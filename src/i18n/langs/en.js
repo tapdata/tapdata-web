@@ -127,9 +127,9 @@ export default {
   agent_deploy_start_install_button_copy: 'Copy',
   agent_deploy_start_install_button_copied: 'Copied',
   agent_deploy_start_install_windows_first:
-    '1. Put the downloaded Tapdata Agent into the directory where you want to install the Agent, and execute the following commands in the directory through the cmd window to realize the automatic deployment and startup of the Tapdata Agent',
+    '1. Put the downloaded Tapdata Agent into the directory where you want to install the Agent, double-click to execute the installation, and enter the command below in the opened window to execute the automatic deployment and startup of the Tapdata Agent',
   agent_deploy_start_install_windows_second:
-    '2. After the above command is executed, the log as shown in the figure below appears, which means that the agent started successfully:',
+    '2. After the Agent starts successfully, the window will automatically close, and tapdata will generate the following directory structure in your installation directory:',
   agent_deploy_start_install_windows_third:
     '3. If you encounter any problems during installation and use, please refer to',
   agent_deploy_link_agent_operation: '"Agent Installation Manual and Common QA"',

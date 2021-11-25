@@ -120,8 +120,9 @@ export default {
   agent_deploy_start_install_button_copy: '复制',
   agent_deploy_start_install_button_copied: '已复制',
   agent_deploy_start_install_windows_first:
-    '1. 将下载好的Tapdata Agent放入要安装Agent的目录，并通过cmd窗口在目录下执行下方命令即可实现Tapdata Agent的自动部署及启动',
-  agent_deploy_start_install_windows_second: '2.待上方命令执行完毕后，出现如下图所示日志则代表Agent启动成功：',
+    '1. 将下载好的Tapdata Agent放入要安装Agent的目录，双击执行安装，在打开的窗口内输入下方命令执行即可实现Tapdata Agent的自动部署及启动',
+  agent_deploy_start_install_windows_second:
+    '2.待Agent启动成功后窗口会自动关闭，tapdata会在您的安装目录生成如下目录结构：',
   agent_deploy_start_install_windows_third: '3.如果您在安装和使用过程中遇到任何问题，请参考',
   agent_deploy_link_agent_operation: '《Agent安装手册及常见QA》',
   agent_deploy_link_agent_operation_desc: '或者直接扫描右方二维码加入社群获取技术支持。',
@@ -180,6 +181,36 @@ export default {
   connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
   connection_form_database_host_placeholder: '请输入数据库地址',
   connection_form_database_host_tips: '数据库地址(127.0.0.1/Domain:{端口},多个地址请用,分开)',
+  connection_form_hazecast_connection_test: 'Connection test',
+  connection_form_hazecast_create: 'Create connection',
+  connection_form_hazecast_edit: 'Edit connection',
+  connection_form_hazecast_data_source: 'Data source',
+  connection_form_hazecast_data_source_type: 'Data source',
+  connection_form_hazecast_rename: 'Rename',
+  connection_form_hazecast_change: 'Change',
+  connection_form_hazecast_name_rules:
+    'Starting with Chinese and English, 1-100 characters, including Chinese and English, numbers, underscores, underscores, and spaces',
+  connection_form_hazecast_no_name: 'The connection name cannot be empty',
+  connection_form_hazecast_name_exists: 'Name already exists',
+  connection_form_hazecast_cancel: 'Cancel',
+  connection_form_hazecast_save: 'Save',
+  connection_form_hazecast_give_up: 'Give up',
+  connection_form_hazecast_confirm_edit: 'This operation will lose the current edit content',
+  connection_form_hazecast_confirm_create: 'This operation will lose the connection currently being created',
+  connection_form_hazecast_confirm_create_content: 'Do you want to abandon the creation of the connection ?', //是否放弃创建该连接？
+  connection_form_hazecast_confirm_edit_content: 'Do you want to abandon the modification of the content ?', //是否放弃修改内容？
+  connection_form_hazecast_connection_name: 'Connection Name',
+  connection_form_hazecast_options_target: 'Target',
+  connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'Target',",
+  connection_form_hazecast_connection_type: 'Connection Type',
+  connection_form_hazecast_database_name: 'Cluster Name', //集群名称
+  connection_form_hazecast_plain_password: 'Token',
+  connection_form_hazecast_ssl: 'Enable SSL', //是否开启ssl
+  connection_form_hazecast_sslKey: 'Key Store File',
+  connection_form_hazecast_sslCA: 'Trust Key Store File',
+  connection_form_hazecast_sslPass: 'Key File Password',
+  connection_form_hazecast_none_sslKey: 'The key store file cannot be empty',
+  connection_form_hazecast_none_sslCA: 'The trust key store file cannot be empty',
 
   // 任务
   task_manage: '任务管理',

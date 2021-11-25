@@ -1,23 +1,8 @@
 export default function (vm) {
-  const fileChange = (file, field, field2) => {
-    if (file) {
-      let reader = new FileReader()
-      reader.readAsText(file)
-      reader.onload = () => {
-        let text = reader.result
-        vm.model[field] = text
-        if (field2) {
-          vm.model[field2] = text
-        }
-      }
-    } else {
-      vm.model[field] = ''
-    }
-  }
   return {
     form: {
       labelPosition: 'left',
-      labelWidth: '120px',
+      labelWidth: '160px',
       labelColon: true
     },
     defaultModel: {
@@ -27,15 +12,15 @@ export default function (vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: 'Connection Type',
+        label: vm.$t('connection_form_hazecast_connection_type'),
         customClass: 'large-item',
         isVertical: false,
         button: true,
         outerTip: true,
         options: [
           {
-            label: vm.$t('dataForm.form.options.target'),
-            tip: vm.$t('dataForm.form.options.targetTips'),
+            label: vm.$t('connection_form_hazecast_options_target'),
+            tip: vm.$t('connection_form_hazecast_options_target_tips'),
             value: 'target'
           }
         ],
@@ -44,20 +29,22 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_name',
-        label: 'Cluster Name',
+        label: vm.$t('connection_form_hazecast_database_name'),
+        placeholder: 'Please enter the cluster name',
         required: true
       },
       {
         type: 'input',
         field: 'plain_password',
-        label: 'Token',
+        label: vm.$t('connection_form_hazecast_plain_password'),
         domType: 'password',
+        placeholder: 'Please enter the token',
         showPassword: true
       },
       {
         type: 'switch',
         field: 'ssl',
-        label: 'Enable SSL',
+        label: vm.$t('connection_form_hazecast_ssl'),
         influences: [
           {
             field: 'sslKeyFile',
@@ -73,8 +60,14 @@ export default function (vm) {
       },
       {
         type: 'file',
-        field: 'sslKeyFile',
-        label: 'Key Store File',
+        field: 'sslKey',
+        fileNameField: 'sslKeyFile',
+        accept: '.keystore',
+        base64: true,
+        noFileType: true,
+        placeholder: 'Please upload files',
+        label: vm.$t('connection_form_hazecast_sslKey'),
+        buttonText: 'Select',
         show: false,
         dependOn: [
           {
@@ -99,23 +92,24 @@ export default function (vm) {
                 if (v) {
                   callback()
                 }
-                callback(new Error(vm.$t('dataForm.error.noneSslKey')))
+                callback(new Error(vm.$t('connection_form_hazecast_none_sslKey')))
               } else {
                 callback()
               }
             }
           }
-        ],
-        on: {
-          change(file) {
-            fileChange(file, 'sslKey', 'sslCert')
-          }
-        }
+        ]
       },
       {
         type: 'file',
-        field: 'sslCAFile',
-        label: 'Trust Key Store File',
+        field: 'sslCA',
+        fileNameField: 'sslCAFile',
+        accept: '.keystore',
+        base64: true,
+        noFileType: true,
+        label: vm.$t('connection_form_hazecast_sslCA'),
+        placeholder: 'Please upload files',
+        buttonText: 'Select',
         show: false,
         dependOn: [
           {
@@ -134,26 +128,26 @@ export default function (vm) {
           {
             required: true,
             validator: (rule, v, callback) => {
-              let ssl = vm.model.sslValidate
-              if (ssl && !v) {
-                callback(new Error(vm.$t('dataForm.error.noneSslCA')))
+              let value = vm.model.sslCA
+              let ssl = vm.model.ssl
+              if (ssl && (!value || !value.trim())) {
+                if (v) {
+                  callback()
+                }
+                callback(new Error(vm.$t('connection_form_hazecast_none_sslCA')))
               } else {
                 callback()
               }
             }
           }
-        ],
-        on: {
-          change(file) {
-            fileChange(file, 'sslCA')
-          }
-        }
+        ]
       },
       {
         type: 'input',
         field: 'sslPass',
-        label: 'Key File Password',
+        label: vm.$t('connection_form_hazecast_sslPass'),
         domType: 'password',
+        placeholder: 'Please enter the key file Password',
         showPassword: true,
         show: false,
         dependOn: [
