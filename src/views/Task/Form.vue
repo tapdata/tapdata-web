@@ -629,14 +629,9 @@ export default {
     },
     //云版支持数据源
     allowDatabaseType() {
-      this.$axios
-        .get('tm/api/Connections/databaseType')
-        .then(data => {
-          this.changeConfig(data || [], 'databaseType')
-        })
-        .catch(() => {
-          this.$message.error('获取全部数据源类型接口请求失败')
-        })
+      this.$axios.get('tm/api/Connections/databaseType').then(data => {
+        this.changeConfig(data || [], 'databaseType')
+      })
     },
     formChangeSetting(data) {
       //删除模式不支持双向
