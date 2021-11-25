@@ -119,6 +119,9 @@ export default {
   dag_dialog_field_mapping_error_save_prefix: '檢測到您還有',
   dag_dialog_field_mapping_error_save_suffix: '張表的字段類型設置存在問題，請在左側表區域選擇有問題的表進行處理',
 
+  //任務編輯
+  dag_job_check_source: '作為源僅支持全量任務',
+
   // 緩存節點提示
   task_job_setting_tip_title: '設置提醒',
   task_job_setting_disable: '不去重',

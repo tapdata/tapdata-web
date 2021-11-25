@@ -1205,7 +1205,9 @@ export default {
         let objectNamesList = [],
           stageTypeFalg = false,
           checkSetting = true,
-          greentplumSettingFalg = true
+          greentplumSettingFalg = true,
+          adbMysqlFalg = true,
+          kundbFalg = true
         if (data && data.stages && data.stages.length) {
           stageTypeFalg = data.stages.every(stage => stage.type === 'database')
           if (stageTypeFalg) {
@@ -1234,6 +1236,20 @@ export default {
             ) {
               greentplumSettingFalg = false
             }
+            if (
+              item.outputLanes.length &&
+              (item.databaseType === 'adb_mysql' || item.database_type === 'adb_mysql') &&
+              this.sync_type !== 'initial_sync'
+            ) {
+              adbMysqlFalg = false
+            }
+            if (
+              item.outputLanes.length &&
+              (item.databaseType === 'kundb' || item.database_type === 'kundb') &&
+              this.sync_type !== 'initial_sync'
+            ) {
+              kundbFalg = false
+            }
           })
         }
         // 【增量采集时间】仅增量任务时，选择浏览器时区，时间设置未作必填校验，导致任务启动后不增量同步。
@@ -1254,7 +1270,15 @@ export default {
           return
         }
         if (!greentplumSettingFalg) {
-          this.$message.error(this.$t('editor.cell.data_node.greentplum_check'))
+          this.$message.error('Greenplum' + this.$t('dag_job_check_source'))
+          return
+        }
+        if (!adbMysqlFalg) {
+          this.$message.error('ADB MySQL' + this.$t('dag_job_check_source'))
+          return
+        }
+        if (!kundbFalg) {
+          this.$message.error('kundb' + this.$t('dag_job_check_source'))
           return
         }
         if (this.modPipeline) {

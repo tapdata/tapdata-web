@@ -72,7 +72,6 @@ export default {
   dag_data_node_label_kafka_high_performance_mode: '高性能模式',
   dag_data_node_label_kafka_all: '所有',
   dag_link_button_custom_script: '自定义处理脚本',
-
   //字段映射
   dag_link_button_field_mapping: '字段映射',
   dag_link_button_mapping_configuration: '映射配置',
@@ -123,6 +122,8 @@ export default {
   //任务编辑
   dag_data_node_label_clickhouse: 'ClickHouse节点',
   dag_data_node_label_aggregate_filter: '过滤器',
+
+  dag_job_check_source: '作为源仅支持全量任务',
   // 缓存节点提示
   task_job_setting_tip_title: '设置提醒',
   task_job_setting_disable: '不去重',

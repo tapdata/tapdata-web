@@ -125,6 +125,8 @@ export default {
   dag_dialog_field_mapping_error_save_suffix:
     'There is a problem with the field type setting of the table, please select the table with the problem in the table area on the left for processing',
 
+  dag_job_check_source: 'as a source, only full tasks are supported',
+
   //Task edit
   task_job_setting_tip_title: 'Set reminder',
   task_job_setting_disable: 'Do not de-duplicate',

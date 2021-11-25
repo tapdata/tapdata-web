@@ -278,7 +278,8 @@ export default {
           'postgres',
           'mariadb',
           'greenplum',
-          'tidb'
+          'tidb',
+          'kundb'
         ]
       }
     }

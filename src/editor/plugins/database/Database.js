@@ -124,7 +124,7 @@ export const databaseConfig = {
         }
         return (
           ['app.Database'].includes(targetCell.get('type')) &&
-          !['hbase'].includes(targetCell?.attributes?.form_data?.database_type) &&
+          !['hbase', 'adb_mysql'].includes(targetCell?.attributes?.form_data?.database_type) &&
           targetCell.graph.getConnectedLinks(this, {
             inbound: true
           }).length < 1 &&
