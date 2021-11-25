@@ -220,6 +220,8 @@ export const defaultModel = {
     custom_type: '',
     collection_name: '',
     unique_keys: '',
+    connectionTimeOut: '10',
+    readTimeOut: '30',
     jsEngineName: 'graal.js',
     custom_ondata_script: '',
     custom_cdc_script: '',
