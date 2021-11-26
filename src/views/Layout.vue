@@ -418,7 +418,10 @@ export default {
           }
           break
         case 'license':
-          this.$message.info(this.$t('app.menu.licenseDate') + ': ' + this.licenseExpireDate)
+          this.$router.push({
+            name: 'License'
+          })
+          // this.$message.info(this.$t('app.menu.licenseDate') + ': ' + this.licenseExpireDate)
           break
         case 'home':
           window.open('https://tapdata.net/', '_blank')

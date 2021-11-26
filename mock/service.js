@@ -1560,5 +1560,20 @@ module.exports = Object.assign({}, dataflow, {
     code: 'ok',
     msg: 'ok'
   },
-  '/api/Javascript_functions/count': { data: { count: 232 }, code: 'ok', msg: 'ok' }
+  '/api/Javascript_functions/count': { data: { count: 232 }, code: 'ok', msg: 'ok' },
+  '/api/License/count': { data: { count: 232 }, code: 'ok', msg: 'ok' },
+  '/api/License': {
+    code: 'ok',
+    msg: 'ok',
+    'data|1-10': [
+      {
+        id: '@id',
+        sid: '@id',
+        name: '@cname',
+        'status|1': ['normal', 'expiring', 'expired'],
+        updateTime: '@now',
+        expireTime: '@now'
+      }
+    ]
+  }
 })
