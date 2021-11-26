@@ -3,18 +3,13 @@
     <ul class="database-ul">
       <li v-for="item in types" :key="item" @click="$emit('select', item)">
         <div class="img-box">
-          <img
-            v-if="['mongodb', 'kafka'].includes(item)"
-            class="img-mini"
-            :src="$util.getConnectionTypeDialogImg(item) || $util.getConnectionTypeDialogImg('default')"
-          />
-          <img v-else :src="$util.getConnectionTypeDialogImg(item)" />
+          <ElImage :src="$util.getConnectionTypeDialogImg(item)" />
         </div>
         <div class="content">{{ typeMap[item] }}</div>
       </li>
       <li v-for="item in comingTypes" :key="item" class="item--disabled">
         <div class="img-box position-relative">
-          <img :src="$util.getConnectionTypeDialogImg(item) || $util.getConnectionTypeDialogImg('default')" />
+          <ElImage :src="$util.getConnectionTypeDialogImg(item)" />
           <div class="img-box__mask position-absolute">
             <span class="mask-text">即将上线</span>
           </div>
@@ -26,7 +21,7 @@
     <ul class="database-ul">
       <li v-for="(item, index) in otherTypes" :key="index" @click="$emit('select', item)">
         <div class="img-box">
-          <img :src="$util.getConnectionTypeDialogImg(item) || $util.getConnectionTypeDialogImg('default')" />
+          <ElImage :src="$util.getConnectionTypeDialogImg(item)" />
         </div>
         <div class="content">{{ typeMap[item] }}</div>
       </li>
@@ -35,7 +30,7 @@
     <ul class="database-ul">
       <li v-for="(item, index) in automationType" :key="index" @click="$emit('select', item.type)">
         <div class="img-box">
-          <img :src="$util.getConnectionTypeDialogImg('default1')" />
+          <ElImage :src="$util.getConnectionTypeDialogImg('default1')" />
         </div>
         <div class="content">{{ item.name }}</div>
       </li>
@@ -82,7 +77,6 @@ export default {
 
 <style scoped lang="scss">
 .database {
-  max-height: 270px;
   overflow: auto;
   .title {
     color: #999;
@@ -97,7 +91,7 @@ export default {
       margin-bottom: 32px;
       text-align: center;
     }
-    li:nth-child(6n + 1) {
+    li:nth-child(9n + 1) {
       margin-left: 0;
     }
     .img-box {
@@ -110,12 +104,6 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
-      img {
-        width: 35%;
-      }
-      .img-mini {
-        width: 26%;
-      }
       &:hover {
         background: rgba(0, 0, 0, 0.3);
       }
@@ -149,6 +137,15 @@ export default {
       height: 16px;
       background: #ff9c00;
       border-radius: 7px;
+    }
+  }
+}
+</style>
+<style lang="scss">
+.database {
+  .database-ul {
+    .el-image__inner {
+      width: 30px;
     }
   }
 }
