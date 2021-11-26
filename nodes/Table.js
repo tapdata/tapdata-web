@@ -58,34 +58,6 @@ export class Table extends NodeType {
           }
         }
       },
-      dropTable: {
-        type: 'boolean',
-        title: '已存在的数据',
-        enum: [
-          {
-            label: '保持已存在的数据',
-            value: false
-          },
-          {
-            label: '运行前删除已存在的数据',
-            value: true
-          }
-        ],
-        default: false,
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          wrapperWidth: 240
-        },
-        'x-component': 'Select',
-        'x-reactions': {
-          dependencies: ['inputLanes'],
-          fulfill: {
-            state: {
-              visible: '{{!!$deps[0] && $deps[0].length>0}}'
-            }
-          }
-        }
-      },
       isSource: {
         type: 'boolean',
         'x-visible': false,
@@ -96,14 +68,13 @@ export class Table extends NodeType {
         'x-visible': false,
         'x-reactions': '{{isTarget}}'
       },
-
       sourceNodeConfig: {
         type: 'void',
         'x-reactions': {
           dependencies: ['isSource'],
           fulfill: {
             state: {
-              visible: '{{console.log("isSource", $deps[0]),!!$deps[0]}}'
+              visible: '{{!!$deps[0]}}'
             }
           }
         },
@@ -221,30 +192,125 @@ export class Table extends NodeType {
             'x-component': 'Space',
             properties: {
               increaseSyncInterval: {
-                title: '增量同步间隔（ms）',
+                title: '增量同步间隔(ms)',
                 type: 'number',
                 'x-decorator': 'FormItem',
-                'x-component': 'InputNumber'
+                'x-component': 'InputNumber',
+                'x-component-props': {
+                  min: 1
+                }
               },
               increaseReadSize: {
-                title: '每次读取数量（行）',
+                title: '每次读取数量(行)',
                 type: 'number',
                 'x-decorator': 'FormItem',
-                'x-component': 'InputNumber'
+                'x-component': 'InputNumber',
+                'x-component-props': {
+                  min: 1
+                }
               },
               processorThreadNum: {
                 title: '处理器线程数',
                 type: 'number',
                 'x-decorator': 'FormItem',
-                'x-component': 'InputNumber'
+                'x-component': 'InputNumber',
+                'x-component-props': {
+                  min: 1
+                }
               }
             }
           },
           maxTransactionDuration: {
-            title: '事务最大时长',
+            title: '事务最大时长(小时)',
             type: 'number',
             'x-decorator': 'FormItem',
-            'x-component': 'InputNumber'
+            'x-component': 'InputNumber',
+            'x-component-props': {
+              min: 0
+            }
+          }
+        }
+      },
+
+      targetNodeConfig: {
+        type: 'void',
+        'x-reactions': {
+          dependencies: ['isTarget'],
+          fulfill: {
+            state: {
+              visible: '{{!!$deps[0]}}'
+            }
+          }
+        },
+        properties: {
+          existDataProcessMode: {
+            title: '已有数据处理',
+            type: 'string',
+            default: 'keepData',
+            enum: [
+              {
+                label: '保持已存在的数据',
+                value: 'keepData'
+              },
+              {
+                label: '运行前删除已存在的数据',
+                value: 'removeData'
+              },
+              {
+                label: '运行前删除表结构',
+                value: 'dropTable'
+              }
+            ],
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              wrapperWidth: 240
+            },
+            'x-component': 'Select'
+          },
+          writeStrategy: {
+            title: '数据写入模式',
+            type: 'string',
+            default: 'appendWrite',
+            enum: [
+              {
+                label: '追加写入',
+                value: 'appendWrite'
+              },
+              {
+                label: '更新写入',
+                value: 'updateWrite'
+              },
+              {
+                label: '更新已存在或者插入新数据',
+                value: 'updateOrInsert'
+              }
+            ],
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              wrapperWidth: 240
+            },
+            'x-component': 'Select',
+            'x-reactions': {
+              target: 'updateConditionFields',
+              fulfill: {
+                state: {
+                  visible: '{{$self.value!=="appendWrite"}}'
+                }
+              }
+            }
+          },
+          updateConditionFields: {
+            title: '更新条件字段',
+            type: 'string',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              wrapperWidth: 240
+            },
+            'x-component': 'Select',
+            'x-component-props': {
+              multiple: true,
+              collapseTags: true
+            }
           }
         }
       }

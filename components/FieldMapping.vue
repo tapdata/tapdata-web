@@ -14,30 +14,30 @@
       </div>
     </div>
     <div class="task-form-body">
-      <div class="nav">
+      <div class="flex flex-column">
         <div class="flex mb-2 ml-6">
           <div class="flex">
             <span class="text"> 搜索表：</span>
             <el-input v-model="searchTable" size="mini" @change="search('table')"></el-input>
           </div>
         </div>
-        <ul>
+        <ul class="task-form-left__ul flex flex-column">
           <li
             v-for="(item, index) in fieldMappingNavData"
             :key="index"
             :class="{ active: position === index }"
             @click.prevent="select(item, index)"
           >
-            <div class="imgBox" v-if="item.invalid">
+            <div class="task-form__img" v-if="item.invalid">
               <img src="../assets/images/fieldMapping-table-error.png" alt="" />
             </div>
-            <div class="imgBox" v-else>
+            <div class="task-form__img" v-else>
               <img src="../assets/images/fieldMapping-table.png" alt="" />
             </div>
-            <div class="contentBox">
-              <div class="contentBox__source">{{ item.sourceObjectName }}</div>
-              <div class="contentBox__target">{{ item.sinkObjectName }}</div>
-              <div class="contentBox__select">
+            <div class="task-form-text-box">
+              <div class="source">{{ item.sourceObjectName }}</div>
+              <div class="target">{{ item.sinkObjectName }}</div>
+              <div class="select">
                 {{
                   `已选中 ${position === index ? fieldCount : item.sourceFieldCount - item.userDeletedNum}/${
                     item.sourceFieldCount
@@ -1076,14 +1076,11 @@ export default {
     flex: 1;
     margin-top: 20px;
     height: 0;
-    .nav {
-      flex: 0 0 auto;
+    .task-form-left__ul {
+      flex: 1;
+      border-top: 1px solid #f2f2f2;
+      border-right: 1px solid #f2f2f2;
       overflow-y: auto;
-      ul {
-        padding-bottom: 100px;
-        border-top: 1px solid #f2f2f2;
-        border-right: 1px solid #f2f2f2;
-      }
       li {
         height: 93px;
         background: #ffffff;
@@ -1103,7 +1100,7 @@ export default {
           border-left: 2px solid #2c65ff;
           cursor: pointer;
         }
-        .imgBox {
+        .task-form__img {
           width: 34px;
           height: 50px;
           img {
@@ -1111,32 +1108,34 @@ export default {
             height: 100%;
           }
         }
-        .contentBox {
+        .task-form-text-box {
           margin-left: 16px;
           width: 200px;
-        }
-        .contentBox__source {
-          font-size: 12px;
-          font-weight: 400;
-          color: #000000;
-          line-height: 17px;
-        }
-        .contentBox__target {
-          font-size: 12px;
-          font-weight: 400;
-          color: #ef9868;
-          line-height: 17px;
-          margin-top: 16px;
-        }
-        .contentBox__select {
-          font-size: 12px;
-          font-weight: 400;
-          color: #000000;
-          line-height: 17px;
-          margin-top: 10px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
+          .source {
+            font-size: 12px;
+            font-weight: 400;
+            color: #000000;
+            line-height: 17px;
+            text-align: left;
+          }
+          .target {
+            font-size: 12px;
+            font-weight: 400;
+            color: #ef9868;
+            line-height: 17px;
+            margin-top: 16px;
+            text-align: left;
+          }
+          .select {
+            font-size: 12px;
+            font-weight: 400;
+            color: #000000;
+            line-height: 17px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
         }
       }
     }

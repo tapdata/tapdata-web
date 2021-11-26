@@ -139,7 +139,7 @@ $height: 40px;
   }
 
   &.active,
-  &.jtk-drag-selected {
+  &.selected {
     border-color: #fa6303;
   }
 

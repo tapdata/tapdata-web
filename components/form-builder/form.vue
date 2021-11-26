@@ -237,7 +237,7 @@ export default {
               if (config.type === 'file' && config.fileNameField) {
                 let file = val
                 self.value[config.fileNameField] = file?.name || ''
-                val = file?.val || ''
+                val = file?.value || ''
               }
               self.value[config.field] = val
               let influences = config.influences

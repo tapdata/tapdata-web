@@ -70,7 +70,12 @@ export const DB_ICON = {
   greenplum: 'greenplum',
   hana: 'hana',
   hive: 'hive',
-  clickhouse: 'clickhouse'
+  clickhouse: 'clickhouse',
+  gaussdb200: 'GaussDB200',
+  kundb: 'KunDB',
+  adb_mysql: 'ADB MySQL',
+  adb_postgres: 'ADB PostgreSQL',
+  hazelcast_cloud_cluster: 'Hazelcast cloud'
 }
 
 export const NODE_TYPE_ICON = {

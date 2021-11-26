@@ -44,7 +44,10 @@ export default {
       this.moveLastPosition[0] = position.x
       this.moveLastPosition[1] = position.y
 
-      on(document, 'mousemove', this.mouseMovePaper)
+      on(document, 'mousemove', this.mouseMovePaper, {
+        capture: false,
+        passive: false
+      })
     },
 
     mouseUpMovePaper() {
