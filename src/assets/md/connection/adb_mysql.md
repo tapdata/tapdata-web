@@ -66,13 +66,8 @@ GRANT RELOAD, SHOW DATABASES, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 't
 ```
 当从ADB MySQL同步到其他异构数据库时，如果源ADB MySQL存在表级联设置，因该级联触发产生的数据更新和删除不会传递到目标。如需要在目标端构建级联处理能力，可以视目标情况，通过触发器等手段来实现该类型的数据同步。
 ```
-###  **4. 先决条件（作为目标）**
-对于某个数据库赋于全部权限
-```
-GRANT ALL PRIVILEGES ON <DATABASE_NAME>.<TABLE_NAME> TO 'tapdata' IDENTIFIED BY 'password';
-```
 
-###  **5. 常见错误**
+###  **4. 常见错误**
 
 Unknown error 1044
 如果权限已经grant了，但是通过tapdata还是无法通过测试连接，可以通过下面的步骤检查并修复
