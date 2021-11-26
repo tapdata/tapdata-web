@@ -127,6 +127,7 @@ export default {
   task_job_setting_tip_title: '设置提醒',
   task_job_setting_disable: '不去重',
   task_job_tip_text: '该缓存节点(xxx)的设置已存在于任务(###)中，请确认是否还继续创建？',
+  task_job_source_falg: '作为源仅支持全量任务',
   data_flow_automatically: '自动挖掘',
   data_flow_manually: '手动挖掘',
   data_flow_oracle_logminer: 'Oracle日志挖掘模式',

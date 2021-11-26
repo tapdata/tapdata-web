@@ -1205,7 +1205,9 @@ export default {
         let objectNamesList = [],
           stageTypeFalg = false,
           checkSetting = true,
-          greentplumSettingFalg = true
+          // greentplumSettingFalg = true,
+          sourceInitialFalg = true,
+          databaseType = ''
         if (data && data.stages && data.stages.length) {
           stageTypeFalg = data.stages.every(stage => stage.type === 'database')
           if (stageTypeFalg) {
@@ -1229,10 +1231,14 @@ export default {
             }
             if (
               item.outputLanes.length &&
-              (item.databaseType === 'greenplum' || item.database_type === 'greenplum') &&
+              (['greenplum', 'kundb', 'adb_mysql', 'gaussdb200'].includes(item.databaseType) ||
+                ['greenplum', 'kundb', 'adb_mysql', 'gaussdb200'].includes(item.database_type)) &&
+              // (item.databaseType === 'greenplum' || item.database_type === 'greenplum') &&
               this.sync_type !== 'initial_sync'
             ) {
-              greentplumSettingFalg = false
+              sourceInitialFalg = false
+              databaseType = item.databaseType ? item.databaseType : item.database_type
+              // greentplumSettingFalg = false
             }
           })
         }
@@ -1253,8 +1259,8 @@ export default {
           this.$message.error(this.$t('editor.cell.link.chooseATableTip'))
           return
         }
-        if (!greentplumSettingFalg) {
-          this.$message.error(this.$t('editor.cell.data_node.greentplum_check'))
+        if (!sourceInitialFalg) {
+          this.$message.error(databaseType + this.$t('task_job_source_falg'))
           return
         }
         if (this.modPipeline) {
