@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { DB_ICON, NODE_TYPE_ICON } from 'web-core/views/dataflow/constants'
+import { NODE_TYPE_ICON } from 'web-core/views/dataflow/constants'
 
 export default {
   name: 'BaseNode',
@@ -20,7 +20,7 @@ export default {
   },
 
   getIcon(node) {
-    let icon = node.type === 'table' ? DB_ICON[node.databaseType] : NODE_TYPE_ICON[node.type]
+    let icon = node.type === 'table' ? node.databaseType : NODE_TYPE_ICON[node.type]
     return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
   }
 }
