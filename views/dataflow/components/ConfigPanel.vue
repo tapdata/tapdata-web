@@ -1,25 +1,23 @@
 <template>
   <section
-    v-show="isMonitor || activeType"
+    v-show="activeType"
     v-resize.top="{
       minHeight: 40
     }"
     class="config-panel border-top"
   >
     <VIcon class="config-panel-close" size="16" @click="handleClosePanel">close</VIcon>
-    <div v-if="activeType === 'settings'" class="h-100 flex flex-column overflow-hidden">
+    <div v-if="activeType === 'settings'" class="h-100 flex flex-column overflow-hidden setting-panel-wrap">
       <SettingPanel v-bind="$attrs" v-on="$listeners"></SettingPanel>
     </div>
-    <div v-else class="config-tabs-wrap">
+    <div class="config-tabs-wrap">
       <div class="tabs-header flex align-center px-4">
-        <!--<VIcon class="header-icon mr-2">{{ icon }}</VIcon>-->
         <ElImage class="mr-2" :src="icon"></ElImage>
         <div class="title-input-wrap flex align-center flex-shrink-0 h-100">
           <input
             ref="nameInput"
             v-focus-select
             :value="activeNode ? activeNode.name : ''"
-            :readonly="isMonitor"
             class="title-input text-truncate"
             @change="handleChangeName"
           />
@@ -28,7 +26,7 @@
       </div>
       <ElTabs v-model="currentTab" class="config-tabs">
         <ElTabPane label="属性设置">
-          <FormPanel :scope="scope" v-on="$listeners"></FormPanel>
+          <FormPanel v-on="$listeners"></FormPanel>
         </ElTabPane>
         <ElTabPane label="元数据">
           <MetaPane></MetaPane>
@@ -52,13 +50,6 @@ import MetaPane from 'web-core/views/dataflow/components/MetaPane'
 import VIcon from 'web-core/components/VIcon'
 import { DB_ICON, NODE_TYPE_ICON } from 'web-core/views/dataflow/constants'
 import focusSelect from 'web-core/directives/focusSelect'
-import { validateBySchema } from 'web-core/components/form/utils/validate'
-import { action } from '@formily/reactive'
-import ConnectionsApi from 'web-core/api/Connections'
-import MetadataApi from 'web-core/api/MetadataInstances'
-
-const connections = new ConnectionsApi()
-const metadataApi = new MetadataApi()
 
 export default {
   name: 'ConfigPanel',
@@ -68,301 +59,22 @@ export default {
     focusSelect
   },
 
-  props: {
-    isMonitor: Boolean
-  },
-
   data() {
     return {
-      currentTab: '0',
-
-      scope: {
-        /**
-         * 统一的异步数据源方法
-         * @param service
-         * @param fieldName 数据设置指定的字段
-         * @param serviceParams 缺省参数，传递给service方法
-         * @returns {(function(*=): void)|*}
-         */
-        useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
-          return field => {
-            field.loading = true
-            service(field, ...serviceParams).then(
-              action.bound(data => {
-                if (fieldName === 'value') {
-                  field.setValue(data)
-                } else field[fieldName] = data
-                field.loading = false
-              })
-            )
-          }
-        },
-
-        /**
-         * 加载数据库
-         * @param field
-         * @param databaseType 数据库类型，String或Array
-         * @returns {Promise<*[]|*>}
-         */
-        loadDatabase: async (field, databaseType = field.form.values.databaseType) => {
-          try {
-            let result = await connections.get({
-              filter: JSON.stringify({
-                where: {
-                  database_type: databaseType
-                    ? {
-                        $in: Array.isArray(databaseType) ? databaseType : [databaseType]
-                      }
-                    : {
-                        $nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
-                      }
-                },
-                fields: {
-                  name: 1,
-                  id: 1,
-                  database_type: 1,
-                  connection_type: 1,
-                  status: 1
-                },
-                order: ['status DESC', 'name ASC']
-              })
-            })
-            return (result.items || result).map(item => {
-              return {
-                id: item.id,
-                name: item.name,
-                label: `${item.name} (${this.$t('connection.status.' + item.status) || item.status})`,
-                value: item.id,
-                databaseType: item.database_type
-              }
-            })
-          } catch (e) {
-            console.log('catch', e) // eslint-disable-line
-            return []
-          }
-        },
-
-        /**
-         * 加载数据库的详情
-         * @param field
-         * @param connectionId
-         * @returns {Promise<AxiosResponse<any>>}
-         */
-        loadDatabaseInfo: async (field, connectionId = field.query('connectionId').get('value')) => {
-          if (!connectionId) return
-          return await connections.customQuery([connectionId], {
-            schema: true
-          })
-        },
-
-        /**
-         * 加载数据库的表，只返回表名的集合
-         * @param field
-         * @param connectionId
-         * @returns {Promise<*|AxiosResponse<any>>}
-         */
-        loadDatabaseTable: async (field, connectionId = field.query('connectionId').get('value')) => {
-          if (!connectionId) return
-          const params = {
-            filter: JSON.stringify({
-              where: {
-                'source.id': connectionId,
-                meta_type: {
-                  in: ['collection', 'table', 'view'] //,
-                },
-                is_deleted: false
-              },
-              fields: {
-                original_name: true
-              }
-            })
-          }
-          const data = await metadataApi.get(params)
-          return data.items.map(item => item.original_name)
-        },
-
-        /**
-         * 加载表的详情，返回表的数据对象
-         * @param field
-         * @param connectionId
-         * @param tableName
-         * @returns {Promise<AxiosResponse<any>>}
-         */
-        loadTableInfo: async (
-          field,
-          connectionId = field.query('connectionId').get('value'),
-          tableName = field.query('tableName').get('value')
-        ) => {
-          if (!connectionId || !tableName) return
-          // console.log('loadTableInfo', field, id) // eslint-disable-line
-          const params = {
-            filter: JSON.stringify({
-              where: {
-                'source.id': connectionId,
-                original_name: tableName,
-                is_deleted: false
-              }
-            })
-          }
-          return await metadataApi.get(params)
-        },
-
-        /**
-         * 加载表字段，返回字段名的集合
-         * @param field
-         * @param connectionId
-         * @param tableName
-         * @returns {Promise<*>}
-         */
-        loadTableField: async (
-          field,
-          connectionId = field.query('connectionId').get('value'),
-          tableName = field.query('tableName').get('value')
-        ) => {
-          if (!connectionId || !tableName) return
-          const params = {
-            filter: JSON.stringify({
-              where: {
-                'source.id': connectionId,
-                original_name: tableName,
-                is_deleted: false
-              },
-              fields: {
-                fields: true
-              }
-            })
-          }
-          const data = await metadataApi.get(params)
-          return data.items[0]?.fields.map(item => item.field_name) || []
-          // const tableData = await metadataApi.findOne(params)
-          // return tableData.fields.map(item => item.field_name)
-        },
-
-        // 加载数据集
-        loadCollections: async (field, connectionId = field.query('connectionId').get('value')) => {
-          if (!connectionId) return
-          let result = await connections.get([connectionId])
-          const tables = result.data?.schema?.tables || []
-          return tables
-        },
-
-        /**
-         * 对目标端已存在的结构和数据的处理，下拉选项
-         * @param field
-         */
-        loadDropOptions: field => {
-          const options = [
-            {
-              label: this.$t('editor.cell.link.existingSchema.keepSchema'),
-              value: 'no_drop'
-            },
-            {
-              label: this.$t('editor.cell.link.existingSchema.keepExistedData'),
-              value: 'drop_data'
-            }
-          ]
-          if (field.form.values.database_type === 'mongodb') {
-            options.push({
-              label: this.$t('editor.cell.link.existingSchema.removeSchema'),
-              value: 'drop_schema'
-            })
-          }
-          field.dataSource = options
-        },
-
-        /**
-         * 数据写入模式
-         * @param field
-         */
-        loadWriteModelOptions: field => {
-          const options = [
-            {
-              label: this.$t('editor.cell.link.writeMode.append'),
-              value: 'append' // insert				{source: ''} + {target: ''}  =  {source: '', target: ''}
-            },
-            {
-              label: this.$t('editor.cell.link.writeMode.upsert'),
-              value: 'upsert' // OneOne				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
-            },
-            {
-              label: this.$t('editor.cell.link.writeMode.update'),
-              value: 'update' // OneMany				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
-            }
-          ]
-          if (field.form.values.type !== 'table') {
-            // SupportEmbedArray
-            options.push({
-              label: this.$t('editor.cell.link.writeMode.merge_embed'),
-              value: 'merge_embed' // ManyOne		{source: ''} + {target: ''}  =  {source: '', joinPath: [{target: ''}]}
-            })
-          }
-          field.dataSource = options
-        },
-
-        isSource: field => {
-          const id = field.form.values.id
-          const allEdges = this.$store.getters['dataflow/allEdges']
-          // field.setValue(allEdges.some(({ source }) => source === id))
-          field.value = allEdges.some(({ source }) => source === id)
-          /*console.log(
-            '🚗isSource',
-            allEdges,
-            id,
-            allEdges.some(({ source }) => source === id),
-            field.value,
-            field
-          )*/
-        },
-
-        isTarget: field => {
-          const id = field.form.values.id
-          const allEdges = this.$store.getters['dataflow/allEdges']
-          // field.setValue(allEdges.some(({ target }) => target === id))
-          field.value = allEdges.some(({ target }) => target === id)
-          /*console.log(
-            '🚗isTarget',
-            allEdges,
-            id,
-            allEdges.some(({ target }) => target === id),
-            field.value,
-            field
-          )*/
-        }
-      }
+      currentTab: '0'
     }
   },
 
   components: { VIcon, MetaPane, DataPane, FormPanel, SettingPanel },
 
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'settingPanelType']),
+    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById']),
 
     icon() {
       const node = this.activeNode
       if (!node) return null
       const icon = node.type === 'table' ? DB_ICON[node.databaseType] : NODE_TYPE_ICON[node.type]
       return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
-    }
-  },
-
-  watch: {
-    async 'activeNode.id'(n, o) {
-      if (o) {
-        const node = this.nodeById(o)
-        try {
-          if (node) {
-            const result = await validateBySchema(node.__Ctor.formSchema, node, this.scope)
-            // eslint-disable-next-line no-console
-            console.log('上一个激活的节点校验结果', result)
-          }
-          this.clearNodeError(o)
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          console.error(e)
-          this.setNodeError(o)
-        }
-        // console.log('上一个激活的节点校验结果', result)
-      }
     }
   },
 
@@ -460,7 +172,7 @@ $headerHeight: 40px;
 
   &-close {
     position: absolute;
-    z-index: 3;
+    z-index: 11;
     top: 12px;
     right: 16px;
   }
@@ -492,31 +204,16 @@ $headerHeight: 40px;
     color: $color;
     font-size: 18px;
   }
-  /*.setting-tabs {
-    ::v-deep {
-      .el-tabs__content {
-        height: calc(100% - 55px);
-        .el-tab-pane {
-          height: 100%;
-          .setting-tabs-box {
-            box-sizing: border-box;
-            .title {
-              height: 40px;
-              line-height: 40px;
-            }
-            textarea {
-              border: 1px solid #d9d9d9;
-              min-width: 600px;
-              min-height: 100px;
-              &:focus {
-                outline: initial;
-              }
-            }
-          }
-        }
-      }
-    }
-  }*/
+
+  .setting-panel-wrap {
+    position: absolute;
+    z-index: 10;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: #fff;
+  }
 
   ::v-deep {
     .config-tabs.el-tabs {

@@ -396,7 +396,7 @@ export default {
       jsPlumbIns.registerConnectionType('active', connectorActiveStyle)
 
       jsPlumbIns.bind('connection', (info, event) => {
-        console.log('connectionEvent', info) // eslint-disable-line
+        // console.log('connectionEvent', info) // eslint-disable-line
         const { sourceId, targetId } = info
         const source = this.getRealId(sourceId)
         const target = this.getRealId(targetId)
@@ -622,6 +622,9 @@ export default {
       await this.addNodes(dag)
       this.setEdges(dag.edges)
       this.setStateDirty(false)
+
+      this.$refs.paperScroller.autoResizePaper()
+      this.handleCenterContent()
     },
 
     newDataflow() {
@@ -888,8 +891,8 @@ export default {
       // console.log('deselectAllNodes') // eslint-disable-line
       this.jsPlumbIns.clearDragSelection()
       this.resetSelectedNodes()
-      this.setActiveNode(null)
       this.deselectConnection()
+      // this.setActiveNode(null)
     },
 
     /**
@@ -1240,23 +1243,12 @@ export default {
       )
       this.deselectAllNodes()
       this.resetDag()
-      // this.setDataflow(DEFAULT_SETTINGS)
+      this.setActiveType(null)
       this.resetSelectedNodes()
     },
 
     getError() {
-      // const settings = this.$store.getters['dataflow/dataflowSettings']
-
       if (!this.dataflow.name) return this.$t('editor.cell.validate.empty_name')
-
-      /*if (settings.sync_type === 'initial_sync' && settings.isSchedule && !settings.cronExpression) {
-        return this.$t('dataFlow.cronExpression')
-      }*/
-
-      /*for (let node of this.nodes) {
-        let res = node.__Ctor.validate(node)
-        if (res !== true) return res
-      }*/
 
       if (this.nodes.length < 2) {
         return this.$t('editor.cell.validate.none_data_node')
