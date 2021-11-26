@@ -1,8 +1,8 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '120px'
     },
     defaultModel: {
       connection_type: 'target'
@@ -118,24 +118,24 @@ export default function (vm) {
         domType: 'password',
         showPassword: true
       },
-      {
-        type: 'switch',
-        field: 'schemaAutoUpdate',
-        label: vm.$t('dataForm.form.ReloadSchema')
-      },
-      {
-        type: 'input',
-        field: 'table_filter',
-        domType: 'textarea',
-        label: vm.$t('dataForm.form.tableFilter'),
-        //tips: vm.$t('dataForm.form.tableFilterTips'),
-        maxlength: 500,
-        showWordLimit: true
-      },
-      {
-        type: 'slot',
-        slot: 'tableFilter'
-      },
+      // {
+      //   type: 'switch',
+      //   field: 'schemaAutoUpdate',
+      //   label: vm.$t('dataForm.form.ReloadSchema')
+      // },
+      // {
+      //   type: 'input',
+      //   field: 'table_filter',
+      //   domType: 'textarea',
+      //   label: vm.$t('dataForm.form.tableFilter'),
+      //   //tips: vm.$t('dataForm.form.tableFilterTips'),
+      //   maxlength: 500,
+      //   showWordLimit: true
+      // },
+      // {
+      //   type: 'slot',
+      //   slot: 'tableFilter'
+      // },
       {
         type: 'input',
         field: 'additionalString',
