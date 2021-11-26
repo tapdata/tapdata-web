@@ -202,6 +202,7 @@ export default {
   connection_form_hazecast_confirm_create_content: 'Do you want to abandon the creation of the connection ?', //是否放弃创建该连接？
   connection_form_hazecast_confirm_edit_content: 'Do you want to abandon the modification of the content ?', //是否放弃修改内容？
   connection_form_hazecast_connection_name: 'Connection Name',
+  connection_form_hazecast_connection_name_placeholder: 'Please enter the connection name',
   connection_form_hazecast_options_target: 'Target',
   connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'Target',",
   connection_form_hazecast_connection_type: 'Connection Type',

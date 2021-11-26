@@ -28,7 +28,7 @@
           </div>
         </div>
         <div class="connection-from-label" v-else>
-          <label v-if="databaseType === 'hazelcast_cloud_cluster'" class="label"
+          <label v-if="databaseType === 'hazelcast_cloud_cluster'" class="haze_label"
             >{{ $t('connection_form_hazecast_data_source_type') }} :</label
           >
           <label v-else class="label">数据源类型:</label>
@@ -265,7 +265,8 @@ export default {
         {
           type: 'input',
           field: 'name',
-          label: self.$t('dataForm.form.connectionName'),
+          label: self.$t('connection_form_hazecast_connection_name'),
+          placeholder: self.$t('connection_form_hazecast_connection_name_placeholder'),
           required: true,
           maxlength: 100,
           width: '504px',
