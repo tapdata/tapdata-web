@@ -98,7 +98,7 @@
         <template slot-scope="scope">
           <div class="connection-name">
             <div class="database-img">
-              <img :src="getImgByType(scope.row.database_type)" />
+              <img :src="$util.getConnectionTypeDialogImg(scope.row.database_type)" />
             </div>
             <div class="database-text">
               <ElLink
@@ -295,6 +295,9 @@ export default {
         'tidb',
         'hana',
         'clickhouse'
+        // 'kundb',
+        // 'adb_postgres',
+        // 'adb_mysql'
       ], //目前白名单,
       searchParams: {
         databaseType: '',
@@ -479,12 +482,6 @@ export default {
           })
         }
       })
-    },
-    getImgByType(type) {
-      if (!type || type === 'jira') {
-        type = 'default'
-      }
-      return require(`@/assets/images/databaseType/${type.toLowerCase()}.png`)
     },
     //列表全选
     handleSelectionChange(val) {

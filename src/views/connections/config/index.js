@@ -28,6 +28,9 @@ import greenplum from './greenplum'
 import tidb from './tidb'
 import hana from './hana'
 import clickhouse from './clickhouse'
+import kundb from './kundb'
+import adb_postgres from './adb_postgres'
+import adb_mysql from './adb_mysql'
 
 export default {
   mysql,
@@ -59,5 +62,8 @@ export default {
   greenplum,
   tidb,
   hana,
-  clickhouse
+  clickhouse,
+  kundb,
+  adb_postgres,
+  adb_mysql
 }

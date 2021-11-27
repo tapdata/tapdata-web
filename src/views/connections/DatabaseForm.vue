@@ -8,7 +8,7 @@
         <header v-if="$route.params.id" class="edit-header-box">
           <div class="edit-header">
             <div class="img-box">
-              <img :src="getImgByType(databaseType)" />
+              <img :src="$util.getConnectionTypeDialogImg(databaseType)" />
             </div>
             <div class="content">{{ model.name }}</div>
             <div class="addBtn color-primary" @click="dialogEditNameVisible = true">
@@ -19,7 +19,7 @@
         <header class="edit-header-box" v-else>
           <div class="edit-header">
             <div class="img-box">
-              <img :src="getImgByType(databaseType)" />
+              <img :src="$util.getConnectionTypeDialogImg(databaseType)" />
             </div>
             <div class="content-box">
               <div class="content">
@@ -656,6 +656,9 @@ export default {
         'tidb',
         'hana',
         'clickhouse'
+        // 'kundb',
+        // 'adb_postgres',
+        // 'adb_mysql'
       ],
       model: '',
       config: {
