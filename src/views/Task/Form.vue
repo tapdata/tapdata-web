@@ -652,9 +652,11 @@ export default {
     formChange(data) {
       let field = data.field || '' // 源端 | 目标端
       if (field === 'source_filter_databaseType') {
+        this.dataSourceModel['source_databaseType'] = data.value
         this.getConnection(this.getWhere('source'), 'source_connectionId', true)
       }
       if (field === 'target_filter_databaseType') {
+        this.dataSourceModel['target_databaseType'] = data.value
         this.getConnection(this.getWhere('target'), 'target_connectionId', true)
       }
     },
@@ -829,9 +831,6 @@ export default {
           } else {
             this.mqTransferFlag = false
           }
-          break
-        }
-        case 'table': {
           //判断是否有第五步
           this.showFieldMapping()
           break
@@ -1053,7 +1052,8 @@ export default {
         stageId: stageId
       }
       this.$axios.post('tm/api/DataFlows/tranModelVersionControl', param).then(data => {
-        this.hiddenFieldMapping = data?.[stageId] || false
+        this.hiddenFieldMapping = !data?.[stageId] || false
+        this.getSteps()
       })
     },
     //预存数据
