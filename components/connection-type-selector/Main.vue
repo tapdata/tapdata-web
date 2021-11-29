@@ -1,6 +1,6 @@
 <template>
   <div class="database">
-    <ul class="database-ul" :class="{ customNthChild: large }">
+    <ul class="database-ul" :class="[large ? 'customNthChild' : 'primaryNthChild']">
       <li v-for="item in types" :key="item" @click="$emit('select', item)">
         <div class="img-box">
           <ElImage :src="$util.getConnectionTypeDialogImg(item)" />
@@ -18,7 +18,7 @@
       </li>
     </ul>
     <span class="title" v-if="otherTypes && otherTypes.length > 0">Other Type</span>
-    <ul class="database-ul">
+    <ul class="database-ul" :class="[large ? 'customNthChild' : 'primaryNthChild']">
       <li v-for="(item, index) in otherTypes" :key="index" @click="$emit('select', item)">
         <div class="img-box">
           <ElImage :src="$util.getConnectionTypeDialogImg(item)" />
@@ -27,7 +27,7 @@
       </li>
     </ul>
     <span class="title" v-if="automationType && automationType.length > 0">Automation Type</span>
-    <ul class="database-ul">
+    <ul class="database-ul" :class="[large ? 'customNthChild' : 'primaryNthChild']">
       <li v-for="(item, index) in automationType" :key="index" @click="$emit('select', item.type)">
         <div class="img-box">
           <ElImage :src="$util.getConnectionTypeDialogImg('default1')" />
@@ -89,11 +89,6 @@ export default {
     margin-bottom: 32px;
     display: inline-block;
   }
-  .customNthChild {
-    li:nth-child(9n + 1) {
-      margin-left: 0;
-    }
-  }
   .database-ul {
     display: flex;
     flex-wrap: wrap;
@@ -101,9 +96,6 @@ export default {
       margin-left: 32px;
       margin-bottom: 32px;
       text-align: center;
-    }
-    li:nth-child(6n + 1) {
-      margin-left: 0;
     }
     .img-box {
       width: 78px;
@@ -148,6 +140,16 @@ export default {
       height: 16px;
       background: #ff9c00;
       border-radius: 7px;
+    }
+  }
+  .customNthChild {
+    li:nth-child(9n + 1) {
+      margin-left: 0;
+    }
+  }
+  .primaryNthChild {
+    li:nth-child(6n + 1) {
+      margin-left: 0;
     }
   }
 }
