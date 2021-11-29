@@ -20,9 +20,10 @@
       </div>
       <header class="header">
         <div class="tab">
-          <div class="img-box">
+          <div class="img-box" v-if="type">
             <img :src="getImgByType(type)" />
           </div>
+          <div class="img-box" v-else></div>
           <div class="content">
             <div>{{ name }}</div>
             <div class="status">

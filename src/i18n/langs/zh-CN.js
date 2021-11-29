@@ -104,7 +104,7 @@ export default {
   dag_dialog_field_mapping_batch_table_name: '批量改表名设置',
   dag_dialog_field_mapping_batch_field_name: '批量改字段名设置',
   dag_dialog_field_mapping_example_prefix: '请输入前缀',
-  dag_dialog_field_mapping_example_suffix: '请输入前缀',
+  dag_dialog_field_mapping_example_suffix: '请输入后缀',
   dag_dialog_field_mapping_example_tip: '说明：设置的前后缀也遵循大小写规则',
   dag_dialog_field_mapping_example_origin_table_name: '原表名',
   dag_dialog_field_mapping_example_change: '修改后',

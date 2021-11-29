@@ -103,7 +103,7 @@ export default {
   dag_dialog_field_mapping_batch_table_name: '批量改表名設置',
   dag_dialog_field_mapping_batch_field_name: '批量改字段名設置',
   dag_dialog_field_mapping_example_prefix: '請輸入前綴',
-  dag_dialog_field_mapping_example_suffix: '請輸入前綴',
+  dag_dialog_field_mapping_example_suffix: '請輸入后綴',
   dag_dialog_field_mapping_example_tip: '說明：設置的前後綴也遵循大小寫規則',
   dag_dialog_field_mapping_example_origin_table_name: '原表名',
   dag_dialog_field_mapping_example_change: '修改後',
