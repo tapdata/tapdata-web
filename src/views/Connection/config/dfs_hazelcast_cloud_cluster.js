@@ -38,8 +38,10 @@ export default function (vm) {
         field: 'plain_password',
         label: vm.$t('connection_form_hazecast_plain_password'),
         domType: 'password',
+        customClass: 'large-item',
         placeholder: 'Please enter the token',
-        showPassword: true
+        showPassword: true,
+        required: true
       },
       {
         type: 'switch',

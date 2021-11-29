@@ -265,8 +265,14 @@ export default {
         {
           type: 'input',
           field: 'name',
-          label: self.$t('connection_form_hazecast_connection_name'),
-          placeholder: self.$t('connection_form_hazecast_connection_name_placeholder'),
+          label:
+            self.databaseType === 'hazelcast_cloud_cluster'
+              ? self.$t('connection_form_hazecast_connection_name')
+              : '连接名称',
+          placeholder:
+            self.databaseType === 'hazelcast_cloud_cluster'
+              ? self.$t('connection_form_hazecast_connection_name_placeholder')
+              : '请输入连接名称',
           required: true,
           maxlength: 100,
           width: '504px',
@@ -427,6 +433,10 @@ export default {
         }
         if (this.model.database_type === 'mongodb' && id && sslCA) {
           sslCA.rules = []
+        }
+        let plain_password = items.find(it => it.field === 'plain_password')
+        if (this.model.database_type === 'hazelcast_cloud_cluster' && id && plain_password) {
+          plain_password.required = false
         }
         if (id) {
           //编辑模式下 不展示

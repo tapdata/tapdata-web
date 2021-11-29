@@ -651,10 +651,10 @@ export default {
     },
     formChange(data) {
       let field = data.field || '' // 源端 | 目标端
-      if (field === 'source_databaseType') {
+      if (field === 'source_filter_databaseType') {
         this.getConnection(this.getWhere('source'), 'source_connectionId', true)
       }
-      if (field === 'target_databaseType') {
+      if (field === 'target_filter_databaseType') {
         this.getConnection(this.getWhere('target'), 'target_connectionId', true)
       }
     },
@@ -715,6 +715,8 @@ export default {
             }
             this.dataSourceModel.source_connectionName = source.name
             this.dataSourceModel.target_connectionName = target.name
+            this.dataSourceModel['source_databaseType'] = source.type
+            this.dataSourceModel['target_databaseType'] = target.type
             this.dataSourceModel.mqType = target.mqType
             this.activeStep += 1
             this.getFormConfig()
@@ -784,11 +786,6 @@ export default {
         }
       }
       switch (type) {
-        case 'instance': {
-          this.changeConfig(this.instanceMock || [], 'region')
-          this.changeInstanceRegion()
-          break
-        }
         case 'dfs_dataSource': {
           this.getConnection(this.getWhere('source'), 'source_connectionId')
           this.getConnection(this.getWhere('target'), 'target_connectionId')
@@ -828,15 +825,11 @@ export default {
           } else {
             this.mqTransferFlag = false
           }
+          break
+        }
+        case 'table': {
           //判断是否有第五步
-          this.$axios
-            .get('tm/api/typeMappings/dataType?databaseType=' + this.dataSourceModel.target_databaseType)
-            .then(data => {
-              if (data?.length === 0) {
-                this.hiddenFieldMapping = true
-                this.getSteps()
-              }
-            })
+          this.showFieldMapping()
           break
         }
         case 'mapping': {
@@ -863,11 +856,11 @@ export default {
     },
     getWhere(type) {
       let where = {}
-      if (type === 'source' && this.dataSourceModel.source_databaseType !== 'all') {
+      if (type === 'source' && this.dataSourceModel.source_filter_databaseType !== 'all') {
         where = {
           database_type: { in: [this.dataSourceModel.source_databaseType] }
         }
-      } else if (type === 'target' && this.dataSourceModel.target_databaseType !== 'all') {
+      } else if (type === 'target' && this.dataSourceModel.target_filter_databaseType !== 'all') {
         where = {
           database_type: { in: [this.dataSourceModel.target_databaseType] }
         }
@@ -994,7 +987,7 @@ export default {
           break
         }
         case 'databaseType': {
-          let source = items.find(it => it.field === 'source_databaseType')
+          let source = items.find(it => it.field === 'source_filter_databaseType')
           let TYPEMAP = this.$const.TYPEMAP
           if (source) {
             // dfs源端不支持 redis elasticsearch
@@ -1017,7 +1010,7 @@ export default {
             source.options.unshift({ label: '全部', value: 'all' })
           }
 
-          let target = items.find(it => it.field === 'target_databaseType')
+          let target = items.find(it => it.field === 'target_filter_databaseType')
           if (target) {
             let filterArr = ['adb_mysql']
             let targetOptions = data.filter(item => filterArr.indexOf(item) === -1)
@@ -1046,6 +1039,18 @@ export default {
       let data = optionsData.options.filter(op => op.value === target)
       if (data.length === 0) return
       return data[0]
+    },
+    //是否支持同步内容
+    showFieldMapping() {
+      let data = this.daft()
+      let stageId = data?.stages?.[1]?.id || ''
+      let param = {
+        stages: data?.stages,
+        stageId: stageId
+      }
+      this.$axios.post('tm/api/DataFlows/tranModelVersionControl', param).then(data => {
+        this.hiddenFieldMapping = data?.[stageId] || false
+      })
     },
     //预存数据
     daft() {

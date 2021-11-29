@@ -39,10 +39,10 @@
           'dameng',
           'greenplum',
           'mq',
-          'clickhouse',
-          'kundb',
-          'adb_mysql',
-          'adb_postgres',
+          // 'clickhouse',
+          // 'kundb',
+          // 'adb_mysql',
+          //'adb_postgres',
           'hazelcast_cloud_cluster'
         ]"
         :comingTypes="['db2', 'sybase ase', 'gbase-8s']"

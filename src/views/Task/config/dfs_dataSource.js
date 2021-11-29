@@ -9,7 +9,7 @@ export default function () {
     items: [
       {
         type: 'select',
-        field: 'source_databaseType',
+        field: 'source_filter_databaseType',
         label: '源端类型',
         options: [],
         required: true
@@ -25,7 +25,7 @@ export default function () {
       },
       {
         type: 'select',
-        field: 'target_databaseType',
+        field: 'target_filter_databaseType',
         label: '目标端类型',
         options: [],
         required: true
