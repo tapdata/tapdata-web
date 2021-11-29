@@ -809,13 +809,17 @@ export default {
             this.changeConfig([], 'setting_distinctWriteType')
           }
           //greenplum做源时不能增量
-          if (this.dataSourceModel['source_databaseType'] === 'greenplum') {
-            this.changeConfig([], 'setting_sync_type')
-            //设置默认值
-            this.settingModel.sync_type = 'initial_sync'
-          }
-          //greenplum做源时不能增量
-          if (this.dataSourceModel['source_databaseType'] === 'adb_mysql') {
+          // if (this.dataSourceModel['source_databaseType'] === 'greenplum') {
+          //   this.changeConfig([], 'setting_sync_type')
+          //   //设置默认值
+          //   this.settingModel.sync_type = 'initial_sync'
+          // }
+          //greenplum、ADB mysql、kundb做源时不能增量
+          if (
+            this.dataSourceModel['source_databaseType'] === 'greenplum' ||
+            this.dataSourceModel['source_databaseType'] === 'adb_mysql' ||
+            this.dataSourceModel['source_databaseType'] === 'kundb'
+          ) {
             this.changeConfig([], 'setting_sync_type')
             //设置默认值
             this.settingModel.sync_type = 'initial_sync'
@@ -1020,8 +1024,8 @@ export default {
                 value: item
               }
             })
+            target.options.unshift({ label: '全部', value: 'all' })
           }
-          target.options.unshift({ label: '全部', value: 'all' })
 
           break
         }
