@@ -8,7 +8,7 @@ import axios from 'axios'
 
 export default class Connections extends PublicAPI {
   constructor() {
-    super('/api/License')
+    super('/api/Licenses')
   }
 
   getSid(ids) {
