@@ -23,7 +23,9 @@
             >启动</VButton
           >
           <VButton :disabled="!statusBtMap['stop'][task.status]" @click="stop">停止</VButton>
-          <VButton :disabled="!statusBtMap['reset'][task.status]" @click="reset">重置</VButton>
+          <VButton :loading="resetBtnLoading" :disabled="!statusBtMap['reset'][task.status]" @click="reset"
+            >重置</VButton
+          >
           <VButton :disabled="!statusBtMap['forceStop'][task.status]" @click="forceStop">强制停止</VButton>
         </div>
       </div>
@@ -179,6 +181,7 @@ export default {
     return {
       loading: true,
       showContent: false,
+      resetBtnLoading: false,
       activeTab: 'progress',
       field_process: [],
       task: null,
@@ -557,15 +560,20 @@ export default {
         if (!flag) {
           return
         }
+        this.resetBtnLoading = true
         this.$axios
           .post('tm/api/DataFlows/resetAll', {
             id: [this.$route.params.id]
           })
           .then(data => {
+            this.resetBtnLoading = false
             this.responseHandler(data, '操作成功')
           })
           .catch(() => {
             this.$message.error('重置失败')
+          })
+          .finally(() => {
+            this.resetBtnLoading = false
           })
       })
     },
