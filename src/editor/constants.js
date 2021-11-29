@@ -204,7 +204,7 @@ export const FORM_DATA_KEY = 'form_data',
     gaussdb200: {
       type: 'gaussdb200',
       name: 'GaussDB200',
-      shapeImage: 'static/editor/gaussdb200.svg',
+      shapeImage: 'static/editor/o-gaussdb200.svg',
       stencilImage: 'static/editor/gaussdb200.svg'
     },
     kundb: {

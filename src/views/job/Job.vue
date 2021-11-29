@@ -1238,6 +1238,7 @@ export default {
             ) {
               sourceInitialFalg = false
               databaseType = item.databaseType ? item.databaseType : item.database_type
+              // greentplumSettingFalg = false
             }
             // if (
             //   item.outputLanes.length &&
