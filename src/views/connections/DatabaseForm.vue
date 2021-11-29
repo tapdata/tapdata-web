@@ -655,10 +655,10 @@ export default {
         'greenplum',
         'tidb',
         'hana',
-        'clickhouse'
-        // 'kundb',
-        // 'adb_postgres',
-        // 'adb_mysql'
+        'clickhouse',
+        'kundb',
+        'adb_postgres',
+        'adb_mysql'
       ],
       model: '',
       config: {

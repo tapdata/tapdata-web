@@ -124,7 +124,7 @@ export const databaseConfig = {
         }
         return (
           ['app.Database'].includes(targetCell.get('type')) &&
-          !['hbase'].includes(targetCell?.attributes?.form_data?.database_type) &&
+          !['hbase', 'adb_mysql'].includes(targetCell?.attributes?.form_data?.database_type) &&
           targetCell.graph.getConnectedLinks(this, {
             inbound: true
           }).length < 1 &&
@@ -152,8 +152,13 @@ export const databaseConfig = {
         // sourceCell 拖动的时候会产生一条outLink,但是没有target.id，以此来限制当节点有目标时，不允许再去连接其他目标
         return (
           ['app.Database'].includes(sourceCell.get('type')) &&
+<<<<<<< HEAD
           !['hive', 'dameng', 'clickhouse'].includes(databaseType) &&
           // !['kudu'].includes(sourceCell?.attributes?.form_data?.database_type) &&
+=======
+          !['hive', 'dameng', 'clickhouse', 'adb_postgres'].includes(databaseType) &&
+          !['kudu'].includes(sourceCell?.attributes?.form_data?.database_type) &&
+>>>>>>> bassie-v1.28
           outLinks.length === 1 &&
           !outLinks[0].attributes.target.id
         )

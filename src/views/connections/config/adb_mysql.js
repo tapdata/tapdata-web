@@ -6,7 +6,7 @@ export default function (vm) {
       labelColon: true
     },
     defaultModel: {
-      connection_type: 'target'
+      connection_type: 'source'
     },
     items: [
       {
@@ -19,10 +19,15 @@ export default function (vm) {
         outerTip: true,
         options: [
           {
-            label: vm.$t('dataForm.form.options.target'),
-            tip: vm.$t('dataForm.form.options.targetTips'),
-            value: 'target'
+            label: vm.$t('dataForm.form.options.source'),
+            tip: vm.$t('dataForm.form.options.sourceTips'),
+            value: 'source'
           }
+          // {
+          //   label: vm.$t('dataForm.form.options.target'),
+          //   tip: vm.$t('dataForm.form.options.targetTips'),
+          //   value: 'target'
+          // }
         ],
         required: true
       },

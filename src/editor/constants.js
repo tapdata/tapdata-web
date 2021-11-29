@@ -206,6 +206,24 @@ export const FORM_DATA_KEY = 'form_data',
       name: 'GaussDB200',
       shapeImage: 'static/editor/gaussdb200.svg',
       stencilImage: 'static/editor/gaussdb200.svg'
+    },
+    kundb: {
+      type: 'kundb',
+      name: 'KunDB',
+      shapeImage: 'static/editor/kundb.svg',
+      stencilImage: 'static/editor/kundb.svg'
+    },
+    adb_mysql: {
+      type: 'adb_mysql',
+      name: 'ADB MySql',
+      shapeImage: 'static/editor/adb_mysql.svg',
+      stencilImage: 'static/editor/adb_mysql.svg'
+    },
+    adb_postgres: {
+      type: 'adb_postgres',
+      name: 'ADB PostgreSQL',
+      shapeImage: 'static/editor/adb_postgres.svg',
+      stencilImage: 'static/editor/adb_postgres.svg'
     }
   },
   FILE_TYPE_MAPPING = {

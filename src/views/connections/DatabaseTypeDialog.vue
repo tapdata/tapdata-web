@@ -59,10 +59,10 @@ export default {
         'greenplum',
         'tidb',
         'hana',
-        'clickhouse'
-        // 'kundb',
-        // 'adb_postgres',
-        // 'adb_mysql'
+        'clickhouse',
+        'kundb',
+        'adb_postgres',
+        'adb_mysql'
       ],
       comingAllowDatabase: [], // 即将上线
       otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],
