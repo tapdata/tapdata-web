@@ -438,7 +438,7 @@ export default {
     formatTask(data) {
       data.totalOutput = data.stats?.output?.rows || 0
       data.totalInput = data.stats?.input?.rows || 0
-      data.creator = data?.creator || data.username || data.user?.username || '-'
+      data.creator = data.createUser || '-'
       data.typeText = data.mappingTemplate === 'cluster-clone' ? '迁移任务' : '同步任务'
       let cdcTime = data.cdcLastTimes?.[0]?.cdcTime || ''
       data.startTimeFmt = this.formatTime(data.startTime)
