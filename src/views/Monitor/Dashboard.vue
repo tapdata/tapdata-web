@@ -342,8 +342,8 @@ export default {
       Object.assign(this.task, {
         sourceName: source.name,
         targetName: target.name,
-        sourceType: source.databaseType || source.database_type,
-        targetType: target.databaseType || target.database_type
+        sourceType: this.$const.TYPEMAP[source.databaseType] || this.$const.TYPEMAP[source.database_type],
+        targetType: this.$const.TYPEMAP[target.databaseType] || this.$const.TYPEMAP[target.database_type]
       })
       let ids = [source.connectionId, target.connectionId]
       let filter = {
@@ -416,7 +416,7 @@ export default {
               break
           }
           this.$set(this.task, type + 'DB', c.database_name)
-          this.$set(this.task, type + 'Url', host)
+          this.$set(this.task, type + 'Url', host === ':0' ? '-' : host)
         })
       })
     },
