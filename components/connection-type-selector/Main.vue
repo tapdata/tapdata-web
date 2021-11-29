@@ -1,6 +1,6 @@
 <template>
   <div class="database">
-    <ul class="database-ul">
+    <ul class="database-ul" :class="{ customNthChild: large }">
       <li v-for="item in types" :key="item" @click="$emit('select', item)">
         <div class="img-box">
           <ElImage :src="$util.getConnectionTypeDialogImg(item)" />
@@ -65,6 +65,12 @@ export default {
       default: () => {
         return []
       }
+    },
+    large: {
+      value: Boolean,
+      default: () => {
+        return false
+      }
     }
   },
   data() {
@@ -83,6 +89,11 @@ export default {
     margin-bottom: 32px;
     display: inline-block;
   }
+  .customNthChild {
+    li:nth-child(9n + 1) {
+      margin-left: 0;
+    }
+  }
   .database-ul {
     display: flex;
     flex-wrap: wrap;
@@ -91,7 +102,7 @@ export default {
       margin-bottom: 32px;
       text-align: center;
     }
-    li:nth-child(9n + 1) {
+    li:nth-child(6n + 1) {
       margin-left: 0;
     }
     .img-box {
