@@ -10,6 +10,7 @@
       :types="database"
       :commingTypes="comingAllowDatabase"
       :otherTypes="otherType"
+      :large="true"
       @select="databaseType"
     ></ConnectionTypeSelector>
   </el-dialog>
