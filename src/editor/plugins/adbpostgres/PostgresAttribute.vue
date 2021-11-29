@@ -174,6 +174,7 @@ export default {
       model: {
         connectionId: '',
         type: 'adb_postgres',
+        databaseType: 'adb_postgres',
         tableName: '',
         field_process: [],
         isFirst: true,

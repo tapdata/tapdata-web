@@ -174,6 +174,7 @@ export default {
       model: {
         connectionId: '',
         type: 'adb_mysql',
+        databaseType: 'adb_mysql',
         tableName: '',
         field_process: [],
         isFirst: true,
