@@ -48,7 +48,7 @@ import SettingPanel from 'web-core/views/dataflow/components/SettingPanel'
 import DataPane from 'web-core/views/dataflow/components/DataPane'
 import MetaPane from 'web-core/views/dataflow/components/MetaPane'
 import VIcon from 'web-core/components/VIcon'
-import { DB_ICON, NODE_TYPE_ICON } from 'web-core/views/dataflow/constants'
+import { NODE_TYPE_ICON } from 'web-core/views/dataflow/constants'
 import focusSelect from 'web-core/directives/focusSelect'
 
 export default {
@@ -73,7 +73,7 @@ export default {
     icon() {
       const node = this.activeNode
       if (!node) return null
-      const icon = node.type === 'table' ? DB_ICON[node.databaseType] : NODE_TYPE_ICON[node.type]
+      const icon = node.type === 'table' ? node.databaseType : NODE_TYPE_ICON[node.type]
       return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
     }
   },
