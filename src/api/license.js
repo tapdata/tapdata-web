@@ -4,9 +4,22 @@
  * @description
  */
 import PublicAPI from './publicApi'
+import axios from 'axios'
 
 export default class Connections extends PublicAPI {
   constructor() {
     super('/api/License')
+  }
+
+  getSid(ids) {
+    return axios.get(`${this.url}/sid`, {
+      params: {
+        id: ids
+      }
+    })
+  }
+
+  updateLicense(params) {
+    return axios.post(`${this.url}/upload`, params)
   }
 }
