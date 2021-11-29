@@ -132,6 +132,7 @@ export default {
   task_job_setting_disable: 'Do not de-duplicate',
   task_job_tip_text:
     'The setting of the cache node (xxx) already exists in the task (###), please confirm whether to continue to create it? ',
+  task_job_source_falg: 'as a source, only full tasks are supported',
   data_flow_automatically: 'automatically',
   data_flow_manually: 'manually',
   data_flow_oracle_logminer: 'Oracle Logminer Mode',
