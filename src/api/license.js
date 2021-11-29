@@ -14,7 +14,7 @@ export default class Connections extends PublicAPI {
   getSid(ids) {
     return axios.get(`${this.url}/sid`, {
       params: {
-        id: ids
+        id: JSON.stringify(ids)
       }
     })
   }

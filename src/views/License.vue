@@ -6,7 +6,7 @@
         <ElButton class="btn" type="primary" size="mini" @click="openDialog">更新License</ElButton>
       </div>
       <ElTableColumn type="selection" width="45"></ElTableColumn>
-      <ElTableColumn prop="license" label="节点名" min-width="150"></ElTableColumn>
+      <ElTableColumn prop="hostname" label="节点名" min-width="150"></ElTableColumn>
       <ElTableColumn prop="sid" label="节点sid" min-width="150"></ElTableColumn>
       <ElTableColumn label="License状态" min-width="150">
         <template #default="{ row }">
@@ -42,25 +42,25 @@ export default {
   },
   methods: {
     getData({ page }) {
-      let { current, size } = page
+      let { current, size } = page;
       let filter = {
         order: 'createTime DESC',
         limit: size,
         skip: (current - 1) * size
-      }
+      };
       return Promise.all([
         this.$api('license').count(),
         this.$api('license').get({
           filter: JSON.stringify(filter)
         })
       ]).then(([countRes, res]) => {
-        let list = res.data
+        let list = res.data;
         return {
           total: countRes.data.count,
           data: list.map(item => {
-            let expirationDate = this.$moment(item.expirationDate)
-            let duration = expirationDate.valueOf() - Date.now()
-            let status = 'normal'
+            let expirationDate = this.$moment(item.expirationDate);
+            let duration = expirationDate.valueOf() - Date.now();
+            let status = 'normal';
             if (duration < 0) {
               status = 'expired'
             } else if (duration < 30 * 24 * 60 * 60 * 1000) {
@@ -79,23 +79,23 @@ export default {
                 text: '已过期',
                 color: 'info'
               }
-            }[status]
-            item.expirationDateFmt = expirationDate.format('YYYY-MM-DD HH:mm:ss')
-            item.lastUpdatedFmt = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+            }[status];
+            item.expirationDateFmt = expirationDate.format('YYYY-MM-DD HH:mm:ss');
+            item.lastUpdatedFmt = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss');
             return item
           })
         }
       })
     },
     copySid() {
-      let table = this.$refs.table
-      let ids = table.multipleSelection?.map(item => item.sid)
+      let table = this.$refs.table;
+      let ids = table.multipleSelection?.map(item => item.sid);
       if (ids?.length) {
-        this.copyLoading = true
+        this.copyLoading = true;
         this.$api('license')
           .getSid(ids)
           .then(res => {
-            let sid = res?.data?.sid
+            let sid = res?.data?.sid;
             if (sid) {
               this.$copyText(sid).then(() => {
                 this.$message.success('已复制到剪贴板')
@@ -111,15 +111,15 @@ export default {
     },
     openDialog() {
       if (this.$refs.table?.multipleSelection?.length) {
-        this.license = ''
+        this.license = '';
         this.dialogVisible = true
       } else {
         this.$message.warning('请先选择节点')
       }
     },
     updateLicense() {
-      this.dialogLoading = true
-      let ids = this.$refs?.table?.multipleSelection?.map(item => item.sid)
+      this.dialogLoading = true;
+      let ids = this.$refs?.table?.multipleSelection?.map(item => item.sid);
       if (ids?.length) {
         this.$api('license')
           .updateLicense({
@@ -127,7 +127,7 @@ export default {
             license: this.license
           })
           .then(() => {
-            this.$message.success('更新成功')
+            this.$message.success('更新成功');
             this.$table.fetch()
           })
           .finally(() => {
