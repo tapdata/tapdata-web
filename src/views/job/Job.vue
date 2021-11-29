@@ -1229,7 +1229,6 @@ export default {
               data.setting.transformerConcurrency = 1
               data.setting.readBatchSize = 10000
             }
-            console.log('########', item)
             if (
               item.outputLanes.length &&
               (['greenplum', 'adb_mysql', 'kundb', 'gaussdb200'].includes(item.databaseType) ||

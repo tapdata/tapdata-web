@@ -89,7 +89,8 @@ export default class Editor extends BaseObject {
     'app.ApiNode': 'connectionId',
     'app.HiveNode': 'connectionId',
     'app.HanaNode': 'connectionId',
-    'app.DamengNode': 'connectionId'
+    'app.DamengNode': 'connectionId',
+    'app.AdbPostgres': 'connectionId'
   }
 
   /**
