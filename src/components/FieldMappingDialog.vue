@@ -294,7 +294,7 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleTableClose()">>{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" @click="handleTableClose()">{{ $t('button_cancel') }}</ElButton>
         <ElButton size="mini" type="primary" @click="handleTableNameSave()">{{ $t('button_confirm') }}</ElButton>
       </span>
     </ElDialog>
@@ -319,7 +319,7 @@
         </ElForm>
       </div>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleFieldClose">>{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" @click="handleFieldClose">{{ $t('button_cancel') }}</ElButton>
         <ElButton size="mini" type="primary" @click="handleFieldSave()">{{ $t('button_confirm') }}</ElButton>
       </span>
     </ElDialog>
