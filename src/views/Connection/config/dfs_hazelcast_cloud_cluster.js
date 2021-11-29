@@ -31,7 +31,22 @@ export default function (vm) {
         field: 'database_name',
         label: vm.$t('connection_form_hazecast_database_name'),
         placeholder: 'Please enter the cluster name',
-        required: true
+        required: true,
+        rules: [
+          {
+            required: true,
+            validator: (rule, v, callback) => {
+              if (!v || !v.trim()) {
+                if (v) {
+                  callback()
+                }
+                callback(new Error('The cluster name cannot be empty'))
+              } else {
+                callback()
+              }
+            }
+          }
+        ]
       },
       {
         type: 'input',
@@ -41,7 +56,22 @@ export default function (vm) {
         customClass: 'large-item',
         placeholder: 'Please enter the token',
         showPassword: true,
-        required: true
+        required: true,
+        rules: [
+          {
+            required: true,
+            validator: (rule, v, callback) => {
+              if (!v || !v.trim()) {
+                if (v) {
+                  callback()
+                }
+                callback(new Error('The token cannot be empty'))
+              } else {
+                callback()
+              }
+            }
+          }
+        ]
       },
       {
         type: 'switch',
