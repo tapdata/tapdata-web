@@ -29,6 +29,11 @@ export const TOPOLOGY_MAP = topologyMap,
     invalid: { text: '失效', type: 'danger' },
     testing: { text: '测试中', type: 'warning' }
   },
+  CONNECTION_STATUS_MAP_EN = {
+    ready: { text: 'Ready', type: 'success' },
+    invalid: { text: 'Invalid', type: 'danger' },
+    testing: { text: 'Testing', type: 'warning' }
+  },
   MILESTONE_STATUS_MAP = {
     waiting: { text: '待执行', icon: 'daizhixing' },
     running: { text: '进行中', icon: 'jinxingzhong' },

@@ -61,7 +61,12 @@
             <el-button v-else type="text" size="mini" @click="startTest()">{{
               $t('connection.testConnection')
             }}</el-button>
-            <StatusTag type="text" class="ml-4" target="connection" :status="status"></StatusTag>
+            <span v-if="databaseType === 'hazelcast_cloud_cluster'">
+              <StatusTag type="text" class="ml-4" target="connection_en" :status="status"></StatusTag>
+            </span>
+            <span v-else>
+              <StatusTag type="text" class="ml-4" target="connection" :status="status"></StatusTag>
+            </span>
             <footer class="mt-2 pb-4">
               <el-button
                 v-if="databaseType === 'hazelcast_cloud_cluster'"
