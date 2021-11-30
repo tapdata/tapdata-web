@@ -133,6 +133,7 @@ export default {
       model: {
         connectionId: '',
         type: 'dummy db',
+        databaseType: 'dummy db',
         tableName: ''
         // primaryKeys: ''
       },

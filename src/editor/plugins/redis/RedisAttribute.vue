@@ -98,7 +98,8 @@ export default {
         connectionId: '',
         redisKey: '',
         redisKeyPrefix: '',
-        type: 'redis'
+        type: 'redis',
+        databaseType: 'redis'
       },
       redisKeyOptions: [],
       mergedSchema: null
