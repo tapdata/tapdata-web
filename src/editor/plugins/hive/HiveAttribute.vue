@@ -206,6 +206,7 @@ export default {
       model: {
         connectionId: '',
         type: 'hive',
+        databaseType: 'hive',
         tableName: '',
         isFirst: true,
         stageId: '',

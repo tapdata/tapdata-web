@@ -177,6 +177,7 @@ export default {
         dropType: 'no_drop',
         syncObjects: [],
         type: 'postgres',
+        databaseType: 'postgres',
         mqType: '',
         isChangeConnectionFlag: false
       },

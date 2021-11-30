@@ -271,6 +271,7 @@ export default {
       model: {
         connectionId: '',
         type: 'kafka',
+        databaseType: 'kafka',
         tableName: '',
         partitionIds: '',
         kafkaPartitionKey: '',

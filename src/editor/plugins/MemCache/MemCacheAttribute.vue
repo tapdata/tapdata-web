@@ -189,6 +189,7 @@ export default {
       ],
       model: {
         type: 'mem_cache',
+        databaseType: 'mem_cache',
         name: '',
         cacheName: '',
         cacheType: 'all',
