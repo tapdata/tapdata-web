@@ -193,7 +193,10 @@
           'greenplum',
           'mq',
           'clickhouse',
-          'kundb'
+          'kundb',
+          'adb_postgres',
+          'adb_mysql',
+          'hazelcast_cloud_cluster'
         ]"
         @select="createConnection"
       ></ConnectionTypeSelector>
@@ -224,7 +227,6 @@ import mouseDrag from 'web-core/directives/mousedrag'
 import VIcon from 'web-core/components/VIcon'
 import ConnectionTypeSelector from 'web-core/components/connection-type-selector'
 import resize from 'web-core/directives/resize'
-import { DB_ICON } from 'web-core/views/dataflow/constants'
 import BaseNode from 'web-core/views/dataflow/components/BaseNode'
 import { debounce, throttle } from 'lodash'
 import ConnectionsApi from 'web-core/api/Connections'
@@ -517,8 +519,7 @@ export default {
     },
 
     genIconSrc(item) {
-      let icon = DB_ICON[item.database_type]
-      return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
+      return require(`web-core/assets/icons/node/${item.database_type}.svg`)
     },
 
     getNodeHtml(n) {

@@ -68,12 +68,13 @@ const state = () => ({
   nodeViewOffsetPosition: [0, 0],
   paperMoveInProgress: false,
   ctorTypes: {}, // 所有节点构造类型
-  activeNode: null, // 当前激活的节点ID
+  activeNodeId: null, // 当前激活的节点ID
   activeConnection: null, // 当前激活的连接
   activeActions: [], // 激活的动作
   selectedNodes: [], // 选中的节点
   activeType: null,
   formSchema: null,
+  taskId: null,
   dag: {
     nodes: [], // 节点数据
     edges: [] // 连线数据
@@ -93,7 +94,7 @@ const getters = {
 
   // 获取所有节点类型
   allNodeTypes: state => {
-    return state.nodeTypes
+    return [...state.nodeTypes, ...state.processorNodeTypes]
   },
 
   processorNodeTypes: state => {
@@ -103,11 +104,12 @@ const getters = {
   nodeType: state => node => {
     const nodeType = node.type
     let foundType
+    const allNodeTypes = [...state.nodeTypes, ...state.processorNodeTypes]
     if (nodeType === 'database') {
       const dbType = node.databaseType
-      foundType = state.nodeTypes.find(typeData => typeData.type === nodeType && typeData.attr.databaseType === dbType)
+      foundType = allNodeTypes.find(typeData => typeData.type === nodeType && typeData.attr.databaseType === dbType)
     } else {
-      foundType = state.nodeTypes.find(typeData => typeData.type === nodeType)
+      foundType = allNodeTypes.find(typeData => typeData.type === nodeType)
     }
 
     if (foundType === undefined) return null
@@ -135,7 +137,7 @@ const getters = {
 
   // 获取激活的节点
   activeNode: (state, getters) => {
-    return state.activeNode ? getters.nodeById(state.activeNode) : null
+    return state.activeNodeId ? getters.nodeById(state.activeNodeId) : null
   },
 
   // 获取激活的线
@@ -145,7 +147,7 @@ const getters = {
 
   // 判断节点是否激活
   isNodeActive: state => nodeId => {
-    return state.activeNode === nodeId
+    return state.activeNodeId === nodeId
   },
 
   // 判断节点是否选中
@@ -239,7 +241,7 @@ const mutations = {
   // 设置激活节点
   setActiveNode(state, nodeId) {
     console.log('setActiveNode', nodeId) // eslint-disable-line
-    state.activeNode = nodeId
+    state.activeNodeId = nodeId
     state.activeType = nodeId ? 'node' : null
   },
 
@@ -290,7 +292,6 @@ const mutations = {
 
   // 选择节点
   addSelectedNode(state, node) {
-    console.log('addSelectedNode', state.selectedNodes) // eslint-disable-line
     state.selectedNodes.push(node)
   },
 
@@ -303,8 +304,7 @@ const mutations = {
 
   // 重置选择的节点
   resetSelectedNodes(state) {
-    Vue.set(state, 'selectedNodes', [])
-    console.log('resetSelectedNodes', state.selectedNodes) // eslint-disable-line
+    state.selectedNodes = []
   },
 
   // 针对数组，修改某个项的值
@@ -375,10 +375,9 @@ const mutations = {
     const nodeId = node.id
     const index = nodes.findIndex(n => n.id === nodeId)
 
-    if (index === -1) return
+    if (!~index) return
 
-    if (state.activeNode === nodes[index].id && state.activeType === 'node') {
-      state.activeNode = null
+    if (state.activeNodeId === nodes[index].id && state.activeType === 'node') {
       state.activeType = null
     }
 
@@ -420,13 +419,18 @@ const mutations = {
     Vue.delete(state.nodeErrorState, id)
   },
 
-  resetDag(state) {
+  reset(state) {
+    state.taskId = null
     state.dag.nodes = []
     state.dag.edges = []
   },
 
   setEdges(state, edges) {
     state.dag.edges = edges
+  },
+
+  setTaskId(state, id) {
+    state.taskId = id
   }
 }
 

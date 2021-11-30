@@ -9,10 +9,10 @@ export const uuid = function () {
 }
 
 export const getConnectionTypeImg = function (type) {
-  return require(`./assets/images/connection-type/${type}.png`)
+  return require(`./assets/icons/node/${type}.svg`)
 }
 export const getConnectionTypeDialogImg = function (type) {
-  return require(`./assets/images/connection-type-dialog/${type}.png`)
+  return require(`./assets/icons/node/${type}.svg`)
 }
 
 let timeout = null

@@ -58,34 +58,6 @@ export class Table extends NodeType {
           }
         }
       },
-      dropTable: {
-        type: 'boolean',
-        title: '已存在的数据',
-        enum: [
-          {
-            label: '保持已存在的数据',
-            value: false
-          },
-          {
-            label: '运行前删除已存在的数据',
-            value: true
-          }
-        ],
-        default: false,
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          wrapperWidth: 240
-        },
-        'x-component': 'Select',
-        'x-reactions': {
-          dependencies: ['inputLanes'],
-          fulfill: {
-            state: {
-              visible: '{{!!$deps[0] && $deps[0].length>0}}'
-            }
-          }
-        }
-      },
       isSource: {
         type: 'boolean',
         'x-visible': false,
@@ -96,7 +68,6 @@ export class Table extends NodeType {
         'x-visible': false,
         'x-reactions': '{{isTarget}}'
       },
-
       sourceNodeConfig: {
         type: 'void',
         'x-reactions': {
@@ -219,6 +190,9 @@ export class Table extends NodeType {
           increase: {
             type: 'void',
             'x-component': 'Space',
+            'x-component-props': {
+              size: 'middle'
+            },
             properties: {
               increaseSyncInterval: {
                 title: '增量同步间隔(ms)',

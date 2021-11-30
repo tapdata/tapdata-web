@@ -4,7 +4,7 @@ export default {
   name: 'FbFile',
   mixins: [mixins],
   props: {
-    value: [File, String],
+    value: [File, String, Object],
     config: {
       require: true,
       type: Object
@@ -20,20 +20,20 @@ export default {
     let config = self.config
     let fileName = this?.value?.name || config.fileName || ''
     let selectFile = file => {
-      this.fileName = file.name
       let value = {
         name: '',
         value: ''
       }
       if (file) {
-        if (config.maxFileSize && file.size / 1024 < config.maxFileSize) {
-          new Error(`上传文件大小不能超过 ${config.maxFileSize}KB`)
+        this.fileName = file.name
+        if (config.maxFileSize && file.size / 1024 > config.maxFileSize) {
+          this.$message.error(`上传文件大小不能超过 ${config.maxFileSize}KB`)
         } else {
           let reader = new FileReader()
           let emitInput = val => {
             value = {
               name: file.name,
-              value: val
+              value: val.split(',')[1]
             }
             self.$emit('input', value)
             self.$emit('change', value)
@@ -61,6 +61,7 @@ export default {
         self.$emit('change', value)
       }
     }
+    fileName = Object.prototype.toString.call(fileName) === '[object Object]' ? '' : fileName
     return h(
       'ElInput',
       {
