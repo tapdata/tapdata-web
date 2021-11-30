@@ -74,6 +74,7 @@ const state = () => ({
   selectedNodes: [], // 选中的节点
   activeType: null,
   formSchema: null,
+  taskId: null,
   dag: {
     nodes: [], // 节点数据
     edges: [] // 连线数据
@@ -93,7 +94,7 @@ const getters = {
 
   // 获取所有节点类型
   allNodeTypes: state => {
-    return state.nodeTypes
+    return [...state.nodeTypes, ...state.processorNodeTypes]
   },
 
   processorNodeTypes: state => {
@@ -103,11 +104,12 @@ const getters = {
   nodeType: state => node => {
     const nodeType = node.type
     let foundType
+    const allNodeTypes = [...state.nodeTypes, ...state.processorNodeTypes]
     if (nodeType === 'database') {
       const dbType = node.databaseType
-      foundType = state.nodeTypes.find(typeData => typeData.type === nodeType && typeData.attr.databaseType === dbType)
+      foundType = allNodeTypes.find(typeData => typeData.type === nodeType && typeData.attr.databaseType === dbType)
     } else {
-      foundType = state.nodeTypes.find(typeData => typeData.type === nodeType)
+      foundType = allNodeTypes.find(typeData => typeData.type === nodeType)
     }
 
     if (foundType === undefined) return null
@@ -417,13 +419,18 @@ const mutations = {
     Vue.delete(state.nodeErrorState, id)
   },
 
-  resetDag(state) {
+  reset(state) {
+    state.taskId = null
     state.dag.nodes = []
     state.dag.edges = []
   },
 
   setEdges(state, edges) {
     state.dag.edges = edges
+  },
+
+  setTaskId(state, id) {
+    state.taskId = id
   }
 }
 

@@ -105,6 +105,9 @@ class RemoveNodeCommand extends Command {
   }
 }
 
+/**
+ * 连接通用命令
+ */
 class ConnectionCommand extends Command {
   constructor(connection) {
     super()
@@ -116,9 +119,9 @@ class ConnectionCommand extends Command {
     this.uuids = [this.connectionData.source + '_source', this.connectionData.target + '_target']
   }
 
-  add(state) {
-    state.instance.connect({ uuids: this.uuids })
-    state.store.commit('dataflow/addConnection', this.connection)
+  add(state, uuids = this.uuids, connection = this.connection) {
+    state.instance.connect({ uuids })
+    state.store.commit('dataflow/addConnection', connection)
   }
 
   remove(state) {
@@ -205,8 +208,14 @@ class AddNodeOnConnectionCommand extends ConnectionCommand {
     state.store.commit('dataflow/addNode', this.node)
     Vue.nextTick(() => {
       const nodeId = NODE_PREFIX + this.node.id
-      state.instance.connect({ uuids: [this.connectionData.source + '_source', nodeId + '_target'] })
-      state.instance.connect({ uuids: [nodeId + '_source', this.connectionData.target + '_target'] })
+      this.add(state, [this.connectionData.source + '_source', nodeId + '_target'], {
+        source: this.connection.source,
+        target: this.node.id
+      })
+      this.add(state, [nodeId + '_source', this.connectionData.target + '_target'], {
+        source: this.node.id,
+        target: this.connection.target
+      })
     })
   }
 

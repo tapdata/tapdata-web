@@ -163,7 +163,11 @@ export default {
           const oldProperties = []
 
           if (this.isActionActive('dragActive')) {
-            const moveNodes = this.$store.getters['dataflow/getSelectedNodes']
+            const moveNodes = [...this.$store.getters['dataflow/getSelectedNodes']]
+
+            if (!this.isNodeSelected(this.nodeId)) {
+              moveNodes.push(this.data)
+            }
             /*const selectedNodeNames = moveNodes.map(node => node.id)
 
             if (!selectedNodeNames.includes(this.data.id)) {

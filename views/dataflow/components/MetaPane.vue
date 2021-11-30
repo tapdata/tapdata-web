@@ -69,8 +69,8 @@ export default {
   },
 
   methods: {
-    loadFields() {
-      metadataApi.get({
+    async loadFields() {
+      const data = await metadataApi.findOne({
         filter: JSON.stringify({
           where: {
             nodeId: this.activeNode.id

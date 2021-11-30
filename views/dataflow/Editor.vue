@@ -231,6 +231,7 @@ export default {
         this.initCommand()
         this.initNodeView()
         await this.initView()
+        this.initWS()
       } catch (error) {
         console.error(error) // eslint-disable-line
       }
@@ -246,8 +247,7 @@ export default {
     ...mapMutations('dataflow', [
       'setStateDirty',
       'setEdges',
-      'setDataflowName',
-      'setDataflowSettings',
+      'setTaskId',
       'setNodeTypes',
       'setCtorTypes',
       'updateNodeProperties',
@@ -260,7 +260,7 @@ export default {
       'removeNode',
       'removeNodeFromSelection',
       'removeAllNodes',
-      'resetDag',
+      'reset',
       'addNode',
       'setActiveType',
       'setFormSchema'
@@ -281,14 +281,6 @@ export default {
     },
 
     async initView() {
-      const mapping = this.$route.query?.mapping
-
-      if (mapping !== this.mapping) {
-        // mapping 改变 重新设置initNodeType
-        this.mapping = mapping
-        this.initNodeType()
-      }
-
       if (this.$route.params.action === 'dataflowSave') {
         // 保存后路由跳转
         this.setStateDirty(false)
@@ -620,6 +612,7 @@ export default {
       this.$set(this, 'dataflow', data)
 
       await this.addNodes(dag)
+      this.setTaskId(data.id)
       this.setEdges(dag.edges)
       this.setStateDirty(false)
 
@@ -630,9 +623,7 @@ export default {
     newDataflow() {
       this.resetWorkspace()
       this.dataflow.name = '新任务@' + new Date().toLocaleTimeString()
-      /*this.setDataflowName({
-        newName: '新任务@' + new Date().toLocaleTimeString()
-      })*/
+      this.saveAsNewDataflow()
     },
 
     /**
@@ -1059,7 +1050,7 @@ export default {
     },
 
     async save() {
-      this.validateNodes()
+      // this.validateNodes()
       const errorMsg = this.getError()
       if (errorMsg) {
         this.$message.error(errorMsg)
@@ -1242,7 +1233,7 @@ export default {
         DEFAULT_SETTINGS
       )
       this.deselectAllNodes()
-      this.resetDag()
+      this.reset()
       this.setActiveType(null)
       this.resetSelectedNodes()
     },
@@ -1466,6 +1457,19 @@ export default {
       this.dataflow.name = name
       taskApi.updateById(this.dataflow.id, {
         name
+      })
+    },
+
+    handleEditFlush() {
+      console.log('handleEditFlush', arguments)
+    },
+
+    initWS() {
+      this.$ws.on('editFlush', this.handleEditFlush)
+      this.$ws.send({
+        type: 'editFlush',
+        opType: 'subscribe',
+        taskId: this.dataflow.id
       })
     }
   }
