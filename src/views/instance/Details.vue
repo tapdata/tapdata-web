@@ -152,7 +152,7 @@ export default {
             data.hostname = data?.tmInfo?.hostname
             data.createAt = data.createAt ? this.$moment(data.createAt).format('YYYY-MM-DD HH:mm:ss') : ''
             if (data?.metric?.systemInfo) {
-              let arr = ['cpus', 'installationDirectory', 'ips']
+              let arr = ['cpus', 'installationDirectory', 'ips', 'logDir']
               arr.forEach(el => {
                 data[el] = data.metric?.systemInfo?.[el] || ''
               })

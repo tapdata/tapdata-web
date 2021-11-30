@@ -678,7 +678,12 @@ export default {
         }
       })
     },
-    showUpgradeDialogFnc() {
+    showUpgradeDialogFnc(row) {
+      // windons不支持自动升级
+      if (this.isWindons(row)) {
+        this.manualUpgradeFnc()
+        return
+      }
       this.upgradeDialog = true
     },
     showUpgradeErrorDialogFnc() {
@@ -854,6 +859,9 @@ export default {
       return (
         tmInfo.updateVersion && tmInfo.updateVersion === this.version && ['fail', 'error'].includes(tmInfo.updateStatus)
       )
+    },
+    isWindons(row) {
+      return row?.metric?.systemInfo?.os?.includes('win')
     }
   }
 }
