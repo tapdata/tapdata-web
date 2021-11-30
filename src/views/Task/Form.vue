@@ -742,7 +742,14 @@ export default {
       }
       if (type === 'mapping') {
         this.transferData = this.$refs.transfer.returnData()
-        if (this.transferData.selectSourceArr.length === 0) {
+        if (this.transferData.selectSourceArr.length === 0 && this.dataSourceModel['mqType'] !== '0') {
+          this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表')
+          return
+        } else if (
+          this.transferData.topicData.length === 0 &&
+          this.transferData.queueData.length === 0 &&
+          this.dataSourceModel['mqType'] === '0'
+        ) {
           this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表')
           return
         }

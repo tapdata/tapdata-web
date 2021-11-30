@@ -218,6 +218,7 @@ export default {
       left: 0;
       width: 0;
       z-index: 1;
+      overflow: initial;
       & > div:first-child {
         visibility: hidden;
       }
