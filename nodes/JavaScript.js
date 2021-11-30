@@ -22,6 +22,7 @@ export class JavaScript extends NodeType {
         title: '脚本',
         type: 'string',
         required: true,
+        default: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
         'x-decorator': 'FormItem',
         'x-component': 'JsEditor',
         'x-component-props': {
