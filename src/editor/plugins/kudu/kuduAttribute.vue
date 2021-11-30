@@ -174,6 +174,7 @@ export default {
       model: {
         connectionId: '',
         type: 'kudu',
+        databaseType: 'kudu',
         tableName: '',
         field_process: [],
         isFirst: true,

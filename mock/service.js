@@ -1560,5 +1560,32 @@ module.exports = Object.assign({}, dataflow, {
     code: 'ok',
     msg: 'ok'
   },
-  '/api/Javascript_functions/count': { data: { count: 232 }, code: 'ok', msg: 'ok' }
+  '/api/Javascript_functions/count': { data: { count: 232 }, code: 'ok', msg: 'ok' },
+  '/api/License/count': { data: { count: 232 }, code: 'ok', msg: 'ok' },
+  '/api/License': {
+    code: 'ok',
+    msg: 'ok',
+    'data|1-10': [
+      {
+        id: '@id',
+        sid: '@id',
+        license: '@name',
+        createTime: '@now',
+        last_updated: '@now',
+        'expirationDate|+1': ['2021-10-10T00:00:00.000Z', '2021-12-10T00:00:00.000Z', '2022-01-10T00:00:00.000Z']
+      }
+    ]
+  },
+  '/api/License/sid': {
+    code: 'ok',
+    msg: 'ok',
+    data: {
+      sid: '@id'
+    }
+  },
+  '/api/License/upload': {
+    code: 'ok',
+    msg: 'ok',
+    data: 'ok'
+  }
 })

@@ -1,4 +1,8 @@
 export default {
+  // 通用提示
+  tips_not_null: '值不能为空',
+  tips_must_number: '值必须为数字',
+
   // 通用按钮
   button_edit: '编辑',
   button_confirm: '确定',
@@ -44,6 +48,8 @@ export default {
   connection_list_column_schema_status: 'Schema加载状态',
   connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
 
+  connection_form_custom_connection_connection_time_out: '连接超时(秒)',
+  connection_form_custom_connection_read_time_out: '读取超时(秒)',
   connection_form_custom_connection_before_operate: '前置操作',
   connection_form_custom_connection_after_operate: '后置操作',
   connection_kafka_kerberos_attest: 'kerberos 认证',
