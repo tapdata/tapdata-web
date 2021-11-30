@@ -263,7 +263,8 @@ export default {
       'reset',
       'addNode',
       'setActiveType',
-      'setFormSchema'
+      'setFormSchema',
+      'setTransformStatus'
     ]),
 
     async confirmMessage(message, headline, type, confirmButtonText, cancelButtonText) {
@@ -466,57 +467,6 @@ export default {
         }
       })
 
-      // 连接线拖动结束事件
-      /*jsPlumbIns.bind('connectionDragStop', (conn, event) => {
-        console.log('connectionDragStopEvent', conn)
-        let $node = this.$refs.layoutContent.querySelector('.df-node')
-        if (!$node) return
-        const pos = this.getMousePositionWithinNodeView(event)
-        console.log({ ...pos }, [...this.nodeViewOffsetPosition])
-        pos.x -= this.nodeViewOffsetPosition[0]
-        pos.y -= this.nodeViewOffsetPosition[1]
-        let sourceId = this.getRealId(conn.sourceId)
-        let nw = $node.offsetWidth
-        let nh = $node.offsetHeight
-        let isConnected = false
-
-        for (let n of this.nodes) {
-          if (n.id !== sourceId) {
-            const [x, y] = n.position
-            console.log([x, y], pos)
-            if (pos.x > x && pos.x < x + nw && pos.y > y && pos.y < y + nh) {
-              console.log('in Node')
-              if (!this.isConnected(sourceId, n.id) && !this.isParent(sourceId, n.id)) {
-                jsPlumbIns.connect({
-                  source: jsPlumbIns.getEndpoint(conn.sourceId + '_source'),
-                  target: jsPlumbIns.getEndpoint(NODE_PREFIX + n.id + '_target')
-                })
-                isConnected = true
-              }
-              break
-            }
-          }
-        }
-
-        if (!isConnected && conn.targetId) {
-          // 恢复连接
-          jsPlumbIns.connect({
-            source: jsPlumbIns.getEndpoint(conn.sourceId + '_source'),
-            target: jsPlumbIns.getEndpoint(conn.targetId + '_target')
-          })
-          console.log('没有连接')
-        }
-      })*/
-
-      // 连线移动到其他节点
-      // jsPlumbIns.bind('connectionMoved', info => {
-      //   console.log('connectionMoved', info) // eslint-disable-line
-      // })
-      // 连线移动到其他节点
-      // jsPlumbIns.bind('connectionDetached', info => {
-      //   console.log('connectionDetachedEvent', info) // eslint-disable-line
-      // })
-
       const _instance = {
         getConnections(params) {
           // console.log('_instance', params) // eslint-disable-line
@@ -542,55 +492,7 @@ export default {
         }
 
         return false
-
-        // return this.isParent(
-        //   this.getRealId(e.sourceId),
-        //   this.getRealId(e.targetId)
-        // )
       })
-
-      /*this.conSelections = []
-
-      jsPlumbIns.bind('click', function (conn, evt) {
-        console.log('click', conn, evt)
-      })
-
-      // 连接线开始拖动事件
-      jsPlumbIns.bind('connectionDrag', function (e) {
-        e.setHover(true)
-        _.dragPoint = e.endpoints[1].getElement()
-        _.allNodeDom = container.querySelectorAll('.flow-node')
-      })
-
-      // 连接线拖动结束事件
-      jsPlumbIns.bind('connectionDragStop', function (e) {
-        if (_.dragOverNode) {
-          let sourceNodeId = e.sourceId
-          let targetNodeId = _.dragOverNode.getAttribute('id')
-          let sourceId = sourceNodeId + '_source'
-          let targetId = targetNodeId + '_target'
-          if (
-            !_.isConnected(sourceId, targetId) &&
-            !_.isParent(_.getRealId(sourceNodeId), _.getRealId(targetNodeId))
-          ) {
-            jsPlumbIns.connect({
-              source: jsPlumbIns.getEndpoint(sourceId),
-              target: jsPlumbIns.getEndpoint(targetId)
-            })
-          }
-        }
-        e.setHover(false)
-        _.dragPoint = undefined
-        _.allNodeDom = undefined
-      })
-
-      // 在target的Endpoint上面drop会触发该事件
-      jsPlumbIns.bind('beforeDrop', e => {
-        return this.isParent(
-          this.getRealId(e.sourceId),
-          this.getRealId(e.targetId)
-        )
-      })*/
     },
 
     async openDataflow(id) {
@@ -599,6 +501,7 @@ export default {
       let data
       try {
         data = await taskApi.get([id]) // this.creatUserId = result.user_id
+        if (data.temp) data = data.temp // 和后端约定了，如果缓存有数据则获取temp
       } catch (e) {
         this.$showError(e, '数据流加载出错', '加载数据流出现的问题:')
         return
@@ -1460,8 +1363,16 @@ export default {
       })
     },
 
-    handleEditFlush() {
-      console.log('handleEditFlush', arguments)
+    handleEditFlush(data) {
+      // eslint-disable-next-line no-console
+      console.log('handleEditFlush', data)
+      const { opType } = data
+      if (opType === 'transformRate') {
+        // 推演进度
+        this.setTransformStatus(data.transformStatus)
+      } else if (opType === 'updateVersion') {
+        // 版本变化
+      }
     },
 
     initWS() {

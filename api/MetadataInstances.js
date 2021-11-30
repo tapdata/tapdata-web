@@ -37,4 +37,17 @@ export default class MetadataInstancesAPI extends PublicApi {
   compareHistory(id, params) {
     return axios.get(this.url + '/compareHistory?id=' + id, params)
   }
+
+  /**
+   * 获取节点schema
+   * @param nodeId
+   * @returns {Promise<AxiosResponse<any>>}
+   */
+  nodeSchema(nodeId) {
+    return axios.get(this.url + '/node/schema', {
+      params: {
+        nodeId
+      }
+    })
+  }
 }
