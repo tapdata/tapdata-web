@@ -91,7 +91,7 @@ export default {
       if (this.isNodeActive(this.nodeId)) list.push('active')
       // 多个节点选中显示高亮效果
       // if (this.isNodeSelected(this.nodeId) && this.isMultiSelect) list.push('jtk-drag-selected')
-      if (this.isNodeSelected(this.nodeId)) list.push('jtk-drag-selected')
+      if (this.isNodeSelected(this.nodeId)) list.push('selected')
       if (this.showAddMenu) list.push('options-active')
       list.push(`node--${this.ins.group}`)
       return list
@@ -118,13 +118,15 @@ export default {
       'addActiveAction',
       'removeActiveAction',
       'updateNodeProperties',
-      'resetSelectedNodes'
+      'resetSelectedNodes',
+      'setNodeError',
+      'clearNodeError'
     ]),
 
     __init() {
       const { id, nodeId } = this
 
-      console.log('sourceEndpoint, targetEndpoint', sourceEndpoint, targetEndpoint) // eslint-disable-line
+      // console.log('sourceEndpoint, targetEndpoint', sourceEndpoint, targetEndpoint) // eslint-disable-line
 
       this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
 
@@ -161,12 +163,16 @@ export default {
           const oldProperties = []
 
           if (this.isActionActive('dragActive')) {
-            const moveNodes = this.$store.getters['dataflow/getSelectedNodes']
-            const selectedNodeNames = moveNodes.map(node => node.id)
+            const moveNodes = [...this.$store.getters['dataflow/getSelectedNodes']]
+
+            if (!this.isNodeSelected(this.nodeId)) {
+              moveNodes.push(this.data)
+            }
+            /*const selectedNodeNames = moveNodes.map(node => node.id)
 
             if (!selectedNodeNames.includes(this.data.id)) {
               moveNodes.push(this.data)
-            }
+            }*/
 
             let x = parseFloat(this.$el.style.left)
             let y = parseFloat(this.$el.style.top)

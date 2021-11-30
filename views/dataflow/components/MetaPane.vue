@@ -10,7 +10,7 @@
 
 <script>
 import MetadataApi from 'web-core/api/MetadataInstances'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 const metadataApi = new MetadataApi()
 
 export default {
@@ -58,22 +58,19 @@ export default {
   },
 
   computed: {
+    ...mapState('dataflow', ['activeNodeId']),
     ...mapGetters('dataflow', ['activeNode'])
   },
 
   watch: {
-    'activeNode.id'(n) {
-      console.log('activeNode.id', n)
-      if (n && this.lastNodeId !== n) {
-        this.loadFields()
-        this.lastNodeId = n
-      }
+    activeNodeId() {
+      this.loadFields()
     }
   },
 
   methods: {
-    loadFields() {
-      metadataApi.get({
+    async loadFields() {
+      const data = await metadataApi.findOne({
         filter: JSON.stringify({
           where: {
             nodeId: this.activeNode.id
