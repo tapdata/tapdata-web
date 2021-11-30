@@ -190,6 +190,9 @@ export class Table extends NodeType {
           increase: {
             type: 'void',
             'x-component': 'Space',
+            'x-component-props': {
+              size: 'middle'
+            },
             properties: {
               increaseSyncInterval: {
                 title: '增量同步间隔(ms)',
