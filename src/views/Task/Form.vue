@@ -741,21 +741,29 @@ export default {
         })
       }
       if (type === 'mapping') {
-        this.transferData = this.$refs.transfer.returnData()
-        if (this.transferData.selectSourceArr.length === 0 && this.dataSourceModel['mqType'] !== '0') {
-          this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表')
-          return
-        } else if (
-          this.transferData.topicData.length === 0 &&
-          this.transferData.queueData.length === 0 &&
-          this.dataSourceModel['mqType'] === '0'
-        ) {
+        let verify = this.checkTransfer()
+        if (!verify) {
           this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表')
           return
         }
         this.fieldProcess()
       }
       this.taskStep++
+    },
+    //检查是否选择表
+    checkTransfer() {
+      let result = true
+      this.transferData = this.$refs.transfer.returnData()
+      if (this.transferData.selectSourceArr.length === 0 && this.dataSourceModel['mqType'] !== '0') {
+        result = false
+      } else if (
+        this.transferData.topicData.length === 0 &&
+        this.transferData.queueData.length === 0 &&
+        this.dataSourceModel['mqType'] === '0'
+      ) {
+        result = false
+      }
+      return result
     },
     back() {
       let type = this.steps[this.activeStep].type || 'instance'
@@ -1199,6 +1207,12 @@ export default {
           return //所有字段被删除了 不可以保存任务
         }
         this.saveOperations(returnData.row, returnData.operations, returnData.target)
+      } else {
+        let verify = this.checkTransfer()
+        if (!verify) {
+          this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表')
+          return
+        }
       }
       let postData = this.daft()
       let promise = null
