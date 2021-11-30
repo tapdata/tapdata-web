@@ -101,7 +101,9 @@ export default {
     remoteMethod: Function,
     pageOptions: {
       type: Object,
-      default: () => {}
+      default: () => {
+        return {}
+      }
     }
   },
   data() {
