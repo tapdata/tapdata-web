@@ -20,6 +20,10 @@ export default {
   },
   watch: {
     databaseType(v) {
+      if (v === 'hazelcast_cloud_cluster') {
+        this.getHtmlMD('en_hazelcast_cloud_cluster')
+        return
+      }
       this.getHtmlMD(v)
     }
   },
