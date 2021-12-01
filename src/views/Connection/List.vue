@@ -43,7 +43,7 @@
             <div class="flex flex-row align-items-center p-2">
               <img
                 class="mr-2"
-                style="width: 24px; height: 24px"
+                style="width: 24px"
                 :src="
                   require('web-core/assets/images/connection-type/' + scope.row.database_type.toLowerCase() + '.png')
                 "
