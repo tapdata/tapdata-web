@@ -1231,8 +1231,10 @@ export default {
             }
             if (
               item.outputLanes.length &&
-              (['greenplum', 'adb_mysql', 'kundb', 'kudu', 'gaussdb200'].includes(item.databaseType) ||
-                ['greenplum', 'adb_mysql', 'kundb', 'kudu', 'gaussdb200'].includes(item.database_type)) &&
+              (['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'gaussdb200'].includes(item.databaseType) ||
+                ['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'gaussdb200'].includes(
+                  item.database_type
+                )) &&
               // (item.databaseType === 'greenplum' || item.database_type === 'greenplum') &&
               this.sync_type !== 'initial_sync'
             ) {
