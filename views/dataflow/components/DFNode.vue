@@ -127,10 +127,11 @@ export default {
       const { id, nodeId } = this
 
       // console.log('sourceEndpoint, targetEndpoint', sourceEndpoint, targetEndpoint) // eslint-disable-line
+      const targetParams = { ...targetEndpoint, maxConnections: this.ins.attr.maxInputs || -1 }
 
       this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
 
-      this.jsPlumbIns.makeTarget(id, targetEndpoint)
+      this.jsPlumbIns.makeTarget(id, targetParams)
 
       this.jsPlumbIns.draggable(this.$el, {
         // containment: 'parent',
@@ -215,7 +216,7 @@ export default {
         }
       })
 
-      this.jsPlumbIns.addEndpoint(this.$el, targetEndpoint, {
+      this.jsPlumbIns.addEndpoint(this.$el, targetParams, {
         uuid: id + '_target'
       })
 

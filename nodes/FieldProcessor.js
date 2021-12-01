@@ -11,7 +11,9 @@ export class FieldProcessor extends NodeType {
     }
   }
 
-  attr = {}
+  attr = {
+    maxInputs: 1 // 最大输入个数
+  }
 
   group = 'processor'
 
