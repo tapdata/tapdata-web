@@ -309,8 +309,8 @@ export default {
     })
 
     this.databaseLoading = false
-    if (result.data) {
-      this.databases = result.data
+    if (result.data?.items) {
+      this.databases = result.data?.items
     }
   },
 

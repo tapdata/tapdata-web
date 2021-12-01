@@ -736,14 +736,14 @@ export default class Editor extends BaseObject {
     connections
       .get(params)
       .then(result => {
-        if (result.data && result.data.length !== 0) {
+        if (result?.data?.items?.length !== 0) {
           /**
            * connectionId -> table name -> schema
            * @type {{object}}
            */
           let connectionSchemaData = {}
 
-          result.data.forEach(connection => {
+          result.data?.items.forEach(connection => {
             if (connection.schema && connection.schema.tables) {
               let tables = {}
               connection.schema.tables.forEach(table => (tables[table.table_name] = table))

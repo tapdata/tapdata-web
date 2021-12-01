@@ -259,8 +259,8 @@ export default {
       })
       this.databaseSelectConfig.loading = false
       let self = this
-      if (result.data) {
-        this.databaseSelectConfig.options = result.data.map(item => {
+      if (result.data?.items) {
+        this.databaseSelectConfig.options = result.data?.items.map(item => {
           return {
             id: item.id,
             name: item.name,
