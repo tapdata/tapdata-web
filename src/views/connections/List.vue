@@ -432,56 +432,55 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        this.$api('connections').count({ where: where }),
-        this.$api('connections').get({
+      return this.$api('connections')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        let list = res.data
-        this.table.setCache({
-          databaseType,
-          keyword,
-          databaseModel,
-          status,
-          panelFlag: true,
-          sourceType
-        })
-        return {
-          total: countRes.data.count,
-          data: list.map(item => {
-            let platformInfo = item.platformInfo
-            if (platformInfo && platformInfo.regionName) {
-              item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
-            }
-            if (item.database_type !== 'mongodb') {
-              item.connectionUrl = ''
-              if (item.database_username) {
-                item.connectionUrl += item.database_username + ':***@'
-              }
-              item.connectionUrl += item.database_host + ':' + item.database_port
-            } else {
-              item.connectionUrl = item.database_uri || item.connection_name
-            }
-            if (item.database_type === 'mq' && item.mqType === '0') {
-              item.connectionUrl = item.brokerURL
-            }
-            // 不存在uri 和 port === 0
-            if (!item.database_uri && !item.database_port && item.mqType !== '0') {
-              item.connectionUrl = ''
-            }
-            if (item.database_type === 'kudu') {
-              item.connectionUrl = item.database_host
-            }
-            if (item.database_type === 'kafka') {
-              item.connectionUrl = item.kafkaBootstrapServers
-            }
-            item.connectionSource = this.sourceTypeMapping[item.sourceType]
-            item.lastUpdateTime = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
-            return item
+        .then(res => {
+          let list = res.data?.items || []
+          this.table.setCache({
+            databaseType,
+            keyword,
+            databaseModel,
+            status,
+            panelFlag: true,
+            sourceType
           })
-        }
-      })
+          return {
+            total: res.data?.total,
+            data: list.map(item => {
+              let platformInfo = item.platformInfo
+              if (platformInfo && platformInfo.regionName) {
+                item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
+              }
+              if (item.database_type !== 'mongodb') {
+                item.connectionUrl = ''
+                if (item.database_username) {
+                  item.connectionUrl += item.database_username + ':***@'
+                }
+                item.connectionUrl += item.database_host + ':' + item.database_port
+              } else {
+                item.connectionUrl = item.database_uri || item.connection_name
+              }
+              if (item.database_type === 'mq' && item.mqType === '0') {
+                item.connectionUrl = item.brokerURL
+              }
+              // 不存在uri 和 port === 0
+              if (!item.database_uri && !item.database_port && item.mqType !== '0') {
+                item.connectionUrl = ''
+              }
+              if (item.database_type === 'kudu') {
+                item.connectionUrl = item.database_host
+              }
+              if (item.database_type === 'kafka') {
+                item.connectionUrl = item.kafkaBootstrapServers
+              }
+              item.connectionSource = this.sourceTypeMapping[item.sourceType]
+              item.lastUpdateTime = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              return item
+            })
+          }
+        })
     },
     //列表全选
     handleSelectionChange(val) {

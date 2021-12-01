@@ -271,8 +271,8 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          if (res.data) {
-            let list = res.data || []
+          if (res.data?.items) {
+            let list = res.data?.items || []
             let sourceList = []
             let targetList = []
             list.forEach(it => {

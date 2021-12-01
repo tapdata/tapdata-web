@@ -401,8 +401,8 @@ export default {
         })
       })
       this.fileConfig.loading = false
-      if (result.data) {
-        this.fileConfig.options = result.data.map(item => {
+      if (result.data?.items) {
+        this.fileConfig.options = result.data?.items.map(item => {
           return {
             id: item.id,
             name: item.name,
@@ -411,7 +411,7 @@ export default {
             value: item.id
           }
         })
-        result.data.map(s => (fieldsNamesMap[s.id] = s.schema))
+        result.data?.items.map(s => (fieldsNamesMap[s.id] = s.schema))
       }
     },
     loadDataModels(connectionId) {

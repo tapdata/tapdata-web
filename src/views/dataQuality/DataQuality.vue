@@ -251,7 +251,7 @@ export default {
           }
         })
         .then(({ data }) => {
-          this.connections = data || []
+          this.connections = data?.items || []
         })
     },
     // 重新统计弹框确认

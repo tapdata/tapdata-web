@@ -670,7 +670,7 @@ export default {
           })
         })
         .then(data => {
-          this.changeConfig(data.data || [], type, reset)
+          this.changeConfig(data.data?.items || [], type, reset)
         })
     },
     //change config

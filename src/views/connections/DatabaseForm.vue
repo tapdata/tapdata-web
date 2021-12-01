@@ -806,7 +806,7 @@ export default {
                     filter: JSON.stringify(filter)
                   })
                   .then(res => {
-                    if (res.data && res.data.length !== 0) {
+                    if (res.data?.total !== 0) {
                       callback(new Error('名称已存在'))
                     } else callback()
                   })
@@ -1440,6 +1440,12 @@ export default {
           }
           if (!params.id) {
             params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
+          }
+          if (!params.schema) {
+            delete params.schema
+          }
+          if (!params.tidbPdServer) {
+            delete params.tidbPdServer
           }
           if (params.database_type === 'mongodb') {
             //params['database_uri'] = encodeURIComponent(params['database_uri'])

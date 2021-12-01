@@ -296,7 +296,7 @@ export default {
       this.$api('connections')
         .get([this.model.connectionId])
         .then(result => {
-          let data = result.data || {}
+          let data = result.data?.items || {}
           if (data) {
             this.connections = {
               name: data.database_username || '',
