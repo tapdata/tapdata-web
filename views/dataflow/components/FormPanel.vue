@@ -2,7 +2,7 @@
   <div class="attr-panel">
     <div class="attr-panel-body overflow-auto">
       <Form :form="form" :colon="false" layout="vertical" feedbackLayout="terse">
-        <FormProvider v-if="schema" :form="form">
+        <FormProvider v-if="!!schema" :form="form">
           <SchemaField :schema="schema" :scope="scope" />
         </FormProvider>
       </Form>

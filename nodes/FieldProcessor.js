@@ -23,7 +23,7 @@ export class FieldProcessor extends NodeType {
         title: '',
         'x-decorator': 'FormItem',
         'x-component': 'FieldProcess',
-        'x-reactions': ['{{useAsyncDataSource(loadTableField)}}']
+        'x-reactions': ['{{useAsyncDataSource(loadSourceNodeField)}}']
       },
       scripts: {
         type: 'array',

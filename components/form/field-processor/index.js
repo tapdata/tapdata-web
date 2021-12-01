@@ -9,6 +9,8 @@ import './fieldProessor.scss'
 export const FieldProcess = connect(
   observer(
     defineComponent({
+      props: ['loading', 'options'],
+
       setup() {
         const formRef = useForm()
         const form = formRef.value
@@ -206,6 +208,8 @@ export const FieldProcess = connect(
       },
 
       render() {
+        // eslint-disable-next-line no-console
+        console.log('🚗 FieldProcessor', this.loading, this.options)
         const { fields } = this
         this.originalFields = JSON.parse(JSON.stringify(this.fields))
         return (
@@ -825,7 +829,7 @@ export const FieldProcess = connect(
       }
     })
   ),
-  mapProps({ dataSource: 'options' })
+  mapProps({ dataSource: 'options', loading: true })
 )
 
 export default FieldProcess
