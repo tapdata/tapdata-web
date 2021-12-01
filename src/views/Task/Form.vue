@@ -835,6 +835,7 @@ export default {
           if (
             this.dataSourceModel['source_databaseType'] === 'greenplum' ||
             this.dataSourceModel['source_databaseType'] === 'adb_mysql' ||
+            this.dataSourceModel['source_databaseType'] === 'adb_postgres' ||
             this.dataSourceModel['source_databaseType'] === 'kundb'
           ) {
             this.changeConfig([], 'setting_sync_type')
@@ -1010,14 +1011,7 @@ export default {
           if (source) {
             // dfs源端不支持 redis elasticsearch
             let options = data
-            let filterArr = [
-              'redis',
-              'hazelcast_cloud_cluster',
-              'elasticsearch',
-              'clickhouse',
-              'dameng',
-              'adb_postgres'
-            ]
+            let filterArr = ['redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'clickhouse', 'dameng']
             options = data.filter(item => filterArr.indexOf(item) === -1)
             source.options = options.map(item => {
               return {
