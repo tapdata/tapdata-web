@@ -947,7 +947,6 @@ export default {
         if (this.flow.status === 'force stopping') {
           this.flow.status = 'force_stopping'
         }
-
         let cdcList = []
         if (this.flow.cdcLastTimes && this.flow.cdcLastTimes.length) {
           this.flow.cdcLastTimes.forEach(item => {
