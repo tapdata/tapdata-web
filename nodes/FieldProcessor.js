@@ -19,11 +19,15 @@ export class FieldProcessor extends NodeType {
     type: 'object',
     properties: {
       operations: {
-        type: 'object',
+        type: 'array',
         title: '',
         'x-decorator': 'FormItem',
         'x-component': 'FieldProcess',
         'x-reactions': ['{{useAsyncDataSource(loadTableField)}}']
+      },
+      scripts: {
+        type: 'array',
+        display: 'none'
       }
     }
   }

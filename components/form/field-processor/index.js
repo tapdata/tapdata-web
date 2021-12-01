@@ -13,7 +13,8 @@ export const FieldProcess = connect(
         const formRef = useForm()
         const form = formRef.value
         return {
-          databaseType: form.values.databaseType
+          databaseType: form.values.databaseType,
+          form
         }
       },
 
@@ -136,6 +137,7 @@ export const FieldProcess = connect(
               value: 'Array'
             }
           ],
+          field_process: [],
           operations: [],
           scripts: [],
           originalFields: [],
@@ -181,6 +183,24 @@ export const FieldProcess = connect(
             scriptType: 'js',
             script: '',
             id: ''
+          }
+        }
+      },
+      watch: {
+        operations: {
+          deep: true,
+          handler(v) {
+            this.$emit('change', v)
+            console.log('operations', v) // eslint-disable-line
+          }
+        },
+
+        scripts: {
+          deep: true,
+          handler(v) {
+            this.form.setValuesIn('scripts', v)
+            this.$emit('change', v)
+            console.log('scripts', v) // eslint-disable-line
           }
         }
       },
