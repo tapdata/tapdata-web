@@ -62,7 +62,10 @@ import {
   Progress,
   Collapse,
   CollapseItem,
-  Divider
+  Divider,
+  Skeleton,
+  SkeletonItem,
+  InfiniteScroll
 } from 'element-ui'
 //重写ElementUI Select组件多选时的触发函数，去掉去重的处理
 Select.methods.handleOptionSelect = function (option, byClick) {
@@ -156,7 +159,10 @@ Vue.component(Progress.name, Progress)
 Vue.component(Collapse.name, Collapse)
 Vue.component(CollapseItem.name, CollapseItem)
 Vue.component(Divider.name, Divider)
+Vue.component(Skeleton.name, Skeleton)
+Vue.component(SkeletonItem.name, SkeletonItem)
 Vue.use(Loading.directive)
+Vue.use(InfiniteScroll)
 /***提示只显示一次**/
 // 因为使用了new DonMessage()的原因，所以导致this.$message(options)的方式无法使用
 // 推荐使用this.$message.success("成功提示")或者this.$message.success(options)的方式进行调用

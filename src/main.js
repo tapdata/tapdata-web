@@ -98,11 +98,26 @@ let init = settings => {
 
   document.title = window.getSettingByKey('PRODUCT_TITLE') || 'Tapdata'
 
+  var loc = window.location,
+    wsUrl = 'ws:'
+  if (loc.protocol === 'https:') {
+    wsUrl = 'wss:'
+  }
+  let host = window.getSettingByKey('DFS_TM_WS_HOST') || loc.host
+  let apiPre = window.getSettingByKey('DFS_TM_API_PRE_URL') || location.pathname.replace(/\/$/, '')
+  let tcmApiPre = window.getSettingByKey('DFS_TCM_API_PRE_URL') || ''
+  let path = (tcmApiPre === '/console' ? '' : tcmApiPre) + apiPre
+  wsUrl += '//' + host
+  wsUrl += path + '/ws/agent'
+
   window.App = new Vue({
     el: '#app',
     i18n,
     router,
     store,
+    wsOptions: {
+      url: wsUrl
+    },
     render: h => h(App)
   })
 }

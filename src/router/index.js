@@ -668,6 +668,32 @@ const router = new Router({
       path: '/guide',
       name: 'guide',
       component: () => import('@/views/Guide')
+    },
+    {
+      path: '/dataflow/editor',
+      name: 'DataflowNew',
+      props: {
+        listRoute: {
+          name: 'dataFlows',
+          query: {
+            mapping: 'custom'
+          }
+        }
+      },
+      component: () => import('web-core/views/dataflow/Editor')
+    },
+    {
+      path: '/dataflow/editor/:id',
+      name: 'DataflowEditor',
+      props: {
+        listRoute: {
+          name: 'dataFlows',
+          query: {
+            mapping: 'custom'
+          }
+        }
+      },
+      component: () => import('web-core/views/dataflow/Editor')
     }
   ]
 })

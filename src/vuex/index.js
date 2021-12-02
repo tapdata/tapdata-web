@@ -4,9 +4,14 @@ import createPersistedState from 'vuex-persistedstate'
 import mutations from './mutations'
 import actions from './actions'
 import cookie from 'vue-cookies'
+import dataflow from 'web-core/store/modules/dataflow'
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
+  modules: {
+    dataflow
+  },
+
   plugins: [
     createPersistedState({
       key: 'tapdata' + [cookie.get('user_id')],
@@ -14,6 +19,10 @@ const store = new Vuex.Store({
         getItem: () => {},
         setItem: () => {},
         removeItem: () => {}
+      },
+      filter({ type }) {
+        // 过滤掉dataflow的持久化
+        return !type.startsWith('dataflow')
       }
     })
   ],
