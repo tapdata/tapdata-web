@@ -5,10 +5,10 @@ const serveUrlMap = {
   mock: 'http://localhost:30300',
   dev: 'http://backend:3030',
   test: 'http://192.168.1.181:30300',
-  jet: 'http://jet.devops.tapdata.net:31613',
+  jet: 'http://jet.devops.tapdata.net:31613'
   // test: 'http://192.168.1.181:30300'
   // test: 'http://192.168.3.3:8080/' // haosheng
-  test: 'http://192.168.1.181:31119/' // v1-27
+  // test: 'http://192.168.1.181:31119/' // v1-27
   // test: 'http://192.168.1.193:31704' // table-many
   // test: 'http://192.168.1.181:30390' // v1-25
   // test: 'http://192.168.1.181:30649'  // v1-24
