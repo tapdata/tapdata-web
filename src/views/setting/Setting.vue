@@ -220,6 +220,15 @@ export default {
       return result
     }
   },
+  watch: {
+    deep: true,
+    formData: {
+      handler(value) {
+        console.log('########', value)
+        this.formData = value
+      }
+    }
+  },
   methods: {
     // 获取设置数据
     getData() {
@@ -280,14 +289,14 @@ export default {
             return a.category_sort > b.category_sort ? 1 : a.category_sort < b.category_sort ? -1 : 0
           })
 
-          this.formData.items = vals
-          let lincenseData = {
-            liceseItems: auth_data,
-            items: auth_data,
-            category: 'license'
-          }
-          this.formData.items.push(lincenseData)
+          _this.formData.items = vals
         })
+      let lincenseData = {
+        liceseItems: auth_data,
+        items: auth_data,
+        category: 'license'
+      }
+      _this.formData.items.push(lincenseData)
     },
     // 保存
     save() {
