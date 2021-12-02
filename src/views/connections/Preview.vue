@@ -251,7 +251,7 @@ export default {
         this.name = data.name
         this.type = data.search_databaseType ? data.search_databaseType : data.database_type
         this.status = data.status
-        this.userId = data.user_id
+        this.userId = data.user_id || data.userId
         this.loadFieldsStatus = data.loadFieldsStatus
         if (['ready'].includes(this.status) && data.loadFieldsStatus !== 'finished' && data.tableCount) {
           this.progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
