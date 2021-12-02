@@ -11,6 +11,7 @@
       :creat-user-id="creatUserId"
       :is-starting="isStarting"
       :dataflow-name="dataflow.name"
+      @page-return="handlePageReturn"
       @save="save"
       @delete="handleDelete"
       @undo="handleUndo"
@@ -130,6 +131,13 @@ export default {
   },
 
   mixins: [deviceSupportHelpers, titleChange, showMessage],
+
+  props: {
+    listRoute: {
+      type: Object,
+      default: () => ({ name: 'Task' })
+    }
+  },
 
   components: {
     ConfigPanel,
@@ -503,7 +511,7 @@ export default {
         data = await taskApi.get([id]) // this.creatUserId = result.user_id
         if (data.temp) data = data.temp // 和后端约定了，如果缓存有数据则获取temp
       } catch (e) {
-        this.$showError(e, '数据流加载出错', '加载数据流出现的问题:')
+        this.$showError(e, '任务加载出错', '加载任务出现的问题:')
         return
       }
 
@@ -1373,6 +1381,10 @@ export default {
       } else if (opType === 'updateVersion') {
         // 版本变化
       }
+    },
+
+    handlePageReturn() {
+      this.$router.push(this.listRoute)
     },
 
     initWS() {
