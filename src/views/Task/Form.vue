@@ -629,19 +629,7 @@ export default {
     },
     //云版支持数据源
     allowDatabaseType() {
-      //接口请求之前 loading = true
-      let items = this.config.items
-      let option_source = items.find(it => it.field === 'source_filter_databaseType')
-      if (option_source) {
-        option_source.loading = true
-      }
-      let option_target = items.find(it => it.field === 'target_filter_databaseType')
-      if (option_target) {
-        option_target.loading = true
-      }
       this.$axios.get('tm/api/Connections/databaseType').then(data => {
-        option_source.loading = false
-        option_target.loading = false
         this.changeConfig(data || [], 'databaseType')
       })
     },
