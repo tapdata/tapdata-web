@@ -12,6 +12,7 @@ export default function () {
         field: 'source_filter_databaseType',
         label: '源端类型',
         options: [],
+        loading: false,
         required: true
       },
       {
@@ -27,6 +28,7 @@ export default function () {
         type: 'select',
         field: 'target_filter_databaseType',
         label: '目标端类型',
+        loading: false,
         options: [],
         required: true
       },
