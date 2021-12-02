@@ -1,9 +1,8 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'left',
-      labelWidth: '120px',
-      labelColon: true
+      labelPosition: 'right',
+      labelWidth: '200px'
     },
     defaultModel: {
       connection_type: 'source_and_target'
@@ -30,11 +29,7 @@ export default function (vm) {
             value: 'target'
           }
         ],
-        required: true,
-        isVertical: false,
-        button: true,
-        outerTip: true,
-        customClass: 'large-item'
+        required: true
       },
       {
         type: 'input',
