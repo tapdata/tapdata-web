@@ -648,32 +648,28 @@ export default {
       }
     },
     formatLag(data = 0) {
-      let result = data + 'ms'
-      let ms = 0,
-        s = 0,
+      let result = data + 's'
+      /* eslint-disable */
+      let s = 0, //
         m = 0,
         h = 0,
         d = 0
-      if (data > 1000) {
-        s = parseInt(data / 1000)
-        ms = parseInt(data % 1000)
-        result = s + 's'
-        if (s > 60) {
-          m = parseInt(s / 60)
-          s = parseInt(s % 60)
-          result = m + 'm'
-          if (m > 60) {
-            h = parseInt(m / 60)
-            m = parseInt(m % 60)
-            result = h + 'h'
-            if (h > 24) {
-              d = parseInt(h / 24)
-              h = parseInt(h % 24)
-              result = d + 'd'
-            }
+      if (data > 60) {
+        m = parseInt(data / 60)
+        s = parseInt(data % 60)
+        result = m + 'm'
+        if (m > 60) {
+          h = parseInt(m / 60)
+          m = parseInt(m % 60)
+          result = h + 'h'
+          if (h > 24) {
+            d = parseInt(h / 24)
+            h = parseInt(h % 24)
+            result = d + 'd'
           }
         }
       }
+      /* eslint-enable */
       return result
     },
     loadWS() {
