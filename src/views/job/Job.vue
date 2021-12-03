@@ -664,9 +664,9 @@ export default {
     getSchemaResult() {
       let self = this
       let id = self.$route.query.id || self.queryId
-      this.showDialogProgress = true // 最新返回信息展示
       ws.on('metadataTransformerProgress', function (res) {
         if (!res?.data?.stageId && res?.data?.dataFlowId === id) {
+          this.showDialogProgress = true // 最新返回信息展示
           let { finished, total, status } = res?.data
           self.progress.finished = finished
           self.progress.total = total
