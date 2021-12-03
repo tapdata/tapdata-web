@@ -321,6 +321,7 @@ import _ from 'lodash'
 import SkipError from '../../components/SkipError'
 import { uuid } from '../../editor/util/Schema'
 import VIcon from '@/components/VIcon'
+import { DATA_NODE_TYPES } from '@/const.js'
 
 const dataFlowsApi = factory('DataFlows')
 const Setting = factory('Setting')
@@ -1671,44 +1672,7 @@ export default {
           let formData = _.cloneDeep(v)
           delete formData.inputLanes
           delete formData.outputLanes
-          if (
-            v.type &&
-            [
-              'table',
-              'view',
-              'collection',
-              'mongo_view',
-              'hive',
-              'kudu',
-              'dummy db',
-              'gridfs',
-              'file',
-              'elasticsearch',
-              'rest api',
-              'redis',
-              'field_processor',
-              'aggregation_processor',
-              'js_processor',
-              'row_filter_processor',
-              'java_processor',
-              'hive',
-              'hana',
-              'kafka',
-              'dameng',
-              'clickhouse',
-              'kudu',
-              'hbase',
-              'mq',
-              'kafka',
-              'adb_mysql',
-              'tcp_udp',
-              'cache_lookup_processor',
-              'custom_connection',
-              'mem_cache',
-              'logminer',
-              'protobuf_convert_processor'
-            ].includes(v.type)
-          ) {
+          if (v.type && DATA_NODE_TYPES.includes(v.type)) {
             let name = v.tableName || v.name
             let node = {
               type: mapping[v.type],
