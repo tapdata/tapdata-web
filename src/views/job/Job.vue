@@ -1649,7 +1649,8 @@ export default {
         hive: 'app.HiveNode',
         hana: 'app.HanaNode',
         dameng: 'app.DamengNode',
-        clickhouse: 'app.ClickHouse'
+        clickhouse: 'app.ClickHouse',
+        kudu: 'app.KUDUNode'
       }
       if (data) {
         let stageMap = {}
@@ -1660,7 +1661,24 @@ export default {
           let formData = _.cloneDeep(v)
           delete formData.inputLanes
           delete formData.outputLanes
-          if (['table', 'view', 'collection', 'mongo_view', 'hive'].includes(v.type)) {
+          if (
+            v.type &&
+            [
+              'table',
+              'view',
+              'collection',
+              'mongo_view',
+              'hive',
+              'kudu',
+              'dummy db',
+              'gridfs',
+              'file',
+              'elasticsearch',
+              'rest api',
+              'redis'
+            ].includes(v.type)
+          ) {
+            let name = v.tableName || v.name
             let node = {
               type: mapping[v.type],
               id: v.id,
@@ -1670,25 +1688,9 @@ export default {
               outputSchema: null,
               attrs: {
                 label: {
-                  text: v.tableName !== '' && v.tableName ? breakText.breakText(v.tableName, 125) : v.type
+                  text: name ? breakText.breakText(name, 125) : v.type
                 }
-              },
-              angle: 0
-            }
-            cells.push(node)
-          } else if (v.type && ['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'redis'].includes(v.type)) {
-            let node = {
-              type: mapping[v.type],
-              id: v.id,
-              freeTransform: false,
-              schema: null,
-              outputSchema: null,
-              attrs: {
-                label: {
-                  text: v.name !== '' && v.name ? breakText.breakText(v.name, 125) : v.type
-                }
-              },
-              form_data: formData
+              }
             }
             cells.push(node)
           } else if (v.type === 'database') {
