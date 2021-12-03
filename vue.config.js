@@ -158,7 +158,7 @@ module.exports = {
   css: {
     loaderOptions: {
       scss: {
-        additionalData: `@import "${varUrl}";`
+        additionalData: `@use "${varUrl}" as *;`
       }
     }
   }

@@ -75,10 +75,11 @@
     "lint-staged": "^9.5.0",
     "markdown-loader": "^6.0.0",
     "mockjs": "^1.1.0",
+    "mousetrap": "^1.6.5",
     "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
-    "sass": "~1.32.6",
-    "sass-loader": "^10.1.1",
+    "sass": "~1.33.0",
+    "sass-loader": "~10.0.3",
     "svg-sprite-loader": "^6.0.2",
     "svgo-loader": "^3.0.0",
     "vue-template-compiler": "^2.6.11"
