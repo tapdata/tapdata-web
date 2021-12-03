@@ -102,6 +102,7 @@ export default {
       model: {
         connectionId: '',
         type: 'elasticsearch',
+        databaseType: 'elasticsearch',
         chunkSize: 3,
         index: '',
         databaseType: 'elasticsearch',
