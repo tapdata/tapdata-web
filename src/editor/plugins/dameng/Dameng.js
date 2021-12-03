@@ -10,7 +10,7 @@ export const DamengNodeConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-dameng.svg'
+          xlinkHref: 'static/editor/dameng.svg'
         },
         label: {
           text: 'Dameng'

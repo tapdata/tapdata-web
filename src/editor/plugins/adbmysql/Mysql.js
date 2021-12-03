@@ -18,6 +18,7 @@ export const AdbMySQLConfig = {
       },
       [FORM_DATA_KEY]: {
         type: 'adb_mysql',
+        databaseType: 'adb_mysql',
         connectionId: '',
         tableName: ''
       }

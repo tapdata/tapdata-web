@@ -54,7 +54,7 @@ export const databaseConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-DB.svg'
+          xlinkHref: 'static/editor/database2.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.database.name')
@@ -152,7 +152,7 @@ export const databaseConfig = {
         // sourceCell 拖动的时候会产生一条outLink,但是没有target.id，以此来限制当节点有目标时，不允许再去连接其他目标
         return (
           ['app.Database'].includes(sourceCell.get('type')) &&
-          !['hive', 'dameng', 'clickhouse', 'adb_postgres'].includes(databaseType) &&
+          !['hive', 'dameng', 'clickhouse'].includes(databaseType) &&
           // !['kudu'].includes(sourceCell?.attributes?.form_data?.database_type) &&
           outLinks.length === 1 &&
           !outLinks[0].attributes.target.id
