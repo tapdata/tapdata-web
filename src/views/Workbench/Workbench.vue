@@ -312,13 +312,13 @@ export default {
           id: 7,
           type: '',
           name: 'Tapdata 在线研讨会：DaaS vs 大数据平台，是竞争还是共处？',
-          time: '2021-12-08'
+          time: '2021-12-03'
         },
         {
           id: 6,
           type: '',
           name: 'Tapdata Cloud 最新功能概览',
-          time: '2021-12-3'
+          time: '2021-12-03'
         },
         {
           id: 5,
@@ -480,6 +480,8 @@ export default {
 .notice-list__time {
   color: rgba(0, 0, 0, 0.5);
   white-space: nowrap;
+  width: 80px;
+  text-align: right;
 }
 .guide-list {
   height: 190px;
