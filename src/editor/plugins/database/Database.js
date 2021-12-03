@@ -54,7 +54,7 @@ export const databaseConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-DB.svg'
+          xlinkHref: 'static/editor/database2.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.database.name')

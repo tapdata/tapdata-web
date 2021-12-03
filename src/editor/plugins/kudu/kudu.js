@@ -10,7 +10,7 @@ export const KUDUNodeConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-kudu.svg'
+          xlinkHref: 'static/editor/kudu.svg'
         },
         label: {
           text: 'KUDU'
