@@ -1650,7 +1650,17 @@ export default {
         hana: 'app.HanaNode',
         dameng: 'app.DamengNode',
         clickhouse: 'app.ClickHouse',
-        kudu: 'app.KUDUNode'
+        kudu: 'app.KUDUNode',
+        hbase: 'app.HBaseNode',
+        mq: 'app.Mq',
+        kafka: 'app.KafkaNode',
+        adb_mysql: 'app.ADBMysqlNode',
+        tcp_udp: 'app.TcpNode',
+        cache_lookup_processor: 'app.JointCache',
+        custom_connection: 'app.CustomNode',
+        mem_cache: 'app.MemCache',
+        logminer: 'app.Logminer',
+        protobuf_convert_processor: 'app.Message'
       }
       if (data) {
         let stageMap = {}
@@ -1675,7 +1685,28 @@ export default {
               'file',
               'elasticsearch',
               'rest api',
-              'redis'
+              'redis',
+              'field_processor',
+              'aggregation_processor',
+              'js_processor',
+              'row_filter_processor',
+              'java_processor',
+              'hive',
+              'hana',
+              'kafka',
+              'dameng',
+              'clickhouse',
+              'kudu',
+              'hbase',
+              'mq',
+              'kafka',
+              'adb_mysql',
+              'tcp_udp',
+              'cache_lookup_processor',
+              'custom_connection',
+              'mem_cache',
+              'logminer',
+              'protobuf_convert_processor'
             ].includes(v.type)
           ) {
             let name = v.tableName || v.name
