@@ -1,5 +1,86 @@
 <template>
-  <div class="notice main-container ws-main-container fs-8" v-if="$route.query.id == 1">
+  <div class="notice main-container fs-8" v-if="$route.query.id == 1">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>新手必看 ！如何玩转 Tapdata Cloud 数据同步功能</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2021-05-28</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 p-6">
+      <div class="notice-body__content">
+        <div class="notice-body__step mb-4">
+          <div>Tapdata Cloud 是 Tapdata 的云版产品，提供安全、简单、永久免费的数据同步服务。</div>
+          <div>
+            近期，Tapdata Cloud 推出1.0 版本，接下来小助手带大家一起来看下如何玩转 Tapdata Cloud 数据同步功能吧！
+          </div>
+          <div class="fw-bolder fs-7">三步快速完成数据同步</div>
+          <div>
+            无论您是想实现数据库架构现代化，还是想实现零停机数据迁移，亦或是实现数据异地灾备及异地多活等，使用 Tapdata
+            Cloud 来搭配您的数据架构设计，只需3步帮您快速完成数据同步！
+          </div>
+          <div class="fw-bolder fs-7">第一步：部署Agent</div>
+          <div>
+            实例Agent是 Tapdata Cloud
+            最重要的组成部分，用户所有的同步任务都依赖于实例来进行。通过实例管理对Agent进行安装、启动、暂停和状态管理等操作。
+          </div>
+          <div class="fw-bolder fs-7">第二步：创建连接</div>
+          <div>
+            建立Agent与用户源数据库和目标数据库的连接。通过连接管理对用户添加的所有数据连接进行管理，主要包括创建连接、连接测试、编辑连接、复制连接、查询连接和删除连接等功能。
+          </div>
+          <div class="fw-bolder fs-7">第三步：创建任务</div>
+          <div>
+            创建同步任务并对同步任务进行管理，主要包括创建任务、启动任务、任务监控、任务编辑、复制、重置、删除等操作。
+          </div>
+          <!--				<div>本版本支持的数据源类型及版本：</div>-->
+        </div>
+        <div class="notice-body__intro">
+          <div class="fw-bolder fs-7">Tapdata 工作台介绍</div>
+          <div>工作台主要帮助用户快速了解和熟悉产品，并可以通过快速创建入口部署Agent、连接和任务。</div>
+          <div class="notice-body__intro-img py-1">
+            <img src="../../../public/images/workbench/workbench.png" alt="" />
+          </div>
+          <div class="fw-bolder fs-7">用户引导</div>
+          <div>点击 Tapdata Cloud 工作台中的【开启引导】可以进入用户引导页面，按照步骤说明学会使用 Tapdata Cloud。</div>
+          <div class="fw-bolder fs-7">快捷入口</div>
+          <div>部署Agent：一键进入Agent创建页面，开始部署Agent</div>
+          <div>创建连接：一键进入连接创建页面，开始创建连接</div>
+          <div>创建任务：一键进入任务创建页面，开始创建同步任务创建任务：一键进入任务创建页面，开始创建同步任务</div>
+          <div class="fw-bolder fs-7">公告通知</div>
+          <div>展示最新的公告信息，包括升级变更提醒、版本新特性介绍等内容，点击公告标题可以查看公告详细内容。</div>
+          <div class="fw-bolder fs-7">文档快速入口</div>
+          <div>点击入口可以快速查看产品介绍文档和产品使用手册。</div>
+          <div class="fw-bolder fs-7">文档中心</div>
+          <div>在文档中心，您可以找到 Tapdata Cloud 相关的文档和资源，帮助您更好地理解和使用我们的产品。</div>
+          <div class="fw-bolder fs-7">社区</div>
+          <div>
+            Tapdata Ask 提供 Tapdata Cloud
+            问答交流，您在使用产品的过程中遇到什么问题，可以点击“社区”提出您的问题，Tapdata
+            的技术人员将会不定期上问答社区看是否能为您提供帮助。同时欢迎您为其它朋友答疑解惑！
+          </div>
+          <div>
+            Tapdata Ask 入口：
+            <ElLink class="logo" type="primary" href="https://ask.tapdata.net/" target="_blank"
+              >https://ask.tapdata.net/</ElLink
+            >
+          </div>
+          <div>
+            您还可以在 Tapdata Ask 反馈我们产品的一些问题，提供优质的反馈将有机会获取 Tapdata 周边礼品，例如
+            签字笔，U盘等。
+          </div>
+          <div>如果您有比较紧急的问题，或者比较深入的交流反馈，也可以添加我们用户支持同学的企业微信，联系我们。</div>
+          <div class="QR-code">
+            <img src="../../assets/image/LarkQR.jpeg" alt="" />
+          </div>
+          <div class="fw-bolder">感谢您对 Tapdata Cloud 的支持，我们一起努力让数据同步变得更加简单高效！</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="notice main-container ws-main-container fs-8" v-else-if="$route.query.id == 2">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>推荐 | 异构数据库同步云平台 Tapdata Cloud 开启有奖公测</span>
@@ -111,7 +192,7 @@
       </div>
     </div>
   </div>
-  <div class="notice main-container ws-main-container fs-8" v-else-if="$route.query.id == 2">
+  <div class="notice main-container ws-main-container fs-8" v-else-if="$route.query.id == 3">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>Tapdata Cloud 1.0.6 版本发布啦！</span>
@@ -166,83 +247,219 @@
       </div>
     </div>
   </div>
-  <div class="notice main-container fs-8" v-else>
+  <div class="notice main-container ws-main-container fs-8" v-else-if="$route.query.id == 4">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
-        <span>新手必看 ！如何玩转 Tapdata Cloud 数据同步功能</span>
+        <span>Tapdata Cloud 1.0.7 版本发布啦！</span>
       </div>
       <div class="notice-header__time mt-5 ml-1 flex align-items-center">
         <img src="../../assets/image/logoIconColour.png" alt="" />
         <span class="ml-5 mr-4">Cloud@Tapdata</span>
-        <span>2021-05-28</span>
+        <span>2021-10-26</span>
       </div>
     </div>
-    <div class="notice-body mt-6 p-6">
-      <div class="notice-body__content">
-        <div class="notice-body__step mb-4">
-          <div>Tapdata Cloud 是 Tapdata 的云版产品，提供安全、简单、永久免费的数据同步服务。</div>
-          <div>
-            近期，Tapdata Cloud 推出1.0 版本，接下来小助手带大家一起来看下如何玩转 Tapdata Cloud 数据同步功能吧！
-          </div>
-          <div class="fw-bolder fs-7">三步快速完成数据同步</div>
-          <div>
-            无论您是想实现数据库架构现代化，还是想实现零停机数据迁移，亦或是实现数据异地灾备及异地多活等，使用 Tapdata
-            Cloud 来搭配您的数据架构设计，只需3步帮您快速完成数据同步！
-          </div>
-          <div class="fw-bolder fs-7">第一步：部署Agent</div>
-          <div>
-            实例Agent是 Tapdata Cloud
-            最重要的组成部分，用户所有的同步任务都依赖于实例来进行。通过实例管理对Agent进行安装、启动、暂停和状态管理等操作。
-          </div>
-          <div class="fw-bolder fs-7">第二步：创建连接</div>
-          <div>
-            建立Agent与用户源数据库和目标数据库的连接。通过连接管理对用户添加的所有数据连接进行管理，主要包括创建连接、连接测试、编辑连接、复制连接、查询连接和删除连接等功能。
-          </div>
-          <div class="fw-bolder fs-7">第三步：创建任务</div>
-          <div>
-            创建同步任务并对同步任务进行管理，主要包括创建任务、启动任务、任务监控、任务编辑、复制、重置、删除等操作。
-          </div>
-          <!--				<div>本版本支持的数据源类型及版本：</div>-->
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-3 fw-bolder">1. 短信通知支持自配置</div>
+        <div class="mb-3">实现个性化通知</div>
+        <div class="mb-8">
+          <img src="../../../public/images/notice/v1.0.7_notice.png" alt="" />
         </div>
-        <div class="notice-body__intro">
-          <div class="fw-bolder fs-7">Tapdata 工作台介绍</div>
-          <div>工作台主要帮助用户快速了解和熟悉产品，并可以通过快速创建入口部署Agent、连接和任务。</div>
-          <div class="notice-body__intro-img py-1">
-            <img src="../../../public/images/workbench/workbench.png" alt="" />
-          </div>
-          <div class="fw-bolder fs-7">用户引导</div>
-          <div>点击 Tapdata Cloud 工作台中的【开启引导】可以进入用户引导页面，按照步骤说明学会使用 Tapdata Cloud。</div>
-          <div class="fw-bolder fs-7">快捷入口</div>
-          <div>部署Agent：一键进入Agent创建页面，开始部署Agent</div>
-          <div>创建连接：一键进入连接创建页面，开始创建连接</div>
-          <div>创建任务：一键进入任务创建页面，开始创建同步任务创建任务：一键进入任务创建页面，开始创建同步任务</div>
-          <div class="fw-bolder fs-7">公告通知</div>
-          <div>展示最新的公告信息，包括升级变更提醒、版本新特性介绍等内容，点击公告标题可以查看公告详细内容。</div>
-          <div class="fw-bolder fs-7">文档快速入口</div>
-          <div>点击入口可以快速查看产品介绍文档和产品使用手册。</div>
-          <div class="fw-bolder fs-7">文档中心</div>
-          <div>在文档中心，您可以找到 Tapdata Cloud 相关的文档和资源，帮助您更好地理解和使用我们的产品。</div>
-          <div class="fw-bolder fs-7">社区</div>
-          <div>
-            Tapdata Ask 提供 Tapdata Cloud
-            问答交流，您在使用产品的过程中遇到什么问题，可以点击“社区”提出您的问题，Tapdata
-            的技术人员将会不定期上问答社区看是否能为您提供帮助。同时欢迎您为其它朋友答疑解惑！
-          </div>
-          <div>
-            Tapdata Ask 入口：
-            <ElLink class="logo" type="primary" href="https://ask.tapdata.net/" target="_blank"
-              >https://ask.tapdata.net/</ElLink
-            >
-          </div>
-          <div>
-            您还可以在 Tapdata Ask 反馈我们产品的一些问题，提供优质的反馈将有机会获取 Tapdata 周边礼品，例如
-            签字笔，U盘等。
-          </div>
-          <div>如果您有比较紧急的问题，或者比较深入的交流反馈，也可以添加我们用户支持同学的企业微信，联系我们。</div>
-          <div class="QR-code">
-            <img src="../../assets/image/LarkQR.jpeg" alt="" />
-          </div>
-          <div class="fw-bolder">感谢您对 Tapdata Cloud 的支持，我们一起努力让数据同步变得更加简单高效！</div>
+        <div class="mb-3 fw-bolder">2. 上新GP/MQ数据源支持</div>
+        <div class="mb-3">关系型，非关系型，消息队列，云上云下，自由流转.</div>
+        <div class="mb-8">
+          <img src="../../../public/images/notice/v1.0.7_connection.png" alt="" />
+        </div>
+        <div class="mb-3">即将上线DB2、Sybase ASE、GBase.</div>
+        <div class="mb-3 fw-bolder">3. 新版界面更友好</div>
+        <div class="mb-3">从配置指引到状态提醒，我们把细节做的更好。创建数据连接，右侧直接可获得清晰的指引</div>
+        <div class="mb-8">
+          <img src="../../../public/images/notice/v1.0.7_creat_connection.png" alt="" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="notice main-container ws-main-container fs-8" v-else-if="$route.query.id == 5">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>Tapdata Cloud 1.0.8 版本发布啦！</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2021-12-03</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-3">
+          Tapdata Cloud 是国内首家异构数据库实时同步云平台，目前支持Oracle、MySQL、PG、SQL Server、MongoDB、ES
+          、达梦、Kafka、GP、MQ、ClickHouse、Hazelcast Cloud、ADB MySQL、ADB PostgreSQL、KunDB之间的数据同步，即将支持
+          DB2、Sybase ASE、Redis、GBase、GaussDB 等，并对用户永久免费。
+          完美支持SQL->NOSQL，拖拽式的“零”代码配置操作、可视化任务运行监控，强大的数据处理能力，Tapdata Cloud
+          让您轻松实现跨系统跨类型的数据同步和交换，释放数据准备阶段的精力。 近日，Tapdata Cloud 发布1.0.8
+          版本，新增5个数据源支持，并进行了多处细节优化
+        </div>
+        <div class="mb-3 fw-bolder">1. 上新ClickHouse等5个数据源</div>
+        <div class="mb-3">ClickHouse | Hazelcast Cloud | ADB MySQL | ADB PostgreSQL | KunDB</div>
+        <div class="mb-3">关系型数据库，NoSQL，NewSQL，消息队列，云上云下，自由流转</div>
+        <div class="mb-8">
+          <img src="../../../public/images/notice/v1.0.8_connection.png" alt="" />
+        </div>
+        <div class="mb-3 fw-bolder">2. 不断优化，提供更佳体验</div>
+        <div class="mb-3">对于用户使用的各个环节，我们一直在努力提供更佳体验。</div>
+        <div class="mb-3">
+          Tapdata Cloud 支持多种部署环境，包括：Linux，Windows，以及Docker。 Tapdata agent，是Tapdata
+          Cloud数据同步服务的执行实例，负责从TCM获取任务信息，通过流式技术从源系统获取数据、处理转换数据并发送到目标系统，并在任务执行过程中监测并上报任务状态至TCM。
+        </div>
+        <div class="mb-8">
+          <img src="../../../public/images/notice/v1.0.8_connection_1.png" alt="" />
+        </div>
+        <div class="mb-3">Tapdata Cloud采用了多种网络安全措施，确保用户数据和信息安全。</div>
+        <div class="mb-3">
+          <span class="fw-bolder">单向连接：</span>同步实例节点单向连接管控端运行服务。Tapdata
+          agent实例节点对外不主动暴露网络信息，只会连接 TCM管理端服务，获取任务信息、上报状态信息。
+        </div>
+        <div class="mb-3">
+          <span class="fw-bolder"> HTTPS 协议：</span>用户部署的Tapdata agent实例节点和 TCM 通信链路采用 HTTPS
+          协议，防止盗取并篡改信息。
+        </div>
+        <div class="mb-3">
+          <span class="fw-bolder">可信环境：</span
+          >自建模式下，所有数据流转均发生在受用户管理的服务器和网络环境，数据不流出泄漏。
+        </div>
+        <div class="mb-3">
+          在 Tapdata Cloud 1.0.8 版本中，我们对
+          Windows下Agent部署方式优化，同时优化了云版Agent包，打包时去掉暂时不需要的数据库驱动jar包 。/div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="notice main-container ws-main-container fs-8" v-else-if="$route.query.id == 6">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>Tapdata Cloud 最新功能概览</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2021-12-03</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-8">
+          <img src="../../../public/images/notice/activity_1.png" alt="" />
+        </div>
+      </div>
+      <div class="mb-3 fw-bolder">Tapdata Cloud 是什么？</div>
+      <div class="mb-3">
+        Tapdata
+        Cloud是由Tapdata提供的集数据同步、数据融合（即将上线）、数据服务（即将上线）为一体的实时数据融合服务，能够在跨云、跨地域、多类型数据源的场景下，提供毫秒级的实时数据同步服务和数据融合服务。
+      </div>
+      <div class="mb-3 fw-bolder">Tapdata Cloud 支持的数据源类型和版本</div>
+      <div class="mb-3">Tapdata Cloud采用了多种网络安全措施，确保用户数据和信息安全。</div>
+      <div class="mb-8">
+        <img src="../../../public/images/notice/activity_2.png" alt="" />
+      </div>
+      <div class="mb-3">
+        <div class="fw-bolder">数据同步方式</div>
+        支持全量同步+增量同步。
+      </div>
+      <div class="mb-3">
+        <div class="fw-bolder">Tapdata Cloud 支持跨区域、跨网络的数据同步：</div>
+        Tapdata Cloud 通过 Agent 来连接源和目标，仅通过开放有限的网络服务，即可实现同步需求，在您开始部署 Agent
+        之前，一定要保证您准备用来部署 Agent 的服务器与您的源数据库和目标数据库的网络是开通的。同时，要保证您的 Agent
+        服务器可以正常访问 Tapdata Cloud 系统，这样 Agent 才能正常上报状态，获取同步配置，执行同步任务。
+      </div>
+      <div class="mb-3">
+        <div class="fw-bolder">数据管理</div>
+        支持创建连接、连接测试、编辑连接、复制连接、查询连接和删除连接等操作。
+      </div>
+      <div class="mb-3">
+        <div class="fw-bolder">任务管理</div>
+        支持创建任务、启动任务、任务监控、任务编辑、复制、重置、删除等操作。
+      </div>
+      <div class="mb-3">
+        <div class="fw-bolder">任务管理</div>
+        支持创建任务、启动任务、任务监控、任务编辑、复制、重置、删除等操作。
+      </div>
+      <div class="mb-3">
+        <div class="fw-bolder">类型映射</div>
+        在同步任务设置过程，通过类型映射设置，用户可以在设置同步范围，选择将源端哪些表同步到目标端，还可以设置源表到目标表的字段名、字段类型和字段精度等信息，提高异构数据迁移成功率，并在
+        Tapdata Cloud 工作台对任务进行管理和监控。
+      </div>
+      <div class="mb-3">
+        <div class="fw-bolder">数据校验方式</div>
+        快速count校验、表全字段值校验和关联字段值校验。
+      </div>
+      <div class="mb-3">
+        <div class="fw-bolder">数据校验</div>
+        支持创建任务、启动任务、任务监控、任务编辑、复制、重置、删除等操作。
+      </div>
+      <div class="mb-3">
+        <div class="fw-bolder">操作日志</div>
+        记录用户在系统进行的各项操作的日志，用户可查看操作的对象、时间、操作类型及描述。
+      </div>
+    </div>
+  </div>
+  <div class="notice main-container ws-main-container fs-8" v-else-if="$route.query.id == 7">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>Tapdata 在线研讨会：DaaS vs 大数据平台，是竞争还是共处？</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2021-12-03</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-8">
+          <img src="../../../public/images/notice/activity_4.png" alt="" />
+        </div>
+        <div class="mb-3">
+          从20年前的传统数仓，到10年前大数据平台，5年前开始火热的数据中台以及最近出现的湖仓一体新数据平台，今天被数据孤岛困扰的企业，面临着太多的选择。这些数据产品及架构有一个共性：他们本质上解决的大部分都是分析洞察类场景(
+          Analytical)，无论是BI，报表，指标，标签，画像，AI等。<span class="fw-bolder"
+            >但是实际上，企业在事务型(Transactional)类型上的业务投入和AP 相比是9:1之差别。而Real Time DaaS,
+            则是主要为TP型场景设计的一个实时数据平台。</span
+          >
+        </div>
+        <div class="mb-3 fw-bolder">
+          我们为什么需要一个Real Time
+          DaaS？它和大数据平台技术上有什么区别？如果企业还没有构建数据平台，我是应该考虑DaaS还是Big
+          Data？如果已经有了大数据平台，我是否还需要DaaS？
+        </div>
+        <div class="mb-3">
+          如果你想了解更多，请参加本次的在线研讨会。TJ会详细阐述 Tapdata DaaS的技术特性以及在不同成熟度企业的合理运用。
+        </div>
+        <div class="mb-3">
+          *
+          我们还提供了丰富的参会礼品，不论是报名参会还是分享海报，都有机会获得机械键盘、数据库相关技术书籍以及精美伴手礼！详情关注文末介绍。
+        </div>
+        <div class="mb-3">Tapdata Cloud采用了多种网络安全措施，确保用户数据和信息安全。</div>
+        <div class="mb-8">
+          <img src="../../../public/images/notice/activity_3.png" alt="" />
+        </div>
+        <div class="mb-3">
+          <div class="fw-bolder">转发有奖</div>
+          转发本活动链接至朋友圈，并将截图发给官方小助手即可参加抽奖；我们将于在线研讨会开始前1小时，即12月8日晚7点开出会前抽奖，送出机械键盘1个，书籍《数据库系统内幕》2本，《图解SQL—数据库语言轻松入门》3本，伴手礼10个。
+        </div>
+        <div class="mb-3">
+          <div class="fw-bolder">参会有奖</div>
+          周三晚在线研讨会期间，按照主持人指示参加抽奖，我们将在分享期间抽奖送出机械键盘1个，书籍《数据库系统内幕》2本，《图解SQL—数据库语言轻松入门》3本，伴手礼10个。
+        </div>
+        <div class="mb-3">
+          <div class="fw-bolder">100%有奖！</div>
+          关注下方二维码即可获取您的专属海报，按照后台指引操作可以直接领取书籍1本（限量20名）！
+        </div>
+        <div class="mb-3">
+          在 Tapdata Cloud 1.0.8 版本中，我们对
+          Windows下Agent部署方式优化，同时优化了云版Agent包，打包时去掉暂时不需要的数据库驱动jar包 。/div>
+        </div>
+        <div class="mb-8">
+          <img src="../../../public/images/notice/activity_5.png" alt="" />
         </div>
       </div>
     </div>
