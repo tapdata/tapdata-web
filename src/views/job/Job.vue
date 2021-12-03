@@ -1223,8 +1223,6 @@ export default {
           // greentplumSettingFalg = true,
           sourceInitialFalg = true,
           databaseType = ''
-          greentplumSettingFalg = true,
-          hanaSettingFalg = true
         if (data && data.stages && data.stages.length) {
           stageTypeFalg = data.stages.every(stage => stage.type === 'database')
           if (stageTypeFalg) {
@@ -1248,8 +1246,8 @@ export default {
             }
             if (
               item.outputLanes.length &&
-              (['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'gaussdb200'].includes(item.databaseType) ||
-                ['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'gaussdb200'].includes(
+              (['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'hana', 'gaussdb200'].includes(item.databaseType) ||
+                ['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'hana', 'gaussdb200'].includes(
                   item.database_type
                 )) &&
               // (item.databaseType === 'greenplum' || item.database_type === 'greenplum') &&
@@ -1258,14 +1256,6 @@ export default {
               sourceInitialFalg = false
               databaseType = item.databaseType ? item.databaseType : item.database_type
               // greentplumSettingFalg = false
-            }
-
-            if (
-              item.outputLanes.length &&
-              (item.databaseType === 'hana' || item.database_type === 'hana') &&
-              this.sync_type !== 'initial_sync'
-            ) {
-              hanaSettingFalg = false
             }
           })
         }
@@ -1291,10 +1281,6 @@ export default {
           return
         }
 
-        if (!hanaSettingFalg) {
-          this.$message.error(this.$t('dag_data_node_hana_hana_check'))
-          return
-        }
         if (this.modPipeline) {
           data['modPipeline'] = []
           this.showCheckStagesVisible = false
