@@ -5,7 +5,7 @@ export default function (vm) {
       labelWidth: '200px'
     },
     defaultModel: {
-      connection_type: 'target',
+      connection_type: 'source_and_target',
       thin_type: 'SID',
       supportUpdatePk: false,
       pgsql_log_decorder_plugin_name: 'wal2json_streaming'

@@ -382,6 +382,10 @@ export default {
 
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
+        if (data.tableName.indexOf('(') === -1) {
+          data.tableName = data.tableName + `(${data.table_type})`
+        }
+
         _.merge(this.model, data)
         this.scope = vueAdapter?.editor?.scope
         this.model.stageId = cell.id
@@ -409,6 +413,9 @@ export default {
 
     getData() {
       let result = _.cloneDeep(this.model)
+      let index = result.tableName.lastIndexOf('(')
+
+      result.tableName = result.tableName.substring(0, index)
       result.name = result.tableName || 'Mq'
       // if (result.connectionId) {
       // 	let database = this.databases.filter(db => db.id === result.connectionId);

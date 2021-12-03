@@ -14,6 +14,7 @@
           <div v-if="item.category === 'license'">
             <div class="license" v-for="(licenseItem, licenseIndex) in item.liceseItems" :key="licenseIndex">
               <div>{{ $t('setting.nameserver') }}: {{ licenseItem.hostname }}</div>
+              <!--authorization報錯 隱藏到期時間-->
               <!-- <div>
                 {{ $t('setting.expiredate') }}:
                 {{

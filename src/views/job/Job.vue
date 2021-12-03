@@ -322,11 +322,11 @@ import SkipError from '../../components/SkipError'
 import { uuid } from '../../editor/util/Schema'
 import VIcon from '@/components/VIcon'
 
-const dataFlowsApi = factory('DataFlows');
-const Setting = factory('Setting');
+const dataFlowsApi = factory('DataFlows')
+const Setting = factory('Setting')
 // const cluster = factory('cluster');
-let changeData = null;
-let timer = null;
+let changeData = null
+let timer = null
 export default {
   name: 'Job',
   dataFlow: null,
@@ -396,54 +396,54 @@ export default {
   },
   mounted() {
     // build editor
-    let customProcessors = [];
+    let customProcessors = []
     this.$api('nodeConfigs')
       .get()
       .then(({ data }) => {
-        customProcessors = data;
-        if (this.$route.query.isSimple == 'true') this.isSimple = true;
+        customProcessors = data
+        if (this.$route.query.isSimple == 'true') this.isSimple = true
         if (!this.$route.query.id) {
           this.getGlobalSetting()
         }
-        this.mappingTemplate = this.$route.query.mapping;
-        if (this.$route.query.isMoniting == 'true') this.isMoniting = true;
+        this.mappingTemplate = this.$route.query.mapping
+        if (this.$route.query.isMoniting == 'true') this.isMoniting = true
         this.editor = editor({
           container: $('.editor-container'),
           actionBarEl: $('.editor-container .action-buttons'),
           scope: this,
           customProcessors
-        });
+        })
 
         if (this.$route.query.isSimple == 'true') {
-          this.initData(db2db.data);
-          this.mappingTemplate = 'cluster-clone';
-          this.loading = false;
-          setTimeout(() => this.initSimple(), 1100);
+          this.initData(db2db.data)
+          this.mappingTemplate = 'cluster-clone'
+          this.loading = false
+          setTimeout(() => this.initSimple(), 1100)
           return
         }
         if (window.name && window.name.length > 200) {
-          this.initData(JSON.parse(window.name));
-          window.name = '';
-          this.loading = false;
+          this.initData(JSON.parse(window.name))
+          window.name = ''
+          this.loading = false
           return
         }
-        this.loadData();
+        this.loadData()
         if (this.$route.query.id) {
-          this.wsWatch();
-          this.initWSSed(); //有id 主动监听当前任务schema进度
+          this.wsWatch()
+          this.initWSSed() //有id 主动监听当前任务schema进度
           this.getSchemaResult()
         } else {
           //新建任务由前端生成任务id
           this.$api('Setting')
             .getObjectId()
             .then(res => {
-              this.queryId = res.data;
+              this.queryId = res.data
               this.getSchemaResult()
             })
         }
         this.editor.graph.on(EditorEventType.DRAFT_SAVE, () => {
           this.draftSave()
-        });
+        })
 
         window.addEventListener('beforeunload', this.handleBeforeUnLoad)
       })
@@ -456,8 +456,8 @@ export default {
     },
 
     backDataFlow() {
-      let mapping = this.$route.query.mapping;
-      const $PLATFORM = window.getSettingByKey('DFS_TCM_PLATFORM');
+      let mapping = this.$route.query.mapping
+      const $PLATFORM = window.getSettingByKey('DFS_TCM_PLATFORM')
       const backToList = () => {
         if ($PLATFORM === 'dfs') {
           top.window.App.$router.push({
@@ -471,7 +471,7 @@ export default {
             }
           })
         }
-      };
+      }
       if (!this.dataChangeFalg || $PLATFORM) {
         backToList()
       } else {
@@ -483,7 +483,7 @@ export default {
           if (!resFlag) {
             return
           }
-          this.dataChangeFalg = false;
+          this.dataChangeFalg = false
           backToList()
         })
       }
@@ -496,10 +496,10 @@ export default {
       if (this.$route.query && this.$route.query.id) {
         this.loadDataFlow(this.$route.query.id)
       } else {
-        this.loading = false;
-        this.onGraphChanged();
-        this.setEditable(true);
-        this.creatUserId = this.$cookie.get('user_id');
+        this.loading = false
+        this.onGraphChanged()
+        this.setEditable(true)
+        this.creatUserId = this.$cookie.get('user_id')
         this.editor.ui.setName(this.$t('dataFlow.newTaksName') + '_' + uuid().slice(0, 7))
         // if (!this.dataFlow) document.title = this.$t('dataFlow.newTaksName');
       }
@@ -507,22 +507,22 @@ export default {
     },
 
     simpleRefresh() {
-      let self = this;
+      let self = this
       self.editor.graph.paper.getMountedViews().forEach(ele => {
         if (ele.$el) ele.$el.show()
-      });
+      })
       this.$nextTick(() => {
         self.$refs.simpleScene.cellHtml = self.editor.graph.paper
           .getMountedViews()
           .map(ele => {
-            if (ele.model.isElement) return ele.$el[0].outerHTML;
+            if (ele.model.isElement) return ele.$el[0].outerHTML
             else return ''
           })
-          .join('');
-        self.$refs.simpleScene.renderCell();
+          .join('')
+        self.$refs.simpleScene.renderCell()
         self.editor.graph.paper.getMountedViews().forEach(ele => {
           if (ele.$el) ele.$el.hide()
-        });
+        })
         try {
           if (this.editor.graph.graph.getCells()[self.$refs.simpleScene.activeStep - 1].validate())
             self.$refs.simpleScene.stepValid()
@@ -532,63 +532,63 @@ export default {
       })
     },
     simpleGoNext(step) {
-      let self = this;
+      let self = this
       if (step == 4) {
-        this.newDataFlowV = true;
-        if (this.$refs.newDataFlowV) this.$refs.newDataFlowV.dialogVisibleSetting = true;
+        this.newDataFlowV = true
+        if (this.$refs.newDataFlowV) this.$refs.newDataFlowV.dialogVisibleSetting = true
         return
-      } else this.newDataFlowV = false;
-      this.editor.graph.selectCell(this.editor.graph.graph.getCells()[step - 1]);
+      } else this.newDataFlowV = false
+      this.editor.graph.selectCell(this.editor.graph.graph.getCells()[step - 1])
       setTimeout(() => {
         self.simpleRefresh()
       }, 10)
     },
     initSimple() {
-      let self = this;
-      this.editor.graph.isSimple = true;
-      document.body.getElementsByClassName('e-sidebar-right')[0].style.zIndex = 2000;
-      this.editor.graph.selectCell(this.editor.graph.graph.getCells()[0]);
+      let self = this
+      this.editor.graph.isSimple = true
+      document.body.getElementsByClassName('e-sidebar-right')[0].style.zIndex = 2000
+      this.editor.graph.selectCell(this.editor.graph.graph.getCells()[0])
       setTimeout(() => {
         self.simpleRefresh()
       }, 10)
     },
     initData(data) {
-      let dataFlow = data;
-      this.dataFlowId = dataFlow.id;
-      this.status = dataFlow.status;
-      this.executeMode = dataFlow.executeMode;
+      let dataFlow = data
+      this.dataFlowId = dataFlow.id
+      this.status = dataFlow.status
+      this.executeMode = dataFlow.executeMode
       if (dataFlow.setting) {
         this.sync_type = dataFlow.setting.sync_type
       }
-      this.dataFlow = dataFlow;
+      this.dataFlow = dataFlow
       if (!dataFlow.name) {
         dataFlow.name = this.$t('dataFlow.newTaksName') + '_' + uuid().slice(0, 7)
       }
-      document.title = dataFlow.name;
+      document.title = dataFlow.name
       // 管理端api创建任务来源以及editorData 数据丢失情况
       if (!dataFlow.editorData && dataFlow.stages) {
         // 1. 拿到创建所有的节点数据
-        let cells = JSON.stringify(this.creatApiEditorData(dataFlow.stages));
-        dataFlow.editorData = cells;
+        let cells = JSON.stringify(this.creatApiEditorData(dataFlow.stages))
+        dataFlow.editorData = cells
         // 2. 调用画布创建节点方法
-        this.editor.setData(dataFlow);
+        this.editor.setData(dataFlow)
         // 3. 更新schema
-        this.editor.reloadSchema();
+        this.editor.reloadSchema()
         // 4. 节点布局
-        this.editor.graph.layoutDirectedGraph();
+        this.editor.graph.layoutDirectedGraph()
         // 5. 处理joinTables
         this.handleJoinTables(dataFlow.stages, this.editor.graph.graph)
       } else {
         this.editor.setData(dataFlow)
       }
-      if (this.statusBtMap[this.status].start || this.isMoniting) this.setEditable(false);
-      else this.setEditable(true);
-      if (this.executeMode !== 'normal') this.showCapture();
-      this.onGraphChanged();
-      this.setSelector(this.$route.query.mapping);
-      this.editor.graph.setSettingData(dataFlow.setting);
-      this.wsSend();
-      let self = this;
+      if (this.statusBtMap[this.status].start || this.isMoniting) this.setEditable(false)
+      else this.setEditable(true)
+      if (this.executeMode !== 'normal') this.showCapture()
+      this.onGraphChanged()
+      this.setSelector(this.$route.query.mapping)
+      this.editor.graph.setSettingData(dataFlow.setting)
+      this.wsSend()
+      let self = this
       setTimeout(() => {
         self.dataChangeFalg = false
       }, 100)
@@ -619,58 +619,58 @@ export default {
               'fullDocument.milestones': true
             }
           }
-        };
+        }
         ws.ready(() => {
           ws.send(msg)
         }, true)
       }
     },
     wsWatch() {
-      let self = this;
+      let self = this
       ws.on('watch', function (data) {
-        let dat = data.data.fullDocument;
-        self.status = dat.status;
+        let dat = data.data.fullDocument
+        self.status = dat.status
 
-        if (self.executeMode !== dat.executeMode) self.executeMode = dat.executeMode;
+        if (self.executeMode !== dat.executeMode) self.executeMode = dat.executeMode
 
         if (!self.statusBtMap[self.status].start) {
           self.executeMode = 'normal'
         }
-        delete self.dataFlow.validateBatchId;
-        delete self.dataFlow.validateStatus;
-        delete self.dataFlow.validationSettings;
+        delete self.dataFlow.validateBatchId
+        delete self.dataFlow.validateStatus
+        delete self.dataFlow.validationSettings
 
-        Object.assign(self.dataFlow, dat);
+        Object.assign(self.dataFlow, dat)
         self.editor.emit('dataFlow:updated', _.cloneDeep(dat))
-      });
-      if (timer && !this.dataFlowId) return;
+      })
+      if (timer && !this.dataFlowId) return
       timer = setInterval(() => {
         self.updateDataFlow()
       }, 5000)
     },
     //实时获取schema加载进度
     initWSSed() {
-      let id = this.$route.query.id || this.queryId;
+      let id = this.$route.query.id || this.queryId
       let msg = {
         type: 'metadataTransformerProgress',
         data: {
           dataFlowId: id
         }
-      };
+      }
       ws.ready(() => {
         ws.send(msg)
       }, true)
     },
     getSchemaResult() {
-      let self = this;
-      let id = self.$route.query.id || self.queryId;
+      let self = this
+      let id = self.$route.query.id || self.queryId
       ws.on('metadataTransformerProgress', function (res) {
         if (!res?.data?.stageId && res?.data?.dataFlowId === id) {
-          self.showDialogProgress = true; // 最新返回信息展示
-          let { finished, total, status } = res?.data;
-          self.progress.finished = finished;
-          self.progress.total = total;
-          self.progress.progress = status;
+          self.showDialogProgress = true // 最新返回信息展示
+          let { finished, total, status } = res?.data
+          self.progress.finished = finished
+          self.progress.total = total
+          self.progress.progress = status
           if (status !== 'done') {
             self.progress.showProgress = true
           } else {
@@ -680,21 +680,21 @@ export default {
       })
     },
     updateDataFlow() {
-      let self = this;
-      let id = self.$route.query.id;
+      let self = this
+      let id = self.$route.query.id
       dataFlowsApi.get([id]).then(result => {
-        let dat = result?.data || {};
-        self.status = dat.status;
+        let dat = result?.data || {}
+        self.status = dat.status
 
-        if (self.executeMode !== dat.executeMode) self.executeMode = dat.executeMode;
+        if (self.executeMode !== dat.executeMode) self.executeMode = dat.executeMode
 
         if (self.statusBtMap[self.status] && !self.statusBtMap[self.status].start) {
           self.executeMode = 'normal'
         }
         if (self.dataFlow) {
-          delete self.dataFlow.validateBatchId;
-          delete self.dataFlow.validateStatus;
-          delete self.dataFlow.validationSettings;
+          delete self.dataFlow.validateBatchId
+          delete self.dataFlow.validateStatus
+          delete self.dataFlow.validationSettings
           Object.assign(self.dataFlow, dat)
         }
         self.editor.emit('dataFlow:updated', _.cloneDeep(dat))
@@ -704,12 +704,12 @@ export default {
       if (this.isSimple) {
         this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
           this.simpleRefresh()
-        });
+        })
         return
       }
-      let self = this;
+      let self = this
       this.editor.graph.on(EditorEventType.DATAFLOW_CHANGED, () => {
-        changeData = this.getDataFlowData(true);
+        changeData = this.getDataFlowData(true)
         if (changeData) {
           self.dataChangeFalg = true
         }
@@ -717,35 +717,35 @@ export default {
     },
     //点击draft save按钮
     async draftSave() {
-      this.isSaving = true;
-      localStorage.removeItem(this.tempId);
+      this.isSaving = true
+      localStorage.removeItem(this.tempId)
       let self = this,
         promise = null,
         // lastString = '',
-        data = this.getDataFlowData(true);
+        data = this.getDataFlowData(true)
 
       let params = {
         'filter[order]': 'name DESC',
         'filter[limit]': 1,
         'filter[where][name][like]': data.name
-      };
+      }
 
-      let result = await dataFlowsApi.get(params);
+      let result = await dataFlowsApi.get(params)
       if (result && result.data.length > 0) {
         this.flowDataName = result.data[0].name
       }
 
-      log('DataFlows Draft Save Params: ', data);
+      log('DataFlows Draft Save Params: ', data)
       if (data?.stages?.length) {
         data.stages.forEach(item => {
           // 是否有hive
           if (item.type === 'hive' || item.database_type === 'hive') {
-            data.setting.transformerConcurrency = 1;
+            data.setting.transformerConcurrency = 1
             data.setting.readBatchSize = 10000
           }
         })
       }
-      promise = dataFlowsApi.draft(data);
+      promise = dataFlowsApi.draft(data)
 
       if (promise) {
         promise
@@ -758,11 +758,11 @@ export default {
           })
           .then(result => {
             if (result && result.data) {
-              let dataFlow = result.data;
-              self.dataFlowId = dataFlow.id;
-              self.status = dataFlow.status;
-              self.executeMode = dataFlow.executeMode;
-              self.dataFlow = dataFlow;
+              let dataFlow = result.data
+              self.dataFlowId = dataFlow.id
+              self.status = dataFlow.status
+              self.executeMode = dataFlow.executeMode
+              self.dataFlow = dataFlow
               if (!self.$route.query || !self.$route.query.id) {
                 self.$router.push({
                   name: 'job',
@@ -777,8 +777,8 @@ export default {
             log('DataFlows Draft Save Response: ', result)
           })
           .finally(() => {
-            changeData = null;
-            self.loading = false;
+            changeData = null
+            self.loading = false
             self.isSaving = false
           })
       }
@@ -788,9 +788,9 @@ export default {
      * show submit layer
      */
     submitLayer() {
-      this.dialogFormVisible = true;
+      this.dialogFormVisible = true
       if (this.dialogFormVisible) {
-        let editorData = this.editor.getData();
+        let editorData = this.editor.getData()
         this.form.taskName = editorData.name
       }
     },
@@ -800,13 +800,13 @@ export default {
      * @param id
      */
     loadDataFlow(id) {
-      let self = this;
+      let self = this
       dataFlowsApi
         .get([id])
         .then(result => {
           if (result && result.data) {
-            self.creatUserId = result.data.user_id;
-            self.initData(result.data);
+            self.creatUserId = result.data.user_id
+            self.initData(result.data)
             // 删除旧缓存
             Object.keys(localStorage).forEach(key => {
               if (key.startsWith('tapdata.dataflow.$$$') && key.split('$$$')[2] == result.data.name)
@@ -817,14 +817,14 @@ export default {
                 }
             })
           } else {
-            self.$message.error(self.$t('message.api.get.error'));
+            self.$message.error(self.$t('message.api.get.error'))
             self.setEditable(false)
           }
           self.loading = false
         })
         .catch(err => {
-          log(err);
-          self.$message.error(self.$t('message.api.get.error'));
+          log(err)
+          self.$message.error(self.$t('message.api.get.error'))
           self.loading = false
         })
     },
@@ -836,33 +836,33 @@ export default {
     getDataFlowData(autoSave) {
       // validate
       if (!autoSave) {
-        this.editor.graph.unHighlightAllCells();
-        let verified = this.editor.validate();
+        this.editor.graph.unHighlightAllCells()
+        let verified = this.editor.validate()
         if (verified !== true) {
-          this.$message.error(verified);
+          this.$message.error(verified)
           return
         }
       }
-      let editorData = this.editor.getData();
-      let graphData = editorData.graphData;
-      let settingData = editorData.settingData;
-      this.sync_type = settingData.sync_type;
+      let editorData = this.editor.getData()
+      let graphData = editorData.graphData
+      let settingData = editorData.settingData
+      this.sync_type = settingData.sync_type
       settingData.notificationInterval = settingData.notificationInterval
         ? Number(settingData.notificationInterval)
-        : 300;
-      settingData.notificationWindow = settingData.notificationWindow ? Number(settingData.notificationWindow) : 0;
-      settingData.readBatchSize = settingData.readBatchSize ? Number(settingData.readBatchSize) : 1000;
-      settingData.readCdcInterval = settingData.readCdcInterval ? Number(settingData.readCdcInterval) : 500;
+        : 300
+      settingData.notificationWindow = settingData.notificationWindow ? Number(settingData.notificationWindow) : 0
+      settingData.readBatchSize = settingData.readBatchSize ? Number(settingData.readBatchSize) : 1000
+      settingData.readCdcInterval = settingData.readCdcInterval ? Number(settingData.readCdcInterval) : 500
       settingData.transformerConcurrency = settingData.transformerConcurrency
         ? Number(settingData.transformerConcurrency)
-        : 8;
-      settingData.processorConcurrency = settingData.processorConcurrency ? Number(settingData.processorConcurrency) : 1;
-      settingData.userSetLagTime = settingData.userSetLagTime ? Number(settingData.userSetLagTime) : 0;
-      let distanceForSink = editorData.distanceForSink || {};
+        : 8
+      settingData.processorConcurrency = settingData.processorConcurrency ? Number(settingData.processorConcurrency) : 1
+      settingData.userSetLagTime = settingData.userSetLagTime ? Number(settingData.userSetLagTime) : 0
+      let distanceForSink = editorData.distanceForSink || {}
 
-      let cells = graphData.cells ? graphData.cells : [];
-      let edgeCells = {};
-      let nodeCells = {};
+      let cells = graphData.cells ? graphData.cells : []
+      let edgeCells = {}
+      let nodeCells = {}
       cells.forEach(cell => {
         if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') {
           if (cell.attrs && cell.attrs.line && cell.attrs.line.stroke) {
@@ -870,7 +870,7 @@ export default {
           }
           edgeCells[cell.id] = cell
         } else nodeCells[cell.id] = cell
-      });
+      })
 
       let postData = Object.assign(
         {
@@ -893,8 +893,8 @@ export default {
         {
           editorData: JSON.stringify(graphData)
         }
-      );
-      let stages = {};
+      )
+      let stages = {}
       Object.values(nodeCells).forEach(cell => {
         let stage = (stages[cell.id] = Object.assign(
           {
@@ -905,10 +905,10 @@ export default {
             distance: distanceForSink[cell.id]
           },
           cell[FORM_DATA_KEY] || {}
-        ));
+        ))
 
         if (['app.Database'].includes(cell.type)) {
-          postData.mappingTemplate = 'cluster-clone';
+          postData.mappingTemplate = 'cluster-clone'
 
           Object.assign(stage, {
             type: 'database',
@@ -927,7 +927,7 @@ export default {
             'app.DamengNode'
           ].includes(cell.type)
         ) {
-          postData.mappingTemplate = 'custom';
+          postData.mappingTemplate = 'custom'
 
           Object.assign(stage, {
             dataQualityTag: false,
@@ -936,19 +936,19 @@ export default {
               .map(edge => edge[FORM_DATA_KEY] && edge[FORM_DATA_KEY].joinTable)
           })
         }
-      });
+      })
       Object.values(edgeCells).forEach(cell => {
         if (cell.type === 'app.Link' || cell.type === 'app.databaseLink') {
-          let sourceId = cell.source.id;
-          let targetId = cell.target.id;
+          let sourceId = cell.source.id
+          let targetId = cell.target.id
           if (sourceId && stages[sourceId]) {
-            stages[sourceId].outputLanes.push(targetId);
+            stages[sourceId].outputLanes.push(targetId)
             //添加字段处理器
             if (postData.mappingTemplate === 'cluster-clone') {
-              stages[sourceId]['field_process'] = cell[FORM_DATA_KEY]?.field_process;
+              stages[sourceId]['field_process'] = cell[FORM_DATA_KEY]?.field_process
 
               //迁移全局修改设置值
-              stages[targetId].tableNameTransform = cell[FORM_DATA_KEY]?.tableNameTransform;
+              stages[targetId].tableNameTransform = cell[FORM_DATA_KEY]?.tableNameTransform
               stages[targetId].fieldsNameTransform = cell[FORM_DATA_KEY]?.fieldsNameTransform
             }
           }
@@ -956,10 +956,10 @@ export default {
             stages[targetId].inputLanes.push(sourceId)
           }
         }
-      });
-      postData.stages = Object.values(stages);
+      })
+      postData.stages = Object.values(stages)
 
-      if (this.dataFlowId) postData.id = this.dataFlowId;
+      if (this.dataFlowId) postData.id = this.dataFlowId
       if (!this.$route.query.id && !this.dataFlowId) {
         postData.id = this.queryId || '' //当前路由没有id 保存任务则用前端生成id
       }
@@ -970,43 +970,43 @@ export default {
      * get data flow stage and include inputSchema, outputSchema, schema
      */
     getStages() {
-      let dataFlowData = this.getDataFlowData(true);
-      let stages = dataFlowData.stages;
-      let { graph } = this.editor.getData() || {};
-      let dataFlowId = this.dataFlowId;
+      let dataFlowData = this.getDataFlowData(true)
+      let stages = dataFlowData.stages
+      let { graph } = this.editor.getData() || {}
+      let dataFlowId = this.dataFlowId
       stages.forEach(stage => {
-        let cell = graph.getCell(stage.id) || {};
-        let schema = cell.getSchema();
-        let outputSchema = cell.getOutputSchema();
-        let inputSchema = cell.getInputSchema();
-        if (schema) stage.schema = schema;
-        if (outputSchema) stage.outputSchema = outputSchema;
-        if (inputSchema) stage.inputSchema = inputSchema;
+        let cell = graph.getCell(stage.id) || {}
+        let schema = cell.getSchema()
+        let outputSchema = cell.getOutputSchema()
+        let inputSchema = cell.getInputSchema()
+        if (schema) stage.schema = schema
+        if (outputSchema) stage.outputSchema = outputSchema
+        if (inputSchema) stage.inputSchema = inputSchema
 
         stage.dataFlowId = dataFlowId
-      });
+      })
       return stages
     },
     checkJoinTableStageId() {
-      let stages = this.getDataFlowData(true).stages;
-      let cells = this.editor.graph.graph.getCells();
-      let valid = true;
+      let stages = this.getDataFlowData(true).stages
+      let cells = this.editor.graph.graph.getCells()
+      let valid = true
       stages.forEach(stage => {
         if (stage.joinTables)
           stage.joinTables.forEach(jt => {
-            if (!jt || !jt.id) return;
-            let finded = false;
+            if (!jt || !jt.id) return
+            let finded = false
             cells.reduce((finded, cell) => {
               if (cell.id == jt.id) finded = true
-            });
+            })
             try {
               if (!finded) cells.filter(cell => cell.id == stage.id)[0].updateOutputSchema()
             } catch (e) {
-              alert('jointables stageid chaeck failed===>>' + stage.id);
+              alert('jointables stageid chaeck failed===>>' + stage.id)
               valid = false
             }
           })
-      });
+      })
       return valid
     },
 
@@ -1016,27 +1016,27 @@ export default {
      * @param cb
      */
     doSave(data, cb) {
-      let self = this;
-      if (!this.checkJoinTableStageId()) return;
-      localStorage.removeItem(this.tempId);
+      let self = this
+      if (!this.checkJoinTableStageId()) return
+      localStorage.removeItem(this.tempId)
       const _doSave = function () {
-        let promise = self.$route.query.id ? dataFlowsApi.patch(data) : dataFlowsApi.post(data);
+        let promise = self.$route.query.id ? dataFlowsApi.patch(data) : dataFlowsApi.post(data)
         promise
           .then(result => {
             if (result && result.data) {
-              let dataFlow = result.data;
+              let dataFlow = result.data
 
-              self.dataFlowId = dataFlow.id;
-              self.status = dataFlow.status;
-              self.executeMode = dataFlow.executeMode;
+              self.dataFlowId = dataFlow.id
+              self.status = dataFlow.status
+              self.executeMode = dataFlow.executeMode
 
-              self.dataFlow = dataFlow;
+              self.dataFlow = dataFlow
 
               if (typeof cb === 'function') {
                 cb(null, dataFlow)
               }
 
-              let stages = self.getStages();
+              let stages = self.getStages()
               dataFlowsApi
                 .saveStage(stages)
                 .then(() => {
@@ -1047,8 +1047,8 @@ export default {
                         id: dataFlow.id,
                         mapping: this.mappingTemplate
                       }
-                    });
-                    self.wsWatch();
+                    })
+                    self.wsWatch()
                     self.wsSend()
                   }
                 })
@@ -1063,36 +1063,36 @@ export default {
             self.loading = false
           })
           .catch(e => {
-            self.loading = false;
+            self.loading = false
             if (typeof cb === 'function') {
               cb(e, null)
             }
           })
-      };
+      }
 
       if (data.name) {
         let params = {
           name: data.name,
           user_id: this.dataFlow?.user_id || data.user_id || ''
-        };
+        }
         if (data.id) {
           params.id = {
             neq: data.id
           }
         }
-        self.loading = true;
+        self.loading = true
         dataFlowsApi
           .count({ where: JSON.stringify(params) })
           .then(result => {
             if (result && result.data && result.data.count > 0) {
-              this.$message.error(`${self.$t('message.exists_name')}: ${data.name}`);
+              this.$message.error(`${self.$t('message.exists_name')}: ${data.name}`)
               self.loading = false
             } else {
               _doSave()
             }
           })
           .catch(e => {
-            self.loading = false;
+            self.loading = false
             if (typeof cb === 'function') {
               cb(e, null)
             }
@@ -1107,9 +1107,9 @@ export default {
      */
     save() {
       let self = this,
-        data = this.getDataFlowData();
+        data = this.getDataFlowData()
       if (data) {
-        if (data.id) delete data.status;
+        if (data.id) delete data.status
 
         self.doSave(data, err => {
           if (err) {
@@ -1121,9 +1121,9 @@ export default {
       }
     },
     skipHandler(id, errorEvents) {
-      let data = this.getDataFlowData();
+      let data = this.getDataFlowData()
       if (data) {
-        data.errorEvents = errorEvents;
+        data.errorEvents = errorEvents
         this.doSaveStartDataFlow(data)
       }
     },
@@ -1146,20 +1146,20 @@ export default {
      * start button handler
      */
     async start() {
-      let _this = this;
-      let id = this.$route.query.id;
+      let _this = this
+      let id = this.$route.query.id
 
       //如果有showSchemaProgress
-      this.showSchemaProgress = false;
-      this.showDialogProgress = false; // 重新启动任务先隐藏上一次进度结果，等ws回信息再显示最新
+      this.showSchemaProgress = false
+      this.showDialogProgress = false // 重新启动任务先隐藏上一次进度结果，等ws回信息再显示最新
       if (this.$refs.agentDialog.checkAgent()) {
         this.checkAgentStatus(() => {
           let doStart = () => {
-            let data = this.$route.query.isMoniting ? this.dataFlow : this.getDataFlowData(); //监控模式启动任务 data 为接口请求回来数据 编辑模式为cell 组装数据
+            let data = this.$route.query.isMoniting ? this.dataFlow : this.getDataFlowData() //监控模式启动任务 data 为接口请求回来数据 编辑模式为cell 组装数据
             if (data) {
               this.doSaveStartDataFlow(data)
             }
-          };
+          }
           let filter = {
             where: {
               'contextMap.dataFlowId': {
@@ -1167,7 +1167,7 @@ export default {
               },
               level: 'ERROR'
             }
-          };
+          }
           if (id) {
             _this
               .$api('logs')
@@ -1209,9 +1209,9 @@ export default {
           checkSetting = true,
           // greentplumSettingFalg = true,
           sourceInitialFalg = true,
-          databaseType = '';
+          databaseType = ''
         if (data && data.stages && data.stages.length) {
-          stageTypeFalg = data.stages.every(stage => stage.type === 'database');
+          stageTypeFalg = data.stages.every(stage => stage.type === 'database')
           if (stageTypeFalg) {
             data.stages.forEach(item => {
               if (item.syncObjects && item.syncObjects.length) {
@@ -1228,7 +1228,7 @@ export default {
               checkSetting = false
             }
             if (item.type === 'hive' || item.database_type === 'hive') {
-              data.setting.transformerConcurrency = 1;
+              data.setting.transformerConcurrency = 1
               data.setting.readBatchSize = 10000
             }
             if (
@@ -1240,7 +1240,7 @@ export default {
               // (item.databaseType === 'greenplum' || item.database_type === 'greenplum') &&
               this.sync_type !== 'initial_sync'
             ) {
-              sourceInitialFalg = false;
+              sourceInitialFalg = false
               databaseType = item.databaseType ? item.databaseType : item.database_type
               // greentplumSettingFalg = false
             }
@@ -1255,23 +1255,23 @@ export default {
         }
         // 【增量采集时间】仅增量任务时，选择浏览器时区，时间设置未作必填校验，导致任务启动后不增量同步。
         if (data?.setting?.sync_type === 'cdc') {
-          let { syncPoints } = data.setting;
-          let findOne = syncPoints.find(el => el.type !== 'current' && !el.date);
+          let { syncPoints } = data.setting
+          let findOne = syncPoints.find(el => el.type !== 'current' && !el.date)
           if (findOne) {
-            this.$message.error(this.$t('task_settings_cdc_sync_point_date'));
+            this.$message.error(this.$t('task_settings_cdc_sync_point_date'))
             return
           }
         }
         if (!checkSetting) {
-          this.$message.error(this.$t('editor.cell.data_node.hbase_check'));
+          this.$message.error(this.$t('editor.cell.data_node.hbase_check'))
           return
         }
         if (stageTypeFalg && objectNamesList.length === 0) {
-          this.$message.error(this.$t('editor.cell.link.chooseATableTip'));
+          this.$message.error(this.$t('editor.cell.link.chooseATableTip'))
           return
         }
         if (!sourceInitialFalg) {
-          this.$message.error(databaseType + this.$t('dag_job_check_source'));
+          this.$message.error(databaseType + this.$t('dag_job_check_source'))
           return
         }
         // if (!adbMysqlFalg) {
@@ -1283,28 +1283,28 @@ export default {
         //   return
         // }
         if (this.modPipeline) {
-          data['modPipeline'] = [];
-          this.showCheckStagesVisible = false;
+          data['modPipeline'] = []
+          this.showCheckStagesVisible = false
           data['modPipeline'] = this.modPipeline
         }
         let start = () => {
-          data.status = 'scheduled';
-          data.executeMode = 'normal';
+          data.status = 'scheduled'
+          data.executeMode = 'normal'
           this.doSave(data, (err, rest) => {
             if (err) {
               if (err.response.msg === 'Error: Loading data source schema') {
                 this.$message.error(this.$t('message.loadingSchema'))
               } else if (err.response.msg === 'DataFlow has add or del stages') {
                 if (err.response?.data && err.response?.data?.length > 0) {
-                  this.showCheckStagesVisible = true;
-                  this.checkStagesData = err.response.data;
-                  this.checkStagesData = this.checkStagesData.filter(v => v.type === 'add'); //只展示别删除的
+                  this.showCheckStagesVisible = true
+                  this.checkStagesData = err.response.data
+                  this.checkStagesData = this.checkStagesData.filter(v => v.type === 'add') //只展示别删除的
                   for (let i = 0; i < this.checkStagesData.length; i++) {
                     this.checkStagesData[i].syncType = 'initial_sync+cdc'
                   }
                 }
               } else if (err.response.msg === 'running transformer') {
-                this.initWSSed();
+                this.initWSSed()
                 this.showSchemaProgress = true
               } else if (err.response.msg === 'invalid') {
                 this.showFieldMappingProgress = true
@@ -1312,7 +1312,7 @@ export default {
                 this.$message.error(err.response.msg)
               }
             } else {
-              this.$message.success(this.$t('message.taskStart'));
+              this.$message.success(this.$t('message.taskStart'))
               this.$router.push({
                 name: 'job',
                 query: {
@@ -1320,12 +1320,12 @@ export default {
                   isMoniting: true,
                   mapping: this.mappingTemplate
                 }
-              });
-              this.$message.success(this.$t('message.taskStart'));
+              })
+              this.$message.success(this.$t('message.taskStart'))
               location.reload()
             }
           })
-        };
+        }
         // if (data.id && this.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
         // 	const h = this.$createElement;
         // 	let arr = this.$t('message.startAggregation_message').split('XXX');
@@ -1351,8 +1351,8 @@ export default {
     /*
      * 保存错误信息*/
     saveCheckStages(data) {
-      this.showCheckStagesVisible = false;
-      this.modPipeline = data;
+      this.showCheckStagesVisible = false
+      this.modPipeline = data
       this.start()
     },
     /**
@@ -1364,8 +1364,8 @@ export default {
         data = {
           id: self.dataFlowId,
           status: forceStop === true ? 'force stopping' : 'stopping'
-        };
-      let message = self.$t('message.stopMessage');
+        }
+      let message = self.$t('message.stopMessage')
       if (forceStop === true) {
         message = self.$t('message.forceStoppingMessage')
       }
@@ -1373,8 +1373,8 @@ export default {
         message = self.$t('message.stopInitial_syncMessage')
       }
       if (self.dataFlow.stages.find(s => s.type === 'aggregation_processor')) {
-        const h = self.$createElement;
-        let arr = self.$t('message.stopAggregation_message').split('XXX');
+        const h = self.$createElement
+        let arr = self.$t('message.stopAggregation_message').split('XXX')
         message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, self.dataFlow.name), ')' + arr[1]])
       }
       self
@@ -1403,7 +1403,7 @@ export default {
 
     preview() {
       let self = this,
-        data = this.getDataFlowData();
+        data = this.getDataFlowData()
       if (!self.statusBtMap[this.status].start) {
         if (data) {
           if (data.id) {
@@ -1418,7 +1418,7 @@ export default {
               executeMode: 'editing_debug'
             })
           }
-          this.isPreview = true;
+          this.isPreview = true
           self.doSave(data, err => {
             if (err) {
               this.$message.error(self.$t('message.saveFail'))
@@ -1436,7 +1436,7 @@ export default {
      */
     capture() {
       let self = this,
-        data = this.getDataFlowData();
+        data = this.getDataFlowData()
 
       if (data) {
         if (data && data.id) {
@@ -1465,7 +1465,7 @@ export default {
      */
     stopCapture() {
       let self = this,
-        data = this.getDataFlowData();
+        data = this.getDataFlowData()
 
       if (data && data.id) {
         self.doSave(
@@ -1487,7 +1487,7 @@ export default {
      */
     reset() {
       let self = this,
-        data = this.getDataFlowData();
+        data = this.getDataFlowData()
 
       if (data && data.id) {
         self
@@ -1501,12 +1501,12 @@ export default {
             if (!flag) {
               return
             }
-            this.loading = true;
+            this.loading = true
             dataFlowsApi
               .reset(data.id)
               .then(() => {
-                self.$message.success(self.$t('message.resetOk'));
-                self.editor.emit('dataFlow:reset');
+                self.$message.success(self.$t('message.resetOk'))
+                self.editor.emit('dataFlow:reset')
                 location.reload()
               })
               .catch(err => {
@@ -1525,8 +1525,8 @@ export default {
      * show setting button handler
      */
     showSetting() {
-      log('Job.showSetting');
-      this.editor.showSetting(!this.editable);
+      log('Job.showSetting')
+      this.editor.showSetting(!this.editable)
       this.editor.graph.selectCell([])
     },
     getGlobalSetting() {
@@ -1536,12 +1536,12 @@ export default {
             id: '76'
           }
         }
-      };
-      this.loading = true;
+      }
+      this.loading = true
       Setting.findOne(where)
         .then(res => {
           if (res.data.value) {
-            let value = JSON.parse(res.data.value);
+            let value = JSON.parse(res.data.value)
             this.editor.setSettingData(value.runNotification)
           }
         })
@@ -1575,7 +1575,7 @@ export default {
      */
 
     confirmReloadSchemaDialog() {
-      this.editor.reloadSchema();
+      this.editor.reloadSchema()
       this.reloadSchemaDialog = false
     },
 
@@ -1584,15 +1584,15 @@ export default {
      * @param editable
      */
     setEditable(editable) {
-      log('Job.setEditable', editable, this.dataFlow);
-      this.editable = editable;
+      log('Job.setEditable', editable, this.dataFlow)
+      this.editable = editable
       if (editable && window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
         this.$router.push({
           name: 'editTask',
           params: {
             id: this.dataFlow.id
           }
-        });
+        })
         return
       }
       if (editable && this.$route.query.isMoniting) {
@@ -1602,11 +1602,11 @@ export default {
             id: this.dataFlow.id,
             mapping: this.mappingTemplate
           }
-        });
+        })
         location.reload()
       }
       if (this.dataFlow) {
-        delete this.dataFlow.editorData;
+        delete this.dataFlow.editorData
         this.editor.setEditable(editable, this.dataFlow)
       } else {
         //this.$message.error(this.$t('message.save_before_running'));
@@ -1627,7 +1627,7 @@ export default {
      */
     creatApiEditorData(data) {
       // 1. 创建cell 2. 加载schema 3.自动布局
-      let cells = [];
+      let cells = []
       let mapping = {
         collection: 'app.Collection',
         table: 'app.Table',
@@ -1650,16 +1650,16 @@ export default {
         hana: 'app.HanaNode',
         dameng: 'app.DamengNode',
         clickhouse: 'app.ClickHouse'
-      };
+      }
       if (data) {
-        let stageMap = {};
+        let stageMap = {}
         data.forEach(item => {
           stageMap[item.id] = item
-        });
+        })
         data.map(v => {
-          let formData = _.cloneDeep(v);
-          delete formData.inputLanes;
-          delete formData.outputLanes;
+          let formData = _.cloneDeep(v)
+          delete formData.inputLanes
+          delete formData.outputLanes
           if (['table', 'view', 'collection', 'mongo_view', 'hive'].includes(v.type)) {
             let node = {
               type: mapping[v.type],
@@ -1674,7 +1674,7 @@ export default {
                 }
               },
               angle: 0
-            };
+            }
             cells.push(node)
           } else if (v.type && ['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'redis'].includes(v.type)) {
             let node = {
@@ -1689,10 +1689,10 @@ export default {
                 }
               },
               form_data: formData
-            };
+            }
             cells.push(node)
           } else if (v.type === 'database') {
-            let map = DATABASE_TYPE_MAPPING;
+            let map = DATABASE_TYPE_MAPPING
             let node = {
               type: mapping[v.type],
               id: v.id,
@@ -1708,7 +1708,7 @@ export default {
                   xlinkHref: map[v.database_type].shapeImage
                 }
               }
-            };
+            }
             cells.push(node)
           } else if (
             [
@@ -1731,7 +1731,7 @@ export default {
                   text: v.name !== '' && v.name ? breakText.breakText(v.name, 95) : v.type
                 }
               }
-            };
+            }
             if (['field_processor'].includes(v.type)) {
               node.form_data = formData
             } else if (['aggregation_processor'].includes(v.type)) {
@@ -1744,9 +1744,9 @@ export default {
             cells.push(node)
           }
           if (v.outputLanes) {
-            v.outputLanes = v.outputLanes.filter(d => d);
+            v.outputLanes = v.outputLanes.filter(d => d)
             v.outputLanes.map(k => {
-              let type = 'app.Link';
+              let type = 'app.Link'
               if (v.type === 'database' && stageMap[k].type === 'database') {
                 type = 'app.databaseLink'
               } else {
@@ -1773,13 +1773,13 @@ export default {
                 },
                 labels: '',
                 attrs: {}
-              };
+              }
               cells.push(node)
             })
           }
         })
       }
-      this.cells = cells;
+      this.cells = cells
       return {
         cells: cells
       }
@@ -1790,7 +1790,7 @@ export default {
      * @param graph
      */
     handleJoinTables(stages, graph) {
-      log('Job.handleJoinTables', stages, graph);
+      log('Job.handleJoinTables', stages, graph)
       if (stages) {
         stages.map(stage => {
           if (
@@ -1808,17 +1808,17 @@ export default {
           ) {
             // 目标节点 数据节点 jointables
             // tableName -> joinTable
-            let joinTables = {};
+            let joinTables = {}
             stage.joinTables.map(table => {
               joinTables[table.stageId] = table
-            });
+            })
 
-            let cell = graph.getCell(stage.id);
+            let cell = graph.getCell(stage.id)
             graph.getConnectedLinks(cell, { inbound: true }).forEach(link => {
-              let sourceCell = link.getSourceCell();
-              let sourceDataCells = sourceCell.getFirstDataNode().filter(cell => !!joinTables[cell.id]);
+              let sourceCell = link.getSourceCell()
+              let sourceDataCells = sourceCell.getFirstDataNode().filter(cell => !!joinTables[cell.id])
               if (sourceDataCells && sourceDataCells.length > 0) {
-                let formData = link.getFormData();
+                let formData = link.getFormData()
                 formData.joinTable = joinTables[sourceDataCells[0].id]
               }
             })
@@ -1827,18 +1827,18 @@ export default {
       }
     },
     querySearch(queryString, cb) {
-      let dataCells = this.editor.getAllCells();
-      let dataCellName = [];
+      let dataCells = this.editor.getAllCells()
+      let dataCellName = []
       dataCells.forEach(cell => {
-        let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null;
+        let formData = typeof cell.getFormData === 'function' ? cell.getFormData() : null
         let tableName = {
           value: formData.tableName || formData.name || '',
           cell: cell
-        };
+        }
         dataCellName.push(tableName)
-      });
-      var restaurants = dataCellName;
-      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+      })
+      var restaurants = dataCellName
+      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants
       // 调用 callback 返回建议列表的数据
       cb(results)
     },
@@ -1862,10 +1862,10 @@ export default {
       clearTimeout(this.timeoutId)
     }
     if (timer) {
-      clearTimeout(timer);
+      clearTimeout(timer)
       timer = null
     }
-    this.editor.destroy();
+    this.editor.destroy()
     ws.off('metadataTransformerProgress')
   }
 }
