@@ -27,6 +27,7 @@ export default function () {
         type: 'select',
         field: 'target_filter_databaseType',
         label: '目标端类型',
+        loading: false,
         options: [],
         required: true
       },
@@ -34,7 +35,6 @@ export default function () {
         type: 'select',
         field: 'target_connectionId',
         label: '目标端连接',
-        loading: false,
         filterable: true,
         options: [],
         required: true
