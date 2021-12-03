@@ -282,7 +282,7 @@
       width="30%"
     >
       <span>错误原因: 模型推演进行中</span>
-      <div>当前进度: {{ progress.finished }} / {{ progress.total }}</div>
+      <div v-if="showDialogProgress">当前进度: {{ progress.finished }} / {{ progress.total }}</div>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="showSchemaProgress = false">关闭</el-button>
         <el-button :disabled="progress.progress !== 'done'" type="primary" size="mini" @click="start()">启动</el-button>
@@ -382,8 +382,9 @@ export default {
         showProgress: false
       },
       queryId: '', //新建任务没有id 则由前端生成
-      showSchemaProgress: false,
-      showFieldMappingProgress: false
+      showSchemaProgress: false, //任务是否正在推演 控制弹窗的显示
+      showFieldMappingProgress: false, //字段映射是否正推演校验 控制弹窗的显示
+      showDialogProgress: false //任务字段总数是有变化，上一次结果不显示
     }
   },
   watch: {
@@ -663,6 +664,7 @@ export default {
     getSchemaResult() {
       let self = this
       let id = self.$route.query.id || self.queryId
+      this.showDialogProgress = true // 最新返回信息展示
       ws.on('metadataTransformerProgress', function (res) {
         if (!res?.data?.stageId && res?.data?.dataFlowId === id) {
           let { finished, total, status } = res?.data
@@ -1149,7 +1151,7 @@ export default {
 
       //如果有showSchemaProgress
       this.showSchemaProgress = false
-
+      this.showDialogProgress = false // 重新启动任务先隐藏上一次进度结果，等ws回信息再显示最新
       if (this.$refs.agentDialog.checkAgent()) {
         this.checkAgentStatus(() => {
           let doStart = () => {
