@@ -11,7 +11,9 @@ export class FieldProcessor extends NodeType {
     }
   }
 
-  attr = {}
+  attr = {
+    maxInputs: 1 // 最大输入个数
+  }
 
   group = 'processor'
 
@@ -19,11 +21,15 @@ export class FieldProcessor extends NodeType {
     type: 'object',
     properties: {
       operations: {
-        type: 'object',
+        type: 'array',
         title: '',
         'x-decorator': 'FormItem',
         'x-component': 'FieldProcess',
-        'x-reactions': ['{{useAsyncDataSource(loadTableField)}}']
+        'x-reactions': ['{{useAsyncDataSource(loadSourceNodeField)}}']
+      },
+      scripts: {
+        type: 'array',
+        display: 'none'
       }
     }
   }
