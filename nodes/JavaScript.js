@@ -11,7 +11,9 @@ export class JavaScript extends NodeType {
     }
   }
 
-  attr = {}
+  attr = {
+    maxInputs: 1 // 最大输入个数
+  }
 
   group = 'processor'
 
@@ -22,6 +24,7 @@ export class JavaScript extends NodeType {
         title: '脚本',
         type: 'string',
         required: true,
+        default: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
         'x-decorator': 'FormItem',
         'x-component': 'JsEditor',
         'x-component-props': {

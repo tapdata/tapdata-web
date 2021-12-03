@@ -1,82 +1,77 @@
 <template>
-  <ElTable :data="tableData" stripe style="width: 100%" height="100%" v-if="activeNode">
-    <ElTableColumn prop="date" label="字段名称" width="180"> </ElTableColumn>
-    <ElTableColumn prop="name" label="字段类型" width="180"> </ElTableColumn>
-    <ElTableColumn prop="address" label="精度"> </ElTableColumn>
-    <ElTableColumn prop="address" label="主键"> </ElTableColumn>
-    <ElTableColumn prop="address" label="字段注释"> </ElTableColumn>
+  <ElTable v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
+    <ElTableColumn prop="field_name" label="字段名称">
+      <template #default="{ row }">
+        <span class="flex align-center"
+          >{{ row.field_name }}
+          <VIcon v-if="row.unique" size="12" class="text-warning ml-1">key</VIcon>
+        </span>
+      </template>
+    </ElTableColumn>
+    <ElTableColumn prop="data_type" label="字段类型"> </ElTableColumn>
+    <ElTableColumn prop="scale" label="精度"> </ElTableColumn>
+    <ElTableColumn prop="oriPrecision" label="长度"> </ElTableColumn>
+    <ElTableColumn prop="comment" label="字段注释"> </ElTableColumn>
   </ElTable>
 </template>
 
 <script>
 import MetadataApi from 'web-core/api/MetadataInstances'
 import { mapGetters, mapState } from 'vuex'
+import VIcon from 'web-core/components/VIcon'
 const metadataApi = new MetadataApi()
 
 export default {
   name: 'MetaPane',
+  components: { VIcon },
   data() {
     return {
-      tableData: [
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }
-      ]
+      tableData: [],
+      loading: false
     }
   },
 
   computed: {
-    ...mapState('dataflow', ['activeNodeId']),
-    ...mapGetters('dataflow', ['activeNode'])
+    ...mapState('dataflow', ['activeNodeId', 'transformStatus']),
+    ...mapGetters('dataflow', ['activeNode']),
+
+    showLoading() {
+      return this.loading || this.transformStatus === 'loading'
+    }
   },
 
   watch: {
     activeNodeId() {
       this.loadFields()
+    },
+
+    transformStatus(v) {
+      if (v === 'finished') {
+        this.loadFields()
+      }
     }
   },
 
   methods: {
     async loadFields() {
-      const data = await metadataApi.findOne({
-        filter: JSON.stringify({
-          where: {
-            nodeId: this.activeNode.id
+      if (this.transformStatus === 'loading') return
+      this.loading = true
+
+      try {
+        const data = await metadataApi.nodeSchema(this.activeNode.id)
+        data.fields.sort((a, b) => {
+          if (a.unique !== b.unique) {
+            return a.unique ? -1 : 1
+          } else {
+            return a.field_name.localeCompare(b.field_name)
           }
         })
-      })
+        this.tableData = data.fields
+      } catch (e) {
+        this.tableData = []
+      }
+
+      this.loading = false
     }
   }
 }

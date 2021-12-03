@@ -11,7 +11,9 @@ export class Table extends NodeType {
     }
   }
 
-  attr = {}
+  attr = {
+    maxInputs: 1 // 最大输入个数
+  }
 
   group = 'data'
 
@@ -323,8 +325,11 @@ export class Table extends NodeType {
    * 获取额外添加到节点上的属性
    */
   getExtraAttr() {
+    const { tableName, databaseType, connectionId } = this.attr
     return {
-      ...this.attr
+      tableName,
+      databaseType,
+      connectionId
     }
   }
 }

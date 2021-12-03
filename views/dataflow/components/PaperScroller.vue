@@ -242,7 +242,9 @@ export default {
 
     // 画布内容居中
     centerContent(ifZoomToFit) {
-      let { minX, minY, maxX, maxY } = getDataflowCorners(this.$store.getters['dataflow/allNodes'])
+      const allNodes = this.$store.getters['dataflow/allNodes']
+      if (!allNodes.length) return
+      let { minX, minY, maxX, maxY } = getDataflowCorners(allNodes)
       // 包含节点尺寸
       maxX += NODE_WIDTH
       maxY += NODE_HEIGHT
@@ -269,7 +271,9 @@ export default {
     // 自动延伸画布，类似于无限画布
     autoResizePaper() {
       const { width, height } = this.options
-      let { minX, minY, maxX, maxY } = getDataflowCorners(this.$store.getters['dataflow/allNodes'])
+      const allNodes = this.$store.getters['dataflow/allNodes']
+      if (!allNodes.length) return
+      let { minX, minY, maxX, maxY } = getDataflowCorners(allNodes)
 
       // 包含节点尺寸
       maxX += NODE_WIDTH

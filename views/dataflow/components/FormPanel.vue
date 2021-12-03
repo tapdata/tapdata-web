@@ -2,7 +2,7 @@
   <div class="attr-panel">
     <div class="attr-panel-body overflow-auto">
       <Form :form="form" :colon="false" layout="vertical" feedbackLayout="terse">
-        <FormProvider v-if="schema" :form="form">
+        <FormProvider v-if="!!schema" :form="form">
           <SchemaField :schema="schema" :scope="scope" />
         </FormProvider>
       </Form>
@@ -317,6 +317,47 @@ export default {
             field.value,
             field
           )*/
+        },
+
+        /**
+         * 加载源节点的schema, 返回的是二维数组，数组的长度取决于源节点的个数
+         * @param field
+         * @returns {Promise<*[]>}
+         */
+        loadSourceNodeField: async field => {
+          const id = field.form.values.id
+          const allEdges = this.$store.getters['dataflow/allEdges']
+          const sourceArr = allEdges.filter(({ target }) => target === id)
+          if (!sourceArr.length) return
+
+          let stopWatch
+          let fetch
+          let data = []
+          if (this.transformStatus === 'loading') {
+            fetch = new Promise((resolve, reject) => {
+              stopWatch = this.$watch('transformStatus', async v => {
+                if (v === 'finished') {
+                  const result = await Promise.all(sourceArr.map(({ source }) => metadataApi.nodeSchema(source)))
+                  resolve(result)
+                } else {
+                  reject('推演失败')
+                }
+              })
+            })
+          } else {
+            fetch = Promise.all(sourceArr.map(({ source }) => metadataApi.nodeSchema(source)))
+          }
+
+          try {
+            const result = await fetch
+            data = result.map(item => item.fields)
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error(e)
+          }
+          stopWatch?.()
+
+          return data
         }
       }
     }
@@ -325,7 +366,7 @@ export default {
   components: { Form, FormProvider, SchemaField },
 
   computed: {
-    ...mapState('dataflow', ['activeNodeId']),
+    ...mapState('dataflow', ['activeNodeId', 'transformStatus']),
 
     ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection', 'activeType', 'hasNodeError', 'allEdges']),
 

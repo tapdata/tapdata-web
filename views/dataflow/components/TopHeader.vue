@@ -1,6 +1,6 @@
 <template>
   <header class="layout-header border-bottom px-4">
-    <button @click="$router.push({ name: 'Task' })" class="icon-btn">
+    <button @click="$emit('page-return')" class="icon-btn">
       <VIcon size="20">left</VIcon>
     </button>
     <div class="title-input-wrap flex align-center mx-2 flex-shrink-0 h-100" :data-value="hiddenValue">
@@ -52,8 +52,8 @@
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
 
-      <ElButton type="primary" class="mx-2" @click="$emit('save')"> 保存 </ElButton>
-      <ElButton plain class="mx-2" @click="$emit('showSettings')"> 设置 </ElButton>
+      <ElButton size="small" type="primary" class="mx-2" @click="$emit('save')"> 保存 </ElButton>
+      <ElButton size="small" plain class="mx-2" @click="$emit('showSettings')"> 设置 </ElButton>
 
       <!--<button @click="$emit('showSettings')" class="icon-btn">
         <VIcon size="20">setting</VIcon>

@@ -9,11 +9,14 @@ import './fieldProessor.scss'
 export const FieldProcess = connect(
   observer(
     defineComponent({
+      props: ['loading', 'options'],
+
       setup() {
         const formRef = useForm()
         const form = formRef.value
         return {
-          databaseType: form.values.databaseType
+          databaseType: form.values.databaseType,
+          form
         }
       },
 
@@ -136,6 +139,7 @@ export const FieldProcess = connect(
               value: 'Array'
             }
           ],
+          field_process: [],
           operations: [],
           scripts: [],
           originalFields: [],
@@ -184,8 +188,28 @@ export const FieldProcess = connect(
           }
         }
       },
+      watch: {
+        operations: {
+          deep: true,
+          handler(v) {
+            this.$emit('change', v)
+            console.log('operations', v) // eslint-disable-line
+          }
+        },
+
+        scripts: {
+          deep: true,
+          handler(v) {
+            this.form.setValuesIn('scripts', v)
+            this.$emit('change', v)
+            console.log('scripts', v) // eslint-disable-line
+          }
+        }
+      },
 
       render() {
+        // eslint-disable-next-line no-console
+        console.log('🚗 FieldProcessor', this.loading, this.options)
         const { fields } = this
         this.originalFields = JSON.parse(JSON.stringify(this.fields))
         return (
@@ -805,7 +829,7 @@ export const FieldProcess = connect(
       }
     })
   ),
-  mapProps({ dataSource: 'options' })
+  mapProps({ dataSource: 'options', loading: true })
 )
 
 export default FieldProcess
