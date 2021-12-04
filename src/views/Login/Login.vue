@@ -149,14 +149,15 @@ export default {
           location.reload()
         }, 0)
       } catch (e) {
-        if (e && e.response && e.response.msg) {
-          if (e.response.msg === 'WAITING_APPROVE') {
+        let msg = e?.data?.message
+        if (msg) {
+          if (msg === 'WAITING_APPROVE') {
             this.errorMessage = this.$t('app.signIn.watingApprove')
-          } else if (e.response.msg.indexOf('not been verified') !== -1 || e.response.msg === 'EMAIL_NON_VERIFLED') {
+          } else if (msg.indexOf('not been verified') !== -1 || msg === 'EMAIL_NON_VERIFLED') {
             this.errorMessage = this.$t('app.signIn.hasVerified')
-          } else if (e.response.msg === 'ACCOUNT_DISABLED') {
+          } else if (msg === 'ACCOUNT_DISABLED') {
             this.errorMessage = this.$t('app.signIn.accountDisabled')
-          } else if (e.response.msg === 'Too many logins') {
+          } else if (msg === 'Too many logins') {
             this.errorMessage = this.$t('login_fail_too_many')
           } else {
             this.errorMessage = this.$t('app.signIn.signInFail')
