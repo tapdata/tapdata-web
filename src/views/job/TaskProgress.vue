@@ -376,10 +376,12 @@ export default {
           waitingForSyecTableNums = 0
         }
         overview.waitingForSyecTableNums = waitingForSyecTableNums
-
-        let num = (overview.targatRowNum / overview.sourceRowNum) * 100
-        this.progressBar = num ? num.toFixed(2) * 1 : 0
-
+        if (overview.sourceRowNum > 0) {
+          let num = (overview.targatRowNum / overview.sourceRowNum ? overview.sourceRowNum : 0) * 100
+          this.progressBar = num ? num.toFixed(2) * 1 : 0
+        } else {
+          this.progressBar = 0
+        }
         let now = new Date().getTime()
         let startTime = new Date(data.runningTime).getTime(),
           runningTime = now - startTime,
