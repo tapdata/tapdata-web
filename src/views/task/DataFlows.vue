@@ -389,6 +389,7 @@ import factory from '../../api/factory'
 import ws from '../../api/ws'
 const dataFlows = factory('DataFlows')
 const MetadataInstance = factory('MetadataInstances')
+const TaskModel = factory('Task')
 // const cluster = factory('cluster');
 import { toRegExp } from '../../utils/util'
 import SkipError from '../../components/SkipError'
@@ -719,28 +720,50 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        this.$api('DataFlows').count({ where: JSON.stringify(where) }),
-        this.$api('DataFlows').get({
+      if (this.mappingTemplate === 'custom') {
+        return TaskModel.get({
+          filter: JSON.stringify(filter)
+        }).then(res => {
+          let data = res.data
+          let list = data?.items || []
+          this.watchDataflowList(list.map(it => it.id))
+          this.table.setCache({
+            keyword,
+            status,
+            progress,
+            executionStatus,
+            timeData
+          })
+          return {
+            total: data.total,
+            data: list.map(item => {
+              return this.cookRecord(item)
+            })
+          }
+        })
+      }
+      return dataFlows
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        let list = res.data || []
-        this.watchDataflowList(list.map(it => it.id))
-        this.table.setCache({
-          keyword,
-          status,
-          progress,
-          executionStatus,
-          timeData
-        })
-        return {
-          total: countRes.data.count,
-          data: list.map(item => {
-            return this.cookRecord(item)
+        .then(res => {
+          let data = res.data
+          let list = data?.items || []
+          this.watchDataflowList(list.map(it => it.id))
+          this.table.setCache({
+            keyword,
+            status,
+            progress,
+            executionStatus,
+            timeData
           })
-        }
-      })
+          return {
+            total: data.total,
+            data: list.map(item => {
+              return this.cookRecord(item)
+            })
+          }
+        })
     },
 
     cookRecord(item) {
