@@ -333,9 +333,10 @@ export default {
       this.$api('Workers')
         .get({ filter: JSON.stringify({ where: where }) })
         .then(res => {
-          if (res && res.data && res.data.length) {
+          let data = res.data?.items
+          if (data?.length) {
             let metricValuesData = []
-            res.data.forEach(item => {
+            data.forEach(item => {
               if (item.metricValues) {
                 metricValuesData.push(item)
               }
@@ -599,10 +600,11 @@ export default {
         }
       }
       cluster.get(params).then(res => {
-        if (res.data) {
+        let items = res.data?.items || []
+        if (items) {
           let processId = []
-          if (res.data.length > 0) {
-            res.data.forEach(item => {
+          if (items?.length > 0) {
+            items.forEach(item => {
               if (item.systemInfo.process_id) {
                 processId.push(item.systemInfo.process_id)
               }
@@ -612,7 +614,7 @@ export default {
           // 获取最大内存、cpu使用率
           this.getUsageRate(processId)
           //自动升级
-          this.getVersion(res.data)
+          this.getVersion(items)
         }
       })
     },
