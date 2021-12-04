@@ -605,7 +605,7 @@ export default {
         type: 'dashboard'
       }
       cluster.get(params).then(res => {
-        this.serverProcess.tableData = res.data
+        this.serverProcess.tableData = res.data?.items
       })
     },
     // 获取dataflows数据
