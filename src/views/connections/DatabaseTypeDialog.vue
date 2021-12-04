@@ -71,6 +71,9 @@ export default {
   },
   created() {
     let allowDataType = window.getSettingByKey('ALLOW_CONNECTION_TYPE') || []
+    if (typeof allowDataType === 'string') {
+      allowDataType = allowDataType.split(',')
+    }
     let comingAllowDataType = window.getSettingByKey('COMING_ONLINE_CONNECTION_TYPE') || []
     let allwoType = this.allwoType
     if (allwoType && allwoType.length) {
