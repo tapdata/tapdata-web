@@ -116,7 +116,7 @@ export const databaseConfig = {
        */
       allowTarget(targetCell, sourceCell) {
         // DM 不允许作为源
-        if (['dameng'].includes(sourceCell?.attributes?.form_data?.database_type)) {
+        if (['dameng', 'kudu'].includes(sourceCell?.attributes?.form_data?.database_type)) {
           return false
         }
         if (sourceCell?.attributes?.form_data?.database_type === 'elasticsearch') {
