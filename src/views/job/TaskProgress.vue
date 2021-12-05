@@ -377,7 +377,7 @@ export default {
         }
         overview.waitingForSyecTableNums = waitingForSyecTableNums
         if (overview.sourceRowNum > 0) {
-          let num = (overview.targatRowNum / overview.sourceRowNum ? overview.sourceRowNum : 0) * 100
+          let num = (overview.targatRowNum / overview.sourceRowNum) * 100
           this.progressBar = num ? num.toFixed(2) * 1 : 0
         } else {
           this.progressBar = 0
@@ -443,8 +443,12 @@ export default {
 
       if (data?.stats?.progressGroupByDB?.length) {
         data.stats.progressGroupByDB.forEach(statusItem => {
-          let num = (statusItem.targetRowNum / statusItem.sourceRowNum) * 100,
+          let statusNum = 0
+          if (statusItem.sourceRowNum > 0) {
+            let num = (statusItem.targetRowNum / statusItem.sourceRowNum) * 100
             statusNum = num > 0 ? num.toFixed(2) * 1 : 0
+          }
+
           if (statusItem.statusNum) {
             statusItem.statusNum = statusNum
           } else {

@@ -150,8 +150,8 @@ export const FORM_DATA_KEY = 'form_data',
     kafka: {
       type: 'kafka',
       name: 'Kafka',
-      shapeImage: 'static/editor/kafka.svg',
-      stencilImage: 'static/editor/kafka.svg'
+      shapeImage: 'static/editor/Kafka.svg',
+      stencilImage: 'static/editor/Kafka.svg'
     },
     mariadb: {
       type: 'mariadb',
