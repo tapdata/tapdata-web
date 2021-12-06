@@ -62,7 +62,7 @@ const state = () => ({
       icon: 'join',
       name: '连接',
       type: 'join',
-      constructor: 'JointCache'
+      constructor: 'Join'
     }
   ],
   nodeViewOffsetPosition: [0, 0],

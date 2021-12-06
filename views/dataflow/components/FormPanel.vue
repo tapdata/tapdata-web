@@ -28,7 +28,8 @@ import {
   Space,
   FormGrid,
   ArrayTabs,
-  FormLayout
+  FormLayout,
+  ArrayItems
 } from '@formily/element'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 import { action } from '@formily/reactive'
@@ -52,6 +53,7 @@ const { SchemaField } = createSchemaField({
     FormGrid,
     ArrayTabs,
     FormLayout,
+    ArrayItems,
     ...components
   }
 })
@@ -295,36 +297,34 @@ export default {
           const id = field.form.values.id
           const allEdges = this.$store.getters['dataflow/allEdges']
           field.value = allEdges.some(({ source }) => source === id)
-          /*console.log(
-            '🚗isSource',
-            allEdges,
-            id,
-            allEdges.some(({ source }) => source === id),
-            field.value,
-            field
-          )*/
         },
 
         isTarget: field => {
           const id = field.form.values.id
           const allEdges = this.$store.getters['dataflow/allEdges']
           field.value = allEdges.some(({ target }) => target === id)
-          /*console.log(
-            '🚗isTarget',
-            allEdges,
-            id,
-            allEdges.some(({ target }) => target === id),
-            field.value,
-            field
-          )*/
+        },
+
+        getSourceNode: field => {
+          const id = field.form.values.id
+          const edges = this.$store.getters['dataflow/allEdges']
+          const nodes = this.$store.getters['dataflow/allNodes']
+          const sourceArr = edges.filter(({ target }) => target === id)
+          field.dataSource = sourceArr.map(({ source }) => {
+            return {
+              value: source,
+              label: nodes.find(node => node.id === source).name
+            }
+          })
         },
 
         /**
          * 加载源节点的schema, 返回的是二维数组，数组的长度取决于源节点的个数
          * @param field
-         * @returns {Promise<*[]>}
+         * @param dataType 数据类型 array | object
+         * @returns {Promise<{}>}
          */
-        loadSourceNodeField: async field => {
+        loadSourceNodeField: async (field, dataType = 'array') => {
           const id = field.form.values.id
           const allEdges = this.$store.getters['dataflow/allEdges']
           const sourceArr = allEdges.filter(({ target }) => target === id)
@@ -332,7 +332,7 @@ export default {
 
           let stopWatch
           let fetch
-          let data = []
+          let result = []
           if (this.transformStatus === 'loading') {
             fetch = new Promise((resolve, reject) => {
               stopWatch = this.$watch('transformStatus', async v => {
@@ -349,14 +349,20 @@ export default {
           }
 
           try {
-            const result = await fetch
-            data = result.map(item => item.fields)
+            result = await fetch
           } catch (e) {
             // eslint-disable-next-line no-console
             console.error(e)
           }
           stopWatch?.()
 
+          if (dataType === 'array') {
+            return result.map(item => item.fields)
+          }
+          const data = {}
+          result.forEach((item, i) => {
+            data[sourceArr[i].source] = item.fields
+          })
           return data
         }
       }
@@ -389,9 +395,9 @@ export default {
       const formSchema = this.$store.getters['dataflow/formSchema'] || {}
       if (this.lastActiveNodeType === node.type) {
         // 判断上一次的激活节点类型，相同表示schema也一样，不需要重置form
-        /*if (this.lastActiveDBType !== node.databaseType) {
+        if (this.lastActiveDBType !== node.databaseType) {
           await this.form.reset() // 将表单重置，防止没有设置default的被覆盖；这里有个问题：子级别的default被清空无效了
-        }*/
+        }
         this.form.setValues(node) // 新填充
       } else {
         await this.setSchema(this.ins.formSchema || formSchema.node)
