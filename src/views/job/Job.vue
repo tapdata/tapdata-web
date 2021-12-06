@@ -276,27 +276,39 @@
       @complete="saveCheckStages"
     ></CheckStage>
     <el-dialog
-      title="任务启动预检查未通过"
+      :title="$t('dag_task_error_tittle')"
       :visible.sync="showSchemaProgress"
       :close-on-click-modal="false"
       width="30%"
     >
-      <span>错误原因: 模型推演进行中</span>
-      <div v-if="showDialogProgress">当前进度: {{ progress.finished }} / {{ progress.total }}</div>
+      <div v-if="progress.progress !== 'done'">
+        <span>{{ $t('dag_task_error_text') }}</span>
+        <div v-if="showDialogProgress">
+          {{ $t('dag_task_error_current_progress') }} : {{ progress.finished }} / {{ progress.total }}
+        </div>
+      </div>
+      <div v-if="progress.progress === 'done'">
+        <span>{{ $t('dag_task_error_completed') }}</span>
+        <div v-if="showDialogProgress">
+          {{ $t('dag_task_error_current_progress') }} : {{ progress.finished }} / {{ progress.total }}
+        </div>
+      </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="showSchemaProgress = false">关闭</el-button>
-        <el-button :disabled="progress.progress !== 'done'" type="primary" size="mini" @click="start()">启动</el-button>
+        <el-button size="mini" @click="showSchemaProgress = false">{{ $t('message.close') }}</el-button>
+        <el-button :disabled="progress.progress !== 'done'" type="primary" size="mini" @click="start()">{{
+          $t('message.startUp')
+        }}</el-button>
       </span>
     </el-dialog>
     <el-dialog
-      title="任务启动预检查未通过"
+      :title="$t('dag_task_error_tittle')"
       :visible.sync="showFieldMappingProgress"
       :close-on-click-modal="false"
       width="30%"
     >
-      <span>错误原因: 字段映射错误请校正</span>
+      <span>{{ $t('dag_task_filed_mapping_text') }}</span>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="showFieldMappingProgress = false">关闭</el-button>
+        <el-button size="mini" @click="showFieldMappingProgress = false">{{ $t('message.close') }}</el-button>
       </span>
     </el-dialog>
   </div>
