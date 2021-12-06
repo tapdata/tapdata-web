@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
-import Cookie from 'tiny-cookie'
+import Cookie from 'web-core/utils/cookie'
 
 // Full config:  https://github.com/axios/axios#request-config
 const config = {
