@@ -77,7 +77,15 @@ const newTc = {
   verify_message_error_joint_table_field_not_match: '校驗條件中源表與目標表的索引欄位個數不相等',
   verify_message_confirm_delete_script: '確定要刪除自定義JS校驗邏輯嗎',
   verify_message_confirm_back: '此操作會丟失當前正在創建（編輯）的校驗任務',
-  verify_message_title_confirm_back: '是否放棄創建（編輯）校驗任務？'
+  verify_message_title_confirm_back: '是否放棄創建（編輯）校驗任務？',
+
+  //字段映射
+  dag_task_error_tittle: '任務啟動預檢查未通過',
+  dag_task_error_text: '錯誤原因：模型推演進行中',
+  dag_task_error_current_progress: '當前進度',
+  dag_task_error_progress: '錯誤原因：模型推演進行中',
+  dag_task_error_completed: '模型推演完成',
+  dag_task_filed_mapping_text: '錯誤原因：欄位映射錯誤請校正'
 }
 
 const tc = {
