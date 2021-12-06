@@ -30,7 +30,6 @@ th {
 * public
 */
 #app {
-  font-family: 'MicrosoftYaHei', '微软雅黑', sans-serif;
   font-weight: 400;
   font-style: normal;
   -webkit-font-smoothing: unset;
@@ -241,7 +240,8 @@ th {
     color: map-get($color, primary);
     background-color: unset;
   }
-  &.is-disabled, &.is-disabled:hover {
+  &.is-disabled,
+  &.is-disabled:hover {
     border: 0;
     color: map-get($color, disable);
     background-color: unset;
