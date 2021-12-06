@@ -154,7 +154,7 @@ export default {
       model: {
         connectionId: '',
         type: 'gridfs',
-        databaseType: '',
+        databaseType: 'gridfs',
         tableName: '',
         isSource: true,
         // primaryKeys: '',
