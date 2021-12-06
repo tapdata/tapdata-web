@@ -94,7 +94,15 @@ const newCn = {
   milestone_label_read_snapshot: '【数据传输】全量读取源端数据快照',
   milestone_label_write_snapshot: '【数据传输】目标端全量写入数据快照',
   milestone_label_read_cdc_event: '【数据传输】源端采集器进入增量读取模式',
-  milestone_label_write_cdc_event: '【数据传输】目标处理器进入增量写入模式'
+  milestone_label_write_cdc_event: '【数据传输】目标处理器进入增量写入模式',
+
+  //字段映射
+  dag_task_error_tittle: '任务启动预检查未通过',
+  dag_task_error_text: '错误原因: 模型推演进行中',
+  dag_task_error_current_progress: '当前进度',
+  dag_task_error_progress: '错误原因: 模型推演进行中',
+  dag_task_error_completed: '模型推演完成',
+  dag_task_filed_mapping_text: '错误原因: 字段映射错误请校正'
 }
 const cn = {
   ...zhLocale,
