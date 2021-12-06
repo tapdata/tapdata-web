@@ -209,14 +209,13 @@ export default {
   },
   mounted() {
     let self = this
-    let id = self.$route.query.id || self.queryId
     ws.on('metadataTransformerProgress', function (res) {
-      if (!res?.data?.stageId && res?.data?.dataFlowId === id) {
-        let status = res?.data
-        if (status !== 'done') {
-          self.disabledTransfer = true
-        } else {
+      if (!res?.data?.stageId) {
+        let status = res?.data?.status
+        if (status === 'done') {
           self.disabledTransfer = false
+        } else {
+          self.disabledTransfer = true
         }
       }
     })

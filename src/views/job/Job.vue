@@ -287,7 +287,7 @@
           {{ $t('dag_task_error_current_progress') }} : {{ progress.finished }} / {{ progress.total }}
         </div>
       </div>
-      <div v-if="progress.progress === 'done'">
+      <div v-if="progress.progress === 'done' && showDialogProgress">
         <span>{{ $t('dag_task_error_completed') }}</span>
         <div v-if="showDialogProgress">
           {{ $t('dag_task_error_current_progress') }} : {{ progress.finished }} / {{ progress.total }}
