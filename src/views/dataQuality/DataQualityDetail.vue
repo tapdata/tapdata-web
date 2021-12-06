@@ -70,32 +70,31 @@
         </template>
         <template slot-scope="scope">
           <div v-if="scope.row.wrongFields[item.text]">
-            <div v-if="scope.row.editing && editCol === item.text">
-              <el-input
-                @keyup.enter.native="editOk(scope.row, item.text)"
-                ref="editInput"
-                v-model="editValue"
-                class="edit-input"
-                type="text"
-                size="mini"
-              />
-              <div>
-                <el-button
-                  @click="editOk(scope.row, item.text)"
-                  :loading="editLoading"
-                  class="btn-text"
-                  type="text"
-                  size="small"
-                >
-                  {{ $t('dataQuality.save') }}
-                </el-button>
-                <el-button @click="editCancel" class="btn-text" type="text" size="small">
-                  {{ $t('dataQuality.cancel') }}
-                </el-button>
-              </div>
-            </div>
+            <!--            <div v-if="scope.row.editing && editCol === item.text">-->
+            <!--              <el-input-->
+            <!--                @keyup.enter.native="editOk(scope.row, item.text)"-->
+            <!--                ref="editInput"-->
+            <!--                v-model="editValue"-->
+            <!--                class="edit-input"-->
+            <!--                type="text"-->
+            <!--                size="mini"-->
+            <!--              />-->
+            <!--              <div>-->
+            <!--                <el-button-->
+            <!--                  @click="editOk(scope.row, item.text)"-->
+            <!--                  :loading="editLoading"-->
+            <!--                  class="btn-text"-->
+            <!--                  type="text"-->
+            <!--                  size="small"-->
+            <!--                >-->
+            <!--                  {{ $t('dataQuality.save') }}-->
+            <!--                </el-button>-->
+            <!--                <el-button @click="editCancel" class="btn-text" type="text" size="small">-->
+            <!--                  {{ $t('dataQuality.cancel') }}-->
+            <!--                </el-button>-->
+            <!--              </div>-->
+            <!--            </div>-->
             <div
-              v-else
               :title="scope.row.wrongFields[item.text]"
               @dblclick="editItem(scope.row, item.text)"
               style="color: #f15e5e; border: 1px solid #f15e5e; padding-left: 5px; min-height: 32px"
@@ -139,6 +138,26 @@
         </template>
       </el-table-column>
     </TablePage>
+
+    <!-- 单个修改弹框 -->
+    <el-dialog
+      width="500px"
+      :title="$t('dataQuality.dataRevision')"
+      :close-on-click-modal="false"
+      :visible.sync="formVisible"
+    >
+      <FormBuilder ref="batchForm" v-model="form" :config="formConfig" />
+
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click=";(formVisible = false), (formLoading = false)">
+          {{ $t('message.cancel') }}
+        </el-button>
+
+        <el-button size="mini" type="primary" :loading="formLoading" @click="editOk">
+          {{ $t('message.confirm') }}
+        </el-button>
+      </span>
+    </el-dialog>
 
     <!-- 批量修改弹框 -->
     <el-dialog
@@ -247,7 +266,8 @@ export default {
       batchLoading: false, // 确认loading
       batchForm: {
         rule: '', // 规则
-        value: '' // 修改的内容
+        value: '', // 修改的内容
+        type: ''
       },
       filterArr: [], // 字段过滤确认前表头数据
       filterVisible: false, // 是否显示字段过滤弹框
@@ -255,9 +275,24 @@ export default {
       sortBy: '_id', // 默认排序字段
       descending: true, // 是否降序
       editValue: '', // 要单独编辑的字段的值
+      editItemData: null, // 编辑的当前的信息
       editCol: '', // 当前编辑的字段名
       editLoading: false, // 编辑字段确认的loading
-      ajv: new Ajv() // ajv校验实例
+      ajv: new Ajv(), // ajv校验实例
+      formVisible: false,
+      formLoading: false,
+      form: {
+        type: 'string', // 修改类型
+        value: '' // 修改的内容
+      },
+      dataTypes: [
+        { label: this.$t('dataQuality.baseString'), value: 'string' },
+        { label: this.$t('dataQuality.baseArray'), value: 'array' },
+        { label: this.$t('dataQuality.baseNumber'), value: 'number' },
+        { label: this.$t('dataQuality.baseBoolean'), value: 'boolean' },
+        { label: this.$t('dataQuality.basedate'), value: 'date' }
+        // { label: this.$t("dataQuality.baseDictionary"), value: "dictionary" },
+      ]
     }
   },
 
@@ -294,6 +329,30 @@ export default {
         return {}
       }
     },
+    // 修改配置
+    formConfig() {
+      return {
+        items: [
+          {
+            type: 'input',
+            label: this.$t('dataQuality.modifyContent'),
+            field: 'value',
+            required: true,
+            rules: [
+              { required: true, message: this.$t('dataQuality.verifyContentTip') },
+              { max: 100, message: this.$t('dataQuality.verifyContentLength') }
+            ]
+          },
+          {
+            type: 'select',
+            label: this.$t('dataQuality.revisionType'),
+            field: 'type',
+            options: this.dataTypes,
+            rules: [{ required: true, message: this.$t('dataQuality.verifyRuleTip') }]
+          }
+        ]
+      }
+    },
     // 批量操作配置
     batchFormConfig() {
       return {
@@ -320,6 +379,13 @@ export default {
               },
               { max: 100, message: this.$t('dataQuality.verifyContentLength') }
             ]
+          },
+          {
+            type: 'select',
+            label: this.$t('dataQuality.selectMidifyType'),
+            field: 'type',
+            options: this.dataTypes,
+            rules: [{ required: true, message: this.$t('dataQuality.verifyRuleTip') }]
           }
         ]
       }
@@ -379,7 +445,7 @@ export default {
     },
     // api服务
     async apiServer() {
-      this.collection = this.$route.query['name'] || null
+      this.collection = this.$route.query['name'] || this.$route.query['collection_name'] || null
       this.apiClient = new APIClient(this.collection || '')
 
       let apiServers = await this.$api('ApiServer').get({
@@ -401,7 +467,7 @@ export default {
               collection = {
                 collection: apiName,
                 text: apiName,
-                value: result.data[apiName].api['findPage_post'].url,
+                value: result.data[apiName].api['findPage_post'] ? result.data[apiName].api['findPage_post'].url : '',
                 operationName: 'findPage_post'
               }
             }
@@ -541,11 +607,22 @@ export default {
         }
         let fieldName = this.batchForm.rule.split('-->')[0],
           rule = this.batchForm.rule.split('-->')[1],
-          value = this.batchForm.value
+          value = this.batchForm.value,
+          type = this.batchForm.type
 
         let vschema = this.buildAjvSchema(fieldName, eval('(' + rule + ')')),
           setter = {}
-        setter[fieldName] = this.setType(fieldName, value)
+        setter[fieldName] = this.setType(fieldName, value, type)
+
+        // 范围校验数据处理
+        let ruleType = ''
+        Object.keys(JSON.parse(rule)).forEach(key => {
+          if (key === 'range') {
+            ruleType = key
+          }
+        })
+        // 校验完成前，转数字
+        if (ruleType) setter[fieldName] = Number(this.setType(fieldName, value, type))
 
         // 校验数据
         if (!this.ajv.validate(vschema, setter)) {
@@ -558,6 +635,7 @@ export default {
           '__tapd8.hitRules.rules': rule,
           '__tapd8.result': 'invalid'
         }
+        setter[fieldName] = this.setType(fieldName, value, type)
         let params = {
           $pull: { '__tapd8.hitRules': { rules: rule, fieldName: fieldName } },
           $set: setter
@@ -610,52 +688,80 @@ export default {
     // 双击编辑字段
     editItem(item, key) {
       this.editCol = key
-      this.editValue = item[key]
+      this.editItemData = item
+      this.form.value = item[key]
+      this.formVisible = true
+      // 默認當前數據類型
+      let fieldDef = this.fieldsDef[this.fieldsDef.findIndex(it => it.field_name == key)]
+      if (['Float', 'BigDecimal', 'Double', 'Short', 'Integer', 'Long'].includes(fieldDef.java_type)) {
+        this.form.type = 'number'
+      } else {
+        this.dataTypes.filter(type => {
+          if (type.value === fieldDef.java_type.toLowerCase()) {
+            this.form.type = fieldDef.java_type.toLowerCase()
+          } else {
+            this.form.type = 'string'
+          }
+        })
+      }
       this.table.list = this.table.list.map(v => {
         v.editing = v === item
         return v
       })
-      this.$nextTick(() => {
-        if (this.$refs.editInput && this.$refs.editInput.length) {
-          this.$refs.editInput.forEach(v => {
-            v.focus()
-          })
-        } else {
-          this.$refs.editInput && this.$refs.editInput.focus()
-        }
-      })
+      // this.$nextTick(() => {
+      //   if (this.$refs.editInput && this.$refs.editInput.length) {
+      //     this.$refs.editInput.forEach(v => {
+      //       v.focus()
+      //     })
+      //   } else {
+      //     this.$refs.editInput && this.$refs.editInput.focus()
+      //   }
+      // })
     },
     // 取消编辑字段
-    editCancel() {
-      this.table.list = this.table.list.map(v => {
-        if (v.editing) v.editing = false
-        return v
-      })
-    },
+    // editCancel() {
+    //   this.table.list = this.table.list.map(v => {
+    //     if (v.editing) v.editing = false
+    //     return v
+    //   })
+    // },
     // 确认编辑字段
-    async editOk(item, key) {
+    async editOk() {
       // 检验字段类型规则
-      let saveItem = JSON.parse(JSON.stringify(item)) // 临时存储即将修改的表单项的值
-      let hitRule = saveItem.__tapd8.hitRules.find(it => it.fieldName == key)
-      saveItem[key] = this.setType(key, this.editValue)
-      if (saveItem[key] !== saveItem[key]) {
+      let saveItem = JSON.parse(JSON.stringify(this.editItemData)) // 临时存储即将修改的表单项的值
+      let hitRule = saveItem.__tapd8.hitRules.find(it => it.fieldName == this.editCol)
+      saveItem[this.editCol] = this.setType(this.editCol, this.form.value, this.form.type)
+      if (saveItem[this.editCol] !== saveItem[this.editCol]) {
         this.$message.warning(
           this.$t('dataQuality.dataTypeError') +
-            this.fieldsDef[this.fieldsDef.findIndex(it => it.field_name == key)].java_type
+            this.fieldsDef[this.fieldsDef.findIndex(it => it.field_name == this.editCol)].java_type
         )
         return
       }
 
       // 参数
       let params = {}
-      params[key] = saveItem[key]
+      params[this.editCol] = saveItem[this.editCol]
+      // params[key] = saveItem[key]
 
       // 若修改的值符合之前违反的规则，就去除当前字段错误标记
-      let vschema = this.buildAjvSchema(key, eval('(' + hitRule.rules + ')'))
+      // let vschema = this.buildAjvSchema(key, eval('(' + hitRule.rules + ')'))
+      let vschema = this.buildAjvSchema(this.editCol, eval('(' + hitRule.rules + ')'))
+
+      // 范围校验数据处理
+      let ruleType = ''
+      Object.keys(JSON.parse(hitRule.rules)).forEach(key => {
+        if (key === 'range') {
+          ruleType = key
+        }
+      })
+      // 校验完成前，转数字
+      if (ruleType) params[this.editCol] = Number(saveItem[this.editCol])
 
       if (this.ajv.validate(vschema, params)) {
         saveItem.__tapd8.hitRules.splice(saveItem.__tapd8.hitRules.indexOf(hitRule), 1)
-        saveItem.wrongFields[key] = undefined
+        // saveItem.wrongFields[key] = undefined
+        saveItem.wrongFields[this.editCol] = undefined
 
         if (saveItem.__tapd8.hitRules.length == 0) {
           // 检查当前行若没有错误标记，就去除当前行错误标记
@@ -668,36 +774,47 @@ export default {
         return
       }
 
+      // 范围校验完成后，返回原类型
+      params[this.editCol] = saveItem[this.editCol]
+
       // 发送请求
       this.editLoading = true
-      let result = await this.apiClient.updateById(item._id, params)
+      // let result = await this.apiClient.updateById(item._id, params)
+      let result = await this.apiClient.updateById(this.editItemData._id, params)
       if (result.success) {
         if (saveItem.__tapd8.result) {
           this.table.list = this.table.list.map(v => {
-            if (v === item) {
+            // if (v === item) {
+            if (v === this.editItemData) {
               return { ...saveItem, editing: false }
             } else {
               return v
             }
           })
         } else {
-          this.table.list = this.table.list.filter(v => v !== item)
+          // this.table.list = this.table.list.filter(v => v !== item)
+          this.table.list = this.table.list.filter(v => v !== this.editItemData)
         }
         this.$message.success(this.$t('message.saveOK'))
 
         // 提交日志
         await this.$api('UserLogs').post({
-          _id: item['_id'],
+          // _id: item['_id'],
+          _id: this.editItemData['_id'],
           biz_module: 'dataQuality',
           last_updated: new Date().toTimeString(),
           desc: 'Update or create dataQuality',
           modelName: 'dataQuality',
           requestMethod: 'POST',
-          before: item[key],
-          after: params[key],
-          name: key,
+          before: this.editItemData[this.editCol],
+          after: params[this.editCol],
+          name: this.editCol,
+          // before: item[key],
+          // after: params[key],
+          // name: key,
           apititle: this.$route.params.id
         })
+        this.table.fetch(1)
       } else {
         let msg = result.msg
         if (result.response && result.response.data && result.response.data.error && result.response.data.error) {
@@ -711,6 +828,7 @@ export default {
         }
         this.$message.error(msg)
       }
+      this.formVisible = false
       this.editLoading = false
     },
     // 打开批量过滤弹框
@@ -749,15 +867,26 @@ export default {
       })
     },
     // 按类型给字段赋值
-    setType(fieldName, value) {
-      let fieldDef = this.fieldsDef[this.fieldsDef.findIndex(it => it.field_name == fieldName)]
-      if (['Short', 'Integer', 'Long'].includes(fieldDef.java_type))
+    setType(fieldName, value, type) {
+      // let fieldDef = this.fieldsDef[this.fieldsDef.findIndex(it => it.field_name == fieldName)]
+      // if (['Short', 'Integer', 'Long'].includes(fieldDef.java_type))
+      //   return Number(value) ? parseInt(value) : Number(value)
+      // else if (['Float', 'BigDecimal', 'Double'].includes(fieldDef.java_type))
+      //   return Number(value) ? parseFloat(value) : Number(value)
+      // else if (fieldDef.java_type == 'Boolean') return value.toLowerCase().startsWith('t')
+      // else if (fieldDef.java_type == 'String') return value + ''
+      // else return value
+      if (type.toLowerCase() === 'number') {
         return Number(value) ? parseInt(value) : Number(value)
-      else if (['Float', 'BigDecimal', 'Double'].includes(fieldDef.java_type))
-        return Number(value) ? parseFloat(value) : Number(value)
-      else if (fieldDef.java_type == 'Boolean') return value.toLowerCase().startsWith('t')
-      else if (fieldDef.java_type == 'String') return value + ''
-      else return value
+      } else if (type.toLowerCase() === 'array') {
+        return value.split(',')
+      } else if (type.toLowerCase() === 'bool') {
+        return value.toLowerCase().startsWith('t')
+      } else if (type.toLowerCase() === 'date') {
+        return this.$moment(value).format('YYYY-MM-DD HH:mm:ss')
+        // } else if (type === "dictionary") {
+        // 	return JSON.parse(value);
+      } else return value
     },
     // 创建ajv校验模式
     buildAjvSchema(fieldName, ruleObj) {
