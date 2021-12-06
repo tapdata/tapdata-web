@@ -19,14 +19,11 @@
     </ElTable>
     <ElPagination
       v-if="hasPagination"
-      background
+      v-bind="Object.assign({}, options, pageOptions)"
       class="mt-3"
-      :layout="layout"
       :current-page.sync="page.current"
-      :page-sizes="[10, 20, 50, 100]"
       :page-size.sync="page.size"
       :total="page.total"
-      :hide-on-single-page="hideOnSinglePage"
       @size-change="fetch(1)"
       @current-change="fetch"
     >
@@ -101,32 +98,29 @@ export default {
       type: Boolean,
       default: true
     },
-    hideOnSinglePage: {
-      type: Boolean,
-      default: false
-    },
-    layout: {
-      type: String,
-      default: 'total, sizes, ->, prev, pager, next, jumper'
-    },
-    defaultPageSize: {
-      type: Number,
-      default: 20
-    },
     remoteMethod: Function,
-    rowKey: [String, Function],
-    spanMethod: [Function]
+    pageOptions: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
   },
   data() {
     return {
       loading: false,
       page: {
         current: 1,
-        size: this.defaultPageSize,
+        size: this.pageOptions.pageSize || 20,
         total: 0
       },
       list: [],
-      multipleSelection: []
+      multipleSelection: [],
+      options: {
+        background: true,
+        layout: 'total, sizes, ->, prev, pager, next, jumper',
+        pageSizes: [10, 20, 50, 100]
+      }
     }
   },
   watch: {

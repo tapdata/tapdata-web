@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
+import Cookie from 'web-core/utils/cookie'
 
 // Full config:  https://github.com/axios/axios#request-config
 const config = {
@@ -37,10 +38,15 @@ const CancelToken = axios.CancelToken
 service.interceptors.request.use(function (config) {
   // 本地开发使用header中加__token的方式绕过网关登录
   const ACCESS_TOKEN = process.env.VUE_APP_ACCESS_TOKEN || ''
-  if (ACCESS_TOKEN) {
-    let params = { __token: ACCESS_TOKEN }
-    config.params = Object.assign({}, config.params, params)
+  const params = {}
+  let accessToken = Cookie.get('token')
+  if (accessToken) {
+    params.access_token = accessToken
   }
+  if (ACCESS_TOKEN) {
+    params.__token = ACCESS_TOKEN
+  }
+  config.params = Object.assign({}, config.params, params)
 
   let url = config.url
   // get 请求编码参数

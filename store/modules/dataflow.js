@@ -62,7 +62,7 @@ const state = () => ({
       icon: 'join',
       name: '连接',
       type: 'join',
-      constructor: 'JointCache'
+      constructor: 'Join'
     }
   ],
   nodeViewOffsetPosition: [0, 0],
@@ -75,6 +75,7 @@ const state = () => ({
   activeType: null,
   formSchema: null,
   taskId: null,
+  transformStatus: '', //推演状态 loading, error, finished
   dag: {
     nodes: [], // 节点数据
     edges: [] // 连线数据
@@ -419,6 +420,10 @@ const mutations = {
     Vue.delete(state.nodeErrorState, id)
   },
 
+  /**
+   * 重置任务
+   * @param state
+   */
   reset(state) {
     state.taskId = null
     state.dag.nodes = []
@@ -429,8 +434,22 @@ const mutations = {
     state.dag.edges = edges
   },
 
+  /**
+   * 设置任务ID
+   * @param state
+   * @param id
+   */
   setTaskId(state, id) {
     state.taskId = id
+  },
+
+  /**
+   * 设置推演状态
+   * @param state
+   * @param status
+   */
+  setTransformStatus(state, status) {
+    state.transformStatus = status
   }
 }
 
