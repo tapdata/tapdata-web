@@ -56,22 +56,11 @@ export class Join extends NodeType {
       },
       leftNodeId: {
         type: 'string',
-        'x-decorator': 'FormItem',
-        'x-component': 'PreviewText.Select',
-        'x-reactions': {
-          dependencies: ['sourceNode'],
-          fulfill: {
-            state: {
-              dataSource: '{{!!$deps[0]}}'
-            }
-          }
-        }
+        display: 'none'
       },
       rightNodeId: {
         type: 'string',
-        'x-decorator': 'FormItem',
-        'x-component': 'PreviewText.Select',
-        'x-reactions': '{{getSourceNode}}'
+        display: 'none'
       },
       joinExpression: {
         title: '连接字段设置',
@@ -79,69 +68,66 @@ export class Join extends NodeType {
         required: true,
         default: [{ left: '', right: '', expression: '=' }],
         'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          wrapperWidth: 600
-        },
-        'x-component': 'ArrayItems',
-        'x-reactions': ['{{useAsyncDataSource(loadSourceNodeField, , "dataSource", "object")}}'],
-        items: {
-          type: 'object',
-          properties: {
-            space: {
-              type: 'void',
-              'x-component': 'Space',
-              properties: {
-                left: {
-                  type: 'string',
-                  required: true,
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Select'
-                },
-                expression: {
-                  type: 'string',
-                  required: true,
-                  default: '=',
-                  'x-decorator': 'FormItem',
-                  'x-component': 'PreviewText.Input'
-                },
-                right: {
-                  type: 'string',
-                  required: true,
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Select'
-                },
-                remove: {
-                  type: 'void',
-                  'x-decorator': 'FormItem',
-                  'x-component': 'ArrayItems.Remove'
-                }
-              }
-            }
-          }
-        },
-        properties: {
-          add: {
-            type: 'void',
-            title: '添加',
-            'x-component': 'ArrayItems.Addition',
-            'x-component-props': {
-              defaultValue: {
-                expression: '='
-              }
+        'x-component': 'JoinExpression',
+        'x-reactions': ['{{useAsyncDataSource(loadSourceNodeField, "dataSource", "object")}}']
+      },
+      embeddedMode: {
+        type: 'boolean',
+        title: '内嵌模式',
+        'x-decorator': 'FormItem',
+        'x-component': 'Switch',
+        'x-reactions': {
+          target: 'embeddedSetting',
+          fulfill: {
+            state: {
+              visible: '{{!!$self.value}}'
             }
           }
         }
+      },
+      embeddedSetting: {
+        type: 'object',
+        properties: {
+          fields: {
+            type: 'array',
+            title: '内嵌对象',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              wrapperWidth: 240
+            },
+            'x-component': 'Select'
+          },
+          path: {
+            type: 'string',
+            title: '内嵌路径(默认为表名)',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              wrapperWidth: 240
+            },
+            'x-component': 'Input'
+          },
+          format: {
+            type: 'string',
+            title: '内嵌类型',
+            default: 'object',
+            enum: [
+              {
+                label: '文档',
+                value: 'object'
+              },
+              {
+                label: '数组',
+                value: 'array'
+              }
+            ],
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              wrapperWidth: 240
+            },
+            'x-component': 'Radio.Group'
+          }
+        }
       }
-      /*nodeId: {
-        title: 'sourceNode',
-        type: 'string',
-        'x-decorator': 'FormItem',
-        'x-decorator-props': {
-          wrapperWidth: 240
-        },
-        'x-component': 'Select',
-        'x-reactions': '{{getSourceNode}}'
-      }*/
     }
   }
 }

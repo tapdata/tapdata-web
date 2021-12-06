@@ -1,0 +1,20 @@
+.join-expression {
+  $ow: 60px;
+  .join-operator {
+    width: $ow;
+    text-align: center;
+  }
+
+  .join-name {
+    margin-right: $ow;
+    width: 300px;
+  }
+
+  .join-field {
+    width: 300px;
+  }
+
+  .join-expression-row + .join-expression-row {
+    margin-top: 12px;
+  }
+}
