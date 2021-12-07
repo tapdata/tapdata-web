@@ -721,6 +721,7 @@ export default {
         where
       }
       if (this.mappingTemplate === 'custom') {
+        delete filter.where.mappingTemplate
         return TaskModel.get({
           filter: JSON.stringify(filter)
         }).then(res => {
@@ -771,7 +772,7 @@ export default {
       if (platformInfo && platformInfo.regionName) {
         item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
       }
-      item.statusLabel = this.statusMap[item.status].label
+      item.statusLabel = this.statusMap[item.status]?.label
       let getLag = lag => {
         let r = ''
         if (lag) {
