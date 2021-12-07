@@ -196,6 +196,7 @@ const getters = {
 const actions = {
   updateDag: debounce(async function ({ state, commit }) {
     const data = await taskApi.patch({
+      id: state.taskId,
       editVersion: state.editVersion,
       dag: state.dag
     })

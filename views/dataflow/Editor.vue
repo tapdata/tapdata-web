@@ -1005,6 +1005,7 @@ export default {
         const dataflow = await taskApi.post(data)
         this.isSaving = false
         this.dataflow.id = dataflow.id
+        this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
         this.$message.success(this.$t('message.saveOK'))
         await this.$router.replace({
