@@ -6,7 +6,16 @@ export const DEFAULT_SETTINGS = {
   name: '', // 任务名称
   type: 'initial_sync+cdc', // 任务类型：全量+增量
   desc: '', // 任务描述
-  increOperationMode: false // 增量数据处理模式：批量
+  isAutoCreateIndex: true, // 自动创建索引
+  writeThreadSize: 8, // 目标写入线程数
+  deduplicWriteMode: 'intelligent', // 去重写入机制: 智能去重写入
+  increOperationMode: false, // 增量数据处理模式：批量,
+  increaseReadSize: 1, // 增量批次读取行数
+  increShareReadMode: 'STREAMING', // 共享增量读取模式
+  increaseSyncInterval: 500, // 增量同步间隔(ms)
+  readBatchSize: 100, // 每次读取行数
+  processorThreadNum: 1 // 处理器线程数
+
   // readBatchSize: 100,
   // notificationWindow: 0,
   // notificationInterval: 300,
