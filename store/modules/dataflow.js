@@ -85,7 +85,8 @@ const state = () => ({
     edges: [] // 连线数据
   },
 
-  dagPromise: null
+  dagPromise: null,
+  editVersion: null
 })
 
 // getters
@@ -193,10 +194,12 @@ const getters = {
 
 // actions
 const actions = {
-  updateDag: debounce(function ({ state }) {
-    taskApi.patch({
+  updateDag: debounce(async function ({ state, commit }) {
+    const data = await taskApi.patch({
+      editVersion: state.editVersion,
       dag: state.dag
     })
+    commit('setEditVersion', data.editVersion)
   }, 300),
 
   async addNodeAsync({ dispatch, commit }, nodeData) {
@@ -471,6 +474,10 @@ const mutations = {
 
   setDagPromise(state, promise) {
     state.dagPromise = promise
+  },
+
+  setEditVersion(state, editVersion) {
+    state.editVersion = editVersion
   }
 }
 

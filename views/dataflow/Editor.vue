@@ -273,7 +273,8 @@ export default {
       'addNode',
       'setActiveType',
       'setFormSchema',
-      'setTransformStatus'
+      'setTransformStatus',
+      'setEditVersion'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag']),
@@ -531,6 +532,7 @@ export default {
       await this.addNodes(dag)
       this.setTaskId(data.id)
       this.setEdges(dag.edges)
+      this.setEditVersion(data.editVersion)
       this.setStateDirty(false)
 
       this.$refs.paperScroller.autoResizePaper()
@@ -960,8 +962,10 @@ export default {
 
     getDataflowDataToSave() {
       const dag = this.$store.getters['dataflow/dag']
+      const editVersion = this.$store.state['dataflow/editVersion']
       return {
         dag,
+        editVersion,
         ...this.dataflow
       }
     },
@@ -982,7 +986,9 @@ export default {
 
       const data = this.getDataflowDataToSave()
 
-      await taskApi.save(data)
+      const result = await taskApi.save(data)
+
+      this.setEditVersion(result.editVersion)
       // await taskApi.patch(data)
 
       this.isSaving = false
@@ -999,6 +1005,7 @@ export default {
         const dataflow = await taskApi.post(data)
         this.isSaving = false
         this.dataflow.id = dataflow.id
+        this.setEditVersion(dataflow.editVersion)
         this.$message.success(this.$t('message.saveOK'))
         await this.$router.replace({
           name: 'DataflowEditor',
