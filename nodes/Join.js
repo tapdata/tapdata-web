@@ -56,20 +56,49 @@ export class Join extends NodeType {
       },
       leftNodeId: {
         type: 'string',
-        display: 'none'
+        display: 'none',
+        'x-reactions': {
+          dependencies: ['sourceNode'],
+          fulfill: {
+            state: {
+              value: '{{$deps[0] && $deps[0][0] ? $deps[0][0].value : ""}}'
+            }
+          }
+        }
       },
       rightNodeId: {
         type: 'string',
-        display: 'none'
+        display: 'none',
+        'x-reactions': {
+          dependencies: ['sourceNode'],
+          fulfill: {
+            state: {
+              value: '{{$deps[0] && $deps[0][1] ? $deps[0][1].value : ""}}'
+            }
+          }
+        }
       },
-      joinExpression: {
+      joinExpressions: {
         title: '连接字段设置',
         type: 'array',
         required: true,
         default: [{ left: '', right: '', expression: '=' }],
         'x-decorator': 'FormItem',
         'x-component': 'JoinExpression',
-        'x-reactions': ['{{useAsyncDataSource(loadSourceNodeField, "dataSource", "object")}}']
+        'x-reactions': [
+          /*{
+            dependencies: ['sourceNode'],
+            fulfill: {
+              state: {
+                sourceNode: '{{$deps[0]}}'
+              }
+            }
+          },*/
+          {
+            dependencies: ['leftNodeId', 'rightNodeId']
+          },
+          '{{useAsyncDataSource(loadSourceNodeField, "dataSource", "object")}}'
+        ]
       },
       embeddedMode: {
         type: 'boolean',

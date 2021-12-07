@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/TopHeader'
 import LeftSidebar from './components/LeftSidebar'
@@ -185,6 +185,7 @@ export default {
   computed: {
     ...mapGetters('dataflow', {
       nodes: 'allNodes',
+      edges: 'allEdges',
       isActionActive: 'isActionActive',
       nodeById: 'nodeById',
       stateIsDirty: 'getStateIsDirty',
@@ -226,7 +227,14 @@ export default {
   },
 
   watch: {
-    $route: 'initView'
+    $route: 'initView',
+
+    'nodes.length'() {
+      this.updateDag()
+    },
+    'edges.length'() {
+      this.updateDag()
+    }
   },
 
   created() {
@@ -274,6 +282,8 @@ export default {
       'setFormSchema',
       'setTransformStatus'
     ]),
+
+    ...mapActions('dataflow', ['addNodeAsync', 'updateDag']),
 
     async confirmMessage(message, headline, type, confirmButtonText, cancelButtonText) {
       try {
@@ -976,7 +986,8 @@ export default {
 
       const data = this.getDataflowDataToSave()
 
-      await taskApi.patch(data)
+      await taskApi.save(data)
+      // await taskApi.patch(data)
 
       this.isSaving = false
 
@@ -993,7 +1004,7 @@ export default {
         this.isSaving = false
         this.dataflow.id = dataflow.id
         this.$message.success(this.$t('message.saveOK'))
-        await this.$router.push({
+        await this.$router.replace({
           name: 'DataflowEditor',
           params: { id: dataflow.id, action: 'dataflowSave' }
         })

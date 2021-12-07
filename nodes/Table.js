@@ -213,8 +213,8 @@ export class Table extends NodeType {
                 'x-component-props': {
                   min: 1
                 }
-              },
-              processorThreadNum: {
+              }
+              /*processorThreadNum: {
                 title: '处理器线程数',
                 type: 'number',
                 'x-decorator': 'FormItem',
@@ -222,7 +222,7 @@ export class Table extends NodeType {
                 'x-component-props': {
                   min: 1
                 }
-              }
+              }*/
             }
           },
           maxTransactionDuration: {

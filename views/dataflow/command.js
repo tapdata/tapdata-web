@@ -220,9 +220,9 @@ class AddNodeOnConnectionCommand extends ConnectionCommand {
   }
 
   undo(state) {
-    this.add(state)
     state.instance.remove(NODE_PREFIX + this.node.id)
     state.store.commit('dataflow/removeNode', this.node)
+    this.add(state)
   }
 }
 

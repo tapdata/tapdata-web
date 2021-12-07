@@ -1,5 +1,9 @@
 import Vue from 'vue'
 import { isObject } from 'web-core/utils/util'
+import Task from 'web-core/api/Task'
+import { debounce } from 'lodash'
+
+const taskApi = new Task()
 
 const find = (obj, nameParts, conditions) => {
   if (!nameParts.length) return obj
@@ -79,7 +83,9 @@ const state = () => ({
   dag: {
     nodes: [], // 节点数据
     edges: [] // 连线数据
-  }
+  },
+
+  dagPromise: null
 })
 
 // getters
@@ -186,7 +192,18 @@ const getters = {
 }
 
 // actions
-const actions = {}
+const actions = {
+  updateDag: debounce(function ({ state }) {
+    taskApi.patch({
+      dag: state.dag
+    })
+  }, 300),
+
+  async addNodeAsync({ dispatch, commit }, nodeData) {
+    commit('addNode', nodeData)
+    await dispatch('updateDag')
+  }
+}
 
 // mutations
 const mutations = {
@@ -450,6 +467,10 @@ const mutations = {
    */
   setTransformStatus(state, status) {
     state.transformStatus = status
+  },
+
+  setDagPromise(state, promise) {
+    state.dagPromise = promise
   }
 }
 
