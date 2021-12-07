@@ -11,6 +11,6 @@ export default class TaskAPI extends PublicApi {
    * @returns {*}
    */
   save(params) {
-    return axios.patch(this.url + '/confirm' + params.id, params)
+    return axios.patch(this.url + '/confirm/' + params.id, params)
   }
 }

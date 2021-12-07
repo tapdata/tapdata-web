@@ -227,14 +227,7 @@ export default {
   },
 
   watch: {
-    $route: 'initView',
-
-    'nodes.length'() {
-      this.updateDag()
-    },
-    'edges.length'() {
-      this.updateDag()
-    }
+    $route: 'initView'
   },
 
   created() {
@@ -324,9 +317,12 @@ export default {
       if (id) {
         await this.openDataflow(id)
       } else {
-        this.newDataflow()
+        await this.newDataflow()
         // this.handleShowSettings() // 默认打开设置
       }
+
+      this.stopDagWatch?.()
+      this.stopDagWatch = this.$watch(() => this.nodes.length + this.edges.length, this.updateDag)
     },
 
     initCommand() {
@@ -541,10 +537,10 @@ export default {
       this.handleCenterContent()
     },
 
-    newDataflow() {
+    async newDataflow() {
       this.resetWorkspace()
       this.dataflow.name = '新任务@' + new Date().toLocaleTimeString()
-      this.saveAsNewDataflow()
+      await this.saveAsNewDataflow()
     },
 
     /**
