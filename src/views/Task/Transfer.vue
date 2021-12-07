@@ -45,6 +45,7 @@
         :source="sourceData"
         :table_prefix="formData.table_prefix"
         :table_suffix="formData.table_suffix"
+        @select-table="selectMqTransfer"
       ></MqTransfer>
     </template>
     <el-dialog
@@ -491,6 +492,15 @@ export default {
         }
       })
       // this.preFixSuffixData()
+      //已选表是否为空
+      if (this.selectSourceArr.length > 0) {
+        this.$emit('select-table', false)
+      } else {
+        this.$emit('select-table', true)
+      }
+    },
+    selectMqTransfer() {
+      this.$emit('select-table')
     },
     saveFileOperations() {
       //如果右边为空  则提示不可以保存

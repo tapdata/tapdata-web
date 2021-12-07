@@ -67,6 +67,7 @@
                   :transferData="transferData"
                   :mqTransferFlag="mqTransferFlag"
                   :isTwoWay="settingModel.bidirectional"
+                  @select-table="selectTransfer"
                 ></Transfer>
               </div>
             </div>
@@ -100,6 +101,7 @@
               type="primary"
               class="btn-step"
               :loading="loading"
+              :disabled="isTransfer && steps[activeStep].type === 'mapping'"
               @mousedown.native.prevent="next()"
             >
               <span>{{ $t('guide.btn_next') }}</span>
@@ -108,6 +110,7 @@
               v-if="steps[activeStep].showSaveBtn"
               type="primary"
               class="btn-step"
+              :disabled="isTransfer"
               :loading="loading"
               @click="save()"
             >
@@ -522,6 +525,8 @@ export default {
           value: 'current'
         }
       ],
+      //是否选择表
+      isTransfer: true,
       //表设置
       fieldMappingNavData: '',
       fieldMappingTableData: '',
@@ -749,6 +754,9 @@ export default {
         this.fieldProcess()
       }
       this.taskStep++
+    },
+    selectTransfer() {
+      this.isTransfer = !this.checkTransfer()
     },
     //检查是否选择表
     checkTransfer() {

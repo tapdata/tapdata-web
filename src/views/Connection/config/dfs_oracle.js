@@ -99,7 +99,19 @@ export default function (vm) {
         type: 'input',
         field: 'database_owner',
         label: vm.$t('dataForm.form.databaseOwner'),
-        required: true
+        rules: [
+          {
+            required: true,
+            validator: (rule, v, callback) => {
+              vm.model.database_owner = v.toUpperCase()
+              if (!v) {
+                callback(new Error(vm.$t('dataForm.form.databaseOwner') + vm.$t('formBuilder.noneText')))
+              } else {
+                callback()
+              }
+            }
+          }
+        ]
       },
       {
         type: 'input',
