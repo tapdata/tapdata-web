@@ -26,3 +26,10 @@
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.1);
 }
+
+.zsiq_floatmain {
+  display: none!important;
+}
+.Workbench ~ .zsiq_floatmain {
+  display: block!important;
+}
