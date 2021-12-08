@@ -24,25 +24,22 @@ export class Aggregate extends NodeType {
         title: '主键',
         type: 'string',
         required: true,
-        enum: [
-          {
-            label: '保留匹配数据',
-            value: 'retain'
-          },
-          {
-            label: '创建匹配数据',
-            value: 'discard'
-          }
-        ],
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-decorator-props': {
           wrapperWidth: 240
-        }
+        },
+        'x-reactions': ['{{useAsyncDataSource(loadNodeFieldNames)}}']
       },
-      aggregations: {
-        type: 'array',
-        'x-component': 'ArrayAggregate'
+      aggregate: {
+        type: 'object',
+        'x-component': 'ArrayAggregate',
+        'x-reactions': ['{{useAsyncDataSource(loadSourceNodeField)}}']
+      // },
+      // aggregations: {
+      //   type: 'array',
+      //   'x-component': 'ArrayAggregate',
+      //   'x-reactions': ['{{useAsyncDataSource(loadSourceNodeField)}}']
         // 'x-decorator': 'FormItem',
         // default: [
         //   {
