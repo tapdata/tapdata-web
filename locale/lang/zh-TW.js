@@ -81,9 +81,8 @@ const newTc = {
 
   //字段映射
   dag_task_error_tittle: '任務啟動預檢查未通過',
-  dag_task_error_text: '錯誤原因：模型推演進行中',
+  dag_task_error_text: '在模型推演過程中，請耐心等待',
   dag_task_error_current_progress: '當前進度',
-  dag_task_error_progress: '錯誤原因：模型推演進行中',
   dag_task_error_completed: '模型推演完成',
   dag_task_filed_mapping_text: '錯誤原因：欄位映射錯誤請校正'
 }

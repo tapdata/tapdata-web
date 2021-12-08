@@ -86,11 +86,10 @@ const newEn = {
 
   //字段映射
   dag_task_error_tittle: 'Task startup pre check failed',
-  dag_task_error_Text: 'error reason: model deduction in progress',
-  dag_task_error_current_Progress: 'current progress',
-  dag_task_error_Progress: 'error reason: model deduction in progress',
-  dag_task_error_Completed: 'model deduction completed',
-  dag_task_filed_mapping_Text: 'error reason: field mapping error, please correct'
+  dag_task_error_Text: 'During the model deduction, please wait patiently',
+  dag_task_error_current_Progress: 'Current progress',
+  dag_task_error_Completed: 'Model deduction completed',
+  dag_task_filed_mapping_Text: 'Field mapping error, please correct'
 }
 const en = {
   ...enLocale,
