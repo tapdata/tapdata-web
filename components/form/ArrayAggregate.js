@@ -71,21 +71,14 @@ export const ArrayAggregate = connect(
             this.$emit('change', v)
             console.log('Aggregate', v) // eslint-disable-line
           }
-        },
+        }
       },
 
       render() {
-        console.log('❀❀❀❀❀❀Aggregate',this.options)
+        console.log('❀❀❀❀❀❀Aggregate', this.options)
         const { aggregations } = this
         return (
           <div class="aggregate-list">
-            {/* <FormItem label="主键" required style="width: 240px">
-              <el-select v-model={aggregate.primaryKeys} size="mini">
-                {this.options&&this.options.length?this.options[0].map(op => (
-                  <el-option label={op.field_name} value={op.field_name} key={op.field_name} />
-                )): []}
-              </el-select>
-            </FormItem> */}
             {aggregations.map((item, index) => {
               // eslint-disable-next-line prettier/prettier
               return (
@@ -123,9 +116,11 @@ export const ArrayAggregate = connect(
                     </FormItem>
                     <FormItem label="分组字段">
                       <el-select v-model={item.groupByExpression} size="mini">
-                        {this.options && this.options.length? this.options[0].map(op => (
-                          <el-option label={op.field_name} value={op.field_name} key={op.field_name} />
-                        )): []}
+                        {this.options && this.options.length
+                          ? this.options[0].map(op => (
+                              <el-option label={op.field_name} value={op.field_name} key={op.field_name} />
+                            ))
+                          : []}
                       </el-select>
                     </FormItem>
                   </el-col>
