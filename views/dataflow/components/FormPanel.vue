@@ -319,19 +319,18 @@ export default {
         },
 
         /**
-         * 加载源节点的schema, 返回的是二维数组，数组的长度取决于源节点的个数
+         * 加载源节点的schema
          * @param field
-         * @param dataType 数据类型 array | object
+         * @param dataType 数据类型 默认 array（二维数组） | object （key是节点ID，value是字段数组）
          * @returns {Promise<{}>}
          */
         loadSourceNodeField: async (field, dataType = 'array') => {
-          // eslint-disable-next-line no-console
           const id = field.form.values.id
           const allEdges = this.$store.getters['dataflow/allEdges']
           const sourceArr = allEdges.filter(({ target }) => target === id)
           if (!sourceArr.length) return
           // eslint-disable-next-line no-console
-          console.log('loadSourceNodeField🚗', id, sourceArr, field.form.values)
+          // console.log('loadSourceNodeField🚗', id, sourceArr, field.form.values)
           let stopWatch
           let fetch
           let result = []
@@ -366,6 +365,49 @@ export default {
             if (item) data[sourceArr[i].source] = item.fields
           })
           return data
+        },
+
+        /**
+         * 加载节点的字段选项列表（默认是第一个源节点）
+         * @param field
+         * @param nodeId
+         * @returns {Promise<{}|*>}
+         */
+        loadNodeFieldOptions: async (field, nodeId) => {
+          if (!nodeId) {
+            const id = field.form.values.id
+            const allEdges = this.$store.getters['dataflow/allEdges']
+            const edge = allEdges.find(({ target }) => target === id)
+            if (!edge) return
+            nodeId = edge.source
+          }
+
+          const { fields } = await metadataApi.nodeSchema(nodeId)
+
+          return fields.map(item => ({
+            label: item.field_name,
+            value: item.id
+          }))
+        },
+
+        /**
+         * 加载节点的字段名列表（默认是第一个源节点）
+         * @param field
+         * @param nodeId
+         * @returns {Promise<{}|*>}
+         */
+        loadNodeFieldNames: async (field, nodeId) => {
+          if (!nodeId) {
+            const id = field.form.values.id
+            const allEdges = this.$store.getters['dataflow/allEdges']
+            const edge = allEdges.find(({ target }) => target === id)
+            if (!edge) return
+            nodeId = edge.source
+          }
+
+          const { fields } = await metadataApi.nodeSchema(nodeId)
+
+          return fields.map(item => item.field_name)
         }
       }
     }
@@ -395,16 +437,7 @@ export default {
     async activeNodeId(n, o) {
       const node = this.activeNode
       const formSchema = this.$store.getters['dataflow/formSchema'] || {}
-      /*if (this.lastActiveNodeType === node.type) {
-        // 判断上一次的激活节点类型，相同表示schema也一样，不需要重置form
-        if (this.lastActiveDBType !== node.databaseType) {
-          await this.form.reset() // 将表单重置，防止没有设置default的被覆盖；这里有个问题：子级别的default被清空无效了
-        }
-        console.log('setValue', node)
-        this.form.setValues(node) // 新填充
-      } else {
-        await this.setSchema(this.ins.formSchema || formSchema.node)
-      }*/
+
       await this.setSchema(this.ins.formSchema || formSchema.node)
 
       this.lastActiveNodeType = node.type // 缓存节点类型
@@ -432,34 +465,22 @@ export default {
     // 监听连线变动
     'allEdges.length'() {
       if (!this.node) return
-      // eslint-disable-next-line no-console
-      console.log('开始设置isSource， isTarget', this.form.getFieldState('isSource'), this.form.query('isSource'))
       if (this.form.getFieldState('isSource')) {
         // 节点关心isSource
         this.form.setFieldState('isSource', state => {
-          state.value = this.allEdges.some(({ source }) => source === this.node.id)
+          this.scope.isSource(state)
         })
       }
       if (this.form.getFieldState('isTarget')) {
         // 节点关心isTarget
         this.form.setFieldState('isTarget', state => {
-          state.value = this.allEdges.some(({ target }) => target === this.node.id)
+          this.scope.isTarget(state)
         })
       }
       if (this.form.getFieldState('sourceNode')) {
         // 节点关心sourceNode
         this.form.setFieldState('sourceNode', state => {
           this.scope.getSourceNode(state)
-          /*const id = this.node.id
-          const edges = this.$store.getters['dataflow/allEdges']
-          const nodes = this.$store.getters['dataflow/allNodes']
-          const sourceArr = edges.filter(({ target }) => target === id)
-          state.value = sourceArr.map(({ source }) => {
-            return {
-              value: source,
-              label: nodes.find(node => node.id === source).name
-            }
-          })*/
         })
       }
     }
