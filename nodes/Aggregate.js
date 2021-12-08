@@ -31,8 +31,8 @@ export class Aggregate extends NodeType {
         },
         'x-reactions': ['{{useAsyncDataSource(loadNodeFieldNames)}}']
       },
-      aggregate: {
-        type: 'object',
+      aggregations: {
+        type: 'array',
         'x-component': 'ArrayAggregate',
         'x-reactions': ['{{useAsyncDataSource(loadSourceNodeField)}}']
       // },

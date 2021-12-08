@@ -75,7 +75,7 @@ export const ArrayAggregate = connect(
       },
 
       render() {
-        console.log('❀❀❀❀❀❀',this.options)
+        console.log('❀❀❀❀❀❀Aggregate',this.options)
         const { aggregations } = this
         return (
           <div class="aggregate-list">
