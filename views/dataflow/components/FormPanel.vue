@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import * as components from 'web-core/components/form'
 import { createSchemaField, FormProvider } from '@formily/vue'
 import {
@@ -305,12 +305,12 @@ export default {
           field.value = allEdges.some(({ target }) => target === id)
         },
 
-        getSourceNode: field => {
+        getSourceNode: (field, fieldName = 'value') => {
           const id = field.form.values.id
           const edges = this.$store.getters['dataflow/allEdges']
           const nodes = this.$store.getters['dataflow/allNodes']
           const sourceArr = edges.filter(({ target }) => target === id)
-          field.dataSource = sourceArr.map(({ source }) => {
+          field[fieldName] = sourceArr.map(({ source }) => {
             return {
               value: source,
               label: nodes.find(node => node.id === source).name
@@ -325,11 +325,13 @@ export default {
          * @returns {Promise<{}>}
          */
         loadSourceNodeField: async (field, dataType = 'array') => {
+          // eslint-disable-next-line no-console
           const id = field.form.values.id
           const allEdges = this.$store.getters['dataflow/allEdges']
           const sourceArr = allEdges.filter(({ target }) => target === id)
           if (!sourceArr.length) return
-
+          // eslint-disable-next-line no-console
+          console.log('loadSourceNodeField🚗', id, sourceArr, field.form.values)
           let stopWatch
           let fetch
           let result = []
@@ -357,11 +359,11 @@ export default {
           stopWatch?.()
 
           if (dataType === 'array') {
-            return result.map(item => item.fields)
+            return result.reduce((arr, item) => (item.fields && arr.push(item.fields), arr), [])
           }
           const data = {}
           result.forEach((item, i) => {
-            data[sourceArr[i].source] = item.fields
+            if (item) data[sourceArr[i].source] = item.fields
           })
           return data
         }
@@ -393,15 +395,17 @@ export default {
     async activeNodeId(n, o) {
       const node = this.activeNode
       const formSchema = this.$store.getters['dataflow/formSchema'] || {}
-      if (this.lastActiveNodeType === node.type) {
+      /*if (this.lastActiveNodeType === node.type) {
         // 判断上一次的激活节点类型，相同表示schema也一样，不需要重置form
         if (this.lastActiveDBType !== node.databaseType) {
           await this.form.reset() // 将表单重置，防止没有设置default的被覆盖；这里有个问题：子级别的default被清空无效了
         }
+        console.log('setValue', node)
         this.form.setValues(node) // 新填充
       } else {
         await this.setSchema(this.ins.formSchema || formSchema.node)
-      }
+      }*/
+      await this.setSchema(this.ins.formSchema || formSchema.node)
 
       this.lastActiveNodeType = node.type // 缓存节点类型
       this.lastActiveDBType = node.databaseType
@@ -442,6 +446,22 @@ export default {
           state.value = this.allEdges.some(({ target }) => target === this.node.id)
         })
       }
+      if (this.form.getFieldState('sourceNode')) {
+        // 节点关心sourceNode
+        this.form.setFieldState('sourceNode', state => {
+          this.scope.getSourceNode(state)
+          /*const id = this.node.id
+          const edges = this.$store.getters['dataflow/allEdges']
+          const nodes = this.$store.getters['dataflow/allNodes']
+          const sourceArr = edges.filter(({ target }) => target === id)
+          state.value = sourceArr.map(({ source }) => {
+            return {
+              value: source,
+              label: nodes.find(node => node.id === source).name
+            }
+          })*/
+        })
+      }
     }
   },
 
@@ -451,6 +471,8 @@ export default {
 
   methods: {
     ...mapMutations('dataflow', ['setNodeValue', 'updateNodeProperties', 'setNodeError', 'clearNodeError']),
+
+    ...mapActions('dataflow', ['updateDag']),
 
     // 设置schema
     async setSchema(schema, values) {
@@ -486,6 +508,7 @@ export default {
         console.log('onFormInputChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
         this.$nextTick(() => {
           this.updateNodeProps(form)
+          this.updateDag()
         })
       })
     }

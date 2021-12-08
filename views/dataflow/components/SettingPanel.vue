@@ -1,6 +1,6 @@
 <template>
   <div class="setting-panel">
-    <ElForm :model="settings" class="setting-panel-form">
+    <ElForm :model="settings" class="setting-panel-form" label-width="110px" label-position="left">
       <ElTabs v-model="settingPanelType" class="setting-tabs h-100">
         <ElTabPane label="基本设置" name="base">
           <div class="setting-panel-box bg-white">
@@ -72,29 +72,78 @@
               </ElRow>
               <ElRow>
                 <ElCol :span="12">
-                  <ElFormItem label="增量滞后判断时间设置">
-                    <ElSwitch v-model="settings.increHysteresis"></ElSwitch>
+                  <ElFormItem label="增量批次读取行数">
                     <ElInputNumber
-                      controls-position="right"
-                      class="pl-5"
-                      v-model="settings.hysteresisInterval"
+                      v-model="settings.increaseReadSize"
                       :min="1"
+                      controls-position="right"
                     ></ElInputNumber>
-                    ms
                   </ElFormItem>
                 </ElCol>
                 <ElCol :span="12">
-                  <ElFormItem label="增量数据处理模式">
+                  <ElFormItem label-width="110" label="增量数据处理模式">
                     <ElSelect v-model="settings.increOperationMode">
                       <ElOption label="批量" :value="false"></ElOption>
                       <ElOption label="逐条" :value="true"></ElOption>
                     </ElSelect>
+                  </ElFormItem>
+                </ElCol>
+              </ElRow>
+              <ElRow>
+                <ElCol :span="12">
+                  <ElFormItem label-width="110" label="增量同步间隔(ms)">
                     <ElInputNumber
+                      v-model="settings.increaseSyncInterval"
+                      :min="1"
+                      :max="100"
+                      size="mini"
                       controls-position="right"
-                      class="pl-5"
+                    ></ElInputNumber>
+                  </ElFormItem>
+                </ElCol>
+                <ElCol :span="12">
+                  <ElFormItem label="每次读取行数">
+                    <ElInputNumber
                       v-model="settings.increaseReadSize"
                       :min="1"
+                      size="mini"
+                      controls-position="right"
                     ></ElInputNumber>
+                  </ElFormItem>
+                </ElCol>
+                <ElCol :span="12">
+                  <ElFormItem label="处理器线程数">
+                    <ElInputNumber
+                      v-model="settings.processorThreadNum"
+                      :min="1"
+                      :max="100"
+                      size="mini"
+                      controls-position="right"
+                    ></ElInputNumber>
+                  </ElFormItem>
+                </ElCol>
+              </ElRow>
+              <ElRow>
+                <ElCol :span="12">
+                  <ElFormItem label="共享增量读取模式">
+                    <ElSelect v-model="settings.increShareReadMode">
+                      <ElOption label="流式读取" value="STREAMING"></ElOption>
+                      <ElOption label="轮询读取" value="POLLING"></ElOption>
+                    </ElSelect>
+                  </ElFormItem>
+                </ElCol>
+                <ElCol :span="12">
+                  <ElFormItem label="增量滞后时间设置">
+                    <ElSwitch v-model="settings.increHysteresis"></ElSwitch>
+                    <template v-if="settings.increHysteresis">
+                      <ElInputNumber
+                        v-model="settings.hysteresisInterval"
+                        class="pl-5 mr-1"
+                        :min="1"
+                        controls-position="right"
+                      ></ElInputNumber>
+                      秒
+                    </template>
                   </ElFormItem>
                 </ElCol>
               </ElRow>

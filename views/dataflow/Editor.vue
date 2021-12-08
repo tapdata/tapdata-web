@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/TopHeader'
 import LeftSidebar from './components/LeftSidebar'
@@ -185,6 +185,7 @@ export default {
   computed: {
     ...mapGetters('dataflow', {
       nodes: 'allNodes',
+      edges: 'allEdges',
       isActionActive: 'isActionActive',
       nodeById: 'nodeById',
       stateIsDirty: 'getStateIsDirty',
@@ -272,8 +273,11 @@ export default {
       'addNode',
       'setActiveType',
       'setFormSchema',
-      'setTransformStatus'
+      'setTransformStatus',
+      'setEditVersion'
     ]),
+
+    ...mapActions('dataflow', ['addNodeAsync', 'updateDag']),
 
     async confirmMessage(message, headline, type, confirmButtonText, cancelButtonText) {
       try {
@@ -314,9 +318,12 @@ export default {
       if (id) {
         await this.openDataflow(id)
       } else {
-        this.newDataflow()
+        await this.newDataflow()
         // this.handleShowSettings() // 默认打开设置
       }
+
+      this.stopDagWatch?.()
+      this.stopDagWatch = this.$watch(() => this.nodes.length + this.edges.length, this.updateDag)
     },
 
     initCommand() {
@@ -525,16 +532,17 @@ export default {
       await this.addNodes(dag)
       this.setTaskId(data.id)
       this.setEdges(dag.edges)
+      this.setEditVersion(data.editVersion)
       this.setStateDirty(false)
 
       this.$refs.paperScroller.autoResizePaper()
       this.handleCenterContent()
     },
 
-    newDataflow() {
+    async newDataflow() {
       this.resetWorkspace()
       this.dataflow.name = '新任务@' + new Date().toLocaleTimeString()
-      this.saveAsNewDataflow()
+      await this.saveAsNewDataflow()
     },
 
     /**
@@ -954,8 +962,10 @@ export default {
 
     getDataflowDataToSave() {
       const dag = this.$store.getters['dataflow/dag']
+      const editVersion = this.$store.state['dataflow/editVersion']
       return {
         dag,
+        editVersion,
         ...this.dataflow
       }
     },
@@ -976,7 +986,10 @@ export default {
 
       const data = this.getDataflowDataToSave()
 
-      await taskApi.patch(data)
+      const result = await taskApi.save(data)
+
+      this.setEditVersion(result.editVersion)
+      // await taskApi.patch(data)
 
       this.isSaving = false
 
@@ -992,8 +1005,10 @@ export default {
         const dataflow = await taskApi.post(data)
         this.isSaving = false
         this.dataflow.id = dataflow.id
+        this.setTaskId(dataflow.id)
+        this.setEditVersion(dataflow.editVersion)
         this.$message.success(this.$t('message.saveOK'))
-        await this.$router.push({
+        await this.$router.replace({
           name: 'DataflowEditor',
           params: { id: dataflow.id, action: 'dataflowSave' }
         })
