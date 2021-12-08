@@ -273,6 +273,10 @@
 <script>
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
+import factor from '@/api/factory'
+const UsersModel = factor('users')
+const RoleModel = factor('role')
+const RoleMappingModel = factor('roleMapping')
 
 export default {
   components: {
@@ -474,16 +478,13 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        this.$api('users').count({ where: where }),
-        this.$api('users').get({
-          filter: JSON.stringify(filter)
-        })
-      ]).then(([countRes, res]) => {
+      return UsersModel.get({
+        filter: JSON.stringify(filter)
+      }).then(res => {
         this.getCount()
-        let list = res.data || []
+        let list = res.data?.items || []
         return {
-          total: countRes.data.count,
+          total: res.data?.total,
           data: list.map(item => {
             if (!item.emailVerified) {
               item.status = 'notVerified'
@@ -504,37 +505,35 @@ export default {
     },
     getCount() {
       Promise.all([
-        this.$api('users').count({
+        UsersModel.get({
           where: { emailVerified: true, account_status: 2 }
         }),
-        this.$api('users').count({
+        UsersModel.get({
           where: { emailVerified: false, account_status: { neq: 0 } }
         }),
-        this.$api('users').count({ where: { account_status: 0 } })
+        UsersModel.get({ where: { account_status: 0 } })
       ]).then(([notActivatedCount, notVerifiedCount, rejectedCount]) => {
-        this.notActivatedCount = notActivatedCount.data.count
-        this.notVerifiedCount = notVerifiedCount.data.count
-        this.rejectedCount = rejectedCount.data.count
+        this.notActivatedCount = notActivatedCount.data.total
+        this.notVerifiedCount = notVerifiedCount.data.total
+        this.rejectedCount = rejectedCount.data.total
       })
     },
     // 获取角色下拉值
     getDbOptions() {
-      this.$api('role')
-        .get({})
-        .then(res => {
-          if (res.data && res.data.length) {
-            let options = []
-            res.data.forEach(db => {
-              if (db.name !== 'admin') {
-                options.push({
-                  label: db.name,
-                  value: db.id
-                })
-              }
-            })
-            this.createFormConfig.items[3].options = options
-          }
-        })
+      RoleModel.get({}).then(res => {
+        if (res.data && res.data.length) {
+          let options = []
+          res.data.forEach(db => {
+            if (db.name !== 'admin') {
+              options.push({
+                label: db.name,
+                value: db.id
+              })
+            }
+          })
+          this.createFormConfig.items[3].options = options
+        }
+      })
     },
     // taps标签页切换
     handleTapClick(val) {
@@ -572,22 +571,18 @@ export default {
           inq: ids
         }
       }
-      this.$api('users')
-        .update(where, { listtags: listtags })
-        .then(() => {
-          this.table.fetch()
-        })
+      UsersModel.update(where, { listtags: listtags }).then(() => {
+        this.table.fetch()
+      })
     },
     // 获取角色关联的用户的数据
     getMappingModel(id) {
-      this.$api('roleMapping')
-        .get({ 'filter[where][principalId]': id })
-        .then(res => {
-          if (res && res.data) {
-            this.roleMappding = res.data
-            this.createForm.roleusers = res.data.map(item => item.roleId)
-          }
-        })
+      RoleMappingModel.get({ 'filter[where][principalId]': id }).then(res => {
+        if (res && res.data) {
+          this.roleMappding = res.data
+          this.createForm.roleusers = res.data.map(item => item.roleId)
+        }
+      })
     },
     // 创建用户弹窗
     openCreateDialog() {
@@ -600,15 +595,13 @@ export default {
           }
         }
       }
-      this.$api('role')
-        .get(parmas)
-        .then(res => {
-          if (res.data && res.data.length) {
-            res.data.forEach(item => {
-              roleusers.push(item.id)
-            })
-          }
-        })
+      RoleModel.get(parmas).then(res => {
+        if (res.data && res.data.length) {
+          res.data.forEach(item => {
+            roleusers.push(item.id)
+          })
+        }
+      })
       this.createForm = {
         username: '',
         email: '',
@@ -680,9 +673,7 @@ export default {
               break
           }
           // delete params.status;
-          that
-            .$api('users')
-            [that.createForm.id ? 'patch' : 'post'](params)
+          UsersModel[that.createForm.id ? 'patch' : 'post'](params)
             .then(res => {
               if (res) {
                 // 过滤不存在角色
@@ -699,7 +690,7 @@ export default {
 
                 // 删除以前角色id
                 that.roleMappding.forEach(rolemapping => {
-                  that.$api('roleMapping').delete(rolemapping.id)
+                  RoleMappingModel.delete(rolemapping.id)
                 })
 
                 let newRoleMappings = []
@@ -710,12 +701,9 @@ export default {
                     roleId: roleuser
                   })
                 })
-                that
-                  .$api('roleMapping')
-                  .post(newRoleMappings)
-                  .then(() => {
-                    that.$message.success(this.$t('message.saveOK'))
-                  })
+                RoleMappingModel.post(newRoleMappings).then(() => {
+                  that.$message.success(this.$t('message.saveOK'))
+                })
                 this.table.fetch()
               }
             })
@@ -770,8 +758,7 @@ export default {
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
-            this.$api('users')
-              .delete(item.id)
+            UsersModel.delete(item.id)
               .then(() => {
                 this.$message.success(this.$t('message.deleteOK'))
                 this.table.fetch()
@@ -917,8 +904,7 @@ export default {
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
-            this.$api('users')
-              .patch(data)
+            UsersModel.patch(data)
               .then(() => {
                 this.$message.success(successMsg)
                 this.table.fetch()
@@ -958,12 +944,10 @@ export default {
           params.emailVerified = true
           break
       }
-      this.$api('users')
-        .update(where, params)
-        .then(() => {
-          this.table.fetch()
-          this.$message.success(this.$t('message.operationSuccuess'))
-        })
+      UsersModel.update(where, params).then(() => {
+        this.table.fetch()
+        this.$message.success(this.$t('message.operationSuccuess'))
+      })
     },
     // 关联用户
     permissionsmethod(data) {
