@@ -82,6 +82,7 @@ import factory from '../api/factory'
 import VIcon from '@/components/VIcon'
 
 const MetadataDefinitions = factory('MetadataDefinitions')
+const UserGroupModel = factory('UserGroup')
 
 export default {
   components: { VIcon },
@@ -112,6 +113,7 @@ export default {
       dialogConfig: {
         type: 'add',
         id: '',
+        gid: '',
         label: '',
         title: '',
         visible: false
@@ -175,26 +177,28 @@ export default {
         where
       }
       if (this.types[0] === 'user') {
-        this.$api('UserGroup')
-          .get({})
-          .then(res => {
-            if (res.data) {
-              let treeData = []
-              if (res.data && res.data.length) {
-                treeData = res.data.map(item => ({
-                  value: item.name,
-                  name: item.name,
-                  id: item.id,
-                  gid: item.gid,
-                  parent_id: item.parent_id,
-                  last_updated: item.last_updated,
-                  user_id: item.user_id
-                }))
-              }
-              this.treeData = this.formatData(treeData)
-              cb && cb(treeData)
-            }
+        UserGroupModel.get({
+          filter: JSON.stringify({
+            limit: 999
           })
+        }).then(res => {
+          if (res.data) {
+            let treeData = []
+            if (res.data?.items?.length) {
+              treeData = res.data.items.map(item => ({
+                value: item.name,
+                name: item.name,
+                id: item.id,
+                gid: item.gid,
+                parent_id: item.parent_id,
+                last_updated: item.last_updated,
+                user_id: item.user_id
+              }))
+            }
+            this.treeData = this.formatData(treeData)
+            cb && cb(treeData)
+          }
+        })
       } else {
         MetadataDefinitions.get({
           filter: JSON.stringify(filter)
@@ -211,25 +215,27 @@ export default {
         filter: {}
       }
       if (this.types[0] === 'user') {
-        this.$api('UserGroup')
-          .get({})
-          .then(res => {
-            if (res.data) {
-              let treeData = []
-              if (res.data && res.data.length) {
-                treeData = res.data.map(item => ({
-                  value: item.name,
-                  id: item.id,
-                  gid: item.gid,
-                  parent_id: item.parent_id,
-                  last_updated: item.last_updated,
-                  user_id: item.user_id
-                }))
-              }
-              // this.treeData = this.formatData(res.data);
-              cb && cb(treeData)
-            }
+        UserGroupModel.get({
+          filter: JSON.stringify({
+            limit: 999
           })
+        }).then(res => {
+          if (res.data) {
+            let treeData = []
+            if (res.data?.items?.length) {
+              treeData = res.data.items.map(item => ({
+                value: item.name,
+                id: item.id,
+                gid: item.gid,
+                parent_id: item.parent_id,
+                last_updated: item.last_updated,
+                user_id: item.user_id
+              }))
+            }
+            // this.treeData = this.formatData(res.data);
+            cb && cb(treeData)
+          }
+        })
       } else {
         MetadataDefinitions.get(params).then(res => {
           if (res.data) {
@@ -299,6 +305,7 @@ export default {
         visible: true,
         type,
         id: node ? node.key : '',
+        gid: node?.data?.gid || '',
         label: type === 'edit' ? node.label : '',
         title:
           type === 'add'
@@ -317,6 +324,7 @@ export default {
       let config = this.dialogConfig
       let value = config.label
       let id = config.id
+      let gid = config.gid
       let itemType = config.itemType
       let method = 'post'
 
@@ -338,9 +346,9 @@ export default {
           params.id = id
         } else if (id) {
           params.parent_id = id
+          params.parent_gid = gid
         }
-        this.$api('UserGroup')
-          [method](params)
+        UserGroupModel[method](params)
           .then(res => {
             let self = this
             if (res.data) {
@@ -401,9 +409,7 @@ export default {
               gid: id
             }
           }
-          that
-            .$api('UserGroup')
-            .delete(params)
+          UserGroupModel.delete(params)
             .then(() => {
               let self = this
               self.getData()

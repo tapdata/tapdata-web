@@ -56,6 +56,7 @@ import factory from '../api/factory'
 import _ from 'lodash'
 
 const MetadataDefinitions = factory('MetadataDefinitions')
+const UserGroupModel = factory('UserGroup')
 
 export default {
   name: 'SelectClassify',
@@ -100,22 +101,24 @@ export default {
       }
 
       if (this.types[0] === 'user') {
-        this.$api('UserGroup')
-          .get({})
-          .then(res => {
-            if (res.data) {
-              let treeData = res.data.map(item => ({
-                value: item.name,
-                id: item.id,
-                gid: item.gid,
-                parent_id: item.parent_id,
-                last_updated: item.last_updated,
-                user_id: item.user_id
-              }))
-              this.treeData = this.formatData(treeData)
-              cb && cb(res.data)
-            }
+        UserGroupModel.get({
+          filter: JSON.stringify({
+            limit: 999
           })
+        }).then(res => {
+          if (res.data?.items) {
+            let treeData = res.data.items.map(item => ({
+              value: item.name,
+              id: item.id,
+              gid: item.gid,
+              parent_id: item.parent_id,
+              last_updated: item.last_updated,
+              user_id: item.user_id
+            }))
+            this.treeData = this.formatData(treeData)
+            cb && cb(res.data)
+          }
+        })
       } else {
         MetadataDefinitions.get({
           filter: JSON.stringify(filter)
@@ -169,13 +172,14 @@ export default {
     },
     handleCheckChange(data) {
       this.oldTagList = []
-      if (this.tagList.lengt > 0 && data.id === this.tagList[0].id) {
+      if (this.tagList.length > 0 && data.id === this.tagList[0].id) {
         this.tagList = []
       } else {
         this.tagList = []
         let node = {
           id: data.id,
-          value: data.value
+          value: data.value,
+          gid: data.gid
         }
         this.tagList.push(node)
       }

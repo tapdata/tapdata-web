@@ -273,6 +273,8 @@
 <script>
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
+import factor from '@/api/factory'
+const UsersModel = factor('users')
 
 export default {
   components: {
@@ -474,16 +476,13 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        this.$api('users').count({ where: where }),
-        this.$api('users').get({
-          filter: JSON.stringify(filter)
-        })
-      ]).then(([countRes, res]) => {
+      return UsersModel.get({
+        filter: JSON.stringify(filter)
+      }).then(res => {
         this.getCount()
-        let list = res.data || []
+        let list = res.data?.items || []
         return {
-          total: countRes.data.count,
+          total: res.data?.total,
           data: list.map(item => {
             if (!item.emailVerified) {
               item.status = 'notVerified'
@@ -504,17 +503,17 @@ export default {
     },
     getCount() {
       Promise.all([
-        this.$api('users').count({
+        UsersModel.get({
           where: { emailVerified: true, account_status: 2 }
         }),
-        this.$api('users').count({
+        UsersModel.get({
           where: { emailVerified: false, account_status: { neq: 0 } }
         }),
-        this.$api('users').count({ where: { account_status: 0 } })
+        UsersModel.get({ where: { account_status: 0 } })
       ]).then(([notActivatedCount, notVerifiedCount, rejectedCount]) => {
-        this.notActivatedCount = notActivatedCount.data.count
-        this.notVerifiedCount = notVerifiedCount.data.count
-        this.rejectedCount = rejectedCount.data.count
+        this.notActivatedCount = notActivatedCount.data.total
+        this.notVerifiedCount = notVerifiedCount.data.total
+        this.rejectedCount = rejectedCount.data.total
       })
     },
     // 获取角色下拉值
