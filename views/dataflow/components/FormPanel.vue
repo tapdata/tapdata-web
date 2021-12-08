@@ -407,7 +407,7 @@ export default {
 
           const { fields } = await metadataApi.nodeSchema(nodeId)
 
-          return fields.map(item => item.fields)
+          return fields.map(item => item.field_name)
         }
       }
     }
