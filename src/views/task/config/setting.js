@@ -67,6 +67,8 @@ export default function () {
             validator(rule, value, callback) {
               if (!value) {
                 callback(new Error('每次读取数量不能为空，默认是1000'))
+              } else if (value < 1 || value > 10000) {
+                callback(new Error('每次读取数量取值范围 1 ~ 10000'))
               } else if (!/^\d+$/.test(value)) {
                 callback(new Error('每次读取数量只能为数字'))
               } else {
