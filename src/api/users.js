@@ -79,6 +79,6 @@ export default class users extends PublicAPI {
   }
 
   update(where, params) {
-    return axios.post(this.url + '/update?where=' + JSON.stringify(where), params)
+    return axios.post(this.url + '/update?where=' + encodeURIComponent(JSON.stringify(where)), params)
   }
 }
