@@ -79,6 +79,13 @@ export const ArrayAggregate = connect(
         const { aggregations } = this
         return (
           <div class="aggregate-list">
+            {/* <FormItem label="主键" required style="width: 240px">
+              <el-select v-model={aggregate.primaryKeys} size="mini">
+                {this.options&&this.options.length?this.options[0].map(op => (
+                  <el-option label={op.field_name} value={op.field_name} key={op.field_name} />
+                )): []}
+              </el-select>
+            </FormItem> */}
             {aggregations.map((item, index) => {
               // eslint-disable-next-line prettier/prettier
               return (
