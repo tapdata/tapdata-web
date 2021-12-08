@@ -180,18 +180,18 @@ let menuSetting = [
     code: 'data_transmission',
     children: [
       {
-        name: 'dataFlows',
+        name: 'migrate',
         icon: 'shujukuqianyi1',
         code: 'Data_SYNC_menu',
-        alias: 'dataFlowsClusterClone',
-        query: '?mapping=cluster-clone'
+        alias: 'dataFlowsClusterClone'
+        // query: '?mapping=cluster-clone'
       },
       {
-        name: 'dataFlows',
+        name: 'dataflow',
         icon: 'shujutongbu',
         code: 'Data_SYNC_menu',
-        alias: 'dataFlowsCustom',
-        query: '?mapping=custom'
+        alias: 'dataFlowsCustom'
+        // query: '?mapping=custom'
       },
       {
         name: 'dataVerification',
