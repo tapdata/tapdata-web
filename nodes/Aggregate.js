@@ -24,6 +24,7 @@ export class Aggregate extends NodeType {
         title: '主键',
         type: 'string',
         required: true,
+        default: 'column_2',
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-decorator-props': {
@@ -34,7 +35,12 @@ export class Aggregate extends NodeType {
       aggregations: {
         type: 'array',
         'x-component': 'ArrayAggregate',
-        'x-reactions': ['{{useAsyncDataSource(loadSourceNodeField)}}']
+        dependencies: ['primaryKeys'],
+        fulfill: {
+          state: {
+            dataSource: '{{$form.getFieldState("primaryKeys").dataSource }}'
+          }
+        }
       // },
       // aggregations: {
       //   type: 'array',
