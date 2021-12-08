@@ -35,10 +35,12 @@ export class Aggregate extends NodeType {
       aggregations: {
         type: 'array',
         'x-component': 'ArrayAggregate',
-        dependencies: ['primaryKeys'],
-        fulfill: {
-          state: {
-            dataSource: '{{$form.getFieldState("primaryKeys").dataSource}}'
+        'x-reactions': {
+          dependencies: ['primaryKeys'],
+          fulfill: {
+            state: {
+              dataSource: '{{$form.getFieldState("primaryKeys").dataSource}}'
+            }
           }
         }
       }

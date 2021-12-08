@@ -75,14 +75,14 @@ export const ArrayAggregate = connect(
       },
 
       render() {
-        console.log('❀❀❀❀❀❀Aggregate', this.options)
+        console.log('❀❀❀❀❀❀Aggregate', this.options) // eslint-disable-line
         const { aggregations } = this
         return (
           <div class="aggregate-list">
             {aggregations.map((item, index) => {
               // eslint-disable-next-line prettier/prettier
               return (
-                <el-row gutter={20} style="width: 770px; margin: 0 0 20px;border: 1px solid #C8CDCF">
+                <el-row gutter={20} style="width: 770px; margin: 0 0 20px;border: 1px solid #C8CDCF;">
                   <el-col span={23}>
                     <el-row gutter={10}>
                       <el-col span={8}>
@@ -117,9 +117,7 @@ export const ArrayAggregate = connect(
                     <FormItem label="分组字段">
                       <el-select v-model={item.groupByExpression} size="mini">
                         {this.options && this.options.length
-                          ? this.options[0].map(op => (
-                              <el-option label={op.field_name} value={op.field_name} key={op.field_name} />
-                            ))
+                          ? this.options.map(op => <el-option label={op} value={op} key={op} />)
                           : []}
                       </el-select>
                     </FormItem>
