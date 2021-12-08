@@ -94,8 +94,7 @@
                   <ElFormItem label-width="110" label="增量同步间隔(ms)">
                     <ElInputNumber
                       v-model="settings.increaseSyncInterval"
-                      :min="1"
-                      :max="100"
+                      :min="0"
                       size="mini"
                       controls-position="right"
                     ></ElInputNumber>
