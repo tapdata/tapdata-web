@@ -9,6 +9,7 @@ import VIcon from '@/components/VIcon'
 export const ArrayAggregate = connect(
   observer(
     defineComponent({
+      props: ['loading', 'options'],
       // components: { Form , FormItem },
       setup() {
         const formRef = useForm()
@@ -58,14 +59,32 @@ export const ArrayAggregate = connect(
               groupByExpression: ''
             }
           ],
+
           groupList: []
         }
+      },
+
+      watch: {
+        aggregations: {
+          deep: true,
+          handler(v) {
+            this.$emit('change', v)
+            console.log('Aggregate', v) // eslint-disable-line
+          }
+        },
       },
 
       render() {
         const { aggregations } = this
         return (
           <div class="aggregate-list">
+            {/* <FormItem label="主键" required style="width: 240px">
+              <el-select v-model={aggregate.primaryKeys} size="mini">
+                {this.options&&this.options.length?this.options[0].map(op => (
+                  <el-option label={op.field_name} value={op.field_name} key={op.field_name} />
+                )): []}
+              </el-select>
+            </FormItem> */}
             {aggregations.map((item, index) => {
               // eslint-disable-next-line prettier/prettier
               return (
@@ -86,7 +105,7 @@ export const ArrayAggregate = connect(
                         </FormItem>
                       </el-col>
                       <el-col span={16}>
-                        <FormItem title="xxx" label="作用目标">
+                        <FormItem title="作用目标" label="作用目标">
                           <el-input
                             v-model={item.aggExpression}
                             size="mini"
@@ -103,9 +122,9 @@ export const ArrayAggregate = connect(
                     </FormItem>
                     <FormItem label="分组字段">
                       <el-select v-model={item.groupByExpression} size="mini">
-                        {this.groupList.map(op => (
-                          <el-option label={op.label} value={op.value} key={op.value} />
-                        ))}
+                        {this.options && this.options.length? this.options[0].map(op => (
+                          <el-option label={op.field_name} value={op.field_name} key={op.field_name} />
+                        )): []}
                       </el-select>
                     </FormItem>
                   </el-col>
