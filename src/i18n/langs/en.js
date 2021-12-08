@@ -8,6 +8,9 @@ export default {
   button_confirm: 'confirm',
   button_cancel: 'cancel',
 
+  // 通用消息
+  message_title_prompt: 'hint',
+
   // 数据校验
   verify_details_title: 'Task verification details',
   verify_history_title: 'Task verification history',
@@ -81,6 +84,7 @@ export default {
   dag_data_node_label_kafka_all: 'All',
   dag_data_node_label_aggregate_filter: 'Filter',
   dag_link_button_custom_script: 'Custom processing script',
+  dag_data_node_hana_hana_check: 'Hana as a source only supports full tasks',
 
   //Field mapping
   dag_link_button_field_mapping: 'Field mapping',
@@ -142,6 +146,12 @@ export default {
   data_flow_automatically: 'automatically',
   data_flow_manually: 'manually',
   data_flow_oracle_logminer: 'Oracle Logminer Mode',
+  task_job_link_type_table_tips: 'Table does not currently support foreign key replication',
+  task_job_link_type_view_tips:
+    'The setting of field mapping is temporarily not supported when copying the view. The field mapping function below this option will be disabled, and the field mapping that has been set will be reset.',
+  task_job_link_confirm_message_rollback:
+    'The setting of field mapping is not supported when copying the view. The field mapping function below this option will be disabled, and the field mapping that has been set will be reset. Are you sure to check it? ',
+  task_setting_oracle_custom_analysis: 'OracleSQL custom analysis',
 
   // Function management
   function_tips_empty: 'Code lacks JS functions',

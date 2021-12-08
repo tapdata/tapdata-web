@@ -255,7 +255,7 @@
       </div>
     </el-dialog>
     <el-dialog
-      :title="$t('message.prompt')"
+      :title="$t('message_title_prompt')"
       :visible.sync="reloadSchemaDialog"
       :close-on-click-modal="false"
       width="30%"
@@ -515,8 +515,8 @@ export default {
         this.creatUserId = this.$cookie.get('user_id')
         this.editor.ui.setName(this.$t('dataFlow.newTaksName') + '_' + uuid().slice(0, 7))
         // if (!this.dataFlow) document.title = this.$t('dataFlow.newTaksName');
+        this.setSelector(this.$route.query.mapping)
       }
-      this.setSelector(this.$route.query.mapping)
     },
 
     simpleRefresh() {
@@ -1223,6 +1223,8 @@ export default {
           // greentplumSettingFalg = true,
           sourceInitialFalg = true,
           databaseType = ''
+          greentplumSettingFalg = true,
+          hanaSettingFalg = true
         if (data && data.stages && data.stages.length) {
           stageTypeFalg = data.stages.every(stage => stage.type === 'database')
           if (stageTypeFalg) {
@@ -1257,13 +1259,14 @@ export default {
               databaseType = item.databaseType ? item.databaseType : item.database_type
               // greentplumSettingFalg = false
             }
-            // if (
-            //   item.outputLanes.length &&
-            //   (item.databaseType === 'kundb' || item.database_type === 'kundb') &&
-            //   this.sync_type !== 'initial_sync'
-            // ) {
-            //   kundbFalg = false
-            // }
+
+            if (
+              item.outputLanes.length &&
+              (item.databaseType === 'hana' || item.database_type === 'hana') &&
+              this.sync_type !== 'initial_sync'
+            ) {
+              hanaSettingFalg = false
+            }
           })
         }
         // 【增量采集时间】仅增量任务时，选择浏览器时区，时间设置未作必填校验，导致任务启动后不增量同步。
@@ -1287,14 +1290,11 @@ export default {
           this.$message.error(databaseType + this.$t('dag_job_check_source'))
           return
         }
-        // if (!adbMysqlFalg) {
-        //   this.$message.error('ADB MySQL' + this.$t('dag_job_check_source'))
-        //   return
-        // }
-        // if (!kundbFalg) {
-        //   this.$message.error('kundb' + this.$t('dag_job_check_source'))
-        //   return
-        // }
+
+        if (!hanaSettingFalg) {
+          this.$message.error(this.$t('dag_data_node_hana_hana_check'))
+          return
+        }
         if (this.modPipeline) {
           data['modPipeline'] = []
           this.showCheckStagesVisible = false

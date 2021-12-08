@@ -8,6 +8,9 @@ export default {
   button_confirm: '確定',
   button_cancel: '取消',
 
+  // 通用消息
+  message_title_prompt: '提示',
+
   // 数据校验
   verify_details_title: '任務校驗詳情',
   verify_history_title: '任務校驗歷史',
@@ -78,6 +81,7 @@ export default {
   dag_data_node_label_kafka_all: '所有',
   dag_data_node_label_aggregate_filter: '過濾器',
   dag_link_button_custom_script: '自定義處理腳本',
+  dag_data_node_hana_hana_check: 'Hana作為源僅支持全量任務',
 
   dag_link_button_field_mapping: '字段映射',
   dag_link_button_mapping_configuration: '映射配置',
@@ -136,6 +140,12 @@ export default {
   data_flow_automatically: '自動挖掘',
   data_flow_manually: '手動挖掘',
   data_flow_oracle_logminer: 'Oracle日誌挖掘模式',
+  task_job_link_type_table_tips: 'Table暫不支持外鍵複製',
+  task_job_link_type_view_tips:
+    '複製view時暫不支持設置欄位映射，勾選此項下方欄位映射功能會被禁用，已設置的欄位映射將會被重置',
+  task_job_link_confirm_message_rollback:
+    '複製view時暫不支持設置欄位映射，勾選此項下方欄位映射功能會被禁用，已設置的欄位映射將會被重置，是否確認勾選？',
+  task_setting_oracle_custom_analysis: 'OracleSQL自定義解析',
 
   // 函数管理
   function_tips_empty: '代碼缺少JS函數',

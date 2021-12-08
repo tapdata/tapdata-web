@@ -232,7 +232,12 @@
     </div>
     <CreateTable v-if="addtableFalg" :dialog="dialogData" @handleTable="getAddTableName"></CreateTable>
     <relatedTasks :taskData="taskData" v-if="disabled" v-loading="databaseSelectConfig.loading"></relatedTasks>
-    <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
+    <el-dialog
+      :title="$t('message_title_prompt')"
+      :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
+      width="30%"
+    >
       <span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">{{ $t('message.cancel') }}</el-button>
