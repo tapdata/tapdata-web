@@ -98,7 +98,7 @@ let init = settings => {
 
   document.title = window.getSettingByKey('PRODUCT_TITLE') || 'Tapdata'
 
-  var loc = window.location,
+  /*var loc = window.location,
     wsUrl = 'ws:'
   if (loc.protocol === 'https:') {
     wsUrl = 'wss:'
@@ -108,7 +108,7 @@ let init = settings => {
   let tcmApiPre = window.getSettingByKey('DFS_TCM_API_PRE_URL') || ''
   let path = (tcmApiPre === '/console' ? '' : tcmApiPre) + apiPre
   wsUrl += '//' + host
-  wsUrl += path + '/ws/agent'
+  wsUrl += path + '/ws/agent'*/
 
   window.App = new Vue({
     el: '#app',
@@ -116,7 +116,7 @@ let init = settings => {
     router,
     store,
     wsOptions: {
-      url: wsUrl
+      url: 'ws://192.168.1.126:3002/ws/agent'
     },
     render: h => h(App)
   })

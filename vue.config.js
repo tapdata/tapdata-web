@@ -46,7 +46,8 @@ module.exports = {
         ws: true,
         secure: false,
         logLevel: 'debug',
-        target: proxy.target.replace(/^https?/, 'ws')
+        // target: proxy.target.replace(/^https?/, 'ws')
+        target: 'ws://192.168.1.126:3002' // 126环境因为网关的问题，需要写死3002端口
       }
     }
   },
