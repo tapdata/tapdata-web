@@ -75,7 +75,6 @@ export const ArrayAggregate = connect(
       },
 
       render() {
-        console.log('❀❀❀❀❀❀Aggregate', this.options) // eslint-disable-line
         const { aggregations } = this
         return (
           <div class="aggregate-list">
