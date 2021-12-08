@@ -30,35 +30,8 @@ export const JoinExpression = connect(
       setup() {
         const formRef = useForm()
         const form = formRef.value
-        // console.log('setup', arguments)
-        // const sourceNode = form.values.sourceNode
-        // console.log('sourceNode*setup', sourceNode)
-        // const sourceNode = form.query('sourceNode').value()
-        // console.log('!!!!sourceNode', sourceNode, form.values, form.getFieldState('sourceNode'))
-        // const sourceNode = form.getFieldState('sourceNode').dataSource
-        // console.log('sourceNode', sourceNode)
-        // let sourceNodeNameMap = {}
-
-        /*if (sourceNode?.length) {
-          // sourceNodeNameMap = sourceNode.reduce((obj, item) => ((obj[item.id] = item.name), obj), {})
-          form.setValuesIn('leftNodeId', sourceNode[0].value)
-          form.setValuesIn('rightNodeId', sourceNode[1]?.value)
-        } else {
-          form.setValuesIn('leftNodeId', null)
-          form.setValuesIn('rightNodeId', null)
-        }*/
-
-        // eslint-disable-next-line no-console
-        // console.log('🚗sourceNode🌰', sourceNode, form.values)
-        // console.log('🚗form', form.values)
-
         return {
-          // formIns: form,
-          // form,
           formValue: form.values
-          // sourceNode: form.values.sourceNode,
-          // leftNodeId: form.values.leftNodeId,
-          // rightNodeId: form.values.rightNodeId
         }
       },
 
@@ -69,18 +42,7 @@ export const JoinExpression = connect(
           leftFields = this.fields[this.formValue.leftNodeId] || []
           rightFields = this.fields[this.formValue.rightNodeId] || []
         }
-        // const sourceNode = []
-        // console.log('JoinExpression')
         const sourceNode = this.formValue.sourceNode || []
-        // const sourceNode = this.formValue.getFieldState('sourceNode').dataSource
-        // console.log('JoinExpression*sourceNode', this.sourceNode, this.form.sourceNode)
-        console.log(
-          'JoinExpression*sourceNode*Field',
-          sourceNode,
-          this.formValue.leftNodeId,
-          this.formValue.rightNodeId
-        )
-        // console.log('JoinExpression', this.fields, this.sourceNode, this.form.sourceNode)
         return (
           <div class="join-expression">
             <div class="join-name-wrap flex align-center">
@@ -132,7 +94,6 @@ export const JoinExpression = connect(
             left: '',
             right: ''
           })
-          // console.log('handleAdd', this.fieldArr)
         },
 
         handleRemove(index) {
