@@ -139,53 +139,52 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        this.$api('Workers').count({ where: where }),
-        this.$api('Workers').get({
+      return this.$api('Workers')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        res.data.forEach(item => {
-          if (item.job_ids) {
-            let job_ids = item.job_ids.map(val => {
-              if (item.jobs) {
-                let jobs = item.jobs.filter(v => v.id === val)
-                if (jobs && jobs.length > 0) {
-                  // return jobs
-                  return `<a href="/#/job?id=${val}" class="database-link" target="_blank">${jobs[0]['name']}</a></br>`
+        .then(res => {
+          res.data.items.forEach(item => {
+            if (item.job_ids) {
+              let job_ids = item.job_ids.map(val => {
+                if (item.jobs) {
+                  let jobs = item.jobs.filter(v => v.id === val)
+                  if (jobs && jobs.length > 0) {
+                    // return jobs
+                    return `<a href="/#/job?id=${val}" class="database-link" target="_blank">${jobs[0]['name']}</a></br>`
+                  }
                 }
+                // return val
+                return `<a href="/#/job?id=${val}" class="database-link" target="_blank">${val}</a></br>`
+              })
+              item.job_ids = job_ids.join(' ')
+            } else if (item.worker_status) {
+              item.job_ids = ''
+              if (item.worker_status.status) {
+                item.job_ids += `<div>${this.$t('process.processState')}: &nbsp;&nbsp;<span style="">${
+                  item.worker_status.status
+                }</span></div>`
               }
-              // return val
-              return `<a href="/#/job?id=${val}" class="database-link" target="_blank">${val}</a></br>`
-            })
-            item.job_ids = job_ids.join(' ')
-          } else if (item.worker_status) {
-            item.job_ids = ''
-            if (item.worker_status.status) {
-              item.job_ids += `<div>${this.$t('process.processState')}: &nbsp;&nbsp;<span style="">${
-                item.worker_status.status
-              }</span></div>`
-            }
 
-            if (item.worker_status.worker_process_start_time) {
-              item.job_ids += `<div>${this.$t(
-                'process.start_time'
-              )}: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="">${this.$moment(
-                item.worker_status.worker_process_start_time
-              ).format('YYYY/MM/DD HH:mm:ss')}</span></div>`
+              if (item.worker_status.worker_process_start_time) {
+                item.job_ids += `<div>${this.$t(
+                  'process.start_time'
+                )}: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="">${this.$moment(
+                  item.worker_status.worker_process_start_time
+                ).format('YYYY/MM/DD HH:mm:ss')}</span></div>`
+              }
             }
-          }
-          if (item.serverDate - item.ping_time > MINUTE) {
-            item.state = 'offline'
-          } else {
-            item.state = 'online'
+            if (item.serverDate - item.ping_time > MINUTE) {
+              item.state = 'offline'
+            } else {
+              item.state = 'online'
+            }
+          })
+          return {
+            total: res.data.total,
+            data: res.data.items
           }
         })
-        return {
-          total: countRes.data.count,
-          data: res.data
-        }
-      })
     },
 
     handleSortTable({ order, prop }) {

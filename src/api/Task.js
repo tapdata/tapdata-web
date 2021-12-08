@@ -10,4 +10,7 @@ export default class TaskAPI extends PublicAPI {
   constructor() {
     super('/api/Task')
   }
+  start(id) {
+    return axios.put(this.url + `/start/${id}`)
+  }
 }

@@ -7,7 +7,7 @@ import { setPermission } from '@/utils/util'
 import { Loading, Message } from 'element-ui'
 
 Vue.use(Router)
-
+const MigrateForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/migrate/form/Form.vue')
 const childRoutes = [
   {
     path: '/dashboard',
@@ -393,9 +393,19 @@ const childRoutes = [
     component: () => import('@/views/clusterManagement/dailyRecord')
   },
   {
-    path: '/dataFlows',
-    name: 'dataFlows',
-    component: () => import('@/views/task/DataFlows'),
+    path: '/migrate',
+    name: 'migrate',
+    component: () => import('@/views/task/migrate/List'),
+    meta: {
+      code: 'Data_SYNC_menu',
+      title: i18n.t('tap.jobFlow'),
+      isCollapse: false
+    }
+  },
+  {
+    path: '/dataflow',
+    name: 'dataflow',
+    component: () => import('@/views/task/etl/List'),
     meta: {
       code: 'Data_SYNC_menu',
       title: i18n.t('tap.jobFlow'),
@@ -674,7 +684,7 @@ const router = new Router({
       name: 'DataflowNew',
       props: {
         listRoute: {
-          name: 'dataFlows',
+          name: 'dataflow',
           query: {
             mapping: 'custom'
           }
@@ -687,13 +697,29 @@ const router = new Router({
       name: 'DataflowEditor',
       props: {
         listRoute: {
-          name: 'dataFlows',
+          name: 'dataflow',
           query: {
             mapping: 'custom'
           }
         }
       },
       component: () => import('web-core/views/dataflow/Editor')
+    },
+    {
+      path: '/migrate/editor',
+      name: 'MigrateNew',
+      component: MigrateForm,
+      meta: {
+        title: '创建任务'
+      }
+    },
+    {
+      path: '/migrate/editor/:id',
+      name: 'MigrateEditor',
+      component: MigrateForm,
+      meta: {
+        title: '编辑任务'
+      }
     }
   ]
 })

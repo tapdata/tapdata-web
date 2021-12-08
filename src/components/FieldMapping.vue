@@ -126,17 +126,16 @@ export default {
         limit: page.size || 10,
         skip: (page.current - 1) * page.size > 0 ? (page.current - 1) * page.size : 0
       }
-      return Promise.all([
-        this.$api('metadataTransformer').count({ where: where }),
-        this.$api('metadataTransformer').get({
+      return this.$api('metadataTransformer')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        return {
-          total: countRes?.data?.count,
-          data: res?.data
-        }
-      })
+        .then(res => {
+          return {
+            total: res?.data?.total,
+            data: res?.data?.items
+          }
+        })
     },
     //任务迁移需要主动更新
     updateAutoFieldProcess(data) {

@@ -269,17 +269,17 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        this.$api('role').count({ where: where }),
-        this.$api('users').role({
+      return this.$api('users')
+        .role({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        return {
-          total: countRes.data.count,
-          data: res.data
-        }
-      })
+        .then(res => {
+          let data = res.data || {}
+          return {
+            total: data.total,
+            data: data?.items || []
+          }
+        })
     },
     // 获取角色下拉值
     // getDbOptions() {
@@ -457,8 +457,8 @@ export default {
       await this.$api('users')
         .get({})
         .then(res => {
-          if (res && res.data) {
-            res.data.forEach(item => {
+          if (res?.data?.items) {
+            res.data.items.forEach(item => {
               if (!item.role) {
                 this.userGroup.push(item)
               }
