@@ -1,12 +1,19 @@
 <template>
   <div class="monitor-log-wrap h-100 flex flex-column">
-    <ElInput
-      class="search-input mt-2"
-      v-model="keyword"
-      prefix-icon="el-icon-search"
-      placeholder="请输入日志内容"
-      @input="search"
-    ></ElInput>
+    <div class="filter-row">
+      <ElInput
+        class="search-input mt-2"
+        v-model="keyword"
+        prefix-icon="el-icon-search"
+        placeholder="请输入日志内容"
+        @input="search"
+      ></ElInput>
+      <ElCheckboxGroup v-model="checkList" :min="1" class="inline-block ml-4" @change="changeType">
+        <ElCheckbox label="INFO">INFO</ElCheckbox>
+        <ElCheckbox label="WARN">WARN</ElCheckbox>
+        <ElCheckbox label="ERROR">ERROR</ElCheckbox>
+      </ElCheckboxGroup>
+    </div>
     <div ref="logs" class="log-container flex-fit mt-6 py-6 overflow-auto" @scroll="loadOld">
       <div v-show="!noMore && loading" class="pb-4 text-center fs-5">
         <i class="el-icon-loading"></i>
@@ -53,7 +60,8 @@ export default {
       noMore: false,
       keyword: '',
       logs: [],
-      isScrollBottom: true
+      isScrollBottom: true,
+      checkList: ['INFO', 'WARN', 'ERROR']
     }
   },
   created() {
@@ -116,7 +124,13 @@ export default {
         order: `id DESC`,
         limit: 35
       }
-      let keyword = this.keyword
+      const { keyword, checkList } = this
+      const len = checkList.length
+      if (len > 0) {
+        filter.where.level = {
+          $in: checkList
+        }
+      }
       if (keyword) {
         const { toRegExp } = this.$util
         let query = { like: toRegExp(keyword), options: 'i' }
@@ -179,6 +193,9 @@ export default {
         message: markKeyword(log.message),
         id: log.id
       }
+    },
+    changeType() {
+      this.getLogs(true)
     }
   }
 }

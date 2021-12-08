@@ -52,7 +52,8 @@ import {
   Cascader,
   ButtonGroup,
   Upload,
-  Divider
+  Divider,
+  CheckboxGroup
 } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
@@ -119,3 +120,4 @@ Vue.use(Cascader)
 Vue.use(ButtonGroup)
 Vue.use(Upload)
 Vue.use(Divider)
+Vue.use(CheckboxGroup)
