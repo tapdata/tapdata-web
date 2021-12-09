@@ -117,14 +117,22 @@ export class Join extends NodeType {
       embeddedSetting: {
         type: 'object',
         properties: {
-          fields: {
-            type: 'array',
+          main: {
+            type: 'string',
             title: '内嵌对象',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               wrapperWidth: 240
             },
-            'x-component': 'Select'
+            'x-component': 'Select',
+            'x-reactions': {
+              dependencies: ['sourceNode'],
+              fulfill: {
+                state: {
+                  dataSource: '{{$deps[0]}}'
+                }
+              }
+            }
           },
           path: {
             type: 'string',

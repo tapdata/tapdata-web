@@ -962,7 +962,7 @@ export default {
 
     getDataflowDataToSave() {
       const dag = this.$store.getters['dataflow/dag']
-      const editVersion = this.$store.state['dataflow/editVersion']
+      const editVersion = this.$store.state.dataflow.editVersion
       return {
         dag,
         editVersion,
@@ -1000,8 +1000,6 @@ export default {
       try {
         this.isSaving = true
         const data = this.getDataflowDataToSave()
-        // eslint-disable-next-line no-console
-        console.log('🚗saveAsNewDataflow', data)
         const dataflow = await taskApi.post(data)
         this.isSaving = false
         this.dataflow.id = dataflow.id
@@ -1270,7 +1268,6 @@ export default {
     },
 
     handleMouseSelect(showSelectBox, selectBoxAttr) {
-      // console.log('handleMouseSelect', arguments) // eslint-disable-line
       // 取消选中所有节点
       this.deselectAllNodes()
       // 清空激活状态

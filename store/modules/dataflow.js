@@ -290,7 +290,7 @@ const mutations = {
 
     const updateObjVal = (target, obj) => {
       Object.entries(obj).forEach(([key, value]) => {
-        if (isObject(value)) {
+        if (isObject(value) && target[key]) {
           updateObjVal(target[key], value)
         } else {
           Vue.set(target, key, value)

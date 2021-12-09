@@ -32,7 +32,7 @@ export const validateBySchema = (schema, values, scope, basePath) => {
       if (isString(reactions) && reactions.includes('useAsyncDataSource')) {
         delete schema['x-reactions']
       } else if (Array.isArray(reactions)) {
-        schema['x-reactions'] = reactions.filter(item => !item.includes('useAsyncDataSource'))
+        schema['x-reactions'] = reactions.filter(item => !isString(item) || !item.includes('useAsyncDataSource'))
       }
     }
     delete schema.default
