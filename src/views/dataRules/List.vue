@@ -166,25 +166,25 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        _this.$api('DataRule').count({ where: where }),
-        _this.$api('DataRule').get({
+      return _this
+        .$api('DataRule')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        if (res.data && res.data.length) {
-          res.data.filter(item => {
-            if (item.classification) {
-              _this.classificationArr.push(item.classification)
-            }
-          })
-        }
-        _this.classificationArr = _this.classificationArr.filter((item, index, self) => self.indexOf(item) === index)
-        return {
-          total: countRes.data.count,
-          data: res.data
-        }
-      })
+        .then(res => {
+          if (res.data.items.length) {
+            res.data.items.filter(item => {
+              if (item.classification) {
+                _this.classificationArr.push(item.classification)
+              }
+            })
+          }
+          _this.classificationArr = _this.classificationArr.filter((item, index, self) => self.indexOf(item) === index)
+          return {
+            total: res.data.total,
+            data: res.data.items
+          }
+        })
     },
 
     // 删除规则

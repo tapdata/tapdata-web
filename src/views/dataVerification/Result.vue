@@ -158,27 +158,26 @@ export default {
           limit: showAdvancedVerification ? 1 : size,
           skip: (current - 1) * (showAdvancedVerification ? 1 : size)
         }
-        return Promise.all([
-          this.$api('InspectDetails').count(where),
-          this.$api('InspectDetails').get({
+        return this.$api('InspectDetails')
+          .get({
             filter: JSON.stringify(where)
           })
-        ]).then(([countRes, res]) => {
-          let resultList = []
-          if (res.data) {
-            if (showAdvancedVerification) {
-              resultList = res.data || []
-            } else {
-              resultList = this.handleOtherVerify(res.data)
+          .then(res => {
+            let resultList = []
+            if (res.data?.items) {
+              if (showAdvancedVerification) {
+                resultList = res.data?.items || []
+              } else {
+                resultList = this.handleOtherVerify(res.data?.items)
+              }
             }
-          }
-          return {
-            showAdvancedVerification, // 是否高级校验
-            total: countRes.data.count, // 总条数
-            statsInfo, // 结果信息
-            resultList // 结果详情
-          }
-        })
+            return {
+              showAdvancedVerification, // 是否高级校验
+              total: res.data.total, // 总条数
+              statsInfo, // 结果信息
+              resultList // 结果详情
+            }
+          })
       }
     },
     rowClick(row) {

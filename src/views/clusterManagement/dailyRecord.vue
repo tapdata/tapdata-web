@@ -162,17 +162,16 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        this.$api('logs').count({ where: where }),
-        this.$api('logs').get({
+      return this.$api('logs')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        return {
-          total: countRes.data.count,
-          data: res.data
-        }
-      })
+        .then(res => {
+          return {
+            total: res.data.total || 0,
+            data: res.data?.items || []
+          }
+        })
     },
     rest() {
       this.searchParams = {

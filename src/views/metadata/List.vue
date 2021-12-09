@@ -355,23 +355,22 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        this.$api('MetadataInstances').count({ where: JSON.stringify(where) }),
-        this.$api('MetadataInstances').get({
+      return this.$api('MetadataInstances')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        this.table.setCache({
-          isFuzzy,
-          keyword,
-          metaType,
-          dbId
+        .then(res => {
+          this.table.setCache({
+            isFuzzy,
+            keyword,
+            metaType,
+            dbId
+          })
+          return {
+            total: res.data.total,
+            data: res.data?.items || []
+          }
         })
-        return {
-          total: countRes.data.count,
-          data: res.data
-        }
-      })
     },
     getDbOptions() {
       let filter = {

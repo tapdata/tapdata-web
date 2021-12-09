@@ -152,29 +152,28 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        this.$api('DataFlowInsights').count({ where: JSON.stringify(where) }),
-        this.$api('DataFlowInsights').get({
+      return this.$api('DataFlowInsights')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        if (res?.data?.length) {
-          res.data.forEach(item => {
-            if (item.statsData.status === 'running') {
-              let num = (item.statsData.targetRowNum / item.statsData.sourceRowNum) * 100
-              item.statsData.status = num ? num.toFixed(2) + '%' : 0 + '%'
-            } else if (item.statsData.status === 'done') {
-              item.statsData.status = this.$t('taskProgress.done')
-            } else {
-              item.statsData.status = this.$t('taskProgress.waiting')
-            }
-          })
-        }
-        return {
-          total: countRes.data.count,
-          data: res.data
-        }
-      })
+        .then(res => {
+          if (res?.data?.items?.length) {
+            res.data.items.forEach(item => {
+              if (item.statsData.status === 'running') {
+                let num = (item.statsData.targetRowNum / item.statsData.sourceRowNum) * 100
+                item.statsData.status = num ? num.toFixed(2) + '%' : 0 + '%'
+              } else if (item.statsData.status === 'done') {
+                item.statsData.status = this.$t('taskProgress.done')
+              } else {
+                item.statsData.status = this.$t('taskProgress.waiting')
+              }
+            })
+          }
+          return {
+            total: res.data.total,
+            data: res.data
+          }
+        })
     },
     //筛选条件
     handleSortTable({ order, prop }) {
