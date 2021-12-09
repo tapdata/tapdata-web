@@ -56,6 +56,11 @@ export default {
       }
     }
   },
+  data() {
+    return {
+      editor: null
+    }
+  },
   computed: {
     _options() {
       return Object.assign(
@@ -78,7 +83,12 @@ export default {
       }
       return n
     },
-    init(editor, tools) {
+    format() {
+      this.beautify.beautify(this.editor.session)
+    },
+    init(editor, tools, beautify) {
+      this.editor = editor
+      this.beautify = beautify
       tools.addCompleter({
         getCompletions: (editor, session, pos, prefix, callback) => {
           if (prefix.length === 0) {
