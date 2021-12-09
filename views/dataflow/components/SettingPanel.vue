@@ -81,7 +81,7 @@
                   </ElFormItem>
                 </ElCol>
                 <ElCol :span="12">
-                  <ElFormItem label-width="110" label="增量数据处理模式">
+                  <ElFormItem label="增量数据处理模式">
                     <ElSelect v-model="settings.increOperationMode">
                       <ElOption label="批量" :value="false"></ElOption>
                       <ElOption label="逐条" :value="true"></ElOption>
@@ -91,7 +91,7 @@
               </ElRow>
               <ElRow>
                 <ElCol :span="12">
-                  <ElFormItem label-width="110" label="增量同步间隔(ms)">
+                  <ElFormItem label="增量同步间隔(ms)">
                     <ElInputNumber
                       v-model="settings.increaseSyncInterval"
                       :min="0"
