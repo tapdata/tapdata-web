@@ -424,51 +424,50 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        this.$api('MetadataInstances').count({ where: where }),
-        this.$api('MetadataInstances').get({
+      return this.$api('MetadataInstances')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        this.table.setCache({
-          isFuzzy,
-          keyword
-        })
-        if (res.data && res.data.length) {
-          this.tableData = res.data.map(item => {
-            item.indexsFilter = item.indexes.filter(idx => idx.expireAfterSeconds && idx.create_by !== 'dba')
-            return item
+        .then(res => {
+          this.table.setCache({
+            isFuzzy,
+            keyword
           })
+          if (res.data?.items?.length) {
+            this.tableData = res.data.items.map(item => {
+              item.indexsFilter = item.indexes.filter(idx => idx.expireAfterSeconds && idx.create_by !== 'dba')
+              return item
+            })
 
-          this.tableData.forEach(item => {
-            for (let i = 0; i < item.indexsFilter.length; i++) {
-              for (let key in item.indexsFilter[i]) {
-                if (key === 'name') {
-                  item.indexsFilter[i]['indexName'] = item.indexsFilter[i][key]
-                  delete item.indexsFilter[i]['name']
+            this.tableData.forEach(item => {
+              for (let i = 0; i < item.indexsFilter.length; i++) {
+                for (let key in item.indexsFilter[i]) {
+                  if (key === 'name') {
+                    item.indexsFilter[i]['indexName'] = item.indexsFilter[i][key]
+                    delete item.indexsFilter[i]['name']
+                  }
                 }
+                let rdata = {
+                  ...item,
+                  ...item.indexsFilter[i]
+                }
+                rdata.combineNum = item.indexsFilter.length
+                delete rdata.indexsFilter
+                tableArrData.push(rdata)
+                // if (i == 0) {
+                //   rowspan.push(rdata.combineNum)
+                // } else {
+                //   rowspan.push(0)
+                // }
               }
-              let rdata = {
-                ...item,
-                ...item.indexsFilter[i]
-              }
-              rdata.combineNum = item.indexsFilter.length
-              delete rdata.indexsFilter
-              tableArrData.push(rdata)
-              // if (i == 0) {
-              //   rowspan.push(rdata.combineNum)
-              // } else {
-              //   rowspan.push(0)
-              // }
-            }
-          })
-        }
-        this.getSpanArr(tableArrData)
-        return {
-          total: countRes.data.count,
-          data: tableArrData
-        }
-      })
+            })
+          }
+          this.getSpanArr(tableArrData)
+          return {
+            total: res.data.total,
+            data: tableArrData
+          }
+        })
     },
 
     getSpanArr(data) {

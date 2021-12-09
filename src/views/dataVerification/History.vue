@@ -10,16 +10,14 @@ export default {
   },
   methods: {
     search(filter, where) {
-      return Promise.all([
-        this.$api('InspectResults').count({
-          where: JSON.stringify(where)
-        }),
-        this.$api('InspectResults').get({
+      return this.$api('InspectResults')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        return [countRes.data, res.data]
-      })
+        .then(res => {
+          return [{ count: res.data.total }, res.data.items]
+          // return [countRes.data, res.data]
+        })
     },
     rowClickHandler(item) {
       let url = ''

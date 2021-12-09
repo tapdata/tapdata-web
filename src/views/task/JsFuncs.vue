@@ -222,17 +222,16 @@ export default {
         limit: size,
         skip: (current - 1) * size
       }
-      return Promise.all([
-        this.$api('Javascript_functions').count(),
-        this.$api('Javascript_functions').get({
+      return this.$api('Javascript_functions')
+        .get({
           filter: filter
         })
-      ]).then(([countRes, res]) => {
-        return {
-          total: countRes.data.count,
-          data: res.data
-        }
-      })
+        .then(res => {
+          return {
+            total: res.data?.total || 0,
+            data: res.data?.items || []
+          }
+        })
     },
     // 创建
     openCreateDialog() {

@@ -331,25 +331,25 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        _this.$api('Dictionary').count({ where: where }),
-        _this.$api('Dictionary').get({
+      return _this
+        .$api('Dictionary')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        if (res.data && res.data.length) {
-          res.data.filter(item => {
-            if (item.type) {
-              _this.classificationArr.push(item.type)
-            }
-          })
-        }
-        _this.classificationArr = _this.classificationArr.filter((item, index, self) => self.indexOf(item) === index)
-        return {
-          total: countRes.data.count,
-          data: res.data
-        }
-      })
+        .then(res => {
+          if (res.data?.items?.length) {
+            res.data.items.filter(item => {
+              if (item.type) {
+                _this.classificationArr.push(item.type)
+              }
+            })
+          }
+          _this.classificationArr = _this.classificationArr.filter((item, index, self) => self.indexOf(item) === index)
+          return {
+            total: res.data.total,
+            data: res.data.items
+          }
+        })
     },
 
     // 删除字典模板表格数据

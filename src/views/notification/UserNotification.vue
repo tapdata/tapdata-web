@@ -125,19 +125,22 @@ export default {
         where: where
       }
       let UserLogs = this.$api('UserLogs')
-      UserLogs.count({
-        where
-      }).then(res => {
-        if (res.data) {
-          this.page.total = res.data.count
-        }
-      })
+      // UserLogs.count({
+      //   where
+      // }).then(res => {
+      //   if (res.data) {
+      //     this.page.total = res.data.count
+      //   }
+      // })
       UserLogs.get({
         filter: JSON.stringify(filter)
       })
         .then(res => {
+          if (res.data) {
+            this.page.total = res.data.total
+          }
           this.page.index = current
-          this.list = res.data || []
+          this.list = res.data?.items || []
         })
         .finally(() => {
           this.loading = false

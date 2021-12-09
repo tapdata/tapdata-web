@@ -470,8 +470,9 @@ export default {
   }
   &.expand {
     height: 100%;
-    width: 100%;
+    //width: 100%;
     border: 1px solid #ebeef5;
+    width: 214px;
     .btn-expand {
       position: absolute;
       top: 5px;
@@ -596,6 +597,7 @@ export default {
       vertical-align: middle;
       overflow: hidden;
       text-overflow: ellipsis;
+      max-width: 120px;
     }
     .btn-menu {
       display: none;

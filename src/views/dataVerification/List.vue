@@ -355,32 +355,31 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        this.$api('Inspects').count({ where: where }),
-        this.$api('Inspects').get({
+      return this.$api('Inspects')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        let list = res.data || []
-        return {
-          total: countRes.data.count,
-          data: list.map(item => {
-            let result = item.InspectResult
-            let sourceTotal = '-'
-            let targetTotal = '-'
-            if (result) {
-              sourceTotal = result.source_total
-              targetTotal = result.target_total
-            }
-            item.lastStartTime = item.lastStartTime
-              ? this.$moment(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
-              : '-'
-            item.sourceTotal = sourceTotal
-            item.targetTotal = targetTotal
-            return item
-          })
-        }
-      })
+        .then(res => {
+          let list = res.data?.items || []
+          return {
+            total: res.data.total,
+            data: list.map(item => {
+              let result = item.InspectResult
+              let sourceTotal = '-'
+              let targetTotal = '-'
+              if (result) {
+                sourceTotal = result.source_total
+                targetTotal = result.target_total
+              }
+              item.lastStartTime = item.lastStartTime
+                ? this.$moment(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
+                : '-'
+              item.sourceTotal = sourceTotal
+              item.targetTotal = targetTotal
+              return item
+            })
+          }
+        })
     },
     toTableInfo(id) {
       let url = ''

@@ -42,60 +42,59 @@ export default {
   },
   methods: {
     getData({ page }) {
-      let { current, size } = page;
+      let { current, size } = page
       let filter = {
         order: 'createTime DESC',
         limit: size,
         skip: (current - 1) * size
-      };
-      return Promise.all([
-        this.$api('license').count(),
-        this.$api('license').get({
+      }
+      return this.$api('license')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        let list = res.data;
-        return {
-          total: countRes.data.count,
-          data: list.map(item => {
-            let expirationDate = this.$moment(item.expirationDate);
-            let duration = expirationDate.valueOf() - Date.now();
-            let status = 'normal';
-            if (duration < 0) {
-              status = 'expired'
-            } else if (duration < 30 * 24 * 60 * 60 * 1000) {
-              status = 'expiring'
-            }
-            item.status = {
-              normal: {
-                text: '正常',
-                color: 'success'
-              },
-              expiring: {
-                text: '即将到期',
-                color: 'warning'
-              },
-              expired: {
-                text: '已过期',
-                color: 'info'
+        .then(res => {
+          let list = res.data.items
+          return {
+            total: res.data.total,
+            data: list.map(item => {
+              let expirationDate = this.$moment(item.expirationDate)
+              let duration = expirationDate.valueOf() - Date.now()
+              let status = 'normal'
+              if (duration < 0) {
+                status = 'expired'
+              } else if (duration < 30 * 24 * 60 * 60 * 1000) {
+                status = 'expiring'
               }
-            }[status];
-            item.expirationDateFmt = expirationDate.format('YYYY-MM-DD HH:mm:ss');
-            item.lastUpdatedFmt = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss');
-            return item
-          })
-        }
-      })
+              item.status = {
+                normal: {
+                  text: '正常',
+                  color: 'success'
+                },
+                expiring: {
+                  text: '即将到期',
+                  color: 'warning'
+                },
+                expired: {
+                  text: '已过期',
+                  color: 'info'
+                }
+              }[status]
+              item.expirationDateFmt = expirationDate.format('YYYY-MM-DD HH:mm:ss')
+              item.lastUpdatedFmt = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              return item
+            })
+          }
+        })
     },
     copySid() {
-      let table = this.$refs.table;
-      let ids = table.multipleSelection?.map(item => item.sid);
+      let table = this.$refs.table
+      let ids = table.multipleSelection?.map(item => item.sid)
       if (ids?.length) {
-        this.copyLoading = true;
+        this.copyLoading = true
         this.$api('license')
           .getSid(ids)
           .then(res => {
-            let sid = res?.data?.sid;
+            let sid = res?.data?.sid
             if (sid) {
               this.$copyText(sid).then(() => {
                 this.$message.success('已复制到剪贴板')
@@ -111,15 +110,15 @@ export default {
     },
     openDialog() {
       if (this.$refs.table?.multipleSelection?.length) {
-        this.license = '';
+        this.license = ''
         this.dialogVisible = true
       } else {
         this.$message.warning('请先选择节点')
       }
     },
     updateLicense() {
-      this.dialogLoading = true;
-      let ids = this.$refs?.table?.multipleSelection?.map(item => item.sid);
+      this.dialogLoading = true
+      let ids = this.$refs?.table?.multipleSelection?.map(item => item.sid)
       if (ids?.length) {
         this.$api('license')
           .updateLicense({
@@ -127,7 +126,7 @@ export default {
             license: this.license
           })
           .then(() => {
-            this.$message.success('更新成功');
+            this.$message.success('更新成功')
             this.$table.fetch()
           })
           .finally(() => {
