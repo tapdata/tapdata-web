@@ -684,10 +684,7 @@ const router = new Router({
       name: 'DataflowNew',
       props: {
         listRoute: {
-          name: 'dataflow',
-          query: {
-            mapping: 'custom'
-          }
+          name: 'dataflow'
         }
       },
       component: () => import('web-core/views/dataflow/Editor')
@@ -697,10 +694,7 @@ const router = new Router({
       name: 'DataflowEditor',
       props: {
         listRoute: {
-          name: 'dataflow',
-          query: {
-            mapping: 'custom'
-          }
+          name: 'dataflow'
         }
       },
       component: () => import('web-core/views/dataflow/Editor')
