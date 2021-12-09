@@ -7,9 +7,18 @@ export default {
   button_edit: '編輯',
   button_confirm: '確定',
   button_cancel: '取消',
+  button_back: '返回',
+  button_save: '保存',
 
   // 通用消息
   message_title_prompt: '提示',
+  message_delete_confirm: '是否刪除',
+
+  // 表格
+  column_operation: '操作',
+
+  // 菜单标题
+  menu_title_function: '函數管理',
 
   // 数据校验
   verify_details_title: '任務校驗詳情',
@@ -149,8 +158,8 @@ export default {
 
   // 函数管理
   function_tips_empty: '代碼缺少JS函數',
-  function_checkbox_Line_number: '顯示行號',
-  function_button_create: '創建',
+  function_button_create_custom_function: '創建函數',
+  function_button_import_jar: '導入jar包',
   function_button_edit: '編輯',
   function_tips_name_repeat: '方法名稱重複',
   function_button_code_format: '格式化代碼',
@@ -177,6 +186,8 @@ export default {
   function_return_value_placeholder: '請輸入返回值',
   function_describe_label: '描述',
   function_describe_placeholder: '請輸入描述',
+  function_format: '命令格式',
+  function_format_placeholder: '请输入命令格式',
 
   // 用户
   login_fail_too_many: '密碼錯誤達到最大次數，請於10分鐘再登錄'

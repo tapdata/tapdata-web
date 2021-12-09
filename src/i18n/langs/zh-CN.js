@@ -7,9 +7,18 @@ export default {
   button_edit: '编辑',
   button_confirm: '确定',
   button_cancel: '取消',
+  button_back: '返回',
+  button_save: '保存',
 
   // 通用消息
   message_title_prompt: '提示',
+  message_delete_confirm: '是否删除',
+
+  // 表格
+  column_operation: '操作',
+
+  // 菜单标题
+  menu_title_function: '函数管理',
 
   // 数据校验
   verify_details_title: '任务校验详情',
@@ -64,8 +73,6 @@ export default {
   connection_kafka_kerberos_none_keytab: '密钥表示文件不能为空',
   connection_kafka_kerberos_none_conf: '配置文件不能为空',
   connection_kafka_encryption: '加密方式',
-  // 路由名
-  app_menu_jsFuncs: '函数',
 
   // Dag
   dag_data_node_label_dameng: 'Dameng节点',
@@ -151,8 +158,8 @@ export default {
 
   // 函数管理
   function_tips_empty: '代码缺少JS函数',
-  function_checkbox_Line_number: '显示行号',
-  function_button_create: '创建',
+  function_button_create_custom_function: '创建函数',
+  function_button_import_jar: '导入jar包',
   function_button_edit: '编辑',
   function_tips_name_repeat: '方法名称重复',
   function_button_code_format: '格式化代码',
@@ -179,6 +186,8 @@ export default {
   function_return_value_placeholder: '请输入返回值',
   function_describe_label: '描述',
   function_describe_placeholder: '请输入描述',
+  function_format: '命令格式',
+  function_format_placeholder: '请输入命令格式',
 
   // 用户
   login_fail_too_many: '密码错误达到最大次数，请于10分钟后再登录'

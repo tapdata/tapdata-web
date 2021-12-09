@@ -435,9 +435,27 @@ const childRoutes = [
     meta: { title: i18n.t('tap.apiInfo'), isCollapse: false }
   },
   {
-    path: '/jsFuncs',
-    name: 'jsFuncs',
-    component: () => import('@/views/task/JsFuncs'),
+    path: '/function',
+    name: 'Function',
+    component: () => import('@/views/function/List'),
+    meta: {
+      isCollapse: false,
+      code: 'SYNC_Function_management'
+    }
+  },
+  {
+    path: '/function/create',
+    name: 'FunctionCreate',
+    component: () => import('@/views/function/CustomForm'),
+    meta: {
+      isCollapse: false,
+      code: 'SYNC_Function_management'
+    }
+  },
+  {
+    path: '/function/edit/:id',
+    name: 'FunctionEdit',
+    component: () => import('@/views/function/Edit'),
     meta: {
       isCollapse: false,
       code: 'SYNC_Function_management'

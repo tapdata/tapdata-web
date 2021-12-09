@@ -4,12 +4,21 @@ export default {
   tips_must_number: 'The value must be a number',
 
   // 通用按钮
-  button_edit: 'edit',
-  button_confirm: 'confirm',
-  button_cancel: 'cancel',
+  button_edit: 'Edit',
+  button_confirm: 'Confirm',
+  button_cancel: 'Cancel',
+  button_back: 'Back',
+  button_save: 'Save',
 
   // 通用消息
-  message_title_prompt: 'hint',
+  message_title_prompt: 'Hint',
+  message_delete_confirm: 'Delete or not',
+
+  // 表格
+  column_operation: 'Operate',
+
+  // 菜单标题
+  menu_title_function: 'Function management',
 
   // 数据校验
   verify_details_title: 'Task verification details',
@@ -155,8 +164,8 @@ export default {
 
   // Function management
   function_tips_empty: 'Code lacks JS functions',
-  function_checkbox_Line_number: 'Display line number',
-  function_button_create: 'Create',
+  function_button_create_custom_function: 'Create',
+  function_button_import_jar: 'Import',
   function_button_edit: 'Edit',
   function_tips_name_repeat: 'Method name repeat',
   function_button_code_format: 'Format code',
@@ -185,6 +194,8 @@ export default {
   function_return_value_placeholder: 'Please enter the return value',
   function_describe_label: 'Description',
   function_describe_placeholder: 'Please enter a description',
+  function_format: 'Format',
+  function_format_placeholder: 'Please enter a format',
 
   // 用户
   login_fail_too_many: 'The maximum number of password errors has been reached, please log in after 10 minutes'
