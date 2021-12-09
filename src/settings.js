@@ -17,6 +17,7 @@ module.exports = {
     'clickhouse',
     'kundb',
     'adb_postgres',
-    'adb_mysql'
+    'adb_mysql',
+    'dummydb'
   ]
 }

@@ -3,13 +3,13 @@
     <div class="btn" slot="reference" @click="toCenter()">
       <ElBadge class="item-badge" :value="unRead" :max="99" :hidden="!unRead">
         <VIcon class="mr-2" size="17">lingdang</VIcon>
-        <span>通知</span>
+        <span>{{ $t('header_notify') }}</span>
       </ElBadge>
     </div>
     <div class="notification-popover-wrap">
       <div class="tab-item-container">
         <div class="notice-header">
-          <span> 通知内容 </span>
+          <span> {{ $t('header_notification_content') }} </span>
         </div>
         <ul class="tab-list cuk-list">
           <li class="list-item" v-for="(item, index) in listData" :key="index" @click="handleRead(item.id)">
@@ -17,7 +17,7 @@
               <div class="unread-1zPaAXtSu"></div>
               <div class="list-item-desc">
                 <!--                <span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>-->
-                <span>您的{{ systemMap[item.system] }}:</span>
+                <span>{{ $t('header_your') }}{{ systemMap[item.system] }}:</span>
                 <span class="notive-item-name" @click="handleGo(item)" :title="item.serverName">
                   {{ item.serverName }}
                 </span>
@@ -28,44 +28,44 @@
         </ul>
         <div class="connection-table__empty" v-if="listData.length < 1">
           <VIcon size="76">notice-color</VIcon>
-          <span>暂无通知</span>
+          <span>{{ $t('header_setting') }}</span>
         </div>
         <div class="tab-item__footer flex justify-content-between py-3 font-color-sub">
           <span class="system-operation-setting cursor-pointer" @click="handleSetting">
             <VIcon class="mr-1" size="12">setting</VIcon>
-            <span>设置</span>
+            <span>{{ $t('header_no_notice') }}</span>
           </span>
-          <ElLink class="font-color-sub" @click="toCenter()">查看所有通知</ElLink>
+          <ElLink class="font-color-sub" @click="toCenter()">{{ $t('header_view_notifications') }}</ElLink>
         </div>
       </div>
     </div>
     <ElDialog
       custom-class="notice-setting-dialog"
-      title="通知设置"
+      :title="$t('notify_setting')"
       width="480px"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       :append-to-body="true"
     >
       <ElForm ref="form" class="e-form" label-width="140px" :model="form">
-        <div class="notice-setting-title">agent通知</div>
-        <ElFormItem label="agent状态为离线时">
-          <span class="notice-setting-label">短信通知</span>
+        <div class="notice-setting-title">{{ $t('notify_agent_notification') }}</div>
+        <ElFormItem :label="$t('notify_agent_status_offline')">
+          <span class="notice-setting-label">{{ $t('notify_sms_notification') }}</span>
           <ElSwitch v-model="form.connectionInterrupted.sms" size="mini" @change="handleSettingValue"></ElSwitch>
-          <span class="notice-setting-label">邮件通知</span>
+          <span class="notice-setting-label">{{ $t('notify_email_notification') }}</span>
           <ElSwitch v-model="form.connectionInterrupted.email" size="mini" @change="handleSettingValue"></ElSwitch>
         </ElFormItem>
-        <ElFormItem label="agent状态为运行中时">
-          <span class="notice-setting-label">短信通知</span>
+        <ElFormItem :label="$t('notify_agent_status_running')">
+          <span class="notice-setting-label">{{ $t('notify_sms_notification') }}</span>
           <ElSwitch v-model="form.connected.sms" size="mini" @change="handleSettingValue"></ElSwitch>
-          <span class="notice-setting-label">邮件通知</span>
+          <span class="notice-setting-label">{{ $t('notify_email_notification') }}</span>
           <ElSwitch v-model="form.connected.email" @change="handleSettingValue"></ElSwitch>
         </ElFormItem>
-        <div class="notice-setting-title">任务运行通知</div>
-        <ElFormItem label="任务运行出错时">
-          <span class="notice-setting-label">短信通知</span>
+        <div class="notice-setting-title">{{ $t('notify_task_running_notification') }}</div>
+        <ElFormItem :label="$t('notify_agent_status_error')">
+          <span class="notice-setting-label">{{ $t('notify_sms_notification') }}</span>
           <ElSwitch v-model="form.stoppedByError.sms" @change="handleSettingValue"></ElSwitch>
-          <span class="notice-setting-label">邮件通知</span>
+          <span class="notice-setting-label">{{ $t('notify_email_notification') }}</span>
           <ElSwitch v-model="form.stoppedByError.email" @change="handleSettingValue"></ElSwitch>
         </ElFormItem>
       </ElForm>
@@ -94,12 +94,12 @@ export default {
       },
       typeMap: TYPEMAP,
       systemMap: {
-        sync: '同步任务',
-        migration: '迁移任务',
-        dataFlow: '任务',
-        agent: 'Agent',
-        inspect: '校验任务',
-        JobDDL: 'DDL处理'
+        sync: this.$t('notify_sync_task'),
+        migration: this.$t('notify_migration_task'),
+        dataFlow: this.$t('notify_task'),
+        agent: this.$t('notify_agent'),
+        inspect: this.$t('notify_inspect'),
+        JobDDL: this.$t('notify_jobDDL')
       },
       userOperations: [],
       dialogVisible: false,
@@ -211,7 +211,7 @@ export default {
             })
             .catch(err => {
               if (err?.data?.msg === 'no permission') {
-                this.$message.error('您的任务已不存在')
+                this.$message.error(this.$t('notify_task_longer_exists'))
               }
             })
           break
@@ -226,7 +226,7 @@ export default {
             })
             .catch(err => {
               if (err?.data?.msg === 'no permission') {
-                this.$message.error('您的任务已不存在')
+                this.$message.error(this.$t('notify_task_longer_exists'))
               }
             })
           break

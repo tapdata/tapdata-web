@@ -42,6 +42,7 @@ import dfs_kundb from './dfs_kundb'
 import dfs_adb_postgres from './dfs_adb_postgres'
 import dfs_adb_mysql from './dfs_adb_mysql'
 import dfs_hazelcast_cloud_cluster from './dfs_hazelcast_cloud_cluster'
+import dfs_dummydb from './dfs_dummydb'
 
 export default {
   mysql,
@@ -87,5 +88,6 @@ export default {
   dfs_kundb,
   dfs_adb_postgres,
   dfs_adb_mysql,
-  dfs_hazelcast_cloud_cluster
+  dfs_hazelcast_cloud_cluster,
+  dfs_dummydb
 }

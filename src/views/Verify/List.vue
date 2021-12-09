@@ -2,31 +2,31 @@
   <section class="verify-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Verify'">
     <div class="page-header">
       <ElForm inline>
-        <ElFormItem label="类型: " class="small">
+        <ElFormItem :label="$t('verify_type') + ': '" class="small">
           <ElSelect v-model="searchParams.inspectMethod" clearable @input="inspectMethodChange">
             <ElOption :label="$t('verify_type_row_count')" value="row_count"></ElOption>
             <ElOption :label="$t('verify_type_field')" value="field"></ElOption>
             <ElOption :label="$t('verify_type_joint_field')" value="jointField"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem label="频次: " class="small">
+        <ElFormItem :label="$t('verify_frequency') + ': '" class="small">
           <ElSelect v-model="searchParams.mode" clearable @input="search()">
             <ElOption :label="$t('verify_frequency_manual')" value="manual"></ElOption>
             <ElOption :label="$t('verify_frequency_cron')" value="cron"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem label="状态: " class="small">
+        <ElFormItem :label="$t('verify_status') + ': '" class="small">
           <ElSelect v-model="searchParams.enabled" clearable @input="search()">
             <ElOption :label="$t('verify_job_enable')" :value="1"></ElOption>
             <ElOption :label="$t('verify_job_disable')" :value="2"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem label="结果: " class="small">
+        <ElFormItem :label="$t('verify_result') + ': '" class="small">
           <ElSelect v-model="searchParams.result" clearable @input="search()">
             <ElOption v-for="item in validList" :key="item.value" :label="item.name" :value="item.value"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem label="名称: " class="medium">
+        <ElFormItem :label="$t('verify_name') + ': '" class="medium">
           <ElInput v-model="searchParams.keyword" clearable :placeholder="$t('verify_job_name')" @input="search(800)">
             <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
           </ElInput>
@@ -110,18 +110,22 @@
             type="primary"
             :disabled="['running', 'scheduling'].includes(scope.row.status)"
             @click="startTask(scope.row.id)"
-            >执行</ElLink
+            >{{ $t('verify_implement') }}</ElLink
           >
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">详情</ElLink>
+          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">{{
+            $t('verify_info')
+          }}</ElLink>
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableHistory(scope.row.id)"
-            >历史</ElLink
-          >
+          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableHistory(scope.row.id)">{{
+            $t('verify_history')
+          }}</ElLink>
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" @click="goEdit(scope.row.id, scope.row.flowId)">配置</ElLink>
+          <ElLink type="primary" @click="goEdit(scope.row.id, scope.row.flowId)">{{
+            $t('verify_configuration')
+          }}</ElLink>
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" @click="remove(scope.row.name, scope.row.id)">删除</ElLink>
+          <ElLink type="primary" @click="remove(scope.row.name, scope.row.id)">{{ $t('verify_delete') }}</ElLink>
         </template>
       </ElTableColumn>
       <div v-if="!isSearching" class="page-table__empty" slot="empty">

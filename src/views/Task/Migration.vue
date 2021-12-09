@@ -52,7 +52,9 @@
           </el-form>
         </div>
         <div class="migration-operation-right">
-          <VButton type="primary" @click="createTask"><span>创建任务</span></VButton>
+          <VButton type="primary" @click="createTask"
+            ><span>{{ $t('task_create_task') }}</span></VButton
+          >
         </div>
       </div>
       <el-table
@@ -62,8 +64,8 @@
         :data="list"
         @sort-change="sortChange"
       >
-        <el-table-column label="任务名称" prop="name" min-width="200"></el-table-column>
-        <el-table-column label="所属agent" prop="belongAgent" min-width="200">
+        <el-table-column :label="$t('task_name')" prop="name" min-width="200"></el-table-column>
+        <el-table-column :label="$t('task_agent')" prop="belongAgent" min-width="200">
           <template slot-scope="scope">
             <el-link v-if="scope.row.belongAgent" type="primary" @click="toAgent(scope.row)">{{
               scope.row.belongAgent
@@ -71,8 +73,8 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column label="任务类型" prop="syncTypeText"></el-table-column>
-        <el-table-column label="任务状态">
+        <el-table-column :label="$t('task_type')" prop="syncTypeText"></el-table-column>
+        <el-table-column :label="$t('task_status')">
           <template slot-scope="scope">
             <status-tag
               type="text"
@@ -82,15 +84,15 @@
             ></status-tag>
           </template>
         </el-table-column>
-        <el-table-column label="启动时间" prop="startTime" sortable="custom" width="150">
+        <el-table-column :label="$t('task_start_time')" prop="startTime" sortable="custom" width="150">
           <template slot-scope="scope">{{ scope.row.startTimeFmt }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="280">
+        <el-table-column :label="$t('task_operate')" width="280">
           <template slot-scope="scope">
             <el-tooltip
               v-if="!['running', 'stopping'].includes(scope.row.status)"
               effect="dark"
-              content="任务配置未完成，无法启动"
+              :content="$t('task_config_not_completed')"
               :manual="!(scope.row.status === 'draft' && scope.row.checked === false)"
               placement="top-start"
             >
@@ -101,7 +103,7 @@
                 "
                 @click="run([scope.row.id], scope.row)"
               >
-                启动任务
+                {{ $t('task_start_task') }}
               </el-link>
             </el-tooltip>
             <el-link
@@ -110,7 +112,7 @@
               :disabled="!statusBtMap['stop'][scope.row.status]"
               @click="stop([scope.row.id])"
             >
-              停止任务
+              {{ $t('task_stop_task') }}
             </el-link>
             <el-link
               v-if="scope.row.status === 'stopping'"
@@ -118,14 +120,14 @@
               :disabled="!statusBtMap['forceStop'][scope.row.status]"
               @click="forceStop([scope.row.id])"
             >
-              强制停止
+              {{ $t('task_forced_stop') }}
             </el-link>
             <ElDivider direction="vertical"></ElDivider>
             <el-link
               type="primary"
               @click="handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate, scope.row.hasChildren)"
             >
-              运行监控
+              {{ $t('task_operation_monitor') }}
             </el-link>
             <ElDivider direction="vertical"></ElDivider>
             <el-link
@@ -133,7 +135,7 @@
               :disabled="!statusBtMap['edit'][scope.row.status]"
               @click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate, scope.row.hasChildren)"
             >
-              编辑
+              {{ $t('button_edit') }}
             </el-link>
             <ElDivider direction="vertical"></ElDivider>
             <el-dropdown @command="handleMore($event, scope.row, scope.$index)">
@@ -141,12 +143,14 @@
                 <i class="el-icon-more"></i>
               </el-link>
               <el-dropdown-menu slot="dropdown" class="text-nowrap">
-                <el-dropdown-item command="copy">复制</el-dropdown-item>
+                <el-dropdown-item command="copy">{{ $t('button_copy') }}</el-dropdown-item>
                 <el-dropdown-item command="resetAll" :disabled="!statusBtMap['reset'][scope.row.status]">
-                  重置
+                  {{ $t('button_reset') }}
                 </el-dropdown-item>
                 <el-dropdown-item command="del" :disabled="!statusBtMap['delete'][scope.row.status]">
-                  <span :class="{ 'color-danger': statusBtMap['delete'][scope.row.status] }">删除</span>
+                  <span :class="{ 'color-danger': statusBtMap['delete'][scope.row.status] }">{{
+                    $t('button_delete')
+                  }}</span>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -156,7 +160,7 @@
           <VIcon size="120">no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('gl_no_data') }}</span>
-            <el-link type="primary" class="fs-7" @click="createTask">创建任务</el-link>
+            <el-link type="primary" class="fs-7" @click="createTask">{{ $t('task_create_task') }}</el-link>
           </div>
         </div>
         <div v-else class="migration-table__empty" slot="empty">
@@ -253,9 +257,9 @@ export default {
         keyword: ''
       },
       syncTypeMap: {
-        initial_sync: '全量',
-        cdc: '增量',
-        'initial_sync+cdc': '全量+增量'
+        initial_sync: this.$t('task_initial_sync'),
+        cdc: this.$t('task_cdc'),
+        'initial_sync+cdc': this.$t('task_initial_sync_cdc')
       },
       agentOptions: [],
 
@@ -499,7 +503,7 @@ export default {
     },
     // 重置任务
     resetAll(ids) {
-      this.$confirm('是否重置该任务？', '重置', {
+      this.$confirm(this.$t('task_reset_tsk'), this.$t('task_reset'), {
         type: 'warning',
         dangerouslyUseHTMLString: true
       }).then(flag => {
@@ -512,14 +516,14 @@ export default {
           })
           .then(data => {
             if (data.success.length > 0) {
-              this.$message.success('重置成功')
+              this.$message.success(this.$t('task_reset_success'))
               this.reset()
             } else {
-              this.$message.success('重置失败')
+              this.$message.success(this.$t('task_reset_failed'))
             }
           })
           .catch(() => {
-            this.$message.success('重置失败')
+            this.$message.success(this.$t('task_reset_failed'))
           })
       })
     },
@@ -544,20 +548,20 @@ export default {
         .post('tm/api/DataFlows/update?where=' + encodeURIComponent(JSON.stringify(where)), attributes)
         .then(data => {
           this.fetch()
-          this.responseHandler(data, '操作成功')
+          this.responseHandler(data, this.$t('task_operation_successful'))
         })
         .catch(() => {
-          this.$message.error('任务启动失败，请编辑任务完成映射配置')
+          this.$message.error(this.$t('task_start_failed'))
         })
     },
     responseHandler(data, msg) {
       let failList = data.fail || []
       if (failList.length) {
         let msgMapping = {
-          5: '此任务不存在',
-          6: '任务状态不允许这种操作',
-          7: '操作失败，请重试',
-          8: '任务状态不允许这种操作'
+          5: this.$t('task_not_exist'),
+          6: this.$t('task_not_allow_operation'),
+          7: this.$t('task_operation_failed'),
+          8: this.$t('task_not_allow_operation')
         }
         let nameMapping = {}
         this.list.forEach(item => {
@@ -579,17 +583,17 @@ export default {
     },
     getConfirmMessage(operateStr, name) {
       let map = {
-        delete_confirm_title: '是否删除该任务？',
-        delete_confirm_message: '删除任务 xxx 后，此任务将无法恢复',
+        delete_confirm_title: this.$t('task_delete_confirm_title'),
+        delete_confirm_message: this.$t('task_delete_confirm_message'),
 
-        stop_confirm_title: '是否暂停该任务？',
-        stop_confirm_message: '暂停任务 xxx 后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
+        stop_confirm_title: this.$t('task_stop_confirm_title'),
+        stop_confirm_message: this.$t('task_stop_confirm_message'),
 
-        force_stop_confirm_title: '是否强制停止该任务？',
-        force_stop_confirm_message: '强制停止任务 xxx 将立即中断数据传输强制任务快速停止，并重置该任务',
+        force_stop_confirm_title: this.$t('task_force_stop_confirm_title'),
+        force_stop_confirm_message: this.$t('task_force_stop_confirm_message'),
 
-        initialize_confirm_title: '是否重置该任务？',
-        initialize_confirm_message: '重置任务 xxx 将清除任务同步进度，任务将重新执行'
+        initialize_confirm_title: this.$t('task_initialize_confirm_title'),
+        initialize_confirm_message: this.$t('task_initialize_confirm_message')
       }
       let title = operateStr + '_confirm_title',
         message = operateStr + '_confirm_message'
@@ -625,14 +629,14 @@ export default {
         let node = list[i]
         if (ids.includes(node.id)) {
           if (node.setting && !node.setting.sync_type.includes('cdc')) {
-            message = '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?'
-            title = '重要提醒'
+            message = this.$t('task_pause_tip')
+            title = this.$t('task_important_reminder')
           }
           if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
             const h = this.$createElement
-            let arr = '任务XXX中含有聚合处理节点，任务停止后再次启动，任务会先进行重置，确定停止？'.split('XXX')
+            let arr = this.$t('task_stop_tip').split('XXX')
             message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
-            title = '重要提醒'
+            title = this.$t('task_important_reminder')
           }
         }
       }
@@ -659,10 +663,10 @@ export default {
         .post(`tm/api/DataFlows/${node.id}/copy`)
         .then(() => {
           this.fetch()
-          this.$message.success('复制成功')
+          this.$message.success(this.$t('task_copy_success'))
         })
         .catch(() => {
-          this.$message.error('复制失败')
+          this.$message.error(this.$t('task_copy_failed'))
         })
     },
     del(ids, item = {}) {
@@ -681,13 +685,13 @@ export default {
             .then(data => {
               if (data?.success?.length) {
                 this.fetch()
-                this.responseHandler(data, '删除成功')
+                this.responseHandler(data, this.$t('task_delete_success'))
               } else if (data?.fail) {
-                this.$message.error('删除失败')
+                this.$message.error(this.$t('task_delete_failed'))
               }
             })
             .catch(() => {
-              this.$message.error('删除失败')
+              this.$message.error(this.$t('task_delete_failed'))
             })
         }
       })
