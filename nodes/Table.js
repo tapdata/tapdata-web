@@ -306,16 +306,18 @@ export class Table extends NodeType {
           },
           updateConditionFields: {
             title: '更新条件字段',
-            type: 'string',
+            type: 'array',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               wrapperWidth: 240
             },
             'x-component': 'Select',
             'x-component-props': {
+              allowCreate: true,
               multiple: true,
-              collapseTags: true
-            }
+              filterable: true
+            },
+            'x-reactions': ['{{useAsyncDataSource(loadNodeFieldNames)}}']
           }
         }
       }

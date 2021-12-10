@@ -511,7 +511,7 @@ export default {
 
     // 更新节点属性
     updateNodeProps(form) {
-      const filterProps = ['id', 'isSource', 'isTarget'] // 排除属性的更新
+      const filterProps = ['id', 'isSource', 'isTarget', 'attrs', 'sourceNode'] // 排除属性的更新
       this.updateNodeProperties({
         id: this.node.id,
         properties: JSON.parse(

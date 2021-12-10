@@ -1005,13 +1005,13 @@ export default {
         this.dataflow.id = dataflow.id
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
-        this.$message.success(this.$t('message.saveOK'))
+        // this.$message.success(this.$t('message.saveOK'))
         await this.$router.replace({
           name: 'DataflowEditor',
           params: { id: dataflow.id, action: 'dataflowSave' }
         })
       } catch (e) {
-        this.$showError(e, '数据流保存出错', '出现的问题:')
+        this.$showError(e, '任务保存出错', '出现的问题:')
       }
     },
 
