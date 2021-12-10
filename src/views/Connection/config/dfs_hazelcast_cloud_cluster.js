@@ -12,7 +12,7 @@ export default function (vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: vm.$t('connection_form_hazecast_connection_type'),
+        label: vm.$t('connection_list_type'),
         customClass: 'large-item',
         isVertical: false,
         button: true,

@@ -6,13 +6,13 @@
       </div>
       <div class="base-info flex-fit">
         <div class="flex align-items-center">
-          <ElLink class="fs-7 mr-4" type="primary">任务名称: {{ task.name }}</ElLink>
+          <ElLink class="fs-7 mr-4" type="primary">{{ $t('task_name') }}: {{ task.name }}</ElLink>
           <img v-if="task.isFinished" style="height: 25px" src="../../../public/images/task/yiwancheng.png" alt="" />
           <StatusTag v-else type="text" target="task" :status="task.status" only-img></StatusTag>
         </div>
         <div class="mt-1">
-          <span>创建人: {{ task.creator }}</span>
-          <span class="ml-4">任务类型：{{ taskType.label }}</span>
+          <span>{{ $t('task_monitor_founder') }}: {{ task.creator }}</span>
+          <span class="ml-4">{{ $t('task_type') }}：{{ taskType.label }}</span>
         </div>
         <div class="mt-2">
           <VButton
@@ -20,19 +20,21 @@
             :disabled="!statusBtMap['run'][task.status] || (task.status === 'draft' && task.checked === false)"
             :loading="startLoading"
             @click="start"
-            >启动</VButton
+            >{{ $t('task_monitor_start') }}</VButton
           >
-          <VButton :disabled="!statusBtMap['stop'][task.status]" @click="stop">停止</VButton>
-          <VButton :loading="resetBtnLoading" :disabled="!statusBtMap['reset'][task.status]" @click="reset"
-            >重置</VButton
-          >
-          <VButton :disabled="!statusBtMap['forceStop'][task.status]" @click="forceStop">强制停止</VButton>
+          <VButton :disabled="!statusBtMap['stop'][task.status]" @click="stop">{{ $t('task_monitor_stop') }}</VButton>
+          <VButton :loading="resetBtnLoading" :disabled="!statusBtMap['reset'][task.status]" @click="reset">{{
+            $t('task_monitor_reset')
+          }}</VButton>
+          <VButton :disabled="!statusBtMap['forceStop'][task.status]" @click="forceStop">{{
+            $t('task_monitor_forced_stop')
+          }}</VButton>
         </div>
       </div>
       <div class="input-and-output flex align-center">
-        <span>总输出</span>
+        <span>{{ $t('task_monitor_total_output') }}</span>
         <span class="fs-4 ml-4 color-primary fw-bold">{{ task.totalOutput }}</span>
-        <span class="ml-6">总输入</span>
+        <span class="ml-6">{{ $t('task_monitor_total_input') }}</span>
         <span class="fs-4 ml-4 color-primary fw-bold">{{ task.totalInput }}</span>
       </div>
     </div>
@@ -43,15 +45,15 @@
         <!--          <span class="font-color-main">{{ task.typeText }}</span>-->
         <!--        </div>-->
         <div class="info-item">
-          <span class="font-color-sub">本次执行时间: </span>
+          <span class="font-color-sub">{{ $t('task_monitor_execution_time') }}: </span>
           <span class="font-color-main">{{ task.startTimeFmt }}</span>
         </div>
         <div class="info-item">
-          <span class="font-color-sub">本次结束时间: </span>
+          <span class="font-color-sub">{{ $t('task_monitor_end_time') }}: </span>
           <span class="font-color-main">{{ task.endTimeFmt }}</span>
         </div>
         <div v-if="taskType.value !== 'initial_sync'" class="info-item">
-          <span class="font-color-sub">增量所处时间点: </span>
+          <span class="font-color-sub">{{ $t('task_monitor_cdc_time') }}: </span>
           <span class="font-color-main">{{ task.cdcTimeFmt }}</span>
         </div>
         <div class="info-item info-title fs-7">{{ infoObj.source.title }}</div>
@@ -74,13 +76,13 @@
           <ElTabPane label="任务进度" name="progress" class="h-100">
             <TaskProgress :task="task"></TaskProgress>
           </ElTabPane>
-          <ElTabPane lazy class="h-100 overflow-hidden" label="运行日志" name="log">
+          <ElTabPane lazy class="h-100 overflow-hidden" :label="$t('task_monitor_run_log')" name="log">
             <Log :id="$route.params.id"></Log>
           </ElTabPane>
-          <ElTabPane lazy class="h-100 overflow-hidden" label="任务里程碑" name="milestone">
-            <ElTable fit height="100%" empty-text="此任务尚未启动或已被重置，暂无运行里程碑数据" :data="milestoneList">
-              <ElTableColumn label="任务详情" prop="label"></ElTableColumn>
-              <ElTableColumn label="状态" prop="status" width="100px">
+          <ElTabPane lazy class="h-100 overflow-hidden" :label="$t('task_monitor_mission_milestone')" name="milestone">
+            <ElTable fit height="100%" :empty-text="$t('task_monitor_no_milestone_data')" :data="milestoneList">
+              <ElTableColumn :label="$t('task_monitor_task_details')" prop="label"></ElTableColumn>
+              <ElTableColumn :label="$t('task_monitor_status')" prop="status" width="100px">
                 <template slot-scope="scope">
                   <StatusTag
                     type="text"
@@ -90,10 +92,16 @@
                   ></StatusTag>
                 </template>
               </ElTableColumn>
-              <ElTableColumn label="时间" prop="fromNow" width="160px"></ElTableColumn>
+              <ElTableColumn :label="$t('task_monitor_time')" prop="fromNow" width="160px"></ElTableColumn>
             </ElTable>
           </ElTabPane>
-          <ElTabPane v-if="showContent" lazy class="h-100 overflow-hidden" label="同步内容" name="content">
+          <ElTabPane
+            v-if="showContent"
+            lazy
+            class="h-100 overflow-hidden"
+            :label="$t('task_monitor_sync_content')"
+            name="content"
+          >
             <FieldMapping ref="fieldMapping" :readOnly="true" :field_process="field_process"></FieldMapping>
           </ElTabPane>
         </ElTabs>
@@ -196,43 +204,43 @@ export default {
       },
       infoObj: {
         source: {
-          title: '源端信息',
+          title: this.$t('task_monitor_source_info'),
           items: [
             {
-              label: '节点名称',
+              label: this.$t('task_monitor_node_name'),
               key: 'sourceName'
             },
             {
-              label: '所属库',
+              label: this.$t('task_monitor_owned_library'),
               key: 'sourceDB'
             },
             {
-              label: '数据库地址',
+              label: this.$t('task_monitor_database_addr'),
               key: 'sourceUrl'
             },
             {
-              label: '数据库类型',
+              label: this.$t('task_monitor_database_type'),
               key: 'sourceType'
             }
           ]
         },
         target: {
-          title: '目标端信息',
+          title: this.$t('task_monitor_target_info'),
           items: [
             {
-              label: '节点名称',
+              label: this.$t('task_monitor_node_name'),
               key: 'targetName'
             },
             {
-              label: '所属库',
+              label: this.$t('task_monitor_owned_library'),
               key: 'targetDB'
             },
             {
-              label: '数据库地址',
+              label: this.$t('task_monitor_database_addr'),
               key: 'targetUrl'
             },
             {
-              label: '数据库类型',
+              label: this.$t('task_monitor_database_type'),
               key: 'targetType'
             }
           ]
@@ -373,19 +381,19 @@ export default {
             case 'mq':
               this.infoObj[type].items = [
                 {
-                  label: '节点名称',
+                  label: this.$t('task_monitor_node_name'),
                   key: type + 'Name'
                 },
                 {
-                  label: '主题名称',
+                  label: this.$t('task_monitor_topic_name'),
                   key: type + 'MqQueueSet'
                 },
                 {
-                  label: 'MQ连接串',
+                  label: this.$t('connection_form_mq_broker_url'),
                   key: type + 'BrokerURL'
                 },
                 {
-                  label: '数据库类型',
+                  label: this.$t('task_monitor_database_type'),
                   key: type + 'Type'
                 }
               ]
@@ -395,19 +403,19 @@ export default {
             case 'kafka':
               this.infoObj[type].items = [
                 {
-                  label: '节点名称',
+                  label: this.$t('task_monitor_node_name'),
                   key: type + 'Name'
                 },
                 {
-                  label: '主题表达式',
+                  label: this.$t('task_monitor_topic_expressionL'),
                   key: type + 'KafkaPatternTopics'
                 },
                 {
-                  label: '数据库地址',
+                  label: this.$t('task_monitor_database_addr'),
                   key: type + 'KafkaBootstrapServers'
                 },
                 {
-                  label: '数据库类型',
+                  label: this.$t('task_monitor_database_type'),
                   key: type + 'Type'
                 }
               ]
@@ -424,7 +432,10 @@ export default {
       data.totalOutput = data.stats?.output?.rows || 0
       data.totalInput = data.stats?.input?.rows || 0
       data.creator = this.task?.creator || data.username || data.user?.username || '-'
-      data.typeText = data.mappingTemplate === 'cluster-clone' ? '迁移任务' : '同步任务'
+      data.typeText =
+        data.mappingTemplate === 'cluster-clone'
+          ? this.$t('task_monitor_migration_task')
+          : this.$t('task_monitor_sync_task')
       let cdcTime = data.cdcLastTimes?.[0]?.cdcTime || ''
       data.startTimeFmt = this.formatTime(data.startTime)
       data.endTimeFmt = data.startTime ? this.formatTime(data.finishTime) : '-'
@@ -448,20 +459,20 @@ export default {
       return await this.$axios
         .post('tm/api/DataFlows/update?where=' + encodeURIComponent(JSON.stringify(where)), attributes)
         .then(data => {
-          this.responseHandler(data, '操作成功')
+          this.responseHandler(data, this.$t('task_operation_successful'))
         })
         .catch(() => {
-          this.$message.error('任务启动失败，请编辑任务完成映射配置')
+          this.$message.error(this.$t('task_start_failed'))
         })
     },
     responseHandler(data, msg) {
       let failList = data.fail || []
       if (failList.length) {
         let msgMapping = {
-          5: '此任务不存在',
-          6: '任务状态不允许这种操作',
-          7: '操作失败，请重试',
-          8: '任务状态不允许这种操作'
+          5: this.$t('task_not_exist'),
+          6: this.$t('task_not_allow_operation'),
+          7: this.$t('task_operation_failed'),
+          8: this.$t('task_not_allow_operation')
         }
         this.$message.warning({
           dangerouslyUseHTMLString: true,
@@ -480,17 +491,17 @@ export default {
     },
     getConfirmMessage(operateStr, name) {
       let map = {
-        delete_confirm_title: '是否删除该任务？',
-        delete_confirm_message: '删除任务 xxx 后，此任务将无法恢复',
+        delete_confirm_title: this.$t('task_delete_confirm_title'),
+        delete_confirm_message: this.$t('task_delete_confirm_message'),
 
-        stop_confirm_title: '是否暂停该任务？',
-        stop_confirm_message: '暂停任务 xxx 后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
+        stop_confirm_title: this.$t('task_stop_confirm_title'),
+        stop_confirm_message: this.$t('task_stop_confirm_message'),
 
-        force_stop_confirm_title: '是否强制停止该任务？',
-        force_stop_confirm_message: '强制停止任务 xxx 将立即中断数据传输强制任务快速停止，并重置该任务',
+        force_stop_confirm_title: this.$t('task_force_stop_confirm_title'),
+        force_stop_confirm_message: this.$t('task_force_stop_confirm_message'),
 
-        initialize_confirm_title: '是否重置该任务？',
-        initialize_confirm_message: '重置任务 xxx 将清除任务同步进度，任务将重新执行'
+        initialize_confirm_title: this.$t('task_initialize_confirm_title'),
+        initialize_confirm_message: this.$t('task_initialize_confirm_message')
       }
       let title = operateStr + '_confirm_title',
         message = operateStr + '_confirm_message'
@@ -525,14 +536,14 @@ export default {
       let title = msgObj.title
       let node = this.task
       if (node.setting && !node.setting.sync_type.includes('cdc')) {
-        message = '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?'
-        title = '重要提醒'
+        message = this.$t('task_pause_tip')
+        title = this.$t('task_important_reminder')
       }
       if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
         const h = this.$createElement
-        let arr = '任务XXX中含有聚合处理节点，任务停止后再次启动，任务会先进行重置，确定停止？'.split('XXX')
+        let arr = this.$t('task_stop_tip').split('XXX')
         message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
-        title = '重要提醒'
+        title = this.$t('task_important_reminder')
       }
       this.$confirm(message, title, {
         type: 'warning'
@@ -553,7 +564,7 @@ export default {
       })
     },
     reset() {
-      this.$confirm('是否重置该任务？', '重置', {
+      this.$confirm(this.$t('task_reset_tsk'), this.$t('task_reset'), {
         type: 'warning',
         dangerouslyUseHTMLString: true
       }).then(flag => {
@@ -567,10 +578,10 @@ export default {
           })
           .then(data => {
             this.resetBtnLoading = false
-            this.responseHandler(data, '操作成功')
+            this.responseHandler(data, this.$t('task_operation_successful'))
           })
           .catch(() => {
-            this.$message.error('重置失败')
+            this.$message.error(this.$t('task_reset_failed'))
           })
           .finally(() => {
             this.resetBtnLoading = false

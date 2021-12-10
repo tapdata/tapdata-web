@@ -2,7 +2,7 @@ export default function (vm) {
   return {
     form: {
       labelPosition: 'left',
-      labelWidth: '120px'
+      labelWidth: '180px'
     },
     defaultModel: {
       connection_type: 'target'
@@ -65,7 +65,7 @@ export default function (vm) {
         field: 'database_owner',
         label: vm.$t('dataForm.form.databaseOwner'),
         required: true,
-        tip: '逗号分割的表达式列表，使用 * 代表任意长度任意字符'
+        tip: vm.$t('connection_form_dameng_database_owner_tip')
       },
       {
         type: 'input',

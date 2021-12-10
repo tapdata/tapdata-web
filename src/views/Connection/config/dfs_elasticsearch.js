@@ -2,7 +2,7 @@ export default function (vm) {
   return {
     form: {
       labelPosition: 'left',
-      labelWidth: '120px'
+      labelWidth: '180px'
     },
     defaultModel: {
       connection_type: 'target',
