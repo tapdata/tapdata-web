@@ -2,7 +2,7 @@ export default function (vm) {
   return {
     form: {
       labelPosition: 'left',
-      labelWidth: '120px'
+      labelWidth: '180px'
     },
     defaultModel: {
       connection_type: 'source_and_target',
@@ -42,7 +42,7 @@ export default function (vm) {
         field: 'kafkaBootstrapServers',
         label: vm.$t('dataForm.form.host'),
         required: true,
-        tip: '输入 IP/host:port , 多个地址以逗号隔开',
+        tip: vm.$t('connection_form_kafka_host_tip'),
         rules: [
           {
             validator(rule, value, callback) {
@@ -108,7 +108,7 @@ export default function (vm) {
         customClass: 'large-item',
         label: vm.$t('dataForm.form.kafka.lonoreFormat'),
         show: true,
-        tip: '如果开启则遇到解析异常会忽略该消息，否则停止拉取消息',
+        tip: vm.$t('connection_form_kafka_lonore_format_tip'),
         dependOn: [
           {
             triggerOptions: [
@@ -179,7 +179,7 @@ export default function (vm) {
         label: vm.$t('dataForm.form.kafka.kafkaIgnorePushError'),
         show: true,
         customClass: 'large-item',
-        tip: '如果开启则忽略该次推送的消息(存在消息丢失)，否则停止推送消息',
+        tip: vm.$t('connection_form_kafka_ignore_push_error_tip'),
         dependOn: [
           {
             triggerOptions: [

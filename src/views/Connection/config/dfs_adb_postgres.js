@@ -2,7 +2,7 @@ export default function (vm) {
   return {
     form: {
       labelPosition: 'left',
-      labelWidth: '120px'
+      labelWidth: '180px'
     },
     defaultModel: {
       connection_type: 'target',
@@ -137,7 +137,7 @@ export default function (vm) {
         type: 'select',
         field: 'database_datetype_without_timezone',
         label: vm.$t('dataForm.form.timeZone'),
-        tip: '影响类型: DATE',
+        tip: vm.$t('connection_form_impact_type'),
         options: [],
         show: true
       }
