@@ -352,6 +352,9 @@ export default {
   connection_form_hazecast_none_sslKey: 'The key store file cannot be empty',
   connection_form_hazecast_none_sslCA: 'The trust key store file cannot be empty',
 
+  connection_test_schema_tips:
+    'Possible cause: case problem, you can try to change the schema to uppercase and try again',
+
   connection_preview_load_schema: 'Load Schema',
   connection_preview_edit: 'Edit',
   connection_preview_test: 'Connection Test',

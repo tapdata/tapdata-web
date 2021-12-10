@@ -182,6 +182,7 @@ export default {
   connection_list_column_schema_status_tips: 'Schema加載完成的連接才可以正常創建任務',
   connection_form_database_host_placeholder: '請輸入數據庫地址',
   connection_form_database_host_tips: '數據庫地址(127.0.0.1/Domain:{端口},多個地址請用,分開)',
+  connection_test_schema_tips: '可能原因：大小寫問題，您可以嘗試將schema改成大寫後重試',
 
   // 任务
   task_manage: '任務管理',

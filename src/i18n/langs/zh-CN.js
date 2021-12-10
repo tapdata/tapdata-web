@@ -329,6 +329,8 @@ export default {
   connection_form_hazecast_none_sslKey: '密钥库文件不能为空',
   connection_form_hazecast_none_sslCA: '信任密钥存储文件不能为空',
 
+  connection_test_schema_tips: '可能原因：大小写问题，您可以尝试将schema改成大写后重试',
+
   connection_preview_load_schema: '加载Schema',
   connection_preview_edit: '编辑',
   connection_preview_test: '连接测试',

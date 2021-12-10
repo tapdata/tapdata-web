@@ -965,8 +965,14 @@ export default {
           field_process.table_id = this.selectRow.sourceTableId
           field_process.table_name = this.selectRow.sourceObjectName
           field_process.operations = this.operations
-        } else this.field_process.push(field_process)
-      } else this.field_process.push(field_process)
+        } else {
+          this.field_process = []
+          this.field_process.push(field_process)
+        }
+      } else {
+        this.field_process = []
+        this.field_process.push(field_process)
+      }
       return this.field_process
     },
     returnData(hiddenMsg) {

@@ -74,7 +74,6 @@
             <div class="step-5" v-if="steps[activeStep].index === 5">
               <FieldMapping
                 ref="fieldMapping"
-                :fieldProcess="transferData.transferData"
                 :transform="transferData"
                 :isFirst="isFirst"
                 :getDataFlow="getDataFlow"
@@ -627,6 +626,8 @@ export default {
         }
         // TODO 临时为了解决bug现在这里加，回头优化
         this.getFormConfig()
+        //是否已选择表
+        this.isTransfer = false
       })
     },
     //云版支持数据源

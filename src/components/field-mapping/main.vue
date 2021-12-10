@@ -9,7 +9,7 @@
     :fieldProcessMethod="updateFieldProcess"
     :updateMetadata="updateMetadata"
     :hiddenFieldProcess="false"
-    :fieldProcess="fieldProcess"
+    :field_process="field_process"
     :transform="transform"
     @row-click="saveOperations"
     @update-nav="updateFieldMappingNavData"
@@ -20,7 +20,7 @@
 import FieldMappingDialog from '@/components/field-mapping/field-mapping-dialog'
 export default {
   name: 'FieldMappings',
-  props: ['readOnly', 'transform', 'isFirst', 'getDataFlow', 'fieldProcess'],
+  props: ['readOnly', 'transform', 'isFirst', 'getDataFlow'],
   components: { FieldMappingDialog },
   data() {
     return {
@@ -41,10 +41,11 @@ export default {
      * 触发父组件：首次条件
      * */
     getMetaData(taskData) {
+      if (!taskData) return
       this.dataFlow = taskData
       this.stageId = this.transform?.stageId || this.dataFlow?.stages[1]?.id //数据库迁移操作放在目标节点上
       let dataFlowId = this.taskData?.id || ''
-      if (!taskData) return
+      this.field_process = this.transform?.field_process
       if (this.isFirst && !dataFlowId) {
         taskData['rollback'] = 'all'
       } else {
@@ -266,6 +267,10 @@ export default {
     //保存数据
     returnData(hiddenMsg) {
       return this.$refs.fieldMappingDom.returnData(hiddenMsg)
+    },
+    //保存数据当前节点的字段处理器
+    saveFileOperations() {
+      return this.$refs.fieldMappingDom.saveFileOperations()
     }
   }
 }
