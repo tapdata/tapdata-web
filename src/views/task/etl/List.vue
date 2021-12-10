@@ -940,8 +940,8 @@ export default {
         })
       } else {
         let routeUrl = this.$router.resolve({
-          name: 'job',
-          query: { id: id, isMoniting: true, mapping: mappingTemplate }
+          name: 'DataflowEditor',
+          params: { id: id }
         })
         window.open(routeUrl.href, 'monitor_' + id)
       }
