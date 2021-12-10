@@ -86,14 +86,6 @@ export class Join extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'JoinExpression',
         'x-reactions': [
-          /*{
-            dependencies: ['sourceNode'],
-            fulfill: {
-              state: {
-                sourceNode: '{{$deps[0]}}'
-              }
-            }
-          },*/
           {
             dependencies: ['leftNodeId', 'rightNodeId']
           },

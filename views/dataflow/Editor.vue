@@ -516,7 +516,7 @@ export default {
       let data
       try {
         data = await taskApi.get([id]) // this.creatUserId = result.user_id
-        if (data.temp) data = data.temp // 和后端约定了，如果缓存有数据则获取temp
+        if (data.temp) data.dag = data.temp // 和后端约定了，如果缓存有数据则获取temp
       } catch (e) {
         this.$showError(e, '任务加载出错', '加载任务出现的问题:')
         return
