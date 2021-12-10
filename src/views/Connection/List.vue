@@ -75,8 +75,8 @@
         <ElTableColumn :label="$t('connection_list_type')" width="120">
           <template slot-scope="scope">{{
             {
-              source: this.$t('connection_list_source'),
-              target: this.$t('connection_list_target'),
+              source: $t('connection_list_source'),
+              target: $t('connection_list_target'),
               source_and_target: this.$t('connection_list_source_and_target')
             }[scope.row.connection_type]
           }}</template>

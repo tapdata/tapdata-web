@@ -64,7 +64,11 @@
         :data="list"
         @sort-change="sortChange"
       >
-        <el-table-column :label="$t('task_name')" prop="name" min-width="200"></el-table-column>
+        <el-table-column :label="$t('task_name')" prop="name" min-width="200">
+          <template v-slot="scope">
+            <ElLink type="primary" @click="toDetails(scope.row)">{{ scope.row.name }}</ElLink>
+          </template>
+        </el-table-column>
         <el-table-column :label="$t('task_agent')" prop="belongAgent" min-width="200">
           <template slot-scope="scope">
             <el-link v-if="scope.row.belongAgent" type="primary" @click="toAgent(scope.row)">{{
@@ -747,6 +751,14 @@ export default {
         name: 'Instance',
         query: {
           keyword: belongAgent
+        }
+      })
+    },
+    toDetails(row) {
+      this.$router.push({
+        name: 'DataflowDetails',
+        params: {
+          id: row.id
         }
       })
     }

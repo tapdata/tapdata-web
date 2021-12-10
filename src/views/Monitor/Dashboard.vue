@@ -181,7 +181,7 @@
 import StatusTag from '@/components/StatusTag'
 import TaskProgress from './TaskProgress'
 
-import FieldMapping from '@/components/FieldMappings'
+import FieldMapping from '@/components/field-mapping/main'
 import Log from './Log.vue'
 export default {
   components: { StatusTag, TaskProgress, Log, FieldMapping },
