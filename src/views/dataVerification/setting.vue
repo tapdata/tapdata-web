@@ -229,15 +229,15 @@ export default {
   },
   methods: {
     getData() {
-      let where = {
-        filter: {
-          where: {
-            id: '82'
-          }
-        }
-      }
+      // let where = {
+      //   filter: {
+      //     where: {
+      //       id: '82'
+      //     }
+      //   }
+      // }
       this.loading = true
-      Setting.findOne(where)
+      Setting.findOne('82')
         .then(res => {
           if (res.data.value) {
             this.formData = JSON.parse(res.data.value)
@@ -252,7 +252,7 @@ export default {
         return
       }
       let where = {
-        id: '82'
+        _id: '82'
       }
       let data = {
         value: JSON.stringify(this.formData)
@@ -280,7 +280,8 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
+  padding-bottom: 50px;
   margin-left: 20px;
   margin-top: 20px;
   .head-text {

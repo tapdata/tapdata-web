@@ -1526,15 +1526,15 @@ export default {
       this.editor.graph.selectCell([])
     },
     getGlobalSetting() {
-      let where = {
-        filter: {
-          where: {
-            id: '76'
-          }
-        }
-      }
+      // let where = {
+      //   filter: {
+      //     where: {
+      //       id: '76'
+      //     }
+      //   }
+      // }
       this.loading = true
-      Setting.findOne(where)
+      Setting.findOne('76')
         .then(res => {
           if (res.data.value) {
             let value = JSON.parse(res.data.value)

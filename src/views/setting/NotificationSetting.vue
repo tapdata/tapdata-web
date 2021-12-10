@@ -125,15 +125,15 @@ export default {
   },
   methods: {
     getData() {
-      let where = {
-        filter: {
-          where: {
-            id: '76'
-          }
-        }
-      }
+      // let where = {
+      //   filter: {
+      //     where: {
+      //       id: '76'
+      //     }
+      //   }
+      // }
       this.loading = true
-      Setting.findOne(where)
+      Setting.findOne('76')
         .then(res => {
           if (res.data.value) {
             let value = JSON.parse(res.data.value)
@@ -148,7 +148,7 @@ export default {
     },
     submit() {
       let where = {
-        id: '76'
+        _id: '76'
       }
       let data = {
         value: JSON.stringify({

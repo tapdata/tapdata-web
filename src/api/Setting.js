@@ -30,4 +30,7 @@ export default class Settings extends PublicAPI {
   getObjectId() {
     return axios.post(`${this.url}/ObjectId`)
   }
+  findOne(id) {
+    return axios.get(`${this.url}/${id}`)
+  }
 }
