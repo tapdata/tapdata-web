@@ -77,7 +77,7 @@
             {
               source: $t('connection_list_source'),
               target: $t('connection_list_target'),
-              source_and_target: this.$t('connection_list_source_and_target')
+              source_and_target: $t('connection_list_source_and_target')
             }[scope.row.connection_type]
           }}</template>
         </ElTableColumn>

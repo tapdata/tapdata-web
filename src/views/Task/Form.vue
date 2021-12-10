@@ -969,6 +969,9 @@ export default {
           let source_connectionId = items.find(it => it.field === 'source_connectionId')
           if (source_connectionId) {
             source_connectionId.loading = false
+            // 在全部类型下dfs源端不支持的数据源
+            let filterArr = ['redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'clickhouse', 'dameng', 'tidb']
+            data = data.filter(item => filterArr.indexOf(item.database_type) === -1)
             source_connectionId.options = data.map(item => {
               return {
                 id: item.database_host + item.database_port + item.database_name + item.database_uri,
@@ -988,6 +991,9 @@ export default {
           }
           let target_connectionId = items.find(it => it.field === 'target_connectionId')
           if (target_connectionId) {
+            // 在全部类型下dfs目标端不支持的数据源
+            let filterArr = ['adb_mysql']
+            data = data.filter(item => filterArr.indexOf(item.database_type) === -1)
             target_connectionId.loading = false
             target_connectionId.options = data.map(item => {
               return {
@@ -1050,7 +1056,7 @@ export default {
           if (source) {
             // dfs源端不支持 redis elasticsearch
             let options = data
-            let filterArr = ['redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'clickhouse', 'dameng']
+            let filterArr = ['redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'clickhouse', 'dameng', 'tidb']
             options = data.filter(item => filterArr.indexOf(item) === -1)
             source.options = options.map(item => {
               return {

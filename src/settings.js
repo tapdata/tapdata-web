@@ -18,6 +18,7 @@ module.exports = {
     'kundb',
     'adb_postgres',
     'adb_mysql',
-    'dummydb'
+    'dummydb',
+    'tidb'
   ]
 }

@@ -180,6 +180,20 @@ export const DEFAULT_MODEL = {
     routeKeyField: '', //消息路由
     virtualHost: '', //虚拟主机
     nameSrvAddr: ''
+  },
+  tidb: {
+    name: '',
+    database_type: '',
+    connection_type: '',
+    tidbPdServer: '',
+    database_host: '',
+    database_port: '',
+    database_name: '',
+    database_username: '',
+    plain_password: '',
+    schemaAutoUpdate: '',
+    table_filter: '',
+    additionalString: ''
   }
 }
 export const CONFIG_MODEL = {

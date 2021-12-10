@@ -341,6 +341,8 @@ export default {
   connection_form_hazecast_sslPass: '密钥文件密码',
   connection_form_hazecast_none_sslKey: '密钥库文件不能为空',
   connection_form_hazecast_none_sslCA: '信任密钥存储文件不能为空',
+  connection_form_tidb_server: 'PDServer 地址',
+  connection_form_tidb_none_server: 'PDServer 地址不能为空',
 
   connection_preview_load_schema: '加载Schema',
   connection_preview_edit: '编辑',

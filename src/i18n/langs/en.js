@@ -373,6 +373,8 @@ export default {
   connection_form_hazecast_sslPass: 'Key File Password',
   connection_form_hazecast_none_sslKey: 'The key store file cannot be empty',
   connection_form_hazecast_none_sslCA: 'The trust key store file cannot be empty',
+  connection_form_tidb_server: 'PDServer address',
+  connection_form_tidb_none_server: 'PDServer address cannot be empty',
 
   connection_preview_load_schema: 'Load Schema',
   connection_preview_edit: 'Edit',
