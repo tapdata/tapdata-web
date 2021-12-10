@@ -65,9 +65,9 @@
         @sort-change="sortChange"
       >
         <el-table-column :label="$t('task_name')" prop="name" min-width="200">
-          <template v-slot="scope">
-            <ElLink type="primary" @click="toDetails(scope.row)">{{ scope.row.name }}</ElLink>
-          </template>
+          <!--          <template v-slot="scope">-->
+          <!--            <ElLink type="primary" @click="toDetails(scope.row)">{{ scope.row.name }}</ElLink>-->
+          <!--          </template>-->
         </el-table-column>
         <el-table-column :label="$t('task_agent')" prop="belongAgent" min-width="200">
           <template slot-scope="scope">

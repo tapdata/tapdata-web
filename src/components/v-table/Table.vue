@@ -104,6 +104,9 @@ export default {
       default: () => {
         return {}
       }
+    },
+    remoteData: {
+      type: [String, Object, Array]
     }
   },
   data() {
@@ -128,6 +131,14 @@ export default {
       deep: true,
       handler(v) {
         v && this.fetch()
+      }
+    },
+    remoteData: {
+      deep: true,
+      handler(v1, v2) {
+        if (JSON.stringify(v1) !== JSON.stringify(v2)) {
+          this.fetch()
+        }
       }
     }
   },

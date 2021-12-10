@@ -1,6 +1,13 @@
 <template>
   <div class="connection-container">
-    <TableList :remoteMethod="remoteMethod" :columns="columns" height="100%" :has-pagination="false" ref="tableList">
+    <TableList
+      :remoteMethod="remoteMethod"
+      :columns="columns"
+      :remote-data="ids"
+      height="100%"
+      :has-pagination="false"
+      ref="tableList"
+    >
       <template slot="name" slot-scope="scope">
         <div class="flex flex-row align-items-center p-2">
           <img
@@ -108,17 +115,6 @@ export default {
       }
     }
   },
-  watch: {
-    ids: {
-      deep: true,
-      handler(v) {
-        console.log('ids', v)
-        if (v.length) {
-          this.init()
-        }
-      }
-    }
-  },
   mounted() {
     this.init()
   },
@@ -159,18 +155,16 @@ export default {
         limit: size,
         skip: size * (current - 1)
       }
-      return this.$axios
-        .get(`tm/api/Connections?filter=${encodeURIComponent(JSON.stringify(filter))}`)
-        .then(({ items, total }) => {
-          let data = items.map(item => {
-            item.connectType = this.connectTypeMap[item.connection_type]
-            return deepCopy(item)
-          })
-          return {
-            total: total || data.length,
-            data: data
-          }
+      return this.$axios.get(`tm/api/Connections?filter=${encodeURIComponent(JSON.stringify(filter))}`).then(items => {
+        let data = items.map(item => {
+          item.connectType = this.connectTypeMap[item.connection_type]
+          return deepCopy(item)
         })
+        return {
+          total: data.length,
+          data: data
+        }
+      })
     },
     getTableData() {
       return this.$refs.tableList?.getData()

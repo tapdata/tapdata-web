@@ -377,15 +377,17 @@ export default {
       this.selectRow = this.fieldMappingNavData[0]
       this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
     }
-    if (!this.readOnly && this.transform) {
-      this.form = {
-        tableNameTransform: this.transform.tableNameTransform,
-        fieldsNameTransform: this.transform.fieldsNameTransform,
-        table_prefix: this.transform.table_prefix,
-        table_suffix: this.transform.table_suffix
+    this.$nextTick(() => {
+      if (!this.readOnly && this.transform) {
+        this.form = {
+          tableNameTransform: this.transform.tableNameTransform,
+          fieldsNameTransform: this.transform.fieldsNameTransform,
+          table_prefix: this.transform.table_prefix,
+          table_suffix: this.transform.table_suffix
+        }
+        this.currentForm = JSON.parse(JSON.stringify(this.form))
       }
-      this.currentForm = JSON.parse(JSON.stringify(this.form))
-    }
+    })
     this.updateView()
   },
   computed: {
@@ -965,8 +967,14 @@ export default {
           field_process.table_id = this.selectRow.sourceTableId
           field_process.table_name = this.selectRow.sourceObjectName
           field_process.operations = this.operations
-        } else this.field_process.push(field_process)
-      } else this.field_process.push(field_process)
+        } else {
+          this.field_process = []
+          this.field_process.push(field_process)
+        }
+      } else {
+        this.field_process = []
+        this.field_process.push(field_process)
+      }
       return this.field_process
     },
     returnData(hiddenMsg) {

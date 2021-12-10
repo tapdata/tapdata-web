@@ -10,6 +10,33 @@ export default function (vm) {
     },
     items: [
       {
+        type: 'radio',
+        field: 'connection_type',
+        label: vm.$t('dataForm.form.connectionType'),
+        options: [
+          {
+            label: vm.$t('dataForm.form.options.sourceAndTarget'),
+            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+            value: 'source_and_target'
+          },
+          {
+            label: vm.$t('dataForm.form.options.source'),
+            tip: vm.$t('dataForm.form.options.sourceTips'),
+            value: 'source'
+          },
+          {
+            label: vm.$t('dataForm.form.options.target'),
+            tip: vm.$t('dataForm.form.options.targetTips'),
+            value: 'target'
+          }
+        ],
+        required: true,
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
+      },
+      {
         type: 'input',
         field: 'database_host',
 
@@ -99,19 +126,7 @@ export default function (vm) {
         type: 'input',
         field: 'database_owner',
         label: vm.$t('dataForm.form.databaseOwner'),
-        rules: [
-          {
-            required: true,
-            validator: (rule, v, callback) => {
-              vm.model.database_owner = v.toUpperCase()
-              if (!v) {
-                callback(new Error(vm.$t('dataForm.form.databaseOwner') + vm.$t('formBuilder.noneText')))
-              } else {
-                callback()
-              }
-            }
-          }
-        ]
+        required: true
       },
       {
         type: 'input',

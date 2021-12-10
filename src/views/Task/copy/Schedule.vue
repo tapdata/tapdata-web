@@ -2,13 +2,13 @@
   <div class="">
     <!--  步骤条  -->
     <ElSteps :active="active" align-center class="mini mb-6">
-      <ElStep v-for="(item, index) in steps" :key="index" icon="icon">
+      <ElStep v-for="(item, index) in steps" :key="index">
         <div slot="title">{{ item.label }}</div>
         <div v-if="item.time && active === index + 1" slot="description">{{ item.time }}</div>
       </ElStep>
     </ElSteps>
     <!--  任务初始化  -->
-    <div v-if="active === 1">
+    <div v-if="['initial_sync', 'cdc'].indexOf(currentStep.group) === -1">
       <!--  里程碑  -->
       <Milestone :list="milestonesData" :taskStatus="task && task.status" :fold="false"></Milestone>
     </div>
@@ -18,7 +18,8 @@
         <Milestone :list="milestonesData" :taskStatus="task && task.status"></Milestone>
       </div>
       <ElDivider class="my-6"></ElDivider>
-      <div>
+      <!--   概览   -->
+      <div v-if="currentStep.group === 'initial_sync'">
         <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}概览</div>
         <div class="p-4" style="background: #fafafa; border-radius: 4px 4px 0 0">
           <div class="flex justify-content-between mb-2 font-color-main">
@@ -33,9 +34,18 @@
           <ElProgress :percentage="progressBar" :show-text="false"></ElProgress>
         </div>
       </div>
-      <div class="mt-6">
+      <div v-if="currentStep.group === 'initial_sync'" class="mt-6">
         <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}详情</div>
-        <TableList :columns="columns" :data="progressGroupByDB"></TableList>
+        <div></div>
+        <TableList v-if="columns.length" :remoteMethod="remoteMethod" :columns="columns" key="initial_sync">
+          <template slot="schedule" slot-scope="scope">
+            <span>{{ getSchedule(scope.row) }}</span>
+          </template>
+        </TableList>
+      </div>
+      <div v-else class="mt-6">
+        <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}详情</div>
+        <TableList :columns="columns" :data="list"></TableList>
       </div>
     </div>
   </div>
@@ -65,12 +75,19 @@ export default {
         type: ''
       },
       columns: [],
+      list: [],
       overviewStats: {},
       progressBar: 0, // 进度
       completeTime: '-', // 完成时间
       progressGroupByDB: [],
       filterItems: [],
-      milestonesData: [] // 里程碑
+      milestonesData: [], // 里程碑
+      statusMap: {
+        done: {
+          color: '',
+          text: '已同步'
+        }
+      }
     }
   },
   computed: {
@@ -173,18 +190,18 @@ export default {
           }
         }
       }
-      if (data?.stats?.progressGroupByDB?.length) {
-        data.stats.progressGroupByDB.forEach(statusItem => {
-          let num = (statusItem.targetRowNum / statusItem.sourceRowNum) * 100,
-            statusNum = num > 0 ? num.toFixed(2) * 1 : 0
-          if (statusItem.statusNum) {
-            statusItem.statusNum = statusNum
-          } else {
-            this.$set(statusItem, 'statusNum', statusNum)
-          }
-        })
-      }
-      this.progressGroupByDB = data?.stats?.progressGroupByDB
+      // if (data?.stats?.progressGroupByDB?.length) {
+      //   data.stats.progressGroupByDB.forEach(statusItem => {
+      //     let num = (statusItem.targetRowNum / statusItem.sourceRowNum) * 100,
+      //       statusNum = num > 0 ? num.toFixed(2) * 1 : 0
+      //     if (statusItem.statusNum) {
+      //       statusItem.statusNum = statusNum
+      //     } else {
+      //       this.$set(statusItem, 'statusNum', statusNum)
+      //     }
+      //   })
+      // }
+      // this.progressGroupByDB = data?.stats?.progressGroupByDB
       this.completeTime = completeTime
       this.overviewStats = overview
     },
@@ -200,6 +217,18 @@ export default {
       let milestones = task?.milestones || []
       let currentStep
       let stepsData = []
+      // 测试group
+      milestones.forEach((el, index) => {
+        if (index + 1 > 9) {
+          el.group = 'initial_sync'
+        } else if (index + 1 > 6) {
+          el.group = 'cdc'
+        } else if (index + 1 > 3) {
+          el.group = 'structure'
+        } else {
+          el.group = 'init'
+        }
+      })
       milestones.forEach(el => {
         let item = stepsData[stepsData.length - 1]
         // 总有几个步骤
@@ -215,8 +244,11 @@ export default {
           currentStep = el.group
         }
       })
+      if (!currentStep) {
+        currentStep = milestones[milestones.length - 1].group
+      }
       this.steps = stepsData
-      this.active = (stepsData.findIndex(item => item.group === currentStep) || 0) + 1
+      this.active = 4 || (stepsData.findIndex(item => item.group === currentStep) || 0) + 1
       this.milestonesData = milestones
         .filter(item => item.group === currentStep)
         .map(m => {
@@ -233,70 +265,91 @@ export default {
     },
     getColumns() {
       let { currentStep } = this
-      switch (currentStep.key) {
+      switch (currentStep.group) {
         // 增量同步
         case 'cdc':
           this.columns = [
             {
-              label: '数据库',
-              prop: 'database'
+              label: '源数据库',
+              prop: 'sourceConnectionName'
             },
             {
-              label: '数据表',
-              prop: 'table'
+              label: '目标数据库',
+              prop: 'targetConnectionName'
             },
             {
-              label: '进度',
-              prop: 'schedule'
-            },
-            {
-              label: '状态',
-              prop: 'type'
+              label: '增量所处时间点',
+              prop: 'cdcTime',
+              dataType: 'time'
             }
           ]
+          this.list = (this.task.cdcLastTimes || []).map(item => {
+            return {
+              cdcTime: item.cdcTime,
+              sourceConnectionName: item.sourceConnectionName,
+              targetConnectionName: item.targetConnectionName
+            }
+          })
           break
         // 全量同步
-        case 'full':
+        case 'initial_sync':
           this.columns = [
             {
-              label: '数据库',
-              prop: 'database'
+              label: '源数据库',
+              prop: 'sourceConnectionName'
             },
             {
-              label: '数据表',
-              prop: 'table'
+              label: '源数据表',
+              prop: 'sourceTableName'
+            },
+            {
+              label: '数据量（行）',
+              prop: 'sourceRowNum'
+            },
+            {
+              label: '目标数据库',
+              prop: 'targetConnectionName'
+            },
+            {
+              label: '目标数据表',
+              prop: 'targetTableName'
+            },
+            {
+              label: '已完成同步数据量（行）',
+              prop: 'targetRowNum'
             },
             {
               label: '进度',
-              prop: 'schedule'
+              prop: 'schedule',
+              slotName: 'schedule'
             },
             {
               label: '状态',
-              prop: 'type'
+              prop: 'status'
             }
           ]
           break
         // 结果迁移
-        default:
-          this.columns = [
-            {
-              label: '数据库',
-              prop: 'database'
-            },
-            {
-              label: '数据表',
-              prop: 'table'
-            },
-            {
-              label: '进度',
-              prop: 'schedule'
-            },
-            {
-              label: '状态',
-              prop: 'type'
-            }
-          ]
-          break
+        // default:
+        //   this.columns = [
+        //     {
+        //       label: '数据库',
+        //       prop: 'database'
+        //     },
+        //     {
+        //       label: '数据表',
+        //       prop: 'table'
+        //     },
+        //     {
+        //       label: '进度',
+        //       prop: 'schedule'
+        //     },
+        //     {
+        //       label: '状态',
+        //       prop: 'type'
+        //     }
+        //   ]
+        //   break
       }
     },
     getTime(time) {
@@ -323,6 +376,61 @@ export default {
           items: []
         }
       ]
+    },
+    remoteMethod({ page }) {
+      let { current, size } = page
+      let { task } = this
+      let stages = task?.stages || []
+      let target = null
+      let source = null
+      stages.forEach(stage => {
+        if (stage.inputLanes.length) {
+          target = stage
+        }
+        if (stage.outputLanes.length) {
+          source = stage
+        }
+      })
+      let where = {
+        dataFlowId: {
+          like: task.id
+        },
+        statsType: 'dataFlowDetailsStats',
+        'statsData.sourceConnectionId': {
+          like: source.connectionId
+        },
+        'statsData.targetConnectionId': {
+          like: target.connectionId
+        }
+      }
+      let filter = {
+        where,
+        limit: size,
+        skip: (current - 1) * size,
+        order: 'createTime DESC'
+      }
+      return Promise.all([
+        this.$axios.get('tm/api/DataFlowInsights?filter=' + encodeURIComponent(JSON.stringify(filter))),
+        this.$axios.get('tm/api/DataFlowInsights/count?where=' + encodeURIComponent(JSON.stringify(where)))
+      ]).then(([data, countData]) => {
+        return {
+          total: countData.count,
+          data: data.map(item => {
+            return Object.assign(item, item.statsData)
+          })
+        }
+      })
+    },
+    getSchedule(row = {}) {
+      const { sourceRowNum, targetRowNum } = row
+      let result = 0
+      if (sourceRowNum !== 0) {
+        result = (targetRowNum / sourceRowNum) * 100
+      }
+      if (result !== 100) {
+        result = result.toFixed(1)
+      }
+      return result + '%'
     }
   }
 }

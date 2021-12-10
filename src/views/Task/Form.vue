@@ -74,7 +74,6 @@
             <div class="step-5" v-if="steps[activeStep].index === 5">
               <FieldMapping
                 ref="fieldMapping"
-                :fieldProcess="transferData.transferData"
                 :transform="transferData"
                 :isFirst="isFirst"
                 :getDataFlow="getDataFlow"
@@ -481,6 +480,7 @@ export default {
       showSysncTableTip: false, //dfs 同库不同表提示
       twoWayAgentRunningCount: '',
       mqTransferFlag: false,
+      stages: [], //当前节点信息
       platformInfo: JSON.parse(JSON.stringify(INSTANCE_MODEL)),
       dataSourceModel: JSON.parse(JSON.stringify(DFSDATASOURCE_MODEL)),
       settingModel: JSON.parse(JSON.stringify(SETTING_MODEL)),
@@ -615,11 +615,14 @@ export default {
         this.settingModel.name = data.name
         this.platformInfo = data.platformInfo
         this.dataSourceModel = data.dataSourceModel || {}
+        this.stages = data.stages
         let stages = data.stages
         let syncObjects = stages[1].syncObjects
         this.transferData = {
           table_prefix: stages[1].table_prefix,
           table_suffix: stages[1].table_suffix,
+          tableNameTransform: stages[1].tableNameTransform,
+          fieldsNameTransform: stages[1].fieldsNameTransform,
           field_process: stages[0].field_process,
           selectSourceArr: syncObjects[0] ? syncObjects[0].objectNames : [],
           topicData: syncObjects[0]?.type === 'topic' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || [],
@@ -627,6 +630,8 @@ export default {
         }
         // TODO 临时为了解决bug现在这里加，回头优化
         this.getFormConfig()
+        //是否已选择表
+        this.isTransfer = false
       })
     },
     //云版支持数据源
@@ -1191,14 +1196,22 @@ export default {
         }
       }
       //编辑时传原status
+      let sourceIdA = ''
+      let targetIdB = ''
       if (this.id) {
         postData.status = this.status || 'paused'
+        //编辑状态stages只做变更
+        sourceIdA = this.stages[0]?.id
+        targetIdB = this.stages[1]?.id
+        //继承表小写 字段改大写
+        this.transferData.table_prefix = this.stages[1]?.table_prefix
+        this.transferData.table_suffix = this.stages[1]?.table_suffix
+        this.transferData.tableNameTransform = this.stages[1]?.tableNameTransform
+        this.transferData.fieldsNameTransform = this.stages[1]?.fieldsNameTransfor
+      } else {
+        sourceIdA = this.$util.uuid()
+        targetIdB = this.$util.uuid()
       }
-      //存实例名称
-      postData.platformInfo.regionName = this.handleName(this.instanceMock || [], this.platformInfo.region)
-      postData.platformInfo.zoneName = this.handleName(this.platformInfoZone || [], this.platformInfo.zone)
-      let sourceIdA = this.$util.uuid()
-      let targetIdB = this.$util.uuid()
       postData.stages = [
         Object.assign({}, stageDefault, {
           id: sourceIdA,

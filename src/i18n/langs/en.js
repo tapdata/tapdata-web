@@ -376,6 +376,8 @@ export default {
   connection_form_tidb_server: 'PDServer address',
   connection_form_tidb_none_server: 'PDServer address cannot be empty',
 
+  connection_test_schema_tips: 'Possible cause: There is a problem with the Schema case setting',
+
   connection_preview_load_schema: 'Load Schema',
   connection_preview_edit: 'Edit',
   connection_preview_test: 'Connection Test',

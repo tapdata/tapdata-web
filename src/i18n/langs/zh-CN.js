@@ -344,6 +344,8 @@ export default {
   connection_form_tidb_server: 'PDServer 地址',
   connection_form_tidb_none_server: 'PDServer 地址不能为空',
 
+  connection_test_schema_tips: '可能原因：Schema大小写设置有问题',
+
   connection_preview_load_schema: '加载Schema',
   connection_preview_edit: '编辑',
   connection_preview_test: '连接测试',
