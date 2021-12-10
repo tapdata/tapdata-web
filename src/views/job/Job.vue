@@ -727,10 +727,21 @@ export default {
         'filter[limit]': 1,
         'filter[where][name][like]': data.name
       }
+      let filter = {
+        order: 'name DESC',
+        limit: 1,
+        where: {
+          name: {
+            like: data.name
+          }
+        }
+      }
 
-      let result = await dataFlowsApi.get(params)
-      if (result && result.data.length > 0) {
-        this.flowDataName = result.data[0].name
+      let result = await dataFlowsApi.get({
+        filter: JSON.stringify(filter)
+      })
+      if (result && result.data.items.length > 0) {
+        this.flowDataName = result.data.items[0].name
       }
 
       log('DataFlows Draft Save Params: ', data)

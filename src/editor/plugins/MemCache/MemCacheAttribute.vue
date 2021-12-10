@@ -365,8 +365,8 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          if (res?.data?.length) {
-            let taskName = res.data.map(name => {
+          if (res?.data?.items?.length) {
+            let taskName = res.data.items.map(name => {
               return name.name
             })
             this.handleconfirm(this.model.cacheName, taskName.join(','))

@@ -1036,8 +1036,8 @@ export default {
           .then(res => {
             let falg = false
 
-            if (res.data?.length) {
-              res.data.forEach(item => {
+            if (res.data?.items?.length) {
+              res.data.items.forEach(item => {
                 if (item?.errorEvents?.length) {
                   falg = true
                 }

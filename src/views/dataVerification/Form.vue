@@ -21,7 +21,7 @@ export default {
     optionsFunc(params) {
       return this.$api('DataFlows')
         .get(params)
-        .then(res => res.data)
+        .then(res => res.data?.items)
     },
     dataflowFunc(params) {
       return this.$api('DataFlows')

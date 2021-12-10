@@ -228,7 +228,7 @@ export default {
                 DataFlowsModel.get({
                   filter: JSON.stringify(filter)
                 }).then(res => {
-                  if (res.data.total) {
+                  if (res.data?.total) {
                     callback(new Error('任务名称已存在'))
                   } else callback()
                 })

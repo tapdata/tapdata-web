@@ -245,7 +245,7 @@ export default {
                     filter: JSON.stringify(filter)
                   })
                   .then(res => {
-                    if (res.data && res.data.length !== 0) {
+                    if (res.data && res.data?.items.length !== 0) {
                       callback(new Error('任务名称已存在'))
                     } else callback()
                   })
