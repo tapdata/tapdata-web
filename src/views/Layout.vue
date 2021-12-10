@@ -26,7 +26,7 @@
         <RouterView></RouterView>
       </ElMain>
     </ElContainer>
-    <ElDialog title="创建连接" :visible.sync="dialogVisible" width="730px">
+    <ElDialog :title="$t('connection_form_creat_connection')" :visible.sync="dialogVisible" width="730px">
       <ConnectionTypeSelector
         :types="[
           'mysql',

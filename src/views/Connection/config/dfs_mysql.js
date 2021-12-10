@@ -2,7 +2,7 @@ export default function (vm) {
   return {
     form: {
       labelPosition: 'left',
-      labelWidth: '120px',
+      labelWidth: '180px',
       labelColon: true
     },
     defaultModel: {
@@ -81,7 +81,7 @@ export default function (vm) {
         //tips: vm.$t('dataForm.form.timeZoneTips'),
         options: [],
         show: true,
-        tip: '影响类型: DATE'
+        tip: vm.$t('connection_form_impact_type')
       }
     ]
   }

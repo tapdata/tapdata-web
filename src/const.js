@@ -36,11 +36,11 @@ export const TOPOLOGY_MAP = topologyMap,
     testing: { text: 'Testing', type: 'warning' }
   },
   MILESTONE_STATUS_MAP = {
-    waiting: { text: '待执行', icon: 'daizhixing' },
-    running: { text: '进行中', icon: 'jinxingzhong' },
-    error: { text: '错误', icon: 'cuowu' },
-    finish: { text: '已完成', icon: 'yiwancheng' },
-    paused: { text: '已暂停', icon: 'yizanting' }
+    waiting: { text: i18n.t('task_milestone_waiting'), icon: 'daizhixing' },
+    running: { text: i18n.t('task_milestone_running'), icon: 'jinxingzhong' },
+    error: { text: i18n.t('task_milestone_error'), icon: 'cuowu' },
+    finish: { text: i18n.t('task_milestone_finish'), icon: 'yiwancheng' },
+    paused: { text: i18n.t('task_milestone_paused'), icon: 'yizanting' }
   },
   SPEC_MAP = {
     micro: '小规格',

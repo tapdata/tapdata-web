@@ -73,15 +73,13 @@
             <!-- 步骤5 -->
             <div class="step-5" v-if="steps[activeStep].index === 5">
               <FieldMapping
-                ref="fieldMappingDom"
-                :remoteMethod="intiFieldMappingTableData"
-                :typeMappingMethod="getTypeMapping"
-                :hiddenFieldProcess="false"
-                :fieldMappingNavData="fieldMappingNavData"
-                :fieldProcessMethod="updateFieldProcess"
-                :field_process="transferData.field_process"
-                @row-click="saveOperations"
-                @update-nav="updateFieldMappingNavData"
+                ref="fieldMapping"
+                :fieldProcess="transferData.transferData"
+                :transform="transferData"
+                :isFirst="isFirst"
+                :getDataFlow="getDataFlow"
+                @update-first="returnModel"
+                @update-transform="updateTranForm"
               ></FieldMapping>
             </div>
           </el-main>
@@ -232,9 +230,6 @@
           .field-mapping__desc,
           .search {
             padding-left: 24px;
-          }
-          .search {
-            margin-top: 24px;
           }
           .icon {
             color: map-get($color, primary);
@@ -469,11 +464,12 @@
 <script>
 import formConfig from './config'
 import Transfer from './Transfer'
+import FieldMapping from '@/components/field-mapping/main'
 import { SETTING_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from './const'
 
 let defaultConfig = []
 export default {
-  components: { Transfer },
+  components: { Transfer, FieldMapping },
   data() {
     return {
       id: '',
@@ -483,7 +479,6 @@ export default {
       errorMsg: '',
       showConnectDialog: false,
       showSysncTableTip: false, //dfs 同库不同表提示
-      isFirst: true,
       twoWayAgentRunningCount: '',
       mqTransferFlag: false,
       platformInfo: JSON.parse(JSON.stringify(INSTANCE_MODEL)),
@@ -529,6 +524,7 @@ export default {
       //是否选择表
       isTransfer: true,
       //表设置
+      isFirst: true,
       fieldMappingNavData: '',
       fieldMappingTableData: '',
       hiddenFieldMapping: false,
@@ -734,14 +730,6 @@ export default {
     //下一步
     next() {
       let type = this.steps[this.activeStep].type || 'instance'
-      if (type === 'instance') {
-        this.$refs.instance.validate(valid => {
-          if (valid) {
-            this.activeStep += 1
-            this.getFormConfig()
-          }
-        })
-      }
       if (type === 'dataSource') {
         this.$refs.dataSource.validate(valid => {
           if (valid) {
@@ -786,7 +774,8 @@ export default {
           this.$message.error(this.$t('task_form_no_bable_tip'))
           return
         }
-        this.fieldProcess()
+        this.activeStep += 1
+        this.getFormConfig()
       }
       this.taskStep++
     },
@@ -820,7 +809,7 @@ export default {
       //当前表的字段映射保存
       if (type === 'table') {
         //保存字段映射
-        let returnData = this.$refs.fieldMappingDom.returnData(true)
+        let returnData = this.$refs.fieldMapping.returnData(true)
         let deleteLen = returnData.target.filter(v => !v.is_deleted)
         if (deleteLen.length !== 0) {
           this.saveOperations()
@@ -892,6 +881,13 @@ export default {
           }
           //判断是否有第五步
           this.showFieldMapping()
+          break
+        }
+        case 'table': {
+          this.$nextTick(() => {
+            let dataFlow = this.daft()
+            this.$refs.fieldMapping.getMetaData(dataFlow)
+          })
           break
         }
         case 'mapping': {
@@ -1220,6 +1216,8 @@ export default {
           name: this.dataSourceModel.target_connectionName,
           table_prefix: this.transferData.table_prefix,
           table_suffix: this.transferData.table_suffix,
+          tableNameTransform: this.transferData.tableNameTransform,
+          fieldsNameTransform: this.transferData.fieldsNameTransform,
           type: 'database',
           readBatchSize: 1000,
           readCdcInterval: 500,
@@ -1236,7 +1234,7 @@ export default {
       }
       //保存字段映射
       if (!this.hiddenFieldMapping) {
-        let returnData = this.$refs.fieldMappingDom.returnData()
+        let returnData = this.$refs.fieldMapping.returnData()
         if (!returnData.valid) return //检验不通过
         let deleteLen = returnData.target.filter(v => !v.is_deleted)
         if (deleteLen.length === 0) {
@@ -1244,6 +1242,7 @@ export default {
           return //所有字段被删除了 不可以保存任务
         }
         this.saveOperations(returnData.row, returnData.operations, returnData.target)
+        this.saveChangNameData(returnData.changNameData)
       } else {
         let verify = this.checkTransfer()
         if (!verify) {
@@ -1292,156 +1291,25 @@ export default {
       })
     },
     //表设置
-    fieldProcess() {
-      this.loading = true
-      let data = this.getDataFlowData()
-      if (!data) return
-      if (this.isFirst && !this.id) {
-        data['rollback'] = 'all'
-      } else {
-        delete data['rollback']
-        delete data['rollbackTable'] //确保不会有恢复默认
-      }
-      let promise = this.$axios.post('tm/api/DataFlows/metadata', data)
-      promise.then(data => {
-        this.activeStep += 1
-        this.loading = false
-        this.isFirst = false
-        this.fieldMappingNavData = data
-      })
-      promise.catch(() => {
-        this.loading = false
-        this.$message.error(this.$t('task_form_model_deduction_failed'))
-      })
+    //接收是否第一次打开
+    returnModel(value) {
+      this.isFirst = value
     },
-    //恢复默认
-    async updateFieldProcess(rollback, rollbackTable, id) {
-      let data = this.getDataFlowData()
-      if (!data) return
-      if (rollback === 'all') {
-        data['rollback'] = rollback
-        //删除整个字段处理器
-        this.transferData.field_process = []
-      } else if (rollbackTable) {
-        data['rollback'] = rollback
-        data['rollbackTable'] = rollbackTable
-        for (let i = 0; i < this.transferData.field_process.length; i++) {
-          // 删除操作
-          let ops = this.transferData.field_process[i]
-          if (ops.table_id === id) {
-            this.transferData.field_process.splice(i, 1)
-          }
-        }
-      }
-      let result = this.updateAutoFieldProcess(data) //更新字段处理器
-      let promise = await this.$axios.post('tm/api/DataFlows/metadata', result)
-      return promise
+    getDataFlow() {
+      return this.daft()
     },
-    //获取当前任务所有的节点
-    getDataFlowData() {
-      //手动同步更新字段处理器
-      let data = this.daft()
-      let result = this.updateAutoFieldProcess(data)
-      return result
+    updateTranForm(data) {
+      this.transferData.table_prefix = data.table_prefix
+      this.transferData.table_suffix = data.table_suffix
+      this.transferData.tableNameTransform = data.tableNameTransform
+      this.transferData.fieldsNameTransform = data.fieldsNameTransform
+      this.transferData.field_process = data.field_process
     },
-    updateAutoFieldProcess(data) {
-      if (data.stages[0]) {
-        data['stages'][0].field_process = this.transferData.field_process
-      }
-      return data
-    },
-    //更新左边导航
-    updateFieldMappingNavData(data) {
-      this.fieldMappingNavData = data
-    },
-    //获取表设置
-    async intiFieldMappingTableData(row) {
-      let source = await this.$axios.get(
-        'tm/api/MetadataInstances/originalData?qualified_name=' + encodeURIComponent(row.sourceQualifiedName)
-      )
-      source = source && source.length > 0 ? source[0].fields : []
-      let target = await this.$axios.get(
-        'tm/api/MetadataInstances/originalData?isTarget=true&qualified_name=' + encodeURIComponent(row.sinkQulifiedName)
-      )
-      // 初始化所有字段都映射 只取顶级字段
-      source = source.filter(field => field.field_name.indexOf('.') === -1)
-      target = target && target.length > 0 ? target[0].fields : []
-      //源表 目标表数据组合
-      //是否有字段处理器
-      let operations = this.getFieldOperations(row)
-      if (operations?.length > 0) {
-        source.forEach(item => {
-          let ops = operations.filter(op => op.original_field_name === item.field_name && op.op === 'RENAME')
-          if (!ops || ops?.length === 0) {
-            item.temporary_field_name = item.field_name
-            return
-          }
-          ops = ops[0]
-          item.temporary_field_name = ops.operand
-        })
-        //是否字段被删除
-        source.forEach(item => {
-          let ops = operations.filter(op => op.original_field_name === item.field_name && op.op === 'REMOVE')
-          if (!ops || ops?.length === 0) {
-            item.temporary_is_delete = false //没有被字段处理器操作过
-            return
-          }
-          item.temporary_is_delete = true
-        })
-      } else {
-        source.forEach(item => {
-          item.temporary_field_name = item.field_name
-        })
-      }
-      //源表 目标表数据组合
-      let fieldMappingTableData = []
-      source.forEach(item => {
-        target.forEach(field => {
-          //先检查是否被改过名
-          let node = {
-            t_id: field.id,
-            t_field_name: field.field_name,
-            t_data_type: field.data_type,
-            t_scale: field.scale,
-            t_precision: field.precision,
-            is_deleted: field.is_deleted, //目标决定这个字段是被删除？
-            t_isPrecisionEdit: true, //默认不能编辑
-            t_isScaleEdit: true //默认不能编辑
-          }
-          if (
-            (item.temporary_field_name === field.field_name && field.is_deleted === false) ||
-            (item.temporary_field_name === field.field_name && item.temporary_field_name)
-          ) {
-            fieldMappingTableData.push(Object.assign({}, item, node))
-          }
-        })
-      })
-      return {
-        data: fieldMappingTableData,
-        target: target
-      }
-    },
-    //判断是否改名
-    getFieldOperations(row) {
-      let operations = []
-      if (!this.transferData.field_process || this.transferData.field_process.length === 0) return
-      let field_process = this.transferData.field_process.filter(process => process.table_id === row.sourceTableId)
-      if (field_process.length > 0) {
-        operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
-      }
-      return operations || []
-    },
-    //判断是否改名
-    handleFieldName(row, fieldName) {
-      let operations = this.getFieldOperations(row)
-      if (!operations) return
-      let ops = operations.filter(op => op.operand === fieldName && op.op === 'RENAME')
-      return ops
-    },
-    //获取typeMapping
-    async getTypeMapping(row) {
-      let data = await this.$axios.get('tm/api/typeMappings/dataType?databaseType=' + row.sinkDbType)
-      return data
+    saveChangNameData(data) {
+      this.transferData.table_prefix = data.table_prefix
+      this.transferData.table_suffix = data.table_suffix
+      this.transferData.tableNameTransform = data.tableNameTransform
+      this.transferData.fieldsNameTransform = data.fieldsNameTransform
     },
     //保存字段处理器
     saveOperations(row, operations, target) {
@@ -1454,7 +1322,7 @@ export default {
       }
       if (typeof where === 'object') where = JSON.stringify(where)
       this.axios.post('tm/api/MetadataInstances/update?where=' + encodeURIComponent(where), data)
-      this.transferData.field_process = this.$refs.fieldMappingDom.saveFileOperations()
+      this.transferData.field_process = this.$refs.fieldMapping.saveFileOperations()
     }
   }
 }

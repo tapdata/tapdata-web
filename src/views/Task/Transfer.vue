@@ -8,12 +8,12 @@
         }}</el-button>
         <span v-if="showProgress" class="ml-2"><VIcon>loading</VIcon> {{ progress }} %</span>
       </div>
-      <div class="box-btn" v-show="!showOperationBtn">
-        <v-button class="e-button" size="mini" @click="beforeRename">{{ $t('dataFlow.changeName') }} </v-button>
-        <v-button size="mini" class="e-button" @click="beforeReduction"
-          >{{ $t('editor.cell.link.reduction') }}
-        </v-button>
-      </div>
+      <!--      <div class="box-btn" v-show="!showOperationBtn">-->
+      <!--        <v-button class="e-button" size="mini" @click="beforeRename">{{ $t('dataFlow.changeName') }} </v-button>-->
+      <!--        <v-button size="mini" class="e-button" @click="beforeReduction"-->
+      <!--          >{{ $t('editor.cell.link.reduction') }}-->
+      <!--        </v-button> 入口字段映射第五步-->
+      <!--      </div>-->
     </div>
 
     <el-transfer

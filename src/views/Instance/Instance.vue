@@ -606,6 +606,8 @@ export default {
       }
       this.$confirm(message, title, {
         type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel'),
         customClass: 'delete-agent'
       }).then(res => {
         if (res) {

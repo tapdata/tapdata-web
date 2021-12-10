@@ -27,7 +27,7 @@
         </div>
         <div class="connection-operation-right">
           <ElButton type="primary" @click="create">
-            <span>{{ $t('connection_list_creat_connection') }}</span>
+            <span>{{ $t('connection_form_creat_connection') }}</span>
           </ElButton>
         </div>
       </div>
@@ -75,13 +75,13 @@
         <ElTableColumn :label="$t('connection_list_type')" width="120">
           <template slot-scope="scope">{{
             {
-              source: this.$t('connection_list_source'),
-              target: this.$t('connection_list_target'),
+              source: $t('connection_list_source'),
+              target: $t('connection_list_target'),
               source_and_target: this.$t('connection_list_source_and_target')
             }[scope.row.connection_type]
           }}</template>
         </ElTableColumn>
-        <ElTableColumn width="180">
+        <ElTableColumn width="190">
           <div slot="header">
             {{ $t('connection_list_column_schema_status') }}
             <ElTooltip placement="top" :content="$t('connection_list_column_schema_status_tips')">
@@ -118,7 +118,7 @@
           <VIcon size="120">no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('gl_no_data') }}</span>
-            <el-link type="primary" class="fs-7" @click="create">{{ $t('connection_list_creat_connection') }}</el-link>
+            <el-link type="primary" class="fs-7" @click="create">{{ $t('connection_form_creat_connection') }}</el-link>
           </div>
         </div>
         <div v-else class="connection-table__empty" slot="empty">
