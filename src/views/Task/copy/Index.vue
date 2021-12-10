@@ -13,7 +13,7 @@
           <Connection :ids="connectionIds" @change="loadTask"></Connection>
         </ElTabPane>
         <ElTabPane label="历史运行记录" name="history" lazy>
-          <History v-if="task.id" :ids="[task.id]" :operations="operations"></History>
+          <History :ids="[task.id]" :operations="operations"></History>
         </ElTabPane>
         <ElTabPane v-if="showContent" label="同步内容" name="content" lazy>
           <FieldMapping ref="fieldMapping" :readOnly="true" :field_process="field_process"></FieldMapping>
