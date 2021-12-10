@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TableList :remoteMethod="remoteMethod" :columns="columns" hide-on-single-page>
+    <TableList :remoteMethod="remoteMethod" :remote-data="ids" :columns="columns" hide-on-single-page>
       <template slot="desc" slot-scope="scope">
         <span>{{ mapData[scope.row.operation] }}</span>
       </template>
@@ -57,28 +57,29 @@ export default {
     remoteMethod({ page }) {
       let { current, size } = page
       const { ids, operations } = this
-      let filter = {
-        where: {
-          sourceId: {
-            in: ids
-          },
-          modular: 'migration',
-          operation: {
-            inq: operations
-          }
+      let where = {
+        sourceId: {
+          inq: ids
         },
+        modular: 'migration',
+        operation: {
+          inq: operations
+        }
+      }
+      let filter = {
+        where: where,
         limit: size,
         skip: size * (current - 1)
       }
-      return this.$axios
-        .get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter)))
-        .then(({ items, total }) => {
-          let data = items
-          return {
-            total: total,
-            data: data
-          }
-        })
+      return Promise.all([
+        this.$axios.get('tm/api/UserLogs/count?where=' + encodeURIComponent(JSON.stringify(where))),
+        this.$axios.get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter)))
+      ]).then(([countData, data]) => {
+        return {
+          total: countData.count,
+          data: data
+        }
+      })
     }
   }
 }

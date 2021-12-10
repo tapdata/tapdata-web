@@ -176,7 +176,6 @@ export default {
       }
     },
     changeType() {
-      console.log('changeType')
       this.getLogs(true)
     }
   }
