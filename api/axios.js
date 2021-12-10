@@ -72,7 +72,7 @@ service.interceptors.request.use(function (config) {
   if (pending.includes(key)) {
     console.log('Cancel request:', config) //eslint-disable-line
     cancelFunc('cancel')
-  } else {
+  } else if (config.method !== 'get') {
     pending.push(key)
   }
   return config
