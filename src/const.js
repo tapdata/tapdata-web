@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 let directionMap = {
   unidirectional: '单向同步',
   bidirectional: '双向同步'
@@ -9,25 +10,25 @@ for (const dKey in directionMap) {
 }
 export const TOPOLOGY_MAP = topologyMap,
   INSTANCE_STATUS_MAP = {
-    Creating: { text: '待部署', type: 'warning' },
-    Running: { text: '运行中', type: 'success' },
-    Stopping: { text: '停止中', type: 'danger' },
-    Stopped: { text: '离线', type: 'disable' }
+    Creating: { text: i18n.t('agent_status_creating'), type: 'warning' },
+    Running: { text: i18n.t('agent_status_running'), type: 'success' },
+    Stopping: { text: i18n.t('agent_status_stopping'), type: 'danger' },
+    Stopped: { text: i18n.t('agent_status_stopped'), type: 'disable' }
   },
   TASK_STATUS_MAP = {
-    running: { text: '运行中', icon: 'yunxingzhong', type: 'success' },
-    paused: { text: '待启动', icon: 'daiqidong' },
-    error: { text: '错误', icon: 'cuowu', type: 'warning' },
-    draft: { text: '待启动', icon: 'daiqidong' },
-    scheduled: { text: '启动中', icon: 'qidongzhong', type: 'success' },
-    stopping: { text: '停止中', icon: 'tingzhizhong', type: 'success' },
-    'force stopping': { text: '强制停止中', icon: 'qiangzhitingzhi', type: 'success' },
-    finished: { text: '已完成', icon: 'yiwancheng', type: 'success' }
+    running: { text: i18n.t('task_status_running'), icon: 'yunxingzhong', type: 'success' },
+    paused: { text: i18n.t('task_status_paused'), icon: 'daiqidong' },
+    error: { text: i18n.t('task_status_error'), icon: 'cuowu', type: 'warning' },
+    draft: { text: i18n.t('task_status_draft'), icon: 'daiqidong' },
+    scheduled: { text: i18n.t('task_status_scheduled'), icon: 'qidongzhong', type: 'success' },
+    stopping: { text: i18n.t('task_status_stopping'), icon: 'tingzhizhong', type: 'success' },
+    'force stopping': { text: i18n.t('task_status_force_stopping'), icon: 'qiangzhitingzhi', type: 'success' },
+    finished: { text: i18n.t('task_status_finished'), icon: 'yiwancheng', type: 'success' }
   },
   CONNECTION_STATUS_MAP = {
-    ready: { text: '有效', type: 'success' },
-    invalid: { text: '失效', type: 'danger' },
-    testing: { text: '测试中', type: 'warning' }
+    ready: { text: i18n.t('connection_list_efficient'), type: 'success' },
+    invalid: { text: i18n.t('connection_list_invalidation'), type: 'danger' },
+    testing: { text: i18n.t('connection_list_testing'), type: 'warning' }
   },
   CONNECTION_STATUS_MAP_EN = {
     ready: { text: 'Ready', type: 'success' },

@@ -2,8 +2,10 @@
   <section class="tapdata-transfer-wrap">
     <div class="reload-schema flex justify-content-between mb-5">
       <div class="text-wrap" style="width: 240px">
-        没有可用的表？
-        <el-button class="border-0" type="text" :loading="reloadLoading" @click="reload()">重新加载</el-button>
+        {{ this.$t('task_form_no_table_available') }}
+        <el-button class="border-0" type="text" :loading="reloadLoading" @click="reload()">{{
+          this.$t('task_form_reload')
+        }}</el-button>
         <span v-if="showProgress" class="ml-2"><VIcon>loading</VIcon> {{ progress }} %</span>
       </div>
       <!--      <div class="box-btn" v-show="!showOperationBtn">-->
@@ -49,7 +51,7 @@
       ></MqTransfer>
     </template>
     <el-dialog
-      title="字段映射"
+      :title="$t('task_form_field_mapping')"
       :visible.sync="dialogFileVisible"
       :modal-append-to-body="true"
       custom-class="databaseLinkDialog"
@@ -114,8 +116,8 @@
               ></el-input>
             </el-form-item>
             <div class="tip">
-              <span>以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span>
-              <div>前缀不允许以 system 开头</div>
+              <span>{{ $t('task_form_regular') }}</span>
+              <div>{{ $t('task_form_regular_not_system') }}</div>
             </div>
           </el-col>
           <el-col :span="12">
@@ -130,7 +132,7 @@
               ></el-input>
             </el-form-item>
             <div class="tip">
-              <span>以英文字母、下划线开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span>
+              <span>{{ $t('task_form_regular_header') }}</span>
             </div>
           </el-col>
         </el-row>
@@ -159,9 +161,9 @@ export default {
       if (value === '') {
         callback()
       } else if (!/^[a-zA-Z]([a-zA-Z0-9_\-.])*$/.test(value)) {
-        callback(new Error('请按照以下规则输入: '))
+        callback(new Error(this.$t('task_form_following_rules')))
       } else if (/^(system).*/.test(value)) {
-        callback(new Error('请按照以下规则输入: '))
+        callback(new Error(this.$t('task_form_following_rules')))
       } else {
         callback()
       }
@@ -170,7 +172,7 @@ export default {
       if (value === '') {
         callback()
       } else if (!/^[a-zA-Z_][a-zA-Z0-9_\-.]*$/.test(value)) {
-        callback(new Error('请按照以下规则输入: '))
+        callback(new Error(this.$t('task_form_following_rules')))
       } else {
         callback()
       }
@@ -199,7 +201,7 @@ export default {
         table_suffix: [{ validator: validateSuffix, trigger: 'blur' }]
       },
       dialogFileVisible: false,
-      transferTitles: ['待映射字段', '已映射字段'],
+      transferTitles: [this.$t('task_form_field_mapped'), this.$t('task_form_mapped_fields')],
       selectSourceFileArr: [],
       sourceFileData: [],
       currentTableId: '',
@@ -381,7 +383,7 @@ export default {
       }
       //字段名限制
       if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(option.label)) {
-        this.$message.error('以英文字母、下划线开头，仅支持英文、数字、下划线，限1~50字符')
+        this.$message.error(this.$t('task_form_field_limit'))
         return
       }
       //rename类型
@@ -465,7 +467,7 @@ export default {
             //当前选中的值与右边的比较 重名则不允许移动
             let result = this.checkLeftFile(file)
             if (result) {
-              this.$message.error(file + '与右边的字段有重复名称，不允许再移动')
+              this.$message.error(file + this.$t('task_form_right_field_duplicate'))
               this.selectSourceFileArr.splice(
                 this.selectSourceFileArr.findIndex(item => item === file),
                 1
@@ -505,7 +507,7 @@ export default {
     saveFileOperations() {
       //如果右边为空  则提示不可以保存
       if (this.selectSourceFileArr.length === 0) {
-        this.$message.error('映射字段不能为空')
+        this.$message.error(this.$t('task_form_mapping_field_cannot_empty'))
         return
       }
       this.dialogFileVisible = false
@@ -561,7 +563,7 @@ export default {
     //改名
     beforeRename() {
       if (this.field_process?.length > 0) {
-        this.$confirm('此时修改表名会重置已有的表设置，是否确认修改?', {
+        this.$confirm(this.$t('task_form_table_reset'), {
           confirmButtonText: this.$t('message.confirm'),
           cancelButtonText: this.$t('message.cancel'),
           type: 'warning',
@@ -578,7 +580,7 @@ export default {
     //还原
     beforeReduction() {
       if (this.field_process?.length > 0) {
-        this.$confirm('此时还原表名会重置已有的表设置，是否确认还原?', {
+        this.$confirm(this.$t('task_form_restore_table'), {
           confirmButtonText: this.$t('message.confirm'),
           cancelButtonText: this.$t('message.cancel'),
           type: 'warning',
@@ -692,7 +694,7 @@ export default {
           }
         })
         .catch(() => {
-          this.$message.error(this.$t('connection.reloadFail'))
+          this.$message.error(this.$t('task_form_reloadFail'))
           this.showProgress = false
           this.reloadLoading = false
           this.progress = 0 //加载完成

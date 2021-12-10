@@ -4,12 +4,12 @@
       <div class="connection-operation">
         <div class="connection-operation-left">
           <el-form inline @submit.native.prevent>
-            <el-form-item label="全部状态 :" width="300px">
+            <el-form-item :label="$t('connection_list_form_all_status') + ' : '" width="300px">
               <el-select v-model="searchParams.status" clearable @input="search()">
                 <el-option v-for="(opt, value) in statusMap" :key="value" :label="opt.text" :value="value"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="按连接名搜索 : " class="ml-2">
+            <el-form-item :label="$t('connection_list_form_search') + ' : '" class="ml-2">
               <el-input
                 width="200"
                 v-model="searchParams.keyword"
@@ -27,7 +27,7 @@
         </div>
         <div class="connection-operation-right">
           <ElButton type="primary" @click="create">
-            <span>创建连接</span>
+            <span>{{ $t('connection_list_creat_connection') }}</span>
           </ElButton>
         </div>
       </div>
@@ -38,7 +38,7 @@
         :data="list"
         @sort-change="sortChange"
       >
-        <ElTableColumn label="连接名" prop="name" min-width="200px">
+        <ElTableColumn :label="$t('connection_list_name')" prop="name" min-width="200px">
           <template slot-scope="scope">
             <div class="flex flex-row align-items-center p-2">
               <img
@@ -67,17 +67,17 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="状态" width="120">
+        <ElTableColumn :label="$t('connection_list_status')" width="120">
           <template slot-scope="scope">
             <StatusTag type="text" target="connection" :status="scope.row.status"></StatusTag>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="连接类型" width="120">
+        <ElTableColumn :label="$t('connection_list_type')" width="120">
           <template slot-scope="scope">{{
             {
-              source: '源头',
-              target: '目标',
-              source_and_target: '源头和目标'
+              source: this.$t('connection_list_source'),
+              target: this.$t('connection_list_target'),
+              source_and_target: this.$t('connection_list_source_and_target')
             }[scope.row.connection_type]
           }}</template>
         </ElTableColumn>
@@ -92,23 +92,25 @@
             <SchemaProgress :data="scope.row"></SchemaProgress>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="修改时间" prop="last_updated" width="150" sortable="custom">
+        <ElTableColumn :label="$t('connection_list_change_time')" prop="last_updated" width="150" sortable="custom">
           <template slot-scope="scope">{{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}</template>
         </ElTableColumn>
-        <ElTableColumn label="操作" width="280">
+        <ElTableColumn :label="$t('connection_list_operate')" width="280">
           <template slot-scope="scope">
             <div class="operate-columns">
-              <el-button size="mini" type="text" @click="testConnection(scope.row)">连接测试</el-button>
+              <el-button size="mini" type="text" @click="testConnection(scope.row)">{{
+                $t('connection_list_test')
+              }}</el-button>
               <el-divider direction="vertical"></el-divider>
-              <el-button type="text" :disabled="scope.row.agentType === 'Cloud'" @click="edit(scope.row)"
-                >编辑</el-button
-              >
+              <el-button type="text" :disabled="scope.row.agentType === 'Cloud'" @click="edit(scope.row)">{{
+                $t('connection_list_edit')
+              }}</el-button>
               <el-divider direction="vertical"></el-divider>
-              <el-button type="text" :disabled="scope.row.agentType === 'Cloud'" @click="copy(scope.row)"
-                >复制</el-button
-              >
+              <el-button type="text" :disabled="scope.row.agentType === 'Cloud'" @click="copy(scope.row)">{{
+                $t('connection_list_copy')
+              }}</el-button>
               <el-divider direction="vertical"></el-divider>
-              <el-button type="text" @click="del(scope.row)">删除</el-button>
+              <el-button type="text" @click="del(scope.row)">{{ $t('connection_list_delete') }}</el-button>
             </div>
           </template>
         </ElTableColumn>
@@ -116,7 +118,7 @@
           <VIcon size="120">no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('gl_no_data') }}</span>
-            <el-link type="primary" class="fs-7" @click="create">创建连接</el-link>
+            <el-link type="primary" class="fs-7" @click="create">{{ $t('connection_list_creat_connection') }}</el-link>
           </div>
         </div>
         <div v-else class="connection-table__empty" slot="empty">
@@ -401,17 +403,19 @@ export default {
           headers: { 'lconname-name': item.name }
         })
         this.fetch()
-        this.$message.success('复制成功')
+        this.$message.success(this.$t('connection_list_copy_success'))
         this.test(data?.result, false)
       } catch (error) {
         if (error?.response?.msg === 'duplicate source') {
-          this.$message.success('复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"')
+          this.$message.success(this.$t('connection_list_copy_failed'))
         }
       }
     },
     del(item) {
-      let msg = `<p>删除连接 <span>${item.name}</span> 后，此连接将无法恢复</p>`
-      this.$confirm(msg, '是否删除该连接？', {
+      let msg = `<p> ${this.$t('connection_list_delete_connection')} <span>${item.name}</span> ${this.$t(
+        'connection_list_delete_connection_tip'
+      )}</p>`
+      this.$confirm(msg, this.$t('connection_list_delete_connection_title'), {
         type: 'warning',
         dangerouslyUseHTMLString: true
       }).then(async resFlag => {
@@ -426,20 +430,20 @@ export default {
                   databaseType: item.database_type
                 })
                 .then(() => {
-                  this.$message.success('删除成功')
+                  this.$message.success(this.$t('connection_list_delete_success'))
                   this.fetch()
                 })
             } else {
-              this.$message.success('删除成功')
+              this.$message.success(this.$t('connection_list_delete_success'))
               this.fetch()
             }
           } catch (error) {
             // 删除失败
-            let errorTip = '删除失败'
+            let errorTip = this.$t('connection_list_delete_failed')
             if (error?.data?.msg) {
               let { dataFlows, jobs, modules } = error?.data?.msg
               if ([...dataFlows, ...jobs, ...modules].length > 0) {
-                errorTip = '此连接被任务所占用，无法删除'
+                errorTip = this.$t('connection_list_task_occupied')
               }
             }
             this.$message.error(errorTip)
@@ -469,7 +473,7 @@ export default {
         this.$refs.test.start(data, isShowDialog)
         this.fetch()
       } catch (error) {
-        this.$message.error(error?.response?.msg || '测试连接失败')
+        this.$message.error(error?.response?.msg || this.$t('connection_list_test_failed'))
       }
     },
     loadDetailsData(data) {

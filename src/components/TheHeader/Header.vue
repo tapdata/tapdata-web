@@ -14,21 +14,21 @@
         <el-popover placement="top-start" width="240" min-width="0" trigger="click">
           <div class="text-center">
             <img style="width: 120px; height: 120px" src="../../../public/images/wx_user_support.png" alt="" />
-            <div>扫码添加官方小助手</div>
-            <div>备注“云版”即可进入群获取支持</div>
+            <div>{{ $t('header_scan_code') }}</div>
+            <div>{{ $t('header_join_group') }}</div>
           </div>
           <div class="mr-6 pointer" slot="reference">
             <VIcon class="mr-2" size="17">question</VIcon>
-            <span>问答支持</span>
+            <span>{{ $t('header_question') }}</span>
           </div>
         </el-popover>
         <div class="mr-6 pointer" @click="command('handbook')">
           <VIcon class="mr-2" size="17">send</VIcon>
-          <span>使用手册</span>
+          <span>{{ $t('header_manual') }}</span>
         </div>
         <div class="mr-6 pointer" @click="command('feedback')">
           <VIcon class="v-icon mr-2" size="17">feedback</VIcon>
-          <span>提交反馈</span>
+          <span>{{ $t('header_feedback') }}</span>
         </div>
         <!--        <div class="mr-6 pointer" @click="command('source-center')">文档中心</div>-->
         <!--        <div class="flex align-items-center mr-6 pointer" @click="command('contact-us')">-->
@@ -36,6 +36,15 @@
         <!--          <span>联系我们</span>-->
         <!--        </div>-->
         <NotificationPopover class="mr-6"></NotificationPopover>
+        <ElDropdown class="btn" placement="bottom" @command="changeLanguage">
+          <VIcon class="mr-6" size="17" v-if="lang === 'sc'">cn</VIcon>
+          <VIcon class="mr-6" size="17" v-else>en</VIcon>
+          <ElDropdownMenu slot="dropdown">
+            <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
+              {{ value }}
+            </ElDropdownItem>
+          </ElDropdownMenu>
+        </ElDropdown>
         <ElDropdown class="menu-user" placement="bottom" @command="command">
           <!--					<el-button class="menu-button" size="mini">-->
           <!--						{{ user.username }}-->
@@ -48,8 +57,8 @@
           <ElDropdownMenu slot="dropdown">
             <!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
             <!--            <ElDropdownItem command="userCenter"> 用户中心 </ElDropdownItem>-->
-            <ElDropdownItem command="home"> 官网 </ElDropdownItem>
-            <ElDropdownItem command="signOut"> 退出登录 </ElDropdownItem>
+            <ElDropdownItem command="home"> {{ $t('header_official_website') }} </ElDropdownItem>
+            <ElDropdownItem command="signOut"> {{ $t('header_sign_out') }} </ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
       </div>
@@ -65,13 +74,15 @@
             <img src="../../../public/images/guide/guide_mark.png" alt="" />
           </div>
           <div class="mt-5 fs-3 text-white">
-            <span>Hi，欢迎使用</span>
+            <span>{{ $t('header_welcome') }}</span>
             <span class="color-primary">Tapdata</span>
             <span class="ml-1">Cloud</span>
           </div>
           <div class="mt-3 fs-6 text-white position-relative inline-block">
-            我们为您准备了详细的新手引导教程，方便您更快上手哦～
-            <el-checkbox v-model="noShow" class="no-show-checkbox text-white position-absolute">不再提醒</el-checkbox>
+            {{ $t('header_tutorials_tip') }}
+            <el-checkbox v-model="noShow" class="no-show-checkbox text-white position-absolute">{{
+              $t('header_more_reminders')
+            }}</el-checkbox>
           </div>
           <div class="guide-operation flex justify-content-center mt-8">
             <img src="../../../public/images/guide/guid_no.png" alt="" @click="leaveGuide" />
@@ -88,7 +99,11 @@ import HeaderCustomerService from './HeaderCustomerService'
 import NotificationPopover from '@/views/Workbench/NotificationPopover'
 // import ws from '../../plugins/ws.js';
 import VIcon from '@/components/VIcon'
-
+const langMap = {
+  sc: 'zh-CN',
+  tc: 'zh-TW',
+  en: 'en'
+}
 export default {
   components: { HeaderCustomerService, VIcon, NotificationPopover },
   data() {
@@ -100,7 +115,12 @@ export default {
       btnLoading: false,
       noShow: false, // 不再显示新手引导
       selfUser: {}, // self用户信息
-      USER_CENTER: window.__config__.USER_CENTER
+      USER_CENTER: window.__config__.USER_CENTER,
+      lang: localStorage.getItem('tapdata_localize_lang') || 'sc',
+      languages: {
+        sc: '中文',
+        en: 'English'
+      }
     }
   },
   created() {
@@ -152,7 +172,7 @@ export default {
           window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
           break
         case 'signOut':
-          this.$confirm('您确定要退出登录吗？', '退出登录', {
+          this.$confirm(this.$t('header_log_out_tip'), this.$t('header_log_out_title'), {
             type: 'warning'
           }).then(res => {
             if (res) {
@@ -177,6 +197,14 @@ export default {
           window.open('https://sourl.cn/bDjxdj', '_blank')
           break
       }
+    },
+    // 中英文切换
+    changeLanguage(lang) {
+      this.lang = lang
+      this.$i18n.locale = langMap[lang]
+      localStorage.setItem('tapdata_localize_lang', lang)
+      location.reload()
+      // window.__USER_LANG__ = lang
     },
     clearCookie() {
       let keys = document.cookie.match(/[^ =;]+(?==)/g)

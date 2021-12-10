@@ -4,7 +4,7 @@
       <div class="list-operation">
         <div class="list-operation-left">
           <el-form inline @submit.native.prevent>
-            <el-form-item label="操作类型 :" class="small">
+            <el-form-item :label="$t('operation_log_type') + ':'" class="small">
               <el-select v-model="searchParams.operationType" clearable @input="search()">
                 <el-option
                   v-for="(item, key) in operationTypeOptions"
@@ -14,26 +14,26 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="操作对象 : " class="small">
+            <el-form-item :label="$t('operation_log_Object') + ':'" class="small">
               <el-input v-model="searchParams.parameter1" clearable @input="search(800)">
                 <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
               </el-input>
             </el-form-item>
-            <el-form-item label="开始时间 : ">
+            <el-form-item :label="$t('operation_log_start_time') + ':'">
               <el-datePicker
                 v-model="searchParams.start"
                 type="datetime"
-                placeholder="开始时间"
+                :placeholder="$t('operation_log_start_time')"
                 value-format="timestamp"
                 @change="search()"
               ></el-datePicker>
             </el-form-item>
-            <el-form-item label="结束时间 : ">
+            <el-form-item :label="$t('operation_log_end_time') + ':'">
               <el-tooltip
                 placement="top"
                 manual
-                content="【结束时间】不能小于【开始时间】"
                 popper-class="copy-tooltip"
+                :content="$t('operation_log_time_tip')"
                 :value="startGreaterThanEnd"
               >
                 <el-datePicker
@@ -45,7 +45,7 @@
                 ></el-datePicker>
               </el-tooltip>
             </el-form-item>
-            <el-form-item label="用户名称 : " class="medium">
+            <el-form-item :label="$t('operation_log_user_name') + ':'" class="medium">
               <el-input v-model="searchParams.username" clearable @input="search(800)">
                 <VIcon slot="prefix" size="14" class="ml-1" style="height: 100% !important">search</VIcon>
               </el-input>
@@ -59,27 +59,27 @@
         </div>
       </div>
       <VList ref="table" row-key="id" :remoteMethod="getData" @sort-change="sortChange">
-        <el-table-column label="用户名" min-width="160">
+        <el-table-column :label="$t('operation_log_username')" min-width="160">
           <template slot-scope="scope">
             <div>{{ scope.row.username }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="操作时间" prop="createTime" sortable="custom" width="180">
+        <el-table-column :label="$t('operation_log_time')" prop="createTime" sortable="custom" width="180">
           <template slot-scope="scope">
             <div>{{ $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip label="操作对象" width="350">
+        <el-table-column show-overflow-tooltip :label="$t('operation_log_Object')" width="350">
           <template slot-scope="scope">
             <div class="ellipsis">{{ scope.row.parameter1 }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="操作类型" width="120">
+        <el-table-column :label="$t('operation_log_type')" width="120">
           <template slot-scope="scope">
             <div>{{ getOperationTypeLabel(scope.row) }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="操作描述" min-width="300">
+        <el-table-column :label="$t('operation_log_describe')" min-width="300">
           <template slot-scope="scope">
             <span
               v-for="(item, index) in descFnc(scope.row)"
@@ -130,39 +130,131 @@ export default {
       order: 'createTime desc',
       operationTypeOptions: [
         // 连接
-        { label: '创建连接', value: 'connection_create', desc: '创建了连接【@{parameter1}】' },
-        { label: '编辑连接', value: 'connection_update', desc: '编辑了连接【@{parameter1}】的配置信息' },
-        { label: '复制连接', value: 'connection_copy', desc: '复制了连接[${parameter1}]为【@{parameter2}】' },
-        { label: '删除连接', value: 'connection_delete', desc: '删除了连接【${parameter1}】' },
+        {
+          label: this.$t('operation_log_connection_create'),
+          value: 'connection_create',
+          desc: this.$t('operation_log_connection_create_tip')
+        },
+        {
+          label: this.$t('operation_log_connection_update'),
+          value: 'connection_update',
+          desc: this.$t('operation_log_connection_update_tip')
+        },
+        {
+          label: this.$t('operation_log_connection_copy'),
+          value: 'connection_copy',
+          desc: this.$t('operation_log_connection_copy_tip')
+        },
+        {
+          label: this.$t('operation_log_connection_delete'),
+          value: 'connection_delete',
+          desc: this.$t('operation_log_connection_delete_tip')
+        },
         // 任务
-        { label: '创建任务', value: 'migration_create', desc: '创建了任务【@{parameter1}】' },
-        { label: '启动任务', value: 'migration_start', desc: '启动了任务【@{parameter1}】' },
-        { label: '编辑任务', value: 'migration_update', desc: '编辑了任务【@{parameter1}】的配置信息' },
-        { label: '复制任务', value: 'migration_copy', desc: '复制了任务[${parameter2}] 为【@{parameter1}】' },
-        { label: '重置任务', value: 'migration_reset', desc: '重置了任务【@{parameter1}】' },
-        { label: '删除任务', value: 'migration_delete', desc: '删除了任务【${parameter1}】' },
-        { label: '停止任务', value: 'migration_stop', desc: '停止了任务【@{parameter1}】' },
-        { label: '强制停止任务', value: 'migration_forceStop', desc: '强制停止了任务【@{parameter1}】' },
+        {
+          label: this.$t('operation_log_migration_create'),
+          value: 'migration_create',
+          desc: this.$t('operation_log_migration_create_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_start'),
+          value: 'migration_start',
+          desc: this.$t('operation_log_migration_start_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_update'),
+          value: 'migration_update',
+          desc: this.$t('operation_log_migration_update_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_copy'),
+          value: 'migration_copy',
+          desc: this.$t('operation_log_migration_copy_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_reset'),
+          value: 'migration_reset',
+          desc: this.$t('operation_log_migration_reset_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_delete'),
+          value: 'migration_delete',
+          desc: this.$t('operation_log_migration_delete_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_stop'),
+          value: 'migration_stop',
+          desc: this.$t('operation_log_migration_stop_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_forceStop'),
+          value: 'migration_forceStop',
+          desc: this.$t('operation_log_migration_forceStop_tip')
+        },
         // Agent
-        { label: '修改Agent名称', value: 'agent_rename', desc: '将Agent名称[${parameter2}]修改为【@{parameter1}】' },
-        { label: 'Agent升级', value: 'agent_update', desc: '进行了Agent升级' },
+        {
+          label: this.$t('operation_log_agent_rename'),
+          value: 'agent_rename',
+          desc: this.$t('operation_log_agent_rename_tip')
+        },
+        {
+          label: this.$t('operation_log_agent_update'),
+          value: 'agent_update',
+          desc: this.$t('operation_log_agent_update_tip')
+        },
         // 校验
-        { label: '新建数据校验', value: 'inspect_create', desc: '新建了数据校验任务【@{parameter1}】' },
-        { label: '执行数据校验', value: 'inspect_start', desc: '执行数据校验任务【@{parameter1}】' },
-        { label: '编辑数据校验', value: 'inspect_update', desc: '编辑了数据校验任务【@{parameter1}】' },
-        { label: '删除数据校验', value: 'inspect_delete', desc: '删除了数据校验任务【${parameter1}】' },
+        {
+          label: this.$t('operation_log_inspect_create'),
+          value: 'inspect_create',
+          desc: this.$t('operation_log_inspect_create_tip')
+        },
+        {
+          label: this.$t('operation_log_inspect_start'),
+          value: 'inspect_start',
+          desc: this.$t('operation_log_inspect_start_tip')
+        },
+        {
+          label: this.$t('operation_log_inspect_update'),
+          value: 'inspect_update',
+          desc: this.$t('operation_log_inspect_update_tip')
+        },
+        {
+          label: this.$t('operation_log_inspect_delete'),
+          value: 'inspect_delete',
+          desc: this.$t('operation_log_inspect_delete_tip')
+        },
         // 二次校验
         {
-          label: '执行差异校验',
+          label: this.$t('operation_log_difference_inspect_start'),
           value: 'differenceInspect_start',
-          desc: '对数据校验任务【@{parameter1}】执行了差异校验'
+          desc: this.$t('operation_log_difference_inspect_start_tip')
         },
         // 通知
-        { label: '已读全部通知', value: 'message_readAll', desc: '设置全部通知为已读' },
-        { label: '删除全部通知', value: 'message_deleteAll', desc: '删除了全部通知' },
-        { label: '标记通知为已读', value: 'message_read', desc: '将选中的通知全部标记为已读' },
-        { label: '删除通知', value: 'message_delete', desc: '将选中的通知全部删除' },
-        { label: '修改通知设置', value: 'userNotification_update', desc: '修改了系统通知设置' }
+        {
+          label: this.$t('operation_log_message_read_all'),
+          value: 'message_readAll',
+          desc: this.$t('operation_log_message_read_all_tip')
+        },
+        {
+          label: this.$t('operation_log_message_delete_all'),
+          value: 'message_deleteAll',
+          desc: this.$t('operation_log_message_delete_all_tip')
+        },
+        {
+          label: this.$t('operation_log_message_read'),
+          value: 'message_read',
+          desc: this.$t('operation_log_message_read_tip')
+        },
+        {
+          label: this.$t('operation_log_message_delete'),
+          value: 'message_delete',
+          desc: this.$t('operation_log_message_delete_tip')
+        },
+        {
+          label: this.$t('operation_log_modify_notification_setting'),
+          value: 'userNotification_update',
+          desc: this.$t('operation_log_modify_notification_setting_tip')
+        }
       ]
     }
   },
@@ -277,7 +369,7 @@ export default {
       let findOne = this.operationTypeOptions.find(item => item.value === `${modular}_${operation}`)
       let desc = findOne?.desc ?? ''
       if (modular === 'connection' && operation === 'update' && rename) {
-        desc = '将连接名称由[${parameter2}]修改为【@{parameter1}】'
+        desc = this.$t('operation_log_modify_connection_name')
       }
       // 不添加事件  ${parameter1} ${parameter2}  添加事件@{parameter1} @{parameter2}
       let replaceStr = desc.replace(/\${(parameter\d+)}/gi, (item, subItem) => {

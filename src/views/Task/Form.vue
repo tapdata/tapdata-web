@@ -3,10 +3,10 @@
     <el-container style="overflow: hidden; flex: 1" class="create-task-container flex-column">
       <div class="steps-header">
         <el-steps class="pb-6" :active="taskStep" process-status="process" finish-status="success" align-center>
-          <el-step title="选择连接"></el-step>
-          <el-step title="设置任务属性"></el-step>
-          <el-step title="选择表"></el-step>
-          <el-step title="表字段映射"></el-step>
+          <el-step :title="$t('task_form_select_connection')"></el-step>
+          <el-step :title="$t('task_form_set_task_properties')"></el-step>
+          <el-step :title="$t('task_form_select_table')"></el-step>
+          <el-step :title="$t('task_form_table_field')"></el-step>
         </el-steps>
       </div>
       <el-container :class="['task-container', 'task-container-' + steps[activeStep].index]">
@@ -15,13 +15,12 @@
             <!--步骤2-->
             <div class="body" v-if="steps[activeStep].index === 2">
               <div class="mb-8">
-                <span class="title">选择连接</span>
+                <span class="title">{{ $t('task_form_select_connection') }}</span>
                 <span class="desc">
-                  如果你还未添加数据源，请先前往连接管理进行添加。<span
-                    style="color: #337dff; cursor: pointer"
-                    @click="handleCreateDatabase"
-                    >前往连接管理创建连接</span
-                  >
+                  {{ $t('task_form_connection_tip')
+                  }}<span style="color: #337dff; cursor: pointer" @click="handleCreateDatabase">{{
+                    $t('task_form_go_to_connection_tip')
+                  }}</span>
                 </span>
               </div>
               <form-builder
@@ -37,9 +36,9 @@
             <!-- 步骤3 -->
             <div class="body step-3" v-if="steps[activeStep].index === 3">
               <div class="mb-8">
-                <span class="title">任务设置</span>
+                <span class="title">{{ $t('task_form_task_setting') }}</span>
                 <span class="desc">
-                  用户可以在任务设置步骤对任务名称、同步类型、遇错处理等进行设置，具体配置说明请查看帮助文档
+                  {{ $t('task_form_task_setting_tip') }}
                 </span>
               </div>
               <form-builder
@@ -56,9 +55,9 @@
             <!-- 步骤4 -->
             <div class="body step-4" v-if="steps[activeStep].index === 4">
               <div class="mb-6">
-                <span class="title">选择表</span>
+                <span class="title">{{ $t('task_form_select_table') }}</span>
                 <span class="desc">
-                  用户可以点击中间向右的箭头按钮勾选源端待同步表，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输）
+                  {{ $t('task_form_sync_tip') }}
                 </span>
               </div>
               <div class="create-task-transfer">
@@ -85,7 +84,9 @@
             </div>
           </el-main>
           <div class="create-task-footer py-6 mx-6" :class="['btns-step-' + steps[activeStep].index]">
-            <v-button class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()"> 取消 </v-button>
+            <v-button class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()">
+              {{ $t('button_cancel') }}
+            </v-button>
             <v-button
               class="btn-step"
               :loading="loading"
@@ -112,7 +113,7 @@
               :loading="loading"
               @click="save()"
             >
-              完成
+              {{ $t('button_finish') }}
             </v-button>
           </div>
         </div>
@@ -538,7 +539,7 @@ export default {
       {
         type: 'input',
         field: 'name',
-        label: '任务名称',
+        label: this.$t('task_name'),
         labelColon: true,
         maxlength: 300,
         showWordLimit: true,
@@ -549,7 +550,7 @@ export default {
             trigger: 'blur',
             validator: (rule, value, callback) => {
               if (!value || !value.trim()) {
-                callback(new Error('任务名称不能为空'))
+                callback(new Error(this.$t('task_form_task_cannot_empty')))
               } else {
                 let filter = {
                   where: {
@@ -565,7 +566,7 @@ export default {
                 }
                 this.$axios.get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
                   if (data && data.length !== 0) {
-                    callback(new Error('任务名称已存在'))
+                    callback(new Error(this.$t('task_form_already_exists')))
                   } else callback()
                 })
               }
@@ -666,27 +667,63 @@ export default {
       if (this.id && this.hiddenFieldMapping) {
         //编辑模式 无字段映射功能
         this.steps = [
-          { index: 3, text: '任务设置', type: 'setting', showExitBtn: true, showNextBtn: true },
-          { index: 4, text: '映射设置', type: 'mapping', showBackBtn: true, showSaveBtn: true }
+          { index: 3, text: this.$t('task_form_task_setting'), type: 'setting', showExitBtn: true, showNextBtn: true },
+          {
+            index: 4,
+            text: this.$t('task_form_mapping_setting'),
+            type: 'mapping',
+            showBackBtn: true,
+            showSaveBtn: true
+          }
         ]
       } else if (!this.id && !this.hiddenFieldMapping) {
         this.steps = [
-          { index: 2, text: '选择源端与目标端连接', type: 'dataSource', showExitBtn: true, showNextBtn: true }, //创建模式 有字段功能
-          { index: 3, text: '任务设置', type: 'setting', showBackBtn: true, showNextBtn: true },
-          { index: 4, text: '映射设置', type: 'mapping', showBackBtn: true, showNextBtn: true },
-          { index: 5, text: '表设置', type: 'table', showBackBtn: true, showSaveBtn: true }
+          {
+            index: 2,
+            text: this.$t('task_form_source_target_connection'),
+            type: 'dataSource',
+            showExitBtn: true,
+            showNextBtn: true
+          }, //创建模式 有字段功能
+          { index: 3, text: this.$t('task_form_task_setting'), type: 'setting', showBackBtn: true, showNextBtn: true },
+          {
+            index: 4,
+            text: this.$t('task_form_mapping_setting'),
+            type: 'mapping',
+            showBackBtn: true,
+            showNextBtn: true
+          },
+          { index: 5, text: this.$t('task_form_table_setting'), type: 'table', showBackBtn: true, showSaveBtn: true }
         ]
       } else if (this.id && !this.hiddenFieldMapping) {
         this.steps = [
-          { index: 3, text: '任务设置', type: 'setting', showExitBtn: true, showNextBtn: true }, //编辑模式 有字段功能
-          { index: 4, text: '映射设置', type: 'mapping', showBackBtn: true, showNextBtn: true },
-          { index: 5, text: '表设置', type: 'table', showBackBtn: true, showSaveBtn: true }
+          { index: 3, text: this.$t('task_form_task_setting'), type: 'setting', showExitBtn: true, showNextBtn: true }, //编辑模式 有字段功能
+          {
+            index: 4,
+            text: this.$t('task_form_mapping_setting'),
+            type: 'mapping',
+            showBackBtn: true,
+            showNextBtn: true
+          },
+          { index: 5, text: this.$t('task_form_table_setting'), type: 'table', showBackBtn: true, showSaveBtn: true }
         ]
       } else if (!this.id && this.hiddenFieldMapping) {
         this.steps = [
-          { index: 2, text: '选择源端与目标端连接', type: 'dataSource', showExitBtn: true, showNextBtn: true }, //创建模式 无字段功能
-          { index: 3, text: '任务设置', type: 'setting', showBackBtn: true, showNextBtn: true },
-          { index: 4, text: '映射设置', type: 'mapping', showBackBtn: true, showSaveBtn: true }
+          {
+            index: 2,
+            text: this.$t('task_form_source_target_connection'),
+            type: 'dataSource',
+            showExitBtn: true,
+            showNextBtn: true
+          }, //创建模式 无字段功能
+          { index: 3, text: this.$t('task_form_task_setting'), type: 'setting', showBackBtn: true, showNextBtn: true },
+          {
+            index: 4,
+            text: this.$t('task_form_mapping_setting'),
+            type: 'mapping',
+            showBackBtn: true,
+            showSaveBtn: true
+          }
         ]
       }
     },
@@ -724,19 +761,17 @@ export default {
             this.activeStep += 1
             this.getFormConfig()
             if (this.showSysncTableTip) {
-              this.$message.warning(
-                '温馨提示：您选择了同一数据源作为源和目标，为了保证您的任务可以顺利执行，请修改目标表名与原表不一致。'
-              )
+              this.$message.warning(this.$t('task_form_table_name_cannot_consistent'))
             }
           } else {
-            this.$message.error('表单校验不通过')
+            this.$message.error(this.$t('task_form_validation_failed'))
           }
         })
       }
       if (type === 'mapping') {
         let verify = this.checkTransfer()
         if (!verify) {
-          this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表')
+          this.$message.error(this.$t('task_form_no_bable_tip'))
           return
         }
         this.activeStep += 1
@@ -981,8 +1016,8 @@ export default {
           if (op) {
             op.options = [
               {
-                label: '更新写入模式',
-                tip: '更新写入模式会判断源端的每条数据在目标端是否存在，若存在则更新，不存在则新增。',
+                label: this.$t('task_form_update_write_mode'),
+                tip: this.$t('task_form_update_write_mode_tip'),
                 value: 'intellect'
               }
             ]
@@ -995,8 +1030,8 @@ export default {
           if (op) {
             op.options = [
               {
-                label: '全量同步',
-                tip: '全量同步也称初始化同步，即在任务启动时刻将源端数据快照读取，并同步至目标端；该同步有更新写入、删除重写两种模式。',
+                label: this.$t('task_form_full_sync'),
+                tip: this.$t('task_form_full_sync_tip'),
                 value: 'initial_sync'
               }
             ]
@@ -1023,7 +1058,7 @@ export default {
                 value: item
               }
             })
-            source.options.unshift({ label: '全部', value: 'all' })
+            source.options.unshift({ label: this.$t('task_form_all'), value: 'all' })
           }
 
           let target = items.find(it => it.field === 'target_filter_databaseType')
@@ -1036,7 +1071,7 @@ export default {
                 value: item
               }
             })
-            target.options.unshift({ label: '全部', value: 'all' })
+            target.options.unshift({ label: this.$t('task_form_all'), value: 'all' })
           }
 
           break
@@ -1097,7 +1132,7 @@ export default {
         description: '',
         status: 'paused',
         executeMode: 'normal',
-        category: '数据库克隆',
+        category: this.$t('task_form_database_clone'),
         stopOnError: false,
         mappingTemplate: 'cluster-clone',
         stages: [],
@@ -1203,7 +1238,7 @@ export default {
         if (!returnData.valid) return //检验不通过
         let deleteLen = returnData.target.filter(v => !v.is_deleted)
         if (deleteLen.length === 0) {
-          this.$message.error('当前表被删除了所有字段，不允许保存操作')
+          this.$message.error(this.$t('task_form_no_fields_not_save'))
           return //所有字段被删除了 不可以保存任务
         }
         this.saveOperations(returnData.row, returnData.operations, returnData.target)
@@ -1211,7 +1246,7 @@ export default {
       } else {
         let verify = this.checkTransfer()
         if (!verify) {
-          this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表')
+          this.$message.error(this.$t('task_form_no_bable_tip'))
           return
         }
       }
@@ -1246,7 +1281,7 @@ export default {
     },
     //返回任务列表
     goBackList() {
-      this.$confirm('此操作会丢失当前正在创建/编辑的任务', '是否放弃创建/编辑该任务', {
+      this.$confirm(this.$t('task_form_lost_task'), this.$t('task_form_give_up'), {
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {

@@ -1,0 +1,198 @@
+<template>
+  <div class="statistics-container flex flex-column font-color-sub h-100">
+    <Info :task="task" class="card-box" @reload="loadTask"></Info>
+    <div class="card-box mt-6 p-6 flex-1">
+      <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100" @tab-click="tabHandler">
+        <ElTabPane label="任务进度" name="schedule">
+          <Schedule :task="task"></Schedule>
+        </ElTabPane>
+        <ElTabPane label="运行日志" name="log" lazy>
+          <Log :id="task.id" style="max-height: 450px"></Log>
+        </ElTabPane>
+        <ElTabPane label="连接" name="connect" lazy>
+          <Connection :ids="connectionIds" @change="loadTask"></Connection>
+        </ElTabPane>
+        <ElTabPane label="历史运行记录" name="history" lazy>
+          <History v-if="task.id" :ids="[task.id]" :operations="operations"></History>
+        </ElTabPane>
+        <ElTabPane v-if="showContent" label="同步内容" name="content" lazy>
+          <FieldMapping ref="fieldMapping" :readOnly="true" :field_process="field_process"></FieldMapping>
+        </ElTabPane>
+      </ElTabs>
+    </div>
+  </div>
+</template>
+
+<script>
+import Info from './Info'
+import Schedule from './Schedule'
+import Log from './Log'
+import Connection from './Connection'
+import History from './History'
+import FieldMapping from '@/components/FieldMappings'
+
+export default {
+  name: 'Index',
+  components: { Info, Schedule, Log, Connection, History, FieldMapping },
+  data() {
+    return {
+      task: {},
+      selectFlow: 'flow_', // 选中节点
+      dataOverviewAll: 'flow',
+      // 事件统计
+      overviewObj: {
+        title: {
+          key: 'overview',
+          statsType: 'data_overview',
+          title: this.$t('dataFlow.dataScreening'),
+          loading: false
+        },
+        body: {
+          outputCount: 0,
+          inputCount: 0,
+          insertCount: 0,
+          updateCount: 0,
+          deleteCount: 0
+        }
+      },
+      throughputObj: {
+        title: {
+          key: 'throughput',
+          statsType: 'throughput',
+          time: 'second',
+          title: this.$t('dataFlow.inputOutput'),
+          tip: this.$t('dataFlow.throughputpop'),
+          unit: 'QPS',
+          class: 'putColor',
+          loading: false
+        },
+        body: null,
+        input: 0,
+        output: 0
+      },
+      activeTab: 'schedule',
+      showContent: false,
+      field_process: [],
+      operations: ['start', 'stop', 'forceStop']
+    }
+  },
+  computed: {
+    connectionIds() {
+      return (
+        this.task?.stages?.map(item => {
+          return item.connectionId
+        }) || []
+      )
+    }
+  },
+  created() {
+    this.$ws.on('watch', this.taskChange)
+    this.$ws.send({
+      type: 'watch',
+      collection: 'DataFlows',
+      filter: {
+        where: { 'fullDocument._id': { $in: [this.$route.params.id] } }, //查询条件
+        fields: {
+          'fullDocument.id': true,
+          'fullDocument._id': true,
+          'fullDocument.name': true,
+          'fullDocument.status': true,
+          'fullDocument.executeMode': true,
+          'fullDocument.stopOnError': true,
+          'fullDocument.last_updated': true,
+          'fullDocument.createTime': true,
+          'fullDocument.children': true,
+          'fullDocument.stats': true,
+          'fullDocument.setting': true,
+          'fullDocument.cdcLastTimes': true,
+          'fullDocument.listtags': true,
+          'fullDocument.finishTime': true,
+          'fullDocument.startTime': true,
+          'fullDocument.errorEvents': true,
+          'fullDocument.milestones': true,
+          'fullDocument.user': true,
+          'fullDocument.mappingTemplate': true
+        }
+      }
+    })
+  },
+  mounted() {
+    this.init()
+  },
+  destroyed() {
+    this.$ws.off('watch', this.taskChange)
+  },
+  methods: {
+    init() {
+      this.loadTask()
+    },
+    loadTask() {
+      let id = this.$route.params?.id
+      this.loading = true
+      this.$axios
+        .get('tm/api/DataFlows/' + id)
+        .then(data => {
+          this.task = this.formatTask(data)
+          this.showContentTab(this.task)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    taskChange(data) {
+      let task = data.data?.fullDocument || {}
+      if (this.task && JSON.stringify(task) !== JSON.stringify(this.task)) {
+        this.task = Object.assign({}, this.task, this.formatTask(task))
+      }
+    },
+    formatTask(data) {
+      if (!data) {
+        return
+      }
+      data.totalOutput = data.stats?.output?.rows || 0
+      data.totalInput = data.stats?.input?.rows || 0
+      data.creator = data.creator || data.createUser || data.username || data.user?.username || '-'
+      data.typeText = data.mappingTemplate === 'cluster-clone' ? '迁移任务' : '同步任务'
+      let cdcTime = data.cdcLastTimes?.[0]?.cdcTime || ''
+      data.startTimeFmt = this.formatTime(data.startTime)
+      data.endTimeFmt = data.startTime ? this.formatTime(data.finishTime) : '-'
+      data.cdcTimeFmt = this.formatTime(cdcTime)
+      return data
+    },
+    formatTime(time) {
+      return time ? this.$moment(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+    },
+    tabHandler() {
+      this.$nextTick(() => {
+        if (this.activeTab === 'content') {
+          this.$refs.fieldMapping.getMetaData(this.task)
+          this.field_process = this.task?.stages[0]?.field_process || []
+        }
+      })
+    },
+    //是否支持同步内容
+    showContentTab(data) {
+      let stageId = data?.stages?.[1]?.id || ''
+      let param = {
+        stages: data?.stages,
+        stageId: stageId
+      }
+      this.$axios.post('tm/api/DataFlows/tranModelVersionControl', param).then(data => {
+        this.showContent = data?.[stageId] || false
+      })
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.card-box {
+  background: #fff;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+  ::v-deep {
+    .table-list {
+      height: 300px;
+    }
+  }
+}
+</style>
