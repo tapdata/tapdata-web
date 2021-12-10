@@ -9,6 +9,7 @@ import i18n from '@/i18n'
 
 const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/Task/Form.vue')
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/Connection/Form.vue')
+const DataflowDetails = () => import(/* webpackChunkName: "task-form" */ '../views/Task/copy/Index.vue')
 
 const routes = [
   {
@@ -136,6 +137,14 @@ const routes = [
             component: () => import(/* webpackChunkName: "task-monitor" */ '../views/Monitor/Dashboard.vue'),
             meta: {
               title: i18n.t('tap_monitor')
+            }
+          },
+          {
+            path: ':id/statistics',
+            name: 'DataflowDetails',
+            component: DataflowDetails,
+            meta: {
+              title: '任务详情'
             }
           }
         ]
