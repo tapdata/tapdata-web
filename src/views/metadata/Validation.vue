@@ -413,7 +413,7 @@ export default {
         })
         .then(res => {
           let groupData = {}
-          res.data.forEach(v => {
+          res.data.items.forEach(v => {
             let key = v.classification || '__ungroup'
             if (!groupData[key]) {
               groupData[key] = []
