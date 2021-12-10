@@ -107,9 +107,7 @@ export default {
       }
       this.$emit('returnFieldMapping', this.field_process)
       //迁移任务需要同步字段处理器
-      if (this.mappingType && this.mappingType === 'cluster-clone') {
-        this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
-      }
+      this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
       let promise = await this.$axios.post('tm/api/DataFlows/metadata', this.dataFlow)
       return promise
     },
