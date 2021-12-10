@@ -1,28 +1,36 @@
 <template>
-  <FieldMapping
+  <FieldMappingDialog
     ref="fieldMappingDom"
     v-loading="loadingMetadata"
-    :remoteMethod="intiFieldMappingTableData"
     :typeMappingMethod="getTypeMapping"
     :readOnly="readOnly"
+    :remoteMethod="intiFieldMappingTableData"
     :fieldMappingNavData="fieldMappingNavData"
     :fieldProcessMethod="updateFieldProcess"
-    :field_process="field_process"
+    :updateMetadata="updateMetadata"
+    :hiddenFieldProcess="false"
+    :fieldProcess="fieldProcess"
+    :transform="transform"
     @row-click="saveOperations"
     @update-nav="updateFieldMappingNavData"
-  ></FieldMapping>
+  ></FieldMappingDialog>
 </template>
 
 <script>
+import FieldMappingDialog from '@/components/field-mapping/field-mapping-dialog'
 export default {
   name: 'FieldMappings',
-  props: ['field_process', 'readOnly'],
+  props: ['readOnly', 'transform', 'isFirst', 'getDataFlow', 'fieldProcess'],
+  components: { FieldMappingDialog },
   data() {
     return {
       fieldMappingNavData: null,
       fieldMappingTableData: '',
       hiddenFieldMapping: false,
-      loadingMetadata: false
+      loadingMetadata: false,
+      field_process: [],
+      dataFlow: [],
+      stageId: ''
     }
   },
   methods: {
@@ -33,9 +41,11 @@ export default {
      * 触发父组件：首次条件
      * */
     getMetaData(taskData) {
+      this.dataFlow = taskData
+      this.stageId = this.transform?.stageId || this.dataFlow?.stages[1]?.id //数据库迁移操作放在目标节点上
+      let dataFlowId = this.taskData?.id || ''
       if (!taskData) return
-      let id = taskData?.id || ''
-      if (this.isFirst && !id) {
+      if (this.isFirst && !dataFlowId) {
         taskData['rollback'] = 'all'
       } else {
         delete taskData['rollback']
@@ -46,16 +56,16 @@ export default {
         this.fieldMappingNavData = taskData.metadataMappings
         this.loadingMetadata = false
         if (this.$refs.fieldMappingDom) {
+          this.$emit('update-first', false) //新建任务 第一次需要恢复默认
           this.$refs.fieldMappingDom.updateView(this.fieldMappingNavData) //左侧导航栏有数据再请求列表数据
         }
       } else {
         let promise = this.$axios.post('tm/api/DataFlows/metadata', taskData)
         promise.then(data => {
-          this.activeStep += 1
-          this.isFirst = false
           this.fieldMappingNavData = data
           this.loadingMetadata = false
           if (this.$refs.fieldMappingDom) {
+            this.$emit('update-first', false) //新建任务 第一次需要恢复默认
             this.$refs.fieldMappingDom.updateView(data) //左侧导航栏有数据再请求列表数据
           }
         })
@@ -72,33 +82,35 @@ export default {
      * 触发模型重新推演
      * */
     async updateFieldProcess(rollback, rollbackTable, id) {
-      let data = this.getDataFlowData()
-      if (!data) return
+      if (!this.dataFlow) return
       if (rollback === 'all') {
-        data['rollback'] = rollback
+        this.dataFlow['rollback'] = rollback
         //删除整个字段处理器
         this.field_process = []
+        //清空表改名 字段改名
+        this.clearTransform()
       } else if (rollbackTable) {
-        data['rollback'] = rollback
-        data['rollbackTable'] = rollbackTable
-        for (let i = 0; i < this.field_process.length; i++) {
-          // 删除操作
-          let ops = this.field_process[i]
-          if (ops.table_id === id) {
-            this.field_process.splice(i, 1)
+        this.dataFlow['rollback'] = rollback
+        this.dataFlow['rollbackTable'] = rollbackTable
+        if (this.field_process?.length > 0) {
+          for (let i = 0; i < this.field_process.length; i++) {
+            // 删除操作
+            let ops = this.field_process[i]
+            if (ops.table_id === id) {
+              this.field_process.splice(i, 1)
+            }
           }
         }
+        let result = this.$refs.fieldMappingDom.returnForm()
+        this.updateAutoTransform('', result)
       }
-      let result = this.updateAutoFieldProcess(data) //更新字段处理器
-      let promise = await this.$axios.post('tm/api/DataFlows/metadata', result)
+      this.$emit('returnFieldMapping', this.field_process)
+      //迁移任务需要同步字段处理器
+      if (this.mappingType && this.mappingType === 'cluster-clone') {
+        this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
+      }
+      let promise = await this.$axios.post('tm/api/DataFlows/metadata', this.dataFlow)
       return promise
-    },
-    //获取当前任务所有的节点
-    getDataFlowData() {
-      //手动同步更新字段处理器
-      let data = this.daft()
-      let result = this.updateAutoFieldProcess(data)
-      return result
     },
     updateAutoFieldProcess(data) {
       if (data.stages[0]) {
@@ -106,9 +118,48 @@ export default {
       }
       return data
     },
+    //获取左边导航数据 - 表
+    async updateMetadata(type, data) {
+      //将表改名 字段改名 放在setting里面
+      this.updateAutoTransform(type, data)
+      let promise = await this.$axios.post('tm/api/DataFlows/metadata', this.dataFlow)
+      return promise
+    },
     //更新左边导航
     updateFieldMappingNavData(data) {
       this.fieldMappingNavData = data
+    },
+    //清空表改名 字段改名
+    clearTransform() {
+      for (let i = 0; i < this.dataFlow.stages.length; i++) {
+        if (this.dataFlow.stages[i]?.id === this.stageId) {
+          this.dataFlow['stages'][i].fieldsNameTransform = ''
+          this.dataFlow['stages'][i].tableNameTransform = ''
+          this.dataFlow['stages'][i].table_suffix = ''
+          this.dataFlow['stages'][i].table_prefix = ''
+        }
+      }
+    },
+    updateAutoTransform(type, data) {
+      for (let i = 0; i < this.dataFlow.stages.length; i++) {
+        if (this.dataFlow.stages[i].id === this.stageId) {
+          this.dataFlow['stages'][i].fieldsNameTransform = data.fieldsNameTransform
+          this.dataFlow['stages'][i].tableNameTransform = data.tableNameTransform
+          this.dataFlow['stages'][i].table_prefix = data.table_prefix
+          this.dataFlow['stages'][i].table_suffix = data.table_suffix
+        }
+      }
+    },
+    checkTransform() {
+      let result = ''
+      for (let i = 0; i < this.dataFlow.stages.length; i++) {
+        if (this.dataFlow.stages[i].id === this.stageId) {
+          if (this.dataFlow['stages'][i].fieldsNameTransform !== '') {
+            result = this.dataFlow['stages'][i].fieldsNameTransform
+          }
+        }
+      }
+      return result
     },
     /*
      * 初始化右边table数据
@@ -132,7 +183,8 @@ export default {
       let operations = this.getFieldOperations(row)
       if (operations?.length > 0) {
         source.forEach(item => {
-          let ops = operations.filter(op => op.original_field_name === item.field_name && op.op === 'RENAME')
+          let original_field_name = item.original_field_name || item.field_name
+          let ops = operations.filter(op => op.original_field_name === original_field_name && op.op === 'RENAME')
           if (!ops || ops?.length === 0) {
             item.temporary_field_name = item.field_name
             return
@@ -140,18 +192,20 @@ export default {
           ops = ops[0]
           item.temporary_field_name = ops.operand
         })
-        //是否字段被删除
-        source.forEach(item => {
-          let ops = operations.filter(op => op.original_field_name === item.field_name && op.op === 'REMOVE')
-          if (!ops || ops?.length === 0) {
-            item.temporary_is_delete = false //没有被字段处理器操作过
-            return
-          }
-          item.temporary_is_delete = true
-        })
       } else {
         source.forEach(item => {
           item.temporary_field_name = item.field_name
+        })
+      }
+      //是否有批量字段改名操作
+      let fieldsNameTransform = this.checkTransform()
+      if (fieldsNameTransform !== '') {
+        source.forEach(item => {
+          if (fieldsNameTransform === 'toUpperCase') {
+            item.temporary_field_name = item.temporary_field_name.toUpperCase() || item.field_name.toUpperCase()
+          } else if (fieldsNameTransform === 'toLowerCase') {
+            item.temporary_field_name = item.temporary_field_name.toLowerCase() || item.field_name.toLowerCase()
+          }
         })
       }
       //源表 目标表数据组合
@@ -169,10 +223,8 @@ export default {
             t_isPrecisionEdit: true, //默认不能编辑
             t_isScaleEdit: true //默认不能编辑
           }
-          if (
-            (item.temporary_field_name === field.field_name && field.is_deleted === false) ||
-            (item.temporary_field_name === field.field_name && item.temporary_field_name)
-          ) {
+          //检查当前name个数
+          if (item.temporary_field_name === field.field_name) {
             fieldMappingTableData.push(Object.assign({}, item, node))
           }
         })
@@ -192,13 +244,6 @@ export default {
       }
       return operations || []
     },
-    //判断是否改名
-    handleFieldName(row, fieldName) {
-      let operations = this.getFieldOperations(row)
-      if (!operations) return
-      let ops = operations.filter(op => op.operand === fieldName && op.op === 'RENAME')
-      return ops
-    },
     //获取typeMapping
     async getTypeMapping(row) {
       let data = await this.$axios.get('tm/api/typeMappings/dataType?databaseType=' + row.sinkDbType)
@@ -216,6 +261,11 @@ export default {
       if (typeof where === 'object') where = JSON.stringify(where)
       this.axios.post('tm/api/MetadataInstances/update?where=' + encodeURIComponent(where), data)
       this.field_process = this.$refs.fieldMappingDom.saveFileOperations()
+      this.transferData = this.$refs.fieldMappingDom.returnData()
+    },
+    //保存数据
+    returnData(hiddenMsg) {
+      return this.$refs.fieldMappingDom.returnData(hiddenMsg)
     }
   }
 }
