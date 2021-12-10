@@ -387,7 +387,7 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let dbOptions = res.data?.items
+          let dbOptions = res.data?.items || []
           this.dbOptions = dbOptions
           let options = []
           dbOptions.forEach(db => {

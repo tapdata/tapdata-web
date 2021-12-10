@@ -207,7 +207,7 @@ export default {
 
     this.databaseLoading = false
     if (result.data) {
-      this.databases = result.data
+      this.databases = result.data?.items || []
     }
   },
   watch: {

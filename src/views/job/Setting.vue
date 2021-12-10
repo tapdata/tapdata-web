@@ -548,8 +548,8 @@ export default {
           }
         })
       })
-      if (result.data && result.data.length > 0) {
-        result.data.forEach(name => {
+      if (result.data?.items?.length > 0) {
+        result.data?.items.forEach(name => {
           this.formData.syncPoints.forEach(point => {
             if (name.id === point.connectionId) {
               point.name = name.name

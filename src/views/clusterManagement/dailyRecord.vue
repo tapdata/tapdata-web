@@ -138,8 +138,8 @@ export default {
       this.$api('cluster')
         .get()
         .then(res => {
-          if (res.data) {
-            res.data.forEach(item => {
+          if (res.data.items) {
+            res.data.items.forEach(item => {
               this.ipList.push({ value: item.systemInfo.ip })
             })
           }

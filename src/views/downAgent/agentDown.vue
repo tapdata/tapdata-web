@@ -281,11 +281,11 @@ export default {
       let that = this
       let params = {}
       cluster.get(params).then(res => {
-        if (res.data) {
+        if (res.data?.items) {
           if (type === 'firstAgent') {
-            that.lastDataNum = res.data.length || 0
+            that.lastDataNum = res.data.items.length || 0
           }
-          that.downLoadNum = res.data.length
+          that.downLoadNum = res.data.items.length
           that.$emit('status-change', that.downLoadNum)
         }
       })

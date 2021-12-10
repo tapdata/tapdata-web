@@ -285,7 +285,7 @@ export default {
 
       // this.databaseSelectConfig.loading = false;
       if (result.data) {
-        this.connectionList = result.data.map(item => {
+        this.connectionList = (result.data?.items || []).map(item => {
           return {
             id: item.id,
             name: item.name,
