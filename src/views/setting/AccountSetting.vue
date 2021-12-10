@@ -267,11 +267,12 @@ export default {
         }
       }
       let result = await usersModel.get(parmas)
-      if (result.data) {
+      let items = result.data?.items || []
+      if (items) {
         this.infoList.forEach(item => {
-          Object.keys(result.data[0]).forEach(key => {
+          Object.keys(items[0]).forEach(key => {
             if (item.key === key) {
-              item.value = result.data[0][key]
+              item.value = items[0][key]
             }
           })
         })

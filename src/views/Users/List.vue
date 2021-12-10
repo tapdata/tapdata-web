@@ -273,10 +273,6 @@
 <script>
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
-import factor from '@/api/factory'
-const UsersModel = factor('users')
-const RoleModel = factor('role')
-const RoleMappingModel = factor('roleMapping')
 
 export default {
   components: {

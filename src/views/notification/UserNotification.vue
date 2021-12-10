@@ -96,7 +96,7 @@ export default {
       this.$api('users')
         .get()
         .then(res => {
-          this.userOptions = res.data || []
+          this.userOptions = res.data?.items || []
         })
     },
     getData(pageNum) {

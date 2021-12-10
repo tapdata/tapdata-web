@@ -368,12 +368,17 @@ export default {
     async apiServer() {
       this.collection = this.$route.query['name'] || null
       this.apiClient = new APIClient(this.collection || '')
-
+      let filter = {
+        where: {
+          clientName: 'Default APIServer'
+        }
+      }
       let apiServers = await this.$api('ApiServer').get({
-        'filter[where][clientName]': 'Default APIServer'
+        filter: JSON.stringify(filter)
       })
-      if (apiServers.data.length > 0) {
-        this.apiClient.setApiServer(apiServers.data[0])
+      let items = apiServers.data?.items || []
+      if (items.length > 0) {
+        this.apiClient.setApiServer(items[0])
         let result = await this.apiClient.loadOpenAPI()
         if (result.success) {
           let collection = {
