@@ -523,9 +523,9 @@ export default {
       this.$api('role')
         .get({})
         .then(res => {
-          if (res.data && res.data.length) {
+          if (res.data && res.data?.items.length) {
             let options = []
-            res.data.forEach(db => {
+            res.data?.items.forEach(db => {
               if (db.name !== 'admin') {
                 options.push({
                   label: db.name,

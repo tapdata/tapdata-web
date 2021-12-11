@@ -195,7 +195,6 @@
 
 <script>
 import factory from '@/api/factory'
-// const rolesModel = factory('role');
 const roleMappingModel = factory('roleMapping')
 
 let pageSort = [
