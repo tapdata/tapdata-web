@@ -257,7 +257,7 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          this.userOperations = res.data || []
+          this.userOperations = res.data?.items || []
         })
         .finally(() => {
           this.loading = false
