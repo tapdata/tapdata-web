@@ -132,15 +132,15 @@ export default {
       logsModel
         .get({ filter: JSON.stringify(filter) })
         .then(res => {
-          if (res.data && res.data.length > 0) {
+          if (res.data && res.data?.items.length > 0) {
             if (reset || prepend || !this.lastLogsId) {
-              this.lastLogsId = res.data[0].id
+              this.lastLogsId = res.data?.items[0].id
             }
             if (reset || !prepend || !this.firstLogsId) {
-              this.firstLogsId = res.data[res.data.length - 1].id
+              this.firstLogsId = res.data?.items[res.data?.items.length - 1].id
             }
 
-            this.$refs.log.add({ logs: res.data, prepend, reset })
+            this.$refs.log.add({ logs: res.data?.items, prepend, reset })
           } else if (this.search && reset) {
             this.$message.info(this.$t('editor.noResult'))
           }

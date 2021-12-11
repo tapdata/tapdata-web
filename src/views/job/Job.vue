@@ -1182,7 +1182,7 @@ export default {
               .$api('logs')
               .get({ filter: JSON.stringify(filter) })
               .then(res => {
-                if (res.data?.length && this.$route.query && id) {
+                if (res.data?.items?.length && this.$route.query && id) {
                   _this.$refs.errorHandler.checkError({ id, status: this.status }, () => {
                     doStart()
                   })
