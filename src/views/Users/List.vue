@@ -581,11 +581,18 @@ export default {
     },
     // 获取角色关联的用户的数据
     getMappingModel(id) {
+      let filter = {
+        where: {
+          principalId: id
+        }
+      }
       this.$api('roleMapping')
-        .get({ 'filter[where][principalId]': id })
+        .get({
+          filter: JSON.stringify(filter)
+        })
         .then(res => {
-          if (res && res.data) {
-            this.roleMappding = res.data
+          if (res && res.data?.items) {
+            this.roleMappding = res.data.items
             this.createForm.roleusers = res.data.map(item => item.roleId)
           }
         })

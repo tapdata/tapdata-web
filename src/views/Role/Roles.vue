@@ -438,11 +438,18 @@ export default {
       let _this = this
       _this.roleusers = []
       _this.oldUser = []
+      let filter = {
+        where: {
+          roleId: id
+        }
+      }
       await this.$api('roleMapping')
-        .get({ 'filter[where][roleId]': id })
+        .get({
+          filter: JSON.stringify(filter)
+        })
         .then(res => {
-          if (res && res.data) {
-            res.data.forEach(roleMapping => {
+          if (res && res.data?.items) {
+            res.data?.items.forEach(roleMapping => {
               if (roleMapping.principalType === 'USER' && this.userGroup.find(v => v.id === roleMapping.principalId)) {
                 _this.roleusers.push(roleMapping.principalId)
                 _this.oldUser.push(roleMapping)

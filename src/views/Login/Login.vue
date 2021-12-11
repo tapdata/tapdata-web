@@ -102,7 +102,6 @@ export default {
       try {
         let usersModel = this.$api('users')
         let timeStamp = this.$api('TimeStamp')
-        // let roleMappingsModel = this.$api('roleMapping');
         //登陆密码加密
         let timeStampData = await timeStamp.get()
         this.form['stime'] = timeStampData.data

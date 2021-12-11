@@ -447,11 +447,18 @@ export default {
     // 获取用户权限数据
     getMappingData(mappingData, pageData) {
       this.loading = true
+      let filter = {
+        where: {
+          roleId: this.$route.query.id
+        }
+      }
       roleMappingModel
-        .get({ 'filter[where][roleId]': this.$route.query.id })
+        .get({
+          filter: JSON.stringify(filter)
+        })
         .then(res => {
-          if (res && res.data && res.data.length) {
-            res.data.forEach(item => {
+          if (res && res.data && res.data?.items.length) {
+            res.data?.items.forEach(item => {
               if (item.principalType === 'USER') {
                 this.roleusers.push(item.principalId)
               }
@@ -463,7 +470,7 @@ export default {
                 }
               }
             })
-            this.rolemappings = res.data
+            this.rolemappings = res.data.items
             if (pageData.length) {
               pageData.forEach(item => {
                 if (this.selectRole && this.selectRole.length) {
@@ -601,7 +608,7 @@ export default {
               })
             }
           }
-          if (res && res.data && res.data.length === 0) {
+          if (res && res.data && res.data?.items.length === 0) {
             if (mappingData.length)
               mappingData.filter(item => {
                 if (item.children && item.children.length) {
