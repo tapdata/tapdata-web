@@ -110,7 +110,7 @@ export default {
     this.$api('MetadataInstances')
       .get(params)
       .then(res => {
-        this.collections = res.data
+        this.collections = res.data?.items || []
         this.model.collection = this.collections[0].original_name
       })
   },

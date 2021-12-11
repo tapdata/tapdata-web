@@ -171,10 +171,10 @@ export default {
         self.loading = true
         MetadataInstances.get(params)
           .then(res => {
-            if (res.data) {
+            if (res.data?.items) {
               // self.data.splice(0, self.data.length);
               self.data = []
-              res.data.forEach(record => {
+              res.data?.items.forEach(record => {
                 let node = {
                   id: record.id,
                   label: record.name || record.original_name,
@@ -267,10 +267,10 @@ export default {
       self.loading = true
       MetadataInstances.get(params)
         .then(res => {
-          if (res.data) {
+          if (res.data?.items) {
             // self.data.splice(0, self.data.length);
             self.data = []
-            res.data.forEach(record => {
+            res.data?.items.forEach(record => {
               self.data.push({
                 id: record.id,
                 label: record.name || record.original_name,
@@ -339,9 +339,9 @@ export default {
         filter: JSON.stringify(filter)
       }
       MetadataInstances.get(params).then(res => {
-        if (res.data) {
+        if (res.data?.items) {
           let childNodes = []
-          res.data.forEach(record => {
+          res.data?.items.forEach(record => {
             childNodes.push({
               id: record.id,
               _id: record.source._id,

@@ -316,7 +316,7 @@ export default {
       MetadataInstances.get(params).then(res => {
         let self = this
         if (res.data) {
-          self.listdata = res.data
+          self.listdata = res.data?.items || []
         }
         log('listdata', self.listdata)
       })

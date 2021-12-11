@@ -97,7 +97,6 @@ import CreateTable from '@/components/dialog/createTable'
 import FieldMapping from '@/components/FieldMapping'
 import { convertSchemaToTreeData } from '../../util/Schema'
 let connections = factory('connections')
-// const MetadataInstances = factory('MetadataInstances')
 
 // let editorMonitor = null;
 let tempSchemas = []

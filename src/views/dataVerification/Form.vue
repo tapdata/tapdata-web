@@ -31,7 +31,7 @@ export default {
     metaDataFunc(params) {
       return this.$api('MetadataInstances')
         .get(params)
-        .then(res => res.data)
+        .then(res => res.data?.items || [])
     },
     submitFunc(id, params) {
       return this.$api('Inspects')

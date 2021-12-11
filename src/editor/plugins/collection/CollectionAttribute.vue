@@ -478,7 +478,7 @@ export default {
             }
 
             MetadataInstances.get(params).then(res => {
-              let table = res?.data?.[0] || defaultSchema
+              let table = res?.data?.items?.[0] || defaultSchema
               this.defaultSchema = table
               let fields = table.fields || []
               //过滤被删除的字段
@@ -741,7 +741,7 @@ export default {
       }
 
       MetadataInstances.get(params).then(res => {
-        this.databaseData = Object.freeze(res.data)
+        this.databaseData = Object.freeze(res.data?.items || [])
       })
     },
 

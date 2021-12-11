@@ -144,7 +144,7 @@ export default {
       this.$api('MetadataInstances')
         .get(params)
         .then(result => {
-          let data = result.data || []
+          let data = result.data?.items || []
           if (data && data.length !== 0) {
             let fields = data[0].fields || []
             this.fields = fields.map(field => field.field_name)

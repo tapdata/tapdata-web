@@ -586,7 +586,7 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let tables = res.data
+          let tables = res.data?.items || []
           let options = []
           tables.forEach(item => {
             options.push({

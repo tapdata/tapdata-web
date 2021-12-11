@@ -276,7 +276,7 @@ export default {
       this.$api('MetadataInstances')
         .get(params)
         .then(result => {
-          let data = result.data || []
+          let data = result.data?.items || []
           if (data && data.length !== 0) {
             this.metaData = {
               name: data[0].name ? `${data[0].name}(${data[0].original_name})` : data[0].original_name,

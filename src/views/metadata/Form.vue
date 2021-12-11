@@ -294,8 +294,8 @@ export default {
         filter: JSON.stringify(params)
       })
 
-      if (resultData.data) {
-        this.getTableData = resultData.data
+      if (resultData.data?.items) {
+        this.getTableData = resultData.data?.items
       }
     },
     // 获取有效表

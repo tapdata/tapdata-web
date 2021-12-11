@@ -522,7 +522,7 @@ export default {
       }
 
       MetadataInstances.get(params).then(res => {
-        this.databaseData = Object.freeze(res.data)
+        this.databaseData = Object.freeze(res.data?.items || [])
       })
     },
 
@@ -601,7 +601,7 @@ export default {
       }
 
       MetadataInstances.get(params).then(res => {
-        let table = res?.data?.[0]
+        let table = res?.data?.items?.[0]
         if (table) {
           this.model.tableId = table.id
           let params = {

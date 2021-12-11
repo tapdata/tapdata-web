@@ -111,10 +111,10 @@ export default {
       self.loading = true
       MetadataInstances.get(params)
         .then(res => {
-          if (res.data) {
+          if (res.data?.items) {
             // self.data.splice(0, self.data.length);
             self.data = []
-            res.data.forEach(record => {
+            res.data?.items.forEach(record => {
               self.data.push({
                 id: record.id,
                 label: record.name || record.original_name,
