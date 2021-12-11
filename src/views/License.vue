@@ -48,7 +48,7 @@ export default {
         limit: size,
         skip: (current - 1) * size
       }
-      return this.$api('license')
+      return this.$api('Licenses')
         .get({
           filter: JSON.stringify(filter)
         })
@@ -91,7 +91,7 @@ export default {
       let ids = table.multipleSelection?.map(item => item.sid)
       if (ids?.length) {
         this.copyLoading = true
-        this.$api('license')
+        this.$api('Licenses')
           .getSid(ids)
           .then(res => {
             let sid = res?.data?.sid
@@ -120,7 +120,7 @@ export default {
       this.dialogLoading = true
       let ids = this.$refs?.table?.multipleSelection?.map(item => item.sid)
       if (ids?.length) {
-        this.$api('license')
+        this.$api('Licenses')
           .updateLicense({
             sid: ids,
             license: this.license
