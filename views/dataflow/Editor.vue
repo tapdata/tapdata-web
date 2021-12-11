@@ -760,7 +760,7 @@ export default {
 
       this.$refs.paperScroller.autoResizePaper()
 
-      !isNotMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties), true)
+      !isNotMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
     },
 
     nodeSelectedById(id, setActive, deselectAllOthers) {
@@ -1378,9 +1378,13 @@ export default {
 
     handleUpdateName(name) {
       this.dataflow.name = name
-      taskApi.updateById(this.dataflow.id, {
+      taskApi.patch({
+        id: this.dataflow.id,
         name
       })
+      /*taskApi.updateById(this.dataflow.id, {
+        name
+      })*/
     },
 
     handleEditFlush(data) {
