@@ -157,7 +157,7 @@ export default {
           })
         })
         .then(res => {
-          let inspect = res.data[0]
+          let inspect = res.data?.items[0]
           let inspectResult = inspect.InspectResult
           this.inspect = inspect
           this.$api('InspectResults')
