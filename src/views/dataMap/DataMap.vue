@@ -271,8 +271,8 @@ export default {
       metadataDefinitions
         .get(params)
         .then(result => {
-          if (result && result.data) {
-            let items = result.data || []
+          if (result && result.data?.items) {
+            let items = result.data?.items || []
             let rootNode = {
               children: []
             }

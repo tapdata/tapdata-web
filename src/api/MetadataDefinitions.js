@@ -7,7 +7,7 @@ import PublicApi from './publicApi'
 import axios from 'axios'
 export default class MetadataDefinitionsAPI extends PublicApi {
   constructor() {
-    super('/api/MetadataDefinitions')
+    super('/api/MetadataDefinition')
   }
   changeById(params) {
     return axios.patch(`${this.url}/${params.id}`, params)

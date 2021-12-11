@@ -208,10 +208,10 @@ export default {
         MetadataDefinitions.get({
           filter: JSON.stringify(filter)
         }).then(res => {
-          if (res.data) {
+          if (res.data?.items) {
             self.data.splice(0, self.data.length)
             let children = []
-            res.data.forEach(record => {
+            res.data?.items.forEach(record => {
               children.push({
                 id: record.id,
                 parent_id: record.parent_id,
@@ -232,10 +232,10 @@ export default {
         MetadataDefinitions.get({
           filter: JSON.stringify(filter)
         }).then(res => {
-          if (res.data) {
+          if (res.data?.items) {
             self.data.splice(0, self.data.length)
             let children = []
-            res.data.forEach(record => {
+            res.data?.items.forEach(record => {
               children.push({
                 id: record.id,
                 parent_id: record.parent_id,

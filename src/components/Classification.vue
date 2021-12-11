@@ -203,9 +203,9 @@ export default {
         MetadataDefinitions.get({
           filter: JSON.stringify(filter)
         }).then(res => {
-          if (res.data) {
-            this.treeData = this.formatData(res.data)
-            cb && cb(res.data)
+          if (res.data?.items) {
+            this.treeData = this.formatData(res.data?.items || [])
+            cb && cb(res.data?.items || [])
           }
         })
       }
@@ -238,9 +238,9 @@ export default {
         })
       } else {
         MetadataDefinitions.get(params).then(res => {
-          if (res.data) {
+          if (res.data?.items) {
             // this.treeData = this.formatData(res.data);
-            cb && cb(res.data)
+            cb && cb(res.data?.items || [])
           }
         })
       }
