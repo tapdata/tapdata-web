@@ -1,23 +1,37 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '120px'
     },
     defaultModel: {
-      connection_type: 'source_and_target',
-      thin_type: 'SID'
+      connection_type: 'target',
+      thin_type: 'SID',
+      supportUpdatePk: false,
+      pgsql_log_decorder_plugin_name: 'wal2json_streaming'
     },
     items: [
       {
-        type: 'slot',
-        slot: 'name'
+        type: 'radio',
+        field: 'connection_type',
+        label: vm.$t('dataForm.form.connectionType'),
+        customClass: 'large-item',
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        options: [
+          {
+            label: vm.$t('dataForm.form.options.target'),
+            tip: vm.$t('dataForm.form.options.targetTips'),
+            value: 'target'
+          }
+        ],
+        required: true
       },
       {
         type: 'input',
         field: 'database_host',
 
-        disabled: false,
         label: vm.$t('dataForm.form.host'),
         rules: [
           {
@@ -33,18 +47,9 @@ export default function (vm) {
         ]
       },
       {
-        type: 'radio',
-        field: 'thin_type',
-        label: vm.$t('dataForm.form.connectionMode'),
-        options: [
-          { label: 'SID', value: 'SID' },
-          { label: 'SERVICE NAME', value: 'SERVICE_NAME' }
-        ],
-        required: true
-      },
-      {
         type: 'input',
         field: 'database_port',
+        customClass: 'small-item',
         label: vm.$t('dataForm.form.port'),
         required: true,
         rules: [
@@ -68,20 +73,7 @@ export default function (vm) {
         type: 'input',
         field: 'database_name',
         label: vm.$t('dataForm.form.databaseName'),
-        required: true,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'thin_type',
-                value: 'SERVICE_NAME'
-              }
-            ],
-            triggerConfig: {
-              label: vm.$t('dataForm.form.serviceName')
-            }
-          }
-        ]
+        required: true
       },
       {
         type: 'input',
@@ -103,15 +95,40 @@ export default function (vm) {
       },
       {
         type: 'select',
-        field: 'database_datetype_without_timezone',
-        label: vm.$t('dataForm.form.timeZone'),
-        //tips: vm.$t('dataForm.form.timeZoneTips'),
-        options: [],
-        show: true
+        field: 'pgsql_log_decorder_plugin_name',
+        label: vm.$t('dataForm.form.plugin_name'),
+        options: [
+          { label: 'json streaming', value: 'wal2json_streaming' },
+          { label: 'json streaming on rds', value: 'wal2json_rds_streaming' },
+          { label: 'pgoutput', value: 'pgoutput' }
+        ],
+        show: true,
+        required: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'connection_type',
+                value: 'target'
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          }
+        ]
       },
       {
-        type: 'slot',
-        slot: 'timezone',
+        type: 'input',
+        field: 'additionalString',
+        label: vm.$t('dataForm.form.additionalString')
+      },
+      {
+        type: 'select',
+        field: 'database_datetype_without_timezone',
+        label: vm.$t('dataForm.form.timeZone'),
+        tip: '影响类型: DATE',
+        options: [],
         show: true
       }
     ]

@@ -20,9 +20,10 @@
       </div>
       <header class="header">
         <div class="tab">
-          <div class="img-box">
-            <img :src="getImgByType(type)" />
+          <div class="img-box" v-if="type">
+            <img :src="$util.getConnectionTypeDialogImg(type)" />
           </div>
+          <div class="img-box" v-else></div>
           <div class="content">
             <div>{{ name }}</div>
             <div class="status">
@@ -145,7 +146,7 @@
 </template>
 
 <script>
-import { getImgByType, TYPEMAPCONFIG } from './util'
+import { TYPEMAPCONFIG } from './util'
 import formConfig from './config'
 import Test from './Test'
 import VIcon from '@/components/VIcon'
@@ -212,7 +213,6 @@ export default {
     this.clearInterval()
   },
   methods: {
-    getImgByType,
     returnTestData(data) {
       if (!data.status || data.status === null) return
       this.status = data.status
@@ -520,7 +520,10 @@ export default {
           'greenplum',
           'tidb',
           'hana',
-          'clickhouse'
+          'clickhouse',
+          'kundb',
+          'adb_postgres',
+          'adb_mysql'
         ].includes(type)
       ) {
         this.$router.push({

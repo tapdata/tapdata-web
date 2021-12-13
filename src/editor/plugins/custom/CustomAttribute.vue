@@ -175,6 +175,7 @@ export default {
         connectionId: '',
         tableName: '',
         type: 'custom_connection',
+        databaseType: 'custom_connection',
         isFirst: true
       },
       scope: '',

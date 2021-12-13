@@ -294,7 +294,7 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleTableClose()">>{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" @click="handleTableClose()">{{ $t('button_cancel') }}</ElButton>
         <ElButton size="mini" type="primary" @click="handleTableNameSave()">{{ $t('button_confirm') }}</ElButton>
       </span>
     </ElDialog>
@@ -319,7 +319,7 @@
         </ElForm>
       </div>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="handleFieldClose">>{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" @click="handleFieldClose">{{ $t('button_cancel') }}</ElButton>
         <ElButton size="mini" type="primary" @click="handleFieldSave()">{{ $t('button_confirm') }}</ElButton>
       </span>
     </ElDialog>
@@ -424,6 +424,9 @@ export default {
         self.page.total = finished
         if (status !== 'done') {
           self.progress.showProgress = true
+          if (self.fieldMappingNavData?.length < self.page.size && self.page.current === 1) {
+            self.initNavData()
+          }
         } else {
           self.progress.showProgress = false
           self.initNavData()
@@ -632,7 +635,7 @@ export default {
     rollbackAll() {
       this.$confirm(
         this.$t('dag_dialog_field_mapping_error_rollback_all'),
-        this.$t('dag_dialog_field_mapping_error_rollback'),
+        this.$t('dag_dialog_field_mapping_error_tip'),
         {
           type: 'warning'
         }

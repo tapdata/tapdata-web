@@ -1,30 +1,36 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '120px',
+      labelColon: true
     },
     defaultModel: {
       connection_type: 'target'
     },
     items: [
-      // {
-      //   type: 'radio',
-      //   field: 'connection_type',
-      //   label: vm.$t('dataForm.form.connectionType'),
-      //   options: [
-      //     {
-      //       label: vm.$t('dataForm.form.options.target'),
-      //       tip: vm.$t('dataForm.form.options.targetTips'),
-      //       value: 'target'
-      //     }
-      //   ],
-      //   required: true
-      // },
+      {
+        type: 'radio',
+        field: 'connection_type',
+        label: vm.$t('dataForm.form.connectionType'),
+        customClass: 'large-item',
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        options: [
+          {
+            label: vm.$t('dataForm.form.options.target'),
+            tip: vm.$t('dataForm.form.options.targetTips'),
+            value: 'target'
+          }
+        ],
+        required: true
+      },
       {
         type: 'input',
         field: 'database_host',
 
+        disabled: false,
         label: vm.$t('dataForm.form.host'),
         rules: [
           {
@@ -42,6 +48,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_port',
+        customClass: 'small-item',
         label: vm.$t('dataForm.form.port'),
         required: true,
         rules: [
@@ -67,16 +74,31 @@ export default function (vm) {
         label: vm.$t('dataForm.form.databaseName'),
         required: true
       },
-      // {
-      //   type: 'input',
-      //   field: 'database_username',
-      //   label: vm.$t('dataForm.form.userName')
-      // },
+      {
+        type: 'input',
+        field: 'database_username',
+        label: vm.$t('dataForm.form.userName')
+      },
       {
         type: 'input',
         field: 'plain_password',
         label: vm.$t('dataForm.form.password'),
-        domType: 'password'
+        domType: 'password',
+        showPassword: true
+      },
+      {
+        type: 'input',
+        field: 'additionalString',
+        label: vm.$t('dataForm.form.additionalString')
+      },
+      {
+        type: 'select',
+        field: 'database_datetype_without_timezone',
+        label: vm.$t('dataForm.form.timeZone'),
+        //tips: vm.$t('dataForm.form.timeZoneTips'),
+        options: [],
+        show: true,
+        tip: '影响类型: DATE'
       }
     ]
   }

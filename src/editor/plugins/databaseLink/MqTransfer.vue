@@ -2,8 +2,9 @@
   <div class="mq-transfer">
     <el-transfer
       class="topic-transfer"
-      :titles="topicTitles"
       v-model="topicData"
+      filterable
+      :titles="topicTitles"
       :data="data1"
       @left-check-change="firstLeftCheckedFnc"
       @change="firstChangeFnc"
@@ -24,8 +25,9 @@
     </el-transfer>
     <el-transfer
       class="queue-transfer"
-      :titles="queueTitles"
       v-model="queueData"
+      filterable
+      :titles="queueTitles"
       :data="data2"
       :left-default-checked="secondLeftCheckedArr"
       :right-default-checked="secondRightCheckedArr"
@@ -137,6 +139,8 @@ export default {
     },
     loadData() {
       this.data = [...this.source]
+      this.data = this.data.map(item => ({ key: item.original_name, label: item.original_name }))
+
       // // 一开始设置全部数据
       this.data2 = [...this.data]
       this.topicData = this.value?.topicData || []

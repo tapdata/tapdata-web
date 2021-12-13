@@ -10,7 +10,7 @@ export const HiveNodeConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-hive.svg'
+          xlinkHref: 'static/editor/hive.svg'
         },
         label: {
           text: 'hive'

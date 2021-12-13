@@ -3,7 +3,7 @@
     :title="$t('connection.createNewDataSource')"
     :visible="dialogVisible"
     :append-to-body="true"
-    width="730px"
+    width="1030px"
     :before-close="handleClose"
   >
     <ConnectionTypeSelector
@@ -11,6 +11,7 @@
       :commingTypes="comingAllowDatabase"
       :otherTypes="otherType"
       :automationType="automationType"
+      :large="true"
       @select="databaseType"
     ></ConnectionTypeSelector>
   </el-dialog>
@@ -59,7 +60,10 @@ export default {
         'greenplum',
         'tidb',
         'hana',
-        'clickhouse'
+        'clickhouse',
+        'kundb',
+        'adb_postgres',
+        'adb_mysql'
       ],
       comingAllowDatabase: [], // 即将上线
       otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],

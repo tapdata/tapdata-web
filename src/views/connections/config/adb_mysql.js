@@ -5,12 +5,26 @@ export default function (vm) {
       labelWidth: '200px'
     },
     defaultModel: {
-      connection_type: 'source_and_target'
+      connection_type: 'source'
     },
     items: [
       {
-        type: 'slot',
-        slot: 'name'
+        type: 'radio',
+        field: 'connection_type',
+        label: vm.$t('dataForm.form.connectionType'),
+        options: [
+          {
+            label: vm.$t('dataForm.form.options.source'),
+            tip: vm.$t('dataForm.form.options.sourceTips'),
+            value: 'source'
+          }
+          // {
+          //   label: vm.$t('dataForm.form.options.target'),
+          //   tip: vm.$t('dataForm.form.options.targetTips'),
+          //   value: 'target'
+          // }
+        ],
+        required: true
       },
       {
         type: 'input',
@@ -34,6 +48,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_port',
+        customClass: 'small-item',
         label: vm.$t('dataForm.form.port'),
         required: true,
         rules: [
@@ -61,12 +76,6 @@ export default function (vm) {
       },
       {
         type: 'input',
-        field: 'database_owner',
-        label: vm.$t('dataForm.form.databaseOwner'),
-        required: true
-      },
-      {
-        type: 'input',
         field: 'database_username',
         label: vm.$t('dataForm.form.userName')
       },
@@ -78,17 +87,18 @@ export default function (vm) {
         showPassword: true
       },
       {
+        type: 'input',
+        field: 'additionalString',
+        label: vm.$t('dataForm.form.additionalString')
+      },
+      {
         type: 'select',
         field: 'database_datetype_without_timezone',
         label: vm.$t('dataForm.form.timeZone'),
         //tips: vm.$t('dataForm.form.timeZoneTips'),
         options: [],
-        show: true
-      },
-      {
-        type: 'slot',
-        slot: 'timezone',
-        show: true
+        show: true,
+        tip: '影响类型: DATE'
       }
     ]
   }

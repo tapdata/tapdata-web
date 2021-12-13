@@ -70,7 +70,10 @@ export const TYPEMAP = {
   greenplum: 'Greenplum',
   tidb: 'TiDB',
   hana: 'SAP HANA',
-  clickhouse: 'ClickHouse'
+  clickhouse: 'ClickHouse',
+  kundb: 'KunDB',
+  adb_mysql: 'ADB MySQL',
+  adb_postgres: 'ADB PostgreSQL'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {
@@ -140,9 +143,7 @@ export const defaultModel = {
     krb5Keytab: '',
     krb5Conf: '',
     krb5KeytabName: '',
-    krb5KeytabFileName: '',
     krb5ConfName: '',
-    krb5ConfFileName: '',
     krb5Principal: '',
     krb5ServiceName: '',
     kafkaSaslMechanism: 'PLAIN'
@@ -219,6 +220,8 @@ export const defaultModel = {
     custom_type: '',
     collection_name: '',
     unique_keys: '',
+    // connectionTimeOut: '10',
+    // readTimeOut: '30',
     jsEngineName: 'graal.js',
     custom_ondata_script: '',
     custom_cdc_script: '',

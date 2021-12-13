@@ -16,7 +16,7 @@ export const collectionConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-collection.svg'
+          xlinkHref: 'static/editor/collection.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.collection.name')
@@ -253,7 +253,7 @@ export const collectionConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'static/editor/collection2.svg',
+        xlinkHref: 'static/editor/collection.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',

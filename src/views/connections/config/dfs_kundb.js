@@ -1,20 +1,46 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '120px',
+      labelColon: true
     },
     defaultModel: {
       connection_type: 'source_and_target'
     },
     items: [
       {
-        type: 'slot',
-        slot: 'name'
+        type: 'radio',
+        field: 'connection_type',
+        label: vm.$t('dataForm.form.connectionType'),
+        options: [
+          {
+            label: vm.$t('dataForm.form.options.sourceAndTarget'),
+            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+            value: 'source_and_target'
+          },
+          {
+            label: vm.$t('dataForm.form.options.source'),
+            tip: vm.$t('dataForm.form.options.sourceTips'),
+            value: 'source'
+          },
+          {
+            label: vm.$t('dataForm.form.options.target'),
+            tip: vm.$t('dataForm.form.options.targetTips'),
+            value: 'target'
+          }
+        ],
+        required: true,
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
       },
       {
         type: 'input',
         field: 'database_host',
+
+        disabled: false,
         label: vm.$t('dataForm.form.host'),
         rules: [
           {
@@ -32,6 +58,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_port',
+        customClass: 'small-item',
         label: vm.$t('dataForm.form.port'),
         required: true,
         rules: [
@@ -51,12 +78,12 @@ export default function (vm) {
           }
         ]
       },
-      // {
-      //   type: 'input',
-      //   field: 'database_name',
-      //   label: vm.$t('dataForm.form.databaseName'),
-      //   required: true
-      // },
+      {
+        type: 'input',
+        field: 'database_name',
+        label: vm.$t('dataForm.form.databaseName'),
+        required: true
+      },
       {
         type: 'input',
         field: 'database_username',
@@ -71,16 +98,6 @@ export default function (vm) {
       },
       {
         type: 'input',
-        field: 'database_owner',
-        label: vm.$t('dataForm.form.databaseOwner'),
-        required: true
-      },
-      {
-        type: 'slot',
-        slot: 'tableFilter'
-      },
-      {
-        type: 'input',
         field: 'additionalString',
         label: vm.$t('dataForm.form.additionalString')
       },
@@ -90,12 +107,8 @@ export default function (vm) {
         label: vm.$t('dataForm.form.timeZone'),
         //tips: vm.$t('dataForm.form.timeZoneTips'),
         options: [],
-        show: true
-      },
-      {
-        type: 'slot',
-        slot: 'timezone',
-        show: true
+        show: true,
+        tip: '影响类型: DATE'
       }
     ]
   }

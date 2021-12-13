@@ -611,6 +611,11 @@ const childRoutes = [
     path: '/taskProgressInfo',
     name: 'taskProgressInfo',
     component: () => import('@/views/job/TaskProgressInfo')
+  },
+  {
+    path: 'license',
+    name: 'License',
+    component: () => import('@/views/License')
   }
 ]
 

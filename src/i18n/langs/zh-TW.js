@@ -1,4 +1,8 @@
 export default {
+  // 通用提示
+  tips_not_null: '值不能為空',
+  tips_must_number: '值必須為數字',
+
   // 通用按钮
   button_edit: '編輯',
   button_confirm: '確定',
@@ -44,6 +48,8 @@ export default {
   connection_list_column_schema_status: 'Schema加載狀態',
   connection_list_column_schema_status_tips: 'Schema加載完成的連接才可以正常創建任務',
 
+  connection_form_custom_connection_connection_time_out: '連接超時(秒)',
+  connection_form_custom_connection_read_time_out: '讀取超時(秒)',
   connection_form_custom_connection_before_operate: '前置操作',
   connection_form_custom_connection_after_operate: '後置操作',
   connection_kafka_kerberos_attest: 'kerberos 認證',
@@ -103,7 +109,7 @@ export default {
   dag_dialog_field_mapping_batch_table_name: '批量改表名設置',
   dag_dialog_field_mapping_batch_field_name: '批量改字段名設置',
   dag_dialog_field_mapping_example_prefix: '請輸入前綴',
-  dag_dialog_field_mapping_example_suffix: '請輸入前綴',
+  dag_dialog_field_mapping_example_suffix: '請輸入后綴',
   dag_dialog_field_mapping_example_tip: '說明：設置的前後綴也遵循大小寫規則',
   dag_dialog_field_mapping_example_origin_table_name: '原表名',
   dag_dialog_field_mapping_example_change: '修改後',
@@ -119,10 +125,14 @@ export default {
   dag_dialog_field_mapping_error_save_prefix: '檢測到您還有',
   dag_dialog_field_mapping_error_save_suffix: '張表的字段類型設置存在問題，請在左側表區域選擇有問題的表進行處理',
 
+  //任務編輯
+  dag_job_check_source: '作為源僅支持全量任務',
+
   // 緩存節點提示
   task_job_setting_tip_title: '設置提醒',
   task_job_setting_disable: '不去重',
   task_job_tip_text: '該緩存節點(xxx)的設置已存在於任務(###)中，請確認是否還繼續創建？ ',
+  task_job_source_falg: '作為源僅支持全量任務',
   data_flow_automatically: '自動挖掘',
   data_flow_manually: '手動挖掘',
   data_flow_oracle_logminer: 'Oracle日誌挖掘模式',

@@ -93,6 +93,7 @@
                 </span>
               </template>
             </VirtualTransfer>
+
             <!-- MQ穿梭框 start -->
             <template v-else>
               <MqTransfer
@@ -111,6 +112,7 @@
       :title="$t('dag_link_button_custom_script')"
       :visible="!!editScript"
       :close-on-click-modal="false"
+      @close="editScript = ''"
     >
       <CodeEditor v-model="editScript" height="300px"></CodeEditor>
       <div slot="footer" class="dialog-footer">
@@ -207,14 +209,13 @@ export default {
   },
   mounted() {
     let self = this
-    let id = self.$route?.query?.id || ''
     ws.on('metadataTransformerProgress', function (res) {
-      if (res?.data?.stageId === id) {
-        let { status } = res?.data
-        if (status !== 'done') {
-          self.disabledTransfer = true
-        } else {
+      if (!res?.data?.stageId) {
+        let status = res?.data?.status
+        if (status === 'done') {
           self.disabledTransfer = false
+        } else {
+          self.disabledTransfer = true
         }
       }
     })

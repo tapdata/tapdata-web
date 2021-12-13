@@ -24,6 +24,7 @@
             v-model="model.connectionId"
             :placeholder="$t('editor.cell.data_node.es.chooseESName')"
             :clearable="true"
+            @input="handlerConnectionChange"
           >
             <el-option
               v-for="(item, idx) in databases"
@@ -49,12 +50,9 @@
               v-if="dataNodeInfo.isTarget && showFieldMapping"
               ref="fieldMapping"
               class="fr"
-              :dataFlow="dataFlow"
-              :showBtn="true"
-              :isFirst="model.isFirst"
               :isDisable="disabled"
-              :hiddenFieldProcess="true"
-              :stageId="stageId"
+              :transform="model"
+              :getDataFlow="getDataFlow"
               @update-first="returnModel"
             ></FieldMapping>
           </div>
@@ -73,10 +71,11 @@ import FieldMapping from '@/components/FieldMapping'
 import _ from 'lodash'
 import factory from '../../../api/factory'
 let connections = factory('connections')
+import VIcon from '@/components/VIcon'
 // let editorMonitor = null;
 export default {
   name: 'esNode',
-  components: { Entity, FieldMapping },
+  components: { Entity, FieldMapping, VIcon },
   props: {
     database_types: {
       type: Array,
@@ -103,14 +102,19 @@ export default {
       model: {
         connectionId: '',
         type: 'elasticsearch',
+        databaseType: 'elasticsearch',
         chunkSize: 3,
         index: '',
-        databaseType: 'elasticsearch'
+        databaseType: 'elasticsearch',
+        database_name: '',
+        stageId: '',
+        showBtn: true,
+        hiddenFieldProcess: true,
+        isFirst: true,
+        hiddenChangeValue: true
       },
       mergedSchema: null,
       scope: '',
-      dataFlow: '',
-      stageId: '',
       showFieldMapping: false,
       dataNodeInfo: {}
     }
@@ -188,6 +192,7 @@ export default {
 
       if (result.data) {
         this.databases = result.data
+        this.handlerConnectionChange()
       }
     },
 
@@ -208,28 +213,24 @@ export default {
     },
 
     handlerConnectionChange() {
-      this.model.tableName = ''
-      for (let i = 0; i < this.databases.length; i++) {
-        if (this.model.connectionId === this.databases[i].id) {
-          this.model.databaseType = this.databases[i]['database_type']
-        }
-      }
+      let connection = this.databases?.find(item => item.id === this.model.connectionId)
+      this.model.database_name = connection?.database_name || ''
     },
 
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         _.merge(this.model, data)
         this.scope = vueAdapter?.editor?.scope
-        this.stageId = cell.id
+        this.model.stageId = cell.id
         this.getDataFlow()
         let param = {
           stages: this.dataFlow?.stages,
-          stageId: this.stageId
+          stageId: this.model.stageId
         }
         this.$api('DataFlows')
           .tranModelVersionControl(param)
           .then(data => {
-            this.showFieldMapping = data?.data[this.stageId]
+            this.showFieldMapping = data?.data[this.model.stageId]
           })
       }
 
@@ -259,6 +260,7 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      return this.dataFlow
     },
     //接收是否第一次打开
     returnModel(value) {

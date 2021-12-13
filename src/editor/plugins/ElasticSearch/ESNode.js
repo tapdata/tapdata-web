@@ -10,7 +10,7 @@ export const esNodeConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-elasticsearch.svg'
+          xlinkHref: 'static/editor/elasticsearch.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.es.name')
@@ -55,6 +55,8 @@ export const esNodeConfig = {
         data = data || this.getFormData()
         let name = this.attr('label/text')
         if (!data) throw new Error(`${name}: ${i18n.t('editor.cell.data_node.file.none_fileName')}`)
+        if (!data.database_name && !data.index)
+          throw new Error(`${name}: ${i18n.t('editor.cell.data_node.es.chooseIndex')}`)
         return true
       }
     }
@@ -187,7 +189,7 @@ export const esNodeConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'static/editor/elastic-search-clust.svg',
+        xlinkHref: 'static/editor/elasticsearch.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',

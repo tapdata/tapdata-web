@@ -1,4 +1,8 @@
 export default {
+  // 通用提示
+  tips_not_null: '值不能为空',
+  tips_must_number: '值必须为数字',
+
   // 通用按钮
   button_edit: '编辑',
   button_confirm: '确定',
@@ -44,6 +48,8 @@ export default {
   connection_list_column_schema_status: 'Schema加载状态',
   connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
 
+  connection_form_custom_connection_connection_time_out: '连接超时(秒)',
+  connection_form_custom_connection_read_time_out: '读取超时(秒)',
   connection_form_custom_connection_before_operate: '前置操作',
   connection_form_custom_connection_after_operate: '后置操作',
   connection_kafka_kerberos_attest: 'kerberos 认证',
@@ -72,7 +78,6 @@ export default {
   dag_data_node_label_kafka_high_performance_mode: '高性能模式',
   dag_data_node_label_kafka_all: '所有',
   dag_link_button_custom_script: '自定义处理脚本',
-
   //字段映射
   dag_link_button_field_mapping: '字段映射',
   dag_link_button_mapping_configuration: '映射配置',
@@ -104,7 +109,7 @@ export default {
   dag_dialog_field_mapping_batch_table_name: '批量改表名设置',
   dag_dialog_field_mapping_batch_field_name: '批量改字段名设置',
   dag_dialog_field_mapping_example_prefix: '请输入前缀',
-  dag_dialog_field_mapping_example_suffix: '请输入前缀',
+  dag_dialog_field_mapping_example_suffix: '请输入后缀',
   dag_dialog_field_mapping_example_tip: '说明：设置的前后缀也遵循大小写规则',
   dag_dialog_field_mapping_example_origin_table_name: '原表名',
   dag_dialog_field_mapping_example_change: '修改后',
@@ -123,10 +128,13 @@ export default {
   //任务编辑
   dag_data_node_label_clickhouse: 'ClickHouse节点',
   dag_data_node_label_aggregate_filter: '过滤器',
+
+  dag_job_check_source: '作为源仅支持全量任务',
   // 缓存节点提示
   task_job_setting_tip_title: '设置提醒',
   task_job_setting_disable: '不去重',
   task_job_tip_text: '该缓存节点(xxx)的设置已存在于任务(###)中，请确认是否还继续创建？',
+  task_job_source_falg: '作为源仅支持全量任务',
   data_flow_automatically: '自动挖掘',
   data_flow_manually: '手动挖掘',
   data_flow_oracle_logminer: 'Oracle日志挖掘模式',

@@ -1,4 +1,8 @@
 export default {
+  // 通用提示
+  tips_not_null: 'The value cannot be empty',
+  tips_must_number: 'The value must be a number',
+
   // 通用按钮
   button_edit: 'edit',
   button_confirm: 'confirm',
@@ -46,6 +50,8 @@ export default {
   connection_list_column_schema_status: 'Schema loading status',
   connection_list_column_schema_status_tips: 'Connections after Schema loading can be created normally',
 
+  connection_form_custom_connection_connection_time_out: 'Connection timeout (s)',
+  connection_form_custom_connection_read_time_out: 'Read timeout (s)',
   connection_form_custom_connection_before_operate: 'Pre-operation',
   connection_form_custom_connection_after_operate: 'Post-operation',
   connection_kafka_kerberos_attest: 'kerberos authentication',
@@ -125,11 +131,14 @@ export default {
   dag_dialog_field_mapping_error_save_suffix:
     'There is a problem with the field type setting of the table, please select the table with the problem in the table area on the left for processing',
 
+  dag_job_check_source: 'as a source, only full tasks are supported',
+
   //Task edit
   task_job_setting_tip_title: 'Set reminder',
   task_job_setting_disable: 'Do not de-duplicate',
   task_job_tip_text:
     'The setting of the cache node (xxx) already exists in the task (###), please confirm whether to continue to create it? ',
+  task_job_source_falg: 'as a source, only full tasks are supported',
   data_flow_automatically: 'automatically',
   data_flow_manually: 'manually',
   data_flow_oracle_logminer: 'Oracle Logminer Mode',

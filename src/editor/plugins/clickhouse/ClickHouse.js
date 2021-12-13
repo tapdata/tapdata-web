@@ -10,7 +10,7 @@ export const ClickHouseConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-click.svg'
+          xlinkHref: 'static/editor/click.svg'
         },
         label: {
           text: 'Clickhouse'
