@@ -347,8 +347,8 @@
       <div class="table-box flex flex-column">
         <div
           v-if="form.batchOperationList.length !== 0"
-          class="flex flex-row flex-1 mb-3"
-          v-for="ops in form.batchOperationList"
+          class="flex flex-row flex-1 mb-3 align-items-center"
+          v-for="(ops,index) in form.batchOperationList"
         >
           <ElSelect class="mr-3" size="mini" v-model="ops.sourceType" :disabled="true">
             <ElOption
@@ -358,7 +358,7 @@
               :key="index"
             ></ElOption>
           </ElSelect>
-          <span class="mr-3"> >> </span>
+          <VIcon class="color-primary mr-3 ">right</VIcon>
           <ElSelect size="mini" v-model="ops.targetType">
             <ElOption
               :label="item.dbType"
@@ -367,9 +367,10 @@
               :key="index"
             ></ElOption>
           </ElSelect>
+          <VIcon v-if="index === 0 && showAddBtn" class="ml-3 clickable" @click="handleBatchOperation">add</VIcon>
         </div>
-        <div class="flex flex-row flex-1 mb-3" v-for="(ops, index) in batchOperation">
-          <ElSelect class="mr-3" size="mini" v-model="ops.sourceType">
+        <div class="flex flex-row flex-1 mb-3 align-items-center" v-for="(ops, index) in batchOperation">
+          <ElSelect class="mr-3" size="mini" clearable v-model="ops.sourceType" @visible-change="handleChangeSourceType">
             <ElOption
               :label="item.dbType"
               :value="item.dbType"
@@ -377,8 +378,8 @@
               :key="index"
             ></ElOption>
           </ElSelect>
-          <span class="mr-3"> >> </span>
-          <ElSelect class="mr-3" size="mini" v-model="ops.targetType">
+          <VIcon class="mr-3 color-primary">right</VIcon>
+          <ElSelect class="mr-3" size="mini" clearable v-model="ops.targetType">
             <ElOption
               :label="item.dbType"
               :value="item.dbType"
@@ -386,7 +387,8 @@
               :key="index"
             ></ElOption>
           </ElSelect>
-          <span v-if="index === 0" class="ml-3 clickable" @click="handleBatchOperation"> + </span>
+          <VIcon v-if="index === 0 && !showAddBtn" class="ml-3 clickable" @click="handleBatchOperation">add</VIcon>
+          <VIcon class="ml-3 clickable" @click="removeBatchOperation(index)">remove</VIcon>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -479,7 +481,8 @@ export default {
           targetType: ''
         }
       ],
-      sourceList: []
+      sourceList: [],
+      showAddBtn: false //展示新增按钮
     }
   },
   mounted() {
@@ -658,11 +661,11 @@ export default {
       this.updateTableData(id, `t_${key}`, value)
     },
     /*更新左边表导航 重新推演*/
-    updateParentMetaData(type, data) {
+    updateParentMetaData(type, data,batchOperation) {
       this.loadingPage = true
       this.$nextTick(() => {
         this.updateMetadata &&
-          this.updateMetadata(type, data)
+          this.updateMetadata(type, data,batchOperation)
             .then(data => {
               this.$emit('update-nav', data)
               this.selectRow = data[this.position]
@@ -687,6 +690,13 @@ export default {
     handleBatchDataType() {
       //锁定源表字段去重
       this.dialogDataTypeVisible = true
+      if(this.form.batchOperationList?.length === 0){
+        this.intiBatchOperation()
+        this.showAddBtn = false
+      }else {
+        this.batchOperation = [] //二次渲染清空当前操作
+        this.showAddBtn = true
+      }
       this.filterBatchOperationList()
     },
     /*表改名称弹窗取消*/
@@ -712,7 +722,12 @@ export default {
         this.sourceList = this.typeMapping
       } else {
         this.form.batchOperationList.forEach(item => {
-          this.sourceList = this.typeMapping.filter(v => v !== item.sourceType)
+          this.sourceList = this.typeMapping.filter(v => v.dbType !== item.sourceType)
+        })
+      }
+      if (this.batchOperation?.length >= 0 && this.batchOperation) {
+        this.batchOperation.forEach(item => {
+          this.sourceList = this.sourceList.filter(v => v.dbType !== item.sourceType)
         })
       }
     },
@@ -722,6 +737,14 @@ export default {
         targetType: ''
       }
       this.batchOperation.push(node)
+    },
+    removeBatchOperation(index){
+      this.batchOperation.splice(index,1)
+    },
+    handleChangeSourceType(val){
+     if(val){ //下拉框打开重新过滤去重sourceList
+       this.filterBatchOperationList()
+     }
     },
     /*表改名弹窗保存*/
     handleTableNameSave() {
@@ -737,11 +760,29 @@ export default {
     },
     /*字段类型弹窗保存*/
     handleDataTypeSave() {
+      let verify = true
+      this.batchOperation.forEach(v =>{
+        if(v.sourceType===''){
+          verify = false
+        }
+      })
+      if(!verify){
+        this.$message.error("请先选择需要源表/目标表转换的类型")
+        return
+      }
       this.dialogDataTypeVisible = false
       this.copyForm()
       //将新增push到batchOperationList
+      this.form.batchOperationList = this.form.batchOperationList || []
       this.form.batchOperationList.push(...this.batchOperation)
-      this.updateParentMetaData('dataType', this.form)
+      this.updateParentMetaData('dataType', this.form,this.batchOperation)
+      this.intiBatchOperation()
+    },
+    intiBatchOperation(){
+      this.batchOperation = [{
+        sourceType: '',
+        targetType: ''
+      }]
     },
     /*copy 当前form*/
     copyForm() {
@@ -764,7 +805,7 @@ export default {
             table_suffix: '',
             batchOperationList:'',
           }
-          this.batchOperation =[]
+          this.intiBatchOperation()
           this.copyForm()
           this.$nextTick(() => {
             this.loadingPage = true

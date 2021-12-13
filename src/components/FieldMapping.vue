@@ -222,10 +222,15 @@ export default {
       return result.fieldsNameTransform
     },
     //获取左边导航数据 - 表
-    async updateMetadata(type, data) {
+    async updateMetadata(type, data,batchOperation) {
       //将表改名 字段改名 rockBackAll
       this.updateAutoTransform(type, data)
-      this.dataFlow['rollback'] = 'all'
+      if(type !=='dataType'){
+        this.dataFlow['rollback'] = 'all'
+      }
+      if(batchOperation){
+        this.dataFlow['batchOperation'] = batchOperation
+      }
       let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
       this.initWSSed() //发送ws 监听schema进度
       return promise?.data
