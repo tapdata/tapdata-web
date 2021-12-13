@@ -283,7 +283,7 @@ export default {
       modules.get(params).then(res => {
         let self = this
         if (res.data) {
-          self.listdata = res.data
+          self.listdata = res.data?.items || []
         }
       })
     },
