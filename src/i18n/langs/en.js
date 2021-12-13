@@ -441,9 +441,9 @@ export default {
   task_stop_task: 'Stop task',
   task_forced_stop: 'Forced stop',
   task_operation_monitor: 'Operation monitoring',
-  task_initial_sync: 'full amount',
-  task_cdc: 'Incremental',
-  task_initial_sync_cdc: 'full amount + increment',
+  task_initial_sync: 'initial_sync',
+  task_cdc: 'cdc',
+  task_initial_sync_cdc: 'initial_sync + cdc',
   task_reset_tsk: 'Do you want to reset this task? ',
   task_reset: 'Reset',
   task_reset_success: 'Reset success',
@@ -622,6 +622,30 @@ export default {
   task_setting_automatic_ddl_tip:
     'Automatic DDL operations support the renaming of fields and indexes, as well as operations such as adding, deleting, and updating',
   task_setting_automatic_index: 'Automatically create index',
+
+  task_instance_select_area: 'Select area',
+  task_instance_choose_area: 'Select Availability Zone',
+
+  milestone_label_init_dataflow: '[Preliminary preparation] Analyze dag path creation subtask',
+  milestone_label_connect_to_source: '[Preliminary preparation] Connect to the source data source',
+  milestone_label_connect_to_target: '[Preliminary preparation] Connect the target data source',
+  milestone_label_init_connector:
+    '[Preliminary preparation] Scan the source information and initialize the source collector',
+  milestone_label_init_transformer:
+    '[Preliminary preparation] Scan the target information and initialize the target processor',
+  milestone_label_read_source_ddl: '[Preliminary preparation] Read source ddl information',
+  milestone_label_drop_target_schema: '[Preliminary preparation] Delete target model',
+  milestone_label_clear_target_data: '[Preliminary preparation] Clear target table data',
+  milestone_label_create_target_table: '[Preliminary preparation] Automatically create a target table',
+  milestone_label_create_target_index: '[Preliminary preparation] Create target table index',
+  milestone_label_create_target_view: '[Preliminary preparation] Automatically create a target view',
+  milestone_label_create_target_function: '[Preliminary preparation] Automatically create target function',
+  milestone_label_create_target_procedure:
+    '[Preliminary preparation] Automatically create a target-side stored procedure',
+  milestone_label_read_snapshot: '[Data Transmission] Read all source data snapshot',
+  milestone_label_write_snapshot: '[Data Transmission] The target end writes a snapshot of the data',
+  milestone_label_read_cdc_event: '[Data Transmission] The source collector enters incremental reading mode',
+  milestone_label_write_cdc_event: '[Data Transmission] Target processor enters incremental write mode',
 
   // 数据校验
   verify_type: 'Type',
