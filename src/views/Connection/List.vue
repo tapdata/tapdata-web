@@ -417,6 +417,8 @@ export default {
       )}</p>`
       this.$confirm(msg, this.$t('connection_list_delete_connection_title'), {
         type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel'),
         dangerouslyUseHTMLString: true
       }).then(async resFlag => {
         if (resFlag) {

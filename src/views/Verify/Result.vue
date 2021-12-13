@@ -23,7 +23,7 @@
     <div v-if="errorMsg && type === 'row_count'" class="error-tips mt-4 px-4">
       <VIcon class="color-danger">error</VIcon>
       <span>
-        <ElLink type="danger" @click="showErrorMessage">查看详情</ElLink>
+        <ElLink type="danger" @click="showErrorMessage">{{ this.$t('verify_see_details') }}</ElLink>
         <VIcon class="ml-2 color-info" size="12">close</VIcon>
       </span>
     </div>
