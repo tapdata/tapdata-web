@@ -14,6 +14,7 @@ import 'ace-builds/webpack-resolver'
 import 'ace-builds/src-noconflict/ext-language_tools'
 import 'ace-builds/src-noconflict/ext-searchbox'
 import 'ace-builds/src-noconflict/theme-one_dark'
+import 'ace-builds/src-noconflict/ext-beautify'
 
 const ACTION_EVENTS = ['change', 'blur', 'focus', 'copy', 'paste', 'input']
 
@@ -57,8 +58,9 @@ export default {
 
     let editor = (this.editor = ace.edit(this.$el))
     let tools = ace.require('ace/ext/language_tools')
+    var beautify = ace.require('ace/ext/beautify') // get reference to extension
     ace.require('ace/ext/searchbox')
-    this.$emit('init', editor, tools)
+    this.$emit('init', editor, tools, beautify)
 
     editor.$blockScrolling = Infinity
     let session = editor.getSession()
