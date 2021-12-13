@@ -571,6 +571,7 @@ export default {
       // 创建节点
       let nodeType
       nodes.forEach(node => {
+        delete node.outputSchema // 粗暴删除不需要的节点属性
         nodeType = getNodeType(node)
 
         if (nodeType !== null) {
