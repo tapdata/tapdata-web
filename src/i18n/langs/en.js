@@ -66,7 +66,7 @@ export default {
   header_log_out_tip: 'Are you sure you want to log out? ',
   header_notify: 'Notification',
   header_notification_content: 'Notification content',
-  header_your: 'Your',
+  header_your: 'Your ',
   header_no_notice: 'No notice yet',
   header_setting: 'Settings',
   header_view_notifications: 'View all notifications',
@@ -537,6 +537,39 @@ export default {
   task_monitor_topic_expressionL: 'topic expression',
   task_monitor_migration_task: 'Migration task',
   task_monitor_sync_task: 'Synchronous task',
+
+  task_setting_sync_type: 'Sync type',
+  task_setting_initial_sync: 'Full synchronization',
+  task_setting_cdc: 'Incremental synchronization',
+  task_setting_initial_sync_cdc: 'Full volume + incremental synchronization',
+  task_setting_initial_sync_tip:
+    'Full synchronization is also called initial synchronization, that is, the source data snapshot is read at the start of the task and synchronized to the target; this synchronization has two modes: update write, delete rewrite. ',
+  task_setting_cdc_tip:
+    'Incremental synchronization refers to the collection and analysis of the stored source-end change log from the start of the task, the orderly synchronization of data changes to the target end, and support for addition, deletion, and modification operations. ',
+  task_setting_initial_sync_cdc_tip:
+    'Select the full + incremental synchronization mode, the task will automatically enter the incremental synchronization state after the full synchronization is completed. ',
+  task_setting_full_write_mode: 'Full write mode',
+  task_setting_update_write_mode: 'Update write mode',
+  task_setting_remoive_rewrite_mode: 'Remove rewrite mode',
+  task_setting_update_write_mode_tip:
+    'The update write mode will determine whether each piece of data at the source end exists on the target end, if it exists, it will be updated, and if it does not exist, it will be added. ',
+  task_setting_remoive_rewrite_mode_tip:
+    'Delete overwrite mode will first empty the data in the target table, and then synchronize all the source data to the target, ensuring that the data on the source and target are completely consistent. ',
+  task_setting_read_number: 'Number of reads per time',
+  task_setting_read_number_cannot_empty: 'The number of reads per time cannot be empty, the default is 1000',
+  task_setting_read_number_ranges: 'The number of reads per time ranges from 1 to 10000',
+  task_setting_read_number_only_number: 'The number of each read can only be a number',
+  task_setting_stop_on_error: 'Encountered an error to stop',
+  task_setting_incremental_concurrency_switch: 'Whether to enable incremental concurrency',
+  task_setting_incremental_concurrency: 'Incremental Concurrency',
+  task_setting_incremental_concurrency_cannot_empty: 'Incremental concurrency cannot be empty, the default is 8',
+  task_setting_incremental_concurrency_only_number: 'Incremental concurrent number can only be a number',
+  task_setting_no_primary_sync_switch: 'Whether there is no primary key synchronization',
+  task_setting_two_way_switch: 'Whether it is two-way',
+  task_setting_automatic_ddl: 'Automatic DDL',
+  task_setting_automatic_ddl_tip:
+    'Automatic DDL operations support the renaming of fields and indexes, as well as operations such as adding, deleting, and updating',
+  task_setting_automatic_index: 'Automatically create index',
 
   // 数据校验
   verify_type: 'Type',

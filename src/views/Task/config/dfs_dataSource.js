@@ -3,7 +3,7 @@ export default function () {
   return {
     form: {
       labelPosition: 'left',
-      labelWidth: '100px',
+      labelWidth: '120px',
       labelColon: true,
       size: 'small'
     },
