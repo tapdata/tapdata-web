@@ -85,15 +85,14 @@ export class Join extends NodeType {
         default: [{ left: '', right: '', expression: '=' }],
         'x-decorator': 'FormItem',
         'x-component': 'JoinExpression',
+        'x-validator': `{{(value) => {
+          console.log("连接字段校验", value)
+          return '' 
+          if(!value || !value.length) return '请添加字段'
+          let item = value.find(item => !item.left || !item.right)
+          return item ? '请完成字段设置配置' : ''
+        }}}`,
         'x-reactions': [
-          /*{
-            dependencies: ['sourceNode'],
-            fulfill: {
-              state: {
-                sourceNode: '{{$deps[0]}}'
-              }
-            }
-          },*/
           {
             dependencies: ['leftNodeId', 'rightNodeId']
           },

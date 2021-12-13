@@ -175,13 +175,20 @@ class MoveNodeCommand extends Command {
     this.newProperties = newProperties
   }
 
+  /**
+   * 执行更新节点坐标
+   * @param state
+   * @param properties
+   */
   updatePosition(state, properties) {
     state.instance.setSuspendDrawing(true)
     properties.forEach(info => {
       state.store.commit('dataflow/updateNodeProperties', info)
     })
+
     Vue.nextTick(() => {
       state.instance.setSuspendDrawing(false, true)
+      // state.store.dispatch('dataflow/updateDag') // 自动保存
     })
   }
 

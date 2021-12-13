@@ -36,6 +36,7 @@ import { action } from '@formily/reactive'
 import { validateBySchema } from 'web-core/components/form/utils/validate'
 import ConnectionsApi from 'web-core/api/Connections'
 import MetadataApi from 'web-core/api/MetadataInstances'
+import { debounce } from 'lodash'
 // import 'web-core/components/form/styles/index.scss'
 
 const { SchemaField } = createSchemaField({
@@ -946,27 +947,26 @@ export default {
     },
 
     // 更新节点属性
-    updateNodeProps(form) {
-      const filterProps = ['id', 'isSource', 'isTarget'] // 排除属性的更新
+    updateNodeProps: debounce(function (form) {
+      const filterProps = ['id', 'isSource', 'isTarget', 'attrs', 'sourceNode'] // 排除属性的更新
       this.updateNodeProperties({
         id: this.node.id,
         properties: JSON.parse(
           JSON.stringify(form.values, (key, value) => (filterProps.includes(key) ? undefined : value))
         )
       })
-    },
+      this.updateDag()
+    }, 100),
 
     // 绑定表单事件
     useEffects() {
       onFormValuesChange(form => {
         console.log('onFormValuesChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
+        this.updateNodeProps(form)
       })
       onFormInputChange(form => {
         console.log('onFormInputChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
-        this.$nextTick(() => {
-          this.updateNodeProps(form)
-          this.updateDag()
-        })
+        this.updateNodeProps(form)
       })
     }
   }
