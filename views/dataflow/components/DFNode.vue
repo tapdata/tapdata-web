@@ -208,7 +208,7 @@ export default {
               })
               newProperties.push(updateInformation)
 
-              this.updateNodeProperties(updateInformation)
+              // this.updateNodeProperties(updateInformation)
             })
           }
 

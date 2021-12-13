@@ -1,6 +1,6 @@
 <template>
   <div class="setting-panel">
-    <ElForm :model="settings" class="setting-panel-form" label-width="110px" label-position="left">
+    <ElForm :model="settings" class="setting-panel-form" label-width="110px" label-position="left" size="small">
       <ElTabs v-model="settingPanelType" class="setting-tabs h-100">
         <ElTabPane label="基本设置" name="base">
           <div class="setting-panel-box bg-white">
@@ -81,7 +81,7 @@
                   </ElFormItem>
                 </ElCol>
                 <ElCol :span="12">
-                  <ElFormItem label-width="110" label="增量数据处理模式">
+                  <ElFormItem label="增量数据处理模式">
                     <ElSelect v-model="settings.increOperationMode">
                       <ElOption label="批量" :value="false"></ElOption>
                       <ElOption label="逐条" :value="true"></ElOption>
@@ -91,11 +91,10 @@
               </ElRow>
               <ElRow>
                 <ElCol :span="12">
-                  <ElFormItem label-width="110" label="增量同步间隔(ms)">
+                  <ElFormItem label="增量同步间隔(ms)">
                     <ElInputNumber
                       v-model="settings.increaseSyncInterval"
                       :min="0"
-                      size="mini"
                       controls-position="right"
                     ></ElInputNumber>
                   </ElFormItem>
@@ -105,7 +104,6 @@
                     <ElInputNumber
                       v-model="settings.increaseReadSize"
                       :min="1"
-                      size="mini"
                       controls-position="right"
                     ></ElInputNumber>
                   </ElFormItem>
@@ -116,7 +114,6 @@
                       v-model="settings.processorThreadNum"
                       :min="1"
                       :max="100"
-                      size="mini"
                       controls-position="right"
                     ></ElInputNumber>
                   </ElFormItem>

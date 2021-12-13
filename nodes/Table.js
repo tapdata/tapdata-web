@@ -20,6 +20,16 @@ export class Table extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
+      isSource: {
+        type: 'boolean',
+        'x-visible': false,
+        'x-reactions': '{{isSource}}'
+      },
+      isTarget: {
+        type: 'boolean',
+        'x-visible': false,
+        'x-reactions': '{{isTarget}}'
+      },
       connectionId: {
         type: 'string',
         title: '数据库',
@@ -44,9 +54,24 @@ export class Table extends NodeType {
         },
         'x-component': 'Select',
         'x-component-props': {
-          config: { placeholder: '请选择表，区分大小写' }
+          allowCreate: false,
+          filterable: true
         },
-        'x-reactions': '{{useAsyncDataSource(loadDatabaseTable)}}'
+        'x-reactions': [
+          '{{useAsyncDataSource(loadDatabaseTable)}}',
+          {
+            dependencies: ['isTarget'],
+            fulfill: {
+              state: {
+                title: '{{$deps[0] ? "表(可输入创建新表)" : "表"}}'
+              },
+              schema: {
+                title: '{{console.log("tableName", $deps[0]),$deps[0] ? "表(可输入创建新表)" : "表"}}',
+                'x-component-props.allowCreate': '{{$deps[0]}}'
+              }
+            }
+          }
+        ]
       },
       name: {
         type: 'string',
@@ -59,16 +84,6 @@ export class Table extends NodeType {
             }
           }
         }
-      },
-      isSource: {
-        type: 'boolean',
-        'x-visible': false,
-        'x-reactions': '{{isSource}}'
-      },
-      isTarget: {
-        type: 'boolean',
-        'x-visible': false,
-        'x-reactions': '{{isTarget}}'
       },
       sourceNodeConfig: {
         type: 'void',
@@ -306,16 +321,18 @@ export class Table extends NodeType {
           },
           updateConditionFields: {
             title: '更新条件字段',
-            type: 'string',
+            type: 'array',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               wrapperWidth: 240
             },
             'x-component': 'Select',
             'x-component-props': {
+              allowCreate: true,
               multiple: true,
-              collapseTags: true
-            }
+              filterable: true
+            },
+            'x-reactions': ['{{useAsyncDataSource(loadNodeFieldNames)}}']
           }
         }
       }

@@ -516,7 +516,7 @@ export default {
       let data
       try {
         data = await taskApi.get([id]) // this.creatUserId = result.user_id
-        if (data.temp) data = data.temp // 和后端约定了，如果缓存有数据则获取temp
+        if (data.temp) data.dag = data.temp // 和后端约定了，如果缓存有数据则获取temp
       } catch (e) {
         this.$showError(e, '任务加载出错', '加载任务出现的问题:')
         return
@@ -760,7 +760,7 @@ export default {
 
       this.$refs.paperScroller.autoResizePaper()
 
-      !isNotMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties), true)
+      !isNotMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
     },
 
     nodeSelectedById(id, setActive, deselectAllOthers) {
@@ -1005,13 +1005,13 @@ export default {
         this.dataflow.id = dataflow.id
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
-        this.$message.success(this.$t('message.saveOK'))
+        // this.$message.success(this.$t('message.saveOK'))
         await this.$router.replace({
           name: 'DataflowEditor',
           params: { id: dataflow.id, action: 'dataflowSave' }
         })
       } catch (e) {
-        this.$showError(e, '数据流保存出错', '出现的问题:')
+        this.$showError(e, '任务保存出错', '出现的问题:')
       }
     },
 
@@ -1378,9 +1378,13 @@ export default {
 
     handleUpdateName(name) {
       this.dataflow.name = name
-      taskApi.updateById(this.dataflow.id, {
+      taskApi.patch({
+        id: this.dataflow.id,
         name
       })
+      /*taskApi.updateById(this.dataflow.id, {
+        name
+      })*/
     },
 
     handleEditFlush(data) {

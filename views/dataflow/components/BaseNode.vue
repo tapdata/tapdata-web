@@ -79,7 +79,6 @@ $height: 40px;
     flex: auto;
     width: 0;
     font-size: 14px;
-    line-height: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
