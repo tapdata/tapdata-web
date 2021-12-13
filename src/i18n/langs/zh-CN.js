@@ -202,11 +202,18 @@ export default {
   function_class_name_label: '类名',
   function_method_name_label: '方法名',
   function_script_label: '代码详情',
+  function_script_empty: '请输入函数代码',
+  function_script_missing_function_name: '缺少函数名',
+  function_script_missing_function_body: '缺少函数体',
+  function_script_format_error: '函数格式不正确',
+  function_script_only_one: '只允许创建一个函数',
   function_import_list_title: '函数列表',
   function_button_load_function: '加载函数',
   function_message_load_function_fail: '加载函数失败',
   function_dialog_setting_title: '函数设置',
   function_message_function_empty: '请上传jar包文件并加载函数',
+  function_message_delete_title: '删除函数',
+  function_message_delete_content: '删除可能会导致已调用该函数的任务报错，确定删除该函数吗？',
 
   // 用户
   login_fail_too_many: '密码错误达到最大次数，请于10分钟后再登录'

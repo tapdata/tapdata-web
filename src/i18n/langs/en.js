@@ -210,11 +210,19 @@ export default {
   function_class_name_label: 'Class name',
   function_method_name_label: 'Method name',
   function_script_label: 'Code details',
+  function_script_empty: 'Please enter the function code',
+  function_script_missing_function_name: 'Missing function name',
+  function_script_missing_function_body: 'Missing function body',
+  function_script_format_error: 'The function format is incorrect',
+  function_script_only_one: 'Only one function is allowed to be created',
   function_import_list_title: 'Function list',
   function_button_load_function: 'Load function',
   function_message_load_function_fail: 'Load function fail',
   function_dialog_setting_title: 'Function setting',
   function_message_function_empty: 'Please upload the jar file and load the function',
+  function_message_delete_title: 'Delete function',
+  function_message_delete_content:
+    'Deletion may cause the task that has called this function to report an error. Are you sure to delete this function? ',
 
   // 用户
   login_fail_too_many: 'The maximum number of password errors has been reached, please log in after 10 minutes'

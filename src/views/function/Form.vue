@@ -41,14 +41,6 @@
               <CodeEditor v-model="form.script" ref="editor" lang="javascript" height="200"></CodeEditor>
             </div>
           </ElFormItem>
-          <!-- <ElFormItem prop="function_name" :label="$t('function_name_label') + ':'">
-            <ElInput
-              v-model="form.function_name"
-              class="form-input"
-              :placeholder="$t('function_name_placeholder')"
-              @input="changeName"
-            ></ElInput>
-          </ElFormItem> -->
           <ElFormItem prop="describe" :label="$t('function_describe_label') + ':'">
             <ElInput
               v-model="form.describe"
@@ -124,15 +116,15 @@ export default {
         validator: (rule, value, callback) => {
           let obj = getScriptObj(value)
           if (!value.trim()) {
-            callback(new Error('请输入函数'))
+            callback(new Error(this.$t('function_script_empty')))
           } else if (!obj.name.trim()) {
-            callback(new Error('缺少函数名'))
+            callback(new Error(this.$t('function_script_missing_function_name')))
           } else if (!obj.body.trim()) {
-            callback(new Error('缺少函数体'))
+            callback(new Error(this.$t('function_script_missing_function_body')))
           } else if (self.$refs.editor.editor.session.$annotations.some(item => item.type !== 'info')) {
-            callback(new Error('函数格式不正确'))
+            callback(new Error(this.$t('function_script_format_error')))
           } else if (obj.bodyLength.length > 1) {
-            callback(new Error('只允许创建一个函数'))
+            callback(new Error(this.$t('function_script_only_one')))
           } else {
             callback()
           }
@@ -236,7 +228,7 @@ export default {
     }
   }
   .script-editor {
-    width: 800px;
+    width: 940px;
   }
   .form-input {
     max-width: 600px;

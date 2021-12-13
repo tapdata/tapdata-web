@@ -114,12 +114,7 @@ export default {
       })
     },
     remove(item) {
-      const h = this.$createElement
-      let message = h('p', [
-        this.$t('message_delete_confirm') + ' ',
-        h('span', { style: { color: '#409EFF' } }, item.function_name)
-      ])
-      this.$confirm(message, this.$t('message_title_prompt'), {
+      this.$confirm(this.$t('function_message_delete_content'), this.$t('function_message_delete_title'), {
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {

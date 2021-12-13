@@ -202,11 +202,18 @@ export default {
   function_class_name_label: '類名',
   function_method_name_label: '方法名',
   function_script_label: '代碼詳情',
+  function_script_empty: '請輸入函數代碼',
+  function_script_missing_function_name: '缺少函數名',
+  function_script_missing_function_body: '缺少函數體',
+  function_script_format_error: '函數格式不正確',
+  function_script_only_one: '只允許創建一個函數',
   function_import_list_title: '函數列表',
   function_button_load_function: '加載函數',
   function_message_load_function_fail: '加载函數失败',
   function_dialog_setting_title: '函數设置',
   function_message_function_empty: '請上傳jar包文件並加載函數',
+  function_message_delete_title: '刪除函數',
+  function_message_delete_content: '刪除可能會導致已調用該函數的任務報錯，確定刪除該函數嗎？',
 
   // 用户
   login_fail_too_many: '密碼錯誤達到最大次數，請於10分鐘再登錄'
