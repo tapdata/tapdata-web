@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TableList :remoteMethod="remoteMethod" :remote-data="ids" :columns="columns" hide-on-single-page>
+    <TableList :remoteMethod="remoteMethod" :remote-data="ids" :columns="columns" :hide-on-single-page="true">
       <template slot="desc" slot-scope="scope">
         <span>{{ mapData[scope.row.operation] }}</span>
       </template>

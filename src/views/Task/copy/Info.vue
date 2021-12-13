@@ -9,9 +9,9 @@
           :status="task.isFinished ? 'finished' : task.status || 'running'"
           only-img
         ></StatusTag>
-        <span class="ml-6 font-color-sub">
-          所属Agent：<span>{{ task.belongAgent }}</span>
-        </span>
+        <!--        <span class="ml-6 font-color-sub">-->
+        <!--          所属Agent：<span>{{ task.belongAgent }}</span>-->
+        <!--        </span>-->
         <span class="ml-6 font-color-sub">
           创建人：<span>{{ task.creator }}</span>
         </span>
@@ -375,6 +375,47 @@ export default {
     },
     edit() {
       console.log('编辑') // eslint-disable-line
+      let row = this.task || {}
+      this.handleDetail(row.id, 'edit', row.mappingTemplate, row.hasChildren)
+    },
+    handleDetail(id, type, mappingTemplate, hasChildren) {
+      // 子选项 hasChildren 为 true
+      if (hasChildren) {
+        return
+      }
+      if (type === 'edit') {
+        this.$confirm(
+          '<p>编辑任务如果修改了<span style="color:#409EFF">节点排版流程</span>、' +
+            '<span style="color:#409EFF">节点属性</span>、' +
+            '<span style="color:#409EFF">匹配关系</span>,' +
+            '提交后必须<span style="color:#409EFF">重置</span>才能正常运行, 否则可能导致异常错误，请问您要继续编辑吗?</p>',
+          '重要提醒',
+          {
+            dangerouslyUseHTMLString: true,
+            customClass: 'dataflow-clickTip',
+            confirmButtonText: '继续编辑',
+            type: 'warning'
+          }
+        ).then(resFlag => {
+          if (resFlag) {
+            this.$router.push({
+              path: '/task/' + id
+            })
+          }
+        })
+      } else {
+        this.$router.push({
+          name: 'Monitor',
+          params: {
+            id: id
+          }
+        })
+      }
+      setTimeout(() => {
+        document.querySelectorAll('.el-tooltip__popper').forEach(it => {
+          it.outerHTML = ''
+        })
+      }, 200)
     },
     async changeStatus({ status, errorEvents }) {
       let where = {

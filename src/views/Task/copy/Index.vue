@@ -193,6 +193,9 @@ export default {
     .table-list {
       height: 300px;
     }
+    .el-tab-pane {
+      height: 450px;
+    }
   }
 }
 </style>

@@ -1,8 +1,9 @@
 <template>
   <div class="">
     <!--  步骤条  -->
-    <ElSteps :active="active" align-center class="mini mb-6">
-      <ElStep v-for="(item, index) in steps" :key="index">
+    <ElSteps :active="active" align-center class="mini mb-6 pt-3">
+      <ElStep v-for="(item, index) in steps" :key="index" :class="[{ 'is-ative': active === index + 1 }]">
+        <span slot="icon" class="circle-icon"></span>
         <div slot="title">{{ item.label }}</div>
         <div v-if="item.time && active === index + 1" slot="description">{{ item.time }}</div>
       </ElStep>
@@ -218,17 +219,17 @@ export default {
       let currentStep
       let stepsData = []
       // 测试group
-      milestones.forEach((el, index) => {
-        if (index + 1 > 9) {
-          el.group = 'initial_sync'
-        } else if (index + 1 > 6) {
-          el.group = 'cdc'
-        } else if (index + 1 > 3) {
-          el.group = 'structure'
-        } else {
-          el.group = 'init'
-        }
-      })
+      // milestones.forEach((el, index) => {
+      //   if (index + 1 > 9) {
+      //     el.group = 'initial_sync'
+      //   } else if (index + 1 > 6) {
+      //     el.group = 'cdc'
+      //   } else if (index + 1 > 3) {
+      //     el.group = 'structure'
+      //   } else {
+      //     el.group = 'init'
+      //   }
+      // })
       milestones.forEach(el => {
         let item = stepsData[stepsData.length - 1]
         // 总有几个步骤
@@ -248,7 +249,7 @@ export default {
         currentStep = milestones[milestones.length - 1].group
       }
       this.steps = stepsData
-      this.active = 4 || (stepsData.findIndex(item => item.group === currentStep) || 0) + 1
+      this.active = (stepsData.findIndex(item => item.group === currentStep) || 0) + 1
       this.milestonesData = milestones
         .filter(item => item.group === currentStep)
         .map(m => {
@@ -435,3 +436,39 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.circle-icon {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: map-get($color, disable);
+}
+.el-steps {
+  ::v-deep {
+    .el-step__head .el-step__icon {
+      border: 0;
+    }
+    .el-step__line {
+      height: 2px;
+      top: 11px;
+      left: 50%;
+      right: -50%;
+      background-color: map-get($color, disable);
+    }
+    .is-finish {
+      .circle-icon {
+        background-color: map-get($color, primary);
+      }
+      .el-step__line {
+        background-color: map-get($color, primary);
+      }
+    }
+    .is-ative {
+      .el-step__line {
+        background-color: map-get($color, disable);
+      }
+    }
+  }
+}
+</style>
