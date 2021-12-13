@@ -338,11 +338,11 @@
       custom-class="field-maping-table-dialog"
       :visible.sync="dialogDataTypeVisible"
       :close-on-click-modal="false"
-      :before-close="handleFieldClose"
+      :before-close="handleDataTypeClose"
     >
       <div class="table-box flex flex-row mb-3">
         <span class="inline-block font-weight-bold" style="width: 190px">{{$t('dag_dialog_field_mapping_batch_change_type_source')}}</span>
-        <span class="inline-block font-weight-bold" style="width: 334px">>{{$t('dag_dialog_field_mapping_batch_change_type_target')}}</span>
+        <span class="inline-block font-weight-bold" style="width: 334px">{{$t('dag_dialog_field_mapping_batch_change_type_target')}}</span>
       </div>
       <div class="table-box flex flex-column">
         <div
@@ -482,7 +482,8 @@ export default {
         }
       ],
       sourceList: [],
-      showAddBtn: false //展示新增按钮
+      showAddBtn: false, //展示新增按钮
+      oldBatchOperationList:[]
     }
   },
   mounted() {
@@ -698,6 +699,7 @@ export default {
         this.showAddBtn = true
       }
       this.filterBatchOperationList()
+      this.oldBatchOperationList = JSON.parse(JSON.stringify(this.form.batchOperationList))
     },
     /*表改名称弹窗取消*/
     handleTableClose() {
@@ -774,7 +776,21 @@ export default {
       this.copyForm()
       //将新增push到batchOperationList
       this.form.batchOperationList = this.form.batchOperationList || []
+      let oldObj = {} //是否对已有的数据有修改
       this.form.batchOperationList.push(...this.batchOperation)
+      this.batchOperation = []
+      if( this.oldBatchOperationList?.length > 0){
+        this.oldBatchOperationList.forEach(item=>{
+          oldObj[item.sourceType] = item.targetType
+        })
+      }
+      if( this.form.batchOperationList?.length > 0){
+        this.form.batchOperationList.forEach(item=>{
+          if(!oldObj[item.sourceType] || oldObj[item.sourceType] !== item.targetType){
+            this.batchOperation.push(item);
+          }
+        })
+      }
       this.updateParentMetaData('dataType', this.form,this.batchOperation)
       this.intiBatchOperation()
     },
