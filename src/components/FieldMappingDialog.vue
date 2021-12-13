@@ -803,7 +803,7 @@ export default {
             fieldsNameTransform: '',
             table_prefix: '',
             table_suffix: '',
-            batchOperationList:'',
+            batchOperationList:[],
           }
           this.intiBatchOperation()
           this.copyForm()

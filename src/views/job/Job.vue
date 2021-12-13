@@ -963,6 +963,7 @@ export default {
               //迁移全局修改设置值
               stages[targetId].tableNameTransform = cell[FORM_DATA_KEY]?.tableNameTransform
               stages[targetId].fieldsNameTransform = cell[FORM_DATA_KEY]?.fieldsNameTransform
+              stages[targetId].batchOperationList = cell[FORM_DATA_KEY]?.batchOperationList
             }
           }
           if (targetId && stages[targetId]) {
