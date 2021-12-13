@@ -2,7 +2,9 @@
   <div
     :style="{
       height: height ? px(height) : '100%',
-      width: width ? px(width) : '100%'
+      width: width ? px(width) : '100%',
+      padding: '12px 0',
+      backgroundColor: '#282c34'
     }"
   >
     <VCodeEditor
@@ -69,7 +71,7 @@ export default {
           enableBasicAutocompletion: true,
           enableLiveAutocompletion: true,
           enableSnippets: true,
-          fontSize: 18,
+          fontSize: 12,
           wrap: true
         },
         this.options
