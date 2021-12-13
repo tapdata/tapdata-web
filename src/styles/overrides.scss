@@ -1,0 +1,131 @@
+// 步骤条
+.el-steps {
+  &.primary {
+    .el-step__head {
+      border-color: rgba(0, 0, 0, 0.25);
+      color: rgba(0, 0, 0, 0.25);
+      &.is-process {
+        border-color: rgba(44, 101, 255, 1);
+        color: rgba(44, 101, 255, 1);
+      }
+      &.is-success {
+        border-color: rgba(44, 101, 255, 1);
+        color: rgba(44, 101, 255, 1);
+        .el-step__line {
+          background-color: rgba(44, 101, 255, 0.05);
+        }
+      }
+      .el-step__line {
+        height: 5px;
+        top: 9px;
+        left: 57%;
+        right: -43%;
+        background-color: rgba(1, 1, 1, 0.05);
+        .el-step__line-inner {
+          display: none;
+        }
+      }
+      .el-step__icon {
+        border: 1px solid #2c65ff;
+        .el-step__icon-inner {
+          font-weight: normal;
+          color: #2c65ff;
+        }
+      }
+    }
+    .el-step__title {
+      font-size: 14px;
+      font-weight: normal;
+      color: #000;
+    }
+  }
+  &.mini {
+    .el-step__icon {
+      &.is-icon {
+        width: 12px;
+      }
+    }
+    .el-step__icon-inner {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .el-step__icon-inner {
+      background-color: map-get($color, disable);
+    }
+    .is-finish {
+      .el-step__icon-inner {
+        background-color: map-get($color, primary);
+      }
+    }
+    .el-step__title {
+      font-size: 14px;
+      &.is-wait {
+        color: map-get($fontColor, disable);
+      }
+      &.is-process {
+        color: map-get($fontColor, disable);
+      }
+      &.is-finish {
+        color: map-get($fontColor, main);
+      }
+    }
+    .el-step__description {
+      color: map-get($fontColor, disable);
+    }
+  }
+}
+
+// 穿梭框
+.el-transfer {
+  display: flex;
+  .el-transfer-panel {
+    display: inline-flex;
+    flex-direction: column;
+    flex: 1;
+    .el-transfer-panel__header {
+      background: rgba(44, 101, 255, 0.05);
+      height: 54px;
+      line-height: 54px;
+      .el-checkbox {
+        line-height: 54px;
+      }
+      .el-checkbox__label {
+        margin-left: 8px;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.85);
+      }
+    }
+  }
+  .el-transfer-panel__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding-top: 16px;
+    background: #fafafa;
+  }
+  .el-transfer-panel__list {
+    flex: 1;
+  }
+  .el-transfer-panel__filter {
+    margin: 0 16px 16px;
+    .el-input__inner {
+      padding-left: 36px;
+      border-radius: 2px;
+    }
+  }
+  .el-transfer__buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    .el-button {
+      padding: 0;
+      width: 36px;
+      height: 27px;
+      &:last-child {
+        margin-left: 0;
+      }
+    }
+  }
+}

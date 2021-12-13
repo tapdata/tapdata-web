@@ -138,7 +138,7 @@ export default {
         '/api/MetadataInstances/upload?upsert=' +
         this.upsert +
         '&listtags=' +
-        JSON.stringify(this.tagList) +
+        encodeURIComponent(JSON.stringify(this.tagList)) +
         '&type=' +
         this.downType
     },
