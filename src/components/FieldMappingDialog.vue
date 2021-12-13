@@ -26,7 +26,7 @@
           type="primary"
           size="mini"
           @click="handleBatchDataType"
-          >修改类型</ElButton
+          > {{$t('dag_dialog_field_mapping_change_type_field_rename')}}</ElButton
         >
         <ElButton v-if="!readOnly" class="mr-5" size="mini" type="primary" @click="rollbackAll">{{
           $t('dag_dialog_field_mapping_rollback_all')
@@ -341,8 +341,8 @@
       :before-close="handleFieldClose"
     >
       <div class="table-box flex flex-row mb-3">
-        <span class="inline-block font-weight-bold" style="width: 190px">源字段类型</span>
-        <span class="inline-block font-weight-bold" style="width: 334px">目标字段类型</span>
+        <span class="inline-block font-weight-bold" style="width: 190px">{{$t('dag_dialog_field_mapping_batch_change_type_source')}}</span>
+        <span class="inline-block font-weight-bold" style="width: 334px">>{{$t('dag_dialog_field_mapping_batch_change_type_target')}}</span>
       </div>
       <div class="table-box flex flex-column">
         <div
@@ -767,7 +767,7 @@ export default {
         }
       })
       if(!verify){
-        this.$message.error("请先选择需要源表/目标表转换的类型")
+        this.$message.error(this.$t('dag_dialog_field_mapping_batch_change_type_error_tip'))
         return
       }
       this.dialogDataTypeVisible = false
