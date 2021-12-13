@@ -98,11 +98,28 @@ let init = settings => {
 
   document.title = window.getSettingByKey('PRODUCT_TITLE') || 'Tapdata'
 
+  // 初始化ws
+  let getWsUrl = () => {
+    var loc = window.location,
+      wsUrl = 'ws://'
+    if (loc.protocol === 'https:') {
+      wsUrl = 'wss://'
+    }
+    let token = VueCookie.get('token')
+    let xToken = VueCookie.get('xToken')
+    let poolId = top.window.__POOL_ID__ || 'CIDC-RP-25'
+    let tokenParam = xToken ? 'X-Token=' + xToken : 'access_token' + token
+    return wsUrl + loc.host + `/ws/agent?xxxxpoolIdxxxx=${poolId}&${tokenParam}`
+  }
+
   window.App = new Vue({
     el: '#app',
     i18n,
     router,
     store,
+    wsOptions: {
+      url: getWsUrl()
+    },
     render: h => h(App)
   })
 }

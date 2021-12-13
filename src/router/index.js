@@ -446,7 +446,16 @@ const childRoutes = [
   {
     path: '/function/create',
     name: 'FunctionCreate',
-    component: () => import('@/views/function/CustomForm'),
+    component: () => import('@/views/function/Form'),
+    meta: {
+      isCollapse: false,
+      code: 'SYNC_Function_management'
+    }
+  },
+  {
+    path: '/function/import',
+    name: 'FunctionImport',
+    component: () => import('@/views/function/ImportForm'),
     meta: {
       isCollapse: false,
       code: 'SYNC_Function_management'
@@ -455,7 +464,16 @@ const childRoutes = [
   {
     path: '/function/edit/:id',
     name: 'FunctionEdit',
-    component: () => import('@/views/function/Edit'),
+    component: () => import('@/views/function/Form'),
+    meta: {
+      isCollapse: false,
+      code: 'SYNC_Function_management'
+    }
+  },
+  {
+    path: '/function/details/:id',
+    name: 'FunctionDetails',
+    component: () => import('@/views/function/Details'),
     meta: {
       isCollapse: false,
       code: 'SYNC_Function_management'

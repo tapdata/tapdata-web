@@ -9,6 +9,12 @@ export default {
   button_cancel: '取消',
   button_back: '返回',
   button_save: '保存',
+  button_check: '查看',
+  button_delete: '删除',
+  button_setting: '设置',
+
+  // 通用下拉框
+  select_option_all: '全部',
 
   // 通用消息
   message_title_prompt: '提示',
@@ -160,14 +166,16 @@ export default {
   function_tips_empty: '代码缺少JS函数',
   function_button_create_custom_function: '创建函数',
   function_button_import_jar: '导入jar包',
-  function_button_edit: '编辑',
-  function_tips_name_repeat: '方法名称重复',
+  function_button_edit_function: '编辑函数',
+  function_details: '函数详情',
+  function_tips_name_repeat: '函数名称重复',
   function_button_code_format: '格式化代码',
   function_last_update_label: '更新时间',
   function_parameters_label: '参数',
   function_type_label: '函数类型',
   function_type_option_custom: '自定义函数',
   function_type_option_jar: '第三方jar包',
+  function_type_option_system: '系统函数',
   function_name_label: '函数名称',
   function_name_placeholder: '请输入函数名称',
   function_name_repeat: '函数名称重复',
@@ -188,6 +196,17 @@ export default {
   function_describe_placeholder: '请输入描述',
   function_format: '命令格式',
   function_format_placeholder: '请输入命令格式',
+  function_jar_file_label: 'jar文件',
+  function_package_name_label: '包名',
+  function_package_name_placeholder: '请输入包名',
+  function_class_name_label: '类名',
+  function_method_name_label: '方法名',
+  function_script_label: '代码详情',
+  function_import_list_title: '函数列表',
+  function_button_load_function: '加载函数',
+  function_message_load_function_fail: '加载函数失败',
+  function_dialog_setting_title: '函数设置',
+  function_message_function_empty: '请上传jar包文件并加载函数',
 
   // 用户
   login_fail_too_many: '密码错误达到最大次数，请于10分钟后再登录'

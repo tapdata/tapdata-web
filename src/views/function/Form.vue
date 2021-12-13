@@ -1,10 +1,42 @@
 <template>
   <section class="custom-form-wrapper">
-    <div class="container-header">{{ $t('function_button_create_custom_function') }}</div>
+    <div class="container-header">
+      {{ $route.params.id ? $t('function_button_edit_function') : $t('function_button_create_custom_function') }}
+    </div>
     <div class="custom-form__body">
       <div class="main px-6 py-4">
-        <ElForm ref="form" label-position="left" label-width="120px" size="small" :model="form" :rules="rules">
-          <ElFormItem prop="script" :label="$t('function_body_label') + ':'">
+        <ElForm ref="form" label-position="left" label-width="120px" size="small" :model="form">
+          <template v-if="$route.params.id && details.type === 'jar'">
+            <ElFormItem :label="$t('function_jar_file_label') + ':'">
+              <span>{{ details.fileName }}</span>
+            </ElFormItem>
+            <ElFormItem :label="$t('function_package_name_label') + ':'">
+              <span>{{ details.packageName }}</span>
+            </ElFormItem>
+            <ElFormItem :label="$t('function_class_name_label') + ':'">
+              <span>{{ details.className }}</span>
+            </ElFormItem>
+            <ElFormItem :label="$t('function_method_name_label') + ':'">
+              <span>{{ details.methodName }}</span>
+            </ElFormItem>
+            <ElFormItem
+              prop="function_name"
+              :label="$t('function_name_label') + ':'"
+              :rules="{ required: true, message: $t('function_name_placeholder') }"
+            >
+              <ElInput
+                v-model="form.function_name"
+                class="form-input"
+                :placeholder="$t('function_name_placeholder')"
+              ></ElInput>
+            </ElFormItem>
+          </template>
+          <ElFormItem
+            v-if="form.type === 'custom'"
+            prop="script"
+            :label="$t('function_script_label') + ':'"
+            :rules="scriptRules"
+          >
             <div class="script-editor">
               <CodeEditor v-model="form.script" ref="editor" lang="javascript" height="200"></CodeEditor>
             </div>
@@ -51,7 +83,7 @@
         </ElForm>
       </div>
       <div class="footer p-6">
-        <ElButton class="btn" size="mini">{{ $t('button_back') }}</ElButton>
+        <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('button_back') }}</ElButton>
         <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
       </div>
     </div>
@@ -79,59 +111,92 @@ export default {
   data() {
     let self = this
     return {
+      details: {},
       form: {
         type: 'custom',
         describe: '',
         format: '',
         parameters_desc: '',
         return_value: '',
-        script: 'function function_name (record) {\n\treturn record\n}'
+        script: 'function functionName (record) {\n\treturn record\n}'
       },
-      rules: {
-        script: [
-          {
-            validator: (rule, value, callback) => {
-              let obj = getScriptObj(value)
-              if (!value.trim()) {
-                callback(new Error('请输入函数'))
-              } else if (!obj.name.trim()) {
-                callback(new Error('缺少函数名'))
-              } else if (!obj.body.trim()) {
-                callback(new Error('缺少函数体'))
-              } else if (self.$refs.editor.editor.session.$annotations.some(item => item.type !== 'info')) {
-                callback(new Error('函数格式不正确'))
-              } else if (obj.bodyLength.length > 1) {
-                callback(new Error('只允许创建一个函数'))
-              } else {
-                callback()
-              }
-            }
+      scriptRules: {
+        validator: (rule, value, callback) => {
+          let obj = getScriptObj(value)
+          if (!value.trim()) {
+            callback(new Error('请输入函数'))
+          } else if (!obj.name.trim()) {
+            callback(new Error('缺少函数名'))
+          } else if (!obj.body.trim()) {
+            callback(new Error('缺少函数体'))
+          } else if (self.$refs.editor.editor.session.$annotations.some(item => item.type !== 'info')) {
+            callback(new Error('函数格式不正确'))
+          } else if (obj.bodyLength.length > 1) {
+            callback(new Error('只允许创建一个函数'))
+          } else {
+            callback()
           }
-        ]
+        }
       }
     }
   },
+  created() {
+    let id = this.$route.params.id
+    if (id) {
+      this.getData(id)
+    }
+  },
   methods: {
+    getData(id) {
+      this.$api('Javascript_functions')
+        .findOne({
+          filter: {
+            where: {
+              id
+            }
+          }
+        })
+        .then(res => {
+          let details = res?.data || {}
+          // 处理老数据问题
+          if (details.type === 'custom' && !details.script) {
+            details.script = `function ${details.function_name}() ${details.function_body}`
+          }
+          this.details = details
+          this.form = Object.assign({}, this.form, details)
+        })
+    },
     save() {
       this.$refs.editor.format()
       this.$nextTick(() => {
         this.$refs.form.validate(valid => {
           if (valid) {
-            let obj = getScriptObj(this.form.script)
-
+            let params = {}
+            let method = 'post'
+            let id = this.$route.params.id
+            if (this.form.type === 'custom') {
+              let obj = getScriptObj(this.form.script)
+              params = {
+                function_body: `{${obj.body}}`,
+                function_name: obj.name,
+                parameters: obj.params
+              }
+            }
+            if (id) {
+              params.id = id
+              method = 'patch'
+            }
             this.$api('Javascript_functions')
-              .post(
-                Object.assign({}, this.form, {
+              [method](
+                Object.assign({}, this.form, params, {
                   last_updated: new Date(),
-                  user_id: this.$cookie.get('user_id'),
-                  function_body: `{${obj.body}}`,
-                  function_name: obj.function_name,
-                  parameters: obj.params
+                  user_id: this.$cookie.get('user_id')
                 })
               )
               .then(res => {
                 if (res) {
                   this.$message.success(this.$t('message.saveOK'))
+                  this.$router.back()
                 }
               })
               .catch(e => {
@@ -162,6 +227,9 @@ export default {
   overflow: hidden;
 
   ::v-deep {
+    .el-form-item__label {
+      font-size: 12px;
+    }
     .el-form-item--mini.el-form-item,
     .el-form-item--small.el-form-item {
       margin-bottom: 24px;
