@@ -388,7 +388,7 @@
             ></ElOption>
           </ElSelect>
           <VIcon v-if="index === 0 && !showAddBtn" class="ml-3 clickable" @click="handleBatchOperation">add</VIcon>
-          <VIcon class="ml-3 clickable" @click="removeBatchOperation(index)">remove</VIcon>
+          <VIcon v-if="index !== 0 || (index === 0 && showAddBtn) " class="ml-3 clickable" @click="removeBatchOperation(index)">remove</VIcon>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
