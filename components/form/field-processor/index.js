@@ -22,88 +22,6 @@ export const FieldProcess = connect(
 
       data() {
         return {
-          fields: [
-            {
-              id: '616fc30dda6a812a6424bb5e',
-              autoincrement: 'NO',
-              columnSize: 32,
-              data_code: 12,
-              data_type: 'VARCHAR',
-              dataType: 12,
-              label: 'RULE_ID',
-              field_name: 'RULE_ID',
-              foreign_key_position: 0,
-              is_auto_allowed: true,
-              is_deleted: false,
-              is_nullable: false,
-              java_type: 'String',
-              javaType: 'String',
-              oriPrecision: 32,
-              original_field_name: 'RULE_ID',
-              original_java_type: 'String',
-              precision: 32,
-              primary_key_position: 1,
-              source: 'auto',
-              unique: true,
-              key: 'PRI',
-              desc: '描述1',
-              table_name: 'eb_rule_notice_type',
-              children: [
-                {
-                  id: '616fc30dda6a812a6424bb5ei',
-                  autoincrement: 'NO',
-                  columnSize: 32,
-                  data_code: 12,
-                  data_type: 'VARCHAR',
-                  dataType: 12,
-                  label: 'RULE_ID',
-                  field_name: 'RULE_ID',
-                  foreign_key_position: 0,
-                  is_auto_allowed: true,
-                  is_deleted: false,
-                  is_nullable: false,
-                  java_type: 'String',
-                  javaType: 'String',
-                  oriPrecision: 32,
-                  original_field_name: 'RULE_ID',
-                  original_java_type: 'String',
-                  precision: 32,
-                  primary_key_position: 1,
-                  source: 'auto',
-                  unique: true,
-                  key: 'PRI',
-                  desc: '描述1',
-                  table_name: 'eb_rule_notice_type'
-                }
-              ]
-            },
-            {
-              id: '616fc30dda6a812a6424bb5f',
-              autoincrement: 'NO',
-              columnSize: 32,
-              data_code: 12,
-              data_type: 'VARCHAR',
-              dataType: 12,
-              label: 'SEND_TYPE',
-              field_name: 'SEND_TYPE',
-              foreign_key_position: 0,
-              is_auto_allowed: true,
-              is_deleted: false,
-              is_nullable: false,
-              java_type: 'String',
-              javaType: 'String',
-              oriPrecision: 32,
-              original_field_name: 'SEND_TYPE',
-              original_java_type: 'String',
-              precision: 32,
-              primary_key_position: 2,
-              source: 'auto',
-              unique: true,
-              key: 'PRI',
-              table_name: 'eb_rule_notice_type',
-              desc: '描述2'
-            }
-          ],
           nodeKey: '',
           selectList: [
             {
@@ -210,8 +128,8 @@ export const FieldProcess = connect(
       render() {
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
-        const { fields } = this
-        this.originalFields = JSON.parse(JSON.stringify(this.fields))
+        let fields = this.options?.[0] || []
+        this.originalFields = JSON.parse(JSON.stringify(fields))
         return (
           <div class="field-processor-tree-warp bg-body pt-5 pb-5">
             <div class="field-processor-operation flex">
@@ -248,7 +166,7 @@ export const FieldProcess = connect(
                       class="tree-node flex flex-1 justify-content-center align-items flex-row"
                       slot-scope="{ node, data }"
                     >
-                      <ElTooltip class="item inline-block" effect="dark" placement="left-start">
+                      <ElTooltip class="item inline-block" effect="dark" placement="right-start">
                         <span slot="content">
                           {data.original_field_name}
                           <br />
@@ -263,7 +181,7 @@ export const FieldProcess = connect(
                           ]}
                         >
                           <ElInput
-                            v-model={data.label}
+                            v-model={data.field_name}
                             disabled={this.isRemove(data.id)}
                             onBlur={() => this.handleRename(node, data)}
                           />
@@ -383,19 +301,19 @@ export const FieldProcess = connect(
           console.log('fieldProcessor.handleRename', node, data) //eslint-disable-line
           let nativeData = this.getNativeData(data.id) //查找初始schema
           //该字段若是已被删除 不可再重命名
-          if (!data || data.label === '') {
-            data.label = nativeData.label
+          if (!data || data.field_name === '') {
+            data.field_name = nativedata.field_name
             this.$message.error(this.$t('message.exists_name'))
             return
           }
           let removes = this.operations.filter(v => v.id === data.id && v.op === 'REMOVE')
           if (removes.length > 0) {
-            data.label = nativeData.label
+            data.field_name = nativedata.field_name
             return
           }
           let existsName = this.handleExistsName(node, data)
           if (existsName) {
-            data.label = nativeData.label
+            data.field_name = nativedata.field_name
             return
           }
           let createOps = this.operations.filter(v => v.id === data.id && v.op === 'CREATE')
@@ -403,7 +321,7 @@ export const FieldProcess = connect(
             let op = createOps[0]
             let level = op.level
             let fieldNames = (op.field || op.field_name).split('.')
-            fieldNames[level] = data.label
+            fieldNames[level] = data.field_name
             op.field = fieldNames.join('.')
             //同步对js 改名操作
             if (this.scripts && this.scripts.length && this.scripts.length > 0) {
@@ -429,18 +347,20 @@ export const FieldProcess = connect(
               op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
                 id: data.id,
                 field: nativeData.original_field_name,
-                operand: data.label,
+                operand: data.field_name,
                 table_name: data.table_name,
                 type: data.type,
                 primary_key_position: data.primary_key_position,
                 color: data.color,
-                label: data.label
+                label: data.field_name,
+                field_name: data.field_name
               })
               this.operations.push(op)
             } else {
               op = ops[0]
-              op.operand = data.label
-              op.label = data.label
+              op.operand = data.field_name
+              op.label = data.field_name
+              op.field_name = data.field_name
             }
             //删除 相同字段名称
             if (this.scripts && this.operations.length && this.operations.length > 0) {
@@ -463,9 +383,9 @@ export const FieldProcess = connect(
           // 改名前查找同级中是否重名，若有则return且还原改动并提示
           let exist = false
           if (node && node.parent && node.parent.childNodes) {
-            let parentNode = node.parent.childNodes.filter(v => data.label === v.data.label)
+            let parentNode = node.parent.childNodes.filter(v => data.field_name === v.data.field_name)
             if (parentNode && parentNode.length === 2) {
-              this.$message.error(data.label + this.$t('message.exists_name'))
+              this.$message.error(data.field_name + this.$t('message.exists_name'))
               exist = true
             }
           }
@@ -511,7 +431,8 @@ export const FieldProcess = connect(
                 type: data.type,
                 primary_key_position: data.primary_key_position,
                 color: data.color,
-                label: data.label
+                label: data.field_name,
+                field_name: data.field_name
               })
               this.operations.push(op)
             } else {
@@ -525,7 +446,7 @@ export const FieldProcess = connect(
         handleReset(node, data) {
           console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
           let parentId = node.parent.data.id
-          let dataLabel = JSON.parse(JSON.stringify(data.label))
+          let dataLabel = JSON.parse(JSON.stringify(data.field_name))
           let indexId = this.operations.filter(v => v.op === 'REMOVE' && v.id === parentId)
           if (parentId && indexId.length !== 0) {
             return
@@ -556,7 +477,7 @@ export const FieldProcess = connect(
                   if (existsName) {
                     return
                   }
-                  if (nativeData) node.data.label = nativeData.label
+                  if (nativeData) node.data.field_name = nativeData.original_field_name
                   self.operations.splice(i, 1)
                   i--
                   continue
@@ -573,11 +494,11 @@ export const FieldProcess = connect(
           fn(node, data)
           let existsName = this.handleExistsName(node, data)
           if (existsName) {
-            data.label = dataLabel
+            data.field_name = dataLabel
           }
         },
         getParentFieldName(node) {
-          let fieldName = node.data && node.data.label ? node.data.label : ''
+          let fieldName = node.data && node.data.field_name ? node.data.field_name : ''
           if (node.level > 1 && node.parent && node.parent.data) {
             let parentFieldName = this.getParentFieldName(node.parent)
             if (parentFieldName) fieldName = parentFieldName + '.' + fieldName
@@ -597,7 +518,7 @@ export const FieldProcess = connect(
           let level = node.level
           if (action === 'create_sibling') {
             parentFieldName = this.getParentFieldName(node.parent)
-            let parentNode = node.parent.childNodes.filter(v => v.data.label === 'newFieldName')
+            let parentNode = node.parent.childNodes.filter(v => v.data.field_name === 'newFieldName')
             if (parentNode && parentNode.length > 0) {
               this.$message.error('newFieldName ' + this.$t('message.exists_name'))
               return
@@ -605,7 +526,7 @@ export const FieldProcess = connect(
           } else if (action === 'create_child') {
             parentFieldName = this.getParentFieldName(node)
             level++
-            let parentNode = node.childNodes.filter(v => v.data.label === 'newFieldName')
+            let parentNode = node.childNodes.filter(v => v.data.field_name === 'newFieldName')
             if (parentNode && parentNode.length > 0) {
               this.$message.error('newFieldName ' + this.$t('message.exists_name'))
               return
@@ -630,7 +551,8 @@ export const FieldProcess = connect(
             type: 'String',
             color: data.color,
             primary_key_position: 0,
-            table_name: data.table_name
+            table_name: data.table_name,
+            field_name: 'newFieldName'
           }
           if (action === 'create_sibling') {
             let parentNode = node.parent
@@ -668,7 +590,8 @@ export const FieldProcess = connect(
               type: data.type,
               primary_key_position: data.primary_key_position,
               color: data.color,
-              label: data.label,
+              label: data.field_name,
+              field_name: data.field_name,
               tableName,
               id
             })
@@ -718,7 +641,7 @@ export const FieldProcess = connect(
                 // 删除所有的rename的操作
                 let ops = self.operations[i]
                 if (ops.id === field.id && ops.op === 'RENAME') {
-                  data.label = originalField.label
+                  data.field_name = originalField.field_name
                   self.operations.splice(i, 1)
                 }
               }
@@ -741,7 +664,8 @@ export const FieldProcess = connect(
                   type: field.type,
                   primary_key_position: field.primary_key_position,
                   color: field.color,
-                  label: field.label
+                  label: field.label,
+                  field_name: field.label
                 })
                 self.operations.push(op)
               }
@@ -775,7 +699,6 @@ export const FieldProcess = connect(
         },
         handleAllDelete() {
           let ids = this.$refs.tree.getCheckedNodes()
-          this.checkAll = false
           if (ids && ids.length > 0) {
             ids.map(id => {
               let node = this.$refs.tree.getNode(id)
@@ -785,29 +708,26 @@ export const FieldProcess = connect(
         },
         handleAllToUpperCase() {
           let ids = this.$refs.tree.getCheckedNodes()
-          this.checkAll = false
           if (ids && ids.length > 0) {
             ids.map(id => {
               let node = this.$refs.tree.getNode(id)
-              node.data.label = node.data.label.toUpperCase()
+              node.data.field_name = node.data.field_name.toUpperCase()
               this.handleRename(node, node.data)
             })
           }
         },
         handleAllToLowerCase() {
           let ids = this.$refs.tree.getCheckedNodes()
-          this.checkAll = false
           if (ids && ids.length > 0) {
             ids.map(id => {
               let node = this.$refs.tree.getNode(id)
-              node.data.label = node.data.label.toLowerCase()
+              node.data.field_name = node.data.field_name.toLowerCase()
               this.handleRename(node, node.data)
             })
           }
         },
         handleAllReset() {
           let ids = this.$refs.tree.getCheckedNodes(false, true)
-          this.checkAll = false
           if (ids && ids.length > 0) {
             ids.map(id => {
               let node = this.$refs.tree.getNode(id)
@@ -818,8 +738,9 @@ export const FieldProcess = connect(
           }
         },
         handleCheckAllChange() {
+          let fields = this.options?.[0] || []
           if (!this.checkAll) {
-            this.$refs.tree.setCheckedNodes(this.fields)
+            this.$refs.tree.setCheckedNodes(fields)
             this.checkAll = true
           } else {
             this.$refs.tree.setCheckedKeys([])
