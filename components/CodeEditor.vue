@@ -2,7 +2,9 @@
   <div
     :style="{
       height: height ? px(height) : '100%',
-      width: width ? px(width) : '100%'
+      width: width ? px(width) : '100%',
+      padding: '12px 0',
+      backgroundColor: '#282c34'
     }"
   >
     <VCodeEditor
@@ -56,6 +58,11 @@ export default {
       }
     }
   },
+  data() {
+    return {
+      editor: null
+    }
+  },
   computed: {
     _options() {
       return Object.assign(
@@ -64,7 +71,7 @@ export default {
           enableBasicAutocompletion: true,
           enableLiveAutocompletion: true,
           enableSnippets: true,
-          fontSize: 18,
+          fontSize: 12,
           wrap: true
         },
         this.options
@@ -78,7 +85,12 @@ export default {
       }
       return n
     },
-    init(editor, tools) {
+    format() {
+      this.beautify.beautify(this.editor.session)
+    },
+    init(editor, tools, beautify) {
+      this.editor = editor
+      this.beautify = beautify
       tools.addCompleter({
         getCompletions: (editor, session, pos, prefix, callback) => {
           if (prefix.length === 0) {

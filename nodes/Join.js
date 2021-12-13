@@ -83,17 +83,26 @@ export class Join extends NodeType {
         type: 'array',
         required: true,
         default: [{ left: '', right: '', expression: '=' }],
+        items: {
+          type: 'object',
+          properties: {
+            left: {
+              type: 'string',
+              required: true,
+              'x-decorator': 'FormItem',
+              'x-component': 'Select'
+            },
+            right: {
+              type: 'string',
+              required: true,
+              'x-decorator': 'FormItem',
+              'x-component': 'Select'
+            }
+          }
+        },
         'x-decorator': 'FormItem',
         'x-component': 'JoinExpression',
         'x-reactions': [
-          /*{
-            dependencies: ['sourceNode'],
-            fulfill: {
-              state: {
-                sourceNode: '{{$deps[0]}}'
-              }
-            }
-          },*/
           {
             dependencies: ['leftNodeId', 'rightNodeId']
           },
@@ -117,14 +126,22 @@ export class Join extends NodeType {
       embeddedSetting: {
         type: 'object',
         properties: {
-          fields: {
-            type: 'array',
+          main: {
+            type: 'string',
             title: '内嵌对象',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               wrapperWidth: 240
             },
-            'x-component': 'Select'
+            'x-component': 'Select',
+            'x-reactions': {
+              dependencies: ['sourceNode'],
+              fulfill: {
+                state: {
+                  dataSource: '{{$deps[0]}}'
+                }
+              }
+            }
           },
           path: {
             type: 'string',
