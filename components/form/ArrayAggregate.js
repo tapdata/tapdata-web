@@ -114,7 +114,7 @@ export const ArrayAggregate = connect(
                       <el-input v-model={item.filterPredicate} size="mini" type="textarea"></el-input>
                     </FormItem>
                     <FormItem label="分组字段">
-                      <el-select v-model={item.groupByExpression} size="mini">
+                      <el-select v-model={item.groupByExpression} size="mini" multiple>
                         {this.options && this.options.length
                           ? this.options.map(op => <el-option label={op} value={op} key={op} />)
                           : []}
