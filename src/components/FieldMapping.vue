@@ -202,7 +202,8 @@ export default {
           this.dataFlow['stages'][i].tableNameTransform = ''
           this.dataFlow['stages'][i].table_suffix = ''
           this.dataFlow['stages'][i].table_prefix = ''
-          this.dataFlow['stages'][i].batchOperationList= ''
+          this.dataFlow['stages'][i].batchOperationList= []
+          this.dataFlow['batchOperation'] = []
         }
       }
     },
