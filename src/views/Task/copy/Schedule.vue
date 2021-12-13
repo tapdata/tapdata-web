@@ -3,9 +3,9 @@
     <!--  步骤条  -->
     <ElSteps :active="active" align-center class="mini mb-6 pt-3">
       <ElStep v-for="(item, index) in steps" :key="index" :class="[{ 'is-ative': active === index + 1 }]">
-        <span slot="icon" class="circle-icon"></span>
-        <div slot="title">{{ item.label }}</div>
-        <div v-if="item.time && active === index + 1" slot="description">{{ item.time }}</div>
+        <span slot="icon" class="circle-icon cursor-pointer" @click="clickStep(index)"></span>
+        <div slot="title" class="cursor-pointer" @click="clickStep(index)">{{ item.label }}</div>
+        <div v-if="item.time" slot="description" class="cursor-pointer" @click="clickStep(index)">{{ item.time }}</div>
       </ElStep>
     </ElSteps>
     <!--  任务初始化  -->
@@ -69,7 +69,7 @@ export default {
   },
   data() {
     return {
-      active: 1,
+      active: 0,
       steps: [],
       searchParams: {
         tableName: '',
@@ -249,9 +249,15 @@ export default {
         currentStep = milestones[milestones.length - 1].group
       }
       this.steps = stepsData
+      if (this.active !== 0) {
+        return
+      }
       this.active = (stepsData.findIndex(item => item.group === currentStep) || 0) + 1
-      this.milestonesData = milestones
-        .filter(item => item.group === currentStep)
+      this.getMilestonesData()
+    },
+    getMilestonesData() {
+      this.milestonesData = this.task.milestones
+        .filter(item => item.group === this.currentStep.group)
         .map(m => {
           // let time = m.status === 'running' ? formatTime(m.start) : formatTime(m.end)
           let time = formatTime(m.start)
@@ -432,6 +438,10 @@ export default {
         result = result.toFixed(1)
       }
       return result + '%'
+    },
+    clickStep(index = 0) {
+      this.active = index + 1
+      this.getMilestonesData()
     }
   }
 }

@@ -194,7 +194,7 @@ export default {
       height: 300px;
     }
     .el-tab-pane {
-      height: 450px;
+      min-height: 400px;
     }
   }
 }
