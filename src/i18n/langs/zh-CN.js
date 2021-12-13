@@ -490,6 +490,40 @@ export default {
   task_monitor_topic_expressionL: '主题表达式',
   task_monitor_migration_task: '迁移任务',
   task_monitor_sync_task: '同步任务',
+
+  task_setting_sync_type: '同步类型',
+  task_setting_initial_sync: '全量同步',
+  task_setting_cdc: '增量同步',
+  task_setting_initial_sync_cdc: '全量 + 增量同步',
+  task_setting_initial_sync_tip:
+    '全量同步也称初始化同步，即在任务启动时刻将源端数据快照读取，并同步至目标端；该同步有更新写入、删除重写两种模式。',
+  task_setting_cdc_tip:
+    '增量同步是指从任务启动时刻对存储的源端变化的日志进行采集和分析，有序的将数据变化同步至目标端，支持增删改操作。',
+  task_setting_initial_sync_cdc_tip: '选择全量+增量同步模式，任务会在全量同步执行结束后自动进入增量同步状态。',
+  task_setting_full_write_mode: '全量写入模式',
+  task_setting_update_write_mode: '更新写入模式',
+  task_setting_remoive_rewrite_mode: '删除重写模式',
+  task_setting_update_write_mode_tip: '更新写入模式会判断源端的每条数据在目标端是否存在，若存在则更新，不存在则新增。',
+  task_setting_remoive_rewrite_mode_tip:
+    '删除重写模式会先将目标表的数据清空，再将源端数据全部同步至目标端，能保证源端和目标端的数据完全一致。',
+  task_setting_read_number: '每次读取数量',
+  task_setting_read_number_cannot_empty: '每次读取数量不能为空，默认是1000',
+  task_setting_read_number_ranges: '每次读取数量取值范围 1 ~ 10000',
+  task_setting_read_number_only_number: '每次读取数量只能为数字',
+  task_setting_stop_on_error: '遇到错误停止',
+  task_setting_incremental_concurrency_switch: '是否开启增量并发',
+  task_setting_incremental_concurrency: '增量并发数',
+  task_setting_incremental_concurrency_cannot_empty: '增量并发数不能为空，默认是8',
+  task_setting_incremental_concurrency_only_number: '增量并发数只能为数字',
+  task_setting_no_primary_sync_switch: '是否无主键同步',
+  task_setting_two_way_switch: '是否双向',
+  task_setting_automatic_ddl: '自动DDL',
+  task_setting_automatic_ddl_tip: '自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作',
+  task_setting_automatic_index: '自动创建索引',
+
+  task_instance_select_area: '选择区域',
+  task_instance_choose_area: '选择可用区',
+
   // 数据校验
   verify_type: '类型',
   verify_frequency: '频次',

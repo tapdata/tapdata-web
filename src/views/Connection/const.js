@@ -185,7 +185,7 @@ export const DEFAULT_MODEL = {
     name: '',
     database_type: '',
     connection_type: '',
-    tidbPdServer: '',
+    // tidbPdServer: '',
     database_host: '',
     database_port: '',
     database_name: '',

@@ -74,24 +74,24 @@ export default function (vm) {
       // 		});
       // 	}
       // },
-      {
-        type: 'input',
-        field: 'tidbPdServer',
-        label: vm.$t('connection_form_tidb_server'),
-        placeholder: 'http://192.168.1.183:2379',
-        rules: [
-          {
-            required: true,
-            validator(rule, value, callback) {
-              if (!value || !value.trim()) {
-                callback(new Error(vm.$t('connection_form_tidb_none_server')))
-              } else {
-                callback()
-              }
-            }
-          }
-        ]
-      },
+      // {
+      //   type: 'input',
+      //   field: 'tidbPdServer',
+      //   label: vm.$t('connection_form_tidb_server'),
+      //   placeholder: 'http://192.168.1.183:2379',
+      //   rules: [
+      //     {
+      //       required: true,
+      //       validator(rule, value, callback) {
+      //         if (!value || !value.trim()) {
+      //           callback(new Error(vm.$t('connection_form_tidb_none_server')))
+      //         } else {
+      //           callback()
+      //         }
+      //       }
+      //     }
+      //   ]
+      // },
       {
         type: 'input',
         field: 'database_host',

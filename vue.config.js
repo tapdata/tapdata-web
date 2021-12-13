@@ -188,7 +188,8 @@ const getToken = userId => {
   return token
 }
 if (process.env.NODE_ENV === 'development') {
-  let userId = '60cc0c304e190a579cbe306c'
+  // let userId = '60cc0c304e190a579cbe306c'
+  let userId = '60dd450086ff2e5d620356df'
   process.env.VUE_APP_ACCESS_TOKEN = getToken(userId)
   console.log('本地用户调试ID: ' + userId)
   console.log('本地用户调试Token: ' + process.env.VUE_APP_ACCESS_TOKEN)
