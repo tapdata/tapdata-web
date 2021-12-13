@@ -230,6 +230,7 @@ export default {
       }
       if(batchOperation){
         this.dataFlow['batchOperation'] = batchOperation
+        delete this.dataFlow['rollback']
       }
       let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
       this.initWSSed() //发送ws 监听schema进度
