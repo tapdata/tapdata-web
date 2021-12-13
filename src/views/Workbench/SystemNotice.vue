@@ -273,7 +273,9 @@ export default {
         isDeleted: true
       }
       this.$confirm(this.$t('notify_delete_notification_tip'), this.$t('notify_delete_notification_title'), {
-        type: 'warning'
+        type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel')
       }).then(res => {
         if (res) {
           this.$axios.post('tm/api/Messages/update?where=' + encodeURIComponent(JSON.stringify(where)), data)

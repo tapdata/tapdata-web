@@ -73,7 +73,7 @@
           v-model="activeTab"
           @tab-click="tabHandler"
         >
-          <ElTabPane label="任务进度" name="progress" class="h-100">
+          <ElTabPane :label="$t('task_monitor_progress')" name="progress" class="h-100">
             <TaskProgress :task="task"></TaskProgress>
           </ElTabPane>
           <ElTabPane lazy class="h-100 overflow-hidden" :label="$t('task_monitor_run_log')" name="log">
@@ -546,7 +546,9 @@ export default {
         title = this.$t('task_important_reminder')
       }
       this.$confirm(message, title, {
-        type: 'warning'
+        type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel')
       }).then(resFlag => {
         if (resFlag) {
           this.changeStatus({ status: 'stopping' })
@@ -556,7 +558,9 @@ export default {
     forceStop() {
       let msgObj = this.getConfirmMessage('force_stop', this.task.name)
       this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning'
+        type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel')
       }).then(resFlag => {
         if (resFlag) {
           this.changeStatus({ status: 'force stopping' })
@@ -566,6 +570,8 @@ export default {
     reset() {
       this.$confirm(this.$t('task_reset_tsk'), this.$t('task_reset'), {
         type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel'),
         dangerouslyUseHTMLString: true
       }).then(flag => {
         if (!flag) {

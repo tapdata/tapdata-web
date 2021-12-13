@@ -509,6 +509,8 @@ export default {
     resetAll(ids) {
       this.$confirm(this.$t('task_reset_tsk'), this.$t('task_reset'), {
         type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel'),
         dangerouslyUseHTMLString: true
       }).then(flag => {
         if (!flag) {
@@ -681,7 +683,9 @@ export default {
       }
       let msgObj = this.getConfirmMessage('delete', item.name)
       this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning'
+        type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel')
       }).then(resFlag => {
         if (resFlag) {
           this.$axios
@@ -707,15 +711,18 @@ export default {
       }
       if (type === 'edit') {
         this.$confirm(
-          '<p>编辑任务如果修改了<span style="color:#409EFF">节点排版流程</span>、' +
-            '<span style="color:#409EFF">节点属性</span>、' +
-            '<span style="color:#409EFF">匹配关系</span>,' +
-            '提交后必须<span style="color:#409EFF">重置</span>才能正常运行, 否则可能导致异常错误，请问您要继续编辑吗?</p>',
-          '重要提醒',
+          `<p>${this.$t('task_list_edit_tip')}<span style="color:#409EFF">${this.$t('task_list_edit_tip1')}</span>、` +
+            `<span style="color:#409EFF">${this.$t('task_list_node_attr')}</span>、` +
+            `<span style="color:#409EFF">${this.$t('task_list_matching_releation')}</span>,` +
+            `${this.$t('task_list_edit_submit')}<span style="color:#409EFF">${this.$t(
+              'task_list_edit_reset'
+            )}</span>${this.$t('task_list_edit_tip3')}</p>`,
+          this.$t('task_important_reminder'),
           {
             dangerouslyUseHTMLString: true,
             customClass: 'dataflow-clickTip',
-            confirmButtonText: '继续编辑',
+            cancelButtonText: this.$t('button_cancel'),
+            confirmButtonText: this.$t('task_list_continue_edit'),
             type: 'warning'
           }
         ).then(resFlag => {
