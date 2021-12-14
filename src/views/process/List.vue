@@ -120,7 +120,7 @@ export default {
       let { state, keyword } = this.searchParams
       let where = {
         ping_time: {
-          $gte: Date.now() - 60000,
+          $gte: Date.now() - 60000
         }
       }
 
