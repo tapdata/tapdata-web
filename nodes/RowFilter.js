@@ -30,7 +30,7 @@ export class RowFilter extends NodeType {
             value: 'retain'
           },
           {
-            label: '创建匹配数据',
+            label: '丢弃匹配数据',
             value: 'discard'
           }
         ],
