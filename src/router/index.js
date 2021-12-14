@@ -710,7 +710,7 @@ const router = new Router({
 
 let usersModel = factor('users')
 router.afterEach(() => {
-  Loading.service({ fullscreen: true }).close()
+  // Loading.service({ fullscreen: true }).close()
 })
 let isFirst = true
 router.beforeEach(async (to, from, next) => {
@@ -766,9 +766,7 @@ router.beforeEach(async (to, from, next) => {
       //无权限，说明是首次进入页面，重新请求后台获取
       let loading = Loading.service({
         fullscreen: true,
-        lock: true,
-        text: 'Loading...',
-        background: 'rgba(0, 0, 0, 0.7)'
+        lock: true
       })
       try {
         let result = await usersModel.getPermissions(`/${userId}/permissions`)

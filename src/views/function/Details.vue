@@ -3,7 +3,7 @@
     <div class="container-header">
       {{ $t('function_details') }}
     </div>
-    <div class="function-details__body">
+    <div class="function-details__body" v-loading="!details.id">
       <div class="main px-6 py-4">
         <ElForm label-position="left" label-width="120px" size="small" :model="details">
           <ElFormItem :label="$t('function_name_label') + ':'">

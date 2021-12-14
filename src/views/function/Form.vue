@@ -1,11 +1,18 @@
 <template>
-  <section class="custom-form-wrapper" v-loading="$route.params.id && !details.id">
+  <section class="custom-form-wrapper">
     <div class="container-header">
       {{ $route.params.id ? $t('function_button_edit_function') : $t('function_button_create_custom_function') }}
     </div>
-    <div v-if="!$route.params.id || details.id" class="custom-form__body">
+    <div v-loading="$route.params.id && !details.id" class="custom-form__body">
       <div class="main px-6 py-4">
-        <ElForm ref="form" label-position="left" label-width="120px" size="small" :model="form">
+        <ElForm
+          v-if="!$route.params.id || details.id"
+          ref="form"
+          label-position="left"
+          label-width="120px"
+          size="small"
+          :model="form"
+        >
           <template v-if="$route.params.id && details.type === 'jar'">
             <ElFormItem :label="$t('function_jar_file_label') + ':'">
               <span>{{ details.fileName }}</span>
