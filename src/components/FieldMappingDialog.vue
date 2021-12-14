@@ -354,7 +354,7 @@
             <ElOption
               :label="item.dbType"
               :value="item.dbType"
-              v-for="(item, index) in typeMapping"
+              v-for="(item, index) in sourceTypeMapping"
               :key="index"
             ></ElOption>
           </ElSelect>
@@ -483,7 +483,8 @@ export default {
       ],
       sourceList: [],
       showAddBtn: false, //展示新增按钮
-      oldBatchOperationList:[]
+      oldBatchOperationList:[],
+      sourceTypeMapping:[]
     }
   },
   mounted() {
@@ -556,7 +557,8 @@ export default {
       this.$nextTick(() => {
         this.typeMappingMethod &&
           this.typeMappingMethod(this.selectRow).then(data => {
-            this.typeMapping = data
+            this.sourceTypeMapping = data.sourceData
+            this.typeMapping = data.targetData
           })
       })
     },
@@ -721,10 +723,10 @@ export default {
     filterBatchOperationList() {
       //每次源表都需要过滤
       if (this.form.batchOperationList?.length === 0 || !this.form.batchOperationList) {
-        this.sourceList = this.typeMapping
+        this.sourceList = this.sourceTypeMapping
       } else {
         this.form.batchOperationList.forEach(item => {
-          this.sourceList = this.typeMapping.filter(v => v.dbType !== item.sourceType)
+          this.sourceList = this.sourceTypeMapping.filter(v => v.dbType !== item.sourceType)
         })
       }
       if (this.batchOperation?.length >= 0 && this.batchOperation) {

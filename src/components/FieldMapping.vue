@@ -331,8 +331,13 @@ export default {
     },
     //获取typeMapping
     async getTypeMapping(row) {
-      let promise = await this.$api('TypeMapping').getId(row.sinkDbType)
-      return promise?.data
+      if(!row)return
+      let targetData = await this.$api('TypeMapping').getId(row.sinkDbType)
+      let sourceData= await this.$api('TypeMapping').getId(row.sourceDbType)
+      return {
+        sourceData:sourceData,
+        targetData:targetData
+      }
     },
     saveReturnData() {
       //保存字段映射
