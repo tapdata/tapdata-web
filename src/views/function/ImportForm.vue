@@ -232,6 +232,7 @@ export default {
       } else {
         this.$message.error(this.$t('function_message_load_function_fail'))
       }
+      this.$ws.off('loadJarLibResult', this.hanlderResult)
       this.loading = false
     },
     loadFunction() {
