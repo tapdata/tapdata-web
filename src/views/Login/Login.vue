@@ -141,6 +141,9 @@ export default {
           this.$cookie.set('show_guide', 1)
         }
         history.go(-1)
+        setTimeout(() => {
+          location.reload()
+        }, 50)
       } catch (e) {
         if (e && e.response && e.response.msg) {
           if (e.response.msg === 'WAITING_APPROVE') {
