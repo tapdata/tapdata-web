@@ -140,14 +140,7 @@ export default {
         if (!user.data.isCompleteGuide) {
           this.$cookie.set('show_guide', 1)
         }
-
-        this.$router.replace({
-          name: 'dashboard'
-        })
-
-        setTimeout(() => {
-          location.reload()
-        }, 0)
+        history.go(-1)
       } catch (e) {
         if (e && e.response && e.response.msg) {
           if (e.response.msg === 'WAITING_APPROVE') {

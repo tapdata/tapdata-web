@@ -4,12 +4,27 @@ export default {
   tips_must_number: 'The value must be a number',
 
   // 通用按钮
-  button_edit: 'edit',
-  button_confirm: 'confirm',
-  button_cancel: 'cancel',
+  button_edit: 'Edit',
+  button_confirm: 'Confirm',
+  button_cancel: 'Cancel',
+  button_back: 'Back',
+  button_save: 'Save',
+  button_check: 'Details',
+  button_delete: 'Delete',
+  button_setting: 'Setting',
+
+  // 通用下拉框
+  select_option_all: 'All',
 
   // 通用消息
-  message_title_prompt: 'hint',
+  message_title_prompt: 'Hint',
+  message_delete_confirm: 'Delete or not',
+
+  // 表格
+  column_operation: 'Operate',
+
+  // 菜单标题
+  menu_title_function: 'Function management',
 
   // 数据校验
   verify_details_title: 'Task verification details',
@@ -159,16 +174,18 @@ export default {
 
   // Function management
   function_tips_empty: 'Code lacks JS functions',
-  function_checkbox_Line_number: 'Display line number',
-  function_button_create: 'Create',
-  function_button_edit: 'Edit',
-  function_tips_name_repeat: 'Method name repeat',
+  function_button_create_custom_function: 'Create function',
+  function_button_import_jar: 'Import',
+  function_button_edit_function: 'Edit function',
+  function_details: 'Function details',
+  function_tips_name_repeat: 'Function name repeat',
   function_button_code_format: 'Format code',
   function_last_update_label: 'Update time',
   function_parameters_label: 'Parameters',
   function_type_label: 'Function type',
   function_type_option_custom: 'Custom function',
   function_type_option_jar: 'Third-party jar package',
+  function_type_option_system: 'System function',
   function_name_label: 'Function name',
   function_name_placeholder: 'Please enter the function name',
   function_name_repeat: 'Function name repeat',
@@ -189,6 +206,27 @@ export default {
   function_return_value_placeholder: 'Please enter the return value',
   function_describe_label: 'Description',
   function_describe_placeholder: 'Please enter a description',
+  function_format: 'Format',
+  function_format_placeholder: 'Please enter a format',
+  function_jar_file_label: 'Jar file name',
+  function_package_name_label: 'Package name',
+  function_package_name_placeholder: 'Please enter a package name',
+  function_class_name_label: 'Class name',
+  function_method_name_label: 'Method name',
+  function_script_label: 'Code details',
+  function_script_empty: 'Please enter the function code',
+  function_script_missing_function_name: 'Missing function name',
+  function_script_missing_function_body: 'Missing function body',
+  function_script_format_error: 'The function format is incorrect',
+  function_script_only_one: 'Only one function is allowed to be created',
+  function_import_list_title: 'Function list',
+  function_button_load_function: 'Load function',
+  function_message_load_function_fail: 'Load function fail',
+  function_dialog_setting_title: 'Function setting',
+  function_message_function_empty: 'Please upload the jar file and load the function',
+  function_message_delete_title: 'Delete function',
+  function_message_delete_content:
+    'Deletion may cause the task that has called this function to report an error. Are you sure to delete this function? ',
 
   // 用户
   login_fail_too_many: 'The maximum number of password errors has been reached, please log in after 10 minutes'
