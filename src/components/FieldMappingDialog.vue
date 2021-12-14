@@ -26,7 +26,8 @@
           type="primary"
           size="mini"
           @click="handleBatchDataType"
-          > {{$t('dag_dialog_field_mapping_change_type_field_rename')}}</ElButton
+        >
+          {{ $t('dag_dialog_field_mapping_change_type_field_rename') }}</ElButton
         >
         <ElButton v-if="!readOnly" class="mr-5" size="mini" type="primary" @click="rollbackAll">{{
           $t('dag_dialog_field_mapping_rollback_all')
@@ -341,14 +342,18 @@
       :before-close="handleDataTypeClose"
     >
       <div class="table-box flex flex-row mb-3">
-        <span class="inline-block font-weight-bold" style="width: 190px">{{$t('dag_dialog_field_mapping_batch_change_type_source')}}</span>
-        <span class="inline-block font-weight-bold" style="width: 334px">{{$t('dag_dialog_field_mapping_batch_change_type_target')}}</span>
+        <span class="inline-block font-weight-bold" style="width: 190px">{{
+          $t('dag_dialog_field_mapping_batch_change_type_source')
+        }}</span>
+        <span class="inline-block font-weight-bold" style="width: 334px">{{
+          $t('dag_dialog_field_mapping_batch_change_type_target')
+        }}</span>
       </div>
       <div class="table-box flex flex-column">
         <div
           v-if="form.batchOperationList.length !== 0"
           class="flex flex-row flex-1 mb-3 align-items-center"
-          v-for="(ops,index) in form.batchOperationList"
+          v-for="(ops, index) in form.batchOperationList"
         >
           <ElSelect class="mr-3" size="mini" v-model="ops.sourceType" :disabled="true">
             <ElOption
@@ -358,7 +363,7 @@
               :key="index"
             ></ElOption>
           </ElSelect>
-          <VIcon class="color-primary mr-3 ">right</VIcon>
+          <VIcon class="color-primary mr-3">right</VIcon>
           <ElSelect size="mini" v-model="ops.targetType">
             <ElOption
               :label="item.dbType"
@@ -370,7 +375,13 @@
           <VIcon v-if="index === 0 && showAddBtn" class="ml-3 clickable" @click="handleBatchOperation">add</VIcon>
         </div>
         <div class="flex flex-row flex-1 mb-3 align-items-center" v-for="(ops, index) in batchOperation">
-          <ElSelect class="mr-3" size="mini" clearable v-model="ops.sourceType" @visible-change="handleChangeSourceType">
+          <ElSelect
+            class="mr-3"
+            size="mini"
+            clearable
+            v-model="ops.sourceType"
+            @visible-change="handleChangeSourceType"
+          >
             <ElOption
               :label="item.dbType"
               :value="item.dbType"
@@ -379,7 +390,7 @@
             ></ElOption>
           </ElSelect>
           <VIcon class="mr-3 color-primary">right</VIcon>
-          <ElSelect class="mr-3" size="mini" clearable v-model="ops.targetType">
+          <ElSelect size="mini" clearable v-model="ops.targetType">
             <ElOption
               :label="item.dbType"
               :value="item.dbType"
@@ -388,7 +399,12 @@
             ></ElOption>
           </ElSelect>
           <VIcon v-if="index === 0 && !showAddBtn" class="ml-3 clickable" @click="handleBatchOperation">add</VIcon>
-          <VIcon v-if="index !== 0 || (index === 0 && showAddBtn) " class="ml-3 clickable" @click="removeBatchOperation(index)">remove</VIcon>
+          <VIcon
+            v-if="index !== 0 || (index === 0 && showAddBtn)"
+            class="ml-3 clickable"
+            @click="removeBatchOperation(index)"
+            >remove</VIcon
+          >
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -483,8 +499,8 @@ export default {
       ],
       sourceList: [],
       showAddBtn: false, //展示新增按钮
-      oldBatchOperationList:[],
-      sourceTypeMapping:[]
+      oldBatchOperationList: [],
+      sourceTypeMapping: []
     }
   },
   mounted() {
@@ -556,9 +572,9 @@ export default {
     initTypeMapping() {
       this.$nextTick(() => {
         this.typeMappingMethod &&
-          this.typeMappingMethod(this.selectRow).then(data => {
-            this.sourceTypeMapping = data.sourceData
-            this.typeMapping = data.targetData
+          this.typeMappingMethod(this.selectRow).then(({ sourceData, targetData }) => {
+            this.sourceTypeMapping = sourceData || []
+            this.typeMapping = targetData || []
           })
       })
     },
@@ -664,11 +680,11 @@ export default {
       this.updateTableData(id, `t_${key}`, value)
     },
     /*更新左边表导航 重新推演*/
-    updateParentMetaData(type, data,batchOperation) {
+    updateParentMetaData(type, data, batchOperation) {
       this.loadingPage = true
       this.$nextTick(() => {
         this.updateMetadata &&
-          this.updateMetadata(type, data,batchOperation)
+          this.updateMetadata(type, data, batchOperation)
             .then(data => {
               this.$emit('update-nav', data)
               this.selectRow = data[this.position]
@@ -693,10 +709,10 @@ export default {
     handleBatchDataType() {
       //锁定源表字段去重
       this.dialogDataTypeVisible = true
-      if(this.form.batchOperationList?.length === 0){
+      if (this.form.batchOperationList?.length === 0) {
         this.intiBatchOperation()
         this.showAddBtn = false
-      }else {
+      } else {
         this.batchOperation = [] //二次渲染清空当前操作
         this.showAddBtn = true
       }
@@ -742,13 +758,14 @@ export default {
       }
       this.batchOperation.push(node)
     },
-    removeBatchOperation(index){
-      this.batchOperation.splice(index,1)
+    removeBatchOperation(index) {
+      this.batchOperation.splice(index, 1)
     },
-    handleChangeSourceType(val){
-     if(val){ //下拉框打开重新过滤去重sourceList
-       this.filterBatchOperationList()
-     }
+    handleChangeSourceType(val) {
+      if (val) {
+        //下拉框打开重新过滤去重sourceList
+        this.filterBatchOperationList()
+      }
     },
     /*表改名弹窗保存*/
     handleTableNameSave() {
@@ -765,12 +782,12 @@ export default {
     /*字段类型弹窗保存*/
     handleDataTypeSave() {
       let verify = true
-      this.batchOperation.forEach(v =>{
-        if(v.sourceType===''){
+      this.batchOperation.forEach(v => {
+        if (v.sourceType === '') {
           verify = false
         }
       })
-      if(!verify){
+      if (!verify) {
         this.$message.error(this.$t('dag_dialog_field_mapping_batch_change_type_error_tip'))
         return
       }
@@ -781,26 +798,28 @@ export default {
       let oldObj = {} //是否对已有的数据有修改
       this.form.batchOperationList.push(...this.batchOperation)
       this.batchOperation = []
-      if( this.oldBatchOperationList?.length > 0){
-        this.oldBatchOperationList.forEach(item=>{
+      if (this.oldBatchOperationList?.length > 0) {
+        this.oldBatchOperationList.forEach(item => {
           oldObj[item.sourceType] = item.targetType
         })
       }
-      if( this.form.batchOperationList?.length > 0){
-        this.form.batchOperationList.forEach(item=>{
-          if(!oldObj[item.sourceType] || oldObj[item.sourceType] !== item.targetType){
-            this.batchOperation.push(item);
+      if (this.form.batchOperationList?.length > 0) {
+        this.form.batchOperationList.forEach(item => {
+          if (!oldObj[item.sourceType] || oldObj[item.sourceType] !== item.targetType) {
+            this.batchOperation.push(item)
           }
         })
       }
-      this.updateParentMetaData('dataType', this.form,this.batchOperation)
+      this.updateParentMetaData('dataType', this.form, this.batchOperation)
       this.intiBatchOperation()
     },
-    intiBatchOperation(){
-      this.batchOperation = [{
-        sourceType: '',
-        targetType: ''
-      }]
+    intiBatchOperation() {
+      this.batchOperation = [
+        {
+          sourceType: '',
+          targetType: ''
+        }
+      ]
     },
     /*copy 当前form*/
     copyForm() {
@@ -821,7 +840,7 @@ export default {
             fieldsNameTransform: '',
             table_prefix: '',
             table_suffix: '',
-            batchOperationList:[],
+            batchOperationList: []
           }
           this.intiBatchOperation()
           this.copyForm()
@@ -1266,7 +1285,7 @@ export default {
         table_suffix: this.form.table_suffix,
         tableNameTransform: this.form.tableNameTransform,
         fieldsNameTransform: this.form.fieldsNameTransform,
-        batchOperationList:this.form?.batchOperationList || []
+        batchOperationList: this.form?.batchOperationList || []
       }
       return {
         valid: true,
