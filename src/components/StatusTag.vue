@@ -36,6 +36,9 @@ export default {
     status: {
       type: String
     },
+    lang: {
+      type: String
+    },
     target: {
       type: String,
       default: 'instance'
@@ -68,7 +71,11 @@ export default {
       return this.map[this.status] || {}
     },
     imgSrc() {
-      return require(`../../public/images/task/${this.statusObj.icon}.png`)
+      if (this.lang === 'en') {
+        return require(`../../public/images/task/${this.statusObj.icon}.svg`)
+      } else {
+        return require(`../../public/images/task/${this.statusObj.icon}.png`)
+      }
     }
   }
 }

@@ -25,6 +25,8 @@ export default {
   button_finish: '完成',
   button_submit: '保存',
   button_confirm: '确定',
+  button_close: '取 消',
+  button_save: '确 定',
   /** 模块 */
   // 工作台
   workbench_manage: '工作台',
@@ -345,7 +347,8 @@ export default {
   // connection_form_hazecast_data_source: '数据源',
   // connection_form_hazecast_data_source_type: '数据源',
   connection_form_hazecast_rename: '重命名',
-  connection_form_change: '改变',
+  connection_form_change: '更换',
+  connection_form_rename: '改名',
   connection_form_hazecast_cancel: '取消',
   connection_form_hazecast_save: '保存',
   connection_form_give_up: '放弃',
@@ -573,6 +576,7 @@ export default {
 
   task_instance_select_area: '选择区域',
   task_instance_choose_area: '选择可用区',
+
   // 里程碑
   milestone_label_init_dataflow: '【前期准备】解析dag路径创建子任务',
   milestone_label_connect_to_source: '【前期准备】连接源端数据源',

@@ -1,21 +1,26 @@
 <template>
   <div class="field-mapping" v-loading="loadingPage">
     <div class="field-mapping__desc text-start lh-base">
-      <strong>表设置</strong>:
-      用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型
+      <strong>{{ $t('task_mapping_table_setting') }}</strong
+      >:
+      {{ $t('task_mapping_table_setting_tip') }}
       <div class="float-end">
-        <el-button v-if="!readOnly" plain type="primary" size="mini" @click="handleChangTableName">表改名</el-button>
-        <el-button v-if="!readOnly" plain type="primary" size="mini" @click="dialogFieldVisible = true"
-          >字段改名</el-button
-        >
-        <el-button v-if="!readOnly" class="mr-5" size="mini" type="primary" @click="rollbackAll">恢复默认</el-button>
+        <el-button v-if="!readOnly" plain type="primary" size="mini" @click="handleChangTableName">{{
+          $t('task_mapping_table_rename')
+        }}</el-button>
+        <el-button v-if="!readOnly" plain type="primary" size="mini" @click="dialogFieldVisible = true">{{
+          $t('task_mapping_table_field_rename')
+        }}</el-button>
+        <el-button v-if="!readOnly" class="mr-5" size="mini" type="primary" @click="rollbackAll">{{
+          $t('task_mapping_table_restore_default')
+        }}</el-button>
       </div>
     </div>
     <div class="task-form-body">
       <div class="flex flex-column">
         <div class="flex mb-2 ml-6">
           <div class="flex">
-            <span class="text"> 搜索表：</span>
+            <span class="text"> {{ $t('task_mapping_table_search_table') }}：</span>
             <el-input v-model="searchTable" size="mini" @change="search('table')"></el-input>
           </div>
         </div>
@@ -37,9 +42,9 @@
               <div class="target">{{ item.sinkObjectName }}</div>
               <div class="select">
                 {{
-                  `已选中 ${position === index ? fieldCount : item.sourceFieldCount - item.userDeletedNum}/${
-                    item.sourceFieldCount
-                  }`
+                  `${$t('task_mapping_table_selected')} ${
+                    position === index ? fieldCount : item.sourceFieldCount - item.userDeletedNum
+                  }/${item.sourceFieldCount}`
                 }}
               </div>
             </div>
@@ -49,11 +54,11 @@
       <div class="main">
         <div class="search mb-5 ml-2">
           <div class="item">
-            <span> 搜索字段：</span>
+            <span> {{ $t('task_mapping_table_search_field') }}：</span>
             <el-input v-model="searchField" size="mini" @change="search('field')"></el-input>
           </div>
           <div class="item ml-5" v-if="!readOnly">
-            <el-tooltip effect="dark" content="恢复默认字段" placement="top-start">
+            <el-tooltip effect="dark" :content="$t('task_mapping_table_restore_default_fields')" placement="top-start">
               <el-button size="mini" @click.stop="rollbackTable(selectRow.sinkObjectName, selectRow.sourceTableId)">
                 <VIcon class="color-primary" size="14">rollback</VIcon>
               </el-button>
@@ -68,7 +73,12 @@
           :row-class-name="tableRowClassName"
           v-loading="loading"
         >
-          <ElTableColumn show-overflow-tooltip label="源表字段名" prop="field_name" width="150">
+          <ElTableColumn
+            show-overflow-tooltip
+            :label="$t('task_mapping_table_source_table_field')"
+            prop="field_name"
+            width="150"
+          >
             <template slot-scope="scope">
               <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
                 >{{ scope.row.field_name }}
@@ -77,10 +87,22 @@
               <span v-else class="item" :show-overflow-tooltip="true">{{ scope.row.field_name }}</span>
             </template>
           </ElTableColumn>
-          <ElTableColumn label="源表类型" prop="data_type" width="150"></ElTableColumn>
-          <ElTableColumn label="源表长度" prop="precision" width="150"></ElTableColumn>
-          <ElTableColumn label="源表精度" prop="scale" width="100"></ElTableColumn>
-          <ElTableColumn label="目标表字段名" width="260">
+          <ElTableColumn
+            :label="$t('task_mapping_table_source_table_type')"
+            prop="data_type"
+            width="150"
+          ></ElTableColumn>
+          <ElTableColumn
+            :label="$t('task_mapping_table_source_table_length')"
+            prop="precision"
+            width="150"
+          ></ElTableColumn>
+          <ElTableColumn
+            :label="$t('task_mapping_table_source_table_accuracy')"
+            prop="scale"
+            width="100"
+          ></ElTableColumn>
+          <ElTableColumn :label="$t('task_mapping_table_target_table_field')" width="260">
             <template slot-scope="scope">
               <div
                 v-if="!scope.row.is_deleted && !hiddenFieldProcess && !readOnly"
@@ -93,7 +115,7 @@
               <span v-else :show-overflow-tooltip="true">{{ scope.row.t_field_name }}</span>
             </template>
           </ElTableColumn>
-          <ElTableColumn label="目标表类型" width="150">
+          <ElTableColumn :label="$t('task_mapping_table_target_type')" width="150">
             <template slot-scope="scope">
               <div v-if="!scope.row.is_deleted && !readOnly" @click="edit(scope.row, 'data_type')">
                 <span>{{ scope.row.t_data_type }}</span>
@@ -105,7 +127,7 @@
               </div>
             </template>
           </ElTableColumn>
-          <ElTableColumn label="目标表长度" width="150">
+          <ElTableColumn :label="$t('task_mapping_table_target_length')" width="150">
             <template slot-scope="scope">
               <div
                 v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && !readOnly"
@@ -119,7 +141,7 @@
               </div>
             </template>
           </ElTableColumn>
-          <ElTableColumn label="目标表精度" width="100">
+          <ElTableColumn :label="$t('task_mapping_table_target_accuracy')" width="100">
             <template slot-scope="scope">
               <div
                 v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit && !readOnly"
@@ -133,15 +155,19 @@
               </div>
             </template>
           </ElTableColumn>
-          <ElTableColumn label="操作" width="80" v-if="!hiddenFieldProcess && !readOnly">
+          <ElTableColumn :label="$t('task_mapping_table_operate')" width="80" v-if="!hiddenFieldProcess && !readOnly">
             <template slot-scope="scope">
-              <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true)"> 删除 </ElLink>
-              <ElLink type="primary" v-else @click="del(scope.row.t_id, false)"> 还原 </ElLink>
+              <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true)">
+                {{ $t('button_delete') }}
+              </ElLink>
+              <ElLink type="primary" v-else @click="del(scope.row.t_id, false)">
+                {{ $t('task_mapping_table_reduction') }}
+              </ElLink>
             </template>
           </ElTableColumn>
           <div class="field-mapping-table__empty" slot="empty">
             <i class="el-icon-folder-opened"></i>
-            <span class="ml-1">暂无数据</span>
+            <span class="ml-1">{{ $t('task_mapping_table_no_data') }}</span>
           </div>
         </El-table>
       </div>
@@ -167,7 +193,7 @@
                 item.maxPrecision && currentOperationType === 'precision' && item.minPrecision !== item.maxPrecision
               "
             >
-              <div v-if="index === 0">长度范围</div>
+              <div v-if="index === 0">{{ $t('task_mapping_table_length_range') }}</div>
               <div>
                 {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
               </div>
@@ -176,7 +202,7 @@
               v-if="item.maxScale && currentOperationType === 'scale' && item.minScale !== item.maxScale"
               style="margin-top: 10px"
             >
-              <div>精度范围</div>
+              <div>{{ $t('task_mapping_table_accuracy_range') }}</div>
               <div>
                 {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
               </div>
@@ -196,13 +222,13 @@
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
           <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
             <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
-              <div v-if="index === 0">长度范围</div>
+              <div v-if="index === 0">{{ $t('task_mapping_table_length_range') }}</div>
               <div>
                 {{ `[ ${item.minPrecision} , ${item.maxPrecision} ]` }}
               </div>
             </div>
             <div v-if="item.maxScale && item.minScale !== item.maxScale" style="margin-top: 10px">
-              <div>精度范围</div>
+              <div>{{ $t('task_mapping_table_accuracy_range') }}</div>
               <div>
                 {{ `[ ${item.minScale} , ${item.maxScale} ]` }}
               </div>
@@ -211,14 +237,14 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose()">取 消</el-button>
-        <el-button type="primary" @click="editSave()">确 定</el-button>
+        <el-button @click="handleClose()">{{ $t('button_dialog_cancel') }}</el-button>
+        <el-button type="primary" @click="editSave()">{{ $t('button_dialog_confirm') }}</el-button>
       </span>
     </el-dialog>
     <el-dialog
       width="800px"
       append-to-body
-      title="批量改表名设置"
+      :title="$t('task_mapping_batch_change_table_title')"
       custom-class="field-maping-table-dialog"
       :visible.sync="dialogTableVisible"
       :close-on-click-modal="false"
@@ -226,43 +252,45 @@
     >
       <div class="table-box">
         <el-form :rules="rules" ref="form" :model="form" label-position="top" class="table-form" label-width="120px">
-          <el-form-item label="表名大小写">
+          <el-form-item :label="$t('task_mapping_dialog_table_name_case')">
             <el-select size="mini" v-model="form.tableNameTransform">
-              <el-option label="不变" value=""></el-option>
-              <el-option label="转大写" value="toUpperCase"></el-option>
-              <el-option label="转小写" value="toLowerCase"></el-option>
+              <el-option :label="$t('task_mapping_dialog_constant')" value=""></el-option>
+              <el-option :label="$t('task_mapping_dialog_to_uppercase')" value="toUpperCase"></el-option>
+              <el-option :label="$t('task_mapping_dialog_lowercase')" value="toLowerCase"></el-option>
             </el-select>
           </el-form-item>
-          <div class="tip">说明：设置的前后缀也遵循大小写规则</div>
-          <el-form-item label="请输入前缀" prop="table_prefix">
+          <div class="tip">{{ $t('task_mapping_dialog_rule_note') }}</div>
+          <el-form-item :label="$t('task_mapping_dialog_enter_prefix')" prop="table_prefix">
             <el-input size="mini" v-model="form.table_prefix"></el-input>
           </el-form-item>
           <div class="tip">
-            <span>以英文字母开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span>
-            <div>前缀不允许以 system 开头</div>
+            <span>{{ $t('task_mapping_dialog_english_letter') }}</span>
+            <div>{{ $t('task_mapping_dialog_not_allow_system') }}</div>
           </div>
-          <el-form-item label="请输入后缀" prop="table_suffix">
+          <el-form-item :label="$t('task_mapping_dialog_enter_suffix')" prop="table_suffix">
             <el-input size="mini" v-model="form.table_suffix"></el-input>
           </el-form-item>
           <div class="tip">
-            <span>以英文字母、下划线开头，仅支持英文、数字、下划线、点、中划线，限0~50字符</span>
+            <span>{{ $t('task_mapping_dialog_underscore_begin') }}</span>
           </div>
         </el-form>
         <div class="table-example">
-          <h3>示例:</h3>
-          <p>原表名: tableName</p>
-          <p>修改后: {{ tableName }}</p>
+          <h3>{{ $t('task_mapping_dialog_example') }}:</h3>
+          <p>{{ $t('task_mapping_dialog_original_table_name') }}: tableName</p>
+          <p>{{ $t('task_mapping_dialog_after_modify') }}: {{ tableName }}</p>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="handleTableClose()">取 消</el-button>
-        <el-button size="mini" type="primary" @click="handleTableNameSave()">确 定</el-button>
+        <el-button size="mini" @click="handleTableClose()">{{ $t('button_dialog_cancel') }}</el-button>
+        <el-button size="mini" type="primary" @click="handleTableNameSave()">{{
+          $t('button_dialog_confirm')
+        }}</el-button>
       </span>
     </el-dialog>
     <el-dialog
       width="600px"
       append-to-body
-      title="批量改字段名设置"
+      :title="$t('task_mapping_batch_change_field_title')"
       custom-class="field-maping-table-dialog"
       :visible.sync="dialogFieldVisible"
       :close-on-click-modal="false"
@@ -270,18 +298,18 @@
     >
       <div class="table-box">
         <el-form ref="form" class="table-form" :model="form" label-width="120px">
-          <el-form-item label="字段名大小写">
+          <el-form-item :label="$t('task_mapping_dialog_field_name_case')">
             <el-select size="mini" v-model="form.fieldsNameTransform">
-              <el-option label="不变" value=""></el-option>
-              <el-option label="转大写" value="toUpperCase"></el-option>
-              <el-option label="转小写" value="toLowerCase"></el-option>
+              <el-option :label="$t('task_mapping_dialog_constant')" value=""></el-option>
+              <el-option :label="$t('task_mapping_dialog_to_uppercase')" value="toUpperCase"></el-option>
+              <el-option :label="$t('task_mapping_dialog_lowercase')" value="toLowerCase"></el-option>
             </el-select>
           </el-form-item>
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="handleFieldClose">取 消</el-button>
-        <el-button size="mini" type="primary" @click="handleFieldSave()">确 定</el-button>
+        <el-button size="mini" @click="handleFieldClose">{{ $t('button_dialog_cancel') }}</el-button>
+        <el-button size="mini" type="primary" @click="handleFieldSave()">{{ $t('button_dialog_confirm') }}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -314,9 +342,9 @@ export default {
       if (value === '') {
         callback()
       } else if (!/^[a-zA-Z]([a-zA-Z0-9_\-.])*$/.test(value)) {
-        callback(new Error('请按照以下规则输入: '))
+        callback(new Error(this.$t('task_mapping_dialog_rule_input')))
       } else if (/^(system).*/.test(value)) {
-        callback(new Error('请按照以下规则输入: '))
+        callback(new Error(this.$t('task_mapping_dialog_rule_input')))
       } else {
         callback()
       }
@@ -325,7 +353,7 @@ export default {
       if (value === '') {
         callback()
       } else if (!/^[a-zA-Z_][a-zA-Z0-9_\-.]*$/.test(value)) {
-        callback(new Error('请按照以下规则输入: '))
+        callback(new Error(this.$t('task_mapping_dialog_rule_input')))
       } else {
         callback()
       }
@@ -354,10 +382,10 @@ export default {
         scale: ''
       },
       titleType: {
-        field_name: '修改目标字段名',
-        data_type: '修改目标表字段类型',
-        precision: '修改目标字段长度',
-        scale: '修改目标表精度'
+        field_name: this.$t('task_mapping_dialog_modify_target_field_name'),
+        data_type: this.$t('task_mapping_dialog_modify_target_field_type'),
+        precision: this.$t('task_mapping_dialog_modify_target_field_length'),
+        scale: this.$t('task_mapping_dialog_modify_target_field_accuracy')
       },
       operations: [], //字段操作
       dialogTableVisible: false,
@@ -557,8 +585,10 @@ export default {
     },
     /* 恢复默认全部*/
     rollbackAll() {
-      this.$confirm('您确认要全部恢复默认吗？', '提示', {
-        type: 'warning'
+      this.$confirm(this.$t('task_mapping_dialog_all_restore_defaults'), this.$t('task_mapping_dialog_hint'), {
+        type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel')
       }).then(resFlag => {
         if (resFlag) {
           this.form = {
@@ -592,7 +622,7 @@ export default {
         let data = JSON.parse(JSON.stringify(this.target))
         let deleteLen = data.filter(v => !v.is_deleted)
         if (deleteLen.length === 0 && this.target?.length > 0) {
-          this.$message.error('当前表被删除了所有字段，不允许保存操作')
+          this.$message.error(this.$t('task_mapping_dialog_delete_all_field_tip'))
           return //所有字段被删除了 不可以保存任务
         }
         this.$emit('row-click', this.selectRow, this.operations, this.target)
@@ -640,8 +670,10 @@ export default {
     },
     /*恢复默认单表*/
     rollbackTable(name, id) {
-      this.$confirm('您确认要恢复默认吗？', '提示', {
-        type: 'warning'
+      this.$confirm(this.$t('task_mapping_dialog_restore_defaults'), this.$t('task_mapping_dialog_hint'), {
+        type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel')
       }).then(resFlag => {
         if (resFlag) {
           this.loadingPage = true
@@ -685,7 +717,7 @@ export default {
         option = option[0]
         //字段名限制
         if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(value)) {
-          this.$message.error('以英文字母、下划线开头，仅支持英文、数字、下划线，限1~50字符')
+          this.$message.error(this.$t('task_mapping_dialog_field_name_restrictions_tip'))
           return
         }
         if (value === option.field_name && !option.is_deleted) {
@@ -712,7 +744,7 @@ export default {
         if (isPrecision.length === 0) {
           this.currentTypeRules.forEach(r => {
             if (r.minPrecision === r.maxPrecision && value !== r.maxPrecision) {
-              this.$message.error('当前值不符合该字段范围')
+              this.$message.error(this.$t('task_mapping_dialog_field_range_check'))
               verify = false
             }
           })
@@ -721,7 +753,7 @@ export default {
             if (r.minPrecision < r.maxPrecision) {
               if (r.minPrecision > value || value > r.maxPrecision) {
                 verify = false
-                this.$message.error('当前值不符合该字段范围')
+                this.$message.error(this.$t('task_mapping_dialog_field_range_check'))
               }
             }
           })
@@ -734,7 +766,7 @@ export default {
         if (isScale.length === 0) {
           this.currentTypeRules.forEach(r => {
             if (r.minScale === r.maxScale && value !== r.maxScale) {
-              this.$message.error('当前值不符合该字段范围')
+              this.$message.error(this.$t('task_mapping_dialog_field_range_check'))
               verify = false
             }
           })
@@ -743,7 +775,7 @@ export default {
             if (r.minScale < r.maxScale) {
               if (r.minScale > value || value > r.maxScale) {
                 verify = false
-                this.$message.error('当前值不符合该字段范围')
+                this.$message.error(this.$t('task_mapping_dialog_field_range_check'))
               }
             }
           })
@@ -981,9 +1013,9 @@ export default {
       let result = this.checkTable()
       if (result.checkDataType || result.checkInvalid) {
         if (!hiddenMsg) {
-          this.$message.error(
-            `检测到您还有 ${result.count} 张表的字段类型设置存在问题，请在左侧表区域选择有问题的表进行处理`
-          )
+          let arr = this.$t('task_mapping_dialog_field_type_problem').split('XXX')
+          let msg = arr[0] + result.count + arr[1]
+          this.$message.error(msg)
         }
         return {
           valid: false,
