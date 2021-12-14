@@ -247,7 +247,6 @@ export default {
     }
   },
   mounted() {
-    console.log('window.getSettingByKey(\'ALLOW_CONNECTION_TYPE\')', window.getSettingByKey('ALLOW_CONNECTION_TYPE'))
     let timeZone = new Date().getTimezoneOffset() / 60
     if (timeZone > 0) {
       this.systemTimeZone = 0 - timeZone
@@ -949,19 +948,15 @@ export default {
     },
     //获取表设置
     async intiFieldMappingTableData(row) {
-      let source = await MetadataInstancesModel.originalData({
-        qualified_name: encodeURIComponent(row.sourceQualifiedName)
-      })
-      console.log('source', source)
-      source = source && source.length > 0 ? source[0].fields : []
-      let target = await MetadataInstancesModel.originalData({
-        isTarget: true,
-        qualified_name: encodeURIComponent(row.sinkQulifiedName)
-      })
-      console.log('target', target)
+      let sourceResult = await MetadataInstancesModel.originalData(row.sourceQualifiedName)
+      // console.log('source', source)
+      let source = sourceResult.data?.length ? sourceResult.data[0].fields : []
+      let targetResult = await MetadataInstancesModel.originalData(row.sourceQualifiedName)
+      // let target = await MetadataInstancesModel.originalData(row.sourceQualifiedName, true)
+      // console.log('target', target)
       // 初始化所有字段都映射 只取顶级字段
       source = source.filter(field => field.field_name.indexOf('.') === -1)
-      target = target && target.length > 0 ? target[0].fields : []
+      let target = targetResult.data?.length ? targetResult.data[0].fields : []
       //源表 目标表数据组合
       //是否有字段处理器
       let operations = this.getFieldOperations(row)
@@ -1038,7 +1033,7 @@ export default {
     async getTypeMapping(row) {
       let data = await TypeMappingModel.getId(row.sinkDbType)
       console.log('getTypeMapping', data)
-      return data
+      return data.data
     },
     //保存字段处理器
     saveOperations(row, operations, target) {
