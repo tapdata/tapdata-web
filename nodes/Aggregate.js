@@ -22,13 +22,15 @@ export class Aggregate extends NodeType {
     properties: {
       primaryKeys: {
         title: '主键',
-        type: 'string',
+        type: 'array',
         required: true,
-        default: 'column_2',
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-decorator-props': {
-          wrapperWidth: 240
+          wrapperWidth: 770
+        },
+        'x-component-props': {
+          multiple: true
         },
         'x-reactions': ['{{useAsyncDataSource(loadNodeFieldNames)}}']
       },
