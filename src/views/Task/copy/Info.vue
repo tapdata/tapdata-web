@@ -263,12 +263,11 @@ export default {
         },
         legend: {
           top: 10,
-          right: 50,
-          show: false
+          right: '5%'
         },
         grid: {
           left: '5%',
-          right: '10%',
+          right: '5%',
           bottom: '3%',
           containLabel: true,
           borderWidth: 1,
