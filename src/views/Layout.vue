@@ -151,7 +151,17 @@
         </div>
       </el-aside>
       <el-main class="layout-main">
-        <router-view />
+        <div v-if="showBreadcrumb" class="header-breadcrumb">
+          <ElBreadcrumb
+            :class="['breadcrumb', { 'one-breadcrumb': breadcrumbData.length === 1 }]"
+            separator-class="el-icon-arrow-right"
+          >
+            <ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
+              {{ item.name }}
+            </ElBreadcrumbItem>
+          </ElBreadcrumb>
+        </div>
+        <router-view class="flex-fill" />
       </el-main>
     </el-container>
 
@@ -165,6 +175,7 @@ import newDataFlow from '@/components/newDataFlow'
 import NotificationPopover from './notification/NotificationPopover'
 import DownAgent from './downAgent/agentDown'
 import { signOut } from '../utils/util'
+import { childRoutes } from '@/router'
 
 const Languages = {
   sc: '中文 (简)',
@@ -274,13 +285,16 @@ export default {
       agentTipFalg: false,
       licenseExpire: '',
       licenseExpireVisible: false,
-      licenseExpireDate: ''
+      licenseExpireDate: '',
+      breadcrumbData: [],
+      showBreadcrumb: false
     }
   },
   created() {
     this.activeMenu = this.$route.fullPath
     this.getMenus()
     this.getFavMenus()
+    this.getBreadcrumb()
     this.$root.$on('updateMenu', () => {
       this.getFavMenus()
     })
@@ -313,6 +327,7 @@ export default {
   watch: {
     '$route.name'() {
       this.activeMenu = this.$route.path
+      this.getBreadcrumb()
     }
     // $route() {
     // 	if (this.$route.meta) {
@@ -502,6 +517,32 @@ export default {
             this.licenseExpireDate = this.$moment(expires_on).format('YYYY-MM-DD HH:mm:ss')
           }
         })
+    },
+    getBreadcrumb() {
+      const route = this.$route
+      let matched = route.matched.slice(1)
+      let data = []
+      let flag = false
+      if (matched.length) {
+        // find parent
+        const parentName = matched[0]?.meta?.listRoute?.name
+        if (parentName) {
+          const parentRoute = childRoutes.find(item => item.name === parentName)
+          matched.unshift(parentRoute)
+        }
+        data = matched.map(route => {
+          flag = !!route.meta?.showTitle
+          return {
+            name: route.meta?.title,
+            to: {
+              name: route.name === this.$route.name ? null : route.name
+            },
+            showTitle: !!route.meta?.showTitle
+          }
+        })
+      }
+      this.breadcrumbData = data
+      this.showBreadcrumb = flag
     }
   }
 }
@@ -529,6 +570,26 @@ export default {
       float: right;
       padding: 8px 20px 0;
       cursor: pointer;
+    }
+  }
+  .breadcrumb {
+    padding: 18px 0 18px 20px;
+    //height: 40px;
+    border-bottom: 1px solid #dedee4;
+    box-shadow: 0 0 4px 0 rgb(0 0 0 / 10%);
+    box-sizing: border-box;
+    &.one-breadcrumb {
+      font-size: 18px;
+      ::v-deep {
+        .el-breadcrumb__inner {
+          color: #000;
+        }
+      }
+    }
+    ::v-deep {
+      .el-breadcrumb__separator {
+        color: map-get($fontColor, sub);
+      }
     }
   }
 }
@@ -702,6 +763,10 @@ export default {
   .layout-main {
     padding: 0;
     background: #fff;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    overflow-y: hidden;
   }
   .expire-msg {
     display: inline-block;

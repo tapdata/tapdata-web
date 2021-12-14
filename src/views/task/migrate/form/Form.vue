@@ -1091,7 +1091,7 @@ export default {
 <style lang="scss" scoped>
 .create-task-wrap {
   //padding: 0 20px;
-  height: 100%;
+  height: 0;
   background: rgba(250, 250, 250, 1);
   .step-header {
     display: flex;

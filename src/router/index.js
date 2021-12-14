@@ -403,6 +403,30 @@ const childRoutes = [
     }
   },
   {
+    path: '/migrate/editor',
+    name: 'MigrateNew',
+    component: MigrateForm,
+    meta: {
+      title: '创建任务',
+      showTitle: true,
+      listRoute: {
+        name: 'migrate'
+      }
+    }
+  },
+  {
+    path: '/migrate/editor/:id',
+    name: 'MigrateEditor',
+    component: MigrateForm,
+    meta: {
+      title: '编辑任务',
+      showTitle: true,
+      listRoute: {
+        name: 'migrate'
+      }
+    }
+  },
+  {
     path: '/dataflows',
     name: 'dataflow',
     component: () => import('@/views/task/etl/List'),
@@ -410,6 +434,14 @@ const childRoutes = [
       code: 'Data_SYNC_menu',
       title: i18n.t('tap.jobFlow'),
       isCollapse: false
+    }
+  },
+  {
+    path: '/dataflows/details/:id',
+    name: 'dataflowDetails',
+    component: () => import('@/views/task/etl/Details'),
+    meta: {
+      title: '同步任务详情'
     }
   },
   {
@@ -698,22 +730,6 @@ const router = new Router({
         }
       },
       component: () => import('web-core/views/dataflow/Editor')
-    },
-    {
-      path: '/migrate/editor',
-      name: 'MigrateNew',
-      component: MigrateForm,
-      meta: {
-        title: '创建任务'
-      }
-    },
-    {
-      path: '/migrate/editor/:id',
-      name: 'MigrateEditor',
-      component: MigrateForm,
-      meta: {
-        title: '编辑任务'
-      }
     }
   ]
 })
