@@ -8,12 +8,15 @@ import axios from 'axios'
 
 export default class TaskAPI extends PublicAPI {
   constructor() {
-    super('/api/Task')
+    super('/api/SubTask')
+  }
+  byTaskId(taskId, params) {
+    return axios.get(this.url + `/byTaskId/${taskId}`, { params })
   }
   start(id) {
-    return axios.put(this.url + `/start/${id}`)
+    return axios.post(this.url + `/running/${id}`)
   }
   stop(id) {
-    return axios.put(this.url + `/stop/${id}`)
+    return axios.post(this.url + `/stopped/${id}`)
   }
 }

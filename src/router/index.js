@@ -403,7 +403,7 @@ const childRoutes = [
     }
   },
   {
-    path: '/dataflow',
+    path: '/dataflows',
     name: 'dataflow',
     component: () => import('@/views/task/etl/List'),
     meta: {
@@ -680,7 +680,7 @@ const router = new Router({
       component: () => import('@/views/Guide')
     },
     {
-      path: '/dataflow/editor',
+      path: '/dataflows/editor',
       name: 'DataflowNew',
       props: {
         listRoute: {
@@ -690,7 +690,7 @@ const router = new Router({
       component: () => import('web-core/views/dataflow/Editor')
     },
     {
-      path: '/dataflow/editor/:id',
+      path: '/dataflows/editor/:id',
       name: 'DataflowEditor',
       props: {
         listRoute: {
@@ -819,6 +819,7 @@ router.beforeEach(async (to, from, next) => {
     if (to.meta.code && !window.getSettingByKey('DFS_IGNORE_PERMISSION')) {
       matched = permissions.some(p => p.code === to.meta.code)
     }
+    // 绕开权限判断
     if (matched) {
       // if (showGuide) {
       // 	if (to.name === 'guide') {

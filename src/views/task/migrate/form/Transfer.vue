@@ -646,28 +646,26 @@ export default {
     },
     //重新加载模型
     async reload() {
-      this.$checkAgentStatus(() => {
-        let config = {
-          title: this.$t('connection.reloadTittle'),
-          Message: this.$t('connection.reloadMsg'),
-          confirmButtonText: this.$t('message.confirm'),
-          cancelButtonText: this.$t('message.cancel'),
-          id: this.sourceId
+      let config = {
+        title: this.$t('connection.reloadTittle'),
+        Message: this.$t('connection.reloadMsg'),
+        confirmButtonText: this.$t('message.confirm'),
+        cancelButtonText: this.$t('message.cancel'),
+        id: this.sourceId
+      }
+      this.$confirm(config.Message + '?', config.title, {
+        confirmButtonText: config.confirmButtonText,
+        cancelButtonText: config.cancelButtonText,
+        type: 'warning',
+        closeOnClickModal: false
+      }).then(resFlag => {
+        if (resFlag) {
+          this.showProgress = true
+          this.reloadLoading = true
+          this.progress = 0
+          this.reloadCount++
+          this.reloadApi('first')
         }
-        this.$confirm(config.Message + '?', config.title, {
-          confirmButtonText: config.confirmButtonText,
-          cancelButtonText: config.cancelButtonText,
-          type: 'warning',
-          closeOnClickModal: false
-        }).then(resFlag => {
-          if (resFlag) {
-            this.showProgress = true
-            this.reloadLoading = true
-            this.progress = 0
-            this.reloadCount++
-            this.reloadApi('first')
-          }
-        })
       })
     },
     reloadApi(type) {
