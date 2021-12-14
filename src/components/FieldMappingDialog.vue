@@ -734,7 +734,7 @@ export default {
     /*字段改名弹窗取消*/
     handleDataTypeClose() {
       this.dialogDataTypeVisible = false
-      this.form.fieldsNameTransform = this.currentForm.batchOperationList
+      this.form.batchOperationList = this.currentForm.batchOperationList
     },
     filterBatchOperationList() {
       //每次源表都需要过滤

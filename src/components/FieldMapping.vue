@@ -249,6 +249,7 @@ export default {
      * 数据匹配 源表所有字段过处理器 源表所有字段过字段改名 匹配后的数据再与目标表数据匹配
      * */
     async intiFieldMappingTableData(row) {
+      if (!this.$refs.fieldMappingDom) return //打开弹窗才能请求弹窗列表数据
       let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
       source = source.data && source.data.length > 0 ? source.data[0].fields : []
       let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
@@ -321,13 +322,6 @@ export default {
         operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
       }
       return operations || []
-    },
-    //判断是否改名
-    handleFieldName(row, fieldName) {
-      let operations = this.getFieldOperations(row)
-      if (!operations) return
-      let ops = operations.filter(op => op.operand === fieldName && op.op === 'RENAME')
-      return ops
     },
     //获取typeMapping
     async getTypeMapping(row) {
