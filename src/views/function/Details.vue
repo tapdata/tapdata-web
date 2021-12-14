@@ -20,7 +20,7 @@
               <span>{{ details.packageName }}</span>
             </ElFormItem>
             <ElFormItem :label="$t('function_class_name_label') + ':'">
-              <span>{{ details.className }}</span>
+              <span>{{ details.classNameFmt }}</span>
             </ElFormItem>
             <ElFormItem :label="$t('function_method_name_label') + ':'">
               <span>{{ details.methodName }}</span>
@@ -92,6 +92,7 @@ export default {
             details.script = `function ${details.function_name}() ${details.function_body}`
           }
           details.typeFmt = typeMap[details.type]
+          details.classNameFmt = details.className?.split(details.packageName + '.')?.[1] || ''
           this.details = details
         })
     }

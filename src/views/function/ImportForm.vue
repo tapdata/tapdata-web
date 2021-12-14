@@ -77,8 +77,9 @@
                 </div>
               </template>
             </ElTableColumn>
-            <ElTableColumn prop="className" min-width="200px" :label="$t('function_class_label')"></ElTableColumn>
+            <ElTableColumn prop="classNameFmt" :label="$t('function_class_label')"></ElTableColumn>
             <ElTableColumn prop="methodName" :label="$t('function_method_name_label')"></ElTableColumn>
+            <ElTableColumn prop="format" :label="$t('function_format')"></ElTableColumn>
             <ElTableColumn width="120px" :label="$t('column_operation')">
               <template #default="{ row, $index }">
                 <ElButton size="mini" type="text" @click="openSetting(row, $index)">{{
@@ -205,7 +206,9 @@ export default {
         })
     },
     changeName(index) {
-      this.funcList[index].function_name = this.editName
+      let item = this.funcList[index]
+      item.function_name = this.editName
+      item.format = this.setFormat(item)
       this.editIndex = null
       this.getRepeatNames(this.funcList, this.editName)
     },
@@ -213,11 +216,20 @@ export default {
       this.funcList = null
       this.editIndex = null
     },
+    setFormat(item) {
+      let params = item?.parameters?.sort((a, b) => a.index < b.index) || []
+      let arr = []
+      params.forEach(p => {
+        arr.push(`${p.name}:${p.type}`)
+      })
+      return `${item.function_name}(${arr.join(', ')})`
+    },
     hanlderResult(data) {
       let result = data?.result
       if (data?.status === 'SUCCESS' && result?.length) {
         this.funcList = result.map(item => {
           item.function_name = item.methodName
+          item.classNameFmt = item.className?.split(this.form.packageName + '.')?.[1] || ''
           item = Object.assign(item, {
             describe: '',
             format: '',
@@ -225,6 +237,7 @@ export default {
             return_value: '',
             isRepeat: false
           })
+          item.format = this.setFormat(item)
           return item
         })
         this.getRepeatNames(this.funcList)
@@ -302,6 +315,7 @@ export default {
           if (list.some(item => item.isRepeat)) {
             return this.$message.error(this.$t('function_name_repeat'))
           }
+          let loading = this.$loading()
           let { fileId, fileName, packageName } = this.form
           let useId = this.$cookie.get('user_id')
           let now = new Date()
@@ -333,6 +347,9 @@ export default {
             })
             .catch(e => {
               this.$message.error(e.response.msg)
+            })
+            .finally(() => {
+              loading.close()
             })
         }
       })
