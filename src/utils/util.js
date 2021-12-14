@@ -81,3 +81,4 @@ export const getImgByType = function (type) {
   }
   return require(`@/assets/images/types/${type.toLowerCase()}.png`)
 }
+export const deepCopy = obj => JSON.parse(JSON.stringify(obj))

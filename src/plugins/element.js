@@ -65,7 +65,9 @@ import {
   Divider,
   Skeleton,
   SkeletonItem,
-  InfiniteScroll
+  InfiniteScroll,
+  Breadcrumb,
+  BreadcrumbItem
 } from 'element-ui'
 //重写ElementUI Select组件多选时的触发函数，去掉去重的处理
 Select.methods.handleOptionSelect = function (option, byClick) {
@@ -163,6 +165,8 @@ Vue.component(Skeleton.name, Skeleton)
 Vue.component(SkeletonItem.name, SkeletonItem)
 Vue.use(Loading.directive)
 Vue.use(InfiniteScroll)
+Vue.component(Breadcrumb.name, Breadcrumb)
+Vue.component(BreadcrumbItem.name, BreadcrumbItem)
 /***提示只显示一次**/
 // 因为使用了new DonMessage()的原因，所以导致this.$message(options)的方式无法使用
 // 推荐使用this.$message.success("成功提示")或者this.$message.success(options)的方式进行调用

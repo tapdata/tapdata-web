@@ -129,3 +129,23 @@
     }
   }
 }
+// 按钮
+.el-button, .v-button {
+  // 文字字体
+  .el-button--text {
+    border: 0;
+    //color: map-get($color, primary);
+    border-radius: unset;
+    &:focus,
+    &:hover {
+      //color: map-get($color, primary);
+      background-color: unset;
+    }
+    &.is-disabled,
+    &.is-disabled:hover {
+      border: 0;
+      //color: map-get($color, disable);
+      background-color: unset;
+    }
+  }
+}

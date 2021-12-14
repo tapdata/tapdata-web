@@ -403,13 +403,49 @@ const childRoutes = [
     }
   },
   {
-    path: '/dataflow',
+    path: '/migrate/editor',
+    name: 'MigrateNew',
+    component: MigrateForm,
+    meta: {
+      title: '创建任务',
+      showTitle: true,
+      listRoute: {
+        name: 'migrate'
+      }
+    }
+  },
+  {
+    path: '/migrate/editor/:id',
+    name: 'MigrateEditor',
+    component: MigrateForm,
+    meta: {
+      title: '编辑任务',
+      showTitle: true,
+      listRoute: {
+        name: 'migrate'
+      }
+    }
+  },
+  {
+    path: '/dataflows',
     name: 'dataflow',
     component: () => import('@/views/task/etl/List'),
     meta: {
       code: 'Data_SYNC_menu',
       title: i18n.t('tap.jobFlow'),
       isCollapse: false
+    }
+  },
+  {
+    path: '/dataflows/details/:id',
+    name: 'dataflowDetails',
+    component: () => import('@/views/task/etl/Details'),
+    meta: {
+      title: '同步任务详情',
+      showTitle: true,
+      listRoute: {
+        name: 'dataflow'
+      }
     }
   },
   {
@@ -680,7 +716,7 @@ const router = new Router({
       component: () => import('@/views/Guide')
     },
     {
-      path: '/dataflow/editor',
+      path: '/dataflows/editor',
       name: 'DataflowNew',
       props: {
         listRoute: {
@@ -690,7 +726,7 @@ const router = new Router({
       component: () => import('web-core/views/dataflow/Editor')
     },
     {
-      path: '/dataflow/editor/:id',
+      path: '/dataflows/editor/:id',
       name: 'DataflowEditor',
       props: {
         listRoute: {
@@ -698,22 +734,6 @@ const router = new Router({
         }
       },
       component: () => import('web-core/views/dataflow/Editor')
-    },
-    {
-      path: '/migrate/editor',
-      name: 'MigrateNew',
-      component: MigrateForm,
-      meta: {
-        title: '创建任务'
-      }
-    },
-    {
-      path: '/migrate/editor/:id',
-      name: 'MigrateEditor',
-      component: MigrateForm,
-      meta: {
-        title: '编辑任务'
-      }
     }
   ]
 })
@@ -819,6 +839,7 @@ router.beforeEach(async (to, from, next) => {
     if (to.meta.code && !window.getSettingByKey('DFS_IGNORE_PERMISSION')) {
       matched = permissions.some(p => p.code === to.meta.code)
     }
+    // 绕开权限判断
     if (matched) {
       // if (showGuide) {
       // 	if (to.name === 'guide') {

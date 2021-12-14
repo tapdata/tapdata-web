@@ -350,8 +350,12 @@ export default {
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-    if (this.$route.query.step) {
+    let query = this.$route.query
+    if (query.step) {
       this.handleGuide()
+    }
+    if (query?.action === 'create') {
+      this.checkTestConnectionAvailable()
     }
   },
   destroyed() {

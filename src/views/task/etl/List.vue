@@ -159,11 +159,7 @@
           <span class="dataflow-name">
             <span
               :class="['name', { 'has-children': row.hasChildren }]"
-              @click="
-                row.status === 'draft'
-                  ? handleDetail(row.id, 'edit', row.mappingTemplate, row.hasChildren)
-                  : handleDetail(row.id, 'detail', row.mappingTemplate, row.hasChildren)
-              "
+              @click="toDetail(row)"
               >{{ row.name }}</span
             >
             <el-tag v-if="row.listTagId !== undefined" class="tag" type="info" effect="dark" size="mini">
@@ -249,13 +245,13 @@
             >
               {{ $t('dataFlow.button.force_stop') }}
             </ElLink>
-            <ElLink
-              style="margin-left: 10px"
-              type="primary"
-              @click="handleDetail(row.id, 'detail', row.mappingTemplate, row.hasChildren)"
-            >
-              {{ $t('dataFlow.runningMonitor') }}
-            </ElLink>
+            <!--            <ElLink-->
+            <!--              style="margin-left: 10px"-->
+            <!--              type="primary"-->
+            <!--              @click="handleDetail(row.id, 'detail', row.mappingTemplate, row.hasChildren)"-->
+            <!--            >-->
+            <!--              {{ $t('dataFlow.runningMonitor') }}-->
+            <!--            </ElLink>-->
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               style="margin-left: 10px"
@@ -1111,7 +1107,16 @@ export default {
         if (!resFlag) {
           return
         }
-        this.changeStatus(ids, { status: 'stopping' })
+        TaskModel.stop(ids[0])
+          .then(res => {
+            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.table.fetch()
+          })
+          .catch(err => {
+            this.$message.error(err.data?.message)
+          })
+        // return
+        // this.changeStatus(ids, { status: 'stopping' })
       })
     },
     forceStop(ids, item = {}) {
@@ -1286,6 +1291,15 @@ export default {
     },
     handleGoFunction() {
       top.location.href = '/#/JsFuncs'
+    },
+    toDetail(row) {
+      console.log('详情')
+      this.$router.push({
+        name: 'dataflowDetails',
+        params: {
+          id: row.id
+        }
+      })
     }
   }
 }
