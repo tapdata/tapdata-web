@@ -36,7 +36,7 @@
         <div class="mb-4">
           <div class="mb-4" style="font-size: 12px">{{ $t('function_import_list_title') }}:</div>
           <ElTable :data="funcList">
-            <ElTableColumn :label="$t('function_name_label')">
+            <ElTableColumn min-width="200px" :label="$t('function_name_label')">
               <template #default="{ row, $index }">
                 <div class="flex align-center">
                   <template v-if="editIndex !== $index">
@@ -61,10 +61,7 @@
                       type="primary"
                       size="mini"
                       :disabled="!editName || !editName.trim()"
-                      @click="
-                        funcList[$index].function_name = editName
-                        editIndex = null
-                      "
+                      @click="changeName($index)"
                       >{{ $t('button_save') }}</ElButton
                     >
                   </template>
@@ -148,7 +145,8 @@ export default {
       },
       settingData: null,
       editIndex: null,
-      editName: ''
+      editName: '',
+      repeatNames: []
     }
   },
   watch: {
@@ -165,6 +163,44 @@ export default {
     }
   },
   methods: {
+    getRepeatNames(list, name) {
+      let map = {}
+      let names = name ? this.repeatNames.concat() : []
+      if (!name) {
+        list.forEach(item => {
+          let name = item.function_name
+          if (map[name]) {
+            names.push(name)
+          }
+          map[name] = true
+        })
+      }
+      this.$api('Javascript_functions')
+        .get({
+          filter: JSON.stringify(
+            encodeURIComponent({
+              fields: { function_name: 1 },
+              where: {
+                function_name: {
+                  inq: !name ? Object.keys(map) : [name]
+                }
+              }
+            })
+          )
+        })
+        .then(res => {
+          let data = res?.data || []
+          names.concat(data)
+          this.repeatNames = Array.from(new Set(names))
+          this.funcList.forEach(item => {
+            item.isRepeat = this.repeatNames.includes(item.function_name)
+          })
+        })
+    },
+    changeName(index) {
+      this.funcList[index].function_name = this.editName
+      this.editIndex = null
+    },
     clearFunctionList() {
       this.funcList = null
       this.editIndex = null
@@ -174,9 +210,16 @@ export default {
       if (data?.status === 'SUCCESS' && result?.length) {
         this.funcList = result.map(item => {
           item.function_name = item.functionName
-          item = Object.assign(item, { describe: '', format: '', parameters_desc: '', return_value: '' })
+          item = Object.assign(item, {
+            describe: '',
+            format: '',
+            parameters_desc: '',
+            return_value: '',
+            isRepeat: false
+          })
           return item
         })
+        this.getRepeatNames(this.funcList)
       } else if (data?.status === 'ERROR') {
         this.$message.error(data.error)
       } else {
@@ -248,13 +291,15 @@ export default {
             let useId = this.$cookie.get('user_id')
             let now = new Date()
             let params = list.map(item => {
-              let { function_name, describe, format, parameters_desc, return_value } = item
+              let { function_name, describe, format, parameters_desc, return_value, className, methodName } = item
               return {
                 type: 'jar',
                 fileId,
                 fileName,
                 packageName,
                 function_name,
+                className,
+                methodName,
                 describe,
                 format,
                 parameters_desc,
