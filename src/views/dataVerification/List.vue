@@ -404,13 +404,11 @@ export default {
       window.open(url, '_blank')
     },
     startTask(id) {
-      let multipleSelection = id ? [id] : this.multipleSelection
+      // let multipleSelection = id ? [id] : this.multipleSelection
       this.$api('Inspects')
         .update(
           {
-            id: {
-              inq: multipleSelection
-            }
+            id: id
           },
           { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: '' }
         )
