@@ -274,7 +274,9 @@ export default {
       'setActiveType',
       'setFormSchema',
       'setTransformStatus',
-      'setEditVersion'
+      'setEditVersion',
+      'copyNodes',
+      'pasteNodes'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag']),
@@ -328,6 +330,14 @@ export default {
 
     initCommand() {
       this.command = new CommandManager(this.$store, this.jsPlumbIns)
+      Mousetrap.bind('mod+c', () => {
+        console.log('复制快捷键')
+        this.copyNodes()
+      })
+      Mousetrap.bind('mod+v', () => {
+        console.log('粘贴快捷键')
+        this.pasteNodes(this.command)
+      })
       Mousetrap.bind('mod+z', () => {
         this.command.undo()
       })

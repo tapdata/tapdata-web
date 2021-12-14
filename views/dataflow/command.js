@@ -61,16 +61,20 @@ class Command {
 class AddNodeCommand extends Command {
   constructor(node) {
     super()
-    this.node = node
+    // this.node = node
+    this.nodes = Array.isArray(node) ? node : [node]
   }
 
   exec(state) {
-    state.store.commit('dataflow/addNode', this.node)
+    state.store.commit('dataflow/addNodes', this.nodes)
+    // state.store.commit('dataflow/addNode', this.node)
   }
 
   undo(state) {
-    state.instance.remove(NODE_PREFIX + this.node.id)
-    state.store.commit('dataflow/removeNode', this.node)
+    this.nodes.forEach(node => {
+      state.instance.remove(NODE_PREFIX + node.id)
+      state.store.commit('dataflow/removeNode', node)
+    })
   }
 }
 
@@ -95,7 +99,7 @@ class RemoveNodeCommand extends Command {
   }
 
   undo(state) {
-    this.nodes.forEach(node => state.store.commit('dataflow/addNode', node))
+    state.store.commit('dataflow/addNodes', this.nodes)
     Vue.nextTick(() => {
       this.connections?.forEach(c => {
         state.instance.connect({ uuids: [c.sourceId + '_source', c.targetId + '_target'] })

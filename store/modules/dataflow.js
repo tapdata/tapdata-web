@@ -2,6 +2,8 @@ import Vue from 'vue'
 import { isObject } from 'web-core/utils/util'
 import Task from 'web-core/api/Task'
 import { debounce } from 'lodash'
+import { AddNodeCommand } from '@/_packages/tapdata-web-core/views/dataflow/command'
+import { uuid } from 'web-core/utils/util'
 
 const taskApi = new Task()
 
@@ -283,6 +285,10 @@ const mutations = {
     state.dag.nodes.push(nodeData)
   },
 
+  addNodes(state, nodes) {
+    state.dag.nodes.push(...nodes)
+  },
+
   // 更新节点属性
   updateNodeProperties(state, updateInformation) {
     console.log('updateInformation', updateInformation) // eslint-disable-line
@@ -479,6 +485,43 @@ const mutations = {
 
   setEditVersion(state, editVersion) {
     state.editVersion = editVersion
+  },
+
+  copyNodes: state => {
+    const nodes = state.selectedNodes
+    const nodeMap = nodes.reduce((map, node) => ((map[node.id] = true), map), {})
+    localStorage['DAG_CLIPBOARD_NODES'] = JSON.stringify(state.selectedNodes)
+  },
+
+  pasteNodes: (state, command) => {
+    const CLIPBOARD_NODES = localStorage['DAG_CLIPBOARD_NODES']
+    if (CLIPBOARD_NODES) {
+      const nodes = JSON.parse(CLIPBOARD_NODES)
+      const allNodeTypes = [...state.nodeTypes, ...state.processorNodeTypes]
+      const nodeTypesMap = allNodeTypes.reduce((res, item) => ((res[item.type] = item), res), {})
+
+      nodes.map(node => {
+        node.id = uuid()
+        node.attrs.position[0] += 20
+        node.attrs.position[1] += 20
+
+        const nodeType = nodeTypesMap[node.type]
+
+        if (nodeType) {
+          const Ctor = state.ctorTypes[nodeType.constructor]
+          const ins = new Ctor(nodeType)
+
+          Object.defineProperty(node, '__Ctor', {
+            value: ins,
+            enumerable: false
+          })
+        }
+      })
+
+      command.exec(new AddNodeCommand(nodes))
+
+      localStorage['DAG_CLIPBOARD_NODES'] = JSON.stringify(nodes)
+    }
   }
 }
 
