@@ -334,8 +334,13 @@ export default {
       if (!row) return
       return Promise.all([
         this.$api('TypeMapping').getId(row.sourceDbType),
-        this.$api('TypeMapping').getId(row.sourceDbType)
-      ])
+        this.$api('TypeMapping').getId(row.sinkDbType)
+      ]).then(([sourceData, targetData]) => {
+        return {
+          sourceData: sourceData?.data,
+          targetData: targetData?.data
+        }
+      })
     },
     saveReturnData() {
       //保存字段映射

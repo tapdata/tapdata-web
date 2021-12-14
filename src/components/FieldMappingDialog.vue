@@ -573,8 +573,8 @@ export default {
       this.$nextTick(() => {
         this.typeMappingMethod &&
           this.typeMappingMethod(this.selectRow).then(({ sourceData, targetData }) => {
-            this.sourceTypeMapping = sourceData?.data || []
-            this.typeMapping = targetData?.data || []
+            this.sourceTypeMapping = sourceData || []
+            this.typeMapping = targetData || []
           })
       })
     },
