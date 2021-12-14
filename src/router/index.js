@@ -441,7 +441,11 @@ const childRoutes = [
     name: 'dataflowDetails',
     component: () => import('@/views/task/etl/Details'),
     meta: {
-      title: '同步任务详情'
+      title: '同步任务详情',
+      showTitle: true,
+      listRoute: {
+        name: 'dataflow'
+      }
     }
   },
   {

@@ -2,7 +2,9 @@
   <ElContainer v-loading="loading" class="task-details-container flex-column">
     <div class="task-info flex justify-content-between bg-white p-6">
       <div class="task-info__left flex align-items-center">
-        <div class="task-info__img flex justify-center align-items-center mr-8">图片</div>
+        <div class="task-info__img flex justify-center align-items-center mr-8">
+          <img src="../../../assets/images/task/task.png" alt="" />
+        </div>
         <div>
           <div>
             <span class="fs-6 color-primary">{{ task.name }}</span>
