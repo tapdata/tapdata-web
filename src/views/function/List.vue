@@ -3,10 +3,12 @@
     <TablePage ref="table" class="h-100" :title="$t('menu_title_function')" :remoteMethod="getData">
       <ul class="search-bar" slot="search">
         <li class="item">
-          <ElSelect v-model="searchParams.type" size="small" @input="table.fetch(1)">
-            <ElOption :label="$t('select_option_all')" value=""></ElOption>
-            <ElOption v-for="(label, value) in typeMapping" :key="value" :label="label" :value="value"> </ElOption>
-          </ElSelect>
+          <ElRadioGroup v-model="searchParams.type" size="small" @input="table.fetch(1)">
+            <ElRadioButton label="">{{ $t('select_option_all') }}</ElRadioButton>
+            <ElRadioButton v-for="(label, value) in typeMapping" :key="value" :label="value"
+              >{{ label }}
+            </ElRadioButton>
+          </ElRadioGroup>
         </li>
         <li class="item">
           <ElButton plain class="btn-refresh" size="small" @click="table.fetch()">
