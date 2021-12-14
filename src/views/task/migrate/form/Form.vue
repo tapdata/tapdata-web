@@ -168,7 +168,7 @@ export default {
       dataSourceZone: '',
       dataSourceMock: [],
       dialogDatabaseTypeVisible: false,
-      allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE'),
+      allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE') || [],
       supportTwoWay: false,
       systemTimeZone: '',
       options: [
@@ -247,6 +247,7 @@ export default {
     }
   },
   mounted() {
+    console.log('window.getSettingByKey(\'ALLOW_CONNECTION_TYPE\')', window.getSettingByKey('ALLOW_CONNECTION_TYPE'))
     let timeZone = new Date().getTimezoneOffset() / 60
     if (timeZone > 0) {
       this.systemTimeZone = 0 - timeZone
@@ -296,7 +297,7 @@ export default {
     },
     //云版支持数据源
     allowDatabaseType() {
-      let result = (this.allowDataType || '').split(',')
+      let result = this.allowDataType
       this.changeConfig(result, 'databaseType')
     },
     formChangeSetting(data) {
