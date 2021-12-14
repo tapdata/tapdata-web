@@ -390,7 +390,7 @@
             ></ElOption>
           </ElSelect>
           <VIcon class="mr-3 color-primary">right</VIcon>
-          <ElSelect class="mr-3" size="mini" clearable v-model="ops.targetType">
+          <ElSelect size="mini" clearable v-model="ops.targetType">
             <ElOption
               :label="item.dbType"
               :value="item.dbType"
