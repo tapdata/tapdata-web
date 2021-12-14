@@ -10,7 +10,7 @@ export const logminerConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-digger.svg'
+          xlinkHref: 'static/editor/digger.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.logminer.name')
