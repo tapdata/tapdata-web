@@ -163,18 +163,18 @@ export default {
     }
   },
   methods: {
-    getRepeatNames(list, name) {
+    getRepeatNames(list) {
       let map = {}
-      let names = name ? this.repeatNames.concat() : []
-      if (!name) {
-        list.forEach(item => {
-          let name = item.function_name
-          if (map[name]) {
-            names.push(name)
-          }
-          map[name] = true
-        })
-      }
+      let names = []
+
+      list.forEach(item => {
+        let name = item.function_name
+        if (map[name]) {
+          names.push(name)
+        }
+        map[name] = true
+      })
+
       this.$api('Javascript_functions')
         .get({
           filter: JSON.stringify(
@@ -182,7 +182,7 @@ export default {
               fields: { function_name: 1 },
               where: {
                 function_name: {
-                  inq: !name ? Object.keys(map) : [name]
+                  inq: Object.keys(map)
                 }
               }
             })
@@ -200,6 +200,7 @@ export default {
     changeName(index) {
       this.funcList[index].function_name = this.editName
       this.editIndex = null
+      this.getRepeatNames(this.funcList, this.editName)
     },
     clearFunctionList() {
       this.funcList = null
@@ -286,42 +287,44 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           let list = this.funcList
-          if (list?.length) {
-            let { fileId, fileName, packageName } = this.form
-            let useId = this.$cookie.get('user_id')
-            let now = new Date()
-            let params = list.map(item => {
-              let { function_name, describe, format, parameters_desc, return_value, className, methodName } = item
-              return {
-                type: 'jar',
-                fileId,
-                fileName,
-                packageName,
-                function_name,
-                className,
-                methodName,
-                describe,
-                format,
-                parameters_desc,
-                return_value,
-                last_updated: now,
-                user_id: useId
+          if (!list?.length) {
+            return this.$message.error(this.$t('function_message_function_empty'))
+          }
+          if (list.some(item => item.isRepeat)) {
+            return this.$message.error(this.$t('function_name_repeat'))
+          }
+          let { fileId, fileName, packageName } = this.form
+          let useId = this.$cookie.get('user_id')
+          let now = new Date()
+          let params = list.map(item => {
+            let { function_name, describe, format, parameters_desc, return_value, className, methodName } = item
+            return {
+              type: 'jar',
+              fileId,
+              fileName,
+              packageName,
+              function_name,
+              className,
+              methodName,
+              describe,
+              format,
+              parameters_desc,
+              return_value,
+              last_updated: now,
+              user_id: useId
+            }
+          })
+          this.$api('Javascript_functions')
+            .post(params)
+            .then(res => {
+              if (res) {
+                this.$message.success(this.$t('message.saveOK'))
+                this.$router.back()
               }
             })
-            this.$api('Javascript_functions')
-              .post(params)
-              .then(res => {
-                if (res) {
-                  this.$message.success(this.$t('message.saveOK'))
-                  this.$router.back()
-                }
-              })
-              .catch(e => {
-                this.$message.error(e.response.msg)
-              })
-          } else {
-            this.$message.error(this.$t('function_message_function_empty'))
-          }
+            .catch(e => {
+              this.$message.error(e.response.msg)
+            })
         }
       })
     }
