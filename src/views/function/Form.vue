@@ -1,0 +1,248 @@
+<template>
+  <section class="custom-form-wrapper">
+    <div class="container-header">
+      {{ $route.params.id ? $t('function_button_edit_function') : $t('function_button_create_custom_function') }}
+    </div>
+    <div class="custom-form__body">
+      <div class="main px-6 py-4">
+        <ElForm ref="form" label-position="left" label-width="120px" size="small" :model="form">
+          <template v-if="$route.params.id && details.type === 'jar'">
+            <ElFormItem :label="$t('function_jar_file_label') + ':'">
+              <span>{{ details.fileName }}</span>
+            </ElFormItem>
+            <ElFormItem :label="$t('function_package_name_label') + ':'">
+              <span>{{ details.packageName }}</span>
+            </ElFormItem>
+            <ElFormItem :label="$t('function_class_name_label') + ':'">
+              <span>{{ details.className }}</span>
+            </ElFormItem>
+            <ElFormItem :label="$t('function_method_name_label') + ':'">
+              <span>{{ details.methodName }}</span>
+            </ElFormItem>
+            <ElFormItem
+              prop="function_name"
+              :label="$t('function_name_label') + ':'"
+              :rules="{ required: true, message: $t('function_name_placeholder') }"
+            >
+              <ElInput
+                v-model="form.function_name"
+                class="form-input"
+                :placeholder="$t('function_name_placeholder')"
+              ></ElInput>
+            </ElFormItem>
+          </template>
+          <ElFormItem
+            v-if="form.type === 'custom'"
+            prop="script"
+            :label="$t('function_script_label') + ':'"
+            :rules="scriptRules"
+          >
+            <div class="script-editor">
+              <CodeEditor v-model="form.script" ref="editor" lang="javascript" height="200"></CodeEditor>
+            </div>
+          </ElFormItem>
+          <ElFormItem prop="describe" :label="$t('function_describe_label') + ':'">
+            <ElInput
+              v-model="form.describe"
+              class="form-input"
+              type="textarea"
+              :placeholder="$t('function_describe_placeholder')"
+            ></ElInput>
+          </ElFormItem>
+          <ElFormItem prop="format" :label="$t('function_format') + ':'">
+            <ElInput
+              v-model="form.format"
+              class="form-input"
+              :placeholder="$t('function_format_placeholder')"
+            ></ElInput>
+          </ElFormItem>
+          <ElFormItem prop="parameters_desc" :label="$t('function_parameters_describe_label') + ':'">
+            <ElInput
+              v-model="form.parameters_desc"
+              class="form-input"
+              type="textarea"
+              :placeholder="$t('function_parameters_describe_placeholder')"
+            ></ElInput>
+          </ElFormItem>
+          <ElFormItem prop="return_value" :label="$t('function_return_value_label') + ':'">
+            <ElInput
+              v-model="form.return_value"
+              class="form-input"
+              type="textarea"
+              :placeholder="$t('function_return_value_placeholder')"
+            ></ElInput>
+          </ElFormItem>
+        </ElForm>
+      </div>
+      <div class="footer p-6">
+        <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('button_back') }}</ElButton>
+        <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script>
+import CodeEditor from 'web-core/components/CodeEditor'
+const getScriptObj = script => {
+  let matchArr1 = script.match(/(?<=function\s+)\w+(?=\s*\([^]*\))/g)
+  let name = matchArr1?.[0] || ''
+  let matchArr2 = script.match(/(?<=\s*function\s+\w+\s*\([^]*\)\s*\{)[^]*?(?=\}\s*)/g)
+  let body = matchArr2?.[0] || ''
+  let matchArr3 = script.match(/(?<=function\s+\w+\s*\()[\w\s,]*(?=\))/g)
+  let params = matchArr3?.[0] || ''
+  return {
+    name,
+    body,
+    params,
+    bodyLength: matchArr2?.length || 0
+  }
+}
+export default {
+  components: { CodeEditor },
+  data() {
+    let self = this
+    return {
+      details: {},
+      form: {
+        type: 'custom',
+        describe: '',
+        format: '',
+        parameters_desc: '',
+        return_value: '',
+        script: 'function functionName (record) {\n\treturn record\n}'
+      },
+      scriptRules: {
+        validator: (rule, value, callback) => {
+          let obj = getScriptObj(value)
+          if (!value.trim()) {
+            callback(new Error(this.$t('function_script_empty')))
+          } else if (!obj.name.trim()) {
+            callback(new Error(this.$t('function_script_missing_function_name')))
+          } else if (!obj.body.trim()) {
+            callback(new Error(this.$t('function_script_missing_function_body')))
+          } else if (self.$refs.editor.editor.session.$annotations.some(item => item.type !== 'info')) {
+            callback(new Error(this.$t('function_script_format_error')))
+          } else if (obj.bodyLength.length > 1) {
+            callback(new Error(this.$t('function_script_only_one')))
+          } else {
+            callback()
+          }
+        }
+      }
+    }
+  },
+  created() {
+    let id = this.$route.params.id
+    if (id) {
+      this.getData(id)
+    }
+  },
+  methods: {
+    getData(id) {
+      this.$api('Javascript_functions')
+        .findOne({
+          filter: {
+            where: {
+              id
+            }
+          }
+        })
+        .then(res => {
+          let details = res?.data || {}
+          // 处理老数据问题
+          if (details.type === 'custom' && !details.script) {
+            details.script = `function ${details.function_name}() ${details.function_body}`
+          }
+          this.details = details
+          this.form = Object.assign({}, this.form, details)
+        })
+    },
+    save() {
+      this.$refs.editor.format()
+      this.$nextTick(() => {
+        this.$refs.form.validate(valid => {
+          if (valid) {
+            let params = {}
+            let method = 'post'
+            let id = this.$route.params.id
+            if (this.form.type === 'custom') {
+              let obj = getScriptObj(this.form.script)
+              params = {
+                function_body: `{${obj.body}}`,
+                function_name: obj.name,
+                parameters: obj.params
+              }
+            }
+            if (id) {
+              params.id = id
+              method = 'patch'
+            }
+            this.$api('Javascript_functions')
+              [method](
+                Object.assign({}, this.form, params, {
+                  last_updated: new Date(),
+                  user_id: this.$cookie.get('user_id')
+                })
+              )
+              .then(res => {
+                if (res) {
+                  this.$message.success(this.$t('message.saveOK'))
+                  this.$router.back()
+                }
+              })
+              .catch(e => {
+                this.$message.error(e.response.msg)
+              })
+          }
+        })
+      })
+    }
+  }
+}
+</script>
+
+<style scoped lang="scss">
+.custom-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #fafafa;
+}
+.custom-form__body {
+  margin: 30px 24px 0 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  box-shadow: 0px 0px 3px 0px #cccccc;
+  overflow: hidden;
+
+  ::v-deep {
+    .el-form-item__label {
+      font-size: 12px;
+    }
+    .el-form-item--mini.el-form-item,
+    .el-form-item--small.el-form-item {
+      margin-bottom: 24px;
+    }
+  }
+  .script-editor {
+    width: 940px;
+  }
+  .form-input {
+    max-width: 600px;
+  }
+  .main {
+    flex: 1;
+    overflow: auto;
+  }
+  .footer {
+    border-top: 1px solid #f0f0f0;
+    box-shadow: 0px -1px 2px 0px #f6f6f6;
+    .btn {
+      width: 80px;
+    }
+  }
+}
+</style>
