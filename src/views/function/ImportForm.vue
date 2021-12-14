@@ -40,7 +40,13 @@
               <template #default="{ row, $index }">
                 <div class="flex align-center">
                   <template v-if="editIndex !== $index">
-                    <ElTooltip class="item" effect="dark" placement="top" :content="$t('function_tips_name_repeat')">
+                    <ElTooltip
+                      v-if="row.isRepeat"
+                      class="item"
+                      effect="dark"
+                      placement="top"
+                      :content="$t('function_tips_name_repeat')"
+                    >
                       <i class="el-icon-warning mr-2 color-error"></i>
                     </ElTooltip>
                     <span class="ellipsis">{{ row.function_name }}</span>
