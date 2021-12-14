@@ -91,8 +91,10 @@ export default {
           if (details.type === 'custom' && !details.script) {
             details.script = `function ${details.function_name}() ${details.function_body}`
           }
+          if (details.type === 'jar') {
+            details.classNameFmt = details.className?.split(details.packageName + '.')?.[1] || ''
+          }
           details.typeFmt = typeMap[details.type]
-          details.classNameFmt = details.className?.split(details.packageName + '.')?.[1] || ''
           this.details = details
         })
     }

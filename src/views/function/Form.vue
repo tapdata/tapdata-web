@@ -14,7 +14,7 @@
               <span>{{ details.packageName }}</span>
             </ElFormItem>
             <ElFormItem :label="$t('function_class_name_label') + ':'">
-              <span>{{ details.className }}</span>
+              <span>{{ details.classNameFmt }}</span>
             </ElFormItem>
             <ElFormItem :label="$t('function_method_name_label') + ':'">
               <span>{{ details.methodName }}</span>
@@ -153,6 +153,9 @@ export default {
           // 处理老数据问题
           if (details.type === 'custom' && !details.script) {
             details.script = `function ${details.function_name}() ${details.function_body}`
+          }
+          if (details.type === 'jar') {
+            details.classNameFmt = details.className?.split(details.packageName + '.')?.[1] || ''
           }
           this.details = details
           this.form = Object.assign({}, this.form, details)
