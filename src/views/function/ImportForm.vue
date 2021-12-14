@@ -7,18 +7,21 @@
       <div class="main px-6 py-4">
         <ElForm ref="form" label-position="left" label-width="120px" size="small" :model="form" :rules="rules">
           <ElFormItem prop="fileId" :label="$t('function_file_label') + ':'">
-            <ElUpload
-              class="form-input flex align-center"
-              action="api/file/upload"
-              accept=".jar"
-              :file-list="fileList"
-              :on-change="fileChange"
-              :on-remove="fileRemove"
-            >
-              <ElButton style="margin-right: 10px" size="small" type="primary">{{
-                $t('function_button_file_upload')
-              }}</ElButton>
-            </ElUpload>
+            <div class="flex align-center">
+              <ElUpload
+                class="form-input flex align-center"
+                action="api/file/upload"
+                accept=".jar"
+                :file-list="fileList"
+                :on-change="fileChange"
+                :on-remove="fileRemove"
+              >
+                <ElButton style="margin-right: 10px" size="small" type="primary">{{
+                  $t('function_button_file_upload')
+                }}</ElButton>
+              </ElUpload>
+              <span class="color-info ml-4" style="font-size: 12px">*最大10M</span>
+            </div>
           </ElFormItem>
           <ElFormItem prop="packageName" :label="$t('function_package_name_label') + ':'">
             <div class="flex align-center">
@@ -36,7 +39,7 @@
         <div class="mb-4">
           <div class="mb-4" style="font-size: 12px">{{ $t('function_import_list_title') }}:</div>
           <ElTable :data="funcList">
-            <ElTableColumn min-width="200px" :label="$t('function_name_label')">
+            <ElTableColumn :label="$t('function_name_label')">
               <template #default="{ row, $index }">
                 <div class="flex align-center">
                   <template v-if="editIndex !== $index">
@@ -74,9 +77,9 @@
                 </div>
               </template>
             </ElTableColumn>
-            <ElTableColumn prop="className" :label="$t('function_class_label')"></ElTableColumn>
+            <ElTableColumn prop="className" min-width="200px" :label="$t('function_class_label')"></ElTableColumn>
             <ElTableColumn prop="methodName" :label="$t('function_method_name_label')"></ElTableColumn>
-            <ElTableColumn :label="$t('column_operation')">
+            <ElTableColumn width="120px" :label="$t('column_operation')">
               <template #default="{ row, $index }">
                 <ElButton size="mini" type="text" @click="openSetting(row, $index)">{{
                   $t('button_setting')
@@ -183,20 +186,18 @@ export default {
 
       this.$api('Javascript_functions')
         .get({
-          filter: JSON.stringify(
-            encodeURIComponent({
-              fields: { function_name: 1 },
-              where: {
-                function_name: {
-                  inq: Object.keys(map)
-                }
+          filter: JSON.stringify({
+            fields: { function_name: 1 },
+            where: {
+              function_name: {
+                inq: Object.keys(map)
               }
-            })
-          )
+            }
+          })
         })
         .then(res => {
           let data = res?.data || []
-          names.concat(data)
+          names = names.concat(data.map(item => item.function_name))
           this.repeatNames = Array.from(new Set(names))
           this.funcList.forEach(item => {
             item.isRepeat = this.repeatNames.includes(item.function_name)
@@ -216,7 +217,7 @@ export default {
       let result = data?.result
       if (data?.status === 'SUCCESS' && result?.length) {
         this.funcList = result.map(item => {
-          item.function_name = item.functionName
+          item.function_name = item.methodName
           item = Object.assign(item, {
             describe: '',
             format: '',
@@ -289,6 +290,7 @@ export default {
     },
     remove(index) {
       this.funcList.splice(index, 1)
+      this.getRepeatNames(this.funcList)
     },
     save() {
       this.$refs.form.validate(valid => {
@@ -368,6 +370,9 @@ export default {
     }
     .el-upload-list__item:first-child {
       margin-top: 0;
+    }
+    .el-upload-list__item-name {
+      width: 250px;
     }
   }
   .form-input {
