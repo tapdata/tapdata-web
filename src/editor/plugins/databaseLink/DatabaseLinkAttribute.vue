@@ -177,6 +177,7 @@ export default {
         topicData: [],
         queueData: [],
         field_process: [], //字段处理器
+        batchOperationList: [],
         transferFlag: false,
         isFirst: true, //初始值
         scope: '',
@@ -493,6 +494,7 @@ export default {
       this.model.table_suffix = data.table_suffix
       this.model.tableNameTransform = data.tableNameTransform
       this.model.fieldsNameTransform = data.fieldsNameTransform
+      this.model.batchOperationList= data.batchOperationList
     },
     //接收是否第一次打开
     returnModel(value) {
