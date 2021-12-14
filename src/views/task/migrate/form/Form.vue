@@ -265,7 +265,7 @@ export default {
     //兼容新手引导
     handleCreateDatabase() {
       this.$router.push({
-        name: 'Connection',
+        name: 'connections',
         query: {
           action: 'create'
         }

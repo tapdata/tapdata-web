@@ -532,13 +532,16 @@ export default {
         }
         data = matched.map(route => {
           flag = !!route.meta?.showTitle
-          return {
+          let obj = {
             name: route.meta?.title,
-            to: {
-              name: route.name === this.$route.name ? null : route.name
-            },
             showTitle: !!route.meta?.showTitle
           }
+          if (route.name !== this.$route.name) {
+            obj.to = {
+              name: route.name
+            }
+          }
+          return obj
         })
       }
       this.breadcrumbData = data
