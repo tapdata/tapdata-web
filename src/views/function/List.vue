@@ -43,11 +43,10 @@
       </div>
       <ElTableColumn :label="$t('function_name_label')" prop="function_name"> </ElTableColumn>
       <ElTableColumn :label="$t('function_type_label')" prop="typeFmt"> </ElTableColumn>
-      <ElTableColumn :label="$t('function_parameters_label')" prop="parameters"> </ElTableColumn>
-      <ElTableColumn :label="$t('function_body_label')" prop="function_body"> </ElTableColumn>
-      <ElTableColumn :label="$t('function_last_update_label')" prop="last_updated"> </ElTableColumn>
+      <ElTableColumn :label="$t('function_describe_label')" prop="describe"> </ElTableColumn>
+      <ElTableColumn :label="$t('function_last_update_label')" prop="lastUpdatedFmt"> </ElTableColumn>
 
-      <ElTableColumn :label="$t('column_operation')">
+      <ElTableColumn width="150" :label="$t('column_operation')">
         <template #default="{ row }">
           <ElButton
             size="mini"
@@ -110,6 +109,7 @@ export default {
           total: countRes.data.count,
           data: res.data.map(item => {
             item.typeFmt = this.typeMapping[item.type]
+            item.lastUpdatedFmt = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
             return item
           })
         }
