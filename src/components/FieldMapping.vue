@@ -202,7 +202,7 @@ export default {
           this.dataFlow['stages'][i].tableNameTransform = ''
           this.dataFlow['stages'][i].table_suffix = ''
           this.dataFlow['stages'][i].table_prefix = ''
-          this.dataFlow['stages'][i].batchOperationList= []
+          this.dataFlow['stages'][i].batchOperationList = []
           this.dataFlow['batchOperation'] = []
         }
       }
@@ -223,13 +223,13 @@ export default {
       return result.fieldsNameTransform
     },
     //获取左边导航数据 - 表
-    async updateMetadata(type, data,batchOperation) {
+    async updateMetadata(type, data, batchOperation) {
       //将表改名 字段改名 rockBackAll
       this.updateAutoTransform(type, data)
-      if(type !=='dataType'){
+      if (type !== 'dataType') {
         this.dataFlow['rollback'] = 'all'
       }
-      if(batchOperation){
+      if (batchOperation) {
         this.dataFlow['batchOperation'] = batchOperation
         delete this.dataFlow['rollback']
       }
@@ -331,13 +331,11 @@ export default {
     },
     //获取typeMapping
     async getTypeMapping(row) {
-      if(!row)return
-      let targetData = await this.$api('TypeMapping').getId(row.sinkDbType)
-      let sourceData= await this.$api('TypeMapping').getId(row.sourceDbType)
-      return {
-        sourceData:sourceData,
-        targetData:targetData
-      }
+      if (!row) return
+      return Promise.all([
+        this.$api('TypeMapping').getId(row.sourceDbType),
+        this.$api('TypeMapping').getId(row.sourceDbType)
+      ])
     },
     saveReturnData() {
       //保存字段映射
