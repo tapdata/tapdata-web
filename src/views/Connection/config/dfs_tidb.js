@@ -5,7 +5,7 @@ export default function (vm) {
       labelWidth: '180px'
     },
     defaultModel: {
-      connection_type: 'source_and_target'
+      connection_type: 'target'
     },
     items: [
       {
@@ -17,16 +17,6 @@ export default function (vm) {
         button: true,
         outerTip: true,
         options: [
-          {
-            label: vm.$t('dataForm.form.options.sourceAndTarget'),
-            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
-            value: 'source_and_target'
-          },
-          {
-            label: vm.$t('dataForm.form.options.source'),
-            tip: vm.$t('dataForm.form.options.sourceTips'),
-            value: 'source'
-          },
           {
             label: vm.$t('dataForm.form.options.target'),
             tip: vm.$t('dataForm.form.options.targetTips'),
@@ -148,20 +138,20 @@ export default function (vm) {
         domType: 'password',
         showPassword: true
       },
-      {
-        type: 'switch',
-        field: 'schemaAutoUpdate',
-        label: vm.$t('dataForm.form.ReloadSchema')
-      },
-      {
-        type: 'input',
-        field: 'table_filter',
-        domType: 'textarea',
-        label: vm.$t('dataForm.form.tableFilter'),
-        tips: vm.$t('dataForm.form.tableFilterTips'),
-        maxlength: 500,
-        showWordLimit: true
-      },
+      // {
+      //   type: 'switch',
+      //   field: 'schemaAutoUpdate',
+      //   label: vm.$t('dataForm.form.ReloadSchema')
+      // },
+      // {
+      //   type: 'input',
+      //   field: 'table_filter',
+      //   domType: 'textarea',
+      //   label: vm.$t('dataForm.form.tableFilter'),
+      //   tips: vm.$t('dataForm.form.tableFilterTips'),
+      //   maxlength: 500,
+      //   showWordLimit: true
+      // },
       {
         type: 'input',
         field: 'additionalString',
