@@ -5,7 +5,7 @@ export default function (vm) {
       labelWidth: '180px'
     },
     defaultModel: {
-      connection_type: 'source_and_target',
+      connection_type: 'source',
       increamentalTps: 100,
       initialReadSize: 100000
     },
@@ -19,11 +19,6 @@ export default function (vm) {
         button: true,
         outerTip: true,
         options: [
-          {
-            label: vm.$t('dataForm.form.options.sourceAndTarget'),
-            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
-            value: 'source_and_target'
-          },
           {
             label: vm.$t('dataForm.form.options.source'),
             tip: vm.$t('dataForm.form.options.sourceTips'),

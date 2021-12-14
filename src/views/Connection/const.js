@@ -191,8 +191,6 @@ export const DEFAULT_MODEL = {
     database_name: '',
     database_username: '',
     plain_password: '',
-    schemaAutoUpdate: '',
-    table_filter: '',
     additionalString: ''
   }
 }
