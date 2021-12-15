@@ -335,7 +335,7 @@
     <ElDialog
       width="600px"
       append-to-body
-      :title="$t('dag_dialog_field_mapping_batch_field_name')"
+      :title="$t('dag_dialog_field_mapping_batch_change_type')"
       custom-class="field-maping-table-dialog"
       :visible.sync="dialogDataTypeVisible"
       :close-on-click-modal="false"
@@ -364,7 +364,7 @@
             ></ElOption>
           </ElSelect>
           <VIcon class="color-primary mr-3">right</VIcon>
-          <ElSelect size="mini" v-model="ops.targetType">
+          <ElSelect size="mini" v-model="ops.targetType" filterable>
             <ElOption
               :label="item.dbType"
               :value="item.dbType"
@@ -379,6 +379,7 @@
             class="mr-3"
             size="mini"
             clearable
+            filterable
             v-model="ops.sourceType"
             @visible-change="handleChangeSourceType"
           >
@@ -390,7 +391,7 @@
             ></ElOption>
           </ElSelect>
           <VIcon class="mr-3 color-primary">right</VIcon>
-          <ElSelect size="mini" clearable v-model="ops.targetType">
+          <ElSelect size="mini" clearable filterable v-model="ops.targetType" >
             <ElOption
               :label="item.dbType"
               :value="item.dbType"
