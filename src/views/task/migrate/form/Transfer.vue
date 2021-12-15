@@ -92,7 +92,7 @@
               autofocus
               maxlength="50"
               minlength="1"
-              @keyup.enter.native="checkInput(option)"
+              @keyup.13.native="checkInput(option)"
               :ref="option.id"
             ></ElInput>
             <VIcon class="v-icon-close" @click.stop.prevent="closeInput(option)">close</VIcon>

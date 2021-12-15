@@ -18,7 +18,7 @@
                 v-model="form.password"
                 :type="passwordType"
                 :placeholder="$t('app.signIn.password_placeholder')"
-                @keyup.enter="submit"
+                @keyup.13="submit"
               >
                 <i
                   slot="suffix"

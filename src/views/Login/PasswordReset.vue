@@ -27,7 +27,7 @@
                 autocomplete="current-password"
                 :type="passwordType"
                 :placeholder="$t('app.signIn.newpassword_placeholder')"
-                @keyup.enter="submit"
+                @keyup.13="submit"
               >
                 <i
                   slot="suffix"
