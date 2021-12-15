@@ -143,7 +143,13 @@ export default {
     taskChange(data) {
       let task = data.data?.fullDocument || {}
       if (this.task && JSON.stringify(task) !== JSON.stringify(this.task)) {
-        this.task = Object.assign({}, this.task, this.formatTask(task))
+        this.task = Object.assign(
+          {
+            creator: this.task.creator
+          },
+          this.task,
+          this.formatTask(task)
+        )
       }
     },
     formatTask(data) {
