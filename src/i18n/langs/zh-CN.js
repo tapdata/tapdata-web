@@ -137,6 +137,7 @@ export default {
   tap_create_task: '创建任务',
   tap_edit_task: '编辑任务',
   tap_monitor: '运行监控',
+  tap_task_details: '任务详情',
   tap_data_validation: '数据校验',
   tap_create_verification_task: '创建校验任务',
   tap_edit_verification_task: '编辑校验任务',

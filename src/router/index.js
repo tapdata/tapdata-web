@@ -144,7 +144,7 @@ const routes = [
             name: 'DataflowDetails',
             component: DataflowDetails,
             meta: {
-              title: '任务详情'
+              title: i18n.$('tap_task_details')
             }
           }
         ]

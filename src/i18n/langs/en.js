@@ -137,6 +137,7 @@ export default {
   tap_create_task: 'Create task',
   tap_edit_task: 'Edit task',
   tap_monitor: 'Run monitoring',
+  tap_task_details: 'Task details',
   tap_data_validation: 'Data validation',
   tap_create_verification_task: 'Create verification task',
   tap_edit_verification_task: 'Edit verification task',
