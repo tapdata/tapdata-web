@@ -2,10 +2,23 @@
   <div class="">
     <!--  步骤条  -->
     <ElSteps :active="active" align-center class="mini mb-6 pt-3">
-      <ElStep v-for="(item, index) in steps" :key="index" :class="[{ 'is-ative': active === index + 1 }]">
-        <span slot="icon" class="circle-icon cursor-pointer" @click="clickStep(index)"></span>
-        <div slot="title" class="cursor-pointer" @click="clickStep(index)">{{ item.label }}</div>
-        <div v-if="item.time" slot="description" class="cursor-pointer" @click="clickStep(index)">{{ item.time }}</div>
+      <ElStep v-for="(item, index) in steps" :key="index" :class="[{ 'is-ative': showActive === index + 1 }]">
+        <span
+          slot="icon"
+          :class="['circle-icon', { 'cursor-pointer': index + 1 <= active }]"
+          @click="clickStep(index)"
+        ></span>
+        <div slot="title" :class="[{ 'cursor-pointer': index + 1 <= active }]" @click="clickStep(index)">
+          {{ item.label }}
+        </div>
+        <div
+          v-if="item.time"
+          slot="description"
+          :class="[{ 'cursor-pointer': index + 1 <= active }]"
+          @click="clickStep(index)"
+        >
+          {{ item.time }}
+        </div>
       </ElStep>
     </ElSteps>
     <!--  任务初始化  -->
@@ -38,7 +51,14 @@
       <div v-if="currentStep.group === 'initial_sync'" class="mt-6">
         <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}详情</div>
         <div></div>
-        <TableList v-if="columns.length" :remoteMethod="remoteMethod" :columns="columns" key="initial_sync">
+        <TableList
+          v-if="columns.length"
+          :remoteMethod="remoteMethod"
+          :columns="columns"
+          max-height="300"
+          key="initial_sync"
+          hide-on-single-page
+        >
           <template slot="schedule" slot-scope="scope">
             <span>{{ getSchedule(scope.row) }}</span>
           </template>
@@ -46,7 +66,7 @@
       </div>
       <div v-else class="mt-6">
         <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}详情</div>
-        <TableList :columns="columns" :data="list"></TableList>
+        <TableList :columns="columns" :data="list" max-height="300" hide-on-single-page></TableList>
       </div>
     </div>
   </div>
@@ -70,6 +90,7 @@ export default {
   data() {
     return {
       active: 0,
+      showActive: 0,
       steps: [],
       searchParams: {
         tableName: '',
@@ -96,8 +117,9 @@ export default {
       return this.task?.setting?.sync_type
     },
     currentStep() {
-      const { steps, active } = this
-      return steps[active - 1] || {}
+      const { steps, active, showActive } = this
+      let index = showActive || active
+      return steps[index - 1] || {}
     }
   },
   watch: {
@@ -233,7 +255,7 @@ export default {
       milestones.forEach(el => {
         let item = stepsData[stepsData.length - 1]
         // 总有几个步骤
-        if (el.group !== item?.group) {
+        if (el.group && el.group !== item?.group) {
           stepsData.push({
             label: map[el.group],
             time: formatTime(el.start) || formatTime(el.end),
@@ -253,6 +275,7 @@ export default {
         return
       }
       this.active = (stepsData.findIndex(item => item.group === currentStep) || 0) + 1
+      this.showActive = this.active
       this.getMilestonesData()
     },
     getMilestonesData() {
@@ -440,7 +463,10 @@ export default {
       return result + '%'
     },
     clickStep(index = 0) {
-      this.active = index + 1
+      if (index + 1 > this.active) {
+        return
+      }
+      this.showActive = index + 1
       this.getMilestonesData()
     }
   }
@@ -474,9 +500,14 @@ export default {
         background-color: map-get($color, primary);
       }
     }
+    .el-step__description,
+    .el-step__description {
+      color: map-get($fontColor, sub);
+    }
     .is-ative {
-      .el-step__line {
-        background-color: map-get($color, disable);
+      .el-step__title,
+      .el-step__description {
+        color: map-get($color, primary);
       }
     }
   }
