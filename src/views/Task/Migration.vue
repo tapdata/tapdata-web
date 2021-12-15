@@ -84,6 +84,7 @@
               type="text"
               target="task"
               :status="scope.row.isFinished ? 'finished' : scope.row.status"
+              :lang="lang"
               only-img
             ></status-tag>
           </template>
@@ -283,7 +284,8 @@ export default {
         edit: { draft: true, error: true, paused: true },
         reset: { draft: true, error: true, paused: true },
         forceStop: { stopping: true }
-      }
+      },
+      lang: localStorage.getItem('tapdata_localize_lang') || 'sc'
     }
   },
   computed: {

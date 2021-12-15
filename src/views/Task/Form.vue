@@ -1301,7 +1301,9 @@ export default {
     //返回任务列表
     goBackList() {
       this.$confirm(this.$t('task_form_lost_task'), this.$t('task_form_give_up'), {
-        type: 'warning'
+        type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel')
       }).then(resFlag => {
         if (!resFlag) {
           return

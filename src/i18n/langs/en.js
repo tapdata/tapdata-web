@@ -376,6 +376,7 @@ export default {
   // connection_form_hazecast_data_source_type: 'Data source',
   connection_form_hazecast_rename: 'Rename',
   connection_form_change: 'Change',
+  connection_form_rename: 'Rename',
   // connection_form_hazecast_no_name: 'The connection name cannot be empty',
   // connection_form_hazecast_name_exists: 'Name already exists',
   connection_form_hazecast_cancel: 'Cancel',
@@ -592,15 +593,15 @@ export default {
   task_monitor_sync_task: 'Synchronous task',
 
   task_setting_sync_type: 'Sync type',
-  task_setting_initial_sync: 'Full synchronization',
-  task_setting_cdc: 'Incremental synchronization',
-  task_setting_initial_sync_cdc: 'Full volume + incremental synchronization',
+  task_setting_initial_sync: 'INITIAL SYNC',
+  task_setting_cdc: 'CDC',
+  task_setting_initial_sync_cdc: 'INITIAL SYNC + CDC',
   task_setting_initial_sync_tip:
-    'Full synchronization is also called initial synchronization, that is, the source data snapshot is read at the start of the task and synchronized to the target; this synchronization has two modes: update write, delete rewrite. ',
+    'INITIAL SYNC is also called initial synchronization, that is, the source data snapshot is read at the start of the task and synchronized to the target; this synchronization has two modes: update write, delete rewrite. ',
   task_setting_cdc_tip:
     'Incremental synchronization refers to the collection and analysis of the stored source-end change log from the start of the task, the orderly synchronization of data changes to the target end, and support for addition, deletion, and modification operations. ',
   task_setting_initial_sync_cdc_tip:
-    'Select the full + incremental synchronization mode, the task will automatically enter the incremental synchronization state after the full synchronization is completed. ',
+    'Select the INITIAL SYNC + CDC mode, the task will automatically enter the incremental synchronization state after the full synchronization is completed. ',
   task_setting_full_write_mode: 'Full write mode',
   task_setting_update_write_mode: 'Update write mode',
   task_setting_remoive_rewrite_mode: 'Remove rewrite mode',

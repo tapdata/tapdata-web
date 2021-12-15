@@ -28,12 +28,12 @@
         </ul>
         <div class="connection-table__empty" v-if="listData.length < 1">
           <VIcon size="76">notice-color</VIcon>
-          <span>{{ $t('header_setting') }}</span>
+          <span>{{ $t('header_no_notice') }}</span>
         </div>
         <div class="tab-item__footer flex justify-content-between py-3 font-color-sub">
           <span class="system-operation-setting cursor-pointer" @click="handleSetting">
             <VIcon class="mr-1" size="12">setting</VIcon>
-            <span>{{ $t('header_no_notice') }}</span>
+            <span>{{ $t('header_setting') }}</span>
           </span>
           <ElLink class="font-color-sub" @click="toCenter()">{{ $t('header_view_notifications') }}</ElLink>
         </div>
@@ -281,7 +281,8 @@ export default {
         color: #337dff;
       }
       .el-badge__content {
-        right: 30px;
+        left: 0;
+        right: inherit;
         height: 15px;
         line-height: 15px;
         padding: 0 5px;

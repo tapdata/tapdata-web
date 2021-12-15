@@ -15,7 +15,7 @@
             </div>
             <span class="ml-2">{{ model.name }}</span>
             <el-button class="ml-2" type="text" @click="dialogEditNameVisible = true">
-              {{ $t('connection_form_change') }}
+              {{ $t('connection_form_rename') }}
             </el-button>
           </div>
         </div>
