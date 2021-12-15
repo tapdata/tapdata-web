@@ -134,6 +134,7 @@ export default {
         input: 0,
         output: 0
       },
+      yMax: 1,
       statusBtMap: {
         // scheduled, draft, running, stopping, error, paused, force stopping
         run: { draft: true, error: true, paused: true },
@@ -257,6 +258,11 @@ export default {
         inputCountList.push(item.inputCount)
         outputCountList.push(item.outputCount)
       })
+      // 计算y轴最大值
+      const max = Math.max(...[...inputCountList, ...outputCountList])
+      if (max > this.yMax) {
+        this.yMax = max + Math.ceil(max / 10)
+      }
       this.throughputObj.body = {
         tooltip: {
           trigger: 'axis'
@@ -283,6 +289,7 @@ export default {
           data: timeList
         },
         yAxis: {
+          max: this.yMax,
           axisLine: {
             show: true,
             lineStyle: {
