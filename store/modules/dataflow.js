@@ -516,7 +516,7 @@ const mutations = {
    * @param state
    * @param command
    */
-  pasteNodes: (state, command) => {
+  pasteNodes: async (state, command) => {
     const DAG_CLIPBOARD = localStorage['DAG_CLIPBOARD']
     if (DAG_CLIPBOARD) {
       const dag = JSON.parse(DAG_CLIPBOARD)
@@ -559,8 +559,16 @@ const mutations = {
         }
       })
 
-      command.exec(new AddDagCommand(dag))
+      // 执行添加dag命令，可以撤销/重做
+      await command.exec(new AddDagCommand(dag))
 
+      // 选中粘贴的节点
+      const jsPlumbIns = command.state.instance
+      jsPlumbIns.clearDragSelection()
+      nodes.forEach(node => jsPlumbIns.addToDragSelection(`node-${node.id}`))
+      state.selectedNodes = nodes
+
+      // 存储
       localStorage['DAG_CLIPBOARD'] = JSON.stringify(dag)
     }
   }

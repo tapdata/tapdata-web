@@ -18,8 +18,10 @@ class CommandManager {
     this.undoCommands = []
   }
 
-  exec(command, notExec, isRedo) {
-    !notExec && command.exec(this.state)
+  async exec(command, notExec, isRedo) {
+    if (!notExec) {
+      await command.exec(this.state)
+    }
     this.commands.push(command)
     !isRedo && (this.undoCommands = [])
   }
