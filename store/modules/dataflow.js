@@ -2,7 +2,7 @@ import Vue from 'vue'
 import { isObject } from 'web-core/utils/util'
 import Task from 'web-core/api/Task'
 import { debounce } from 'lodash'
-import { AddNodeCommand } from '@/_packages/tapdata-web-core/views/dataflow/command'
+import { AddDagCommand } from '@/_packages/tapdata-web-core/views/dataflow/command'
 import { uuid } from 'web-core/utils/util'
 
 const taskApi = new Task()
@@ -461,6 +461,10 @@ const mutations = {
     state.dag.edges = edges
   },
 
+  addEdges(state, edges) {
+    state.dag.edges.push(...edges)
+  },
+
   /**
    * 设置任务ID
    * @param state
@@ -487,23 +491,60 @@ const mutations = {
     state.editVersion = editVersion
   },
 
+  /**
+   * 复制节点，如果节点直接有连线，也会一并复制
+   * @param state
+   */
   copyNodes: state => {
     const nodes = state.selectedNodes
-    const nodeMap = nodes.reduce((map, node) => ((map[node.id] = true), map), {})
-    localStorage['DAG_CLIPBOARD_NODES'] = JSON.stringify(state.selectedNodes)
+    const edges = state.dag.edges
+    let copyEdges = []
+
+    if (nodes.length) {
+      const nodeMap = nodes.reduce((map, node) => ((map[node.id] = true), map), {})
+      copyEdges = edges.filter(item => nodeMap[item.source] && nodeMap[item.target])
+    }
+
+    localStorage['DAG_CLIPBOARD'] = JSON.stringify({
+      nodes,
+      edges: copyEdges
+    })
   },
 
+  /**
+   * 粘贴节点
+   * @param state
+   * @param command
+   */
   pasteNodes: (state, command) => {
-    const CLIPBOARD_NODES = localStorage['DAG_CLIPBOARD_NODES']
-    if (CLIPBOARD_NODES) {
-      const nodes = JSON.parse(CLIPBOARD_NODES)
+    const DAG_CLIPBOARD = localStorage['DAG_CLIPBOARD']
+    if (DAG_CLIPBOARD) {
+      const dag = JSON.parse(DAG_CLIPBOARD)
+      const { nodes, edges } = dag
+
+      if (!nodes.length) return
+
       const allNodeTypes = [...state.nodeTypes, ...state.processorNodeTypes]
       const nodeTypesMap = allNodeTypes.reduce((res, item) => ((res[item.type] = item), res), {})
+      const sourceMap = {},
+        targetMap = {}
 
-      nodes.map(node => {
-        node.id = uuid()
+      edges.forEach(item => ((sourceMap[item.source] = item), (targetMap[item.target] = item)))
+
+      nodes.forEach(node => {
+        const oldId = node.id
+        node.id = uuid() // 生成新的ID
         node.attrs.position[0] += 20
         node.attrs.position[1] += 20
+
+        // 替换连线里绑定的ID
+        if (sourceMap[oldId]) {
+          sourceMap[oldId].source = node.id
+        }
+        // 替换连线里绑定的ID
+        if (targetMap[oldId]) {
+          targetMap[oldId].target = node.id
+        }
 
         const nodeType = nodeTypesMap[node.type]
 
@@ -518,9 +559,9 @@ const mutations = {
         }
       })
 
-      command.exec(new AddNodeCommand(nodes))
+      command.exec(new AddDagCommand(dag))
 
-      localStorage['DAG_CLIPBOARD_NODES'] = JSON.stringify(nodes)
+      localStorage['DAG_CLIPBOARD'] = JSON.stringify(dag)
     }
   }
 }

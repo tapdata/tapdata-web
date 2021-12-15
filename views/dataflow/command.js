@@ -261,6 +261,33 @@ class QuickAddTargetCommand extends Command {
   }
 }
 
+/**
+ * 添加dag，包含节点和连线
+ */
+class AddDagCommand extends Command {
+  constructor(dag) {
+    super()
+    this.nodes = dag.nodes
+    this.edges = dag.edges
+  }
+
+  async exec(state) {
+    state.store.commit('dataflow/addNodes', this.nodes)
+    state.store.commit('dataflow/addEdges', this.edges)
+    await Vue.nextTick()
+    this.edges.forEach(({ source, target }) => {
+      state.instance.connect({ uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`] })
+    })
+  }
+
+  undo(state) {
+    this.nodes.forEach(node => {
+      state.instance.remove(NODE_PREFIX + node.id)
+      state.store.commit('dataflow/removeNode', node)
+    })
+  }
+}
+
 export {
   CommandManager,
   AddNodeCommand,
@@ -269,5 +296,6 @@ export {
   RemoveConnectionCommand,
   MoveNodeCommand,
   AddNodeOnConnectionCommand,
-  QuickAddTargetCommand
+  QuickAddTargetCommand,
+  AddDagCommand
 }

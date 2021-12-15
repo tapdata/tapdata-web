@@ -603,18 +603,6 @@ export default {
       edges.forEach(({ source, target }) => {
         this.jsPlumbIns.connect({ uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`] })
       })
-
-      /*this.nodes.forEach(node => {
-        let t = NODE_PREFIX + node.id + '_target',
-          tp = this.jsPlumbIns.getEndpoint(t)
-        if (node.inputLanes && node.inputLanes.length) {
-          node.inputLanes.forEach(nid => {
-            let s = NODE_PREFIX + nid + '_source',
-              sp = this.jsPlumbIns.getEndpoint(s)
-            this.jsPlumbIns.connect({ source: sp, target: tp })
-          })
-        }
-      })*/
     },
 
     getRealId(str) {
