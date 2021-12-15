@@ -9,10 +9,10 @@
       :empty-text="$t('task_monitor_no_milestone_data')"
       :data="milestoneList"
       :columns="milestoneColumns"
-      height="100%"
+      max-height="300"
       fit
       :class="[{ 'is-fold': isFold }, { unfold: !isFold }]"
-      :has-pagination="false"
+      hide-on-single-page
     >
       <template slot="label" slot-scope="scope">
         <span>{{ scope.row.label }}</span>
@@ -106,7 +106,7 @@ export default {
 
 <style lang="scss" scoped>
 .table-list {
-  transition: height 0.24s;
+  transition: 0.3s;
   &:not(.is-fold) {
     margin-top: 20px;
   }

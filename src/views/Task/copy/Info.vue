@@ -61,8 +61,8 @@
           </div>
         </div>
       </div>
-      <div class="flex-fill" style="min-height: 250px">
-        <div class="flex justify-content-between" style="padding-left: 5%">
+      <div class="flex-fill pl-10" style="min-height: 250px">
+        <div class="flex justify-content-between ml-6">
           <ElRadioGroup v-model="throughputObj.title.time" size="mini" @change="changeUtil">
             <ElRadioButton label="second">{{ $t('task_info_s') }}</ElRadioButton>
             <ElRadioButton label="minute">{{ $t('task_info_m') }}</ElRadioButton>
@@ -134,6 +134,7 @@ export default {
         input: 0,
         output: 0
       },
+      yMax: 1,
       statusBtMap: {
         // scheduled, draft, running, stopping, error, paused, force stopping
         run: { draft: true, error: true, paused: true },
@@ -257,17 +258,22 @@ export default {
         inputCountList.push(item.inputCount)
         outputCountList.push(item.outputCount)
       })
+      // 计算y轴最大值
+      const max = Math.max(...[...inputCountList, ...outputCountList])
+      if (max > this.yMax) {
+        this.yMax = max + Math.ceil(max / 10)
+      }
       this.throughputObj.body = {
         tooltip: {
           trigger: 'axis'
         },
         legend: {
           top: 10,
-          right: '5%'
+          right: 0
         },
         grid: {
-          left: '5%',
-          right: '5%',
+          left: 0,
+          right: 0,
           bottom: '3%',
           containLabel: true,
           borderWidth: 1,
@@ -283,6 +289,7 @@ export default {
           data: timeList
         },
         yAxis: {
+          max: this.yMax,
           axisLine: {
             show: true,
             lineStyle: {

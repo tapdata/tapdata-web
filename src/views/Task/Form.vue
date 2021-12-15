@@ -775,6 +775,7 @@ export default {
       }
       if (type === 'mapping') {
         let verify = this.checkTransfer()
+        this.isTransfer = !verify
         if (!verify) {
           this.$message.error(this.$t('task_form_no_bable_tip'))
           return
@@ -1208,6 +1209,7 @@ export default {
         this.transferData.table_suffix = this.stages[1]?.table_suffix
         this.transferData.tableNameTransform = this.stages[1]?.tableNameTransform
         this.transferData.fieldsNameTransform = this.stages[1]?.fieldsNameTransfor
+        postData.id = this.id
       } else {
         sourceIdA = this.$util.uuid()
         targetIdB = this.$util.uuid()
