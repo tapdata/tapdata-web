@@ -491,7 +491,7 @@ export default {
     },
     toEditorPage() {
       this.$router.push({
-        name: 'DataflowNew',
+        name: 'DataflowEditor',
         params: {
           id: this.task?.id
         }
