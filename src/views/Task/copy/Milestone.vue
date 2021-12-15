@@ -1,12 +1,12 @@
 <template>
   <div class="milestone-container">
     <div class="inline-flex align-items-center fs-7 font-color-main fw-bolder cursor-pointer" @click="toggleFnc">
-      <span>任务里程碑</span>
+      <span>{{ $t('task_monitor_mission_milestone') }}</span>
       <VIcon v-if="isFold" class="v-icon ml-1">arrow-right</VIcon>
       <VIcon v-else class="v-icon ml-1">arrow-down</VIcon>
     </div>
     <TableList
-      empty-text="此任务尚未启动或已被重置，暂无运行里程碑数据"
+      :empty-text="$t('task_monitor_no_milestone_data')"
       :data="milestoneList"
       :columns="milestoneColumns"
       height="100%"
@@ -60,18 +60,18 @@ export default {
       isFold: this.fold,
       milestoneColumns: [
         {
-          label: '里程碑',
+          label: this.$t('task_info_milestone'),
           prop: 'label',
           slotName: 'label'
         },
         {
-          label: '状态',
+          label: this.$t('task_monitor_status'),
           prop: 'status',
           slotName: 'status',
           width: 100
         },
         {
-          label: '时间',
+          label: this.$t('task_monitor_time'),
           prop: 'fromNow',
           width: 160
         }
@@ -92,7 +92,7 @@ export default {
       return result
     },
     checkError(msg) {
-      this.$confirm(msg, '错误', {
+      this.$confirm(msg, this.$t('task_info_error'), {
         type: 'warning',
         width: '850px'
       })

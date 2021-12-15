@@ -160,8 +160,8 @@
       </template>
       <div class="wx-img text-center">
         <img style="width: 120px; height: 120px" src="../../../public/images/wx_user_support.png" alt="" />
-        <div>扫码添加官方小助手</div>
-        <div>备注“云版”即可进入群获取支持</div>
+        <div>{{ $t('header_scan_code') }}</div>
+        <div>{{ $t('header_join_group') }}</div>
       </div>
     </main>
     <footer class="footer">
@@ -372,6 +372,7 @@ export default {
     bottom: 100px;
     padding: 4px;
     border: 1px solid #dcdcdc;
+    background-color: #fff;
   }
 }
 </style>

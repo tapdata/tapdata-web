@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="70px" height="25px" viewBox="0 0 70 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>running</title>
+    <g id="控件" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="running">
+            <rect id="矩形" fill="#F0FDF0" x="0" y="0" width="70" height="25" rx="4"></rect>
+            <g id="yunxingzhong" transform="translate(8.000000, 8.000000)">
+                <circle id="椭圆形" fill="#78A674" cx="4.5" cy="4.5" r="4.5"></circle>
+                <path d="M7.0875,4.21875 C7.0875,4.21875 3.375,2.1375 3.31875,2.1375 C2.98125,2.025 2.86875,2.30625 2.86875,2.53125 L2.86875,2.53125 C2.86875,2.53125 2.86875,6.6375 2.925,6.6375 C3.0375,6.91875 3.31875,6.91875 3.54375,6.80625 L3.54375,6.80625 C3.54375,6.80625 6.975,4.8375 7.03125,4.78125 C7.2,4.66875 7.36875,4.44375 7.0875,4.21875 L7.0875,4.21875 Z" id="路径" fill="#FFFFFF" fill-rule="nonzero"></path>
+            </g>
+            <text font-family="PingFangSC-Regular, PingFang SC" font-size="12" font-weight="normal" fill="#78A674">
+                <tspan x="20" y="17">running</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

@@ -181,7 +181,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_host',
-        label: '数据库地址',
+        label: vm.$t('connection_form_database_address'),
         rules: [
           {
             required: true,
@@ -212,7 +212,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_port',
-        label: '端口',
+        label: vm.$t('connection_form_port'),
         required: true,
         rules: [
           {

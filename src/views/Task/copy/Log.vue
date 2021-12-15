@@ -5,7 +5,7 @@
         class="search-input mt-2"
         v-model="keyword"
         prefix-icon="el-icon-search"
-        placeholder="请输入日志内容"
+        :placeholder="$t('task_info_log_placeholder')"
         @input="search"
       ></ElInput>
       <ElCheckboxGroup v-model="checkList" :min="1" class="inline-block ml-4" @change="changeType">
@@ -18,7 +18,7 @@
       <div v-show="!noMore && loading" class="pb-4 text-center fs-5">
         <i class="el-icon-loading"></i>
       </div>
-      <div v-show="noMore" class="font-color-sub text-center pb-4">没有更多了</div>
+      <div v-show="noMore" class="font-color-sub text-center pb-4">{{ $t('task_info_no_more') }}</div>
       <ul>
         <li class="log-item px-6" v-for="log in logs" :key="log.id">
           [<span class="fw-bold" :class="log.color" v-html="log.level"></span>]&nbsp; <span>{{ log.time }}</span
