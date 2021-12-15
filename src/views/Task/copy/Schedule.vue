@@ -3,9 +3,22 @@
     <!--  步骤条  -->
     <ElSteps :active="active" align-center class="mini mb-6 pt-3">
       <ElStep v-for="(item, index) in steps" :key="index" :class="[{ 'is-ative': showActive === index + 1 }]">
-        <span slot="icon" class="circle-icon cursor-pointer" @click="clickStep(index)"></span>
-        <div slot="title" class="cursor-pointer" @click="clickStep(index)">{{ item.label }}</div>
-        <div v-if="item.time" slot="description" class="cursor-pointer" @click="clickStep(index)">{{ item.time }}</div>
+        <span
+          slot="icon"
+          :class="['circle-icon', { 'cursor-pointer': index + 1 <= active }]"
+          @click="clickStep(index)"
+        ></span>
+        <div slot="title" :class="[{ 'cursor-pointer': index + 1 <= active }]" @click="clickStep(index)">
+          {{ item.label }}
+        </div>
+        <div
+          v-if="item.time"
+          slot="description"
+          :class="[{ 'cursor-pointer': index + 1 <= active }]"
+          @click="clickStep(index)"
+        >
+          {{ item.time }}
+        </div>
       </ElStep>
     </ElSteps>
     <!--  任务初始化  -->
@@ -242,7 +255,7 @@ export default {
       milestones.forEach(el => {
         let item = stepsData[stepsData.length - 1]
         // 总有几个步骤
-        if (el.group !== item?.group) {
+        if (el.group && el.group !== item?.group) {
           stepsData.push({
             label: map[el.group],
             time: formatTime(el.start) || formatTime(el.end),
@@ -450,6 +463,9 @@ export default {
       return result + '%'
     },
     clickStep(index = 0) {
+      if (index + 1 > this.active) {
+        return
+      }
       this.showActive = index + 1
       this.getMilestonesData()
     }
