@@ -273,8 +273,8 @@ export default {
     },
     //初始化数据 编辑跳转
     intiData(id) {
-      DataFlowsModel.get([id]).then(data => {
-        console.log('DataFlowsModel.get(id)', id)
+      DataFlowsModel.get([id]).then(res => {
+        let data = res.data
         this.status = data.status
         this.settingModel = Object.assign(this.settingModel, data.setting)
         this.settingModel.name = data.name

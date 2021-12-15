@@ -8,15 +8,7 @@
         <div>
           <div>
             <span class="fs-6 color-primary">{{ task.name }}</span>
-            {{ task.status }}
-            <StatusTag
-              v-if="task.status"
-              type="text"
-              target="task"
-              :status="task.status"
-              only-img
-              class="ml-6"
-            ></StatusTag>
+            <StatusTag v-if="task.status" type="text" target="etl" :status="task.status" class="ml-6"></StatusTag>
           </div>
           <div class="flex align-items-center mt-4" style="height: 30px">
             <div
