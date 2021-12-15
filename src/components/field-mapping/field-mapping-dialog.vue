@@ -18,7 +18,7 @@
     </div>
     <div class="task-form-body">
       <div class="flex flex-column">
-        <div class="flex mb-2 ml-6">
+        <div class="flex mb-5 ml-6">
           <div class="flex">
             <span class="text"> {{ $t('task_mapping_table_search_table') }}：</span>
             <el-input v-model="searchTable" size="mini" @change="search('table')"></el-input>
@@ -59,7 +59,11 @@
           </div>
           <div class="item ml-5" v-if="!readOnly">
             <el-tooltip effect="dark" :content="$t('task_mapping_table_restore_default_fields')" placement="top-start">
-              <el-button size="mini" @click.stop="rollbackTable(selectRow.sinkObjectName, selectRow.sourceTableId)">
+              <el-button
+                size="mini"
+                style="padding: 6px 15px"
+                @click.stop="rollbackTable(selectRow.sinkObjectName, selectRow.sourceTableId)"
+              >
                 <VIcon class="color-primary" size="14">rollback</VIcon>
               </el-button>
             </el-tooltip>
@@ -251,7 +255,14 @@
       :before-close="handleTableClose"
     >
       <div class="table-box">
-        <el-form :rules="rules" ref="form" :model="form" label-position="top" class="table-form" label-width="120px">
+        <el-form
+          :rules="rules"
+          ref="fieldForm"
+          :model="form"
+          label-position="top"
+          class="table-form"
+          label-width="120px"
+        >
           <el-form-item :label="$t('task_mapping_dialog_table_name_case')">
             <el-select size="mini" v-model="form.tableNameTransform">
               <el-option :label="$t('task_mapping_dialog_constant')" value=""></el-option>
@@ -569,9 +580,13 @@ export default {
     },
     /*表改名弹窗保存*/
     handleTableNameSave() {
-      this.dialogTableVisible = false
-      this.copyForm()
-      this.updateParentMetaData('table', this.form)
+      this.$refs.fieldForm.validate(valid => {
+        if (valid) {
+          this.dialogTableVisible = false
+          this.copyForm()
+          this.updateParentMetaData('table', this.form)
+        }
+      })
     },
     /*字段名弹窗保存*/
     handleFieldSave() {

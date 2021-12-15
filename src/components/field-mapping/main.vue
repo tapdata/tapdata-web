@@ -44,7 +44,7 @@ export default {
       if (!taskData) return
       this.dataFlow = taskData
       this.stageId = this.transform?.stageId || this.dataFlow?.stages[1]?.id //数据库迁移操作放在目标节点上
-      let dataFlowId = this.taskData?.id || ''
+      let dataFlowId = taskData?.id || ''
       this.field_process = this.transform?.field_process
       if (this.isFirst && !dataFlowId) {
         taskData['rollback'] = 'all'
