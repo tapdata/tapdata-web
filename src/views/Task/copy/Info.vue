@@ -62,7 +62,7 @@
         </div>
       </div>
       <div class="flex-fill" style="min-height: 250px">
-        <div class="flex justify-content-between" style="padding-left: 5%">
+        <div class="flex justify-content-between" style="padding: 0 5%">
           <ElRadioGroup v-model="throughputObj.title.time" size="mini" @change="changeUtil">
             <ElRadioButton label="second">{{ $t('dataFlow.second') }}</ElRadioButton>
             <ElRadioButton label="minute">{{ $t('dataFlow.min') }}</ElRadioButton>
