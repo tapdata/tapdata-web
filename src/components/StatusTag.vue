@@ -36,9 +36,6 @@ export default {
     status: {
       type: String
     },
-    lang: {
-      type: String
-    },
     target: {
       type: String,
       default: 'instance'
@@ -52,6 +49,11 @@ export default {
       default: () => {
         return null
       }
+    }
+  },
+  data() {
+    return {
+      lang: localStorage.getItem('tapdata_localize_lang') || 'sc'
     }
   },
   computed: {

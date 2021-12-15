@@ -3,19 +3,19 @@
     <Info :task="task" class="card-box" @reload="loadTask"></Info>
     <div class="card-box mt-6 p-6 flex-1">
       <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100" @tab-click="tabHandler">
-        <ElTabPane label="任务进度" name="schedule">
+        <ElTabPane :label="$t('task_monitor_progress')" name="schedule">
           <Schedule :task="task"></Schedule>
         </ElTabPane>
-        <ElTabPane label="运行日志" name="log" lazy>
+        <ElTabPane :label="$t('task_monitor_run_log')" name="log" lazy>
           <Log :id="task.id" style="max-height: 450px"></Log>
         </ElTabPane>
-        <ElTabPane label="连接" name="connect" lazy>
+        <ElTabPane :label="$t('task_monitor_run_connection')" name="connect" lazy>
           <Connection :ids="connectionIds" @change="loadTask"></Connection>
         </ElTabPane>
-        <ElTabPane label="历史运行记录" name="history" lazy>
+        <ElTabPane :label="$t('task_monitor_history_run_record')" name="history" lazy>
           <History :ids="[task.id]" :operations="operations"></History>
         </ElTabPane>
-        <ElTabPane v-if="showContent" label="同步内容" name="content" lazy>
+        <ElTabPane v-if="showContent" :label="$t('task_monitor_sync_content')" name="content" lazy>
           <FieldMapping ref="fieldMapping" :readOnly="true" :field_process="field_process"></FieldMapping>
         </ElTabPane>
       </ElTabs>
@@ -45,7 +45,7 @@ export default {
         title: {
           key: 'overview',
           statsType: 'data_overview',
-          title: this.$t('dataFlow.dataScreening'),
+          title: this.$t('task_info_data_screening'),
           loading: false
         },
         body: {
@@ -61,8 +61,8 @@ export default {
           key: 'throughput',
           statsType: 'throughput',
           time: 'second',
-          title: this.$t('dataFlow.inputOutput'),
-          tip: this.$t('dataFlow.throughputpop'),
+          title: this.$t('task_info_input_output'),
+          tip: this.$t('task_info_throughputpop'),
           unit: 'QPS',
           class: 'putColor',
           loading: false
@@ -159,7 +159,10 @@ export default {
       data.totalOutput = data.stats?.output?.rows || 0
       data.totalInput = data.stats?.input?.rows || 0
       data.creator = data.creator || data.createUser || data.username || data.user?.username || '-'
-      data.typeText = data.mappingTemplate === 'cluster-clone' ? '迁移任务' : '同步任务'
+      data.typeText =
+        data.mappingTemplate === 'cluster-clone'
+          ? this.$t('task_monitor_migration_task')
+          : this.$t('task_monitor_sync_task')
       let cdcTime = data.cdcLastTimes?.[0]?.cdcTime || ''
       data.startTimeFmt = this.formatTime(data.startTime)
       data.endTimeFmt = data.startTime ? this.formatTime(data.finishTime) : '-'

@@ -13,24 +13,24 @@
         <!--          所属Agent：<span>{{ task.belongAgent }}</span>-->
         <!--        </span>-->
         <span class="ml-6 font-color-sub">
-          创建人：<span>{{ task.creator }}</span>
+          {{ $t('task_monitor_founder') }}：<span>{{ task.creator }}</span>
         </span>
         <span class="ml-6 font-color-sub">
-          开始时间：<span>{{ formatTime(task.last_updated) }}</span>
+          {{ $t('task_info_start_time') }}：<span>{{ formatTime(task.last_updated) }}</span>
         </span>
       </div>
       <div class="operation">
         <VButton type="primary" :disabled="startDisabled" @click="start">
           <VIcon>start-fill</VIcon>
-          <span class="ml-1">启动</span>
+          <span class="ml-1">{{ $t('task_info_start') }}</span>
         </VButton>
         <VButton type="danger" :disabled="stopDisabled" @click="stop">
           <VIcon>pause-fill</VIcon>
-          <span class="ml-1">停止</span>
+          <span class="ml-1">{{ $t('task_info_stopt') }}</span>
         </VButton>
         <VButton :disabled="editDisabled" @click="edit">
           <VIcon>edit-fill</VIcon>
-          <span class="ml-1">编辑</span>
+          <span class="ml-1">{{ $t('button_edit') }}</span>
         </VButton>
       </div>
     </div>
@@ -38,25 +38,25 @@
       <div class="p-6" style="background-color: #fafafa; min-width: 240px">
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
-          <span>总输入</span>
+          <span>{{ $t('task_monitor_total_input') }}</span>
         </div>
         <div class="mb-4 fs-4 font-color-main">{{ overviewObj.body.inputCount }}</div>
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-success" size="18">mark</VIcon>
-          <span>总输出</span>
+          <span>{{ $t('task_monitor_total_output') }}</span>
         </div>
         <div class="mb-6 fs-4 font-color-main">{{ overviewObj.body.outputCount }}</div>
         <div class="flex justify-content-between text-center">
           <div>
-            <div class="mb-3">总插入</div>
+            <div class="mb-3">{{ $t('task_monitor_total_insert') }}</div>
             <div class="fs-6 font-color-main">{{ overviewObj.body.insertCount }}</div>
           </div>
           <div>
-            <div class="mb-3">总更新</div>
+            <div class="mb-3">{{ $t('task_monitor_total_update') }}</div>
             <div class="fs-6 font-color-main">{{ overviewObj.body.updateCount }}</div>
           </div>
           <div>
-            <div class="mb-3">总删除</div>
+            <div class="mb-3">{{ $t('task_monitor_total_delete') }}</div>
             <div class="fs-6 font-color-main">{{ overviewObj.body.deleteCount }}</div>
           </div>
         </div>
@@ -64,10 +64,10 @@
       <div class="flex-fill pl-10" style="min-height: 250px">
         <div class="flex justify-content-between ml-6">
           <ElRadioGroup v-model="throughputObj.title.time" size="mini" @change="changeUtil">
-            <ElRadioButton label="second">{{ $t('dataFlow.second') }}</ElRadioButton>
-            <ElRadioButton label="minute">{{ $t('dataFlow.min') }}</ElRadioButton>
-            <ElRadioButton label="hour">{{ $t('dataFlow.hour') }}</ElRadioButton>
-            <ElRadioButton label="day">{{ $t('dataFlow.day') }}</ElRadioButton>
+            <ElRadioButton label="second">{{ $t('task_info_s') }}</ElRadioButton>
+            <ElRadioButton label="minute">{{ $t('task_info_m') }}</ElRadioButton>
+            <ElRadioButton label="hour">{{ $t('task_info_h') }}</ElRadioButton>
+            <ElRadioButton label="day">{{ $t('task_info_d') }}</ElRadioButton>
           </ElRadioGroup>
           <div
             class="px-2"
@@ -124,8 +124,8 @@ export default {
           key: 'throughput',
           statsType: 'throughput',
           time: 'second',
-          title: this.$t('dataFlow.inputOutput'),
-          tip: this.$t('dataFlow.throughputpop'),
+          title: this.$t('task_info_input_output'),
+          tip: this.$t('task_info_throughputpop'),
           unit: 'QPS',
           class: 'putColor',
           loading: false
@@ -308,7 +308,7 @@ export default {
         },
         series: [
           {
-            name: this.$t('dataFlow.input'),
+            name: this.$t('task_info_input'),
             type: 'line',
             smooth: true,
             data: inputCountList,
@@ -323,7 +323,7 @@ export default {
             }
           },
           {
-            name: this.$t('dataFlow.output'),
+            name: this.$t('task_info_output'),
             type: 'line',
             smooth: true,
             data: outputCountList,
@@ -378,17 +378,19 @@ export default {
       let title = msgObj.title
       let node = this.task
       if (node.setting && !node.setting.sync_type.includes('cdc')) {
-        message = '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?'
-        title = '重要提醒'
+        message = this.$t('task_pause_tip')
+        title = this.$t('task_important_reminder')
       }
       if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
         const h = this.$createElement
-        let arr = '任务XXX中含有聚合处理节点，任务停止后再次启动，任务会先进行重置，确定停止？'.split('XXX')
+        let arr = this.$t('task_stop_tip').split('XXX')
         message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
-        title = '重要提醒'
+        title = this.$t('task_important_reminder')
       }
       this.$confirm(message, title, {
-        type: 'warning'
+        type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel')
       }).then(resFlag => {
         if (resFlag) {
           this.changeStatus({ status: 'stopping' })
@@ -407,15 +409,18 @@ export default {
       }
       if (type === 'edit') {
         this.$confirm(
-          '<p>编辑任务如果修改了<span style="color:#409EFF">节点排版流程</span>、' +
-            '<span style="color:#409EFF">节点属性</span>、' +
-            '<span style="color:#409EFF">匹配关系</span>,' +
-            '提交后必须<span style="color:#409EFF">重置</span>才能正常运行, 否则可能导致异常错误，请问您要继续编辑吗?</p>',
-          '重要提醒',
+          `<p>${this.$t('task_list_edit_tip')}<span style="color:#409EFF">${this.$t('task_list_edit_tip1')}</span>、` +
+            `<span style="color:#409EFF">${this.$t('task_list_node_attr')}</span>、` +
+            `<span style="color:#409EFF">${this.$t('task_list_matching_releation')}</span>,` +
+            `${this.$t('task_list_edit_submit')}<span style="color:#409EFF">${this.$t(
+              'task_list_edit_reset'
+            )}</span>${this.$t('task_list_edit_tip3')}</p>`,
+          this.$t('task_important_reminder'),
           {
             dangerouslyUseHTMLString: true,
             customClass: 'dataflow-clickTip',
-            confirmButtonText: '继续编辑',
+            cancelButtonText: this.$t('button_cancel'),
+            confirmButtonText: this.$t('task_list_continue_edit'),
             type: 'warning'
           }
         ).then(resFlag => {
@@ -452,11 +457,11 @@ export default {
       return await this.$axios
         .post('tm/api/DataFlows/update?where=' + encodeURIComponent(JSON.stringify(where)), attributes)
         .then(data => {
-          this.responseHandler(data, '操作成功')
+          this.responseHandler(data, this.$t('task_operation_successful'))
         })
         .catch(error => {
           if (error?.isException) {
-            this.$message.error('任务启动失败，请编辑任务完成映射配置')
+            this.$message.error(this.$t('task_start_failed'))
           }
         })
     },
@@ -464,10 +469,10 @@ export default {
       let failList = data.fail || []
       if (failList.length) {
         let msgMapping = {
-          5: '此任务不存在',
-          6: '任务状态不允许这种操作',
-          7: '操作失败，请重试',
-          8: '任务状态不允许这种操作'
+          5: this.$t('task_not_exist'),
+          6: this.$t('task_not_allow_operation'),
+          7: this.$t('task_operation_failed'),
+          8: this.$t('task_not_allow_operation')
         }
         this.$message.warning({
           dangerouslyUseHTMLString: true,
@@ -486,17 +491,17 @@ export default {
     },
     getConfirmMessage(operateStr, name) {
       let map = {
-        delete_confirm_title: '是否删除该任务？',
-        delete_confirm_message: '删除任务 xxx 后，此任务将无法恢复',
+        delete_confirm_title: this.$t('task_delete_confirm_title'),
+        delete_confirm_message: this.$t('task_delete_confirm_message'),
 
-        stop_confirm_title: '是否暂停该任务？',
-        stop_confirm_message: '暂停任务 xxx 后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
+        stop_confirm_title: this.$t('task_stop_confirm_title'),
+        stop_confirm_message: this.$t('task_stop_confirm_message'),
 
-        force_stop_confirm_title: '是否强制停止该任务？',
-        force_stop_confirm_message: '强制停止任务 xxx 将立即中断数据传输强制任务快速停止，并重置该任务',
+        force_stop_confirm_title: this.$t('task_force_stop_confirm_title'),
+        force_stop_confirm_message: this.$t('task_force_stop_confirm_message'),
 
-        initialize_confirm_title: '是否重置该任务？',
-        initialize_confirm_message: '重置任务 xxx 将清除任务同步进度，任务将重新执行'
+        initialize_confirm_title: this.$t('task_initialize_confirm_title'),
+        initialize_confirm_message: this.$t('task_initialize_confirm_message')
       }
       let title = operateStr + '_confirm_title',
         message = operateStr + '_confirm_message'

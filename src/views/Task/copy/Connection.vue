@@ -49,9 +49,13 @@
       </template>
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns">
-          <ElButton size="mini" type="text" @click="testConnection(scope.row)">测试</ElButton>
+          <ElButton size="mini" type="text" @click="testConnection(scope.row)">{{
+            $t('task_info_connection_test')
+          }}</ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton size="mini" type="text" @click="reload(scope.row)">加载Schema</ElButton>
+          <ElButton size="mini" type="text" @click="reload(scope.row)">{{
+            $t('connection_preview_load_schema')
+          }}</ElButton>
         </div>
       </template>
     </TableList>
@@ -85,39 +89,39 @@ export default {
       fetchTimer: null,
       columns: [
         {
-          label: '连接名',
+          label: this.$t('connection_list_name'),
           slotName: 'name'
         },
         {
-          label: '状态',
+          label: this.$t('connection_list_status'),
           prop: 'status',
           slotName: 'status'
         },
         {
-          label: '连接类型',
+          label: this.$t('connection_list_type'),
           prop: 'connectType'
         },
         {
-          label: 'Schema加载进度',
+          label: this.$t('connection_list_schema_load_progress'),
           prop: 'schema',
           headerSlot: 'schemaHeader',
           slotName: 'schema'
         },
         {
-          label: '修改时间',
+          label: this.$t('connection_list_change_time'),
           prop: 'last_updated',
           dataType: 'time'
         },
         {
-          label: '操作',
+          label: this.$t('connection_list_operate'),
           prop: 'operation',
           slotName: 'operation'
         }
       ],
       connectTypeMap: {
-        source: '源头',
-        target: '目标',
-        source_and_target: '源头和目标'
+        source: this.$t('connection_list_source'),
+        target: this.$t('connection_list_target'),
+        source_and_target: this.$t('connection_list_source_and_target')
       }
     }
   },
@@ -206,7 +210,7 @@ export default {
         this.fetch()
       } catch (error) {
         if (error?.isException) {
-          this.$message.error(error?.response?.msg || '测试连接失败')
+          this.$message.error(error?.response?.msg || this.$t('connection_list_test_failed'))
         }
       }
     },
@@ -215,8 +219,8 @@ export default {
         let config = {
           title: this.$t('connection.reloadTittle'),
           Message: this.$t('connection.reloadMsg'),
-          confirmButtonText: this.$t('message.confirm'),
-          cancelButtonText: this.$t('message.cancel'),
+          confirmButtonText: this.$t('button_save'),
+          cancelButtonText: this.$t('button_close'),
           name: row.name,
           id: row.id
         }

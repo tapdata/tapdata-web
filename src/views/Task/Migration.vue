@@ -84,7 +84,6 @@
               type="text"
               target="task"
               :status="scope.row.isFinished ? 'finished' : scope.row.status"
-              :lang="lang"
               only-img
             ></status-tag>
           </template>
@@ -284,8 +283,7 @@ export default {
         edit: { draft: true, error: true, paused: true },
         reset: { draft: true, error: true, paused: true },
         forceStop: { stopping: true }
-      },
-      lang: localStorage.getItem('tapdata_localize_lang') || 'sc'
+      }
     }
   },
   computed: {
@@ -649,7 +647,9 @@ export default {
         }
       }
       this.$confirm(message, title, {
-        type: 'warning'
+        type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel')
       }).then(resFlag => {
         if (resFlag) {
           this.changeStatus(ids, { status: 'stopping' })
@@ -659,7 +659,9 @@ export default {
     forceStop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('force_stop', item.name)
       this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning'
+        type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel')
       }).then(resFlag => {
         if (resFlag) {
           this.changeStatus(ids, { status: 'force stopping' })

@@ -34,22 +34,32 @@
       <ElDivider class="my-6"></ElDivider>
       <!--   概览   -->
       <div v-if="currentStep.group === 'initial_sync'">
-        <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}概览</div>
+        <div class="mb-4 fs-7 font-color-main fw-bolder">
+          {{ currentStep.label }}{{ this.$t('task_info_overview') }}
+        </div>
         <div class="p-4" style="background: #fafafa; border-radius: 4px 4px 0 0">
           <div class="flex justify-content-between mb-2 font-color-main">
             <div>
-              <span>计划{{ currentStep.label }}表数量 {{ overviewStats.sourceTableNum || 0 }}</span>
+              <span
+                >{{ $t('task_info_plan') }}{{ currentStep.label }}{{ $t('task_info_table_number') }}
+                {{ overviewStats.sourceTableNum || 0 }}</span
+              >
               <span class="ml-3"
-                >已完成{{ currentStep.label }}表数量 {{ overviewStats.waitingForSyecTableNums || 0 }}</span
+                >{{ $t('task_info_completed') }}{{ currentStep.label }}{{ $t('task_info_table_number') }}
+                {{ overviewStats.waitingForSyecTableNums || 0 }}</span
               >
             </div>
-            <div>预计{{ currentStep.label }}完成时间：{{ completeTime }}</div>
+            <div>
+              {{ $t('task_info_expected') }}{{ currentStep.label }}{{ $t('task_info_completed_time') }}：{{
+                completeTime
+              }}
+            </div>
           </div>
           <ElProgress :percentage="progressBar" :show-text="false"></ElProgress>
         </div>
       </div>
       <div v-if="currentStep.group === 'initial_sync'" class="mt-6">
-        <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}详情</div>
+        <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
         <div></div>
         <TableList
           v-if="columns.length"
@@ -65,7 +75,7 @@
         </TableList>
       </div>
       <div v-else class="mt-6">
-        <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}详情</div>
+        <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
         <TableList :columns="columns" :data="list" max-height="300" hide-on-single-page></TableList>
       </div>
     </div>
@@ -107,7 +117,7 @@ export default {
       statusMap: {
         done: {
           color: '',
-          text: '已同步'
+          text: this.$t('task_info_synced')
         }
       }
     }
@@ -182,34 +192,34 @@ export default {
             }
           }
           if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
-            r = 1 + this.$t('taskProgress.m')
+            r = 1 + this.$t('task_info_m')
           }
           // r = parseInt(s) + this.$t('timeToLive.s')
           if (m > 0) {
-            r = parseInt(m) + this.$t('taskProgress.m')
+            r = parseInt(m) + this.$t('task_info_m')
           }
           if (h > 0) {
-            r = parseInt(h) + this.$t('taskProgress.h') + r
+            r = parseInt(h) + this.$t('task_info_h') + r
           }
           if (d > 0) {
-            r = parseInt(d) + this.$t('taskProgress.d') + r
+            r = parseInt(d) + this.$t('task_info_d') + r
           }
           // 全量未完成 停止任务
           if (['paused', 'error'].includes(data.status)) {
-            completeTime = this.$t('taskProgress.taskStopped') // 任务已停止
+            completeTime = this.$t('task_info_task_stopped') // 任务已停止
           } else {
             completeTime = r
           }
         }
 
         if (this.progressBar === 100) {
-          overview.currentStatus = this.$t('taskProgress.progress') // 进行中
-          completeTime = this.$t('taskProgress.fullyCompleted') // 全量已完成
+          overview.currentStatus = this.$t('task_info_progress') // 进行中
+          completeTime = this.$t('task_info_fully_completed') // 全量已完成
         }
         // 任务暂停、错误  增量状态都为停止
-        if (completeTime === this.$t('taskProgress.fullyCompleted')) {
+        if (completeTime === this.$t('task_info_fully_completed')) {
           if (['paused', 'error'].includes(data.status)) {
-            overview.currentStatus = this.$t('taskProgress.stopped') // 已停止
+            overview.currentStatus = this.$t('task_info_stopped') // 已停止
           }
         }
       }
@@ -231,10 +241,10 @@ export default {
     getStep() {
       const { task } = this
       let map = {
-        init: '任务初始化',
-        structure: '结构迁移',
-        cdc: '增量同步',
-        initial_sync: '全量同步'
+        init: this.$t('task_info_task_init'),
+        structure: this.$t('task_info_task_structure'),
+        cdc: this.$t('task_info_task_cdc'),
+        initial_sync: this.$t('task_setting_initial_sync')
       }
 
       let milestones = task?.milestones || []
@@ -300,15 +310,15 @@ export default {
         case 'cdc':
           this.columns = [
             {
-              label: '源数据库',
+              label: this.$t('task_info_source_database'),
               prop: 'sourceConnectionName'
             },
             {
-              label: '目标数据库',
+              label: this.$t('task_info_target_database'),
               prop: 'targetConnectionName'
             },
             {
-              label: '增量所处时间点',
+              label: this.$t('task_info_cdc_time'),
               prop: 'cdcTime',
               dataType: 'time'
             }
@@ -325,36 +335,36 @@ export default {
         case 'initial_sync':
           this.columns = [
             {
-              label: '源数据库',
+              label: this.$t('task_info_source_database'),
               prop: 'sourceConnectionName'
             },
             {
-              label: '源数据表',
+              label: this.$t('task_info_source_table'),
               prop: 'sourceTableName'
             },
             {
-              label: '数据量（行）',
+              label: this.$t('task_info_data_row'),
               prop: 'sourceRowNum'
             },
             {
-              label: '目标数据库',
+              label: this.$t('task_info_target_database'),
               prop: 'targetConnectionName'
             },
             {
-              label: '目标数据表',
+              label: this.$t('task_info_target_table'),
               prop: 'targetTableName'
             },
             {
-              label: '已完成同步数据量（行）',
+              label: this.$t('task_info_amount_sync_data'),
               prop: 'targetRowNum'
             },
             {
-              label: '进度',
+              label: this.$t('task_info_source_database'),
               prop: 'schedule',
               slotName: 'schedule'
             },
             {
-              label: '状态',
+              label: this.$t('task_monitor_status'),
               prop: 'status'
             }
           ]
@@ -395,12 +405,12 @@ export default {
     getSearchItems() {
       this.filterItems = [
         {
-          label: '表名称',
+          label: this.$t('task_info_table_name'),
           key: 'tableName',
           type: 'input'
         },
         {
-          label: '状态',
+          label: this.$t('task_monitor_status'),
           key: 'type',
           type: 'select',
           items: []

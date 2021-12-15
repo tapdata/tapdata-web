@@ -46,7 +46,7 @@
       class="result-table mt-4"
       v-if="inspect"
       v-loading="['running', 'scheduling'].includes(inspect.status)"
-      element-loading-text="校验中..."
+      :element-loading-text="$t('verify_checking')"
     >
       <template v-if="!['running', 'scheduling'].includes(inspect.status)">
         <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>

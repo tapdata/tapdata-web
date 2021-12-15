@@ -36,13 +36,37 @@ export default function (vm) {
         type: 'input',
         field: 'initialReadSize',
         label: vm.$t('dataForm.form.initialReadSize'),
-        required: true
+        required: true,
+        rules: [
+          {
+            required: true,
+            validator(rule, value, callback) {
+              if (!/^\d+$/.test(value)) {
+                callback(new Error(vm.$t('dataForm.error.portNumber')))
+              } else {
+                callback()
+              }
+            }
+          }
+        ]
       },
       {
         type: 'input',
         field: 'increamentalTps',
         label: vm.$t('dataForm.form.incrementalTps'),
-        required: true
+        required: true,
+        rules: [
+          {
+            required: true,
+            validator(rule, value, callback) {
+              if (!/^\d+$/.test(value)) {
+                callback(new Error(vm.$t('dataForm.error.portNumber')))
+              } else {
+                callback()
+              }
+            }
+          }
+        ]
       }
     ]
   }

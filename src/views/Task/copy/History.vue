@@ -27,26 +27,26 @@ export default {
   data() {
     return {
       mapData: {
-        start: '启动任务',
-        stop: '停止任务',
-        forceStop: '强制停止任务'
+        start: this.$t('task_start_task'),
+        stop: this.$t('task_stop_task'),
+        forceStop: this.$t('task_info_forced_stop_task')
       },
       columns: [
         {
-          label: '任务名称',
+          label: this.$t('task_name'),
           prop: 'parameter1'
         },
         {
-          label: '运行时间',
+          label: this.$t('task_info_running_time'),
           prop: 'createTime',
           dataType: 'time'
         },
         {
-          label: '操作者',
+          label: this.$t('task_info_operator'),
           prop: 'username'
         },
         {
-          label: '操作内容',
+          label: this.$t('task_info_operator_content'),
           prop: 'desc',
           slotName: 'desc'
         }
