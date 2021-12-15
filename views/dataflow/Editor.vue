@@ -985,14 +985,16 @@ export default {
 
       const data = this.getDataflowDataToSave()
 
-      const result = await taskApi.save(data)
-
-      this.setEditVersion(result.editVersion)
+      try {
+        const result = await taskApi.save(data)
+        this.$message.success(this.$t('message.saveOK'))
+        this.setEditVersion(result.editVersion)
+      } catch (e) {
+        this.handleError(e)
+      }
       // await taskApi.patch(data)
 
       this.isSaving = false
-
-      this.$message.success(this.$t('message.saveOK'))
     },
 
     async saveAsNewDataflow() {
@@ -1375,15 +1377,24 @@ export default {
       return newPosition
     },
 
-    handleUpdateName(name) {
+    handleError(error) {
+      if (error?.data?.message) {
+        this.$message.error(error.data.message)
+      } else {
+        // eslint-disable-next-line no-console
+        console.error(error)
+        this.$message.error('出错了')
+      }
+    },
+
+    async handleUpdateName(name) {
       this.dataflow.name = name
-      taskApi.patch({
-        id: this.dataflow.id,
-        name
-      })
-      /*taskApi.updateById(this.dataflow.id, {
-        name
-      })*/
+      taskApi
+        .patch({
+          id: this.dataflow.id,
+          name
+        })
+        .catch(this.handleError)
     },
 
     handleEditFlush(data) {
