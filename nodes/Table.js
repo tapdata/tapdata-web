@@ -290,15 +290,15 @@ export class Table extends NodeType {
           writeStrategy: {
             title: '数据写入模式',
             type: 'string',
-            default: 'appendWrite',
+            default: 'updateOrInsert',
             enum: [
-              {
-                label: '追加写入',
-                value: 'appendWrite'
-              },
               {
                 label: '更新写入',
                 value: 'updateWrite'
+              },
+              {
+                label: '追加写入',
+                value: 'appendWrite'
               },
               {
                 label: '更新已存在或者插入新数据',
