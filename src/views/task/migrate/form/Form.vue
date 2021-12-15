@@ -1183,6 +1183,7 @@ export default {
     padding: 24px 24px 0;
     background: #fff;
     overflow-y: auto;
+    font-size: 14px;
     .body {
       .title {
         font-size: 14px;
