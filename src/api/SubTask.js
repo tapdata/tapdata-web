@@ -14,9 +14,9 @@ export default class TaskAPI extends PublicAPI {
     return axios.get(this.url + `/byTaskId/${taskId}`, { params })
   }
   start(id) {
-    return axios.post(this.url + `/running/${id}`)
+    return axios.post(this.url + `/start/${id}`)
   }
   stop(id) {
-    return axios.post(this.url + `/stopped/${id}`)
+    return axios.post(this.url + `/stop/${id}`)
   }
 }

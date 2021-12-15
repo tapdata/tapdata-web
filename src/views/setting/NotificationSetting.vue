@@ -151,11 +151,9 @@ export default {
         _id: '76'
       }
       let data = {
-        value: JSON.stringify({
-          runNotification: this.runNotification,
-          systemNotification: this.systemNotification,
-          agentNotification: this.agentNotification
-        })
+        runNotification: this.runNotification,
+        systemNotification: this.systemNotification,
+        agentNotification: this.agentNotification
       }
       if (!data) {
         return

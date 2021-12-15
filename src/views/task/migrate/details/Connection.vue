@@ -238,8 +238,8 @@ export default {
         }
         this.loadFieldsStatus = 'loading'
       }
-      this.$axios
-        .patch('tm/api/Connections/' + row.id, parms)
+      this.$api('connections')
+        .patch(row.id, parms)
         .then(data => {
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           if (type === 'first') {

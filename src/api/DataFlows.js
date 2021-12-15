@@ -96,4 +96,10 @@ export default class DataFlows extends PublicAPI {
   tranModelVersionControl(params) {
     return axios.post(this.url + '/tranModelVersionControl', params)
   }
+  startBatch(params) {
+    return axios.post(this.url + '/startBatch', params)
+  }
+  stopBatch(params) {
+    return axios.post(this.url + '/stopBatch', params)
+  }
 }

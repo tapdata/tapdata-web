@@ -260,33 +260,17 @@ export default {
     },
     loadData() {
       let id = this.$route.params?.id
-      console.log('this.$route.params', this.$route.params)
       this.loading = true
       this.$api('Task')
         .get([id])
         .then(res => {
-          console.log('呵呵呵', res.data)
           this.task = this.formatTask(res.data)
         })
         .finally(() => {
           this.loading = false
         })
-
-      // try {
-      //   let data = taskApi.get([id])
-      //   this.list = (data?.dag?.nodes || []).map(item => {
-      //     return {
-      //       name: item.name,
-      //       status: 'running',
-      //       id: item.id
-      //     }
-      //   })
-      // } catch (e) {
-      //   this.$showError(e, '数据流加载出错', '加载数据流出现的问题:')
-      // }
     },
     taskChange(data) {
-      //{"reqId":"2e537cbf-0a8b-44dc-89a5-d9fa3b968a71","ts":1637655338681,"code":"ok","data":{"id":"619ca30b9b71bd1318587950","customId":"60cc0c304e190a579cbe306c","userId":"61408608c4e5c40012663090","createUser":"jason@tapdata.io","dag":{"edges":[{"elementType":"Link","source":"f1861854-6551-4b10-8d02-79351bb3db5f","target":"59692c3d-758e-42d4-8d47-af7f3fdd2188","link":true,"node":false}],"nodes":[{"connectionId":"61938452f76f622a88df3b82","databaseType":"mq","tableName":"tapdata_snapshot_616d331462a8ec00ae0ec3e6_b9a3d97f0262405999276d4e2f7666ae","type":"table","catalog":"data","id":"f1861854-6551-4b10-8d02-79351bb3db5f","name":"tapdata_snapshot_616d331462a8ec00ae0ec3e6_b9a3d97f0262405999276d4e2f7666ae","elementType":"Node","attrs":{"position":[-315,198]}},{"connectionId":"61938452f76f622a88df3b82","databaseType":"mq","tableName":"tapdata_snapshot_616ebb6991c64500afdf523a_2ee606ec96c4457cb338e5d364b59a46","type":"table","catalog":"data","id":"59692c3d-758e-42d4-8d47-af7f3fdd2188","name":"tapdata_snapshot_616ebb6991c64500afdf523a_2ee606ec96c4457cb338e5d364b59a46","elementType":"Node","attrs":{"position":[26,198]}}]},"name":"新任务@下午4:14:53","status":"edit","deleted":false,"createTime":"2021-11-23T08:15:07.541+00:00"}}
       let task = data.data?.fullDocument || {}
       if (this.task) {
         this.task = Object.assign({}, this.task, this.formatTask(task))
