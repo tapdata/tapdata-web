@@ -53,7 +53,7 @@
               autofocus
               maxlength="50"
               minlength="1"
-              @keyup.enter.native="checkInput(option)"
+              @keyup.13.native="checkInput(option)"
               :ref="option.id"
             ></el-input>
             <i class="el-icon-close" @click.stop.prevent="closeInput(option)"></i>

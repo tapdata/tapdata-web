@@ -15,7 +15,7 @@
         style="width: 210px"
         clearable
         @change="handleSearchTree()"
-        @keyup.enter.native="handleSearchTree()"
+        @keyup.13.native="handleSearchTree()"
         size="mini"
       >
         <el-select

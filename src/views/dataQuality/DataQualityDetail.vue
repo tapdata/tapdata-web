@@ -72,7 +72,7 @@
           <div v-if="scope.row.wrongFields[item.text]">
             <div v-if="scope.row.editing && editCol === item.text">
               <el-input
-                @keyup.enter.native="editOk(scope.row, item.text)"
+                @keyup.13.native="editOk(scope.row, item.text)"
                 ref="editInput"
                 v-model="editValue"
                 class="edit-input"

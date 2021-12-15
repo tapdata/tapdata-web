@@ -14,7 +14,7 @@
             :placeholder="dialog.placeholder"
             maxlength="50"
             show-word-limit
-            @keyup.enter.native="confirm"
+            @keyup.13.native="confirm"
           ></el-input>
         </el-form-item>
       </el-form>
