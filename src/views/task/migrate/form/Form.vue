@@ -297,6 +297,9 @@ export default {
     //云版支持数据源
     allowDatabaseType() {
       let result = this.allowDataType
+      if (typeof result === 'string') {
+        result = result.split(',')
+      }
       this.changeConfig(result, 'databaseType')
     },
     formChangeSetting(data) {

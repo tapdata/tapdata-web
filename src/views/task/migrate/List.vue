@@ -172,15 +172,15 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('dataFlow.syncType')" min-width="150">
+      <el-table-column :label="$t('dataFlow.syncType')" width="150">
         <template #default="{ row }">
           <span>
             {{ row.sync_type ? syncType[row.sync_type] : '' }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column>
-      <el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="180">
+      <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="160" sortable="custom"></el-table-column>
+      <el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="100">
         <template #default="{ row }">
           <div class="flex align-items-center">
             <template v-if="statusMap[row.status]">
@@ -1045,10 +1045,10 @@ export default {
             }
             if (falg) {
               _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {
-                _this.changeStatus(ids, { status: 'scheduled' })
+                _this.startAndStop('startBatch', ids, { status: 'scheduled' })
               })
             } else {
-              _this.changeStatus(ids, { status: 'scheduled' })
+              _this.startAndStop('startBatch', ids, { status: 'scheduled' })
             }
           })
       }
@@ -1286,6 +1286,34 @@ export default {
     },
     handleGoFunction() {
       top.location.href = '/#/JsFuncs'
+    },
+    startAndStop(method = 'startBatch', ids, { status, errorEvents }) {
+      // let where = {
+      //   _id: {
+      //     in: ids
+      //   }
+      // }
+      let attributes = {
+        status
+      }
+      errorEvents && (attributes.errorEvents = errorEvents)
+      dataFlows[method]({
+        ids
+      })
+        .then(res => {
+          console.log(method, res)
+          this.table.fetch()
+          this.responseHandler(res.data, this.$t('message.operationSuccuess'))
+        })
+        .catch(err => {
+          if (err.response.msg === 'Metadata transformer error') {
+            this.$message.error('任务启动失败，请编辑任务完成映射配置')
+          } else if (err.response.msg === 'DataFlow has add or del stages') {
+            this.$message.error('任务启动失败，请编辑任务完成新增同步链路设置')
+          } else if (err.response.msg === 'running transformer') {
+            this.$message.error('任务启动失败，正在模型推演中...请稍后再试')
+          }
+        })
     }
   }
 }

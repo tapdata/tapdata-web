@@ -11,7 +11,7 @@
       ref="tableList"
     >
       <template slot="status" slot-scope="scope">
-        <StatusTag type="text" target="connection" :status="scope.row.status"></StatusTag>
+        <StatusTag type="text" target="etlSub" :status="scope.row.status"></StatusTag>
       </template>
       <template slot="schemaHeader">
         <div>
@@ -24,7 +24,7 @@
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns">
           <VButton
-            :disabled="startStop(scope.row)"
+            :disabled="startDisabled(scope.row)"
             auto-loading
             inner-loading
             type="text"
@@ -32,7 +32,7 @@
           >
             运行
           </VButton>
-          <VButton :disabled="disabledStop(scope.row)" class="mr-2" type="text" @click="stop(scope.row, arguments[0])">
+          <VButton :disabled="stopDisabled(scope.row)" class="mr-2" type="text" @click="stop(scope.row, arguments[0])">
             停止
           </VButton>
           <VButton type="text">运行统计</VButton>
@@ -122,11 +122,11 @@ export default {
           }
         })
     },
-    startStop(row) {
+    startDisabled(row) {
       return false
       // return !this.statusBtMap['run'][row.status] || (row.status === 'draft' && row.checked === false)
     },
-    disabledStop(row) {
+    stopDisabled(row) {
       return false
       // return !this.statusBtMap['stop'][row.status]
     },

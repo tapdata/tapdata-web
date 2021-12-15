@@ -36,6 +36,26 @@ export const TOPOLOGY_MAP = topologyMap,
     finish: { text: '已完成', icon: 'yiwancheng' },
     paused: { text: '已暂停', icon: 'yizanting' }
   },
+  ETL_STATUS_MAP = {
+    edit: { text: '编辑中', type: 'success' },
+    start: { text: '启动中', icon: 'qidongzhong', type: 'success' },
+    running: { text: '运行中', icon: 'yunxingzhong', type: 'success' },
+    stop: { text: '已停止' },
+    paused: { text: '暂停' }
+  },
+  ETL_SUB_STATUS_MAP = {
+    edit: { text: '编辑中', type: 'success' },
+    scheduling: { text: '启动中', icon: 'qidongzhong', type: 'success' },
+    schedule_failed: { text: '错误', icon: 'cuowu', type: 'warning' },
+    wait_run: { text: '待启动', icon: 'daiqidong', type: 'success' },
+    running: { text: '运行中', icon: 'yunxingzhong', type: 'success' },
+    pausing: { text: ' 暂停中' },
+    stopping: { text: '停止中', icon: 'tingzhizhong', type: 'success' },
+    paused: { text: '暂停' },
+    stop: { text: '已停止' },
+    complete: { text: '已完成', icon: 'yiwancheng' },
+    error: { text: '错误', icon: 'cuowu', type: 'warning' }
+  },
   SPEC_MAP = {
     micro: '小规格',
     small: '标准规格',
