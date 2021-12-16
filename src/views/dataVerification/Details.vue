@@ -201,7 +201,7 @@ export default {
         let where = {
           where: {
             taskId,
-            inspect_id: { regexp: `^${this.inspect.id}$` },
+            inspect_id: this.inspect.id,
             inspectResultId: { regexp: `^${this.resultInfo.id}$` }
           },
           order: 'createTime DESC',
@@ -218,7 +218,7 @@ export default {
               if (showAdvancedVerification) {
                 resultList = res.data.items || []
               } else {
-                resultList = this.handleOtherVerify(res.data)
+                resultList = this.handleOtherVerify(res.data.items)
               }
             }
             return {

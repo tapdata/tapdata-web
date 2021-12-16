@@ -41,7 +41,7 @@
     </ElTableColumn>
     <ElTableColumn v-else :label="$t('dataVerification.sourceRows')">
       <template slot-scope="scope">
-        <span>{{ scope.row.firstSourceTotal || 0 }}</span>
+        <span>{{ scope.row.source_total || 0 }}</span>
         <!--        <div>-->
         <!--          {{ scope.row.firstTargetTotal || 0 }}-->
         <!--        </div>-->

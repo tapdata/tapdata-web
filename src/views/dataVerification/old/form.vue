@@ -484,6 +484,9 @@ export default {
             t.targetTree = []
             return t
           })
+          if (!data.timing) {
+            data.timing = this.form.timing
+          }
           this.form = data
           this.getFlowStages()
         }

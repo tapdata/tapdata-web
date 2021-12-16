@@ -119,7 +119,7 @@ export default {
       let currentPage = pageNum || current + 1
       let id = this.$route.params.id
       let where = {
-        inspect_id: { regexp: `^${id}$` },
+        inspect_id: id,
         parentId: { eq: null }
       }
       let filter = {
