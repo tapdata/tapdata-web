@@ -75,7 +75,8 @@ export default {
     getData() {
       let typeMap = {
         custom: this.$t('function_type_option_custom'),
-        jar: this.$t('function_type_option_jar')
+        jar: this.$t('function_type_option_jar'),
+        system: this.$t('function_type_option_system')
       }
       this.$api('Javascript_functions')
         .findOne({

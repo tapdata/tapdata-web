@@ -54,10 +54,12 @@
             @click="$router.push({ name: 'FunctionDetails', params: { id: row.id } })"
             >{{ $t('button_check') }}</ElButton
           >
-          <ElButton size="mini" type="text" @click="toEdit(row)">{{ $t('button_edit') }}</ElButton>
-          <ElButton size="mini" type="text" style="color: #f56c6c" @click="remove(row)">{{
-            $t('button.delete')
-          }}</ElButton>
+          <template v-if="row.type !== 'system'">
+            <ElButton size="mini" type="text" @click="toEdit(row)">{{ $t('button_edit') }}</ElButton>
+            <ElButton size="mini" type="text" style="color: #f56c6c" @click="remove(row)">{{
+              $t('button.delete')
+            }}</ElButton>
+          </template>
         </template>
       </ElTableColumn>
     </TablePage>
@@ -78,7 +80,8 @@ export default {
         custom: this.$t('function_type_option_custom'),
         jar: this.$t('function_type_option_jar'),
         system: this.$t('function_type_option_system')
-      }
+      },
+      order: 'createTime DESC'
     }
   },
   computed: {
