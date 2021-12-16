@@ -171,19 +171,17 @@ export default {
             .then(res => {
               let result = res.data?.items[0]
               if (result) {
-                if (result) {
-                  this.resultInfo = result
-                  let stats = result.stats
-                  if (stats.length) {
-                    this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
-                    this.taskId = stats[0].taskId
-                    this.$nextTick(() => {
-                      this.$refs?.resultView.fetch(1)
-                      if (this.type !== 'row_count') {
-                        this.$refs.singleTable?.setCurrentRow(stats[0])
-                      }
-                    })
-                  }
+                this.resultInfo = result
+                let stats = result.stats
+                if (stats.length) {
+                  this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
+                  this.taskId = stats[0].taskId
+                  this.$nextTick(() => {
+                    this.$refs?.resultView?.fetch?.(1)
+                    if (this.type !== 'row_count') {
+                      this.$refs.singleTable?.setCurrentRow(stats[0])
+                    }
+                  })
                 }
               }
             })
@@ -256,7 +254,7 @@ export default {
     },
     rowClick(row) {
       this.taskId = row.taskId
-      this.$refs.resultView.fetch(1)
+      this.$refs.resultView?.fetch?.(1)
     },
     handleOtherVerify(data) {
       if (data.length === 0) {

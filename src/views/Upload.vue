@@ -44,6 +44,7 @@
 
 <script>
 import SelectClassify from '../components/SelectClassify'
+import Cookie from 'tiny-cookie'
 // import factory from '@/api/factory';
 // const MetadataInstance = factory('MetadataInstances');
 export default {
@@ -58,7 +59,8 @@ export default {
       status: false,
       tagList: [],
       mappingTemplate: 'cluster-clone',
-      downType: ''
+      downType: '',
+      accessToken: ''
     }
   },
   created() {
@@ -70,6 +72,7 @@ export default {
     } else {
       this.downType = 'dataflow'
     }
+    this.accessToken = Cookie.get('token')
     // this.handlerUpload();
     // this.action =
     // 	window.location.protocol +
@@ -140,7 +143,8 @@ export default {
         '&listtags=' +
         encodeURIComponent(JSON.stringify(this.tagList)) +
         '&type=' +
-        this.downType
+        this.downType +
+        `&access_token=${this.accessToken}`
     },
 
     handleSuccess(response) {
