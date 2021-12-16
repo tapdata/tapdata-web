@@ -4,7 +4,7 @@ import { observer } from '@formily/reactive-vue'
 import { h, useField } from '@formily/vue'
 import { isArr, isValid } from '@formily/shared'
 import { stylePrefix } from '../configs'
-import { Space } from '../Space'
+import { Space } from '../space'
 import { Tag } from 'element-ui'
 import { formatDate } from 'element-ui/src/utils/date-util'
 

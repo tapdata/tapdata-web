@@ -129,7 +129,7 @@ export const JoinExpression = connect(
                       class="ml-3"
                       type="text"
                       disabled={this.fieldArr.length < 2}
-                      onClick={() => this.handleRemove()}
+                      onClick={() => this.handleRemove(i)}
                     >
                       <VIcon size={16}>delete</VIcon>
                     </ElButton>
