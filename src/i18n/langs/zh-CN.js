@@ -82,6 +82,8 @@ export default {
   connection_kafka_encryption: '加密方式',
 
   connection_hana_label_hana_type: '租户模式',
+  // 路由名
+  app_menu_jsFuncs: '函数',
 
   // Dag
   dag_data_node_label_dameng: 'Dameng节点',
