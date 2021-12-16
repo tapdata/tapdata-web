@@ -250,7 +250,7 @@ export default {
       let milestones = task?.milestones || []
       let currentStep
       let stepsData = []
-      if (milestones.length) {
+      if (!milestones.length) {
         return
       }
       milestones.forEach(el => {
