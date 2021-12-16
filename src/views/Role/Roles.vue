@@ -491,7 +491,7 @@ export default {
         }
       })
       this.$api('roleMapping')
-        .post(newRoleMappings)
+        .saveAll(newRoleMappings)
         .then(res => {
           if (res && res.data) {
             this.roleusers = []
