@@ -85,8 +85,14 @@
             }}</el-checkbox>
           </div>
           <div class="guide-operation flex justify-content-center mt-8">
-            <img src="../../../public/images/guide/guid_no.png" alt="" @click="leaveGuide" />
-            <img class="ml-9" src="../../../public/images/guide/guid_yes.png" alt="" @click="toGuidePage" />
+            <template v-if="lang === 'sc'">
+              <img src="../../../public/images/guide/guid_no.png" alt="" @click="leaveGuide" />
+              <img class="ml-9" src="../../../public/images/guide/guid_yes.png" alt="" @click="toGuidePage" />
+            </template>
+            <template v-else>
+              <img src="../../../public/images/guide/en_guid_no.svg" alt="" @click="leaveGuide" />
+              <img class="ml-9" src="../../../public/images/guide/en_guid_yes.svg" alt="" @click="toGuidePage" />
+            </template>
           </div>
         </div>
       </div>
