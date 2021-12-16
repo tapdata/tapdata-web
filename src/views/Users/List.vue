@@ -695,7 +695,7 @@ export default {
               if (res) {
                 // 过滤不存在角色
                 let roleIdArr = []
-                if (res.data.roleMappings.length) {
+                if (res.data.roleMappings?.length) {
                   that.createFormConfig.items[3].options.filter(item => {
                     if (that.createForm.roleusers.indexOf(item.value) > -1) {
                       roleIdArr.push(item.value)
@@ -720,7 +720,7 @@ export default {
                 })
                 that
                   .$api('roleMapping')
-                  .post(newRoleMappings)
+                  .saveAll(newRoleMappings)
                   .then(() => {
                     that.$message.success(this.$t('message.saveOK'))
                   })
