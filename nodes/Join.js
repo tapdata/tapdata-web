@@ -133,12 +133,13 @@ export class Join extends NodeType {
             'x-decorator-props': {
               wrapperWidth: 240
             },
-            'x-component': 'Select',
+            'x-component': 'PreviewText.Input',
             'x-reactions': {
-              dependencies: ['sourceNode'],
+              dependencies: ['sourceNode', 'joinType'],
               fulfill: {
                 state: {
-                  dataSource: '{{$deps[0]}}'
+                  value:
+                    '{{$deps[1] === "left" ? $deps[0]&&$deps[0][0]&&$deps[0][0].label : $deps[0]&&$deps[0][1]&&$deps[0][1].label}}'
                 }
               }
             }

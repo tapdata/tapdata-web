@@ -1,4 +1,5 @@
 export * from './select'
+export * from './preview-text'
 export * from './JsEditor'
 export * from './SqlEditor'
 export * from './PreviewSql'
