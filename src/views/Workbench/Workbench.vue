@@ -426,12 +426,15 @@ export default {
 }
 .create-list__main {
   flex: 1;
+  overflow: hidden;
 }
 .create-list__name {
   color: #000;
+  white-space: nowrap;
 }
 .create-list__desc {
   height: 110px;
+  overflow: auto;
   color: rgba(0, 0, 0, 0.49);
 }
 .aside-main {

@@ -72,7 +72,7 @@
             <StatusTag type="text" target="connection" :status="scope.row.status"></StatusTag>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('connection_list_type')" width="120">
+        <ElTableColumn :label="$t('connection_list_type')" width="130">
           <template slot-scope="scope">{{
             {
               source: $t('connection_list_source'),

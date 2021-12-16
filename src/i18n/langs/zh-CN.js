@@ -761,5 +761,43 @@ export default {
   operation_log_message_delete_tip: '将选中的通知全部删除',
   operation_log_modify_notification_setting: '修改通知设置',
   operation_log_modify_notification_setting_tip: '修改了系统通知设置',
-  operation_log_modify_connection_name: '将连接名称由[${parameter2}]修改为【@{parameter1}】'
+  operation_log_modify_connection_name: '将连接名称由[${parameter2}]修改为【@{parameter1}】',
+
+  guide_install_agent: '安装 Agent',
+  guide_create_source_connection: '创建源连接',
+  guide_create_target_connection: '创建目标连接',
+  guide_config_sync_task: '配置同步任务',
+  guide_install_agent_tip:
+    'TapData Cloud 需本地安装 Agent 以确保连接数据库和数据传输服务的正常运行，为了更好了体验新手引导模式，我们将为您提供了Agent测试环境，可用于直接测试数据源。',
+  guide_click_agent_next_step: '点击启用agent开始下一步吧！',
+  guide_name: '名称',
+  guide_install_agent_test_tip: '测试Agent的同步速度限制为最多200行/S，您自己部署安装的Agent不受该限制。',
+  guide_install_agent_test_tip1: '如果您超过一周没有访问系统，测试Agent会被自动回收，您可以通过新手引导再次创建使用。',
+  guide_start_test_agent: '启动测试Agent',
+  guide_stop_test_agent: '停用测试Agent',
+  guide_previous: '上一步',
+  guide_next_step: '下一步',
+  guide_test_agent_tip: '测试Agent的启动大概需要1～5分钟的时间，请耐心等待。',
+  guide_create_source_connection_tip:
+    '数据源指的是可以作为源的数据库、file、GridFS、REST API 等类型的连接，必须先创建源连接才能创建迁移任务。',
+  guide_create_target_connection_tip:
+    '目标连接指的是可以作为目标的数据库、file、GridFS、REST API等类型的连接，必须创建目标连接才能创建迁移任务。',
+  guide_database_type: '数据库类型',
+  guide_init_database: '初始化数据库',
+  guide_connection_name: '连接名称',
+  guide_only_test: '（仅测试使用，不可编辑）',
+  guide_address_port: '地址/端口',
+  guide_database_name: '数据库名',
+  guide_database_account: '数据库账号',
+  guide_database_password: '数据库密码',
+  guide_sync_task: '同步类型',
+  guide_mapping_setting: '映射设置',
+  guide_mapping_setting_tip:
+    '用户可以在此页面勾选源端待同步表，点击中间向右的箭头按钮，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输），鼠标移入表名可以对表进行改名操作，点击完成按钮即成功创建同步任务。',
+  guide_selected: '待选择表',
+  guide_table_selected: '已选择表',
+  guide_finish: '完成',
+  guide_complete_novice_guide: '恭喜您完成新手引导！',
+  guide_back_workbench: '返回工作台',
+  guide_view_task_monitor: '查看任务监控'
 }

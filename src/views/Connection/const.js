@@ -192,7 +192,8 @@ export const DEFAULT_MODEL = {
     database_name: '',
     database_username: '',
     plain_password: '',
-    additionalString: ''
+    additionalString: '',
+    database_datetype_without_timezone: ''
   }
 }
 export const CONFIG_MODEL = {

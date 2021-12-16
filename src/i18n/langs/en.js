@@ -2,7 +2,7 @@ export default {
   /** 全局 */
   gl_see_more: 'See more',
   gl_no_data: 'No data',
-  gl_no_match_result: 'No matching results were found',
+  gl_no_match_result: 'No matching results were found ',
   gl_back_to_list: 'Back to list',
   gl_placeholder_select: 'Please select',
   gl_placeholder_input: 'Please enter',
@@ -43,8 +43,8 @@ export default {
     'Task management is mainly used to create and manage synchronization tasks. Come and create a data synchronization task, and view and manage the types and status of existing data synchronization tasks. ',
   workbench_task_button_create: 'Create task',
   workbench_overview_connection: 'Connect',
-  workbench_overview_connection_ready: 'Active connection',
-  workbench_overview_connection_invalid: 'Invalid connection',
+  workbench_overview_connection_ready: 'Active',
+  workbench_overview_connection_invalid: 'Invalid',
   workbench_overview_task: 'Task',
   workbench_guide_novice: 'Novice Guide',
   workbench_guide_documentation: 'Product Documentation',
@@ -76,9 +76,9 @@ export default {
   notify_agent_notification: 'agent notification',
   notify_sms_notification: 'SMS notification',
   notify_email_notification: 'email notification',
-  notify_agent_status_offline: 'When the agent status is offline',
-  notify_agent_status_running: 'When the agent status is running',
-  notify_agent_status_error: 'When there is an error in task operation',
+  notify_agent_status_offline: 'Agent status is offline',
+  notify_agent_status_running: 'Agent status is running',
+  notify_agent_status_error: 'Error in task operation',
   notify_task_running_notification: 'Task running notification',
   notify_sync_task: 'Sync task',
   notify_migration_task: 'Migration task',
@@ -155,7 +155,7 @@ export default {
 
   // Agent
   agent_key: 'Agent',
-  agent_manage: 'Agent Management',
+  agent_manage: 'Agent',
   agent_name: 'Agent Name',
   agent_id: 'Agent ID',
   agent_task_number: 'Number tasks',
@@ -312,7 +312,7 @@ export default {
     '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
 
   // 连接
-  connection_manage: 'Connection Management',
+  connection_manage: 'Connection',
   connection_list_column_schema_status: 'Schema loading status',
   connection_list_column_schema_status_tips: 'Connections after Schema loading can be created normally',
   connection_list_form_all_status: 'All status',
@@ -434,7 +434,7 @@ export default {
   connection_preview_operation_success: 'Operation successful',
 
   // 任务
-  task_manage: 'Task Management',
+  task_manage: 'Task',
   task_name: 'Task name',
   task_status: 'Task Status',
   task_sync_type: 'Task synchronization type',
@@ -818,5 +818,45 @@ export default {
   operation_log_message_delete_tip: 'Delete all selected notifications',
   operation_log_modify_notification_setting: 'Modify notification settings',
   operation_log_modify_notification_setting_tip: 'System notification settings have been modified',
-  operation_log_modify_connection_name: 'Modify the connection name from [${parameter2}] to [@{parameter1}]'
+  operation_log_modify_connection_name: 'Modify the connection name from [${parameter2}] to [@{parameter1}]',
+
+  guide_install_agent: 'Install Agent',
+  guide_create_source_connection: 'Create source connection',
+  guide_create_target_connection: 'Create target connection',
+  guide_config_sync_task: 'Configure synchronization task',
+  guide_install_agent_tip:
+    'TapData Cloud needs to install Agent locally to ensure the normal operation of the database connection and data transmission service. In order to better experience the novice guide mode, we will provide you with an Agent test environment that can be used to directly test the data source. ',
+  guide_click_agent_next_step: 'Click to enable agent to start the next step! ',
+  guide_name: 'Name',
+  guide_install_agent_test_tip:
+    'The synchronization speed of the test agent is limited to a maximum of 200 lines/S. The agent you deploy and install is not subject to this restriction. ',
+  guide_install_agent_test_tip1:
+    'If you have not accessed the system for more than a week, the test agent will be automatically recycled, and you can create it again through the novice guide. ',
+  guide_start_test_agent: 'Start Test Agent',
+  guide_stop_test_agent: 'Stop Test Agent',
+  guide_previous: 'Previous step',
+  guide_next_step: 'Next step',
+  guide_test_agent_tip: 'It takes about 1 to 5 minutes to start the test agent, please be patient. ',
+  guide_create_source_connection_tip:
+    'Data source refers to the connection of database, file, GridFS, REST API, etc. that can be used as the source. The source connection must be created before the migration task can be created. ',
+  guide_create_target_connection_tip:
+    'Target connection refers to a connection of database, file, GridFS, REST API, etc. that can be used as a target. A target connection must be created to create a migration task. ',
+  guide_database_type: 'Database Type',
+  guide_init_database: 'Initialize the database',
+  guide_connection_name: 'Connection name',
+  guide_only_test: '(Only for testing, not editable)',
+  guide_address_port: 'Address/Port',
+  guide_database_name: 'Database name',
+  guide_database_account: 'Database account',
+  guide_database_password: 'Database password',
+  guide_sync_task: 'Sync type',
+  guide_mapping_setting: 'Mapping settings',
+  guide_mapping_setting_tip:
+    'Users can check the source table to be synchronized on this page, click the arrow button to the right in the middle to move these tables to the queue of tables to be synchronized (after the task is executed, these tables will be synchronized), and the mouse can be moved into the table name Rename the table and click the Finish button to successfully create a synchronization task. ',
+  guide_selected: 'table to be selected',
+  guide_table_selected: 'Selected table',
+  guide_finish: 'Finish',
+  guide_complete_novice_guide: 'Congratulations on completing the novice guide! ',
+  guide_back_workbench: 'Return to workbench',
+  guide_view_task_monitor: 'View task monitor'
 }

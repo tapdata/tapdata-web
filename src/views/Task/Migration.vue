@@ -77,7 +77,7 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('task_type')" prop="syncTypeText"></el-table-column>
+        <el-table-column :label="$t('task_type')" prop="syncTypeText" width="130"></el-table-column>
         <el-table-column :label="$t('task_status')">
           <template slot-scope="scope">
             <status-tag

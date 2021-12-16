@@ -332,6 +332,7 @@ th {
   & > .cell {
     font-size: 14px;
     color: map-get($fontColor, main);
+    word-break: break-word;
   }
 }
 .el-table .el-table__fixed-right-patch {
