@@ -250,18 +250,9 @@ export default {
       let milestones = task?.milestones || []
       let currentStep
       let stepsData = []
-      // 测试group
-      // milestones.forEach((el, index) => {
-      //   if (index + 1 > 9) {
-      //     el.group = 'initial_sync'
-      //   } else if (index + 1 > 6) {
-      //     el.group = 'cdc'
-      //   } else if (index + 1 > 3) {
-      //     el.group = 'structure'
-      //   } else {
-      //     el.group = 'init'
-      //   }
-      // })
+      if (!milestones.length) {
+        return
+      }
       milestones.forEach(el => {
         let item = stepsData[stepsData.length - 1]
         // 总有几个步骤
