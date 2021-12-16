@@ -33,4 +33,8 @@ export default class Settings extends PublicAPI {
   findOne(id) {
     return axios.get(`${this.url}/${id}`)
   }
+  enterpriseUpdate(where, attributes) {
+    if (typeof where === 'object') where = JSON.stringify(where)
+    return axios.post(this.url + '/enterpriseUpdate?where=' + encodeURIComponent(where), attributes)
+  }
 }
