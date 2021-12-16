@@ -13,6 +13,7 @@
                 action="api/file/upload"
                 accept=".jar"
                 :file-list="fileList"
+                :before-upload="selectFile"
                 :on-change="fileChange"
                 :on-remove="fileRemove"
               >
@@ -266,6 +267,14 @@ export default {
           }
         }
       })
+    },
+    selectFile(file) {
+      let maxFileSize = 10
+      if (file.size > maxFileSize * 1024 * 1024) {
+        this.$message.error(`上传文件大小不能超过 ${maxFileSize}M`)
+        return false
+      }
+      return true
     },
     fileRemove() {
       this.fileList = []
