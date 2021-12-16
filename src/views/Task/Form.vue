@@ -79,6 +79,7 @@
                 :getDataFlow="getDataFlow"
                 @update-first="returnModel"
                 @update-transform="updateTranForm"
+                @row-click="selectRowFieldProcess"
               ></FieldMapping>
             </div>
           </el-main>
@@ -1333,6 +1334,9 @@ export default {
       this.transferData.table_suffix = data.table_suffix
       this.transferData.tableNameTransform = data.tableNameTransform
       this.transferData.fieldsNameTransform = data.fieldsNameTransform
+    },
+    selectRowFieldProcess(field_process) {
+      this.transferData.field_process = field_process
     },
     //保存字段处理器
     saveOperations(row, operations, target) {
