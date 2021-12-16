@@ -157,11 +157,7 @@
       <el-table-column min-width="200" :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name">
-            <span
-              :class="['name', { 'has-children': row.hasChildren }]"
-              @click="toDetail(row)"
-              >{{ row.name }}</span
-            >
+            <span :class="['name', { 'has-children': row.hasChildren }]" @click="toDetail(row)">{{ row.name }}</span>
             <el-tag v-if="row.listTagId !== undefined" class="tag" type="info" effect="dark" size="mini">
               {{ row.listTagValue }}
             </el-tag>
@@ -462,9 +458,14 @@ export default {
         run: { draft: true, error: true, paused: true },
         stop: { running: true },
         delete: { draft: true, error: true, paused: true },
-        edit: { draft: true, error: true, paused: true },
+        edit: { edit: true, stop: true, error: true },
         reset: { draft: true, error: true, paused: true },
         forceStop: { stopping: true }
+    //     编辑中（edit）- 编辑中
+    // 启动中（start）- 启动中
+    // 运行中（running）- 运行中
+    // stop - 已停止
+    // pause - 暂停
       },
       dataFlowId: '',
 
@@ -1183,7 +1184,7 @@ export default {
       })
     },
     copy(ids, node) {
-      dataFlows
+      this.$api('Task')
         .copy(node.id)
         .then(() => {
           this.table.fetch()

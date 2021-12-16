@@ -7,7 +7,7 @@
       :page-options="{
         'hide-on-single-page': true
       }"
-      height="100%"
+      max-height="100%"
       ref="tableList"
     >
       <template slot="status" slot-scope="scope">
@@ -24,15 +24,36 @@
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns">
           <VButton
-            :disabled="startDisabled(scope.row)"
+            v-if="scope.row.status === 'running'"
+            :disabled="!statusBtMap['paused'][scope.row.status]"
             auto-loading
             inner-loading
             type="text"
             @click="start(scope.row, arguments[0])"
           >
-            运行
+            暂停
           </VButton>
-          <VButton :disabled="stopDisabled(scope.row)" class="mr-2" type="text" @click="stop(scope.row, arguments[0])">
+          <VButton
+            v-else-if="['paused', 'schedule_failed', 'error'].includes(scope.row.status)"
+            :disabled="!statusBtMap['recover'][scope.row.status]"
+            auto-loading
+            inner-loading
+            type="text"
+            @click="start(scope.row, arguments[0])"
+          >
+            恢复
+          </VButton>
+          <VButton
+            v-else
+            :disabled="!statusBtMap['start'][scope.row.status]"
+            auto-loading
+            inner-loading
+            type="text"
+            @click="start(scope.row, arguments[0])"
+          >
+            启动
+          </VButton>
+          <VButton :disabled="!statusBtMap['stop'][scope.row.status]" class="mr-2" type="text" @click="stop(scope.row, arguments[0])">
             停止
           </VButton>
           <VButton type="text">运行统计</VButton>
@@ -80,13 +101,36 @@ export default {
         }
       ],
       statusBtMap: {
-        // scheduled, draft, running, stopping, error, paused, force stopping
-        run: { draft: true, error: true, paused: true },
-        stop: { running: true },
-        delete: { draft: true, error: true, paused: true },
-        edit: { draft: true, error: true, paused: true },
-        reset: { draft: true, error: true, paused: true },
-        forceStop: { stopping: true }
+        start: {
+          edit: true,
+          wait_run: true,
+          stop: true,
+          complete: true
+        },
+        paused: {
+          running: true
+        },
+        recover: {
+          paused: true,
+          schedule_failed: true,
+          error: true
+        },
+        stop: {
+          paused: true,
+          schedule_failed: true,
+          error: true
+        }
+        // edit: { text: '编辑中', type: 'success' },
+        // scheduling: { text: '启动中', icon: 'qidongzhong', type: 'success' },
+        // schedule_failed: { text: '错误', icon: 'cuowu', type: 'warning' },
+        // wait_run: { text: '待启动', icon: 'daiqidong', type: 'success' },
+        // running: { text: '运行中', icon: 'yunxingzhong', type: 'success' },
+        // pausing: { text: ' 暂停中' },
+        // stopping: { text: '停止中', icon: 'tingzhizhong', type: 'success' },
+        // paused: { text: '暂停' },
+        // stop: { text: '已停止' },
+        // complete: { text: '已完成', icon: 'yiwancheng' },
+        // error: { text: '错误', icon: 'cuowu', type: 'warning' }
       }
     }
   },
@@ -121,14 +165,6 @@ export default {
             data: data
           }
         })
-    },
-    startDisabled(row) {
-      return false
-      // return !this.statusBtMap['run'][row.status] || (row.status === 'draft' && row.checked === false)
-    },
-    stopDisabled(row) {
-      return false
-      // return !this.statusBtMap['stop'][row.status]
     },
     start(row = {}, resetLoading) {
       this.$api('SubTask')
