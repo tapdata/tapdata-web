@@ -37,8 +37,8 @@
           </ElFormItem>
         </ElForm>
         <div class="mb-4">
-          <div class="mb-4" style="font-size: 12px">{{ $t('function_import_list_title') }}:</div>
-          <ElTable :data="funcList">
+          <div class="mb-4" style="font-size: 14px">{{ $t('function_import_list_title') }}</div>
+          <ElTable border :data="funcList">
             <ElTableColumn :label="$t('function_name_label')">
               <template #default="{ row, $index }">
                 <div class="flex align-center">

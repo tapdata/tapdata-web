@@ -81,7 +81,7 @@ export default {
         jar: this.$t('function_type_option_jar'),
         system: this.$t('function_type_option_system')
       },
-      order: 'createTime DESC'
+      order: 'last_updated DESC'
     }
   },
   computed: {
