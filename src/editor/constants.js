@@ -122,8 +122,8 @@ export const FORM_DATA_KEY = 'form_data',
     db2: {
       type: 'db2',
       name: 'DB2',
-      shapeImage: 'static/editor/db2.svg',
-      stencilImage: 'static/editor/db2.svg'
+      shapeImage: 'static/editor/DB2.svg',
+      stencilImage: 'static/editor/DB2.svg'
     },
     postgres: {
       type: 'postgres',
