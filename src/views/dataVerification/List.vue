@@ -368,7 +368,7 @@ export default {
               let sourceTotal = '-'
               let targetTotal = '-'
               if (result) {
-                sourceTotal = result.source_total
+                sourceTotal = result.sourceTotal
                 targetTotal = result.target_total
               }
               item.lastStartTime = item.lastStartTime
@@ -439,7 +439,13 @@ export default {
         .getId(flowId)
         .then(res => {
           if (['running', 'paused', 'error'].includes(res.data.status)) {
-            this.$router.push('dataVerification/' + id + '/edit')
+            // this.$router.push('dataVerification/' + id + '/edit')
+            this.$router.push({
+              name: 'dataVerificationEdit',
+              params: {
+                id: id
+              }
+            })
           } else {
             this.$message.info(
               this.$t('dataVerification.checkStatusPre') +

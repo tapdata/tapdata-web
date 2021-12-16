@@ -158,7 +158,7 @@ export default {
       if (!data) {
         return
       }
-      Setting.update(where, data)
+      Setting.enterpriseUpdate(where, data)
         .then(() => {
           this.$message.success('submit OK')
         })

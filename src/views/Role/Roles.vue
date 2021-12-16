@@ -441,7 +441,8 @@ export default {
       let filter = {
         where: {
           roleId: id
-        }
+        },
+        limit: 999
       }
       await this.$api('roleMapping')
         .get({
@@ -462,7 +463,11 @@ export default {
     // 获取用户列表
     async getUserData() {
       await this.$api('users')
-        .get({})
+        .get({
+          filter: JSON.stringify({
+            limit: 999
+          })
+        })
         .then(res => {
           if (res?.data?.items) {
             res.data.items.forEach(item => {
@@ -491,7 +496,7 @@ export default {
         }
       })
       this.$api('roleMapping')
-        .post(newRoleMappings)
+        .saveAll(newRoleMappings)
         .then(res => {
           if (res && res.data) {
             this.roleusers = []

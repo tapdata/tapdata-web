@@ -29,7 +29,7 @@
             auto-loading
             inner-loading
             type="text"
-            @click="start(scope.row, arguments[0])"
+            @click="pause(scope.row, arguments[0])"
           >
             暂停
           </VButton>
@@ -181,6 +181,18 @@ export default {
     stop(row, resetLoading) {
       this.$api('SubTask')
         .stop(row.id)
+        .then(res => {
+          this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+          this.table.fetch()
+        })
+        .catch(err => {
+          this.$message.error(err.data?.message)
+        })
+        .finally(resetLoading)
+    },
+    pause(row = {}, resetLoading) {
+      this.$api('SubTask')
+        .pause(row.id)
         .then(res => {
           this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
           this.table.fetch()

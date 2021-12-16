@@ -174,28 +174,7 @@
       <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column>
       <el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="180">
         <template #default="{ row }">
-          <div class="flex align-items-center">
-            <template v-if="statusMap[row.status]">
-              <img
-                v-if="statusMap[row.status].icon == 'loading'"
-                style="width: 26px; vertical-align: middle"
-                :src="$window._TAPDATA_OPTIONS_.loadingImg"
-              />
-              <i v-else :class="'dataflow-table__icon iconfont ' + statusMap[row.status].icon"></i>
-            </template>
-            <span>{{ row.statusLabel }}</span>
-            <span style="color: #999" v-if="!row.hasChildren && row.statusList && row.statusList.length">
-              (
-              <span v-for="(key, index) in row.statusList" :key="key">
-                {{ $t('dataFlow.status.' + key) }}
-                <span v-if="index < row.statusList.length - 1">&nbsp;</span>
-              </span>
-              )
-            </span>
-          </div>
-          <div v-if="row.status === 'running' && row.tcm">
-            {{ row.tcm.agentName }}
-          </div>
+          <StatusTag type="text" target="etl" :status="row.status"></StatusTag>
         </template>
       </el-table-column>
       <el-table-column prop="startTime" :label="$t('dataFlow.creationTime')" width="170" sortable="custom">
@@ -379,11 +358,12 @@ import SkipError from '../../../components/SkipError'
 import DownAgent from '../../downAgent/agentDown'
 import TablePage from '@/components/TablePage'
 import VIcon from '@/components/VIcon'
+import StatusTag from '@/components/StatusTag'
 
 let interval = null
 export default {
   name: 'TaskList',
-  components: { TablePage, DownAgent, SkipError, VIcon },
+  components: { TablePage, DownAgent, SkipError, VIcon, StatusTag },
   data() {
     return {
       restLoading: false,

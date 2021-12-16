@@ -22,4 +22,7 @@ export default class RoleMappings extends PublicAPI {
   post(params) {
     return axios.post(this.url, params)
   }
+  saveAll(params) {
+    return axios.post(this.url + '/saveAll', params)
+  }
 }

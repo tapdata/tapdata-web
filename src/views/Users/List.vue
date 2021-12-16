@@ -54,7 +54,7 @@
         </ul>
       </div>
       <div slot="search">
-        <ul class="search-bar">
+        <ul class="search-bar flex">
           <li>
             <el-input
               clearable
@@ -474,7 +474,7 @@ export default {
         skip: (current - 1) * size
       }
       if (JSON.stringify(where) !== '{}') {
-        filter.where = filter
+        filter.where = where
       }
       return this.$api('users')
         .get({
@@ -574,7 +574,7 @@ export default {
         }
       }
       this.$api('users')
-        .update(where, { listtags: listtags })
+        .update(where, { listTags: listtags })
         .then(() => {
           this.table.fetch()
         })
@@ -593,7 +593,7 @@ export default {
         .then(res => {
           if (res && res.data?.items) {
             this.roleMappding = res.data.items
-            this.createForm.roleusers = res.data.map(item => item.roleId)
+            this.createForm.roleusers = res.data.items.map(item => item.roleId)
           }
         })
     },
@@ -695,7 +695,7 @@ export default {
               if (res) {
                 // 过滤不存在角色
                 let roleIdArr = []
-                if (res.data.roleMappings.length) {
+                if (res.data.roleMappings?.length) {
                   that.createFormConfig.items[3].options.filter(item => {
                     if (that.createForm.roleusers.indexOf(item.value) > -1) {
                       roleIdArr.push(item.value)
@@ -720,7 +720,7 @@ export default {
                 })
                 that
                   .$api('roleMapping')
-                  .post(newRoleMappings)
+                  .saveAll(newRoleMappings)
                   .then(() => {
                     that.$message.success(this.$t('message.saveOK'))
                   })
