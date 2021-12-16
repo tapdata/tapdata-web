@@ -80,6 +80,8 @@ export default {
   connection_kafka_kerberos_none_conf: '配置文件不能为空',
   connection_kafka_encryption: '加密方式',
 
+  connection_hana_label_hana_type: '租户模式',
+
   // Dag
   dag_data_node_label_dameng: 'Dameng节点',
   dag_data_node_label_database_link_table: '表名大小写',
@@ -141,11 +143,11 @@ export default {
   dag_dialog_field_mapping_error_range: '当前值不符合该字段范围',
   dag_dialog_field_mapping_error_save_prefix: '检测到您还有',
   dag_dialog_field_mapping_error_save_suffix: '张表的字段类型设置存在问题，请在左侧表区域选择有问题的表进行处理',
-  dag_dialog_field_mapping_change_type_field_rename:'类型修改',
-  dag_dialog_field_mapping_batch_change_type:'批量修改字段类型',
-  dag_dialog_field_mapping_batch_change_type_source:'源字段类型',
-  dag_dialog_field_mapping_batch_change_type_target:'目标字段类型',
-  dag_dialog_field_mapping_batch_change_type_error_tip:'请先选择需要源表/目标表转换的类型',
+  dag_dialog_field_mapping_change_type_field_rename: '类型修改',
+  dag_dialog_field_mapping_batch_change_type: '批量修改字段类型',
+  dag_dialog_field_mapping_batch_change_type_source: '源字段类型',
+  dag_dialog_field_mapping_batch_change_type_target: '目标字段类型',
+  dag_dialog_field_mapping_batch_change_type_error_tip: '请先选择需要源表/目标表转换的类型',
 
   //任务编辑
   dag_data_node_label_clickhouse: 'ClickHouse节点',
