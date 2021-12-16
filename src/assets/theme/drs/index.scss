@@ -274,11 +274,9 @@ $borderColor: (
 .el-dropdown-menu__item:not(.is-disabled):hover {
   color: map-get($fontColor, normal);
 }
-.el-menu-item {
-  font-size: 12px;
-}
 .el-menu-item,
 .el-submenu__title {
+  font-size: 12px;
   height: 40px;
   line-height: 40px;
   border-left: 3px solid #fff;
