@@ -15,7 +15,11 @@
             style="width: 24px; height: 24px"
             :src="require('web-core/assets/images/connection-type/' + scope.row.database_type.toLowerCase() + '.png')"
           />
-          <ElLink type="primary" style="display: block; line-height: 20px">
+          <ElLink
+            type="primary"
+            style="display: block; line-height: 20px"
+            @click="preview(scope.row.id, scope.row.database_type)"
+          >
             {{ scope.row.name }}
           </ElLink>
           <div class="flex align-items-center">
@@ -57,6 +61,7 @@
     </TableList>
     <!-- 连接测试 -->
     <ConnectionTest ref="test"></ConnectionTest>
+    <Preview ref="preview" @close="fetch()" @reload-schema="fetch()" hide-operation></Preview>
   </div>
 </template>
 
@@ -65,11 +70,12 @@ import TableList from '@/components/TableList'
 import StatusTag from '@/components/StatusTag'
 import SchemaProgress from 'web-core/components/SchemaProgress'
 import VIcon from '@/components/VIcon'
+import Preview from '@/views/Connection/Preview'
 import { deepCopy } from '@/util'
 
 export default {
   name: 'Connection',
-  components: { TableList, StatusTag, VIcon, SchemaProgress },
+  components: { TableList, StatusTag, VIcon, SchemaProgress, Preview },
   props: {
     ids: {
       type: Array,
@@ -300,9 +306,10 @@ export default {
           this.progress = 0 //加载完成
           this.reloadLoading = false
         })
+    },
+    preview(id, type) {
+      this.$refs.preview.open(id, type)
     }
   }
 }
 </script>
-
-<style scoped></style>

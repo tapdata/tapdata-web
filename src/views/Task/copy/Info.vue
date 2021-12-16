@@ -16,7 +16,7 @@
           {{ $t('task_monitor_founder') }}：<span>{{ task.creator }}</span>
         </span>
         <span class="ml-6 font-color-sub">
-          {{ $t('task_info_start_time') }}：<span>{{ formatTime(task.last_updated) }}</span>
+          {{ $t('task_info_start_time') }}：<span>{{ formatTime(task.startTime) || '-' }}</span>
         </span>
       </div>
       <div class="operation">

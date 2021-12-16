@@ -21,7 +21,7 @@
           <div><status-tag type="text" target="connection" :status="connection.status"></status-tag></div>
         </div>
       </div>
-      <div class="button-line container-item border-item pt-4 pb-5">
+      <div v-if="!hideOperation" class="button-line container-item border-item pt-4 pb-5">
         <div slot="operation" class="flex">
           <el-button type="primary" class="flex-fill" @click="reload()">
             {{ $t('connection_preview_load_schema') }}
@@ -71,6 +71,12 @@ import { CONFIG_MODEL } from './const'
 export default {
   name: 'DetailsDrawer',
   components: { VIcon, StatusTag },
+  props: {
+    hideOperation: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       drawer: false,
