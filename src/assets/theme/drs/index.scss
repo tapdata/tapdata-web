@@ -198,6 +198,9 @@ $borderColor: (
 .el-button--small {
   border-radius: 2px;
 }
+.el-button--text {
+  border: none;
+}
 .el-button:focus,
 .el-button:hover {
   background-color: #fff;
