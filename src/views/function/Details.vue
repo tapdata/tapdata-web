@@ -40,7 +40,7 @@
           </ElFormItem>
         </ElForm>
         <div v-if="details.type === 'custom'" class="mb-4">
-          <div class="details-panel-title mb-4">{{ $t('function_script_label') }}:</div>
+          <div class="details-panel-title mb-4">{{ $t('function_script_label') }}</div>
           <div class="script-editor">
             <CodeEditor
               v-model="details.script"
@@ -75,7 +75,8 @@ export default {
     getData() {
       let typeMap = {
         custom: this.$t('function_type_option_custom'),
-        jar: this.$t('function_type_option_jar')
+        jar: this.$t('function_type_option_jar'),
+        system: this.$t('function_type_option_system')
       }
       this.$api('Javascript_functions')
         .findOne({
@@ -126,7 +127,7 @@ export default {
       }
     }
     .details-panel-title {
-      font-size: 12px;
+      font-size: 14px;
     }
     .script-editor {
       max-width: 940px;

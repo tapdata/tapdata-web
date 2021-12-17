@@ -169,7 +169,7 @@ export default {
         })
     },
     save() {
-      this.$refs.editor.format()
+      this.$refs?.editor?.format()
       this.$nextTick(() => {
         this.$refs.form.validate(valid => {
           if (valid) {

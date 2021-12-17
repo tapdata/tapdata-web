@@ -762,6 +762,9 @@ export default {
       case 'tcp_udp':
         this.model = Object.assign({}, defaultModel['tcp'])
         break
+      case 'hana':
+        this.model = Object.assign({}, defaultModel['default'], defaultModel['hana'])
+        break
     }
     this.getDT(this.databaseType)
     this.initTimezones()
