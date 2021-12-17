@@ -3,30 +3,14 @@
     <div class="field-mapping__desc text-start lh-base">
       <strong>{{ $t('dag_dialog_field_mapping_table_setting') }}</strong
       >: {{ $t('dag_dialog_field_mapping_tip') }}
-      <div class="float-end">
-        <ElButton
-          v-if="!readOnly && !transform.hiddenChangeValue"
-          plain
-          type="primary"
-          size="mini"
-          @click="handleChangTableName"
-          >{{ $t('dag_dialog_field_mapping_table_rename') }}</ElButton
-        >
-        <ElButton
-          v-if="!readOnly && !transform.hiddenChangeValue"
-          plain
-          type="primary"
-          size="mini"
-          @click="dialogFieldVisible = true"
-          >{{ $t('dag_dialog_field_mapping_field_rename') }}</ElButton
-        >
-        <ElButton
-          v-if="!readOnly && !transform.hiddenChangeValue"
-          plain
-          type="primary"
-          size="mini"
-          @click="handleBatchDataType"
-        >
+      <div class="float-end mt-5">
+        <ElButton v-if="!readOnly && !transform.hiddenChangeValue" size="mini" @click="handleChangTableName">{{
+          $t('dag_dialog_field_mapping_table_rename')
+        }}</ElButton>
+        <ElButton v-if="!readOnly && !transform.hiddenChangeValue" size="mini" @click="dialogFieldVisible = true">{{
+          $t('dag_dialog_field_mapping_field_rename')
+        }}</ElButton>
+        <ElButton v-if="!readOnly && !transform.hiddenChangeValue" size="mini" @click="handleBatchDataType">
           {{ $t('dag_dialog_field_mapping_change_type_field_rename') }}</ElButton
         >
         <ElButton v-if="!readOnly" class="mr-5" size="mini" type="primary" @click="rollbackAll">{{
@@ -91,7 +75,11 @@
             <ElInput v-model="searchField" size="mini" @input="search('field')"></ElInput>
           </div>
           <div class="item ml-5" v-if="!readOnly">
-            <ElButton size="mini" @click.stop="rollbackTable(selectRow.sinkObjectName, selectRow.sourceTableId)">
+            <ElButton
+              size="mini"
+              style="padding: 6px 15px"
+              @click.stop="rollbackTable(selectRow.sinkObjectName, selectRow.sourceTableId)"
+            >
               <ElTooltip effect="dark" :content="$t('dag_dialog_field_mapping_rollback_field')" placement="top-start">
                 <VIcon class="color-primary" size="14">rollback</VIcon>
               </ElTooltip>
@@ -190,8 +178,10 @@
             v-if="!hiddenFieldProcess && !readOnly"
           >
             <template slot-scope="scope">
-              <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true)"> 删除 </ElLink>
-              <ElLink type="primary" v-else @click="del(scope.row.t_id, false)"> 还原 </ElLink>
+              <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true)">
+                {{ $t('button_delete') }}
+              </ElLink>
+              <ElLink type="primary" v-else @click="del(scope.row.t_id, false)"> {{ $t('button_reduction') }} </ElLink>
             </template>
           </ElTableColumn>
           <div class="field-mapping-table__empty" slot="empty">
@@ -350,31 +340,33 @@
         }}</span>
       </div>
       <div class="table-box flex flex-column">
-        <div
-          v-if="form.batchOperationList.length !== 0"
-          class="flex flex-row flex-1 mb-3 align-items-center"
-          v-for="(ops, index) in form.batchOperationList"
-        >
-          <ElSelect class="mr-3" size="mini" v-model="ops.sourceType" :disabled="true">
-            <ElOption
-              :label="item.dbType"
-              :value="item.dbType"
-              v-for="(item, index) in sourceTypeMapping"
-              :key="index"
-            ></ElOption>
-          </ElSelect>
-          <VIcon class="color-primary mr-3">right</VIcon>
-          <ElSelect size="mini" v-model="ops.targetType" filterable>
-            <ElOption
-              :label="item.dbType"
-              :value="item.dbType"
-              v-for="(item, index) in typeMapping"
-              :key="index"
-            ></ElOption>
-          </ElSelect>
-          <VIcon v-if="index === 0 && showAddBtn" class="ml-3 clickable" @click="handleBatchOperation">add</VIcon>
-        </div>
-        <div class="flex flex-row flex-1 mb-3 align-items-center" v-for="(ops, index) in batchOperation">
+        <template v-if="form.batchOperationList.length !== 0">
+          <div
+            class="flex flex-row flex-1 mb-3 align-items-center"
+            v-for="(ops, index) in form.batchOperationList"
+            :key="index"
+          >
+            <ElSelect class="mr-3" size="mini" v-model="ops.sourceType" :disabled="true">
+              <ElOption
+                :label="item.dbType"
+                :value="item.dbType"
+                v-for="(item, index) in sourceTypeMapping"
+                :key="index"
+              ></ElOption>
+            </ElSelect>
+            <VIcon class="color-primary mr-3">right</VIcon>
+            <ElSelect size="mini" v-model="ops.targetType" filterable>
+              <ElOption
+                :label="item.dbType"
+                :value="item.dbType"
+                v-for="(item, index) in typeMapping"
+                :key="index"
+              ></ElOption>
+            </ElSelect>
+            <VIcon v-if="index === 0 && showAddBtn" class="ml-3 clickable" @click="handleBatchOperation">add</VIcon>
+          </div>
+        </template>
+        <div class="flex flex-row flex-1 mb-3 align-items-center" v-for="(ops, index) in batchOperation" :key="index">
           <ElSelect
             class="mr-3"
             size="mini"
@@ -391,7 +383,7 @@
             ></ElOption>
           </ElSelect>
           <VIcon class="mr-3 color-primary">right</VIcon>
-          <ElSelect size="mini" clearable filterable v-model="ops.targetType" >
+          <ElSelect size="mini" clearable filterable v-model="ops.targetType">
             <ElOption
               :label="item.dbType"
               :value="item.dbType"
@@ -519,7 +511,7 @@ export default {
     //接收数据
     let id = this.transform.stageId
     let self = this
-    ws.on('metadataTransformerProgress', function (res) {
+    ws.on('metadataTransformerProgress', function(res) {
       if (res?.data?.stageId === id) {
         let { finished, total, status } = res?.data
         self.progress.finished = finished
@@ -1375,7 +1367,7 @@ export default {
   }
   .task-form__text {
     display: inline-block;
-    width: 100px;
+    width: 130px;
     text-align: left;
   }
   .task-form-body {

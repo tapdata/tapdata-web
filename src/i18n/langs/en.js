@@ -12,6 +12,7 @@ export default {
   button_check: 'Details',
   button_delete: 'Delete',
   button_setting: 'Setting',
+  button_reduction: 'Reduction',
 
   // 通用下拉框
   select_option_all: 'All',

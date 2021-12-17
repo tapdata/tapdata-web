@@ -12,6 +12,7 @@ export default {
   button_check: '查看',
   button_delete: '刪除',
   button_setting: '設置',
+  button_reduction: '還原',
 
   // 通用下拉框
   select_option_all: '全部',
