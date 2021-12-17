@@ -86,8 +86,8 @@
     <div v-else>
       <!--  里程碑  -->
       <Milestone :list="milestonesData" :taskStatus="task && task.status" :fold="false"></Milestone>
-      <ElDivider class="my-6"></ElDivider>
-      <div>
+      <ElDivider v-if="task.milestones && task.milestones.length" class="my-6"></ElDivider>
+      <div v-if="task.milestones && task.milestones.length">
         <div class="mb-4 fs-7 font-color-main fw-bolder">
           {{ currentStep.label }}{{ this.$t('task_info_overview') }}
         </div>
@@ -112,7 +112,7 @@
           <ElProgress :percentage="progressBar" :show-text="false"></ElProgress>
         </div>
       </div>
-      <div class="mt-6">
+      <div v-if="task.milestones && task.milestones.length" class="mt-6">
         <div class="mb-4 fs-7 font-color-main fw-bolder">
           {{ $t('task_setting_initial_sync') }}{{ $t('task_info_info') }}
         </div>
@@ -129,7 +129,7 @@
           </template>
         </TableList>
       </div>
-      <div class="mt-6">
+      <div v-if="task.milestones && task.milestones.length" class="mt-6">
         <div class="mb-4 fs-7 font-color-main fw-bolder">{{ $t('task_info_task_cdc') }}{{ $t('task_info_info') }}</div>
         <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page></TableList>
       </div>
