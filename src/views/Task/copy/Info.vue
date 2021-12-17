@@ -169,9 +169,12 @@ export default {
       }
     }
   },
-  // mounted() {
-  //   this.init()
-  // },
+  mounted() {
+    // this.init()
+    this.$once('onceLoadHttp', () => {
+      this.loadHttp()
+    })
+  },
   destroyed() {
     this.$ws.off('dataFlowInsight')
   },
@@ -180,7 +183,8 @@ export default {
       if (this.task.creator) {
         this.creator = this.task.creator
       }
-      this.loadHttp()
+      // this.loadHttp()
+      this.$emit('onceLoadHttp')
       this.loadWS()
       this.sendMsg()
     },
