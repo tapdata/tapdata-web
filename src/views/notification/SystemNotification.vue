@@ -225,7 +225,8 @@ export default {
         .get({ filter: JSON.stringify(filter) })
         .then(res => {
           if (res.data) {
-            this.listData = res.data
+            this.listData = res.data?.items || []
+            this.total = res.data?.total || 0
             //格式化日期
             if (this.listData && this.listData.length > 0) {
               this.listData.map(item => {
@@ -237,7 +238,7 @@ export default {
         .finally(() => {
           this.loading = false
         })
-      this.getCount(this.read)
+      // this.getCount(this.read)
     },
     handleCurrentChange(cpage) {
       this.currentPage = cpage
@@ -270,14 +271,14 @@ export default {
         })
     },
     getUnreadNum() {
-      let where = {
+      let filter = {
         where: {
           read: false
         }
       }
-      notification.count(where).then(res => {
+      notification.get({ filter: JSON.stringify(filter) }).then(res => {
         if (res.data) {
-          this.count = res.data.count
+          this.count = res.data.total || 0
         }
       })
     },

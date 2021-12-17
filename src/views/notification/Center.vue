@@ -24,11 +24,13 @@
 import SystemNotification from './SystemNotification'
 import UserNotification from './UserNotification'
 import { mapState } from 'vuex'
+import VIcon from '@/components/VIcon'
 
 export default {
   components: {
     SystemNotification,
-    UserNotification
+    UserNotification,
+    VIcon
   },
   data() {
     return {
