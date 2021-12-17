@@ -156,6 +156,7 @@ export default {
     return {
       active: 0,
       showActive: 0,
+      isClickStep: false,
       steps: [],
       searchParams: {
         tableName: '',
@@ -328,11 +329,10 @@ export default {
         currentStep = milestones[milestones.length - 1].group
       }
       this.steps = stepsData
-      if (this.active !== 0) {
-        return
-      }
       this.active = (stepsData.findIndex(item => item.group === currentStep) || 0) + 1
-      this.showActive = this.active
+      if (!this.isClickStep) {
+        this.showActive = this.active
+      }
       this.getMilestonesData()
     },
     getMilestonesData() {
@@ -496,6 +496,7 @@ export default {
       if (index + 1 > this.active) {
         return
       }
+      this.isClickStep = true
       this.showActive = index + 1
       this.getMilestonesData()
     }
