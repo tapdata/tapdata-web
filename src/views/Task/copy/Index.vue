@@ -143,13 +143,7 @@ export default {
     taskChange(data) {
       let task = data.data?.fullDocument || {}
       if (this.task && JSON.stringify(task) !== JSON.stringify(this.task)) {
-        this.task = Object.assign(
-          {
-            creator: this.task.creator
-          },
-          this.task,
-          this.formatTask(task)
-        )
+        this.task = Object.assign({}, this.task, this.formatTask(task))
       }
     },
     formatTask(data) {
@@ -158,7 +152,7 @@ export default {
       }
       data.totalOutput = data.stats?.output?.rows || 0
       data.totalInput = data.stats?.input?.rows || 0
-      data.creator = data.creator || data.createUser || data.username || data.user?.username || '-'
+      data.creator = data.creator || data.createUser || data.username || data.user?.username || ''
       data.typeText =
         data.mappingTemplate === 'cluster-clone'
           ? this.$t('task_monitor_migration_task')
