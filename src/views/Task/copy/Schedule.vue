@@ -21,19 +21,72 @@
         </div>
       </ElStep>
     </ElSteps>
-    <!--  任务初始化  -->
-    <div v-if="['initial_sync', 'cdc'].indexOf(currentStep.group) === -1">
+    <template v-if="steps.length > 0">
+      <!--  任务初始化  -->
+      <div v-if="['initial_sync', 'cdc'].indexOf(currentStep.group) === -1">
+        <!--  里程碑  -->
+        <Milestone :list="milestonesData" :taskStatus="task && task.status" :fold="false"></Milestone>
+      </div>
+      <!--  结构迁移  -->
+      <div v-else>
+        <div class="mb-4">
+          <Milestone :list="milestonesData" :taskStatus="task && task.status"></Milestone>
+        </div>
+        <ElDivider class="my-6"></ElDivider>
+        <!--   概览   -->
+        <div v-if="currentStep.group === 'initial_sync'">
+          <div class="mb-4 fs-7 font-color-main fw-bolder">
+            {{ currentStep.label }}{{ this.$t('task_info_overview') }}
+          </div>
+          <div class="p-4" style="background: #fafafa; border-radius: 4px 4px 0 0">
+            <div class="flex justify-content-between mb-2 font-color-main">
+              <div>
+                <span
+                  >{{ $t('task_info_plan') }}{{ currentStep.label }}{{ $t('task_info_table_number') }}
+                  {{ overviewStats.sourceTableNum || 0 }}</span
+                >
+                <span class="ml-3"
+                  >{{ $t('task_info_completed') }}{{ currentStep.label }}{{ $t('task_info_table_number') }}
+                  {{ overviewStats.waitingForSyecTableNums || 0 }}</span
+                >
+              </div>
+              <div>
+                {{ $t('task_info_expected') }}{{ currentStep.label }}{{ $t('task_info_completed_time') }}：{{
+                  completeTime
+                }}
+              </div>
+            </div>
+            <ElProgress :percentage="progressBar" :show-text="false"></ElProgress>
+          </div>
+        </div>
+        <div v-if="currentStep.group === 'initial_sync'" class="mt-6">
+          <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
+          <div></div>
+          <TableList
+            v-if="columns.length"
+            :remoteMethod="remoteMethod"
+            :columns="columns"
+            max-height="300"
+            key="initial_sync"
+            hide-on-single-page
+          >
+            <template slot="schedule" slot-scope="scope">
+              <span>{{ getSchedule(scope.row) }}</span>
+            </template>
+          </TableList>
+        </div>
+        <div v-else class="mt-6">
+          <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
+          <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page></TableList>
+        </div>
+      </div>
+    </template>
+    <!--  里程碑无分类  -->
+    <div v-else>
       <!--  里程碑  -->
       <Milestone :list="milestonesData" :taskStatus="task && task.status" :fold="false"></Milestone>
-    </div>
-    <!--  结构迁移  -->
-    <div v-else>
-      <div class="mb-4">
-        <Milestone :list="milestonesData" :taskStatus="task && task.status"></Milestone>
-      </div>
       <ElDivider class="my-6"></ElDivider>
-      <!--   概览   -->
-      <div v-if="currentStep.group === 'initial_sync'">
+      <div>
         <div class="mb-4 fs-7 font-color-main fw-bolder">
           {{ currentStep.label }}{{ this.$t('task_info_overview') }}
         </div>
@@ -58,9 +111,10 @@
           <ElProgress :percentage="progressBar" :show-text="false"></ElProgress>
         </div>
       </div>
-      <div v-if="currentStep.group === 'initial_sync'" class="mt-6">
-        <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
-        <div></div>
+      <div class="mt-6">
+        <div class="mb-4 fs-7 font-color-main fw-bolder">
+          {{ $t('task_setting_initial_sync') }}{{ $t('task_info_info') }}
+        </div>
         <TableList
           v-if="columns.length"
           :remoteMethod="remoteMethod"
@@ -74,9 +128,9 @@
           </template>
         </TableList>
       </div>
-      <div v-else class="mt-6">
-        <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
-        <TableList :columns="columns" :data="list" max-height="300" hide-on-single-page></TableList>
+      <div class="mt-6">
+        <div class="mb-4 fs-7 font-color-main fw-bolder">{{ $t('task_info_task_cdc') }}{{ $t('task_info_info') }}</div>
+        <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page></TableList>
       </div>
     </div>
   </div>
@@ -106,6 +160,7 @@ export default {
         tableName: '',
         type: ''
       },
+      cdcColumns: [], // 增量
       columns: [],
       list: [],
       overviewStats: {},
@@ -295,93 +350,65 @@ export default {
         })
     },
     getColumns() {
-      let { currentStep } = this
-      switch (currentStep.group) {
-        // 增量同步
-        case 'cdc':
-          this.columns = [
-            {
-              label: this.$t('task_info_source_database'),
-              prop: 'sourceConnectionName'
-            },
-            {
-              label: this.$t('task_info_target_database'),
-              prop: 'targetConnectionName'
-            },
-            {
-              label: this.$t('task_info_cdc_time'),
-              prop: 'cdcTime',
-              dataType: 'time'
-            }
-          ]
-          this.list = (this.task.cdcLastTimes || []).map(item => {
-            return {
-              cdcTime: item.cdcTime,
-              sourceConnectionName: item.sourceConnectionName,
-              targetConnectionName: item.targetConnectionName
-            }
-          })
-          break
-        // 全量同步
-        case 'initial_sync':
-          this.columns = [
-            {
-              label: this.$t('task_info_source_database'),
-              prop: 'sourceConnectionName'
-            },
-            {
-              label: this.$t('task_info_source_table'),
-              prop: 'sourceTableName'
-            },
-            {
-              label: this.$t('task_info_data_row'),
-              prop: 'sourceRowNum'
-            },
-            {
-              label: this.$t('task_info_target_database'),
-              prop: 'targetConnectionName'
-            },
-            {
-              label: this.$t('task_info_target_table'),
-              prop: 'targetTableName'
-            },
-            {
-              label: this.$t('task_info_amount_sync_data'),
-              prop: 'targetRowNum'
-            },
-            {
-              label: this.$t('task_info_source_database'),
-              prop: 'schedule',
-              slotName: 'schedule'
-            },
-            {
-              label: this.$t('task_monitor_status'),
-              prop: 'status'
-            }
-          ]
-          break
-        // 结果迁移
-        // default:
-        //   this.columns = [
-        //     {
-        //       label: '数据库',
-        //       prop: 'database'
-        //     },
-        //     {
-        //       label: '数据表',
-        //       prop: 'table'
-        //     },
-        //     {
-        //       label: '进度',
-        //       prop: 'schedule'
-        //     },
-        //     {
-        //       label: '状态',
-        //       prop: 'type'
-        //     }
-        //   ]
-        //   break
-      }
+      // 增量同步
+      this.cdcColumns = [
+        {
+          label: this.$t('task_info_source_database'),
+          prop: 'sourceConnectionName'
+        },
+        {
+          label: this.$t('task_info_target_database'),
+          prop: 'targetConnectionName'
+        },
+        {
+          label: this.$t('task_info_cdc_time'),
+          prop: 'cdcTime',
+          dataType: 'time'
+        }
+      ]
+      this.list = (this.task.cdcLastTimes || []).map(item => {
+        return {
+          cdcTime: item.cdcTime,
+          sourceConnectionName: item.sourceConnectionName,
+          targetConnectionName: item.targetConnectionName
+        }
+      })
+      // 全量同步
+      this.columns = [
+        {
+          label: this.$t('task_info_source_database'),
+          prop: 'sourceConnectionName'
+        },
+        {
+          label: this.$t('task_info_source_table'),
+          prop: 'sourceTableName'
+        },
+        {
+          label: this.$t('task_info_data_row'),
+          prop: 'sourceRowNum'
+        },
+        {
+          label: this.$t('task_info_target_database'),
+          prop: 'targetConnectionName'
+        },
+        {
+          label: this.$t('task_info_target_table'),
+          prop: 'targetTableName'
+        },
+        {
+          label: this.$t('task_info_amount_sync_data'),
+          prop: 'targetRowNum'
+        },
+        {
+          label: this.$t('task_info_source_database'),
+          prop: 'schedule',
+          slotName: 'schedule'
+        },
+        {
+          label: this.$t('task_monitor_status'),
+          prop: 'status'
+        }
+      ]
     },
     getTime(time) {
       return formatTime(parseInt(time))
