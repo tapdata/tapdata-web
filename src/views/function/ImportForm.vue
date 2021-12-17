@@ -257,7 +257,6 @@ export default {
       }
       this.loading = false
       clearTimeout(timer)
-      timer = null
     },
     loadFunction() {
       this.$refs.form.validate(valid => {
