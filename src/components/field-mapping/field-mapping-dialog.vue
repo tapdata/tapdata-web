@@ -5,10 +5,10 @@
       >:
       {{ $t('task_mapping_table_setting_tip') }}
       <div class="float-end">
-        <el-button v-if="!readOnly" plain type="primary" size="mini" @click="handleChangTableName">{{
+        <el-button v-if="!readOnly" size="mini" @click="handleChangTableName">{{
           $t('task_mapping_table_rename')
         }}</el-button>
-        <el-button v-if="!readOnly" plain type="primary" size="mini" @click="dialogFieldVisible = true">{{
+        <el-button v-if="!readOnly" size="mini" @click="dialogFieldVisible = true">{{
           $t('task_mapping_table_field_rename')
         }}</el-button>
         <el-button v-if="!readOnly" class="mr-5" size="mini" type="primary" @click="rollbackAll">{{
