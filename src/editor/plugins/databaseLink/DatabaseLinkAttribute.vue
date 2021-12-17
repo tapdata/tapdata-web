@@ -209,15 +209,15 @@ export default {
   mounted() {
     let self = this
     ws.on('metadataTransformerProgress', function (res) {
-      if (!res?.data?.stageId) {
+      if(res?.data?.msg === 'dataFLowId is not start transformer') {
+        self.disabledTransfer = false
+      } else if (!res?.data?.stageId) {
         let status = res?.data?.status
         if (status === 'done') {
           self.disabledTransfer = false
         } else {
           self.disabledTransfer = true
         }
-      } else if(res?.data.msg === 'dataFLowId is not start transformer') {
-        self.disabledTransfer = false
       } else {
         self.disabledTransfer = false
       }
