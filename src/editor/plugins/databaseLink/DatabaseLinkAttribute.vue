@@ -217,9 +217,9 @@ export default {
           self.disabledTransfer = true
         }
       } else if(res?.data.msg === 'dataFLowId is not start transformer') {
-        self.disabledTransfer = true
+        self.disabledTransfer = false
       } else {
-        self.disabledTransfer = true
+        self.disabledTransfer = false
       }
     })
   },
