@@ -9,7 +9,7 @@
       </el-steps>
       <!--   第1步   -->
       <div v-if="step === 0" class="step-content mt-7">
-        <div class="step-content__title fs-6 fw-bolder">安装 Agent{{ $t('guide_view_task_monitor') }}</div>
+        <div class="step-content__title fs-6 fw-bolder">{{ $t('guide_install_agent') }}</div>
         <div class="step-content__desc mt-6">
           <div>
             {{ $t('guide_install_agent_tip') }}
@@ -273,18 +273,18 @@ export default {
       },
       taskTypeItems: [
         {
-          label: '全量 + 增量同步',
-          tip: '选择全量+增量同步模式，任务会在全量同步执行结束后自动进入增量同步状态。',
+          label: this.$t('task_setting_initial_sync_cdc'),
+          tip: this.$t('task_setting_initial_sync_cdc_tip'),
           value: 'initial_sync+cdc'
         },
         {
-          label: '全量同步',
-          tip: '全量同步也称初始化同步，即在任务启动时刻将源端数据快照读取，并同步至目标端；该同步有更新写入、删除重写两种模式。',
+          label: this.$t('task_setting_initial_sync'),
+          tip: this.$t('task_setting_initial_sync_tip'),
           value: 'initial_sync'
         },
         {
-          label: '增量同步',
-          tip: '增量同步是指从任务启动时刻对存储的源端变化的日志进行采集和分析，有序的将数据变化同步至目标端，支持增删改操作。',
+          label: this.$t('task_setting_cdc'),
+          tip: this.$t('task_setting_cdc_tip'),
           value: 'cdc'
         }
       ],
@@ -306,13 +306,13 @@ export default {
       let result
       let { agent } = this
       if (agent.status === 'Running') {
-        result = '已启动'
+        result = this.$t('task_status_running')
       } else if (agent.status === 'Stopping') {
-        result = '停止中'
+        result = this.$t('task_status_stopping')
       } else if (!agent.status) {
-        result = '待启动'
+        result = this.$t('task_status_draft')
       } else {
-        result = '启动中'
+        result = this.$t('task_status_scheduled')
       }
       return result
     },
@@ -473,10 +473,10 @@ export default {
       this.$axios
         .post('api/tcm/orders', params)
         .then(() => {
-          this.$message.success('Agent启动中')
+          this.$message.success(this.$t('guide_agent_start_success'))
         })
         .catch(() => {
-          this.$message.error('Agent启动失败')
+          this.$message.error(this.$t('guide_agent_start_fail'))
         })
     },
     stopAgent() {},
@@ -549,7 +549,7 @@ export default {
           }
         })
         .catch(() => {
-          this.$message.error('创建连接失败')
+          this.$message.error(this.$t('guide_creat_connection_fail'))
         })
         .finally(() => {
           this.initDatabaseLoading = false
@@ -639,7 +639,7 @@ export default {
         description: '',
         status: 'paused',
         executeMode: 'normal',
-        category: '数据库克隆',
+        category: this.$t('task_form_database_clone'),
         stopOnError: false,
         mappingTemplate: 'cluster-clone',
         stages: [],
