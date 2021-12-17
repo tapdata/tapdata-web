@@ -871,6 +871,8 @@ export default class Graph extends Component {
       )
       halo.$el.find('button').click(() => {
         event.stopPropagation()
+        this.selection.collection.reset([])
+        this.onClickBlank()
         elementView.model.setEnabled(elementView.model)
         event.target.outerHTML = ''
       })
@@ -887,6 +889,8 @@ export default class Graph extends Component {
           link.toBack()
           link.attributes.form_data.disabled = true
         })
+        this.selection.collection.reset([])
+        this.onClickBlank()
         elementView.model.setDisabled(elementView.model, true)
         event.target.outerHTML = ''
       })
