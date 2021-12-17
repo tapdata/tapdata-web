@@ -531,7 +531,8 @@ export default {
       hiddenFieldMapping: false,
       taskStep: 0,
       tableNameTransform: '',
-      fieldsNameTransform: ''
+      fieldsNameTransform: '',
+      updateTransfer: false
     }
   },
   created() {
@@ -1211,8 +1212,10 @@ export default {
         sourceIdA = this.stages[0]?.id
         targetIdB = this.stages[1]?.id
         postData.id = this.id
-        this.transferData.tableNameTransform = this.tableNameTransform
-        this.transferData.fieldsNameTransform = this.fieldsNameTransform
+        if (!this.updateTransfer) {
+          this.transferData.tableNameTransform = this.tableNameTransform
+          this.transferData.fieldsNameTransform = this.fieldsNameTransform
+        }
       } else {
         sourceIdA = this.$util.uuid()
         targetIdB = this.$util.uuid()
@@ -1267,6 +1270,7 @@ export default {
         }
         this.saveOperations(returnData.row, returnData.operations, returnData.target)
         this.saveChangNameData(returnData.changNameData)
+        this.updateTransfer = true
       } else {
         let verify = this.checkTransfer()
         if (!verify) {
