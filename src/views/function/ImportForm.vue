@@ -174,6 +174,7 @@ export default {
   },
   destroyed() {
     this?.$ws?.off('loadJarLibResult', this.hanlderResult)
+    clearTimeout(timer)
   },
   methods: {
     getRepeatNames(list) {
@@ -273,7 +274,7 @@ export default {
             })
             // 设置10秒超时
             timer = setTimeout(() => {
-              this.hanlderResult({ status: 'TIME_OUT' })
+              this?.hanlderResult({ status: 'TIME_OUT' })
             }, 10000)
           }
         }
