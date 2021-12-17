@@ -4,7 +4,7 @@ import { observer } from '@formily/reactive-vue'
 import { h, useField } from '@formily/vue'
 import { isArr, isValid } from '@formily/shared'
 import { stylePrefix } from '../configs'
-import { Space } from '../Space'
+import { Space } from '../space'
 import { Tag } from 'element-ui'
 import { formatDate } from 'element-ui/src/utils/date-util'
 
@@ -20,32 +20,35 @@ export const usePlaceholder = value => {
   return placeholder
 }
 
-const Input = defineComponent({
-  name: 'FPreviewTextInput',
-  props: [],
-  setup(_props, { attrs, slots }) {
-    const placeholder = usePlaceholder(attrs.value)
-    console.log('FPreviewTextInput', slots, attrs, _props) // eslint-disable-line
-    return () => {
-      return h(
-        Space,
-        {
-          class: [prefixCls],
-          style: attrs.style
-        },
-        {
-          default: () => [
-            slots?.prepend?.(),
-            slots?.prefix?.(),
-            placeholder.value,
-            slots?.suffix?.(),
-            slots?.append?.() || attrs.append
-          ]
-        }
-      )
+const Input = observer(
+  defineComponent({
+    name: 'FPreviewTextInput',
+    props: [],
+    setup(_props, { attrs, slots }) {
+      const fieldRef = useField()
+      const field = fieldRef.value
+      const placeholder = usePlaceholder()
+      return () => {
+        return h(
+          Space,
+          {
+            class: [prefixCls],
+            style: attrs.style
+          },
+          {
+            default: () => [
+              slots?.prepend?.(),
+              slots?.prefix?.(),
+              field.value !== '' ? field.value : placeholder.value,
+              slots?.suffix?.(),
+              slots?.append?.() || attrs.append
+            ]
+          }
+        )
+      }
     }
-  }
-})
+  })
+)
 
 const Switch = defineComponent({
   name: 'FPreviewSwitch',

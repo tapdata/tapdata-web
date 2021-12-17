@@ -139,7 +139,11 @@ $height: 40px;
 
   &.active,
   &.selected {
-    border-color: #fa6303;
+    border-color: #2c65ff;
+  }
+
+  &.active {
+    border-width: 2px;
   }
 
   &:hover,

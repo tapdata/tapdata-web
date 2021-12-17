@@ -1,7 +1,7 @@
 import { connect, mapProps, useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
-import { Space } from './Space'
+import { Space } from './space'
 import VIcon from 'web-core/components/VIcon'
 
 const Conditions = observer(
