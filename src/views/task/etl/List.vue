@@ -437,15 +437,15 @@ export default {
         // scheduled, draft, running, stopping, error, paused, force stopping
         run: { draft: true, error: true, paused: true },
         stop: { running: true },
-        delete: { draft: true, error: true, paused: true },
+        delete: { edit: true, draft: true, error: true, paused: true },
         edit: { edit: true, stop: true, error: true },
         reset: { draft: true, error: true, paused: true },
         forceStop: { stopping: true }
-    //     编辑中（edit）- 编辑中
-    // 启动中（start）- 启动中
-    // 运行中（running）- 运行中
-    // stop - 已停止
-    // pause - 暂停
+        //     编辑中（edit）- 编辑中
+        // 启动中（start）- 启动中
+        // 运行中（running）- 运行中
+        // stop - 已停止
+        // pause - 暂停
       },
       dataFlowId: '',
 
@@ -1124,14 +1124,16 @@ export default {
         if (!resFlag) {
           return
         }
-        dataFlows.deleteAll(where).then(res => {
-          if (res.data && res.data.success) {
-            this.table.fetch()
-            this.responseHandler(res.data, this.$t('message.deleteOK'))
-          } else if (res.data && res.data.fail) {
-            this.$message.info(this.$t('message.deleteFail'))
-          }
-        })
+        this.$api('Task')
+          .delete(where)
+          .then(res => {
+            if (res.data && res.data.success) {
+              this.table.fetch()
+              this.responseHandler(res.data, this.$t('message.deleteOK'))
+            } else if (res.data && res.data.fail) {
+              this.$message.info(this.$t('message.deleteFail'))
+            }
+          })
       })
     },
     initialize(ids, item = {}) {
