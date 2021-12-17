@@ -10,7 +10,7 @@
           <Log :id="task.id" style="max-height: 450px"></Log>
         </ElTabPane>
         <ElTabPane :label="$t('task_monitor_run_connection')" name="connect" lazy>
-          <Connection :ids="connectionIds" @change="loadTask"></Connection>
+          <Connection ref="connection" :ids="connectionIds" @change="loadTask"></Connection>
         </ElTabPane>
         <ElTabPane :label="$t('task_monitor_history_run_record')" name="history" lazy>
           <History :ids="[task.id]" :operations="operations"></History>
@@ -143,13 +143,7 @@ export default {
     taskChange(data) {
       let task = data.data?.fullDocument || {}
       if (this.task && JSON.stringify(task) !== JSON.stringify(this.task)) {
-        this.task = Object.assign(
-          {
-            creator: this.task.creator
-          },
-          this.task,
-          this.formatTask(task)
-        )
+        this.task = Object.assign({}, this.task, this.formatTask(task))
       }
     },
     formatTask(data) {
@@ -158,7 +152,7 @@ export default {
       }
       data.totalOutput = data.stats?.output?.rows || 0
       data.totalInput = data.stats?.input?.rows || 0
-      data.creator = data.creator || data.createUser || data.username || data.user?.username || '-'
+      data.creator = data.creator || data.createUser || data.username || data.user?.username || ''
       data.typeText =
         data.mappingTemplate === 'cluster-clone'
           ? this.$t('task_monitor_migration_task')
@@ -174,9 +168,13 @@ export default {
     },
     tabHandler() {
       this.$nextTick(() => {
-        if (this.activeTab === 'content') {
+        const { activeTab } = this
+        if (activeTab === 'content') {
           this.$refs.fieldMapping.getMetaData(this.task)
           this.field_process = this.task?.stages[0]?.field_process || []
+        }
+        if (activeTab !== 'connect') {
+          this.$refs.connection?.clearInterval?.()
         }
       })
     },
@@ -205,6 +203,12 @@ export default {
     }
     .el-tab-pane {
       min-height: 400px;
+    }
+    .field-mapping {
+      min-height: 400px;
+      .task-form-body {
+        max-height: 350px;
+      }
     }
   }
 }

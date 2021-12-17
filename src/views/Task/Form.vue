@@ -529,7 +529,10 @@ export default {
       fieldMappingNavData: '',
       fieldMappingTableData: '',
       hiddenFieldMapping: false,
-      taskStep: 0
+      taskStep: 0,
+      tableNameTransform: '',
+      fieldsNameTransform: '',
+      updateTransfer: false
     }
   },
   created() {
@@ -629,6 +632,9 @@ export default {
           topicData: syncObjects[0]?.type === 'topic' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || [],
           queueData: syncObjects[0]?.type === 'queue' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || []
         }
+        //编辑时不被覆盖
+        this.tableNameTransform = stages[1].tableNameTransform
+        this.fieldsNameTransform = stages[1].fieldsNameTransform
         // TODO 临时为了解决bug现在这里加，回头优化
         this.getFormConfig()
         //是否已选择表
@@ -1205,12 +1211,11 @@ export default {
         //编辑状态stages只做变更
         sourceIdA = this.stages[0]?.id
         targetIdB = this.stages[1]?.id
-        //继承表小写 字段改大写
-        this.transferData.table_prefix = this.stages[1]?.table_prefix
-        this.transferData.table_suffix = this.stages[1]?.table_suffix
-        this.transferData.tableNameTransform = this.stages[1]?.tableNameTransform
-        this.transferData.fieldsNameTransform = this.stages[1]?.fieldsNameTransfor
         postData.id = this.id
+        if (!this.updateTransfer) {
+          this.transferData.tableNameTransform = this.tableNameTransform
+          this.transferData.fieldsNameTransform = this.fieldsNameTransform
+        }
       } else {
         sourceIdA = this.$util.uuid()
         targetIdB = this.$util.uuid()
@@ -1238,8 +1243,8 @@ export default {
           name: this.dataSourceModel.target_connectionName,
           table_prefix: this.transferData.table_prefix,
           table_suffix: this.transferData.table_suffix,
-          tableNameTransform: this.transferData.tableNameTransform,
-          fieldsNameTransform: this.transferData.fieldsNameTransform,
+          tableNameTransform: this.transferData.tableNameTransform || this.tableNameTransform,
+          fieldsNameTransform: this.transferData.fieldsNameTransform || this.fieldsNameTransform,
           type: 'database',
           readBatchSize: 1000,
           readCdcInterval: 500,
@@ -1265,6 +1270,7 @@ export default {
         }
         this.saveOperations(returnData.row, returnData.operations, returnData.target)
         this.saveChangNameData(returnData.changNameData)
+        this.updateTransfer = true
       } else {
         let verify = this.checkTransfer()
         if (!verify) {
