@@ -10,7 +10,7 @@
           <Log :id="task.id" style="max-height: 450px"></Log>
         </ElTabPane>
         <ElTabPane :label="$t('task_monitor_run_connection')" name="connect" lazy>
-          <Connection :ids="connectionIds" @change="loadTask"></Connection>
+          <Connection ref="connection" :ids="connectionIds" @change="loadTask"></Connection>
         </ElTabPane>
         <ElTabPane :label="$t('task_monitor_history_run_record')" name="history" lazy>
           <History :ids="[task.id]" :operations="operations"></History>
@@ -174,9 +174,13 @@ export default {
     },
     tabHandler() {
       this.$nextTick(() => {
-        if (this.activeTab === 'content') {
+        const { activeTab } = this
+        if (activeTab === 'content') {
           this.$refs.fieldMapping.getMetaData(this.task)
           this.field_process = this.task?.stages[0]?.field_process || []
+        }
+        if (activeTab !== 'connect') {
+          this.$refs.connection.clearInterval()
         }
       })
     },
