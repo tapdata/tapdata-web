@@ -150,11 +150,12 @@ export default {
   dag_dialog_field_mapping_error_save_prefix: 'Detected that you still have',
   dag_dialog_field_mapping_error_save_suffix:
     'There is a problem with the field type setting of the table, please select the table with the problem in the table area on the left for processing',
-  dag_dialog_field_mapping_change_type_field_rename:'Type modification',
-  dag_dialog_field_mapping_batch_change_type:'Batch edit field types',
-  dag_dialog_field_mapping_batch_change_type_error_tip:'Please select the type of source table/target table conversion',
-  dag_dialog_field_mapping_batch_change_type_source:'Source field type',
-  dag_dialog_field_mapping_batch_change_type_target:'Target field type',
+  dag_dialog_field_mapping_change_type_field_rename: 'Type modification',
+  dag_dialog_field_mapping_batch_change_type: 'Batch edit field types',
+  dag_dialog_field_mapping_batch_change_type_error_tip:
+    'Please select the type of source table/target table conversion',
+  dag_dialog_field_mapping_batch_change_type_source: 'Source field type',
+  dag_dialog_field_mapping_batch_change_type_target: 'Target field type',
   dag_job_check_source: 'as a source, only full tasks are supported',
 
   //Task edit
@@ -228,6 +229,7 @@ export default {
   function_message_delete_title: 'Delete function',
   function_message_delete_content:
     'Deletion may cause the task that has called this function to report an error. Are you sure to delete this function? ',
+  function_tips_max_size: 'Max size ',
 
   // 用户
   login_fail_too_many: 'The maximum number of password errors has been reached, please log in after 10 minutes'

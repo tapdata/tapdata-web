@@ -145,11 +145,11 @@ export default {
   dag_dialog_field_mapping_error_range: '當前值不符合該字段範圍',
   dag_dialog_field_mapping_error_save_prefix: '檢測到您還有',
   dag_dialog_field_mapping_error_save_suffix: '張表的字段類型設置存在問題，請在左側表區域選擇有問題的表進行處理',
-  dag_dialog_field_mapping_change_type_field_rename:'類型修改',
-  dag_dialog_field_mapping_batch_change_type:'批量修改字段類型',
-  dag_dialog_field_mapping_batch_change_type_source:'源字段類型',
-  dag_dialog_field_mapping_batch_change_type_target:'目標字段類型',
-  dag_dialog_field_mapping_batch_change_type_error_tip:'請先選擇需要源表/目標表轉換的類型',
+  dag_dialog_field_mapping_change_type_field_rename: '類型修改',
+  dag_dialog_field_mapping_batch_change_type: '批量修改字段類型',
+  dag_dialog_field_mapping_batch_change_type_source: '源字段類型',
+  dag_dialog_field_mapping_batch_change_type_target: '目標字段類型',
+  dag_dialog_field_mapping_batch_change_type_error_tip: '請先選擇需要源表/目標表轉換的類型',
 
   //任務編輯
   dag_job_check_source: '作為源僅支持全量任務',
@@ -221,6 +221,7 @@ export default {
   function_message_function_empty: '請上傳jar包文件並加載函數',
   function_message_delete_title: '刪除函數',
   function_message_delete_content: '刪除可能會導致已調用該函數的任務報錯，確定刪除該函數嗎？',
+  function_tips_max_size: '最大',
 
   // 用户
   login_fail_too_many: '密碼錯誤達到最大次數，請於10分鐘再登錄'

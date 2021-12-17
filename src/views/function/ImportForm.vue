@@ -21,7 +21,7 @@
                   $t('function_button_file_upload')
                 }}</ElButton>
               </ElUpload>
-              <span class="color-info ml-4" style="font-size: 12px">*最大10M</span>
+              <span class="color-info ml-4" style="font-size: 12px">*{{ $t('function_tips_max_size') }}10M</span>
             </div>
           </ElFormItem>
           <ElFormItem prop="packageName" :label="$t('function_package_name_label') + ':'">
@@ -139,6 +139,7 @@
 </template>
 
 <script>
+let timer = null
 export default {
   data() {
     return {
@@ -168,10 +169,11 @@ export default {
       this.clearFunctionList()
     }
   },
+  created() {
+    this?.$ws?.on('loadJarLibResult', this.hanlderResult)
+  },
   destroyed() {
-    if (this.$ws && this.loading) {
-      this.$ws.off('loadJarLibResult', this.hanlderResult)
-    }
+    this?.$ws?.off('loadJarLibResult', this.hanlderResult)
   },
   methods: {
     getRepeatNames(list) {
@@ -226,6 +228,9 @@ export default {
       return `${item.function_name}(${arr.join(', ')})`
     },
     hanlderResult(data) {
+      if (!this.loading) {
+        return
+      }
       let result = data?.result
       if (data?.status === 'SUCCESS' && result?.length) {
         this.funcList = result.map(item => {
@@ -244,18 +249,20 @@ export default {
         this.getRepeatNames(this.funcList)
       } else if (data?.status === 'ERROR') {
         this.$message.error(data.error)
+      } else if (data?.status === 'TIME_OUT') {
+        this.$message.error('Websocket time out.')
       } else {
         this.$message.error(this.$t('function_message_load_function_fail'))
       }
-      this.$ws.off('loadJarLibResult', this.hanlderResult)
       this.loading = false
+      clearTimeout(timer)
+      timer = null
     },
     loadFunction() {
       this.$refs.form.validate(valid => {
         if (valid) {
           if (this.$ws) {
             this.loading = true
-            this.$ws.on('loadJarLibResult', this.hanlderResult)
             let { fileId, packageName } = this.form
             this.$ws.send({
               type: 'loadJar',
@@ -264,6 +271,10 @@ export default {
                 packageName
               }
             })
+            // 设置10秒超时
+            timer = setTimeout(() => {
+              this.hanlderResult({ status: 'TIME_OUT' })
+            }, 10000)
           }
         }
       })

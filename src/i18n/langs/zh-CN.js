@@ -221,6 +221,7 @@ export default {
   function_message_function_empty: '请上传jar包文件并加载函数',
   function_message_delete_title: '删除函数',
   function_message_delete_content: '删除可能会导致已调用该函数的任务报错，确定删除该函数吗？',
+  function_tips_max_size: '最大',
 
   // 用户
   login_fail_too_many: '密码错误达到最大次数，请于10分钟后再登录'
