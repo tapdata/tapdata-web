@@ -130,27 +130,12 @@ export default {
   },
   beforeDestroy() {
     this.clearInterval()
-    clearInterval(this.fetchTimer)
-    this.fetchTimer = null
   },
   methods: {
     init() {
-      this.fetchTimer && clearInterval(this.fetchTimer)
+      this.clearInterval()
       this.fetchTimer = setInterval(() => {
-        let list = this.getTableData() || []
-        let ids = []
-        list.forEach(item => {
-          if (
-            ['testing'].includes(item.status) ||
-            ['loading'].includes(item.loadFieldsStatus) ||
-            !item.loadFieldsStatus
-          ) {
-            ids.push(item.id)
-          }
-        })
-        if (ids.length) {
-          this.fetch()
-        }
+        this.fetch()
       }, 3000)
     },
     remoteMethod({ page }) {
@@ -185,7 +170,9 @@ export default {
     clearInterval() {
       // 清除定时器
       clearInterval(this.timer)
+      clearInterval(this.fetchTimer)
       this.timer = null
+      this.fetchTimer = null
     },
     testConnection(item) {
       this.$checkAgentStatus(async () => {
@@ -240,7 +227,7 @@ export default {
     },
     reloadApi(row, type) {
       this.reloadLoading = true
-      this.clearInterval()
+      // this.clearInterval()
       let parms
       if (type === 'first') {
         parms = {
@@ -266,7 +253,7 @@ export default {
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
             this.progress = progress ? progress : 0
-            this.getSchemaProgress()
+            this.getSchemaProgress(row)
             this.fetch()
           }
         })
@@ -279,10 +266,10 @@ export default {
           }
         })
     },
-    getSchemaProgress() {
-      this.clearInterval()
+    getSchemaProgress(row) {
+      // this.clearInterval()
       this.$axios
-        .get('tm/api/Connections/' + this.connection.id)
+        .get('tm/api/Connections/' + row.id)
         .then(data => {
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           if (data.loadFieldsStatus === 'finished') {
@@ -295,8 +282,8 @@ export default {
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
             this.progress = progress ? progress : 0
-            this.timer = setInterval(() => {
-              this.getSchemaProgress()
+            this.timer = setTimeout(() => {
+              this.getSchemaProgress(row)
             }, 800)
           }
         })

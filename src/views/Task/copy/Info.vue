@@ -13,7 +13,7 @@
         <!--          所属Agent：<span>{{ task.belongAgent }}</span>-->
         <!--        </span>-->
         <span class="ml-6 font-color-sub">
-          {{ $t('task_monitor_founder') }}：<span>{{ task.creator }}</span>
+          {{ $t('task_monitor_founder') }}：<span>{{ creator }}</span>
         </span>
         <span class="ml-6 font-color-sub">
           {{ $t('task_info_start_time') }}：<span>{{ formatTime(task.startTime) || '-' }}</span>
@@ -143,7 +143,8 @@ export default {
         edit: { draft: true, error: true, paused: true },
         reset: { draft: true, error: true, paused: true },
         forceStop: { stopping: true }
-      }
+      },
+      creator: ''
     }
   },
   computed: {
@@ -176,6 +177,9 @@ export default {
   },
   methods: {
     init() {
+      if (this.task.creator) {
+        this.creator = this.task.creator
+      }
       this.loadHttp()
       this.loadWS()
       this.sendMsg()
