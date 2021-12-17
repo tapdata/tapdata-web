@@ -64,6 +64,7 @@
           <div></div>
           <TableList
             v-if="columns.length"
+            ref="initialTableList"
             :remoteMethod="remoteMethod"
             :columns="columns"
             max-height="300"
@@ -409,6 +410,7 @@ export default {
           prop: 'status'
         }
       ]
+      this.$refs.initialTableList?.fetch?.()
     },
     getTime(time) {
       return formatTime(parseInt(time))

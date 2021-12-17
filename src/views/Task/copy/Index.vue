@@ -174,7 +174,7 @@ export default {
           this.field_process = this.task?.stages[0]?.field_process || []
         }
         if (activeTab !== 'connect') {
-          this.$refs.connection.clearInterval()
+          this.$refs.connection?.clearInterval?.()
         }
       })
     },
@@ -206,6 +206,9 @@ export default {
     }
     .field-mapping {
       min-height: 400px;
+      .task-form-body {
+        max-height: 350px;
+      }
     }
   }
 }
