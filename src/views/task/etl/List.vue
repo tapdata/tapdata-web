@@ -351,7 +351,6 @@ import factory from '../../../api/factory'
 import ws from '../../../api/ws'
 const dataFlows = factory('DataFlows')
 const MetadataInstance = factory('MetadataInstances')
-const TaskModel = factory('Task')
 // const cluster = factory('cluster');
 import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
@@ -691,26 +690,28 @@ export default {
       }
       if (this.mappingTemplate === 'custom') {
         delete filter.where.mappingTemplate
-        return TaskModel.get({
-          filter: JSON.stringify(filter)
-        }).then(res => {
-          let data = res.data
-          let list = data?.items || []
-          this.watchDataflowList(list.map(it => it.id))
-          this.table.setCache({
-            keyword,
-            status,
-            progress,
-            executionStatus,
-            timeData
+        return this.$api('Task')
+          .get({
+            filter: JSON.stringify(filter)
           })
-          return {
-            total: data.total,
-            data: list.map(item => {
-              return this.cookRecord(item)
+          .then(res => {
+            let data = res.data
+            let list = data?.items || []
+            this.watchDataflowList(list.map(it => it.id))
+            this.table.setCache({
+              keyword,
+              status,
+              progress,
+              executionStatus,
+              timeData
             })
-          }
-        })
+            return {
+              total: data.total,
+              data: list.map(item => {
+                return this.cookRecord(item)
+              })
+            }
+          })
       }
       return dataFlows
         .get({
@@ -1002,32 +1003,35 @@ export default {
       }
 
       if (this.$refs.agentDialog.checkAgent()) {
-        TaskModel.get({ filter: JSON.stringify(filter) }).then(res => {
-          let flag = false
-          let items = res.data?.items || []
-          if (items.length) {
-            items.forEach(item => {
-              if (item?.errorEvents?.length) {
-                flag = true
-              }
-            })
-          }
-          TaskModel.start(id)
-            .then(res => {
-              this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
-              this.table.fetch()
-            })
-            .catch(err => {
-              this.$message.error(err.data?.message)
-            })
-          if (flag) {
-            _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {
+        this.$api('Task')
+          .get({ filter: JSON.stringify(filter) })
+          .then(res => {
+            let flag = false
+            let items = res.data?.items || []
+            if (items.length) {
+              items.forEach(item => {
+                if (item?.errorEvents?.length) {
+                  flag = true
+                }
+              })
+            }
+            this.$api('Task')
+              .batchStart(ids)
+              .then(res => {
+                this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+                this.table.fetch()
+              })
+              .catch(err => {
+                this.$message.error(err.data?.message)
+              })
+            if (flag) {
+              _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {
+                // _this.changeStatus(ids, { status: 'scheduled' })
+              })
+            } else {
               // _this.changeStatus(ids, { status: 'scheduled' })
-            })
-          } else {
-            // _this.changeStatus(ids, { status: 'scheduled' })
-          }
-        })
+            }
+          })
       }
       // if (node) {
       // 	this.$refs.errorHandler.checkError(node, () => {
@@ -1088,7 +1092,8 @@ export default {
         if (!resFlag) {
           return
         }
-        TaskModel.stop(ids[0])
+        this.$api('Task')
+          .batchStop(ids)
           .then(res => {
             this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
             this.table.fetch()
@@ -1112,11 +1117,6 @@ export default {
       })
     },
     del(ids, item = {}) {
-      let where = {
-        _id: {
-          inq: ids
-        }
-      }
       let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning'
@@ -1125,7 +1125,7 @@ export default {
           return
         }
         this.$api('Task')
-          .delete(ids[0])
+          .batchDelete(ids)
           .then(res => {
             if (res) {
               this.table.fetch()
@@ -1145,8 +1145,8 @@ export default {
           return
         }
         this.restLoading = true
-        dataFlows
-          .resetAll(ids)
+        this.$api('Task')
+          .batchRenew(ids)
           .then(res => {
             this.table.fetch()
             this.responseHandler(res.data, this.$t('message.resetOk'))

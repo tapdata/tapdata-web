@@ -25,4 +25,16 @@ export default class TaskAPI extends PublicAPI {
   pause(id) {
     return axios.put(this.url + `/pause/${id}`)
   }
+  batchDelete(ids) {
+    return axios.delete(this.url + `/batchDelete?taskIds=` + ids.join('&taskIds='))
+  }
+  batchRenew(ids) {
+    return axios.patch(this.url + `/batchRenew?taskIds=` + ids.join('&taskIds='))
+  }
+  batchStop(ids) {
+    return axios.put(this.url + `/batchStop?taskIds=` + ids.join('&taskIds='))
+  }
+  batchStart(ids) {
+    return axios.put(this.url + `/batchStart?taskIds=` + ids.join('&taskIds='))
+  }
 }
