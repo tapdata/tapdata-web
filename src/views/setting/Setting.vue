@@ -13,11 +13,14 @@
         <div class="box" v-for="(childItem, childIndex) in item.items" :key="childIndex">
           <div v-if="item.category === 'license'">
             <div class="license" v-for="(licenseItem, licenseIndex) in item.liceseItems" :key="licenseIndex">
-              {{ $t('setting.nameserver') }}: {{ licenseItem.hostname }}
-            </div>
-            <div>
-              {{ $t('setting.expiredate') }}:
-              {{ licenseItem.authorization ? $moment(licenseItem.authorization.validity_period.expires_on || '') : '' }}
+              <div>{{ $t('setting.nameserver') }}: {{ licenseItem.hostname }}</div>
+              <!--authorization報錯 隱藏到期時間-->
+              <!-- <div>
+                {{ $t('setting.expiredate') }}:
+                {{
+                  licenseItem.authorization ? $moment(licenseItem.authorization.validity_period.expires_on || '') : ''
+                }}
+              </div> -->
             </div>
             <el-button @click="importlicense(licenseItem)">{{ $t('setting.import') }}</el-button>
             <el-button @click="hrefApply(licenseItem)">{{ $t('setting.apply') }}</el-button>
