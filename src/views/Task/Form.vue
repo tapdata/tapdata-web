@@ -79,6 +79,7 @@
                 :getDataFlow="getDataFlow"
                 @update-first="returnModel"
                 @update-transform="updateTranForm"
+                @row-click="selectRowFieldProcess"
               ></FieldMapping>
             </div>
           </el-main>
@@ -1334,6 +1335,9 @@ export default {
       this.transferData.tableNameTransform = data.tableNameTransform
       this.transferData.fieldsNameTransform = data.fieldsNameTransform
     },
+    selectRowFieldProcess(field_process) {
+      this.transferData.field_process = field_process
+    },
     //保存字段处理器
     saveOperations(row, operations, target) {
       if (!target || target?.length === 0) return
@@ -1345,7 +1349,7 @@ export default {
       }
       if (typeof where === 'object') where = JSON.stringify(where)
       this.axios.post('tm/api/MetadataInstances/update?where=' + encodeURIComponent(where), data)
-      this.transferData.field_process = this.$refs.fieldMapping.saveFileOperations()
+      this.transferData.field_process = this.$refs.fieldMapping.saveFileOperations(row, operations)
     }
   }
 }

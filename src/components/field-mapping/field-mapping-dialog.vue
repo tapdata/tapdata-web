@@ -1001,29 +1001,6 @@ export default {
         this.updateTarget(id, 't_field_name', opr[0].original_field_name || opr[0].field)
       }
     },
-    saveFileOperations() {
-      let field_process = {
-        table_id: this.selectRow.sourceTableId, //存源表名 兼容旧版字段处理器
-        table_name: this.selectRow.sourceObjectName,
-        operations: this.operations
-      }
-      if (this.field_process && this.field_process.length > 0) {
-        let process = this.field_process.filter(fields => fields.table_id === this.selectRow.sourceTableId)
-        if (process.length > 0) {
-          field_process = process[0]
-          field_process.table_id = this.selectRow.sourceTableId
-          field_process.table_name = this.selectRow.sourceObjectName
-          field_process.operations = this.operations
-        } else {
-          this.field_process = []
-          this.field_process.push(field_process)
-        }
-      } else {
-        this.field_process = []
-        this.field_process.push(field_process)
-      }
-      return this.field_process
-    },
     returnData(hiddenMsg) {
       let result = this.checkTable()
       if (result.checkDataType || result.checkInvalid) {
