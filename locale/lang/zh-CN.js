@@ -97,7 +97,7 @@ const newCn = {
   milestone_label_write_cdc_event: '【数据传输】目标处理器进入增量写入模式',
 
   //字段映射
-  dag_task_error_tittle: '任务启动预检查未通过',
+  dag_task_error_tittle: '任务启动预检查',
   dag_task_error_text: '在模型推演过程中，请耐心等待',
   dag_task_error_current_progress: '当前进度',
   dag_task_error_completed: '模型推演完成',

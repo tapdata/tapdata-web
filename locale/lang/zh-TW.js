@@ -80,7 +80,7 @@ const newTc = {
   verify_message_title_confirm_back: '是否放棄創建（編輯）校驗任務？',
 
   //字段映射
-  dag_task_error_tittle: '任務啟動預檢查未通過',
+  dag_task_error_tittle: '任務啟動預檢查',
   dag_task_error_text: '在模型推演過程中，請耐心等待',
   dag_task_error_current_progress: '當前進度',
   dag_task_error_completed: '模型推演完成',

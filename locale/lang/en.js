@@ -85,7 +85,7 @@ const newEn = {
   verify_message_title_confirm_back: 'Would you give up creating (editing) verification tasks? ',
 
   //字段映射
-  dag_task_error_tittle: 'Task startup pre check failed',
+  dag_task_error_tittle: 'Task start pre-check',
   dag_task_error_Text: 'During the model deduction, please wait patiently',
   dag_task_error_current_Progress: 'Current progress',
   dag_task_error_Completed: 'Model deduction completed',
