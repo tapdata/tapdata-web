@@ -1349,7 +1349,7 @@ export default {
       }
       if (typeof where === 'object') where = JSON.stringify(where)
       this.axios.post('tm/api/MetadataInstances/update?where=' + encodeURIComponent(where), data)
-      this.transferData.field_process = this.$refs.fieldMapping.saveFileOperations()
+      this.transferData.field_process = this.$refs.fieldMapping.saveFileOperations(row, operations)
     }
   }
 }

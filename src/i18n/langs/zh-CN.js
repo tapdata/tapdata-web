@@ -361,11 +361,6 @@ export default {
   connection_form_mq_topic_tip: '多个主题用逗号隔开',
   connection_form_mq_broker_url: 'MQ连接串',
   connection_form_mq_broker_url_tip: '示例tcp://127.0.0.1:61616,支持tcp,nio,udp,ssl,http(s)',
-  // connection_form_hazecast_connection_test: '连接测试',
-  // connection_form_hazecast_create: '创建连接',
-  // connection_form_hazecast_edit: '编辑连接',
-  // connection_form_hazecast_data_source: '数据源',
-  // connection_form_hazecast_data_source_type: '数据源',
   connection_form_hazecast_rename: '重命名',
   connection_form_change: '更换',
   connection_form_rename: '改名',
@@ -799,5 +794,8 @@ export default {
   guide_finish: '完成',
   guide_complete_novice_guide: '恭喜您完成新手引导！',
   guide_back_workbench: '返回工作台',
-  guide_view_task_monitor: '查看任务监控'
+  guide_view_task_monitor: '查看任务监控',
+  guide_agent_start_success: 'Agent启动中',
+  guide_agent_start_fail: 'Agent启动失败',
+  guide_creat_connection_fail: '创建连接失败'
 }

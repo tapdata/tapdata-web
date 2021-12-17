@@ -36,7 +36,7 @@
         <!--          <span>联系我们</span>-->
         <!--        </div>-->
         <NotificationPopover class="mr-6"></NotificationPopover>
-        <ElDropdown class="btn" placement="bottom" @command="changeLanguage">
+        <!-- <ElDropdown class="btn" placement="bottom" @command="changeLanguage">
           <VIcon class="mr-6" size="17" v-if="lang === 'sc'">cn</VIcon>
           <VIcon class="mr-6" size="17" v-else>en</VIcon>
           <ElDropdownMenu slot="dropdown">
@@ -44,7 +44,7 @@
               {{ value }}
             </ElDropdownItem>
           </ElDropdownMenu>
-        </ElDropdown>
+        </ElDropdown> -->
         <ElDropdown class="menu-user" placement="bottom" @command="command">
           <!--					<el-button class="menu-button" size="mini">-->
           <!--						{{ user.username }}-->

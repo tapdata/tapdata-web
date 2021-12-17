@@ -427,7 +427,7 @@ export default {
 
   connection_preview_load_schema: 'Load Schema',
   connection_preview_edit: 'Edit',
-  connection_preview_test: 'Connection Test',
+  connection_preview_test: 'Test',
   connection_preview_no_sure: 'Do not confirm',
   connection_preview_master_partition: 'Write to master partition only',
   connection_preview_isr_partition: 'Write all ISR partitions',
@@ -834,8 +834,8 @@ export default {
     'If you have not accessed the system for more than a week, the test agent will be automatically recycled, and you can create it again through the novice guide. ',
   guide_start_test_agent: 'Start Test Agent',
   guide_stop_test_agent: 'Stop Test Agent',
-  guide_previous: 'Previous step',
-  guide_next_step: 'Next step',
+  guide_previous: 'Back',
+  guide_next_step: 'Next',
   guide_test_agent_tip: 'It takes about 1 to 5 minutes to start the test agent, please be patient. ',
   guide_create_source_connection_tip:
     'Data source refers to the connection of database, file, GridFS, REST API, etc. that can be used as the source. The source connection must be created before the migration task can be created. ',
@@ -858,5 +858,8 @@ export default {
   guide_finish: 'Finish',
   guide_complete_novice_guide: 'Congratulations on completing the novice guide! ',
   guide_back_workbench: 'Return to workbench',
-  guide_view_task_monitor: 'View task monitor'
+  guide_view_task_monitor: 'View task monitor',
+  guide_agent_start_success: 'Agent starting',
+  guide_agent_start_fail: 'Agent start failed',
+  guide_creat_connection_fail: 'Failed to create connection'
 }
