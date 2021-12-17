@@ -1125,9 +1125,9 @@ export default {
           return
         }
         this.$api('Task')
-          .delete(where)
+          .delete(ids[0])
           .then(res => {
-            if (res.data && res.data.success) {
+            if (res) {
               this.table.fetch()
               this.responseHandler(res.data, this.$t('message.deleteOK'))
             } else if (res.data && res.data.fail) {
