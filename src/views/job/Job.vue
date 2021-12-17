@@ -689,8 +689,7 @@ export default {
           } else {
             self.progress.showProgress = false
           }
-        }
-        if(res?.data?.msg==='dataFLowId is not start transformer'){
+        } else {
           self.progress.showProgress = false
         }
       })
