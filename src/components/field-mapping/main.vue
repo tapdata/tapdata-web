@@ -276,7 +276,7 @@ export default {
         operations: operations
       }
       if (this.field_process && this.field_process.length > 0) {
-        for (let i =0; i < this.field_process.length; i++) {
+        for (let i = 0; i < this.field_process.length; i++) {
           if (this.field_process[i].table_id === row?.sourceTableId) {
             this.field_process[i].operations = operations
           } else {
