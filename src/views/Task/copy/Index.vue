@@ -204,6 +204,9 @@ export default {
     .el-tab-pane {
       min-height: 400px;
     }
+    .field-mapping {
+      min-height: 400px;
+    }
   }
 }
 </style>
