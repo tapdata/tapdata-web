@@ -18,8 +18,10 @@ class CommandManager {
     this.undoCommands = []
   }
 
-  exec(command, notExec, isRedo) {
-    !notExec && command.exec(this.state)
+  async exec(command, notExec, isRedo) {
+    if (!notExec) {
+      await command.exec(this.state)
+    }
     this.commands.push(command)
     !isRedo && (this.undoCommands = [])
   }
@@ -61,16 +63,20 @@ class Command {
 class AddNodeCommand extends Command {
   constructor(node) {
     super()
-    this.node = node
+    // this.node = node
+    this.nodes = Array.isArray(node) ? node : [node]
   }
 
   exec(state) {
-    state.store.commit('dataflow/addNode', this.node)
+    state.store.commit('dataflow/addNodes', this.nodes)
+    // state.store.commit('dataflow/addNode', this.node)
   }
 
   undo(state) {
-    state.instance.remove(NODE_PREFIX + this.node.id)
-    state.store.commit('dataflow/removeNode', this.node)
+    this.nodes.forEach(node => {
+      state.instance.remove(NODE_PREFIX + node.id)
+      state.store.commit('dataflow/removeNode', node)
+    })
   }
 }
 
@@ -95,7 +101,7 @@ class RemoveNodeCommand extends Command {
   }
 
   undo(state) {
-    this.nodes.forEach(node => state.store.commit('dataflow/addNode', node))
+    state.store.commit('dataflow/addNodes', this.nodes)
     Vue.nextTick(() => {
       this.connections?.forEach(c => {
         state.instance.connect({ uuids: [c.sourceId + '_source', c.targetId + '_target'] })
@@ -257,6 +263,33 @@ class QuickAddTargetCommand extends Command {
   }
 }
 
+/**
+ * 添加dag，包含节点和连线
+ */
+class AddDagCommand extends Command {
+  constructor(dag) {
+    super()
+    this.nodes = dag.nodes
+    this.edges = dag.edges
+  }
+
+  async exec(state) {
+    state.store.commit('dataflow/addNodes', this.nodes)
+    state.store.commit('dataflow/addEdges', this.edges)
+    await Vue.nextTick()
+    this.edges.forEach(({ source, target }) => {
+      state.instance.connect({ uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`] })
+    })
+  }
+
+  undo(state) {
+    this.nodes.forEach(node => {
+      state.instance.remove(NODE_PREFIX + node.id)
+      state.store.commit('dataflow/removeNode', node)
+    })
+  }
+}
+
 export {
   CommandManager,
   AddNodeCommand,
@@ -265,5 +298,6 @@ export {
   RemoveConnectionCommand,
   MoveNodeCommand,
   AddNodeOnConnectionCommand,
-  QuickAddTargetCommand
+  QuickAddTargetCommand,
+  AddDagCommand
 }

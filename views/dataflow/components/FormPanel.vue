@@ -1,10 +1,8 @@
 <template>
   <div class="attr-panel">
     <div class="attr-panel-body overflow-auto">
-      <Form :form="form" :colon="false" layout="vertical" feedbackLayout="terse">
-        <FormProvider v-if="!!schema" :form="form">
-          <SchemaField :schema="schema" :scope="scope" />
-        </FormProvider>
+      <Form class-name="form-wrap" :form="form" :colon="false" layout="horizontal" label-align="left" label-width="120">
+        <SchemaField v-if="!!schema" :schema="schema" :scope="scope" />
       </Form>
     </div>
   </div>
@@ -13,7 +11,7 @@
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import * as components from 'web-core/components/form'
-import { createSchemaField, FormProvider } from '@formily/vue'
+import { createSchemaField } from '@formily/vue'
 import {
   Form,
   FormItem,
@@ -414,7 +412,7 @@ export default {
     }
   },
 
-  components: { Form, FormProvider, SchemaField },
+  components: { Form, SchemaField },
 
   computed: {
     ...mapState('dataflow', ['activeNodeId', 'transformStatus']),
@@ -1032,6 +1030,16 @@ $headerBg: #fff;
   }
 
   ::v-deep {
+    /*.form-wrap {
+      height: 100%;
+      > form {
+        height: 100%;
+        > .formily-element-space {
+          height: 100%;
+        }
+      }
+    }*/
+
     // 覆盖数字输入框的宽度
     .formily-element-form-item {
       .el-input-number {
