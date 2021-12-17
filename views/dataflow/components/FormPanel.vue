@@ -2,10 +2,7 @@
   <div class="attr-panel">
     <div class="attr-panel-body overflow-auto">
       <Form class-name="form-wrap" :form="form" :colon="false" layout="horizontal" label-align="left" label-width="120">
-        <SchemaField class="h-100" :schema="schema" :scope="scope" />
-        <!--<FormProvider v-if="!!schema" :form="form">
-          <SchemaField :schema="schema" :scope="scope" />
-        </FormProvider>-->
+        <SchemaField v-if="!!schema" :schema="schema" :scope="scope" />
       </Form>
     </div>
   </div>
