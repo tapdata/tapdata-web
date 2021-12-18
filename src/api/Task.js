@@ -37,4 +37,7 @@ export default class TaskAPI extends PublicAPI {
   batchStart(ids) {
     return axios.put(this.url + `/batchStart?taskIds=` + ids.join('&taskIds='))
   }
+  patchId(id, params) {
+    return axios.patch(`${this.url}/${id}`, params)
+  }
 }

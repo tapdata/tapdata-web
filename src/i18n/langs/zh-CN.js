@@ -8,6 +8,8 @@ export default {
   button_confirm: '确定',
   button_cancel: '取消',
 
+  gl_button_update_success: '修改成功',
+
   // 数据校验
   verify_details_title: '任务校验详情',
   verify_history_title: '任务校验历史',

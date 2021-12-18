@@ -250,13 +250,13 @@
             >
               {{ $t('dataFlow.button.force_stop') }}
             </ElLink>
-            <ElLink
-              style="margin-left: 10px"
-              type="primary"
-              @click="handleDetail(row.id, 'detail', row.mappingTemplate, row.hasChildren)"
-            >
-              {{ $t('dataFlow.runningMonitor') }}
-            </ElLink>
+            <!--            <ElLink-->
+            <!--              style="margin-left: 10px"-->
+            <!--              type="primary"-->
+            <!--              @click="handleDetail(row.id, 'detail', row.mappingTemplate, row.hasChildren)"-->
+            <!--            >-->
+            <!--              {{ $t('dataFlow.runningMonitor') }}-->
+            <!--            </ElLink>-->
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               style="margin-left: 10px"

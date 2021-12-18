@@ -24,7 +24,7 @@
               <VIcon size="12" class="v-icon">document</VIcon>
               <span class="ml-1">描述：</span>
               <InlineInput
-                :value="task.description"
+                :value="task.desc"
                 :icon-config="{ class: 'color-primary' }"
                 :input-props="{ placeholder: '描述内容' }"
                 :min="0"
@@ -455,11 +455,12 @@ export default {
       }
     },
     updateDesc(val, id) {
-      this.$api('DataFlows')
+      this.$api('Task')
         .patchId(id, {
-          description: val
+          desc: val
         })
         .then(() => {
+          this.task.desc = val
           this.$message.success(this.$t('gl_button_update_success'))
         })
     },
