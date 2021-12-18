@@ -309,6 +309,12 @@ export default {
     loadNotices() {
       this.notices = [
         {
+          id: 8,
+          type: '',
+          name: 'Tapdata Cloud 1.0.9 版本发布啦！',
+          time: '2021-12-18'
+        },
+        {
           id: 7,
           type: '',
           name: 'Tapdata 在线研讨会：DaaS vs 大数据平台，是竞争还是共处？',

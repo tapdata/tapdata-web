@@ -464,6 +464,59 @@
       </div>
     </div>
   </div>
+  <div class="notice main-container ws-main-container fs-8" v-else-if="$route.query.id == 8">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>Tapdata Cloud 1.0.9 版本发布啦！</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2021-12-03</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-3">
+          Tapdata Cloud 是国内首家异构数据库实时同步云平台，目前支持Oracle、MySQL、PG、SQL Server、MongoDB、ES
+          、达梦、Kafka、GP、MQ、ClickHouse、Hazelcast Cloud、ADB MySQL、ADB
+          PostgreSQL、KunDB、TiDB、Dummy之间的数据同步，即将支持 DB2、Sybase ASE、Redis、GBase、GaussDB
+          等，并对用户永久免费。
+        </div>
+        <div class="mb-3">
+          完美支持SQL->NOSQL，拖拽式的“零”代码配置操作、可视化任务运行监控，强大的数据处理能力，Tapdata Cloud
+          让您轻松实现跨系统跨类型的数据同步和交换，释放数据准备阶段的精力。
+        </div>
+        <div class="mb-3">
+          近日，Tapdata Cloud 发布1.0.9 版本，新增2个数据源支持，并结合用户反馈进行了多处功能增强和优化。
+        </div>
+        <div class="mb-3 fw-bolder">1. 上新TiDB 等2个数据源</div>
+        <div class="mb-3">1.0.9 版本新增TiDB 作为同步目标，并支持Dummy 作为数据源。</div>
+        <div class="mb-8">
+          <img src="../../../public/images/notice/v1.0.9_01.png" alt="" />
+        </div>
+        <div class="mb-3 fw-bolder">2. 不断优化，提供更佳体验</div>
+        <div class="mb-3">在创建连接时，用户可以选择连接类型</div>
+        <div class="mb-8">
+          <img src="../../../public/images/notice/v1.0.9_02.png" alt="" />
+        </div>
+        <div class="mb-3">本次新增日志过滤筛选功能，用户可以通过日志过滤筛选</div>
+        <div class="mb-8">
+          <img src="../../../public/images/notice/v1.0.9_03.png" alt="" />
+        </div>
+        <div class="mb-3 fw-bolder">3. 支持批量操作、体验更佳</div>
+        <div class="mb-3">字段映射部分，表名、字段名和大小写设置支持用户批量调整，简单快捷，极大提高了处理效率。</div>
+        <div class="mb-8">
+          <img src="../../../public/images/notice/v1.0.9_04.png" alt="" />
+        </div>
+        <div class="mb-3 fw-bolder">4. 多维度统计，更直观了解任务进度</div>
+        <div class="mb-3">1.0.9 版本对数据库同步任务详情进行了优化，用户可以看到同步的进度，同步进程一目了然。</div>
+        <div class="mb-8">
+          <img src="../../../public/images/notice/v1.0.9_05.png" alt="" />
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
