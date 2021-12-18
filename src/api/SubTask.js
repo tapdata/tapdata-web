@@ -22,4 +22,7 @@ export default class TaskAPI extends PublicAPI {
   pause(id) {
     return axios.post(this.url + `/pause/${id}`)
   }
+  runtimeInfo(id) {
+    return axios.get(this.url + `/runtimeInfo/${id}`)
+  }
 }

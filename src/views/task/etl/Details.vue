@@ -476,6 +476,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.task-details-container {
+  font-size: 12px;
+}
 .task-info {
   .v-icon {
     color: rgba(132, 175, 255, 1);

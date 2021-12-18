@@ -367,6 +367,10 @@ export default {
   task_setting_automatic_ddl_tip: '自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作',
   task_setting_automatic_index: '自动创建索引',
 
+  task_name: '任务名称',
+  task_status: '任务状态',
+  task_sync_type: '任务同步类型',
+
   // 函数管理
   function_tips_empty: '代码缺少JS函数',
   function_checkbox_Line_number: '显示行号',

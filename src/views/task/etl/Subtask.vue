@@ -56,7 +56,7 @@
           <VButton :disabled="!statusBtMap['stop'][scope.row.status]" class="mr-2" type="text" @click="stop(scope.row, arguments[0])">
             停止
           </VButton>
-          <VButton type="text">运行统计</VButton>
+          <VButton type="text" @click="toStatistics(scope.row)">运行统计</VButton>
         </div>
       </template>
     </TableList>
@@ -201,6 +201,15 @@ export default {
           this.$message.error(err.data?.message)
         })
         .finally(resetLoading)
+    },
+    toStatistics(row = {}) {
+      this.$router.push({
+        name: 'dataflowStatistics',
+        params: {
+          id: this.task.id,
+          subId: row.id
+        }
+      })
     }
   }
 }

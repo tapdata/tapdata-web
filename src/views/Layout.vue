@@ -525,11 +525,7 @@ export default {
       let flag = false
       if (matched.length) {
         // find parent
-        const parentName = matched[0]?.meta?.listRoute?.name
-        if (parentName) {
-          const parentRoute = childRoutes.find(item => item.name === parentName)
-          matched.unshift(parentRoute)
-        }
+        this.addParentRoute(matched[0], matched)
         data = matched.map(route => {
           flag = !!route.meta?.showTitle
           let obj = {
@@ -546,6 +542,14 @@ export default {
       }
       this.breadcrumbData = data
       this.showBreadcrumb = flag
+    },
+    addParentRoute(item = {}, matched = []) {
+      const parentName = item?.meta?.listRoute?.name
+      if (parentName) {
+        const parentRoute = childRoutes.find(item => item.name === parentName)
+        matched.unshift(parentRoute)
+        this.addParentRoute(parentRoute, matched)
+      }
     }
   }
 }

@@ -1,23 +1,14 @@
 <template>
-  <div v-loading="loading" class="statistics-container flex flex-column font-color-sub h-100">
+  <div class="statistics-container flex flex-column font-color-sub h-100">
     <Info :task="task" class="card-box card-box__info" @reload="loadTask"></Info>
-    <div class="card-box__content px-6 flex-1">
-      <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100" @tab-click="tabHandler">
-        <ElTabPane :label="$t('task_monitor_progress')" name="schedule">
+    <div class="card-box px-6 flex-1">
+      <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
+        <ElTabPane label="任务进度" name="schedule">
           <Schedule :task="task"></Schedule>
         </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_run_log')" name="log" lazy>
+        <ElTabPane label="运行日志" name="log" lazy>
           <Log :id="task.id" style="max-height: 450px"></Log>
         </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_run_connection')" name="connect" lazy>
-          <Connection ref="connection" :ids="connectionIds" @change="loadTask"></Connection>
-        </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_history_run_record')" name="history" lazy>
-          <History :ids="[task.id]" :operations="operations"></History>
-        </ElTabPane>
-        <!--        <ElTabPane v-if="showContent" :label="$t('task_monitor_sync_content')" name="content" lazy>-->
-        <!--          <FieldMapping ref="fieldMapping" :readOnly="true" :field_process="field_process" :getDataFlow="getDataFlow"></FieldMapping>-->
-        <!--        </ElTabPane>-->
       </ElTabs>
     </div>
   </div>
@@ -26,17 +17,13 @@
 <script>
 import Info from './Info'
 import Schedule from './Schedule'
-import Log from './Log'
-import Connection from './Connection'
-import History from './History'
-import FieldMapping from '@/components/FieldMapping'
+import Log from '../../migrate/details/Log'
 
 export default {
-  name: 'Index',
-  components: { Info, Schedule, Log, Connection, History, FieldMapping },
+  name: 'Statistics',
+  components: { Info, Schedule, Log },
   data() {
     return {
-      loading: true,
       task: {},
       selectFlow: 'flow_', // 选中节点
       dataOverviewAll: 'flow',
@@ -45,7 +32,7 @@ export default {
         title: {
           key: 'overview',
           statsType: 'data_overview',
-          title: this.$t('task_info_data_screening'),
+          title: this.$t('dataFlow.dataScreening'),
           loading: false
         },
         body: {
@@ -61,8 +48,8 @@ export default {
           key: 'throughput',
           statsType: 'throughput',
           time: 'second',
-          title: this.$t('task_info_input_output'),
-          tip: this.$t('task_info_throughputpop'),
+          title: this.$t('dataFlow.inputOutput'),
+          tip: this.$t('dataFlow.throughputpop'),
           unit: 'QPS',
           class: 'putColor',
           loading: false
@@ -71,19 +58,7 @@ export default {
         input: 0,
         output: 0
       },
-      activeTab: 'schedule',
-      showContent: false,
-      field_process: [],
-      operations: ['start', 'stop', 'forceStop']
-    }
-  },
-  computed: {
-    connectionIds() {
-      return (
-        this.task?.stages?.map(item => {
-          return item.connectionId
-        }) || []
-      )
+      activeTab: 'schedule'
     }
   },
   created() {
@@ -92,7 +67,7 @@ export default {
       type: 'watch',
       collection: 'DataFlows',
       filter: {
-        where: { 'fullDocument._id': { $in: [this.$route.params.id] } }, //查询条件
+        where: { 'fullDocument._id': { $in: [this.$route.params.subId] } }, //查询条件
         fields: {
           'fullDocument.id': true,
           'fullDocument._id': true,
@@ -127,14 +102,13 @@ export default {
     init() {
       this.loadTask()
     },
-    loadTask() {
-      let id = this.$route.params?.id
+    async loadTask() {
+      let id = this.$route.params?.subId
       this.loading = true
-      this.$api('DataFlows')
+      this.$api('SubTask')
         .get([id])
         .then(res => {
           this.task = this.formatTask(res.data)
-          this.showContentTab(this.task)
         })
         .finally(() => {
           this.loading = false
@@ -147,16 +121,10 @@ export default {
       }
     },
     formatTask(data) {
-      if (!data) {
-        return
-      }
       data.totalOutput = data.stats?.output?.rows || 0
       data.totalInput = data.stats?.input?.rows || 0
-      data.creator = data.creator || data.createUser || data.username || data.user?.username || ''
-      data.typeText =
-        data.mappingTemplate === 'cluster-clone'
-          ? this.$t('task_monitor_migration_task')
-          : this.$t('task_monitor_sync_task')
+      data.creator = data.creator || data.createUser || data.username || data.user?.username || '-'
+      data.typeText = data.mappingTemplate === 'cluster-clone' ? '迁移任务' : '同步任务'
       let cdcTime = data.cdcLastTimes?.[0]?.cdcTime || ''
       data.startTimeFmt = this.formatTime(data.startTime)
       data.endTimeFmt = data.startTime ? this.formatTime(data.finishTime) : '-'
@@ -165,34 +133,6 @@ export default {
     },
     formatTime(time) {
       return time ? this.$moment(time).format('YYYY-MM-DD HH:mm:ss') : '-'
-    },
-    tabHandler() {
-      this.$nextTick(() => {
-        const { activeTab } = this
-        if (activeTab === 'content') {
-          this.$refs.fieldMapping.getMetaData(this.task)
-          this.field_process = this.task?.stages[0]?.field_process || []
-        }
-        if (activeTab !== 'connect') {
-          this.$refs.connection?.clearInterval?.()
-        }
-      })
-    },
-    //是否支持同步内容
-    showContentTab(data) {
-      let stageId = data?.stages?.[1]?.id || ''
-      let param = {
-        stages: data?.stages,
-        stageId: stageId
-      }
-      this.$api('DataFlows')
-        .tranModelVersionControl(param)
-        .then(res => {
-          this.showContent = res.data?.[stageId] || false
-        })
-    },
-    getDataFlow() {
-      return this.task
     }
   }
 }
@@ -201,38 +141,18 @@ export default {
 <style lang="scss" scoped>
 .statistics-container {
   font-size: 12px;
-  ::v-deep {
-    font-size: 12px;
-  }
+  overflow-y: auto;
 }
 .card-box {
   background: #fff;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.02);
   ::v-deep {
     .table-list {
-      //height: 300px;
-    }
-    .el-tab-pane {
-      min-height: 400px;
-    }
-    .field-mapping {
-      min-height: 400px;
-      .task-form-body {
-        max-height: 350px;
-      }
+      height: 300px;
     }
   }
 }
 .card-box__info {
   border-bottom: 1px solid #e4e7ed;
-}
-.card-box__content {
-  padding-left: 24px;
-  //height: 0;
-  ::v-deep {
-    .el-tabs__content {
-      overflow-y: auto;
-    }
-  }
 }
 </style>

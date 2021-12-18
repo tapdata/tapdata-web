@@ -463,6 +463,18 @@ const childRoutes = [
     }
   },
   {
+    path: '/dataflows/details/:id/statistics/:subId',
+    name: 'dataflowStatistics',
+    component: () => import('@/views/task/etl/statistics/Index'),
+    meta: {
+      title: '同步任务统计',
+      showTitle: true,
+      listRoute: {
+        name: 'dataflowDetails'
+      }
+    }
+  },
+  {
     path: '/relations',
     name: 'relations',
     component: () => import('@/views/relations/relations'),
