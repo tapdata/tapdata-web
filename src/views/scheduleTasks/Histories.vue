@@ -117,17 +117,17 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        _this.$api('TaskHistories').count({ where: where }),
-        _this.$api('TaskHistories').get({
+      return _this
+        .$api('TaskHistories')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        return {
-          total: countRes.data.count,
-          data: res.data
-        }
-      })
+        .then(res => {
+          return {
+            total: res.data?.total || 0,
+            data: res.data?.items || []
+          }
+        })
     },
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'task_start_time'} ${order === 'ascending' ? 'ASC' : 'DESC'}`

@@ -162,17 +162,17 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        _this.$api('ScheduleTasks').count({ where: where }),
-        _this.$api('ScheduleTasks').get({
+      return _this
+        .$api('ScheduleTasks')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        return {
-          total: countRes.data.count,
-          data: res.data
-        }
-      })
+        .then(res => {
+          return {
+            total: res.data?.total || 0,
+            data: res.data?.items || []
+          }
+        })
     },
 
     // 启动 暂停

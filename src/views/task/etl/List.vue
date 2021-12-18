@@ -508,19 +508,6 @@ export default {
     }
   },
   methods: {
-    getAgentOptions() {
-      this.$api('tcm')
-        .getAgent()
-        .then(res => {
-          let list = res.data && res.data.items ? res.data.items : []
-          this.agentOptions = list.map(item => {
-            return {
-              label: item.name,
-              value: item.tmInfo.agentId
-            }
-          })
-        })
-    },
     dataflowChange(data) {
       if (data && data.data && data.data.fullDocument) {
         let dataflow = data.data.fullDocument
