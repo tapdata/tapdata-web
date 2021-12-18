@@ -384,10 +384,8 @@ export default {
           return
         }
         this.loadingObj.reset = true
-        this.$axios
-          .post('tm/api/DataFlows/resetAll', {
-            id: [id]
-          })
+        this.$api('DataFlows')
+          .resetAll([id])
           .then(data => {
             this.responseHandler(data, '操作成功')
           })
@@ -419,8 +417,8 @@ export default {
         status
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      this.$axios
-        .post('tm/api/DataFlows/update?where=' + encodeURIComponent(JSON.stringify(where)), attributes)
+      this.$api('DataFlows')
+        .update(where, attributes)
         .then(data => {
           this.responseHandler(data, '操作成功')
         })
@@ -457,8 +455,8 @@ export default {
       }
     },
     updateDesc(val, id) {
-      this.$axios
-        .patch(`tm/api/DataFlows/${id}`, {
+      this.$api('DataFlows')
+        .patchId(id, {
           description: val
         })
         .then(() => {

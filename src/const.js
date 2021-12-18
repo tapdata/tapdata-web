@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 let directionMap = {
   unidirectional: '单向同步',
   bidirectional: '双向同步'
@@ -55,6 +56,43 @@ export const TOPOLOGY_MAP = topologyMap,
     stop: { text: '已停止', type: 'danger' },
     complete: { text: '已完成', type: 'primary' },
     error: { text: '错误', type: 'warning' }
+  },
+  MIGRATE_STATUS_MAP = {
+    running: {
+      text: i18n.t('dataFlow.status.running'),
+      icon: 'right-fill',
+      type: 'success'
+    },
+    paused: {
+      text: i18n.t('dataFlow.status.paused'),
+      icon: 'wait-fill',
+      type: 'primary'
+    },
+    error: {
+      text: i18n.t('dataFlow.status.error'),
+      icon: 'warning',
+      type: 'warning'
+    },
+    draft: {
+      text: i18n.t('dataFlow.status.draft'),
+      icon: 'wait-fill',
+      type: 'primary'
+    },
+    scheduled: {
+      text: i18n.t('dataFlow.status.scheduled'),
+      icon: 'loading',
+      type: 'success'
+    },
+    stopping: {
+      text: i18n.t('dataFlow.status.stopping'),
+      icon: 'loading',
+      type: 'success'
+    },
+    'force stopping': {
+      text: i18n.t('dataFlow.status.force_stopping'),
+      icon: 'loading',
+      type: 'success'
+    }
   },
   SPEC_MAP = {
     micro: '小规格',

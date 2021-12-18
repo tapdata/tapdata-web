@@ -3,8 +3,10 @@
     <TableList
       :remoteMethod="remoteMethod"
       :columns="columns"
+      :remote-data="ids"
+      height="100%"
+      :has-pagination="false"
       ref="tableList"
-      :hide-on-single-page="true"
     >
       <template slot="name" slot-scope="scope">
         <div class="flex flex-row align-items-center p-2">
@@ -16,15 +18,6 @@
           <ElLink type="primary" style="display: block; line-height: 20px">
             {{ scope.row.name }}
           </ElLink>
-          <!--          <div class="flex align-items-center">-->
-          <!--            <img-->
-          <!--              v-if="scope.row.agentType === 'Cloud'"-->
-          <!--              src="../../../../public/images/only_test.png"-->
-          <!--              alt=""-->
-          <!--              class="ml-3"-->
-          <!--              style="height: 18px"-->
-          <!--            />-->
-          <!--          </div>-->
         </div>
       </template>
       <template slot="status" slot-scope="scope">
@@ -43,9 +36,13 @@
       </template>
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns">
-          <ElButton size="mini" type="text" @click="testConnection(scope.row)">测试</ElButton>
+          <ElButton size="mini" type="text" @click="testConnection(scope.row)">{{
+            $t('task_info_connection_test')
+          }}</ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton size="mini" type="text" @click="reload(scope.row)">加载Schema</ElButton>
+          <ElButton size="mini" type="text" @click="reload(scope.row)">{{
+            $t('connection_preview_load_schema')
+          }}</ElButton>
         </div>
       </template>
     </TableList>
@@ -77,39 +74,39 @@ export default {
       fetchTimer: null,
       columns: [
         {
-          label: '连接名',
+          label: this.$t('connection_list_name'),
           slotName: 'name'
         },
         {
-          label: '状态',
+          label: this.$t('connection_list_status'),
           prop: 'status',
           slotName: 'status'
         },
         {
-          label: '连接类型',
+          label: this.$t('connection_list_type'),
           prop: 'connectType'
         },
         {
-          label: 'Schema加载进度',
+          label: this.$t('connection_list_schema_load_progress'),
           prop: 'schema',
           headerSlot: 'schemaHeader',
           slotName: 'schema'
         },
         {
-          label: '修改时间',
+          label: this.$t('connection_list_change_time'),
           prop: 'last_updated',
           dataType: 'time'
         },
         {
-          label: '操作',
+          label: this.$t('connection_list_operate'),
           prop: 'operation',
           slotName: 'operation'
         }
       ],
       connectTypeMap: {
-        source: '源头',
-        target: '目标',
-        source_and_target: '源头和目标'
+        source: this.$t('connection_list_source'),
+        target: this.$t('connection_list_target'),
+        source_and_target: this.$t('connection_list_source_and_target')
       }
     }
   },
@@ -118,27 +115,12 @@ export default {
   },
   beforeDestroy() {
     this.clearInterval()
-    clearInterval(this.fetchTimer)
-    this.fetchTimer = null
   },
   methods: {
     init() {
-      this.fetchTimer && clearInterval(this.fetchTimer)
+      this.clearInterval()
       this.fetchTimer = setInterval(() => {
-        let list = this.getTableData() || []
-        let ids = []
-        list.forEach(item => {
-          if (
-            ['testing'].includes(item.status) ||
-            ['loading'].includes(item.loadFieldsStatus) ||
-            !item.loadFieldsStatus
-          ) {
-            ids.push(item.id)
-          }
-        })
-        if (ids.length) {
-          this.fetch()
-        }
+        // this.fetch()
       }, 3000)
     },
     remoteMethod({ page }) {
@@ -158,13 +140,12 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let { items, total } = res.data
-          let data = items.map(item => {
+          let data = res.data.items.map(item => {
             item.connectType = this.connectTypeMap[item.connection_type]
             return deepCopy(item)
           })
           return {
-            total: total || data.length,
+            total: res.data.total,
             data: data
           }
         })
@@ -178,12 +159,20 @@ export default {
     clearInterval() {
       // 清除定时器
       clearInterval(this.timer)
+      clearInterval(this.fetchTimer)
       this.timer = null
+      this.fetchTimer = null
     },
     testConnection(item) {
-      let loading = this.$loading()
-      this.test(item)
-      loading.close()
+      this.$api('Workers')
+        .getAvailableAgent()
+        .then(result => {
+          if (!result.data.result || result.data.result.length === 0) {
+            this.$message.error(this.$t('dataForm.form.agentMsg'))
+            return
+          }
+          this.test(item)
+        })
     },
     async test(data, isShowDialog = true) {
       if (['gridfs', 'mongodb'].includes(data.database_type)) {
@@ -194,42 +183,50 @@ export default {
         delete data['database_password']
       }
       try {
-        await this.$axios.patch(`tm/api/Connections/${data.id}`, {
+        await this.$api('connections').patch(data.id, {
           status: 'testing'
         })
         this.$refs.test.start(data, isShowDialog)
         this.fetch()
       } catch (error) {
         if (error?.isException) {
-          this.$message.error(error?.response?.msg || '测试连接失败')
+          this.$message.error(error?.response?.msg || this.$t('connection_list_test_failed'))
         }
       }
     },
     async reload(row) {
-      let config = {
-        title: this.$t('connection.reloadTittle'),
-        Message: this.$t('connection.reloadMsg'),
-        confirmButtonText: this.$t('message.confirm'),
-        cancelButtonText: this.$t('message.cancel'),
-        name: row.name,
-        id: row.id
-      }
-      this.$confirm(config.Message + config.name + '?', config.title, {
-        confirmButtonText: config.confirmButtonText,
-        cancelButtonText: config.cancelButtonText,
-        type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
-        if (resFlag) {
-          this.showProgress = true
-          this.progress = 0
-          this.reloadApi(row, 'first')
-        }
-      })
+      this.$api('Workers')
+        .getAvailableAgent()
+        .then(result => {
+          if (!result.data.result || result.data.result.length === 0) {
+            this.$message.error(this.$t('dataForm.form.agentMsg'))
+            return
+          }
+          let config = {
+            title: this.$t('connection.reloadTittle'),
+            Message: this.$t('connection.reloadMsg'),
+            confirmButtonText: this.$t('button_save'),
+            cancelButtonText: this.$t('button_close'),
+            name: row.name,
+            id: row.id
+          }
+          this.$confirm(config.Message + config.name + '?', config.title, {
+            confirmButtonText: config.confirmButtonText,
+            cancelButtonText: config.cancelButtonText,
+            type: 'warning',
+            closeOnClickModal: false
+          }).then(resFlag => {
+            if (resFlag) {
+              this.showProgress = true
+              this.progress = 0
+              this.reloadApi(row, 'first')
+            }
+          })
+        })
     },
     reloadApi(row, type) {
       this.reloadLoading = true
-      this.clearInterval()
+      // this.clearInterval()
       let parms
       if (type === 'first') {
         parms = {
@@ -255,7 +252,7 @@ export default {
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
             this.progress = progress ? progress : 0
-            this.getSchemaProgress()
+            this.getSchemaProgress(row)
             this.fetch()
           }
         })
@@ -268,10 +265,10 @@ export default {
           }
         })
     },
-    getSchemaProgress() {
-      this.clearInterval()
-      this.$axios
-        .get('tm/api/Connections/' + this.connection.id)
+    getSchemaProgress(row) {
+      // this.clearInterval()
+      this.$api('connections')
+        .customQuery(row.id)
         .then(data => {
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           if (data.loadFieldsStatus === 'finished') {
@@ -284,8 +281,8 @@ export default {
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
             this.progress = progress ? progress : 0
-            this.timer = setInterval(() => {
-              this.getSchemaProgress()
+            this.timer = setTimeout(() => {
+              this.getSchemaProgress(row)
             }, 800)
           }
         })
@@ -299,5 +296,3 @@ export default {
   }
 }
 </script>
-
-<style scoped></style>

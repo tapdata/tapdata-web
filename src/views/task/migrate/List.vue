@@ -157,15 +157,7 @@
       <el-table-column min-width="200" :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name">
-            <span
-              :class="['name', { 'has-children': row.hasChildren }]"
-              @click="
-                row.status === 'draft'
-                  ? handleDetail(row.id, 'edit', row.mappingTemplate, row.hasChildren)
-                  : handleDetail(row.id, 'detail', row.mappingTemplate, row.hasChildren)
-              "
-              >{{ row.name }}</span
-            >
+            <span :class="['name', { 'has-children': row.hasChildren }]" @click="toDetails(row)">{{ row.name }}</span>
             <el-tag v-if="row.listTagId !== undefined" class="tag" type="info" effect="dark" size="mini">
               {{ row.listTagValue }}
             </el-tag>
@@ -1000,7 +992,6 @@ export default {
           it.outerHTML = ''
         })
       }, 200)
-
     },
     getConfirmMessage(operateStr, isBulk, name) {
       let title = operateStr + '_confirm_title',
@@ -1354,6 +1345,14 @@ export default {
             this.$message.error('任务启动失败，正在模型推演中...请稍后再试')
           }
         })
+    },
+    toDetails(row = {}) {
+      this.$router.push({
+        name: 'MigrateDetails',
+        params: {
+          id: row.id
+        }
+      })
     }
   }
 }

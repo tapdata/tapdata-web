@@ -8,6 +8,8 @@ import { Loading, Message } from 'element-ui'
 
 Vue.use(Router)
 const MigrateForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/migrate/form/Form.vue')
+const MigrateDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/migrate/details/Index.vue')
+
 const childRoutes = [
   {
     path: '/dashboard',
@@ -420,6 +422,18 @@ const childRoutes = [
     component: MigrateForm,
     meta: {
       title: '编辑任务',
+      showTitle: true,
+      listRoute: {
+        name: 'migrate'
+      }
+    }
+  },
+  {
+    path: '/migrate/details/:id',
+    name: 'MigrateDetails',
+    component: MigrateDetails,
+    meta: {
+      title: '任务详情',
       showTitle: true,
       listRoute: {
         name: 'migrate'

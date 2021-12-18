@@ -3925,12 +3925,13 @@ ecc-jsbn@~0.1.1:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
 
-echarts@^4.6.0:
-  version "4.9.0"
-  resolved "https://registry.nlark.com/echarts/download/echarts-4.9.0.tgz?cache=0&sync_timestamp=1632191301834&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fecharts%2Fdownload%2Fecharts-4.9.0.tgz#a9b9baa03f03a2a731e6340c55befb57a9e1347d"
-  integrity sha1-qbm6oD8Doqcx5jQMVb77V6nhNH0=
+echarts@^5.0.2:
+  version "5.2.2"
+  resolved "https://tapdata-npm.pkg.coding.net/tapdata/npm/__tarballs/echarts/5.2.2/__path/npm/echarts/-/echarts-5.2.2/ec3c8b2a151cbba71ba3c2c7cf9b2f2047ce4370.tgz#ec3c8b2a151cbba71ba3c2c7cf9b2f2047ce4370"
+  integrity sha512-yxuBfeIH5c+0FsoRP60w4De6omXhA06c7eUYBsC1ykB6Ys2yK5fSteIYWvkJ4xJVLQgCvAdO8C4mN6MLeJpBaw==
   dependencies:
-    zrender "4.3.2"
+    tslib "2.3.0"
+    zrender "5.2.1"
 
 ee-first@1.1.1:
   version "1.1.1"
@@ -8497,6 +8498,11 @@ requires-port@^1.0.0:
   resolved "https://registry.nlark.com/requires-port/download/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
   integrity sha1-kl0mAdOaxIXgkc8NpcbmlNw9yv8=
 
+resize-detector@^0.3.0:
+  version "0.3.0"
+  resolved "https://tapdata-npm.pkg.coding.net/tapdata/npm/__tarballs/resize-detector/0.3.0/__path/npm/resize-detector/-/resize-detector-0.3.0/fe495112e184695500a8f51e0389f15774cb1cfc.tgz#fe495112e184695500a8f51e0389f15774cb1cfc"
+  integrity sha512-R/tCuvuOHQ8o2boRP6vgx8hXCCy87H1eY9V5imBYeVNyNVpuL9ciReSccLj2gDcax9+2weXy3bc8Vv+NRXeEvQ==
+
 resize-observer-polyfill@^1.5.0:
   version "1.5.1"
   resolved "https://registry.nlark.com/resize-observer-polyfill/download/resize-observer-polyfill-1.5.1.tgz#0e9020dd3d21024458d4ebd27e23e40269810464"
@@ -9681,6 +9687,11 @@ ts-pnp@^1.1.6:
   resolved "https://registry.npm.taobao.org/ts-pnp/download/ts-pnp-1.2.0.tgz#a500ad084b0798f1c3071af391e65912c86bca92"
   integrity sha1-pQCtCEsHmPHDBxrzkeZZEshrypI=
 
+tslib@2.3.0:
+  version "2.3.0"
+  resolved "https://tapdata-npm.pkg.coding.net/tapdata/npm/__tarballs/tslib/2.3.0/__path/npm/tslib/-/tslib-2.3.0/803b8cdab3e12ba581a4ca41c8839bbb0dacb09e.tgz#803b8cdab3e12ba581a4ca41c8839bbb0dacb09e"
+  integrity sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==
+
 tslib@^1.9.0:
   version "1.14.1"
   resolved "https://registry.nlark.com/tslib/download/tslib-1.14.1.tgz?cache=0&sync_timestamp=1628722556410&other_urls=https%3A%2F%2Fregistry.nlark.com%2Ftslib%2Fdownload%2Ftslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
@@ -10083,10 +10094,23 @@ vue-cookies@^1.7.0:
   resolved "https://registry.npm.taobao.org/vue-cookies/download/vue-cookies-1.7.4.tgz#d241d0a0431da0795837651d10b4d73e7c8d3e8d"
   integrity sha1-0kHQoEMdoHlYN2UdELTXPnyNPo0=
 
+vue-demi@^0.11.2:
+  version "0.11.4"
+  resolved "https://tapdata-npm.pkg.coding.net/tapdata/npm/__tarballs/vue-demi/0.11.4/__path/npm/vue-demi/-/vue-demi-0.11.4/6101992fe4724cf5634018a16e953f3052e94e2a.tgz#6101992fe4724cf5634018a16e953f3052e94e2a"
+  integrity sha512-/3xFwzSykLW2HiiLie43a+FFgNOcokbBJ+fzvFXd0r2T8MYohqvphUyDQ8lbAwzQ3Dlcrb1c9ykifGkhSIAk6A==
+
 vue-demi@^0.9.0:
   version "0.9.1"
   resolved "https://registry.nlark.com/vue-demi/download/vue-demi-0.9.1.tgz#25d6e1ebd4d4010757ff3571e2bf6a1d7bf3de82"
   integrity sha1-Jdbh69TUAQdX/zVx4r9qHXvz3oI=
+
+vue-echarts@^6.0.0:
+  version "6.0.0"
+  resolved "https://tapdata-npm.pkg.coding.net/tapdata/npm/__tarballs/vue-echarts/6.0.0/__path/npm/vue-echarts/-/vue-echarts-6.0.0/480263fc6ed2125b886bb1b7f05bf9273edee552.tgz#480263fc6ed2125b886bb1b7f05bf9273edee552"
+  integrity sha512-eB3fnnu8Oc+kwVTlBz95o/rliTbWIiUdxTG7vRQIIgRpINWW07WLSPm+UhlD6FZ/P8IqCoVG87pJeLRKsaHeMw==
+  dependencies:
+    resize-detector "^0.3.0"
+    vue-demi "^0.11.2"
 
 vue-eslint-parser@^7.0.0:
   version "7.11.0"
@@ -10597,7 +10621,9 @@ yorkie@^2.0.0:
     normalize-path "^1.0.0"
     strip-indent "^2.0.0"
 
-zrender@4.3.2:
-  version "4.3.2"
-  resolved "https://registry.nlark.com/zrender/download/zrender-4.3.2.tgz#ec7432f9415c82c73584b6b7b8c47e1b016209c6"
-  integrity sha1-7HQy+UFcgsc1hLa3uMR+GwFiCcY=
+zrender@5.2.1:
+  version "5.2.1"
+  resolved "https://tapdata-npm.pkg.coding.net/tapdata/npm/__tarballs/zrender/5.2.1/__path/npm/zrender/-/zrender-5.2.1/5f4bbda915ba6d412b0b19dc2431beaad05417bb.tgz#5f4bbda915ba6d412b0b19dc2431beaad05417bb"
+  integrity sha512-M3bPGZuyLTNBC6LiNKXJwSCtglMp8XUEqEBG+2MdICDI3d1s500Y4P0CzldQGsqpRVB7fkvf3BKQQRxsEaTlsw==
+  dependencies:
+    tslib "2.3.0"
