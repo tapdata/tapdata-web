@@ -16,6 +16,13 @@ $namespace: 'el';
 .el-select{
   width: 100%;
 }
+.formily-element-form-item {
+  .ace_editor,.ace_gutter{
+    background-color: #000;
+    color: #fff;
+  }
+}
+
 
 @import './space.scss';
 @import './filter-conditions';
