@@ -201,6 +201,7 @@ export default {
 <style lang="scss" scoped>
 .statistics-container {
   font-size: 12px;
+  overflow-y: auto;
   ::v-deep {
     font-size: 12px;
   }

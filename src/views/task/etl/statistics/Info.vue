@@ -135,13 +135,29 @@ export default {
       },
       yMax: 1,
       statusBtMap: {
-        // scheduled, draft, running, stopping, error, paused, force stopping
-        run: { draft: true, error: true, paused: true },
-        stop: { running: true },
-        delete: { draft: true, error: true, paused: true },
-        edit: { draft: true, error: true, paused: true },
-        reset: { draft: true, error: true, paused: true },
-        forceStop: { stopping: true }
+        start: {
+          edit: true,
+          wait_run: true,
+          stop: true,
+          complete: true
+        },
+        paused: {
+          running: true
+        },
+        recover: {
+          paused: true,
+          schedule_failed: true,
+          error: true
+        },
+        stop: {
+          paused: true,
+          schedule_failed: true,
+          error: true
+        },
+        edit: {
+          edit: true,
+          paused: true
+        }
       },
       creator: ''
     }
@@ -149,7 +165,7 @@ export default {
   computed: {
     startDisabled() {
       const { statusBtMap, task } = this
-      return !statusBtMap['run'][task.status] || (task.status === 'draft' && task.checked === false)
+      return !statusBtMap['start'][task.status] || (task.status === 'draft' && task.checked === false)
     },
     stopDisabled() {
       const { statusBtMap, task } = this

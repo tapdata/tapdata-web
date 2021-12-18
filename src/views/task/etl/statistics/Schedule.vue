@@ -79,7 +79,7 @@
     <div v-else>
       <!--  里程碑  -->
       <Milestone :list="milestonesData" :taskStatus="task && task.status" :fold="false"></Milestone>
-      <ElDivider v-if="runtimeInfo.milestones && runtimeInfo.milestones.length" class="my-6"></ElDivider>
+      <ElDivider class="my-6"></ElDivider>
       <Overview :info="overviewInfo" :status="task.status"></Overview>
       <div v-if="currentStep.group === 'structure'" class="mt-6">
         <div class="mb-4 fs-7 font-color-main fw-bolder">
