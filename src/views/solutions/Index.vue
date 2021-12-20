@@ -39,8 +39,6 @@
 
 <script>
 import { delayTrigger } from '@/utils/util'
-import factory from '@/api/factory'
-const CustomerJobLogs = factory('CustomerJobLogs')
 
 export default {
   name: 'Solutions',
@@ -88,7 +86,8 @@ export default {
       if (this.keyword) {
         params.code = this.keyword
       }
-      CustomerJobLogs.solutions(params)
+      this.$api('CustomerJobLogs')
+        .solutions(params)
         .then(res => {
           this.list = res.data
         })
