@@ -45,7 +45,7 @@
         </button>
       </ElTooltip>
       <div class="choose-size mx-2">
-        <ElPopover placement="bottom" trigger="click" popper-class="rounded-xl p-0">
+        <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0">
           <div slot="reference" class="size-wrap">{{ scaleTxt }}</div>
           <div class="choose-list p-2">
             <div @click="$emit('zoom-in')" class="choose-item pl-4 flex justify-content-between align-center">
