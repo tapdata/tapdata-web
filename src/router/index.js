@@ -668,6 +668,15 @@ const childRoutes = [
     path: 'license',
     name: 'License',
     component: () => import('@/views/License')
+  },
+  {
+    path: 'solutions',
+    name: 'Solutions',
+    component: () => import('@/views/solutions/Index'),
+    meta: {
+      title: i18n.t('solution_name'),
+      showTitle: true
+    }
   }
 ]
 

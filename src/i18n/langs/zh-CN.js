@@ -415,5 +415,14 @@ export default {
   function_describe_placeholder: '请输入描述',
 
   // 用户
-  login_fail_too_many: '密码错误达到最大次数，请于10分钟后再登录'
+  login_fail_too_many: '密码错误达到最大次数，请于10分钟后再登录',
+
+  // 解决方案
+  solution_name: '解决方案',
+  solution_customer_job_logs: '客户任务日志',
+  solution_error_code: '错误码',
+  solution_select_placeholder_type: '请选择类型',
+  solution_search_result: '结果',
+  solution_search_desc: '描述',
+  solution_search_solutons: '解决方案',
 }
