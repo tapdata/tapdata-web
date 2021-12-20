@@ -111,38 +111,9 @@ export default function (vm) {
         ]
       },
       {
-        type: 'select',
-        field: 'hanaType',
-        label: vm.$t('connection_hana_label_hana_type'),
-        options: [
-          { label: 'SDC', value: 'sdc' },
-          { label: 'MDC', value: 'mdc' }
-        ]
-      },
-      {
-        type: 'input',
-        field: 'database_name',
-        label: vm.$t('dataForm.form.databaseName'),
-        required: true,
-        show: false,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'hanaType',
-                value: 'mdc'
-              }
-            ],
-            triggerConfig: {
-              show: true
-            }
-          }
-        ]
-      },
-      {
         type: 'input',
         field: 'database_owner',
-        label: 'Schema',
+        label: vm.$t('dataForm.form.databaseName'),
         required: true
       },
       {
