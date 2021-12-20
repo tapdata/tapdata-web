@@ -87,15 +87,22 @@ export default {
         logContainer.find('li').remove()
       }
       if (logs && logs.length) {
-        doms = logs
-          .map(item => {
-            return this.formatLog(item)
-          })
-          .join('')
+        let keyword = this.keyword
+        logs.forEach(item => {
+          if (
+            item.threadName.includes(keyword) ||
+            item.loggerName.includes(keyword) ||
+            item.message.includes(keyword) ||
+            item.level.includes(keyword)
+          ) {
+            doms += this.formatLog(item)
+          }
+        })
       }
       logContainer[prepend ? 'prepend' : 'append'](doms)
     },
     clear() {
+      this.count = 0
       $(this.$refs.logContainer).find('li').remove()
     }
   }
