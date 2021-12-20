@@ -143,7 +143,7 @@
           @click="creatText"
         >
           <i class="iconfont icon-jia add-btn-icon"></i>
-          创建任务
+          {{ $t('task_create_task') }}
         </el-button>
       </div>
 

@@ -867,6 +867,7 @@ export default {
 <style lang="scss" scoped>
 .dashboard {
   padding: 20px;
+  overflow-y: auto;
   .e-row {
     .e-col {
       height: 340px;

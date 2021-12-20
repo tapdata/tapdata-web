@@ -22,7 +22,7 @@
             </div>
             <div class="ml-6 flex align-items-center">
               <VIcon size="12" class="v-icon">document</VIcon>
-              <span class="ml-1">描述：</span>
+              <span class="ml-1">{{ $t('task_details_desc') }}：</span>
               <InlineInput
                 :value="task.desc"
                 :icon-config="{ class: 'color-primary' }"
@@ -46,7 +46,7 @@
               @click="start($route.params.id, arguments[0])"
             >
               <VIcon size="12">start-fill</VIcon>
-              <span class="ml-1">启动</span>
+              <span class="ml-1">{{ $t('task_button_start') }}</span>
             </VButton>
             <VButton
               v-if="task.status === 'stopping'"
@@ -55,7 +55,7 @@
               @click="forceStop($route.params.id, arguments[0])"
             >
               <VIcon size="12">pause-fill</VIcon>
-              <span class="ml-1">强制停止</span>
+              <span class="ml-1">{{ $t('task_button_force_stop') }}</span>
             </VButton>
             <VButton
               v-else
@@ -64,11 +64,11 @@
               @click="stop($route.params.id, arguments[0])"
             >
               <VIcon size="12">pause-fill</VIcon>
-              <span class="ml-1">停止</span>
+              <span class="ml-1">{{ $t('task_button_stop') }}</span>
             </VButton>
             <VButton @click="toEditorPage">
               <VIcon size="12">edit-fill</VIcon>
-              <span class="ml-1">编辑</span>
+              <span class="ml-1">{{ $t('task_button_edit') }}</span>
             </VButton>
             <!--            <VButton-->
             <!--              :disabled="!statusBtMap['reset'][task.status]"-->
@@ -90,7 +90,7 @@
       <ElTabs v-model="activeTab" class="dashboard-tabs flex flex-column overflow-hidden h-100">
         <ElTabPane label="子任务" name="subTask">
           <div slot="label">
-            <span class="mr-2">子任务</span>
+            <span class="mr-2">{{ $t('task_details_sub_task') }}</span>
             <ElTooltip
               placement="top"
               content="在Tapdata Cloud中你创建任务里的每个目标节点均会被定义为子任务 您可以在下方查看每个子任务详情"

@@ -372,6 +372,16 @@ export default {
   task_name: '任务名称',
   task_status: '任务状态',
   task_sync_type: '任务同步类型',
+  task_create_task: '创建任务',
+  task_button_pause: '暂停',
+  task_button_recover: '恢复',
+  task_button_start: '启动', // 停止 编辑 子任务
+  task_button_stop: '停止',
+  task_button_force_stop: '强制停止',
+  task_button_edit: '编辑',
+  task_details_sub_task: '子任务',
+  task_details_desc: '描述', // 描述 启动 强制停止 停止 编辑 子任务
+  task_details_running_statistics: '运行统计', // 描述 启动 强制停止 停止 编辑 子任务
 
   // 函数管理
   function_tips_empty: '代码缺少JS函数',
