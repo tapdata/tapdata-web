@@ -69,7 +69,7 @@
       </ElCollapse>
 
       <div class="flex-1 min-h-0 flex flex-column border-bottom">
-        <div class="tb-header flex align-center px-2">
+        <div class="tb-header flex align-center px-4">
           <span class="flex-1 user-select-none text-truncate flex align-center"
             >数据表<span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span></span
           >
@@ -95,13 +95,6 @@
             </template>
           </ElInput>
         </div>
-        <!--<div class="px-3 py-3">
-          <ElInput v-model="tbSearchTxt" placeholder="请输入表名搜索" size="small" @input="handleTBInput" clearable>
-            <template #prefix>
-              <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
-            </template>
-          </ElInput>
-        </div>-->
         <ElScrollbar ref="tbList" class="flex-1 min-h-0" tag="div" wrap-class="tb-list">
           <ElSkeleton :loading="tbLoading" animated :throttle="skeletonThrottle">
             <template #template>
@@ -143,7 +136,7 @@
             <span class="flex-1 user-select-none">处理节点</span>
           </div>
         </template>
-        <ElRow class="node-list flex-wrap p-2" :gutter="0" type="flex">
+        <ElRow class="node-list flex-wrap px-2" :gutter="0" type="flex">
           <ElCol :span="8" v-for="(n, ni) in processorNodeTypes" :key="ni" class="p-1">
             <div
               v-mouse-drag="{
@@ -713,8 +706,8 @@ $itemH: 34px;
 
         &__header {
           position: relative;
-          padding-left: 8px;
-          padding-right: 8px;
+          padding-left: 16px;
+          padding-right: 16px;
           height: $headerH;
           font-size: 14px;
 
