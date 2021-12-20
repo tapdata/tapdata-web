@@ -107,6 +107,10 @@ export default {
     },
     remoteData: {
       type: [String, Object, Array]
+    },
+    hideOnSinglePage: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -129,7 +133,7 @@ export default {
   },
   computed: {
     showPage() {
-      if (this.$attrs['hide-on-single-page']) {
+      if (this.hideOnSinglePage) {
         return this.hasPagination && !this.nonePage
       }
       return this.hasPagination
@@ -158,6 +162,7 @@ export default {
     fetch(pageNum, debounce = 0, hideLoading, callback) {
       if (!this.remoteMethod) {
         this.list = this.data
+        this.nonePage = this.list.length <= this.page.size
         return
       }
       if (pageNum === 1) {
