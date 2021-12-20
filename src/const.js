@@ -1,4 +1,5 @@
 import i18n from '@/i18n'
+
 let directionMap = {
   unidirectional: '单向同步',
   bidirectional: '双向同步'
@@ -10,52 +11,52 @@ for (const dKey in directionMap) {
 }
 export const TOPOLOGY_MAP = topologyMap,
   INSTANCE_STATUS_MAP = {
-    Creating: { text: '待部署', type: 'warning' },
-    Running: { text: '运行中', type: 'success' },
-    Stopping: { text: '停止中', type: 'danger' },
-    Stopped: { text: '离线', type: 'disable' }
+    Creating: {text: '待部署', type: 'warning'},
+    Running: {text: '运行中', type: 'success'},
+    Stopping: {text: '停止中', type: 'danger'},
+    Stopped: {text: '离线', type: 'disable'}
   },
   TASK_STATUS_MAP = {
-    running: { text: '运行中', icon: 'yunxingzhong', type: 'success' },
-    paused: { text: '待启动', icon: 'daiqidong' },
-    error: { text: '错误', icon: 'cuowu', type: 'warning' },
-    draft: { text: '待启动', icon: 'daiqidong' },
-    scheduled: { text: '启动中', icon: 'qidongzhong', type: 'success' },
-    stopping: { text: '停止中', icon: 'tingzhizhong', type: 'success' },
-    'force stopping': { text: '强制停止中', icon: 'qiangzhitingzhi', type: 'success' },
-    finished: { text: '已完成', icon: 'yiwancheng', type: 'success' }
+    running: {text: '运行中', icon: 'yunxingzhong', type: 'success'},
+    paused: {text: '待启动', icon: 'daiqidong'},
+    error: {text: '错误', icon: 'cuowu', type: 'warning'},
+    draft: {text: '待启动', icon: 'daiqidong'},
+    scheduled: {text: '启动中', icon: 'qidongzhong', type: 'success'},
+    stopping: {text: '停止中', icon: 'tingzhizhong', type: 'success'},
+    'force stopping': {text: '强制停止中', icon: 'qiangzhitingzhi', type: 'success'},
+    finished: {text: '已完成', icon: 'yiwancheng', type: 'success'}
   },
   CONNECTION_STATUS_MAP = {
-    ready: { text: '有效', type: 'success' },
-    invalid: { text: '失效', type: 'danger' },
-    testing: { text: '测试中', type: 'warning' }
+    ready: {text: '有效', type: 'success'},
+    invalid: {text: '失效', type: 'danger'},
+    testing: {text: '测试中', type: 'warning'}
   },
   MILESTONE_STATUS_MAP = {
-    waiting: { text: '待执行', icon: 'daizhixing' },
-    running: { text: '进行中', icon: 'jinxingzhong' },
-    error: { text: '错误', icon: 'cuowu' },
-    finish: { text: '已完成', icon: 'yiwancheng' },
-    paused: { text: '已暂停', icon: 'yizanting' }
+    waiting: {text: '待执行', icon: 'daizhixing'},
+    running: {text: '进行中', icon: 'jinxingzhong'},
+    error: {text: '错误', icon: 'cuowu'},
+    finish: {text: '已完成', icon: 'yiwancheng'},
+    paused: {text: '已暂停', icon: 'yizanting'}
   },
   ETL_STATUS_MAP = {
-    edit: { text: '编辑中', type: 'primary' },
-    start: { text: '启动中', type: 'success' },
-    running: { text: '运行中', type: 'success' },
-    stop: { text: '已停止', type: 'danger' },
-    paused: { text: '暂停', type: 'warning' }
+    edit: {text: '编辑中', type: 'primary'},
+    start: {text: '启动中', type: 'success'},
+    running: {text: '运行中', type: 'success'},
+    stop: {text: '已停止', type: 'danger'},
+    paused: {text: '暂停', type: 'warning'}
   },
   ETL_SUB_STATUS_MAP = {
-    edit: { text: '编辑中', type: 'primary' },
-    scheduling: { text: '启动中', type: 'success' },
-    schedule_failed: { text: '错误', type: 'warning' },
-    wait_run: { text: '待启动', type: 'success' },
-    running: { text: '运行中', type: 'success' },
-    pausing: { text: ' 暂停中' },
-    stopping: { text: '停止中', type: 'success' },
-    paused: { text: '暂停', type: 'warning' },
-    stop: { text: '已停止', type: 'danger' },
-    complete: { text: '已完成', type: 'primary' },
-    error: { text: '错误', type: 'warning' }
+    edit: {text: '编辑中', type: 'primary'},
+    scheduling: {text: '启动中', type: 'success'},
+    schedule_failed: {text: '错误', type: 'warning'},
+    wait_run: {text: '待启动', type: 'success'},
+    running: {text: '运行中', type: 'success'},
+    pausing: {text: ' 暂停中'},
+    stopping: {text: '停止中', type: 'success'},
+    paused: {text: '暂停', type: 'warning'},
+    stop: {text: '已停止', type: 'danger'},
+    complete: {text: '已完成', type: 'primary'},
+    error: {text: '错误', type: 'warning'}
   },
   MIGRATE_STATUS_MAP = {
     running: {
@@ -127,3 +128,38 @@ export const TOPOLOGY_MAP = topologyMap,
     // 'custom_connection',
     // 'gridfs'
   ] //目前白名单,
+export const DATA_NODE_TYPES = [
+  'table',
+  'view',
+  'collection',
+  'mongo_view',
+  'hive',
+  'kudu',
+  'dummy db',
+  'gridfs',
+  'file',
+  'elasticsearch',
+  'rest api',
+  'redis',
+  'field_processor',
+  'aggregation_processor',
+  'js_processor',
+  'row_filter_processor',
+  'java_processor',
+  'hive',
+  'hana',
+  'kafka',
+  'dameng',
+  'clickhouse',
+  'kudu',
+  'hbase',
+  'mq',
+  'kafka',
+  'adb_mysql',
+  'tcp_udp',
+  'cache_lookup_processor',
+  'custom_connection',
+  'mem_cache',
+  'logminer',
+  'protobuf_convert_processor'
+]

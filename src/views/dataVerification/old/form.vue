@@ -336,6 +336,7 @@ const META_INSTANCE_FIELDS = {
 import MultiSelection from './multi-selection.vue'
 import CodeEditor from 'web-core/components/CodeEditor'
 //import JsEditor from 'web-core/components/js-editor.vue'
+import { DATA_NODE_TYPES } from '@/const.js'
 export default {
   components: { MultiSelection, CodeEditor },
   props: {
@@ -527,7 +528,7 @@ export default {
       this.getFlowStages()
     },
     dealData(flowData, callback, isDB) {
-      let types = isDB ? ['database'] : ['table', 'collection', 'kafka']
+      let types = isDB ? ['database'] : DATA_NODE_TYPES
       let flowStages = flowData.stages.filter(stg => types.includes(stg.type))
       let connectionIds = []
       let tableNames = []
@@ -547,7 +548,7 @@ export default {
       if (connectionIds.length) {
         let where = {
           meta_type: {
-            inq: ['table', 'collection', 'kafka']
+            inq: DATA_NODE_TYPES
           },
           'source.id': {
             inq: Array.from(new Set(connectionIds))

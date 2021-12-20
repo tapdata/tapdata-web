@@ -30,7 +30,7 @@ const childRoutes = [
   {
     path: '/connections/create',
     name: 'connectionsCreate',
-    component: () => import('@/views/connections/DatabaseForm'),
+    component: () => import('@/views/connections/formbuild'),
     meta: {
       title: i18n.t('tap.connection'),
       isCollapse: true,
@@ -40,6 +40,26 @@ const childRoutes = [
   {
     path: '/connections/:id/edit',
     name: 'connectionsEdit',
+    component: () => import('@/views/connections/formbuild'),
+    meta: {
+      title: i18n.t('tap.connection'),
+      isCollapse: true,
+      code: 'datasource_edition'
+    }
+  },
+  {
+    path: '/connections/oldCreate',
+    name: 'connectionsOldCreate',
+    component: () => import('@/views/connections/DatabaseForm'),
+    meta: {
+      title: i18n.t('tap.connection'),
+      isCollapse: true,
+      code: 'datasource_creation'
+    }
+  },
+  {
+    path: '/connections/:id/oldEdit',
+    name: 'connectionsOldEdit',
     component: () => import('@/views/connections/DatabaseForm'),
     meta: {
       title: i18n.t('tap.connection'),
@@ -718,6 +738,30 @@ const router = new Router({
       name: 'job',
       component: () => import('@/views/job/Job'),
       meta: { code: 'Data_SYNC', title: i18n.t('tap.jobFlow') }
+    },
+    {
+      path: '/dataflow/editor',
+      name: 'DataflowNew',
+      component: () => import('@/views/dataflow/Editor'),
+      meta: { code: 'Data_SYNC', title: i18n.t('tap.jobFlow') }
+    },
+    {
+      path: '/dataflow/editor/:id',
+      name: 'DataflowEdit',
+      component: () => import('@/views/dataflow/Editor'),
+      meta: { code: 'Data_SYNC', title: i18n.t('tap.jobFlow') }
+    },
+    {
+      path: '/dataflow/monitor/:id',
+      name: 'DataflowMonitor',
+      component: () => import('@/views/dataflow/Monitor'),
+      meta: { code: 'Data_SYNC', title: i18n.t('tap.jobFlow') }
+    },
+    {
+      path: '/dataflow/node/add',
+      name: 'DataflowNodeAdd',
+      component: () => import('@/views/dataflow/AddNode'),
+      meta: { code: 'Data_SYNC', title: '新增节点' }
     },
     {
       path: '/createTask/create',

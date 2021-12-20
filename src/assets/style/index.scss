@@ -248,6 +248,30 @@ input[type='password'] + .el-input__suffix {
   }
 }
 
+$color: (
+  primary: #409eff,
+  lprimary: #66b1ff,
+  success: #67c23a,
+  lsuccess: #85ce61,
+  danger: #f56c6c,
+  warning: #e6a23c,
+  info: #909399,
+  linfo: rgb(233, 233, 235),
+  disable: #bbb
+);
+$fontColor: (
+  normal: #333,
+  light: #555,
+  slight: #999
+);
+$bgColor: (
+  disable: #f5f5f5,
+  hover: #f5f8ff
+);
+$borderColor: (
+  disable: #d9d9d9,
+  normal: #ddd
+);
 #app {
   font-weight: 400;
   font-style: normal;
@@ -292,7 +316,7 @@ input[type='password'] + .el-input__suffix {
 .color-info {
   color: map-get($color, info);
 }
-.color-success {
+/*.color-success {
   color: map-get($color, success);
 }
 .color-error {
@@ -304,7 +328,7 @@ input[type='password'] + .el-input__suffix {
 .el-input__inner {
   border-radius: 2px;
   border: 1px solid #d9d9d9;
-}
+}*/
 .el-input__inner:hover {
   border-color: map-get($color, primary);
 }

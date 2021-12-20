@@ -67,7 +67,8 @@ export default {
       },
       model: {
         connectionId: '',
-        type: 'file'
+        type: 'file',
+        databaseType: 'file'
       }
     }
   },

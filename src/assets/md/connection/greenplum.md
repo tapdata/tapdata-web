@@ -17,4 +17,3 @@ GRANT INSERT,UPDATE,DELETE,TRUNCATE
 ON ALL TABLES IN SCHEMA <schemaname> TO <username>;
 ```
 > **注意**：以上只是基本权限的设置，实际场景可能更加复杂
-
