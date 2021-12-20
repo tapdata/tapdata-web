@@ -11,7 +11,7 @@
                   <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
                 </span>
                 <VIcon class="mr-2 click-btn" @click.stop="creat">plus</VIcon>
-                <VIcon @click.stop="handleShowDBInput">magnify</VIcon>
+                <VIcon class="click-btn" @click.stop="handleShowDBInput">magnify</VIcon>
               </template>
               <span v-else class="flex-1 user-select-none text-truncate">{{ activeConnection.name }}</span>
               <ElInput
@@ -30,7 +30,7 @@
                 @clear="handleShowDBInput"
               >
                 <template #prefix>
-                  <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
+                  <VIcon size="14" class="ml-1 h-100 click-btn">magnify</VIcon>
                 </template>
               </ElInput>
             </div>
@@ -73,7 +73,7 @@
           <span class="flex-1 user-select-none text-truncate flex align-center"
             >数据表<span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span></span
           >
-          <VIcon @click.stop="handleShowTBInput">magnify</VIcon>
+          <VIcon class="click-btn" @click.stop="handleShowTBInput">magnify</VIcon>
 
           <ElInput
             v-if="showTBInput"
@@ -625,7 +625,12 @@ $itemH: 34px;
     }
 
     .click-btn {
+      width: 1.6em;
+      height: 1.6em;
       z-index: 2;
+    }
+    .click-btn:hover {
+      background-color: #f2f4f6;
     }
 
     .badge {

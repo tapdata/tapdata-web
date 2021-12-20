@@ -276,6 +276,10 @@ export default {
   }
 }
 
+.df-node-text {
+  font-size: 12px;
+}
+
 .df-node-text-tooltip {
   transform: translateY(-6px);
 }

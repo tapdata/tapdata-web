@@ -81,7 +81,10 @@ export const ArrayAggregate = connect(
             {aggregations.map((item, index) => {
               // eslint-disable-next-line prettier/prettier
               return (
-                <el-row gutter={20} style="width: 770px; margin: 0 0 20px;border: 1px solid #C8CDCF;">
+                <el-row
+                  gutter={20}
+                  style="width: 889px; margin: 0 0 20px; padding-top: 15px; border: 1px solid #C8CDCF;"
+                >
                   <el-col span={23}>
                     <el-row gutter={10}>
                       <el-col span={8}>
@@ -124,7 +127,7 @@ export const ArrayAggregate = connect(
                   <el-col span={1}>
                     <VIcon
                       class="clickable"
-                      style="padding-top:12px"
+                      style="padding-top:3px"
                       color="#666"
                       onClick={() => this.removeRow(index)}
                       small
