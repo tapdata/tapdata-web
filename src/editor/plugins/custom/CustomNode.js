@@ -10,7 +10,7 @@ export const customNodeConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-custom.svg'
+          xlinkHref: 'static/editor/custom.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.custom.name')

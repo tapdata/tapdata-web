@@ -48,43 +48,44 @@ export default {
         limit: size,
         skip: (current - 1) * size
       }
-      return this.$api('Licenses')
-        .get({
+      return Promise.all([
+        this.$api('license').count(),
+        this.$api('license').get({
           filter: JSON.stringify(filter)
         })
-        .then(res => {
-          let list = res.data.items
-          return {
-            total: res.data.total,
-            data: list.map(item => {
-              let expirationDate = this.$moment(item.expirationDate)
-              let duration = expirationDate.valueOf() - Date.now()
-              let status = 'normal'
-              if (duration < 0) {
-                status = 'expired'
-              } else if (duration < 30 * 24 * 60 * 60 * 1000) {
-                status = 'expiring'
+      ]).then(([countRes, res]) => {
+        let list = res.data
+        return {
+          total: countRes.data.count,
+          data: list.map(item => {
+            let expirationDate = this.$moment(item.expirationDate)
+            let duration = expirationDate.valueOf() - Date.now()
+            let status = 'normal'
+            if (duration < 0) {
+              status = 'expired'
+            } else if (duration < 30 * 24 * 60 * 60 * 1000) {
+              status = 'expiring'
+            }
+            item.status = {
+              normal: {
+                text: '正常',
+                color: 'success'
+              },
+              expiring: {
+                text: '即将到期',
+                color: 'warning'
+              },
+              expired: {
+                text: '已过期',
+                color: 'info'
               }
-              item.status = {
-                normal: {
-                  text: '正常',
-                  color: 'success'
-                },
-                expiring: {
-                  text: '即将到期',
-                  color: 'warning'
-                },
-                expired: {
-                  text: '已过期',
-                  color: 'info'
-                }
-              }[status]
-              item.expirationDateFmt = expirationDate.format('YYYY-MM-DD HH:mm:ss')
-              item.lastUpdatedFmt = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
-              return item
-            })
-          }
-        })
+            }[status]
+            item.expirationDateFmt = expirationDate.format('YYYY-MM-DD HH:mm:ss')
+            item.lastUpdatedFmt = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+            return item
+          })
+        }
+      })
     },
     copySid() {
       let table = this.$refs.table
@@ -128,6 +129,10 @@ export default {
           .then(() => {
             this.$message.success('更新成功')
             this.$table.fetch()
+          })
+          .catch(err => {
+            let msg = err?.response?.msg || err
+            this.$message.error(msg)
           })
           .finally(() => {
             this.dialogLoading = false

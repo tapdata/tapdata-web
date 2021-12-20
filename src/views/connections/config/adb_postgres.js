@@ -1,11 +1,11 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'left',
-      labelWidth: '120px'
+      labelPosition: 'right',
+      labelWidth: '200px'
     },
     defaultModel: {
-      connection_type: 'target',
+      connection_type: 'source_and_target',
       thin_type: 'SID',
       supportUpdatePk: false,
       pgsql_log_decorder_plugin_name: 'wal2json_streaming'
@@ -15,11 +15,17 @@ export default function (vm) {
         type: 'radio',
         field: 'connection_type',
         label: vm.$t('dataForm.form.connectionType'),
-        customClass: 'large-item',
-        isVertical: false,
-        button: true,
-        outerTip: true,
         options: [
+          {
+            label: vm.$t('dataForm.form.options.sourceAndTarget'),
+            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+            value: 'source_and_target'
+          },
+          {
+            label: vm.$t('dataForm.form.options.source'),
+            tip: vm.$t('dataForm.form.options.sourceTips'),
+            value: 'source'
+          },
           {
             label: vm.$t('dataForm.form.options.target'),
             tip: vm.$t('dataForm.form.options.targetTips'),

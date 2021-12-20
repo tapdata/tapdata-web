@@ -276,27 +276,39 @@
       @complete="saveCheckStages"
     ></CheckStage>
     <el-dialog
-      title="任务启动预检查未通过"
+      :title="$t('dag_task_error_tittle')"
       :visible.sync="showSchemaProgress"
       :close-on-click-modal="false"
       width="30%"
     >
-      <span>错误原因: 模型推演进行中</span>
-      <div>当前进度: {{ progress.finished }} / {{ progress.total }}</div>
+      <div v-if="progress.progress !== 'done'">
+        <span>{{ $t('dag_task_error_text') }}</span>
+        <div v-if="showDialogProgress">
+          {{ $t('dag_task_error_current_progress') }} : {{ progress.finished }} / {{ progress.total }}
+        </div>
+      </div>
+      <div v-if="progress.progress === 'done' && showDialogProgress">
+        <span>{{ $t('dag_task_error_completed') }}</span>
+        <div v-if="showDialogProgress">
+          {{ $t('dag_task_error_current_progress') }} : {{ progress.finished }} / {{ progress.total }}
+        </div>
+      </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="showSchemaProgress = false">关闭</el-button>
-        <el-button :disabled="progress.progress !== 'done'" type="primary" size="mini" @click="start()">启动</el-button>
+        <el-button size="mini" @click="showSchemaProgress = false">{{ $t('message.close') }}</el-button>
+        <el-button :disabled="progress.progress !== 'done'" type="primary" size="mini" @click="start()">{{
+          $t('message.startUp')
+        }}</el-button>
       </span>
     </el-dialog>
     <el-dialog
-      title="任务启动预检查未通过"
+      :title="$t('dag_task_error_tittle')"
       :visible.sync="showFieldMappingProgress"
       :close-on-click-modal="false"
       width="30%"
     >
-      <span>错误原因: 字段映射错误请校正</span>
+      <span>{{ $t('dag_task_filed_mapping_text') }}</span>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="showFieldMappingProgress = false">关闭</el-button>
+        <el-button size="mini" @click="showFieldMappingProgress = false">{{ $t('message.close') }}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -321,6 +333,7 @@ import _ from 'lodash'
 import SkipError from '../../components/SkipError'
 import { uuid } from '../../editor/util/Schema'
 import VIcon from '@/components/VIcon'
+import { DATA_NODE_TYPES } from '@/const.js'
 
 const dataFlowsApi = factory('DataFlows')
 const Setting = factory('Setting')
@@ -382,8 +395,9 @@ export default {
         showProgress: false
       },
       queryId: '', //新建任务没有id 则由前端生成
-      showSchemaProgress: false,
-      showFieldMappingProgress: false
+      showSchemaProgress: false, //任务是否正在推演 控制弹窗的显示
+      showFieldMappingProgress: false, //字段映射是否正推演校验 控制弹窗的显示
+      showDialogProgress: false //任务字段总数是有变化，上一次结果不显示
     }
   },
   watch: {
@@ -665,6 +679,7 @@ export default {
       let id = self.$route.query.id || self.queryId
       ws.on('metadataTransformerProgress', function (res) {
         if (!res?.data?.stageId && res?.data?.dataFlowId === id) {
+          self.showDialogProgress = true // 最新返回信息展示
           let { finished, total, status } = res?.data
           self.progress.finished = finished
           self.progress.total = total
@@ -846,6 +861,7 @@ export default {
       // validate
       if (!autoSave) {
         this.editor.graph.unHighlightAllCells()
+
         let verified = this.editor.validate()
         if (verified !== true) {
           this.$message.error(verified)
@@ -1160,7 +1176,7 @@ export default {
 
       //如果有showSchemaProgress
       this.showSchemaProgress = false
-
+      this.showDialogProgress = false // 重新启动任务先隐藏上一次进度结果，等ws回信息再显示最新
       if (this.$refs.agentDialog.checkAgent()) {
         this.checkAgentStatus(() => {
           let doStart = () => {
@@ -1242,8 +1258,10 @@ export default {
             }
             if (
               item.outputLanes.length &&
-              (['greenplum', 'adb_mysql', 'kundb', 'gaussdb200'].includes(item.databaseType) ||
-                ['greenplum', 'adb_mysql', 'kundb', 'gaussdb200'].includes(item.database_type)) &&
+              (['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'gaussdb200'].includes(item.databaseType) ||
+                ['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'gaussdb200'].includes(
+                  item.database_type
+                )) &&
               // (item.databaseType === 'greenplum' || item.database_type === 'greenplum') &&
               this.sync_type !== 'initial_sync'
             ) {
@@ -1329,7 +1347,7 @@ export default {
                 }
               })
               this.$message.success(this.$t('message.taskStart'))
-              location.reload()
+              // location.reload()
             }
           })
         }
@@ -1656,7 +1674,18 @@ export default {
         hive: 'app.HiveNode',
         hana: 'app.HanaNode',
         dameng: 'app.DamengNode',
-        clickhouse: 'app.ClickHouse'
+        clickhouse: 'app.ClickHouse',
+        kudu: 'app.KUDUNode',
+        hbase: 'app.HBaseNode',
+        mq: 'app.Mq',
+        kafka: 'app.KafkaNode',
+        adb_mysql: 'app.ADBMysqlNode',
+        tcp_udp: 'app.TcpNode',
+        cache_lookup_processor: 'app.JointCache',
+        custom_connection: 'app.CustomNode',
+        mem_cache: 'app.MemCache',
+        logminer: 'app.Logminer',
+        protobuf_convert_processor: 'app.Message'
       }
       if (data) {
         let stageMap = {}
@@ -1667,7 +1696,8 @@ export default {
           let formData = _.cloneDeep(v)
           delete formData.inputLanes
           delete formData.outputLanes
-          if (['table', 'view', 'collection', 'mongo_view', 'hive'].includes(v.type)) {
+          if (v.type && DATA_NODE_TYPES.includes(v.type)) {
+            let name = v.tableName || v.name
             let node = {
               type: mapping[v.type],
               id: v.id,
@@ -1677,25 +1707,9 @@ export default {
               outputSchema: null,
               attrs: {
                 label: {
-                  text: v.tableName !== '' && v.tableName ? breakText.breakText(v.tableName, 125) : v.type
+                  text: name ? breakText.breakText(name, 125) : v.type
                 }
-              },
-              angle: 0
-            }
-            cells.push(node)
-          } else if (v.type && ['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'redis'].includes(v.type)) {
-            let node = {
-              type: mapping[v.type],
-              id: v.id,
-              freeTransform: false,
-              schema: null,
-              outputSchema: null,
-              attrs: {
-                label: {
-                  text: v.name !== '' && v.name ? breakText.breakText(v.name, 125) : v.type
-                }
-              },
-              form_data: formData
+              }
             }
             cells.push(node)
           } else if (v.type === 'database') {
@@ -1712,7 +1726,7 @@ export default {
                   text: v.name !== '' && v.name ? breakText.breakText(v.name, 125) : v.type
                 },
                 image: {
-                  xlinkHref: map[v.database_type].shapeImage
+                  xlinkHref: map[v.database_type || v.databaseType].shapeImage
                 }
               }
             }

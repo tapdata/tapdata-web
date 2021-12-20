@@ -868,7 +868,7 @@ export default {
     },
     create() {
       let routeUrl = this.$router.resolve({
-        name: 'job',
+        name: 'DataflowNew',
         query: { mapping: this.mappingTemplate }
       })
       window.open(routeUrl.href, '_blank')
@@ -921,8 +921,11 @@ export default {
             return
           }
           let routeUrl = this.$router.resolve({
-            name: 'job',
-            query: { id: id, mapping: mappingTemplate }
+            name: 'DataflowEdit',
+            params: {
+              id
+            },
+            query: { mapping: mappingTemplate }
           })
           setTimeout(() => {
             document.querySelectorAll('.el-tooltip__popper').forEach(it => {
@@ -935,8 +938,9 @@ export default {
         })
       } else {
         let routeUrl = this.$router.resolve({
-          name: 'job',
-          query: { id: id, isMoniting: true, mapping: mappingTemplate }
+          name: 'DataflowMonitor',
+          params: { id },
+            query: { mapping: mappingTemplate }
         })
         window.open(routeUrl.href, 'monitor_' + id)
       }

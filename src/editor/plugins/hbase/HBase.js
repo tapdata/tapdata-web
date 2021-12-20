@@ -10,7 +10,7 @@ export const HBaseNodeConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-hbase.svg'
+          xlinkHref: 'static/editor/hbase.svg'
         },
         label: {
           text: 'HBase'

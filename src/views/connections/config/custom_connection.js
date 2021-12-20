@@ -73,44 +73,44 @@ export default function (vm) {
           }
         ]
       },
-      {
-        type: 'input',
-        field: 'connectionTimeOut',
-        label: vm.$t('connection_form_custom_connection_connection_time_out'),
-        rules: [
-          {
-            required: true,
-            validator(rule, value, callback) {
-              if (!value) {
-                callback(new Error(vm.$t('tips_not_null')))
-              } else if (!/^\d+$/.test(value)) {
-                callback(new Error(vm.$t('tips_must_number')))
-              } else {
-                callback()
-              }
-            }
-          }
-        ]
-      },
-      {
-        type: 'input',
-        field: 'readTimeOut',
-        label: vm.$t('connection_form_custom_connection_read_time_out'),
-        rules: [
-          {
-            required: true,
-            validator(rule, value, callback) {
-              if (!value) {
-                callback(new Error(vm.$t('tips_not_null')))
-              } else if (!/^\d+$/.test(value)) {
-                callback(new Error(vm.$t('tips_must_number')))
-              } else {
-                callback()
-              }
-            }
-          }
-        ]
-      },
+      // {
+      //   type: 'input',
+      //   field: 'connectionTimeOut',
+      //   label: vm.$t('connection_form_custom_connection_connection_time_out'),
+      //   rules: [
+      //     {
+      //       required: true,
+      //       validator(rule, value, callback) {
+      //         if (!value) {
+      //           callback(new Error(vm.$t('tips_not_null')))
+      //         } else if (!/^\d+$/.test(value)) {
+      //           callback(new Error(vm.$t('tips_must_number')))
+      //         } else {
+      //           callback()
+      //         }
+      //       }
+      //     }
+      //   ]
+      // },
+      // {
+      //   type: 'input',
+      //   field: 'readTimeOut',
+      //   label: vm.$t('connection_form_custom_connection_read_time_out'),
+      //   rules: [
+      //     {
+      //       required: true,
+      //       validator(rule, value, callback) {
+      //         if (!value) {
+      //           callback(new Error(vm.$t('tips_not_null')))
+      //         } else if (!/^\d+$/.test(value)) {
+      //           callback(new Error(vm.$t('tips_must_number')))
+      //         } else {
+      //           callback()
+      //         }
+      //       }
+      //     }
+      //   ]
+      // },
       {
         type: 'select',
         field: 'custom_type',

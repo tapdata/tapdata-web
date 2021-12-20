@@ -18,7 +18,9 @@ yarn start:dev      # 启动应用，代理为dev环境
 yarn start:test     # 启动应用，代理为test环境
 ```
 
-> 环境代理映射。如需代理其他地址，可在启动命令后面追加 `--origin 代理地址`
+> 环境服务映射。
+> 如需代理其他地址，可在启动命令后面追加 `--origin 代理地址`
+
 ```json
 {
   "mock": "http://localhost:30300",
@@ -93,18 +95,18 @@ bugfix/xxx
 
 ### Tag
 
-+ 对应每个发布版本的源代码 tag。tag版本号与需求版本一致，从dev分支打tag，命名 release版本号日期，如：release_1.0_20200426
-+ 对应每个发布版本的上线文件 tag。tag版本号与需求版本一致，命名 dist版本号日期，如：dist_1.0_20200426
++ 对应每个发布版本的源代码 tag。tag版本号与需求版本一致，从dev分支打tag，命名 release版本号日期，如：release\_1.0\_20200426
++ 对应每个发布版本的上线文件 tag。tag版本号与需求版本一致，命名 dist版本号日期，如：dist\_1.0\_20200426
 
 ### 开发流程
 
-+ 从dev分支根据需求，检出分支 feat/xxx，即 dev --> feat/xxx
-  
-+ 从dev分支检出预发环境测试分支 release/xxx ，即 dev --> release/xxx
++ 从dev分支根据需求，检出分支 feat/xxx，即 dev --\> feat/xxx
+	  
++ 从dev分支检出预发环境测试分支 release/xxx ，即 dev --\> release/xxx
 
-+ 开发完成后将各个开发分支合并至此，即 feat/xxx --> release/xxx, feat/yyyy --> release/xxx
++ 开发完成后将各个开发分支合并至此，即 feat/xxx --\> release/xxx, feat/yyyy --\> release/xxx
 
-+ 测试通过后，发起 merge request，待 code review 通过后，负责人 merge 代码，即 release/xxx --> dev
++ 测试通过后，发起 merge request，待 code review 通过后，负责人 merge 代码，即 release/xxx --\> dev
 
 ### 上线流程
 
@@ -118,9 +120,9 @@ bugfix/xxx
 
 ### Bugfix 流程
 
-+ master的bug，直接检出 hotfix/xxx 修正,修复完成测试通过后，merge 进 master 分支； 即 master --> hotfix/xxx --> master
-  
-+ dev的bug，直接检出 bugfix/xxx 修正,修复完成测试通过后，merge 进 dev 分支； 即 dev --> bugfix/xxx --> master
++ master的bug，直接检出 hotfix/xxx 修正,修复完成测试通过后，merge 进 master 分支； 即 master --\> hotfix/xxx --\> master
+	  
++ dev的bug，直接检出 bugfix/xxx 修正,修复完成测试通过后，merge 进 dev 分支； 即 dev --\> bugfix/xxx --\> master
 
 + feat分支中的bug，直接在 feat/xxx 分支修复
 

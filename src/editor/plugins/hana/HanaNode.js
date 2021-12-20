@@ -10,7 +10,7 @@ export const HanaNodeConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-hana.svg'
+          xlinkHref: 'static/editor/hana.svg'
         },
         label: {
           text: 'SAP HANA'

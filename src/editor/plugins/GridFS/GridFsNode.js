@@ -11,7 +11,7 @@ export const GridFSNodeConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-gridfs2.svg'
+          xlinkHref: 'static/editor/gridfs.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.gridfs.name')
@@ -238,7 +238,7 @@ export const GridFSNodeConfig = {
         strokeDasharray: '0'
       },
       image: {
-        xlinkHref: 'static/editor/gridfs2.svg',
+        xlinkHref: 'static/editor/gridfs.svg',
         refWidth: '60%',
         refHeight: '60%',
         refX: '2%',
