@@ -31,7 +31,7 @@
             type="text"
             @click="pause(scope.row, arguments[0])"
           >
-            暂停
+            {{ $t('task_button_pause') }}
           </VButton>
           <VButton
             v-else-if="['paused', 'schedule_failed', 'error'].includes(scope.row.status)"
@@ -41,7 +41,7 @@
             type="text"
             @click="start(scope.row, arguments[0])"
           >
-            恢复
+            {{ $t('task_button_recover') }}
           </VButton>
           <VButton
             v-else
@@ -51,12 +51,12 @@
             type="text"
             @click="start(scope.row, arguments[0])"
           >
-            启动
+            {{ $t('task_button_start') }}
           </VButton>
           <VButton :disabled="!statusBtMap['stop'][scope.row.status]" class="mr-2" type="text" @click="stop(scope.row, arguments[0])">
-            停止
+            {{ $t('task_button_stop') }}
           </VButton>
-          <VButton type="text" @click="toStatistics(scope.row)">运行统计</VButton>
+          <VButton type="text" @click="toStatistics(scope.row)">{{ $t('task_details_running_statistics') }}</VButton>
         </div>
       </template>
     </TableList>
