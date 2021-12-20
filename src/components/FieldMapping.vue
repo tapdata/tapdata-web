@@ -70,8 +70,17 @@ export default {
       }
 
       if (!this.dataFlow) return
+      if (this.transform.stageId) {
+        this.dataFlow['stageId'] = this.transform.stageId //任务同步目标节点stageID 推演
+      }
       //迁移任务需要同步字段处理器
       if (this.mappingType && this.mappingType === 'cluster-clone') {
+        //是否目标有connectionIDld
+        let checkTargetConnectionId = this.hasConnectionId(this.dataFlow)
+        if (!checkTargetConnectionId || checkTargetConnectionId === false) {
+          this.$message.error(this.$t('dag_link_field_mapping_error_tip'))
+          return
+        }
         this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
         //是否有选中的表
         if (
@@ -94,10 +103,6 @@ export default {
         delete this.dataFlow['rollback']
         delete this.dataFlow['rollbackTable']
       }
-      if (this.transform.stageId) {
-        this.dataFlow['stageId'] = this.transform.stageId //任务同步目标节点stageID 推演
-      }
-
       let promise = this.$api('DataFlows').getMetadata(this.dataFlow)
       promise
         .then(() => {
@@ -146,6 +151,16 @@ export default {
         }
       }
       return data
+    },
+    //是否目标有connectionID
+    hasConnectionId(data) {
+      let result = false
+      for (let i = 0; i < data.stages.length; i++) {
+        if (data.stages[i].id === this.transform.stageId && data.stages[i].connectionId !== '') {
+          result = true
+        }
+      }
+      return result
     },
     /*
      * 子模块-恢复默认操作
