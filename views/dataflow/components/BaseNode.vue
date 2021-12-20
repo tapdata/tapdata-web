@@ -28,7 +28,7 @@ export default {
 
 <style lang="scss">
 $width: 180px;
-$height: 40px;
+$height: 50px;
 
 .layout-content .df-node {
   cursor: move;
@@ -51,6 +51,7 @@ $height: 40px;
   user-select: none;
 
   &-icon {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -60,8 +61,12 @@ $height: 40px;
     border-right-style: solid;
     border-right-width: inherit;
     border-color: inherit;
-    border-top-left-radius: inherit;
-    border-bottom-left-radius: inherit;
+    border-top-left-radius: 9px;
+    border-bottom-left-radius: 9px;
+
+    .icon-wrap {
+      border-radius: 50%;
+    }
 
     .v-icon {
       color: #2c65ff;
@@ -69,8 +74,8 @@ $height: 40px;
     }
 
     .el-image {
-      width: 28px;
-      height: 28px;
+      width: 21px;
+      height: 21px;
     }
   }
 
@@ -78,7 +83,7 @@ $height: 40px;
     margin: 0 10px;
     flex: auto;
     width: 0;
-    font-size: 14px;
+    font-size: 12px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -122,6 +127,15 @@ $height: 40px;
     border-color: #6236ff;
     .df-node-icon {
       background-color: rgba(98, 54, 255, 0.2);
+      &:before {
+        content: '';
+        position: absolute;
+        width: 34px;
+        height: 34px;
+        border: 1px solid #6236ff;
+        border-radius: 50%;
+        background: #fff;
+      }
       .v-icon {
         width: 28px;
         height: 28px;
@@ -137,13 +151,19 @@ $height: 40px;
     }
   }
 
+  //&.active,
+  //&.selected {
+  //  border-color: #2c65ff;
+  //}
+
   &.active,
   &.selected {
     border-color: #2c65ff;
-  }
-
-  &.active {
     border-width: 2px;
+    .df-node-icon {
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+    }
   }
 
   &:hover,

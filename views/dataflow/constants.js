@@ -1,6 +1,6 @@
 export const NODE_PREFIX = 'node-'
 export const NODE_WIDTH = 180
-export const NODE_HEIGHT = 40
+export const NODE_HEIGHT = 50
 
 export const DEFAULT_SETTINGS = {
   name: '', // 任务名称
