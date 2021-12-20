@@ -11,6 +11,7 @@
       :creat-user-id="creatUserId"
       :is-starting="isStarting"
       :dataflow-name="dataflow.name"
+      :scale="scale"
       @page-return="handlePageReturn"
       @save="save"
       @delete="handleDelete"
@@ -18,6 +19,7 @@
       @redo="handleRedo"
       @zoom-out="handleZoomOut"
       @zoom-in="handleZoomIn"
+      @zoom-to="handleZoomTo"
       @showSettings="handleShowSettings"
       @center-content="handleCenterContent"
       @auto-layout="handleAutoLayout"
@@ -178,7 +180,9 @@ export default {
       dataflow: {
         id: '',
         name: ''
-      }
+      },
+
+      scale: 1
     }
   },
 
@@ -852,113 +856,6 @@ export default {
       })
     },
 
-    mouseDown(e) {
-      on(window, 'mouseup', this.mouseUp)
-
-      this.mouseDownMouseSelect(e)
-    },
-
-    mouseDownMouseSelect(e) {
-      if (this.isCtrlKeyPressed(e) === true) {
-        // 忽略按下ctrl||command键，此键已用来触发画布拖动
-        return
-      }
-
-      if (this.isActionActive('dragActive')) {
-        // 节点正在拖动
-        return
-      }
-
-      this.mouseClickPosition = this.getMousePositionWithinNodeView(e)
-      this.selectActive = true
-
-      // this.showSelectBox(e)
-
-      on(this.$refs.layoutContent, 'mousemove', this.mouseMoveSelect)
-    },
-
-    mouseMoveSelect(e) {
-      e.preventDefault() // 防止拖动时文字被选中
-
-      if (e.buttons === 0) {
-        // 没有按键或者是没有初始化
-        this.mouseUpMouseSelect(e)
-        return
-      }
-
-      this.showSelectBox = true
-      let w, h, x, y
-      const pos = this.getMousePositionWithinNodeView(e)
-
-      // console.log('mouseMoveSelect', pos) // eslint-disable-line
-
-      x = Math.min(this.mouseClickPosition.x, pos.x)
-      y = Math.min(this.mouseClickPosition.y, pos.y)
-      w = Math.abs(this.mouseClickPosition.x - pos.x)
-      h = Math.abs(this.mouseClickPosition.y - pos.y)
-
-      this.selectBoxAttr = { x, y, w, h, right: x + w, bottom: y + h }
-    },
-
-    mouseUp() {
-      off(window, 'mouseup', this.mouseUp)
-
-      if (!this.selectActive) {
-        return
-      }
-
-      this.mouseUpMouseSelect()
-    },
-
-    mouseUpMouseSelect() {
-      off(this.$refs.layoutContent, 'mousemove', this.mouseMoveSelect)
-      // console.log('mouseUpMouseSelect') // eslint-disable-line
-      this.deselectAllNodes()
-      // 清空激活状态
-      this.setActiveType(null)
-
-      if (this.showSelectBox) {
-        const selectedNodes = this.getNodesInSelection()
-        selectedNodes.forEach(node => this.nodeSelected(node))
-      }
-
-      this.hideSelectBox()
-    },
-
-    hideSelectBox() {
-      this.selectActive = false
-      this.showSelectBox = false
-      this.selectBoxAttr = null
-    },
-
-    getMousePositionWithinNodeView(e) {
-      const nodeViewScale = this.nodeViewScale
-      // const nodeViewOffset = this.nodeViewOffsetPosition
-      // const [x, y] = this.nodeViewOffsetPosition
-      let { x, y } = this.$refs.layoutContent.getBoundingClientRect()
-      return {
-        x: (e.pageX - x) / nodeViewScale,
-        y: (e.pageY - y) / nodeViewScale
-      }
-    },
-
-    __removeConnection(source, target) {
-      // console.log('removeConnection', source, target) // eslint-disable-line
-      const connections = this.jsPlumbIns.getConnections({
-        source,
-        target
-      })
-
-      connections.forEach(connectionInstance => {
-        this.jsPlumbIns.deleteConnection(connectionInstance)
-      })
-
-      this.removeConnection({
-        sourceId: this.getRealId(source),
-        targetId: this.getRealId(target)
-      })
-    },
-
     getDataflowDataToSave() {
       const dag = this.$store.getters['dataflow/dag']
       const editVersion = this.$store.state.dataflow.editVersion
@@ -1045,6 +942,10 @@ export default {
 
     handleZoomOut() {
       this.$refs.paperScroller.zoomOut()
+    },
+
+    handleZoomTo(scale) {
+      this.$refs.paperScroller.zoomTo(scale)
     },
 
     handleShowSettings() {
@@ -1281,6 +1182,7 @@ export default {
     },
 
     handleChangeScale(scale) {
+      this.scale = scale
       this.jsPlumbIns.setZoom(scale)
     },
 

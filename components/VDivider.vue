@@ -30,8 +30,9 @@ export default {
 </script>
 
 <style lang="scss">
-$divider-inset-margin: 72px !default;
+$divider-inset-margin: 8px !default;
 $divider-inset-margin-top: 8px !default;
+$divider-inset-max-width: calc(100% - 16px) !default;
 $divider-inset-max-height: calc(100% - 16px) !default;
 hr.v-divider {
   border-color: rgba(0, 0, 0, 0.12);
@@ -48,9 +49,8 @@ hr.v-divider {
   border-width: thin 0 0 0;
   transition: inherit;
   &--inset:not(.v-divider--vertical) {
-    max-width: calc(100% - #{$divider-inset-margin});
+    max-width: $divider-inset-max-width;
     margin-left: $divider-inset-margin;
-    margin-right: $divider-inset-margin;
   }
   &--vertical {
     align-self: stretch;
