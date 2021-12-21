@@ -2,6 +2,31 @@
 # 当发生错误时中止脚本
 #set -e
 
+HOST="126,185"
+
+usage() {
+  echo "Usage:"
+  echo "  deploy.sh [-h host]"
+  echo ""
+  echo "Description:"
+  echo "    -h host: 你要发布到的主机，如126、185"
+  echo ""
+  echo "Example:"
+  echo "    发布到126和185（默认）:                               ./deploy.sh"
+  echo "    发布到126:                                          ./deploy.sh -h 126"
+  echo ""
+  exit 0
+}
+
+while getopts 'h:' OPT; do
+  case $OPT in
+  h) HOST="$OPTARG" ;;
+  ?) usage ;;
+  esac
+done
+
+HOST_ARR=(`echo $HOST | tr ',' ' '`)
+
 yarn && yarn build
 
 cd dist
@@ -19,12 +44,12 @@ notice() {
 }
 
 work() {
-  notice "打包成功，开始上传"
+  notice "开始上传前端包到$1"
 
-  server="root@192.168.1.126"
+  server="root@192.168.1.$1"
   path="/data/refactor-enterprise/tapdata-v1.25.2/components/tapdata-management/client"
 
-  scp $fileName root@192.168.1.126:$path || {
+  scp $fileName $server:$path || {
     notice "上传失败"
     exit 1
   }
@@ -33,10 +58,13 @@ work() {
     notice "执行脚本出错，停止发布"
     exit 1
   }
+
+  notice "$1发布完成"
 }
 
 zip -q -r $fileName * -x \*.zip
 
-work
-
-notice "前端发布完成"
+for h in ${HOST_ARR[@]}
+do
+  work $h
+done
