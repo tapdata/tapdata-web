@@ -26,6 +26,12 @@
           <div class="log-message pl-10" v-html="log.message"></div>
         </li>
       </ul>
+      <div v-if="!logs || !logs.length" class="monitor-log__empty position-absolute top-50 start-50 translate-middle">
+        <VIcon size="120">no-data-color</VIcon>
+        <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+          <span>暂无日志</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -47,10 +53,16 @@
   .log-keyword-block {
     background: map-get($color, warning);
   }
+  .monitor-log-wrap {
+    color: map-get($fontColor, light);
+  }
 }
 </style>
 <script>
+import VIcon from '@/components/VIcon'
+
 export default {
+  components: { VIcon },
   props: {
     id: String
   },
