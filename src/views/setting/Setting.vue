@@ -243,7 +243,7 @@ export default {
         .get({})
         .then(result => {
           if (result && result.data) {
-            auth_data = result.data
+            auth_data = result.data.items || []
           }
         })
       _this
