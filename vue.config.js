@@ -4,8 +4,9 @@ const CompressionWebpackPlugin = require('compression-webpack-plugin')
 const serveUrlMap = {
   mock: 'http://localhost:30300',
   dev: 'http://backend:3030',
-  test: 'http://192.168.1.181:30300',
+  // test: 'http://192.168.1.181:3003',
   jet: 'http://jet.devops.tapdata.net:31613',
+  test: 'http://192.168.1.126:3003/' // tm 重构
   // test: 'http://192.168.1.181:30300'
   // test: 'http://192.168.3.3:8080/' // haosheng
   // test: 'http://192.168.1.181:32220/' // v1-28
@@ -87,10 +88,17 @@ module.exports = {
         plugins: [
           { name: 'removeStyleElement', active: true },
           {
+            name: 'removeAttributesBySelector',
+            params: {
+              selector: ":not([fill='none'])",
+              attributes: ['fill']
+            }
+          },
+          {
             name: 'removeAttrs',
             active: true,
             params: {
-              attrs: ['class', 'p-id', 'fill']
+              attrs: ['class', 'p-id' /*, 'fill'*/]
             }
           }
         ]

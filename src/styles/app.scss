@@ -27,9 +27,5 @@
   --primary-hover: #40a9ff;
   --primary-hover-l: #f0f7ff;
 }
-
-@import 'utilities';
-
-body {
-  font-family: var(--font-sans-serif);
-}
+@import 'reboot';
+@import '~web-core/styles/utilities';
