@@ -481,6 +481,7 @@ export default {
               width: 1 // 这里是为了突出显示加上的
             }
           },
+          boundaryGap: false,
           data: timeList
         },
         yAxis: {
@@ -559,6 +560,7 @@ export default {
               width: 1
             }
           },
+          boundaryGap: false,
           data: timeList
         },
         yAxis: {
@@ -623,6 +625,7 @@ export default {
               color: '#f56c6c'
             }
           },
+          boundaryGap: false,
           data: timeList
         },
         yAxis: {
