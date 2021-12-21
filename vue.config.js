@@ -90,7 +90,7 @@ module.exports = {
           {
             name: 'removeAttributesBySelector',
             params: {
-              selector: ":not([fill='none'])",
+              selector: ":not(path[fill='none'])",
               attributes: ['fill']
             }
           },
