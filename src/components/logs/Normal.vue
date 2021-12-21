@@ -260,8 +260,9 @@ export default {
         self.loading = false
         return
       }
+      //{ filter: JSON.stringify(filter) }
       this.$api('CustomerJobLogs')
-        .get({ filter: JSON.stringify(filter) })
+        .get()
         .then(res => {
           let list = res.data.items
           list.forEach(el => {

@@ -316,6 +316,15 @@ $borderColor: (
 .color-info {
   color: map-get($color, info);
 }
+.color-success {
+  color: map-get($color, success);
+}
+.color-error {
+  color: map-get($color, danger);
+}
+.color-warning {
+  color: map-get($color, warning);
+}
 /*.color-success {
   color: map-get($color, success);
 }

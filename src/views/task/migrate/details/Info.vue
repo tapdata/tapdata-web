@@ -27,7 +27,7 @@
           <VIcon size="12">pause-fill</VIcon>
           <span class="ml-1">{{ $t('task_info_stopt') }}</span>
         </VButton>
-        <VButton :disabled="editDisabled" @click="edit">
+        <VButton :disabled="editDisabled" @click="handleEditor">
           <VIcon size="12">edit-fill</VIcon>
           <span class="ml-1">{{ $t('button_edit') }}</span>
         </VButton>
@@ -275,11 +275,11 @@ export default {
           trigger: 'axis'
         },
         legend: {
-          top: 10,
+          top: 0,
           right: 0
         },
         grid: {
-          top: '18px',
+          top: '20px',
           left: 0,
           right: 0,
           bottom: '3%',
@@ -373,6 +373,18 @@ export default {
     formatTime(date) {
       return formatTime(date)
     },
+    startAndStop(method = 'startBatch', ids) {
+      this.$api('DataFlows')
+        [method]({
+          ids
+        })
+        .then(res => {
+          this.responseHandler(res.data, this.$t('task_operation_successful'))
+        })
+        .catch(err => {
+          this.$message.error(err.data.message)
+        })
+    },
     start() {
       this.$api('Workers')
         .getAvailableAgent()
@@ -381,9 +393,7 @@ export default {
             this.$message.error(this.$t('dataForm.form.agentMsg'))
             return
           }
-          this.startLoading = true
-          await this.changeStatus({ status: 'scheduled' })
-          this.startLoading = false
+          this.startAndStop('startBatch', [this.task.id])
         })
     },
     stop() {
@@ -407,77 +417,48 @@ export default {
         cancelButtonText: this.$t('button_cancel')
       }).then(resFlag => {
         if (resFlag) {
-          this.changeStatus({ status: 'stopping' })
+          this.startAndStop('stopBatch', [this.task.id])
         }
       })
     },
-    edit() {
-      console.log('编辑') // eslint-disable-line
-      let row = this.task || {}
-      this.handleDetail(row.id, 'edit', row.mappingTemplate, row.hasChildren)
-    },
-    handleDetail(id, type, mappingTemplate, hasChildren) {
-      // 子选项 hasChildren 为 true
-      if (hasChildren) {
-        return
-      }
-      if (type === 'edit') {
-        this.$confirm(
-          `<p>${this.$t('task_list_edit_tip')}<span style="color:#409EFF">${this.$t('task_list_edit_tip1')}</span>、` +
-            `<span style="color:#409EFF">${this.$t('task_list_node_attr')}</span>、` +
-            `<span style="color:#409EFF">${this.$t('task_list_matching_releation')}</span>,` +
-            `${this.$t('task_list_edit_submit')}<span style="color:#409EFF">${this.$t(
-              'task_list_edit_reset'
-            )}</span>${this.$t('task_list_edit_tip3')}</p>`,
-          this.$t('task_important_reminder'),
-          {
-            dangerouslyUseHTMLString: true,
-            customClass: 'dataflow-clickTip',
-            cancelButtonText: this.$t('button_cancel'),
-            confirmButtonText: this.$t('task_list_continue_edit'),
-            type: 'warning'
-          }
-        ).then(resFlag => {
-          if (resFlag) {
-            this.$router.push({
-              path: '/task/' + id
-            })
-          }
-        })
-      } else {
+    handleEditor(id) {
+      const h = this.$createElement
+      this.$confirm(
+        h('p', null, [
+          h('span', null, this.$t('dataFlow.modifyEditText')),
+          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeLayoutProcess')),
+          h('span', null, '、'),
+          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeAttributes')),
+          h('span', null, '、'),
+          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.matchingRelationship')),
+          h('span', null, '，'),
+          h('span', null, this.$t('dataFlow.afterSubmission')),
+          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.reset')),
+          h('span', null, this.$t('dataFlow.runNomally')),
+          h('span', null, this.$t('dataFlow.editLayerTip'))
+        ]),
+        this.$t('dataFlow.importantReminder'),
+        {
+          customClass: 'dataflow-clickTip',
+          confirmButtonText: this.$t('dataFlow.continueEditing'),
+          type: 'warning'
+        }
+      ).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
         this.$router.push({
-          name: 'Monitor',
+          name: 'MigrateEditor',
           params: {
             id: id
           }
         })
-      }
+      })
       setTimeout(() => {
         document.querySelectorAll('.el-tooltip__popper').forEach(it => {
           it.outerHTML = ''
         })
       }, 200)
-    },
-    async changeStatus({ status, errorEvents }) {
-      let where = {
-        _id: {
-          in: [this.$route.params.id]
-        }
-      }
-      let attributes = {
-        status
-      }
-      errorEvents && (attributes.errorEvents = errorEvents)
-      return await this.$api('DataFlows')
-        .update(where, attributes)
-        .then(data => {
-          this.responseHandler(data, this.$t('task_operation_successful'))
-        })
-        .catch(error => {
-          if (error?.isException) {
-            this.$message.error(this.$t('task_start_failed'))
-          }
-        })
     },
     responseHandler(data, msg) {
       let failList = data.fail || []
