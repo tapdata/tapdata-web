@@ -105,6 +105,7 @@ export default {
   dag_link_button_mapping_configuration: '映射配置',
   dag_link_field_mapping_error_no_table: '請選擇需要遷移的表',
   dag_link_field_mapping_error_all_deleted: '當前表被刪除了所有字段，不允許保存操作',
+  dag_link_field_mapping_error_tip: '請先配置目標節點',
   dag_dialog_field_mapping_table_setting: '表設置',
   dag_dialog_field_mapping_tip:
     '用戶可以在此頁面設置源庫每個表要同步的字段，以及在目標庫自動建表時對應的字段名稱和字段類型',

@@ -109,6 +109,7 @@ export default {
   dag_link_field_mapping_error_no_table: 'Please select the table to be migrated',
   dag_link_field_mapping_error_all_deleted:
     'All fields have been deleted from the current table, and the save operation is not allowed',
+  dag_link_field_mapping_error_tip: 'Please configure the target node first',
   dag_dialog_field_mapping_table_setting: 'Table Settings',
   dag_dialog_field_mapping_tip:
     'Users can set the fields to be synchronized for each table in the source database on this page, as well as the corresponding field names and field types when the target database is automatically created.',
