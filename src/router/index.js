@@ -710,7 +710,7 @@ const router = new Router({
 
 let usersModel = factor('users')
 router.afterEach(() => {
-  Loading.service({ fullscreen: true }).close()
+  // Loading.close()
 })
 let isFirst = true
 router.beforeEach(async (to, from, next) => {
