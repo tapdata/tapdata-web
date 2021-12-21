@@ -891,8 +891,8 @@ export default {
             return
           }
           let routeUrl = this.$router.resolve({
-            name: 'job',
-            query: { id: id, mapping: mappingTemplate }
+            name: 'DataflowEditor',
+            params: { id: id }
           })
           setTimeout(() => {
             document.querySelectorAll('.el-tooltip__popper').forEach(it => {
