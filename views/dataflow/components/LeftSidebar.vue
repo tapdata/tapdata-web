@@ -11,7 +11,7 @@
                   <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
                 </span>
                 <VIcon class="mr-2 click-btn" @click.stop="creat">plus</VIcon>
-                <VIcon @click.stop="handleShowDBInput">magnify</VIcon>
+                <VIcon class="click-btn" @click.stop="handleShowDBInput">magnify</VIcon>
               </template>
               <span v-else class="flex-1 user-select-none text-truncate">{{ activeConnection.name }}</span>
               <ElInput
@@ -30,7 +30,7 @@
                 @clear="handleShowDBInput"
               >
                 <template #prefix>
-                  <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
+                  <VIcon size="14" class="ml-1 h-100 click-btn">magnify</VIcon>
                 </template>
               </ElInput>
             </div>
@@ -69,11 +69,11 @@
       </ElCollapse>
 
       <div class="flex-1 min-h-0 flex flex-column border-bottom">
-        <div class="tb-header flex align-center px-2">
+        <div class="tb-header flex align-center px-4">
           <span class="flex-1 user-select-none text-truncate flex align-center"
             >数据表<span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span></span
           >
-          <VIcon @click.stop="handleShowTBInput">magnify</VIcon>
+          <VIcon class="click-btn" @click.stop="handleShowTBInput">magnify</VIcon>
 
           <ElInput
             v-if="showTBInput"
@@ -95,13 +95,6 @@
             </template>
           </ElInput>
         </div>
-        <!--<div class="px-3 py-3">
-          <ElInput v-model="tbSearchTxt" placeholder="请输入表名搜索" size="small" @input="handleTBInput" clearable>
-            <template #prefix>
-              <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
-            </template>
-          </ElInput>
-        </div>-->
         <ElScrollbar ref="tbList" class="flex-1 min-h-0" tag="div" wrap-class="tb-list">
           <ElSkeleton :loading="tbLoading" animated :throttle="skeletonThrottle">
             <template #template>
@@ -143,7 +136,7 @@
             <span class="flex-1 user-select-none">处理节点</span>
           </div>
         </template>
-        <ElRow class="node-list flex-wrap p-2" :gutter="0" type="flex">
+        <ElRow class="node-list flex-wrap px-2" :gutter="0" type="flex">
           <ElCol :span="8" v-for="(n, ni) in processorNodeTypes" :key="ni" class="p-1">
             <div
               v-mouse-drag="{
@@ -632,7 +625,12 @@ $itemH: 34px;
     }
 
     .click-btn {
+      width: 1.6em;
+      height: 1.6em;
       z-index: 2;
+    }
+    .click-btn:hover {
+      background-color: #f2f4f6;
     }
 
     .badge {
@@ -713,8 +711,8 @@ $itemH: 34px;
 
         &__header {
           position: relative;
-          padding-left: 8px;
-          padding-right: 8px;
+          padding-left: 16px;
+          padding-right: 16px;
           height: $headerH;
           font-size: 14px;
 

@@ -1,6 +1,6 @@
 <template>
   <div class="setting-panel">
-    <ElForm :model="settings" class="setting-panel-form" label-width="110px" label-position="left">
+    <ElForm :model="settings" class="setting-panel-form" label-width="120px" label-position="left" size="small">
       <ElTabs v-model="settingPanelType" class="setting-tabs h-100">
         <ElTabPane label="基本设置" name="base">
           <div class="setting-panel-box bg-white">
@@ -22,7 +22,7 @@
           </div>
         </ElTabPane>
         <ElTabPane label="高级设置" name="advanced">
-          <div class="setting-panel-box bg-white mt-5">
+          <div class="setting-panel-box bg-white">
             <div class="setting-title fs-7 pl-4">读写设置</div>
             <div class="pt-5 px-5">
               <ElRow>
@@ -42,7 +42,7 @@
               </ElRow>
             </div>
           </div>
-          <div class="setting-panel-box bg-white mt-5">
+          <div class="setting-panel-box bg-white">
             <div class="setting-title fs-7 pl-4">全量设置</div>
             <div class="pt-5 px-5">
               <ElFormItem label="目标写入线程数">
@@ -81,7 +81,7 @@
                   </ElFormItem>
                 </ElCol>
                 <ElCol :span="12">
-                  <ElFormItem label-width="110" label="增量数据处理模式">
+                  <ElFormItem label="增量数据处理模式">
                     <ElSelect v-model="settings.increOperationMode">
                       <ElOption label="批量" :value="false"></ElOption>
                       <ElOption label="逐条" :value="true"></ElOption>
@@ -91,12 +91,10 @@
               </ElRow>
               <ElRow>
                 <ElCol :span="12">
-                  <ElFormItem label-width="110" label="增量同步间隔(ms)">
+                  <ElFormItem label="增量同步间隔(ms)">
                     <ElInputNumber
                       v-model="settings.increaseSyncInterval"
-                      :min="1"
-                      :max="100"
-                      size="mini"
+                      :min="0"
                       controls-position="right"
                     ></ElInputNumber>
                   </ElFormItem>
@@ -106,7 +104,6 @@
                     <ElInputNumber
                       v-model="settings.increaseReadSize"
                       :min="1"
-                      size="mini"
                       controls-position="right"
                     ></ElInputNumber>
                   </ElFormItem>
@@ -117,7 +114,6 @@
                       v-model="settings.processorThreadNum"
                       :min="1"
                       :max="100"
-                      size="mini"
                       controls-position="right"
                     ></ElInputNumber>
                   </ElFormItem>
@@ -186,6 +182,7 @@ export default {
 .setting-panel {
   position: relative;
   height: 100%;
+  font-size: 12px;
   .setting-tabs,
   .setting-panel-form {
     height: 100%;
@@ -213,13 +210,20 @@ export default {
       .el-tabs__content {
         .setting-title {
           line-height: 35px;
-          font-weight: 500;
-          border-bottom: 1px solid rgba(200, 205, 207, 0.26);
+          font-weight: bold;
+          background-color: #f2f4f6;
+          // border-top: 1px solid rgba(200, 205, 207, 0.26);
+          // border-bottom: 1px solid rgba(200, 205, 207, 0.26);
         }
         .el-select,
         .el-input,
         .el-textarea {
           width: auto;
+        }
+        .el-radio__label,
+        .el-input,
+        .el-input__inner {
+          font-size: 12px;
         }
         .el-textarea {
           width: 500px;

@@ -21,16 +21,17 @@ export class RowFilter extends NodeType {
     type: 'object',
     properties: {
       action: {
-        title: '主键',
+        title: '执行动作',
         type: 'string',
         required: true,
+        default: 'retain',
         enum: [
           {
             label: '保留匹配数据',
             value: 'retain'
           },
           {
-            label: '创建匹配数据',
+            label: '丢弃匹配数据',
             value: 'discard'
           }
         ],
@@ -46,9 +47,16 @@ export class RowFilter extends NodeType {
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'JsEditor',
+        'x-decorator-props': {
+          wrapperWidth: 800
+        },
         'x-component-props': {
           options: { showPrintMargin: false, useWrapMode: true }
         }
+      },
+      example: {
+        type: 'array',
+        'x-component': 'ExpressionExample'
       }
     }
   }

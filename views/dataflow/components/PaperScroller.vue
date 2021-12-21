@@ -492,6 +492,11 @@ export default {
       this.changeScale(scale)
     },
 
+    zoomTo(scale) {
+      this.wheelToScaleArtboard(scale)
+      this.changeScale(scale)
+    },
+
     /**
      * 改变缩放
      * @param scale

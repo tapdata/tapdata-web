@@ -9,6 +9,7 @@ import VIcon from '@/components/VIcon'
 export const ArrayAggregate = connect(
   observer(
     defineComponent({
+      props: ['loading', 'options'],
       // components: { Form , FormItem },
       setup() {
         const formRef = useForm()
@@ -58,7 +59,18 @@ export const ArrayAggregate = connect(
               groupByExpression: ''
             }
           ],
+
           groupList: []
+        }
+      },
+
+      watch: {
+        aggregations: {
+          deep: true,
+          handler(v) {
+            this.$emit('change', v)
+            console.log('Aggregate', v) // eslint-disable-line
+          }
         }
       },
 
@@ -69,7 +81,10 @@ export const ArrayAggregate = connect(
             {aggregations.map((item, index) => {
               // eslint-disable-next-line prettier/prettier
               return (
-                <el-row gutter={20} style="width: 770px; margin: 0 0 20px;border: 1px solid #C8CDCF">
+                <el-row
+                  gutter={20}
+                  style="width: 889px; margin: 0 0 20px; padding-top: 15px; border: 1px solid #C8CDCF;"
+                >
                   <el-col span={23}>
                     <el-row gutter={10}>
                       <el-col span={8}>
@@ -86,7 +101,7 @@ export const ArrayAggregate = connect(
                         </FormItem>
                       </el-col>
                       <el-col span={16}>
-                        <FormItem title="xxx" label="作用目标">
+                        <FormItem title="作用目标" label="作用目标">
                           <el-input
                             v-model={item.aggExpression}
                             size="mini"
@@ -102,17 +117,17 @@ export const ArrayAggregate = connect(
                       <el-input v-model={item.filterPredicate} size="mini" type="textarea"></el-input>
                     </FormItem>
                     <FormItem label="分组字段">
-                      <el-select v-model={item.groupByExpression} size="mini">
-                        {this.groupList.map(op => (
-                          <el-option label={op.label} value={op.value} key={op.value} />
-                        ))}
+                      <el-select v-model={item.groupByExpression} size="mini" multiple>
+                        {this.options && this.options.length
+                          ? this.options.map(op => <el-option label={op} value={op} key={op} />)
+                          : []}
                       </el-select>
                     </FormItem>
                   </el-col>
                   <el-col span={1}>
                     <VIcon
                       class="clickable"
-                      style="padding-top:12px"
+                      style="padding-top:3px"
                       color="#666"
                       onClick={() => this.removeRow(index)}
                       small

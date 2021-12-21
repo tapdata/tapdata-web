@@ -18,7 +18,7 @@
       <div slot="empty"><slot name="empty"></slot></div>
     </ElTable>
     <ElPagination
-      v-if="hasPagination"
+      v-if="showPage"
       v-bind="Object.assign({}, options, pageOptions)"
       class="mt-3"
       :current-page.sync="page.current"
@@ -104,6 +104,13 @@ export default {
       default: () => {
         return {}
       }
+    },
+    remoteData: {
+      type: [String, Object, Array]
+    },
+    hideOnSinglePage: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -120,7 +127,16 @@ export default {
         background: true,
         layout: 'total, sizes, ->, prev, pager, next, jumper',
         pageSizes: [10, 20, 50, 100]
+      },
+      nonePage: false
+    }
+  },
+  computed: {
+    showPage() {
+      if (this.hideOnSinglePage) {
+        return this.hasPagination && !this.nonePage
       }
+      return this.hasPagination
     }
   },
   watch: {
@@ -128,6 +144,14 @@ export default {
       deep: true,
       handler(v) {
         v && this.fetch()
+      }
+    },
+    remoteData: {
+      deep: true,
+      handler(v1, v2) {
+        if (JSON.stringify(v1) !== JSON.stringify(v2)) {
+          this.fetch()
+        }
       }
     }
   },
@@ -138,6 +162,7 @@ export default {
     fetch(pageNum, debounce = 0, hideLoading, callback) {
       if (!this.remoteMethod) {
         this.list = this.data
+        this.nonePage = this.list.length <= this.page.size
         return
       }
       if (pageNum === 1) {
@@ -158,6 +183,7 @@ export default {
             .then(({ data, total }) => {
               this.page.total = total
               this.list = data || []
+              this.nonePage = this.page.total <= this.list.length
               if (total > 0 && (!data || !data.length)) {
                 setTimeout(() => {
                   this.fetch(this.page.current - 1)

@@ -33,31 +33,46 @@
           <VIcon size="20">compress</VIcon>
         </button>
       </ElTooltip>
-      <ElTooltip transition="tooltip-fade-in" content="缩小">
-        <button @click="$emit('zoom-out')" class="icon-btn">
-          <VIcon size="20">zoom-out</VIcon>
-        </button>
-      </ElTooltip>
-      <ElTooltip transition="tooltip-fade-in" content="放大">
-        <button @click="$emit('zoom-in')" class="icon-btn">
-          <VIcon size="20">zoom-in</VIcon>
-        </button>
-      </ElTooltip>
       <ElTooltip transition="tooltip-fade-in" content="自动布局">
         <button @click="$emit('auto-layout')" class="icon-btn">
           <VIcon size="20">auto-layout</VIcon>
         </button>
       </ElTooltip>
+      <VDivider class="mx-4" vertical inset></VDivider>
+      <ElTooltip transition="tooltip-fade-in" content="缩小">
+        <button @click="$emit('zoom-out')" class="icon-btn">
+          <VIcon size="20">remove-outline</VIcon>
+        </button>
+      </ElTooltip>
+      <div class="choose-size mx-2">
+        <ElPopover placement="bottom" trigger="hover" popper-class="rounded-xl p-0">
+          <div slot="reference" class="size-wrap">{{ scaleTxt }}</div>
+          <div class="choose-list p-2">
+            <div @click="$emit('zoom-in')" class="choose-item pl-4 flex justify-content-between align-center">
+              <span class="title">放大</span>
+              <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd></div>
+            </div>
+            <div @click="$emit('zoom-out')" class="choose-item pl-4 flex justify-content-between align-center">
+              <span class="title">缩小</span>
+              <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd></div>
+            </div>
+            <VDivider class="my-2"></VDivider>
+            <div v-for="val in chooseItems" :key="val" class="choose-item pl-4" @click="$emit('zoom-to', val)">
+              {{ val * 100 }}%
+            </div>
+          </div>
+        </ElPopover>
+      </div>
+      <ElTooltip transition="tooltip-fade-in" content="放大">
+        <button @click="$emit('zoom-in')" class="icon-btn">
+          <VIcon size="20">add-outline</VIcon>
+        </button>
+      </ElTooltip>
     </div>
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
-
-      <ElButton size="small" type="primary" class="mx-2" @click="$emit('save')"> 保存 </ElButton>
       <ElButton size="small" plain class="mx-2" @click="$emit('showSettings')"> 设置 </ElButton>
-
-      <!--<button @click="$emit('showSettings')" class="icon-btn">
-        <VIcon size="20">setting</VIcon>
-      </button>-->
+      <ElButton :loading="isSaving" size="small" type="primary" cflass="mx-2" @click="$emit('save')"> 保存 </ElButton>
     </div>
   </header>
 </template>
@@ -66,6 +81,7 @@
 import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
 import { mapGetters, mapMutations } from 'vuex'
+import VDivider from 'web-core/components/VDivider'
 
 export default {
   name: 'TopHeader',
@@ -79,10 +95,11 @@ export default {
     isMonitor: Boolean,
     editable: Boolean,
     creatUserId: String,
-    dataflowName: String
+    dataflowName: String,
+    scale: Number
   },
 
-  components: { VIcon },
+  components: { VDivider, VIcon },
 
   data() {
     return {
@@ -91,7 +108,8 @@ export default {
         'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc'),
         initial_sync: this.$t('dataFlow.initial_sync'),
         cdc: this.$t('dataFlow.cdc')
-      }
+      },
+      chooseItems: [4, 2, 1.5, 1, 0.5, 0.25]
     }
   },
 
@@ -106,6 +124,10 @@ export default {
     hiddenValue() {
       let value = this.name.replace(/\s/g, '.')
       return `${value}`
+    },
+
+    scaleTxt() {
+      return Math.round(this.scale * 100) + '%'
     }
   },
 
@@ -310,6 +332,25 @@ $sidebarBg: #fff;
     }
   }
 
+  .choose-size {
+    .size-wrap {
+      position: relative;
+      padding: 0 6px;
+      width: 48px;
+      height: 30px;
+      font-size: 14px;
+      line-height: 30px;
+      text-align: center;
+      border-radius: 4px;
+      cursor: pointer;
+
+      &:hover {
+        color: map-get($color, primary);
+        background: $hoverBg;
+      }
+    }
+  }
+
   ::v-deep {
     .el-button-group {
       .btn-base:not(:first-child) {
@@ -333,6 +374,37 @@ $sidebarBg: #fff;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
+  }
+}
+</style>
+
+<style lang="scss">
+.choose-list {
+  .choose-item {
+    margin-bottom: 2px;
+    min-width: 148px;
+    line-height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(241, 243, 245, 0.5);
+    }
+  }
+  .kbd-wrap {
+    kbd {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      padding: 0;
+      line-height: 16px;
+      font-size: 12px;
+      font-family: Arial, monospace;
+      text-align: center;
+      background: rgba(150, 150, 150, 0.06);
+      border: 1px solid rgba(100, 100, 100, 0.1);
+      border-radius: 3px;
+    }
   }
 }
 </style>

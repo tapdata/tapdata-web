@@ -11,6 +11,7 @@
       :creat-user-id="creatUserId"
       :is-starting="isStarting"
       :dataflow-name="dataflow.name"
+      :scale="scale"
       @page-return="handlePageReturn"
       @save="save"
       @delete="handleDelete"
@@ -18,6 +19,7 @@
       @redo="handleRedo"
       @zoom-out="handleZoomOut"
       @zoom-in="handleZoomIn"
+      @zoom-to="handleZoomTo"
       @showSettings="handleShowSettings"
       @center-content="handleCenterContent"
       @auto-layout="handleAutoLayout"
@@ -63,7 +65,6 @@
             v-model="nodeMenu.show"
             trigger="hover"
             placement="bottom"
-            width="88"
             popper-class="min-width-unset rounded-xl"
             :reference="nodeMenu.reference"
           >
@@ -178,7 +179,9 @@ export default {
       dataflow: {
         id: '',
         name: ''
-      }
+      },
+
+      scale: 1
     }
   },
 
@@ -274,7 +277,9 @@ export default {
       'setActiveType',
       'setFormSchema',
       'setTransformStatus',
-      'setEditVersion'
+      'setEditVersion',
+      'copyNodes',
+      'pasteNodes'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag']),
@@ -328,6 +333,14 @@ export default {
 
     initCommand() {
       this.command = new CommandManager(this.$store, this.jsPlumbIns)
+      Mousetrap.bind('mod+c', () => {
+        console.log('复制快捷键')
+        this.copyNodes()
+      })
+      Mousetrap.bind('mod+v', () => {
+        console.log('粘贴快捷键')
+        this.pasteNodes(this.command)
+      })
       Mousetrap.bind('mod+z', () => {
         this.command.undo()
       })
@@ -502,7 +515,7 @@ export default {
 
         // target.__Ctor.allowSource(source)
 
-        if (!this.nodeELIsConnected(sourceId, targetId) && !this.isParent(source.id, target.id)) {
+        if (!this.nodeELIsConnected(sourceId, targetId) && this.allowConnect(source.id, target.id)) {
           return target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source, _instance)
         }
 
@@ -516,7 +529,7 @@ export default {
       let data
       try {
         data = await taskApi.get([id]) // this.creatUserId = result.user_id
-        if (data.temp) data = data.temp // 和后端约定了，如果缓存有数据则获取temp
+        if (data.temp) data.dag = data.temp // 和后端约定了，如果缓存有数据则获取temp
       } catch (e) {
         this.$showError(e, '任务加载出错', '加载任务出现的问题:')
         return
@@ -571,6 +584,7 @@ export default {
       // 创建节点
       let nodeType
       nodes.forEach(node => {
+        delete node.outputSchema // 粗暴删除不需要的节点属性
         nodeType = getNodeType(node)
 
         if (nodeType !== null) {
@@ -592,18 +606,6 @@ export default {
       edges.forEach(({ source, target }) => {
         this.jsPlumbIns.connect({ uuids: [`${NODE_PREFIX}${source}_source`, `${NODE_PREFIX}${target}_target`] })
       })
-
-      /*this.nodes.forEach(node => {
-        let t = NODE_PREFIX + node.id + '_target',
-          tp = this.jsPlumbIns.getEndpoint(t)
-        if (node.inputLanes && node.inputLanes.length) {
-          node.inputLanes.forEach(nid => {
-            let s = NODE_PREFIX + nid + '_source',
-              sp = this.jsPlumbIns.getEndpoint(s)
-            this.jsPlumbIns.connect({ source: sp, target: tp })
-          })
-        }
-      })*/
     },
 
     getRealId(str) {
@@ -760,7 +762,7 @@ export default {
 
       this.$refs.paperScroller.autoResizePaper()
 
-      !isNotMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties), true)
+      !isNotMove && this.command.exec(new MoveNodeCommand(oldProperties, newProperties))
     },
 
     nodeSelectedById(id, setActive, deselectAllOthers) {
@@ -853,116 +855,9 @@ export default {
       })
     },
 
-    mouseDown(e) {
-      on(window, 'mouseup', this.mouseUp)
-
-      this.mouseDownMouseSelect(e)
-    },
-
-    mouseDownMouseSelect(e) {
-      if (this.isCtrlKeyPressed(e) === true) {
-        // 忽略按下ctrl||command键，此键已用来触发画布拖动
-        return
-      }
-
-      if (this.isActionActive('dragActive')) {
-        // 节点正在拖动
-        return
-      }
-
-      this.mouseClickPosition = this.getMousePositionWithinNodeView(e)
-      this.selectActive = true
-
-      // this.showSelectBox(e)
-
-      on(this.$refs.layoutContent, 'mousemove', this.mouseMoveSelect)
-    },
-
-    mouseMoveSelect(e) {
-      e.preventDefault() // 防止拖动时文字被选中
-
-      if (e.buttons === 0) {
-        // 没有按键或者是没有初始化
-        this.mouseUpMouseSelect(e)
-        return
-      }
-
-      this.showSelectBox = true
-      let w, h, x, y
-      const pos = this.getMousePositionWithinNodeView(e)
-
-      // console.log('mouseMoveSelect', pos) // eslint-disable-line
-
-      x = Math.min(this.mouseClickPosition.x, pos.x)
-      y = Math.min(this.mouseClickPosition.y, pos.y)
-      w = Math.abs(this.mouseClickPosition.x - pos.x)
-      h = Math.abs(this.mouseClickPosition.y - pos.y)
-
-      this.selectBoxAttr = { x, y, w, h, right: x + w, bottom: y + h }
-    },
-
-    mouseUp() {
-      off(window, 'mouseup', this.mouseUp)
-
-      if (!this.selectActive) {
-        return
-      }
-
-      this.mouseUpMouseSelect()
-    },
-
-    mouseUpMouseSelect() {
-      off(this.$refs.layoutContent, 'mousemove', this.mouseMoveSelect)
-      // console.log('mouseUpMouseSelect') // eslint-disable-line
-      this.deselectAllNodes()
-      // 清空激活状态
-      this.setActiveType(null)
-
-      if (this.showSelectBox) {
-        const selectedNodes = this.getNodesInSelection()
-        selectedNodes.forEach(node => this.nodeSelected(node))
-      }
-
-      this.hideSelectBox()
-    },
-
-    hideSelectBox() {
-      this.selectActive = false
-      this.showSelectBox = false
-      this.selectBoxAttr = null
-    },
-
-    getMousePositionWithinNodeView(e) {
-      const nodeViewScale = this.nodeViewScale
-      // const nodeViewOffset = this.nodeViewOffsetPosition
-      // const [x, y] = this.nodeViewOffsetPosition
-      let { x, y } = this.$refs.layoutContent.getBoundingClientRect()
-      return {
-        x: (e.pageX - x) / nodeViewScale,
-        y: (e.pageY - y) / nodeViewScale
-      }
-    },
-
-    __removeConnection(source, target) {
-      // console.log('removeConnection', source, target) // eslint-disable-line
-      const connections = this.jsPlumbIns.getConnections({
-        source,
-        target
-      })
-
-      connections.forEach(connectionInstance => {
-        this.jsPlumbIns.deleteConnection(connectionInstance)
-      })
-
-      this.removeConnection({
-        sourceId: this.getRealId(source),
-        targetId: this.getRealId(target)
-      })
-    },
-
     getDataflowDataToSave() {
       const dag = this.$store.getters['dataflow/dag']
-      const editVersion = this.$store.state['dataflow/editVersion']
+      const editVersion = this.$store.state.dataflow.editVersion
       return {
         dag,
         editVersion,
@@ -986,34 +881,34 @@ export default {
 
       const data = this.getDataflowDataToSave()
 
-      const result = await taskApi.save(data)
-
-      this.setEditVersion(result.editVersion)
+      try {
+        const result = await taskApi.save(data)
+        this.$message.success(this.$t('message.saveOK'))
+        this.setEditVersion(result.editVersion)
+      } catch (e) {
+        this.handleError(e)
+      }
       // await taskApi.patch(data)
 
       this.isSaving = false
-
-      this.$message.success(this.$t('message.saveOK'))
     },
 
     async saveAsNewDataflow() {
       try {
         this.isSaving = true
         const data = this.getDataflowDataToSave()
-        // eslint-disable-next-line no-console
-        console.log('🚗saveAsNewDataflow', data)
         const dataflow = await taskApi.post(data)
         this.isSaving = false
         this.dataflow.id = dataflow.id
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
-        this.$message.success(this.$t('message.saveOK'))
+        // this.$message.success(this.$t('message.saveOK'))
         await this.$router.replace({
           name: 'DataflowEditor',
           params: { id: dataflow.id, action: 'dataflowSave' }
         })
       } catch (e) {
-        this.$showError(e, '数据流保存出错', '出现的问题:')
+        this.$showError(e, '任务保存出错', '出现的问题:')
       }
     },
 
@@ -1046,6 +941,10 @@ export default {
 
     handleZoomOut() {
       this.$refs.paperScroller.zoomOut()
+    },
+
+    handleZoomTo(scale) {
+      this.$refs.paperScroller.zoomTo(scale)
     },
 
     handleShowSettings() {
@@ -1134,15 +1033,31 @@ export default {
       return this.jsPlumbIns.getConnections('*').some(c => `${c.sourceId}` === s && `${c.targetId}` === t)
     },
 
-    // 循环检查target是否是source的上级
-    isParent(sourceId, targetId) {
+    allowConnect(sourceId, targetId) {
       if (sourceId === targetId) return true
-      let sourceNode = this.nodeById(sourceId)
+      const allEdges = this.$store.getters['dataflow/allEdges']
+      const map = allEdges.reduce((map, item) => {
+        let target = map[item.target]
+        if (target) {
+          target.push(item.source)
+        } else {
+          map[item.target] = [item.source]
+        }
+        return map
+      }, {})
+
+      if (!map[sourceId]) return true
+
+      return !this.isParent(sourceId, targetId, map)
+    },
+
+    // 循环检查target是否是source的上级
+    isParent(sourceId, targetId, map) {
       let flag = false
-      if (!sourceNode.inputLanes) return flag
-      for (let id of sourceNode.inputLanes) {
+      if (!map[sourceId]) return flag
+      for (let id of map[sourceId]) {
         flag = id === targetId
-        if (flag || this.isParent(id, targetId)) return true
+        if (flag || this.isParent(id, targetId, map)) return true
       }
       return flag
     },
@@ -1270,7 +1185,6 @@ export default {
     },
 
     handleMouseSelect(showSelectBox, selectBoxAttr) {
-      // console.log('handleMouseSelect', arguments) // eslint-disable-line
       // 取消选中所有节点
       this.deselectAllNodes()
       // 清空激活状态
@@ -1283,17 +1197,33 @@ export default {
     },
 
     handleChangeScale(scale) {
+      this.scale = scale
       this.jsPlumbIns.setZoom(scale)
     },
 
+    isSource(node) {
+      const id = node.id
+      const allEdges = this.$store.getters['dataflow/allEdges']
+      return allEdges.some(({ source }) => source === id)
+    },
+
+    /**
+     * 快速添加目标节点
+     * @param source 源节点
+     * @param nodeType 节点的类型对象
+     */
     quickAddNode(source, nodeType) {
       const spaceX = 120
       const spaceY = 120
-      const newPosition = [
-        source.position[0] + NODE_WIDTH + spaceX,
-        !source.outputLanes?.length ? source.position[1] : source.position[1] + spaceY
-      ]
-      const movePosition = !source.outputLanes?.length > 0 ? [spaceX, 0] : [0, spaceY]
+
+      const newPosition = [source.attrs.position[0] + NODE_WIDTH + spaceX, source.attrs.position[1]]
+      let movePosition = [0, spaceY]
+
+      if (this.isSource(source)) {
+        newPosition[1] += spaceY
+        movePosition = [spaceX, 0]
+      }
+
       const position = this.getNewNodePosition(newPosition, movePosition)
       const target = this.createNode(position, nodeType)
 
@@ -1339,6 +1269,9 @@ export default {
         height: NODE_HEIGHT
       })
       this.addNodeOnConn(nodeType, position, nodeMenu.connection.source, nodeMenu.connection.target)
+      this.$nextTick(() => {
+        this.handleAutoLayout()
+      })
     },
 
     canUsePosition(position1, position2) {
@@ -1364,7 +1297,7 @@ export default {
         conflictFound = false
         for (i = 0; i < this.nodes.length; i++) {
           node = this.nodes[i]
-          if (!this.canUsePosition(node.position, newPosition)) {
+          if (!this.canUsePosition(node.attrs.position, newPosition)) {
             conflictFound = true
             break
           }
@@ -1379,11 +1312,24 @@ export default {
       return newPosition
     },
 
-    handleUpdateName(name) {
+    handleError(error) {
+      if (error?.data?.message) {
+        this.$message.error(error.data.message)
+      } else {
+        // eslint-disable-next-line no-console
+        console.error(error)
+        this.$message.error('出错了')
+      }
+    },
+
+    async handleUpdateName(name) {
       this.dataflow.name = name
-      taskApi.updateById(this.dataflow.id, {
-        name
-      })
+      taskApi
+        .patch({
+          id: this.dataflow.id,
+          name
+        })
+        .catch(this.handleError)
     },
 
     handleEditFlush(data) {

@@ -2,6 +2,8 @@ import Vue from 'vue'
 import { isObject } from 'web-core/utils/util'
 import Task from 'web-core/api/Task'
 import { debounce } from 'lodash'
+import { AddDagCommand } from '@/_packages/tapdata-web-core/views/dataflow/command'
+import { uuid } from 'web-core/utils/util'
 
 const taskApi = new Task()
 
@@ -283,6 +285,10 @@ const mutations = {
     state.dag.nodes.push(nodeData)
   },
 
+  addNodes(state, nodes) {
+    state.dag.nodes.push(...nodes)
+  },
+
   // 更新节点属性
   updateNodeProperties(state, updateInformation) {
     console.log('updateInformation', updateInformation) // eslint-disable-line
@@ -290,7 +296,7 @@ const mutations = {
 
     const updateObjVal = (target, obj) => {
       Object.entries(obj).forEach(([key, value]) => {
-        if (isObject(value)) {
+        if (isObject(value) && target[key]) {
           updateObjVal(target[key], value)
         } else {
           Vue.set(target, key, value)
@@ -455,6 +461,10 @@ const mutations = {
     state.dag.edges = edges
   },
 
+  addEdges(state, edges) {
+    state.dag.edges.push(...edges)
+  },
+
   /**
    * 设置任务ID
    * @param state
@@ -479,6 +489,103 @@ const mutations = {
 
   setEditVersion(state, editVersion) {
     state.editVersion = editVersion
+  },
+
+  /**
+   * 复制节点，如果节点直接有连线，也会一并复制
+   * @param state
+   */
+  copyNodes: state => {
+    const nodes = state.selectedNodes
+    const edges = state.dag.edges
+    let copyEdges = []
+
+    if (nodes.length) {
+      const nodeMap = nodes.reduce((map, node) => ((map[node.id] = true), map), {})
+      copyEdges = edges.filter(item => nodeMap[item.source] && nodeMap[item.target])
+    }
+
+    localStorage['DAG_CLIPBOARD'] = JSON.stringify({
+      nodes,
+      edges: copyEdges
+    })
+  },
+
+  /**
+   * 粘贴节点
+   * @param state
+   * @param command
+   */
+  pasteNodes: async (state, command) => {
+    const DAG_CLIPBOARD = localStorage['DAG_CLIPBOARD']
+    if (DAG_CLIPBOARD) {
+      const dag = JSON.parse(DAG_CLIPBOARD)
+      const { nodes, edges } = dag
+
+      if (!nodes.length) return
+
+      const allNodeTypes = [...state.nodeTypes, ...state.processorNodeTypes]
+      const nodeTypesMap = allNodeTypes.reduce((res, item) => ((res[item.type] = item), res), {})
+      const sourceMap = {},
+        targetMap = {}
+
+      edges.forEach(item => {
+        let _source = sourceMap[item.source]
+        let _target = targetMap[item.target]
+
+        if (!_source) {
+          sourceMap[item.source] = [item]
+        } else {
+          _source.push(item)
+        }
+
+        if (!_target) {
+          targetMap[item.target] = [item]
+        } else {
+          _target.push(item)
+        }
+      })
+
+      nodes.forEach(node => {
+        const oldId = node.id
+        node.id = uuid() // 生成新的ID
+        node.attrs.position[0] += 20
+        node.attrs.position[1] += 20
+
+        // 替换连线里绑定的ID
+        if (sourceMap[oldId]) {
+          sourceMap[oldId].forEach(item => (item.source = node.id))
+        }
+        // 替换连线里绑定的ID
+        if (targetMap[oldId]) {
+          targetMap[oldId].forEach(item => (item.target = node.id))
+        }
+
+        const nodeType = nodeTypesMap[node.type]
+
+        if (nodeType) {
+          const Ctor = state.ctorTypes[nodeType.constructor]
+          const ins = new Ctor(nodeType)
+
+          Object.defineProperty(node, '__Ctor', {
+            value: ins,
+            enumerable: false
+          })
+        }
+      })
+
+      // 执行添加dag命令，可以撤销/重做
+      await command.exec(new AddDagCommand(dag))
+
+      // 选中粘贴的节点
+      const jsPlumbIns = command.state.instance
+      jsPlumbIns.clearDragSelection()
+      nodes.forEach(node => jsPlumbIns.addToDragSelection(`node-${node.id}`))
+      state.selectedNodes = nodes
+
+      // 存储
+      localStorage['DAG_CLIPBOARD'] = JSON.stringify(dag)
+    }
   }
 }
 
