@@ -230,13 +230,18 @@ export default {
       }
     }
   },
+  mounted() {
+    this.$once('onceLoadHttp', () => {
+      this.loadHttp()
+    })
+  },
   destroyed() {
     this.$ws.off('dataFlowInsight')
   },
   methods: {
     init() {
       this.loadInfo()
-      this.loadHttp()
+      this.$emit('onceLoadHttp')
       this.loadWS()
       this.sendMsg()
     },
