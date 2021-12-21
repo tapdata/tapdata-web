@@ -279,7 +279,8 @@ export default {
           'mariadb',
           'greenplum',
           'tidb',
-          'kundb'
+          'kundb',
+          'adb_postgres'
         ]
       }
     }
@@ -668,7 +669,9 @@ export default {
       this.cell = cell
       this.dataNodeInfo = dataNodeInfo || {}
 
+      this.loadDataModels(this.model.connectionId)
       let ouputSchema = cell.getOutputSchema()
+      console.log('ouputSchema', ouputSchema)
       if (this.model.connectionId && this.model.tableName && !ouputSchema) {
         this.handlerSchemaChange()
       } else {

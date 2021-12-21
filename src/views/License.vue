@@ -53,9 +53,9 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let list = res.data.items
+          let list = res.data?.items || []
           return {
-            total: res.data.total,
+            total: res.data?.total || 0,
             data: list.map(item => {
               let expirationDate = this.$moment(item.expirationDate)
               let duration = expirationDate.valueOf() - Date.now()
@@ -128,6 +128,10 @@ export default {
           .then(() => {
             this.$message.success('更新成功')
             this.$table.fetch()
+          })
+          .catch(err => {
+            let msg = err?.response?.msg || err
+            this.$message.error(msg)
           })
           .finally(() => {
             this.dialogLoading = false

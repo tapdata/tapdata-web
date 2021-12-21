@@ -10,6 +10,7 @@
       :types="database"
       :commingTypes="comingAllowDatabase"
       :otherTypes="otherType"
+      :automationType="automationType"
       :large="true"
       @select="databaseType"
     ></ConnectionTypeSelector>
@@ -66,7 +67,8 @@ export default {
       ],
       comingAllowDatabase: [], // 即将上线
       otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],
-      typeMap: TYPEMAP
+      typeMap: TYPEMAP,
+      automationType: '' //插件化数据源
     }
   },
   created() {
@@ -75,8 +77,8 @@ export default {
       allowDataType = allowDataType.split(',')
     }
     let comingAllowDataType = window.getSettingByKey('COMING_ONLINE_CONNECTION_TYPE') || []
-    let allwoType = this.allwoType
-    if (allwoType && allwoType.length) {
+    let allowType = this.allwoType
+    if (allowType && allowType.length) {
       allowDataType = allowDataType.filter(val => {
         return this.allwoType.includes(val)
       })
@@ -84,6 +86,7 @@ export default {
     this.comingAllowDatabase = comingAllowDataType.filter(type => this.database.includes(type)) || []
     this.database = allowDataType.filter(type => this.database.includes(type)) || []
     this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || []
+    this.getDatabaseType()
   },
   methods: {
     getImgByType,
@@ -94,6 +97,22 @@ export default {
     databaseType(type) {
       this.$emit('databaseType', type)
       this.$store.commit('createConnection', { databaseType: type })
+    },
+    getDatabaseType() {
+      this.$api('DatabaseTypes')
+        .get()
+        .then(res => {
+          if (res.data) {
+            this.automationType = res.data || []
+            this.automationType = this.automationType.filter(
+              item =>
+                !this.otherType.includes(item.type) &&
+                !this.database.includes(item.type) &&
+                !this.comingAllowDatabase.includes(item.type) &&
+                !['mem_cache','rest api', 'log_collect'].includes(item.type)
+            )
+          }
+        })
     }
   }
 }
@@ -149,6 +168,11 @@ export default {
     .content {
       font-size: 12px;
       margin-top: 5px;
+      max-width: 124px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      word-break: break-word;
+      overflow: hidden;
     }
   }
   .clearfix:before,

@@ -40,7 +40,7 @@ export const PostgresConfig = {
        * @return {boolean}
        */
       allowTarget() {
-        return false
+        return true
       },
 
       /**

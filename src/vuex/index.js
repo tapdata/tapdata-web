@@ -5,13 +5,10 @@ import mutations from './mutations'
 import actions from './actions'
 import cookie from 'vue-cookies'
 import dataflow from 'web-core/store/modules/dataflow'
+
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
-  modules: {
-    dataflow
-  },
-
   plugins: [
     createPersistedState({
       key: 'tapdata' + [cookie.get('user_id')],
@@ -21,7 +18,7 @@ const store = new Vuex.Store({
         removeItem: () => {}
       },
       filter({ type }) {
-        // 过滤掉dataflow的持久化
+        console.log('vux-type', type)
         return !type.startsWith('dataflow')
       }
     })
@@ -153,7 +150,11 @@ const store = new Vuex.Store({
 
   actions,
 
-  mutations
+  mutations,
+
+  modules: {
+    dataflow
+  }
 })
 
 export default store

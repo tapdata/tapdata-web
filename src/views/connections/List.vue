@@ -94,7 +94,7 @@
         :reserve-selection="true"
       >
       </el-table-column>
-      <el-table-column prop="name" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true" min-width="150">
+      <el-table-column prop="name" min-width="150" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <div class="connection-name">
             <div class="database-img">
@@ -118,7 +118,7 @@
           {{ scope.row.connectionUrl }}
         </template>
       </el-table-column>
-      <el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="100">
+      <el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="80">
         <template slot-scope="scope">
           <div>
             <span class="error" v-if="['invalid'].includes(scope.row.status)">
@@ -142,7 +142,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="connection_type" :label="$t('connection.connectionType')" width="160">
+      <el-table-column prop="connection_type" :label="$t('connection.connectionType')" width="80">
         <template slot-scope="scope">
           {{ $t('connection.type.' + scope.row.connection_type) }}
         </template>
@@ -411,9 +411,9 @@ export default {
         // where.or = [{ name: filterObj }, { database_uri: filterObj }, { database_host: filterObj }];
         where.name = { like: verify(keyword), options: 'i' }
       }
-      where.database_type = {
-        in: this.whiteList
-      }
+      // where.database_type = {
+      //   in: this.whiteList
+      // }
       region && (where['platformInfo.region'] = region)
       databaseType && (where.database_type = databaseType)
       // if (databaseType === 'maria' || databaseType === 'mysqlpxc') {
@@ -486,6 +486,13 @@ export default {
           }
         })
     },
+    getImgByType(type) {
+      // if (!type || type === 'jira') {
+      //   type = 'default'
+      // }
+      type = 'default'
+      return require(`@/assets/images/databaseType/${type.toLowerCase()}.png`)
+    },
     //列表全选
     handleSelectionChange(val) {
       this.multipleSelection = val
@@ -504,10 +511,20 @@ export default {
       this.previewVisible = false
     },
     edit(id, type, item) {
-      if (this.whiteList.includes(type)) {
-        if (item.search_databaseType) {
-          type = item.search_databaseType
-        }
+      if (item.search_databaseType) {
+        type = item.search_databaseType
+      }
+      if (this.whiteList.includes(type) || type === 'rest api') {
+        this.$router.push({
+          name: 'connectionsOldEdit',
+          params: {
+            id: id
+          },
+          query: {
+            databaseType: type
+          }
+        })
+      }else {
         this.$router.push({
           name: 'connectionsEdit',
           params: {
@@ -517,9 +534,6 @@ export default {
             databaseType: type
           }
         })
-      } else {
-        top.location.href = '/#/connection/' + id
-        localStorage.setItem('connectionDatabaseType', type)
       }
     },
     copy(data) {
@@ -665,17 +679,23 @@ export default {
     },
     handleDatabaseType(type) {
       this.handleDialogDatabaseTypeVisible()
-      if (this.whiteList.includes(type)) {
+      if (this.whiteList.includes(type) || type === 'rest api') {
+        this.$router.push({
+          name: 'connectionsOldCreate',
+          query: {
+            databaseType: type
+          }
+        })
+      }else {
         this.$router.push({
           name: 'connectionsCreate',
           query: {
             databaseType: type
           }
         })
-      } else {
-        top.location.href = '/#/connection'
-        localStorage.setItem('connectionDatabaseType', type)
       }
+      // top.location.href = '/#/connection'
+      // localStorage.setItem('connectionDatabaseType', type)
     },
 
     //检测agent 是否可用
@@ -757,7 +777,7 @@ export default {
     vertical-align: middle;
     width: 40px;
     height: 40px;
-    background: #ffffff;
+    //background: #ffffff;
     border-radius: 3px;
     display: flex;
     justify-content: center;
@@ -775,7 +795,7 @@ export default {
     word-break: break-word;
     text-overflow: ellipsis;
     float: left;
-    margin-left: 10px;
+    margin-left: 4px;
 
     .name {
       color: #409eff;

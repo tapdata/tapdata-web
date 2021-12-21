@@ -89,3 +89,82 @@ export const formatTime = (date, format = 'YYYY-MM-DD HH:mm:ss') => {
 }
 // 判断对象是否为空
 export const isEmpty = obj => Reflect.ownKeys(obj).length === 0 && obj.constructor === Object
+
+const CLASSTYPES = [
+  'String',
+  'Number',
+  'BigInt',
+  'Boolean',
+  'Symbol',
+  'Function',
+  'Array',
+  'Date',
+  'RegExp',
+  'Object',
+  'Error'
+]
+
+const CLASS2TYPE = CLASSTYPES.reduce((obj, t) => ((obj[`[object ${t}]`] = t.toLowerCase()), obj), {})
+
+export function getClassType(obj) {
+  return obj == null ? String(obj) : CLASS2TYPE[{}.toString.call(obj)] || 'object'
+}
+
+export function isObject(obj) {
+  return getClassType(obj) === 'object'
+}
+
+export function isString(obj) {
+  return getClassType(obj) === 'string'
+}
+
+export function isFunction(func) {
+  return typeof func === 'function' || getClassType(func) === 'function'
+}
+
+/**
+ * 按key给数组分组
+ * @param data
+ * @param key
+ * @returns {*}
+ */
+export function groupBy(data, key) {
+  return data.reduce((storage, item) => {
+    const g = item[key]
+    storage[g] = storage[g] || []
+    storage[g].push(item)
+    return storage
+  }, {})
+}
+
+export const uuid = function () {
+  // credit: http://stackoverflow.com/posts/2117523/revisions
+
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    let r = (Math.random() * 16) | 0
+    let v = c === 'x' ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}
+
+export function escapeHTML(value) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+}
+
+/**
+ * 比较两个数字是否近似相等
+ * 0.1 + 0.2 === 0.3 => false
+ * sameNumber(0.1+0.2, 0.3) => true
+ * @param num1
+ * @param num2
+ * @param tolerance 宽松度
+ * @returns {boolean}
+ */
+export function sameNumber(num1, num2, tolerance = Number.EPSILON) {
+  return Math.abs(num1 - num2) <= tolerance || num1 === num2
+}

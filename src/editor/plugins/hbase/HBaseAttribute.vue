@@ -207,7 +207,8 @@ export default {
         showBtn: true,
         hiddenFieldProcess: true,
         isFirst: true,
-        hiddenChangeValue: true
+        hiddenChangeValue: true,
+        databaseType: 'hbase'
         // primaryKeys: ''
       },
       schemasLoading: false,

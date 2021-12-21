@@ -83,9 +83,8 @@ export default class Graph extends Component {
     )
 
     this.commandManager = new joint.dia.CommandManager({
-      graph: graph,
-      cmdBeforeAdd: function (cmdName, cell, graph, options) {
-        log('cmdBeforeAdd', cmdName, options)
+      graph,
+      cmdBeforeAdd: function (cmdName) {
         // 忽略不需要回退的操作
         return !['change:ports', 'change:attrs', 'change:form_data', 'change:labels'].includes(cmdName)
       }
@@ -341,9 +340,15 @@ export default class Graph extends Component {
     const paperScroller = (this.paperScroller = new joint.ui.PaperScroller({
       paper: paper,
       autoResizePaper: true,
-      cursor: 'grab',
-      contentOptions: function (paperScroller) {
+      cursor: 'grab'
+      /*contentOptions: function (paperScroller) {
         let visibleArea = paperScroller.getVisibleArea()
+        console.log('visibleArea', visibleArea, {
+          bottom: visibleArea.height / 2,
+          top: visibleArea.height / 2,
+          left: visibleArea.width / 2,
+          right: visibleArea.width / 2
+        })
         return {
           padding: {
             bottom: visibleArea.height / 2,
@@ -353,7 +358,7 @@ export default class Graph extends Component {
           },
           allowNewOrigin: 'any'
         }
-      }
+      }*/
     }))
 
     this.el = paperScroller.el
@@ -1232,6 +1237,7 @@ export default class Graph extends Component {
   }
 
   onMousewheel(cellView, evt, x, y, delta) {
+    console.log('onMousewheel', arguments)
     if (this.keyboard.isActive('alt', evt)) {
       evt.preventDefault()
       this.paperScroller.zoom(delta * 0.2, {
