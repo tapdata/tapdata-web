@@ -294,6 +294,7 @@ export default {
               width: 1 // 这里是为了突出显示加上的
             }
           },
+          boundaryGap: false,
           data: timeList
         },
         yAxis: {
