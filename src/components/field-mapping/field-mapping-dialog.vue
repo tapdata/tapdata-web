@@ -91,11 +91,7 @@
               <span v-else class="item" :show-overflow-tooltip="true">{{ scope.row.field_name }}</span>
             </template>
           </ElTableColumn>
-          <ElTableColumn
-            :label="$t('task_mapping_table_source_table_type')"
-            prop="data_type"
-            width="150"
-          ></ElTableColumn>
+          <ElTableColumn :label="$t('task_mapping_table_source_table_type')" prop="data_type"></ElTableColumn>
           <ElTableColumn
             :label="$t('task_mapping_table_source_table_length')"
             prop="precision"
