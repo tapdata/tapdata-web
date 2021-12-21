@@ -529,7 +529,22 @@ const mutations = {
       const sourceMap = {},
         targetMap = {}
 
-      edges.forEach(item => ((sourceMap[item.source] = item), (targetMap[item.target] = item)))
+      edges.forEach(item => {
+        let _source = sourceMap[item.source]
+        let _target = targetMap[item.target]
+
+        if (!_source) {
+          sourceMap[item.source] = [item]
+        } else {
+          _source.push(item)
+        }
+
+        if (!_target) {
+          targetMap[item.target] = [item]
+        } else {
+          _target.push(item)
+        }
+      })
 
       nodes.forEach(node => {
         const oldId = node.id
@@ -539,11 +554,11 @@ const mutations = {
 
         // 替换连线里绑定的ID
         if (sourceMap[oldId]) {
-          sourceMap[oldId].source = node.id
+          sourceMap[oldId].forEach(item => (item.source = node.id))
         }
         // 替换连线里绑定的ID
         if (targetMap[oldId]) {
-          targetMap[oldId].target = node.id
+          targetMap[oldId].forEach(item => (item.target = node.id))
         }
 
         const nodeType = nodeTypesMap[node.type]

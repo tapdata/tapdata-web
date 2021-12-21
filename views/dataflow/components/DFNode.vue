@@ -10,13 +10,7 @@
       />
     </template>
     <div class="df-node-options" @click.stop>
-      <el-popover
-        v-model="showAddMenu"
-        placement="bottom"
-        width="88"
-        trigger="click"
-        popper-class="min-width-unset rounded-xl"
-      >
+      <el-popover v-model="showAddMenu" placement="bottom" trigger="click" popper-class="min-width-unset rounded-xl">
         <div slot="reference" class="node-option" titlmoue="添加节点">
           <VIcon>plus</VIcon>
         </div>

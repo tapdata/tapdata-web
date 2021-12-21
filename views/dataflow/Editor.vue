@@ -65,7 +65,6 @@
             v-model="nodeMenu.show"
             trigger="hover"
             placement="bottom"
-            width="88"
             popper-class="min-width-unset rounded-xl"
             :reference="nodeMenu.reference"
           >
@@ -516,7 +515,7 @@ export default {
 
         // target.__Ctor.allowSource(source)
 
-        if (!this.nodeELIsConnected(sourceId, targetId) && !this.isParent(source.id, target.id)) {
+        if (!this.nodeELIsConnected(sourceId, targetId) && this.allowConnect(source.id, target.id)) {
           return target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source, _instance)
         }
 
@@ -1034,15 +1033,31 @@ export default {
       return this.jsPlumbIns.getConnections('*').some(c => `${c.sourceId}` === s && `${c.targetId}` === t)
     },
 
-    // 循环检查target是否是source的上级
-    isParent(sourceId, targetId) {
+    allowConnect(sourceId, targetId) {
       if (sourceId === targetId) return true
-      let sourceNode = this.nodeById(sourceId)
+      const allEdges = this.$store.getters['dataflow/allEdges']
+      const map = allEdges.reduce((map, item) => {
+        let target = map[item.target]
+        if (target) {
+          target.push(item.source)
+        } else {
+          map[item.target] = [item.source]
+        }
+        return map
+      }, {})
+
+      if (!map[sourceId]) return true
+
+      return !this.isParent(sourceId, targetId, map)
+    },
+
+    // 循环检查target是否是source的上级
+    isParent(sourceId, targetId, map) {
       let flag = false
-      if (!sourceNode.inputLanes) return flag
-      for (let id of sourceNode.inputLanes) {
+      if (!map[sourceId]) return flag
+      for (let id of map[sourceId]) {
         flag = id === targetId
-        if (flag || this.isParent(id, targetId)) return true
+        if (flag || this.isParent(id, targetId, map)) return true
       }
       return flag
     },
@@ -1186,14 +1201,29 @@ export default {
       this.jsPlumbIns.setZoom(scale)
     },
 
+    isSource(node) {
+      const id = node.id
+      const allEdges = this.$store.getters['dataflow/allEdges']
+      return allEdges.some(({ source }) => source === id)
+    },
+
+    /**
+     * 快速添加目标节点
+     * @param source 源节点
+     * @param nodeType 节点的类型对象
+     */
     quickAddNode(source, nodeType) {
       const spaceX = 120
       const spaceY = 120
-      const newPosition = [
-        source.position[0] + NODE_WIDTH + spaceX,
-        !source.outputLanes?.length ? source.position[1] : source.position[1] + spaceY
-      ]
-      const movePosition = !source.outputLanes?.length > 0 ? [spaceX, 0] : [0, spaceY]
+
+      const newPosition = [source.attrs.position[0] + NODE_WIDTH + spaceX, source.attrs.position[1]]
+      let movePosition = [0, spaceY]
+
+      if (this.isSource(source)) {
+        newPosition[1] += spaceY
+        movePosition = [spaceX, 0]
+      }
+
       const position = this.getNewNodePosition(newPosition, movePosition)
       const target = this.createNode(position, nodeType)
 
@@ -1239,6 +1269,9 @@ export default {
         height: NODE_HEIGHT
       })
       this.addNodeOnConn(nodeType, position, nodeMenu.connection.source, nodeMenu.connection.target)
+      this.$nextTick(() => {
+        this.handleAutoLayout()
+      })
     },
 
     canUsePosition(position1, position2) {
@@ -1264,7 +1297,7 @@ export default {
         conflictFound = false
         for (i = 0; i < this.nodes.length; i++) {
           node = this.nodes[i]
-          if (!this.canUsePosition(node.position, newPosition)) {
+          if (!this.canUsePosition(node.attrs.position, newPosition)) {
             conflictFound = true
             break
           }
