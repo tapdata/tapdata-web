@@ -34,6 +34,16 @@
                   {{ item.type }}
                 </div>
                 <el-link
+                  v-if="item.id === 9"
+                  target="_blank"
+                  type="primary"
+                  class="notice-list__name flex-grow-1 ellipsis block pointer"
+                  href="https://sourl.cn/2f3mPF"
+                >
+                  {{ item.name }}
+                </el-link>
+                <el-link
+                  v-else
                   type="primary"
                   class="notice-list__name flex-grow-1 ellipsis block pointer"
                   @click="toNotice(item)"
@@ -309,10 +319,16 @@ export default {
     loadNotices() {
       this.notices = [
         {
+          id: 9,
+          type: '',
+          name: '1分钟有奖调研，元旦开奖！',
+          time: '2021-12-21'
+        },
+        {
           id: 8,
           type: '',
           name: 'Tapdata Cloud 1.0.9 版本发布啦！',
-          time: '2021-12-18'
+          time: '2021-12-21'
         },
         {
           id: 7,

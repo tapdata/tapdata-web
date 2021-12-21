@@ -472,7 +472,7 @@
       <div class="notice-header__time mt-5 ml-1 flex align-items-center">
         <img src="../../assets/image/logoIconColour.png" alt="" />
         <span class="ml-5 mr-4">Cloud@Tapdata</span>
-        <span>2021-12-03</span>
+        <span>2021-12-21</span>
       </div>
     </div>
     <div class="notice-body mt-6 fs-6">
