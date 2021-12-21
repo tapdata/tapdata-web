@@ -279,6 +279,7 @@ export default {
           right: 0
         },
         grid: {
+          top: '18px',
           left: 0,
           right: 0,
           bottom: '3%',

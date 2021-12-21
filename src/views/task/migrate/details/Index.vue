@@ -26,7 +26,7 @@
 <script>
 import Info from './Info'
 import Schedule from './Schedule'
-import Log from './Log'
+import Log from '@/components/logs/Index'
 import Connection from './Connection'
 import History from './History'
 import FieldMapping from '@/components/FieldMapping'
