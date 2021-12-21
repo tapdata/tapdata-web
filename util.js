@@ -12,7 +12,11 @@ export const getConnectionTypeImg = function (type) {
   return require(`./assets/icons/node/${type}.svg`)
 }
 export const getConnectionTypeDialogImg = function (type) {
-  return require(`./assets/icons/node/${type}.svg`)
+  try {
+    return require(`./assets/icons/node/${type}.svg`)
+  } catch (e) {
+    return null
+  }
 }
 
 let timeout = null
