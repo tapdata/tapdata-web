@@ -698,7 +698,7 @@ $hoverBg: #eef3ff;
         .el-collapse-item:first-child:last-child {
           height: 100%;
           .el-collapse-item__wrap {
-            height: calc(100% - #{$headerH});
+            height: calc(100% - #{$headerH - 1});
           }
           .el-collapse-item__content {
             height: 100%;
