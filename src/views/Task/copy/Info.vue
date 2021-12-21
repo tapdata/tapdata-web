@@ -280,7 +280,6 @@ export default {
           right: 0
         },
         grid: {
-          top: '10px',
           left: 0,
           right: 0,
           bottom: '3%',
