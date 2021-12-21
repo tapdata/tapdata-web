@@ -48,44 +48,43 @@ export default {
         limit: size,
         skip: (current - 1) * size
       }
-      return Promise.all([
-        this.$api('license').count(),
-        this.$api('license').get({
+      return this.$api('Licenses')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        let list = res.data
-        return {
-          total: countRes.data.count,
-          data: list.map(item => {
-            let expirationDate = this.$moment(item.expirationDate)
-            let duration = expirationDate.valueOf() - Date.now()
-            let status = 'normal'
-            if (duration < 0) {
-              status = 'expired'
-            } else if (duration < 30 * 24 * 60 * 60 * 1000) {
-              status = 'expiring'
-            }
-            item.status = {
-              normal: {
-                text: '正常',
-                color: 'success'
-              },
-              expiring: {
-                text: '即将到期',
-                color: 'warning'
-              },
-              expired: {
-                text: '已过期',
-                color: 'info'
+        .then(res => {
+          let list = res.data?.items || []
+          return {
+            total: res.data?.total || 0,
+            data: list.map(item => {
+              let expirationDate = this.$moment(item.expirationDate)
+              let duration = expirationDate.valueOf() - Date.now()
+              let status = 'normal'
+              if (duration < 0) {
+                status = 'expired'
+              } else if (duration < 30 * 24 * 60 * 60 * 1000) {
+                status = 'expiring'
               }
-            }[status]
-            item.expirationDateFmt = expirationDate.format('YYYY-MM-DD HH:mm:ss')
-            item.lastUpdatedFmt = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
-            return item
-          })
-        }
-      })
+              item.status = {
+                normal: {
+                  text: '正常',
+                  color: 'success'
+                },
+                expiring: {
+                  text: '即将到期',
+                  color: 'warning'
+                },
+                expired: {
+                  text: '已过期',
+                  color: 'info'
+                }
+              }[status]
+              item.expirationDateFmt = expirationDate.format('YYYY-MM-DD HH:mm:ss')
+              item.lastUpdatedFmt = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              return item
+            })
+          }
+        })
     },
     copySid() {
       let table = this.$refs.table
