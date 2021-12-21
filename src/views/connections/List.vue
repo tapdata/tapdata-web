@@ -23,28 +23,29 @@
           </ElSelect>
         </li>
         <li class="item">
-          <el-select
+          <ElSelect
             v-model="searchParams.databaseModel"
             clearable
             size="small"
             @input="table.fetch(1)"
             :placeholder="$t('connection.connectionType')"
           >
-            <el-option v-for="item in databaseModelOptions" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
+            <ElOption v-for="item in databaseModelOptions" :key="item.value" :label="item.label" :value="item.value">
+            </ElOption>
+          </ElSelect>
         </li>
         <li class="item">
-          <el-select
+          <ElSelect
             v-model="searchParams.databaseType"
+            filterable
             clearable
             size="small"
             @input="table.fetch(1)"
             :placeholder="$t('connection.dataBaseType')"
           >
-            <el-option v-for="item in databaseTypeOptions" :key="item.type" :label="item.name" :value="item.type">
-            </el-option>
-          </el-select>
+            <ElOption v-for="item in databaseTypeOptions" :key="item.type" :label="item.name" :value="item.type">
+            </ElOption>
+          </ElSelect>
         </li>
         <li class="item">
           <ElInput
@@ -65,7 +66,7 @@
         </li>
       </ul>
       <div slot="operation">
-        <el-button
+        <ElButton
           v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'datasource_category_application'"
           size="mini"
@@ -75,8 +76,8 @@
         >
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkTag') }}</span>
-        </el-button>
-        <el-button
+        </ElButton>
+        <ElButton
           v-readonlybtn="'datasource_creation'"
           class="btn btn-create"
           type="primary"
@@ -85,16 +86,16 @@
         >
           <i class="iconfont icon-jia add-btn-icon"></i>
           <span> {{ $t('connection.createNewDataSource') }}</span>
-        </el-button>
+        </ElButton>
       </div>
-      <el-table-column
+      <ElTableColumn
         v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
         type="selection"
         width="45"
         :reserve-selection="true"
       >
-      </el-table-column>
-      <el-table-column prop="name" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true" min-width="150">
+      </ElTableColumn>
+      <ElTableColumn prop="name" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true" min-width="150">
         <template slot-scope="scope">
           <div class="connection-name">
             <div class="database-img">
@@ -112,13 +113,13 @@
             </div>
           </div>
         </template>
-      </el-table-column>
-      <el-table-column :label="$t('connection.connectionInfo')" min-width="150">
+      </ElTableColumn>
+      <ElTableColumn :label="$t('connection.connectionInfo')" min-width="150">
         <template slot-scope="scope">
           {{ scope.row.connectionUrl }}
         </template>
-      </el-table-column>
-      <el-table-column prop="status" :label="$t('connection.dataBaseStatus')" width="100">
+      </ElTableColumn>
+      <ElTableColumn prop="status" :label="$t('connection.dataBaseStatus')" width="100">
         <template slot-scope="scope">
           <div>
             <span class="error" v-if="['invalid'].includes(scope.row.status)">
@@ -141,13 +142,13 @@
             </span>
           </div>
         </template>
-      </el-table-column>
-      <el-table-column prop="connection_type" :label="$t('connection.connectionType')" width="160">
+      </ElTableColumn>
+      <ElTableColumn prop="connection_type" :label="$t('connection.connectionType')" width="160">
         <template slot-scope="scope">
           {{ $t('connection.type.' + scope.row.connection_type) }}
         </template>
-      </el-table-column>
-      <el-table-column width="160">
+      </ElTableColumn>
+      <ElTableColumn width="160">
         <div slot="header">
           {{ $t('connection_list_column_schema_status') }}
           <ElTooltip placement="top" :content="$t('connection_list_column_schema_status_tips')">
@@ -157,13 +158,13 @@
         <template slot-scope="scope">
           <SchemaProgress :data="scope.row"></SchemaProgress>
         </template>
-      </el-table-column>
-      <el-table-column :label="$t('connection.lastUpdateTime')" width="160" prop="last_updated" sortable="custom">
+      </ElTableColumn>
+      <ElTableColumn :label="$t('connection.lastUpdateTime')" width="160" prop="last_updated" sortable="custom">
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}
         </template>
-      </el-table-column>
-      <el-table-column :label="$t('connection.operate')" width="220">
+      </ElTableColumn>
+      <ElTableColumn :label="$t('connection.operate')" width="220">
         <template slot-scope="scope">
           <ElLink type="primary" @click="testConnection(scope.row)">{{ $t('connection.testConnection') }} </ElLink>
           <ElLink
@@ -190,7 +191,7 @@
             >{{ $t('message.delete') }}
           </ElLink>
         </template>
-      </el-table-column>
+      </ElTableColumn>
     </TablePage>
     <Preview
       :id="id"
@@ -390,10 +391,7 @@ export default {
       this.table.fetch(1)
     },
     async getDatabaseType() {
-      let filter = {}
-      let databaseTypes = await this.$api('DatabaseTypes').get({
-        filter: JSON.stringify(filter)
-      })
+      let databaseTypes = await this.$api('DatabaseTypes').get()
       databaseTypes.data.forEach(dt => this.databaseTypeOptions.push(dt))
     },
     getData({ page, tags }) {
