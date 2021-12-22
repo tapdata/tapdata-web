@@ -6,9 +6,9 @@
           <img src="../../../assets/images/task/task.png" alt="" />
         </div>
         <div>
-          <div>
+          <div class="flex align-items-center">
             <span class="fs-6 color-primary">{{ task.name }}</span>
-            <StatusTag v-if="task.status" type="text" target="etl" :status="task.status" class="ml-6"></StatusTag>
+            <StatusItem v-model="statusResult" :rows="task.statuses" class="ml-4"></StatusItem>
           </div>
           <div class="flex align-items-center mt-4" style="height: 30px">
             <div
@@ -35,10 +35,6 @@
             </div>
           </div>
           <div class="operation-row mt-4">
-            <!--            <ElButton type="primary" size="mini">启动</ElButton>-->
-            <!--            <ElButton size="mini">停止</ElButton>-->
-            <!--            <ElButton size="mini">重置</ElButton>-->
-            <!--            <ElButton size="mini">强制停止</ElButton>-->
             <VButton
               type="primary"
               :disabled="startDisabled"
@@ -48,25 +44,11 @@
               <VIcon size="12">start-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_start') }}</span>
             </VButton>
-            <VButton
-              v-if="task.status === 'stopping'"
-              :disabled="forceStopDisabled"
-              :loading="loadingObj.forceStop"
-              @click="forceStop($route.params.id, arguments[0])"
-            >
-              <VIcon size="12">pause-fill</VIcon>
-              <span class="ml-1">{{ $t('task_button_force_stop') }}</span>
-            </VButton>
-            <VButton
-              v-else
-              :disabled="stopDisabled"
-              :loading="loadingObj.stop"
-              @click="stop($route.params.id, arguments[0])"
-            >
+            <VButton :disabled="stopDisabled" :loading="loadingObj.stop" @click="stop($route.params.id, arguments[0])">
               <VIcon size="12">pause-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_stop') }}</span>
             </VButton>
-            <VButton @click="toEditorPage">
+            <VButton @click="handleEditor(task.id)">
               <VIcon size="12">edit-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_edit') }}</span>
             </VButton>
@@ -112,18 +94,18 @@
 </template>
 
 <script>
-import StatusTag from '@/components/StatusTag'
 import VIcon from '@/components/VIcon'
 import InlineInput from '@/components/InlineInput'
 import Connection from '../migrate/details/Connection'
 import History from '../migrate/details/History'
 import Subtask from './Subtask'
+import StatusItem from './StatusItem'
 // import Task from 'web-core/api/Task'
 // const taskApi = new Task()
 
 export default {
   name: 'TaskDetails',
-  components: { StatusTag, VIcon, InlineInput, Connection, History, Subtask },
+  components: { VIcon, InlineInput, Connection, History, Subtask, StatusItem },
   data() {
     return {
       loading: true,
@@ -141,7 +123,7 @@ export default {
           label: '修改时间：'
         },
         {
-          key: 'syncType',
+          key: 'type',
           icon: 'menu',
           label: '同步类型：'
         }
@@ -183,7 +165,8 @@ export default {
         forceStop: false,
         reset: false
       },
-      operations: ['start', 'stop', 'forceStop']
+      operations: ['start', 'stop', 'forceStop'],
+      statusResult: []
     }
   },
   computed: {
@@ -195,19 +178,18 @@ export default {
       )
     },
     startDisabled() {
-      return false
-      // const { statusBtMap, task } = this
-      // return !statusBtMap['run'][task.status] || (task.status === 'draft' && task.checked === false)
+      const { statusResult, task } = this
+      return (
+        this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
+        statusResult.every(t => t.status === 'running' && t.count)
+      )
     },
     stopDisabled() {
-      return false
-      // const { statusBtMap, task } = this
-      // return !statusBtMap['stop'][task.status]
-    },
-    forceStopDisabled() {
-      return false
-      // const { statusBtMap, task } = this
-      // return !statusBtMap['forceStop'][task.status]
+      const { statusResult, task } = this
+      return (
+        this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
+        statusResult.every(t => t.status === 'not_running' && t.count)
+      )
     }
   },
   created() {
@@ -277,7 +259,7 @@ export default {
       result.totalInput = result.stats?.input?.rows || 0
       result.creator = result.creator || result.username || result.user?.username || '-'
       result.updatedTime = result.last_updated ? this.formatTime(result.last_updated) : '-'
-      result.syncType = this.syncTypeMap[result.setting?.sync_type]
+      result.type = this.syncTypeMap[result.type]
       return result
     },
     start(id, resetLoading) {
@@ -463,14 +445,52 @@ export default {
           this.task.desc = val
           this.$message.success(this.$t('gl_button_update_success'))
         })
+        .catch(err => {
+          this.$message.error(err.data.message)
+        })
     },
-    toEditorPage() {
-      this.$router.push({
-        name: 'DataflowEditor',
-        params: {
-          id: this.task?.id
+    handleEditor(id) {
+      const h = this.$createElement
+      this.$confirm(
+        h('p', null, [
+          h('span', null, this.$t('dataFlow.modifyEditText')),
+          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeLayoutProcess')),
+          h('span', null, '、'),
+          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeAttributes')),
+          h('span', null, '、'),
+          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.matchingRelationship')),
+          h('span', null, '，'),
+          h('span', null, this.$t('dataFlow.afterSubmission')),
+          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.reset')),
+          h('span', null, this.$t('dataFlow.runNomally')),
+          h('span', null, this.$t('dataFlow.editLayerTip'))
+        ]),
+        this.$t('dataFlow.importantReminder'),
+        {
+          customClass: 'dataflow-clickTip',
+          confirmButtonText: this.$t('dataFlow.continueEditing'),
+          type: 'warning'
         }
+      ).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        let routeUrl = this.$router.resolve({
+          name: 'DataflowEditor',
+          params: { id: id }
+        })
+        setTimeout(() => {
+          document.querySelectorAll('.el-tooltip__popper').forEach(it => {
+            it.outerHTML = ''
+          })
+          window.open(routeUrl.href, 'edit_' + id)
+        }, 200)
       })
+      setTimeout(() => {
+        document.querySelectorAll('.el-tooltip__popper').forEach(it => {
+          it.outerHTML = ''
+        })
+      }, 200)
     }
   }
 }
