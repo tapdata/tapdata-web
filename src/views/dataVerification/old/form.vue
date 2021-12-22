@@ -258,26 +258,26 @@
                       </span>
                     </div>
 
-                    <div class="setting-item">
-                      <div class="setting-item-box">
+                    <el-row class="pt-3">
+                      <el-col :span="13" class="setting-item-box">
                         <el-switch
-                          v-model="item.source.where"
-                          @change="changeSourceWhere(item.source.where, item.source)"
+                          v-model="item.source.sourceFilterFalg"
+                          @change="changeSourceWhere(item.source.sourceFilterFalg, item.source)"
                         ></el-switch>
-                        <label class="item-label">源表数据过滤</label>
-                      </div>
-                      <div class="setting-item-box pl-5">
+                        <label class="item-label pl-2">{{ $t('verify_form_source_filter') }}</label>
+                      </el-col>
+                      <el-col :span="11" class="pl-6">
                         <el-switch
-                          v-model="item.target.where"
-                          @change="changeSourceWhere(item.target.where, item.target)"
+                          v-model="item.target.targeFilterFalg"
+                          @change="changeSourceWhere(item.target.targeFilterFalg, item.target)"
                         ></el-switch>
-                        <label class="item-label">目标表数据过滤</label>
-                      </div>
-                    </div>
-                    <div class="setting-item">
-                      <div class="setting-item-box">
+                        <label class="item-label pl-2">{{ $t('verify_form_target_filter') }}</label>
+                      </el-col>
+                    </el-row>
+                    <el-row class="pt-3">
+                      <el-col :span="13" class="setting-item-box">
                         <queryBuilder
-                          v-if="item.source.where"
+                          v-if="item.source.sourceFilterFalg"
                           v-model="item.source.custSql"
                           v-bind:initialOffset.sync="item.source.initialOffset"
                           :primaryKeyOptions="item.source.fields.map(f => f.field_name)"
@@ -285,10 +285,10 @@
                           :databaseType="item.source.databaseType"
                           :mergedSchema="item.source"
                         ></queryBuilder>
-                      </div>
-                      <div class="setting-item-box pl-5">
+                      </el-col>
+                      <el-col :span="11" class="pl-6">
                         <queryBuilder
-                          v-if="item.target.where"
+                          v-if="item.target.targeFilterFalg"
                           v-model="item.target.custSql"
                           v-bind:initialOffset.sync="item.target.initialOffset"
                           :primaryKeyOptions="item.target.fields.map(f => f.field_name)"
@@ -296,8 +296,8 @@
                           :databaseType="item.target.databaseType"
                           :mergedSchema="item.target"
                         ></queryBuilder>
-                      </div>
-                    </div>
+                      </el-col>
+                    </el-row>
                   </div>
                 </el-form>
 
@@ -360,6 +360,7 @@
 const TABLE_PARAMS = {
   connectionId: '',
   table: '',
+  databaseType: '',
   sortColumn: '',
   fields: []
 }
@@ -431,23 +432,7 @@ export default {
           keep: 100
         },
         enabled: true,
-        tasks: [
-          {
-            source: {
-              custSql: {
-                filterType: 'field', //sql
-                noFieldFilter: true,
-                noLineLimit: true,
-                selectedFields: [],
-                fieldFilterType: 'keepAllFields',
-                limitLines: '',
-                cSql: '',
-                editSql: '',
-                conditions: []
-              }
-            }
-          }
-        ]
+        tasks: []
       },
       rules: {
         flowId: [
@@ -504,6 +489,7 @@ export default {
           noLineLimit: true,
           selectedFields: [],
           fieldFilterType: 'keepAllFields',
+          noFieldFilter: true,
           limitLines: '',
           cSql: '',
           editSql: '',
@@ -910,9 +896,11 @@ export default {
           }
         }
       }
+      debugger
       return {
         connectionId: stage.connectionId,
         connectionName: stage.connectionName,
+        databaseType: stage.databaseType,
         table: stage.tableName,
         sortColumn,
         fields: sortField(stage.fields)
@@ -1018,6 +1006,26 @@ export default {
         this.$router.back()
       })
     },
+    //
+    stringIntercept(databaseType, item) {
+      let where
+      if (databaseType === 'mongodb') {
+        if (item.custSql?.editSql) {
+          where = item.custSql.editSql
+        } else {
+          where = item.custSql?.cSql
+        }
+      } else {
+        if (item.custSql?.cSql) {
+          let index = item.custSql.cSql.indexOf('*  FROM')
+          let string = item.custSql.cSql.substring(index + 7, item.custSql.cSql.length).trimStart()
+          where = string
+        } else {
+          where = item.custSql?.editSql
+        }
+      }
+      return where
+    },
     nextStep() {
       this.$refs.baseForm.validate(valid => {
         if (valid) {
@@ -1082,6 +1090,9 @@ export default {
                   if (webScript && webScript !== '') {
                     script = 'function validate(sourceRow){' + webScript + '}'
                   }
+
+                  source.where = this.stringIntercept(source.databaseType, source)
+                  target.where = this.stringIntercept(target.databaseType, target)
                   return {
                     source,
                     target,
@@ -1185,15 +1196,12 @@ export default {
         padding: 5px 10px;
         border: 1px solid #dedee4;
       }
+
       .setting-item {
         display: flex;
         align-items: center;
         padding: 5px 0;
         margin-bottom: 0;
-        .setting-item-box {
-          width: 600px;
-          padding-left: 140px;
-        }
         .el-form-item__content {
           display: flex;
           align-items: center;
@@ -1227,6 +1235,9 @@ export default {
           text-overflow: ellipsis;
           white-space: nowrap;
         }
+      }
+      .setting-item-box {
+        padding-left: 140px;
       }
       .setting-buttons {
         margin-left: 10px;

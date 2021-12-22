@@ -51,6 +51,8 @@ export default {
   verify_result_source_info: 'Source Information',
   verify_result_target_info: 'Target Information',
   verify_create_window_duration: 'Window duration',
+  verify_form_source_filter: 'Source table data filtering',
+  verify_form_target_filter: 'Target table data filtering',
 
   taskprogress_plan_sync_table_num: 'Number of plan synchronization tables',
   taskprogress_completed_sync_table_num: 'Number of completed synchronization tables',
