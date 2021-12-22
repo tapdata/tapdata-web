@@ -17,10 +17,12 @@ server_id         = 223344
 log_bin           = mysql-bin
 expire_logs_days  = 1
 binlog_format     = row
+binlog_row_image  = full
 ```
 配置解释：<br>
 server-id: 对于 MySQL 中的每个服务器和复制客户端必须是唯一的<br>
 binlog_format：必须设置为 row 或者 ROW<br>
+binlog_row_image：必须设置为 full<br>
 expire_logs_days：二进制日志文件保留的天数，到期会自动删除<br>
 log_bin：binlog 序列文件的基本名称<br>
 
@@ -34,6 +36,12 @@ log_bin：binlog 序列文件的基本名称<br>
 show variables like 'binlog_format';
 ```
 输出的结果中，format value 应该是"ROW"
+
+验证 binlog_row_image 参数的值是否为full:
+```
+show variables like 'binlog_row_image';
+```
+输出结果中，binlog_row_image value应该是"FULL"
 
 #### **3.3 创建MySQL账号**
 Mysql8以后，对密码加密的方式不同，请注意使用对应版本的方式，设置密码，否则会导致无法进行增量同步
