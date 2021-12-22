@@ -60,6 +60,7 @@
               @quick-add-node="quickAddNode"
             ></DFNode>
           </PaperScroller>
+          <PaperEmpty v-if="!nodes.length"></PaperEmpty>
           <ElPopover
             ref="nodeMenu"
             v-model="nodeMenu.show"
@@ -120,6 +121,7 @@ import dagre from 'dagre'
 import { validateBySchema } from 'web-core/components/form/utils/validate'
 import resize from 'web-core/directives/resize'
 import { merge } from 'lodash'
+import PaperEmpty from 'web-core/views/dataflow/components/PaperEmpty'
 
 const databaseTypesApi = new DatabaseTypes()
 const taskApi = new Task()
@@ -141,6 +143,7 @@ export default {
   },
 
   components: {
+    PaperEmpty,
     ConfigPanel,
     PaperScroller,
     TopHeader,
