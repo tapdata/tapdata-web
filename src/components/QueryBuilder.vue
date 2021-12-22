@@ -7,7 +7,7 @@
           v-if="!value.noFieldFilter"
           :placeholder="$t('editor.cell.data_node.collection.form.filter.allField')"
         >
-          <el-select v-model="value.fieldFilterType">
+          <el-select v-model="value.fieldFilterType" size="mini">
             <el-option
               v-for="item in filterTypeOptions"
               :key="item.value"
@@ -48,34 +48,22 @@
             </el-select>
           </div>
           <el-row v-if="databaseType == 'mongodb' && value.conditions.length == 0">
-            <el-button plain class="el-button--small" style="height: 28px" @click="addCond('group', 'and')"
-              >+ and()</el-button
-            >
-            <el-button plain class="el-button--small" style="height: 28px" @click="addCond('group', 'or')"
-              >+ or()</el-button
-            >
+            <el-button plain class="el-button--small" size="mini" @click="addCond('group', 'and')">+ and()</el-button>
+            <el-button plain class="el-button--small" size="mini" @click="addCond('group', 'or')">+ or()</el-button>
           </el-row>
           <el-row v-if="databaseType != 'mongodb' && value.conditions.length == 0">
-            <el-button plain class="el-button--small" style="height: 28px" @click="addCond('cond')"
+            <el-button plain class="el-button--small" size="mini" @click="addCond('cond')"
               >+{{ $t('queryBuilder.addCond') }}</el-button
             >
-            <el-button plain class="el-button--small" style="height: 28px" @click="addCond('group')"
+            <el-button plain class="el-button--small" size="mini" @click="addCond('group')"
               >+({{ $t('queryBuilder.addCond') }})</el-button
             >
           </el-row>
           <el-row v-if="databaseType != 'mongodb' && value.conditions.length > 0" style="padding-bottom: 10px">
-            <el-button plain class="el-button--small" style="height: 28px" @click="addCond('cond', 'and')"
-              >+ and</el-button
-            >
-            <el-button plain class="el-button--small" style="height: 28px" @click="addCond('cond', 'or')"
-              >+ or</el-button
-            >
-            <el-button plain class="el-button--small" style="height: 28px" @click="addCond('group', 'and')"
-              >+ and()</el-button
-            >
-            <el-button plain class="el-button--small" style="height: 28px" @click="addCond('group', 'or')"
-              >+ or()</el-button
-            >
+            <el-button plain class="el-button--small" size="mini" @click="addCond('cond', 'and')">+ and</el-button>
+            <el-button plain class="el-button--small" size="mini" @click="addCond('cond', 'or')">+ or</el-button>
+            <el-button plain class="el-button--small" size="mini" @click="addCond('group', 'and')">+ and()</el-button>
+            <el-button plain class="el-button--small" size="mini" @click="addCond('group', 'or')">+ or()</el-button>
           </el-row>
           <queryCond
             v-if="value.conditions.length > 0"
@@ -505,6 +493,12 @@ export default {
 </style>
 <style lang="scss">
 .e-qb {
+  .el-select {
+    width: 100%;
+  }
+  .el-form-item__label {
+    line-height: 28px;
+  }
   .fiflter {
     .e-select .el-input--mini .el-input__inner {
       border: 0;
