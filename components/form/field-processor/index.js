@@ -1,7 +1,7 @@
 import { connect, mapProps, useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
-import VIcon from '@/components/VIcon'
+import VIcon from 'web-core/components/VIcon'
 import { uuid } from './util'
 import './fieldProessor.scss'
 // import de from 'element-ui/src/locale/lang/de'
@@ -167,12 +167,7 @@ export const FieldProcess = connect(
                       slot-scope="{ node, data }"
                     >
                       <ElTooltip class="item inline-block" effect="dark" placement="right-start">
-                        <span slot="content">
-                          {data.original_field_name}
-                          <br />
-                          <span v-if="data.original_javaType">{data.original_type}</span>
-                          <div v-if="data.comment">{data.comment}</div>
-                        </span>
+                        <span slot="content">{data.original_field_name}</span>
                         <span
                           class={[
                             this.isRename(data.id) ? 'active__name' : '',
@@ -302,18 +297,18 @@ export const FieldProcess = connect(
           let nativeData = this.getNativeData(data.id) //查找初始schema
           //该字段若是已被删除 不可再重命名
           if (!data || data.field_name === '') {
-            data.field_name = nativedata.field_name
+            data.field_name = nativeData.field_name
             this.$message.error(this.$t('message.exists_name'))
             return
           }
           let removes = this.operations.filter(v => v.id === data.id && v.op === 'REMOVE')
           if (removes.length > 0) {
-            data.field_name = nativedata.field_name
+            data.field_name = nativeData.field_name
             return
           }
           let existsName = this.handleExistsName(node, data)
           if (existsName) {
-            data.field_name = nativedata.field_name
+            data.field_name = nativeData.field_name
             return
           }
           let createOps = this.operations.filter(v => v.id === data.id && v.op === 'CREATE')
