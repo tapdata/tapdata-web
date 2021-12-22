@@ -65,6 +65,9 @@ export default {
               } else if (duration < 30 * 24 * 60 * 60 * 1000) {
                 status = 'expiring'
               }
+              if (!item.license) {
+                status = 'probation'
+              }
               item.status = {
                 normal: {
                   text: '正常',
@@ -77,10 +80,16 @@ export default {
                 expired: {
                   text: '已过期',
                   color: 'info'
+                },
+                probation: {
+                  text: '试用',
+                  color: 'info'
                 }
               }[status]
-              item.expirationDateFmt = expirationDate.format('YYYY-MM-DD HH:mm:ss')
-              item.lastUpdatedFmt = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              item.expirationDateFmt = item.expirationDate ? expirationDate.format('YYYY-MM-DD HH:mm:ss') : ''
+              item.lastUpdatedFmt = item.last_updated
+                ? this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+                : ''
               return item
             })
           }
