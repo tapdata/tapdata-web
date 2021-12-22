@@ -8,7 +8,6 @@ import tcLocale from 'element-ui/lib/locale/lang/zh-TW'
 import en from './langs/en'
 import zhCN from './langs/zh-CN'
 import zhTW from './langs/zh-TW'
-import { cookie } from '../util'
 
 let eleLangs = {
   'zh-CN': zhLocale,
@@ -26,12 +25,8 @@ let langMap = {
   en: 'en'
 }
 Vue.use(VueI18n)
-const lang = cookie.get('lang')
-if (!lang) {
-  cookie.set('lang', 'zh-CN')
-}
 const i18n = new VueI18n({
-  locale: langMap[cookie.get('lang')] || langMap[localStorage.getItem('tapdata_localize_lang')] || 'zh-CN',
+  locale: 'zh-CN',
   messages: eleLangs
 })
 Object.values(langMap).forEach(l => {
