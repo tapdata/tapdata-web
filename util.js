@@ -9,10 +9,18 @@ export const uuid = function () {
 }
 
 export const getConnectionTypeImg = function (type) {
-  return require(`./assets/icons/node/${type}.svg`)
+  try {
+    return require(`./assets/icons/node/${type}.svg`)
+  } catch (e) {
+    return require('./assets/icons/node/default.svg')
+  }
 }
 export const getConnectionTypeDialogImg = function (type) {
-  return require(`./assets/icons/node/${type}.svg`)
+  try {
+    return require(`./assets/icons/node/${type}.svg`)
+  } catch (e) {
+    return require('./assets/icons/node/default.svg')
+  }
 }
 
 let timeout = null
