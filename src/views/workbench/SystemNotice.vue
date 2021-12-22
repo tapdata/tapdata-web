@@ -3,10 +3,10 @@
     <div class="main">
       <div class="system-operation">
         <div class="system-operation-left">
-          <span>通知列表</span>
+          <span>{{ $t('notify_list') }}</span>
           <span class="system-operation-setting" @click="handleSetting">
             <VIcon class="ml-2" size="12">setting</VIcon>
-            <span class="fs-8">设置</span>
+            <span class="fs-8">{{ $t('header_setting') }}</span>
           </span>
         </div>
         <div class="system-operation-right">
@@ -16,11 +16,17 @@
             @click="handleReadNotice()"
             :disabled="multipleSelection.length < 1"
           >
-            标记为已读
+            {{ $t('notify_mark_read') }}
           </ElButton>
-          <ElButton size="mini" @click="handleDelete()" :disabled="multipleSelection.length < 1"> 删除 </ElButton>
-          <ElButton size="mini" type="primary" @click="handleReadNoticeAll()"> 全部已读 </ElButton>
-          <ElButton size="mini" @click="handleAllDelete()" :disabled="list.length < 1"> 全部删除 </ElButton>
+          <ElButton size="mini" @click="handleDelete('one')" :disabled="multipleSelection.length < 1">
+            {{ $t('notify_delete') }}
+          </ElButton>
+          <ElButton size="mini" type="primary" @click="handleReadNotice('all')">
+            {{ $t('notify_all_read') }}
+          </ElButton>
+          <ElButton size="mini" @click="handleDelete('all')" :disabled="list.length < 1">
+            {{ $t('notify_all_delete') }}
+          </ElButton>
         </div>
       </div>
       <ElTable
@@ -31,27 +37,32 @@
         @selection-change="handleSelectionChange"
       >
         <ElTableColumn type="selection" width="55"></ElTableColumn>
-        <ElTableColumn label="通知内容" prop="name" min-width="150">
+        <ElTableColumn :label="$t('notify_notification_content')" prop="name" min-width="150">
           <template slot-scope="scope">
             <div class="list-item-content">
               <div class="unread-1zPaAXtSu" v-show="!scope.row.read"></div>
               <div class="list-item-desc" @click="handleReadNotice(scope.row.id)">
                 <!--                                <span :style="`color: ${colorMap[scope.row.level]};`">【{{ scope.row.level }}】</span>-->
-                <span>您的{{ systemMap[scope.row.system] }}:</span>
+                <span>{{ $t('notify_your') }}{{ systemMap[scope.row.system] }}:</span>
                 <span style="color: #2c65ff; cursor: pointer" @click="handleGo(scope.row)">
                   {{ scope.row.serverName }}
                 </span>
                 <span>{{ typeMap[scope.row.msg] }}</span>
                 <span v-if="scope.row.CDCTime">{{ getLag(scope.row.CDCTime) }}</span>
-                <span v-if="scope.row.restDay">{{ scope.row.restDay }} 天</span>
+                <span v-if="scope.row.restDay">{{ scope.row.restDay }} {{ $t('notify_day') }}</span>
               </div>
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn show-overflow-tooltip label="通知时间" prop="createTime" width="180"></ElTableColumn>
+        <ElTableColumn
+          show-overflow-tooltip
+          :label="$t('notify_notification_time')"
+          prop="createTime"
+          width="180"
+        ></ElTableColumn>
         <div class="connection-table__empty" slot="empty">
           <VIcon size="100">no-notice-color</VIcon>
-          <span v-if="!isSearching" style="display: inline-block; margin-left: 6px">暂无通知</span>
+          <span v-if="!isSearching" style="display: inline-block; margin-left: 6px">{{ $t('notify_no_notice') }}</span>
         </div>
       </ElTable>
       <ElPagination
@@ -93,12 +104,12 @@ export default {
         INFO: '#409EFF'
       },
       systemMap: {
-        sync: '同步任务',
-        migration: '迁移任务',
-        dataFlow: '任务',
-        agent: 'Agent',
-        inspect: '校验任务',
-        JobDDL: 'DDL处理'
+        sync: this.$t('notify_sync_task'),
+        migration: this.$t('notify_migration_task'),
+        dataFlow: this.$t('notify_task'),
+        agent: this.$t('notify_agent'),
+        inspect: this.$t('notify_inspect'),
+        JobDDL: this.$t('notify_jobDDL')
       },
       page: {
         current: 1,
@@ -189,7 +200,7 @@ export default {
             })
             .catch(err => {
               if (err?.data?.msg === 'no permission') {
-                this.$message.error('您的任务已不存在')
+                this.$message.error(this.$t('notify_task_longer_exists'))
               }
             })
           break
@@ -206,7 +217,7 @@ export default {
             })
             .catch(err => {
               if (err?.data?.msg === 'no permission') {
-                this.$message.error('您的任务已不存在')
+                this.$message.error(this.$t('notify_task_longer_exists'))
               }
             })
           break
@@ -249,13 +260,21 @@ export default {
       this.multipleSelection = val
     },
     // 删除消息
-    handleDelete() {
+    handleDelete(type) {
       let where = {}
-      let ids = this.multipleSelection.map(item => item.id)
-      where.id = { inq: ids }
-
-      this.$confirm('是否确认删除通知？', '删除通知', {
-        type: 'warning'
+      if (type === 'one') {
+        let ids = this.multipleSelection.map(item => item.id)
+        where.id = { inq: ids }
+      } else {
+        where = {}
+      }
+      // let data = {
+      //   isDeleted: true
+      // }
+      this.$confirm(this.$t('notify_delete_notification_tip'), this.$t('notify_delete_notification_title'), {
+        type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel')
       }).then(res => {
         if (res) {
           this.$axios.delete('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where)))
@@ -455,35 +474,6 @@ $unreadColor: #e43737;
       background-color: #fff;
       border-color: #ebeef5;
       color: #c0c4cc;
-    }
-  }
-}
-.notice-setting-dialog {
-  .el-dialog__header {
-    padding: 40px 40px 0 40px;
-    .el-dialog__title {
-      font-weight: 500;
-      color: #000;
-    }
-    .el-dialog__headerbtn {
-      top: 40px;
-      right: 40px;
-    }
-  }
-  .el-dialog__body {
-    padding: 30px 40px;
-    .notice-setting-title {
-      padding-bottom: 10px;
-      font-size: 12px;
-      color: #2c65ff;
-    }
-    .notice-setting-label {
-      padding: 0 8px 0 30px;
-      font-size: 12px;
-      color: rgba(0, 0, 0, 0.65);
-    }
-    .el-form-item__label {
-      text-align: left;
     }
   }
 }

@@ -5,12 +5,13 @@ import AgentDownload from '@/views/agent-download/AgentPage.vue'
 import FastDownload from '@/views/agent-download/FastDownload.vue'
 import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
 import ContactUs from '@/views/ContactUs'
+import i18n from '@/i18n'
 
 const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/Form.vue')
 const TaskDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/Details.vue')
-// const TaskDetails = () => import(/* webpackChunkName: "task-form" */ '../views/Task/SubtaskDetails.vue')
 const TaskStatistics = () => import(/* webpackChunkName: "task-form" */ '../views/task/statistics/Index.vue')
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/connection/Form.vue')
+const DataflowDetails = () => import(/* webpackChunkName: "task-form" */ '../views/Task/copy/Index.vue')
 
 const routes = [
   {
@@ -22,7 +23,7 @@ const routes = [
         path: '/',
         name: 'Home',
         meta: {
-          title: '首页'
+          title: i18n.t('tap_home')
         },
         redirect: { name: 'Workbench' },
         hidden: true
@@ -32,7 +33,7 @@ const routes = [
         name: 'Workbench',
         component: () => import('../views/workbench/Workbench.vue'),
         meta: {
-          title: '工作台',
+          title: i18n.t('tap_workbench'),
           icon: 'workbench',
           hideTitle: true
         },
@@ -42,7 +43,7 @@ const routes = [
             name: 'WorkbenchNotice',
             component: () => import('../views/workbench/Notice.vue'),
             meta: {
-              title: '公告通知'
+              title: i18n.t('tap_announcement_notice')
             }
           }
         ]
@@ -52,7 +53,7 @@ const routes = [
         name: 'SystemNotice',
         component: () => import('../views/workbench/SystemNotice.vue'),
         meta: {
-          title: '系统通知'
+          title: i18n.t('tap_system_notification')
         }
       },
       {
@@ -60,7 +61,7 @@ const routes = [
         name: 'Instance',
         component: () => import(/* webpackChunkName: "instance" */ '../views/instance/Instance.vue'),
         meta: {
-          title: 'Agent管理',
+          title: i18n.t('tap_agent_management'),
           icon: 'agent'
         },
         children: [
@@ -72,7 +73,7 @@ const routes = [
             // which is lazy-loaded when the route is visited.
             component: () => import(/* webpackChunkName: "instance-details" */ '../views/instance/Details.vue'),
             meta: {
-              title: '实例详情'
+              title: i18n.t('tap_instance_details')
             }
           }
         ]
@@ -83,7 +84,7 @@ const routes = [
         // component: Iframe,
         component: () => import(/* webpackChunkName: "connection-list" */ '../views/connection/List.vue'),
         meta: {
-          title: '连接管理',
+          title: i18n.t('tap_connection_management'),
           icon: 'connection'
         },
         children: [
@@ -93,7 +94,7 @@ const routes = [
             component: ConnectionForm,
             //component: Iframe,
             meta: {
-              title: '创建连接'
+              title: i18n.t('tap_create_connection')
             }
           },
           {
@@ -102,7 +103,7 @@ const routes = [
             component: ConnectionForm,
             //component: Iframe,
             meta: {
-              title: '编辑连接'
+              title: i18n.t('tap_edit_connection')
             }
           }
         ]
@@ -112,7 +113,7 @@ const routes = [
         name: 'Task',
         component: () => import(/* webpackChunkName: "task-migration" */ '../views/task/Migration.vue'),
         meta: {
-          title: '任务管理',
+          title: i18n.t('tap_task_management'),
           icon: 'task'
         },
         children: [
@@ -121,7 +122,7 @@ const routes = [
             name: 'DataflowCreate',
             component: TaskForm,
             meta: {
-              title: '创建任务'
+              title: i18n.t('tap_create_task')
             }
           },
           {
@@ -129,7 +130,7 @@ const routes = [
             name: 'DataflowEdit',
             component: TaskForm,
             meta: {
-              title: '编辑任务'
+              title: i18n.t('tap_edit_task')
             }
           },
           {
@@ -137,7 +138,15 @@ const routes = [
             name: 'Monitor',
             component: () => import(/* webpackChunkName: "task-monitor" */ '../views/monitor/Dashboard.vue'),
             meta: {
-              title: '运行监控'
+              title: i18n.t('tap_monitor')
+            }
+          },
+          {
+            path: ':id/statistics',
+            name: 'DataflowDetails',
+            component: DataflowDetails,
+            meta: {
+              title: i18n.t('tap_task_details')
             }
           },
           {
@@ -163,7 +172,7 @@ const routes = [
         name: 'Verify',
         component: () => import(/* webpackChunkName: "verify" */ '../views/verify/List.vue'),
         meta: {
-          title: '数据校验',
+          title: i18n.t('tap_data_validation'),
           icon: 'shujuxiaoyan'
         },
         children: [
@@ -172,7 +181,7 @@ const routes = [
             name: 'VerifyCreate',
             component: () => import(/* webpackChunkName: "verify-form" */ '../views/verify/Form.vue'),
             meta: {
-              title: '创建校验任务'
+              title: i18n.t('tap_create_verification_task')
             }
           },
           {
@@ -180,7 +189,7 @@ const routes = [
             name: 'VerifyEdit',
             component: () => import(/* webpackChunkName: "verify-form" */ '../views/verify/Form.vue'),
             meta: {
-              title: '编辑校验任务'
+              title: i18n.t('tap_edit_verification_task')
             }
           },
           {
@@ -188,7 +197,7 @@ const routes = [
             name: 'VerifyDetails',
             component: () => import(/* webpackChunkName: "verify-details" */ '../views/verify/Details.vue'),
             meta: {
-              title: '任务校验详情'
+              title: i18n.t('tap_task_verification_details')
             }
           },
           {
@@ -196,7 +205,7 @@ const routes = [
             name: 'VerifyDiffDetails',
             component: () => import(/* webpackChunkName: "verify-result" */ '../views/verify/Result.vue'),
             meta: {
-              title: '差异校验详情'
+              title: i18n.t('tap_difference_check_details')
             }
           },
           {
@@ -204,7 +213,7 @@ const routes = [
             name: 'VerifyResult',
             component: () => import(/* webpackChunkName: "verify-result" */ '../views/verify/Result.vue'),
             meta: {
-              title: '校验结果'
+              title: i18n.t('tap_check_result')
             }
           },
           {
@@ -212,7 +221,7 @@ const routes = [
             name: 'VerifyHistory',
             component: () => import(/* webpackChunkName: "verify-history" */ '../views/verify/History.vue'),
             meta: {
-              title: '任务校验历史'
+              title: i18n.t('tap_task_verification_history')
             }
           },
           {
@@ -220,7 +229,7 @@ const routes = [
             name: 'VerifyDiffHistory',
             component: () => import(/* webpackChunkName: "verify-history" */ '../views/verify/History.vue'),
             meta: {
-              title: '差异校验历史'
+              title: i18n.t('tap_difference_check_history')
             }
           }
         ]
@@ -230,7 +239,7 @@ const routes = [
         name: 'OperationLog',
         component: () => import(/* webpackChunkName: "instance" */ '../views/operation-log/List.vue'),
         meta: {
-          title: '操作日志',
+          title: i18n.t('tap_operation_log'),
           icon: 'operation-log'
         }
       },
@@ -239,7 +248,7 @@ const routes = [
         name: 'NoviceGuide',
         component: () => import(/* webpackChunkName: "instance" */ '../views/novice-guide/Index.vue'),
         meta: {
-          title: '新手引导'
+          title: i18n.t('tap_Beginner_guide')
         }
       }
     ]
@@ -249,7 +258,7 @@ const routes = [
     name: 'AgentDownload',
     component: AgentDownload,
     meta: {
-      title: 'Agent 下载'
+      title: i18n.t('tap_agent_download')
     }
   },
   {
@@ -257,7 +266,7 @@ const routes = [
     name: 'FastDownload',
     component: FastDownload,
     meta: {
-      title: 'Agent 立即下载'
+      title: i18n.t('tap_agent_download_now')
     }
   },
   {
@@ -265,7 +274,7 @@ const routes = [
     name: 'UpgradeVersion',
     component: UpgradeVersion,
     meta: {
-      title: 'Agent 升级'
+      title: i18n.t('tap_upgrade')
     }
   },
   {
@@ -273,7 +282,7 @@ const routes = [
     name: 'ContactUs',
     component: ContactUs,
     meta: {
-      title: '联系我们'
+      title: i18n.t('tap_contact_us')
     }
   },
   {

@@ -138,6 +138,9 @@ export default {
     },
     firstChangeFnc() {
       this.secondLeftCheckedArr = [] // 清空其他选中
+      //已选表是否为空
+      this.returnValue()
+      this.$emit('select-table')
     },
     // 第二个穿梭框
     secondChangeFnc(value) {
@@ -155,6 +158,9 @@ export default {
         let items = this.data.filter(item => secondRightCheckedArr.indexOf(item.key) > -1) // 正在穿梭数据的源数据
         this.data1 = this.data1.concat(items)
       }
+      //已选表是否为空
+      this.returnValue()
+      this.$emit('select-table')
     },
     // 用于标记，第二穿梭框的右侧--左移还是右移？
     secondRightCheckedFnc(value) {

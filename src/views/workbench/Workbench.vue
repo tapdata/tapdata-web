@@ -34,6 +34,16 @@
                   {{ item.type }}
                 </div>
                 <el-link
+                  v-if="item.id === 9"
+                  target="_blank"
+                  type="primary"
+                  class="notice-list__name flex-grow-1 ellipsis block pointer"
+                  href="https://sourl.cn/2f3mPF"
+                >
+                  {{ item.name }}
+                </el-link>
+                <el-link
+                  v-else
                   type="primary"
                   class="notice-list__name flex-grow-1 ellipsis block pointer"
                   @click="toNotice(item)"
@@ -309,19 +319,55 @@ export default {
     loadNotices() {
       this.notices = [
         {
-          id: 2,
+          id: 9,
+          type: '',
+          name: '1分钟有奖调研，元旦开奖！',
+          time: '2021-12-21'
+        },
+        {
+          id: 8,
+          type: '',
+          name: 'Tapdata Cloud 1.0.9 版本发布啦！',
+          time: '2021-12-21'
+        },
+        {
+          id: 7,
+          type: '',
+          name: 'Tapdata 在线研讨会：DaaS vs 大数据平台，是竞争还是共处？',
+          time: '2021-12-03'
+        },
+        {
+          id: 6,
+          type: '',
+          name: 'Tapdata Cloud 最新功能概览',
+          time: '2021-12-03'
+        },
+        {
+          id: 5,
+          type: '',
+          name: 'Tapdata Cloud 1.0.8 版本发布啦！',
+          time: '2021-12-03'
+        },
+        {
+          id: 4,
+          type: '',
+          name: 'Tapdata Cloud 1.0.7 版本发布啦！',
+          time: '2021-10-26'
+        },
+        {
+          id: 3,
           type: '',
           name: 'Tapdata Cloud 1.0.6 版本发布啦！',
           time: '2021-08-30'
         },
         {
-          id: 1,
+          id: 2,
           type: '',
           name: '异构数据库同步云平台 Tapdata Cloud 开启有奖公测',
           time: '2021-07-31'
         },
         {
-          id: 0,
+          id: 1,
           type: '',
           name: 'Tapdata Cloud上线公测',
           time: '2021-07-01'
@@ -402,12 +448,15 @@ export default {
 }
 .create-list__main {
   flex: 1;
+  overflow: hidden;
 }
 .create-list__name {
   color: #000;
+  white-space: nowrap;
 }
 .create-list__desc {
   height: 110px;
+  overflow: auto;
   color: rgba(0, 0, 0, 0.49);
 }
 .aside-main {
@@ -456,6 +505,8 @@ export default {
 .notice-list__time {
   color: rgba(0, 0, 0, 0.5);
   white-space: nowrap;
+  width: 80px;
+  text-align: right;
 }
 .guide-list {
   height: 190px;

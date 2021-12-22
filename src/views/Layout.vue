@@ -26,7 +26,7 @@
         <RouterView></RouterView>
       </ElMain>
     </ElContainer>
-    <ElDialog title="创建连接" :visible.sync="dialogVisible" width="730px">
+    <ElDialog :title="$t('connection_form_creat_connection')" :visible.sync="dialogVisible" width="730px">
       <ConnectionTypeSelector
         :types="[
           'mysql',
@@ -39,7 +39,13 @@
           'dameng',
           'greenplum',
           'mq',
-          'clickhouse'
+          'clickhouse',
+          'kundb',
+          'adb_mysql',
+          'adb_postgres',
+          'hazelcast_cloud_cluster',
+          'dummy db',
+          'tidb'
         ]"
         :comingTypes="['db2', 'sybase ase', 'gbase-8s']"
         @select="createConnection"

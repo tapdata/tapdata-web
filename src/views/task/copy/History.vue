@@ -1,0 +1,88 @@
+<template>
+  <div>
+    <TableList :remoteMethod="remoteMethod" :remote-data="ids" :columns="columns" :hide-on-single-page="true">
+      <template slot="desc" slot-scope="scope">
+        <span>{{ mapData[scope.row.operation] }}</span>
+      </template>
+    </TableList>
+  </div>
+</template>
+
+<script>
+import TableList from '@/components/TableList'
+
+export default {
+  name: 'History',
+  components: { TableList },
+  props: {
+    ids: {
+      type: Array,
+      default: () => []
+    },
+    operations: {
+      type: Array,
+      default: () => []
+    }
+  },
+  data() {
+    return {
+      mapData: {
+        start: this.$t('task_start_task'),
+        stop: this.$t('task_stop_task'),
+        forceStop: this.$t('task_info_forced_stop_task')
+      },
+      columns: [
+        {
+          label: this.$t('task_name'),
+          prop: 'parameter1'
+        },
+        {
+          label: this.$t('task_info_running_time'),
+          prop: 'createTime',
+          dataType: 'time'
+        },
+        {
+          label: this.$t('task_info_operator'),
+          prop: 'username'
+        },
+        {
+          label: this.$t('task_info_operator_content'),
+          prop: 'desc',
+          slotName: 'desc'
+        }
+      ]
+    }
+  },
+  methods: {
+    remoteMethod({ page }) {
+      let { current, size } = page
+      const { ids, operations } = this
+      let where = {
+        sourceId: {
+          inq: ids
+        },
+        modular: 'migration',
+        operation: {
+          inq: operations
+        }
+      }
+      let filter = {
+        where: where,
+        limit: size,
+        skip: size * (current - 1)
+      }
+      return Promise.all([
+        this.$axios.get('tm/api/UserLogs/count?where=' + encodeURIComponent(JSON.stringify(where))),
+        this.$axios.get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter)))
+      ]).then(([countData, data]) => {
+        return {
+          total: countData.count,
+          data: data
+        }
+      })
+    }
+  }
+}
+</script>
+
+<style scoped></style>

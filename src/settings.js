@@ -14,6 +14,11 @@ module.exports = {
     'kafka',
     'greenplum',
     'mq',
-    'clickhouse'
+    'clickhouse',
+    'kundb',
+    'adb_postgres',
+    'adb_mysql',
+    'dummydb',
+    'tidb'
   ]
 }

@@ -21,11 +21,15 @@
           <div><status-tag type="text" target="connection" :status="connection.status"></status-tag></div>
         </div>
       </div>
-      <div class="button-line container-item border-item pt-4 pb-5">
+      <div v-if="!hideOperation" class="button-line container-item border-item pt-4 pb-5">
         <div slot="operation" class="flex">
-          <el-button type="primary" class="flex-fill" @click="reload()"> 加载Schema </el-button>
-          <el-button class="flex-fill" :disabled="connection.agentType === 'Cloud'" @click="edit()"> 编辑 </el-button>
-          <el-button class="flex-fill" @click="beforeTest()"> 连接测试 </el-button>
+          <el-button type="primary" class="flex-fill" @click="reload()">
+            {{ $t('connection_preview_load_schema') }}
+          </el-button>
+          <el-button class="flex-fill" :disabled="connection.agentType === 'Cloud'" @click="edit()">
+            {{ $t('connection_preview_edit') }}
+          </el-button>
+          <el-button class="flex-fill" @click="beforeTest()"> {{ $t('connection_preview_test') }} </el-button>
         </div>
         <el-progress v-if="showProgress" class="mt-2" color="#2c65ff" :percentage="progress"></el-progress>
       </div>
@@ -35,7 +39,7 @@
         </div>
         <div class="flex-fill ml-4">
           <div v-for="(temp, k) in item.items" :key="index + '' + k" class="box-line">
-            <div class="box-line__label">{{ temp.label + '：' }}</div>
+            <div class="box-line__label">{{ temp.label }}:</div>
 
             <el-tooltip
               v-if="connection[temp.key] && temp.key !== 'mqType' && connection[temp.key].toString()"
@@ -67,6 +71,12 @@ import { CONFIG_MODEL } from './const'
 export default {
   name: 'DetailsDrawer',
   components: { VIcon, StatusTag },
+  props: {
+    hideOperation: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       drawer: false,
@@ -84,10 +94,10 @@ export default {
         }
       },
       kafkaACK: {
-        0: '不确认',
-        '-1': '仅写入master分区',
-        1: '仅写入master分区',
-        all: '写入所有ISR分区'
+        0: this.$t('connection_preview_no_sure'),
+        '-1': this.$t('connection_preview_master_partition'),
+        1: this.$t('connection_preview_master_partition'),
+        all: this.$t('connection_preview_isr_partition')
       },
       list: [],
       mqType: {
@@ -304,7 +314,6 @@ export default {
 }
 .img-box {
   width: 24px;
-  height: 24px;
   img {
     width: 100%;
     height: 100%;

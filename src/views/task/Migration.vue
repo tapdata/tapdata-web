@@ -16,9 +16,9 @@
         @sort-change="sortChange"
       >
         <ElTableColumn label="任务名称" prop="name" min-width="200">
-          <!--          <template v-slot="scope">-->
-          <!--            <ElLink type="primary" @click="toDetails(scope.row)">{{ scope.row.name }}</ElLink>-->
-          <!--          </template>-->
+          <template v-slot="scope">
+            <ElLink type="primary" @click="toDetails(scope.row)">{{ scope.row.name }}</ElLink>
+          </template>
         </ElTableColumn>
         <ElTableColumn label="任务类型" prop="typeText"></ElTableColumn>
         <ElTableColumn label="所属agent" prop="belongAgent" min-width="200">
@@ -29,8 +29,8 @@
             <span v-else>-</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="同步类型" prop="syncTypeText"></ElTableColumn>
-        <ElTableColumn label="任务状态">
+        <ElTableColumn :label="$t('task_type')" prop="syncTypeText" width="130"></ElTableColumn>
+        <ElTableColumn :label="$t('task_status')">
           <template slot-scope="scope">
             <status-tag
               type="text"
@@ -40,15 +40,15 @@
             ></status-tag>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="启动时间" prop="startTime" sortable="custom" width="150">
+        <ElTableColumn :label="$t('task_start_time')" prop="startTime" sortable="custom" width="150">
           <template slot-scope="scope">{{ scope.row.startTimeFmt }}</template>
         </ElTableColumn>
-        <ElTableColumn label="操作" width="280">
+        <ElTableColumn :label="$t('task_operate')" width="280">
           <template slot-scope="scope">
             <ElTooltip
               v-if="!['running', 'stopping'].includes(scope.row.status)"
               effect="dark"
-              content="任务配置未完成，无法启动"
+              :content="$t('task_config_not_completed')"
               :manual="!(scope.row.status === 'draft' && scope.row.checked === false)"
               placement="top-start"
             >
@@ -63,7 +63,7 @@
                 class="no-loading"
                 @click="run([scope.row.id], scope.row, arguments[0])"
               >
-                启动任务
+                {{ $t('task_start_task') }}
               </VButton>
             </ElTooltip>
             <ElButton
@@ -73,7 +73,7 @@
               :disabled="!statusBtMap['stop'][scope.row.status]"
               @click="stop([scope.row.id])"
             >
-              停止任务
+              {{ $t('task_stop_task') }}
             </ElButton>
             <ElButton
               v-if="scope.row.status === 'stopping'"
@@ -82,7 +82,7 @@
               :disabled="!statusBtMap['forceStop'][scope.row.status]"
               @click="forceStop([scope.row.id])"
             >
-              强制停止
+              {{ $t('task_forced_stop') }}
             </ElButton>
             <ElDivider direction="vertical"></ElDivider>
             <ElButton
@@ -90,7 +90,7 @@
               type="text"
               @click="handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate, scope.row.hasChildren)"
             >
-              运行监控
+              {{ $t('task_operation_monitor') }}
             </ElButton>
             <ElDivider direction="vertical"></ElDivider>
             <ElButton
@@ -99,7 +99,7 @@
               :disabled="!statusBtMap['edit'][scope.row.status]"
               @click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate, scope.row.hasChildren)"
             >
-              编辑
+              {{ $t('button_edit') }}
             </ElButton>
             <ElDivider direction="vertical"></ElDivider>
             <ElDropdown @command="handleMore($event, scope.row, scope.$index)">
@@ -260,9 +260,9 @@ export default {
       },
       typeMap: { 'cluster-clone': '数据库迁移', custom: '数据表同步' },
       syncTypeMap: {
-        initial_sync: '全量',
-        cdc: '增量',
-        'initial_sync+cdc': '全量+增量'
+        initial_sync: this.$t('task_initial_sync'),
+        cdc: this.$t('task_cdc'),
+        'initial_sync+cdc': this.$t('task_initial_sync_cdc')
       },
       agentOptions: [],
 
@@ -599,8 +599,10 @@ export default {
     },
     // 重置任务
     resetAll(ids) {
-      this.$confirm('是否重置该任务？', '重置', {
+      this.$confirm(this.$t('task_reset_tsk'), this.$t('task_reset'), {
         type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel'),
         dangerouslyUseHTMLString: true
       }).then(flag => {
         if (!flag) {
@@ -612,14 +614,14 @@ export default {
           })
           .then(data => {
             if (data.success.length > 0) {
-              this.$message.success('重置成功')
+              this.$message.success(this.$t('task_reset_success'))
               this.reset()
             } else {
-              this.$message.success('重置失败')
+              this.$message.success(this.$t('task_reset_failed'))
             }
           })
           .catch(() => {
-            this.$message.success('重置失败')
+            this.$message.success(this.$t('task_reset_failed'))
           })
       })
     },
@@ -674,7 +676,7 @@ export default {
         .patch('tm/api/DataFlows?where=', attributes)
         .then(data => {
           this.fetch()
-          this.responseHandler(data, '操作成功')
+          this.responseHandler(data, this.$t('task_operation_successful'))
         })
         .catch(error => {
           if (error?.isException) {
@@ -689,10 +691,10 @@ export default {
       let failList = data.fail || []
       if (failList.length) {
         let msgMapping = {
-          5: '此任务不存在',
-          6: '任务状态不允许这种操作',
-          7: '操作失败，请重试',
-          8: '任务状态不允许这种操作'
+          5: this.$t('task_not_exist'),
+          6: this.$t('task_not_allow_operation'),
+          7: this.$t('task_operation_failed'),
+          8: this.$t('task_not_allow_operation')
         }
         let nameMapping = {}
         this.list.forEach(item => {
@@ -714,17 +716,17 @@ export default {
     },
     getConfirmMessage(operateStr, name) {
       let map = {
-        delete_confirm_title: '是否删除该任务？',
-        delete_confirm_message: '删除任务 xxx 后，此任务将无法恢复',
+        delete_confirm_title: this.$t('task_delete_confirm_title'),
+        delete_confirm_message: this.$t('task_delete_confirm_message'),
 
-        stop_confirm_title: '是否暂停该任务？',
-        stop_confirm_message: '暂停任务 xxx 后，任务中未完成全量同步的表再次启动时，会重新执行全量同步',
+        stop_confirm_title: this.$t('task_stop_confirm_title'),
+        stop_confirm_message: this.$t('task_stop_confirm_message'),
 
-        force_stop_confirm_title: '是否强制停止该任务？',
-        force_stop_confirm_message: '强制停止任务 xxx 将立即中断数据传输强制任务快速停止，并重置该任务',
+        force_stop_confirm_title: this.$t('task_force_stop_confirm_title'),
+        force_stop_confirm_message: this.$t('task_force_stop_confirm_message'),
 
-        initialize_confirm_title: '是否重置该任务？',
-        initialize_confirm_message: '重置任务 xxx 将清除任务同步进度，任务将重新执行'
+        initialize_confirm_title: this.$t('task_initialize_confirm_title'),
+        initialize_confirm_message: this.$t('task_initialize_confirm_message')
       }
       let title = operateStr + '_confirm_title',
         message = operateStr + '_confirm_message'
@@ -763,19 +765,21 @@ export default {
         let node = list[i]
         if (ids.includes(node.id)) {
           if (node.setting && !node.setting.sync_type.includes('cdc')) {
-            message = '初始化类型的任务暂停后如果再次启动，任务会从头开始同步，确定暂停?'
-            title = '重要提醒'
+            message = this.$t('task_pause_tip')
+            title = this.$t('task_important_reminder')
           }
           if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
             const h = this.$createElement
-            let arr = '任务XXX中含有聚合处理节点，任务停止后再次启动，任务会先进行重置，确定停止？'.split('XXX')
+            let arr = this.$t('task_stop_tip').split('XXX')
             message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
-            title = '重要提醒'
+            title = this.$t('task_important_reminder')
           }
         }
       }
       this.$confirm(message, title, {
-        type: 'warning'
+        type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel')
       }).then(resFlag => {
         if (resFlag) {
           this.changeStatus(ids, { status: 'stopping' })
@@ -785,7 +789,9 @@ export default {
     forceStop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('force_stop', item.name)
       this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning'
+        type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel')
       }).then(resFlag => {
         if (resFlag) {
           this.changeStatus(ids, { status: 'force stopping' })
@@ -797,10 +803,10 @@ export default {
         .post(`tm/api/DataFlows/${node.id}/copy`)
         .then(() => {
           this.fetch()
-          this.$message.success('复制成功')
+          this.$message.success(this.$t('task_copy_success'))
         })
         .catch(() => {
-          this.$message.error('复制失败')
+          this.$message.error(this.$t('task_copy_failed'))
         })
     },
     del(ids, item = {}) {
@@ -811,7 +817,9 @@ export default {
       }
       let msgObj = this.getConfirmMessage('delete', item.name)
       this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning'
+        type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel')
       }).then(resFlag => {
         if (resFlag) {
           this.$axios
@@ -819,13 +827,13 @@ export default {
             .then(data => {
               if (data?.success?.length) {
                 this.fetch()
-                this.responseHandler(data, '删除成功')
+                this.responseHandler(data, this.$t('task_delete_success'))
               } else if (data?.fail) {
-                this.$message.error('删除失败')
+                this.$message.error(this.$t('task_delete_failed'))
               }
             })
             .catch(() => {
-              this.$message.error('删除失败')
+              this.$message.error(this.$t('task_delete_failed'))
             })
         }
       })
@@ -837,15 +845,18 @@ export default {
       }
       if (type === 'edit') {
         this.$confirm(
-          '<p>编辑任务如果修改了<span style="color:#409EFF">节点排版流程</span>、' +
-            '<span style="color:#409EFF">节点属性</span>、' +
-            '<span style="color:#409EFF">匹配关系</span>,' +
-            '提交后必须<span style="color:#409EFF">重置</span>才能正常运行, 否则可能导致异常错误，请问您要继续编辑吗?</p>',
-          '重要提醒',
+          `<p>${this.$t('task_list_edit_tip')}<span style="color:#409EFF">${this.$t('task_list_edit_tip1')}</span>、` +
+            `<span style="color:#409EFF">${this.$t('task_list_node_attr')}</span>、` +
+            `<span style="color:#409EFF">${this.$t('task_list_matching_releation')}</span>,` +
+            `${this.$t('task_list_edit_submit')}<span style="color:#409EFF">${this.$t(
+              'task_list_edit_reset'
+            )}</span>${this.$t('task_list_edit_tip3')}</p>`,
+          this.$t('task_important_reminder'),
           {
             dangerouslyUseHTMLString: true,
             customClass: 'dataflow-clickTip',
-            confirmButtonText: '继续编辑',
+            cancelButtonText: this.$t('button_cancel'),
+            confirmButtonText: this.$t('task_list_continue_edit'),
             type: 'warning'
           }
         ).then(resFlag => {

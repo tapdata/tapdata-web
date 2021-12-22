@@ -4,7 +4,9 @@
       <div class="flex-shrink-0" style="width: 300px">
         <!-- 非增量 -->
         <div v-if="task && task.setting.sync_type !== 'cdc'" style="height: 310px">
-          <div><span class="dots">全量同步概览</span></div>
+          <div>
+            <span class="dots">{{ $t('task_monitor_full_sync') }}</span>
+          </div>
           <div>
             <div class="progress-box flex justify-content-center align-items-center position-relative">
               <el-progress
@@ -18,12 +20,14 @@
             </div>
           </div>
           <div class="py-6 text-center">
-            预计全量完成还需时间：<span>{{ completeTime }}</span>
+            {{ $t('task_monitor_full_completion_time') }}：<span>{{ completeTime }}</span>
           </div>
         </div>
         <!-- 非全量 -->
         <div v-if="task && task.setting.sync_type !== 'initial_sync'">
-          <div><span class="dots">增量同步概览</span></div>
+          <div>
+            <span class="dots">{{ $t('task_monitor_cdc_overview') }}</span>
+          </div>
           <div class="pb-6">
             <div class="progress-box flex justify-content-center align-items-center position-relative">
               <el-progress
@@ -34,7 +38,7 @@
                 :width="120"
               ></el-progress>
               <div class="progress-box__value flex flex-column justify-content-center align-items-center">
-                <div class="fs-5">{{ replicateObj.currentStatus || '延迟' }}</div>
+                <div class="fs-5">{{ replicateObj.currentStatus || $t('task_monitor_delay') }}</div>
                 <div class="mt-2" v-if="!replicateObj.currentStatus">{{ replicateObj.value }}</div>
               </div>
             </div>
@@ -44,7 +48,7 @@
       <div class="task-overview__detail flex-fill pl-4">
         <!-- 非增量 -->
         <div v-if="task && task.setting.sync_type !== 'cdc'" style="height: 310px">
-          <div class="mb-10 fs-7 dots">进度详情</div>
+          <div class="mb-10 fs-7 dots">{{ $t('task_monitor_progress_details') }}</div>
           <div v-for="(item, index) in initialList" :key="index" class="initial-box">
             <span v-if="item.label" class="initial-box__title font-color-sub">{{ item.label }}：</span>
             <span class="initial-box__value" :class="{ 'font-color-sub': !!item.value }">{{
@@ -54,19 +58,19 @@
         </div>
         <!-- 非全量 -->
         <div v-if="task && task.setting.sync_type !== 'initial_sync'">
-          <div class="mb-10 fs-7 dots">增量详情</div>
+          <div class="mb-10 fs-7 dots">{{ $t('task_monitor_cdc_details') }}</div>
           <el-table :data="cdcLastTimes">
-            <el-table-column label="源库" prop="sourceConnectionName"></el-table-column>
-            <el-table-column label="时间" prop="cdcTime">
+            <el-table-column :label="$t('task_monitor_source_library')" prop="sourceConnectionName"></el-table-column>
+            <el-table-column :label="$t('task_monitor_time')" prop="cdcTime">
               <template slot-scope="scope">{{ $moment(scope.row.cdcTime).format('YYYY-MM-DD HH:mm:ss') }}</template>
             </el-table-column>
-            <el-table-column label="目标库" prop="targetConnectionName"></el-table-column>
+            <el-table-column :label="$t('task_monitor_target_library')" prop="targetConnectionName"></el-table-column>
           </el-table>
         </div>
       </div>
     </div>
     <div class="task-chart">
-      <div class="task-chart__title fs-7">状态统计</div>
+      <div class="task-chart__title fs-7">{{ $t('task_monitor_status_statistice') }}</div>
       <div class="task-chart__body flex flex-wrap justify-content-between pr-3">
         <div class="task-chart__item">
           <EchartHeader :data="overviewObj.title"></EchartHeader>
@@ -130,24 +134,24 @@ export default {
       initialList: [
         {
           key: 'sourceTableNum',
-          label: '计划迁移表数量'
+          label: this.$t('task_monitor_migrate_table_number')
         },
         {
           key: 'sourceRowNum',
-          label: '计划迁移数据量（行）'
+          label: this.$t('task_monitor_migrate_table_rows')
         },
         {
           key: 'waitingForSyecTableNums',
-          label: '已完成迁移表数量'
+          label: this.$t('task_monitor_migrate_table_number_completed')
         },
         {
           key: 'targatRowNum',
-          label: '已完成迁移数据量（行）'
+          label: this.$t('task_monitor_migrate_table_rows_completed')
         },
         {
           // key: '',
           // label: '*目前任务进度查看仅支持： MySQL、Oracle、SQL Server、PostgreSQL和MongoDB',
-          value: '*目前任务进度查看仅支持： MySQL、Oracle、SQL Server、PostgreSQL和MongoDB'
+          value: this.$t('task_monitor_migrate_tip')
         }
       ],
       // 事件统计
@@ -186,7 +190,7 @@ export default {
           time: 'minute',
           title: this.$t('dataFlow.transf'),
           tip: this.$t('dataFlow.transtime_pop'),
-          unit: '单位：/条',
+          unit: this.$t('task_monitor_unit_row'),
           class: 'transfColor',
           classFlex: true,
           loading: false
@@ -202,7 +206,7 @@ export default {
           time: 'minute',
           title: this.$t('dataFlow.replicate'),
           tip: this.$t('dataFlow.replicate_pop'),
-          unit: '单位：/秒',
+          unit: this.$t('task_monitor_unit_second'),
           class: 'transfColor',
           classFlex: 'flex',
           hideSecond: true,
@@ -210,7 +214,7 @@ export default {
         },
         body: null,
         value: 0, // 当前延迟
-        currentStatus: '未开始'
+        currentStatus: this.$t('task_monitor_not_start')
       },
       selectFlow: 'flow_', // 选中节点
       stageId: 'all',
@@ -232,6 +236,9 @@ export default {
   },
   mounted() {
     this.init()
+    this.$once('onceLoadHttp', () => {
+      this.loadHttp()
+    })
   },
   destroyed() {
     this.clearWS()
@@ -239,7 +246,7 @@ export default {
   methods: {
     init() {
       this.loadInfo()
-      this.loadHttp()
+      this.$emit('onceLoadHttp')
       this.loadWS()
       this.sendMsg()
     },
@@ -252,7 +259,7 @@ export default {
       if (data?.stats?.overview) {
         overview = JSON.parse(JSON.stringify(data.stats.overview))
 
-        this.replicateObj.currentStatus = !overview?.status ? '未开始' : ''
+        this.replicateObj.currentStatus = !overview?.status ? this.$t('task_monitor_not_start') : ''
 
         if (overview.waitingForSyecTableNums !== undefined) {
           waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
@@ -479,6 +486,7 @@ export default {
               width: 1 // 这里是为了突出显示加上的
             }
           },
+          boundaryGap: false,
           data: timeList
         },
         yAxis: {
@@ -557,6 +565,7 @@ export default {
               width: 1
             }
           },
+          boundaryGap: false,
           data: timeList
         },
         yAxis: {
@@ -621,6 +630,7 @@ export default {
               color: '#f56c6c'
             }
           },
+          boundaryGap: false,
           data: timeList
         },
         yAxis: {
@@ -655,32 +665,28 @@ export default {
       }
     },
     formatLag(data = 0) {
-      let result = data + 'ms'
-      let ms = 0,
-        s = 0,
+      let result = data + 's'
+      /* eslint-disable */
+      let s = 0, //
         m = 0,
         h = 0,
         d = 0
-      if (data > 1000) {
-        s = parseInt(data / 1000)
-        ms = parseInt(data % 1000)
-        result = s + 's' + ms + 'ms'
-        if (s > 60) {
-          m = parseInt(s / 60)
-          s = parseInt(s % 60)
-          result = m + 'm' + s + 's'
-          if (m > 60) {
-            h = parseInt(m / 60)
-            m = parseInt(m % 60)
-            result = h + 'h' + m + 'm'
-            if (h > 24) {
-              d = parseInt(h / 24)
-              h = parseInt(h % 24)
-              result = d + 'd' + h + 'h'
-            }
+      if (data > 60) {
+        m = parseInt(data / 60)
+        s = parseInt(data % 60)
+        result = m + 'm'
+        if (m > 60) {
+          h = parseInt(m / 60)
+          m = parseInt(m % 60)
+          result = h + 'h'
+          if (h > 24) {
+            d = parseInt(h / 24)
+            h = parseInt(h % 24)
+            result = d + 'd'
           }
         }
       }
+      /* eslint-enable */
       return result
     },
     loadWS() {

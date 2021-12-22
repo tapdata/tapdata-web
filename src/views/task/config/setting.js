@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 export default function () {
   return {
     form: {
@@ -12,21 +13,21 @@ export default function () {
       {
         type: 'radio',
         field: 'sync_type',
-        label: '同步类型',
+        label: i18n.t('task_setting_sync_type'),
         options: [
           {
-            label: '全量 + 增量同步',
-            tip: '选择全量+增量同步模式，任务会在全量同步执行结束后自动进入增量同步状态。',
+            label: i18n.t('task_setting_initial_sync_cdc'),
+            tip: i18n.t('task_setting_initial_sync_cdc_tip'),
             value: 'initial_sync+cdc'
           },
           {
-            label: '全量同步',
-            tip: '全量同步也称初始化同步，即在任务启动时刻将源端数据快照读取，并同步至目标端；该同步有更新写入、删除重写两种模式。',
+            label: i18n.t('task_setting_initial_sync'),
+            tip: i18n.t('task_setting_initial_sync_tip'),
             value: 'initial_sync'
           },
           {
-            label: '增量同步',
-            tip: '增量同步是指从任务启动时刻对存储的源端变化的日志进行采集和分析，有序的将数据变化同步至目标端，支持增删改操作。',
+            label: i18n.t('task_setting_cdc'),
+            tip: i18n.t('task_setting_cdc_tip'),
             value: 'cdc'
           }
         ],
@@ -38,16 +39,16 @@ export default function () {
       {
         type: 'radio',
         field: 'distinctWriteType',
-        label: '全量写入模式',
+        label: i18n.t('task_setting_full_write_mode'),
         options: [
           {
-            label: '更新写入模式',
-            tip: '更新写入模式会判断源端的每条数据在目标端是否存在，若存在则更新，不存在则新增。',
+            label: i18n.t('task_setting_update_write_mode'),
+            tip: i18n.t('task_setting_update_write_mode_tip'),
             value: 'intellect'
           },
           {
-            label: '删除重写模式',
-            tip: '删除重写模式会先将目标表的数据清空，再将源端数据全部同步至目标端，能保证源端和目标端的数据完全一致。',
+            label: i18n.t('task_setting_remoive_rewrite_mode'),
+            tip: i18n.t('task_setting_remoive_rewrite_mode_tip'),
             value: 'compel'
           }
         ],
@@ -59,18 +60,18 @@ export default function () {
       {
         type: 'input',
         field: 'readBatchSize',
-        label: '每次读取数量',
+        label: i18n.t('task_setting_read_number'),
         required: true,
         rules: [
           {
             required: true,
             validator(rule, value, callback) {
               if (!value) {
-                callback(new Error('每次读取数量不能为空，默认是1000'))
-              } else if (value < 1 || value > 10000) {
-                callback(new Error('每次读取数量取值范围 1 ~ 10000'))
+                callback(new Error(i18n.t('task_setting_read_number_cannot_empty')))
+                // } else if (value < 1 || value > 10000) {
+                //   callback(new Error(i18n.t('task_setting_read_number_ranges')))
               } else if (!/^\d+$/.test(value)) {
-                callback(new Error('每次读取数量只能为数字'))
+                callback(new Error(i18n.t('task_setting_read_number_only_number')))
               } else {
                 callback()
               }
@@ -82,12 +83,12 @@ export default function () {
       {
         type: 'switch',
         field: 'stopOnError',
-        label: '遇到错误停止'
+        label: i18n.t('task_setting_stop_on_error')
       },
       {
         type: 'switch',
         field: 'cdcConcurrency',
-        label: '是否开启增量并发',
+        label: i18n.t('task_setting_incremental_concurrency_switch'),
         show: true,
         dependOn: [
           {
@@ -117,7 +118,7 @@ export default function () {
       {
         type: 'input',
         field: 'transformerConcurrency',
-        label: '增量并发数',
+        label: i18n.t('task_setting_incremental_concurrency'),
         required: true,
         show: true,
         rules: [
@@ -125,9 +126,9 @@ export default function () {
             required: true,
             validator(rule, value, callback) {
               if (!value) {
-                callback(new Error('增量并发数不能为空，默认是8'))
+                callback(new Error(i18n.t('task_setting_incremental_concurrency_cannot_empty')))
               } else if (!/^\d+$/.test(value)) {
-                callback(new Error('每次读取数量只能为数字'))
+                callback(new Error(i18n.t('task_setting_incremental_concurrency_only_number')))
               } else {
                 callback()
               }
@@ -162,7 +163,7 @@ export default function () {
       {
         type: 'switch',
         field: 'noPrimaryKey',
-        label: '是否无主键同步',
+        label: i18n.t('task_setting_no_primary_sync_switch'),
         show: true,
         dependOn: [
           {
@@ -192,20 +193,20 @@ export default function () {
       {
         type: 'switch',
         field: 'bidirectional',
-        label: '是否双向',
+        label: i18n.t('task_setting_two_way_switch'),
         show: false
       },
       {
         type: 'switch',
         field: 'isOpenAutoDDL',
-        label: '自动DDL',
+        label: i18n.t('task_setting_automatic_ddl'),
         show: true,
-        tip: '自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作'
+        tip: i18n.t('task_setting_automatic_ddl_tip')
       },
       {
         type: 'switch',
         field: 'needToCreateIndex',
-        label: '自动创建索引',
+        label: i18n.t('task_setting_automatic_index'),
         show: true
       }
       // {

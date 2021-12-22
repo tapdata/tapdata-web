@@ -75,18 +75,22 @@
             type="primary"
             :disabled="['running', 'scheduling'].includes(scope.row.status)"
             @click="startTask(scope.row.id)"
-            >执行</ElLink
+            >{{ $t('verify_implement') }}</ElLink
           >
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">详情</ElLink>
+          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">{{
+            $t('verify_info')
+          }}</ElLink>
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableHistory(scope.row.id)"
-            >历史</ElLink
-          >
+          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableHistory(scope.row.id)">{{
+            $t('verify_history')
+          }}</ElLink>
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" @click="goEdit(scope.row.id, scope.row.flowId)">配置</ElLink>
+          <ElLink type="primary" @click="goEdit(scope.row.id, scope.row.flowId)">{{
+            $t('verify_configuration')
+          }}</ElLink>
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" @click="remove(scope.row.name, scope.row.id)">删除</ElLink>
+          <ElLink type="primary" @click="remove(scope.row.name, scope.row.id)">{{ $t('verify_delete') }}</ElLink>
         </template>
       </ElTableColumn>
       <div v-if="!isSearching" class="page-table__empty" slot="empty">

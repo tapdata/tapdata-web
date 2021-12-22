@@ -7,7 +7,7 @@ export default function (vm) {
   return {
     form: {
       labelPosition: 'left',
-      labelWidth: '120px'
+      labelWidth: '180px'
     },
     defaultModel: {
       connection_type: 'source_and_target'
@@ -69,7 +69,7 @@ export default function (vm) {
         field: 'mqQueueSet',
         label: vm.$t('dataForm.form.mq.mqQueueSet'),
         required: true,
-        tip: '多个队列用逗号隔开',
+        tip: vm.$t('connection_form_mq_queue_tip'),
         dependOn: [
           {
             triggerOptions: [
@@ -111,7 +111,7 @@ export default function (vm) {
         field: 'mqTopicSet',
         show: true,
         label: vm.$t('dataForm.form.mq.mqTopicSet'),
-        tip: '多个主题用逗号隔开',
+        tip: vm.$t('connection_form_mq_topic_tip'),
         dependOn: [
           {
             triggerOptions: [
@@ -140,10 +140,10 @@ export default function (vm) {
       {
         type: 'input',
         field: 'brokerURL',
-        label: 'MQ连接串',
+        label: vm.$t('connection_form_mq_broker_url'),
         required: true,
         show: false,
-        tip: '示例tcp://127.0.0.1:61616,支持tcp,nio,udp,ssl,http(s)',
+        tip: vm.$t('connection_form_mq_broker_url_tip'),
         dependOn: [
           {
             triggerOptions: [
@@ -181,7 +181,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_host',
-        label: '数据库地址',
+        label: vm.$t('connection_form_database_address'),
         rules: [
           {
             required: true,
@@ -212,7 +212,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_port',
-        label: '端口',
+        label: vm.$t('connection_form_port'),
         required: true,
         rules: [
           {

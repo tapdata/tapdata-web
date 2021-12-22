@@ -13,6 +13,12 @@ import dfs_kafka from './dfs_kafka'
 import dfs_greenplum from './dfs_greenplum'
 import dfs_mq from './dfs_mq'
 import dfs_clickhouse from './dfs_clickhouse'
+import dfs_kundb from './dfs_kundb'
+import dfs_adb_postgres from './dfs_adb_postgres'
+import dfs_adb_mysql from './dfs_adb_mysql'
+import dfs_hazelcast_cloud_cluster from './dfs_hazelcast_cloud_cluster'
+import dfs_dummydb from './dfs_dummydb'
+import dfs_tidb from './dfs_tidb'
 
 export default {
   dfs_mysql,
@@ -29,5 +35,11 @@ export default {
   dfs_kafka,
   dfs_greenplum,
   dfs_mq,
-  dfs_clickhouse
+  dfs_clickhouse,
+  dfs_kundb,
+  dfs_adb_postgres,
+  dfs_adb_mysql,
+  dfs_hazelcast_cloud_cluster,
+  dfs_dummydb,
+  dfs_tidb
 }

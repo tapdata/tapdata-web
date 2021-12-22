@@ -1,42 +1,58 @@
 <!DOCTYPE html>
 <html lang="">
-	<head>
-		<meta charset="utf-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width,initial-scale=1.0" />
-		<meta name="version" content="-version-" />
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="version" content="-version-" />
 
-		<link rel="icon" type="image/png" sizes="32x32" href="<%= BASE_URL %>favicon-dfs-32x32.png" />
-		<link rel="icon" type="image/png" sizes="16x16" href="<%= BASE_URL %>favicon-dfs-16x16.png" />
-		<!-- [if IE]><link rel="shortcut icon" href="<%= BASE_URL %>favicon-dfs.ico"><![endif] -->
+    <link rel="icon" type="image/png" sizes="32x32" href="<%= BASE_URL %>favicon-dfs-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="<%= BASE_URL %>favicon-dfs-16x16.png" />
+    <!-- [if IE]><link rel="shortcut icon" href="<%= BASE_URL %>favicon-dfs.ico"><![endif] -->
 
-		<title><%= htmlWebpackPlugin.options.title %></title>
+    <title><%= htmlWebpackPlugin.options.title %></title>
     <script>
-      var _hmt = _hmt || [];
-      (function() {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?f01ae5c22a108e9219336e36f556ea7f";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-      })();
+      var _hmt = _hmt || []
+      ;(function () {
+        var hm = document.createElement('script')
+        hm.src = 'https://hm.baidu.com/hm.js?f01ae5c22a108e9219336e36f556ea7f'
+        var s = document.getElementsByTagName('script')[0]
+        s.parentNode.insertBefore(hm, s)
+      })()
     </script>
-	</head>
-	<body>
-		<noscript>
-			<strong
-				>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please
-				enable it to continue.</strong
-			>
-		</noscript>
-		<div id="app">
-			<div class="el-loading-mask is-fullscreen" style="z-index: 3000;">
-				<div class="el-loading-spinner">
-					<svg viewBox="25 25 50 50" class="circular">
-						<circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
-					</svg>
-				</div>
-			</div>
-		</div>
-		<!-- built files will be auto injected -->
-	</body>
+    <script type="text/javascript" id="zsiqchat">
+      var $zoho = $zoho || {}
+      $zoho.salesiq = $zoho.salesiq || {
+        widgetcode: '39c2c81d902fdf4fbcc9b55f1268168c6d58fe89b1de70d9adcb5c4c13d6ff4d604d73c57c92b8946ff9b4782f00d83f',
+        values: {},
+        ready: function () {}
+      }
+      var d = document
+      s = d.createElement('script')
+      s.type = 'text/javascript'
+      s.id = 'zsiqscript'
+      s.defer = true
+      s.src = 'https://salesiq.zoho.com.cn/widget'
+      t = d.getElementsByTagName('script')[0]
+      t.parentNode.insertBefore(s, t)
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <strong
+        >We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please
+        enable it to continue.</strong
+      >
+    </noscript>
+    <div id="app">
+      <div class="el-loading-mask is-fullscreen" style="z-index: 3000">
+        <div class="el-loading-spinner">
+          <svg viewBox="25 25 50 50" class="circular">
+            <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <!-- built files will be auto injected -->
+  </body>
 </html>

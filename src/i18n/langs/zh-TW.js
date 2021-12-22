@@ -116,12 +116,14 @@ export default {
   agent_deploy_before_prepare_windows_second: '2.點擊下方的下載按鈕將Tapdata Agent安裝包下載到本地環境。 ',
   agent_deploy_before_prepare_windows_second_download: '點擊下載 Tapdata Agent',
   agent_deploy_before_prepare_windows_third: '3.請嚴格按照下方的安裝步驟部署，不要直接雙擊安裝包！ ',
+  agent_deploy_before_prepare_windows_four: '4.若安裝路徑包括中文或特殊字符可能導致安裝失敗',
   agent_deploy_start_install: '開始安裝',
   agent_deploy_start_install_button_copy: '複製',
   agent_deploy_start_install_button_copied: '已復制',
   agent_deploy_start_install_windows_first:
-    '1. 將下載好的Tapdata Agent放入要安裝Agent的目錄，並通過cmd窗口在目錄下執行下方命令即可實現Tapdata Agent的自動部署及啟動',
-  agent_deploy_start_install_windows_second: '2.待上方命令執行完畢後，出現如下圖所示日誌則代表Agent啟動成功：',
+    '1. 將下載好的Tapdata Agent放入要安裝Agent的目錄，雙擊執行安裝，在打開的窗口內輸入下方命令執行即可實現Tapdata Agent的自動部署及啟動',
+  agent_deploy_start_install_windows_second:
+    '2.待Agent啟動成功後窗口會自動關閉，tapdata會在您的安裝目錄生成如下目錄結構：',
   agent_deploy_start_install_windows_third: '3.如果您在安裝和使用過程中遇到任何問題，請參考',
   agent_deploy_link_agent_operation: '《Agent安裝手冊及常見QA》',
   agent_deploy_link_agent_operation_desc: '或者直接掃描右方二維碼加入社群獲取技術支持。 ',
@@ -180,6 +182,7 @@ export default {
   connection_list_column_schema_status_tips: 'Schema加載完成的連接才可以正常創建任務',
   connection_form_database_host_placeholder: '請輸入數據庫地址',
   connection_form_database_host_tips: '數據庫地址(127.0.0.1/Domain:{端口},多個地址請用,分開)',
+  connection_test_schema_tips: '可能原因：Schema大小寫設置有問題，您可嘗試修改大小寫後重試',
 
   // 任务
   task_manage: '任務管理',

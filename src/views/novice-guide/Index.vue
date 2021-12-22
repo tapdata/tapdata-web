@@ -2,20 +2,19 @@
   <div v-if="$route.name === 'NoviceGuide'" class="novice-guide-wrapper main-container">
     <div class="container-section p-6">
       <el-steps class="primary pb-6" :active="step" process-status="process" finish-status="success" align-center>
-        <el-step title="安装 Agent"></el-step>
-        <el-step title="创建源连接"></el-step>
-        <el-step title="创建目标连接"></el-step>
-        <el-step title="配置同步任务"></el-step>
+        <el-step :title="$t('guide_install_agent')"></el-step>
+        <el-step :title="$t('guide_create_source_connection')"></el-step>
+        <el-step :title="$t('guide_create_target_connection')"></el-step>
+        <el-step :title="$t('guide_config_sync_task')"></el-step>
       </el-steps>
       <!--   第1步   -->
       <div v-if="step === 0" class="step-content mt-7">
-        <div class="step-content__title fs-6 fw-bolder">安装 Agent</div>
+        <div class="step-content__title fs-6 fw-bolder">{{ $t('guide_install_agent') }}</div>
         <div class="step-content__desc mt-6">
           <div>
-            TapData Cloud 需本地安装 Agent
-            以确保连接数据库和数据传输服务的正常运行，为了更好了体验新手引导模式，我们将为您提供了Agent测试环境，可用于直接测试数据源。
+            {{ $t('guide_install_agent_tip') }}
           </div>
-          <div class="mt-2">点击启用agent开始下一步吧！</div>
+          <div class="mt-2">{{ $t('guide_click_agent_next_step') }}</div>
         </div>
         <div class="agent-info flex justify-content-between mt-6 p-4">
           <div>
@@ -23,12 +22,14 @@
               <span class="status-icon mr-1"></span>
               <span class="fw-bolder" style="margin-left: 2px">{{ agentStatus }}</span>
             </div>
-            <div class="agent-desc mt-4 ml-3" :class="[{ invisible: !agent.name }]">名称：{{ agent.name }}</div>
+            <div class="agent-desc mt-4 ml-3" :class="[{ invisible: !agent.name }]">
+              {{ $t('guide_name') }}：{{ agent.name }}
+            </div>
             <div class="ml-3 mt-2 text-black-50">
-              测试Agent的同步速度限制为最多200行/S，您自己部署安装的Agent不受该限制。
+              {{ $t('guide_install_agent_test_tip') }}
             </div>
             <div class="ml-3 mt-2 color-warning">
-              如果您超过一周没有访问系统，测试Agent会被自动回收，您可以通过新手引导再次创建使用。
+              {{ $t('guide_install_agent_test_tip1') }}
             </div>
             <div class="agent-btn mt-4">
               <el-button
@@ -37,7 +38,7 @@
                 class="color-primary"
                 :loading="startAgentLoading"
                 @click="startAgent"
-                >启动测试Agent</el-button
+                >{{ $t('guide_start_test_agent') }}</el-button
               >
               <el-button
                 v-else
@@ -46,7 +47,7 @@
                 :loading="stopAgentLoading"
                 style="visibility: hidden"
                 @click="stopAgent"
-                >停用测试Agent</el-button
+                >{{ $t('guide_stop_test_agent') }}</el-button
               >
             </div>
           </div>
@@ -61,30 +62,32 @@
             :disabled="agent.status !== 'Running'"
             :loading="agentNextLoading"
             @click="toNext"
-            >下一步</el-button
+            >{{ $t('guide_next_step') }}</el-button
           >
-          <span v-if="agentNextLoading" class="ml-2 font-color-sub"
-            >测试Agent的启动大概需要1～5分钟的时间，请耐心等待。</span
-          >
+          <span v-if="agentNextLoading" class="ml-2 font-color-sub">{{ $t('guide_install_agent_test_tip') }}</span>
         </div>
       </div>
       <!--   第2步、第3步   -->
       <div v-else-if="[1, 2].includes(step)" class="step-content mt-7">
         <template v-if="step === 1">
-          <div class="step-content__title fs-6 fw-bolder">创建源连接</div>
+          <div class="step-content__title fs-6 fw-bolder">{{ $t('guide_create_source_connection') }}</div>
           <div class="step-content__desc mt-6">
-            <div>数据源指的是可以作为源的数据库连接，必须先创建源连接才能创建迁移任务。</div>
+            <div>
+              {{ $t('guide_create_source_connection_tip') }}
+            </div>
           </div>
         </template>
         <template v-else>
-          <div class="step-content__title fs-6 fw-bolder">创建目标连接</div>
+          <div class="step-content__title fs-6 fw-bolder">{{ $t('guide_create_target_connection') }}</div>
           <div class="step-content__desc mt-6">
-            <div>目标连接指的是可以作为目标的数据库连接，必须创建目标连接才能创建迁移任务。</div>
+            <div>
+              {{ $t('guide_create_target_connection_tip') }}
+            </div>
           </div>
         </template>
 
         <el-form ref="sourceElForm" v-model="sourceForm" label-width="80px" class="source-form mt-6">
-          <el-form-item label="数据库类型" prop="database_type" class="database-type">
+          <el-form-item :label="$t('guide_database_type')" prop="database_type" class="database-type">
             <div class="flex w-100">
               <el-radio-group v-model="sourceForm.database_type" size="mini" @change="changeSourceDatabaseType">
                 <el-radio-button v-for="(item, index) in databaseTypeItems" :key="index" :label="item.value">
@@ -99,17 +102,17 @@
                 type="primary"
                 size="mini"
                 @click="initDatabase"
-                >初始化数据库</el-button
+                >{{ $t('guide_init_database') }}</el-button
               >
             </div>
           </el-form-item>
           <template v-if="sourceForm.id">
-            <el-form-item label="连接名称" prop="name" class="medium-width">
+            <el-form-item :label="$t('guide_connection_name')" prop="name" class="medium-width">
               <el-input v-model="sourceForm.name" size="mini" readonly disabled>
-                <span slot="suffix">（仅测试使用，不可编辑）</span>
+                <span slot="suffix">{{ $t('guide_only_test') }}</span>
               </el-input>
             </el-form-item>
-            <el-form-item label="地址/端口" prop="database_host" class="database-uri-port medium-width">
+            <el-form-item :label="$t('guide_address_port')" prop="database_host" class="database-uri-port medium-width">
               <div class="flex justify-content-between w-100">
                 <el-input
                   v-model="sourceForm.database_host"
@@ -127,13 +130,13 @@
                 ></el-input>
               </div>
             </el-form-item>
-            <el-form-item label="数据库名" prop="database_name" class="mini-width">
+            <el-form-item :label="$t('guide_database_name')" prop="database_name" class="mini-width">
               <el-input v-model="sourceForm.database_name" size="mini" readonly disabled></el-input>
             </el-form-item>
-            <el-form-item label="数据库账号" prop="database_username" class="mini-width">
+            <el-form-item :label="$t('guide_database_account')" prop="database_username" class="mini-width">
               <el-input v-model="sourceForm.database_username" size="mini" readonly disabled></el-input>
             </el-form-item>
-            <el-form-item label="数据库密码" prop="database_password" class="mini-width">
+            <el-form-item :label="$t('guide_database_password')" prop="database_password" class="mini-width">
               <el-input v-model="sourceForm.database_password" size="mini" readonly disabled></el-input>
             </el-form-item>
             <el-form-item
@@ -147,22 +150,24 @@
           </template>
         </el-form>
         <div class="operation mt-7">
-          <el-button v-if="step !== 0" class="mr-4" size="mini" @click="toPrev" key="preBtn">上一步</el-button>
+          <el-button v-if="step !== 0" class="mr-4" size="mini" @click="toPrev" key="preBtn">{{
+            $t('guide_previous')
+          }}</el-button>
           <el-button
             type="primary"
             size="mini"
             :disabled="!sourceForm.id"
             :loading="connectionNextLoading"
             @click="toNext"
-            >下一步</el-button
+            >{{ $t('guide_next_step') }}</el-button
           >
         </div>
       </div>
       <!--   第4步   -->
       <div v-if="step === 3" class="step-content mt-7">
-        <div class="step-content__title fs-6 fw-bolder">配置同步任务</div>
+        <div class="step-content__title fs-6 fw-bolder">{{ $t('guide_config_sync_task') }}</div>
         <div class="flex mt-6">
-          <div class="task-item-label mr-4 flex align-items-center">同步类型</div>
+          <div class="task-item-label mr-4 flex align-items-center">{{ $t('guide_sync_task') }}</div>
           <el-radio-group v-model="taskForm.type" size="mini">
             <el-radio-button v-for="(item, index) in taskTypeItems" :key="index" :label="item.value">
               {{ item.label }}
@@ -170,14 +175,14 @@
           </el-radio-group>
         </div>
         <div class="flex mt-6">
-          <div class="task-item-label mr-4">映射设置</div>
+          <div class="task-item-label mr-4">{{ $t('guide_mapping_setting') }}</div>
           <div class="flex-grow-1 flex-shrink-1">
             <div class="mb-4 text-black-50">
-              用户可以在此页面勾选源端待同步表，点击中间向右的箭头按钮，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输），鼠标移入表名可以对表进行改名操作，点击完成按钮即成功创建同步任务。
+              {{ $t('guide_mapping_setting_tip') }}
             </div>
             <el-transfer
               v-model="taskForm.selectSourceArr"
-              :titles="['待选择表', '已选择表']"
+              :titles="[$t('guide_selected'), $t('guide_table_selected')]"
               :filter-method="filterMethod"
               :filter-placeholder="$t('editor.cell.link.searchContent')"
               :data="sourceData"
@@ -197,7 +202,7 @@
             :loading="createTaskLoading"
             style="margin-left: 105px"
             @click="createTask"
-            >完成</el-button
+            >{{ $t('guide_finish') }}</el-button
           >
         </div>
       </div>
@@ -206,10 +211,10 @@
         <div class="finish-img">
           <VIcon size="53">success-fill-color</VIcon>
         </div>
-        <div class="mt-6 fs-7">恭喜您完成新手引导！</div>
+        <div class="mt-6 fs-7">{{ $t('guide_complete_novice_guide') }}</div>
         <div class="mt-6">
-          <el-button class="mr-4" type="primary" @click="toWorkbench">返回工作台</el-button>
-          <el-button @click="toTaskDetail">查看任务监控</el-button>
+          <el-button class="mr-4" type="primary" @click="toWorkbench">{{ $t('guide_back_workbench') }}</el-button>
+          <el-button @click="toTaskDetail">{{ $t('guide_view_task_monitor') }}</el-button>
         </div>
       </div>
     </div>
@@ -230,10 +235,10 @@ export default {
       schemaTimer: null,
       step: 0,
       steps: [
-        { index: 0, text: '安装 Agent', type: 'agent' },
-        { index: 1, text: '创建源连接', type: 'source' },
-        { index: 2, text: '创建目标连接', type: 'target' },
-        { index: 3, text: '配置同步任务', type: 'task' }
+        { index: 0, text: this.$t('guide_install_agent'), type: 'agent' },
+        { index: 1, text: this.$t('guide_create_source_connection'), type: 'source' },
+        { index: 2, text: this.$t('guide_create_target_connection'), type: 'target' },
+        { index: 3, text: this.$t('guide_config_sync_task'), type: 'task' }
       ],
       agent: {},
       startAgentLoading: false, // 启动agent
@@ -268,18 +273,18 @@ export default {
       },
       taskTypeItems: [
         {
-          label: '全量 + 增量同步',
-          tip: '选择全量+增量同步模式，任务会在全量同步执行结束后自动进入增量同步状态。',
+          label: this.$t('task_setting_initial_sync_cdc'),
+          tip: this.$t('task_setting_initial_sync_cdc_tip'),
           value: 'initial_sync+cdc'
         },
         {
-          label: '全量同步',
-          tip: '全量同步也称初始化同步，即在任务启动时刻将源端数据快照读取，并同步至目标端；该同步有更新写入、删除重写两种模式。',
+          label: this.$t('task_setting_initial_sync'),
+          tip: this.$t('task_setting_initial_sync_tip'),
           value: 'initial_sync'
         },
         {
-          label: '增量同步',
-          tip: '增量同步是指从任务启动时刻对存储的源端变化的日志进行采集和分析，有序的将数据变化同步至目标端，支持增删改操作。',
+          label: this.$t('task_setting_cdc'),
+          tip: this.$t('task_setting_cdc_tip'),
           value: 'cdc'
         }
       ],
@@ -301,13 +306,13 @@ export default {
       let result
       let { agent } = this
       if (agent.status === 'Running') {
-        result = '已启动'
+        result = this.$t('task_status_running')
       } else if (agent.status === 'Stopping') {
-        result = '停止中'
+        result = this.$t('task_status_stopping')
       } else if (!agent.status) {
-        result = '待启动'
+        result = this.$t('task_status_draft')
       } else {
-        result = '启动中'
+        result = this.$t('task_status_scheduled')
       }
       return result
     },
@@ -468,10 +473,10 @@ export default {
       this.$axios
         .post('api/tcm/orders', params)
         .then(() => {
-          this.$message.success('Agent启动中')
+          this.$message.success(this.$t('guide_agent_start_success'))
         })
         .catch(() => {
-          this.$message.error('Agent启动失败')
+          this.$message.error(this.$t('guide_agent_start_fail'))
         })
     },
     stopAgent() {},
@@ -544,7 +549,7 @@ export default {
           }
         })
         .catch(() => {
-          this.$message.error('创建连接失败')
+          this.$message.error(this.$t('guide_creat_connection_fail'))
         })
         .finally(() => {
           this.initDatabaseLoading = false
@@ -639,7 +644,7 @@ export default {
         description: '',
         status: 'paused',
         executeMode: 'normal',
-        category: '数据库克隆',
+        category: this.$t('task_form_database_clone'),
         stopOnError: false,
         mappingTemplate: 'cluster-clone',
         stages: [],

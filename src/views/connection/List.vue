@@ -7,7 +7,7 @@
         </div>
         <div class="connection-operation-right">
           <ElButton type="primary" @click="create">
-            <span>创建连接</span>
+            <span>{{ $t('connection_form_creat_connection') }}</span>
           </ElButton>
         </div>
       </div>
@@ -17,7 +17,7 @@
             <div class="flex flex-row align-items-center p-2" style="height: 50px">
               <img
                 class="mr-2"
-                style="width: 24px; height: 24px"
+                style="width: 24px"
                 :src="
                   require('web-core/assets/images/connection-type/' + scope.row.database_type.toLowerCase() + '.png')
                 "
@@ -41,21 +41,21 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="状态" width="120">
+        <ElTableColumn :label="$t('connection_list_status')" width="120">
           <template slot-scope="scope">
             <StatusTag type="text" target="connection" :status="scope.row.status"></StatusTag>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="连接类型" width="120">
+        <ElTableColumn :label="$t('connection_list_type')" width="130">
           <template slot-scope="scope">{{
             {
-              source: '源头',
-              target: '目标',
-              source_and_target: '源头和目标'
+              source: $t('connection_list_source'),
+              target: $t('connection_list_target'),
+              source_and_target: $t('connection_list_source_and_target')
             }[scope.row.connection_type]
           }}</template>
         </ElTableColumn>
-        <ElTableColumn width="180">
+        <ElTableColumn width="190">
           <div slot="header">
             {{ $t('connection_list_column_schema_status') }}
             <ElTooltip placement="top" :content="$t('connection_list_column_schema_status_tips')">
@@ -66,10 +66,10 @@
             <SchemaProgress :data="scope.row"></SchemaProgress>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="修改时间" prop="last_updated" width="150" sortable="custom">
+        <ElTableColumn :label="$t('connection_list_change_time')" prop="last_updated" width="150" sortable="custom">
           <template slot-scope="scope">{{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}</template>
         </ElTableColumn>
-        <ElTableColumn label="操作" width="280">
+        <ElTableColumn :label="$t('connection_list_operate')" width="280">
           <template slot-scope="scope">
             <div class="operate-columns">
               <ElButton size="mini" type="text" @click="testConnection(scope.row)">连接测试</ElButton>
@@ -396,14 +396,18 @@ export default {
         this.test(data?.result || data, false)
       } catch (error) {
         if (error?.response?.msg === 'duplicate source') {
-          this.$message.success('复制失败，原因：系统设置中 "连接设置 - 允许创建重复数据源" 被设置为 "false"')
+          this.$message.success(this.$t('connection_list_copy_failed'))
         }
       }
     },
     del(item) {
-      let msg = `<p>删除连接 <span>${item.name}</span> 后，此连接将无法恢复</p>`
-      this.$confirm(msg, '是否删除该连接？', {
+      let msg = `<p> ${this.$t('connection_list_delete_connection')} <span>${item.name}</span> ${this.$t(
+        'connection_list_delete_connection_tip'
+      )}</p>`
+      this.$confirm(msg, this.$t('connection_list_delete_connection_title'), {
         type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel'),
         dangerouslyUseHTMLString: true
       }).then(async resFlag => {
         if (resFlag) {
@@ -417,11 +421,11 @@ export default {
                   databaseType: item.database_type
                 })
                 .then(() => {
-                  this.$message.success('删除成功')
+                  this.$message.success(this.$t('connection_list_delete_success'))
                   this.fetch()
                 })
             } else {
-              this.$message.success('删除成功')
+              this.$message.success(this.$t('connection_list_delete_success'))
               this.fetch()
             }
           } catch (error) {
@@ -433,7 +437,7 @@ export default {
             } else if (error?.data?.msg) {
               let { dataFlows, jobs, modules } = error?.data?.msg
               if ([...dataFlows, ...jobs, ...modules].length > 0) {
-                errorTip = '此连接被任务所占用，无法删除'
+                errorTip = this.$t('connection_list_task_occupied')
               }
             }
             this.$message.error(errorTip)
@@ -463,7 +467,7 @@ export default {
         this.$refs.test.start(data, isShowDialog)
         this.fetch()
       } catch (error) {
-        this.$message.error(error?.response?.msg || '测试连接失败')
+        this.$message.error(error?.response?.msg || this.$t('connection_list_test_failed'))
       }
     },
     loadDetailsData(data) {

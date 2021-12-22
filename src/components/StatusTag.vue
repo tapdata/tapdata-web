@@ -18,7 +18,13 @@
 
 <script>
 import VIcon from '@/components/VIcon'
-import { CONNECTION_STATUS_MAP, INSTANCE_STATUS_MAP, TASK_STATUS_MAP, MILESTONE_STATUS_MAP } from '../const'
+import {
+  CONNECTION_STATUS_MAP,
+  INSTANCE_STATUS_MAP,
+  TASK_STATUS_MAP,
+  MILESTONE_STATUS_MAP,
+  CONNECTION_STATUS_MAP_EN
+} from '../const'
 export default {
   name: 'StatusTag',
   components: { VIcon },
@@ -48,6 +54,11 @@ export default {
       type: String
     }
   },
+  data() {
+    return {
+      lang: localStorage.getItem('tapdata_localize_lang') || 'sc'
+    }
+  },
   computed: {
     map() {
       return (
@@ -56,7 +67,8 @@ export default {
           instance: INSTANCE_STATUS_MAP,
           task: TASK_STATUS_MAP,
           connection: CONNECTION_STATUS_MAP,
-          milestone: MILESTONE_STATUS_MAP
+          milestone: MILESTONE_STATUS_MAP,
+          connection_en: CONNECTION_STATUS_MAP_EN
         }[this.target]
       )
     },
@@ -64,7 +76,11 @@ export default {
       return this.map[this.status] || this.map[this.defaultStatus] || {}
     },
     imgSrc() {
-      return require(`../../public/images/task/${this.statusObj.icon}.png`)
+      if (this.lang === 'en') {
+        return require(`../../public/images/task/${this.statusObj.icon}.svg`)
+      } else {
+        return require(`../../public/images/task/${this.statusObj.icon}.png`)
+      }
     }
   }
 }

@@ -15,16 +15,36 @@ export default {
   },
   data() {
     return {
-      htmlMD: ''
+      htmlMD: '',
+      lang: localStorage.getItem('tapdata_localize_lang') || 'sc'
     }
   },
   watch: {
     databaseType(v) {
-      this.getHtmlMD(v)
+      if (this.lang === 'en') {
+        this.getHtmlMD('en_' + v)
+        return
+      } else {
+        this.getHtmlMD(v)
+      }
+      // if (v === 'hazelcast_cloud_cluster') {
+      //   this.getHtmlMD('en_hazelcast_cloud_cluster')
+      //   return
+      // }
     }
   },
   mounted() {
-    this.getHtmlMD(this.databaseType)
+    if (this.lang === 'en') {
+      this.getHtmlMD('en_' + this.databaseType)
+      return
+    } else {
+      this.getHtmlMD(this.databaseType)
+    }
+    // if (this.databaseType === 'hazelcast_cloud_cluster') {
+    //   this.getHtmlMD('en_hazelcast_cloud_cluster')
+    //   return
+    // }
+    // this.getHtmlMD(this.databaseType)
   },
   methods: {
     getHtmlMD(type) {

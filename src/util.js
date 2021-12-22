@@ -97,6 +97,20 @@ export const cookie = {
     cookie.set(name, '', -1)
   }
 }
+let timeout = null
+export function delayTrigger(func, t) {
+  if (t) {
+    if (timeout) {
+      window.clearTimeout(timeout)
+    }
+    timeout = setTimeout(() => {
+      func && func()
+      timeout = null
+    }, t)
+  } else {
+    func && func()
+  }
+}
 // 支持的数据源 'mysql','mariadb','mysql pxc','mongodb','postgres','oracle','sqlserver','redis'
 // 不支持 'rest api','db2','sybase','gbase','gaussdb200','kafka','elasticsearch'
 export const TYPEMAP = {
@@ -120,5 +134,6 @@ export const TYPEMAP = {
   kafka: 'Kafka',
   mariadb: 'MariaDB',
   'mysql pxc': 'MySQL PXC',
-  jira: 'jira'
+  jira: 'jira',
+  clickhouse: 'ClickHouse'
 }

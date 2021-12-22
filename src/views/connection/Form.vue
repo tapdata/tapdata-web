@@ -2,26 +2,32 @@
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
       <main class="connection-from-main">
-        <div class="connection-from-title">{{ $route.params.id ? '编辑连接' : '创建连接' }}</div>
+        <div class="connection-from-title">
+          {{
+            $route.params.id ? this.$t('connection_form_edit_connection') : this.$t('connection_form_creat_connection')
+          }}
+        </div>
         <div class="connection-from-label" v-if="$route.params.id">
-          <label class="label">数据源: </label>
+          <label class="label">{{ $t('connection_form_data_source') }}: </label>
           <div class="content-box">
             <div class="img-box ml-2">
               <img :src="$util.getConnectionTypeImg(databaseType)" />
             </div>
             <span class="ml-2">{{ model.name }}</span>
-            <el-button class="ml-2" type="text" @click="dialogEditNameVisible = true"> 改名 </el-button>
+            <el-button class="ml-2" type="text" @click="dialogEditNameVisible = true">
+              {{ $t('connection_form_rename') }}
+            </el-button>
           </div>
         </div>
         <div class="connection-from-label" v-else>
-          <label class="label">数据源类型:</label>
+          <label class="label">{{ $t('connection_form_data_source_type') }}:</label>
           <div class="content-box">
             <div class="img-box ml-2">
               <img :src="$util.getConnectionTypeImg(databaseType)" />
             </div>
             <span class="ml-2">{{ typeMap[databaseType] }}</span>
             <el-button class="ml-2" type="text" @click="$root.$emit('select-connection-type')">
-              {{ $t('connection.change') }}
+              {{ $t('connection_form_change') }}
             </el-button>
           </div>
         </div>
@@ -30,12 +36,12 @@
             <form-builder ref="form" class="form-builder grey" v-model="model" :config="config">
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
             </form-builder>
-            <el-button type="text" size="mini" @click="startTest()">{{ $t('connection.testConnection') }}</el-button>
-            <StatusTag type="text" class="ml-4" target="connection" :status="status"></StatusTag>
+            <el-button type="text" size="mini" @click="startTest()">{{ $t('connection_list_test') }}</el-button>
+            <span>
+              <StatusTag type="text" class="ml-4" target="connection" :status="status"></StatusTag>
+            </span>
             <footer class="mt-2 pb-4">
-              <el-button size="mini" class="connection-from-btn" @click="goBack()">{{
-                $t('dataForm.cancel')
-              }}</el-button>
+              <el-button size="mini" class="connection-from-btn" @click="goBack()">{{ $t('button_cancel') }}</el-button>
               <el-button
                 size="mini"
                 class="connection-from-btn"
@@ -43,7 +49,7 @@
                 :loading="submitBtnLoading"
                 @click="submit"
               >
-                {{ $t('dataForm.submit') }}
+                {{ $t('button_submit') }}
               </el-button>
             </footer>
           </div>
@@ -66,14 +72,14 @@
         <el-form-item prop="rename">
           <el-input v-model="renameData.rename" maxlength="100" show-word-limit></el-input>
         </el-form-item>
-        <span style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block"
-          >中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格</span
-        >
+        <span style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block">{{
+          $t('connection_form_name_rules')
+        }}</span>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelRename" size="mini">{{ $t('dataForm.cancel') }}</el-button>
+        <el-button @click="handleCancelRename" size="mini">{{ $t('button_cancel') }}</el-button>
         <el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
-          $t('message.confirm')
+          $t('button_confirm')
         }}</el-button>
       </span>
     </el-dialog>
@@ -99,7 +105,7 @@ export default {
       if (!this.renameData.rename || !this.renameData.rename.trim()) {
         callback(new Error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText')))
       } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(this.renameData.rename)) {
-        callback(new Error('名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'))
+        callback(new Error(this.$t('connection_form_name_rules')))
       } else {
         callback()
       }
@@ -198,7 +204,8 @@ export default {
         {
           type: 'input',
           field: 'name',
-          label: self.$t('dataForm.form.connectionName'),
+          label: self.$t('connection_form_connection_name'),
+          placeholder: self.$t('connection_form_connection_name_placeholder'),
           required: true,
           maxlength: 100,
           width: '504px',
@@ -211,9 +218,9 @@ export default {
               trigger: 'blur',
               validator: (rule, value, callback) => {
                 if (!value || !value.trim()) {
-                  callback(new Error('连接名称不能为空'))
+                  callback(new Error(this.$t('connection_form_no_name')))
                 } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(value)) {
-                  callback('连接名称中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格')
+                  callback(new Error(this.$t('connection_form_name_rules')))
                 } else if (
                   value &&
                   value.trim() &&
@@ -350,6 +357,10 @@ export default {
         if (this.model.database_type === 'mongodb' && id && sslCA) {
           sslCA.rules = []
         }
+        let plain_password = items.find(it => it.field === 'plain_password')
+        if (this.model.database_type === 'hazelcast_cloud_cluster' && id && plain_password) {
+          plain_password.required = false
+        }
         if (id) {
           //编辑模式下 不展示
           defaultConfig[0].show = false
@@ -368,11 +379,15 @@ export default {
       this.loadingFrom = false
     },
     goBack() {
-      let tip = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接'
-      let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
+      let tip,
+        title = ''
+      tip = this.$route.params.id ? this.$t('connection_form_confirm_edit') : this.$t('connection_form_confirm_create')
+      title = this.$route.params.id
+        ? this.$t('connection_form_confirm_edit_content')
+        : this.$t('connection_form_confirm_create_content')
       this.$confirm(tip, title, {
-        confirmButtonText: '放弃',
-        cancelButtonText: '取消',
+        confirmButtonText: this.$t('connection_form_give_up'),
+        cancelButtonText: this.$t('button_cancel'),
         type: 'warning'
       }).then(resFlag => {
         if (resFlag) {
@@ -426,8 +441,6 @@ export default {
             data
           )
           params['sslCert'] = this.model.sslKey
-          delete params.sslKeyFile
-          delete params.sslCAFile
           delete params.status //编辑的情况下不传status
           if (!params.id) {
             delete params.id
@@ -606,7 +619,10 @@ export default {
     margin-right: 4px;
   }
   .label {
-    width: 100px;
+    width: 180px;
+  }
+  .haze_label {
+    width: 150px;
   }
   .content-box {
     font-size: 12px;
@@ -656,7 +672,7 @@ export default {
         width: 680px;
       }
       &.small-item {
-        width: 240px;
+        width: 320px;
       }
       &.mongodb-item {
         width: 680px;

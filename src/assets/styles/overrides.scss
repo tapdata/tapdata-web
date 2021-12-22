@@ -340,6 +340,11 @@ th {
   &.el-table--small td {
     padding: 5px 0;
   }
+  & > .cell {
+    font-size: 14px;
+    color: map-get($fontColor, main);
+    word-break: break-word;
+  }
   &.table-border {
     border: none;
     &::before {

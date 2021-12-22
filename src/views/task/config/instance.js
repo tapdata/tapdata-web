@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 export default function () {
   return {
     form: {
@@ -11,7 +12,7 @@ export default function () {
       {
         type: 'select',
         field: 'region',
-        label: '选择区域',
+        label: i18n.t('task_instance_select_area'),
         options: [],
         loading: true,
         required: true
@@ -19,7 +20,7 @@ export default function () {
       {
         type: 'select',
         field: 'zone',
-        label: '选择可用区',
+        label: i18n.t('task_instance_choose_area'),
         loading: true,
         options: [],
         dependOn: [

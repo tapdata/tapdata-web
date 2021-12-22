@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 export const DEFAULT_MODEL = {
   default: {
     id: '',
@@ -43,6 +44,8 @@ export const DEFAULT_MODEL = {
     connection_type: '',
     kafkaBootstrapServers: '',
     kafkaPatternTopics: '',
+    database_username: '',
+    plain_password: '',
     kafkaIgnoreInvalidRecord: false,
     kafkaAcks: '',
     kafkaCompressionType: '',
@@ -178,6 +181,19 @@ export const DEFAULT_MODEL = {
     routeKeyField: '', //消息路由
     virtualHost: '', //虚拟主机
     nameSrvAddr: ''
+  },
+  tidb: {
+    name: '',
+    database_type: '',
+    connection_type: '',
+    // tidbPdServer: '',
+    database_host: '',
+    database_port: '',
+    database_name: '',
+    database_username: '',
+    plain_password: '',
+    additionalString: '',
+    database_datetype_without_timezone: ''
   }
 }
 export const CONFIG_MODEL = {
@@ -186,7 +202,7 @@ export const CONFIG_MODEL = {
       icon: 'time',
       items: [
         {
-          label: '加载schema',
+          label: i18n.t('connection_preview_load_schema'),
           key: 'last_updated'
         }
       ]
@@ -195,7 +211,7 @@ export const CONFIG_MODEL = {
       icon: 'database',
       items: [
         {
-          label: '数据库地址',
+          label: i18n.t('connection_form_database_address'),
           key: 'database_host'
         }
       ]
@@ -204,7 +220,7 @@ export const CONFIG_MODEL = {
       icon: 'port',
       items: [
         {
-          label: '端口',
+          label: i18n.t('connection_form_port'),
           key: 'database_port'
         }
       ]
@@ -213,7 +229,7 @@ export const CONFIG_MODEL = {
       icon: 'name',
       items: [
         {
-          label: '数据库名称',
+          label: i18n.t('connection_form_database_name'),
           key: 'database_name'
         }
       ]
@@ -222,7 +238,7 @@ export const CONFIG_MODEL = {
       icon: 'database-user-name',
       items: [
         {
-          label: '账号',
+          label: i18n.t('connection_form_database_username'),
           key: 'database_username'
         }
       ]
@@ -231,7 +247,7 @@ export const CONFIG_MODEL = {
       icon: 'database-password',
       items: [
         {
-          label: '密码',
+          label: i18n.t('connection_form_database_password'),
           key: 'database_password'
         }
       ]
@@ -240,7 +256,7 @@ export const CONFIG_MODEL = {
       icon: 'additional-string',
       items: [
         {
-          label: '其他连接串参数',
+          label: i18n.t('connection_form_additional_string'),
           key: 'additionalString'
         }
       ]
@@ -249,7 +265,7 @@ export const CONFIG_MODEL = {
       icon: 'origin-time',
       items: [
         {
-          label: '时间类型的时区',
+          label: i18n.t('connection_form_timezone'),
           key: 'database_datetype_without_timezone'
         }
       ]
@@ -260,7 +276,7 @@ export const CONFIG_MODEL = {
       icon: 'time',
       items: [
         {
-          label: '加载schema',
+          label: i18n.t('connection_preview_load_schema'),
           key: 'last_updated'
         }
       ]
@@ -269,27 +285,27 @@ export const CONFIG_MODEL = {
       icon: 'database',
       items: [
         {
-          label: '数据库地址',
+          label: i18n.t('connection_form_database_address'),
           key: 'kafkaBootstrapServers'
         },
         {
-          label: '主题表达式',
+          label: i18n.t('connection_form_kafka_pattern_topic'),
           key: 'kafkaPatternTopics'
         },
         {
-          label: '忽略非JSON Object格式消息',
+          label: i18n.t('connection_form_kafka_ignore_invalid'),
           key: 'kafkaIgnoreInvalidRecord'
         },
         {
-          label: 'ACK 确认机制',
+          label: i18n.t('connection_form_kafka_ack'),
           key: 'kafkaAcks'
         },
         {
-          label: '消息压缩类型',
+          label: i18n.t('connection_form_kafka_compression_type'),
           key: 'kafkaCompressionType'
         },
         {
-          label: '忽略推送消息异常',
+          label: i18n.t('connection_form_kafka_ignore_push'),
           key: 'kafkaIgnorePushError'
         }
       ]
@@ -300,7 +316,7 @@ export const CONFIG_MODEL = {
       icon: 'time',
       items: [
         {
-          label: '加载schema',
+          label: i18n.t('connection_preview_load_schema'),
           key: 'last_updated'
         }
       ]
@@ -309,7 +325,7 @@ export const CONFIG_MODEL = {
       icon: 'database',
       items: [
         {
-          label: '数据库地址',
+          label: i18n.t('connection_form_database_address'),
           key: 'database_host'
         }
       ]
@@ -318,31 +334,31 @@ export const CONFIG_MODEL = {
       icon: 'port',
       items: [
         {
-          label: '端口',
+          label: i18n.t('connection_form_port'),
           key: 'database_port'
         },
         {
-          label: 'MQ类型',
+          label: i18n.t('connection_form_mq_type'),
           key: 'mqType'
         },
         {
-          label: 'MQ连接串',
+          label: i18n.t('connection_form_broker_url'),
           key: 'brokerURL'
         },
         {
-          label: '队列名集合',
+          label: i18n.t('connection_form_mq_queue_set'),
           key: 'mqQueueSet'
         },
         {
-          label: '主题名称',
+          label: i18n.t('connection_form_mq_topic_set'),
           key: 'mqTopicSet'
         },
         {
-          label: '消息路由',
+          label: i18n.t('connection_form_route_key_field'),
           key: 'routeKeyField'
         },
         {
-          label: '虚拟主机',
+          label: i18n.t('connection_form_virtual_host'),
           key: 'virtualHost'
         }
       ]
@@ -351,7 +367,7 @@ export const CONFIG_MODEL = {
       icon: 'database-user-name',
       items: [
         {
-          label: '账号',
+          label: i18n.t('connection_form_database_username'),
           key: 'mqUserName'
         }
       ]
@@ -360,7 +376,7 @@ export const CONFIG_MODEL = {
       icon: 'database-password',
       items: [
         {
-          label: '密码',
+          label: i18n.t('connection_form_database_password'),
           key: 'plain_password'
         }
       ]

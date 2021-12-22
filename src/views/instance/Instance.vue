@@ -495,7 +495,9 @@ export default {
     },
     toOldPurchase() {
       this.$confirm(this.$t('agent_link_to_old_purchase_msg'), this.$t('agent_link_to_old_purchase_title'), {
-        type: 'warning'
+        type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel')
       }).then(res => {
         if (!res) {
           return
@@ -508,7 +510,9 @@ export default {
     },
     toPurchase() {
       this.$confirm(this.$t('agent_link_to_purchase_msg'), this.$t('agent_link_to_purchase_title'), {
-        type: 'warning'
+        type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel')
       }).then(res => {
         if (!res) {
           return
@@ -560,7 +564,9 @@ export default {
       }
       let message = flag ? this.$t('agent_button_stop_tip_running') : this.$t('agent_button_stop_tip_no_running')
       this.$confirm(message, this.$t('agent_button_stop_tip'), {
-        type: 'warning'
+        type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel')
       }).then(res => {
         if (res) {
           if (row.btnLoading) {
@@ -599,6 +605,8 @@ export default {
       }
       this.$confirm(message, title, {
         type: 'warning',
+        confirmButtonText: this.$t('button_confirm'),
+        cancelButtonText: this.$t('button_cancel'),
         customClass: 'delete-agent'
       }).then(res => {
         if (res) {

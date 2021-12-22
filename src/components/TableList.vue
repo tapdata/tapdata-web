@@ -16,12 +16,16 @@
 
 <script>
 import VIcon from '@/components/VIcon'
+import VTable from '@/components/v-table'
 export default {
   name: 'TableList',
-  components: { VIcon },
+  components: { VIcon, VTable },
   methods: {
     fetch() {
       return this.$refs.table?.fetch(...arguments)
+    },
+    getData() {
+      return this.$refs.table?.getData()
     }
   }
 }
