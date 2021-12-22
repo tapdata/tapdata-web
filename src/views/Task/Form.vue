@@ -446,6 +446,7 @@
   ::v-deep {
     .e-form-builder-item {
       &.read-batch-size {
+        .input-item,
         .el-input__inner {
           width: 277px;
         }
