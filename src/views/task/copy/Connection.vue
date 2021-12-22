@@ -70,7 +70,7 @@ import TableList from '@/components/TableList'
 import StatusTag from '@/components/StatusTag'
 import SchemaProgress from 'web-core/components/SchemaProgress'
 import VIcon from '@/components/VIcon'
-import Preview from '@/views/Connection/Preview'
+import Preview from '@/views/connection/Preview'
 import { deepCopy } from '@/util'
 
 export default {
