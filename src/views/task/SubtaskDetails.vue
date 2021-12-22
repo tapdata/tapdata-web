@@ -189,7 +189,7 @@
 import StatusTag from '@/components/StatusTag'
 import VIcon from '@/components/VIcon'
 // import InlineInput from '@/components/InlineInput'
-import EchartHeader from '@/views/Monitor/EchartHeader'
+import EchartHeader from '@/views/monitor/EchartHeader'
 import VEchart from '@/components/VEchart'
 import TaskProgress from './TaskProgress.vue'
 
