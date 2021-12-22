@@ -153,7 +153,7 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import 'web-core/components/form/styles/index.scss'
+// import 'web-core/components/form/styles/index.scss'
 
 export default {
   name: 'SettingPanel',
