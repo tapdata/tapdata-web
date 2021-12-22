@@ -23,28 +23,27 @@
       </template>
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns">
+          <!--          <VButton-->
+          <!--            v-if="scope.row.status === 'running'"-->
+          <!--            :disabled="!statusBtMap['paused'][scope.row.status]"-->
+          <!--            auto-loading-->
+          <!--            inner-loading-->
+          <!--            type="text"-->
+          <!--            @click="pause(scope.row, arguments[0])"-->
+          <!--          >-->
+          <!--            {{ $t('task_button_pause') }}-->
+          <!--          </VButton>-->
+          <!--          <VButton-->
+          <!--            v-else-if="['paused', 'schedule_failed', 'error'].includes(scope.row.status)"-->
+          <!--            :disabled="!statusBtMap['recover'][scope.row.status]"-->
+          <!--            auto-loading-->
+          <!--            inner-loading-->
+          <!--            type="text"-->
+          <!--            @click="start(scope.row, arguments[0])"-->
+          <!--          >-->
+          <!--            {{ $t('task_button_recover') }}-->
+          <!--          </VButton>-->
           <VButton
-            v-if="scope.row.status === 'running'"
-            :disabled="!statusBtMap['paused'][scope.row.status]"
-            auto-loading
-            inner-loading
-            type="text"
-            @click="pause(scope.row, arguments[0])"
-          >
-            {{ $t('task_button_pause') }}
-          </VButton>
-          <VButton
-            v-else-if="['paused', 'schedule_failed', 'error'].includes(scope.row.status)"
-            :disabled="!statusBtMap['recover'][scope.row.status]"
-            auto-loading
-            inner-loading
-            type="text"
-            @click="start(scope.row, arguments[0])"
-          >
-            {{ $t('task_button_recover') }}
-          </VButton>
-          <VButton
-            v-else
             :disabled="!statusBtMap['start'][scope.row.status]"
             auto-loading
             inner-loading
@@ -53,8 +52,30 @@
           >
             {{ $t('task_button_start') }}
           </VButton>
-          <VButton :disabled="!statusBtMap['stop'][scope.row.status]" class="mr-2" type="text" @click="stop(scope.row, arguments[0])">
+          <!--          <VButton-->
+          <!--            v-if="scope.row.status === 'stopping'"-->
+          <!--            :disabled="!statusBtMap['task_button_force_stop'][scope.row.status]"-->
+          <!--            class="mr-2"-->
+          <!--            type="text"-->
+          <!--            @click="stop(scope.row, arguments[0])"-->
+          <!--          >-->
+          <!--            {{ $t('task_button_force_stop') }}-->
+          <!--          </VButton>-->
+          <VButton
+            :disabled="!statusBtMap['stop'][scope.row.status]"
+            class="mr-2"
+            type="text"
+            @click="stop(scope.row, arguments[0])"
+          >
             {{ $t('task_button_stop') }}
+          </VButton>
+          <VButton
+            :disabled="!statusBtMap['reset'][scope.row.status]"
+            class="mr-2"
+            type="text"
+            @click="stop(scope.row, arguments[0])"
+          >
+            {{ $t('task_button_reset') }}
           </VButton>
           <VButton type="text" @click="toStatistics(scope.row)">{{ $t('task_details_running_statistics') }}</VButton>
         </div>
@@ -117,6 +138,14 @@ export default {
         },
         stop: {
           paused: true,
+          schedule_failed: true,
+          error: true
+        },
+        reset: {
+          wait_run: true,
+          pause: true,
+          stop: true,
+          complete: true,
           schedule_failed: true,
           error: true
         }

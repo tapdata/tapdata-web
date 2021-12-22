@@ -377,6 +377,7 @@ export default {
   task_button_recover: '恢复',
   task_button_start: '启动', // 停止 编辑 子任务
   task_button_stop: '停止',
+  task_button_reset: '重置',
   task_button_force_stop: '强制停止',
   task_button_edit: '编辑',
   task_details_sub_task: '子任务',
