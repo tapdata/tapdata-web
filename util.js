@@ -12,14 +12,14 @@ export const getConnectionTypeImg = function (type) {
   try {
     return require(`./assets/icons/node/${type}.svg`)
   } catch (e) {
-    return require('./assets/icons/node/default.svg')
+    return null
   }
 }
 export const getConnectionTypeDialogImg = function (type) {
   try {
     return require(`./assets/icons/node/${type}.svg`)
   } catch (e) {
-    return require('./assets/icons/node/default.svg')
+    return null
   }
 }
 

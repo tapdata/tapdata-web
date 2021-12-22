@@ -10,8 +10,8 @@
                   连接
                   <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
                 </span>
-                <VIcon class="mr-2 click-btn" @click.stop="creat">plus</VIcon>
-                <VIcon class="click-btn" @click.stop="handleShowDBInput">magnify</VIcon>
+                <VIcon size="20" class="click-btn" @click.stop="creat">add-outline</VIcon>
+                <VIcon size="20" class="click-btn" @click.stop="handleShowDBInput">search-outline</VIcon>
               </template>
               <span v-else class="flex-1 user-select-none text-truncate">{{ activeConnection.name }}</span>
               <ElInput
@@ -30,7 +30,7 @@
                 @clear="handleShowDBInput"
               >
                 <template #prefix>
-                  <VIcon size="14" class="ml-1 h-100 click-btn">magnify</VIcon>
+                  <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
                 </template>
               </ElInput>
             </div>
@@ -73,7 +73,7 @@
           <span class="flex-1 user-select-none text-truncate flex align-center"
             >数据表<span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span></span
           >
-          <VIcon class="click-btn" @click.stop="handleShowTBInput">magnify</VIcon>
+          <VIcon size="20" class="click-btn" @click.stop="handleShowTBInput">search-outline</VIcon>
 
           <ElInput
             v-if="showTBInput"
@@ -605,6 +605,7 @@ export default {
 
 <style scoped lang="scss">
 $itemH: 34px;
+$hoverBg: #eef3ff;
 
 .drag-node {
   position: fixed !important;
@@ -625,12 +626,15 @@ $itemH: 34px;
     }
 
     .click-btn {
-      width: 1.6em;
-      height: 1.6em;
+      width: 24px !important;
+      height: 24px !important;
       z-index: 2;
-    }
-    .click-btn:hover {
-      background-color: #f2f4f6;
+      border-radius: 3px;
+
+      &:hover {
+        color: map-get($color, primary);
+        background: $hoverBg;
+      }
     }
 
     .badge {
@@ -694,7 +698,7 @@ $itemH: 34px;
         .el-collapse-item:first-child:last-child {
           height: 100%;
           .el-collapse-item__wrap {
-            height: calc(100% - #{$headerH});
+            height: calc(100% - #{$headerH - 1});
           }
           .el-collapse-item__content {
             height: 100%;
