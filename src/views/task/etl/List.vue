@@ -166,7 +166,7 @@
       <el-table-column :label="$t('dataFlow.syncType')" min-width="150">
         <template #default="{ row }">
           <span>
-            {{ row.sync_type ? syncType[row.sync_type] : '' }}
+            {{ row.type ? syncType[row.type] : '' }}
           </span>
         </template>
       </el-table-column>
@@ -218,9 +218,7 @@
               v-readonlybtn="'SYNC_job_edition'"
               style="margin-left: 10px"
               type="primary"
-              :disabled="
-                $disabledByPermission('SYNC_job_edition_all_data', row.user_id) || !statusBtMap['edit'][row.status]
-              "
+              :disabled="$disabledByPermission('SYNC_job_edition_all_data', row.user_id)"
               @click="handleEditor(row.id)"
             >
               {{ $t('button.edit') }}
@@ -258,7 +256,11 @@
                 <el-dropdown-item command="copy" v-readonlybtn="'SYNC_job_creation'"
                   >{{ $t('dataFlow.copy') }}
                 </el-dropdown-item>
-                <el-dropdown-item :disabled="resetDisabled(row)" command="initialize" v-readonlybtn="'SYNC_job_operation'">
+                <el-dropdown-item
+                  :disabled="resetDisabled(row)"
+                  command="initialize"
+                  v-readonlybtn="'SYNC_job_operation'"
+                >
                   {{ $t('dataFlow.button.reset') }}
                 </el-dropdown-item>
                 <el-dropdown-item
@@ -530,23 +532,13 @@ export default {
         id: true,
         name: true,
         status: true,
-        executeMode: true,
-        category: true,
-        stopOnError: true,
         last_updated: true,
         createTime: true,
-        children: true,
-        stats: true,
-        checked: true,
-        stages: true,
-        setting: true,
         user_id: true,
         startTime: true,
-        listtags: true,
-        mappingTemplate: true,
-        platformInfo: true,
         agentId: true,
-        statuses: true
+        statuses: true,
+        type: true
       }
       if (keyword && keyword.trim()) {
         where.or = [
@@ -701,17 +693,7 @@ export default {
         }
       }
       item.statusResult = []
-      // 扁平化
-      return {
-        id: item.id,
-        name: item.name,
-        status: item.status,
-        statuses: item.statuses,
-        sync_type: item.setting?.sync_type,
-        user_id: item.user_id,
-        startTime: item.startTime,
-        statusResult: item.statusResult
-      }
+      return item
     },
     handleSelectTag() {
       let tagList = {}
