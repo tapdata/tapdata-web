@@ -10,6 +10,7 @@ import VueClipboard from 'vue-clipboard2'
 import factory from '@/api/factory'
 import Cache from '@/utils/cache'
 import TapdataWebCore from 'web-core'
+import Cookie from 'web-core/utils/cookie'
 
 import '@/plugins/element'
 import '@/plugins/icon'
@@ -107,8 +108,12 @@ let init = settings => {
   let apiPre = window.getSettingByKey('DFS_TM_API_PRE_URL') || location.pathname.replace(/\/$/, '')
   let tcmApiPre = window.getSettingByKey('DFS_TCM_API_PRE_URL') || ''
   let path = (tcmApiPre === '/console' ? '' : tcmApiPre) + apiPre
+  let token = Cookie.get('token')
+  let xToken = Cookie.get('xToken')
+  let tokenParam = xToken ? 'X-Token=' + xToken : 'access_token=' + token
   wsUrl += '//' + host
   wsUrl += path + '/ws/agent'
+  wsUrl += `?xxxxpoolIdxxxx=CIDC-RP-25&${tokenParam}`
 
   window.App = new Vue({
     el: '#app',

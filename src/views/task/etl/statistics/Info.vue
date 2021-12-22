@@ -1,6 +1,6 @@
 <template>
   <div class="card-box p-6">
-    <div class="flex justify-content-between">
+    <div class="flex justify-content-between align-items-center">
       <div class="info-line align-items-center">
         <span class="mr-4 fs-6 font-color-main">{{ task.name }}</span>
         <StatusTag
@@ -20,18 +20,30 @@
       </div>
       <div class="operation">
         <VButton type="primary" :disabled="startDisabled" @click="start">
-          <VIcon>start-fill</VIcon>
-          <span class="ml-1">{{ $t('task_info_start') }}</span>
+          <VIcon size="12">start-fill</VIcon>
+          <span class="ml-1">{{ $t('task_button_start') }}</span>
         </VButton>
         <VButton type="danger" :disabled="stopDisabled" @click="stop">
-          <VIcon>pause-fill</VIcon>
-          <span class="ml-1">{{ $t('task_info_stopt') }}</span>
+          <VIcon size="12">pause-fill</VIcon>
+          <span class="ml-1">{{ $t('task_button_stop') }}</span>
         </VButton>
-        <VButton :disabled="editDisabled" @click="edit">
-          <VIcon>edit-fill</VIcon>
-          <span class="ml-1">{{ $t('button_edit') }}</span>
-        </VButton>
+        <!--        <VButton :disabled="editDisabled" @click="edit">-->
+        <!--          <VIcon size="12">edit-fill</VIcon>-->
+        <!--          <span class="ml-1">{{ $t('button_edit') }}</span>-->
+        <!--        </VButton>-->
       </div>
+    </div>
+    <div class="mt-3">
+      <SelectList
+        v-if="stagesItems.length > 0"
+        v-model="selectedStage"
+        :items="stagesItems"
+        last-page-text=""
+        clearable
+        size="mini"
+        style="min-width: 240px"
+        @change="changeStageFnc"
+      ></SelectList>
     </div>
     <div class="flex justify-content-between mt-6">
       <div class="p-6" style="background-color: #fafafa; min-width: 240px">
@@ -60,7 +72,7 @@
           </div>
         </div>
       </div>
-      <div class="flex-fill pl-10" style="min-height: 250px">
+      <div class="flex flex-column flex-fill pl-10" style="height: 250px">
         <div class="flex justify-content-between ml-6">
           <ElRadioGroup v-model="throughputObj.title.time" size="mini" @change="changeUtil">
             <ElRadioButton label="second">{{ $t('task_info_s') }}</ElRadioButton>
@@ -75,7 +87,7 @@
             QPS
           </div>
         </div>
-        <VEchart :option="throughputObj.body" class="v-echart" style="height: 100%"></VEchart>
+        <VEchart :option="throughputObj.body" class="v-echart flex-fill"></VEchart>
       </div>
     </div>
   </div>
@@ -85,12 +97,13 @@
 import StatusTag from '@/components/StatusTag'
 import VEchart from '@/components/VEchart'
 import VIcon from '@/components/VIcon'
+import SelectList from '@/components/SelectList'
 import { formatTime, isEmpty } from '@/utils/util'
 
 let lastMsg
 export default {
   name: 'Info',
-  components: { StatusTag, VEchart, VIcon },
+  components: { StatusTag, VEchart, VIcon, SelectList },
   props: {
     task: {
       type: Object,
@@ -150,22 +163,24 @@ export default {
           error: true
         },
         stop: {
-          paused: true,
-          schedule_failed: true,
-          error: true
+          running: true
+          // paused: true,
+          // schedule_failed: true,
+          // error: true
         },
         edit: {
           edit: true,
           paused: true
         }
       },
-      creator: ''
+      creator: '',
+      selectedStage: '' // 选中的节点
     }
   },
   computed: {
     startDisabled() {
       const { statusBtMap, task } = this
-      return !statusBtMap['start'][task.status] || (task.status === 'draft' && task.checked === false)
+      return !statusBtMap['start'][task.status]
     },
     stopDisabled() {
       const { statusBtMap, task } = this
@@ -174,6 +189,15 @@ export default {
     editDisabled() {
       const { statusBtMap, task } = this
       return !statusBtMap['edit'][task.status]
+    },
+    stagesItems() {
+      let result = this.task?.dag?.nodes?.map(item => {
+        return {
+          label: item.name,
+          value: item.id
+        }
+      })
+      return result || []
     }
   },
   watch: {
@@ -198,10 +222,50 @@ export default {
       if (this.task.creator) {
         this.creator = this.task.creator
       }
+      this.loadMetrics()
       // this.loadHttp()
       this.$emit('onceLoadHttp')
       this.loadWS()
       this.sendMsg()
+    },
+    loadMetrics() {
+      const { selectedStage } = this
+      let filter = {
+        where: {
+          name: {
+            $in: [
+              'sub_task_total_input',
+              'sub_task_total_output',
+              'sub_task_total_insert',
+              'sub_task_total_update',
+              'sub_task_total_delete',
+              'sub_task_qps'
+            ]
+          },
+          'labels.taskId': this.task.id
+        }
+      }
+      if (selectedStage) {
+        delete filter.where['labels.taskId']
+        filter.where['labels.nodeId'] = selectedStage
+        filter.where.name = {
+          $in: [
+            'sub_task_node_total_input',
+            'sub_task_node_total_output',
+            'sub_task_node_total_insert',
+            'sub_task_node_total_update',
+            'sub_task_node_total_delete',
+            'sub_task_node_qps'
+          ]
+        }
+      }
+      this.$api('Metrics')
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          console.log('Metrics', res)
+        })
     },
     loadWS() {
       this.$ws.on('dataFlowInsight', data => {
@@ -551,6 +615,10 @@ export default {
         msg,
         title: map[title]
       }
+    },
+    changeStageFnc() {
+      // this.sendMsg()
+      this.loadMetrics()
     }
   }
 }
