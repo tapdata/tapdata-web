@@ -13,7 +13,13 @@ export function setPermission(list) {
   sessionStorage.setItem('tapdata_permissions', JSON.stringify(permissions))
   return permissions
 }
-
+export const getConnectionTypeDialogImg = function (type) {
+  try {
+    return require(`./assets/icons/node/${type}.svg`)
+  } catch (e) {
+    return null
+  }
+}
 export function signOut() {
   let cookie = window.VueCookie
 
