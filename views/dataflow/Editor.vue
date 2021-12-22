@@ -510,8 +510,11 @@ export default {
       }
 
       jsPlumbIns.bind('beforeDrop', info => {
-        // console.log('beforeDrop', info) // eslint-disable-line
         const { sourceId, targetId } = info
+
+        if (sourceId === targetId) return false
+
+        // console.log('beforeDrop', info) // eslint-disable-line
 
         const source = this.nodeById(this.getRealId(sourceId))
         const target = this.nodeById(this.getRealId(targetId))
@@ -1037,7 +1040,6 @@ export default {
     },
 
     allowConnect(sourceId, targetId) {
-      if (sourceId === targetId) return true
       const allEdges = this.$store.getters['dataflow/allEdges']
       const map = allEdges.reduce((map, item) => {
         let target = map[item.target]
