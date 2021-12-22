@@ -40,6 +40,7 @@ $height: 50px;
 
 .df-node {
   position: absolute;
+  z-index: 5;
   display: flex;
   align-items: center;
   width: $width;
