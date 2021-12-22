@@ -381,7 +381,13 @@ export default {
             nodeId = edge.source
           }
 
-          const { fields } = await metadataApi.nodeSchema(nodeId)
+          let fields = []
+          try {
+            fields = await metadataApi.nodeSchema(nodeId)
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('nodeSchema', e)
+          }
 
           return fields.map(item => ({
             label: item.field_name,
@@ -404,7 +410,13 @@ export default {
             nodeId = edge.source
           }
 
-          const { fields } = await metadataApi.nodeSchema(nodeId)
+          let fields = []
+          try {
+            fields = await metadataApi.nodeSchema(nodeId)
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('nodeSchema', e)
+          }
 
           return fields.map(item => item.field_name)
         }
