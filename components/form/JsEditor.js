@@ -1,4 +1,4 @@
-import CodeEditor from 'web-core/components/CodeEditor'
+import CodeEditor from 'web-core/components/base/VCodeEditor'
 
 export const JsEditor = {
   props: {
@@ -41,9 +41,9 @@ export const JsEditor = {
     }
     return (
       <CodeEditor
+        class="border rounded-2"
         value={this.sql}
         lang="javascript"
-        theme="chrome"
         height={this.height}
         onInput={this.onInput}
         options={options}

@@ -1222,11 +1222,11 @@ export default {
       const spaceY = 120
 
       const newPosition = [source.attrs.position[0] + NODE_WIDTH + spaceX, source.attrs.position[1]]
-      let movePosition = [0, spaceY]
+      let movePosition = [spaceX, 0]
 
       if (this.isSource(source)) {
         newPosition[1] += spaceY
-        movePosition = [spaceX, 0]
+        movePosition = [0, spaceY]
       }
 
       const position = this.getNewNodePosition(newPosition, movePosition)
