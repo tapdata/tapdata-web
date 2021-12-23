@@ -625,9 +625,6 @@ export default {
 .layout-container {
   height: 100%;
   background: rgba(250, 250, 250, 1);
-  .el-submenu__title {
-    font-size: 12px;
-  }
   .layout-header {
     display: flex;
     align-items: center;

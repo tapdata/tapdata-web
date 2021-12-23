@@ -255,7 +255,7 @@
       </div>
     </el-dialog>
     <el-dialog
-      :title="$t('message.prompt')"
+      :title="$t('message_title_prompt')"
       :visible.sync="reloadSchemaDialog"
       :close-on-click-modal="false"
       width="30%"
@@ -515,8 +515,8 @@ export default {
         this.creatUserId = this.$cookie.get('user_id')
         this.editor.ui.setName(this.$t('dataFlow.newTaksName') + '_' + uuid().slice(0, 7))
         // if (!this.dataFlow) document.title = this.$t('dataFlow.newTaksName');
+        this.setSelector(this.$route.query.mapping)
       }
-      this.setSelector(this.$route.query.mapping)
     },
 
     simpleRefresh() {
@@ -689,6 +689,8 @@ export default {
           } else {
             self.progress.showProgress = false
           }
+        } else {
+          self.progress.showProgress = false
         }
       })
     },
@@ -975,6 +977,7 @@ export default {
               //迁移全局修改设置值
               stages[targetId].tableNameTransform = cell[FORM_DATA_KEY]?.tableNameTransform
               stages[targetId].fieldsNameTransform = cell[FORM_DATA_KEY]?.fieldsNameTransform
+              stages[targetId].batchOperationList = cell[FORM_DATA_KEY]?.batchOperationList
             }
           }
           if (targetId && stages[targetId]) {
@@ -1258,8 +1261,8 @@ export default {
             }
             if (
               item.outputLanes.length &&
-              (['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'gaussdb200'].includes(item.databaseType) ||
-                ['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'gaussdb200'].includes(
+              (['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'hana', 'gaussdb200'].includes(item.databaseType) ||
+                ['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'hana', 'gaussdb200'].includes(
                   item.database_type
                 )) &&
               // (item.databaseType === 'greenplum' || item.database_type === 'greenplum') &&
@@ -1269,13 +1272,6 @@ export default {
               databaseType = item.databaseType ? item.databaseType : item.database_type
               // greentplumSettingFalg = false
             }
-            // if (
-            //   item.outputLanes.length &&
-            //   (item.databaseType === 'kundb' || item.database_type === 'kundb') &&
-            //   this.sync_type !== 'initial_sync'
-            // ) {
-            //   kundbFalg = false
-            // }
           })
         }
         // 【增量采集时间】仅增量任务时，选择浏览器时区，时间设置未作必填校验，导致任务启动后不增量同步。
@@ -1299,14 +1295,7 @@ export default {
           this.$message.error(databaseType + this.$t('dag_job_check_source'))
           return
         }
-        // if (!adbMysqlFalg) {
-        //   this.$message.error('ADB MySQL' + this.$t('dag_job_check_source'))
-        //   return
-        // }
-        // if (!kundbFalg) {
-        //   this.$message.error('kundb' + this.$t('dag_job_check_source'))
-        //   return
-        // }
+
         if (this.modPipeline) {
           data['modPipeline'] = []
           this.showCheckStagesVisible = false

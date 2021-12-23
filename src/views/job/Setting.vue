@@ -269,6 +269,25 @@
             </el-popover>
           </div>
         </el-form-item>
+        <!-- Oracle日志挖掘模式 -->
+        <el-form-item :label="$t('data_flow_oracle_logminer')" v-show="formData.sync_type !== 'initial_sync'">
+          <el-select
+            v-model="formData.oracleLogminer"
+            size="mini"
+            :placeholder="$t('message.placeholderSelect')"
+            class="dataWrite-list"
+          >
+            <el-option :label="$t('dataFlow.automatically')" value="automatically"> </el-option>
+            <el-option :label="$t('dataFlow.manually')" value="manually"> </el-option>
+          </el-select>
+        </el-form-item>
+        <!-- OracleSQL自定义解析 -->
+        <el-form-item :label="$t('task_setting_oracle_custom_analysis')" v-show="formData.sync_type !== 'initial_sync'">
+          <el-switch
+            v-model="formData.useCustomSQLParser"
+            :active-text="formData.useCustomSQLParser ? $t('dataFlow.yes') : $t('dataFlow.no')"
+          ></el-switch>
+        </el-form-item>
       </div>
       <el-form-item v-if="isSimple">
         <div v-if="!showMore" @click="showMore = true" class="advance-setting">

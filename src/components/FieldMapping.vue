@@ -70,8 +70,17 @@ export default {
       }
 
       if (!this.dataFlow) return
+      if (this.transform.stageId) {
+        this.dataFlow['stageId'] = this.transform.stageId //任务同步目标节点stageID 推演
+      }
       //迁移任务需要同步字段处理器
       if (this.mappingType && this.mappingType === 'cluster-clone') {
+        //是否目标有connectionIDld
+        let checkTargetConnectionId = this.hasConnectionId(this.dataFlow)
+        if (!checkTargetConnectionId || checkTargetConnectionId === false) {
+          this.$message.error(this.$t('dag_link_field_mapping_error_tip'))
+          return
+        }
         this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
         //是否有选中的表
         if (
@@ -94,10 +103,6 @@ export default {
         delete this.dataFlow['rollback']
         delete this.dataFlow['rollbackTable']
       }
-      if (this.transform.stageId) {
-        this.dataFlow['stageId'] = this.transform.stageId //任务同步目标节点stageID 推演
-      }
-
       let promise = this.$api('DataFlows').getMetadata(this.dataFlow)
       promise
         .then(() => {
@@ -145,6 +150,16 @@ export default {
         }
       }
       return data
+    },
+    //是否目标有connectionID
+    hasConnectionId(data) {
+      let result = false
+      for (let i = 0; i < data.stages.length; i++) {
+        if (data.stages[i].id === this.transform.stageId && data.stages[i].connectionId !== '') {
+          result = true
+        }
+      }
+      return result
     },
     /*
      * 子模块-恢复默认操作
@@ -201,6 +216,8 @@ export default {
           this.dataFlow['stages'][i].tableNameTransform = ''
           this.dataFlow['stages'][i].table_suffix = ''
           this.dataFlow['stages'][i].table_prefix = ''
+          this.dataFlow['stages'][i].batchOperationList = []
+          this.dataFlow['batchOperation'] = []
         }
       }
     },
@@ -211,6 +228,7 @@ export default {
           this.dataFlow['stages'][i].tableNameTransform = data.tableNameTransform
           this.dataFlow['stages'][i].table_prefix = data.table_prefix
           this.dataFlow['stages'][i].table_suffix = data.table_suffix
+          this.dataFlow['stages'][i].batchOperationList = data.batchOperationList
         }
       }
     },
@@ -219,10 +237,16 @@ export default {
       return result.fieldsNameTransform
     },
     //获取左边导航数据 - 表
-    async updateMetadata(type, data) {
+    async updateMetadata(type, data, batchOperation) {
       //将表改名 字段改名 rockBackAll
       this.updateAutoTransform(type, data)
-      this.dataFlow['rollback'] = 'all'
+      if (type !== 'dataType') {
+        this.dataFlow['rollback'] = 'all'
+      }
+      if (batchOperation) {
+        this.dataFlow['batchOperation'] = batchOperation
+        delete this.dataFlow['rollback']
+      }
       let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
       this.initWSSed() //发送ws 监听schema进度
       return promise?.data
@@ -239,6 +263,7 @@ export default {
      * 数据匹配 源表所有字段过处理器 源表所有字段过字段改名 匹配后的数据再与目标表数据匹配
      * */
     async intiFieldMappingTableData(row) {
+      if (!this.$refs.fieldMappingDom) return //打开弹窗才能请求弹窗列表数据
       let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
       source = source.data && source.data.length > 0 ? source.data[0].fields : []
       let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
@@ -312,17 +337,18 @@ export default {
       }
       return operations || []
     },
-    //判断是否改名
-    handleFieldName(row, fieldName) {
-      let operations = this.getFieldOperations(row)
-      if (!operations) return
-      let ops = operations.filter(op => op.operand === fieldName && op.op === 'RENAME')
-      return ops
-    },
     //获取typeMapping
     async getTypeMapping(row) {
-      let promise = await this.$api('TypeMapping').getId(row.sinkDbType)
-      return promise?.data
+      if (!row) return
+      return Promise.all([
+        this.$api('TypeMapping').getId(row.sourceDbType),
+        this.$api('TypeMapping').getId(row.sinkDbType)
+      ]).then(([sourceData, targetData]) => {
+        return {
+          sourceData: sourceData?.data,
+          targetData: targetData?.data
+        }
+      })
     },
     saveReturnData() {
       //保存字段映射

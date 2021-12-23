@@ -209,4 +209,3 @@ Vue.prototype.$alert = MessageBox.alert
 Vue.prototype.$message = new DoneMessage()
 Vue.prototype.$msgbox = MessageBox
 Vue.prototype.$notify = Notification
-Loading.service({ fullscreen: true })
