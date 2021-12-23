@@ -871,9 +871,82 @@ export default {
       }
     },
 
+    validate() {
+      if (!this.dataflow.name) return this.$t('editor.cell.validate.empty_name')
+
+      // 至少两个数据节点
+      const tableNode = this.nodes.filter(node => node.type === 'table')
+      if (tableNode.length < 2) {
+        return this.$t('editor.cell.validate.none_data_node')
+      }
+
+      const sourceMap = {},
+        targetMap = {},
+        edges = this.$store.getters['dataflow/allEdges']
+      edges.forEach(item => {
+        let _source = sourceMap[item.source]
+        let _target = targetMap[item.target]
+
+        if (!_source) {
+          sourceMap[item.source] = [item]
+        } else {
+          _source.push(item)
+        }
+
+        if (!_target) {
+          targetMap[item.target] = [item]
+        } else {
+          _target.push(item)
+        }
+      })
+
+      let someErrorMsg = ''
+      // 检查每个节点的源节点个数、连线个数
+      this.nodes.some(node => {
+        const { id } = node
+        const minInputs = node.__Ctor.attr.minInputs ?? 1 // 没有设置minInputs则缺省为1
+        const inputNum = targetMap[id]?.length ?? 0
+
+        if (!sourceMap[id] && !targetMap[id]) {
+          // 存在没有连线的节点
+          someErrorMsg = `${node.name} 没有任何连线`
+          return true
+        }
+
+        if (inputNum < minInputs) {
+          someErrorMsg = `${node.name} 至少需要一个源节点`
+          return true
+        }
+      })
+      if (someErrorMsg) return someErrorMsg
+
+      // 检查链路的末尾节点类型是否是表节点
+      const firstNodes = this.nodes.filter(node => !targetMap[node.id]) // 链路的首节点
+      const nodeMap = this.nodes.reduce((map, node) => ((map[node.id] = node), map), {})
+      if (firstNodes.some(node => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
+
+      return null
+    },
+
+    // 循环检查检查链路的末尾节点类型是否是表节点
+    isEndOfTable(source, sourceMap, nodeMap) {
+      if (!sourceMap[source.id]) {
+        // 末位节点
+        return source.type === 'table'
+      }
+
+      for (let edge of sourceMap[source.id]) {
+        if (!this.isEndOfTable(nodeMap[edge.target], sourceMap, nodeMap)) {
+          return false
+        }
+      }
+
+      return true
+    },
+
     async save() {
       // this.validateNodes()
-      const errorMsg = this.getError()
+      const errorMsg = this.validate()
       if (errorMsg) {
         this.$message.error(errorMsg)
         return
