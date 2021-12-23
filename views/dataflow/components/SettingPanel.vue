@@ -3,9 +3,9 @@
     <ElForm :model="settings" class="setting-panel-form" label-width="140px" label-position="top" size="small">
       <ElTabs v-model="settingPanelType" class="setting-tabs h-100">
         <ElTabPane label="基本设置" name="base">
-          <div class="setting-panel-box bg-white">
-            <div class="setting-title fs-7 pl-4 border-bottom">任务设置</div>
-            <div class="px-5">
+          <div class="setting-panel-box bg-white px-5">
+            <div class="setting-title fs-7 border-bottom">任务设置</div>
+            <div>
               <ElRow>
                 <ElCol :span="12">
                   <ElFormItem label="任务名称" required="">
@@ -33,9 +33,12 @@
           </div>
         </ElTabPane>
         <ElTabPane label="高级设置" name="advanced">
-          <div class="setting-panel-box bg-white">
-            <div class="setting-title fs-7 pl-4">读写设置</div>
-            <div class="px-5">
+          <div class="setting-panel-box bg-white px-5">
+            <div class="setting-title border-bottom fs-7">
+              读写设置
+              <span class="pl-2">任务在进行读取和写入时执行的策略</span>
+            </div>
+            <div>
               <ElRow>
                 <ElCol :span="12">
                   <ElFormItem label="自动创建索引">
@@ -53,9 +56,12 @@
               </ElRow>
             </div>
           </div>
-          <div class="setting-panel-box bg-white">
-            <div class="setting-title fs-7 pl-4">全量设置</div>
-            <div class="px-5">
+          <div class="setting-panel-box bg-white px-5">
+            <div class="setting-title border-bottom fs-7">
+              全量设置
+              <span class="pl-2">任务的同步类型为全量或全量+增量时执行的</span>
+            </div>
+            <div>
               <ElFormItem label="目标写入线程数">
                 <ElInputNumber
                   controls-position="right"
@@ -66,9 +72,12 @@
               </ElFormItem>
             </div>
           </div>
-          <div class="setting-panel-box bg-white mt-5">
-            <div class="setting-title fs-7 pl-4">增量设置</div>
-            <div class="px-5 pb-5">
+          <div class="setting-panel-box bg-white mt-5 px-5">
+            <div class="setting-title border-bottom fs-7">
+              增量设置
+              <span class="pl-2">任务的同步类型为增量或全量+增量时执行的</span>
+            </div>
+            <div class="pb-5">
               <ElRow>
                 <ElCol :span="4">
                   <ElFormItem label="增量同步并发写入">
@@ -100,36 +109,17 @@
                       <ElOption label="批量" :value="false"></ElOption>
                       <ElOption label="逐条" :value="true"></ElOption>
                     </ElSelect>
-                    <template>
+                    <template v-if="!settings.increOperationMode">
                       <ElInputNumber
-                        v-model="settings.increaseSyncInterval"
-                        :min="0"
-                        class="pl-5 mr-1"
+                        v-model="settings.increaseReadSize"
+                        :min="1"
                         controls-position="right"
                       ></ElInputNumber>
                     </template>
                   </ElFormItem>
                 </ElCol>
-                <!-- <ElCol :span="4">
-                  <ElFormItem label="增量同步间隔(ms)">
-                    <ElInputNumber
-                      v-model="settings.increaseSyncInterval"
-                      :min="0"
-                      controls-position="right"
-                    ></ElInputNumber>
-                  </ElFormItem>
-                </ElCol> -->
               </ElRow>
               <ElRow>
-                <ElCol :span="4">
-                  <ElFormItem label="增量批次读取行数">
-                    <ElInputNumber
-                      v-model="settings.increaseReadSize"
-                      :min="1"
-                      controls-position="right"
-                    ></ElInputNumber>
-                  </ElFormItem>
-                </ElCol>
                 <!-- <ElCol :span="12">
                   <ElFormItem label="增量同步间隔(ms)">
                     <ElInputNumber
@@ -139,7 +129,7 @@
                     ></ElInputNumber>
                   </ElFormItem>
                 </ElCol> -->
-                <ElCol :span="6">
+                <!-- <ElCol :span="6">
                   <ElFormItem label="每次读取行数">
                     <ElInputNumber
                       v-model="settings.increaseReadSize"
@@ -147,7 +137,7 @@
                       controls-position="right"
                     ></ElInputNumber>
                   </ElFormItem>
-                </ElCol>
+                </ElCol> -->
                 <ElCol :span="4">
                   <ElFormItem label="处理器线程数">
                     <ElInputNumber
@@ -158,15 +148,38 @@
                     ></ElInputNumber>
                   </ElFormItem>
                 </ElCol>
-                <ElCol :span="10">
+                <!-- <ElCol :span="10">
                   <ElFormItem label="共享增量读取模式">
                     <ElSelect v-model="settings.increShareReadMode">
                       <ElOption label="流式读取" value="STREAMING"></ElOption>
                       <ElOption label="轮询读取" value="POLLING"></ElOption>
                     </ElSelect>
                   </ElFormItem>
-                </ElCol>
+                </ElCol> -->
               </ElRow>
+
+              <ElFormItem label="增量开始时间点">
+                <ElRow v-for="item in settings.syncPoints" :key="item.name">
+                  <div class="labelTxt">
+                    数据源:
+                    {{ item.name || item.connectionId }}
+                  </div>
+                  <ElCol :span="8" style="margin-right: 10px">
+                    <ElSelect v-model="item.type" placeholder="请选择">
+                      <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value"> </ElOption>
+                    </ElSelect>
+                  </ElCol>
+                  <ElCol :span="14" v-if="item.type !== 'current'">
+                    <ElDatePicker
+                      format="yyyy-MM-dd HH:mm:ss"
+                      style="width: 95%"
+                      v-model="item.date"
+                      type="datetime"
+                      :disabled="item.type === 'current'"
+                    ></ElDatePicker>
+                  </ElCol>
+                </ElRow>
+              </ElFormItem>
             </div>
           </div>
         </ElTabPane>
@@ -188,7 +201,21 @@ export default {
 
   data() {
     return {
-      settingPanelType: 'base'
+      settingPanelType: 'base',
+      options: [
+        {
+          label: '用户浏览器时区',
+          value: 'localTZ'
+        },
+        {
+          label: '数据库时区',
+          value: 'connTZ'
+        },
+        {
+          label: '此刻',
+          value: 'current'
+        }
+      ]
     }
   },
 
@@ -197,7 +224,40 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['setNodeValue', 'updateNodeProperties', 'setDataflowSettings'])
+    ...mapMutations('dataflow', ['setNodeValue', 'updateNodeProperties', 'setDataflowSettings']),
+
+    getAllConnectionIds() {
+      console.log(this.dataflow)
+      debugger
+    },
+
+    updateSyncNode(syncPoints) {
+      syncPoints = syncPoints || []
+      let connectionIds = this.getAllConnectionIds()
+      if (connectionIds && connectionIds.length > 0) {
+        this.getAllConnectionName(connectionIds)
+          .then(() => {})
+          .catch(() => {})
+        syncPoints = syncPoints.filter(point => connectionIds.includes(point.connectionId))
+        let map = {}
+        // connectionId -> syncPoint
+        syncPoints.forEach(s => (map[s.connectionId] = s))
+
+        connectionIds.forEach(connectionId => {
+          if (!map[connectionId]) {
+            map[connectionId] = {
+              connectionId: connectionId,
+              type: 'current', // localTZ: 本地时区； connTZ：连接时区
+              time: '',
+              date: '',
+              timezone: this.systemTimeZone,
+              name: ''
+            }
+          }
+        })
+        return map
+      }
+    }
   }
 }
 </script>
@@ -210,9 +270,6 @@ export default {
   .setting-tabs,
   .setting-panel-form {
     height: 100%;
-    .setting-panel-box {
-      border-top: 1px solid #c8cdcf;
-    }
     ::v-deep {
       > .el-tabs__header {
         margin: 0;
@@ -239,6 +296,11 @@ export default {
         .setting-title {
           line-height: 35px;
           font-weight: 600;
+          span {
+            font-weight: initial;
+            font-size: 12px;
+            color: rgba(0, 0, 0, 0.45);
+          }
         }
         .el-form-item {
           margin-bottom: 15px;
