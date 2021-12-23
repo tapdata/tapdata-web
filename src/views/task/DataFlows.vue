@@ -455,6 +455,10 @@ export default {
         'force stopping': {
           label: this.$t('dataFlow.status.force_stopping'),
           icon: 'loading'
+        },
+        prepare: {
+          label: this.$t('dataFlow.status.prepare'),
+          icon: 'loading'
         }
       },
       agentOptions: [],
