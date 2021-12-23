@@ -233,31 +233,6 @@
                         >{{ $t('dataVerification.advanceVerify') }}</el-checkbox
                       >
                     </div>
-                    <div class="setting-item" v-if="item.showAdvancedVerification">
-                      <label class="item-label is-required">{{ $t('dataVerification.JSVerifyLogic') }}</label>
-                      <el-button
-                        v-if="!item.webScript || item.webScript === ''"
-                        size="mini"
-                        icon="el-icon-plus"
-                        @click="addScript(index)"
-                        >{{ $t('dataVerification.addJS') }}</el-button
-                      >
-                      <span v-if="item.webScript && item.webScript !== ''">
-                        <el-input
-                          class="item-select item-textarea"
-                          type="textarea"
-                          v-model="item.webScript"
-                          disabled
-                        ></el-input>
-                        <el-button-group class="setting-buttons">
-                          <el-button size="mini" icon="el-icon-edit" @click="editScript(index)"></el-button>
-                        </el-button-group>
-                        <el-button-group class="setting-buttons">
-                          <el-button size="mini" icon="el-icon-close" @click="removeScript(index)"></el-button>
-                        </el-button-group>
-                      </span>
-                    </div>
-
                     <el-row class="pt-3">
                       <el-col :span="13" class="setting-item-box">
                         <el-switch
@@ -298,6 +273,30 @@
                         ></queryBuilder>
                       </el-col>
                     </el-row>
+                    <div class="setting-item pt-4" v-if="item.showAdvancedVerification">
+                      <label class="item-label is-required">{{ $t('dataVerification.JSVerifyLogic') }}</label>
+                      <el-button
+                        v-if="!item.webScript || item.webScript === ''"
+                        size="mini"
+                        icon="el-icon-plus"
+                        @click="addScript(index)"
+                        >{{ $t('dataVerification.addJS') }}</el-button
+                      >
+                      <span v-if="item.webScript && item.webScript !== ''">
+                        <el-input
+                          class="item-select item-textarea"
+                          type="textarea"
+                          v-model="item.webScript"
+                          disabled
+                        ></el-input>
+                        <el-button-group class="setting-buttons">
+                          <el-button size="mini" icon="el-icon-edit" @click="editScript(index)"></el-button>
+                        </el-button-group>
+                        <el-button-group class="setting-buttons">
+                          <el-button size="mini" icon="el-icon-close" @click="removeScript(index)"></el-button>
+                        </el-button-group>
+                      </span>
+                    </div>
                   </div>
                 </el-form>
 
@@ -1008,20 +1007,20 @@ export default {
     },
     //
     stringIntercept(databaseType, item) {
-      let where
+      let where = ''
       if (databaseType === 'mongodb') {
-        if (item.custSql?.editSql) {
+        if (item.custSql?.filterType === 'sql') {
           where = item.custSql.editSql
         } else {
           where = item.custSql?.cSql
         }
       } else {
-        if (item.custSql?.cSql) {
+        if (item.custSql?.filterType === 'sql') {
+          where = 'WHERE ' + item.custSql?.editSql
+        } else {
           let index = item.custSql.cSql.indexOf('*  FROM')
           let string = item.custSql.cSql.substring(index + 7, item.custSql.cSql.length).trimStart()
           where = string
-        } else {
-          where = item.custSql?.editSql
         }
       }
       return where
