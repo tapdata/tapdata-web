@@ -1279,7 +1279,7 @@ export default {
         })
     },
     handleGoFunction() {
-      top.location.href = '/#/JsFuncs'
+      top.location.href = '/#/function'
     }
   }
 }

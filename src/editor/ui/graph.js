@@ -311,18 +311,21 @@ export default class Graph extends Component {
             if (link.target().port == model.get('source').port) hasConnected = true
             if (link.source().port == model.get('source').port) hasConnected = true
           })
-          if (!hasConnected)
+          if (!hasConnected && model.get('source').port) {
             self.graph.getCell(model.get('source').id).portProp(model.get('source').port, 'attrs/circle/visibility', '')
+          }
+
           hasConnected = false
           if (model.get('target').id) {
             self.graph.getConnectedLinks(self.graph.getCell(model.get('target').id)).map(link => {
               if (link.target().port == model.get('target').port) hasConnected = true
               if (link.source().port == model.get('target').port) hasConnected = true
             })
-            if (!hasConnected)
+            if (!hasConnected && model.get('target').port) {
               self.graph
                 .getCell(model.get('target').id)
                 .portProp(model.get('target').port, 'attrs/circle/visibility', '')
+            }
           }
         }
         self.updateOutputSchema(model)
@@ -375,17 +378,23 @@ export default class Graph extends Component {
   }
 
   dealWithConnectBetweenLink(cell) {
-    let currentPosition = cell.position()
+    // let currentPosition = cell.position()
     let allLinks = this.graph.getLinks()
-    let self = this
+    // let self = this
+
+    const rightMidPoint = cell.getBBox().rightMiddle()
+    const paperPoint = this.paper.localToPagePoint(rightMidPoint)
+
     if (this.graph.getNeighbors(cell).length == 0 && allLinks.length > 0) {
       //only no linked cell can perform this operation.
       // if no link on paper yet, nothing to do.
-      let matchedLink = allLinks.filter(item => {
-        return self.checkIntersection(item, currentPosition)
-      })
-      if (matchedLink.length > 0) {
-        let linkView = this.paper.findViewByModel(matchedLink[0])
+      const cellView = this.paper.findViewByModel(cell)
+      cellView.el.style.display = 'none'
+      const matchPath = document.elementFromPoint(paperPoint.x - cell.attributes.size.width / 2, paperPoint.y)
+      cellView.el.style.display = 'unset'
+
+      if (matchPath && matchPath.nodeName === 'path') {
+        let linkView = this.paper.findView(matchPath)
         let originalFormData = linkView.model.getFormData()
         //from view of cell itself
         // target don't accept source connection
@@ -444,12 +453,15 @@ export default class Graph extends Component {
           afterLink.setFormData(originalFormData)
           this.updateOutputSchema(afterLink)
           linkView.model.remove()
+
+          this.selection.collection.reset([cell])
         }
       }
     }
   }
   // check if the cell is drag to between nodes, right on link
   checkIntersection(item, currentPosition) {
+    console.log('🚌checkIntersection', item, item.getBBox({ useModelGeometry: true }))
     if (item.getBBox({ useModelGeometry: true }).containsPoint(currentPosition)) {
       //inside bbox
       return true
@@ -787,7 +799,7 @@ export default class Graph extends Component {
       }
     } else {
       if (cell.isElement()) {
-        if ($('.monitorTab').html().length < 50) {
+        if ($('.monitorTab')?.html()?.length < 50) {
           $('.monitorTab').html(
             `<div class="e-tab-title active">${i18n.t(
               'editor.ui.sidebar.statistics'
@@ -876,6 +888,8 @@ export default class Graph extends Component {
       )
       halo.$el.find('button').click(() => {
         event.stopPropagation()
+        this.selection.collection.reset([])
+        this.onClickBlank()
         elementView.model.setEnabled(elementView.model)
         event.target.outerHTML = ''
       })
@@ -892,6 +906,8 @@ export default class Graph extends Component {
           link.toBack()
           link.attributes.form_data.disabled = true
         })
+        this.selection.collection.reset([])
+        this.onClickBlank()
         elementView.model.setDisabled(elementView.model, true)
         event.target.outerHTML = ''
       })
@@ -1151,6 +1167,7 @@ export default class Graph extends Component {
             })
             return
           }
+          console.log('🚗删除', this.selection.collection.toArray())
           this.graph.removeCells(this.selection.collection.toArray())
         }
       },

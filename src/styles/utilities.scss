@@ -11920,7 +11920,8 @@
   cursor: grabbing;
 }
 
-.cursor-pointer, .clickable {
+.cursor-pointer,
+.clickable {
   cursor: pointer;
 }
 .cursor-col-resize {

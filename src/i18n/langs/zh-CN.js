@@ -7,6 +7,25 @@ export default {
   button_edit: '编辑',
   button_confirm: '确定',
   button_cancel: '取消',
+  button_back: '返回',
+  button_save: '保存',
+  button_check: '查看',
+  button_delete: '删除',
+  button_setting: '设置',
+  button_reduction: '还原',
+
+  // 通用下拉框
+  select_option_all: '全部',
+
+  // 通用消息
+  message_title_prompt: '提示',
+  message_delete_confirm: '是否删除',
+
+  // 表格
+  column_operation: '操作',
+
+  // 菜单标题
+  menu_title_function: '函数管理',
 
   gl_button_update_success: '修改成功',
 
@@ -165,6 +184,8 @@ export default {
   connection_preview_master_partition: '仅写入master分区',
   connection_preview_isr_partition: '写入所有ISR分区',
   connection_preview_operation_success: '操作成功',
+
+  connection_hana_label_hana_type: '租户模式',
   // 路由名
   app_menu_jsFuncs: '函数',
 
@@ -182,11 +203,13 @@ export default {
   dag_data_node_label_kafka_high_performance_mode: '高性能模式',
   dag_data_node_label_kafka_all: '所有',
   dag_link_button_custom_script: '自定义处理脚本',
+  dag_data_node_hana_hana_check: 'Hana作为源仅支持全量任务',
   //字段映射
   dag_link_button_field_mapping: '字段映射',
   dag_link_button_mapping_configuration: '映射配置',
   dag_link_field_mapping_error_no_table: '请选择需要迁移的表',
   dag_link_field_mapping_error_all_deleted: '当前表被删除了所有字段，不允许保存操作',
+  dag_link_field_mapping_error_tip: '请先配置目标节点',
   dag_dialog_field_mapping_table_setting: '表设置',
   dag_dialog_field_mapping_tip:
     '用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型',
@@ -228,6 +251,11 @@ export default {
   dag_dialog_field_mapping_error_range: '当前值不符合该字段范围',
   dag_dialog_field_mapping_error_save_prefix: '检测到您还有',
   dag_dialog_field_mapping_error_save_suffix: '张表的字段类型设置存在问题，请在左侧表区域选择有问题的表进行处理',
+  dag_dialog_field_mapping_change_type_field_rename: '类型修改',
+  dag_dialog_field_mapping_batch_change_type: '批量修改字段类型',
+  dag_dialog_field_mapping_batch_change_type_source: '源字段类型',
+  dag_dialog_field_mapping_batch_change_type_target: '目标字段类型',
+  dag_dialog_field_mapping_batch_change_type_error_tip: '请先选择需要源表/目标表转换的类型',
 
   //任务编辑
   dag_data_node_label_clickhouse: 'ClickHouse节点',
@@ -383,19 +411,27 @@ export default {
   task_details_sub_task: '子任务',
   task_details_desc: '描述', // 描述 启动 强制停止 停止 编辑 子任务
   task_details_running_statistics: '运行统计', // 描述 启动 强制停止 停止 编辑 子任务
+  task_job_link_type_table_tips: 'Table暂不支持外键复制',
+  task_job_link_type_view_tips:
+    '复制view时暂不支持设置字段映射，勾选此项下方字段映射功能会被禁用，已设置的字段映射将会被重置',
+  task_job_link_confirm_message_rollback:
+    '复制view时暂不支持设置字段映射，勾选此项下方字段映射功能会被禁用，已设置的字段映射将会被重置，是否确认勾选？',
+  task_setting_oracle_custom_analysis: 'OracleSQL自定义解析',
 
   // 函数管理
   function_tips_empty: '代码缺少JS函数',
-  function_checkbox_Line_number: '显示行号',
-  function_button_create: '创建',
-  function_button_edit: '编辑',
-  function_tips_name_repeat: '方法名称重复',
+  function_button_create_custom_function: '创建函数',
+  function_button_import_jar: '导入jar包',
+  function_button_edit_function: '编辑函数',
+  function_details: '函数详情',
+  function_tips_name_repeat: '函数名称重复',
   function_button_code_format: '格式化代码',
   function_last_update_label: '更新时间',
   function_parameters_label: '参数',
   function_type_label: '函数类型',
   function_type_option_custom: '自定义函数',
   function_type_option_jar: '第三方jar包',
+  function_type_option_system: '系统函数',
   function_name_label: '函数名称',
   function_name_placeholder: '请输入函数名称',
   function_name_repeat: '函数名称重复',
@@ -414,6 +450,27 @@ export default {
   function_return_value_placeholder: '请输入返回值',
   function_describe_label: '描述',
   function_describe_placeholder: '请输入描述',
+  function_format: '命令格式',
+  function_format_placeholder: '请输入命令格式',
+  function_jar_file_label: 'jar文件',
+  function_package_name_label: '包名',
+  function_package_name_placeholder: '请输入包名',
+  function_class_name_label: '类名',
+  function_method_name_label: '方法名',
+  function_script_label: '代码详情',
+  function_script_empty: '请输入函数代码',
+  function_script_missing_function_name: '缺少函数名',
+  function_script_missing_function_body: '缺少函数体',
+  function_script_format_error: '函数格式不正确',
+  function_script_only_one: '只允许创建一个函数',
+  function_import_list_title: '函数列表',
+  function_button_load_function: '加载函数',
+  function_message_load_function_fail: '加载函数失败',
+  function_dialog_setting_title: '函数设置',
+  function_message_function_empty: '请上传jar包文件并加载函数',
+  function_message_delete_title: '删除函数',
+  function_message_delete_content: '删除可能会导致已调用该函数的任务报错，确定删除该函数吗？',
+  function_tips_max_size: '最大',
 
   // 用户
   login_fail_too_many: '密码错误达到最大次数，请于10分钟后再登录',

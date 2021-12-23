@@ -4,9 +4,28 @@ export default {
   tips_must_number: 'The value must be a number',
 
   // 通用按钮
-  button_edit: 'edit',
-  button_confirm: 'confirm',
-  button_cancel: 'cancel',
+  button_edit: 'Edit',
+  button_confirm: 'Confirm',
+  button_cancel: 'Cancel',
+  button_back: 'Back',
+  button_save: 'Save',
+  button_check: 'Details',
+  button_delete: 'Delete',
+  button_setting: 'Setting',
+  button_reduction: 'Reduction',
+
+  // 通用下拉框
+  select_option_all: 'All',
+
+  // 通用消息
+  message_title_prompt: 'Hint',
+  message_delete_confirm: 'Delete or not',
+
+  // 表格
+  column_operation: 'Operate',
+
+  // 菜单标题
+  menu_title_function: 'Function management',
 
   // 数据校验
   verify_details_title: 'Task verification details',
@@ -64,6 +83,7 @@ export default {
   connection_kafka_kerberos_none_keytab: 'The key representation file cannot be empty',
   connection_kafka_kerberos_none_conf: 'Configuration file cannot be empty',
   connection_kafka_encryption: 'Encryption',
+  connection_hana_label_hana_type: 'Install type',
   //Dag
   dag_data_node_label_dameng: 'Dameng Node',
   dag_data_node_label_database_link_table: 'Table name case',
@@ -81,6 +101,7 @@ export default {
   dag_data_node_label_kafka_all: 'All',
   dag_data_node_label_aggregate_filter: 'Filter',
   dag_link_button_custom_script: 'Custom processing script',
+  dag_data_node_hana_hana_check: 'Hana as a source only supports full tasks',
 
   //Field mapping
   dag_link_button_field_mapping: 'Field mapping',
@@ -88,6 +109,7 @@ export default {
   dag_link_field_mapping_error_no_table: 'Please select the table to be migrated',
   dag_link_field_mapping_error_all_deleted:
     'All fields have been deleted from the current table, and the save operation is not allowed',
+  dag_link_field_mapping_error_tip: 'Please configure the target node first',
   dag_dialog_field_mapping_table_setting: 'Table Settings',
   dag_dialog_field_mapping_tip:
     'Users can set the fields to be synchronized for each table in the source database on this page, as well as the corresponding field names and field types when the target database is automatically created.',
@@ -130,7 +152,12 @@ export default {
   dag_dialog_field_mapping_error_save_prefix: 'Detected that you still have',
   dag_dialog_field_mapping_error_save_suffix:
     'There is a problem with the field type setting of the table, please select the table with the problem in the table area on the left for processing',
-
+  dag_dialog_field_mapping_change_type_field_rename: 'Type modification',
+  dag_dialog_field_mapping_batch_change_type: 'Batch edit field types',
+  dag_dialog_field_mapping_batch_change_type_error_tip:
+    'Please select the type of source table/target table conversion',
+  dag_dialog_field_mapping_batch_change_type_source: 'Source field type',
+  dag_dialog_field_mapping_batch_change_type_target: 'Target field type',
   dag_job_check_source: 'as a source, only full tasks are supported',
 
   //Task edit
@@ -142,19 +169,27 @@ export default {
   data_flow_automatically: 'automatically',
   data_flow_manually: 'manually',
   data_flow_oracle_logminer: 'Oracle Logminer Mode',
+  task_job_link_type_table_tips: 'Table does not currently support foreign key replication',
+  task_job_link_type_view_tips:
+    'The setting of field mapping is temporarily not supported when copying the view. The field mapping function below this option will be disabled, and the field mapping that has been set will be reset.',
+  task_job_link_confirm_message_rollback:
+    'The setting of field mapping is not supported when copying the view. The field mapping function below this option will be disabled, and the field mapping that has been set will be reset. Are you sure to check it? ',
+  task_setting_oracle_custom_analysis: 'OracleSQL custom analysis',
 
   // Function management
   function_tips_empty: 'Code lacks JS functions',
-  function_checkbox_Line_number: 'Display line number',
-  function_button_create: 'Create',
-  function_button_edit: 'Edit',
-  function_tips_name_repeat: 'Method name repeat',
+  function_button_create_custom_function: 'Create function',
+  function_button_import_jar: 'Import',
+  function_button_edit_function: 'Edit function',
+  function_details: 'Function details',
+  function_tips_name_repeat: 'Function name repeat',
   function_button_code_format: 'Format code',
   function_last_update_label: 'Update time',
   function_parameters_label: 'Parameters',
   function_type_label: 'Function type',
   function_type_option_custom: 'Custom function',
   function_type_option_jar: 'Third-party jar package',
+  function_type_option_system: 'System function',
   function_name_label: 'Function name',
   function_name_placeholder: 'Please enter the function name',
   function_name_repeat: 'Function name repeat',
@@ -175,6 +210,28 @@ export default {
   function_return_value_placeholder: 'Please enter the return value',
   function_describe_label: 'Description',
   function_describe_placeholder: 'Please enter a description',
+  function_format: 'Format',
+  function_format_placeholder: 'Please enter a format',
+  function_jar_file_label: 'Jar file name',
+  function_package_name_label: 'Package name',
+  function_package_name_placeholder: 'Please enter a package name',
+  function_class_name_label: 'Class name',
+  function_method_name_label: 'Method name',
+  function_script_label: 'Code details',
+  function_script_empty: 'Please enter the function code',
+  function_script_missing_function_name: 'Missing function name',
+  function_script_missing_function_body: 'Missing function body',
+  function_script_format_error: 'The function format is incorrect',
+  function_script_only_one: 'Only one function is allowed to be created',
+  function_import_list_title: 'Function list',
+  function_button_load_function: 'Load function',
+  function_message_load_function_fail: 'Load function fail',
+  function_dialog_setting_title: 'Function setting',
+  function_message_function_empty: 'Please upload the jar file and load the function',
+  function_message_delete_title: 'Delete function',
+  function_message_delete_content:
+    'Deletion may cause the task that has called this function to report an error. Are you sure to delete this function? ',
+  function_tips_max_size: 'Max size ',
 
   // 用户
   login_fail_too_many: 'The maximum number of password errors has been reached, please log in after 10 minutes'
