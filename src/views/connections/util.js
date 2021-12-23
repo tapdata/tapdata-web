@@ -284,6 +284,9 @@ export const defaultModel = {
     mqTopicSet: '', //主题名称
     routeKeyField: '', //消息路由
     virtualHost: '' //虚拟主机
+  },
+  hana: {
+    hanaType: 'sdc'
   }
 }
 export const defaultCloudModel = {

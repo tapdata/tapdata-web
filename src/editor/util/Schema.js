@@ -136,7 +136,13 @@ export const /**
  */
 export const mergeSchema = function (targetSchema, sourceSchema, mergeOpts) {
   log('Schema.mergeSchema', arguments)
-  if (!sourceSchema || !sourceSchema.table_name || !sourceSchema.fields || sourceSchema.fields.length === 0)
+  if (
+    !sourceSchema ||
+    (sourceSchema.meta_type === 'table' && !sourceSchema.table_name) ||
+    (sourceSchema.meta_type === 'collection' && !sourceSchema.tableName) ||
+    !sourceSchema.fields ||
+    sourceSchema.fields.length === 0
+  )
     return targetSchema
 
   targetSchema = targetSchema || {}

@@ -203,7 +203,14 @@ export default {
   font-size: 12px;
   overflow-y: auto;
   ::v-deep {
-    font-size: 12px;
+    .logs-list {
+      //height: 200px;
+      //overflow-y: auto;
+    }
+    .scroller {
+      height: 200px;
+      overflow-y: auto;
+    }
   }
 }
 .card-box {
