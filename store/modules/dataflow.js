@@ -70,6 +70,12 @@ const state = () => ({
       type: 'join',
       constructor: 'Join'
     }
+    // {
+    //   icon: 'joint-cache',
+    //   name: '关联缓存',
+    //   type: 'cache_lookup_processor',
+    //   constructor: 'JointCache'
+    // }
   ],
   nodeViewOffsetPosition: [0, 0],
   paperMoveInProgress: false,
