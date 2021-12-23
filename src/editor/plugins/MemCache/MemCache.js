@@ -16,7 +16,7 @@ export const memCacheConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-cache3.svg'
+          xlinkHref: 'static/editor/cache3.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.memCache.name')

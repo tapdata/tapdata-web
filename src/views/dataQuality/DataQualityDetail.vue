@@ -499,7 +499,7 @@ export default {
     },
     // 删除行
     remove(item) {
-      this.$confirm(this.$t('dataQuality.ifDel'), this.$t('message.prompt'), {
+      this.$confirm(this.$t('dataQuality.ifDel'), this.$t('message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false,
         beforeClose: (action, instance, done) => {

@@ -13,9 +13,11 @@ export default {
 <style lang="scss">
 #app {
   width: 100%;
+  min-width: 1200px;
   height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: auto;
 }
 /*滚动条整体样式*/
 #app::-webkit-scrollbar {
@@ -107,5 +109,12 @@ export default {
     max-width: 100%;
     margin-bottom: 20px;
   }
+}
+.container-header {
+  padding: 15px 20px;
+  background: #fff;
+  font-size: 16px;
+  border-bottom: 1px solid #dedee4;
+  box-shadow: 0px 0px 4px 0px rgb(0 0 0 / 10%);
 }
 </style>

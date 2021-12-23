@@ -657,7 +657,7 @@ export default {
         this.$t('message.deleteOrNot') + ' ',
         h('span', { style: { color: '#409EFF' } }, item.field_name)
       ])
-      this.$confirm(message, this.$t('message.prompt'), {
+      this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false,
         beforeClose: (action, instance, done) => {
@@ -764,7 +764,7 @@ export default {
     delBusiness(item, key) {
       const h = this.$createElement
       let message = h('p', [this.$t('message.deleteOrNot') + ' ', h('span', { style: { color: '#409EFF' } }, key)])
-      this.$confirm(message, this.$t('message.prompt'), {
+      this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false,
         beforeClose: (action, instance, done) => {
@@ -968,7 +968,6 @@ export default {
             padding-bottom: 10px;
             overflow: hidden;
             span {
-              display: inline-block;
               float: left;
               color: #666;
             }
@@ -1121,7 +1120,6 @@ export default {
                 background-color: #f7edee;
               }
               .label {
-                display: inline-block;
                 float: left;
                 padding: 5px 0;
                 color: #aaa;
@@ -1130,7 +1128,6 @@ export default {
               }
               .dropInfo {
                 float: left;
-                display: inline-block;
                 width: calc(100% - 60px);
                 white-space: break-spaces;
                 overflow: hidden;
@@ -1194,7 +1191,6 @@ export default {
         line-height: 28px;
       }
       .iconfont {
-        display: inline-block;
         float: right;
         cursor: pointer;
         &:hover {

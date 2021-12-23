@@ -190,7 +190,7 @@ export default {
 <style lang="scss" scoped>
 .monitor-log-wrap {
   display: flex;
-  max-height: 450px;
+  //max-height: 450px;
   .search-input {
     width: 343px;
   }

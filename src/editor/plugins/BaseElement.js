@@ -318,7 +318,6 @@ export const baseElementConfig = {
               let joinTable = formData ? formData.joinTable : null
               let schema = sourceCell.getOutputSchema()
               let sourceCellFormData = sourceCell.getFormData()
-
               joinTable = joinTable ? _.cloneDeep(joinTable) : _.cloneDeep(JOIN_TABLE_TPL)
 
               if (schema) {
@@ -328,12 +327,18 @@ export const baseElementConfig = {
                 // 	.map(f => f.field_name)
                 // 	.join(',');
                 if (
-                  schema.table_name !== joinTable.tableName ||
+                  (schema.meta_type === 'collection' && schema.tableName !== joinTable.tableName) ||
+                  (schema.meta_type === 'table' && schema.table_name !== joinTable.tableName) ||
                   sourceCellFormData.connectionId !== joinTable.connectionId
                 ) {
                   joinTable = _.cloneDeep(JOIN_TABLE_TPL)
                 }
-                joinTable.tableName = schema && schema.table_name
+                if (schema?.meta_type === 'table') {
+                  joinTable.tableName = schema && schema.table_name
+                } else {
+                  joinTable.tableName = schema && schema.tableName
+                }
+                // joinTable.tableName = schema && schema.table_name
                 /* if( !joinTable.joinPath && ['merge_embed', 'update'].includes(joinTable.joinType)){
 										joinTable.joinPath = joinTable.tableName;
 									} */

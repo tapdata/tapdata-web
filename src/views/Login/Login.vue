@@ -138,14 +138,10 @@ export default {
         if (!user.data.isCompleteGuide) {
           this.$cookie.set('show_guide', 1)
         }
-
-        this.$router.replace({
-          name: 'dashboard'
-        })
-
+        history.go(-1)
         setTimeout(() => {
           location.reload()
-        }, 0)
+        }, 50)
       } catch (e) {
         let msg = e?.data?.message
         if (msg) {

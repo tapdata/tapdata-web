@@ -110,7 +110,12 @@
     <div class="e-entity-wrap" style="text-align: center; overflow: auto">
       <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
-    <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
+    <el-dialog
+      :title="$t('message_title_prompt')"
+      :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
+      width="30%"
+    >
       <span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>

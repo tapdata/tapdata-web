@@ -8,7 +8,7 @@
         <div>
           <div class="flex align-items-center">
             <span class="fs-6 color-primary">{{ task.name }}</span>
-            <StatusItem v-model="statusResult" :rows="task.statuses" class="ml-4"></StatusItem>
+            <StatusItem v-model="statusResult" :rows="task.statuses" class="ml-4" inline></StatusItem>
           </div>
           <div class="flex align-items-center mt-4" style="height: 30px">
             <div
@@ -88,6 +88,9 @@
         <ElTabPane label="历史运行记录" name="history" lazy>
           <History v-if="task.id" :ids="[task.id]" :operations="operations"></History>
         </ElTabPane>
+        <ElTabPane label="运行日志" name="log" lazy>
+          <Log :id="task.id" type="2"></Log>
+        </ElTabPane>
       </ElTabs>
     </div>
   </ElContainer>
@@ -100,12 +103,13 @@ import Connection from '../migrate/details/Connection'
 import History from '../migrate/details/History'
 import Subtask from './Subtask'
 import StatusItem from './StatusItem'
+import Log from '@/components/logs/Index'
 // import Task from 'web-core/api/Task'
 // const taskApi = new Task()
 
 export default {
   name: 'TaskDetails',
-  components: { VIcon, InlineInput, Connection, History, Subtask, StatusItem },
+  components: { VIcon, InlineInput, Connection, History, Subtask, StatusItem, Log },
   data() {
     return {
       loading: true,

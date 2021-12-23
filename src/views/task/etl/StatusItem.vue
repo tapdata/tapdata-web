@@ -1,6 +1,6 @@
 <template>
-  <div class="etl-status-item">
-    <div v-for="(item, index) in result" :key="index">
+  <div :class="['etl-status-item', { 'inline-layout': inline }]">
+    <div v-for="(item, index) in comList" :key="index" class="etl-status-item__box">
       <span
         :class="['circle-icon', 'mr-2', !!item.type && `bg-color-${item.type}`]"
         :style="{ 'background-color': item.color }"
@@ -20,6 +20,14 @@ export default {
     rows: {
       type: Array,
       default: () => []
+    },
+    inline: {
+      type: Boolean,
+      default: false
+    },
+    showAll: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -35,6 +43,12 @@ export default {
   computed: {
     showCount() {
       return this.result.length > 1
+    },
+    comList() {
+      if (!this.showAll) {
+        return this.result.filter(t => t.count > 0)
+      }
+      return this.result
     }
   },
   watch: {
@@ -92,6 +106,14 @@ export default {
 .etl-status-item {
   font-size: 12px;
   line-height: 16px;
+  &.inline-layout {
+    display: flex;
+    .etl-status-item__box {
+      &:not(:first-child) {
+        margin-left: 12px;
+      }
+    }
+  }
 }
 .circle-icon {
   display: inline-block;

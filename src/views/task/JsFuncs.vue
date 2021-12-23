@@ -395,7 +395,7 @@ export default {
         this.$t('message.deleteOrNot') + ' ',
         h('span', { style: { color: '#409EFF' } }, item.function_name)
       ])
-      this.$confirm(message, this.$t('message.prompt'), {
+      this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {

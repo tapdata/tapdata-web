@@ -7,6 +7,25 @@ export default {
   button_edit: '編輯',
   button_confirm: '確定',
   button_cancel: '取消',
+  button_back: '返回',
+  button_save: '保存',
+  button_check: '查看',
+  button_delete: '刪除',
+  button_setting: '設置',
+  button_reduction: '還原',
+
+  // 通用下拉框
+  select_option_all: '全部',
+
+  // 通用消息
+  message_title_prompt: '提示',
+  message_delete_confirm: '是否刪除',
+
+  // 表格
+  column_operation: '操作',
+
+  // 菜单标题
+  menu_title_function: '函數管理',
 
   // 数据校验
   verify_details_title: '任務校驗詳情',
@@ -62,6 +81,8 @@ export default {
   connection_kafka_kerberos_none_conf: '配置文件不能為空',
   connection_kafka_encryption: '加密方式',
 
+  connection_hana_label_hana_type: '租戶模式',
+
   // Dag
   dag_data_node_label_dameng: 'Dameng節點',
   dag_data_node_label_database_link_table: '表名大小寫',
@@ -78,11 +99,13 @@ export default {
   dag_data_node_label_kafka_all: '所有',
   dag_data_node_label_aggregate_filter: '過濾器',
   dag_link_button_custom_script: '自定義處理腳本',
+  dag_data_node_hana_hana_check: 'Hana作為源僅支持全量任務',
 
   dag_link_button_field_mapping: '字段映射',
   dag_link_button_mapping_configuration: '映射配置',
   dag_link_field_mapping_error_no_table: '請選擇需要遷移的表',
   dag_link_field_mapping_error_all_deleted: '當前表被刪除了所有字段，不允許保存操作',
+  dag_link_field_mapping_error_tip: '請先配置目標節點',
   dag_dialog_field_mapping_table_setting: '表設置',
   dag_dialog_field_mapping_tip:
     '用戶可以在此頁面設置源庫每個表要同步的字段，以及在目標庫自動建表時對應的字段名稱和字段類型',
@@ -124,6 +147,11 @@ export default {
   dag_dialog_field_mapping_error_range: '當前值不符合該字段範圍',
   dag_dialog_field_mapping_error_save_prefix: '檢測到您還有',
   dag_dialog_field_mapping_error_save_suffix: '張表的字段類型設置存在問題，請在左側表區域選擇有問題的表進行處理',
+  dag_dialog_field_mapping_change_type_field_rename: '類型修改',
+  dag_dialog_field_mapping_batch_change_type: '批量修改字段類型',
+  dag_dialog_field_mapping_batch_change_type_source: '源字段類型',
+  dag_dialog_field_mapping_batch_change_type_target: '目標字段類型',
+  dag_dialog_field_mapping_batch_change_type_error_tip: '請先選擇需要源表/目標表轉換的類型',
 
   //任務編輯
   dag_job_check_source: '作為源僅支持全量任務',
@@ -136,19 +164,27 @@ export default {
   data_flow_automatically: '自動挖掘',
   data_flow_manually: '手動挖掘',
   data_flow_oracle_logminer: 'Oracle日誌挖掘模式',
+  task_job_link_type_table_tips: 'Table暫不支持外鍵複製',
+  task_job_link_type_view_tips:
+    '複製view時暫不支持設置欄位映射，勾選此項下方欄位映射功能會被禁用，已設置的欄位映射將會被重置',
+  task_job_link_confirm_message_rollback:
+    '複製view時暫不支持設置欄位映射，勾選此項下方欄位映射功能會被禁用，已設置的欄位映射將會被重置，是否確認勾選？',
+  task_setting_oracle_custom_analysis: 'OracleSQL自定義解析',
 
   // 函数管理
   function_tips_empty: '代碼缺少JS函數',
-  function_checkbox_Line_number: '顯示行號',
-  function_button_create: '創建',
-  function_button_edit: '編輯',
-  function_tips_name_repeat: '方法名稱重複',
+  function_button_create_custom_function: '創建函數',
+  function_button_import_jar: '導入jar包',
+  function_button_edit_function: '編輯函數',
+  function_details: '函數詳情',
+  function_tips_name_repeat: '函數名稱重複',
   function_button_code_format: '格式化代碼',
   function_last_update_label: '更新時間',
   function_parameters_label: '參數',
   function_type_label: '函數類型',
   function_type_option_custom: '自定義函數',
   function_type_option_jar: '第三方jar包',
+  function_type_option_system: '系統函數',
   function_name_label: '函數名稱',
   function_name_placeholder: '請輸入函數名稱',
   function_name_repeat: '函數名稱重復',
@@ -167,6 +203,27 @@ export default {
   function_return_value_placeholder: '請輸入返回值',
   function_describe_label: '描述',
   function_describe_placeholder: '請輸入描述',
+  function_format: '命令格式',
+  function_format_placeholder: '请输入命令格式',
+  function_jar_file_label: 'jar文件',
+  function_package_name_label: '包名',
+  function_package_name_placeholder: '請輸入包名',
+  function_class_name_label: '類名',
+  function_method_name_label: '方法名',
+  function_script_label: '代碼詳情',
+  function_script_empty: '請輸入函數代碼',
+  function_script_missing_function_name: '缺少函數名',
+  function_script_missing_function_body: '缺少函數體',
+  function_script_format_error: '函數格式不正確',
+  function_script_only_one: '只允許創建一個函數',
+  function_import_list_title: '函數列表',
+  function_button_load_function: '加載函數',
+  function_message_load_function_fail: '加载函數失败',
+  function_dialog_setting_title: '函數设置',
+  function_message_function_empty: '請上傳jar包文件並加載函數',
+  function_message_delete_title: '刪除函數',
+  function_message_delete_content: '刪除可能會導致已調用該函數的任務報錯，確定刪除該函數嗎？',
+  function_tips_max_size: '最大',
 
   // 用户
   login_fail_too_many: '密碼錯誤達到最大次數，請於10分鐘再登錄'
