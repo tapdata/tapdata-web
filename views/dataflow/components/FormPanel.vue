@@ -1042,15 +1042,15 @@ $headerBg: #fff;
   }
 
   ::v-deep {
-    /*.form-wrap {
-      height: 100%;
+    .form-wrap {
+      flex: 1;
       > form {
         height: 100%;
         > .formily-element-space {
           height: 100%;
         }
       }
-    }*/
+    }
 
     // 覆盖数字输入框的宽度
     .formily-element-form-item {
