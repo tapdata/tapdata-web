@@ -33,5 +33,6 @@ export const TYPEMAP = {
   adb_mysql: 'ADB MySQL',
   adb_postgres: 'ADB PostgreSQL',
   vika: 'Vika',
-  kundb: 'KunDB'
+  kundb: 'KunDB',
+  hazelcast_cloud_cluster: 'Hazelcast Cloud'
 }

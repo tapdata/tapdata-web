@@ -10,8 +10,8 @@
                   连接
                   <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
                 </span>
-                <VIcon class="mr-2 click-btn" @click.stop="creat">plus</VIcon>
-                <VIcon @click.stop="handleShowDBInput">magnify</VIcon>
+                <VIcon size="20" class="click-btn" @click.stop="creat">add-outline</VIcon>
+                <VIcon size="20" class="click-btn" @click.stop="handleShowDBInput">search-outline</VIcon>
               </template>
               <span v-else class="flex-1 user-select-none text-truncate">{{ activeConnection.name }}</span>
               <ElInput
@@ -47,11 +47,11 @@
                   <ElSkeletonItem variant="text"></ElSkeletonItem>
                 </div>
               </template>
-              <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore">
+              <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore" class="px-2 pt-1">
                 <div
                   v-for="db in dbList"
                   :key="db.id"
-                  class="db-item flex align-center px-4 clickable user-select-none"
+                  class="db-item flex align-center px-4 clickable user-select-none rounded-2"
                   :class="{ active: activeConnection.id === db.id }"
                   @click="handleSelectDB(db)"
                 >
@@ -69,11 +69,11 @@
       </ElCollapse>
 
       <div class="flex-1 min-h-0 flex flex-column border-bottom">
-        <div class="tb-header flex align-center px-2">
+        <div class="tb-header flex align-center px-4">
           <span class="flex-1 user-select-none text-truncate flex align-center"
             >数据表<span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span></span
           >
-          <VIcon @click.stop="handleShowTBInput">magnify</VIcon>
+          <VIcon size="20" class="click-btn" @click.stop="handleShowTBInput">search-outline</VIcon>
 
           <ElInput
             v-if="showTBInput"
@@ -95,13 +95,6 @@
             </template>
           </ElInput>
         </div>
-        <!--<div class="px-3 py-3">
-          <ElInput v-model="tbSearchTxt" placeholder="请输入表名搜索" size="small" @input="handleTBInput" clearable>
-            <template #prefix>
-              <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
-            </template>
-          </ElInput>
-        </div>-->
         <ElScrollbar ref="tbList" class="flex-1 min-h-0" tag="div" wrap-class="tb-list">
           <ElSkeleton :loading="tbLoading" animated :throttle="skeletonThrottle">
             <template #template>
@@ -109,7 +102,7 @@
                 <ElSkeletonItem variant="text"></ElSkeletonItem>
               </div>
             </template>
-            <div v-infinite-scroll="loadMoreTable" :infinite-scroll-disabled="disabled">
+            <div v-infinite-scroll="loadMoreTable" :infinite-scroll-disabled="disabled" class="px-2 pt-1">
               <div
                 v-for="tb in tbList"
                 v-mouse-drag="{
@@ -122,7 +115,7 @@
                   onStop
                 }"
                 :key="tb.id"
-                class="tb-item grabbable flex align-center px-4 user-select-none"
+                class="tb-item grabbable flex align-center px-4 user-select-none rounded-2"
               >
                 <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
               </div>
@@ -143,7 +136,7 @@
             <span class="flex-1 user-select-none">处理节点</span>
           </div>
         </template>
-        <ElRow class="node-list flex-wrap p-2" :gutter="0" type="flex">
+        <ElRow class="node-list flex-wrap px-2" :gutter="0" type="flex">
           <ElCol :span="8" v-for="(n, ni) in processorNodeTypes" :key="ni" class="p-1">
             <div
               v-mouse-drag="{
@@ -612,6 +605,7 @@ export default {
 
 <style scoped lang="scss">
 $itemH: 34px;
+$hoverBg: #eef3ff;
 
 .drag-node {
   position: fixed !important;
@@ -632,7 +626,15 @@ $itemH: 34px;
     }
 
     .click-btn {
+      width: 24px !important;
+      height: 24px !important;
       z-index: 2;
+      border-radius: 4px;
+
+      &:hover {
+        color: map-get($color, primary);
+        background: $hoverBg;
+      }
     }
 
     .badge {
@@ -663,12 +665,15 @@ $itemH: 34px;
 
     .db-item,
     .tb-item {
-      margin-bottom: 2px;
+      margin-bottom: 4px;
       height: $itemH;
       font-size: 12px;
-      &.active,
-      &:hover {
+      &.active {
         background-color: #eef3ff;
+      }
+
+      &:not(.active):hover {
+        background-color: rgba(47, 46, 63, 0.05);
       }
 
       .el-image {
@@ -696,7 +701,7 @@ $itemH: 34px;
         .el-collapse-item:first-child:last-child {
           height: 100%;
           .el-collapse-item__wrap {
-            height: calc(100% - #{$headerH});
+            height: calc(100% - #{$headerH - 1});
           }
           .el-collapse-item__content {
             height: 100%;
@@ -713,13 +718,13 @@ $itemH: 34px;
 
         &__header {
           position: relative;
-          padding-left: 8px;
-          padding-right: 8px;
+          padding-left: 16px;
+          padding-right: 16px;
           height: $headerH;
           font-size: 14px;
 
           &:hover {
-            background-color: #f9fafc;
+            background-color: rgba(47, 46, 63, 0.05);
           }
         }
 

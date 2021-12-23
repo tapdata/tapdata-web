@@ -91,22 +91,33 @@ class RemoveNodeCommand extends Command {
   }
 
   exec(state) {
+    state.instance.setSuspendDrawing(true)
+
     this.connections = state.instance
       .getConnections('*')
       .filter(c => this.nodeIds.includes(c.targetId) || this.nodeIds.includes(c.sourceId))
+
+    this.nodeIds.forEach(id => state.instance.remove(id))
+
     this.nodeIds.forEach((id, i) => {
-      state.instance.remove(id)
       state.store.commit('dataflow/removeNode', this.nodes[i])
+    })
+
+    Vue.nextTick(() => {
+      state.instance.setSuspendDrawing(false, true)
     })
   }
 
   undo(state) {
+    state.instance.setSuspendDrawing(true)
     state.store.commit('dataflow/addNodes', this.nodes)
+
     Vue.nextTick(() => {
       this.connections?.forEach(c => {
         state.instance.connect({ uuids: [c.sourceId + '_source', c.targetId + '_target'] })
         state.store.commit('dataflow/addConnection', { source: getRealId(c.sourceId), target: getRealId(c.targetId) })
       })
+      state.instance.setSuspendDrawing(false, true)
     })
   }
 }
@@ -242,17 +253,19 @@ class AddNodeOnConnectionCommand extends ConnectionCommand {
 /**
  * 快速添加目标节点
  */
-class QuickAddTargetCommand extends Command {
-  constructor(sourceId, node) {
-    super()
+class QuickAddTargetCommand extends ConnectionCommand {
+  constructor(source, node) {
+    super({
+      source,
+      target: node.id
+    })
     this.node = node
-    this.uuids = [NODE_PREFIX + sourceId + '_source', NODE_PREFIX + node.id + '_target']
   }
 
   exec(state) {
     state.store.commit('dataflow/addNode', this.node)
     Vue.nextTick(() => {
-      state.instance.connect({ uuids: this.uuids })
+      this.add(state)
     })
   }
 

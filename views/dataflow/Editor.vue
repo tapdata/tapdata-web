@@ -11,6 +11,7 @@
       :creat-user-id="creatUserId"
       :is-starting="isStarting"
       :dataflow-name="dataflow.name"
+      :scale="scale"
       @page-return="handlePageReturn"
       @save="save"
       @delete="handleDelete"
@@ -18,6 +19,7 @@
       @redo="handleRedo"
       @zoom-out="handleZoomOut"
       @zoom-in="handleZoomIn"
+      @zoom-to="handleZoomTo"
       @showSettings="handleShowSettings"
       @center-content="handleCenterContent"
       @auto-layout="handleAutoLayout"
@@ -58,12 +60,12 @@
               @quick-add-node="quickAddNode"
             ></DFNode>
           </PaperScroller>
+          <PaperEmpty v-if="!nodes.length"></PaperEmpty>
           <ElPopover
             ref="nodeMenu"
             v-model="nodeMenu.show"
             trigger="hover"
             placement="bottom"
-            width="88"
             popper-class="min-width-unset rounded-xl"
             :reference="nodeMenu.reference"
           >
@@ -119,6 +121,7 @@ import dagre from 'dagre'
 import { validateBySchema } from 'web-core/components/form/utils/validate'
 import resize from 'web-core/directives/resize'
 import { merge } from 'lodash'
+import PaperEmpty from 'web-core/views/dataflow/components/PaperEmpty'
 
 const databaseTypesApi = new DatabaseTypes()
 const taskApi = new Task()
@@ -140,6 +143,7 @@ export default {
   },
 
   components: {
+    PaperEmpty,
     ConfigPanel,
     PaperScroller,
     TopHeader,
@@ -178,7 +182,9 @@ export default {
       dataflow: {
         id: '',
         name: ''
-      }
+      },
+
+      scale: 1
     }
   },
 
@@ -504,15 +510,18 @@ export default {
       }
 
       jsPlumbIns.bind('beforeDrop', info => {
-        // console.log('beforeDrop', info) // eslint-disable-line
         const { sourceId, targetId } = info
+
+        if (sourceId === targetId) return false
+
+        // console.log('beforeDrop', info) // eslint-disable-line
 
         const source = this.nodeById(this.getRealId(sourceId))
         const target = this.nodeById(this.getRealId(targetId))
 
         // target.__Ctor.allowSource(source)
 
-        if (!this.nodeELIsConnected(sourceId, targetId) && !this.isParent(source.id, target.id)) {
+        if (!this.nodeELIsConnected(sourceId, targetId) && this.allowConnect(source.id, target.id)) {
           return target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source, _instance)
         }
 
@@ -852,113 +861,6 @@ export default {
       })
     },
 
-    mouseDown(e) {
-      on(window, 'mouseup', this.mouseUp)
-
-      this.mouseDownMouseSelect(e)
-    },
-
-    mouseDownMouseSelect(e) {
-      if (this.isCtrlKeyPressed(e) === true) {
-        // 忽略按下ctrl||command键，此键已用来触发画布拖动
-        return
-      }
-
-      if (this.isActionActive('dragActive')) {
-        // 节点正在拖动
-        return
-      }
-
-      this.mouseClickPosition = this.getMousePositionWithinNodeView(e)
-      this.selectActive = true
-
-      // this.showSelectBox(e)
-
-      on(this.$refs.layoutContent, 'mousemove', this.mouseMoveSelect)
-    },
-
-    mouseMoveSelect(e) {
-      e.preventDefault() // 防止拖动时文字被选中
-
-      if (e.buttons === 0) {
-        // 没有按键或者是没有初始化
-        this.mouseUpMouseSelect(e)
-        return
-      }
-
-      this.showSelectBox = true
-      let w, h, x, y
-      const pos = this.getMousePositionWithinNodeView(e)
-
-      // console.log('mouseMoveSelect', pos) // eslint-disable-line
-
-      x = Math.min(this.mouseClickPosition.x, pos.x)
-      y = Math.min(this.mouseClickPosition.y, pos.y)
-      w = Math.abs(this.mouseClickPosition.x - pos.x)
-      h = Math.abs(this.mouseClickPosition.y - pos.y)
-
-      this.selectBoxAttr = { x, y, w, h, right: x + w, bottom: y + h }
-    },
-
-    mouseUp() {
-      off(window, 'mouseup', this.mouseUp)
-
-      if (!this.selectActive) {
-        return
-      }
-
-      this.mouseUpMouseSelect()
-    },
-
-    mouseUpMouseSelect() {
-      off(this.$refs.layoutContent, 'mousemove', this.mouseMoveSelect)
-      // console.log('mouseUpMouseSelect') // eslint-disable-line
-      this.deselectAllNodes()
-      // 清空激活状态
-      this.setActiveType(null)
-
-      if (this.showSelectBox) {
-        const selectedNodes = this.getNodesInSelection()
-        selectedNodes.forEach(node => this.nodeSelected(node))
-      }
-
-      this.hideSelectBox()
-    },
-
-    hideSelectBox() {
-      this.selectActive = false
-      this.showSelectBox = false
-      this.selectBoxAttr = null
-    },
-
-    getMousePositionWithinNodeView(e) {
-      const nodeViewScale = this.nodeViewScale
-      // const nodeViewOffset = this.nodeViewOffsetPosition
-      // const [x, y] = this.nodeViewOffsetPosition
-      let { x, y } = this.$refs.layoutContent.getBoundingClientRect()
-      return {
-        x: (e.pageX - x) / nodeViewScale,
-        y: (e.pageY - y) / nodeViewScale
-      }
-    },
-
-    __removeConnection(source, target) {
-      // console.log('removeConnection', source, target) // eslint-disable-line
-      const connections = this.jsPlumbIns.getConnections({
-        source,
-        target
-      })
-
-      connections.forEach(connectionInstance => {
-        this.jsPlumbIns.deleteConnection(connectionInstance)
-      })
-
-      this.removeConnection({
-        sourceId: this.getRealId(source),
-        targetId: this.getRealId(target)
-      })
-    },
-
     getDataflowDataToSave() {
       const dag = this.$store.getters['dataflow/dag']
       const editVersion = this.$store.state.dataflow.editVersion
@@ -969,9 +871,82 @@ export default {
       }
     },
 
+    validate() {
+      if (!this.dataflow.name) return this.$t('editor.cell.validate.empty_name')
+
+      // 至少两个数据节点
+      const tableNode = this.nodes.filter(node => node.type === 'table')
+      if (tableNode.length < 2) {
+        return this.$t('editor.cell.validate.none_data_node')
+      }
+
+      const sourceMap = {},
+        targetMap = {},
+        edges = this.$store.getters['dataflow/allEdges']
+      edges.forEach(item => {
+        let _source = sourceMap[item.source]
+        let _target = targetMap[item.target]
+
+        if (!_source) {
+          sourceMap[item.source] = [item]
+        } else {
+          _source.push(item)
+        }
+
+        if (!_target) {
+          targetMap[item.target] = [item]
+        } else {
+          _target.push(item)
+        }
+      })
+
+      let someErrorMsg = ''
+      // 检查每个节点的源节点个数、连线个数
+      this.nodes.some(node => {
+        const { id } = node
+        const minInputs = node.__Ctor.attr.minInputs ?? 1 // 没有设置minInputs则缺省为1
+        const inputNum = targetMap[id]?.length ?? 0
+
+        if (!sourceMap[id] && !targetMap[id]) {
+          // 存在没有连线的节点
+          someErrorMsg = `${node.name} 没有任何连线`
+          return true
+        }
+
+        if (inputNum < minInputs) {
+          someErrorMsg = `${node.name} 至少需要一个源节点`
+          return true
+        }
+      })
+      if (someErrorMsg) return someErrorMsg
+
+      // 检查链路的末尾节点类型是否是表节点
+      const firstNodes = this.nodes.filter(node => !targetMap[node.id]) // 链路的首节点
+      const nodeMap = this.nodes.reduce((map, node) => ((map[node.id] = node), map), {})
+      if (firstNodes.some(node => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
+
+      return null
+    },
+
+    // 循环检查检查链路的末尾节点类型是否是表节点
+    isEndOfTable(source, sourceMap, nodeMap) {
+      if (!sourceMap[source.id]) {
+        // 末位节点
+        return source.type === 'table'
+      }
+
+      for (let edge of sourceMap[source.id]) {
+        if (!this.isEndOfTable(nodeMap[edge.target], sourceMap, nodeMap)) {
+          return false
+        }
+      }
+
+      return true
+    },
+
     async save() {
       // this.validateNodes()
-      const errorMsg = this.getError()
+      const errorMsg = this.validate()
       if (errorMsg) {
         this.$message.error(errorMsg)
         return
@@ -1045,6 +1020,10 @@ export default {
 
     handleZoomOut() {
       this.$refs.paperScroller.zoomOut()
+    },
+
+    handleZoomTo(scale) {
+      this.$refs.paperScroller.zoomTo(scale)
     },
 
     handleShowSettings() {
@@ -1133,15 +1112,30 @@ export default {
       return this.jsPlumbIns.getConnections('*').some(c => `${c.sourceId}` === s && `${c.targetId}` === t)
     },
 
+    allowConnect(sourceId, targetId) {
+      const allEdges = this.$store.getters['dataflow/allEdges']
+      const map = allEdges.reduce((map, item) => {
+        let target = map[item.target]
+        if (target) {
+          target.push(item.source)
+        } else {
+          map[item.target] = [item.source]
+        }
+        return map
+      }, {})
+
+      if (!map[sourceId]) return true
+
+      return !this.isParent(sourceId, targetId, map)
+    },
+
     // 循环检查target是否是source的上级
-    isParent(sourceId, targetId) {
-      if (sourceId === targetId) return true
-      let sourceNode = this.nodeById(sourceId)
+    isParent(sourceId, targetId, map) {
       let flag = false
-      if (!sourceNode.inputLanes) return flag
-      for (let id of sourceNode.inputLanes) {
+      if (!map[sourceId]) return flag
+      for (let id of map[sourceId]) {
         flag = id === targetId
-        if (flag || this.isParent(id, targetId)) return true
+        if (flag || this.isParent(id, targetId, map)) return true
       }
       return flag
     },
@@ -1281,17 +1275,33 @@ export default {
     },
 
     handleChangeScale(scale) {
+      this.scale = scale
       this.jsPlumbIns.setZoom(scale)
     },
 
+    isSource(node) {
+      const id = node.id
+      const allEdges = this.$store.getters['dataflow/allEdges']
+      return allEdges.some(({ source }) => source === id)
+    },
+
+    /**
+     * 快速添加目标节点
+     * @param source 源节点
+     * @param nodeType 节点的类型对象
+     */
     quickAddNode(source, nodeType) {
       const spaceX = 120
       const spaceY = 120
-      const newPosition = [
-        source.position[0] + NODE_WIDTH + spaceX,
-        !source.outputLanes?.length ? source.position[1] : source.position[1] + spaceY
-      ]
-      const movePosition = !source.outputLanes?.length > 0 ? [spaceX, 0] : [0, spaceY]
+
+      const newPosition = [source.attrs.position[0] + NODE_WIDTH + spaceX, source.attrs.position[1]]
+      let movePosition = [spaceX, 0]
+
+      if (this.isSource(source)) {
+        newPosition[1] += spaceY
+        movePosition = [0, spaceY]
+      }
+
       const position = this.getNewNodePosition(newPosition, movePosition)
       const target = this.createNode(position, nodeType)
 
@@ -1337,6 +1347,9 @@ export default {
         height: NODE_HEIGHT
       })
       this.addNodeOnConn(nodeType, position, nodeMenu.connection.source, nodeMenu.connection.target)
+      this.$nextTick(() => {
+        this.handleAutoLayout()
+      })
     },
 
     canUsePosition(position1, position2) {
@@ -1362,7 +1375,7 @@ export default {
         conflictFound = false
         for (i = 0; i < this.nodes.length; i++) {
           node = this.nodes[i]
-          if (!this.canUsePosition(node.position, newPosition)) {
+          if (!this.canUsePosition(node.attrs.position, newPosition)) {
             conflictFound = true
             break
           }

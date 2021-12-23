@@ -53,7 +53,7 @@ export const JoinExpression = connect(
 
         rightFields() {
           this.form.setFieldState(`${this.address}.*.right`, state => {
-            state.dataSource = this.leftFields
+            state.dataSource = this.rightFields
           })
         }
       },

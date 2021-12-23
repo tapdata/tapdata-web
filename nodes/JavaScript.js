@@ -27,7 +27,11 @@ export class JavaScript extends NodeType {
         default: 'function process(record){\n\n\t// Enter you code at here\n\treturn record;\n}',
         'x-decorator': 'FormItem',
         'x-component': 'JsEditor',
+        'x-decorator-props': {
+          wrapperWidth: 800
+        },
         'x-component-props': {
+          height: 500,
           options: { showPrintMargin: false, useWrapMode: true }
         }
       }

@@ -12,6 +12,7 @@ export class Table extends NodeType {
   }
 
   attr = {
+    minInputs: 0, // 最小输入个数
     maxInputs: 1 // 最大输入个数
   }
 
@@ -29,6 +30,10 @@ export class Table extends NodeType {
         type: 'boolean',
         'x-visible': false,
         'x-reactions': '{{isTarget}}'
+      },
+      databaseType: {
+        type: 'string',
+        'x-display': 'hidden'
       },
 
       grid: {
@@ -212,6 +217,7 @@ export class Table extends NodeType {
                   initialOffset: {
                     title: 'sql增量条件',
                     type: 'string',
+                    required: true,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       wrapperWidth: 240
@@ -241,6 +247,7 @@ export class Table extends NodeType {
                       increaseSyncInterval: {
                         title: '增量同步间隔(ms)',
                         type: 'number',
+                        default: 500,
                         'x-decorator': 'FormItem',
                         'x-component': 'InputNumber',
                         'x-component-props': {
@@ -250,6 +257,7 @@ export class Table extends NodeType {
                       increaseReadSize: {
                         title: '每次读取数量(行)',
                         type: 'number',
+                        default: 100,
                         'x-decorator': 'FormItem',
                         'x-component': 'InputNumber',
                         'x-component-props': {
@@ -274,6 +282,14 @@ export class Table extends NodeType {
                     'x-component': 'InputNumber',
                     'x-component-props': {
                       min: 0
+                    },
+                    'x-reactions': {
+                      dependencies: ['databaseType'],
+                      fulfill: {
+                        state: {
+                          visible: '{{$deps[0]==="oracle"}}'
+                        }
+                      }
                     }
                   }
                 }

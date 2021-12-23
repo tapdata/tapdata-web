@@ -27,10 +27,12 @@
     flex:1;
   }
   .field-type{
-    width: 150px;
+    width: 100px;
   }
   .field-ops{
-    width: 180px;
+    width: 250px;
+    text-align: right;
+    margin-right: 24px;
   }
   .field-desc{
     width: 250px;
@@ -40,7 +42,10 @@
     font-weight: bold;
   }
   .tree-node{
-    line-height: 32px;
+    line-height: 50px;
+  }
+  .field-processor-operation{
+    height: 50px;
   }
   .field-processor-tree {
     .el-input__inner{
@@ -49,11 +54,18 @@
       font-size: 11px;
       padding: 0 5px;
     }
+    .el-tree-node__content {
+      height: 50px;
+      cursor: pointer;
+      border-top: 1px solid;
+      border-color: map-get($borderColor, slight);
+      font-size: 12px;
+    }
     .el-input__prefix, .el-input__suffix .el-select__caret{
       color: map-get($color, primary);
     }
     .e-select {
-      width: 150px;
+      width: 100px;
       font-size: 11px;
     }
     .e-desc {
@@ -61,8 +73,10 @@
       font-size: 11px;
     }
     .e-ops {
-      width: 180px;
+      width: 250px;
       font-size: 11px;
+      text-align: right;
+      margin-right: 24px;
     }
     .item {
       width: 32%;

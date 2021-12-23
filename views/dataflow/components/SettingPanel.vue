@@ -1,30 +1,41 @@
 <template>
   <div class="setting-panel">
-    <ElForm :model="settings" class="setting-panel-form" label-width="110px" label-position="left" size="small">
+    <ElForm :model="settings" class="setting-panel-form" label-width="140px" label-position="top" size="small">
       <ElTabs v-model="settingPanelType" class="setting-tabs h-100">
         <ElTabPane label="基本设置" name="base">
           <div class="setting-panel-box bg-white">
-            <div class="p-5">
-              <ElFormItem label="任务名称">
-                <ElInput v-model="settings.name"></ElInput>
-              </ElFormItem>
-              <ElFormItem label="同步类型">
-                <ElRadioGroup v-model="settings.type">
-                  <ElRadio label="initial_sync+cdc">全量+增量</ElRadio>
-                  <ElRadio label="initial_sync">全量</ElRadio>
-                  <ElRadio label="cdc">增量</ElRadio>
-                </ElRadioGroup>
-              </ElFormItem>
-              <ElFormItem label="任务描述">
-                <ElInput type="textarea" v-model="settings.desc"></ElInput>
-              </ElFormItem>
+            <div class="setting-title fs-7 pl-4 border-bottom">任务设置</div>
+            <div class="px-5">
+              <ElRow>
+                <ElCol :span="12">
+                  <ElFormItem label="任务名称" required="">
+                    <ElInput v-model="settings.name"></ElInput>
+                  </ElFormItem>
+                </ElCol>
+                <ElCol :span="12">
+                  <ElFormItem label="同步类型">
+                    <ElRadioGroup v-model="settings.type">
+                      <ElRadio label="initial_sync+cdc">全量+增量</ElRadio>
+                      <ElRadio label="initial_sync">全量</ElRadio>
+                      <ElRadio label="cdc">增量</ElRadio>
+                    </ElRadioGroup>
+                  </ElFormItem>
+                </ElCol>
+              </ElRow>
+              <ElRow>
+                <ElCol :span="24">
+                  <ElFormItem label="任务描述">
+                    <ElInput type="textarea" v-model="settings.desc"></ElInput>
+                  </ElFormItem>
+                </ElCol>
+              </ElRow>
             </div>
           </div>
         </ElTabPane>
         <ElTabPane label="高级设置" name="advanced">
-          <div class="setting-panel-box bg-white mt-5">
+          <div class="setting-panel-box bg-white">
             <div class="setting-title fs-7 pl-4">读写设置</div>
-            <div class="pt-5 px-5">
+            <div class="px-5">
               <ElRow>
                 <ElCol :span="12">
                   <ElFormItem label="自动创建索引">
@@ -42,9 +53,9 @@
               </ElRow>
             </div>
           </div>
-          <div class="setting-panel-box bg-white mt-5">
+          <div class="setting-panel-box bg-white">
             <div class="setting-title fs-7 pl-4">全量设置</div>
-            <div class="pt-5 px-5">
+            <div class="px-5">
               <ElFormItem label="目标写入线程数">
                 <ElInputNumber
                   controls-position="right"
@@ -57,78 +68,14 @@
           </div>
           <div class="setting-panel-box bg-white mt-5">
             <div class="setting-title fs-7 pl-4">增量设置</div>
-            <div class="pt-5 px-5">
+            <div class="px-5 pb-5">
               <ElRow>
-                <ElCol :span="12">
-                  <ElFormItem label="引擎过滤">
-                    <ElSwitch v-model="settings.isFilter"></ElSwitch>
-                  </ElFormItem>
-                </ElCol>
-                <ElCol :span="12">
+                <ElCol :span="4">
                   <ElFormItem label="增量同步并发写入">
                     <ElSwitch v-model="settings.increSyncConcurrency"></ElSwitch>
                   </ElFormItem>
                 </ElCol>
-              </ElRow>
-              <ElRow>
-                <ElCol :span="12">
-                  <ElFormItem label="增量批次读取行数">
-                    <ElInputNumber
-                      v-model="settings.increaseReadSize"
-                      :min="1"
-                      controls-position="right"
-                    ></ElInputNumber>
-                  </ElFormItem>
-                </ElCol>
-                <ElCol :span="12">
-                  <ElFormItem label="增量数据处理模式">
-                    <ElSelect v-model="settings.increOperationMode">
-                      <ElOption label="批量" :value="false"></ElOption>
-                      <ElOption label="逐条" :value="true"></ElOption>
-                    </ElSelect>
-                  </ElFormItem>
-                </ElCol>
-              </ElRow>
-              <ElRow>
-                <ElCol :span="12">
-                  <ElFormItem label="增量同步间隔(ms)">
-                    <ElInputNumber
-                      v-model="settings.increaseSyncInterval"
-                      :min="0"
-                      controls-position="right"
-                    ></ElInputNumber>
-                  </ElFormItem>
-                </ElCol>
-                <ElCol :span="12">
-                  <ElFormItem label="每次读取行数">
-                    <ElInputNumber
-                      v-model="settings.increaseReadSize"
-                      :min="1"
-                      controls-position="right"
-                    ></ElInputNumber>
-                  </ElFormItem>
-                </ElCol>
-                <ElCol :span="12">
-                  <ElFormItem label="处理器线程数">
-                    <ElInputNumber
-                      v-model="settings.processorThreadNum"
-                      :min="1"
-                      :max="100"
-                      controls-position="right"
-                    ></ElInputNumber>
-                  </ElFormItem>
-                </ElCol>
-              </ElRow>
-              <ElRow>
-                <ElCol :span="12">
-                  <ElFormItem label="共享增量读取模式">
-                    <ElSelect v-model="settings.increShareReadMode">
-                      <ElOption label="流式读取" value="STREAMING"></ElOption>
-                      <ElOption label="轮询读取" value="POLLING"></ElOption>
-                    </ElSelect>
-                  </ElFormItem>
-                </ElCol>
-                <ElCol :span="12">
+                <ElCol :span="6">
                   <ElFormItem label="增量滞后时间设置">
                     <ElSwitch v-model="settings.increHysteresis"></ElSwitch>
                     <template v-if="settings.increHysteresis">
@@ -142,6 +89,83 @@
                     </template>
                   </ElFormItem>
                 </ElCol>
+                <ElCol :span="4">
+                  <ElFormItem label="引擎过滤">
+                    <ElSwitch v-model="settings.isFilter"></ElSwitch>
+                  </ElFormItem>
+                </ElCol>
+                <ElCol :span="10">
+                  <ElFormItem label="增量数据处理模式">
+                    <ElSelect v-model="settings.increOperationMode">
+                      <ElOption label="批量" :value="false"></ElOption>
+                      <ElOption label="逐条" :value="true"></ElOption>
+                    </ElSelect>
+                    <template>
+                      <ElInputNumber
+                        v-model="settings.increaseSyncInterval"
+                        :min="0"
+                        class="pl-5 mr-1"
+                        controls-position="right"
+                      ></ElInputNumber>
+                    </template>
+                  </ElFormItem>
+                </ElCol>
+                <!-- <ElCol :span="4">
+                  <ElFormItem label="增量同步间隔(ms)">
+                    <ElInputNumber
+                      v-model="settings.increaseSyncInterval"
+                      :min="0"
+                      controls-position="right"
+                    ></ElInputNumber>
+                  </ElFormItem>
+                </ElCol> -->
+              </ElRow>
+              <ElRow>
+                <ElCol :span="4">
+                  <ElFormItem label="增量批次读取行数">
+                    <ElInputNumber
+                      v-model="settings.increaseReadSize"
+                      :min="1"
+                      controls-position="right"
+                    ></ElInputNumber>
+                  </ElFormItem>
+                </ElCol>
+                <!-- <ElCol :span="12">
+                  <ElFormItem label="增量同步间隔(ms)">
+                    <ElInputNumber
+                      v-model="settings.increaseSyncInterval"
+                      :min="0"
+                      controls-position="right"
+                    ></ElInputNumber>
+                  </ElFormItem>
+                </ElCol> -->
+                <ElCol :span="6">
+                  <ElFormItem label="每次读取行数">
+                    <ElInputNumber
+                      v-model="settings.increaseReadSize"
+                      :min="1"
+                      controls-position="right"
+                    ></ElInputNumber>
+                  </ElFormItem>
+                </ElCol>
+                <ElCol :span="4">
+                  <ElFormItem label="处理器线程数">
+                    <ElInputNumber
+                      v-model="settings.processorThreadNum"
+                      :min="1"
+                      :max="100"
+                      controls-position="right"
+                    ></ElInputNumber>
+                  </ElFormItem>
+                </ElCol>
+                <ElCol :span="10">
+                  <ElFormItem label="共享增量读取模式">
+                    <ElSelect v-model="settings.increShareReadMode">
+                      <ElOption label="流式读取" value="STREAMING"></ElOption>
+                      <ElOption label="轮询读取" value="POLLING"></ElOption>
+                    </ElSelect>
+                  </ElFormItem>
+                </ElCol>
               </ElRow>
             </div>
           </div>
@@ -153,7 +177,7 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import 'web-core/components/form/styles/index.scss'
+// import 'web-core/components/form/styles/index.scss'
 
 export default {
   name: 'SettingPanel',
@@ -182,9 +206,13 @@ export default {
 .setting-panel {
   position: relative;
   height: 100%;
+  font-size: 12px;
   .setting-tabs,
   .setting-panel-form {
     height: 100%;
+    .setting-panel-box {
+      border-top: 1px solid #c8cdcf;
+    }
     ::v-deep {
       > .el-tabs__header {
         margin: 0;
@@ -201,6 +229,7 @@ export default {
       > .el-tabs__content {
         height: calc(100% - 40px);
         overflow: auto;
+        box-sizing: border-box;
         .el-tab-pane {
           height: 100%;
         }
@@ -209,16 +238,26 @@ export default {
       .el-tabs__content {
         .setting-title {
           line-height: 35px;
-          font-weight: 500;
-          border-bottom: 1px solid rgba(200, 205, 207, 0.26);
+          font-weight: 600;
+        }
+        .el-form-item {
+          margin-bottom: 15px;
+          .el-form-item__label {
+            padding-bottom: 0;
+          }
         }
         .el-select,
         .el-input,
         .el-textarea {
           width: auto;
         }
+        .el-radio__label,
+        .el-input,
+        .el-input__inner {
+          font-size: 12px;
+        }
         .el-textarea {
-          width: 500px;
+          width: 100%;
           min-height: 100px;
           .el-textarea__inner {
             min-height: 100px !important;
