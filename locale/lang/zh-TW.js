@@ -616,6 +616,7 @@ const tc = {
       stopping: '停止中',
       error: '錯誤',
       force_stopping: '強制停止',
+      prepare: '准备中',
       cdc: '增量中',
       initializing: '初始化中',
       initialized: '初始化完成',
