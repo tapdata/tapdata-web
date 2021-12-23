@@ -381,7 +381,7 @@ export default {
             nodeId = edge.source
           }
 
-          let fields = []
+          let fields
           try {
             fields = await metadataApi.nodeSchema(nodeId)
           } catch (e) {
@@ -389,10 +389,12 @@ export default {
             console.error('nodeSchema', e)
           }
 
-          return fields.map(item => ({
-            label: item.field_name,
-            value: item.id
-          }))
+          return fields
+            ? fields.map(item => ({
+                label: item.field_name,
+                value: item.id
+              }))
+            : []
         },
 
         /**
@@ -410,7 +412,7 @@ export default {
             nodeId = edge.source
           }
 
-          let fields = []
+          let fields
           try {
             fields = await metadataApi.nodeSchema(nodeId)
           } catch (e) {
@@ -418,7 +420,7 @@ export default {
             console.error('nodeSchema', e)
           }
 
-          return fields.map(item => item.field_name)
+          return fields ? fields.map(item => item.field_name) : []
         }
       }
     }
@@ -446,15 +448,18 @@ export default {
 
   watch: {
     async activeNodeId(n, o) {
-      const node = this.activeNode
       const formSchema = this.$store.getters['dataflow/formSchema'] || {}
 
       await this.setSchema(this.ins.formSchema || formSchema.node)
 
-      this.lastActiveNodeType = node.type // 缓存节点类型
-      this.lastActiveDBType = node.databaseType
-      this.hasNodeError(n) && this.form.validate()
+      // 如果节点存在错误状态，走一遍校验，可以让用户看到错误信息
+      if (this.hasNodeError(n)) {
+        this.form.validate().then(() => {
+          this.clearNodeError(n)
+        })
+      }
 
+      // 校验上一个节点配置
       if (o) {
         const node = this.nodeById(o)
         try {
@@ -469,7 +474,6 @@ export default {
           console.error(e)
           this.setNodeError(o)
         }
-        // console.log('上一个激活的节点校验结果', result)
       }
     },
 

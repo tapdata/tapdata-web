@@ -93,7 +93,7 @@ const state = () => ({
 
 // getters
 const getters = {
-  getStateIsDirty: state => {
+  stateIsDirty: state => {
     return state.stateIsDirty
   },
 
