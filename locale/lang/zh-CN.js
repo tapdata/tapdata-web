@@ -637,6 +637,7 @@ const cn = {
       stopping: '停止中',
       error: '错误',
       force_stopping: '强制停止中',
+      prepare: '准备中',
       cdc: '增量中',
       initializing: '初始化中',
       initialized: '初始化完成',
