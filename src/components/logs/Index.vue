@@ -1,13 +1,13 @@
 <template>
   <div class="debug-logs">
-    <CustomerLogs v-show="logsType === 'normal'" :id="id">
-      <ElRadioGroup v-model="logsType" size="mini">
+    <CustomerLogs v-if="logsType === 'normal'" :id="id">
+      <ElRadioGroup v-if="showAll" v-model="logsType" size="mini">
         <ElRadioButton label="normal">普通</ElRadioButton>
         <ElRadioButton label="detailed">详细</ElRadioButton>
       </ElRadioGroup>
     </CustomerLogs>
-    <TechnologyLogs v-show="logsType === 'detailed'" :id="id">
-      <ElRadioGroup v-model="logsType" size="mini">
+    <TechnologyLogs v-if="logsType === 'detailed'" :id="id">
+      <ElRadioGroup v-if="showAll" v-model="logsType" size="mini">
         <ElRadioButton label="normal">普通</ElRadioButton>
         <ElRadioButton label="detailed">详细</ElRadioButton>
       </ElRadioGroup>
@@ -25,11 +25,31 @@ export default {
     TechnologyLogs
   },
   props: {
-    id: String
+    id: String,
+    type: {
+      type: [String, Number],
+      default: 0
+    }
   },
   data() {
     return {
       logsType: 'detailed'
+    }
+  },
+  computed: {
+    showAll() {
+      return this.type == 0
+    }
+  },
+  watch: {
+    type(v) {
+      if (!this.showAll) {
+        if (v == 1) {
+          this.logsType = 'detailed'
+        } else if (v == 2) {
+          this.logsType = 'normal'
+        }
+      }
     }
   }
 }

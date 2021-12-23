@@ -7,7 +7,7 @@
           <Schedule :task="task"></Schedule>
         </ElTabPane>
         <ElTabPane label="运行日志" name="log" lazy>
-          <Log :id="task.id" style="max-height: 450px"></Log>
+          <Log :id="task.id" type="1"></Log>
         </ElTabPane>
       </ElTabs>
     </div>
@@ -17,7 +17,7 @@
 <script>
 import Info from './Info'
 import Schedule from './Schedule'
-import Log from '../../migrate/details/Log'
+import Log from '@/components/logs/Index'
 
 export default {
   name: 'Statistics',
@@ -142,6 +142,16 @@ export default {
 .statistics-container {
   font-size: 12px;
   overflow-y: auto;
+  ::v-deep {
+    .logs-list {
+      //height: 200px;
+      //overflow-y: auto;
+    }
+    .scroller {
+      height: 200px;
+      overflow-y: auto;
+    }
+  }
 }
 .card-box {
   background: #fff;
