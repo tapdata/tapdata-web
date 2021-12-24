@@ -25,7 +25,7 @@
         <div class="operate-columns">
           <!--          <VButton-->
           <!--            v-if="scope.row.status === 'running'"-->
-          <!--            :disabled="!statusBtMap['paused'][scope.row.status]"-->
+          <!--            :disabled="!statusBtMap['pause'][scope.row.status]"-->
           <!--            auto-loading-->
           <!--            inner-loading-->
           <!--            type="text"-->
@@ -34,7 +34,7 @@
           <!--            {{ $t('task_button_pause') }}-->
           <!--          </VButton>-->
           <!--          <VButton-->
-          <!--            v-else-if="['paused', 'schedule_failed', 'error'].includes(scope.row.status)"-->
+          <!--            v-else-if="['pause', 'schedule_failed', 'error'].includes(scope.row.status)"-->
           <!--            :disabled="!statusBtMap['recover'][scope.row.status]"-->
           <!--            auto-loading-->
           <!--            inner-loading-->
@@ -128,16 +128,16 @@ export default {
           stop: true,
           complete: true
         },
-        paused: {
+        pause: {
           running: true
         },
         recover: {
-          paused: true,
+          pause: true,
           schedule_failed: true,
           error: true
         },
         stop: {
-          paused: true,
+          pause: true,
           schedule_failed: true,
           error: true
         },

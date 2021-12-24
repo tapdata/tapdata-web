@@ -135,7 +135,7 @@ export default {
       },
       yMax: 1,
       statusBtMap: {
-        // scheduled, draft, running, stopping, error, paused, force stopping
+        // scheduled, draft, running, stopping, error, pause, force stopping
         run: { draft: true, error: true, paused: true },
         stop: { running: true },
         delete: { draft: true, error: true, paused: true },

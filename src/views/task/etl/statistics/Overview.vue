@@ -52,7 +52,7 @@ export default {
       const { source, success, start } = this.info
       const { progressBar, status } = this
       let result = ''
-      if (['paused', 'error'].includes(status)) {
+      if (['pause', 'error'].includes(status)) {
         result = this.$t('task_info_task_stopped')
       }
       if (progressBar === 100) {

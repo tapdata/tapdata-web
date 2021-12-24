@@ -142,12 +142,12 @@ export default {
         }
       ],
       statusBtMap: {
-        // scheduled, draft, running, stopping, error, paused, force stopping
-        run: { draft: true, error: true, paused: true },
+        // scheduled, draft, running, stopping, error, pause, force stopping
+        run: { draft: true, error: true, pause: true },
         stop: { running: true },
-        delete: { draft: true, error: true, paused: true },
-        edit: { draft: true, error: true, paused: true },
-        reset: { draft: true, error: true, paused: true },
+        delete: { draft: true, error: true, pause: true },
+        edit: { draft: true, error: true, pause: true },
+        reset: { draft: true, error: true, pause: true },
         forceStop: { stopping: true }
       },
       syncTypeMap: {
@@ -272,7 +272,7 @@ export default {
       statuses.forEach(el => {
         obj[el.status].count++
       })
-      let result = ['edit', 'scheduling', 'running', 'pausing', 'pause', 'complete', 'error']
+      let result = ['edit', 'scheduling', 'running', 'stopping', 'stop', 'complete', 'error']
       let color = ['#648EFF', '#5CC4D2', '#81CE94', '#EFB166', '#EFB166', '#11A9DA', '#EB755C']
       this.pieData = result.map((t, i) => {
         // 待启动

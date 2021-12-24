@@ -154,23 +154,23 @@ export default {
           stop: true,
           complete: true
         },
-        paused: {
+        pause: {
           running: true
         },
         recover: {
-          paused: true,
+          pause: true,
           schedule_failed: true,
           error: true
         },
         stop: {
           running: true
-          // paused: true,
+          // pause: true,
           // schedule_failed: true,
           // error: true
         },
         edit: {
           edit: true,
-          paused: true
+          pause: true
         }
       },
       creator: '',

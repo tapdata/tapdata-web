@@ -385,12 +385,12 @@ export default {
         'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
       },
       statusBtMap: {
-        // scheduled, draft, running, stopping, error, paused, force stopping
-        start: { draft: true, error: true, paused: true },
+        // scheduled, draft, running, stopping, error, pause, force stopping
+        start: { draft: true, error: true, pause: true },
         stop: { running: true },
-        delete: { edit: true, draft: true, error: true, paused: true },
+        delete: { edit: true, draft: true, error: true, pause: true },
         edit: { edit: true, stop: true, error: true },
-        reset: { draft: true, error: true, paused: true },
+        reset: { draft: true, error: true, pause: true },
         forceStop: { stopping: true }
         //     编辑中（edit）- 编辑中
         // 启动中（start）- 启动中

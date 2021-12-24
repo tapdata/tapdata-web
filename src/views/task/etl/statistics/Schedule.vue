@@ -277,7 +277,7 @@ export default {
             r = parseInt(d) + this.$t('task_info_d') + r
           }
           // 全量未完成 停止任务
-          if (['paused', 'error'].includes(data.status)) {
+          if (['pause', 'error'].includes(data.status)) {
             completeTime = this.$t('task_info_task_stopped') // 任务已停止
           } else {
             completeTime = r
@@ -290,7 +290,7 @@ export default {
         }
         // 任务暂停、错误  增量状态都为停止
         if (completeTime === this.$t('task_info_fully_completed')) {
-          if (['paused', 'error'].includes(data.status)) {
+          if (['pause', 'error'].includes(data.status)) {
             overview.currentStatus = this.$t('task_info_stopped') // 已停止
           }
         }
@@ -468,8 +468,8 @@ export default {
     },
     getMilestoneStatus(status) {
       let result = status
-      if (['draft', 'paused', 'error'].includes(this.task?.status) && status === 'running') {
-        result = 'paused'
+      if (['draft', 'pause', 'error'].includes(this.task?.status) && status === 'running') {
+        result = 'pause'
       }
       return result
     },
