@@ -381,7 +381,7 @@ export default {
       let w, h, x, y
       const pos = this.getMousePositionWithinScroller(e)
 
-      console.log('mouseMoveSelect', pos) // eslint-disable-line
+      // console.log('mouseMoveSelect', pos) // eslint-disable-line
 
       x = Math.min(this.mouseClickPosition.x, pos.x)
       y = Math.min(this.mouseClickPosition.y, pos.y)
@@ -409,21 +409,13 @@ export default {
 
       // 显示拖选框时，执行判断逻辑
       if (this.showSelectBox) {
-        let { x, y, bottom, right } = this.selectBoxAttr
-        // 计算页面偏移与扩展尺寸的总和
-        const paperLeft = this.paperOffset.left + this.paperReverseSize.w
-        const paperTop = this.paperOffset.top + this.paperReverseSize.h
         const scale = this.paperScale
-        // 减去总和可与节点坐标直接比较
-        x -= paperLeft
-        right -= paperLeft
-        y -= paperTop
-        bottom -= paperTop
+        let { x, y, w, h, bottom, right } = this.selectBoxAttr
 
-        x /= scale
-        y /= scale
-        right /= scale
-        bottom /= scale
+        x = (x - this.paperOffset.left) / scale - this.paperReverseSize.w
+        y = (y - this.paperOffset.top) / scale - this.paperReverseSize.h
+        right = x + w / scale
+        bottom = y + h / scale
         boxAttr = { x, y, right, bottom }
       }
 

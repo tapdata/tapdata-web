@@ -631,6 +631,7 @@ const en = {
       stopping: 'Stopping',
       error: 'Error',
       force_stopping: 'Force Stopping',
+      prepare: 'Prepare',
       cdc: 'CDC',
       initializing: 'Initializing',
       initialized: 'Initialized',

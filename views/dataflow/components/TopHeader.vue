@@ -90,11 +90,6 @@ export default {
 
   props: {
     isSaving: Boolean,
-    isStarting: Boolean,
-    isEditable: Boolean,
-    isMonitor: Boolean,
-    editable: Boolean,
-    creatUserId: String,
     dataflowName: String,
     scale: Number
   },
