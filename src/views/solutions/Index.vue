@@ -66,6 +66,11 @@ export default {
       if (code) {
         this.keyword = code
       }
+      switch (type) {
+        default:
+          this.select = 'CustomerJobLogs'
+          break
+      }
       this.getData()
     },
     search(debounce) {

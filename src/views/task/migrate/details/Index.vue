@@ -208,7 +208,8 @@ export default {
       //overflow-y: auto;
     }
     .scroller {
-      height: 200px;
+      padding: 24px;
+      height: 300px;
       overflow-y: auto;
     }
   }

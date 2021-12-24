@@ -29,10 +29,6 @@ export default {
     type: {
       type: [String, Number],
       default: 0
-    },
-    logType: {
-      type: [String, Number],
-      default: 0
     }
   },
   data() {
@@ -50,18 +46,7 @@ export default {
   },
   watch: {
     type(v) {
-      console.log('watch-type', v)
       v && this.init()
-      // if (!this.showAll) {
-      //   if (v == 1) {
-      //     this.logsType = 'detailed'
-      //   } else if (v == 2) {
-      //     this.logsType = 'normal'
-      //   }
-      // }
-    },
-    logType(v) {
-      console.log('logType', v)
     }
   },
   methods: {
@@ -73,6 +58,8 @@ export default {
         } else if (type == 2) {
           this.logsType = 'normal'
         }
+      } else {
+        this.logsType = 'normal'
       }
     }
   }
