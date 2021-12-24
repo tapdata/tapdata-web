@@ -18,8 +18,6 @@
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>⇧</kbd><span class="mx-1">+</span><kbd>Z</kbd>
       </div>
 
-      <div><span class="mr-2">删除</span><kbd>⌫</kbd></div>
-
       <div>
         <span class="mr-2">放大</span>
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd>
@@ -27,6 +25,17 @@
         <span class="mr-2">缩小</span>
         <kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd>
       </div>
+
+      <div>
+        <span class="mr-2">自动布局</span>
+        <kbd>⌘</kbd>
+        <span class="mx-1">+</span>
+        <kbd>⌥</kbd>
+        <span class="mx-1">+</span>
+        <kbd>L</kbd>
+      </div>
+
+      <div><span class="mr-2">删除</span><kbd>⌫</kbd></div>
     </div>
   </div>
 </template>
@@ -41,7 +50,6 @@ export default {
         return h('div')
       },
       mounted() {
-        console.log('this.$el', this.$el)
         const root = this.$el.attachShadow({
           mode: 'open'
         })
