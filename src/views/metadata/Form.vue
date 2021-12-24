@@ -391,12 +391,14 @@ export default {
         } else {
           fieldsType = 'double'
         }
-        let data = {
-          'filter[where][dataType]': fieldsType
+        let filter = {
+          where: {
+            dataType: fieldsType
+          }
         }
-        let result = await that.$api('Dictionary').get(data)
-        if (result.data) {
-          that.dictionaryList = result.data
+        let result = await that.$api('Dictionary').get({ filter: JSON.stringify(filter) })
+        if (result.data?.items) {
+          that.dictionaryList = result.data.items || []
         }
       } else {
         if (!that.form.field_name) {

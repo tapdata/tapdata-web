@@ -144,16 +144,20 @@ export default {
 
     // 获取表格数据
     async getDataTableApi() {
-      let params = {
-        'filter[where][__tapd8.dataFlowId][regexp]': `^${this.dataFlow.id}$`,
-        'filter[where][__tapd8.stageId]': this.stageId,
-        'filter[where][__tapd8.tableName]': this.selectTableName,
-        'filter[order]': 'createTime DESC',
-        'filter[limit]': 100
+      let filter = {
+        where: {
+          '__tapd8.dataFlowId': {
+            regexp: `^${this.dataFlow.id}$`
+          },
+          '__tapd8.stageId': this.stageId,
+          '__tapd8.tableName': this.selectTableName
+        },
+        order: 'createTime DESC',
+        limit: 100
       }
       this.loading = true
       this.isloading = true
-      await DataFlowsDebugs.get(params)
+      await DataFlowsDebugs.get({ filter: JSON.stringify(filter) })
         .then(res => {
           // this.nodeList = Object.keys(res.data);   // 获取下拉项
           if (res.data && res.data.length > 0) {

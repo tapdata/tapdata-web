@@ -235,7 +235,6 @@ export default {
     // getDataApi(cb) {
     // 	this.loading = true;
     // 	let params = {};
-    // 	params['filter[where][systemInfo.username][regexp]'] = `^${this.$cookie.get('user_id')}$`;
     // 	this.$api('cluster')
     // 		.get(params)
     // 		.then(res => {

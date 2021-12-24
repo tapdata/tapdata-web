@@ -51,7 +51,12 @@ export default class {
 
     let clientInfo = await axios.get('/api/Applications', {
       params: {
-        'filter[where][clientName]': 'Data Explorer'
+        // 'filter[where][clientName]': 'Data Explorer'
+        filter: JSON.stringify({
+          where: {
+            clientName: 'Data Explorer'
+          }
+        })
       }
     })
     clientInfo = clientInfo.data[0] || {}

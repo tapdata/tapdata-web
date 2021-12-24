@@ -260,27 +260,34 @@ export default {
     // 获取当前数据
     handleList() {
       this.checkedValue = 'all datas'
-      let params = {
-        'filter[fields][apiVersion]': true,
-        'filter[fields][basePath]': true,
-        'filter[fields][connection]': true,
-        'filter[fields][datasource]': true,
-        'filter[fields][description]': true,
-        'filter[fields][id]': true,
-        'filter[fields][status]': true,
-        'filter[fields][tablename]': true,
-        'filter[fields][user_id]': true,
-        'filter[fields][last_updated]': true,
-        'filter[fields][listtags]': true
+      let filter = {
+        fields: {
+          apiVersion: true,
+          basePath: true,
+          connection: true,
+          datasource: true,
+          description: true,
+          id: true,
+          status: true,
+          tablename: true,
+          user_id: true,
+          last_updated: true,
+          listtags: true
+        },
+        where: {}
       }
       if (this.selectNodeId) {
-        params['filter[where][listtags.id][regexp]'] = `^${this.selectNodeId}$`
+        filter.where['listtags.id'] = {
+          regexp: `^${this.selectNodeId}$`
+        }
       }
       if (this.search) {
-        params['filter[where][tablename][like]'] = this.search
-        params['filter[where][tablename][options]'] = 'i'
+        filter.where.tablename = {
+          like: this.search,
+          options: 'i'
+        }
       }
-      modules.get(params).then(res => {
+      modules.get({ filter: JSON.stringify(filter) }).then(res => {
         let self = this
         if (res.data) {
           self.listdata = res.data?.items || []
@@ -310,10 +317,15 @@ export default {
       this.checkData = value
     },
     handleChecked(val) {
-      let params = {}
       this.checkedValue = val
-      params[`filter[where][classifications.id][in][0]`] = val.id
-      MetadataInstances.get(params).then(res => {
+      let filter = {
+        where: {
+          'classifications.id': {
+            in: [val.id]
+          }
+        }
+      }
+      MetadataInstances.get({ filter: JSON.stringify(filter) }).then(res => {
         let self = this
         if (res.data) {
           self.listdata = res.data?.items || []
