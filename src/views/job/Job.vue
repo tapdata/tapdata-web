@@ -739,11 +739,6 @@ export default {
         // lastString = '',
         data = this.getDataFlowData(true)
 
-      let params = {
-        'filter[order]': 'name DESC',
-        'filter[limit]': 1,
-        'filter[where][name][like]': data.name
-      }
       let filter = {
         order: 'name DESC',
         limit: 1,

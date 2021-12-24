@@ -62,10 +62,7 @@
         </div>
       </div>
       <div class="task-info__right flex align-items-center">
-        <div v-for="(item, index) in ouputItems" :key="index" class="flex align-items-center ml-6">
-          <span>{{ item.label }}</span>
-          <span class="ml-4 fs-4 color-primary fw-bolder">{{ task[item.key] || 0 }}</span>
-        </div>
+        <TypeChart type="pie" :data="pieData" :options="pieOptions"></TypeChart>
       </div>
     </div>
     <div class="sub-task flex-fill mt-6 p-6 bg-white">
@@ -89,7 +86,7 @@
           <History v-if="task.id" :ids="[task.id]" :operations="operations"></History>
         </ElTabPane>
         <ElTabPane label="运行日志" name="log" lazy>
-          <Log :id="task.id" type="2"></Log>
+          <Log :id="task.id" type="2" log-type="2"></Log>
         </ElTabPane>
       </ElTabs>
     </div>
@@ -104,12 +101,14 @@ import History from '../migrate/details/History'
 import Subtask from './Subtask'
 import StatusItem from './StatusItem'
 import Log from '@/components/logs/Index'
+import TypeChart from '@/components/TypeChart'
+import { ETL_SUB_STATUS_MAP } from '@/const'
 // import Task from 'web-core/api/Task'
 // const taskApi = new Task()
 
 export default {
   name: 'TaskDetails',
-  components: { VIcon, InlineInput, Connection, History, Subtask, StatusItem, Log },
+  components: { VIcon, InlineInput, Connection, History, Subtask, StatusItem, Log, TypeChart },
   data() {
     return {
       loading: true,
@@ -170,7 +169,21 @@ export default {
         reset: false
       },
       operations: ['start', 'stop', 'forceStop'],
-      statusResult: []
+      statusResult: [],
+      pieData: [],
+      pieOptions: {
+        legend: {
+          // orient: 'vertical',
+          left: 'right',
+          top: 'middle',
+          width: '240px'
+        },
+        grid: {
+          left: 0
+        },
+        radius: true,
+        center: ['20%', 'center']
+      }
     }
   },
   computed: {
@@ -243,10 +256,51 @@ export default {
         .get([id])
         .then(res => {
           this.task = this.formatTask(res.data)
+          this.getSubTaskStatusCount()
         })
         .finally(() => {
           this.loading = false
         })
+    },
+    getSubTaskStatusCount() {
+      const { statuses } = this.task
+      let obj = {}
+      for (let key in ETL_SUB_STATUS_MAP) {
+        obj[key] = Object.assign({ count: 0 }, ETL_SUB_STATUS_MAP[key])
+      }
+
+      statuses.forEach(el => {
+        obj[el.status].count++
+      })
+      console.log('getSubTaskStatusCount', obj)
+      //
+      // edit: { text: '待启动', type: 'primary' },
+      // scheduling: { text: '启动中', type: 'success' },
+      // schedule_failed: { text: '错误', type: 'danger' },
+      // wait_run: { text: '待启动', type: 'warning' },
+      // running: { text: '运行中', type: 'success' },
+      // // pausing: { text: ' 暂停中', type: 'warning' },
+      // stopping: { text: '停止中', type: 'success' },
+      // // paused: { text: '暂停', type: 'warning' },
+      // stop: { text: '已停止', type: 'danger' },
+      // complete: { text: '已完成', type: 'primary' },
+      // error: { text: '错误', type: 'warning' }
+      let result = ['edit', 'scheduling', 'running', 'stopping', 'stop', 'complete', 'error']
+      let color = ['#648EFF', '#5CC4D2', '#81CE94', '#EFB166', '#EFB166', '#11A9DA', '#EB755C']
+      this.pieData = result.map((t, i) => {
+        // 待启动
+        let item = { count: 0 }
+        item.value = obj[t].count
+        item.name = obj[t].text
+        if (t === 'edit') {
+          item.value += obj['wait_run'].count
+        } else if (t === 'error') {
+          item.value += obj['schedule_failed'].count
+        }
+        item.color = color[i]
+        return item
+      })
+      console.log('this.pieData ', this.pieData)
     },
     taskChange(data) {
       let task = data.data?.fullDocument || {}
@@ -370,10 +424,10 @@ export default {
           return
         }
         this.loadingObj.reset = true
-        this.$api('DataFlows')
-          .resetAll([id])
+        this.$api('Task')
+          .reset(id)
           .then(data => {
-            this.responseHandler(data, '操作成功')
+            this.responseHandler(data, this.$t('message.deleteOK'))
           })
           .catch(error => {
             if (error?.isException) {
@@ -406,7 +460,7 @@ export default {
       this.$api('DataFlows')
         .update(where, attributes)
         .then(data => {
-          this.responseHandler(data, '操作成功')
+          this.responseHandler(data, this.$t('message.deleteOK'))
         })
         .catch(error => {
           if (error?.isException) {
@@ -508,6 +562,10 @@ export default {
   .v-icon {
     color: rgba(132, 175, 255, 1);
   }
+}
+.task-info__right {
+  width: 350px;
+  border-left: 1px solid #e8e8e8;
 }
 .task-info__img {
   width: 54px;

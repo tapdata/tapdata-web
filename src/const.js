@@ -44,14 +44,14 @@ export const TOPOLOGY_MAP = topologyMap,
     error: { text: '错误', type: 'danger' }
   },
   ETL_SUB_STATUS_MAP = {
-    edit: { text: '编辑中', type: 'primary' },
+    edit: { text: '待启动', type: 'primary' },
     scheduling: { text: '启动中', type: 'success' },
     schedule_failed: { text: '错误', type: 'danger' },
     wait_run: { text: '待启动', type: 'warning' },
     running: { text: '运行中', type: 'success' },
-    pausing: { text: ' 暂停中', type: 'warning' },
+    // pausing: { text: ' 暂停中', type: 'warning' },
     stopping: { text: '停止中', type: 'success' },
-    paused: { text: '暂停', type: 'warning' },
+    // paused: { text: '暂停', type: 'warning' },
     stop: { text: '已停止', type: 'danger' },
     complete: { text: '已完成', type: 'primary' },
     error: { text: '错误', type: 'warning' }

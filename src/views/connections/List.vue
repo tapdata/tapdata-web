@@ -119,7 +119,7 @@
           {{ scope.row.connectionUrl }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="status" :label="$t('connection.dataBaseStatus')" width="80">
+      <ElTableColumn prop="status" :label="$t('connection.dataBaseStatus')" width="100">
         <template slot-scope="scope">
           <div>
             <span class="error" v-if="['invalid'].includes(scope.row.status)">
@@ -143,7 +143,7 @@
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="connection_type" :label="$t('connection.connectionType')" width="80">
+      <ElTableColumn prop="connection_type" :label="$t('connection.connectionType')" width="160">
         <template slot-scope="scope">
           {{ $t('connection.type.' + scope.row.connection_type) }}
         </template>
@@ -522,7 +522,7 @@ export default {
             databaseType: type
           }
         })
-      }else {
+      } else {
         this.$router.push({
           name: 'connectionsEdit',
           params: {
@@ -684,7 +684,7 @@ export default {
             databaseType: type
           }
         })
-      }else {
+      } else {
         this.$router.push({
           name: 'connectionsCreate',
           query: {

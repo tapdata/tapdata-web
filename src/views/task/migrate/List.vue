@@ -548,12 +548,16 @@ export default {
           delete dataflow.children
         }
         if (index >= 0) {
-          this.table.$set(list, index, Object.assign(list[index], this.cookRecord(dataflow)))
+          this.table.$set(
+            list,
+            index,
+            Object.assign(list[index], this.cookRecord(dataflow), { user_id: list[index]?.user_id })
+          )
           let handleItem = this.cookRecord(dataflow)
           if (handleItem.children && !handleItem.children.length) {
             delete handleItem.children
           }
-          this.table.$set(list, index, Object.assign(list[index], handleItem))
+          this.table.$set(list, index, Object.assign(list[index], handleItem, { user_id: list[index]?.user_id }))
         }
       }
     },
@@ -579,7 +583,8 @@ export default {
             'fullDocument.errorEvents': true,
             'fullDocument.agentId': true,
             'fullDocument.setting': true,
-            'fullDocument.listtags': true
+            'fullDocument.listtags': true,
+            'fullDocument.user_id': true
           }
         }
       }
@@ -1129,7 +1134,8 @@ export default {
         if (!resFlag) {
           return
         }
-        this.changeStatus(ids, { status: 'stopping' })
+        this.startAndStop('stopBatch', ids, { status: 'stopping' })
+        // this.changeStatus(ids, { status: 'stopping' })
       })
     },
     forceStop(ids, item = {}) {
@@ -1140,7 +1146,16 @@ export default {
         if (!resFlag) {
           return
         }
-        this.changeStatus(ids, { status: 'force stopping' })
+        // this.changeStatus(ids, { status: 'force stopping' })
+        this.$api('DataFlows')
+          .patchId(ids[0], { status: 'force stopping' })
+          .then(res => {
+            this.table.fetch()
+            this.responseHandler(res.data, this.$t('message.operationSuccuess'))
+          })
+          .catch(err => {
+            this.$message.error(err.data.message)
+          })
       })
     },
     del(ids, item = {}) {
@@ -1176,7 +1191,7 @@ export default {
         }
         this.restLoading = true
         dataFlows
-          .resetAll(ids)
+          .resetAll({ id: ids })
           .then(res => {
             this.table.fetch()
             this.responseHandler(res.data, this.$t('message.resetOk'))
@@ -1324,6 +1339,7 @@ export default {
           this.responseHandler(res.data, this.$t('message.operationSuccuess'))
         })
         .catch(err => {
+          console.log('err', err)
           if (err.response.msg === 'Metadata transformer error') {
             this.$message.error('任务启动失败，请编辑任务完成映射配置')
           } else if (err.response.msg === 'DataFlow has add or del stages') {

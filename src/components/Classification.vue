@@ -211,9 +211,9 @@ export default {
       }
     },
     getDataAll(cb) {
-      let params = {
-        filter: {}
-      }
+      // let params = {
+      //   filter: {}
+      // }
       if (this.types[0] === 'user') {
         UserGroupModel.get({
           filter: JSON.stringify({
@@ -237,7 +237,7 @@ export default {
           }
         })
       } else {
-        MetadataDefinitions.get(params).then(res => {
+        MetadataDefinitions.get().then(res => {
           if (res.data?.items) {
             // this.treeData = this.formatData(res.data);
             cb && cb(res.data?.items || [])
