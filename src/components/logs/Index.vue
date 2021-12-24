@@ -33,8 +33,11 @@ export default {
   },
   data() {
     return {
-      logsType: 'detailed'
+      logsType: ''
     }
+  },
+  mounted() {
+    this.init()
   },
   computed: {
     showAll() {
@@ -43,12 +46,20 @@ export default {
   },
   watch: {
     type(v) {
-      if (!this.showAll) {
-        if (v == 1) {
+      v && this.init()
+    }
+  },
+  methods: {
+    init() {
+      let { type, showAll } = this
+      if (!showAll) {
+        if (type == 1) {
           this.logsType = 'detailed'
-        } else if (v == 2) {
+        } else if (type == 2) {
           this.logsType = 'normal'
         }
+      } else {
+        this.logsType = 'normal'
       }
     }
   }

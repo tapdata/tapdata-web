@@ -19,19 +19,31 @@
       </div>
       <slot></slot>
     </div>
-    <div v-if="list.length" class="logs-list" ref="logsList">
+    <div v-if="list.length" class="logs-list" ref="logsList" v-loading="loading">
       <DynamicScroller
         ref="virtualScroller"
         :items="list"
-        :min-item-size="15"
+        key-field="id"
+        :min-item-size="30"
         class="scroller"
         @scroll.native="scrollFnc"
       >
+        <template #before>
+          <div class="before-scroll-content text-center font-color-disable">
+            <div v-if="isNoMore">没有更多数据</div>
+            <div v-if="preLoading">正在加载...</div>
+          </div>
+        </template>
         <template #default="{ item, index, active }">
-          <DynamicScrollerItem :item="item" :active="active" :data-index="index" :size-dependencies="[item.id]">
+          <DynamicScrollerItem
+            :item="item"
+            :active="active"
+            :data-index="index"
+            :size-dependencies="[item.id, item.content]"
+          >
             [<span :class="['level', colorMap[item.level]]">{{ item.level }}</span
             >]
-            <span>{{ formatTime(item.timestamp) }}</span>
+            <span class="mr-2">{{ formatTime(item.timestamp) }}</span>
             <span v-html="item.content"></span>
             <span v-if="item.link" class="color-primary ml-2">参考外链:{{ item.link }}</span>
             <span
@@ -53,8 +65,7 @@
 import ws from '@/api/ws'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { delayTrigger, formatTime } from '@/utils/util'
-
-let count = 0
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 export default {
   name: 'Normal',
   components: {
@@ -74,6 +85,7 @@ export default {
       bottomKey: '',
       timer: null,
       loading: false,
+      preLoading: false,
       imageUrl: require('@/assets/images/noData.svg'),
       list: [],
       colorMap: {
@@ -86,7 +98,8 @@ export default {
         page: 1,
         size: 20
       },
-      isScrollBottom: true
+      isScrollBottom: true,
+      isNoMore: false
     }
   },
   mounted() {
@@ -113,9 +126,8 @@ export default {
           limit: 20
         }
       }
-      const self = this
-      ws.on('logs', function (data) {
-        data && self.resetData()
+      ws.on('logs', data => {
+        data && this.resetData()
       })
 
       ws.ready(() => {
@@ -132,8 +144,11 @@ export default {
       // }
     },
     toSolutions(code) {
-      // 这里没有this.$router
-      window.open('/#/customerLogsSolutions?code=' + code)
+      let routeUrl = this.$router.resolve({
+        name: 'Solutions',
+        query: { code: code }
+      })
+      window.open(routeUrl.href)
     },
     logScroll(logContainer) {
       if (logContainer.scrollHeight - logContainer.clientHeight - logContainer.scrollTop < 100) {
@@ -159,6 +174,9 @@ export default {
       return filter
     },
     loadOld() {
+      if (this.isNoMore) {
+        return
+      }
       let filter = {
         where: {
           dataFlowId: this.id,
@@ -167,7 +185,7 @@ export default {
           }
         },
         order: 'id DESC',
-        limit: 35
+        limit: 20
       }
       this.addFilter(filter)
       this.getLogsData(filter, false, true)
@@ -179,7 +197,7 @@ export default {
           dataFlowId: this.id
         },
         order: 'id DESC',
-        limit: 35
+        limit: 20
       }
       this.addFilter(filter)
 
@@ -187,12 +205,14 @@ export default {
     },
     resetData() {
       this.lastLogsId = ''
+      this.isNoMore = false
+      this.preLoading = false
       let filter = {
         where: {
           dataFlowId: this.id
         },
         order: 'id DESC',
-        limit: 35
+        limit: 20
       }
       this.addFilter(filter)
 
@@ -201,15 +221,30 @@ export default {
     getLogsData(filter, reset = false, prepend = false) {
       // 获取日志
 
-      let self = this
+      if (this.loading) return
 
-      if (self.loading) return
-      // { filter: JSON.stringify(filter) }
-      self.loading = true
+      if (prepend) {
+        this.preLoading = true
+      } else {
+        this.loading = true
+      }
+      // if (reset || (!reset && !prepend)) {
+      //   this.loading = true
+      // }
       this.$api('CustomerJobLogs')
         .get({ filter: JSON.stringify(filter) })
         .then(res => {
           let data = res.data.items
+          if (!data.length) {
+            if (reset) {
+              console.log('暂无结果')
+            } else {
+              if (prepend) {
+                this.isNoMore = true
+              }
+            }
+            return
+          }
           data.forEach(el => {
             let { template, params } = el
             let content = (template || '').replace(/\r\n/g, '<br/>').replace(/\t/g, '<span class="tap-span"></span>')
@@ -221,9 +256,7 @@ export default {
                 content = content.replace(re, params[key])
               }
             }
-            el.id += new Date().getTime()
-            count++
-            el.content = content + count
+            el.content = content
           })
           let { list } = this
           if (reset) {
@@ -255,7 +288,8 @@ export default {
           // }
         })
         .finally(() => {
-          self.loading = false
+          this.loading = false
+          this.preLoading = false
         })
     },
     getRandom(min, max) {
@@ -321,10 +355,11 @@ export default {
   //overflow-y: auto;
   //height: 0;
   //flex: 1;
+  //min-height: 150px;
   background: rgba(229, 236, 255, 0.22);
-  &.empty {
-    min-height: 150px;
-  }
+  //&.empty {
+  //  min-height: 150px;
+  //}
   .el-loading-spinner .el-loading-text {
     font-size: 12px;
     color: #333;

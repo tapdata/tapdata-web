@@ -14,6 +14,7 @@
   </div>
 </template>
 <script>
+import Cookie from 'web-core/utils/cookie'
 const langMap = {
   sc: 'zh-CN',
   tc: 'zh-TW',
@@ -23,6 +24,11 @@ const Languages = {
   sc: '中文 (简)',
   en: 'English',
   tc: '中文 (繁)'
+}
+const LanguagesKey = {
+  sc: 'zh_CN',
+  en: 'en_US',
+  tc: 'zh_TW'
 }
 export default {
   name: 'LoginHeader',
@@ -36,6 +42,7 @@ export default {
   methods: {
     langChange(lang) {
       localStorage.setItem('tapdata_localize_lang', lang)
+      Cookie.set('lang', LanguagesKey[lang])
       this.$i18n.locale = langMap[lang]
       this.lang = lang
     }

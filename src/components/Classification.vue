@@ -170,9 +170,11 @@ export default {
     getData(cb) {
       let where = {}
       if (this.types.length) {
-        where.or = this.types.map(t => ({ item_type: t }))
+        where.item_type = {
+          $in: this.types
+        }
       }
-      if (!parseInt(this.$cookie.get('isAdmin'))) where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` }
+      // if (!parseInt(this.$cookie.get('isAdmin'))) where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` }
       let filter = {
         where
       }
@@ -211,9 +213,9 @@ export default {
       }
     },
     getDataAll(cb) {
-      let params = {
-        filter: {}
-      }
+      // let params = {
+      //   filter: {}
+      // }
       if (this.types[0] === 'user') {
         UserGroupModel.get({
           filter: JSON.stringify({
@@ -237,7 +239,7 @@ export default {
           }
         })
       } else {
-        MetadataDefinitions.get(params).then(res => {
+        MetadataDefinitions.get().then(res => {
           if (res.data?.items) {
             // this.treeData = this.formatData(res.data);
             cb && cb(res.data?.items || [])

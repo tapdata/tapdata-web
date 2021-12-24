@@ -27,5 +27,8 @@
   --primary-hover: #40a9ff;
   --primary-hover-l: #f0f7ff;
 }
+@import 'var';
 @import 'reboot';
+@import 'overrides';
 @import '~web-core/styles/utilities';
+@import '~@/assets/style/font/iconfont.css';

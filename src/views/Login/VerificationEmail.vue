@@ -31,6 +31,7 @@
 <script>
 import Header from './component/header'
 import factory from '@/api/factory'
+import Cookie from 'web-core/utils/cookie'
 const usersModel = factory('users')
 
 export default {
@@ -61,6 +62,7 @@ export default {
   methods: {
     langChange(lang) {
       localStorage.setItem('tapdata_localize_lang', lang)
+      Cookie.set('lang', LanguagesKey[lang])
       location.reload()
     },
 

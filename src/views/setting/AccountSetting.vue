@@ -7,7 +7,7 @@
           <span class="label">{{ item.label }}</span>
           <span class="text"> {{ item.value }} </span>
           <i
-            :class="['iconfont', item.icon, rotateFlag && item.key == 'accesscode' ? 'rotateActive' : 'backActive']"
+            :class="['iconfont', item.icon, rotateFlag && item.key == 'accessCode' ? 'rotateActive' : 'backActive']"
             v-if="item.key !== 'email'"
             @click="handleChange(item.key)"
           ></i>
@@ -186,7 +186,7 @@ export default {
         {
           label: this.$t('account.accessCode'),
           value: '',
-          key: 'accesscode',
+          key: 'accessCode',
           icon: 'icon-shuaxin3'
         }
       ],
@@ -259,20 +259,26 @@ export default {
     // 获取当前信息
     async handleGetData() {
       this.loading = true
-      let parmas = {
-        filter: {
-          where: {
-            id: this.$cookie.get('user_id')
-          }
+      let filter = {
+        where: {
+          id: this.$cookie.get('user_id')
         }
       }
-      let result = await usersModel.get(parmas)
-      let items = result.data?.items || []
+      // let parmas = {
+      //   filter: {
+      //     where: {
+      //       id: this.$cookie.get('user_id')
+      //     }
+      //   }
+      // }
+      // let result = await usersModel.get({ filter: JSON.stringify(filter) })
+      let result = await usersModel.get([this.$cookie.get('user_id')])
+      let items = result.data
       if (items) {
         this.infoList.forEach(item => {
-          Object.keys(items[0]).forEach(key => {
+          Object.keys(items).forEach(key => {
             if (item.key === key) {
-              item.value = items[0][key]
+              item.value = items[key]
             }
           })
         })

@@ -17,8 +17,7 @@ import '@/plugins/icon'
 import 'element-ui/lib/theme-chalk/index.css'
 import '@/directives'
 import 'github-markdown-css'
-import '@/assets/style/index.scss'
-import '@/assets/theme/drs/index.scss'
+// import '@/assets/style/index.scss'
 import LoadMore from '@/utils/loadMore'
 
 import '@/styles/app.scss'
@@ -86,12 +85,18 @@ window.getSettingByKey = key => {
   }
   return value
 }
+const LanguagesKey = {
+  sc: 'zh_CN',
+  en: 'en_US',
+  tc: 'zh_TW'
+}
 let init = settings => {
   window.__settings__ = settings
   let lang = localStorage.getItem('tapdata_localize_lang')
   if (!lang) {
     lang = window.getSettingByKey('DEFAULT_LANGUAGE')
     localStorage.setItem('tapdata_localize_lang', lang || 'en')
+    Cookie.set('lang', LanguagesKey[lang || 'en'])
   }
 
   document.title = window.getSettingByKey('PRODUCT_TITLE') || 'Tapdata'
