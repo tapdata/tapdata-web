@@ -71,5 +71,16 @@ export default {
   height: 100%;
   box-sizing: border-box;
   overflow: hidden;
+  ::v-deep {
+    .log-container {
+      height: 300px;
+      max-height: 300px;
+    }
+    .vue-recycle-scroller {
+      padding: 24px;
+      height: 300px;
+      max-height: 300px;
+    }
+  }
 }
 </style>

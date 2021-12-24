@@ -29,9 +29,12 @@
         @scroll.native="scrollFnc"
       >
         <template #before>
-          <div class="before-scroll-content text-center font-color-disable">
+          <div class="before-scroll-content text-center font-color-disable pb-2">
             <div v-if="isNoMore">没有更多数据</div>
-            <div v-if="preLoading">正在加载...</div>
+            <!--            <div v-if="preLoading">正在加载...</div>-->
+            <div v-show="preLoading">
+              <i class="el-icon-loading"></i>
+            </div>
           </div>
         </template>
         <template #default="{ item, index, active }">
@@ -216,7 +219,7 @@ export default {
       }
       this.addFilter(filter)
 
-      this.getLogsData(filter, true, true)
+      this.getLogsData(filter, true, false)
     },
     getLogsData(filter, reset = false, prepend = false) {
       // 获取日志

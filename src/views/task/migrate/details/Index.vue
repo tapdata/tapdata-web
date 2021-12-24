@@ -202,17 +202,6 @@ export default {
 .statistics-container {
   font-size: 12px;
   overflow-y: auto;
-  ::v-deep {
-    .logs-list {
-      //height: 200px;
-      //overflow-y: auto;
-    }
-    .scroller {
-      padding: 24px;
-      height: 300px;
-      overflow-y: auto;
-    }
-  }
 }
 .card-box {
   background: #fff;
