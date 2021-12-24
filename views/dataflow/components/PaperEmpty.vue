@@ -27,6 +27,14 @@
       </div>
 
       <div>
+        <span class="mr-2">画布实际尺寸</span>
+        <kbd>⌘</kbd><span class="mx-1">+</span><kbd>0</kbd>
+        <span class="mx-2">/</span>
+        <span class="mr-2">适应画布</span>
+        <kbd>⌘</kbd><span class="mx-1">+</span><kbd>1</kbd>
+      </div>
+
+      <div>
         <span class="mr-2">自动布局</span>
         <kbd>⌘</kbd>
         <span class="mx-1">+</span>

@@ -204,8 +204,13 @@ export default {
         e.preventDefault()
         this.zoomOut()
       })
-      // 画布适应内容区
+      // 画布实际大小
       Mousetrap.bind('mod+0', e => {
+        e.preventDefault()
+        this.zoomTo(1)
+      })
+      // 画布适应内容区
+      Mousetrap.bind('mod+1', e => {
         e.preventDefault()
         this.centerContent()
       })
