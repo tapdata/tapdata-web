@@ -4,6 +4,9 @@ import { defineComponent } from 'vue-demi'
 import VIcon from 'web-core/components/VIcon'
 import { uuid } from './util'
 import './fieldProessor.scss'
+import { handleOperation } from '../../../../../editor/plugins/FieldProcess/util'
+import _ from 'lodash'
+import log from '../../../../../log'
 // import de from 'element-ui/src/locale/lang/de'
 
 export const FieldProcess = connect(
@@ -16,6 +19,8 @@ export const FieldProcess = connect(
         const form = formRef.value
         return {
           databaseType: form.values.databaseType,
+          operations: form.values.operations,
+          scripts: form.values.scripts,
           form
         }
       },
@@ -57,9 +62,6 @@ export const FieldProcess = connect(
               value: 'Array'
             }
           ],
-          field_process: [],
-          operations: [],
-          scripts: [],
           originalFields: [],
           checkAll: false,
           scriptDialog: {
@@ -91,7 +93,7 @@ export const FieldProcess = connect(
             op: 'CREATE',
             field: '',
             tableName: '',
-            javaType: 'String',
+            java_type: 'String',
             id: '',
 
             action: '',
@@ -130,14 +132,61 @@ export const FieldProcess = connect(
         console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options?.[0] || []
         this.originalFields = JSON.parse(JSON.stringify(fields))
+        console.log(this.operations)
+        // apply operations to schema
+        //查找是否有被删除的字段且operation有操作
+        let temporary = handleOperation(fields, this.operations)
+        temporary.map(item => {
+          let targetIndex = fields.findIndex(n => n.id === item.id)
+          if (targetIndex === -1 && item.op !== 'CREATE') {
+            // data.operations.splice(index,1); //删除找不到id的数据
+            return
+          }
+          if (item.op === 'CONVERT') {
+            fields[targetIndex].java_type = item.operand
+          } else if (item.op === 'RENAME') {
+            const name = fields[targetIndex].field_name
+            let newName = name.split('.')
+            newName[newName.length - 1] = item.operand
+            const newNameStr = newName.join('.')
+            fields[targetIndex].field_name = newNameStr
+
+            // change children field name
+            fields.forEach(field => {
+              if (field.field_name.startsWith(name + '.')) {
+                field.field_name = newNameStr + field.field_name.substring(name.length)
+              }
+            })
+          } else if (item.op === 'CREATE') {
+            let triggerFieldId = item.triggerFieldId
+            let newField = {
+              id: item.id,
+              field_name: item.field || item.field_name,
+              table_name: item.tableName || item.table_name,
+              original_field_name: item.field || item.field_name,
+              java_type: item.java_type,
+              data_type: 'STRING',
+              primary_key_position: 0,
+              dataType: 2,
+              is_nullable: true,
+              columnSize: 0,
+              autoincrement: false
+            }
+            if (triggerFieldId) {
+              let triggerFieldIndex = fields.findIndex(f => f.id === triggerFieldId)
+              fields.splice(triggerFieldIndex + 1, 0, newField)
+            } else fields.push(newField)
+          }
+        })
+        log('FieldProcess.mergeOutputSchema', fields)
         return (
-          <div class="field-processor-tree-warp bg-body pt-5 pb-5">
+          <div class="field-processor-tree-warp bg-body pt-2 pb-5">
             <div class="field-processor-operation flex">
               <ElCheckbox class="check-all mr-4" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
-              <span class="field-name inline-block fw-bolder">字段名称</span>
-              <span class="field-desc inline-block fw-bolder">字段描述</span>
-              <span class="field-type inline-block fw-bolder">类型</span>
-              <span class="field-ops inline-block fw-bolder">
+              <span class="field-name inline-block">字段名称</span>
+              <span class="field-desc inline-block">字段描述</span>
+              <span class="field-type inline-block">类型</span>
+              <span class="field-ops inline-block">
                 <VIcon class="clickable ml-5" small onClick={() => this.handleAllToUpperCase()}>
                   toUpperCase
                 </VIcon>
@@ -166,25 +215,29 @@ export const FieldProcess = connect(
                       class="tree-node flex flex-1 justify-content-center align-items flex-row"
                       slot-scope="{ node, data }"
                     >
-                      <ElTooltip class="item inline-block" effect="dark" placement="right-start">
-                        <span slot="content">{data.original_field_name}</span>
-                        <span
-                          class={[
-                            this.isRename(data.id) ? 'active__name' : '',
-                            this.isCreate(data.id) ? 'active__name' : '',
-                            'e-label'
-                          ]}
-                        >
-                          <ElInput
-                            v-model={data.field_name}
-                            disabled={this.isRemove(data.id)}
-                            onBlur={() => this.handleRename(node, data)}
-                          />
-                        </span>
-                      </ElTooltip>
+                      <span
+                        class={[
+                          'tree-field-input-wrap',
+                          'item',
+                          'inline-block',
+                          'e-label',
+                          this.isRename(data.id) ? 'active__name' : '',
+                          this.isCreate(data.id) ? 'active__name' : ''
+                        ]}
+                      >
+                        <ElInput
+                          class="tree-field-input"
+                          v-model={data.field_name}
+                          disabled={this.isRemove(data.id)}
+                          onChange={() => this.handleRename(node, data)}
+                        />
+                        <VIcon class="title-input-icon" size="14">
+                          edit-outline
+                        </VIcon>
+                      </span>
                       <span class="e-desc">{data.desc}</span>
                       <ElSelect
-                        v-model={data.data_type}
+                        v-model={data.java_type}
                         size="mini"
                         disabled={this.isRemove(data.id)}
                         class={[this.isConvertDataType(data.id) ? 'active__type' : '', 'e-select']}
@@ -411,7 +464,7 @@ export const FieldProcess = connect(
           let createOps = this.operations.filter(v => v.id === data.id && v.op === 'CREATE')
           if (createOps && createOps.length > 0) {
             let op = createOps[0]
-            op.javaType = data.type
+            op.java_type = data.java_type
           } else {
             let nativeData = this.getNativeData(data.id)
             let ops = this.operations.filter(v => v.id === data.id && v.op === 'CONVERT')
@@ -420,10 +473,10 @@ export const FieldProcess = connect(
               op = Object.assign(JSON.parse(JSON.stringify(this.CONVERT_OPS_TPL)), {
                 id: data.id,
                 field: nativeData.original_field_name,
-                operand: data.type,
-                originalDataType: nativeData.type,
+                operand: data.java_type,
+                originalDataType: nativeData.original_java_type,
                 table_name: data.table_name,
-                type: data.type,
+                type: data.java_type,
                 primary_key_position: data.primary_key_position,
                 color: data.color,
                 label: data.field_name,
@@ -432,9 +485,9 @@ export const FieldProcess = connect(
               this.operations.push(op)
             } else {
               op = ops[0]
-              op.type = data.type
-              op.operand = data.type
-              op.originalDataType = nativeData.type
+              op.type = data.java_type
+              op.operand = data.java_type
+              op.originalDataType = nativeData.original_java_type
             }
           }
         },
@@ -532,7 +585,7 @@ export const FieldProcess = connect(
           let newFieldOperation = Object.assign(JSON.parse(JSON.stringify(this.CREATE_OPS_TPL)), {
             field: parentFieldName ? parentFieldName + '.newFieldName' : 'newFieldName',
             tableName: data.table_name,
-            javaType: 'String',
+            java_type: 'String',
             id: fieldId,
             action: action,
             triggerFieldId: node.data.id,

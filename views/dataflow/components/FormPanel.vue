@@ -963,11 +963,10 @@ export default {
     // 更新节点属性
     updateNodeProps: debounce(function (form) {
       const filterProps = ['id', 'isSource', 'isTarget', 'attrs', 'sourceNode'] // 排除属性的更新
+      Object.keys(form.values).filter((key, value) => (filterProps.includes(key) ? undefined : value))
       this.updateNodeProperties({
         id: this.node.id,
-        properties: JSON.parse(
-          JSON.stringify(form.values, (key, value) => (filterProps.includes(key) ? undefined : value))
-        )
+        properties: JSON.parse(JSON.stringify(form.values))
       })
       this.updateDag()
     }, 100),
