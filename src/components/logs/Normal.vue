@@ -54,7 +54,6 @@ import ws from '@/api/ws'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { delayTrigger, formatTime } from '@/utils/util'
 
-let count = 0
 export default {
   name: 'Normal',
   components: {
@@ -222,8 +221,7 @@ export default {
               }
             }
             el.id += new Date().getTime()
-            count++
-            el.content = content + count
+            el.content = content
           })
           let { list } = this
           if (reset) {
@@ -321,10 +319,11 @@ export default {
   //overflow-y: auto;
   //height: 0;
   //flex: 1;
+  min-height: 150px;
   background: rgba(229, 236, 255, 0.22);
-  &.empty {
-    min-height: 150px;
-  }
+  //&.empty {
+  //  min-height: 150px;
+  //}
   .el-loading-spinner .el-loading-text {
     font-size: 12px;
     color: #333;

@@ -63,11 +63,9 @@ export default class DataFlows extends PublicAPI {
     if (typeof where === 'object') where = JSON.stringify(where)
     return axios.post(this.url + '/removeAll?where=' + encodeURIComponent(where))
   }
-  resetAll(where) {
-    if (typeof where === 'object') where = JSON.stringify(where)
-    return axios.post(this.url + '/resetAll?id=' + encodeURIComponent(where))
+  resetAll(params) {
+    return axios.post(this.url + '/resetAll', params)
   }
-
   saveStage(stages) {
     return axios.post(`${this.url}/stages`, stages)
   }
