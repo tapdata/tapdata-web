@@ -334,7 +334,7 @@ const META_INSTANCE_FIELDS = {
   meta_type: true
 }
 import MultiSelection from './multi-selection.vue'
-import CodeEditor from 'web-core/components/CodeEditor'
+import CodeEditor from '@/components/CodeEditor'
 //import JsEditor from 'web-core/components/js-editor.vue'
 import { DATA_NODE_TYPES } from '@/const.js'
 export default {

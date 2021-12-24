@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import CodeEditor from 'web-core/components/CodeEditor'
+import CodeEditor from '@/components/CodeEditor'
 export default {
   components: { CodeEditor },
   data() {

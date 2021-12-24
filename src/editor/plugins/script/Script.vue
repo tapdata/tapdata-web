@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import CodeEditor from 'web-core/components/CodeEditor'
+import CodeEditor from '@/components/CodeEditor'
 import log from '../../../log'
 import { EditorEventType } from '../../lib/events'
 import Debug from './Debug'

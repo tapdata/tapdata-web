@@ -171,7 +171,7 @@
 </template>
 
 <script>
-import CodeEditor from 'web-core/components/CodeEditor'
+import CodeEditor from '@/components/CodeEditor'
 import _ from 'lodash'
 
 export default {

@@ -566,7 +566,7 @@
 import factory from '@/api/factory'
 import formConfig from './config'
 import gitbook from './GitBook'
-import CodeEditor from 'web-core/components/CodeEditor'
+import CodeEditor from '@/components/CodeEditor'
 import Test from './Test'
 import { getImgByType, TYPEMAP, TYPEMAPCONFIG, defaultModel, defaultCloudModel } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
