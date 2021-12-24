@@ -133,7 +133,7 @@ import ws from '@/api/ws'
 
 const metadataApi = new MetadataInstances()
 
-import CodeEditor from 'web-core/components/CodeEditor'
+import CodeEditor from '@/components/CodeEditor'
 let connections = factory('connections')
 let editorMonitor = null
 export default {
@@ -209,7 +209,7 @@ export default {
   mounted() {
     let self = this
     ws.on('metadataTransformerProgress', function (res) {
-      if(res?.data?.msg === 'dataFlowId is not start transformer') {
+      if (res?.data?.msg === 'dataFlowId is not start transformer') {
         self.disabledTransfer = false
       } else if (!res?.data?.stageId) {
         let status = res?.data?.status
@@ -498,7 +498,7 @@ export default {
       this.model.table_suffix = data.table_suffix
       this.model.tableNameTransform = data.tableNameTransform
       this.model.fieldsNameTransform = data.fieldsNameTransform
-      this.model.batchOperationList= data.batchOperationList
+      this.model.batchOperationList = data.batchOperationList
     },
     //接收是否第一次打开
     returnModel(value) {

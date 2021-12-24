@@ -136,7 +136,7 @@
 </template>
 
 <script>
-import CodeEditor from 'web-core/components/CodeEditor'
+import CodeEditor from '@/components/CodeEditor'
 import { EditorEventType } from '../../lib/events'
 import _ from 'lodash'
 
