@@ -922,7 +922,7 @@
     "@babel/helper-validator-identifier" "^7.15.7"
     to-fast-properties "^2.0.0"
 
-"@formily/core@2.0.6", "@formily/core@^2.0.5":
+"@formily/core@2.0.6", "@formily/core@^2.0.6":
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@formily/core/-/core-2.0.6.tgz#6f258c1852aa1a10b18617959a3a41cdc42377e5"
   integrity sha512-71W/1RvXjYEcNNpcBaOfRPNyz7pIoXxlQrgipRDqtN4oU8vmgdlEPoqBxee76dP4/aavCrX9PFbzXZ7zDstreQ==
@@ -931,7 +931,7 @@
     "@formily/shared" "2.0.6"
     "@formily/validator" "2.0.6"
 
-"@formily/element@^2.0.5":
+"@formily/element@^2.0.6":
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@formily/element/-/element-2.0.6.tgz#589c09924b592358913df1e03cfc513b359c62a6"
   integrity sha512-vtrwgba3+JMOCPrJcR/eyCsj8+dzzm0rqfCwmrhmYjDyqD/S5oHmpdi9CVo9jNglM+7z5yD7s2JdD88oV2psiA==
@@ -968,7 +968,7 @@
   resolved "https://registry.yarnpkg.com/@formily/path/-/path-2.0.6.tgz#1cf5ce93b3f48ecd1c12af2a3705c63e22addaaa"
   integrity sha512-Xv8+nA3xXfDGIkeL06zI/aRnjYtPALjfDN4aCFCdZt09ZCC+QLiY0OXaiZYnBoxG+I+NxO3MJt06CgaeGfMX+A==
 
-"@formily/reactive-vue@2.0.6", "@formily/reactive-vue@^2.0.5":
+"@formily/reactive-vue@2.0.6", "@formily/reactive-vue@^2.0.6":
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@formily/reactive-vue/-/reactive-vue-2.0.6.tgz#cdd409767c4ebff1845f3d8c0838e30323784145"
   integrity sha512-2pzbxYfpETIc0qldLvGYJM0ZHL4uCaf4iyA5Pyhg+S1bkgj6BM9iX6ZDgosNpWtu7LzS8OAYpwyRW58UFHuvgw==
@@ -976,7 +976,7 @@
     "@formily/reactive" "2.0.6"
     vue-demi "^0.9.0"
 
-"@formily/reactive@2.0.6", "@formily/reactive@^2.0.5":
+"@formily/reactive@2.0.6", "@formily/reactive@^2.0.6":
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@formily/reactive/-/reactive-2.0.6.tgz#2a8862ee6cfd0b9ccca8a06e5e6794f1a29c32bc"
   integrity sha512-2LOlMq1bvz0GM7ZZOqdBU7xZAOZAe1WGgKi7F2/bWoCAcoDq0eejHpgkBS0PSYdvJzbUZoFJO0h2jWBgbG1apA==
@@ -1001,7 +1001,7 @@
   dependencies:
     "@formily/shared" "2.0.6"
 
-"@formily/vue@2.0.6", "@formily/vue@^2.0.5":
+"@formily/vue@2.0.6", "@formily/vue@^2.0.6":
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@formily/vue/-/vue-2.0.6.tgz#caf4b34bfadddb0ceb62cb49882872f284570f10"
   integrity sha512-L5SQy4VXCkblKW5Il0iCxeKS6xo2x96YCMYVTtt4PMEu5lM0BTOPVQ800nYSufBO6nBRDM8MPlsl6rHa7xECRw==
