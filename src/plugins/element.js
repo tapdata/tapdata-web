@@ -69,6 +69,10 @@ import {
   Breadcrumb,
   BreadcrumbItem
 } from 'element-ui'
+
+// 组件默认尺寸为small
+Vue.prototype.$ELEMENT = { size: 'small' }
+
 //重写ElementUI Select组件多选时的触发函数，去掉去重的处理
 Select.methods.handleOptionSelect = function (option, byClick) {
   var _this12 = this
