@@ -366,7 +366,8 @@ export class Table extends NodeType {
                     type: 'array',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 240
+                      wrapperWidth: 240,
+                      feedbackText: '可输入创建新字段'
                     },
                     'x-component': 'Select',
                     'x-component-props': {
