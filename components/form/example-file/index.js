@@ -1,24 +1,30 @@
-import { connect, mapProps, useForm } from '@formily/vue'
+import { connect, mapProps } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
+import './index.scss'
 // import * as components from 'web-core/components/form'
 // import { Form, FormItem, Switch, Input, Checkbox, Radio} from '@formily/element'
 
 export const ExpressionExample = connect(
   observer(
     defineComponent({
-      setup() {
-        const formRef = useForm()
-        const form = formRef.value
-        return {
-          databaseType: form.values.databaseType
+      props: ['loading', 'options'],
+
+      watch: {
+        example: {
+          handler(v) {
+            this.form.setValuesIn('Example', v)
+            this.$emit('change', v)
+            console.log('scripts', v) // eslint-disable-line
+          }
         }
       },
 
       render() {
+        // eslint-disable-next-line no-console
+        console.log('################')
         return (
           <div class="expression">
-            return (
             <div style="color: #888888; font-size: 12px">
               <h3 style="font-size: 14px; font-weight: bold"> 表达式示例</h3>
               <p style="text-indent: 2em">筛选出50岁以上的男性或者收入一万以下的30岁以上的人</p>
@@ -81,7 +87,6 @@ export const ExpressionExample = connect(
                 </tr>
               </table>
             </div>
-            )
           </div>
         )
       }
