@@ -86,7 +86,7 @@
           <History v-if="task.id" :ids="[task.id]" :operations="operations"></History>
         </ElTabPane>
         <ElTabPane label="运行日志" name="log" lazy>
-          <Log :id="task.id" type="2" log-type="2"></Log>
+          <Log :id="task.id" type="2"></Log>
         </ElTabPane>
       </ElTabs>
     </div>
@@ -272,20 +272,7 @@ export default {
       statuses.forEach(el => {
         obj[el.status].count++
       })
-      console.log('getSubTaskStatusCount', obj)
-      //
-      // edit: { text: '待启动', type: 'primary' },
-      // scheduling: { text: '启动中', type: 'success' },
-      // schedule_failed: { text: '错误', type: 'danger' },
-      // wait_run: { text: '待启动', type: 'warning' },
-      // running: { text: '运行中', type: 'success' },
-      // // pausing: { text: ' 暂停中', type: 'warning' },
-      // stopping: { text: '停止中', type: 'success' },
-      // // paused: { text: '暂停', type: 'warning' },
-      // stop: { text: '已停止', type: 'danger' },
-      // complete: { text: '已完成', type: 'primary' },
-      // error: { text: '错误', type: 'warning' }
-      let result = ['edit', 'scheduling', 'running', 'stopping', 'stop', 'complete', 'error']
+      let result = ['edit', 'scheduling', 'running', 'pausing', 'pause', 'complete', 'error']
       let color = ['#648EFF', '#5CC4D2', '#81CE94', '#EFB166', '#EFB166', '#11A9DA', '#EB755C']
       this.pieData = result.map((t, i) => {
         // 待启动
