@@ -383,7 +383,8 @@ export default {
 
           let fields
           try {
-            fields = await metadataApi.nodeSchema(nodeId)
+            const data = await metadataApi.nodeSchema(nodeId)
+            fields = data.fields
           } catch (e) {
             // eslint-disable-next-line no-console
             console.error('nodeSchema', e)
@@ -414,7 +415,8 @@ export default {
 
           let fields
           try {
-            fields = await metadataApi.nodeSchema(nodeId)
+            const data = await metadataApi.nodeSchema(nodeId)
+            fields = data.fields
           } catch (e) {
             // eslint-disable-next-line no-console
             console.error('nodeSchema', e)
@@ -962,12 +964,13 @@ export default {
 
     // 更新节点属性
     updateNodeProps: debounce(function (form) {
+      const formValues = { ...form.values }
       const filterProps = ['id', 'isSource', 'isTarget', 'attrs', 'sourceNode'] // 排除属性的更新
+      filterProps.forEach(key => (formValues[key] = undefined))
+
       this.updateNodeProperties({
         id: this.node.id,
-        properties: JSON.parse(
-          JSON.stringify(form.values, (key, value) => (filterProps.includes(key) ? undefined : value))
-        )
+        properties: JSON.parse(JSON.stringify(formValues))
       })
       this.updateDag()
     }, 100),

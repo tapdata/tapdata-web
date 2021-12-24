@@ -45,9 +45,21 @@
     line-height: 50px;
   }
   .field-processor-operation{
-    height: 50px;
+    height: 36px;
+  }
+  .title-input-icon{
+    position: absolute;
+    right: 10px;
+    top: 19px;
   }
   .field-processor-tree {
+    .tree-field-input-wrap{
+      position: relative;
+    }
+    .tree-field-input .el-input__inner:hover{
+      border: 1px solid;
+      border-color: map-get($borderColor, disable)
+    }
     .el-input__inner{
       border: none;
       background-color: transparent;
