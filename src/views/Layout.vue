@@ -176,11 +176,17 @@ import NotificationPopover from './notification/NotificationPopover'
 import DownAgent from './downAgent/agentDown'
 import { signOut } from '../utils/util'
 import { childRoutes } from '@/router'
+import Cookie from 'web-core/utils/cookie'
 
 const Languages = {
   sc: '中文 (简)',
   en: 'English',
   tc: '中文 (繁)'
+}
+const LanguagesKey = {
+  sc: 'zh_CN',
+  en: 'en_US',
+  tc: 'zh_TW'
 }
 let menuSetting = [
   { name: 'dashboard', icon: 'shouye' },
@@ -486,6 +492,7 @@ export default {
     },
     changeLanguage(lang) {
       localStorage.setItem('tapdata_localize_lang', lang)
+      Cookie.set('lang', LanguagesKey[lang])
       location.reload()
     },
 

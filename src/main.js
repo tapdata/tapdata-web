@@ -85,12 +85,18 @@ window.getSettingByKey = key => {
   }
   return value
 }
+const LanguagesKey = {
+  sc: 'zh_CN',
+  en: 'en_US',
+  tc: 'zh_TW'
+}
 let init = settings => {
   window.__settings__ = settings
   let lang = localStorage.getItem('tapdata_localize_lang')
   if (!lang) {
     lang = window.getSettingByKey('DEFAULT_LANGUAGE')
     localStorage.setItem('tapdata_localize_lang', lang || 'en')
+    Cookie.set('lang', LanguagesKey[lang || 'en'])
   }
 
   document.title = window.getSettingByKey('PRODUCT_TITLE') || 'Tapdata'
