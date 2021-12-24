@@ -383,7 +383,8 @@ export default {
 
           let fields
           try {
-            fields = await metadataApi.nodeSchema(nodeId)
+            const data = await metadataApi.nodeSchema(nodeId)
+            fields = data.fields
           } catch (e) {
             // eslint-disable-next-line no-console
             console.error('nodeSchema', e)
@@ -414,7 +415,8 @@ export default {
 
           let fields
           try {
-            fields = await metadataApi.nodeSchema(nodeId)
+            const data = await metadataApi.nodeSchema(nodeId)
+            fields = data.fields
           } catch (e) {
             // eslint-disable-next-line no-console
             console.error('nodeSchema', e)
