@@ -61,9 +61,9 @@
           </div>
         </div>
       </div>
-      <div class="task-info__right flex align-items-center">
+      <div class="task-info__right flex align-items-center pl-6">
         <TypeChart type="pie" :data="pieData" :options="pieOptions" class="type-chart"></TypeChart>
-        <div class="pie-status flex flex-wrap">
+        <div class="pie-status flex flex-wrap ml-5">
           <div v-for="(item, index) in pieData" :key="index" class="pie-status__item flex align-items-center ellipsis">
             <span class="circle-icon mr-2" :style="{ 'background-color': item.color }"></span>
             <span>{{ item.name }}</span>
@@ -562,7 +562,8 @@ export default {
   border-left: 1px solid #e8e8e8;
 }
 .pie-status__item {
-  width: 80px;
+  width: 70px;
+  line-height: 22px;
 }
 .circle-icon {
   display: inline-block;

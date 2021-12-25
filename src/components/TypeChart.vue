@@ -247,7 +247,7 @@ export default {
       const { options } = this
       if (options) {
         if (options.radius) {
-          obj.series[0].radius = options.radius?.length === 2 ? options.radius : ['40%', '70%']
+          obj.series[0].radius = options.radius?.length === 2 ? options.radius : ['65%', '90%']
         }
         if (options.center) {
           obj.series[0].center = options.center
