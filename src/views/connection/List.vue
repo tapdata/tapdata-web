@@ -327,7 +327,7 @@ export default {
       let { keyword, status } = this.searchParams
       let where = {}
       if (keyword && keyword.trim()) {
-        where.name = { like: toRegExp(keyword), options: 'i' }
+        where.name = { $regex: toRegExp(keyword), $options: 'i' }
       }
       status && (where.status = status)
       let filter = {

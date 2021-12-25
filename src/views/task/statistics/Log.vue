@@ -108,8 +108,8 @@ export default {
       let keyword = this.keyword
       if (keyword) {
         const { toRegExp } = this.$util
-        let query = { like: toRegExp(keyword), options: 'i' }
-        filter.where.or = [{ threadName: query }, { loggerName: query }, { message: query }, { level: query }]
+        let query = { $regex: toRegExp(keyword), $options: 'i' }
+        filter.where.$or = [{ threadName: query }, { loggerName: query }, { message: query }, { level: query }]
       }
       if (!isSearch && this.logs.length) {
         filter.where.id = {

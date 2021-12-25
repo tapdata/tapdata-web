@@ -782,41 +782,6 @@ export default {
   milestone_label_read_cdc_event: '[Data Transmission] The source collector enters incremental reading mode',
   milestone_label_write_cdc_event: '[Data Transmission] Target processor enters incremental write mode',
 
-  // 数据校验
-  verify_type: 'Type',
-  verify_frequency: 'Frequency',
-  verify_status: 'Status',
-  verify_result: 'Result',
-  verify_name: 'Name',
-  verify_implement: 'Execute',
-  verify_info: 'Details',
-  verify_history: 'History',
-  verify_configuration: 'Configuration',
-  verify_delete: 'Delete',
-  verify_manage: 'Data verification',
-  verify_details_title: 'Task verification details',
-  verify_history_title: 'Task verification history',
-  verify_diff_history_title: 'Diff verification history',
-  verify_diff_details_title: 'Diff verification details',
-  verify_result_title: 'Verification result',
-  verify_button_diff_verify: 'diff verification',
-  verify_button_diff_verify_running: 'verification in progress',
-  verify_button_diff_verify_tips:
-    'Re-verify the difference data result of this full verification, the difference in the number of rows does not support the difference verification',
-  verify_last_start_time: 'Last verification time',
-  verify_button_diff_task_history: 'Verify History',
-  verify_message_old_data_not_support: 'Old data does not support secondary verification',
-  verify_message_out_of_limit:
-    'Your discrepancy data volume has exceeded the maximum number of error data saved by the task support, and the second verification is temporarily unable to be performed',
-  verify_result_count_more: 'Target count more: {0}',
-  verify_result_count_less: 'Target count less: {0}',
-  verify_result_content_diff: 'Table data difference: {0}',
-  verify_result_count_inconsistent: 'inconsistent',
-  verify_result_count_consistent: 'consistent',
-  verify_button_create: 'Create',
-  verify_see_details: 'View details',
-  verify_checking: 'Checking...',
-
   // 操作日志
   operation_log_manage: 'Operation log',
   operation_log_type: 'Operation Type',
@@ -922,5 +887,101 @@ export default {
   guide_view_task_monitor: 'View task monitor',
   guide_agent_start_success: 'Agent starting',
   guide_agent_start_fail: 'Agent start failed',
-  guide_creat_connection_fail: 'Failed to create connection'
+  guide_creat_connection_fail: 'Failed to create connection',
+
+  // 数据校验
+  verify_type: 'Type',
+  verify_frequency: 'Frequency',
+  verify_status: 'Status',
+  verify_result: 'Result',
+  verify_name: 'Name',
+  verify_implement: 'Execute',
+  verify_info: 'Details',
+  verify_history: 'History',
+  verify_configuration: 'Configuration',
+  verify_delete: 'Delete',
+  verify_manage: 'Data verification',
+  verify_details_title: 'Task verification details',
+  verify_history_title: 'Task verification history',
+  verify_diff_history_title: 'Diff verification history',
+  verify_diff_details_title: 'Diff verification details',
+  verify_result_title: 'Verification result',
+  verify_button_diff_verify: 'diff verification',
+  verify_button_diff_verify_running: 'verification in progress',
+  verify_button_diff_verify_tips:
+    'Re-verify the difference data result of this full verification, the difference in the number of rows does not support the difference verification',
+  verify_last_start_time: 'Last verification time',
+  verify_button_diff_task_history: 'Verify History',
+  verify_message_old_data_not_support: 'Old data does not support secondary verification',
+  verify_message_out_of_limit:
+    'Your discrepancy data volume has exceeded the maximum number of error data saved by the task support, and the second verification is temporarily unable to be performed',
+  verify_result_count_more: 'Target count more: {0}',
+  verify_result_count_less: 'Target count less: {0}',
+  verify_result_content_diff: 'Table data difference: {0}',
+  verify_result_count_inconsistent: 'inconsistent',
+  verify_result_count_consistent: 'consistent',
+  verify_button_create: 'Create',
+  verify_see_details: 'View details',
+  verify_checking: 'Checking...',
+
+  verify_title_create: 'New verification',
+  verify_title_edit: 'Edit Verification',
+
+  verify_history_source_rows: 'Verfify Rows',
+  verify_history_target_rows: 'Target Rows',
+  verify_history_source_total_rows: 'Source Total Rows',
+  verify_history_target_total_rows: 'Target Total Rows',
+
+  verify_type_row_count: 'Quick count verification',
+  verify_type_field: 'Check all field values ​​of the table',
+  verify_type_joint_field: 'Associated field value verification',
+
+  verify_tips_type_row_count:
+    'Quick count only performs count verification on the number of rows in the source table and the target table. The speed is extremely fast, but the specific field content of the difference will not be displayed.',
+  verify_tips_type_field:
+    'Full table field value verification will verify all the fields of the source table and the target table row by row. It can detect the differences in all fields, but the speed is slow.',
+  verify_tips_type_joint_field:
+    'Associated key verification only compares and verifies the values ​​of the associated fields of the source table and the target table, which is faster than the full-table field value verification mode',
+
+  verify_frequency_manual: 'Single verification',
+  verify_frequency_cron: 'Repeat verification',
+
+  verify_job_enable: 'Enabled',
+  verify_job_disable: 'Disabled',
+  verify_job_name: 'Verify job name',
+
+  verify_form_label_select_job: 'Select task',
+  verify_form_label_type: 'Verification Type',
+  verify_form_label_frequency: 'Verify frequency',
+  verify_form_label_start_and_end_time: 'Start and end time',
+  verify_form_label_interval: 'Verification interval',
+  verify_form_label_error_save_count: 'Number of saved errors',
+  verify_form_label_index_field: 'Index field',
+  verify_form_label_script: 'JS verification logic',
+  verify_form_label_table: 'Table to be verified',
+  verify_form_joint_table_header: 'Verification condition',
+
+  verify_button_joint_table_clear: 'Clear',
+  verify_button_add_table: 'Add table',
+  verify_button_auto_add_table: 'Automatically add table',
+  verify_button_add_script: 'Add logic',
+
+  verify_switch_job_enable_or_not: 'Is it enabled?',
+  verify_checkbox_advance: 'Advanced Checkbox',
+
+  verify_validator_message_task: 'Please select a task',
+  verify_validator_message_job_name: 'Please enter the verification job name',
+  verify_validator_message_time: 'Please select the start and end time',
+  verify_validator_message_frequency: 'Please enter the verification interval',
+
+  verify_message_error_joint_table_not_set: 'Please add verification conditions',
+  verify_message_error_joint_table_target_or_source_not_set:
+    'The source table or the target table is not selected in the verification condition',
+  verify_message_error_joint_table_field_not_set:
+    'The index field of the source table or the target table in the verification condition is not selected',
+  verify_message_error_joint_table_field_not_match:
+    'The number of index fields of the source table and the target table in the verification condition are not equal',
+  verify_message_confirm_delete_script: 'Are you sure you want to delete the custom JS verification logic',
+  verify_message_confirm_back: 'This operation will lose the verification task currently being created (edited)',
+  verify_message_title_confirm_back: 'Would you give up creating (editing) verification tasks? '
 }

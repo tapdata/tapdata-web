@@ -453,14 +453,14 @@ export default {
       })
       let where = {
         dataFlowId: {
-          like: task.id
+          $regex: task.id
         },
         statsType: 'dataFlowDetailsStats',
         'statsData.sourceConnectionId': {
-          like: source.connectionId
+          $regex: source.connectionId
         },
         'statsData.targetConnectionId': {
-          like: target.connectionId
+          $regex: target.connectionId
         }
       }
       let filter = {

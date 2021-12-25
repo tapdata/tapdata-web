@@ -450,6 +450,61 @@ export default {
   verify_result_count_consistent: '一致',
   verify_button_create: '新建',
 
+  verify_title_create: '新建校驗',
+  verify_title_edit: '編輯校驗',
+
+  verify_history_source_rows: '本次校驗行數',
+  verify_history_target_rows: '目標行數',
+  verify_history_source_total_rows: '源總行數',
+  verify_history_target_total_rows: '目標總行數',
+
+  verify_type_row_count: '快速count校驗',
+  verify_type_field: '表全欄位值校驗',
+  verify_type_joint_field: '關聯欄位值校驗',
+
+  verify_tips_type_row_count: '快速count僅對源表和目標表的行數進行count校驗，速度極快，但是不會展示差異的具體欄位內容',
+  verify_tips_type_field: '全表欄位值校驗會對源表和目標表的全部欄位進行逐行校驗，能查出所有欄位的差異，但是速度慢',
+  verify_tips_type_joint_field: '關聯鍵校驗只對源表和目標表的關聯欄位的值進行比對校驗，速度快於全表欄位值校驗模式',
+
+  verify_frequency_manual: '單次校驗',
+  verify_frequency_cron: '重複校驗',
+
+  verify_job_enable: '已啟用',
+  verify_job_disable: '已禁止',
+  verify_job_name: '校驗任務名',
+
+  verify_form_label_select_job: '選擇任務',
+  verify_form_label_type: '校驗類型',
+  verify_form_label_frequency: '校驗頻次',
+  verify_form_label_start_and_end_time: '起止時間',
+  verify_form_label_interval: '校驗間隔',
+  verify_form_label_error_save_count: '錯誤保存條數',
+  verify_form_label_index_field: '索引欄位',
+  verify_form_label_script: 'JS校驗邏輯',
+  verify_form_label_table: '待校驗表',
+  verify_form_joint_table_header: '校驗條件',
+
+  verify_button_joint_table_clear: '清空',
+  verify_button_add_table: '添加表',
+  verify_button_auto_add_table: '自動添加表',
+  verify_button_add_script: '添加邏輯',
+
+  verify_switch_job_enable_or_not: '是否啟用',
+  verify_checkbox_advance: '高級校驗',
+
+  verify_validator_message_task: '請選擇任務',
+  verify_validator_message_job_name: '請輸入校驗任務名稱',
+  verify_validator_message_time: '請選擇起止時間',
+  verify_validator_message_frequency: '請輸入校驗間隔',
+
+  verify_message_error_joint_table_not_set: '請添加校驗條件',
+  verify_message_error_joint_table_target_or_source_not_set: '校驗條件中源表或目標表未選擇',
+  verify_message_error_joint_table_field_not_set: '校驗條件中源表或目標表的索引欄位未選擇',
+  verify_message_error_joint_table_field_not_match: '校驗條件中源表與目標表的索引欄位個數不相等',
+  verify_message_confirm_delete_script: '確定要刪除自定義JS校驗邏輯嗎',
+  verify_message_confirm_back: '此操作會丟失當前正在創建（編輯）的校驗任務',
+  verify_message_title_confirm_back: '是否放棄創建（編輯）校驗任務？',
+
   // 操作日志
   operation_log_manage: '操作日誌'
 }
