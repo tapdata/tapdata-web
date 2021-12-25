@@ -651,20 +651,19 @@ export default {
       // 库迁移
       if (row.mappingTemplate === 'cluster-clone') {
         this.$router.push({
-          name: 'DataflowStatistics',
+          name: 'DataflowDetails',
           params: {
             id: row.id
           }
         })
-        return
       }
       // 表同步
-      this.$router.push({
-        name: 'DataflowDetails',
-        params: {
-          id: row.id
-        }
-      })
+      // this.$router.push({
+      //   name: 'DataflowDetails',
+      //   params: {
+      //     id: row.id
+      //   }
+      // })
     },
     changeStatus(ids, { status, errorEvents, finallyEvents }) {
       let attributes = {
