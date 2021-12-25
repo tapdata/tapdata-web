@@ -983,6 +983,8 @@ export default {
     'The index field of the source table or the target table in the verification condition is not selected',
   verify_message_error_joint_table_field_not_match:
     'The number of index fields of the source table and the target table in the verification condition are not equal',
+  verify_message_error_script_no_enter:
+    'After enabling advanced verification, the JS verification logic cannot be empty',
   verify_message_confirm_delete_script: 'Are you sure you want to delete the custom JS verification logic',
   verify_message_confirm_back: 'This operation will lose the verification task currently being created (edited)',
   verify_message_title_confirm_back: 'Would you give up creating (editing) verification tasks? '
