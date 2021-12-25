@@ -19,7 +19,7 @@
       </div>
       <slot></slot>
     </div>
-    <div v-if="list.length" class="logs-list" ref="logsList" v-loading="loading">
+    <div class="logs-list" ref="logsList" v-loading="loading">
       <DynamicScroller
         ref="virtualScroller"
         :items="list"
@@ -29,9 +29,11 @@
         @scroll.native="scrollFnc"
       >
         <template #before>
-          <div class="before-scroll-content text-center font-color-disable pb-2">
+          <div v-if="showSearchResult" class="before-scroll-content text-center font-color-disable pb-2">
+            <div>无搜索结果</div>
+          </div>
+          <div v-else class="before-scroll-content text-center font-color-disable pb-2">
             <div v-if="isNoMore">没有更多数据</div>
-            <!--            <div v-if="preLoading">正在加载...</div>-->
             <div v-show="preLoading">
               <i class="el-icon-loading"></i>
             </div>
@@ -59,9 +61,9 @@
         </template>
       </DynamicScroller>
     </div>
-    <div class="logs-list empty flex align-items-center justify-content-center" v-else>
-      <div class="p-4">{{ $t('message.noData') }}</div>
-    </div>
+    <!--    <div class="logs-list empty flex align-items-center justify-content-center" v-else>-->
+    <!--      <div class="p-4">{{ $t('message.noData') }}</div>-->
+    <!--    </div>-->
   </div>
 </template>
 <script>
@@ -84,8 +86,8 @@ export default {
       keyword: '',
       lastLogsId: '',
       firstLogsId: '',
-      topKey: '',
-      bottomKey: '',
+      // topKey: '',
+      // bottomKey: '',
       timer: null,
       loading: false,
       preLoading: false,
@@ -101,8 +103,9 @@ export default {
         page: 1,
         size: 20
       },
-      isScrollBottom: true,
-      isNoMore: false
+      isScrollBottom: false,
+      isNoMore: false,
+      showSearchResult: false
     }
   },
   mounted() {
@@ -111,13 +114,13 @@ export default {
 
   methods: {
     init() {
-      // this.pollingData()
+      this.pollingData()
       // this.loadWs()
       this.resetData()
     },
     pollingData() {
       this.timer = setInterval(() => {
-        // this.loadNew()
+        this.loadNew()
       }, 5000)
     },
     loadWs() {
@@ -142,9 +145,7 @@ export default {
       if (target.scrollTop <= 0) {
         this.loadOld()
       }
-      // if (target.scrollHeight - target.scrollTop <= target.clientHeight) {
-      // this.loadOld()
-      // }
+      this.isScrollBottom = target.scrollHeight - target.scrollTop <= target.clientHeight
     },
     toSolutions(code) {
       let routeUrl = this.$router.resolve({
@@ -194,10 +195,13 @@ export default {
       this.getLogsData(filter, false, true)
     },
     loadNew() {
-      this.lastLogsId = ''
+      // this.lastLogsId = ''
       let filter = {
         where: {
-          dataFlowId: this.id
+          dataFlowId: this.id,
+          id: {
+            gt: this.lastLogsId
+          }
         },
         order: 'id DESC',
         limit: 20
@@ -207,6 +211,7 @@ export default {
       this.getLogsData(filter, false, false)
     },
     resetData() {
+      this.firstLogsId = ''
       this.lastLogsId = ''
       this.isNoMore = false
       this.preLoading = false
@@ -226,21 +231,21 @@ export default {
 
       if (this.loading) return
 
-      if (prepend) {
-        this.preLoading = true
-      } else {
+      if (reset) {
         this.loading = true
+      } else {
+        if (prepend) {
+          this.preLoading = true
+        }
       }
-      // if (reset || (!reset && !prepend)) {
-      //   this.loading = true
-      // }
       this.$api('CustomerJobLogs')
         .get({ filter: JSON.stringify(filter) })
         .then(res => {
-          let data = res.data.items
+          let data = res.data.items.reverse()
           if (!data.length) {
             if (reset) {
-              console.log('暂无结果')
+              this.list = []
+              this.showSearchResult = true
             } else {
               if (prepend) {
                 this.isNoMore = true
@@ -265,30 +270,22 @@ export default {
           if (reset) {
             this.list = Object.freeze(data)
             this.scrollToBottom()
-            // this.scrollToItem(data.length - 1)
+            this.firstLogsId = this.list[0]?.id
+            this.lastLogsId = this.list[this.list.length - 1]?.id
+            this.showSearchResult = false
           } else {
             if (prepend) {
-              this.topKey = list[0]?.id
               this.list = Object.freeze([...data, ...list])
+              this.firstLogsId = this.list[0]?.id
               this.scrollToItem(data.length - 1)
             } else {
-              this.topKey = list[list.length - 1]?.id
               this.list = Object.freeze([...list, ...data])
-              this.scrollToBottom()
+              this.lastLogsId = this.list[this.list.length - 1]?.id
+              if (this.isScrollBottom) {
+                this.scrollToBottom()
+              }
             }
           }
-          // if (res.data && res.data.length > 0) {
-          //   if (reset || prepend || !this.lastLogsId) {
-          //     this.lastLogsId = res.data[0].id
-          //   }
-          //   if (reset || !prepend || !this.firstLogsId) {
-          //     this.firstLogsId = res.data[res.data.length - 1].id
-          //   }
-          //
-          //   this.$refs.log.add({ logs: res.data, prepend, reset })
-          // } else if (this.keyword && reset) {
-          //   this.$message.info(this.$t('editor.noResult'))
-          // }
         })
         .finally(() => {
           this.loading = false
