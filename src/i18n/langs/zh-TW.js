@@ -360,7 +360,7 @@ export default {
     '刪除重寫模式會先將目標表的數據清空，再將源端數據全部同步至目標端，能保證源端和目標端的數據完全一致。 ',
   task_setting_read_number: '每次讀取數量',
   task_setting_read_number_cannot_empty: '每次讀取數量不能為空，默認是1000',
-  task_setting_read_number_ranges: '每次讀取數量取值範圍 1 ~ 10000',
+  task_setting_read_number_ranges: '每次讀取數量取值範圍 1 ~ 999999',
   task_setting_read_number_only_number: '每次讀取數量只能為數字',
   task_setting_stop_on_error: '遇到錯誤停止',
   task_setting_incremental_concurrency_switch: '是否開啟增量並發',
