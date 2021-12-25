@@ -511,7 +511,7 @@ export default {
   font-size: 14px;
   &.none-border {
     &:hover {
-      background-color: #fafafa;
+      background-color: #eff1f4;
       .icon-btn {
         color: map-get($fontColor, main);
       }

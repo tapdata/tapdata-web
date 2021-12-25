@@ -108,7 +108,7 @@ export default {
   &.dark {
     border-color: transparent;
     &:hover {
-      background-color: #fafafa;
+      background-color: #eff1f4;
       .icon-btn {
         color: #000;
       }
