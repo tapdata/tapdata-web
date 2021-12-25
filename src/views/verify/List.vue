@@ -382,8 +382,8 @@ export default {
       let where = {}
       //精准搜索 iModel
       if (keyword && keyword.trim()) {
-        let filterObj = { like: this.$util.toRegExp(keyword), options: 'i' }
-        where['or'] = [{ name: filterObj }, { dataFlowName: filterObj }]
+        let filterObj = { $regex: this.$util.toRegExp(keyword), $options: 'i' }
+        where['$or'] = [{ name: filterObj }, { dataFlowName: filterObj }]
       }
       if (enabled) {
         where.enabled = enabled == 1

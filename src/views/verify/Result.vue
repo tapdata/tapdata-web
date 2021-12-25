@@ -62,8 +62,8 @@
 }
 </style>
 <script>
-import ResultTable from 'web-core/views/verification/ResultTable'
-import ResultView from 'web-core/views/verification/ResultView'
+import ResultTable from './ResultTable'
+import ResultView from './ResultView'
 export default {
   components: { ResultTable, ResultView },
   data() {

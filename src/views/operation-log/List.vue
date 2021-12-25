@@ -292,10 +292,10 @@ export default {
       }
       // 操作对象
       if (parameter1) {
-        where['parameter1'] = { like: toRegExp(parameter1), options: 'i' }
+        where['parameter1'] = { $regex: toRegExp(parameter1), $options: 'i' }
       }
       if (username) {
-        where['username'] = { like: toRegExp(username), options: 'i' }
+        where['username'] = { $regex: toRegExp(username), $options: 'i' }
       }
       let dateObj = {}
       // 开始时间
