@@ -385,12 +385,12 @@ export default {
           type: 'select-inner',
           items: this.filterStatusOptions
         },
-        {
-          label: '任务类型',
-          key: 'type',
-          type: 'select-inner',
-          items: this.filterTypeMap
-        },
+        // {
+        //   label: '任务类型',
+        //   key: 'type',
+        //   type: 'select-inner',
+        //   items: this.filterTypeMap
+        // },
         {
           label: '同步类型',
           key: 'syncType',
