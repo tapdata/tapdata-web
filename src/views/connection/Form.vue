@@ -2,31 +2,56 @@
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
       <main class="connection-from-main">
-        <div class="connection-from-title">
+        <div v-if="databaseType === 'hazelcast_cloud_cluster'" class="connection-from-title">
+          {{ $route.params.id ? $t('connection_form_hazecast_edit') : $t('connection_form_hazecast_create') }}
+        </div>
+        <div v-else class="connection-from-title">
           {{
             $route.params.id ? this.$t('connection_form_edit_connection') : this.$t('connection_form_creat_connection')
           }}
         </div>
         <div class="connection-from-label" v-if="$route.params.id">
-          <label class="label">{{ $t('connection_form_data_source') }}: </label>
+          <label v-if="databaseType === 'hazelcast_cloud_cluster'" class="haze_label"
+            >{{ $t('connection_form_hazecast_data_source') }}:
+          </label>
+          <label v-else class="label">{{ $t('connection_form_data_source') }}: </label>
           <div class="content-box">
             <div class="img-box ml-2">
               <img :src="$util.getConnectionTypeImg(databaseType)" />
             </div>
             <span class="ml-2">{{ model.name }}</span>
-            <el-button class="ml-2" type="text" @click="dialogEditNameVisible = true">
+            <el-button
+              v-if="databaseType === 'hazelcast_cloud_cluster'"
+              class="ml-2"
+              type="text"
+              @click="dialogEditNameVisible = true"
+            >
+              {{ $t('connection_form_hazecast_rename') }}
+            </el-button>
+            <el-button v-else class="ml-2" type="text" @click="dialogEditNameVisible = true">
               {{ $t('connection_form_rename') }}
             </el-button>
           </div>
         </div>
         <div class="connection-from-label" v-else>
-          <label class="label">{{ $t('connection_form_data_source_type') }}:</label>
+          <label v-if="databaseType === 'hazelcast_cloud_cluster'" class="haze_label"
+            >{{ $t('connection_form_hazecast_data_source_type') }} :</label
+          >
+          <label v-else class="label">{{ $t('connection_form_data_source_type') }}:</label>
           <div class="content-box">
             <div class="img-box ml-2">
               <img :src="$util.getConnectionTypeImg(databaseType)" />
             </div>
             <span class="ml-2">{{ typeMap[databaseType] }}</span>
-            <el-button class="ml-2" type="text" @click="$root.$emit('select-connection-type')">
+            <el-button
+              v-if="databaseType === 'hazelcast_cloud_cluster'"
+              class="ml-2"
+              type="text"
+              @click="$root.$emit('select-connection-type')"
+            >
+              {{ $t('connection_form_hazecast_change') }}
+            </el-button>
+            <el-button v-else class="ml-2" type="text" @click="$root.$emit('select-connection-type')">
               {{ $t('connection_form_change') }}
             </el-button>
           </div>
@@ -36,21 +61,42 @@
             <form-builder ref="form" class="form-builder grey" v-model="model" :config="config">
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
             </form-builder>
-            <el-button type="text" size="mini" @click="startTest()">{{ $t('connection_list_test') }}</el-button>
+            <el-button v-if="databaseType === 'hazelcast_cloud_cluster'" type="text" size="mini" @click="startTest()">{{
+              $t('connection_form_hazecast_connection_test')
+            }}</el-button>
+            <el-button v-else type="text" size="mini" @click="startTest()">{{ $t('connection_list_test') }}</el-button>
             <span>
               <StatusTag type="text" class="ml-4" target="connection" :status="status"></StatusTag>
             </span>
             <footer class="mt-2 pb-4">
-              <el-button size="mini" class="connection-from-btn" @click="goBack()">{{ $t('button_cancel') }}</el-button>
-              <el-button
-                size="mini"
-                class="connection-from-btn"
-                type="primary"
-                :loading="submitBtnLoading"
-                @click="submit"
-              >
-                {{ $t('button_submit') }}
-              </el-button>
+              <template v-if="databaseType === 'hazelcast_cloud_cluster'">
+                <el-button size="mini" class="connection-from-btn" @click="goBack()">{{
+                  $t('connection_form_hazecast_cancel')
+                }}</el-button>
+                <el-button
+                  size="mini"
+                  class="connection-from-btn"
+                  type="primary"
+                  :loading="submitBtnLoading"
+                  @click="submit"
+                >
+                  {{ $t('connection_form_hazecast_save') }}
+                </el-button>
+              </template>
+              <template v-else>
+                <el-button size="mini" class="connection-from-btn" @click="goBack()">{{
+                  $t('button_cancel')
+                }}</el-button>
+                <el-button
+                  size="mini"
+                  class="connection-from-btn"
+                  type="primary"
+                  :loading="submitBtnLoading"
+                  @click="submit"
+                >
+                  {{ $t('button_submit') }}
+                </el-button>
+              </template>
             </footer>
           </div>
         </div>
@@ -72,15 +118,28 @@
         <el-form-item prop="rename">
           <el-input v-model="renameData.rename" maxlength="100" show-word-limit></el-input>
         </el-form-item>
-        <span style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block">{{
+        <span
+          v-if="databaseType === 'hazelcast_cloud_cluster'"
+          style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block"
+          >{{ $t('connection_form_hazecast_name_rules') }}</span
+        >
+        <span v-else style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block">{{
           $t('connection_form_name_rules')
         }}</span>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelRename" size="mini">{{ $t('button_cancel') }}</el-button>
-        <el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
-          $t('button_confirm')
-        }}</el-button>
+        <template v-if="databaseType === 'hazelcast_cloud_cluster'">
+          <el-button @click="handleCancelRename" size="mini">{{ $t('connection_form_hazecast_cancel') }}</el-button>
+          <el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
+            $t('connection_form_hazecast_save')
+          }}</el-button>
+        </template>
+        <template v-else>
+          <el-button @click="handleCancelRename" size="mini">{{ $t('button_cancel') }}</el-button>
+          <el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
+            $t('button_confirm')
+          }}</el-button>
+        </template>
       </span>
     </el-dialog>
   </div>
@@ -204,8 +263,8 @@ export default {
         {
           type: 'input',
           field: 'name',
-          label: self.$t('connection_form_connection_name'),
-          placeholder: self.$t('connection_form_connection_name_placeholder'),
+          label: self.$t('connection_form_hazecast_connection_name'),
+          placeholder: self.$t('connection_form_hazecast_connection_name_placeholder'),
           required: true,
           maxlength: 100,
           width: '504px',
@@ -218,9 +277,15 @@ export default {
               trigger: 'blur',
               validator: (rule, value, callback) => {
                 if (!value || !value.trim()) {
-                  callback(new Error(this.$t('connection_form_no_name')))
+                  if (this.databaseType === 'hazelcast_cloud_cluster') {
+                    callback(new Error(this.$t('connection_form_hazecast_no_name')))
+                  } else callback(new Error('连接名称不能为空'))
                 } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(value)) {
-                  callback(new Error(this.$t('connection_form_name_rules')))
+                  if (this.databaseType === 'hazelcast_cloud_cluster') {
+                    callback(new Error(this.$t('connection_form_hazecast_name_rules')))
+                  } else {
+                    callback(new Error('名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'))
+                  }
                 } else if (
                   value &&
                   value.trim() &&
@@ -240,15 +305,52 @@ export default {
                   }
                   this.$axios
                     .get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
-                    .then(({ items }) => {
-                      if (items && items.length !== 0) {
-                        callback(new Error('名称已存在'))
+                    .then(data => {
+                      if (data && data.length !== 0) {
+                        if (this.databaseType === 'hazelcast_cloud_cluster') {
+                          callback(new Error(this.$t('connection_form_hazecast_name_exists')))
+                        } else {
+                          callback(new Error('名称已存在'))
+                        }
                       } else callback()
                     })
                 } else {
                   callback()
                 }
               }
+              // validator: (rule, value, callback) => {
+              //   if (!value || !value.trim()) {
+              //     callback(new Error(this.$t('connection_form_no_name')))
+              //   } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(value)) {
+              //     callback(new Error(this.$t('connection_form_name_rules')))
+              //   } else if (
+              //     value &&
+              //     value.trim() &&
+              //     /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(value)
+              //   ) {
+              //     let filter = {
+              //       where: {
+              //         name: this.model.name
+              //       },
+              //       fields: {
+              //         name: 1
+              //       },
+              //       limit: 1
+              //     }
+              //     if (this.$route.params.id) {
+              //       filter.where['id'] = { neq: this.$route.params.id || '' }
+              //     }
+              //     this.$axios
+              //       .get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
+              //       .then(({ items }) => {
+              //         if (items && items.length !== 0) {
+              //           callback(new Error('名称已存在'))
+              //         } else callback()
+              //       })
+              //   } else {
+              //     callback()
+              //   }
+              // }
             }
           ]
         }
