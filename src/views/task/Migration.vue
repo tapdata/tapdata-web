@@ -385,12 +385,12 @@ export default {
           type: 'select-inner',
           items: this.filterStatusOptions
         },
-        {
-          label: '任务类型',
-          key: 'type',
-          type: 'select-inner',
-          items: this.filterTypeMap
-        },
+        // {
+        //   label: '任务类型',
+        //   key: 'type',
+        //   type: 'select-inner',
+        //   items: this.filterTypeMap
+        // },
         {
           label: '同步类型',
           key: 'syncType',
@@ -502,10 +502,10 @@ export default {
         where['mappingTemplate'] = type
       }
       if (keyword && keyword.trim()) {
-        where.or = [
-          { name: { like: toRegExp(keyword), options: 'i' } },
-          { 'stages.tableName': { like: toRegExp(keyword), options: 'i' } },
-          { 'stages.name': { like: toRegExp(keyword), options: 'i' } }
+        where.$or = [
+          { name: { $regex: toRegExp(keyword), $options: 'i' } },
+          { 'stages.tableName': { $regex: toRegExp(keyword), $options: 'i' } },
+          { 'stages.name': { $regex: toRegExp(keyword), $options: 'i' } }
         ]
       }
       if (agentId) {
@@ -651,20 +651,19 @@ export default {
       // 库迁移
       if (row.mappingTemplate === 'cluster-clone') {
         this.$router.push({
-          name: 'DataflowStatistics',
+          name: 'DataflowDetails',
           params: {
             id: row.id
           }
         })
-        return
       }
       // 表同步
-      this.$router.push({
-        name: 'DataflowDetails',
-        params: {
-          id: row.id
-        }
-      })
+      // this.$router.push({
+      //   name: 'DataflowDetails',
+      //   params: {
+      //     id: row.id
+      //   }
+      // })
     },
     changeStatus(ids, { status, errorEvents, finallyEvents }) {
       let attributes = {
@@ -680,7 +679,7 @@ export default {
         })
         .catch(error => {
           if (error?.isException) {
-            this.$message.error('任务启动失败，请编辑任务完成映射配置')
+            this.$message.error(error?.data?.message + '(' + error?.data?.code + ')')
           }
         })
         .finally(() => {

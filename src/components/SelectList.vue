@@ -458,7 +458,7 @@ export default {
               return item.label === val && item.value === this.value
             })
             if (findone?.length === 0) {
-              this.getData({ like: val, options: 'i' }, true)
+              this.getData({ $regex: val, $options: 'i' }, true)
             }
           } else {
             this.init()

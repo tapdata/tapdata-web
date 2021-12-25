@@ -13,7 +13,7 @@
           <StatusTag v-else type="text" target="task" :status="task.status" only-img></StatusTag>
         </div>
         <div class="mt-1">
-          <span>{{ $t('task_monitor_founder') }}: {{ task.creator }}</span>
+          <span>{{ $t('task_monitor_founder') }}: {{ task.createUser }}</span>
           <span class="ml-4">{{ $t('task_type') }}：{{ taskType.label }}</span>
         </div>
         <div class="mt-2">
@@ -41,7 +41,7 @@
       </div>
     </div>
     <div v-if="task" class="dashboard-main flex mt-6 flex-fit overflow-hidden">
-      <div class="panel-left h-100 overflow-auto pt-6 px-6">
+      <div class="panel-left h-100 overflow-auto p-6">
         <!--        <div class="info-item">-->
         <!--          <span class="font-color-sub">任务类型: </span>-->
         <!--          <span class="font-color-main">{{ task.typeText }}</span>-->

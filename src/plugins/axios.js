@@ -52,13 +52,14 @@ const errorCallback = error => {
   if (status === 401) {
     // 未登录
     location.replace(location.href.split('#/')[0] + 'login')
-  } else if ((status + '').startsWith('5')) {
+  } else if (error.code && error.message) {
+    // 其他错误
+    Message.error(`${error.message || error}`)
+  } else if (error?.message !== 'cancel') {
     // 500 报错
     location.replace(location.href.split('#/')[0] + '#/500')
-  } else if (status && !(status + '').startsWith('2')) {
-    // 其他错误
-    Message.error(`请求失败(${status})： ${error.message || error}`)
   }
+  console.error('请求报错：' + error) // eslint-disable-line
   return Promise.reject(error)
 }
 // 请求发起拦截器

@@ -129,7 +129,7 @@ export default {
       this.getUnreadData()
       if (this.$ws) {
         this.$ws.on('notification', async res => {
-          this.unRead++ // 未读消息+1
+          this.getUnReadNum()
           let data = res?.data
           if (data) {
             data.createTime = formatTime(data.createTime)

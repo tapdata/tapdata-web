@@ -9,7 +9,7 @@ import i18n from '@/i18n'
 
 const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/Form.vue')
 const TaskDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/Details.vue')
-const TaskStatistics = () => import(/* webpackChunkName: "task-form" */ '../views/task/statistics/Index.vue')
+// const TaskStatistics = () => import(/* webpackChunkName: "task-form" */ '../views/task/statistics/Index.vue')
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/connection/Form.vue')
 const DataflowDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/copy/Index.vue')
 
@@ -156,15 +156,15 @@ const routes = [
             meta: {
               title: '任务详情'
             }
-          },
-          {
-            path: ':id/statistics',
-            name: 'DataflowStatistics',
-            component: TaskStatistics,
-            meta: {
-              title: '任务详情'
-            }
           }
+          // {
+          //   path: ':id/statistics',
+          //   name: 'DataflowStatistics',
+          //   component: TaskStatistics,
+          //   meta: {
+          //     title: '任务详情'
+          //   }
+          // }
         ]
       },
       {

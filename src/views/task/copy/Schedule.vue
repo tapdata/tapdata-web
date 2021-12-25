@@ -193,6 +193,7 @@ export default {
     task: {
       deep: true,
       handler(v) {
+        console.log('task', v)
         v && this.init()
       }
     }
@@ -296,6 +297,7 @@ export default {
       this.overviewStats = overview
     },
     getStep() {
+      console.log('getStep')
       const { task } = this
       let map = {
         init: this.$t('task_info_task_init'),
@@ -453,14 +455,14 @@ export default {
       })
       let where = {
         dataFlowId: {
-          like: task.id
+          $regex: task.id
         },
         statsType: 'dataFlowDetailsStats',
         'statsData.sourceConnectionId': {
-          like: source.connectionId
+          $regex: source.connectionId
         },
         'statsData.targetConnectionId': {
-          like: target.connectionId
+          $regex: target.connectionId
         }
       }
       let filter = {
@@ -469,17 +471,16 @@ export default {
         skip: (current - 1) * size,
         order: 'createTime DESC'
       }
-      return Promise.all([
-        this.$axios.get('tm/api/DataFlowInsights?filter=' + encodeURIComponent(JSON.stringify(filter))),
-        this.$axios.get('tm/api/DataFlowInsights/count?where=' + encodeURIComponent(JSON.stringify(where)))
-      ]).then(([data, countData]) => {
-        return {
-          total: countData.count,
-          data: data.map(item => {
-            return Object.assign(item, item.statsData)
-          })
-        }
-      })
+      return this.$axios
+        .get('tm/api/DataFlowInsights?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(res => {
+          return {
+            total: res.total,
+            data: res.items.map(item => {
+              return Object.assign(item, item.statsData)
+            })
+          }
+        })
     },
     getSchedule(row = {}) {
       const { sourceRowNum, targetRowNum } = row
