@@ -374,10 +374,11 @@ export default {
   connection_form_confirm_create_content: '你想放弃连接的创建吗？', //是否必须放弃创建该连接？
   connection_form_confirm_edit_content: '要放弃修改内容吗？', //是否放弃修改内容？
   connection_form_hazecast_options_target: '目标',
-  connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'目标',",
+  connection_form_hazecast_options_target_tips: '此数据连接在Tapdata 中只能作为目标使用，不能作用为源',
+  // connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'目标',",
   connection_form_hazecast_database_name: 'Cluster Name', // 集群名称
-  connection_form_hazecast_plain_password: '令牌',
-  connection_form_hazecast_ssl: 'Enable SSL', //是否开启ssl
+  connection_form_hazecast_plain_password: 'Token',
+  connection_form_hazecast_ssl: '开启ssl', //是否开启ssl
   connection_form_hazecast_sslKey: '密钥存储文件',
   connection_form_hazecast_sslCA: '信任密钥存储文件',
   connection_form_hazecast_sslPass: '密钥文件密码',
