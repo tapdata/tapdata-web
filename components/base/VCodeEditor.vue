@@ -54,7 +54,7 @@ export default {
   },
   mounted() {
     let lang = this.lang || 'text'
-    let theme = this.theme || 'chrome'
+    let theme = this.theme
 
     let editor = (this.editor = ace.edit(this.$el))
     let tools = ace.require('ace/ext/language_tools')
@@ -64,7 +64,7 @@ export default {
 
     editor.$blockScrolling = Infinity
     let session = editor.getSession()
-    editor.setTheme(`ace/theme/${theme}`)
+    theme && editor.setTheme(`ace/theme/${theme}`)
     session.setMode(`ace/mode/${lang}`)
     session.setTabSize(2)
 

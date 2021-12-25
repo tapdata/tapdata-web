@@ -381,12 +381,21 @@ export default {
             nodeId = edge.source
           }
 
-          const { fields } = await metadataApi.nodeSchema(nodeId)
+          let fields
+          try {
+            const data = await metadataApi.nodeSchema(nodeId)
+            fields = data.fields
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('nodeSchema', e)
+          }
 
-          return fields.map(item => ({
-            label: item.field_name,
-            value: item.id
-          }))
+          return fields
+            ? fields.map(item => ({
+                label: item.field_name,
+                value: item.id
+              }))
+            : []
         },
 
         /**
@@ -404,9 +413,16 @@ export default {
             nodeId = edge.source
           }
 
-          const { fields } = await metadataApi.nodeSchema(nodeId)
+          let fields
+          try {
+            const data = await metadataApi.nodeSchema(nodeId)
+            fields = data.fields
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('nodeSchema', e)
+          }
 
-          return fields.map(item => item.field_name)
+          return fields ? fields.map(item => item.field_name) : []
         }
       }
     }
@@ -434,15 +450,18 @@ export default {
 
   watch: {
     async activeNodeId(n, o) {
-      const node = this.activeNode
       const formSchema = this.$store.getters['dataflow/formSchema'] || {}
 
       await this.setSchema(this.ins.formSchema || formSchema.node)
 
-      this.lastActiveNodeType = node.type // 缓存节点类型
-      this.lastActiveDBType = node.databaseType
-      this.hasNodeError(n) && this.form.validate()
+      // 如果节点存在错误状态，走一遍校验，可以让用户看到错误信息
+      if (this.hasNodeError(n)) {
+        this.form.validate().then(() => {
+          this.clearNodeError(n)
+        })
+      }
 
+      // 校验上一个节点配置
       if (o) {
         const node = this.nodeById(o)
         try {
@@ -457,7 +476,6 @@ export default {
           console.error(e)
           this.setNodeError(o)
         }
-        // console.log('上一个激活的节点校验结果', result)
       }
     },
 
@@ -946,12 +964,13 @@ export default {
 
     // 更新节点属性
     updateNodeProps: debounce(function (form) {
+      const formValues = { ...form.values }
       const filterProps = ['id', 'isSource', 'isTarget', 'attrs', 'sourceNode'] // 排除属性的更新
+      filterProps.forEach(key => (formValues[key] = undefined))
+
       this.updateNodeProperties({
         id: this.node.id,
-        properties: JSON.parse(
-          JSON.stringify(form.values, (key, value) => (filterProps.includes(key) ? undefined : value))
-        )
+        properties: JSON.parse(JSON.stringify(formValues))
       })
       this.updateDag()
     }, 100),
@@ -1030,15 +1049,15 @@ $headerBg: #fff;
   }
 
   ::v-deep {
-    /*.form-wrap {
-      height: 100%;
+    .form-wrap {
+      flex: 1;
       > form {
         height: 100%;
         > .formily-element-space {
           height: 100%;
         }
       }
-    }*/
+    }
 
     // 覆盖数字输入框的宽度
     .formily-element-form-item {

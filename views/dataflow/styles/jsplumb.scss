@@ -26,6 +26,12 @@
   user-select: none;
 }
 
-.el-select-dropdown__item {
-  font-size: 12px;
+.ace_editor,.ace_gutter-layer,.ace_scroller{
+  background-color: #000;
+}
+.ace_gutter-cell,.ace_content, .ace-tm  .ace_cursor  {
+  color: #fff;
+}
+.ace_gutter-active-line {
+  color: #000;
 }
