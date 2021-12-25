@@ -47,17 +47,23 @@
             :data-index="index"
             :size-dependencies="[item.id, item.content]"
           >
-            [<span :class="['level', colorMap[item.level]]">{{ item.level }}</span
-            >]
-            <span class="mr-2">{{ formatTime(item.timestamp) }}</span>
-            <span v-html="item.content"></span>
-            <span v-if="item.link" class="color-primary ml-2">参考外链:{{ item.link }}</span>
-            <span
-              v-if="item.params.errorCode"
-              class="color-primary cursor-pointer ml-2"
-              @click="toSolutions(item.params.errorCode)"
-              >点击，跳转至解决方案</span
-            >
+            <div class="flex">
+              <div class="mr-2">
+                [<span :class="['level', colorMap[item.level]]">{{ item.level }}</span
+                >]
+                <span>{{ formatTime(item.timestamp) }}</span>
+              </div>
+              <div>
+                <span v-html="item.content"></span>
+                <span v-if="item.link" class="color-primary ml-2">参考外链:{{ item.link }}</span>
+                <span
+                  v-if="item.params.errorCode"
+                  class="color-primary cursor-pointer ml-2"
+                  @click="toSolutions(item.params.errorCode)"
+                  >点击，跳转至解决方案</span
+                >
+              </div>
+            </div>
           </DynamicScrollerItem>
         </template>
       </DynamicScroller>
@@ -163,12 +169,7 @@ export default {
     addFilter(filter) {
       const { checkList, keyword } = this
       if (keyword) {
-        filter.where.or = [
-          { threadName: { regexp: keyword } },
-          { loggerName: { regexp: keyword } },
-          { message: { regexp: keyword } },
-          { level: { regexp: keyword } }
-        ]
+        filter.where.searchKey = { regexp: keyword }
       }
 
       if (checkList.length) {
@@ -184,13 +185,15 @@ export default {
       }
       let filter = {
         where: {
-          dataFlowId: this.id,
-          id: {
-            lt: this.firstLogsId
-          }
+          dataFlowId: this.id
         },
         order: 'id DESC',
         limit: 20
+      }
+      if (this.firstLogsId) {
+        filter.where.id = {
+          lt: this.firstLogsId
+        }
       }
       this.addFilter(filter)
       this.getLogsData(filter, false, true)
@@ -199,13 +202,15 @@ export default {
       // this.lastLogsId = ''
       let filter = {
         where: {
-          dataFlowId: this.id,
-          id: {
-            gt: this.lastLogsId
-          }
+          dataFlowId: this.id
         },
         order: 'id DESC',
         limit: 20
+      }
+      if (this.lastLogsId) {
+        filter.where.id = {
+          gt: this.lastLogsId
+        }
       }
       this.addFilter(filter)
 
@@ -256,7 +261,7 @@ export default {
           }
           data.forEach(el => {
             let { template, params } = el
-            let content = (template || '').replace(/\r\n/g, '<br/>').replace(/\t/g, '<span class="tap-span"></span>')
+            let content = template || ''
             for (let key in params) {
               let re = new RegExp(`{${key}}`, 'ig')
               if (this.keyword) {
@@ -265,7 +270,7 @@ export default {
                 content = content.replace(re, params[key])
               }
             }
-            el.content = content
+            el.content = content.replace(/\r\n/g, '<br/>').replace(/\t/g, '<span class="tap-span"></span>')
           })
           let { list } = this
           if (reset) {
