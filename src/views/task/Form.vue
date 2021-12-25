@@ -880,6 +880,7 @@ export default {
             const options = source_connectionId.options
             if (connectionId && !options.find(item => item.value === connectionId)) {
               options.push({
+                id: connectionId,
                 name: this.dataSourceModel.source_connectionName,
                 label: this.dataSourceModel.source_connectionName,
                 value: connectionId,
@@ -892,6 +893,7 @@ export default {
             const options = target_connectionId.options
             if (connectionId && !options.find(item => item.value === connectionId)) {
               options.push({
+                id: connectionId,
                 name: this.dataSourceModel.target_connectionName,
                 label: this.dataSourceModel.target_connectionName,
                 value: connectionId,
