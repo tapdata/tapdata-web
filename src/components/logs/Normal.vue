@@ -8,6 +8,7 @@
           prefix-icon="el-icon-search"
           :placeholder="$t('task_info_log_placeholder')"
           size="mini"
+          clearable
           @input="searchFnc(800)"
         ></ElInput>
         <ElCheckboxGroup v-model="checkList" :min="1" size="mini" class="inline-flex ml-4" @change="searchFnc">
