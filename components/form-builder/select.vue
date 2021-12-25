@@ -86,7 +86,9 @@ export default {
               defaultFirstOption: config.defaultFirstOption,
               clearable: config.clearable,
               multiple: config.multiple,
-              disabled: config.disabled ? config.disabled : false
+              disabled: config.disabled ? config.disabled : false,
+              remote: config.remote,
+              remoteMethod: config.remoteMethod
             },
             on: Object.assign(this.on, {
               'visible-change'(value) {
