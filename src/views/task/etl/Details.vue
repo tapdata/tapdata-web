@@ -8,7 +8,7 @@
         <div>
           <div class="flex align-items-center">
             <span class="fs-6 color-primary">{{ task.name }}</span>
-            <StatusItem v-model="statusResult" :rows="task.statuses" class="ml-4" inline></StatusItem>
+            <StatusItem v-model="statusResult" :rows="task.statuses" class="ml-4 visually-hidden" inline></StatusItem>
           </div>
           <div class="flex align-items-center mt-4" style="height: 30px">
             <div
