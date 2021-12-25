@@ -363,27 +363,59 @@ export default {
   connection_form_mq_topic_tip: '多个主题用逗号隔开',
   connection_form_mq_broker_url: 'MQ连接串',
   connection_form_mq_broker_url_tip: '示例tcp://127.0.0.1:61616,支持tcp,nio,udp,ssl,http(s)',
-  connection_form_hazecast_rename: '重命名',
+  // connection_form_hazecast_rename: '重命名',
   connection_form_change: '更换',
   connection_form_rename: '改名',
-  connection_form_hazecast_cancel: '取消',
-  connection_form_hazecast_save: '保存',
+  // connection_form_hazecast_cancel: '取消',
+  // connection_form_hazecast_save: '保存',
   connection_form_give_up: '放弃',
   connection_form_confirm_edit: '此操作将丢失当前编辑内容',
   connection_form_confirm_create: '此操作将丢失当前正在创建的连接',
   connection_form_confirm_create_content: '你想放弃连接的创建吗？', //是否必须放弃创建该连接？
   connection_form_confirm_edit_content: '要放弃修改内容吗？', //是否放弃修改内容？
-  connection_form_hazecast_options_target: '目标',
-  connection_form_hazecast_options_target_tips: '此数据连接在Tapdata 中只能作为目标使用，不能作用为源',
+  // connection_form_hazecast_options_target: '目标',
+  // connection_form_hazecast_options_target_tips: '此数据连接在Tapdata 中只能作为目标使用，不能作用为源',
   // connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'目标',",
-  connection_form_hazecast_database_name: 'Cluster Name', // 集群名称
+  // connection_form_hazecast_database_name: 'Cluster Name', // 集群名称
+  // connection_form_hazecast_plain_password: 'Token',
+  // connection_form_hazecast_ssl: '开启ssl', //是否开启ssl
+  // connection_form_hazecast_sslKey: '密钥存储文件',
+  // connection_form_hazecast_sslCA: '信任密钥存储文件',
+  // connection_form_hazecast_sslPass: '密钥文件密码',
+  // connection_form_hazecast_none_sslKey: '密钥库文件不能为空',
+  // connection_form_hazecast_none_sslCA: '信任密钥存储文件不能为空',
+  connection_form_hazecast_connection_type: 'Connection Type',
+  connection_form_hazecast_connection_test: 'Connection test',
+  connection_form_hazecast_create: 'Create connection',
+  connection_form_hazecast_edit: 'Edit connection',
+  connection_form_hazecast_data_source: 'Data source',
+  connection_form_hazecast_data_source_type: 'Data source',
+  connection_form_hazecast_rename: 'Rename',
+  connection_form_hazecast_change: 'Change',
+  connection_form_hazecast_name_rules:
+    'Starting with Chinese and English, 1-100 characters, including Chinese and English, numbers, underscores, underscores, and spaces',
+  connection_form_hazecast_no_name: 'The connection name cannot be empty',
+  connection_form_hazecast_name_exists: 'Name already exists',
+  connection_form_hazecast_cancel: 'Cancel',
+  connection_form_hazecast_save: 'Save',
+  connection_form_hazecast_give_up: 'Give up',
+  connection_form_hazecast_confirm_edit: 'This operation will lose the current edit content',
+  connection_form_hazecast_confirm_create: 'This operation will lose the connection currently being created',
+  connection_form_hazecast_confirm_create_content: 'Do you want to abandon the creation of the connection ?', //是否放弃创建该连接？
+  connection_form_hazecast_confirm_edit_content: 'Do you want to abandon the modification of the content ?', //是否放弃修改内容？
+  connection_form_hazecast_connection_name: 'Connection Name',
+  connection_form_hazecast_connection_name_placeholder: 'Please enter the connection name',
+  connection_form_hazecast_options_target: 'Target',
+  connection_form_hazecast_options_target_tips:
+    'This data connection can only be used as target in Tapdata, but not as source ',
+  connection_form_hazecast_database_name: 'Cluster Name', //集群名称
   connection_form_hazecast_plain_password: 'Token',
-  connection_form_hazecast_ssl: '开启ssl', //是否开启ssl
-  connection_form_hazecast_sslKey: '密钥存储文件',
-  connection_form_hazecast_sslCA: '信任密钥存储文件',
-  connection_form_hazecast_sslPass: '密钥文件密码',
-  connection_form_hazecast_none_sslKey: '密钥库文件不能为空',
-  connection_form_hazecast_none_sslCA: '信任密钥存储文件不能为空',
+  connection_form_hazecast_ssl: 'Enable SSL', //是否开启ssl
+  connection_form_hazecast_sslKey: 'Key Store File',
+  connection_form_hazecast_sslCA: 'Trust Key Store File',
+  connection_form_hazecast_sslPass: 'Key File Password',
+  connection_form_hazecast_none_sslKey: 'The key store file cannot be empty',
+  connection_form_hazecast_none_sslCA: 'The trust key store file cannot be empty',
   connection_form_tidb_server: 'PDServer 地址',
   connection_form_tidb_none_server: 'PDServer 地址不能为空',
   connection_form_mongo_standard_mode_tip:
@@ -632,7 +664,7 @@ export default {
     '删除重写模式会先将目标表的数据清空，再将源端数据全部同步至目标端，能保证源端和目标端的数据完全一致。',
   task_setting_read_number: '每次读取数量',
   task_setting_read_number_cannot_empty: '每次读取数量不能为空，默认是1000',
-  task_setting_read_number_ranges: '每次读取数量取值范围 1 ~ 10000',
+  task_setting_read_number_ranges: '每次读取数量取值范围 1 ~ 999999',
   task_setting_read_number_only_number: '每次读取数量只能为数字',
   task_setting_stop_on_error: '遇到错误停止',
   task_setting_incremental_concurrency_switch: '是否开启增量并发',
@@ -908,6 +940,7 @@ export default {
   verify_message_error_joint_table_target_or_source_not_set: '校验条件中源表或目标表未选择',
   verify_message_error_joint_table_field_not_set: '校验条件中源表或目标表的索引字段未选择',
   verify_message_error_joint_table_field_not_match: '校验条件中源表与目标表的索引字段个数不相等',
+  verify_message_error_script_no_enter: '开启高级校验后，JS校验逻辑不能为空',
   verify_message_confirm_delete_script: '确定要删除自定义JS校验逻辑吗',
   verify_message_confirm_back: '此操作会丢失当前正在创建（编辑）的校验任务',
   verify_message_title_confirm_back: '是否放弃创建（编辑）校验任务？'

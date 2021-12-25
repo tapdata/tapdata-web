@@ -272,14 +272,15 @@
         flex: 1;
         overflow: hidden;
         min-height: 290px;
+        $headerHeight: 48px;
         ::v-deep {
           .el-transfer-panel__header {
             background: rgba(44, 101, 255, 0.05);
-            height: 54px;
-            line-height: 54px;
+            height: $headerHeight;
+            line-height: $headerHeight;
             .el-checkbox {
-              height: 54px;
-              line-height: 54px;
+              height: $headerHeight;
+              line-height: $headerHeight;
             }
           }
         }
@@ -497,7 +498,13 @@ export default {
         },
         items: []
       },
-      transferData: '',
+      transferData: {
+        table_prefix: '',
+        table_suffix: '',
+        selectSourceArr: [],
+        topicData: [],
+        queueData: []
+      },
       taskType: 'cluster-clone',
       dialogTestVisible: false,
       status: '',
@@ -802,7 +809,7 @@ export default {
     //检查是否选择表
     checkTransfer() {
       let result = true
-      this.transferData = this.$refs.transfer.returnData()
+      // this.transferData = this.$refs.transfer.returnData()
       if (this.transferData.selectSourceArr.length === 0 && this.dataSourceModel['mqType'] !== '0') {
         result = false
       } else if (
@@ -817,9 +824,9 @@ export default {
     back() {
       let type = this.steps[this.activeStep].type || 'instance'
       //将复制表内容存起来
-      if (type === 'mapping') {
+      /*if (type === 'mapping') {
         this.transferData = this.$refs.transfer.returnData()
-      }
+      }*/
       if (type === 'setting') {
         this.allowDatabaseType()
       }
@@ -918,7 +925,7 @@ export default {
       let id = this.dataSourceModel.source_connectionId || ''
       this.$nextTick(() => {
         this.$refs.transfer.getTable(id, this.settingModel.bidirectional)
-        this.$refs.transfer.showOperation(this.settingModel.bidirectional || false) //双向模式不可以更改表名
+        // this.$refs.transfer.showOperation(this.settingModel.bidirectional || false) //双向模式不可以更改表名
       })
     },
     //获取当前是否可以展示双向开关
@@ -1185,7 +1192,7 @@ export default {
       //第四步 数据组装
       if (this.hiddenFieldMapping) {
         //没有第五步 表设置 需要主动调用 transfer.returnData
-        this.transferData = this.$refs.transfer.returnData()
+        // this.transferData = this.$refs.transfer.returnData()
       }
       let selectTable = []
       if (this.transferData) {

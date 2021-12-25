@@ -689,7 +689,7 @@ export default {
     'Delete overwrite mode will first empty the data in the target table, and then synchronize all the source data to the target, ensuring that the data on the source and target are completely consistent. ',
   task_setting_read_number: 'Number of reads per time',
   task_setting_read_number_cannot_empty: 'The number of reads per time cannot be empty, the default is 1000',
-  task_setting_read_number_ranges: 'The number of reads per time ranges from 1 to 10000',
+  task_setting_read_number_ranges: 'The number of reads per time ranges from 1 to 999999',
   task_setting_read_number_only_number: 'The number of each read can only be a number',
   task_setting_stop_on_error: 'Encountered an error to stop',
   task_setting_incremental_concurrency_switch: 'Whether to enable incremental concurrency',
@@ -983,6 +983,8 @@ export default {
     'The index field of the source table or the target table in the verification condition is not selected',
   verify_message_error_joint_table_field_not_match:
     'The number of index fields of the source table and the target table in the verification condition are not equal',
+  verify_message_error_script_no_enter:
+    'After enabling advanced verification, the JS verification logic cannot be empty',
   verify_message_confirm_delete_script: 'Are you sure you want to delete the custom JS verification logic',
   verify_message_confirm_back: 'This operation will lose the verification task currently being created (edited)',
   verify_message_title_confirm_back: 'Would you give up creating (editing) verification tasks? '
