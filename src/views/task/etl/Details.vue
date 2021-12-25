@@ -62,7 +62,13 @@
         </div>
       </div>
       <div class="task-info__right flex align-items-center">
-        <TypeChart type="pie" :data="pieData" :options="pieOptions"></TypeChart>
+        <TypeChart type="pie" :data="pieData" :options="pieOptions" class="type-chart"></TypeChart>
+        <div class="pie-status flex flex-wrap">
+          <div v-for="(item, index) in pieData" :key="index" class="pie-status__item flex align-items-center ellipsis">
+            <span class="circle-icon mr-2" :style="{ 'background-color': item.color }"></span>
+            <span>{{ item.name }}</span>
+          </div>
+        </div>
       </div>
     </div>
     <div class="sub-task flex-fill mt-6 p-6 bg-white">
@@ -173,16 +179,9 @@ export default {
       pieData: [],
       pieOptions: {
         legend: {
-          // orient: 'vertical',
-          left: 'right',
-          top: 'middle',
-          width: '240px'
+          show: false
         },
-        grid: {
-          left: 0
-        },
-        radius: true,
-        center: ['20%', 'center']
+        radius: true
       }
     }
   },
@@ -272,10 +271,11 @@ export default {
       statuses.forEach(el => {
         obj[el.status].count++
       })
-      let result = ['edit', 'scheduling', 'running', 'stopping', 'stop', 'complete', 'error']
+      let statusArr = ['edit', 'scheduling', 'running', 'stopping', 'stop', 'complete', 'error']
       let color = ['#648EFF', '#5CC4D2', '#81CE94', '#EFB166', '#EFB166', '#11A9DA', '#EB755C']
-      this.pieData = result.map((t, i) => {
-        // 待启动
+      let arr = []
+      for (let i = 0; i < statusArr.length; i++) {
+        let t = statusArr[i]
         let item = { count: 0 }
         item.value = obj[t].count
         item.name = obj[t].text
@@ -284,10 +284,13 @@ export default {
         } else if (t === 'error') {
           item.value += obj['schedule_failed'].count
         }
+        if (!item.value) {
+          continue
+        }
         item.color = color[i]
-        return item
-      })
-      console.log('this.pieData ', this.pieData)
+        arr.push(item)
+      }
+      this.pieData = arr
     },
     taskChange(data) {
       let task = data.data?.fullDocument || {}
@@ -551,8 +554,21 @@ export default {
   }
 }
 .task-info__right {
-  width: 350px;
+  .type-chart {
+    width: 100px;
+    height: 100px;
+  }
+  max-width: 350px;
   border-left: 1px solid #e8e8e8;
+}
+.pie-status__item {
+  width: 80px;
+}
+.circle-icon {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
 }
 .task-info__img {
   width: 54px;

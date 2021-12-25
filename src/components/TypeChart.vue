@@ -240,14 +240,7 @@ export default {
             radius: '50%',
             label: { show: false },
             labelLine: { show: false },
-            data: series,
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              }
-            }
+            data: series
           }
         ]
       }
