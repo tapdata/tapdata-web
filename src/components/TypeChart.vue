@@ -52,7 +52,20 @@ export default {
       if (this.extend) {
         return
       }
-      this.chartOption = this[this.type]?.()
+      let obj = this[this.type]?.()
+      const { options } = this
+      if (options) {
+        for (let key in options) {
+          if (key === 'series') {
+            obj[key].forEach((el, i) => {
+              Object.assign(el || {}, options[key][i] || {})
+            })
+          } else {
+            Object.assign(obj[key] || {}, options[key] || {})
+          }
+        }
+      }
+      this.chartOption = obj
     },
     bar() {
       let seriesData = []
@@ -136,85 +149,99 @@ export default {
       }
     },
     line() {
-      let timeList = []
-      let inputCountList = []
-      let outputCountList = []
-      return {
-        tooltip: {
-          trigger: 'axis'
-        },
-        legend: {
-          top: 10,
-          right: 0
-        },
-        grid: {
-          left: 0,
-          right: 0,
-          bottom: '3%',
-          containLabel: true,
-          borderWidth: 1,
-          borderColor: '#ccc'
-        },
+      let obj = {
         xAxis: {
-          axisLine: {
-            lineStyle: {
-              color: '#409EFF',
-              width: 1 // 这里是为了突出显示加上的
-            }
-          },
-          data: timeList
+          boundaryGap: false,
+          // axisLine: {
+          //   lineStyle: {
+          //     color: '#409EFF',
+          //     width: 1 // 这里是为了突出显示加上的
+          //   }
+          // },
+          data: []
         },
         yAxis: {
-          max: this.yMax,
+          type: 'value',
           axisLine: {
             show: true,
             lineStyle: {
               color: '#409EFF',
               width: 1
             }
-          },
-          axisLabel: {
-            formatter: function (value) {
-              if (value >= 1000) {
-                value = value / 1000 + 'K'
-              }
-              return value
-            }
           }
+          // max: this.yMax,
+          // axisLine: {
+          //   show: true,
+          //   lineStyle: {
+          //     color: '#409EFF',
+          //     width: 1
+          //   }
+          // },
+          // axisLabel: {
+          //   formatter: function (value) {
+          //     if (value >= 1000) {
+          //       value = value / 1000 + 'K'
+          //     }
+          //     return value
+          //   }
+          // }
+        },
+        grid: {
+          left: '24px',
+          right: '24px',
+          top: '24px',
+          bottom: '24px'
         },
         series: [
-          {
-            name: this.$t('task_info_input'),
-            type: 'line',
-            smooth: true,
-            data: inputCountList,
-            itemStyle: {
-              color: '#2ba7c3'
-            },
-            lineStyle: {
-              color: '#2ba7c3'
-            },
-            areaStyle: {
-              color: '#2ba7c3'
-            }
-          },
-          {
-            name: this.$t('task_info_output'),
-            type: 'line',
-            smooth: true,
-            data: outputCountList,
-            itemStyle: {
-              color: '#61a569'
-            },
-            lineStyle: {
-              color: '#8cd5c2'
-            },
-            areaStyle: {
-              color: '#8cd5c2'
-            }
-          }
+          // {
+          //   name: this.$t('task_info_input'),
+          //   type: 'line',
+          //   smooth: true,
+          //   data: inputCountList,
+          //   itemStyle: {
+          //     color: '#2ba7c3'
+          //   },
+          //   lineStyle: {
+          //     color: '#2ba7c3'
+          //   },
+          //   areaStyle: {
+          //     color: '#2ba7c3'
+          //   }
+          // },
+          // {
+          //   name: this.$t('task_info_output'),
+          //   type: 'line',
+          //   smooth: true,
+          //   data: outputCountList,
+          //   itemStyle: {
+          //     color: '#61a569'
+          //   },
+          //   lineStyle: {
+          //     color: '#8cd5c2'
+          //   },
+          //   areaStyle: {
+          //     color: '#8cd5c2'
+          //   }
+          // }
         ]
       }
+
+      // let data = {
+      //   x: [],
+      //   y: [] || [[], []]
+      // }
+      const { data } = this
+      obj.xAxis.data = data.x || []
+      let series = []
+      if (data.y && data.y[0] instanceof Array) {
+        data.y.forEach(el => {
+          series.push(Object.assign(this.getLineSeriesItem(), { data: el }))
+        })
+      } else {
+        series.push(Object.assign(this.getLineSeriesItem(), { data: data.y }))
+      }
+      obj.series = series
+      return obj
     },
     pie() {
       // 需要传入 [{ value: 1, name: 'A', color: 'red' },{ value: 2, name: 'B', color: 'blue' }...]
@@ -252,11 +279,22 @@ export default {
         if (options.center) {
           obj.series[0].center = options.center
         }
-        for (let key in options) {
-          Object.assign(obj[key] || {}, options[key] || {})
-        }
       }
       return obj
+    },
+    getLineSeriesItem() {
+      const { options } = this
+      let item = {
+        type: 'line',
+        smooth: true,
+        data: []
+      }
+      if (options) {
+        if (options.smooth) {
+          item.smooth = options.smooth
+        }
+      }
+      return item
     }
   }
 }
