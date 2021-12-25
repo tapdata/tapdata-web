@@ -49,6 +49,8 @@ export default {
   verify_result_source_info: '源信息',
   verify_result_target_info: '目标信息',
   verify_create_window_duration: '窗口时长',
+  verify_form_source_filter: '源表数据过滤',
+  verify_form_target_filter: '目标表数据过滤',
 
   taskprogress_plan_sync_table_num: '计划同步表数量',
   taskprogress_completed_sync_table_num: '已完成同步表数量',

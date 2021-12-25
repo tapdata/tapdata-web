@@ -186,77 +186,120 @@
             </div>
             <ul class="panel-container" id="data-verification-form">
               <li class="condition-item" v-for="(item, index) in form.tasks" :key="index">
-                <div class="condition-setting">
-                  <div class="setting-item">
-                    <label class="item-label is-required">{{ $t('dataVerification.table') }}</label>
-                    <el-cascader
-                      class="item-select"
-                      :class="{ red: !item.sourceTable }"
-                      size="mini"
-                      v-model="item.sourceTable"
-                      :options="item.sourceTree"
-                      @input="tableChangeHandler(item, 'source', index)"
-                    ></el-cascader>
-                    <span class="item-icon">
-                      <i class="el-icon-right"></i>
-                    </span>
-                    <el-cascader
-                      class="item-select"
-                      size="mini"
-                      :class="{ red: !item.targetTable }"
-                      v-model="item.targetTable"
-                      :options="item.targetTree"
-                      @input="tableChangeHandler(item, 'target')"
-                    ></el-cascader>
+                <el-form :model="item">
+                  <div class="condition-setting">
+                    <div class="setting-item">
+                      <label class="item-label is-required">{{ $t('dataVerification.table') }}</label>
+                      <el-cascader
+                        class="item-select"
+                        :class="{ red: !item.sourceTable }"
+                        size="mini"
+                        v-model="item.sourceTable"
+                        :options="item.sourceTree"
+                        @input="tableChangeHandler(item, 'source', index)"
+                      ></el-cascader>
+                      <span class="item-icon">
+                        <i class="el-icon-right"></i>
+                      </span>
+                      <el-cascader
+                        class="item-select"
+                        size="mini"
+                        :class="{ red: !item.targetTable }"
+                        v-model="item.targetTable"
+                        :options="item.targetTree"
+                        @input="tableChangeHandler(item, 'target')"
+                      ></el-cascader>
+                    </div>
+                    <div class="setting-item" v-show="['field', 'jointField'].includes(form.inspectMethod)">
+                      <label class="item-label is-required">{{ $t('dataVerification.indexField') }}</label>
+                      <MultiSelection
+                        v-model="item.source.sortColumn"
+                        :options="item.source.fields"
+                        :class="{ red: !item.source.sortColumn }"
+                        :placeholder="$t('dataVerification.ChoosePKField')"
+                        :id="'itemSource' + index"
+                      ></MultiSelection>
+                      <span class="item-icon"></span>
+                      <MultiSelection
+                        v-model="item.target.sortColumn"
+                        :class="{ red: !item.target.sortColumn }"
+                        :options="item.target.fields"
+                        :placeholder="$t('dataVerification.ChoosePKField')"
+                      ></MultiSelection>
+                      <el-checkbox
+                        style="margin-left: 10px"
+                        v-model="item.showAdvancedVerification"
+                        v-show="form.inspectMethod === 'field'"
+                        >{{ $t('dataVerification.advanceVerify') }}</el-checkbox
+                      >
+                    </div>
+                    <el-row class="pt-3">
+                      <el-col :span="13" class="setting-item-box">
+                        <el-switch
+                          v-model="item.source.sourceFilterFalg"
+                          @change="changeSourceWhere(item.source.sourceFilterFalg, item.source)"
+                        ></el-switch>
+                        <label class="item-label pl-2">{{ $t('verify_form_source_filter') }}</label>
+                      </el-col>
+                      <el-col :span="11" class="pl-6">
+                        <el-switch
+                          v-model="item.target.targeFilterFalg"
+                          @change="changeSourceWhere(item.target.targeFilterFalg, item.target)"
+                        ></el-switch>
+                        <label class="item-label pl-2">{{ $t('verify_form_target_filter') }}</label>
+                      </el-col>
+                    </el-row>
+                    <el-row class="pt-3">
+                      <el-col :span="13" class="setting-item-box">
+                        <queryBuilder
+                          v-if="item.source.sourceFilterFalg"
+                          v-model="item.source.custSql"
+                          v-bind:initialOffset.sync="item.source.initialOffset"
+                          :primaryKeyOptions="item.source.fields.map(f => f.field_name)"
+                          :tableName="item.source.tableName"
+                          :databaseType="item.source.databaseType"
+                          :mergedSchema="item.source"
+                        ></queryBuilder>
+                      </el-col>
+                      <el-col :span="11" class="pl-6">
+                        <queryBuilder
+                          v-if="item.target.targeFilterFalg"
+                          v-model="item.target.custSql"
+                          v-bind:initialOffset.sync="item.target.initialOffset"
+                          :primaryKeyOptions="item.target.fields.map(f => f.field_name)"
+                          :tableName="item.target.tableName"
+                          :databaseType="item.target.databaseType"
+                          :mergedSchema="item.target"
+                        ></queryBuilder>
+                      </el-col>
+                    </el-row>
+                    <div class="setting-item pt-4" v-if="item.showAdvancedVerification">
+                      <label class="item-label is-required">{{ $t('dataVerification.JSVerifyLogic') }}</label>
+                      <el-button
+                        v-if="!item.webScript || item.webScript === ''"
+                        size="mini"
+                        icon="el-icon-plus"
+                        @click="addScript(index)"
+                        >{{ $t('dataVerification.addJS') }}</el-button
+                      >
+                      <span v-if="item.webScript && item.webScript !== ''">
+                        <el-input
+                          class="item-select item-textarea"
+                          type="textarea"
+                          v-model="item.webScript"
+                          disabled
+                        ></el-input>
+                        <el-button-group class="setting-buttons">
+                          <el-button size="mini" icon="el-icon-edit" @click="editScript(index)"></el-button>
+                        </el-button-group>
+                        <el-button-group class="setting-buttons">
+                          <el-button size="mini" icon="el-icon-close" @click="removeScript(index)"></el-button>
+                        </el-button-group>
+                      </span>
+                    </div>
                   </div>
-                  <div class="setting-item" v-show="['field', 'jointField'].includes(form.inspectMethod)">
-                    <label class="item-label is-required">{{ $t('dataVerification.indexField') }}</label>
-                    <MultiSelection
-                      v-model="item.source.sortColumn"
-                      :options="item.source.fields"
-                      :class="{ red: !item.source.sortColumn }"
-                      :placeholder="$t('dataVerification.ChoosePKField')"
-                      :id="'itemSource' + index"
-                    ></MultiSelection>
-                    <span class="item-icon"></span>
-                    <MultiSelection
-                      v-model="item.target.sortColumn"
-                      :class="{ red: !item.target.sortColumn }"
-                      :options="item.target.fields"
-                      :placeholder="$t('dataVerification.ChoosePKField')"
-                    ></MultiSelection>
-                    <el-checkbox
-                      style="margin-left: 10px"
-                      v-model="item.showAdvancedVerification"
-                      v-show="form.inspectMethod === 'field'"
-                      >{{ $t('dataVerification.advanceVerify') }}</el-checkbox
-                    >
-                  </div>
-                  <div class="setting-item" v-if="item.showAdvancedVerification">
-                    <label class="item-label is-required">{{ $t('dataVerification.JSVerifyLogic') }}</label>
-                    <el-button
-                      v-if="!item.webScript || item.webScript === ''"
-                      size="mini"
-                      icon="el-icon-plus"
-                      @click="addScript(index)"
-                      >{{ $t('dataVerification.addJS') }}</el-button
-                    >
-                    <span v-if="item.webScript && item.webScript !== ''">
-                      <el-input
-                        class="item-select item-textarea"
-                        type="textarea"
-                        v-model="item.webScript"
-                        disabled
-                      ></el-input>
-                      <el-button-group class="setting-buttons">
-                        <el-button size="mini" icon="el-icon-edit" @click="editScript(index)"></el-button>
-                      </el-button-group>
-                      <el-button-group class="setting-buttons">
-                        <el-button size="mini" icon="el-icon-close" @click="removeScript(index)"></el-button>
-                      </el-button-group>
-                    </span>
-                  </div>
-                </div>
+                </el-form>
+
                 <el-button-group class="setting-buttons">
                   <el-button size="mini" icon="el-icon-close" @click="removeItem(index)"></el-button>
                 </el-button-group>
@@ -316,6 +359,7 @@
 const TABLE_PARAMS = {
   connectionId: '',
   table: '',
+  databaseType: '',
   sortColumn: '',
   fields: []
 }
@@ -335,10 +379,11 @@ const META_INSTANCE_FIELDS = {
 }
 import MultiSelection from './multi-selection.vue'
 import CodeEditor from '@/components/CodeEditor'
+import queryBuilder from '@/components/QueryBuilder'
 //import JsEditor from 'web-core/components/js-editor.vue'
 import { DATA_NODE_TYPES } from '@/const.js'
 export default {
-  components: { MultiSelection, CodeEditor },
+  components: { MultiSelection, CodeEditor, queryBuilder },
   props: {
     remoteFunc: Function,
     optionsFunc: Function,
@@ -433,7 +478,25 @@ export default {
     this.getFlowOptions()
     this.htmlMD = require(`./functionInfo.md`)
   },
+
   methods: {
+    changeSourceWhere(v, item) {
+      if (v) {
+        let custSql = {
+          filterType: 'field', //sql
+          // noFieldFilter: true,
+          noLineLimit: true,
+          selectedFields: [],
+          fieldFilterType: 'keepAllFields',
+          noFieldFilter: true,
+          limitLines: '',
+          cSql: '',
+          editSql: '',
+          conditions: []
+        }
+        this.$set(item, 'custSql', custSql)
+      }
+    },
     //获取dataflow数据
     getFlowOptions() {
       this.loading = true
@@ -832,9 +895,11 @@ export default {
           }
         }
       }
+      debugger
       return {
         connectionId: stage.connectionId,
         connectionName: stage.connectionName,
+        databaseType: stage.databaseType,
         table: stage.tableName,
         sortColumn,
         fields: sortField(stage.fields)
@@ -940,6 +1005,26 @@ export default {
         this.$router.back()
       })
     },
+    //
+    stringIntercept(databaseType, item) {
+      let where = ''
+      if (databaseType === 'mongodb') {
+        if (item.custSql?.filterType === 'sql') {
+          where = item.custSql.editSql
+        } else {
+          where = item.custSql?.cSql
+        }
+      } else {
+        if (item.custSql?.filterType === 'sql') {
+          where = 'WHERE ' + item.custSql?.editSql
+        } else {
+          let index = item.custSql.cSql.indexOf('*  FROM')
+          let string = item.custSql.cSql.substring(index + 7, item.custSql.cSql.length).trimStart()
+          where = string
+        }
+      }
+      return where
+    },
     nextStep() {
       this.$refs.baseForm.validate(valid => {
         if (valid) {
@@ -1004,6 +1089,9 @@ export default {
                   if (webScript && webScript !== '') {
                     script = 'function validate(sourceRow){' + webScript + '}'
                   }
+
+                  source.where = this.stringIntercept(source.databaseType, source)
+                  target.where = this.stringIntercept(target.databaseType, target)
                   return {
                     source,
                     target,
@@ -1107,6 +1195,7 @@ export default {
         padding: 5px 10px;
         border: 1px solid #dedee4;
       }
+
       .setting-item {
         display: flex;
         align-items: center;
@@ -1145,6 +1234,9 @@ export default {
           text-overflow: ellipsis;
           white-space: nowrap;
         }
+      }
+      .setting-item-box {
+        padding-left: 140px;
       }
       .setting-buttons {
         margin-left: 10px;
