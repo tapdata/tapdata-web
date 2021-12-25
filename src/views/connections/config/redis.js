@@ -107,15 +107,31 @@ export default function (vm) {
         required: true
       },
       {
-        type: 'input',
+        type: 'switch',
         field: 'database_username',
-        label: vm.$t('dataForm.form.userName')
+        label: vm.$t('connection_redis_valid'),
+        activeValue: 'true',
+        inactiveValue: ''
       },
       {
         type: 'input',
         field: 'plain_password',
         label: vm.$t('dataForm.form.password'),
-        domType: 'password'
+        domType: 'password',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'database_username',
+                value: 'true'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       }
     ]
   }

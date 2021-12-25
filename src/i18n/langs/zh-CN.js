@@ -81,6 +81,8 @@ export default {
   connection_kafka_kerberos_none_conf: '配置文件不能为空',
   connection_kafka_encryption: '加密方式',
 
+  connection_redis_valid: '开启认证',
+
   connection_hana_label_hana_type: '租户模式',
   // 路由名
   app_menu_jsFuncs: '函数',

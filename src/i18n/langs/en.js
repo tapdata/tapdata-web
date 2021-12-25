@@ -83,7 +83,11 @@ export default {
   connection_kafka_kerberos_none_keytab: 'The key representation file cannot be empty',
   connection_kafka_kerberos_none_conf: 'Configuration file cannot be empty',
   connection_kafka_encryption: 'Encryption',
+
+  connection_redis_valid: 'Authentication',
+
   connection_hana_label_hana_type: 'Install type',
+
   //Dag
   dag_data_node_label_dameng: 'Dameng Node',
   dag_data_node_label_database_link_table: 'Table name case',
