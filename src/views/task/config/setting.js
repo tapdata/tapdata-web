@@ -55,7 +55,27 @@ export default function () {
         required: true,
         isVertical: false,
         button: true,
-        outerTip: true
+        outerTip: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'sync_type',
+                value: 'cdc'
+              }
+            ],
+            triggerConfig: {
+              value: 'intellect',
+              options: [
+                {
+                  label: i18n.t('task_setting_update_write_mode'),
+                  tip: i18n.t('task_setting_update_write_mode_tip'),
+                  value: 'intellect'
+                }
+              ]
+            }
+          }
+        ]
       },
       {
         type: 'input',

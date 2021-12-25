@@ -210,7 +210,7 @@
       <div class="js-wrap">
         <div class="jsBox">
           <div class="js-fixText"><span style="color: #0000ff">function </span><span> validate(sourceRow){</span></div>
-          <CodeEditor class="js-editor" v-model="webScript" lang="javascript" theme="eclipse"></CodeEditor>
+          <CodeEditor class="js-editor" v-model="webScript" lang="javascript"></CodeEditor>
           <div class="js-fixText">}</div>
         </div>
         <div class="markdown-body-wrap example ml-4">
