@@ -15,12 +15,12 @@ export const targetEndpoint = {
     cursor: 'pointer',
     stroke: '#dedee4',
     fill: '#FFF',
-    radius: 5
+    radius: 6
   },
   hoverPaintStyle: {
     stroke: '#2c65ff',
     fill: '#f0f7ff',
-    radius: 7
+    radius: 8
   },
   dropOptions: {
     hoverClass: 'dropHover'
@@ -38,12 +38,12 @@ export const sourceEndpoint = {
     cursor: 'pointer',
     stroke: '#dedee4',
     fill: '#FFF',
-    radius: 5
+    radius: 6
   },
   hoverPaintStyle: {
     stroke: '#2c65ff',
     fill: '#f0f7ff',
-    radius: 7
+    radius: 8
   },
   connectorStyle: {
     strokeWidth: 2,
@@ -52,6 +52,6 @@ export const sourceEndpoint = {
     outlineWidth: 2
   },
   connectorHoverStyle: {
-    stroke: '#fa6303'
+    stroke: '#2c65ff'
   }
 }
