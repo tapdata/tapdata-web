@@ -409,7 +409,9 @@ export default {
   connection_form_confirm_create_content: 'Do you want to abandon the creation of the connection ?', //是否放弃创建该连接？
   connection_form_confirm_edit_content: 'Do you want to abandon the modification of the content ?', //是否放弃修改内容？
   connection_form_hazecast_options_target: 'Target',
-  connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'Target',",
+  connection_form_hazecast_options_target_tips:
+    'This data connection can only be used as a target in Tapdata, not as a source',
+  // connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'Target',",
   connection_form_hazecast_connection_type: 'Connection Type',
   connection_form_hazecast_database_name: 'Cluster Name', //集群名称
   connection_form_hazecast_plain_password: 'Token',

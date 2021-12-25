@@ -71,13 +71,10 @@ export default {
         limit: size,
         skip: size * (current - 1)
       }
-      return Promise.all([
-        this.$axios.get('tm/api/UserLogs/count?where=' + encodeURIComponent(JSON.stringify(where))),
-        this.$axios.get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter)))
-      ]).then(([countData, data]) => {
+      return this.$axios.get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
         return {
-          total: countData.count,
-          data: data
+          total: data.total,
+          data: data.items
         }
       })
     }
