@@ -4,9 +4,11 @@
       <div class="monitor-icon rounded-circle overflow-hidden mr-6 p-3">
         <img src="../../../public/images/task/console.png" />
       </div>
-      <div class="base-info flex-fit">
+      <div class="base-info flex-fit overflow-hidden">
         <div class="flex align-items-center">
-          <ElLink class="fs-7 mr-4" type="primary">{{ $t('task_name') }}: {{ task.name }}</ElLink>
+          <ElLink class="fs-7 mr-4 inline-block ellipsis" style="max-width: 50%" type="primary"
+            >{{ $t('task_name') }}: {{ task.name }}</ElLink
+          >
           <img v-if="task.isFinished" style="height: 25px" src="../../../public/images/task/yiwancheng.png" alt="" />
           <StatusTag v-else type="text" target="task" :status="task.status" only-img></StatusTag>
         </div>
