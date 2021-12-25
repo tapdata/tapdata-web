@@ -92,11 +92,12 @@
             </template>
           </ElTableColumn>
           <ElTableColumn :label="$t('task_mapping_table_source_table_type')" prop="data_type"></ElTableColumn>
-          <ElTableColumn
-            :label="$t('task_mapping_table_source_table_length')"
-            prop="precision"
-            width="150"
-          ></ElTableColumn>
+          <ElTableColumn :label="$t('task_mapping_table_source_table_length')" prop="precision" width="150">
+            <template slot-scope="scope">
+              <span v-if="scope.row.precision < 0"></span>
+              <span v-else>{{ scope.row.precision }}</span>
+            </template>
+          </ElTableColumn>
           <ElTableColumn
             :label="$t('task_mapping_table_source_table_accuracy')"
             prop="scale"

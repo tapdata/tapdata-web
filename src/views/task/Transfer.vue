@@ -15,22 +15,6 @@
       <!--        </v-button> 入口字段映射第五步-->
       <!--      </div>-->
     </div>
-    <div class="text-wrap float-start overflow-hidden">
-      <span v-if="!showProgress" class="mr-2">{{ reloadCount ? '加载已完成' : '没有可用的表？' }}</span>
-      <div v-else class="float-start mr-2">
-        <VIcon size="12" class="animation-rotate font-color-main">loading-point</VIcon>
-        <span class="ml-2">模型加载中</span>
-        <span class="ml-2">{{ progress }}%</span>
-      </div>
-      <ElButton class="border-0" type="text" :disabled="reloadLoading" @click="reload()">重新加载</ElButton>
-      <ElTooltip placement="top" class="ml-2">
-        <div slot="content">
-          <div>1.要等待模型加载完成后才能正常创建任务，否则任务可能无法保存</div>
-          <div>2.如果找不到您需要的表，可以尝试重新加载模型</div>
-        </div>
-        <VIcon class="color-primary" size="14">info</VIcon>
-      </ElTooltip>
-    </div>
     <VirtualTransfer
       v-if="!transferFlag"
       v-model="selectSourceArr"
@@ -761,7 +745,7 @@ export default {
     margin-bottom: 10px;
   }
   .text-wrap {
-    position: absolute;
+    /*position: absolute;*/
     top: 68px;
     left: 120px;
     z-index: 1;

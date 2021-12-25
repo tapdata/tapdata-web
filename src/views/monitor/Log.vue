@@ -4,6 +4,7 @@
       <ElInput
         class="search-input mt-2"
         v-model="keyword"
+        clearable
         prefix-icon="el-icon-search"
         placeholder="请输入日志内容"
         @input="search"
@@ -99,7 +100,18 @@ export default {
       }, 1000)
     },
     updateLogs(data) {
-      this.loadNew(data.data)
+      let keyword = this.keyword
+      let logs = data?.data || []
+      this.loadNew(
+        logs.filter(item => {
+          return (
+            item.threadName.includes(keyword) ||
+            item.loggerName.includes(keyword) ||
+            item.message.includes(keyword) ||
+            item.level.includes(keyword)
+          )
+        })
+      )
     },
     loadOld(event) {
       let el = event.target
@@ -117,7 +129,7 @@ export default {
     scrollToBottom() {
       this.$nextTick(() => {
         let el = this.$refs.logs
-        if (this.isScrollBottom) {
+        if (el && this.isScrollBottom) {
           let lastItemEl = el.querySelector('li:last-child')
           if (lastItemEl) {
             el.scrollTo(0, lastItemEl.offsetTop + lastItemEl.clientHeight)
@@ -130,7 +142,7 @@ export default {
       let filter = {
         where: {
           'contextMap.dataFlowId': {
-            eq: this.id
+            $eq: this.id
           }
         },
         order: `id DESC`,
@@ -145,8 +157,8 @@ export default {
       }
       if (keyword) {
         const { toRegExp } = this.$util
-        let query = { like: toRegExp(keyword), options: 'i' }
-        filter.where.or = [{ threadName: query }, { loggerName: query }, { message: query }, { level: query }]
+        let query = { $regex: toRegExp(keyword), $options: 'i' }
+        filter.where.$or = [{ threadName: query }, { loggerName: query }, { message: query }, { level: query }]
       }
       if (!isSearch && this.logs.length) {
         filter.where.id = {
