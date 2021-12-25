@@ -217,7 +217,7 @@ export default {
     loadData(params) {
       params['dataFlowId'] = this.task.id
       this.$axios
-        .get('tm/api/DataFlowInsight/runtimeMonitor', {
+        .get('tm/api/DataFlowInsights/runtimeMonitor', {
           params: params
         })
         .then(res => {

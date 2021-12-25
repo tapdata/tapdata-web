@@ -502,10 +502,10 @@ export default {
         where['mappingTemplate'] = type
       }
       if (keyword && keyword.trim()) {
-        where.or = [
-          { name: { like: toRegExp(keyword), options: 'i' } },
-          { 'stages.tableName': { like: toRegExp(keyword), options: 'i' } },
-          { 'stages.name': { like: toRegExp(keyword), options: 'i' } }
+        where.$or = [
+          { name: { $regex: toRegExp(keyword), $options: 'i' } },
+          { 'stages.tableName': { $regex: toRegExp(keyword), $options: 'i' } },
+          { 'stages.name': { $regex: toRegExp(keyword), $options: 'i' } }
         ]
       }
       if (agentId) {

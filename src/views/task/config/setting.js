@@ -55,7 +55,27 @@ export default function () {
         required: true,
         isVertical: false,
         button: true,
-        outerTip: true
+        outerTip: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'sync_type',
+                value: 'cdc'
+              }
+            ],
+            triggerConfig: {
+              value: 'intellect',
+              options: [
+                {
+                  label: i18n.t('task_setting_update_write_mode'),
+                  tip: i18n.t('task_setting_update_write_mode_tip'),
+                  value: 'intellect'
+                }
+              ]
+            }
+          }
+        ]
       },
       {
         type: 'input',
@@ -196,13 +216,13 @@ export default function () {
         label: i18n.t('task_setting_two_way_switch'),
         show: false
       },
-      {
-        type: 'switch',
-        field: 'isOpenAutoDDL',
-        label: i18n.t('task_setting_automatic_ddl'),
-        show: true,
-        tip: i18n.t('task_setting_automatic_ddl_tip')
-      },
+      // {
+      //   type: 'switch',
+      //   field: 'isOpenAutoDDL',
+      //   label: i18n.t('task_setting_automatic_ddl'),
+      //   show: true,
+      //   tip: i18n.t('task_setting_automatic_ddl_tip')
+      // },
       {
         type: 'switch',
         field: 'needToCreateIndex',
