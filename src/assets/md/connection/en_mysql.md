@@ -17,10 +17,12 @@ server_id = 223344
 log_bin = mysql-bin
 expire_logs_days = 1
 binlog_format = row
+binlog_row_image  = full
 ```
 Configuration explanation:<br>
 server-id: Must be unique for each server and replication client in MySQL<br>
 binlog_format: Must be set to row or ROW<br>
+binlog_row_image: must be set to full<br>
 expire_logs_days: The number of days to keep the binary log file, it will be automatically deleted when it expires<br>
 log_bin: the base name of the binlog sequence file<br>
 
@@ -34,6 +36,12 @@ To verify that binlog is enabled, execute the following command in the mysql she
 show variables like'binlog_format';
 ```
 In the output result, the format value should be "ROW"
+
+Verify that the value of the binlog_row_image parameter is full:
+```
+show variables like'binlog_row_image';
+```
+In the output result, the binlog_row_image value should be "FULL"
 
 #### **3.3 Create MySQL Account**
 After Mysql8, the password encryption method is different, please pay attention to use the corresponding version to set the password, otherwise it will cause the incremental synchronization to fail
