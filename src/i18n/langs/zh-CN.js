@@ -907,6 +907,7 @@ export default {
   verify_message_error_joint_table_target_or_source_not_set: '校验条件中源表或目标表未选择',
   verify_message_error_joint_table_field_not_set: '校验条件中源表或目标表的索引字段未选择',
   verify_message_error_joint_table_field_not_match: '校验条件中源表与目标表的索引字段个数不相等',
+  verify_message_error_script_no_enter: '开启高级校验后，JS校验逻辑不能为空',
   verify_message_confirm_delete_script: '确定要删除自定义JS校验逻辑吗',
   verify_message_confirm_back: '此操作会丢失当前正在创建（编辑）的校验任务',
   verify_message_title_confirm_back: '是否放弃创建（编辑）校验任务？'

@@ -992,6 +992,7 @@ export default {
             this.jointErrorMessage = this.$t('verify_message_error_joint_table_not_set')
             return
           }
+          // 判断表名称是否为空
           if (
             tasks.some((c, i) => {
               index = i + 1
@@ -1005,6 +1006,7 @@ export default {
             this.jointErrorMessage = this.$t('verify_message_error_joint_table_field_not_set')
             return this.$message.error(this.$t('verify_message_error_joint_table_target_or_source_not_set'))
           }
+          // 判断表字段校验时，索引字段是否为空
           index = 0
           if (
             this.form.inspectMethod !== 'row_count' &&
@@ -1020,6 +1022,7 @@ export default {
             this.jointErrorMessage = this.$t('verify_message_error_joint_table_field_not_set')
             return this.$message.error(this.$t('verify_message_error_joint_table_field_not_set'))
           }
+          // 判断表字段校验时，索引字段是否个数一致
           index = 0
           if (
             this.form.inspectMethod !== 'row_count' &&
@@ -1035,6 +1038,22 @@ export default {
             })
             this.jointErrorMessage = this.$t('verify_message_error_joint_table_field_not_match')
             return this.$message.error(this.$t('verify_message_error_joint_table_field_not_match'))
+          }
+          // 开启高级校验后，JS校验逻辑不能为空
+          index = 0
+          if (
+            this.form.inspectMethod === 'field' &&
+            tasks.some((c, i) => {
+              index = i + 1
+              return c.showAdvancedVerification && !c.script
+            })
+          ) {
+            this.editId = tasks[index - 1]?.id
+            this.$nextTick(() => {
+              document.getElementById('data-verification-form').childNodes[index - 1].querySelector('input').focus()
+            })
+            this.jointErrorMessage = this.$t('verify_message_error_script_no_enter')
+            return this.$message.error(this.$t('verify_message_error_script_no_enter'))
           }
           if (this.form.inspectMethod === 'jointField') {
             tasks.forEach(item => {

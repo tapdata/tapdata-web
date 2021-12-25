@@ -501,6 +501,7 @@ export default {
   verify_message_error_joint_table_target_or_source_not_set: '校驗條件中源表或目標表未選擇',
   verify_message_error_joint_table_field_not_set: '校驗條件中源表或目標表的索引欄位未選擇',
   verify_message_error_joint_table_field_not_match: '校驗條件中源表與目標表的索引欄位個數不相等',
+  verify_message_error_script_no_enter: '開啟高級校驗後，JS校驗邏輯不能為空',
   verify_message_confirm_delete_script: '確定要刪除自定義JS校驗邏輯嗎',
   verify_message_confirm_back: '此操作會丟失當前正在創建（編輯）的校驗任務',
   verify_message_title_confirm_back: '是否放棄創建（編輯）校驗任務？',
