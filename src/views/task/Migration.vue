@@ -680,7 +680,7 @@ export default {
         })
         .catch(error => {
           if (error?.isException) {
-            this.$message.error('任务启动失败，请编辑任务完成映射配置')
+            this.$message.error(error?.data?.message + '(' + error?.data?.code + ')')
           }
         })
         .finally(() => {
