@@ -182,6 +182,7 @@ export default {
       loading: true,
       searchParams: {
         status: '',
+        database_type: '',
         keyword: ''
       },
       list: [],
@@ -265,6 +266,21 @@ export default {
           items: this.statusOptions
         },
         {
+          label: '数据库类型',
+          key: 'database_type',
+          type: 'select-inner',
+          menuMinWidth: '180px',
+          items: async () => {
+            let data = await this.$axios.get('tm/api/Connections/databaseType')
+            return data.map(item => {
+              return {
+                label: item,
+                value: item
+              }
+            })
+          }
+        },
+        {
           placeholder: '按连接名搜索',
           key: 'keyword',
           type: 'input'
@@ -324,10 +340,13 @@ export default {
       const { toRegExp } = this.$util
       this.loading = true
       let current = pageNum || this.page.current
-      let { keyword, status } = this.searchParams
+      let { keyword, status, database_type } = this.searchParams
       let where = {}
       if (keyword && keyword.trim()) {
         where.name = { $regex: toRegExp(keyword), $options: 'i' }
+      }
+      if (database_type) {
+        where.database_type = database_type
       }
       status && (where.status = status)
       let filter = {

@@ -479,16 +479,10 @@ export default {
               }
             })
             .catch(err => {
-              if (err && err.response) {
-                if (err.response.msg.indexOf('duplication for names') > -1) {
-                  this.$message.error(this.$t('dataForm.error.connectionNameExist'))
-                } else if (err.response.msg.indexOf('duplicate source') > -1) {
-                  this.$message.error(this.$t('dataForm.error.duplicateSource'))
-                } else {
-                  this.$message.error(err.response.msg)
-                }
+              if (err && err?.data?.message) {
+                this.$message.error(err?.data?.message + ' (' + err?.data?.code + ')')
               } else {
-                this.$message.error(this.$t('message.saveFail'))
+                this.$message.error(this.$t('dataForm.saveFail'))
               }
             })
             .finally(() => {
@@ -530,6 +524,10 @@ export default {
     },
     //保存名字
     submitEdit() {
+      if (this.renameData.rename === this.model.name) {
+        this.handleCancelRename()
+        return //名字没有改变 不做任何操作
+      }
       this.$refs['renameForm'].validate(valid => {
         if (valid) {
           this.editBtnLoading = true
@@ -553,15 +551,9 @@ export default {
               this.dialogEditNameVisible = false
             })
             .catch(err => {
-              this.renameData.rename = this.model.name
-              this.$refs['renameForm'].clearValidate()
               this.editBtnLoading = false
-              if (err && err.response) {
-                if (err.response.msg.indexOf('duplication for names') > -1) {
-                  this.$message.error(this.$t('dataForm.error.connectionNameExist'))
-                } else {
-                  this.$message.error(err.response.msg)
-                }
+              if (err && err?.data?.message) {
+                this.$message.error(err?.data?.message + ' (' + err?.data?.code + ')')
               } else {
                 this.$message.error(this.$t('dataForm.saveFail'))
               }

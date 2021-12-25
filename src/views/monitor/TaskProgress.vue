@@ -235,10 +235,10 @@ export default {
     }
   },
   mounted() {
-    this.init()
     this.$once('onceLoadHttp', () => {
       this.loadHttp()
     })
+    this.init()
   },
   destroyed() {
     this.clearWS()
@@ -344,7 +344,7 @@ export default {
         let item = this[el]?.title
         let params = {
           statsType: item.statsType,
-          granularity: item.time ? 'flow_' + item.time : 'flow'
+          granularity: item.time ? item.time : 'flow'
         }
         this.loadData(params, item)
       })

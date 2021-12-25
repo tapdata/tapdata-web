@@ -55,7 +55,7 @@ const errorCallback = error => {
   } else if (error.code && error.message) {
     // 其他错误
     Message.error(`${error.message || error}`)
-  } else {
+  } else if (error?.message !== 'cancel') {
     // 500 报错
     location.replace(location.href.split('#/')[0] + '#/500')
   }
