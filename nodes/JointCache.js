@@ -108,6 +108,9 @@ export class JointCache extends NodeType {
         'x-component-props': {
           config: { placeholder: '请选择或创建写入路径字段' }
         }
+      },
+      script: {
+        type: 'string'
       }
     }
   }

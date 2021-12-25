@@ -25,3 +25,13 @@
 .jtk-drag-select {
   user-select: none;
 }
+
+.ace_editor,.ace_gutter-layer,.ace_scroller{
+  background-color: #000;
+}
+.ace_gutter-cell,.ace_content, .ace-tm  .ace_cursor  {
+  color: #fff;
+}
+.ace_gutter-active-line {
+  color: #000;
+}

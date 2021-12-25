@@ -55,7 +55,7 @@ export class RowFilter extends NodeType {
         }
       },
       example: {
-        type: 'array',
+        type: 'void',
         'x-component': 'ExpressionExample'
       }
     }

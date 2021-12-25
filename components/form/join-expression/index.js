@@ -103,7 +103,7 @@ export const JoinExpression = connect(
             </div>
             <FormLayout class="mb-n2" shallow={false} feedbackLayout="terse">
               {this.fieldArr.map((item, i) => (
-                <div class="flex align-center join-expression-row" key={i}>
+                <div class="flex join-expression-row" key={i}>
                   <div class="join-field">
                     {h(RecursionField, {
                       props: {
@@ -122,11 +122,12 @@ export const JoinExpression = connect(
                     })}
                   </div>
                   <FormItem>
-                    <ElButton class="ml-3" type="text" onClick={() => this.handleAdd()}>
+                    <ElButton class="ml-3 align-middle" size="mini" type="text" onClick={() => this.handleAdd()}>
                       <VIcon size={16}>plus</VIcon>
                     </ElButton>
                     <ElButton
-                      class="ml-3"
+                      class="ml-3 align-middle"
+                      size="mini"
                       type="text"
                       disabled={this.fieldArr.length < 2}
                       onClick={() => this.handleRemove(i)}
