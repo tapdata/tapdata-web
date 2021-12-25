@@ -90,11 +90,6 @@ export default {
 
   props: {
     isSaving: Boolean,
-    isStarting: Boolean,
-    isEditable: Boolean,
-    isMonitor: Boolean,
-    editable: Boolean,
-    creatUserId: String,
     dataflowName: String,
     scale: Number
   },
@@ -182,7 +177,7 @@ export default {
 <style scoped lang="scss">
 $sidebarW: 236px;
 $hoverBg: #eef3ff;
-$radius: 3px;
+$radius: 4px;
 $baseHeight: 26px;
 $sidebarBg: #fff;
 

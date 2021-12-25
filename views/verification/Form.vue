@@ -199,7 +199,7 @@
     </div>
     <div class="mt-8">
       <VButton @click="goBack()">{{ $t('button_back') }}</VButton>
-      <VButton type="primary" @click="nextStep()">{{ $t('button_save') }}</VButton>
+      <VButton type="primary" @click="nextStep()">{{ $t('button_dialog_confirm') }}</VButton>
     </div>
     <ElDialog
       width="60%"

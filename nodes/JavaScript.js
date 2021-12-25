@@ -31,6 +31,7 @@ export class JavaScript extends NodeType {
           wrapperWidth: 800
         },
         'x-component-props': {
+          height: 500,
           options: { showPrintMargin: false, useWrapMode: true }
         }
       }

@@ -1,4 +1,4 @@
-import CodeEditor from 'web-core/components/CodeEditor'
+import CodeEditor from 'web-core/components/base/VCodeEditor'
 
 export const SqlEditor = {
   props: {
@@ -41,6 +41,7 @@ export const SqlEditor = {
     }
     return (
       <CodeEditor
+        class="border rounded-2"
         value={this.sql}
         lang="sql"
         theme="sqlserver"

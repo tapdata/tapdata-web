@@ -3,13 +3,6 @@
     <!--头部-->
     <TopHeader
       :is-saving="isSaving"
-      :is-editable="isEditable"
-      :editable="editable"
-      :status="status"
-      :status-bt-map="statusBtMap"
-      :sync_type="sync_type"
-      :creat-user-id="creatUserId"
-      :is-starting="isStarting"
       :dataflow-name="dataflow.name"
       :scale="scale"
       @page-return="handlePageReturn"
@@ -45,7 +38,7 @@
             @change-scale="handleChangeScale"
           >
             <DFNode
-              v-for="n in nodes"
+              v-for="n in allNodes"
               :key="n.id"
               :node-id="n.id"
               :id="NODE_PREFIX + n.id"
@@ -60,6 +53,7 @@
               @quick-add-node="quickAddNode"
             ></DFNode>
           </PaperScroller>
+          <PaperEmpty v-if="!allNodes.length"></PaperEmpty>
           <ElPopover
             ref="nodeMenu"
             v-model="nodeMenu.show"
@@ -96,12 +90,11 @@ import DFNode from './components/DFNode'
 import jsPlumbIns from './instance'
 import { connectorActiveStyle } from './style'
 import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, STATUS_MAP } from './constants'
-import { ctorTypes, nodeTypes } from 'web-core/nodes/loader/index'
+import { ctorTypes, nodeTypes } from 'web-core/nodes/loader'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
 import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from 'web-core/views/dataflow/components/ConfigPanel'
-import { off, on } from 'web-core/utils/dom'
 import { uuid } from 'web-core/utils/util'
 import DatabaseTypes from 'web-core/api/DatabaseTypes'
 import Task from 'web-core/api/Task'
@@ -120,6 +113,7 @@ import dagre from 'dagre'
 import { validateBySchema } from 'web-core/components/form/utils/validate'
 import resize from 'web-core/directives/resize'
 import { merge } from 'lodash'
+import PaperEmpty from 'web-core/views/dataflow/components/PaperEmpty'
 
 const databaseTypesApi = new DatabaseTypes()
 const taskApi = new Task()
@@ -141,6 +135,7 @@ export default {
   },
 
   components: {
+    PaperEmpty,
     ConfigPanel,
     PaperScroller,
     TopHeader,
@@ -154,21 +149,12 @@ export default {
       status: 'draft',
       loading: true,
       editable: false,
-      isMoniting: false,
-      isSimple: false,
       isSaving: false,
-      isStarting: false,
-      sync_type: 'initial_sync+cdc',
-      creatUserId: '',
-      statusBtMap: STATUS_MAP,
       jsPlumbIns,
-      nodeMap: {},
       navLines: [],
       selectBoxAttr: null,
       selectActive: false,
       showSelectBox: false,
-      nodeViewScale: 1,
-      mapping: this.$route.query?.mapping,
 
       nodeMenu: {
         show: false,
@@ -186,31 +172,15 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', {
-      nodes: 'allNodes',
-      edges: 'allEdges',
-      isActionActive: 'isActionActive',
-      nodeById: 'nodeById',
-      stateIsDirty: 'getStateIsDirty',
-      nodeViewOffsetPosition: 'getNodeViewOffsetPosition',
-      processorNodeTypes: 'processorNodeTypes'
-    }),
-
-    dataflowStyle() {
-      const offsetPosition = this.nodeViewOffsetPosition
-      return {
-        left: offsetPosition[0] + 'px',
-        top: offsetPosition[1] + 'px'
-      }
-    },
-
-    backgroundStyle() {
-      const offsetPosition = this.nodeViewOffsetPosition
-      return {
-        transform: `scale(${this.nodeViewScale})`,
-        'background-position': `right ${-offsetPosition[0]}px bottom ${-offsetPosition[1]}px`
-      }
-    },
+    ...mapGetters('dataflow', [
+      'allNodes',
+      'allEdges',
+      'isActionActive',
+      'nodeById',
+      'stateIsDirty',
+      'processorNodeTypes',
+      'hasNodeError'
+    ]),
 
     selectBoxStyle() {
       let attr = this.selectBoxAttr
@@ -328,17 +298,15 @@ export default {
       }
 
       this.stopDagWatch?.()
-      this.stopDagWatch = this.$watch(() => this.nodes.length + this.edges.length, this.updateDag)
+      this.stopDagWatch = this.$watch(() => this.allNodes.length + this.allEdges.length, this.updateDag)
     },
 
     initCommand() {
       this.command = new CommandManager(this.$store, this.jsPlumbIns)
       Mousetrap.bind('mod+c', () => {
-        console.log('复制快捷键')
         this.copyNodes()
       })
       Mousetrap.bind('mod+v', () => {
-        console.log('粘贴快捷键')
         this.pasteNodes(this.command)
       })
       Mousetrap.bind('mod+z', () => {
@@ -361,13 +329,6 @@ export default {
 
     async initNodeType() {
       let _nodeTypes = nodeTypes
-      // let dataFlowType
-      /*if (this.mapping === 'cluster-clone') {
-        // dataFlowType = 'database-migration' // 数据库迁移
-        const dbTypes = await this.loadDatabaseTypes(nodeTypes)
-        _nodeTypes = _nodeTypes.filter(item => item.type === 'database')
-        _nodeTypes.push(...dbTypes)
-      }*/
       this.setNodeTypes(_nodeTypes)
       this.setCtorTypes(ctorTypes)
     },
@@ -411,7 +372,6 @@ export default {
     },
 
     initNodeView() {
-      // let container = this.$refs.layoutContent
       const { jsPlumbIns } = this
       jsPlumbIns.setContainer('#node-view')
       jsPlumbIns.registerConnectionType('active', connectorActiveStyle)
@@ -507,8 +467,11 @@ export default {
       }
 
       jsPlumbIns.bind('beforeDrop', info => {
-        // console.log('beforeDrop', info) // eslint-disable-line
         const { sourceId, targetId } = info
+
+        if (sourceId === targetId) return false
+
+        // console.log('beforeDrop', info) // eslint-disable-line
 
         const source = this.nodeById(this.getRealId(sourceId))
         const target = this.nodeById(this.getRealId(targetId))
@@ -528,7 +491,7 @@ export default {
 
       let data
       try {
-        data = await taskApi.get([id]) // this.creatUserId = result.user_id
+        data = await taskApi.get([id])
         if (data.temp) data.dag = data.temp // 和后端约定了，如果缓存有数据则获取temp
       } catch (e) {
         this.$showError(e, '任务加载出错', '加载任务出现的问题:')
@@ -631,7 +594,7 @@ export default {
       let rangeX = 10
       let rangeY = 10
 
-      this.nodes.forEach(item => {
+      this.allNodes.forEach(item => {
         if (item.id !== id) {
           let [x, y] = item.attrs.position
           let _x = x - pos[0]
@@ -684,53 +647,52 @@ export default {
         r = Math.max(x, r)
       })
 
-      const offsetPosition = this.nodeViewOffsetPosition
       // 组装导航线
       let lines = []
       if (t < pos[1]) {
-        let top = t + offsetPosition[1] + 'px',
+        let top = t + 'px',
           height = pos[1] - t + 'px'
         lines.push(
           {
             top,
-            left: pos[0] + offsetPosition[0] + 'px',
+            left: pos[0] + 'px',
             height
           },
           {
             top,
-            left: pos[0] + nw + offsetPosition[0] + 'px',
+            left: pos[0] + nw + 'px',
             height
           }
         )
       }
       if (b > pos[1] + nh) {
-        let top = pos[1] + nh + offsetPosition[1] + 'px',
+        let top = pos[1] + nh + 'px',
           height = b - pos[1] - nh + 'px'
         lines.push(
           {
             top,
-            left: pos[0] + offsetPosition[0] + 'px',
+            left: pos[0] + 'px',
             height
           },
           {
             top,
-            left: pos[0] + nw + offsetPosition[0] + 'px',
+            left: pos[0] + nw + 'px',
             height
           }
         )
       }
 
       if (l < pos[0]) {
-        let left = l + offsetPosition[0] + 'px',
+        let left = l + 'px',
           width = pos[0] - l + 'px'
         lines.push(
           {
-            top: pos[1] + offsetPosition[1] + 'px',
+            top: pos[1] + 'px',
             left,
             width
           },
           {
-            top: pos[1] + nh + offsetPosition[1] + 'px',
+            top: pos[1] + nh + 'px',
             left,
             width
           }
@@ -738,16 +700,16 @@ export default {
       }
 
       if (r > pos[0] + nw) {
-        let left = pos[0] + nw + offsetPosition[0] + 'px',
+        let left = pos[0] + nw + 'px',
           width = r - pos[0] - nw + 'px'
         lines.push(
           {
-            top: pos[1] + offsetPosition[1] + 'px',
+            top: pos[1] + 'px',
             left,
             width
           },
           {
-            top: pos[1] + nh + offsetPosition[1] + 'px',
+            top: pos[1] + nh + 'px',
             left,
             width
           }
@@ -849,7 +811,7 @@ export default {
       right -= nodeViewOffset[0]
       y -= nodeViewOffset[1]
       bottom -= nodeViewOffset[1]*/
-      return this.nodes.filter(node => {
+      return this.allNodes.filter(node => {
         const [left, top] = node.attrs.position
         return left + nw > x && left < right && bottom > top && y < top + nh
       })
@@ -865,9 +827,87 @@ export default {
       }
     },
 
+    validate() {
+      if (!this.dataflow.name) return this.$t('editor.cell.validate.empty_name')
+
+      // 至少两个数据节点
+      const tableNode = this.allNodes.filter(node => node.type === 'table')
+      if (tableNode.length < 2) {
+        return this.$t('editor.cell.validate.none_data_node')
+      }
+
+      const sourceMap = {},
+        targetMap = {},
+        edges = this.allEdges
+      edges.forEach(item => {
+        let _source = sourceMap[item.source]
+        let _target = targetMap[item.target]
+
+        if (!_source) {
+          sourceMap[item.source] = [item]
+        } else {
+          _source.push(item)
+        }
+
+        if (!_target) {
+          targetMap[item.target] = [item]
+        } else {
+          _target.push(item)
+        }
+      })
+
+      let someErrorMsg = ''
+      // 检查每个节点的源节点个数、连线个数、节点的错误状态
+      this.allNodes.some(node => {
+        const { id } = node
+        const minInputs = node.__Ctor.attr.minInputs ?? 1 // 没有设置minInputs则缺省为1
+        const inputNum = targetMap[id]?.length ?? 0
+
+        if (!sourceMap[id] && !targetMap[id]) {
+          // 存在没有连线的节点
+          someErrorMsg = `「 ${node.name} 」没有任何连线`
+          return true
+        }
+
+        if (inputNum < minInputs) {
+          someErrorMsg = `「 ${node.name} 」至少需要一个源节点`
+          return true
+        }
+
+        if (this.hasNodeError(id)) {
+          someErrorMsg = `「 ${node.name} 」配置异常`
+          return true
+        }
+      })
+      if (someErrorMsg) return someErrorMsg
+
+      // 检查链路的末尾节点类型是否是表节点
+      const firstNodes = this.allNodes.filter(node => !targetMap[node.id]) // 链路的首节点
+      const nodeMap = this.allNodes.reduce((map, node) => ((map[node.id] = node), map), {})
+      if (firstNodes.some(node => !this.isEndOfTable(node, sourceMap, nodeMap))) return `链路的末位需要是一个数据节点`
+
+      return null
+    },
+
+    // 循环检查检查链路的末尾节点类型是否是表节点
+    isEndOfTable(source, sourceMap, nodeMap) {
+      if (!sourceMap[source.id]) {
+        // 末位节点
+        return source.type === 'table'
+      }
+
+      for (let edge of sourceMap[source.id]) {
+        if (!this.isEndOfTable(nodeMap[edge.target], sourceMap, nodeMap)) {
+          return false
+        }
+      }
+
+      return true
+    },
+
     async save() {
       // this.validateNodes()
-      const errorMsg = this.getError()
+      const errorMsg = this.validate()
       if (errorMsg) {
         this.$message.error(errorMsg)
         return
@@ -963,7 +1003,7 @@ export default {
      * 自动布局
      */
     handleAutoLayout() {
-      const nodes = this.nodes
+      const nodes = this.allNodes
       if (nodes.length < 2) return
 
       let hasMove = false
@@ -1034,8 +1074,7 @@ export default {
     },
 
     allowConnect(sourceId, targetId) {
-      if (sourceId === targetId) return true
-      const allEdges = this.$store.getters['dataflow/allEdges']
+      const allEdges = this.allEdges
       const map = allEdges.reduce((map, item) => {
         let target = map[item.target]
         if (target) {
@@ -1082,7 +1121,7 @@ export default {
     getError() {
       if (!this.dataflow.name) return this.$t('editor.cell.validate.empty_name')
 
-      if (this.nodes.length < 2) {
+      if (this.allNodes.length < 2) {
         return this.$t('editor.cell.validate.none_data_node')
       }
 
@@ -1092,8 +1131,8 @@ export default {
     },
 
     async validateNodes() {
-      const { nodes } = this
-      const result = await Promise.all(nodes.map(node => validateBySchema(node.__Ctor.formSchema, node))).catch(
+      const { allNodes } = this
+      const result = await Promise.all(allNodes.map(node => validateBySchema(node.__Ctor.formSchema, node))).catch(
         error => {
           // eslint-disable-next-line no-console
           console.log('validateNodes', error)
@@ -1101,23 +1140,6 @@ export default {
       )
       // eslint-disable-next-line no-console
       console.log('validateNodes-result', result)
-    },
-
-    setZoomLevel(zoomLevel) {
-      this.nodeViewScale = zoomLevel // important for background
-      const element = this.jsPlumbIns.getContainer()
-
-      // https://docs.jsplumbtoolkit.com/community/current/articles/zooming.html
-      const prependProperties = ['webkit', 'moz', 'ms', 'o']
-      const scaleString = 'scale(' + zoomLevel + ')'
-
-      for (let i = 0; i < prependProperties.length; i++) {
-        // @ts-ignore
-        element.style[prependProperties[i] + 'Transform'] = scaleString
-      }
-      element.style['transform'] = scaleString
-
-      this.jsPlumbIns.setZoom(zoomLevel)
     },
 
     /**
@@ -1203,7 +1225,7 @@ export default {
 
     isSource(node) {
       const id = node.id
-      const allEdges = this.$store.getters['dataflow/allEdges']
+      const allEdges = this.allEdges
       return allEdges.some(({ source }) => source === id)
     },
 
@@ -1217,11 +1239,11 @@ export default {
       const spaceY = 120
 
       const newPosition = [source.attrs.position[0] + NODE_WIDTH + spaceX, source.attrs.position[1]]
-      let movePosition = [0, spaceY]
+      let movePosition = [spaceX, 0]
 
       if (this.isSource(source)) {
         newPosition[1] += spaceY
-        movePosition = [spaceX, 0]
+        movePosition = [0, spaceY]
       }
 
       const position = this.getNewNodePosition(newPosition, movePosition)
@@ -1295,8 +1317,8 @@ export default {
       let i, node
       do {
         conflictFound = false
-        for (i = 0; i < this.nodes.length; i++) {
-          node = this.nodes[i]
+        for (i = 0; i < this.allNodes.length; i++) {
+          node = this.allNodes[i]
           if (!this.canUsePosition(node.attrs.position, newPosition)) {
             conflictFound = true
             break

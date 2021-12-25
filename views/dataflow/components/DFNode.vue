@@ -24,7 +24,9 @@
         <VIcon>close</VIcon>
       </div>
     </div>
-    <VIcon v-if="hasNodeError(data.id)" class="mr-2" size="14" color="#FF7474">warning</VIcon>
+    <ElTooltip v-if="hasNodeError(data.id)" content="请检查节点配置" placement="top">
+      <VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>
+    </ElTooltip>
   </BaseNode>
 </template>
 

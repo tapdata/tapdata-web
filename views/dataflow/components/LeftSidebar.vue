@@ -47,11 +47,11 @@
                   <ElSkeletonItem variant="text"></ElSkeletonItem>
                 </div>
               </template>
-              <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore">
+              <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore" class="px-2 pt-1">
                 <div
                   v-for="db in dbList"
                   :key="db.id"
-                  class="db-item flex align-center px-4 clickable user-select-none"
+                  class="db-item flex align-center px-4 clickable user-select-none rounded-2"
                   :class="{ active: activeConnection.id === db.id }"
                   @click="handleSelectDB(db)"
                 >
@@ -102,7 +102,7 @@
                 <ElSkeletonItem variant="text"></ElSkeletonItem>
               </div>
             </template>
-            <div v-infinite-scroll="loadMoreTable" :infinite-scroll-disabled="disabled">
+            <div v-infinite-scroll="loadMoreTable" :infinite-scroll-disabled="disabled" class="px-2 pt-1">
               <div
                 v-for="tb in tbList"
                 v-mouse-drag="{
@@ -115,7 +115,7 @@
                   onStop
                 }"
                 :key="tb.id"
-                class="tb-item grabbable flex align-center px-4 user-select-none"
+                class="tb-item grabbable flex align-center px-4 user-select-none rounded-2"
               >
                 <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
               </div>
@@ -629,7 +629,7 @@ $hoverBg: #eef3ff;
       width: 24px !important;
       height: 24px !important;
       z-index: 2;
-      border-radius: 3px;
+      border-radius: 4px;
 
       &:hover {
         color: map-get($color, primary);
@@ -665,12 +665,15 @@ $hoverBg: #eef3ff;
 
     .db-item,
     .tb-item {
-      margin-bottom: 2px;
+      margin-bottom: 4px;
       height: $itemH;
       font-size: 12px;
-      &.active,
-      &:hover {
+      &.active {
         background-color: #eef3ff;
+      }
+
+      &:not(.active):hover {
+        background-color: rgba(47, 46, 63, 0.05);
       }
 
       .el-image {
@@ -721,7 +724,7 @@ $hoverBg: #eef3ff;
           font-size: 14px;
 
           &:hover {
-            background-color: #f9fafc;
+            background-color: rgba(47, 46, 63, 0.05);
           }
         }
 
