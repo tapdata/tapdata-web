@@ -69,6 +69,13 @@
           :active-text="formData.noPrimaryKey ? $t('dataFlow.yes') : $t('dataFlow.no')"
         ></el-switch>
       </el-form-item>
+      <el-form-item :label="$t('dataFlow.transformModelVersion')">
+        <!-- 系统推演 -->
+        <el-select v-model="formData.transformModelVersion" size="mini" placeholder="请选择" class="dataWrite-list">
+          <el-option label="v1" value="v1"></el-option>
+          <el-option label="v2" value="v2"> </el-option>
+        </el-select>
+      </el-form-item>
       <!-- 增量数据处理机制 -->
       <el-form-item :label="$t('dataFlow.cdcDataProcess')" v-show="formData.sync_type !== 'initial_sync'">
         <el-select v-model="formData.isSerialMode" size="mini" placeholder="请选择" class="dataWrite-list">
