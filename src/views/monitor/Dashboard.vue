@@ -13,7 +13,7 @@
           <StatusTag v-else type="text" target="task" :status="task.status" only-img></StatusTag>
         </div>
         <div class="mt-1">
-          <span>{{ $t('task_monitor_founder') }}: {{ task.creator }}</span>
+          <span>{{ $t('task_monitor_founder') }}: {{ task.createUser }}</span>
           <span class="ml-4">{{ $t('task_type') }}：{{ taskType.label }}</span>
         </div>
         <div class="mt-2">
