@@ -910,8 +910,10 @@ export default {
   guide_database_password: 'Database password',
   guide_sync_task: 'Sync type',
   guide_mapping_setting: 'Mapping settings',
+  // guide_mapping_setting_tip:
+  //   'Users can check the source table to be synchronized on this page, click the arrow button to the right in the middle to move these tables to the queue of tables to be synchronized (after the task is executed, these tables will be synchronized), and the mouse can be moved into the table name Rename the table and click the Finish button to successfully create a synchronization task. ',
   guide_mapping_setting_tip:
-    'Users can check the source table to be synchronized on this page, click the arrow button to the right in the middle to move these tables to the queue of tables to be synchronized (after the task is executed, these tables will be synchronized), and the mouse can be moved into the table name Rename the table and click the Finish button to successfully create a synchronization task. ',
+    'Users can check the source table to be synchronized on this page, click the arrow button in the middle to move these tables to the queue of tables to be synchronized (after the task is executed, these tables will be synchronized), and click the Finish button to succeed Create a synchronization task. ',
   guide_selected: 'table to be selected',
   guide_table_selected: 'Selected table',
   guide_finish: 'Finish',
