@@ -88,8 +88,8 @@ export default function () {
             validator(rule, value, callback) {
               if (!value) {
                 callback(new Error(i18n.t('task_setting_read_number_cannot_empty')))
-                // } else if (value < 1 || value > 10000) {
-                //   callback(new Error(i18n.t('task_setting_read_number_ranges')))
+              } else if (value < 1 || value > 999999) {
+                callback(new Error(i18n.t('task_setting_read_number_ranges')))
               } else if (!/^\d+$/.test(value)) {
                 callback(new Error(i18n.t('task_setting_read_number_only_number')))
               } else {

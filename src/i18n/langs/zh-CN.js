@@ -664,7 +664,7 @@ export default {
     '删除重写模式会先将目标表的数据清空，再将源端数据全部同步至目标端，能保证源端和目标端的数据完全一致。',
   task_setting_read_number: '每次读取数量',
   task_setting_read_number_cannot_empty: '每次读取数量不能为空，默认是1000',
-  task_setting_read_number_ranges: '每次读取数量取值范围 1 ~ 10000',
+  task_setting_read_number_ranges: '每次读取数量取值范围 1 ~ 999999',
   task_setting_read_number_only_number: '每次读取数量只能为数字',
   task_setting_stop_on_error: '遇到错误停止',
   task_setting_incremental_concurrency_switch: '是否开启增量并发',
