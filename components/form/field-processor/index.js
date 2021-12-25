@@ -2,11 +2,8 @@ import { connect, mapProps, useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import VIcon from 'web-core/components/VIcon'
-import { uuid } from './util'
+import { uuid, handleOperation } from './util'
 import './fieldProessor.scss'
-import { handleOperation } from '../../../../../editor/plugins/FieldProcess/util'
-import _ from 'lodash'
-import log from '../../../../../log'
 // import de from 'element-ui/src/locale/lang/de'
 
 export const FieldProcess = connect(
@@ -178,7 +175,7 @@ export const FieldProcess = connect(
             } else fields.push(newField)
           }
         })
-        log('FieldProcess.mergeOutputSchema', fields)
+        console.log('FieldProcess.mergeOutputSchema', fields)
         return (
           <div class="field-processor-tree-warp bg-body pt-2 pb-5">
             <div class="field-processor-operation flex">
