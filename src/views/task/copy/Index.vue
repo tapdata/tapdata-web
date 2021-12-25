@@ -26,7 +26,8 @@
 <script>
 import Info from './Info'
 import Schedule from './Schedule'
-import Log from './Log'
+import Log from '@/views/monitor/Log'
+// src/views/monitor/Log.vue
 import Connection from './Connection'
 import History from './History'
 import FieldMapping from '@/components/field-mapping/main'

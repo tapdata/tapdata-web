@@ -114,10 +114,10 @@ export default {
     }
   }
   &:hover {
-    background-color: #fafafa;
+    background-color: #eff1f4;
     ::v-deep {
       .el-input__inner {
-        background-color: #fafafa;
+        background-color: #eff1f4;
         cursor: pointer;
       }
     }

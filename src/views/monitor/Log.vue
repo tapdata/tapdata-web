@@ -19,7 +19,7 @@
       <div v-show="!noMore && loading" class="pb-4 text-center fs-5">
         <i class="el-icon-loading"></i>
       </div>
-      <div v-show="noMore" class="font-color-sub text-center pb-4">没有更多了</div>
+      <div v-show="logs && logs.length && noMore" class="font-color-sub text-center pb-4">没有更多了</div>
       <ul v-if="logs">
         <li class="log-item px-6" v-for="log in logs" :key="log.id">
           [<span class="fw-bold" :class="log.color" v-html="log.level"></span>]&nbsp; <span>{{ log.time }}</span
@@ -114,6 +114,9 @@ export default {
       )
     },
     loadOld(event) {
+      if (this.loading) {
+        return
+      }
       let el = event.target
       this.isScrollBottom = el.scrollTop + el.clientHeight >= el.scrollHeight
       if (el.scrollTop <= 0 && !this.noMore && !this.loading) {
@@ -122,7 +125,7 @@ export default {
     },
     loadNew(data) {
       let list = data || []
-      list = data.reverse().map(this.formatLog)
+      list = list.reverse().map(this.formatLog)
       let logs = this.logs || []
       logs.push(...list)
       this.logs = logs
@@ -179,7 +182,7 @@ export default {
             this.scrollToBottom()
             return
           }
-          if (!list.length && data.total) {
+          if (!list.length) {
             this.noMore = true
             return
           }
