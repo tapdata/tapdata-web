@@ -124,7 +124,8 @@ export const defaultModel = {
     initialReadSize: 100000, //dummy
     hiveConnType: 'Stream', // kafka
     schema: '',
-    tidbPdServer: '' // TiDB
+    tidbPdServer: '', // TiDB
+    isCheckValid: false
   },
   kafka: {
     id: '',

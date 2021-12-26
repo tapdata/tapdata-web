@@ -108,10 +108,38 @@ export default function (vm) {
       },
       {
         type: 'switch',
+        field: 'isCheckValid',
+        label: vm.$t('connection_redis_valid')
+      },
+      {
+        type: 'input',
         field: 'database_username',
         label: vm.$t('connection_redis_valid'),
-        activeValue: 'true',
-        inactiveValue: ''
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'isCheckValid',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              value: 'true'
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'isCheckValid',
+                value: false
+              }
+            ],
+            triggerConfig: {
+              value: ''
+            }
+          }
+        ]
       },
       {
         type: 'input',
@@ -123,8 +151,8 @@ export default function (vm) {
           {
             triggerOptions: [
               {
-                field: 'database_username',
-                value: 'true'
+                field: 'isCheckValid',
+                value: true
               }
             ],
             triggerConfig: {
