@@ -1,6 +1,7 @@
-@import "~web-core/styles/utilities";
+@import '~web-core/styles/utilities';
 //@import 'utilities';
 @import 'overrides';
+@import '~@/assets/fonts/DIN/index.css';
 
 .g-panel-container {
   background: #fff;
@@ -29,8 +30,8 @@
 }
 
 .zsiq_floatmain {
-  display: none!important;
+  display: none !important;
 }
 .Workbench ~ .zsiq_floatmain {
-  display: block!important;
+  display: block !important;
 }

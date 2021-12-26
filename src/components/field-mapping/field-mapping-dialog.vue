@@ -134,11 +134,13 @@
                 v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && !readOnly"
                 @click="edit(scope.row, 'precision')"
               >
-                <span>{{ scope.row.t_precision }}</span>
+                <span v-if="scope.row.t_precision < 0"></span>
+                <span v-else>{{ scope.row.t_precision }}</span>
                 <i class="icon el-icon-edit-outline"></i>
               </div>
               <div v-else>
-                <span>{{ scope.row.t_precision }}</span>
+                <span v-if="scope.row.t_precision < 0"></span>
+                <span v-else>{{ scope.row.t_precision }}</span>
               </div>
             </template>
           </ElTableColumn>
