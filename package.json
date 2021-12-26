@@ -28,7 +28,7 @@
     "crypto-js": "^4.0.0",
     "dagre": "^0.8.5",
     "echarts": "^5.0.2",
-    "element-ui": "^2.15.6",
+    "element-ui": "2.15.7",
     "escodegen": "^1.11.1",
     "esprima": "^4.0.1",
     "esquery": "^1.0.1",
