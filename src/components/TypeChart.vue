@@ -1,13 +1,29 @@
 <template>
-  <VEchart :option="chartOption" class="type-chart-container"></VEchart>
+  <VChart class="chart" :option="chartOption" :autoresize="autoresize" />
 </template>
 
 <script>
-import VEchart from './VEchart'
+import { use } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
+import { PieChart, BarChart, LineChart } from 'echarts/charts'
+import { TitleComponent, TooltipComponent, ToolboxComponent, LegendComponent, GridComponent } from 'echarts/components'
+import VChart from 'vue-echarts'
+
+use([
+  CanvasRenderer,
+  PieChart,
+  BarChart,
+  LineChart,
+  TitleComponent,
+  TooltipComponent,
+  ToolboxComponent,
+  LegendComponent,
+  GridComponent
+])
 
 export default {
   name: 'TypeChart',
-  components: { VEchart },
+  components: { VChart },
   props: {
     type: {
       type: String,
@@ -21,6 +37,10 @@ export default {
     },
     extend: {
       type: Object
+    },
+    autoresize: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -57,11 +77,11 @@ export default {
       if (options) {
         for (let key in options) {
           if (key === 'series') {
-            obj[key].forEach((el, i) => {
-              Object.assign(el || {}, options[key][i] || {})
+            options[key].forEach((el, i) => {
+              obj[key][i] = Object.assign({}, obj[key][i] || {}, el || {})
             })
           } else {
-            Object.assign(obj[key] || {}, options[key] || {})
+            obj[key] = Object.assign({}, obj[key] || {}, options[key] || {})
           }
         }
       }
@@ -114,7 +134,7 @@ export default {
           }
         },
         yAxis: {
-          show: false
+          // show: false
         },
         series: [
           {
