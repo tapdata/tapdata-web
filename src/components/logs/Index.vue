@@ -80,6 +80,8 @@ export default {
       padding: 24px;
       height: 300px;
       max-height: 300px;
+      font-size: 14px;
+      color: #333;
     }
   }
 }
