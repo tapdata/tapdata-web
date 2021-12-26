@@ -21,15 +21,15 @@
       </div>
       <div class="operation">
         <VButton type="primary" :disabled="startDisabled" @click="start">
-          <VIcon>start-fill</VIcon>
+          <VIcon size="12">start-fill</VIcon>
           <span class="ml-1">{{ $t('task_info_start') }}</span>
         </VButton>
         <VButton type="danger" :disabled="stopDisabled" @click="stop">
-          <VIcon>pause-fill</VIcon>
+          <VIcon size="12">pause-fill</VIcon>
           <span class="ml-1">{{ $t('task_info_stopt') }}</span>
         </VButton>
         <VButton :disabled="editDisabled" @click="edit">
-          <VIcon>edit-fill</VIcon>
+          <VIcon size="12">edit-fill</VIcon>
           <span class="ml-1">{{ $t('button_edit') }}</span>
         </VButton>
       </div>
