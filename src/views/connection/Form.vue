@@ -263,8 +263,8 @@ export default {
         {
           type: 'input',
           field: 'name',
-          label: self.$t('connection_form_hazecast_connection_name'),
-          placeholder: self.$t('connection_form_hazecast_connection_name_placeholder'),
+          label: self.$t('connection_form_connection_name'),
+          placeholder: self.$t('connection_form_connection_name_placeholder'),
           required: true,
           maxlength: 100,
           width: '504px',
@@ -305,13 +305,9 @@ export default {
                   }
                   this.$axios
                     .get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
-                    .then(data => {
-                      if (data && data.length !== 0) {
-                        if (this.databaseType === 'hazelcast_cloud_cluster') {
-                          callback(new Error(this.$t('connection_form_hazecast_name_exists')))
-                        } else {
-                          callback(new Error('名称已存在'))
-                        }
+                    .then(({ items }) => {
+                      if (items && items.length !== 0) {
+                        callback(new Error('名称已存在'))
                       } else callback()
                     })
                 } else {

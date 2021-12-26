@@ -875,30 +875,22 @@ export default {
           target_connectionId.remote = true
           target_connectionId.remoteMethod = this.queryConnection('target')
 
-          this.getConnection(this.getWhere('source'), 'source_connectionId').then(() => {
+          this.getConnection(this.getWhere('source'), 'source_connectionId').then(async () => {
             const connectionId = this.dataSourceModel.source_connectionId
             const options = source_connectionId.options
+
             if (connectionId && !options.find(item => item.value === connectionId)) {
-              options.push({
-                id: connectionId,
-                name: this.dataSourceModel.source_connectionName,
-                label: this.dataSourceModel.source_connectionName,
-                value: connectionId,
-                type: this.dataSourceModel.source_databaseType
-              })
+              const connection = await this.findOneConnection(connectionId)
+              options.push(this.getConnectionItem(connection))
             }
           })
-          this.getConnection(this.getWhere('target'), 'target_connectionId').then(() => {
+          this.getConnection(this.getWhere('target'), 'target_connectionId').then(async () => {
             const connectionId = this.dataSourceModel.target_connectionId
             const options = target_connectionId.options
+
             if (connectionId && !options.find(item => item.value === connectionId)) {
-              options.push({
-                id: connectionId,
-                name: this.dataSourceModel.target_connectionName,
-                label: this.dataSourceModel.target_connectionName,
-                value: connectionId,
-                type: this.dataSourceModel.target_databaseType
-              })
+              const connection = await this.findOneConnection(connectionId)
+              options.push(this.getConnectionItem(connection))
             }
           })
           break
@@ -1022,6 +1014,18 @@ export default {
           this.changeConfig(items || [], type, reset)
         })
     },
+
+    getConnectionItem(item) {
+      return {
+        id: item.database_host + item.database_port + item.database_name + item.database_uri,
+        name: item.name,
+        label: item.name,
+        value: item.id,
+        type: item.database_type,
+        mqType: item.mqType || ''
+      }
+    },
+
     //change config
     changeConfig(data, type, reset = false) {
       let items = this.config.items
@@ -1037,16 +1041,7 @@ export default {
             // 在全部类型下dfs源端不支持的数据源
             let filterArr = ['redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'clickhouse', 'dameng', 'tidb']
             data = data.filter(item => filterArr.indexOf(item.database_type) === -1)
-            source_connectionId.options = data.map(item => {
-              return {
-                id: item.database_host + item.database_port + item.database_name + item.database_uri,
-                name: item.name,
-                label: item.name,
-                value: item.id,
-                type: item.database_type,
-                mqType: item.mqType || ''
-              }
-            })
+            source_connectionId.options = data.map(this.getConnectionItem)
           }
           break
         }
@@ -1162,27 +1157,8 @@ export default {
       let item = optionsData.options.find(op => op.value === target)
 
       if (!item) {
-        let filter = {
-          where: {
-            id: target
-          },
-          fields: {
-            name: 1,
-            id: 1,
-            database_type: 1,
-            connection_type: 1,
-            status: 1,
-            database_host: 1,
-            database_port: 1,
-            database_name: 1,
-            database_uri: 1,
-            database_username: 1,
-            mqType: 1
-          },
-          order: ['status DESC', 'name ASC']
-        }
-        let result = await this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
-        item = result?.items?.[0]
+        const connection = await this.findOneConnection(target)
+        item = this.getConnectionItem(connection)
       }
 
       return item
@@ -1444,6 +1420,30 @@ export default {
         where.name = { like: query, options: 'i' }
         this.getConnection(where, `${type}_connectionId`)
       }
+    },
+
+    async findOneConnection(id) {
+      let filter = {
+        where: {
+          id
+        },
+        fields: {
+          name: 1,
+          id: 1,
+          database_type: 1,
+          connection_type: 1,
+          status: 1,
+          database_host: 1,
+          database_port: 1,
+          database_name: 1,
+          database_uri: 1,
+          database_username: 1,
+          mqType: 1
+        },
+        order: ['status DESC', 'name ASC']
+      }
+      let result = await this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
+      return result?.items?.[0]
     }
   }
 }
