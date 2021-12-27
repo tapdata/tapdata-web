@@ -215,6 +215,11 @@ export default {
         max-height: 350px;
       }
     }
+    .el-tabs__nav-wrap {
+      &::after {
+        height: 1px;
+      }
+    }
   }
 }
 </style>

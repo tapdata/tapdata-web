@@ -240,6 +240,13 @@ export default {
         white-space: nowrap;
       }
     }
+    ::v-deep {
+      .el-tabs__nav-wrap {
+        &::after {
+          height: 1px;
+        }
+      }
+    }
   }
 }
 </style>

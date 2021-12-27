@@ -541,7 +541,7 @@ export default {
           let stages = flowData.stages || []
           if (
             stages.some(item =>
-              ['kafka', 'redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'mq'].includes(
+              ['kafka', 'redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'mq', 'dummy'].includes(
                 item.databaseType || item.database_type
               )
             )
@@ -1056,7 +1056,7 @@ export default {
             this.form.inspectMethod === 'field' &&
             tasks.some((c, i) => {
               index = i + 1
-              return c.showAdvancedVerification && !c.script
+              return c.showAdvancedVerification && !c.webScript
             })
           ) {
             this.editId = tasks[index - 1]?.id

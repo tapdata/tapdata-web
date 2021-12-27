@@ -105,17 +105,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.table-list {
-  transition: 0.3s;
-  &:not(.is-fold) {
-    margin-top: 20px;
+.milestone-container {
+  .table-list {
+    transition: 0.3s;
+    &:not(.is-fold) {
+      margin-top: 20px;
+    }
   }
-}
-.v-icon {
-  color: map-get($fontColor, sub);
-  transition: 0.6s;
-}
-.is-fold {
-  height: 0 !important;
+  .v-icon {
+    color: map-get($fontColor, sub);
+    transition: 0.6s;
+  }
+  .is-fold {
+    height: 0 !important;
+  }
 }
 </style>
