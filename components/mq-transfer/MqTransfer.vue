@@ -1,0 +1,243 @@
+<template>
+  <div class="el-transfer inline-flex">
+    <VirtualTransferPanel
+      v-slot="{ option }"
+      v-bind="$props"
+      ref="leftPanel"
+      class="flex-1"
+      :data="sourceData"
+      :title="titles[0] || t('el.transfer.titles.0')"
+      :default-checked="leftDefaultChecked"
+      :placeholder="filterPlaceholder || t('el.transfer.filterPlaceholder')"
+      @checked-change="onSourceCheckedChange"
+    >
+      <slot name="left" :option="option"></slot>
+      <slot name="left-footer"></slot>
+    </VirtualTransferPanel>
+    <div class="inline-flex flex-column">
+      <div class="el-transfer__buttons flex-row flex-1">
+        <el-button
+          type="primary"
+          class="mb-0 mr-4"
+          :class="['el-transfer__button', hasButtonTexts ? 'is-with-texts' : '']"
+          @click.native="addToLeft()"
+          :disabled="topChecked.length === 0"
+        >
+          <i class="el-icon-arrow-left"></i>
+          <span v-if="buttonTexts[0] !== undefined">{{ buttonTexts[0] }}</span>
+        </el-button>
+        <el-button
+          type="primary"
+          class="mb-0"
+          :class="['el-transfer__button', hasButtonTexts ? 'is-with-texts' : '']"
+          @click.native="addToRight()"
+          :disabled="leftChecked.length === 0"
+        >
+          <span v-if="buttonTexts[1] !== undefined">{{ buttonTexts[1] }}</span>
+          <i class="el-icon-arrow-right"></i>
+        </el-button>
+      </div>
+      <div class="el-transfer__buttons flex-row flex-1">
+        <el-button
+          type="primary"
+          class="mb-0 mr-4"
+          :class="['el-transfer__button', hasButtonTexts ? 'is-with-texts' : '']"
+          @click.native="addToLeft('bottom')"
+          :disabled="bottomChecked.length === 0"
+        >
+          <i class="el-icon-arrow-left"></i>
+          <span v-if="buttonTexts[0] !== undefined">{{ buttonTexts[0] }}</span>
+        </el-button>
+        <el-button
+          type="primary"
+          class="mb-0"
+          :class="['el-transfer__button', hasButtonTexts ? 'is-with-texts' : '']"
+          @click.native="addToRight('bottom')"
+          :disabled="leftChecked.length === 0"
+        >
+          <span v-if="buttonTexts[1] !== undefined">{{ buttonTexts[1] }}</span>
+          <i class="el-icon-arrow-right"></i>
+        </el-button>
+      </div>
+    </div>
+    <div class="inline-flex flex-column flex-1">
+      <VirtualTransferPanel
+        v-slot="{ option }"
+        v-bind="$props"
+        ref="rightPanel"
+        class="w-100 mb-4"
+        :data="rightTopData"
+        :title="titles[1] || t('el.transfer.titles.1')"
+        :default-checked="rightTopDefaultChecked"
+        :placeholder="filterPlaceholder || t('el.transfer.filterPlaceholder')"
+        @checked-change="onTargetCheckedChange('top', ...arguments)"
+      >
+        <slot name="right" :option="option"></slot>
+        <slot name="right-footer"></slot>
+      </VirtualTransferPanel>
+      <VirtualTransferPanel
+        v-slot="{ option }"
+        v-bind="$props"
+        ref="rightPanel"
+        class="w-100"
+        :data="rightBottomData"
+        :title="titles[2] || t('el.transfer.titles.1')"
+        :default-checked="rightBottomDefaultChecked"
+        :placeholder="filterPlaceholder || t('el.transfer.filterPlaceholder')"
+        @checked-change="onTargetCheckedChange('bottom', ...arguments)"
+      >
+        <slot name="right" :option="option"></slot>
+        <slot name="right-footer"></slot>
+      </VirtualTransferPanel>
+    </div>
+  </div>
+</template>
+
+<script>
+import { Transfer } from 'element-ui'
+import VirtualTransferPanel from 'web-core/components/virtual-transfer/VirtualTransferPanel'
+
+export default {
+  name: 'MqTransfer',
+  components: { VirtualTransferPanel },
+  extends: Transfer,
+
+  props: {
+    topValue: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    bottomValue: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    rightTopDefaultChecked: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    rightBottomDefaultChecked: {
+      type: Array,
+      default() {
+        return []
+      }
+    }
+  },
+
+  data() {
+    return {
+      topChecked: [],
+      bottomChecked: []
+    }
+  },
+
+  computed: {
+    sourceData() {
+      const allValue = [...this.topValue, ...this.bottomValue]
+      const valueObj = {}
+      allValue.forEach(item => {
+        valueObj[item] = true
+      })
+      return this.data.filter(item => !valueObj[item[this.props.key]])
+    },
+
+    rightTopData() {
+      let data
+      if (this.targetOrder === 'original') {
+        const valueObj = {}
+        this.topValue.forEach(item => {
+          valueObj[item] = true
+        })
+        data = this.data.filter(item => valueObj[item[this.props.key]])
+      } else {
+        data = this.topValue.reduce((arr, cur) => {
+          const val = this.dataObj[cur]
+          if (val) {
+            arr.push(val)
+          }
+          return arr
+        }, [])
+      }
+      return data
+    },
+
+    rightBottomData() {
+      let data
+      if (this.targetOrder === 'original') {
+        const valueObj = {}
+        this.bottomValue.forEach(item => {
+          valueObj[item] = true
+        })
+        data = this.data.filter(item => valueObj[item[this.props.key]])
+      } else {
+        data = this.bottomValue.reduce((arr, cur) => {
+          const val = this.dataObj[cur]
+          if (val) {
+            arr.push(val)
+          }
+          return arr
+        }, [])
+      }
+      return data
+    }
+  },
+
+  methods: {
+    onTargetCheckedChange(from, val, movedKeys) {
+      this[`${from}Checked`] = val
+      if (movedKeys === undefined) return
+      this.$emit('right-top-check-change', val, movedKeys)
+    },
+
+    addToLeft(from = 'top') {
+      const valueKey = `${from}Value`
+      let currentValue = this[valueKey].slice()
+      const currentChecked = this[`${from}Checked`]
+      currentChecked.forEach(item => {
+        const index = currentValue.indexOf(item)
+        if (index > -1) {
+          currentValue.splice(index, 1)
+        }
+      })
+      this.$emit(`update:${valueKey}`, currentValue)
+      this.$emit('change', currentValue, 'left', currentChecked)
+    },
+
+    addToRight(to = 'top') {
+      const valueKey = `${to}Value`
+      const allValue = [...this.topValue, ...this.bottomValue]
+      let currentValue = this[valueKey].slice()
+      const itemsToBeMoved = []
+      const key = this.props.key
+
+      let leftCheckedKeyPropsObj = {}
+      this.leftChecked.forEach(item => {
+        leftCheckedKeyPropsObj[item] = true
+      })
+
+      let valueKeyPropsObj = {}
+      allValue.forEach(item => {
+        valueKeyPropsObj[item] = true
+      })
+
+      this.data.forEach(item => {
+        const itemKey = item[key]
+        if (leftCheckedKeyPropsObj[itemKey] && !valueKeyPropsObj[itemKey]) {
+          itemsToBeMoved.push(itemKey)
+        }
+      })
+
+      currentValue =
+        this.targetOrder === 'unshift' ? itemsToBeMoved.concat(currentValue) : currentValue.concat(itemsToBeMoved)
+
+      this.$emit(`update:${valueKey}`, currentValue)
+      this.$emit('change', currentValue, `right-${to}`, this.leftChecked)
+    }
+  }
+}
+</script>

@@ -679,6 +679,7 @@ const tc = {
     run_custom_sql: '重複運行自定義SQL',
     stop_on_error: '遇到錯誤停止',
     need_to_create_Index: '自動創建索引',
+    transformModelVersion: '系統推演版本',
     noPrimaryKey: '支持無主鍵同步',
     is_schedule: '定期調度任務',
     cron_expression: '調度cron表達式',
