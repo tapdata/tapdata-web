@@ -528,23 +528,19 @@ export default {
       }, 200)
     },
     async changeStatus({ status, errorEvents }) {
-      let where = {
-        _id: {
-          in: [this.$route.params.id]
-        }
-      }
       let attributes = {
-        status
+        status,
+        id: this.$route.params.id
       }
       errorEvents && (attributes.errorEvents = errorEvents)
       return await this.$axios
-        .post('tm/api/DataFlows/update?where=' + encodeURIComponent(JSON.stringify(where)), attributes)
+        .patch('tm/api/DataFlows?where=', attributes)
         .then(data => {
           this.responseHandler(data, this.$t('task_operation_successful'))
         })
         .catch(error => {
           if (error?.isException) {
-            this.$message.error(this.$t('task_start_failed'))
+            this.$message.error(error.data?.message)
           }
         })
     },
