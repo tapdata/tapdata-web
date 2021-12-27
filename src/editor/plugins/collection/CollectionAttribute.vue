@@ -300,7 +300,7 @@
           class="fr"
           type="success"
           size="mini"
-          v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+          v-if="!dataNodeInfo.isTarget || !showFieldMapping || !transformModelVersion"
           @click="hanlderLoadSchema"
         >
           <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
@@ -644,7 +644,8 @@ export default {
       repeatTableDiao: false,
       repeatTable: [],
       scope: '',
-      showFieldMapping: false
+      showFieldMapping: false,
+      transformModelVersion: false
     }
   },
 
@@ -1125,6 +1126,11 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      if (this.dataFlow?.setting?.transformModelVersion === 'v2') {
+        this.transformModelVersion = true
+      } else {
+        this.transformModelVersion = false
+      }
       return this.dataFlow
     },
     //接收是否第一次打开
