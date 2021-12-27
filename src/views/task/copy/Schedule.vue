@@ -187,7 +187,8 @@ export default {
       return steps[index - 1] || {}
     },
     isSupport() {
-      return this.supportList.includes(this.task?.dataSourceModel?.source_databaseType)
+      const type = this.task?.stages.find(t => t.outputLanes.length)?.database_type
+      return this.supportList.includes(type)
     }
   },
   watch: {
