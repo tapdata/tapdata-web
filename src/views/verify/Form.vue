@@ -109,7 +109,7 @@
         }}</ElLink>
       </div>
       <ul class="joint-table-main" id="data-verification-form">
-        <li class="joint-table-item" v-for="(item, index) in form.tasks" :key="item.id" @click="editItem(item.id)">
+        <li class="joint-table-item" v-for="(item, index) in form.tasks" :key="item.id" @click="editItem(item)">
           <div class="joint-table-setting overflow-hidden">
             <div class="setting-item">
               <label class="item-label">{{ $t('verify_form_label_table') }}: </label>
@@ -188,7 +188,7 @@
           </div>
           <div class="ml-6">
             <ElLink type="primary" @click.stop="removeItem(index)">{{ $t('button_delete') }}</ElLink>
-            <ElLink type="primary" class="block mt-2" @click="editItem(item.id)">{{ $t('button_edit') }}</ElLink>
+            <ElLink type="primary" class="block mt-2" @click="editItem(item)">{{ $t('button_edit') }}</ElLink>
           </div>
         </li>
       </ul>
@@ -199,7 +199,7 @@
     </div>
     <div class="mt-8">
       <VButton @click="goBack()">{{ $t('button_back') }}</VButton>
-      <VButton type="primary" @click="nextStep()">{{ $t('button_dialog_confirm') }}</VButton>
+      <VButton type="primary" @click="nextStep()">{{ $t('button_save') }}</VButton>
     </div>
     <ElDialog
       width="60%"
@@ -476,11 +476,7 @@ export default {
             )
         )
         .then(data => {
-          if (data?.items) {
-            this.flowOptions = data.items || []
-          } else {
-            this.flowOptions = data || []
-          }
+          this.flowOptions = data.items || []
           let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
           this.form.name = this.form.name || flow.name || ''
           this.form['dataFlowName'] = flow.name
@@ -496,11 +492,13 @@ export default {
     getData(id) {
       this.$axios
         .get('tm/api/Inspects/findOne', {
-          filter: JSON.stringify({
-            where: {
-              id: id
-            }
-          })
+          params: {
+            filter: JSON.stringify({
+              where: {
+                id: id
+              }
+            })
+          }
         })
         .then(data => {
           if (data) {
@@ -511,6 +509,7 @@ export default {
               t.target = Object.assign({}, TABLE_PARAMS, t.target)
               t.sourceTree = []
               t.targetTree = []
+              t.id = t.taskId
               return t
             })
             this.form = Object.assign({}, this.form, data)
@@ -575,14 +574,23 @@ export default {
       let tableNames = []
       flowStages.forEach(stg => {
         connectionIds.push(stg.connectionId)
+        // 获取节点表名称，缩小接口请求数据的范围
         if (!isDB) {
           tableNames.push(stg.tableName)
         } else if (stg.syncObjects?.length) {
+          // 当stage存在syncObjects字段说明是目标节点
           let obj = stg.syncObjects[0]
           let tables = obj.objectNames || []
           tables.forEach(t => {
+            // 迁移时，可以同时从目标节点获取源和目标的表名，匹配目标表名时注意大小写和前后缀配置
             tableNames.push(t)
-            tableNames.push(stg.table_prefix + t + stg.table_suffix)
+            // 拼上前后缀
+            let name = stg.table_prefix + t + stg.table_suffix
+            // 大小写转换
+            if (stg.tableNameTransform) {
+              name = name[stg.tableNameTransform]()
+            }
+            tableNames.push(name)
           })
         }
       })
@@ -682,6 +690,9 @@ export default {
         let sourceTablesNames = obj.objectNames || []
         sourceTablesNames.forEach(name => {
           let targetTableName = target.table_prefix + name + target.table_suffix
+          if (target.tableNameTransform) {
+            targetTableName = targetTableName[target.tableNameTransform]()
+          }
           let sourceTable = tables.find(tb => tb.original_name === name && tb.source.id === source.connectionId)
           let targetTable = tables.find(
             tb => tb.original_name === targetTableName && tb.source.id === target.connectionId
@@ -902,14 +913,13 @@ export default {
     removeItem(idx) {
       this.form.tasks.splice(idx, 1)
     },
-    editItem(id) {
-      this.editId = id
+    editItem(item) {
+      this.editId = item.id
     },
     clear() {
       this.form.tasks = []
     },
     timingChangeHandler(times) {
-      console.log('this.form', this.form) // eslint-disable-line
       this.form.timing.start = times[0]
       this.form.timing.end = times[1]
     },
