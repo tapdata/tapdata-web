@@ -150,16 +150,18 @@ export default {
         limit: size,
         skip: size * (current - 1)
       }
-      return this.$axios.get(`tm/api/Connections?filter=${encodeURIComponent(JSON.stringify(filter))}`).then(items => {
-        let data = items.map(item => {
-          item.connectType = this.connectTypeMap[item.connection_type]
-          return deepCopy(item)
+      return this.$axios
+        .get(`tm/api/Connections?filter=${encodeURIComponent(JSON.stringify(filter))}`)
+        .then(({ items }) => {
+          let data = items.map(item => {
+            item.connectType = this.connectTypeMap[item.connection_type]
+            return deepCopy(item)
+          })
+          return {
+            total: data.length,
+            data: data
+          }
         })
-        return {
-          total: data.length,
-          data: data
-        }
-      })
     },
     getTableData() {
       return this.$refs.tableList?.getData()
