@@ -30,7 +30,7 @@
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('task_type')" prop="syncTypeText" width="130"></ElTableColumn>
-        <ElTableColumn :label="$t('task_status')">
+        <ElTableColumn :label="$t('task_status')" width="120">
           <template slot-scope="scope">
             <status-tag
               type="text"

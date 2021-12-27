@@ -41,6 +41,13 @@ export default {
     autoresize: {
       type: Boolean,
       default: true
+    },
+    noX: {
+      type: [String, Array]
+    },
+    noY: {
+      type: Array,
+      default: () => [0, 1]
     }
   },
   data() {
@@ -246,11 +253,6 @@ export default {
           // }
         ]
       }
-
-      // let data = {
-      //   x: [],
-      //   y: [] || [[], []]
-      // }
       const { data } = this
       obj.xAxis.data = data.x || []
       let series = []
@@ -262,6 +264,7 @@ export default {
         series.push(Object.assign(this.getLineSeriesItem(), { data: data.y }))
       }
       obj.series = series
+      this.setEmptyData(obj)
       return obj
     },
     pie() {
@@ -316,6 +319,47 @@ export default {
         }
       }
       return item
+    },
+    setEmptyData(data) {
+      const { noX, noY } = this
+      if (!noX || data.xAxis.data?.length) {
+        data.yAxis.min = null
+        data.yAxis.max = null
+        return
+      }
+      let result
+      let stamp = new Date().getTime()
+      if (typeof noX === 'string') {
+        switch (noX) {
+          case 'second':
+          case 'min':
+          case 'hour':
+          case 'day':
+          case 'time':
+            result = new Array(10).fill().map((t, i) => {
+              let time = stamp + i * 10000
+              return this.formatTime(noX, time)
+            })
+            break
+          default:
+            result = new Array(10).fill().map((t, i) => i++)
+            break
+        }
+      } else {
+        result = noX
+      }
+      data.xAxis.data = result
+      data.yAxis.min = noY[0] || 0
+      data.yAxis.max = noY[1] || 1
+    },
+    formatTime(type, time) {
+      let map = {
+        second: 'HH:mm:ss',
+        min: 'HH:mm',
+        hour: 'HH:00',
+        day: 'MM-DD'
+      }
+      return this.$moment(time).format(map[type] || 'YYYY-MM-DD HH:mm:ss')
     }
   }
 }
