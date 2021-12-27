@@ -109,7 +109,7 @@
         }}</ElLink>
       </div>
       <ul class="joint-table-main" id="data-verification-form">
-        <li class="joint-table-item" v-for="(item, index) in form.tasks" :key="item.id" @click="editItem(item.id)">
+        <li class="joint-table-item" v-for="(item, index) in form.tasks" :key="item.id" @click="editItem(item)">
           <div class="joint-table-setting overflow-hidden">
             <div class="setting-item">
               <label class="item-label">{{ $t('verify_form_label_table') }}: </label>
@@ -188,7 +188,7 @@
           </div>
           <div class="ml-6">
             <ElLink type="primary" @click.stop="removeItem(index)">{{ $t('button_delete') }}</ElLink>
-            <ElLink type="primary" class="block mt-2" @click="editItem(item.id)">{{ $t('button_edit') }}</ElLink>
+            <ElLink type="primary" class="block mt-2" @click="editItem(item)">{{ $t('button_edit') }}</ElLink>
           </div>
         </li>
       </ul>
@@ -476,11 +476,7 @@ export default {
             )
         )
         .then(data => {
-          if (data?.items) {
-            this.flowOptions = data.items || []
-          } else {
-            this.flowOptions = data || []
-          }
+          this.flowOptions = data.items || []
           let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
           this.form.name = this.form.name || flow.name || ''
           this.form['dataFlowName'] = flow.name
@@ -496,11 +492,13 @@ export default {
     getData(id) {
       this.$axios
         .get('tm/api/Inspects/findOne', {
-          filter: JSON.stringify({
-            where: {
-              id: id
-            }
-          })
+          params: {
+            filter: JSON.stringify({
+              where: {
+                id: id
+              }
+            })
+          }
         })
         .then(data => {
           if (data) {
@@ -902,8 +900,8 @@ export default {
     removeItem(idx) {
       this.form.tasks.splice(idx, 1)
     },
-    editItem(id) {
-      this.editId = id
+    editItem(item) {
+      this.editId = item.id || item.taskId
     },
     clear() {
       this.form.tasks = []
