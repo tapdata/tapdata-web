@@ -1132,7 +1132,7 @@ export default {
     display: flex;
     flex: 1;
     margin-top: 20px;
-    height: 0;
+    height: 100%;
     .task-form-left__ul {
       flex: 1;
       border-top: 1px solid #f2f2f2;
