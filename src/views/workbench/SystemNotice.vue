@@ -337,7 +337,7 @@ export default {
 
       this.$axios.post('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
         if (res) {
-          this.getUnreadNum() //未读消息数量
+          // this.getUnreadNum() //未读消息数量
           this.fetch()
           // this.read = read
           this.$root.$emit('notificationUpdate')
@@ -354,7 +354,7 @@ export default {
           this.$root.$emit('notificationUpdate')
         }
       })
-    },
+    }
     // handleReadNotice(type) {
     //   let where = {}
     //   if (type === 'one') {
@@ -377,16 +377,16 @@ export default {
     //     })
     // }
     // 未读消息
-    getUnreadNum() {
-      let where = {
-        read: false
-      }
-      this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
-        if (res) {
-          this.unReadCount = res
-        }
-      })
-    }
+    // getUnreadNum() {
+    //   let where = {
+    //     read: false
+    //   }
+    //   this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
+    //     if (res) {
+    //       this.unReadCount = res
+    //     }
+    //   })
+    // }
   }
 }
 </script>
