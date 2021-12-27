@@ -216,13 +216,13 @@ export default function () {
         label: i18n.t('task_setting_two_way_switch'),
         show: false
       },
-      // {
-      //   type: 'switch',
-      //   field: 'isOpenAutoDDL',
-      //   label: i18n.t('task_setting_automatic_ddl'),
-      //   show: true,
-      //   tip: i18n.t('task_setting_automatic_ddl_tip')
-      // },
+      {
+        type: 'switch',
+        field: 'isOpenAutoDDL',
+        label: i18n.t('task_setting_automatic_ddl'),
+        show: true,
+        tip: i18n.t('task_setting_automatic_ddl_tip')
+      },
       {
         type: 'switch',
         field: 'needToCreateIndex',
