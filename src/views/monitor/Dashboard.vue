@@ -6,9 +6,11 @@
       </div>
       <div class="base-info flex-fit overflow-hidden">
         <div class="flex align-items-center">
-          <ElLink class="fs-7 mr-4 inline-block ellipsis" style="max-width: 50%" type="primary"
-            >{{ $t('task_name') }}: {{ task.name }}</ElLink
-          >
+          <ElTooltip :content="task.name" placement="top">
+            <ElLink class="fs-7 mr-4 inline-block ellipsis" style="max-width: 50%" type="primary"
+              >{{ $t('task_name') }}: {{ task.name }}</ElLink
+            >
+          </ElTooltip>
           <img v-if="task.isFinished" style="height: 25px" src="../../../public/images/task/yiwancheng.png" alt="" />
           <StatusTag v-else type="text" target="task" :status="task.status" only-img></StatusTag>
         </div>
