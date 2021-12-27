@@ -1,5 +1,5 @@
 <template>
-  <div class="card-box p-6">
+  <div class="card-box py-6 px-4">
     <div class="flex justify-content-between">
       <div class="info-line">
         <span class="mr-4 fs-6 font-color-main">{{ task.name }}</span>
@@ -169,6 +169,16 @@ export default {
           top: 4,
           right: 0,
           show: true
+        },
+        yAxis: {
+          axisLabel: {
+            formatter: function (value) {
+              if (value >= 1000) {
+                value = value / 1000 + 'K'
+              }
+              return value
+            }
+          }
         },
         grid: {
           left: 0,
@@ -381,22 +391,22 @@ export default {
         },
         series: [
           {
-            name: this.$t('task_info_input'),
+            // name: this.$t('task_info_input'),
             type: 'line',
             smooth: true,
             data: inputCountList,
             itemStyle: {
-              color: '#2ba7c3'
+              color: '#76CDEE'
             },
             lineStyle: {
-              color: '#2ba7c3'
+              color: '#76CDEE'
             },
             areaStyle: {
-              color: '#2ba7c3'
+              color: '#76CDEE'
             }
           },
           {
-            name: this.$t('task_info_output'),
+            // name: this.$t('task_info_output'),
             type: 'line',
             smooth: true,
             data: outputCountList,

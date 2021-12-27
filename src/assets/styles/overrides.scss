@@ -169,6 +169,9 @@ th {
   color: map-get($color, primary);
   font-weight: normal;
   font-size: 12px;
+  .el-link--inner {
+    line-height: 20px;
+  }
 }
 .el-link.el-link--primary:hover {
   color: map-get($color, lprimary);

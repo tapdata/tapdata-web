@@ -1182,12 +1182,7 @@ export default {
       let target = this.dataSourceModel
       //设置为增量模式
       let timeZone = new Date().getTimezoneOffset() / 60
-      let systemTimeZone = ''
-      if (timeZone > 0) {
-        systemTimeZone = 0 - timeZone
-      } else {
-        systemTimeZone = '+' + -timeZone
-      }
+      let systemTimeZone = (timeZone > 0 ? '+' : '-') + (Math.abs(timeZone) + '').padStart(2, '0') + ':00'
       let syncPoints = [
         {
           connectionId: source.source_connectionId,

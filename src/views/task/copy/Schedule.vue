@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="schedule-pane">
     <!--  步骤条  -->
     <ElSteps v-if="steps.length" :active="active" align-center class="mini mb-6 pt-3">
       <ElStep v-for="(item, index) in steps" :key="index" :class="[{ 'is-ative': showActive === index + 1 }]">
@@ -29,10 +29,10 @@
       </div>
       <!--  结构迁移  -->
       <div v-else>
-        <div class="mb-4">
+        <div class="mb-2">
           <Milestone :list="milestonesData" :taskStatus="task && task.status"></Milestone>
         </div>
-        <ElDivider class="my-6"></ElDivider>
+        <ElDivider class="my-1"></ElDivider>
         <!--   概览   -->
         <div v-if="currentStep.group === 'initial_sync'">
           <div class="mb-4 fs-7 font-color-main fw-bolder">
@@ -512,6 +512,7 @@ export default {
   border-radius: 50%;
   background-color: map-get($color, disable);
 }
+
 .el-steps {
   ::v-deep {
     .el-step__head .el-step__icon {

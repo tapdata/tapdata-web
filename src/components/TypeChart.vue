@@ -180,12 +180,6 @@ export default {
       let obj = {
         xAxis: {
           boundaryGap: false,
-          // axisLine: {
-          //   lineStyle: {
-          //     color: '#409EFF',
-          //     width: 1 // 这里是为了突出显示加上的
-          //   }
-          // },
           data: []
         },
         yAxis: {
@@ -197,22 +191,6 @@ export default {
               width: 1
             }
           }
-          // max: this.yMax,
-          // axisLine: {
-          //   show: true,
-          //   lineStyle: {
-          //     color: '#409EFF',
-          //     width: 1
-          //   }
-          // },
-          // axisLabel: {
-          //   formatter: function (value) {
-          //     if (value >= 1000) {
-          //       value = value / 1000 + 'K'
-          //     }
-          //     return value
-          //   }
-          // }
         },
         grid: {
           left: '24px',
@@ -220,38 +198,7 @@ export default {
           top: '24px',
           bottom: '24px'
         },
-        series: [
-          // {
-          //   name: this.$t('task_info_input'),
-          //   type: 'line',
-          //   smooth: true,
-          //   data: inputCountList,
-          //   itemStyle: {
-          //     color: '#2ba7c3'
-          //   },
-          //   lineStyle: {
-          //     color: '#2ba7c3'
-          //   },
-          //   areaStyle: {
-          //     color: '#2ba7c3'
-          //   }
-          // },
-          // {
-          //   name: this.$t('task_info_output'),
-          //   type: 'line',
-          //   smooth: true,
-          //   data: outputCountList,
-          //   itemStyle: {
-          //     color: '#61a569'
-          //   },
-          //   lineStyle: {
-          //     color: '#8cd5c2'
-          //   },
-          //   areaStyle: {
-          //     color: '#8cd5c2'
-          //   }
-          // }
-        ]
+        series: []
       }
       const { data } = this
       obj.xAxis.data = data.x || []
