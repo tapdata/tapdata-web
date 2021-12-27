@@ -199,7 +199,7 @@
     </div>
     <div class="mt-8">
       <VButton @click="goBack()">{{ $t('button_back') }}</VButton>
-      <VButton type="primary" @click="nextStep()">{{ $t('button_dialog_confirm') }}</VButton>
+      <VButton type="primary" @click="nextStep()">{{ $t('button_save') }}</VButton>
     </div>
     <ElDialog
       width="60%"
@@ -509,6 +509,7 @@ export default {
               t.target = Object.assign({}, TABLE_PARAMS, t.target)
               t.sourceTree = []
               t.targetTree = []
+              t.id = t.taskId
               return t
             })
             this.form = Object.assign({}, this.form, data)
@@ -540,7 +541,7 @@ export default {
           let stages = flowData.stages || []
           if (
             stages.some(item =>
-              ['kafka', 'redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'mq'].includes(
+              ['kafka', 'redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'mq', 'dummy'].includes(
                 item.databaseType || item.database_type
               )
             )
@@ -573,14 +574,23 @@ export default {
       let tableNames = []
       flowStages.forEach(stg => {
         connectionIds.push(stg.connectionId)
+        // 获取节点表名称，缩小接口请求数据的范围
         if (!isDB) {
           tableNames.push(stg.tableName)
         } else if (stg.syncObjects?.length) {
+          // 当stage存在syncObjects字段说明是目标节点
           let obj = stg.syncObjects[0]
           let tables = obj.objectNames || []
           tables.forEach(t => {
+            // 迁移时，可以同时从目标节点获取源和目标的表名，匹配目标表名时注意大小写和前后缀配置
             tableNames.push(t)
-            tableNames.push(stg.table_prefix + t + stg.table_suffix)
+            // 拼上前后缀
+            let name = stg.table_prefix + t + stg.table_suffix
+            // 大小写转换
+            if (stg.tableNameTransform) {
+              name = name[stg.tableNameTransform]()
+            }
+            tableNames.push(name)
           })
         }
       })
@@ -680,6 +690,9 @@ export default {
         let sourceTablesNames = obj.objectNames || []
         sourceTablesNames.forEach(name => {
           let targetTableName = target.table_prefix + name + target.table_suffix
+          if (target.tableNameTransform) {
+            targetTableName = targetTableName[target.tableNameTransform]()
+          }
           let sourceTable = tables.find(tb => tb.original_name === name && tb.source.id === source.connectionId)
           let targetTable = tables.find(
             tb => tb.original_name === targetTableName && tb.source.id === target.connectionId
@@ -901,13 +914,12 @@ export default {
       this.form.tasks.splice(idx, 1)
     },
     editItem(item) {
-      this.editId = item.id || item.taskId
+      this.editId = item.id
     },
     clear() {
       this.form.tasks = []
     },
     timingChangeHandler(times) {
-      console.log('this.form', this.form) // eslint-disable-line
       this.form.timing.start = times[0]
       this.form.timing.end = times[1]
     },
@@ -1044,7 +1056,7 @@ export default {
             this.form.inspectMethod === 'field' &&
             tasks.some((c, i) => {
               index = i + 1
-              return c.showAdvancedVerification && !c.script
+              return c.showAdvancedVerification && !c.webScript
             })
           ) {
             this.editId = tasks[index - 1]?.id

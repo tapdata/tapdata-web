@@ -63,7 +63,12 @@
       </div>
       <div class="flex flex-column flex-fill pl-10">
         <div class="flex justify-content-between ml-6">
-          <ElRadioGroup v-model="throughputObj.title.time" size="mini" @change="changeUtil">
+          <ElRadioGroup
+            v-model="throughputObj.title.time"
+            size="mini"
+            @change="changeUtil"
+            :disabled="lineData.x.length === 0"
+          >
             <ElRadioButton label="second">{{ $t('task_info_s') }}</ElRadioButton>
             <ElRadioButton label="minute">{{ $t('task_info_m') }}</ElRadioButton>
             <ElRadioButton label="hour">{{ $t('task_info_h') }}</ElRadioButton>
@@ -76,7 +81,13 @@
             QPS
           </div>
         </div>
-        <TypeChart type="line" :data="lineData" :options="lineOptions" class="v-echart flex-fill"></TypeChart>
+        <TypeChart
+          type="line"
+          :data="lineData"
+          :options="lineOptions"
+          no-x="second"
+          class="v-echart flex-fill"
+        ></TypeChart>
       </div>
     </div>
   </div>

@@ -1,7 +1,7 @@
 <template>
   <div class="schedule-pane">
     <!--  步骤条  -->
-    <ElSteps :active="active" align-center class="mini mb-6 pt-3">
+    <ElSteps v-if="steps.length" :active="active" align-center class="mini mb-6 pt-3">
       <ElStep v-for="(item, index) in steps" :key="index" :class="[{ 'is-ative': showActive === index + 1 }]">
         <span
           slot="icon"
@@ -86,53 +86,50 @@
     <div v-else>
       <!--  里程碑  -->
       <Milestone :list="milestonesData" :taskStatus="task && task.status" :fold="false"></Milestone>
-      <ElDivider v-if="task.milestones && task.milestones.length" class="my-6"></ElDivider>
-      <div v-if="task.milestones && task.milestones.length">
-        <div class="mb-4 fs-7 font-color-main fw-bolder">
-          {{ currentStep.label }}{{ this.$t('task_info_overview') }}
-        </div>
-        <div class="p-4" style="background: #fafafa; border-radius: 4px 4px 0 0">
-          <div class="flex justify-content-between mb-2 font-color-main">
-            <div>
-              <span
-                >{{ $t('task_info_plan') }}{{ currentStep.label }}{{ $t('task_info_table_number') }}
-                {{ overviewStats.sourceTableNum || 0 }}</span
-              >
-              <span class="ml-3"
-                >{{ $t('task_info_completed') }}{{ currentStep.label }}{{ $t('task_info_table_number') }}
-                {{ overviewStats.waitingForSyecTableNums || 0 }}</span
-              >
-            </div>
-            <div>
-              {{ $t('task_info_expected') }}{{ currentStep.label }}{{ $t('task_info_completed_time') }}：{{
-                completeTime
-              }}
-            </div>
+      <template v-if="isSupport">
+        <ElDivider v-if="task.milestones && task.milestones.length" class="my-6"></ElDivider>
+        <div v-if="task.milestones && task.milestones.length">
+          <div class="mb-4 fs-7 font-color-main fw-bolder">
+            {{ currentStep.label }}{{ this.$t('task_info_overview') }}
           </div>
-          <ElProgress :percentage="progressBar" :show-text="false"></ElProgress>
+          <div class="p-4" style="background: #fafafa; border-radius: 4px 4px 0 0">
+            <div class="flex justify-content-between mb-2 font-color-main">
+              <div>
+                <span
+                  >{{ $t('task_info_plan') }}{{ currentStep.label }}{{ $t('task_info_table_number') }}
+                  {{ overviewStats.sourceTableNum || 0 }}</span
+                >
+                <span class="ml-3"
+                  >{{ $t('task_info_completed') }}{{ currentStep.label }}{{ $t('task_info_table_number') }}
+                  {{ overviewStats.waitingForSyecTableNums || 0 }}</span
+                >
+              </div>
+              <div>
+                {{ $t('task_info_expected') }}{{ currentStep.label }}{{ $t('task_info_completed_time') }}：{{
+                  completeTime
+                }}
+              </div>
+            </div>
+            <ElProgress :percentage="progressBar" :show-text="false"></ElProgress>
+          </div>
         </div>
-      </div>
-      <div v-if="task.milestones && task.milestones.length" class="mt-6">
-        <div class="mb-4 fs-7 font-color-main fw-bolder">
-          {{ $t('task_setting_initial_sync') }}{{ $t('task_info_info') }}
+        <div v-if="task.milestones && task.milestones.length" class="mt-6">
+          <div class="mb-4 fs-7 font-color-main fw-bolder">
+            {{ $t('task_setting_initial_sync') }}{{ $t('task_info_info') }}
+          </div>
+          <TableList :remoteMethod="remoteMethod" :columns="columns" auto-height key="initial_sync" hide-on-single-page>
+            <template slot="schedule" slot-scope="scope">
+              <span>{{ getSchedule(scope.row) }}</span>
+            </template>
+          </TableList>
         </div>
-        <TableList
-          v-if="columns.length"
-          :remoteMethod="remoteMethod"
-          :columns="columns"
-          max-height="300"
-          key="initial_sync"
-          hide-on-single-page
-        >
-          <template slot="schedule" slot-scope="scope">
-            <span>{{ getSchedule(scope.row) }}</span>
-          </template>
-        </TableList>
-      </div>
-      <div v-if="task.milestones && task.milestones.length" class="mt-6">
-        <div class="mb-4 fs-7 font-color-main fw-bolder">{{ $t('task_info_task_cdc') }}{{ $t('task_info_info') }}</div>
-        <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page></TableList>
-      </div>
+        <div v-if="task.milestones && task.milestones.length" class="mt-6">
+          <div class="mb-4 fs-7 font-color-main fw-bolder">
+            {{ $t('task_info_task_cdc') }}{{ $t('task_info_info') }}
+          </div>
+          <TableList :columns="cdcColumns" :data="list" auto-height hide-on-single-page></TableList>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -176,7 +173,8 @@ export default {
           color: '',
           text: this.$t('task_info_synced')
         }
-      }
+      },
+      supportList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres']
     }
   },
   computed: {
@@ -187,6 +185,10 @@ export default {
       const { steps, active, showActive } = this
       let index = showActive || active
       return steps[index - 1] || {}
+    },
+    isSupport() {
+      const type = this.task?.stages?.find(t => t.outputLanes.length)?.database_type
+      return this.supportList.includes(type)
     }
   },
   watch: {
