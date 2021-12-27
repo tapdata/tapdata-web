@@ -20,21 +20,21 @@
         </span>
       </div>
       <div class="operation">
-        <VButton type="primary" size="mini" :disabled="startDisabled" @click="start">
-          <VIcon>start-fill</VIcon>
+        <VButton type="primary" :disabled="startDisabled" @click="start">
+          <VIcon size="12">start-fill</VIcon>
           <span class="ml-1">{{ $t('task_info_start') }}</span>
         </VButton>
-        <VButton type="danger" size="mini" :disabled="stopDisabled" @click="stop">
-          <VIcon>pause-fill</VIcon>
+        <VButton type="danger" :disabled="stopDisabled" @click="stop">
+          <VIcon size="12">pause-fill</VIcon>
           <span class="ml-1">{{ $t('task_info_stopt') }}</span>
         </VButton>
-        <VButton size="mini" :disabled="editDisabled" @click="edit">
-          <VIcon>edit-fill</VIcon>
+        <VButton :disabled="editDisabled" @click="edit">
+          <VIcon size="12">edit-fill</VIcon>
           <span class="ml-1">{{ $t('button_edit') }}</span>
         </VButton>
       </div>
     </div>
-    <div class="flex justify-content-between mt-6">
+    <div class="flex justify-content-between mt-6" style="height: 250px">
       <div class="p-6" style="background-color: #fafafa; min-width: 240px">
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
@@ -61,7 +61,7 @@
           </div>
         </div>
       </div>
-      <div class="flex-fill pl-10" style="min-height: 250px">
+      <div class="flex flex-column flex-fill pl-10">
         <div class="flex justify-content-between ml-6">
           <ElRadioGroup v-model="throughputObj.title.time" size="mini" @change="changeUtil">
             <ElRadioButton label="second">{{ $t('task_info_s') }}</ElRadioButton>
@@ -76,7 +76,7 @@
             QPS
           </div>
         </div>
-        <VEchart :option="throughputObj.body" class="v-echart" style="height: 100%"></VEchart>
+        <TypeChart type="line" :data="lineData" :options="lineOptions" class="v-echart flex-fill"></TypeChart>
       </div>
     </div>
   </div>
@@ -84,14 +84,15 @@
 
 <script>
 import StatusTag from '@/components/StatusTag'
-import VEchart from '@/components/VEchart'
 import VIcon from '@/components/VIcon'
+import TypeChart from '@/components/TypeChart'
 import { formatTime, isEmpty } from '@/util'
 
 let lastMsg
+
 export default {
   name: 'Info',
-  components: { StatusTag, VEchart, VIcon },
+  components: { StatusTag, VIcon, TypeChart },
   props: {
     task: {
       type: Object,
@@ -144,7 +145,56 @@ export default {
         reset: { draft: true, error: true, paused: true },
         forceStop: { stopping: true }
       },
-      creator: ''
+      creator: '',
+      lineData: {
+        x: [],
+        y: [[], []]
+      },
+      lineOptions: {
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          top: 4,
+          right: 0,
+          show: true
+        },
+        grid: {
+          left: 0,
+          right: 0,
+          top: '24px',
+          bottom: 0,
+          containLabel: true,
+          borderWidth: 1,
+          borderColor: '#ccc'
+        },
+        series: [
+          {
+            name: this.$t('task_info_input'),
+            lineStyle: {
+              color: '#2C65FF'
+            },
+            areaStyle: {
+              color: '#2C65FF'
+            },
+            itemStyle: {
+              color: '#2C65FF'
+            }
+          },
+          {
+            name: this.$t('task_info_output'),
+            lineStyle: {
+              color: '#76CDEE'
+            },
+            areaStyle: {
+              color: '#76CDEE'
+            },
+            itemStyle: {
+              color: '#76CDEE'
+            }
+          }
+        ]
+      }
     }
   },
   computed: {
@@ -271,6 +321,9 @@ export default {
       if (max > this.yMax) {
         this.yMax = max + Math.ceil(max / 10)
       }
+      this.lineData.x = timeList
+      this.lineData.y[0] = inputCountList
+      this.lineData.y[1] = outputCountList
       this.throughputObj.body = {
         tooltip: {
           trigger: 'axis'

@@ -272,14 +272,15 @@
         flex: 1;
         overflow: hidden;
         min-height: 290px;
+        $headerHeight: 48px;
         ::v-deep {
           .el-transfer-panel__header {
             background: rgba(44, 101, 255, 0.05);
-            height: 54px;
-            line-height: 54px;
+            height: $headerHeight;
+            line-height: $headerHeight;
             .el-checkbox {
-              height: 54px;
-              line-height: 54px;
+              height: $headerHeight;
+              line-height: $headerHeight;
             }
           }
         }
@@ -497,7 +498,13 @@ export default {
         },
         items: []
       },
-      transferData: '',
+      transferData: {
+        table_prefix: '',
+        table_suffix: '',
+        selectSourceArr: [],
+        topicData: [],
+        queueData: []
+      },
       taskType: 'cluster-clone',
       dialogTestVisible: false,
       status: '',
@@ -537,6 +544,7 @@ export default {
       updateTransfer: false
     }
   },
+
   created() {
     this.id = this.$route.params.id
     this.getSteps()
@@ -747,7 +755,7 @@ export default {
     next() {
       let type = this.steps[this.activeStep].type || 'instance'
       if (type === 'dataSource') {
-        this.$refs.dataSource.validate(valid => {
+        this.$refs.dataSource.validate(async valid => {
           if (valid) {
             //源端目标端不可选择相同库 规则: id一致
             this.showSysncTableTip = false
@@ -755,8 +763,14 @@ export default {
               this.showSysncTableTip = true // dfs 仅提示
             }
             //数据源名称
-            let source = this.handleConnectionName(this.dataSourceModel.source_connectionId, 'source_connectionId')
-            let target = this.handleConnectionName(this.dataSourceModel.target_connectionId, 'target_connectionId')
+            let source = await this.handleConnectionName(
+              this.dataSourceModel.source_connectionId,
+              'source_connectionId'
+            )
+            let target = await this.handleConnectionName(
+              this.dataSourceModel.target_connectionId,
+              'target_connectionId'
+            )
             //source.id/target.id = host + port + username
             if (source.id === target.id) {
               this.showSysncTableTip = true // dfs 仅提示
@@ -802,7 +816,7 @@ export default {
     //检查是否选择表
     checkTransfer() {
       let result = true
-      this.transferData = this.$refs.transfer.returnData()
+      // this.transferData = this.$refs.transfer.returnData()
       if (this.transferData.selectSourceArr.length === 0 && this.dataSourceModel['mqType'] !== '0') {
         result = false
       } else if (
@@ -817,9 +831,9 @@ export default {
     back() {
       let type = this.steps[this.activeStep].type || 'instance'
       //将复制表内容存起来
-      if (type === 'mapping') {
+      /*if (type === 'mapping') {
         this.transferData = this.$refs.transfer.returnData()
-      }
+      }*/
       if (type === 'setting') {
         this.allowDatabaseType()
       }
@@ -853,8 +867,32 @@ export default {
       }
       switch (type) {
         case 'dfs_dataSource': {
-          this.getConnection(this.getWhere('source'), 'source_connectionId')
-          this.getConnection(this.getWhere('target'), 'target_connectionId')
+          let source_connectionId = this.config.items.find(it => it.field === 'source_connectionId')
+          let target_connectionId = this.config.items.find(it => it.field === 'target_connectionId')
+          source_connectionId.remote = true
+          source_connectionId.remoteMethod = this.queryConnection('source')
+
+          target_connectionId.remote = true
+          target_connectionId.remoteMethod = this.queryConnection('target')
+
+          this.getConnection(this.getWhere('source'), 'source_connectionId').then(async () => {
+            const connectionId = this.dataSourceModel.source_connectionId
+            const options = source_connectionId.options
+
+            if (connectionId && !options.find(item => item.value === connectionId)) {
+              const connection = await this.findOneConnection(connectionId)
+              options.push(this.getConnectionItem(connection))
+            }
+          })
+          this.getConnection(this.getWhere('target'), 'target_connectionId').then(async () => {
+            const connectionId = this.dataSourceModel.target_connectionId
+            const options = target_connectionId.options
+
+            if (connectionId && !options.find(item => item.value === connectionId)) {
+              const connection = await this.findOneConnection(connectionId)
+              options.push(this.getConnectionItem(connection))
+            }
+          })
           break
         }
         case 'drs_dataSource': {
@@ -918,7 +956,7 @@ export default {
       let id = this.dataSourceModel.source_connectionId || ''
       this.$nextTick(() => {
         this.$refs.transfer.getTable(id, this.settingModel.bidirectional)
-        this.$refs.transfer.showOperation(this.settingModel.bidirectional || false) //双向模式不可以更改表名
+        // this.$refs.transfer.showOperation(this.settingModel.bidirectional || false) //双向模式不可以更改表名
       })
     },
     //获取当前是否可以展示双向开关
@@ -970,10 +1008,24 @@ export default {
         fields: fields,
         order: ['status DESC', 'name ASC']
       }
-      this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter))).then(({ items }) => {
-        this.changeConfig(items || [], type, reset)
-      })
+      return this.$axios
+        .get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(({ items }) => {
+          this.changeConfig(items || [], type, reset)
+        })
     },
+
+    getConnectionItem(item) {
+      return {
+        id: item.database_host + item.database_port + item.database_name + item.database_uri,
+        name: item.name,
+        label: item.name,
+        value: item.id,
+        type: item.database_type,
+        mqType: item.mqType || ''
+      }
+    },
+
     //change config
     changeConfig(data, type, reset = false) {
       let items = this.config.items
@@ -989,16 +1041,7 @@ export default {
             // 在全部类型下dfs源端不支持的数据源
             let filterArr = ['redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'clickhouse', 'dameng', 'tidb']
             data = data.filter(item => filterArr.indexOf(item.database_type) === -1)
-            source_connectionId.options = data.map(item => {
-              return {
-                id: item.database_host + item.database_port + item.database_name + item.database_uri,
-                name: item.name,
-                label: item.name,
-                value: item.id,
-                type: item.database_type,
-                mqType: item.mqType || ''
-              }
-            })
+            source_connectionId.options = data.map(this.getConnectionItem)
           }
           break
         }
@@ -1107,13 +1150,18 @@ export default {
       if (data.length === 0) return
       return data[0].name
     },
-    handleConnectionName(target, type) {
+    async handleConnectionName(target, type) {
       let items = this.config.items
       let optionsData = items.find(it => it.field === type)
-      if (optionsData.length === 0) return
-      let data = optionsData.options.filter(op => op.value === target)
-      if (data.length === 0) return
-      return data[0]
+
+      let item = optionsData.options.find(op => op.value === target)
+
+      if (!item) {
+        const connection = await this.findOneConnection(target)
+        item = this.getConnectionItem(connection)
+      }
+
+      return item
     },
     //是否支持同步内容
     showFieldMapping() {
@@ -1185,7 +1233,7 @@ export default {
       //第四步 数据组装
       if (this.hiddenFieldMapping) {
         //没有第五步 表设置 需要主动调用 transfer.returnData
-        this.transferData = this.$refs.transfer.returnData()
+        // this.transferData = this.$refs.transfer.returnData()
       }
       let selectTable = []
       if (this.transferData) {
@@ -1364,6 +1412,38 @@ export default {
       if (typeof where === 'object') where = JSON.stringify(where)
       this.axios.post('tm/api/MetadataInstances/update?where=' + encodeURIComponent(where), data)
       this.transferData.field_process = this.$refs.fieldMapping.saveFileOperations(row, operations)
+    },
+
+    queryConnection(type) {
+      return query => {
+        const where = this.getWhere(type)
+        where.name = { like: query, options: 'i' }
+        this.getConnection(where, `${type}_connectionId`)
+      }
+    },
+
+    async findOneConnection(id) {
+      let filter = {
+        where: {
+          id
+        },
+        fields: {
+          name: 1,
+          id: 1,
+          database_type: 1,
+          connection_type: 1,
+          status: 1,
+          database_host: 1,
+          database_port: 1,
+          database_name: 1,
+          database_uri: 1,
+          database_username: 1,
+          mqType: 1
+        },
+        order: ['status DESC', 'name ASC']
+      }
+      let result = await this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
+      return result?.items?.[0]
     }
   }
 }

@@ -19,15 +19,15 @@
       <div v-show="!noMore && loading" class="pb-4 text-center fs-5">
         <i class="el-icon-loading"></i>
       </div>
-      <div v-show="noMore" class="font-color-sub text-center pb-4">没有更多了</div>
-      <ul>
+      <div v-show="logs && logs.length && noMore" class="font-color-sub text-center pb-4">没有更多了</div>
+      <ul v-if="logs">
         <li class="log-item px-6" v-for="log in logs" :key="log.id">
           [<span class="fw-bold" :class="log.color" v-html="log.level"></span>]&nbsp; <span>{{ log.time }}</span
           >&nbsp; [<span v-html="log.threadName"></span>]&nbsp; <span v-html="log.loggerName"></span>&nbsp;
           <div class="log-message pl-10" v-html="log.message"></div>
         </li>
       </ul>
-      <div v-if="!logs || !logs.length" class="monitor-log__empty position-absolute top-50 start-50 translate-middle">
+      <div v-if="logs && !logs.length" class="monitor-log__empty position-absolute top-50 start-50 translate-middle">
         <VIcon size="120">no-data-color</VIcon>
         <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
           <span>暂无日志</span>
@@ -69,10 +69,10 @@ export default {
   },
   data() {
     return {
-      loading: false,
+      loading: true,
       noMore: false,
       keyword: '',
-      logs: [],
+      logs: null,
       isScrollBottom: true,
       checkList: ['INFO', 'WARN', 'ERROR']
     }
@@ -114,6 +114,9 @@ export default {
       )
     },
     loadOld(event) {
+      if (this.loading) {
+        return
+      }
       let el = event.target
       this.isScrollBottom = el.scrollTop + el.clientHeight >= el.scrollHeight
       if (el.scrollTop <= 0 && !this.noMore && !this.loading) {
@@ -122,8 +125,11 @@ export default {
     },
     loadNew(data) {
       let list = data || []
-      list = data.reverse().map(this.formatLog)
-      this.logs.push(...list)
+      list = list.reverse().map(this.formatLog)
+      let logs = this.logs || []
+      logs.push(...list)
+      this.logs = logs
+      this.loading = false
       this.scrollToBottom()
     },
     scrollToBottom() {

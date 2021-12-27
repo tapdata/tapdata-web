@@ -193,7 +193,6 @@ export default {
     task: {
       deep: true,
       handler(v) {
-        console.log('task', v)
         v && this.init()
       }
     }
@@ -297,7 +296,6 @@ export default {
       this.overviewStats = overview
     },
     getStep() {
-      console.log('getStep')
       const { task } = this
       let map = {
         init: this.$t('task_info_task_init'),
@@ -544,5 +542,8 @@ export default {
       }
     }
   }
+}
+.el-divider {
+  background-color: #f2f2f2;
 }
 </style>

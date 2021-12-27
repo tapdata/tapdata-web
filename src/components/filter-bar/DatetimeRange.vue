@@ -186,10 +186,10 @@ export default {
 .filter-datetime-range {
   cursor: pointer;
   &:hover {
-    background-color: #fafafa;
+    background-color: #eff1f4;
     ::v-deep {
       input {
-        background-color: #fafafa;
+        background-color: #eff1f4;
         cursor: pointer;
       }
     }

@@ -207,6 +207,13 @@
       color: unset;
       cursor: unset;
     }
+    ::v-deep {
+      .el-table__cell {
+        .cell {
+          line-height: 16px;
+        }
+      }
+    }
   }
   .migration-table__empty {
     color: map-get($fontColor, light);
