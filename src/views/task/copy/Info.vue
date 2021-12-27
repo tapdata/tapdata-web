@@ -170,6 +170,16 @@ export default {
           right: 0,
           show: true
         },
+        yAxis: {
+          axisLabel: {
+            formatter: function (value) {
+              if (value >= 1000) {
+                value = value / 1000 + 'K'
+              }
+              return value
+            }
+          }
+        },
         grid: {
           left: 0,
           right: 0,
