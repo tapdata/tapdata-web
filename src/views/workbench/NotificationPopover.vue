@@ -149,8 +149,8 @@ export default {
       let where = {
         read: false
       }
-      return this.$axios.get('tm/api/Messages/count?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
-        this.unRead = res
+      return this.$axios.get('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
+        this.unRead = res.total
       })
     },
     getUnreadData() {

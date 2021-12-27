@@ -1,5 +1,5 @@
 <template>
-  <div class="card-box p-6">
+  <div class="card-box px-2 py-6">
     <div class="flex justify-content-between">
       <div class="info-line">
         <span class="mr-4 fs-6 font-color-main">{{ task.name }}</span>

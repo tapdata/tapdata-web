@@ -1,7 +1,7 @@
 <template>
   <div class="statistics-container flex flex-column font-color-sub h-100">
-    <Info :task="task" class="card-box" @reload="loadTask"></Info>
-    <div class="card-box mt-6 p-6 flex-1">
+    <Info :task="task" @reload="loadTask"></Info>
+    <div class="card-box mt-6 p-4 flex-1">
       <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
         <ElTabPane label="任务进度" name="schedule">
           <Schedule :task="task"></Schedule>
