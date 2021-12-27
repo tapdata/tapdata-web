@@ -47,8 +47,8 @@
             :data-index="index"
             :size-dependencies="[item.id, item.content]"
           >
-            <div class="flex">
-              <div class="mr-2">
+            <div class="flex py-1">
+              <div class="mr-2 white-space-nowrap">
                 [<span :class="['level', colorMap[item.level]]">{{ item.level }}</span
                 >]
                 <span>{{ formatTime(item.timestamp) }}</span>
@@ -264,7 +264,7 @@ export default {
             let content = template || ''
             for (let key in params) {
               let re = new RegExp(`{${key}}`, 'ig')
-              if (this.keyword) {
+              if (this.keyword && params[key].includes(this.keyword)) {
                 content = content.replace(re, `<span class="keyword">${params[key]}</span>`)
               } else {
                 content = content.replace(re, params[key])
@@ -329,8 +329,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .customer-logs {
-  //display: flex;
-  //flex-direction: column;
   font-size: 12px;
   ::v-deep {
     .tap-span {
@@ -344,7 +342,6 @@ export default {
 .e-debug-log {
   width: 100%;
   height: 100%;
-  //padding: 10px 5px 5px 20px;
   box-sizing: border-box;
   overflow: hidden;
 
@@ -357,15 +354,7 @@ export default {
   }
 }
 .logs-list {
-  //height: calc(100% - 44px);
-  //overflow-y: auto;
-  //height: 0;
-  //flex: 1;
-  //min-height: 150px;
   background: rgba(229, 236, 255, 0.22);
-  //&.empty {
-  //  min-height: 150px;
-  //}
   .el-loading-spinner .el-loading-text {
     font-size: 12px;
     color: #333;
@@ -376,9 +365,6 @@ export default {
     }
   }
 }
-.inputStyle {
-  width: 300px;
-}
 .el-checkbox {
   margin-left: 4px;
   margin-right: 8px;
@@ -387,5 +373,8 @@ export default {
       font-size: 12px;
     }
   }
+}
+.white-space-nowrap {
+  white-space: nowrap;
 }
 </style>

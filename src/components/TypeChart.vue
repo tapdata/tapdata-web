@@ -1,5 +1,5 @@
 <template>
-  <VChart class="chart" :option="chartOption" :autoresize="autoresize" />
+  <VChart ref="chart" :option="chartOption" :autoresize="autoresize" class="type-chart-container" />
 </template>
 
 <script>
@@ -41,6 +41,13 @@ export default {
     autoresize: {
       type: Boolean,
       default: true
+    },
+    noX: {
+      type: [String, Array]
+    },
+    noY: {
+      type: Array,
+      default: () => [0, 1]
     }
   },
   data() {
@@ -59,17 +66,22 @@ export default {
       deep: true,
       handler(v) {
         if (v) {
-          this.chartOption = v
+          v && this.init()
         }
       }
     }
   },
   mounted() {
     this.init()
+    window.addEventListener('resize', this.resize)
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.resize)
   },
   methods: {
     init() {
       if (this.extend) {
+        this.chartOption = this.extend
         return
       }
       let obj = this[this.type]?.()
@@ -172,12 +184,6 @@ export default {
       let obj = {
         xAxis: {
           boundaryGap: false,
-          // axisLine: {
-          //   lineStyle: {
-          //     color: '#409EFF',
-          //     width: 1 // 这里是为了突出显示加上的
-          //   }
-          // },
           data: []
         },
         yAxis: {
@@ -189,22 +195,6 @@ export default {
               width: 1
             }
           }
-          // max: this.yMax,
-          // axisLine: {
-          //   show: true,
-          //   lineStyle: {
-          //     color: '#409EFF',
-          //     width: 1
-          //   }
-          // },
-          // axisLabel: {
-          //   formatter: function (value) {
-          //     if (value >= 1000) {
-          //       value = value / 1000 + 'K'
-          //     }
-          //     return value
-          //   }
-          // }
         },
         grid: {
           left: '24px',
@@ -212,44 +202,8 @@ export default {
           top: '24px',
           bottom: '24px'
         },
-        series: [
-          // {
-          //   name: this.$t('task_info_input'),
-          //   type: 'line',
-          //   smooth: true,
-          //   data: inputCountList,
-          //   itemStyle: {
-          //     color: '#2ba7c3'
-          //   },
-          //   lineStyle: {
-          //     color: '#2ba7c3'
-          //   },
-          //   areaStyle: {
-          //     color: '#2ba7c3'
-          //   }
-          // },
-          // {
-          //   name: this.$t('task_info_output'),
-          //   type: 'line',
-          //   smooth: true,
-          //   data: outputCountList,
-          //   itemStyle: {
-          //     color: '#61a569'
-          //   },
-          //   lineStyle: {
-          //     color: '#8cd5c2'
-          //   },
-          //   areaStyle: {
-          //     color: '#8cd5c2'
-          //   }
-          // }
-        ]
+        series: []
       }
-
-      // let data = {
-      //   x: [],
-      //   y: [] || [[], []]
-      // }
       const { data } = this
       obj.xAxis.data = data.x || []
       let series = []
@@ -261,6 +215,7 @@ export default {
         series.push(Object.assign(this.getLineSeriesItem(), { data: data.y }))
       }
       obj.series = series
+      this.setEmptyData(obj)
       return obj
     },
     pie() {
@@ -315,6 +270,53 @@ export default {
         }
       }
       return item
+    },
+    setEmptyData(data) {
+      const { noX, noY } = this
+      if (!noX || data.xAxis.data?.length) {
+        data.yAxis.min = null
+        data.yAxis.max = null
+        return
+      }
+      let result
+      let stamp = new Date().getTime()
+      if (typeof noX === 'string') {
+        switch (noX) {
+          case 'second':
+          case 'min':
+          case 'hour':
+          case 'day':
+          case 'time':
+            result = new Array(10).fill().map((t, i) => {
+              let time = stamp + i * 10000
+              return this.formatTime(noX, time)
+            })
+            break
+          default:
+            result = new Array(10).fill().map((t, i) => i++)
+            break
+        }
+      } else {
+        result = noX
+      }
+      data.xAxis.data = result
+      data.yAxis.min = noY[0] || 0
+      data.yAxis.max = noY[1] || 1
+    },
+    formatTime(type, time) {
+      let map = {
+        second: 'HH:mm:ss',
+        min: 'HH:mm',
+        hour: 'HH:00',
+        day: 'MM-DD'
+      }
+      return this.$moment(time).format(map[type] || 'YYYY-MM-DD HH:mm:ss')
+    },
+    resize() {
+      const { delayTrigger } = this.$util
+      delayTrigger(() => {
+        this.$refs.chart?.resize?.()
+      }, 800)
     }
   }
 }
