@@ -1,5 +1,5 @@
 <template>
-  <div class="card-box py-6 px-4">
+  <div class="card-box p-6">
     <div class="flex justify-content-between">
       <div class="info-line">
         <span class="mr-4 fs-6 font-color-main">{{ task.name }}</span>
@@ -40,24 +40,24 @@
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_input') }}</span>
         </div>
-        <div class="mb-4 fs-4 font-color-main">{{ overviewObj.body.inputCount }}</div>
+        <div class="mb-4 fs-4 font-color-main number-text">{{ overviewObj.body.inputCount }}</div>
         <div class="flex align-items-center mb-2">
-          <VIcon class="mr-4 color-success" size="18">mark</VIcon>
+          <VIcon class="mr-4" size="18" color="#76CDEE">mark</VIcon>
           <span>{{ $t('task_monitor_total_output') }}</span>
         </div>
-        <div class="mb-6 fs-4 font-color-main">{{ overviewObj.body.outputCount }}</div>
+        <div class="mb-6 fs-4 font-color-main number-text">{{ overviewObj.body.outputCount }}</div>
         <div class="flex justify-content-between text-center">
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_insert') }}</div>
-            <div class="fs-6 font-color-main">{{ overviewObj.body.insertCount }}</div>
+            <div class="fs-6 font-color-main number-text">{{ overviewObj.body.insertCount }}</div>
           </div>
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_update') }}</div>
-            <div class="fs-6 font-color-main">{{ overviewObj.body.updateCount }}</div>
+            <div class="fs-6 font-color-main number-text">{{ overviewObj.body.updateCount }}</div>
           </div>
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_delete') }}</div>
-            <div class="fs-6 font-color-main">{{ overviewObj.body.deleteCount }}</div>
+            <div class="fs-6 font-color-main number-text">{{ overviewObj.body.deleteCount }}</div>
           </div>
         </div>
       </div>
