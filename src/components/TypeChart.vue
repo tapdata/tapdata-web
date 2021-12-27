@@ -1,5 +1,5 @@
 <template>
-  <VChart class="chart" :option="chartOption" :autoresize="autoresize" />
+  <VChart ref="chart" :option="chartOption" :autoresize="autoresize" class="type-chart-container" />
 </template>
 
 <script>
@@ -73,6 +73,10 @@ export default {
   },
   mounted() {
     this.init()
+    window.addEventListener('resize', this.resize)
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.resize)
   },
   methods: {
     init() {
@@ -307,6 +311,12 @@ export default {
         day: 'MM-DD'
       }
       return this.$moment(time).format(map[type] || 'YYYY-MM-DD HH:mm:ss')
+    },
+    resize() {
+      const { delayTrigger } = this.$util
+      delayTrigger(() => {
+        this.$refs.chart?.resize?.()
+      }, 800)
     }
   }
 }
