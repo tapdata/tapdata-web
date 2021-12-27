@@ -1056,7 +1056,7 @@ export default {
             this.form.inspectMethod === 'field' &&
             tasks.some((c, i) => {
               index = i + 1
-              return c.showAdvancedVerification && !c.script
+              return c.showAdvancedVerification && !c.webScript
             })
           ) {
             this.editId = tasks[index - 1]?.id
