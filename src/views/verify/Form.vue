@@ -541,7 +541,7 @@ export default {
           let stages = flowData.stages || []
           if (
             stages.some(item =>
-              ['kafka', 'redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'mq'].includes(
+              ['kafka', 'redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'mq', 'dummy'].includes(
                 item.databaseType || item.database_type
               )
             )
