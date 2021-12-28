@@ -1,8 +1,8 @@
 <template>
   <div v-loading="loading" class="statistics-container flex flex-column font-color-sub h-100">
     <Info :task="task" class="card-box" @reload="loadTask"></Info>
-    <div class="card-box mt-6 pb-6 pt-3 px-6 flex-1">
-      <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100" @tab-click="tabHandler">
+    <div class="card-box mt-6 pb-6 pt-3 px-6">
+      <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden" @tab-click="tabHandler">
         <ElTabPane :label="$t('task_monitor_progress')" name="schedule">
           <Schedule :task="task"></Schedule>
         </ElTabPane>
@@ -200,17 +200,18 @@ export default {
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.02);
   ::v-deep {
     .table-list {
-      //height: 300px;
+      max-height: 400px;
     }
-    .el-tab-pane {
-      min-height: 400px;
-    }
+    //.el-tab-pane {
+    //  min-height: 400px;
+    //  max-height: 600px;
+    //}
     .el-tabs__nav-wrap::after {
       height: 1px;
       background-color: #e8e8e8;
     }
     .field-mapping {
-      min-height: 400px;
+      max-height: 400px;
       .task-form-body {
         max-height: 350px;
       }

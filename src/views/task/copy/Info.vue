@@ -184,34 +184,35 @@ export default {
           left: 0,
           right: 0,
           top: '24px',
-          bottom: 0,
-          containLabel: true,
-          borderWidth: 1,
-          borderColor: '#ccc'
+          bottom: 0
         },
         series: [
           {
             name: this.$t('task_info_input'),
             lineStyle: {
-              color: '#2C65FF'
+              color: 'rgba(24, 144, 255, 1)',
+              width: 1
             },
             areaStyle: {
-              color: '#2C65FF'
+              color: 'rgba(24, 144, 255, 0.2)'
             },
+            symbol: 'none',
             itemStyle: {
-              color: '#2C65FF'
+              color: 'rgba(24, 144, 255, 1)'
             }
           },
           {
             name: this.$t('task_info_output'),
             lineStyle: {
-              color: '#76CDEE'
+              color: 'rgba(118, 205, 238, 1)',
+              width: 1
             },
+            symbol: 'none',
             areaStyle: {
-              color: '#76CDEE'
+              color: 'rgba(118, 205, 238, 0.2)'
             },
             itemStyle: {
-              color: '#76CDEE'
+              color: 'rgba(118, 205, 238, 1)'
             }
           }
         ]

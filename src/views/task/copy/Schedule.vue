@@ -67,18 +67,21 @@
             ref="initialTableList"
             :remoteMethod="remoteMethod"
             :columns="columns"
-            max-height="300"
+            auto-height
             key="initial_sync"
             hide-on-single-page
           >
             <template slot="schedule" slot-scope="scope">
               <span>{{ getSchedule(scope.row) }}</span>
             </template>
+            <template slot="status" slot-scope="scope">
+              <StatusTag type="text" :statusMap="statusMap" :status="formatStatus(scope.row)"></StatusTag>
+            </template>
           </TableList>
         </div>
         <div v-else class="mt-6">
           <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
-          <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page></TableList>
+          <TableList :columns="cdcColumns" :data="list" auto-height hide-on-single-page></TableList>
         </div>
       </div>
     </template>
@@ -121,6 +124,9 @@
             <template slot="schedule" slot-scope="scope">
               <span>{{ getSchedule(scope.row) }}</span>
             </template>
+            <template slot="status" slot-scope="scope">
+              <StatusTag type="text" :statusMap="statusMap" :status="formatStatus(scope.row)"></StatusTag>
+            </template>
           </TableList>
         </div>
         <div v-if="task.milestones && task.milestones.length" class="mt-6">
@@ -137,11 +143,12 @@
 <script>
 import TableList from '@/components/TableList'
 import Milestone from './Milestone'
+import StatusTag from '@/components/StatusTag'
 import { deepCopy, formatTime } from '@/util'
 
 export default {
   name: 'Schedule',
-  components: { TableList, Milestone },
+  components: { TableList, Milestone, StatusTag },
   props: {
     task: {
       type: Object,
@@ -170,8 +177,20 @@ export default {
       milestonesData: [], // 里程碑
       statusMap: {
         done: {
-          color: '',
+          type: 'success',
           text: this.$t('task_info_synced')
+        },
+        waiting: {
+          type: 'primary',
+          text: this.$t('task_info_sync_waiting')
+        },
+        running: {
+          type: 'warning',
+          text: this.$t('task_info_sync_running')
+        },
+        pause: {
+          type: 'danger',
+          text: this.$t('task_info_sync_pause')
         }
       },
       supportList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres']
@@ -341,8 +360,8 @@ export default {
       this.milestonesData = this.task.milestones
         .filter(item => item.group === this.currentStep.group)
         .map(m => {
-          // let time = m.status === 'running' ? formatTime(m.start) : formatTime(m.end)
-          let time = formatTime(m.start)
+          let time = m.status === 'running' ? formatTime(m.start) : formatTime(m.end)
+          // let time = formatTime(m.start)
           return {
             label: this.$t(`milestone_label_${m.code.toLowerCase()}`),
             status: m.status,
@@ -442,7 +461,8 @@ export default {
         },
         {
           label: this.$t('task_monitor_status'),
-          prop: 'status'
+          prop: 'status',
+          slotName: 'status'
         }
       ]
       this.$refs.initialTableList?.fetch?.()
@@ -533,6 +553,16 @@ export default {
       this.isClickStep = true
       this.showActive = index + 1
       this.getMilestonesData()
+    },
+    formatStatus(row = {}) {
+      let status = row.statsData?.status
+      const taskStatus = this.task?.status
+      if (taskStatus === 'error' && this.getSchedule(row) !== '100%') {
+        status = 'pause'
+      } else if (taskStatus === 'paused') {
+        status = 'waiting'
+      }
+      return status
     }
   }
 }

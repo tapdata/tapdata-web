@@ -9,10 +9,10 @@
       :empty-text="$t('task_monitor_no_milestone_data')"
       :data="milestoneList"
       :columns="milestoneColumns"
-      max-height="300"
       fit
       :class="[{ 'is-fold': isFold }, { unfold: !isFold }]"
       hide-on-single-page
+      auto-height
     >
       <template slot="label" slot-scope="scope">
         <span>{{ scope.row.label }}</span>

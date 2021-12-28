@@ -55,6 +55,11 @@ export default {
       chartOption: {}
     }
   },
+  computed: {
+    chart() {
+      return this.$refs.chart || {}
+    }
+  },
   watch: {
     data: {
       deep: true,
@@ -88,12 +93,33 @@ export default {
       const { options } = this
       if (options) {
         for (let key in options) {
-          if (key === 'series') {
+          // 对象默认合并，其他都是覆盖
+          if (options[key] instanceof Array) {
+            if (typeof options[key][0] !== 'object') {
+              obj[key] = options[key]
+            }
             options[key].forEach((el, i) => {
-              obj[key][i] = Object.assign({}, obj[key][i] || {}, el || {})
+              if (typeof el === 'object') {
+                // 覆盖
+                if (el.cover) {
+                  obj[key][i] = el
+                } else {
+                  obj[key][i] = Object.assign({}, obj[key][i] || {}, el || {})
+                }
+              } else {
+                obj[key][i] = el
+              }
             })
+          } else if (typeof options[key] === 'object') {
+            // 覆盖
+            if (options[key].cover) {
+              obj[key] = options[key]
+            } else {
+              // 合并
+              obj[key] = Object.assign({}, obj[key] || {}, options[key] || {})
+            }
           } else {
-            obj[key] = Object.assign({}, obj[key] || {}, options[key] || {})
+            obj[key] = options[key]
           }
         }
       }
@@ -184,23 +210,33 @@ export default {
       let obj = {
         xAxis: {
           boundaryGap: false,
-          data: []
+          data: [],
+          splitLine: {
+            show: true,
+            lineStyle: {
+              type: 'dashed'
+            }
+          },
+          axisTick: {
+            show: false
+          }
         },
         yAxis: {
           type: 'value',
           axisLine: {
+            show: true
+          },
+          splitLine: {
             show: true,
             lineStyle: {
-              color: '#409EFF',
-              width: 1
+              type: 'dashed'
             }
           }
         },
         grid: {
-          left: '24px',
-          right: '24px',
-          top: '24px',
-          bottom: '24px'
+          containLabel: true,
+          borderWidth: 1,
+          borderColor: '#ccc'
         },
         series: []
       }
@@ -315,8 +351,8 @@ export default {
     resize() {
       const { delayTrigger } = this.$util
       delayTrigger(() => {
-        this.$refs.chart?.resize?.()
-      }, 800)
+        this.chart?.resize?.()
+      }, 300)
     }
   }
 }
