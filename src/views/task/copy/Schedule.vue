@@ -182,11 +182,11 @@ export default {
         },
         waiting: {
           type: 'primary',
-          text: this.$t('task_info_syncing')
+          text: this.$t('task_info_sync_waiting')
         },
         running: {
           type: 'warning',
-          text: this.$t('task_info_wait_synced')
+          text: this.$t('task_info_sync_running')
         },
         pause: {
           type: 'danger',
@@ -556,8 +556,11 @@ export default {
     },
     formatStatus(row = {}) {
       let status = row.statsData?.status
-      if (this.task?.status === 'error' && this.getSchedule(row) !== '100%') {
+      const taskStatus = this.task?.status
+      if (taskStatus === 'error' && this.getSchedule(row) !== '100%') {
         status = 'pause'
+      } else if (taskStatus === 'paused') {
+        status = 'waiting'
       }
       return status
     }
