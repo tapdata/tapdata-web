@@ -418,7 +418,7 @@ export default {
     this.$nextTick(() => {
       if (!this.readOnly && this.transform) {
         this.form = {
-          tableNameTransform: this.transform.tableNameTransform,
+          tableNameTransform: this.transform.tableNameTransform || '',
           fieldsNameTransform: this.transform.fieldsNameTransform,
           table_prefix: this.transform.table_prefix,
           table_suffix: this.transform.table_suffix
