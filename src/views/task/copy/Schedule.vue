@@ -341,8 +341,8 @@ export default {
       this.milestonesData = this.task.milestones
         .filter(item => item.group === this.currentStep.group)
         .map(m => {
-          // let time = m.status === 'running' ? formatTime(m.start) : formatTime(m.end)
-          let time = formatTime(m.start)
+          let time = m.status === 'running' ? formatTime(m.start) : formatTime(m.end)
+          // let time = formatTime(m.start)
           return {
             label: this.$t(`milestone_label_${m.code.toLowerCase()}`),
             status: m.status,
