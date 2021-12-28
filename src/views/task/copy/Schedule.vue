@@ -373,19 +373,20 @@ export default {
           dataType: 'time'
         }
       ]
-      console.log(this.task)
       // 迁移一对一 获取滞后时间
       let stageList = []
       let currentItem = {}
       this.task.stages.forEach(stage => {
-        this.task.stats.stagesMetrics.forEach(item => {
-          if (stage.inputLanes.includes(item.stageId)) {
-            currentItem.targetConnectionId = stage.connectionId
-            currentItem.replicationLag = item.replicationLag
-          } else if (stage.outputLanes.includes(item.stageId)) {
-            currentItem.sourceConnectionId = stage.connectionId
-          }
-        })
+        if (this.task.stats.stagesMetrics?.length) {
+          this.task.stats.stagesMetrics.forEach(item => {
+            if (stage.inputLanes.includes(item.stageId)) {
+              currentItem.targetConnectionId = stage.connectionId
+              currentItem.replicationLag = item.replicationLag
+            } else if (stage.outputLanes.includes(item.stageId)) {
+              currentItem.sourceConnectionId = stage.connectionId
+            }
+          })
+        }
       })
       if (Object.keys(currentItem).length) {
         stageList.push(currentItem)
