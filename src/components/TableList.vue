@@ -16,10 +16,9 @@
 
 <script>
 import VIcon from '@/components/VIcon'
-import VTable from '@/components/v-table'
 export default {
   name: 'TableList',
-  components: { VIcon, VTable },
+  components: { VIcon },
   methods: {
     fetch() {
       return this.$refs.table?.fetch(...arguments)

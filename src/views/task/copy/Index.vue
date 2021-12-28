@@ -220,6 +220,9 @@ export default {
         height: 1px;
       }
     }
+    .number-text {
+      font-family: DIN;
+    }
   }
 }
 </style>
