@@ -250,8 +250,18 @@
                       </el-col>
                     </el-row>
                     <el-row class="pt-3">
-                      <el-col :span="13" class="setting-item-box">
-                        <queryBuilder
+                      <el-col :span="13" class="setting-item-box" v-if="item.source.sourceFilterFalg">
+                        <CodeEditor v-model="item.source.where" :width="width" height="200px" class="mb-2"></CodeEditor>
+                        <template v-if="item.source.databaseType">
+                          <div v-if="item.source.databaseType === 'mongodb'">
+                            {{ $t('dag_dialog_field_mapping_example') }}: {"field": 1, "field2": "value"}
+                          </div>
+                          <div v-else>
+                            {{ $t('dag_dialog_field_mapping_example') }}: field1 = 1 and field2 = 'value'
+                          </div>
+                        </template>
+
+                        <!-- <queryBuilder
                           v-if="item.source.sourceFilterFalg"
                           v-model="item.source.custSql"
                           v-bind:initialOffset.sync="item.source.initialOffset"
@@ -259,10 +269,19 @@
                           :tableName="item.source.tableName"
                           :databaseType="item.source.databaseType"
                           :mergedSchema="item.source"
-                        ></queryBuilder>
+                        ></queryBuilder> -->
                       </el-col>
-                      <el-col :span="11" class="pl-6">
-                        <queryBuilder
+                      <el-col :span="11" class="pl-6" v-if="item.target.targeFilterFalg">
+                        <CodeEditor v-model="item.target.where" :width="width" height="200px" class="mb-2"></CodeEditor>
+                        <template v-if="item.target.databaseType">
+                          <div v-if="item.target.databaseType === 'mongodb'">
+                            {{ $t('dag_dialog_field_mapping_example') }}: {"field": 1, "field2": "value"}
+                          </div>
+                          <div v-else>
+                            {{ $t('dag_dialog_field_mapping_example') }}：field1 = 1 and field2 = 'value'
+                          </div>
+                        </template>
+                        <!-- <queryBuilder
                           v-if="item.target.targeFilterFalg"
                           v-model="item.target.custSql"
                           v-bind:initialOffset.sync="item.target.initialOffset"
@@ -270,7 +289,7 @@
                           :tableName="item.target.tableName"
                           :databaseType="item.target.databaseType"
                           :mergedSchema="item.target"
-                        ></queryBuilder>
+                        ></queryBuilder> -->
                       </el-col>
                     </el-row>
                     <div class="setting-item pt-4" v-if="item.showAdvancedVerification">
@@ -379,11 +398,11 @@ const META_INSTANCE_FIELDS = {
 }
 import MultiSelection from './multi-selection.vue'
 import CodeEditor from '@/components/CodeEditor'
-import queryBuilder from '@/components/QueryBuilder'
+// import queryBuilder from '@/components/QueryBuilder'
 //import JsEditor from 'web-core/components/js-editor.vue'
 import { DATA_NODE_TYPES } from '@/const.js'
 export default {
-  components: { MultiSelection, CodeEditor, queryBuilder },
+  components: { MultiSelection, CodeEditor },
   props: {
     remoteFunc: Function,
     optionsFunc: Function,
@@ -482,19 +501,19 @@ export default {
   methods: {
     changeSourceWhere(v, item) {
       if (v) {
-        let custSql = {
-          filterType: 'field', //sql
-          // noFieldFilter: true,
-          noLineLimit: true,
-          selectedFields: [],
-          fieldFilterType: 'keepAllFields',
-          noFieldFilter: true,
-          limitLines: '',
-          cSql: '',
-          editSql: '',
-          conditions: []
-        }
-        this.$set(item, 'custSql', custSql)
+        // let custSql = {
+        //   filterType: 'field', //sql
+        //   // noFieldFilter: true,
+        //   noLineLimit: true,
+        //   selectedFields: [],
+        //   fieldFilterType: 'keepAllFields',
+        //   noFieldFilter: true,
+        //   limitLines: '',
+        //   cSql: '',
+        //   editSql: '',
+        //   conditions: []
+        // }
+        this.$set(item, 'where', '')
       }
     },
     //获取dataflow数据
@@ -895,7 +914,6 @@ export default {
           }
         }
       }
-      debugger
       return {
         connectionId: stage.connectionId,
         connectionName: stage.connectionName,
@@ -1006,25 +1024,25 @@ export default {
       })
     },
     //
-    stringIntercept(databaseType, item) {
-      let where = ''
-      if (databaseType === 'mongodb') {
-        if (item.custSql?.filterType === 'sql') {
-          where = item.custSql.editSql
-        } else {
-          where = item.custSql?.cSql
-        }
-      } else {
-        if (item.custSql?.filterType === 'sql') {
-          where = 'WHERE ' + item.custSql?.editSql
-        } else {
-          let index = item.custSql.cSql.indexOf('*  FROM')
-          let string = item.custSql.cSql.substring(index + 7, item.custSql.cSql.length).trimStart()
-          where = string
-        }
-      }
-      return where
-    },
+    // stringIntercept(databaseType, item) {
+    //   let where = ''
+    //   if (databaseType === 'mongodb') {
+    //     if (item.custSql?.filterType === 'sql') {
+    //       where = item.custSql.editSql
+    //     } else {
+    //       where = item.custSql?.cSql
+    //     }
+    //   } else {
+    //     if (item.custSql?.filterType === 'sql') {
+    //       where = 'WHERE ' + item.custSql?.editSql
+    //     } else {
+    //       let index = item.custSql.cSql.indexOf('*  FROM')
+    //       let string = item.custSql.cSql.substring(index + 7, item.custSql.cSql.length).trimStart()
+    //       where = string
+    //     }
+    //   }
+    //   return where
+    // },
     nextStep() {
       this.$refs.baseForm.validate(valid => {
         if (valid) {
@@ -1090,8 +1108,8 @@ export default {
                     script = 'function validate(sourceRow){' + webScript + '}'
                   }
 
-                  source.where = this.stringIntercept(source.databaseType, source)
-                  target.where = this.stringIntercept(target.databaseType, target)
+                  // source.where = this.stringIntercept(source.databaseType, source)
+                  // target.where = this.stringIntercept(target.databaseType, target)
                   return {
                     source,
                     target,
