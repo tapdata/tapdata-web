@@ -250,6 +250,7 @@ import { TASK_STATUS_MAP } from '../../const'
 import StatusTag from '../../components/StatusTag'
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/filter-bar'
+import { isFinished } from './util'
 let timer = null
 
 export default {
@@ -310,12 +311,19 @@ export default {
     },
     filterStatusOptions() {
       let result = []
-      const { statusOptions } = this
+      const { statusOptions, statusMap } = this
       for (let key in statusOptions) {
-        result.push({
+        let obj = {
           label: key,
           value: statusOptions[key]
-        })
+        }
+        if (statusOptions[key] === 'finished') {
+          continue
+        }
+        if (key === this.$t('task_status_paused')) {
+          obj.label += ',' + statusMap['finished'].text
+        }
+        result.push(obj)
       }
       return result
     },
@@ -390,7 +398,8 @@ export default {
           label: '任务状态',
           key: 'status',
           type: 'select-inner',
-          items: this.filterStatusOptions
+          items: this.filterStatusOptions,
+          selectedWidth: '200px'
         },
         // {
         //   label: '任务类型',
@@ -560,30 +569,7 @@ export default {
       item.statusText = statusInfo.text || ''
       item.statusIcon = statusInfo.icon || ''
       item.startTimeFmt = item.startTime ? this.$moment(item.startTime).format('YYYY-MM-DD HH:mm:ss') : '-'
-      // 全量状态下，任务完成状态时，前端识别为已停止
-      if (item.status === 'paused' && item.setting?.sync_type === 'initial_sync') {
-        let { stages, stats } = item
-        let flag = true
-        // 有节点
-        if (stats?.stagesMetrics?.length > 0) {
-          let stagesMetrics = stats.stagesMetrics || []
-          stagesMetrics.forEach(el => {
-            let findOne = stages.find(stageItem => stageItem.id === el.stageId)
-            // 作为源节点，未全量完成
-            if (findOne?.outputLanes?.length > 0 && el.status !== 'initialized') {
-              flag = false
-            }
-          })
-        } else {
-          // 无节点的任务
-          flag = false
-        }
-
-        if (flag) {
-          // 别为已完成
-          item.isFinished = true
-        }
-      }
+      item.isFinished = isFinished(item) // 全量状态下，任务完成状态时，前端识别为已停止
       return item
     },
     sortChange({ prop, order }) {

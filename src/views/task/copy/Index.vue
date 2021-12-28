@@ -31,6 +31,7 @@ import Log from '@/views/monitor/Log'
 import Connection from './Connection'
 import History from './History'
 import FieldMapping from '@/components/field-mapping/main'
+import { isFinished } from '../util'
 
 export default {
   name: 'Index',
@@ -162,6 +163,7 @@ export default {
       data.startTimeFmt = this.formatTime(data.startTime)
       data.endTimeFmt = data.startTime ? this.formatTime(data.finishTime) : '-'
       data.cdcTimeFmt = this.formatTime(cdcTime)
+      data.isFinished = isFinished(data)
       return data
     },
     formatTime(time) {
