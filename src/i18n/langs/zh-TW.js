@@ -430,6 +430,7 @@ export default {
   task_mapping_dialog_field_range_check: '當前值不符合該字段範圍',
   task_mapping_dialog_field_type_problem:
     '檢測到您還有 XXX 張表的字段類型設置存在問題，請在左側表區域選擇有問題的表進行處理',
+  task_mapping_dialog_target_no_fields_problem: '檢測到您有 XXX 張表中沒有字段，請先返回上一步將沒有字段的表移除',
 
   // 数据校验
   verify_manage: '數據校驗',
