@@ -263,8 +263,14 @@ export default {
         {
           type: 'input',
           field: 'name',
-          label: self.$t('connection_form_connection_name'),
-          placeholder: self.$t('connection_form_connection_name_placeholder'),
+          label:
+            self.databaseType === 'hazelcast_cloud_cluster'
+              ? self.$t('connection_form_hazecast_connection_name')
+              : self.$t('connection_form_connection_name'),
+          placeholder:
+            self.databaseType === 'hazelcast_cloud_cluster'
+              ? self.$t('connection_form_hazecast_connection_name_placeholder')
+              : self.$t('connection_form_connection_name_placeholder'),
           required: true,
           maxlength: 100,
           width: '504px',
