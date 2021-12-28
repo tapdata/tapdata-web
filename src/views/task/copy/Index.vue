@@ -204,6 +204,7 @@ export default {
     }
     .el-tab-pane {
       min-height: 400px;
+      max-height: 600px;
     }
     .el-tabs__nav-wrap::after {
       height: 1px;

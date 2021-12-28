@@ -67,7 +67,7 @@
             ref="initialTableList"
             :remoteMethod="remoteMethod"
             :columns="columns"
-            max-height="300"
+            auto-height
             key="initial_sync"
             hide-on-single-page
           >
@@ -78,7 +78,7 @@
         </div>
         <div v-else class="mt-6">
           <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
-          <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page></TableList>
+          <TableList :columns="cdcColumns" :data="list" auto-height hide-on-single-page></TableList>
         </div>
       </div>
     </template>
