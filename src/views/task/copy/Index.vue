@@ -184,6 +184,9 @@ export default {
     //是否支持同步内容
     showContentTab(data) {
       let stageId = data?.stages?.[1]?.id || ''
+      if (!stageId) {
+        return
+      }
       let param = {
         stages: data?.stages,
         stageId: stageId
