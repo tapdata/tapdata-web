@@ -70,7 +70,7 @@
         <el-form-item>
           <div class="flex-block fr" v-if="model.connectionId && model.tableName">
             <FieldMapping
-              v-if="dataNodeInfo.isTarget && showFieldMapping"
+              v-if="dataNodeInfo.isTarget && showFieldMapping && transformModelVersion"
               ref="fieldMapping"
               class="fr"
               :isDisable="disabled"
@@ -112,6 +112,7 @@ export default {
       disabled: false,
       databases: [],
       databaseLoading: false,
+      transformModelVersion: false,
       rules: {
         connectionId: [
           {
@@ -432,6 +433,11 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      if (this.dataFlow?.setting?.transformModelVersion === 'v2') {
+        this.transformModelVersion = true
+      } else {
+        this.transformModelVersion = false
+      }
       return this.dataFlow
     },
     //接收是否第一次打开

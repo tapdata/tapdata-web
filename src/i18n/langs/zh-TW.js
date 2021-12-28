@@ -83,6 +83,8 @@ export default {
   connection_kafka_kerberos_none_conf: '配置文件不能為空',
   connection_kafka_encryption: '加密方式',
 
+  connection_redis_valid: '開啟認證',
+
   connection_hana_label_hana_type: '租戶模式',
 
   // Dag

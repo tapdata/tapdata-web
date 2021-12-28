@@ -44,6 +44,7 @@ export const FORM_DATA_KEY = 'form_data',
     isOpenAutoDDL: false,
     cdcConcurrency: false,
     cdcShareFilterOnServer: false,
+    transformModelVersion: 'v1',
     emailWaring: {
       edited: false,
       started: false,

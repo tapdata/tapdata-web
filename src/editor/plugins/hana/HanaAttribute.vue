@@ -145,7 +145,7 @@
               class="fr marR20"
               type="success"
               size="mini"
-              v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+              v-if="!dataNodeInfo.isTarget || !showFieldMapping || !transformModelVersion"
               @click="hanlderLoadSchema"
             >
               <i class="el-icon-loading" v-if="reloadModelLoading"></i>
@@ -265,7 +265,8 @@ export default {
       primaryKeyOptions: [],
       scope: '',
       showFieldMapping: false,
-      dataNodeInfo: {}
+      dataNodeInfo: {},
+      transformModelVersion: false
     }
   },
 
@@ -580,6 +581,11 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      if (this.dataFlow?.setting?.transformModelVersion === 'v2') {
+        this.transformModelVersion = true
+      } else {
+        this.transformModelVersion = false
+      }
       return this.dataFlow
     },
     //接收是否第一次打开

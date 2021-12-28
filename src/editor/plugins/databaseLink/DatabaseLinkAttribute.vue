@@ -46,7 +46,7 @@
             <h3>{{ $t('editor.cell.link.migrationSetting') }}<i style="color: red"> *</i></h3>
             <div class="box-btn">
               <FieldMapping
-                v-if="showFieldMapping"
+                v-if="showFieldMapping && transformModelVersion"
                 v-show="!model.selectSourceDatabase['view']"
                 ref="fieldMapping"
                 class="fr"
@@ -203,7 +203,8 @@ export default {
       fieldMappingTableData: '',
       scope: '',
       editScript: '',
-      showFieldMapping: false
+      showFieldMapping: false,
+      transformModelVersion: false
     }
   },
   mounted() {
@@ -487,6 +488,11 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      if (this.dataFlow?.setting?.transformModelVersion === 'v2') {
+        this.transformModelVersion = true
+      } else {
+        this.transformModelVersion = false
+      }
       return this.dataFlow
     },
     returnFieldMapping(field_process) {

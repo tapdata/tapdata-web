@@ -277,31 +277,6 @@
     ></CheckStage>
     <el-dialog
       :title="$t('dag_task_error_tittle')"
-      :visible.sync="showSchemaProgress"
-      :close-on-click-modal="false"
-      width="30%"
-    >
-      <div v-if="progress.progress !== 'done'">
-        <span>{{ $t('dag_task_error_text') }}</span>
-        <div v-if="showDialogProgress">
-          {{ $t('dag_task_error_current_progress') }} : {{ progress.finished }} / {{ progress.total }}
-        </div>
-      </div>
-      <div v-if="progress.progress === 'done' && showDialogProgress">
-        <span>{{ $t('dag_task_error_completed') }}</span>
-        <div v-if="showDialogProgress">
-          {{ $t('dag_task_error_current_progress') }} : {{ progress.finished }} / {{ progress.total }}
-        </div>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="showSchemaProgress = false">{{ $t('message.close') }}</el-button>
-        <el-button :disabled="progress.progress !== 'done'" type="primary" size="mini" @click="start()">{{
-          $t('message.startUp')
-        }}</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog
-      :title="$t('dag_task_error_tittle')"
       :visible.sync="showFieldMappingProgress"
       :close-on-click-modal="false"
       width="30%"
@@ -1249,7 +1224,9 @@ export default {
             }
             if (
               item.outputLanes.length &&
-              (['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'hana', 'gaussdb200'].includes(item.databaseType) ||
+              (['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'hana', 'gaussdb200'].includes(
+                item.databaseType
+              ) ||
                 ['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'hana', 'gaussdb200'].includes(
                   item.database_type
                 )) &&
@@ -1289,6 +1266,7 @@ export default {
           this.showCheckStagesVisible = false
           data['modPipeline'] = this.modPipeline
         }
+        this.initWSSed() //当前推演进度
         let start = () => {
           data.status = 'scheduled'
           data.executeMode = 'normal'
@@ -1305,9 +1283,6 @@ export default {
                     this.checkStagesData[i].syncType = 'initial_sync+cdc'
                   }
                 }
-              } else if (err.response.msg === 'running transformer') {
-                this.initWSSed()
-                this.showSchemaProgress = true
               } else if (err.response.msg === 'invalid') {
                 this.showFieldMappingProgress = true
               } else {
