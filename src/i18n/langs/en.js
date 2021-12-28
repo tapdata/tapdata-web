@@ -660,6 +660,7 @@ export default {
   task_info_data_row: 'Data volume (row)',
   task_info_target_table: 'Target data table',
   task_info_amount_sync_data: 'Completed synchronization data amount (rows)',
+  task_info_completed_schedule: 'Fully completed progress',
   task_info_schedule: 'Progress',
   task_info_table_name: 'table name',
   task_info_milestone: 'Milestone',
@@ -669,6 +670,7 @@ export default {
   task_info_operator: 'Operator',
   task_info_operator_content: 'Operation content',
   task_info_connection_test: 'Test',
+  task_info_lag_time: 'lag time',
 
   task_setting_sync_type: 'Sync type',
   task_setting_initial_sync: 'INITIAL SYNC',
@@ -759,9 +761,12 @@ export default {
   task_mapping_dialog_restore_defaults: 'Are you sure you want to restore the defaults? ',
   task_mapping_dialog_field_name_restrictions_tip:
     'Start with English letters and underscores, only support English, numbers, and underscores, limited to 1~50 characters',
+  task_mapping_dialog_target_no_fields: 'Target model not found',
   task_mapping_dialog_field_range_check: 'The current value does not meet the field range',
   task_mapping_dialog_field_type_problem:
     'It has been detected that you have a problem with the field type settings of XXX tables. Please select the problematic table in the table area on the left for processing.',
+  task_mapping_dialog_target_no_fields_problem:
+    'It is detected that you have XXX tables with no fields, please go back to the previous step and remove the tables without fields. ',
 
   milestone_label_init_dataflow: '[Preliminary preparation] Analyze dag path creation subtask',
   milestone_label_connect_to_source: '[Preliminary preparation] Connect to the source data source',

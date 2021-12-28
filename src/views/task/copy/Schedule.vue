@@ -34,8 +34,8 @@
         </div>
         <ElDivider class="my-1"></ElDivider>
         <!--   概览   -->
-        <div v-if="currentStep.group === 'initial_sync'">
-          <div class="mb-4 fs-7 font-color-main fw-bolder">
+        <div v-if="currentStep.group === 'initial_sync'" class="mt-2">
+          <div class="mb-3 fs-7 font-color-main fw-bolder">
             {{ currentStep.label }}{{ this.$t('task_info_overview') }}
           </div>
           <div class="p-4" style="background: #fafafa; border-radius: 4px 4px 0 0">
@@ -364,18 +364,50 @@ export default {
           prop: 'targetConnectionName'
         },
         {
+          label: this.$t('task_info_lag_time'),
+          prop: 'replicationLag'
+        },
+        {
           label: this.$t('task_info_cdc_time'),
           prop: 'cdcTime',
           dataType: 'time'
         }
       ]
-      this.list = (this.task.cdcLastTimes || []).map(item => {
-        return {
-          cdcTime: item.cdcTime,
-          sourceConnectionName: item.sourceConnectionName,
-          targetConnectionName: item.targetConnectionName
+      // 迁移一对一 获取滞后时间
+      let stageList = []
+      let currentItem = {}
+      this.task.stages.forEach(stage => {
+        if (this.task.stats.stagesMetrics?.length) {
+          this.task.stats.stagesMetrics.forEach(item => {
+            if (stage.inputLanes.includes(item.stageId)) {
+              currentItem.targetConnectionId = stage.connectionId
+              currentItem.replicationLag = item.replicationLag
+            } else if (stage.outputLanes.includes(item.stageId)) {
+              currentItem.sourceConnectionId = stage.connectionId
+            }
+          })
         }
       })
+      if (Object.keys(currentItem).length) {
+        stageList.push(currentItem)
+      }
+
+      ;(this.task.cdcLastTimes || []).forEach(item => {
+        stageList.forEach(stage => {
+          if (
+            item.sourceConnectionId === stage.sourceConnectionId &&
+            item.targetConnectionId === stage.targetConnectionId
+          ) {
+            this.list.push({
+              cdcTime: item.cdcTime,
+              replicationLag: stage.replicationLag || '0',
+              sourceConnectionName: item.sourceConnectionName,
+              targetConnectionName: item.targetConnectionName
+            })
+          }
+        })
+      })
+
       // 全量同步
       this.columns = [
         {
@@ -403,7 +435,7 @@ export default {
           prop: 'targetRowNum'
         },
         {
-          label: this.$t('task_info_source_database'),
+          label: this.$t('task_info_completed_schedule'),
           prop: 'schedule',
           slotName: 'schedule'
         },

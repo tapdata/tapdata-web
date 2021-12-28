@@ -637,6 +637,7 @@ export default {
   task_info_data_row: '数据量（行）',
   task_info_target_table: '目标数据表',
   task_info_amount_sync_data: '已完成同步数据量（行）',
+  task_info_completed_schedule: '全量完成进度',
   task_info_schedule: '进度',
   task_info_table_name: '表名称',
   task_info_milestone: '里程碑',
@@ -646,6 +647,7 @@ export default {
   task_info_operator: '操作者',
   task_info_operator_content: '操作内容',
   task_info_connection_test: '测试',
+  task_info_lag_time: '滞后时间',
 
   task_setting_sync_type: '同步类型',
   task_setting_initial_sync: '全量同步',
@@ -726,12 +728,14 @@ export default {
   task_mapping_dialog_rule_input: '请按照以下规则输入:',
   task_mapping_dialog_all_restore_defaults: '您确认要全部恢复默认吗？',
   task_mapping_dialog_hint: '提示',
-  task_mapping_dialog_delete_all_field_tip: '当前表被删除了所有字段，不允许保存操作',
+  task_mapping_dialog_delete_all_field_tip: '当前表没有可用字段，不允许保存操作',
   task_mapping_dialog_restore_defaults: '您确认要恢复默认吗？',
   task_mapping_dialog_field_name_restrictions_tip: '以英文字母、下划线开头，仅支持英文、数字、下划线，限1~50字符',
+  task_mapping_dialog_target_no_fields: '未找到目标模型',
   task_mapping_dialog_field_range_check: '当前值不符合该字段范围',
   task_mapping_dialog_field_type_problem:
     '检测到您还有 XXX 张表的字段类型设置存在问题，请在左侧表区域选择有问题的表进行处理',
+  task_mapping_dialog_target_no_fields_problem: '检测到您有 XXX 张表中没有字段，请先返回上一步将没有字段的表移除',
 
   // 里程碑
   milestone_label_init_dataflow: '【前期准备】解析dag路径创建子任务',
