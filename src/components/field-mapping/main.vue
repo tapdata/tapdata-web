@@ -178,6 +178,13 @@ export default {
       // 初始化所有字段都映射 只取顶级字段
       source = source.filter(field => field.field_name.indexOf('.') === -1)
       target = target && target.length > 0 ? target[0].fields : []
+      if (source?.length > 0 && target?.length === 0) {
+        this.$message.error(this.$t('task_mapping_dialog_target_no_fields') + '(' + row.sinkQulifiedName + ')')
+        return {
+          data: [],
+          target: []
+        }
+      }
       //是否有字段处理器
       let operations = this.getFieldOperations(row)
       if (operations?.length > 0) {

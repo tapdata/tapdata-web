@@ -761,6 +761,7 @@ export default {
   task_mapping_dialog_restore_defaults: 'Are you sure you want to restore the defaults? ',
   task_mapping_dialog_field_name_restrictions_tip:
     'Start with English letters and underscores, only support English, numbers, and underscores, limited to 1~50 characters',
+  task_mapping_dialog_target_no_fields: 'Target model not found',
   task_mapping_dialog_field_range_check: 'The current value does not meet the field range',
   task_mapping_dialog_field_type_problem:
     'It has been detected that you have a problem with the field type settings of XXX tables. Please select the problematic table in the table area on the left for processing.',

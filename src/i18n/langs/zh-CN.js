@@ -728,9 +728,10 @@ export default {
   task_mapping_dialog_rule_input: '请按照以下规则输入:',
   task_mapping_dialog_all_restore_defaults: '您确认要全部恢复默认吗？',
   task_mapping_dialog_hint: '提示',
-  task_mapping_dialog_delete_all_field_tip: '当前表被删除了所有字段，不允许保存操作',
+  task_mapping_dialog_delete_all_field_tip: '当前表没有可用字段，不允许保存操作',
   task_mapping_dialog_restore_defaults: '您确认要恢复默认吗？',
   task_mapping_dialog_field_name_restrictions_tip: '以英文字母、下划线开头，仅支持英文、数字、下划线，限1~50字符',
+  task_mapping_dialog_target_no_fields: '未找到目标模型',
   task_mapping_dialog_field_range_check: '当前值不符合该字段范围',
   task_mapping_dialog_field_type_problem:
     '检测到您还有 XXX 张表的字段类型设置存在问题，请在左侧表区域选择有问题的表进行处理',

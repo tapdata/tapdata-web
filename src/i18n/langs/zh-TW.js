@@ -423,9 +423,10 @@ export default {
   task_mapping_dialog_rule_input: '請按照以下規則輸入:',
   task_mapping_dialog_all_restore_defaults: '您確認要全部恢復默認嗎？ ',
   task_mapping_dialog_hint: '提示',
-  task_mapping_dialog_delete_all_field_tip: '當前表被刪除了所有字段，不允許保存操作',
+  task_mapping_dialog_delete_all_field_tip: '當前表没有可用字段，不允許保存操作',
   task_mapping_dialog_restore_defaults: '您確認要恢復默認嗎？ ',
   task_mapping_dialog_field_name_restrictions_tip: '以英文字母、下劃線開頭，僅支持英文、數字、下劃線，限1~50字符',
+  task_mapping_dialog_target_no_fields: '未找到目标模型',
   task_mapping_dialog_field_range_check: '當前值不符合該字段範圍',
   task_mapping_dialog_field_type_problem:
     '檢測到您還有 XXX 張表的字段類型設置存在問題，請在左側表區域選擇有問題的表進行處理',
