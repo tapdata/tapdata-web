@@ -660,6 +660,7 @@ export default {
   task_info_data_row: 'Data volume (row)',
   task_info_target_table: 'Target data table',
   task_info_amount_sync_data: 'Completed synchronization data amount (rows)',
+  task_info_completed_schedule: 'Fully completed progress',
   task_info_schedule: 'Progress',
   task_info_table_name: 'table name',
   task_info_milestone: 'Milestone',
@@ -669,6 +670,7 @@ export default {
   task_info_operator: 'Operator',
   task_info_operator_content: 'Operation content',
   task_info_connection_test: 'Test',
+  task_info_lag_time: 'lag time',
 
   task_setting_sync_type: 'Sync type',
   task_setting_initial_sync: 'INITIAL SYNC',

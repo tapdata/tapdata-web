@@ -333,6 +333,7 @@ export default {
   task_info_data_row: '數據量（行）',
   task_info_target_table: '目標數據表',
   task_info_amount_sync_data: '已完成同步數據量（行）',
+  task_info_completed_schedule: '全量完成進度',
   task_info_schedule: '進度',
   task_info_table_name: '表名稱',
   task_info_milestone: '里程碑',
