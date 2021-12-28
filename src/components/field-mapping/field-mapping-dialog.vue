@@ -1002,10 +1002,22 @@ export default {
     },
     returnData(hiddenMsg) {
       let result = this.checkTable()
-      if (result.checkDataType || result.checkInvalid) {
+      if ((result.checkDataType || result.checkInvalid) && result.noFieldsTable === 0) {
         if (!hiddenMsg) {
           let arr = this.$t('task_mapping_dialog_field_type_problem').split('XXX')
           let msg = arr[0] + result.count + arr[1]
+          this.$message.error(msg)
+        }
+        return {
+          valid: false,
+          row: '',
+          operations: '',
+          target: []
+        }
+      } else if (result.noFieldsTable > 0) {
+        if (!hiddenMsg) {
+          let arr = this.$t('task_mapping_dialog_target_no_fields_problem').split('XXX')
+          let msg = arr[0] + result.noFieldsTable + arr[1]
           this.$message.error(msg)
         }
         return {
@@ -1056,10 +1068,18 @@ export default {
           count += 1
         }
       })
+      let noFieldsTable = 0
+      this.fieldMappingNavData.forEach(table => {
+        if (table.sourceFieldCount === 0) {
+          checkInvalid = true
+          noFieldsTable += 1
+        }
+      })
       return {
         checkInvalid: checkInvalid,
         checkDataType: checkDataType,
-        count: count
+        count: count,
+        noFieldsTable: noFieldsTable
       }
     },
     //动态样式
