@@ -74,6 +74,9 @@
             <template slot="schedule" slot-scope="scope">
               <span>{{ getSchedule(scope.row) }}</span>
             </template>
+            <template slot="status" slot-scope="scope">
+              <StatusTag type="text" :statusMap="statusMap" :status="formatStatus(scope.row)"></StatusTag>
+            </template>
           </TableList>
         </div>
         <div v-else class="mt-6">
@@ -121,6 +124,9 @@
             <template slot="schedule" slot-scope="scope">
               <span>{{ getSchedule(scope.row) }}</span>
             </template>
+            <template slot="status" slot-scope="scope">
+              <StatusTag type="text" :statusMap="statusMap" :status="formatStatus(scope.row)"></StatusTag>
+            </template>
           </TableList>
         </div>
         <div v-if="task.milestones && task.milestones.length" class="mt-6">
@@ -137,11 +143,12 @@
 <script>
 import TableList from '@/components/TableList'
 import Milestone from './Milestone'
+import StatusTag from '@/components/StatusTag'
 import { deepCopy, formatTime } from '@/util'
 
 export default {
   name: 'Schedule',
-  components: { TableList, Milestone },
+  components: { TableList, Milestone, StatusTag },
   props: {
     task: {
       type: Object,
@@ -170,8 +177,20 @@ export default {
       milestonesData: [], // 里程碑
       statusMap: {
         done: {
-          color: '',
+          type: 'success',
           text: this.$t('task_info_synced')
+        },
+        waiting: {
+          type: 'primary',
+          text: this.$t('task_info_syncing')
+        },
+        running: {
+          type: 'warning',
+          text: this.$t('task_info_wait_synced')
+        },
+        pause: {
+          type: 'danger',
+          text: this.$t('task_info_sync_pause')
         }
       },
       supportList: ['mysql', 'oracle', 'mongodb', 'sqlserver', 'postgres']
@@ -442,7 +461,8 @@ export default {
         },
         {
           label: this.$t('task_monitor_status'),
-          prop: 'status'
+          prop: 'status',
+          slotName: 'status'
         }
       ]
       this.$refs.initialTableList?.fetch?.()
@@ -533,6 +553,13 @@ export default {
       this.isClickStep = true
       this.showActive = index + 1
       this.getMilestonesData()
+    },
+    formatStatus(row = {}) {
+      let status = row.statsData?.status
+      if (this.task?.status === 'error' && this.getSchedule(row) !== '100%') {
+        status = 'pause'
+      }
+      return status
     }
   }
 }
