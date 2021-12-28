@@ -451,8 +451,11 @@ export default {
       })
     },
     formatTask(data) {
-      data.totalOutput = data.stats?.output?.rows || 0
-      data.totalInput = data.stats?.input?.rows || 0
+      if (!data) {
+        return {}
+      }
+      data.totalOutput = data?.stats?.output?.rows || 0
+      data.totalInput = data?.stats?.input?.rows || 0
       data.creator = data.createUser || '-'
       data.typeText =
         data.mappingTemplate === 'cluster-clone'
