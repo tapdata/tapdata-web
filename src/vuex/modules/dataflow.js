@@ -184,7 +184,6 @@ const mutations = {
   // Settings
   setDataflowSettings(state, dataflowSettings) {
     Vue.set(state.dataflow, 'settings', dataflowSettings)
-    console.log('dataflow', state.dataflow)
   },
 
   /**
