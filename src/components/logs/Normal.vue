@@ -49,7 +49,7 @@
           >
             <div class="flex py-1">
               <div class="mr-2 white-space-nowrap">
-                [<span :class="['level', colorMap[item.level]]">{{ item.level }}</span
+                [<span :class="['level', colorMap[item.level]]">{{ item.params.level || item.level }}</span
                 >]
                 <span>{{ formatTime(item.timestamp) }}</span>
               </div>
