@@ -268,7 +268,17 @@ export default {
         }
         overview.waitingForSyecTableNums = waitingForSyecTableNums
 
-        let num = (overview.targatRowNum / overview.sourceRowNum) * 100
+        let num
+        const { targatRowNum, sourceRowNum } = overview
+        if (sourceRowNum === 0) {
+          if (targatRowNum === 0) {
+            num = 100
+          } else {
+            num = 0
+          }
+        } else {
+          num = (targatRowNum / sourceRowNum) * 100
+        }
         if (num > 100) {
           num = 100
         }

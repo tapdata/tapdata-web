@@ -126,6 +126,17 @@ export default {
               this.transferData.table_suffix = ''
               this.transferData.selectSourceArr = []
             }
+            //是否selectSourceArr在当前tables存在
+            if (this.transferData.selectSourceArr?.length > 0) {
+              let arr = this.transferData.selectSourceArr
+              let newData = []
+              for (let i = 0; i < arr.length; i++) {
+                if (tables.includes(arr[i])) {
+                  newData.push(arr[i])
+                }
+              }
+              this.transferData.selectSourceArr = newData
+            }
           }
         })
         .finally(() => {

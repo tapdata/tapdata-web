@@ -240,12 +240,12 @@ export default {
   agent_deploy_before_prepare_windows_third:
     '3. Please strictly follow the installation steps below to deploy, do not double-click the installation package directly! ',
   agent_deploy_before_prepare_windows_four:
-    '4. If the installation path includes Chinese or special characters, the installation may fail',
+    '4. If the installation path includes Chinese or special characters, the installation may fail.',
   agent_deploy_start_install: 'Start installation',
   agent_deploy_start_install_button_copy: 'Copy',
   agent_deploy_start_install_button_copied: 'Copied',
   agent_deploy_start_install_windows_first:
-    '1. Put the downloaded Tapdata Agent into the directory where you want to install the Agent, double-click to execute the installation, and enter the command below in the opened window to execute the automatic deployment and startup of the Tapdata Agent',
+    '1. Put the downloaded Tapdata Agent into the directory where you want to install the Agent, double-click to execute the installation, and enter the command below in the opened window to execute the automatic deployment and startup of the Tapdata Agent:',
   agent_deploy_start_install_windows_second:
     '2. After the Agent starts successfully, the window will automatically close, and tapdata will generate the following directory structure in your installation directory:',
   agent_deploy_start_install_windows_third:
@@ -257,25 +257,25 @@ export default {
     '1. Before installation, please make sure that Java 1.8 is installed in your deployment environment and the environment variables are correctly configured. ',
   agent_deploy_before_prepare_linux_first_link: 'Click to see how to install and configure Java 1.8',
   agent_deploy_before_prepare_linux_second:
-    '2. We highly recommend deploying Tapdata Agent in a separate and clean folder',
+    '2. We highly recommend deploying Tapdata Agent in a separate and clean folder.',
   agent_deploy_before_prepare_linux_third:
     '3. Download and deploy Tapdata Agent without root permission, only need to have read and write permissions on the deployment directory',
   agent_deploy_start_install_linux_first:
-    '1. Please copy the following command and execute it in the local deployment environment, which includes the download, automatic deployment and startup of Tapdata Agent',
+    '1. Please copy the following command and execute it in the local deployment environment, which includes the download, automatic deployment and startup of Tapdata Agent:',
   agent_deploy_start_install_linux_second:
     '2. After the above command is executed, the log as shown in the figure below appears, which means that the agent started successfully:',
   agent_deploy_start_install_linux_third:
     '3. If you encounter any problems during installation and use, please refer to',
   agent_deploy_before_prepare_docker_first:
-    '1. We provide an image that contains the environment required for Tapdata Agent to run',
+    '1. We provide an image that contains the environment required for Tapdata Agent to run.',
   agent_deploy_before_prepare_docker_second:
     '2. First, your deployment environment must have Docker installed before you can use Docker to install, if not installed, please refer to',
   agent_deploy_before_prepare_docker_install_link: '《Docker Installation》',
-  agent_deploy_before_prepare_docker_second_install: 'Proceed to install',
+  agent_deploy_before_prepare_docker_second_install: 'Proceed to install.',
   agent_deploy_start_install_docker_first:
-    '1. Please copy the following command and execute it in the deployment environment, which includes the download and operation of the image, the download, automatic deployment and start of the Tapdata Agent',
+    '1. Please copy the following command and execute it in the deployment environment, which includes the download and operation of the image, the download, automatic deployment and start of the Tapdata Agent:',
   agent_deploy_start_install_docker_second:
-    '2. After the docker installation is successful, the container ID of the installed Agent will be automatically output. You can use the docker ps command to view the running docker',
+    '2. After the docker installation is successful, the container ID of the installed Agent will be automatically output. You can use the docker ps command to view the running docker:',
   agent_deploy_start_install_docker_third:
     "3. If you need to view the agent's log or start and stop the agent, please refer to",
 
