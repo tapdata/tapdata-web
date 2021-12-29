@@ -395,9 +395,9 @@ export default {
       // 迁移一对一 获取滞后时间
       let stageList = []
       let currentItem = {}
-      if (this.task.stages?.length)
+      if (this.task?.stages?.length)
         this.task.stages.forEach(stage => {
-          if (this.task.stats.stagesMetrics?.length) {
+          if (this.task?.stats?.stagesMetrics?.length) {
             this.task.stats.stagesMetrics.forEach(item => {
               if (stage.inputLanes.includes(item.stageId)) {
                 currentItem.targetConnectionId = stage.connectionId
