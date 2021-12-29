@@ -216,7 +216,7 @@ export default {
       background-color: #e8e8e8;
     }
     .field-mapping {
-      max-height: 400px;
+      height: 400px;
       .task-form-body {
         max-height: 350px;
       }
