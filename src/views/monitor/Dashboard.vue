@@ -11,8 +11,12 @@
               >{{ $t('task_name') }}: {{ task.name }}</ElLink
             >
           </ElTooltip>
-          <img v-if="task.isFinished" style="height: 25px" src="../../../public/images/task/yiwancheng.png" alt="" />
-          <StatusTag v-else type="text" target="task" :status="task.status" only-img></StatusTag>
+          <StatusTag
+            type="text"
+            target="task"
+            :status="task.isFinished ? 'finished' : task.status || 'running'"
+            only-img
+          ></StatusTag>
         </div>
         <div class="mt-1">
           <span>{{ $t('task_monitor_founder') }}: {{ task.createUser }}</span>
@@ -203,6 +207,7 @@ import TaskProgress from './TaskProgress'
 
 import FieldMapping from '@/components/field-mapping/main'
 import Log from './Log.vue'
+import { isFinished } from '../task/util'
 export default {
   components: { StatusTag, TaskProgress, Log, FieldMapping },
   data() {
@@ -465,6 +470,7 @@ export default {
       data.startTimeFmt = this.formatTime(data.startTime)
       data.endTimeFmt = data.startTime ? this.formatTime(data.finishTime) : '-'
       data.cdcTimeFmt = this.formatTime(cdcTime)
+      data.isFinished = isFinished(data)
       return data
     },
     formatTime(time) {
