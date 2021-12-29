@@ -116,12 +116,12 @@ export default {
   agent_deploy_before_prepare_windows_second: '2.點擊下方的下載按鈕將Tapdata Agent安裝包下載到本地環境。 ',
   agent_deploy_before_prepare_windows_second_download: '點擊下載 Tapdata Agent',
   agent_deploy_before_prepare_windows_third: '3.請嚴格按照下方的安裝步驟部署，不要直接雙擊安裝包！ ',
-  agent_deploy_before_prepare_windows_four: '4.若安裝路徑包括中文或特殊字符可能導致安裝失敗',
+  agent_deploy_before_prepare_windows_four: '4.若安裝路徑包括中文或特殊字符可能導致安裝失敗。',
   agent_deploy_start_install: '開始安裝',
   agent_deploy_start_install_button_copy: '複製',
   agent_deploy_start_install_button_copied: '已復制',
   agent_deploy_start_install_windows_first:
-    '1. 將下載好的Tapdata Agent放入要安裝Agent的目錄，雙擊執行安裝，在打開的窗口內輸入下方命令執行即可實現Tapdata Agent的自動部署及啟動',
+    '1. 將下載好的Tapdata Agent放入要安裝Agent的目錄，雙擊執行安裝，在打開的窗口內輸入下方命令執行即可實現Tapdata Agent的自動部署及啟動：',
   agent_deploy_start_install_windows_second:
     '2.待Agent啟動成功後窗口會自動關閉，tapdata會在您的安裝目錄生成如下目錄結構：',
   agent_deploy_start_install_windows_third: '3.如果您在安裝和使用過程中遇到任何問題，請參考',
@@ -129,22 +129,22 @@ export default {
   agent_deploy_link_agent_operation_desc: '或者直接掃描右方二維碼加入社群獲取技術支持。 ',
   agent_deploy_before_prepare_linux_first: '1.安裝前請確認您的部署環境中已安裝Java1.8版本並正確配置環境變量。 ',
   agent_deploy_before_prepare_linux_first_link: '點擊查看Java1.8安裝和配置方式',
-  agent_deploy_before_prepare_linux_second: '2.我們非常建議在一個獨立、乾淨的文件夾內部署 Tapdata Agent',
+  agent_deploy_before_prepare_linux_second: '2.我們非常建議在一個獨立、乾淨的文件夾內部署 Tapdata Agent。',
   agent_deploy_before_prepare_linux_third:
-    '3.下載、部署 Tapdata Agent 無需 root 權限，只需要對部署目錄具備讀寫權限即可',
+    '3.下載、部署 Tapdata Agent 無需 root 權限，只需要對部署目錄具備讀寫權限即可。',
   agent_deploy_start_install_linux_first:
-    '1.請複制下方命令並在本地部署環境執行，其包含 Tapdata Agent 的下載、自動部署及啟動',
+    '1.請複制下方命令並在本地部署環境執行，其包含 Tapdata Agent 的下載、自動部署及啟動：',
   agent_deploy_start_install_linux_second: '2.待上方命令執行完畢後，出現如下圖所示日誌則代表Agent啟動成功：',
   agent_deploy_start_install_linux_third: '3.如果您在安裝和使用過程中遇到任何問題，請參考',
-  agent_deploy_before_prepare_docker_first: '1.我們提供了包含 Tapdata Agent 運行所需環境的鏡像',
+  agent_deploy_before_prepare_docker_first: '1.我們提供了包含 Tapdata Agent 運行所需環境的鏡像。',
   agent_deploy_before_prepare_docker_second:
     '2.首先您的部署環境必須已經安裝Docker才可使用Docker方式安裝，如未安裝可參考',
   agent_deploy_before_prepare_docker_install_link: '《Docker安裝》',
-  agent_deploy_before_prepare_docker_second_install: '進行安裝',
+  agent_deploy_before_prepare_docker_second_install: '進行安裝。',
   agent_deploy_start_install_docker_first:
-    '1.請複制下方命令並在部署環境執行，其包含鏡像的下載及運行，Tapdata Agent 的下載、自動部署及啟動',
+    '1.請複制下方命令並在部署環境執行，其包含鏡像的下載及運行，Tapdata Agent 的下載、自動部署及啟動：',
   agent_deploy_start_install_docker_second:
-    '2.docker安裝成功後，會自動輸出已安裝Agent的容器ID，您可以通過docker ps命令來查看正在運行的docker',
+    '2.docker安裝成功後，會自動輸出已安裝Agent的容器ID，您可以通過docker ps命令來查看正在運行的docker。',
   agent_deploy_start_install_docker_third: '3.如果您需要查看Agent的日誌或者對Agent進行啟停操作，請參考',
 
   // Agent升級
