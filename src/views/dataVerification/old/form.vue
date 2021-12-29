@@ -257,7 +257,7 @@
                             {{ $t('dag_dialog_field_mapping_example') }}: {"field": 1, "field2": "value"}
                           </div>
                           <div v-else>
-                            {{ $t('dag_dialog_field_mapping_example') }}: field1 = 1 and field2 = 'value'
+                            {{ $t('dag_dialog_field_mapping_example') }}: WHERE field1 = 1 and field2 = 'value'
                           </div>
                         </template>
 
@@ -278,7 +278,7 @@
                             {{ $t('dag_dialog_field_mapping_example') }}: {"field": 1, "field2": "value"}
                           </div>
                           <div v-else>
-                            {{ $t('dag_dialog_field_mapping_example') }}：field1 = 1 and field2 = 'value'
+                            {{ $t('dag_dialog_field_mapping_example') }}：WHERE field1 = 1 and field2 = 'value'
                           </div>
                         </template>
                         <!-- <queryBuilder
