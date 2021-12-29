@@ -968,16 +968,16 @@ export default {
         this.settingModel['distinctWriteType'] !== 'compel' // 进入设置页面再判断
     },
     getWhere(type) {
-      let where = {}
-      if (type === 'source' && this.dataSourceModel.source_filter_databaseType !== 'all') {
-        where = {
-          database_type: { in: [this.dataSourceModel.source_databaseType] }
-        }
-      } else if (type === 'target' && this.dataSourceModel.target_filter_databaseType !== 'all') {
-        where = {
-          database_type: { in: [this.dataSourceModel.target_databaseType] }
+      let where = {
+        connection_type: {
+          $in: ['source_and_target', type]
         }
       }
+
+      if (this.dataSourceModel.source_filter_databaseType !== 'all') {
+        where.database_type = { $in: [this.dataSourceModel[`${type}_databaseType`]] }
+      }
+
       return where
     },
     //获取数据源
