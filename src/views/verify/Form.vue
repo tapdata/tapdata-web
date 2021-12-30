@@ -199,7 +199,9 @@
     </div>
     <div class="mt-8">
       <VButton @click="goBack()">{{ $t('button_back') }}</VButton>
-      <VButton type="primary" @click="nextStep()">{{ $t('button_save') }}</VButton>
+      <VButton type="primary" :disabled="!flowStages || !flowStages.length" @click="nextStep()">{{
+        $t('button_save')
+      }}</VButton>
     </div>
     <ElDialog
       width="60%"
@@ -719,6 +721,7 @@ export default {
               tableName: targetTable.original_name
             })
           } else {
+            this.flowStages = null
             this.$message.error('找不到节点对应的表信息')
           }
         })
