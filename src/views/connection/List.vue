@@ -234,6 +234,7 @@ export default {
         if (
           ['testing'].includes(item.status) ||
           ['loading'].includes(item.loadFieldsStatus) ||
+          // TODO 狗皮膏药：点击加载schema前端请求成功之后会获取数据更新状态，但后端数据并未更新，因此要一直轮询
           !item.loadFieldsStatus
         ) {
           ids.push(item.id)

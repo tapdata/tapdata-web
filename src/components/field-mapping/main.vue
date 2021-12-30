@@ -118,9 +118,15 @@ export default {
       return data
     },
     //获取左边导航数据 - 表
-    async updateMetadata(type, data) {
+    async updateMetadata(type, data, row, operations) {
       //将表改名 字段改名 放在setting里面
       this.updateAutoTransform(type, data)
+      if (type !== 'dataType') {
+        this.dataFlow['rollback'] = 'all'
+      }
+      if (type === 'field') {
+        this.dataFlow.stages[0].field_process = this.saveFileOperations(row, operations) //保存字段处理器
+      }
       let promise = await this.$axios.post('tm/api/DataFlows/metadata', this.dataFlow)
       return promise
     },
