@@ -33,7 +33,6 @@
 <script>
 import ColumnItem from './Column'
 import { delayTrigger } from '../../../util'
-import moment from 'moment'
 export default {
   name: 'VTable',
   components: { ColumnItem },
