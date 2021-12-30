@@ -129,7 +129,7 @@ export default {
       this.getUnreadData()
       if (this.$ws) {
         this.$ws.on('notification', async res => {
-          this.getUnreadData()
+          this.getUnReadNum()
           let data = res?.data
           if (data) {
             data.createTime = formatTime(data.createTime)
@@ -145,14 +145,14 @@ export default {
       }
     },
     // 获取未读的消息数量
-    // getUnReadNum() {
-    //   let where = {
-    //     read: false
-    //   }
-    //   return this.$axios.get('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
-    //     this.unRead = res.total
-    //   })
-    // },
+    getUnReadNum() {
+      let where = {
+        read: false
+      }
+      return this.$axios.get('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
+        this.unRead = res.total
+      })
+    },
     getUnreadData() {
       let filter = {
         where: {
