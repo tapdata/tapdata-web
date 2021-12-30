@@ -276,7 +276,11 @@ export default {
                 content = content.replace(re, params[key])
               }
             }
-            el.content = content.replace(/\r\n/g, '<br/>').replace(/\t/g, '<span class="tap-span"></span>')
+            el.content = content
+              .replace(/\r\n/g, '<br/>')
+              .replace(/\n/g, '<br/>')
+              .replace(/\t/g, '<span class="tap-span"></span>')
+              .replace(/[\b\f\n\r\t]/g, '')
           })
           let { list } = this
           if (reset) {
