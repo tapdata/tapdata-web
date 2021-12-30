@@ -39,37 +39,7 @@
         </div>
       </div>
     </div>
-    <ElDialog
-      custom-class="notice-setting-dialog"
-      :title="$t('notify_setting')"
-      width="600px"
-      :visible.sync="dialogVisible"
-      :close-on-click-modal="false"
-      :append-to-body="true"
-    >
-      <ElForm ref="form" class="e-form" label-width="150px" :model="form">
-        <div class="notice-setting-title">{{ $t('notify_agent_notification') }}</div>
-        <ElFormItem :label="$t('notify_agent_status_offline')">
-          <span class="notice-setting-label">{{ $t('notify_sms_notification') }}</span>
-          <ElSwitch v-model="form.connectionInterrupted.sms" size="mini" @change="handleSettingValue"></ElSwitch>
-          <span class="notice-setting-label">{{ $t('notify_email_notification') }}</span>
-          <ElSwitch v-model="form.connectionInterrupted.email" size="mini" @change="handleSettingValue"></ElSwitch>
-        </ElFormItem>
-        <ElFormItem :label="$t('notify_agent_status_running')">
-          <span class="notice-setting-label">{{ $t('notify_sms_notification') }}</span>
-          <ElSwitch v-model="form.connected.sms" size="mini" @change="handleSettingValue"></ElSwitch>
-          <span class="notice-setting-label">{{ $t('notify_email_notification') }}</span>
-          <ElSwitch v-model="form.connected.email" @change="handleSettingValue"></ElSwitch>
-        </ElFormItem>
-        <div class="notice-setting-title">{{ $t('notify_task_running_notification') }}</div>
-        <ElFormItem :label="$t('notify_agent_status_error')">
-          <span class="notice-setting-label">{{ $t('notify_sms_notification') }}</span>
-          <ElSwitch v-model="form.stoppedByError.sms" @change="handleSettingValue"></ElSwitch>
-          <span class="notice-setting-label">{{ $t('notify_email_notification') }}</span>
-          <ElSwitch v-model="form.stoppedByError.email" @change="handleSettingValue"></ElSwitch>
-        </ElFormItem>
-      </ElForm>
-    </ElDialog>
+    <Setting v-if="visible" :visible="visible" @handleDialogVisible="handleSettingDialog"></Setting>
   </ElPopover>
 </template>
 
@@ -77,8 +47,9 @@
 import { TYPEMAP } from './tyepMap'
 import VIcon from '@/components/VIcon'
 import { formatTime, uniqueArr } from '@/util'
+import Setting from './components/Setting'
 export default {
-  components: { VIcon },
+  components: { VIcon, Setting },
   data() {
     return {
       loading: false,
@@ -100,22 +71,8 @@ export default {
         JobDDL: this.$t('notify_jobDDL')
       },
       userOperations: [],
-      dialogVisible: false,
-      userId: '',
-      form: {
-        connected: {
-          email: true,
-          sms: true
-        },
-        connectionInterrupted: {
-          email: true,
-          sms: true
-        },
-        stoppedByError: {
-          email: true,
-          sms: true
-        }
-      }
+      visible: false,
+      form: {}
     }
   },
   created() {
@@ -129,7 +86,7 @@ export default {
       this.getUnreadData()
       if (this.$ws) {
         this.$ws.on('notification', async res => {
-          this.getUnReadNum()
+          this.getUnreadData()
           let data = res?.data
           if (data) {
             data.createTime = formatTime(data.createTime)
@@ -145,14 +102,16 @@ export default {
       }
     },
     // 获取未读的消息数量
-    getUnReadNum() {
-      let where = {
-        read: false
-      }
-      return this.$axios.get('tm/api/Messages?where=' + encodeURIComponent(JSON.stringify(where))).then(res => {
-        this.unRead = res.total
-      })
-    },
+    // getUnReadNum() {
+    //   let filter = {
+    //     where: {
+    //       read: false
+    //     }
+    //   }
+    //   return this.$axios.get('tm/api/Messages/count?filter=' + encodeURIComponent(JSON.stringify(filter))).then(res => {
+    //     this.unRead = res.total
+    //   })
+    // },
     getUnreadData() {
       let filter = {
         where: {
@@ -237,22 +196,11 @@ export default {
     },
     // 通知设置
     handleSetting() {
-      this.dialogVisible = true
-      // 获取tm用户id
-      this.$axios.get('tm/api/users/self').then(data => {
-        if (data) {
-          this.userId = data.id
-          if (data.notification) {
-            this.form = data.notification
-          }
-        }
-      })
+      this.visible = true
     },
-    handleSettingValue() {
-      let data = {
-        notification: this.form
-      }
-      this.$axios.patch(`tm/api/users/${this.userId}`, data)
+    // 关闭设置
+    handleSettingDialog() {
+      this.visible = false
     }
   }
 }
@@ -286,35 +234,6 @@ export default {
     }
     .tab-item {
       margin-bottom: 1px;
-    }
-  }
-}
-.notice-setting-dialog {
-  .el-dialog__header {
-    padding: 40px 40px 0 40px;
-    .el-dialog__title {
-      font-weight: 500;
-      color: #000;
-    }
-    .el-dialog__headerbtn {
-      top: 40px;
-      right: 40px;
-    }
-  }
-  .el-dialog__body {
-    padding: 30px 40px;
-    .notice-setting-title {
-      padding-bottom: 10px;
-      font-size: 12px;
-      color: #2c65ff;
-    }
-    .notice-setting-label {
-      padding: 0 8px 0 30px;
-      font-size: 12px;
-      color: rgba(0, 0, 0, 0.65);
-    }
-    .el-form-item__label {
-      text-align: left;
     }
   }
 }
