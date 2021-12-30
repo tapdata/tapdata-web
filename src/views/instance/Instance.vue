@@ -1,5 +1,5 @@
 <template>
-  <section class="instance-wrapper main-container" v-loading="loading" v-if="$route.name === 'Instance'">
+  <section class="instance-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Instance'">
     <div class="main">
       <div class="instance-operation">
         <div class="instance-operation-left">
@@ -895,8 +895,6 @@ export default {
     height: 20px;
   }
   .main {
-    padding: 20px;
-    background: #fff;
     flex: 1;
     display: flex;
     flex-direction: column;
