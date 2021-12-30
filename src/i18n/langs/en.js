@@ -234,5 +234,19 @@ export default {
   function_tips_max_size: 'Max size ',
 
   // 用户
-  login_fail_too_many: 'The maximum number of password errors has been reached, please log in after 10 minutes'
+  login_fail_too_many: 'The maximum number of password errors has been reached, please log in after 10 minutes',
+  // solution
+  solution_name: 'Solution',
+  solution_customer_job_logs: 'Customer job logs',
+  solution_error_code: 'Error code',
+  solution_select_placeholder_type: 'Please select the type',
+  solution_search_result: 'Result',
+  solution_search_desc: 'Description',
+  solution_search_solutions: 'Solution',
+  // Customer log
+  customer_logs_to_solutions:'View solutions',
+  customer_logs_to_link:'View external links',
+  customer_logs_no_more_data:'No more data',
+  customer_logs_no_search_data:'No search results',
+  customer_logs_copy_result:'copied to clipboard'
 }

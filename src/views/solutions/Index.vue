@@ -27,7 +27,7 @@
           </div>
           <ul class="result-item__list ml-4">
             <li v-for="(t, i) in item.solutions" :key="i" class="mb-1">
-              <div class="mb-1">{{ $t('solution_search_solutons') }}{{ i + 1 }}:</div>
+              <div class="mb-1">{{ $t('solution_search_solutions') }}{{ i + 1 }}:</div>
               <div class="font-color-sub">{{ t }}</div>
             </li>
           </ul>

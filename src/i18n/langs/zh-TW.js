@@ -226,5 +226,19 @@ export default {
   function_tips_max_size: '最大',
 
   // 用户
-  login_fail_too_many: '密碼錯誤達到最大次數，請於10分鐘再登錄'
+  login_fail_too_many: '密碼錯誤達到最大次數，請於10分鐘再登錄',
+  // 解決方案
+  solution_name: '解決方案',
+  solution_customer_job_logs: '客戶任務日誌',
+  solution_error_code: '錯誤碼',
+  solution_select_placeholder_type: '請選擇類型',
+  solution_search_result: '結果',
+  solution_search_desc: '描述',
+  solution_search_solutions: '解決方案',
+  // 客戶日誌
+  customer_logs_to_solutions: '查看解決方案',
+  customer_logs_to_link: '查看外鏈',
+  customer_logs_no_more_data: '沒有更多數據',
+  customer_logs_no_search_data: '無搜索結果',
+  customer_logs_copy_result: '已復製到剪貼板'
 }

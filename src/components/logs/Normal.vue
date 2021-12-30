@@ -31,10 +31,10 @@
       >
         <template #before>
           <div v-if="showSearchResult" class="before-scroll-content text-center font-color-disable pb-2">
-            <div>无搜索结果</div>
+            <div>{{ $t('customer_logs_no_search_data') }}</div>
           </div>
           <div v-else class="before-scroll-content text-center font-color-disable pb-2">
-            <div v-if="isNoMore">没有更多数据</div>
+            <div v-if="isNoMore">{{ $t('customer_logs_no_more_data') }}</div>
             <div v-show="preLoading">
               <i class="el-icon-loading"></i>
             </div>
@@ -55,12 +55,14 @@
               </div>
               <div>
                 <span v-html="item.content"></span>
-                <span v-if="item.link" class="color-primary ml-2">参考外链:{{ item.link }}</span>
+                <span v-if="item.link" class="color-primary ml-2 cursor-pointer" @click="toLink(item.link)">{{
+                  $t('customer_logs_to_link')
+                }}</span>
                 <span
                   v-if="item.params.errorCode"
                   class="color-primary cursor-pointer ml-2"
                   @click="toSolutions(item.params.errorCode)"
-                  >点击，跳转至解决方案</span
+                  >{{ $t('customer_logs_to_solutions') }}</span
                 >
               </div>
             </div>
@@ -321,6 +323,12 @@ export default {
     scrollToItem(index) {
       this.$nextTick(() => {
         this.$refs.virtualScroller?.scrollToItem?.(index)
+      })
+    },
+    toLink(link) {
+      this.$copyText(link).then(() => {
+        this.$message.success(this.$t('customer_logs_copy_result'))
+        window.open(link, '_blank')
       })
     }
   },
