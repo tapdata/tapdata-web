@@ -974,7 +974,10 @@ export default {
         }
       }
 
-      if (this.dataSourceModel.source_filter_databaseType !== 'all') {
+      if (
+        this.dataSourceModel.source_filter_databaseType !== 'all' ||
+        this.dataSourceModel.target_filter_databaseType !== 'all'
+      ) {
         where.database_type = { $in: [this.dataSourceModel[`${type}_databaseType`]] }
       }
 
