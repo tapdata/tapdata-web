@@ -6,7 +6,6 @@
       v-on="$listeners"
       :data="list"
       ref="table"
-      height="100%"
       class="table-container__table"
       @selection-change="handleSelectionChange"
     >
