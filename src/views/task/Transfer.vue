@@ -118,6 +118,13 @@ export default {
                   obj[next.key] ? '' : (obj[next.key] = true && item.push(next))
                   return item
                 }, [])
+              //是否selectSourceArr在当前tables存在
+              let arr = this.transferData.selectSourceArr
+              if (arr?.length > 0) {
+                this.transferData.selectSourceArr = tables
+                  .filter(v => arr.some(s => v.table_name === s))
+                  .map(r => r.table_name)
+              }
             }
 
             if (bidirectional && (this.transferData.table_prefix !== '' || this.transferData.table_suffix !== '')) {
@@ -125,17 +132,6 @@ export default {
               this.transferData.table_prefix = ''
               this.transferData.table_suffix = ''
               this.transferData.selectSourceArr = []
-            }
-            //是否selectSourceArr在当前tables存在
-            if (this.transferData.selectSourceArr?.length > 0) {
-              let arr = this.transferData.selectSourceArr
-              let newData = []
-              for (let i = 0; i < arr.length; i++) {
-                if (tables.includes(arr[i])) {
-                  newData.push(arr[i])
-                }
-              }
-              this.transferData.selectSourceArr = newData
             }
           }
         })
