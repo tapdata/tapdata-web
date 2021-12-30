@@ -1,169 +1,169 @@
 <template>
-  <section class="migration-wrapper main-container" v-loading="loading" v-if="$route.name === 'Task'">
-    <div class="main">
-      <div class="migration-operation">
-        <div class="migration-operation-left">
-          <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="fetch"></FilterBar>
-        </div>
-        <div class="migration-operation-right">
-          <VButton type="primary" :loading="createLoading" @click="createTask"><span>创建任务</span></VButton>
+  <section class="migration-wrapper g-panel-container" v-loading="loading" v-if="$route.name === 'Task'">
+    <!--    <div class="main">-->
+    <div class="migration-operation">
+      <div class="migration-operation-left">
+        <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="fetch"></FilterBar>
+      </div>
+      <div class="migration-operation-right">
+        <VButton type="primary" :loading="createLoading" @click="createTask"><span>创建任务</span></VButton>
+      </div>
+    </div>
+    <ElTable
+      class="migration-table table-border font-color-sub mt-4"
+      height="100%"
+      :data="list"
+      @sort-change="sortChange"
+    >
+      <ElTableColumn label="任务名称" prop="name" min-width="200">
+        <template v-slot="scope">
+          <ElLink type="primary" @click="toDetails(scope.row)">{{ scope.row.name }}</ElLink>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn label="任务类型" prop="typeText"></ElTableColumn>
+      <ElTableColumn label="所属agent" prop="belongAgent" min-width="200">
+        <template slot-scope="scope">
+          <ElLink v-if="scope.row.belongAgent" type="primary" @click="toAgent(scope.row)">{{
+            scope.row.belongAgent
+          }}</ElLink>
+          <span v-else>-</span>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn :label="$t('task_type')" prop="syncTypeText" width="130"></ElTableColumn>
+      <ElTableColumn :label="$t('task_status')" width="120">
+        <template slot-scope="scope">
+          <status-tag
+            type="text"
+            target="task"
+            :status="scope.row.isFinished ? 'finished' : scope.row.status"
+            only-img
+          ></status-tag>
+        </template>
+      </ElTableColumn>
+      <ElTableColumn :label="$t('task_start_time')" prop="startTime" sortable="custom" width="150">
+        <template slot-scope="scope">{{ scope.row.startTimeFmt }}</template>
+      </ElTableColumn>
+      <ElTableColumn :label="$t('task_operate')" width="280">
+        <template slot-scope="scope">
+          <ElTooltip
+            v-if="!['running', 'stopping'].includes(scope.row.status)"
+            effect="dark"
+            :content="$t('task_config_not_completed')"
+            :manual="!(scope.row.status === 'draft' && scope.row.checked === false)"
+            placement="top-start"
+          >
+            <VButton
+              size="mini"
+              type="text"
+              :disabled="
+                !statusBtMap['run'][scope.row.status] || (scope.row.status === 'draft' && scope.row.checked === false)
+              "
+              inner-loading
+              auto-loading
+              class="no-loading"
+              @click="run([scope.row.id], scope.row, arguments[0])"
+            >
+              {{ $t('task_start_task') }}
+            </VButton>
+          </ElTooltip>
+          <ElButton
+            v-if="scope.row.status === 'running'"
+            size="mini"
+            type="text"
+            :disabled="!statusBtMap['stop'][scope.row.status]"
+            @click="stop([scope.row.id])"
+          >
+            {{ $t('task_stop_task') }}
+          </ElButton>
+          <ElButton
+            v-if="scope.row.status === 'stopping'"
+            size="mini"
+            type="text"
+            :disabled="!statusBtMap['forceStop'][scope.row.status]"
+            @click="forceStop([scope.row.id])"
+          >
+            {{ $t('task_forced_stop') }}
+          </ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton
+            size="mini"
+            type="text"
+            @click="handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate, scope.row.hasChildren)"
+          >
+            {{ $t('task_operation_monitor') }}
+          </ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton
+            size="mini"
+            type="text"
+            :disabled="!statusBtMap['edit'][scope.row.status]"
+            @click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate, scope.row.hasChildren)"
+          >
+            {{ $t('button_edit') }}
+          </ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElDropdown @command="handleMore($event, scope.row, scope.$index)">
+            <ElButton size="mini" type="text" class="rotate-90">
+              <i class="el-icon-more"></i>
+            </ElButton>
+            <ElDropdownMenu slot="dropdown" class="text-nowrap">
+              <ElDropdownItem command="copy">复制</ElDropdownItem>
+              <ElDropdownItem command="resetAll" :disabled="!statusBtMap['reset'][scope.row.status]">
+                重置
+              </ElDropdownItem>
+              <ElDropdownItem command="del" :disabled="!statusBtMap['delete'][scope.row.status]">
+                <span :class="{ 'color-danger': statusBtMap['delete'][scope.row.status] }">删除</span>
+              </ElDropdownItem>
+            </ElDropdownMenu>
+          </ElDropdown>
+        </template>
+      </ElTableColumn>
+      <div v-if="!isSearching" class="migration-table__empty" slot="empty">
+        <VIcon size="120">no-data-color</VIcon>
+        <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+          <span>{{ $t('gl_no_data') }}</span>
+          <ElLink type="primary" class="fs-7" @click="createTask">创建任务</ElLink>
         </div>
       </div>
-      <ElTable
-        class="migration-table table-border font-color-sub mt-4"
-        height="100%"
-        :data="list"
-        @sort-change="sortChange"
-      >
-        <ElTableColumn label="任务名称" prop="name" min-width="200">
-          <template v-slot="scope">
-            <ElLink type="primary" @click="toDetails(scope.row)">{{ scope.row.name }}</ElLink>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn label="任务类型" prop="typeText"></ElTableColumn>
-        <ElTableColumn label="所属agent" prop="belongAgent" min-width="200">
-          <template slot-scope="scope">
-            <ElLink v-if="scope.row.belongAgent" type="primary" @click="toAgent(scope.row)">{{
-              scope.row.belongAgent
-            }}</ElLink>
-            <span v-else>-</span>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn :label="$t('task_type')" prop="syncTypeText" width="130"></ElTableColumn>
-        <ElTableColumn :label="$t('task_status')" width="120">
-          <template slot-scope="scope">
-            <status-tag
-              type="text"
-              target="task"
-              :status="scope.row.isFinished ? 'finished' : scope.row.status"
-              only-img
-            ></status-tag>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn :label="$t('task_start_time')" prop="startTime" sortable="custom" width="150">
-          <template slot-scope="scope">{{ scope.row.startTimeFmt }}</template>
-        </ElTableColumn>
-        <ElTableColumn :label="$t('task_operate')" width="280">
-          <template slot-scope="scope">
-            <ElTooltip
-              v-if="!['running', 'stopping'].includes(scope.row.status)"
-              effect="dark"
-              :content="$t('task_config_not_completed')"
-              :manual="!(scope.row.status === 'draft' && scope.row.checked === false)"
-              placement="top-start"
-            >
-              <VButton
-                size="mini"
-                type="text"
-                :disabled="
-                  !statusBtMap['run'][scope.row.status] || (scope.row.status === 'draft' && scope.row.checked === false)
-                "
-                inner-loading
-                auto-loading
-                class="no-loading"
-                @click="run([scope.row.id], scope.row, arguments[0])"
-              >
-                {{ $t('task_start_task') }}
-              </VButton>
-            </ElTooltip>
-            <ElButton
-              v-if="scope.row.status === 'running'"
-              size="mini"
-              type="text"
-              :disabled="!statusBtMap['stop'][scope.row.status]"
-              @click="stop([scope.row.id])"
-            >
-              {{ $t('task_stop_task') }}
-            </ElButton>
-            <ElButton
-              v-if="scope.row.status === 'stopping'"
-              size="mini"
-              type="text"
-              :disabled="!statusBtMap['forceStop'][scope.row.status]"
-              @click="forceStop([scope.row.id])"
-            >
-              {{ $t('task_forced_stop') }}
-            </ElButton>
-            <ElDivider direction="vertical"></ElDivider>
-            <ElButton
-              size="mini"
-              type="text"
-              @click="handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate, scope.row.hasChildren)"
-            >
-              {{ $t('task_operation_monitor') }}
-            </ElButton>
-            <ElDivider direction="vertical"></ElDivider>
-            <ElButton
-              size="mini"
-              type="text"
-              :disabled="!statusBtMap['edit'][scope.row.status]"
-              @click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate, scope.row.hasChildren)"
-            >
-              {{ $t('button_edit') }}
-            </ElButton>
-            <ElDivider direction="vertical"></ElDivider>
-            <ElDropdown @command="handleMore($event, scope.row, scope.$index)">
-              <ElButton size="mini" type="text" class="rotate-90">
-                <i class="el-icon-more"></i>
-              </ElButton>
-              <ElDropdownMenu slot="dropdown" class="text-nowrap">
-                <ElDropdownItem command="copy">复制</ElDropdownItem>
-                <ElDropdownItem command="resetAll" :disabled="!statusBtMap['reset'][scope.row.status]">
-                  重置
-                </ElDropdownItem>
-                <ElDropdownItem command="del" :disabled="!statusBtMap['delete'][scope.row.status]">
-                  <span :class="{ 'color-danger': statusBtMap['delete'][scope.row.status] }">删除</span>
-                </ElDropdownItem>
-              </ElDropdownMenu>
-            </ElDropdown>
-          </template>
-        </ElTableColumn>
-        <div v-if="!isSearching" class="migration-table__empty" slot="empty">
-          <VIcon size="120">no-data-color</VIcon>
-          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-            <span>{{ $t('gl_no_data') }}</span>
-            <ElLink type="primary" class="fs-7" @click="createTask">创建任务</ElLink>
-          </div>
+      <div v-else class="migration-table__empty" slot="empty">
+        <VIcon size="120">search-no-data-color</VIcon>
+        <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+          <span>{{ $t('gl_no_match_result') }}</span>
+          <ElLink type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</ElLink>
         </div>
-        <div v-else class="migration-table__empty" slot="empty">
-          <VIcon size="120">search-no-data-color</VIcon>
-          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-            <span>{{ $t('gl_no_match_result') }}</span>
-            <ElLink type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</ElLink>
+      </div>
+    </ElTable>
+    <ElPagination
+      background
+      class="mt-3"
+      layout="total, sizes, ->, prev, pager, next, jumper"
+      :current-page.sync="page.current"
+      :page-sizes="[10, 20, 50, 100]"
+      :page-size.sync="page.size"
+      :total="page.total"
+      @size-change="fetch(1)"
+      @current-change="fetch"
+    >
+    </ElPagination>
+    <ElDialog title="选择任务类型" :visible.sync="createVisible" width="416px" top="30vh">
+      <div class="select-type flex justify-content-between">
+        <div class="select-type__item" @click="createMigrate">
+          <div>
+            <div>数据库迁移</div>
+            <div class="mt-4">对数据库进行跨库复制</div>
           </div>
+          <VIcon size="30" class="v-icon">right-fill</VIcon>
         </div>
-      </ElTable>
-      <ElPagination
-        background
-        class="mt-3"
-        layout="total, sizes, ->, prev, pager, next, jumper"
-        :current-page.sync="page.current"
-        :page-sizes="[10, 20, 50, 100]"
-        :page-size.sync="page.size"
-        :total="page.total"
-        @size-change="fetch(1)"
-        @current-change="fetch"
-      >
-      </ElPagination>
-      <ElDialog title="选择任务类型" :visible.sync="createVisible" width="416px" top="30vh">
-        <div class="select-type flex justify-content-between">
-          <div class="select-type__item" @click="createMigrate">
-            <div>
-              <div>数据库迁移</div>
-              <div class="mt-4">对数据库进行跨库复制</div>
-            </div>
-            <VIcon size="30" class="v-icon">right-fill</VIcon>
+        <div class="select-type__item data-table ml-10" @click="createSync">
+          <div>
+            <div>数据表同步</div>
+            <div class="mt-4 font-color-sub">抽取源端数据并计算转换</div>
           </div>
-          <div class="select-type__item data-table ml-10" @click="createSync">
-            <div>
-              <div>数据表同步</div>
-              <div class="mt-4 font-color-sub">抽取源端数据并计算转换</div>
-            </div>
-            <VIcon size="30" class="v-icon">right-fill</VIcon>
-          </div>
+          <VIcon size="30" class="v-icon">right-fill</VIcon>
         </div>
-      </ElDialog>
-    </div>
+      </div>
+    </ElDialog>
+    <!--    </div>-->
   </section>
   <RouterView v-else></RouterView>
 </template>
@@ -183,8 +183,6 @@
     font-size: 16px;
   }
   .main {
-    padding: 20px;
-    background: #fff;
     flex: 1;
     display: flex;
     flex-direction: column;

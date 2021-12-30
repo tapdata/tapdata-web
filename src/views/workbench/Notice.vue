@@ -1,5 +1,5 @@
 <template>
-  <div class="notice main-container fs-8" v-if="$route.query.id == 1">
+  <div class="notice g-panel-container fs-8" v-if="$route.query.id == 1">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>新手必看 ！如何玩转 Tapdata Cloud 数据同步功能</span>
@@ -80,7 +80,7 @@
       </div>
     </div>
   </div>
-  <div class="notice main-container ws-main-container fs-8" v-else-if="$route.query.id == 2">
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 2">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>推荐 | 异构数据库同步云平台 Tapdata Cloud 开启有奖公测</span>
@@ -192,7 +192,7 @@
       </div>
     </div>
   </div>
-  <div class="notice main-container ws-main-container fs-8" v-else-if="$route.query.id == 3">
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 3">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>Tapdata Cloud 1.0.6 版本发布啦！</span>
@@ -247,7 +247,7 @@
       </div>
     </div>
   </div>
-  <div class="notice main-container ws-main-container fs-8" v-else-if="$route.query.id == 4">
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 4">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>Tapdata Cloud 1.0.7 版本发布啦！</span>
@@ -279,7 +279,7 @@
       </div>
     </div>
   </div>
-  <div class="notice main-container ws-main-container fs-8" v-else-if="$route.query.id == 5">
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 5">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>Tapdata Cloud 1.0.8 版本发布啦！</span>
@@ -335,7 +335,7 @@
       </div>
     </div>
   </div>
-  <div class="notice main-container ws-main-container fs-8" v-else-if="$route.query.id == 6">
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 6">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>Tapdata Cloud 最新功能概览</span>
@@ -403,7 +403,7 @@
       </div>
     </div>
   </div>
-  <div class="notice main-container ws-main-container fs-8" v-else-if="$route.query.id == 7">
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 7">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>Tapdata 在线研讨会：DaaS vs 大数据平台，是竞争还是共处？</span>
@@ -464,7 +464,7 @@
       </div>
     </div>
   </div>
-  <div class="notice main-container ws-main-container fs-8" v-else-if="$route.query.id == 8">
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 8">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
         <span>Tapdata Cloud 1.0.9 版本发布啦！</span>

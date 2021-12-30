@@ -408,8 +408,6 @@ $unreadColor: #e43737;
     color: #000;
   }
   .main {
-    padding: 20px;
-    background: #fff;
     flex: 1;
     display: flex;
     flex-direction: column;
