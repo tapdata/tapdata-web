@@ -62,7 +62,7 @@
         </div>
       </div>
       <div class="task-info__right flex align-items-center pl-6">
-        <TypeChart type="pie" :data="pieData" :options="pieOptions" class="type-chart"></TypeChart>
+        <Chart type="pie" :data="pieData" :options="pieOptions" class="type-chart"></Chart>
         <div class="pie-status flex flex-wrap ml-5">
           <div v-for="(item, index) in pieData" :key="index" class="pie-status__item flex align-items-center ellipsis">
             <span class="circle-icon mr-2" :style="{ 'background-color': item.color }"></span>
@@ -107,14 +107,14 @@ import History from '../migrate/details/History'
 import Subtask from './Subtask'
 import StatusItem from './StatusItem'
 import Log from '@/components/logs/Index'
-import TypeChart from '@/components/TypeChart'
+import Chart from 'web-core/components/chart'
 import { ETL_SUB_STATUS_MAP } from '@/const'
 // import Task from 'web-core/api/Task'
 // const taskApi = new Task()
 
 export default {
   name: 'TaskDetails',
-  components: { VIcon, InlineInput, Connection, History, Subtask, StatusItem, Log, TypeChart },
+  components: { VIcon, InlineInput, Connection, History, Subtask, StatusItem, Log, Chart },
   data() {
     return {
       loading: true,

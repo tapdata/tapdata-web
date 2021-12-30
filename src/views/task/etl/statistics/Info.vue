@@ -87,8 +87,7 @@
             QPS
           </div>
         </div>
-        <!--        <VEchart :option="throughputObj.body" class="v-echart flex-fill"></VEchart>-->
-        <TypeChart type="line" :data="lineData" :options="lineOptions" class="type-chart"></TypeChart>
+        <Chart type="line" :data="lineData" :options="lineOptions" no-x="second" class="type-chart h-100"></Chart>
       </div>
     </div>
   </div>
@@ -96,16 +95,16 @@
 
 <script>
 import StatusTag from '@/components/StatusTag'
-import VEchart from '@/components/VEchart'
 import VIcon from '@/components/VIcon'
 import SelectList from '@/components/SelectList'
-import TypeChart from '@/components/TypeChart'
+import Chart from 'web-core/components/chart'
 import { formatTime, isEmpty } from '@/utils/util'
+import { splitTime } from 'web-core/utils/util'
 
 let lastMsg
 export default {
   name: 'Info',
-  components: { StatusTag, VEchart, VIcon, SelectList, TypeChart },
+  components: { StatusTag, VIcon, SelectList, Chart },
   props: {
     task: {
       type: Object,
@@ -193,17 +192,57 @@ export default {
         y: [[], []]
       },
       lineOptions: {
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          top: 4,
+          right: 0,
+          show: true
+        },
+        yAxis: {
+          axisLabel: {
+            formatter: function (value) {
+              if (value >= 1000) {
+                value = value / 1000 + 'K'
+              }
+              return value
+            }
+          }
+        },
+        grid: {
+          left: 0,
+          right: 0,
+          top: '24px',
+          bottom: 0
+        },
         series: [
           {
             name: this.$t('task_info_input'),
             lineStyle: {
-              color: '#2C65FF'
+              color: 'rgba(24, 144, 255, 1)',
+              width: 1
+            },
+            areaStyle: {
+              color: 'rgba(24, 144, 255, 0.2)'
+            },
+            symbol: 'none',
+            itemStyle: {
+              color: 'rgba(24, 144, 255, 1)'
             }
           },
           {
             name: this.$t('task_info_output'),
             lineStyle: {
-              color: '#76CDEE'
+              color: 'rgba(118, 205, 238, 1)',
+              width: 1
+            },
+            symbol: 'none',
+            areaStyle: {
+              color: 'rgba(118, 205, 238, 0.2)'
+            },
+            itemStyle: {
+              color: 'rgba(118, 205, 238, 1)'
             }
           }
         ]
@@ -320,7 +359,7 @@ export default {
             console.log('res', el, res.data)
             // lineData
             if (el === 'total_input_qps') {
-              this.lineData.x = res.data.items.map(t => t.ts)
+              this.lineData.x = res.data.items.map(t => this.$moment(t.ts))
               this.lineData.y[0] = res.data.items.map(t => t.value)
             } else {
               this.lineData.y[1] = res.data.items.map(t => t.value)
@@ -465,7 +504,7 @@ export default {
         outputCountList = [],
         timeType = data.granularity['throughput']?.split('_')[1]
       data.statsData.throughput.forEach(item => {
-        timeList.push(this.splitTime(item.t, timeType))
+        timeList.push(splitTime(item.t, timeType))
         inputCountList.push(item.inputCount)
         outputCountList.push(item.outputCount)
       })
@@ -555,23 +594,6 @@ export default {
     },
     changeUtil() {
       this.sendMsg()
-    },
-    splitTime(time, type) {
-      let result
-      switch (type) {
-        case 'second':
-          result = time.substring(11, 19)
-          break
-        case 'minute':
-          result = time.substring(11, 16)
-          break
-        case 'hour':
-          result = time.substring(11, 16)
-          break
-        case 'day':
-          result = time.substring(6, 10)
-      }
-      return result
     },
     formatTime(date) {
       return formatTime(date)

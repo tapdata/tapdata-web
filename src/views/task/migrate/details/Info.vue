@@ -75,7 +75,7 @@
             QPS
           </div>
         </div>
-        <VEchart :option="throughputObj.body" class="v-echart" style="height: 100%"></VEchart>
+        <Chart type="line" :data="lineData" :options="lineOptions" no-x="second" class="v-echart h-100"></Chart>
       </div>
     </div>
   </div>
@@ -83,14 +83,15 @@
 
 <script>
 import StatusTag from '@/components/StatusTag'
-import VEchart from '@/components/VEchart'
+import Chart from 'web-core/components/chart'
 import VIcon from '@/components/VIcon'
 import { formatTime, isEmpty } from '@/utils/util'
+import { splitTime } from 'web-core/utils/util'
 
 let lastMsg
 export default {
   name: 'Info',
-  components: { StatusTag, VEchart, VIcon },
+  components: { StatusTag, VIcon, Chart },
   props: {
     task: {
       type: Object,
@@ -133,7 +134,6 @@ export default {
         input: 0,
         output: 0
       },
-      yMax: 1,
       statusBtMap: {
         // scheduled, draft, running, stopping, error, pause, force stopping
         run: { draft: true, error: true, paused: true },
@@ -143,7 +143,67 @@ export default {
         reset: { draft: true, error: true, paused: true },
         forceStop: { stopping: true }
       },
-      creator: ''
+      creator: '',
+      lineData: {
+        x: [],
+        y: [[], []]
+      },
+      lineOptions: {
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          top: 4,
+          right: 0,
+          show: true
+        },
+        yAxis: {
+          axisLabel: {
+            formatter: function (value) {
+              if (value >= 1000) {
+                value = value / 1000 + 'K'
+              }
+              return value
+            }
+          }
+        },
+        grid: {
+          left: 0,
+          right: 0,
+          top: '24px',
+          bottom: 0
+        },
+        series: [
+          {
+            name: this.$t('task_info_input'),
+            lineStyle: {
+              color: 'rgba(24, 144, 255, 1)',
+              width: 1
+            },
+            areaStyle: {
+              color: 'rgba(24, 144, 255, 0.2)'
+            },
+            symbol: 'none',
+            itemStyle: {
+              color: 'rgba(24, 144, 255, 1)'
+            }
+          },
+          {
+            name: this.$t('task_info_output'),
+            lineStyle: {
+              color: 'rgba(118, 205, 238, 1)',
+              width: 1
+            },
+            symbol: 'none',
+            areaStyle: {
+              color: 'rgba(118, 205, 238, 0.2)'
+            },
+            itemStyle: {
+              color: 'rgba(118, 205, 238, 1)'
+            }
+          }
+        ]
+      }
     }
   },
   computed: {
@@ -261,114 +321,16 @@ export default {
         outputCountList = [],
         timeType = data.granularity['throughput']?.split('_')[1]
       data.statsData.throughput.forEach(item => {
-        timeList.push(this.splitTime(item.t, timeType))
+        timeList.push(splitTime(item.t, timeType))
         inputCountList.push(item.inputCount)
         outputCountList.push(item.outputCount)
       })
-      // 计算y轴最大值
-      const max = Math.max(...[...inputCountList, ...outputCountList])
-      if (max > this.yMax) {
-        this.yMax = max + Math.ceil(max / 10)
-      }
-      this.throughputObj.body = {
-        tooltip: {
-          trigger: 'axis'
-        },
-        legend: {
-          top: 0,
-          right: 0
-        },
-        grid: {
-          top: '20px',
-          left: 0,
-          right: 0,
-          bottom: '3%',
-          containLabel: true,
-          borderWidth: 1,
-          borderColor: '#ccc'
-        },
-        xAxis: {
-          axisLine: {
-            lineStyle: {
-              color: '#409EFF',
-              width: 1 // 这里是为了突出显示加上的
-            }
-          },
-          data: timeList
-        },
-        yAxis: {
-          max: this.yMax,
-          axisLine: {
-            show: true,
-            lineStyle: {
-              color: '#409EFF',
-              width: 1
-            }
-          },
-          axisLabel: {
-            formatter: function (value) {
-              if (value >= 1000) {
-                value = value / 1000 + 'K'
-              }
-              return value
-            }
-          }
-        },
-        series: [
-          {
-            name: this.$t('task_info_input'),
-            type: 'line',
-            smooth: true,
-            data: inputCountList,
-            itemStyle: {
-              color: '#2ba7c3'
-            },
-            lineStyle: {
-              color: '#2ba7c3'
-            },
-            areaStyle: {
-              color: '#2ba7c3'
-            }
-          },
-          {
-            name: this.$t('task_info_output'),
-            type: 'line',
-            smooth: true,
-            data: outputCountList,
-            itemStyle: {
-              color: '#61a569'
-            },
-            lineStyle: {
-              color: '#8cd5c2'
-            },
-            areaStyle: {
-              color: '#8cd5c2'
-            }
-          }
-        ]
-      }
-      this.throughputObj.input = inputCountList[inputCountList.length - 1] || 0
-      this.throughputObj.output = outputCountList[outputCountList.length - 1] || 0
+      this.lineData.x = timeList
+      this.lineData.y[0] = inputCountList
+      this.lineData.y[1] = outputCountList
     },
     changeUtil() {
       this.sendMsg()
-    },
-    splitTime(time, type) {
-      let result
-      switch (type) {
-        case 'second':
-          result = time.substring(11, 19)
-          break
-        case 'minute':
-          result = time.substring(11, 16)
-          break
-        case 'hour':
-          result = time.substring(11, 16)
-          break
-        case 'day':
-          result = time.substring(6, 10)
-      }
-      return result
     },
     formatTime(date) {
       return formatTime(date)
