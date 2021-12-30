@@ -78,19 +78,21 @@
       >
       </ElPagination>
     </div>
-    <NotificationPopover class="none" ref="NotificationPopover"></NotificationPopover>
+    <Setting v-if="visible" :visible="visible" @handleDialogVisible="handleSettingDialog"></Setting>
   </section>
 </template>
 
 <script>
 import { TYPEMAP } from './tyepMap'
-import NotificationPopover from './NotificationPopover'
+// import NotificationPopover from './NotificationPopover'
+import Setting from './components/Setting'
 import VIcon from '@/components/VIcon'
 
 export default {
-  components: { NotificationPopover, VIcon },
+  components: { Setting, VIcon },
   data() {
     return {
+      visible: false,
       user: window.__USER_INFO__ || {},
       list: [],
       unReadCount: 0,
@@ -129,7 +131,11 @@ export default {
   },
   methods: {
     handleSetting() {
-      this.$refs.NotificationPopover?.handleSetting()
+      this.visible = true
+    },
+    // 关闭设置
+    handleSettingDialog() {
+      this.visible = false
     },
     fetch(pageNum, debounce) {
       const { delayTrigger } = this.$util

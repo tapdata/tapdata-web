@@ -27,7 +27,7 @@
           <div class="log-message pl-10" v-html="log.message"></div>
         </li>
       </ul>
-      <div v-if="logs && !logs.length" class="monitor-log__empty position-absolute top-50 start-50 translate-middle">
+      <div v-if="logs && !logs.length" class="monitor-log__empty text-center">
         <VIcon size="120">no-data-color</VIcon>
         <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
           <span>暂无日志</span>
