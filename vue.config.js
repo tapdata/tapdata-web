@@ -107,6 +107,7 @@ module.exports = {
       .loader('svgo-loader')
       .options({
         plugins: [
+          { name: 'removeTitle', active: true },
           { name: 'removeStyleElement', active: true },
           {
             name: 'removeAttrs',
@@ -134,6 +135,7 @@ module.exports = {
       .loader('svgo-loader')
       .options({
         plugins: [
+          { name: 'removeTitle', active: true },
           { name: 'removeStyleElement', active: true },
           {
             name: 'removeAttrs',

@@ -81,13 +81,7 @@
             QPS
           </div>
         </div>
-        <TypeChart
-          type="line"
-          :data="lineData"
-          :options="lineOptions"
-          no-x="second"
-          class="v-echart flex-fill"
-        ></TypeChart>
+        <Chart type="line" :data="lineData" :options="lineOptions" no-x="second" class="v-echart flex-fill"></Chart>
       </div>
     </div>
   </div>
@@ -96,14 +90,15 @@
 <script>
 import StatusTag from '@/components/StatusTag'
 import VIcon from '@/components/VIcon'
-import TypeChart from '@/components/TypeChart'
+import Chart from 'web-core/components/chart'
 import { formatTime, isEmpty } from '@/util'
+import { splitTime } from 'web-core/utils/util'
 
 let lastMsg
 
 export default {
   name: 'Info',
-  components: { StatusTag, VIcon, TypeChart },
+  components: { StatusTag, VIcon, Chart },
   props: {
     task: {
       type: Object,
@@ -146,7 +141,6 @@ export default {
         input: 0,
         output: 0
       },
-      yMax: 1,
       statusBtMap: {
         // scheduled, draft, running, stopping, error, paused, force stopping
         run: { draft: true, error: true, paused: true },
@@ -334,117 +328,16 @@ export default {
         outputCountList = [],
         timeType = data.granularity['throughput']?.split('_')[1]
       data.statsData.throughput.forEach(item => {
-        timeList.push(this.splitTime(item.t, timeType))
+        timeList.push(splitTime(item.t, timeType))
         inputCountList.push(item.inputCount)
         outputCountList.push(item.outputCount)
       })
-      // 计算y轴最大值
-      const max = Math.max(...[...inputCountList, ...outputCountList])
-      if (max > this.yMax) {
-        this.yMax = max + Math.ceil(max / 10)
-      }
       this.lineData.x = timeList
       this.lineData.y[0] = inputCountList
       this.lineData.y[1] = outputCountList
-      this.throughputObj.body = {
-        tooltip: {
-          trigger: 'axis'
-        },
-        legend: {
-          top: 10,
-          right: 0
-        },
-        grid: {
-          left: 0,
-          right: 0,
-          bottom: '3%',
-          containLabel: true,
-          borderWidth: 1,
-          borderColor: '#ccc'
-        },
-        xAxis: {
-          axisLine: {
-            lineStyle: {
-              color: '#409EFF',
-              width: 1 // 这里是为了突出显示加上的
-            }
-          },
-          boundaryGap: false,
-          data: timeList
-        },
-        yAxis: {
-          max: this.yMax,
-          axisLine: {
-            show: true,
-            lineStyle: {
-              color: '#409EFF',
-              width: 1
-            }
-          },
-          axisLabel: {
-            formatter: function (value) {
-              if (value >= 1000) {
-                value = value / 1000 + 'K'
-              }
-              return value
-            }
-          }
-        },
-        series: [
-          {
-            // name: this.$t('task_info_input'),
-            type: 'line',
-            smooth: true,
-            data: inputCountList,
-            itemStyle: {
-              color: '#76CDEE'
-            },
-            lineStyle: {
-              color: '#76CDEE'
-            },
-            areaStyle: {
-              color: '#76CDEE'
-            }
-          },
-          {
-            // name: this.$t('task_info_output'),
-            type: 'line',
-            smooth: true,
-            data: outputCountList,
-            itemStyle: {
-              color: '#61a569'
-            },
-            lineStyle: {
-              color: '#8cd5c2'
-            },
-            areaStyle: {
-              color: '#8cd5c2'
-            }
-          }
-        ]
-      }
-      this.throughputObj.input = inputCountList[inputCountList.length - 1] || 0
-      this.throughputObj.output = outputCountList[outputCountList.length - 1] || 0
     },
     changeUtil() {
       this.sendMsg()
-    },
-    splitTime(time, type) {
-      let result
-      switch (type) {
-        case 'second':
-          result = time.substring(11, 19)
-          break
-        case 'minute':
-          result = time.substring(11, 16)
-          break
-        case 'hour':
-          result = time.substring(11, 16)
-          break
-        case 'day':
-          result = time.substring(6, 10)
-      }
-      return result
     },
     formatTime(date) {
       return formatTime(date)
