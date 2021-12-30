@@ -92,6 +92,7 @@ import StatusTag from '@/components/StatusTag'
 import VIcon from '@/components/VIcon'
 import Chart from 'web-core/components/chart'
 import { formatTime, isEmpty } from '@/util'
+import { splitTime } from 'web-core/utils/util'
 
 let lastMsg
 
@@ -327,7 +328,7 @@ export default {
         outputCountList = [],
         timeType = data.granularity['throughput']?.split('_')[1]
       data.statsData.throughput.forEach(item => {
-        timeList.push(this.splitTime(item.t, timeType))
+        timeList.push(splitTime(item.t, timeType))
         inputCountList.push(item.inputCount)
         outputCountList.push(item.outputCount)
       })
@@ -337,23 +338,6 @@ export default {
     },
     changeUtil() {
       this.sendMsg()
-    },
-    splitTime(time, type) {
-      let result
-      switch (type) {
-        case 'second':
-          result = time.substring(11, 19)
-          break
-        case 'minute':
-          result = time.substring(11, 16)
-          break
-        case 'hour':
-          result = time.substring(11, 16)
-          break
-        case 'day':
-          result = time.substring(6, 10)
-      }
-      return result
     },
     formatTime(date) {
       return formatTime(date)
