@@ -74,7 +74,7 @@
       <div class="task-chart__body flex flex-wrap justify-content-between pr-3">
         <div class="task-chart__item">
           <EchartHeader :data="overviewObj.title"></EchartHeader>
-          <VEchart :option="overviewObj.body" class="v-echart"></VEchart>
+          <Chart :extend="overviewObj.body" class="v-echart"></Chart>
         </div>
         <div class="task-chart__item">
           <EchartHeader :data="throughputObj.title" @change="changeHeaderFnc"></EchartHeader>
@@ -86,7 +86,7 @@
               >{{ $t('dataFlow.output') }}:<span class="ml-1">{{ throughputObj.output }}</span></span
             >
           </div>
-          <VEchart :option="throughputObj.body" class="v-echart"></VEchart>
+          <Chart :extend="throughputObj.body" class="v-echart"></Chart>
         </div>
         <div class="task-chart__item">
           <EchartHeader :data="transfObj.title" @change="changeHeaderFnc"></EchartHeader>
@@ -95,7 +95,7 @@
               >{{ $t('dataFlow.current') }}:<span class="ml-1">{{ transfObj.value }}</span></span
             >
           </div>
-          <VEchart :option="transfObj.body" class="v-echart"></VEchart>
+          <Chart :extend="transfObj.body" class="v-echart"></Chart>
         </div>
         <div class="task-chart__item">
           <EchartHeader :data="replicateObj.title" @change="changeHeaderFnc"></EchartHeader>
@@ -104,7 +104,7 @@
               >{{ $t('dataFlow.current') }}:<span class="ml-1">{{ replicateObj.value }}</span></span
             >
           </div>
-          <VEchart :option="replicateObj.body" class="v-echart"></VEchart>
+          <Chart :extend="replicateObj.body" class="v-echart"></Chart>
         </div>
       </div>
     </div>
@@ -112,12 +112,12 @@
 </template>
 
 <script>
-import VEchart from '@/components/VEchart'
+import Chart from 'web-core/components/chart'
 import EchartHeader from './EchartHeader'
 let lastMsg = ''
 export default {
   name: 'TaskProgress',
-  components: { VEchart, EchartHeader },
+  components: { EchartHeader, Chart },
   props: {
     task: {
       type: Object,
