@@ -421,7 +421,13 @@ export default {
           // filterKey: 'agentId',
           menuMinWidth: '250px',
           items: async () => {
-            let data = await this.$axios.get('api/tcm/agent')
+            let filter = {
+              where: {
+                status: { $in: ['Running'] }
+              },
+              size: 100
+            }
+            let data = await this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
             return data.items.map(item => {
               return {
                 label: item.name,
