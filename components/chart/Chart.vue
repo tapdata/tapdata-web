@@ -330,13 +330,13 @@ export default {
           case 'hour':
           case 'day':
           case 'time':
-            result = new Array(10).fill().map((t, i) => {
+            result = new Array(20).fill().map((t, i) => {
               let time = stamp + i * 10000
               return this.formatTime(noX, time)
             })
             break
           default:
-            result = new Array(10).fill().map((t, i) => i++)
+            result = new Array(20).fill().map((t, i) => i++)
             break
         }
       } else {
