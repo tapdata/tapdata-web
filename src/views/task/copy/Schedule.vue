@@ -392,40 +392,16 @@ export default {
           dataType: 'time'
         }
       ]
-      // 迁移一对一 获取滞后时间
-      let stageList = []
-      let currentItem = {}
-      if (this.task?.stages?.length)
-        this.task.stages.forEach(stage => {
-          if (this.task?.stats?.stagesMetrics?.length) {
-            this.task.stats.stagesMetrics.forEach(item => {
-              if (stage.inputLanes.includes(item.stageId)) {
-                currentItem.targetConnectionId = stage.connectionId
-                currentItem.replicationLag = item.replicationLag
-              } else if (stage.outputLanes.includes(item.stageId)) {
-                currentItem.sourceConnectionId = stage.connectionId
-              }
-            })
-          }
-        })
-      if (Object.keys(currentItem).length) {
-        stageList.push(currentItem)
-      }
-
-      ;(this.task.cdcLastTimes || []).forEach(item => {
-        stageList.forEach(stage => {
-          if (
-            item.sourceConnectionId === stage.sourceConnectionId &&
-            item.targetConnectionId === stage.targetConnectionId
-          ) {
-            this.list.push({
-              cdcTime: item.cdcTime,
-              replicationLag: stage.replicationLag || '0',
-              sourceConnectionName: item.sourceConnectionName,
-              targetConnectionName: item.targetConnectionName
-            })
-          }
-        })
+      // 滞后时间
+      let arr = (this.task?.stats?.stagesMetrics || []).map(t => t.replicationLag) || []
+      let replicationLag = Math.max(...arr) || 0
+      this.list = (this.task.cdcLastTimes || []).map(item => {
+        return {
+          cdcTime: item.cdcTime,
+          replicationLag: replicationLag,
+          sourceConnectionName: item.sourceConnectionName,
+          targetConnectionName: item.targetConnectionName
+        }
       })
 
       // 全量同步

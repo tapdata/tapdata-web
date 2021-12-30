@@ -102,6 +102,7 @@ export default {
   notify_no_notice: '暂无通知',
   notify_delete_notification_tip: '是否确认删除通知',
   notify_delete_notification_title: '删除通知',
+  notify_delete_all_notification_message: '是否确认删除全部通知?',
 
   notify_list_started: '当任务开启',
   notify_list_paused: '已暂停',

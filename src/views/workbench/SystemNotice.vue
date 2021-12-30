@@ -18,13 +18,13 @@
           >
             {{ $t('notify_mark_read') }}
           </ElButton>
-          <ElButton size="mini" @click="handleDelete('one')" :disabled="multipleSelection.length < 1">
+          <ElButton size="mini" @click="handleDelete" :disabled="multipleSelection.length < 1">
             {{ $t('notify_delete') }}
           </ElButton>
-          <ElButton size="mini" type="primary" @click="handleReadNotice('all')">
+          <ElButton size="mini" type="primary" @click="handleReadNoticeAll">
             {{ $t('notify_all_read') }}
           </ElButton>
-          <ElButton size="mini" @click="handleDelete('all')" :disabled="list.length < 1">
+          <ElButton size="mini" @click="handleAllDelete" :disabled="list.length < 1">
             {{ $t('notify_all_delete') }}
           </ElButton>
         </div>
@@ -41,7 +41,7 @@
           <template slot-scope="scope">
             <div class="list-item-content">
               <div class="unread-1zPaAXtSu" v-show="!scope.row.read"></div>
-              <div class="list-item-desc" @click="handleReadNotice(scope.row.id)">
+              <div class="list-item-desc" @click="!scope.row.read && handleReadNotice(scope.row.id, scope.row)">
                 <!--                                <span :style="`color: ${colorMap[scope.row.level]};`">【{{ scope.row.level }}】</span>-->
                 <span>{{ $t('notify_your') }}{{ systemMap[scope.row.system] }}:</span>
                 <span style="color: #2c65ff; cursor: pointer" @click="handleGo(scope.row)">
@@ -260,17 +260,11 @@ export default {
       this.multipleSelection = val
     },
     // 删除消息
-    handleDelete(type) {
+    handleDelete() {
       let where = {}
-      if (type === 'one') {
-        let ids = this.multipleSelection.map(item => item.id)
-        where.id = { inq: ids }
-      } else {
-        where = {}
-      }
-      // let data = {
-      //   isDeleted: true
-      // }
+      let ids = this.multipleSelection.map(item => item.id)
+      where.id = { inq: ids }
+
       this.$confirm(this.$t('notify_delete_notification_tip'), this.$t('notify_delete_notification_title'), {
         type: 'warning',
         confirmButtonText: this.$t('button_confirm'),
@@ -284,7 +278,7 @@ export default {
     },
     // 删除全部消息
     handleAllDelete() {
-      this.$confirm('是否确认删除全部通知？', '删除通知', {
+      this.$confirm(this.$t('notify_delete_all_notification_message'), this.$t('notify_delete_notification_title'), {
         type: 'warning'
       }).then(res => {
         if (res) {
@@ -340,7 +334,7 @@ export default {
           // this.getUnreadNum() //未读消息数量
           this.fetch()
           // this.read = read
-          this.$root.$emit('notificationUpdate')
+          // this.$root.$emit('notificationUpdate')
         }
       })
     },
@@ -351,7 +345,7 @@ export default {
           // this.getUnreadNum() //未读消息数量
           this.fetch()
           // this.read = read
-          this.$root.$emit('notificationUpdate')
+          // this.$root.$emit('notificationUpdate')
         }
       })
     }

@@ -139,9 +139,9 @@ export default {
         this.$ws.ready(() => {
           this.$ws.send(msg)
         }, true)
-        this.$root.$on('notificationUpdate', () => {
-          this.$ws.send(msg)
-        })
+        // this.$root.$on('notificationUpdate', () => {
+        //   this.$ws.send(msg)
+        // })
       }
     },
     // 获取未读的消息数量
