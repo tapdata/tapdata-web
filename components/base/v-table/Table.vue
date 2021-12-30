@@ -209,9 +209,6 @@ export default {
       this.multipleSelection = val
       this.$emit('selection-change', val)
     },
-    formatTime(time, fmt = 'YYYY-MM-DD HH:mm:ss') {
-      return moment(time).format(fmt)
-    },
     setAutoHeight() {
       if (!this.isAutoHeight) {
         return
