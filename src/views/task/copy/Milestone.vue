@@ -12,7 +12,6 @@
       fit
       :class="[{ 'is-fold': isFold }, { unfold: !isFold }]"
       hide-on-single-page
-      auto-height
     >
       <template slot="label" slot-scope="scope">
         <span>{{ scope.row.label }}</span>

@@ -4,10 +4,8 @@
       :remoteMethod="remoteMethod"
       :columns="columns"
       :remote-data="ids"
-      height="100%"
       :has-pagination="false"
       ref="tableList"
-      auto-height
     >
       <template slot="name" slot-scope="scope">
         <div class="flex flex-row align-items-center p-2">
