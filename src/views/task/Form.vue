@@ -909,25 +909,28 @@ export default {
             this.changeConfig([], 'setting_isOpenAutoDDL')
             this.changeConfig([], 'setting_twoWay')
           }
+          //kafka 作为目标 不支持删除模式
           if (this.dataSourceModel['target_databaseType'] === 'kafka') {
             this.changeConfig([], 'setting_distinctWriteType')
           }
-          //greenplum做源时不能增量
-          // if (this.dataSourceModel['source_databaseType'] === 'greenplum') {
-          //   this.changeConfig([], 'setting_sync_type')
-          //   //设置默认值
-          //   this.settingModel.sync_type = 'initial_sync'
-          // }
           //greenplum、ADB mysql、kundb做源时不能增量
           if (
-            this.dataSourceModel['source_databaseType'] === 'greenplum' ||
-            this.dataSourceModel['source_databaseType'] === 'adb_mysql' ||
-            this.dataSourceModel['source_databaseType'] === 'adb_postgres' ||
-            this.dataSourceModel['source_databaseType'] === 'kundb'
+            ['greenplum', 'adb_mysql', 'adb_postgres', 'kundb'].includes(this.dataSourceModel['source_databaseType'])
           ) {
             this.changeConfig([], 'setting_sync_type')
             //设置默认值
             this.settingModel.sync_type = 'initial_sync'
+          }
+          // kafka、es、mq作为目标不允许开启自动创建索引
+          if (['kafka', 'mq', 'elasticsearch'].includes(this.dataSourceModel['target_databaseType'])) {
+            this.changeConfig([], 'setting_needToCreateIndex')
+            //设置默认值
+            this.settingModel.needToCreateIndex = false
+          }
+          // kafka、mq作为源不支持无主键同步
+          if (['kafka', 'mq'].includes(this.dataSourceModel['source_databaseType'])) {
+            this.changeConfig([], 'setting_noPrimaryKey')
+            this.settingModel.noPrimaryKey = false
           }
           if (this.dataSourceModel['target_databaseType'] === 'mq' && this.dataSourceModel['mqType'] === '0') {
             this.mqTransferFlag = true
@@ -1090,6 +1093,22 @@ export default {
                 value: 'intellect'
               }
             ]
+          }
+          break
+        }
+        // 不允许开启自动索引
+        case 'setting_needToCreateIndex': {
+          let op = items.find(it => it.field === 'needToCreateIndex')
+          if (op) {
+            op.show = false
+          }
+          break
+        }
+        // 不支持无主键同步
+        case 'setting_noPrimaryKey': {
+          let op = items.find(it => it.field === 'noPrimaryKey')
+          if (op) {
+            op.show = false
           }
           break
         }

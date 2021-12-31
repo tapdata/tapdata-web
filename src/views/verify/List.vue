@@ -57,6 +57,7 @@
               <span>{{ getStatusText(scope.row) }}</span>
             </div>
             <div v-else>-</div>
+            ---{{ scope.row.InspectResult.parentId }}
             <VIcon v-if="scope.row.InspectResult && scope.row.InspectResult.parentId" class="ml-2" size="14"
               >ercijiaoyan</VIcon
             >

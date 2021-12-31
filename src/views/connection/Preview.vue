@@ -126,7 +126,7 @@ export default {
       if (!type) {
         type = 'default'
       }
-      return require(`web-core/assets/images/connection-type/${type.toLowerCase()}.png`)
+      return require(`web-core/assets/icons/node/${type.toLowerCase()}.svg`)
     },
     open(id, type) {
       this.loadData(id, type)
