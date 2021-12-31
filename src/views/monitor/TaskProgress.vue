@@ -114,6 +114,7 @@
 <script>
 import Chart from 'web-core/components/chart'
 import EchartHeader from './EchartHeader'
+import { getOverviewData } from '../task/copy/util'
 let lastMsg = ''
 export default {
   name: 'TaskProgress',
@@ -251,101 +252,11 @@ export default {
       this.sendMsg()
     },
     loadInfo() {
-      let overview = {}
-      let waitingForSyecTableNums = 0
-      let completeTime = ''
-      let data = this.task
-      this.progressBar = 0
-      if (data?.stats?.overview) {
-        overview = JSON.parse(JSON.stringify(data.stats.overview))
-
-        this.replicateObj.currentStatus = !overview?.status ? this.$t('task_monitor_not_start') : ''
-
-        if (overview.waitingForSyecTableNums !== undefined) {
-          waitingForSyecTableNums = overview.sourceTableNum - overview.waitingForSyecTableNums
-        } else {
-          waitingForSyecTableNums = 0
-        }
-        overview.waitingForSyecTableNums = waitingForSyecTableNums
-
-        let num
-        const { targatRowNum, sourceRowNum } = overview
-        if (sourceRowNum === 0) {
-          if (targatRowNum === 0) {
-            num = 100
-          } else {
-            num = 0
-          }
-        } else {
-          num = (targatRowNum / sourceRowNum) * 100
-        }
-        if (num > 100) {
-          num = 100
-        }
-        this.progressBar = num ? num.toFixed(2) * 1 : 0
-
-        let now = new Date().getTime()
-        let startTime = new Date(data.runningTime).getTime(),
-          runningTime = now - startTime,
-          speed = overview.targatRowNum / runningTime
-        // lefts = Math.floor((spendTime / 1000) % 60) //计算秒数
-
-        let time = (overview.sourceRowNum - overview.targatRowNum) / speed / 1000
-
-        let r = ''
-        if (time) {
-          let s = time,
-            m = 0,
-            h = 0,
-            d = 0
-          if (s > 60) {
-            m = parseInt(s / 60)
-            s = parseInt(s % 60)
-            if (m > 60) {
-              h = parseInt(m / 60)
-              m = parseInt(m % 60)
-              if (h > 24) {
-                d = parseInt(h / 24)
-                h = parseInt(h % 24)
-              }
-            }
-          }
-          if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
-            r = 1 + this.$t('taskProgress.m')
-          }
-          // r = parseInt(s) + this.$t('timeToLive.s')
-          if (m > 0) {
-            r = parseInt(m) + this.$t('taskProgress.m')
-          }
-          if (h > 0) {
-            r = parseInt(h) + this.$t('taskProgress.h') + r
-          }
-          if (d > 0) {
-            r = parseInt(d) + this.$t('taskProgress.d') + r
-          }
-          // 全量未完成 停止任务
-          if (['paused', 'error'].includes(data.status)) {
-            completeTime = this.$t('taskProgress.taskStopped') // 任务已停止
-          } else {
-            completeTime = r
-          }
-        }
-
-        if (this.progressBar === 100) {
-          overview.currentStatus = this.$t('taskProgress.progress') // 进行中
-          completeTime = this.$t('taskProgress.fullyCompleted') // 全量已完成
-        }
-        // 任务暂停、错误  增量状态都为停止
-        if (completeTime === this.$t('taskProgress.fullyCompleted')) {
-          if (['paused', 'error'].includes(data.status)) {
-            overview.currentStatus = this.$t('taskProgress.stopped') // 已停止
-          }
-        }
-      }
-
-      this.completeTime = completeTime
-
+      let { progress, overview, completeTime, currentStatus } = getOverviewData(this.task)
+      this.progressBar = progress
       this.overviewStats = overview
+      this.completeTime = completeTime
+      this.replicateObj.currentStatus = currentStatus
     },
     // http请求
     loadHttp() {

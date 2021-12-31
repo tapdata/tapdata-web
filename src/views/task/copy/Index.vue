@@ -31,7 +31,7 @@ import Log from '@/views/monitor/Log'
 import Connection from './Connection'
 import History from './History'
 import FieldMapping from '@/components/field-mapping/main'
-import { isFinished } from '../util'
+import { isFinished } from './util'
 
 export default {
   name: 'Index',

@@ -248,7 +248,7 @@ import { TASK_STATUS_MAP } from '../../const'
 import StatusTag from '../../components/StatusTag'
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/filter-bar'
-import { isFinished } from './util'
+import { isFinished } from './copy/util'
 let timer = null
 
 export default {

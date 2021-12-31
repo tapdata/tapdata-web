@@ -207,7 +207,7 @@ import TaskProgress from './TaskProgress'
 
 import FieldMapping from '@/components/field-mapping/main'
 import Log from './Log.vue'
-import { isFinished } from '../task/util'
+import { isFinished } from '../task/copy/util'
 export default {
   components: { StatusTag, TaskProgress, Log, FieldMapping },
   data() {
