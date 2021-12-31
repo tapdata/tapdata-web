@@ -266,7 +266,7 @@ export default {
             let content = template || ''
             for (let key in params) {
               let re = new RegExp(`{${key}}`, 'ig')
-              if (this.keyword && params[key].includes(this.keyword)) {
+              if (this.keyword && params[key].indexOf(this.keyword) > -1) {
                 // 高亮关键字
                 let lightKey = params[key].replace(new RegExp(this.keyword, 'ig'), function (val) {
                   return `<span class="keyword">${val}</span>`
