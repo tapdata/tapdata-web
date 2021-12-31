@@ -288,8 +288,9 @@ export default {
         type: 'warning'
       }).then(res => {
         if (res) {
-          this.$axios.delete('tm/api/Messages/deleteAll')
-          this.fetch()
+          this.$axios.delete('tm/api/Messages/deleteAll').then(() => {
+            this.fetch()
+          })
         }
       })
     },
