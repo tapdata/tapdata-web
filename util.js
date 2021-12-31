@@ -46,21 +46,3 @@ export function toRegExp(word) {
   }
   return word
 }
-// @params1: time 2021-12-29 16:29:58
-export function splitTime(time, type) {
-  let result = time
-  switch (type) {
-    case 'second':
-      result = time.substring(11, 19)
-      break
-    case 'minute':
-      result = time.substring(11, 16)
-      break
-    case 'hour':
-      result = time.substring(11, 16)
-      break
-    case 'day':
-      result = time.substring(6, 10)
-  }
-  return result
-}

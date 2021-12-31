@@ -127,7 +127,6 @@ export default {
         pageSizes: [10, 20, 50, 100]
       },
       nonePage: false,
-      isAutoHeight: false,
       itemHeight: 42
     }
   },
@@ -157,14 +156,12 @@ export default {
   },
   mounted() {
     this.fetch(1)
-    this.isAutoHeight = window.hasOwnProperty.call(this.$attrs, 'auto-height') && this.$attrs['auto-height'] !== false
   },
   methods: {
     fetch(pageNum, debounce = 0, hideLoading, callback) {
       if (!this.remoteMethod) {
         this.list = this.data
         this.nonePage = this.list.length <= this.page.size
-        this.setAutoHeight()
         return
       }
       if (pageNum === 1) {
@@ -186,7 +183,6 @@ export default {
               this.page.total = total
               this.list = data || []
               this.nonePage = this.page.total <= this.list.length
-              this.setAutoHeight()
               if (total > 0 && (!data || !data.length)) {
                 setTimeout(() => {
                   this.fetch(this.page.current - 1)
@@ -206,17 +202,6 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
       this.$emit('selection-change', val)
-    },
-    setAutoHeight() {
-      if (!this.isAutoHeight) {
-        return
-      }
-      this.$nextTick(() => {
-        let $container = this.$refs.vTableContainer
-        if ($container?.style) {
-          $container.style['min-height'] = this.itemHeight * (this.list.length + 1) + 'px'
-        }
-      })
     }
   }
 }
