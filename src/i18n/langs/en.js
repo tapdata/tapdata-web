@@ -244,9 +244,9 @@ export default {
   solution_search_desc: 'Description',
   solution_search_solutions: 'Solution',
   // Customer log
-  customer_logs_to_solutions:'View solutions',
-  customer_logs_to_link:'View external links',
-  customer_logs_no_more_data:'No more data',
-  customer_logs_no_search_data:'No search results',
-  customer_logs_copy_result:'copied to clipboard'
+  customer_logs_to_solutions: 'View solutions',
+  customer_logs_to_link: 'View database error help page',
+  customer_logs_no_more_data: 'No more data',
+  customer_logs_no_search_data: 'No search results',
+  customer_logs_copy_result: 'copied to clipboard'
 }
