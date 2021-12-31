@@ -1018,7 +1018,8 @@ export default {
       let filter = {
         where: where,
         fields: fields,
-        order: ['status DESC', 'name ASC']
+        order: ['status DESC', 'name ASC'],
+        limit: 999
       }
       return this.$axios
         .get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
