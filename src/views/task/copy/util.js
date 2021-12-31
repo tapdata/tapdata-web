@@ -52,6 +52,7 @@ export function getOverviewData(data) {
     } else {
       num = (targatRowNum / sourceRowNum) * 100
     }
+    num = Math.abs(num)
     if (num > 100) {
       num = 100
     }
