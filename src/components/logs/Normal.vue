@@ -55,9 +55,6 @@
               </div>
               <div>
                 <span v-html="item.content"></span>
-                <span v-if="item.params.dataSourceErrorMessage" class="ml-2">{{
-                  item.params.dataSourceErrorMessage
-                }}</span>
                 <span v-if="item.link" class="color-primary ml-2 cursor-pointer" @click="toLink(item.link)">{{
                   $t('customer_logs_to_link')
                 }}</span>
@@ -264,26 +261,32 @@ export default {
             }
             return
           }
+          const { keyword } = this
           data.forEach(el => {
             let { template, params } = el
             let content = template || ''
             for (let key in params) {
               let re = new RegExp(`{${key}}`, 'ig')
-              if (this.keyword && new RegExp(this.keyword, 'ig').test(params[key])) {
-                // 高亮关键字
-                let lightKey = params[key].replace(new RegExp(this.keyword, 'ig'), function (val) {
-                  return `<span class="keyword">${val}</span>`
-                })
-                content = content.replace(re, lightKey)
-              } else {
-                content = content.replace(re, params[key])
-              }
+              content = content.replace(re, params[key])
             }
+            // dataSourceErrorMessage
+            if (params.dataSourceErrorMessage) {
+              content += `<span class="ml-2">${params.dataSourceErrorMessage}</span>`
+            }
+
             el.content = content
               .replace(/\r\n/g, '<br/>')
               .replace(/\n/g, '<br/>')
               .replace(/\t/g, '<span class="tap-span"></span>')
               .replace(/[\b\f\n\r\t]/g, '')
+            // 高亮处理
+            if (keyword && new RegExp(keyword, 'ig').test(el.content)) {
+              const reg = new RegExp(keyword, 'ig')
+              // 高亮关键字
+              el.content = el.content.replace(reg, function (val) {
+                return `<span class="keyword">${val}</span>`
+              })
+            }
           })
           let { list } = this
           if (reset) {
