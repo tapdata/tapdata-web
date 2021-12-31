@@ -55,6 +55,9 @@
               </div>
               <div>
                 <span v-html="item.content"></span>
+                <span v-if="item.params.dataSourceErrorMessage" class="ml-2">{{
+                  item.params.dataSourceErrorMessage
+                }}</span>
                 <span v-if="item.link" class="color-primary ml-2 cursor-pointer" @click="toLink(item.link)">{{
                   $t('customer_logs_to_link')
                 }}</span>
