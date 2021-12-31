@@ -248,7 +248,7 @@ export default {
           }
           self.$emit('receive', testData)
         }
-      }, 8000)
+      }, 15000)
       this.callback = () => {
         if (!this.status && this.wsError !== 'ERROR') {
           this.$ws.send(msg)
