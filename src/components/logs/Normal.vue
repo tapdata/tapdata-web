@@ -174,7 +174,7 @@ export default {
     addFilter(filter) {
       const { checkList, keyword } = this
       if (keyword) {
-        filter.where.searchKey = { $regex: keyword }
+        filter.where.searchKey = { $regex: keyword, $options: 'i' }
       }
 
       if (checkList.length) {
