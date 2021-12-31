@@ -549,7 +549,7 @@ export default {
       this.loadingPage = true
       this.$nextTick(() => {
         this.updateMetadata &&
-          this.updateMetadata(type, data)
+          this.updateMetadata(type, data, this.selectRow, this.operations)
             .then(res => {
               this.$emit('update-nav', res)
               this.selectRow = res[this.position]

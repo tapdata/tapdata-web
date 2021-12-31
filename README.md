@@ -55,6 +55,41 @@ yarn mock
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
+
+## 部署
+
+### 部署到sit
+1. 克隆 `daas-cloud` 项目，保证和dfs-web目录同级
+```bash
+git clone git@e.coding.net:tapdata/drs/daas-cloud.git
+```
+2. 切换到dfs-web相同的分支，如 `dfs-v2.0.0`
+```bash
+cd daas-cloud
+git checkout dfs-v2.0.0
+```
+3. 首次执行需要登录下公司的docker镜像库, 密码是通用密码，你懂的！
+```bash
+docker login http://harbor.devops.tapdata.net:80
+```
+
+5. 执行build，要确保 `daas-cloud` 是最新的
+```bash
+git pull
+./drs/build/build.sh -P dfs -v 2.0.0-20211230-xf-001 -p sit -c console
+```
+> -v 版本，可以按照版本号-日期-发布者-递增数的格式，每次更新记得的递增保证唯一
+
+4. 详细参数说明
+```
+-p profile: the runtime environment. Can be one of the following: dev, prod, test, uat; default dev."
+-v version: build version, default is the tag name of current git branch."
+-P product: build the product, drs or dfs, default drs."
+-c components: build on demand: tcm, tm, tm-java, agent, console; use commas to separate multiple component name, example -m tcm,tm; default for build all."
+-d Build docker image, default true."
+-u Update environment, default true."
+```
+
 ### 目录
 
 ```

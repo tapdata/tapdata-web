@@ -845,6 +845,12 @@ export default {
         if (deleteLen.length !== 0) {
           this.saveOperations(returnData.row, returnData.operations, returnData.target)
         }
+        //保存表改名 字段改名
+        this.updateTransfer = true
+        this.transferData.table_prefix = returnData.changNameData.table_prefix
+        this.transferData.table_suffix = returnData.changNameData.table_suffix
+        this.transferData.tableNameTransform = returnData.changNameData.tableNameTransform
+        this.transferData.fieldsNameTransform = returnData.changNameData.fieldsNameTransform
       }
       this.activeStep -= 1
       this.taskStep--
