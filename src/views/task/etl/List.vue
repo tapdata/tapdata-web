@@ -1123,7 +1123,10 @@ export default {
         })
     },
     handleGoFunction() {
-      top.location.href = '/#/JsFuncs'
+      // top.location.href = '/#/JsFuncs'
+      this.$router.push({
+        name: 'Function'
+      })
     },
     toDetail(row) {
       console.log('详情')

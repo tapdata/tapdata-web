@@ -2,35 +2,80 @@
   <div
     :style="{
       height: height ? px(height) : '100%',
-      width: width ? px(width) : '100%'
+      width: width ? px(width) : '100%',
+      padding: '12px 0',
+      backgroundColor: '#282c34'
     }"
-  ></div>
+  >
+    <VCodeEditor
+      :value="value"
+      :theme="theme"
+      :lang="lang"
+      :width="width"
+      :height="height"
+      :options="_options"
+      @init="init"
+      @input="$emit('input', $event)"
+    ></VCodeEditor>
+    <div v-if="false" class="position-absolute w-100 h-100 flex flex-column">
+      <div class="p-4" style="background: #fff">
+        <VButton>返回</VButton>
+      </div>
+      <div class="flex flex-fill">
+        <VCodeEditor
+          :value="value"
+          class="flex-fill"
+          :lang="lang"
+          :theme="theme"
+          :options="_options"
+          @init="init"
+          @input="$emit('input', $event)"
+        ></VCodeEditor>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import ace from 'ace-builds'
-import 'ace-builds/webpack-resolver'
-import 'ace-builds/src-noconflict/ext-language_tools'
-import 'ace-builds/src-noconflict/ext-searchbox'
-
-const ACTION_EVENTS = ['change', 'blur', 'focus', 'copy', 'paste', 'input']
-
 export default {
   name: 'CodeEditor',
   props: {
-    value: {
-      required: true
+    value: String,
+    theme: {
+      type: String,
+      default: 'one_dark'
     },
-    lang: String,
-    theme: String,
-    height: [String, Number],
+    lang: {
+      type: String,
+      default: 'javascript'
+    },
     width: [String, Number],
-    options: Object
+    height: [String, Number],
+    options: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
   },
   data() {
     return {
-      editor: null,
-      contentBackup: ''
+      editor: null
+    }
+  },
+  computed: {
+    _options() {
+      return Object.assign(
+        {
+          printMargin: false,
+          enableBasicAutocompletion: true,
+          enableLiveAutocompletion: true,
+          enableSnippets: true,
+          fontSize: 12,
+          wrap: true
+        },
+        this.options
+      )
     }
   },
   methods: {
@@ -39,50 +84,109 @@ export default {
         return n + 'px'
       }
       return n
-    }
-  },
-  watch: {
-    value(val) {
-      if (typeof val === 'object') {
-        val = JSON.stringify(val)
+    },
+    format() {
+      this.beautify.beautify(this.editor.session)
+    },
+    init(editor, tools, beautify) {
+      this.editor = editor
+      this.beautify = beautify
+      let typeMapping = {
+        custom: this.$t('function_type_option_custom'),
+        jar: this.$t('function_type_option_jar'),
+        system: this.$t('function_type_option_system')
       }
-      if (this.contentBackup !== val) this.editor.setValue(val, 1)
+      this.$api('Javascript_functions')
+        .get()
+        .then(res => {
+          let items = res?.data || []
+          items.sort((a, b) => {
+            let scoreMap = {
+              custom: 0,
+              jar: 1,
+              system: 2
+            }
+            let aName = a.methodName || a.function_name
+            let bName = b.methodName || b.function_name
+            aName = aName.toLowerCase()
+            bName = bName.toLowerCase()
+            if (a.type !== b.type) {
+              return scoreMap[a.type] - scoreMap[b.type]
+            } else {
+              if (aName < bName) {
+                return -1
+              }
+              if (aName > bName) {
+                return 1
+              }
+              return 0
+            }
+          })
+          tools.addCompleter({
+            getCompletions: (editor, session, pos, prefix, callback) => {
+              if (prefix.length === 0) {
+                return callback(null, [])
+              } else {
+                return callback(
+                  null,
+                  items.map((item, index) => {
+                    let methodName = item.methodName || item.function_name
+                    return {
+                      caption: methodName,
+                      snippet: methodName + '(${1})',
+                      meta: typeMapping[item.type],
+                      type: 'snippet',
+                      score: 1000000 - index,
+                      format: item.format,
+                      parametersDesc: item.parameters_desc,
+                      returnDesc: item.return_value
+                    }
+                  })
+                )
+              }
+            },
+            getDocTooltip: function (item) {
+              if (item.type == 'snippet') {
+                let body = item.parametersDesc
+                  ? `<pre class="code-editor-snippet-tips__body"><div class="panel-title">parameters description</div>${item.parametersDesc}</pre>`
+                  : `<pre class="code-editor-snippet-tips__body">${item.format || item.caption}</pre>`
+                let footer = item.returnDesc
+                  ? `<pre class="code-editor-snippet-tips__footer"><div class="panel-title">return description</div>${item.returnDesc}</pre>`
+                  : ''
+                item.docHTML = `<div class="code-editor-snippet-tips"><div class="code-editor-snippet-tips__header"><span class="panel-title">function</span>${
+                  item.format || item.caption
+                }</div>${body}${footer}</div>`
+              }
+            }
+          })
+        })
     }
-  },
-  mounted() {
-    let lang = this.lang || 'text'
-    let theme = this.theme || 'chrome'
-
-    let editor = (this.editor = ace.edit(this.$el))
-    let tools = ace.require('ace/ext/language_tools')
-    ace.require('ace/ext/searchbox')
-    this.$emit('init', editor, tools)
-
-    editor.$blockScrolling = Infinity
-    let session = editor.getSession()
-    editor.setTheme(`ace/theme/${theme}`)
-    session.setMode(`ace/mode/${lang}`)
-    session.setTabSize(2)
-
-    let val = typeof this.value === 'object' ? JSON.stringify(this.value, null, 2) : this.value
-    editor.setValue(val || '', 1)
-
-    if (this.options) {
-      session.setUseWrapMode(this.options.useWrapMode) // 自动换行
-      editor.setOptions(this.options)
-    }
-
-    editor.on('change', () => {
-      let content = editor.getValue()
-      this.$emit('input', content)
-      this.contentBackup = content
-    })
-
-    ACTION_EVENTS.forEach(ev => {
-      editor.on(ev, (event, editor) => {
-        this.$emit(ev, editor.getValue(), event, editor)
-      })
-    })
   }
 }
 </script>
+<style lang="scss">
+.ace_tooltip.ace_doc-tooltip {
+  background: #25282c;
+  color: #c1c1c1;
+}
+.code-editor-snippet-tips {
+  max-height: 400px;
+  max-width: 500px;
+  pre {
+    margin: 0;
+  }
+  .panel-title {
+    margin-right: 10px;
+    color: #c678dd;
+  }
+}
+.code-editor-snippet-tips__body,
+.code-editor-snippet-tips__footer {
+  padding: 10px 0;
+  border-top: 1px solid #ccc;
+  font-size: 12px;
+  .panel-title {
+    margin-bottom: 6px;
+  }
+}
+</style>
