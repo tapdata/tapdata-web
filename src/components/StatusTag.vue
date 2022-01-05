@@ -114,7 +114,5 @@ export default {
 }
 .td-status-tag__text {
   display: inline-block;
-  height: 26px;
-  line-height: 26px;
 }
 </style>

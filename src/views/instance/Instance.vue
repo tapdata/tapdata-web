@@ -31,7 +31,7 @@
             <div class="flex">
               <div>
                 <inline-input
-                  :class="['color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
+                  :class="['inline-input', 'color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
                   :value="scope.row.name"
                   :icon-config="{ class: 'color-primary', size: '12' }"
                   type="icon"
@@ -142,31 +142,27 @@
         </el-table-column>
         <el-table-column :label="$t('agent_operate')" width="200" fixed="right">
           <template slot-scope="scope">
-            <div class="operate-columns">
-              <el-button
-                size="mini"
-                type="text"
-                :disabled="deployBtnDisabled(scope.row)"
-                @click="toDeploy(scope.row)"
-                >{{ $t('agent_button_deploy') }}</el-button
-              >
-              <el-divider direction="vertical"></el-divider>
-              <el-button
-                type="text"
-                :disabled="stopBtnDisabled(scope.row)"
-                :loading="scope.row.btnLoading.stop"
-                @click="handleStop(scope.row)"
-                >{{ $t('agent_button_stop') }}</el-button
-              >
-              <el-divider direction="vertical"></el-divider>
-              <el-button
-                type="text"
-                :loading="scope.row.btnLoading.delete"
-                :disabled="delBtnDisabled(scope.row)"
-                @click="handleDel(scope.row)"
-                >{{ $t('agent_button_delete') }}</el-button
-              >
-            </div>
+            <el-button size="mini" type="text" :disabled="deployBtnDisabled(scope.row)" @click="toDeploy(scope.row)">{{
+              $t('agent_button_deploy')
+            }}</el-button>
+            <el-divider direction="vertical"></el-divider>
+            <el-button
+              size="mini"
+              type="text"
+              :disabled="stopBtnDisabled(scope.row)"
+              :loading="scope.row.btnLoading.stop"
+              @click="handleStop(scope.row)"
+              >{{ $t('agent_button_stop') }}</el-button
+            >
+            <el-divider direction="vertical"></el-divider>
+            <el-button
+              size="mini"
+              type="text"
+              :loading="scope.row.btnLoading.delete"
+              :disabled="delBtnDisabled(scope.row)"
+              @click="handleDel(scope.row)"
+              >{{ $t('agent_button_delete') }}</el-button
+            >
           </template>
         </el-table-column>
         <div v-if="!isSearching" class="instance-table__empty" slot="empty">
@@ -927,10 +923,8 @@ export default {
     overflow: auto;
     border-bottom: none;
     color: rgba(0, 0, 0, 0.65);
-    .operate-columns {
-      .el-divider {
-        margin: 0 16px;
-      }
+    .el-divider--vertical {
+      margin: 0 16px;
     }
   }
   .instance-table__empty {
@@ -957,6 +951,18 @@ export default {
     .el-progress-circle {
       width: 20px !important;
       height: 20px !important;
+    }
+  }
+}
+.inline-input {
+  ::v-deep {
+    .el-input--mini .el-input__inner {
+      height: 20px;
+      line-height: 20px;
+    }
+    .icon-button {
+      width: 20px;
+      height: 20px;
     }
   }
 }

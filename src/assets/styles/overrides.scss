@@ -341,7 +341,7 @@ th {
     display: none;
   }
   &.el-table--small td {
-    padding: 5px 0;
+    padding: 8px 0;
   }
   & > .cell {
     font-size: 14px;
@@ -358,7 +358,7 @@ th {
     }
     th {
       padding: 0;
-      height: 54px;
+      height: 48px;
     }
     td {
       border-bottom: 1px solid #eceef1;
@@ -384,8 +384,9 @@ th {
         border-bottom: 0;
       }
       & > .cell {
-        font-size: 14px;
-        color: map-get($fontColor, main);
+        font-size: 12px;
+        color: map-get($fontColor, sub);
+        font-weight: bold;
       }
     }
   }
@@ -395,7 +396,10 @@ th {
   }
   .el-table__cell {
     .cell {
-      line-height: 30px;
+      line-height: 20px;
+      .el-button--text.el-button--mini {
+        padding: 4px 0;
+      }
     }
     &:first-child {
       > .cell {

@@ -77,7 +77,6 @@ export default {
 <style lang="scss" scoped>
 .filter-datetime {
   padding-left: 8px;
-  font-size: 14px;
   .filter-datetime__title {
     margin-right: 8px;
     cursor: pointer;
@@ -90,7 +89,6 @@ export default {
       }
       input {
         color: map-get($fontColor, main);
-        font-size: 14px;
       }
     }
     &.empty-time {

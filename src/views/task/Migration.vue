@@ -205,12 +205,11 @@
       color: unset;
       cursor: unset;
     }
-    ::v-deep {
-      .el-table__cell {
-        .cell {
-          line-height: 16px;
-        }
-      }
+    .td-status-tag {
+      position: absolute;
+      top: 50%;
+      left: 10px;
+      margin-top: -12px;
     }
   }
   .migration-table__empty {

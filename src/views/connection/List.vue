@@ -14,10 +14,9 @@
       <ElTable class="connection-table table-border mt-4" height="100%" :data="list" @sort-change="sortChange">
         <ElTableColumn label="连接名" prop="name" min-width="200px">
           <template slot-scope="scope">
-            <div class="flex flex-row align-items-center p-2" style="height: 50px">
+            <div class="flex flex-row align-items-center">
               <img
-                class="mr-2"
-                style="width: 24px"
+                class="mr-2 db-img"
                 :src="require('web-core/assets/icons/node/' + scope.row.database_type.toLowerCase() + '.svg')"
               />
               <!-- require('web-core/assets/images/connection-type/' + scope.row.database_type.toLowerCase() + '.png') -->
@@ -73,11 +72,11 @@
             <div class="operate-columns">
               <ElButton size="mini" type="text" @click="testConnection(scope.row)">连接测试</ElButton>
               <ElDivider direction="vertical"></ElDivider>
-              <ElButton type="text" :disabled="isCloud(scope.row)" @click="edit(scope.row)">编辑</ElButton>
+              <ElButton size="mini" type="text" :disabled="isCloud(scope.row)" @click="edit(scope.row)">编辑</ElButton>
               <ElDivider direction="vertical"></ElDivider>
-              <ElButton type="text" :disabled="isCloud(scope.row)" @click="copy(scope.row)">复制</ElButton>
+              <ElButton size="mini" type="text" :disabled="isCloud(scope.row)" @click="copy(scope.row)">复制</ElButton>
               <ElDivider direction="vertical"></ElDivider>
-              <ElButton type="text" @click="del(scope.row)">删除</ElButton>
+              <ElButton size="mini" type="text" @click="del(scope.row)">删除</ElButton>
             </div>
           </template>
         </ElTableColumn>
@@ -151,6 +150,9 @@
     .agent-link {
       color: unset;
       cursor: unset;
+    }
+    .db-img {
+      height: 20px;
     }
     .operate-columns {
       .el-divider {

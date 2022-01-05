@@ -187,6 +187,7 @@ export default {
   cursor: pointer;
   &:hover {
     background-color: #eff1f4;
+    border-radius: 2px;
     ::v-deep {
       input {
         background-color: #eff1f4;
@@ -195,7 +196,6 @@ export default {
     }
   }
   .filter-datetime-range__title {
-    font-size: 14px;
     color: map-get($fontColor, sub);
   }
 }

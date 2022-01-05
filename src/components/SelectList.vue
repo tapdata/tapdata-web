@@ -108,7 +108,7 @@
     <div
       v-else
       ref="reference"
-      :class="['inner-select', { 'is-focus': visible }, 'inline-flex align-items-center fs-7']"
+      :class="['inner-select', { 'is-focus': visible }, 'inline-flex align-items-center']"
       :validate-event="false"
       @mouseenter="inputHovering = true"
       @mouseleave="inputHovering = false"
@@ -508,10 +508,10 @@ export default {
 
 <style lang="scss" scoped>
 .v-select-list {
-  font-size: 14px;
   &.none-border {
     &:hover {
       background-color: #eff1f4;
+      border-radius: 2px;
       .icon-btn {
         color: map-get($fontColor, main);
       }
