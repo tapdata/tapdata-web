@@ -31,10 +31,10 @@
       >
         <template #before>
           <div v-if="showSearchResult" class="before-scroll-content text-center font-color-disable pb-2">
-            <div>无搜索结果</div>
+            <div>{{ $t('customer_logs_no_search_data') }}</div>
           </div>
           <div v-else class="before-scroll-content text-center font-color-disable pb-2">
-            <div v-if="isNoMore">没有更多数据</div>
+            <div v-if="isNoMore">{{ $t('customer_logs_no_more_data') }}</div>
             <div v-show="preLoading">
               <i class="el-icon-loading"></i>
             </div>
@@ -47,17 +47,25 @@
             :data-index="index"
             :size-dependencies="[item.id, item.content]"
           >
-            [<span :class="['level', colorMap[item.level]]">{{ item.level }}</span
-            >]
-            <span class="mr-2">{{ formatTime(item.timestamp) }}</span>
-            <span v-html="item.content"></span>
-            <span v-if="item.link" class="color-primary ml-2">参考外链:{{ item.link }}</span>
-            <span
-              v-if="item.params.errorCode"
-              class="color-primary cursor-pointer ml-2"
-              @click="toSolutions(item.params.errorCode)"
-              >点击，跳转至解决方案</span
-            >
+            <div class="flex py-1">
+              <div class="mr-2 white-space-nowrap">
+                [<span :class="['level', colorMap[item.level]]">{{ item.params.level || item.level }}</span
+                >]
+                <span>{{ formatTime(item.timestamp) }}</span>
+              </div>
+              <div>
+                <span v-html="item.content"></span>
+                <span v-if="item.link" class="color-primary ml-2 cursor-pointer" @click="toLink(item.link)">{{
+                  $t('customer_logs_to_link')
+                }}</span>
+                <span
+                  v-if="item.params.errorCode"
+                  class="color-primary cursor-pointer ml-2"
+                  @click="toSolutions(item.params.errorCode)"
+                  >{{ $t('customer_logs_to_solutions') }}</span
+                >
+              </div>
+            </div>
           </DynamicScrollerItem>
         </template>
       </DynamicScroller>
@@ -163,12 +171,7 @@ export default {
     addFilter(filter) {
       const { checkList, keyword } = this
       if (keyword) {
-        filter.where.or = [
-          { threadName: { regexp: keyword } },
-          { loggerName: { regexp: keyword } },
-          { message: { regexp: keyword } },
-          { level: { regexp: keyword } }
-        ]
+        filter.where.searchKey = { $regex: keyword, $options: 'i' }
       }
 
       if (checkList.length) {
@@ -184,13 +187,15 @@ export default {
       }
       let filter = {
         where: {
-          dataFlowId: this.id,
-          id: {
-            lt: this.firstLogsId
-          }
+          dataFlowId: this.id
         },
         order: 'id DESC',
         limit: 20
+      }
+      if (this.firstLogsId) {
+        filter.where.id = {
+          lt: this.firstLogsId
+        }
       }
       this.addFilter(filter)
       this.getLogsData(filter, false, true)
@@ -199,13 +204,15 @@ export default {
       // this.lastLogsId = ''
       let filter = {
         where: {
-          dataFlowId: this.id,
-          id: {
-            gt: this.lastLogsId
-          }
+          dataFlowId: this.id
         },
         order: 'id DESC',
         limit: 20
+      }
+      if (this.lastLogsId) {
+        filter.where.id = {
+          gt: this.lastLogsId
+        }
       }
       this.addFilter(filter)
 
@@ -254,18 +261,32 @@ export default {
             }
             return
           }
+          const { keyword } = this
           data.forEach(el => {
             let { template, params } = el
-            let content = (template || '').replace(/\r\n/g, '<br/>').replace(/\t/g, '<span class="tap-span"></span>')
+            let content = template || ''
             for (let key in params) {
               let re = new RegExp(`{${key}}`, 'ig')
-              if (this.keyword) {
-                content = content.replace(re, `<span class="keyword">${params[key]}</span>`)
-              } else {
-                content = content.replace(re, params[key])
-              }
+              content = content.replace(re, params[key])
             }
+            // dataSourceErrorMessage
+            if (params.dataSourceErrorMessage) {
+              content += `<span class="ml-2">${params.dataSourceErrorMessage}</span>`
+            }
+
             el.content = content
+              .replace(/\r\n/g, '<br/>')
+              .replace(/\n/g, '<br/>')
+              .replace(/\t/g, '<span class="tap-span"></span>')
+              .replace(/[\b\f\n\r\t]/g, '')
+            // 高亮处理
+            if (keyword && new RegExp(keyword, 'ig').test(el.content)) {
+              const reg = new RegExp(keyword, 'ig')
+              // 高亮关键字
+              el.content = el.content.replace(reg, function (val) {
+                return `<span class="keyword">${val}</span>`
+              })
+            }
           })
           let { list } = this
           if (reset) {
@@ -313,6 +334,12 @@ export default {
       this.$nextTick(() => {
         this.$refs.virtualScroller?.scrollToItem?.(index)
       })
+    },
+    toLink(link) {
+      this.$copyText(link).then(() => {
+        this.$message.success(this.$t('customer_logs_copy_result'))
+        window.open(link, '_blank')
+      })
     }
   },
 
@@ -324,8 +351,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .customer-logs {
-  //display: flex;
-  //flex-direction: column;
   font-size: 12px;
   ::v-deep {
     .tap-span {
@@ -339,7 +364,6 @@ export default {
 .e-debug-log {
   width: 100%;
   height: 100%;
-  //padding: 10px 5px 5px 20px;
   box-sizing: border-box;
   overflow: hidden;
 
@@ -352,15 +376,7 @@ export default {
   }
 }
 .logs-list {
-  //height: calc(100% - 44px);
-  //overflow-y: auto;
-  //height: 0;
-  //flex: 1;
-  //min-height: 150px;
   background: rgba(229, 236, 255, 0.22);
-  //&.empty {
-  //  min-height: 150px;
-  //}
   .el-loading-spinner .el-loading-text {
     font-size: 12px;
     color: #333;
@@ -371,9 +387,6 @@ export default {
     }
   }
 }
-.inputStyle {
-  width: 300px;
-}
 .el-checkbox {
   margin-left: 4px;
   margin-right: 8px;
@@ -382,5 +395,8 @@ export default {
       font-size: 12px;
     }
   }
+}
+.white-space-nowrap {
+  white-space: nowrap;
 }
 </style>

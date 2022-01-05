@@ -71,7 +71,12 @@ export default {
         password: ''
       },
       keepSignIn: true,
-      errorMessage: ''
+      errorMessage: '',
+      langMap: {
+        sc: 'zh-CN',
+        tc: 'zh-TW',
+        en: 'en'
+      }
     }
   },
   created() {
@@ -134,6 +139,7 @@ export default {
         this.$cookie.set('token', data.id)
         this.$cookie.set('isAdmin', parseInt(user.data.role) || 0)
         this.$cookie.set('user_id', data.userId)
+        this.$cookie.set('lang', this.langMap[localStorage.getItem('tapdata_localize_lang')] || 'zh-CN')
         this.$cookie.delete('show_guide')
         if (!user.data.isCompleteGuide) {
           this.$cookie.set('show_guide', 1)

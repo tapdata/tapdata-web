@@ -1,13 +1,29 @@
 <template>
-  <VEchart :option="chartOption" class="type-chart-container"></VEchart>
+  <VChart ref="chart" :option="chartOption" :autoresize="autoresize" class="type-chart-container" />
 </template>
 
 <script>
-import VEchart from './VEchart'
+import { use } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
+import { PieChart, BarChart, LineChart } from 'echarts/charts'
+import { TitleComponent, TooltipComponent, ToolboxComponent, LegendComponent, GridComponent } from 'echarts/components'
+import VChart from 'vue-echarts'
+
+use([
+  CanvasRenderer,
+  PieChart,
+  BarChart,
+  LineChart,
+  TitleComponent,
+  TooltipComponent,
+  ToolboxComponent,
+  LegendComponent,
+  GridComponent
+])
 
 export default {
   name: 'TypeChart',
-  components: { VEchart },
+  components: { VChart },
   props: {
     type: {
       type: String,
@@ -21,6 +37,17 @@ export default {
     },
     extend: {
       type: Object
+    },
+    autoresize: {
+      type: Boolean,
+      default: true
+    },
+    noX: {
+      type: [String, Array]
+    },
+    noY: {
+      type: Array,
+      default: () => [0, 1]
     }
   },
   data() {
@@ -39,20 +66,38 @@ export default {
       deep: true,
       handler(v) {
         if (v) {
-          this.chartOption = v
+          v && this.init()
         }
       }
     }
   },
   mounted() {
     this.init()
+    window.addEventListener('resize', this.resize)
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.resize)
   },
   methods: {
     init() {
       if (this.extend) {
+        this.chartOption = this.extend
         return
       }
-      this.chartOption = this[this.type]?.()
+      let obj = this[this.type]?.()
+      const { options } = this
+      if (options) {
+        for (let key in options) {
+          if (key === 'series') {
+            options[key].forEach((el, i) => {
+              obj[key][i] = Object.assign({}, obj[key][i] || {}, el || {})
+            })
+          } else {
+            obj[key] = Object.assign({}, obj[key] || {}, options[key] || {})
+          }
+        }
+      }
+      this.chartOption = obj
     },
     bar() {
       let seriesData = []
@@ -101,7 +146,7 @@ export default {
           }
         },
         yAxis: {
-          show: false
+          // show: false
         },
         series: [
           {
@@ -136,85 +181,42 @@ export default {
       }
     },
     line() {
-      let timeList = []
-      let inputCountList = []
-      let outputCountList = []
-      return {
-        tooltip: {
-          trigger: 'axis'
-        },
-        legend: {
-          top: 10,
-          right: 0
-        },
-        grid: {
-          left: 0,
-          right: 0,
-          bottom: '3%',
-          containLabel: true,
-          borderWidth: 1,
-          borderColor: '#ccc'
-        },
+      let obj = {
         xAxis: {
-          axisLine: {
-            lineStyle: {
-              color: '#409EFF',
-              width: 1 // 这里是为了突出显示加上的
-            }
-          },
-          data: timeList
+          boundaryGap: false,
+          data: []
         },
         yAxis: {
-          max: this.yMax,
+          type: 'value',
           axisLine: {
             show: true,
             lineStyle: {
               color: '#409EFF',
               width: 1
             }
-          },
-          axisLabel: {
-            formatter: function (value) {
-              if (value >= 1000) {
-                value = value / 1000 + 'K'
-              }
-              return value
-            }
           }
         },
-        series: [
-          {
-            name: this.$t('task_info_input'),
-            type: 'line',
-            smooth: true,
-            data: inputCountList,
-            itemStyle: {
-              color: '#2ba7c3'
-            },
-            lineStyle: {
-              color: '#2ba7c3'
-            },
-            areaStyle: {
-              color: '#2ba7c3'
-            }
-          },
-          {
-            name: this.$t('task_info_output'),
-            type: 'line',
-            smooth: true,
-            data: outputCountList,
-            itemStyle: {
-              color: '#61a569'
-            },
-            lineStyle: {
-              color: '#8cd5c2'
-            },
-            areaStyle: {
-              color: '#8cd5c2'
-            }
-          }
-        ]
+        grid: {
+          left: '24px',
+          right: '24px',
+          top: '24px',
+          bottom: '24px'
+        },
+        series: []
       }
+      const { data } = this
+      obj.xAxis.data = data.x || []
+      let series = []
+      if (data.y && data.y[0] instanceof Array) {
+        data.y.forEach(el => {
+          series.push(Object.assign(this.getLineSeriesItem(), { data: el }))
+        })
+      } else {
+        series.push(Object.assign(this.getLineSeriesItem(), { data: data.y }))
+      }
+      obj.series = series
+      this.setEmptyData(obj)
+      return obj
     },
     pie() {
       // 需要传入 [{ value: 1, name: 'A', color: 'red' },{ value: 2, name: 'B', color: 'blue' }...]
@@ -252,11 +254,69 @@ export default {
         if (options.center) {
           obj.series[0].center = options.center
         }
-        for (let key in options) {
-          Object.assign(obj[key] || {}, options[key] || {})
-        }
       }
       return obj
+    },
+    getLineSeriesItem() {
+      const { options } = this
+      let item = {
+        type: 'line',
+        smooth: true,
+        data: []
+      }
+      if (options) {
+        if (options.smooth) {
+          item.smooth = options.smooth
+        }
+      }
+      return item
+    },
+    setEmptyData(data) {
+      const { noX, noY } = this
+      if (!noX || data.xAxis.data?.length) {
+        data.yAxis.min = null
+        data.yAxis.max = null
+        return
+      }
+      let result
+      let stamp = new Date().getTime()
+      if (typeof noX === 'string') {
+        switch (noX) {
+          case 'second':
+          case 'min':
+          case 'hour':
+          case 'day':
+          case 'time':
+            result = new Array(10).fill().map((t, i) => {
+              let time = stamp + i * 10000
+              return this.formatTime(noX, time)
+            })
+            break
+          default:
+            result = new Array(10).fill().map((t, i) => i++)
+            break
+        }
+      } else {
+        result = noX
+      }
+      data.xAxis.data = result
+      data.yAxis.min = noY[0] || 0
+      data.yAxis.max = noY[1] || 1
+    },
+    formatTime(type, time) {
+      let map = {
+        second: 'HH:mm:ss',
+        min: 'HH:mm',
+        hour: 'HH:00',
+        day: 'MM-DD'
+      }
+      return this.$moment(time).format(map[type] || 'YYYY-MM-DD HH:mm:ss')
+    },
+    resize() {
+      const { delayTrigger } = this.$util
+      delayTrigger(() => {
+        this.$refs.chart?.resize?.()
+      }, 800)
     }
   }
 }

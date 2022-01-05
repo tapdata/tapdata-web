@@ -461,7 +461,7 @@ const childRoutes = [
     }
   },
   {
-    path: '/dataflows',
+    path: '/dataflow',
     name: 'dataflow',
     component: () => import('@/views/task/etl/List'),
     meta: {
@@ -471,7 +471,7 @@ const childRoutes = [
     }
   },
   {
-    path: '/dataflows/details/:id',
+    path: '/dataflow/details/:id',
     name: 'dataflowDetails',
     component: () => import('@/views/task/etl/Details'),
     meta: {
@@ -483,7 +483,7 @@ const childRoutes = [
     }
   },
   {
-    path: '/dataflows/details/:id/statistics/:subId',
+    path: '/dataflow/details/:id/statistics/:subId',
     name: 'dataflowStatistics',
     component: () => import('@/views/task/etl/statistics/Index'),
     meta: {
@@ -807,7 +807,7 @@ const router = new Router({
       component: () => import('@/views/Guide')
     },
     {
-      path: '/dataflows/editor',
+      path: '/dataflow/editor',
       name: 'DataflowNew',
       props: {
         listRoute: {
@@ -817,7 +817,7 @@ const router = new Router({
       component: () => import('web-core/views/dataflow/Editor')
     },
     {
-      path: '/dataflows/editor/:id',
+      path: '/dataflow/editor/:id',
       name: 'DataflowEditor',
       props: {
         listRoute: {

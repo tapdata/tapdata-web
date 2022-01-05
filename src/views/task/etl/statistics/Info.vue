@@ -51,24 +51,24 @@
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_input') }}</span>
         </div>
-        <div class="mb-4 fs-4 font-color-main">{{ overviewObj.body.inputCount }}</div>
+        <div class="mb-4 fs-4 font-color-main">{{ totalData.total_input }}</div>
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-success" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_output') }}</span>
         </div>
-        <div class="mb-6 fs-4 font-color-main">{{ overviewObj.body.outputCount }}</div>
+        <div class="mb-6 fs-4 font-color-main">{{ totalData.total_output }}</div>
         <div class="flex justify-content-between text-center">
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_insert') }}</div>
-            <div class="fs-6 font-color-main">{{ overviewObj.body.insertCount }}</div>
+            <div class="fs-6 font-color-main">{{ totalData.total_insert }}</div>
           </div>
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_update') }}</div>
-            <div class="fs-6 font-color-main">{{ overviewObj.body.updateCount }}</div>
+            <div class="fs-6 font-color-main">{{ totalData.total_update }}</div>
           </div>
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_delete') }}</div>
-            <div class="fs-6 font-color-main">{{ overviewObj.body.deleteCount }}</div>
+            <div class="fs-6 font-color-main">{{ totalData.total_delete }}</div>
           </div>
         </div>
       </div>
@@ -87,7 +87,7 @@
             QPS
           </div>
         </div>
-        <VEchart :option="throughputObj.body" class="v-echart flex-fill"></VEchart>
+        <Chart type="line" :data="lineData" :options="lineOptions" no-x="second" class="type-chart h-100"></Chart>
       </div>
     </div>
   </div>
@@ -95,15 +95,16 @@
 
 <script>
 import StatusTag from '@/components/StatusTag'
-import VEchart from '@/components/VEchart'
 import VIcon from '@/components/VIcon'
 import SelectList from '@/components/SelectList'
+import Chart from 'web-core/components/chart'
 import { formatTime, isEmpty } from '@/utils/util'
+import { splitTime } from 'web-core/utils/util'
 
 let lastMsg
 export default {
   name: 'Info',
-  components: { StatusTag, VEchart, VIcon, SelectList },
+  components: { StatusTag, VIcon, SelectList, Chart },
   props: {
     task: {
       type: Object,
@@ -174,7 +175,78 @@ export default {
         }
       },
       creator: '',
-      selectedStage: '' // 选中的节点
+      selectedStage: '', // 选中的节点
+      totalData: {
+        total_input: 0,
+        total_output: 0,
+        total_insert: 0,
+        total_update: 0,
+        total_delete: 0
+      },
+      qpsData: {
+        total_input_qps: null,
+        total_output_qps: null
+      },
+      lineData: {
+        x: [],
+        y: [[], []]
+      },
+      lineOptions: {
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          top: 4,
+          right: 0,
+          show: true
+        },
+        yAxis: {
+          axisLabel: {
+            formatter: function (value) {
+              if (value >= 1000) {
+                value = value / 1000 + 'K'
+              }
+              return value
+            }
+          }
+        },
+        grid: {
+          left: 0,
+          right: 0,
+          top: '24px',
+          bottom: 0
+        },
+        series: [
+          {
+            name: this.$t('task_info_input'),
+            lineStyle: {
+              color: 'rgba(24, 144, 255, 1)',
+              width: 1
+            },
+            areaStyle: {
+              color: 'rgba(24, 144, 255, 0.2)'
+            },
+            symbol: 'none',
+            itemStyle: {
+              color: 'rgba(24, 144, 255, 1)'
+            }
+          },
+          {
+            name: this.$t('task_info_output'),
+            lineStyle: {
+              color: 'rgba(118, 205, 238, 1)',
+              width: 1
+            },
+            symbol: 'none',
+            areaStyle: {
+              color: 'rgba(118, 205, 238, 0.2)'
+            },
+            itemStyle: {
+              color: 'rgba(118, 205, 238, 1)'
+            }
+          }
+        ]
+      }
     }
   },
   computed: {
@@ -222,11 +294,80 @@ export default {
       if (this.task.creator) {
         this.creator = this.task.creator
       }
-      this.loadMetrics()
+      // this.loadMetrics()
+      this.getTotalMetrics()
+      this.getQpsMetrics()
       // this.loadHttp()
       this.$emit('onceLoadHttp')
       this.loadWS()
       this.sendMsg()
+    },
+    getTotalMetrics() {
+      let arr = ['total_input', 'total_output', 'total_insert', 'total_update', 'total_delete']
+      const { selectedStage } = this
+      let prefix = 'sub_task_'
+      if (selectedStage) {
+        prefix = 'sub_task_node_'
+      }
+      arr.forEach(el => {
+        let filter = {
+          where: {
+            name: prefix + el
+          },
+          order: 'createTime DESC',
+          limit: 1
+        }
+        if (selectedStage) {
+          filter.where['labels.nodeId'] = selectedStage
+        } else {
+          filter.where['labels.taskId'] = this.task.id
+        }
+        this.$api('Metrics')
+          .get({
+            filter: JSON.stringify(filter)
+          })
+          .then(res => {
+            this.totalData[el] = res.data.items?.[0]?.value || 0
+          })
+      })
+    },
+    getQpsMetrics() {
+      let arr = ['total_input_qps', 'total_output_qps']
+      const { selectedStage } = this
+      let prefix = 'sub_task_'
+      if (selectedStage) {
+        prefix = 'sub_task_node_'
+      }
+      arr.forEach(el => {
+        let filter = {
+          where: {
+            name: prefix + el
+          },
+          order: 'createTime DESC',
+          limit: 20
+        }
+        if (selectedStage) {
+          filter.where['labels.nodeId'] = selectedStage
+        } else {
+          filter.where['labels.taskId'] = this.task.id
+        }
+        this.$api('Metrics')
+          .get({
+            filter: JSON.stringify(filter)
+          })
+          .then(res => {
+            console.log('res', el, res.data)
+            // lineData
+            if (el === 'total_input_qps') {
+              this.lineData.x = res.data.items.map(t => this.$moment(t.ts))
+              this.lineData.y[0] = res.data.items.map(t => t.value)
+            } else {
+              this.lineData.y[1] = res.data.items.map(t => t.value)
+            }
+            // this.totalData[el] = res.data.items?.[0]?.value || 0
+            // this.qpsData[el] = res.data.items?.[0]?.value || 0
+          })
+      })
     },
     loadMetrics() {
       const { selectedStage } = this
@@ -262,6 +403,28 @@ export default {
       this.$api('Metrics')
         .get({
           filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          console.log('Metrics', res)
+        })
+      this.$api('Metrics')
+        .get({
+          filter: JSON.stringify({
+            where: {
+              name: 'sub_task_total_input_qps'
+            }
+          })
+        })
+        .then(res => {
+          console.log('Metrics', res)
+        })
+      this.$api('Metrics')
+        .get({
+          filter: JSON.stringify({
+            where: {
+              name: 'sub_task_total_output_qps'
+            }
+          })
         })
         .then(res => {
           console.log('Metrics', res)
@@ -341,7 +504,7 @@ export default {
         outputCountList = [],
         timeType = data.granularity['throughput']?.split('_')[1]
       data.statsData.throughput.forEach(item => {
-        timeList.push(this.splitTime(item.t, timeType))
+        timeList.push(splitTime(item.t, timeType))
         inputCountList.push(item.inputCount)
         outputCountList.push(item.outputCount)
       })
@@ -431,23 +594,6 @@ export default {
     },
     changeUtil() {
       this.sendMsg()
-    },
-    splitTime(time, type) {
-      let result
-      switch (type) {
-        case 'second':
-          result = time.substring(11, 19)
-          break
-        case 'minute':
-          result = time.substring(11, 16)
-          break
-        case 'hour':
-          result = time.substring(11, 16)
-          break
-        case 'day':
-          result = time.substring(6, 10)
-      }
-      return result
     },
     formatTime(date) {
       return formatTime(date)
@@ -618,7 +764,8 @@ export default {
     },
     changeStageFnc() {
       // this.sendMsg()
-      this.loadMetrics()
+      // this.loadMetrics()
+      this.getTotalMetrics()
     }
   }
 }
