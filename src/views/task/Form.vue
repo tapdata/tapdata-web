@@ -841,16 +841,16 @@ export default {
       if (type === 'table') {
         //保存字段映射
         let returnData = this.$refs.fieldMapping.returnData(true)
-        let deleteLen = returnData.target.filter(v => !v.is_deleted)
-        if (deleteLen.length !== 0) {
-          this.saveOperations(returnData.row, returnData.operations, returnData.target)
-        }
         //保存表改名 字段改名
         this.updateTransfer = true
-        this.transferData.table_prefix = returnData.changNameData.table_prefix
-        this.transferData.table_suffix = returnData.changNameData.table_suffix
-        this.transferData.tableNameTransform = returnData.changNameData.tableNameTransform
-        this.transferData.fieldsNameTransform = returnData.changNameData.fieldsNameTransform
+        this.transferData.table_prefix = returnData.changNameData?.table_prefix
+        this.transferData.table_suffix = returnData.changNameData?.table_suffix
+        this.transferData.tableNameTransform = returnData.changNameData?.tableNameTransform
+        this.transferData.fieldsNameTransform = returnData.changNameData?.fieldsNameTransform
+        let deleteLen = returnData.target.filter(v => !v.is_deleted)
+        if (deleteLen.length !== 0 && returnData.target?.length > 0) {
+          this.saveOperations(returnData.row, returnData.operations, returnData.target)
+        }
       }
       this.activeStep -= 1
       this.taskStep--

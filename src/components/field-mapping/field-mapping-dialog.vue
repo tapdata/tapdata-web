@@ -1002,6 +1002,12 @@ export default {
     },
     returnData(hiddenMsg) {
       let result = this.checkTable()
+      let changNameData = {
+        table_prefix: this.form.table_prefix,
+        table_suffix: this.form.table_suffix,
+        tableNameTransform: this.form.tableNameTransform,
+        fieldsNameTransform: this.form.fieldsNameTransform
+      }
       if ((result.checkDataType || result.checkInvalid) && result.noFieldsTable === 0) {
         if (!hiddenMsg) {
           let arr = this.$t('task_mapping_dialog_field_type_problem').split('XXX')
@@ -1012,7 +1018,8 @@ export default {
           valid: false,
           row: '',
           operations: '',
-          target: []
+          target: [],
+          changNameData: changNameData
         }
       } else if (result.noFieldsTable > 0) {
         if (!hiddenMsg) {
@@ -1024,14 +1031,9 @@ export default {
           valid: false,
           row: '',
           operations: '',
-          target: []
+          target: [],
+          changNameData: changNameData
         }
-      }
-      let changNameData = {
-        table_prefix: this.form.table_prefix,
-        table_suffix: this.form.table_suffix,
-        tableNameTransform: this.form.tableNameTransform,
-        fieldsNameTransform: this.form.fieldsNameTransform
       }
       return {
         valid: true,
