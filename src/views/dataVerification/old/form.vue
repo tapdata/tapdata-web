@@ -191,10 +191,11 @@
                     <div class="setting-item">
                       <label class="item-label is-required">{{ $t('dataVerification.table') }}</label>
                       <el-cascader
+                        v-model="item.sourceTable"
+                        filterable
                         class="item-select"
                         :class="{ red: !item.sourceTable }"
                         size="mini"
-                        v-model="item.sourceTable"
                         :options="item.sourceTree"
                         @input="tableChangeHandler(item, 'source', index)"
                       ></el-cascader>
@@ -202,10 +203,11 @@
                         <i class="el-icon-right"></i>
                       </span>
                       <el-cascader
+                        v-model="item.targetTable"
+                        filterable
                         class="item-select"
                         size="mini"
                         :class="{ red: !item.targetTable }"
-                        v-model="item.targetTable"
                         :options="item.targetTree"
                         @input="tableChangeHandler(item, 'target')"
                       ></el-cascader>
