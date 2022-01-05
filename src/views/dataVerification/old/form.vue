@@ -750,6 +750,9 @@ export default {
       })
       let getTree = (type, tables) => {
         let tree = this[type]
+        tables.sort((a, b) => {
+          return a.original_name - b.original_name
+        })
         tables.forEach(tb => {
           let parent = tree.find(item => item.value === tb.source.id)
           if (!parent) {
