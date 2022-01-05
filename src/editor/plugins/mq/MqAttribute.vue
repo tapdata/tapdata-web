@@ -319,7 +319,7 @@ export default {
             } else {
               schemas = result.data.mqTopicSet.map(item => item + '(topic)')
             }
-            tempSchemas = result.data.schema.tables
+            tempSchemas = result.data.schema?.tables || []
             schemas = schemas.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
             self.schemas = schemas
 
@@ -383,7 +383,7 @@ export default {
 
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
-        if (data.tableName.indexOf('(') === -1) {
+        if (data.tableName && data.tableName.indexOf('(') === -1) {
           data.tableName = data.tableName + `(${data.table_type})`
         }
 
