@@ -105,7 +105,6 @@ export default {
         databaseType: 'elasticsearch',
         chunkSize: 3,
         index: '',
-        databaseType: 'elasticsearch',
         database_name: '',
         stageId: '',
         showBtn: true,
