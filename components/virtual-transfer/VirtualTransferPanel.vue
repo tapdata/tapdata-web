@@ -13,6 +13,7 @@
         v-model="query"
         size="small"
         :placeholder="placeholder"
+        @input="handleQueryInput"
         @mouseenter.native="inputHover = true"
         @mouseleave.native="inputHover = false"
         v-if="filterable"
@@ -26,6 +27,7 @@
         class="el-transfer-panel__list"
       >
         <RecycleScroller
+          ref="scroller"
           class="el-transfer-panel__scroller"
           :key-field="keyProp"
           :item-size="36"
@@ -112,6 +114,10 @@ export default {
     itemSize: {
       type: Number,
       default: null
+    },
+    searchAfterScrollTop: {
+      type: Boolean,
+      default: true
     }
   },
 
@@ -151,6 +157,20 @@ export default {
         this.checked.length > 0 &&
         this.checkableData.every(item => checkObj[item[this.keyProp]])
       // console.timeEnd('do-updateAllChecked')
+    },
+
+    handleQueryInput() {
+      if (this.searchAfterScrollTop) {
+        this.$refs.scroller.scrollToPosition(0)
+        this.$refs.scroller.updateVisibleItems(false)
+      }
+    },
+
+    clearQuery() {
+      if (this.inputIcon === 'circle-close') {
+        this.query = ''
+        this.handleQueryInput()
+      }
     }
   }
 }

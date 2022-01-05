@@ -82,4 +82,16 @@ export default class DataFlows extends PublicAPI {
   getInsight(params) {
     return axios.patch(`${this.url}/insight`, params)
   }
+
+  tranModelVersionControl(params) {
+    return axios.post(this.url + '/tranModelVersionControl', params)
+  }
+
+  metadata(params) {
+    return axios.post(this.url + '/metadata', params)
+  }
+
+  originalData(qualified_name) {
+    return axios.get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name))
+  }
 }

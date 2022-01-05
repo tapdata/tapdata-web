@@ -17,7 +17,9 @@ export default {
       h('ElSwitch', {
         props: {
           value: self.value,
-          disabled: self.config.disabled
+          disabled: self.config.disabled,
+          activeValue: self.config.activeValue,
+          inactiveValue: self.config.inactiveValue
         },
         style: {
           'user-select': 'none'

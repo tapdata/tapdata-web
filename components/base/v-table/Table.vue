@@ -1,12 +1,11 @@
 <template>
-  <div class="v-table-container">
+  <div ref="vTableContainer" class="v-table-container">
     <ElTable
       v-loading="loading"
       v-bind="$attrs"
       v-on="$listeners"
       :data="list"
       ref="table"
-      height="100%"
       class="table-container__table"
       @selection-change="handleSelectionChange"
     >
@@ -34,7 +33,6 @@
 <script>
 import ColumnItem from './Column'
 import { delayTrigger } from '../../../util'
-import moment from 'moment'
 export default {
   name: 'VTable',
   components: { ColumnItem },
@@ -128,7 +126,8 @@ export default {
         layout: 'total, sizes, ->, prev, pager, next, jumper',
         pageSizes: [10, 20, 50, 100]
       },
-      nonePage: false
+      nonePage: false,
+      itemHeight: 42
     }
   },
   computed: {
@@ -203,9 +202,6 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
       this.$emit('selection-change', val)
-    },
-    formatTime(time, fmt = 'YYYY-MM-DD HH:mm:ss') {
-      return moment(time).format(fmt)
     }
   }
 }

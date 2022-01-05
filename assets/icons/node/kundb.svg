@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="60px" height="60px" viewBox="0 0 60 60" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>Transwrp KunDB</title>
-    <g id="Transwrp-KunDB" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="KUNDB" transform="translate(22.000000, 16.000000)" fill-rule="nonzero">
-            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="12 18.8671165 12 22.5 9 21.1322346 9 17.5"></polygon>
-            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="15 16.3671165 15 20 12 18.6328835 12 15"></polygon>
-            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="9 23.8203693 9 26 7 25.1796307 7 23"></polygon>
-            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="15 23.8202594 15 26 13 25.1797406 13 23"></polygon>
-            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="10 26.5469755 10 28 9 27.4530245 9 26"></polygon>
-            <polygon id="路径" fill="#004ED9" points="3 7.99793787 3 11.6308213 0 10.2637048 0 6.63082134"></polygon>
-            <polygon id="路径" fill="#006FDF" points="3 11.606722 3 15.2396054 0 13.8724889 0 10.2396054"></polygon>
-            <polygon id="路径" fill="#006FDF" points="6 12.9979379 6 16.6308213 3 15.2637048 3 11.6308213"></polygon>
-            <polygon id="路径" fill="#004ED9" points="6 9.36776538 6 13 3 11.6328835 3 8"></polygon>
-            <polygon id="路径" fill="#004ED9" points="9 10.7797184 9 14.4124244 6 13.0451304 6 9.41242439"></polygon>
-            <polygon id="路径" fill="#004ED9" points="9 14.3669391 9 18 6 16.6324121 6 13"></polygon>
-            <polygon id="路径" fill="#006FDF" points="12 15.7800123 12 19.4124244 9 18.0454852 9 14.4124244"></polygon>
-            <polygon id="路径" fill="#004ED9" points="12 12.6266839 12 16.2595674 9 14.891802 9 11.2595674"></polygon>
-            <polygon id="路径" fill="#006FDF" points="12 9.10672198 12 12.7396054 9 11.3724889 9 7.73960544"></polygon>
-            <polygon id="路径" fill="#006FDF" points="12 5.49793787 12 9.13082134 9 7.76370481 9 4.13082134"></polygon>
-            <polygon id="路径" fill="#004ED9" points="9 7.62668394 9 11.2595674 6 9.89245087 6 6.25956741"></polygon>
-            <polygon id="路径" fill="#004ED9" points="9 4.10672198 9 7.73960544 6 6.37248891 6 2.73960544"></polygon>
-            <polygon id="路径" fill="#004ED9" points="6 2.74790586 6 6.38031795 3 5.01273004 3 1.38031795"></polygon>
-            <polygon id="路径" fill="#004ED9" points="3 4.36711653 3 8 0 6.63288347 0 3"></polygon>
-            <polygon id="路径" fill="#004ED9" points="3 1.36711653 3 5 0 3.63288347 0 0"></polygon>
-            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="15 10.4985867 15 14.1308213 12 12.7637048 12 9.13082134"></polygon>
-            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="15 6.86693915 15 10.5 12 9.13241209 12 5.5"></polygon>
-            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="6 16.6073708 6 20.2396054 3 18.8724889 3 15.2396054"></polygon>
-            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="3 15.22665 3 18.8595335 0 17.4924169 0 13.8595335"></polygon>
+<svg width="15px" height="21px" viewBox="0 0 15 21" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>切片</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Transwrp-KunDB" transform="translate(2.000000, 0.991008)" fill-rule="nonzero">
+            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="8.57528225 13.4825707 8.57528225 16.0786542 6.43146169 15.1012397 6.43146169 12.5056199"></polygon>
+            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="10.7191028 11.6960537 10.7191028 14.2921371 8.57528225 13.3151863 8.57528225 10.7191028"></polygon>
+            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="6.43146169 17.0221991 6.43146169 18.5797782 5.00224798 17.9935367 5.00224798 16.4359576"></polygon>
+            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="10.7191028 17.0221206 10.7191028 18.5797782 9.28988911 17.9936153 9.28988911 16.4359576"></polygon>
+            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="7.14606854 18.9706506 7.14606854 20.008992 6.43146169 19.6181195 6.43146169 18.5797782"></polygon>
+            <polygon id="路径" fill="#004ED9" points="2.14382056 5.71538123 2.14382056 8.31146463 0 7.3345138 0 4.73843038"></polygon>
+            <polygon id="路径" fill="#006FDF" points="2.14382056 8.2942431 2.14382056 10.8903265 0 9.91337566 0 7.31729221"></polygon>
+            <polygon id="路径" fill="#006FDF" points="4.28764112 9.28841552 4.28764112 11.8844989 2.14382056 10.9075481 2.14382056 8.31146463"></polygon>
+            <polygon id="路径" fill="#004ED9" points="4.28764112 6.69426935 4.28764112 9.28988911 2.14382056 8.31293829 2.14382056 5.71685483"></polygon>
+            <polygon id="路径" fill="#004ED9" points="6.43146169 7.70326066 6.43146169 10.2992173 4.28764112 9.32213961 4.28764112 6.72618298"></polygon>
+            <polygon id="路径" fill="#004ED9" points="6.43146169 10.2667132 6.43146169 12.8629234 4.28764112 11.8856357 4.28764112 9.28988911"></polygon>
+            <polygon id="路径" fill="#006FDF" points="8.57528225 11.2765049 8.57528225 13.8722516 6.43146169 12.8954274 6.43146169 10.2992173"></polygon>
+            <polygon id="路径" fill="#004ED9" points="8.57528225 9.02311486 8.57528225 11.6191984 6.43146169 10.6417838 6.43146169 8.04616404"></polygon>
+            <polygon id="路径" fill="#006FDF" points="8.57528225 6.50772594 8.57528225 9.10380935 6.43146169 8.12685852 6.43146169 5.5307751"></polygon>
+            <polygon id="路径" fill="#006FDF" points="8.57528225 3.92886409 8.57528225 6.52494752 6.43146169 5.54799667 6.43146169 2.95191324"></polygon>
+            <polygon id="路径" fill="#004ED9" points="6.43146169 5.45008062 6.43146169 8.04616404 4.28764112 7.0692132 4.28764112 4.47312978"></polygon>
+            <polygon id="路径" fill="#004ED9" points="6.43146169 2.93469167 6.43146169 5.5307751 4.28764112 4.55382425 4.28764112 1.95774083"></polygon>
+            <polygon id="路径" fill="#004ED9" points="4.28764112 1.96367237 4.28764112 4.55941894 2.14382056 3.58213125 2.14382056 0.986384669"></polygon>
+            <polygon id="路径" fill="#004ED9" points="2.14382056 3.12077141 2.14382056 5.71685483 0 4.739904 0 2.14382056"></polygon>
+            <polygon id="路径" fill="#004ED9" points="2.14382056 0.976950844 2.14382056 3.57303427 0 2.59608343 0 0"></polygon>
+            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="10.7191028 7.50236202 10.7191028 10.0979818 8.57528225 9.12103094 8.57528225 6.52494752"></polygon>
+            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="10.7191028 4.90716178 10.7191028 7.50337197 8.57528225 6.52608427 8.57528225 3.9303377"></polygon>
+            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="4.28764112 11.867741 4.28764112 14.4633607 2.14382056 13.4864099 2.14382056 10.8903265"></polygon>
+            <polygon id="路径" fill="#00A1E8" opacity="0.8" points="2.14382056 10.8810685 2.14382056 13.4771519 0 12.500201 0 9.90411764"></polygon>
         </g>
     </g>
 </svg>

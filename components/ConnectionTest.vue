@@ -128,7 +128,7 @@ export default {
       //接收数据
       this.$ws.on('testConnectionResult', this.hanlderTestConnectionResult)
       //长连接失败
-      this.$ws.on('testConnection', this.hanldleTestConnection)
+      this.$ws.on('testConnection', this.handleTestConnection)
     }
   },
   destroyed() {
@@ -137,7 +137,7 @@ export default {
         this.$ws.off('open', this.callback)
       }
       this.$ws.off('testConnectionResult', this.hanlderTestConnectionResult)
-      this.$ws.off('testConnection', this.hanldleTestConnection)
+      this.$ws.off('testConnection', this.handleTestConnection)
     }
     this.testData.testLogs = []
     this.status = ''
@@ -193,7 +193,7 @@ export default {
         this.$emit('receive', testData)
       }
     },
-    hanldleTestConnection(data) {
+    handleTestConnection(data) {
       this.wsError = 'ERROR'
       //this.wsErrorMsg = data.error
       let testData = {
@@ -201,7 +201,7 @@ export default {
       }
       this.$emit('receive', testData)
     },
-    start(formData, isShowDialog = true, updateSchema, editTest) {
+    start(formData, isShowDialog = true, updateSchema = false, editTest) {
       //继续传进来的值 重试功能使用
       if (formData) {
         this.retryData = {
@@ -248,7 +248,7 @@ export default {
           }
           self.$emit('receive', testData)
         }
-      }, 8000)
+      }, 15000)
       this.callback = () => {
         if (!this.status && this.wsError !== 'ERROR') {
           this.$ws.send(msg)
