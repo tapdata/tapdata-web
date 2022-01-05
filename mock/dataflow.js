@@ -1281,5 +1281,67 @@ module.exports = {
         }
       ]
     }
+  },
+  '/tm/api/DataFlows/tranModelVersionControl': {
+    reqId: '5e7a40a3-da6d-4940-aace-54c471e4f6b4',
+    ts: 1641364647570,
+    code: 'ok',
+    data: { '0b173e70-82b5-46b7-bb48-7a99e2fb4e44': true }
+  },
+  '/tm/api/DataFlowInsights/runtimeMonitor?statsType=data_overview': {
+    reqId: '26987e75-e7bb-4637-8a8a-a07fe244a9a9',
+    ts: 1641364647945,
+    code: 'ok',
+    data: {
+      statsType: 'data_overview',
+      createTime: '2022-01-05T06:37:27.945+00:00',
+      dataFlowId: '61d50dd8e6800c3f3d04a527',
+      granularity: 'flow',
+      statsData: {
+        outputCount: 4,
+        deleteCount: 0,
+        deleteSize: 0.0,
+        updateCount: 0,
+        t: '2022-01-05 11:21:04',
+        inputSize: 0.0,
+        updateSize: 0.0,
+        insertCount: 4,
+        insertSize: 1.0,
+        inputCount: 4
+      }
+    }
+  },
+  '/tm/api/DataFlowInsights/runtimeMonitor?statsType=throughput': {
+    reqId: '2e6416aa-df89-421d-bcef-d86a6660a8a2',
+    ts: 1641364647945,
+    code: 'ok',
+    data: {
+      statsType: 'throughput',
+      createTime: '2022-01-05T06:37:27.945+00:00',
+      dataFlowId: '61d50dd8e6800c3f3d04a527',
+      granularity: 'flow_second',
+      statsData: [
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:19:36', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:19:42', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:19:47', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:19:53', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:24', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:30', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:36', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:42', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:47', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:53', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:59', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:04', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:10', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:16', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:21', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:27', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:29', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:22:04', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:22:09', inputSize: 0.0, inputCount: 0.0 },
+        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:22:15', inputSize: 0.0, inputCount: 0.0 }
+      ]
+    }
   }
 }
