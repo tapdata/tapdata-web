@@ -289,7 +289,7 @@ export default {
       }
     },
     'model.joinTable.joinType': {
-      handler() {
+      handler(value) {
         if (this.model.joinTable.joinType === 'merge_embed' && this.cell) {
           if (!this.model.joinTable.arrayUniqueKey) {
             let sourceCell = this.cell.getSourceCell(),
@@ -303,6 +303,7 @@ export default {
           this.model.joinTable.arrayUniqueKey = ''
         }
         this.model.joinTableRequired = !(settingData.noPrimaryKey && ['upsert'].includes(this.model.joinTable.joinType))
+        this.model.joinTable.joinType = value
       }
     }
   },

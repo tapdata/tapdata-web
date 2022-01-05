@@ -69,6 +69,13 @@
           :active-text="formData.noPrimaryKey ? $t('dataFlow.yes') : $t('dataFlow.no')"
         ></el-switch>
       </el-form-item>
+      <el-form-item :label="$t('dataFlow.transformModelVersion')">
+        <!-- 系统推演 -->
+        <el-select v-model="formData.transformModelVersion" size="mini" placeholder="请选择" class="dataWrite-list">
+          <el-option label="v1" value="v1"></el-option>
+          <el-option label="v2" value="v2"> </el-option>
+        </el-select>
+      </el-form-item>
       <!-- 增量数据处理机制 -->
       <el-form-item :label="$t('dataFlow.cdcDataProcess')" v-show="formData.sync_type !== 'initial_sync'">
         <el-select v-model="formData.isSerialMode" size="mini" placeholder="请选择" class="dataWrite-list">
@@ -256,6 +263,25 @@
               <span class="icon iconfont icon-tishi1" slot="reference"></span>
             </el-popover>
           </div>
+        </el-form-item>
+        <!-- Oracle日志挖掘模式 -->
+        <el-form-item :label="$t('data_flow_oracle_logminer')" v-show="formData.sync_type !== 'initial_sync'">
+          <el-select
+            v-model="formData.oracleLogminer"
+            size="mini"
+            :placeholder="$t('message.placeholderSelect')"
+            class="dataWrite-list"
+          >
+            <el-option :label="$t('dataFlow.automatically')" value="automatically"> </el-option>
+            <el-option :label="$t('dataFlow.manually')" value="manually"> </el-option>
+          </el-select>
+        </el-form-item>
+        <!-- OracleSQL自定义解析 -->
+        <el-form-item :label="$t('task_setting_oracle_custom_analysis')" v-show="formData.sync_type !== 'initial_sync'">
+          <el-switch
+            v-model="formData.useCustomSQLParser"
+            :active-text="formData.useCustomSQLParser ? $t('dataFlow.yes') : $t('dataFlow.no')"
+          ></el-switch>
         </el-form-item>
       </div>
       <el-form-item v-if="isSimple">

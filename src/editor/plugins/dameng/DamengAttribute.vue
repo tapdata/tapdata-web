@@ -88,7 +88,7 @@
         class="fr"
         type="success"
         size="mini"
-        v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+        v-if="!dataNodeInfo.isTarget || !showFieldMapping || !transformModelVersion"
         @click="hanlderLoadSchema"
       >
         <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
@@ -99,17 +99,19 @@
         v-else
         ref="fieldMapping"
         class="fr"
-        :dataFlow="dataFlow"
-        :showBtn="true"
-        :isFirst="model.isFirst"
         :isDisable="disabled"
-        :hiddenFieldProcess="true"
-        :stageId="stageId"
+        :transform="model"
+        :getDataFlow="getDataFlow"
         @update-first="returnModel"
       ></FieldMapping>
       <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
-    <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
+    <el-dialog
+      :title="$t('message_title_prompt')"
+      :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
+      width="30%"
+    >
       <span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
@@ -176,14 +178,17 @@ export default {
         databaseType: 'dameng',
         tableName: '',
         field_process: [],
-        isFirst: true
+        stageId: '',
+        showBtn: true,
+        hiddenFieldProcess: true,
+        isFirst: true,
+        hiddenChangeValue: true
       },
       scope: '',
-      dataFlow: '',
-      stageId: '',
       showFieldMapping: false,
       schemasLoading: false,
-      mergedSchema: null
+      mergedSchema: null,
+      transformModelVersion: false
     }
   },
 
@@ -304,17 +309,17 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
-        this.stageId = cell.id
+        this.model.stageId = cell.id
         this.getDataFlow()
         _.merge(this.model, data)
         let param = {
           stages: this.dataFlow?.stages,
-          stageId: this.stageId
+          stageId: this.model.stageId
         }
         this.$api('DataFlows')
           .tranModelVersionControl(param)
           .then(data => {
-            this.showFieldMapping = data?.data[this.stageId]
+            this.showFieldMapping = data?.data[this.model.stageId]
           })
       }
       this.mergedSchema = cell.getOutputSchema()
@@ -391,6 +396,12 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      if (this.dataFlow?.setting?.transformModelVersion === 'v2') {
+        this.transformModelVersion = true
+      } else {
+        this.transformModelVersion = false
+      }
+      return this.dataFlow
     },
     //接收是否第一次打开
     returnModel(value) {

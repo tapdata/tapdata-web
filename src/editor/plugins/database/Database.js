@@ -54,7 +54,7 @@ export const databaseConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-DB.svg'
+          xlinkHref: 'static/editor/database2.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.database.name')
@@ -116,7 +116,7 @@ export const databaseConfig = {
        */
       allowTarget(targetCell, sourceCell) {
         // DM 不允许作为源
-        if (['dameng'].includes(sourceCell?.attributes?.form_data?.database_type)) {
+        if (['dameng', 'kudu'].includes(sourceCell?.attributes?.form_data?.database_type)) {
           return false
         }
         if (sourceCell?.attributes?.form_data?.database_type === 'elasticsearch') {
@@ -124,7 +124,7 @@ export const databaseConfig = {
         }
         return (
           ['app.Database'].includes(targetCell.get('type')) &&
-          !['hbase'].includes(targetCell?.attributes?.form_data?.database_type) &&
+          !['hbase', 'adb_mysql'].includes(targetCell?.attributes?.form_data?.database_type) &&
           targetCell.graph.getConnectedLinks(this, {
             inbound: true
           }).length < 1 &&
@@ -153,7 +153,7 @@ export const databaseConfig = {
         return (
           ['app.Database'].includes(sourceCell.get('type')) &&
           !['hive', 'dameng', 'clickhouse'].includes(databaseType) &&
-          !['kudu'].includes(sourceCell?.attributes?.form_data?.database_type) &&
+          // !['kudu'].includes(sourceCell?.attributes?.form_data?.database_type) &&
           outLinks.length === 1 &&
           !outLinks[0].attributes.target.id
         )

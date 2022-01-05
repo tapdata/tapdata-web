@@ -38,7 +38,7 @@
           <i class="iconfont icon-bangzhu1-copy"></i>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="help">{{ $t('app.document') }}</el-dropdown-item>
-            <el-dropdown-item command="question">{{ $t('app.qa') }}</el-dropdown-item>
+            <!-- <el-dropdown-item command="question">{{ $t('app.qa') }}</el-dropdown-item> -->
             <!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
           </el-dropdown-menu>
         </el-dropdown>
@@ -402,7 +402,8 @@ export default {
           this.dialogVisible = true
           break
         case 'help':
-          window.open('https://docs.tapdata.io/', '_blank')
+          // window.open('https://docs.tapdata.io/', '_blank')
+          window.open('https://tapdata.net/docs-tapdata-enterprise.html', '_blank')
           break
         case 'question':
           this.isShowCustomerService = !this.isShowCustomerService
@@ -418,7 +419,10 @@ export default {
           }
           break
         case 'license':
-          this.$message.info(this.$t('app.menu.licenseDate') + ': ' + this.licenseExpireDate)
+          this.$router.push({
+            name: 'License'
+          })
+          // this.$message.info(this.$t('app.menu.licenseDate') + ': ' + this.licenseExpireDate)
           break
         case 'home':
           window.open('https://tapdata.net/', '_blank')
@@ -553,9 +557,6 @@ export default {
 .layout-container {
   height: 100%;
   background: rgba(250, 250, 250, 1);
-  .el-submenu__title {
-    font-size: 12px;
-  }
   .layout-header {
     display: flex;
     align-items: center;

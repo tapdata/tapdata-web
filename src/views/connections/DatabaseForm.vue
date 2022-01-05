@@ -8,7 +8,7 @@
         <header v-if="$route.params.id" class="edit-header-box">
           <div class="edit-header">
             <div class="img-box">
-              <img :src="$util.getConnectionTypeImg(databaseType) || $util.getConnectionTypeImg('default')" />
+              <img :src="$util.getConnectionTypeDialogImg(databaseType)" />
             </div>
             <div class="content">{{ model.name }}</div>
             <div class="addBtn color-primary" @click="dialogEditNameVisible = true">
@@ -19,7 +19,7 @@
         <header class="edit-header-box" v-else>
           <div class="edit-header">
             <div class="img-box">
-              <img :src="$util.getConnectionTypeImg(databaseType) || $util.getConnectionTypeImg('default')" />
+              <img :src="$util.getConnectionTypeDialogImg(databaseType)" />
             </div>
             <div class="content-box">
               <div class="content">
@@ -566,7 +566,7 @@
 import factory from '@/api/factory'
 import formConfig from './config'
 import gitbook from './GitBook'
-import CodeEditor from 'web-core/components/CodeEditor'
+import CodeEditor from '@/components/CodeEditor'
 import Test from './Test'
 import { TYPEMAP, TYPEMAPCONFIG, defaultModel, defaultCloudModel } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
@@ -656,6 +656,9 @@ export default {
         'tidb',
         'hana',
         'clickhouse',
+        'kundb',
+        'adb_postgres',
+        'adb_mysql',
         'vika'
       ],
       model: '',
@@ -759,6 +762,9 @@ export default {
         break
       case 'tcp_udp':
         this.model = Object.assign({}, defaultModel['tcp'])
+        break
+      case 'hana':
+        this.model = Object.assign({}, defaultModel['default'], defaultModel['hana'])
         break
       case 'vika':
         this.model = Object.assign({}, defaultModel['vika'])

@@ -104,6 +104,7 @@ export default {
       model: {
         connectionId: '',
         type: 'rest api',
+        databaseType: 'rest api',
         tableName: ''
         // primaryKeys: ''
       },

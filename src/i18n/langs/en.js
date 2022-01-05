@@ -1,4 +1,32 @@
 export default {
+  // 通用提示
+  tips_not_null: 'The value cannot be empty',
+  tips_must_number: 'The value must be a number',
+
+  // 通用按钮
+  button_edit: 'Edit',
+  button_confirm: 'Confirm',
+  button_cancel: 'Cancel',
+  button_back: 'Back',
+  button_save: 'Save',
+  button_check: 'Details',
+  button_delete: 'Delete',
+  button_setting: 'Setting',
+  button_reduction: 'Reduction',
+
+  // 通用下拉框
+  select_option_all: 'All',
+
+  // 通用消息
+  message_title_prompt: 'Hint',
+  message_delete_confirm: 'Delete or not',
+
+  // 表格
+  column_operation: 'Operate',
+
+  // 菜单标题
+  menu_title_function: 'Function management',
+
   // 数据校验
   verify_details_title: 'Task verification details',
   verify_history_title: 'Task verification history',
@@ -19,6 +47,12 @@ export default {
   verify_result_content_diff: 'Table data difference: {0}',
   verify_result_count_inconsistent: 'inconsistent',
   verify_result_count_consistent: 'consistent',
+  verify_result_field_name: 'Field name',
+  verify_result_source_info: 'Source Information',
+  verify_result_target_info: 'Target Information',
+  verify_create_window_duration: 'Window duration',
+  verify_form_source_filter: 'Source table data filtering',
+  verify_form_target_filter: 'Target table data filtering',
 
   taskprogress_plan_sync_table_num: 'Number of plan synchronization tables',
   taskprogress_completed_sync_table_num: 'Number of completed synchronization tables',
@@ -37,8 +71,24 @@ export default {
   connection_list_column_schema_status: 'Schema loading status',
   connection_list_column_schema_status_tips: 'Connections after Schema loading can be created normally',
 
+  connection_form_custom_connection_connection_time_out: 'Connection timeout (s)',
+  connection_form_custom_connection_read_time_out: 'Read timeout (s)',
   connection_form_custom_connection_before_operate: 'Pre-operation',
   connection_form_custom_connection_after_operate: 'Post-operation',
+  connection_kafka_kerberos_attest: 'kerberos authentication',
+  connection_kafka_kerberos_config_keytab: 'Key representation file',
+  connection_kafka_kerberos_config_conf: 'Configuration file',
+  connection_kafka_kerberos_body_config: 'Body Configuration',
+  connection_kafka_kerberos_service_name: 'Service name',
+  connection_kafka_kerberos_tip:
+    'The instance name mapping needs to be configured on the host where the Engine is located /etc/hosts',
+  connection_kafka_kerberos_none_keytab: 'The key representation file cannot be empty',
+  connection_kafka_kerberos_none_conf: 'Configuration file cannot be empty',
+  connection_kafka_encryption: 'Encryption',
+
+  connection_redis_valid: 'Authentication',
+
+  connection_hana_label_hana_type: 'Install type',
 
   //Dag
   dag_data_node_label_dameng: 'Dameng Node',
@@ -56,10 +106,139 @@ export default {
   dag_data_node_label_kafka_high_performance_mode: 'High performance mode',
   dag_data_node_label_kafka_all: 'All',
   dag_data_node_label_aggregate_filter: 'Filter',
+  dag_link_button_custom_script: 'Custom processing script',
+  dag_data_node_hana_hana_check: 'Hana as a source only supports full tasks',
+
+  //Field mapping
+  dag_link_button_field_mapping: 'Field mapping',
+  dag_link_button_mapping_configuration: 'Mapping configuration',
+  dag_link_field_mapping_error_no_table: 'Please select the table to be migrated',
+  dag_link_field_mapping_error_all_deleted:
+    'All fields have been deleted from the current table, and the save operation is not allowed',
+  dag_link_field_mapping_error_tip: 'Please configure the target node first',
+  dag_dialog_field_mapping_table_setting: 'Table Settings',
+  dag_dialog_field_mapping_tip:
+    'Users can set the fields to be synchronized for each table in the source database on this page, as well as the corresponding field names and field types when the target database is automatically created.',
+  dag_dialog_field_mapping_table_rename: 'table rename',
+  dag_dialog_field_mapping_field_rename: 'Field rename',
+  dag_dialog_field_mapping_rollback_all: 'Restore default',
+  dag_dialog_field_mapping_rollback_field: 'Restore default field',
+  dag_dialog_field_mapping_search_table: 'Search table',
+  dag_dialog_field_mapping_loading_schema: 'Loading, please wait...',
+  dag_dialog_field_mapping_selected: 'Selected',
+  dag_dialog_field_mapping_search_field: 'Search Field',
+  dag_dialog_field_mapping_source_field: 'Source table field name',
+  dag_dialog_field_mapping_source_type: 'Source table type',
+  dag_dialog_field_mapping_source_precision: 'Source table scale',
+  dag_dialog_field_mapping_source_scale: 'Source table precision',
+  dag_dialog_field_mapping_target_field: 'Target table field name',
+  dag_dialog_field_mapping_target_type: 'Target table type',
+  dag_dialog_field_mapping_target_precision: 'Target table scale',
+  dag_dialog_field_mapping_target_scale: 'Target table precision',
+  dag_dialog_field_mapping_operate: 'Operation',
+  dag_dialog_field_mapping_no_data: 'No data yet',
+  dag_dialog_field_mapping_range_precision: 'Length range',
+  dag_dialog_field_mapping_range_scale: 'Precision range',
+  dag_dialog_field_mapping_batch_table_name: 'Batch change table name setting',
+  dag_dialog_field_mapping_batch_field_name: 'Batch change field name settings',
+  dag_dialog_field_mapping_example_prefix: 'Prefix',
+  dag_dialog_field_mapping_example_suffix: 'Suffix',
+  dag_dialog_field_mapping_example_tip: 'Explanation: the prefix and suffix set also follow the capitalization rules',
+  dag_dialog_field_mapping_example_origin_table_name: 'Original table name',
+  dag_dialog_field_mapping_example_change: 'After modification',
+  dag_dialog_field_mapping_example: 'Example',
+  dag_dialog_field_mapping_tittle_field_name: 'Modify the target table field name',
+  dag_dialog_field_mapping_tittle_data_type: 'Modify the target table field type',
+  dag_dialog_field_mapping_tittle_precision: 'Modify the length of the target field',
+  dag_dialog_field_mapping_tittle_scale: 'Modify the precision of the target table',
+  dag_dialog_field_mapping_error_tip: 'tip',
+  dag_dialog_field_mapping_error_rollback_all: 'Are you sure you want to restore all to the default',
+  dag_dialog_field_mapping_error_rollback: 'Are you sure you want to restore all to the default',
+  dag_dialog_field_mapping_error_range: 'The current value does not meet the field range',
+  dag_dialog_field_mapping_error_save_prefix: 'Detected that you still have',
+  dag_dialog_field_mapping_error_save_suffix:
+    'There is a problem with the field type setting of the table, please select the table with the problem in the table area on the left for processing',
+  dag_dialog_field_mapping_change_type_field_rename: 'Type modification',
+  dag_dialog_field_mapping_batch_change_type: 'Batch edit field types',
+  dag_dialog_field_mapping_batch_change_type_error_tip:
+    'Please select the type of source table/target table conversion',
+  dag_dialog_field_mapping_batch_change_type_source: 'Source field type',
+  dag_dialog_field_mapping_batch_change_type_target: 'Target field type',
+  dag_job_check_source: 'as a source, only full tasks are supported',
 
   //Task edit
   task_job_setting_tip_title: 'Set reminder',
   task_job_setting_disable: 'Do not de-duplicate',
   task_job_tip_text:
-    'The setting of the cache node (xxx) already exists in the task (###), please confirm whether to continue to create it? '
+    'The setting of the cache node (xxx) already exists in the task (###), please confirm whether to continue to create it? ',
+  task_job_source_falg: 'as a source, only full tasks are supported',
+  data_flow_automatically: 'automatically',
+  data_flow_manually: 'manually',
+  data_flow_oracle_logminer: 'Oracle Logminer Mode',
+  task_job_link_type_table_tips: 'Table does not currently support foreign key replication',
+  task_job_link_type_view_tips:
+    'The setting of field mapping is temporarily not supported when copying the view. The field mapping function below this option will be disabled, and the field mapping that has been set will be reset.',
+  task_job_link_confirm_message_rollback:
+    'The setting of field mapping is not supported when copying the view. The field mapping function below this option will be disabled, and the field mapping that has been set will be reset. Are you sure to check it? ',
+  task_setting_oracle_custom_analysis: 'OracleSQL custom analysis',
+
+  // Function management
+  function_tips_empty: 'Code lacks JS functions',
+  function_button_create_custom_function: 'Create function',
+  function_button_import_jar: 'Import',
+  function_button_edit_function: 'Edit function',
+  function_details: 'Function details',
+  function_tips_name_repeat: 'Function name repeat',
+  function_button_code_format: 'Format code',
+  function_last_update_label: 'Update time',
+  function_parameters_label: 'Parameters',
+  function_type_label: 'Function type',
+  function_type_option_custom: 'Custom function',
+  function_type_option_jar: 'Third-party jar package',
+  function_type_option_system: 'System function',
+  function_name_label: 'Function name',
+  function_name_placeholder: 'Please enter the function name',
+  function_name_repeat: 'Function name repeat',
+  function_class_label: 'Class name',
+  function_class_placeholder:
+    'Please enter the class name, UDF function class name, the format is resource name. Class name',
+  function_file_label: 'jar file',
+  function_button_file_upload: 'Click to upload',
+  function_file_upload_tips: 'Please upload the jar package file',
+  function_file_upload_success: 'Upload successful',
+  function_file_upload_fail: 'Upload failed',
+  function_body_label: 'Function body',
+  function_body_placeholder: 'Please enter the command format, which is an example of the specific usage of this UDF',
+  function_parameters_describe_label: 'Parameter description',
+  function_parameters_describe_placeholder:
+    'Support input parameter types and specific description of return parameter types',
+  function_return_value_label: 'Return value',
+  function_return_value_placeholder: 'Please enter the return value',
+  function_describe_label: 'Description',
+  function_describe_placeholder: 'Please enter a description',
+  function_format: 'Format',
+  function_format_placeholder: 'Please enter a format',
+  function_jar_file_label: 'Jar file name',
+  function_package_name_label: 'Package name',
+  function_package_name_placeholder: 'Please enter a package name',
+  function_class_name_label: 'Class name',
+  function_method_name_label: 'Method name',
+  function_script_label: 'Code details',
+  function_script_empty: 'Please enter the function code',
+  function_script_missing_function_name: 'Missing function name',
+  function_script_missing_function_body: 'Missing function body',
+  function_script_format_error: 'The function format is incorrect',
+  function_script_only_one: 'Only one function is allowed to be created',
+  function_import_list_title: 'Function list',
+  function_button_load_function: 'Load function',
+  function_message_load_function_fail: 'Load function fail',
+  function_dialog_setting_title: 'Function setting',
+  function_message_function_empty: 'Please upload the jar file and load the function',
+  function_message_delete_title: 'Delete function',
+  function_message_delete_content:
+    'Deletion may cause the task that has called this function to report an error. Are you sure to delete this function? ',
+  function_tips_max_size: 'Max size ',
+
+  // 用户
+  login_fail_too_many: 'The maximum number of password errors has been reached, please log in after 10 minutes'
 }

@@ -13,12 +13,16 @@
         <div class="box" v-for="(childItem, childIndex) in item.items" :key="childIndex">
           <div v-if="item.category === 'license'">
             <div class="license" v-for="(licenseItem, licenseIndex) in item.liceseItems" :key="licenseIndex">
-              {{ $t('setting.nameserver') }}: {{ licenseItem.hostname }}
+              <div>{{ $t('setting.nameserver') }}: {{ licenseItem.hostname }}</div>
+              <!--authorization報錯 隱藏到期時間-->
+              <!-- <div>
+                {{ $t('setting.expiredate') }}:
+                {{
+                  licenseItem.authorization ? $moment(licenseItem.authorization.validity_period.expires_on || '') : ''
+                }}
+              </div> -->
             </div>
-            <div>
-              {{ $t('setting.expiredate') }}:
-              {{ licenseItem.authorization ? $moment(licenseItem.authorization.validity_period.expires_on || '') : '' }}
-            </div>
+
             <el-button @click="importlicense(licenseItem)">{{ $t('setting.import') }}</el-button>
             <el-button @click="hrefApply(licenseItem)">{{ $t('setting.apply') }}</el-button>
           </div>
@@ -220,6 +224,15 @@ export default {
       return result
     }
   },
+  watch: {
+    deep: true,
+    formData: {
+      handler(value) {
+        console.log('########', value)
+        this.formData = value
+      }
+    }
+  },
   methods: {
     // 获取设置数据
     getData() {
@@ -280,14 +293,14 @@ export default {
             return a.category_sort > b.category_sort ? 1 : a.category_sort < b.category_sort ? -1 : 0
           })
 
-          this.formData.items = vals
-          let lincenseData = {
-            liceseItems: auth_data,
-            items: auth_data,
-            category: 'license'
-          }
-          this.formData.items.push(lincenseData)
+          _this.formData.items = vals
         })
+      let lincenseData = {
+        liceseItems: auth_data,
+        items: auth_data,
+        category: 'license'
+      }
+      _this.formData.items.push(lincenseData)
     },
     // 保存
     save() {

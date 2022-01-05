@@ -112,6 +112,17 @@
           }}</span>
         </el-button>
       </div>
+      <el-tag
+        v-if="progress.showProgress"
+        effect="plain"
+        type="info"
+        size="mini"
+        style="margin-left: 10px; margin-right: 10px; border: none"
+      >
+        <span style="display: inline-block; padding: 0 5px; vertical-align: middle"
+          >加载进度: {{ progress.finished }} / {{ progress.total }}</span
+        >
+      </el-tag>
       <div class="flex-center">
         <el-tag
           :type="
@@ -244,7 +255,7 @@
       </div>
     </el-dialog>
     <el-dialog
-      :title="$t('message.prompt')"
+      :title="$t('message_title_prompt')"
       :visible.sync="reloadSchemaDialog"
       :close-on-click-modal="false"
       width="30%"
@@ -264,6 +275,17 @@
       :data="checkStagesData"
       @complete="saveCheckStages"
     ></CheckStage>
+    <el-dialog
+      :title="$t('dag_task_error_tittle')"
+      :visible.sync="showFieldMappingProgress"
+      :close-on-click-modal="false"
+      width="30%"
+    >
+      <span>{{ $t('dag_task_filed_mapping_text') }}</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="showFieldMappingProgress = false">{{ $t('message.close') }}</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -286,6 +308,7 @@ import _ from 'lodash'
 import SkipError from '../../components/SkipError'
 import { uuid } from '../../editor/util/Schema'
 import VIcon from '@/components/VIcon'
+import { DATA_NODE_TYPES } from '@/const.js'
 
 const dataFlowsApi = factory('DataFlows')
 const Setting = factory('Setting')
@@ -338,7 +361,18 @@ export default {
       statusBtMap,
       showCheckStagesVisible: false,
       checkStagesData: [],
-      modPipeline: ''
+      modPipeline: '',
+      //schema加载进度
+      progress: {
+        total: '0',
+        finished: '0',
+        progress: '0',
+        showProgress: false
+      },
+      queryId: '', //新建任务没有id 则由前端生成
+      showSchemaProgress: false, //任务是否正在推演 控制弹窗的显示
+      showFieldMappingProgress: false, //字段映射是否正推演校验 控制弹窗的显示
+      showDialogProgress: false //任务字段总数是有变化，上一次结果不显示
     }
   },
   watch: {
@@ -384,6 +418,16 @@ export default {
         this.loadData()
         if (this.$route.query.id) {
           this.wsWatch()
+          this.initWSSed() //有id 主动监听当前任务schema进度
+          this.getSchemaResult()
+        } else {
+          //新建任务由前端生成任务id
+          this.$api('Setting')
+            .getObjectId()
+            .then(res => {
+              this.queryId = res.data
+              this.getSchemaResult()
+            })
         }
         this.editor.graph.on(EditorEventType.DRAFT_SAVE, () => {
           this.draftSave()
@@ -446,8 +490,8 @@ export default {
         this.creatUserId = this.$cookie.get('user_id')
         this.editor.ui.setName(this.$t('dataFlow.newTaksName') + '_' + uuid().slice(0, 7))
         // if (!this.dataFlow) document.title = this.$t('dataFlow.newTaksName');
+        this.setSelector(this.$route.query.mapping)
       }
-      this.setSelector(this.$route.query.mapping)
     },
 
     simpleRefresh() {
@@ -591,6 +635,39 @@ export default {
       timer = setInterval(() => {
         self.updateDataFlow()
       }, 5000)
+    },
+    //实时获取schema加载进度
+    initWSSed() {
+      let id = this.$route.query.id || this.queryId
+      let msg = {
+        type: 'metadataTransformerProgress',
+        data: {
+          dataFlowId: id
+        }
+      }
+      ws.ready(() => {
+        ws.send(msg)
+      }, true)
+    },
+    getSchemaResult() {
+      let self = this
+      let id = self.$route.query.id || self.queryId
+      ws.on('metadataTransformerProgress', function (res) {
+        if (!res?.data?.stageId && res?.data?.dataFlowId === id) {
+          self.showDialogProgress = true // 最新返回信息展示
+          let { finished, total, status } = res?.data
+          self.progress.finished = finished
+          self.progress.total = total
+          self.progress.progress = status
+          if (status !== 'done') {
+            self.progress.showProgress = true
+          } else {
+            self.progress.showProgress = false
+          }
+        } else {
+          self.progress.showProgress = false
+        }
+      })
     },
     updateDataFlow() {
       let self = this
@@ -862,8 +939,9 @@ export default {
               stages[sourceId]['field_process'] = cell[FORM_DATA_KEY]?.field_process
 
               //迁移全局修改设置值
-              stages[targetId].tableNameTransform = cell[FORM_DATA_KEY].tableNameTransform
-              stages[targetId].fieldsNameTransform = cell[FORM_DATA_KEY].fieldsNameTransform
+              stages[targetId].tableNameTransform = cell[FORM_DATA_KEY]?.tableNameTransform
+              stages[targetId].fieldsNameTransform = cell[FORM_DATA_KEY]?.fieldsNameTransform
+              stages[targetId].batchOperationList = cell[FORM_DATA_KEY]?.batchOperationList
             }
           }
           if (targetId && stages[targetId]) {
@@ -874,7 +952,9 @@ export default {
       postData.stages = Object.values(stages)
 
       if (this.dataFlowId) postData.id = this.dataFlowId
-
+      if (!this.$route.query.id && !this.dataFlowId) {
+        postData.id = this.queryId || '' //当前路由没有id 保存任务则用前端生成id
+      }
       return postData
     },
 
@@ -932,8 +1012,7 @@ export default {
       if (!this.checkJoinTableStageId()) return
       localStorage.removeItem(this.tempId)
       const _doSave = function () {
-        let promise = data.id ? dataFlowsApi.patch(data) : dataFlowsApi.post(data)
-
+        let promise = self.$route.query.id ? dataFlowsApi.patch(data) : dataFlowsApi.post(data)
         promise
           .then(result => {
             if (result && result.data) {
@@ -1062,6 +1141,9 @@ export default {
       let _this = this
       let id = this.$route.query.id
 
+      //如果有showSchemaProgress
+      this.showSchemaProgress = false
+      this.showDialogProgress = false // 重新启动任务先隐藏上一次进度结果，等ws回信息再显示最新
       if (this.$refs.agentDialog.checkAgent()) {
         this.checkAgentStatus(() => {
           let doStart = () => {
@@ -1117,7 +1199,9 @@ export default {
         let objectNamesList = [],
           stageTypeFalg = false,
           checkSetting = true,
-          greentplumSettingFalg = true
+          // greentplumSettingFalg = true,
+          sourceInitialFalg = true,
+          databaseType = ''
         if (data && data.stages && data.stages.length) {
           stageTypeFalg = data.stages.every(stage => stage.type === 'database')
           if (stageTypeFalg) {
@@ -1141,10 +1225,18 @@ export default {
             }
             if (
               item.outputLanes.length &&
-              (item.databaseType === 'greenplum' || item.database_type === 'greenplum') &&
+              (['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'hana', 'gaussdb200'].includes(
+                item.databaseType
+              ) ||
+                ['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'hana', 'gaussdb200'].includes(
+                  item.database_type
+                )) &&
+              // (item.databaseType === 'greenplum' || item.database_type === 'greenplum') &&
               this.sync_type !== 'initial_sync'
             ) {
-              greentplumSettingFalg = false
+              sourceInitialFalg = false
+              databaseType = item.databaseType ? item.databaseType : item.database_type
+              // greentplumSettingFalg = false
             }
           })
         }
@@ -1165,15 +1257,17 @@ export default {
           this.$message.error(this.$t('editor.cell.link.chooseATableTip'))
           return
         }
-        if (!greentplumSettingFalg) {
-          this.$message.error(this.$t('editor.cell.data_node.greentplum_check'))
+        if (!sourceInitialFalg) {
+          this.$message.error(databaseType + this.$t('dag_job_check_source'))
           return
         }
+
         if (this.modPipeline) {
           data['modPipeline'] = []
           this.showCheckStagesVisible = false
           data['modPipeline'] = this.modPipeline
         }
+        this.initWSSed() //当前推演进度
         let start = () => {
           data.status = 'scheduled'
           data.executeMode = 'normal'
@@ -1190,6 +1284,8 @@ export default {
                     this.checkStagesData[i].syncType = 'initial_sync+cdc'
                   }
                 }
+              } else if (err.response.msg === 'invalid') {
+                this.showFieldMappingProgress = true
               } else {
                 this.$message.error(err.response.msg)
               }
@@ -1532,7 +1628,18 @@ export default {
         hana: 'app.HanaNode',
         dameng: 'app.DamengNode',
         clickhouse: 'app.ClickHouse',
-        vika: 'app.VikaNode'
+        kudu: 'app.KUDUNode',
+        hbase: 'app.HBaseNode',
+        mq: 'app.Mq',
+        kafka: 'app.KafkaNode',
+        adb_mysql: 'app.ADBMysqlNode',
+        tcp_udp: 'app.TcpNode',
+        cache_lookup_processor: 'app.JointCache',
+        custom_connection: 'app.CustomNode',
+        mem_cache: 'app.MemCache',
+        logminer: 'app.Logminer',
+        protobuf_convert_processor: 'app.Message',
+        ika: 'app.VikaNode'
       }
       if (data) {
         let stageMap = {}
@@ -1543,7 +1650,8 @@ export default {
           let formData = _.cloneDeep(v)
           delete formData.inputLanes
           delete formData.outputLanes
-          if (['table', 'view', 'collection', 'mongo_view', 'hive'].includes(v.type)) {
+          if (v.type && DATA_NODE_TYPES.includes(v.type)) {
+            let name = v.tableName || v.name
             let node = {
               type: mapping[v.type],
               id: v.id,
@@ -1553,25 +1661,9 @@ export default {
               outputSchema: null,
               attrs: {
                 label: {
-                  text: v.tableName !== '' && v.tableName ? breakText.breakText(v.tableName, 125) : v.type
+                  text: name ? breakText.breakText(name, 125) : v.type
                 }
-              },
-              angle: 0
-            }
-            cells.push(node)
-          } else if (v.type && ['dummy db', 'gridfs', 'file', 'elasticsearch', 'rest api', 'redis'].includes(v.type)) {
-            let node = {
-              type: mapping[v.type],
-              id: v.id,
-              freeTransform: false,
-              schema: null,
-              outputSchema: null,
-              attrs: {
-                label: {
-                  text: v.name !== '' && v.name ? breakText.breakText(v.name, 125) : v.type
-                }
-              },
-              form_data: formData
+              }
             }
             cells.push(node)
           } else if (v.type === 'database') {
@@ -1735,6 +1827,10 @@ export default {
       this.editor.graph.selectionPosition(item.cell)
     }
   },
+  //获取当前queryID
+  getDataFlowQueryId() {
+    return this.queryId
+  },
 
   beforeDestroy() {
     if (this.timeoutId) {
@@ -1745,6 +1841,7 @@ export default {
       timer = null
     }
     this.editor.destroy()
+    ws.off('metadataTransformerProgress')
   }
 }
 </script>

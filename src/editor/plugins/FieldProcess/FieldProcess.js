@@ -44,7 +44,8 @@ export const fieldProcessConfig = {
       [FORM_DATA_KEY]: {
         type: 'field_processor',
         scripts: [],
-        operations: []
+        operations: [],
+        jsEngineName: 'graal.js'
       }
     },
     prototypeProperties: {

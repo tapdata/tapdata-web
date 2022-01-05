@@ -69,6 +69,17 @@
                     <i class="el-icon-warning-outline"></i>
                   </el-tooltip>
                 </el-radio>
+                <ElRadio label="cdcCount"
+                  >动态校验
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="基于时间窗口对动态数据进行校验，目前仅支持对行数进行校验"
+                    placement="top"
+                  >
+                    <i class="el-icon-warning-outline"></i>
+                  </el-tooltip>
+                </ElRadio>
               </el-radio-group>
             </el-form-item>
             <el-form-item class="setting-item" prop="name">
@@ -123,6 +134,46 @@
                 <el-option :value="10000" label="10000(rows)"></el-option>
               </el-select>
             </el-form-item>
+            <template v-if="form.inspectMethod === 'cdcCount'">
+              <el-form-item class="setting-item">
+                <label class="item-label">{{ $t('verify_create_window_duration') }}</label>
+                <el-input
+                  class="item-input"
+                  size="mini"
+                  v-model="form.cdcDuration"
+                  onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                  onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+                >
+                  <template slot="append"> {{ $t('timeToLive.m') }} </template>
+                </el-input>
+              </el-form-item>
+              <el-form-item class="setting-item" prop="cdcBeginDate">
+                <label class="item-label is-required">校验开始时间</label>
+                <el-date-picker
+                  class="item-select"
+                  size="mini"
+                  v-model="form.cdcBeginDate"
+                  type="datetime"
+                  placeholder="校验开始时间"
+                  format="yyyy-MM-dd HH:mm"
+                  value-format="yyyy-MM-dd HH:mm"
+                >
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item class="setting-item" v-if="form.mode === 'manual'">
+                <label class="item-label">校验结束时间</label>
+                <el-date-picker
+                  class="item-select"
+                  size="mini"
+                  v-model="form.cdcEndDate"
+                  type="datetime"
+                  placeholder="校验结束时间"
+                  format="yyyy-MM-dd HH:mm"
+                  value-format="yyyy-MM-dd HH:mm"
+                >
+                </el-date-picker>
+              </el-form-item>
+            </template>
           </el-form>
         </div>
         <div v-if="flowStages" v-loading="!flowStages.length">
@@ -135,77 +186,141 @@
             </div>
             <ul class="panel-container" id="data-verification-form">
               <li class="condition-item" v-for="(item, index) in form.tasks" :key="index">
-                <div class="condition-setting">
-                  <div class="setting-item">
-                    <label class="item-label is-required">{{ $t('dataVerification.table') }}</label>
-                    <el-cascader
-                      class="item-select"
-                      :class="{ red: !item.sourceTable }"
-                      size="mini"
-                      v-model="item.sourceTable"
-                      :options="item.sourceTree"
-                      @input="tableChangeHandler(item, 'source', index)"
-                    ></el-cascader>
-                    <span class="item-icon">
-                      <i class="el-icon-right"></i>
-                    </span>
-                    <el-cascader
-                      class="item-select"
-                      size="mini"
-                      :class="{ red: !item.targetTable }"
-                      v-model="item.targetTable"
-                      :options="item.targetTree"
-                      @input="tableChangeHandler(item, 'target')"
-                    ></el-cascader>
+                <el-form :model="item">
+                  <div class="condition-setting">
+                    <div class="setting-item">
+                      <label class="item-label is-required">{{ $t('dataVerification.table') }}</label>
+                      <el-cascader
+                        v-model="item.sourceTable"
+                        filterable
+                        class="item-select"
+                        :class="{ red: !item.sourceTable }"
+                        size="mini"
+                        :options="item.sourceTree"
+                        @input="tableChangeHandler(item, 'source', index)"
+                      ></el-cascader>
+                      <span class="item-icon">
+                        <i class="el-icon-right"></i>
+                      </span>
+                      <el-cascader
+                        v-model="item.targetTable"
+                        filterable
+                        class="item-select"
+                        size="mini"
+                        :class="{ red: !item.targetTable }"
+                        :options="item.targetTree"
+                        @input="tableChangeHandler(item, 'target')"
+                      ></el-cascader>
+                    </div>
+                    <div class="setting-item" v-show="['field', 'jointField'].includes(form.inspectMethod)">
+                      <label class="item-label is-required">{{ $t('dataVerification.indexField') }}</label>
+                      <MultiSelection
+                        v-model="item.source.sortColumn"
+                        :options="item.source.fields"
+                        :class="{ red: !item.source.sortColumn }"
+                        :placeholder="$t('dataVerification.ChoosePKField')"
+                        :id="'itemSource' + index"
+                      ></MultiSelection>
+                      <span class="item-icon"></span>
+                      <MultiSelection
+                        v-model="item.target.sortColumn"
+                        :class="{ red: !item.target.sortColumn }"
+                        :options="item.target.fields"
+                        :placeholder="$t('dataVerification.ChoosePKField')"
+                      ></MultiSelection>
+                      <el-checkbox
+                        style="margin-left: 10px"
+                        v-model="item.showAdvancedVerification"
+                        v-show="form.inspectMethod === 'field'"
+                        >{{ $t('dataVerification.advanceVerify') }}</el-checkbox
+                      >
+                    </div>
+                    <el-row class="pt-3">
+                      <el-col :span="13" class="setting-item-box">
+                        <el-switch
+                          v-model="item.source.sourceFilterFalg"
+                          @change="changeSourceWhere(item.source.sourceFilterFalg, item.source)"
+                        ></el-switch>
+                        <label class="item-label pl-2">{{ $t('verify_form_source_filter') }}</label>
+                      </el-col>
+                      <el-col :span="11" class="pl-6">
+                        <el-switch
+                          v-model="item.target.targeFilterFalg"
+                          @change="changeSourceWhere(item.target.targeFilterFalg, item.target)"
+                        ></el-switch>
+                        <label class="item-label pl-2">{{ $t('verify_form_target_filter') }}</label>
+                      </el-col>
+                    </el-row>
+                    <el-row class="pt-3">
+                      <el-col :span="13" class="setting-item-box" v-if="item.source.sourceFilterFalg">
+                        <CodeEditor v-model="item.source.where" :width="width" height="200px" class="mb-2"></CodeEditor>
+                        <template v-if="item.source.databaseType">
+                          <div v-if="item.source.databaseType === 'mongodb'">
+                            {{ $t('dag_dialog_field_mapping_example') }}: {"field": 1, "field2": "value"}
+                          </div>
+                          <div v-else>
+                            {{ $t('dag_dialog_field_mapping_example') }}: WHERE field1 = 1 and field2 = 'value'
+                          </div>
+                        </template>
+
+                        <!-- <queryBuilder
+                          v-if="item.source.sourceFilterFalg"
+                          v-model="item.source.custSql"
+                          v-bind:initialOffset.sync="item.source.initialOffset"
+                          :primaryKeyOptions="item.source.fields.map(f => f.field_name)"
+                          :tableName="item.source.tableName"
+                          :databaseType="item.source.databaseType"
+                          :mergedSchema="item.source"
+                        ></queryBuilder> -->
+                      </el-col>
+                      <el-col :span="11" class="pl-6" v-if="item.target.targeFilterFalg">
+                        <CodeEditor v-model="item.target.where" :width="width" height="200px" class="mb-2"></CodeEditor>
+                        <template v-if="item.target.databaseType">
+                          <div v-if="item.target.databaseType === 'mongodb'">
+                            {{ $t('dag_dialog_field_mapping_example') }}: {"field": 1, "field2": "value"}
+                          </div>
+                          <div v-else>
+                            {{ $t('dag_dialog_field_mapping_example') }}：WHERE field1 = 1 and field2 = 'value'
+                          </div>
+                        </template>
+                        <!-- <queryBuilder
+                          v-if="item.target.targeFilterFalg"
+                          v-model="item.target.custSql"
+                          v-bind:initialOffset.sync="item.target.initialOffset"
+                          :primaryKeyOptions="item.target.fields.map(f => f.field_name)"
+                          :tableName="item.target.tableName"
+                          :databaseType="item.target.databaseType"
+                          :mergedSchema="item.target"
+                        ></queryBuilder> -->
+                      </el-col>
+                    </el-row>
+                    <div class="setting-item pt-4" v-if="item.showAdvancedVerification">
+                      <label class="item-label is-required">{{ $t('dataVerification.JSVerifyLogic') }}</label>
+                      <el-button
+                        v-if="!item.webScript || item.webScript === ''"
+                        size="mini"
+                        icon="el-icon-plus"
+                        @click="addScript(index)"
+                        >{{ $t('dataVerification.addJS') }}</el-button
+                      >
+                      <span v-if="item.webScript && item.webScript !== ''">
+                        <el-input
+                          class="item-select item-textarea"
+                          type="textarea"
+                          v-model="item.webScript"
+                          disabled
+                        ></el-input>
+                        <el-button-group class="setting-buttons">
+                          <el-button size="mini" icon="el-icon-edit" @click="editScript(index)"></el-button>
+                        </el-button-group>
+                        <el-button-group class="setting-buttons">
+                          <el-button size="mini" icon="el-icon-close" @click="removeScript(index)"></el-button>
+                        </el-button-group>
+                      </span>
+                    </div>
                   </div>
-                  <div class="setting-item" v-show="form.inspectMethod !== 'row_count'">
-                    <label class="item-label is-required">{{ $t('dataVerification.indexField') }}</label>
-                    <MultiSelection
-                      v-model="item.source.sortColumn"
-                      :options="item.source.fields"
-                      :class="{ red: !item.source.sortColumn }"
-                      :placeholder="$t('dataVerification.ChoosePKField')"
-                      :id="'itemSource' + index"
-                    ></MultiSelection>
-                    <span class="item-icon"></span>
-                    <MultiSelection
-                      v-model="item.target.sortColumn"
-                      :class="{ red: !item.target.sortColumn }"
-                      :options="item.target.fields"
-                      :placeholder="$t('dataVerification.ChoosePKField')"
-                    ></MultiSelection>
-                    <el-checkbox
-                      style="margin-left: 10px"
-                      v-model="item.showAdvancedVerification"
-                      v-show="form.inspectMethod === 'field'"
-                      >{{ $t('dataVerification.advanceVerify') }}</el-checkbox
-                    >
-                  </div>
-                  <div class="setting-item" v-if="item.showAdvancedVerification">
-                    <label class="item-label is-required">{{ $t('dataVerification.JSVerifyLogic') }}</label>
-                    <el-button
-                      v-if="!item.webScript || item.webScript === ''"
-                      size="mini"
-                      icon="el-icon-plus"
-                      @click="addScript(index)"
-                      >{{ $t('dataVerification.addJS') }}</el-button
-                    >
-                    <span v-if="item.webScript && item.webScript !== ''">
-                      <el-input
-                        class="item-select item-textarea"
-                        type="textarea"
-                        v-model="item.webScript"
-                        disabled
-                      ></el-input>
-                      <el-button-group class="setting-buttons">
-                        <el-button size="mini" icon="el-icon-edit" @click="editScript(index)"></el-button>
-                      </el-button-group>
-                      <el-button-group class="setting-buttons">
-                        <el-button size="mini" icon="el-icon-close" @click="removeScript(index)"></el-button>
-                      </el-button-group>
-                    </span>
-                  </div>
-                </div>
+                </el-form>
+
                 <el-button-group class="setting-buttons">
                   <el-button size="mini" icon="el-icon-close" @click="removeItem(index)"></el-button>
                 </el-button-group>
@@ -237,11 +352,17 @@
       :before-close="handleAddScriptClose"
     >
       <div class="js-wrap">
-        <div class="jsBox">
-          <div class="js-fixText"><span style="color: #0000ff">function </span><span> validate(sourceRow){</span></div>
-          <CodeEditor class="js-editor" v-model="webScript" lang="javascript" theme="eclipse"></CodeEditor>
-          <!--          <JsEditor v-if="dialogAddScriptVisible" :code.sync="webScript" ref="jsEditor" :width.sync="width"></JsEditor>-->
-          <div class="js-fixText">}</div>
+        <div class="jsBox px-6">
+          <div>
+            <span class="mr-2 text-secondary" style="font-size: 12px">JS引擎版本：</span>
+            <ElSelect v-model="jsEngineName" style="width: 100px" size="mini">
+              <ElOption label="新版" value="graal.js"></ElOption>
+              <ElOption label="旧版" value="nashorn"></ElOption>
+            </ElSelect>
+          </div>
+          <div class="py-2"><span style="color: #0000ff">function </span><span> validate(sourceRow){</span></div>
+          <CodeEditor class="js-editor" v-model="webScript"></CodeEditor>
+          <div class="py-2">}</div>
         </div>
         <div class="markdown-body-wrap example">
           <div class="markdown-body" v-html="htmlMD"></div>
@@ -259,6 +380,7 @@
 const TABLE_PARAMS = {
   connectionId: '',
   table: '',
+  databaseType: '',
   sortColumn: '',
   fields: []
 }
@@ -277,8 +399,10 @@ const META_INSTANCE_FIELDS = {
   meta_type: true
 }
 import MultiSelection from './multi-selection.vue'
-import CodeEditor from 'web-core/components/CodeEditor'
+import CodeEditor from '@/components/CodeEditor'
+// import queryBuilder from '@/components/QueryBuilder'
 //import JsEditor from 'web-core/components/js-editor.vue'
+import { DATA_NODE_TYPES } from '@/const.js'
 export default {
   components: { MultiSelection, CodeEditor },
   props: {
@@ -290,15 +414,18 @@ export default {
   },
   data() {
     let self = this
-    let requiredValidator = (msg, isCheckMode) => {
+    let requiredValidator = (msg, check) => {
       return (rule, value, callback) => {
-        let valid = isCheckMode ? self.form.mode === 'cron' : true
+        let valid = check ? check() : true
         if (valid && !value) {
           callback(new Error(msg))
         } else {
           callback()
         }
       }
+    }
+    let checkMode = () => {
+      return self.form.mode === 'cron'
     }
     return {
       loading: false,
@@ -312,6 +439,9 @@ export default {
         name: '',
         mode: 'manual',
         inspectMethod: 'row_count',
+        cdcBeginDate: '',
+        cdcEndDate: '',
+        cdcDuration: '',
         timing: {
           intervals: 24 * 60,
           intervalsUnit: 'minute',
@@ -337,12 +467,19 @@ export default {
         ],
         'timing.start': [
           {
-            validator: requiredValidator(this.$t('dataVerification.tasksTime'), true)
+            validator: requiredValidator(this.$t('dataVerification.tasksTime'), checkMode)
           }
         ],
         'timing.intervals': [
           {
-            validator: requiredValidator(this.$t('dataVerification.tasksVerifyInterval'), true)
+            validator: requiredValidator(this.$t('dataVerification.tasksVerifyInterval'), checkMode)
+          }
+        ],
+        cdcBeginDate: [
+          {
+            validator: requiredValidator('请输入开始时间', () => {
+              return self.form.inspectMethod === 'cdcCount'
+            })
           }
         ]
       },
@@ -354,7 +491,7 @@ export default {
       dialogAddScriptVisible: false,
       formIndex: '',
       webScript: '',
-      width: '600',
+      jsEngineName: 'graal.js',
       allStages: null
     }
   },
@@ -362,7 +499,25 @@ export default {
     this.getFlowOptions()
     this.htmlMD = require(`./functionInfo.md`)
   },
+
   methods: {
+    changeSourceWhere(v, item) {
+      if (v) {
+        // let custSql = {
+        //   filterType: 'field', //sql
+        //   // noFieldFilter: true,
+        //   noLineLimit: true,
+        //   selectedFields: [],
+        //   fieldFilterType: 'keepAllFields',
+        //   noFieldFilter: true,
+        //   limitLines: '',
+        //   cSql: '',
+        //   editSql: '',
+        //   conditions: []
+        // }
+        this.$set(item, 'where', '')
+      }
+    },
     //获取dataflow数据
     getFlowOptions() {
       this.loading = true
@@ -454,7 +609,7 @@ export default {
       this.getFlowStages()
     },
     dealData(flowData, callback, isDB) {
-      let types = isDB ? ['database'] : ['table', 'collection']
+      let types = isDB ? ['database'] : DATA_NODE_TYPES
       let flowStages = flowData.stages.filter(stg => types.includes(stg.type))
       let connectionIds = []
       let tableNames = []
@@ -462,21 +617,26 @@ export default {
         connectionIds.push(stg.connectionId)
         if (!isDB) {
           tableNames.push(stg.tableName)
+        } else if (stg.syncObjects?.length) {
+          let obj = stg.syncObjects[0]
+          let tables = obj.objectNames || []
+          tables.forEach(t => {
+            tableNames.push(t)
+            tableNames.push(stg.table_prefix + t + stg.table_suffix)
+          })
         }
       })
       if (connectionIds.length) {
         let where = {
           meta_type: {
-            inq: ['table', 'collection']
+            inq: DATA_NODE_TYPES
           },
           'source.id': {
             inq: Array.from(new Set(connectionIds))
           }
         }
-        if (!isDB) {
-          where.original_name = {
-            inq: Array.from(new Set(tableNames))
-          }
+        where.original_name = {
+          inq: Array.from(new Set(tableNames))
         }
         this.metaDataFunc({
           filter: JSON.stringify({
@@ -488,15 +648,7 @@ export default {
             let tables = data || []
             if (isDB) {
               this.stageMap = {}
-              flowStages.forEach(stage => {
-                if (stage.outputLanes.length) {
-                  let targetDBStage = flowStages.find(stg => stg.id === stage.outputLanes[0])
-                  this.getTreeForDBFlow('source', tables, stage, targetDBStage)
-                }
-                if (stage.inputLanes.length) {
-                  this.getTreeForDBFlow('target', tables, stage)
-                }
-              })
+              this.getTreeForDBFlow(tables, flowStages)
             } else {
               this.flowStages = flowStages
               this.allStages = flowData.stages
@@ -545,65 +697,83 @@ export default {
         })
       }
     },
-    getTreeForDBFlow(type, tables, stage, targetStage) {
-      let includeTableNames = []
-      let getTableNames = (objects, prefix = '', suffix = '') => {
-        let obj = objects.find(obj => obj.type === 'table')
-        if (obj) {
-          includeTableNames = obj.objectNames.map(tName => {
-            return prefix + tName + suffix
-          })
+    getTreeForDBFlow(tables, flowStages) {
+      let stagesMap = {}
+      let targetStages = []
+      flowStages.forEach(stg => {
+        stagesMap[stg.id] = stg
+        if (stg.inputLanes?.length) {
+          targetStages.push(stg)
         }
-      }
-      if (type === 'source' && targetStage.syncObjects) {
-        getTableNames(targetStage.syncObjects)
-      }
-      if (type === 'target' && stage.syncObjects) {
-        getTableNames(stage.syncObjects, stage.table_prefix, stage.table_suffix)
-      }
-      let includeTables = tables.filter(tb => {
-        let flag = true
-        if (includeTableNames.length) {
-          flag = includeTableNames.includes(tb.original_name)
-        }
-        return tb.source.id === stage.connectionId && flag
       })
-      if (!includeTables.length) {
-        return this.$message.error("Can't found the " + type + 'node: ' + stage.tableName)
-      }
-      let parent = {
-        label: includeTables[0].source.name,
-        value: stage.connectionId,
-        children: []
-      }
-      let index = this[type + 'Tree'].findIndex(it => it.value === stage.connectionId)
-      if (index >= 0) {
-        parent = this[type + 'Tree'].splice(index, 1)[0]
-      }
-      includeTables.forEach(table => {
-        if (!parent.children.find(child => child.value === table.original_name)) {
-          parent.children.push({
-            label: table.original_name,
-            value: table.original_name
-          })
-          let outputLanes = targetStage
-            ? [targetStage.connectionId + targetStage.table_prefix + table.original_name + targetStage.table_suffix]
-            : null
-          let key = stage.connectionId + table.original_name
-          if (targetStage) {
-            this.stageMap[key] = outputLanes
+      this.sourceTree = []
+      this.targetTree = []
+      let sourceTables = []
+      let targetTables = []
+      targetStages.forEach(stage => {
+        let target = stage
+        let source = stagesMap[target.inputLanes[0]]
+
+        let obj = target.syncObjects[0]
+        let sourceTablesNames = obj.objectNames || []
+        sourceTablesNames.forEach(name => {
+          let targetTableName = target.table_prefix + name + target.table_suffix
+          let sourceTable = tables.find(tb => tb.original_name === name && tb.source.id === source.connectionId)
+          let targetTable = tables.find(
+            tb => tb.original_name === targetTableName && tb.source.id === target.connectionId
+          )
+          if (sourceTable && targetTable) {
+            sourceTables.push(sourceTable)
+            targetTables.push(targetTable)
+
+            let outputLanes = target.connectionId + targetTableName
+            let key = source.connectionId + name
+            this.stageMap[key] = [outputLanes]
+            this.flowStages.push({
+              id: key,
+              connectionId: sourceTable.source.id,
+              connectionName: sourceTable.source.name,
+              fields: sourceTable.fields,
+              tableName: sourceTable.original_name
+            })
+            this.flowStages.push({
+              id: outputLanes,
+              connectionId: targetTable.source.id,
+              connectionName: targetTable.source.name,
+              fields: targetTable.fields,
+              tableName: targetTable.original_name
+            })
+          } else {
+            this.$message.error('找不到节点对应的表信息')
           }
-          this.flowStages.push({
-            id: key,
-            connectionId: table.source.id,
-            connectionName: table.source.name,
-            fields: table.fields,
-            tableName: table.original_name,
-            outputLanes
-          })
-        }
+        })
       })
-      this[type + 'Tree'].push(parent)
+      let getTree = (type, tables) => {
+        let tree = this[type]
+        tables.sort((a, b) => {
+          return a.original_name - b.original_name
+        })
+        tables.forEach(tb => {
+          let parent = tree.find(item => item.value === tb.source.id)
+          if (!parent) {
+            parent = {
+              label: tb.source.name,
+              value: tb.source.id,
+              children: []
+            }
+            tree.push(parent)
+          }
+
+          if (!parent.children.some(c => c.value === tb.original_name)) {
+            parent.children.push({
+              label: tb.original_name,
+              value: tb.original_name
+            })
+          }
+        })
+      }
+      getTree('sourceTree', sourceTables)
+      getTree('targetTree', targetTables)
     },
     //获取表的连线关系
     getStageMap(stages) {
@@ -688,7 +858,8 @@ export default {
               targetTree: [],
               showAdvancedVerification: false,
               script: '', //后台使用 需要拼接function头尾
-              webScript: '' //前端使用 用于页面展示
+              webScript: '', //前端使用 用于页面展示
+              jsEngineName: 'graal.js'
             }
             if (targetStage) {
               this.setTarget(task, targetStage)
@@ -730,9 +901,11 @@ export default {
     setTable(stage, source) {
       let sortColumn = ''
       let sortField = list => {
-        return list.sort((a, b) => {
-          return a.field_name > b.field_name ? -1 : 1
-        })
+        return (
+          list?.sort((a, b) => {
+            return a.field_name > b.field_name ? -1 : 1
+          }) || []
+        )
       }
       if (stage && stage.fields && stage.fields.length) {
         if (source && source.sortColumn) {
@@ -749,6 +922,7 @@ export default {
       return {
         connectionId: stage.connectionId,
         connectionName: stage.connectionName,
+        databaseType: stage.databaseType,
         table: stage.tableName,
         sortColumn,
         fields: sortField(stage.fields)
@@ -762,7 +936,8 @@ export default {
         targetTree: [],
         showAdvancedVerification: false,
         script: '', //后台使用 需要拼接function头尾
-        webScript: '' //前端使用 用于页面展示
+        webScript: '', //前端使用 用于页面展示
+        jsEngineName: 'graal.js'
       })
       this.getTaskTree()
     },
@@ -773,8 +948,8 @@ export default {
       this.form.tasks = []
     },
     timingChangeHandler(times) {
-      this.form.timing.start = times[0]
-      this.form.timing.end = times[1]
+      this.form.timing.start = times?.[0] || ''
+      this.form.timing.end = times?.[1] || ''
     },
     tableChangeHandler(item, type, index) {
       let stages = this.flowStages
@@ -806,11 +981,13 @@ export default {
     handleAddScriptClose() {
       this.webScript = ''
       this.formIndex = ''
+      this.jsEngineName = 'graal.js'
       this.dialogAddScriptVisible = false
     },
     addScript(index) {
       this.formIndex = index
       this.webScript = ''
+      this.jsEngineName = 'graal.js'
       this.dialogAddScriptVisible = true
     },
     removeScript(index) {
@@ -826,13 +1003,17 @@ export default {
     editScript(index) {
       this.formIndex = index
       let script = JSON.parse(JSON.stringify(this.form.tasks[this.formIndex].webScript))
+      this.jsEngineName = JSON.parse(JSON.stringify(this.form.tasks[this.formIndex].jsEngineName || 'nashorn'))
       this.webScript = script
       this.dialogAddScriptVisible = true
     },
     submitScript() {
       let script = JSON.parse(JSON.stringify(this.webScript))
       let formIndex = JSON.parse(JSON.stringify(this.formIndex))
+      let jsEngineName = JSON.parse(JSON.stringify(this.jsEngineName))
       this.form.tasks[formIndex].webScript = script
+      this.form.tasks[formIndex].jsEngineName = jsEngineName
+      this.jsEngineName = ''
       this.webScript = ''
       this.formIndex = ''
       this.dialogAddScriptVisible = false
@@ -847,6 +1028,26 @@ export default {
         this.$router.back()
       })
     },
+    //
+    // stringIntercept(databaseType, item) {
+    //   let where = ''
+    //   if (databaseType === 'mongodb') {
+    //     if (item.custSql?.filterType === 'sql') {
+    //       where = item.custSql.editSql
+    //     } else {
+    //       where = item.custSql?.cSql
+    //     }
+    //   } else {
+    //     if (item.custSql?.filterType === 'sql') {
+    //       where = 'WHERE ' + item.custSql?.editSql
+    //     } else {
+    //       let index = item.custSql.cSql.indexOf('*  FROM')
+    //       let string = item.custSql.cSql.substring(index + 7, item.custSql.cSql.length).trimStart()
+    //       where = string
+    //     }
+    //   }
+    //   return where
+    // },
     nextStep() {
       this.$refs.baseForm.validate(valid => {
         if (valid) {
@@ -866,7 +1067,7 @@ export default {
           }
           index = 0
           if (
-            this.form.inspectMethod !== 'row_count' &&
+            ['field', 'jointField'].includes(this.form.inspectMethod) &&
             tasks.some((c, i) => {
               index = i + 1
               return !c.source.sortColumn || !c.target.sortColumn
@@ -877,7 +1078,7 @@ export default {
           }
           index = 0
           if (
-            this.form.inspectMethod !== 'row_count' &&
+            ['field', 'jointField'].includes(this.form.inspectMethod) &&
             tasks.some((c, i) => {
               index = i + 1
               return c.source.sortColumn.split(',').length !== c.target.sortColumn.split(',').length
@@ -907,24 +1108,29 @@ export default {
               status: this.form.mode === 'manual' ? 'scheduling' : 'waiting',
               ping_time: 0,
               tasks: this.form.tasks.map(
-                ({ source, target, fullMatch, showAdvancedVerification, script, webScript }) => {
+                ({ source, target, fullMatch, showAdvancedVerification, script, webScript, jsEngineName }) => {
                   if (webScript && webScript !== '') {
                     script = 'function validate(sourceRow){' + webScript + '}'
                   }
+
+                  // source.where = this.stringIntercept(source.databaseType, source)
+                  // target.where = this.stringIntercept(target.databaseType, target)
                   return {
                     source,
                     target,
                     fullMatch,
                     showAdvancedVerification,
                     script,
-                    webScript
+                    webScript,
+                    jsEngineName
                   }
                 }
               ),
               platformInfo: {
                 agentType: 'private'
               },
-              byFirstCheckId: ''
+              byFirstCheckId: '',
+              browserTimezoneOffset: new Date().getTimezoneOffset()
             })
           )
             .then(data => {
@@ -1012,6 +1218,7 @@ export default {
         padding: 5px 10px;
         border: 1px solid #dedee4;
       }
+
       .setting-item {
         display: flex;
         align-items: center;
@@ -1051,6 +1258,9 @@ export default {
           white-space: nowrap;
         }
       }
+      .setting-item-box {
+        padding-left: 140px;
+      }
       .setting-buttons {
         margin-left: 10px;
         .el-button {
@@ -1079,12 +1289,9 @@ export default {
   flex-wrap: nowrap;
   flex-direction: row;
   .jsBox {
-    width: 70%;
-    height: 478px;
-    .js-fixText {
-      line-height: 25px;
-      margin-left: 28px;
-    }
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     .js-fixContent {
       margin-left: 60px;
     }

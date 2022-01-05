@@ -24,6 +24,7 @@
             v-model="model.connectionId"
             :placeholder="$t('editor.cell.data_node.es.chooseESName')"
             :clearable="true"
+            @input="handlerConnectionChange"
           >
             <el-option
               v-for="(item, idx) in databases"
@@ -43,6 +44,19 @@
             :placeholder="$t('editor.cell.data_node.es.chooseIndex')"
           ></el-input>
         </el-form-item>
+        <el-form-item>
+          <div class="flex-block fr">
+            <FieldMapping
+              v-if="dataNodeInfo.isTarget && showFieldMapping && transformModelVersion"
+              ref="fieldMapping"
+              class="fr"
+              :isDisable="disabled"
+              :transform="model"
+              :getDataFlow="getDataFlow"
+              @update-first="returnModel"
+            ></FieldMapping>
+          </div>
+        </el-form-item>
       </el-form>
       <div class="e-entity-wrap" style="text-align: center">
         <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
@@ -53,13 +67,15 @@
 <script>
 import { convertSchemaToTreeData } from '../../util/Schema'
 import Entity from '../link/Entity'
+import FieldMapping from '@/components/FieldMapping'
 import _ from 'lodash'
 import factory from '../../../api/factory'
 let connections = factory('connections')
+import VIcon from '@/components/VIcon'
 // let editorMonitor = null;
 export default {
   name: 'esNode',
-  components: { Entity },
+  components: { Entity, FieldMapping, VIcon },
   props: {
     database_types: {
       type: Array,
@@ -86,10 +102,21 @@ export default {
       model: {
         connectionId: '',
         type: 'elasticsearch',
+        databaseType: 'elasticsearch',
         chunkSize: 3,
-        index: ''
+        index: '',
+        database_name: '',
+        stageId: '',
+        showBtn: true,
+        hiddenFieldProcess: true,
+        isFirst: true,
+        hiddenChangeValue: true
       },
-      mergedSchema: null
+      mergedSchema: null,
+      scope: '',
+      showFieldMapping: false,
+      dataNodeInfo: {},
+      transformModelVersion: false
     }
   },
 
@@ -165,6 +192,7 @@ export default {
 
       if (result.data) {
         this.databases = result.data
+        this.handlerConnectionChange()
       }
     },
 
@@ -185,24 +213,33 @@ export default {
     },
 
     handlerConnectionChange() {
-      this.model.tableName = ''
-      for (let i = 0; i < this.databases.length; i++) {
-        if (this.model.connectionId === this.databases[i].id) {
-          this.model.databaseType = this.databases[i]['database_type']
-        }
-      }
+      let connection = this.databases?.find(item => item.id === this.model.connectionId)
+      this.model.database_name = connection?.database_name || ''
     },
 
-    setData(data, cell) {
+    setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         _.merge(this.model, data)
+        this.scope = vueAdapter?.editor?.scope
+        this.model.stageId = cell.id
+        this.getDataFlow()
+        let param = {
+          stages: this.dataFlow?.stages,
+          stageId: this.model.stageId
+        }
+        this.$api('DataFlows')
+          .tranModelVersionControl(param)
+          .then(data => {
+            this.showFieldMapping = data?.data[this.model.stageId]
+          })
       }
 
       this.mergedSchema = cell.getOutputSchema()
       cell.on('change:outputSchema', () => {
         this.mergedSchema = cell.getOutputSchema()
+        this.getDataFlow()
       })
-
+      this.dataNodeInfo = dataNodeInfo || {}
       // editorMonitor = vueAdapter.editor;
     },
 
@@ -219,6 +256,20 @@ export default {
 
     setDisabled(disabled) {
       this.disabled = disabled
+    },
+    //获取dataFlow
+    getDataFlow() {
+      this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      if (this.dataFlow?.setting?.transformModelVersion === 'v2') {
+        this.transformModelVersion = true
+      } else {
+        this.transformModelVersion = false
+      }
+      return this.dataFlow
+    },
+    //接收是否第一次打开
+    returnModel(value) {
+      this.model.isFirst = value
     }
 
     // seeMonitor() {

@@ -733,7 +733,7 @@ export default {
           uri: item.uri
         }
       }
-      this.$confirm(message, this.$t('message.prompt'), {
+      this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false,
         beforeClose: (action, instance, done) => {

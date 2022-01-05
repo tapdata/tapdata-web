@@ -26,6 +26,12 @@
             :placeholder="$t('editor.cell.data_node.collection.form.pk.placeholder')"
           ></MultiSelection>
         </el-form-item>
+        <ElFormItem :required="true" label="JS引擎版本：" size="mini">
+          <ElSelect v-model="form.jsEngineName">
+            <ElOption label="新版" value="graal.js"></ElOption>
+            <ElOption label="旧版" value="nashorn"></ElOption>
+          </ElSelect>
+        </ElFormItem>
         <!-- <el-form-item required>
           <span slot="label">
             <span>{{ $t('editor.cell.processor.aggregate.aggregateSizeLabel') }}</span>
@@ -281,6 +287,7 @@ export default {
       form: {
         name: '',
         type: 'aggregation_processor',
+        jsEngineName: 'graal.js',
         // aggrCleanSecond: 3600,
         // aggrFullSyncSecond: 3600,
         aggregations: [
@@ -397,6 +404,7 @@ export default {
 
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
+        data.jsEngineName = data.jsEngineName || 'nashorn'
         _.merge(this.form, data)
         this.form.aggregations.map((item, index) => {
           this.$set(this.form.aggregations, index, item)

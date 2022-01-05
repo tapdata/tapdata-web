@@ -13,6 +13,13 @@
         ></el-input>
       </el-form-item>
 
+      <ElFormItem :required="true" label="JS引擎版本：" size="mini">
+        <ElSelect v-model="model.jsEngineName">
+          <ElOption label="新版" value="graal.js"></ElOption>
+          <ElOption label="旧版" value="nashorn"></ElOption>
+        </ElSelect>
+      </ElFormItem>
+
       <el-form-item :required="true" size="mini">
         <template slot="label">
           {{ $t('editor.cell.processor.dataFilter.form.expression.label') }}
@@ -129,7 +136,7 @@
 </template>
 
 <script>
-import CodeEditor from 'web-core/components/CodeEditor'
+import CodeEditor from '@/components/CodeEditor'
 import { EditorEventType } from '../../lib/events'
 import _ from 'lodash'
 
@@ -144,6 +151,7 @@ export default {
         type: 'row_filter_processor',
         name: 'Row Filter',
         expression: '//code',
+        jsEngineName: 'graal.js',
         action: 'retain' // discard,retain
       },
       width: 500
@@ -169,6 +177,7 @@ export default {
   methods: {
     setData(data) {
       if (data) {
+        data.jsEngineName = data.jsEngineName || 'nashorn'
         _.merge(this.model, data)
       }
 

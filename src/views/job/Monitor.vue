@@ -46,7 +46,8 @@
               'kafka',
               'hana',
               'dameng',
-              'clickhouse'
+              'clickhouse',
+              'adb_mysql'
             ].includes(stageType)
           "
           v-loading="apiLoading"
@@ -1003,7 +1004,9 @@ export default {
               'kudu',
               'tcp_udp',
               'hana',
-              'clickhouse'
+              'dameng',
+              'clickhouse',
+              'adb_mysql'
             ].includes(this.stageType)
           ) {
             this.getStageDataApi(currentStageData.connectionId, this.tableName)

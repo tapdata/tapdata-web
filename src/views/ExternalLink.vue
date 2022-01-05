@@ -1,6 +1,6 @@
 <template>
   <iframe
-    src="/old/index.html#/"
+    src="./old/index.html#/"
     frameborder="0"
     style="display: block; height: 100%; width: 100%"
     @load="loadFrame"

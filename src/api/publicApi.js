@@ -10,6 +10,32 @@ const CancelToken = axios.CancelToken
 
 axios.defaults.baseURL = process.env.BASE_URL
 
+const getPendingKey = config => {
+  let { url, method, data, params } = config
+  let headers = {}
+  for (const key in config.headers) {
+    let value = config.headers[key]
+    if (Object.prototype.toString.call(value) === '[object String]' && !['Content-Type', 'Accept'].includes(key)) {
+      headers[key] = value
+    }
+  }
+  data = Object.prototype.toString.call(data) === '[object String]' ? JSON.parse(data) : data
+  let key = JSON.stringify({
+    url,
+    method,
+    data,
+    params,
+    headers
+  })
+  return key
+}
+const removePending = config => {
+  let key = getPendingKey(config)
+  let index = pending.findIndex(it => it === key)
+  if (index >= 0) {
+    pending.splice(index, 1)
+  }
+}
 axios.interceptors.request.use(
   function (config) {
     config.paramsSerializer = params => {
@@ -44,7 +70,7 @@ axios.interceptors.request.use(
     config.headers['Pool-Id'] = 'CIDC-RP-25'
     config.headers['x-requested-with'] = 'XMLHttpRequest'
 
-    let key = JSON.stringify(config)
+    let key = getPendingKey(config)
     let cancelFunc = null
     config.cancelToken = new CancelToken(c => {
       cancelFunc = c
@@ -52,12 +78,15 @@ axios.interceptors.request.use(
     if (pending.includes(key)) {
       console.log('Cancel request:', JSON.parse(key)) //eslint-disable-line
       cancelFunc()
-    } else {
+    } else if (config.method !== 'get') {
       pending.push(key)
     }
     return config
   },
   function (error) {
+    if (error?.config || error?.response?.config) {
+      removePending(error.config || error.response.config)
+    }
     return Promise.reject(error)
   }
 )
@@ -65,9 +94,7 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   response => {
     return new Promise((resolve, reject) => {
-      let key = JSON.stringify(response.config)
-      let index = pending.findIndex(it => it === key)
-      pending.splice(index, 1)
+      removePending(response.config)
       let data = response.data
       if (data.code === 'ok') {
         return resolve({
@@ -122,6 +149,9 @@ axios.interceptors.response.use(
     })
   },
   error => {
+    if (error?.config || error?.response?.config) {
+      removePending(error.config || error.response.config)
+    }
     let rsp = error.response
     if (rsp) {
       if (rsp.data && rsp.data.state === 'EXCEPTION') {

@@ -107,15 +107,59 @@ export default function (vm) {
         required: true
       },
       {
+        type: 'switch',
+        field: 'isCheckValid',
+        label: vm.$t('connection_redis_valid')
+      },
+      {
         type: 'input',
         field: 'database_username',
-        label: vm.$t('dataForm.form.userName')
+        label: vm.$t('connection_redis_valid'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'isCheckValid',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              value: 'true'
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'isCheckValid',
+                value: false
+              }
+            ],
+            triggerConfig: {
+              value: ''
+            }
+          }
+        ]
       },
       {
         type: 'input',
         field: 'plain_password',
         label: vm.$t('dataForm.form.password'),
-        domType: 'password'
+        domType: 'password',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'isCheckValid',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       }
     ]
   }

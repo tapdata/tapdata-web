@@ -89,7 +89,7 @@
               class="fr"
               type="success"
               size="mini"
-              v-if="isSourceDataNode || !showFieldMapping"
+              v-if="isSourceDataNode || !showFieldMapping || !transformModelVersion"
               @click="hanlderLoadSchema"
             >
               <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
@@ -100,12 +100,9 @@
               v-else
               ref="fieldMapping"
               class="fr"
-              :dataFlow="dataFlow"
-              :showBtn="true"
-              :isFirst="model.isFirst"
               :isDisable="disabled"
-              :hiddenFieldProcess="true"
-              :stageId="stageId"
+              :transform="model"
+              :getDataFlow="getDataFlow"
               @update-first="returnModel"
             ></FieldMapping>
           </div>
@@ -116,7 +113,12 @@
       </div>
     </div>
     <relatedTasks :taskData="taskData" v-if="disabled"></relatedTasks>
-    <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
+    <el-dialog
+      :title="$t('message_title_prompt')"
+      :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
+      width="30%"
+    >
       <span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">{{ $t('message.cancel') }}</el-button>
@@ -175,14 +177,19 @@ export default {
         connectionId: '',
         tableName: '',
         type: 'custom_connection',
-        isFirst: true
+        databaseType: 'custom_connection',
+        field_process: [],
+        stageId: '',
+        showBtn: true,
+        hiddenFieldProcess: true,
+        isFirst: true,
+        hiddenChangeValue: true
       },
       scope: '',
-      dataFlow: '',
-      stageId: '',
       showFieldMapping: false,
       mergedSchema: null,
-      primaryKeyOptions: []
+      primaryKeyOptions: [],
+      transformModelVersion: false
     }
   },
 
@@ -405,6 +412,12 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      if (this.dataFlow?.setting?.transformModelVersion === 'v2') {
+        this.transformModelVersion = true
+      } else {
+        this.transformModelVersion = false
+      }
+      return this.dataFlow
     },
     //接收是否第一次打开
     returnModel(value) {

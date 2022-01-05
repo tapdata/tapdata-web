@@ -22,26 +22,6 @@ import dameng from './dameng'
 import hive from './hive'
 import tcp_udp from './tcp_udp'
 import vika from './vika'
-import drs_mysql from './drs_mysql'
-import drs_mariadb from './drs_maria'
-import drs_oracle from './drs_oracle'
-import drs_mysqlpxc from './drs_mysqlpxc'
-import drs_postgres from './drs_postgres'
-import drs_db2 from './drs_db2'
-import drs_mongodb from './drs_mongodb'
-import drs_sqlserver from './drs_sqlserver'
-import dfs_mysql from './dfs_mysql'
-import dfs_mariadb from './dfs_maria'
-import dfs_oracle from './dfs_oracle'
-import dfs_mysqlpxc from './dfs_mysqlpxc'
-import dfs_postgres from './dfs_postgres'
-import dfs_db2 from './dfs_db2'
-import dfs_mongodb from './dfs_mongodb'
-import dfs_sqlserver from './dfs_sqlserver'
-import dfs_redis from './dfs_redis'
-import drs_dameng from './drs_dameng'
-import dfs_dameng from './dfs_dameng'
-import dfs_elasticsearch from './dfs_elasticsearch'
 import mq from './mq'
 import hbase from './hbase'
 import kudu from './kudu'
@@ -49,6 +29,9 @@ import greenplum from './greenplum'
 import tidb from './tidb'
 import hana from './hana'
 import clickhouse from './clickhouse'
+import kundb from './kundb'
+import adb_postgres from './adb_postgres'
+import adb_mysql from './adb_mysql'
 
 export default {
   mysql,
@@ -66,26 +49,6 @@ export default {
   // jira,
   hive,
   vika,
-  drs_mysql,
-  drs_mariadb,
-  drs_oracle,
-  drs_mysqlpxc,
-  drs_postgres,
-  drs_db2,
-  drs_dameng,
-  dfs_dameng,
-  drs_mongodb,
-  drs_sqlserver,
-  dfs_mysql,
-  dfs_mariadb,
-  dfs_oracle,
-  dfs_mysqlpxc,
-  dfs_postgres,
-  dfs_db2,
-  dfs_mongodb,
-  dfs_sqlserver,
-  dfs_redis,
-  dfs_elasticsearch,
   sybasease,
   gbase8s,
   gaussdb200,
@@ -101,5 +64,8 @@ export default {
   greenplum,
   tidb,
   hana,
-  clickhouse
+  clickhouse,
+  kundb,
+  adb_postgres,
+  adb_mysql
 }

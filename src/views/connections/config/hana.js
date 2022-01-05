@@ -5,7 +5,7 @@ export default function (vm) {
       labelWidth: '200px'
     },
     defaultModel: {
-      connection_type: 'target'
+      connection_type: 'source_and_target'
     },
     items: [
       {
@@ -13,6 +13,16 @@ export default function (vm) {
         field: 'connection_type',
         label: vm.$t('dataForm.form.connectionType'),
         options: [
+          {
+            label: vm.$t('dataForm.form.options.sourceAndTarget'),
+            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+            value: 'source_and_target'
+          },
+          {
+            label: vm.$t('dataForm.form.options.source'),
+            tip: vm.$t('dataForm.form.options.sourceTips'),
+            value: 'source'
+          },
           {
             label: vm.$t('dataForm.form.options.target'),
             tip: vm.$t('dataForm.form.options.targetTips'),
@@ -101,9 +111,38 @@ export default function (vm) {
         ]
       },
       {
+        type: 'select',
+        field: 'hanaType',
+        label: vm.$t('connection_hana_label_hana_type'),
+        options: [
+          { label: 'SDC', value: 'sdc' },
+          { label: 'MDC', value: 'mdc' }
+        ]
+      },
+      {
+        type: 'input',
+        field: 'database_name',
+        label: vm.$t('dataForm.form.databaseName'),
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'hanaType',
+                value: 'mdc'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
         type: 'input',
         field: 'database_owner',
-        label: vm.$t('dataForm.form.databaseName'),
+        label: 'Schema',
         required: true
       },
       {

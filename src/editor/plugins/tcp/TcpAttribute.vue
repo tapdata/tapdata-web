@@ -69,6 +69,7 @@ export default {
         name: '',
         connectionId: '',
         type: 'tcp_udp',
+        databaseType: 'tcp_udp',
         isShowMessage: true
       },
       schemas: [],

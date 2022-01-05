@@ -10,7 +10,7 @@ export const fileNodeConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-file.svg'
+          xlinkHref: 'static/editor/file.svg'
         },
         label: {
           text: i18n.t('editor.cell.data_node.file.name')

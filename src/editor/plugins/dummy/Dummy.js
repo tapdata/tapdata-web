@@ -11,7 +11,7 @@ export const DummyConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-dummy.svg'
+          xlinkHref: 'static/editor/dummy.svg'
         },
 
         label: {

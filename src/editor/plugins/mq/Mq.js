@@ -15,7 +15,7 @@ export const mqConfig = {
     defaultInstanceProperties: {
       attrs: {
         image: {
-          xlinkHref: 'static/editor/o-mq-o.svg'
+          xlinkHref: 'static/editor/mq.svg'
         },
         label: {
           text: 'MQ'

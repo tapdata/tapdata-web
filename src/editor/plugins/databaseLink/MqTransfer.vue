@@ -2,8 +2,9 @@
   <div class="mq-transfer">
     <el-transfer
       class="topic-transfer"
-      :titles="topicTitles"
       v-model="topicData"
+      filterable
+      :titles="topicTitles"
       :data="data1"
       @left-check-change="firstLeftCheckedFnc"
       @change="firstChangeFnc"
@@ -11,12 +12,12 @@
       <template #default="{ option }">
         <div>
           <span v-if="topicData.includes(option.key)">{{ table_prefix }}</span>
-          <!-- <span v-if="topicData.includes(option.label) && tableNameTransform === 'toLowerCase'">{{
+          <span v-if="topicData.includes(option.label) && tableNameTransform === 'toLowerCase'">{{
             option.label.toLowerCase()
           }}</span>
           <span v-else-if="topicData.includes(option.label) && tableNameTransform === 'toUpperCase'">{{
             option.label.toUpperCase()
-          }}</span> -->
+          }}</span>
           <span>{{ option.label }}</span>
           <span v-if="topicData.includes(option.key)">{{ table_suffix }}</span>
         </div>
@@ -24,8 +25,9 @@
     </el-transfer>
     <el-transfer
       class="queue-transfer"
-      :titles="queueTitles"
       v-model="queueData"
+      filterable
+      :titles="queueTitles"
       :data="data2"
       :left-default-checked="secondLeftCheckedArr"
       :right-default-checked="secondRightCheckedArr"
@@ -35,12 +37,12 @@
       <template #default="{ option }">
         <div>
           <span v-if="queueData.includes(option.key)">{{ table_prefix }}</span>
-          <!-- <span v-if="queueData.includes(option.label) && tableNameTransform === 'toLowerCase'">{{
+          <span v-if="queueData.includes(option.label) && tableNameTransform === 'toLowerCase'">{{
             option.label.toLowerCase()
           }}</span>
           <span v-else-if="queueData.includes(option.label) && tableNameTransform === 'toUpperCase'">{{
             option.label.toUpperCase()
-          }}</span> -->
+          }}</span>
           <span>{{ option.label }}</span>
           <span v-if="queueData.includes(option.key)">{{ table_suffix }}</span>
         </div>
@@ -74,12 +76,12 @@ export default {
         return []
       }
     },
-    // tableNameTransform: {
-    //   type: String,
-    //   default: () => {
-    //     return ''
-    //   }
-    // },
+    tableNameTransform: {
+      type: String,
+      default: () => {
+        return ''
+      }
+    },
     value: {
       type: Object,
       default: () => {
@@ -109,9 +111,9 @@ export default {
         this.init()
       }
     },
-    // tableNameTransform(val) {
-    //   this.tableNameTransform = val
-    // },
+    tableNameTransform(val) {
+      this.tableNameTransform = val
+    },
     topicData: {
       deep: true,
       handler() {
@@ -137,6 +139,8 @@ export default {
     },
     loadData() {
       this.data = [...this.source]
+      this.data = this.data.map(item => ({ key: item.original_name, label: item.original_name }))
+
       // // 一开始设置全部数据
       this.data2 = [...this.data]
       this.topicData = this.value?.topicData || []

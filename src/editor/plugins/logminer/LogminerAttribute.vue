@@ -150,7 +150,7 @@ export default {
         syncPoint: {},
         // date: '',
         // timezone: '',
-        // type: '',
+        type: 'logminer',
         logCollectorSettings: [
           {
             connectionId: '',

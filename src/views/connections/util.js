@@ -70,7 +70,10 @@ export const TYPEMAP = {
   greenplum: 'Greenplum',
   tidb: 'TiDB',
   hana: 'SAP HANA',
-  clickhouse: 'ClickHouse'
+  clickhouse: 'ClickHouse',
+  kundb: 'KunDB',
+  adb_mysql: 'ADB MySQL',
+  adb_postgres: 'ADB PostgreSQL'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {
@@ -121,7 +124,8 @@ export const defaultModel = {
     initialReadSize: 100000, //dummy
     hiveConnType: 'Stream', // kafka
     schema: '',
-    tidbPdServer: '' // TiDB
+    tidbPdServer: '', // TiDB
+    isCheckValid: false
   },
   kafka: {
     id: '',
@@ -135,7 +139,15 @@ export const defaultModel = {
     kafkaIgnoreInvalidRecord: false,
     kafkaAcks: '',
     kafkaCompressionType: '',
-    kafkaIgnorePushError: false
+    kafkaIgnorePushError: false,
+    krb5: false,
+    krb5Keytab: '',
+    krb5Conf: '',
+    krb5KeytabName: '',
+    krb5ConfName: '',
+    krb5Principal: '',
+    krb5ServiceName: '',
+    kafkaSaslMechanism: 'PLAIN'
   },
   file: {
     name: '',
@@ -209,6 +221,9 @@ export const defaultModel = {
     custom_type: '',
     collection_name: '',
     unique_keys: '',
+    // connectionTimeOut: '10',
+    // readTimeOut: '30',
+    jsEngineName: 'graal.js',
     custom_ondata_script: '',
     custom_cdc_script: '',
     custom_initial_script: '',
@@ -270,6 +285,9 @@ export const defaultModel = {
     mqTopicSet: '', //主题名称
     routeKeyField: '', //消息路由
     virtualHost: '' //虚拟主机
+  },
+  hana: {
+    hanaType: 'sdc'
   },
   vika: {
     name: '',

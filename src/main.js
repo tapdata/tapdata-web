@@ -17,7 +17,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import '@/directives'
 import 'github-markdown-css'
 import '@/assets/style/index.scss'
-// import '@/assets/theme/drs/index.scss'
+import '@/assets/theme/drs/index.scss'
 import LoadMore from '@/utils/loadMore'
 
 import '@/styles/app.scss'
@@ -87,9 +87,6 @@ window.getSettingByKey = key => {
 }
 let init = settings => {
   window.__settings__ = settings
-  if (window.getSettingByKey('DFS_TCM_PLATFORM')) {
-    require('@/assets/theme/drs/index.scss')
-  }
   let lang = localStorage.getItem('tapdata_localize_lang')
   if (!lang) {
     lang = window.getSettingByKey('DEFAULT_LANGUAGE')
@@ -98,11 +95,28 @@ let init = settings => {
 
   document.title = window.getSettingByKey('PRODUCT_TITLE') || 'Tapdata'
 
+  // 初始化ws
+  let getWsUrl = () => {
+    var loc = window.location,
+      wsUrl = 'ws://'
+    if (loc.protocol === 'https:') {
+      wsUrl = 'wss://'
+    }
+    let token = VueCookie.get('token')
+    let xToken = VueCookie.get('xToken')
+    let poolId = top.window.__POOL_ID__ || 'CIDC-RP-25'
+    let tokenParam = xToken ? 'X-Token=' + xToken : 'access_token' + token
+    return wsUrl + loc.host + `/ws/agent?xxxxpoolIdxxxx=${poolId}&${tokenParam}`
+  }
+
   window.App = new Vue({
     el: '#app',
     i18n,
     router,
     store,
+    wsOptions: {
+      url: getWsUrl()
+    },
     render: h => h(App)
   })
 }

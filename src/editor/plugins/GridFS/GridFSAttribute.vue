@@ -83,7 +83,12 @@
       <entity :schema="convertSchemaToTreeData(mergedSchema)" :editable="false"></entity>
     </div>
     <relatedTasks :taskData="taskData" v-if="disabled && model.gridfsReadMode !== 'binary'"></relatedTasks>
-    <el-dialog :title="$t('message.prompt')" :visible.sync="dialogVisible" :close-on-click-modal="false" width="30%">
+    <el-dialog
+      :title="$t('message_title_prompt')"
+      :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
+      width="30%"
+    >
       <span>{{ $t('editor.ui.nodeLoadSchemaDiaLog') }}</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">{{ $t('message.cancel') }}</el-button>
@@ -154,7 +159,7 @@ export default {
       model: {
         connectionId: '',
         type: 'gridfs',
-        databaseType: '',
+        databaseType: 'gridfs',
         tableName: '',
         isSource: true,
         // primaryKeys: '',
