@@ -485,7 +485,7 @@ export default {
     },
     signOut() {
       this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut'), {
-        type: 'error'
+        type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {
           return
