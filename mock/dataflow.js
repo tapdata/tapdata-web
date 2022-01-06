@@ -1,5 +1,6 @@
 const Mock = require('mockjs')
 const Random = Mock.Random
+const moment = require('moment')
 
 module.exports = {
   '/tm/api/DataFlows/chart': {
@@ -1288,59 +1289,119 @@ module.exports = {
     code: 'ok',
     data: { '0b173e70-82b5-46b7-bb48-7a99e2fb4e44': true }
   },
-  '/tm/api/DataFlowInsights/runtimeMonitor?statsType=data_overview': {
-    reqId: '26987e75-e7bb-4637-8a8a-a07fe244a9a9',
-    ts: 1641364647945,
-    code: 'ok',
-    data: {
-      statsType: 'data_overview',
-      createTime: '2022-01-05T06:37:27.945+00:00',
-      dataFlowId: '61d50dd8e6800c3f3d04a527',
-      granularity: 'flow',
-      statsData: {
-        outputCount: 4,
-        deleteCount: 0,
-        deleteSize: 0.0,
-        updateCount: 0,
-        t: '2022-01-05 11:21:04',
-        inputSize: 0.0,
-        updateSize: 0.0,
-        insertCount: 4,
-        insertSize: 1.0,
-        inputCount: 4
-      }
+  '/tm/api/DataFlowInsights/runtimeMonitor': req => {
+    const query = req.req?.query || {}
+    const { statsType } = query
+    console.log('statsType', query, statsType)
+    // console.log('是我', req.req.query)
+    let result = {}
+    let currentTime = new Date().getTime()
+    switch (statsType) {
+      case 'data_overview':
+        result = {
+          reqId: '26987e75-e7bb-4637-8a8a-a07fe244a9a9',
+          ts: 1641364647945,
+          code: 'ok',
+          data: {
+            statsType: 'data_overview',
+            createTime: '2022-01-05T06:37:27.945+00:00',
+            dataFlowId: '61d50dd8e6800c3f3d04a527',
+            granularity: 'flow',
+            statsData: {
+              outputCount: Random.integer(0, 100),
+              deleteCount: Random.integer(0, 100),
+              deleteSize: Random.integer(0, 100),
+              updateCount: Random.integer(0, 100),
+              t: '2022-01-05 11:21:04',
+              inputSize: Random.integer(0, 100),
+              updateSize: Random.integer(0, 100),
+              insertCount: Random.integer(0, 100),
+              insertSize: Random.integer(0, 100),
+              inputCount: Random.integer(0, 100)
+            }
+          }
+        }
+        break
+      case 'throughput':
+        result = {
+          reqId: '2e6416aa-df89-421d-bcef-d86a6660a8a2',
+          ts: 1641364647945,
+          code: 'ok',
+          data: {
+            statsType: 'throughput',
+            createTime: '2022-01-05T06:37:27.945+00:00',
+            dataFlowId: '61d50dd8e6800c3f3d04a527',
+            granularity: 'flow_second',
+            statsData: [
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:19:36', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:19:42', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:19:47', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:19:53', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:24', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:30', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:36', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:42', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:47', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:53', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:59', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:04', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:10', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:16', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:21', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:27', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:29', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:22:04', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:22:09', inputSize: 0.0, inputCount: 0.0 },
+              // { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:22:15', inputSize: 0.0, inputCount: 0.0 }
+            ]
+          }
+        }
+        result.data.statsData = new Array(20).fill().map((t, i) => {
+          let obj = {
+            outputSize: Random.integer(0, 100),
+            outputCount: Random.integer(0, 100),
+            t: moment(currentTime + i * 5000).format('YYYY-MM-DD HH:mm:ss'),
+            inputSize: Random.integer(0, 100),
+            inputCount: Random.integer(0, 100)
+          }
+          return obj
+        })
+        break
     }
+    return result
   },
-  '/tm/api/DataFlowInsights/runtimeMonitor?statsType=throughput': {
-    reqId: '2e6416aa-df89-421d-bcef-d86a6660a8a2',
-    ts: 1641364647945,
+  '/tm/api/DataFlowInsights': {
+    reqId: '48a21a07-839a-4a0f-ae9d-48a7caeb0847',
+    ts: 1641386586465,
     code: 'ok',
     data: {
-      statsType: 'throughput',
-      createTime: '2022-01-05T06:37:27.945+00:00',
-      dataFlowId: '61d50dd8e6800c3f3d04a527',
-      granularity: 'flow_second',
-      statsData: [
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:19:36', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:19:42', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:19:47', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:19:53', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:24', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:30', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:36', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:42', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:47', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:53', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:20:59', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:04', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:10', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:16', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:21', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:27', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:21:29', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:22:04', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:22:09', inputSize: 0.0, inputCount: 0.0 },
-        { outputSize: 0.0, outputCount: 0.0, t: '2022-01-05 11:22:15', inputSize: 0.0, inputCount: 0.0 }
+      total: 1,
+      items: [
+        {
+          id: '61d56473b8c8ca70349586e7',
+          customId: '60cc0c304e190a579cbe306c',
+          createUser: 'jason@tapdata.io',
+          statsType: 'dataFlowDetailsStats',
+          dataFlowId: '61d56450b8c8ca70349583d9',
+          statsData: {
+            sourceConnectionId: '61cd58523481e164d001c496',
+            sourceConnectionName: 'auto_test_MySQL_ 2TZ',
+            targetConnectionId: '61cd58d13481e164d001e9b0',
+            targetConnectionName: 'auto_test_Oracle _-2TZ',
+            sourceTableName: 'CLAIM',
+            sourceRowNum: 1062,
+            targetTableName: 'MYSQL_CLAIM_2TO02',
+            targetRowNum: 1062,
+            status: 'done',
+            startTime: 1641374837450,
+            sourceDbName: 'INSURANCE',
+            targetDbName: 'tap122c',
+            sourceDatabaseType: 'mysql',
+            targetDatabaseType: 'oracle'
+          },
+          createTime: '2022-01-05T09:27:15.838+00:00',
+          user_id: '61408608c4e5c40012663090'
+        }
       ]
     }
   }
