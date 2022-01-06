@@ -484,7 +484,9 @@ export default {
       this.mdHtml = require(`@/assets/md/connection/${type.toLowerCase()}.md`)
     },
     signOut() {
-      this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut')).then(resFlag => {
+      this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut'), {
+        type: 'warning'
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }

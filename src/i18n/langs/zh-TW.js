@@ -385,6 +385,7 @@ export default {
   customer_logs_to_solutions: '查看解決方案',
   customer_logs_to_link: '查看數據庫錯誤幫助頁面',
   customer_logs_no_more_data: '沒有更多數據',
+  customer_logs_no_data: '暂无数据',
   customer_logs_no_search_data: '無搜索結果',
   customer_logs_copy_result: '已復製到剪貼板'
 }

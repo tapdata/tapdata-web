@@ -492,6 +492,7 @@ export default {
   customer_logs_to_solutions: '查看解决方案',
   customer_logs_to_link: '查看数据库错误帮助页面',
   customer_logs_no_more_data: '没有更多数据',
+  customer_logs_no_data: '暂无数据',
   customer_logs_no_search_data: '无搜索结果',
   customer_logs_copy_result: '已复制到剪贴板'
 }

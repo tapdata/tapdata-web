@@ -30,11 +30,12 @@
         @scroll.native="scrollFnc"
       >
         <template #before>
-          <div v-if="showSearchResult" class="before-scroll-content text-center font-color-disable pb-2">
+          <div v-if="keyword" class="before-scroll-content text-center font-color-disable pb-2">
             <div>{{ $t('customer_logs_no_search_data') }}</div>
           </div>
           <div v-else class="before-scroll-content text-center font-color-disable pb-2">
             <div v-if="isNoMore">{{ $t('customer_logs_no_more_data') }}</div>
+            <div v-else>{{ $t('dag_dialog_field_mapping_no_data') }}</div>
             <div v-show="preLoading">
               <i class="el-icon-loading"></i>
             </div>
@@ -113,8 +114,7 @@ export default {
         size: 20
       },
       isScrollBottom: false,
-      isNoMore: false,
-      showSearchResult: false
+      isNoMore: false
     }
   },
   mounted() {
@@ -253,7 +253,6 @@ export default {
           if (!data.length) {
             if (reset) {
               this.list = []
-              this.showSearchResult = true
             } else {
               if (prepend) {
                 this.isNoMore = true
@@ -294,7 +293,6 @@ export default {
             this.scrollToBottom()
             this.firstLogsId = this.list[0]?.id
             this.lastLogsId = this.list[this.list.length - 1]?.id
-            this.showSearchResult = false
           } else {
             if (prepend) {
               this.list = Object.freeze([...data, ...list])

@@ -29,22 +29,6 @@ Vue.use(VueClipboard)
 Vue.use(LoadMore)
 Vue.use(TapdataWebCore)
 
-// 封装确认弹窗
-Vue.prototype.$confirm = (param1, param2, param3) => {
-  return new Promise((resolve, reject) => {
-    Vue.prototype.$msgbox
-      .confirm(param1, param2, param3)
-      .then(() => {
-        resolve(true)
-      })
-      .catch(() => {
-        reject(false)
-      })
-  }).catch(() => {
-    // TODO error
-  })
-}
-
 Vue.prototype.$moment = moment
 Vue.prototype.$api = factory
 Vue.prototype.$window = window

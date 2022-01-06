@@ -1318,7 +1318,10 @@ export default {
         })
     },
     handleGoFunction() {
-      top.location.href = '/#/JsFuncs'
+      // top.location.href = '/#/JsFuncs'
+      this.$router.push({
+        name: 'Function'
+      })
     },
     startAndStop(method = 'startBatch', ids, { status, errorEvents }) {
       // let where = {
