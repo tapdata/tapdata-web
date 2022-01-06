@@ -124,6 +124,8 @@ export default {
   notify_list_agent_stop: 'Agent stop failed',
   notify_list_agent_created: 'Agent created',
   notify_list_agent_deleted: 'Agent deleted',
+  notify_list_will_release_agent: 'will be released soon',
+  notify_list_releases_agent: 'has been reclaimed',
 
   // routing header
   tap_home: 'Home',

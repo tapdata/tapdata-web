@@ -14,6 +14,8 @@ export const TYPEMAP = {
   startupFailed: i18n.t('notify_list_startup_failed'),
   stopFailed: i18n.t('notify_list_stop_failed'),
   encounterERRORSkipped: i18n.t('notify_list_encounter_error_skipped'),
+  releaseAgent: i18n.t('notify_list_releases_agent'),
+  willReleaseAgent: i18n.t('notify_list_will_release_agent'),
   CDCLag: 'CDC滞后超时',
   manageSeverRestartFailed: '管理端服务重启失败',
   APISeverRestartFailed: 'API服务重启失败',
