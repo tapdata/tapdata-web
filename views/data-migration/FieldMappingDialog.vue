@@ -240,8 +240,8 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose()">{{ $t('button_dialog_cancel') }}</el-button>
-        <el-button type="primary" @click="editSave()">{{ $t('button_dialog_confirm') }}</el-button>
+        <el-button @click="handleClose()">{{ $t('button_cancel') }}</el-button>
+        <el-button type="primary" @click="editSave()">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -291,10 +291,8 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="handleTableClose()">{{ $t('button_dialog_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="handleTableNameSave()">{{
-          $t('button_dialog_confirm')
-        }}</el-button>
+        <el-button size="mini" @click="handleTableClose()">{{ $t('button_cancel') }}</el-button>
+        <el-button size="mini" type="primary" @click="handleTableNameSave()">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -318,8 +316,8 @@
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="handleFieldClose">{{ $t('button_dialog_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="handleFieldSave()">{{ $t('button_dialog_confirm') }}</el-button>
+        <el-button size="mini" @click="handleFieldClose">{{ $t('button_cancel') }}</el-button>
+        <el-button size="mini" type="primary" @click="handleFieldSave()">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
   </div>
