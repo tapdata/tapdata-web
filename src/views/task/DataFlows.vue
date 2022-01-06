@@ -232,7 +232,7 @@
                   "
                   @click="run([row.id])"
                 >
-                  {{ $t('dataFlow.run') }}
+                  {{ $t('task_list_run') }}
                 </ElLink>
               </span>
             </el-tooltip>
@@ -244,7 +244,7 @@
                 $disabledByPermission('SYNC_job_operation_all_data', row.user_id) || !statusBtMap['stop'][row.status]
               "
               @click="stop([row.id])"
-              >{{ $t('dataFlow.stop') }}</ElLink
+              >{{ $t('task_list_stop') }}</ElLink
             >
             <ElLink
               v-if="row.status === 'stopping'"
@@ -256,7 +256,7 @@
               "
               @click="forceStop([row.id])"
             >
-              {{ $t('dataFlow.button.force_stop') }}
+              {{ $t('task_list_force_stop') }}
             </ElLink>
             <ElLink
               style="margin-left: 10px"
@@ -274,7 +274,7 @@
               "
               @click="handleDetail(row.id, 'edit', row.mappingTemplate, row.hasChildren)"
             >
-              {{ $t('button.edit') }}
+              {{ $t('button_edit') }}
             </ElLink>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
@@ -940,7 +940,7 @@ export default {
         let routeUrl = this.$router.resolve({
           name: 'DataflowMonitor',
           params: { id },
-            query: { mapping: mappingTemplate }
+          query: { mapping: mappingTemplate }
         })
         window.open(routeUrl.href, 'monitor_' + id)
       }

@@ -1126,7 +1126,6 @@ export default {
       top.location.href = '/#/JsFuncs'
     },
     toDetail(row) {
-      console.log('详情')
       this.$router.push({
         name: 'dataflowDetails',
         params: {

@@ -270,6 +270,11 @@ export default {
   data_flow_automatically: '自动挖掘',
   data_flow_manually: '手动挖掘',
   data_flow_oracle_logminer: 'Oracle日志挖掘模式',
+
+  task_list_run: '启动',
+  task_list_stop: '停止',
+  task_list_force_stop: '强制停止',
+
   task_monitor_progress: '任务进度',
   task_monitor_full_sync: '全量同步概览',
   task_monitor_full_completion_time: '预计全量完成还需时间',
