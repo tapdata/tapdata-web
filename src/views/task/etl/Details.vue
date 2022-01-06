@@ -262,7 +262,7 @@ export default {
         })
     },
     getSubTaskStatusCount() {
-      const { statuses } = this.task
+      const { statuses = [] } = this.task
       let obj = {}
       for (let key in ETL_SUB_STATUS_MAP) {
         obj[key] = Object.assign({ count: 0 }, ETL_SUB_STATUS_MAP[key])
