@@ -247,6 +247,7 @@ export default {
   customer_logs_to_solutions: 'View solutions',
   customer_logs_to_link: 'View database error help page',
   customer_logs_no_more_data: 'No more data',
+  customer_logs_no_data: 'No data yet',
   customer_logs_no_search_data: 'No search results',
   customer_logs_copy_result: 'copied to clipboard'
 }
