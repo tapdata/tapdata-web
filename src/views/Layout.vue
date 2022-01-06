@@ -449,7 +449,9 @@ export default {
           window.open('https://tapdata.net/', '_blank')
           break
         case 'signOut':
-          this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut')).then(resFlag => {
+          this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut'), {
+            type: 'error'
+          }).then(resFlag => {
             if (!resFlag) {
               return
             }
