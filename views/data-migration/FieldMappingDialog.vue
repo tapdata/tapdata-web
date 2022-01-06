@@ -271,14 +271,14 @@
           </el-form-item>
           <div class="tip">{{ $t('task_mapping_dialog_rule_note') }}</div>
           <el-form-item :label="$t('task_mapping_dialog_enter_prefix')" prop="table_prefix">
-            <el-input size="mini" v-model="form.table_prefix"></el-input>
+            <el-input size="mini" v-model="form.table_prefix" maxlength="50" show-word-limit></el-input>
           </el-form-item>
           <div class="tip">
             <span>{{ $t('task_mapping_dialog_english_letter') }}</span>
             <div>{{ $t('task_mapping_dialog_not_allow_system') }}</div>
           </div>
           <el-form-item :label="$t('task_mapping_dialog_enter_suffix')" prop="table_suffix">
-            <el-input size="mini" v-model="form.table_suffix"></el-input>
+            <el-input size="mini" v-model="form.table_suffix" maxlength="50" show-word-limit></el-input>
           </el-form-item>
           <div class="tip">
             <span>{{ $t('task_mapping_dialog_underscore_begin') }}</span>

@@ -236,10 +236,10 @@
             </el-select>
           </el-form-item>
           <el-form-item label="请输入前缀">
-            <el-input size="mini" v-model="form.table_prefix"></el-input>
+            <el-input size="mini" v-model="form.table_prefix" maxlength="50" show-word-limit></el-input>
           </el-form-item>
           <el-form-item label="请输入后缀">
-            <el-input size="mini" v-model="form.table_suffix"></el-input>
+            <el-input size="mini" v-model="form.table_suffix" maxlength="50" show-word-limit></el-input>
           </el-form-item>
           <div class="tip">说明：设置的前后缀也遵循大小写规则</div>
         </el-form>
