@@ -24,7 +24,7 @@
             <el-input v-model="searchTable" size="mini" @change="search('table')"></el-input>
           </div>
         </div>
-        <ul class="task-form-left__ul flex flex-column">
+        <ul class="task-form-left__ul flex-column">
           <li
             v-for="(item, index) in fieldMappingNavData"
             :key="index"
@@ -1160,6 +1160,7 @@ export default {
       border-top: 1px solid #f2f2f2;
       border-right: 1px solid #f2f2f2;
       overflow-y: auto;
+      padding-bottom: 47px;
       li {
         height: 93px;
         background: #ffffff;
@@ -1198,6 +1199,7 @@ export default {
             text-align: left;
             overflow: hidden;
             text-overflow: ellipsis;
+            white-space: nowrap;
           }
           .target {
             font-size: 12px;
@@ -1208,6 +1210,7 @@ export default {
             text-align: left;
             overflow: hidden;
             text-overflow: ellipsis;
+            white-space: nowrap;
           }
           .select {
             font-size: 12px;
