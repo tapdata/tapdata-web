@@ -33,7 +33,7 @@ export default {
           let emitInput = val => {
             value = {
               name: file.name,
-              value: val.split(',')[1]
+              value: config.base64 ? val.split(',')[1] : val
             }
             self.$emit('input', value)
             self.$emit('change', value)

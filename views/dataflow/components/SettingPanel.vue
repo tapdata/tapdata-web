@@ -3,9 +3,9 @@
     <ElForm :model="settings" class="setting-panel-form" label-width="140px" label-position="top" size="small">
       <ElTabs v-model="settingPanelType" class="setting-tabs h-100">
         <ElTabPane label="基本设置" name="base">
-          <div class="setting-panel-box bg-white px-5">
-            <div class="setting-title fs-7 border-bottom">任务设置</div>
-            <div>
+          <div class="setting-panel-box bg-white pt-3">
+            <div class="setting-title fs-7 px-5">任务设置</div>
+            <div class="px-5">
               <ElRow>
                 <ElCol :span="12">
                   <ElFormItem label="任务名称" required="">
@@ -33,12 +33,12 @@
           </div>
         </ElTabPane>
         <ElTabPane label="高级设置" name="advanced">
-          <div class="setting-panel-box bg-white px-5">
-            <div class="setting-title border-bottom fs-7">
+          <div class="setting-panel-box bg-white border-bottom pt-3">
+            <div class="setting-title fs-7 px-5">
               读写设置
               <span class="pl-2">任务在进行读取和写入时执行的策略</span>
             </div>
-            <div>
+            <div class="px-5">
               <ElRow>
                 <ElCol :span="12">
                   <ElFormItem label="自动创建索引">
@@ -56,12 +56,12 @@
               </ElRow>
             </div>
           </div>
-          <div class="setting-panel-box bg-white px-5">
-            <div class="setting-title border-bottom fs-7">
+          <div class="setting-panel-box bg-white border-bottom pt-3">
+            <div class="setting-title fs-7 px-5">
               全量设置
               <span class="pl-2">任务的同步类型为全量或全量+增量时执行的</span>
             </div>
-            <div>
+            <div class="px-5">
               <ElFormItem label="目标写入线程数">
                 <ElInputNumber
                   controls-position="right"
@@ -72,8 +72,8 @@
               </ElFormItem>
             </div>
           </div>
-          <div class="setting-panel-box bg-white mt-5 px-5">
-            <div class="setting-title border-bottom fs-7">
+          <div class="setting-panel-box bg-white border-bottom mt-5 px-5">
+            <div class="setting-title fs-7">
               增量设置
               <span class="pl-2">任务的同步类型为增量或全量+增量时执行的</span>
             </div>
@@ -304,6 +304,8 @@ export default {
     }
     ::v-deep {
       > .el-tabs__header {
+        height: 50px;
+        line-height: 50px;
         margin: 0;
         .el-tabs__nav-wrap {
           padding-left: 16px;
@@ -311,6 +313,12 @@ export default {
 
           &::after {
             height: 1px;
+          }
+          .el-tabs__item {
+            font-weight: 400;
+            &.is-active {
+              font-weight: 600;
+            }
           }
         }
       }

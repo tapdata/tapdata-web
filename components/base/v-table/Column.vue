@@ -9,10 +9,10 @@
       <slot :name="item.slotName" :row="scope.row"></slot>
     </template>
     <template v-else-if="!children && item.dataType === 'time'" v-slot="scope">
-      <div>{{ formatTime(scope.row[item.prop], item.fmt) || item.default }}</div>
+      <div>{{ getValue(formatTime(scope.row[item.prop], item.fmt), item.default) }}</div>
     </template>
     <template v-else-if="!children" v-slot="scope">
-      {{ scope.row[item.prop] || item.default }}
+      {{ getValue(scope.row[item.prop], item.default) }}
     </template>
     <!--  多表头  -->
     <template v-for="temp in children">
@@ -43,6 +43,9 @@ export default {
   methods: {
     formatTime(time, fmt = 'YYYY-MM-DD HH:mm:ss') {
       return moment(time).format(fmt)
+    },
+    getValue(val, d) {
+      return val ?? d
     }
   }
 }

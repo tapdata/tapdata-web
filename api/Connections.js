@@ -37,4 +37,8 @@ export default class Connections extends PublicAPI {
     let url = `${this.url}/${id}` + '?noSchema=1'
     return axios.get(url)
   }
+
+  getAllowDatabaseType() {
+    return axios.get(`${this.url}/databaseType`)
+  }
 }
