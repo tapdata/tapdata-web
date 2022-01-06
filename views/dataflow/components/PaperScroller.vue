@@ -566,6 +566,11 @@ export default {
       const scale = this.paperScale
       const { left, top } = this.paperOffset
       this.doChangePageScroll(left + x * scale, top + y * scale)
+    },
+
+    getPaperCenterPos() {
+      const pos = this.getScaleAbsolutePoint()
+      return this.getMouseToPage(pos)
     }
   }
 }
