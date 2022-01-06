@@ -253,6 +253,7 @@
     padding: 24px 24px 0;
     background: #fff;
     overflow-y: auto;
+    height: 0;
     .body {
       .title {
         font-size: 14px;
