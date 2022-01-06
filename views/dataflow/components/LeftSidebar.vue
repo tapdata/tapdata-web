@@ -35,7 +35,7 @@
               </ElInput>
             </div>
           </template>
-          <ElScrollbar ref="dbList" tag="div" wrap-class="db-list">
+          <ElScrollbar ref="dbList" tag="div" wrap-class="db-list" :wrap-style="scrollbarWrapStyle">
             <ElSkeleton :loading="dbLoading" animated :throttle="skeletonThrottle">
               <template #template>
                 <div v-for="i in 5" :key="i" class="flex p-4 align-center">
@@ -95,7 +95,13 @@
             </template>
           </ElInput>
         </div>
-        <ElScrollbar ref="tbList" class="flex-1 min-h-0" tag="div" wrap-class="tb-list">
+        <ElScrollbar
+          ref="tbList"
+          class="flex-1 min-h-0"
+          tag="div"
+          wrap-class="tb-list"
+          :wrap-style="scrollbarWrapStyle"
+        >
           <ElSkeleton :loading="tbLoading" animated :throttle="skeletonThrottle">
             <template #template>
               <div v-for="i in 5" :key="i" class="flex p-4 align-center">
@@ -233,6 +239,7 @@ const metadataApi = new MetadataApi()
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
 import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
 import EmptyItem from 'web-core/components/EmptyItem'
+import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 
 export default {
   name: 'LeftSidebar',
@@ -320,6 +327,11 @@ export default {
 
     disabledDBMore() {
       return this.dbLoading || this.noDBMore || this.dbLoadingMore
+    },
+
+    scrollbarWrapStyle() {
+      let gutter = scrollbarWidth()
+      return `height: calc(100% + ${gutter}px);`
     }
   },
 
@@ -743,10 +755,6 @@ $hoverBg: #eef3ff;
 
     .el-scrollbar {
       height: 100%;
-    }
-
-    .el-scrollbar__wrap {
-      height: calc(100% + 8px);
     }
 
     .header__input {
