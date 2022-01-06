@@ -16,9 +16,9 @@ const components = [ConnectionTypeSelector, ConnectionTest, FieldMapping, CheckS
 const install = Vue => {
   Vue.prototype.$util = _util
   Vue.prototype.$const = _const
-  Vue.prototype.$confirm = (param1, param2, param3) => {
+  Vue.prototype.$confirm = (message, title, options) => {
     return new Promise((resolve, reject) => {
-      VConfirm.confirm(param1, param2, param3)
+      VConfirm.confirm(message, title, options)
         .then(() => {
           resolve(true)
         })

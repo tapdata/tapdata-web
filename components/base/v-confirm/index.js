@@ -62,6 +62,7 @@ const MessageBox = function (options, callback) {
   } else if (options.callback && !callback) {
     callback = options.callback
   }
+  console.log('options', options)
   if (typeof Promise !== 'undefined') {
     return new Promise((resolve, reject) => {
       currentMsg = {
@@ -70,7 +71,7 @@ const MessageBox = function (options, callback) {
         resolve: resolve,
         reject: reject
       }
-
+      console.log('currentMsg', currentMsg)
       showNextMsg()
     })
   } else {
@@ -111,6 +112,7 @@ const showNextMsg = () => {
 }
 
 MessageBox.confirm = (message, title, options) => {
+  console.log('confirm', message, title, options)
   if (title && typeof title === 'object') {
     options = title
     title = ''
