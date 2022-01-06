@@ -432,9 +432,11 @@ export default {
       let result = 0
       if (sourceRowNum !== 0) {
         result = (targetRowNum / sourceRowNum) * 100
-      }
-      if (result !== 100) {
-        result = result.toFixed(1)
+        if (result !== 100) {
+          result = result.toFixed(1)
+        }
+      } else {
+        return '100%'
       }
       return result + '%'
     },
@@ -453,6 +455,8 @@ export default {
         status = 'pause'
       } else if (taskStatus === 'paused') {
         status = 'waiting'
+      } else if (row.sourceRowNum === 0) {
+        status = 'done'
       }
       return status
     }

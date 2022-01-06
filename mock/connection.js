@@ -110,18 +110,10 @@ module.exports = {
       tableCount: 10,
       everLoadSchema: true,
       schema: {
-        tables: [
+        'tables|100-500': [
           {
-            id: '60ef810a04d4fd0011d8474b',
-            table_name: 'CAR_CLAIM'
-          },
-          {
-            id: '60ef810a04d4fd0011d8474d',
-            table_name: 'CUSTOMER_TEST'
-          },
-          {
-            id: '60ef810a04d4fd0011d8474e',
-            table_name: 'BIG_DATA'
+            id: '@id',
+            table_name: '@name'
           }
         ]
       }

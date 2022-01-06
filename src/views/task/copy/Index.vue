@@ -154,7 +154,7 @@ export default {
       }
       data.totalOutput = data.stats?.output?.rows || 0
       data.totalInput = data.stats?.input?.rows || 0
-      data.creator = data.creator || data.createUser || data.username || data.user?.username || ''
+      data.creator = data.createUser || ''
       data.typeText =
         data.mappingTemplate === 'cluster-clone'
           ? this.$t('task_monitor_migration_task')
