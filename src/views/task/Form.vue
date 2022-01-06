@@ -928,7 +928,10 @@ export default {
             this.settingModel.sync_type = 'initial_sync'
           }
           // kafka、es、mq作为目标不允许开启自动创建索引
-          if (['kafka', 'mq', 'elasticsearch'].includes(this.dataSourceModel['target_databaseType'])) {
+          if (
+            ['kafka', 'mq', 'elasticsearch'].includes(this.dataSourceModel['target_databaseType']) ||
+            ['kafka', 'mq', 'elasticsearch'].includes(this.dataSourceModel['source_databaseType'])
+          ) {
             this.changeConfig([], 'setting_needToCreateIndex')
             //设置默认值
             this.settingModel.needToCreateIndex = false
