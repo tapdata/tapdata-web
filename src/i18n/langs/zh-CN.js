@@ -27,8 +27,6 @@ export default {
   button_confirm: '确定',
   button_close: '取 消',
   button_save: '确 定',
-  button_dialog_cancel: '取 消',
-  button_dialog_confirm: '确 定',
   /** 模块 */
   // 工作台
   workbench_manage: '工作台',
@@ -126,6 +124,8 @@ export default {
   notify_list_agent_stop: 'Agent服务停止失败',
   notify_list_agent_created: 'Agent被创建',
   notify_list_agent_deleted: 'Agent被删除',
+  notify_list_will_release_agent: '即将被回收',
+  notify_list_releases_agent: '已经被回收',
   // 路由头部
   tap_home: '首页',
   tap_workbench: '工作台',
@@ -708,7 +708,7 @@ export default {
   task_mapping_table_length_range: '长度范围',
   task_mapping_table_accuracy_range: '精度范围',
   task_mapping_table_reduction: '还原',
-  task_mapping_table_no_data: '暂无数据',
+  task_mapping_table_no_data: '暂无数据，可能正在首次加载表结构，请稍候再试',
   task_mapping_batch_change_field_title: '批量改字段名设置',
   task_mapping_dialog_field_name_case: '字段名大小写',
   task_mapping_dialog_constant: '不变',
