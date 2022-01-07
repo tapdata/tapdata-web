@@ -415,6 +415,16 @@ th {
   .el-table__fixed-right-patch {
     background-color: #fafafa;
   }
+  .ascending {
+    .sort-caret.ascending {
+      border-bottom-color: map-get($color, primary);
+    }
+  }
+  .descending {
+    .sort-caret.descending {
+      border-top-color: map-get($color, primary);
+    }
+  }
 }
 .el-pagination.is-background .el-pager li:not(.disabled).active {
   background-color: map-get($color, primary);

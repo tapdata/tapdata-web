@@ -184,6 +184,7 @@ export default {
 
 <style lang="scss" scoped>
 .filter-datetime-range {
+  padding: 0 8px;
   cursor: pointer;
   &:hover {
     background-color: #eff1f4;

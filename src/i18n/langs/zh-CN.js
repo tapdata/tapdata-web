@@ -708,7 +708,7 @@ export default {
   task_mapping_table_length_range: '长度范围',
   task_mapping_table_accuracy_range: '精度范围',
   task_mapping_table_reduction: '还原',
-  task_mapping_table_no_data: '暂无数据',
+  task_mapping_table_no_data: '暂无数据，可能正在首次加载表结构，请稍候再试',
   task_mapping_batch_change_field_title: '批量改字段名设置',
   task_mapping_dialog_field_name_case: '字段名大小写',
   task_mapping_dialog_constant: '不变',

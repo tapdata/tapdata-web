@@ -213,9 +213,6 @@ export default {
   .btn {
     cursor: pointer;
     .item-badge {
-      &:hover {
-        color: #337dff;
-      }
       .el-badge__content {
         left: 0;
         right: inherit;

@@ -543,7 +543,6 @@ export default {
 }
 .inner-select {
   padding: 0 8px;
-  border: 1px solid #d9d9d9;
   border-radius: 4px;
   cursor: pointer;
 }

@@ -227,6 +227,7 @@ export default {
 <style lang="scss" scoped>
 .el-form-item {
   margin-bottom: 0;
+  margin-right: 8px;
 }
 .btn-refresh {
   padding: 0;
@@ -234,8 +235,10 @@ export default {
   line-height: 32px;
   width: 32px;
   font-size: 16px;
-  &:hover {
+  &:hover,
+  &.is-plain:focus:hover {
     border-color: #d9d9d9;
+    background-color: #f5f6f7;
   }
 }
 .filter-form {
