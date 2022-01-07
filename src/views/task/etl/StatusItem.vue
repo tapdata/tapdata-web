@@ -87,6 +87,7 @@ export default {
       const { rows, statusMap } = this
       let result = []
       let obj = deepCopy(ETL_STATUS_MAP)
+      console.log(rows, statusMap, obj)
       for (let key in obj) {
         obj[key].count = 0
         rows.forEach(el => {

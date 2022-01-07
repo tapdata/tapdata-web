@@ -176,6 +176,7 @@
           <StatusItem v-model="row.statusResult" :rows="row.statuses"></StatusItem>
         </template>
       </el-table-column>
+
       <el-table-column prop="startTime" :label="$t('dataFlow.creationTime')" width="170" sortable="custom">
         <template #default="{ row }">
           {{ row.startTime ? $moment(row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
@@ -190,7 +191,7 @@
               type="primary"
               @click="start([row.id])"
             >
-              {{ $t('dataFlow.run') }}
+              {{ $t('task_list_run') }}
             </ElLink>
             <ElLink
               v-readonlybtn="'SYNC_job_operation'"
@@ -200,7 +201,7 @@
               "
               class="ml-3"
               @click="stop([row.id])"
-              >{{ $t('dataFlow.stop') }}</ElLink
+              >{{ $t('task_list_stop') }}</ElLink
             >
             <!--            <ElLink-->
             <!--              v-if="row.status === 'stopping'"-->
@@ -247,28 +248,19 @@
                 <i class="el-icon-arrow-down"></i>
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
-                <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
-                  $t('dataVerify.dataVerify')
-                }}</el-dropdown-item>
                 <el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
                   $t('dataFlow.dataFlowExport')
                 }}</el-dropdown-item>
                 <el-dropdown-item command="copy" v-readonlybtn="'SYNC_job_creation'"
                   >{{ $t('dataFlow.copy') }}
                 </el-dropdown-item>
+
                 <el-dropdown-item
                   :disabled="resetDisabled(row)"
                   command="initialize"
                   v-readonlybtn="'SYNC_job_operation'"
                 >
                   {{ $t('dataFlow.button.reset') }}
-                </el-dropdown-item>
-                <el-dropdown-item
-                  command="setTag"
-                  v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
-                  v-readonlybtn="'SYNC_category_application'"
-                >
-                  {{ $t('dataFlow.addTag') }}
                 </el-dropdown-item>
                 <el-dropdown-item
                   class="btn-delete"
@@ -280,6 +272,16 @@
                 >
                   {{ $t('button.delete') }}
                 </el-dropdown-item>
+                <el-dropdown-item
+                  command="setTag"
+                  v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+                  v-readonlybtn="'SYNC_category_application'"
+                >
+                  {{ $t('dataFlow.addTag') }}
+                </el-dropdown-item>
+                <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
+                  $t('dataVerify.dataVerify')
+                }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -1129,7 +1131,6 @@ export default {
       })
     },
     toDetail(row) {
-      console.log('详情')
       this.$router.push({
         name: 'dataflowDetails',
         params: {
@@ -1139,23 +1140,26 @@ export default {
     },
     startDisabled(row) {
       const statusResult = row.statusResult || []
+      const statusLength = row.statuses?.length || 0
       return (
         this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
-        statusResult.every(t => t.status === 'running' && t.count)
+        statusResult.every(t => t.status === 'running' && t.count > 0 && t.count === statusLength)
       )
     },
     stopDisabled(row) {
       const statusResult = row.statusResult || []
+      const statusLength = row.statuses?.length || 0
       return (
         this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
-        statusResult.every(t => t.status === 'not_running' && t.count)
+        statusResult.every(t => t.status === 'not_running' && t.count > 0 && t.count === statusLength)
       )
     },
     resetDisabled(row) {
       const statusResult = row.statusResult || []
+      const statusLength = row.statuses?.length || 0
       return (
         this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
-        statusResult.some(t => t.status === 'running' && t.count)
+        statusResult.some(t => t.status === 'running' && t.count > 0 && t.count === statusLength)
       )
     }
   }
