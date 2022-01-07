@@ -108,14 +108,7 @@
         <div class="charts-list">
           <echart-head :data="screeningObj" @getUnit="getUnit"></echart-head>
           <div class="unit">{{ $t('dataFlow.unit') }}:{{ $t('dataFlow.rowCount') }}</div>
-          <shaftless-echart
-            class="charts-box"
-            :sliderBar="sliderBar"
-            :echartObj="dataScreening"
-            v-if="dataScreening"
-            :echartsId="'dataScreeningId'"
-            style="width: 100%"
-          ></shaftless-echart>
+          <Chart type="bar" :data="transBarData" :options="{ labelFormat: 'KMT', barWidth: '100%' }"></Chart>
         </div>
       </li>
       <li class="e-col" v-readonlybtn="'Data_verify_menu'">
@@ -251,17 +244,17 @@
 import DKDashboard from './DKDashboard'
 import echartHead from './components/echartHead'
 // import elTables from './components/elTables';
-import shaftlessEchart from '../../components/shaftlessEchart'
 import pieChart from '../../components/pieChart'
 import factory from '../../api/factory'
 import moment from 'moment'
+import Chart from 'web-core/components/chart'
 const cluster = factory('cluster')
 const DataFlows = factory('DataFlows')
 // const insights = factory('insights');
 // import echartsCompinent from '../../components/echartsCompinent';
 
 export default {
-  components: { echartHead, pieChart, shaftlessEchart, DKDashboard },
+  components: { echartHead, pieChart, DKDashboard, Chart },
   data() {
     return {
       loading: false,
@@ -463,6 +456,7 @@ export default {
           }
         ]
       },
+      transBarData: [],
       serverProcess: {
         height: 360,
         isHeader: true,
@@ -637,6 +631,15 @@ export default {
               res.data.chart2[0].totalUpdate,
               res.data.chart2[0].totalDelete
             ]
+            const chart2 = res.data.chart2[0]
+            this.transBarData = [
+              { name: this.$t('dataFlow.totalOutput'), value: chart2.totalOutput, color: '#7ba75d' },
+              { name: this.$t('dataFlow.totalInput'), value: chart2.totalInput, color: '#409EFF' },
+              { name: this.$t('dataFlow.totalInsert'), value: chart2.totalInsert, color: '#d9742c' },
+              { name: this.$t('dataFlow.totalUpdate'), value: chart2.totalUpdate, color: '#e6b451' },
+              { name: this.$t('dataFlow.totalDelete'), value: chart2.totalDelete, color: '#e06c6c' }
+            ]
+
             self.unitData = self.dataScreening.series[0].data
             self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize]
             self.transfer.tableData = res.data.chart3
