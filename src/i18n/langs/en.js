@@ -71,6 +71,32 @@ export default {
   connection_list_column_schema_status: 'Schema loading status',
   connection_list_column_schema_status_tips: 'Connections after Schema loading can be created normally',
 
+  connection_form_connection_type: 'Connection Type',
+  connection_form_source_and_target: 'Source and target',
+  connection_form_source: 'Source',
+  connection_form_target: 'Target',
+  connection_form_source_and_target_tip:
+    'This data connection can be used as source and target at the same time in Tapdata',
+  connection_form_source_tip: 'This data connection can only be used as a source in Tapdata, not as a target',
+  connection_form_target_tip:
+    'This data connection can only be used as a target in Tapdata, and cannot be used as a source',
+  connection_form_host: 'Database host',
+  connection_form_port: 'Port',
+  connection_form_connection_name: 'Connection name',
+  connection_form_user_name: 'Account',
+  connection_form_password: 'Password',
+
+  connection_form_mq_type: 'MQ Type',
+  connection_form_mq_topic_set: 'topic name',
+  connection_form_mq_queue_set: 'Queue name',
+  connection_form_mq_broker_url: 'MQ connection string',
+  connection_form_mq_database_host: 'MQ address',
+  connection_form_mq_database_port: 'MQ port',
+  connection_form_mq_route_key_field: 'Message routing',
+  connection_form_mq_virtual_host: 'Virtual Host',
+  connection_form_mq_producer_group: 'Producer Group',
+  connection_form_mq_consumer_group: 'Consumer Group',
+
   connection_form_custom_connection_connection_time_out: 'Connection timeout (s)',
   connection_form_custom_connection_read_time_out: 'Read timeout (s)',
   connection_form_custom_connection_before_operate: 'Pre-operation',

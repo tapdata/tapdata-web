@@ -914,7 +914,8 @@ export default {
             'app.KUDUNode',
             'app.HanaNode',
             'app.ClickHouse',
-            'app.DamengNode'
+            'app.DamengNode',
+            'app.VikaNode'
           ].includes(cell.type)
         ) {
           postData.mappingTemplate = 'custom'
@@ -1637,7 +1638,8 @@ export default {
         custom_connection: 'app.CustomNode',
         mem_cache: 'app.MemCache',
         logminer: 'app.Logminer',
-        protobuf_convert_processor: 'app.Message'
+        protobuf_convert_processor: 'app.Message',
+        ika: 'app.VikaNode'
       }
       if (data) {
         let stageMap = {}

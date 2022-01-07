@@ -298,7 +298,8 @@ export default {
         'clickhouse',
         'kundb',
         'adb_postgres',
-        'adb_mysql'
+        'adb_mysql',
+        'vika'
       ], //目前白名单,
       searchParams: {
         databaseType: '',
