@@ -129,7 +129,8 @@
 import TableList from '@/components/TableList'
 import Milestone from '../../migrate/details/Milestone'
 import Overview from './Overview'
-import { deepCopy, formatTime } from '@/utils/util'
+import { formatTime } from '@/utils/util'
+import { getOverviewData } from '@/views/task/util'
 
 export default {
   name: 'Schedule',
@@ -172,7 +173,9 @@ export default {
         label: '',
         source: 0,
         success: 0,
-        start: new Date().getTime()
+        start: new Date().getTime(),
+        progressBar: 0,
+        completeTime: ''
       },
       groupMap: {
         init: this.$t('task_info_task_init'),
@@ -203,7 +206,6 @@ export default {
   methods: {
     init() {
       this.loadRuntimeInfo()
-      // this.getInfo()
       // this.getStep()
       // this.getSearchItems()
       // this.getColumns()
@@ -218,97 +220,6 @@ export default {
           this.getStep()
           this.getColumns()
         })
-    },
-    getInfo() {
-      let overview = {}
-      let completeTime = ''
-      let data = this.task
-      this.progressBar = 0
-      if (data?.stats?.overview) {
-        overview = deepCopy(data.stats.overview)
-        let { sourceRowNum, targatRowNum, sourceTableNum } = overview
-        let waitingForSyecTableNums = 0
-        if (overview.waitingForSyecTableNums !== undefined) {
-          waitingForSyecTableNums = sourceTableNum - overview.waitingForSyecTableNums
-        }
-        overview.waitingForSyecTableNums = waitingForSyecTableNums
-        let num = sourceRowNum ? (targatRowNum / sourceRowNum) * 100 : 0
-        if (num > 100) {
-          num = 100
-        }
-        this.progressBar = num ? num.toFixed(2) * 1 : 0
-
-        let now = new Date().getTime()
-        let startTime = new Date(data.runningTime).getTime(),
-          runningTime = now - startTime,
-          speed = targatRowNum / runningTime
-
-        let time = speed ? (sourceRowNum - targatRowNum) / speed / 1000 : 0
-
-        let r = ''
-        if (time) {
-          let s = time,
-            m = 0,
-            h = 0,
-            d = 0
-          if (s > 60) {
-            m = parseInt(s / 60)
-            s = parseInt(s % 60)
-            if (m > 60) {
-              h = parseInt(m / 60)
-              m = parseInt(m % 60)
-              if (h > 24) {
-                d = parseInt(h / 24)
-                h = parseInt(h % 24)
-              }
-            }
-          }
-          if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
-            r = 1 + this.$t('task_info_m')
-          }
-          // r = parseInt(s) + this.$t('timeToLive.s')
-          if (m > 0) {
-            r = parseInt(m) + this.$t('task_info_m')
-          }
-          if (h > 0) {
-            r = parseInt(h) + this.$t('task_info_h') + r
-          }
-          if (d > 0) {
-            r = parseInt(d) + this.$t('task_info_d') + r
-          }
-          // 全量未完成 停止任务
-          if (['pause', 'error'].includes(data.status)) {
-            completeTime = this.$t('task_info_task_stopped') // 任务已停止
-          } else {
-            completeTime = r
-          }
-        }
-
-        if (this.progressBar === 100) {
-          overview.currentStatus = this.$t('task_info_progress') // 进行中
-          completeTime = this.$t('task_info_fully_completed') // 全量已完成
-        }
-        // 任务暂停、错误  增量状态都为停止
-        if (completeTime === this.$t('task_info_fully_completed')) {
-          if (['pause', 'error'].includes(data.status)) {
-            overview.currentStatus = this.$t('task_info_stopped') // 已停止
-          }
-        }
-      }
-      // if (data?.stats?.progressGroupByDB?.length) {
-      //   data.stats.progressGroupByDB.forEach(statusItem => {
-      //     let num = (statusItem.targetRowNum / statusItem.sourceRowNum) * 100,
-      //       statusNum = num > 0 ? num.toFixed(2) * 1 : 0
-      //     if (statusItem.statusNum) {
-      //       statusItem.statusNum = statusNum
-      //     } else {
-      //       this.$set(statusItem, 'statusNum', statusNum)
-      //     }
-      //   })
-      // }
-      // this.progressGroupByDB = data?.stats?.progressGroupByDB
-      this.completeTime = completeTime
-      this.overviewStats = overview
     },
     getStep() {
       const { runtimeInfo, groupMap } = this
@@ -358,27 +269,28 @@ export default {
     },
     getOverviewInfo() {
       const group = this.currentStep.group
-      const { groupMap, runtimeInfo } = this
+      const { groupMap, runtimeInfo, overviewInfo } = this
       const structureMigrate = runtimeInfo?.structureMigrate || {}
       const fullSync = runtimeInfo?.fullSync || {}
+      overviewInfo.label = groupMap[group]
       switch (group) {
         case 'structure':
-          this.overviewInfo = {
-            label: groupMap[group],
-            source: structureMigrate.tableNum || 0,
-            success: structureMigrate.successNum || 0,
-            start: structureMigrate.start ? new Date(structureMigrate.start).getTime() : new Date().getTime()
-          }
+          overviewInfo.source = structureMigrate.tableNum || 0
+          overviewInfo.success = structureMigrate.successNum || 0
+          overviewInfo.start = structureMigrate.start ? new Date(structureMigrate.start).getTime() : new Date().getTime()
           break
         case 'initial_sync':
-          this.overviewInfo = {
-            label: groupMap[group],
-            source: fullSync.tableNum || 0,
-            success: fullSync.successTableNum || 0,
-            start: fullSync.start ? new Date(fullSync.start).getTime() : new Date().getTime()
-          }
+          overviewInfo.source = fullSync.tableNum || 0
+          overviewInfo.success = fullSync.successTableNum || 0
+          overviewInfo.start = fullSync.start ? new Date(fullSync.start).getTime() : new Date().getTime()
           break
       }
+      let { progress, overview, completeTime } = getOverviewData(this.task)
+      overviewInfo.progressBar = progress
+      overviewInfo.completeTime = completeTime
+      this.progressBar = progress
+      this.overviewStats = overview
+      this.completeTime = completeTime
     },
     getColumns() {
       // 结构迁移
