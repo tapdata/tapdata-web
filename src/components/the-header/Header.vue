@@ -17,16 +17,16 @@
             <div>{{ $t('header_scan_code') }}</div>
             <div>{{ $t('header_join_group') }}</div>
           </div>
-          <div class="mr-6 pointer" slot="reference">
+          <div class="command-item mr-6" slot="reference">
             <VIcon class="mr-2" size="17">question</VIcon>
             <span>{{ $t('header_question') }}</span>
           </div>
         </el-popover>
-        <div class="mr-6 pointer" @click="command('handbook')">
+        <div class="command-item mr-6" @click="command('handbook')">
           <VIcon class="mr-2" size="17">send</VIcon>
           <span>{{ $t('header_manual') }}</span>
         </div>
-        <div class="mr-6 pointer" @click="command('feedback')">
+        <div class="command-item mr-6" @click="command('feedback')">
           <VIcon class="v-icon mr-2" size="17">feedback</VIcon>
           <span>{{ $t('header_feedback') }}</span>
         </div>
@@ -35,7 +35,7 @@
         <!--          <VIcon class="mr-2" size="17">send</VIcon>-->
         <!--          <span>联系我们</span>-->
         <!--        </div>-->
-        <NotificationPopover class="mr-6"></NotificationPopover>
+        <NotificationPopover class="command-item mr-6"></NotificationPopover>
         <!-- <ElDropdown class="btn" placement="bottom" @command="changeLanguage">
           <VIcon class="mr-6" size="17" v-if="lang === 'sc'">cn</VIcon>
           <VIcon class="mr-6" size="17" v-else>en</VIcon>
@@ -45,7 +45,7 @@
             </ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown> -->
-        <ElDropdown class="menu-user" placement="bottom" @command="command">
+        <ElDropdown class="command-item menu-user" placement="bottom" @command="command">
           <!--					<el-button class="menu-button" size="mini">-->
           <!--						{{ user.username }}-->
           <!--					</el-button>-->
@@ -276,15 +276,16 @@ export default {
   .button-bar {
     display: flex;
     align-items: center;
-    color: rgba(255, 255, 255, 0.45);
-    > div {
-      .v-icon {
-        color: #fff;
-      }
+    .command-item {
+      padding: 4px 8px;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.45);
       &:hover {
-        color: map-get($color, primary);
-        .v-icon {
-          color: map-get($color, primary);
+        color: #fff;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        &.icon {
+          color: #fff;
         }
       }
     }
@@ -339,10 +340,6 @@ export default {
     .img {
       width: 17px;
       height: 17px;
-    }
-    .username {
-      cursor: pointer;
-      color: rgba(255, 255, 255, 0.45);
     }
   }
 }

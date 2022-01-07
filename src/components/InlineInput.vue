@@ -135,6 +135,10 @@ export default {
     width: 28px;
     height: 28px;
     line-height: unset;
+    &:hover {
+      border-color: #d9d9d9;
+      background-color: #f5f6f7;
+    }
   }
   .inline-input-button {
     padding: 5px 8px;

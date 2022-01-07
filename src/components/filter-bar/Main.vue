@@ -234,8 +234,10 @@ export default {
   line-height: 32px;
   width: 32px;
   font-size: 16px;
-  &:hover {
+  &:hover,
+  &.is-plain:focus:hover {
     border-color: #d9d9d9;
+    background-color: #f5f6f7;
   }
 }
 .filter-form {
