@@ -2,7 +2,7 @@ export const SETTING_MODEL = {
   name: '',
   sync_type: 'initial_sync+cdc',
   distinctWriteType: 'intellect',
-  stopOnError: false,
+  stopOnError: true,
   isOpenAutoDDL: false,
   bidirectional: false,
   readBatchSize: 1000,
