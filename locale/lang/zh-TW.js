@@ -3360,6 +3360,7 @@ const tc = {
     tip: '*目前任務進度查看僅支持： MySQL、Oracle、SQL Server、PostgreSQL和MongoDB',
     fullSyuncProgress: '全量同步進度',
     takeTime: '預計全量完成還需時間',
+    takeCompleteTime: '全量完成時間',
     planMigrationTableNum: '計劃遷移表數量',
     completedMigrationTableNum: '已完成遷移表數量',
     planMigrateData: '計劃遷移數據量（行）',
