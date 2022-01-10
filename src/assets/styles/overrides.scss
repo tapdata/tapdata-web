@@ -340,8 +340,13 @@ th {
   &::before {
     display: none;
   }
-  &.el-table--small td {
-    padding: 8px 0;
+  &.el-table--small {
+    td {
+      padding: 16px 0;
+    }
+    th {
+      height: 52px;
+    }
   }
   & > .cell {
     font-size: 14px;
@@ -358,7 +363,7 @@ th {
     }
     th {
       padding: 0;
-      height: 48px;
+      //height: 48px;
     }
     td {
       border-bottom: 1px solid #f5f5f5;
