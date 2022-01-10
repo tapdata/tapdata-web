@@ -108,7 +108,7 @@
         <div class="charts-list">
           <echart-head :data="screeningObj" @getUnit="getUnit"></echart-head>
           <div class="unit">{{ $t('dataFlow.unit') }}:{{ $t('dataFlow.rowCount') }}</div>
-          <Chart type="bar" :data="transBarData" :options="{ labelFormat: 'KMT', barWidth: '100%' }"></Chart>
+          <Chart type="bar" :data="transBarData" :options="transBarOptions"></Chart>
         </div>
       </li>
       <li class="e-col" v-readonlybtn="'Data_verify_menu'">
@@ -457,6 +457,15 @@ export default {
         ]
       },
       transBarData: [],
+      transBarOptions: {
+        barWidth: '100%',
+        series: [
+          {
+            labelFormat: 'KMT',
+            fixed: 1
+          }
+        ]
+      },
       serverProcess: {
         height: 360,
         isHeader: true,
