@@ -441,7 +441,7 @@ $unreadColor: #e43737;
       display: block;
       .unread-1zPaAXtSu {
         position: absolute;
-        top: 13px;
+        top: 8px;
         left: -10px;
         width: 6px;
         height: 6px;

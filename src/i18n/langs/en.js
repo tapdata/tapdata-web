@@ -525,6 +525,7 @@ export default {
   task_form_sync_tip:
     'Users can click the arrow button to the right in the middle to check the tables to be synchronized at the source and move these tables to the queue of tables to be synchronized (after the task is executed, these tables will be synchronized and transmitted)',
   task_form_task_cannot_empty: 'Task name cannot be empty',
+  task_form_task_name_limit: 'Task name exceeds character limit',
   task_form_already_exists: 'Task name already exists',
   task_form_mapping_setting: 'Mapping settings',
   task_form_source_target_connection: 'Select the source and target connection',
