@@ -190,17 +190,11 @@ export default {
       if (data.database_type !== 'redis') {
         delete data['database_password']
       }
-      try {
-        await this.$axios.patch(`tm/api/Connections/${data.id}`, {
-          status: 'testing'
-        })
-        this.$refs.test.start(data, isShowDialog)
-        this.fetch()
-      } catch (error) {
-        if (error?.isException) {
-          this.$message.error(error?.response?.msg || this.$t('connection_list_test_failed'))
-        }
-      }
+      await this.$axios.patch(`tm/api/Connections/${data.id}`, {
+        status: 'testing'
+      })
+      this.$refs.test.start(data, isShowDialog)
+      this.fetch()
     },
     async reload(row) {
       this.$checkAgentStatus(() => {
@@ -258,13 +252,10 @@ export default {
             this.fetch()
           }
         })
-        .catch(error => {
-          if (error?.isException) {
-            this.$message.error(this.$t('connection.reloadFail'))
-            this.showProgress = false
-            this.progress = 0 //加载完成
-            this.reloadLoading = false
-          }
+        .catch(() => {
+          this.showProgress = false
+          this.progress = 0 //加载完成
+          this.reloadLoading = false
         })
     },
     getSchemaProgress(row) {

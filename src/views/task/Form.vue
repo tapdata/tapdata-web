@@ -566,6 +566,8 @@ export default {
             validator: (rule, value, callback) => {
               if (!value || !value.trim()) {
                 callback(new Error(this.$t('task_form_task_cannot_empty')))
+              } else if (value.length > 300) {
+                callback(new Error(this.$t('task_form_task_name_limit')))
               } else {
                 let filter = {
                   where: {
@@ -787,6 +789,7 @@ export default {
         })
       }
       if (type === 'setting') {
+        debugger
         this.$refs.setting.validate(valid => {
           if (valid) {
             this.activeStep += 1

@@ -512,6 +512,7 @@ export default {
   task_form_sync_tip:
     '用户可以点击中间向右的箭头按钮勾选源端待同步表，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输）',
   task_form_task_cannot_empty: '任务名称不能为空',
+  task_form_task_name_limit: '任务名称超出字符限制',
   task_form_already_exists: '任务名称已存在',
   task_form_mapping_setting: '映射设置',
   task_form_source_target_connection: '选择源端与目标端连接',
