@@ -683,6 +683,7 @@ export default {
       })
     },
     showUpgradeDialogFnc(row) {
+      this.rowClick(row)
       // windons不支持自动升级
       if (this.isWindons(row)) {
         this.manualUpgradeFnc()
