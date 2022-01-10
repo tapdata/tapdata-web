@@ -18,7 +18,7 @@
               <div class="list-item-desc">
                 <!--                <span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>-->
                 <span>{{ $t('header_your') }}{{ systemMap[item.system] }}:</span>
-                <span class="notive-item-name" @click="handleGo(item)" :title="item.serverName">
+                <span class="notive-item-name text-primary" @click="handleGo(item)" :title="item.serverName">
                   {{ item.serverName }}
                 </span>
                 <span>{{ typeMap[item.msg] }}</span>
@@ -33,7 +33,7 @@
         <div class="tab-item__footer flex justify-content-between py-3 font-color-sub">
           <span class="system-operation-setting cursor-pointer" @click="handleSetting">
             <VIcon class="mr-1" size="12">setting</VIcon>
-            <span>{{ $t('header_setting') }}</span>
+            <span class="fs-8">{{ $t('header_setting') }}</span>
           </span>
           <ElLink class="font-color-sub" @click="toCenter()">{{ $t('header_view_notifications') }}</ElLink>
         </div>
@@ -333,7 +333,6 @@ export default {
             white-space: nowrap;
             text-overflow: ellipsis;
             overflow: hidden;
-            color: #409eff;
           }
 
           span {
