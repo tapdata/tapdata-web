@@ -100,15 +100,16 @@ export default {
       }, 1000)
     },
     updateLogs(data) {
-      let keyword = this.keyword
+      const { keyword, checkList } = this
       let logs = data?.data || []
       this.loadNew(
         logs.filter(item => {
           return (
-            item.threadName.includes(keyword) ||
-            item.loggerName.includes(keyword) ||
-            item.message.includes(keyword) ||
-            item.level.includes(keyword)
+            checkList.includes(item.level) &&
+            (item.threadName.includes(keyword) ||
+              item.loggerName.includes(keyword) ||
+              item.message.includes(keyword) ||
+              item.level.includes(keyword))
           )
         })
       )
