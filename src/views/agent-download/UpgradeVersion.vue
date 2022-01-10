@@ -28,7 +28,7 @@
         <div class="py-2 text-style">{{ $t('agent_upgrade_step_title') }}</div>
         <div>{{ $t('agent_upgrade_step_windows_first') }}</div>
         <div>{{ $t('agent_upgrade_step_windows_second') }}</div>
-        <div>
+        <div v-if="agentId">
           <div class="box title-text">
             <span class="com-url">{{ comUrl }}</span>
             <ElTooltip
@@ -56,7 +56,7 @@
         <div class="py-2 text-style">{{ $t('agent_upgrade_step_title') }}</div>
         <div>{{ $t('agent_upgrade_step_linux_first') }}</div>
         <div>{{ $t('agent_upgrade_step_linux_second') }}</div>
-        <div>
+        <div v-if="agentId">
           <div class="box title-text">
             <span class="com-url">{{ comUrl }}</span>
             <ElTooltip
@@ -97,7 +97,7 @@
         <div>
           {{ $t('agent_upgrade_step_docker_second') }}
         </div>
-        <div>
+        <div v-if="agentId">
           <div class="box title-text">
             <span class="com-url">{{ comUrl }}</span>
             <ElTooltip
@@ -166,6 +166,7 @@ export default {
   methods: {
     loadData() {
       let agentId = this.$route.query.agentId
+      this.agentId = agentId
       this.$axios.get('api/tcm/config/version/latest/' + agentId).then(data => {
         this.token = data.token
         this.version = data.version
