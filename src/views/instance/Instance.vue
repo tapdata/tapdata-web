@@ -576,7 +576,6 @@ export default {
             })
             .catch(() => {
               this.$message.error(this.$t('agent_button_stop_msg_fail'))
-              this.loading = false
             })
             .finally(() => {
               if (row.btnLoading) {

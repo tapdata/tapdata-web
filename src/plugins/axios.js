@@ -107,12 +107,17 @@ _axios.interceptors.response.use(function (response) {
       return resolve(data?.data)
     } else if (code === 'SystemError') {
       // code 为 SystemError 则表示请求异常，提示信息
-      let msg = data?.message || data?.msg
-      Message.error(`SystemError： ${msg}`)
+      let msg = data?.message || data?.msg || ''
+      Message.error(`SystemError： ${msg === msg.substring(0, 20) ? msg : msg.substring(0, 20) + '...'}`)
+      // eslint-disable-next-line
+      console.log('请求失败:' + msg, response)
       return reject(msg)
+    } else {
+      // 其他情况交由业务端自行处理
+      let msg = data?.message || data?.msg || ''
+      Message.error(`${code}： ${msg}`)
+      return reject(Object.assign(response))
     }
-    // 其他情况交由业务端自行处理
-    reject(Object.assign(response, { isException: true }))
   })
 }, errorCallback)
 

@@ -483,15 +483,12 @@ export default {
         id: this.$route.params.id
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      return await this.$axios
-        .patch('tm/api/DataFlows?where=', attributes)
-        .then(data => {
-          this.responseHandler(data, this.$t('task_operation_successful'))
-        })
-
-        .catch(error => {
-          error?.isException && this.$message.error(this.$t('task_start_failed'))
-        })
+      return await this.$axios.patch('tm/api/DataFlows?where=', attributes).then(data => {
+        this.responseHandler(data, this.$t('task_operation_successful'))
+      })
+      // .catch(error => {
+      //   error?.isException && this.$message.error(this.$t('task_start_failed'))
+      // })
     },
     responseHandler(data, msg) {
       let failList = data.fail || []
@@ -614,9 +611,9 @@ export default {
             this.responseHandler(data, this.$t('task_operation_successful'))
             this.getData()
           })
-          .catch(error => {
-            error?.isException && this.$message.error(this.$t('task_reset_failed'))
-          })
+          // .catch(error => {
+          //   error?.isException && this.$message.error(this.$t('task_reset_failed'))
+          // })
           .finally(() => {
             this.resetBtnLoading = false
           })

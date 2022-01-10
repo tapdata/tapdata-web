@@ -427,16 +427,9 @@ export default {
         id: this.$route.params.id
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      return await this.$axios
-        .patch('tm/api/DataFlows?where=', attributes)
-        .then(data => {
-          this.responseHandler(data, this.$t('task_operation_successful'))
-        })
-        .catch(error => {
-          if (error?.isException) {
-            this.$message.error(error.data?.message)
-          }
-        })
+      return await this.$axios.patch('tm/api/DataFlows?where=', attributes).then(data => {
+        this.responseHandler(data, this.$t('task_operation_successful'))
+      })
     },
     responseHandler(data, msg) {
       let failList = data.fail || []

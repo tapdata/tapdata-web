@@ -93,13 +93,20 @@ export default ({ routes }) => {
         loading.close()
         init()
       })
-      .catch(() => {
+      .catch(err => {
+        // 获取用户信息失败
         if (count < 4) {
+          // eslint-disable-next-line
+          console.log('获取用户信息失败')
           setTimeout(() => {
             count++
+            // eslint-disable-next-line
+            console.log(`重新尝试获取用户信息: 第${count}次`)
             getData()
           }, 3000)
         } else {
+          // eslint-disable-next-line
+          console.log('获取用户信息失败, 停止重试，跳转到500', err)
           loading.close()
           init()
           location.replace(location.href.split('#/')[0] + '#/500')

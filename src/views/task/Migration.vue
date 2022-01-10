@@ -673,11 +673,6 @@ export default {
           this.fetch()
           this.responseHandler(data, this.$t('task_operation_successful'))
         })
-        .catch(error => {
-          if (error?.isException) {
-            this.$message.error(error?.data?.message + '(' + error?.data?.code + ')')
-          }
-        })
         .finally(() => {
           finallyEvents?.()
         })

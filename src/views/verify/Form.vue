@@ -1109,17 +1109,11 @@ export default {
               },
               byFirstCheckId: ''
             })
-          )
-            .then(data => {
-              if (data) {
-                this.$router.back()
-              }
-            })
-            .catch(err => {
-              if (err?.isException) {
-                this.$message.error(err.data?.message)
-              }
-            })
+          ).then(data => {
+            if (data) {
+              this.$router.back()
+            }
+          })
         }
       })
     }
