@@ -32,7 +32,11 @@
               </el-row>
               <el-row class="mt-3">
                 <el-col :span="12">
-                  <span>{{ $t('taskProgress.takeTime') }}：</span>
+                  <span
+                    >{{
+                      progressBar !== 100 ? $t('taskProgress.takeTime') : $t('taskProgress.takeCompleteTime')
+                    }}：</span
+                  >
                   <span class="ml-3 color-green">{{ completeTime }}</span>
                 </el-col>
                 <!--              <el-col :span="12">-->
