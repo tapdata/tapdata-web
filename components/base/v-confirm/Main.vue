@@ -157,6 +157,10 @@ export default {
     },
     getIconByType(type) {
       this.icon = type
+      if (type === 'error') {
+        this.iconClass = 'color-danger'
+        return
+      }
       this.iconClass = 'color-' + type
     }
   }

@@ -27,6 +27,7 @@
         }"
         @move-node="handleDragMoveNode"
         @drop-node="handleAddNodeByDrag"
+        @add-table-as-node="handleAddTableAsNode"
       />
       <section class="layout-wrap">
         <!--内容体-->
@@ -89,7 +90,7 @@ import LeftSidebar from './components/LeftSidebar'
 import DFNode from './components/DFNode'
 import jsPlumbIns from './instance'
 import { connectorActiveStyle } from './style'
-import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, STATUS_MAP } from './constants'
+import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from './constants'
 import { ctorTypes, nodeTypes } from 'web-core/nodes/loader'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
@@ -1184,6 +1185,12 @@ export default {
       const node = this.createNode(position, item)
       this.command.exec(new AddNodeCommand(node))
       return node
+    },
+
+    handleAddTableAsNode(item) {
+      const { x, y } = this.$refs.paperScroller.getPaperCenterPos()
+      const position = this.getNewNodePosition([x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2], [0, 120])
+      this.handleAddNodeToPos(position, item)
     },
 
     createNode(position, item) {

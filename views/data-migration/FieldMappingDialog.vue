@@ -240,8 +240,8 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose()">{{ $t('button_dialog_cancel') }}</el-button>
-        <el-button type="primary" @click="editSave()">{{ $t('button_dialog_confirm') }}</el-button>
+        <el-button @click="handleClose()">{{ $t('button_cancel') }}</el-button>
+        <el-button type="primary" @click="editSave()">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -271,14 +271,14 @@
           </el-form-item>
           <div class="tip">{{ $t('task_mapping_dialog_rule_note') }}</div>
           <el-form-item :label="$t('task_mapping_dialog_enter_prefix')" prop="table_prefix">
-            <el-input size="mini" v-model="form.table_prefix"></el-input>
+            <el-input size="mini" v-model="form.table_prefix" maxlength="50" show-word-limit></el-input>
           </el-form-item>
           <div class="tip">
             <span>{{ $t('task_mapping_dialog_english_letter') }}</span>
             <div>{{ $t('task_mapping_dialog_not_allow_system') }}</div>
           </div>
           <el-form-item :label="$t('task_mapping_dialog_enter_suffix')" prop="table_suffix">
-            <el-input size="mini" v-model="form.table_suffix"></el-input>
+            <el-input size="mini" v-model="form.table_suffix" maxlength="50" show-word-limit></el-input>
           </el-form-item>
           <div class="tip">
             <span>{{ $t('task_mapping_dialog_underscore_begin') }}</span>
@@ -291,10 +291,8 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="handleTableClose()">{{ $t('button_dialog_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="handleTableNameSave()">{{
-          $t('button_dialog_confirm')
-        }}</el-button>
+        <el-button size="mini" @click="handleTableClose()">{{ $t('button_cancel') }}</el-button>
+        <el-button size="mini" type="primary" @click="handleTableNameSave()">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -318,8 +316,8 @@
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="handleFieldClose">{{ $t('button_dialog_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="handleFieldSave()">{{ $t('button_dialog_confirm') }}</el-button>
+        <el-button size="mini" @click="handleFieldClose">{{ $t('button_cancel') }}</el-button>
+        <el-button size="mini" type="primary" @click="handleFieldSave()">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
   </div>

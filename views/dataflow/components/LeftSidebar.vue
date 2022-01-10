@@ -35,7 +35,7 @@
               </ElInput>
             </div>
           </template>
-          <ElScrollbar ref="dbList" tag="div" wrap-class="db-list">
+          <ElScrollbar ref="dbList" tag="div" wrap-class="db-list" :wrap-style="scrollbarWrapStyle">
             <ElSkeleton :loading="dbLoading" animated :throttle="skeletonThrottle">
               <template #template>
                 <div v-for="i in 5" :key="i" class="flex p-4 align-center">
@@ -73,6 +73,9 @@
           <span class="flex-1 user-select-none text-truncate flex align-center"
             >数据表<span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span></span
           >
+          <ElTooltip content="创建新表作为节点使用" placement="top">
+            <VIcon size="20" class="click-btn" @click.stop="handleAddTable">add-outline</VIcon>
+          </ElTooltip>
           <VIcon size="20" class="click-btn" @click.stop="handleShowTBInput">search-outline</VIcon>
 
           <ElInput
@@ -95,7 +98,13 @@
             </template>
           </ElInput>
         </div>
-        <ElScrollbar ref="tbList" class="flex-1 min-h-0" tag="div" wrap-class="tb-list">
+        <ElScrollbar
+          ref="tbList"
+          class="flex-1 min-h-0"
+          tag="div"
+          wrap-class="tb-list"
+          :wrap-style="scrollbarWrapStyle"
+        >
           <ElSkeleton :loading="tbLoading" animated :throttle="skeletonThrottle">
             <template #template>
               <div v-for="i in 5" :key="i" class="flex p-4 align-center">
@@ -160,6 +169,7 @@
       </ElCollapseItem>
     </ElCollapse>
 
+    <!-- S 节点拖拽元素 -->
     <BaseNode
       v-if="dragStarting"
       id="dragNode"
@@ -167,6 +177,8 @@
       :node="dragNodeType"
       :class="`node--${dragNodeType.group}`"
     ></BaseNode>
+    <!-- E 节点拖拽元素 -->
+
     <ElDialog
       title="选择数据源类型"
       :visible.sync="connectionDialog"
@@ -203,6 +215,8 @@
     >
       <!--<Form :databaseTypeText="databaseType" @saveConnection="saveConnection"></Form>-->
     </ElDialog>
+
+    <CreateTable :dialog="dialogData" @handleTable="handleSaveTable"></CreateTable>
   </aside>
 </template>
 
@@ -233,11 +247,14 @@ const metadataApi = new MetadataApi()
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
 import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
 import EmptyItem from 'web-core/components/EmptyItem'
+import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
+import CreateTable from './CreateTable'
 
 export default {
   name: 'LeftSidebar',
 
   components: {
+    CreateTable,
     EmptyItem,
     OverflowTooltip,
     BaseNode,
@@ -281,7 +298,14 @@ export default {
       dbLoadingMore: false,
       tbLoading: true,
       tbLoadingMore: false,
-      skeletonThrottle: 0
+      skeletonThrottle: 0,
+
+      dialogData: {
+        type: 'table',
+        title: this.$t('dialog.createTable'),
+        placeholder: this.$t('dialog.placeholderTable'),
+        visible: false
+      }
     }
   },
 
@@ -320,6 +344,11 @@ export default {
 
     disabledDBMore() {
       return this.dbLoading || this.noDBMore || this.dbLoadingMore
+    },
+
+    scrollbarWrapStyle() {
+      let gutter = scrollbarWidth()
+      return `height: calc(100% + ${gutter}px);`
     }
   },
 
@@ -598,7 +627,28 @@ export default {
 
     handleDBInput: debounce(function () {
       this.loadDatabase()
-    }, 100)
+    }, 100),
+
+    handleAddTable() {
+      this.dialogData.visible = true
+    },
+
+    handleSaveTable(name) {
+      const connection = this.activeConnection
+
+      this.$emit('add-table-as-node', {
+        name,
+        type: 'table',
+        group: 'data',
+        constructor: 'Table',
+        databaseType: connection.database_type,
+        attr: {
+          tableName: name,
+          databaseType: connection.database_type,
+          connectionId: connection.id
+        }
+      })
+    }
   }
 }
 </script>
@@ -743,10 +793,6 @@ $hoverBg: #eef3ff;
 
     .el-scrollbar {
       height: 100%;
-    }
-
-    .el-scrollbar__wrap {
-      height: calc(100% + 8px);
     }
 
     .header__input {

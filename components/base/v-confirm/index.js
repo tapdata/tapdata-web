@@ -70,7 +70,6 @@ const MessageBox = function (options, callback) {
         resolve: resolve,
         reject: reject
       }
-
       showNextMsg()
     })
   } else {
