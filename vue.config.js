@@ -1,5 +1,7 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
+const SpeedMeasurePlugin = require('speed-measure-webpack-plugin') // 观测打包时间
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
@@ -34,8 +36,6 @@ const proxy = {
   changeOrigin: false
 }
 
-//sass变量
-let varUrl = '~@/styles/var.scss'
 module.exports = {
   assetsDir: 'static',
   lintOnSave: true,
@@ -51,7 +51,6 @@ module.exports = {
         secure: false,
         logLevel: 'debug',
         target: proxy.target.replace(/^https?/, 'ws')
-        // target: 'ws://192.168.1.126:3002' // 126环境因为网关的问题，需要写死3002端口
       }
     }
   },
@@ -146,6 +145,10 @@ module.exports = {
       .end()
 
     config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('src/_packages/tapdata-web-core'))
+
+    config.plugin('hard-source-webpack-plugin').use(HardSourceWebpackPlugin)
+
+    config.plugin('speed-measure-webpack-plugin').use(SpeedMeasurePlugin).end()
   },
   configureWebpack: config => {
     if (process.env.NODE_ENV === 'production') {
@@ -170,7 +173,7 @@ module.exports = {
   css: {
     loaderOptions: {
       scss: {
-        additionalData: `@use "${varUrl}" as *;`
+        additionalData: `@use "~@/styles/var.scss" as *;`
       }
     }
   }
