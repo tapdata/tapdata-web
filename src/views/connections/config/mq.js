@@ -16,7 +16,7 @@ export default function (vm) {
       {
         type: 'select',
         field: 'mqType',
-        label: vm.$t('dataForm.form.mq.mqType'),
+        label: vm.$t('connection_form_mq_type'),
         options: [
           {
             label: 'ActiveMQ',
@@ -36,21 +36,21 @@ export default function (vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: vm.$t('dataForm.form.connectionType'),
+        label: vm.$t('connection_form_connection_type'),
         options: [
           {
-            label: vm.$t('dataForm.form.options.sourceAndTarget'),
-            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+            label: vm.$t('connection_form_source_and_target'),
+            tip: vm.$t('connection_form_source_and_target_tip'),
             value: 'source_and_target'
           },
           {
-            label: vm.$t('dataForm.form.options.source'),
-            tip: vm.$t('dataForm.form.options.sourceTips'),
+            label: vm.$t('connection_form_source'),
+            tip: vm.$t('connection_form_source_tip'),
             value: 'source'
           },
           {
-            label: vm.$t('dataForm.form.options.target'),
-            tip: vm.$t('dataForm.form.options.targetTips'),
+            label: vm.$t('connection_form_target'),
+            tip: vm.$t('connection_form_target_tip'),
             value: 'target'
           }
         ],
@@ -61,7 +61,7 @@ export default function (vm) {
         type: 'input',
         field: 'mqTopicSet',
         show: true,
-        label: vm.$t('dataForm.form.mq.mqTopicSet'),
+        label: vm.$t('connection_form_mq_topic_set'),
         required: true,
         dependOn: [
           {
@@ -106,7 +106,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'mqQueueSet',
-        label: vm.$t('dataForm.form.mq.mqQueueSet'),
+        label: vm.$t('connection_form_mq_queue_set'),
         show: true,
         required: false,
         dependOn: [
@@ -141,7 +141,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'brokerURL',
-        label: vm.$t('dataForm.form.mq.brokerUrl'),
+        label: vm.$t('connection_form_mq_broker_url'),
         required: true,
         show: false,
         dependOn: [
@@ -165,7 +165,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_host',
-        label: vm.$t('dataForm.form.mq.database_host'),
+        label: vm.$t('connection_form_mq_database_host'),
         rules: [
           {
             required: true,
@@ -196,7 +196,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_port',
-        label: vm.$t('dataForm.form.mq.database_port'),
+        label: vm.$t('connection_form_mq_database_port'),
         required: true,
         rules: [
           {
@@ -231,20 +231,96 @@ export default function (vm) {
       },
       {
         type: 'input',
+        field: 'productGroup',
+        label: vm.$t('connection_form_mq_producer_group'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'mqType',
+                value: '2'
+              },
+              {
+                field: 'connection_type',
+                value: 'source_and_target'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'mqType',
+                value: '2'
+              },
+              {
+                field: 'connection_type',
+                value: 'target'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'input',
+        field: 'consumerGroup',
+        label: vm.$t('connection_form_mq_consumer_group'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'mqType',
+                value: '2'
+              },
+              {
+                field: 'connection_type',
+                value: 'source_and_target'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'mqType',
+                value: '2'
+              },
+              {
+                field: 'connection_type',
+                value: 'source'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'input',
         field: 'mqUserName',
-        label: vm.$t('dataForm.form.userName')
+        label: vm.$t('connection_form_user_name')
       },
       {
         type: 'input',
         field: 'mqPassword',
-        label: vm.$t('dataForm.form.password'),
+        label: vm.$t('connection_form_password'),
         domType: 'password',
         showPassword: true
       },
       {
         type: 'input',
         field: 'routeKeyField',
-        label: vm.$t('dataForm.form.mq.routeKeyField'),
+        label: vm.$t('connection_form_mq_route_key_field'),
         show: false,
         dependOn: [
           {
@@ -263,7 +339,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'virtualHost',
-        label: vm.$t('dataForm.form.mq.virtualHost'),
+        label: vm.$t('connection_form_mq_virtual_host'),
         show: false,
         dependOn: [
           {

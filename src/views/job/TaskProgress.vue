@@ -431,7 +431,8 @@ export default {
 
         if (this.progressBar === 100) {
           overview.currentStatus = this.$t('taskProgress.progress') // 进行中
-          completeTime = this.$t('taskProgress.fullyCompleted') // 全量已完成
+          let time = data.milestones.find(t => t.code === 'WRITE_SNAPSHOT')?.end
+          completeTime = this.$moment(time).format('YYYY-MM-DD HH:mm:ss') // 全量已完成
         }
         // 任务暂停、错误  增量状态都为停止
         if (completeTime === this.$t('taskProgress.fullyCompleted')) {
