@@ -367,6 +367,12 @@ export default {
       .el-form-item__label,
       .el-form-item__content {
         line-height: 28px;
+        .el-select {
+          width: 100%;
+          .el-select__tags {
+            max-width: 100% !important;
+          }
+        }
       }
       .el-form-item__label {
         font-size: 12px;

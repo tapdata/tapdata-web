@@ -301,6 +301,9 @@ export default {
 
     .el-table--border th {
       border-right: 1px solid #ebeef5;
+      .cell {
+        white-space: nowrap;
+      }
     }
 
     .table-footer {

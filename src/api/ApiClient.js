@@ -179,7 +179,6 @@ export default class {
         headers = headers.filter(v => !!showFields[v.value])
       }
     }
-    console.log('------', headers)
     return headers
   }
 

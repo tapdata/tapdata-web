@@ -198,10 +198,10 @@ export default {
       status: '',
       dbOptions: [],
       statusList: [
-        {
-          label: this.$t('modules.all'),
-          value: 'all'
-        },
+        // {
+        //   label: this.$t('modules.all'),
+        //   value: 'all'
+        // },
         {
           label: this.$t('modules.active'),
           value: 'active'
@@ -273,6 +273,7 @@ export default {
         let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword
         where.or = [{ basePath: filterObj }, { description: filterObj }]
       }
+      status && (where.status = status)
 
       if (tags && tags.length) {
         where['listtags.id'] = {

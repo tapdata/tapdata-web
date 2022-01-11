@@ -24,19 +24,19 @@
       <div class="module-path-content">
         <div class="module-path-item" v-for="(item, index) in createForm.paths" :key="index">
           <div class="module-path-item-group" v-if="apiAuthority === 'edit'">
-            <div>
+            <div class="module-path-item-button">
               <span class="module-path-item-method" :class="'label-' + getstyle(item)">{{ item.method }}</span>
               <span class="module-path-item-text">{{ item.path }}</span>
             </div>
-            <div>
-              <div class="module-path-item-button" style="margin-left: 10px">
+            <div class="module-path-button-box">
+              <div style="margin-left: 10px">
                 <el-tooltip class="item" effect="dark" :content="$t('button_edit')" placement="left">
                   <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
                     ><i class="fa fa-edit el-icon-edit-outline"></i
                   ></span>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" :content="$t('button_delete')" placement="bottom">
-                  <span title="remove" @click="removeApiPath(index)" style="cursor: pointer"
+                  <span title="remove" @click="removeApiPath(index)" style="margin-right: 10px; cursor: pointer"
                     ><i class="fa fa-times el-icon-delete"></i
                   ></span>
                 </el-tooltip>
@@ -107,7 +107,7 @@ export default {
         prefix: '',
         basePath: '',
         path: '',
-        apiType: '',
+        apiType: 'defaultApi',
         status: 'pending',
         createType: '',
         paths: [],
@@ -155,6 +155,9 @@ export default {
     },
     'createForm.basePath'() {
       this.updatePath()
+      if (this.createForm.apiType === 'defaultApi') {
+        this.initPresetPaths()
+      }
     },
     'createForm.prefix'() {
       this.updatePath()
@@ -402,7 +405,7 @@ export default {
     handleOpenTag() {
       let id = this.$route.query.id
       if (id) {
-        this.$refs.classify.show(this.apiData.listtags)
+        this.$refs.classify.show(this.apiData.listtags ? this.apiData.listtags : {})
       } else {
         this.$refs.classify.show({})
       }
@@ -673,6 +676,9 @@ export default {
         display: flex;
         justify-content: space-between;
       }
+      .module-path-button-box {
+        display: flex;
+      }
       .module-path-item-method {
         display: inline-block;
         width: 80px;
@@ -734,13 +740,16 @@ export default {
 .module-form {
   .el-form {
     .el-form-item {
-      margin-bottom: 12px;
+      margin-bottom: 20px;
       .el-form-item__label {
         width: 140px !important;
         text-align: right;
       }
       .el-form-item__content {
         margin-left: 140px !important;
+        .el-radio--mini.is-bordered {
+          padding: 0 15px 0 10px;
+        }
       }
     }
   }
