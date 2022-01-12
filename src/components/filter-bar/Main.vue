@@ -260,7 +260,7 @@ export default {
       }
       &:focus,
       &:target {
-        border-color: #409eff;
+        border-color: map-get($color, primary);
       }
     }
   }
