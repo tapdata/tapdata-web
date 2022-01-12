@@ -674,8 +674,8 @@ export default {
           fields.forEach(field => {
             if (
               // 主键值减1
-              field.primary_key_position * 1 >
-              primary_key_position_mum * 1
+              item.primary_key &&
+              field.primary_key_position * 1 > primary_key_position_mum * 1
             ) {
               field.primary_key_position = field.primary_key_position - 1
             }
