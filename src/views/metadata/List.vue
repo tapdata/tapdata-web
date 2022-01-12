@@ -456,6 +456,31 @@ export default {
         if (valid) {
           let { model_type, database, tableName } = this.createForm
           let db = this.dbOptions.find(it => it.id === database)
+          let fields = [
+            {
+              checked: false,
+              create_source: 'manual',
+              is_auto_allowed: true,
+              alias_name: '',
+              field_name: '_id',
+              java_type: 'String',
+              columnSize: 0,
+              precision: 0,
+              scale: 0,
+              parent: '',
+              autoincrement: false,
+              primary_key: true,
+              foreign_key: false,
+              primary_key_position: 1,
+              foreign_key_position: 0,
+              is_nullable: false,
+              unique: false, // 唯一
+              comment: '', //长描述
+              dictionary: null,
+              dictionary_id: '',
+              relation: []
+            }
+          ]
           let params = {
             connectionId: db.id,
             original_name: tableName,
@@ -467,6 +492,7 @@ export default {
             alias_name: '',
             comment: ''
           }
+          params.fields = model_type === 'collection' ? fields : []
           this.$api('MetadataInstances')
             .post(params)
             .then(() => {
@@ -484,29 +510,22 @@ export default {
         inputPattern: /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/, // eslint-disable-line
         inputErrorMessage: this.$t('dialog.placeholderTable'),
         customClass: 'changeName-prompt',
-        inputValue: item.name || item.original_name,
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.$api('MetadataInstances')
-              .updateById(item.id, {
-                name: instance.inputValue
-              })
-              .then(() => {
-                this.$message.success(this.$t('message.saveOK'))
-                this.table.fetch()
-                done()
-              })
-              .catch(() => {
-                this.$message.info(this.$t('message.saveFail'))
-              })
-              .finally(() => {
-                instance.confirmButtonLoading = false
-              })
-          } else {
-            done()
-          }
+        inputValue: item.name || item.original_name
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
         }
+        this.$api('MetadataInstances')
+          .updateById(item.id, {
+            name: item.name || item.original_name
+          })
+          .then(() => {
+            this.$message.success(this.$t('message.saveOK'))
+            this.table.fetch()
+          })
+          .catch(() => {
+            this.$message.info(this.$t('message.saveFail'))
+          })
       })
     },
     remove(item) {
@@ -517,27 +536,23 @@ export default {
       ])
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
-        closeOnClickModal: false,
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.$api('MetadataInstances')
-              .delete(item.id)
-              .then(() => {
-                this.$message.success(this.$t('message.deleteOK'))
-                this.table.fetch()
-                done()
-              })
-              .catch(() => {
-                this.$message.info(this.$t('message.deleteFail'))
-              })
-              .finally(() => {
-                instance.confirmButtonLoading = false
-              })
-          } else {
-            done()
-          }
+        closeOnClickModal: false
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
         }
+        this.$api('MetadataInstances')
+          .delete(item.id)
+          .then(() => {
+            this.$message.success(this.$t('message.deleteOK'))
+            this.table.fetch()
+          })
+          .catch(() => {
+            this.$message.info(this.$t('message.deleteFail'))
+          })
+        // .finally(() => {
+        //   instance.confirmButtonLoading = false
+        // })
       })
     }
   }
