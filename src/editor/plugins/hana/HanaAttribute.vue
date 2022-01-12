@@ -13,20 +13,7 @@
       <el-form class="e-form" label-position="top" :model="model" ref="form" :disabled="disabled">
         <!-- <span class="addTxt">+新建文件</span> -->
         <el-form-item :label="$t('editor.choose') + ' hana'" prop="connectionId" :rules="rules" required>
-          <el-select
-            :filterable="!databaseLoading"
-            :loading="databaseLoading"
-            v-model="model.connectionId"
-            :placeholder="$t('message.placeholderSelect') + 'hana'"
-            :clearable="true"
-          >
-            <el-option
-              v-for="(item, idx) in databases"
-              :label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
-              :value="item.id"
-              v-bind:key="idx"
-            ></el-option>
-          </el-select>
+          <FbSelect v-model="model.connectionId" :config="databaseSelectConfig"></FbSelect>
         </el-form-item>
 
         <el-form-item
@@ -37,22 +24,18 @@
         >
           <div class="flex-block">
             <!-- <FbSelect class="e-select" v-model="model.tableName" :config="schemaSelectConfig"></FbSelect> -->
-            <el-select
+            <VirtualSelect
               v-model="model.tableName"
-              :filterable="!schemasLoading"
-              :loading="schemasLoading"
-              default-first-option
-              clearable
-              :placeholder="$t('editor.cell.data_node.table.form.table.placeholder')"
               size="mini"
-            >
-              <el-option
-                v-for="(item, idx) in schemas"
-                :label="`${item.table_name}`"
-                :value="item.table_name"
-                v-bind:key="idx"
-              ></el-option>
-            </el-select>
+              filterable
+              clearable
+              :item-size="34"
+              :items="schemaSelectConfig.options"
+              :loading="schemaSelectConfig.loading"
+              :disabled="schemaSelectConfig.loading"
+              :placeholder="$t('editor.cell.data_node.table.form.table.placeholder')"
+              @change="handleFieldFilterType"
+            />
             <el-tooltip
               class="item"
               effect="light"
@@ -187,21 +170,22 @@
 import _ from 'lodash'
 import factory from '../../../api/factory'
 import Entity from '../link/Entity'
-import { convertSchemaToTreeData } from '../../util/Schema'
+import { convertSchemaToTreeData, uuid, removeDeleted } from '../../util/Schema'
 import ClipButton from '@/components/ClipButton'
 import CreateTable from '@/components/dialog/createTable'
 import FieldMapping from '@/components/FieldMapping'
 import queryBuilder from '@/components/QueryBuilder'
-
+import VirtualSelect from 'web-core/components/virtual-select'
 import ws from '@/api/ws'
-const connections = factory('connections')
+// const connections = factory('connections')
 
 // let editorMonitor = null;
 let tempSchemas = []
 export default {
   name: 'HanaNode',
-  components: { Entity, ClipButton, CreateTable, FieldMapping, queryBuilder },
+  components: { Entity, ClipButton, CreateTable, FieldMapping, queryBuilder, VirtualSelect },
   data() {
+    let self = this
     return {
       disabled: false,
       databases: [],
@@ -266,33 +250,57 @@ export default {
       scope: '',
       showFieldMapping: false,
       dataNodeInfo: {},
-      transformModelVersion: false
+      transformModelVersion: false,
+      databaseSelectConfig: {
+        size: 'mini',
+        placeholder: this.$t('editor.cell.data_node.database.form.placeholder'),
+        loading: false,
+        filterable: true,
+        clearable: true,
+        on: {
+          change() {
+            self.handlerConnectionChange()
+          }
+        },
+        options: []
+      },
+      schemaSelectConfig: {
+        size: 'mini',
+        placeholder: this.$t('editor.cell.data_node.collection.form.collection.placeholder'),
+        loading: false,
+        filterable: true,
+        options: [],
+        allowCreate: false,
+        defaultFirstOption: false,
+        clearable: true
+      }
     }
   },
 
   async mounted() {
     this.databaseLoading = true
-    let result = await connections.get({
-      filter: JSON.stringify({
-        where: {
-          database_type: 'hana'
-        },
-        fields: {
-          name: 1,
-          id: 1,
-          database_type: 1,
-          connection_type: 1,
-          status: 1,
-          schema: 1
-        },
-        order: 'name ASC'
-      })
-    })
+    await this.loadDataSource()
+    // let result = await connections.get({
+    //   filter: JSON.stringify({
+    //     where: {
+    //       database_type: 'hana'
+    //     },
+    //     fields: {
+    //       name: 1,
+    //       id: 1,
+    //       database_type: 1,
+    //       connection_type: 1,
+    //       status: 1,
+    //       schema: 1
+    //     },
+    //     order: 'name ASC'
+    //   })
+    // })
 
     this.databaseLoading = false
-    if (result.data) {
-      this.databases = result.data
-    }
+    // if (result.data) {
+    //   this.databases = result.data
+    // }
   },
 
   watch: {
@@ -313,31 +321,64 @@ export default {
       immediate: true,
       handler() {
         // this.handlerSchemaChange()
-        if (this.schemas.length > 0) {
-          this.handlerSchemaChange()
-          if (this.model.tableName) {
-            let schema = this.schemas.filter(s => s.table_name === this.model.tableName)
-            schema =
-              schema && schema.length > 0
-                ? schema[0]
-                : {
-                    table_name: this.model.tableName,
-                    cdc_enabled: true,
-                    meta_type: 'hana',
-                    fields: []
-                  }
-            this.$emit('schemaChange', _.cloneDeep(schema))
-            this.mergedSchema = schema
+        if (this.schemaSelectConfig.options.length > 0) {
+          let defaultSchema = {
+            table_name: this.model.tableName,
+            cdc_enabled: true,
+            meta_type: 'collection',
+            fields: [
+              {
+                autoincrement: false,
+                columnSize: 0,
+                dataType: 7,
+                data_type: 'OBJECT_ID',
+                field_name: '_id',
+                id: uuid(),
+                is_nullable: true,
+                javaType: 'String',
+                key: 'PRI',
+                original_field_name: '_id',
+                precision: 0,
+                primary_key_position: 1,
+                scale: 0,
+                table_name: this.model.tableName
+              }
+            ]
           }
-          //切换table 才清空过滤
-          if (this.schema?.length && this.model.tableName) {
-            this.model.custFields.length = 0
-            this.model.custSql.selectedFields.length = 0
-            this.model.custSql.conditions.length = 0
-            this.model.custSql.limitLines = ''
-            this.model.cSql = ''
-            this.model.custSql.fieldFilterType = 'keepAllFields'
-            this.model.custSql.editSql = ''
+          if (this.model.tableName) {
+            let params = {
+              filter: JSON.stringify({
+                where: {
+                  'source.id': this.model.connectionId,
+                  original_name: this.model.tableName,
+                  is_deleted: false
+                }
+              })
+            }
+
+            this.$api('MetadataInstances')
+              .get(params)
+              .then(res => {
+                let table = res?.data?.[0] || defaultSchema
+                this.defaultSchema = table
+                let fields = table.fields || []
+                //过滤被删除的字段
+                if (fields) {
+                  fields = removeDeleted(fields)
+                }
+                this.primaryKeyOptions = fields.map(f => f.field_name)
+                this.model.custSql.custFields = fields.map(f => f.field_name)
+                this.model.custSql.conditions.length = 0
+                this.model.custSql.fieldFilterType = 'keepAllFields'
+                this.model.custSql.cSql = ''
+                this.model.custSql.editSql = ''
+                this.model.custSql.selectedFields.length = 0
+                this.model.collectionAggregate = false
+                this.model.isFilter = false
+                this.model.collectionAggrPipeline = ''
+                table.tableName = this.model.tableName
+                this.$emit('schemaChange', _.cloneDeep(table))
+              })
           }
         }
       }
@@ -387,24 +428,41 @@ export default {
         return
       }
       let self = this
-      this.schemasLoading = true
-      connections
-        .get([connectionId])
-        .then(result => {
-          if (result.data) {
-            let schemas = (result.data.schema && result.data.schema.tables) || []
-            tempSchemas = schemas = schemas.sort((t1, t2) =>
-              t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
-            )
-            self.schemas = schemas.filter(item => {
-              if (item.table_name) {
-                return item
-              }
-            })
-          }
+      // this.schemasLoading = true
+      // connections
+      //   .get([connectionId])
+      //   .then(result => {
+      //     if (result.data) {
+      //       let schemas = (result.data.schema && result.data.schema.tables) || []
+      //       tempSchemas = schemas = schemas.sort((t1, t2) =>
+      //         t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
+      //       )
+      //       self.schemas = schemas.filter(item => {
+      //         if (item.table_name) {
+      //           return item
+      //         }
+      //       })
+      //     }
+      //   })
+      //   .finally(() => {
+      //     this.schemasLoading = false
+      //   })
+      this.schemaSelectConfig.loading = true
+      self.loading = true
+      this.$api('MetadataInstances')
+        .getTables(connectionId)
+        .then(res => {
+          let schemas = res.data
+          schemas = Array.from(new Set(schemas))
+          self.schemaSelectConfig.options = schemas
+            .sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
+            .map(item => ({
+              label: item,
+              value: item
+            }))
         })
         .finally(() => {
-          this.schemasLoading = false
+          this.schemaSelectConfig.loading = false
         })
     },
 
@@ -452,6 +510,12 @@ export default {
         self.$emit('schemaChange', _.cloneDeep(schema))
       }
       // this.taskData.tableName = this.model.tableName
+    },
+
+    handleFieldFilterType() {
+      this.model.operations = []
+      this.model.fieldFilter = ''
+      this.model.fieldFilterType = 'keepAllFields'
     },
 
     setData(data, cell, dataNodeInfo, vueAdapter) {
@@ -591,6 +655,45 @@ export default {
     //接收是否第一次打开
     returnModel(value) {
       this.model.isFirst = value
+    },
+    handlerConnectionChange() {
+      this.model.tableName = ''
+      let list = this.databaseSelectConfig.options
+      for (let i = 0; i < list.length; i++) {
+        if (this.model.connectionId === list[i].id) {
+          this.model.databaseType = list[i]['database_type']
+        }
+      }
+    },
+    async loadDataSource() {
+      this.databaseSelectConfig.loading = true
+      let result = await this.$api('connections').get({
+        filter: JSON.stringify({
+          where: {
+            database_type: 'hana'
+          },
+          fields: {
+            name: 1,
+            id: 1,
+            database_type: 1,
+            connection_type: 1,
+            status: 1
+          }
+        })
+      })
+
+      this.databaseSelectConfig.loading = false
+      if (result.data) {
+        this.databaseSelectConfig.options = result.data.map(item => {
+          let statusName = this.$t(`connection.status.${item.status}`)
+          return {
+            id: item.id,
+            name: item.name,
+            label: `${item.name} (${statusName})`,
+            value: item.id
+          }
+        })
+      }
     }
 
     // seeMonitor() {
