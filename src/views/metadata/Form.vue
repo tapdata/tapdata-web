@@ -499,7 +499,7 @@ export default {
       if (fields && fields.length) {
         fields.forEach(field => {
           if (!this.form.primary_key) {
-            if (field.primary_key_position * 1 > primary_key_position_mum * 1) {
+            if (this.form.primary_key && field.primary_key_position * 1 > primary_key_position_mum * 1) {
               field.primary_key_position = field.primary_key_position - 1
             }
           }
