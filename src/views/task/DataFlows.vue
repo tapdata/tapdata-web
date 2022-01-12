@@ -602,7 +602,8 @@ export default {
             'fullDocument.errorEvents': true,
             'fullDocument.agentId': true,
             'fullDocument.setting': true,
-            'fullDocument.listtags': true
+            'fullDocument.listtags': true,
+            'fullDocument.user_id': true
           }
         }
       }

@@ -659,69 +659,64 @@ export default {
       ])
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
-        closeOnClickModal: false,
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.metadataDataObj.fields.splice(index, 1)
-            let groupRelation = {}
-            let fields = this.metadataDataObj.fields
+        closeOnClickModal: false
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        // 分页删除条数
+        let delIndex = (this.pageCurrent - 1) * this.pageSize + index
+        this.metadataDataObj.fields.splice(delIndex, 1)
+        let groupRelation = {}
+        let fields = this.metadataDataObj.fields
 
-            if (fields && fields.length) {
-              fields.forEach(field => {
-                if (
-                  // 主键值减1
-                  field.primary_key_position * 1 >
-                  primary_key_position_mum * 1
-                ) {
-                  field.primary_key_position = field.primary_key_position - 1
-                }
-                field.relation &&
-                  field.relation.length &&
-                  field.relation.forEach(item => {
-                    let key = item.table_name + item.rel
-                    if (groupRelation[key]) {
-                      groupRelation[key].fields.push({
+        if (fields && fields.length) {
+          fields.forEach(field => {
+            if (
+              // 主键值减1
+              item.primary_key &&
+              field.primary_key_position * 1 > primary_key_position_mum * 1
+            ) {
+              field.primary_key_position = field.primary_key_position - 1
+            }
+            field.relation &&
+              field.relation.length &&
+              field.relation.forEach(item => {
+                let key = item.table_name + item.rel
+                if (groupRelation[key]) {
+                  groupRelation[key].fields.push({
+                    local: item.field_name,
+                    foreign: field.field_name
+                  })
+                } else {
+                  groupRelation[key] = {
+                    table_name: item.table_name,
+                    rel: item.rel,
+                    fields: [
+                      {
                         local: item.field_name,
                         foreign: field.field_name
-                      })
-                    } else {
-                      groupRelation[key] = {
-                        table_name: item.table_name,
-                        rel: item.rel,
-                        fields: [
-                          {
-                            local: item.field_name,
-                            foreign: field.field_name
-                          }
-                        ]
                       }
-                    }
-                  })
+                    ]
+                  }
+                }
               })
-            }
-            let relation = Object.values(groupRelation)
-            let params = {
-              fields: fields,
-              relation: relation
-            }
-            this.$api('MetadataInstances')
-              .patchId(this.metadataDataObj.id, params)
-              .then(() => {
-                this.getData()
-                this.$message.success(this.$t('message.deleteOK'))
-                done()
-              })
-              .catch(() => {
-                this.$message.info(this.$t('message.deleteFail'))
-              })
-              .finally(() => {
-                instance.confirmButtonLoading = false
-              })
-          } else {
-            done()
-          }
+          })
         }
+        let relation = Object.values(groupRelation)
+        let params = {
+          fields: fields,
+          relation: relation
+        }
+        this.$api('MetadataInstances')
+          .patch(this.metadataDataObj.id, params)
+          .then(() => {
+            this.getData()
+            this.$message.success(this.$t('message.deleteOK'))
+          })
+          .catch(() => {
+            this.$message.info(this.$t('message.deleteFail'))
+          })
       })
     },
     // 关闭弹窗
@@ -766,35 +761,31 @@ export default {
       let message = h('p', [this.$t('message.deleteOrNot') + ' ', h('span', { style: { color: '#409EFF' } }, key)])
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
-        closeOnClickModal: false,
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            for (let value in this.metadataDataObj.custom_properties) {
-              if (value === key) {
-                delete this.metadataDataObj.custom_properties[value]
-              }
-            }
-            let params = {
-              custom_properties: this.metadataDataObj.custom_properties
-            }
-            this.$api('MetadataInstances')
-              .patchId(this.metadataDataObj.id, params)
-              .then(() => {
-                this.getData()
-                this.$message.success(this.$t('metadata.details.success_Release'))
-                done()
-              })
-              .catch(() => {
-                this.$message.error(this.$t('message.saveFail'))
-              })
-              .finally(() => {
-                instance.confirmButtonLoading = false
-              })
-          } else {
-            done()
+        closeOnClickModal: false
+      }).then(res => {
+        if (!res) {
+          return
+        }
+        for (let value in this.metadataDataObj.custom_properties) {
+          if (value === key) {
+            delete this.metadataDataObj.custom_properties[value]
           }
         }
+        let params = {
+          custom_properties: this.metadataDataObj.custom_properties
+        }
+        this.$api('MetadataInstances')
+          .patch(this.metadataDataObj.id, params)
+          .then(() => {
+            this.getData()
+            this.$message.success(this.$t('metadata.details.success_Release'))
+          })
+          .catch(() => {
+            this.$message.error(this.$t('message.saveFail'))
+          })
+        // .finally(() => {
+        //   instance.confirmButtonLoading = false
+        // })
       })
     },
     // 保存业务属性
@@ -968,6 +959,7 @@ export default {
             padding-bottom: 10px;
             overflow: hidden;
             span {
+              display: inline-block;
               float: left;
               color: #666;
             }
@@ -1120,6 +1112,7 @@ export default {
                 background-color: #f7edee;
               }
               .label {
+                display: inline-block;
                 float: left;
                 padding: 5px 0;
                 color: #aaa;
@@ -1128,6 +1121,7 @@ export default {
               }
               .dropInfo {
                 float: left;
+                display: inline-block;
                 width: calc(100% - 60px);
                 white-space: break-spaces;
                 overflow: hidden;
@@ -1191,6 +1185,7 @@ export default {
         line-height: 28px;
       }
       .iconfont {
+        display: inline-block;
         float: right;
         cursor: pointer;
         &:hover {
