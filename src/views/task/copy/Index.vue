@@ -1,7 +1,7 @@
 <template>
   <div v-loading="loading" class="statistics-container flex flex-column font-color-sub">
     <Info :task="task" class="card-box g-panel-container" @reload="loadTask"></Info>
-    <div class="card-box mt-6 pb-6 pt-3 px-6 g-panel-container">
+    <div class="card-box mt-6 pb-6 pt-2 px-6 g-panel-container">
       <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden" @tab-click="tabHandler">
         <ElTabPane :label="$t('task_monitor_progress')" name="schedule">
           <Schedule :task="task"></Schedule>
