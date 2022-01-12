@@ -29,19 +29,19 @@
               <span class="module-path-item-text">{{ item.path }}</span>
             </div>
             <div class="module-path-button-box">
+              <div class="module-path-item-description">{{ item.description }}</div>
               <div style="margin-left: 10px">
-                <el-tooltip class="item" effect="dark" :content="$t('button_edit')" placement="left">
-                  <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
-                    ><i class="fa fa-edit el-icon-edit-outline"></i
-                  ></span>
-                </el-tooltip>
                 <el-tooltip class="item" effect="dark" :content="$t('button_delete')" placement="bottom">
                   <span title="remove" @click="removeApiPath(index)" style="margin-right: 10px; cursor: pointer"
                     ><i class="fa fa-times el-icon-delete"></i
                   ></span>
                 </el-tooltip>
+                <el-tooltip class="item" effect="dark" :content="$t('button_edit')" placement="left">
+                  <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
+                    ><i class="fa fa-edit el-icon-edit-outline"></i
+                  ></span>
+                </el-tooltip>
               </div>
-              <div class="module-path-item-description">{{ item.description }}</div>
             </div>
           </div>
           <template v-else>
@@ -697,6 +697,14 @@ export default {
       }
       .module-path-item-role {
         margin-top: 10px;
+        ::v-deep {
+          .el-select {
+            width: 100%;
+            .el-select__tags {
+              max-width: 100%;
+            }
+          }
+        }
       }
       .label-default {
         background-color: #999 !important;
