@@ -516,7 +516,7 @@ export default {
         }
         this.$api('MetadataInstances')
           .updateById(item.id, {
-            name: item.name || item.original_name
+            name: resFlag.value
           })
           .then(() => {
             this.$message.success(this.$t('message.saveOK'))
