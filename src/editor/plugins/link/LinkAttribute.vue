@@ -736,7 +736,6 @@ export default {
     display: flex;
     flex: 1;
     flex-direction: column;
-    height: 100%;
     .link-show-tips {
       color: red;
       font-size: 12px;
@@ -829,11 +828,6 @@ export default {
       top: 0;
       width: 50px;
     }
-  }
-
-  .e-mapping-wrap {
-    flex: 1;
-    height: 50%;
   }
 
   .flex-block {
