@@ -255,7 +255,7 @@ export default {
       required: true
     },
     currentVersion: {
-      type: String,
+      type: Number,
       required: true
     }
   },

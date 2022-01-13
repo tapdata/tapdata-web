@@ -354,33 +354,27 @@ export default {
       ])
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
-        closeOnClickModal: false,
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            this.$api('ScheduleTasks')
-              .post({
-                task_name: 'mongodb_drop_index',
-                task_type: 'MONGODB_DROP_INDEX',
-                status: 'waiting',
-                task_data: {
-                  collection_name: _this.indexData.original_name,
-                  uri: _this.indexData.source ? _this.indexData.source.database_uri : '',
-                  name: item.name,
-                  ns: item.ns,
-                  meta_id: _this.$route.query.id
-                }
-              })
-              .then(() => {
-                done()
-                this.$message.success(this.$t('message.deleting'))
-              })
-              .catch(() => {
-                this.$message.info(this.$t('message.deleteFail'))
-              })
-          } else {
-            done()
-          }
-        }
+        closeOnClickModal: false
+      }).then(() => {
+        this.$api('ScheduleTasks')
+          .post({
+            task_name: 'mongodb_drop_index',
+            task_type: 'MONGODB_DROP_INDEX',
+            status: 'waiting',
+            task_data: {
+              collection_name: _this.indexData.original_name,
+              uri: _this.indexData.source ? _this.indexData.source.database_uri : '',
+              name: item.name,
+              ns: item.ns,
+              meta_id: _this.$route.query.id
+            }
+          })
+          .then(() => {
+            this.$message.success(this.$t('message.deleting'))
+          })
+          .catch(() => {
+            this.$message.info(this.$t('message.deleteFail'))
+          })
       })
     },
     // 添加索引字段

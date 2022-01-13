@@ -304,7 +304,6 @@ export default {
       let unavailableTable = []
       for (let i = 0; i < this.form.relation.length; i++) {
         if (index === i) {
-          continue
         } else {
           unavailableTable.push(this.form.relation[i].table_name)
         }
@@ -475,6 +474,7 @@ export default {
       let groupRelation = {},
         fieldsArr = [],
         falg = false
+      this.metadata.fields = this.metadata.fields?.length ? this.metadata.fields : []
       if (this.metadata.fields.includes(this.form.field_name)) {
         falg = true
       }
@@ -501,7 +501,7 @@ export default {
       if (fields && fields.length) {
         fields.forEach(field => {
           if (!this.form.primary_key) {
-            if (field.primary_key_position * 1 > primary_key_position_mum * 1) {
+            if (this.form.primary_key && field.primary_key_position * 1 > primary_key_position_mum * 1) {
               field.primary_key_position = field.primary_key_position - 1
             }
           }

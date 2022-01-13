@@ -171,7 +171,8 @@ export default {
     addFilter(filter) {
       const { checkList, keyword } = this
       if (keyword) {
-        filter.where.searchKey = { $regex: keyword, $options: 'i' }
+        // filter.where.searchKey = { $regex: keyword, $options: 'i' }
+        filter.where.$or = [{ searchKey: { $regex: keyword, $options: 'i' } }, { key: keyword }]
       }
 
       if (checkList.length) {
@@ -262,8 +263,16 @@ export default {
           }
           const { keyword } = this
           data.forEach(el => {
-            let { template, params } = el
+            let { template, params, templateKeys } = el
             let content = template || ''
+            if (templateKeys) {
+              templateKeys.forEach(t => {
+                for (let key in params) {
+                  let re = new RegExp(`{${key}}`, 'ig')
+                  params[t] = params[t].replace(re, params[key])
+                }
+              })
+            }
             for (let key in params) {
               let re = new RegExp(`{${key}}`, 'ig')
               content = content.replace(re, params[key])
