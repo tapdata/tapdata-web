@@ -789,7 +789,6 @@ export default {
         })
       }
       if (type === 'setting') {
-        debugger
         this.$refs.setting.validate(valid => {
           if (valid) {
             this.activeStep += 1
