@@ -603,6 +603,9 @@ export default {
         this.$refs.form.validate(valid => {
           if (valid) {
             let data = Object.assign({}, this.model)
+            if (data.database_type === 'mongodb') {
+              data.database_uri = ''
+            }
             if (this.$route.params.id) {
               //编辑需要特殊标识 updateSchema = false editTest = true
               this.$refs.test.start(data, true, false, true)
