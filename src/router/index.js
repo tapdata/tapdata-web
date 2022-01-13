@@ -825,6 +825,11 @@ const router = new Router({
         }
       },
       component: () => import('web-core/views/dataflow/Editor')
+    },
+    {
+      path: '/node/editor',
+      name: 'NodeEditor',
+      component: () => import('web-core/views/node/Editor')
     }
   ]
 })
