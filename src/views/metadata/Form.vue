@@ -631,6 +631,16 @@ export default {
         }
       }
       .e-table {
+        &::before {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          height: 1px;
+          content: '';
+          background-color: #ebeef5;
+          z-index: 1;
+        }
         th {
           padding: 4px 10px;
           color: #666;
