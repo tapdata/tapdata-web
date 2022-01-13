@@ -86,7 +86,9 @@
         </el-table>
         <div class="addBtn">
           <el-button @click="addDictionary" size="mini">+ {{ $t('metadata.details.newMapping') }}</el-button>
-          <el-button @click="handleSelectTemplate" size="mini">{{ $t('metadata.details.chooseTemplate') }}</el-button>
+          <el-button @click="handleSelectTemplate(form)" size="mini">{{
+            $t('metadata.details.chooseTemplate')
+          }}</el-button>
         </div>
       </div>
       <!-- 外键设置 -->
@@ -383,6 +385,7 @@ export default {
 
         that.dictionaryList = []
         let fieldsType
+
         if (item.java_type == 'String') {
           fieldsType = 'string'
         } else if (item.java_type == 'Boolean') {
