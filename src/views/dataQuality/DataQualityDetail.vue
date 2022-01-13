@@ -66,7 +66,7 @@
       <!-- 列表项 -->
       <el-table-column v-for="(item, index) in headers.filter(v => v.visible)" :key="index" min-width="120">
         <template slot="header">
-          <span :title="item.text">{{ item.text }}</span>
+          <span :title="aliasObj[item.text] || item.text">{{ aliasObj[item.text] || item.text }}</span>
         </template>
         <template slot-scope="scope">
           <div v-if="scope.row.wrongFields[item.text]">
@@ -179,7 +179,7 @@
         <el-table-column prop="date" :label="$t('dataQuality.fieldName')" width="330">
           <template slot-scope="scope">
             <div :style="{ color: errorObj[scope.row.text] ? 'red' : undefined }">
-              {{ scope.row.text }}
+              {{ aliasObj[scope.row.text] || scope.row.text }}
             </div>
           </template>
         </el-table-column>
@@ -230,6 +230,7 @@ export default {
 
   data() {
     return {
+      aliasObj: {}, // 别名映射对象
       showTable: false, // 是否渲染表单
       searchParams: {
         // 搜索参数
@@ -355,6 +356,18 @@ export default {
                     return it
                   })
                 }
+              })
+
+            // 获取模型数据中的中文字段
+            this.$api('modules')
+              .getSchema(this.modapiId)
+              .then(({ data }) => {
+                let list = data.fields || []
+                let obj = {}
+                list.forEach(v => {
+                  obj[v.original_field_name] = v.alias_name || v.original_field_name
+                })
+                this.aliasObj = obj
               })
 
             this.apiServer()
