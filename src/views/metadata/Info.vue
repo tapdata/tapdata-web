@@ -297,6 +297,7 @@
                   </el-button>
                   <el-button
                     v-readonlybtn="'meta_data_deleting'"
+                    v-if="scope.row.field_name !== '_id'"
                     size="mini"
                     type="text"
                     @click="remove(scope.row, scope.$index, 0)"
