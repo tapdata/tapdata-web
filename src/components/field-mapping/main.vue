@@ -124,6 +124,8 @@ export default {
       // if (type !== 'dataType') {
       //   this.dataFlow['rollback'] = 'all'
       // }
+      delete this.dataFlow['rollback']
+      delete this.dataFlow['rollbackTable']
       if (type === 'field') {
         this.dataFlow.stages[0].field_process = this.saveFileOperations(row, operations) //保存字段处理器
       }
