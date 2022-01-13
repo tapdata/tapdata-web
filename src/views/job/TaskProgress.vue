@@ -362,6 +362,7 @@ export default {
     //     })
     // },
     handleData(data) {
+      if (!data.id) return
       // let currentData = data
       let overview = {}
       let waitingForSyecTableNums = 0

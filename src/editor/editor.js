@@ -359,9 +359,9 @@ export default class Editor extends BaseObject {
 
   /**
    * show logs panel
-   * @param dataFlow
+   * @param dataFlow 首次创建没有保存时，默认为空对象，保证面板正常展示
    */
-  showLogs(dataFlow, isShow) {
+  showLogs(dataFlow = {}, isShow) {
     let bottomTabPanel = this.getBottomTabPanel()
     let milestone = bottomTabPanel.getChildByName('milestone')
 
