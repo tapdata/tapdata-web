@@ -216,6 +216,7 @@ export default {
 
 <style scoped lang="scss">
 .filter-icon {
+  padding-right: 10px;
   font-size: 12px;
   color: #edc958;
 }
