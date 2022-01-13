@@ -96,6 +96,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       createDialogVisible: false,
       collectionTableData: [],
       rulesArr: [],
@@ -186,23 +187,17 @@ export default {
       ])
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
-        closeOnClickModal: false,
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            this.$api('MetadataInstances')
-              .delete(item.id)
-              .then(() => {
-                done()
-                this.getData()
-                this.$message.success(this.$t('message.deleteOK'))
-              })
-              .catch(() => {
-                this.$message.info(this.$t('message.deleteFail'))
-              })
-          } else {
-            done()
-          }
-        }
+        closeOnClickModal: false
+      }).then(() => {
+        this.$api('MetadataInstances')
+          .delete(item.id)
+          .then(() => {
+            this.getData()
+            this.$message.success(this.$t('message.deleteOK'))
+          })
+          .catch(() => {
+            this.$message.info(this.$t('message.deleteFail'))
+          })
       })
     },
     // 分页数据处理
