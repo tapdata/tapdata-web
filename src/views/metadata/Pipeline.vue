@@ -122,16 +122,14 @@ export default {
           closeOnClickModal: false,
           confirmButtonText: this.$t('message.confirm'),
           confirmButtonClass: this.$t('message.cancel'),
-          showClose: false,
-          beforeClose: (action, instance, done) => {
-            if (action === 'confirm') {
-              this.applyToDB()
-              this.isCoverDialog = false
-            } else {
-              done()
-            }
-          }
+          showClose: false
         })
+          .then(() => {
+            this.applyToDB()
+          })
+          .finally(() => {
+            this.isCoverDialog = false
+          })
       } else {
         this.applyToDB()
       }
