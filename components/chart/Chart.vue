@@ -127,7 +127,6 @@ export default {
           }
         }
       }
-      console.log('init', obj)
       this.chartOption = obj
     },
     bar() {
