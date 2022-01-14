@@ -326,18 +326,12 @@ export const baseElementConfig = {
                 // 	.filter(f => f.primary_key_position > 0)
                 // 	.map(f => f.field_name)
                 // 	.join(',');
-                if (
-                  (schema.meta_type === 'collection' && schema.tableName !== joinTable.tableName) ||
-                  (schema.meta_type === 'table' && schema.table_name !== joinTable.tableName) ||
-                  sourceCellFormData.connectionId !== joinTable.connectionId
-                ) {
+                let tableName = schema?.tableName || schema?.table_name
+                if (tableName !== joinTable.tableName || sourceCellFormData.connectionId !== joinTable.connectionId) {
                   joinTable = _.cloneDeep(JOIN_TABLE_TPL)
                 }
-                if (schema?.meta_type === 'table') {
-                  joinTable.tableName = schema && schema.table_name
-                } else {
-                  joinTable.tableName = schema && schema.tableName
-                }
+                joinTable.tableName = tableName
+
                 // joinTable.tableName = schema && schema.table_name
                 /* if( !joinTable.joinPath && ['merge_embed', 'update'].includes(joinTable.joinType)){
 										joinTable.joinPath = joinTable.tableName;

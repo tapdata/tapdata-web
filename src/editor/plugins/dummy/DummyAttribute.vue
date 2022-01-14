@@ -200,7 +200,7 @@ export default {
                 : {
                     table_name: this.model.tableName,
                     cdc_enabled: true,
-                    meta_type: 'rest api',
+                    meta_type: 'table',
                     fields: []
                   }
             this.$emit('schemaChange', _.cloneDeep(schema))
