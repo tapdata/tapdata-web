@@ -816,7 +816,7 @@ export default {
     },
     // 禁用停止
     stopBtnDisabled(row) {
-      return row.agentType === 'Cloud' || row.status !== 'Running'
+      return row.agentType === 'Cloud' || row.status !== 'Running' || row.metric.runningTaskNum > 0
     },
     // 禁用删除
     delBtnDisabled(row) {
