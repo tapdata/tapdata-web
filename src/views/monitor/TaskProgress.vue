@@ -115,6 +115,8 @@
 import Chart from 'web-core/components/chart'
 import EchartHeader from './EchartHeader'
 import { getOverviewData } from '../task/copy/util'
+import { formatTimeByTime } from '@/util'
+
 let lastMsg = ''
 export default {
   name: 'TaskProgress',
@@ -270,23 +272,6 @@ export default {
         this.loadData(params, item)
       })
     },
-    formatTime(time, type) {
-      let result
-      switch (type) {
-        case 'second':
-          result = time.substring(11, 19)
-          break
-        case 'minute':
-          result = time.substring(11, 16)
-          break
-        case 'hour':
-          result = time.substring(11, 16)
-          break
-        case 'day':
-          result = time.substring(6, 10)
-      }
-      return result
-    },
     getOverview(data) {
       let overview = data.statsData.data_overview
       let seriesData = [
@@ -381,7 +366,7 @@ export default {
         outputCountList = [],
         timeType = data.granularity['throughput']?.split('_')[1]
       data.statsData.throughput.forEach(item => {
-        timeList.push(this.formatTime(item.t, timeType))
+        timeList.push(formatTimeByTime(item.t, timeType))
         inputCountList.push(item.inputCount)
         outputCountList.push(item.outputCount)
       })
@@ -462,7 +447,7 @@ export default {
         dataList = [],
         timeType = data.granularity['trans_time']?.split('_')[1]
       data.statsData.trans_time.forEach(item => {
-        timeList.push(this.formatTime(item.t, timeType)) // 时间
+        timeList.push(formatTimeByTime(item.t, timeType)) // 时间
         dataList.push(item.d)
       })
       this.transfObj.body = {
@@ -527,7 +512,7 @@ export default {
         dataList = [],
         timeType = data.granularity['repl_lag']?.split('_')[1]
       data.statsData.repl_lag.forEach(item => {
-        timeList.push(this.formatTime(item.t, timeType)) // 时间
+        timeList.push(formatTimeByTime(item.t, timeType)) // 时间
         dataList.push(item.d)
       })
       this.replicateObj.value = this.formatLag(dataList[dataList.length - 1] || 0)

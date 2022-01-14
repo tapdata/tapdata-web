@@ -57,6 +57,26 @@ export const deepCopy = obj => JSON.parse(JSON.stringify(obj))
 export const formatTime = (date, format = 'YYYY-MM-DD HH:mm:ss') => {
   return date ? moment(date).format(format) : ''
 }
+// 根据类型做时间格式化，精确到哪种级别
+export const formatTimeByTime = (time, type) => {
+  let result = time
+  switch (type) {
+    case 'second':
+      result = moment(time).format('HH:mm:ss')
+      break
+    case 'minute':
+      result = moment(time).format('HH:mm')
+      break
+    case 'hour':
+      result = moment(time).format('HH:00')
+      break
+    case 'day':
+      result = moment(time).format('MM-DD')
+      break
+  }
+  return result
+}
+
 // 判断对象是否为空
 export const isEmpty = obj => Reflect.ownKeys(obj).length === 0 && obj.constructor === Object
 // 数组去重
