@@ -115,7 +115,8 @@ _axios.interceptors.response.use(function (response) {
     } else {
       // 其他情况交由业务端自行处理
       let msg = data?.message || data?.msg || ''
-      Message.error(`${code}： ${msg}`)
+      console.log(`${code}： ${msg}`)
+      Message.error(msg)
       return reject(Object.assign(response))
     }
   })
