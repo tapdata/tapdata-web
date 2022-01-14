@@ -61,8 +61,11 @@
             <el-collapse-item name="1">
               <template slot="title">
                 <div class="iconBox">
-                  <i class="header-icon el-icon-arrow-right"></i>
-                  <span>{{ $t('metadata.details.basicAttributes') }}</span>
+                  <div>
+                    <i class="header-icon el-icon-arrow-right"></i>
+                    <span>{{ $t('metadata.details.basicAttributes') }}</span>
+                  </div>
+
                   <i @click.stop="asideFalg = false" class="iconfont icon-outdent"></i>
                 </div>
               </template>
@@ -129,9 +132,13 @@
             <el-collapse-item name="2">
               <template slot="title">
                 <div class="iconBox">
-                  <i class="header-icon el-icon-arrow-right"></i
-                  ><span>{{ $t('metadata.details.businessAttributes') }}</span>
-                  <el-button type="text" @click.stop="creatBusiness">+ {{ $t('metadata.details.creat') }}</el-button>
+                  <div>
+                    <i class="header-icon el-icon-arrow-right"></i
+                    ><span>{{ $t('metadata.details.businessAttributes') }}</span>
+                  </div>
+                  <el-button type="text" size="mini" @click.stop="creatBusiness"
+                    >+ {{ $t('metadata.details.creat') }}</el-button
+                  >
                 </div>
               </template>
               <ul>
@@ -290,6 +297,7 @@
                   </el-button>
                   <el-button
                     v-readonlybtn="'meta_data_deleting'"
+                    v-if="scope.row.field_name !== '_id'"
                     size="mini"
                     type="text"
                     @click="remove(scope.row, scope.$index, 0)"
@@ -1163,9 +1171,11 @@ export default {
       background-color: #eff1f4;
     }
     .iconBox {
+      display: flex;
       width: 100%;
       height: 28px;
       line-height: 28px;
+      justify-content: space-between;
       .header-icon {
         float: left;
         margin-top: 8px;
@@ -1186,16 +1196,14 @@ export default {
       }
       .iconfont {
         display: inline-block;
-        float: right;
+        line-height: 28px;
+        // float: right;
         cursor: pointer;
         &:hover {
           color: #409eff;
         }
       }
       .el-button {
-        float: right;
-        height: 32px;
-        line-height: 32px;
         padding: 0;
         font-size: 12px;
         color: #333;
