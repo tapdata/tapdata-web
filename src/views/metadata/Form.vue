@@ -86,7 +86,9 @@
         </el-table>
         <div class="addBtn">
           <el-button @click="addDictionary" size="mini">+ {{ $t('metadata.details.newMapping') }}</el-button>
-          <el-button @click="handleSelectTemplate" size="mini">{{ $t('metadata.details.chooseTemplate') }}</el-button>
+          <el-button @click="handleSelectTemplate(form)" size="mini">{{
+            $t('metadata.details.chooseTemplate')
+          }}</el-button>
         </div>
       </div>
       <!-- 外键设置 -->
@@ -304,7 +306,6 @@ export default {
       let unavailableTable = []
       for (let i = 0; i < this.form.relation.length; i++) {
         if (index === i) {
-          continue
         } else {
           unavailableTable.push(this.form.relation[i].table_name)
         }
@@ -384,6 +385,7 @@ export default {
 
         that.dictionaryList = []
         let fieldsType
+
         if (item.java_type == 'String') {
           fieldsType = 'string'
         } else if (item.java_type == 'Boolean') {
@@ -473,6 +475,7 @@ export default {
       let groupRelation = {},
         fieldsArr = [],
         falg = false
+      this.metadata.fields = this.metadata.fields?.length ? this.metadata.fields : []
       if (this.metadata.fields.includes(this.form.field_name)) {
         falg = true
       }
@@ -499,7 +502,7 @@ export default {
       if (fields && fields.length) {
         fields.forEach(field => {
           if (!this.form.primary_key) {
-            if (field.primary_key_position * 1 > primary_key_position_mum * 1) {
+            if (this.form.primary_key && field.primary_key_position * 1 > primary_key_position_mum * 1) {
               field.primary_key_position = field.primary_key_position - 1
             }
           }
@@ -628,6 +631,16 @@ export default {
         }
       }
       .e-table {
+        &::before {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          height: 1px;
+          content: '';
+          background-color: #ebeef5;
+          z-index: 1;
+        }
         th {
           padding: 4px 10px;
           color: #666;

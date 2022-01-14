@@ -42,6 +42,9 @@
         >
           <slot></slot>
         </el-table>
+        <div class="table-footer">
+          <slot name="tableFooter"></slot>
+        </div>
         <el-pagination
           background
           class="table-page-pagination"
@@ -221,6 +224,7 @@ export default {
   min-width: 720px;
   flex: 1;
   width: 100%;
+
   .table-page-header {
     padding: 15px 10px;
     padding-left: 20px;
@@ -229,49 +233,59 @@ export default {
     border-bottom: 1px solid #dedee4;
     box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
+
     .page-header-title {
       font-size: 16px;
       color: #333;
       font-weight: 600;
+
       &.link {
         color: rgb(72, 182, 226);
         cursor: pointer;
       }
     }
+
     .page-header-desc {
       margin-top: 10px;
       font-size: 12px;
       color: #999;
     }
   }
+
   .table-page-main {
     flex: 1;
     padding: 20px;
     display: flex;
     overflow: hidden;
   }
+
   .table-page-left {
     margin-right: 10px;
   }
+
   .table-page-body {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+
     .table-page-topbar {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
       flex-wrap: wrap-reverse;
+
       .table-page-search-bar {
         margin-right: 5px;
         margin-bottom: 20px;
       }
+
       .table-page-operation-bar {
         margin-bottom: 20px;
         text-align: right;
       }
     }
+
     .table-page-table {
       flex: 1;
       border-bottom: none;
@@ -279,13 +293,23 @@ export default {
       background: #fff;
       overflow: hidden;
     }
+
     .el-table--border td,
     .el-table__body-wrapper .el-table--border.is-scrolling-left ~ .el-table__fixed {
       border-right: 0;
     }
+
     .el-table--border th {
       border-right: 1px solid #ebeef5;
+      .cell {
+        white-space: nowrap;
+      }
     }
+
+    .table-footer {
+      line-height: 38px;
+    }
+
     .table-page-pagination {
       margin-top: 5px;
     }

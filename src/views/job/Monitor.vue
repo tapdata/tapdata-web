@@ -948,7 +948,6 @@ export default {
         if (this.flow.status === 'force stopping') {
           this.flow.status = 'force_stopping'
         }
-
         let cdcList = []
         if (this.flow.cdcLastTimes && this.flow.cdcLastTimes.length) {
           this.flow.cdcLastTimes.forEach(item => {
@@ -1472,7 +1471,7 @@ export default {
     },
 
     // 跳转到数据校验页面
-    handleGoDataVerify() {
+    /*handleGoDataVerify() {
       this.loading = true
       dataFlows
         .get([this.flow.id], {
@@ -1486,7 +1485,7 @@ export default {
             this.editor.showResult()
           }
         })
-    },
+    },*/
 
     // tooltip的可控
     visibilityChange(event) {

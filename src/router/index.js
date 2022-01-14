@@ -157,7 +157,6 @@ const childRoutes = [
     path: '/ttl',
     name: 'timeToLive',
     component: () => import('@/views/TimeToLive/List'),
-    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'time_to_live_menu',
       // url: '/old/index.html#/ttl',
@@ -199,10 +198,9 @@ const childRoutes = [
   {
     path: '/modules',
     name: 'modules',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/apiPage/Modules'),
     meta: {
       code: 'API_management_menu',
-      url: '/old/index.html#/modules',
       title: i18n.t('tap.apiManagement'),
       isCollapse: false
     }
@@ -210,7 +208,7 @@ const childRoutes = [
   {
     path: '/module',
     name: 'module',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/apiPage/ModuleForm'),
     meta: {
       code: 'API_creation'
     }
@@ -218,7 +216,7 @@ const childRoutes = [
   {
     path: '/module/:id',
     name: 'editModule',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/apiPage/ModuleForm'),
     meta: {
       code: 'API_edition'
     }
@@ -226,10 +224,11 @@ const childRoutes = [
   {
     path: '/dataExplorer',
     name: 'dataExplorer',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/apiPage/DataExplorer'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'API_data_explorer_menu',
-      url: '/old/index.html#/dataExplorer',
+      // url: '/old/index.html#/dataExplorer',
       title: i18n.t('tap.dataExplor'),
       isCollapse: false
     }
@@ -237,10 +236,11 @@ const childRoutes = [
   {
     path: '/apiDocAndTest',
     name: 'apiDocAndTest',
-    component: () => import('@/views/ExternalLink'),
+    // component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/apiPage/ApiDocAndTest'),
     meta: {
       code: 'API_doc_&_test_menu',
-      url: '/old/index.html#/apiDocAndTest',
+      // url: '/old/index.html#/apiDocAndTest',
       title: i18n.t('tap.docTest'),
       isCollapse: false
     }
@@ -248,10 +248,11 @@ const childRoutes = [
   {
     path: '/apiAnalysis',
     name: 'apiAnalysis',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/apiPage/ApiAnalysis'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'API_stats_menu',
-      url: '/old/index.html#/apiAnalysis',
+      // url: '/old/index.html#/apiAnalysis',
       title: i18n.t('tap.apiStats'),
       isCollapse: false
     }
@@ -259,10 +260,11 @@ const childRoutes = [
   {
     path: '/applications',
     name: 'applications',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/apiPage/Applications'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'API_clients_menu',
-      url: '/old/index.html#/applications',
+      // url: '/old/index.html#/applications',
       title: i18n.t('tap.apiClients'),
       isCollapse: false
     }
@@ -270,10 +272,11 @@ const childRoutes = [
   {
     path: '/apiServers',
     name: 'apiServers',
-    component: () => import('@/views/ExternalLink'),
+    component: () => import('@/views/apiPage/ApiServers'),
+    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'API_server_menu',
-      url: '/old/index.html#/apiServers',
+      // url: '/old/index.html#/apiServers',
       title: i18n.t('tap.apiSever'),
       isCollapse: false
     }
