@@ -494,6 +494,7 @@ export default {
       this.initTypeMapping()
       this.clearSearch()
       this.operations = []
+      this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
       if (this.field_process?.length > 0) {
         this.getFieldProcess()
       }
