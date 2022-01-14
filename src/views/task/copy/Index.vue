@@ -114,7 +114,8 @@ export default {
           'fullDocument.errorEvents': true,
           'fullDocument.milestones': true,
           'fullDocument.user': true,
-          'fullDocument.mappingTemplate': true
+          'fullDocument.mappingTemplate': true,
+          'fullDocument.stages': true
         }
       }
     })

@@ -3,7 +3,7 @@
     <div class="task-overview flex">
       <div class="flex-shrink-0" style="width: 300px">
         <!-- 非增量 -->
-        <div v-if="task && task.setting.sync_type !== 'cdc'" style="height: 310px">
+        <div v-if="task && task.setting && task.setting.sync_type !== 'cdc'" style="height: 310px">
           <div>
             <span class="dots">{{ $t('task_monitor_full_sync') }}</span>
           </div>
@@ -47,7 +47,7 @@
       </div>
       <div class="task-overview__detail flex-fill pl-4">
         <!-- 非增量 -->
-        <div v-if="task && task.setting.sync_type !== 'cdc'" style="height: 310px">
+        <div v-if="task && task.setting && task.setting.sync_type !== 'cdc'" style="height: 310px">
           <div class="mb-10 fs-7 dots">{{ $t('task_monitor_progress_details') }}</div>
           <div v-for="(item, index) in initialList" :key="index" class="initial-box">
             <span v-if="item.label" class="initial-box__title font-color-sub">{{ item.label }}：</span>
