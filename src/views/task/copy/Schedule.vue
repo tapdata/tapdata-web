@@ -257,8 +257,8 @@ export default {
             group: el.group
           })
         }
-        // 已完成
-        if (el.status !== 'finish' && !currentStep) {
+        // 判断分组里面是否有：进行中、已完成
+        if (['finish', 'running'].includes(el.status)) {
           currentStep = el.group
         }
       })
