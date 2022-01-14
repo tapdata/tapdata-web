@@ -576,11 +576,13 @@ export default {
       this.$confirm(this.$t('dataQuality.ifDel'), this.$t('message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false
-      }).then(() => {
-        this.apiClient.deleteById(item._id).then(() => {
-          this.$message.success(this.$t('message.deleteOK'))
-          this.table.fetch()
-        })
+      }).then(res => {
+        if (res) {
+          this.apiClient.deleteById(item._id).then(() => {
+            this.$message.success(this.$t('message.deleteOK'))
+            this.table.fetch()
+          })
+        }
       })
     },
     // 打开批量修改弹框

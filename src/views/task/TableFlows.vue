@@ -369,9 +369,11 @@ export default {
           attributes.push(node)
         })
       }
-      dataFlows.patchAll({ attrs: attributes }).then(() => {
-        this.dataFlowId = ''
-        this.getData()
+      dataFlows.patchAll({ attrs: attributes }).then(res => {
+        if (res) {
+          this.dataFlowId = ''
+          this.getData()
+        }
       })
     },
     rowClassHandler({ rowIndex }) {

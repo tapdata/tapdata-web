@@ -188,16 +188,18 @@ export default {
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false
-      }).then(() => {
-        this.$api('MetadataInstances')
-          .delete(item.id)
-          .then(() => {
-            this.getData()
-            this.$message.success(this.$t('message.deleteOK'))
-          })
-          .catch(() => {
-            this.$message.info(this.$t('message.deleteFail'))
-          })
+      }).then(res => {
+        if (res) {
+          this.$api('MetadataInstances')
+            .delete(item.id)
+            .then(() => {
+              this.getData()
+              this.$message.success(this.$t('message.deleteOK'))
+            })
+            .catch(() => {
+              this.$message.info(this.$t('message.deleteFail'))
+            })
+        }
       })
     },
     // 分页数据处理
