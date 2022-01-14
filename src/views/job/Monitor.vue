@@ -499,6 +499,7 @@ import factory from '../../api/factory'
 import { EditorEventType } from '../../editor/lib/events'
 import i18n from '@/i18n'
 import ws from '../../api/ws'
+import { formatTimeByTime } from '@/utils/util'
 // import _ from "lodash";
 const dataFlows = factory('DataFlows')
 const connectionApi = factory('connections')
@@ -1278,19 +1279,7 @@ export default {
         tdataList = []
       function ptime(type) {
         data.statsData[type].forEach(time => {
-          switch (data.granularity[type].split('_')[1]) {
-            case 'second':
-              time.t = time.t.substring(11, 19)
-              break
-            case 'minute':
-              time.t = time.t.substring(11, 16)
-              break
-            case 'hour':
-              time.t = time.t.substring(11, 16)
-              break
-            case 'day':
-              time.t = time.t.substring(6, 10)
-          }
+          time.t = formatTimeByTime(time.t, data.granularity[type].split('_')[1])
         })
       }
       ptime('repl_lag')
