@@ -21,7 +21,6 @@
             :clearable="true"
             @change="changeFnc"
           >
-            <!--           -->
             <el-option
               v-for="(item, idx) in databases"
               :label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
@@ -229,8 +228,8 @@ import VIcon from '@/components/VIcon'
 import FieldMapping from '@/components/FieldMapping'
 
 import ws from '@/api/ws'
-// import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
 const connections = factory('connections')
+
 // let editorMonitor = null;
 export default {
   name: 'ApiNode',
@@ -417,6 +416,7 @@ export default {
                 return item
               }
             })
+            self.tableList = self.schemas
           }
         })
         .finally(() => {
