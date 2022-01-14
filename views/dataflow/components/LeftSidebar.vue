@@ -73,6 +73,9 @@
           <span class="flex-1 user-select-none text-truncate flex align-center"
             >数据表<span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span></span
           >
+          <ElTooltip content="创建新表作为节点使用" placement="top">
+            <VIcon size="20" class="click-btn" @click.stop="handleAddTable">add-outline</VIcon>
+          </ElTooltip>
           <VIcon size="20" class="click-btn" @click.stop="handleShowTBInput">search-outline</VIcon>
 
           <ElInput
@@ -166,6 +169,7 @@
       </ElCollapseItem>
     </ElCollapse>
 
+    <!-- S 节点拖拽元素 -->
     <BaseNode
       v-if="dragStarting"
       id="dragNode"
@@ -173,6 +177,8 @@
       :node="dragNodeType"
       :class="`node--${dragNodeType.group}`"
     ></BaseNode>
+    <!-- E 节点拖拽元素 -->
+
     <ElDialog
       title="选择数据源类型"
       :visible.sync="connectionDialog"
@@ -209,6 +215,8 @@
     >
       <!--<Form :databaseTypeText="databaseType" @saveConnection="saveConnection"></Form>-->
     </ElDialog>
+
+    <CreateTable :dialog="dialogData" @handleTable="handleSaveTable"></CreateTable>
   </aside>
 </template>
 
@@ -240,11 +248,13 @@ import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/re
 import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
 import EmptyItem from 'web-core/components/EmptyItem'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
+import CreateTable from './CreateTable'
 
 export default {
   name: 'LeftSidebar',
 
   components: {
+    CreateTable,
     EmptyItem,
     OverflowTooltip,
     BaseNode,
@@ -288,7 +298,14 @@ export default {
       dbLoadingMore: false,
       tbLoading: true,
       tbLoadingMore: false,
-      skeletonThrottle: 0
+      skeletonThrottle: 0,
+
+      dialogData: {
+        type: 'table',
+        title: this.$t('dialog.createTable'),
+        placeholder: this.$t('dialog.placeholderTable'),
+        visible: false
+      }
     }
   },
 
@@ -610,7 +627,28 @@ export default {
 
     handleDBInput: debounce(function () {
       this.loadDatabase()
-    }, 100)
+    }, 100),
+
+    handleAddTable() {
+      this.dialogData.visible = true
+    },
+
+    handleSaveTable(name) {
+      const connection = this.activeConnection
+
+      this.$emit('add-table-as-node', {
+        name,
+        type: 'table',
+        group: 'data',
+        constructor: 'Table',
+        databaseType: connection.database_type,
+        attr: {
+          tableName: name,
+          databaseType: connection.database_type,
+          connectionId: connection.id
+        }
+      })
+    }
   }
 }
 </script>

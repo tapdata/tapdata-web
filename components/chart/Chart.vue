@@ -83,9 +83,9 @@ export default {
   mounted() {
     this.init()
     window.addEventListener('resize', this.resize)
-  },
-  beforeDestroy() {
-    window.removeEventListener('resize', this.resize)
+    this.$once('hook:beforeDestroy', () => {
+      window.removeEventListener('resize', this.resize)
+    })
   },
   methods: {
     init() {
@@ -130,8 +130,9 @@ export default {
       this.chartOption = obj
     },
     bar() {
-      let seriesData = []
-      return {
+      // 需要传入 [{ value: 1, name: 'A', color: 'red' },{ value: 2, name: 'B', color: 'blue' }...] 单系列
+      // 需要传入 { x: [], y: [[], []] }，y数组支持多系列
+      let obj = {
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -139,79 +140,122 @@ export default {
           }
         },
         grid: {
-          left: '10%',
-          right: '10%',
-          bottom: '3%',
+          // left: '10%',
+          // right: '10%',
+          // bottom: '3%',
           containLabel: true
         },
         xAxis: {
           type: 'category',
-          show: true,
+          // show: true,
           axisLine: {
-            show: false,
-            lineStyle: {
-              color: '#666',
-              width: 0
-            }
+            show: false
+            // lineStyle: {
+            //   type: 'dashed'
+            //   // color: '#666',
+            //   // width: 0
+            // }
           },
           axisLabel: {
-            margin: 30
+            // margin: 30
           },
           axisTick: {
             show: false
           },
-          data: [
-            this.$t('dataFlow.totalOutput'),
-            this.$t('dataFlow.totalInput'),
-            this.$t('dataFlow.totalInsert'),
-            this.$t('dataFlow.totalUpdate'),
-            this.$t('dataFlow.totalDelete')
-          ],
+          data: [],
           axisPointer: {
+            show: false,
             type: 'shadow'
           },
           nameTextStyle: {
-            verticalAlign: 'bottom',
-            color: '#F00'
+            // verticalAlign: 'bottom',
+            // color: '#F00'
           }
         },
         yAxis: {
-          // show: false
+          show: false
         },
         series: [
           {
             type: 'bar',
-            data: seriesData,
-            barWidth: '50%',
-            barGap: '-100%',
-            itemStyle: {
-              normal: {
-                color: function (params) {
-                  let colorList = ['#7ba75d', '#409EFF', '#d9742c', '#e6b451', '#e06c6c']
-                  return colorList[params.dataIndex]
-                },
-                label: {
-                  show: true,
-                  position: 'bottom',
-                  distance: 10,
-                  formatter: function (value) {
-                    if (value.data / (1000 * 1000 * 1000) > 1) {
-                      return (value.data / (1000 * 1000 * 1000)).toFixed(1) + ' T'
-                    } else if (value.data / (1000 * 1000) > 1) {
-                      return (value.data / (1000 * 1000)).toFixed(1) + ' M'
-                    } else if (value.data / 1000 > 1) {
-                      return (value.data / 1000).toFixed(1) + ' K'
+            data: [],
+            colorBy: 'value'
+            // barWidth: '50%',
+            // barGap: '-100%'
+            // itemStyle: {
+            //   normal: {
+            //     // color: function (params) {
+            //     //   let colorList = ['#7ba75d', '#409EFF', '#d9742c', '#e6b451', '#e06c6c']
+            //     //   return colorList[params.dataIndex]
+            //     // },
+            //     label: {
+            //       show: true,
+            //       position: 'bottom',
+            //       distance: 10,
+            //       formatter: function (value) {
+            //         if (value.data / (1000 * 1000 * 1000) > 1) {
+            //           return (value.data / (1000 * 1000 * 1000)).toFixed(1) + ' T'
+            //         } else if (value.data / (1000 * 1000) > 1) {
+            //           return (value.data / (1000 * 1000)).toFixed(1) + ' M'
+            //         } else if (value.data / 1000 > 1) {
+            //           return (value.data / 1000).toFixed(1) + ' K'
+            //         }
+            //       }
+            //     }
+            //   }
+            // }
+          }
+        ]
+      }
+      const { data, options } = this
+      if (data instanceof Array) {
+        let color = data.map(t => t.color)
+        obj.xAxis.data = data.map(t => t.name)
+        obj.series[0].data = data.map(t => t.value)
+        if (color.length) {
+          obj.color = color
+        }
+      } else {
+        // 需要传入 { x: [], y: [[], []] }，y数组支持多系列
+        obj.xAxis.data = data.x
+        let series = []
+        data.y.forEach(el => {
+          series.push(Object.assign(this.getBarSeriesItem(), { data: el }))
+        })
+        obj.series = series
+      }
+      if (options) {
+        if (options.series) {
+          options.series.forEach((el, i) => {
+            Object.assign(obj.series[i], el)
+            if (el.labelFormat === 'KMT') {
+              const { valueToFixed } = this
+              obj.series[i].itemStyle = {
+                normal: {
+                  label: {
+                    show: true,
+                    position: 'top',
+                    distance: 10,
+                    formatter: function (value) {
+                      if (value.data / (1000 * 1000 * 1000) > 1) {
+                        return valueToFixed(value.data / (1000 * 1000 * 1000), el.fixed) + ' T'
+                      } else if (value.data / (1000 * 1000) > 1) {
+                        return valueToFixed(value.data / (1000 * 1000), el.fixed) + ' M'
+                      } else if (value.data / 1000 > 1) {
+                        return valueToFixed(value.data / 1000, el.fixed) + ' K'
+                      }
                     }
                   }
                 }
               }
             }
-          }
-        ]
+          })
+        }
       }
+      return obj
     },
     line() {
-      // 需要传入 { x: [], y: [[], []] }
+      // 需要传入 { x: [], y: [[], []] }，y数组支持多系列
       let obj = {
         xAxis: {
           boundaryGap: false,
@@ -300,6 +344,20 @@ export default {
       }
       return obj
     },
+    getBarSeriesItem() {
+      const { options } = this
+      let item = {
+        type: 'bar',
+        data: [],
+        colorBy: 'value'
+      }
+      if (options) {
+        if (options.barWidth) {
+          item.barWidth = options.barWidth
+        }
+      }
+      return item
+    },
     getLineSeriesItem() {
       const { options } = this
       let item = {
@@ -354,6 +412,12 @@ export default {
         day: 'MM-DD'
       }
       return this.$moment(time).format(map[type] || 'YYYY-MM-DD HH:mm:ss')
+    },
+    valueToFixed(val, fixed) {
+      if (fixed) {
+        return val.toFixed(fixed)
+      }
+      return val
     },
     resize() {
       const { delayTrigger } = this.$util
