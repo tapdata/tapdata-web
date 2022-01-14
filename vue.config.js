@@ -1,7 +1,6 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
-const SpeedMeasurePlugin = require('speed-measure-webpack-plugin') // 观测打包时间
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
@@ -145,10 +144,6 @@ module.exports = {
       .end()
 
     config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('src/_packages/tapdata-web-core'))
-
-    config.plugin('hard-source-webpack-plugin').use(HardSourceWebpackPlugin)
-
-    config.plugin('speed-measure-webpack-plugin').use(SpeedMeasurePlugin).end()
   },
   configureWebpack: config => {
     if (process.env.NODE_ENV === 'production') {
@@ -168,6 +163,15 @@ module.exports = {
         maxEntrypointSize: 10000000,
         maxAssetSize: 30000000
       }
+
+      config.plugins.push(
+        new HardSourceWebpackPlugin(),
+        new HardSourceWebpackPlugin.ExcludeModulePlugin([
+          {
+            test: /.*\.DS_Store/
+          }
+        ])
+      )
     }
   },
   css: {

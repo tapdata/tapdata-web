@@ -171,7 +171,8 @@ export default {
     addFilter(filter) {
       const { checkList, keyword } = this
       if (keyword) {
-        filter.where.searchKey = { $regex: keyword, $options: 'i' }
+        // filter.where.searchKey = { $regex: keyword, $options: 'i' }
+        filter.where.$or = [{ searchKey: { $regex: keyword, $options: 'i' } }, { key: keyword }]
       }
 
       if (checkList.length) {
