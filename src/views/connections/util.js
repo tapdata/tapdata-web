@@ -154,7 +154,7 @@ export const defaultModel = {
     database_type: '',
     connection_type: '',
     database_host: '',
-    database_port: '',
+    database_port: '21',
     database_name: '',
     database_username: '',
     database_password: '',
