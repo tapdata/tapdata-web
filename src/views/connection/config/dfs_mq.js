@@ -155,6 +155,28 @@ export default function (vm) {
             triggerConfig: {
               show: true
             }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'mqType',
+                value: '1'
+              }
+            ],
+            triggerConfig: {
+              value: ''
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'mqType',
+                value: '2'
+              }
+            ],
+            triggerConfig: {
+              value: ''
+            }
           }
         ]
       },
@@ -204,7 +226,8 @@ export default function (vm) {
               }
             ],
             triggerConfig: {
-              show: false
+              show: false,
+              value: ''
             }
           }
         ]
@@ -240,7 +263,8 @@ export default function (vm) {
               }
             ],
             triggerConfig: {
-              show: false
+              show: false,
+              value: ''
             }
           }
         ]
