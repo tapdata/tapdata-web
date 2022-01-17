@@ -1144,8 +1144,10 @@ export default {
         dataFlows
           .resetAll(ids)
           .then(res => {
-            this.table.fetch()
-            this.responseHandler(res.data, this.$t('message.resetOk'))
+            if (res) {
+              this.table.fetch()
+              this.responseHandler(res.data, this.$t('message.resetOk'))
+            }
           })
           .catch(() => {
             this.$message.info(this.$t('message.cancelReset'))
