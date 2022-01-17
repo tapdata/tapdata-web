@@ -456,7 +456,10 @@ export default {
       let fields = {
         id: true,
         name: true,
-        status: true
+        status: true,
+        stages: true,
+        stats: true,
+        setting: true
       }
       let filter = {
         fields,
@@ -470,8 +473,8 @@ export default {
       let changeList = data?.items || []
       let statusMap = {}
       changeList.forEach(item => {
-        let { statusText, statusIcon, status } = this.formatData(item)
-        statusMap[item.id] = { statusText, statusIcon, status }
+        let { statusText, statusIcon, status, isFinished } = this.formatData(item)
+        statusMap[item.id] = { statusText, statusIcon, status, isFinished }
       })
       let list = this.list || []
       list.forEach(item => {
