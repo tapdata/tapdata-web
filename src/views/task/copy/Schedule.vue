@@ -451,7 +451,7 @@ export default {
     formatStatus(row = {}) {
       let status = row.statsData?.status
       const taskStatus = this.task?.status
-      const finished = isFinished(this.task)
+      const finished = isFinished(this.task) // isFinished
       if (taskStatus === 'error' && this.getSchedule(row) !== '100%') {
         status = 'pause'
       } else if (finished) {
