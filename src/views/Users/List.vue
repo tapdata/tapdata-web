@@ -766,26 +766,18 @@ export default {
         confirmButtonText: this.$t('user.delete'),
         confirmButtonClass: 'delConfirmbtn',
         customClass: 'user-confirm',
-        showClose: false,
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.$api('users')
-              .delete(item.id)
-              .then(() => {
-                this.$message.success(this.$t('message.deleteOK'))
-                this.table.fetch()
-                done()
-              })
-              .catch(() => {
-                this.$message.info(this.$t('message.deleteFail'))
-              })
-              .finally(() => {
-                instance.confirmButtonLoading = false
-              })
-          } else {
-            done()
-          }
+        showClose: false
+      }).then(res => {
+        if (res) {
+          this.$api('users')
+            .delete(item.id)
+            .then(() => {
+              this.$message.success(this.$t('message.deleteOK'))
+              this.table.fetch()
+            })
+            .catch(() => {
+              this.$message.info(this.$t('message.deleteFail'))
+            })
         }
       })
     },
@@ -860,11 +852,7 @@ export default {
       }
       let successMsg = this.$t('user.freezeSuccess')
       let errorMsg = this.$t('user.freezeError')
-      this.$confirm(
-        message,
-
-        this.handleStatus(params, successMsg, errorMsg, this.$t('user.freeze'))
-      )
+      this.$confirm(message, this.handleStatus(params, successMsg, errorMsg, this.$t('user.freeze')))
     },
     // 校验
     handleCheck(item) {
@@ -901,11 +889,7 @@ export default {
       }
       let successMsg = this.$t('user.checkSuccess')
       let errorMsg = this.$t('user.checkError')
-      this.$confirm(
-        message,
-
-        this.handleStatus(params, successMsg, errorMsg, this.$t('user.checkSuccess'))
-      )
+      this.$confirm(message, this.handleStatus(params, successMsg, errorMsg, this.$t('user.checkSuccess')))
     },
     // 改变状态提示
     handleStatus(data, successMsg, errorMsg, confirmButton) {
@@ -1105,9 +1089,12 @@ export default {
     padding: 30px;
     .el-form {
       .el-form-item {
-        margin-bottom: 12px;
+        margin-bottom: 15px;
         .el-form-item__label {
           text-align: left;
+        }
+        .el-form-item__error {
+          line-height: 12px;
         }
       }
     }

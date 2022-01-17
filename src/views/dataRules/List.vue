@@ -196,26 +196,18 @@ export default {
       ])
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
-        closeOnClickModal: false,
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.$api('DataRule')
-              .delete(item.id, item.name)
-              .then(() => {
-                this.$message.success(this.$t('message.deleteOK'))
-                this.table.fetch()
-                done()
-              })
-              .catch(() => {
-                this.$message.info(this.$t('message.deleteFail'))
-              })
-              .finally(() => {
-                instance.confirmButtonLoading = false
-              })
-          } else {
-            done()
-          }
+        closeOnClickModal: false
+      }).then(res => {
+        if (res) {
+          this.$api('DataRule')
+            .delete(item.id, item.name)
+            .then(() => {
+              this.$message.success(this.$t('message.deleteOK'))
+              this.table.fetch()
+            })
+            .catch(() => {
+              this.$message.info(this.$t('message.deleteFail'))
+            })
         }
       })
     },

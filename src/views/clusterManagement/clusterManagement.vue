@@ -873,7 +873,19 @@ export default {
 .clusterManagement-container {
   .editAgentForm {
     .el-form-item {
-      margin-bottom: 5px;
+      margin-bottom: 15px;
+    }
+  }
+}
+.serverDialog {
+  .el-form {
+    .el-form-item__label,
+    .el-form-item__content {
+      line-height: 28px;
+      .el-form-item__error {
+        padding-top: 1px;
+        line-height: 12px;
+      }
     }
   }
 }

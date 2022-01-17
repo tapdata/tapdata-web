@@ -116,6 +116,7 @@
       :title="$t('role.createRole')"
       :close-on-click-modal="false"
       :visible.sync="dialogFormVisible"
+      custom-class="create-role"
       width="600px"
     >
       <el-form :model="form" ref="form" label-width="120px">
@@ -612,6 +613,13 @@ export default {
 
   .el-dialog__body {
     padding: 30px;
+    .el-form-item {
+      margin-bottom: 15px;
+    }
+    .el-form-item__error {
+      padding-top: 0;
+      line-height: 12px;
+    }
   }
 
   .dialog-footer {

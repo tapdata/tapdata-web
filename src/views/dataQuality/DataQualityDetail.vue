@@ -496,23 +496,13 @@ export default {
     remove(item) {
       this.$confirm(this.$t('dataQuality.ifDel'), this.$t('message_title_prompt'), {
         type: 'warning',
-        closeOnClickModal: false,
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.apiClient
-              .deleteById(item._id)
-              .then(() => {
-                this.$message.success(this.$t('message.deleteOK'))
-                this.table.fetch()
-                done()
-              })
-              .finally(() => {
-                instance.confirmButtonLoading = false
-              })
-          } else {
-            done()
-          }
+        closeOnClickModal: false
+      }).then(res => {
+        if (res) {
+          this.apiClient.deleteById(item._id).then(() => {
+            this.$message.success(this.$t('message.deleteOK'))
+            this.table.fetch()
+          })
         }
       })
     },
