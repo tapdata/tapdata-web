@@ -521,10 +521,10 @@ export default {
         }
 
         if (data.mqType === '0') {
-          delete data.database_host
-          delete data.database_port
+          data.database_host = ''
+          data.database_port = ''
         } else {
-          delete data.brokerURL
+          data.brokerURL = ''
         }
       }
       this.$refs.form.validate(valid => {
