@@ -145,7 +145,7 @@ import TableList from '@/components/TableList'
 import Milestone from './Milestone'
 import StatusTag from '@/components/StatusTag'
 import { formatTime } from '@/util'
-import { getOverviewData } from './util'
+import { getOverviewData, isFinished } from './util'
 
 export default {
   name: 'Schedule',
@@ -451,8 +451,11 @@ export default {
     formatStatus(row = {}) {
       let status = row.statsData?.status
       const taskStatus = this.task?.status
+      const finished = isFinished(this.task)
       if (taskStatus === 'error' && this.getSchedule(row) !== '100%') {
         status = 'pause'
+      } else if (finished) {
+        status = 'done'
       } else if (taskStatus === 'paused') {
         status = 'waiting'
       } else if (row.sourceRowNum === 0) {
