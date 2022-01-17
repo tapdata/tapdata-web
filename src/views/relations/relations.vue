@@ -188,67 +188,69 @@ export default {
         cancelButtonText: this.$t('relations.no'),
         type: 'warning',
         closeOnClickModal: false
-      }).then(() => {
-        LineageGraphsAPI.refreshGraphData()
-          .then(res => {
-            if (res.data) {
-              this.refreshResult.allProgress = 10
-              this.refreshResult.currProgress = 0
-              this.refreshing = true
-              let self = this
-              this.inter = setInterval(() => {
+      }).then(res => {
+        if (res) {
+          LineageGraphsAPI.refreshGraphData()
+            .then(res => {
+              if (res.data) {
+                this.refreshResult.allProgress = 10
+                this.refreshResult.currProgress = 0
+                this.refreshing = true
+                let self = this
+                this.inter = setInterval(() => {
+                  LineageGraphsAPI.get({
+                    filter: '{"where":{"type":"tableLineageProcessor"}}'
+                  }).then(res => {
+                    if (res.data) {
+                      self.refreshResult = res.data[0]
+                      if (self.refreshResult.sync_data) {
+                        this.$message.error(this.$t('relations.refreshStatusMsg'))
+                      }
+                      if (self.refreshResult.status == 'finish') {
+                        this.getData()
+                        //this.graph = graph();
+                        clearInterval(self.inter)
+                        //计算耗时
+                        self.consumeTime = self.getConsumeTime(
+                          self.refreshResult.start_date,
+                          self.refreshResult.finish_date
+                        )
+                        self.allProgress = self.refreshResult.allProgress
+                        setTimeout(() => {
+                          self.refreshing = false
+                        }, 3000)
+                      } else if (self.refreshResult.status == 'error') {
+                        this.rClass = false
+                        this.errorVisible = true
+                        //计算耗时
+                        self.consumeTime = self.getConsumeTime(
+                          self.refreshResult.start_date,
+                          self.refreshResult.finish_date
+                        )
+                        self.allProgress = self.refreshResult.allProgress
+                        clearInterval(self.inter)
+                      }
+                    }
+                  })
+                }, 2000)
+              } else
                 LineageGraphsAPI.get({
                   filter: '{"where":{"type":"tableLineageProcessor"}}'
                 }).then(res => {
                   if (res.data) {
-                    self.refreshResult = res.data[0]
-                    if (self.refreshResult.sync_data) {
-                      this.$message.error(this.$t('relations.refreshStatusMsg'))
-                    }
-                    if (self.refreshResult.status == 'finish') {
-                      this.getData()
-                      //this.graph = graph();
-                      clearInterval(self.inter)
-                      //计算耗时
-                      self.consumeTime = self.getConsumeTime(
-                        self.refreshResult.start_date,
-                        self.refreshResult.finish_date
-                      )
-                      self.allProgress = self.refreshResult.allProgress
-                      setTimeout(() => {
-                        self.refreshing = false
-                      }, 3000)
-                    } else if (self.refreshResult.status == 'error') {
+                    this.refreshResult = res.data[0]
+                    if (this.refreshResult.status === 'error') {
                       this.rClass = false
                       this.errorVisible = true
-                      //计算耗时
-                      self.consumeTime = self.getConsumeTime(
-                        self.refreshResult.start_date,
-                        self.refreshResult.finish_date
-                      )
-                      self.allProgress = self.refreshResult.allProgress
-                      clearInterval(self.inter)
+                      this.refreshing = false
                     }
                   }
                 })
-              }, 2000)
-            } else
-              LineageGraphsAPI.get({
-                filter: '{"where":{"type":"tableLineageProcessor"}}'
-              }).then(res => {
-                if (res.data) {
-                  this.refreshResult = res.data[0]
-                  if (this.refreshResult.status === 'error') {
-                    this.rClass = false
-                    this.errorVisible = true
-                    this.refreshing = false
-                  }
-                }
-              })
-          })
-          .finally(() => {
-            this.apiLoading = false
-          })
+            })
+            .finally(() => {
+              this.apiLoading = false
+            })
+        }
       })
     },
     handlePreviewVisible() {

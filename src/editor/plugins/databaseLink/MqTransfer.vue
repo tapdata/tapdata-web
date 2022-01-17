@@ -19,6 +19,13 @@
             option.label.toUpperCase()
           }}</span>
           <span>{{ option.label }}</span>
+          <span v-if="topicData.includes(option.label) && tableNameTransform === 'toLowerCase'">{{
+            option.label.toLowerCase()
+          }}</span>
+          <span v-else-if="topicData.includes(option.label) && tableNameTransform === 'toUpperCase'">{{
+            option.label.toUpperCase()
+          }}</span>
+          <span v-else>{{ option.label }}</span>
           <span v-if="topicData.includes(option.key)">{{ table_suffix }}</span>
         </div>
       </template>
@@ -43,7 +50,7 @@
           <span v-else-if="queueData.includes(option.label) && tableNameTransform === 'toUpperCase'">{{
             option.label.toUpperCase()
           }}</span>
-          <span>{{ option.label }}</span>
+          <span v-else>{{ option.label }}</span>
           <span v-if="queueData.includes(option.key)">{{ table_suffix }}</span>
         </div>
       </template>

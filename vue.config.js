@@ -1,14 +1,12 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
   dev: 'http://backend:3030',
   // test: 'http://192.168.1.181:30300'
   // test: 'http://192.168.3.3:8080/' // haosheng
-  test: 'http://192.168.1.181:30474/' // v1-30
-  // test: 'http://192.168.1.132:32535/' // v1-29
+  test: 'http://192.168.1.132:32535/' // v1-29
   // test: 'http://192.168.1.181:32220/' // v1-28
   // test: 'http://192.168.1.181:31119/' // v1-27
   // test: 'http://192.168.1.193:31704' // table-many
@@ -156,15 +154,6 @@ module.exports = {
         maxAssetSize: 30000000
       }
     }
-
-    config.plugins.push(
-      new HardSourceWebpackPlugin(),
-      new HardSourceWebpackPlugin.ExcludeModulePlugin([
-        {
-          test: /.*\.DS_Store/
-        }
-      ])
-    )
   },
   css: {
     loaderOptions: {

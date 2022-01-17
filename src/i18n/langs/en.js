@@ -36,10 +36,6 @@ export default {
   verify_result_content_diff: 'Table data difference: {0}',
   verify_result_count_inconsistent: 'inconsistent',
   verify_result_count_consistent: 'consistent',
-  verify_result_field_name: 'Field name',
-  verify_result_source_info: 'Source Information',
-  verify_result_target_info: 'Target Information',
-  verify_create_window_duration: 'Window duration',
   verify_form_source_filter: 'Source table data filtering',
   verify_form_target_filter: 'Target table data filtering',
 
@@ -318,9 +314,6 @@ export default {
   connection_redis_valid: 'Authentication',
 
   connection_hana_label_hana_type: 'Install type',
-
-  // Route name
-  app_menu_jsFuncs: 'Function',
 
   // function
   js_func_name: 'Function name',

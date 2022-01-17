@@ -1460,7 +1460,7 @@ export default {
     },
 
     // 跳转到数据校验页面
-    handleGoDataVerify() {
+    /*handleGoDataVerify() {
       this.loading = true
       dataFlows
         .get([this.flow.id], {
@@ -1474,7 +1474,7 @@ export default {
             this.editor.showResult()
           }
         })
-    },
+    },*/
 
     // tooltip的可控
     visibilityChange(event) {

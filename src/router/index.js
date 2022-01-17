@@ -560,6 +560,16 @@ const childRoutes = [
     }
   },
   {
+    path: '/dataVerifyResult/:id/details',
+    name: 'VerifyDiffDetails',
+    component: () => import('@/views/dataVerification/Result'),
+    meta: {
+      title: i18n.t('verify_diff_details_title'),
+      isCollapse: true,
+      code: 'Data_verify'
+    }
+  },
+  {
     path: '/dataVerifyResult/:id',
     name: 'dataVerifyResult',
     component: () => import('@/views/dataVerification/Result'),

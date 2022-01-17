@@ -404,7 +404,6 @@ export default {
 
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
-        data.jsEngineName = data.jsEngineName || 'nashorn'
         _.merge(this.form, data)
         this.form.aggregations.map((item, index) => {
           this.$set(this.form.aggregations, index, item)

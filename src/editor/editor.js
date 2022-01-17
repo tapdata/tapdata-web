@@ -16,8 +16,8 @@ import Setting from '../views/job/Setting'
 import DebugLogs from '../views/job/DebugLogs'
 import Milestone from '../views/job/Milestone'
 import TaskProgress from '../views/job/TaskProgress'
-import DataVerify from '../views/job/DataVerify/List'
-import DVResult from '../views/job/DataVerify/Result'
+// import DataVerify from '../views/job/DataVerify/List'
+// import DVResult from '../views/job/DataVerify/Result'
 
 import log from '../log'
 import Panel from './ui/panel'
@@ -359,9 +359,9 @@ export default class Editor extends BaseObject {
 
   /**
    * show logs panel
-   * @param dataFlow
+   * @param dataFlow 首次创建没有保存时，默认为空对象，保证面板正常展示
    */
-  showLogs(dataFlow, isShow) {
+  showLogs(dataFlow = {}, isShow) {
     let bottomTabPanel = this.getBottomTabPanel()
     let milestone = bottomTabPanel.getChildByName('milestone')
 
@@ -474,7 +474,7 @@ export default class Editor extends BaseObject {
    * show dataVerify panel
    * @param disableDirective
    */
-  showDataVerify() {
+  /*showDataVerify() {
     // remove setting
     let dvResult = this.getRightTabPanel().getChildByName('dvResult')
     if (dvResult) this.getRightTabPanel().remove(dvResult)
@@ -499,20 +499,21 @@ export default class Editor extends BaseObject {
       })
     }
     self.getRightSidebar().show()
-  }
+  }*/
 
   /**
    * show data flow monitor panel
    */
   showMonitor() {
     // remove dataVerify
-    let dataVerify = this.getRightTabPanel().getChildByName('dataVerify')
-    if (dataVerify) this.getRightTabPanel().remove(dataVerify)
+    // let dataVerify = this.getRightTabPanel().getChildByName('dataVerify')
+    // if (dataVerify) this.getRightTabPanel().remove(dataVerify)
 
     let monitor = this.getRightTabPanel().getChildByName('monitor')
     this.getRightTabPanel().select(monitor)
   }
-  showResult() {
+
+  /*showResult() {
     let dvLoading = this.getRightTabPanel().getChildByName('dvLoading')
     if (dvLoading) this.getRightTabPanel().remove(dvLoading)
     // add result
@@ -539,7 +540,7 @@ export default class Editor extends BaseObject {
       self.getRightTabPanel().select(dvResult)
     }
     self.getRightSidebar().show()
-  }
+  }*/
 
   setData(dataFlow) {
     let dat = JSON.parse(dataFlow.editorData)

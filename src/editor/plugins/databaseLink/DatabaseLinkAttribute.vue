@@ -29,6 +29,38 @@
               </ElPopover>
             </ElCheckbox>
           </el-form-item>
+          <el-form-item>
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <span class="span-label">{{ $t('dag_data_node_label_database_link_table') }}</span>
+                <el-select v-model="model.tableNameTransform" size="mini">
+                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
+                  <el-option
+                    :label="$t('dag_data_node_label_database_link_to_uppercase')"
+                    value="toUpperCase"
+                  ></el-option>
+                  <el-option
+                    :label="$t('dag_data_node_label_database_link_to_lowercase')"
+                    value="toLowerCase"
+                  ></el-option>
+                </el-select>
+              </el-col>
+              <el-col :span="12">
+                <span class="span-label">{{ $t('dag_data_node_label_database_link_field') }}</span>
+                <el-select v-model="model.fieldsNameTransform" size="mini">
+                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
+                  <el-option
+                    :label="$t('dag_data_node_label_database_link_to_uppercase')"
+                    value="toUpperCase"
+                  ></el-option>
+                  <el-option
+                    :label="$t('dag_data_node_label_database_link_to_lowercase')"
+                    value="toLowerCase"
+                  ></el-option>
+                </el-select>
+              </el-col>
+            </el-row>
+          </el-form-item>
           <el-form-item :label="$t('editor.cell.link.existingSchema.label')">
             <el-select v-model="model.dropType" size="mini">
               <el-option :label="$t('editor.cell.link.existingSchema.keepSchema')" value="no_drop"></el-option>
@@ -97,6 +129,7 @@
               <MqTransfer
                 v-model="mqActiveData"
                 :source="sourceData"
+                :tableNameTransform="model.tableNameTransform"
                 :table_prefix="model.table_prefix"
                 :table_suffix="model.table_suffix"
               ></MqTransfer>
@@ -134,6 +167,7 @@ import ws from '@/api/ws'
 const metadataApi = new MetadataInstances()
 
 import CodeEditor from '@/components/CodeEditor'
+// import { ALLOW_FIELD_MAPPING } from '../../constants'
 let connections = factory('connections')
 let editorMonitor = null
 export default {
@@ -171,8 +205,9 @@ export default {
         table_suffix: '',
         dropType: 'no_drop',
         type: 'databaseLink',
-        tableNameTransform: '',
-        fieldsNameTransform: '',
+        tableNameTransform: 'noOperation',
+        fieldsNameTransform: 'noOperation',
+        fieldNameTransform: '',
         selectSourceArr: [],
         topicData: [],
         queueData: [],
@@ -186,6 +221,7 @@ export default {
         hiddenChangeValue: false, //是否显示表改大小写
         showBtn: true,
         script: '',
+        dataFlow: '',
 
         selectSourceDatabase: {
           table: true,
@@ -295,6 +331,7 @@ export default {
         }
         //获取目标节点ID
         this.model.stageId = targetCell?.id || ''
+
         // 获取目标节点的数据显示右侧选择表
 
         let targetFormData = targetCell && targetCell.getFormData()
@@ -335,10 +372,14 @@ export default {
           }
         }
         targetCell && this.loadTables(connectionId, sourceFormData.database_type)
+        this.loadDataModels(connectionId)
+        //获取目标节点ID
+        this.stageId = targetCell.id || ''
       }
 
       editorMonitor = vueAdapter.editor
       this.configJoinTable = cell.configJoinTable && cell.configJoinTable()
+      this.getDataFlow()
       this.getDataFlow()
       //是否显示字段推演
       let param = {
@@ -492,6 +533,14 @@ export default {
         this.transformModelVersion = true
       } else {
         this.transformModelVersion = false
+      }
+      return this.dataFlow
+    },
+    // 获取表名称
+    loadDataModels(connectionId) {
+      let self = this
+      if (!connectionId) {
+        return
       }
       return this.dataFlow
     },

@@ -397,6 +397,7 @@ export default {
   dag_dialog_field_mapping_batch_change_type_error_tip: '请先选择需要源表/目标表转换的类型',
 
   //任务编辑
+  // 缓存节点提示
   dag_data_node_label_clickhouse: 'ClickHouse节点',
   dag_data_node_label_aggregate_filter: '过滤器',
 

@@ -57,6 +57,7 @@ export default {
   },
 
   mounted() {
+    if (!this.dataFlow.id) return
     let msg = {
         type: 'logs',
         filter: {

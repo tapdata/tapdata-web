@@ -340,11 +340,19 @@ export default {
   created() {
     this.getDatabaseType()
     //header
+    // let guideDoc =
+    //   ' <a target="_blank" style="color: #409EFF" href="https://docs.tapdata.net/data-source">' +
+    //   this.$t('dataForm.form.guideDoc') +
+    //   '</a>'
+    // this.description = this.$t('connection.desc') + guideDoc
+    let helpUrl = 'https://docs.tapdata.net'
     let guideDoc =
-      ' <a target="_blank" style="color: #409EFF" href="https://docs.tapdata.net/data-source">' +
-      this.$t('dataForm.form.guideDoc') +
-      '</a>'
-    this.description = this.$t('connection.desc') + guideDoc
+      ` <a style="color: #48B6E2" href="${helpUrl}/data-source">` + this.$t('dataForm.form.guideDoc') + '</a>'
+    if (this.$window.getSettingByKey('SHOW_OLD_PAGE')) {
+      this.description = this.$t('connection.desc')
+    } else {
+      this.description = this.$t('connection.desc') + this.$t('connection.helpDesc') + guideDoc
+    }
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
