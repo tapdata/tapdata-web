@@ -480,6 +480,7 @@ export default {
   mounted() {
     if (this.$has('Data_SYNC') || this.$has('Data_verify')) {
       this.getDataFlowApi()
+      this.getMeasurement()
     }
 
     if (this.$has('Cluster_management') || this.$has('Cluster_management_menu')) {
@@ -660,6 +661,57 @@ export default {
         .finally(() => {
           self.loading = false
         })
+    },
+    // 指标
+    getMeasurement() {
+      let params = {
+        samples: [
+          {
+            tags: {
+              userId: 'aaaa',
+              key1: 'cdccc',
+              key2: 'ccccc'
+            },
+            fields: ['cpuUsage'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
+            start: 123123323214, //optional
+            end: 123123123123123, //optional
+            limit: 10, //optional， 没有就返回全部， 服务器保护返回最多1000个
+            guanluary: 'minute'
+          }
+        ],
+        statistics: [
+          {
+            tags: {
+              userId: 'aaaa',
+              key1: 'cdccc',
+              key2: 'ccccc'
+            },
+            fields: ['input', 'output']
+          }
+        ]
+      }
+      this.$api('Measurement').query(params).then(res => {
+        console.log('Measurement', res)
+        // {
+        //   "samples" : [
+        //   {
+        //     "cpuUsage" : [12,312,323,2123,123,23],
+        //     "time" : [123123123,12312312,12312312,123123123,123123123]
+        //   }
+        // ],
+        //   "statistics" : [
+        //   {
+        //     "output" : 123213, // 总输出
+        //     "input" : 1, // 总输入
+        //     "insert" : 2, // 总插入
+        //     "update" : 3, // 总更新
+        //     "delete" : 4, // 总删除
+        //   }
+        // ]
+        // }
+      }).catch(err => {
+        console.log('err', err)
+      })
     },
 
     // 数据处理

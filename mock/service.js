@@ -3,8 +3,9 @@ const settings = require('./settings.json')
 const permission = require('./permission.json')
 const Random = Mock.Random
 const dataflow = require('./dataflow.js')
+const measurement = require('./measurement.js')
 
-module.exports = Object.assign({}, dataflow, {
+module.exports = Object.assign({}, dataflow, measurement,{
   '/api/Connections': {
     code: 'ok',
     msg: 'ok',
