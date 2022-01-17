@@ -249,9 +249,17 @@ export default {
         this.creator = this.task.creator
       }
       // this.loadHttp()
+      this.loadOverviewData()
       this.$emit('onceLoadHttp')
       this.loadWS()
       this.sendMsg()
+    },
+    loadOverviewData() {
+      const stats = this.task?.stats || {}
+      let obj = this.overviewObj.body
+      for (let key in obj) {
+        obj[key] = stats[key.replace('Count', '')]?.rows || 0
+      }
     },
     loadWS() {
       this.$ws.on('dataFlowInsight', data => {
