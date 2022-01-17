@@ -207,7 +207,7 @@ export default {
         color: #000;
       }
       .query-build-header-radio {
-        padding: 0 20px;
+        padding: 4px 20px 0;
       }
     }
   }
