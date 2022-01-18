@@ -325,6 +325,7 @@ export default {
           let defaultSchema = {
             table_name: this.model.tableName,
             cdc_enabled: true,
+
             meta_type: 'collection',
             fields: [
               {

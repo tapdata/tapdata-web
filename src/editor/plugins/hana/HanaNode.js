@@ -18,6 +18,7 @@ export const HanaNodeConfig = {
       },
       [FORM_DATA_KEY]: {
         type: 'hana',
+        databaseType: 'hana',
         connectionId: '',
         tableName: ''
       }

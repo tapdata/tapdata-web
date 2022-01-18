@@ -851,6 +851,7 @@ export default {
       let distanceForSink = editorData.distanceForSink || {}
 
       let cells = graphData.cells ? graphData.cells : []
+
       let edgeCells = {}
       let nodeCells = {}
       cells.forEach(cell => {
@@ -1147,7 +1148,7 @@ export default {
       if (this.$refs.agentDialog.checkAgent()) {
         this.checkAgentStatus(() => {
           let doStart = () => {
-            let data = this.$route.query.isMoniting ? this.dataFlow : this.getDataFlowData() //监控模式启动任务 data 为接口请求回来数据 编辑模式为cell 组装数据
+            let data = _this.$route.query.isMoniting ? _this.dataFlow : _this.getDataFlowData() //监控模式启动任务 data 为接口请求回来数据 编辑模式为cell 组装数据
             if (data) {
               this.doSaveStartDataFlow(data)
             }

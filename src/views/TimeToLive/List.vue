@@ -733,20 +733,28 @@ export default {
           uri: item.uri
         }
       }
-      this.$confirm(message, this.$t('message_title_prompt'), {
+      this.$confirm(message, this.$t('message.prompt'), {
         type: 'warning',
-        closeOnClickModal: false
-      }).then(res => {
-        if (res) {
-          this.$api('ScheduleTasks')
-            .post(params)
-            .then(() => {
-              this.$message.success(this.$t('timeToLive.status_deleted'))
-              this.table.fetch()
-            })
-            .catch(() => {
-              this.$message.info(this.$t('message.deleteFail'))
-            })
+        closeOnClickModal: false,
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.$api('ScheduleTasks')
+              .post(params)
+              .then(() => {
+                this.$message.success(this.$t('timeToLive.status_deleted'))
+                this.table.fetch()
+                done()
+              })
+              .catch(() => {
+                this.$message.info(this.$t('message.deleteFail'))
+              })
+              .finally(() => {
+                instance.confirmButtonLoading = false
+              })
+          } else {
+            done()
+          }
         }
       })
     },
