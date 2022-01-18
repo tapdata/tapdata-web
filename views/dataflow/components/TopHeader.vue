@@ -72,7 +72,7 @@
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
       <ElButton size="small" plain class="mx-2" @click="$emit('showSettings')"> 设置 </ElButton>
-      <ElButton :loading="isSaving" size="small" type="primary" cflass="mx-2" @click="$emit('save')"> 保存 </ElButton>
+      <ElButton :loading="isSaving" size="small" type="primary" class="mx-2" @click="$emit('save')"> 保存 </ElButton>
     </div>
   </header>
 </template>

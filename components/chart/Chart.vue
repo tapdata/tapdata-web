@@ -225,25 +225,31 @@ export default {
         obj.series = series
       }
       if (options) {
-        if (options.labelFormat === 'KMT') {
-          obj.series[0].itemStyle = {
-            normal: {
-              label: {
-                show: true,
-                position: 'top',
-                distance: 10,
-                formatter: function (value) {
-                  if (value.data / (1000 * 1000 * 1000) > 1) {
-                    return (value.data / (1000 * 1000 * 1000)).toFixed(1) + ' T'
-                  } else if (value.data / (1000 * 1000) > 1) {
-                    return (value.data / (1000 * 1000)).toFixed(1) + ' M'
-                  } else if (value.data / 1000 > 1) {
-                    return (value.data / 1000).toFixed(1) + ' K'
+        if (options.series) {
+          options.series.forEach((el, i) => {
+            Object.assign(obj.series[i], el)
+            if (el.labelFormat === 'KMT') {
+              const { valueToFixed } = this
+              obj.series[i].itemStyle = {
+                normal: {
+                  label: {
+                    show: true,
+                    position: 'top',
+                    distance: 10,
+                    formatter: function (value) {
+                      if (value.data / (1000 * 1000 * 1000) > 1) {
+                        return valueToFixed(value.data / (1000 * 1000 * 1000), el.fixed) + ' T'
+                      } else if (value.data / (1000 * 1000) > 1) {
+                        return valueToFixed(value.data / (1000 * 1000), el.fixed) + ' M'
+                      } else if (value.data / 1000 > 1) {
+                        return valueToFixed(value.data / 1000, el.fixed) + ' K'
+                      }
+                    }
                   }
                 }
               }
             }
-          }
+          })
         }
       }
       return obj
@@ -406,6 +412,12 @@ export default {
         day: 'MM-DD'
       }
       return this.$moment(time).format(map[type] || 'YYYY-MM-DD HH:mm:ss')
+    },
+    valueToFixed(val, fixed) {
+      if (fixed) {
+        return val.toFixed(fixed)
+      }
+      return val
     },
     resize() {
       const { delayTrigger } = this.$util
