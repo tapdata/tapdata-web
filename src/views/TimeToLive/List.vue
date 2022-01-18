@@ -736,20 +736,19 @@ export default {
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false
+      }).then(res => {
+        if (res) {
+          this.$api('ScheduleTasks')
+            .post(params)
+            .then(() => {
+              this.$message.success(this.$t('timeToLive.status_deleted'))
+              this.table.fetch()
+            })
+            .catch(() => {
+              this.$message.info(this.$t('message.deleteFail'))
+            })
+        }
       })
-        .then(res => {
-          if (res) {
-            this.$api('ScheduleTasks')
-              .post(params)
-              .then(() => {
-                this.$message.success(this.$t('timeToLive.status_deleted'))
-                this.table.fetch()
-              })
-          }
-        })
-        .catch(() => {
-          this.$message.info(this.$t('message.deleteFail'))
-        })
     },
 
     // 重置生命周期
