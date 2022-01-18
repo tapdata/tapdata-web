@@ -931,13 +931,24 @@ export default {
             this.settingModel.sync_type = 'initial_sync'
           }
           // kafka、es、mq作为目标不允许开启自动创建索引
+          // if (
+          //   ['kafka', 'mq', 'elasticsearch'].includes(this.dataSourceModel['target_databaseType']) ||
+          //   ['kafka', 'mq', 'elasticsearch'].includes(this.dataSourceModel['source_databaseType'])
+          // ) {
+          //   this.changeConfig([], 'setting_needToCreateIndex')
+          //   //设置默认值
+          //   this.settingModel.needToCreateIndex = false
+          // }
+
+          //mysql、pg、oracle、sql server、mongodb 是作为目标 支持自动创建索引
           if (
-            ['kafka', 'mq', 'elasticsearch'].includes(this.dataSourceModel['target_databaseType']) ||
-            ['kafka', 'mq', 'elasticsearch'].includes(this.dataSourceModel['source_databaseType'])
+            ['mysql', 'postgres', 'oracle', 'sqlserver', 'mongodb'].includes(
+              this.dataSourceModel['target_databaseType']
+            )
           ) {
             this.changeConfig([], 'setting_needToCreateIndex')
             //设置默认值
-            this.settingModel.needToCreateIndex = false
+            this.settingModel.needToCreateIndex = true
           }
           // kafka、mq作为源不支持无主键同步
           if (['kafka', 'mq'].includes(this.dataSourceModel['source_databaseType'])) {
@@ -1109,11 +1120,11 @@ export default {
           }
           break
         }
-        // 不允许开启自动索引
+        // 允许开启自动索引
         case 'setting_needToCreateIndex': {
           let op = items.find(it => it.field === 'needToCreateIndex')
           if (op) {
-            op.show = false
+            op.show = true
           }
           break
         }
