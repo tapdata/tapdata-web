@@ -1110,10 +1110,6 @@ export default {
 }
 .user-confirm {
   width: 500px;
-  padding-bottom: 20px;
-  .el-message-box__content {
-    padding: 20px 30px;
-  }
   .delConfirmbtn {
     background-color: #f56c6c;
     border: 1px solid #f56c6c;
