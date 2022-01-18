@@ -72,10 +72,18 @@ export default {
       let result
       switch (len) {
         case 0:
-          result = [Object.assign({ count: 1 }, ETL_STATUS_MAP['not_running'])]
+          result = [
+            Object.assign({ count: 1 }, ETL_STATUS_MAP['not_running'], {
+              status: 'not_running'
+            })
+          ]
           break
         case 1:
-          result = [Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP[rows[0]?.status])]
+          result = [
+            Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP[rows[0]?.status], {
+              status: rows[0]?.status
+            })
+          ]
           break
         default:
           result = this.formatResult()
@@ -87,8 +95,8 @@ export default {
       const { rows, statusMap } = this
       let result = []
       let obj = deepCopy(ETL_STATUS_MAP)
-      console.log(rows, statusMap, obj)
       for (let key in obj) {
+        obj[key].status = key
         obj[key].count = 0
         rows.forEach(el => {
           if (statusMap[key].includes(el.status)) {
