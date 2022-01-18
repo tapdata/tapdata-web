@@ -29,7 +29,8 @@ const defaults = {
   cancelButtonClass: '',
   dangerouslyUseHTMLString: false,
   distinguishCancelAndClose: false,
-  width: '416px' // 需要完整的像素字符串
+  width: '416px', // 需要完整的像素字符串
+  beforeClose: null
 }
 
 function isVNode(node) {

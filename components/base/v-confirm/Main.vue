@@ -147,7 +147,11 @@ export default {
       this.getIconByType(this.type)
     },
     handleAction(action) {
-      this.close()
+      if (typeof this.beforeClose === 'function') {
+        this.beforeClose(action, this, this.close)
+      } else {
+        this.close()
+      }
       if (action !== 'close') {
         this.callback(action, this)
       }
