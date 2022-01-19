@@ -76,6 +76,7 @@ export default function (vm) {
       {
         type: 'switch',
         field: 'ssl',
+        show: false,
         label: vm.$t('connection_form_hazecast_ssl'),
         influences: [
           {

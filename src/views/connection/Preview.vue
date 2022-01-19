@@ -51,7 +51,13 @@
             </el-tooltip>
             <!-- MQ文字转换 start -->
             <div v-else-if="connection[temp.key] && temp.key === 'mqType'" class="box-line__value ellipsis">
-              {{ mqType[connection[temp.key]] || '-' }}
+              <span>{{ mqType[connection[temp.key]] || '-' }}</span>
+            </div>
+            <div
+              v-else-if="connection[temp.key] && (temp.key === 'mqQueueSet' || temp.key === 'mqTopicSet')"
+              class="box-line__value ellipsis"
+            >
+              <span>{{ connection[temp.key].length > 0 ? connection[temp.key] : '-' }}</span>
             </div>
             <!-- MQ文字转换 end -->
             <div v-else class="box-line__value ellipsis">{{ connection[temp.key] || '-' }}</div>
