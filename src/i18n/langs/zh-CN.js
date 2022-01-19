@@ -417,7 +417,7 @@ export default {
   task_job_link_confirm_message_rollback:
     '复制view时暂不支持设置字段映射，勾选此项下方字段映射功能会被禁用，已设置的字段映射将会被重置，是否确认勾选？',
   task_setting_oracle_custom_analysis: 'OracleSQL自定义解析',
-
+  task_setting_manually_miner_concurrency: '并发挖掘线程数',
   // 函数管理
   function_tips_empty: '代码缺少JS函数',
   function_button_create_custom_function: '创建函数',

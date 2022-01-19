@@ -69,7 +69,8 @@ export const FORM_DATA_KEY = 'form_data',
     userSetLagTime: 0,
     noPrimaryKey: false,
     oracleLogminer: 'automatically',
-    useCustomSQLParser: false
+    useCustomSQLParser: false,
+    manuallyMinerConcurrency: 1
   },
   DATABASE_TYPE_MAPPING = {
     mysql: {

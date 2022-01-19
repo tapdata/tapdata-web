@@ -472,6 +472,7 @@ export default {
   task_job_link_confirm_message_rollback:
     '複製view時暫不支持設置欄位映射，勾選此項下方欄位映射功能會被禁用，已設置的欄位映射將會被重置，是否確認勾選？',
   task_setting_oracle_custom_analysis: 'OracleSQL自定義解析',
+  task_setting_manually_miner_concurrency: '并发挖掘线程数',
   // 用户
   login_fail_too_many: '密碼錯誤達到最大次數，請於10分鐘再登錄'
 }
