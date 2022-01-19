@@ -86,9 +86,12 @@
             $t('verify_history')
           }}</ElLink>
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" @click="goEdit(scope.row.id, scope.row.flowId)">{{
-            $t('verify_configuration')
-          }}</ElLink>
+          <ElLink
+            type="primary"
+            :disabled="['running', 'scheduling'].includes(scope.row.status)"
+            @click="goEdit(scope.row.id, scope.row.flowId)"
+            >{{ $t('verify_configuration') }}</ElLink
+          >
           <ElDivider direction="vertical"></ElDivider>
           <ElLink type="primary" @click="remove(scope.row.name, scope.row.id)">{{ $t('verify_delete') }}</ElLink>
         </template>
