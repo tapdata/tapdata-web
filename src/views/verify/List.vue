@@ -299,9 +299,9 @@ export default {
       let list = this.list || []
       let ids = []
       list.forEach(item => {
-        if (['running', 'scheduling'].includes(item.status)) {
-          ids.push(item.id)
-        }
+        // if (['running', 'scheduling'].includes(item.status)) {
+        ids.push(item.id)
+        // }
       })
       if (ids.length && this.$route.name === 'Verify') {
         this.updateStatusByIds(ids)
