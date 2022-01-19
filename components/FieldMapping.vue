@@ -230,7 +230,7 @@
         <el-form ref="form" class="table-form" :model="form" label-width="120px">
           <el-form-item label="表名大小写">
             <el-select size="mini" v-model="form.tableNameTransform">
-              <el-option :label="$t('dag_data_node_label_database_link_unchang')" value=""></el-option>
+              <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
               <el-option :label="$t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></el-option>
               <el-option :label="$t('dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></el-option>
             </el-select>
