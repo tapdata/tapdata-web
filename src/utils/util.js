@@ -1,4 +1,5 @@
 import moment from 'moment'
+import i18n from '@/i18n'
 
 export function setPermission(list) {
   let permissions = []
@@ -106,6 +107,38 @@ export const formatTimeByTime = (time, type) => {
   }
   return result
 }
+// 毫秒换算成时分秒
+export const formatMs = msTime => {
+  let time = msTime / 1000
+  let arr = []
+  arr.push({
+    label: i18n.t('task_info_d'),
+    value: Math.floor(time / 60 / 60 / 24)
+  }) // day
+  arr.push({
+    label: i18n.t('task_info_h'),
+    value: Math.floor(time / 60 / 60) % 24
+  }) // hour
+  arr.push({
+    label: i18n.t('task_info_m'),
+    value: Math.floor(time / 60) % 60
+  }) // minute
+  arr.push({
+    label: i18n.t('task_info_s'),
+    value: Math.floor(time) % 60
+  }) // second
+  let result = ''
+  arr.forEach(el => {
+    if (el.value) {
+      result += el.value + el.label
+    }
+  })
+  if (!result) {
+    result = msTime + i18n.t('task_info_ms')
+  }
+  return result
+}
+
 // 判断对象是否为空
 export const isEmpty = obj => Reflect.ownKeys(obj).length === 0 && obj.constructor === Object
 

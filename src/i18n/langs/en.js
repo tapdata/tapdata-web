@@ -359,6 +359,7 @@ export default {
   task_info_task_stopped: 'Task has been stopped',
   task_info_progress: 'in progress',
   task_info_stopped: 'Stopped',
+  task_info_ms: 'milliseconds',
   task_info_s: 'seconds',
   task_info_m: 'minutes',
   task_info_h: 'Hour',

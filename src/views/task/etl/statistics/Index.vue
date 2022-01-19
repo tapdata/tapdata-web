@@ -1,6 +1,6 @@
 <template>
   <div class="statistics-container flex flex-column font-color-sub h-100">
-    <Info :task="task" class="card-box card-box__info" @reload="loadTask"></Info>
+    <Info :task="task" class="card-box card-box__info" :remote-method="infoRemoteMethod" @reload="loadTask"></Info>
     <div class="card-box px-6 flex-1">
       <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
         <ElTabPane label="任务进度" name="schedule">
@@ -133,6 +133,13 @@ export default {
     },
     formatTime(time) {
       return time ? this.$moment(time).format('YYYY-MM-DD HH:mm:ss') : '-'
+    },
+    infoRemoteMethod(params) {
+      return this.$api('Measurement')
+        .query(params)
+        .then(res => {
+          return res.data
+        })
     }
   }
 }

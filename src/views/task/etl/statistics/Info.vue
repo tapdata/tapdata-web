@@ -33,7 +33,7 @@
         <!--        </VButton>-->
       </div>
     </div>
-    <div class="mt-3">
+    <div class="flex align-center mt-3">
       <SelectList
         v-if="stagesItems.length > 0"
         v-model="selectedStage"
@@ -44,31 +44,32 @@
         style="min-width: 240px"
         @change="changeStageFnc"
       ></SelectList>
+      <FilterBar v-model="searchParams" :items="filterItems" class="ml-4" hide-refresh @search="search"></FilterBar>
     </div>
     <div class="flex justify-content-between mt-6">
-      <div class="p-6" style="background-color: #fafafa; min-width: 240px">
+      <div class="p-6 grey-background" style="min-width: 200px">
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_input') }}</span>
         </div>
-        <div class="mb-4 fs-4 font-color-main">{{ totalData.total_input }}</div>
+        <div class="mb-4 fs-4 font-color-main">{{ overData.inputEvents }}</div>
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-success" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_output') }}</span>
         </div>
-        <div class="mb-6 fs-4 font-color-main">{{ totalData.total_output }}</div>
+        <div class="mb-6 fs-4 font-color-main">{{ overData.outputEvents }}</div>
         <div class="flex justify-content-between text-center">
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_insert') }}</div>
-            <div class="fs-6 font-color-main">{{ totalData.total_insert }}</div>
+            <div class="fs-6 font-color-main">{{ overData.insertCount }}</div>
           </div>
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_update') }}</div>
-            <div class="fs-6 font-color-main">{{ totalData.total_update }}</div>
+            <div class="fs-6 font-color-main">{{ overData.updateCount }}</div>
           </div>
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_delete') }}</div>
-            <div class="fs-6 font-color-main">{{ totalData.total_delete }}</div>
+            <div class="fs-6 font-color-main">{{ overData.deleteCount }}</div>
           </div>
         </div>
       </div>
@@ -87,7 +88,42 @@
             QPS
           </div>
         </div>
-        <Chart type="line" :data="lineData" :options="lineOptions" no-x="second" class="type-chart h-100"></Chart>
+        <Chart
+          ref="chart"
+          type="line"
+          :data="lineData"
+          :options="lineOptions"
+          no-x="second"
+          class="type-chart h-100"
+        ></Chart>
+      </div>
+      <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
+        <div class="right-box grey-background">
+          <div class="fw-bold">全量进度</div>
+          <div class="progress-box flex justify-content-center align-items-center position-relative">
+            <ElProgress
+              type="circle"
+              color="rgba(44, 101, 255, 1)"
+              :percentage="progressBar"
+              :show-text="false"
+              :width="50"
+            ></ElProgress>
+            <div class="flex justify-content-center position-absolute color-primary fw-bolder fs-7">
+              {{ progressBar }}%
+            </div>
+          </div>
+          <div v-if="progressBar === 100" class="font-color-sub">
+            全量完成时间：{{ formatTime(writeData.initialTime) }}
+          </div>
+          <div v-else class="font-color-sub">
+            {{ $t('task_monitor_full_completion_time') + '：' + (forecast || '计算中') }}
+          </div>
+        </div>
+        <div class="right-box mt-4 grey-background">
+          <div class="fw-bold">增量延迟</div>
+          <div class="color-primary fw-bolder fs-5">{{ formatMs(writeData.replicateLag) }}</div>
+          <div class="font-color-sub">增量所处时间点：{{ formatTime(writeData.cdcTime) }}</div>
+        </div>
       </div>
     </div>
   </div>
@@ -98,18 +134,20 @@ import StatusTag from '@/components/StatusTag'
 import VIcon from '@/components/VIcon'
 import SelectList from '@/components/SelectList'
 import Chart from 'web-core/components/chart'
-import { formatTime, isEmpty, formatTimeByTime } from '@/utils/util'
+import FilterBar from '@/components/filter-bar'
+import { formatTime, isEmpty, formatTimeByTime, formatMs } from '@/utils/util'
 
 let lastMsg
 export default {
   name: 'Info',
-  components: { StatusTag, VIcon, SelectList, Chart },
+  components: { StatusTag, VIcon, SelectList, Chart, FilterBar },
   props: {
     task: {
       type: Object,
       required: true,
       default: () => {}
-    }
+    },
+    remoteMethod: Function
   },
   data() {
     return {
@@ -199,16 +237,28 @@ export default {
           right: 0,
           show: true
         },
-        yAxis: {
-          axisLabel: {
-            formatter: function (value) {
-              if (value >= 1000) {
-                value = value / 1000 + 'K'
+        yAxis: [
+          {
+            axisLabel: {
+              formatter: function (value) {
+                if (value >= 1000) {
+                  value = value / 1000 + 'K'
+                }
+                return value
               }
-              return value
+            }
+          },
+          {
+            axisLabel: {
+              formatter: function (value) {
+                if (value >= 1000) {
+                  value = value / 1000 + 'K'
+                }
+                return value
+              }
             }
           }
-        },
+        ],
         grid: {
           left: 0,
           right: 0,
@@ -245,7 +295,35 @@ export default {
             }
           }
         ]
-      }
+      },
+      overData: {
+        inputEvents: 0,
+        outputEvents: 0,
+        insertCount: 0,
+        updateCount: 0,
+        deleteCount: 0
+      },
+      writeData: {
+        cdcTime: '',
+        initialTime: '',
+        initialTotal: 0,
+        initialWrite: 0,
+        replicateLag: 0
+      },
+      initialData: [], // 缓存最近两次全量的进度数据
+      forecast: '', // 预计完成时间
+      searchParams: {
+        start: '',
+        end: ''
+      },
+      filterItems: [
+        {
+          label: '统计时间',
+          key: 'start,end',
+          type: 'datetimerange',
+          timeDiff: 60 * 1000
+        }
+      ]
     }
   },
   computed: {
@@ -269,6 +347,16 @@ export default {
         }
       })
       return result || []
+    },
+    progressBar() {
+      const { writeData } = this
+      const { initialWrite, initialTotal } = writeData
+      if (!initialTotal) {
+        return 0
+      } else if (initialWrite >= initialTotal) {
+        return 100
+      }
+      return Math.floor((initialWrite * 100) / initialTotal)
     }
   },
   watch: {
@@ -294,12 +382,17 @@ export default {
         this.creator = this.task.creator
       }
       // this.loadMetrics()
-      this.getTotalMetrics()
-      this.getQpsMetrics()
+      // this.getTotalMetrics()
+      // this.getQpsMetrics()
+      this.getMeasurement()
+      this.timer = setInterval(() => {
+        this.getMeasurement()
+      }, 5000)
+      // this.getMeasurement()
       // this.loadHttp()
-      this.$emit('onceLoadHttp')
-      this.loadWS()
-      this.sendMsg()
+      // this.$emit('onceLoadHttp')
+      // this.loadWS()
+      // this.sendMsg()
     },
     getTotalMetrics() {
       let arr = ['total_input', 'total_output', 'total_insert', 'total_update', 'total_delete']
@@ -429,6 +522,179 @@ export default {
           console.log('Metrics', res)
         })
     },
+    getMeasurement() {
+      console.log('selectedStage', this.selectedStage)
+      let params = {
+        samples: [
+          {
+            tags: {
+              measureType: 'dataflow', //指标类型
+              customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
+              host: 'hostname', //主机
+              agentId: 'agent1', //Agent的ID
+              dataFlowId: 'dataFlow1' //DataFlow的ID
+            },
+            fields: ['inputQps', 'outputQps'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
+            start: 123123323214, //optional
+            end: 123123123123123, //optional
+            limit: 10, //optional， 没有就返回全部， 服务器保护返回最多1000个
+            guanluary: 'minute'
+          },
+          {
+            tags: {
+              measureType: 'dataflow', //指标类型
+              customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
+              host: 'hostname', //主机
+              agentId: 'agent1', //Agent的ID
+              dataFlowId: 'dataFlow1' //DataFlow的ID
+            },
+            fields: ['replicateLag'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
+            end: 123123123123123, //optional
+            limit: 1, //optional， 没有就返回全部， 服务器保护返回最多1000个
+            guanluary: 'minute'
+          },
+          {
+            tags: {
+              measureType: 'dataflow', //指标类型
+              customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
+              host: 'hostname', //主机
+              agentId: 'agent1', //Agent的ID
+              dataflowId: 'afsdfasdf' //DataFlow的ID
+            },
+            fields: ['outputEvents', 'inputEvents'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
+            start: 123123323214, //optional
+            end: 123123123123123, //optional
+            type: 'headAndTail', // headAndTail 返回查询头尾两个值， default是需要指定limit的列表返回， default可以不写
+            guanluary: 'minute'
+          }
+        ],
+        statistics: [
+          {
+            tags: {
+              measureType: 'dataflow', //指标类型
+              customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
+              host: 'hostname', //主机
+              agentId: 'agent1', //Agent的ID
+              dataflowId: 'afsdfasdf' //DataFlow的ID
+            }
+            //"fields" : ["initialTotal", "initialWrite", "outputEvents", "inputEvents", "insertCount", "updateCount", "deleteCount"]
+          }
+        ]
+      }
+      if (this.selectedStage) {
+        params = {
+          samples: [
+            {
+              tags: {
+                measureType: 'node', //指标类型
+                customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
+                host: 'hostname', //主机
+                agentId: 'agent1', //Agent的ID
+                dataFlowId: 'dataFlow1', //DataFlow的ID
+                type: 'node', //节点类型， node， processor
+                nodeId: 'kasldjfkasf' //节点的ID
+              },
+              //"fields" : ["inputQps", "outputQps", "transmitionTime"],  //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
+              start: 123123323214, //optional
+              end: 123123123123123, //optional
+              limit: 10, //optional, 没有就返回全部， 服务器保护返回最多1000个
+              guanluary: 'minute'
+            },
+            {
+              tags: {
+                measureType: 'dataflow', //指标类型
+                customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
+                host: 'hostname', //主机
+                agentId: 'agent1', //Agent的ID
+                dataFlowId: 'dataFlow1' //DataFlow的ID
+              },
+              fields: ['replicateLag'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
+              start: 123123323214, //optional
+              end: 123123123123123, //optional
+              limit: 1, //optional， 没有就返回全部， 服务器保护返回最多1000个
+              guanluary: 'minute'
+            }
+          ],
+          statistics: [
+            {
+              tags: {
+                userId: 'aaaa',
+                key1: 'cdccc',
+                key2: 'ccccc'
+              },
+              fields: ['input', 'output']
+            }
+          ]
+        }
+      }
+      this.remoteMethod(params).then(data => {
+        console.log('getMeasurement', data)
+        const { samples } = data
+        const countObj = samples?.[2] || {}
+        const statistics = data.statistics?.[0] || {}
+        const { overData, writeData, initialData, lineData, lineOptions } = this
+        // 总输入总输出
+        for (let key in overData) {
+          overData[key] = countObj[key][1] - countObj[key][0]
+        }
+        for (let key in writeData) {
+          writeData[key] = statistics[key]
+        }
+        writeData.replicateLag = data.samples?.[1]?.replicateLag?.[0] || 0
+        // 全量预计完成时间
+        initialData.length >= 2 && initialData.shift()
+        initialData.push(Object.assign({}, writeData))
+        if (initialData.length >= 2) {
+          const getForecastMs = this.getForecastMs(initialData)
+          if (getForecastMs) {
+            this.forecast = getForecastMs
+          }
+        }
+        // 折线图
+        const qpsData = samples[0]
+        lineData.x = qpsData.time.map(t => formatTime(t))
+        lineData.y[0] = qpsData.inputQps
+        lineData.y[1] = qpsData.outputQps
+        if (this.selectedStage) {
+          // 追加系列
+          lineData.y[2] = qpsData.transmitionTime
+          lineOptions.series[2] = {
+            name: '耗时',
+            yAxisIndex: 1,
+            lineStyle: {
+              color: 'rgba(70, 10, 238, 1)',
+              width: 1
+            },
+            symbol: 'none',
+            areaStyle: {
+              color: 'rgba(70, 10, 238, 0.2)'
+            },
+            itemStyle: {
+              color: 'rgba(70, 10, 238, 1)'
+            }
+          }
+        } else {
+          lineData.y[2] = []
+          lineOptions.series[2] = { name: '' }
+        }
+        console.log('lineData', lineData.y)
+      })
+    },
+    getForecastMs(data) {
+      const [start, end] = data
+      const num = end.initialWrite - start.initialWrite
+      const timeDiff = new Date(end.initialTime).getTime() - new Date(start.initialTime).getTime()
+      if (!num) {
+        return
+      }
+      const speed = num / timeDiff
+      if (!speed) {
+        return
+      }
+      const result = (end.initialTotal - start.initialWrite) / speed
+      return formatMs(result)
+    },
+    setMoreSer() {},
     loadWS() {
       this.$ws.on('dataFlowInsight', data => {
         this.getOverview(data) // 事件统计
@@ -597,6 +863,9 @@ export default {
     formatTime(date) {
       return formatTime(date)
     },
+    formatMs(ms) {
+      return formatMs(ms)
+    },
     start() {
       this.$api('Workers')
         .getAvailableAgent()
@@ -764,8 +1033,28 @@ export default {
     changeStageFnc() {
       // this.sendMsg()
       // this.loadMetrics()
-      this.getTotalMetrics()
+      // this.getTotalMetrics()
+      console.log('selectedStage', this.selectedStage)
+      this.getMeasurement()
+    },
+    search() {
+      console.log('search', this.searchParams)
+      this.getMeasurement()
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.grey-background {
+  background-color: #fafafa;
+}
+.right-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+  flex: 1;
+  height: 50%;
+}
+</style>

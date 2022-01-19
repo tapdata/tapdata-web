@@ -343,6 +343,7 @@ export default {
   task_info_task_stopped: '任务已停止',
   task_info_progress: '进行中',
   task_info_stopped: '已停止',
+  task_info_ms: '毫秒',
   task_info_s: '秒',
   task_info_m: '分钟',
   task_info_h: '小时',
