@@ -273,16 +273,16 @@
         <ElForm ref="form" class="table-form" :model="form" label-width="120px">
           <ElFormItem :label="$t('dag_data_node_label_database_link_table')">
             <ElSelect size="mini" v-model="form.tableNameTransform">
-              <ElOption :label="$t('dag_data_node_label_database_link_unchang')" value=""></ElOption>
+              <ElOption :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></ElOption>
               <ElOption :label="$t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></ElOption>
               <ElOption :label="$t('dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></ElOption>
             </ElSelect>
           </ElFormItem>
           <ElFormItem :label="$t('dag_dialog_field_mapping_example_prefix')">
-            <ElInput size="mini" v-model="form.table_prefix"></ElInput>
+            <ElInput size="mini" v-model="form.table_prefix" maxlength="50" show-word-limit></ElInput>
           </ElFormItem>
           <ElFormItem :label="$t('dag_dialog_field_mapping_example_suffix')">
-            <ElInput size="mini" v-model="form.table_suffix"></ElInput>
+            <ElInput size="mini" v-model="form.table_suffix" maxlength="50" show-word-limit></ElInput>
           </ElFormItem>
           <div class="tip">{{ $t('dag_dialog_field_mapping_example_tip') }}</div>
         </ElForm>
@@ -310,7 +310,7 @@
         <ElForm ref="form" class="table-form" :model="form" label-width="120px">
           <ElFormItem :label="$t('dag_data_node_label_database_link_field')">
             <ElSelect size="mini" v-model="form.fieldsNameTransform">
-              <ElOption :label="$t('dag_data_node_label_database_link_unchang')" value=""></ElOption>
+              <ElOption :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></ElOption>
               <ElOption :label="$t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></ElOption>
               <ElOption :label="$t('dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></ElOption>
             </ElSelect>
@@ -340,7 +340,7 @@
         }}</span>
       </div>
       <div class="table-box flex flex-column">
-        <template v-if="form.batchOperationList.length !== 0">
+        <template v-if="form.batchOperationList && form.batchOperationList.length !== 0">
           <div
             class="flex flex-row flex-1 mb-3 align-items-center"
             v-for="(ops, index) in form.batchOperationList"
@@ -511,7 +511,7 @@ export default {
     //接收数据
     let id = this.transform.stageId
     let self = this
-    ws.on('metadataTransformerProgress', function(res) {
+    ws.on('metadataTransformerProgress', function (res) {
       if (res?.data?.stageId === id) {
         let { finished, total, status } = res?.data
         self.progress.finished = finished

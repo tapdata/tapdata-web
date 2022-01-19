@@ -29,38 +29,7 @@
               </ElPopover>
             </ElCheckbox>
           </el-form-item>
-          <el-form-item>
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <span class="span-label">{{ $t('dag_data_node_label_database_link_table') }}</span>
-                <el-select v-model="model.tableNameTransform" size="mini">
-                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
-                  <el-option
-                    :label="$t('dag_data_node_label_database_link_to_uppercase')"
-                    value="toUpperCase"
-                  ></el-option>
-                  <el-option
-                    :label="$t('dag_data_node_label_database_link_to_lowercase')"
-                    value="toLowerCase"
-                  ></el-option>
-                </el-select>
-              </el-col>
-              <el-col :span="12">
-                <span class="span-label">{{ $t('dag_data_node_label_database_link_field') }}</span>
-                <el-select v-model="model.fieldsNameTransform" size="mini">
-                  <el-option :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></el-option>
-                  <el-option
-                    :label="$t('dag_data_node_label_database_link_to_uppercase')"
-                    value="toUpperCase"
-                  ></el-option>
-                  <el-option
-                    :label="$t('dag_data_node_label_database_link_to_lowercase')"
-                    value="toLowerCase"
-                  ></el-option>
-                </el-select>
-              </el-col>
-            </el-row>
-          </el-form-item>
+
           <el-form-item :label="$t('editor.cell.link.existingSchema.label')">
             <el-select v-model="model.dropType" size="mini">
               <el-option :label="$t('editor.cell.link.existingSchema.keepSchema')" value="no_drop"></el-option>
@@ -97,7 +66,6 @@
               >
             </div>
           </div>
-
           <div class="transfer">
             <VirtualTransfer
               v-if="!model.transferFlag"
@@ -128,6 +96,7 @@
             <template v-else>
               <MqTransfer
                 v-model="mqActiveData"
+                v-if="model.transferFlag"
                 :source="sourceData"
                 :tableNameTransform="model.tableNameTransform"
                 :table_prefix="model.table_prefix"
@@ -339,6 +308,8 @@ export default {
         let selectTargetType = []
         if (targetFormData && targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
           this.model.transferFlag = true
+        } else {
+          this.model.transferFlag = false
         }
         if (targetCell && this.model.selectSourceArr.length === 0) {
           // 修改库清空连线选中的表
@@ -508,12 +479,12 @@ export default {
     // },
 
     // 添加前后缀数据处理
-    preFixSuffixData() {
-      this.mqActiveData.table_prefix = this.model.table_prefix
-      this.mqActiveData.table_suffix = this.model.table_suffix
-      //前后缀 表名改动 需要清空字段处理器
-      this.model.field_process = []
-    },
+    // preFixSuffixData() {
+    //   this.mqActiveData.table_prefix = this.model.table_prefix
+    //   this.mqActiveData.table_suffix = this.model.table_suffix
+    //   //前后缀 表名改动 需要清空字段处理器
+    //   this.model.field_process = []
+    // },
 
     // 还原
     handleReduction() {
@@ -538,7 +509,6 @@ export default {
     },
     // 获取表名称
     loadDataModels(connectionId) {
-      let self = this
       if (!connectionId) {
         return
       }
@@ -554,6 +524,8 @@ export default {
       this.model.tableNameTransform = data.tableNameTransform
       this.model.fieldsNameTransform = data.fieldsNameTransform
       this.model.batchOperationList = data.batchOperationList
+      this.mqActiveData.table_prefix = this.model.table_prefix
+      this.mqActiveData.table_suffix = this.model.table_suffix
     },
     //接收是否第一次打开
     returnModel(value) {
