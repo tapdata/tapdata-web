@@ -401,7 +401,7 @@ export default {
     },
     async getDatabaseType() {
       let databaseTypes = await this.$api('DatabaseTypes').get()
-      databaseTypes.data.forEach(dt => this.databaseTypeOptions.push(dt))
+      this.databaseTypeOptions = databaseTypes.data.filter(dt => dt.type !== 'kudu')
     },
     getData({ page, tags }) {
       let region = this.$route.query.region
