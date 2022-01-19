@@ -55,7 +55,7 @@ export default {
         'hive',
         'tcp_udp',
         'hbase',
-        'kudu',
+        // 'kudu',
         'greenplum',
         'tidb',
         'hana',

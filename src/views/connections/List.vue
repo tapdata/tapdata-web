@@ -291,7 +291,7 @@ export default {
         'tcp_udp',
         'mq',
         'hbase',
-        'kudu',
+        // 'kudu',
         'greenplum',
         'tidb',
         'hana',
