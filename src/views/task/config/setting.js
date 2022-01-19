@@ -227,7 +227,7 @@ export default function () {
         type: 'switch',
         field: 'needToCreateIndex',
         label: i18n.t('task_setting_automatic_index'),
-        show: true
+        show: false
       }
       // {
       //   type: 'slot',
