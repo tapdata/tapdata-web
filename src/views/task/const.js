@@ -11,7 +11,7 @@ export const SETTING_MODEL = {
   fieldNameTransform: '',
   tableNameTransform: '',
   noPrimaryKey: true,
-  needToCreateIndex: true,
+  needToCreateIndex: false,
   syncPoints: [
     {
       connectionId: '',
