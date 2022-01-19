@@ -270,19 +270,21 @@ export default {
             show: false
           }
         },
-        yAxis: {
-          type: 'value',
-          max: 'dataMax',
-          axisLine: {
-            show: true
-          },
-          splitLine: {
-            show: true,
-            lineStyle: {
-              type: 'dashed'
+        yAxis: [
+          {
+            type: 'value',
+            max: 'dataMax',
+            axisLine: {
+              show: true
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {
+                type: 'dashed'
+              }
             }
           }
-        },
+        ],
         grid: {
           containLabel: true,
           borderWidth: 1,
@@ -375,8 +377,8 @@ export default {
     setEmptyData(data) {
       const { noX, noY } = this
       if (!noX || data.xAxis.data?.length) {
-        data.yAxis.min = null
-        data.yAxis.max = null
+        data.yAxis[0].min = null
+        data.yAxis[0].max = null
         return
       }
       let result
@@ -401,8 +403,8 @@ export default {
         result = noX
       }
       data.xAxis.data = result
-      data.yAxis.min = noY[0] || 0
-      data.yAxis.max = noY[1] || 1
+      data.yAxis[0].min = noY[0] || 0
+      data.yAxis[0].max = noY[1] || 1
     },
     formatTime(type, time) {
       let map = {
