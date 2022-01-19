@@ -691,7 +691,8 @@ export default {
             id: item.id,
             name: item.name,
             label: `${item.name} (${statusName})`,
-            value: item.id
+            value: item.id,
+            database_type: item.database_type
           }
         })
       }
