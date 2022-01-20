@@ -73,7 +73,7 @@
           </div>
           <div>如果您有比较紧急的问题，或者比较深入的交流反馈，也可以添加我们用户支持同学的企业微信，联系我们。</div>
           <div class="QR-code">
-            <img src="../../assets/image/LarkQR.jpeg" alt="" />
+            <img src="../../../public/images/wx_user_support.png" alt="" />
           </div>
           <div class="fw-bolder">感谢您对 Tapdata Cloud 的支持，我们一起努力让数据同步变得更加简单高效！</div>
         </div>
@@ -242,7 +242,7 @@
         <div class="mb-4" style="color: #d83931">温馨提示：体验新功能，需要更新Agent到最新版本哦。</div>
         <div class="mb-4">更多新功能具体介绍，敬请关注Tapdata服务号后续发布。</div>
         <div class="mb-3">
-          <img style="width: 100px" src="../../../public/images/notice/wx_code.png" alt="" />
+          <img style="width: 100px" src="../../../public/images/wx_code.png" alt="" />
         </div>
       </div>
     </div>

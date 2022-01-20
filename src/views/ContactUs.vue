@@ -33,7 +33,7 @@
           <div class="contact-footer__top px-6">扫码添加客服</div>
           <div class="contact-footer__bottom px-6">进行咨询与交流</div>
         </div>
-        <img class="contact-footer__logo" src="../assets/image/LarkQR.jpeg" alt="" />
+        <img class="contact-footer__logo" src="../../public/images/wx_user_support.png" alt="" />
       </div>
     </div>
   </div>

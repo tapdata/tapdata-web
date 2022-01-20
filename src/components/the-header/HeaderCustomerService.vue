@@ -18,7 +18,7 @@
         </div>
       </div>
       <div class="panel">
-        <img src="../../assets/image/LarkQR.jpeg" class="code" />
+        <img src="../../../public/images/wx_user_support.png" class="code" />
       </div>
     </main>
   </div>
