@@ -179,6 +179,7 @@ export default {
   module_form_condition: '過濾條件',
   module_form_no_server_preview_api: '沒有 API 服務器預覽 API 文檔.',
   module_form_get_api_uri_fail: '獲取 API Server Uri 失敗',
+  module_form_duplication_name: '名稱重複',
 
   query_build_match: '匹配',
   query_build_condition: '條件',

@@ -176,6 +176,7 @@ export default {
   module_form_condition: 'Filter condition',
   module_form_no_server_preview_api: 'There is no API server to preview the API document.',
   module_form_get_api_uri_fail: 'Failed to get API Server Uri',
+  module_form_duplication_name: 'Duplicate for name',
 
   query_build_match: 'match',
   query_build_condition: 'Condition',

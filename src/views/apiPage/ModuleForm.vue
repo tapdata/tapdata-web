@@ -1,86 +1,91 @@
 <template>
-  <div class="module-form">
-    <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
-    <div class="module-path">
-      <div class="module-path-header">
-        <span>{{ $t('module_form_path') }}</span>
-        <div class="module-path-button">
-          <el-button
-            v-if="createForm.apiType == 'customerApi' && createForm.paths.length < 1"
-            size="mini"
-            @click="customeApiPath"
-            >{{ $t('module_form_customer_Api') }}</el-button
-          >
-          <el-button size="mini" v-if="apiAuthority === 'edit'" @click="updateAuthority">{{
-            $t('module_form_security')
-          }}</el-button>
-          <el-button size="mini" v-else @click="updateAuthority">{{ $t('module_form_edit') }}</el-button>
-          <el-button size="mini" v-if="createForm.status === 'active'" @click="openDocument">{{
-            $t('module_form_document')
-          }}</el-button>
-          <el-button size="mini" v-if="createForm.status === 'active'">{{ $t('module_form_preview') }}</el-button>
-        </div>
-      </div>
-      <div class="module-path-content">
-        <div class="module-path-item" v-for="(item, index) in createForm.paths" :key="index">
-          <div class="module-path-item-group" v-if="apiAuthority === 'edit'">
-            <div class="module-path-item-button">
-              <span class="module-path-item-method" :class="'label-' + getstyle(item)">{{ item.method }}</span>
-              <span class="module-path-item-text">{{ item.path }}</span>
-            </div>
-            <div class="module-path-button-box">
-              <div class="module-path-item-description">{{ item.description }}</div>
-              <div style="margin-left: 10px">
-                <el-tooltip class="item" effect="dark" :content="$t('button_delete')" placement="bottom">
-                  <span title="remove" @click="removeApiPath(index)" style="margin-right: 10px; cursor: pointer"
-                    ><i class="fa fa-times el-icon-delete"></i
-                  ></span>
-                </el-tooltip>
-                <el-tooltip class="item" effect="dark" :content="$t('button_edit')" placement="left">
-                  <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
-                    ><i class="fa fa-edit el-icon-edit-outline"></i
-                  ></span>
-                </el-tooltip>
-              </div>
+  <section class="module-warp" v-loading="loadingFrom">
+    <div class="module-warp-box">
+      <div class="module-form">
+        <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
+        <div class="module-path">
+          <div class="module-path-header">
+            <span>{{ $t('module_form_path') }}</span>
+            <div class="module-path-button">
+              <el-button
+                v-if="createForm.apiType == 'customerApi' && createForm.paths.length < 1"
+                size="mini"
+                @click="customeApiPath"
+                >{{ $t('module_form_customer_Api') }}</el-button
+              >
+              <el-button size="mini" v-if="apiAuthority === 'edit'" @click="updateAuthority">{{
+                $t('module_form_security')
+              }}</el-button>
+              <el-button size="mini" v-else @click="updateAuthority">{{ $t('module_form_edit') }}</el-button>
+              <el-button size="mini" v-if="createForm.status === 'active'" @click="openDocument">{{
+                $t('module_form_document')
+              }}</el-button>
+              <el-button size="mini" v-if="createForm.status === 'active'">{{ $t('module_form_preview') }}</el-button>
             </div>
           </div>
-          <template v-else>
-            <div>
-              <span class="module-path-item-method" :class="'label-' + getstyle(item)">{{ item.method }}</span>
-              <span class="module-path-item-text">{{ item.path }}</span>
+          <div class="module-path-content">
+            <div class="module-path-item" v-for="(item, index) in createForm.paths" :key="index">
+              <div class="module-path-item-group" v-if="apiAuthority === 'edit'">
+                <div class="module-path-item-button">
+                  <span class="module-path-item-method" :class="'label-' + getstyle(item)">{{ item.method }}</span>
+                  <span class="module-path-item-text">{{ item.path }}</span>
+                </div>
+                <div class="module-path-button-box">
+                  <div class="module-path-item-description">{{ item.description }}</div>
+                  <div style="margin-left: 10px">
+                    <el-tooltip class="item" effect="dark" :content="$t('button_delete')" placement="bottom">
+                      <span title="remove" @click="removeApiPath(index)" style="margin-right: 10px; cursor: pointer"
+                        ><i class="fa fa-times el-icon-delete"></i
+                      ></span>
+                    </el-tooltip>
+                    <el-tooltip class="item" effect="dark" :content="$t('button_edit')" placement="left">
+                      <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
+                        ><i class="fa fa-edit el-icon-edit-outline"></i
+                      ></span>
+                    </el-tooltip>
+                  </div>
+                </div>
+              </div>
+              <template v-else>
+                <div>
+                  <span class="module-path-item-method" :class="'label-' + getstyle(item)">{{ item.method }}</span>
+                  <span class="module-path-item-text">{{ item.path }}</span>
+                </div>
+                <div class="module-path-item-role">
+                  <el-select v-model="item.acl" multiple size="mini" placeholder="请选择">
+                    <el-option v-for="item in roles" :key="item.name" :label="item.name" :value="item.name">
+                    </el-option>
+                  </el-select>
+                </div>
+              </template>
             </div>
-            <div class="module-path-item-role">
-              <el-select v-model="item.acl" multiple size="mini" placeholder="请选择">
-                <el-option v-for="item in roles" :key="item.name" :label="item.name" :value="item.name"> </el-option>
-              </el-select>
-            </div>
-          </template>
+            <div class="module-path-item" v-if="createForm.paths.length === 0">No record found</div>
+          </div>
+          <div class="module-tags">
+            <span>{{ $t('module_form_tags') }}</span>
+            <span v-for="item in createForm.listtags" :key="item.id">{{ item.value }}</span>
+            <el-button type="primary" @click="handleOpenTag()" size="small">
+              {{ $t('module_form_edit') }}
+            </el-button>
+          </div>
+          <div class="module-form-footer">
+            <el-button class="cancel" @click="handleBack()" size="small">
+              {{ $t('button_back') }}
+            </el-button>
+            <el-button type="primary" @click="submit()" size="small"> {{ $t('button_save') }}</el-button>
+          </div>
         </div>
-        <div class="module-path-item" v-if="createForm.paths.length === 0">No record found</div>
-      </div>
-      <div class="module-tags">
-        <span>{{ $t('module_form_tags') }}</span>
-        <span v-for="item in createForm.listtags" :key="item.id">{{ item.value }}</span>
-        <el-button type="primary" @click="handleOpenTag()" size="small">
-          {{ $t('module_form_edit') }}
-        </el-button>
-      </div>
-      <div class="module-form-footer">
-        <el-button class="cancel" @click="handleBack()" size="small">
-          {{ $t('button_back') }}
-        </el-button>
-        <el-button type="primary" @click="submit()" size="small">{{ $t('button_save') }}</el-button>
+        <CustomerApiForm
+          v-if="dialogVisible"
+          :apiData="apiData"
+          :dialogVisible="dialogVisible"
+          @dialogVisible="handleDialogVisible"
+          @backApiPath="handleBackApiPath"
+        ></CustomerApiForm>
+        <SelectClassify ref="classify" :types="['api']" @operationsClassify="saveClassify"></SelectClassify>
       </div>
     </div>
-    <CustomerApiForm
-      v-if="dialogVisible"
-      :apiData="apiData"
-      :dialogVisible="dialogVisible"
-      @dialogVisible="handleDialogVisible"
-      @backApiPath="handleBackApiPath"
-    ></CustomerApiForm>
-    <SelectClassify ref="classify" :types="['api']" @operationsClassify="saveClassify"></SelectClassify>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -116,7 +121,8 @@ export default {
       roles: [],
       fields: [],
       tagFlag: false,
-      apiAuthority: 'edit'
+      apiAuthority: 'edit',
+      loadingFrom: false
     }
   },
   created() {
@@ -447,6 +453,7 @@ export default {
     },
     // 保存
     submit() {
+      this.loadingFrom = true
       if (this.createForm.paths?.length < 1) {
         this.$message.error(this.$t('module_form_noPath'))
         return
@@ -469,11 +476,20 @@ export default {
             [method](this.createForm)
             .then(res => {
               if (res) {
+                this.$router.push({
+                  name: 'modules'
+                })
                 this.$message.success(this.$t('message_save_ok'))
               }
             })
-            .catch(() => {
+            .catch(e => {
+              if (e?.response?.msg == 'duplication for name') {
+                this.$message.error(this.$t('module_form_duplication_name') + ',' + this.$t('message_save_fail'))
+              }
               this.$message.error(this.$t('message_save_fail'))
+            })
+            .finally(() => {
+              this.loadingFrom = false
             })
         }
       })
@@ -644,120 +660,128 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.module-form {
-  width: 1000px;
-  margin: 30px auto;
+.module-warp {
+  width: 100%;
+  height: 100%;
+  padding: 30px 0;
   box-sizing: border-box;
   overflow: hidden;
-  .module-path-header {
-    display: flex;
-    justify-content: space-between;
-    span {
-      display: inline-block;
-      width: 140px;
-      padding-right: 20px;
-      text-align: right;
+  .module-warp-box {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    .module-form {
+      width: 1000px;
+      margin: 0 auto;
       box-sizing: border-box;
-    }
-  }
-  .module-path-content {
-    padding: 20px 0 20px 70px;
-    .module-path-item {
-      padding: 10px 15px 12px;
-      border: 1px solid #eee;
-      border-top: 0;
-      color: #999;
-      font-size: 10px;
-      cursor: pointer;
-      &:first-child {
-        border-top: 1px solid #eee;
-      }
-      .module-path-item-group {
-        display: flex;
-        justify-content: space-between;
-      }
-      .module-path-button-box {
-        display: flex;
-      }
-      .module-path-item-method {
-        display: inline-block;
-        width: 80px;
-        padding: 3px;
-        text-align: center;
-        font-size: 11px;
-        color: #fff;
-      }
-      .module-path-item-text {
-        padding-left: 20px;
-      }
-      .module-path-item-button {
-        span {
-          padding: 0 5px;
-        }
-      }
-      .module-path-item-role {
-        margin-top: 10px;
-        ::v-deep {
-          .el-select {
-            width: 100%;
-            .el-select__tags {
-              max-width: 100%;
+      overflow: hidden;
+      ::deep {
+        .el-form-item {
+          margin-bottom: 20px;
+          .el-form-item__label {
+            width: 140px !important;
+            text-align: right;
+          }
+          .el-form-item__content {
+            margin-left: 140px !important;
+            .el-radio--mini.is-bordered {
+              padding: 0 15px 0 10px;
             }
           }
         }
       }
-      .label-default {
-        background-color: #999 !important;
-      }
-      .label-primary {
-        background-color: #dc6767 !important;
-      }
-      .label-red {
-        background-color: #bf4346 !important;
-      }
-      .label-orange {
-        background-color: #e9662c !important;
-      }
-      .label-green {
-        background-color: #488c6c !important;
-      }
-      .label-yellow {
-        background-color: #f2994b !important;
-      }
-      .label-blue {
-        background-color: #0a819c !important;
-      }
-    }
-  }
-  .module-tags {
-    padding: 20px 0 20px 70px;
-    font-size: 12px;
-    span {
-      padding: 0 20px;
-    }
-    .e-button {
-      padding-left: 20px;
-    }
-  }
-  .module-form-footer {
-    text-align: center;
-  }
-}
-</style>
-<style lang="scss">
-.module-form {
-  .el-form {
-    .el-form-item {
-      margin-bottom: 20px;
-      .el-form-item__label {
-        width: 140px !important;
-        text-align: right;
-      }
-      .el-form-item__content {
-        margin-left: 140px !important;
-        .el-radio--mini.is-bordered {
-          padding: 0 15px 0 10px;
+      .module-path-header {
+        display: flex;
+        justify-content: space-between;
+        span {
+          display: inline-block;
+          width: 140px;
+          padding-right: 20px;
+          text-align: right;
+          box-sizing: border-box;
         }
+      }
+      .module-path-content {
+        padding: 20px 0 20px 70px;
+        .module-path-item {
+          padding: 10px 15px 12px;
+          border: 1px solid #eee;
+          border-top: 0;
+          color: #999;
+          font-size: 10px;
+          cursor: pointer;
+          &:first-child {
+            border-top: 1px solid #eee;
+          }
+          .module-path-item-group {
+            display: flex;
+            justify-content: space-between;
+          }
+          .module-path-button-box {
+            display: flex;
+          }
+          .module-path-item-method {
+            display: inline-block;
+            width: 80px;
+            padding: 3px;
+            text-align: center;
+            font-size: 11px;
+            color: #fff;
+          }
+          .module-path-item-text {
+            padding-left: 20px;
+          }
+          .module-path-item-button {
+            span {
+              padding: 0 5px;
+            }
+          }
+          .module-path-item-role {
+            margin-top: 10px;
+            ::v-deep {
+              .el-select {
+                width: 100%;
+                .el-select__tags {
+                  max-width: 100%;
+                }
+              }
+            }
+          }
+          .label-default {
+            background-color: #999 !important;
+          }
+          .label-primary {
+            background-color: #dc6767 !important;
+          }
+          .label-red {
+            background-color: #bf4346 !important;
+          }
+          .label-orange {
+            background-color: #e9662c !important;
+          }
+          .label-green {
+            background-color: #488c6c !important;
+          }
+          .label-yellow {
+            background-color: #f2994b !important;
+          }
+          .label-blue {
+            background-color: #0a819c !important;
+          }
+        }
+      }
+      .module-tags {
+        padding: 20px 0 20px 70px;
+        font-size: 12px;
+        span {
+          padding: 0 20px;
+        }
+        .e-button {
+          padding-left: 20px;
+        }
+      }
+      .module-form-footer {
+        text-align: center;
       }
     }
   }
