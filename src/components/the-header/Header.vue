@@ -11,11 +11,18 @@
           <span>社区</span>
         </div> -->
         <!--        <div class="mr-6 pointer" @click="command('questions')">问答支持</div>-->
-        <el-popover placement="top-start" width="240" min-width="0" trigger="click">
-          <div class="text-center">
-            <img style="width: 120px; height: 120px" src="../../../public/images/wx_user_support.png" alt="" />
-            <div>{{ $t('header_scan_code') }}</div>
-            <div>{{ $t('header_join_group') }}</div>
+        <el-popover placement="top-start" width="400" min-width="0" trigger="click">
+          <div class="flex justify-content-between text-center">
+            <div>
+              <img style="width: 120px; height: 120px" src="../../../public/images/wx_user_support.png" alt="" />
+              <div>{{ $t('header_scan_code') }}</div>
+              <div>{{ $t('header_join_group') }}</div>
+            </div>
+            <div>
+              <img style="width: 120px; height: 120px" src="../../../public/images/wx_code.png" alt="" />
+              <div>{{ $t('header_scan_code_title1') }}</div>
+              <div>{{ $t('header_scan_code_desc1') }}</div>
+            </div>
           </div>
           <div class="command-item mr-6" slot="reference">
             <VIcon class="mr-2" size="17">question</VIcon>
@@ -26,10 +33,10 @@
           <VIcon class="mr-2" size="17">send</VIcon>
           <span>{{ $t('header_manual') }}</span>
         </div>
-        <div class="command-item mr-6" @click="command('feedback')">
-          <VIcon class="v-icon mr-2" size="17">feedback</VIcon>
-          <span>{{ $t('header_feedback') }}</span>
-        </div>
+        <!--        <div class="command-item mr-6" @click="command('feedback')">-->
+        <!--          <VIcon class="v-icon mr-2" size="17">feedback</VIcon>-->
+        <!--          <span>{{ $t('header_feedback') }}</span>-->
+        <!--        </div>-->
         <!--        <div class="mr-6 pointer" @click="command('source-center')">文档中心</div>-->
         <!--        <div class="flex align-items-center mr-6 pointer" @click="command('contact-us')">-->
         <!--          <VIcon class="mr-2" size="17">send</VIcon>-->
@@ -64,10 +71,6 @@
       </div>
     </div>
     <div class="dfs-header__dialog">
-      <!-- 用户支持 -->
-      <HeaderCustomerService v-model="isShowCustomerService"></HeaderCustomerService>
-      <!-- agent断开弹窗 -->
-      <!-- <AgentFail v-model="agentVisible" :isClose="isClose"></AgentFail> -->
       <div :class="['fixed-novice-guide-dialog', { active: guideVisible }]">
         <div class="guide-dialog__content text-center">
           <div class="guide-mark">
@@ -100,8 +103,6 @@
   </ElHeader>
 </template>
 <script>
-import HeaderCustomerService from './HeaderCustomerService'
-// import AgentFail from './AgentFail';
 import NotificationPopover from '@/views/workbench/NotificationPopover'
 // import ws from '../../plugins/ws.js';
 import VIcon from '@/components/VIcon'
@@ -111,7 +112,7 @@ const langMap = {
   en: 'en'
 }
 export default {
-  components: { HeaderCustomerService, VIcon, NotificationPopover },
+  components: { VIcon, NotificationPopover },
   data() {
     return {
       user: window.__USER_INFO__ || {},

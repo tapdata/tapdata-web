@@ -44,6 +44,8 @@ export default {
   header_question: '問答支持',
   header_scan_code: '掃碼添加官方小助手',
   header_join_group: '備註“雲版”即可進入群獲取支持',
+  header_scan_code_title1: '扫码关注Tapdata微信服务号',
+  header_scan_code_desc1: '获取最新资讯和技术干货',
   header_manual: '使用手冊',
   header_feedback: '提交反饋',
   header_official_website: '官網',
