@@ -517,6 +517,32 @@
       </div>
     </div>
   </div>
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 9">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>升级公告！</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2021-01-20</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-6">尊敬的用户朋友：</div>
+        <div class="mb-2">
+          您好！为了进一步提高服务质量，Tapdata Cloud 将于2022年1月20号（本周四）19点至22点进行升级
+        </div>
+        <div class="mb-2">
+          升级期间可能会影响访问控制台、创建任务等操作，不影响已在运行状态的任务，升级完成后恢复正常使用。
+        </div>
+        <div class="mb-10">以上升级如带来不便请您谅解，并提前做好准备，如有疑问可联系我们。</div>
+        <div class="">2022年1月20日</div>
+        <div class="">Tapdata Cloud 团队</div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>

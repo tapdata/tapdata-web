@@ -33,17 +33,16 @@
                 <div v-if="item.type" class="notice-list__type mr-4 p-1">
                   {{ item.type }}
                 </div>
+                <!--                <el-link-->
+                <!--                  v-if="item.id === 9"-->
+                <!--                  target="_blank"-->
+                <!--                  type="primary"-->
+                <!--                  class="notice-list__name flex-grow-1 ellipsis block pointer"-->
+                <!--                  href="https://sourl.cn/2f3mPF"-->
+                <!--                >-->
+                <!--                  {{ item.name }}-->
+                <!--                </el-link>-->
                 <el-link
-                  v-if="item.id === 9"
-                  target="_blank"
-                  type="primary"
-                  class="notice-list__name flex-grow-1 ellipsis block pointer"
-                  href="https://sourl.cn/2f3mPF"
-                >
-                  {{ item.name }}
-                </el-link>
-                <el-link
-                  v-else
                   type="primary"
                   class="notice-list__name flex-grow-1 ellipsis block pointer"
                   @click="toNotice(item)"
@@ -321,8 +320,8 @@ export default {
         {
           id: 9,
           type: '',
-          name: '1分钟有奖调研，元旦开奖！',
-          time: '2021-12-21'
+          name: '升级公告！',
+          time: '2022-01-20'
         },
         {
           id: 8,
