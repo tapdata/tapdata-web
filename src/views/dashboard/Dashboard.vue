@@ -642,13 +642,13 @@ export default {
               res.data.chart2[0].totalDelete
             ]
             const chart2 = res.data.chart2[0]
-            this.transBarData = [
-              { name: this.$t('dataFlow.totalOutput'), value: chart2.totalOutput, color: '#7ba75d' },
-              { name: this.$t('dataFlow.totalInput'), value: chart2.totalInput, color: '#409EFF' },
-              { name: this.$t('dataFlow.totalInsert'), value: chart2.totalInsert, color: '#d9742c' },
-              { name: this.$t('dataFlow.totalUpdate'), value: chart2.totalUpdate, color: '#e6b451' },
-              { name: this.$t('dataFlow.totalDelete'), value: chart2.totalDelete, color: '#e06c6c' }
-            ]
+            // this.transBarData = [
+            //   { name: this.$t('dataFlow.totalOutput'), value: chart2.totalOutput, color: '#7ba75d' },
+            //   { name: this.$t('dataFlow.totalInput'), value: chart2.totalInput, color: '#409EFF' },
+            //   { name: this.$t('dataFlow.totalInsert'), value: chart2.totalInsert, color: '#d9742c' },
+            //   { name: this.$t('dataFlow.totalUpdate'), value: chart2.totalUpdate, color: '#e6b451' },
+            //   { name: this.$t('dataFlow.totalDelete'), value: chart2.totalDelete, color: '#e06c6c' }
+            // ]
 
             self.unitData = self.dataScreening.series[0].data
             self.kbData = [res.data.chart2[0].totalOutputDataSize, res.data.chart2[0].totalInputDataSize]
@@ -690,28 +690,22 @@ export default {
           }
         ]
       }
-      this.$api('Measurement').query(params).then(res => {
-        console.log('Measurement', res)
-        // {
-        //   "samples" : [
-        //   {
-        //     "cpuUsage" : [12,312,323,2123,123,23],
-        //     "time" : [123123123,12312312,12312312,123123123,123123123]
-        //   }
-        // ],
-        //   "statistics" : [
-        //   {
-        //     "output" : 123213, // 总输出
-        //     "input" : 1, // 总输入
-        //     "insert" : 2, // 总插入
-        //     "update" : 3, // 总更新
-        //     "delete" : 4, // 总删除
-        //   }
-        // ]
-        // }
-      }).catch(err => {
-        console.log('err', err)
-      })
+      this.$api('Measurement')
+        .query(params)
+        .then(({ data }) => {
+          const result = data?.statistics?.[0]
+          console.log('Measurement', data)
+          this.transBarData = [
+            { name: this.$t('dataFlow.totalOutput'), value: result.outputEvents, color: '#7ba75d' },
+            { name: this.$t('dataFlow.totalInput'), value: result.inputEvents, color: '#409EFF' },
+            { name: this.$t('dataFlow.totalInsert'), value: result.insertCount, color: '#d9742c' },
+            { name: this.$t('dataFlow.totalUpdate'), value: result.updateCount, color: '#e6b451' },
+            { name: this.$t('dataFlow.totalDelete'), value: result.deleteCount, color: '#e06c6c' }
+          ]
+        })
+        .catch(err => {
+          console.log('err', err)
+        })
     },
 
     // 数据处理
