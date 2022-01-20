@@ -1833,6 +1833,7 @@ const cn = {
         CHECK_DDL_PERMISSION: '检查执行ddl语句所需的权限是否授权',
         CHECK_PERMISSION: '检查同步所需权限是否授权',
         CHECK_BIN_LOG: '检查binlog是否开启，并且是ROW级别',
+        CHECK_BIN_ROW_IMAGE: '检查binlog格式是否为FULL',
         CHECK_SCRIPT: '检查脚本是否可用',
         CHECK_PRIMARY_KEY: '检查主键是否可用',
         CHECK_CONFIG: '检查配置是否正确',
