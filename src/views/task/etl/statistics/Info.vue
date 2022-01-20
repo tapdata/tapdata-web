@@ -136,10 +136,9 @@ import VIcon from '@/components/VIcon'
 import SelectList from '@/components/SelectList'
 import Chart from 'web-core/components/chart'
 import FilterBar from '@/components/filter-bar'
-import { formatTime, isEmpty, formatTimeByTime, formatMs, delayTrigger } from '@/utils/util'
+import { formatTime, formatMs, delayTrigger } from '@/utils/util'
 import { cloneDeep } from 'lodash'
 
-let lastMsg
 export default {
   name: 'Info',
   components: { StatusTag, VIcon, SelectList, Chart, FilterBar },
@@ -246,7 +245,7 @@ export default {
             height: 20,
             bottom: '2%',
             textStyle: {
-              color: '#d4ffff',
+              color: '#2c65ff',
               fontSize: 11
             }
           },
@@ -398,7 +397,6 @@ export default {
       if (this.task.creator) {
         this.creator = this.task.creator
       }
-      // this.getQpsMetrics()
       this.getMeasurement()
       this.timer = setInterval(() => {
         if (this.isSliderFlag()) {
@@ -406,48 +404,9 @@ export default {
         }
       }, 5000)
     },
-    getQpsMetrics() {
-      let arr = ['total_input_qps', 'total_output_qps']
-      const { selectedStage } = this
-      let prefix = 'sub_task_'
-      if (selectedStage) {
-        prefix = 'sub_task_node_'
-      }
-      arr.forEach(el => {
-        let filter = {
-          where: {
-            name: prefix + el
-          },
-          order: 'createTime DESC',
-          limit: 20
-        }
-        if (selectedStage) {
-          filter.where['labels.nodeId'] = selectedStage
-        } else {
-          filter.where['labels.taskId'] = this.task.id
-        }
-        this.$api('Metrics')
-          .get({
-            filter: JSON.stringify(filter)
-          })
-          .then(res => {
-            console.log('res', el, res.data)
-            // lineData
-            if (el === 'total_input_qps') {
-              this.lineData.x = res.data.items.map(t => this.$moment(t.ts))
-              this.lineData.y[0] = res.data.items.map(t => t.value)
-            } else {
-              this.lineData.y[1] = res.data.items.map(t => t.value)
-            }
-            // this.totalData[el] = res.data.items?.[0]?.value || 0
-            // this.qpsData[el] = res.data.items?.[0]?.value || 0
-          })
-      })
-    },
     isSliderFlag() {
       const { sliderObj } = this
-      const flag = sliderObj.start === null && sliderObj.end === null
-      return flag
+      return sliderObj.start === null && sliderObj.end === null
     },
     getMeasurement() {
       let params = {
@@ -713,85 +672,6 @@ export default {
           it.outerHTML = ''
         })
       }, 200)
-    },
-    async changeStatus({ status, errorEvents }) {
-      let where = {
-        _id: {
-          in: [this.$route.params.id]
-        }
-      }
-      let attributes = {
-        status
-      }
-      errorEvents && (attributes.errorEvents = errorEvents)
-      return await this.$api('DataFlows')
-        .update(where, attributes)
-        .then(data => {
-          this.responseHandler(data, this.$t('task_operation_successful'))
-        })
-        .catch(error => {
-          if (error?.isException) {
-            this.$message.error(this.$t('task_start_failed'))
-          }
-        })
-    },
-    responseHandler(data, msg) {
-      let failList = data.fail || []
-      if (failList.length) {
-        let msgMapping = {
-          5: this.$t('task_not_exist'),
-          6: this.$t('task_not_allow_operation'),
-          7: this.$t('task_operation_failed'),
-          8: this.$t('task_not_allow_operation')
-        }
-        this.$message.warning({
-          dangerouslyUseHTMLString: true,
-          message: failList
-            .map(item => {
-              return `<div style="line-height: 24px;"><span style="color: #409EFF">${
-                this.task.name
-              }</span> : <span style="color: #F56C6C">${msgMapping[item.code]}</span></div>`
-            })
-            .join('')
-        })
-      } else if (msg) {
-        this.$message.success(msg)
-        this.$emit('reload')
-      }
-    },
-    getConfirmMessage(operateStr, name) {
-      let map = {
-        delete_confirm_title: this.$t('task_delete_confirm_title'),
-        delete_confirm_message: this.$t('task_delete_confirm_message'),
-
-        stop_confirm_title: this.$t('task_stop_confirm_title'),
-        stop_confirm_message: this.$t('task_stop_confirm_message'),
-
-        force_stop_confirm_title: this.$t('task_force_stop_confirm_title'),
-        force_stop_confirm_message: this.$t('task_force_stop_confirm_message'),
-
-        initialize_confirm_title: this.$t('task_initialize_confirm_title'),
-        initialize_confirm_message: this.$t('task_initialize_confirm_message')
-      }
-      let title = operateStr + '_confirm_title',
-        message = operateStr + '_confirm_message'
-      const h = this.$createElement
-      let strArr = map[message].split('xxx')
-      let msg = h('p', null, [
-        strArr[0],
-        h(
-          'span',
-          {
-            class: 'color-primary'
-          },
-          name
-        ),
-        strArr[1]
-      ])
-      return {
-        msg,
-        title: map[title]
-      }
     },
     changeStageFnc() {
       this.getMeasurement()
