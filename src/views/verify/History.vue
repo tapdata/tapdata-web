@@ -11,10 +11,10 @@
             }}
           </template>
         </el-table-column>
-        <el-table-column :label="$t('dataVerification.completeTime')" prop="end" align="center" width="180">
+        <el-table-column :label="$t('dataVerification.completeTime')" prop="last_updated" align="center" width="180">
           <template slot-scope="scope">
             <span>
-              {{ scope.row.end ? $moment(scope.row.end).format('YYYY-MM-DD HH:mm:ss') : '' }}
+              {{ scope.row.last_updated ? $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') : '' }}
             </span>
           </template>
         </el-table-column>
