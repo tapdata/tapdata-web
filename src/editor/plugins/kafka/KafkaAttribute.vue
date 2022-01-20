@@ -349,7 +349,6 @@ export default {
                     partitionSet: [-1]
                   }
             this.partitionSet = schema.partitionSet ? schema.partitionSet : []
-
             this.tableList = schema.fields ? schema.fields : []
 
             this.$emit('schemaChange', _.cloneDeep(schema))
@@ -416,7 +415,10 @@ export default {
                 return item
               }
             })
-            self.tableList = self.schemas
+            if (self.model.table_name) {
+              let schema = this.schemas.filter(s => s.table_name === self.model.tableName)
+              this.tableList = schema[0].fields ? schema[0].fields : []
+            }
           }
         })
         .finally(() => {
