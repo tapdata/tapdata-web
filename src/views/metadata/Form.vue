@@ -640,6 +640,9 @@ export default {
         td {
           padding: 0;
         }
+        .el-table__body-wrapper {
+          border-bottom: 1px solid #ececec;
+        }
       }
       .addBtn {
         .el-button {
