@@ -6,7 +6,14 @@
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { PieChart, BarChart, LineChart } from 'echarts/charts'
-import { TitleComponent, TooltipComponent, ToolboxComponent, LegendComponent, GridComponent } from 'echarts/components'
+import {
+  TitleComponent,
+  TooltipComponent,
+  ToolboxComponent,
+  LegendComponent,
+  GridComponent,
+  DataZoomComponent
+} from 'echarts/components'
 import VChart from 'vue-echarts'
 
 use([
@@ -18,7 +25,8 @@ use([
   TooltipComponent,
   ToolboxComponent,
   LegendComponent,
-  GridComponent
+  GridComponent,
+  DataZoomComponent
 ])
 
 export default {
@@ -52,6 +60,10 @@ export default {
     noY: {
       type: Array,
       default: () => [0, 1]
+    },
+    events: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -89,8 +101,15 @@ export default {
   },
   methods: {
     init() {
-      if (this.extend) {
-        this.chartOption = this.extend
+      const { events, extend, chart } = this
+      if (events.length) {
+        let getDom = chart?.chart
+        events.forEach(t => {
+          getDom.on(t.name, t.method)
+        })
+      }
+      if (extend) {
+        this.chartOption = extend
         return
       }
       let obj = this[this.type]?.()
@@ -108,7 +127,11 @@ export default {
                 if (el.cover) {
                   obj[key][i] = el
                 } else {
-                  obj[key][i] = Object.assign({}, obj[key][i] || {}, el || {})
+                  if (obj[key]) {
+                    obj[key][i] = Object.assign({}, obj[key][i] || {}, el || {})
+                  } else {
+                    obj[key] = options[key]
+                  }
                 }
               } else {
                 obj[key][i] = el
