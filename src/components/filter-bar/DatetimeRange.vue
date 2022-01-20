@@ -42,10 +42,6 @@ export default {
     endPlaceholder: {
       type: String,
       default: '结束时间'
-    },
-    timeDiff: {
-      type: Number,
-      default: 1000 // ms
     }
   },
   data() {
@@ -54,10 +50,10 @@ export default {
       end: '',
       startOptions: {
         disabledDate: time => {
-          const { end, timeDiff } = this
+          const { end } = this
           if (end) {
             if (this.getTimestamp(end) === this.getDayStartTimestamp(end)) {
-              return this.getTimestamp(time) > this.getDayStartTimestamp(end) - timeDiff
+              return this.getTimestamp(time) > this.getDayStartTimestamp(end) - 1
             }
             return this.getTimestamp(time) > this.getDayStartTimestamp(end)
           }
@@ -66,10 +62,10 @@ export default {
       },
       endOptions: {
         disabledDate: time => {
-          const { start, timeDiff } = this
+          const { start } = this
           if (start) {
             if (this.getTimestamp(start) === this.getDayEndTimestamp(start)) {
-              return this.getTimestamp(time) < this.getDayStartTimestamp(start) + timeDiff
+              return this.getTimestamp(time) < this.getDayStartTimestamp(start) + 1
             }
             return this.getTimestamp(time) < this.getDayStartTimestamp(start)
           }
@@ -131,32 +127,29 @@ export default {
       }
     },
     setStartRange() {
-      const { end, timeDiff } = this
-      if (!end || !this.isSameDay()) {
+      if (!this.end || !this.isSameDay()) {
         this.resetRange()
       } else {
-        this.startOptions.selectableRange = this.startRange + '-' + this.getHMs(this.end, -timeDiff)
+        this.startOptions.selectableRange = this.startRange + '-' + this.getHMs(this.end - 1000)
       }
     },
     setEndRange() {
-      const { start, timeDiff } = this
-      if (!start || !this.isSameDay()) {
+      if (!this.start || !this.isSameDay()) {
         this.resetRange()
       } else {
-        this.endOptions.selectableRange = this.getHMs(this.start, timeDiff) + '-' + this.endRange
+        this.endOptions.selectableRange = this.getHMs(this.start + 1000) + '-' + this.endRange
       }
     },
     setStartValue() {
-      const { start, end, timeDiff } = this
-      if (start && end && start >= end - timeDiff) {
-        this.start = end - timeDiff
+      const { start, end } = this
+      if (start && end && start >= end) {
+        this.start = end - 1000
       }
     },
     setEndValue() {
-      console.log('123')
-      const { start, end, timeDiff } = this
-      if (start && end && start + timeDiff >= end) {
-        this.end = start + timeDiff
+      const { start, end } = this
+      if (start && end && start >= end) {
+        this.end = start + 1000
       }
     },
     isSameDay() {
@@ -164,14 +157,11 @@ export default {
       return this.getDayStartTimestamp(start) === this.getDayStartTimestamp(end)
     },
     // 获取时分秒，自动补零
-    getHMs(timestamp, diff) {
+    getHMs(timestamp) {
       if (!timestamp) {
         return
       }
-      let date = new Date(timestamp)
-      if (diff) {
-        date = new Date(date.getTime() + diff)
-      }
+      const date = new Date(timestamp)
       const hours = date.getHours().toString().padStart(2, '0')
       const minutes = date.getMinutes().toString().padStart(2, '0')
       const seconds = date.getSeconds().toString().padStart(2, '0')

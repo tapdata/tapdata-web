@@ -19,11 +19,11 @@
         </span>
       </div>
       <div class="operation">
-        <VButton type="primary" :disabled="startDisabled" @click="start">
+        <VButton type="primary" :disabled="startDisabled" @click="start(task, arguments[0])">
           <VIcon size="12">start-fill</VIcon>
           <span class="ml-1">{{ $t('task_button_start') }}</span>
         </VButton>
-        <VButton type="danger" :disabled="stopDisabled" @click="stop">
+        <VButton type="danger" :disabled="stopDisabled" @click="stop(task, arguments[0])">
           <VIcon size="12">pause-fill</VIcon>
           <span class="ml-1">{{ $t('task_button_stop') }}</span>
         </VButton>
@@ -93,6 +93,7 @@
           type="line"
           :data="lineData"
           :options="lineOptions"
+          :events="[{ name: 'datazoom', method: datazoomFunc }]"
           no-x="second"
           class="type-chart h-100"
         ></Chart>
@@ -135,7 +136,8 @@ import VIcon from '@/components/VIcon'
 import SelectList from '@/components/SelectList'
 import Chart from 'web-core/components/chart'
 import FilterBar from '@/components/filter-bar'
-import { formatTime, isEmpty, formatTimeByTime, formatMs } from '@/utils/util'
+import { formatTime, isEmpty, formatTimeByTime, formatMs, delayTrigger } from '@/utils/util'
+import { cloneDeep } from 'lodash'
 
 let lastMsg
 export default {
@@ -237,6 +239,24 @@ export default {
           right: 0,
           show: true
         },
+        dataZoom: [
+          {
+            type: 'slider',
+            show: true,
+            height: 20,
+            bottom: '2%',
+            textStyle: {
+              color: '#d4ffff',
+              fontSize: 11
+            }
+          },
+          {
+            type: 'inside'
+          }
+        ],
+        xAxis: {
+          type: 'category'
+        },
         yAxis: [
           {
             axisLabel: {
@@ -261,7 +281,7 @@ export default {
         ],
         grid: {
           left: 0,
-          right: 0,
+          right: '2px',
           top: '24px',
           bottom: 0
         },
@@ -295,6 +315,12 @@ export default {
             }
           }
         ]
+      },
+      sliderObj: {
+        start: null, // 记录滑块位置
+        end: null,
+        startValue: null, // 记录索引
+        endValue: null
       },
       overData: {
         inputEvents: 0,
@@ -367,61 +393,18 @@ export default {
       }
     }
   },
-  mounted() {
-    // this.init()
-    this.$once('onceLoadHttp', () => {
-      this.loadHttp()
-    })
-  },
-  destroyed() {
-    this.$ws.off('dataFlowInsight')
-  },
   methods: {
     init() {
       if (this.task.creator) {
         this.creator = this.task.creator
       }
-      // this.loadMetrics()
-      // this.getTotalMetrics()
       // this.getQpsMetrics()
       this.getMeasurement()
       this.timer = setInterval(() => {
-        this.getMeasurement()
+        if (this.isSliderFlag()) {
+          this.getMeasurement()
+        }
       }, 5000)
-      // this.getMeasurement()
-      // this.loadHttp()
-      // this.$emit('onceLoadHttp')
-      // this.loadWS()
-      // this.sendMsg()
-    },
-    getTotalMetrics() {
-      let arr = ['total_input', 'total_output', 'total_insert', 'total_update', 'total_delete']
-      const { selectedStage } = this
-      let prefix = 'sub_task_'
-      if (selectedStage) {
-        prefix = 'sub_task_node_'
-      }
-      arr.forEach(el => {
-        let filter = {
-          where: {
-            name: prefix + el
-          },
-          order: 'createTime DESC',
-          limit: 1
-        }
-        if (selectedStage) {
-          filter.where['labels.nodeId'] = selectedStage
-        } else {
-          filter.where['labels.taskId'] = this.task.id
-        }
-        this.$api('Metrics')
-          .get({
-            filter: JSON.stringify(filter)
-          })
-          .then(res => {
-            this.totalData[el] = res.data.items?.[0]?.value || 0
-          })
-      })
     },
     getQpsMetrics() {
       let arr = ['total_input_qps', 'total_output_qps']
@@ -461,69 +444,12 @@ export default {
           })
       })
     },
-    loadMetrics() {
-      const { selectedStage } = this
-      let filter = {
-        where: {
-          name: {
-            $in: [
-              'sub_task_total_input',
-              'sub_task_total_output',
-              'sub_task_total_insert',
-              'sub_task_total_update',
-              'sub_task_total_delete',
-              'sub_task_qps'
-            ]
-          },
-          'labels.taskId': this.task.id
-        }
-      }
-      if (selectedStage) {
-        delete filter.where['labels.taskId']
-        filter.where['labels.nodeId'] = selectedStage
-        filter.where.name = {
-          $in: [
-            'sub_task_node_total_input',
-            'sub_task_node_total_output',
-            'sub_task_node_total_insert',
-            'sub_task_node_total_update',
-            'sub_task_node_total_delete',
-            'sub_task_node_qps'
-          ]
-        }
-      }
-      this.$api('Metrics')
-        .get({
-          filter: JSON.stringify(filter)
-        })
-        .then(res => {
-          console.log('Metrics', res)
-        })
-      this.$api('Metrics')
-        .get({
-          filter: JSON.stringify({
-            where: {
-              name: 'sub_task_total_input_qps'
-            }
-          })
-        })
-        .then(res => {
-          console.log('Metrics', res)
-        })
-      this.$api('Metrics')
-        .get({
-          filter: JSON.stringify({
-            where: {
-              name: 'sub_task_total_output_qps'
-            }
-          })
-        })
-        .then(res => {
-          console.log('Metrics', res)
-        })
+    isSliderFlag() {
+      const { sliderObj } = this
+      const flag = sliderObj.start === null && sliderObj.end === null
+      return flag
     },
     getMeasurement() {
-      console.log('selectedStage', this.selectedStage)
       let params = {
         samples: [
           {
@@ -632,7 +558,7 @@ export default {
         const { samples } = data
         const countObj = samples?.[2] || {}
         const statistics = data.statistics?.[0] || {}
-        const { overData, writeData, initialData, lineData, lineOptions } = this
+        const { overData, writeData, initialData, lineData, lineOptions, sliderObj } = this
         // 总输入总输出
         for (let key in overData) {
           overData[key] = countObj[key][1] - countObj[key][0]
@@ -652,13 +578,25 @@ export default {
         }
         // 折线图
         const qpsData = samples[0]
-        lineData.x = qpsData.time.map(t => formatTime(t))
-        lineData.y[0] = qpsData.inputQps
-        lineData.y[1] = qpsData.outputQps
+        // lineData.x = qpsData.time.map(t => formatTime(t))
+        let lineDataDeep = cloneDeep(lineData)
+        let lineOptionsDeep = cloneDeep(lineOptions)
+        let xArr = qpsData.time.map(t => formatTime(t))
+        // 滑块位置
+        if (this.isSliderFlag()) {
+          const len = lineDataDeep.x.length
+          sliderObj.startValue = len ? len : len - 1
+          sliderObj.endValue = sliderObj.startValue + xArr.length - 1
+          lineOptionsDeep.dataZoom[0].startValue = sliderObj.startValue
+          lineOptionsDeep.dataZoom[0].endValue = sliderObj.endValue
+        }
+        lineDataDeep.x.push(...xArr)
+        lineDataDeep.y[0].push(...qpsData.inputQps)
+        lineDataDeep.y[1].push(...qpsData.outputQps)
         if (this.selectedStage) {
           // 追加系列
-          lineData.y[2] = qpsData.transmitionTime
-          lineOptions.series[2] = {
+          lineDataDeep.y[2] = qpsData.transmitionTime
+          lineOptionsDeep.series[2] = {
             name: '耗时',
             yAxisIndex: 1,
             lineStyle: {
@@ -674,10 +612,12 @@ export default {
             }
           }
         } else {
-          lineData.y[2] = []
-          lineOptions.series[2] = { name: '' }
+          lineDataDeep.y[2] = []
+          lineOptionsDeep.series[2] = { name: '' }
         }
-        console.log('lineData', lineData.y)
+        lineOptionsDeep.dataZoom[0].show = lineDataDeep.x.length > 20
+        this.lineOptions = lineOptionsDeep
+        this.lineData = lineDataDeep
       })
     },
     getForecastMs(data) {
@@ -694,171 +634,8 @@ export default {
       const result = (end.initialTotal - start.initialWrite) / speed
       return formatMs(result)
     },
-    setMoreSer() {},
-    loadWS() {
-      this.$ws.on('dataFlowInsight', data => {
-        this.getOverview(data) // 事件统计
-        this.getThroughputOpt(data) // 输入输出统计
-      })
-    },
-    // 获取节点类型（是否是全部节点）
-    sendMsg() {
-      let msg = {
-        type: 'dataFlowInsight',
-        granularity: {
-          throughput: this.selectFlow + this.throughputObj.title.time,
-          trans_time: this.selectFlow + 'minute',
-          repl_lag: this.selectFlow + 'minute',
-          data_overview: this.dataOverviewAll
-        },
-        dataFlowId: this.task.id
-      }
-      let msgStr = JSON.stringify(msg)
-      if (lastMsg !== msgStr) {
-        this.$ws.ready(() => {
-          lastMsg = msgStr
-          this.$ws.send(msg)
-        })
-      }
-    },
-    loadHttp() {
-      let arr = ['overviewObj', 'throughputObj']
-      arr.forEach(el => {
-        let item = this[el]?.title
-        let params = {
-          statsType: item.statsType,
-          granularity: item.time ? 'flow_' + item.time : 'flow'
-        }
-        this.loadData(params, item)
-      })
-    },
-    // 通过api获取数据
-    loadData(params) {
-      params['dataFlowId'] = this.task.id
-      this.$api('DataFlowInsights')
-        .runtimeMonitor({
-          params: params
-        })
-        .then(res => {
-          let result = res.data || {}
-          let data = {
-            statsData: {},
-            granularity: {}
-          }
-          data.statsData[result.statsType] = result.statsData
-          data.granularity[result.statsType] = result.granularity
-          // 组合成ws返回的格式
-
-          switch (result.statsType) {
-            case 'throughput':
-              this.getThroughputOpt(data) // 输入输出统计
-              break
-          }
-        })
-    },
-    getOverview(data) {
-      let overview = data.statsData.data_overview || {}
-      if (isEmpty(overview)) {
-        return
-      }
-      this.overviewObj.body = overview
-    },
-    getThroughputOpt(data) {
-      let timeList = [],
-        inputCountList = [],
-        outputCountList = [],
-        timeType = data.granularity['throughput']?.split('_')[1]
-      data.statsData.throughput.forEach(item => {
-        timeList.push(formatTimeByTime(item.t, timeType))
-        inputCountList.push(item.inputCount)
-        outputCountList.push(item.outputCount)
-      })
-      // 计算y轴最大值
-      const max = Math.max(...[...inputCountList, ...outputCountList])
-      if (max > this.yMax) {
-        this.yMax = max + Math.ceil(max / 10)
-      }
-      this.throughputObj.body = {
-        tooltip: {
-          trigger: 'axis'
-        },
-        legend: {
-          top: 10,
-          right: 0
-        },
-        grid: {
-          left: 0,
-          right: 0,
-          bottom: '3%',
-          containLabel: true,
-          borderWidth: 1,
-          borderColor: '#ccc'
-        },
-        xAxis: {
-          axisLine: {
-            lineStyle: {
-              color: '#409EFF',
-              width: 1 // 这里是为了突出显示加上的
-            }
-          },
-          data: timeList
-        },
-        yAxis: {
-          max: this.yMax,
-          axisLine: {
-            show: true,
-            lineStyle: {
-              color: '#409EFF',
-              width: 1
-            }
-          },
-          axisLabel: {
-            formatter: function (value) {
-              if (value >= 1000) {
-                value = value / 1000 + 'K'
-              }
-              return value
-            }
-          }
-        },
-        series: [
-          {
-            name: this.$t('task_info_input'),
-            type: 'line',
-            smooth: true,
-            data: inputCountList,
-            itemStyle: {
-              color: '#2ba7c3'
-            },
-            lineStyle: {
-              color: '#2ba7c3'
-            },
-            areaStyle: {
-              color: '#2ba7c3'
-            }
-          },
-          {
-            name: this.$t('task_info_output'),
-            type: 'line',
-            smooth: true,
-            data: outputCountList,
-            itemStyle: {
-              color: '#61a569'
-            },
-            lineStyle: {
-              color: '#8cd5c2'
-            },
-            areaStyle: {
-              color: '#8cd5c2'
-            }
-          }
-        ]
-      }
-      this.throughputObj.input = inputCountList[inputCountList.length - 1] || 0
-      this.throughputObj.output = outputCountList[outputCountList.length - 1] || 0
-    },
-    changeUtil() {
-      this.sendMsg()
+    changeUtil(val) {
+      console.log('changeUtil', val)
     },
     formatTime(date) {
       return formatTime(date)
@@ -866,43 +643,29 @@ export default {
     formatMs(ms) {
       return formatMs(ms)
     },
-    start() {
-      this.$api('Workers')
-        .getAvailableAgent()
-        .then(async result => {
-          if (!result.data.result || result.data.result.length === 0) {
-            this.$message.error(this.$t('dataForm.form.agentMsg'))
-            return
-          }
-          this.startLoading = true
-          await this.changeStatus({ status: 'scheduled' })
-          this.startLoading = false
+    start(row = {}, resetLoading) {
+      this.$api('SubTask')
+        .start(row.id)
+        .then(res => {
+          this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+          this.table.fetch()
         })
+        .catch(err => {
+          this.$message.error(err.data?.message)
+        })
+        .finally(resetLoading)
     },
-    stop() {
-      let msgObj = this.getConfirmMessage('stop', this.task.name)
-      let message = msgObj.msg
-      let title = msgObj.title
-      let node = this.task
-      if (node.setting && !node.setting.sync_type.includes('cdc')) {
-        message = this.$t('task_pause_tip')
-        title = this.$t('task_important_reminder')
-      }
-      if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
-        const h = this.$createElement
-        let arr = this.$t('task_stop_tip').split('XXX')
-        message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
-        title = this.$t('task_important_reminder')
-      }
-      this.$confirm(message, title, {
-        type: 'warning',
-        confirmButtonText: this.$t('button_confirm'),
-        cancelButtonText: this.$t('button_cancel')
-      }).then(resFlag => {
-        if (resFlag) {
-          this.changeStatus({ status: 'stopping' })
-        }
-      })
+    stop(row, resetLoading) {
+      this.$api('SubTask')
+        .stop(row.id)
+        .then(res => {
+          this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+          this.table.fetch()
+        })
+        .catch(err => {
+          this.$message.error(err.data?.message)
+        })
+        .finally(resetLoading)
     },
     edit() {
       console.log('编辑') // eslint-disable-line
@@ -1031,15 +794,25 @@ export default {
       }
     },
     changeStageFnc() {
-      // this.sendMsg()
-      // this.loadMetrics()
-      // this.getTotalMetrics()
-      console.log('selectedStage', this.selectedStage)
       this.getMeasurement()
     },
     search() {
-      console.log('search', this.searchParams)
       this.getMeasurement()
+    },
+    datazoomFunc(val) {
+      delayTrigger(() => {
+        let { sliderObj } = this
+        if (val.type === 'datazoom') {
+          if (val.batch) {
+            const item = val.batch[0] || {}
+            sliderObj.start = item.start
+            sliderObj.end = item.end
+          } else {
+            sliderObj.start = val.start
+            sliderObj.end = val.end
+          }
+        }
+      }, 100)
     }
   }
 }
