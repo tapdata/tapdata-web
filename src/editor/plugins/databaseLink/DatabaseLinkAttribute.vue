@@ -59,6 +59,7 @@
                 @returnPreFixSuffix="returnPreFixSuffix"
               ></FieldMapping>
               <ElButton
+                v-if="showFieldMapping && !transformModelVersion"
                 style="padding: 4px 10px; color: #666; background-color: #f5f5f5; margin-left: 10px"
                 @click="handleOpenTableDialog"
                 >{{ $t('dag_dialog_field_mapping_table_rename') }}</ElButton
@@ -720,6 +721,33 @@ export default {
     }
   }
 }
+::v-deep {
+  .field-maping-table-dialog {
+    .table-box {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      .table-form {
+        width: 56%;
+        .el-form-item {
+          margin-bottom: 12px;
+        }
+        .tip {
+          padding-left: 40px;
+        }
+      }
+      .table-example {
+        width: 36%;
+        h3 {
+          padding-bottom: 20px;
+        }
+        p {
+          padding-bottom: 10px;
+        }
+      }
+    }
+  }
+}
 </style>
 <style lang="scss">
 .database-link {
@@ -882,33 +910,6 @@ export default {
   .text {
     padding: 0 50px;
     color: #666;
-  }
-}
-::v-deep {
-  .field-maping-table-dialog {
-    .table-box {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      .table-form {
-        width: 56%;
-        .el-form-item {
-          margin-bottom: 12px;
-        }
-        .tip {
-          padding-left: 40px;
-        }
-      }
-      .table-example {
-        width: 36%;
-        h3 {
-          padding-bottom: 20px;
-        }
-        p {
-          padding-bottom: 10px;
-        }
-      }
-    }
   }
 }
 </style>
