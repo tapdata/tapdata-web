@@ -224,24 +224,14 @@ export default {
     },
     loadAgent() {
       let agentList = this.agentList
-      let filter = {
-        where: {},
-        // size: 1,
-        // page: 0,
-        sort: ['createAt desc']
-      }
       const loading = this.$loading({
         target: this.$refs.agent?.[0]
       })
       this.$axios
-        .get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .get('/api/tcm/agent/agentCount')
         .then(data => {
-          agentList[0].value = data?.total
-          let total = data?.total
-          let runningCount = data.items.filter(item => item.status === 'Running')?.length ?? 0
-          let offlineCount = total - runningCount
-          agentList[0].list[0].value = runningCount
-          agentList[0].list[1].value = offlineCount
+          agentList[0].list[0].value = data.agentRunningCount || 0
+          agentList[0].list[1].value = data.agentTotalCount - agentList[0].list[0].value
         })
         .finally(() => {
           loading.close()
