@@ -611,7 +611,7 @@ export default {
         this.$refs.form.validate(valid => {
           if (valid) {
             let data = Object.assign({}, this.model)
-            if (data.database_type === 'mongodb') {
+            if (data.database_type === 'mongodb' && !data.isUrl) {
               data.database_uri = ''
             }
             if (this.$route.params.id) {
