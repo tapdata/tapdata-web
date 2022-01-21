@@ -140,7 +140,7 @@ export default {
           name: 'Agent',
           key: 'agent',
           icon: 'agent',
-          value: 1,
+          value: 0,
           list: [
             {
               label: $t('agent_status_running'),
@@ -230,8 +230,9 @@ export default {
       this.$axios
         .get('/api/tcm/agent/agentCount')
         .then(data => {
+          agentList[0].value = data.agentTotalCount || 0
           agentList[0].list[0].value = data.agentRunningCount || 0
-          agentList[0].list[1].value = data.agentTotalCount - agentList[0].list[0].value
+          agentList[0].list[1].value = agentList[0].value - agentList[0].list[0].value
         })
         .finally(() => {
           loading.close()
