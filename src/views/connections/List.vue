@@ -401,7 +401,9 @@ export default {
     },
     async getDatabaseType() {
       let databaseTypes = await this.$api('DatabaseTypes').get()
-      this.databaseTypeOptions = databaseTypes.data.filter(dt => dt.type !== 'kudu')
+      this.databaseTypeOptions = databaseTypes.data
+        .filter(dt => dt.type !== 'kudu')
+        .sort((t1, t2) => (t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1))
     },
     getData({ page, tags }) {
       let region = this.$route.query.region
