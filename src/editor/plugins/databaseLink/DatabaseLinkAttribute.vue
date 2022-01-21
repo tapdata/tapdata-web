@@ -268,7 +268,7 @@ export default {
         self.disabledTransfer = false
       } else if (!res?.data?.stageId) {
         let status = res?.data?.status
-        if (status === 'done') {
+        if (['done', 'error'].includes(status)) {
           self.disabledTransfer = false
         } else {
           self.disabledTransfer = true

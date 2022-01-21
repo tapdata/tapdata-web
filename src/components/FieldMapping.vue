@@ -56,6 +56,20 @@ export default {
       field_process: this.transform.field_process
     }
   },
+  mounted() {
+    //监听ws error 关掉弹窗以及错误提示
+    let self = this
+    let id = this.transform.stageId
+    ws.on('metadataTransformerProgress', function (res) {
+      if (res?.data?.stageId === id) {
+        let status = res?.data?.status
+        if (['error'].includes(status)) {
+          self.dialogFieldProcessVisible = false //推演失败 关闭弹窗
+          self.$message.error(res?.data?.errorMsg)
+        }
+      }
+    })
+  },
   methods: {
     /*
      * 模型推演

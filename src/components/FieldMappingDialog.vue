@@ -517,11 +517,12 @@ export default {
         self.progress.finished = finished
         self.progress.total = total
         self.page.total = finished
-        if (status !== 'done') {
+        if (!['done', 'error'].includes(status)) {
           self.progress.showProgress = true
           if (self.fieldMappingNavData?.length < self.page.size && self.page.current === 1) {
             self.initNavData()
           }
+        } else if (['error'].includes(status)) {
         } else {
           self.progress.showProgress = false
           self.initNavData()
