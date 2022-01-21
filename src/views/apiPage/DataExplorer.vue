@@ -538,8 +538,11 @@ export default {
             504: this.$t('dataExplorer_timeout'),
             401: this.$t('dataExplorer_unauthenticated')
           }
-          // console.log('-------', e)
-          this.$message.error(msg['' + (e?.response?.status || '')])
+          if (e?.response) {
+            this.$message.error(msg['' + (e?.response?.status || '')])
+          } else {
+            this.$message.error(this.$t('dataExplorer_timeout'))
+          }
         })
     },
     // 获取表头
