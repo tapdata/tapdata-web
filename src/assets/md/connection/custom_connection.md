@@ -20,8 +20,8 @@ rest.get(url, header, returnType, connectTimeOut, readTimeOut)
 
 // 调用http的 get 方法
 // returnType: 返回的结果类型，默认为array
-// connectTimeOut：连接超时时间，默认为10S，需要指定连接超时时间时可以使用该参数
-// readTimeOut：读取超时时间，默认为10S，需要指定读取超时时间时可以使用该参数
+// connectTimeOut：连接超时时间，单位毫秒(ms)，默认为 10000 ms，需要指定连接超时时间时可以使用该参数
+// readTimeOut：读取超时时间，单位毫秒(ms)，默认为 30000 ms，需要指定读取超时时间时可以使用该参数
 
 var result = rest.get('http://127.0.0.1:1234/users?id=1', {}, '[array/object/string]', 30, 300);
 ```
@@ -34,8 +34,8 @@ rest.post(url, parameters, headers, returnType, connectTimeOut, readTimeOut)
 
 // 调用http的 post 方法
 // returnType: 返回的结果类型，默认为array
-// connectTimeOut：连接超时时间，默认为10S，需要指定连接超时时间时可以使用该参数
-// readTimeOut：读取超时时间，默认为10S，需要指定读取超时时间时可以使用该参数
+// connectTimeOut：连接超时时间，单位毫秒(ms)，默认为 10000 ms，需要指定连接超时时间时可以使用该参数
+// readTimeOut：读取超时时间，单位毫秒(ms)，默认为 30000 ms，需要指定读取超时时间时可以使用该参数
 
 var result = rest.post('http://127.0.0.1:1234/users/find', {}, {}, '[array/object/string]', 30, 300);
 ```
@@ -47,8 +47,8 @@ rest.patch(url, parameters, connectTimeOut, readTimeOut)
 rest.patch(url, parameters, headers, connectTimeOut, readTimeOut)
 
 // 调用http的 patch 方法
-// connectTimeOut：连接超时时间，默认为10S，需要指定连接超时时间时可以使用该参数
-// readTimeOut：读取超时时间，默认为10S，需要指定读取超时时间时可以使用该参数
+// connectTimeOut：连接超时时间，单位毫秒(ms)，默认为 10000 ms，需要指定连接超时时间时可以使用该参数
+// readTimeOut：读取超时时间，单位毫秒(ms)，默认为 30000 ms，需要指定读取超时时间时可以使用该参数
 
 var result = rest.patch('http://127.0.0.1:1234/users?where[user_id]=1', {status: 0}, {}, 30, 300);
 ```
@@ -60,8 +60,8 @@ rest.delete(url, connectTimeOut, readTimeOut)
 rest.delete(url, headers, connectTimeOut, readTimeOut)
 
 // 调用http的 delete 方法
-// connectTimeOut：连接超时时间，默认为10S，需要指定连接超时时间时可以使用该参数
-// readTimeOut：读取超时时间，默认为10S，需要指定读取超时时间时可以使用该参数
+// connectTimeOut：连接超时时间，单位毫秒(ms)，默认为 10000 ms，需要指定连接超时时间时可以使用该参数
+// readTimeOut：读取超时时间，单位毫秒(ms)，默认为 30000 ms，需要指定读取超时时间时可以使用该参数
 
 var result = rest.delete('http://127.0.0.1:1234/users?where[user_id]=1', {}, 30, 300);
 ```
