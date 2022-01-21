@@ -517,11 +517,12 @@ export default {
         self.progress.finished = finished
         self.progress.total = total
         self.page.total = finished
-        if (status !== 'done') {
+        if (!['done', 'error'].includes(status)) {
           self.progress.showProgress = true
           if (self.fieldMappingNavData?.length < self.page.size && self.page.current === 1) {
             self.initNavData()
           }
+        } else if (['error'].includes(status)) {
         } else {
           self.progress.showProgress = false
           self.initNavData()
@@ -579,13 +580,17 @@ export default {
         this.getNavDataMethod &&
           this.getNavDataMethod(this.page)
             .then(({ data, total }) => {
-              this.fieldMappingNavData = data
-              this.selectRow = data[this.position] || data[0]
-              this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
-              this.page.total = total
-              //初始化右侧列表
-              this.initTableData()
-              this.initTypeMapping()
+              if (data && data.status === 'error') {
+                this.$message.error(data.errorMsg)
+              } else {
+                this.fieldMappingNavData = data
+                this.selectRow = data[this.position] || data[0]
+                this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
+                this.page.total = total
+                //初始化右侧列表
+                this.initTableData()
+                this.initTypeMapping()
+              }
             })
             .finally(() => {
               this.loadingPage = false

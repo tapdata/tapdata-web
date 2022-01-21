@@ -659,7 +659,7 @@ export default {
           self.progress.finished = finished
           self.progress.total = total
           self.progress.progress = status
-          if (status !== 'done') {
+          if (!['done', 'error'].includes(status)) {
             self.progress.showProgress = true
           } else {
             self.progress.showProgress = false
