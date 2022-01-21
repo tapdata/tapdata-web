@@ -580,17 +580,13 @@ export default {
         this.getNavDataMethod &&
           this.getNavDataMethod(this.page)
             .then(({ data, total }) => {
-              if (data && data.status === 'error') {
-                this.$message.error(data.errorMsg)
-              } else {
-                this.fieldMappingNavData = data
-                this.selectRow = data[this.position] || data[0]
-                this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
-                this.page.total = total
-                //初始化右侧列表
-                this.initTableData()
-                this.initTypeMapping()
-              }
+              this.fieldMappingNavData = data
+              this.selectRow = data[this.position] || data[0]
+              this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
+              this.page.total = total
+              //初始化右侧列表
+              this.initTableData()
+              this.initTypeMapping()
             })
             .finally(() => {
               this.loadingPage = false
