@@ -147,6 +147,10 @@ factory('Setting')
     }
     init(data || [])
   })
+  .catch(err => {
+    // eslint-disable-next-line
+    console.log('请求全局配置(settings)失败: ' + err)
+  })
 //获取全局项目设置（OEM信息）
 
 //解决浏览器tab切换时，element ui 组件tooltip气泡不消失的问题  #7752
