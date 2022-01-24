@@ -228,6 +228,12 @@ export const FORM_DATA_KEY = 'form_data',
       name: 'ADB PostgreSQL',
       shapeImage: 'static/editor/adb_postgres.svg',
       stencilImage: 'static/editor/adb_postgres.svg'
+    },
+    hazelcast_cloud_cluster: {
+      type: 'hazelcast_cloud_cluster',
+      name: 'Hazelcast Cloud',
+      shapeImage: 'static/editor/hazelcast.svg',
+      stencilImage: 'static/editor/hazelcast.svg'
     }
   },
   FILE_TYPE_MAPPING = {

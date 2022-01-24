@@ -73,7 +73,8 @@ export const TYPEMAP = {
   clickhouse: 'ClickHouse',
   kundb: 'KunDB',
   adb_mysql: 'ADB MySQL',
-  adb_postgres: 'ADB PostgreSQL'
+  adb_postgres: 'ADB PostgreSQL',
+  hazelcast_cloud_cluster: 'Hazelcast Cloud'
 }
 //特殊数据源
 export const TYPEMAPCONFIG = {

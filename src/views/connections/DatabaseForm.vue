@@ -659,7 +659,8 @@ export default {
         'kundb',
         'adb_postgres',
         'adb_mysql',
-        'vika'
+        'vika',
+        'hazelcast_cloud_cluster'
       ],
       model: '',
       config: {

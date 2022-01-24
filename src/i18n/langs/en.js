@@ -349,6 +349,7 @@ export default {
   dag_data_node_label_aggregate_filter: 'Filter',
   dag_link_button_custom_script: 'Custom processing script',
   dag_data_node_hana_hana_check: 'Hana as a source only supports full tasks',
+  dag_data_node_label_hazelcast: 'Hazelcast Cloud Node',
 
   //Field mapping
   dag_link_button_field_mapping: 'Field mapping',

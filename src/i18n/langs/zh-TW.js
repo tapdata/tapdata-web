@@ -344,6 +344,7 @@ export default {
   dag_data_node_label_memcache_type_local: '局部緩存',
   dag_data_node_label_memcache_type_tip: '全局緩存所有任務可引用，局部緩存僅限當前DAG引用。 ',
   dag_data_node_hana_hana_check: 'Hana作為源僅支持全量任務',
+  dag_data_node_label_hazelcast: 'Hazelcast Cloud節點',
 
   dag_dialog_field_mapping_change_type_field_rename: '類型修改',
   dag_dialog_field_mapping_batch_change_type: '批量修改字段類型',

@@ -308,6 +308,36 @@ export default {
   connection_kafka_kerberos_none_conf: '配置文件不能为空',
   connection_kafka_encryption: '加密方式',
 
+  connection_form_hazecast_connection_type: '连接类型',
+  connection_form_hazecast_connection_test: '连接测试',
+  connection_form_hazecast_create: '创建连接',
+  connection_form_hazecast_edit: '编辑连接',
+  connection_form_hazecast_data_source: '数据源',
+  connection_form_hazecast_data_source_type: '数据源',
+  connection_form_hazecast_rename: '重命名',
+  connection_form_hazecast_change: '改变',
+  connection_form_hazecast_no_name: '连接名称不能为空',
+  connection_form_hazecast_name_exists: '名称已存在',
+  connection_form_hazecast_cancel: '取消',
+  connection_form_hazecast_save: '保存',
+  connection_form_hazecast_give_up: '放弃',
+  connection_form_hazecast_confirm_edit: '此操作将丢失当前编辑内容',
+  connection_form_hazecast_confirm_create: '此操作将丢失当前正在创建的连接',
+  connection_form_hazecast_confirm_create_content: '你想放弃连接的创建吗？', //是否放弃创建该连接？
+  connection_form_hazecast_confirm_edit_content: '你想放弃修改内容吗？', //是否放弃修改内容？
+  connection_form_hazecast_connection_name: '连接名称',
+  connection_form_hazecast_connection_name_placeholder: '请输入连接名称',
+  connection_form_hazecast_options_target: '目标',
+  connection_form_hazecast_options_target_tips: '这个数据连接在Tapdata中只能作为目标，不能作为源',
+  connection_form_hazecast_database_name: 'Cluster Name', //集群名称
+  connection_form_hazecast_plain_password: '令牌',
+  connection_form_hazecast_ssl: 'Enable SSL', //是否开启ssl
+  connection_form_hazecast_sslKey: '密钥存储文件',
+  connection_form_hazecast_sslCA: '信任密钥存储文件',
+  connection_form_hazecast_sslPass: '密钥文件密码',
+  connection_form_hazecast_none_sslKey: '密钥库文件不能为空',
+  connection_form_hazecast_none_sslCA: '信任密钥存储文件不能为空',
+
   connection_redis_valid: '开启认证',
 
   connection_hana_label_hana_type: '租户模式',
@@ -344,6 +374,7 @@ export default {
   dag_data_node_label_kafka_all: '所有',
   dag_link_button_custom_script: '自定义处理脚本',
   dag_data_node_hana_hana_check: 'Hana作为源仅支持全量任务',
+  dag_data_node_label_hazelcast: 'Hazelcast Cloud节点',
   //字段映射
   dag_link_button_field_mapping: '字段映射',
   dag_link_button_mapping_configuration: '映射配置',

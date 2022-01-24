@@ -299,7 +299,8 @@ export default {
         'kundb',
         'adb_postgres',
         'adb_mysql',
-        'vika'
+        'vika',
+        'hazelcast_cloud_cluster'
       ], //目前白名单,
       searchParams: {
         databaseType: '',

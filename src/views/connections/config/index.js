@@ -32,6 +32,7 @@ import clickhouse from './clickhouse'
 import kundb from './kundb'
 import adb_postgres from './adb_postgres'
 import adb_mysql from './adb_mysql'
+import hazelcast_cloud_cluster from './hazelcast_cloud_cluster'
 
 export default {
   mysql,
@@ -67,5 +68,6 @@ export default {
   clickhouse,
   kundb,
   adb_postgres,
-  adb_mysql
+  adb_mysql,
+  hazelcast_cloud_cluster
 }
