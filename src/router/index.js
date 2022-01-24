@@ -805,6 +805,7 @@ router.beforeEach(async (to, from, next) => {
           return
         }
       } catch (e) {
+        loading.close()
         if (e.response && e.response.msg) {
           Message.error({
             message: e.response.msg
