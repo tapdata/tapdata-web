@@ -91,9 +91,6 @@
         <ElTabPane label="历史运行记录" name="history" lazy>
           <History v-if="task.id" :ids="[task.id]" :operations="operations"></History>
         </ElTabPane>
-        <ElTabPane label="运行日志" name="log" lazy>
-          <Log :id="task.id" type="2"></Log>
-        </ElTabPane>
       </ElTabs>
     </div>
   </ElContainer>

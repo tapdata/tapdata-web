@@ -7,7 +7,7 @@
           <Schedule :task="task"></Schedule>
         </ElTabPane>
         <ElTabPane label="运行日志" name="log" lazy>
-          <Log :id="task.id" type="1"></Log>
+          <Log :id="task.id"></Log>
         </ElTabPane>
       </ElTabs>
     </div>
