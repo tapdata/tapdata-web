@@ -74,6 +74,52 @@ export default function () {
                 }
               ]
             }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'noPrimaryKey',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              options: [
+                {
+                  label: i18n.t('task_setting_update_write_mode'),
+                  tip: i18n.t('task_setting_update_write_mode_tip'),
+                  value: 'intellect',
+                  disabled: true
+                },
+                {
+                  label: i18n.t('task_setting_remoive_rewrite_mode'),
+                  tip: i18n.t('task_setting_remoive_rewrite_mode_tip'),
+                  value: 'compel'
+                }
+              ],
+              value: 'compel'
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'noPrimaryKey',
+                value: false
+              }
+            ],
+            triggerConfig: {
+              options: [
+                {
+                  label: i18n.t('task_setting_update_write_mode'),
+                  tip: i18n.t('task_setting_update_write_mode_tip'),
+                  value: 'intellect'
+                },
+                {
+                  label: i18n.t('task_setting_remoive_rewrite_mode'),
+                  tip: i18n.t('task_setting_remoive_rewrite_mode_tip'),
+                  value: 'compel'
+                }
+              ]
+            }
           }
         ]
       },
