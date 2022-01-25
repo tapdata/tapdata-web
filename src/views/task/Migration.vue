@@ -838,9 +838,7 @@ export default {
       }
       if (type === 'edit') {
         this.$confirm(
-          `<p>${this.$t('task_list_edit_tip')}<span style="color:#409EFF">${this.$t('task_list_edit_tip1')}</span>、` +
-            `<span style="color:#409EFF">${this.$t('task_list_node_attr')}</span>、` +
-            `<span style="color:#409EFF">${this.$t('task_list_matching_releation')}</span>,` +
+          `<p>${this.$t('task_list_edit_tip')}, ` +
             `${this.$t('task_list_edit_submit')}<span style="color:#409EFF">${this.$t(
               'task_list_edit_reset'
             )}</span>${this.$t('task_list_edit_tip3')}</p>`,
