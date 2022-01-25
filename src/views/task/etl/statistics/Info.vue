@@ -35,16 +35,44 @@
     </div>
     <div class="flex align-center mt-3">
       <SelectList
-        v-if="stagesItems.length > 0"
         v-model="selectedStage"
         :items="stagesItems"
         last-page-text=""
         clearable
         size="mini"
         style="min-width: 240px"
+        placeholder="请选择节点"
         @change="changeStageFnc"
       ></SelectList>
-      <FilterBar v-model="searchParams" :items="filterItems" class="ml-4" hide-refresh @search="search"></FilterBar>
+      <SelectList
+        v-model="selectedTime"
+        :items="selectedTimeItems"
+        last-page-text=""
+        clearable
+        size="mini"
+        placeholder="请选择周期"
+        class="ml-4"
+        style="min-width: 180px"
+        @change="changeTimeFnc"
+      ></SelectList>
+      <DatetimeRange
+        v-if="selectedTime === 'custom'"
+        v-model="timeRange"
+        value-format="timestamp"
+        class="filter-datetime-range ml-2"
+        @change="changeTimeRangeFnc"
+      ></DatetimeRange>
+      <SelectList
+        v-model="selectedRate"
+        :items="selectedRateItems"
+        last-page-text=""
+        clearable
+        size="mini"
+        placeholder="请选择频率"
+        class="ml-4"
+        style="min-width: 180px"
+        @change="changeRateFnc"
+      ></SelectList>
     </div>
     <div class="flex justify-content-between mt-6">
       <div class="p-6 grey-background" style="min-width: 200px">
@@ -74,29 +102,21 @@
         </div>
       </div>
       <div class="flex flex-column flex-fill pl-10" style="height: 250px">
-        <div class="flex justify-content-between ml-6">
-          <ElRadioGroup v-model="throughputObj.title.time" size="mini" @change="changeUtil">
-            <ElRadioButton label="second">{{ $t('task_info_s') }}</ElRadioButton>
-            <ElRadioButton label="minute">{{ $t('task_info_m') }}</ElRadioButton>
-            <ElRadioButton label="hour">{{ $t('task_info_h') }}</ElRadioButton>
-            <ElRadioButton label="day">{{ $t('task_info_d') }}</ElRadioButton>
-          </ElRadioGroup>
-          <div
-            class="px-2"
-            style="line-height: 27px; border: 1px solid #e8e8e8; border-radius: 4px; box-sizing: border-box"
-          >
-            QPS
-          </div>
-        </div>
-        <Chart
-          ref="chart"
-          type="line"
-          :data="lineData"
-          :options="lineOptions"
-          :events="[{ name: 'datazoom', method: datazoomFunc }]"
-          no-x="second"
-          class="type-chart h-100"
-        ></Chart>
+        <!--        <div class="flex justify-content-between ml-6">-->
+        <!--          <ElRadioGroup v-model="selectTime" size="mini" @change="changeUtil">-->
+        <!--            <ElRadioButton label="second" :disabled="secondDisabled">{{ $t('task_info_s') }}</ElRadioButton>-->
+        <!--            <ElRadioButton label="minute" :disabled="minuteDisabled">{{ $t('task_info_m') }}</ElRadioButton>-->
+        <!--            <ElRadioButton label="hour" :disabled="hourDisabled">{{ $t('task_info_h') }}</ElRadioButton>-->
+        <!--            <ElRadioButton label="day" :disabled="dayDisabled">{{ $t('task_info_d') }}</ElRadioButton>-->
+        <!--          </ElRadioGroup>-->
+        <!--          <div-->
+        <!--            class="px-2"-->
+        <!--            style="line-height: 27px; border: 1px solid #e8e8e8; border-radius: 4px; box-sizing: border-box"-->
+        <!--          >-->
+        <!--            QPS-->
+        <!--          </div>-->
+        <!--        </div>-->
+        <Chart ref="chart" type="line" :data="lineData" :options="lineOptions" class="type-chart h-100"></Chart>
       </div>
       <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
         <div class="right-box grey-background">
@@ -135,13 +155,16 @@ import StatusTag from '@/components/StatusTag'
 import VIcon from '@/components/VIcon'
 import SelectList from '@/components/SelectList'
 import Chart from 'web-core/components/chart'
-import FilterBar from '@/components/filter-bar'
+import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import { formatTime, formatMs, delayTrigger } from '@/utils/util'
 import { cloneDeep } from 'lodash'
 
+let now = new Date(1997, 9, 3)
+let oneDay = 24 * 3600 * 1000
+let value1 = Math.random() * 1000
 export default {
   name: 'Info',
-  components: { StatusTag, VIcon, SelectList, Chart, FilterBar },
+  components: { StatusTag, VIcon, SelectList, Chart, DatetimeRange },
   props: {
     task: {
       type: Object,
@@ -152,40 +175,7 @@ export default {
   },
   data() {
     return {
-      selectFlow: 'stage_', // 选中节点
-      dataOverviewAll: 'flow',
-      // 事件统计
-      overviewObj: {
-        title: {
-          key: 'overview',
-          statsType: 'data_overview',
-          title: this.$t('dataFlow.dataScreening'),
-          loading: false
-        },
-        body: {
-          outputCount: 0,
-          inputCount: 0,
-          insertCount: 0,
-          updateCount: 0,
-          deleteCount: 0
-        }
-      },
-      throughputObj: {
-        title: {
-          key: 'throughput',
-          statsType: 'throughput',
-          time: 'second',
-          title: this.$t('task_info_input_output'),
-          tip: this.$t('task_info_throughputpop'),
-          unit: 'QPS',
-          class: 'putColor',
-          loading: false
-        },
-        body: null,
-        input: 0,
-        output: 0
-      },
-      yMax: 1,
+      selectTime: 'second',
       statusBtMap: {
         start: {
           edit: true,
@@ -214,18 +204,13 @@ export default {
       },
       creator: '',
       selectedStage: '', // 选中的节点
-      totalData: {
-        total_input: 0,
-        total_output: 0,
-        total_insert: 0,
-        total_update: 0,
-        total_delete: 0
-      },
-      qpsData: {
-        total_input_qps: null,
-        total_output_qps: null
-      },
+      selectedTime: '',
+      selectedRate: '',
       lineData: {
+        x: [],
+        y: [[], []]
+      },
+      lineDataDeep: {
         x: [],
         y: [[], []]
       },
@@ -239,25 +224,28 @@ export default {
           show: true
         },
         dataZoom: [
+          // {
+          //   type: 'slider',
+          //   show: true,
+          //   height: 20,
+          //   bottom: '2%',
+          //   textStyle: {
+          //     color: '#2c65ff',
+          //     fontSize: 11
+          //   }
+          // },
           {
-            type: 'slider',
-            show: true,
-            height: 20,
-            bottom: '2%',
-            textStyle: {
-              color: '#2c65ff',
-              fontSize: 11
-            }
-          },
-          {
-            type: 'inside'
+            type: 'inside',
+            minSpan: 1,
+            maxSpan: 100
           }
         ],
         xAxis: {
-          type: 'category'
+          type: 'time'
         },
         yAxis: [
           {
+            // max: 'dataMax',
             axisLabel: {
               formatter: function (value) {
                 if (value >= 1000) {
@@ -268,6 +256,7 @@ export default {
             }
           },
           {
+            // max: 'dataMax',
             axisLabel: {
               formatter: function (value) {
                 if (value >= 1000) {
@@ -297,7 +286,8 @@ export default {
             symbol: 'none',
             itemStyle: {
               color: 'rgba(24, 144, 255, 1)'
-            }
+            },
+            data: []
           },
           {
             name: this.$t('task_info_output'),
@@ -311,15 +301,10 @@ export default {
             },
             itemStyle: {
               color: 'rgba(118, 205, 238, 1)'
-            }
+            },
+            data: []
           }
         ]
-      },
-      sliderObj: {
-        start: null, // 记录滑块位置
-        end: null,
-        startValue: null, // 记录索引
-        endValue: null
       },
       overData: {
         inputEvents: 0,
@@ -348,7 +333,40 @@ export default {
           type: 'datetimerange',
           timeDiff: 60 * 1000
         }
-      ]
+      ],
+      selectedTimeItems: [
+        {
+          label: '最近五分钟',
+          value: '5min'
+        },
+        {
+          label: '最近十五分钟',
+          value: '15min'
+        },
+        {
+          label: '最近三十分钟',
+          value: '30min'
+        },
+        {
+          label: '最近一小时',
+          value: '60min'
+        },
+        {
+          label: '自定义时间',
+          value: 'custom'
+        }
+      ],
+      selectedRateItems: [
+        {
+          label: '5秒',
+          value: 'second'
+        },
+        {
+          label: '1分钟',
+          value: 'minute'
+        }
+      ],
+      timeRange: []
     }
   },
   computed: {
@@ -382,6 +400,20 @@ export default {
         return 100
       }
       return Math.floor((initialWrite * 100) / initialTotal)
+    },
+    secondDisabled() {
+      return false
+    },
+    minuteDisabled() {
+      return false
+    },
+    hourDisabled() {
+      const { selectedTime } = this
+      return !['30min', '60min'].includes(selectedTime)
+    },
+    dayDisabled() {
+      const { selectedTime } = this
+      return !['60min'].includes(selectedTime)
     }
   },
   watch: {
@@ -397,60 +429,97 @@ export default {
       if (this.task.creator) {
         this.creator = this.task.creator
       }
-      this.getMeasurement()
+      this.getMeasurement(60)
+      this.resetTimer()
+    },
+    resetTimer(limit) {
+      let ms = 5000
+      let type = this.selectedRate
+      switch (type) {
+        case 'second':
+          ms = 5000
+          break
+        case 'minute':
+          ms = 60 * 1000
+          break
+      }
+      this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
-        if (this.isSliderFlag()) {
-          this.getMeasurement()
-        }
-      }, 5000)
+        this.getMeasurement(limit)
+      }, ms)
     },
-    isSliderFlag() {
-      const { sliderObj } = this
-      return sliderObj.start === null && sliderObj.end === null
+    randomData() {
+      now = new Date(+now + oneDay)
+      return [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/')
     },
-    getMeasurement() {
+    randomData1() {
+      now = new Date(+now + oneDay)
+      value1 = value1 + Math.random() * 21 - 10
+      return {
+        name: now.toString(),
+        value: [[now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'), Math.round(value1)]
+      }
+    },
+    // param1：数组前后操作，  param2:：滑块范围是否追加，false表示范围不变，true表示会扩张
+    getMeasurement(limit = 5) {
+      const { selectedTime } = this
+      let startTimeStamp, endTimeStamp
+      if (selectedTime) {
+        ;[startTimeStamp, endTimeStamp] = this.getTimeRangeByType(selectedTime, this.timeRange)
+      }
+      let guanluary = 'minute'
+      switch (this.selectedRate) {
+        case 'minute':
+          guanluary = 'hour'
+          break
+        default:
+          guanluary = 'minute'
+          break
+      }
+      let agentId = 'agent1' || this.task.agentId
       let params = {
         samples: [
           {
             tags: {
               measureType: 'dataflow', //指标类型
-              customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
+              // customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
               host: 'hostname', //主机
-              agentId: 'agent1', //Agent的ID
-              dataFlowId: 'dataFlow1' //DataFlow的ID
+              agentId: agentId, //Agent的ID
+              dataFlowId: this.task.id //DataFlow的ID
             },
             fields: ['inputQps', 'outputQps'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
-            start: 123123323214, //optional
-            end: 123123123123123, //optional
-            limit: 10, //optional， 没有就返回全部， 服务器保护返回最多1000个
-            guanluary: 'minute'
+            // start: startTimeStamp, //optional
+            // end: endTimeStamp, //optional
+            // limit: limit, //optional， 没有就返回全部， 服务器保护返回最多1000个
+            guanluary: guanluary
           },
           {
             tags: {
               measureType: 'dataflow', //指标类型
               customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
               host: 'hostname', //主机
-              agentId: 'agent1', //Agent的ID
-              dataFlowId: 'dataFlow1' //DataFlow的ID
+              agentId: agentId, //Agent的ID
+              dataFlowId: this.task.id //DataFlow的ID
             },
             fields: ['replicateLag'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
-            end: 123123123123123, //optional
+            // start: startTimeStamp, //optional
+            // end: endTimeStamp, //optional
             limit: 1, //optional， 没有就返回全部， 服务器保护返回最多1000个
-            guanluary: 'minute'
+            guanluary: guanluary
           },
           {
             tags: {
               measureType: 'dataflow', //指标类型
               customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
               host: 'hostname', //主机
-              agentId: 'agent1', //Agent的ID
-              dataflowId: 'afsdfasdf' //DataFlow的ID
+              agentId: agentId, //Agent的ID
+              dataflowId: this.task.id //DataFlow的ID
             },
-            fields: ['outputEvents', 'inputEvents'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
-            start: 123123323214, //optional
-            end: 123123123123123, //optional
+            // fields: ['outputEvents', 'inputEvents'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
+            // start: startTimeStamp, //optional
+            // end: endTimeStamp, //optional
             type: 'headAndTail', // headAndTail 返回查询头尾两个值， default是需要指定limit的列表返回， default可以不写
-            guanluary: 'minute'
+            guanluary: guanluary
           }
         ],
         statistics: [
@@ -482,7 +551,7 @@ export default {
               //"fields" : ["inputQps", "outputQps", "transmitionTime"],  //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
               start: 123123323214, //optional
               end: 123123123123123, //optional
-              limit: 10, //optional, 没有就返回全部， 服务器保护返回最多1000个
+              // limit: limit, //optional, 没有就返回全部， 服务器保护返回最多1000个
               guanluary: 'minute'
             },
             {
@@ -512,12 +581,22 @@ export default {
           ]
         }
       }
+      if (startTimeStamp) {
+        params.samples[0].start = startTimeStamp
+        params.samples[1].start = startTimeStamp
+        params.samples[2].start = startTimeStamp
+      }
+      if (endTimeStamp) {
+        params.samples[0].end = endTimeStamp
+        params.samples[1].end = endTimeStamp
+        params.samples[2].end = endTimeStamp
+      }
       this.remoteMethod(params).then(data => {
         console.log('getMeasurement', data)
         const { samples } = data
         const countObj = samples?.[2] || {}
         const statistics = data.statistics?.[0] || {}
-        const { overData, writeData, initialData, lineData, lineOptions, sliderObj } = this
+        const { overData, writeData, initialData, lineData, lineOptions } = this
         // 总输入总输出
         for (let key in overData) {
           overData[key] = countObj[key][1] - countObj[key][0]
@@ -537,46 +616,99 @@ export default {
         }
         // 折线图
         const qpsData = samples[0]
+        let { inputQps, outputQps } = qpsData
+        inputQps = inputQps.slice(0, limit)
+        outputQps = outputQps.slice(0, limit)
+        let qpsDataTime = qpsData.time.slice(0, limit)
         // lineData.x = qpsData.time.map(t => formatTime(t))
-        let lineDataDeep = cloneDeep(lineData)
+        // let lineDataDeep = cloneDeep(lineData)
+        let lineDataDeep = this.lineDataDeep
         let lineOptionsDeep = cloneDeep(lineOptions)
-        let xArr = qpsData.time.map(t => formatTime(t))
-        // 滑块位置
-        if (this.isSliderFlag()) {
-          const len = lineDataDeep.x.length
-          sliderObj.startValue = len ? len : len - 1
-          sliderObj.endValue = sliderObj.startValue + xArr.length - 1
-          lineOptionsDeep.dataZoom[0].startValue = sliderObj.startValue
-          lineOptionsDeep.dataZoom[0].endValue = sliderObj.endValue
-        }
+        let xArr = qpsDataTime.map(t => formatTime(t))
+        const xArrLen = xArr.length
+        console.log('xArrLen', xArrLen)
+        // let xArr = qpsData.time.map(t => this.randomData()) //TODO 需要删除的日期测试数据
+        lineDataDeep.x.splice(0, xArrLen)
+        lineDataDeep.y[0].splice(0, xArrLen)
+        lineDataDeep.y[1].splice(0, xArrLen)
         lineDataDeep.x.push(...xArr)
-        lineDataDeep.y[0].push(...qpsData.inputQps)
-        lineDataDeep.y[1].push(...qpsData.outputQps)
-        if (this.selectedStage) {
-          // 追加系列
-          lineDataDeep.y[2] = qpsData.transmitionTime
-          lineOptionsDeep.series[2] = {
-            name: '耗时',
-            yAxisIndex: 1,
-            lineStyle: {
-              color: 'rgba(70, 10, 238, 1)',
-              width: 1
+        // lineDataDeep.y[0].push(
+        //   ...qpsData.inputQps.map((t, i) => {
+        //     return {
+        //       name: lineDataDeep.x[xLen + i],
+        //       value: [lineDataDeep.x[xLen + i], t]
+        //     }
+        //   })
+        // )
+        // lineDataDeep.y[1].push(
+        //   ...qpsData.outputQps.map((t, i) => {
+        //     return {
+        //       name: lineDataDeep.x[xLen + i],
+        //       value: [lineDataDeep.x[xLen + i], t]
+        //     }
+        //   })
+        // )
+        // lineDataDeep.y[1].push(...qpsData.outputQps)
+        lineDataDeep.x.forEach((el, i) => {
+          // lineDataDeep.y[0].push(...qpsData.inputQps)
+          // lineDataDeep.y[1].push(...qpsData.outputQps)
+          // let val = this.randomData() // TODO 需要删除的日期测试数据，展示
+          // let time = formatTime(val)
+          // data1.push({
+          //   name: time,
+          //   // value: [el, inputQps[i]]
+          //   value: [val, lineDataDeep.y[0][i]]
+          // })
+          // data2.push({
+          //   name: time,
+          //   // value: [el, outputQps[i]]
+          //   value: [val, lineDataDeep.y[1][i]]
+          // })
+          // let index = i + lineDataDeep.x.length
+          lineDataDeep.y[0].push(this.randomData1())
+          lineDataDeep.y[1].push(this.randomData1())
+        })
+        console.log('xArr', xArr)
+        console.log('this.$refs.chart', this.$refs.chart.chart.getOption())
+        this.$refs.chart.chart?.setOption({
+          series: [
+            {
+              // data: data1
+              data: lineDataDeep.y[0]
             },
-            symbol: 'none',
-            areaStyle: {
-              color: 'rgba(70, 10, 238, 0.2)'
-            },
-            itemStyle: {
-              color: 'rgba(70, 10, 238, 1)'
+            {
+              // data: data2
+              data: lineDataDeep.y[1]
             }
-          }
-        } else {
-          lineDataDeep.y[2] = []
-          lineOptionsDeep.series[2] = { name: '' }
-        }
-        lineOptionsDeep.dataZoom[0].show = lineDataDeep.x.length > 20
-        this.lineOptions = lineOptionsDeep
-        this.lineData = lineDataDeep
+          ]
+        })
+
+        // if (this.selectedStage) {
+        //   // 追加系列
+        //   lineDataDeep.y[2] = qpsData.transmitionTime
+        //   lineOptionsDeep.series[2] = {
+        //     name: '耗时',
+        //     yAxisIndex: 1,
+        //     lineStyle: {
+        //       color: 'rgba(70, 10, 238, 1)',
+        //       width: 1
+        //     },
+        //     symbol: 'none',
+        //     areaStyle: {
+        //       color: 'rgba(70, 10, 238, 0.2)'
+        //     },
+        //     itemStyle: {
+        //       color: 'rgba(70, 10, 238, 1)'
+        //     }
+        //   }
+        // } else {
+        //   lineDataDeep.y[2] = []
+        //   lineOptionsDeep.series[2] = { name: '' }
+        // }
+
+        console.log('lineDataDeep.x.', lineDataDeep.x.length)
+        // this.lineOptions = lineOptionsDeep
+        // this.lineData = lineDataDeep
       })
     },
     getForecastMs(data) {
@@ -673,26 +805,63 @@ export default {
         })
       }, 200)
     },
+    getTimeRangeByType(type, val) {
+      let current = new Date().getTime()
+      let result = [null]
+      switch (type) {
+        case '5min':
+          result[0] = current - 5 * 60 * 1000
+          break
+        case '15min':
+          result[0] = current - 15 * 60 * 1000
+          break
+        case '30min':
+          result[0] = current - 30 * 60 * 1000
+          break
+        case '60min':
+          result[0] = current - 60 * 60 * 1000
+          break
+        case 'custom':
+          result = val
+          break
+      }
+      console.log('result', result)
+      return result
+    },
+    changeTimeFnc(val) {
+      console.log('changeTimeFnc', val)
+      switch (val) {
+        case '5min':
+          this.selectTime = 'second'
+          break
+        case '15min':
+          this.selectTime = 'minute'
+          break
+        case '30min':
+          this.selectTime = 'hour'
+          break
+        case '60min':
+          this.selectTime = 'day'
+          break
+        default:
+          this.selectTime = 'second'
+          break
+      }
+      this.getMeasurement(false, true)
+      this.resetTimer()
+    },
+    changeRateFnc(val) {
+      console.log('changeRateFnc', val)
+      this.getMeasurement(60)
+      this.resetTimer(5)
+    },
     changeStageFnc() {
       this.getMeasurement()
+      this.resetTimer()
     },
-    search() {
+    changeTimeRangeFnc() {
       this.getMeasurement()
-    },
-    datazoomFunc(val) {
-      delayTrigger(() => {
-        let { sliderObj } = this
-        if (val.type === 'datazoom') {
-          if (val.batch) {
-            const item = val.batch[0] || {}
-            sliderObj.start = item.start
-            sliderObj.end = item.end
-          } else {
-            sliderObj.start = val.start
-            sliderObj.end = val.end
-          }
-        }
-      }, 100)
+      this.resetTimer()
     }
   }
 }
@@ -709,5 +878,15 @@ export default {
   padding: 16px;
   flex: 1;
   height: 50%;
+}
+.filter-datetime-range {
+  font-size: 12px;
+  line-height: 32px;
+  ::v-deep {
+    font-size: 12px;
+    .el-input {
+      font-size: 12px;
+    }
+  }
 }
 </style>
