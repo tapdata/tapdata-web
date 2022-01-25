@@ -173,7 +173,7 @@
       <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column>
       <el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="180">
         <template #default="{ row }">
-          <StatusItem v-model="row.statusResult" :rows="row.statuses"></StatusItem>
+          <StatusItem v-model="row.statusResult"></StatusItem>
         </template>
       </el-table-column>
 
@@ -343,6 +343,7 @@ import TablePage from '@/components/TablePage'
 import VIcon from '@/components/VIcon'
 import StatusItem from './StatusItem'
 import { ETL_STATUS_MAP } from '@/const'
+import { getSubTaskStatus } from './util'
 
 let interval = null
 export default {
@@ -694,7 +695,7 @@ export default {
           item['lag'] = getLag(item.stats.replicationLag)
         }
       }
-      item.statusResult = []
+      item.statusResult = getSubTaskStatus(item.statuses)
       return item
     },
     handleSelectTag() {

@@ -12,11 +12,14 @@
 </template>
 
 <script>
-import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from '@/const'
-import { deepCopy } from '@/utils/util'
+import { getSubTaskStatus } from './util'
 export default {
   name: 'StatusItem',
   props: {
+    value: {
+      type: Array,
+      default: () => []
+    },
     rows: {
       type: Array,
       default: () => []
@@ -52,6 +55,12 @@ export default {
     }
   },
   watch: {
+    value: {
+      deep: true,
+      handler() {
+        this.init()
+      }
+    },
     rows: {
       deep: true,
       handler() {
@@ -64,48 +73,14 @@ export default {
   },
   methods: {
     init() {
-      this.result = this.getData(this.rows)
-      this.$emit('input', this.result)
-    },
-    getData(rows = []) {
-      const len = rows.length
-      let result
-      switch (len) {
-        case 0:
-          result = [
-            Object.assign({ count: 1 }, ETL_STATUS_MAP['not_running'], {
-              status: 'not_running'
-            })
-          ]
-          break
-        case 1:
-          result = [
-            Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP[rows[0]?.status], {
-              status: rows[0]?.status
-            })
-          ]
-          break
-        default:
-          result = this.formatResult()
-          break
+      const { value, rows } = this
+      console.log('init', value)
+      if (value.length) {
+        this.result = value
+      } else if (rows.length) {
+        this.result = getSubTaskStatus(rows)
+        this.$emit('input', this.result)
       }
-      return result
-    },
-    formatResult() {
-      const { rows, statusMap } = this
-      let result = []
-      let obj = deepCopy(ETL_STATUS_MAP)
-      for (let key in obj) {
-        obj[key].status = key
-        obj[key].count = 0
-        rows.forEach(el => {
-          if (statusMap[key].includes(el.status)) {
-            obj[key].count++
-          }
-        })
-        result.push(obj[key])
-      }
-      return result
     }
   }
 }
