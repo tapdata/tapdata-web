@@ -161,16 +161,7 @@ export default {
   connection_form_confirm_create: '此操作将丢失当前正在创建的连接',
   connection_form_confirm_create_content: '你想放弃连接的创建吗？', //是否必须放弃创建该连接？
   connection_form_confirm_edit_content: '要放弃修改内容吗？', //是否放弃修改内容？
-  connection_form_hazecast_options_target: '目标',
-  connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'目标',",
-  connection_form_hazecast_database_name: 'Cluster Name', // 集群名称
-  connection_form_hazecast_plain_password: '令牌',
-  connection_form_hazecast_ssl: 'Enable SSL', //是否开启ssl
-  connection_form_hazecast_sslKey: '密钥存储文件',
-  connection_form_hazecast_sslCA: '信任密钥存储文件',
-  connection_form_hazecast_sslPass: '密钥文件密码',
-  connection_form_hazecast_none_sslKey: '密钥库文件不能为空',
-  connection_form_hazecast_none_sslCA: '信任密钥存储文件不能为空',
+
   connection_form_tidb_none_server: 'PDServer 地址不能为空',
   connection_form_mongo_standard_mode_tip:
     '此模式将连接网络中的单独服务器，该服务器提供到数据库的TSL/SSL通道。如果您的数据库位于不可访问的子网中，则可尝试使用此方法',

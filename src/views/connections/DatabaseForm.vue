@@ -658,7 +658,8 @@ export default {
         'clickhouse',
         'kundb',
         'adb_postgres',
-        'adb_mysql'
+        'adb_mysql',
+        'hazelcast_cloud_cluster'
       ],
       model: '',
       config: {
