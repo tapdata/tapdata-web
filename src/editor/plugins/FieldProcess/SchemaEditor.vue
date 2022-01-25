@@ -936,7 +936,7 @@ export default {
         data.label = dataLabel
       }
       //删除 对应字段js脚本处理
-
+      this.model.scripts = delScript(this.model.operations, this.model.scripts, data.id)
       this.$emit('dataChanged', this.model)
     },
     getParentFieldName(node) {
