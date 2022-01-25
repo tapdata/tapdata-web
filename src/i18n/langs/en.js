@@ -170,14 +170,32 @@ export default {
   connection_form_confirm_edit_content: 'Do you want to abandon the content modification? ', //Do you want to give up modifying the content?
   connection_form_hazecast_options_target: 'Target',
   connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'Target',",
-  connection_form_hazecast_database_name: 'Cluster Name', // cluster name
+  connection_form_hazecast_connection_type: 'Connection Type',
+  connection_form_hazecast_connection_test: 'Connection test',
+  connection_form_hazecast_create: 'Create connection',
+  connection_form_hazecast_edit: 'Edit connection',
+  connection_form_hazecast_data_source: 'Data source',
+  connection_form_hazecast_data_source_type: 'Data source',
+  connection_form_hazecast_change: 'Change',
+  connection_form_hazecast_name_rules:
+    'Starting with Chinese and English, 1-100 characters, including Chinese and English, numbers, underscores, underscores, and spaces',
+  connection_form_hazecast_no_name: 'The connection name cannot be empty',
+  connection_form_hazecast_name_exists: 'Name already exists',
+  connection_form_hazecast_give_up: 'Give up',
+  connection_form_hazecast_confirm_edit: 'This operation will lose the current edit content',
+  connection_form_hazecast_confirm_create: 'This operation will lose the connection currently being created',
+  connection_form_hazecast_confirm_create_content: 'Do you want to abandon the creation of the connection ?', //是否放弃创建该连接？
+  connection_form_hazecast_confirm_edit_content: 'Do you want to abandon the modification of the content ?', //是否放弃修改内容？
+  connection_form_hazecast_connection_name: 'Connection Name',
+  connection_form_hazecast_connection_name_placeholder: 'Please enter the connection name',
+  connection_form_hazecast_database_name: 'Cluster Name', //集群名称
   connection_form_hazecast_plain_password: 'Token',
-  connection_form_hazecast_ssl: 'Enable SSL', //Whether to enable ssl
-  connection_form_hazecast_sslKey: 'Key storage file',
-  connection_form_hazecast_sslCA: 'Trusted key storage file',
-  connection_form_hazecast_sslPass: 'Key file password',
-  connection_form_hazecast_none_sslKey: 'The keystore file cannot be empty',
-  connection_form_hazecast_none_sslCA: 'The trust key storage file cannot be empty',
+  connection_form_hazecast_ssl: 'Enable SSL', //是否开启ssl
+  connection_form_hazecast_sslKey: 'Key Store File',
+  connection_form_hazecast_sslCA: 'Trust Key Store File',
+  connection_form_hazecast_sslPass: 'Key File Password',
+  connection_form_hazecast_none_sslKey: 'The key store file cannot be empty',
+  connection_form_hazecast_none_sslCA: 'The trust key store file cannot be empty',
   connection_form_tidb_none_server: 'PDServer address cannot be empty',
   connection_form_mongo_standard_mode_tip:
     'This mode will connect to a separate server in the network, which provides a TSL/SSL channel to the database. If your database is in an inaccessible subnet, you can try this method',

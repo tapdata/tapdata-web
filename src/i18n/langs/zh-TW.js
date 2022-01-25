@@ -80,6 +80,32 @@ export default {
   connection_kafka_kerberos_none_keytab: '密鑰表示文件不能為空',
   connection_kafka_kerberos_none_conf: '配置文件不能為空',
   connection_kafka_encryption: '加密方式',
+  connection_form_hazecast_connection_type: '連接類型',
+  connection_form_hazecast_connection_test: '連接測試',
+  connection_form_hazecast_create: '創建連接',
+  connection_form_hazecast_edit: '編輯連接',
+  connection_form_hazecast_data_source: '數據源',
+  connection_form_hazecast_data_source_type: '數據源',
+  connection_form_hazecast_change: '改變',
+  connection_form_hazecast_no_name: '連接名稱不能為空',
+  connection_form_hazecast_name_exists: '名稱已存在',
+  connection_form_hazecast_give_up: '放棄',
+  connection_form_hazecast_confirm_edit: '此操作將丟失當前編輯內容',
+  connection_form_hazecast_confirm_create: '此操作將丟失當前正在創建的連接',
+  connection_form_hazecast_confirm_create_content: '你想放棄連接的創建嗎？', //是否放棄創建該連接？
+  connection_form_hazecast_confirm_edit_content: '你想放棄修改內容嗎？', //是否放棄修改內容？
+  connection_form_hazecast_connection_name: '連接名稱',
+  connection_form_hazecast_connection_name_placeholder: '請輸入連接名稱',
+  connection_form_hazecast_options_target_tips: '這個數據連接在Tapdata中只能作為目標，不能作為源',
+  connection_form_hazecast_database_name: 'Cluster Name', //集群名稱
+  connection_form_hazecast_plain_password: '密码',
+  connection_form_hazecast_ssl: 'Enable SSL', //是否開啟ssl
+  connection_form_hazecast_sslKey: '密鑰存儲文件',
+  connection_form_hazecast_sslCA: '信任密鑰存儲文件',
+  connection_form_hazecast_sslPass: '密鑰文件密碼',
+  connection_form_hazecast_none_sslKey: '密鑰庫文件不能為空',
+  connection_form_hazecast_none_sslCA: '信任密鑰存儲文件不能為空',
+  connection_form_hazecast_options_target: '目标',
 
   connection_hana_label_hana_type: '租戶模式',
 

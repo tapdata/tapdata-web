@@ -63,7 +63,8 @@ export default {
         'clickhouse',
         'kundb',
         'adb_postgres',
-        'adb_mysql'
+        'adb_mysql',
+        'hazelcast_cloud_cluster'
       ],
       comingAllowDatabase: [], // 即将上线
       otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],
@@ -109,7 +110,7 @@ export default {
                 !this.otherType.includes(item.type) &&
                 !this.database.includes(item.type) &&
                 !this.comingAllowDatabase.includes(item.type) &&
-                !['mem_cache','rest api', 'log_collect'].includes(item.type)
+                !['mem_cache', 'rest api', 'log_collect'].includes(item.type)
             )
           }
         })
