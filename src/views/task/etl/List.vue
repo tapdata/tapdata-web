@@ -197,7 +197,7 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="
-                $disabledByPermission('SYNC_job_operation_all_data', row.user_id) || !statusBtMap['stop'][row.status]
+                $disabledByPermission('SYNC_job_operation_all_data', row.user_id) || stopDisabled(row.statusResult)
               "
               class="ml-3"
               @click="stop([row.id])"
@@ -266,7 +266,7 @@
                   class="btn-delete"
                   command="del"
                   :disabled="
-                    $disabledByPermission('SYNC_job_delete_all_data', row.user_id) || !statusBtMap['delete'][row.status]
+                    $disabledByPermission('SYNC_job_delete_all_data', row.user_id) || deleteDisabled(row.statusResult)
                   "
                   v-readonlybtn="'SYNC_job_delete'"
                 >
@@ -1147,13 +1147,8 @@ export default {
         statusResult.every(t => t.status === 'running' && t.count > 0 && t.count === statusLength)
       )
     },
-    stopDisabled(row) {
-      const statusResult = row.statusResult || []
-      const statusLength = row.statuses?.length || 0
-      return (
-        this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
-        statusResult.every(t => t.status === 'not_running' && t.count > 0 && t.count === statusLength)
-      )
+    stopDisabled(data) {
+      return !data.filter(t => t.count > 0).every(t => ['running'].includes(t.status))
     },
     resetDisabled(row) {
       const statusResult = row.statusResult || []
@@ -1162,6 +1157,11 @@ export default {
         this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
         statusResult.some(t => t.status === 'running' && t.count > 0 && t.count === statusLength)
       )
+    },
+    deleteDisabled(data) {
+      return !data
+        .filter(t => t.count > 0)
+        .every(t => ['edit', 'draft', 'error', 'pause', 'not_running', 'stop'].includes(t.status))
     }
   }
 }

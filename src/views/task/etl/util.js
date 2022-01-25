@@ -29,9 +29,7 @@ export function getSubTaskStatus(rows = []) {
         let item = etlStatusMap[key]
         item.status = key
         item.count = 0
-        console.log(item)
         rows.forEach(el => {
-          console.log(el, statusMap[key])
           if (statusMap[key].includes(el.status)) {
             item.count++
           }

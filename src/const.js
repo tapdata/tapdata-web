@@ -51,7 +51,7 @@ export const TOPOLOGY_MAP = topologyMap,
     running: { text: '运行中', type: 'success' },
     pausing: { text: ' 暂停中', type: 'warning' },
     stopping: { text: '停止中', type: 'success' },
-    paused: { text: '暂停', type: 'warning' },
+    pause: { text: '暂停', type: 'warning' },
     stop: { text: '已停止', type: 'danger' },
     complete: { text: '已完成', type: 'primary' },
     error: { text: '错误', type: 'warning' }
