@@ -435,9 +435,6 @@ export default {
           data.partitionIdSet = data.partitionId
         }
 
-        this.scope = vueAdapter?.editor?.scope
-        this.stageId = cell.id
-        this.getDataFlow()
         if (typeof data.kafkaPartitionKey === 'string') {
           if (!data.kafkaPartitionKey) {
             data.kafkaPartitionKey = []
@@ -446,6 +443,9 @@ export default {
           }
         }
         _.merge(this.model, data)
+        this.scope = vueAdapter?.editor?.scope
+        this.stageId = cell.id
+        this.getDataFlow()
         let param = {
           stages: this.dataFlow?.stages,
           stageId: this.stageId

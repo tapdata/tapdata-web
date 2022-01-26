@@ -908,14 +908,14 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
-        this.model.stageId = cell.id
-        this.getDataFlow()
         let conds
         if (data.custSql && data.custSql.conditions) {
           conds = JSON.parse(JSON.stringify(data.custSql.conditions))
           delete data.custSql.conditions
         }
         _.merge(this.model, data)
+        this.model.stageId = cell.id
+        this.getDataFlow()
         if (this.model.custSql && this.model.custSql.conditions && conds && conds.length > 0)
           conds.forEach(it => {
             this.model.custSql.conditions.push(it)

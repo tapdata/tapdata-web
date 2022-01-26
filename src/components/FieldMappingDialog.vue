@@ -122,7 +122,7 @@
           <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')" width="260">
             <template slot-scope="scope">
               <div
-                v-if="!scope.row.is_deleted && !hiddenFieldProcess && !readOnly"
+                v-if="!scope.row.is_deleted && !transform.hiddenFieldProcess && !readOnly"
                 @click="edit(scope.row, 'field_name')"
               >
                 <span :show-overflow-tooltip="true"
@@ -175,7 +175,7 @@
           <ElTableColumn
             :label="$t('dag_dialog_field_mapping_operate')"
             width="80"
-            v-if="!hiddenFieldProcess && !readOnly"
+            v-if="!transform.hiddenFieldProcess && !readOnly"
           >
             <template slot-scope="scope">
               <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true)">
@@ -424,10 +424,6 @@ export default {
     getNavDataMethod: Function,
     field_process: Array,
     transform: Object,
-    hiddenFieldProcess: {
-      type: Boolean,
-      default: false
-    },
     readOnly: {
       type: Boolean,
       default: false
