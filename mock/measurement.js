@@ -36,5 +36,16 @@ module.exports = {
     },
     code: 'ok',
     msg: 'ok'
+  },
+  '/api/measurement/queryTransmitTotal': {
+    data: {
+      inputTotal: '@integer(0, 1000)',
+      outputTotal: '@integer(0, 1000)',
+      insertedTotal: '@integer(0, 1000)',
+      updatedTotal: '@integer(0, 1000)',
+      deletedTotal: '@integer(0, 1000)'
+    },
+    code: 'ok',
+    msg: 'ok'
   }
 }

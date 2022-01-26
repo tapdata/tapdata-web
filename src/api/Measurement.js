@@ -13,4 +13,7 @@ export default class Measurement extends PublicAPI {
   query(params) {
     return axios.post(this.url + '/query', params)
   }
+  queryTransmitTotal() {
+    return axios.get(this.url + '/queryTransmitTotal')
+  }
 }

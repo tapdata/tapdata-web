@@ -691,16 +691,14 @@ export default {
         ]
       }
       this.$api('Measurement')
-        .query(params)
+        .queryTransmitTotal()
         .then(({ data }) => {
-          const result = data?.statistics?.[0]
-          console.log('Measurement', data)
           this.transBarData = [
-            { name: this.$t('dataFlow.totalOutput'), value: result.outputEvents, color: '#7ba75d' },
-            { name: this.$t('dataFlow.totalInput'), value: result.inputEvents, color: '#409EFF' },
-            { name: this.$t('dataFlow.totalInsert'), value: result.insertCount, color: '#d9742c' },
-            { name: this.$t('dataFlow.totalUpdate'), value: result.updateCount, color: '#e6b451' },
-            { name: this.$t('dataFlow.totalDelete'), value: result.deleteCount, color: '#e06c6c' }
+            { name: this.$t('dataFlow.totalInput'), value: data.inputTotal, color: '#409EFF' },
+            { name: this.$t('dataFlow.totalOutput'), value: data.outputTotal, color: '#7ba75d' },
+            { name: this.$t('dataFlow.totalInsert'), value: data.insertedTotal, color: '#d9742c' },
+            { name: this.$t('dataFlow.totalUpdate'), value: data.updatedTotal, color: '#e6b451' },
+            { name: this.$t('dataFlow.totalDelete'), value: data.deletedTotal, color: '#e06c6c' }
           ]
         })
         .catch(err => {
