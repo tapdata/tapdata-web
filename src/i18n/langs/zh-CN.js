@@ -671,6 +671,9 @@ export default {
   task_setting_update_write_mode_tip: '更新写入模式会判断源端的每条数据在目标端是否存在，若存在则更新，不存在则新增。',
   task_setting_remoive_rewrite_mode_tip:
     '删除重写模式会先将目标表的数据清空，再将源端数据全部同步至目标端，能保证源端和目标端的数据完全一致。',
+  task_setting_append_rewrite_mode: '追加写入模式',
+  task_setting_append_rewrite_mode_tip:
+    '追加写入模式只会将源端新增的数据，都追加写入到目标，不会对目标端数据进行更新和删除。',
   task_setting_read_number: '每次读取数量',
   task_setting_read_number_cannot_empty: '每次读取数量不能为空，默认是1000',
   task_setting_read_number_ranges: '每次读取数量取值范围 1 ~ 999999',

@@ -694,6 +694,9 @@ export default {
     'The update write mode will determine whether each piece of data at the source end exists on the target end, if it exists, it will be updated, and if it does not exist, it will be added. ',
   task_setting_remoive_rewrite_mode_tip:
     'Delete overwrite mode will first empty the data in the target table, and then synchronize all the source data to the target, ensuring that the data on the source and target are completely consistent. ',
+  task_setting_append_rewrite_mode: 'Append write mode',
+  task_setting_append_rewrite_mode_tip:
+    'The append write mode will only append the newly added data from the source to the target, and will not update or delete the data on the target. ',
   task_setting_read_number: 'Number of reads per time',
   task_setting_read_number_cannot_empty: 'The number of reads per time cannot be empty, the default is 1000',
   task_setting_read_number_ranges: 'The number of reads per time ranges from 1 to 999999',
