@@ -1258,10 +1258,10 @@ export default {
         .update(where, parmas)
         .then(() => {
           this.table.fetch()
-          this.$message.success('message_save_ok')
+          this.$message.success(this.$t('message_save_ok'))
         })
         .catch(() => {
-          this.$message.error('message_save_fail')
+          this.$message.error(this.$t('message_save_fail'))
         })
         .finally(() => {
           this.timeZoneDialog = false
