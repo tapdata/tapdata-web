@@ -630,7 +630,7 @@ export default {
         let xArr = qpsDataTime.map(t => formatTime(t))
         const xArrLen = xArr.length
         console.log('xArrLen', xArrLen)
-        if (lineDataDeep.x > 20) {
+        if (lineDataDeep.x.length > 20) {
           lineDataDeep.x.splice(0, xArrLen)
           lineDataDeep.y[0].splice(0, xArrLen)
           lineDataDeep.y[1].splice(0, xArrLen)
