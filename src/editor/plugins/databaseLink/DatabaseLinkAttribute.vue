@@ -60,6 +60,7 @@
               ></FieldMapping>
               <ElButton
                 v-if="showFieldMapping && !transformModelVersion"
+                v-show="!model.selectSourceDatabase['view']"
                 style="padding: 4px 10px; color: #666; background-color: #f5f5f5; margin-left: 10px"
                 @click="handleOpenTableDialog"
                 >{{ $t('dag_dialog_field_mapping_table_rename') }}</ElButton
