@@ -2,12 +2,40 @@ export default function (vm) {
   return {
     form: {
       labelPosition: 'left',
-      labelWidth: '180px'
+      labelWidth: '180px',
+      labelColon: true
     },
     defaultModel: {
       connection_type: 'source_and_target'
     },
     items: [
+      {
+        type: 'radio',
+        field: 'connection_type',
+        label: vm.$t('dataForm.form.connectionType'),
+        options: [
+          {
+            label: vm.$t('dataForm.form.options.sourceAndTarget'),
+            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+            value: 'source_and_target'
+          },
+          {
+            label: vm.$t('dataForm.form.options.source'),
+            tip: vm.$t('dataForm.form.options.sourceTips'),
+            value: 'source'
+          },
+          {
+            label: vm.$t('dataForm.form.options.target'),
+            tip: vm.$t('dataForm.form.options.targetTips'),
+            value: 'target'
+          }
+        ],
+        required: true,
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
+      },
       {
         type: 'input',
         field: 'database_host',
@@ -30,6 +58,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_port',
+        customClass: 'small-item',
         label: vm.$t('dataForm.form.port'),
         required: true,
         rules: [
@@ -78,12 +107,8 @@ export default function (vm) {
         label: vm.$t('dataForm.form.timeZone'),
         //tips: vm.$t('dataForm.form.timeZoneTips'),
         options: [],
-        show: true
-      },
-      {
-        type: 'slot',
-        slot: 'timezone',
-        show: true
+        show: true,
+        tip: vm.$t('connection_form_impact_type')
       }
     ]
   }

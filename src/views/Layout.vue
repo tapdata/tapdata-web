@@ -45,7 +45,8 @@
           'adb_postgres',
           'hazelcast_cloud_cluster',
           'dummy db',
-          'tidb'
+          'tidb',
+          'mariadb'
         ]"
         :comingTypes="['db2', 'sybase ase', 'gbase-8s']"
         @select="createConnection"
