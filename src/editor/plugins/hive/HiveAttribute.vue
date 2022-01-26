@@ -343,10 +343,10 @@ export default {
 
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
+        _.merge(this.model, data)
         this.scope = vueAdapter?.editor?.scope
         this.model.stageId = cell.id
         this.getDataFlow()
-        _.merge(this.model, data)
         let param = {
           stages: this.dataFlow?.stages,
           stageId: this.model.stageId
