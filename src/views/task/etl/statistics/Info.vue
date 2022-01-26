@@ -156,7 +156,7 @@ import VIcon from '@/components/VIcon'
 import SelectList from '@/components/SelectList'
 import Chart from 'web-core/components/chart'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
-import { formatTime, formatMs, delayTrigger } from '@/utils/util'
+import { formatTime, formatMs, delayTrigger, isEmpty } from '@/utils/util'
 import { cloneDeep } from 'lodash'
 
 let now = new Date(1997, 9, 3)
@@ -460,8 +460,12 @@ export default {
         value: [[now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'), Math.round(value1)]
       }
     },
+    randomTime() {
+      now = new Date(+now + oneDay)
+      return [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/')
+    },
     // param1：数组前后操作，  param2:：滑块范围是否追加，false表示范围不变，true表示会扩张
-    getMeasurement(limit = 5) {
+    getMeasurement() {
       const { selectedTime } = this
       let startTimeStamp, endTimeStamp
       if (selectedTime) {
@@ -477,6 +481,7 @@ export default {
           break
       }
       let agentId = 'agent1' || this.task.agentId
+      let dataFlowId = 'dataFlow1' || this.task.id
       let params = {
         samples: [
           {
@@ -485,7 +490,7 @@ export default {
               // customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
               host: 'hostname', //主机
               agentId: agentId, //Agent的ID
-              dataFlowId: this.task.id //DataFlow的ID
+              dataFlowId: dataFlowId //DataFlow的ID
             },
             fields: ['inputQps', 'outputQps'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
             // start: startTimeStamp, //optional
@@ -499,7 +504,7 @@ export default {
               customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
               host: 'hostname', //主机
               agentId: agentId, //Agent的ID
-              dataFlowId: this.task.id //DataFlow的ID
+              dataFlowId: dataFlowId //DataFlow的ID
             },
             fields: ['replicateLag'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
             // start: startTimeStamp, //optional
@@ -513,7 +518,7 @@ export default {
               customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
               host: 'hostname', //主机
               agentId: agentId, //Agent的ID
-              dataflowId: this.task.id //DataFlow的ID
+              dataflowId: dataFlowId //DataFlow的ID
             },
             // fields: ['outputEvents', 'inputEvents'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
             // start: startTimeStamp, //optional
@@ -596,11 +601,14 @@ export default {
         const { samples } = data
         const countObj = samples?.[2] || {}
         const statistics = data.statistics?.[0] || {}
-        const { overData, writeData, initialData, lineData, lineOptions } = this
+        const { overData, writeData, initialData, lineOptions } = this
         // 总输入总输出
-        for (let key in overData) {
-          overData[key] = countObj[key][1] - countObj[key][0]
+        if (!isEmpty(countObj)) {
+          for (let key in overData) {
+            overData[key] = countObj[key][1] - countObj[key][0]
+          }
         }
+
         for (let key in writeData) {
           writeData[key] = statistics[key]
         }
@@ -617,59 +625,35 @@ export default {
         // 折线图
         const qpsData = samples[0]
         let { inputQps, outputQps } = qpsData
-        inputQps = inputQps.slice(0, limit)
-        outputQps = outputQps.slice(0, limit)
-        let qpsDataTime = qpsData.time.slice(0, limit)
-        // lineData.x = qpsData.time.map(t => formatTime(t))
-        // let lineDataDeep = cloneDeep(lineData)
+        let qpsDataTime = qpsData.time
         let lineDataDeep = this.lineDataDeep
-        let lineOptionsDeep = cloneDeep(lineOptions)
         let xArr = qpsDataTime.map(t => formatTime(t))
         const xArrLen = xArr.length
         console.log('xArrLen', xArrLen)
-        // let xArr = qpsData.time.map(t => this.randomData()) //TODO 需要删除的日期测试数据
-        lineDataDeep.x.splice(0, xArrLen)
-        lineDataDeep.y[0].splice(0, xArrLen)
-        lineDataDeep.y[1].splice(0, xArrLen)
-        lineDataDeep.x.push(...xArr)
-        // lineDataDeep.y[0].push(
-        //   ...qpsData.inputQps.map((t, i) => {
-        //     return {
-        //       name: lineDataDeep.x[xLen + i],
-        //       value: [lineDataDeep.x[xLen + i], t]
-        //     }
-        //   })
-        // )
-        // lineDataDeep.y[1].push(
-        //   ...qpsData.outputQps.map((t, i) => {
-        //     return {
-        //       name: lineDataDeep.x[xLen + i],
-        //       value: [lineDataDeep.x[xLen + i], t]
-        //     }
-        //   })
-        // )
-        // lineDataDeep.y[1].push(...qpsData.outputQps)
-        lineDataDeep.x.forEach((el, i) => {
-          // lineDataDeep.y[0].push(...qpsData.inputQps)
-          // lineDataDeep.y[1].push(...qpsData.outputQps)
-          // let val = this.randomData() // TODO 需要删除的日期测试数据，展示
-          // let time = formatTime(val)
-          // data1.push({
-          //   name: time,
-          //   // value: [el, inputQps[i]]
-          //   value: [val, lineDataDeep.y[0][i]]
-          // })
-          // data2.push({
-          //   name: time,
-          //   // value: [el, outputQps[i]]
-          //   value: [val, lineDataDeep.y[1][i]]
-          // })
-          // let index = i + lineDataDeep.x.length
-          lineDataDeep.y[0].push(this.randomData1())
-          lineDataDeep.y[1].push(this.randomData1())
+        if (lineDataDeep.x > 20) {
+          lineDataDeep.x.splice(0, xArrLen)
+          lineDataDeep.y[0].splice(0, xArrLen)
+          lineDataDeep.y[1].splice(0, xArrLen)
+        }
+        let inArr = []
+        let outArr = []
+        xArr.forEach((el, i) => {
+          let time = this.randomTime() || el // TODO 造递增的时间点
+          inArr.push({
+            name: time,
+            value: [time, inputQps[i]]
+          })
+          outArr.push({
+            name: time,
+            value: [time, outputQps[i]]
+          })
         })
+        lineDataDeep.x.push(...xArr)
+        lineDataDeep.y[0].push(...inArr)
+        lineDataDeep.y[1].push(...outArr)
         console.log('xArr', xArr)
         console.log('this.$refs.chart', this.$refs.chart.chart.getOption())
+        console.log('lineDataDeep', lineDataDeep)
         this.$refs.chart.chart?.setOption({
           series: [
             {
