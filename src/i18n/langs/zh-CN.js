@@ -493,7 +493,7 @@ export default {
   task_copy_failed: '复制失败',
   task_delete_success: '删除成功',
   task_delete_failed: '删除失败',
-  task_list_edit_tip: '编辑任务如果修改了',
+  task_list_edit_tip: '如果修改了任务设置',
   task_list_edit_tip1: '节点排版流程',
   task_list_node_attr: '节点属性',
   task_list_matching_releation: '匹配关系',

@@ -505,7 +505,7 @@ export default {
   task_copy_failed: 'Copy failed',
   task_delete_success: 'Delete successfully',
   task_delete_failed: 'Delete failed',
-  task_list_edit_tip: 'Edit task if modified',
+  task_list_edit_tip: 'If the task settings are modified',
   task_list_edit_tip1: ' Node typesetting process',
   task_list_node_attr: 'Node attribute',
   task_list_matching_releation: 'Matching relationship',
