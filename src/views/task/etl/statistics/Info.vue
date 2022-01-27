@@ -511,6 +511,7 @@ export default {
           {
             tags,
             guanluary,
+            fields: ['inputTotal', 'outputTotal', 'insertedTotal', 'updatedTotal', 'deletedTotal'],
             type: 'headAndTail'
           }
         ],
@@ -548,6 +549,7 @@ export default {
             {
               tags,
               guanluary,
+              fields: ['inputTotal', 'outputTotal', 'insertedTotal', 'updatedTotal', 'deletedTotal'],
               type: 'headAndTail'
             }
           ],
