@@ -85,51 +85,12 @@ export default function () {
             triggerConfig: {
               options: [
                 {
-                  label: i18n.t('task_setting_update_write_mode'),
-                  tip: i18n.t('task_setting_update_write_mode_tip'),
-                  value: 'intellect',
-                  disabled: true
-                },
-                {
                   label: i18n.t('task_setting_remoive_rewrite_mode'),
                   tip: i18n.t('task_setting_remoive_rewrite_mode_tip'),
                   value: 'compel'
-                },
-                {
-                  label: i18n.t('task_setting_append_rewrite_mode'),
-                  tip: i18n.t('task_setting_append_rewrite_mode_tip'),
-                  value: 'append',
-                  disabled: true
                 }
               ],
               value: 'compel'
-            }
-          },
-          {
-            triggerOptions: [
-              {
-                field: 'noPrimaryKey',
-                value: false
-              }
-            ],
-            triggerConfig: {
-              options: [
-                {
-                  label: i18n.t('task_setting_update_write_mode'),
-                  tip: i18n.t('task_setting_update_write_mode_tip'),
-                  value: 'intellect'
-                },
-                {
-                  label: i18n.t('task_setting_remoive_rewrite_mode'),
-                  tip: i18n.t('task_setting_remoive_rewrite_mode_tip'),
-                  value: 'compel'
-                },
-                {
-                  label: i18n.t('task_setting_append_rewrite_mode'),
-                  tip: i18n.t('task_setting_append_rewrite_mode_tip'),
-                  value: 'append'
-                }
-              ]
             }
           }
         ]
@@ -285,12 +246,26 @@ export default function () {
         field: 'needToCreateIndex',
         label: i18n.t('task_setting_automatic_index'),
         show: false
+      },
+      {
+        type: 'slot',
+        slot: 'syncPoints',
+        label: '增量采集开始时刻',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'sync_type',
+                value: 'cdc'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       }
-      // {
-      //   type: 'slot',
-      //   slot: 'syncPoints',
-      //   label: '增量采集开始时刻'
-      // }
     ]
   }
 }
