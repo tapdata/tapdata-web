@@ -227,8 +227,8 @@ export default {
     clearTransform() {
       for (let i = 0; i < this.dataFlow.stages.length; i++) {
         if (this.dataFlow.stages[i].id === this.transform.stageId) {
-          this.dataFlow['stages'][i].fieldsNameTransform = ''
-          this.dataFlow['stages'][i].tableNameTransform = ''
+          this.dataFlow['stages'][i].fieldsNameTransform = 'noOperation'
+          this.dataFlow['stages'][i].tableNameTransform = 'noOperation'
           this.dataFlow['stages'][i].table_suffix = ''
           this.dataFlow['stages'][i].table_prefix = ''
           this.dataFlow['stages'][i].batchOperationList = []

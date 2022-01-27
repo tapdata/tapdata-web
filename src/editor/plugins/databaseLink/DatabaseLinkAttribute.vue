@@ -219,7 +219,7 @@ export default {
         dropType: 'no_drop',
         type: 'databaseLink',
         tableNameTransform: 'noOperation',
-        fieldsNameTransform: '',
+        fieldsNameTransform: 'noOperation',
         fieldNameTransform: '',
         selectSourceArr: [],
         topicData: [],

@@ -826,8 +826,8 @@ export default {
       ).then(resFlag => {
         if (resFlag) {
           this.form = {
-            tableNameTransform: '',
-            fieldsNameTransform: '',
+            tableNameTransform: 'noOperation',
+            fieldsNameTransform: 'noOperation',
             table_prefix: '',
             table_suffix: '',
             batchOperationList: []
