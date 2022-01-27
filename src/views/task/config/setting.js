@@ -74,24 +74,6 @@ export default function () {
                 }
               ]
             }
-          },
-          {
-            triggerOptions: [
-              {
-                field: 'noPrimaryKey',
-                value: true
-              }
-            ],
-            triggerConfig: {
-              options: [
-                {
-                  label: i18n.t('task_setting_remoive_rewrite_mode'),
-                  tip: i18n.t('task_setting_remoive_rewrite_mode_tip'),
-                  value: 'compel'
-                }
-              ],
-              value: 'compel'
-            }
           }
         ]
       },
@@ -246,25 +228,6 @@ export default function () {
         field: 'needToCreateIndex',
         label: i18n.t('task_setting_automatic_index'),
         show: false
-      },
-      {
-        type: 'slot',
-        slot: 'syncPoints',
-        label: '增量采集开始时刻',
-        show: false,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'sync_type',
-                value: 'cdc'
-              }
-            ],
-            triggerConfig: {
-              show: true
-            }
-          }
-        ]
       }
     ]
   }
