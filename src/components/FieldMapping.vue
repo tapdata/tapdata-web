@@ -32,7 +32,7 @@
         @update-nav="updateFieldMappingNavData"
       ></FieldMappingDialog>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="saveReturnData">{{ $t('dataVerify.confirm') }}</el-button>
+        <el-button type="primary" :disabled="false" @click="saveReturnData">{{ $t('dataVerify.confirm') }}</el-button>
       </div>
     </el-dialog>
   </div>
