@@ -187,6 +187,9 @@ export default {
   extends: Select,
 
   props: {
+    value: {
+      type: [Number, String]
+    },
     items: {
       type: [Array, Function],
       default: () => []
@@ -308,6 +311,9 @@ export default {
   watch: {
     visible(val) {
       val && this.initWidth()
+    },
+    value() {
+      this.getSelectLabel()
     }
   },
   mounted() {

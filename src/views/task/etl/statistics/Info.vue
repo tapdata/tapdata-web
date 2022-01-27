@@ -55,7 +55,7 @@
         placeholder="请选择周期"
         class="ml-4"
         style="min-width: 180px"
-        @change="changeTimeFnc"
+        @change="changePeriodFnc"
       ></SelectList>
       <DatetimeRange
         v-if="selectedTime === 'custom'"
@@ -159,7 +159,6 @@ import SelectList from '@/components/SelectList'
 import Chart from 'web-core/components/chart'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import { formatTime, formatMs, delayTrigger, isEmpty } from '@/utils/util'
-import { cloneDeep } from 'lodash'
 
 let now = new Date(1997, 9, 3)
 let oneDay = 24 * 3600 * 1000
@@ -433,7 +432,7 @@ export default {
       if (this.task.creator) {
         this.creator = this.task.creator
       }
-      this.getMeasurement(60)
+      this.getMeasurement()
       this.resetTimer()
     },
     resetTimer(limit) {
@@ -469,11 +468,15 @@ export default {
       return [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/')
     },
     // param1：数组前后操作，  param2:：滑块范围是否追加，false表示范围不变，true表示会扩张
-    getMeasurement() {
+    getMeasurement(reset = false) {
       const { selectedTime } = this
       let startTimeStamp, endTimeStamp
       if (selectedTime) {
         ;[startTimeStamp, endTimeStamp] = this.getTimeRangeByType(selectedTime, this.timeRange)
+      }
+      // 自定义时间，需要选择范围
+      if (selectedTime === 'custom' && !startTimeStamp && !endTimeStamp) {
+        return
       }
       let guanluary = 'minute'
       switch (this.selectedRate) {
@@ -509,16 +512,18 @@ export default {
           },
           {
             tags: {
-              measureType: 'dataflow', //指标类型
-              customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
-              host: 'hostname', //主机
-              agentId: agentId, //Agent的ID
-              dataFlowId: dataFlowId //DataFlow的ID
+              // measureType: 'dataflow', //指标类型
+              // customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
+              // host: 'hostname', //主机
+              // agentId: agentId, //Agent的ID
+              // dataFlowId: dataFlowId //DataFlow的ID
+              subTaskId: subTaskId,
+              type: 'subTask'
             },
             fields: ['replicateLag'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
             // start: startTimeStamp, //optional
             // end: endTimeStamp, //optional
-            limit: 1, //optional， 没有就返回全部， 服务器保护返回最多1000个
+            // limit: 1, //optional， 没有就返回全部， 服务器保护返回最多1000个
             guanluary: guanluary
           },
           {
@@ -550,31 +555,38 @@ export default {
         ]
       }
       if (this.selectedStage) {
+        let nodeId = this.selectedStage
         params = {
           samples: [
             {
               tags: {
-                measureType: 'node', //指标类型
-                customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
-                host: 'hostname', //主机
-                agentId: 'agent1', //Agent的ID
-                dataFlowId: 'dataFlow1', //DataFlow的ID
-                type: 'node', //节点类型， node， processor
-                nodeId: 'kasldjfkasf' //节点的ID
+                // measureType: 'node', //指标类型
+                // customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
+                // host: 'hostname', //主机
+                // agentId: 'agent1', //Agent的ID
+                // dataFlowId: 'dataFlow1', //DataFlow的ID
+                // type: 'node', //节点类型， node， processor
+                // nodeId: 'kasldjfkasf' //节点的ID
+                subTaskId: subTaskId,
+                type: 'subTask',
+                nodeId
               },
               //"fields" : ["inputQPS", "outputQPS", "transmitionTime"],  //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
-              start: 123123323214, //optional
-              end: 123123123123123, //optional
+              // start: 123123323214, //optional
+              // end: 123123123123123, //optional
               // limit: limit, //optional, 没有就返回全部， 服务器保护返回最多1000个
-              guanluary: 'minute'
+              guanluary: guanluary
             },
             {
               tags: {
-                measureType: 'dataflow', //指标类型
-                customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
-                host: 'hostname', //主机
-                agentId: 'agent1', //Agent的ID
-                dataFlowId: 'dataFlow1' //DataFlow的ID
+                // measureType: 'dataflow', //指标类型
+                // customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
+                // host: 'hostname', //主机
+                // agentId: 'agent1', //Agent的ID
+                // dataFlowId: 'dataFlow1' //DataFlow的ID
+                subTaskId: subTaskId,
+                type: 'subTask',
+                nodeId
               },
               fields: ['replicateLag'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
               start: 123123323214, //optional
@@ -632,11 +644,9 @@ export default {
           }
         }
         // 折线图
-        const qpsData = samples[0]
+        const qpsData = samples[0] || {}
         let { inputQPS = [], outputQPS = [] } = qpsData
-        console.log('inputQPS', inputQPS)
-        console.log('outputQPS', outputQPS)
-        let qpsDataTime = qpsData.time
+        let qpsDataTime = qpsData.time || []
         let lineDataDeep = this.lineDataDeep
         let xArr = qpsDataTime.map(t => formatTime(t))
         const xArrLen = xArr.length
@@ -649,7 +659,7 @@ export default {
         let inArr = []
         let outArr = []
         xArr.forEach((el, i) => {
-          let time = this.randomTime() || el // TODO 造递增的时间点
+          let time = el
           inArr.push({
             name: time,
             value: [time, inputQPS[i] || 0]
@@ -659,10 +669,16 @@ export default {
             value: [time, outputQPS[i] || 0]
           })
         })
-        console.log('inArr', inArr)
-        lineDataDeep.x.push(...xArr)
-        lineDataDeep.y[0].push(...inArr)
-        lineDataDeep.y[1].push(...outArr)
+        if (reset) {
+          lineDataDeep.x = xArr
+          lineDataDeep.y[0] = inArr
+          lineDataDeep.y[1] = outArr
+        } else {
+          lineDataDeep.x.push(...xArr)
+          lineDataDeep.y[0].push(...inArr)
+          lineDataDeep.y[1].push(...outArr)
+        }
+
         console.log('xArr', xArr)
         console.log('this.$refs.chart', this.$refs.chart.chart.getOption())
         console.log('lineDataDeep', lineDataDeep)
@@ -824,39 +840,43 @@ export default {
       console.log('result', result)
       return result
     },
-    changeTimeFnc(val) {
-      console.log('changeTimeFnc', val)
+    changePeriodFnc(val) {
+      console.log('changePeriodFnc', val, JSON.stringify(this.selectedRateItems))
       switch (val) {
         case '5min':
           this.selectTime = 'second'
+          this.selectedRate = 'second'
           break
         case '15min':
           this.selectTime = 'minute'
+          this.selectedRate = 'second'
           break
         case '30min':
           this.selectTime = 'hour'
+          this.selectedRate = 'second'
           break
         case '60min':
           this.selectTime = 'day'
+          this.selectedRate = 'minute'
           break
         default:
           this.selectTime = 'second'
           break
       }
-      this.getMeasurement(false, true)
+      this.getMeasurement(true)
       this.resetTimer()
     },
     changeRateFnc(val) {
       console.log('changeRateFnc', val)
-      this.getMeasurement(60)
-      this.resetTimer(5)
+      this.getMeasurement(true)
+      this.resetTimer()
     },
     changeStageFnc() {
-      this.getMeasurement()
+      this.getMeasurement(true)
       this.resetTimer()
     },
     changeTimeRangeFnc() {
-      this.getMeasurement()
+      this.getMeasurement(true)
       this.resetTimer()
     }
   }
