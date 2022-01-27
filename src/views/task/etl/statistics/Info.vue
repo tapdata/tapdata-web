@@ -82,24 +82,24 @@
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_input') }}</span>
         </div>
-        <div class="mb-4 fs-4 font-color-main">{{ overData.inputEvents }}</div>
+        <div class="mb-4 fs-4 font-color-main">{{ overData.inputTotal }}</div>
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-success" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_output') }}</span>
         </div>
-        <div class="mb-6 fs-4 font-color-main">{{ overData.outputEvents }}</div>
+        <div class="mb-6 fs-4 font-color-main">{{ overData.outputTotal }}</div>
         <div class="flex justify-content-between text-center">
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_insert') }}</div>
-            <div class="fs-6 font-color-main">{{ overData.insertCount }}</div>
+            <div class="fs-6 font-color-main">{{ overData.insertedTotal }}</div>
           </div>
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_update') }}</div>
-            <div class="fs-6 font-color-main">{{ overData.updateCount }}</div>
+            <div class="fs-6 font-color-main">{{ overData.updatedTotal }}</div>
           </div>
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_delete') }}</div>
-            <div class="fs-6 font-color-main">{{ overData.deleteCount }}</div>
+            <div class="fs-6 font-color-main">{{ overData.deletedTotal }}</div>
           </div>
         </div>
       </div>
@@ -308,11 +308,11 @@ export default {
         ]
       },
       overData: {
-        inputEvents: 0,
-        outputEvents: 0,
-        insertCount: 0,
-        updateCount: 0,
-        deleteCount: 0
+        inputTotal: 0,
+        outputTotal: 0,
+        insertedTotal: 0,
+        updatedTotal: 0,
+        deletedTotal: 0
       },
       writeData: {
         cdcTime: '',
@@ -492,117 +492,74 @@ export default {
       let taskId = this.$route.params?.id
       let subTaskId = this.$route.params?.subId
       console.log('this.', this.$route.params)
+      let tags = {
+        subTaskId: subTaskId,
+        type: 'subTask'
+      }
       let params = {
         samples: [
           {
-            tags: {
-              // measureType: 'dataflow', //指标类型
-              // customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
-              // host: 'hostname', //主机
-              // agentId: agentId, //Agent的ID
-              // taskId: taskId,
-              subTaskId: subTaskId,
-              type: 'subTask'
-            },
-            fields: ['inputQPS', 'outputQPS'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
-            // start: startTimeStamp, //optional
-            // end: endTimeStamp, //optional
-            // limit: limit, //optional， 没有就返回全部， 服务器保护返回最多1000个
-            guanluary: guanluary
+            tags,
+            guanluary,
+            fields: ['inputQPS', 'outputQPS']
           },
           {
-            tags: {
-              // measureType: 'dataflow', //指标类型
-              // customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
-              // host: 'hostname', //主机
-              // agentId: agentId, //Agent的ID
-              // dataFlowId: dataFlowId //DataFlow的ID
-              subTaskId: subTaskId,
-              type: 'subTask'
-            },
-            fields: ['replicateLag'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
-            // start: startTimeStamp, //optional
-            // end: endTimeStamp, //optional
-            // limit: 1, //optional， 没有就返回全部， 服务器保护返回最多1000个
-            guanluary: guanluary
+            tags,
+            guanluary,
+            fields: ['replicateLag']
           },
           {
-            tags: {
-              measureType: 'dataflow', //指标类型
-              customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
-              host: 'hostname', //主机
-              agentId: agentId, //Agent的ID
-              dataflowId: dataFlowId //DataFlow的ID
-            },
-            // fields: ['outputEvents', 'inputEvents'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
-            // start: startTimeStamp, //optional
-            // end: endTimeStamp, //optional
-            type: 'headAndTail', // headAndTail 返回查询头尾两个值， default是需要指定limit的列表返回， default可以不写
-            guanluary: guanluary
+            tags,
+            guanluary,
+            type: 'headAndTail'
           }
         ],
         statistics: [
           {
             tags: {
-              measureType: 'dataflow', //指标类型
-              customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
-              host: 'hostname', //主机
-              agentId: 'agent1', //Agent的ID
-              dataflowId: 'afsdfasdf' //DataFlow的ID
+              measureType: 'dataflow',
+              customerId: 'enterpriseId',
+              host: 'hostname',
+              agentId: 'agent1',
+              dataflowId: 'afsdfasdf'
             }
-            //"fields" : ["initialTotal", "initialWrite", "outputEvents", "inputEvents", "insertCount", "updateCount", "deleteCount"]
           }
         ]
       }
       if (this.selectedStage) {
         let nodeId = this.selectedStage
+        tags = {
+          subTaskId: subTaskId,
+          type: 'node',
+          nodeId
+        }
         params = {
           samples: [
             {
-              tags: {
-                // measureType: 'node', //指标类型
-                // customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
-                // host: 'hostname', //主机
-                // agentId: 'agent1', //Agent的ID
-                // dataFlowId: 'dataFlow1', //DataFlow的ID
-                // type: 'node', //节点类型， node， processor
-                // nodeId: 'kasldjfkasf' //节点的ID
-                subTaskId: subTaskId,
-                type: 'subTask',
-                nodeId
-              },
-              //"fields" : ["inputQPS", "outputQPS", "transmitionTime"],  //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
-              // start: 123123323214, //optional
-              // end: 123123123123123, //optional
-              // limit: limit, //optional, 没有就返回全部， 服务器保护返回最多1000个
-              guanluary: guanluary
+              tags,
+              guanluary,
+              fields: ['inputQPS', 'outputQPS']
             },
             {
-              tags: {
-                // measureType: 'dataflow', //指标类型
-                // customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
-                // host: 'hostname', //主机
-                // agentId: 'agent1', //Agent的ID
-                // dataFlowId: 'dataFlow1' //DataFlow的ID
-                subTaskId: subTaskId,
-                type: 'subTask',
-                nodeId
-              },
-              fields: ['replicateLag'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
-              start: 123123323214, //optional
-              end: 123123123123123, //optional
-              limit: 1, //optional， 没有就返回全部， 服务器保护返回最多1000个
-              guanluary: 'minute'
+              tags,
+              guanluary,
+              fields: ['replicateLag']
+            },
+            {
+              tags,
+              guanluary,
+              type: 'headAndTail'
             }
           ],
           statistics: [
             {
               tags: {
-                userId: 'aaaa',
-                key1: 'cdccc',
-                key2: 'ccccc'
-              },
-              fields: ['input', 'output']
+                measureType: 'dataflow',
+                customerId: 'enterpriseId',
+                host: 'hostname',
+                agentId: 'agent1',
+                dataflowId: 'afsdfasdf'
+              }
             }
           ]
         }
@@ -622,11 +579,12 @@ export default {
         const { samples } = data
         const countObj = samples?.[2] || {}
         const statistics = data.statistics?.[0] || {}
-        const { overData, writeData, initialData, lineOptions } = this
+        const { overData, writeData, initialData } = this
         // 总输入总输出
         if (!isEmpty(countObj)) {
           for (let key in overData) {
-            overData[key] = countObj[key][1] - countObj[key][0]
+            let l = countObj[key].length
+            overData[key] = countObj[key][l - 1] - countObj[key][0]
           }
         }
 
@@ -685,42 +643,15 @@ export default {
         this.$refs.chart.chart?.setOption({
           series: [
             {
-              // data: data1
               data: lineDataDeep.y[0]
             },
             {
-              // data: data2
               data: lineDataDeep.y[1]
             }
           ]
         })
 
-        // if (this.selectedStage) {
-        //   // 追加系列
-        //   lineDataDeep.y[2] = qpsData.transmitionTime
-        //   lineOptionsDeep.series[2] = {
-        //     name: '耗时',
-        //     yAxisIndex: 1,
-        //     lineStyle: {
-        //       color: 'rgba(70, 10, 238, 1)',
-        //       width: 1
-        //     },
-        //     symbol: 'none',
-        //     areaStyle: {
-        //       color: 'rgba(70, 10, 238, 0.2)'
-        //     },
-        //     itemStyle: {
-        //       color: 'rgba(70, 10, 238, 1)'
-        //     }
-        //   }
-        // } else {
-        //   lineDataDeep.y[2] = []
-        //   lineOptionsDeep.series[2] = { name: '' }
-        // }
-
         console.log('lineDataDeep.x.', lineDataDeep.x.length)
-        // this.lineOptions = lineOptionsDeep
-        // this.lineData = lineDataDeep
       })
     },
     getForecastMs(data) {
