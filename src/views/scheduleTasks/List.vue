@@ -68,6 +68,7 @@
           <el-button
             v-readonlybtn="'schedule_jobs_management'"
             v-if="scope.row.status === 'paused'"
+            :disabled="scope.row.status === 'done'"
             size="mini"
             type="text"
             @click="doUpdate(scope.row, 'waiting')"
@@ -76,6 +77,7 @@
           <el-button
             v-readonlybtn="'schedule_jobs_management'"
             v-else
+            :disabled="scope.row.status === 'done'"
             size="mini"
             type="text"
             @click="doUpdate(scope.row, 'stopping')"
