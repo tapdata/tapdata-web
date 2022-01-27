@@ -456,7 +456,13 @@ export default {
           }
         ]
       },
-      transBarData: [],
+      transBarData: [
+        { name: this.$t('dataFlow.totalInput'), value: 0, key: 'inputTotal', color: '#409EFF' },
+        { name: this.$t('dataFlow.totalOutput'), value: 0, key: 'outputTotal', color: '#7ba75d' },
+        { name: this.$t('dataFlow.totalInsert'), value: 0, key: 'insertedTotal', color: '#d9742c' },
+        { name: this.$t('dataFlow.totalUpdate'), value: 0, key: 'updatedTotal', color: '#e6b451' },
+        { name: this.$t('dataFlow.totalDelete'), value: 0, key: 'deletedTotal', color: '#e06c6c' }
+      ],
       transBarOptions: {
         barWidth: '100%',
         series: [
@@ -641,7 +647,7 @@ export default {
               res.data.chart2[0].totalUpdate,
               res.data.chart2[0].totalDelete
             ]
-            const chart2 = res.data.chart2[0]
+            // const chart2 = res.data.chart2[0]
             // this.transBarData = [
             //   { name: this.$t('dataFlow.totalOutput'), value: chart2.totalOutput, color: '#7ba75d' },
             //   { name: this.$t('dataFlow.totalInput'), value: chart2.totalInput, color: '#409EFF' },
@@ -693,13 +699,16 @@ export default {
       this.$api('Measurement')
         .queryTransmitTotal()
         .then(({ data }) => {
-          this.transBarData = [
-            { name: this.$t('dataFlow.totalInput'), value: data.inputTotal, color: '#409EFF' },
-            { name: this.$t('dataFlow.totalOutput'), value: data.outputTotal, color: '#7ba75d' },
-            { name: this.$t('dataFlow.totalInsert'), value: data.insertedTotal, color: '#d9742c' },
-            { name: this.$t('dataFlow.totalUpdate'), value: data.updatedTotal, color: '#e6b451' },
-            { name: this.$t('dataFlow.totalDelete'), value: data.deletedTotal, color: '#e06c6c' }
-          ]
+          let result = []
+          this.transBarData.forEach(el => {
+            result.push(
+              Object.assign({}, el, {
+                value: data[el.key]
+              })
+            )
+          })
+          console.log('result', result)
+          this.transBarData = result
         })
         .catch(err => {
           console.log('err', err)

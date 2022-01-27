@@ -35,12 +35,14 @@
     </div>
     <div class="flex align-center mt-3">
       <SelectList
+        v-if="stagesItems.length"
         v-model="selectedStage"
         :items="stagesItems"
         last-page-text=""
         clearable
         size="mini"
         style="min-width: 240px"
+        menu-min-width="240px"
         placeholder="请选择节点"
         @change="changeStageFnc"
       ></SelectList>
@@ -383,12 +385,14 @@ export default {
       return !statusBtMap['edit'][task.status]
     },
     stagesItems() {
+      console.log('stagesItems', this.task)
       let result = this.task?.dag?.nodes?.map(item => {
         return {
           label: item.name,
           value: item.id
         }
       })
+      console.log('result', result)
       return result || []
     },
     progressBar() {
@@ -480,19 +484,24 @@ export default {
           guanluary = 'minute'
           break
       }
-      let agentId = 'agent1' || this.task.agentId
-      let dataFlowId = 'dataFlow1' || this.task.id
+      let agentId = this.task.agentId
+      let dataFlowId = this.task.id
+      let taskId = this.$route.params?.id
+      let subTaskId = this.$route.params?.subId
+      console.log('this.', this.$route.params)
       let params = {
         samples: [
           {
             tags: {
-              measureType: 'dataflow', //指标类型
+              // measureType: 'dataflow', //指标类型
               // customerId: 'enterpriseId', //客户ID, 如果没有可以先试用userId
-              host: 'hostname', //主机
-              agentId: agentId, //Agent的ID
-              dataFlowId: dataFlowId //DataFlow的ID
+              // host: 'hostname', //主机
+              // agentId: agentId, //Agent的ID
+              // taskId: taskId,
+              subTaskId: subTaskId,
+              type: 'subTask'
             },
-            fields: ['inputQps', 'outputQps'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
+            fields: ['inputQPS', 'outputQPS'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
             // start: startTimeStamp, //optional
             // end: endTimeStamp, //optional
             // limit: limit, //optional， 没有就返回全部， 服务器保护返回最多1000个
@@ -553,7 +562,7 @@ export default {
                 type: 'node', //节点类型， node， processor
                 nodeId: 'kasldjfkasf' //节点的ID
               },
-              //"fields" : ["inputQps", "outputQps", "transmitionTime"],  //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
+              //"fields" : ["inputQPS", "outputQPS", "transmitionTime"],  //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
               start: 123123323214, //optional
               end: 123123123123123, //optional
               // limit: limit, //optional, 没有就返回全部， 服务器保护返回最多1000个
@@ -624,7 +633,9 @@ export default {
         }
         // 折线图
         const qpsData = samples[0]
-        let { inputQps, outputQps } = qpsData
+        let { inputQPS = [], outputQPS = [] } = qpsData
+        console.log('inputQPS', inputQPS)
+        console.log('outputQPS', outputQPS)
         let qpsDataTime = qpsData.time
         let lineDataDeep = this.lineDataDeep
         let xArr = qpsDataTime.map(t => formatTime(t))
@@ -641,13 +652,14 @@ export default {
           let time = this.randomTime() || el // TODO 造递增的时间点
           inArr.push({
             name: time,
-            value: [time, inputQps[i]]
+            value: [time, inputQPS[i] || 0]
           })
           outArr.push({
             name: time,
-            value: [time, outputQps[i]]
+            value: [time, outputQPS[i] || 0]
           })
         })
+        console.log('inArr', inArr)
         lineDataDeep.x.push(...xArr)
         lineDataDeep.y[0].push(...inArr)
         lineDataDeep.y[1].push(...outArr)
