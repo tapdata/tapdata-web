@@ -274,6 +274,7 @@ export default {
     // 初始化pai路径
     initPresetPaths() {
       let prefix = this.createForm.prefix ? this.createForm.prefix + '/' : ''
+      this.createForm.paths = []
       let preset = {
         path: '/api/' + this.createForm.apiVersion + '/' + prefix + this.createForm.basePath,
         method: 'POST',
