@@ -50,11 +50,6 @@ export default function () {
             label: i18n.t('task_setting_remoive_rewrite_mode'),
             tip: i18n.t('task_setting_remoive_rewrite_mode_tip'),
             value: 'compel'
-          },
-          {
-            label: i18n.t('task_setting_append_rewrite_mode'),
-            tip: i18n.t('task_setting_append_rewrite_mode_tip'),
-            value: 'append'
           }
         ],
         required: true,
