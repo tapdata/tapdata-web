@@ -98,7 +98,7 @@
             show-overflow-tooltip
             :label="$t('dag_dialog_field_mapping_source_field')"
             prop="field_name"
-            width="150"
+            width="180"
           >
             <template slot-scope="scope">
               <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
@@ -119,7 +119,7 @@
             width="150"
           ></ElTableColumn>
           <ElTableColumn :label="$t('dag_dialog_field_mapping_source_scale')" prop="scale" width="100"></ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')" width="260">
+          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')" >
             <template slot-scope="scope">
               <div
                 v-if="!scope.row.is_deleted && !transform.hiddenFieldProcess && !readOnly"
@@ -1413,6 +1413,9 @@ export default {
             color: #000000;
             line-height: 17px;
             text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
           .target {
             font-size: 12px;
@@ -1421,6 +1424,9 @@ export default {
             line-height: 17px;
             margin-top: 16px;
             text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
           .select {
             font-size: 12px;

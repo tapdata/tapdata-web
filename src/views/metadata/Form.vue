@@ -53,10 +53,10 @@
           <el-input-number v-model="form.columnSize" :min="0" size="mini"></el-input-number>
         </el-form-item>
         <el-form-item :label="$t('metadata.details.accuracy')">
-          <el-input-number v-model="form.precision" :min="0" size="mini"></el-input-number>
+          <el-input-number v-model="form.scale" :min="0" size="mini"></el-input-number>
         </el-form-item>
         <el-form-item :label="$t('metadata.details.numberLength')">
-          <el-input-number v-model="form.scale" :min="0" size="mini"></el-input-number>
+          <el-input-number v-model="form.precision" :min="0" size="mini"></el-input-number>
         </el-form-item>
       </div>
       <!-- 字典模板 -->

@@ -664,8 +664,6 @@ export default {
           } else {
             self.progress.showProgress = false
           }
-        } else {
-          self.progress.showProgress = false
         }
       })
     },
