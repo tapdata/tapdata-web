@@ -258,7 +258,7 @@
                     <el-row class="pt-3">
                       <el-col :span="form.inspectMethod === 'field' ? 12 : 13" class="setting-item-box">
                         <template v-if="item.source.sourceFilterFalg">
-                          <CodeEditor v-model="item.source.where" height="200px" class="mb-2"></CodeEditor>
+                          <CodeEditor v-model="item.source.where" lang="sql" height="200px" class="mb-2"></CodeEditor>
                           <template v-if="item.source.databaseType">
                             <div v-if="item.source.databaseType === 'mongodb'">
                               {{ $t('dag_dialog_field_mapping_example') }}: {"field": 1, "field2": "value"}
@@ -285,7 +285,7 @@
                         v-if="item.target.targeFilterFalg"
                       >
                         <template v-if="item.target.targeFilterFalg">
-                          <CodeEditor v-model="item.target.where" height="200px" class="mb-2"></CodeEditor>
+                          <CodeEditor v-model="item.target.where" lang="sql" height="200px" class="mb-2"></CodeEditor>
                           <template v-if="item.target.databaseType">
                             <div v-if="item.target.databaseType === 'mongodb'">
                               {{ $t('dag_dialog_field_mapping_example') }}: {"field": 1, "field2": "value"}
