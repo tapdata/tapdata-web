@@ -59,6 +59,7 @@
                 @returnPreFixSuffix="returnPreFixSuffix"
               ></FieldMapping>
               <ElButton
+                :disabled="false"
                 v-if="showFieldMapping && !transformModelVersion"
                 v-show="!model.selectSourceDatabase['view']"
                 style="padding: 4px 10px; color: #666; background-color: #f5f5f5; margin-left: 10px"
@@ -274,8 +275,6 @@ export default {
         } else {
           self.disabledTransfer = true
         }
-      } else {
-        self.disabledTransfer = false
       }
     })
   },
