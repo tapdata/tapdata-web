@@ -1805,6 +1805,7 @@ const tc = {
         CHECK_DDL_PERMISSION: '檢查執行ddl語句所需的權限是否授權',
         CHECK_PERMISSION: '檢查同步所需權限是否授權',
         CHECK_BIN_LOG: '檢查binlog是否開啟，並且是ROW級別',
+        CHECK_BIN_ROW_IMAGE: '檢查binlog格式是否為FULL',
         CHECK_SCRIPT: '檢查腳本是否可用',
         CHECK_PRIMARY_KEY: '檢查主鍵是否可用',
         CHECK_CONFIG: '檢查配置是否正確',
@@ -3318,7 +3319,7 @@ const tc = {
     start: '啟動',
     paused: '暫停',
     status: {
-      done: 'done',
+      done: '已完成',
       waiting: '等待中',
       scheduling: '正在執行',
       paused: '暫停',
