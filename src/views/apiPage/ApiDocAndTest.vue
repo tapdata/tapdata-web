@@ -11,7 +11,6 @@
 
 <script>
 import APIClient from '@/api/ApiClient'
-import axios from 'axios'
 export default {
   name: 'ApiDocAndTest',
   data() {

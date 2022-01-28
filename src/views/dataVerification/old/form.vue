@@ -232,18 +232,22 @@
                         style="margin-left: 10px"
                         v-model="item.showAdvancedVerification"
                         v-show="form.inspectMethod === 'field'"
+                        @change="handleChangeAdvanced(item.showAdvancedVerification, item)"
                         >{{ $t('dataVerification.advanceVerify') }}</el-checkbox
                       >
                     </div>
                     <el-row class="pt-3">
-                      <el-col :span="13" class="setting-item-box">
+                      <el-col :span="form.inspectMethod === 'field' ? 12 : 13" class="setting-item-box">
                         <el-switch
                           v-model="item.source.sourceFilterFalg"
                           @change="changeSourceWhere(item.source.sourceFilterFalg, item.source)"
                         ></el-switch>
                         <label class="item-label pl-2">{{ $t('verify_form_source_filter') }}</label>
                       </el-col>
-                      <el-col :span="11" class="pl-6">
+                      <el-col
+                        :span="form.inspectMethod === 'field' ? 9 : 11"
+                        :class="form.inspectMethod === 'field' ? 'pl-10' : 'pl-6'"
+                      >
                         <el-switch
                           v-model="item.target.targeFilterFalg"
                           @change="changeSourceWhere(item.target.targeFilterFalg, item.target)"
@@ -252,14 +256,9 @@
                       </el-col>
                     </el-row>
                     <el-row class="pt-3">
-                      <el-col :span="13" class="setting-item-box">
+                      <el-col :span="form.inspectMethod === 'field' ? 12 : 13" class="setting-item-box">
                         <template v-if="item.source.sourceFilterFalg">
-                          <CodeEditor
-                            v-model="item.source.where"
-                            :width="width"
-                            height="200px"
-                            class="mb-2"
-                          ></CodeEditor>
+                          <CodeEditor v-model="item.source.where" height="200px" class="mb-2"></CodeEditor>
                           <template v-if="item.source.databaseType">
                             <div v-if="item.source.databaseType === 'mongodb'">
                               {{ $t('dag_dialog_field_mapping_example') }}: {"field": 1, "field2": "value"}
@@ -280,14 +279,13 @@
                           :mergedSchema="item.source"
                         ></queryBuilder> -->
                       </el-col>
-                      <el-col :span="11" class="pl-6" v-if="item.target.targeFilterFalg">
+                      <el-col
+                        :span="form.inspectMethod === 'field' ? 9 : 11"
+                        :class="form.inspectMethod === 'field' ? 'pl-10' : 'pl-6'"
+                        v-if="item.target.targeFilterFalg"
+                      >
                         <template v-if="item.target.targeFilterFalg">
-                          <CodeEditor
-                            v-model="item.target.where"
-                            :width="width"
-                            height="200px"
-                            class="mb-2"
-                          ></CodeEditor>
+                          <CodeEditor v-model="item.target.where" height="200px" class="mb-2"></CodeEditor>
                           <template v-if="item.target.databaseType">
                             <div v-if="item.target.databaseType === 'mongodb'">
                               {{ $t('dag_dialog_field_mapping_example') }}: {"field": 1, "field2": "value"}
@@ -515,23 +513,19 @@ export default {
   },
 
   methods: {
-    changeSourceWhere(v, item) {
+    handleChangeAdvanced(v, item) {
       if (v) {
-        // let custSql = {
-        //   filterType: 'field', //sql
-        //   // noFieldFilter: true,
-        //   noLineLimit: true,
-        //   selectedFields: [],
-        //   fieldFilterType: 'keepAllFields',
-        //   noFieldFilter: true,
-        //   limitLines: '',
-        //   cSql: '',
-        //   editSql: '',
-        //   conditions: []
-        // }
-        this.$set(item, 'where', '')
+        item.target.targeFilterFalg = false
+        // item.target.where = ''
       }
     },
+    // changeSourceWhere(v, item) {
+    // if (!v) {
+    //   this.$set(item, 'where', '')
+    // } else {
+    //   item.where = ''
+    // }
+    // },
     //获取dataflow数据
     getFlowOptions() {
       this.loading = true
