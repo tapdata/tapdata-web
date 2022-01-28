@@ -257,6 +257,7 @@
                           <CodeEditor
                             v-model="item.source.where"
                             :width="width"
+                            lang="sql"
                             height="200px"
                             class="mb-2"
                           ></CodeEditor>
@@ -285,6 +286,7 @@
                           <CodeEditor
                             v-model="item.target.where"
                             :width="width"
+                            lang="sql"
                             height="200px"
                             class="mb-2"
                           ></CodeEditor>
