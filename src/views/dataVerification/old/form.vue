@@ -516,16 +516,14 @@ export default {
     handleChangeAdvanced(v, item) {
       if (v) {
         item.target.targeFilterFalg = false
-        // item.target.where = ''
+        item.target.where = ''
       }
     },
-    // changeSourceWhere(v, item) {
-    // if (!v) {
-    //   this.$set(item, 'where', '')
-    // } else {
-    //   item.where = ''
-    // }
-    // },
+    changeSourceWhere(v, item) {
+      if (!v) {
+        this.$set(item, 'where', '')
+      }
+    },
     //获取dataflow数据
     getFlowOptions() {
       this.loading = true

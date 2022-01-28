@@ -91,7 +91,7 @@
       <el-table-column :label="$t('timeToLive.header.indexStatus')" prop="status" sortable="status">
         <template slot-scope="scope">
           {{ $t('timeToLive.status_' + scope.row.status) || scope.row.status }}
-          <el-popover placement="top-start" trigger="hover" width="800">
+          <el-popover placement="top-start" trigger="hover" width="600" v-if="scope.row.error_msg">
             <div style="word-break: break-word; text-align: left">
               {{ scope.row.error_msg }}
             </div>
