@@ -280,7 +280,7 @@ export default {
 
     // 获取新建表名称
     getAddTableName(val) {
-      this.model.tableName = val
+      this.model.tableName = `${val}(${this.model.table_type})`
       this.mergedSchema = null
       let schema = {
         meta_type: 'mq',

@@ -210,7 +210,7 @@ let menuSetting = [
       { name: 'metadataSearch' },
       { name: 'dataQuality', code: 'data_quality_menu' },
       { name: 'timeToLive', code: 'time_to_live_menu' },
-      { name: 'dataMap', code: 'data_lineage_menu' },
+      // { name: 'dataMap', code: 'data_lineage_menu' },
       { name: 'dataRules', code: 'data_rules_menu' },
       { name: 'topology', code: 'Topology_menu' },
       { name: 'dictionary', code: 'dictionary_menu' }

@@ -161,7 +161,7 @@
                     <div class="title">过滤器示例：</div>
                     <p>
                       筛选出50岁以上的男性或者收入一万以下的30岁以上的人,表达式如下：<br />
-                      ( record.gender == 0 && record.age > 50 )|| ( record.age ≥30 && record.salary ≤ 10000 )
+                      ( record.gender == 0 && record.age > 50 ) || ( record.age >= 30 && record.salary <= 10000 )
                     </p>
                     <p>支持的符号:</p>
                     <el-table border :data="tooltipTableData">
@@ -277,7 +277,7 @@ export default {
         { label: 'COUNT', value: 'COUNT' }
       ],
       tooltipTableData: [
-        { A: '>, <', B: '大于、小于', C: '≥, ≤', D: '大于等于、小于等于' },
+        { A: '>, <', B: '大于、小于', C: '>=, <=', D: '大于等于、小于等于' },
         { A: '==', B: '等于', C: '!', D: '非' },
         { A: '&&', B: '且', C: '||', D: '或' },
         { A: '/^.*$/.test( )', B: '正则表达式', C: '( )', D: '条件分组' }

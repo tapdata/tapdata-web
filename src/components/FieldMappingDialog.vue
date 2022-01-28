@@ -44,8 +44,12 @@
               <img src="../assets/images/fieldMapping-table.png" alt="" />
             </div>
             <div class="task-form-text-box">
-              <div class="source">{{ item.sourceObjectName }}</div>
-              <div class="target">{{ item.sinkObjectName }}</div>
+              <ElTooltip class="item" effect="dark" :content="item.sourceObjectName" placement="left">
+                <div class="source">{{ item.sourceObjectName }}</div>
+              </ElTooltip>
+              <ElTooltip class="item" effect="dark" :content="item.sinkObjectName" placement="left">
+                <div class="target">{{ item.sinkObjectName }}</div>
+              </ElTooltip>
               <div class="select">
                 {{
                   `${$t('dag_dialog_field_mapping_selected')} ${
@@ -119,7 +123,7 @@
             width="150"
           ></ElTableColumn>
           <ElTableColumn :label="$t('dag_dialog_field_mapping_source_scale')" prop="scale" width="100"></ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')" >
+          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')">
             <template slot-scope="scope">
               <div
                 v-if="!scope.row.is_deleted && !transform.hiddenFieldProcess && !readOnly"
@@ -518,7 +522,6 @@ export default {
           if (self.fieldMappingNavData?.length < self.page.size && self.page.current === 1) {
             self.initNavData()
           }
-        } else if (['error'].includes(status)) {
         } else {
           self.progress.showProgress = false
           self.initNavData()

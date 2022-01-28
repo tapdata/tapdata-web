@@ -707,7 +707,6 @@ export default {
     },
     //判断节点是否支持字段映射
     getTranModelVersionControl() {
-      console.log( this.model.stageId)
       let param = {
         stages: this.dataFlow?.stages,
         stageId: this.model.stageId
