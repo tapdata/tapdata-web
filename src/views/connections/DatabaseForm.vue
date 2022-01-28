@@ -568,7 +568,7 @@ import formConfig from './config'
 import gitbook from './GitBook'
 import CodeEditor from '@/components/CodeEditor'
 import Test from './Test'
-import { TYPEMAP, TYPEMAPCONFIG, defaultModel, defaultCloudModel } from './util'
+import { TYPEMAPCONFIG, defaultModel, defaultCloudModel } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import VIcon from '@/components/VIcon'
 

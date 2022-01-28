@@ -119,7 +119,7 @@
             width="150"
           ></ElTableColumn>
           <ElTableColumn :label="$t('dag_dialog_field_mapping_source_scale')" prop="scale" width="100"></ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')" >
+          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')">
             <template slot-scope="scope">
               <div
                 v-if="!scope.row.is_deleted && !transform.hiddenFieldProcess && !readOnly"
