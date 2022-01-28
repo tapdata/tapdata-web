@@ -119,7 +119,6 @@ export default {
     },
     tableNameTransform(val) {
       this.tableNameTransform = val
-      console.log(this.tableNameTransform)
     },
     topicData: {
       deep: true,

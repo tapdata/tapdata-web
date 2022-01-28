@@ -650,7 +650,7 @@ export default {
               this.$api('users').patch({ arrquery: [parmas] })
             } else {
               let userData = { arrquery: arrquery }
-              arrquery.forEach((item, index) => {
+              arrquery.forEach(item => {
                 if (item.processId === _this.searchParams.api_server_process_id) {
                   if (item.apiServer === _this.getApiId(apiId)) {
                     // parmas.parmas[index].condition = JSON.stringify(_this)
@@ -1220,7 +1220,6 @@ export default {
         type: type || 'json'
       }
       // console.log(this.condition, Object.keys(this.condition))
-      debugger
       if (this.condition && Object.keys(this.condition).length) {
         // 有查询条件
         let queryString = this.$refs.queryBuild.serializationToRestFilter('filter', { where: this.condition })
