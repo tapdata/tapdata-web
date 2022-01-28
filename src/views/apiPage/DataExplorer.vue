@@ -1220,7 +1220,7 @@ export default {
         type: type || 'json'
       }
       // console.log(this.condition, Object.keys(this.condition))
-      debugger
+
       if (this.condition && Object.keys(this.condition).length) {
         // 有查询条件
         let queryString = this.$refs.queryBuild.serializationToRestFilter('filter', { where: this.condition })

@@ -252,15 +252,22 @@
                       </el-col>
                     </el-row>
                     <el-row class="pt-3">
-                      <el-col :span="13" class="setting-item-box" v-if="item.source.sourceFilterFalg">
-                        <CodeEditor v-model="item.source.where" :width="width" height="200px" class="mb-2"></CodeEditor>
-                        <template v-if="item.source.databaseType">
-                          <div v-if="item.source.databaseType === 'mongodb'">
-                            {{ $t('dag_dialog_field_mapping_example') }}: {"field": 1, "field2": "value"}
-                          </div>
-                          <div v-else>
-                            {{ $t('dag_dialog_field_mapping_example') }}: WHERE field1 = 1 and field2 = 'value'
-                          </div>
+                      <el-col :span="13" class="setting-item-box">
+                        <template v-if="item.source.sourceFilterFalg">
+                          <CodeEditor
+                            v-model="item.source.where"
+                            :width="width"
+                            height="200px"
+                            class="mb-2"
+                          ></CodeEditor>
+                          <template v-if="item.source.databaseType">
+                            <div v-if="item.source.databaseType === 'mongodb'">
+                              {{ $t('dag_dialog_field_mapping_example') }}: {"field": 1, "field2": "value"}
+                            </div>
+                            <div v-else>
+                              {{ $t('dag_dialog_field_mapping_example') }}: WHERE field1 = 1 and field2 = 'value'
+                            </div>
+                          </template>
                         </template>
 
                         <!-- <queryBuilder
@@ -274,14 +281,21 @@
                         ></queryBuilder> -->
                       </el-col>
                       <el-col :span="11" class="pl-6" v-if="item.target.targeFilterFalg">
-                        <CodeEditor v-model="item.target.where" :width="width" height="200px" class="mb-2"></CodeEditor>
-                        <template v-if="item.target.databaseType">
-                          <div v-if="item.target.databaseType === 'mongodb'">
-                            {{ $t('dag_dialog_field_mapping_example') }}: {"field": 1, "field2": "value"}
-                          </div>
-                          <div v-else>
-                            {{ $t('dag_dialog_field_mapping_example') }}：WHERE field1 = 1 and field2 = 'value'
-                          </div>
+                        <template v-if="item.target.targeFilterFalg">
+                          <CodeEditor
+                            v-model="item.target.where"
+                            :width="width"
+                            height="200px"
+                            class="mb-2"
+                          ></CodeEditor>
+                          <template v-if="item.target.databaseType">
+                            <div v-if="item.target.databaseType === 'mongodb'">
+                              {{ $t('dag_dialog_field_mapping_example') }}: {"field": 1, "field2": "value"}
+                            </div>
+                            <div v-else>
+                              {{ $t('dag_dialog_field_mapping_example') }}：WHERE field1 = 1 and field2 = 'value'
+                            </div>
+                          </template>
                         </template>
                         <!-- <queryBuilder
                           v-if="item.target.targeFilterFalg"
@@ -1259,6 +1273,7 @@ export default {
         }
       }
       .setting-item-box {
+        min-height: 1px;
         padding-left: 140px;
       }
       .setting-buttons {
