@@ -44,8 +44,12 @@
               <img src="../assets/images/fieldMapping-table.png" alt="" />
             </div>
             <div class="task-form-text-box">
-              <div class="source">{{ item.sourceObjectName }}</div>
-              <div class="target">{{ item.sinkObjectName }}</div>
+              <ElTooltip class="item" effect="dark" :content="item.sourceObjectName" placement="left">
+                <div class="source">{{ item.sourceObjectName }}</div>
+              </ElTooltip>
+              <ElTooltip class="item" effect="dark" :content="item.sinkObjectName" placement="left">
+                <div class="target">{{ item.sinkObjectName }}</div>
+              </ElTooltip>
               <div class="select">
                 {{
                   `${$t('dag_dialog_field_mapping_selected')} ${
