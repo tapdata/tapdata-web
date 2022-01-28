@@ -486,5 +486,6 @@ export default {
   function_tips_max_size: 'Max size ',
 
   // 用户
-  login_fail_too_many: 'The maximum number of password errors has been reached, please log in after 10 minutes'
+  login_fail_too_many: 'The maximum number of password errors has been reached, please log in after 10 minutes',
+  rule_exists_name: 'Save failed, duplicate name'
 }

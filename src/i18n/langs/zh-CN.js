@@ -508,5 +508,7 @@ export default {
   function_tips_max_size: '最大',
 
   // 用户
-  login_fail_too_many: '密码错误达到最大次数，请于10分钟后再登录'
+  login_fail_too_many: '密码错误达到最大次数，请于10分钟后再登录',
+
+  rule_exists_name: '保存失败，名称重复'
 }

@@ -476,5 +476,6 @@ export default {
   task_setting_oracle_custom_analysis: 'OracleSQL自定義解析',
   task_setting_manually_miner_concurrency: '并发挖掘线程数',
   // 用户
-  login_fail_too_many: '密碼錯誤達到最大次數，請於10分鐘再登錄'
+  login_fail_too_many: '密碼錯誤達到最大次數，請於10分鐘再登錄',
+  rule_exists_name: '保存失败，名称重复'
 }
