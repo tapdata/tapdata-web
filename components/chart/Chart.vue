@@ -90,7 +90,9 @@ export default {
   methods: {
     init() {
       if (this.extend) {
-        this.chartOption = this.extend
+        if (JSON.stringify(this.chartOption) !== JSON.stringify(this.extend)) {
+          this.chartOption = this.extend
+        }
         return
       }
       let obj = this[this.type]?.()
