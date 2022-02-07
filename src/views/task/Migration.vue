@@ -840,7 +840,7 @@ export default {
       }
       this.$confirm(
         `<p>${this.$t('task_list_edit_tip')}, ` +
-          `${this.$t('task_list_edit_submit')}<span style="color:#409EFF">${this.$t(
+          `${this.$t('task_list_edit_submit')}<span class="font-color-main fw-bolder">${this.$t(
             'task_list_edit_reset'
           )}</span>${this.$t('task_list_edit_tip3')}</p>`,
         this.$t('task_important_reminder'),
