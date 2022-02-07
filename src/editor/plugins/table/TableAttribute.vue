@@ -14,7 +14,7 @@
           :rules="rules"
           required
         >
-          <div style="display: flex">
+          <div class="flex-block">
             <FbSelect v-model="model.connectionId" :config="databaseSelectConfig"></FbSelect>
             <el-tooltip
               class="item"
@@ -39,9 +39,10 @@
               :content="$t('dataForm.copyDatabase')"
               placement="top-start"
             >
-              <div class="el-button" style="padding: 7px; margin-left: 7px">
+              <ClipButton :value="copyConnectionId" :copyClass="true"></ClipButton>
+              <!-- <div class="el-button" style="padding: 7px; margin-left: 7px">
                 <ClipButton :value="copyConnectionId"></ClipButton>
-              </div>
+              </div> -->
             </el-tooltip>
             <el-tooltip
               class="item"
@@ -103,9 +104,10 @@
               :content="$t('dataForm.copyTable')"
               placement="bottom-start"
             >
-              <div class="el-button" style="padding: 7px; margin-left: 7px">
+              <ClipButton :value="model.tableName" :copyClass="true"></ClipButton>
+              <!-- <div class="el-button" style="padding: 7px; margin-left: 7px">
                 <ClipButton :value="model.tableName"></ClipButton>
-              </div>
+              </div> -->
             </el-tooltip>
             <el-tooltip
               class="item"

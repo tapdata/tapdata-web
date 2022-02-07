@@ -21,7 +21,7 @@
           :rules="rules"
           required
         >
-          <div style="display: flex">
+          <div class="flex-block">
             <FbSelect v-model="model.connectionId" :config="databaseSelectConfig"></FbSelect>
             <el-tooltip
               class="item"
@@ -39,6 +39,7 @@
               ></el-button>
               <!-- @click="$refs.databaseForm.show({ whiteList: ['mongodb'] })" -->
             </el-tooltip>
+
             <el-tooltip
               class="item"
               popper-class="collection-tooltip"
@@ -46,9 +47,10 @@
               :content="$t('dataForm.copyDatabase')"
               placement="top-start"
             >
-              <div class="el-button" style="padding: 7px; margin-left: 7px">
+              <ClipButton :value="copyConnectionId" :copyClass="true"></ClipButton>
+              <!-- <div class="el-button" style="padding: 7px; margin-left: 7px">
                 <ClipButton :value="copyConnectionId"></ClipButton>
-              </div>
+              </div> -->
             </el-tooltip>
             <el-tooltip
               class="item"
@@ -103,18 +105,14 @@
                 @click="addNewTable"
               ></el-button>
             </el-tooltip>
+            <!-- <ClipButton :value="model.tableName" :copyClass="true"></ClipButton> -->
             <el-tooltip
               class="item"
               popper-class="collection-tooltip"
               effect="light"
               :content="$t('dataForm.copyCollection')"
             >
-              <!-- <el-button size="mini" style="padding: 7px;margin-left: 7px">
-								<ClipButton :value="model.tableName"></ClipButton>
-							</el-button> -->
-              <div class="el-button" style="padding: 7px; margin-left: 7px">
-                <ClipButton :value="model.tableName"></ClipButton>
-              </div>
+              <ClipButton :value="model.tableName" :copyClass="true"></ClipButton>
             </el-tooltip>
             <el-tooltip
               class="item"

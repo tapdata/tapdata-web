@@ -1,7 +1,7 @@
 <template>
   <el-tooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
     <i
-      class="iconfont icon-fuzhi1"
+      :class="[{ copyClass: copyClass }, 'iconfont', 'icon-fuzhi1']"
       v-clipboard:copy="value"
       v-clipboard:success="onCopy"
       @mouseleave="showTooltip = false"
@@ -12,7 +12,7 @@
 <script>
 export default {
   name: 'ClipButton',
-  props: ['value'],
+  props: ['value', 'copyClass'],
   data() {
     return {
       showTooltip: false
@@ -34,6 +34,15 @@ export default {
   &:hover {
     color: #333;
   }
+}
+.copyClass {
+  padding: 6px;
+  margin-left: 7px;
+  font-size: 12px;
+  cursor: pointer;
+  color: #606266;
+  border-radius: 3px;
+  border: 1px solid #dcdfe6;
 }
 </style>
 <style lang="scss">
