@@ -74,7 +74,7 @@
       <div class="task-chart__body flex flex-wrap justify-content-between pr-3">
         <div class="task-chart__item">
           <EchartHeader :data="overviewObj.title"></EchartHeader>
-          <Chart :extend="overviewObj.body" class="v-echart"></Chart>
+          <Chart v-if="overviewObj.body" :extend="overviewObj.body" class="v-echart"></Chart>
         </div>
         <div class="task-chart__item">
           <EchartHeader :data="throughputObj.title" @change="changeHeaderFnc"></EchartHeader>
@@ -86,7 +86,7 @@
               >{{ $t('dataFlow.output') }}:<span class="ml-1">{{ throughputObj.output }}</span></span
             >
           </div>
-          <Chart :extend="throughputObj.body" class="v-echart"></Chart>
+          <Chart v-if="throughputObj.body" :extend="throughputObj.body" class="v-echart"></Chart>
         </div>
         <div class="task-chart__item">
           <EchartHeader :data="transfObj.title" @change="changeHeaderFnc"></EchartHeader>
@@ -95,7 +95,7 @@
               >{{ $t('dataFlow.current') }}:<span class="ml-1">{{ transfObj.value }}</span></span
             >
           </div>
-          <Chart :extend="transfObj.body" class="v-echart"></Chart>
+          <Chart v-if="transfObj.body" :extend="transfObj.body" class="v-echart"></Chart>
         </div>
         <div class="task-chart__item">
           <EchartHeader :data="replicateObj.title" @change="changeHeaderFnc"></EchartHeader>
@@ -104,7 +104,7 @@
               >{{ $t('dataFlow.current') }}:<span class="ml-1">{{ replicateObj.value }}</span></span
             >
           </div>
-          <Chart :extend="replicateObj.body" class="v-echart"></Chart>
+          <Chart v-if="replicateObj.body" :extend="replicateObj.body" class="v-echart"></Chart>
         </div>
       </div>
     </div>
@@ -166,7 +166,7 @@ export default {
           classFlex: true,
           loading: false
         },
-        body: {}
+        body: null
       },
       // 输入输出统计
       throughputObj: {
