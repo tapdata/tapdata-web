@@ -553,6 +553,7 @@ export default {
   task_form_source_connection: '源端连接',
   task_form_target_type: '目标端类型',
   task_form_target_connection: '目标端连接',
+  task_form_setting_sync_points_tip: '增量采集时间点设置暂时只支持：MySQL，SQL Server，Oracle和MongoDB。',
 
   task_monitor_progress: '任务进度',
   task_monitor_full_sync: '全量同步概览',

@@ -50,6 +50,31 @@
                 @submit.native.prevent
                 @value-change="formChangeSetting"
               >
+                <template slot="syncPoints">
+                  <el-row>
+                    {{ $t('connection_form_data_source') }}：{{ dataSourceModel.source_connectionName }}
+                  </el-row>
+                  <el-row>
+                    <el-col :span="8" style="margin-right: 10px">
+                      <el-select v-model="settingModel.syncPoints[0].type" :placeholder="$t('gl_placeholder_select')">
+                        <el-option v-for="op in options" :key="op.value" :label="op.label" :value="op.value">
+                        </el-option>
+                      </el-select>
+                    </el-col>
+                    <el-col :span="12" v-if="settingModel.syncPoints[0].type !== 'current'">
+                      <el-date-picker
+                        format="yyyy-MM-dd HH:mm:ss"
+                        v-model="settingModel.syncPoints[0].date"
+                        type="datetime"
+                        :disabled="settingModel.syncPoints[0].type === 'current'"
+                      ></el-date-picker>
+                    </el-col>
+                  </el-row>
+                  <el-row>
+                    <i class="el-icon-info color-primary mr-2"></i>
+                    <span class="font-color-sub fs-8">{{ $t('task_form_setting_sync_points_tip') }}</span>
+                  </el-row>
+                </template>
               </form-builder>
             </div>
             <!-- 步骤4 -->
@@ -1228,18 +1253,9 @@ export default {
       let target = this.dataSourceModel
       //设置为增量模式
       let timeZone = new Date().getTimezoneOffset() / 60
-      let systemTimeZone = (timeZone > 0 ? '+' : '-') + (Math.abs(timeZone) + '').padStart(2, '0') + ':00'
-      let syncPoints = [
-        {
-          connectionId: source.source_connectionId,
-          type: 'current', // localTZ: 本地时区； connTZ：连接时区
-          time: '',
-          date: '',
-          name: '',
-          timezone: systemTimeZone // 当type为localTZ时有该字段
-        }
-      ]
-      this.settingModel['syncPoints'] = syncPoints
+      let systemTimeZone = (timeZone > 0 ? '+' : '-') + Math.abs(timeZone)
+      this.settingModel.syncPoints[0].connectionId = source.source_connectionId
+      this.settingModel.syncPoints[0].timezone = systemTimeZone
       let postData = {
         name: this.settingModel.name,
         description: '',
