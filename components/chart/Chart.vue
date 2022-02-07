@@ -108,9 +108,9 @@ export default {
           getDom.on(t.name, t.method)
         })
       }
-      if (this.extend) {
-        if (JSON.stringify(this.chartOption) !== JSON.stringify(this.extend)) {
-          this.chartOption = this.extend
+      if (extend) {
+        if (JSON.stringify(this.chartOption) !== JSON.stringify(extend)) {
+          this.chartOption = extend
         }
         return
       }
