@@ -6,7 +6,14 @@
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { PieChart, BarChart, LineChart } from 'echarts/charts'
-import { TitleComponent, TooltipComponent, ToolboxComponent, LegendComponent, GridComponent } from 'echarts/components'
+import {
+  TitleComponent,
+  TooltipComponent,
+  ToolboxComponent,
+  LegendComponent,
+  GridComponent,
+  DataZoomComponent
+} from 'echarts/components'
 import VChart from 'vue-echarts'
 
 use([
@@ -18,7 +25,8 @@ use([
   TooltipComponent,
   ToolboxComponent,
   LegendComponent,
-  GridComponent
+  GridComponent,
+  DataZoomComponent
 ])
 
 export default {
@@ -52,6 +60,10 @@ export default {
     noY: {
       type: Array,
       default: () => [0, 1]
+    },
+    events: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -89,6 +101,13 @@ export default {
   },
   methods: {
     init() {
+      const { events, extend, chart } = this
+      if (events.length) {
+        let getDom = chart?.chart
+        events.forEach(t => {
+          getDom.on(t.name, t.method)
+        })
+      }
       if (this.extend) {
         if (JSON.stringify(this.chartOption) !== JSON.stringify(this.extend)) {
           this.chartOption = this.extend
@@ -110,7 +129,11 @@ export default {
                 if (el.cover) {
                   obj[key][i] = el
                 } else {
-                  obj[key][i] = Object.assign({}, obj[key][i] || {}, el || {})
+                  if (obj[key]) {
+                    obj[key][i] = Object.assign({}, obj[key][i] || {}, el || {})
+                  } else {
+                    obj[key] = options[key]
+                  }
                 }
               } else {
                 obj[key][i] = el
@@ -272,19 +295,21 @@ export default {
             show: false
           }
         },
-        yAxis: {
-          type: 'value',
-          max: 'dataMax',
-          axisLine: {
-            show: true
-          },
-          splitLine: {
-            show: true,
-            lineStyle: {
-              type: 'dashed'
+        yAxis: [
+          {
+            type: 'value',
+            max: 'dataMax',
+            axisLine: {
+              show: true
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {
+                type: 'dashed'
+              }
             }
           }
-        },
+        ],
         grid: {
           containLabel: true,
           borderWidth: 1,
@@ -377,8 +402,8 @@ export default {
     setEmptyData(data) {
       const { noX, noY } = this
       if (!noX || data.xAxis.data?.length) {
-        data.yAxis.min = null
-        data.yAxis.max = null
+        data.yAxis[0].min = null
+        data.yAxis[0].max = null
         return
       }
       let result
@@ -403,8 +428,8 @@ export default {
         result = noX
       }
       data.xAxis.data = result
-      data.yAxis.min = noY[0] || 0
-      data.yAxis.max = noY[1] || 1
+      data.yAxis[0].min = noY[0] || 0
+      data.yAxis[0].max = noY[1] || 1
     },
     formatTime(type, time) {
       let map = {
