@@ -85,11 +85,7 @@
             {{ $t('task_forced_stop') }}
           </ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton
-            size="mini"
-            type="text"
-            @click="handleDetail(scope.row.id, 'detail', scope.row.mappingTemplate, scope.row.hasChildren)"
-          >
+          <ElButton size="mini" type="text" @click="toMonitor(scope.row)">
             {{ $t('task_operation_monitor') }}
           </ElButton>
           <ElDivider direction="vertical"></ElDivider>
@@ -97,7 +93,7 @@
             size="mini"
             type="text"
             :disabled="!statusBtMap['edit'][scope.row.status]"
-            @click="handleDetail(scope.row.id, 'edit', scope.row.mappingTemplate, scope.row.hasChildren)"
+            @click="toEditor(scope.row)"
           >
             {{ $t('button_edit') }}
           </ElButton>
@@ -831,45 +827,40 @@ export default {
         }
       })
     },
-    handleDetail(id, type, mappingTemplate, hasChildren) {
-      // 子选项 hasChildren 为 true
-      if (hasChildren) {
-        return
-      }
-      if (type === 'edit') {
-        this.$confirm(
-          `<p>${this.$t('task_list_edit_tip')}, ` +
-            `${this.$t('task_list_edit_submit')}<span style="color:#409EFF">${this.$t(
-              'task_list_edit_reset'
-            )}</span>${this.$t('task_list_edit_tip3')}</p>`,
-          this.$t('task_important_reminder'),
-          {
-            dangerouslyUseHTMLString: true,
-            customClass: 'dataflow-clickTip',
-            cancelButtonText: this.$t('button_cancel'),
-            confirmButtonText: this.$t('task_list_continue_edit'),
-            type: 'warning'
-          }
-        ).then(resFlag => {
-          if (resFlag) {
-            this.$router.push({
-              path: '/task/' + id
-            })
-          }
-        })
-      } else {
+    toEditor(row = {}) {
+      let id = row.id
+      if (!this.isRunBefore(row)) {
         this.$router.push({
-          name: 'Monitor',
+          name: 'DataflowEdit',
           params: {
             id: id
           }
         })
+        return
       }
-      setTimeout(() => {
-        document.querySelectorAll('.el-tooltip__popper').forEach(it => {
-          it.outerHTML = ''
-        })
-      }, 200)
+      this.$confirm(
+        `<p>${this.$t('task_list_edit_tip')}, ` +
+          `${this.$t('task_list_edit_submit')}<span style="color:#409EFF">${this.$t(
+            'task_list_edit_reset'
+          )}</span>${this.$t('task_list_edit_tip3')}</p>`,
+        this.$t('task_important_reminder'),
+        {
+          dangerouslyUseHTMLString: true,
+          customClass: 'dataflow-clickTip',
+          cancelButtonText: this.$t('button_cancel'),
+          confirmButtonText: this.$t('task_list_continue_edit'),
+          type: 'warning'
+        }
+      ).then(resFlag => {
+        if (resFlag) {
+          this.$router.push({
+            name: 'DataflowEdit',
+            params: {
+              id: id
+            }
+          })
+        }
+      })
     },
     handleMore(command, node) {
       this[command]([node.id], node)
@@ -883,6 +874,17 @@ export default {
         name: 'Instance',
         query: {
           keyword: belongAgent
+        }
+      })
+    },
+    isRunBefore(row) {
+      return row.startTime
+    },
+    toMonitor(row = {}) {
+      this.$router.push({
+        name: 'Monitor',
+        params: {
+          id: row.id
         }
       })
     }
