@@ -3319,7 +3319,7 @@ const tc = {
     start: '啟動',
     paused: '暫停',
     status: {
-      done: 'done',
+      done: '已完成',
       waiting: '等待中',
       scheduling: '正在執行',
       paused: '暫停',
