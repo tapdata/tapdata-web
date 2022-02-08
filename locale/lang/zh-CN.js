@@ -3351,7 +3351,7 @@ const cn = {
     start: '启动',
     paused: '暂停',
     status: {
-      done: 'done',
+      done: '已完成',
       waiting: '等待中',
       scheduling: '正在执行',
       paused: '暂停',
