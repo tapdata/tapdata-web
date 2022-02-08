@@ -52,7 +52,7 @@ export default {
         let token = await this.apiClient.getAPIServerToken()
         this.token = token
 
-        let url = `${location.protocol}//${location.hostname}:${location.port}/explorer/index.html?url=${openApi}&token=${token}#/`
+        let url = `${location.protocol}//${location.hostname}:${location.port}/static/explorer/index.html?url=${openApi}&token=${token}#/`
 
         if (defaultCollection) {
           url = url + defaultCollection
