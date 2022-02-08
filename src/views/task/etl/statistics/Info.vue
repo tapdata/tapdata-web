@@ -205,8 +205,8 @@ export default {
       },
       creator: '',
       selectedStage: '', // 选中的节点
-      selectedTime: '',
-      selectedRate: '',
+      selectedTime: '5min',
+      selectedRate: 'second',
       lineData: {
         x: [],
         y: [[], []]
@@ -435,7 +435,7 @@ export default {
       this.getMeasurement()
       this.resetTimer()
     },
-    resetTimer(limit) {
+    resetTimer() {
       let ms = 5000
       let type = this.selectedRate
       switch (type) {
@@ -448,7 +448,13 @@ export default {
       }
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
-        this.getMeasurement(limit)
+        let { selectedTime, timeRange } = this
+        if (!(selectedTime === 'custom' && (timeRange[0] || timeRange[1]))) {
+          this.getMeasurement()
+        }
+        // if (!this.selectedTime || this.selectedTime !== 'custom') {
+        //   this.getMeasurement()
+        // }
       }, ms)
     },
     randomData() {
@@ -487,11 +493,11 @@ export default {
           guanluary = 'minute'
           break
       }
-      let agentId = this.task.agentId
-      let dataFlowId = this.task.id
-      let taskId = this.$route.params?.id
+      // let agentId = this.task.agentId
+      // let dataFlowId = this.task.id
+      // let taskId = this.$route.params?.id
       let subTaskId = this.$route.params?.subId
-      console.log('this.', this.$route.params)
+      let lineDataDeep = this.lineDataDeep
       let tags = {
         subTaskId: subTaskId,
         type: 'subTask'
@@ -503,11 +509,11 @@ export default {
             guanluary,
             fields: ['inputQPS', 'outputQPS']
           },
-          {
-            tags,
-            guanluary,
-            fields: ['replicateLag']
-          },
+          // {
+          //   tags,
+          //   guanluary,
+          //   fields: ['replicateLag']
+          // },
           {
             tags,
             guanluary,
@@ -517,13 +523,14 @@ export default {
         ],
         statistics: [
           {
-            tags: {
-              measureType: 'dataflow',
-              customerId: 'enterpriseId',
-              host: 'hostname',
-              agentId: 'agent1',
-              dataflowId: 'afsdfasdf'
-            }
+            tags
+            // : {
+            //           measureType: 'dataflow',
+            //           customerId: 'enterpriseId',
+            //           host: 'hostname',
+            //           agentId: 'agent1',
+            //           dataflowId: 'afsdfasdf'
+            //         }
           }
         ]
       }
@@ -541,11 +548,11 @@ export default {
               guanluary,
               fields: ['inputQPS', 'outputQPS']
             },
-            {
-              tags,
-              guanluary,
-              fields: ['replicateLag']
-            },
+            // {
+            //   tags,
+            //   guanluary,
+            //   fields: ['replicateLag']
+            // },
             {
               tags,
               guanluary,
@@ -566,20 +573,26 @@ export default {
           ]
         }
       }
-      if (startTimeStamp) {
-        params.samples[0].start = startTimeStamp
-        params.samples[1].start = startTimeStamp
-        params.samples[2].start = startTimeStamp
-      }
       if (endTimeStamp) {
         params.samples[0].end = endTimeStamp
         params.samples[1].end = endTimeStamp
-        params.samples[2].end = endTimeStamp
+        // params.samples[2].end = endTimeStamp
+      }
+      if (startTimeStamp) {
+        if (selectedTime && selectedTime !== 'custom') {
+          let lastTime = lineDataDeep.x[lineDataDeep.x.length - 1]
+          params.samples[0].start = lastTime || startTimeStamp
+          params.samples[1].start = lastTime || startTimeStamp
+        } else {
+          params.samples[0].start = startTimeStamp
+          params.samples[1].start = startTimeStamp
+        }
+        // params.samples[2].start = startTimeStamp
       }
       this.remoteMethod(params).then(data => {
         console.log('getMeasurement', data)
         const { samples } = data
-        const countObj = samples?.[2] || {}
+        const countObj = samples?.[1] || {}
         const statistics = data.statistics?.[0] || {}
         const { overData, writeData, initialData } = this
         // 总输入总输出
@@ -607,7 +620,7 @@ export default {
         const qpsData = samples[0] || {}
         let { inputQPS = [], outputQPS = [] } = qpsData
         let qpsDataTime = qpsData.time || []
-        let lineDataDeep = this.lineDataDeep
+
         let xArr = qpsDataTime.map(t => formatTime(t))
         const xArrLen = xArr.length
         console.log('xArrLen', xArrLen)
