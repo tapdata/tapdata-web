@@ -206,15 +206,15 @@
         @select="createConnection"
       ></ConnectionTypeSelector>
     </ElDialog>
-    <ElDialog
+    <!-- <ElDialog
       title="创建连接"
       width="60%"
       :visible.sync="connectionFormDialog"
       :close-on-click-modal="false"
       :append-to-body="true"
     >
-      <!--<Form :databaseTypeText="databaseType" @saveConnection="saveConnection"></Form>-->
-    </ElDialog>
+      <Form v-if="connectionFormDialog" :databaseTypeText="databaseType" @saveConnection="saveConnection"></Form>
+    </ElDialog> -->
 
     <CreateTable :dialog="dialogData" @handleTable="handleSaveTable"></CreateTable>
   </aside>
@@ -238,7 +238,7 @@ import BaseNode from 'web-core/views/dataflow/components/BaseNode'
 import { debounce, throttle } from 'lodash'
 import ConnectionsApi from 'web-core/api/Connections'
 import MetadataApi from 'web-core/api/MetadataInstances'
-// import Form from '@/views/connection/Form'
+// import Form from '../../../../../views/connections/DatabaseForm'
 
 import { Select } from 'element-ui'
 // import ElScrollbar from 'element-ui/packages/scrollbar'
@@ -373,12 +373,12 @@ export default {
     },
     createConnection(type) {
       this.connectionDialog = false
-      this.connectionFormDialog = true
+      // this.connectionFormDialog = true
       this.databaseType = type
-      // this.$router.push({
-      //   name: 'ConnectionCreate',
-      //   query: { databaseType: type }
-      // })
+      this.$router.push({
+        name: 'connectionsCreate',
+        query: { databaseType: type }
+      })
     },
     async init() {
       this.tbLoading = true
