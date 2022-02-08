@@ -181,6 +181,7 @@
 
     <ElDialog
       title="选择数据源类型"
+      width="730px"
       :visible.sync="connectionDialog"
       :close-on-click-modal="false"
       :append-to-body="true"
