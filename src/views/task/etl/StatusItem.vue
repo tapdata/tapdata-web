@@ -38,7 +38,7 @@ export default {
       result: [],
       statusMap: {
         running: ['scheduling', 'running', 'pausing', 'stopping', 'scheduling'],
-        not_running: ['wait_run', 'pause', 'stop', 'complete', 'schedule_failed'],
+        not_running: ['edit', 'wait_run', 'pause', 'stop', 'complete', 'schedule_failed'],
         error: ['error']
       }
     }
@@ -74,11 +74,11 @@ export default {
   methods: {
     init() {
       const { value, rows } = this
-      console.log('init', value)
       if (value.length) {
         this.result = value
       } else if (rows.length) {
         this.result = getSubTaskStatus(rows)
+        console.log('dataResult', rows.length, this.result)
         this.$emit('input', this.result)
       }
     }

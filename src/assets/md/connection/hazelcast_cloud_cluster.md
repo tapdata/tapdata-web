@@ -1,32 +1,32 @@
-## **Data source configuration description**
+## **数据源配置说明**
 
-### **1. Hazelcast cloud Installation instructions**
+### **1。 Hazelcast cloud 安装说明**
 
-Please follow the instructions below To ensure that the hazelcast cloud database is successfully added and used in tapdata
+请按照下面的说明来确保hazelcast云数据库成功添加并在tapdata中使用
 
 
-### **2. Restriction description**
-Tapdata supports hazelcast cloud as the target database
+### **2。 限制说明**
+Tapdata 支持 hazelcast cloud 作为目标数据库
 
-### **3. Configuration description**
-- The following configurations can be obtained in hazelcast cluster configuration
+### **3。 配置说明**
+- hazelcast集群配置中可以得到以下配置
 
-![Image text](../images/hazcast_2.png)
+![图像文本](../images/hazcast_2.png)
 
-- Cluster Name：
+- 集群名称：
 
-![Image text](../images/hazcast_1.png)
+![图像文本](../images/hazcast_1.png)
 
-- Token:
+- 令牌：
 
-![Image text](../images/hazcast_3.png)
+![图像文本](../images/hazcast_3.png)
 
-- Enable SSL: Use SSL encryption protocol
-- Key Store File: client.keystore File
-- Trust Key Store File: client.truststore
+- 启用 SSL：使用 SSL 加密协议
+- 密钥库文件：client.keystore 文件
+- 信任密钥存储文件：client.truststore
 
-![Image text](../images/hazcast_4.png)
+![图像文本](../images/hazcast_4.png)
 
-- Key File Password: ssl Password for file
+- 密钥文件密码：文件的 ssl 密码
 
-![Image text](../images/hazcast_5.png)
+![图像文本](../images/hazcast_5.png)

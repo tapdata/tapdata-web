@@ -196,6 +196,8 @@ export default {
   connection_form_hazecast_sslPass: 'Key File Password',
   connection_form_hazecast_none_sslKey: 'The key store file cannot be empty',
   connection_form_hazecast_none_sslCA: 'The trust key store file cannot be empty',
+  connection_form_hazecast_cluster_name_placeholder: 'Please enter the Cluster name',
+  connection_form_hazecast_password_placeholder: 'Please enter the password',
   connection_form_tidb_none_server: 'PDServer address cannot be empty',
   connection_form_mongo_standard_mode_tip:
     'This mode will connect to a separate server in the network, which provides a TSL/SSL channel to the database. If your database is in an inaccessible subnet, you can try this method',

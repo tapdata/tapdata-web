@@ -97,15 +97,19 @@ export default {
   connection_form_hazecast_connection_name: '連接名稱',
   connection_form_hazecast_connection_name_placeholder: '請輸入連接名稱',
   connection_form_hazecast_options_target_tips: '這個數據連接在Tapdata中只能作為目標，不能作為源',
-  connection_form_hazecast_database_name: 'Cluster Name', //集群名稱
-  connection_form_hazecast_plain_password: '密码',
+  connection_form_hazecast_database_name: 'Cluster名稱', //集群名稱
+  connection_form_hazecast_plain_password: '密碼',
   connection_form_hazecast_ssl: 'Enable SSL', //是否開啟ssl
   connection_form_hazecast_sslKey: '密鑰存儲文件',
   connection_form_hazecast_sslCA: '信任密鑰存儲文件',
   connection_form_hazecast_sslPass: '密鑰文件密碼',
   connection_form_hazecast_none_sslKey: '密鑰庫文件不能為空',
   connection_form_hazecast_none_sslCA: '信任密鑰存儲文件不能為空',
+  connection_form_hazecast_cluster_name_placeholder: '請輸入Cluster名稱',
+  connection_form_hazecast_password_placeholder: '請輸入密碼',
   connection_form_hazecast_options_target: '目标',
+  connection_form_hazecast_cancel: '取消',
+  connection_form_hazecast_save: '保存',
 
   connection_hana_label_hana_type: '租戶模式',
 

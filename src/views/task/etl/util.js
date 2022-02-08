@@ -3,12 +3,13 @@ import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from '@/const'
 export function getSubTaskStatus(rows = []) {
   const statusMap = {
     running: ['scheduling', 'running', 'pausing', 'stopping', 'scheduling'],
-    not_running: ['wait_run', 'pause', 'stop', 'complete', 'schedule_failed'],
+    not_running: ['edit', 'wait_run', 'pause', 'stop', 'complete', 'schedule_failed'],
     error: ['error']
   }
   const len = rows.length
   const etlStatusMap = ETL_STATUS_MAP
-  let result = []
+  let result = [],
+    item = {}
   switch (len) {
     case 0:
       result = [
@@ -26,7 +27,7 @@ export function getSubTaskStatus(rows = []) {
       break
     default:
       for (let key in etlStatusMap) {
-        let item = etlStatusMap[key]
+        item = etlStatusMap[key]
         item.status = key
         item.count = 0
         rows.forEach(el => {
@@ -36,6 +37,7 @@ export function getSubTaskStatus(rows = []) {
         })
         result.push(item)
       }
+
       break
   }
   return result
