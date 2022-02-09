@@ -7,7 +7,6 @@ export function getSubTaskStatus(rows = []) {
     error: ['error']
   }
   const len = rows.length
-  const etlStatusMap = ETL_STATUS_MAP
   let result = [],
     item = {}
   switch (len) {
@@ -26,8 +25,8 @@ export function getSubTaskStatus(rows = []) {
       ]
       break
     default:
-      for (let key in etlStatusMap) {
-        item = etlStatusMap[key]
+      for (let key in ETL_STATUS_MAP) {
+        item = Object.assign({}, ETL_STATUS_MAP[key])
         item.status = key
         item.count = 0
         rows.forEach(el => {
