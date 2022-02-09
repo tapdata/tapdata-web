@@ -19,10 +19,6 @@ export default {
       type: Array,
       default: () => []
     },
-    rows: {
-      type: Array,
-      default: () => []
-    },
     inline: {
       type: Boolean,
       default: false

@@ -375,7 +375,6 @@ export default {
           value: 'initial_sync+cdc'
         }
       ],
-      statusMap: ETL_STATUS_MAP,
       agentOptions: [],
 
       multipleSelection: [],
@@ -426,7 +425,7 @@ export default {
     },
     statusOptions() {
       let options = {}
-      let map = this.statusMap
+      let map = ETL_STATUS_MAP
       for (const key in map) {
         const item = map[key]
         let value = key

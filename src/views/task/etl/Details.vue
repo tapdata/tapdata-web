@@ -8,7 +8,6 @@
         <div>
           <div class="flex align-items-center">
             <span class="fs-6 color-primary">{{ task.name }}</span>
-            <StatusItem :value="statusResult" :rows="task.statuses" class="ml-4 visually-hidden" inline></StatusItem>
           </div>
           <div class="flex align-items-center mt-4" style="height: 30px">
             <div
@@ -52,12 +51,6 @@
               <VIcon size="12">edit-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_edit') }}</span>
             </VButton>
-            <!--            <VButton-->
-            <!--              :disabled="!statusBtMap['reset'][task.status]"-->
-            <!--              :loading="loadingObj.reset"-->
-            <!--              @click="reset($route.params.id)"-->
-            <!--              >重置</VButton-->
-            <!--            >-->
           </div>
         </div>
       </div>
@@ -102,16 +95,13 @@ import InlineInput from '@/components/InlineInput'
 import Connection from '../migrate/details/Connection'
 import History from '../migrate/details/History'
 import Subtask from './Subtask'
-import StatusItem from './StatusItem'
-import Log from '@/components/logs/Index'
 import Chart from 'web-core/components/chart'
 import { ETL_SUB_STATUS_MAP } from '@/const'
-// import Task from 'web-core/api/Task'
-// const taskApi = new Task()
+import { getSubTaskStatus } from './util'
 
 export default {
   name: 'TaskDetails',
-  components: { VIcon, InlineInput, Connection, History, Subtask, StatusItem, Log, Chart },
+  components: { VIcon, InlineInput, Connection, History, Subtask, Chart },
   data() {
     return {
       loading: true,
@@ -158,13 +148,7 @@ export default {
         cdc: '增量',
         'initial_sync+cdc': '全量+增量'
       },
-      list: [
-        // {
-        //   name: '123',
-        //   status: 'running',
-        //   id: '619ca30b9b71bd1318587950'
-        // }
-      ],
+      list: [],
       loadingObj: {
         start: false,
         stop: false,
@@ -305,6 +289,12 @@ export default {
       result.creator = result.creator || result.username || result.user?.username || '-'
       result.updatedTime = result.last_updated ? this.formatTime(result.last_updated) : '-'
       result.type = this.syncTypeMap[result.type]
+      let statuses = result.statuses
+      result.statusResult = []
+      if (statuses?.length) {
+        let statusResult = getSubTaskStatus(statuses)
+        result.statusResult = statusResult
+      }
       return result
     },
     start(id, resetLoading) {
