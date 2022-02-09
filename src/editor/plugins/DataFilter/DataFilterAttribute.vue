@@ -50,9 +50,9 @@
             <span style="color: red">(</span> record.gender <span style="color: #f5af3f">==</span> 0
             <span style="color: #f5af3f">&&</span> record.age <span style="color: #f5af3f">&gt;</span> 50
             <span style="color: red">)</span>
-            <span style="color: #f5af3f">|| </span>
-            <span style="color: red">(</span> record.age <span style="color: #f5af3f">&ge;</span>30
-            <span style="color: #f5af3f">&&</span> record.salary <span style="color: #f5af3f">&le;</span> 10000
+            <span style="color: #f5af3f"> || </span>
+            <span style="color: red">(</span> record.age <span style="color: #f5af3f">&gt;=</span> 30
+            <span style="color: #f5af3f">&&</span> record.salary <span style="color: #f5af3f">&lt;=</span> 10000
             <span style="color: red">)</span>
           </p>
 
@@ -61,7 +61,7 @@
           </h3>
           <table>
             <tr>
-              <td style="width: 60px; text-align: center">
+              <td style="width: 80px; text-align: center">
                 <span style="color: #f5af3f">&gt;, &lt;</span>
                 <span style="color: #f5af3f"></span>
               </td>
@@ -69,8 +69,8 @@
                 {{ $t('editor.cell.processor.dataFilter.form.symbol.gtLt') }}
               </td>
 
-              <td style="width: 60px; text-align: center">
-                <span style="color: #f5af3f">&ge;, &le;</span>
+              <td style="width: 80px; text-align: center">
+                <span style="color: #f5af3f">&gt;=, &lt;=</span>
               </td>
               <td style="width: 140px; text-align: left">
                 {{ $t('editor.cell.processor.dataFilter.form.symbol.geLe') }}
