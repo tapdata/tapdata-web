@@ -126,7 +126,8 @@ export default {
           edit: true,
           wait_run: true,
           stop: true,
-          complete: true
+          complete: true,
+          stopping: true
         },
         pause: {
           running: true
@@ -139,7 +140,8 @@ export default {
         stop: {
           pause: true,
           schedule_failed: true,
-          error: true
+          error: true,
+          running: true
         },
         reset: {
           wait_run: true,

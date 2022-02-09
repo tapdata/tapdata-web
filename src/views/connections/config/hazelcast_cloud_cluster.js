@@ -30,7 +30,7 @@ export default function (vm) {
         type: 'input',
         field: 'database_name',
         label: vm.$t('connection_form_hazecast_database_name'),
-        placeholder: 'Please enter the cluster name',
+        placeholder: vm.$t('connection_form_hazecast_cluster_name_placeholder'),
         required: true,
         rules: [
           {
@@ -54,7 +54,7 @@ export default function (vm) {
         label: vm.$t('connection_form_hazecast_plain_password'),
         domType: 'password',
         customClass: 'large-item',
-        placeholder: 'Please enter the token',
+        placeholder: vm.$t('connection_form_hazecast_password_placeholder'),
         showPassword: true,
         required: true,
         rules: [

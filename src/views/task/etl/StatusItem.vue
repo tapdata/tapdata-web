@@ -12,7 +12,6 @@
 </template>
 
 <script>
-import { getSubTaskStatus } from './util'
 export default {
   name: 'StatusItem',
   props: {
@@ -35,52 +34,22 @@ export default {
   },
   data() {
     return {
-      result: [],
       statusMap: {
         running: ['scheduling', 'running', 'pausing', 'stopping', 'scheduling'],
-        not_running: ['wait_run', 'pause', 'stop', 'complete', 'schedule_failed'],
+        not_running: ['edit', 'wait_run', 'pause', 'stop', 'complete', 'schedule_failed'],
         error: ['error']
       }
     }
   },
   computed: {
     showCount() {
-      return this.result.length > 1
+      return this.value.length > 1
     },
     comList() {
       if (!this.showAll) {
-        return this.result.filter(t => t.count > 0)
+        return this.value.filter(t => t.count > 0)
       }
-      return this.result
-    }
-  },
-  watch: {
-    value: {
-      deep: true,
-      handler() {
-        this.init()
-      }
-    },
-    rows: {
-      deep: true,
-      handler() {
-        this.init()
-      }
-    }
-  },
-  mounted() {
-    this.init()
-  },
-  methods: {
-    init() {
-      const { value, rows } = this
-      console.log('init', value)
-      if (value.length) {
-        this.result = value
-      } else if (rows.length) {
-        this.result = getSubTaskStatus(rows)
-        this.$emit('input', this.result)
-      }
+      return this.value
     }
   }
 }

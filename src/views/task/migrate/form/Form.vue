@@ -580,6 +580,9 @@ export default {
           // 第二步 数据源连接ID
           let source_connectionId = items.find(it => it.field === 'source_connectionId')
           if (source_connectionId) {
+            // 在全部类型下源端不支持的数据源
+            let filterArr = ['redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'clickhouse', 'dameng']
+            data = data.filter(item => filterArr.indexOf(item.database_type) === -1)
             source_connectionId.loading = false
             source_connectionId.options = data.map(item => {
               return {
@@ -598,6 +601,7 @@ export default {
           if (reset) {
             this.dataSourceModel.target_connectionId = ''
           }
+
           let target_connectionId = items.find(it => it.field === 'target_connectionId')
           if (target_connectionId) {
             target_connectionId.loading = false
@@ -664,7 +668,7 @@ export default {
           if (source) {
             // dfs源端不支持 redis elasticsearch
             let options = data
-            let filterArr = ['redis', 'elasticsearch', 'dameng']
+            let filterArr = ['redis', 'elasticsearch', 'dameng', 'hazelcast_cloud_cluster']
             options = data.filter(item => filterArr.indexOf(item) === -1)
             source.options = options
               .filter(item => !notContainType.includes(item))

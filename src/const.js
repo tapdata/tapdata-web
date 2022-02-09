@@ -50,11 +50,11 @@ export const TOPOLOGY_MAP = topologyMap,
     wait_run: { text: '待启动', type: 'warning' },
     running: { text: '运行中', type: 'success' },
     pausing: { text: ' 暂停中', type: 'warning' },
-    stopping: { text: '停止中', type: 'success' },
+    stopping: { text: '停止中', type: 'danger' },
     pause: { text: '暂停', type: 'warning' },
     stop: { text: '已停止', type: 'danger' },
     complete: { text: '已完成', type: 'primary' },
-    error: { text: '错误', type: 'warning' }
+    error: { text: '错误', type: 'danger' }
   },
   MIGRATE_STATUS_MAP = {
     running: {

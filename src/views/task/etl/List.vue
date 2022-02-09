@@ -173,7 +173,7 @@
       <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column>
       <el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="180">
         <template #default="{ row }">
-          <StatusItem v-model="row.statusResult"></StatusItem>
+          <StatusItem :value="row.statusResult"></StatusItem>
         </template>
       </el-table-column>
 
@@ -695,7 +695,12 @@ export default {
           item['lag'] = getLag(item.stats.replicationLag)
         }
       }
-      item.statusResult = getSubTaskStatus(item.statuses)
+      let statuses = item.statuses
+      item.statusResult = []
+      if (statuses?.length) {
+        let result = getSubTaskStatus(statuses)
+        item.statusResult = result
+      }
       return item
     },
     handleSelectTag() {
@@ -1148,7 +1153,8 @@ export default {
       )
     },
     stopDisabled(data) {
-      return !data.filter(t => t.count > 0).every(t => ['running'].includes(t.status))
+      let stopData = data.filter(t => t.count > 0).find(t => ['running'].includes(t.status))
+      return stopData ? false : true
     },
     resetDisabled(row) {
       const statusResult = row.statusResult || []

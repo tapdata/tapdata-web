@@ -1638,7 +1638,7 @@ export default {
       this.dialogDatabaseTypeVisible = false
       if (this.whiteList.includes(type)) {
         this.$router.push({
-          name: 'connectionsCreate',
+          name: 'connectionsOldCreate',
           query: {
             databaseType: type
           }
