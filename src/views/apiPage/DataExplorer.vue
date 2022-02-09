@@ -538,8 +538,6 @@ export default {
             504: this.$t('dataExplorer_timeout'),
             401: this.$t('dataExplorer_unauthenticated')
           }
-          console.log(e, e.response)
-          debugger
           if (e?.response) {
             this.$message.error(msg['' + (e?.response?.status || '')])
           } else {
