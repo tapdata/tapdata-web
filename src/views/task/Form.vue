@@ -965,9 +965,9 @@ export default {
           //   this.settingModel.needToCreateIndex = false
           // }
 
-          //mysql、pg、oracle、sql server、mongodb 是作为目标 支持自动创建索引
+          //mysql、pg、oracle、sql server、mongodb、mariadb 是作为目标 支持自动创建索引
           if (
-            ['mysql', 'postgres', 'oracle', 'sqlserver', 'mongodb'].includes(
+            ['mysql', 'postgres', 'oracle', 'sqlserver', 'mongodb', 'mariadb'].includes(
               this.dataSourceModel['target_databaseType']
             )
           ) {
