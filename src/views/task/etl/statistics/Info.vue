@@ -433,7 +433,7 @@ export default {
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
         let { selectedTime, timeRange } = this
-        if (!(selectedTime === 'custom' && (timeRange[0] || timeRange[1]))) {
+        if (!(selectedTime === 'custom')) {
           this.getMeasurement()
         }
         // if (!this.selectedTime || this.selectedTime !== 'custom') {
@@ -465,21 +465,14 @@ export default {
         ;[startTimeStamp, endTimeStamp] = this.getTimeRangeByType(selectedTime, this.timeRange)
       }
       // 自定义时间，需要选择范围
-      if (selectedTime === 'custom' && !startTimeStamp && !endTimeStamp) {
-        return
+      if (selectedTime === 'custom') {
+        if (!startTimeStamp && !endTimeStamp) {
+          return
+        }
       }
-      let guanluary = 'minute'
-      switch (this.selectedRate) {
-        case 'minute':
-          guanluary = 'hour'
-          break
-        default:
-          guanluary = 'minute'
-          break
-      }
-      // let agentId = this.task.agentId
-      // let dataFlowId = this.task.id
-      // let taskId = this.$route.params?.id
+      let guanluaryType =
+        this.selectedTime === 'custom' ? this.getTimeSpacingType(startTimeStamp, endTimeStamp) : this.selectedRate
+      let guanluary = this.getGuanluary(guanluaryType)
       let subTaskId = this.$route.params?.subId
       let lineDataDeep = this.lineDataDeep
       let tags = {
@@ -557,6 +550,12 @@ export default {
           ]
         }
       }
+      if (reset) {
+        lineDataDeep = {
+          x: [],
+          y: [[], []]
+        }
+      }
       if (endTimeStamp) {
         params.samples[0].end = endTimeStamp
         params.samples[1].end = endTimeStamp
@@ -624,11 +623,11 @@ export default {
           let time = el
           inArr.push({
             name: time,
-            value: [time, inputQPS[i] || 0]
+            value: [time, inputQPS[i]]
           })
           outArr.push({
             name: time,
-            value: [time, outputQPS[i] || 0]
+            value: [time, outputQPS[i]]
           })
         })
         if (reset) {
@@ -653,13 +652,48 @@ export default {
         })
       })
     },
+    getGuanluary(guanluaryType, format) {
+      let result = 'minute'
+      let formatRes = ''
+      switch (guanluaryType) {
+        case 'day':
+          result = 'month'
+          break
+        case 'hour':
+          result = 'day'
+          break
+        case 'minute':
+          result = 'hour'
+          break
+        default:
+          result = 'minute'
+          break
+      }
+      if (format) {
+        return formatRes
+      }
+      return result
+    },
+    getTimeSpacingType(start, end) {
+      let diff = ((end || new Date().getTime()) - start) / 1000
+      let timeType
+      if (diff > 24 * 60 * 60) {
+        timeType = 'day'
+      } else if (diff > 60 * 60) {
+        timeType = 'hour'
+      } else if (diff > 60) {
+        timeType = 'minute'
+      } else {
+        timeType = 'second'
+      }
+      return timeType
+    },
     getEmptyData(start, end) {
       let result = []
       const { selectedTime } = this
       const endTimeStamp = end || new Date().getTime()
       let timeType = 'second'
       let timeSpacing = 0
-      let diff = (endTimeStamp - start) / 1000
       switch (selectedTime) {
         case '5min':
         case '15min':
@@ -670,15 +704,7 @@ export default {
           timeType = 'minute'
           break
         default:
-          if (diff > 24 * 60 * 60) {
-            timeType = 'day'
-          } else if (diff > 60 * 60) {
-            timeType = 'hour'
-          } else if (diff > 60) {
-            timeType = 'minute'
-          } else {
-            timeType = 'second'
-          }
+          timeType = this.getTimeSpacingType(start, endTimeStamp)
           break
       }
       switch (timeType) {
@@ -834,20 +860,20 @@ export default {
           this.selectTime = 'second'
           break
       }
-      this.getMeasurement(true)
       this.resetTimer()
+      this.getMeasurement(true)
     },
-    changeRateFnc(val) {
-      this.getMeasurement(true)
+    changeRateFnc() {
       this.resetTimer()
+      this.getMeasurement(true)
     },
     changeStageFnc() {
-      this.getMeasurement(true)
       this.resetTimer()
+      this.getMeasurement(true)
     },
     changeTimeRangeFnc() {
-      this.getMeasurement(true)
       this.resetTimer()
+      this.getMeasurement(true)
     }
   }
 }
