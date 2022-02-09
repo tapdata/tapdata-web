@@ -21,14 +21,14 @@ export const SETTING_MODEL = {
       name: '',
       timezone: '+08:00' // 当type为localTZ时有该字段
     }
-  ],
-  isSchedule: false,
-  cronExpression: ''
+  ]
 }
 
 export const DATASOURCE_MODEL = {
-  source_sourceType: 'rds',
-  target_sourceType: 'dds',
+  source_sourceType: '',
+  target_sourceType: '',
+  source_filter_databaseType: 'all',
+  target_filter_databaseType: 'all',
   source_connectionId: '',
   target_connectionId: '',
   source_connectionName: '',
@@ -43,10 +43,12 @@ export const DFSDATASOURCE_MODEL = {
   target_connectionName: '',
   mqType: '0'
 }
-
-export const INSTANCE_MODEL = {
-  region: '', //区域
-  zone: '', //可用区,
-  regionName: '', //区域
-  zoneName: '' //可用区,
+export const TRANSFER_MODEL = {
+  tableNameTransform: '', //表名大小写
+  fieldsNameTransform: '',
+  table_prefix: '', //前缀,
+  table_suffix: '', //后缀
+  selectSourceArr: [], //可用区,
+  topicData: [],
+  queueData: []
 }
