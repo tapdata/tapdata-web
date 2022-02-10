@@ -63,6 +63,7 @@
                     </el-col>
                     <el-col :span="12" v-if="settingModel.syncPoints[0].type !== 'current'">
                       <el-date-picker
+                        value-format="yyyy-MM-dd HH:mm:ss"
                         format="yyyy-MM-dd HH:mm:ss"
                         v-model="settingModel.syncPoints[0].date"
                         type="datetime"
