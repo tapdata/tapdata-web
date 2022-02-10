@@ -528,7 +528,7 @@ export default {
             } else {
               _this.tableHeader = []
               _this.tableData = []
-              _this.$refs.collectionSelect.reset()
+              _this.searchParams.collection = ''
             }
           }
         })

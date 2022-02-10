@@ -249,6 +249,7 @@
                         :class="form.inspectMethod === 'field' ? 'pl-10' : 'pl-6'"
                       >
                         <el-switch
+                          :disabled="item.showAdvancedVerification"
                           v-model="item.target.targeFilterFalg"
                           @change="changeSourceWhere(item.target.targeFilterFalg, item.target)"
                         ></el-switch>
@@ -515,8 +516,10 @@ export default {
   methods: {
     handleChangeAdvanced(v, item) {
       if (v) {
-        item.target.targeFilterFalg = false
-        item.target.where = ''
+        this.$set(item.target, 'targeFilterFalg', false)
+        this.$set(item.target, 'where', '')
+        // item.target.targeFilterFalg = false
+        // item.target.where = ''
       }
     },
     changeSourceWhere(v, item) {
