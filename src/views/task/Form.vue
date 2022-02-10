@@ -1273,10 +1273,8 @@ export default {
       let source = this.dataSourceModel
       let target = this.dataSourceModel
       //设置为增量模式
-      let timeZone = new Date().getTimezoneOffset() / 60
-      let systemTimeZone = (timeZone > 0 ? '+' : '-') + Math.abs(timeZone)
       this.settingModel.syncPoints[0].connectionId = source.source_connectionId
-      this.settingModel.syncPoints[0].timezone = systemTimeZone
+      this.settingModel.syncPoints[0].timezone = this.systemTimeZone
       let postData = {
         name: this.settingModel.name,
         description: '',
