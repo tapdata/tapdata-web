@@ -88,6 +88,8 @@ export default {
   connection_form_hazecast_data_source_type: '數據源',
   connection_form_hazecast_change: '改變',
   connection_form_hazecast_no_name: '連接名稱不能為空',
+  connection_form_hazecast_cluster_name_empty: 'Cluster名稱不能為空',
+  connection_form_hazecast_token_empty: 'Token不能為空',
   connection_form_hazecast_name_exists: '名稱已存在',
   connection_form_hazecast_give_up: '放棄',
   connection_form_hazecast_confirm_edit: '此操作將丟失當前編輯內容',
@@ -98,7 +100,7 @@ export default {
   connection_form_hazecast_connection_name_placeholder: '請輸入連接名稱',
   connection_form_hazecast_options_target_tips: '這個數據連接在Tapdata中只能作為目標，不能作為源',
   connection_form_hazecast_database_name: 'Cluster名稱', //集群名稱
-  connection_form_hazecast_plain_password: '密碼',
+  connection_form_hazecast_plain_password: 'Token',
   connection_form_hazecast_ssl: 'Enable SSL', //是否開啟ssl
   connection_form_hazecast_sslKey: '密鑰存儲文件',
   connection_form_hazecast_sslCA: '信任密鑰存儲文件',
@@ -106,7 +108,7 @@ export default {
   connection_form_hazecast_none_sslKey: '密鑰庫文件不能為空',
   connection_form_hazecast_none_sslCA: '信任密鑰存儲文件不能為空',
   connection_form_hazecast_cluster_name_placeholder: '請輸入Cluster名稱',
-  connection_form_hazecast_password_placeholder: '請輸入密碼',
+  connection_form_hazecast_token_placeholder: '請輸入Token',
   connection_form_hazecast_options_target: '目标',
   connection_form_hazecast_cancel: '取消',
   connection_form_hazecast_save: '保存',

@@ -164,6 +164,8 @@ export default {
   connection_form_hazecast_data_source_type: '数据源',
   connection_form_hazecast_change: '改变',
   connection_form_hazecast_no_name: '连接名称不能为空',
+  connection_form_hazecast_cluster_name_empty: 'Cluster名称不能为空',
+  connection_form_hazecast_token_empty: 'token不能为空',
   connection_form_hazecast_name_exists: '名称已存在',
   connection_form_hazecast_give_up: '放弃',
   connection_form_hazecast_confirm_edit: '此操作将丢失当前编辑内容',
@@ -175,7 +177,7 @@ export default {
   connection_form_hazecast_options_target: '目标',
   connection_form_hazecast_options_target_tips: '这个数据连接在Tapdata中只能作为目标，不能作为源',
   connection_form_hazecast_database_name: 'Cluster名称', //集群名称
-  connection_form_hazecast_plain_password: '密码',
+  connection_form_hazecast_plain_password: 'Token',
   connection_form_hazecast_ssl: 'Enable SSL', //是否开启ssl
   connection_form_hazecast_sslKey: '密钥存储文件',
   connection_form_hazecast_sslCA: '信任密钥存储文件',
@@ -183,7 +185,7 @@ export default {
   connection_form_hazecast_none_sslKey: '密钥库文件不能为空',
   connection_form_hazecast_none_sslCA: '信任密钥存储文件不能为空',
   connection_form_hazecast_cluster_name_placeholder: '请输入Cluster名称',
-  connection_form_hazecast_password_placeholder: '请输入密码',
+  connection_form_hazecast_token_placeholder: '请输入Token',
   connection_form_give_up: '放弃',
   connection_form_confirm_edit: '此操作将丢失当前编辑内容',
   connection_form_confirm_create: '此操作将丢失当前正在创建的连接',
