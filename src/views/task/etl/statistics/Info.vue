@@ -574,7 +574,12 @@ export default {
         // params.samples[2].start = startTimeStamp
       }
       this.remoteMethod(params).then(data => {
-        const { samples } = data
+        let { samples } = data
+        samples.forEach(el => {
+          for (let key in el) {
+            el[key] = el[key].reverse()
+          }
+        })
         const countObj = samples?.[1] || {}
         const statistics = data.statistics?.[0] || {}
         const { overData, writeData, initialData } = this
@@ -582,7 +587,11 @@ export default {
         if (!isEmpty(countObj)) {
           for (let key in overData) {
             let l = countObj[key].length
-            overData[key] = countObj[key][l - 1] - countObj[key][0]
+            if (reset) {
+              overData[key] = countObj[key][l - 1] - countObj[key][0]
+            } else {
+              overData[key] += countObj[key][l - 1] - countObj[key][0]
+            }
           }
         }
 
@@ -602,9 +611,7 @@ export default {
         // 折线图
         const qpsData = samples[0] || {}
         let { inputQPS = [], outputQPS = [] } = qpsData
-        inputQPS = inputQPS.reverse()
-        outputQPS = outputQPS.reverse()
-        let qpsDataTime = (qpsData.time || []).reverse()
+        let qpsDataTime = (qpsData.time || [])
         // 空数据，需要模拟时间点
         if (!qpsDataTime.length) {
           qpsDataTime = this.getEmptyData(params.samples[0].start, params.samples[0].end)
