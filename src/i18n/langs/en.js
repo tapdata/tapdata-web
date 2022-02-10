@@ -180,6 +180,8 @@ export default {
   connection_form_hazecast_name_rules:
     'Starting with Chinese and English, 1-100 characters, including Chinese and English, numbers, underscores, underscores, and spaces',
   connection_form_hazecast_no_name: 'The connection name cannot be empty',
+  connection_form_hazecast_cluster_name_empty: 'Cluster name cannot be empty',
+  connection_form_hazecast_token_empty: 'The token cannot be empty',
   connection_form_hazecast_name_exists: 'Name already exists',
   connection_form_hazecast_give_up: 'Give up',
   connection_form_hazecast_confirm_edit: 'This operation will lose the current edit content',
@@ -197,7 +199,7 @@ export default {
   connection_form_hazecast_none_sslKey: 'The key store file cannot be empty',
   connection_form_hazecast_none_sslCA: 'The trust key store file cannot be empty',
   connection_form_hazecast_cluster_name_placeholder: 'Please enter the Cluster name',
-  connection_form_hazecast_password_placeholder: 'Please enter the password',
+  connection_form_hazecast_token_placeholder: 'Please enter the token',
   connection_form_tidb_none_server: 'PDServer address cannot be empty',
   connection_form_mongo_standard_mode_tip:
     'This mode will connect to a separate server in the network, which provides a TSL/SSL channel to the database. If your database is in an inaccessible subnet, you can try this method',
