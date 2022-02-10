@@ -104,20 +104,6 @@
         </div>
       </div>
       <div class="flex flex-column flex-fill pl-10" style="height: 250px">
-        <!--        <div class="flex justify-content-between ml-6">-->
-        <!--          <ElRadioGroup v-model="selectTime" size="mini" @change="changeUtil">-->
-        <!--            <ElRadioButton label="second" :disabled="secondDisabled">{{ $t('task_info_s') }}</ElRadioButton>-->
-        <!--            <ElRadioButton label="minute" :disabled="minuteDisabled">{{ $t('task_info_m') }}</ElRadioButton>-->
-        <!--            <ElRadioButton label="hour" :disabled="hourDisabled">{{ $t('task_info_h') }}</ElRadioButton>-->
-        <!--            <ElRadioButton label="day" :disabled="dayDisabled">{{ $t('task_info_d') }}</ElRadioButton>-->
-        <!--          </ElRadioGroup>-->
-        <!--          <div-->
-        <!--            class="px-2"-->
-        <!--            style="line-height: 27px; border: 1px solid #e8e8e8; border-radius: 4px; box-sizing: border-box"-->
-        <!--          >-->
-        <!--            QPS-->
-        <!--          </div>-->
-        <!--        </div>-->
         <Chart ref="chart" type="line" :data="lineData" :options="lineOptions" class="type-chart h-100"></Chart>
       </div>
       <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
@@ -384,14 +370,12 @@ export default {
       return !statusBtMap['edit'][task.status]
     },
     stagesItems() {
-      console.log('stagesItems', this.task)
       let result = this.task?.dag?.nodes?.map(item => {
         return {
           label: item.name,
           value: item.id
         }
       })
-      console.log('result', result)
       return result || []
     },
     progressBar() {
@@ -449,7 +433,7 @@ export default {
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
         let { selectedTime, timeRange } = this
-        if (!(selectedTime === 'custom' && (timeRange[0] || timeRange[1]))) {
+        if (!(selectedTime === 'custom')) {
           this.getMeasurement()
         }
         // if (!this.selectedTime || this.selectedTime !== 'custom') {
@@ -481,21 +465,14 @@ export default {
         ;[startTimeStamp, endTimeStamp] = this.getTimeRangeByType(selectedTime, this.timeRange)
       }
       // 自定义时间，需要选择范围
-      if (selectedTime === 'custom' && !startTimeStamp && !endTimeStamp) {
-        return
+      if (selectedTime === 'custom') {
+        if (!startTimeStamp && !endTimeStamp) {
+          return
+        }
       }
-      let guanluary = 'minute'
-      switch (this.selectedRate) {
-        case 'minute':
-          guanluary = 'hour'
-          break
-        default:
-          guanluary = 'minute'
-          break
-      }
-      // let agentId = this.task.agentId
-      // let dataFlowId = this.task.id
-      // let taskId = this.$route.params?.id
+      let guanluaryType =
+        this.selectedTime === 'custom' ? this.getTimeSpacingType(startTimeStamp, endTimeStamp) : this.selectedRate
+      let guanluary = this.getGuanluary(guanluaryType)
       let subTaskId = this.$route.params?.subId
       let lineDataDeep = this.lineDataDeep
       let tags = {
@@ -573,6 +550,12 @@ export default {
           ]
         }
       }
+      if (reset) {
+        lineDataDeep = {
+          x: [],
+          y: [[], []]
+        }
+      }
       if (endTimeStamp) {
         params.samples[0].end = endTimeStamp
         params.samples[1].end = endTimeStamp
@@ -580,9 +563,10 @@ export default {
       }
       if (startTimeStamp) {
         if (selectedTime && selectedTime !== 'custom') {
-          let lastTime = lineDataDeep.x[lineDataDeep.x.length - 1]
-          params.samples[0].start = lastTime || startTimeStamp
-          params.samples[1].start = lastTime || startTimeStamp
+          const lastTime = lineDataDeep.x[lineDataDeep.x.length - 1]
+          const lastTimeStamp = lastTime ? new Date(lastTime).getTime() : ''
+          params.samples[0].start = lastTimeStamp || startTimeStamp
+          params.samples[1].start = lastTimeStamp || startTimeStamp
         } else {
           params.samples[0].start = startTimeStamp
           params.samples[1].start = startTimeStamp
@@ -590,7 +574,6 @@ export default {
         // params.samples[2].start = startTimeStamp
       }
       this.remoteMethod(params).then(data => {
-        console.log('getMeasurement', data)
         const { samples } = data
         const countObj = samples?.[1] || {}
         const statistics = data.statistics?.[0] || {}
@@ -619,11 +602,16 @@ export default {
         // 折线图
         const qpsData = samples[0] || {}
         let { inputQPS = [], outputQPS = [] } = qpsData
-        let qpsDataTime = qpsData.time || []
+        inputQPS = inputQPS.reverse()
+        outputQPS = outputQPS.reverse()
+        let qpsDataTime = (qpsData.time || []).reverse()
+        // 空数据，需要模拟时间点
+        if (!qpsDataTime.length) {
+          qpsDataTime = this.getEmptyData(params.samples[0].start, params.samples[0].end)
+        }
 
         let xArr = qpsDataTime.map(t => formatTime(t))
         const xArrLen = xArr.length
-        console.log('xArrLen', xArrLen)
         if (lineDataDeep.x.length > 20) {
           lineDataDeep.x.splice(0, xArrLen)
           lineDataDeep.y[0].splice(0, xArrLen)
@@ -635,11 +623,11 @@ export default {
           let time = el
           inArr.push({
             name: time,
-            value: [time, inputQPS[i] || 0]
+            value: [time, inputQPS[i]]
           })
           outArr.push({
             name: time,
-            value: [time, outputQPS[i] || 0]
+            value: [time, outputQPS[i]]
           })
         })
         if (reset) {
@@ -652,9 +640,6 @@ export default {
           lineDataDeep.y[1].push(...outArr)
         }
 
-        console.log('xArr', xArr)
-        console.log('this.$refs.chart', this.$refs.chart.chart.getOption())
-        console.log('lineDataDeep', lineDataDeep)
         this.$refs.chart.chart?.setOption({
           series: [
             {
@@ -665,9 +650,81 @@ export default {
             }
           ]
         })
-
-        console.log('lineDataDeep.x.', lineDataDeep.x.length)
       })
+    },
+    getGuanluary(guanluaryType, format) {
+      let result = 'minute'
+      let formatRes = ''
+      switch (guanluaryType) {
+        case 'day':
+          result = 'month'
+          break
+        case 'hour':
+          result = 'day'
+          break
+        case 'minute':
+          result = 'hour'
+          break
+        default:
+          result = 'minute'
+          break
+      }
+      if (format) {
+        return formatRes
+      }
+      return result
+    },
+    getTimeSpacingType(start, end) {
+      let diff = ((end || new Date().getTime()) - start) / 1000
+      let timeType
+      if (diff > 24 * 60 * 60) {
+        timeType = 'day'
+      } else if (diff > 60 * 60) {
+        timeType = 'hour'
+      } else if (diff > 60) {
+        timeType = 'minute'
+      } else {
+        timeType = 'second'
+      }
+      return timeType
+    },
+    getEmptyData(start, end) {
+      let result = []
+      const { selectedTime } = this
+      const endTimeStamp = end || new Date().getTime()
+      let timeType = 'second'
+      let timeSpacing = 0
+      switch (selectedTime) {
+        case '5min':
+        case '15min':
+          timeType = 'second'
+          break
+        case '30min':
+        case '60min':
+          timeType = 'minute'
+          break
+        default:
+          timeType = this.getTimeSpacingType(start, endTimeStamp)
+          break
+      }
+      switch (timeType) {
+        case 'second':
+          timeSpacing = 5 * 1000
+          break
+        case 'minute':
+          timeSpacing = 60 * 1000
+          break
+        case 'hour':
+          timeSpacing = 60 * 60 * 1000
+          break
+        case 'day':
+          timeSpacing = 24 * 60 * 60 * 1000
+          break
+      }
+      for (let i = start; i < endTimeStamp; i += timeSpacing) {
+        result.push(i)
+      }
+      return result.slice(1)
     },
     getForecastMs(data) {
       const [start, end] = data
@@ -682,9 +739,6 @@ export default {
       }
       const result = (end.initialTotal - start.initialWrite) / speed
       return formatMs(result)
-    },
-    changeUtil(val) {
-      console.log('changeUtil', val)
     },
     formatTime(date) {
       return formatTime(date)
@@ -717,7 +771,6 @@ export default {
         .finally(resetLoading)
     },
     edit() {
-      console.log('编辑') // eslint-disable-line
       let row = this.task || {}
       this.handleDetail(row.id, 'edit', row.mappingTemplate, row.hasChildren)
     },
@@ -783,11 +836,9 @@ export default {
           result = val
           break
       }
-      console.log('result', result)
       return result
     },
     changePeriodFnc(val) {
-      console.log('changePeriodFnc', val, JSON.stringify(this.selectedRateItems))
       switch (val) {
         case '5min':
           this.selectTime = 'second'
@@ -809,21 +860,20 @@ export default {
           this.selectTime = 'second'
           break
       }
-      this.getMeasurement(true)
       this.resetTimer()
+      this.getMeasurement(true)
     },
-    changeRateFnc(val) {
-      console.log('changeRateFnc', val)
-      this.getMeasurement(true)
+    changeRateFnc() {
       this.resetTimer()
+      this.getMeasurement(true)
     },
     changeStageFnc() {
-      this.getMeasurement(true)
       this.resetTimer()
+      this.getMeasurement(true)
     },
     changeTimeRangeFnc() {
-      this.getMeasurement(true)
       this.resetTimer()
+      this.getMeasurement(true)
     }
   }
 }
@@ -850,5 +900,87 @@ export default {
       font-size: 12px;
     }
   }
+}
+
+.ant-layout.authing-guard-layout {
+  padding: 0;
+}
+.g2-view-login {
+  height: 100%;
+}
+.g2-view-header {
+  text-align: center;
+}
+.g2-view-container .g2-view-tabs [class*='authing-'].authing-ant-tabs-tab {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  font-size: 16px;
+}
+/*
+  Edit login page css
+  eg：
+  .authing-guard-layout {
+    background: black !important;
+  }
+  Change the background color
+*/
+.react-joyride {
+  position: relative;
+  flex: 1;
+  margin-top: 0;
+  padding-bottom: 100vh;
+  width: 65%;
+}
+.react-joyride::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: url(https://cloud.tapdata.net/assets/img/login/bg.png) no-repeat center center;
+  background-size: 80%;
+}
+.ant-layout.authing-guard-layout {
+  flex-direction: row;
+  justify-content: unset;
+  align-items: unset;
+}
+body .styles_container__24ljE {
+  margin: 0;
+  padding-top: 100px;
+  width: 35%;
+}
+.styles_container__28TSZ {
+  margin-bottom: 30px;
+}
+.styles_authing-tabs-inner__KEW7v {
+  text-align: center;
+}
+.styles_authing-tab-item__2W-41 {
+  flex: 1;
+  margin-right: 0;
+  font-size: 16px;
+}
+.styles_authing-tab-item__active__1E7DK {
+  font-size: 16px;
+}
+.styles_authing-tab-item__active__1E7DK:after {
+  width: 100%;
+}
+.ant-form-item {
+  margin-bottom: 30px;
+}
+.ant-input-lg {
+  font-size: 14px;
+}
+.styles_registerBtn__37rJN {
+  margin-bottom: 24px;
+}
+.styles_pageFooter__1Gi3w,
+.styles_problem__2ff93,
+.styles_problem__3qBot {
+  display: none;
 }
 </style>
