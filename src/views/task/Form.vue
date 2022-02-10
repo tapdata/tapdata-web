@@ -701,6 +701,16 @@ export default {
         } else if (target && value !== 'compel' && this.supportTwoWay) {
           target.show = true
         }
+      } else if (field === 'sync_type') {
+        let target = items.find(it => it.field === 'syncPoints')
+        if (
+          value === 'cdc' &&
+          ['mysql', 'oracle', 'sqlserver', 'mongodb'].includes(this.dataSourceModel['source_databaseType'])
+        ) {
+          target.show = true
+        } else {
+          target.show = false
+        }
       }
     },
     formChange(data) {
@@ -974,6 +984,16 @@ export default {
             this.changeConfig([], 'setting_needToCreateIndex')
             //设置默认值
             this.settingModel.needToCreateIndex = true
+          }
+          // mysql、oracle、sqlserver、mongodb 支持增量时间点
+          let target = this.config.items.find(it => it.field === 'syncPoints')
+          if (
+            this.settingModel.sync_type === 'cdc' &&
+            ['mysql', 'oracle', 'sqlserver', 'mongodb'].includes(this.dataSourceModel['source_databaseType'])
+          ) {
+            target.show = true
+          } else {
+            target.show = false
           }
           // kafka、mq作为源不支持无主键同步
           if (['kafka', 'mq'].includes(this.dataSourceModel['source_databaseType'])) {

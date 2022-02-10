@@ -234,20 +234,7 @@ export default function () {
         field: 'syncPoints',
         slot: 'syncPoints',
         label: '增量采集开始时刻',
-        show: false,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'sync_type',
-                value: 'cdc'
-              }
-            ],
-            triggerConfig: {
-              show: true
-            }
-          }
-        ]
+        show: false
       }
     ]
   }
