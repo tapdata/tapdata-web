@@ -181,7 +181,8 @@ export const link = {
             'app.HanaNode',
             'app.DamengNode',
             'app.ClickHouse',
-            'app.AdbPostgres'
+            'app.AdbPostgres',
+            'app.VikaNode'
           ].includes(targetCell.get('type'))
         )
       },

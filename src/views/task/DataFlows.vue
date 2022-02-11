@@ -456,6 +456,10 @@ export default {
         'force stopping': {
           label: this.$t('dataFlow.status.force_stopping'),
           icon: 'loading'
+        },
+        prepare: {
+          label: this.$t('dataFlow.status.prepare'),
+          icon: 'loading'
         }
       },
       agentOptions: [],
@@ -586,7 +590,8 @@ export default {
             'fullDocument.errorEvents': true,
             'fullDocument.agentId': true,
             'fullDocument.setting': true,
-            'fullDocument.listtags': true
+            'fullDocument.listtags': true,
+            'fullDocument.user_id': true
           }
         }
       }
@@ -1154,8 +1159,10 @@ export default {
         dataFlows
           .resetAll(ids)
           .then(res => {
-            this.table.fetch()
-            this.responseHandler(res.data, this.$t('message.resetOk'))
+            if (res) {
+              this.table.fetch()
+              this.responseHandler(res.data, this.$t('message.resetOk'))
+            }
           })
           .catch(() => {
             this.$message.info(this.$t('message.cancelReset'))
@@ -1209,6 +1216,10 @@ export default {
             this.$message.error('任务启动失败，请编辑任务完成新增同步链路设置')
           } else if (err.response.msg === 'running transformer') {
             this.$message.error('任务启动失败，正在模型推演中...请稍后再试')
+          } else {
+            if (err.response.msg !== '') {
+              this.$message.error(err.response.msg)
+            }
           }
         })
     },

@@ -2,7 +2,16 @@
   <div class="e-debug-log">
     <el-form inline action="javascript: void(0);">
       <el-form-item>
-        <el-input class="inputStyle" v-model="search" size="mini" :placeholder="$t('message.search')"> </el-input>
+        <el-input
+          v-model="search"
+          clearable
+          class="inputStyle"
+          size="mini"
+          :placeholder="$t('message.search')"
+          @clear="loadNew"
+          @keydown.enter.native="loadNew"
+        >
+        </el-input>
       </el-form-item>
       <el-form-item>
         <el-button icon="el-icon-search" size="mini" :disabled="loading" @click="loadNew"></el-button>
@@ -48,6 +57,7 @@ export default {
   },
 
   mounted() {
+    if (!this.dataFlow.id) return
     let msg = {
         type: 'logs',
         filter: {
@@ -142,7 +152,9 @@ export default {
 
             this.$refs.log.add({ logs: res.data?.items, prepend, reset })
           } else if (this.search && reset) {
-            this.$message.info(this.$t('editor.noResult'))
+            this.lastLogsId = ''
+            this.firstLogsId = ''
+            this.$refs.log.clear()
           }
         })
         .finally(() => {

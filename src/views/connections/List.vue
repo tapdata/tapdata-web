@@ -95,7 +95,7 @@
         :reserve-selection="true"
       >
       </ElTableColumn>
-      <ElTableColumn prop="name" min-width="150" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true">
+      <ElTableColumn prop="name" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true" min-width="150">
         <template slot-scope="scope">
           <div class="connection-name">
             <div class="database-img">
@@ -291,7 +291,7 @@ export default {
         'tcp_udp',
         'mq',
         'hbase',
-        'kudu',
+        // 'kudu',
         'greenplum',
         'tidb',
         'hana',
@@ -299,6 +299,7 @@ export default {
         'kundb',
         'adb_postgres',
         'adb_mysql',
+        'vika',
         'hazelcast_cloud_cluster'
       ], //目前白名单,
       searchParams: {
@@ -340,11 +341,19 @@ export default {
   created() {
     this.getDatabaseType()
     //header
+    // let guideDoc =
+    //   ' <a target="_blank" style="color: #409EFF" href="https://docs.tapdata.net/data-source">' +
+    //   this.$t('dataForm.form.guideDoc') +
+    //   '</a>'
+    // this.description = this.$t('connection.desc') + guideDoc
+    let helpUrl = 'https://docs.tapdata.net'
     let guideDoc =
-      ' <a target="_blank" style="color: #409EFF" href="https://docs.tapdata.net/data-source">' +
-      this.$t('dataForm.form.guideDoc') +
-      '</a>'
-    this.description = this.$t('connection.desc') + guideDoc
+      ` <a style="color: #48B6E2" href="${helpUrl}/data-source">` + this.$t('dataForm.form.guideDoc') + '</a>'
+    if (this.$window.getSettingByKey('SHOW_OLD_PAGE')) {
+      this.description = this.$t('connection.desc')
+    } else {
+      this.description = this.$t('connection.desc') + this.$t('connection.helpDesc') + guideDoc
+    }
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
@@ -397,7 +406,9 @@ export default {
     },
     async getDatabaseType() {
       let databaseTypes = await this.$api('DatabaseTypes').get()
-      databaseTypes.data.forEach(dt => this.databaseTypeOptions.push(dt))
+      this.databaseTypeOptions = databaseTypes.data
+        .filter(dt => dt.type !== 'kudu')
+        .sort((t1, t2) => (t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1))
     },
     getData({ page, tags }) {
       let region = this.$route.query.region
@@ -410,9 +421,9 @@ export default {
         // where.or = [{ name: filterObj }, { database_uri: filterObj }, { database_host: filterObj }];
         where.name = { like: verify(keyword), options: 'i' }
       }
-      // where.database_type = {
-      //   in: this.whiteList
-      // }
+      where.database_type = {
+        in: this.whiteList
+      }
       region && (where['platformInfo.region'] = region)
       databaseType && (where.database_type = databaseType)
       // if (databaseType === 'maria' || databaseType === 'mysqlpxc') {
@@ -692,9 +703,10 @@ export default {
             databaseType: type
           }
         })
+      } else {
+        top.location.href = '/#/connection'
+        localStorage.setItem('connectionDatabaseType', type)
       }
-      // top.location.href = '/#/connection'
-      // localStorage.setItem('connectionDatabaseType', type)
     },
 
     //检测agent 是否可用

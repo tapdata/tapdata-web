@@ -125,7 +125,8 @@ export const defaultModel = {
     initialReadSize: 100000, //dummy
     hiveConnType: 'Stream', // kafka
     schema: '',
-    tidbPdServer: '' // TiDB
+    tidbPdServer: '', // TiDB
+    isCheckValid: false
   },
   kafka: {
     id: '',
@@ -154,7 +155,7 @@ export const defaultModel = {
     database_type: '',
     connection_type: '',
     database_host: '',
-    database_port: '',
+    database_port: '21',
     database_name: '',
     database_username: '',
     database_password: '',
@@ -284,10 +285,21 @@ export const defaultModel = {
     mqQueueSet: '', //队列名集合
     mqTopicSet: '', //主题名称
     routeKeyField: '', //消息路由
-    virtualHost: '' //虚拟主机
+    virtualHost: '', //虚拟主机
+    productGroup: '',
+    consumerGroup: ''
   },
   hana: {
     hanaType: 'sdc'
+  },
+  vika: {
+    name: '',
+    database_type: '',
+    connection_type: '',
+    database_host: '',
+    plain_password: '',
+    vika_space_name: '',
+    vika_space_id: ''
   }
 }
 export const defaultCloudModel = {

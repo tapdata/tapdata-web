@@ -87,7 +87,7 @@
               class="fr"
               type="success"
               size="mini"
-              v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+              v-if="!dataNodeInfo.isTarget || !showFieldMapping || !transformModelVersion"
               @click="hanlderLoadSchema"
             >
               <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
@@ -217,7 +217,8 @@ export default {
         // primaryKeys: ''
       },
       schemasLoading: false,
-      mergedSchema: null
+      mergedSchema: null,
+      transformModelVersion: false
     }
   },
 
@@ -336,11 +337,11 @@ export default {
     },
 
     setData(data, cell, dataNodeInfo, vueAdapter) {
-      this.scope = vueAdapter?.editor?.scope
-      this.model.stageId = cell.id
-      this.getDataFlow()
       if (data) {
         _.merge(this.model, data)
+        this.scope = vueAdapter?.editor?.scope
+        this.model.stageId = cell.id
+        this.getDataFlow()
         let param = {
           stages: this.dataFlow?.stages,
           stageId: this.model.stageId
@@ -423,6 +424,11 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      if (this.dataFlow?.setting?.transformModelVersion === 'v2') {
+        this.transformModelVersion = true
+      } else {
+        this.transformModelVersion = false
+      }
       return this.dataFlow
     },
     //接收是否第一次打开

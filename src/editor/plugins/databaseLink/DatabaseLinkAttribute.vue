@@ -29,6 +29,7 @@
               </ElPopover>
             </ElCheckbox>
           </el-form-item>
+
           <el-form-item :label="$t('editor.cell.link.existingSchema.label')">
             <el-select v-model="model.dropType" size="mini">
               <el-option :label="$t('editor.cell.link.existingSchema.keepSchema')" value="no_drop"></el-option>
@@ -46,7 +47,7 @@
             <h3>{{ $t('editor.cell.link.migrationSetting') }}<i style="color: red"> *</i></h3>
             <div class="box-btn">
               <FieldMapping
-                v-if="showFieldMapping"
+                v-if="showFieldMapping && transformModelVersion"
                 v-show="!model.selectSourceDatabase['view']"
                 ref="fieldMapping"
                 class="fr"
@@ -58,6 +59,14 @@
                 @returnPreFixSuffix="returnPreFixSuffix"
               ></FieldMapping>
               <ElButton
+                :disabled="false"
+                v-if="showFieldMapping && !transformModelVersion"
+                v-show="!model.selectSourceDatabase['view']"
+                style="padding: 4px 10px; color: #666; background-color: #f5f5f5; margin-left: 10px"
+                @click="handleOpenTableDialog"
+                >{{ $t('dag_dialog_field_mapping_table_rename') }}</ElButton
+              >
+              <ElButton
                 class="fr"
                 style="padding: 4px 10px; color: #666; background-color: #f5f5f5; margin-left: 10px"
                 @click="editScript = model.script || 'function process(record) {\n\treturn record;\n}'"
@@ -65,7 +74,6 @@
               >
             </div>
           </div>
-
           <div class="transfer">
             <VirtualTransfer
               v-if="!model.transferFlag"
@@ -96,7 +104,9 @@
             <template v-else>
               <MqTransfer
                 v-model="mqActiveData"
+                v-if="model.transferFlag"
                 :source="sourceData"
+                :tableNameTransform="model.tableNameTransform"
                 :table_prefix="model.table_prefix"
                 :table_suffix="model.table_suffix"
               ></MqTransfer>
@@ -118,6 +128,43 @@
         <el-button type="primary" @click="saveScript">{{ $t('button_confirm') }}</el-button>
       </div>
     </ElDialog>
+    <ElDialog
+      width="800px"
+      append-to-body
+      :title="$t('dag_dialog_field_mapping_batch_table_name')"
+      custom-class="field-maping-table-dialog"
+      :visible.sync="dialogTableVisible"
+      :close-on-click-modal="false"
+      :before-close="handleTableClose"
+    >
+      <div class="table-box">
+        <ElForm ref="form" class="table-form" :model="form" label-width="120px">
+          <ElFormItem :label="$t('dag_data_node_label_database_link_table')">
+            <ElSelect size="mini" v-model="form.tableNameTransform">
+              <ElOption :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></ElOption>
+              <ElOption :label="$t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></ElOption>
+              <ElOption :label="$t('dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></ElOption>
+            </ElSelect>
+          </ElFormItem>
+          <ElFormItem :label="$t('dag_dialog_field_mapping_example_prefix')">
+            <ElInput size="mini" v-model="form.table_prefix" maxlength="50" show-word-limit></ElInput>
+          </ElFormItem>
+          <ElFormItem :label="$t('dag_dialog_field_mapping_example_suffix')">
+            <ElInput size="mini" v-model="form.table_suffix" maxlength="50" show-word-limit></ElInput>
+          </ElFormItem>
+          <div class="tip">{{ $t('dag_dialog_field_mapping_example_tip') }}</div>
+        </ElForm>
+        <div class="table-example">
+          <h3>{{ $t('dag_dialog_field_mapping_example') }} :</h3>
+          <p>{{ $t('dag_dialog_field_mapping_example_origin_table_name') }} : tableName</p>
+          <p>{{ $t('dag_dialog_field_mapping_example_change') }} : {{ tableName }}</p>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <ElButton size="mini" @click="handleTableClose">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" @click.stop="handleTableNameSave()">{{ $t('button_confirm') }}</ElButton>
+      </span>
+    </ElDialog>
   </div>
 </template>
 
@@ -133,7 +180,8 @@ import ws from '@/api/ws'
 
 const metadataApi = new MetadataInstances()
 
-import CodeEditor from 'web-core/components/CodeEditor'
+import CodeEditor from '@/components/CodeEditor'
+// import { ALLOW_FIELD_MAPPING } from '../../constants'
 let connections = factory('connections')
 let editorMonitor = null
 export default {
@@ -154,7 +202,7 @@ export default {
       // dialogVisible: false,
       disabled: false,
       logsFlag: false,
-      exampleName: 'tableName',
+      sourceTableName: 'tableName',
 
       configJoinTable: false,
       sourceData: [],
@@ -171,8 +219,9 @@ export default {
         table_suffix: '',
         dropType: 'no_drop',
         type: 'databaseLink',
-        tableNameTransform: '',
-        fieldsNameTransform: '',
+        tableNameTransform: 'noOperation',
+        fieldsNameTransform: 'noOperation',
+        fieldNameTransform: '',
         selectSourceArr: [],
         topicData: [],
         queueData: [],
@@ -186,6 +235,7 @@ export default {
         hiddenChangeValue: false, //是否显示表改大小写
         showBtn: true,
         script: '',
+        dataFlow: '',
 
         selectSourceDatabase: {
           table: true,
@@ -203,25 +253,43 @@ export default {
       fieldMappingTableData: '',
       scope: '',
       editScript: '',
-      showFieldMapping: false
+      showFieldMapping: false,
+      transformModelVersion: false,
+      dialogTableVisible: false,
+      form: {
+        tableNameTransform: 'noOperation',
+        table_prefix: '',
+        table_suffix: ''
+      }
     }
   },
   mounted() {
     let self = this
     ws.on('metadataTransformerProgress', function (res) {
-      if(res?.data?.msg === 'dataFlowId is not start transformer') {
+      if (res?.data?.msg === 'dataFlowId is not start transformer') {
         self.disabledTransfer = false
       } else if (!res?.data?.stageId) {
         let status = res?.data?.status
-        if (status === 'done') {
+        if (['done', 'error'].includes(status)) {
           self.disabledTransfer = false
         } else {
           self.disabledTransfer = true
         }
-      } else {
-        self.disabledTransfer = false
       }
     })
+  },
+  computed: {
+    tableName() {
+      let tableName = ''
+      if (this.form.tableNameTransform === 'toUpperCase') {
+        tableName = (this.form.table_prefix + this.sourceTableName + this.form.table_suffix).toUpperCase()
+      } else if (this.form.tableNameTransform === 'toLowerCase') {
+        tableName = (this.form.table_prefix + this.sourceTableName + this.form.table_suffix).toLowerCase()
+      } else {
+        tableName = this.form.table_prefix + this.sourceTableName + this.form.table_suffix
+      }
+      return tableName
+    }
   },
   watch: {
     mqActiveData: {
@@ -294,6 +362,7 @@ export default {
         }
         //获取目标节点ID
         this.model.stageId = targetCell?.id || ''
+
         // 获取目标节点的数据显示右侧选择表
 
         let targetFormData = targetCell && targetCell.getFormData()
@@ -301,6 +370,8 @@ export default {
         let selectTargetType = []
         if (targetFormData && targetFormData.database_type === 'mq' && targetFormData.mqType === '0') {
           this.model.transferFlag = true
+        } else {
+          this.model.transferFlag = false
         }
         if (targetCell && this.model.selectSourceArr.length === 0) {
           // 修改库清空连线选中的表
@@ -334,10 +405,14 @@ export default {
           }
         }
         targetCell && this.loadTables(connectionId, sourceFormData.database_type)
+        this.loadDataModels(connectionId)
+        //获取目标节点ID
+        this.stageId = targetCell.id || ''
       }
 
       editorMonitor = vueAdapter.editor
       this.configJoinTable = cell.configJoinTable && cell.configJoinTable()
+      this.getDataFlow()
       this.getDataFlow()
       //是否显示字段推演
       let param = {
@@ -466,12 +541,12 @@ export default {
     // },
 
     // 添加前后缀数据处理
-    preFixSuffixData() {
-      this.mqActiveData.table_prefix = this.model.table_prefix
-      this.mqActiveData.table_suffix = this.model.table_suffix
-      //前后缀 表名改动 需要清空字段处理器
-      this.model.field_process = []
-    },
+    // preFixSuffixData() {
+    //   this.mqActiveData.table_prefix = this.model.table_prefix
+    //   this.mqActiveData.table_suffix = this.model.table_suffix
+    //   //前后缀 表名改动 需要清空字段处理器
+    //   this.model.field_process = []
+    // },
 
     // 还原
     handleReduction() {
@@ -487,6 +562,18 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      if (this.dataFlow?.setting?.transformModelVersion === 'v2') {
+        this.transformModelVersion = true
+      } else {
+        this.transformModelVersion = false
+      }
+      return this.dataFlow
+    },
+    // 获取表名称
+    loadDataModels(connectionId) {
+      if (!connectionId) {
+        return
+      }
       return this.dataFlow
     },
     returnFieldMapping(field_process) {
@@ -498,7 +585,31 @@ export default {
       this.model.table_suffix = data.table_suffix
       this.model.tableNameTransform = data.tableNameTransform
       this.model.fieldsNameTransform = data.fieldsNameTransform
-      this.model.batchOperationList= data.batchOperationList
+      this.model.batchOperationList = data.batchOperationList
+      this.mqActiveData.table_prefix = this.model.table_prefix
+      this.mqActiveData.table_suffix = this.model.table_suffix
+    },
+    handleOpenTableDialog() {
+      let { table_prefix, table_suffix, tableNameTransform } = this.model
+      this.dialogTableVisible = true
+      this.form.tableNameTransform = tableNameTransform
+      this.form.table_prefix = table_prefix
+      this.form.table_suffix = table_suffix
+    },
+    handleTableNameSave() {
+      let { table_prefix, table_suffix, tableNameTransform } = this.form
+      this.model.table_prefix = table_prefix
+      this.model.table_suffix = table_suffix
+      this.model.tableNameTransform = tableNameTransform
+      this.dialogTableVisible = false
+    },
+    /*表改名称弹窗取消*/
+    handleTableClose() {
+      let { table_prefix, table_suffix, tableNameTransform } = this.model
+      this.dialogTableVisible = false
+      this.form.tableNameTransform = tableNameTransform
+      this.form.table_prefix = table_prefix
+      this.form.table_suffix = table_suffix
     },
     //接收是否第一次打开
     returnModel(value) {
@@ -605,6 +716,33 @@ export default {
             color: #666;
             background-color: #f5f5f5;
           }
+        }
+      }
+    }
+  }
+}
+::v-deep {
+  .field-maping-table-dialog {
+    .table-box {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      .table-form {
+        width: 56%;
+        .el-form-item {
+          margin-bottom: 12px;
+        }
+        .tip {
+          padding-left: 40px;
+        }
+      }
+      .table-example {
+        width: 36%;
+        h3 {
+          padding-bottom: 20px;
+        }
+        p {
+          padding-bottom: 10px;
         }
       }
     }

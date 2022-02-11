@@ -277,31 +277,6 @@
     ></CheckStage>
     <el-dialog
       :title="$t('dag_task_error_tittle')"
-      :visible.sync="showSchemaProgress"
-      :close-on-click-modal="false"
-      width="30%"
-    >
-      <div v-if="progress.progress !== 'done'">
-        <span>{{ $t('dag_task_error_text') }}</span>
-        <div v-if="showDialogProgress">
-          {{ $t('dag_task_error_current_progress') }} : {{ progress.finished }} / {{ progress.total }}
-        </div>
-      </div>
-      <div v-if="progress.progress === 'done' && showDialogProgress">
-        <span>{{ $t('dag_task_error_completed') }}</span>
-        <div v-if="showDialogProgress">
-          {{ $t('dag_task_error_current_progress') }} : {{ progress.finished }} / {{ progress.total }}
-        </div>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="showSchemaProgress = false">{{ $t('message.close') }}</el-button>
-        <el-button :disabled="progress.progress !== 'done'" type="primary" size="mini" @click="start()">{{
-          $t('message.startUp')
-        }}</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog
-      :title="$t('dag_task_error_tittle')"
       :visible.sync="showFieldMappingProgress"
       :close-on-click-modal="false"
       width="30%"
@@ -334,6 +309,7 @@ import SkipError from '../../components/SkipError'
 import { uuid } from '../../editor/util/Schema'
 import VIcon from '@/components/VIcon'
 import { DATA_NODE_TYPES } from '@/const.js'
+import { locale } from 'moment'
 
 const dataFlowsApi = factory('DataFlows')
 const Setting = factory('Setting')
@@ -684,13 +660,11 @@ export default {
           self.progress.finished = finished
           self.progress.total = total
           self.progress.progress = status
-          if (status !== 'done') {
+          if (!['done', 'error'].includes(status)) {
             self.progress.showProgress = true
           } else {
             self.progress.showProgress = false
           }
-        } else {
-          self.progress.showProgress = false
         }
       })
     },
@@ -793,7 +767,9 @@ export default {
                   }
                 })
               }
+              self.dataChangeFalg = false
               self.$message.success(self.$t('message.saveOK'))
+              // location.reload()
             }
             log('DataFlows Draft Save Response: ', result)
           })
@@ -883,6 +859,7 @@ export default {
       let distanceForSink = editorData.distanceForSink || {}
 
       let cells = graphData.cells ? graphData.cells : []
+
       let edgeCells = {}
       let nodeCells = {}
       cells.forEach(cell => {
@@ -946,7 +923,8 @@ export default {
             'app.KUDUNode',
             'app.HanaNode',
             'app.ClickHouse',
-            'app.DamengNode'
+            'app.DamengNode',
+            'app.VikaNode'
           ].includes(cell.type)
         ) {
           postData.mappingTemplate = 'custom'
@@ -1178,7 +1156,7 @@ export default {
       if (this.$refs.agentDialog.checkAgent()) {
         this.checkAgentStatus(() => {
           let doStart = () => {
-            let data = this.$route.query.isMoniting ? this.dataFlow : this.getDataFlowData() //监控模式启动任务 data 为接口请求回来数据 编辑模式为cell 组装数据
+            let data = _this.$route.query.isMoniting ? _this.dataFlow : _this.getDataFlowData() //监控模式启动任务 data 为接口请求回来数据 编辑模式为cell 组装数据
             if (data) {
               this.doSaveStartDataFlow(data)
             }
@@ -1256,7 +1234,9 @@ export default {
             }
             if (
               item.outputLanes.length &&
-              (['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'hana', 'gaussdb200'].includes(item.databaseType) ||
+              (['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'hana', 'gaussdb200'].includes(
+                item.databaseType
+              ) ||
                 ['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'kudu', 'hana', 'gaussdb200'].includes(
                   item.database_type
                 )) &&
@@ -1296,6 +1276,7 @@ export default {
           this.showCheckStagesVisible = false
           data['modPipeline'] = this.modPipeline
         }
+        this.initWSSed() //当前推演进度
         let start = () => {
           data.status = 'scheduled'
           data.executeMode = 'normal'
@@ -1312,9 +1293,6 @@ export default {
                     this.checkStagesData[i].syncType = 'initial_sync+cdc'
                   }
                 }
-              } else if (err.response.msg === 'running transformer') {
-                this.initWSSed()
-                this.showSchemaProgress = true
               } else if (err.response.msg === 'invalid') {
                 this.showFieldMappingProgress = true
               } else {
@@ -1669,7 +1647,8 @@ export default {
         custom_connection: 'app.CustomNode',
         mem_cache: 'app.MemCache',
         logminer: 'app.Logminer',
-        protobuf_convert_processor: 'app.Message'
+        protobuf_convert_processor: 'app.Message',
+        ika: 'app.VikaNode'
       }
       if (data) {
         let stageMap = {}

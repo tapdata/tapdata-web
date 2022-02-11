@@ -89,7 +89,7 @@
               class="fr"
               type="success"
               size="mini"
-              v-if="isSourceDataNode || !showFieldMapping"
+              v-if="isSourceDataNode || !showFieldMapping || !transformModelVersion"
               @click="hanlderLoadSchema"
             >
               <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
@@ -100,12 +100,9 @@
               v-else
               ref="fieldMapping"
               class="fr"
-              :dataFlow="dataFlow"
-              :showBtn="true"
-              :isFirst="model.isFirst"
               :isDisable="disabled"
-              :hiddenFieldProcess="true"
-              :stageId="stageId"
+              :transform="model"
+              :getDataFlow="getDataFlow"
               @update-first="returnModel"
             ></FieldMapping>
           </div>
@@ -181,14 +178,18 @@ export default {
         tableName: '',
         type: 'custom_connection',
         databaseType: 'custom_connection',
-        isFirst: true
+        field_process: [],
+        stageId: '',
+        showBtn: true,
+        hiddenFieldProcess: true,
+        isFirst: true,
+        hiddenChangeValue: true
       },
       scope: '',
-      dataFlow: '',
-      stageId: '',
       showFieldMapping: false,
       mergedSchema: null,
-      primaryKeyOptions: []
+      primaryKeyOptions: [],
+      transformModelVersion: false
     }
   },
 
@@ -291,9 +292,9 @@ export default {
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
         this.scope = vueAdapter?.editor?.scope
+        _.merge(this.model, data)
         this.getDataFlow()
         this.stageId = cell.id
-        _.merge(this.model, data)
         let param = {
           stages: this.dataFlow?.stages,
           stageId: this.stageId
@@ -411,6 +412,12 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      if (this.dataFlow?.setting?.transformModelVersion === 'v2') {
+        this.transformModelVersion = true
+      } else {
+        this.transformModelVersion = false
+      }
+      return this.dataFlow
     },
     //接收是否第一次打开
     returnModel(value) {

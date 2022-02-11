@@ -14,7 +14,7 @@
           :rules="rules"
           required
         >
-          <div style="display: flex">
+          <div class="flex-block">
             <FbSelect v-model="model.connectionId" :config="databaseSelectConfig"></FbSelect>
             <el-tooltip
               class="item"
@@ -39,9 +39,10 @@
               :content="$t('dataForm.copyDatabase')"
               placement="top-start"
             >
-              <div class="el-button" style="padding: 7px; margin-left: 7px">
+              <ClipButton :value="copyConnectionId" :copyClass="true"></ClipButton>
+              <!-- <div class="el-button" style="padding: 7px; margin-left: 7px">
                 <ClipButton :value="copyConnectionId"></ClipButton>
-              </div>
+              </div> -->
             </el-tooltip>
             <el-tooltip
               class="item"
@@ -103,9 +104,10 @@
               :content="$t('dataForm.copyTable')"
               placement="bottom-start"
             >
-              <div class="el-button" style="padding: 7px; margin-left: 7px">
+              <ClipButton :value="model.tableName" :copyClass="true"></ClipButton>
+              <!-- <div class="el-button" style="padding: 7px; margin-left: 7px">
                 <ClipButton :value="model.tableName"></ClipButton>
-              </div>
+              </div> -->
             </el-tooltip>
             <el-tooltip
               class="item"
@@ -207,7 +209,7 @@
               class="fr"
               type="success"
               size="mini"
-              v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+              v-if="!dataNodeInfo.isTarget || !showFieldMapping || !transformModelVersion"
               @click="hanlderLoadSchema"
             >
               <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
@@ -358,7 +360,7 @@ export default {
       dialogData: null,
       databaseData: [],
       copyConnectionId: '',
-
+      transformModelVersion: false,
       dialogVisible: false,
       taskData: {
         id: '',
@@ -645,15 +647,15 @@ export default {
 
     setData(data, cell, dataNodeInfo, vueAdapter) {
       if (data) {
-        this.scope = vueAdapter?.editor?.scope
-        this.model.stageId = cell.id
-        this.getDataFlow()
         let conds
         if (data.custSql && data.custSql.conditions) {
           conds = JSON.parse(JSON.stringify(data.custSql.conditions))
           delete data.custSql.conditions
         }
         _.merge(this.model, data)
+        this.scope = vueAdapter?.editor?.scope
+        this.model.stageId = cell.id
+        this.getDataFlow()
         if (this.model.custSql && this.model.custSql.conditions && conds && conds.length > 0)
           conds.forEach(it => {
             this.model.custSql.conditions.push(it)
@@ -774,6 +776,11 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope && this.scope.getDataFlowData(true) //不校验
+      if (this.dataFlow?.setting?.transformModelVersion === 'v2') {
+        this.transformModelVersion = true
+      } else {
+        this.transformModelVersion = false
+      }
       return this.dataFlow
     },
     //接收是否第一次打开

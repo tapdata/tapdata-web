@@ -12,7 +12,7 @@
         </div>
         <div
           class="flex align-items-center justify-content-sm-between mt-2"
-          v-else-if="inspect.inspectMethod !== 'row_count'"
+          v-else-if="['field', 'jointField'].includes(inspect.inspectMethod)"
         >
           <div class="flex align-items-center">
             <ElButton v-if="['running', 'scheduling'].includes(inspect.status)" size="mini">{{

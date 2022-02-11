@@ -70,17 +70,18 @@
             v-if="scope.row.status === 'paused'"
             size="mini"
             type="text"
-            @click="doUpdate(scope.row, 'waiting')"
-            >{{ $t('task.start') }}</el-button
+            @click="doUpdate(scope.row, 'stopping')"
+            >{{ $t('task.paused') }}</el-button
           >
           <el-button
             v-readonlybtn="'schedule_jobs_management'"
             v-else
             size="mini"
             type="text"
-            @click="doUpdate(scope.row, 'stopping')"
-            >{{ $t('task.paused') }}</el-button
+            @click="doUpdate(scope.row, 'waiting')"
+            >{{ $t('task.start') }}</el-button
           >
+
           <el-button
             size="mini"
             type="text"

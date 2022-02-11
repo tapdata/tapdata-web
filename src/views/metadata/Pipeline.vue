@@ -94,6 +94,8 @@ export default {
       this.model = this.pipelineData.pipline
       this.pipeline_status = this.pipelineData.pipeline_status
       this.pipeline_message = this.pipelineData.pipeline_message
+    } else {
+      this.$set(this.pipelineData, 'pipline', {})
     }
     // 获取表数据
     let params = {
@@ -137,6 +139,7 @@ export default {
 
     // 管道
     applyToDB() {
+      let _this = this
       this.$refs.form.validate(valid => {
         if (valid) {
           this.$api('ScheduleTasks')
@@ -157,8 +160,8 @@ export default {
               }
             })
             .then(res => {
-              this.isApplication = res.data.task_data.isApplication
-              this.pipelineData.pipline.isApplication = this.isApplication
+              _this.isApplication = res.data.task_data.isApplication
+              if (_this.pipelineData) _this.$set(_this.pipelineData.pipline, 'isApplication', _this.isApplication)
               this.$message.success(this.$t('metadata.details.pipeline.success'))
             })
             .catch(() => {

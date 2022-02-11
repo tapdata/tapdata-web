@@ -53,10 +53,10 @@
           <el-input-number v-model="form.columnSize" :min="0" size="mini"></el-input-number>
         </el-form-item>
         <el-form-item :label="$t('metadata.details.accuracy')">
-          <el-input-number v-model="form.precision" :min="0" size="mini"></el-input-number>
+          <el-input-number v-model="form.scale" :min="0" size="mini"></el-input-number>
         </el-form-item>
         <el-form-item :label="$t('metadata.details.numberLength')">
-          <el-input-number v-model="form.scale" :min="0" size="mini"></el-input-number>
+          <el-input-number v-model="form.precision" :min="0" size="mini"></el-input-number>
         </el-form-item>
       </div>
       <!-- 字典模板 -->
@@ -86,7 +86,9 @@
         </el-table>
         <div class="addBtn">
           <el-button @click="addDictionary" size="mini">+ {{ $t('metadata.details.newMapping') }}</el-button>
-          <el-button @click="handleSelectTemplate" size="mini">{{ $t('metadata.details.chooseTemplate') }}</el-button>
+          <el-button @click="handleSelectTemplate(form)" size="mini">{{
+            $t('metadata.details.chooseTemplate')
+          }}</el-button>
         </div>
       </div>
       <!-- 外键设置 -->
@@ -383,6 +385,7 @@ export default {
 
         that.dictionaryList = []
         let fieldsType
+
         if (item.java_type == 'String') {
           fieldsType = 'string'
         } else if (item.java_type == 'Boolean') {
@@ -645,6 +648,9 @@ export default {
         }
         td {
           padding: 0;
+        }
+        .el-table__body-wrapper {
+          border-bottom: 1px solid #ececec;
         }
       }
       .addBtn {

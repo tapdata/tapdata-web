@@ -327,6 +327,14 @@ export default {
                   }
                 })
               }
+
+              if (['krb5Keytab', 'krb5Conf', 'krb5Principal', 'krb5ServiceName'].includes(el.field)) {
+                items.forEach(ka => {
+                  if (ka.field === 'krb5' && ka.value === '-') {
+                    el.value = '-'
+                  }
+                })
+              }
             })
           }
 

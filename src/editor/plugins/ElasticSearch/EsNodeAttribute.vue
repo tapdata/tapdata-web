@@ -47,7 +47,7 @@
         <el-form-item>
           <div class="flex-block fr">
             <FieldMapping
-              v-if="dataNodeInfo.isTarget && showFieldMapping"
+              v-if="dataNodeInfo.isTarget && showFieldMapping && transformModelVersion"
               ref="fieldMapping"
               class="fr"
               :isDisable="disabled"
@@ -105,7 +105,6 @@ export default {
         databaseType: 'elasticsearch',
         chunkSize: 3,
         index: '',
-        databaseType: 'elasticsearch',
         database_name: '',
         stageId: '',
         showBtn: true,
@@ -116,7 +115,8 @@ export default {
       mergedSchema: null,
       scope: '',
       showFieldMapping: false,
-      dataNodeInfo: {}
+      dataNodeInfo: {},
+      transformModelVersion: false
     }
   },
 
@@ -260,6 +260,11 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      if (this.dataFlow?.setting?.transformModelVersion === 'v2') {
+        this.transformModelVersion = true
+      } else {
+        this.transformModelVersion = false
+      }
       return this.dataFlow
     },
     //接收是否第一次打开

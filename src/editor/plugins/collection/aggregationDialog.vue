@@ -65,7 +65,7 @@
 </template>
 <script>
 import ws from '@/api/ws'
-import CodeEditor from 'web-core/components/CodeEditor'
+import CodeEditor from '@/components/CodeEditor'
 import Jsonviewer from 'vue-json-viewer'
 import VIcon from '@/components/VIcon'
 export default {

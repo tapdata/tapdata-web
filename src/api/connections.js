@@ -42,6 +42,9 @@ export default class Connections extends PublicAPI {
     let url = `${this.url}/${id}` + '?noSchema=1'
     return axios.get(url)
   }
+  getSpace(params) {
+    return axios.post(this.url + '/vika', params)
+  }
   patch(id, params) {
     return axios.patch(`${this.url}/${id}`, params)
   }

@@ -97,7 +97,7 @@ export const messageProcessConfig = {
        * @return {boolean}
        */
       allowTarget(targetCell) {
-        return !['app.Database'].includes(targetCell.get('type'))
+        return ['app.Collection', 'app.TcpNode', 'app.Mq'].includes(targetCell.get('type'))
       },
 
       /**

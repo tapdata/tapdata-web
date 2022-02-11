@@ -13,11 +13,37 @@ const workerApi = factory('Workers')
 class WSClient extends EventEmitter {
   constructor() {
     super()
-
     this.autoReconnect = true
     this.ws = null
     this.timeoutId = null
+    this.serverTimer = null
+    this.serverTimeout = 5 * 1000 //服务端超时设置
+    this.timeout = 45 * 1000 //间隔45秒一次探活
+    this.timer = null
     this.agentId = null
+  }
+
+  start(ws) {
+    this.reset()
+    let that = this
+    that.timer = setTimeout(() => {
+      // console.log('发送心跳,后端收到后，返回一个心跳消息')
+      // onmessage拿到返回的心跳就说明连接正常
+      let msg = {
+        type: 'ping'
+      }
+      msg = typeof msg === 'string' ? msg : JSON.stringify(msg)
+      ws.send(msg)
+      that.serverTimer = setTimeout(() => {
+        // 如果超过一定时间还没响应(响应后触发重置)，说明后端断开了
+        ws.close()
+      }, that.serverTimeout)
+    }, that.timeout)
+  }
+
+  reset() {
+    this.serverTimer && clearTimeout(this.serverTimer)
+    this.timer && clearTimeout(this.timer)
   }
 
   /**
@@ -105,6 +131,7 @@ class WSClient extends EventEmitter {
 
   handlerOpen() {
     log('Websocket is opened!')
+    this.start(this.ws) //发送心跳包
     this.emit('opened')
   }
 
@@ -135,7 +162,10 @@ class WSClient extends EventEmitter {
       window['console'].error('Received message is not JSON Object', msg)
       return
     }
-
+    if (message.type === 'ping') {
+      // 消息获取成功，重置心跳
+      self.start(self.ws)
+    }
     if (message.type === 'pipe') {
       let data = message.data || {}
       let eventName = data.type

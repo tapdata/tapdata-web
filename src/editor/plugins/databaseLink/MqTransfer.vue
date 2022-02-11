@@ -10,16 +10,19 @@
       @change="firstChangeFnc"
     >
       <template #default="{ option }">
-        <div>
-          <span v-if="topicData.includes(option.key)">{{ table_prefix }}</span>
-          <span v-if="topicData.includes(option.label) && tableNameTransform === 'toLowerCase'">{{
-            option.label.toLowerCase()
-          }}</span>
-          <span v-else-if="topicData.includes(option.label) && tableNameTransform === 'toUpperCase'">{{
-            option.label.toUpperCase()
-          }}</span>
-          <span>{{ option.label }}</span>
-          <span v-if="topicData.includes(option.key)">{{ table_suffix }}</span>
+        <div v-if="topicData.includes(option.label)">
+          <template v-if="tableNameTransform === 'toLowerCase'">
+            <span>{{ table_prefix.toLowerCase() + option.label.toLowerCase() + table_suffix.toLowerCase() }}</span>
+          </template>
+          <template v-else-if="tableNameTransform === 'toUpperCase'">
+            <span>{{ table_prefix.toUpperCase() + option.label.toUpperCase() + table_suffix.toUpperCase() }}</span>
+          </template>
+          <template v-else>
+            <span>{{ table_prefix + option.label + table_suffix }}</span>
+          </template>
+        </div>
+        <div v-else>
+          {{ option.label }}
         </div>
       </template>
     </el-transfer>
@@ -35,16 +38,19 @@
       @change="secondChangeFnc"
     >
       <template #default="{ option }">
-        <div>
-          <span v-if="queueData.includes(option.key)">{{ table_prefix }}</span>
-          <span v-if="queueData.includes(option.label) && tableNameTransform === 'toLowerCase'">{{
-            option.label.toLowerCase()
-          }}</span>
-          <span v-else-if="queueData.includes(option.label) && tableNameTransform === 'toUpperCase'">{{
-            option.label.toUpperCase()
-          }}</span>
-          <span>{{ option.label }}</span>
-          <span v-if="queueData.includes(option.key)">{{ table_suffix }}</span>
+        <div v-if="queueData.includes(option.label)">
+          <template v-if="tableNameTransform === 'toLowerCase'">
+            <span>{{ table_prefix.toLowerCase() + option.label.toLowerCase() + table_suffix.toLowerCase() }}</span>
+          </template>
+          <template v-else-if="tableNameTransform === 'toUpperCase'">
+            <span>{{ table_prefix.toUpperCase() + option.label.toUpperCase() + table_suffix.toUpperCase() }}</span>
+          </template>
+          <template v-else>
+            <span>{{ table_prefix + option.label + table_suffix }}</span>
+          </template>
+        </div>
+        <div v-else>
+          {{ option.label }}
         </div>
       </template>
     </el-transfer>

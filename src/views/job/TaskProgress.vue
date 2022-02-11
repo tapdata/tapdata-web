@@ -32,7 +32,11 @@
               </el-row>
               <el-row class="mt-3">
                 <el-col :span="12">
-                  <span>{{ $t('taskProgress.takeTime') }}：</span>
+                  <span
+                    >{{
+                      progressBar !== 100 ? $t('taskProgress.takeTime') : $t('taskProgress.takeCompleteTime')
+                    }}：</span
+                  >
                   <span class="ml-3 color-green">{{ completeTime }}</span>
                 </el-col>
                 <!--              <el-col :span="12">-->
@@ -358,6 +362,7 @@ export default {
     //     })
     // },
     handleData(data) {
+      if (!data.id) return
       // let currentData = data
       let overview = {}
       let waitingForSyecTableNums = 0
@@ -431,7 +436,8 @@ export default {
 
         if (this.progressBar === 100) {
           overview.currentStatus = this.$t('taskProgress.progress') // 进行中
-          completeTime = this.$t('taskProgress.fullyCompleted') // 全量已完成
+          let time = data.milestones.find(t => t.code === 'WRITE_SNAPSHOT')?.end
+          completeTime = this.$moment(time).format('YYYY-MM-DD HH:mm:ss') // 全量已完成
         }
         // 任务暂停、错误  增量状态都为停止
         if (completeTime === this.$t('taskProgress.fullyCompleted')) {

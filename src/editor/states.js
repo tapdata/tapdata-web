@@ -40,6 +40,18 @@ let statusBtMap = {
     finder: true,
     edit: true
   },
+  prepare: {
+    start: true,
+    stop: true,
+    forceStop: true,
+    reset: true,
+    setting: true,
+    preview: true,
+    logs: true,
+    reloadSchema: true,
+    finder: true,
+    edit: true
+  },
   scheduled: {
     start: true,
     stop: true,

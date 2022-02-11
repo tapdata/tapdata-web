@@ -162,7 +162,8 @@ export default {
               if (item.statsData.status === 'running') {
                 let num = (item.statsData.targetRowNum / item.statsData.sourceRowNum) * 100
                 item.statsData.status = num ? num.toFixed(2) + '%' : 0 + '%'
-              } else if (item.statsData.status === 'done') {
+              } else if (item.statsData.status === 'done' || item.statsData.sourceRowNum === 0) {
+                // 如果源表行数为0，则忽略状态字段直接视为完成状态
                 item.statsData.status = this.$t('taskProgress.done')
               } else {
                 item.statsData.status = this.$t('taskProgress.waiting')

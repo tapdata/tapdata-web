@@ -81,6 +81,13 @@
           :active-text="formData.noPrimaryKey ? $t('dataFlow.yes') : $t('dataFlow.no')"
         ></el-switch>
       </el-form-item>
+      <el-form-item :label="$t('dataFlow.transformModelVersion')">
+        <!-- 系统推演 -->
+        <el-select v-model="formData.transformModelVersion" size="mini" placeholder="请选择" class="dataWrite-list">
+          <el-option label="v1" value="v1"></el-option>
+          <el-option label="v2" value="v2"> </el-option>
+        </el-select>
+      </el-form-item>
       <!-- 增量数据处理机制 -->
       <el-form-item :label="$t('dataFlow.cdcDataProcess')" v-show="formData.sync_type !== 'initial_sync'">
         <el-select v-model="formData.isSerialMode" size="mini" placeholder="请选择" class="dataWrite-list">
@@ -277,9 +284,13 @@
             :placeholder="$t('message.placeholderSelect')"
             class="dataWrite-list"
           >
-            <el-option :label="$t('dataFlow.automatically')" value="automatically"> </el-option>
-            <el-option :label="$t('dataFlow.manually')" value="manually"> </el-option>
+            <el-option :label="$t('data_flow_automatically')" value="automatically"> </el-option>
+            <el-option :label="$t('data_flow_manually')" value="manually"> </el-option>
           </el-select>
+        </el-form-item>
+        <!-- 并发挖掘线程数配置 -->
+        <el-form-item :label="$t('task_setting_manually_miner_concurrency')">
+          <el-input-number v-model="formData.manuallyMinerConcurrency" :min="1" :max="8" size="mini"></el-input-number>
         </el-form-item>
         <!-- OracleSQL自定义解析 -->
         <el-form-item :label="$t('task_setting_oracle_custom_analysis')" v-show="formData.sync_type !== 'initial_sync'">
@@ -699,6 +710,12 @@ export default {
 }
 .iconfont {
   vertical-align: middle;
+}
+.e-button {
+  padding: 4px 10px;
+  color: #666;
+  background-color: #f5f5f5;
+  margin-left: 10px;
 }
 </style>
 <style lang="scss">

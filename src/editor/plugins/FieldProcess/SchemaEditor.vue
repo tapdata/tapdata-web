@@ -936,7 +936,7 @@ export default {
         data.label = dataLabel
       }
       //删除 对应字段js脚本处理
-
+      this.model.scripts = delScript(this.model.operations, this.model.scripts, data.id)
       this.$emit('dataChanged', this.model)
     },
     getParentFieldName(node) {
@@ -1115,7 +1115,8 @@ $color: #71c179;
   clear: both;
 }
 .e-schema-editor {
-  border: 1px solid $color;
+  border-left: 1px solid $color;
+  border-right: 1px solid $color;
   display: inline-block;
   margin-bottom: 20px;
   box-sizing: border-box;
@@ -1288,6 +1289,8 @@ $colorborder: #71c179;
     }
 
     .el-input__inner {
+      height: 30px;
+      line-height: 30px;
       border: none;
       background-color: transparent;
       font-size: 11px;

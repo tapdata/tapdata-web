@@ -44,8 +44,12 @@
               <img src="../assets/images/fieldMapping-table.png" alt="" />
             </div>
             <div class="task-form-text-box">
-              <div class="source">{{ item.sourceObjectName }}</div>
-              <div class="target">{{ item.sinkObjectName }}</div>
+              <ElTooltip class="item" effect="dark" :content="item.sourceObjectName" placement="left">
+                <div class="source">{{ item.sourceObjectName }}</div>
+              </ElTooltip>
+              <ElTooltip class="item" effect="dark" :content="item.sinkObjectName" placement="left">
+                <div class="target">{{ item.sinkObjectName }}</div>
+              </ElTooltip>
               <div class="select">
                 {{
                   `${$t('dag_dialog_field_mapping_selected')} ${
@@ -98,7 +102,7 @@
             show-overflow-tooltip
             :label="$t('dag_dialog_field_mapping_source_field')"
             prop="field_name"
-            width="150"
+            width="180"
           >
             <template slot-scope="scope">
               <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
@@ -119,10 +123,10 @@
             width="150"
           ></ElTableColumn>
           <ElTableColumn :label="$t('dag_dialog_field_mapping_source_scale')" prop="scale" width="100"></ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')" width="260">
+          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')">
             <template slot-scope="scope">
               <div
-                v-if="!scope.row.is_deleted && !hiddenFieldProcess && !readOnly"
+                v-if="!scope.row.is_deleted && !transform.hiddenFieldProcess && !readOnly"
                 @click="edit(scope.row, 'field_name')"
               >
                 <span :show-overflow-tooltip="true"
@@ -175,7 +179,7 @@
           <ElTableColumn
             :label="$t('dag_dialog_field_mapping_operate')"
             width="80"
-            v-if="!hiddenFieldProcess && !readOnly"
+            v-if="!transform.hiddenFieldProcess && !readOnly"
           >
             <template slot-scope="scope">
               <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true)">
@@ -273,16 +277,16 @@
         <ElForm ref="form" class="table-form" :model="form" label-width="120px">
           <ElFormItem :label="$t('dag_data_node_label_database_link_table')">
             <ElSelect size="mini" v-model="form.tableNameTransform">
-              <ElOption :label="$t('dag_data_node_label_database_link_unchang')" value=""></ElOption>
+              <ElOption :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></ElOption>
               <ElOption :label="$t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></ElOption>
               <ElOption :label="$t('dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></ElOption>
             </ElSelect>
           </ElFormItem>
           <ElFormItem :label="$t('dag_dialog_field_mapping_example_prefix')">
-            <ElInput size="mini" v-model="form.table_prefix"></ElInput>
+            <ElInput size="mini" v-model="form.table_prefix" maxlength="50" show-word-limit></ElInput>
           </ElFormItem>
           <ElFormItem :label="$t('dag_dialog_field_mapping_example_suffix')">
-            <ElInput size="mini" v-model="form.table_suffix"></ElInput>
+            <ElInput size="mini" v-model="form.table_suffix" maxlength="50" show-word-limit></ElInput>
           </ElFormItem>
           <div class="tip">{{ $t('dag_dialog_field_mapping_example_tip') }}</div>
         </ElForm>
@@ -310,7 +314,7 @@
         <ElForm ref="form" class="table-form" :model="form" label-width="120px">
           <ElFormItem :label="$t('dag_data_node_label_database_link_field')">
             <ElSelect size="mini" v-model="form.fieldsNameTransform">
-              <ElOption :label="$t('dag_data_node_label_database_link_unchang')" value=""></ElOption>
+              <ElOption :label="$t('dag_data_node_label_database_link_unchang')" value="noOperation"></ElOption>
               <ElOption :label="$t('dag_data_node_label_database_link_to_uppercase')" value="toUpperCase"></ElOption>
               <ElOption :label="$t('dag_data_node_label_database_link_to_lowercase')" value="toLowerCase"></ElOption>
             </ElSelect>
@@ -340,7 +344,7 @@
         }}</span>
       </div>
       <div class="table-box flex flex-column">
-        <template v-if="form.batchOperationList.length !== 0">
+        <template v-if="form.batchOperationList && form.batchOperationList.length !== 0">
           <div
             class="flex flex-row flex-1 mb-3 align-items-center"
             v-for="(ops, index) in form.batchOperationList"
@@ -424,10 +428,6 @@ export default {
     getNavDataMethod: Function,
     field_process: Array,
     transform: Object,
-    hiddenFieldProcess: {
-      type: Boolean,
-      default: false
-    },
     readOnly: {
       type: Boolean,
       default: false
@@ -511,13 +511,13 @@ export default {
     //接收数据
     let id = this.transform.stageId
     let self = this
-    ws.on('metadataTransformerProgress', function(res) {
+    ws.on('metadataTransformerProgress', function (res) {
       if (res?.data?.stageId === id) {
         let { finished, total, status } = res?.data
         self.progress.finished = finished
         self.progress.total = total
         self.page.total = finished
-        if (status !== 'done') {
+        if (!['done', 'error'].includes(status)) {
           self.progress.showProgress = true
           if (self.fieldMappingNavData?.length < self.page.size && self.page.current === 1) {
             self.initNavData()
@@ -829,8 +829,8 @@ export default {
       ).then(resFlag => {
         if (resFlag) {
           this.form = {
-            tableNameTransform: '',
-            fieldsNameTransform: '',
+            tableNameTransform: 'noOperation',
+            fieldsNameTransform: 'noOperation',
             table_prefix: '',
             table_suffix: '',
             batchOperationList: []
@@ -1416,6 +1416,9 @@ export default {
             color: #000000;
             line-height: 17px;
             text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
           .target {
             font-size: 12px;
@@ -1424,6 +1427,9 @@ export default {
             line-height: 17px;
             margin-top: 16px;
             text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
           .select {
             font-size: 12px;

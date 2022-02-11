@@ -21,7 +21,6 @@
             :clearable="true"
             @change="changeFnc"
           >
-            <!--           -->
             <el-option
               v-for="(item, idx) in databases"
               :label="`${item.name} (${$t('connection.status.' + item.status) || item.status})`"
@@ -180,7 +179,7 @@
               class="fr"
               type="success"
               size="mini"
-              v-if="!dataNodeInfo.isTarget || !showFieldMapping"
+              v-if="!dataNodeInfo.isTarget || !showFieldMapping || !transformModelVersion"
               @click="hanlderLoadSchema"
             >
               <VIcon v-if="reloadModelLoading">loading-circle</VIcon>
@@ -191,12 +190,9 @@
               v-else
               ref="fieldMapping"
               class="fr"
-              :dataFlow="dataFlow"
-              :showBtn="true"
-              :isFirst="model.isFirst"
               :isDisable="disabled"
-              :hiddenFieldProcess="true"
-              :stageId="stageId"
+              :transform="model"
+              :getDataFlow="getDataFlow"
               @update-first="returnModel"
             ></FieldMapping>
           </div>
@@ -232,8 +228,8 @@ import VIcon from '@/components/VIcon'
 import FieldMapping from '@/components/FieldMapping'
 
 import ws from '@/api/ws'
-// import { ALLOW_FIELD_MAPPING } from '@/editor/constants'
 const connections = factory('connections')
+
 // let editorMonitor = null;
 export default {
   name: 'ApiNode',
@@ -280,17 +276,20 @@ export default {
         tableName: '',
         partitionIds: '',
         kafkaPartitionKey: '',
-        isFirst: true,
         performanceMode: false,
-        partitionIdSet: []
+        partitionIdSet: [],
+        isFirst: true,
+        stageId: '',
+        showBtn: true,
+        hiddenFieldProcess: true,
+        hiddenChangeValue: true
       },
       scope: '',
-      dataFlow: '',
-      stageId: '',
       showFieldMapping: false,
       schemasLoading: false,
       mergedSchema: null,
-      dataNodeInfo: {}
+      dataNodeInfo: {},
+      transformModelVersion: false
     }
   },
 
@@ -350,7 +349,6 @@ export default {
                     partitionSet: [-1]
                   }
             this.partitionSet = schema.partitionSet ? schema.partitionSet : []
-
             this.tableList = schema.fields ? schema.fields : []
 
             this.$emit('schemaChange', _.cloneDeep(schema))
@@ -417,6 +415,10 @@ export default {
                 return item
               }
             })
+            if (self.model.table_name) {
+              let schema = this.schemas.filter(s => s.table_name === self.model.tableName)
+              this.tableList = schema[0].fields ? schema[0].fields : []
+            }
           }
         })
         .finally(() => {
@@ -433,9 +435,6 @@ export default {
           data.partitionIdSet = data.partitionId
         }
 
-        this.scope = vueAdapter?.editor?.scope
-        this.stageId = cell.id
-        this.getDataFlow()
         if (typeof data.kafkaPartitionKey === 'string') {
           if (!data.kafkaPartitionKey) {
             data.kafkaPartitionKey = []
@@ -444,6 +443,9 @@ export default {
           }
         }
         _.merge(this.model, data)
+        this.scope = vueAdapter?.editor?.scope
+        this.stageId = cell.id
+        this.getDataFlow()
         let param = {
           stages: this.dataFlow?.stages,
           stageId: this.stageId
@@ -550,6 +552,12 @@ export default {
     //获取dataFlow
     getDataFlow() {
       this.dataFlow = this.scope.getDataFlowData(true) //不校验
+      if (this.dataFlow?.setting?.transformModelVersion === 'v2') {
+        this.transformModelVersion = true
+      } else {
+        this.transformModelVersion = false
+      }
+      return this.dataFlow
     },
     //接收是否第一次打开
     returnModel(value) {

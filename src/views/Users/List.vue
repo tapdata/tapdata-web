@@ -1113,7 +1113,7 @@ export default {
     padding: 30px;
     .el-form {
       .el-form-item {
-        margin-bottom: 15px;
+        margin-bottom: 22px;
         .el-form-item__label {
           text-align: left;
         }

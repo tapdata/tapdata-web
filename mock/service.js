@@ -542,7 +542,37 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, {
   },
   '/api/Connections/:id': {
     code: 'ok',
-    msg: 'ok'
+    msg: 'ok',
+    data: {
+      name: '@name',
+      connection_type: 'target',
+      'database_type|1': ['mysql', 'oracle', 'mongodb'],
+      database_host: '',
+      database_username: '',
+      database_port: '@integer(0, 5000)',
+      database_uri: () => {
+        return 'mongodb://192.168.1.191:' + Random.integer(0, 5000) + '/tapdata_test'
+      },
+      database_name: '',
+      id: '@id',
+      sslCert: '',
+      additionalString: '',
+      'ssl|1': Boolean,
+      sslKey: '',
+      sslPass: '',
+      'schemaAutoUpdate|1': Boolean,
+      sslCA: '',
+      search_databaseType: '',
+      status: 'ready',
+      fill: 'uri',
+      user_id: '@id',
+      last_updated: Random.datetime(),
+      loadCount: Random.integer(0, 100),
+      'loadFieldsStatus|1': ['loading', 'finished', 'error'],
+      tableCount: Random.integer(0, 100),
+      username: '@name',
+      file_source_protocol: 'ftp'
+    }
   },
   '/api/Workers/:id/availableAgent': {
     data: {

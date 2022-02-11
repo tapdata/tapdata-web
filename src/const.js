@@ -159,5 +159,6 @@ export const DATA_NODE_TYPES = [
   'custom_connection',
   'mem_cache',
   'logminer',
-  'protobuf_convert_processor'
+  'protobuf_convert_processor',
+  'hazelcast_cloud_cluster'
 ]

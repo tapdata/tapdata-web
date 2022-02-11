@@ -58,7 +58,7 @@ export default {
   },
   data() {
     return {
-      loading: true,
+      loading: false,
       list: []
     }
   },
@@ -100,7 +100,7 @@ export default {
       })
     },
     getData(showLoading) {
-      let id = this.dataFlow.id
+      let id = this.dataFlow?.id
       if (id) {
         showLoading && (this.loading = true)
         dataFlowsAPI

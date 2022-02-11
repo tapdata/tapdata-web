@@ -44,6 +44,7 @@ export const FORM_DATA_KEY = 'form_data',
     isOpenAutoDDL: false,
     cdcConcurrency: false,
     cdcShareFilterOnServer: false,
+    transformModelVersion: 'v1',
     emailWaring: {
       edited: false,
       started: false,
@@ -69,7 +70,8 @@ export const FORM_DATA_KEY = 'form_data',
     noPrimaryKey: false,
     flowEngineVersion: 'Data_Flow_Engine_V1',
     oracleLogminer: 'automatically',
-    useCustomSQLParser: false
+    useCustomSQLParser: false,
+    manuallyMinerConcurrency: 1
   },
   DATABASE_TYPE_MAPPING = {
     mysql: {
@@ -108,12 +110,12 @@ export const FORM_DATA_KEY = 'form_data',
       shapeImage: 'static/editor/hbase.svg',
       stencilImage: 'static/editor/hbase.svg'
     },
-    kudu: {
-      type: 'kudu',
-      name: 'kudu',
-      shapeImage: 'static/editor/kudu.svg',
-      stencilImage: 'static/editor/kudu.svg'
-    },
+    // kudu: {
+    //   type: 'kudu',
+    //   name: 'kudu',
+    //   shapeImage: 'static/editor/kudu.svg',
+    //   stencilImage: 'static/editor/kudu.svg'
+    // },
     mongodb: {
       type: 'mongodb',
       name: 'MongoDB',
@@ -228,6 +230,12 @@ export const FORM_DATA_KEY = 'form_data',
       shapeImage: 'static/editor/adb_postgres.svg',
       stencilImage: 'static/editor/adb_postgres.svg'
     }
+    // hazelcast_cloud_cluster: {
+    //   type: 'hazelcast_cloud_cluster',
+    //   name: 'Hazelcast Cloud',
+    //   shapeImage: 'static/editor/hazelcast.svg',
+    //   stencilImage: 'static/editor/hazelcast.svg'
+    // }
   },
   FILE_TYPE_MAPPING = {
     xml: {

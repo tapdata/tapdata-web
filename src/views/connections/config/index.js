@@ -21,6 +21,7 @@ import dummydb from './dummydb'
 import dameng from './dameng'
 import hive from './hive'
 import tcp_udp from './tcp_udp'
+import vika from './vika'
 import mq from './mq'
 import hbase from './hbase'
 import kudu from './kudu'
@@ -48,6 +49,7 @@ export default {
   mysqlpxc,
   // jira,
   hive,
+  vika,
   sybasease,
   gbase8s,
   gaussdb200,

@@ -566,9 +566,9 @@
 import factory from '@/api/factory'
 import formConfig from './config'
 import gitbook from './GitBook'
-import CodeEditor from 'web-core/components/CodeEditor'
+import CodeEditor from '@/components/CodeEditor'
 import Test from './Test'
-import { getImgByType, TYPEMAP, TYPEMAPCONFIG, defaultModel, defaultCloudModel } from './util'
+import { TYPEMAPCONFIG, defaultModel, defaultCloudModel } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import VIcon from '@/components/VIcon'
 
@@ -659,6 +659,7 @@ export default {
         'kundb',
         'adb_postgres',
         'adb_mysql',
+        'vika',
         'hazelcast_cloud_cluster'
       ],
       model: '',
@@ -667,7 +668,7 @@ export default {
       },
       checkItems: null,
       databaseType: '',
-      typeMap: TYPEMAP,
+      typeMap: this.$const.TYPEMAP,
       timer: null,
       status: '',
       loadingFrom: true,
@@ -766,6 +767,9 @@ export default {
       case 'hana':
         this.model = Object.assign({}, defaultModel['default'], defaultModel['hana'])
         break
+      case 'vika':
+        this.model = Object.assign({}, defaultModel['vika'])
+        break
     }
     this.getDT(this.databaseType)
     this.initTimezones()
@@ -824,14 +828,6 @@ export default {
     ]
   },
   watch: {
-    // 文件选中类型默认端口号
-    'model.file_source_protocol'(val) {
-      if (val === 'smb') {
-        this.model.database_port = '445'
-      } else if (val === 'ftp') {
-        this.model.database_port = '21'
-      }
-    },
     'model.multiTenant'(val) {
       if (!val) {
         this.model.pdb = ''
@@ -859,7 +855,6 @@ export default {
     }
   },
   methods: {
-    getImgByType,
     formChange(data) {
       let filed = data.field || ''
       let value = data.value
@@ -911,6 +906,10 @@ export default {
       if (filed === 'custom_after_opr') {
         this.model.custom_after_script = ''
       }
+      //维格表
+      if (filed === 'plain_password' && this.model.database_type === 'vika') {
+        this.getSpaceVika()
+      }
     },
     async initData(data) {
       let editData = null
@@ -936,6 +935,10 @@ export default {
         }
         this.renameData.rename = this.model.name
         this.model.isUrl = false
+        if (this.model.database_type === 'vika') {
+          //初始化维格表
+          this.getSpaceVika(this.$route.params.id)
+        }
       } else {
         this.model = Object.assign(this.model, data, { name: this.model.name })
         this.model.isUrl = true
@@ -991,6 +994,27 @@ export default {
         this.dataTypes = options
         this.checkDataTypeOptions(type)
       }
+    },
+    //获取维格表的空间
+    getSpaceVika(id) {
+      if ((!this.model.plain_password || this.model.plain_password === '') && !id) {
+        return
+      }
+      let params = {
+        load_type: 'space',
+        database_host: this.model.database_host,
+        api_token: this.model.plain_password,
+        connection_id: id || ''
+      }
+      this.$api('connections')
+        .getSpace(params)
+        .then(data => {
+          if (data.data.status === 'SUCCESS') {
+            this.changeConfig(data.data.result || [], 'set_space')
+          } else {
+            this.$message.error(data.data?.error)
+          }
+        })
     },
     //rest api addUrl
     addUrlInfo(type) {
@@ -1061,12 +1085,17 @@ export default {
         // else if (this.model.database_type === 'mongodb' && !this.$route.params.id && itemIsUrl) {
         //   itemIsUrl.options[1].disabled = true
         // }
-        ////编辑模式下mongodb 不校验证书
+        //编辑模式下mongodb 不校验证书
         if (this.model.database_type === 'mongodb' && this.$route.params.id && sslKey) {
           sslKey.rules = []
         }
         if (this.model.database_type === 'mongodb' && this.$route.params.id && sslCA) {
           sslCA.rules = []
+        }
+        //编辑模式下vika不校验plain_password
+        let plain_password = items.find(it => it.field === 'plain_password')
+        if (this.model.database_type === 'vika' && this.$route.params.id && plain_password) {
+          plain_password.required = false
         }
         if (this.$route.params.id) {
           //编辑模式下 不展示
@@ -1211,6 +1240,21 @@ export default {
                 name: item.zoneName,
                 label: item.zoneName,
                 value: item.zoneCode
+              }
+            })
+          }
+          break
+        }
+        case 'set_space': {
+          //映射可用区
+          let vika_space_id = items.find(it => it.field === 'vika_space_id')
+          if (vika_space_id) {
+            vika_space_id.options = data.map(item => {
+              return {
+                id: item.id,
+                name: item.name,
+                label: item.name,
+                value: item.id
               }
             })
           }
