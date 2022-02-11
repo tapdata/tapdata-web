@@ -1,7 +1,7 @@
-/dist/
-/public/
-/src/editor/lib/rappid/rappid.js
-/src/editor/lib/rappid/themes/style.default.css
-/src/assets/style/font/iconfont.css
-/src/assets/js/leader-line.js
-/src/assets/js/leader-line.min.js
+/apps/*/dist/
+/apps/*/public/
+/apps/daas/src/editor/lib/rappid/rappid.js
+/apps/daas/src/editor/lib/rappid/themes/style.default.css
+/apps/daas/src/assets/style/font/iconfont.css
+/apps/daas/src/assets/js/leader-line.js
+/apps/daas/src/assets/js/leader-line.min.js
