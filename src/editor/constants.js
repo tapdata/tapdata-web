@@ -187,12 +187,12 @@ export const FORM_DATA_KEY = 'form_data',
       shapeImage: 'static/editor/tidb.svg',
       stencilImage: 'static/editor/tidb.svg'
     },
-    // hana: {
-    //   type: 'hana',
-    //   name: 'SPA Hana',
-    //   shapeImage: 'static/editor/hana.svg',
-    //   stencilImage: 'static/editor/hana.svg'
-    // },
+    hana: {
+      type: 'hana',
+      name: 'SPA Hana',
+      shapeImage: 'static/editor/hana.svg',
+      stencilImage: 'static/editor/hana.svg'
+    },
     hive: {
       type: 'hive',
       name: 'Hive',
