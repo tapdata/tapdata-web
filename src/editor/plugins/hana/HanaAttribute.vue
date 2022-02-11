@@ -168,7 +168,7 @@
 </template>
 <script>
 import _ from 'lodash'
-import factory from '../../../api/factory'
+// import factory from '../../../api/factory'
 import Entity from '../link/Entity'
 import { convertSchemaToTreeData, uuid, removeDeleted } from '../../util/Schema'
 import ClipButton from '@/components/ClipButton'
