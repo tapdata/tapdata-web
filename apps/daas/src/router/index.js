@@ -9,6 +9,10 @@ import { Loading, Message } from 'element-ui'
 Vue.use(Router)
 const MigrateForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/migrate/form/Form.vue')
 const MigrateDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/migrate/details/Index.vue')
+const DagEditor = async () => {
+  const { Editor } = await import('@daas/dag')
+  return Editor
+}
 
 const childRoutes = [
   {
@@ -827,7 +831,7 @@ const router = new Router({
           name: 'dataflow'
         }
       },
-      component: () => import('web-core/views/dataflow/Editor')
+      component: DagEditor
     },
     {
       path: '/dataflow/editor/:id',
@@ -837,7 +841,7 @@ const router = new Router({
           name: 'dataflow'
         }
       },
-      component: () => import('web-core/views/dataflow/Editor')
+      component: DagEditor
     },
     {
       path: '/node/editor',
