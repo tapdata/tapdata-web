@@ -570,7 +570,8 @@ export default {
     // 跳转任务状态统计
     jumpSyncTask(val) {
       let routeUrl = this.$router.resolve({
-        path: 'dataFlows?mapping=custom',
+        // path: 'dataFlows?mapping=custom',
+        name: 'dataflow',
         query: { executionStatus: val }
       })
 
@@ -580,7 +581,8 @@ export default {
     // 跳转任务状态统计
     jumpMigrationTask(val) {
       let routeUrl = this.$router.resolve({
-        path: 'dataFlows?mapping=cluster-clone',
+        // path: 'dataFlows?mapping=cluster-clone',
+        name: 'migrate',
         query: { executionStatus: val }
       })
 
@@ -590,9 +592,8 @@ export default {
     // 点击同步运行状态跳转到任务列表
     handleSncyStatus(status) {
       let routeUrl = this.$router.resolve({
-        name: 'dataFlows',
+        name: 'dataflow',
         query: {
-          mapping: 'custom',
           status: status
         }
       })
@@ -603,8 +604,8 @@ export default {
     // 点击迁移运行状态跳转到任务列表
     handleMigrationStatus(status) {
       let routeUrl = this.$router.resolve({
-        name: 'dataFlows',
-        query: { mapping: 'cluster-clone', status: status }
+        name: 'migrate',
+        query: { status: status }
       })
       window.open(routeUrl.href)
     },

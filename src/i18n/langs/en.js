@@ -285,15 +285,9 @@ export default {
   connection_form_target_tip:
     'This data connection can only be used as a target in Tapdata, and cannot be used as a source',
   connection_form_host: 'Database host',
-  connection_form_port: 'Port',
-  connection_form_connection_name: 'Connection name',
   connection_form_user_name: 'Account',
   connection_form_password: 'Password',
 
-  connection_form_mq_type: 'MQ Type',
-  connection_form_mq_topic_set: 'topic name',
-  connection_form_mq_queue_set: 'Queue name',
-  connection_form_mq_broker_url: 'MQ connection string',
   connection_form_mq_database_host: 'MQ address',
   connection_form_mq_database_port: 'MQ port',
   connection_form_mq_route_key_field: 'Message routing',
@@ -447,14 +441,12 @@ export default {
   connection_preview_isr_partition: 'Write all ISR partitions',
   connection_preview_operation_success: 'Operation successful',
 
-
   connection_redis_valid: 'Authentication',
 
   connection_hana_label_hana_type: 'Install type',
 
   // 路由名
   app_menu_jsFuncs: 'Function',
-
 
   // function
   js_func_name: 'Function name',
@@ -780,7 +772,7 @@ export default {
 
   // 用户
   login_fail_too_many: 'The maximum number of password errors has been reached, please log in after 10 minutes',
-  rule_exists_name: 'Save failed, duplicate name'
+  rule_exists_name: 'Save failed, duplicate name',
   // solution
   solution_name: 'Solution',
   solution_customer_job_logs: 'Customer job logs',

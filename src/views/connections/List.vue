@@ -703,9 +703,6 @@ export default {
             databaseType: type
           }
         })
-      } else {
-        top.location.href = '/#/connection'
-        localStorage.setItem('connectionDatabaseType', type)
       }
     },
 

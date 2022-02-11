@@ -25,7 +25,6 @@ import SystemNotification from './SystemNotification'
 import UserNotification from './UserNotification'
 import VIcon from '@/components/VIcon'
 import { mapState } from 'vuex'
-import VIcon from '@/components/VIcon'
 
 export default {
   components: {
