@@ -1,0 +1,26 @@
+.aggregate-list {
+  .example {
+    h3 {
+      font-size: 12px;
+      color: #000;
+      font-weight: bold;
+    }
+    .example-box {
+      padding-top: 10px;
+      font-size: 12px;
+      color: #000;
+      li {
+        padding: 5px 0;
+        .text {
+          display: inline-block;
+          width: 280px;
+          padding-left: 10px;
+        }
+        .comment {
+          display: inline-block;
+          color: #aaa;
+        }
+      }
+    }
+  }
+}
