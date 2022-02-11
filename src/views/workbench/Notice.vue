@@ -146,7 +146,7 @@
             <div class="mode-section__connect">
               <div class="mode-section__header">方式一 ：顺利完成1个同步任务</div>
               <div class="p-5 clear">
-                <div class="line-heiht-2">
+                <div class="line-height-2">
                   活动期间顺利完成至少1个 Tapdata Cloud 数据同步任务，截图发给 Tapdata
                   服务号人工客服（通过公众号首页菜单联系客服），即可领取 64G U盘/ 充电宝 / 小爱音箱 / 保温杯 4选1！
                 </div>
@@ -161,7 +161,7 @@
             <div class="mode-section__connect">
               <div class="mode-section__header">方式二：撰写并分享产品体验博客</div>
               <div class="p-5 clear">
-                <div class="line-heiht-2">
+                <div class="line-height-2">
                   活动期间，体验 Tapdata Cloud / Tapdata Enterprise，并撰写和分享使用经验博客文章，完成后将文章链接发给
                   Tapdata 服务号人工客服，可根据内容质量获得Apple AirPods / Kindle /
                   机械键盘（文章质量越高，奖品价值越高）！
@@ -176,7 +176,7 @@
             <div class="mode-section__connect">
               <div class="mode-section__header">方式三：成为 Tapdata 产品推荐官</div>
               <div class="p-5 clear">
-                <div class="line-heiht-2">
+                <div class="line-height-2">
                   活动期间成功邀请朋友关注 Tapdata
                   微信服务号（邀请数≥15名）的推荐官，将获得礼品盲盒1个（包括不限于机械键盘，保温杯，充电宝，Kindle，
                   Apple AirPods 等），邀请人数达标后系统将自动通知您（ps：邀请人数越多，将有机会获得更高价值的礼品）！
@@ -525,7 +525,7 @@
       <div class="notice-header__time mt-5 ml-1 flex align-items-center">
         <img src="../../assets/image/logoIconColour.png" alt="" />
         <span class="ml-5 mr-4">Cloud@Tapdata</span>
-        <span>2021-01-20</span>
+        <span>2022-01-20</span>
       </div>
     </div>
     <div class="notice-body mt-6 fs-6">
@@ -540,6 +540,112 @@
         <div class="mb-10">以上升级如带来不便请您谅解，并提前做好准备，如有疑问可联系我们。</div>
         <div class="">2022年1月20日</div>
         <div class="">Tapdata Cloud 团队</div>
+      </div>
+    </div>
+  </div>
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 10">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>Tapdata Cloud 开年版本更新：细节控福利！数据源又新增，支持增量任务自定义采集「开始时刻」</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2022-02-11</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-4">开年又逢更新，优化一刻不停——Tapdata Cloud 新版本发布啦！</div>
+        <div class="mb-4">
+          此次发布的 2.0.1
+          版，在数据源上新之余，针对实际操作过程中的诸多细节再做优化，进一步提升了其易用性和操作的便捷性。
+        </div>
+        <div class="mb-2 p-4" style="background-color: rgb(241, 248, 255)">
+          <div class="mb-4">更新速览👇</div>
+          <div class="ml-2 mb-4">
+            1. 支持<span class="fw-bold font-color-main">设置增量采集时间点</span>，增量任务可以自定义采集开始时刻
+          </div>
+          <div class="ml-2 mb-4">
+            2. 支持数据源再上新，数据连接<span class="fw-bold font-color-main">新增 MariaDB 支持</span>
+          </div>
+          <div class="ml-2 mb-4">3. 细节更新：优化了编辑「已运行任务」的弹窗提示，避免误操作</div>
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">01</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>支持设置增量采集时间点</strong>
+            </div>
+            <div class="number-title-box__desc">功能升级 操作更灵活</div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          针对历史版本中，设置增量任务时无法指定时间，默认从“当前时间”开始增量数据采集的问题，现已做出优化——新版本下，增量任务可以自定义增量采集时间点。打开增量任务设置，即可手动添加“增量采集开始时刻”，满足真实业务场景下的操作需求，专注使用体验的不断优化。
+        </div>
+        <div class="mb-4 line-height-2">
+          如果你的全量+增量任务在进入增量阶段后出现异常，导致任务停止，可以编辑任务，将任务的同步类型改为【增量同步】，然后将【增量采集开始时刻】设置为任务停止时所处于的增量时间点，再继续运行任务。无需再重新跑一次全量即可实现数据的无缝衔接，保证数据的完整性。
+        </div>
+        <div>
+          <img src="../../../public/images/notice/task_create.gif" alt="" />
+        </div>
+        <div>
+          <img src="../../../public/images/notice/task_setting_cdc_time.png" alt="" />
+        </div>
+        <div class="mb-4 line-height-2">
+          目前，该优化已覆盖包括 MySQL、SQL Server、Oracle，以及 MongoDB
+          在内的多个数据库。针对其他数据库的支持，后续也将陆续开放，敬请期待。
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">02</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>数据源再上新</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>MariaDB现已加入Tapdata Cloud</p>
+              <p class="mt-3">异构数据库实时同步家族</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          作为国内首家异构数据库实时同步云平台，Tapdata Cloud
+          打破系统和数据类型限制，支持多样化的数据源、拖拽式的“零”代码配置操作，以强大的数据处理能力，真正做到轻松实现跨系统跨类型的数据同步和交换，让你能够释放数据准备阶段的精力，更专注数据业务的开发与创新。
+        </div>
+        <div class="mb-4 line-height-2">
+          本次更新中，数据连接新增 MariaDB 支持，可支持的数据源版图再增一块。看，这都是 Tapdata Cloud 为你“打”下的江山：
+        </div>
+        <div>
+          <img src="../../../public/images/notice/connection_selector.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">03</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>细节优化</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>微小但贴心 使用更安心</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          用户导向，细节至上——这一次，我们优化了针对已运行任务进行编辑的弹窗提示。叮咚，前方为已运行任务，如果修改任务设置，提交后必须重置才能正常运行，请谨慎操作哦。
+        </div>
+        <div>
+          <img src="../../../public/images/notice/task_edit_pop.gif" alt="" />
+        </div>
+        <div>
+          <img src="../../../public/images/notice/task_edit_pop_content.png" alt="" />
+        </div>
+        <div class="line-height-2">
+          重视成长路上收获的每一条反馈，不断完善，持续优化，Tapdata一直在路上。使于细节，成于大美，期待下一个新版本再和大家见面图片
+          <img
+            src="../../../public/images/notice/love.png"
+            alt=""
+            style="width: 20px; height: 20px; vertical-align: text-bottom"
+          />。
+        </div>
       </div>
     </div>
   </div>
@@ -608,7 +714,7 @@ export default {
       }
     }
   }
-  .line-heiht-2 {
+  .line-height-2 {
     line-height: 2;
   }
 }
@@ -754,5 +860,44 @@ export default {
     width: 135px;
     height: 135px;
   }
+}
+.number-title-box {
+  text-align: center;
+}
+.number-title-box__number {
+  color: rgb(255, 255, 255);
+  text-shadow: rgb(53 119 177) 0px 1.4px, rgb(69 104 188) 1px 1px, rgb(69 104 188) 1.4px 0px, rgb(69 104 188) 1px -1px,
+    rgb(69 104 188) 0px -1.4px, rgb(69 104 188) -1px -1px, rgb(69 104 188) -1.4px 0px, rgb(69 104 188) -1px 1px;
+  font-size: 51px;
+  font-style: italic;
+}
+.number-title-box__content {
+  display: inline-block;
+  margin-top: -16px;
+  margin-bottom: 24px;
+  border-top: 1px solid #3577b1;
+  background: #fff;
+}
+.number-title-box__title {
+  background: -moz-linear-gradient(to right, rgb(239, 158, 56) 0%, rgb(51, 119, 176) 100%);
+  background: -webkit-gradient(linear, 0 0, 0 right, from(rgb(239, 158, 56)), to(rgb(51, 119, 176)));
+  background: -webkit-linear-gradient(to right, rgb(239, 158, 56) 0%, rgb(51, 119, 176) 100%);
+  background: -o-linear-gradient(to right, rgb(239, 158, 56) 0%, rgb(51, 119, 176) 100%);
+  background: -ms-linear-gradient(to right, rgb(239, 158, 56) 0%, rgb(51, 119, 176) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#ffffff',GradientType=0 );
+  background: linear-gradient(to right, rgb(239, 158, 56) 0%, rgb(51, 119, 176) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 28px;
+}
+.number-title-box__desc {
+  margin-top: 16px;
+  color: #979494;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+:root .number-title-box__title {
+  filter: none;
 }
 </style>
