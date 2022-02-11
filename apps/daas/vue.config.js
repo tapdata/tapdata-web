@@ -56,7 +56,7 @@ module.exports = {
   chainWebpack(config) {
     const iconDir = resolve('src/assets/icons/svg')
     const colorIconDir = resolve('src/assets/icons/colorSvg')
-    const webCoreIconDir = resolve('src/_packages/tapdata-web-core/assets/icons/svg')
+    const webCoreIconDir = resolve('../../packages/web-core/assets/icons/svg')
 
     // svg loader排除 icon 目录
     config.module
@@ -143,7 +143,7 @@ module.exports = {
       .loader('markdown-loader')
       .end()
 
-    config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('src/_packages/tapdata-web-core'))
+    config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('../../packages/web-core'))
   },
   configureWebpack: config => {
     if (process.env.NODE_ENV === 'production') {

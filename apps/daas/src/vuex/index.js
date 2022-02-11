@@ -4,7 +4,7 @@ import createPersistedState from 'vuex-persistedstate'
 import mutations from './mutations'
 import actions from './actions'
 import cookie from 'vue-cookies'
-import dataflow from 'web-core/store/modules/dataflow'
+import dataflow from '@daas/dag/src/store'
 
 Vue.use(Vuex)
 

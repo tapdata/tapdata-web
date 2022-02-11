@@ -1,4 +1,4 @@
-const nodeContext = require.context('web-core/nodes/', false, /\.js$/)
+const nodeContext = require.context('../', false, /\.js$/)
 
 const requireAllNode = requireContext => {
   return requireContext.keys().reduce((map, name) => {

@@ -1,9 +1,8 @@
 import Vue from 'vue'
-import { isObject } from 'web-core/utils/util'
-import Task from 'web-core/api/Task'
+import { isObject, uuid } from '@daas/shared'
+import { Task } from '@daas/api'
 import { debounce } from 'lodash'
-import { AddDagCommand } from '@/_packages/tapdata-web-core/views/dataflow/command'
-import { uuid } from 'web-core/utils/util'
+import { AddDagCommand } from './command'
 
 const taskApi = new Task()
 

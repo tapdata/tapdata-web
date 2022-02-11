@@ -16,10 +16,10 @@
 </template>
 
 <script>
-import MetadataApi from 'web-core/api/MetadataInstances'
+import { MetadataInstances } from '@daas/api'
 import { mapGetters, mapState } from 'vuex'
 import VIcon from 'web-core/components/VIcon'
-const metadataApi = new MetadataApi()
+const metadataApi = new MetadataInstances()
 
 export default {
   name: 'MetaPane',

@@ -33,9 +33,9 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
-import { sourceEndpoint, targetEndpoint } from 'web-core/views/dataflow/style'
-import { NODE_PREFIX } from 'web-core/views/dataflow/constants'
-import BaseNode from 'web-core/views/dataflow/components/BaseNode'
+import { sourceEndpoint, targetEndpoint } from '../style'
+import { NODE_PREFIX } from '../constants'
+import BaseNode from './BaseNode'
 import VIcon from 'web-core/components/VIcon'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
 

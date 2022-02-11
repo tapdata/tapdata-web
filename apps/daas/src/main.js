@@ -10,7 +10,7 @@ import VueClipboard from 'vue-clipboard2'
 import factory from '@/api/factory'
 import Cache from '@/utils/cache'
 import TapdataWebCore from 'web-core'
-import Cookie from 'web-core/utils/cookie'
+import Cookie from '@daas/shared/src/cookie'
 
 import '@/plugins/element'
 import '@/plugins/icon'

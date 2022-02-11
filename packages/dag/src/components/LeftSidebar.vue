@@ -235,16 +235,15 @@ import mouseDrag from 'web-core/directives/mousedrag'
 import VIcon from 'web-core/components/VIcon'
 import ConnectionTypeSelector from 'web-core/components/connection-type-selector'
 import resize from 'web-core/directives/resize'
-import BaseNode from 'web-core/views/dataflow/components/BaseNode'
+import BaseNode from './BaseNode'
 import { debounce, throttle } from 'lodash'
-import ConnectionsApi from 'web-core/api/Connections'
-import MetadataApi from 'web-core/api/MetadataInstances'
-// import Form from '../../../../../views/connections/DatabaseForm'
+import { Connections, MetadataInstances } from '@daas/api'
+// import Form from '@/views/connection/Form'
 
 import { Select } from 'element-ui'
 // import ElScrollbar from 'element-ui/packages/scrollbar'
-const connections = new ConnectionsApi()
-const metadataApi = new MetadataApi()
+const connections = new Connections()
+const metadataApi = new MetadataInstances()
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
 import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
 import EmptyItem from 'web-core/components/EmptyItem'

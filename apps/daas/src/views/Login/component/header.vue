@@ -14,7 +14,7 @@
   </div>
 </template>
 <script>
-import Cookie from 'web-core/utils/cookie'
+import Cookie from '@daas/shared/src/cookie'
 const langMap = {
   sc: 'zh-CN',
   tc: 'zh-TW',

@@ -176,7 +176,7 @@ import NotificationPopover from './notification/NotificationPopover'
 import DownAgent from './downAgent/agentDown'
 import { signOut } from '../utils/util'
 import { childRoutes } from '@/router'
-import Cookie from 'web-core/utils/cookie'
+import Cookie from '@daas/shared/src/cookie'
 
 const Languages = {
   sc: '中文 (简)',

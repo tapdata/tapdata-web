@@ -1,4 +1,4 @@
-import { on, off, appendHtml } from 'web-core/utils/dom'
+import { on, off, appendHtml } from '@daas/shared'
 
 const EVENT = {
   mouse: {

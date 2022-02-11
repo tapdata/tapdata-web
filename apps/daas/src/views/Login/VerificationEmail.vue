@@ -31,7 +31,7 @@
 <script>
 import Header from './component/header'
 import factory from '@/api/factory'
-import Cookie from 'web-core/utils/cookie'
+import Cookie from '@daas/shared/src/cookie'
 const usersModel = factory('users')
 
 export default {

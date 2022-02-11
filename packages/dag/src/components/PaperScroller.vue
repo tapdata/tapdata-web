@@ -30,7 +30,7 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import { on, off } from 'web-core/utils/dom'
+import { on, off } from '@daas/shared'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { getDataflowCorners } from '../helpers'
 import movePaper from '../mixins/movePaper'

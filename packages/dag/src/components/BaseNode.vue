@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { NODE_TYPE_ICON } from 'web-core/views/dataflow/constants'
+import { NODE_TYPE_ICON } from '../constants'
 
 export default {
   name: 'BaseNode',

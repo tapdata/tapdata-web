@@ -43,12 +43,12 @@
 import { mapGetters, mapMutations } from 'vuex'
 import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
-import FormPanel from 'web-core/views/dataflow/components/FormPanel'
-import SettingPanel from 'web-core/views/dataflow/components/SettingPanel'
-import DataPane from 'web-core/views/dataflow/components/DataPane'
-import MetaPane from 'web-core/views/dataflow/components/MetaPane'
+import FormPanel from './FormPanel'
+import SettingPanel from './SettingPanel'
+import DataPane from './DataPane'
+import MetaPane from './MetaPane'
 import VIcon from 'web-core/components/VIcon'
-import { NODE_TYPE_ICON } from 'web-core/views/dataflow/constants'
+import { NODE_TYPE_ICON } from '../constants'
 import focusSelect from 'web-core/directives/focusSelect'
 
 export default {

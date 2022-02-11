@@ -91,14 +91,13 @@ import DFNode from './components/DFNode'
 import jsPlumbIns from './instance'
 import { connectorActiveStyle } from './style'
 import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from './constants'
-import { ctorTypes, nodeTypes } from 'web-core/nodes/loader'
+import { ctorTypes, nodeTypes } from './nodes/loader'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
 import { showMessage } from 'web-core/mixins/showMessage'
-import ConfigPanel from 'web-core/views/dataflow/components/ConfigPanel'
-import { uuid } from 'web-core/utils/util'
-import DatabaseTypes from 'web-core/api/DatabaseTypes'
-import Task from 'web-core/api/Task'
+import ConfigPanel from './components/ConfigPanel'
+import { uuid } from '@daas/shared'
+import { DatabaseTypes, Task } from '@daas/api'
 import {
   AddConnectionCommand,
   AddNodeCommand,
@@ -111,10 +110,10 @@ import {
 } from './command'
 import Mousetrap from 'mousetrap'
 import dagre from 'dagre'
-import { validateBySchema } from 'web-core/components/form/utils/validate'
+import { validateBySchema } from '@daas/form/src/shared/validate'
 import resize from 'web-core/directives/resize'
 import { merge } from 'lodash'
-import PaperEmpty from 'web-core/views/dataflow/components/PaperEmpty'
+import PaperEmpty from './components/PaperEmpty'
 
 const databaseTypesApi = new DatabaseTypes()
 const taskApi = new Task()

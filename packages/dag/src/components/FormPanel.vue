@@ -10,58 +10,27 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import * as components from 'web-core/components/form'
+import * as components from '@daas/form'
 import { createSchemaField } from '@formily/vue'
-import {
-  Form,
-  FormItem,
-  FormTab,
-  PreviewText,
-  ArrayTable,
-  Switch,
-  Input,
-  InputNumber,
-  Checkbox,
-  Radio,
-  Space,
-  FormGrid,
-  ArrayTabs,
-  FormLayout,
-  ArrayItems
-} from '@formily/element'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 import { action } from '@formily/reactive'
-import { validateBySchema } from 'web-core/components/form/utils/validate'
-import ConnectionsApi from 'web-core/api/Connections'
-import MetadataApi from 'web-core/api/MetadataInstances'
+import { validateBySchema } from '@daas/form/src/shared/validate'
+import { Connections, MetadataInstances } from '@daas/api'
 import { debounce } from 'lodash'
-// import 'web-core/components/form/styles/index.scss'
 
 const { SchemaField } = createSchemaField({
   components: {
-    FormItem,
-    FormTab,
-    ArrayTable,
-    PreviewText,
-    Switch,
-    Input,
-    InputNumber,
-    Checkbox,
-    Radio,
-    Space,
-    FormGrid,
-    ArrayTabs,
-    FormLayout,
-    ArrayItems,
     ...components
   }
 })
 
-const connections = new ConnectionsApi()
-const metadataApi = new MetadataApi()
+const connections = new Connections()
+const metadataApi = new MetadataInstances()
 
 export default {
   name: 'FormPanel',
+
+  components: { Form: components.Form, SchemaField },
 
   data() {
     return {
@@ -427,8 +396,6 @@ export default {
       }
     }
   },
-
-  components: { Form, SchemaField },
 
   computed: {
     ...mapState('dataflow', ['activeNodeId', 'transformStatus']),

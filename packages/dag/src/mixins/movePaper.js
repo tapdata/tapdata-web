@@ -1,4 +1,4 @@
-import { on, off } from 'web-core/utils/dom'
+import { on, off, appendHtml } from '@daas/shared'
 
 export default {
   data() {
