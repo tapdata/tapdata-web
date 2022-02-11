@@ -1,4 +1,0 @@
-[submodule "src/_packages/tapdata-web-core"]
-	path = src/_packages/tapdata-web-core
-	url = git@e.coding.net:tapdata/tapdata/tapdata-web-core.git
-	branch = release
