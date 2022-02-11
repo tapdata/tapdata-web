@@ -1,0 +1,23 @@
+{
+  "name": "@daas/dag",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@daas/api": "workspace:^1.0.0",
+    "@daas/form": "workspace:^1.0.0",
+    "@daas/shared": "workspace:^1.0.0",
+    "@formily/core": "^2.0.2",
+    "@formily/reactive": "^2.0.2",
+    "@formily/vue": "^2.0.2",
+    "dagre": "^0.8.5",
+    "mousetrap": "^1.6.5",
+    "vuex": "^3.6.2"
+  }
+}
