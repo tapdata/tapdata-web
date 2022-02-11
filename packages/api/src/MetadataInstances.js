@@ -1,6 +1,6 @@
 import axios from './axios'
 import PublicApi from './PublicApi'
-export default class MetadataInstancesAPI extends PublicApi {
+export class MetadataInstances extends PublicApi {
   constructor() {
     super('/api/MetadataInstances')
   }

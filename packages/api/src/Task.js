@@ -1,6 +1,6 @@
 import PublicApi from './PublicApi'
 import axios from './axios'
-export default class TaskAPI extends PublicApi {
+export class Task extends PublicApi {
   constructor() {
     super('/api/Task')
   }

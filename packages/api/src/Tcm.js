@@ -3,10 +3,10 @@
  * @date 3/2/20
  * @description
  */
-import PublicAPI from './publicApi'
+import PublicAPI from './PublicApi'
 import axios from 'axios'
 
-export default class TCM extends PublicAPI {
+export class TCM extends PublicAPI {
   constructor() {
     super('/api/tcm')
   }

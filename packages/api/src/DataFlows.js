@@ -1,7 +1,7 @@
 import PublicAPI from './PublicApi'
 import axios from './axios'
 
-export default class DataFlows extends PublicAPI {
+export class DataFlows extends PublicAPI {
   constructor() {
     super('/api/DataFlows')
   }
