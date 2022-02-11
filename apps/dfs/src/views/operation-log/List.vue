@@ -1,0 +1,478 @@
+<template>
+  <section class="operation-logs-wrapper g-panel-container" v-if="$route.name === 'OperationLog'">
+    <div class="main">
+      <div class="list-operation">
+        <div class="list-operation-left">
+          <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="table.fetch(1)"> </FilterBar>
+        </div>
+      </div>
+      <TableList
+        ref="table"
+        row-key="id"
+        :columns="columns"
+        :remoteMethod="getData"
+        class="mt-4"
+        @sort-change="sortChange"
+      >
+        <template slot="operationType" slot-scope="scope">
+          <div>{{ getOperationTypeLabel(scope.row) }}</div>
+        </template>
+        <template slot="desc" slot-scope="scope">
+          <span
+            v-for="(item, index) in descFnc(scope.row)"
+            :key="index"
+            :class="[{ 'color-primary cursor-pointer': item.variable }]"
+            @click="clickDescSpan(item, scope.row)"
+          >
+            {{ item.text || '' }}
+          </span>
+        </template>
+        <div v-if="!isSearching" class="migration-table__empty" slot="empty">
+          <VIcon size="120">no-data-color</VIcon>
+          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+            <span>{{ $t('gl_no_data') }}</span>
+          </div>
+        </div>
+        <div v-else class="migration-table__empty" slot="empty">
+          <VIcon size="120">search-no-data-color</VIcon>
+          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+            <span>{{ $t('gl_no_match_result') }}</span>
+            <ElLink type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</ElLink>
+          </div>
+        </div>
+      </TableList>
+    </div>
+  </section>
+  <RouterView v-else></RouterView>
+</template>
+
+<script>
+import VIcon from '@/components/VIcon'
+import FilterBar from '@/components/filter-bar'
+import TableList from '@/components/TableList'
+import { isEmpty } from '@/util'
+
+export default {
+  components: { VIcon, FilterBar, TableList },
+  data() {
+    return {
+      loading: true,
+      searchParams: {
+        operationType: '',
+        parameter1: '',
+        start: '',
+        end: '',
+        username: ''
+      },
+      source: [], // 所有数据
+      list: [], // 展示的数据
+      order: 'createTime desc',
+      filterItems: [],
+      operationTypeOptions: [
+        // 连接
+        {
+          label: this.$t('operation_log_connection_create'),
+          value: 'connection_create',
+          desc: this.$t('operation_log_connection_create_tip')
+        },
+        {
+          label: this.$t('operation_log_connection_update'),
+          value: 'connection_update',
+          desc: this.$t('operation_log_connection_update_tip')
+        },
+        {
+          label: this.$t('operation_log_connection_copy'),
+          value: 'connection_copy',
+          desc: this.$t('operation_log_connection_copy_tip')
+        },
+        {
+          label: this.$t('operation_log_connection_delete'),
+          value: 'connection_delete',
+          desc: this.$t('operation_log_connection_delete_tip')
+        },
+        // 任务
+        {
+          label: this.$t('operation_log_migration_create'),
+          value: 'migration_create',
+          desc: this.$t('operation_log_migration_create_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_start'),
+          value: 'migration_start',
+          desc: this.$t('operation_log_migration_start_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_update'),
+          value: 'migration_update',
+          desc: this.$t('operation_log_migration_update_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_copy'),
+          value: 'migration_copy',
+          desc: this.$t('operation_log_migration_copy_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_reset'),
+          value: 'migration_reset',
+          desc: this.$t('operation_log_migration_reset_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_delete'),
+          value: 'migration_delete',
+          desc: this.$t('operation_log_migration_delete_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_stop'),
+          value: 'migration_stop',
+          desc: this.$t('operation_log_migration_stop_tip')
+        },
+        {
+          label: this.$t('operation_log_migration_forceStop'),
+          value: 'migration_forceStop',
+          desc: this.$t('operation_log_migration_forceStop_tip')
+        },
+        // Agent
+        {
+          label: this.$t('operation_log_agent_rename'),
+          value: 'agent_rename',
+          desc: this.$t('operation_log_agent_rename_tip')
+        },
+        {
+          label: this.$t('operation_log_agent_update'),
+          value: 'agent_update',
+          desc: this.$t('operation_log_agent_update_tip')
+        },
+        // 校验
+        {
+          label: this.$t('operation_log_inspect_create'),
+          value: 'inspect_create',
+          desc: this.$t('operation_log_inspect_create_tip')
+        },
+        {
+          label: this.$t('operation_log_inspect_start'),
+          value: 'inspect_start',
+          desc: this.$t('operation_log_inspect_start_tip')
+        },
+        {
+          label: this.$t('operation_log_inspect_update'),
+          value: 'inspect_update',
+          desc: this.$t('operation_log_inspect_update_tip')
+        },
+        {
+          label: this.$t('operation_log_inspect_delete'),
+          value: 'inspect_delete',
+          desc: this.$t('operation_log_inspect_delete_tip')
+        },
+        // 二次校验
+        {
+          label: this.$t('operation_log_difference_inspect_start'),
+          value: 'differenceInspect_start',
+          desc: this.$t('operation_log_difference_inspect_start_tip')
+        },
+        // 通知
+        { label: '已读全部通知', value: 'message_readAll', desc: '设置全部通知为已读' },
+        { label: '删除全部通知', value: 'message_deleteAll', desc: '删除了全部通知' },
+        { label: '标记通知为已读', value: 'message_read', desc: '将选中的通知全部标记为已读' },
+        { label: '删除通知', value: 'message_delete', desc: '将选中的通知全部删除' },
+        { label: '修改通知设置', value: 'userNotification_update', desc: '修改了系统通知设置' }
+      ],
+      columns: [
+        {
+          label: '用户名',
+          prop: 'username',
+          minWidth: 160
+        },
+        {
+          label: '操作时间',
+          prop: 'createTime',
+          dataType: 'time',
+          width: 180
+        },
+        {
+          label: '操作对象',
+          prop: 'parameter1',
+          width: 350
+        },
+        {
+          label: '操作类型',
+          prop: 'operationType',
+          slotName: 'operationType',
+          width: 120
+        },
+        {
+          label: '操作描述',
+          prop: 'desc',
+          slotName: 'desc',
+          minWidth: 300
+        }
+      ]
+    }
+  },
+  computed: {
+    table() {
+      return this.$refs.table
+    },
+    isSearching() {
+      return !!Object.values(this.searchParams).join('')
+    }
+  },
+  watch: {
+    $route(route) {
+      if (route.name === 'OperationLog') {
+        let query = route.query
+        this.searchParams = Object.assign(this.searchParams, query)
+        let pageNum = isEmpty(query) ? undefined : 1
+        this.table.fetch(pageNum)
+      }
+    }
+  },
+  created() {
+    let query = this.$route.query
+    this.searchParams = Object.assign(this.searchParams, query)
+    this.getSearchItems()
+  },
+  methods: {
+    getModularAndOperation(operationType) {
+      let [modular, operation] = operationType.split('_')
+      return { modular, operation }
+    },
+    search(debounce) {
+      let { searchParams } = this
+      let query = {}
+      for (let key in searchParams) {
+        if (searchParams[key]) {
+          query[key] = searchParams[key]
+        }
+      }
+      const { delayTrigger } = this.$util
+      delayTrigger(() => {
+        this.$router.replace({
+          name: 'OperationLog',
+          query: query
+        })
+      }, debounce)
+    },
+    getSearchItems() {
+      this.filterItems = [
+        {
+          label: '操作类型',
+          key: 'operationType',
+          type: 'select-inner',
+          items: this.operationTypeOptions
+        },
+        {
+          label: '操作时间',
+          key: 'start,end',
+          type: 'datetimerange'
+        },
+        {
+          placeholder: '操作对象',
+          key: 'parameter1',
+          type: 'input'
+        },
+        {
+          placeholder: '用户名称',
+          key: 'username',
+          type: 'input'
+        }
+      ]
+    },
+    getData({ page }) {
+      const { toRegExp } = this.$util
+      let { current, size } = page
+      let { operationType, parameter1, start, end, username } = this.searchParams
+      let where = {
+        type: 'userOperation' // 默认用户操作
+      }
+      // 操作类型
+      if (operationType) {
+        let { modular, operation } = this.getModularAndOperation(operationType)
+        where['modular'] = modular
+        where['operation'] = operation
+      }
+      // 操作对象
+      if (parameter1) {
+        where['parameter1'] = { $regex: toRegExp(parameter1), $options: 'i' }
+      }
+      if (username) {
+        where['username'] = { $regex: toRegExp(username), $options: 'i' }
+      }
+      let dateObj = {}
+      // 开始时间
+      if (start) {
+        dateObj.$gt = {
+          $date: start
+        }
+      }
+      if (end) {
+        dateObj.$lt = {
+          $date: end
+        }
+      }
+      if (!isEmpty(dateObj)) {
+        where['createTime'] = dateObj
+      }
+      let filter = {
+        where,
+        limit: size,
+        skip: size * (current - 1),
+        order: this.order
+      }
+      return this.$axios
+        .get('tm/api/UserLogs?filter=' + encodeURIComponent(JSON.stringify(filter)))
+        .then(({ total, items }) => {
+          return {
+            total: total,
+            data: items
+          }
+        })
+    },
+    sortChange({ prop, order }) {
+      this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'asc' : 'desc'}`
+      this.table.fetch(1)
+    },
+    getOperationTypeLabel(row) {
+      return this.operationTypeOptions.find(item => item.value === `${row.modular}_${row.operation}`)?.label
+    },
+    descFnc(row) {
+      let { modular, operation, rename } = row
+      let findOne = this.operationTypeOptions.find(item => item.value === `${modular}_${operation}`)
+      let desc = findOne?.desc ?? ''
+      if (modular === 'connection' && operation === 'update' && rename) {
+        desc = this.$t('operation_log_modify_connection_name')
+      }
+      // 不添加事件  ${parameter1} ${parameter2}  添加事件@{parameter1} @{parameter2}
+      let replaceStr = desc.replace(/\${(parameter\d+)}/gi, (item, subItem) => {
+        return row[subItem]
+      }) // 替换掉所有${}
+      let vReg = /(@{parameter\d+})/gi
+      // 根据@{}分割，保留分割符
+      return replaceStr.split(vReg).map(item => {
+        // @{}添加标记，做事件处理
+        if (vReg.test(item)) {
+          return {
+            text: row[item.match(/\w+/g)?.[0]],
+            variable: true
+          }
+        }
+        return {
+          text: item
+        }
+      })
+    },
+    clickDescSpan(item, row) {
+      if (!item.variable) {
+        return
+      }
+      this.toGoList(row)
+    },
+    toGoList(row) {
+      let { modular, parameter1 } = row
+      switch (modular) {
+        // 任务
+        case 'migration':
+          this.$router.push({
+            name: 'Task',
+            query: {
+              status: '',
+              syncType: '',
+              agentId: '',
+              keyword: parameter1
+            }
+          })
+          break
+        // 连接
+        case 'connection':
+          this.$router.push({
+            name: 'Connection',
+            query: {
+              status: '',
+              keyword: parameter1
+            }
+          })
+          break
+        // Agent
+        case 'agent':
+          this.$router.push({
+            name: 'Instance',
+            query: {
+              status: '',
+              keyword: parameter1
+            }
+          })
+          break
+        // 二次校验
+        case 'differenceInspect':
+          this.$router.push({
+            name: 'Verify',
+            query: {
+              keyword: parameter1
+            }
+          })
+          break
+        // 数据校验
+        case 'inspect':
+          this.$router.push({
+            name: 'Verify',
+            query: {
+              keyword: parameter1
+            }
+          })
+          break
+      }
+    },
+    reset() {
+      this.searchParams = {
+        operationType: '',
+        parameter1: '',
+        start: '',
+        end: '',
+        username: ''
+      }
+      this.search()
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.operation-logs-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+  .pointer {
+    cursor: pointer;
+  }
+  .btn-refresh {
+    padding: 0;
+    height: 32px;
+    line-height: 32px;
+    width: 32px;
+    font-size: 16px;
+  }
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .operation-logs-table {
+    flex: 1;
+    overflow: auto;
+    border-bottom: none;
+  }
+}
+::v-deep {
+  .el-dropdown-menu__item.dropdown-item--disabled {
+    color: map-get($color, disable);
+    cursor: default;
+    &:hover {
+      background: unset;
+      color: map-get($color, disable);
+    }
+  }
+}
+</style>

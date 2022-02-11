@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="53px" height="53px" viewBox="0 0 53 53" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>wancheng</title>
+    <g id="新手引导" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="新手引导-安装Agent（已启用" transform="translate(-1316.000000, -440.000000)" fill-rule="nonzero">
+            <g id="wancheng" transform="translate(1316.000000, 440.000000)">
+                <path d="M26.5,0 C41.1355459,0 53,11.8644541 53,26.5 C53,41.1355459 41.1355459,53 26.5,53 C11.8644541,53 0,41.1355459 0,26.5 C0,11.8644541 11.8644541,0 26.5,0 Z" id="路径" fill="#8ACD54"></path>
+                <polygon id="路径" fill="#FFFFFF" points="43 19.64682 23.93857 37.5087957 23.3746224 38 22.8106747 37.5087957 11 26.4641407 14.8509567 22.8619756 23.3746224 30.8254398 39.2134945 16"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

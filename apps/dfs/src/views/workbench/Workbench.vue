@@ -1,0 +1,475 @@
+<template>
+  <div v-if="$route.name === 'Workbench'" class="workbench-container">
+    <!--	快速开始	-->
+    <div class="workbench-start workbench-section">
+      <el-row :gutter="40" class="section-header py-6">
+        <el-col :span="18" class="main-title">{{ $t('workbench_quick_start') }}</el-col>
+        <el-col :span="6" class="aside-title">{{ $t('workbench_notice') }}</el-col>
+      </el-row>
+      <el-row :gutter="40" class="section-body">
+        <el-col :span="6" v-for="(item, index) in createList" :key="index">
+          <div class="create-list__item flex p-6">
+            <div class="create-list__index block flex justify-content-center align-items-center flex-shrink-0">
+              {{ index + 1 }}
+            </div>
+            <div class="create-list__main ml-4">
+              <div class="create-list__name mb-4 fs-6">{{ item.name }}</div>
+              <div class="create-list__desc">{{ item.desc }}</div>
+              <el-link type="primary" class="float-end pointer" @click="item.action">
+                <span>{{ item.btnName }}</span>
+                <VIcon class="ml-2" size="12">right</VIcon>
+              </el-link>
+            </div>
+          </div>
+        </el-col>
+        <el-col :span="6">
+          <div class="aside-main notice-list flex-grow-1 p-6">
+            <ul class="notice-list__list">
+              <li
+                v-for="(item, index) in notices.slice(0, 5)"
+                :key="index"
+                class="notice-list__item flex align-items-center mb-4 px-1 pointer"
+              >
+                <div v-if="item.type" class="notice-list__type mr-4 p-1">
+                  {{ item.type }}
+                </div>
+                <!--                <el-link-->
+                <!--                  v-if="item.id === 9"-->
+                <!--                  target="_blank"-->
+                <!--                  type="primary"-->
+                <!--                  class="notice-list__name flex-grow-1 ellipsis block pointer"-->
+                <!--                  href="https://sourl.cn/2f3mPF"-->
+                <!--                >-->
+                <!--                  {{ item.name }}-->
+                <!--                </el-link>-->
+                <el-link
+                  type="primary"
+                  class="notice-list__name flex-grow-1 ellipsis block pointer"
+                  @click="toNotice(item)"
+                >
+                  {{ item.name }}
+                </el-link>
+                <div class="notice-list__time">
+                  {{ formatFromNow(item.time) }}
+                </div>
+              </li>
+            </ul>
+          </div>
+        </el-col>
+      </el-row>
+    </div>
+    <!--	概览	-->
+    <div class="workbench-overview workbench-section">
+      <el-row :gutter="40" class="section-header py-6">
+        <el-col :span="18" class="main-title">{{ $t('workbench_overview') }}</el-col>
+        <el-col :span="6" class="aside-title">{{ $t('workbench_guide') }}</el-col>
+      </el-row>
+      <el-row :gutter="40" class="section-body">
+        <el-col :span="18">
+          <ul class="agent-list__list flex-grow-1 flex justify-content-around px-5">
+            <li v-for="(item, index) in agentList" :key="index" class="agent-list__item py-6" :ref="item.key">
+              <div class="agent-list__name flex align-items-center justify-content-center mx-auto mb-3">
+                <VIcon size="14" class="icon" color="#888">{{ item.icon }}</VIcon>
+                <span class="ml-1 fs-7">{{ item.name }}</span>
+              </div>
+              <div class="color-primary text-center fs-1">
+                {{ item.value }}
+              </div>
+              <div class="agent-list__detail flex flex-wrap justify-content-around mt-3 py-2 px-1">
+                <div v-for="(detail, dIndex) in item.list" :key="dIndex" :class="['agent-list__status', detail.class]">
+                  <span>{{ detail.label }}</span>
+                  <span>:</span>
+                  <span :class="['ml-1']">{{ detail.value }}</span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </el-col>
+        <el-col :span="6">
+          <div class="aside-main guide-list flex-grow-1 p-6">
+            <div class="guide-list__list">
+              <el-link
+                v-for="(item, index) in guides"
+                :key="index"
+                type="primary"
+                class="guide-list__item mb-4 block pointer"
+                @click="clickGuide(item)"
+              >
+                {{ item.name }}
+              </el-link>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+    </div>
+  </div>
+  <router-view v-else></router-view>
+</template>
+
+<script>
+import VIcon from '@/components/VIcon'
+
+export default {
+  name: 'Workbench',
+  components: { VIcon },
+  data() {
+    const $t = this.$t.bind(this)
+    return {
+      createList: [
+        {
+          name: $t('agent_manage'),
+          desc: $t('workbench_agent_desc'),
+          btnName: $t('workbench_agent_button_create'),
+          action: this.createAgent
+        },
+        {
+          name: $t('connection_manage'),
+          desc: $t('workbench_connection_desc'),
+          btnName: $t('workbench_connection_button_create'),
+          action: this.createConnection
+        },
+        {
+          name: $t('task_manage'),
+          desc: $t('workbench_task_desc'),
+          btnName: $t('workbench_task_button_create'),
+          action: this.createTask
+        }
+      ], // 创建列表
+      agentList: [
+        {
+          name: 'Agent',
+          key: 'agent',
+          icon: 'agent',
+          value: 0,
+          list: [
+            {
+              label: $t('agent_status_running'),
+              value: 0,
+              class: 'success'
+            },
+            {
+              label: $t('agent_status_stopped'),
+              value: 0,
+              class: 'error'
+            }
+          ]
+        },
+        {
+          name: $t('workbench_overview_connection'),
+          key: 'connection',
+          icon: 'connection',
+          value: 0,
+          list: [
+            {
+              label: $t('workbench_overview_connection_ready'),
+              value: 0
+            },
+            {
+              label: $t('workbench_overview_connection_invalid'),
+              value: 0
+            }
+          ]
+        },
+        {
+          name: $t('workbench_overview_task'),
+          key: 'task',
+          icon: 'task',
+          value: 0,
+          list: [
+            {
+              label: $t('task_sync_type_initial_sync'),
+              value: 0
+            },
+            {
+              label: $t('task_sync_type_cdc'),
+              value: 0
+            },
+            {
+              label: $t('task_sync_type_initial_sync_cdc'),
+              value: 0
+            }
+          ]
+        }
+      ], // 介绍列表
+      notices: [], // 公告列表
+      guides: [
+        {
+          name: $t('workbench_guide_novice'),
+          action: 'guide'
+        },
+        {
+          name: $t('workbench_guide_documentation'),
+          url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme'
+        },
+        {
+          name: $t('workbench_guide_problem'),
+          url: 'https://www.yuque.com/tapdata/cloud/iff88o'
+        },
+        {
+          name: $t('workbench_guide_data_safe'),
+          url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_chan-pin-jia-gou-ji-yuan-li'
+        }
+      ],
+      isGuide: true
+    }
+  },
+  mounted() {
+    this.init()
+  },
+  methods: {
+    init() {
+      this.loadAgent() // agent
+      this.loadConnection() // 连接、任务
+      this.loadNotices() // 通知公告
+    },
+    loadAgent() {
+      let agentList = this.agentList
+      const loading = this.$loading({
+        target: this.$refs.agent?.[0]
+      })
+      this.$axios
+        .get('/api/tcm/agent/agentCount')
+        .then(data => {
+          agentList[0].value = data.agentTotalCount || 0
+          agentList[0].list[0].value = data.agentRunningCount || 0
+          agentList[0].list[1].value = agentList[0].value - agentList[0].list[0].value
+        })
+        .finally(() => {
+          loading.close()
+        })
+    },
+    loadConnection() {
+      let agentList = this.agentList
+      const connectionLoading = this.$loading({
+        target: this.$refs.connection?.[0]
+      })
+      const taskLoading = this.$loading({
+        target: this.$refs.task?.[0]
+      })
+      this.$axios
+        .get('tm/api/DataFlows/chart')
+        .then(data => {
+          // 连接
+          const chart8 = data.chart8
+          if (chart8) {
+            agentList[1].value = chart8.total
+            agentList[1].list[0].value = chart8.ready || 0
+            agentList[1].list[1].value = chart8.invalid || 0
+          }
+
+          // 任务
+          const chart9 = data.chart9
+          if (chart9) {
+            agentList[2].value = chart9.total
+            agentList[2].list[0].value = chart9.initial_sync || 0
+            agentList[2].list[1].value = chart9.cdc || 0
+            agentList[2].list[2].value = chart9['initial_sync+cdc'] || 0
+          }
+        })
+        .finally(() => {
+          connectionLoading.close()
+          taskLoading.close()
+        })
+    },
+    loadNotices() {
+      this.notices = [
+        {
+          id: 10,
+          type: '',
+          name: 'Tapdata Cloud 2.0.1 版本发布啦！',
+          time: '2022-02-11'
+        },
+        {
+          id: 9,
+          type: '',
+          name: '升级公告！',
+          time: '2022-01-20'
+        },
+        {
+          id: 8,
+          type: '',
+          name: 'Tapdata Cloud 1.0.9 版本发布啦！',
+          time: '2021-12-21'
+        },
+        {
+          id: 7,
+          type: '',
+          name: 'Tapdata 在线研讨会：DaaS vs 大数据平台，是竞争还是共处？',
+          time: '2021-12-03'
+        },
+        {
+          id: 6,
+          type: '',
+          name: 'Tapdata Cloud 最新功能概览',
+          time: '2021-12-03'
+        },
+        {
+          id: 5,
+          type: '',
+          name: 'Tapdata Cloud 1.0.8 版本发布啦！',
+          time: '2021-12-03'
+        },
+        {
+          id: 4,
+          type: '',
+          name: 'Tapdata Cloud 1.0.7 版本发布啦！',
+          time: '2021-10-26'
+        },
+        {
+          id: 3,
+          type: '',
+          name: 'Tapdata Cloud 1.0.6 版本发布啦！',
+          time: '2021-08-30'
+        },
+        {
+          id: 2,
+          type: '',
+          name: '异构数据库同步云平台 Tapdata Cloud 开启有奖公测',
+          time: '2021-07-31'
+        },
+        {
+          id: 1,
+          type: '',
+          name: 'Tapdata Cloud上线公测',
+          time: '2021-07-01'
+        }
+      ]
+    },
+    createAgent() {
+      this.$router.push({
+        name: 'Instance',
+        query: {
+          create: true
+        }
+      })
+    },
+    createTask() {
+      this.$router.push({
+        name: 'DataflowCreate'
+      })
+    },
+    createConnection() {
+      this.$root.$emit('select-connection-type')
+    },
+    toNotice(item) {
+      this.$router.push({
+        name: 'WorkbenchNotice',
+        query: {
+          id: item?.id
+        }
+      })
+    },
+    clickGuide(item) {
+      if (item.action) {
+        this.$root.$emit('show-guide')
+        return
+      }
+      window.open(item.url, '_blank')
+    },
+    formatFromNow(date) {
+      return this.$moment(date)?.fromNow()
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.workbench-container {
+  height: 100%;
+  min-height: 610px;
+  min-width: 1100px;
+  box-sizing: border-box;
+  .pointer {
+    cursor: pointer;
+  }
+}
+.main-title,
+.aside-title {
+  font-size: 18px;
+  height: 24px;
+  line-height: 24px;
+}
+// 快速开始
+.create-list__item {
+  background-color: #fff;
+  //min-width: 200px;
+  height: 213px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  &:hover {
+    box-shadow: 0 2px 11px 8px #e0e2e7;
+  }
+}
+.create-list__index {
+  width: 22px;
+  height: 22px;
+  color: map-get($color, primary);
+  border: 1px solid map-get($color, primary);
+  border-radius: 50%;
+}
+.create-list__main {
+  flex: 1;
+  overflow: hidden;
+}
+.create-list__name {
+  color: #000;
+  white-space: nowrap;
+}
+.create-list__desc {
+  height: 110px;
+  overflow: auto;
+  color: rgba(0, 0, 0, 0.49);
+}
+.aside-main {
+  height: 213px;
+  background-color: #fff;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+.agent-list__list {
+  background-color: #fff;
+  border-radius: 4px;
+}
+.agent-list__item {
+  //min-width: 250px;
+  height: 190px;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+.agent-list__name {
+  .vicon {
+    color: #888;
+  }
+}
+.agent-list__detail {
+  width: 232px;
+  background-color: #fafafb;
+  color: rgba(0, 0, 0, 0.5);
+  .agent-list__status {
+    white-space: nowrap;
+    margin-right: 8px;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  .success {
+    color: #599f3f;
+  }
+  .error {
+    color: #f7a237;
+  }
+}
+// 通知公告
+.notice-list__type {
+  background: #f7f8f9;
+}
+.notice-list__time {
+  color: rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  width: 80px;
+  text-align: right;
+}
+.guide-list {
+  height: 190px;
+}
+</style>
