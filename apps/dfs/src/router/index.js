@@ -10,6 +10,10 @@ import i18n from '@/i18n'
 const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/Form.vue')
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/connection/Form.vue')
 const DataflowDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/copy/Index.vue')
+const DagEditor = async () => {
+  const { Editor } = await import('@daas/dag')
+  return Editor
+}
 
 const routes = [
   {
@@ -295,12 +299,12 @@ const routes = [
   {
     path: '/dataflow/editor',
     name: 'DataflowNew',
-    component: () => import('web-core/views/dataflow/Editor')
+    component: DagEditor
   },
   {
     path: '/dataflow/editor/:id',
     name: 'DataflowEditor',
-    component: () => import('web-core/views/dataflow/Editor')
+    component: DagEditor
   }
 ]
 

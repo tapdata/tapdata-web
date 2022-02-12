@@ -1,6 +1,6 @@
 {
   "name": "dfs",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "submodule": "node ./init_submodule.js",
@@ -15,10 +15,14 @@
     "vue": "^2.6.14"
   },
   "dependencies": {
+    "@daas/dag": "workspace:^1.0.0",
+    "@daas/form": "workspace:^1.0.0",
+    "@daas/shared": "workspace:^1.0.0",
     "@formily/core": "^2.0.2",
-    "@formily/element": "^2.0.2",
+    "@formily/json-schema": "^2.0.9",
     "@formily/reactive": "^2.0.2",
     "@formily/reactive-vue": "^2.0.2",
+    "@formily/shared": "^2.0.9",
     "@formily/vue": "^2.0.2",
     "@vue/composition-api": "^1.2.4",
     "axios": "^0.21.1",
@@ -28,6 +32,7 @@
     "echarts": "^5.0.2",
     "element-ui": "^2.15.1",
     "github-markdown-css": "^4.0.0",
+    "highlight.js": "^11.0.1",
     "jsonwebtoken": "^8.5.1",
     "jsplumb": "^2.15.6",
     "moment": "^2.29.1",
@@ -63,8 +68,6 @@
     "mockjs": "^1.1.0",
     "nodemon": "^2.0.12",
     "prettier": "^2.2.1",
-    "sass": "^1.34.1",
-    "sass-loader": "^10.2.0",
     "svg-sprite-loader": "^6.0.2",
     "svgo-loader": "^3.0.0",
     "vue-cli-plugin-element": "^1.0.1",

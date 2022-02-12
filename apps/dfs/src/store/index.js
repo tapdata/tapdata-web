@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import dataflow from 'web-core/store/modules/dataflow'
+import dataflow from '@daas/dag/src/store'
 
 Vue.use(Vuex)
 
