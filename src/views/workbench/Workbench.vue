@@ -280,12 +280,6 @@ export default {
           time: '2022-02-12 14:00:00'
         },
         {
-          id: 9,
-          type: '',
-          name: '升级公告！',
-          time: '2022-01-20'
-        },
-        {
           id: 8,
           type: '',
           name: 'Tapdata Cloud 1.0.9 版本发布啦！',
