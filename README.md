@@ -5,7 +5,6 @@
 ## 快速开始
 
 1. **安装 [pnpm](https://pnpm.io/zh/motivation)**
-
 ```bash
 npm install -g pnpm
 ```
@@ -27,8 +26,9 @@ pnpm start:dfs
 
 4. **命令传参**
 
+> 常用的参数有 `--port` 和 `--dest`，详见[vue-cli文档](https://cli.vuejs.org/zh/guide/cli-service.html#%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4)
+
 ```bash
-# 常用的参数有 `--port` 和 `--dest`，详见[vue-cli文档](https://cli.vuejs.org/zh/guide/cli-service.html#%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4)
 # 在根目录，指定端口启动（windows下可能要多加一个--）
 pnpm start:daas -- -- --port=8100
 # 等效于
