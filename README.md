@@ -94,6 +94,34 @@ git mv src public README.md vue.config.js package.json .env apps/dfs
 git merge import-dfs  --allow-unrelated-historie
 ```
 
+## 使用 [git worktree](https://git-scm.com/docs/git-worktree) 同时开发多个分支
+
+- 比如将dfs分支检出到指定目录
+
+```bash
+git worktree add ../dfs dfs-v2.0.2
+
+# 在 dfs 目录下进行开发
+cd ../dfs
+pnpm i
+pnpm start:dfs
+``` 
+
+- 废弃某个检出的分支
+```bash
+rm -rf ../dfs
+git worktree prune
+
+# 或者
+git worktree remove ../dfs
+``` 
+
+### worktree 的优点
+
+- git worktree 可以快速进行并行开发，同一个项目多个分支同时并行演进
+- git worktree 的提交可以在同一个项目中共享
+- git worktree 和单独 clone 项目相比，节省了硬盘空间，又因为 git worktree 使用 hard link 实现，要远远快于 clone
+
 ## pnpm
 
 ### [命令行](https://pnpm.io/zh/pnpm-cli)
