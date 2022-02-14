@@ -86,6 +86,7 @@ git merge import-dfs  --allow-unrelated-historie
 ## 使用 [git worktree](https://git-scm.com/docs/git-worktree) 同时开发多个分支
 
 - 比如将dfs分支检出到指定目录
+
 ```bash
 git worktree add ../dfs dfs-v2.0.2
 
@@ -96,6 +97,7 @@ pnpm start:dfs
 ``` 
 
 - 废弃某个检出的分支
+
 ```bash
 rm -rf ../dfs
 git worktree prune
