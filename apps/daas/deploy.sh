@@ -2,6 +2,12 @@
 # 当发生错误时中止脚本
 #set -e
 
+DAAS_HOME=$(cd "$(dirname "$0")" && pwd)
+
+echo $DAAS_HOME
+
+cd $DAAS_HOME
+
 HOST="126,185"
 
 usage() {
@@ -27,7 +33,7 @@ done
 
 HOST_ARR=(`echo $HOST | tr ',' ' '`)
 
-yarn && yarn build
+pnpm i -w && pnpm build
 
 cd dist
 
