@@ -69,7 +69,7 @@ git remote add dfs git@e.coding.net:tapdata/dfs/dfs-web.git
 2. 拉取 dfs 代码，并检出要同步的分支
 ```bash
 git fetch dfs
-git checkout -b import-dfs dfs/release
+git checkout -b import-dfs-to-daas-web dfs/release
 ```
 
 3. 调整成 daas-web 的目录结构
