@@ -25,6 +25,75 @@ pnpm start:daas
 pnpm start:dfs
 ```
 
+4. **命令传参**
+> 常用的参数有 `--port` 和 `--dest`，详见[vue-cli文档](https://cli.vuejs.org/zh/guide/cli-service.html#%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4)
+```bash
+# 在根目录，指定端口启动（windows下可能要多加一个--）
+pnpm start:daas -- -- --port=8100
+# 等效于
+cd apps/daas
+pnpm start:test -- --port=8100
+```
+
+5. **设置淘宝镜像源**
+```bash
+# 使用nrm
+npm i -g nrm
+nrm use taobao
+
+# 或者手动设置
+pnpm set registry https://registry.npm.taobao.org/ 
+
+# 查看设置的源
+pnpm get registry
+```
+
+## 同步老仓库代码
+
+### daas
+
+1. 将frontend-el目录拆成独立分支
+
+```bash
+# cd 到 daas 项目目录下执行，-P: 目录、-b 分支名，这一步比较耗时
+git subtree split -P frontend-el -b split-frontend-el-2.0
+```
+
+2. 在daas-web下拉取上面拆分好的分支
+
+```bash
+# cd 到 daas-web 项目目录下执行
+git pull ../daas split-frontend-el-2.0 -r
+```
+
+### dfs
+
+1. 在 daas-web 下设置dfs项目远程地址
+
+```bash
+git remote add dfs git@e.coding.net:tapdata/dfs/dfs-web.git
+```
+
+2. 拉取 dfs 代码，并检出要同步的分支
+
+```bash
+git fetch dfs
+git checkout -b import-dfs dfs/release
+```
+
+3. 调整成 daas-web 的目录结构
+
+```bash
+# 举个 🌰
+git mv src public README.md vue.config.js package.json .env apps/dfs
+```
+
+4. 上一步调整完提交之后，切换到 daas-web 的主分支，开始合并
+
+```bash
+git merge import-dfs  --allow-unrelated-historie
+```
+
 ## pnpm
 
 ### [命令行](https://pnpm.io/zh/pnpm-cli)
