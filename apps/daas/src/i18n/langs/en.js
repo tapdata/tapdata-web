@@ -787,5 +787,27 @@ export default {
   customer_logs_no_more_data: 'No more data',
   customer_logs_no_data: 'No data yet',
   customer_logs_no_search_data: 'No search results',
-  customer_logs_copy_result: 'copied to clipboard'
+  customer_logs_copy_result: 'copied to clipboard',
+
+  // 共享挖掘
+  share_list_name: 'Shared Mining',
+  share_list_connection: 'Belonging to the connection',
+  share_list_time_excavation: 'Excavation time point',
+  share_list_creat_time: 'Create time',
+  share_list_setting: 'Mining settings',
+  share_list_dig_task_search: 'Dig task name search',
+  share_list_connection_search: 'Connection name search',
+  share_list_dig_setting: 'digging settings',
+  share_form_setting_connection_name: 'Store MongoDB connection name',
+  share_form_setting_table_name: 'Store MongoDB table name',
+  share_form_setting_log_time: 'log save time',
+  share_form_edit_name: 'Mining name',
+  share_form_edit_dig_time: 'Log mining time',
+  share_form_edit_localTZ_type: 'User browser time zone',
+  share_form_edit_current_type: 'At the moment',
+  share_form_edit_connTZ_type: 'Database time zone',
+  share_form_edit_day: 'day',
+  share_form_edit_title: 'Whether to give up editing this mining task',
+  share_form_edit_text: 'This operation will not save the modified content',
+  share_form_edit_give_up: 'give up'
 }

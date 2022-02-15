@@ -211,6 +211,10 @@ let menuSetting = [
         // query: '?mapping=custom'
       },
       {
+        name: 'sharedMining',
+        icon: 'shujutongbu'
+      },
+      {
         name: 'dataVerification',
         icon: 'hechabidui-copy',
         code: 'Data_verify_menu'

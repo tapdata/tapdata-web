@@ -366,7 +366,6 @@ export default {
   connection_form_hazecast_cancel: '取消',
   connection_form_hazecast_save: '保存',
 
-
   // Dag
   dag_data_node_label_dameng: 'Dameng節點',
   dag_data_node_label_database_link_table: '表名大小寫',
@@ -433,11 +432,6 @@ export default {
   dag_dialog_field_mapping_error_range: '當前值不符合該字段範圍',
   dag_dialog_field_mapping_error_save_prefix: '檢測到您還有',
   dag_dialog_field_mapping_error_save_suffix: '張表的字段類型設置存在問題，請在左側表區域選擇有問題的表進行處理',
-  dag_dialog_field_mapping_change_type_field_rename: '類型修改',
-  dag_dialog_field_mapping_batch_change_type: '批量修改字段類型',
-  dag_dialog_field_mapping_batch_change_type_source: '源字段類型',
-  dag_dialog_field_mapping_batch_change_type_target: '目標字段類型',
-  dag_dialog_field_mapping_batch_change_type_error_tip: '請先選擇需要源表/目標表轉換的類型',
 
   //任務編輯
   dag_job_check_source: '作為源僅支持全量任務',
@@ -676,5 +670,27 @@ export default {
   customer_logs_no_more_data: '沒有更多數據',
   customer_logs_no_data: '暂无数据',
   customer_logs_no_search_data: '無搜索結果',
-  customer_logs_copy_result: '已復製到剪貼板'
+  customer_logs_copy_result: '已復製到剪貼板',
+
+  // 共享挖掘
+  share_list_name: '共享挖掘',
+  share_list_connection: '所屬連接',
+  share_list_time_excavation: '挖掘所處時間點',
+  share_list_creat_time: '創建時間',
+  share_list_setting: '挖掘設置',
+  share_list_dig_task_search: '挖掘任務名搜索',
+  share_list_connection_search: '連接名稱搜索',
+  share_list_dig_setting: '挖掘設置',
+  share_form_setting_connection_name: '存儲MongoDB連接名稱',
+  share_form_setting_table_name: '存儲MongoDB表名',
+  share_form_setting_log_time: '日誌保存時長',
+  share_form_edit_name: '挖掘名稱',
+  share_form_edit_dig_time: '日誌挖掘時間',
+  share_form_edit_localTZ_type: '用戶瀏覽器時區',
+  share_form_edit_current_type: '此刻',
+  share_form_edit_connTZ_type: '數據庫時區',
+  share_form_edit_day: '天',
+  share_form_edit_title: '是否放棄編輯該挖掘任務',
+  share_form_edit_text: '此操作不會保存已修改的內容',
+  share_form_edit_give_up: '放棄'
 }

@@ -329,6 +329,16 @@ const childRoutes = [
     }
   },
   {
+    path: '/sharedMining',
+    name: 'sharedMining',
+    component: () => import('@/views/task/sharedMining/List'),
+    meta: {
+      code: 'Data_SYNC_menu',
+      title: i18n.t('tap.sharedMining'),
+      isCollapse: false
+    }
+  },
+  {
     path: '/taskHistories',
     name: 'taskHistories',
     component: () => import('@/views/scheduleTasks/Histories'),
