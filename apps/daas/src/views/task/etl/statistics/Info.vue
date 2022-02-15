@@ -324,19 +324,23 @@ export default {
       selectedTimeItems: [
         {
           label: '最近五分钟',
-          value: '5min'
+          value: '5min',
+          spacing: 5 * 60 * 1000
         },
         {
           label: '最近十五分钟',
-          value: '15min'
+          value: '15min',
+          spacing: 15 * 60 * 1000
         },
         {
           label: '最近三十分钟',
-          value: '30min'
+          value: '30min',
+          spacing: 30 * 60 * 1000
         },
         {
           label: '最近一小时',
-          value: '60min'
+          value: '60min',
+          spacing: 60 * 60 * 1000
         },
         {
           label: '自定义时间',
@@ -411,6 +415,9 @@ export default {
       }
     }
   },
+  beforeDestroy() {
+    this.timer && clearInterval(this.timer)
+  },
   methods: {
     init() {
       if (this.task.creator) {
@@ -459,10 +466,16 @@ export default {
     },
     // param1：数组前后操作，  param2:：滑块范围是否追加，false表示范围不变，true表示会扩张
     getMeasurement(reset = false) {
-      const { selectedTime } = this
+      const { selectedTime, selectedTimeItems } = this
       let startTimeStamp, endTimeStamp
       if (selectedTime) {
         ;[startTimeStamp, endTimeStamp] = this.getTimeRangeByType(selectedTime, this.timeRange)
+        if (isNaN(startTimeStamp)) {
+          startTimeStamp = null
+        }
+        if (isNaN(endTimeStamp)) {
+          endTimeStamp = null
+        }
       }
       // 自定义时间，需要选择范围
       if (selectedTime === 'custom') {
@@ -470,9 +483,12 @@ export default {
           return
         }
       }
-      let guanluaryType =
-        this.selectedTime === 'custom' ? this.getTimeSpacingType(startTimeStamp, endTimeStamp) : this.selectedRate
-      let guanluary = this.getGuanluary(guanluaryType)
+      let diff =
+        this.selectedTime === 'custom'
+          ? (endTimeStamp || new Date().getTime()) - startTimeStamp
+          : selectedTimeItems.find(t => t.value === selectedTime).spacing
+      let guanluary = this.getGuanluary(diff)
+
       let subTaskId = this.$route.params?.subId
       let lineDataDeep = this.lineDataDeep
       let tags = {
@@ -587,10 +603,12 @@ export default {
         if (!isEmpty(countObj)) {
           for (let key in overData) {
             let l = countObj[key].length
+            let val0 = countObj[key]?.[0] || 0
+            let val1 = countObj[key]?.[1] || 0
             if (reset) {
-              overData[key] = countObj[key][l - 1] - countObj[key][0]
+              overData[key] = val1 - val0
             } else {
-              overData[key] += countObj[key][l - 1] - countObj[key][0]
+              overData[key] += val1 - val0
             }
           }
         }
@@ -611,7 +629,7 @@ export default {
         // 折线图
         const qpsData = samples[0] || {}
         let { inputQPS = [], outputQPS = [] } = qpsData
-        let qpsDataTime = (qpsData.time || [])
+        let qpsDataTime = qpsData.time || []
         // 空数据，需要模拟时间点
         if (!qpsDataTime.length) {
           qpsDataTime = this.getEmptyData(params.samples[0].start, params.samples[0].end)
@@ -659,75 +677,71 @@ export default {
         })
       })
     },
-    getGuanluary(guanluaryType, format) {
-      let result = 'minute'
+    getGuanluary(val, format) {
+      let diff = val / 1000
+      let timeType
       let formatRes = ''
-      switch (guanluaryType) {
-        case 'day':
-          result = 'month'
-          break
-        case 'hour':
-          result = 'day'
-          break
-        case 'minute':
-          result = 'hour'
-          break
-        default:
-          result = 'minute'
-          break
+      // <= 1h(1 * 60 * 60s) --> minute, second point, max 60 * 12 = 720
+      // <= 12h(12 * 60 * 60s) --> hour, minute point, max 12 * 60 = 720
+      // <= 30d(30 * 24 * 60 * 60s) --> day, hour point, max 24 * 30 = 720
+      // <= 24m+ --> month, day point, max 30 * 24 = 720
+      if (diff <= 1 * 60 * 60) {
+        timeType = 'minute'
+      } else if (diff <= 12 * 60 * 60) {
+        timeType = 'hour'
+      } else if (diff <= 30 * 24 * 60 * 60) {
+        timeType = 'day'
+      } else {
+        timeType = 'month'
       }
       if (format) {
         return formatRes
       }
-      return result
-    },
-    getTimeSpacingType(start, end) {
-      let diff = ((end || new Date().getTime()) - start) / 1000
-      let timeType
-      if (diff > 24 * 60 * 60) {
-        timeType = 'day'
-      } else if (diff > 60 * 60) {
-        timeType = 'hour'
-      } else if (diff > 60) {
-        timeType = 'minute'
-      } else {
-        timeType = 'second'
-      }
       return timeType
+    },
+    getTimeSpacing(type) {
+      // <= 1h(1 * 60 * 60s) --> minute, second point, max 60 * 12 = 720 period 5s
+      // <= 12h(12 * 60 * 60s) --> hour, minute point, max 12 * 60 = 720 period 1m
+      // <= 30d(30 * 24 * 60 * 60s) --> day, hour point, max 24 * 30 = 720 period 1h
+      // <= 24m+ --> month, day point, max 30 * 24 = 720 period 1d
+      let result = ''
+      switch (type) {
+        case 'minute':
+          result = 5 * 1000
+          break
+        case 'hour':
+          result = 1 * 60 * 1000
+          break
+        case 'day':
+          result = 1 * 60 * 60 * 1000
+          break
+        case 'month':
+          result = 1 * 24 * 60 * 60 * 1000
+          break
+      }
+      return result
     },
     getEmptyData(start, end) {
       let result = []
-      const { selectedTime } = this
-      const endTimeStamp = end || new Date().getTime()
-      let timeType = 'second'
-      let timeSpacing = 0
-      switch (selectedTime) {
-        case '5min':
-        case '15min':
-          timeType = 'second'
-          break
-        case '30min':
-        case '60min':
-          timeType = 'minute'
-          break
-        default:
-          timeType = this.getTimeSpacingType(start, endTimeStamp)
-          break
-      }
-      switch (timeType) {
-        case 'second':
-          timeSpacing = 5 * 1000
-          break
-        case 'minute':
-          timeSpacing = 60 * 1000
-          break
-        case 'hour':
-          timeSpacing = 60 * 60 * 1000
-          break
-        case 'day':
-          timeSpacing = 24 * 60 * 60 * 1000
-          break
-      }
+      const { selectedTime, selectedTimeItems } = this
+      let startTimeStamp = start || new Date().getTime()
+      let endTimeStamp = end || new Date().getTime()
+      // let timeType = 'second'
+      // let startTimeStamp, endTimeStamp
+      // if (selectedTime) {
+      //   ;[startTimeStamp, endTimeStamp] = this.getTimeRangeByType(selectedTime, this.timeRange)
+      //   if (isNaN(startTimeStamp)) {
+      //     startTimeStamp = null
+      //   }
+      //   if (isNaN(endTimeStamp)) {
+      //     endTimeStamp = null
+      //   }
+      // }
+      let diff =
+        this.selectedTime === 'custom'
+          ? endTimeStamp - startTimeStamp
+          : selectedTimeItems.find(t => t.value === selectedTime).spacing
+      let timeSpacing = this.getTimeSpacing(this.getGuanluary(diff))
       for (let i = start; i < endTimeStamp; i += timeSpacing) {
         result.push(i)
       }
@@ -846,27 +860,27 @@ export default {
       return result
     },
     changePeriodFnc(val) {
-      switch (val) {
-        case '5min':
-          this.selectTime = 'second'
-          this.selectedRate = 'second'
-          break
-        case '15min':
-          this.selectTime = 'minute'
-          this.selectedRate = 'second'
-          break
-        case '30min':
-          this.selectTime = 'hour'
-          this.selectedRate = 'second'
-          break
-        case '60min':
-          this.selectTime = 'day'
-          this.selectedRate = 'minute'
-          break
-        default:
-          this.selectTime = 'second'
-          break
-      }
+      // switch (val) {
+      //   case '5min':
+      //     this.selectTime = 'second'
+      //     this.selectedRate = 'second'
+      //     break
+      //   case '15min':
+      //     this.selectTime = 'minute'
+      //     this.selectedRate = 'second'
+      //     break
+      //   case '30min':
+      //     this.selectTime = 'hour'
+      //     this.selectedRate = 'second'
+      //     break
+      //   case '60min':
+      //     this.selectTime = 'day'
+      //     this.selectedRate = 'minute'
+      //     break
+      //   default:
+      //     this.selectTime = 'second'
+      //     break
+      // }
       this.resetTimer()
       this.getMeasurement(true)
     },
