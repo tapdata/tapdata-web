@@ -16,6 +16,19 @@ export default {
   // 菜单标题
   menu_title_function: 'Function management',
 
+  // 连接管理
+  connection_form_creat_connection: 'Create connection',
+  connection_form_edit_connection: 'Edit connection',
+  connection_form_data_source: 'Data source',
+  connection_form_data_source_type: 'Data source type',
+  connection_form_connection_name: 'Connection name',
+  connection_form_database_address: 'Database address',
+  connection_form_port: 'Port',
+  connection_form_change: 'change',
+  connection_form_rename: 'rename',
+  connection_form_database_owner_tip:
+    'Comma-separated list of expressions, use * to represent any character of any length',
+
   // 数据校验
   verify_details_title: 'Task verification details',
   verify_history_title: 'Task verification history',

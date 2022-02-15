@@ -26,6 +26,18 @@ export default {
   // 菜单标题
   menu_title_function: '函數管理',
 
+  // 连接管理
+  connection_form_creat_connection: '創建連接',
+  connection_form_edit_connection: '編輯連接',
+  connection_form_data_source: '數據源',
+  connection_form_data_source_type: '數據源類型',
+  connection_form_connection_name: '連接名稱',
+  connection_form_database_address: '數據庫地址',
+  connection_form_port: '端口',
+  connection_form_change: '更換',
+  connection_form_rename: '改名',
+  connection_form_database_owner_tip: '逗號分割的表達式列表，使用 * 代表任意長度任意字符',
+
   // 数据校验
   verify_details_title: '任務校驗詳情',
   verify_history_title: '任務校驗歷史',
@@ -365,7 +377,6 @@ export default {
   connection_form_hazecast_options_target: '目标',
   connection_form_hazecast_cancel: '取消',
   connection_form_hazecast_save: '保存',
-
 
   // Dag
   dag_data_node_label_dameng: 'Dameng節點',
