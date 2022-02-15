@@ -505,9 +505,13 @@ export default {
           }
         }
       }
-      ws.ready(() => {
-        ws.send(msg)
-      }, true)
+      try {
+        ws.ready(() => {
+          ws.send(msg)
+        }, true)
+      } catch (e) {
+        console.log('e', e)
+      }
     },
     reset() {
       this.searchParams = {
