@@ -14,6 +14,11 @@ const DagEditor = async () => {
   return Editor
 }
 
+const NodeEditor = async () => {
+  const { Editor } = await import('@daas/node-design')
+  return Editor
+}
+
 const childRoutes = [
   {
     path: '/dashboard',
@@ -846,7 +851,7 @@ const router = new Router({
     {
       path: '/node/editor',
       name: 'NodeEditor',
-      component: () => import('web-core/views/node/Editor')
+      component: NodeEditor
     }
   ]
 })
