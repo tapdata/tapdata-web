@@ -1,27 +1,40 @@
 <template>
-  <div class="databaseFrom" v-loading="loadingFrom">
-    <header class="header" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
-      {{ $route.params.id ? $t('connection.editDataSource') : $t('connection.createNewDataSource') }}
-    </header>
-    <div class="databaseFrom-body">
-      <main class="databaseFrom-main">
-        <header v-if="$route.params.id" class="edit-header-box">
-          <div class="edit-header">
-            <div class="img-box">
+  <div class="connection-from" v-loading="loadingFrom">
+    <div class="connection-from-body">
+      <main class="connection-from-main">
+        <div class="connection-from-title" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+          {{
+            $route.params.id ? this.$t('connection_form_edit_connection') : this.$t('connection_form_creat_connection')
+          }}
+        </div>
+        <!-- <header class="header" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+          {{ $route.params.id ? $t('connection_form_edit_connection') : $t('connection_form_creat_connection') }}
+        </header> -->
+        <!-- <div class="databaseFrom-body">
+          <main class="databaseFrom-main"> -->
+        <div class="connection-from-label" v-if="$route.params.id">
+          <label class="label">{{ $t('connection_form_data_source') }}: </label>
+          <div class="content-box">
+            <div class="img-box ml-2">
               <img :src="$util.getConnectionTypeDialogImg(databaseType)" />
             </div>
-            <div class="content">{{ model.name }}</div>
-            <div class="addBtn color-primary" @click="dialogEditNameVisible = true">
-              {{ $t('connection.rename') }}
+            <div class="content ml-2">{{ model.name }}</div>
+            <div class="addBtn color-primary ml-2" @click="dialogEditNameVisible = true">
+              {{ $t('connection_form_rename') }}
             </div>
           </div>
-        </header>
-        <header class="edit-header-box" v-else>
-          <div class="edit-header">
-            <div class="img-box">
+        </div>
+        <div class="connection-from-label" v-else>
+          <label class="label">{{ $t('connection_form_data_source_type') }}:</label>
+          <div class="content-box">
+            <div class="img-box ml-2">
               <img :src="$util.getConnectionTypeDialogImg(databaseType)" />
             </div>
-            <div class="content-box">
+            <span class="ml-2">{{ typeMap[databaseType] }}</span>
+            <el-button class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
+              {{ $t('connection_form_change') }}
+            </el-button>
+            <!-- <div class="content-box">
               <div class="content">
                 {{ typeMap[databaseType] }}
                 <div class="addBtn color-primary" @click="dialogDatabaseTypeVisible = true">
@@ -29,20 +42,26 @@
                 </div>
               </div>
               <div class="tip" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
-                {{ $t('dataForm.form.guide') }}
-                <a class="color-primary" target="_blank" href="https://docs.tapdata.net/data-source">{{
-                  $t('dataForm.form.guideDoc')
-                }}</a>
-              </div>
-              <div class="tip" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM')">
-                请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
-              </div>
-            </div>
+                    {{ $t('dataForm.form.guide') }}
+                    <a class="color-primary" target="_blank" href="https://docs.tapdata.net/data-source">{{
+                      $t('dataForm.form.guideDoc')
+                    }}</a>
+                  </div>
+                  <div class="tip" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM')">
+                    请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
+                  </div>
+            </div> -->
           </div>
-        </header>
+        </div>
         <div class="form-wrap">
           <div class="form">
-            <form-builder ref="form" v-model="model" :config="config" @value-change="formChange">
+            <form-builder
+              ref="form"
+              class="form-builder grey"
+              v-model="model"
+              :config="config"
+              @value-change="formChange"
+            >
               <div class="url-tip" slot="name" v-if="!$route.params.id">
                 中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
               </div>
@@ -81,7 +100,7 @@
               </div>
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
               <div class="url-tip" slot="tableFilter">
-                {{ $t('dataForm.form.tableFilterTips') }}
+                {{ $t('connection_form_database_owner_tip') }}
               </div>
               <div class="url-tip" slot="timezone">
                 {{ $t('dataForm.form.timeZoneTips') }}
@@ -509,7 +528,9 @@
           </div>
         </footer>
       </main>
-      <gitbook v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"></gitbook>
+      <GitBook v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"></GitBook>
+      <!-- </div>
+      </main> -->
     </div>
     <Test
       ref="test"
@@ -565,7 +586,7 @@
 <script>
 import factory from '@/api/factory'
 import formConfig from './config'
-import gitbook from './GitBook'
+import GitBook from './GitBook'
 import CodeEditor from '@/components/CodeEditor'
 import Test from './Test'
 import { TYPEMAPCONFIG, defaultModel, defaultCloudModel } from './util'
@@ -577,7 +598,7 @@ const connectionsModel = factory('connections')
 let defaultConfig = []
 export default {
   name: 'DatabaseForm',
-  components: { gitbook, Test, DatabaseTypeDialog, CodeEditor, VIcon },
+  components: { GitBook, Test, DatabaseTypeDialog, CodeEditor, VIcon },
   data() {
     let validateExcelHeader = (rule, value, callback) => {
       let start = this.model.excel_header_start
@@ -781,8 +802,10 @@ export default {
         label: self.$t('dataForm.form.connectionName'),
         required: true,
         maxlength: 100,
+        width: '504px',
         showWordLimit: true,
         show: true,
+        customClass: 'large-item',
         rules: [
           {
             required: true,
@@ -1743,188 +1766,269 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.databaseFrom {
+.connection-from {
   display: flex;
   flex-direction: column;
-  width: 100%;
   height: 100%;
   overflow: hidden;
-  .databaseFrom-body {
+  .connection-from-body {
     display: flex;
     flex: 1;
+    padding-left: 24px;
     overflow: hidden;
-    .databaseFrom-main {
+    background: #fff;
+    .connection-from-main {
       display: flex;
       flex: 1;
       flex-direction: column;
+      .connection-from-title {
+        padding-top: 20px;
+        margin-bottom: 24px;
+        font-size: 14px;
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.85);
+        line-height: 28px;
+      }
+      .connection-from-label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 24px;
+        .label:before {
+          content: '*';
+          color: #f56c6c;
+          margin-right: 4px;
+        }
+        .label {
+          width: 180px;
+          font-size: 12px;
+          color: #606266;
+        }
+        .content-box {
+          display: flex;
+          max-width: 680px;
+          line-height: 22px;
+          font-size: 12px;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: #000000;
+          align-items: center;
+          white-space: nowrap;
+          word-break: break-word;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+        .img-box {
+          display: flex;
+          width: 25px;
+          height: 25px;
+          justify-content: center;
+          align-items: center;
+          background: #fff;
+          border-radius: 3px;
+          img {
+            width: 100%;
+          }
+        }
+      }
       .form-wrap {
         display: flex;
         overflow-y: auto;
         flex: 1;
-      }
-      .form {
-        padding: 0 20px;
-        width: 640px;
-        margin: 0 auto;
-        padding-right: 200px;
-        .url-tip {
-          font-size: 12px;
-          color: #999;
-          line-height: 18px;
-        }
-        .rest-api-box {
-          display: flex;
-          flex: 1;
-          div.rest-api-label {
-            width: 210px;
-            padding-right: 20px;
-            line-height: 28px;
-            font-size: 12px;
-            color: #606266;
-            text-align: right;
-            box-sizing: border-box;
-          }
-          .rest-api-url {
-            width: calc(100% - 200px);
-            border: 1px solid #dedee4;
-            padding: 10px;
-            margin-top: 5px;
-            .rest-api-row {
-              margin-bottom: 10px;
-            }
-            .rest-api-margin {
-              margin-left: 10px;
-            }
-            .rest-api-marginB {
-              margin-bottom: 10px;
-            }
-            .rest-api-label {
-              display: inline-block;
-              width: 80px;
-            }
-            .rest-api-FloatL {
-              float: left;
-            }
-            .small-input {
-              width: 104px;
-            }
-            .min-input {
-              width: 80px;
-            }
-            .medium-input {
-              width: 130px;
-            }
-            .rest-api-Array {
-              margin-bottom: 10px;
-            }
-            .add-btn-icon {
-              cursor: pointer;
-            }
-          }
-        }
-        .gridfs-box {
-          font-size: 12px;
-          .separate {
-            margin: 0 10px;
-          }
-        }
-        .fileBox {
-          display: flex;
-          flex: 1;
-          div.file-label {
-            width: 210px;
-            padding-right: 20px;
-            line-height: 28px;
-            font-size: 12px;
-            color: #606266;
-            text-align: right;
-            box-sizing: border-box;
-          }
-          .file-form-content {
-            width: calc(100% - 200px);
-            padding: 0 10px;
-          }
-          .fromLoopBox {
-            padding: 10px 20px 20px !important;
-            margin-bottom: 12px;
-            box-sizing: border-box;
-            background-color: #fff;
-            border: 1px solid #dedee4;
-            border-radius: 3px;
-            .el-input--mini .el-input__inner {
-              width: 100%;
+        .form {
+          .form-builder {
+            ::v-deep {
+              .e-form-builder-item {
+                width: 396px;
+                &.large-item {
+                  width: 680px;
+                }
+                &.small-item {
+                  width: 320px;
+                }
+                &.mongodb-item {
+                  width: 680px;
+                }
+                &.mongodb-tip-item .el-form-item__content {
+                  width: 680px;
+                }
+                .url-tip {
+                  font-size: 12px;
+                  color: map-get($fontColor, slight);
+                  b {
+                    font-size: 12px;
+                    font-weight: 400;
+                    color: map-get($fontColor, slight);
+                  }
+                }
+              }
             }
           }
         }
       }
-      .edit-header-box {
-        border-bottom: 1px solid #eee;
-        margin-bottom: 20px;
-      }
-      .edit-header {
-        display: flex;
-        justify-content: flex-start;
-        width: 578px;
-        margin: 30px auto;
-      }
-      .title {
-        display: flex;
-        justify-content: flex-start;
-        width: 568px;
-        margin: 40px auto 20px auto;
-      }
-      .img-box {
-        display: flex;
-        width: 52px;
-        height: 52px;
-        justify-content: center;
-        align-items: center;
-        background: #fff;
-        border-radius: 3px;
-        margin-right: 10px;
-        img {
-          width: 100%;
-        }
-      }
-      .content {
-        display: flex;
-        align-items: center;
-        margin-left: 15px;
-        font-size: 22px;
-        max-width: 445px;
-        white-space: nowrap;
-        word-break: break-word;
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
-      .addBtn {
-        cursor: pointer;
-        font-size: 12px;
-        margin-top: 22px;
-        margin-left: 10px;
-      }
-      .content-box {
-        .addBtn {
-          cursor: pointer;
-          font-size: 12px;
-          margin-top: 0;
-          margin-left: 10px;
-        }
+      // .form {
+      //   padding: 0 20px;
+      //   width: 640px;
+      //   margin: 0 auto;
+      //   padding-right: 200px;
+      //   .url-tip {
+      //     font-size: 12px;
+      //     color: #999;
+      //     line-height: 18px;
+      //   }
+      //   .rest-api-box {
+      //     display: flex;
+      //     flex: 1;
+      //     div.rest-api-label {
+      //       width: 210px;
+      //       padding-right: 20px;
+      //       line-height: 28px;
+      //       font-size: 12px;
+      //       color: #606266;
+      //       text-align: right;
+      //       box-sizing: border-box;
+      //     }
+      //     .rest-api-url {
+      //       width: calc(100% - 200px);
+      //       border: 1px solid #dedee4;
+      //       padding: 10px;
+      //       margin-top: 5px;
+      //       .rest-api-row {
+      //         margin-bottom: 10px;
+      //       }
+      //       .rest-api-margin {
+      //         margin-left: 10px;
+      //       }
+      //       .rest-api-marginB {
+      //         margin-bottom: 10px;
+      //       }
+      //       .rest-api-label {
+      //         display: inline-block;
+      //         width: 80px;
+      //       }
+      //       .rest-api-FloatL {
+      //         float: left;
+      //       }
+      //       .small-input {
+      //         width: 104px;
+      //       }
+      //       .min-input {
+      //         width: 80px;
+      //       }
+      //       .medium-input {
+      //         width: 130px;
+      //       }
+      //       .rest-api-Array {
+      //         margin-bottom: 10px;
+      //       }
+      //       .add-btn-icon {
+      //         cursor: pointer;
+      //       }
+      //     }
+      //   }
+      //   .gridfs-box {
+      //     font-size: 12px;
+      //     .separate {
+      //       margin: 0 10px;
+      //     }
+      //   }
+      //   .fileBox {
+      //     display: flex;
+      //     flex: 1;
+      //     div.file-label {
+      //       width: 210px;
+      //       padding-right: 20px;
+      //       line-height: 28px;
+      //       font-size: 12px;
+      //       color: #606266;
+      //       text-align: right;
+      //       box-sizing: border-box;
+      //     }
+      //     .file-form-content {
+      //       width: calc(100% - 200px);
+      //       padding: 0 10px;
+      //     }
+      //     .fromLoopBox {
+      //       padding: 10px 20px 20px !important;
+      //       margin-bottom: 12px;
+      //       box-sizing: border-box;
+      //       background-color: #fff;
+      //       border: 1px solid #dedee4;
+      //       border-radius: 3px;
+      //       .el-input--mini .el-input__inner {
+      //         width: 100%;
+      //       }
+      //     }
+      //   }
+      // }
+      // .edit-header-box {
+      //   border-bottom: 1px solid #eee;
+      //   margin-bottom: 20px;
+      // }
+      // .edit-header {
+      //   display: flex;
+      //   justify-content: flex-start;
+      //   width: 578px;
+      //   margin: 30px auto;
+      // }
+      // .title {
+      //   display: flex;
+      //   justify-content: flex-start;
+      //   width: 568px;
+      //   margin: 40px auto 20px auto;
+      // }
+      // .img-box {
+      //   display: flex;
+      //   width: 52px;
+      //   height: 52px;
+      //   justify-content: center;
+      //   align-items: center;
+      //   background: #fff;
+      //   border-radius: 3px;
+      //   margin-right: 10px;
+      //   img {
+      //     width: 100%;
+      //   }
+      // }
+      // .content {
+      //   display: flex;
+      //   align-items: center;
+      //   margin-left: 15px;
+      //   font-size: 22px;
+      //   max-width: 445px;
+      //   white-space: nowrap;
+      //   word-break: break-word;
+      //   text-overflow: ellipsis;
+      //   overflow: hidden;
+      // }
+      // .addBtn {
+      //   cursor: pointer;
+      //   font-size: 12px;
+      //   margin-top: 22px;
+      //   margin-left: 10px;
+      // }
+      // .content-box {
+      //   .addBtn {
+      //     cursor: pointer;
+      //     font-size: 12px;
+      //     margin-top: 0;
+      //     margin-left: 10px;
+      //   }
 
-        .tip {
-          margin-left: 15px;
-          font-size: 12px;
-          color: #999;
-          margin-top: 5px;
-          line-height: 18px;
-          width: 430px;
-        }
-      }
-      .test {
-        margin-left: 200px;
-        margin-bottom: 20px;
-        margin-top: 16px;
-      }
+      //   .tip {
+      //     margin-left: 15px;
+      //     font-size: 12px;
+      //     color: #999;
+      //     margin-top: 5px;
+      //     line-height: 18px;
+      //     width: 430px;
+      //   }
+      // }
+      // .test {
+      //   margin-left: 200px;
+      //   margin-bottom: 20px;
+      //   margin-top: 16px;
+      // }
     }
     .status {
       font-size: 12px;
@@ -1940,19 +2044,19 @@ export default {
       }
     }
   }
-  .header {
-    height: 50px;
-    line-height: 50px;
-    padding-left: 20px;
-    background-color: rgba(250, 250, 250, 100);
-    color: rgba(51, 51, 51, 100);
-    font-size: 18px;
-    text-align: left;
-    box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(222, 222, 228, 100);
-    border-left: none;
-    position: relative;
-  }
+  // .header {
+  //   height: 50px;
+  //   line-height: 50px;
+  //   padding-left: 20px;
+  //   background-color: rgba(250, 250, 250, 100);
+  //   color: rgba(51, 51, 51, 100);
+  //   font-size: 18px;
+  //   text-align: left;
+  //   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
+  //   border: 1px solid rgba(222, 222, 228, 100);
+  //   border-left: none;
+  //   position: relative;
+  // }
   .footer {
     margin: 10px auto;
     width: 100%;
@@ -1980,94 +2084,94 @@ export default {
 }
 </style>
 <style lang="scss">
-.databaseFrom .el-form--label-right .el-form-item {
-  .el-form-item__label .e-form-builder-item-label {
-    float: right;
-  }
-  margin-top: 16px;
-}
-.databaseFrom .el-form--label-right .el-form-item {
-  .el-form-item__label {
-    display: inline-block;
-    padding: 0 20px 0 0;
-  }
-}
-.databaseFrom .form {
-  .url-tip {
-    margin-top: -14px;
-    b {
-      color: #666;
-    }
-  }
-  .file-form-content {
-    .el-form-item {
-      margin-bottom: 6px;
-    }
-    .el-form-item__label {
-      padding-bottom: 0;
-      line-height: 28px;
-      font-size: 12px;
-    }
-    .el-form-item__content {
-      line-height: 30px;
-    }
-  }
-  .urlInfoForm {
-    .el-form-item {
-      margin-bottom: 0;
-    }
-  }
-}
-.databaseFrom .gridfs-box {
-  .el-form-item {
-    margin-bottom: 0;
-    margin-top: 0;
-  }
+// .databaseFrom .el-form--label-right .el-form-item {
+//   .el-form-item__label .e-form-builder-item-label {
+//     float: right;
+//   }
+//   margin-top: 16px;
+// }
+// .databaseFrom .el-form--label-right .el-form-item {
+//   .el-form-item__label {
+//     display: inline-block;
+//     padding: 0 20px 0 0;
+//   }
+// }
+// .databaseFrom .form {
+//   .url-tip {
+//     margin-top: -14px;
+//     b {
+//       color: #666;
+//     }
+//   }
+//   .file-form-content {
+//     .el-form-item {
+//       margin-bottom: 6px;
+//     }
+//     .el-form-item__label {
+//       padding-bottom: 0;
+//       line-height: 28px;
+//       font-size: 12px;
+//     }
+//     .el-form-item__content {
+//       line-height: 30px;
+//     }
+//   }
+//   .urlInfoForm {
+//     .el-form-item {
+//       margin-bottom: 0;
+//     }
+//   }
+// }
+// .databaseFrom .gridfs-box {
+//   .el-form-item {
+//     margin-bottom: 0;
+//     margin-top: 0;
+//   }
 
-  .el-form-item__content {
-    display: flex;
-    font-size: 12px;
-    margin-right: 20px;
-  }
+//   .el-form-item__content {
+//     display: flex;
+//     font-size: 12px;
+//     margin-right: 20px;
+//   }
 
-  .el-form-item__error {
-    padding-top: 0;
-  }
+//   .el-form-item__error {
+//     padding-top: 0;
+//   }
 
-  .el-form-item__label:before {
-    content: '*';
-    color: #f56c6c;
-    margin-right: 4px;
-  }
+//   .el-form-item__label:before {
+//     content: '*';
+//     color: #f56c6c;
+//     margin-right: 4px;
+//   }
 
-  .excel_value_start {
-    .el-form-item__label:before {
-      content: '';
-    }
-  }
+//   .excel_value_start {
+//     .el-form-item__label:before {
+//       content: '';
+//     }
+//   }
 
-  .el-form-item__label {
-    font-size: 12px;
-  }
+//   .el-form-item__label {
+//     font-size: 12px;
+//   }
 
-  .el-radio__label {
-    font-size: 12px;
-  }
+//   .el-radio__label {
+//     font-size: 12px;
+//   }
 
-  .headerType .el-form-item__content {
-    flex-direction: column;
+//   .headerType .el-form-item__content {
+//     flex-direction: column;
 
-    .excel_header_start {
-      display: flex;
-      font-size: 12px;
-    }
-  }
+//     .excel_header_start {
+//       display: flex;
+//       font-size: 12px;
+//     }
+//   }
 
-  .excelHeaderType {
-    .el-form-item__content {
-      display: block;
-      font-size: 12px;
-    }
-  }
-}
+//   .excelHeaderType {
+//     .el-form-item__content {
+//       display: block;
+//       font-size: 12px;
+//     }
+//   }
+// }
 </style>
