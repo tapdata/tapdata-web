@@ -51,6 +51,12 @@ export default {
   workbench_guide_documentation: '产品文档',
   workbench_guide_problem: '常见问题',
   workbench_guide_data_safe: 'Tapdata cloud 如何保障数据安全？',
+  workbench_statistics_title: '任务数据量统计',
+  workbench_statistics__sub_title: '输入数据量',
+  workbench_statistics__sub_title_label: '累计',
+  workbench_statistics_time_type_day: '当天',
+  workbench_statistics_time_type_week: '最近一周',
+  workbench_statistics_time_type_month: '最近一月',
 
   // 头部
   header_question: '问答支持',

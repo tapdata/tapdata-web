@@ -52,6 +52,12 @@ export default {
   workbench_guide_documentation: 'Product Documentation',
   workbench_guide_problem: 'Common problems',
   workbench_guide_data_safe: 'How does Tapdata cloud ensure data security? ',
+  workbench_statistics_title: 'Task data volume statistics',
+  workbench_statistics__sub_title: 'Input data volume',
+  workbench_statistics__sub_title_label: 'cumulative',
+  workbench_statistics_time_type_day: 'this day',
+  workbench_statistics_time_type_week: 'Last week',
+  workbench_statistics_time_type_month: 'Last month',
 
   // head
   header_question: 'Question and answer support',

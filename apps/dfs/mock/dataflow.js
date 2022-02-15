@@ -1404,5 +1404,23 @@ module.exports = {
         }
       ]
     }
+  },
+  '/tm/api/DataFlowInsights/statistics': {
+    reqId: '77b5587a-fe9c-4ccc-b970-81b45f6f865f',
+    ts: 1644486895566,
+    code: 'ok',
+    data: {
+      granularity: 'week',
+      inputDataStatistics: [
+        { time: '2022-02-10', count: '@integer(0, 100)' },
+        { time: '2022-02-09', count: '@integer(0, 100)' },
+        { time: '2022-02-08', count: '@integer(0, 100)' },
+        { time: '2022-02-07', count: '@integer(0, 100)' },
+        { time: '2022-02-06', count: '@integer(0, 100)' },
+        { time: '2022-02-05', count: '@integer(0, 100)' },
+        { time: '2022-02-04', count: '@integer(0, 100)' }
+      ],
+      totalInputDataCount: '@integer(0, 100)'
+    }
   }
 }

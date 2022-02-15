@@ -102,16 +102,38 @@
         </el-col>
       </el-row>
     </div>
+    <!--  任务数据量统计  -->
+    <div class="workbench-overview workbench-section">
+      <div class="main-title py-6">{{ $t('workbench_statistics_title') }}</div>
+      <div class="p-6" style="background-color: #fff">
+        <div class="flex justify-content-between">
+          <div>
+            <span>{{ $t('workbench_statistics__sub_title') }}</span>
+            <span
+              >（{{ $t('workbench_statistics__sub_title_label') + '：'
+              }}<span class="color-primary">{{ taskInputNumber }}</span
+              >）</span
+            >
+          </div>
+          <TextRadio v-model="timeType" :items="timeTypeItems" @change="loadBarData"></TextRadio>
+        </div>
+        <div style="height: 200px">
+          <Chart type="bar" :data="barData" :options="barOptions"></Chart>
+        </div>
+      </div>
+    </div>
   </div>
   <router-view v-else></router-view>
 </template>
 
 <script>
 import VIcon from '@/components/VIcon'
+import TextRadio from '@/components/TextRadio'
+import Chart from 'web-core/components/chart'
 
 export default {
   name: 'Workbench',
-  components: { VIcon },
+  components: { VIcon, TextRadio, Chart },
   data() {
     const $t = this.$t.bind(this)
     return {
@@ -210,7 +232,26 @@ export default {
           url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_chan-pin-jia-gou-ji-yuan-li'
         }
       ],
-      isGuide: true
+      isGuide: true,
+      taskInputNumber: 0,
+      barData: [],
+      barOptions: {
+        grid: {
+          top: 20,
+          bottom: 0,
+          left: 0,
+          right: 0
+        },
+        yAxis: {
+          show: true
+        }
+      },
+      timeType: 'week',
+      timeTypeItems: [
+        { label: $t('workbench_statistics_time_type_day'), value: 'day' },
+        { label: $t('workbench_statistics_time_type_week'), value: 'week' },
+        { label: $t('workbench_statistics_time_type_month'), value: 'month' }
+      ]
     }
   },
   mounted() {
@@ -221,6 +262,7 @@ export default {
       this.loadAgent() // agent
       this.loadConnection() // 连接、任务
       this.loadNotices() // 通知公告
+      this.loadBarData()
     },
     loadAgent() {
       let agentList = this.agentList
@@ -328,6 +370,20 @@ export default {
           time: '2021-07-01'
         }
       ]
+    },
+    loadBarData() {
+      let granularity = this.timeType
+      this.$axios.get('tm/api/DataFlowInsights/statistics?' + granularity).then(data => {
+        const list = data.inputDataStatistics || []
+        this.taskInputNumber = data.totalInputDataCount || 0
+        this.barData = list.map(el => {
+          return {
+            name: el.time,
+            value: el.count,
+            color: '#2c65ff'
+          }
+        })
+      })
     },
     createAgent() {
       this.$router.push({
