@@ -138,7 +138,7 @@
             size="mini"
             type="text"
             :disabled="
-              $disabledByPermission('data_catalog_edition_all_data', scope.row.source ? scope.row.source.user_id : '')
+              $disabledByPermission('data_catalog_edition_all_data', scope.row.source ? scope.row.user_id : '')
             "
             @click="toDetails(scope.row)"
           >
@@ -149,7 +149,7 @@
             size="mini"
             type="text"
             :disabled="
-              $disabledByPermission('data_catalog_edition_all_data', scope.row.source ? scope.row.source.user_id : '')
+              $disabledByPermission('data_catalog_edition_all_data', scope.row.source ? scope.row.user_id : '')
             "
             @click="changeName(scope.row)"
           >
@@ -159,9 +159,7 @@
             v-readonlybtn="'meta_data_deleting'"
             size="mini"
             type="text"
-            :disabled="
-              $disabledByPermission('meta_data_deleting_all_data', scope.row.source ? scope.row.source.user_id : '')
-            "
+            :disabled="$disabledByPermission('meta_data_deleting_all_data', scope.row.source ? scope.row.user_id : '')"
             @click="remove(scope.row)"
             >{{ $t('button.delete') }}</el-button
           >
@@ -327,7 +325,8 @@ export default {
         source: true,
         'source._id': true,
         'source.user_id': true,
-        databaseId: true
+        databaseId: true,
+        user_id: true
       }
       if (keyword && keyword.trim()) {
         let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword
