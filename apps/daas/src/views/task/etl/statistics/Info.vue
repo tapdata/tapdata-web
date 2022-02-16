@@ -502,11 +502,6 @@ export default {
             guanluary,
             fields: ['inputQPS', 'outputQPS']
           },
-          // {
-          //   tags,
-          //   guanluary,
-          //   fields: ['replicateLag']
-          // },
           {
             tags,
             guanluary,
@@ -517,13 +512,6 @@ export default {
         statistics: [
           {
             tags
-            // : {
-            //           measureType: 'dataflow',
-            //           customerId: 'enterpriseId',
-            //           host: 'hostname',
-            //           agentId: 'agent1',
-            //           dataflowId: 'afsdfasdf'
-            //         }
           }
         ]
       }
@@ -541,11 +529,6 @@ export default {
               guanluary,
               fields: ['inputQPS', 'outputQPS']
             },
-            // {
-            //   tags,
-            //   guanluary,
-            //   fields: ['replicateLag']
-            // },
             {
               tags,
               guanluary,
@@ -555,13 +538,7 @@ export default {
           ],
           statistics: [
             {
-              tags: {
-                measureType: 'dataflow',
-                customerId: 'enterpriseId',
-                host: 'hostname',
-                agentId: 'agent1',
-                dataflowId: 'afsdfasdf'
-              }
+              tags
             }
           ]
         }
