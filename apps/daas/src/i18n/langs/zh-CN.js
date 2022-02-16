@@ -22,18 +22,6 @@ export default {
   gl_placeholder_select: '请选择',
   gl_placeholder_input: '请输入',
 
-  // 连接管理
-  connection_form_creat_connection: '创建连接',
-  connection_form_edit_connection: '编辑连接',
-  connection_form_data_source: '数据源',
-  connection_form_data_source_type: '数据源类型',
-  connection_form_connection_name: '连接名称',
-  connection_form_database_address: '数据库地址',
-  connection_form_port: '端口',
-  connection_form_change: '更换',
-  connection_form_rename: '改名',
-  connection_form_database_owner_tip: '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
-
   // 数据校验
   verify_details_title: '任务校验详情',
   verify_history_title: '任务校验历史',
@@ -288,6 +276,15 @@ export default {
   connection_list_column_schema_status: 'Schema加载状态',
   connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
 
+  // 连接管理
+  connection_form_creat_connection: '创建连接',
+  connection_form_edit_connection: '编辑连接',
+  connection_form_data_source: '数据源',
+  connection_form_data_source_type: '数据源类型',
+  connection_form_database_address: '数据库地址',
+  connection_form_change: '更换',
+  connection_form_rename: '改名',
+  connection_form_database_owner_tip: '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
   connection_form_connection_type: '连接类型',
   connection_form_source_and_target: '源头和目标',
   connection_form_source: '源头',
@@ -311,11 +308,19 @@ export default {
   connection_form_mq_virtual_host: '虚拟主机',
   connection_form_mq_producer_group: '生产者组',
   connection_form_mq_consumer_group: '消费者组',
+  connection_form_mq_queue_tip: '多个队列用逗号隔开',
+  connection_form_mq_topic_tip: '多个主题用逗号隔开',
+  connection_form_mq_broker_url_tip: '示例tcp://127.0.0.1:61616,支持tcp,nio,udp,ssl,http(s)',
 
   connection_form_custom_connection_connection_time_out: '连接超时(秒)',
   connection_form_custom_connection_read_time_out: '读取超时(秒)',
   connection_form_custom_connection_before_operate: '前置操作',
   connection_form_custom_connection_after_operate: '后置操作',
+
+  connection_redis_valid: '开启认证',
+
+  connection_hana_label_hana_type: '租户模式',
+  connection_form_hana_file_schema_tip: '如果匹配的文件具有相同结构，请指定一个通用名',
 
   connection_kafka_kerberos_attest: 'kerberos 认证',
   connection_kafka_kerberos_config_keytab: '密钥表示文件',
@@ -326,7 +331,16 @@ export default {
   connection_kafka_kerberos_none_keytab: '密钥表示文件不能为空',
   connection_kafka_kerberos_none_conf: '配置文件不能为空',
   connection_kafka_encryption: '加密方式',
-
+  connection_form_kafka_host_tip: '输入 IP/host:port , 多个地址以逗号隔开',
+  connection_form_kafka_lonore_format_tip: '如果开启则遇到解析异常会忽略该消息，否则停止拉取消息',
+  connection_form_kafka_ignore_push_error_tip: '如果开启则忽略该次推送的消息(存在消息丢失)，否则停止推送消息',
+  connection_form_route_key_field: '消息路由',
+  connection_form_broker_url: 'MQ连接串',
+  connection_form_kafka_ignore_push: '忽略推送消息异常',
+  connection_form_kafka_compression_type: '消息压缩类型',
+  connection_form_kafka_ack: 'ACK 确认机制',
+  connection_form_kafka_ignore_invalid: '忽略非JSON Object格式消息',
+  connection_form_kafka_pattern_topic: '主题表达式',
   // 连接
   connection_manage: '连接管理',
   connection_list_form_all_status: '全部状态',
@@ -356,24 +370,13 @@ export default {
   connection_list_efficient: '有效',
   connection_list_invalidation: '失效',
   connection_list_testing: '测试中',
-  connection_form_creat_connection: '创建连接',
-  connection_form_edit_connection: '编辑连接',
-  connection_form_data_source: '数据源',
-  connection_form_data_source_type: '数据源类型',
-  connection_form_database_address: '数据库地址',
+
   connection_form_database_name: '数据库名称',
   connection_form_database_username: '账号',
   connection_form_database_password: '密码',
   connection_form_additional_string: '其他连接串参数',
   connection_form_timezone: '时间类型的时区',
   connection_form_virtual_host: '虚拟主机',
-  connection_form_route_key_field: '消息路由',
-  connection_form_broker_url: 'MQ连接串',
-  connection_form_kafka_ignore_push: '忽略推送消息异常',
-  connection_form_kafka_compression_type: '消息压缩类型',
-  connection_form_kafka_ack: 'ACK 确认机制',
-  connection_form_kafka_ignore_invalid: '忽略非JSON Object格式消息',
-  connection_form_kafka_pattern_topic: '主题表达式',
   connection_form_connection_name_placeholder: '请输入连接名称',
   connection_form_coming_soon: '即将上线',
   connection_form_impact_type: '影响类型: DATE',
@@ -382,16 +385,10 @@ export default {
   connection_form_name_rules: '以中英文开头，1-100个字符，包括中英文，数字，中划线，下划线，空格',
   connection_form_no_name: '连接名不能为空',
   connection_form_name_exists: '名字已经存在',
-  connection_form_kafka_host_tip: '输入 IP/host:port , 多个地址以逗号隔开',
-  connection_form_kafka_lonore_format_tip: '如果开启则遇到解析异常会忽略该消息，否则停止拉取消息',
-  connection_form_kafka_ignore_push_error_tip: '如果开启则忽略该次推送的消息(存在消息丢失)，否则停止推送消息',
-  connection_form_dameng_database_owner_tip: '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
-  connection_form_mq_queue_tip: '多个队列用逗号隔开',
-  connection_form_mq_topic_tip: '多个主题用逗号隔开',
-  connection_form_mq_broker_url_tip: '示例tcp://127.0.0.1:61616,支持tcp,nio,udp,ssl,http(s)',
+
+  connection_form_kudu_host_tip: 'IP地址:端口; 支持多个; 用 , 分割',
+
   connection_form_hazecast_rename: '重命名',
-  connection_form_change: '更换',
-  connection_form_rename: '改名',
   connection_form_hazecast_cancel: '取消',
   connection_form_hazecast_save: '保存',
   connection_form_hazecast_connection_type: '连接类型',
@@ -444,9 +441,6 @@ export default {
   connection_preview_isr_partition: '写入所有ISR分区',
   connection_preview_operation_success: '操作成功',
 
-  connection_redis_valid: '开启认证',
-
-  connection_hana_label_hana_type: '租户模式',
   // 路由名
   app_menu_jsFuncs: '函数',
 

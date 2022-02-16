@@ -1,8 +1,8 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '160px'
     },
     defaultModel: {
       connection_type: 'source',
@@ -27,7 +27,11 @@ export default function (vm) {
             value: 'target'
           }
         ],
-        required: true
+        require: true,
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
       },
       {
         type: 'input',
@@ -64,7 +68,11 @@ export default function (vm) {
             byValue: true,
             value: ''
           }
-        ]
+        ],
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
       },
       {
         type: 'file',
@@ -275,6 +283,7 @@ export default function (vm) {
         type: 'input',
         field: 'file_schema',
         label: vm.$t('dataForm.form.gridfs.file_schema'),
+        tip: vm.$t('connection_form_hana_file_schema_tip'),
         show: false,
         required: true,
         dependOn: [
@@ -294,10 +303,6 @@ export default function (vm) {
             }
           }
         ]
-      },
-      {
-        type: 'slot',
-        slot: 'file_schema_tip'
       },
       {
         type: 'select',

@@ -1,8 +1,8 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '160px'
     },
     defaultModel: {
       connection_type: 'source_and_target',
@@ -31,12 +31,17 @@ export default function (vm) {
             value: 'target'
           }
         ],
-        required: true
+        required: true,
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
       },
       {
         type: 'input',
         field: 'kafkaBootstrapServers',
         label: vm.$t('dataForm.form.host'),
+        tip: vm.$t('connection_form_kafka_host_tip'),
         required: true,
         rules: [
           {
@@ -49,10 +54,6 @@ export default function (vm) {
             }
           }
         ]
-      },
-      {
-        type: 'slot',
-        slot: 'kafkaUri'
       },
       {
         type: 'input',
@@ -255,25 +256,8 @@ export default function (vm) {
         type: 'switch', // 忽略非JSON Object格式消息
         field: 'kafkaIgnoreInvalidRecord',
         label: vm.$t('dataForm.form.kafka.lonoreFormat'),
+        tip: vm.$t('connection_form_kafka_lonore_format_tip'),
         show: true,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'connection_type',
-                value: 'target'
-              }
-            ],
-            triggerConfig: {
-              show: false
-            }
-          }
-        ]
-      },
-
-      {
-        type: 'slot',
-        slot: 'lonoreFormatTip',
         dependOn: [
           {
             triggerOptions: [
@@ -342,24 +326,8 @@ export default function (vm) {
         type: 'switch', //是否忽略推送消息异常,
         field: 'kafkaIgnorePushError',
         label: vm.$t('dataForm.form.kafka.kafkaIgnorePushError'),
+        tip: vm.$t('connection_form_kafka_ignore_push_error_tip'),
         show: true,
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'connection_type',
-                value: 'source'
-              }
-            ],
-            triggerConfig: {
-              show: false
-            }
-          }
-        ]
-      },
-      {
-        type: 'slot',
-        slot: 'pushErrorTip',
         dependOn: [
           {
             triggerOptions: [

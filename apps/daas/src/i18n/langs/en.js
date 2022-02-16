@@ -295,17 +295,30 @@ export default {
   connection_form_user_name: 'Account',
   connection_form_password: 'Password',
 
+  connection_form_mq_type: 'MQ Type',
+  connection_form_mq_topic_set: 'topic name',
+  connection_form_mq_queue_set: 'Queue name set',
+  connection_form_mq_broker_url: 'MQ connection string',
   connection_form_mq_database_host: 'MQ address',
   connection_form_mq_database_port: 'MQ port',
   connection_form_mq_route_key_field: 'Message routing',
   connection_form_mq_virtual_host: 'Virtual Host',
   connection_form_mq_producer_group: 'Producer Group',
   connection_form_mq_consumer_group: 'Consumer Group',
+  connection_form_mq_queue_tip: 'Multiple queues are separated by commas',
+  connection_form_mq_topic_tip: 'Multiple topics are separated by commas',
+  connection_form_mq_broker_url_tip: 'Example tcp://127.0.0.1:61616, supports tcp, nio, udp, ssl, http(s)',
 
   connection_form_custom_connection_connection_time_out: 'Connection timeout (s)',
   connection_form_custom_connection_read_time_out: 'Read timeout (s)',
   connection_form_custom_connection_before_operate: 'Pre-operation',
   connection_form_custom_connection_after_operate: 'Post-operation',
+
+  connection_redis_valid: 'Authentication',
+
+  connection_hana_label_hana_type: 'Install type',
+  connection_form_hana_file_schema_tip: 'If matching files have the same structure, please specify a common name',
+
   connection_kafka_kerberos_attest: 'kerberos authentication',
   connection_kafka_kerberos_config_keytab: 'Key representation file',
   connection_kafka_kerberos_config_conf: 'Configuration file',
@@ -316,6 +329,11 @@ export default {
   connection_kafka_kerberos_none_keytab: 'The key representation file cannot be empty',
   connection_kafka_kerberos_none_conf: 'Configuration file cannot be empty',
   connection_kafka_encryption: 'Encryption',
+  connection_form_kafka_ignore_push: 'Ignore push message exception',
+  connection_form_kafka_compression_type: 'Message compression type',
+  connection_form_kafka_ack: 'ACK confirmation mechanism',
+  connection_form_kafka_ignore_invalid: 'Ignore non-JSON Object format messages',
+  connection_form_kafka_pattern_topic: 'topic expression',
 
   // connect
   connection_manage: 'Connection Management',
@@ -367,15 +385,9 @@ export default {
   connection_form_timezone: 'Time zone of time type',
   connection_form_virtual_host: 'Virtual Host',
   connection_form_route_key_field: 'Message routing',
-  connection_form_mq_topic_set: 'topic name',
-  connection_form_mq_queue_set: 'Queue name set',
+
   connection_form_broker_url: 'MQ connection string',
-  connection_form_mq_type: 'MQ Type',
-  connection_form_kafka_ignore_push: 'Ignore push message exception',
-  connection_form_kafka_compression_type: 'Message compression type',
-  connection_form_kafka_ack: 'ACK confirmation mechanism',
-  connection_form_kafka_ignore_invalid: 'Ignore non-JSON Object format messages',
-  connection_form_kafka_pattern_topic: 'topic expression',
+
   connection_form_connection_name_placeholder: 'Please enter the connection name',
   connection_form_coming_soon: 'Coming soon',
   connection_form_impact_type: 'Type of impact: DATE',
@@ -393,10 +405,7 @@ export default {
     'If it is enabled, ignore the push message (there is a message loss), otherwise stop pushing the message',
   connection_form_dameng_database_owner_tip:
     'Comma-separated expression list, use * to represent any character of any length',
-  connection_form_mq_queue_tip: 'Multiple queues are separated by commas',
-  connection_form_mq_topic_tip: 'Multiple topics are separated by commas',
-  connection_form_mq_broker_url: 'MQ connection string',
-  connection_form_mq_broker_url_tip: 'Example tcp://127.0.0.1:61616, supports tcp, nio, udp, ssl, http(s)',
+
   connection_form_hazecast_rename: 'Rename',
   connection_form_hazecast_cancel: 'Cancel',
   connection_form_hazecast_save: 'Save',
@@ -451,10 +460,6 @@ export default {
   connection_preview_master_partition: 'Write to master partition only',
   connection_preview_isr_partition: 'Write all ISR partitions',
   connection_preview_operation_success: 'Operation successful',
-
-  connection_redis_valid: 'Authentication',
-
-  connection_hana_label_hana_type: 'Install type',
 
   // 路由名
   app_menu_jsFuncs: 'Function',

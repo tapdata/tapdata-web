@@ -65,9 +65,9 @@
               <div class="url-tip" slot="name" v-if="!$route.params.id">
                 中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
               </div>
-              <div class="url-tip" slot="kududatabase">
+              <!-- <div class="url-tip" slot="kududatabase">
                 {{ $t('dataForm.form.kuduhost') }}
-              </div>
+              </div> -->
               <div class="url-tip" slot="ecsList" v-if="model.sourceType === 'ecs'">
                 <el-select
                   v-model="model.ecs"
@@ -99,34 +99,34 @@
                 </span>
               </div>
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
-              <div class="url-tip" slot="tableFilter">
+              <!-- <div class="url-tip" slot="tableFilter">
                 {{ $t('connection_form_database_owner_tip') }}
-              </div>
-              <div class="url-tip" slot="timezone">
+              </div> -->
+              <!-- <div class="url-tip" slot="timezone">
                 {{ $t('dataForm.form.timeZoneTips') }}
-              </div>
-              <div class="url-tip" slot="kafkaUri">
+              </div> -->
+              <!-- <div class="url-tip" slot="kafkaUri">
                 {{ $t('dataForm.form.kafka.hostPlaceHolder') }}
-              </div>
-              <div class="url-tip" slot="lonoreFormatTip">
+              </div> -->
+              <!-- <div class="url-tip" slot="lonoreFormatTip">
                 {{ $t('dataForm.form.kafka.lonoreFormatTip') }}
-              </div>
-              <div class="url-tip" slot="pushErrorTip">
+              </div> -->
+              <!-- <div class="url-tip" slot="pushErrorTip">
                 {{ $t('dataForm.form.kafka.pushErrorTip') }}
-              </div>
+              </div> -->
 
-              <div class="url-tip" slot="queueTip" v-if="model.mqType !== '2'">
+              <!-- <div class="url-tip" slot="queueTip" v-if="model.mqType !== '2'">
                 {{ $t('dataForm.form.mq.queueSetTip') }}
-              </div>
-              <div class="url-tip" slot="topicTip" v-if="model.mqType !== '1'">
+              </div> -->
+              <!-- <div class="url-tip" slot="topicTip" v-if="model.mqType !== '1'">
                 {{ $t('dataForm.form.mq.topicSetTip') }}
-              </div>
-              <div class="url-tip" slot="brokerUrlTip" v-if="model.mqType === '0'">
+              </div> -->
+              <!-- <div class="url-tip" slot="brokerUrlTip" v-if="model.mqType === '0'">
                 {{ $t('dataForm.form.mq.brokerUrlTip') }}
-              </div>
-              <div class="url-tip" slot="file_schema_tip">
+              </div> -->
+              <!-- <div class="url-tip" slot="file_schema_tip">
                 <div>{{ $t('dataForm.form.gridfs.file_schema_tip') }}</div>
-              </div>
+              </div> -->
               <!-- rest api -->
               <div class="url-tip" slot="req_pre_process">
                 <div>function request_process(url, headers, request_params, offset) {</div>
@@ -1800,7 +1800,7 @@ export default {
           margin-right: 4px;
         }
         .label {
-          width: 180px;
+          width: 160px;
           font-size: 12px;
           color: #606266;
         }
@@ -1859,6 +1859,11 @@ export default {
                     font-size: 12px;
                     font-weight: 400;
                     color: map-get($fontColor, slight);
+                  }
+                }
+                .fb-radio-group {
+                  .el-radio--mini.is-bordered {
+                    padding-top: 0;
                   }
                 }
               }
