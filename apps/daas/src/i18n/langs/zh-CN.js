@@ -343,6 +343,9 @@ export default {
   connection_form_kafka_pattern_topic: '主题表达式',
   // 连接
   connection_manage: '连接管理',
+  connection_list_form_task_status: '任务状态',
+  connection_list_form_sync_type: '同步类型',
+  connection_list_form_database_type: '数据库类型',
   connection_list_form_all_status: '全部状态',
   connection_list_form_search: '按连接名搜索',
   connection_list_name: '连接名',
@@ -367,9 +370,13 @@ export default {
   connection_list_delete_connection: '删除连接',
   connection_list_delete_connection_tip: ' 后，此连接将无法恢复',
   connection_list_delete_connection_title: '是否删除该连接？',
+  connection_list_all_status: '全部状态',
   connection_list_efficient: '有效',
   connection_list_invalidation: '失效',
   connection_list_testing: '测试中',
+  connection_list_desc:
+    '数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。除了基础的配置项之外，数据源还有定期/手动加载数据库结构、设置时区、表过滤设置等功能。更多配置说明，请点击',
+  connection_list_help_doc: '帮助文档',
 
   connection_form_database_name: '数据库名称',
   connection_form_database_username: '账号',

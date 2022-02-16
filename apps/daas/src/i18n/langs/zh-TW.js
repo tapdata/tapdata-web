@@ -349,6 +349,9 @@ export default {
 
   // 連接
   connection_manage: '連接管理',
+  connection_list_form_task_status: '任務狀態',
+  connection_list_form_sync_type: '同步類型',
+  connection_list_form_database_type: '數據庫類型',
   connection_list_form_all_status: '全部狀態',
   connection_list_form_search: '按連接名搜索',
   connection_list_name: '連接名',
@@ -373,9 +376,13 @@ export default {
   connection_list_delete_connection: '刪除連接',
   connection_list_delete_connection_tip: ' 後，此連接將無法恢復',
   connection_list_delete_connection_title: '是否刪除該連接？ ',
+  connection_list_all_status: '全部狀態',
   connection_list_efficient: '有效',
   connection_list_invalidation: '失效',
   connection_list_testing: '測試中',
+  connection_list_desc:
+    '數據源包括數據庫、結構化文件、應用程序RESTful API、自定義接口等類型，必須先創建數據源才能創建遷移或同步任務。除了基礎的配置項之外，數據源還有定期/手動加載數據庫結構、設置時區、表過濾設置等功能。更多配置說明，請點擊',
+  connection_list_help_doc: '幫助文檔',
 
   connection_form_database_name: '數據庫名稱',
   connection_form_database_username: '賬號',

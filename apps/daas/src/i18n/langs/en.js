@@ -337,6 +337,9 @@ export default {
 
   // connect
   connection_manage: 'Connection Management',
+  connection_list_form_task_status: 'task status',
+  connection_list_form_sync_type: 'Sync type',
+  connection_list_form_database_type: 'Database type',
   connection_list_form_all_status: 'All status',
   connection_list_form_search: 'Search by connection name',
   connection_list_name: 'Connection name',
@@ -362,9 +365,13 @@ export default {
   connection_list_delete_connection: 'Delete connection',
   connection_list_delete_connection_tip: 'After this, this connection will not be restored',
   connection_list_delete_connection_title: 'Do you want to delete this connection? ',
+  connection_list_all_status: 'All status',
   connection_list_efficient: 'effective',
   connection_list_invalidation: 'Invalid',
   connection_list_testing: 'Testing',
+  connection_list_desc:
+    'Data sources include databases, structured files, application RESTful APIs, custom interfaces and other types. You must create a data source before you can create a migration or synchronization task. In addition to the basic configuration items, the data source also has functions such as regularly/manually loading database structures, setting time zones, and table filtering settings. For more configuration instructions, please click ',
+  connection_list_help_doc: 'Help Documentation',
 
   // 连接管理
   connection_form_change: 'change',
