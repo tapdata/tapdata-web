@@ -20,6 +20,10 @@ import dfs_hazelcast_cloud_cluster from './dfs_hazelcast_cloud_cluster'
 import dfs_dummydb from './dfs_dummydb'
 import dfs_tidb from './dfs_tidb'
 import dfs_aliyun_mysql from './dfs_aliyun_mysql'
+import dfs_aliyun_mariadb from './dfs_aliyun_mariadb'
+import dfs_aliyun_mongodb from './dfs_aliyun_mongodb'
+import dfs_aliyun_postgres from './dfs_aliyun_postgres'
+import dfs_aliyun_sqlserver from './dfs_aliyun_sqlserver'
 
 export default {
   dfs_mysql,
@@ -43,5 +47,9 @@ export default {
   dfs_hazelcast_cloud_cluster,
   dfs_dummydb,
   dfs_tidb,
-  dfs_aliyun_mysql
+  dfs_aliyun_mysql,
+  dfs_aliyun_mariadb,
+  dfs_aliyun_mongodb,
+  dfs_aliyun_postgres,
+  dfs_aliyun_sqlserver
 }
