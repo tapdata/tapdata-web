@@ -4,7 +4,7 @@
  * @description
  */
 import EventEmitter from '../editor/lib/EventEmitter'
-import Cookie from 'tiny-cookie'
+import * as Cookie from 'tiny-cookie'
 import log from '../log'
 import factory from './factory'
 

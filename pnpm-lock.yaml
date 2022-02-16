@@ -1,9 +1,5 @@
 lockfileVersion: 5.3
 
-overrides:
-  '@vue/composition-api': 1.4.0
-  vue-demi: 0.9.1
-
 importers:
 
   .:
@@ -195,7 +191,7 @@ importers:
       '@vue/cli-plugin-eslint': ~4.5.0
       '@vue/cli-plugin-router': ~4.5.0
       '@vue/cli-service': ~4.5.0
-      '@vue/composition-api': 1.4.0
+      '@vue/composition-api': ^1.2.4
       '@vue/eslint-config-prettier': ^6.0.0
       ace-builds: ^1.4.13
       axios: ^0.21.1
@@ -333,7 +329,7 @@ importers:
       '@formily/reactive': ^2.0.9
       '@formily/reactive-vue': ^2.0.9
       '@formily/shared': ^2.0.9
-      '@vue/composition-api': 1.4.0
+      '@vue/composition-api': ^1.2.4
     dependencies:
       '@formily/core': registry.npmmirror.com/@formily/core/2.0.9
       '@formily/element': registry.npmmirror.com/@formily/element/2.0.9_b552e1fcc29f220232862772f249f808
@@ -13895,6 +13891,43 @@ packages:
     version: 1.7.4
     dev: false
 
+  registry.npmmirror.com/vue-demi/0.12.1_5f1bd7414a2bfaaedeb8e06aba7234f1:
+    resolution: {integrity: sha512-QL3ny+wX8c6Xm1/EZylbgzdoDolye+VpCXRhI2hug9dJTP3OUJ3lmiKN3CsVV3mOJKwFi0nsstbgob0vG7aoIw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-demi/-/vue-demi-0.12.1.tgz}
+    id: registry.npmmirror.com/vue-demi/0.12.1
+    name: vue-demi
+    version: 0.12.1
+    engines: {node: '>=12'}
+    hasBin: true
+    requiresBuild: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      '@vue/composition-api': registry.npmmirror.com/@vue/composition-api/1.4.0_vue@2.6.14
+      vue: registry.npmmirror.com/vue/2.6.14
+    dev: false
+
+  registry.npmmirror.com/vue-demi/0.12.1_vue@2.6.14:
+    resolution: {integrity: sha512-QL3ny+wX8c6Xm1/EZylbgzdoDolye+VpCXRhI2hug9dJTP3OUJ3lmiKN3CsVV3mOJKwFi0nsstbgob0vG7aoIw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-demi/-/vue-demi-0.12.1.tgz}
+    id: registry.npmmirror.com/vue-demi/0.12.1
+    name: vue-demi
+    version: 0.12.1
+    engines: {node: '>=12'}
+    hasBin: true
+    requiresBuild: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      vue: registry.npmmirror.com/vue/2.6.14
+    dev: false
+
   registry.npmmirror.com/vue-demi/0.9.1_5f1bd7414a2bfaaedeb8e06aba7234f1:
     resolution: {integrity: sha512-7s1lufRD2l369eFWPjgLvhqCRk0XzGWJsQc7K4q+0mZtixyGIvsK1Cg88P4NcaRIEiBuuN4q1NN4SZKFKwQswA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-demi/-/vue-demi-0.9.1.tgz}
     id: registry.npmmirror.com/vue-demi/0.9.1
@@ -13948,7 +13981,7 @@ packages:
       echarts: registry.npmmirror.com/echarts/5.3.0
       resize-detector: registry.npmmirror.com/resize-detector/0.3.0
       vue: registry.npmmirror.com/vue/2.6.14
-      vue-demi: registry.npmmirror.com/vue-demi/0.9.1_5f1bd7414a2bfaaedeb8e06aba7234f1
+      vue-demi: registry.npmmirror.com/vue-demi/0.12.1_5f1bd7414a2bfaaedeb8e06aba7234f1
     dev: false
 
   registry.npmmirror.com/vue-echarts/6.0.2_echarts@5.3.0+vue@2.6.14:
@@ -13968,7 +14001,7 @@ packages:
       echarts: registry.npmmirror.com/echarts/5.3.0
       resize-detector: registry.npmmirror.com/resize-detector/0.3.0
       vue: registry.npmmirror.com/vue/2.6.14
-      vue-demi: registry.npmmirror.com/vue-demi/0.9.1_vue@2.6.14
+      vue-demi: registry.npmmirror.com/vue-demi/0.12.1_vue@2.6.14
     dev: false
 
   registry.npmmirror.com/vue-eslint-parser/7.11.0_eslint@6.8.0:

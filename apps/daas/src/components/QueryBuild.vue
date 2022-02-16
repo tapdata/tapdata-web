@@ -76,6 +76,7 @@ export default {
       deep: true,
       handler() {
         let condition = this.flat(this.root)
+        // eslint-disable-next-line
         console.log('root', this.root)
         this.$emit('input', condition)
       }
@@ -100,6 +101,7 @@ export default {
   },
   methods: {
     setCondition(condition) {
+      // eslint-disable-next-line
       console.log('setCondition', condition)
       let result = this.standard(condition) || []
 

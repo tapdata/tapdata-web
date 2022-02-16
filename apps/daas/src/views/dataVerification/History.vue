@@ -9,7 +9,7 @@ export default {
     History
   },
   methods: {
-    search(filter, where) {
+    search(filter) {
       return this.$api('InspectResults')
         .get({
           filter: JSON.stringify(filter)

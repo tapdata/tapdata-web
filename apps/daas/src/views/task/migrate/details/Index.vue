@@ -29,11 +29,10 @@ import Schedule from './Schedule'
 import Log from '@/components/logs/Index'
 import Connection from './Connection'
 import History from './History'
-import FieldMapping from '@/components/FieldMapping'
 
 export default {
   name: 'Index',
-  components: { Info, Schedule, Log, Connection, History, FieldMapping },
+  components: { Info, Schedule, Log, Connection, History },
   data() {
     return {
       loading: true,
@@ -207,9 +206,9 @@ export default {
   background: #fff;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.02);
   ::v-deep {
-    .table-list {
-      //height: 300px;
-    }
+    // .table-list {
+    //height: 300px;
+    // }
     .el-tab-pane {
       min-height: 400px;
     }

@@ -144,7 +144,7 @@ import VIcon from '@/components/VIcon'
 import SelectList from '@/components/SelectList'
 import Chart from 'web-core/components/chart'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
-import { formatTime, formatMs, delayTrigger, isEmpty } from '@/utils/util'
+import { formatTime, formatMs, isEmpty } from '@/utils/util'
 
 let now = new Date(1997, 9, 3)
 let oneDay = 24 * 3600 * 1000
@@ -439,7 +439,7 @@ export default {
       }
       this.timer && clearInterval(this.timer)
       this.timer = setInterval(() => {
-        let { selectedTime, timeRange } = this
+        let { selectedTime } = this
         if (!(selectedTime === 'custom')) {
           this.getMeasurement()
         }
@@ -602,7 +602,7 @@ export default {
         // 总输入总输出
         if (!isEmpty(countObj)) {
           for (let key in overData) {
-            let l = countObj[key].length
+            // let l = countObj[key].length
             let val0 = countObj[key]?.[0] || 0
             let val1 = countObj[key]?.[1] || 0
             if (reset) {
@@ -859,7 +859,7 @@ export default {
       }
       return result
     },
-    changePeriodFnc(val) {
+    changePeriodFnc() {
       // switch (val) {
       //   case '5min':
       //     this.selectTime = 'second'

@@ -396,8 +396,7 @@ export default {
               this.$message.success(this.$t('message.saveOK'))
             })
             .catch(e => {
-              debugger
-              if(e?.response?.msg.indexOf('name is exists') !== -1) {
+              if (e?.response?.msg.indexOf('name is exists') !== -1) {
                 this.$message.error(this.$t('rule_exists_name'))
               } else {
                 this.$message.error(this.$t('message.saveFail'))

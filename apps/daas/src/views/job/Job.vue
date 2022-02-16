@@ -309,7 +309,7 @@ import SkipError from '../../components/SkipError'
 import { uuid } from '../../editor/util/Schema'
 import VIcon from '@/components/VIcon'
 import { DATA_NODE_TYPES } from '@/const.js'
-import { locale } from 'moment'
+// import { locale } from 'moment'
 
 const dataFlowsApi = factory('DataFlows')
 const Setting = factory('Setting')
