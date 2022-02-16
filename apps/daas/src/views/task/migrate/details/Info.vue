@@ -382,7 +382,7 @@ export default {
         }
       })
     },
-    handleEditor(id) {
+    handleEditor() {
       const h = this.$createElement
       this.$confirm(
         h('p', null, [
@@ -408,7 +408,8 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$router.push({
+        const id = this.task.id
+          this.$router.push({
           name: 'MigrateEditor',
           params: {
             id: id
