@@ -16,7 +16,9 @@
       @sort-change="handleSortTable"
     >
       <template slot="search">
-        <ul class="search-bar">
+        <!-- @search="search" -->
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+        <!-- <ul class="search-bar">
           <li>
             <ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
               <ElOption :label="$t('dataFlow.status.all')" value=""></ElOption>
@@ -75,7 +77,7 @@
               <i class="el-icon-refresh"></i>
             </ElButton>
           </li>
-        </ul>
+        </ul> -->
       </template>
       <div class="buttons" slot="operation">
         <el-button
@@ -387,14 +389,16 @@ import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
 import DownAgent from '../../downAgent/agentDown'
 import TablePage from '@/components/TablePage'
-import VIcon from '@/components/VIcon'
+import FilterBar from '@/components/filter-bar'
+// import VIcon from '@/components/VIcon'
 
 let interval = null
 export default {
   name: 'DataflowList',
-  components: { TablePage, DownAgent, SkipError, VIcon },
+  components: { FilterBar, TablePage, DownAgent, SkipError },
   data() {
     return {
+      filterItems: [],
       restLoading: false,
       mappingTemplate: '',
       searchParams: {
@@ -495,20 +499,23 @@ export default {
       return this.$refs.table
     },
     statusOptions() {
-      let options = {}
+      // let options = {}
+      let options = [{ label: this.$t('task_list_status_all'), value: '' }]
       let map = this.statusMap
       for (const key in map) {
         const item = map[key]
-        let value = key
-        if (options[item.label]) {
-          value = options[item.label] + ',' + value
-        }
-        options[item.label] = value
+        options.push({ label: item.label, value: key })
+        // let value = key
+        // if (options[item.label]) {
+        //   value = options[item.label] + ',' + value
+        // }
+        // options[item.label] = value
       }
       return options
     }
   },
   created() {
+    this.getFilterItems()
     let { mapping, agentId, status, executionStatus } = this.$route.query
     this.mappingTemplate = mapping ?? 'cluster-clone'
     this.searchParams.agentId = agentId ?? ''
@@ -1337,12 +1344,10 @@ export default {
         ids
       })
         .then(res => {
-          console.log(method, res)
           this.table.fetch()
           this.responseHandler(res.data, this.$t('message.operationSuccuess'))
         })
         .catch(err => {
-          console.log('err', err)
           if (err.response.msg === 'Metadata transformer error') {
             this.$message.error('任务启动失败，请编辑任务完成映射配置')
           } else if (err.response.msg === 'DataFlow has add or del stages') {
@@ -1359,6 +1364,52 @@ export default {
           id: row.id
         }
       })
+    },
+    search() {
+      // const { delayTrigger } = this.$util
+      // delayTrigger(() => {
+      //   this.$router.replace({
+      //     name: 'Task',
+      //     query: this.searchParams
+      //   })
+      // }, debounce)
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: this.$t('task_list_status'),
+          key: 'status',
+          type: 'select-inner',
+          items: this.statusOptions,
+          selectedWidth: '200px'
+        },
+        {
+          label: this.$t('task_list_sync_type'),
+          key: 'progress',
+          type: 'select-inner',
+          items: this.progressOptions
+        },
+        {
+          label: this.$t('task_list_execution_status'),
+          key: 'executionStatus',
+          type: 'select-inner',
+          menuMinWidth: '250px',
+          items: async () => {
+            let option = ['initializing', 'cdc', 'initialized', 'Lag']
+            return option.map(item => {
+              return {
+                label: this.$t('task_list_status_' + item),
+                value: item
+              }
+            })
+          }
+        },
+        {
+          placeholder: this.$t('task_list_search_placeholder'),
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     }
   }
 }

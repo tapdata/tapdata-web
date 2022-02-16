@@ -26,6 +26,14 @@ export default {
   // 菜单标题
   menu_title_function: '函數管理',
 
+  gl_button_update_success: '修改成功',
+  gl_see_more: '查看更多',
+  gl_no_data: '暂无数据',
+  gl_no_match_result: '没有查到符合条件的结果',
+  gl_back_to_list: '返回列表',
+  gl_placeholder_select: '请选择',
+  gl_placeholder_input: '请输入',
+
   // 数据校验
   verify_details_title: '任務校驗詳情',
   verify_history_title: '任務校驗歷史',
@@ -448,6 +456,15 @@ export default {
   task_list_run: '啟動',
   task_list_stop: '停止',
   task_list_force_stop: '強制停止',
+  task_list_status: '任務狀態',
+  task_list_sync_type: '同步類型',
+  task_list_execution_status: '執行狀態',
+  task_list_search_placeholder: '任務名稱/節點名/庫名稱',
+  task_list_status_initializing: '初始化中',
+  task_list_status_cdc: '增量中',
+  task_list_status_initialized: '初始化完成',
+  task_list_status_Lag: '增量滯後',
+  task_list_status_all: '全部狀態',
 
   task_monitor_progress: '任務進度',
   task_monitor_full_sync: '全量同步概覽',

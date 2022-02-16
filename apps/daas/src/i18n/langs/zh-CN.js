@@ -16,6 +16,12 @@ export default {
   menu_title_function: '函数管理',
 
   gl_button_update_success: '修改成功',
+  gl_see_more: '查看更多',
+  gl_no_data: '暂无数据',
+  gl_no_match_result: '没有查到符合条件的结果',
+  gl_back_to_list: '返回列表',
+  gl_placeholder_select: '请选择',
+  gl_placeholder_input: '请输入',
 
   // 数据校验
   verify_details_title: '任务校验详情',
@@ -517,7 +523,6 @@ export default {
   dag_dialog_field_mapping_batch_change_type_target: '目标字段类型',
   dag_dialog_field_mapping_batch_change_type_error_tip: '请先选择需要源表/目标表转换的类型',
 
-  //任务编辑
   // 缓存节点提示
   dag_data_node_label_clickhouse: 'ClickHouse节点',
   dag_data_node_label_aggregate_filter: '过滤器',
@@ -536,6 +541,15 @@ export default {
   task_list_run: '启动',
   task_list_stop: '停止',
   task_list_force_stop: '强制停止',
+  task_list_status: '任务状态',
+  task_list_sync_type: '同步类型',
+  task_list_execution_status: '执行状态',
+  task_list_search_placeholder: '任务名称/节点名/库名称',
+  task_list_status_initializing: '初始化中',
+  task_list_status_cdc: '增量中',
+  task_list_status_initialized: '初始化完成',
+  task_list_status_Lag: '增量滞后',
+  task_list_status_all: '全部状态',
 
   task_monitor_progress: '任务进度',
   task_monitor_full_sync: '全量同步概览',

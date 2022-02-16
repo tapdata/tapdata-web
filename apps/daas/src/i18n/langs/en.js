@@ -16,6 +16,13 @@ export default {
   // 菜单标题
   menu_title_function: 'Function management',
 
+  gl_see_more: 'See more',
+  gl_no_data: 'No data',
+  gl_no_match_result: 'No matching results were found',
+  gl_back_to_list: 'Back to list',
+  gl_placeholder_select: 'Please select',
+  gl_placeholder_input: 'Please input',
+
   // 数据校验
   verify_details_title: 'Task verification details',
   verify_history_title: 'Task verification history',
@@ -553,6 +560,15 @@ export default {
   task_list_run: 'Start',
   task_list_stop: 'Stop',
   task_list_force_stop: 'Forced stop',
+  task_list_status: 'task status',
+  task_list_sync_type: 'Sync type',
+  task_list_execution_status: 'Execution status',
+  task_list_search_placeholder: 'task name/node name/library name',
+  task_list_status_initializing: 'Initializing',
+  task_list_status_cdc: 'Increasing',
+  task_list_status_initialized: 'Initialization completed',
+  task_list_status_Lag: 'Incremental lag',
+  task_list_status_all: 'All status',
 
   task_monitor_progress: 'Task progress',
   task_monitor_full_sync: 'Full synchronization overview',
