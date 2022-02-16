@@ -256,6 +256,7 @@ export default {
   },
   mounted() {
     this.init()
+    this.hideCustomTip()
   },
   methods: {
     init() {
@@ -373,17 +374,23 @@ export default {
     },
     loadBarData() {
       let granularity = this.timeType
-      this.$axios.get('tm/api/DataFlowInsights/statistics?' + granularity).then(data => {
-        const list = data.inputDataStatistics || []
-        this.taskInputNumber = data.totalInputDataCount || 0
-        this.barData = list.map(el => {
-          return {
-            name: el.time,
-            value: el.count,
-            color: '#2c65ff'
+      this.$axios
+        .get('tm/api/DataFlowInsights/statistics', {
+          params: {
+            granularity
           }
         })
-      })
+        .then(data => {
+          const list = data.inputDataStatistics || []
+          this.taskInputNumber = data.totalInputDataCount || 0
+          this.barData = list.map(el => {
+            return {
+              name: el.time,
+              value: el.count,
+              color: '#2c65ff'
+            }
+          })
+        })
     },
     createAgent() {
       this.$router.push({
@@ -418,6 +425,11 @@ export default {
     },
     formatFromNow(date) {
       return this.$moment(date)?.fromNow()
+    },
+    hideCustomTip() {
+      setTimeout(() => {
+        document.getElementById('titlediv').style.display = 'none'
+      }, 5000)
     }
   }
 }
