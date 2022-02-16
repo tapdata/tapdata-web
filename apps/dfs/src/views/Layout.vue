@@ -46,7 +46,12 @@
           'hazelcast_cloud_cluster',
           'dummy db',
           'tidb',
-          'mariadb'
+          'mariadb',
+          'aliyun_mariadb',
+          'aliyun_mongodb',
+          'aliyun_mysql',
+          'aliyun_postgres',
+          'aliyun_sqlserver'
         ]"
         :comingTypes="['db2', 'sybase ase', 'gbase-8s']"
         @select="createConnection"
