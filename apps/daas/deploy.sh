@@ -65,6 +65,8 @@ work() {
     exit 1
   }
 
+  rm -rf $fileName
+
   notice "$1发布完成"
 }
 
