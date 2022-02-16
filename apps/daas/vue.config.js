@@ -4,7 +4,7 @@ const CompressionWebpackPlugin = require('compression-webpack-plugin')
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
-  dev: 'http://backend:3030',
+  dev: 'http://localhost:3000', // TM端本地默认地址
   // test: 'http://192.168.1.181:3003',
   jet: 'http://jet.devops.tapdata.net:31613',
   test: 'http://192.168.1.126:3003/' // tm 重构
