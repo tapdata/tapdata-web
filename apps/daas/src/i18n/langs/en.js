@@ -347,6 +347,12 @@ export default {
   connection_list_efficient: 'effective',
   connection_list_invalidation: 'Invalid',
   connection_list_testing: 'Testing',
+
+  // 连接管理
+  connection_form_change: 'change',
+  connection_form_rename: 'rename',
+  connection_form_database_owner_tip:
+    'Comma-separated list of expressions, use * to represent any character of any length',
   connection_form_creat_connection: 'Create connection',
   connection_form_edit_connection: 'Edit connection',
   connection_form_data_source: 'Data source',
@@ -392,8 +398,6 @@ export default {
   connection_form_mq_broker_url: 'MQ connection string',
   connection_form_mq_broker_url_tip: 'Example tcp://127.0.0.1:61616, supports tcp, nio, udp, ssl, http(s)',
   connection_form_hazecast_rename: 'Rename',
-  connection_form_change: 'Replace',
-  connection_form_rename: 'Rename',
   connection_form_hazecast_cancel: 'Cancel',
   connection_form_hazecast_save: 'Save',
   connection_form_give_up: 'give up',

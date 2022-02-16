@@ -281,6 +281,15 @@ export default {
   connection_list_column_schema_status: 'Schema加載狀態',
   connection_list_column_schema_status_tips: 'Schema加載完成的連接才可以正常創建任務',
 
+  // 连接管理
+  connection_form_creat_connection: '創建連接',
+  connection_form_edit_connection: '編輯連接',
+  connection_form_data_source: '數據源',
+  connection_form_data_source_type: '數據源類型',
+  connection_form_database_address: '數據庫地址',
+  connection_form_change: '更換',
+  connection_form_rename: '改名',
+  connection_form_database_owner_tip: '逗號分割的表達式列表，使用 * 代表任意長度任意字符',
   connection_form_connection_type: '連接類型',
   connection_form_source_and_target: '源頭和目標',
   connection_form_source: '源頭',

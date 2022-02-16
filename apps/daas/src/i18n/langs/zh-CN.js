@@ -14,7 +14,6 @@ export default {
 
   // 菜单标题
   menu_title_function: '函数管理',
-
   gl_button_update_success: '修改成功',
   gl_see_more: '查看更多',
   gl_no_data: '暂无数据',
@@ -22,6 +21,18 @@ export default {
   gl_back_to_list: '返回列表',
   gl_placeholder_select: '请选择',
   gl_placeholder_input: '请输入',
+
+  // 连接管理
+  connection_form_creat_connection: '创建连接',
+  connection_form_edit_connection: '编辑连接',
+  connection_form_data_source: '数据源',
+  connection_form_data_source_type: '数据源类型',
+  connection_form_connection_name: '连接名称',
+  connection_form_database_address: '数据库地址',
+  connection_form_port: '端口',
+  connection_form_change: '更换',
+  connection_form_rename: '改名',
+  connection_form_database_owner_tip: '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
 
   // 数据校验
   verify_details_title: '任务校验详情',
