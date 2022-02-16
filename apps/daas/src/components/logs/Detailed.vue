@@ -30,8 +30,8 @@
           <div class="log-message pl-10" v-html="log.message"></div>
         </li>
       </ul>
-      <div v-else-if="keyword">搜索无数据</div>
-      <div v-else>暂无数据</div>
+      <div v-else-if="keyword" class="text-center">搜索无数据</div>
+      <div v-else class="text-center">暂无数据</div>
     </div>
   </div>
 </template>
