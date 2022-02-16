@@ -501,7 +501,7 @@ import i18n from '@/i18n'
 import ws from '../../api/ws'
 import { formatTimeByTime } from '@/utils/util'
 // import _ from "lodash";
-const dataFlows = factory('DataFlows')
+// const dataFlows = factory('DataFlows')
 const connectionApi = factory('connections')
 const DataFlowInsights = factory('DataFlowInsights')
 let currentStageData = null

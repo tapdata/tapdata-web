@@ -678,6 +678,7 @@ export default {
 
       this.loadDataModels(this.model.connectionId)
       let ouputSchema = cell.getOutputSchema()
+      // eslint-disable-next-line
       console.log('ouputSchema', ouputSchema)
       if (this.model.connectionId && this.model.tableName && !ouputSchema) {
         this.handlerSchemaChange()

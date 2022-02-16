@@ -1337,11 +1337,13 @@ export default {
         ids
       })
         .then(res => {
+          // eslint-disable-next-line
           console.log(method, res)
           this.table.fetch()
           this.responseHandler(res.data, this.$t('message.operationSuccuess'))
         })
         .catch(err => {
+          // eslint-disable-next-line
           console.log('err', err)
           if (err.response.msg === 'Metadata transformer error') {
             this.$message.error('任务启动失败，请编辑任务完成映射配置')

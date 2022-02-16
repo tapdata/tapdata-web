@@ -510,6 +510,7 @@ export default {
           ws.send(msg)
         }, true)
       } catch (e) {
+        // eslint-disable-next-line
         console.log('e', e)
       }
     },

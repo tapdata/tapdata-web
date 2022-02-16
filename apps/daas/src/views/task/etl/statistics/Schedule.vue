@@ -215,6 +215,7 @@ export default {
       this.$api('SubTask')
         .runtimeInfo(id)
         .then(res => {
+          // eslint-disable-next-line
           console.log('loadRuntimeInfo', res)
           this.runtimeInfo = res.data || {}
           this.getStep()
@@ -277,7 +278,9 @@ export default {
         case 'structure':
           overviewInfo.source = structureMigrate.tableNum || 0
           overviewInfo.success = structureMigrate.successNum || 0
-          overviewInfo.start = structureMigrate.start ? new Date(structureMigrate.start).getTime() : new Date().getTime()
+          overviewInfo.start = structureMigrate.start
+            ? new Date(structureMigrate.start).getTime()
+            : new Date().getTime()
           break
         case 'initial_sync':
           overviewInfo.source = fullSync.tableNum || 0

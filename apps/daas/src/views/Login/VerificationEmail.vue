@@ -34,6 +34,12 @@ import factory from '@/api/factory'
 import Cookie from '@daas/shared/src/cookie'
 const usersModel = factory('users')
 
+const LanguagesKey = {
+  sc: 'zh_CN',
+  en: 'en_US',
+  tc: 'zh_TW'
+}
+
 export default {
   name: 'SignIn',
   components: { Header },

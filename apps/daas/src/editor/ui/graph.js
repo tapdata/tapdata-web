@@ -461,6 +461,7 @@ export default class Graph extends Component {
   }
   // check if the cell is drag to between nodes, right on link
   checkIntersection(item, currentPosition) {
+    // eslint-disable-next-line
     console.log('🚌checkIntersection', item, item.getBBox({ useModelGeometry: true }))
     if (item.getBBox({ useModelGeometry: true }).containsPoint(currentPosition)) {
       //inside bbox
@@ -1167,6 +1168,7 @@ export default class Graph extends Component {
             })
             return
           }
+          // eslint-disable-next-line
           console.log('🚗删除', this.selection.collection.toArray())
           this.graph.removeCells(this.selection.collection.toArray())
         }
@@ -1254,6 +1256,7 @@ export default class Graph extends Component {
   }
 
   onMousewheel(cellView, evt, x, y, delta) {
+    // eslint-disable-next-line
     console.log('onMousewheel', arguments)
     if (this.keyboard.isActive('alt', evt)) {
       evt.preventDefault()

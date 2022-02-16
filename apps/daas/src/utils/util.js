@@ -220,3 +220,17 @@ export function escapeHTML(value) {
 export function sameNumber(num1, num2, tolerance = Number.EPSILON) {
   return Math.abs(num1 - num2) <= tolerance || num1 === num2
 }
+// 数组去重
+export function uniqueArr(arr = [], key = 'id') {
+  if (typeof arr[0] !== 'object') {
+    return Array.from(new Set(arr))
+  }
+  let obj = {}
+  return arr.reduce((cur, next) => {
+    if (!obj[next[key]]) {
+      obj[next[key]] = true
+      cur.push(next)
+    }
+    return cur
+  }, [])
+}

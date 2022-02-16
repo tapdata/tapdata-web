@@ -22,6 +22,7 @@ export const Space = defineComponent({
 
       const prefixCls = `${stylePrefix}-space`
       const children = slots.default?.()
+      // eslint-disable-next-line
       console.log('children', children, filterKey)
       let items = []
       if (Array.isArray(children)) {
