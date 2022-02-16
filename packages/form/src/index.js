@@ -1,5 +1,3 @@
-export * from '@formily/element'
-
 export * from './components/select'
 export * from './components/preview-text'
 export * from './components/space'
@@ -15,3 +13,5 @@ export * from './components/form-title'
 export * from './components/join-expression'
 export * from './components/join-expression'
 export * from './components/example-file'
+
+export * from '@formily/element'
