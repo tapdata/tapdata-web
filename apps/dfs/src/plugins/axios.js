@@ -114,6 +114,9 @@ _axios.interceptors.response.use(function (response) {
       return reject(msg)
     } else {
       // 其他情况交由业务端自行处理
+      if (['Datasource.TableNotFound'].includes(code)) {
+        return reject(Object.assign(response))
+      }
       let msg = data?.message || data?.msg || ''
       console.log(`${code}： ${msg}`)
       Message.error(msg)
