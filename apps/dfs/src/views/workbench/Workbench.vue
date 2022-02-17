@@ -115,7 +115,6 @@
               >）</span
             >
           </div>
-          <TextRadio v-model="timeType" :items="timeTypeItems" @change="loadBarData"></TextRadio>
         </div>
         <div style="height: 200px">
           <Chart type="bar" :data="barData" :options="barOptions"></Chart>
@@ -246,12 +245,7 @@ export default {
           show: true
         }
       },
-      timeType: 'week',
-      timeTypeItems: [
-        { label: $t('workbench_statistics_time_type_day'), value: 'day' },
-        { label: $t('workbench_statistics_time_type_week'), value: 'week' },
-        { label: $t('workbench_statistics_time_type_month'), value: 'month' }
-      ]
+      colorList: ['rgba(44, 101, 255, 0.85)', 'rgba(44, 101, 255, 0.5)']
     }
   },
   mounted() {
@@ -373,7 +367,7 @@ export default {
       ]
     },
     loadBarData() {
-      let granularity = this.timeType
+      let granularity = 'month'
       this.$axios
         .get('tm/api/DataFlowInsights/statistics', {
           params: {
@@ -383,11 +377,11 @@ export default {
         .then(data => {
           const list = data.inputDataStatistics || []
           this.taskInputNumber = data.totalInputDataCount || 0
-          this.barData = list.map(el => {
+          this.barData = list.map((el, index) => {
             return {
               name: el.time,
               value: el.count,
-              color: '#2c65ff'
+              color: this.colorList[index % 2]
             }
           })
         })
