@@ -116,10 +116,10 @@
             }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button v-readonlybtn="'SYNC_Function_management'" size="small" class="btn" @click="handleGoFunction">
+        <!-- <el-button v-readonlybtn="'SYNC_Function_management'" size="small" class="btn" @click="handleGoFunction">
           <i class="iconfont icon-hanshu back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkFx') }}</span>
-        </el-button>
+        </el-button> -->
         <el-button v-readonlybtn="'SYNC_job_import'" size="small" class="btn" @click="handleImport">
           <i class="iconfont icon-daoru back-btn-icon"></i>
           <span> {{ $t('dataFlow.bulkImport') }}</span>
@@ -154,7 +154,7 @@
       >
       </el-table-column>
 
-      <el-table-column min-width="200" :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true">
+      <el-table-column min-width="200" :label="$t('task_list_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name">
             <span :class="['name', { 'has-children': row.hasChildren }]" @click="toDetail(row)">{{ row.name }}</span>
@@ -164,26 +164,33 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('dataFlow.syncType')" min-width="150">
+      <el-table-column :label="$t('task_list_task_type')" min-width="150">
         <template #default="{ row }">
           <span>
             {{ row.type ? syncType[row.type] : '' }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column>
-      <el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="180">
+      <!-- <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column> -->
+      <el-table-column prop="status" :label="$t('task_list_status')" width="180">
         <template #default="{ row }">
           <StatusItem :value="row.statusResult"></StatusItem>
         </template>
       </el-table-column>
 
-      <el-table-column prop="startTime" :label="$t('dataFlow.creationTime')" width="170" sortable="custom">
+      <el-table-column
+        prop="lag"
+        :label="$t('task_list_execution_status')"
+        width="180"
+        sortable="custom"
+      ></el-table-column>
+
+      <el-table-column prop="startTime" :label="$t('task_list_start_time')" width="170" sortable="custom">
         <template #default="{ row }">
           {{ row.startTime ? $moment(row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('dataFlow.operate')" width="280" fixed="right">
+      <el-table-column :label="$t('column_operation')" width="280" fixed="right">
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
@@ -225,7 +232,7 @@
             >
               {{ $t('button.edit') }}
             </ElLink>
-            <ElLink
+            <!-- <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               style="margin-left: 10px"
               type="primary"
@@ -236,8 +243,8 @@
               "
               @click="handleTaskscheduling(row.id, row)"
             >
-              {{ $t('dataFlow.schedule') }}
-            </ElLink>
+              {{ $t('task_list_button_schedule') }}
+            </ElLink> -->
             <el-dropdown
               v-show="moreAuthority"
               size="small"
@@ -1138,7 +1145,7 @@ export default {
     handleGoFunction() {
       // top.location.href = '/#/JsFuncs'
       this.$router.push({
-        name: 'Function'
+        name: 'function'
       })
     },
     toDetail(row) {

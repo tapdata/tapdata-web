@@ -91,11 +91,14 @@
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkTag') }}</span>
         </el-button>
-        <el-dropdown
-          class="btn"
-          @command="handleCommand($event)"
-          v-show="multipleSelection.length > 0 && bulkOperation"
+        <el-button
+          v-if="multipleSelection.length === 0 && bulkOperation"
+          :disabled="multipleSelection.length === 0 && bulkOperation"
         >
+          <i class="iconfont icon-piliang back-btn-icon"></i>
+          <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
+        </el-button>
+        <el-dropdown v-else class="btn" @command="handleCommand($event)">
           <el-button class="btn-dropdowm" size="small">
             <i class="iconfont icon-piliang back-btn-icon"></i>
             <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
@@ -159,7 +162,10 @@
       <el-table-column min-width="200" :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name">
-            <span :class="['name', { 'has-children': row.hasChildren }]" @click="toDetails(row)">{{ row.name }}</span>
+            <!-- @click="toDetails(row)" -->
+            <span :class="['name', { 'has-children': row.hasChildren }]" @click="handlePreview(row.id)">{{
+              row.name
+            }}</span>
             <el-tag v-if="row.listTagId !== undefined" class="tag" type="info" effect="dark" size="mini">
               {{ row.listTagValue }}
             </el-tag>
@@ -173,7 +179,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="160" sortable="custom"></el-table-column>
+      <!-- <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="160" sortable="custom"></el-table-column> -->
       <el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="100">
         <template #default="{ row }">
           <div class="flex align-items-center">
@@ -270,7 +276,10 @@
             >
               {{ $t('button.edit') }}
             </ElLink>
-            <ElLink
+            <ElLink v-readonlybtn="'SYNC_job_edition'" style="margin-left: 10px" type="primary" @click="toDetails(row)">
+              {{ $t('task_list_button_monitor') }}
+            </ElLink>
+            <!-- <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               style="margin-left: 10px"
               type="primary"
@@ -282,7 +291,7 @@
               @click="handleTaskscheduling(row.id, row)"
             >
               {{ $t('dataFlow.schedule') }}
-            </ElLink>
+            </ElLink> -->
             <el-dropdown
               v-show="moreAuthority"
               size="small"
@@ -375,10 +384,12 @@
     </el-dialog>
     <DownAgent ref="agentDialog" type="taskRunning"></DownAgent>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
+    <Preview v-if="previewVisible" :id="id" :visible="previewVisible" @previewVisible="handlePreviewVisible"></Preview>
   </section>
 </template>
 
 <script>
+import Preview from './Preview'
 import factory from '../../../api/factory'
 import ws from '../../../api/ws'
 const dataFlows = factory('DataFlows')
@@ -395,9 +406,11 @@ import FilterBar from '@/components/filter-bar'
 let interval = null
 export default {
   name: 'DataflowList',
-  components: { FilterBar, TablePage, DownAgent, SkipError },
+  components: { FilterBar, TablePage, DownAgent, SkipError, Preview },
   data() {
     return {
+      id: '',
+      previewVisible: false,
       filterItems: [],
       restLoading: false,
       mappingTemplate: '',
@@ -956,20 +969,8 @@ export default {
     handleEditor(id) {
       const h = this.$createElement
       this.$confirm(
-        h('p', null, [
-          h('span', null, this.$t('dataFlow.modifyEditText')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeLayoutProcess')),
-          h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeAttributes')),
-          h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.matchingRelationship')),
-          h('span', null, '，'),
-          h('span', null, this.$t('dataFlow.afterSubmission')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.reset')),
-          h('span', null, this.$t('dataFlow.runNomally')),
-          h('span', null, this.$t('dataFlow.editLayerTip'))
-        ]),
-        this.$t('dataFlow.importantReminder'),
+        h('p', null, [h('span', null, this.$t('task_list_edit_confirm'))]),
+        this.$t('task_list_important_reminder'),
         {
           customClass: 'dataflow-clickTip',
           confirmButtonText: this.$t('dataFlow.continueEditing'),
@@ -1327,7 +1328,7 @@ export default {
     handleGoFunction() {
       // top.location.href = '/#/JsFuncs'
       this.$router.push({
-        name: 'Function'
+        name: 'function'
       })
     },
     startAndStop(method = 'startBatch', ids, { status, errorEvents }) {
@@ -1364,6 +1365,13 @@ export default {
           id: row.id
         }
       })
+    },
+    handlePreview(id) {
+      this.id = id
+      this.previewVisible = true
+    },
+    handlePreviewVisible() {
+      this.previewVisible = false
     },
     search() {
       // const { delayTrigger } = this.$util

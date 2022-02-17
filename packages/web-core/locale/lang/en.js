@@ -277,7 +277,8 @@ const en = {
       dataFlowsClusterClone: 'Database Migration',
       dataFlowsCustom: 'Data Sync',
       topology: 'Topology',
-      sharedMining: 'Shared Mining'
+      sharedMining: 'Shared Mining',
+      function: 'function management'
     },
     Home: {
       all: 'All',

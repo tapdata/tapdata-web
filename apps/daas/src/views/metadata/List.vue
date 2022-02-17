@@ -176,7 +176,7 @@
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
-      <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
+      <FormBuilder ref="form" v-if="createDialogVisible" v-model="createForm" :config="createFormConfig"></FormBuilder>
       <span slot="footer" class="dialog-footer">
         <el-button @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
         <el-button type="primary" @click="createNewModel()" size="small">{{ $t('message.confirm') }}</el-button>

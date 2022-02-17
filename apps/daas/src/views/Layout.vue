@@ -15,10 +15,10 @@
       <div class="button-bar">
         <span class="expire-msg" v-if="licenseExpireVisible">
           <span v-if="licenseExpire <= 1">{{
-            $t('app.menu.licenseBefore') + licenseExpire + $t('app.menu.licenseAfterOneDay')
+            $t('menu_title_licenseBefore') + licenseExpire + $t('menu_title_licenseAfterOneDay')
           }}</span>
           <span v-if="licenseExpire > 1">{{
-            $t('app.menu.licenseBefore') + licenseExpire + $t('app.menu.licenseAfter')
+            $t('menu_title_licenseBefore') + licenseExpire + $t('menu_title_licenseAfter')
           }}</span>
         </span>
         <el-button class="btn-create" type="primary" size="mini" v-if="creatAuthority" @click="command('newDataFlow')">
@@ -50,7 +50,7 @@
         >
           <i class="iconfont icon-shezhi1"></i>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="settings" v-if="settingCode">{{ $t('app.menu.settings') }}</el-dropdown-item>
+            <el-dropdown-item command="settings" v-if="settingCode">{{ $t('menu_title_settings') }}</el-dropdown-item>
             <el-dropdown-item command="setting" v-readonlybtn="'home_notice_settings'">{{
               $t('notification.setting')
             }}</el-dropdown-item>
@@ -88,7 +88,7 @@
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="account">{{ $t('app.account') }}</el-dropdown-item>
             <el-dropdown-item command="version">{{ $t('app.version') }}</el-dropdown-item>
-            <el-dropdown-item command="license">{{ $t('app.menu.license') }}</el-dropdown-item>
+            <el-dropdown-item command="license">{{ $t('menu_title_license') }}</el-dropdown-item>
             <el-dropdown-item v-if="$window.getSettingByKey('SHOW_HOME_BUTTON')" command="home">
               {{ $t('app.home') }}
             </el-dropdown-item>
@@ -130,7 +130,7 @@
           <el-submenu v-if="favMenus.length" index="favorite">
             <template slot="title">
               <i class="iconfont icon-shoucang"></i>
-              <span slot="title">{{ $t('app.menu.favorite') }}</span>
+              <span slot="title">{{ $t('menu_title_favorite') }}</span>
             </template>
             <el-menu-item
               v-for="(menu, index) in favMenus"
@@ -211,13 +211,17 @@ let menuSetting = [
         // query: '?mapping=custom'
       },
       {
+        name: 'dataVerification',
+        icon: 'hechabidui-copy',
+        code: 'Data_verify_menu'
+      },
+      {
         name: 'sharedMining',
         icon: 'shujutongbu'
       },
       {
-        name: 'dataVerification',
-        icon: 'hechabidui-copy',
-        code: 'Data_verify_menu'
+        name: 'function',
+        icon: 'shujutongbu'
       }
     ]
   },
@@ -355,21 +359,22 @@ export default {
       }
     },
     delFavMenu(idx) {
-      this.$confirm(this.$t('message.comfirm') + this.$t('app.menu.delFavMenu'), this.$t('app.menu.delFavMenu')).then(
-        async resFlag => {
-          if (!resFlag) {
-            return
-          }
-          this.favMenus.splice(idx, 1)
-          // this.$cookie.get('user_id'),
-          let result = await this.$api('users').updateById({
-            favorites: this.favMenus
-          })
-          if (result.status === 200) {
-            this.$message.success(this.$t('message.saveOK'))
-          }
+      this.$confirm(
+        this.$t('message.comfirm') + this.$t('menu_title_delFavMenu'),
+        this.$t('menu_title_delFavMenu')
+      ).then(async resFlag => {
+        if (!resFlag) {
+          return
         }
-      )
+        this.favMenus.splice(idx, 1)
+        // this.$cookie.get('user_id'),
+        let result = await this.$api('users').updateById({
+          favorites: this.favMenus
+        })
+        if (result.status === 200) {
+          this.$message.success(this.$t('message.saveOK'))
+        }
+      })
     },
     getMenus() {
       let permissions = sessionStorage.getItem('tapdata_permissions')
@@ -384,7 +389,7 @@ export default {
         return items.map(item => {
           let router = routerMap[item.name]
           let menu = Object.assign({}, item, router)
-          menu.label = this.$t('app.menu.' + (item.alias || menu.name))
+          menu.label = this.$t('menu_title_' + (item.alias || menu.name))
           let matched = !menu.code || permissions.some(p => p.code === menu.code)
           if (menu.children) {
             menu.children = formatMenu(menu.children)
@@ -447,7 +452,7 @@ export default {
           this.$router.push({
             name: 'License'
           })
-          // this.$message.info(this.$t('app.menu.licenseDate') + ': ' + this.licenseExpireDate)
+          // this.$message.info(this.$t('menu_title_licenseDate') + ': ' + this.licenseExpireDate)
           break
         case 'home':
           window.open('https://tapdata.net/', '_blank')

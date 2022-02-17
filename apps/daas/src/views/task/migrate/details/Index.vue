@@ -29,11 +29,11 @@ import Schedule from './Schedule'
 import Log from '@/components/logs/Index'
 import Connection from './Connection'
 import History from './History'
-import FieldMapping from '@/components/FieldMapping'
+// import FieldMapping from '@/components/FieldMapping'
 
 export default {
   name: 'Index',
-  components: { Info, Schedule, Log, Connection, History, FieldMapping },
+  components: { Info, Schedule, Log, Connection, History },
   data() {
     return {
       loading: true,

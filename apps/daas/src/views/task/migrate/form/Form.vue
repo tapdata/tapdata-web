@@ -34,6 +34,7 @@
               >
               </FormBuilder>
             </div>
+
             <!-- 步骤3 -->
             <div class="body step-3" v-if="steps[activeStep].index === 3">
               <div class="mb-8">

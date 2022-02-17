@@ -289,7 +289,8 @@ const cn = {
       dataFlowsCustom: '数据同步',
       dataFlowsClusterClone: '数据库迁移',
       topology: '网络拓扑',
-      sharedMining: '共享挖掘'
+      sharedMining: '共享挖掘',
+      function: '函数管理'
     },
     Home: {
       all: '全部',

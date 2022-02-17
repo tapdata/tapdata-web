@@ -29,6 +29,31 @@
                   </ElFormItem>
                 </ElCol>
               </ElRow>
+              <ElRow class="pb-5">
+                <ElCol :span="12">
+                  <ElFormItem label="任务调度" required="">
+                    <ElSwitch v-model="settings.isSchedule"></ElSwitch>
+                  </ElFormItem>
+                </ElCol>
+                <ElCol :span="12" v-if="settings.isSchedule">
+                  <ElFormItem :label="$t('dag_data_setting_expression')">
+                    <ElInput type="input" width="100%" v-model="settings.cronExpression"></ElInput>
+                  </ElFormItem>
+                  <div class="schedule">
+                    <p>{{ $t('dag_data_setting_explanation') }}</p>
+                    <p>{{ $t('dag_data_setting_grammar') }}</p>
+                    <ul class="schedule-list">
+                      <li class="fl" v-for="item in timeTextArr" :key="item">
+                        <p>{{ $t('dag_data_setting_' + item) }}</p>
+                        <span>*</span>
+                      </li>
+                    </ul>
+                    <p>{{ $t('dag_data_setting_explanation') }}</p>
+                    <p>0 */1 * * * ? * // {{ $t('dag_data_setting_runMinute') }}</p>
+                    <p>0 0 2 * * ? * // {{ $t('dag_data_setting_runDay') }}</p>
+                  </div>
+                </ElCol>
+              </ElRow>
             </div>
           </div>
         </ElTabPane>
@@ -205,7 +230,8 @@ export default {
           label: '此刻',
           value: 'current'
         }
-      ]
+      ],
+      timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year']
     }
   },
 
@@ -335,7 +361,7 @@ export default {
       }
 
       > .el-tabs__content {
-        height: calc(100% - 40px);
+        height: calc(100% - 50px);
         overflow: auto;
         box-sizing: border-box;
         .el-tab-pane {
@@ -344,6 +370,17 @@ export default {
       }
 
       .el-tabs__content {
+        .schedule {
+          font-size: 12px;
+          color: #999;
+          p {
+            padding-bottom: 5px;
+          }
+          li {
+            padding-right: 10px;
+            text-align: center;
+          }
+        }
         .setting-title {
           line-height: 35px;
           font-weight: 600;

@@ -271,7 +271,8 @@ const tc = {
       dataFlowsCustom: '數據同步',
       dataFlowsClusterClone: '數據庫遷移',
       topology: '網絡拓撲',
-      sharedMining: '共享挖掘'
+      sharedMining: '共享挖掘',
+      function: '函數管理'
     },
     Home: {
       all: '全部',

@@ -545,7 +545,7 @@ const childRoutes = [
   },
   {
     path: '/function',
-    name: 'Function',
+    name: 'function',
     component: () => import('@/views/function/List'),
     meta: {
       isCollapse: false,
