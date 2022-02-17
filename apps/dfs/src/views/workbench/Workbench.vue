@@ -106,15 +106,10 @@
     <div class="workbench-overview workbench-section">
       <div class="main-title py-6">{{ $t('workbench_statistics_title') }}</div>
       <div class="p-6" style="background-color: #fff">
-        <div class="flex justify-content-between">
-          <div>
-            <span>{{ $t('workbench_statistics__sub_title') }}</span>
-            <span
-              >（{{ $t('workbench_statistics__sub_title_label') + '：'
-              }}<span class="color-primary">{{ taskInputNumber }}</span
-              >）</span
-            >
-          </div>
+        <div class="fs-7" style="color: #000">
+          <span class="mr-4">{{ $t('workbench_statistics__sub_title') }}</span>
+          <span class="mr-1">{{ $t('workbench_statistics__sub_title_label') }}</span>
+          <span class="color-primary" style="font-family: DIN">{{ taskInputNumber }}</span>
         </div>
         <div style="height: 200px">
           <Chart type="bar" :data="barData" :options="barOptions"></Chart>
@@ -127,12 +122,11 @@
 
 <script>
 import VIcon from '@/components/VIcon'
-import TextRadio from '@/components/TextRadio'
 import Chart from 'web-core/components/chart'
 
 export default {
   name: 'Workbench',
-  components: { VIcon, TextRadio, Chart },
+  components: { VIcon, Chart },
   data() {
     const $t = this.$t.bind(this)
     return {
@@ -235,6 +229,7 @@ export default {
       taskInputNumber: 0,
       barData: [],
       barOptions: {
+        barWidth: '50%',
         grid: {
           top: 20,
           bottom: 0,
@@ -243,6 +238,9 @@ export default {
         },
         yAxis: {
           show: true
+        },
+        tooltip: {
+          trigger: 'item'
         }
       },
       colorList: ['rgba(44, 101, 255, 0.85)', 'rgba(44, 101, 255, 0.5)']
