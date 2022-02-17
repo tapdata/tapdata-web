@@ -123,6 +123,7 @@
 <script>
 import VIcon from '@/components/VIcon'
 import Chart from 'web-core/components/chart'
+import { formatTime } from '@/util'
 
 export default {
   name: 'Workbench',
@@ -236,11 +237,38 @@ export default {
           left: 0,
           right: 0
         },
+        xAxis: {
+          axisLabel: {
+            formatter: val => {
+              return formatTime(val, 'MM-DD')
+            }
+          },
+          axisLine: {
+            onZero: false
+          }
+        },
         yAxis: {
-          show: true
+          show: true,
+          type: 'log',
+          min: 1,
+          logBase: 10,
+          axisLabel: {
+            formatter: val => {
+              return val === 1 ? 0 : val
+            }
+          }
         },
         tooltip: {
-          trigger: 'item'
+          trigger: 'item',
+          formatter: params => {
+            let item = params
+            let val = item.value
+            if (val === 1.1) {
+              val = 1
+            }
+            let html = item.marker + params.name + `<span style="padding: 0 4px"></span><br/>` + val
+            return html
+          }
         }
       },
       colorList: ['rgba(44, 101, 255, 0.85)', 'rgba(44, 101, 255, 0.5)']
@@ -376,9 +404,13 @@ export default {
           const list = data.inputDataStatistics || []
           this.taskInputNumber = data.totalInputDataCount || 0
           this.barData = list.map((el, index) => {
+            let value = el.count
+            if (value === 1) {
+              value = 1.1
+            }
             return {
               name: el.time,
-              value: el.count,
+              value: value,
               color: this.colorList[index % 2]
             }
           })
