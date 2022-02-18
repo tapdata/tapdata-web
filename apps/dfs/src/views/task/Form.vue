@@ -706,7 +706,9 @@ export default {
         let target = items.find(it => it.field === 'syncPoints')
         if (
           value === 'cdc' &&
-          ['mysql', 'oracle', 'sqlserver', 'mongodb'].includes(this.dataSourceModel['source_databaseType'])
+          ['mysql', 'oracle', 'sqlserver', 'mongodb', 'aliyun_mysql'].includes(
+            this.dataSourceModel['source_databaseType']
+          )
         ) {
           target.show = true
         } else {
@@ -948,8 +950,8 @@ export default {
         case 'setting': {
           this.getSupportTwoWay() // 进入设置页面再判断
           if (
-            this.dataSourceModel['source_databaseType'] !== 'mysql' ||
-            this.dataSourceModel['target_databaseType'] !== 'mysql'
+            !['mysql', 'aliyun_mysql'].includes(this.dataSourceModel['source_databaseType']) ||
+            !['mysql', 'aliyun_mysql'].includes(this.dataSourceModel['target_databaseType'])
           ) {
             this.changeConfig([], 'setting_isOpenAutoDDL')
             this.changeConfig([], 'setting_twoWay')
@@ -978,7 +980,7 @@ export default {
 
           //mysql、pg、oracle、sql server、mongodb、mariadb 是作为目标 支持自动创建索引
           if (
-            ['mysql', 'postgres', 'oracle', 'sqlserver', 'mongodb', 'mariadb'].includes(
+            ['mysql', 'postgres', 'oracle', 'sqlserver', 'mongodb', 'mariadb', 'aliyun_mysql'].includes(
               this.dataSourceModel['target_databaseType']
             )
           ) {
@@ -990,7 +992,7 @@ export default {
           let target = this.config.items.find(it => it.field === 'syncPoints')
           if (
             this.settingModel.sync_type === 'cdc' &&
-            ['mysql', 'oracle', 'sqlserver', 'mongodb'].includes(this.dataSourceModel['source_databaseType'])
+            ['mysql', 'oracle', 'sqlserver', 'mongodb', 'aliyun_mysql'].includes(this.dataSourceModel['source_databaseType'])
           ) {
             target.show = true
           } else {
