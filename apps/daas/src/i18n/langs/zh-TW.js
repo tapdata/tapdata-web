@@ -354,6 +354,8 @@ export default {
   connection_form_connection_name: '連接名稱',
   connection_form_user_name: '賬號',
   connection_form_password: '密碼',
+  connection_form_shared_mining: '共享挖掘',
+  connection_form_shared_mining_tip: '共享挖掘開啟，您可在任務列表中管理共享挖掘任務',
 
   connection_form_mq_type: 'MQ類型',
   connection_form_mq_topic_set: '主題名稱',
@@ -683,6 +685,10 @@ export default {
   task_monitor_run_log: '運行日誌',
   task_monitor_run_connection: '連接',
   task_monitor_history_run_record: '歷史運行記錄',
+  task_monitor_mining_task: '挖掘任務',
+  task_monitor_mining_task_name: '挖掘任務名稱',
+  task_monitor_mining_task_point_time: '挖掘所處時間點',
+  task_monitor_mining_task_status: '挖掘狀態',
   task_monitor_mission_milestone: '任務里程碑',
   task_monitor_no_milestone_data: '此任務尚未啟動或已被重置，暫無運行里程碑數據',
   task_monitor_task_details: '任務詳情',
@@ -872,13 +878,14 @@ export default {
   customer_logs_copy_result: '已復製到剪貼板',
 
   // 共享挖掘
-  share_list_name: '共享挖掘',
+  share_list_name: '挖掘名稱',
   share_list_connection: '所屬連接',
   share_list_time_excavation: '挖掘所處時間點',
   share_list_creat_time: '創建時間',
   share_list_setting: '挖掘設置',
-  share_list_dig_task_search: '挖掘任務名搜索',
-  share_list_connection_search: '連接名稱搜索',
+  share_list_dig_task_search: '挖掘任務名/連接名搜索',
+  share_list_status: '狀態',
+  // share_list_connection_search: '連接名稱搜索',
   share_list_dig_setting: '挖掘設置',
   share_form_setting_connection_name: '存儲MongoDB連接名稱',
   share_form_setting_table_name: '存儲MongoDB表名',
@@ -891,5 +898,19 @@ export default {
   share_form_edit_day: '天',
   share_form_edit_title: '是否放棄編輯該挖掘任務',
   share_form_edit_text: '此操作不會保存已修改的內容',
-  share_form_edit_give_up: '放棄'
+  share_form_edit_give_up: '放棄',
+
+  share_detail_mining_info: '挖掘信息',
+  share_detail_name: '挖掘名稱',
+  share_detail_log_mining_time: '日誌挖掘時間',
+  hare_detail_log_time: '日誌保存時長',
+  share_detail_call_task: '調用任務',
+  share_detail_source_time: '源庫時間點',
+  share_detail_sycn_time_point: '同步時間點',
+  share_detail_mining_status: '挖掘狀態',
+  share_detail_button_table_info: '表詳情',
+  share_detail_statistics_time: '統計時間',
+  share_detail_start_time: '開始間',
+  share_detail_end_time: '結束時間',
+  share_detail_to: '至'
 }

@@ -484,6 +484,7 @@ export default {
           this.$message.error(err.data.message)
         })
     },
+    // 编辑
     handleEditor(id) {
       const h = this.$createElement
       this.$confirm(

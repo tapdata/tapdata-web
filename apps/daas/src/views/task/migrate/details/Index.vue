@@ -15,6 +15,9 @@
         <ElTabPane :label="$t('task_monitor_history_run_record')" name="history" lazy>
           <History :ids="[task.id]" :operations="operations"></History>
         </ElTabPane>
+        <ElTabPane :label="$t('task_monitor_mining_task')" name="task">
+          <Task :id="task.id"></Task>
+        </ElTabPane>
         <!--        <ElTabPane v-if="showContent" :label="$t('task_monitor_sync_content')" name="content" lazy>-->
         <!--          <FieldMapping ref="fieldMapping" :readOnly="true" :field_process="field_process" :getDataFlow="getDataFlow"></FieldMapping>-->
         <!--        </ElTabPane>-->
@@ -29,11 +32,12 @@ import Schedule from './Schedule'
 import Log from '@/components/logs/Index'
 import Connection from './Connection'
 import History from './History'
+import Task from './Task'
 // import FieldMapping from '@/components/FieldMapping'
 
 export default {
   name: 'Index',
-  components: { Info, Schedule, Log, Connection, History },
+  components: { Info, Schedule, Log, Connection, History, Task },
   data() {
     return {
       loading: true,

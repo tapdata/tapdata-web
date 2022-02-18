@@ -126,7 +126,8 @@ export const defaultModel = {
     hiveConnType: 'Stream', // kafka
     schema: '',
     tidbPdServer: '', // TiDB
-    isCheckValid: false
+    isCheckValid: false,
+    shareCdcEnable: false
   },
   kafka: {
     id: '',

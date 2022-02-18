@@ -345,6 +345,8 @@ export default {
   connection_form_host: 'Database host',
   connection_form_user_name: 'Account',
   connection_form_password: 'Password',
+  connection_form_shared_mining: 'Shared mining',
+  connection_form_shared_mining_tip: 'Shared mining is enabled, you can manage shared mining tasks in the task list',
 
   connection_form_mq_type: 'MQ Type',
   connection_form_mq_topic_set: 'topic name',
@@ -706,6 +708,10 @@ export default {
   task_monitor_run_log: 'Run log',
   task_monitor_run_connection: 'Connect',
   task_monitor_history_run_record: 'History run record',
+  task_monitor_mining_task: 'Mining task',
+  task_monitor_mining_task_name: 'Mining task name',
+  task_monitor_mining_task_point_time: 'Mining time point',
+  task_monitor_mining_task_status: 'Mining status',
   task_monitor_mission_milestone: 'Mission Milestone',
   task_monitor_no_milestone_data:
     'This task has not been started or has been reset. There is no running milestone data yet',
@@ -906,12 +912,13 @@ export default {
   customer_logs_copy_result: 'copied to clipboard',
 
   // 共享挖掘
-  share_list_name: 'Shared Mining',
+  share_list_name: 'Mining name',
   share_list_connection: 'Belonging to the connection',
   share_list_time_excavation: 'Excavation time point',
   share_list_creat_time: 'Create time',
   share_list_setting: 'Mining settings',
-  share_list_dig_task_search: 'Dig task name search',
+  share_list_dig_task_search: 'digging task name/connection name search',
+  share_list_status: 'Status',
   share_list_connection_search: 'Connection name search',
   share_list_dig_setting: 'digging settings',
   share_form_setting_connection_name: 'Store MongoDB connection name',
@@ -925,5 +932,19 @@ export default {
   share_form_edit_day: 'day',
   share_form_edit_title: 'Whether to give up editing this mining task',
   share_form_edit_text: 'This operation will not save the modified content',
-  share_form_edit_give_up: 'give up'
+  share_form_edit_give_up: 'give up',
+
+  share_detail_mining_info: 'Mining information',
+  share_detail_name: 'Mining name',
+  share_detail_log_mining_time: 'Log mining time',
+  hare_detail_log_time: 'log storage time',
+  share_detail_call_task: 'Call task',
+  share_detail_source_time: 'Source library time point',
+  share_detail_sycn_time_point: 'Sync time point',
+  share_detail_mining_status: 'Mining status',
+  share_detail_button_table_info: 'Table details',
+  share_detail_statistics_time: 'Statistics time',
+  share_detail_start_time: 'Start time',
+  share_detail_end_time: 'End time',
+  share_detail_to: 'to'
 }

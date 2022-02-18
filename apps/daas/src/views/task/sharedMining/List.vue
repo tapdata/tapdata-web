@@ -21,7 +21,7 @@
             >
             </el-input>
           </li>
-          <li>
+          <!-- <li>
             <el-input
               clearable
               class="input-with-select"
@@ -31,7 +31,7 @@
               @input="table.fetch(1, 800)"
             >
             </el-input>
-          </li>
+          </li> -->
           <template v-if="searchParams.keyword">
             <li>
               <el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
@@ -44,23 +44,17 @@
       </div>
       <div slot="operation">
         <el-button class="btn btn-create" size="mini" @click="handleSetting">
-          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
           <span>{{ $t('share_list_setting') }}</span>
         </el-button>
       </div>
-      <el-table-column
-        :label="$t('share_list_name')"
-        prop="source.name"
-        sortable="source.name"
-        :show-overflow-tooltip="true"
-      >
+      <el-table-column :label="$t('share_list_name')" prop="name" sortable="name" :show-overflow-tooltip="true">
         <template slot-scope="scope">
-          {{ scope.row.source.name }}
+          {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('share_list_connection')" prop="tableName" sortable="tableName">
+      <el-table-column :label="$t('share_list_connection')" prop="connections">
         <template slot-scope="scope">
-          {{ scope.row.name || scope.row.original_name }}
+          {{ scope.row.connections }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('share_list_time_excavation')" prop="name">
@@ -68,15 +62,8 @@
           {{ scope.row.indexName }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('share_list_creat_time')" prop="fields">
-        <template slot-scope="scope">
-          {{
-            typeof scope.row.key === 'string'
-              ? Object.keys(JSON.parse(scope.row.key)).join(',')
-              : Object.keys(scope.row.key).join(',')
-          }}
-        </template>
-      </el-table-column>
+      <el-table-column :label="$t('share_list_creat_time')" prop="createTime"> </el-table-column>
+      <el-table-column :label="$t('share_list_status')" prop="status"> </el-table-column>
       <el-table-column :label="$t('column_operation')">
         <template slot-scope="scope">
           <el-button size="mini" type="text" style="color: #f56c6c" @click="handleEdit(scope.row)">{{
@@ -162,7 +149,7 @@ export default {
         keyword: '',
         isFuzzy: true
       },
-      order: 'last_updated DESC',
+      order: 'createTime DESC',
       dbOptions: [],
       list: null,
       settingDialogVisible: false,
@@ -177,7 +164,7 @@ export default {
       },
       digSettingFormConfig: {
         form: {
-          labelPosition: 'right',
+          labelPosition: 'left',
           labelWidth: '160px'
         },
         defaultModel: {
@@ -284,112 +271,28 @@ export default {
     },
 
     // 获取列表数据
-    getData({ page, tags }) {
-      let tableArrData = []
-      let { current, size } = page
-      let { isFuzzy, keyword } = this.searchParams
-      let where = {
-        is_deleted: false,
-        meta_type: 'collection',
-        'source.database_type': 'mongodb',
-        'source.connection_type': {
-          inq: ['target', 'source_and_target']
-        },
-        indexes: {
-          $elemMatch: {
-            expireAfterSeconds: { $exists: true },
-            create_by: { $ne: 'dba' }
-          }
-        }
-      }
-      let fields = {
-        id: true,
-        _id: true,
-        meta_type: true,
-        name: true,
-        original_name: true,
-        source: true,
-        'source.id': true,
-        'source._id': true,
-        'source.name': true,
-        'source.user_id': true,
-        'source.database_uri': true,
-        'source.database_host': true,
-        'source.database_name': true,
-        indexes: true
-      }
-      if (keyword && keyword.trim()) {
-        let filterObj = isFuzzy ? { like: keyword, options: 'i' } : keyword
-        where.or = [
-          { name: filterObj },
-          { original_name: filterObj },
-          { 'source.name': filterObj },
-          { 'indexes.name': filterObj }
-        ]
-      }
+    getData() {
+      // let { current, size } = page
+      // let { keyword } = this.searchParams
+      // let where = {}
+      // if (keyword && keyword.trim()) {
+      //   let filterObj = { like: keyword, options: 'i' }
+      //   where.or = [{ name: filterObj }]
+      // }
 
-      if (tags && tags.length) {
-        where['classifications.id'] = {
-          in: tags
-        }
-      }
-
-      if (!parseInt(this.$cookie.get('isAdmin'))) {
-        if (!this.$disabledByPermission('time_to_live_all_data')) {
-          where['source.user_id'] = {
-            regexp: `^${this.$cookie.get('user_id')}$`
-          }
-        }
-      }
-
-      let filter = {
-        order: this.order,
-        limit: size,
-        fields: fields,
-        skip: (current - 1) * size,
-        where
-      }
-      return this.$api('MetadataInstances')
-        .get({
-          filter: JSON.stringify(filter)
-        })
+      // let filter = {
+      //   order: this.order,
+      //   limit: size,
+      //   skip: (current - 1) * size,
+      //   where
+      // }
+      this.$api('logcollector')
+        .get()
         .then(res => {
-          this.table.setCache({
-            isFuzzy,
-            keyword
-          })
-          if (res.data?.items?.length) {
-            this.tableData = res.data.items.map(item => {
-              item.indexsFilter = item.indexes.filter(idx => idx.expireAfterSeconds && idx.create_by !== 'dba')
-              return item
-            })
-
-            this.tableData.forEach(item => {
-              for (let i = 0; i < item.indexsFilter.length; i++) {
-                for (let key in item.indexsFilter[i]) {
-                  if (key === 'name') {
-                    item.indexsFilter[i]['indexName'] = item.indexsFilter[i][key]
-                    delete item.indexsFilter[i]['name']
-                  }
-                }
-                let rdata = {
-                  ...item,
-                  ...item.indexsFilter[i]
-                }
-                rdata.combineNum = item.indexsFilter.length
-                delete rdata.indexsFilter
-                tableArrData.push(rdata)
-                // if (i == 0) {
-                //   rowspan.push(rdata.combineNum)
-                // } else {
-                //   rowspan.push(0)
-                // }
-              }
-            })
-          }
+          // this.table.setCache({ keyword })
           return {
             total: res.data.total,
-            data: tableArrData
+            data: res.data
           }
         })
     },

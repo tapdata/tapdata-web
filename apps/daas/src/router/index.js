@@ -328,16 +328,7 @@ const childRoutes = [
       isCollapse: false
     }
   },
-  {
-    path: '/sharedMining',
-    name: 'sharedMining',
-    component: () => import('@/views/task/sharedMining/List'),
-    meta: {
-      code: 'Data_SYNC_menu',
-      title: i18n.t('tap.sharedMining'),
-      isCollapse: false
-    }
-  },
+
   {
     path: '/taskHistories',
     name: 'taskHistories',
@@ -475,6 +466,25 @@ const childRoutes = [
       listRoute: {
         name: 'migrate'
       }
+    }
+  },
+  {
+    path: '/sharedMining',
+    name: 'sharedMining',
+    component: () => import('@/views/task/sharedMining/List'),
+    meta: {
+      code: 'Data_SYNC_menu',
+      title: i18n.t('tap.sharedMining'),
+      isCollapse: false
+    }
+  },
+  {
+    path: '/sharedMining/details/:id',
+    name: 'SharedMiningDetails',
+    component: () => import('@/views/task/sharedMining/Detail'),
+    meta: {
+      title: '挖掘详情',
+      showTitle: true
     }
   },
   {
