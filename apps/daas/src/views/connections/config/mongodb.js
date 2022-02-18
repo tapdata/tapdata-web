@@ -383,6 +383,12 @@ export default function (vm) {
         label: vm.$t('dataForm.form.ReloadSchema')
       },
       {
+        type: 'switch',
+        field: 'shareCdcEnable',
+        label: vm.$t('connection_oracle_config_share_log_switch'),
+        show: true
+      },
+      {
         type: 'input',
         field: 'table_filter',
         domType: 'textarea',

@@ -512,6 +512,7 @@ export default {
 
   connection_test_schema_tips:
     'Possible reason: there is a problem with the Schema case setting, you can try to modify the case and try again',
+  connection_oracle_config_share_log_switch: 'Shared mining',
 
   connection_preview_load_schema: 'Load Schema',
   connection_preview_edit: 'Edit',

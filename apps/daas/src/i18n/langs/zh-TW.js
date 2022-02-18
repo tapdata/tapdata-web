@@ -25,7 +25,6 @@ export default {
 
   // 菜单标题
   menu_title_function: '函數管理',
-  menu_title_function: '函數管理',
   menu_title_dashboard: '控制台',
   menu_title_connections: '數據源',
   menu_title_dataSync: '數據同步',
@@ -498,6 +497,7 @@ export default {
     '此模式將連接網絡中的單獨服務器，該服務器提供到數據庫的TSL/SSL通道。如果您的數據庫位於不可訪問的子網中，則可嘗試使用此方法',
 
   connection_test_schema_tips: '可能原因：Schema大小寫設置有問題，您可嘗試修改大小寫後重試',
+  connection_oracle_config_share_log_switch: '共享挖掘',
 
   connection_preview_load_schema: '加載Schema',
   connection_preview_edit: '編輯',
