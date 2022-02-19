@@ -29,14 +29,14 @@
         </template>
         <div v-if="!isSearching" class="migration-table__empty" slot="empty">
           <VIcon size="120">no-data-color</VIcon>
-          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+          <div class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('gl_no_data') }}</span>
           </div>
         </div>
         <div v-else class="migration-table__empty" slot="empty">
           <VIcon size="120">search-no-data-color</VIcon>
-          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-            <span>{{ $t('gl_no_match_result') }}</span>
+          <div class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub">
+            <span style="line-height: 20px">{{ $t('gl_no_match_result') }}</span>
             <ElLink type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</ElLink>
           </div>
         </div>
@@ -341,11 +341,11 @@ export default {
       this.table.fetch(1)
     },
     getOperationTypeLabel(row) {
-      return this.operationTypeOptions.find(item => item.value === `${row.modular}_${row.operation}`)?.label
+      return this.operationTypeOptions.find(item => item.value === `${row.modular}&&${row.operation}`)?.label
     },
     descFnc(row) {
       let { modular, operation, rename } = row
-      let findOne = this.operationTypeOptions.find(item => item.value === `${modular}_${operation}`)
+      let findOne = this.operationTypeOptions.find(item => item.value === `${modular}&&${operation}`)
       let desc = findOne?.desc ?? ''
       if (modular === 'connection' && operation === 'update' && rename) {
         desc = this.$t('operation_log_modify_connection_name')
