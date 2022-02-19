@@ -72,109 +72,118 @@ export default {
         // 连接
         {
           label: this.$t('operation_log_connection_create'),
-          value: 'connection_create',
+          value: 'connection&&create',
           desc: this.$t('operation_log_connection_create_tip')
         },
         {
           label: this.$t('operation_log_connection_update'),
-          value: 'connection_update',
+          value: 'connection&&update',
           desc: this.$t('operation_log_connection_update_tip')
         },
         {
           label: this.$t('operation_log_connection_copy'),
-          value: 'connection_copy',
+          value: 'connection&&copy',
           desc: this.$t('operation_log_connection_copy_tip')
         },
         {
           label: this.$t('operation_log_connection_delete'),
-          value: 'connection_delete',
+          value: 'connection&&delete',
           desc: this.$t('operation_log_connection_delete_tip')
         },
         // 任务
         {
           label: this.$t('operation_log_migration_create'),
-          value: 'migration_create',
+          value: 'migration&&create',
           desc: this.$t('operation_log_migration_create_tip')
         },
         {
           label: this.$t('operation_log_migration_start'),
-          value: 'migration_start',
+          value: 'migration&&start',
           desc: this.$t('operation_log_migration_start_tip')
         },
         {
           label: this.$t('operation_log_migration_update'),
-          value: 'migration_update',
+          value: 'migration&&update',
           desc: this.$t('operation_log_migration_update_tip')
         },
         {
           label: this.$t('operation_log_migration_copy'),
-          value: 'migration_copy',
+          value: 'migration&&copy',
           desc: this.$t('operation_log_migration_copy_tip')
         },
         {
           label: this.$t('operation_log_migration_reset'),
-          value: 'migration_reset',
+          value: 'migration&&reset',
           desc: this.$t('operation_log_migration_reset_tip')
         },
         {
           label: this.$t('operation_log_migration_delete'),
-          value: 'migration_delete',
+          value: 'migration&&delete',
           desc: this.$t('operation_log_migration_delete_tip')
         },
         {
           label: this.$t('operation_log_migration_stop'),
-          value: 'migration_stop',
+          value: 'migration&&stop',
           desc: this.$t('operation_log_migration_stop_tip')
         },
         {
           label: this.$t('operation_log_migration_forceStop'),
-          value: 'migration_forceStop',
+          value: 'migration&&forceStop',
           desc: this.$t('operation_log_migration_forceStop_tip')
         },
         // Agent
         {
           label: this.$t('operation_log_agent_rename'),
-          value: 'agent_rename',
+          value: 'agent&&rename',
           desc: this.$t('operation_log_agent_rename_tip')
         },
         {
           label: this.$t('operation_log_agent_update'),
-          value: 'agent_update',
+          value: 'agent&&update',
           desc: this.$t('operation_log_agent_update_tip')
         },
         // 校验
         {
           label: this.$t('operation_log_inspect_create'),
-          value: 'inspect_create',
+          value: 'inspect&&create',
           desc: this.$t('operation_log_inspect_create_tip')
         },
         {
           label: this.$t('operation_log_inspect_start'),
-          value: 'inspect_start',
+          value: 'inspect&&start',
           desc: this.$t('operation_log_inspect_start_tip')
         },
         {
           label: this.$t('operation_log_inspect_update'),
-          value: 'inspect_update',
+          value: 'inspect&&update',
           desc: this.$t('operation_log_inspect_update_tip')
         },
         {
           label: this.$t('operation_log_inspect_delete'),
-          value: 'inspect_delete',
+          value: 'inspect&&delete',
           desc: this.$t('operation_log_inspect_delete_tip')
         },
         // 二次校验
         {
           label: this.$t('operation_log_difference_inspect_start'),
-          value: 'differenceInspect_start',
+          value: 'differenceInspect&&start',
           desc: this.$t('operation_log_difference_inspect_start_tip')
         },
         // 通知
-        { label: '已读全部通知', value: 'message_readAll', desc: '设置全部通知为已读' },
-        { label: '删除全部通知', value: 'message_deleteAll', desc: '删除了全部通知' },
-        { label: '标记通知为已读', value: 'message_read', desc: '将选中的通知全部标记为已读' },
-        { label: '删除通知', value: 'message_delete', desc: '将选中的通知全部删除' },
-        { label: '修改通知设置', value: 'userNotification_update', desc: '修改了系统通知设置' }
+        { label: '已读全部通知', value: 'message&&readAll', desc: '设置全部通知为已读' },
+        { label: '删除全部通知', value: 'message&&deleteAll', desc: '删除了全部通知' },
+        { label: '标记通知为已读', value: 'message&&read', desc: '将选中的通知全部标记为已读' },
+        { label: '删除通知', value: 'message&&delete', desc: '将选中的通知全部删除' },
+        { label: '修改通知设置', value: 'userNotification&&update', desc: '修改了系统通知设置' },
+        // 用户中心
+        // { label: '修改昵称', value: 'user&&update_nickname', desc: '修改了昵称' },
+        // { label: '绑定手机号', value: 'user&&bind_phone', desc: '绑定了手机号' },
+        { label: '修改手机号', value: 'user&&update_phone', desc: '修改了手机号' },
+        // { label: '绑定邮箱', value: 'user&&bind_email', desc: '绑定了邮箱' },
+        { label: '修改邮箱', value: 'user&&update_email', desc: '修改了邮箱' }
+        // { label: '修改密码', value: 'user&&update_password', desc: '修改了密码' },
+        // { label: '修改头像', value: 'user&&update_avatar', desc: '修改了头像' },
+        // { label: '修改企业信息', value: 'user&&update_enterprise_info', desc: '修改了企业信息' }
       ],
       columns: [
         {
@@ -233,7 +242,7 @@ export default {
   },
   methods: {
     getModularAndOperation(operationType) {
-      let [modular, operation] = operationType.split('_')
+      let [modular, operation] = operationType.split('&&')
       return { modular, operation }
     },
     search(debounce) {
