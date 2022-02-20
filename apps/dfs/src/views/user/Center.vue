@@ -1,6 +1,6 @@
 <template>
   <div class="user-center g-panel-container h-100">
-    <div>个人信息</div>
+    <div class="fs-7">个人信息</div>
     <ElDivider class="my-6"></ElDivider>
     <div>
       <div>
@@ -24,7 +24,7 @@
           </el-col>
           <el-col :span="12" class="user-item">
             <div class="user-item__label">密码：</div>
-            <div class="user-item__value">******...</div>
+            <div class="user-item__value">******</div>
             <ElLink type="primary" @click="editPassword">修改</ElLink>
           </el-col>
         </el-row>
@@ -38,9 +38,10 @@
           <el-col :span="12" class="user-item">
             <div class="user-item__label">头像：</div>
             <div class="user-item__value">
-              <img src="" alt="" />
+              <img v-if="userData.avatar" :src="userData.avatar" alt="" style="width: 56px" />
+              <span v-else>暂无</span>
             </div>
-            <ElLink type="primary">修改</ElLink>
+            <ElLink type="primary" @click="dialogObj.avatar = true">修改</ElLink>
           </el-col>
         </el-row>
         <el-row :gutter="40" class="section-header mb-6">
@@ -59,7 +60,7 @@
         </el-row>
       </div>
     </div>
-    <div class="mt-12">企业信息</div>
+    <div class="mt-12 fs-7">企业信息</div>
     <ElDivider class="my-6"></ElDivider>
     <div>
       <div>
@@ -94,6 +95,39 @@
         </template>
       </div>
     </div>
+    <!--  上传头像  -->
+    <ElDialog
+      width="435px"
+      append-to-body
+      title="上传头像"
+      :close-on-click-modal="true"
+      :visible.sync="dialogObj.avatar"
+    >
+      <div class="text-center">
+        <!--        <img :src="imageUrl" alt="" style="width: 100px" />-->
+        <ElUpload
+          class="avatar-uploader"
+          action="tm/api/user/upload"
+          accept="image/*"
+          ref="avatarUploader"
+          :show-file-list="false"
+          :on-error="handleAvatarError"
+          :on-success="handleAvatarSuccess"
+          :before-upload="beforeAvatarUpload"
+        >
+          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          <div class="my-4 font-color-main">支持JPG、PNG和GIF格式，图片大小需在500KB以内</div>
+          <VButton type="primary">上传头像</VButton>
+        </ElUpload>
+      </div>
+      <div class="mt-6 text-center">
+        <VButton @click="dialogObj.avatar = true">{{ $t('dataVerify.cancel') }}</VButton>
+        <VButton type="primary" :disabled="!imageUrl" @click="avatarConfirm(arguments[0])">{{
+          $t('dataVerify.confirm')
+        }}</VButton>
+      </div>
+    </ElDialog>
     <!--  密码  -->
     <ElDialog
       width="435px"
@@ -299,6 +333,7 @@ export default {
       userData: {
         username: '',
         nickname: '',
+        avatar: '',
         phone: '',
         wx: '',
         email: ''
@@ -306,7 +341,9 @@ export default {
       nameForm: {
         nickname: ''
       },
+      imageUrl: '',
       dialogObj: {
+        avatar: false,
         password: false,
         bindPhone: false,
         editPhone: false,
@@ -393,6 +430,41 @@ export default {
         .then(() => {
           this.userData.nickname = nickname
           this.$message.success('修改昵称成功')
+        })
+    },
+    handleAvatarError(res, file) {
+      console.log('handleAvatarError', res, file)
+      // this.imageUrl = URL.createObjectURL(file.raw)
+    },
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw)
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type.indexOf('image/') > -1
+      const isLt2M = file.size / 1024 / 1024 < 2
+      const leftThan = file.size / 1024 < 500
+
+      if (!isJPG) {
+        this.$message.error('上传头像只能图片格式!')
+      }
+      if (!leftThan) {
+        this.$message.error('上传头像图片大小不能超过 500KB!')
+      }
+      return isJPG && isLt2M
+    },
+    avatarConfirm(resetLoading) {
+      const avatar = this.imageUrl.toString('base64')
+      this.$axios
+        .patch('tm/api/user', {
+          avatar
+        })
+        .then(() => {
+          this.$message.success('修改头像成功')
+          this.userData.avatar = avatar
+          this.dialogObj.avatar = false
+        })
+        .finally(() => {
+          resetLoading?.()
         })
     },
     editPassword() {
@@ -586,6 +658,20 @@ export default {
 }
 .enterprise-item__value {
   width: 240px;
+}
+.avatar-uploader-icon {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  font-size: 28px;
+  color: #8c939d;
+  width: 100px;
+  height: 100px;
+  line-height: 100px;
+  text-align: center;
+}
+.avatar {
+  width: 100px;
+  height: 100px;
 }
 ::v-deep {
   .el-form-item__label {
