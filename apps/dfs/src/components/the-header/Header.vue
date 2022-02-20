@@ -63,7 +63,7 @@
 
           <ElDropdownMenu slot="dropdown">
             <!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
-            <!--            <ElDropdownItem command="userCenter"> 用户中心 </ElDropdownItem>-->
+            <ElDropdownItem command="userCenter"> 用户中心 </ElDropdownItem>
             <ElDropdownItem command="home"> {{ $t('header_official_website') }} </ElDropdownItem>
             <ElDropdownItem command="signOut"> {{ $t('header_sign_out') }} </ElDropdownItem>
           </ElDropdownMenu>
@@ -176,7 +176,10 @@ export default {
           window.open('https://cloud.tapdata.net/', '_blank')
           break
         case 'userCenter':
-          window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
+          // window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
+          this.$router.push({
+            name: 'userCenter'
+          })
           break
         case 'signOut':
           this.$confirm(this.$t('header_log_out_tip'), this.$t('header_log_out_title'), {

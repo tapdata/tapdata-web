@@ -10,6 +10,7 @@ import i18n from '@/i18n'
 const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/Form.vue')
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/connection/Form.vue')
 const DataflowDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/copy/Index.vue')
+const UserCenter = () => import(/* webpackChunkName: "task-form" */ '../views/user/Center.vue')
 const DagEditor = async () => {
   const { Editor } = await import('@daas/dag')
   return Editor
@@ -233,6 +234,14 @@ const routes = [
         path: '/noviceGuide',
         name: 'NoviceGuide',
         component: () => import(/* webpackChunkName: "instance" */ '../views/novice-guide/Index.vue'),
+        meta: {
+          title: i18n.t('tap_Beginner_guide')
+        }
+      },
+      {
+        path: '/user/center',
+        name: 'userCenter',
+        component: UserCenter,
         meta: {
           title: i18n.t('tap_Beginner_guide')
         }
