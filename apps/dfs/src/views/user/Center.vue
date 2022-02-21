@@ -64,7 +64,7 @@
     <ElDivider class="my-6"></ElDivider>
     <div>
       <div>
-        <el-row :gutter="40" class="section-header mb-6">
+        <el-row :gutter="40" class="section-header mb-2">
           <el-col :span="12" class="enterprise-item">
             <div class="enterprise-item__label">公司名称：</div>
             <div v-if="!isEdit" class="enterprise-item__value">{{ enData.companyName || '未填写' }}</div>
@@ -76,7 +76,7 @@
             <ElInput v-else v-model="enForm.website" class="enterprise-item__value"></ElInput>
           </el-col>
         </el-row>
-        <el-row :gutter="40" class="section-header mb-6">
+        <el-row :gutter="40" class="section-header mb-2">
           <el-col :span="12" class="enterprise-item">
             <div class="enterprise-item__label">所属行业：</div>
             <div v-if="!isEdit" class="enterprise-item__value">{{ enData.industry || '未填写' }}</div>
@@ -698,7 +698,7 @@ export default {
           city: enForm.city
         })
         .then(() => {
-          this.$message.success('修改密码成功')
+          this.$message.success('修改企业信息成功')
           this.enData = Object.assign({}, enForm)
           this.isEdit = false
         })
@@ -724,6 +724,7 @@ export default {
 .enterprise-item {
   display: flex;
   align-items: center;
+  line-height: 34px;
 }
 .enterprise-item__label {
   width: 80px;
