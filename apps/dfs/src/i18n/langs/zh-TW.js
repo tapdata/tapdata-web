@@ -200,11 +200,12 @@ export default {
   agent_deploy_start_install: '開始安裝',
   agent_deploy_start_install_button_copy: '複製',
   agent_deploy_start_install_button_copied: '已復制',
-  agent_deploy_start_install_windows_first:
-    '1. 將下載好的Tapdata Agent放入要安裝Agent的目錄，雙擊執行安裝，在打開的窗口內輸入下方命令執行即可實現Tapdata Agent的自動部署及啟動：',
-  agent_deploy_start_install_windows_second:
-    '2.待Agent啟動成功後窗口會自動關閉，tapdata會在您的安裝目錄生成如下目錄結構：',
-  agent_deploy_start_install_windows_third: '3.如果您在安裝和使用過程中遇到任何問題，請參考',
+  agent_deploy_start_install_windows_first: '1.點擊',
+  agent_deploy_start_install_windows_first_download: '下載Tapdata Agent',
+  agent_deploy_start_install_windows_second: '2.將tapdata.exe放入您要安裝的目錄，安裝路徑不能有中文和特殊字符。 ',
+  agent_deploy_start_install_windows_third: '3.雙擊執行tapdata.exe開始安裝。 ',
+  agent_deploy_start_install_windows_fourth: '4.等待安裝過程提示要輸入Token時，複製下方Token，在命令窗口右鍵進行粘貼',
+  agent_deploy_start_install_windows_fifth: '5.耐心等待，即可完成Tapdata Agent的安裝和啟動。 ',
   agent_deploy_link_agent_operation: '《Agent安裝手冊及常見QA》',
   agent_deploy_link_agent_operation_desc: '或者直接掃描右方二維碼加入社群獲取技術支持。 ',
   agent_deploy_before_prepare_linux_first: '1.安裝前請確認您的部署環境中已安裝Java1.8版本並正確配置環境變量。 ',
