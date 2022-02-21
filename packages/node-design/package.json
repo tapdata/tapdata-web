@@ -8,5 +8,12 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@daas/form": "workspace:^1.0.0",
+    "@daas/shared": "workspace:^1.0.0",
+    "@formily/core": "^2.0.11",
+    "@formily/reactive": "^2.0.11",
+    "@formily/shared": "^2.0.9"
+  }
 }
