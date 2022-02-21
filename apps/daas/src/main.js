@@ -11,6 +11,7 @@ import factory from '@/api/factory'
 import Cache from '@/utils/cache'
 import TapdataWebCore from 'web-core'
 import Cookie from '@daas/shared/src/cookie'
+import VIcon from '@/components/VIcon'
 
 import '@/plugins/element'
 import '@/plugins/icon'
@@ -33,6 +34,8 @@ Vue.prototype.$moment = moment
 Vue.prototype.$api = factory
 Vue.prototype.$window = window
 Vue.prototype.$cache = new Cache()
+
+Vue.component(VIcon.name, VIcon)
 
 window.VueCookie = VueCookie
 window.ChildRoutes = childRoutes

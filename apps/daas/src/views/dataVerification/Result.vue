@@ -1,81 +1,69 @@
 <template>
-  <section class="verification-result-wrap" v-loading="loading">
-    <div class="panel-main" style="padding: 0 20px">
-      <div class="main main-border">
-        <div class="title mt-5">{{ inspect.name }}</div>
-        <div class="text">
-          {{ typeMap[type] }}
+  <section class="verify-result-wrap g-panel-container" v-loading="loading">
+    <div class="verify-result-header" v-if="inspect">
+      <div>
+        <span style="font-size: 14px">{{ inspect.name }}</span>
+        <span class="font-color-linfo ml-3">{{ typeMap[type] }}</span>
+      </div>
+      <div v-if="inspect.inspectMethod !== 'row_count'">
+        <div class="flex align-items-center">
+          <div
+            v-if="resultInfo.parentId && $route.name === 'VerifyResult'"
+            class="color-info flex align-items-center"
+            style="font-size: 12px"
+          >
+            {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
+            <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
+              $t('verify_button_diff_task_history')
+            }}</ElLink>
+          </div>
         </div>
-        <div class="error-band" style="width: 96.5%" v-if="errorMsg && type === 'row_count'">
-          <i class="iconfont icon-warning-circle"></i>
-          <span>{{ errorMsg }}</span>
-        </div>
-        <div
-          v-if="resultInfo.parentId && $route.name === 'dataVerifyResult'"
-          class="color-info"
-          style="font-size: 12px; text-align: right"
-        >
-          {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
-          <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
-            $t('verify_button_diff_task_history')
-          }}</ElLink>
-        </div>
-        <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
       </div>
     </div>
-    <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
+    <div v-if="errorMsg && type === 'row_count'" class="error-tips mt-4 px-4">
+      <VIcon class="color-danger">error</VIcon>
+      <span>
+        <ElLink type="danger" @click="showErrorMessage">{{ this.$t('verify_see_details') }}</ElLink>
+        <VIcon class="ml-2 color-info" size="12">close</VIcon>
+      </span>
+    </div>
+    <div class="result-table mt-4" v-if="inspect && !['running', 'scheduling'].includes(inspect.status)">
+      <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
+      <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
+    </div>
   </section>
 </template>
 <style lang="scss">
-$margin: 10px;
-.verification-result-wrap {
+.verify-result-wrap {
+  flex: 1;
   display: flex;
-  width: 100%;
-  height: 100%;
+  flex-direction: column;
   overflow: hidden;
-  .panel-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    &.panel-box {
-      margin-bottom: 10px;
-      border-left: 1px solid #dedee4;
-      border-bottom: 1px solid #dedee4;
-    }
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      .title {
-        font-weight: bold;
-        color: #409eff;
-      }
-      .text {
-        margin-top: 6px;
-        color: #666;
-        font-size: 12px;
-      }
-      .error-band {
-        background: #fdf6ec;
-        border: 1px solid #f8e2c0;
-        color: #e6a23c;
-        margin: 10px;
-        line-height: 20px;
-        max-height: 160px;
-        text-overflow: ellipsis;
-        overflow-y: auto;
-        font-size: 12px;
-        padding: 8px;
-      }
-    }
-  }
+}
+.verify-result-header {
+  display: flex;
+  justify-content: space-between;
+}
+.error-tips {
+  background: #fdf6ec;
+  border: 1px solid #f8e2c0;
+  color: #e6a23c;
+  line-height: 20px;
+  max-height: 160px;
+  text-overflow: ellipsis;
+  overflow-y: auto;
+  font-size: 12px;
+  padding: 8px;
+}
+.result-table {
+  flex: 1;
+  display: flex;
+  overflow: auto;
 }
 </style>
 <script>
-import ResultTable from './old/result-table'
-import ResultView from './old/result-view'
+import ResultTable from './ResultTable'
+import ResultView from './ResultView'
 export default {
   components: { ResultTable, ResultView },
   data() {
@@ -125,14 +113,16 @@ export default {
           if (result) {
             this.resultInfo = result
             let stats = result.stats
-            this.inspect = result.inspect
+            let inspect = result.inspect
+            inspect.status = result.status
+            this.inspect = inspect
             if (stats.length) {
               this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
               this.taskId = stats[0].taskId
               this.$refs.resultView.fetch(1)
               if (this.type !== 'row_count') {
                 this.$nextTick(() => {
-                  this.$refs.singleTable.setCurrentRow(stats[0])
+                  this.$refs.singleTable?.setCurrentRow(stats[0])
                 })
               }
             }
@@ -149,31 +139,33 @@ export default {
         let showAdvancedVerification = task.showAdvancedVerification
         let statsInfo = this.tableData.find(item => item.taskId === this.taskId)
         let where = {
-          where: {
-            taskId,
-            inspect_id: this.inspect.id,
-            inspectResultId: { regexp: `^${this.resultInfo.id}$` }
-          },
+          taskId,
+          inspect_id: this.inspect.id,
+          inspectResultId: this.resultInfo.id
+        }
+        let filter = {
+          where,
           order: 'createTime DESC',
           limit: showAdvancedVerification ? 1 : size,
           skip: (current - 1) * (showAdvancedVerification ? 1 : size)
         }
         return this.$api('InspectDetails')
           .get({
-            filter: JSON.stringify(where)
+            filter: JSON.stringify(filter)
           })
           .then(res => {
+            let data = res.data || {}
             let resultList = []
-            if (res.data?.items) {
+            if (data.items) {
               if (showAdvancedVerification) {
-                resultList = res.data?.items || []
+                resultList = data.items || []
               } else {
-                resultList = this.handleOtherVerify(res.data?.items)
+                resultList = this.handleOtherVerify(data.items)
               }
             }
             return {
               showAdvancedVerification, // 是否高级校验
-              total: res.data.total, // 总条数
+              total: data.total, // 总条数
               statsInfo, // 结果信息
               resultList // 结果详情
             }
@@ -241,6 +233,9 @@ export default {
       })
       url = route.href
       window.open(url, '_blank')
+    },
+    showErrorMessage() {
+      this.$alert(this.errorMsg)
     }
   }
 }
