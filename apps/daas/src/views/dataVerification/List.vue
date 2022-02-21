@@ -246,7 +246,8 @@ export default {
       inspectMethod: {
         row_count: this.$t('dataVerification.rowVerify'),
         field: this.$t('dataVerification.contentVerify'),
-        jointField: this.$t('dataVerification.jointVerify')
+        jointField: this.$t('dataVerification.jointVerify'),
+        cdcCount: '动态校验'
       },
       statusMap: {
         waiting: this.$t('dataVerification.waiting'),

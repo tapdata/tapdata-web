@@ -42,6 +42,19 @@ export default {
   verify_create_window_duration: 'Window duration',
   verify_form_source_filter: 'Source table data filtering',
   verify_form_target_filter: 'Target table data filtering',
+  verify_checking: 'Checking...',
+  verify_message_error_joint_table_not_set: 'Please add verification conditions',
+  verify_message_error_joint_table_target_or_source_not_set:
+    'The source table or the target table is not selected in the verification condition',
+  verify_message_error_joint_table_field_not_set:
+    'The index field of the source table or the target table in the verification condition is not selected',
+  verify_message_error_joint_table_field_not_match:
+    'The number of index fields of the source table and the target table in the verification condition are not equal',
+  verify_message_error_script_no_enter:
+    'After enabling advanced verification, the JS verification logic cannot be empty',
+  verify_message_confirm_delete_script: 'Are you sure you want to delete the custom JS verification logic',
+  verify_message_confirm_back: 'This operation will lose the verification task currently being created (edited)',
+  verify_message_title_confirm_back: 'Would you give up creating (editing) verification tasks? ',
 
   taskprogress_plan_sync_table_num: 'Number of plan synchronization tables',
   taskprogress_completed_sync_table_num: 'Number of completed synchronization tables',
