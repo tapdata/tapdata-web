@@ -37,8 +37,13 @@
           </el-col>
           <el-col :span="12" class="user-item">
             <div class="user-item__label">头像：</div>
-            <div class="user-item__value">
-              <img v-if="userData.avatar" :src="userData.avatar" alt="" style="width: 56px" />
+            <div class="user-item__value position-relative">
+              <img
+                v-if="userData.avatar"
+                :src="userData.avatar"
+                alt=""
+                style="position: absolute; top: -24px; left: 0; width: 56px"
+              />
               <span v-else>暂无</span>
             </div>
             <ElLink type="primary" @click="dialogObj.avatar = true">修改</ElLink>
@@ -91,7 +96,7 @@
         <VButton v-if="!isEdit" type="text" @click="editEnData">企业信息修改</VButton>
         <template v-else>
           <VButton type="text" @click="cancelEditEnData">取消</VButton>
-          <VButton type="text" @click="saveEnData(arguments[0])">保存</VButton>
+          <VButton type="text" auto-loading @click="saveEnData(arguments[0])">保存</VButton>
         </template>
       </div>
     </div>
@@ -104,25 +109,16 @@
       :visible.sync="dialogObj.avatar"
     >
       <div class="text-center">
-        <ElUpload
-          class="avatar-uploader"
-          action=""
-          accept="image/*"
-          ref="avatarUploader"
-          :show-file-list="false"
-          :on-error="handleAvatarError"
-          :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload"
-        >
-          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+        <UploadFile :upload="upload" accept="image/*">
+          <img v-if="avatar" :src="avatar" class="avatar" />
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           <div class="my-4 font-color-main">支持JPG、PNG和GIF格式，图片大小需在500KB以内</div>
           <VButton type="primary">上传头像</VButton>
-        </ElUpload>
+        </UploadFile>
       </div>
       <div class="mt-6 text-center">
         <VButton @click="dialogObj.avatar = true">{{ $t('dataVerify.cancel') }}</VButton>
-        <VButton type="primary" :disabled="!imageUrl" @click="avatarConfirm(arguments[0])">{{
+        <VButton type="primary" :disabled="!avatar" auto-loading @click="avatarConfirm(arguments[0])">{{
           $t('dataVerify.confirm')
         }}</VButton>
       </div>
@@ -236,7 +232,7 @@
 
       <span slot="footer" class="dialog-footer">
         <VButton @click="dialogObj.editPhone = false">{{ $t('dataVerify.cancel') }}</VButton>
-        <VButton type="primary" :disabled="editPhoneDisabled()" @click="editPhoneConfirm(arguments[0])">{{
+        <VButton type="primary" :disabled="editPhoneDisabled()" auto-loading @click="editPhoneConfirm(arguments[0])">{{
           $t('dataVerify.confirm')
         }}</VButton>
       </span>
@@ -328,7 +324,7 @@
 
       <span slot="footer" class="dialog-footer">
         <VButton @click="dialogObj.editEmail = false">{{ $t('dataVerify.cancel') }}</VButton>
-        <VButton type="primary" :disabled="editEmailDisabled()" @click="editEmailConfirm(arguments[0])">{{
+        <VButton type="primary" :disabled="editEmailDisabled()" auto-loading @click="editEmailConfirm(arguments[0])">{{
           $t('dataVerify.confirm')
         }}</VButton>
       </span>
@@ -339,11 +335,13 @@
 <script>
 import InlineInput from '@/components/InlineInput'
 import VerificationCode from '@/components/VerificationCode'
+import UploadFile from '@/components/UploadFile'
+import { urlToBase64 } from '@/util'
 import CryptoJS from 'crypto-js'
 
 export default {
   name: 'Center',
-  components: { InlineInput, VerificationCode },
+  components: { InlineInput, VerificationCode, UploadFile },
   data() {
     return {
       userData: {
@@ -357,7 +355,7 @@ export default {
       nameForm: {
         nickname: ''
       },
-      imageUrl: '',
+      avatar: '',
       dialogObj: {
         avatar: false,
         password: false,
@@ -405,15 +403,12 @@ export default {
   },
   methods: {
     init() {
-      // window.__USER_INFO__
-      // if (isEmpty(this.userData)) {
-      //   // this.userData = window.__USER_INFO__
-      //
-      // }
-      let { userData, nameForm, phoneForm, wxForm, emailForm } = this
+      let { userData, nameForm } = this
       for (let key in userData) {
         userData[key] = window.__USER_INFO__[key]
       }
+      userData.avatar = window.__USER_INFO__.photo
+      this.avatar = userData.avatar
       this.getEnterprise()
       this.resetPasswordForm()
       this.resetPhoneForm()
@@ -422,7 +417,10 @@ export default {
     },
     getEnterprise() {
       this.$axios.get('tm/api/Customer').then(data => {
-        console.log('data', data)
+        for (let key in this.enData) {
+          this.enData[key] = data[key] || ''
+          this.enForm[key] = data[key] || ''
+        }
       })
     },
     resetPasswordForm() {
@@ -466,28 +464,18 @@ export default {
           this.$message.success('修改昵称成功')
         })
     },
-    handleAvatarError(res, file) {
-      console.log('handleAvatarError', res, file)
-      this.imageUrl = URL.createObjectURL(file.raw)
-    },
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw)
-    },
-    beforeAvatarUpload(file) {
-      const isJPG = file.type.indexOf('image/') > -1
-      const isLt2M = file.size / 1024 / 1024 < 2
+    upload(evt) {
+      let file = evt.target.files[0]
       const leftThan = file.size / 1024 < 500
-
-      if (!isJPG) {
-        this.$message.error('上传头像只能图片格式!')
-      }
       if (!leftThan) {
         this.$message.error('上传头像图片大小不能超过 500KB!')
       }
-      return isJPG && isLt2M
+      urlToBase64(URL.createObjectURL(file)).then(res => {
+        this.avatar = res
+      })
     },
     avatarConfirm(resetLoading) {
-      const avatar = this.imageUrl.toString('base64')
+      const avatar = encodeURI(this.avatar)
       this.$axios
         .patch('api/tcm/user', {
           avatar
@@ -645,12 +633,6 @@ export default {
         .finally(() => {
           resetLoading?.()
         })
-    },
-    editEmailOldSendCode() {
-      return this.$axios.get('tm/api/user/sendCode')
-    },
-    editEmailNewSendCode() {
-      return this.$axios.get('tm/api/user/sendCode')
     },
     editEmailDisabled() {
       let flag = false
