@@ -1,8 +1,13 @@
 <template>
   <div class="verification-code">
-    <ElButton :type="type" :loading="loading" :disabled="disabled" :style="buttonStyle" @click="sendFnc">{{
-      num ? num + 's' : buttonText
-    }}</ElButton>
+    <ElButton
+      :type="type"
+      :loading="loading"
+      :disabled="disabled || btnDisabled"
+      :style="buttonStyle"
+      @click="sendFnc"
+      >{{ num ? num + 's' : buttonText }}</ElButton
+    >
   </div>
 </template>
 
@@ -14,6 +19,10 @@ export default {
       type: String,
       default: ''
     },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
     buttonText: {
       type: String,
       default: '发送验证码'
@@ -24,13 +33,23 @@ export default {
     buttonStyle: {
       type: Object,
       default: () => {}
+    },
+    requestOptions: {
+      type: Object,
+      default: () => {
+        return {
+          method: 'get',
+          url: '',
+          params: {}
+        }
+      }
     }
   },
   data() {
     return {
       timer: null,
       loading: false,
-      disabled: false,
+      btnDisabled: false,
       num: ''
     }
   },
@@ -39,13 +58,26 @@ export default {
   },
   methods: {
     sendFnc() {
-      console.log('sendFnc', this.remoteMethod)
       this.loading = true
       try {
-        if (this.remoteMethod) {
-          this.remoteMethod().then(() => {
-            this.startSend()
-          })
+        // if (this.remoteMethod) {
+        //   this.remoteMethod().then(() => {
+        //     this.startSend()
+        //   })
+        // } else {
+        // const { requestOptions } = this
+        const { method, url, params } = this.requestOptions
+        // method: 'get',
+        //   url: '',
+        //   params: {}
+        if (url) {
+          this.$axios[method](url, params)
+            .then(() => {
+              this.startSend()
+            })
+            .catch(() => {
+              this.loading = false
+            })
         } else {
           this.startSend()
         }
@@ -55,7 +87,7 @@ export default {
     },
     startSend() {
       this.loading = false
-      this.disabled = true
+      this.btnDisabled = true
       this.num = 60
       this.countdown()
     },
@@ -68,7 +100,7 @@ export default {
       }, 300)
     },
     clearTimer() {
-      this.disabled = false
+      this.btnDisabled = false
       this.loading = false
       this.timer && clearInterval(this.timer)
     }

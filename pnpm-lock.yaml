@@ -214,6 +214,7 @@ importers:
       compression-webpack-plugin: ^5.0.1
       core-js: ^3.6.5
       cross-env: ^7.0.3
+      crypto-js: ^4.0.0
       dagre: ^0.8.5
       default-passive-events: ^2.0.0
       echarts: ^5.0.2
@@ -260,6 +261,7 @@ importers:
       '@vue/composition-api': registry.npmmirror.com/@vue/composition-api/1.4.6_vue@2.6.14
       axios: registry.npmmirror.com/axios/0.21.4
       core-js: registry.npmmirror.com/core-js/3.21.0
+      crypto-js: registry.npmmirror.com/crypto-js/4.1.1
       dagre: registry.npmmirror.com/dagre/0.8.5
       default-passive-events: registry.npmmirror.com/default-passive-events/2.0.0
       echarts: registry.npmmirror.com/echarts/5.3.0
@@ -3009,7 +3011,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_sass-loader@10.2.1
     dev: true
 
   registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164:
@@ -3490,7 +3492,7 @@ packages:
     dev: true
 
   registry.npmmirror.com/ansi-styles/3.2.1:
-    resolution: {integrity: sha512-VT0ZI6kZRdTh8YyJw3SMbYm/u+NqfsAxEpWO0Pf9sq8/e94WxxOpPKx9FR1FlyCtOVDNOQ+8ntlqFxiRc+r5qA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/ansi-styles/-/ansi-styles-3.2.1.tgz}
+    resolution: {integrity: sha512-VT0ZI6kZRdTh8YyJw3SMbYm/u+NqfsAxEpWO0Pf9sq8/e94WxxOpPKx9FR1FlyCtOVDNOQ+8ntlqFxiRc+r5qA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/ansi-styles/-/ansi-styles-3.2.1.tgz}
     name: ansi-styles
     version: 3.2.1
     engines: {node: '>=4'}
@@ -3752,7 +3754,7 @@ packages:
     name: axios
     version: 0.21.4
     dependencies:
-      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8_debug@4.3.3
+      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8
     transitivePeerDependencies:
       - debug
     dev: false
@@ -5217,7 +5219,7 @@ packages:
     dev: true
 
   registry.npmmirror.com/crypto-js/4.1.1:
-    resolution: {integrity: sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/crypto-js/-/crypto-js-4.1.1.tgz}
+    resolution: {integrity: sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/crypto-js/-/crypto-js-4.1.1.tgz}
     name: crypto-js
     version: 4.1.1
     dev: false
@@ -6948,9 +6950,8 @@ packages:
       readable-stream: registry.npmmirror.com/readable-stream/2.3.7
     dev: true
 
-  registry.npmmirror.com/follow-redirects/1.14.8_debug@4.3.3:
+  registry.npmmirror.com/follow-redirects/1.14.8:
     resolution: {integrity: sha512-1x0S9UVJHsQprFcEC/qnNzBLcIxsjAV905f/UkQxbclCsoTWlacCNOpQa/anodLl2uaEKFhfWOvM2Qg77+15zA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.14.8.tgz}
-    id: registry.npmmirror.com/follow-redirects/1.14.8
     name: follow-redirects
     version: 1.14.8
     engines: {node: '>=4.0'}
@@ -6959,8 +6960,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dependencies:
-      debug: registry.npmmirror.com/debug/4.3.3
 
   registry.npmmirror.com/for-in/1.0.2:
     resolution: {integrity: sha512-7EwmXrOjyL+ChxMhmG5lnW9MPt1aIeZEwKhQzoBUdTV0N3zuwWDZYVJatDvZ2OyzPUvdIAZDsCetk3coyMfcnQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/for-in/-/for-in-1.0.2.tgz}
@@ -7809,7 +7808,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: registry.npmmirror.com/eventemitter3/4.0.7
-      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8_debug@4.3.3
+      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8
       requires-port: registry.npmmirror.com/requires-port/1.0.0
     transitivePeerDependencies:
       - debug

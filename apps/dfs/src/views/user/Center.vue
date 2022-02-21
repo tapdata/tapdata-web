@@ -1,5 +1,5 @@
 <template>
-  <div class="user-center g-panel-container h-100">
+  <div class="user-center g-panel-container flex-fill">
     <div class="fs-7">个人信息</div>
     <ElDivider class="my-6"></ElDivider>
     <div>
@@ -14,8 +14,8 @@
           <el-col :span="12" class="user-item">
             <div class="user-item__label">用户昵称：</div>
             <InlineInput
-              class="inline-input color-primary fs-8"
-              :value="nameForm.nickname"
+              class="inline-input fs-8"
+              :value="userData.nickname"
               :icon-config="{ class: 'color-primary', size: '12' }"
               type="text"
               style="width: 202px"
@@ -31,8 +31,8 @@
         <el-row :gutter="40" class="section-header mb-6">
           <el-col :span="12" class="user-item">
             <div class="user-item__label">手机号：</div>
-            <div class="user-item__value">{{ userData.phone || '未绑定' }}</div>
-            <ElLink v-if="userData.phone" type="primary" @click="dialogObj.editPhone = true">修改</ElLink>
+            <div class="user-item__value">{{ userData.telephone || '未绑定' }}</div>
+            <ElLink v-if="userData.telephone" type="primary" @click="dialogObj.editPhone = true">修改</ElLink>
             <ElLink v-else type="primary" @click="dialogObj.bindPhone = true">绑定</ElLink>
           </el-col>
           <el-col :span="12" class="user-item">
@@ -45,12 +45,12 @@
           </el-col>
         </el-row>
         <el-row :gutter="40" class="section-header mb-6">
-          <el-col :span="12" class="user-item">
-            <div class="user-item__label">微信：</div>
-            <div class="user-item__value">{{ userData.wx || '未绑定' }}</div>
-            <ElLink v-if="userData.wx" type="primary" @click="unbindWx">解绑</ElLink>
-            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">绑定</ElLink>
-          </el-col>
+          <!--          <el-col :span="12" class="user-item">-->
+          <!--            <div class="user-item__label">微信：</div>-->
+          <!--            <div class="user-item__value">{{ userData.wx || '未绑定' }}</div>-->
+          <!--            <ElLink v-if="userData.wx" type="primary" @click="unbindWx">解绑</ElLink>-->
+          <!--            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">绑定</ElLink>-->
+          <!--          </el-col>-->
           <el-col :span="12" class="user-item">
             <div class="user-item__label">邮箱：</div>
             <div class="user-item__value">{{ userData.email || '未绑定' }}</div>
@@ -67,8 +67,8 @@
         <el-row :gutter="40" class="section-header mb-6">
           <el-col :span="12" class="enterprise-item">
             <div class="enterprise-item__label">公司名称：</div>
-            <div v-if="!isEdit" class="enterprise-item__value">{{ enData.name || '未填写' }}</div>
-            <ElInput v-else v-model="enForm.name" class="enterprise-item__value"></ElInput>
+            <div v-if="!isEdit" class="enterprise-item__value">{{ enData.companyName || '未填写' }}</div>
+            <ElInput v-else v-model="enForm.companyName" class="enterprise-item__value"></ElInput>
           </el-col>
           <el-col :span="12" class="enterprise-item">
             <div class="enterprise-item__label">公司官网：</div>
@@ -79,8 +79,8 @@
         <el-row :gutter="40" class="section-header mb-6">
           <el-col :span="12" class="enterprise-item">
             <div class="enterprise-item__label">所属行业：</div>
-            <div v-if="!isEdit" class="enterprise-item__value">{{ enData.in || '未填写' }}</div>
-            <ElInput v-else v-model="enForm.in" class="enterprise-item__value"></ElInput>
+            <div v-if="!isEdit" class="enterprise-item__value">{{ enData.industry || '未填写' }}</div>
+            <ElInput v-else v-model="enForm.industry" class="enterprise-item__value"></ElInput>
           </el-col>
           <el-col :span="12" class="enterprise-item">
             <div class="enterprise-item__label">所属城市：</div>
@@ -104,10 +104,9 @@
       :visible.sync="dialogObj.avatar"
     >
       <div class="text-center">
-        <!--        <img :src="imageUrl" alt="" style="width: 100px" />-->
         <ElUpload
           class="avatar-uploader"
-          action="tm/api/user/upload"
+          action=""
           accept="image/*"
           ref="avatarUploader"
           :show-file-list="false"
@@ -128,7 +127,7 @@
         }}</VButton>
       </div>
     </ElDialog>
-    <!--  密码  -->
+    <!--  修改密码  -->
     <ElDialog
       width="435px"
       append-to-body
@@ -138,8 +137,18 @@
       :visible.sync="dialogObj.password"
     >
       <ElForm :model="passwordForm" label-width="120px" @submit.native.prevent>
-        <ElFormItem prop="current" label="当前密码：">
-          <ElInput v-model="passwordForm.current" placeholder="请输入当前密码" maxlength="50" show-password></ElInput>
+        <ElFormItem prop="current" label="当前手机：">
+          <ElInput v-model="passwordForm.telephone" placeholder="请输入当前手机" maxlength="50"></ElInput>
+        </ElFormItem>
+        <ElFormItem prop="newPassword" label="手机验证码：" class="inline-form-item">
+          <ElInput v-model="passwordForm.code" placeholder="请输入手机验证码" maxlength="50"></ElInput>
+          <VerificationCode
+            :request-options="getCodeOptions(passwordForm.telephone, 'RESET_PASSWORD')"
+            :disabled="!passwordForm.telephone"
+            :style="{ width: '120px', textAlign: 'center' }"
+            class="ml-6"
+            type="text"
+          ></VerificationCode>
         </ElFormItem>
         <ElFormItem prop="newPassword" label="新密码：">
           <ElInput v-model="passwordForm.newPassword" placeholder="请输入新密码" maxlength="50" show-password></ElInput>
@@ -156,7 +165,9 @@
 
       <span slot="footer" class="dialog-footer">
         <VButton @click="dialogObj.password = false">{{ $t('dataVerify.cancel') }}</VButton>
-        <VButton type="primary" @click="passwordConfirm(arguments[0])" @>{{ $t('dataVerify.confirm') }}</VButton>
+        <VButton type="primary" auto-loading @click="passwordConfirm(arguments[0])" @>{{
+          $t('dataVerify.confirm')
+        }}</VButton>
       </span>
     </ElDialog>
     <!--  绑定手机号  -->
@@ -174,7 +185,8 @@
         <ElFormItem prop="newPassword" label="旧手机验证码：" class="inline-form-item">
           <ElInput v-model="phoneForm.oldCode" placeholder="请输入手机验证码" maxlength="50"></ElInput>
           <VerificationCode
-            :remote-method="bindPhoneSendCode"
+            :request-options="getCodeOptions(phoneForm.current, 'BIND_PHONE')"
+            :disabled="!phoneForm.current"
             :style="{ width: '120px', textAlign: 'center' }"
             class="ml-6"
             type="text"
@@ -184,7 +196,7 @@
 
       <span slot="footer" class="dialog-footer">
         <VButton @click="dialogObj.bindPhone = false">{{ $t('dataVerify.cancel') }}</VButton>
-        <VButton type="primary" :disabled="!phoneForm.oldCode" @click="bindPhoneConfirm(arguments[0])">{{
+        <VButton type="primary" :disabled="!phoneForm.oldCode" auto-loading @click="bindPhoneConfirm(arguments[0])">{{
           $t('dataVerify.confirm')
         }}</VButton>
       </span>
@@ -204,7 +216,6 @@
         <ElFormItem prop="newPassword" label="旧手机验证码：" class="inline-form-item">
           <ElInput v-model="phoneForm.oldCode" placeholder="请输入旧手机验证码" maxlength="50"></ElInput>
           <VerificationCode
-            :remote-method="editPhoneOldSendCode"
             :style="{ width: '120px', textAlign: 'center' }"
             class="ml-6"
             type="text"
@@ -216,7 +227,6 @@
         <ElFormItem prop="newAgainPassword" label="新手机验证码：">
           <ElInput v-model="phoneForm.newCode" placeholder="请输入新手机验证码" maxlength="50"></ElInput>
           <VerificationCode
-            :remote-method="editPhoneNewSendCode"
             :style="{ width: '120px', textAlign: 'center' }"
             class="ml-6"
             type="text"
@@ -259,7 +269,8 @@
         <ElFormItem prop="newPassword" label="验证码：" class="inline-form-item">
           <ElInput v-model="emailForm.code" placeholder="请输入验证码" maxlength="50"></ElInput>
           <VerificationCode
-            :remote-method="bindEmailSendCode"
+            :request-options="getCodeOptions(emailForm.email, 'BIND_EMAIL', 'email')"
+            :disabled="!emailForm.email"
             :style="{ width: '120px', textAlign: 'center' }"
             class="ml-6"
             type="text"
@@ -272,6 +283,7 @@
         <VButton
           type="primary"
           :disabled="!emailForm.email || !emailForm.code"
+          auto-loading
           @click="bindEmailConfirm(arguments[0])"
           >{{ $t('dataVerify.confirm') }}</VButton
         >
@@ -292,7 +304,8 @@
         <ElFormItem prop="code" label="当前邮箱验证码：" class="inline-form-item">
           <ElInput v-model="emailForm.code" placeholder="请输入验证码" maxlength="50"></ElInput>
           <VerificationCode
-            :remote-method="editEmailOldSendCode"
+            :request-options="getCodeOptions(emailForm.email, 'CHANGE_EMAIL', 'email')"
+            :disabled="!emailForm.email"
             :style="{ width: '120px', textAlign: 'center' }"
             class="ml-6"
             type="text"
@@ -304,7 +317,8 @@
         <ElFormItem prop="newCode" label="新邮箱验证码：" class="inline-form-item">
           <ElInput v-model="emailForm.newCode" placeholder="请输入验证码" maxlength="50"></ElInput>
           <VerificationCode
-            :remote-method="editEmailNewSendCode"
+            :request-options="getCodeOptions(emailForm.newEmail, 'BIND_EMAIL', 'email')"
+            :disabled="!emailForm.newEmail"
             :style="{ width: '120px', textAlign: 'center' }"
             class="ml-6"
             type="text"
@@ -325,6 +339,8 @@
 <script>
 import InlineInput from '@/components/InlineInput'
 import VerificationCode from '@/components/VerificationCode'
+import CryptoJS from 'crypto-js'
+
 export default {
   name: 'Center',
   components: { InlineInput, VerificationCode },
@@ -334,7 +350,7 @@ export default {
         username: '',
         nickname: '',
         avatar: '',
-        phone: '',
+        telephone: '',
         wx: '',
         email: ''
       },
@@ -352,7 +368,8 @@ export default {
         editEmail: false
       },
       passwordForm: {
-        current: '',
+        telephone: '',
+        code: '',
         newPassword: '',
         newAgainPassword: ''
       },
@@ -369,15 +386,15 @@ export default {
         newCode: ''
       },
       enData: {
-        name: '',
+        companyName: '',
         website: '',
-        in: '',
+        industry: '',
         city: ''
       },
       enForm: {
-        name: '',
+        companyName: '',
         website: '',
-        in: '',
+        industry: '',
         city: ''
       },
       isEdit: false
@@ -397,15 +414,32 @@ export default {
       for (let key in userData) {
         userData[key] = window.__USER_INFO__[key]
       }
+      this.getEnterprise()
+      this.resetPasswordForm()
       this.resetPhoneForm()
       this.resetEmailForm()
       nameForm.nickname = userData.nickname
+    },
+    getEnterprise() {
+      this.$axios.get('tm/api/Customer').then(data => {
+        console.log('data', data)
+      })
+    },
+    resetPasswordForm() {
+      let { userData, passwordForm } = this
+      for (let key in passwordForm) {
+        if (key === 'telephone') {
+          this.passwordForm.telephone = userData.telephone
+        } else {
+          this.passwordForm[key] = ''
+        }
+      }
     },
     resetPhoneForm() {
       let { userData, phoneForm } = this
       for (let key in phoneForm) {
         if (key === 'current') {
-          this.phoneForm.current = userData.phone
+          this.phoneForm.current = userData.telephone
         } else {
           this.phoneForm[key] = ''
         }
@@ -421,10 +455,10 @@ export default {
         }
       }
     },
-    updateName() {
-      let { nickname } = this.nameForm
+    updateName(val) {
+      let nickname = val
       this.$axios
-        .patch('tm/api/user', {
+        .patch('api/tcm/user', {
           nickname
         })
         .then(() => {
@@ -434,7 +468,7 @@ export default {
     },
     handleAvatarError(res, file) {
       console.log('handleAvatarError', res, file)
-      // this.imageUrl = URL.createObjectURL(file.raw)
+      this.imageUrl = URL.createObjectURL(file.raw)
     },
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
@@ -455,7 +489,7 @@ export default {
     avatarConfirm(resetLoading) {
       const avatar = this.imageUrl.toString('base64')
       this.$axios
-        .patch('tm/api/user', {
+        .patch('api/tcm/user', {
           avatar
         })
         .then(() => {
@@ -467,37 +501,75 @@ export default {
           resetLoading?.()
         })
     },
+    sendCode(phone, scene) {
+      return this.$axios.post('api/tcm/sms/captcha', {
+        phone,
+        scene
+      })
+    },
+    getCodeOptions(val, scene, type = 'sms') {
+      let params = {
+        scene
+      }
+      if (type === 'sms') {
+        params.phone = val
+      } else {
+        params.email = val
+      }
+      return {
+        method: 'post',
+        url: `api/tcm/${type}/captcha`,
+        params
+      }
+    },
     editPassword() {
+      if (!this.userData.telephone) {
+        this.$confirm('请先绑定手机号', '绑定手机', {
+          type: 'warning'
+        }).then(resFlag => {
+          if (resFlag) {
+            this.dialogObj.bindPhone = true
+          }
+        })
+        return
+      }
       this.dialogObj.password = true
     },
     passwordConfirm(resetLoading) {
+      // CryptoJS.RC4.encrypt(this.form.password, 'XWFSxfs8wFcs').toString()
       let { passwordForm } = this
+      let { newPassword, newAgainPassword } = passwordForm
+      if (newPassword !== newAgainPassword) {
+        this.$message.error('输入密码不一致')
+        resetLoading?.()
+        return
+      }
       this.$axios
-        .patch('tm/api/user', {
-          current: passwordForm.current,
-          newPassword: passwordForm.newPassword,
-          newAgainPassword: passwordForm.newAgainPassword
+        .patch('api/tcm/user/password', {
+          phoneCode: passwordForm.code,
+          password: CryptoJS.RC4.encrypt(passwordForm.newPassword, 'XWFSxfs8wFcs').toString()
         })
         .then(() => {
           this.$message.success('修改密码成功')
+          this.resetPasswordForm()
           this.dialogObj.password = false
         })
         .finally(() => {
           resetLoading?.()
         })
     },
-    bindPhoneSendCode() {
-      return this.$axios.get('tm/api/user/sendCode')
-    },
+    // bindPhoneSendCode() {
+    //   return this.sendCode(this.phoneForm.current, 'BIND_PHONE')
+    // },
     bindPhoneConfirm(resetLoading) {
       let { phoneForm } = this
       this.$axios
-        .patch('tm/api/user', {
-          current: phoneForm.current,
-          oldCode: phoneForm.oldCode
+        .post('api/tcm/user/phone', {
+          phone: phoneForm.current,
+          code: phoneForm.oldCode
         })
         .then(() => {
-          this.userData.phone = phoneForm.current
+          this.userData.telephone = phoneForm.current
           this.resetPhoneForm()
           this.$message.success('绑定手机成功')
           this.dialogObj.bindPhone = false
@@ -532,7 +604,7 @@ export default {
           newCode: phoneForm.newCode
         })
         .then(() => {
-          this.userData.phone = phoneForm.newPhone
+          this.userData.telephone = phoneForm.newPhone
           this.resetPhoneForm()
           this.$message.success('修改手机成功')
           this.dialogObj.editPhone = false
@@ -560,7 +632,7 @@ export default {
     bindEmailConfirm(resetLoading) {
       let { emailForm } = this
       this.$axios
-        .patch('tm/api/user', {
+        .post('api/tcm/user/email', {
           email: emailForm.email,
           code: emailForm.code
         })
@@ -593,11 +665,11 @@ export default {
     editEmailConfirm(resetLoading) {
       let { emailForm } = this
       this.$axios
-        .patch('tm/api/user', {
-          email: emailForm.email,
-          code: emailForm.code,
-          newEmail: emailForm.newEmail,
-          newCode: emailForm.newCode
+        .patch('api/tcm/user/email', {
+          // email: emailForm.email,
+          oldEmailCode: emailForm.code,
+          email: emailForm.newEmail,
+          emailCode: emailForm.newCode
         })
         .then(() => {
           this.userData.email = emailForm.newEmail
@@ -619,10 +691,10 @@ export default {
     saveEnData(resetLoading) {
       let { enForm } = this
       this.$axios
-        .patch('tm/api/user/enterprise', {
-          name: enForm.name,
+        .patch('tm/api/Customer', {
+          companyName: enForm.companyName,
           website: enForm.website,
-          in: enForm.in,
+          industry: enForm.industry,
           city: enForm.city
         })
         .then(() => {
