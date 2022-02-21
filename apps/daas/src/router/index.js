@@ -671,14 +671,6 @@ const childRoutes = [
     }
   },
   {
-    path: '/dataVerification/setting',
-    name: 'dataVerifySetting',
-    component: () => import('@/views/dataVerification/setting'),
-    meta: {
-      code: 'Data_verify'
-    }
-  },
-  {
     path: '/agentDown',
     name: 'agentDown',
     component: () => import('@/views/downAgent/agentDown')
