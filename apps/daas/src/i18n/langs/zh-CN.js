@@ -418,6 +418,7 @@ export default {
     '此模式将连接网络中的单独服务器，该服务器提供到数据库的TSL/SSL通道。如果您的数据库位于不可访问的子网中，则可尝试使用此方法',
 
   connection_test_schema_tips: '可能原因：Schema大小写设置有问题，您可尝试修改大小写后重试',
+  connection_oracle_config_share_log_switch: '共享挖掘',
 
   connection_preview_load_schema: '加载Schema',
   connection_preview_edit: '编辑',

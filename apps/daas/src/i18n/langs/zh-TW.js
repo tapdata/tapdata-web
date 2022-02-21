@@ -314,6 +314,7 @@ export default {
   connection_kafka_kerberos_none_keytab: '密鑰表示文件不能為空',
   connection_kafka_kerberos_none_conf: '配置文件不能為空',
   connection_kafka_encryption: '加密方式',
+  connection_oracle_config_share_log_switch: '共享挖掘',
 
   // 路由名
   app_menu_jsFuncs: '函數',

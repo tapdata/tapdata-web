@@ -225,6 +225,12 @@ export default function (vm) {
         ]
       },
       {
+        type: 'switch',
+        field: 'shareCdcEnable',
+        label: vm.$t('connection_oracle_config_share_log_switch'),
+        show: true
+      },
+      {
         type: 'select',
         field: 'database_datetype_without_timezone',
         label: vm.$t('dataForm.form.timeZone'),
