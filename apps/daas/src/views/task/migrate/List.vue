@@ -16,8 +16,7 @@
       @sort-change="handleSortTable"
     >
       <template slot="search">
-        <!-- @search="search" -->
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+        <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="table.fetch(1)"> </FilterBar>
         <!-- <ul class="search-bar">
           <li>
             <ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
@@ -1373,14 +1372,14 @@ export default {
     handlePreviewVisible() {
       this.previewVisible = false
     },
-    search() {
-      // const { delayTrigger } = this.$util
-      // delayTrigger(() => {
-      //   this.$router.replace({
-      //     name: 'Task',
-      //     query: this.searchParams
-      //   })
-      // }, debounce)
+    search(debounce) {
+      const { delayTrigger } = this.$util
+      delayTrigger(() => {
+        this.$router.replace({
+          name: 'migrate',
+          query: this.searchParams
+        })
+      }, debounce)
     },
     getFilterItems() {
       this.filterItems = [

@@ -14,57 +14,9 @@
       @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
     >
-      <ul class="search-bar" slot="search">
-        <li class="item">
-          <ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
-            <ElOption :label="$t('connection.status.all')" value=""></ElOption>
-            <ElOption v-for="item in databaseStatusOptions" :key="item.value" :label="item.label" :value="item.value">
-            </ElOption>
-          </ElSelect>
-        </li>
-        <li class="item">
-          <ElSelect
-            v-model="searchParams.databaseModel"
-            clearable
-            size="small"
-            @input="table.fetch(1)"
-            :placeholder="$t('connection.connectionType')"
-          >
-            <ElOption v-for="item in databaseModelOptions" :key="item.value" :label="item.label" :value="item.value">
-            </ElOption>
-          </ElSelect>
-        </li>
-        <li class="item">
-          <ElSelect
-            v-model="searchParams.databaseType"
-            filterable
-            clearable
-            size="small"
-            @input="table.fetch(1)"
-            :placeholder="$t('connection.dataBaseType')"
-          >
-            <ElOption v-for="item in databaseTypeOptions" :key="item.type" :label="item.name" :value="item.type">
-            </ElOption>
-          </ElSelect>
-        </li>
-        <li class="item">
-          <ElInput
-            v-model="searchParams.keyword"
-            clearable
-            class="input-with-select"
-            size="small"
-            :placeholder="$t('connection.dataBaseSearch')"
-            @input="table.fetch(1, 800)"
-          >
-            <i slot="prefix" class="el-input__icon el-icon-search"></i>
-          </ElInput>
-        </li>
-        <li class="item">
-          <ElButton plain class="btn-refresh" size="small" @click="table.fetch()">
-            <i class="el-icon-refresh"></i>
-          </ElButton>
-        </li>
-      </ul>
+      <template slot="search">
+        <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="table.fetch(1)"> </FilterBar>
+      </template>
       <div slot="operation">
         <ElButton
           v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
@@ -220,13 +172,15 @@ import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
 import { defaultModel, verify, desensitization } from './util'
 import Test from './Test'
+import FilterBar from '@/components/filter-bar'
 
 let timeout = null
 
 export default {
-  components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress },
+  components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress, FilterBar },
   data() {
     return {
+      filterItems: [],
       user_id: this.$cookie.get('user_id'),
       dialogDatabaseTypeVisible: false,
       previewVisible: false,
@@ -238,29 +192,33 @@ export default {
       order: 'createTime DESC',
       databaseModelOptions: [
         {
-          label: this.$t('connection.type.source'),
+          label: this.$t('connection_list_source'),
           value: 'source'
         },
         {
-          label: this.$t('connection.type.target'),
+          label: this.$t('connection_list_target'),
           value: 'target'
         },
         {
-          label: this.$t('connection.type.source_and_target'),
+          label: this.$t('connection_list_source_and_target'),
           value: 'source_and_target'
         }
       ],
       databaseStatusOptions: [
         {
-          label: this.$t('connection.status.ready'),
+          label: this.$t('connection_list_all_status'),
+          value: ''
+        },
+        {
+          label: this.$t('connection_list_efficient'),
           value: 'ready'
         },
         {
-          label: this.$t('connection.status.invalid'),
+          label: this.$t('connection_list_invalidation'),
           value: 'invalid'
         },
         {
-          label: this.$t('connection.status.testing'),
+          label: this.$t('connection_list_testing'),
           value: 'testing'
         }
       ],
@@ -334,7 +292,7 @@ export default {
   },
   watch: {
     '$route.query'() {
-      this.searchParams = Object.assign(this.searchParams, this.table.getCache())
+      // this.searchParams = Object.assign(this.searchParams, this.table.getCache())
       this.table.fetch(1)
     }
   },
@@ -348,11 +306,11 @@ export default {
     // this.description = this.$t('connection.desc') + guideDoc
     let helpUrl = 'https://docs.tapdata.net'
     let guideDoc =
-      ` <a style="color: #48B6E2" href="${helpUrl}/data-source">` + this.$t('dataForm.form.guideDoc') + '</a>'
+      ` <a style="color: #48B6E2" href="${helpUrl}/data-source">` + this.$t('connection_list_help_doc') + '</a>'
     if (this.$window.getSettingByKey('SHOW_OLD_PAGE')) {
-      this.description = this.$t('connection.desc')
+      this.description = this.$t('connection_list_desc')
     } else {
-      this.description = this.$t('connection.desc') + this.$t('connection.helpDesc') + guideDoc
+      this.description = this.$t('connection_list_desc') + guideDoc
     }
     //定时轮询
     timeout = setInterval(() => {
@@ -406,9 +364,16 @@ export default {
     },
     async getDatabaseType() {
       let databaseTypes = await this.$api('DatabaseTypes').get()
-      this.databaseTypeOptions = databaseTypes.data
+      let databaseTypeOptions = databaseTypes.data
         .filter(dt => dt.type !== 'kudu')
         .sort((t1, t2) => (t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1))
+      this.databaseTypeOptions = databaseTypeOptions.map(item => {
+        return {
+          label: item.name,
+          value: item.type
+        }
+      })
+      this.getFilterItems()
     },
     getData({ page, tags }) {
       let region = this.$route.query.region
@@ -759,6 +724,44 @@ export default {
         this.$message.error(this.$t('connection.testConnection') + this.$t('connection.status.invalid'), false)
       }
       this.table.fetch()
+    },
+    search(debounce) {
+      const { delayTrigger } = this.$util
+      delayTrigger(() => {
+        this.$router.replace({
+          name: 'connections',
+          query: this.searchParams
+        })
+      }, debounce)
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: this.$t('connection_list_status'),
+          key: 'status',
+          type: 'select-inner',
+          items: this.databaseStatusOptions,
+          selectedWidth: '200px'
+        },
+        {
+          label: this.$t('connection_list_form_sync_type'),
+          key: 'databaseModel',
+          type: 'select-inner',
+          items: this.databaseModelOptions
+        },
+        {
+          label: this.$t('connection_list_form_database_type'),
+          key: 'databaseType',
+          type: 'select-inner',
+          menuMinWidth: '250px',
+          items: this.databaseTypeOptions
+        },
+        {
+          placeholder: this.$t('task_list_search_placeholder'),
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     }
   }
 }
@@ -766,6 +769,13 @@ export default {
 <style lang="scss" scoped>
 .connection-list-wrap {
   height: 100%;
+  ::v-deep {
+    .el-select-dropdown__item {
+      span {
+        font-size: 12px;
+      }
+    }
+  }
 
   .btn-refresh {
     padding: 0;

@@ -138,6 +138,7 @@ export default {
   button_export: 'Export',
   button_import: 'Import',
   button_download: 'Download',
+  button_button: 'Add',
 
   query_fuzzy: 'Fuzzy match',
   query_precise: 'Exact match',
@@ -423,7 +424,7 @@ export default {
   connection_list_invalidation: 'Invalid',
   connection_list_testing: 'Testing',
   connection_list_desc:
-    'Data sources include databases, structured files, application RESTful APIs, custom interfaces and other types. You must create a data source before you can create a migration or synchronization task. In addition to the basic configuration items, the data source also has functions such as regularly/manually loading database structures, setting time zones, and table filtering settings. For more configuration instructions, please click ',
+    'Data sources include types such as databases, structured files, application RESTful APIs, custom interfaces, etc. A data source must be created before a migration or synchronization task can be created. For more configuration instructions, please click ',
   connection_list_help_doc: 'Help Documentation',
 
   // 连接管理

@@ -572,7 +572,7 @@ export default {
         }
       }
       region && (where['platformInfo.region'] = region)
-      syncType && (where['setting.sync_type'] = syncType)
+      syncType && (where['type'] = syncType)
       if (executionStatus) {
         if (executionStatus === 'Lag') {
           // where['stats.stagesMetrics'] = {
@@ -618,7 +618,7 @@ export default {
           where.status = status
         }
       }
-      progress && (where['setting.sync_type'] = progress)
+      progress && (where['type'] = progress)
       let filter = {
         order: this.order,
         limit: size,
@@ -1181,14 +1181,14 @@ export default {
         .filter(t => t.count > 0)
         .every(t => ['edit', 'draft', 'error', 'pause', 'not_running', 'stop'].includes(t.status))
     },
-    search() {
-      // const { delayTrigger } = this.$util
-      // delayTrigger(() => {
-      //   this.$router.replace({
-      //     name: 'Task',
-      //     query: this.searchParams
-      //   })
-      // }, debounce)
+    search(debounce) {
+      const { delayTrigger } = this.$util
+      delayTrigger(() => {
+        this.$router.replace({
+          name: 'dataflow',
+          query: this.searchParams
+        })
+      }, debounce)
     },
     getFilterItems() {
       this.filterItems = [

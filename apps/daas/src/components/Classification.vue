@@ -1,19 +1,24 @@
 <template>
   <div class="classification" :class="{ expand: isExpand }">
-    <el-button class="btn-expand" size="mini" @click="toggle()">
+    <!-- <el-button class="btn-query" size="mini" type="text">
+      <i class="iconfont icon-fangdajing" @click="searchFalg = !searchFalg"></i>
+    </el-button> -->
+    <el-button class="btn-expand toggle" size="mini" @click="toggle()" v-if="!isExpand">
       <i class="iconfont icon-zhankai2"></i>
     </el-button>
-    <el-button class="btn-addIcon" size="mini" type="text">
-      <i class="iconfont icon-jia" v-readonlybtn="authority" @click="showDialog()"></i>
-    </el-button>
-    <el-button class="btn-query" size="mini" type="text">
-      <i class="iconfont icon-fangdajing" @click="searchFalg = !searchFalg"></i>
-    </el-button>
-    <div class="classification-header">
+    <div class="classification-header" v-else>
+      <el-button class="btn-expand" size="mini" @click="toggle()">
+        <i class="iconfont icon-zhankai2"></i>
+      </el-button>
+      <el-button class="btn-addIcon" size="mini" type="text" v-readonlybtn="authority" @click="showDialog()">
+        <!-- <i class="iconfont icon-jia" v-readonlybtn="authority" @click="showDialog()"></i> -->
+        {{ $t('button_button') }}
+      </el-button>
       <div class="title">
         <span>{{ types[0] === 'user' ? $t('classification.userTitle') : $t('classification.title') }}</span>
       </div>
-      <div class="search-box" v-if="searchFalg">
+      <!-- v-if="searchFalg" -->
+      <div class="search-box">
         <el-input class="search" size="mini" v-model="filterText">
           <span slot="prefix" class="el-input__icon h-100 ml-1">
             <VIcon size="14">search</VIcon>
@@ -453,8 +458,8 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 26px;
-  height: 22px;
+  width: 24px;
+  // height: 22px;
   user-select: none;
   box-sizing: border-box;
   border-top: none;
@@ -467,22 +472,27 @@ export default {
     color: #666;
     transform: rotate(0);
     box-sizing: border-box;
-    background: #eff1f4;
+    // background: #eff1f4;
     border: 0;
+  }
+  .toggle {
+    margin-top: 20px;
+    color: #337dff;
   }
   &.expand {
     height: 100%;
     //width: 100%;
-    border: 1px solid #ebeef5;
+    padding: 12px 0;
+    border-right: 1px solid #f2f2f2;
     width: 214px;
     .btn-expand {
       position: absolute;
       top: 5px;
-      right: 8px;
+      left: 8px;
       transform: rotate(180deg);
       .icon-zhankai2 {
         font-size: 16px;
-        color: #666;
+        color: #337dff;
         &:hover {
           color: #409eff;
         }
@@ -490,7 +500,9 @@ export default {
     }
     .btn-addIcon {
       position: absolute;
-      right: 33px;
+      top: 3px;
+      right: 10px;
+      font-size: 12px;
       .iconfont.icon-jia {
         display: flex;
         flex-direction: row;
@@ -500,7 +512,6 @@ export default {
         font-size: 16px;
         // background: #fff;
         // border: 1px solid #dedee4;
-
         height: 66%;
         // padding: 0 4px;
         // padding-right: 6px;
@@ -529,7 +540,8 @@ export default {
 
   /*头部样式*/
   .classification-header {
-    background: #fafafa;
+    position: relative;
+    // background: #fafafa;
     // border-bottom: 1px solid #dedee4;
     font-size: 12px;
     line-height: 31px;
@@ -540,9 +552,9 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 8px;
+      padding: 0 8px 0 32px;
       color: #666;
-      background-color: #eff1f4;
+      // background-color: #eff1f4;
     }
 
     .search-box {
@@ -591,7 +603,7 @@ export default {
       margin-right: 5px;
       font-size: 12px;
       // color: #409EFF;
-      color: #edc958;
+      color: #658ffe;
     }
     .table-label {
       flex: 1;

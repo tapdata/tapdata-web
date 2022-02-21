@@ -139,6 +139,7 @@ export default {
   button_export: '導出',
   button_import: '導入',
   button_download: '下載',
+  button_button: '新增',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精準匹配',
@@ -434,7 +435,7 @@ export default {
   connection_list_invalidation: '失效',
   connection_list_testing: '測試中',
   connection_list_desc:
-    '數據源包括數據庫、結構化文件、應用程序RESTful API、自定義接口等類型，必須先創建數據源才能創建遷移或同步任務。除了基礎的配置項之外，數據源還有定期/手動加載數據庫結構、設置時區、表過濾設置等功能。更多配置說明，請點擊',
+    '數據源包括數據庫、結構化文件、應用程序RESTful API、自定義接口等類型，必須先創建數據源才能創建遷移或同步任務。更多配置說明，請點擊',
   connection_list_help_doc: '幫助文檔',
 
   connection_form_database_name: '數據庫名稱',

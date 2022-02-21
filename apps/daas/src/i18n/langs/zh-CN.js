@@ -136,6 +136,7 @@ export default {
   button_export: '导出',
   button_import: '导入',
   button_download: '下载',
+  button_button: '新增',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精准匹配',
@@ -429,7 +430,7 @@ export default {
   connection_list_invalidation: '失效',
   connection_list_testing: '测试中',
   connection_list_desc:
-    '数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。除了基础的配置项之外，数据源还有定期/手动加载数据库结构、设置时区、表过滤设置等功能。更多配置说明，请点击',
+    '数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。更多配置说明，请点击',
   connection_list_help_doc: '帮助文档',
 
   connection_form_database_name: '数据库名称',

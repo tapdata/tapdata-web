@@ -286,8 +286,8 @@ export default {
       //   skip: (current - 1) * size,
       //   where
       // }
-      this.$api('logcollector')
-        .get()
+      return this.$api('logcollector')
+        .get({})
         .then(res => {
           // this.table.setCache({ keyword })
           return {
