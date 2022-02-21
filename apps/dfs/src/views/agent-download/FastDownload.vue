@@ -38,7 +38,9 @@
           </li>
           <li>
             {{ $t('agent_deploy_start_install_windows_first') }}
-            <ElLink type="primary">{{ $t('agent_deploy_start_install_windows_first_download') }}</ElLink>
+            <ElLink type="primary" @click="handleDownLoad">{{
+              $t('agent_deploy_start_install_windows_first_download')
+            }}</ElLink>
           </li>
           <li class="mt-3">
             {{ $t('agent_deploy_start_install_windows_second') }}
