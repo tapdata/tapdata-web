@@ -144,6 +144,11 @@ export default {
     init() {
       this.getTmUser()
     },
+    getUser() {
+      this.$axios.get('api/tcm/user').then(data => {
+        this.user = data || {}
+      })
+    },
     getTmUser() {
       this.$axios.get('tm/api/users/self').then(data => {
         if (data) {

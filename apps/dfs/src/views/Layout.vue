@@ -122,6 +122,7 @@ export default {
     this.getBreadcrumb(this.$route)
     this.$root.$on('select-connection-type', this.selectConnectionType)
     this.$root.$on('show-guide', this.showGuide)
+    this.$root.$on('get-user', this.getUser)
   },
   watch: {
     $route(route) {
@@ -149,6 +150,9 @@ export default {
     },
     showGuide() {
       this.$refs.theHeader?.showGuide?.()
+    },
+    getUser() {
+      this.$refs.theHeader?.getUser?.()
     },
     selectConnectionType() {
       this.dialogVisible = true

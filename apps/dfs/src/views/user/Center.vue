@@ -105,7 +105,7 @@
       width="435px"
       append-to-body
       title="上传头像"
-      :close-on-click-modal="true"
+      :close-on-click-modal="false"
       :visible.sync="dialogObj.avatar"
     >
       <div class="text-center">
@@ -117,7 +117,7 @@
         </UploadFile>
       </div>
       <div class="mt-6 text-center">
-        <VButton @click="dialogObj.avatar = true">{{ $t('dataVerify.cancel') }}</VButton>
+        <VButton @click="dialogObj.avatar = false">{{ $t('dataVerify.cancel') }}</VButton>
         <VButton type="primary" :disabled="!avatar" auto-loading @click="avatarConfirm(arguments[0])">{{
           $t('dataVerify.confirm')
         }}</VButton>
@@ -487,6 +487,7 @@ export default {
         .then(() => {
           this.$message.success('修改头像成功')
           this.userData.avatar = avatar
+          this.refreshRootUser()
           this.dialogObj.avatar = false
         })
         .finally(() => {
@@ -690,6 +691,9 @@ export default {
         .finally(() => {
           resetLoading?.()
         })
+    },
+    refreshRootUser() {
+      this.$root.$emit('get-user')
     }
   }
 }
