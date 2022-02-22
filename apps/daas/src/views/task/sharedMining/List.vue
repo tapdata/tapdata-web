@@ -20,17 +20,6 @@
             >
             </el-input>
           </li>
-          <!-- <li>
-            <el-input
-              clearable
-              class="input-with-select"
-              size="mini"
-              v-model="searchParams.keyword"
-              :placeholder="$t('share_list_connection_search')"
-              @input="table.fetch(1, 800)"
-            >
-            </el-input>
-          </li> -->
           <template v-if="searchParams.keyword">
             <li>
               <el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
@@ -42,7 +31,7 @@
         </ul>
       </div>
       <div slot="operation">
-        <el-button class="btn btn-create" size="mini" @click="handleSetting">
+        <el-button class="btn btn-create" type="primary" size="mini" @click="handleSetting">
           <span>{{ $t('share_list_setting') }}</span>
         </el-button>
       </div>
@@ -53,7 +42,9 @@
       </el-table-column>
       <el-table-column :label="$t('share_list_connection')" prop="connections">
         <template slot-scope="scope">
-          {{ scope.row.connections }}
+          <div v-for="item in scope.row.connections">
+            <span v-for="op in item">{{ op }}</span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column :label="$t('share_list_time_excavation')" prop="name">
@@ -62,12 +53,22 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('share_list_creat_time')" prop="createTime"> </el-table-column>
-      <el-table-column :label="$t('share_list_status')" prop="status"> </el-table-column>
-      <el-table-column :label="$t('column_operation')">
+      <el-table-column :label="$t('share_list_status')" prop="status">
         <template slot-scope="scope">
+          <StatusTag type="text" target="shareCdc" :status="scope.row.status" only-img></StatusTag>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('share_list_time')"> </el-table-column>
+      <el-table-column :label="$t('column_operation')" width="200">
+        <template slot-scope="scope">
+          <el-button size="mini" type="text" @click="handleRun([scope.row.id])">{{ $t('task_list_run') }}</el-button>
+          <el-divider direction="vertical"></el-divider>
+          <el-button size="mini" type="text" @click="handleStop([scope.row.id])">{{ $t('task_list_stop') }}</el-button>
+          <el-divider direction="vertical"></el-divider>
           <el-button size="mini" type="text" style="color: #f56c6c" @click="handleEdit(scope.row)">{{
             $t('button_edit')
           }}</el-button>
+          <el-divider direction="vertical"></el-divider>
           <el-button size="mini" type="text" @click="handleDetail(scope.row)">{{ $t('button_details') }}</el-button>
         </template>
       </el-table-column>
@@ -80,10 +81,28 @@
       :close-on-click-modal="false"
       :visible.sync="settingDialogVisible"
     >
-      <FormBuilder ref="form" v-model="digSettingForm" :config="digSettingFormConfig"></FormBuilder>
+      <el-form :model="digSettingForm" label-position="left" label-width="150px">
+        <el-form-item :label="$t('share_form_setting_connection_name')" size="mini">
+          <el-select v-model="digSettingForm.persistenceMongodb_uri_db" placeholder="请选择" @change="handleTables">
+            <el-option v-for="item in mongodbList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('share_form_setting_table_name')" size="mini">
+          <el-select v-model="digSettingForm.persistenceMongodb_collection" placeholder="请选择">
+            <el-option v-for="table in tableList" :key="table.tableId" :label="table.table_name" :value="table.tableId">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('share_form_setting_log_time')" size="mini">
+          <el-select v-model="digSettingForm.share_cdc_ttl_day" placeholder="请选择">
+            <el-option v-for="op in logSaveList" :key="op" :label="op + $t('share_form_edit_day')" :value="op">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="settingDialogVisible = false" size="mini">{{ $t('button_cancel') }}</el-button>
-        <el-button type="primary" @click="createNewTtl()" size="mini">{{ $t('button_confirm') }}</el-button>
+        <el-button type="primary" @click="saveSetting()" size="mini">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
 
@@ -98,24 +117,24 @@
         <el-form-item :label="$t('share_form_edit_name')" size="mini" required>
           <el-input v-model="editForm.name"></el-input>
         </el-form-item>
-        <el-form-item :label="$t('share_form_edit_dig_time')" size="mini" required>
-          <el-row>
-            <el-col :span="24" class="pb-3">
-              <el-select v-model="editForm.syncTimePoint" placeholder="请选择">
-                <el-option v-for="op in options" :key="op.value" :label="op.label" :value="op.value"> </el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="24">
-              <el-date-picker
-                format="yyyy-MM-dd HH:mm:ss"
-                v-model="editForm.syncTineZone"
-                type="datetime"
-              ></el-date-picker>
-            </el-col>
-          </el-row>
-        </el-form-item>
+        <!--        <el-form-item :label="$t('share_form_edit_dig_time')" size="mini" required>-->
+        <!--          <el-row>-->
+        <!--            <el-col :span="24" class="pb-3">-->
+        <!--              <el-select v-model="editForm.syncTimePoint" placeholder="请选择">-->
+        <!--                <el-option v-for="op in options" :key="op.value" :label="op.label" :value="op.value"> </el-option>-->
+        <!--              </el-select>-->
+        <!--            </el-col>-->
+        <!--            <el-col :span="24">-->
+        <!--              <el-date-picker-->
+        <!--                format="yyyy-MM-dd HH:mm:ss"-->
+        <!--                v-model="editForm.syncTineZone"-->
+        <!--                type="datetime"-->
+        <!--              ></el-date-picker>-->
+        <!--            </el-col>-->
+        <!--          </el-row>-->
+        <!--        </el-form-item>-->
         <el-form-item :label="$t('share_form_setting_log_time')" size="mini">
-          <el-select v-model="editForm.storageTime" placeholder="请选择">
+          <el-select v-model="editForm.shareCdcTtlDay" placeholder="请选择">
             <el-option v-for="op in logSaveList" :key="op" :label="op + $t('share_form_edit_day')" :value="op">
             </el-option>
           </el-select>
@@ -126,78 +145,43 @@
         <el-button type="primary" @click="saveEdit()" size="mini">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
+    <DownAgent ref="agentDialog" type="taskRunning"></DownAgent>
   </section>
 </template>
 
 <script>
 import TablePage from '@/components/TablePage'
+import DownAgent from '../../downAgent/agentDown'
+import StatusTag from '@/components/StatusTag'
 
 export default {
   components: {
-    TablePage
+    TablePage,
+    DownAgent,
+    StatusTag
   },
   data() {
     return {
-      rowspan: '',
-      tableData: [],
-      spanData: [],
-      spanNameData: [],
-      types: 'database',
       searchParams: {
-        keyword: '',
-        isFuzzy: true
+        keyword: ''
       },
       order: 'createTime DESC',
-      dbOptions: [],
       list: null,
       settingDialogVisible: false,
       editDialogVisible: false,
       digSettingForm: {
-        model_type: 'mongo',
-        database: '',
-        tableName: '',
-        filed: '',
-        data_type: 's',
-        expire: ''
+        persistenceMongodb_uri_db: '',
+        persistenceMongodb_collection: '',
+        share_cdc_ttl_day: 3
       },
-      digSettingFormConfig: {
-        form: {
-          labelPosition: 'left',
-          labelWidth: '160px'
-        },
-        defaultModel: {
-          data_type: 's'
-        },
-        items: [
-          {
-            type: 'select',
-            label: this.$t('share_form_setting_connection_name'),
-            field: 'model_type',
-            options: [],
-            required: true
-          },
-          {
-            type: 'select',
-            label: this.$t('share_form_setting_table_name'),
-            field: 'database',
-            options: [],
-            required: true,
-            filterable: true
-          },
-          {
-            type: 'select',
-            label: this.$t('share_form_setting_log_time'),
-            field: 'tableName',
-            options: [],
-            filterable: true
-          }
-        ]
-      },
+      mongodbList: [],
+      tableList: [],
       editForm: {
+        id: '',
         name: '',
         syncTimePoint: 'localTZ',
         syncTineZone: '',
-        storageTime: 3
+        shareCdcTtlDay: 3
       },
       options: [
         {
@@ -213,42 +197,17 @@ export default {
           value: 'current'
         }
       ],
-      logSaveList: [1, 2, 3, 4, 5, 6, 7]
+      logSaveList: [1, 2, 3, 4, 5, 6, 7],
+      statusBtMap: {
+        // scheduled, draft, running, stopping, error, pause, force stopping
+        start: { draft: true, error: true, pause: true },
+        stop: { running: true },
+        edit: { edit: true, stop: true, error: true }
+      }
     }
-  },
-  created() {
-    // this.getDbOptions()
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-  },
-  watch: {
-    'createForm.tableName'(val) {
-      let includesTimeField = []
-      let selectTable = this.createFormConfig.items[2].options.filter(item => item.value === val)
-      let schemaField = selectTable && selectTable.length ? selectTable[0].record.fields : []
-      this.createFormConfig.items[3].options = []
-      this.createForm.filed = ''
-      schemaField.forEach(v => {
-        if (v.data_type == 'DATE_TIME' || v.data_type == 'DATETIME' || v.data_type == 'DATE' || v.data_type == 'date') {
-          includesTimeField.push(v.field_name)
-          if (v.field_name == '__tapd8.ts') {
-            this.createForm.filed = v.field_name
-            // this.indexDefinition[0].key = v.field_name
-          }
-          this.createFormConfig.items[3].options.push({
-            name: v.field_name + `(${v.data_type})`,
-            value: v.field_name
-          })
-        }
-      })
-
-      if (this.createForm.tableName && includesTimeField.length === 0) {
-        this.createForm.filed = ''
-        // this.indexDefinition = [{ key: '', value: 1 }]
-        this.$message.error(this.$t('timeToLive.filedGetFailed'))
-      }
-    }
   },
   computed: {
     table() {
@@ -310,13 +269,90 @@ export default {
             // this.digSettingFormConfig.items[0].options = res.data
           }
         })
+      this.getMongodb()
     },
-
+    //获取所有mongo连接
+    getMongodb() {
+      let filter = {
+        where: {
+          database_type: 'mongodb'
+        }
+      }
+      this.$api('connections')
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          if (res) {
+            this.mongodbList = res?.data?.items
+          }
+        })
+    },
+    //根据已选connectionId->tables
+    handleTables(id) {
+      this.$api('connections')
+        .customQuery(id, { schema: true })
+        .then(res => {
+          if (res) {
+            this.tableList = res?.data?.schema?.tables || []
+          }
+        })
+    },
+    //保存全局挖掘设置
+    saveSetting() {
+      this.$api('logcollector')
+        .patchSystemConfig(this.digSettingForm)
+        .then(res => {
+          if (res) {
+            this.settingDialogVisible = false
+            this.$message.success('保存全局设置成功')
+          }
+        })
+    },
+    handleRun(ids) {
+      let filter = {
+        where: {
+          id: ids[0]
+        }
+      }
+      if (this.$refs.agentDialog.checkAgent()) {
+        this.$api('Task')
+          .get({ filter: JSON.stringify(filter) })
+          .then(res => {
+            this.$api('Task')
+              .batchStart(ids)
+              .then(res => {
+                this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+                this.table.fetch()
+              })
+              .catch(err => {
+                this.$message.error(err.data?.message)
+              })
+          })
+      }
+    },
+    handleStop(ids) {
+      this.$confirm(this.$t('message.stopInitial_syncMessage'), this.$t('dataFlow.importantReminder'), {
+        type: 'warning'
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        this.$api('Task')
+          .batchStop(ids)
+          .then(res => {
+            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.table.fetch()
+          })
+          .catch(err => {
+            this.$message.error(err.data?.message)
+          })
+      })
+    },
     // 编辑
     handleEdit(item) {
       this.editDialogVisible = true
-      let editData = item
-      this.editForm = editData
+      this.editForm = item
     },
     // 取消编辑
     cancelEdit() {
@@ -332,7 +368,17 @@ export default {
     },
 
     // 保存编辑
-    saveEdit() {},
+    saveEdit() {
+      let id = this.editForm?.id
+      this.$api('logcollector')
+        .patch(id, this.editForm)
+        .then(res => {
+          if (res) {
+            this.editDialogVisible = false
+            this.$message.success('保存成功，重启任务后生效')
+          }
+        })
+    },
 
     handleDetail(item) {
       this.$router.push({
@@ -365,8 +411,6 @@ export default {
       margin-left: 5px;
     }
     .btn {
-      padding: 7px;
-      background: #f5f5f5;
       i.iconfont {
         font-size: 12px;
       }
