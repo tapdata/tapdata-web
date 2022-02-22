@@ -18,7 +18,7 @@
           <div class="font-color-sub">ggggg</div>
         </div>
       </div>
-      <div class="share-detail-head-center" style="min-height: 250px">
+      <div class="share-detail-head-center py-3" style="min-height: 250px">
         <div class="flex ml-3 pt-3">
           <span class="label fs-8">{{ $t('share_detail_statistics_time') }}</span>
           <el-date-picker
@@ -225,7 +225,7 @@ export default {
     }
     .share-detail-head-center {
       .label {
-        width: 80px;
+        width: 70px;
         line-height: 28px;
       }
       ::v-deep {

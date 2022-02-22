@@ -4,6 +4,7 @@
     :visible="dialogVisible"
     :append-to-body="true"
     width="1030px"
+    custom-class="connection-dialog"
     :before-close="handleClose"
   >
     <ConnectionTypeSelector
@@ -189,6 +190,13 @@ export default {
 
   .clearfix {
     *zoom: 1;
+  }
+}
+::v-deep {
+  .connection-dialog {
+    .el-dialog__body {
+      padding: 20px 20px 30px 20px;
+    }
   }
 }
 </style>

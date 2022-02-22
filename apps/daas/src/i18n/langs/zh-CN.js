@@ -16,6 +16,8 @@ export default {
   menu_title_function: '函数管理',
   menu_title_dashboard: '控制台',
   menu_title_connections: '数据源',
+  menu_title_connections_create: '创建数据源',
+  menu_title_connections_edit: '编辑数据源',
   menu_title_dataSync: '数据同步',
   menu_title_dataTransmission: '数据传输',
   menu_title_dataFlows: '数据采集',

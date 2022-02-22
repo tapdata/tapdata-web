@@ -36,7 +36,7 @@
           size="small"
           @click="checkTestConnectionAvailable"
         >
-          <i class="iconfont icon-jia add-btn-icon"></i>
+          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
           <span> {{ $t('connection.createNewDataSource') }}</span>
         </ElButton>
       </div>
@@ -116,7 +116,7 @@
           {{ scope.row.lastUpdateTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('connection.operate')" width="220">
+      <ElTableColumn :label="$t('connection.operate')" width="200">
         <template slot-scope="scope">
           <ElLink type="primary" @click="testConnection(scope.row)">{{ $t('connection.testConnection') }} </ElLink>
           <ElLink
@@ -768,7 +768,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .connection-list-wrap {
-  height: 100%;
+  overflow: hidden;
   ::v-deep {
     .el-select-dropdown__item {
       span {

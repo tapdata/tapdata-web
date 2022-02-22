@@ -45,9 +45,10 @@ const childRoutes = [
     name: 'connectionsCreate',
     component: () => import('@/views/connections/DatabaseForm'),
     meta: {
-      title: i18n.t('tap.connection'),
+      title: i18n.t('menu_title_connections_create'),
       isCollapse: true,
-      code: 'datasource_creation'
+      code: 'datasource_creation',
+      showTitle: true
     }
   },
   {
@@ -55,9 +56,10 @@ const childRoutes = [
     name: 'connectionsEdit',
     component: () => import('@/views/connections/formbuild'),
     meta: {
-      title: i18n.t('tap.connection'),
+      title: i18n.t('menu_title_connections_edit'),
       isCollapse: true,
-      code: 'datasource_edition'
+      code: 'datasource_edition',
+      showTitle: true
     }
   },
   {
@@ -65,9 +67,10 @@ const childRoutes = [
     name: 'connectionsOldCreate',
     component: () => import('@/views/connections/DatabaseForm'),
     meta: {
-      title: i18n.t('tap.connection'),
+      title: i18n.t('menu_title_connections_create'),
       isCollapse: true,
-      code: 'datasource_creation'
+      code: 'datasource_creation',
+      showTitle: true
     }
   },
   {
@@ -75,9 +78,10 @@ const childRoutes = [
     name: 'connectionsOldEdit',
     component: () => import('@/views/connections/DatabaseForm'),
     meta: {
-      title: i18n.t('tap.connection'),
+      title: i18n.t('menu_title_connections_edit'),
       isCollapse: true,
-      code: 'datasource_edition'
+      code: 'datasource_edition',
+      showTitle: true
     }
   },
   {
@@ -88,7 +92,8 @@ const childRoutes = [
       code: 'datasource_creation',
       url: '/old/index.html#/connection',
       title: i18n.t('tap.connectionEdtion'),
-      isCollapse: false
+      isCollapse: false,
+      showTitle: true
     }
   },
   {
@@ -99,7 +104,8 @@ const childRoutes = [
       code: 'datasource_edition',
       url: '/old/index.html#/connection',
       title: i18n.t('tap.connectionEdtion'),
-      isCollapse: true
+      isCollapse: true,
+      showTitle: true
     }
   },
   // {
@@ -129,7 +135,8 @@ const childRoutes = [
     component: () => import('@/views/metadata/Search'),
     meta: {
       title: i18n.t('tap.metadataSearch'),
-      isCollapse: true
+      isCollapse: true,
+      showTitle: true
     }
   },
   {
@@ -140,6 +147,7 @@ const childRoutes = [
       code: 'data_catalog_menu',
       title: i18n.t('tap.dataCatalog'),
       isCollapse: true,
+      showTitle: true,
       types: [
         'table',
         'view',
@@ -162,6 +170,7 @@ const childRoutes = [
     meta: {
       code: 'data_catalog_menu',
       title: i18n.t('tap.dataCatalog'),
+      showTitle: true,
       isCollapse: true
     }
   },
@@ -175,6 +184,7 @@ const childRoutes = [
       url: '/old/index.html#/dataQuality',
       title: i18n.t('tap.dataQuality'),
       isCollapse: true,
+      showTitle: true,
       types: ['collection']
     }
   },
@@ -185,6 +195,7 @@ const childRoutes = [
     meta: {
       code: 'data_quality_edition',
       title: i18n.t('tap.dataQuality'),
+      showTitle: true,
       isCollapse: true
     }
   },
@@ -196,6 +207,7 @@ const childRoutes = [
       code: 'time_to_live_menu',
       // url: '/old/index.html#/ttl',
       title: i18n.t('tap.TimeToLive'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -206,6 +218,7 @@ const childRoutes = [
     meta: {
       code: 'data_rules_menu',
       title: i18n.t('tap.dataRules'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -217,6 +230,7 @@ const childRoutes = [
       code: 'Topology_menu',
       url: '/old/index.html#/topology',
       title: i18n.t('tap.topology'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -227,6 +241,7 @@ const childRoutes = [
     meta: {
       code: 'dictionary_menu',
       title: i18n.t('tap.dictionary'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -237,6 +252,7 @@ const childRoutes = [
     meta: {
       code: 'API_management_menu',
       title: i18n.t('tap.apiManagement'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -245,7 +261,8 @@ const childRoutes = [
     name: 'module',
     component: () => import('@/views/apiPage/ModuleForm'),
     meta: {
-      code: 'API_creation'
+      code: 'API_creation',
+      showTitle: true
     }
   },
   {
@@ -253,7 +270,8 @@ const childRoutes = [
     name: 'editModule',
     component: () => import('@/views/apiPage/ModuleForm'),
     meta: {
-      code: 'API_edition'
+      code: 'API_edition',
+      showTitle: true
     }
   },
   {
@@ -265,6 +283,7 @@ const childRoutes = [
       code: 'API_data_explorer_menu',
       // url: '/old/index.html#/dataExplorer',
       title: i18n.t('tap.dataExplor'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -277,6 +296,7 @@ const childRoutes = [
       code: 'API_doc_&_test_menu',
       // url: '/old/index.html#/apiDocAndTest',
       title: i18n.t('tap.docTest'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -289,6 +309,7 @@ const childRoutes = [
       code: 'API_stats_menu',
       // url: '/old/index.html#/apiAnalysis',
       title: i18n.t('tap.apiStats'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -301,6 +322,7 @@ const childRoutes = [
       code: 'API_clients_menu',
       // url: '/old/index.html#/applications',
       title: i18n.t('tap.apiClients'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -313,6 +335,7 @@ const childRoutes = [
       code: 'API_server_menu',
       // url: '/old/index.html#/apiServers',
       title: i18n.t('tap.apiSever'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -324,6 +347,7 @@ const childRoutes = [
       url: '/old/index.html#/dataCollect',
       title: i18n.t('tap.dataCollect'),
       code: 'data_collect(old)_menu',
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -334,6 +358,7 @@ const childRoutes = [
     meta: {
       code: 'schedule_jobs_menu',
       title: i18n.t('tap.jobSchedule'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -345,6 +370,7 @@ const childRoutes = [
     meta: {
       code: 'schedule_jobs_menu',
       title: i18n.t('tap.taskHistories'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -355,6 +381,7 @@ const childRoutes = [
     meta: {
       code: 'agents_menu',
       title: i18n.t('tap.agentManagement'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -366,6 +393,7 @@ const childRoutes = [
       code: 'servers_oversee_menu',
       url: '/old/index.html#/serversOversee',
       title: i18n.t('tap.serversOversee'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -376,6 +404,7 @@ const childRoutes = [
     meta: {
       code: 'user_management_menu',
       title: i18n.t('tap.userManagement'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -386,6 +415,7 @@ const childRoutes = [
     meta: {
       code: 'role_management_menu',
       title: i18n.t('tap.roleManagement'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -394,7 +424,8 @@ const childRoutes = [
     name: 'role',
     component: () => import('@/views/Role/Role'),
     meta: {
-      code: 'role_creation'
+      code: 'role_creation',
+      showTitle: true
     }
   },
   {
@@ -402,7 +433,8 @@ const childRoutes = [
     name: 'editRole',
     component: () => import('@/views/Role/Role'),
     meta: {
-      code: 'role_edition'
+      code: 'role_edition',
+      showTitle: true
     }
   },
   {
@@ -412,6 +444,7 @@ const childRoutes = [
     meta: {
       code: 'system_settings_menu',
       title: i18n.t('tap.systemSettings'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -423,6 +456,7 @@ const childRoutes = [
     meta: {
       code: 'Cluster_management_menu',
       title: i18n.t('tap.clusterManagement'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -438,6 +472,7 @@ const childRoutes = [
     meta: {
       code: 'Data_SYNC_menu',
       title: i18n.t('tap.jobFlow'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -484,7 +519,8 @@ const childRoutes = [
     meta: {
       code: 'Data_SYNC_menu',
       title: i18n.t('menu_title_sharedMining'),
-      isCollapse: false
+      isCollapse: false,
+      showTitle: true
     }
   },
   {
@@ -503,7 +539,8 @@ const childRoutes = [
     meta: {
       code: 'Data_SYNC_menu',
       title: i18n.t('tap.jobFlow'),
-      isCollapse: false
+      isCollapse: false,
+      showTitle: true
     }
   },
   {
@@ -534,7 +571,9 @@ const childRoutes = [
     path: '/relations',
     name: 'relations',
     component: () => import('@/views/relations/relations'),
-    meta: {}
+    meta: {
+      showTitle: true
+    }
   },
   {
     path: '/dataMap',
@@ -543,6 +582,7 @@ const childRoutes = [
     meta: {
       code: 'data_lineage_menu',
       title: i18n.t('tap.dataLineage'),
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -553,6 +593,7 @@ const childRoutes = [
     meta: {
       title: i18n.t('tap.upload'),
       code: 'SYNC_job_import',
+      showTitle: true,
       isCollapse: false
     }
   },
@@ -560,7 +601,7 @@ const childRoutes = [
     path: '/apiInfo',
     name: 'apiInfo',
     component: () => import('@/views/job/apiInfo'),
-    meta: { title: i18n.t('tap.apiInfo'), isCollapse: false }
+    meta: { title: i18n.t('tap.apiInfo'), showTitle: true, isCollapse: false }
   },
   {
     path: '/function',
@@ -568,6 +609,7 @@ const childRoutes = [
     component: () => import('@/views/function/List'),
     meta: {
       isCollapse: false,
+      showTitle: true,
       code: 'SYNC_Function_management'
     }
   },
@@ -577,6 +619,7 @@ const childRoutes = [
     component: () => import('@/views/function/Form'),
     meta: {
       isCollapse: false,
+      showTitle: true,
       code: 'SYNC_Function_management'
     }
   },
@@ -586,6 +629,7 @@ const childRoutes = [
     component: () => import('@/views/function/ImportForm'),
     meta: {
       isCollapse: false,
+      showTitle: true,
       code: 'SYNC_Function_management'
     }
   },
@@ -595,6 +639,7 @@ const childRoutes = [
     component: () => import('@/views/function/Form'),
     meta: {
       isCollapse: false,
+      showTitle: true,
       code: 'SYNC_Function_management'
     }
   },
@@ -604,6 +649,7 @@ const childRoutes = [
     component: () => import('@/views/function/Details'),
     meta: {
       isCollapse: false,
+      showTitle: true,
       code: 'SYNC_Function_management'
     }
   },
@@ -611,7 +657,7 @@ const childRoutes = [
     path: '/tableFlows',
     name: 'tableFlows',
     component: () => import('@/views/task/TableFlows'),
-    meta: { isCollapse: true }
+    meta: { isCollapse: true, showTitle: true }
   },
 
   {
@@ -621,6 +667,7 @@ const childRoutes = [
     meta: {
       title: i18n.t('app.menu.dataVerification'),
       isCollapse: true,
+      showTitle: true,
       code: 'verify_job_edition'
     }
   },
@@ -631,6 +678,7 @@ const childRoutes = [
     meta: {
       title: i18n.t('verify_details_title'),
       isCollapse: true,
+      showTitle: true,
       code: 'Data_verify'
     }
   },
@@ -641,6 +689,7 @@ const childRoutes = [
     meta: {
       title: i18n.t('app.menu.dataVerification'),
       isCollapse: true,
+      showTitle: true,
       code: 'verify_job_creation'
     }
   },
@@ -651,6 +700,7 @@ const childRoutes = [
     meta: {
       title: i18n.t('app.menu.dataVerification'),
       isCollapse: true,
+      showTitle: true,
       code: 'Data_verify_menu'
     }
   },
@@ -661,6 +711,7 @@ const childRoutes = [
     meta: {
       title: i18n.t('verify_history_title'),
       isCollapse: true,
+      showTitle: true,
       code: 'Data_verify'
     }
   },
@@ -671,6 +722,7 @@ const childRoutes = [
     meta: {
       title: i18n.t('verify_diff_history_title'),
       isCollapse: true,
+      showTitle: true,
       code: 'Data_verify'
     }
   },
@@ -681,6 +733,7 @@ const childRoutes = [
     meta: {
       title: i18n.t('verify_diff_details_title'),
       isCollapse: true,
+      showTitle: true,
       code: 'Data_verify'
     }
   },
@@ -691,6 +744,7 @@ const childRoutes = [
     meta: {
       title: i18n.t('verify_result_title'),
       isCollapse: true,
+      showTitle: true,
       code: 'Data_verify'
     }
   },
@@ -705,6 +759,7 @@ const childRoutes = [
     component: () => import('@/views/notification/Center'),
     meta: {
       title: i18n.t('notification.systemNotice'),
+      showTitle: true,
       isCollapse: true
     }
   },
@@ -715,6 +770,7 @@ const childRoutes = [
     component: () => import('@/views/setting/SettingCenter'),
     meta: {
       title: i18n.t('tap.settingCenter'),
+      showTitle: true,
       isCollapse: true
     },
     children: [
@@ -722,13 +778,13 @@ const childRoutes = [
         path: 'accountSetting',
         name: 'accountSetting',
         component: () => import('@/views/setting/AccountSetting'),
-        meta: { title: i18n.t('tap.account'), isCollapse: true }
+        meta: { title: i18n.t('tap.account'), showTitle: true, isCollapse: true }
       },
       {
         path: 'notificationSetting',
         name: 'notificationSetting',
         component: () => import('@/views/setting/NotificationSetting'),
-        meta: { title: i18n.t('notification.setting'), isCollapse: true }
+        meta: { title: i18n.t('notification.setting'), showTitle: true, isCollapse: true }
       }
     ]
   },
@@ -740,6 +796,7 @@ const childRoutes = [
       code: 'data_catalog_menu',
       title: i18n.t('tap.dataCatalog'),
       isCollapse: true,
+      showTitle: true,
       types: ['table', 'view', 'collection', 'mongo_view']
     }
   },
