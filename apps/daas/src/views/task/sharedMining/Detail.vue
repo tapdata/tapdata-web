@@ -7,7 +7,7 @@
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
           <div class="head-label">{{ $t('share_detail_name') }}:</div>
-          <div class="font-color-sub">444444</div>
+          <div class="font-color-sub">{{ detailData.name }}</div>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
           <div class="head-label">{{ $t('share_detail_log_mining_time') }}:</div>
@@ -15,7 +15,7 @@
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
           <div class="head-label">{{ $t('hare_detail_log_time') }}:</div>
-          <div class="font-color-sub">ggggg</div>
+          <div class="font-color-sub">{{ detailData.storageTime }}</div>
         </div>
       </div>
       <div class="share-detail-head-center" style="min-height: 250px">
@@ -43,13 +43,22 @@
     </div>
     <div class="share-detail-box mt-5 p-5">
       <TableList
-        :remoteMethod="remoteMethod"
+        :data="detailData.taskList"
         :columns="columns"
         :remote-data="id"
         height="100%"
         :has-pagination="false"
         ref="tableList"
       >
+        <template slot="sourceTimestamp" slot-scope="scope">
+          <span>{{ scope.row.sourceTimestamp }}</span>
+        </template>
+        <template slot="syncTimestamp" slot-scope="scope">
+          <span>{{ scope.row.syncTimestamp }}</span>
+        </template>
+        <template slot="status" slot-scope="scope">
+          <StatusTag type="text" target="shareCdc" :status="scope.row.status" only-img></StatusTag>
+        </template>
         <template slot="operation" slot-scope="scope">
           <div class="operate-columns">
             <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{ $t('button_check') }}</ElButton>
@@ -66,12 +75,14 @@
 <script>
 import Chart from 'web-core/components/chart'
 import TableList from '@/components/TableList'
+import StatusTag from '@/components/StatusTag'
 export default {
   name: 'Info',
-  components: { Chart, TableList },
+  components: { Chart, TableList, StatusTag },
   data() {
     return {
       id: '',
+      detailData: '',
       statisticsTime: [],
       lineData: {
         x: [],
@@ -142,19 +153,19 @@ export default {
       columns: [
         {
           label: this.$t('share_detail_call_task'),
-          slotName: 'name'
+          prop: 'name'
         },
         {
           label: this.$t('share_detail_source_time'),
-          prop: 'point'
+          slotName: 'sourceTimestamp'
         },
         {
           label: this.$t('share_detail_sycn_time_point'),
-          prop: 'pointTime'
+          slotName: 'syncTimestamp'
         },
         {
           label: this.$t('share_detail_mining_status'),
-          prop: 'status'
+          slotName: 'status'
         },
         {
           label: this.$t('column_operation'),
@@ -173,12 +184,23 @@ export default {
       )
     }
   },
-  created() {},
+  created() {
+    this.id = this.$route.params.id
+    this.getData(this.id)
+  },
 
   destroyed() {
     this.$ws.off('watch', this.taskChange)
   },
   methods: {
+    getData(id) {
+      this.$api('logcollector')
+        .getDetail(id)
+        .then(res => {
+          console.log(res?.data)
+          this.detailData = res?.data
+        })
+    },
     remoteMethod({ page }) {
       const { ids } = this
       let { current, size } = page

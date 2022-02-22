@@ -134,7 +134,7 @@
         <!--          </el-row>-->
         <!--        </el-form-item>-->
         <el-form-item :label="$t('share_form_setting_log_time')" size="mini">
-          <el-select v-model="editForm.shareCdcTtlDay" placeholder="请选择">
+          <el-select v-model="editForm.storageTime" placeholder="请选择">
             <el-option v-for="op in logSaveList" :key="op" :label="op + $t('share_form_edit_day')" :value="op">
             </el-option>
           </el-select>
@@ -181,7 +181,7 @@ export default {
         name: '',
         syncTimePoint: 'localTZ',
         syncTineZone: '',
-        shareCdcTtlDay: 3
+        storageTime: 3
       },
       options: [
         {
