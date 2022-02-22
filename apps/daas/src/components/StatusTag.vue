@@ -25,7 +25,8 @@ import {
   MILESTONE_STATUS_MAP,
   ETL_STATUS_MAP,
   ETL_SUB_STATUS_MAP,
-  MIGRATE_STATUS_MAP
+  MIGRATE_STATUS_MAP,
+  SHARECDC_MAP
 } from '../const'
 export default {
   name: 'StatusTag',
@@ -63,6 +64,7 @@ export default {
         {
           instance: INSTANCE_STATUS_MAP,
           task: TASK_STATUS_MAP,
+          shareCdc: SHARECDC_MAP,
           connection: CONNECTION_STATUS_MAP,
           milestone: MILESTONE_STATUS_MAP,
           etl: ETL_STATUS_MAP,
@@ -75,8 +77,7 @@ export default {
       return this.map[this.status] || this.map[this.defaultStatus] || {}
     },
     imgSrc() {
-      return ''
-      // return require(`../../public/images/task/${this.statusObj.icon}.png`)
+      return require(`@/assets/icons/colorSvg/${this.statusObj.icon}.png`)
     }
   }
 }

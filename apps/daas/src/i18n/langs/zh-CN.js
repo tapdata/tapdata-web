@@ -902,6 +902,7 @@ export default {
   share_list_setting: '挖掘设置',
   share_list_dig_task_search: '挖掘任务名/连接名搜索',
   share_list_status: '状态',
+  share_list_time: '挖掘延迟',
   // share_list_connection_search: '连接名称搜索',
   share_list_edit_title: '挖掘编辑',
   share_form_setting_connection_name: '存储MongoDB连接名称',
