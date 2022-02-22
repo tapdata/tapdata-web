@@ -3,28 +3,28 @@
     <el-form :model="formData" class="e-form" label-position="top">
       <div v-for="(item, index) in formData.items" :key="index" class="item">
         <template v-if="item.category !== 'license'">
-          <span class="title">{{ $t('setting.' + item.category) }}</span>
+          <span class="title">{{ $t('setting_' + item.category) }}</span>
           <span class="btns" v-if="item.category === 'SMTP'">
-            <a @click="checkTemplate()">{{ $t('setting.email_template') }}</a>
-            <a @click="connectAndTest()">{{ $t('setting.connect_and_test') }}</a>
+            <a @click="checkTemplate()">{{ $t('setting_email_template') }}</a>
+            <a @click="connectAndTest()">{{ $t('setting_connect_and_test') }}</a>
           </span>
         </template>
 
         <div class="box" v-for="(childItem, childIndex) in item.items" :key="childIndex">
           <div v-if="item.category === 'license'">
             <div class="license" v-for="(licenseItem, licenseIndex) in item.liceseItems" :key="licenseIndex">
-              <div>{{ $t('setting.nameserver') }}: {{ licenseItem.hostname }}</div>
+              <div>{{ $t('setting_nameserver') }}: {{ licenseItem.hostname }}</div>
               <!--authorization報錯 隱藏到期時間-->
               <!-- <div>
-                {{ $t('setting.expiredate') }}:
+                {{ $t('setting_expiredate') }}:
                 {{
                   licenseItem.authorization ? $moment(licenseItem.authorization.validity_period.expires_on || '') : ''
                 }}
               </div> -->
             </div>
 
-            <el-button @click="importlicense(licenseItem)">{{ $t('setting.import') }}</el-button>
-            <el-button @click="hrefApply(licenseItem)">{{ $t('setting.apply') }}</el-button>
+            <el-button @click="importlicense(licenseItem)">{{ $t('setting_import') }}</el-button>
+            <el-button @click="hrefApply(licenseItem)">{{ $t('setting_apply') }}</el-button>
           </div>
 
           <el-row v-else>
@@ -32,13 +32,13 @@
               <el-form-item>
                 <span slot="label">
                   <span>{{
-                    $t('setting.' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label
+                    $t('setting_' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label
                   }}</span>
                   <el-tooltip effect="dark" placement="top" v-if="childItem.documentation">
                     <div style="max-width: 300px" slot="content">
                       {{
                         $t(
-                          'setting.' +
+                          'setting_' +
                             (childItem.documentation || '')
                               .split('/')
                               .join('_')
@@ -75,7 +75,7 @@
                   :disabled="item.category === 'license'"
                   :mask="childItem.mask"
                   size="mini"
-                  :label="$t('setting.' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label"
+                  :label="$t('setting_' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label"
                 >
                 </el-input>
 
@@ -97,7 +97,7 @@
       </div>
     </el-form>
     <el-dialog
-      :title="$t('setting.email_template')"
+      :title="$t('setting_email_template')"
       :close-on-click-modal="false"
       custom-class="dialog-email-template"
       :visible.sync="emailTemplateDialog"
@@ -119,15 +119,15 @@
         <el-col :span="18">
           <div class="settings-email-template">
             <p>
-              {{ $t('setting.email_template_from') }} :
+              {{ $t('setting_email_template_from') }} :
               {{ SMTP['Email_Send_Address'] }}
             </p>
             <p>
-              {{ $t('setting.email_template_to') }} :
+              {{ $t('setting_email_template_to') }} :
               {{ SMTP['Email_Receivers'] }}
             </p>
             <p>
-              {{ $t('setting.email_template_subject') }} : {{ SMTP['Send_Email_Title_Prefix'] }} Tapdata Notification:
+              {{ $t('setting_email_template_subject') }} : {{ SMTP['Send_Email_Title_Prefix'] }} Tapdata Notification:
               <span v-show="activeTab <= 4">Job {{ emailTabs[activeTab].status }}</span>
               <span v-show="activeTab > 4">DDL Warn, please perform DDL operation manually.</span>
             </p>
@@ -181,26 +181,26 @@ export default {
       activeTab: 0,
       emailTabs: [
         {
-          label: this.$t('setting.Email_Template_Running'),
+          label: this.$t('setting_Email_Template_Running'),
           status: 'running'
         },
         {
-          label: this.$t('setting.Email_Template_Paused'),
+          label: this.$t('setting_Email_Template_Paused'),
           status: 'paused'
         },
         {
-          label: this.$t('setting.Email_Template_Error'),
+          label: this.$t('setting_Email_Template_Error'),
           status: 'error'
         },
         {
-          label: this.$t('setting.Email_Template_Draft'),
+          label: this.$t('setting_Email_Template_Draft'),
           status: 'draft'
         },
         {
-          label: this.$t('setting.Email_Template_CDC'),
+          label: this.$t('setting_Email_Template_CDC'),
           status: 'CDC Lag'
         },
-        { label: this.$t('setting.Email_Template_DDL') }
+        { label: this.$t('setting_Email_Template_DDL') }
       ]
     }
   },
@@ -331,7 +331,7 @@ export default {
       let duration = Math.floor((now - lastTime) / 1000)
       if (lastTime && duration < 60) {
         return this.snackbarfun(
-          this.$message.success(this.$t('setting.test_email_countdown')) + '(' + (60 - duration) + 's)',
+          this.$message.success(this.$t('setting_test_email_countdown')) + '(' + (60 - duration) + 's)',
           2
         )
       }
@@ -340,10 +340,10 @@ export default {
           .testEmail()
           .then(() => {
             localStorage.setItem('Tapdata_settings_email_countdown', now)
-            this.$message.success(this.$t('setting.test_email_success'))
+            this.$message.success(this.$t('setting_test_email_success'))
           })
       } catch (error) {
-        this.$message.error(this.$t('setting.requestFailed'))
+        this.$message.error(this.$t('setting_requestFailed'))
       }
     }
   }
