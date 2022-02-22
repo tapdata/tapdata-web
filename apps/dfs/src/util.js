@@ -157,7 +157,7 @@ export const TYPEMAP = {
   jira: 'jira',
   clickhouse: 'ClickHouse'
 }
-
+// 转base64
 export const urlToBase64 = url => {
   return new Promise((resolve, reject) => {
     let image = new Image()
@@ -179,4 +179,9 @@ export const urlToBase64 = url => {
       reject(new Error('urlToBase64 error'))
     }
   })
+}
+// 千分符
+export const numToThousands = (num, index = 3, symbol = ',') => {
+  let reg = new RegExp('(?!^)(?=(\\d{' + index + '})+$)', 'g')
+  return String(num).replace(reg, symbol)
 }

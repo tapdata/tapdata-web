@@ -109,9 +109,9 @@
         <div class="fs-7" style="color: #000">
           <span class="mr-4">{{ $t('workbench_statistics__sub_title') }}</span>
           <span class="mr-1">{{ $t('workbench_statistics__sub_title_label') }}</span>
-          <span class="color-primary" style="font-family: DIN">{{ taskInputNumber }}</span>
+          <span class="color-primary" style="font-family: DIN">{{ numToThousands(taskInputNumber) }}</span>
         </div>
-        <div style="height: 200px">
+        <div class="pr-4" style="height: 200px">
           <Chart type="bar" :data="barData" :options="barOptions"></Chart>
         </div>
       </div>
@@ -123,7 +123,7 @@
 <script>
 import VIcon from '@/components/VIcon'
 import Chart from 'web-core/components/chart'
-import { formatTime } from '@/util'
+import { formatTime, numToThousands } from '@/util'
 
 export default {
   name: 'Workbench',
@@ -254,7 +254,11 @@ export default {
           logBase: 10,
           axisLabel: {
             formatter: val => {
-              return val === 1 ? 0 : val
+              let res = val === 1 ? 0 : val
+              if (res / 1000 >= 1) {
+                res = res / 1000 + 'K'
+              }
+              return res
             }
           }
         },
@@ -266,6 +270,7 @@ export default {
             if (val === 1.1) {
               val = 1
             }
+            val = numToThousands(val)
             let html = item.marker + params.name + `<span style="padding: 0 4px"></span><br/>` + val
             return html
           }
@@ -454,6 +459,9 @@ export default {
       setTimeout(() => {
         document.getElementById('titlediv').style.display = 'none'
       }, 5000)
+    },
+    numToThousands() {
+      return numToThousands(...arguments)
     }
   }
 }
