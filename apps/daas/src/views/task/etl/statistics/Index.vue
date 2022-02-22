@@ -24,6 +24,7 @@ export default {
   components: { Info, Schedule, Log },
   data() {
     return {
+      timer: null,
       task: {},
       selectFlow: 'flow_', // 选中节点
       dataOverviewAll: 'flow',
@@ -91,6 +92,9 @@ export default {
         }
       }
     })
+    this.timer = setInterval(() => {
+      this.loadTask()
+    }, 5000)
   },
   mounted() {
     this.init()
@@ -108,6 +112,9 @@ export default {
       this.$api('SubTask')
         .get([id])
         .then(res => {
+          if (JSON.stringify(this.formatTask(res.data)) === JSON.stringify(this.task)) {
+            return
+          }
           this.task = this.formatTask(res.data)
         })
         .finally(() => {
@@ -140,6 +147,9 @@ export default {
         .then(res => {
           return res.data
         })
+    },
+    clearTimer() {
+      this.timer && clearInterval(this.timer)
     }
   }
 }
