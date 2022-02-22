@@ -104,7 +104,7 @@
         <div slot="header">
           {{ $t('connection_list_column_schema_status') }}
           <ElTooltip placement="top" :content="$t('connection_list_column_schema_status_tips')">
-            <VIcon>question-circle</VIcon>
+            <VIcon class="color-primary" size="14">info</VIcon>
           </ElTooltip>
         </div>
         <template slot-scope="scope">

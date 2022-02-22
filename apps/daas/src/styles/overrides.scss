@@ -702,7 +702,7 @@
   padding: 5px 0;
 }
 .el-table .cell {
-  line-height: 30px;
+  line-height: 20px;
 }
 .el-table__body tr.hover-row > td {
   background-color: map-get($bgColor, hover);
@@ -734,5 +734,12 @@
   .el-form-item__label {
     color: #333;
     font-size: 12px;
+  }
+}
+.el-dialog {
+  .el-dialog__title {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgb(131, 99, 99);
   }
 }
