@@ -1,10 +1,9 @@
 <template>
-  <section class="timeToLive-list-wrap">
+  <section class="share-list-wrap">
     <TablePage
       ref="table"
       row-key="id+indexName"
-      class="timeToLive-list"
-      :title="$t('app.menu.' + $route.name)"
+      class="share-list"
       :remoteMethod="getData"
       @sort-change="handleSortTable"
     >
@@ -75,57 +74,56 @@
     </TablePage>
 
     <el-dialog
-      width="600px"
-      custom-class="create-dialog"
-      :title="$t('share_list_dig_setting')"
+      width="400px"
+      custom-class="setting-dialog"
+      :title="$t('share_list_setting')"
       :close-on-click-modal="false"
       :visible.sync="settingDialogVisible"
     >
       <FormBuilder ref="form" v-model="digSettingForm" :config="digSettingFormConfig"></FormBuilder>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="settingDialogVisible = false" size="small">{{ $t('button_cancel') }}</el-button>
-        <el-button type="primary" @click="createNewTtl()" size="small">{{ $t('button_confirm') }}</el-button>
+        <el-button @click="settingDialogVisible = false" size="mini">{{ $t('button_cancel') }}</el-button>
+        <el-button type="primary" @click="createNewTtl()" size="mini">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
 
     <el-dialog
-      width="600px"
-      custom-class="create-dialog"
-      :title="$t('share_list_dig_setting')"
+      width="400px"
+      custom-class="edit-dialog"
+      :title="$t('share_list_edit_title')"
       :close-on-click-modal="false"
       :visible.sync="editDialogVisible"
     >
-      <Elform :model="editForm">
-        <ElFormItem :label="$t('share_form_edit_name')" size="mini">
-          <ElInput v-model="editForm.name"></ElInput>
-        </ElFormItem>
-        <ElFormItem :label="$t('share_form_edit_dig_time')" size="mini">
-          <ElRow>
-            <ElCol :span="8" style="margin-right: 10px">
-              <ElSelect v-model="editForm.type" placeholder="请选择">
-                <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value"> </ElOption>
-              </ElSelect>
-            </ElCol>
-            <ElCol :span="14">
-              <ElDatePicker
+      <el-form :model="editForm" label-position="left" label-width="150px">
+        <el-form-item :label="$t('share_form_edit_name')" size="mini" required>
+          <el-input v-model="editForm.name"></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('share_form_edit_dig_time')" size="mini" required>
+          <el-row>
+            <el-col :span="24" class="pb-3">
+              <el-select v-model="editForm.syncTimePoint" placeholder="请选择">
+                <el-option v-for="op in options" :key="op.value" :label="op.label" :value="op.value"> </el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="24">
+              <el-date-picker
                 format="yyyy-MM-dd HH:mm:ss"
-                style="width: 95%"
-                v-model="editForm.date"
+                v-model="editForm.syncTineZone"
                 type="datetime"
-              ></ElDatePicker>
-            </ElCol>
-          </ElRow>
-        </ElFormItem>
-        <ElFormItem :label="$t('share_form_setting_log_time')" size="mini">
-          <ElSelect v-model="editForm.logTtl" placeholder="请选择">
-            <ElOption v-for="op in logSaveList" :key="op" :label="op + $t('share_form_edit_day')" :value="op">
-            </ElOption>
-          </ElSelect>
-        </ElFormItem>
-      </Elform>
+              ></el-date-picker>
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item :label="$t('share_form_setting_log_time')" size="mini">
+          <el-select v-model="editForm.storageTime" placeholder="请选择">
+            <el-option v-for="op in logSaveList" :key="op" :label="op + $t('share_form_edit_day')" :value="op">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="cancelEdit" size="small">{{ $t('button_cancel') }}</el-button>
-        <el-button type="primary" @click="saveEdit()" size="small">{{ $t('share_form_edit_give_up') }}</el-button>
+        <el-button @click="cancelEdit" size="mini">{{ $t('button_cancel') }}</el-button>
+        <el-button type="primary" @click="saveEdit()" size="mini">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -175,7 +173,7 @@ export default {
             type: 'select',
             label: this.$t('share_form_setting_connection_name'),
             field: 'model_type',
-            // mode: 'text',
+            options: [],
             required: true
           },
           {
@@ -197,9 +195,9 @@ export default {
       },
       editForm: {
         name: '',
-        type: '',
-        date: '',
-        logTtl: 3
+        syncTimePoint: 'localTZ',
+        syncTineZone: '',
+        storageTime: 3
       },
       options: [
         {
@@ -271,28 +269,32 @@ export default {
     },
 
     // 获取列表数据
-    getData() {
-      // let { current, size } = page
-      // let { keyword } = this.searchParams
-      // let where = {}
-      // if (keyword && keyword.trim()) {
-      //   let filterObj = { like: keyword, options: 'i' }
-      //   where.or = [{ name: filterObj }]
-      // }
+    getData({ page }) {
+      let { current, size } = page
+      let { keyword } = this.searchParams
+      let where = {}
+      if (keyword && keyword.trim()) {
+        let filterObj = { like: keyword, options: 'i' }
+        where.or = [{ name: filterObj }]
+      }
 
-      // let filter = {
-      //   order: this.order,
-      //   limit: size,
-      //   skip: (current - 1) * size,
-      //   where
-      // }
+      let filter = {
+        order: this.order,
+        limit: size,
+        skip: (current - 1) * size,
+        where
+      }
       return this.$api('logcollector')
-        .get({})
+        .get(filter)
         .then(res => {
+          let list = res.data?.items || []
           // this.table.setCache({ keyword })
           return {
             total: res.data.total,
-            data: res.data
+            data: list.map(item => {
+              item.createTime = this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              return item
+            })
           }
         })
     },
@@ -300,12 +302,21 @@ export default {
     // 挖掘设置
     handleSetting() {
       this.settingDialogVisible = true
+      this.$api('logcollector')
+        .getSystemConfig()
+        .then(res => {
+          if (res) {
+            console.log('#####', res)
+            // this.digSettingFormConfig.items[0].options = res.data
+          }
+        })
     },
 
     // 编辑
     handleEdit(item) {
-      this.editDialogVisiblef = true
-      this.editForm = item
+      this.editDialogVisible = true
+      let editData = item
+      this.editForm = editData
     },
     // 取消编辑
     cancelEdit() {
@@ -316,11 +327,21 @@ export default {
         if (!resFlag) {
           return
         }
+        this.editDialogVisible = false
       })
     },
 
     // 保存编辑
     saveEdit() {},
+
+    handleDetail(item) {
+      this.$router.push({
+        name: 'SharedMiningDetails',
+        params: {
+          id: item.id
+        }
+      })
+    },
 
     // 表格排序
     handleSortTable({ order, prop }) {
@@ -331,9 +352,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.timeToLive-list-wrap {
+.share-list-wrap {
   height: 100%;
-  .timeToLive-list {
+  .share-list {
     .search-bar {
       display: flex;
       li + li {
@@ -378,18 +399,18 @@ export default {
       }
     }
   }
-}
-</style>
-<style lang="scss">
-.metadata-list-wrap {
-  .create-dialog {
+  ::v-deep {
     .el-dialog__body {
-      padding: 30px;
+      padding: 10px 20px;
       .el-form {
         .el-form-item {
           margin-bottom: 12px;
           .el-form-item__label {
-            text-align: left;
+            font-size: 12px;
+          }
+          .el-select,
+          .el-date-editor {
+            width: 100%;
           }
         }
       }

@@ -20,4 +20,14 @@ export default class LogcollectorApi extends PublicAPI {
   patch(id, params) {
     return axios.patch(`${this.url}/${id}`, params)
   }
+
+  byConnectionName(name) {
+    if (name) {
+      return axios.get(`${this.url}/byConnectionName/${name}`)
+    }
+  }
+
+  getSystemConfig(params) {
+    return axios.get(this.url + '/system/config', { params })
+  }
 }

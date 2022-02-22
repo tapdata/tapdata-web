@@ -921,6 +921,7 @@ export default {
   share_list_setting: 'Mining settings',
   share_list_dig_task_search: 'digging task name/connection name search',
   share_list_status: 'Status',
+  share_list_edit_title: 'Mining Edit',
   share_list_connection_search: 'Connection name search',
   share_list_dig_setting: 'digging settings',
   share_form_setting_connection_name: 'Store MongoDB connection name',

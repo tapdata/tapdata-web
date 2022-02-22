@@ -398,6 +398,7 @@ export default {
   connection_form_kafka_pattern_topic: '主题表达式',
   // 连接
   connection_manage: '连接管理',
+  connection_title: '数据源管理 ',
   connection_list_form_task_status: '任务状态',
   connection_list_form_sync_type: '同步类型',
   connection_list_form_database_type: '数据库类型',
@@ -891,7 +892,7 @@ export default {
   share_list_dig_task_search: '挖掘任务名/连接名搜索',
   share_list_status: '状态',
   // share_list_connection_search: '连接名称搜索',
-  share_list_dig_setting: '挖掘设置',
+  share_list_edit_title: '挖掘编辑',
   share_form_setting_connection_name: '存储MongoDB连接名称',
   share_form_setting_table_name: '存储MongoDB表名',
   share_form_setting_log_time: '日志保存时长',

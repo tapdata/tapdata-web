@@ -27,8 +27,12 @@ const childRoutes = [
     component: () => import('@/views/connections/List'),
     meta: {
       code: 'datasource_menu',
-      title: i18n.t('tap.connection'),
-      isCollapse: false
+      title: i18n.t('connection_title'),
+      isCollapse: false,
+      showTitle: true,
+      desc: i18n.t('connection_list_desc'),
+      href: 'https://docs.tapdata.net/data-source',
+      hrefText: i18n.t('connection_list_help_doc')
     }
   },
   {
@@ -474,7 +478,7 @@ const childRoutes = [
     component: () => import('@/views/task/sharedMining/List'),
     meta: {
       code: 'Data_SYNC_menu',
-      title: i18n.t('tap.sharedMining'),
+      title: i18n.t('menu_title_sharedMining'),
       isCollapse: false
     }
   },

@@ -1,7 +1,7 @@
 <template>
-  <div class="card-box p-6">
-    <div class="flex justify-content-between mt-6 fs-8">
-      <div class="p-6" style="background-color: #fafafa; min-width: 240px">
+  <div class="share-detail">
+    <div class="share-detail-box flex justify-content-between fs-8">
+      <div class="share-detail-head-left">
         <div class="flex align-items-center mb-2">
           <span>{{ $t('share_detail_mining_info') }}</span>
         </div>
@@ -172,12 +172,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.share-detail {
+  width: 100%;
+  padding: 0 20px;
+  background-color: #eff1f4;
+  .share-detail-box {
+    width: 100%;
+    background: #fff;
+    border-radius: 4px;
+    .share-detail-head-left {
+      min-width: 240px;
+    }
+  }
+}
 .statistics-container {
   font-size: 12px;
   overflow-y: auto;
 }
 .card-box {
-  background: #fff;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.02);
   ::v-deep {
     .table-list {

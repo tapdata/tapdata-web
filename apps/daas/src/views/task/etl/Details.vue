@@ -185,7 +185,7 @@ export default {
       const { statusResult, task } = this
       return (
         this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
-        statusResult.every(t => t.status === 'not_running' && t.count)
+        statusResult.every(t => t.status === 'stop' && t.count)
       )
     }
   },
@@ -236,6 +236,7 @@ export default {
         .get([id])
         .then(res => {
           this.task = this.formatTask(res.data)
+
           this.getSubTaskStatusCount()
         })
         .finally(() => {
@@ -295,6 +296,7 @@ export default {
         let statusResult = getSubTaskStatus(statuses)
         result.statusResult = statusResult
       }
+      this.statusResult = result.statusResult
       return result
     },
     start(id, resetLoading) {

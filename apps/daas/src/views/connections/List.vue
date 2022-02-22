@@ -1,10 +1,10 @@
 <template>
   <section class="connection-list-wrap">
+    <!-- :title="$t('connection.databaseTittle')"
+      :desc="description" -->
     <TablePage
       ref="table"
       row-key="id"
-      :title="$t('connection.databaseTittle')"
-      :desc="description"
       :classify="{
         authority: 'datasource_catalog_management',
         types: ['database']

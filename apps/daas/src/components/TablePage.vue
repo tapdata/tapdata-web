@@ -261,13 +261,13 @@ export default {
   .table-page-main {
     display: flex;
     flex: 1;
-    padding: 0 20px;
+    padding: 0 20px 20px 20px;
     overflow: hidden;
     background-color: #eff1f4;
     .table-page-main-box {
       display: flex;
       flex: 1;
-      overflow: hidden;
+      border-radius: 4px;
       background-color: #fff;
     }
   }
@@ -293,7 +293,7 @@ export default {
       }
 
       .table-page-operation-bar {
-        margin: 10px 105px 10px 0;
+        margin: 10px 20px 10px 0;
         text-align: right;
       }
     }
@@ -313,6 +313,7 @@ export default {
 
     .el-table--border th {
       border-right: 1px solid #ebeef5;
+      background-color: #fafafa;
       .cell {
         white-space: nowrap;
       }

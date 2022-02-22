@@ -157,7 +157,17 @@
             separator-class="el-icon-arrow-right"
           >
             <ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
-              {{ item.name }}
+              <span>{{ item.name }}</span>
+              <span v-if="item.desc" class="pl-3 fs-8" style="color: rgba(0, 0, 0, 0.5)">{{ item.desc }}</span>
+              <el-link
+                type="primary"
+                class="fs-8 color-primary"
+                :href="item.href"
+                v-if="item.href"
+                style="cursor: pointer"
+                >{{ item.hrefText }}</el-link
+              >
+              <!-- <a :href="item.href" v-if="item.href" class="fs-8" style="color: #48b6e2">{{ item.hrefText }}</a> -->
             </ElBreadcrumbItem>
           </ElBreadcrumb>
         </div>
@@ -548,7 +558,10 @@ export default {
           flag = !!route.meta?.showTitle
           let obj = {
             name: route.meta?.title,
-            showTitle: !!route.meta?.showTitle
+            showTitle: !!route.meta?.showTitle,
+            desc: route.meta?.desc || '',
+            href: route.meta?.href || '',
+            hrefText: route.meta?.hrefText || ''
           }
           if (route.name !== this.$route.name) {
             obj.to = {
@@ -597,23 +610,27 @@ export default {
       cursor: pointer;
     }
   }
-  .breadcrumb {
-    padding: 18px 0 18px 20px;
-    //height: 40px;
-    border-bottom: 1px solid #dedee4;
-    box-shadow: 0 0 4px 0 rgb(0 0 0 / 10%);
-    box-sizing: border-box;
-    &.one-breadcrumb {
-      font-size: 18px;
-      ::v-deep {
-        .el-breadcrumb__inner {
-          color: #000;
+  .header-breadcrumb {
+    background: #eff1f4;
+    .breadcrumb {
+      padding: 25px 0 25px 20px;
+      //height: 40px;
+      // border-bottom: 1px solid #dedee4;
+      box-shadow: 0 0 4px 0 rgb(0 0 0 / 10%);
+      box-sizing: border-box;
+      background-color: #eff1f4;
+      &.one-breadcrumb {
+        font-size: 18px;
+        ::v-deep {
+          .el-breadcrumb__inner {
+            color: #000;
+          }
         }
       }
-    }
-    ::v-deep {
-      .el-breadcrumb__separator {
-        color: map-get($fontColor, sub);
+      ::v-deep {
+        .el-breadcrumb__separator {
+          color: map-get($fontColor, sub);
+        }
       }
     }
   }
