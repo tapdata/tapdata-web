@@ -920,7 +920,7 @@ export default {
   share_detail_mining_status: '挖掘狀態',
   share_detail_button_table_info: '表詳情',
   share_detail_statistics_time: '統計時間',
-  share_detail_start_time: '開始間',
+  share_detail_start_time: '開始時間',
   share_detail_end_time: '結束時間',
   share_detail_to: '至'
 }

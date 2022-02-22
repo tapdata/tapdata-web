@@ -3,27 +3,28 @@
     <div class="share-detail-box flex justify-content-between fs-8">
       <div class="share-detail-head-left">
         <div class="flex align-items-center mb-2">
-          <span>{{ $t('share_detail_mining_info') }}</span>
+          <span class="mb-4 fs-7">{{ $t('share_detail_mining_info') }}</span>
         </div>
-        <div class="flex justify-content-between text-center">
-          <div class="mb-3 fs-8">{{ $t('share_detail_name') }}</div>
-          <div class="fs-6 font-color-main">444444</div>
+        <div class="flex justify-content-start mb-4 text-left fs-8">
+          <div class="head-label">{{ $t('share_detail_name') }}:</div>
+          <div class="font-color-sub">444444</div>
         </div>
-        <div class="flex justify-content-between text-center">
-          <div class="mb-3 fs-8">{{ $t('share_detail_log_mining_time') }}</div>
-          <div class="fs-6 font-color-main">555555</div>
+        <div class="flex justify-content-start mb-4 text-left fs-8">
+          <div class="head-label">{{ $t('share_detail_log_mining_time') }}:</div>
+          <div class="font-color-sub">555555</div>
         </div>
-        <div class="flex justify-content-between text-center">
-          <div class="mb-3 fs-8">{{ $t('hare_detail_log_time') }}</div>
-          <div class="fs-6 font-color-main">ggggg</div>
+        <div class="flex justify-content-start mb-4 text-left fs-8">
+          <div class="head-label">{{ $t('hare_detail_log_time') }}:</div>
+          <div class="font-color-sub">ggggg</div>
         </div>
       </div>
-      <div class="flex-fill px-10" style="min-height: 250px">
-        <div class="flex justify-content-between ml-6">
-          {{ $t('share_detail_statistics_time') }}
+      <div class="share-detail-head-center" style="min-height: 250px">
+        <div class="flex ml-3 pt-3">
+          <span class="label fs-8">{{ $t('share_detail_statistics_time') }}</span>
           <el-date-picker
             v-model="statisticsTime"
             type="datetimerange"
+            size="mini"
             :range-separator="$t('share_detail_to')"
             :start-placeholder="$t('share_detail_start_time')"
             :end-placeholder="$t('share_detail_end_time')"
@@ -32,15 +33,15 @@
         </div>
         <Chart type="line" :data="lineData" :options="lineOptions" no-x="second" class="v-echart h-100"></Chart>
       </div>
-      <div class="flex dig-info-right">
-        <div class="box py-3 mt-2" style="background-color: #fafafa">
+      <div class="flex share-detail-head-right text-center">
+        <div class="box py-3 mt-2">
           <div class="title fs-8">增量延迟</div>
           <div class="time py-4 fs-4 text-primary">0s</div>
           <div class="text-muted">增量所处时间点：2021-12-20 18:00:00</div>
         </div>
       </div>
     </div>
-    <div class="card-box__content px-6 flex-1">
+    <div class="share-detail-box mt-5 p-5">
       <TableList
         :remoteMethod="remoteMethod"
         :columns="columns"
@@ -61,9 +62,13 @@
     </div>
   </div>
 </template>
+
 <script>
+import Chart from 'web-core/components/chart'
+import TableList from '@/components/TableList'
 export default {
   name: 'Info',
+  components: { Chart, TableList },
   data() {
     return {
       id: '',
@@ -74,31 +79,61 @@ export default {
       },
       loading: true,
       task: {},
-      selectFlow: 'flow_', // 选中节点
-      dataOverviewAll: 'flow',
-      // 事件统计
-      overviewObj: {
-        title: {
-          key: 'overview',
-          statsType: 'data_overview',
-          title: this.$t('task_info_data_screening'),
-          loading: false
-        }
-      },
-      throughputObj: {
-        title: {
-          key: 'throughput',
-          statsType: 'throughput',
-          time: 'second',
-          title: this.$t('task_info_input_output'),
-          tip: this.$t('task_info_throughputpop'),
-          unit: 'QPS',
-          class: 'putColor',
-          loading: false
+      lineOptions: {
+        tooltip: {
+          trigger: 'axis'
         },
-        body: null,
-        input: 0,
-        output: 0
+        legend: {
+          top: 4,
+          right: 0,
+          show: true
+        },
+        yAxis: {
+          axisLabel: {
+            formatter: function (value) {
+              if (value >= 1000) {
+                value = value / 1000 + 'K'
+              }
+              return value
+            }
+          }
+        },
+        grid: {
+          left: 0,
+          right: 0,
+          top: '24px',
+          bottom: 0
+        },
+        series: [
+          {
+            name: this.$t('task_info_input'),
+            lineStyle: {
+              color: 'rgba(24, 144, 255, 1)',
+              width: 1
+            },
+            areaStyle: {
+              color: 'rgba(24, 144, 255, 0.2)'
+            },
+            symbol: 'none',
+            itemStyle: {
+              color: 'rgba(24, 144, 255, 1)'
+            }
+          },
+          {
+            name: this.$t('task_info_output'),
+            lineStyle: {
+              color: 'rgba(118, 205, 238, 1)',
+              width: 1
+            },
+            symbol: 'none',
+            areaStyle: {
+              color: 'rgba(118, 205, 238, 0.2)'
+            },
+            itemStyle: {
+              color: 'rgba(118, 205, 238, 1)'
+            }
+          }
+        ]
       },
       activeTab: 'schedule',
       showContent: false,
@@ -182,6 +217,29 @@ export default {
     border-radius: 4px;
     .share-detail-head-left {
       min-width: 240px;
+      padding: 20px;
+      border-right: 1px solid #f2f2f2;
+      .head-label {
+        width: 100px;
+      }
+    }
+    .share-detail-head-center {
+      .label {
+        width: 80px;
+        line-height: 28px;
+      }
+      ::v-deep {
+        .el-date-editor {
+          width: 300px;
+        }
+        .el-range-input {
+          width: 120px;
+        }
+      }
+    }
+    .share-detail-head-right {
+      min-width: 240px;
+      align-items: center;
     }
   }
 }
