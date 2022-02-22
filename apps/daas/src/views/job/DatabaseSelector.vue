@@ -97,7 +97,6 @@ export default {
           label: true,
           meta_type: true,
           original_name: true,
-          source: true,
           'source._id': true,
           'source.user_id': true,
           'source.name': true,

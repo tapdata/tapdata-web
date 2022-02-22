@@ -322,7 +322,6 @@ export default {
         create_time: true,
         collection: true,
         id: true,
-        source: true,
         'source._id': true,
         'source.user_id': true,
         databaseId: true,

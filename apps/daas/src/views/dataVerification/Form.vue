@@ -489,7 +489,6 @@ const META_INSTANCE_FIELDS = {
   id: true,
   name: true,
   original_name: true,
-  source: true,
   'source.id': true,
   'source.name': true,
   fields: true,
