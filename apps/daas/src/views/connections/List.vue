@@ -223,43 +223,6 @@ export default {
         }
       ],
       databaseTypeOptions: [],
-      whiteList: [
-        'mysql',
-        'oracle',
-        'mongodb',
-        'sqlserver',
-        'postgres',
-        'elasticsearch',
-        'redis',
-        'file',
-        'db2',
-        'kafka',
-        'mariadb',
-        'mysql pxc',
-        // 'jira',
-        'dameng',
-        'hive',
-        'gbase-8s',
-        'sybase ase',
-        'gaussdb200',
-        'dummy db',
-        'rest api',
-        'custom_connection',
-        'gridfs',
-        'tcp_udp',
-        'mq',
-        'hbase',
-        // 'kudu',
-        'greenplum',
-        'tidb',
-        'hana',
-        'clickhouse',
-        'kundb',
-        'adb_postgres',
-        'adb_mysql',
-        'vika',
-        'hazelcast_cloud_cluster'
-      ], //目前白名单,
       searchParams: {
         databaseType: '',
         keyword: '',
@@ -387,7 +350,7 @@ export default {
         where.name = { like: verify(keyword), options: 'i' }
       }
       where.database_type = {
-        in: this.whiteList
+        in: window.getSettingByKey('ALLOW_CONNECTION_TYPE').split(',')
       }
       region && (where['platformInfo.region'] = region)
       databaseType && (where.database_type = databaseType)
@@ -475,12 +438,7 @@ export default {
     preview(id, type) {
       this.id = id
       this.databaseType = type
-      if (this.whiteList.includes(type)) {
-        this.previewVisible = true
-      } else {
-        top.location.href = '/#/connection/' + id
-        localStorage.setItem('connectionDatabaseType', type)
-      }
+      this.previewVisible = true
     },
     handlePreviewVisible() {
       this.previewVisible = false
@@ -489,27 +447,15 @@ export default {
       if (item.search_databaseType) {
         type = item.search_databaseType
       }
-      if (this.whiteList.includes(type) || type === 'rest api') {
-        this.$router.push({
-          name: 'connectionsOldEdit',
-          params: {
-            id: id
-          },
-          query: {
-            databaseType: type
-          }
-        })
-      } else {
-        this.$router.push({
-          name: 'connectionsEdit',
-          params: {
-            id: id
-          },
-          query: {
-            databaseType: type
-          }
-        })
-      }
+      this.$router.push({
+        name: 'connectionsEdit',
+        params: {
+          id: id
+        },
+        query: {
+          databaseType: type
+        }
+      })
     },
     copy(data) {
       let headersName = { 'lconname-name': data.name }
@@ -654,21 +600,12 @@ export default {
     },
     handleDatabaseType(type) {
       this.handleDialogDatabaseTypeVisible()
-      if (this.whiteList.includes(type) || type === 'rest api') {
-        this.$router.push({
-          name: 'connectionsOldCreate',
-          query: {
-            databaseType: type
-          }
-        })
-      } else {
-        this.$router.push({
-          name: 'connectionsCreate',
-          query: {
-            databaseType: type
-          }
-        })
-      }
+      this.$router.push({
+        name: 'connectionsCreate',
+        query: {
+          databaseType: type
+        }
+      })
     },
 
     //检测agent 是否可用

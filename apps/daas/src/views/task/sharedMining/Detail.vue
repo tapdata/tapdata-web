@@ -14,7 +14,7 @@
           <div class="font-color-sub">555555</div>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
-          <div class="head-label">{{ $t('hare_detail_log_time') }}:</div>
+          <div class="head-label">{{ $t('share_detail_log_time') }}:</div>
           <div class="font-color-sub">ggggg</div>
         </div>
       </div>
