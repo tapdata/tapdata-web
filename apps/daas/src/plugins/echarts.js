@@ -1,5 +1,5 @@
 // 引入 ECharts 主模块
-import echarts from 'echarts/lib/echarts'
+import * as echarts from 'echarts/lib/echarts'
 // 引入柱状图等
 import 'echarts/lib/chart/bar'
 import 'echarts/lib/chart/line'

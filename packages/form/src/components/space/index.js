@@ -13,16 +13,16 @@ const spaceSize = {
 
 export const Space = defineComponent({
   name: 'FSpace',
-  props: ['size', 'direction', 'align', 'split', 'filterKey'],
+  props: ['size', 'direction', 'align', 'split', 'filterIndex'],
   setup(props, { slots }) {
     const layout = useFormLayout()
 
     return () => {
-      const { align, size = layout.value?.spaceGap ?? 'small', direction = 'horizontal', split, filterKey } = props
+      const { align, size = layout.value?.spaceGap ?? 'small', direction = 'horizontal', split, filterIndex } = props
 
       const prefixCls = `${stylePrefix}-space`
       const children = slots.default?.()
-      console.log('children', children, filterKey)
+      
       let items = []
       if (Array.isArray(children)) {
         if (children.length === 1) {
@@ -37,9 +37,9 @@ export const Space = defineComponent({
         }
       }
 
-      if (filterKey?.length) {
-        items = items.filter(item => {
-          return !filterKey.includes(item.data.key)
+      if (filterIndex?.length) {
+        items = items.filter((item, index) => {
+          return !filterIndex.includes(index)
         })
       }
 

@@ -211,9 +211,9 @@ export default {
   background: #fff;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.02);
   ::v-deep {
-    .table-list {
-      //height: 300px;
-    }
+    // .table-list {
+    //height: 300px;
+    // }
     .el-tab-pane {
       min-height: 400px;
     }

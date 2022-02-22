@@ -259,11 +259,11 @@ export default {
     // 获取当前信息
     async handleGetData() {
       this.loading = true
-      let filter = {
-        where: {
-          id: this.$cookie.get('user_id')
-        }
-      }
+      // let filter = {
+      //   where: {
+      //     id: this.$cookie.get('user_id')
+      //   }
+      // }
       // let parmas = {
       //   filter: {
       //     where: {

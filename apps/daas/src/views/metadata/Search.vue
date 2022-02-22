@@ -140,13 +140,13 @@ export default {
       this.$api('MetadataInstances')
         .search(params)
         .then(result => {
-          let data = result.data.records || []
+          let data = result.data || []
           this.noMore = false
-          if (data.data.length === 0 || (data.data.length < data.pageSize && !this.first)) {
+          if (data.length === 0 || (data.length < data.pageSize && !this.first)) {
             this.noMore = true
             return
           }
-          let resultData = result.data.records.data || []
+          let resultData = result.data || []
           //关键字标记
           this.handleKeywords(resultData || [])
           this.searchData = this.searchData.concat(resultData)

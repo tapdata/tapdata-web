@@ -129,7 +129,6 @@ export const FieldProcess = connect(
         console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options?.[0] || []
         this.originalFields = JSON.parse(JSON.stringify(fields))
-        console.log(this.operations)
         // apply operations to schema
         //查找是否有被删除的字段且operation有操作
         let temporary = handleOperation(fields, this.operations)
@@ -175,6 +174,7 @@ export const FieldProcess = connect(
             } else fields.push(newField)
           }
         })
+        // eslint-disable-next-line
         console.log('FieldProcess.mergeOutputSchema', fields)
         return (
           <div class="field-processor-tree-warp bg-body pt-2 pb-5">

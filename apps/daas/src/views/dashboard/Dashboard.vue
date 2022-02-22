@@ -671,32 +671,32 @@ export default {
     },
     // 指标
     getMeasurement() {
-      let params = {
-        samples: [
-          {
-            tags: {
-              userId: 'aaaa',
-              key1: 'cdccc',
-              key2: 'ccccc'
-            },
-            fields: ['cpuUsage'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
-            start: 123123323214, //optional
-            end: 123123123123123, //optional
-            limit: 10, //optional， 没有就返回全部， 服务器保护返回最多1000个
-            guanluary: 'minute'
-          }
-        ],
-        statistics: [
-          {
-            tags: {
-              userId: 'aaaa',
-              key1: 'cdccc',
-              key2: 'ccccc'
-            },
-            fields: ['input', 'output']
-          }
-        ]
-      }
+      // let params = {
+      //   samples: [
+      //     {
+      //       tags: {
+      //         userId: 'aaaa',
+      //         key1: 'cdccc',
+      //         key2: 'ccccc'
+      //       },
+      //       fields: ['cpuUsage'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
+      //       start: 123123323214, //optional
+      //       end: 123123123123123, //optional
+      //       limit: 10, //optional， 没有就返回全部， 服务器保护返回最多1000个
+      //       guanluary: 'minute'
+      //     }
+      //   ],
+      //   statistics: [
+      //     {
+      //       tags: {
+      //         userId: 'aaaa',
+      //         key1: 'cdccc',
+      //         key2: 'ccccc'
+      //       },
+      //       fields: ['input', 'output']
+      //     }
+      //   ]
+      // }
       this.$api('Measurement')
         .queryTransmitTotal()
         .then(({ data }) => {
@@ -708,10 +708,12 @@ export default {
               })
             )
           })
+          // eslint-disable-next-line
           console.log('result', result)
           this.transBarData = result
         })
         .catch(err => {
+          // eslint-disable-next-line
           console.log('err', err)
         })
     },

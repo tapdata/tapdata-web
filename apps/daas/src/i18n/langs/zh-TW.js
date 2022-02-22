@@ -109,6 +109,15 @@ export default {
   verify_create_window_duration: '窗口時長',
   verify_form_source_filter: '源表數據過濾',
   verify_form_target_filter: '目標表數據過濾',
+  verify_checking: '校驗中...',
+  verify_message_error_joint_table_not_set: '請添加校驗條件',
+  verify_message_error_joint_table_target_or_source_not_set: '校驗條件中源表或目標表未選擇',
+  verify_message_error_joint_table_field_not_set: '校驗條件中源表或目標表的索引欄位未選擇',
+  verify_message_error_joint_table_field_not_match: '校驗條件中源表與目標表的索引欄位個數不相等',
+  verify_message_error_script_no_enter: '開啟高級校驗後，JS校驗邏輯不能為空',
+  verify_message_confirm_delete_script: '確定要刪除自定義JS校驗邏輯嗎',
+  verify_message_confirm_back: '此操作會丟失當前正在創建（編輯）的校驗任務',
+  verify_message_title_confirm_back: '是否放棄創建（編輯）校驗任務？',
 
   taskprogress_plan_sync_table_num: '計劃同步表數量',
   taskprogress_completed_sync_table_num: '已完成同步表數量',
@@ -454,6 +463,25 @@ export default {
   connection_form_name_exists: '名字已經存在',
 
   connection_form_kudu_host_tip: 'IP地址:端口; 支持多個; 用 , 分割',
+  connection_oracle_config_share_log_switch: '共享挖掘',
+
+  // 路由名
+  app_menu_jsFuncs: '函數',
+
+  // 函數
+  js_func_name: '函數名',
+  js_func_parameters: '參數',
+  js_func_function_body: '函數體',
+  js_func_last_update: '更新時間',
+  js_func_create: '創建',
+  js_func_function_name_repeat: '方法名稱重複',
+  js_func_dialog_format: '格式化代碼',
+  js_func_dialog_code: 'Javascript函數代碼',
+  js_func_dialog_Linenumbers: '顯示行號',
+  js_func_dialog_nofunctions: '代碼缺少JS函數',
+  js_func_dialog_create_title: '新增記錄',
+  js_func_dialog_edit_title: '更新記錄',
+  js_func_delete_remind: '確定要刪除函數',
 
   connection_form_hazecast_connection_type: '連接類型',
   connection_form_hazecast_connection_test: '連接測試',
@@ -498,7 +526,6 @@ export default {
     '此模式將連接網絡中的單獨服務器，該服務器提供到數據庫的TSL/SSL通道。如果您的數據庫位於不可訪問的子網中，則可嘗試使用此方法',
 
   connection_test_schema_tips: '可能原因：Schema大小寫設置有問題，您可嘗試修改大小寫後重試',
-  connection_oracle_config_share_log_switch: '共享挖掘',
 
   connection_preview_load_schema: '加載Schema',
   connection_preview_edit: '編輯',
@@ -507,24 +534,6 @@ export default {
   connection_preview_master_partition: '僅寫入master分區',
   connection_preview_isr_partition: '寫入所有ISR分區',
   connection_preview_operation_success: '操作成功',
-
-  // 路由名
-  app_menu_jsFuncs: '函數',
-
-  // 函數
-  js_func_name: '函數名',
-  js_func_parameters: '參數',
-  js_func_function_body: '函數體',
-  js_func_last_update: '更新時間',
-  js_func_create: '創建',
-  js_func_function_name_repeat: '方法名稱重複',
-  js_func_dialog_format: '格式化代碼',
-  js_func_dialog_code: 'Javascript函數代碼',
-  js_func_dialog_Linenumbers: '顯示行號',
-  js_func_dialog_nofunctions: '代碼缺少JS函數',
-  js_func_dialog_create_title: '新增記錄',
-  js_func_dialog_edit_title: '更新記錄',
-  js_func_delete_remind: '確定要刪除函數',
 
   // Dag
   dag_data_node_label_dameng: 'Dameng節點',

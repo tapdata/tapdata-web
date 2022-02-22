@@ -1,20 +1,12 @@
 <template>
   <el-table
     highlight-current-row
-    class="dv-table border mt-2"
     ref="table"
     height="100%"
     :data="list"
     :element-loading-text="$t('dataFlow.dataLoading')"
     @row-click="rowClickHandler"
   >
-    <ElTableColumn width="45">
-      <template slot-scope="scope">
-        <ElRadio :value="current" :label="scope.row.taskId">
-          <span></span>
-        </ElRadio>
-      </template>
-    </ElTableColumn>
     <ElTableColumn :label="$t('dataVerification.sourceTable')">
       <template slot-scope="scope">
         <span>{{ scope.row.source ? scope.row.source.table : '' }}</span>
@@ -47,7 +39,7 @@
         <!--        </div>-->
       </template>
     </ElTableColumn>
-    <ElTableColumn prop="progress" :label="$t('dataVerification.verifyProgress')" width="80px">
+    <ElTableColumn prop="progress" :label="$t('dataVerification.verifyProgress')" width="120px">
       <template slot-scope="scope">
         <div>
           <span>{{
@@ -65,7 +57,7 @@
               <span>{{ scope.row.countResultText }}</span>
             </span>
           </div>
-          <div v-if="scope.row.result === 'failed' && scope.row.contentResultText && verifyType !== 'cdcCount'">
+          <div v-if="scope.row.result === 'failed' && scope.row.contentResultText">
             <span class="error">
               <i class="verify-icon el-icon-error color-danger"></i>
               <span>{{ scope.row.contentResultText }}</span>
@@ -83,7 +75,7 @@
 <style lang="scss" scoped>
 .verify-icon {
   margin: 0 4px;
-  font-size: 14px;
+  font-size: 14;
 }
 </style>
 <script>
@@ -95,8 +87,7 @@ export default {
       default: () => {
         return []
       }
-    },
-    verifyType: String
+    }
   },
   data() {
     return {

@@ -383,7 +383,6 @@ export default {
         meta_type: true,
         name: true,
         original_name: true,
-        source: true,
         'source.id': true,
         'source._id': true,
         'source.name': true,
@@ -568,7 +567,6 @@ export default {
           qualified_name: true,
           schema: true,
           indexes: true,
-          source: true,
           'source.database_uri': true,
           'source.name': true,
           fields: true

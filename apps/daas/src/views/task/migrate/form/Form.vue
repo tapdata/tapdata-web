@@ -259,6 +259,7 @@ export default {
     //是否支持双向前提
     getAgentCount() {
       TcmModel.getAgentCount().then(data => {
+        // eslint-disable-next-line
         console.log('getAgentCount', data)
         this.twoWayAgentRunningCount = data.twoWayAgentRunningCount || 0
       })
@@ -901,6 +902,7 @@ export default {
       }
       let promise = DataFlowsModel.getMetadata(data)
       promise.then(data => {
+        // eslint-disable-next-line
         console.log('DataFlowsModel.getMetadata(data)', data)
         this.activeStep += 1
         this.loading = false
@@ -1040,6 +1042,7 @@ export default {
     //获取typeMapping
     async getTypeMapping(row) {
       let data = await TypeMappingModel.getId(row.sinkDbType)
+      // eslint-disable-next-line
       console.log('getTypeMapping', data)
       return data.data
     },

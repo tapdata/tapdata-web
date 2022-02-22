@@ -4,11 +4,12 @@
  * @description
  */
 import PublicApi from './publicApi'
+import axios from 'axios'
 export default class WorkerAPI extends PublicApi {
   constructor() {
     super('/api/Workers')
   }
   getAvailableAgent() {
-    return this.get(['/availableAgent'])
+    return axios.get(this.url + '/availableAgent')
   }
 }

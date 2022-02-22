@@ -293,6 +293,7 @@ export default {
       }
       this.$set(this.settings, 'syncPoints', Object.values(filterSourceNodes()))
       // let arr = filterSourceNodes()
+      // eslint-disable-next-line
       console.log(allNodes, allSource, sourceConnectionIds, this.settings.syncPoints, filterSourceNodes())
     },
 

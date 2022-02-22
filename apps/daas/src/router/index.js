@@ -14,6 +14,11 @@ const DagEditor = async () => {
   return Editor
 }
 
+const NodeEditor = async () => {
+  const { Editor } = await import('@daas/node-design')
+  return Editor
+}
+
 const childRoutes = [
   {
     path: '/dashboard',
@@ -680,30 +685,12 @@ const childRoutes = [
     }
   },
   {
-    path: '/dataVerifyResult/:id/details',
-    name: 'VerifyDiffDetails',
-    component: () => import('@/views/dataVerification/Result'),
-    meta: {
-      title: i18n.t('verify_diff_details_title'),
-      isCollapse: true,
-      code: 'Data_verify'
-    }
-  },
-  {
     path: '/dataVerifyResult/:id',
     name: 'dataVerifyResult',
     component: () => import('@/views/dataVerification/Result'),
     meta: {
       title: i18n.t('verify_result_title'),
       isCollapse: true,
-      code: 'Data_verify'
-    }
-  },
-  {
-    path: '/dataVerification/setting',
-    name: 'dataVerifySetting',
-    component: () => import('@/views/dataVerification/setting'),
-    meta: {
       code: 'Data_verify'
     }
   },
@@ -870,7 +857,7 @@ const router = new Router({
     {
       path: '/node/editor',
       name: 'NodeEditor',
-      component: () => import('web-core/views/node/Editor')
+      component: NodeEditor
     }
   ]
 })

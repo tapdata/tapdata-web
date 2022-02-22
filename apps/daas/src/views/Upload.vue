@@ -44,7 +44,7 @@
 
 <script>
 import SelectClassify from '../components/SelectClassify'
-import Cookie from 'tiny-cookie'
+import * as Cookie from 'tiny-cookie'
 // import factory from '@/api/factory';
 // const MetadataInstance = factory('MetadataInstances');
 export default {
