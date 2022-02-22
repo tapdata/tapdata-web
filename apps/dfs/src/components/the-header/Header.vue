@@ -57,7 +57,14 @@
           <!--						{{ user.username }}-->
           <!--					</el-button>-->
           <div class="username flex align-items-center">
-            <VIcon class="mr-2" size="17">account</VIcon>
+            <img
+              v-if="user.avatar"
+              :src="user.avatar"
+              alt=""
+              class="mr-2"
+              style="width: 30px; height: 30px; border-radius: 50%"
+            />
+            <VIcon v-else class="mr-2" size="20">account</VIcon>
             <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
           </div>
 

@@ -42,7 +42,7 @@
                 v-if="userData.avatar"
                 :src="userData.avatar"
                 alt=""
-                style="position: absolute; top: -24px; left: 0; width: 56px"
+                style="position: absolute; top: -24px; left: 0; width: 56px; height: 56px; border-radius: 50%"
               />
               <span v-else>暂无</span>
             </div>
@@ -730,6 +730,7 @@ export default {
 .avatar {
   width: 100px;
   height: 100px;
+  border-radius: 50%;
 }
 ::v-deep {
   .el-form-item__label {
