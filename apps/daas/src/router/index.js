@@ -57,69 +57,6 @@ const childRoutes = [
     }
   },
   {
-    path: '/connections/oldCreate',
-    name: 'connectionsOldCreate',
-    component: () => import('@/views/connections/DatabaseForm'),
-    meta: {
-      title: i18n.t('tap.connection'),
-      isCollapse: true,
-      code: 'datasource_creation'
-    }
-  },
-  {
-    path: '/connections/:id/oldEdit',
-    name: 'connectionsOldEdit',
-    component: () => import('@/views/connections/DatabaseForm'),
-    meta: {
-      title: i18n.t('tap.connection'),
-      isCollapse: true,
-      code: 'datasource_edition'
-    }
-  },
-  {
-    path: '/connection',
-    name: 'connection',
-    component: () => import('@/views/ExternalLink'),
-    meta: {
-      code: 'datasource_creation',
-      url: '/old/index.html#/connection',
-      title: i18n.t('tap.connectionEdtion'),
-      isCollapse: false
-    }
-  },
-  {
-    path: '/connection/:id',
-    name: 'editConnection',
-    component: () => import('@/views/ExternalLink'),
-    meta: {
-      code: 'datasource_edition',
-      url: '/old/index.html#/connection',
-      title: i18n.t('tap.connectionEdtion'),
-      isCollapse: true
-    }
-  },
-  // {
-  //   path: '/metadataDefinition',
-  //   name: 'metadataDefinition',
-  //   component: () => import('@/views/ExternalLink'),
-  //   meta: {
-  //     code: 'data_catalog_menu',
-  //     url: '/old/index.html#/metadataDefinition',
-  //     title: i18n.t('tap.metadata'),
-  //     isCollapse: false
-  //   }
-  // },
-  // {
-  //   path: '/metadataInstances/:id',
-  //   name: 'metadataInstances',
-  //   component: () => import('@/views/ExternalLink'),
-  //   meta: {
-  //     code: 'data_catalog_edition',
-  //     title: i18n.t('tap.metadataInstances'),
-  //     isCollapse: true
-  //   }
-  // },
-  {
     path: '/metadataSearch',
     name: 'metadataSearch',
     component: () => import('@/views/metadata/Search'),
@@ -161,19 +98,6 @@ const childRoutes = [
       isCollapse: true
     }
   },
-
-  {
-    path: '/dataQuality',
-    name: 'dataQuality',
-    component: () => import('@/views/dataQuality/DataQuality'),
-    meta: {
-      code: 'data_quality_menu',
-      url: '/old/index.html#/dataQuality',
-      title: i18n.t('tap.dataQuality'),
-      isCollapse: true,
-      types: ['collection']
-    }
-  },
   {
     path: '/dataQuality/:id',
     name: 'dataQualityDetail',
@@ -190,7 +114,6 @@ const childRoutes = [
     component: () => import('@/views/TimeToLive/List'),
     meta: {
       code: 'time_to_live_menu',
-      // url: '/old/index.html#/ttl',
       title: i18n.t('tap.TimeToLive'),
       isCollapse: false
     }
@@ -202,17 +125,6 @@ const childRoutes = [
     meta: {
       code: 'data_rules_menu',
       title: i18n.t('tap.dataRules'),
-      isCollapse: false
-    }
-  },
-  {
-    path: '/topology',
-    name: 'topology',
-    component: () => import('@/views/ExternalLink'),
-    meta: {
-      code: 'Topology_menu',
-      url: '/old/index.html#/topology',
-      title: i18n.t('tap.topology'),
       isCollapse: false
     }
   },
@@ -256,10 +168,8 @@ const childRoutes = [
     path: '/dataExplorer',
     name: 'dataExplorer',
     component: () => import('@/views/apiPage/DataExplorer'),
-    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'API_data_explorer_menu',
-      // url: '/old/index.html#/dataExplorer',
       title: i18n.t('tap.dataExplor'),
       isCollapse: false
     }
@@ -267,11 +177,9 @@ const childRoutes = [
   {
     path: '/apiDocAndTest',
     name: 'apiDocAndTest',
-    // component: () => import('@/views/ExternalLink'),
     component: () => import('@/views/apiPage/ApiDocAndTest'),
     meta: {
       code: 'API_doc_&_test_menu',
-      // url: '/old/index.html#/apiDocAndTest',
       title: i18n.t('tap.docTest'),
       isCollapse: false
     }
@@ -280,10 +188,8 @@ const childRoutes = [
     path: '/apiAnalysis',
     name: 'apiAnalysis',
     component: () => import('@/views/apiPage/ApiAnalysis'),
-    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'API_stats_menu',
-      // url: '/old/index.html#/apiAnalysis',
       title: i18n.t('tap.apiStats'),
       isCollapse: false
     }
@@ -292,10 +198,8 @@ const childRoutes = [
     path: '/applications',
     name: 'applications',
     component: () => import('@/views/apiPage/Applications'),
-    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'API_clients_menu',
-      // url: '/old/index.html#/applications',
       title: i18n.t('tap.apiClients'),
       isCollapse: false
     }
@@ -304,22 +208,9 @@ const childRoutes = [
     path: '/apiServers',
     name: 'apiServers',
     component: () => import('@/views/apiPage/ApiServers'),
-    // component: () => import('@/views/ExternalLink'),
     meta: {
       code: 'API_server_menu',
-      // url: '/old/index.html#/apiServers',
       title: i18n.t('tap.apiSever'),
-      isCollapse: false
-    }
-  },
-  {
-    path: '/dataCollect',
-    name: 'dataCollect',
-    component: () => import('@/views/ExternalLink'),
-    meta: {
-      url: '/old/index.html#/dataCollect',
-      title: i18n.t('tap.dataCollect'),
-      code: 'data_collect(old)_menu',
       isCollapse: false
     }
   },
@@ -350,17 +241,6 @@ const childRoutes = [
     meta: {
       code: 'agents_menu',
       title: i18n.t('tap.agentManagement'),
-      isCollapse: false
-    }
-  },
-  {
-    path: '/serversOversee',
-    name: 'serversOversee',
-    component: () => import('@/views/ExternalLink'),
-    meta: {
-      code: 'servers_oversee_menu',
-      url: '/old/index.html#/serversOversee',
-      title: i18n.t('tap.serversOversee'),
       isCollapse: false
     }
   },
