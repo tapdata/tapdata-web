@@ -385,8 +385,8 @@ export default function (vm) {
       {
         type: 'switch',
         field: 'shareCdcEnable',
-        label: vm.$t('connection_oracle_config_share_log_switch'),
-        show: true
+        label: vm.$t('connection_form_shared_mining'),
+        tip: vm.$t('connection_form_shared_mining_tip')
       },
       {
         type: 'input',
@@ -396,12 +396,6 @@ export default function (vm) {
         tip: vm.$t('connection_form_impact_type'),
         maxlength: 500,
         showWordLimit: true
-      },
-      {
-        type: 'switch',
-        field: 'shareCdcEnable',
-        label: vm.$t('connection_form_shared_mining'),
-        tip: vm.$t('connection_form_shared_mining_tip')
       }
     ]
   }

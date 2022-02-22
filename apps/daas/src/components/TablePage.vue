@@ -51,7 +51,7 @@
           </div>
           <el-pagination
             background
-            class="table-page-pagination"
+            class="table-page-pagination my-3"
             layout="total, sizes, ->, prev, pager, next, jumper"
             :current-page.sync="page.current"
             :page-sizes="[10, 20, 50, 100]"
@@ -283,18 +283,21 @@ export default {
     flex-direction: column;
     overflow: hidden;
     background-color: #fff;
+    .el-table--border {
+      border: none;
+    }
     .table-page-topbar {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
       flex-wrap: wrap-reverse;
-
+      padding-top: 10px;
       .table-page-search-bar {
-        margin: 10px 5px 10px 0;
+        margin: 0 5px 10px 0;
       }
 
       .table-page-operation-bar {
-        margin: 10px 20px 10px 0;
+        margin: 0 20px 10px 0;
         text-align: right;
       }
     }

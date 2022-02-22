@@ -14,6 +14,7 @@
             style="width: 24px; height: 24px"
             :src="require('web-core/assets/images/connection-type/' + scope.row.database_type.toLowerCase() + '.png')"
           />
+          <!--:src="require('static/editor/' + scope.row.database_type.toLowerCase() + '.svg')"  -->
           <ElLink
             type="primary"
             style="display: block; line-height: 20px"

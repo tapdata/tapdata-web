@@ -1765,11 +1765,14 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding: 0 20px 20px 20px;
   overflow: hidden;
+  background-color: #eff1f4;
   .connection-from-body {
     display: flex;
     flex: 1;
     padding-left: 24px;
+    border-radius: 4px;
     overflow: hidden;
     background: #fff;
     .connection-from-main {
