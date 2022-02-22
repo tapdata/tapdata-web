@@ -43,6 +43,10 @@ export default {
           params: {}
         }
       }
+    },
+    spacing: {
+      type: Number,
+      default: 1000
     }
   },
   data() {
@@ -97,7 +101,7 @@ export default {
           this.clearTimer()
         }
         this.num--
-      }, 300)
+      }, this.spacing)
     },
     clearTimer() {
       this.btnDisabled = false

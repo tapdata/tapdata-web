@@ -212,6 +212,8 @@
         <ElFormItem prop="newPassword" label="旧手机验证码：" class="inline-form-item">
           <ElInput v-model="phoneForm.oldCode" placeholder="请输入旧手机验证码" maxlength="50"></ElInput>
           <VerificationCode
+            :request-options="getCodeOptions(phoneForm.current, 'CHANGE_PHONE')"
+            :disabled="!phoneForm.current"
             :style="{ width: '120px', textAlign: 'center' }"
             class="ml-6"
             type="text"
@@ -223,6 +225,8 @@
         <ElFormItem prop="newAgainPassword" label="新手机验证码：">
           <ElInput v-model="phoneForm.newCode" placeholder="请输入新手机验证码" maxlength="50"></ElInput>
           <VerificationCode
+            :request-options="getCodeOptions(phoneForm.newPhone, 'BIND_PHONE')"
+            :disabled="!phoneForm.current"
             :style="{ width: '120px', textAlign: 'center' }"
             class="ml-6"
             type="text"
@@ -407,7 +411,7 @@ export default {
       for (let key in userData) {
         userData[key] = window.__USER_INFO__[key]
       }
-      userData.avatar = window.__USER_INFO__.photo
+      userData.avatar = window.__USER_INFO__.avatar
       this.avatar = userData.avatar
       this.getEnterprise()
       this.resetPasswordForm()
@@ -585,11 +589,10 @@ export default {
     editPhoneConfirm(resetLoading) {
       let { phoneForm } = this
       this.$axios
-        .patch('tm/api/user', {
-          current: phoneForm.current,
-          oldCode: phoneForm.oldCode,
-          newPhone: phoneForm.newPhone,
-          newCode: phoneForm.newCode
+        .patch('api/tcm/user/phone', {
+          oldPhoneCode: phoneForm.oldCode,
+          phone: phoneForm.newPhone,
+          phoneCode: phoneForm.newCode
         })
         .then(() => {
           this.userData.telephone = phoneForm.newPhone
