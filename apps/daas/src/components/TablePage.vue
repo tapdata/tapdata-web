@@ -267,6 +267,7 @@ export default {
     .table-page-main-box {
       display: flex;
       flex: 1;
+      width: 100%;
       border-radius: 4px;
       background-color: #fff;
     }

@@ -925,7 +925,7 @@ export default {
   share_detail_mining_status: '挖掘状态',
   share_detail_button_table_info: '表详情',
   share_detail_statistics_time: '统计时间',
-  share_detail_start_time: '开始间',
+  share_detail_start_time: '开始时间',
   share_detail_end_time: '结束时间',
   share_detail_to: '至'
 }
