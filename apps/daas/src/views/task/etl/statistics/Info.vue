@@ -490,7 +490,7 @@ export default {
       let guanluary = this.getGuanluary(diff)
 
       let subTaskId = this.$route.params?.subId
-      let lineDataDeep = this.lineDataDeep
+      // let lineDataDeep = this.lineDataDeep
       let tags = {
         subTaskId: subTaskId,
         type: 'subTask'
@@ -544,7 +544,7 @@ export default {
         }
       }
       if (reset) {
-        lineDataDeep = {
+        this.lineDataDeep = {
           x: [],
           y: [[], []]
         }
@@ -556,7 +556,7 @@ export default {
       }
       if (startTimeStamp) {
         if (selectedTime && selectedTime !== 'custom') {
-          const lastTime = lineDataDeep.x[lineDataDeep.x.length - 1]
+          const lastTime = this.lineDataDeep.x[this.lineDataDeep.x.length - 1]
           const lastTimeStamp = lastTime ? new Date(lastTime).getTime() : ''
           params.samples[0].start = lastTimeStamp || startTimeStamp
           params.samples[1].start = lastTimeStamp || startTimeStamp
@@ -614,10 +614,10 @@ export default {
 
         let xArr = qpsDataTime.map(t => formatTime(t))
         const xArrLen = xArr.length
-        if (lineDataDeep.x.length > 20) {
-          lineDataDeep.x.splice(0, xArrLen)
-          lineDataDeep.y[0].splice(0, xArrLen)
-          lineDataDeep.y[1].splice(0, xArrLen)
+        if (this.lineDataDeep.x.length > 20) {
+          this.lineDataDeep.x.splice(0, xArrLen)
+          this.lineDataDeep.y[0].splice(0, xArrLen)
+          this.lineDataDeep.y[1].splice(0, xArrLen)
         }
         let inArr = []
         let outArr = []
@@ -633,22 +633,29 @@ export default {
           })
         })
         if (reset) {
-          lineDataDeep.x = xArr
-          lineDataDeep.y[0] = inArr
-          lineDataDeep.y[1] = outArr
+          this.lineDataDeep.x = xArr
+          this.lineDataDeep.y[0] = inArr
+          this.lineDataDeep.y[1] = outArr
         } else {
-          lineDataDeep.x.push(...xArr)
-          lineDataDeep.y[0].push(...inArr)
-          lineDataDeep.y[1].push(...outArr)
+          xArr.forEach((el, index) => {
+            if (!this.lineDataDeep.x.includes(el)) {
+              this.lineDataDeep.x.push(el)
+              this.lineDataDeep.y[0].push(inArr[index])
+              this.lineDataDeep.y[1].push(outArr[index])
+            }
+          })
+          // this.lineDataDeep.x.push(...xArr)
+          // this.lineDataDeep.y[0].push(...inArr)
+          // this.lineDataDeep.y[1].push(...outArr)
         }
 
         this.$refs.chart.chart?.setOption({
           series: [
             {
-              data: lineDataDeep.y[0]
+              data: Object.assign([], this.lineDataDeep.y[0])
             },
             {
-              data: lineDataDeep.y[1]
+              data: Object.assign([], this.lineDataDeep.y[1])
             }
           ]
         })
