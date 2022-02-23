@@ -19,6 +19,9 @@ export default class TaskAPI extends PublicAPI {
   stop(id) {
     return axios.post(this.url + `/stop/${id}`)
   }
+  renew(id) {
+    return axios.post(this.url + `/renew/${id}`)
+  }
   pause(id) {
     return axios.post(this.url + `/pause/${id}`)
   }

@@ -29,7 +29,8 @@ export const TOPOLOGY_MAP = topologyMap,
   SHARECDC_MAP = {
     running: { text: '运行中', icon: 'running', type: 'success' },
     stop: { text: '已暂停', icon: 'stop' },
-    error: { text: '错误', icon: 'error', type: 'warning' }
+    error: { text: '错误', icon: 'error', type: 'warning' },
+    edit: { text: '编辑', icon: 'edit', type: 'warning' }
   },
   CONNECTION_STATUS_MAP = {
     ready: { text: '有效', type: 'success' },

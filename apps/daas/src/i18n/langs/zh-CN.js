@@ -874,6 +874,7 @@ export default {
   share_list_time: '挖掘延迟',
   // share_list_connection_search: '连接名称搜索',
   share_list_edit_title: '挖掘编辑',
+  share_detail_title: '挖掘表详情',
   share_form_setting_connection_name: '存储MongoDB连接名称',
   share_form_setting_table_name: '存储MongoDB表名',
   share_form_setting_log_time: '日志保存时长',

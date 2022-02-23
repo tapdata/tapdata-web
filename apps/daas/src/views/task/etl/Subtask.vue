@@ -73,7 +73,7 @@
             :disabled="!statusBtMap['reset'][scope.row.status]"
             class="mr-2"
             type="text"
-            @click="stop(scope.row, arguments[0])"
+            @click="renew(scope.row, arguments[0])"
           >
             {{ $t('task_button_reset') }}
           </VButton>
@@ -201,6 +201,18 @@ export default {
     stop(row, resetLoading) {
       this.$api('SubTask')
         .stop(row.id)
+        .then(res => {
+          this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+          this.table.fetch()
+        })
+        .catch(err => {
+          this.$message.error(err.data?.message)
+        })
+        .finally(resetLoading)
+    },
+    renew(row, resetLoading) {
+      this.$api('SubTask')
+        .renew(row.id)
         .then(res => {
           this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
           this.table.fetch()

@@ -34,4 +34,11 @@ export default class LogcollectorApi extends PublicAPI {
   patchSystemConfig(params) {
     return axios.patch(this.url + '/system/config', params)
   }
+
+  getDetail(id) {
+    return axios.get(`${this.url}/detail/${id}`)
+  }
+  check() {
+    return axios.get(`${this.url}/check/system/config`)
+  }
 }
