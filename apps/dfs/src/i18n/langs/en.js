@@ -946,6 +946,8 @@ export default {
   verify_checking: 'Checking...',
   verify_operation: 'operation',
   verify_operation_verify_again: 'Re-verify',
+  verify_operation_verify_again_info:
+    'When no table is selected, by default only the table that is inconsistent with the last verification will be re-verified',
 
   verify_title_create: 'New verification',
   verify_title_edit: 'Edit Verification',

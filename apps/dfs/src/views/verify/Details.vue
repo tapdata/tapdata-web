@@ -4,7 +4,13 @@
       <div>
         <span style="font-size: 14px">{{ inspect.name }}</span>
         <span class="font-color-linfo ml-3">{{ typeMap[type] }}</span>
-        <ElButton type="text" @click.prevent.stop="verifyAgain([])">{{ $t('verify_operation_verify_again') }}</ElButton>
+        <ElButton type="text" class="ml-8" @click.prevent.stop="verifyAgain([])">{{
+          $t('verify_operation_verify_again')
+        }}</ElButton>
+        <span class="button-icon">
+          <VIcon class="color-disable" size="14">info</VIcon>
+          <span class="button-icon__info ml-2">{{ $t('verify_operation_verify_again_info') }}</span>
+        </span>
       </div>
       <div v-if="inspect.inspectMethod !== 'row_count'">
         <div class="flex align-items-center">
@@ -72,6 +78,17 @@
 .verify-details-header {
   display: flex;
   justify-content: space-between;
+}
+.button-icon {
+  margin-left: 12px;
+  .button-icon__info {
+    display: none;
+  }
+  &:hover {
+    .button-icon__info {
+      display: inline;
+    }
+  }
 }
 .error-tips {
   padding: 6px 0;

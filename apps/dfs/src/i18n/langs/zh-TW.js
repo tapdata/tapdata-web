@@ -539,6 +539,7 @@ export default {
   verify_button_create: '新建',
   verify_operation: '操作',
   verify_operation_verify_again: '重新校驗',
+  verify_operation_verify_again_info: '當未選擇表時默認只對上次校驗不一致的表進行重新校驗',
 
   verify_title_create: '新建校驗',
   verify_title_edit: '編輯校驗',
