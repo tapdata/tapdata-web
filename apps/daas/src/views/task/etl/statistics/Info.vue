@@ -598,7 +598,9 @@ export default {
         }
         // 全量预计完成时间
         this.initialData.length >= 2 && this.initialData.shift()
-        this.initialData.push(Object.assign({}, writeData))
+        this.initialData.push(Object.assign({
+          time: new Date().getTime()
+        }, writeData))
         if (this.initialData.length >= 2) {
           const getForecastMs = this.getForecastMs(this.initialData)
           if (getForecastMs) {
@@ -743,7 +745,7 @@ export default {
     getForecastMs(data) {
       const [start, end] = data
       const num = end.initialWrite - start.initialWrite
-      const timeDiff = new Date(end.initialTime).getTime() - new Date(start.initialTime).getTime()
+      const timeDiff = end.time - start.time
       if (!num) {
         return
       }
