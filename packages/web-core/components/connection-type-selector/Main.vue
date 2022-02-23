@@ -125,9 +125,9 @@ export default {
     .img-box {
       width: 78px;
       height: 78px;
-      // border: 1px solid #dedee4;
-      // border-radius: 6px;
-      // background: #fafafa;
+      border: 1px solid #dedee4;
+      border-radius: 6px;
+      background: #fafafa;
       cursor: pointer;
       display: flex;
       justify-content: center;
@@ -184,7 +184,8 @@ export default {
 .database {
   .database-ul {
     .el-image__inner {
-      width: 60px;
+      // width: 60px
+      width: 30px;
     }
   }
 }

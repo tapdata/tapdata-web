@@ -1,102 +1,103 @@
 <template>
-  <section class="import-form-wrapper">
-    <div class="container-header">
-      {{ $t('function_button_import_jar') }}
-    </div>
-    <div class="import-form__body">
-      <div class="main px-6 py-4">
-        <ElForm ref="form" label-position="left" label-width="120px" size="small" :model="form" :rules="rules">
-          <ElFormItem prop="fileId" :label="$t('function_file_label') + ':'">
-            <div class="flex align-center">
-              <ElUpload
-                class="form-input flex align-center"
-                action="api/file/upload"
-                accept=".jar"
-                :file-list="fileList"
-                :before-upload="selectFile"
-                :on-change="fileChange"
-                :on-remove="fileRemove"
-              >
-                <ElButton style="margin-right: 10px" size="small" type="primary">{{
-                  $t('function_button_file_upload')
-                }}</ElButton>
-              </ElUpload>
-              <span class="color-info ml-4" style="font-size: 12px">*{{ $t('function_tips_max_size') }}10M</span>
-            </div>
-          </ElFormItem>
-          <ElFormItem prop="packageName" :label="$t('function_package_name_label') + ':'">
-            <div class="flex align-center">
-              <ElInput
-                v-model="form.packageName"
-                class="form-input"
-                :placeholder="$t('function_package_name_placeholder')"
-              ></ElInput>
-              <ElButton class="btn ml-4" type="primary" size="small" :loading="loading" @click="loadFunction">
-                <span>{{ $t('function_button_load_function') }}</span>
-              </ElButton>
-            </div>
-          </ElFormItem>
-        </ElForm>
-        <div class="mb-4">
-          <div class="mb-4" style="font-size: 14px">{{ $t('function_import_list_title') }}</div>
-          <ElTable border class="table-border" :data="funcList">
-            <ElTableColumn :label="$t('function_name_label')">
-              <template #default="{ row, $index }">
-                <div class="flex align-center">
-                  <template v-if="editIndex !== $index">
-                    <ElTooltip
-                      v-if="row.isRepeat"
-                      class="item"
-                      effect="dark"
-                      placement="top"
-                      :content="$t('function_tips_name_repeat')"
-                    >
-                      <i class="el-icon-warning mr-2 color-error"></i>
-                    </ElTooltip>
-                    <span class="ellipsis">{{ row.function_name }}</span>
-                    <ElButton
-                      class="ml-2"
-                      type="text"
-                      icon="el-icon-edit-outline"
-                      @click="
-                        editIndex = $index
-                        editName = row.function_name
-                      "
-                    ></ElButton>
-                  </template>
-                  <template v-else>
-                    <ElInput v-model="editName" size="mini" class="mr-2"></ElInput>
-                    <ElButton size="mini" @click="editIndex = null">{{ $t('button_cancel') }}</ElButton>
-                    <ElButton
-                      type="primary"
-                      size="mini"
-                      :disabled="!editName || !editName.trim()"
-                      @click="changeName($index)"
-                      >{{ $t('button_save') }}</ElButton
-                    >
-                  </template>
-                </div>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn prop="classNameFmt" :label="$t('function_class_label')"></ElTableColumn>
-            <ElTableColumn prop="methodName" :label="$t('function_method_name_label')"></ElTableColumn>
-            <ElTableColumn prop="format" :label="$t('function_format')"></ElTableColumn>
-            <ElTableColumn width="120px" :label="$t('column_operation')">
-              <template #default="{ row, $index }">
-                <ElButton size="mini" type="text" @click="openSetting(row, $index)">{{
-                  $t('button_setting')
-                }}</ElButton>
-                <ElButton size="mini" type="text" @click="remove($index)">{{ $t('button_delete') }}</ElButton>
-              </template>
-            </ElTableColumn>
-          </ElTable>
+  <section class="import-form-wrapper section-wrap">
+    <div class="section-wrap-box">
+      <!-- <div class="container-header">
+        {{ $t('function_button_import_jar') }}
+      </div> -->
+      <!-- <div class="import-form__body">
+        <div class="main px-6 py-4"> -->
+      <ElForm ref="form" label-position="left" label-width="120px" size="small" :model="form" :rules="rules">
+        <ElFormItem prop="fileId" :label="$t('function_file_label') + ':'">
+          <div class="flex align-center">
+            <ElUpload
+              class="form-input flex align-center"
+              action="api/file/upload"
+              accept=".jar"
+              :file-list="fileList"
+              :before-upload="selectFile"
+              :on-change="fileChange"
+              :on-remove="fileRemove"
+            >
+              <ElButton style="margin-right: 10px" size="small" type="primary">{{
+                $t('function_button_file_upload')
+              }}</ElButton>
+            </ElUpload>
+            <span class="color-info ml-4" style="font-size: 12px">*{{ $t('function_tips_max_size') }}10M</span>
+          </div>
+        </ElFormItem>
+        <ElFormItem prop="packageName" :label="$t('function_package_name_label') + ':'">
+          <div class="flex align-center">
+            <ElInput
+              v-model="form.packageName"
+              class="form-input"
+              :placeholder="$t('function_package_name_placeholder')"
+            ></ElInput>
+            <ElButton class="btn ml-4" type="primary" size="small" :loading="loading" @click="loadFunction">
+              <span>{{ $t('function_button_load_function') }}</span>
+            </ElButton>
+          </div>
+        </ElFormItem>
+      </ElForm>
+      <div class="mb-4">
+        <div class="mb-4" style="font-size: 14px">{{ $t('function_import_list_title') }}</div>
+        <ElTable border class="table-border" :data="funcList">
+          <ElTableColumn :label="$t('function_name_label')">
+            <template #default="{ row, $index }">
+              <div class="flex align-center">
+                <template v-if="editIndex !== $index">
+                  <ElTooltip
+                    v-if="row.isRepeat"
+                    class="item"
+                    effect="dark"
+                    placement="top"
+                    :content="$t('function_tips_name_repeat')"
+                  >
+                    <i class="el-icon-warning mr-2 color-error"></i>
+                  </ElTooltip>
+                  <span class="ellipsis">{{ row.function_name }}</span>
+                  <ElButton
+                    class="ml-2"
+                    type="text"
+                    icon="el-icon-edit-outline"
+                    @click="
+                      editIndex = $index
+                      editName = row.function_name
+                    "
+                  ></ElButton>
+                </template>
+                <template v-else>
+                  <ElInput v-model="editName" size="mini" class="mr-2"></ElInput>
+                  <ElButton size="mini" @click="editIndex = null">{{ $t('button_cancel') }}</ElButton>
+                  <ElButton
+                    type="primary"
+                    size="mini"
+                    :disabled="!editName || !editName.trim()"
+                    @click="changeName($index)"
+                    >{{ $t('button_save') }}</ElButton
+                  >
+                </template>
+              </div>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn prop="classNameFmt" :label="$t('function_class_label')"></ElTableColumn>
+          <ElTableColumn prop="methodName" :label="$t('function_method_name_label')"></ElTableColumn>
+          <ElTableColumn prop="format" :label="$t('function_format')"></ElTableColumn>
+          <ElTableColumn width="120px" :label="$t('column_operation')">
+            <template #default="{ row, $index }">
+              <ElButton size="mini" type="text" @click="openSetting(row, $index)">{{ $t('button_setting') }}</ElButton>
+              <ElButton size="mini" type="text" @click="remove($index)">{{ $t('button_delete') }}</ElButton>
+            </template>
+          </ElTableColumn>
+        </ElTable>
+        <!-- </div>
+        </div> -->
+        <div class="footer p-6">
+          <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('button_back') }}</ElButton>
+          <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
         </div>
       </div>
-      <div class="footer p-6">
-        <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('button_back') }}</ElButton>
-        <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
-      </div>
     </div>
+
     <ElDialog
       width="694px"
       custom-class="create-dialog"

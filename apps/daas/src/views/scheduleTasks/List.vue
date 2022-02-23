@@ -1,13 +1,6 @@
 <template>
-  <section class="dataRule-list-wrap">
-    <TablePage
-      ref="table"
-      row-key="id"
-      class="dataRule-list"
-      :title="$t('app.menu.' + $route.name)"
-      :remoteMethod="getData"
-      @sort-change="handleSortTable"
-    >
+  <section class="dataRule-list-wrap section-wrap">
+    <TablePage ref="table" row-key="id" class="dataRule-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <div slot="search">
         <ul class="search-bar flex">
           <li>
@@ -203,8 +196,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .dataRule-list-wrap {
-  height: 100%;
-
   .tapNav {
     height: 28px;
     background-color: rgba(239, 241, 244, 100);
@@ -268,27 +259,6 @@ export default {
       }
       &.btn-create {
         margin-left: 5px;
-      }
-    }
-  }
-}
-</style>
-<style lang="scss">
-.dataRule-list-wrap {
-  .table-page-container {
-    .table-page-body {
-      box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);
-      .table-page-topbar {
-        background-color: #fff;
-      }
-      .el-table {
-        box-sizing: border-box;
-      }
-      .table-page-pagination {
-        margin-top: 0;
-        padding: 5px 20px;
-        background-color: #fff;
-        box-sizing: border-box;
       }
     }
   }

@@ -9,6 +9,9 @@
         <ElTabPane label="运行日志" name="log" lazy>
           <Log :id="task.id"></Log>
         </ElTabPane>
+        <ElTabPane label="挖掘任务" name="sharedMing" lazy>
+          <ShareMining :id="task.id"></ShareMining>
+        </ElTabPane>
       </ElTabs>
     </div>
   </div>
@@ -17,11 +20,12 @@
 <script>
 import Info from './Info'
 import Schedule from './Schedule'
+import ShareMining from './ShareMining'
 import Log from '@/components/logs/Index'
 
 export default {
   name: 'Statistics',
-  components: { Info, Schedule, Log },
+  components: { Info, Schedule, Log, ShareMining },
   data() {
     return {
       task: {},

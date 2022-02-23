@@ -65,6 +65,13 @@
               <div class="url-tip" slot="name" v-if="!$route.params.id">
                 中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
               </div>
+              <div class="url-tip" slot="shareCdc-tip" v-if="mongodbList.length === 0">
+                <el-link type="primary" target="_blank" href="#/connections/create?databaseType=mongodb"
+                  >请先创建mongodb数据源</el-link
+                >
+                /
+                <span class="refresh" @click="getMongodb"> 刷新数据 <VIcon class="font-color-sub">refresh</VIcon></span>
+              </div>
               <!-- <div class="url-tip" slot="kududatabase">
                 {{ $t('dataForm.form.kuduhost') }}
               </div> -->
@@ -646,6 +653,10 @@ export default {
       createStrategyDisabled: false,
       timezones: [],
       dataTypes: [],
+      logSaveList: [1, 2, 3, 4, 5, 6, 7],
+      mongodbList: [],
+      showSystemConfig: false,
+      tableList: [], //共享挖掘
       // whiteList: [
       //   'mysql',
       //   'oracle',
@@ -933,6 +944,18 @@ export default {
       if (filed === 'plain_password' && this.model.database_type === 'vika') {
         this.getSpaceVika()
       }
+      //共享挖掘
+      if (filed === 'shareCdcEnable' && ['oracle', 'mongodb'.includes(this.model.database_type)]) {
+        debugger
+        //请求是否有全局共享挖掘配置
+        this.handleSetting()
+        //日志时长
+        this.changeConfig([], 'logSaveList')
+      }
+      if (filed === 'persistenceMongodb_uri_db' && ['oracle', 'mongodb'.includes(this.model.database_type)]) {
+        //请求是否有全局共享挖掘配置
+        this.handleTables()
+      }
     },
     async initData(data) {
       let editData = null
@@ -1039,6 +1062,69 @@ export default {
           }
         })
     },
+    // 共享挖掘设置
+    handleSetting() {
+      this.$api('logcollector')
+        .getSystemConfig()
+        .then(res => {
+          if (res) {
+            let systemConfig = res?.data
+            if (!systemConfig?.persistenceMongodb_uri_db) {
+              this.showSystemConfig = true
+              this.getMongodb()
+            } else {
+              //隐藏全局配置
+              this.changeConfig([], 'hiddenSystemConfig')
+            }
+          }
+        })
+    },
+    //获取所有mongo连接
+    getMongodb() {
+      let filter = {
+        where: {
+          database_type: 'mongodb'
+        }
+      }
+      this.$api('connections')
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          if (res) {
+            this.mongodbList = res?.data?.items
+            this.changeConfig([], 'mongodbList')
+          }
+        })
+    },
+    //根据已选connectionId->tables
+    handleTables() {
+      this.$api('connections')
+        .customQuery(this.model.persistenceMongodb_uri_db, { schema: true })
+        .then(res => {
+          if (res) {
+            this.tableList = res?.data?.schema?.tables || []
+            this.changeConfig([], 'tableList')
+          }
+        })
+    },
+    //保存全局挖掘设置
+    saveSetting() {
+      let digSettingForm = {
+        persistenceMongodb_uri_db: this.model.persistenceMongodb_uri_db,
+        persistenceMongodb_collection: this.model.persistenceMongodb_collection,
+        share_cdc_ttl_day: this.model.share_cdc_ttl_day
+      }
+      this.$api('logcollector')
+        .patchSystemConfig(digSettingForm)
+        .then(res => {
+          if (res) {
+            this.settingDialogVisible = false
+            this.$message.success('保存全局设置成功')
+          }
+        })
+    },
+
     //rest api addUrl
     addUrlInfo(type) {
       let urlInfo = {
@@ -1283,6 +1369,66 @@ export default {
           }
           break
         }
+        //共享挖掘
+        case 'mongodbList': {
+          //映射可用区
+          let persistenceMongodb_uri_db = items.find(it => it.field === 'persistenceMongodb_uri_db')
+          if (persistenceMongodb_uri_db) {
+            persistenceMongodb_uri_db.options = this.mongodbList.map(item => {
+              return {
+                id: item.id,
+                name: item.name,
+                label: item.name,
+                value: item.id
+              }
+            })
+          }
+          break
+        }
+        case 'tableList': {
+          //映射可用区
+          let persistenceMongodb_collection = items.find(it => it.field === 'persistenceMongodb_collection')
+          if (persistenceMongodb_collection) {
+            persistenceMongodb_collection.options = this.tableList.map(item => {
+              return {
+                id: item.tableId,
+                name: item.table_name,
+                label: item.table_name,
+                value: item.table_name
+              }
+            })
+          }
+          break
+        }
+        case 'logSaveList': {
+          let share_cdc_ttl_day = items.find(it => it.field === 'share_cdc_ttl_day')
+          if (share_cdc_ttl_day) {
+            share_cdc_ttl_day.options = this.logSaveList.map(item => {
+              return {
+                id: item,
+                name: item + this.$t('share_form_edit_day'),
+                label: item + this.$t('share_form_edit_day'),
+                value: item
+              }
+            })
+          }
+          break
+        }
+        case 'hiddenSystemConfig': {
+          let share_cdc_ttl_day = items.find(it => it.field === 'share_cdc_ttl_day')
+          if (share_cdc_ttl_day) {
+            share_cdc_ttl_day.show = false
+          }
+          let persistenceMongodb_collection = items.find(it => it.field === 'persistenceMongodb_collection')
+          if (persistenceMongodb_collection) {
+            persistenceMongodb_collection.show = false
+          }
+          let persistenceMongodb_uri_db = items.find(it => it.field === 'persistenceMongodb_uri_db')
+          if (persistenceMongodb_uri_db) {
+            persistenceMongodb_uri_db.show = false
+          }
+          break
+        }
       }
     },
     handleTestVisible() {
@@ -1488,6 +1634,14 @@ export default {
       // }
       this.$refs.form.validate(valid => {
         if (valid && flag) {
+          //提交全局挖掘设置
+          if (this.showSystemConfig) {
+            this.saveSetting()
+          } else {
+            delete this.model.persistenceMongodb_uri_db
+            delete this.model.persistenceMongodb_collection
+            delete this.model.share_cdc_ttl_day
+          }
           let params = Object.assign(
             {},
             {

@@ -408,7 +408,7 @@ let menuSetting = [
       { name: 'apiServers', code: 'API_server_menu' }
     ]
   },
-  { name: 'dataCollect', icon: 'shujucaiji', code: 'data_collect(old)_menu' },
+  // { name: 'dataCollect', icon: 'shujucaiji', code: 'data_collect(old)_menu' },
   {
     name: 'system',
     icon: 'caozuorizhi',

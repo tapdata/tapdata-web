@@ -1,10 +1,9 @@
 <template>
-  <section class="api-analysis-wrap">
+  <section class="api-analysis-wrap section-wrap">
     <TablePage
       ref="table"
       row-key="id"
       class="api-analysis-list"
-      :title="$t('app.menu.' + $route.name)"
       :remoteMethod="getData"
       @sort-change="handleSortTable"
     >

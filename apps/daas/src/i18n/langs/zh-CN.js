@@ -874,6 +874,7 @@ export default {
   share_list_time: '挖掘延迟',
   // share_list_connection_search: '连接名称搜索',
   share_list_edit_title: '挖掘编辑',
+  share_detail_title: '挖掘表详情',
   share_form_setting_connection_name: '存储MongoDB连接名称',
   share_form_setting_table_name: '存储MongoDB表名',
   share_form_setting_log_time: '日志保存时长',
@@ -900,6 +901,10 @@ export default {
   share_detail_start_time: '开始时间',
   share_detail_end_time: '结束时间',
   share_detail_to: '至',
+
+  share_task_table_name: '挖掘任务名称',
+  share_task_table_time: '挖掘所处时间',
+  share_task_table_status: '挖掘所处状态',
 
   // 设置
   setting_email_template: '邮件模板',

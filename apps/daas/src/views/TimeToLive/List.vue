@@ -1,10 +1,9 @@
 <template>
-  <section class="timeToLive-list-wrap">
+  <section class="timeToLive-list-wrap classify-wrap">
     <TablePage
       ref="table"
       row-key="id+indexName"
       class="timeToLive-list"
-      :title="$t('app.menu.' + $route.name)"
       :classify="{
         authority: 'time_to_live',
         types: ['database']
@@ -788,7 +787,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .timeToLive-list-wrap {
-  height: 100%;
   .timeToLive-list {
     .search-bar {
       display: flex;

@@ -1,5 +1,5 @@
 <template>
-  <section class="connection-list-wrap">
+  <section class="connection-list-wrap classify-wrap">
     <!-- :title="$t('connection.databaseTittle')"
       :desc="description" -->
     <TablePage
@@ -104,7 +104,7 @@
         <div slot="header">
           {{ $t('connection_list_column_schema_status') }}
           <ElTooltip placement="top" :content="$t('connection_list_column_schema_status_tips')">
-            <VIcon>question-circle</VIcon>
+            <VIcon class="color-primary" size="14">info</VIcon>
           </ElTooltip>
         </div>
         <template slot-scope="scope">
@@ -450,7 +450,8 @@ export default {
       this.$router.push({
         name: 'connectionsEdit',
         params: {
-          id: id
+          id: id,
+          databaseType: type
         },
         query: {
           databaseType: type

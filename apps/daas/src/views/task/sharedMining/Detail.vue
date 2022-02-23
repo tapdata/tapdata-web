@@ -7,7 +7,7 @@
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
           <div class="head-label">{{ $t('share_detail_name') }}:</div>
-          <div class="font-color-sub">444444</div>
+          <div class="font-color-sub">{{ detailData.name }}</div>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
           <div class="head-label">{{ $t('share_detail_log_mining_time') }}:</div>
@@ -15,7 +15,7 @@
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
           <div class="head-label">{{ $t('share_detail_log_time') }}:</div>
-          <div class="font-color-sub">ggggg</div>
+          <div class="font-color-sub">{{ detailData.storageTime }}</div>
         </div>
       </div>
       <div class="share-detail-head-center py-3" style="min-height: 250px">
@@ -43,35 +43,56 @@
     </div>
     <div class="share-detail-box mt-5 p-5">
       <TableList
-        :remoteMethod="remoteMethod"
+        :data="detailData.taskList"
         :columns="columns"
         :remote-data="id"
         height="100%"
         :has-pagination="false"
         ref="tableList"
       >
+        <template slot="sourceTimestamp" slot-scope="scope">
+          <span>{{ scope.row.sourceTimestamp }}</span>
+        </template>
+        <template slot="syncTimestamp" slot-scope="scope">
+          <span>{{ scope.row.syncTimestamp }}</span>
+        </template>
+        <template slot="status" slot-scope="scope">
+          <StatusTag type="text" target="shareCdc" :status="scope.row.status" only-img></StatusTag>
+        </template>
         <template slot="operation" slot-scope="scope">
           <div class="operate-columns">
-            <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{ $t('button_check') }}</ElButton>
-            <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
-              $t('share_detail_button_table_info')
-            }}</ElButton>
+            <ElButton size="mini" type="text" @click="goDetail(scope.row.id)">{{ $t('button_check') }}</ElButton>
+            <ElButton size="mini" type="text" @click="getTables()">{{ $t('share_detail_button_table_info') }}</ElButton>
           </div>
         </template>
       </TableList>
     </div>
+    <el-dialog
+      width="400px"
+      custom-class="edit-dialog"
+      :title="$t('share_detail_title')"
+      :close-on-click-modal="false"
+      :visible.sync="tableDialogVisible"
+    >
+      <span v-for="item in detailData.tableName">{{ item }}</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="tableDialogVisible = false" size="mini">{{ $t('button_close') }}</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import Chart from 'web-core/components/chart'
 import TableList from '@/components/TableList'
+import StatusTag from '@/components/StatusTag'
 export default {
   name: 'Info',
-  components: { Chart, TableList },
+  components: { Chart, TableList, StatusTag },
   data() {
     return {
       id: '',
+      detailData: '',
       statisticsTime: [],
       lineData: {
         x: [],
@@ -142,26 +163,27 @@ export default {
       columns: [
         {
           label: this.$t('share_detail_call_task'),
-          slotName: 'name'
+          prop: 'name'
         },
         {
           label: this.$t('share_detail_source_time'),
-          prop: 'point'
+          slotName: 'sourceTimestamp'
         },
         {
           label: this.$t('share_detail_sycn_time_point'),
-          prop: 'pointTime'
+          slotName: 'syncTimestamp'
         },
         {
           label: this.$t('share_detail_mining_status'),
-          prop: 'status'
+          slotName: 'status'
         },
         {
           label: this.$t('column_operation'),
           prop: 'operation',
           slotName: 'operation'
         }
-      ]
+      ],
+      tableDialogVisible: false
     }
   },
   computed: {
@@ -173,12 +195,25 @@ export default {
       )
     }
   },
-  created() {},
+  created() {
+    this.id = this.$route.params.id
+    this.getData(this.id)
+  },
 
   destroyed() {
     this.$ws.off('watch', this.taskChange)
   },
   methods: {
+    getData(id) {
+      this.$api('logcollector')
+        .getDetail(id)
+        .then(res => {
+          this.detailData = res?.data
+        })
+    },
+    getTables() {
+      this.tableDialogVisible = true
+    },
     remoteMethod({ page }) {
       const { ids } = this
       let { current, size } = page

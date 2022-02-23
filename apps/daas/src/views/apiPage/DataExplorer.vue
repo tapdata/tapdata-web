@@ -1,10 +1,9 @@
 <template>
-  <section class="apiserver-wrap">
+  <section class="apiserver-wrap classify-wrap">
     <TablePage
       ref="table"
       row-key="id"
       class="apiserver-list"
-      :title="$t('app.menu.' + $route.name)"
       :remoteMethod="getData"
       :classify="{
         authority: 'API_category_management',
@@ -1294,15 +1293,13 @@ export default {
 
     // 获取时区
     getHandleTimeZone() {
-      let paramas = {
-        filter: {
-          where: {
-            id: '84'
-          }
+      let filter = {
+        where: {
+          id: '84'
         }
       }
       this.$api('Setting')
-        .get(paramas)
+        .get({ filter: JSON.stringify(filter) })
         .then(res => {
           if (res.data) {
             this.save_timezone = res.data[0].value
@@ -1357,7 +1354,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .apiserver-wrap {
-  height: 100%;
   .apiserver-list {
     .search-bar {
       display: flex;

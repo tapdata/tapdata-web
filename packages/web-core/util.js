@@ -17,7 +17,7 @@ export const getConnectionTypeImg = function (type) {
 }
 export const getConnectionTypeDialogImg = function (type) {
   try {
-    return require(`./assets/icons/connections/${type}.svg`)
+    return require(`./assets/icons/node/${type}.svg`)
   } catch (e) {
     return null
   }

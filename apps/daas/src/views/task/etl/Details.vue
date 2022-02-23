@@ -47,7 +47,7 @@
               <VIcon size="12">pause-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_stop') }}</span>
             </VButton>
-            <VButton @click="handleEditor(task.id)">
+            <VButton :disabled="editDisabled" @click="handleEditor(task.id)">
               <VIcon size="12">edit-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_edit') }}</span>
             </VButton>
@@ -122,6 +122,11 @@ export default {
           key: 'type',
           icon: 'menu',
           label: '同步类型：'
+        },
+        {
+          key: 'type',
+          icon: 'menu',
+          label: '增量滞后'
         }
       ],
       ouputItems: [
@@ -186,6 +191,13 @@ export default {
       return (
         this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
         statusResult.every(t => t.status === 'stop' && t.count)
+      )
+    },
+    editDisabled() {
+      const { statusResult, task } = this
+      return (
+        this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
+        statusResult.every(t => t.status === 'running' && t.count)
       )
     }
   },

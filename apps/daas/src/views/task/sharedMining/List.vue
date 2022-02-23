@@ -1,5 +1,5 @@
 <template>
-  <section class="share-list-wrap">
+  <section class="share-list-wrap section-wrap">
     <TablePage
       ref="table"
       row-key="id+indexName"
@@ -31,7 +31,13 @@
         </ul>
       </div>
       <div slot="operation">
-        <el-button class="btn btn-create" type="primary" size="mini" @click="handleSetting">
+        <el-button
+          class="btn btn-create"
+          type="primary"
+          :disabled="showEditSettingBtn"
+          size="mini"
+          @click="handleSetting"
+        >
           <span>{{ $t('share_list_setting') }}</span>
         </el-button>
       </div>
@@ -42,8 +48,8 @@
       </el-table-column>
       <el-table-column :label="$t('share_list_connection')" prop="connections">
         <template slot-scope="scope">
-          <div v-for="item in scope.row.connections">
-            <span v-for="op in item">{{ op }}</span>
+          <div v-for="item in scope.row.connections" :key="item.id">
+            <span v-for="op in item" :key="op">{{ op }}</span>
           </div>
         </template>
       </el-table-column>
@@ -53,48 +59,66 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('share_list_creat_time')" prop="createTime"> </el-table-column>
+      <el-table-column :label="$t('share_list_time')"> </el-table-column>
       <el-table-column :label="$t('share_list_status')" prop="status">
         <template slot-scope="scope">
           <StatusTag type="text" target="shareCdc" :status="scope.row.status" only-img></StatusTag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('share_list_time')"> </el-table-column>
       <el-table-column :label="$t('column_operation')" width="200">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" @click="handleRun([scope.row.id])">{{ $t('task_list_run') }}</el-button>
+          <el-button size="mini" type="text" @click="run([scope.row.id])">{{ $t('task_list_run') }}</el-button>
           <el-divider direction="vertical"></el-divider>
-          <el-button size="mini" type="text" @click="handleStop([scope.row.id])">{{ $t('task_list_stop') }}</el-button>
+          <el-button size="mini" type="text" @click="stop([scope.row.id])">{{ $t('task_list_stop') }}</el-button>
           <el-divider direction="vertical"></el-divider>
-          <el-button size="mini" type="text" style="color: #f56c6c" @click="handleEdit(scope.row)">{{
+          <el-button size="mini" type="text" style="color: #f56c6c" @click="edit(scope.row)">{{
             $t('button_edit')
           }}</el-button>
           <el-divider direction="vertical"></el-divider>
-          <el-button size="mini" type="text" @click="handleDetail(scope.row)">{{ $t('button_details') }}</el-button>
+          <el-button size="mini" type="text" @click="detail(scope.row)">{{ $t('button_details') }}</el-button>
         </template>
       </el-table-column>
     </TablePage>
 
     <el-dialog
-      width="400px"
+      width="500px"
       custom-class="setting-dialog"
       :title="$t('share_list_setting')"
       :close-on-click-modal="false"
       :visible.sync="settingDialogVisible"
     >
-      <el-form :model="digSettingForm" label-position="left" label-width="150px">
-        <el-form-item :label="$t('share_form_setting_connection_name')" size="mini">
+      <el-form :model="digSettingForm" ref="digSettingForm" :rules="rules" label-position="left" label-width="180px">
+        <el-form-item :label="$t('share_form_setting_connection_name')" size="mini" prop="persistenceMongodb_uri_db">
           <el-select v-model="digSettingForm.persistenceMongodb_uri_db" placeholder="请选择" @change="handleTables">
             <el-option v-for="item in mongodbList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
           </el-select>
+
+          <div v-if="mongodbList.length === 0">
+            <el-link type="primary" target="_blank" href="#/connections/create?databaseType=mongodb"
+              >请先创建mongodb数据源</el-link
+            >
+            /
+            <span class="refresh" @click="getMongodb"> 刷新数据 <VIcon class="font-color-sub">refresh</VIcon></span>
+          </div>
         </el-form-item>
-        <el-form-item :label="$t('share_form_setting_table_name')" size="mini">
-          <el-select v-model="digSettingForm.persistenceMongodb_collection" placeholder="请选择">
-            <el-option v-for="table in tableList" :key="table.tableId" :label="table.table_name" :value="table.tableId">
+        <el-form-item :label="$t('share_form_setting_table_name')" size="mini" prop="persistenceMongodb_collection">
+          <el-select
+            v-model="digSettingForm.persistenceMongodb_collection"
+            placeholder="请选择"
+            allow-create
+            filterable
+          >
+            <el-option
+              v-for="table in tableList"
+              :key="table.tableId"
+              :label="table.table_name"
+              :value="table.table_name"
+            >
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('share_form_setting_log_time')" size="mini">
-          <el-select v-model="digSettingForm.share_cdc_ttl_day" placeholder="请选择">
+          <el-select v-model="digSettingForm.share_cdc_ttl_day" placeholder="请选择" allow-create filterable>
             <el-option v-for="op in logSaveList" :key="op" :label="op + $t('share_form_edit_day')" :value="op">
             </el-option>
           </el-select>
@@ -134,7 +158,7 @@
         <!--          </el-row>-->
         <!--        </el-form-item>-->
         <el-form-item :label="$t('share_form_setting_log_time')" size="mini">
-          <el-select v-model="editForm.shareCdcTtlDay" placeholder="请选择">
+          <el-select v-model="editForm.storageTime" placeholder="请选择">
             <el-option v-for="op in logSaveList" :key="op" :label="op + $t('share_form_edit_day')" :value="op">
             </el-option>
           </el-select>
@@ -181,7 +205,7 @@ export default {
         name: '',
         syncTimePoint: 'localTZ',
         syncTineZone: '',
-        shareCdcTtlDay: 3
+        storageTime: 3
       },
       options: [
         {
@@ -197,17 +221,25 @@ export default {
           value: 'current'
         }
       ],
-      logSaveList: [1, 2, 3, 4, 5, 6, 7],
+      logSaveList: ['1', '2', '3', '4', '5', '6', '7'],
       statusBtMap: {
         // scheduled, draft, running, stopping, error, pause, force stopping
         start: { draft: true, error: true, pause: true },
         stop: { running: true },
         edit: { edit: true, stop: true, error: true }
+      },
+      showEditSettingBtn: false, //不能修改
+      //rules
+      rules: {
+        persistenceMongodb_uri_db: [{ required: true, message: '请选择MongoDB连接名称', trigger: 'blur' }],
+        persistenceMongodb_collection: [{ required: true, message: '请选择MongoDB表名', trigger: 'blur' }]
       }
     }
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
+    //是否可以全局设置
+    this.check()
   },
   computed: {
     table() {
@@ -259,17 +291,28 @@ export default {
     },
 
     // 挖掘设置
+    check() {
+      this.$api('logcollector')
+        .check()
+        .then(res => {
+          if (res) {
+            this.showEditSettingBtn = res.data
+          }
+        })
+    },
     handleSetting() {
       this.settingDialogVisible = true
       this.$api('logcollector')
         .getSystemConfig()
         .then(res => {
           if (res) {
-            console.log('#####', res)
-            // this.digSettingFormConfig.items[0].options = res.data
+            this.digSettingForm = res.data
+            this.getMongodb()
+            if (this.digSettingForm?.persistenceMongodb_uri_db) {
+              this.handleTables(this.digSettingForm?.persistenceMongodb_uri_db) //编辑页面请求tables
+            }
           }
         })
-      this.getMongodb()
     },
     //获取所有mongo连接
     getMongodb() {
@@ -300,16 +343,20 @@ export default {
     },
     //保存全局挖掘设置
     saveSetting() {
-      this.$api('logcollector')
-        .patchSystemConfig(this.digSettingForm)
-        .then(res => {
-          if (res) {
-            this.settingDialogVisible = false
-            this.$message.success('保存全局设置成功')
-          }
-        })
+      this.$refs.digSettingForm.validate(valid => {
+        if (valid) {
+          this.$api('logcollector')
+            .patchSystemConfig(this.digSettingForm)
+            .then(res => {
+              if (res) {
+                this.settingDialogVisible = false
+                this.$message.success('保存全局设置成功')
+              }
+            })
+        }
+      })
     },
-    handleRun(ids) {
+    run(ids) {
       let filter = {
         where: {
           id: ids[0]
@@ -319,19 +366,21 @@ export default {
         this.$api('Task')
           .get({ filter: JSON.stringify(filter) })
           .then(res => {
-            this.$api('Task')
-              .batchStart(ids)
-              .then(res => {
-                this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
-                this.table.fetch()
-              })
-              .catch(err => {
-                this.$message.error(err.data?.message)
-              })
+            if (res) {
+              this.$api('Task')
+                .batchStart(ids)
+                .then(res => {
+                  this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+                  this.table.fetch()
+                })
+                .catch(err => {
+                  this.$message.error(err.data?.message)
+                })
+            }
           })
       }
     },
-    handleStop(ids) {
+    stop(ids) {
       this.$confirm(this.$t('message.stopInitial_syncMessage'), this.$t('dataFlow.importantReminder'), {
         type: 'warning'
       }).then(resFlag => {
@@ -350,7 +399,7 @@ export default {
       })
     },
     // 编辑
-    handleEdit(item) {
+    edit(item) {
       this.editDialogVisible = true
       this.editForm = item
     },
@@ -380,7 +429,7 @@ export default {
         })
     },
 
-    handleDetail(item) {
+    detail(item) {
       this.$router.push({
         name: 'SharedMiningDetails',
         params: {
@@ -400,6 +449,12 @@ export default {
 <style lang="scss" scoped>
 .share-list-wrap {
   height: 100%;
+  .refresh {
+    color: map-get($color, primary);
+    font-weight: normal;
+    font-size: 12px;
+    cursor: pointer;
+  }
   .share-list {
     .search-bar {
       display: flex;

@@ -296,3 +296,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.connection-container {
+  height: 100%;
+}
+</style>
