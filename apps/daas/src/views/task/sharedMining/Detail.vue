@@ -61,14 +61,24 @@
         </template>
         <template slot="operation" slot-scope="scope">
           <div class="operate-columns">
-            <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{ $t('button_check') }}</ElButton>
-            <ElButton size="mini" type="text" @click="handleDetail(scope.row)">{{
-              $t('share_detail_button_table_info')
-            }}</ElButton>
+            <ElButton size="mini" type="text" @click="goDetail(scope.row.id)">{{ $t('button_check') }}</ElButton>
+            <ElButton size="mini" type="text" @click="getTables()">{{ $t('share_detail_button_table_info') }}</ElButton>
           </div>
         </template>
       </TableList>
     </div>
+    <el-dialog
+      width="400px"
+      custom-class="edit-dialog"
+      :title="$t('share_detail_title')"
+      :close-on-click-modal="false"
+      :visible.sync="tableDialogVisible"
+    >
+      <span v-for="item in detailData.tableName">{{ item }}</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="tableDialogVisible = false" size="mini">{{ $t('button_close') }}</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -172,7 +182,8 @@ export default {
           prop: 'operation',
           slotName: 'operation'
         }
-      ]
+      ],
+      tableDialogVisible: false
     }
   },
   computed: {
@@ -197,9 +208,11 @@ export default {
       this.$api('logcollector')
         .getDetail(id)
         .then(res => {
-          console.log(res?.data)
           this.detailData = res?.data
         })
+    },
+    getTables() {
+      this.tableDialogVisible = true
     },
     remoteMethod({ page }) {
       const { ids } = this

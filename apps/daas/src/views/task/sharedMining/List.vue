@@ -31,7 +31,13 @@
         </ul>
       </div>
       <div slot="operation">
-        <el-button class="btn btn-create" type="primary" size="mini" @click="handleSetting">
+        <el-button
+          class="btn btn-create"
+          type="primary"
+          :disabled="!showEditSettingBtn"
+          size="mini"
+          @click="handleSetting"
+        >
           <span>{{ $t('share_list_setting') }}</span>
         </el-button>
       </div>
@@ -53,12 +59,12 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('share_list_creat_time')" prop="createTime"> </el-table-column>
+      <el-table-column :label="$t('share_list_time')"> </el-table-column>
       <el-table-column :label="$t('share_list_status')" prop="status">
         <template slot-scope="scope">
           <StatusTag type="text" target="shareCdc" :status="scope.row.status" only-img></StatusTag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('share_list_time')"> </el-table-column>
       <el-table-column :label="$t('column_operation')" width="200">
         <template slot-scope="scope">
           <el-button size="mini" type="text" @click="handleRun([scope.row.id])">{{ $t('task_list_run') }}</el-button>
@@ -175,8 +181,8 @@ export default {
       settingDialogVisible: false,
       editDialogVisible: false,
       digSettingForm: {
-        persistenceMongodb_uri_db: '',
-        persistenceMongodb_collection: '',
+        persistenceMongodb_uri_db: '61a76bf6eb2518041961841e',
+        persistenceMongodb_collection: 'TCL3',
         share_cdc_ttl_day: 3
       },
       mongodbList: [],
@@ -208,11 +214,14 @@ export default {
         start: { draft: true, error: true, pause: true },
         stop: { running: true },
         edit: { edit: true, stop: true, error: true }
-      }
+      },
+      showEditSettingBtn: false
     }
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
+    //是否可以全局设置
+    this.check()
   },
   computed: {
     table() {
@@ -264,17 +273,25 @@ export default {
     },
 
     // 挖掘设置
+    check() {
+      this.$api('logcollector')
+        .check()
+        .then(res => {
+          if (res) {
+            this.showEditSettingBtn = res.data
+          }
+        })
+    },
     handleSetting() {
       this.settingDialogVisible = true
       this.$api('logcollector')
         .getSystemConfig()
         .then(res => {
           if (res) {
-            console.log('#####', res)
-            // this.digSettingFormConfig.items[0].options = res.data
+            this.digSettingForm = res.data
+            this.getMongodb()
           }
         })
-      this.getMongodb()
     },
     //获取所有mongo连接
     getMongodb() {

@@ -38,4 +38,7 @@ export default class LogcollectorApi extends PublicAPI {
   getDetail(id) {
     return axios.get(`${this.url}/detail/${id}`)
   }
+  check() {
+    return axios.get(`${this.url}/check/system/config`)
+  }
 }
