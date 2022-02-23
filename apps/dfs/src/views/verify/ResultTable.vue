@@ -6,7 +6,9 @@
     :data="list"
     :element-loading-text="$t('dataFlow.dataLoading')"
     @row-click="rowClickHandler"
+    @selection-change="handleSelectionChange"
   >
+    <ElTableColumn type="selection" width="55"> </ElTableColumn>
     <ElTableColumn :label="$t('dataVerification.sourceTable')">
       <template slot-scope="scope">
         <span>{{ scope.row.source ? scope.row.source.table : '' }}</span>
@@ -70,12 +72,19 @@
         </div>
       </template>
     </ElTableColumn>
+    <ElTableColumn prop="status" :label="$t('verify_operation')">
+      <template slot-scope="scope">
+        <ElButton type="text" :disabled="verifyAgainDisabled" @click.prevent.stop="verifyAgain(scope.row)">{{
+          $t('verify_operation_verify_again')
+        }}</ElButton>
+      </template>
+    </ElTableColumn>
   </el-table>
 </template>
 <style lang="scss" scoped>
 .verify-icon {
   margin: 0 4px;
-  font-size: 14;
+  font-size: 14px;
 }
 </style>
 <script>
@@ -91,7 +100,8 @@ export default {
   },
   data() {
     return {
-      current: 0
+      current: 0,
+      multipleSelection: []
     }
   },
   computed: {
@@ -120,6 +130,9 @@ export default {
         return item
       })
       return list
+    },
+    verifyAgainDisabled() {
+      return !this.list.every(t => ['waiting', 'done'].includes(t.status))
     }
   },
   methods: {
@@ -130,6 +143,12 @@ export default {
     rowClickHandler(row) {
       this.current = row.taskId
       this.$emit('row-click', row)
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+    verifyAgain(row) {
+      this.$emit('verify-again', [row.taskId])
     }
   }
 }

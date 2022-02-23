@@ -4,6 +4,7 @@
       <div>
         <span style="font-size: 14px">{{ inspect.name }}</span>
         <span class="font-color-linfo ml-3">{{ typeMap[type] }}</span>
+        <ElButton type="text" @click.prevent.stop="verifyAgain([])">{{ $t('verify_operation_verify_again') }}</ElButton>
       </div>
       <div v-if="inspect.inspectMethod !== 'row_count'">
         <div class="flex align-items-center">
@@ -234,7 +235,7 @@ export default {
     },
     rowClick(row) {
       this.taskId = row.taskId
-      this.$refs.resultView.fetch(1)
+      this.$refs.resultView?.fetch(1)
     },
     handleOtherVerify(data) {
       if (data.length === 0) {
@@ -290,6 +291,25 @@ export default {
           id: this.resultInfo.firstCheckId
         }
       })
+    },
+    verifyAgain() {
+      this.$axios
+        .post(
+          'tm/api/Inspects/update?where=' +
+            encodeURIComponent(
+              JSON.stringify({
+                id: this.inspect.id
+              })
+            ),
+          {
+            status: 'scheduling',
+            inspectResultId: this.resultInfo.id,
+            taskIds: []
+          }
+        )
+        .then(() => {
+          this.getData()
+        })
     }
   }
 }

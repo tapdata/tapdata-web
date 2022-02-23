@@ -944,6 +944,8 @@ export default {
   verify_button_create: 'Create',
   verify_see_details: 'View details',
   verify_checking: 'Checking...',
+  verify_operation: 'operation',
+  verify_operation_verify_again: 'Re-verify',
 
   verify_title_create: 'New verification',
   verify_title_edit: 'Edit Verification',

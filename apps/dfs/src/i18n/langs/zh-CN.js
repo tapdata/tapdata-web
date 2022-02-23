@@ -908,6 +908,8 @@ export default {
   verify_button_create: '新建',
   verify_see_details: '查看详情',
   verify_checking: '校验中...',
+  verify_operation: '操作',
+  verify_operation_verify_again: '重新校验',
 
   verify_title_create: '新建校验',
   verify_title_edit: '编辑校验',

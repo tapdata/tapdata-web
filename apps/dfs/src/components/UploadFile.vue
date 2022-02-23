@@ -18,7 +18,6 @@ export default {
   },
   methods: {
     clickItem() {
-      console.log('$refs.file.click', this.$refs.file)
       this.$refs.file.click()
     }
   }

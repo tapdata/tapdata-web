@@ -537,6 +537,8 @@ export default {
   verify_result_count_inconsistent: '不一致',
   verify_result_count_consistent: '一致',
   verify_button_create: '新建',
+  verify_operation: '操作',
+  verify_operation_verify_again: '重新校驗',
 
   verify_title_create: '新建校驗',
   verify_title_edit: '編輯校驗',
