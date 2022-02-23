@@ -120,7 +120,8 @@ export default {
           show: true
         },
         xAxis: {
-          type: 'time'
+          type: 'time',
+          data: []
         },
         yAxis: [
           {
@@ -257,48 +258,49 @@ export default {
     getTables() {
       this.tableDialogVisible = true
     },
-    getChartData() {
-      let filter = {
-        where: {
-          id: id,
-          startTime: '',
-          endTime: ''
+    getChartData(id) {
+      let data = [
+        {
+          logTime: '2022-02-18T06:50:12.109Z',
+          inputQps: 1000,
+          outputQps: 900
+        },
+        {
+          logTime: '2022-02-18T06:50:12.109Z',
+          inputQps: 1000,
+          outputQps: 900
         }
-      }
-      this.$api('logcollector')
-        .getChart()
-        .then(res => {
-          //this.chartData = res?.data
-          let data = [
-            {
-              logTime: '2022-02-18T06:50:12.109Z',
-              inputQps: 1000,
-              outputQps: 900
-            },
-            {
-              logTime: '2022-02-18T06:50:12.109Z',
-              inputQps: 1000,
-              outputQps: 900
-            }
-          ]
-          let xArr = data.map(t => formatTime(t.logTime)) //x轴
-          let inArr = data.map(t => t.inputQps)
-          let outArr = data.map(t => t.outputQps)
+      ]
+      let xArr = data.map(t => formatTime(t.logTime)) //x轴
+      let inArr = data.map(t => t.inputQps)
+      let outArr = data.map(t => t.outputQps)
 
-          this.$refs.chart.chart?.setOption({
-            series: [
-              {
-                data: inArr
-              },
-              {
-                data: outArr
-              }
-            ],
-            xAxis: {
-              data: xArr
-            }
-          })
-        })
+      this.$refs.chart.chart?.setOption({
+        series: [
+          {
+            data: inArr
+          },
+          {
+            data: outArr
+          }
+        ],
+        xAxis: {
+          data: xArr
+        }
+      })
+      // let filter = {
+      //   where: {
+      //     id: id,
+      //     startTime: '',
+      //     endTime: ''
+      //   }
+      // }
+      // this.$api('logcollector')
+      //   .getChart()
+      //   .then(res => {
+      //     //this.chartData = res?.data
+      //
+      //   })
     },
     goDetail(id) {
       this.$router.push({
