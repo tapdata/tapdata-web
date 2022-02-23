@@ -176,13 +176,14 @@ export default {
         { label: '删除通知', value: 'message&&delete', desc: '将选中的通知全部删除' },
         { label: '修改通知设置', value: 'userNotification&&update', desc: '修改了系统通知设置' },
         // 用户中心
-        { label: '修改昵称', value: 'user&&update_nickname', desc: '修改了昵称' },
+        // { label: '修改昵称', value: 'user&&update_nickname', desc: '修改了昵称' },
+        { label: '修改用户信息', value: 'user&&update', desc: '修改了用户信息' },
         { label: '绑定手机号', value: 'user&&bind_phone', desc: '绑定了手机号' },
         { label: '修改手机号', value: 'user&&update_phone', desc: '修改了手机号' },
         { label: '绑定邮箱', value: 'user&&bind_email', desc: '绑定了邮箱' },
         { label: '修改邮箱', value: 'user&&update_email', desc: '修改了邮箱' },
         { label: '修改密码', value: 'user&&reset_password', desc: '修改了密码' },
-        { label: '修改头像', value: 'user&&update_avatar', desc: '修改了头像' },
+        // { label: '修改头像', value: 'user&&update_avatar', desc: '修改了头像' },
         { label: '修改企业信息', value: 'customer&&update', desc: '修改了企业信息' }
       ],
       columns: [
