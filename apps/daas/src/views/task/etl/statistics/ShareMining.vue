@@ -30,6 +30,7 @@ export default {
   data() {
     return {
       operations: ['preview'],
+      taskList: [],
       columns: [
         {
           label: this.$t('share_task_table_name'),
@@ -57,7 +58,7 @@ export default {
   methods: {
     getData(id) {
       this.$api('logcollector')
-        .byTaskId(id)
+        .bySubTaskId(id)
         .then(res => {
           this.taskList = res?.data || []
         })

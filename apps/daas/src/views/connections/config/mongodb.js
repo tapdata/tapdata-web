@@ -383,10 +383,24 @@ export default function (vm) {
         label: vm.$t('dataForm.form.ReloadSchema')
       },
       {
+        type: 'input',
+        field: 'table_filter',
+        domType: 'textarea',
+        label: vm.$t('dataForm.form.tableFilter'),
+        tip: vm.$t('connection_form_impact_type'),
+        maxlength: 500,
+        showWordLimit: true
+      },
+      {
         type: 'switch',
         field: 'shareCdcEnable',
         label: vm.$t('connection_form_shared_mining'),
         tip: vm.$t('connection_form_shared_mining_tip')
+      },
+      {
+        type: 'switch',
+        field: 'showShareConfig',
+        show: false
       },
       {
         type: 'select',
@@ -400,6 +414,10 @@ export default function (vm) {
             triggerOptions: [
               {
                 field: 'shareCdcEnable',
+                value: true
+              },
+              {
+                field: 'showShareConfig',
                 value: true
               }
             ],
@@ -418,6 +436,10 @@ export default function (vm) {
             triggerOptions: [
               {
                 field: 'shareCdcEnable',
+                value: true
+              },
+              {
+                field: 'showShareConfig',
                 value: true
               }
             ],
@@ -440,6 +462,10 @@ export default function (vm) {
               {
                 field: 'shareCdcEnable',
                 value: true
+              },
+              {
+                field: 'showShareConfig',
+                value: true
               }
             ],
             triggerConfig: {
@@ -461,6 +487,10 @@ export default function (vm) {
               {
                 field: 'shareCdcEnable',
                 value: true
+              },
+              {
+                field: 'showShareConfig',
+                value: true
               }
             ],
             triggerConfig: {
@@ -468,15 +498,6 @@ export default function (vm) {
             }
           }
         ]
-      },
-      {
-        type: 'input',
-        field: 'table_filter',
-        domType: 'textarea',
-        label: vm.$t('dataForm.form.tableFilter'),
-        tip: vm.$t('connection_form_impact_type'),
-        maxlength: 500,
-        showWordLimit: true
       }
     ]
   }

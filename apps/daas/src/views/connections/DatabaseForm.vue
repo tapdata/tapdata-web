@@ -65,7 +65,7 @@
               <div class="url-tip" slot="name" v-if="!$route.params.id">
                 中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
               </div>
-              <div class="url-tip" slot="shareCdc-tip" v-if="mongodbList.length === 0">
+              <div class="url-tip" slot="shareCdc-tip" v-if="mongodbList.length === 0 && model.showShareConfig">
                 <el-link type="primary" target="_blank" href="#/connections/create?databaseType=mongodb"
                   >请先创建mongodb数据源</el-link
                 >
@@ -946,7 +946,6 @@ export default {
       }
       //共享挖掘
       if (filed === 'shareCdcEnable' && ['oracle', 'mongodb'.includes(this.model.database_type)]) {
-        debugger
         //请求是否有全局共享挖掘配置
         this.handleSetting()
         //日志时长
@@ -1072,9 +1071,7 @@ export default {
             if (!systemConfig?.persistenceMongodb_uri_db) {
               this.showSystemConfig = true
               this.getMongodb()
-            } else {
-              //隐藏全局配置
-              this.changeConfig([], 'hiddenSystemConfig')
+              //打开全局设置
             }
           }
         })
@@ -1094,6 +1091,7 @@ export default {
           if (res) {
             this.mongodbList = res?.data?.items
             this.changeConfig([], 'mongodbList')
+            this.model.showShareConfig = true
           }
         })
     },
@@ -1374,6 +1372,7 @@ export default {
           //映射可用区
           let persistenceMongodb_uri_db = items.find(it => it.field === 'persistenceMongodb_uri_db')
           if (persistenceMongodb_uri_db) {
+            persistenceMongodb_uri_db.show = true
             persistenceMongodb_uri_db.options = this.mongodbList.map(item => {
               return {
                 id: item.id,
@@ -1389,6 +1388,7 @@ export default {
           //映射可用区
           let persistenceMongodb_collection = items.find(it => it.field === 'persistenceMongodb_collection')
           if (persistenceMongodb_collection) {
+            persistenceMongodb_collection.show = true
             persistenceMongodb_collection.options = this.tableList.map(item => {
               return {
                 id: item.tableId,
@@ -1411,21 +1411,6 @@ export default {
                 value: item
               }
             })
-          }
-          break
-        }
-        case 'hiddenSystemConfig': {
-          let share_cdc_ttl_day = items.find(it => it.field === 'share_cdc_ttl_day')
-          if (share_cdc_ttl_day) {
-            share_cdc_ttl_day.show = false
-          }
-          let persistenceMongodb_collection = items.find(it => it.field === 'persistenceMongodb_collection')
-          if (persistenceMongodb_collection) {
-            persistenceMongodb_collection.show = false
-          }
-          let persistenceMongodb_uri_db = items.find(it => it.field === 'persistenceMongodb_uri_db')
-          if (persistenceMongodb_uri_db) {
-            persistenceMongodb_uri_db.show = false
           }
           break
         }
