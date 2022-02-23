@@ -1,5 +1,5 @@
 <template>
-  <section class="share-list-wrap">
+  <section class="share-list-wrap section-wrap">
     <TablePage
       ref="table"
       row-key="id+indexName"
@@ -48,8 +48,8 @@
       </el-table-column>
       <el-table-column :label="$t('share_list_connection')" prop="connections">
         <template slot-scope="scope">
-          <div v-for="item in scope.row.connections">
-            <span v-for="op in item">{{ op }}</span>
+          <div v-for="item in scope.row.connections" :key="item.id">
+            <span v-for="op in item" :key="op">{{ op }}</span>
           </div>
         </template>
       </el-table-column>
@@ -366,15 +366,17 @@ export default {
         this.$api('Task')
           .get({ filter: JSON.stringify(filter) })
           .then(res => {
-            this.$api('Task')
-              .batchStart(ids)
-              .then(res => {
-                this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
-                this.table.fetch()
-              })
-              .catch(err => {
-                this.$message.error(err.data?.message)
-              })
+            if (res) {
+              this.$api('Task')
+                .batchStart(ids)
+                .then(res => {
+                  this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+                  this.table.fetch()
+                })
+                .catch(err => {
+                  this.$message.error(err.data?.message)
+                })
+            }
           })
       }
     },

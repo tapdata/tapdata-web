@@ -1,6 +1,6 @@
 <template>
-  <section class="data-verify-history-wrap g-panel-container" v-loading="loading">
-    <div class="panel-main">
+  <section class="data-verify-history-wrap section-wrap" v-loading="loading">
+    <div class="panel-main section-wrap-box">
       <el-table :data="page.data" height="100%">
         <el-table-column :label="$t('dataVerification.verifyTime')" prop="start">
           <template slot-scope="scope">
@@ -185,11 +185,11 @@ export default {
 
 <style lang="scss" scoped>
 .data-verify-history-wrap {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  overflow: hidden;
-  box-sizing: border-box;
+  // display: flex;
+  // height: 100%;
+  // flex-direction: column;
+  // overflow: hidden;
+  // box-sizing: border-box;
   .data-verify-history__icon {
     color: #fff;
   }

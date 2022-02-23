@@ -20,7 +20,7 @@
       <!-- v-if="searchFalg" -->
       <div class="search-box">
         <el-input class="search" size="mini" v-model="filterText">
-          <span slot="prefix" class="el-input__icon h-100 ml-1">
+          <span slot="suffix" class="el-input__icon h-100 ml-1">
             <VIcon size="14">search</VIcon>
           </span>
         </el-input>
@@ -482,7 +482,7 @@ export default {
   &.expand {
     height: 100%;
     //width: 100%;
-    padding: 12px 0;
+    padding: 20px 0;
     border-right: 1px solid #f2f2f2;
     width: 214px;
     .btn-expand {
@@ -501,7 +501,7 @@ export default {
     .btn-addIcon {
       position: absolute;
       top: 3px;
-      right: 10px;
+      right: 12px;
       font-size: 12px;
       .iconfont.icon-jia {
         display: flex;
@@ -541,6 +541,7 @@ export default {
   /*头部样式*/
   .classification-header {
     position: relative;
+    padding: 0 12px;
     // background: #fafafa;
     // border-bottom: 1px solid #dedee4;
     font-size: 12px;
@@ -581,13 +582,14 @@ export default {
       // }
     }
     .search {
-      margin: 0 20px;
+      margin-left: 7px;
     }
   }
   .tree-block {
     position: relative;
     width: 100%;
     flex: 1;
+    padding: 0 10px;
     overflow: auto;
   }
   .custom-tree-node {
@@ -633,6 +635,9 @@ export default {
   .el-input .el-input__inner {
     height: 24px;
     line-height: 24px;
+  }
+  .el-input__suffix {
+    top: 2px;
   }
 }
 .classification-tree {

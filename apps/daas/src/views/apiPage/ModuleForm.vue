@@ -1,6 +1,6 @@
 <template>
-  <section class="module-warp" v-loading="loadingFrom">
-    <div class="module-warp-box">
+  <section class="module-warp section-wrap" v-loading="loadingFrom">
+    <div class="module-warp-box section-wrap-box">
       <div class="module-form">
         <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
         <div class="module-path">
@@ -237,7 +237,7 @@ export default {
         })
         .then(res => {
           let options = []
-          options = res.data.map(db => {
+          options = res.data.items.map(db => {
             return {
               label: db.name,
               value: db.id
@@ -259,8 +259,8 @@ export default {
         })
         .then(res => {
           let options = []
-          if (res.data?.length && res.data[0].schema?.tables?.length)
-            options = res.data[0].schema.tables.map(table => {
+          if (res.data?.items?.length && res.data.schema?.tables?.length)
+            options = res.data.items[0].schema.tables.map(table => {
               return {
                 label: table.table_name,
                 value: table.table_name,
@@ -662,20 +662,17 @@ export default {
 
 <style scoped lang="scss">
 .module-warp {
-  width: 100%;
-  height: 100%;
-  padding: 30px 0;
   box-sizing: border-box;
   overflow: hidden;
   .module-warp-box {
-    width: 100%;
-    height: 100%;
+    // width: 100%;
+    // height: 100%;
     overflow: auto;
     .module-form {
       width: 1000px;
       margin: 0 auto;
       box-sizing: border-box;
-      overflow: hidden;
+      // overflow: hidden;
       ::deep {
         .el-form-item {
           margin-bottom: 20px;

@@ -1,10 +1,9 @@
 <template>
-  <section class="applications-wrap">
+  <section class="applications-wrap section-wrap">
     <TablePage
       ref="table"
       row-key="id"
       class="applications-list"
-      :title="$t('app.menu.' + $route.name)"
       :remoteMethod="getData"
       @sort-change="handleSortTable"
     >

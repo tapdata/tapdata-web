@@ -54,7 +54,8 @@ const childRoutes = [
   {
     path: '/connections/:id/edit',
     name: 'connectionsEdit',
-    component: () => import('@/views/connections/formbuild'),
+    // component: () => import('@/views/connections/formbuild'),
+    component: () => import('@/views/connections/DatabaseForm'),
     meta: {
       title: i18n.t('menu_title_connections_edit'),
       isCollapse: true,
@@ -116,6 +117,19 @@ const childRoutes = [
       title: i18n.t('tap.dataQuality'),
       showTitle: true,
       isCollapse: true
+    }
+  },
+  {
+    path: '/dataQuality',
+    name: 'dataQuality',
+    component: () => import('@/views/dataQuality/DataQuality'),
+    meta: {
+      code: 'data_quality_menu',
+      // url: '/old/index.html#/dataQuality',
+      title: i18n.t('tap.dataQuality'),
+      isCollapse: true,
+      showTitle: true,
+      types: ['collection']
     }
   },
   {

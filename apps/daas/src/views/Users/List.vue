@@ -1,10 +1,9 @@
 <template>
-  <section class="user-list-wrap">
+  <section class="user-list-wrap classify-wrap">
     <TablePage
       ref="table"
       row-key="id"
       class="user-list"
-      :title="$t('app.menu.' + $route.name)"
       :desc="$t('user.des')"
       :classify="{ authority: 'user_category_management', types: ['user'] }"
       :remoteMethod="getData"
@@ -1004,8 +1003,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .user-list-wrap {
-  height: 100%;
-
   .tapNav {
     height: 28px;
     background-color: rgba(239, 241, 244, 100);

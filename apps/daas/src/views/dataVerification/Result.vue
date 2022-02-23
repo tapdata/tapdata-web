@@ -1,35 +1,37 @@
 <template>
-  <section class="verify-result-wrap g-panel-container" v-loading="loading">
-    <div class="verify-result-header" v-if="inspect">
-      <div>
-        <span style="font-size: 14px">{{ inspect.name }}</span>
-        <span class="font-color-linfo ml-3">{{ typeMap[type] }}</span>
-      </div>
-      <div v-if="inspect.inspectMethod !== 'row_count'">
-        <div class="flex align-items-center">
-          <div
-            v-if="resultInfo.parentId && $route.name === 'VerifyResult'"
-            class="color-info flex align-items-center"
-            style="font-size: 12px"
-          >
-            {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
-            <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
-              $t('verify_button_diff_task_history')
-            }}</ElLink>
+  <section class="verify-result-wrap section-wrap" v-loading="loading">
+    <div class="section-wrap-box">
+      <div class="verify-result-header" v-if="inspect">
+        <div>
+          <span style="font-size: 14px">{{ inspect.name }}</span>
+          <span class="font-color-linfo ml-3">{{ typeMap[type] }}</span>
+        </div>
+        <div v-if="inspect.inspectMethod !== 'row_count'">
+          <div class="flex align-items-center">
+            <div
+              v-if="resultInfo.parentId && $route.name === 'VerifyResult'"
+              class="color-info flex align-items-center"
+              style="font-size: 12px"
+            >
+              {{ $t('verify_last_start_time') }}: {{ $moment(inspect.lastStartTime).format('YYYY-MM-DD HH:mm:ss') }}
+              <ElLink class="ml-5" type="primary" @click="toDiffHistory">{{
+                $t('verify_button_diff_task_history')
+              }}</ElLink>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div v-if="errorMsg && type === 'row_count'" class="error-tips mt-4 px-4">
-      <VIcon class="color-danger">error</VIcon>
-      <span>
-        <ElLink type="danger" @click="showErrorMessage">{{ this.$t('verify_see_details') }}</ElLink>
-        <VIcon class="ml-2 color-info" size="12">close</VIcon>
-      </span>
-    </div>
-    <div class="result-table mt-4" v-if="inspect && !['running', 'scheduling'].includes(inspect.status)">
-      <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
-      <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
+      <div v-if="errorMsg && type === 'row_count'" class="error-tips mt-4 px-4">
+        <VIcon class="color-danger">error</VIcon>
+        <span>
+          <ElLink type="danger" @click="showErrorMessage">{{ this.$t('verify_see_details') }}</ElLink>
+          <VIcon class="ml-2 color-info" size="12">close</VIcon>
+        </span>
+      </div>
+      <div class="result-table mt-4" v-if="inspect && !['running', 'scheduling'].includes(inspect.status)">
+        <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
+        <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
+      </div>
     </div>
   </section>
 </template>

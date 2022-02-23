@@ -1,5 +1,5 @@
 <template>
-  <section class="connection-list-wrap">
+  <section class="connection-list-wrap classify-wrap">
     <!-- :title="$t('connection.databaseTittle')"
       :desc="description" -->
     <TablePage
@@ -450,7 +450,8 @@ export default {
       this.$router.push({
         name: 'connectionsEdit',
         params: {
-          id: id
+          id: id,
+          databaseType: type
         },
         query: {
           databaseType: type

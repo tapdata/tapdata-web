@@ -1,9 +1,8 @@
 <template>
-  <section class="data-verify-wrap">
+  <section class="data-verify-wrap section-wrap">
     <TablePage
       ref="table"
       row-key="id"
-      :title="$t('app.menu.dataVerification')"
       :remoteMethod="getData"
       @selection-change="handleSelectionChange"
       @sort-change="handleSortTable"
@@ -472,6 +471,7 @@ export default {
   }
   .search-bar {
     display: flex;
+    // padding-left: 20px;
     .item {
       margin-right: 10px;
     }
@@ -504,8 +504,8 @@ export default {
   .el-table--border td {
     border-right: 0;
   }
-  .el-table--border th {
-    border-right: 1px solid #dcdfe6;
-  }
+  // .el-table--border th {
+  //   border-right: 1px solid #dcdfe6;
+  // }
 }
 </style>

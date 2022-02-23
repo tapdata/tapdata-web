@@ -1,11 +1,11 @@
 <template>
-  <section class="metadata-info">
-    <header class="header">
+  <section class="metadata-info section-wrap">
+    <!-- <header class="header">
       <span @click="back">
         {{ $t('metadata.details.dataDirectory') }}
       </span>
       / {{ $t('metadata.details.dataDetails') }}
-    </header>
+    </header> -->
 
     <el-container class="metadata-content">
       <!-- 元数据管理详情 头部信息 start -->
@@ -873,11 +873,11 @@ export default {
 </script>
 <style lang="scss" scoped>
 .metadata-info {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(239, 241, 244, 100);
+  // display: flex;
+  // flex-direction: column;
+  // width: 100%;
+  // height: 100%;
+  // background-color: rgba(239, 241, 244, 100);
   .icon-yuechi1 {
     color: darkorange;
   }
