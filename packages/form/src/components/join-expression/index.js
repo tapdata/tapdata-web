@@ -1,6 +1,6 @@
 import VIcon from 'web-core/components/VIcon'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
-import { h, connect, mapProps, useForm, useField, useFieldSchema, RecursionField } from '@formily/vue'
+import { h as render, connect, mapProps, useForm, useField, useFieldSchema, RecursionField } from '@formily/vue'
 import { defineComponent } from '@vue/composition-api/dist/vue-composition-api'
 import { observer } from '@formily/reactive-vue'
 import { FormBaseItem as FormItem, FormLayout } from '@formily/element'
@@ -105,7 +105,7 @@ export const JoinExpression = connect(
               {this.fieldArr.map((item, i) => (
                 <div class="flex join-expression-row" key={i}>
                   <div class="join-field">
-                    {h(RecursionField, {
+                    {render(RecursionField, {
                       props: {
                         name: i,
                         schema: this.leftSchema
@@ -114,7 +114,7 @@ export const JoinExpression = connect(
                   </div>
                   <FormItem class="join-operator">=</FormItem>
                   <div class="join-field">
-                    {h(RecursionField, {
+                    {render(RecursionField, {
                       props: {
                         name: i,
                         schema: this.rightSchema
