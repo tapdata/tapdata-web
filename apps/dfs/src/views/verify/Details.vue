@@ -50,7 +50,13 @@
       :element-loading-text="$t('verify_checking')"
     >
       <template v-if="!['running', 'scheduling'].includes(inspect.status)">
-        <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
+        <ResultTable
+          ref="singleTable"
+          :type="type"
+          :data="tableData"
+          @row-click="rowClick"
+          @verify-again="verifyAgain"
+        ></ResultTable>
         <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
       </template>
     </div>
