@@ -646,43 +646,43 @@ export default {
       createStrategyDisabled: false,
       timezones: [],
       dataTypes: [],
-      whiteList: [
-        'mysql',
-        'oracle',
-        'mongodb',
-        'sqlserver',
-        'postgres',
-        'elasticsearch',
-        'redis',
-        'file',
-        'db2',
-        'kafka',
-        'mariadb',
-        'mysql pxc',
-        // 'jira',
-        'mq',
-        'dameng',
-        'gbase-8s',
-        'sybase ase',
-        'gaussdb200',
-        'dummy db',
-        'rest api',
-        'custom_connection',
-        'gridfs',
-        'hive',
-        'tcp_udp',
-        'hbase',
-        'kudu',
-        'greenplum',
-        'tidb',
-        'hana',
-        'clickhouse',
-        'kundb',
-        'adb_postgres',
-        'adb_mysql',
-        'vika',
-        'hazelcast_cloud_cluster'
-      ],
+      // whiteList: [
+      //   'mysql',
+      //   'oracle',
+      //   'mongodb',
+      //   'sqlserver',
+      //   'postgres',
+      //   'elasticsearch',
+      //   'redis',
+      //   'file',
+      //   'db2',
+      //   'kafka',
+      //   'mariadb',
+      //   'mysql pxc',
+      //   // 'jira',
+      //   'mq',
+      //   'dameng',
+      //   'gbase-8s',
+      //   'sybase ase',
+      //   'gaussdb200',
+      //   'dummy db',
+      //   'rest api',
+      //   'custom_connection',
+      //   'gridfs',
+      //   'hive',
+      //   'tcp_udp',
+      //   'hbase',
+      //   'kudu',
+      //   'greenplum',
+      //   'tidb',
+      //   'hana',
+      //   'clickhouse',
+      //   'kundb',
+      //   'adb_postgres',
+      //   'adb_mysql',
+      //   'vika',
+      //   'hazelcast_cloud_cluster'
+      // ],
       model: '',
       config: {
         items: []
@@ -1703,18 +1703,13 @@ export default {
     },
     handleDatabaseType(type) {
       this.dialogDatabaseTypeVisible = false
-      if (this.whiteList.includes(type)) {
-        this.$router.push({
-          name: 'connectionsOldCreate',
-          query: {
-            databaseType: type
-          }
-        })
-        location.reload()
-      } else {
-        top.location.href = '/#/connection'
-        localStorage.setItem('connectionDatabaseType', type)
-      }
+      this.$router.push({
+        name: 'connectionsCreate',
+        query: {
+          databaseType: type
+        }
+      })
+      location.reload()
     },
     // 文件类型添加文件路径
     addPathRow() {
@@ -1770,11 +1765,14 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding: 0 20px 20px 20px;
   overflow: hidden;
+  background-color: #eff1f4;
   .connection-from-body {
     display: flex;
     flex: 1;
     padding-left: 24px;
+    border-radius: 4px;
     overflow: hidden;
     background: #fff;
     .connection-from-main {

@@ -14,11 +14,11 @@
           <div class="font-color-sub">555555</div>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
-          <div class="head-label">{{ $t('hare_detail_log_time') }}:</div>
+          <div class="head-label">{{ $t('share_detail_log_time') }}:</div>
           <div class="font-color-sub">{{ detailData.storageTime }}</div>
         </div>
       </div>
-      <div class="share-detail-head-center" style="min-height: 250px">
+      <div class="share-detail-head-center py-3" style="min-height: 250px">
         <div class="flex ml-3 pt-3">
           <span class="label fs-8">{{ $t('share_detail_statistics_time') }}</span>
           <el-date-picker
@@ -247,7 +247,7 @@ export default {
     }
     .share-detail-head-center {
       .label {
-        width: 80px;
+        width: 70px;
         line-height: 28px;
       }
       ::v-deep {

@@ -488,7 +488,7 @@ export default {
     .btn-expand {
       position: absolute;
       top: 5px;
-      left: 8px;
+      left: 17px;
       transform: rotate(180deg);
       .icon-zhankai2 {
         font-size: 16px;
@@ -552,7 +552,7 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 8px 0 32px;
+      padding: 0 8px 0 46px;
       color: #666;
       // background-color: #eff1f4;
     }
@@ -581,7 +581,7 @@ export default {
       // }
     }
     .search {
-      margin: 0 10px;
+      margin: 0 20px;
     }
   }
   .tree-block {
