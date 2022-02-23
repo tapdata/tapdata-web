@@ -579,7 +579,7 @@ export default {
         })
         const countObj = samples?.[1] || {}
         const statistics = data.statistics?.[0] || {}
-        const { overData, writeData, initialData } = this
+        const { overData, writeData } = this
         // 总输入总输出
         if (!isEmpty(countObj)) {
           for (let key in overData) {
@@ -597,10 +597,10 @@ export default {
           writeData[key] = statistics[key]
         }
         // 全量预计完成时间
-        initialData.length >= 2 && initialData.shift()
-        initialData.push(Object.assign({}, writeData))
-        if (initialData.length >= 2) {
-          const getForecastMs = this.getForecastMs(initialData)
+        this.initialData.length >= 2 && this.initialData.shift()
+        this.initialData.push(Object.assign({}, writeData))
+        if (this.initialData.length >= 2) {
+          const getForecastMs = this.getForecastMs(this.initialData)
           if (getForecastMs) {
             this.forecast = getForecastMs
           }
