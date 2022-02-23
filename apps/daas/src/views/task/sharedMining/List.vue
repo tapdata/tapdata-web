@@ -34,7 +34,7 @@
         <el-button
           class="btn btn-create"
           type="primary"
-          :disabled="!showEditSettingBtn"
+          :disabled="showEditSettingBtn"
           size="mini"
           @click="handleSetting"
         >
@@ -215,7 +215,7 @@ export default {
         stop: { running: true },
         edit: { edit: true, stop: true, error: true }
       },
-      showEditSettingBtn: false
+      showEditSettingBtn: false //不能修改
     }
   },
   mounted() {
