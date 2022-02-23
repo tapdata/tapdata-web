@@ -1,6 +1,6 @@
 import { Input as FormInput } from '@daas/form'
 import { createBehavior, createResource } from '../../core'
-import { createFieldSchema } from '../Field'
+import { createFieldSchema } from '../field'
 import { AllSchemas } from '../../schemas'
 import { AllLocales } from '../../locales'
 

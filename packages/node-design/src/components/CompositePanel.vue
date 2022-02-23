@@ -21,7 +21,9 @@
         <div class="composite-panel-tabs-header-title">{{ tabItems[activeTab].title }}</div>
         <div class="composite-panel-tabs-header-actions"></div>
       </div>
-      <div class="composite-panel-tabs-body"></div>
+      <div class="composite-panel-tabs-body">
+        <ResourceWidget title="sources.Inputs" :sources="sources"></ResourceWidget>
+      </div>
     </div>
   </div>
 </template>
@@ -31,13 +33,16 @@ import VIcon from 'web-core/components/VIcon'
 import 'web-core/assets/icons/svg/component.svg'
 import 'web-core/assets/icons/svg/outline.svg'
 import 'web-core/assets/icons/svg/history.svg'
+import { ResourceWidget } from '../widgets/resource-widget'
+import { Input } from '../sources/input'
 
 export default {
   name: 'CompositePanel',
-  components: { VIcon },
+  components: { VIcon, ResourceWidget },
 
   data() {
     return {
+      sources: [Input],
       tabItems: [
         {
           name: 'component',

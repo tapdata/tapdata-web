@@ -1,12 +1,14 @@
 import { FormPath } from '@formily/core'
 import { toJS } from '@formily/reactive'
-import { ArrayField, Field as InternalField, ObjectField, VoidField, observer, Schema } from '@formily/vue'
+import { ArrayField, Field as InternalField, ObjectField, VoidField, Schema } from '@formily/vue'
+import { observer } from '@formily/reactive-vue'
 import { FormItem } from '@daas/form'
 import { each, reduce } from '@formily/shared'
 import { createBehavior } from '../../core'
+import { defineComponent } from 'vue-demi'
 
 import { isArr, isStr } from '@daas/shared'
-import { Container } from '../../common/Container'
+// import { Container } from '../../common/Container'
 import { AllLocales } from '../../locales'
 
 Schema.silent(true)
@@ -107,31 +109,40 @@ const toDesignableFieldProps = (schema, components, nodeIdAttrName, id) => {
   return results
 }
 
-export const Field = observer(props => {
-  const designer = this.$store.designer
-  const components = this.$store.components
-  const node = props.node
-  if (!node) return null
-  const fieldProps = toDesignableFieldProps(props, components, designer.props.nodeIdAttrName, node.id)
-  if (props.type === 'object') {
-    return (
-      <Container>
-        <ObjectField {...fieldProps} name={node.id}>
-          {props.children}
-        </ObjectField>
-      </Container>
-    )
-  } else if (props.type === 'array') {
-    return <ArrayField {...fieldProps} name={node.id} />
-  } else if (node.props.type === 'void') {
-    return (
-      <VoidField {...fieldProps} name={node.id}>
-        {props.children}
-      </VoidField>
-    )
-  }
-  return <InternalField {...fieldProps} name={node.id} />
-})
+export const Field = observer(
+  defineComponent({
+    name: 'FormPreviewer',
+    setup(props) {
+      // const designer = this.$store.designer
+      // const components = this.$store.components
+      const node = props.node
+      if (!node) return null
+      // const fieldProps = toDesignableFieldProps(props, components, designer.props.nodeIdAttrName, node.id)
+      const fieldProps = {}
+      if (props.type === 'object') {
+        return (
+          <ObjectField {...fieldProps} name={node.id}>
+            {props.children}
+          </ObjectField>
+          /*<Container>
+          <ObjectField {...fieldProps} name={node.id}>
+            {props.children}
+          </ObjectField>
+        </Container>*/
+        )
+      } else if (props.type === 'array') {
+        return <ArrayField {...fieldProps} name={node.id} />
+      } else if (node.props.type === 'void') {
+        return (
+          <VoidField {...fieldProps} name={node.id}>
+            {props.children}
+          </VoidField>
+        )
+      }
+      return <InternalField {...fieldProps} name={node.id} />
+    }
+  })
+)
 
 Field.Behavior = createBehavior({
   name: 'Field',
