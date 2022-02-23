@@ -77,7 +77,7 @@
       ></SelectList>
     </div>
     <div class="flex justify-content-between mt-6">
-      <div class="p-6 grey-background" style="min-width: 200px">
+      <div class="p-6 grey-background" style="min-width: 240px">
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_input') }}</span>
@@ -204,35 +204,38 @@ export default {
       lineOptions: {
         tooltip: {
           trigger: 'axis'
+          // formatter: params => {
+          //   let [item1, item2] = params
+          //   let html = formatTime(item1.name)
+          //   html += `<div style="display: flex;justify-content: space-between"><span>${item1.marker}${item1.seriesName}</span>` + `<span>${item1.value?.[1]}</span></div>`
+          //   html += `<div style="display: flex;justify-content: space-between"><span>${item2.marker}${item2.seriesName}</span>` + `<span>${item2.value?.[1]}</span></div>`
+          //   return html
+          // }
         },
         legend: {
           top: 4,
           right: 0,
           show: true
         },
-        dataZoom: [
-          // {
-          //   type: 'slider',
-          //   show: true,
-          //   height: 20,
-          //   bottom: '2%',
-          //   textStyle: {
-          //     color: '#2c65ff',
-          //     fontSize: 11
-          //   }
-          // },
-          {
-            type: 'inside',
-            minSpan: 1,
-            maxSpan: 100
-          }
-        ],
+        // dataZoom: [
+        //   {
+        //     type: 'inside',
+        //     minSpan: 1,
+        //     maxSpan: 100
+        //   }
+        // ],
         xAxis: {
           type: 'time'
+          // axisLabel: {
+          //   formatter: val => {
+          //     return formatTime(val)
+          //   }
+          // },
         },
         yAxis: [
           {
             // max: 'dataMax',
+            name: 'QPS',
             axisLabel: {
               formatter: function (value) {
                 if (value >= 1000) {
@@ -257,7 +260,7 @@ export default {
         grid: {
           left: 0,
           right: '2px',
-          top: '24px',
+          top: '36px',
           bottom: 0
         },
         series: [
@@ -488,7 +491,7 @@ export default {
           ? (endTimeStamp || new Date().getTime()) - startTimeStamp
           : selectedTimeItems.find(t => t.value === selectedTime).spacing
       let guanluary = this.getGuanluary(diff)
-
+      let formatGuanluaryTime = this.getGuanluary(diff, true)
       let subTaskId = this.$route.params?.subId
       // let lineDataDeep = this.lineDataDeep
       let tags = {
@@ -517,7 +520,8 @@ export default {
       }
       if (this.selectedStage) {
         let nodeId = this.selectedStage
-        tags = {
+        let taskTags = tags
+         tags= {
           subTaskId: subTaskId,
           type: 'node',
           nodeId
@@ -538,7 +542,7 @@ export default {
           ],
           statistics: [
             {
-              tags
+              tags: taskTags
             }
           ]
         }
@@ -589,11 +593,9 @@ export default {
             }
           }
         }
-
         for (let key in writeData) {
           writeData[key] = statistics[key]
         }
-        writeData.replicateLag = data.samples?.[1]?.replicateLag?.[0] || 0
         // 全量预计完成时间
         initialData.length >= 2 && initialData.shift()
         initialData.push(Object.assign({}, writeData))
@@ -612,7 +614,7 @@ export default {
           qpsDataTime = this.getEmptyData(params.samples[0].start, params.samples[0].end)
         }
 
-        let xArr = qpsDataTime.map(t => formatTime(t))
+        let xArr = qpsDataTime.map(t => formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
         const xArrLen = xArr.length
         if (this.lineDataDeep.x.length > 20) {
           this.lineDataDeep.x.splice(0, xArrLen)
@@ -632,6 +634,7 @@ export default {
             value: [time, outputQPS[i]]
           })
         })
+        console.log('x轴：', this.lineDataDeep.x.length, xArr)
         if (reset) {
           this.lineDataDeep.x = xArr
           this.lineDataDeep.y[0] = inArr
@@ -648,7 +651,9 @@ export default {
           // this.lineDataDeep.y[0].push(...inArr)
           // this.lineDataDeep.y[1].push(...outArr)
         }
-
+        // this.lineOptions.xAxis.axisLabel.formatter = val => {
+        //   return formatTime(val, formatGuanluaryTime)
+        // }
         this.$refs.chart.chart?.setOption({
           series: [
             {
@@ -671,12 +676,16 @@ export default {
       // <= 24m+ --> month, day point, max 30 * 24 = 720
       if (diff <= 1 * 60 * 60) {
         timeType = 'minute'
+        formatRes = 'YYYY-MM-DD HH:mm:ss'
       } else if (diff <= 12 * 60 * 60) {
         timeType = 'hour'
+        formatRes = 'YYYY-MM-DD HH:mm'
       } else if (diff <= 30 * 24 * 60 * 60) {
         timeType = 'day'
+        formatRes = 'YYYY-MM-DD HH:00'
       } else {
         timeType = 'month'
+        formatRes = 'YYYY-MM-DD'
       }
       if (format) {
         return formatRes
