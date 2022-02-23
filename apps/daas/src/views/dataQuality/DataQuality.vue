@@ -1,9 +1,9 @@
 <template>
-  <section class="data-quality-wrap">
+  <section class="data-quality-wrap classify-wrap">
+    <!-- :title="$t('dataQuality.title')"
+      :desc="$t('dataQuality.desc')" -->
     <TablePage
       ref="table"
-      :title="$t('dataQuality.title')"
-      :desc="$t('dataQuality.desc')"
       :remoteMethod="getData"
       :classify="{
         authority: 'data_catalog_category_management',
@@ -289,14 +289,8 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.data-quality-wrap {
-}
-</style>
-
 <style lang="scss" scoped>
 .data-quality-wrap {
-  height: 100%;
   .operation {
     .btn {
       padding: 7px;

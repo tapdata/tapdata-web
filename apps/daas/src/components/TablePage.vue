@@ -51,7 +51,7 @@
           </div>
           <el-pagination
             background
-            class="table-page-pagination my-3"
+            class="table-page-pagination mt-3"
             layout="total, sizes, ->, prev, pager, next, jumper"
             :current-page.sync="page.current"
             :page-sizes="[10, 20, 50, 100]"
@@ -261,7 +261,7 @@ export default {
   .table-page-main {
     display: flex;
     flex: 1;
-    padding: 0 20px 20px 20px;
+    // padding: 0 20px 20px 20px;
     overflow: hidden;
     background-color: #eff1f4;
     .table-page-main-box {
@@ -273,9 +273,9 @@ export default {
     }
   }
 
-  .table-page-left {
-    margin-right: 10px;
-  }
+  // .table-page-left {
+  //   margin-right: 10px;
+  // }
 
   .table-page-body {
     flex: 1;
@@ -283,6 +283,7 @@ export default {
     flex-direction: column;
     overflow: hidden;
     background-color: #fff;
+    border-radius: 4px;
     .el-table--border {
       border: none;
     }
@@ -291,13 +292,12 @@ export default {
       justify-content: space-between;
       align-items: flex-end;
       flex-wrap: wrap-reverse;
-      padding-top: 10px;
       .table-page-search-bar {
-        margin: 0 5px 10px 0;
+        margin: 0 5px 15px 0;
       }
 
       .table-page-operation-bar {
-        margin: 0 20px 10px 0;
+        margin-bottom: 10px;
         text-align: right;
       }
     }
@@ -318,6 +318,9 @@ export default {
     .el-table--border th {
       border-right: 1px solid #ebeef5;
       background-color: #fafafa;
+      &:last-child {
+        border-right: 0;
+      }
       .cell {
         white-space: nowrap;
       }

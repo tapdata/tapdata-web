@@ -1,10 +1,9 @@
 <template>
-  <section class="data-flow-wrap" v-loading="restLoading">
+  <section class="data-flow-wrap classify-wrap" v-loading="restLoading">
     <TablePage
       ref="table"
       row-key="id"
       class="data-flow-list"
-      :title="mappingTemplate === 'custom' ? $t('dataFlow.custom') : $t('dataFlow.clusterClone')"
       :classify="{ authority: 'SYNC_category_management', types: ['dataflow'] }"
       :remoteMethod="getData"
       @selection-change="
@@ -17,79 +16,8 @@
     >
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="table.fetch(1)"> </FilterBar>
-        <!-- <ul class="search-bar">
-          <li>
-            <ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
-              <ElOption :label="$t('dataFlow.status.all')" value=""></ElOption>
-              <ElOption v-for="(value, label) in statusOptions" :key="value" :label="label" :value="value"> </ElOption>
-            </ElSelect>
-          </li>
-          <li>
-            <el-select
-              v-model="searchParams.progress"
-              size="small"
-              clearable
-              :placeholder="$t('dataFlow.taskSettingPlaceholder')"
-              style="width: 160px"
-              @input="table.fetch(1)"
-            >
-              <el-option
-                v-for="item in progressOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-          </li>
-          <li>
-            <el-select
-              v-model="searchParams.executionStatus"
-              size="small"
-              clearable
-              :placeholder="$t('dataFlow.executionStatus')"
-              style="width: 160px"
-              @input="table.fetch(1)"
-            >
-              <el-option
-                v-for="opt in ['initializing', 'cdc', 'initialized', 'Lag']"
-                :key="opt"
-                :label="$t('dataFlow.status.' + opt)"
-                :value="opt"
-              ></el-option>
-            </el-select>
-          </li>
-          <li>
-            <el-input
-              v-model="searchParams.keyword"
-              clearable
-              size="small"
-              :placeholder="$t('dataFlow.searchPlaceholder')"
-              @input="table.fetch(1, 800)"
-            >
-              <span slot="prefix" class="el-input__icon h-100 ml-1">
-                <VIcon size="14">search</VIcon>
-              </span>
-            </el-input>
-          </li>
-          <li>
-            <ElButton class="btn-refresh" size="small" @click="table.fetch()">
-              <i class="el-icon-refresh"></i>
-            </ElButton>
-          </li>
-        </ul> -->
       </template>
       <div class="buttons" slot="operation">
-        <el-button
-          v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
-          v-readonlybtn="'SYNC_category_application'"
-          size="small"
-          class="btn"
-          v-show="multipleSelection.length > 0"
-          @click="$refs.table.showClassify(handleSelectTag())"
-        >
-          <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkTag') }}</span>
-        </el-button>
         <el-button
           v-if="multipleSelection.length === 0 && bulkOperation"
           :disabled="multipleSelection.length === 0 && bulkOperation"
@@ -120,10 +48,22 @@
             }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button v-readonlybtn="'SYNC_Function_management'" size="small" class="btn" @click="handleGoFunction">
+        <el-button
+          v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+          v-readonlybtn="'SYNC_category_application'"
+          size="small"
+          class="btn"
+          v-show="multipleSelection.length > 0"
+          @click="$refs.table.showClassify(handleSelectTag())"
+        >
+          <i class="iconfont icon-biaoqian back-btn-icon"></i>
+          <span> {{ $t('dataFlow.taskBulkTag') }}</span>
+        </el-button>
+
+        <!-- <el-button v-readonlybtn="'SYNC_Function_management'" size="small" class="btn" @click="handleGoFunction">
           <i class="iconfont icon-hanshu back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkFx') }}</span>
-        </el-button>
+        </el-button> -->
         <el-button v-readonlybtn="'SYNC_job_import'" size="small" class="btn" @click="handleImport">
           <i class="iconfont icon-daoru back-btn-icon"></i>
           <span> {{ $t('dataFlow.bulkImport') }}</span>
@@ -1437,16 +1377,16 @@ export default {
     font-size: 16px;
   }
   .data-flow-list {
-    .search-bar {
-      display: flex;
-      flex-wrap: wrap;
-      li {
-        margin-right: 10px;
-        &:last-child {
-          margin-right: 0;
-        }
-      }
-    }
+    // .search-bar {
+    //   display: flex;
+    //   flex-wrap: wrap;
+    //   li {
+    //     margin-right: 10px;
+    //     &:last-child {
+    //       margin-right: 0;
+    //     }
+    //   }
+    // }
     .buttons {
       white-space: nowrap;
       .btn + .btn {

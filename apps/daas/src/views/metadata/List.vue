@@ -1,10 +1,9 @@
 <template>
-  <section class="metadata-list-wrap">
+  <section class="metadata-list-wrap classify-wrap">
     <TablePage
       ref="table"
       row-key="id"
       class="metadata-list"
-      :title="$t('app.menu.' + $route.name)"
       :classify="{
         authority: 'data_catalog_category_management',
         types: metaType

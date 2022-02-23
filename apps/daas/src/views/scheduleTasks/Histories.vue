@@ -1,13 +1,6 @@
 <template>
-  <section class="schedule-list-wrap">
-    <TablePage
-      ref="table"
-      row-key="id"
-      class="dataRule-list"
-      :title="$t('app.menu.' + $route.name)"
-      :remoteMethod="getData"
-      @sort-change="handleSortTable"
-    >
+  <section class="schedule-list-wrap section-wrap">
+    <TablePage ref="table" row-key="id" class="dataRule-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <div slot="search">
         <ul class="search-bar flex">
           <li>
@@ -138,8 +131,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .schedule-list-wrap {
-  height: 100%;
-  background-color: rgba(239, 241, 244, 100);
   .search-bar {
     display: flex;
     li + li {

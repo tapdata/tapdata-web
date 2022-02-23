@@ -1,314 +1,317 @@
 <template>
-  <section class="verify-form-wrap g-panel-container" v-loading="loading">
-    <div class="verify-form-title">
-      {{ $route.params.id ? $t('verify_title_edit') : $t('verify_title_create') }}
-    </div>
-    <ElForm
-      inline-message
-      class="overflow-hidden grey"
-      ref="baseForm"
-      label-position="left"
-      label-width="96px"
-      :model="form"
-      :rules="rules"
-      :validate-on-rule-change="false"
-    >
-      <ElFormItem required class="form-item" prop="flowId" :label="$t('verify_form_label_select_job') + ': '">
-        <ElSelect
-          filterable
-          class="form-select"
-          v-model="form.flowId"
-          :loading="!flowOptions"
-          @input="flowChangeHandler"
-        >
-          <ElOption v-for="opt in flowOptions" :key="opt.id" :label="opt.name" :value="opt.id"></ElOption>
-        </ElSelect>
-      </ElFormItem>
-      <ElFormItem required class="form-item" :label="$t('verify_form_label_type') + ': '">
-        <ElRadioGroup v-model="form.inspectMethod">
-          <ElRadioButton label="row_count">{{ $t('verify_type_row_count') }}</ElRadioButton>
-          <ElRadioButton label="field">{{ $t('verify_type_field') }}</ElRadioButton>
-          <ElRadioButton label="jointField">{{ $t('verify_type_joint_field') }}</ElRadioButton>
-          <ElRadioButton label="cdcCount"
-            >动态校验
-            <ElTooltip
-              class="item"
-              effect="dark"
-              content="基于时间窗口对动态数据进行校验，目前仅支持对行数进行校验"
-              placement="top"
-            >
-              <i class="el-icon-warning-outline"></i>
-            </ElTooltip>
-          </ElRadioButton>
-        </ElRadioGroup>
-        <div>
-          <i class="el-icon-info color-primary mr-1"></i>
-          <span style="font-size: 12px">{{
-            {
-              row_count: $t('verify_tips_type_row_count'),
-              field: $t('verify_tips_type_field'),
-              jointField: $t('verify_tips_type_joint_field')
-            }[form.inspectMethod]
-          }}</span>
-        </div>
-      </ElFormItem>
-      <ElFormItem required class="form-item" prop="name" :label="$t('verify_job_name') + ': '">
-        <ElInput class="form-input" v-model="form.name"></ElInput>
-      </ElFormItem>
-      <ElFormItem class="form-item" :label="$t('verify_form_label_frequency') + ': '">
-        <ElSelect class="form-select" v-model="form.mode" @input="form.enabled = true">
-          <ElOption :label="$t('verify_frequency_manual')" value="manual"></ElOption>
-          <ElOption :label="$t('verify_frequency_cron')" value="cron"></ElOption>
-        </ElSelect>
-      </ElFormItem>
-      <ElFormItem v-if="form.mode === 'cron'" class="form-item" :label="$t('verify_switch_job_enable_or_not') + ': '">
-        <ElSwitch v-model="form.enabled"></ElSwitch>
-      </ElFormItem>
-      <template v-if="form.mode === 'cron'">
-        <ElFormItem class="form-item" prop="timing.start" :label="$t('verify_form_label_start_and_end_time') + ': '">
-          <ElDatePicker
-            class="form-input"
-            :value="[form.timing.start, form.timing.end]"
-            type="datetimerange"
-            range-separator="-"
-            :start-placeholder="$t('date_picker_start_time')"
-            :end-placeholder="$t('date_picker_end_time')"
-            align="right"
-            :default-time="['00:00:00', '23:59:59']"
-            value-format="timestamp"
-            @input="timingChangeHandler"
-          >
-          </ElDatePicker>
-        </ElFormItem>
-        <ElFormItem class="form-item" prop="timing.intervals" :label="$t('verify_form_label_interval') + ': '">
-          <ElInput
-            class="form-input"
-            v-model="form.timing.intervals"
-            onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-            onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-          >
-            <template slot="append">
-              <ElSelect style="width: 100px" v-model="form.timing.intervalsUnit">
-                <ElOption v-for="unit in timeUnitOptions" :key="unit" :label="unit" :value="unit"></ElOption>
-              </ElSelect>
-            </template>
-          </ElInput>
-        </ElFormItem>
-      </template>
-      <ElFormItem class="form-item" :label="$t('verify_form_label_error_save_count') + ': '">
-        <ElSelect class="form-select" v-model="form.limit.keep">
-          <ElOption :value="100" label="100(rows)"></ElOption>
-          <ElOption :value="1000" label="1000(rows)"></ElOption>
-          <ElOption :value="10000" label="10000(rows)"></ElOption>
-        </ElSelect>
-      </ElFormItem>
-      <template v-if="form.inspectMethod === 'cdcCount'">
-        <ElFormItem class="setting-item">
-          <label class="item-label">{{ $t('verify_create_window_duration') }}</label>
-          <ElInput
-            class="item-input"
-            size="mini"
-            v-model="form.cdcDuration"
-            onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-            onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-          >
-            <template slot="append"> {{ $t('timeToLive.m') }} </template>
-          </ElInput>
-        </ElFormItem>
-        <ElFormItem class="setting-item" prop="cdcBeginDate">
-          <label class="item-label is-required">校验开始时间</label>
-          <ElDatePicker
-            class="item-select"
-            size="mini"
-            v-model="form.cdcBeginDate"
-            type="datetime"
-            placeholder="校验开始时间"
-            format="yyyy-MM-dd HH:mm"
-            value-format="yyyy-MM-dd HH:mm"
-          >
-          </ElDatePicker>
-        </ElFormItem>
-        <ElFormItem class="setting-item" v-if="form.mode === 'manual'">
-          <label class="item-label">校验结束时间</label>
-          <ElDatePicker
-            class="item-select"
-            size="mini"
-            v-model="form.cdcEndDate"
-            type="datetime"
-            placeholder="校验结束时间"
-            format="yyyy-MM-dd HH:mm"
-            value-format="yyyy-MM-dd HH:mm"
-          >
-          </ElDatePicker>
-        </ElFormItem>
-      </template>
-    </ElForm>
-    <div
-      v-if="flowStages"
-      v-loading="!flowStages.length"
-      class="joint-table"
-      :class="{ error: !!jointErrorMessage }"
-      @click="jointErrorMessage = ''"
-    >
-      <div class="joint-table-header">
-        <div>
-          <span>{{ $t('verify_form_joint_table_header') }}</span>
-          <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
-        </div>
-        <ElLink type="primary" :disabled="!form.tasks.length" @click="clear">{{
-          $t('verify_button_joint_table_clear')
-        }}</ElLink>
+  <section class="verify-form-wrap section-wrap flex-fill" v-loading="loading">
+    <div class="section-wrap-box">
+      <div class="verify-form-title">
+        {{ $route.params.id ? $t('verify_title_edit') : $t('verify_title_create') }}
       </div>
-      <ul class="joint-table-main" id="data-verification-form">
-        <li class="joint-table-item" v-for="(item, index) in form.tasks" :key="item.id" @click="editItem(item)">
-          <div class="joint-table-setting overflow-hidden">
-            <div class="setting-item">
-              <label class="item-label">{{ $t('verify_form_label_table') }}: </label>
-              <ElCascader
-                v-if="editId === item.id"
-                v-model="item.sourceTable"
-                class="item-select"
-                :class="{ red: !item.sourceTable }"
-                :options="item.sourceTree"
-                @input="tableChangeHandler(item, 'source', index)"
-              ></ElCascader>
-              <span v-else :class="['item-value-text', { 'color-danger': !item.sourceTable }]">{{
-                item.sourceTable ? item.sourceTable[1] : $t('message.placeholderSelect')
-              }}</span>
-              <span class="item-icon">
-                <i class="el-icon-arrow-right"></i>
-              </span>
-              <ElCascader
-                v-if="editId === item.id"
-                v-model="item.targetTable"
-                class="item-select"
-                :class="{ red: !item.targetTable }"
-                :options="item.targetTree"
-                @input="tableChangeHandler(item, 'target')"
-              ></ElCascader>
-              <span v-else :class="['item-value-text', { 'color-danger': !item.targetTable }]">{{
-                item.targetTable ? item.targetTable[1] : $t('message.placeholderSelect')
-              }}</span>
-            </div>
-            <div class="setting-item mt-4" v-show="form.inspectMethod !== 'row_count'">
-              <label class="item-label">{{ $t('verify_form_label_index_field') }}: </label>
-              <MultiSelection
-                v-if="editId === item.id"
-                v-model="item.source.sortColumn"
-                class="item-select"
-                :class="{ red: !item.source.sortColumn }"
-                :options="item.source.fields"
-                :id="'item-source-' + index"
-              ></MultiSelection>
-              <span v-else :class="['item-value-text', { 'color-danger': !item.source.sortColumn }]">{{
-                item.source.sortColumn || $t('message.placeholderSelect')
-              }}</span>
-              <span class="item-icon"></span>
-              <MultiSelection
-                v-if="editId === item.id"
-                v-model="item.target.sortColumn"
-                class="item-select"
-                :class="{ red: !item.target.sortColumn }"
-                :options="item.target.fields"
-              ></MultiSelection>
-              <span v-else :class="['item-value-text', { 'color-danger': !item.target.sortColumn }]">{{
-                item.target.sortColumn || $t('message.placeholderSelect')
-              }}</span>
-            </div>
-            <div v-if="editId === item.id" class="setting-item mt-4">
-              <label class="item-label"></label>
-              <span class="item-select">
-                <label class="item-label mr-2">{{ $t('verify_form_source_filter') }}</label>
-                <ElSwitch v-model="item.source.sourceFilterFalg" @input="item.source.where = ''"></ElSwitch>
-              </span>
-              <span class="item-icon"></span>
-              <span class="item-select">
-                <label class="item-label mr-2">{{ $t('verify_form_target_filter') }}</label>
-                <ElSwitch
-                  :disabled="item.showAdvancedVerification"
-                  v-model="item.target.targeFilterFalg"
-                  @input="item.target.where = ''"
-                ></ElSwitch>
-              </span>
-            </div>
-            <div v-if="item.source.sourceFilterFalg || item.target.targeFilterFalg" class="setting-item mt-4">
-              <label class="item-label"></label>
-              <div class="item-filter">
-                <div v-if="item.source.sourceFilterFalg" class="item-filter-body">
-                  <template v-if="editId === item.id">
-                    <CodeEditor v-model.trim="item.source.where" lang="sql" height="200px" class="mb-2"></CodeEditor>
-                    <div class="filter-example-label">{{ $t('dag_dialog_field_mapping_example') }}</div>
-                    <div v-if="item.source.databaseType === 'mongodb'" class="filter-example">
-                      {"field": 1, "field2": "value"}
-                    </div>
-                    <div v-else class="filter-example">WHERE field1 = 1 and field2 = "value"</div>
-                  </template>
-                  <div v-else-if="item.source.where">
-                    {{ item.source.where }}
-                  </div>
-                </div>
-              </div>
-              <span class="item-icon"></span>
-              <div class="item-filter">
-                <div v-if="item.target.targeFilterFalg" class="item-filter-body">
-                  <template v-if="editId === item.id">
-                    <CodeEditor v-model.trim="item.target.where" lang="sql" height="200px" class="mb-2"></CodeEditor>
-                    <div class="filter-example-label">{{ $t('dag_dialog_field_mapping_example') }}</div>
-                    <div v-if="item.target.databaseType === 'mongodb'" class="filter-example">
-                      {"field": 1, "field2": "value"}
-                    </div>
-                    <div v-else class="filter-example">WHERE field1 = 1 and field2 = "value"</div>
-                  </template>
-                  <div v-else-if="item.target.where">
-                    {{ item.target.where }}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="setting-item mt-4">
-              <ElCheckbox
-                v-if="editId === item.id"
-                v-model="item.showAdvancedVerification"
-                v-show="form.inspectMethod === 'field'"
-                @input="handleChangeAdvanced(item)"
-                >{{ $t('verify_checkbox_advance') }}</ElCheckbox
+      <ElForm
+        inline-message
+        class="overflow-hidden grey"
+        ref="baseForm"
+        label-position="left"
+        label-width="96px"
+        :model="form"
+        :rules="rules"
+        :validate-on-rule-change="false"
+      >
+        <ElFormItem required class="form-item" prop="flowId" :label="$t('verify_form_label_select_job') + ': '">
+          <ElSelect
+            filterable
+            class="form-select"
+            v-model="form.flowId"
+            :loading="!flowOptions"
+            @input="flowChangeHandler"
+          >
+            <ElOption v-for="opt in flowOptions" :key="opt.id" :label="opt.name" :value="opt.id"></ElOption>
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem required class="form-item" :label="$t('verify_form_label_type') + ': '">
+          <ElRadioGroup v-model="form.inspectMethod">
+            <ElRadioButton label="row_count">{{ $t('verify_type_row_count') }}</ElRadioButton>
+            <ElRadioButton label="field">{{ $t('verify_type_field') }}</ElRadioButton>
+            <ElRadioButton label="jointField">{{ $t('verify_type_joint_field') }}</ElRadioButton>
+            <ElRadioButton label="cdcCount"
+              >动态校验
+              <ElTooltip
+                class="item"
+                effect="dark"
+                content="基于时间窗口对动态数据进行校验，目前仅支持对行数进行校验"
+                placement="top"
               >
-            </div>
-            <div class="setting-item mt-4" v-if="item.showAdvancedVerification && form.inspectMethod === 'field'">
-              <label class="item-label">{{ $t('verify_form_label_script') }}: </label>
-              <VButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)">{{
-                $t('verify_button_add_script')
-              }}</VButton>
-              <template v-else>
-                <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('button_edit') }}</ElLink>
-                <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('button_delete') }}</ElLink>
-              </template>
-            </div>
-            <div
-              class="setting-item mt-4"
-              v-if="form.inspectMethod === 'field' && item.showAdvancedVerification && item.webScript"
+                <i class="el-icon-warning-outline"></i>
+              </ElTooltip>
+            </ElRadioButton>
+          </ElRadioGroup>
+          <div>
+            <i class="el-icon-info color-primary mr-1"></i>
+            <span style="font-size: 12px">{{
+              {
+                row_count: $t('verify_tips_type_row_count'),
+                field: $t('verify_tips_type_field'),
+                jointField: $t('verify_tips_type_joint_field')
+              }[form.inspectMethod]
+            }}</span>
+          </div>
+        </ElFormItem>
+        <ElFormItem required class="form-item" prop="name" :label="$t('verify_job_name') + ': '">
+          <ElInput class="form-input" v-model="form.name"></ElInput>
+        </ElFormItem>
+        <ElFormItem class="form-item" :label="$t('verify_form_label_frequency') + ': '">
+          <ElSelect class="form-select" v-model="form.mode" @input="form.enabled = true">
+            <ElOption :label="$t('verify_frequency_manual')" value="manual"></ElOption>
+            <ElOption :label="$t('verify_frequency_cron')" value="cron"></ElOption>
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem v-if="form.mode === 'cron'" class="form-item" :label="$t('verify_switch_job_enable_or_not') + ': '">
+          <ElSwitch v-model="form.enabled"></ElSwitch>
+        </ElFormItem>
+        <template v-if="form.mode === 'cron'">
+          <ElFormItem class="form-item" prop="timing.start" :label="$t('verify_form_label_start_and_end_time') + ': '">
+            <ElDatePicker
+              class="form-input"
+              :value="[form.timing.start, form.timing.end]"
+              type="datetimerange"
+              range-separator="-"
+              :start-placeholder="$t('date_picker_start_time')"
+              :end-placeholder="$t('date_picker_end_time')"
+              align="right"
+              :default-time="['00:00:00', '23:59:59']"
+              value-format="timestamp"
+              @input="timingChangeHandler"
             >
-              <pre class="item-script">{{ item.webScript }}</pre>
+            </ElDatePicker>
+          </ElFormItem>
+          <ElFormItem class="form-item" prop="timing.intervals" :label="$t('verify_form_label_interval') + ': '">
+            <ElInput
+              class="form-input"
+              v-model="form.timing.intervals"
+              onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+              onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+            >
+              <template slot="append">
+                <ElSelect style="width: 100px" v-model="form.timing.intervalsUnit">
+                  <ElOption v-for="unit in timeUnitOptions" :key="unit" :label="unit" :value="unit"></ElOption>
+                </ElSelect>
+              </template>
+            </ElInput>
+          </ElFormItem>
+        </template>
+        <ElFormItem class="form-item" :label="$t('verify_form_label_error_save_count') + ': '">
+          <ElSelect class="form-select" v-model="form.limit.keep">
+            <ElOption :value="100" label="100(rows)"></ElOption>
+            <ElOption :value="1000" label="1000(rows)"></ElOption>
+            <ElOption :value="10000" label="10000(rows)"></ElOption>
+          </ElSelect>
+        </ElFormItem>
+        <template v-if="form.inspectMethod === 'cdcCount'">
+          <ElFormItem class="setting-item">
+            <label class="item-label">{{ $t('verify_create_window_duration') }}</label>
+            <ElInput
+              class="item-input"
+              size="mini"
+              v-model="form.cdcDuration"
+              onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+              onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+            >
+              <template slot="append"> {{ $t('timeToLive.m') }} </template>
+            </ElInput>
+          </ElFormItem>
+          <ElFormItem class="setting-item" prop="cdcBeginDate">
+            <label class="item-label is-required">校验开始时间</label>
+            <ElDatePicker
+              class="item-select"
+              size="mini"
+              v-model="form.cdcBeginDate"
+              type="datetime"
+              placeholder="校验开始时间"
+              format="yyyy-MM-dd HH:mm"
+              value-format="yyyy-MM-dd HH:mm"
+            >
+            </ElDatePicker>
+          </ElFormItem>
+          <ElFormItem class="setting-item" v-if="form.mode === 'manual'">
+            <label class="item-label">校验结束时间</label>
+            <ElDatePicker
+              class="item-select"
+              size="mini"
+              v-model="form.cdcEndDate"
+              type="datetime"
+              placeholder="校验结束时间"
+              format="yyyy-MM-dd HH:mm"
+              value-format="yyyy-MM-dd HH:mm"
+            >
+            </ElDatePicker>
+          </ElFormItem>
+        </template>
+      </ElForm>
+      <div
+        v-if="flowStages"
+        v-loading="!flowStages.length"
+        class="joint-table"
+        :class="{ error: !!jointErrorMessage }"
+        @click="jointErrorMessage = ''"
+      >
+        <div class="joint-table-header">
+          <div>
+            <span>{{ $t('verify_form_joint_table_header') }}</span>
+            <span class="color-danger ml-6">{{ jointErrorMessage }}</span>
+          </div>
+          <ElLink type="primary" :disabled="!form.tasks.length" @click="clear">{{
+            $t('verify_button_joint_table_clear')
+          }}</ElLink>
+        </div>
+        <ul class="joint-table-main" id="data-verification-form">
+          <li class="joint-table-item" v-for="(item, index) in form.tasks" :key="item.id" @click="editItem(item)">
+            <div class="joint-table-setting overflow-hidden">
+              <div class="setting-item">
+                <label class="item-label">{{ $t('verify_form_label_table') }}: </label>
+                <ElCascader
+                  v-if="editId === item.id"
+                  v-model="item.sourceTable"
+                  class="item-select"
+                  :class="{ red: !item.sourceTable }"
+                  :options="item.sourceTree"
+                  @input="tableChangeHandler(item, 'source', index)"
+                ></ElCascader>
+                <span v-else :class="['item-value-text', { 'color-danger': !item.sourceTable }]">{{
+                  item.sourceTable ? item.sourceTable[1] : $t('message.placeholderSelect')
+                }}</span>
+                <span class="item-icon">
+                  <i class="el-icon-arrow-right"></i>
+                </span>
+                <ElCascader
+                  v-if="editId === item.id"
+                  v-model="item.targetTable"
+                  class="item-select"
+                  :class="{ red: !item.targetTable }"
+                  :options="item.targetTree"
+                  @input="tableChangeHandler(item, 'target')"
+                ></ElCascader>
+                <span v-else :class="['item-value-text', { 'color-danger': !item.targetTable }]">{{
+                  item.targetTable ? item.targetTable[1] : $t('message.placeholderSelect')
+                }}</span>
+              </div>
+              <div class="setting-item mt-4" v-show="form.inspectMethod !== 'row_count'">
+                <label class="item-label">{{ $t('verify_form_label_index_field') }}: </label>
+                <MultiSelection
+                  v-if="editId === item.id"
+                  v-model="item.source.sortColumn"
+                  class="item-select"
+                  :class="{ red: !item.source.sortColumn }"
+                  :options="item.source.fields"
+                  :id="'item-source-' + index"
+                ></MultiSelection>
+                <span v-else :class="['item-value-text', { 'color-danger': !item.source.sortColumn }]">{{
+                  item.source.sortColumn || $t('message.placeholderSelect')
+                }}</span>
+                <span class="item-icon"></span>
+                <MultiSelection
+                  v-if="editId === item.id"
+                  v-model="item.target.sortColumn"
+                  class="item-select"
+                  :class="{ red: !item.target.sortColumn }"
+                  :options="item.target.fields"
+                ></MultiSelection>
+                <span v-else :class="['item-value-text', { 'color-danger': !item.target.sortColumn }]">{{
+                  item.target.sortColumn || $t('message.placeholderSelect')
+                }}</span>
+              </div>
+              <div v-if="editId === item.id" class="setting-item mt-4">
+                <label class="item-label"></label>
+                <span class="item-select">
+                  <label class="item-label mr-2">{{ $t('verify_form_source_filter') }}</label>
+                  <ElSwitch v-model="item.source.sourceFilterFalg" @input="item.source.where = ''"></ElSwitch>
+                </span>
+                <span class="item-icon"></span>
+                <span class="item-select">
+                  <label class="item-label mr-2">{{ $t('verify_form_target_filter') }}</label>
+                  <ElSwitch
+                    :disabled="item.showAdvancedVerification"
+                    v-model="item.target.targeFilterFalg"
+                    @input="item.target.where = ''"
+                  ></ElSwitch>
+                </span>
+              </div>
+              <div v-if="item.source.sourceFilterFalg || item.target.targeFilterFalg" class="setting-item mt-4">
+                <label class="item-label"></label>
+                <div class="item-filter">
+                  <div v-if="item.source.sourceFilterFalg" class="item-filter-body">
+                    <template v-if="editId === item.id">
+                      <CodeEditor v-model.trim="item.source.where" lang="sql" height="200px" class="mb-2"></CodeEditor>
+                      <div class="filter-example-label">{{ $t('dag_dialog_field_mapping_example') }}</div>
+                      <div v-if="item.source.databaseType === 'mongodb'" class="filter-example">
+                        {"field": 1, "field2": "value"}
+                      </div>
+                      <div v-else class="filter-example">WHERE field1 = 1 and field2 = "value"</div>
+                    </template>
+                    <div v-else-if="item.source.where">
+                      {{ item.source.where }}
+                    </div>
+                  </div>
+                </div>
+                <span class="item-icon"></span>
+                <div class="item-filter">
+                  <div v-if="item.target.targeFilterFalg" class="item-filter-body">
+                    <template v-if="editId === item.id">
+                      <CodeEditor v-model.trim="item.target.where" lang="sql" height="200px" class="mb-2"></CodeEditor>
+                      <div class="filter-example-label">{{ $t('dag_dialog_field_mapping_example') }}</div>
+                      <div v-if="item.target.databaseType === 'mongodb'" class="filter-example">
+                        {"field": 1, "field2": "value"}
+                      </div>
+                      <div v-else class="filter-example">WHERE field1 = 1 and field2 = "value"</div>
+                    </template>
+                    <div v-else-if="item.target.where">
+                      {{ item.target.where }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="setting-item mt-4">
+                <ElCheckbox
+                  v-if="editId === item.id"
+                  v-model="item.showAdvancedVerification"
+                  v-show="form.inspectMethod === 'field'"
+                  @input="handleChangeAdvanced(item)"
+                  >{{ $t('verify_checkbox_advance') }}</ElCheckbox
+                >
+              </div>
+              <div class="setting-item mt-4" v-if="item.showAdvancedVerification && form.inspectMethod === 'field'">
+                <label class="item-label">{{ $t('verify_form_label_script') }}: </label>
+                <VButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)">{{
+                  $t('verify_button_add_script')
+                }}</VButton>
+                <template v-else>
+                  <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('button_edit') }}</ElLink>
+                  <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('button_delete') }}</ElLink>
+                </template>
+              </div>
+              <div
+                class="setting-item mt-4"
+                v-if="form.inspectMethod === 'field' && item.showAdvancedVerification && item.webScript"
+              >
+                <pre class="item-script">{{ item.webScript }}</pre>
+              </div>
             </div>
-          </div>
-          <div class="ml-6">
-            <a class="el-link el-link--primary is-underline" @click.stop="removeItem(index)">{{
-              $t('button_delete')
-            }}</a>
-          </div>
-        </li>
-      </ul>
-      <div class="joint-table-footer">
-        <VButton @click="addTable()">{{ $t('verify_button_add_table') }}</VButton>
-        <VButton type="primary" @click="autoAddTable()">{{ $t('verify_button_auto_add_table') }}</VButton>
+            <div class="ml-6">
+              <a class="el-link el-link--primary is-underline" @click.stop="removeItem(index)">{{
+                $t('button_delete')
+              }}</a>
+            </div>
+          </li>
+        </ul>
+        <div class="joint-table-footer">
+          <VButton @click="addTable()">{{ $t('verify_button_add_table') }}</VButton>
+          <VButton type="primary" @click="autoAddTable()">{{ $t('verify_button_auto_add_table') }}</VButton>
+        </div>
+      </div>
+      <div class="mt-8">
+        <VButton @click="goBack()">{{ $t('button_back') }}</VButton>
+        <VButton type="primary" :disabled="!flowStages || !flowStages.length" @click="nextStep()">{{
+          $t('button_save')
+        }}</VButton>
       </div>
     </div>
-    <div class="mt-8">
-      <VButton @click="goBack()">{{ $t('button_back') }}</VButton>
-      <VButton type="primary" :disabled="!flowStages || !flowStages.length" @click="nextStep()">{{
-        $t('button_save')
-      }}</VButton>
-    </div>
+
     <ElDialog
       width="60%"
       :title="$t('dataVerification.JSVerifyLogic')"
@@ -333,6 +336,14 @@
   </section>
 </template>
 <style lang="scss" scoped>
+.verify-form-wrap {
+  overflow: hidden;
+  .section-wrap-box {
+    height: 100%;
+    flex-direction: column;
+    overflow: auto;
+  }
+}
 .verify-form-title {
   margin-bottom: 24px;
   line-height: 22px;

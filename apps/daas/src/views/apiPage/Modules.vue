@@ -1,10 +1,9 @@
 <template>
-  <section class="modules-list-wrap">
+  <section class="modules-list-wrap classify-wrap">
     <TablePage
       ref="table"
       row-key="id"
       class="modules-list"
-      :title="$t('app.menu.' + $route.name)"
       :classify="{
         authority: 'API_category_management',
         types: ['api']

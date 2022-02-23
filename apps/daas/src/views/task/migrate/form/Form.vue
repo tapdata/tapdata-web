@@ -1,6 +1,6 @@
 <template>
-  <ElContainer class="create-task-wrap bg-white" v-if="steps[activeStep]">
-    <ElContainer style="overflow: hidden; flex: 1" class="create-task-container flex-column">
+  <ElContainer class="create-task-wrap section-wrap" v-if="steps[activeStep]">
+    <ElContainer class="create-task-container flex-column table-page-main-box section-wrap-box">
       <div class="steps-header">
         <ElSteps class="primary pb-6" :active="taskStep" process-status="process" finish-status="success" align-center>
           <ElStep title="选择连接"></ElStep>
@@ -1099,7 +1099,7 @@ export default {
 .create-task-wrap {
   //padding: 0 20px;
   height: 0;
-  background: rgba(250, 250, 250, 1);
+  background: #eff1f4;
   .step-header {
     display: flex;
     justify-content: center;

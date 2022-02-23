@@ -674,6 +674,10 @@
 }
 .el-table::before {
   display: none;
+
+}
+.el-table::after {
+  background-color: #fff;
 }
 .el-table.table-border::before {
   display: block;
@@ -686,6 +690,7 @@
 }
 .el-table th {
   background: #f4f5f7;
+  border-bottom: 0;
 }
 .el-table td,
 .el-table th.is-leaf {
@@ -703,6 +708,9 @@
 }
 .el-table .cell {
   line-height: 20px;
+}
+.el-table th.el-table__cell.is-leaf {
+  border-bottom: 0;
 }
 .el-table__body tr.hover-row > td {
   background-color: map-get($bgColor, hover);
@@ -740,6 +748,8 @@
   .el-dialog__title {
     font-size: 14px;
     font-weight: 500;
-    color: rgb(131, 99, 99);
+    color: rgba(0, 0, 0, .75);
   }
 }
+
+

@@ -1,27 +1,29 @@
 <template>
-  <div v-loading="loading" class="statistics-container flex flex-column font-color-sub h-100">
-    <Info :task="task" class="card-box card-box__info" @reload="loadTask"></Info>
-    <div class="card-box__content px-6 flex-1">
-      <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100" @tab-click="tabHandler">
-        <ElTabPane :label="$t('task_monitor_progress')" name="schedule">
-          <Schedule :task="task"></Schedule>
-        </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_run_log')" name="log" lazy>
-          <Log :id="task.id" style="max-height: 450px"></Log>
-        </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_run_connection')" name="connect" lazy>
-          <Connection ref="connection" :ids="connectionIds" @change="loadTask"></Connection>
-        </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_history_run_record')" name="history" lazy>
-          <History :ids="[task.id]" :operations="operations"></History>
-        </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_mining_task')" name="task">
-          <Task :id="task.id"></Task>
-        </ElTabPane>
-        <!--        <ElTabPane v-if="showContent" :label="$t('task_monitor_sync_content')" name="content" lazy>-->
-        <!--          <FieldMapping ref="fieldMapping" :readOnly="true" :field_process="field_process" :getDataFlow="getDataFlow"></FieldMapping>-->
-        <!--        </ElTabPane>-->
-      </ElTabs>
+  <div v-loading="loading" class="statistics-container section-wrap">
+    <div class="section-wrap-box">
+      <Info :task="task" class="card-box card-box__info" @reload="loadTask"></Info>
+      <div class="card-box__content">
+        <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100" @tab-click="tabHandler">
+          <ElTabPane :label="$t('task_monitor_progress')" name="schedule">
+            <Schedule :task="task"></Schedule>
+          </ElTabPane>
+          <ElTabPane :label="$t('task_monitor_run_log')" name="log" lazy>
+            <Log :id="task.id" style="max-height: 450px"></Log>
+          </ElTabPane>
+          <ElTabPane :label="$t('task_monitor_run_connection')" name="connect" lazy>
+            <Connection ref="connection" :ids="connectionIds" @change="loadTask"></Connection>
+          </ElTabPane>
+          <ElTabPane :label="$t('task_monitor_history_run_record')" name="history" lazy>
+            <History :ids="[task.id]" :operations="operations"></History>
+          </ElTabPane>
+          <ElTabPane :label="$t('task_monitor_mining_task')" name="task">
+            <Task :id="task.id"></Task>
+          </ElTabPane>
+          <!--        <ElTabPane v-if="showContent" :label="$t('task_monitor_sync_content')" name="content" lazy>-->
+          <!--          <FieldMapping ref="fieldMapping" :readOnly="true" :field_process="field_process" :getDataFlow="getDataFlow"></FieldMapping>-->
+          <!--        </ElTabPane>-->
+        </ElTabs>
+      </div>
     </div>
   </div>
 </template>
@@ -215,6 +217,7 @@ export default {
     //height: 300px;
     // }
     .el-tab-pane {
+      height: 100%;
       min-height: 400px;
     }
     .field-mapping {
@@ -229,11 +232,18 @@ export default {
   border-bottom: 1px solid #e4e7ed;
 }
 .card-box__content {
-  padding-left: 24px;
+  flex: 1;
+  // padding-left: 24px;
+  overflow: hidden;
   //height: 0;
   ::v-deep {
     .el-tabs__content {
+      flex: 1;
+      height: calc(100% - 70px);
       overflow-y: auto;
+    }
+    .el-tab-pane {
+      height: 100%;
     }
   }
 }
