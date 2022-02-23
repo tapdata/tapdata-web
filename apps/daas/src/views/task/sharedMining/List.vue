@@ -89,7 +89,12 @@
         </el-form-item>
         <el-form-item :label="$t('share_form_setting_table_name')" size="mini">
           <el-select v-model="digSettingForm.persistenceMongodb_collection" placeholder="请选择">
-            <el-option v-for="table in tableList" :key="table.tableId" :label="table.table_name" :value="table.tableId">
+            <el-option
+              v-for="table in tableList"
+              :key="table.tableId"
+              :label="table.table_name"
+              :value="table.table_name"
+            >
             </el-option>
           </el-select>
         </el-form-item>
