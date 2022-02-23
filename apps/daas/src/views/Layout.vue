@@ -1,14 +1,6 @@
 <template>
   <el-container class="layout-container">
-    <div class="agentNot" v-if="agentTipFalg && $window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')">
-      <i class="el-icon-warning"></i>
-      {{ $t('dialog.downAgent.noAgent')
-      }}<span @click="downLoadInstall">{{ $t('dialog.downAgent.clickDownLoad') }}</span>
-      <i class="el-icon-close close" @click="agentTipFalg = false"></i>
-    </div>
-    <CustomerService v-model="isShowCustomerService"></CustomerService>
-    <newDataFlow :dialogVisible.sync="dialogVisible"></newDataFlow>
-    <el-header class="layout-header" height="48px" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+    <el-header class="layout-header" height="72px">
       <a class="logo" href="/">
         <img :src="logoUrl" />
       </a>
@@ -21,21 +13,17 @@
             $t('menu_title_licenseBefore') + licenseExpire + $t('menu_title_licenseAfter')
           }}</span>
         </span>
-        <el-button class="btn-create" type="primary" size="mini" v-if="creatAuthority" @click="command('newDataFlow')">
-          <i class="el-icon-plus"></i>
-          <span>{{ $t('dataFlow.createNew') }}</span>
-        </el-button>
-        <NotificationPopover v-if="$window.getSettingByKey('SHOW_NOTIFICATION')"></NotificationPopover>
-        <a v-if="$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')" class="btn" @click="command('download')"
-          ><i class="iconfont icon-shangchuan-copy"></i
-        ></a>
+        <ElButton v-if="creatAuthority" type="primary" size="mini" @click="command('newDataFlow')">
+          {{ $t('dataFlow.createNew') }}
+        </ElButton>
+        <NotificationPopover v-if="$window.getSettingByKey('SHOW_NOTIFICATION')" class="ml-6"></NotificationPopover>
         <el-dropdown
           v-if="$window.getSettingByKey('SHOW_QA_AND_HELP')"
-          class="btn"
+          class="btn ml-4"
           placement="bottom"
           @command="command"
         >
-          <i class="iconfont icon-bangzhu1-copy"></i>
+          <VIcon>wenda</VIcon>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="help">{{ $t('app.document') }}</el-dropdown-item>
             <!-- <el-dropdown-item command="question">{{ $t('app.qa') }}</el-dropdown-item> -->
@@ -44,11 +32,11 @@
         </el-dropdown>
         <el-dropdown
           v-if="$window.getSettingByKey('SHOW_SETTING_BUTTON') && settingVisibility"
-          class="btn"
+          class="btn ml-4"
           placement="bottom"
           @command="command"
         >
-          <i class="iconfont icon-shezhi1"></i>
+          <VIcon>shezhi</VIcon>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="settings" v-if="settingCode">{{ $t('menu_title_settings') }}</el-dropdown-item>
             <el-dropdown-item command="setting" v-readonlybtn="'home_notice_settings'">{{
@@ -61,19 +49,11 @@
         </el-dropdown>
         <el-dropdown
           v-if="$window.getSettingByKey('SHOW_LANGUAGE')"
-          class="btn"
+          class="btn ml-4"
           placement="bottom"
           @command="changeLanguage"
         >
-          <i
-            class="iconfont"
-            :class="{
-              'icon-zhongwen1': lang === 'sc',
-              'icon-yingwen1': lang === 'en',
-              'icon-fanti': lang === 'tc'
-            }"
-            style="font-size: 18px"
-          ></i>
+          <VIcon>{{ { sc: 'shezhi', en: 'shezhi', tc: 'shezhi' }[lang] }}</VIcon>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item v-for="(value, key) in languages" :key="key" :command="key">
               {{ value }}
@@ -81,10 +61,12 @@
             <!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
           </el-dropdown-menu>
         </el-dropdown>
+        <ElDivider direction="vertical" class="divider mx-6"></ElDivider>
         <el-dropdown class="menu-user" placement="bottom" @command="command">
-          <el-button class="menu-button" size="mini">
-            {{ userName }}<i class="el-icon-caret-bottom el-icon--right"></i>
-          </el-button>
+          <span>
+            <span class="user-initials mr-2">{{ initials }}</span>
+            <span>{{ userName }}<i class="el-icon-arrow-down ml-2"></i></span>
+          </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="account">{{ $t('app.account') }}</el-dropdown-item>
             <el-dropdown-item command="version">{{ $t('app.version') }}</el-dropdown-item>
@@ -98,12 +80,12 @@
       </div>
     </el-header>
     <el-container style="width: 100%; flex: 1; overflow: hidden">
-      <el-aside class="layout-aside" width="auto" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+      <el-aside class="layout-aside" width="auto">
         <el-menu class="menu" :default-active="activeMenu" :collapse="isCollapse" @select="menuHandler($event)">
           <template v-for="menu in menus">
             <el-submenu v-if="menu.children && !menu.hidden" :key="menu.alias || menu.name" :index="menu.name">
               <template slot="title">
-                <i :class="`iconfont icon-${menu.icon}`"></i>
+                <VIcon class="menu-icon mr-4">{{ menu.icon }}</VIcon>
                 <span slot="title">{{ menu.label }}</span>
               </template>
               <template v-for="cMenu in menu.children">
@@ -123,7 +105,7 @@
               :index="menu.path + (menu.query || '')"
               :route="menu"
             >
-              <i :class="`iconfont icon-${menu.icon}`"></i>
+              <VIcon class="menu-icon mr-4">{{ menu.icon }}</VIcon>
               <span slot="title">{{ menu.label }}</span>
             </el-menu-item>
           </template>
@@ -151,492 +133,13 @@
         </div>
       </el-aside>
       <el-main class="layout-main">
-        <div v-if="showBreadcrumb" class="header-breadcrumb">
-          <ElBreadcrumb
-            :class="['breadcrumb', { 'one-breadcrumb': breadcrumbData.length === 1 }]"
-            separator-class="el-icon-arrow-right"
-          >
-            <ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
-              <span>{{ item.name }}</span>
-              <span v-if="item.desc" class="pl-3 fs-8" style="color: rgba(0, 0, 0, 0.5)">{{ item.desc }}</span>
-              <el-link
-                type="primary"
-                class="fs-8 color-primary"
-                :href="item.href"
-                v-if="item.href"
-                style="cursor: pointer"
-                >{{ item.hrefText }}</el-link
-              >
-              <!-- <a :href="item.href" v-if="item.href" class="fs-8" style="color: #48b6e2">{{ item.hrefText }}</a> -->
-            </ElBreadcrumbItem>
-          </ElBreadcrumb>
-        </div>
         <router-view class="flex-fill" />
       </el-main>
     </el-container>
-
-    <DownAgent type="dashboard" ref="agentDialog" @status-change="val => (agentTipFalg = !val)"></DownAgent>
+    <CustomerService v-model="isShowCustomerService"></CustomerService>
+    <newDataFlow :dialogVisible.sync="dialogVisible"></newDataFlow>
   </el-container>
 </template>
-
-<script>
-import CustomerService from '@/components/CustomerService'
-import newDataFlow from '@/components/newDataFlow'
-import NotificationPopover from './notification/NotificationPopover'
-import DownAgent from './downAgent/agentDown'
-import { signOut } from '../utils/util'
-import { childRoutes } from '@/router'
-import Cookie from '@daas/shared/src/cookie'
-
-const Languages = {
-  sc: '中文 (简)',
-  en: 'English',
-  tc: '中文 (繁)'
-}
-const LanguagesKey = {
-  sc: 'zh_CN',
-  en: 'en_US',
-  tc: 'zh_TW'
-}
-let menuSetting = [
-  { name: 'dashboard', icon: 'shouye' },
-  { name: 'connections', icon: 'shujukus1', code: 'datasource_menu' },
-  {
-    name: 'dataTransmission',
-    icon: 'chengbenguanlixitong',
-    code: 'data_transmission',
-    children: [
-      {
-        name: 'migrate',
-        icon: 'shujukuqianyi1',
-        code: 'Data_SYNC_menu',
-        alias: 'dataFlowsClusterClone'
-        // query: '?mapping=cluster-clone'
-      },
-      {
-        name: 'dataflow',
-        icon: 'shujutongbu',
-        code: 'Data_SYNC_menu',
-        alias: 'dataFlowsCustom'
-        // query: '?mapping=custom'
-      },
-      {
-        name: 'dataVerification',
-        icon: 'hechabidui-copy',
-        code: 'Data_verify_menu'
-      },
-      {
-        name: 'sharedMining',
-        icon: 'shujutongbu'
-      },
-      {
-        name: 'function',
-        icon: 'shujutongbu'
-      }
-    ]
-  },
-  {
-    name: 'dataGovernance',
-    icon: 'yuanshuju1',
-    code: 'data_government',
-    children: [
-      { name: 'metadataDefinition', code: 'data_catalog_menu' },
-      // { name: 'metadata', code: 'data_catalog_menu' },
-      { name: 'metadataSearch' },
-      { name: 'dataQuality', code: 'data_quality_menu' },
-      { name: 'timeToLive', code: 'time_to_live_menu' },
-      // { name: 'dataMap', code: 'data_lineage_menu' },
-      { name: 'dataRules', code: 'data_rules_menu' },
-      { name: 'topology', code: 'Topology_menu' },
-      { name: 'dictionary', code: 'dictionary_menu' }
-    ]
-  },
-  {
-    name: 'dataPublish',
-    icon: 'API11',
-    code: 'data_publish',
-    children: [
-      { name: 'modules', code: 'API_management_menu' },
-      { name: 'dataExplorer', code: 'API_data_explorer_menu' },
-      { name: 'apiDocAndTest', code: 'API_doc_&_test_menu' },
-      { name: 'apiAnalysis', code: 'API_stats_menu' },
-      { name: 'applications', code: 'API_clients_menu' },
-      { name: 'apiServers', code: 'API_server_menu' }
-    ]
-  },
-  { name: 'dataCollect', icon: 'shujucaiji', code: 'data_collect(old)_menu' },
-  {
-    name: 'system',
-    icon: 'jiekoufuwu',
-    code: 'system_management',
-    children: [
-      { name: 'tasks', code: 'schedule_jobs_menu' },
-      // { name: 'agentdownload' },
-      {
-        name: 'clusterManagement',
-        code: 'Cluster_management_menu',
-        alias: window.getSettingByKey('SHOW_CLUSTER_OR_AGENT') + 'Management'
-      },
-      { name: 'agents', code: 'agents_menu' },
-      { name: 'serversOversee', code: 'servers_oversee_menu' },
-      { name: 'users', code: 'user_management_menu' },
-      // { name: 'journal', code: 'user_management' },
-      { name: 'roles', code: 'role_management_menu' },
-      { name: 'settings', code: 'system_settings_menu' }
-    ]
-  }
-]
-export default {
-  components: { CustomerService, newDataFlow, NotificationPopover, DownAgent },
-  data() {
-    return {
-      logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
-      languages: Languages,
-      lang: localStorage.getItem('tapdata_localize_lang') || 'en',
-      isCollapse: false,
-      settingVisibility:
-        this.$has('home_notice_settings') || (this.$has('system_settings') && this.$has('system_settings_menu')),
-      settingCode: this.$has('system_settings') && this.$has('system_settings_menu'),
-      creatAuthority:
-        (this.$has('SYNC_job_creation') && this.$has('Data_SYNC_menu')) ||
-        (this.$has('datasource_creation') && this.$has('datasource_menu')),
-      menus: [],
-      activeMenu: '',
-      favMenus: [],
-      userName: '',
-      dialogVisible: false,
-      isShowCustomerService: false,
-      agentTipFalg: false,
-      licenseExpire: '',
-      licenseExpireVisible: false,
-      licenseExpireDate: '',
-      breadcrumbData: [],
-      showBreadcrumb: false
-    }
-  },
-  created() {
-    this.activeMenu = this.$route.fullPath
-    this.getMenus()
-    this.getFavMenus()
-    this.getBreadcrumb()
-    this.$root.$on('updateMenu', () => {
-      this.getFavMenus()
-    })
-    if (this.$cookie.get('email')) {
-      this.userName = this.$cookie.get('username') || this.$cookie.get('email').split('@')[0] || ''
-    }
-
-    window.iframeRouterChange = route => {
-      this.$router.push(route)
-    }
-    let self = this
-    window.stateChange = (key, data) => {
-      self.$store.commit(key, data)
-    }
-
-    window.getFormLocal = data => {
-      return self.$store.state[data]
-    }
-    // this.handleGetPermissions();
-
-    // // 是否允许下载agent
-    // if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
-    if (window.getSettingByKey('SHOW_LICENSE')) {
-      this.getLicense()
-    }
-  },
-  destroyed() {
-    this.$root.$off('updateMenu')
-  },
-  watch: {
-    '$route.name'() {
-      this.activeMenu = this.$route.path
-      this.getBreadcrumb()
-    }
-    // $route() {
-    // 	if (this.$route.meta) {
-    // 		this.isCollapse = this.$route.meta.isCollapse;
-    // 	}
-    // }
-  },
-  methods: {
-    async getFavMenus() {
-      let result = await this.$api('users').get([this.$cookie.get('user_id')])
-      if (result && result.data) {
-        let user = result.data || {}
-        this.favMenus = user.favorites || []
-        // this.userName = user.email.split('@')[0] || '';
-      }
-    },
-    delFavMenu(idx) {
-      this.$confirm(
-        this.$t('message.comfirm') + this.$t('menu_title_delFavMenu'),
-        this.$t('menu_title_delFavMenu')
-      ).then(async resFlag => {
-        if (!resFlag) {
-          return
-        }
-        this.favMenus.splice(idx, 1)
-        // this.$cookie.get('user_id'),
-        let result = await this.$api('users').updateById({
-          favorites: this.favMenus
-        })
-        if (result.status === 200) {
-          this.$message.success(this.$t('message.saveOK'))
-        }
-      })
-    },
-    getMenus() {
-      let permissions = sessionStorage.getItem('tapdata_permissions')
-      permissions = permissions ? JSON.parse(permissions) : []
-      let routerMap = {}
-      let routes = this.$router.options.routes.find(r => r.name === 'layout').children
-      routes.forEach(r => {
-        routerMap[r.name] = r
-      })
-
-      let formatMenu = items => {
-        return items.map(item => {
-          let router = routerMap[item.name]
-          let menu = Object.assign({}, item, router)
-          menu.label = this.$t('menu_title_' + (item.alias || menu.name))
-          let matched = !menu.code || permissions.some(p => p.code === menu.code)
-          if (menu.children) {
-            menu.children = formatMenu(menu.children)
-            if (menu.children.every(m => m.hidden)) {
-              menu.hidden = true
-            }
-          } else if (!matched) {
-            menu.hidden = true
-          }
-          return menu
-        })
-      }
-      let menus = menuSetting.concat()
-      if (window.getSettingByKey('USE_CLOUD_MENU')) {
-        let part1 = menus.splice(0, 2)
-        let menu = menus.splice(0, 1)[0]
-        let part2 = menus
-        menus = part1.concat(menu.children, part2)
-      }
-      this.menus = formatMenu(menus)
-    },
-    command(command) {
-      switch (command) {
-        case 'account':
-          this.$router.push({
-            name: 'settingCenter'
-          })
-          break
-        case 'setting':
-          this.$router.push({
-            name: 'notificationSetting'
-          })
-          break
-        case 'verifySetting':
-          this.$router.push({
-            name: 'dataVerifySetting'
-          })
-          break
-        case 'newDataFlow':
-          this.dialogVisible = true
-          break
-        case 'help':
-          // window.open('https://docs.tapdata.io/', '_blank')
-          window.open('https://tapdata.net/docs-tapdata-enterprise.html', '_blank')
-          break
-        case 'question':
-          this.isShowCustomerService = !this.isShowCustomerService
-          break
-        case 'version':
-          if (window.getSettingByKey('SHOW_DK_VERSION')) {
-            this.$message.info({
-              dangerouslyUseHTMLString: true,
-              message: 'DK_VERSION_1</br>DK_VERSION_2'
-            })
-          } else {
-            this.$message.info(window._TAPDATA_OPTIONS_.version)
-          }
-          break
-        case 'license':
-          this.$router.push({
-            name: 'License'
-          })
-          // this.$message.info(this.$t('menu_title_licenseDate') + ': ' + this.licenseExpireDate)
-          break
-        case 'home':
-          window.open('https://tapdata.net/', '_blank')
-          break
-        case 'signOut':
-          this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut'), {
-            type: 'warning'
-          }).then(resFlag => {
-            if (!resFlag) {
-              return
-            }
-            this.signOut()
-          })
-          break
-        case 'settings':
-          this.$router.push({
-            name: 'settings'
-          })
-          break
-        default:
-          this.$refs.agentDialog.dialogVisible = true
-          // window.open('https://cloud.tapdata.net/agent/download.html', '_blank');
-          break
-      }
-    },
-    signOut() {
-      this.$api('users')
-        .logout()
-        .then(() => {
-          signOut()
-        })
-    },
-    menuHandler(index) {
-      // this.isCollapse = true;
-      if (index.includes('#favorite_')) {
-        let i = index.split('#favorite_')[1]
-        let router = this.favMenus[i]
-        if (this.$route.name === router.name) {
-          this.$router.replace(router)
-        }
-        this.$router.push(router)
-      } else {
-        if (this.$route.fullPath === index) {
-          return
-        }
-        this.$router.push(index)
-      }
-    },
-    changeLanguage(lang) {
-      localStorage.setItem('tapdata_localize_lang', lang)
-      Cookie.set('lang', LanguagesKey[lang])
-      location.reload()
-    },
-
-    // 下载安装Agent
-    downLoadInstall() {
-      this.$refs.agentDialog.dialogVisible = true
-    },
-
-    async getLicense() {
-      let timeStamp = this.$api('TimeStamp')
-      let stime = ''
-      await timeStamp.get().then(res => {
-        if (res) {
-          stime = res.data || new Date().getTime()
-        }
-      })
-      this.$api('Licenses')
-        .expires({})
-        .then(res => {
-          if (res) {
-            let expires_on = res.data.expires_on || ''
-            if (this.$cookie.get('isAdmin') == 1) {
-              let endTime = expires_on - stime
-              endTime = parseInt(endTime / 1000 / 60 / 60 / 24) //相差天数
-              let showDay = window.getSettingByKey('licenseNoticeDays') || 0
-              this.licenseExpireVisible = Number(showDay) > endTime
-              this.licenseExpire = endTime
-            }
-            this.licenseExpireDate = this.$moment(expires_on).format('YYYY-MM-DD HH:mm:ss')
-          }
-        })
-    },
-    getBreadcrumb() {
-      const route = this.$route
-      let matched = route.matched.slice(1)
-      let data = []
-      let flag = false
-      if (matched.length) {
-        // find parent
-        this.addParentRoute(matched[0], matched)
-        data = matched.map(route => {
-          flag = !!route.meta?.showTitle
-          let obj = {
-            name: route.meta?.title,
-            showTitle: !!route.meta?.showTitle,
-            desc: route.meta?.desc || '',
-            href: route.meta?.href || '',
-            hrefText: route.meta?.hrefText || ''
-          }
-          if (route.name !== this.$route.name) {
-            obj.to = {
-              name: route.name
-            }
-          }
-          return obj
-        })
-      }
-      this.breadcrumbData = data
-      this.showBreadcrumb = flag
-    },
-    addParentRoute(item = {}, matched = []) {
-      const parentName = item?.meta?.listRoute?.name
-      if (parentName) {
-        const parentRoute = childRoutes.find(item => item.name === parentName)
-        matched.unshift(parentRoute)
-        this.addParentRoute(parentRoute, matched)
-      }
-    }
-  }
-}
-</script>
-<style scoped lang="scss">
-.layout-container {
-  overflow: hidden;
-  .agentNot {
-    width: calc(100% - 10px);
-    height: 30px;
-    margin: 5px;
-    line-height: 30px;
-    box-sizing: border-box;
-    font-size: 12px;
-    text-align: center;
-    color: #ec8205;
-    user-select: none;
-    border: 1px solid #ec8205;
-    background-color: rgb(255, 233, 207);
-    span {
-      color: #409eff;
-      cursor: pointer;
-    }
-    .close {
-      float: right;
-      padding: 8px 20px 0;
-      cursor: pointer;
-    }
-  }
-  .header-breadcrumb {
-    background: #eff1f4;
-    .breadcrumb {
-      padding: 25px 0 25px 20px;
-      //height: 40px;
-      // border-bottom: 1px solid #dedee4;
-      box-shadow: 0 0 4px 0 rgb(0 0 0 / 10%);
-      box-sizing: border-box;
-      background-color: #eff1f4;
-      &.one-breadcrumb {
-        font-size: 18px;
-        ::v-deep {
-          .el-breadcrumb__inner {
-            color: #000;
-          }
-        }
-      }
-      ::v-deep {
-        .el-breadcrumb__separator {
-          color: map-get($fontColor, sub);
-        }
-      }
-    }
-  }
-}
-</style>
-
 <style lang="scss">
 .btn-del-fav-menu {
   display: none;
@@ -661,15 +164,15 @@ export default {
   height: 100%;
   background: rgba(250, 250, 250, 1);
   .layout-header {
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 7px;
-    background: rgba(54, 54, 54, 1);
+    background: #212a3b;
     .logo {
-      margin-left: 8px;
+      margin-left: 23px;
       display: block;
-      width: 99px;
+      width: 140px;
       img {
         display: block;
         height: 100%;
@@ -678,14 +181,11 @@ export default {
       }
     }
     .button-bar {
+      margin-right: 23px;
       display: flex;
       align-items: center;
-      .btn-create {
-        margin-right: 5px;
-      }
       .btn {
-        margin-left: 8px;
-        color: #999;
+        color: rgba(255, 255, 255, 0.85);
         cursor: pointer;
         i {
           display: inline-block;
@@ -695,19 +195,28 @@ export default {
           width: 28px;
         }
         &:hover {
-          color: #fff;
+          color: map-get($color, primary);
         }
+      }
+      .divider {
+        height: 2em;
+      }
+      .user-initials {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        background: #ffa158;
+        border-radius: 50%;
+        line-height: 30px;
+        text-align: center;
+        font-size: 14px;
+        color: #fff;
       }
       .menu-user {
-        margin-left: 15px;
-        .menu-button {
-          color: rgba(204, 204, 204, 1);
-          background: rgba(85, 85, 85, 1);
-          border: none;
+        color: rgba(255, 255, 255, 0.85);
+        &:hover {
+          color: map-get($color, primary);
         }
-      }
-      .iconfont {
-        font-size: 18px;
       }
     }
   }
@@ -724,16 +233,13 @@ export default {
       //flex: 1;
       padding-bottom: 48px;
       background: rgba(250, 250, 250, 1);
-      .iconfont {
-        display: inline-block;
-        margin-right: 5px;
-        width: 24px;
-        text-align: center;
-        color: rgba(51, 51, 51, 1);
-        font-size: 18px;
-      }
+
       overflow-y: auto;
       user-select: none;
+      .menu-icon {
+        width: 13px;
+        height: 13px;
+      }
       .el-menu-item .el-tooltip {
         outline: none;
       }
@@ -808,9 +314,360 @@ export default {
     overflow-y: hidden;
   }
   .expire-msg {
-    display: inline-block;
-    color: #fff;
-    margin-right: 10px;
+    margin-right: 25px;
+    font-size: 12px;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 17px;
   }
 }
 </style>
+
+<script>
+import CustomerService from '@/components/CustomerService'
+import newDataFlow from '@/components/newDataFlow'
+import NotificationPopover from './notification/NotificationPopover'
+import { signOut } from '../utils/util'
+import Cookie from '@daas/shared/src/cookie'
+import Breadcrumb from '@/components/Breadcrumb'
+
+const Languages = {
+  sc: '中文 (简)',
+  en: 'English',
+  tc: '中文 (繁)'
+}
+const LanguagesKey = {
+  sc: 'zh_CN',
+  en: 'en_US',
+  tc: 'zh_TW'
+}
+let menuSetting = [
+  { name: 'dashboard', icon: 'gongzuotai' },
+  { name: 'connections', icon: 'agent', code: 'datasource_menu' },
+  {
+    name: 'dataTransmission',
+    icon: 'chengbenguanlixitong',
+    code: 'data_transmission',
+    children: [
+      {
+        name: 'migrate',
+        icon: 'shujukuqianyi1',
+        code: 'Data_SYNC_menu',
+        alias: 'dataFlowsClusterClone'
+        // query: '?mapping=cluster-clone'
+      },
+      {
+        name: 'dataflow',
+        icon: 'shujutongbu',
+        code: 'Data_SYNC_menu',
+        alias: 'dataFlowsCustom'
+        // query: '?mapping=custom'
+      },
+      {
+        name: 'dataVerification',
+        icon: 'hechabidui-copy',
+        code: 'Data_verify_menu'
+      },
+      {
+        name: 'sharedMining',
+        icon: 'shujutongbu'
+      },
+      {
+        name: 'function',
+        icon: 'shujutongbu'
+      }
+    ]
+  },
+  {
+    name: 'dataGovernance',
+    icon: 'yuanshuju1',
+    code: 'data_government',
+    children: [
+      { name: 'metadataDefinition', code: 'data_catalog_menu' },
+      // { name: 'metadata', code: 'data_catalog_menu' },
+      { name: 'metadataSearch' },
+      { name: 'dataQuality', code: 'data_quality_menu' },
+      { name: 'timeToLive', code: 'time_to_live_menu' },
+      // { name: 'dataMap', code: 'data_lineage_menu' },
+      { name: 'dataRules', code: 'data_rules_menu' },
+      { name: 'topology', code: 'Topology_menu' },
+      { name: 'dictionary', code: 'dictionary_menu' }
+    ]
+  },
+  {
+    name: 'dataPublish',
+    icon: 'connection',
+    code: 'data_publish',
+    children: [
+      { name: 'modules', code: 'API_management_menu' },
+      { name: 'dataExplorer', code: 'API_data_explorer_menu' },
+      { name: 'apiDocAndTest', code: 'API_doc_&_test_menu' },
+      { name: 'apiAnalysis', code: 'API_stats_menu' },
+      { name: 'applications', code: 'API_clients_menu' },
+      { name: 'apiServers', code: 'API_server_menu' }
+    ]
+  },
+  { name: 'dataCollect', icon: 'shujucaiji', code: 'data_collect(old)_menu' },
+  {
+    name: 'system',
+    icon: 'caozuorizhi',
+    code: 'system_management',
+    children: [
+      { name: 'tasks', code: 'schedule_jobs_menu' },
+      {
+        name: 'clusterManagement',
+        code: 'Cluster_management_menu',
+        alias: window.getSettingByKey('SHOW_CLUSTER_OR_AGENT') + 'Management'
+      },
+      { name: 'agents', code: 'agents_menu' },
+      { name: 'serversOversee', code: 'servers_oversee_menu' },
+      { name: 'users', code: 'user_management_menu' },
+      { name: 'roles', code: 'role_management_menu' },
+      { name: 'settings', code: 'system_settings_menu' }
+    ]
+  }
+]
+export default {
+  components: { CustomerService, newDataFlow, NotificationPopover, Breadcrumb },
+  data() {
+    return {
+      logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
+      languages: Languages,
+      lang: localStorage.getItem('tapdata_localize_lang') || 'en',
+      settingVisibility:
+        this.$has('home_notice_settings') || (this.$has('system_settings') && this.$has('system_settings_menu')),
+      settingCode: this.$has('system_settings') && this.$has('system_settings_menu'),
+      creatAuthority:
+        (this.$has('SYNC_job_creation') && this.$has('Data_SYNC_menu')) ||
+        (this.$has('datasource_creation') && this.$has('datasource_menu')),
+      menus: [],
+      activeMenu: '',
+      favMenus: [],
+      userName: '',
+      dialogVisible: false,
+      isShowCustomerService: false,
+      licenseExpire: '',
+      licenseExpireVisible: false,
+      licenseExpireDate: '',
+      breadcrumbData: [],
+      isCollapse: false
+    }
+  },
+  computed: {
+    initials() {
+      return this.userName.substring(0, 1)
+    }
+  },
+  created() {
+    this.activeMenu = this.$route.fullPath
+    this.getMenus()
+    this.getFavMenus()
+    this.$root.$on('updateMenu', () => {
+      this.getFavMenus()
+    })
+    if (this.$cookie.get('email')) {
+      this.userName = this.$cookie.get('username') || this.$cookie.get('email').split('@')[0] || ''
+    }
+
+    window.iframeRouterChange = route => {
+      this.$router.push(route)
+    }
+    let self = this
+    window.stateChange = (key, data) => {
+      self.$store.commit(key, data)
+    }
+
+    window.getFormLocal = data => {
+      return self.$store.state[data]
+    }
+    // this.handleGetPermissions();
+
+    if (window.getSettingByKey('SHOW_LICENSE')) {
+      this.getLicense()
+    }
+  },
+  destroyed() {
+    this.$root.$off('updateMenu')
+  },
+  watch: {
+    '$route.name'() {
+      this.activeMenu = this.$route.path
+    }
+  },
+  methods: {
+    async getFavMenus() {
+      let result = await this.$api('users').get([this.$cookie.get('user_id')])
+      if (result && result.data) {
+        let user = result.data || {}
+        this.favMenus = user.favorites || []
+        // this.userName = user.email.split('@')[0] || '';
+      }
+    },
+    delFavMenu(idx) {
+      this.$confirm(
+        this.$t('message.comfirm') + this.$t('menu_title_delFavMenu'),
+        this.$t('menu_title_delFavMenu')
+      ).then(async resFlag => {
+        if (!resFlag) {
+          return
+        }
+        this.favMenus.splice(idx, 1)
+        // this.$cookie.get('user_id'),
+        let result = await this.$api('users').updateById({
+          favorites: this.favMenus
+        })
+        if (result.status === 200) {
+          this.$message.success(this.$t('message.saveOK'))
+        }
+      })
+    },
+    getMenus() {
+      let permissions = sessionStorage.getItem('tapdata_permissions')
+      permissions = permissions ? JSON.parse(permissions) : []
+      let routerMap = {}
+      let routes = this.$router.options.routes.find(r => r.name === 'layout').children
+      routes.forEach(r => {
+        routerMap[r.name] = r
+      })
+
+      let formatMenu = items => {
+        return items.map(item => {
+          let router = routerMap[item.name]
+          let menu = Object.assign({}, item, router)
+          menu.label = this.$t('menu_title_' + (item.alias || menu.name))
+          let matched = !menu.code || permissions.some(p => p.code === menu.code)
+          if (menu.children) {
+            menu.children = formatMenu(menu.children)
+            if (menu.children.every(m => m.hidden)) {
+              menu.hidden = true
+            }
+          } else if (!matched) {
+            menu.hidden = true
+          }
+          return menu
+        })
+      }
+      let menus = menuSetting.concat()
+      this.menus = formatMenu(menus)
+    },
+    command(command) {
+      switch (command) {
+        case 'account':
+          this.$router.push({
+            name: 'settingCenter'
+          })
+          break
+        case 'setting':
+          this.$router.push({
+            name: 'notificationSetting'
+          })
+          break
+        case 'verifySetting':
+          this.$router.push({
+            name: 'dataVerifySetting'
+          })
+          break
+        case 'newDataFlow':
+          this.dialogVisible = true
+          break
+        case 'help':
+          // window.open('https://docs.tapdata.io/', '_blank')
+          window.open('https://tapdata.net/docs-tapdata-enterprise.html', '_blank')
+          break
+        case 'question':
+          this.isShowCustomerService = !this.isShowCustomerService
+          break
+        case 'version':
+          if (window.getSettingByKey('SHOW_DK_VERSION')) {
+            this.$message.info({
+              dangerouslyUseHTMLString: true,
+              message: 'DK_VERSION_1</br>DK_VERSION_2'
+            })
+          } else {
+            this.$message.info(window._TAPDATA_OPTIONS_.version)
+          }
+          break
+        case 'license':
+          this.$router.push({
+            name: 'License'
+          })
+          // this.$message.info(this.$t('menu_title_licenseDate') + ': ' + this.licenseExpireDate)
+          break
+        case 'home':
+          window.open('https://tapdata.net/', '_blank')
+          break
+        case 'signOut':
+          this.$confirm(this.$t('app.signOutMsg'), this.$t('app.signOut'), {
+            type: 'warning'
+          }).then(resFlag => {
+            if (!resFlag) {
+              return
+            }
+            this.signOut()
+          })
+          break
+        case 'settings':
+          this.$router.push({
+            name: 'settings'
+          })
+          break
+        default:
+          break
+      }
+    },
+    signOut() {
+      this.$api('users')
+        .logout()
+        .then(() => {
+          signOut()
+        })
+    },
+    menuHandler(index) {
+      if (index.includes('#favorite_')) {
+        let i = index.split('#favorite_')[1]
+        let router = this.favMenus[i]
+        if (this.$route.name === router.name) {
+          this.$router.replace(router)
+        }
+        this.$router.push(router)
+      } else {
+        if (this.$route.fullPath === index) {
+          return
+        }
+        this.$router.push(index)
+      }
+    },
+    changeLanguage(lang) {
+      localStorage.setItem('tapdata_localize_lang', lang)
+      Cookie.set('lang', LanguagesKey[lang])
+      location.reload()
+    },
+
+    async getLicense() {
+      let timeStamp = this.$api('TimeStamp')
+      let stime = ''
+      await timeStamp.get().then(res => {
+        if (res) {
+          stime = res.data || new Date().getTime()
+        }
+      })
+      this.$api('Licenses')
+        .expires({})
+        .then(res => {
+          if (res) {
+            let expires_on = res.data.expires_on || ''
+            if (this.$cookie.get('isAdmin') == 1) {
+              let endTime = expires_on - stime
+              endTime = parseInt(endTime / 1000 / 60 / 60 / 24) //相差天数
+              let showDay = window.getSettingByKey('licenseNoticeDays') || 0
+              this.licenseExpireVisible = Number(showDay) > endTime
+              this.licenseExpire = endTime
+            }
+            this.licenseExpireDate = this.$moment(expires_on).format('YYYY-MM-DD HH:mm:ss')
+          }
+        })
+    }
+  }
+}
+</script>
