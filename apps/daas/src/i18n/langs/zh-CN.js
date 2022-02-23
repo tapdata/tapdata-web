@@ -902,6 +902,10 @@ export default {
   share_detail_end_time: '结束时间',
   share_detail_to: '至',
 
+  share_task_table_name: '挖掘任务名称',
+  share_task_table_time: '挖掘所处时间',
+  share_task_table_status: '挖掘所处状态',
+
   // 设置
   setting_email_template: '邮件模板',
   setting_connect_and_test: '连接测试',

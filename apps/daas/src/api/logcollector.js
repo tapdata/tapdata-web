@@ -41,4 +41,7 @@ export default class LogcollectorApi extends PublicAPI {
   check() {
     return axios.get(`${this.url}/check/system/config`)
   }
+  byTaskId(taskId) {
+    return axios.get(`${this.url}/byTaskId/${taskId}`)
+  }
 }

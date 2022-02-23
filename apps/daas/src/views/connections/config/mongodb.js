@@ -389,6 +389,87 @@ export default function (vm) {
         tip: vm.$t('connection_form_shared_mining_tip')
       },
       {
+        type: 'select',
+        field: 'persistenceMongodb_uri_db',
+        label: vm.$t('share_form_setting_connection_name'),
+        options: [],
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'shareCdcEnable',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'slot',
+        slot: 'shareCdc-tip',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'shareCdcEnable',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'select',
+        field: 'persistenceMongodb_collection',
+        label: vm.$t('share_form_setting_table_name'),
+        options: [],
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'shareCdcEnable',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'select',
+        field: 'share_cdc_ttl_day',
+        label: vm.$t('share_form_setting_log_time'),
+        options: [],
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'shareCdcEnable',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
         type: 'input',
         field: 'table_filter',
         domType: 'textarea',

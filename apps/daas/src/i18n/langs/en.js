@@ -963,6 +963,10 @@ export default {
   share_detail_start_time: 'Start time',
   share_detail_end_time: 'End time',
   share_detail_to: 'to',
+
+  share_task_table_name: 'Mining task name',
+  share_task_table_time: 'Mining time',
+  share_task_table_status: 'Mining status',
   // 设置
   setting_email_template: 'Email template',
   setting_connect_and_test: 'Connection test',

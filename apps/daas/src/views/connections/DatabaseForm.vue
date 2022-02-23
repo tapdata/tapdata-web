@@ -65,6 +65,13 @@
               <div class="url-tip" slot="name" v-if="!$route.params.id">
                 中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
               </div>
+              <div class="url-tip" slot="shareCdc-tip" v-if="mongodbList.length === 0">
+                <el-link type="primary" target="_blank" href="#/connections/create?databaseType=mongodb"
+                  >请先创建mongodb数据源</el-link
+                >
+                /
+                <span class="refresh" @click="getMongodb"> 刷新数据 <VIcon class="font-color-sub">refresh</VIcon></span>
+              </div>
               <!-- <div class="url-tip" slot="kududatabase">
                 {{ $t('dataForm.form.kuduhost') }}
               </div> -->
@@ -939,6 +946,7 @@ export default {
       }
       //共享挖掘
       if (filed === 'shareCdcEnable' && ['oracle', 'mongodb'.includes(this.model.database_type)]) {
+        debugger
         //请求是否有全局共享挖掘配置
         this.handleSetting()
         //日志时长
@@ -1064,6 +1072,9 @@ export default {
             if (!systemConfig?.persistenceMongodb_uri_db) {
               this.showSystemConfig = true
               this.getMongodb()
+            } else {
+              //隐藏全局配置
+              this.changeConfig([], 'hiddenSystemConfig')
             }
           }
         })
@@ -1403,6 +1414,21 @@ export default {
           }
           break
         }
+        case 'hiddenSystemConfig': {
+          let share_cdc_ttl_day = items.find(it => it.field === 'share_cdc_ttl_day')
+          if (share_cdc_ttl_day) {
+            share_cdc_ttl_day.show = false
+          }
+          let persistenceMongodb_collection = items.find(it => it.field === 'persistenceMongodb_collection')
+          if (persistenceMongodb_collection) {
+            persistenceMongodb_collection.show = false
+          }
+          let persistenceMongodb_uri_db = items.find(it => it.field === 'persistenceMongodb_uri_db')
+          if (persistenceMongodb_uri_db) {
+            persistenceMongodb_uri_db.show = false
+          }
+          break
+        }
       }
     },
     handleTestVisible() {
@@ -1609,7 +1635,13 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid && flag) {
           //提交全局挖掘设置
-          this.saveSetting()
+          if (this.showSystemConfig) {
+            this.saveSetting()
+          } else {
+            delete this.model.persistenceMongodb_uri_db
+            delete this.model.persistenceMongodb_collection
+            delete this.model.share_cdc_ttl_day
+          }
           let params = Object.assign(
             {},
             {
