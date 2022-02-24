@@ -1,5 +1,5 @@
 <template>
-  <section class="dashboard" v-if="!$window.getSettingByKey('SHOW_OLD_PAGE')" v-loading="loading">
+  <section class="dashboard" v-if="!$getSettingByKey('SHOW_OLD_PAGE')" v-loading="loading">
     <el-row :gutter="20" class="e-row" v-readonlybtn="'Data_SYNC_menu'">
       <el-col :span="12" class="e-col">
         <div class="charts-list">

@@ -93,7 +93,7 @@
       </div>
       <div slot="operation">
         <el-button
-          v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'user_category_application'"
           size="mini"
           class="btn"
@@ -129,12 +129,7 @@
           <span>{{ $t('user.creatUser') }}</span>
         </el-button>
       </div>
-      <el-table-column
-        v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
-        type="selection"
-        width="45"
-        :reserve-selection="true"
-      >
+      <el-table-column v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
       </el-table-column>
       <el-table-column :label="$t('user.userName')" prop="username" sortable="username">
         <template slot-scope="scope">

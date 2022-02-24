@@ -1,6 +1,6 @@
 <template>
   <div class="table-page-container">
-    <div class="table-page-header" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM') && title">
+    <div class="table-page-header" v-if="!$getSettingByKey('DFS_TCM_PLATFORM') && title">
       <slot name="header">
         <div class="page-header-title">
           {{ title }}
@@ -12,7 +12,7 @@
 
     <div class="table-page-main">
       <div class="table-page-main-box">
-        <div class="table-page-left" v-if="classify && !hideClassify && $window.getSettingByKey('SHOW_CLASSIFY')">
+        <div class="table-page-left" v-if="classify && !hideClassify && $getSettingByKey('SHOW_CLASSIFY')">
           <Classification
             :authority="classify.authority"
             :types="classify.types"

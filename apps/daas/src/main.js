@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import App from '@/App.vue'
-import router, { childRoutes } from '@/router'
 import moment from 'moment' // 时间格式化
 import store from '@/vuex' // 引入全局数据控制
 import VueCookie from 'vue-cookie'
@@ -12,6 +11,7 @@ import Cache from '@/utils/cache'
 import TapdataWebCore from 'web-core'
 import Cookie from '@daas/shared/src/cookie'
 import VIcon from '@/components/VIcon'
+import router from '@/router'
 
 import '@/plugins/element'
 import '@/plugins/icon'
@@ -32,13 +32,11 @@ Vue.use(TapdataWebCore)
 
 Vue.prototype.$moment = moment
 Vue.prototype.$api = factory
-Vue.prototype.$window = window
 Vue.prototype.$cache = new Cache()
 
 Vue.component(VIcon.name, VIcon)
 
 window.VueCookie = VueCookie
-window.ChildRoutes = childRoutes
 
 window.openDebug = () => {
   localStorage.setItem('tapdata_debug', 'true')
@@ -54,12 +52,6 @@ window._TAPDATA_OPTIONS_ = {
   version: 'DAAS_BUILD_NUMBER',
   loadingImg: require('@/assets/icons/loading.svg')
 }
-if (parent && parent.__USER_INFO__) {
-  let userInfo = parent.__USER_INFO__
-  VueCookie.set('xToken', userInfo.token)
-  VueCookie.set('userId', userInfo.id)
-}
-
 let config = sessionStorage.getItem('TM_CONFIG') || '{}'
 config = JSON.parse(config)
 window.getSettingByKey = key => {
@@ -72,6 +64,8 @@ window.getSettingByKey = key => {
   }
   return value
 }
+Vue.prototype.$getSettingByKey = window.getSettingByKey
+
 const LanguagesKey = {
   sc: 'zh_CN',
   en: 'en_US',
@@ -107,7 +101,7 @@ let init = settings => {
   window.App = new Vue({
     el: '#app',
     i18n,
-    router,
+    router: router(i18n),
     store,
     wsOptions: {
       url: wsUrl

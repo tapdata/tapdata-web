@@ -10,7 +10,7 @@
         ref="form"
         action="javascript:void(0);"
       >
-        <template v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+        <template v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
           <el-form-item>
             <div class="e-label">
               <label class="el-form-item__label">{{ $t('editor.cell.link.copySourceDatabase') }}</label>

@@ -49,7 +49,6 @@
                     </el-button>
                     <i
                       class="iconfont icon-icon_tianjia"
-                      v-if="managementType === 'cluster'"
                       v-readonlybtn="'Cluster_operation'"
                       @click="addServeFn(item)"
                     ></i>
@@ -69,7 +68,7 @@
                   <div class="uuid">{{ item.systemInfo.uuid }}</div>
                 </div>
                 <div class="boxBottom">
-                  <el-row :gutter="20" class="data-list" v-if="managementType === 'cluster'">
+                  <el-row :gutter="20" class="data-list">
                     <el-col :span="8">
                       <span class="txt"><i class="icon iconfont iconhoutai"></i>{{ $t('cluster.manageSys') }}</span>
                     </el-col>
@@ -135,7 +134,7 @@
                       </div>
                     </el-col>
                   </el-row>
-                  <el-row :gutter="20" class="data-list" v-if="managementType === 'cluster'">
+                  <el-row :gutter="20" class="data-list">
                     <el-col :span="8">
                       <span class="txt"><i class="icon iconfont iconAPI"></i>API server</span>
                     </el-col>
@@ -306,7 +305,6 @@ export default {
       agentName: '',
       currentNde: {},
       delData: '',
-      managementType: window.getSettingByKey('SHOW_CLUSTER_OR_AGENT'),
       processIdData: []
     }
   },

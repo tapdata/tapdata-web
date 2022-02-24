@@ -30,7 +30,7 @@
             <!--步骤2-->
             <div class="body" v-if="steps[activeStep].index === 2">
               <div class="title">选择源端与目标端连接</div>
-              <div class="desc" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
+              <div class="desc" v-if="$getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
                 选择已创建的源端/目标端的数据库连接，如果需要创建新的数据库连接，请点击<span
                   style="color: #337dff; cursor: pointer"
                   @click="dialogDatabaseTypeVisible = true"
@@ -72,7 +72,7 @@
                 >
                   自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作
                 </div>
-                <template slot="syncPoints" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
+                <template slot="syncPoints" v-if="$getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
                   <el-row style="margin-bottom: 10px">
                     <el-col :span="8" style="margin-right: 10px">
                       <el-select v-model="settingModel.syncPoints[0].type" placeholder="请选择">
@@ -106,7 +106,7 @@
           <el-footer class="CT-task-footer" height="80px">
             <el-button
               class="btn-step"
-              v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs' && [2].includes(steps[activeStep].index)"
+              v-if="$getSettingByKey('DFS_TCM_PLATFORM') === 'dfs' && [2].includes(steps[activeStep].index)"
               @click="goBackList()"
             >
               取消

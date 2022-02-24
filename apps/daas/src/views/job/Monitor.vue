@@ -236,7 +236,7 @@
             <span class="info-label">{{ $t('dataForm.form.mq.mqQueueSet') }}:</span>
             <span class="info-text">{{ stage.mqQueueSet }}</span>
           </div>
-          <div class="info-list" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
+          <div class="info-list" v-if="$getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
             <span class="info-label">实例地域:</span>
             <span class="info-text">
               {{ stage.platformInfo ? stage.platformInfo.regionName : '' }} |
@@ -428,7 +428,7 @@
         </div>
       </div>
 
-      <div v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'" class="echartlist">
+      <div v-if="$getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'" class="echartlist">
         <EchartHeader :data="screeningObj" @twoRadio="getTwoRadio"></EchartHeader>
         <shaftless-echart
           :sliderBar="sliderBar"

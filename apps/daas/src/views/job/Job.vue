@@ -51,9 +51,7 @@
           <el-button
             v-readonlybtn="'SYNC_job_operation'"
             :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId)"
-            v-if="
-              ['running'].includes(status) && executeMode === 'normal' && $window.getSettingByKey('SHOW_DATA_TRACE')
-            "
+            v-if="['running'].includes(status) && executeMode === 'normal' && $getSettingByKey('SHOW_DATA_TRACE')"
             class="action-btn"
             size="mini"
             @click="capture"
@@ -64,9 +62,7 @@
           <el-button
             v-readonlybtn="'SYNC_job_operation'"
             :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId)"
-            v-if="
-              statusBtMap[status] && !statusBtMap[status].reloadSchema && !$window.getSettingByKey('DFS_TCM_PLATFORM')
-            "
+            v-if="statusBtMap[status] && !statusBtMap[status].reloadSchema && !$getSettingByKey('DFS_TCM_PLATFORM')"
             class="action-btn"
             size="mini"
             @click="reloadSchema"
@@ -77,7 +73,7 @@
           <el-button
             v-readonlybtn="'SYNC_job_operation'"
             :disabled="$disabledByPermission('SYNC_job_operation_all_data', creatUserId)"
-            v-if="isEditable() && $window.getSettingByKey('SHOW_DATA_TRACE')"
+            v-if="isEditable() && $getSettingByKey('SHOW_DATA_TRACE')"
             class="action-btn"
             size="mini"
             @click="preview"
@@ -85,23 +81,13 @@
             <i class="iconfont icon-yulan1"></i>
             <span>{{ $t('dataFlow.button.preview') }}</span>
           </el-button>
-          <el-button
-            class="action-btn"
-            size="mini"
-            v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
-            @click="showLogs"
-          >
+          <el-button class="action-btn" size="mini" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')" @click="showLogs">
             <i class="iconfont icon-rizhi1"></i>
             <span>{{ $t('dataFlow.button.logs') }}</span>
           </el-button>
         </el-button-group>
 
-        <el-button
-          class="btn-setting"
-          size="mini"
-          v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
-          @click="showSetting"
-        >
+        <el-button class="btn-setting" size="mini" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')" @click="showSetting">
           <i class="iconfont icon-shezhi1"></i>
           <span class="btn-setting-text">{{
             {
@@ -214,12 +200,7 @@
         <el-button
           v-readonlybtn="'SYNC_job_edition'"
           :disabled="$disabledByPermission('SYNC_job_edition_all_data', creatUserId)"
-          v-if="
-            statusBtMap[status] &&
-            !statusBtMap[status].edit &&
-            !editable &&
-            !$window.getSettingByKey('DFS_TCM_PLATFORM')
-          "
+          v-if="statusBtMap[status] && !statusBtMap[status].edit && !editable && !$getSettingByKey('DFS_TCM_PLATFORM')"
           ff
           class="btn-edit"
           size="mini"
@@ -266,7 +247,7 @@
         <el-button type="primary" @click="confirmReloadSchemaDialog">{{ $t('message.confirm') }}</el-button>
       </span>
     </el-dialog>
-    <AddBtnTip v-if="!loading && isEditable() && !$window.getSettingByKey('DFS_TCM_PLATFORM')"></AddBtnTip>
+    <AddBtnTip v-if="!loading && isEditable() && !$getSettingByKey('DFS_TCM_PLATFORM')"></AddBtnTip>
     <DownAgent ref="agentDialog" type="taskRunning" @closeAgentDialog="closeAgentDialog"></DownAgent>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <CheckStage

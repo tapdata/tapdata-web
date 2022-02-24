@@ -79,7 +79,7 @@
       </template>
       <div class="buttons" slot="operation">
         <el-button
-          v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'SYNC_category_application'"
           size="small"
           class="btn"
@@ -125,7 +125,7 @@
           <span> {{ $t('dataFlow.bulkImport') }}</span>
         </el-button>
         <el-button
-          v-if="!$window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')"
+          v-if="!$getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')"
           v-readonlybtn="'SYNC_job_creation'"
           class="btn btn-create"
           type="primary"
@@ -282,7 +282,7 @@
                 </el-dropdown-item>
                 <el-dropdown-item
                   command="setTag"
-                  v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+                  v-if="$getSettingByKey('SHOW_CLASSIFY')"
                   v-readonlybtn="'SYNC_category_application'"
                 >
                   {{ $t('dataFlow.addTag') }}
