@@ -1067,7 +1067,7 @@ export default {
         .check()
         .then(res => {
           if (res) {
-            let result = res.data
+            let result = res?.data?.data
             if (result) {
               this.showSystemConfig = true
               this.getMongodb()

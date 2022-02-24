@@ -99,7 +99,6 @@
           <el-select v-model="digSettingForm.persistenceMongodb_uri_db" placeholder="请选择" @change="handleTables">
             <el-option v-for="item in mongodbList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
           </el-select>
-
           <div v-if="showEditSettingBtn && mongodbList.length === 0">
             <el-link type="primary" target="_blank" href="#/connections/create?databaseType=mongodb"
               >请先创建mongodb数据源</el-link
@@ -305,7 +304,7 @@ export default {
         .check()
         .then(res => {
           if (res) {
-            this.showEditSettingBtn = res.data //true是可用，false是禁用
+            this.showEditSettingBtn = res?.data?.data //true是可用，false是禁用
           }
         })
     },
