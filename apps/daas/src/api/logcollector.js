@@ -50,4 +50,7 @@ export default class LogcollectorApi extends PublicAPI {
   bySubTaskId(subTaskId) {
     return axios.get(`${this.url}/bySubTaskId/${subTaskId}`)
   }
+  tableNames(taskId) {
+    return axios.get(`${this.url}/ableNames/${taskId}`)
+  }
 }

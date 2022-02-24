@@ -945,13 +945,13 @@ export default {
         this.getSpaceVika()
       }
       //共享挖掘
-      if (filed === 'shareCdcEnable' && ['oracle', 'mongodb'.includes(this.model.database_type)]) {
+      if (filed === 'shareCdcEnable') {
         //请求是否有全局共享挖掘配置
         this.handleSetting()
         //日志时长
         this.changeConfig([], 'logSaveList')
       }
-      if (filed === 'persistenceMongodb_uri_db' && ['oracle', 'mongodb'.includes(this.model.database_type)]) {
+      if (filed === 'persistenceMongodb_uri_db') {
         //请求是否有全局共享挖掘配置
         this.handleTables()
       }

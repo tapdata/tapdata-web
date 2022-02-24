@@ -41,12 +41,18 @@
           <span>{{ $t('share_list_setting') }}</span>
         </el-button>
       </div>
-      <el-table-column :label="$t('share_list_name')" prop="name" sortable="name" :show-overflow-tooltip="true">
+      <el-table-column
+        :label="$t('share_list_name')"
+        prop="name"
+        sortable="name"
+        :show-overflow-tooltip="true"
+        width="360"
+      >
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('share_list_connection')" prop="connections">
+      <el-table-column :label="$t('share_list_connection')" prop="connections" width="250">
         <template slot-scope="scope">
           <div v-for="item in scope.row.connections" :key="item.id">
             <span v-for="op in item" :key="op">{{ op }}</span>
@@ -58,8 +64,8 @@
           {{ scope.row.indexName }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('share_list_creat_time')" prop="createTime"> </el-table-column>
       <el-table-column :label="$t('share_list_time')"> </el-table-column>
+      <el-table-column :label="$t('share_list_creat_time')" prop="createTime" width="160"> </el-table-column>
       <el-table-column :label="$t('share_list_status')" prop="status">
         <template slot-scope="scope">
           <StatusTag type="text" target="shareCdc" :status="scope.row.status" only-img></StatusTag>
