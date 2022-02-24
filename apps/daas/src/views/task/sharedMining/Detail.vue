@@ -3,18 +3,18 @@
     <div class="share-detail-box flex justify-content-between fs-8">
       <div class="share-detail-head-left">
         <div class="flex align-items-center mb-2">
-          <span class="mb-4 fs-7">{{ $t('share_detail_mining_info') }}</span>
+          <span class="fw-bold mb-4 fs-7">{{ $t('share_detail_mining_info') }}</span>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
-          <div class="head-label">{{ $t('share_detail_name') }}:</div>
+          <div class="fw-bold head-label">{{ $t('share_detail_name') }}:</div>
           <div class="font-color-sub">{{ detailData.name }}</div>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
-          <div class="head-label">{{ $t('share_detail_log_mining_time') }}:</div>
+          <div class="fw-bold head-label">{{ $t('share_detail_log_mining_time') }}:</div>
           <div class="font-color-sub">{{ detailData.logTime }}</div>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
-          <div class="head-label">{{ $t('share_detail_log_time') }}:</div>
+          <div class="fw-bold head-label">{{ $t('share_detail_log_time') }}:</div>
           <div class="font-color-sub">{{ detailData.storageTime }}</div>
         </div>
       </div>
@@ -28,7 +28,7 @@
             @change="changeTimeRangeFnc"
           ></DatetimeRange>
         </div>
-        <Chart type="line" :data="lineData" :options="lineOptions" no-x="second" class="v-echart h-100"></Chart>
+        <Chart ref="chart" type="line" :extend="lineOptions" class="v-echart h-100"></Chart>
       </div>
       <div class="flex share-detail-head-right text-center">
         <div class="box py-3 mt-2">
@@ -59,7 +59,9 @@
         <template slot="operation" slot-scope="scope">
           <div class="operate-columns">
             <ElButton size="mini" type="text" @click="goDetail(scope.row.id)">{{ $t('button_check') }}</ElButton>
-            <ElButton size="mini" type="text" @click="getTables()">{{ $t('share_detail_button_table_info') }}</ElButton>
+            <ElButton size="mini" type="text" @click="getTables(scope.row.id)">{{
+              $t('share_detail_button_table_info')
+            }}</ElButton>
           </div>
         </template>
       </TableList>
@@ -72,7 +74,7 @@
       :visible.sync="tableDialogVisible"
     >
       <TableList
-        :data="detailData.tableName"
+        :data="tableNameList"
         :columns="columnsTableName"
         :remote-data="id"
         height="100%"
@@ -120,8 +122,7 @@ export default {
           show: true
         },
         xAxis: {
-          type: 'time',
-          data: []
+          type: 'category'
         },
         yAxis: [
           {
@@ -151,7 +152,7 @@ export default {
           left: 0,
           right: '2px',
           top: '24px',
-          bottom: 0
+          bottom: '24px'
         },
         series: [
           {
@@ -167,6 +168,7 @@ export default {
             itemStyle: {
               color: 'rgba(24, 144, 255, 1)'
             },
+            type: 'line',
             data: []
           },
           {
@@ -182,6 +184,7 @@ export default {
             itemStyle: {
               color: 'rgba(118, 205, 238, 1)'
             },
+            type: 'line',
             data: []
           }
         ]
@@ -220,7 +223,8 @@ export default {
         }
       ],
       tableDialogVisible: false,
-      timeRange: [] //时间范围
+      timeRange: [], //时间范围
+      tableNameList: []
     }
   },
   computed: {
@@ -235,9 +239,10 @@ export default {
   created() {
     this.id = this.$route.params.id
     this.getData(this.id)
+  },
+  mounted() {
     this.getChartData(this.id)
   },
-
   destroyed() {
     this.$ws.off('watch', this.taskChange)
   },
@@ -255,18 +260,19 @@ export default {
           this.detailData = res?.data
         })
     },
-    getTables() {
+    getTables(id) {
       this.tableDialogVisible = true
+      this.getTableNames(id)
     },
     getChartData(id) {
       let data = [
         {
           logTime: '2022-02-18T06:50:12.109Z',
-          inputQps: 1000,
-          outputQps: 900
+          inputQps: 66,
+          outputQps: 435
         },
         {
-          logTime: '2022-02-18T06:50:12.109Z',
+          logTime: '2022-02-19T06:50:12.109Z',
           inputQps: 1000,
           outputQps: 900
         }
@@ -274,20 +280,35 @@ export default {
       let xArr = data.map(t => formatTime(t.logTime)) //x轴
       let inArr = data.map(t => t.inputQps)
       let outArr = data.map(t => t.outputQps)
+      // let inArr = data.map(t => {
+      //   return {
+      //     name: t.logTime,
+      //     value: [t.logTime, t.inputQps]
+      //   }
+      // })
+      // let outArr = data.map(t => {
+      //   return {
+      //     name: t.logTime,
+      //     value: [t.logTime, t.outputQps]
+      //   }
+      // })
 
-      this.$refs.chart.chart?.setOption({
-        series: [
-          {
-            data: inArr
+      this.$nextTick(() => {
+        Object.assign(this.lineOptions, {
+          xAxis: {
+            data: xArr
           },
-          {
-            data: outArr
-          }
-        ],
-        xAxis: {
-          data: xArr
-        }
+          series: [
+            {
+              data: inArr
+            },
+            {
+              data: outArr
+            }
+          ]
+        })
       })
+
       // let filter = {
       //   where: {
       //     id: id,
@@ -313,7 +334,13 @@ export default {
     },
     changeTimeRangeFnc() {
       this.resetTimer()
-      this.getMeasurement(true)
+    },
+    getTableNames(id) {
+      this.$api('logcollector')
+        .tableNames()
+        .then(res => {
+          this.tableNameList = res?.data
+        })
     }
   }
 }
@@ -353,6 +380,16 @@ export default {
     .share-detail-head-right {
       min-width: 240px;
       align-items: center;
+    }
+  }
+  .filter-datetime-range {
+    font-size: 12px;
+    line-height: 32px;
+    ::v-deep {
+      font-size: 12px;
+      .el-input {
+        font-size: 12px;
+      }
     }
   }
 }
