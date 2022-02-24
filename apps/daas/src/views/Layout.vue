@@ -5,14 +5,9 @@
         <img :src="logoUrl" />
       </a>
       <div class="button-bar">
-        <span class="expire-msg" v-if="licenseExpireVisible">
-          <span v-if="licenseExpire <= 1">{{
-            $t('menu_title_licenseBefore') + licenseExpire + $t('menu_title_licenseAfterOneDay')
-          }}</span>
-          <span v-if="licenseExpire > 1">{{
-            $t('menu_title_licenseBefore') + licenseExpire + $t('menu_title_licenseAfter')
-          }}</span>
-        </span>
+        <span class="expire-msg" v-if="licenseExpireVisible">{{
+          $t('app_license_expire_warning', [licenseExpire])
+        }}</span>
         <ElButton v-if="creatAuthority" type="primary" size="mini" @click="command('newDataFlow')">
           {{ $t('dataFlow.createNew') }}
         </ElButton>
@@ -31,7 +26,7 @@
         >
           <VIcon>shezhi</VIcon>
           <ElDropdownMenu slot="dropdown">
-            <ElDropdownItem command="settings" v-if="settingCode">{{ $t('menu_title_settings') }}</ElDropdownItem>
+            <ElDropdownItem command="settings" v-if="settingCode">{{ $t('page_title_setting') }}</ElDropdownItem>
             <ElDropdownItem command="setting" v-readonlybtn="'home_notice_settings'">{{
               $t('notification.setting')
             }}</ElDropdownItem>
@@ -59,7 +54,7 @@
           <ElDropdownMenu slot="dropdown">
             <ElDropdownItem command="account">{{ $t('app.account') }}</ElDropdownItem>
             <ElDropdownItem command="version">{{ $t('app.version') }}</ElDropdownItem>
-            <ElDropdownItem command="license">{{ $t('menu_title_license') }}</ElDropdownItem>
+            <ElDropdownItem command="license">{{ $t('page_title_license') }}</ElDropdownItem>
             <ElDropdownItem v-if="$getSettingByKey('SHOW_HOME_BUTTON')" command="home">
               {{ $t('app.home') }}
             </ElDropdownItem>
@@ -323,8 +318,8 @@ const LanguagesKey = {
   tc: 'zh_TW'
 }
 let menuSetting = [
-  { label: 'menu_title_dashboard', name: 'dashboard', icon: 'gongzuotai' },
-  { label: 'menu_title_connections', name: 'connections', icon: 'agent', code: 'datasource_menu' },
+  { label: 'page_title_dashboard', name: 'dashboard', icon: 'gongzuotai' },
+  { label: 'page_title_connections', name: 'connections', icon: 'agent', code: 'datasource_menu' },
   {
     label: 'menu_title_data_pipeline',
     name: 'dataPipeline',
@@ -332,45 +327,45 @@ let menuSetting = [
     code: 'data_transmission',
     children: [
       {
-        label: 'menu_title_data_copy',
+        label: 'page_title_data_copy',
         name: 'migrate',
         code: 'Data_SYNC_menu'
       },
       {
-        label: 'menu_title_data_develop',
+        label: 'page_title_data_develop',
         name: 'dataflow',
         code: 'Data_SYNC_menu'
       },
       {
-        label: 'menu_title_data_verification',
+        label: 'page_title_data_verification',
         name: 'dataVerification',
         code: 'Data_verify_menu'
       },
       {
-        label: 'menu_title_sharedMining',
+        label: 'page_title_sharedMining',
         name: 'sharedMining',
         icon: 'shujutongbu'
       },
       {
-        label: 'menu_title_function',
+        label: 'page_title_function',
         name: 'function',
         icon: 'shujutongbu'
       }
     ]
   },
   {
-    label: 'menu_title_data_find',
+    label: 'menu_title_data_discovery',
     name: 'dataFind',
     icon: 'shujuzhili',
     code: 'data_government',
     children: [
       {
-        label: 'menu_title_data_catalogue',
+        label: 'page_title_data_catalogue',
         name: 'metadataDefinition',
         code: 'data_catalog_menu'
       },
       {
-        label: 'menu_title_data_search',
+        label: 'page_title_data_search',
         name: 'metadataSearch'
       }
     ]
@@ -382,32 +377,32 @@ let menuSetting = [
     code: 'data_publish',
     children: [
       {
-        label: 'menu_title_api_publish',
+        label: 'page_title_api_publish',
         name: 'modules',
         code: 'API_management_menu'
       },
       {
-        label: 'menu_title_api_browse',
+        label: 'page_title_api_browse',
         name: 'dataExplorer',
         code: 'API_data_explorer_menu'
       },
       {
-        label: 'menu_title_api_test',
+        label: 'page_title_api_test',
         name: 'apiDocAndTest',
         code: 'API_doc_&_test_menu'
       },
       {
-        label: 'menu_title_api_stat',
+        label: 'page_title_api_stat',
         name: 'apiAnalysis',
         code: 'API_stats_menu'
       },
       {
-        label: 'menu_title_api_audit',
+        label: 'page_title_api_audit',
         name: 'applications',
         code: 'API_clients_menu'
       },
       {
-        label: 'menu_title_api_monitor',
+        label: 'page_title_api_monitor',
         name: 'apiServers',
         code: 'API_server_menu'
       }
@@ -420,32 +415,32 @@ let menuSetting = [
     code: 'system_management',
     children: [
       {
-        label: 'menu_title_schedule',
+        label: 'page_title_schedule',
         name: 'tasks',
         code: 'schedule_jobs_menu'
       },
       {
-        label: 'menu_title_cluster',
+        label: 'page_title_cluster',
         name: 'clusterManagement',
         code: 'Cluster_management_menu'
       },
       {
-        label: 'menu_title_process',
+        label: 'page_title_process',
         name: 'agents',
         code: 'agents_menu'
       },
       {
-        label: 'menu_title_user',
+        label: 'page_title_user',
         name: 'users',
         code: 'user_management_menu'
       },
       {
-        label: 'menu_title_role',
+        label: 'page_title_role',
         name: 'roles',
         code: 'role_management_menu'
       },
       {
-        label: 'menu_title_setting',
+        label: 'page_title_setting',
         name: 'settings',
         code: 'system_settings_menu'
       }
@@ -467,7 +462,6 @@ export default {
         (this.$has('datasource_creation') && this.$has('datasource_menu')),
       menus: [],
       activeMenu: '',
-      favMenus: [],
       userName: '',
       dialogVisible: false,
       isShowCustomerService: false,
@@ -486,10 +480,6 @@ export default {
   created() {
     this.activeMenu = this.$route.fullPath
     this.getMenus()
-    this.getFavMenus()
-    this.$root.$on('updateMenu', () => {
-      this.getFavMenus()
-    })
     if (this.$cookie.get('email')) {
       this.userName = this.$cookie.get('username') || this.$cookie.get('email').split('@')[0] || ''
     }
@@ -520,32 +510,6 @@ export default {
     }
   },
   methods: {
-    async getFavMenus() {
-      let result = await this.$api('users').get([this.$cookie.get('user_id')])
-      if (result && result.data) {
-        let user = result.data || {}
-        this.favMenus = user.favorites || []
-        // this.userName = user.email.split('@')[0] || '';
-      }
-    },
-    delFavMenu(idx) {
-      this.$confirm(
-        this.$t('message.comfirm') + this.$t('menu_title_delFavMenu'),
-        this.$t('menu_title_delFavMenu')
-      ).then(async resFlag => {
-        if (!resFlag) {
-          return
-        }
-        this.favMenus.splice(idx, 1)
-        // this.$cookie.get('user_id'),
-        let result = await this.$api('users').updateById({
-          favorites: this.favMenus
-        })
-        if (result.status === 200) {
-          this.$message.success(this.$t('message.saveOK'))
-        }
-      })
-    },
     getMenus() {
       let permissions = sessionStorage.getItem('tapdata_permissions')
       permissions = permissions ? JSON.parse(permissions) : []
@@ -616,7 +580,6 @@ export default {
           this.$router.push({
             name: 'License'
           })
-          // this.$message.info(this.$t('menu_title_licenseDate') + ': ' + this.licenseExpireDate)
           break
         case 'home':
           window.open('https://tapdata.net/', '_blank')
@@ -648,19 +611,10 @@ export default {
         })
     },
     menuHandler(index) {
-      if (index.includes('#favorite_')) {
-        let i = index.split('#favorite_')[1]
-        let router = this.favMenus[i]
-        if (this.$route.name === router.name) {
-          this.$router.replace(router)
-        }
-        this.$router.push(router)
-      } else {
-        if (this.$route.fullPath === index) {
-          return
-        }
-        this.$router.push(index)
+      if (this.$route.fullPath === index) {
+        return
       }
+      this.$router.push(index)
     },
     changeLanguage(lang) {
       localStorage.setItem('tapdata_localize_lang', lang)

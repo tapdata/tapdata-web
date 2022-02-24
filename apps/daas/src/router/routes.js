@@ -762,7 +762,10 @@ export default [
       {
         path: 'license',
         name: 'License',
-        component: () => import('@/views/License')
+        component: () => import('@/views/License'),
+        meta: {
+          title: 'page_title_license'
+        }
       },
       {
         path: 'solutions',
