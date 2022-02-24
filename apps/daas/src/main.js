@@ -11,7 +11,7 @@ import Cache from '@/utils/cache'
 import TapdataWebCore from 'web-core'
 import Cookie from '@daas/shared/src/cookie'
 import VIcon from '@/components/VIcon'
-import router from '@/router'
+import getRouter from '@/router'
 
 import '@/plugins/element'
 import '@/plugins/icon'
@@ -101,7 +101,7 @@ let init = settings => {
   window.App = new Vue({
     el: '#app',
     i18n,
-    router: router(i18n),
+    router: getRouter(i18n),
     store,
     wsOptions: {
       url: wsUrl

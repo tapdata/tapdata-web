@@ -1068,20 +1068,16 @@ export default {
 
     // 点击节点跳转到表
     handTableName(data) {
-      if (!window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
-        if (['database', 'tcp_udp'].includes(this.stageType)) {
-          window.open('/#/metadataDetails?id=' + data.connMetadataInstanceId)
-        } else {
-          window.open('/#/metadataDetails?id=' + data.tableMetadataInstanceId)
-        }
+      let id = data.tableMetadataInstanceId
+      if (['database', 'tcp_udp'].includes(this.stageType)) {
+        id = data.connMetadataInstanceId
       }
+      this.$router.push({ name: 'metadataDetails', params: { id } })
     },
 
     // 跳转到所属库
     handDatabaseName(data) {
-      if (!window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
-        window.open('/#/metadataDetails?id=' + data.connMetadataInstanceId)
-      }
+      this.$router.push({ name: 'metadataDetails', params: { id: data.connMetadataInstanceId } })
     },
 
     // 获取节点名称

@@ -1,3 +1,4 @@
+import Parent from './Parent.vue'
 const MigrateForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/migrate/form/Form.vue')
 const MigrateDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/migrate/details/Index.vue')
 const DagEditor = async () => {
@@ -48,40 +49,6 @@ export default [
     }
   },
   {
-    path: '/job',
-    name: 'job',
-    component: () => import('@/views/job/Job'),
-    meta: {
-      title: 'tap.jobFlow',
-      code: 'Data_SYNC'
-    }
-  },
-  {
-    path: '/createTask/create',
-    name: 'createTask',
-    component: () => import('@/views/createTask/createTask')
-  },
-  {
-    path: '/createTask/:id/edit',
-    name: 'editTask',
-    component: () => import('@/views/createTask/createTask')
-  },
-  {
-    path: '/guide',
-    name: 'guide',
-    component: () => import('@/views/Guide')
-  },
-  {
-    path: '/dataflow/editor',
-    name: 'DataflowNew',
-    component: DagEditor
-  },
-  {
-    path: '/dataflow/editor/:id',
-    name: 'DataflowEditor',
-    component: DagEditor
-  },
-  {
     path: '/node/editor',
     name: 'NodeEditor',
     component: NodeEditor
@@ -92,65 +59,489 @@ export default [
     redirect: 'dashboard',
     component: () => import('@/views/Layout'),
     children: [
+      /* ---------- 控制台  ----------*/
       {
-        path: '/dashboard',
+        path: 'dashboard',
         name: 'dashboard',
         component: () => import('@/views/dashboard/Dashboard'),
-        meta: { title: 'tap.home', isCollapse: false }
+        meta: { title: 'page_title_dashboard' }
       },
+      /* ---------- 连接管理  ----------*/
       {
         path: '/connections',
         name: 'connections',
-        component: () => import('@/views/connections/List'),
+        component: Parent,
+        redirect: 'connections/',
         meta: {
-          code: 'datasource_menu',
-          title: 'connection_title',
-          isCollapse: false,
-          showTitle: true,
-          desc: 'connection_list_desc'
-        }
+          title: 'page_title_connections'
+        },
+        children: [
+          {
+            path: '',
+            name: 'connectionsList',
+            component: () => import('@/views/connections/List'),
+            meta: {
+              title: 'page_title_connections',
+              code: 'datasource_menu',
+              desc: (h, t) => {
+                return [
+                  t('connection_list_desc'),
+                  h(
+                    'ElLink',
+                    { props: { type: 'primary', href: 'https://docs.tapdata.net/data-source' }, class: 'ml-1' },
+                    [t('connection_list_help_doc')]
+                  )
+                ]
+              }
+            }
+          },
+          {
+            path: 'create',
+            name: 'connectionsCreate',
+            component: () => import('@/views/connections/DatabaseForm'),
+            meta: {
+              title: 'page_title_connections_create',
+              code: 'datasource_creation'
+            }
+          },
+          {
+            path: ':id/edit',
+            name: 'connectionsEdit',
+            component: () => import('@/views/connections/DatabaseForm'),
+            meta: {
+              title: 'page_title_connections_edit',
+              code: 'datasource_edition'
+            }
+          }
+        ]
       },
+      /* ---------- 数据复制  ----------*/
       {
-        path: '/connections/create',
-        name: 'connectionsCreate',
-        component: () => import('@/views/connections/DatabaseForm'),
+        path: '/migrate',
+        name: 'migrate',
+        component: Parent,
+        redirect: 'migrate/',
         meta: {
-          title: 'menu_title_connections_create',
-          isCollapse: true,
-          code: 'datasource_creation',
-          showTitle: true
-        }
+          title: 'page_title_data_copy'
+        },
+        children: [
+          {
+            path: '',
+            name: 'migrateList',
+            component: () => import('@/views/task/migrate/List'),
+            meta: {
+              title: 'page_title_data_copy',
+              code: 'Data_SYNC_menu'
+            }
+          },
+          {
+            path: 'editor',
+            name: 'MigrateNew',
+            component: MigrateForm,
+            meta: {
+              title: 'page_title_task_create',
+              code: 'Data_SYNC_menu'
+            }
+          },
+          {
+            path: 'editor/:id',
+            name: 'MigrateEditor',
+            component: MigrateForm,
+            meta: {
+              title: 'page_title_task_edit',
+              code: 'Data_SYNC_menu'
+            }
+          },
+          {
+            path: 'details/:id',
+            name: 'MigrateDetails',
+            component: MigrateDetails,
+            meta: {
+              title: 'page_title_task_details',
+              code: 'Data_SYNC_menu'
+            }
+          }
+        ]
       },
+      /* ---------- 数据开发  ----------*/
       {
-        path: '/connections/:id/edit',
-        name: 'connectionsEdit',
-        component: () => import('@/views/connections/DatabaseForm'),
+        path: '/dataflow',
+        name: 'dataflow',
+        component: Parent,
+        redirect: 'dataflow/',
         meta: {
-          title: 'menu_title_connections_edit',
-          isCollapse: true,
-          code: 'datasource_edition',
-          showTitle: true
-        }
+          title: 'page_title_data_develop',
+          code: 'Data_SYNC_menu'
+        },
+        children: [
+          {
+            path: '',
+            name: 'dataflowList',
+            component: () => import('@/views/task/etl/List'),
+            meta: {
+              title: 'page_title_data_develop',
+              code: 'Data_SYNC_menu'
+            }
+          },
+          {
+            path: 'editor',
+            name: 'DataflowNew',
+            component: DagEditor,
+            meta: {
+              title: 'page_title_data_develop',
+              code: 'Data_SYNC_menu'
+            }
+          },
+          {
+            path: 'editor/:id',
+            name: 'DataflowEditor',
+            component: DagEditor,
+            meta: {
+              title: 'page_title_data_develop',
+              code: 'Data_SYNC_menu'
+            }
+          },
+          /* ---------- 数据开发任务详情  ----------*/
+          {
+            path: 'details/:id',
+            name: 'dataflowDetailsContainer',
+            component: Parent,
+            redirect: 'details/:id/',
+            meta: {
+              title: 'page_title_task_details'
+            },
+            children: [
+              {
+                path: '',
+                name: 'dataflowDetails',
+                component: () => import('@/views/task/etl/Details'),
+                meta: {
+                  title: 'page_title_task_details',
+                  code: 'Data_SYNC_menu'
+                }
+              },
+              {
+                path: 'statistics/:subId',
+                name: 'dataflowStatistics',
+                component: () => import('@/views/task/etl/statistics/Index'),
+                meta: {
+                  title: 'page_title_task_stat',
+                  code: 'Data_SYNC_menu'
+                }
+              }
+            ]
+          }
+        ]
       },
+      /* ---------- 数据校验  ----------*/
       {
-        path: '/metadataSearch',
-        name: 'metadataSearch',
+        path: '/dataVerification',
+        name: 'dataVerification',
+        component: Parent,
+        redirect: 'dataVerification/',
+        meta: {
+          title: 'page_title_data_verification'
+        },
+        children: [
+          {
+            path: '',
+            name: 'dataVerificationList',
+            component: () => import('@/views/dataVerification/List'),
+            meta: {
+              title: 'page_title_data_verification',
+              code: 'Data_verify_menu'
+            }
+          },
+          {
+            path: 'create',
+            name: 'dataVerificationCreate',
+            component: () => import('@/views/dataVerification/Form'),
+            meta: {
+              title: 'page_title_task_create',
+              code: 'page_title_task_create'
+            }
+          },
+          {
+            path: ':id/edit',
+            name: 'dataVerificationEdit',
+            component: () => import('@/views/dataVerification/Form'),
+            meta: {
+              title: 'page_title_task_edit',
+              code: 'verify_job_edition'
+            }
+          },
+          {
+            path: ':id/details',
+            name: 'dataVerifyDetails',
+            component: () => import('@/views/dataVerification/Details'),
+            meta: {
+              title: 'page_title_task_details',
+              code: 'Data_verify'
+            }
+          },
+          {
+            path: ':id/history',
+            name: 'dataVerifyHistory',
+            component: () => import('@/views/dataVerification/History'),
+            meta: {
+              title: 'page_title_data_verification_history',
+              code: 'Data_verify'
+            }
+          },
+          {
+            path: '/dataVerifyResult/:id/history',
+            name: 'VerifyDiffHistory',
+            component: () => import('@/views/dataVerification/History'),
+            meta: {
+              title: 'page_title_diff_verification_history',
+              code: 'Data_verify'
+            }
+          },
+          {
+            path: '/dataVerifyResult/:id/details',
+            name: 'VerifyDiffDetails',
+            component: () => import('@/views/dataVerification/Result'),
+            meta: {
+              title: 'page_title_diff_verification_details',
+              code: 'Data_verify'
+            }
+          },
+          {
+            path: '/dataVerifyResult/:id',
+            name: 'dataVerifyResult',
+            component: () => import('@/views/dataVerification/Result'),
+            meta: {
+              title: 'page_title_data_verification_result',
+              code: 'Data_verify'
+            }
+          }
+        ]
+      },
+      /* ---------- 共享挖掘  ----------*/
+      {
+        path: '/sharedMining',
+        name: 'sharedMining',
+        component: Parent,
+        redirect: 'sharedMining/',
+        meta: {
+          title: 'page_title_sharedMining'
+        },
+        children: [
+          {
+            path: '',
+            name: 'sharedMiningList',
+            component: () => import('@/views/task/sharedMining/List'),
+            meta: {
+              title: 'page_title_shared_mining',
+              code: 'Data_SYNC_menu'
+            }
+          },
+          {
+            path: 'details/:id',
+            name: 'SharedMiningDetails',
+            component: () => import('@/views/task/sharedMining/Detail'),
+            meta: {
+              title: 'page_title_shared_mining_details',
+              code: 'Data_SYNC_menu'
+            }
+          }
+        ]
+      },
+      /* ---------- 函数管理  ----------*/
+      {
+        path: '/function',
+        name: 'function',
+        component: Parent,
+        redirect: 'function/',
+        meta: {
+          title: 'page_title_function'
+        },
+        children: [
+          {
+            path: '',
+            name: 'functionList',
+            component: () => import('@/views/function/List'),
+            meta: {
+              title: 'page_title_function',
+              code: 'SYNC_Function_management'
+            }
+          },
+          {
+            path: 'create',
+            name: 'FunctionCreate',
+            component: () => import('@/views/function/Form'),
+            meta: {
+              title: 'page_title_function_create',
+              code: 'SYNC_Function_management'
+            }
+          },
+          {
+            path: 'import',
+            name: 'FunctionImport',
+            component: () => import('@/views/function/ImportForm'),
+            meta: {
+              title: 'page_title_function_import',
+              code: 'SYNC_Function_management'
+            }
+          },
+          {
+            path: 'edit/:id',
+            name: 'FunctionEdit',
+            component: () => import('@/views/function/Form'),
+            meta: {
+              title: 'page_title_function_edit',
+              code: 'SYNC_Function_management'
+            }
+          },
+          {
+            path: 'details/:id',
+            name: 'FunctionDetails',
+            component: () => import('@/views/function/Details'),
+            meta: {
+              title: 'page_title_function_details',
+              code: 'SYNC_Function_management'
+            }
+          }
+        ]
+      },
+      /* ---------- 数据目录  ----------*/
+      {
+        path: '/catalogue',
+        name: 'metadata',
+        component: () => import('@/views/metadata/List'),
+        redirect: 'catalogue/',
+        meta: {
+          title: 'page_title_data_catalogue'
+        },
+        children: [
+          {
+            path: '',
+            name: 'metadataList',
+            component: () => import('@/views/metadata/List'),
+            meta: {
+              title: 'page_title_data_catalogue',
+              code: 'data_catalog_menu',
+              types: ['table', 'view', 'collection', 'mongo_view']
+            }
+          },
+          {
+            path: ':id/details',
+            name: 'metadataDetails',
+            component: () => import('@/views/metadata/Info'),
+            meta: {
+              code: 'data_catalog_menu',
+              title: 'tap.dataCatalog'
+            }
+          }
+        ]
+      },
+      /* ---------- 数据搜索  ----------*/
+      {
+        path: '/search',
+        name: 'search',
         component: () => import('@/views/metadata/Search'),
         meta: {
-          title: 'tap.metadataSearch',
-          isCollapse: true,
-          showTitle: true
+          title: 'page_title_data_search',
+          code: 'data_catalog_menu'
         }
       },
+      /* ---------- API发布  ----------*/
       {
-        path: '/metadataDefinition',
+        path: '/api-publish',
+        name: 'publish',
+        component: Parent,
+        redirect: 'api-publish/',
+        meta: {
+          title: 'page_title_api_publish'
+        },
+        children: [
+          {
+            path: '',
+            name: 'modules',
+            component: () => import('@/views/apiPage/Modules'),
+            meta: {
+              title: 'page_title_api_publish',
+              code: 'API_management_menu'
+            }
+          },
+          {
+            path: 'create',
+            name: 'module',
+            component: () => import('@/views/apiPage/ModuleForm'),
+            meta: {
+              title: 'page_title_api_publish',
+              code: 'API_creation'
+            }
+          },
+          {
+            path: ':id/edit',
+            name: 'editModule',
+            component: () => import('@/views/apiPage/ModuleForm'),
+            meta: {
+              title: 'page_title_api_publish',
+              code: 'API_edition'
+            }
+          }
+        ]
+      },
+      /* ---------- API浏览  ----------*/
+      {
+        path: '/api-browse',
+        name: 'dataExplorer',
+        component: () => import('@/views/apiPage/DataExplorer'),
+        meta: {
+          title: 'page_title_api_browse',
+          code: 'API_data_explorer_menu'
+        }
+      },
+      /* ---------- API测试  ----------*/
+      {
+        path: '/api-test',
+        name: 'apiDocAndTest',
+        component: () => import('@/views/apiPage/ApiDocAndTest'),
+        meta: {
+          title: 'page_title_api_test',
+          code: 'API_doc_&_test_menu'
+        }
+      },
+      /* ---------- API统计  ----------*/
+      {
+        path: '/api-statistics',
+        name: 'apiAnalysis',
+        component: () => import('@/views/apiPage/ApiAnalysis'),
+        meta: {
+          title: 'page_title_api_stat',
+          code: 'API_stats_menu'
+        }
+      },
+      /* ---------- API审计  ----------*/
+      {
+        path: '/api-audit',
+        name: 'applications',
+        component: () => import('@/views/apiPage/Applications'),
+        meta: {
+          title: 'page_title_api_audit',
+          code: 'API_clients_menu'
+        }
+      },
+      /* ---------- API监控  ----------*/
+      {
+        path: '/api-monitor',
+        name: 'apiServers',
+        component: () => import('@/views/apiPage/ApiServers'),
+        meta: {
+          title: 'page_title_api_monitor',
+          code: 'API_server_menu'
+        }
+      },
+      /* ---------- 元数据管理  ----------*/
+      {
+        path: '/metadata',
         name: 'metadataDefinition',
         component: () => import('@/views/metadata/List'),
         meta: {
+          title: 'page_title_data_metadata',
           code: 'data_catalog_menu',
-          title: 'tap.dataCatalog',
-          isCollapse: true,
-          showTitle: true,
           types: [
             'table',
             'view',
@@ -166,15 +557,122 @@ export default [
           ]
         }
       },
+      /* ---------- 调度任务  ----------*/
       {
-        path: '/metadataDetails',
-        name: 'metadataDetails',
-        component: () => import('@/views/metadata/Info'),
+        path: '/schedule-task',
+        name: 'tasks',
+        component: () => import('@/views/scheduleTasks/List'),
         meta: {
-          code: 'data_catalog_menu',
-          title: 'tap.dataCatalog',
-          showTitle: true,
-          isCollapse: true
+          title: 'page_title_schedule',
+          code: 'schedule_jobs_menu'
+        }
+      },
+      /* ---------- 集群管理  ----------*/
+      {
+        path: '/cluster',
+        name: 'clusterManagement',
+        component: () => import('@/views/clusterManagement/clusterManagement'),
+        meta: {
+          title: 'page_title_cluster',
+          code: 'Cluster_management_menu'
+        }
+      },
+      /* ---------- 进程管理  ----------*/
+      {
+        path: '/process',
+        name: 'agents',
+        component: () => import('@/views/process/List'),
+        meta: {
+          title: 'page_title_process',
+          code: 'agents_menu'
+        }
+      },
+      /* ---------- 用户管理  ----------*/
+      {
+        path: '/user',
+        name: 'users',
+        component: () => import('@/views/Users/List'),
+        meta: {
+          title: 'page_title_user',
+          code: 'user_management_menu'
+        }
+      },
+      /* ---------- 角色管理  ----------*/
+      {
+        path: '/role',
+        name: 'role',
+        component: Parent,
+        redirect: 'role/',
+        meta: {
+          title: 'page_title_role'
+        },
+        children: [
+          {
+            path: '',
+            name: 'roleList',
+            component: () => import('@/views/Role/Roles'),
+            meta: {
+              title: 'page_title_role',
+              code: 'role_management_menu'
+            }
+          },
+          {
+            path: 'create',
+            name: 'role',
+            component: () => import('@/views/Role/Role'),
+            meta: {
+              title: 'page_title_role',
+              code: 'role_creation'
+            }
+          },
+          {
+            path: ':id/edit',
+            name: 'editRole',
+            component: () => import('@/views/Role/Role'),
+            meta: {
+              title: 'page_title_role',
+              code: 'role_edition'
+            }
+          }
+        ]
+      },
+      /* ---------- 系统设置  ----------*/
+      {
+        path: '/settings',
+        name: 'settings',
+        component: () => import('@/views/setting/Setting'),
+        meta: {
+          title: 'page_title_setting',
+          code: 'system_settings_menu'
+        }
+      },
+      /* ---------- 不确定路由  ----------*/
+      {
+        path: '/relations',
+        name: 'relations',
+        component: () => import('@/views/relations/relations')
+      },
+      {
+        path: '/taskHistories',
+        name: 'taskHistories',
+        component: () => import('@/views/scheduleTasks/Histories'),
+        meta: {
+          code: 'schedule_jobs_menu',
+          title: 'tap.taskHistories'
+        }
+      },
+      {
+        path: '/dailyRecord',
+        name: 'dailyRecord',
+        component: () => import('@/views/clusterManagement/dailyRecord')
+      },
+      {
+        path: '/upload',
+        name: 'upload',
+        component: () => import('@/views/Upload'),
+        meta: {
+          title: 'tap.upload',
+          code: 'SYNC_job_import'
         }
       },
       {
@@ -183,9 +681,7 @@ export default [
         component: () => import('@/views/dataQuality/DataQualityDetail'),
         meta: {
           code: 'data_quality_edition',
-          title: 'tap.dataQuality',
-          showTitle: true,
-          isCollapse: true
+          title: 'tap.dataQuality'
         }
       },
       {
@@ -195,8 +691,6 @@ export default [
         meta: {
           code: 'data_quality_menu',
           title: 'tap.dataQuality',
-          isCollapse: true,
-          showTitle: true,
           types: ['collection']
         }
       },
@@ -206,9 +700,7 @@ export default [
         component: () => import('@/views/TimeToLive/List'),
         meta: {
           code: 'time_to_live_menu',
-          title: 'tap.TimeToLive',
-          showTitle: true,
-          isCollapse: false
+          title: 'tap.TimeToLive'
         }
       },
       {
@@ -217,9 +709,7 @@ export default [
         component: () => import('@/views/dataRules/List'),
         meta: {
           code: 'data_rules_menu',
-          title: 'tap.dataRules',
-          showTitle: true,
-          isCollapse: false
+          title: 'tap.dataRules'
         }
       },
       {
@@ -228,305 +718,7 @@ export default [
         component: () => import('@/views/dictionary/List'),
         meta: {
           code: 'dictionary_menu',
-          title: 'tap.dictionary',
-          showTitle: true,
-          isCollapse: false
-        }
-      },
-      {
-        path: '/modules',
-        name: 'modules',
-        component: () => import('@/views/apiPage/Modules'),
-        meta: {
-          code: 'API_management_menu',
-          title: 'tap.apiManagement',
-          showTitle: true,
-          isCollapse: false
-        }
-      },
-      {
-        path: '/module',
-        name: 'module',
-        component: () => import('@/views/apiPage/ModuleForm'),
-        meta: {
-          code: 'API_creation',
-          showTitle: true
-        }
-      },
-      {
-        path: '/module/:id',
-        name: 'editModule',
-        component: () => import('@/views/apiPage/ModuleForm'),
-        meta: {
-          code: 'API_edition',
-          showTitle: true
-        }
-      },
-      {
-        path: '/dataExplorer',
-        name: 'dataExplorer',
-        component: () => import('@/views/apiPage/DataExplorer'),
-        meta: {
-          code: 'API_data_explorer_menu',
-          title: 'tap.dataExplor',
-          showTitle: true,
-          isCollapse: false
-        }
-      },
-      {
-        path: '/apiDocAndTest',
-        name: 'apiDocAndTest',
-        component: () => import('@/views/apiPage/ApiDocAndTest'),
-        meta: {
-          code: 'API_doc_&_test_menu',
-          title: 'tap.docTest',
-          showTitle: true,
-          isCollapse: false
-        }
-      },
-      {
-        path: '/apiAnalysis',
-        name: 'apiAnalysis',
-        component: () => import('@/views/apiPage/ApiAnalysis'),
-        meta: {
-          code: 'API_stats_menu',
-          title: 'tap.apiStats',
-          showTitle: true,
-          isCollapse: false
-        }
-      },
-      {
-        path: '/applications',
-        name: 'applications',
-        component: () => import('@/views/apiPage/Applications'),
-        meta: {
-          code: 'API_clients_menu',
-          title: 'tap.apiClients',
-          showTitle: true,
-          isCollapse: false
-        }
-      },
-      {
-        path: '/apiServers',
-        name: 'apiServers',
-        component: () => import('@/views/apiPage/ApiServers'),
-        meta: {
-          code: 'API_server_menu',
-          title: 'tap.apiSever',
-          showTitle: true,
-          isCollapse: false
-        }
-      },
-      {
-        path: '/tasks',
-        name: 'tasks',
-        component: () => import('@/views/scheduleTasks/List'),
-        meta: {
-          code: 'schedule_jobs_menu',
-          title: 'tap.jobSchedule',
-          showTitle: true,
-          isCollapse: false
-        }
-      },
-
-      {
-        path: '/taskHistories',
-        name: 'taskHistories',
-        component: () => import('@/views/scheduleTasks/Histories'),
-        meta: {
-          code: 'schedule_jobs_menu',
-          title: 'tap.taskHistories',
-          showTitle: true,
-          isCollapse: false
-        }
-      },
-      {
-        path: '/agents',
-        name: 'agents',
-        component: () => import('@/views/process/List'),
-        meta: {
-          code: 'agents_menu',
-          title: 'tap.agentManagement',
-          showTitle: true,
-          isCollapse: false
-        }
-      },
-      {
-        path: '/users',
-        name: 'users',
-        component: () => import('@/views/Users/List'),
-        meta: {
-          code: 'user_management_menu',
-          title: 'tap.userManagement',
-          showTitle: true,
-          isCollapse: false
-        }
-      },
-      {
-        path: '/roles',
-        name: 'roles',
-        component: () => import('@/views/Role/Roles'),
-        meta: {
-          code: 'role_management_menu',
-          title: 'tap.roleManagement',
-          showTitle: true,
-          isCollapse: false
-        }
-      },
-      {
-        path: '/role',
-        name: 'role',
-        component: () => import('@/views/Role/Role'),
-        meta: {
-          code: 'role_creation',
-          showTitle: true
-        }
-      },
-      {
-        path: '/role/:id',
-        name: 'editRole',
-        component: () => import('@/views/Role/Role'),
-        meta: {
-          code: 'role_edition',
-          showTitle: true
-        }
-      },
-      {
-        path: '/settings',
-        name: 'settings',
-        component: () => import('@/views/setting/Setting'),
-        meta: {
-          code: 'system_settings_menu',
-          title: 'tap.systemSettings',
-          showTitle: true,
-          isCollapse: false
-        }
-      },
-      /*-----------------------------------------------------------------*/
-      {
-        path: '/clusterManagement',
-        name: 'clusterManagement',
-        component: () => import('@/views/clusterManagement/clusterManagement'),
-        meta: {
-          code: 'Cluster_management_menu',
-          title: 'tap.clusterManagement',
-          showTitle: true,
-          isCollapse: false
-        }
-      },
-      {
-        path: '/dailyRecord',
-        name: 'dailyRecord',
-        component: () => import('@/views/clusterManagement/dailyRecord')
-      },
-      {
-        path: '/migrate',
-        name: 'migrate',
-        component: () => import('@/views/task/migrate/List'),
-        meta: {
-          code: 'Data_SYNC_menu',
-          title: 'tap.jobFlow',
-          showTitle: true,
-          isCollapse: false
-        }
-      },
-      {
-        path: '/migrate/editor',
-        name: 'MigrateNew',
-        component: MigrateForm,
-        meta: {
-          title: '创建任务',
-          showTitle: true,
-          listRoute: {
-            name: 'migrate'
-          }
-        }
-      },
-      {
-        path: '/migrate/editor/:id',
-        name: 'MigrateEditor',
-        component: MigrateForm,
-        meta: {
-          title: '编辑任务',
-          showTitle: true,
-          listRoute: {
-            name: 'migrate'
-          }
-        }
-      },
-      {
-        path: '/migrate/details/:id',
-        name: 'MigrateDetails',
-        component: MigrateDetails,
-        meta: {
-          title: '任务详情',
-          showTitle: true,
-          listRoute: {
-            name: 'migrate'
-          }
-        }
-      },
-      {
-        path: '/sharedMining',
-        name: 'sharedMining',
-        component: () => import('@/views/task/sharedMining/List'),
-        meta: {
-          code: 'Data_SYNC_menu',
-          title: 'menu_title_sharedMining',
-          isCollapse: false,
-          showTitle: true
-        }
-      },
-      {
-        path: '/sharedMining/details/:id',
-        name: 'SharedMiningDetails',
-        component: () => import('@/views/task/sharedMining/Detail'),
-        meta: {
-          title: '挖掘详情',
-          showTitle: true
-        }
-      },
-      {
-        path: '/dataflow',
-        name: 'dataflow',
-        component: () => import('@/views/task/etl/List'),
-        meta: {
-          code: 'Data_SYNC_menu',
-          title: 'tap.jobFlow',
-          isCollapse: false,
-          showTitle: true
-        }
-      },
-      {
-        path: '/dataflow/details/:id',
-        name: 'dataflowDetails',
-        component: () => import('@/views/task/etl/Details'),
-        meta: {
-          title: '同步任务详情',
-          showTitle: true,
-          listRoute: {
-            name: 'dataflow'
-          }
-        }
-      },
-      {
-        path: '/dataflow/details/:id/statistics/:subId',
-        name: 'dataflowStatistics',
-        component: () => import('@/views/task/etl/statistics/Index'),
-        meta: {
-          title: '同步任务统计',
-          showTitle: true,
-          listRoute: {
-            name: 'dataflowDetails'
-          }
-        }
-      },
-      {
-        path: '/relations',
-        name: 'relations',
-        component: () => import('@/views/relations/relations'),
-        meta: {
-          showTitle: true
+          title: 'tap.dictionary'
         }
       },
       {
@@ -535,173 +727,22 @@ export default [
         component: () => import('@/views/dataMap/DataMap'),
         meta: {
           code: 'data_lineage_menu',
-          title: 'tap.dataLineage',
-          showTitle: true,
-          isCollapse: false
-        }
-      },
-      {
-        path: '/upload',
-        name: 'upload',
-        component: () => import('@/views/Upload'),
-        meta: {
-          title: 'tap.upload',
-          code: 'SYNC_job_import',
-          showTitle: true,
-          isCollapse: false
+          title: 'tap.dataLineage'
         }
       },
       {
         path: '/apiInfo',
         name: 'apiInfo',
         component: () => import('@/views/job/apiInfo'),
-        meta: { title: 'tap.apiInfo', showTitle: true, isCollapse: false }
-      },
-      {
-        path: '/function',
-        name: 'function',
-        component: () => import('@/views/function/List'),
-        meta: {
-          isCollapse: false,
-          showTitle: true,
-          code: 'SYNC_Function_management'
-        }
-      },
-      {
-        path: '/function/create',
-        name: 'FunctionCreate',
-        component: () => import('@/views/function/Form'),
-        meta: {
-          isCollapse: false,
-          showTitle: true,
-          code: 'SYNC_Function_management'
-        }
-      },
-      {
-        path: '/function/import',
-        name: 'FunctionImport',
-        component: () => import('@/views/function/ImportForm'),
-        meta: {
-          isCollapse: false,
-          showTitle: true,
-          code: 'SYNC_Function_management'
-        }
-      },
-      {
-        path: '/function/edit/:id',
-        name: 'FunctionEdit',
-        component: () => import('@/views/function/Form'),
-        meta: {
-          isCollapse: false,
-          showTitle: true,
-          code: 'SYNC_Function_management'
-        }
-      },
-      {
-        path: '/function/details/:id',
-        name: 'FunctionDetails',
-        component: () => import('@/views/function/Details'),
-        meta: {
-          isCollapse: false,
-          showTitle: true,
-          code: 'SYNC_Function_management'
-        }
-      },
-      {
-        path: '/tableFlows',
-        name: 'tableFlows',
-        component: () => import('@/views/task/TableFlows'),
-        meta: { isCollapse: true, showTitle: true }
+        meta: { title: 'tap.apiInfo' }
       },
 
       {
-        path: '/dataVerification/:id/edit',
-        name: 'dataVerificationEdit',
-        component: () => import('@/views/dataVerification/Form'),
-        meta: {
-          title: 'app.menu.dataVerification',
-          isCollapse: true,
-          showTitle: true,
-          code: 'verify_job_edition'
-        }
+        path: '/tableFlows',
+        name: 'tableFlows',
+        component: () => import('@/views/task/TableFlows')
       },
-      {
-        path: '/dataVerification/:id/details',
-        name: 'dataVerifyDetails',
-        component: () => import('@/views/dataVerification/Details'),
-        meta: {
-          title: 'verify_details_title',
-          isCollapse: true,
-          showTitle: true,
-          code: 'Data_verify'
-        }
-      },
-      {
-        path: '/dataVerification/create',
-        name: 'dataVerificationCreate',
-        component: () => import('@/views/dataVerification/Form'),
-        meta: {
-          title: 'app.menu.dataVerification',
-          isCollapse: true,
-          showTitle: true,
-          code: 'verify_job_creation'
-        }
-      },
-      {
-        path: '/dataVerification',
-        name: 'dataVerification',
-        component: () => import('@/views/dataVerification/List'),
-        meta: {
-          title: 'app.menu.dataVerification',
-          isCollapse: true,
-          showTitle: true,
-          code: 'Data_verify_menu'
-        }
-      },
-      {
-        path: '/dataVerification/:id/history',
-        name: 'dataVerifyHistory',
-        component: () => import('@/views/dataVerification/History'),
-        meta: {
-          title: 'verify_history_title',
-          isCollapse: true,
-          showTitle: true,
-          code: 'Data_verify'
-        }
-      },
-      {
-        path: '/dataVerifyResult/:id/history',
-        name: 'VerifyDiffHistory',
-        component: () => import('@/views/dataVerification/History'),
-        meta: {
-          title: 'verify_diff_history_title',
-          isCollapse: true,
-          showTitle: true,
-          code: 'Data_verify'
-        }
-      },
-      {
-        path: '/dataVerifyResult/:id/details',
-        name: 'VerifyDiffDetails',
-        component: () => import('@/views/dataVerification/Result'),
-        meta: {
-          title: 'verify_diff_details_title',
-          isCollapse: true,
-          showTitle: true,
-          code: 'Data_verify'
-        }
-      },
-      {
-        path: '/dataVerifyResult/:id',
-        name: 'dataVerifyResult',
-        component: () => import('@/views/dataVerification/Result'),
-        meta: {
-          title: 'verify_result_title',
-          isCollapse: true,
-          showTitle: true,
-          code: 'Data_verify'
-        }
-      },
+
       {
         path: '/agentDown',
         name: 'agentDown',
@@ -712,9 +753,7 @@ export default [
         name: 'notification',
         component: () => import('@/views/notification/Center'),
         meta: {
-          title: 'notification.systemNotice',
-          showTitle: true,
-          isCollapse: true
+          title: 'notification.systemNotice'
         }
       },
       {
@@ -723,36 +762,22 @@ export default [
         redirect: 'settingCenter/accountSetting',
         component: () => import('@/views/setting/SettingCenter'),
         meta: {
-          title: 'tap.settingCenter',
-          showTitle: true,
-          isCollapse: true
+          title: 'tap.settingCenter'
         },
         children: [
           {
             path: 'accountSetting',
             name: 'accountSetting',
             component: () => import('@/views/setting/AccountSetting'),
-            meta: { title: 'tap.account', showTitle: true, isCollapse: true }
+            meta: { title: 'tap.account' }
           },
           {
             path: 'notificationSetting',
             name: 'notificationSetting',
             component: () => import('@/views/setting/NotificationSetting'),
-            meta: { title: 'notification.setting', showTitle: true, isCollapse: true }
+            meta: { title: 'notification.setting' }
           }
         ]
-      },
-      {
-        path: '/metadata',
-        name: 'metadata',
-        component: () => import('@/views/metadata/List'),
-        meta: {
-          code: 'data_catalog_menu',
-          title: 'tap.dataCatalog',
-          isCollapse: true,
-          showTitle: true,
-          types: ['table', 'view', 'collection', 'mongo_view']
-        }
       },
       {
         path: '/taskProgressInfo',
@@ -772,8 +797,7 @@ export default [
         name: 'Solutions',
         component: () => import('@/views/solutions/Index'),
         meta: {
-          title: 'solution_name',
-          showTitle: true
+          title: 'solution_name'
         }
       }
     ]

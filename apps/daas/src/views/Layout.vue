@@ -68,10 +68,10 @@
         <ElMenu
           unique-opened
           class="menu"
-          :default-active="activeMenu"
+          :default-active="$route.name"
           :collapse="isCollapse"
           :collapse-transition="false"
-          @select="menuHandler($event)"
+          @select="menuHandler"
         >
           <template v-for="menu in menus">
             <ElSubmenu v-if="menu.children && !menu.hidden" :key="menu.label" :index="menu.name">
@@ -80,22 +80,12 @@
                 <span slot="title">{{ menu.label }}</span>
               </template>
               <template v-for="cMenu in menu.children">
-                <ElMenuItem
-                  :key="cMenu.label"
-                  :index="cMenu.path + (cMenu.query || '')"
-                  :route="cMenu"
-                  v-if="!cMenu.hidden"
-                >
+                <ElMenuItem v-if="!cMenu.hidden" :key="cMenu.label" :index="cMenu.name">
                   <div class="submenu-item">{{ cMenu.label }}</div>
                 </ElMenuItem>
               </template>
             </ElSubmenu>
-            <ElMenuItem
-              v-else-if="!menu.hidden"
-              :key="menu.label"
-              :index="menu.path + (menu.query || '')"
-              :route="menu"
-            >
+            <ElMenuItem v-else-if="!menu.hidden" :key="menu.label" :index="menu.name">
               <VIcon class="menu-icon mr-4">{{ menu.icon }}</VIcon>
               <span slot="title">{{ menu.label }}</span>
             </ElMenuItem>
@@ -106,7 +96,7 @@
         </div>
       </ElAside>
       <ElMain class="layout-main">
-        <Breadcrumb></Breadcrumb>
+        <PageHeader></PageHeader>
         <RouterView class="flex-fill" />
       </ElMain>
     </ElContainer>
@@ -305,7 +295,7 @@ import newDataFlow from '@/components/newDataFlow'
 import NotificationPopover from './notification/NotificationPopover'
 import { signOut } from '../utils/util'
 import Cookie from '@daas/shared/src/cookie'
-import Breadcrumb from '@/components/Breadcrumb'
+import PageHeader from '@/components/PageHeader'
 
 const Languages = {
   sc: '中文 (简)',
@@ -318,137 +308,60 @@ const LanguagesKey = {
   tc: 'zh_TW'
 }
 let menuSetting = [
-  { label: 'page_title_dashboard', name: 'dashboard', icon: 'gongzuotai' },
-  { label: 'page_title_connections', name: 'connections', icon: 'agent', code: 'datasource_menu' },
+  { name: 'dashboard', icon: 'gongzuotai' },
+  { name: 'connectionsList', icon: 'agent' },
   {
-    label: 'menu_title_data_pipeline',
     name: 'dataPipeline',
+    label: 'page_title_data_pipeline',
     icon: 'huowuchuanshu',
     code: 'data_transmission',
     children: [
-      {
-        label: 'page_title_data_copy',
-        name: 'migrate',
-        code: 'Data_SYNC_menu'
-      },
-      {
-        label: 'page_title_data_develop',
-        name: 'dataflow',
-        code: 'Data_SYNC_menu'
-      },
-      {
-        label: 'page_title_data_verification',
-        name: 'dataVerification',
-        code: 'Data_verify_menu'
-      },
-      {
-        label: 'page_title_sharedMining',
-        name: 'sharedMining',
-        icon: 'shujutongbu'
-      },
-      {
-        label: 'page_title_function',
-        name: 'function',
-        icon: 'shujutongbu'
-      }
+      { name: 'migrateList' },
+      { name: 'dataflowList' },
+      { name: 'dataVerificationList' },
+      { name: 'sharedMiningList' },
+      { name: 'functionList' }
     ]
   },
   {
-    label: 'menu_title_data_discovery',
-    name: 'dataFind',
+    name: 'dataDiscovery',
+    label: 'page_title_data_discovery',
     icon: 'shujuzhili',
     code: 'data_government',
-    children: [
-      {
-        label: 'page_title_data_catalogue',
-        name: 'metadataDefinition',
-        code: 'data_catalog_menu'
-      },
-      {
-        label: 'page_title_data_search',
-        name: 'metadataSearch'
-      }
-    ]
+    children: [{ name: 'metadataList' }, { name: 'search' }]
   },
   {
-    label: 'menu_title_data_service',
     name: 'dataService',
+    label: 'page_title_data_service',
     icon: 'connection',
     code: 'data_publish',
     children: [
-      {
-        label: 'page_title_api_publish',
-        name: 'modules',
-        code: 'API_management_menu'
-      },
-      {
-        label: 'page_title_api_browse',
-        name: 'dataExplorer',
-        code: 'API_data_explorer_menu'
-      },
-      {
-        label: 'page_title_api_test',
-        name: 'apiDocAndTest',
-        code: 'API_doc_&_test_menu'
-      },
-      {
-        label: 'page_title_api_stat',
-        name: 'apiAnalysis',
-        code: 'API_stats_menu'
-      },
-      {
-        label: 'page_title_api_audit',
-        name: 'applications',
-        code: 'API_clients_menu'
-      },
-      {
-        label: 'page_title_api_monitor',
-        name: 'apiServers',
-        code: 'API_server_menu'
-      }
+      { name: 'modules' },
+      { name: 'dataExplorer' },
+      { name: 'apiDocAndTest' },
+      { name: 'apiAnalysis' },
+      { name: 'applications' },
+      { name: 'apiServers' }
     ]
   },
   {
-    label: 'menu_title_system',
     name: 'system',
+    label: 'page_title_system',
     icon: 'caozuorizhi',
     code: 'system_management',
     children: [
-      {
-        label: 'page_title_schedule',
-        name: 'tasks',
-        code: 'schedule_jobs_menu'
-      },
-      {
-        label: 'page_title_cluster',
-        name: 'clusterManagement',
-        code: 'Cluster_management_menu'
-      },
-      {
-        label: 'page_title_process',
-        name: 'agents',
-        code: 'agents_menu'
-      },
-      {
-        label: 'page_title_user',
-        name: 'users',
-        code: 'user_management_menu'
-      },
-      {
-        label: 'page_title_role',
-        name: 'roles',
-        code: 'role_management_menu'
-      },
-      {
-        label: 'page_title_setting',
-        name: 'settings',
-        code: 'system_settings_menu'
-      }
+      { name: 'metadataDefinition' },
+      { name: 'tasks' },
+      { name: 'clusterManagement' },
+      { name: 'agents' },
+      { name: 'users' },
+      { name: 'roleList' },
+      { name: 'settings' }
     ]
   }
 ]
 export default {
-  components: { CustomerService, newDataFlow, NotificationPopover, Breadcrumb },
+  components: { CustomerService, newDataFlow, NotificationPopover, PageHeader },
   data() {
     return {
       logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
@@ -461,7 +374,6 @@ export default {
         (this.$has('SYNC_job_creation') && this.$has('Data_SYNC_menu')) ||
         (this.$has('datasource_creation') && this.$has('datasource_menu')),
       menus: [],
-      activeMenu: '',
       userName: '',
       dialogVisible: false,
       isShowCustomerService: false,
@@ -478,7 +390,6 @@ export default {
     }
   },
   created() {
-    this.activeMenu = this.$route.fullPath
     this.getMenus()
     if (this.$cookie.get('email')) {
       this.userName = this.$cookie.get('username') || this.$cookie.get('email').split('@')[0] || ''
@@ -504,34 +415,40 @@ export default {
   destroyed() {
     this.$root.$off('updateMenu')
   },
-  watch: {
-    '$route.name'() {
-      this.activeMenu = this.$route.path
-    }
-  },
   methods: {
     getMenus() {
       let permissions = sessionStorage.getItem('tapdata_permissions')
       permissions = permissions ? JSON.parse(permissions) : []
       let routerMap = {}
       let routes = this.$router.options.routes.find(r => r.name === 'layout').children
-      routes.forEach(r => {
-        routerMap[r.name] = r
-      })
+      let getRoutesMap = routes => {
+        routes.forEach(r => {
+          routerMap[r.name] = r
+          if (r.children) {
+            getRoutesMap(r.children)
+          }
+        })
+      }
+      getRoutesMap(routes)
 
       let formatMenu = items => {
         return items.map(item => {
-          let router = routerMap[item.name]
-          let menu = Object.assign({}, item, router)
-          menu.label = this.$t(item.label)
+          let route = routerMap[item.name]
+          let menu = item
+          if (route) {
+            menu.to = { name: route.name }
+            menu.label = this.$t(route.meta.title)
+            menu.code = route.meta.code
+          } else {
+            menu.label = this.$t(menu.label)
+          }
           let matched = !menu.code || permissions.some(p => p.code === menu.code)
-          if (menu.children) {
+          menu.hidden = !matched
+          if (matched && menu.children) {
             menu.children = formatMenu(menu.children)
             if (menu.children.every(m => m.hidden)) {
               menu.hidden = true
             }
-          } else if (!matched) {
-            menu.hidden = true
           }
           return menu
         })
@@ -610,11 +527,13 @@ export default {
           signOut()
         })
     },
-    menuHandler(index) {
-      if (this.$route.fullPath === index) {
+    menuHandler(name) {
+      if (this.$route.name === name) {
         return
       }
-      this.$router.push(index)
+      this.$router.push({
+        name
+      })
     },
     changeLanguage(lang) {
       localStorage.setItem('tapdata_localize_lang', lang)

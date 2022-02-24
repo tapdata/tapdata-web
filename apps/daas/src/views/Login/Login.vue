@@ -138,10 +138,7 @@ export default {
         this.$cookie.set('isAdmin', parseInt(user.data.role) || 0)
         this.$cookie.set('user_id', data.userId)
         this.$cookie.set('lang', this.langMap[localStorage.getItem('tapdata_localize_lang')] || 'zh-CN')
-        this.$cookie.delete('show_guide')
-        if (!user.data.isCompleteGuide) {
-          this.$cookie.set('show_guide', 1)
-        }
+
         history.go(-1)
         setTimeout(() => {
           location.reload()

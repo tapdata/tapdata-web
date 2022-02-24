@@ -136,7 +136,7 @@ export default {
     // 跳转表
     handleJumpTable(data) {
       // location.reload()
-      this.$router.push({ name: 'metadataDetails', query: { id: data.id } })
+      this.$router.push({ name: 'metadataDetails', params: { id: data.id } })
       this.$nextTick(() => {
         location.reload()
       })

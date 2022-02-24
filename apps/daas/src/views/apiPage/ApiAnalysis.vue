@@ -228,7 +228,7 @@ export default {
         return ''
       }
 
-      switch (this.$t('menu_help')) {
+      switch (this.$t('button_help')) {
         case '帮助':
           this.$moment.updateLocale('en', {
             relativeTime: {

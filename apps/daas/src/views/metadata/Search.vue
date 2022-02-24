@@ -200,7 +200,7 @@ export default {
     goMetaInfo(id) {
       this.$router.push({
         name: 'metadataDetails',
-        query: {
+        params: {
           id: id
         }
       })

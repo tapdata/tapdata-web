@@ -494,7 +494,7 @@ export default {
       })
     },
     toDetails(item) {
-      this.$router.push({ name: 'metadataDetails', query: { id: item.id } })
+      this.$router.push({ name: 'metadataDetails', params: { id: item.id } })
     },
     changeName(item) {
       this.$prompt('', this.$t('connection.rename'), {

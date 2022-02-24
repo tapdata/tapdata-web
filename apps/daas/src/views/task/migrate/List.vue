@@ -69,7 +69,6 @@
           <span> {{ $t('dataFlow.bulkImport') }}</span>
         </el-button>
         <el-button
-          v-if="!$getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')"
           v-readonlybtn="'SYNC_job_creation'"
           class="btn btn-create"
           type="primary"
@@ -77,17 +76,6 @@
           @click="create"
         >
           <i class="iconfont icon-jia add-btn-icon"></i>
-        </el-button>
-        <el-button
-          v-else
-          v-readonlybtn="'SYNC_job_creation'"
-          class="btn btn-create"
-          type="primary"
-          size="small"
-          @click="creatText"
-        >
-          <i class="iconfont icon-jia add-btn-icon"></i>
-          创建任务
         </el-button>
       </div>
 
@@ -829,11 +817,6 @@ export default {
         name: 'MigrateNew'
       })
     },
-    async creatText() {
-      this.$router.push({
-        name: 'createTask'
-      })
-    },
     handleDetail(id, type, mappingTemplate, hasChildren) {
       // 子选项 hasChildren 为 true
       if (hasChildren) {
@@ -863,15 +846,6 @@ export default {
           }
         ).then(resFlag => {
           if (!resFlag) {
-            return
-          }
-          if (window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
-            this.$router.push({
-              name: 'editTask',
-              params: {
-                id: id
-              }
-            })
             return
           }
           let routeUrl = this.$router.resolve({

@@ -635,7 +635,7 @@ export default {
     },
     // 获取数据
     getData() {
-      return Promise.all([this.$api('MetadataInstances').get([this.$route.query.id])])
+      return Promise.all([this.$api('MetadataInstances').get([this.$route.parmas.id])])
         .then(res => {
           this.metadataDataObj = res[0].data
           this.pageTotal = (res[0].data.fields && res[0].data.fields.length) || 0
