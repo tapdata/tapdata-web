@@ -82,11 +82,16 @@
         ref="tableName"
       >
       </TableList>
-      <template slot="name" slot-scope="scope">
-        <span>{{ scope.row }}</span>
-      </template>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="tableDialogVisible = false" size="mini">{{ $t('button_close') }}</el-button>
+        <el-pagination
+          @current-change="getTableNames"
+          :current-page="currentPage"
+          :page-sizes="[20, 50, 100]"
+          :page-size="pageSize"
+          layout="total, prev, pager, next, jumper"
+          :total="tableNameTotal"
+        >
+        </el-pagination>
       </span>
     </el-dialog>
   </div>
@@ -196,7 +201,7 @@ export default {
       columnsTableName: [
         {
           label: '表名称',
-          slotName: 'name'
+          prop: 'tablename'
         }
       ],
       columns: [
@@ -224,7 +229,10 @@ export default {
       ],
       tableDialogVisible: false,
       timeRange: [], //时间范围
-      tableNameList: []
+      tableNameList: [],
+      currentPage: 1,
+      pageSize: 20,
+      tableNameTotal: 0
     }
   },
   computed: {
@@ -262,7 +270,7 @@ export default {
     },
     getTables(id) {
       this.tableDialogVisible = true
-      this.getTableNames(id)
+      this.getTableNames()
     },
     getChartData(id) {
       let data = [
@@ -335,11 +343,16 @@ export default {
     changeTimeRangeFnc() {
       this.resetTimer()
     },
-    getTableNames(id) {
+    getTableNames() {
+      let filter = {
+        limit: this.pageSize,
+        skip: (this.currentPage - 1) * this.pageSize
+      }
       this.$api('logcollector')
-        .tableNames()
+        .tableNames(this.detailData.id, filter)
         .then(res => {
-          this.tableNameList = res?.data
+          this.tableNameList = res?.data?.items
+          this.tableNameTotal = res?.data?.total
         })
     }
   }

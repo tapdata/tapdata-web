@@ -947,7 +947,7 @@ export default {
       //共享挖掘
       if (filed === 'shareCdcEnable') {
         //请求是否有全局共享挖掘配置
-        this.handleSetting()
+        this.check()
         //日志时长
         this.changeConfig([], 'logSaveList')
       }
@@ -1062,13 +1062,13 @@ export default {
         })
     },
     // 共享挖掘设置
-    handleSetting() {
+    check() {
       this.$api('logcollector')
-        .getSystemConfig()
+        .check()
         .then(res => {
           if (res) {
-            let systemConfig = res?.data
-            if (!systemConfig?.persistenceMongodb_uri_db) {
+            let result = res.data
+            if (result) {
               this.showSystemConfig = true
               this.getMongodb()
               //打开全局设置
