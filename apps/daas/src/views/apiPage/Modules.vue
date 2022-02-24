@@ -66,7 +66,7 @@
         <el-button size="mini" @click.native="exportFile">{{ $t('modules_export') }}</el-button>
         <el-button size="mini" @click.native="importFile">{{ $t('modules_import') }}</el-button>
         <el-button
-          v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-show="multipleSelection.length > 0"
           v-readonlybtn="'data_catalog_category_application'"
           size="mini"
@@ -81,12 +81,7 @@
           <span>{{ $t('modules_create') }}</span>
         </el-button>
       </div>
-      <el-table-column
-        v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
-        type="selection"
-        width="45"
-        :reserve-selection="true"
-      >
+      <el-table-column v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
       </el-table-column>
       <el-table-column :label="$t('modules_header_api_name')" prop="name" sortable="name"></el-table-column>
       <el-table-column :label="$t('modules_header_tablename')" prop="tablename" sortable="tablename"> </el-table-column>

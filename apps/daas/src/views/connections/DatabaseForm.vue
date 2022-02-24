@@ -2,12 +2,12 @@
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
       <main class="connection-from-main">
-        <div class="connection-from-title" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+        <div class="connection-from-title" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
           {{
             $route.params.id ? this.$t('connection_form_edit_connection') : this.$t('connection_form_creat_connection')
           }}
         </div>
-        <!-- <header class="header" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+        <!-- <header class="header" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
           {{ $route.params.id ? $t('connection_form_edit_connection') : $t('connection_form_creat_connection') }}
         </header> -->
         <!-- <div class="databaseFrom-body">
@@ -41,13 +41,13 @@
                   {{ $t('connection.change') }}
                 </div>
               </div>
-              <div class="tip" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+              <div class="tip" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
                     {{ $t('dataForm.form.guide') }}
                     <a class="color-primary" target="_blank" href="https://docs.tapdata.net/data-source">{{
                       $t('dataForm.form.guideDoc')
                     }}</a>
                   </div>
-                  <div class="tip" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM')">
+                  <div class="tip" v-if="$getSettingByKey('DFS_TCM_PLATFORM')">
                     请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
                   </div>
             </div> -->
@@ -535,7 +535,7 @@
           </div>
         </footer>
       </main>
-      <GitBook v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"></GitBook>
+      <GitBook v-if="!$getSettingByKey('DFS_TCM_PLATFORM')"></GitBook>
       <!-- </div>
       </main> -->
     </div>
