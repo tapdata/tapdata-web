@@ -38,10 +38,16 @@ export default class LogcollectorApi extends PublicAPI {
   getDetail(id) {
     return axios.get(`${this.url}/detail/${id}`)
   }
+  getChart(params) {
+    return axios.get(`${this.url}/system/config/stats`, { params })
+  }
   check() {
     return axios.get(`${this.url}/check/system/config`)
   }
   byTaskId(taskId) {
     return axios.get(`${this.url}/byTaskId/${taskId}`)
+  }
+  bySubTaskId(subTaskId) {
+    return axios.get(`${this.url}/bySubTaskId/${subTaskId}`)
   }
 }

@@ -11,7 +11,7 @@
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
           <div class="head-label">{{ $t('share_detail_log_mining_time') }}:</div>
-          <div class="font-color-sub">555555</div>
+          <div class="font-color-sub">{{ detailData.logTime }}</div>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
           <div class="head-label">{{ $t('share_detail_log_time') }}:</div>
@@ -21,23 +21,20 @@
       <div class="share-detail-head-center py-3" style="min-height: 250px">
         <div class="flex ml-3 pt-3">
           <span class="label fs-8">{{ $t('share_detail_statistics_time') }}</span>
-          <el-date-picker
-            v-model="statisticsTime"
-            type="datetimerange"
-            size="mini"
-            :range-separator="$t('share_detail_to')"
-            :start-placeholder="$t('share_detail_start_time')"
-            :end-placeholder="$t('share_detail_end_time')"
-          >
-          </el-date-picker>
+          <DatetimeRange
+            v-model="timeRange"
+            value-format="timestamp"
+            class="filter-datetime-range ml-2"
+            @change="changeTimeRangeFnc"
+          ></DatetimeRange>
         </div>
         <Chart type="line" :data="lineData" :options="lineOptions" no-x="second" class="v-echart h-100"></Chart>
       </div>
       <div class="flex share-detail-head-right text-center">
         <div class="box py-3 mt-2">
           <div class="title fs-8">增量延迟</div>
-          <div class="time py-4 fs-4 text-primary">0s</div>
-          <div class="text-muted">增量所处时间点：2021-12-20 18:00:00</div>
+          <div class="time py-4 fs-4 text-primary">{{ detailData.delayTime }}</div>
+          <div class="text-muted">增量所处时间点：{{ formatTime(detailData.cdcTime) }}</div>
         </div>
       </div>
     </div>
@@ -74,7 +71,18 @@
       :close-on-click-modal="false"
       :visible.sync="tableDialogVisible"
     >
-      <span v-for="item in detailData.tableName">{{ item }}</span>
+      <TableList
+        :data="detailData.tableName"
+        :columns="columnsTableName"
+        :remote-data="id"
+        height="100%"
+        :has-pagination="false"
+        ref="tableName"
+      >
+      </TableList>
+      <template slot="name" slot-scope="scope">
+        <span>{{ scope.row }}</span>
+      </template>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="tableDialogVisible = false" size="mini">{{ $t('button_close') }}</el-button>
       </span>
@@ -86,9 +94,11 @@
 import Chart from 'web-core/components/chart'
 import TableList from '@/components/TableList'
 import StatusTag from '@/components/StatusTag'
+import { formatTime, formatMs, isEmpty } from '@/utils/util'
+import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 export default {
   name: 'Info',
-  components: { Chart, TableList, StatusTag },
+  components: { Chart, TableList, StatusTag, DatetimeRange },
   data() {
     return {
       id: '',
@@ -109,19 +119,37 @@ export default {
           right: 0,
           show: true
         },
-        yAxis: {
-          axisLabel: {
-            formatter: function (value) {
-              if (value >= 1000) {
-                value = value / 1000 + 'K'
+        xAxis: {
+          type: 'time',
+          data: []
+        },
+        yAxis: [
+          {
+            // max: 'dataMax',
+            axisLabel: {
+              formatter: function (value) {
+                if (value >= 1000) {
+                  value = value / 1000 + 'K'
+                }
+                return value
               }
-              return value
+            }
+          },
+          {
+            // max: 'dataMax',
+            axisLabel: {
+              formatter: function (value) {
+                if (value >= 1000) {
+                  value = value / 1000 + 'K'
+                }
+                return value
+              }
             }
           }
-        },
+        ],
         grid: {
           left: 0,
-          right: 0,
+          right: '2px',
           top: '24px',
           bottom: 0
         },
@@ -138,7 +166,8 @@ export default {
             symbol: 'none',
             itemStyle: {
               color: 'rgba(24, 144, 255, 1)'
-            }
+            },
+            data: []
           },
           {
             name: this.$t('task_info_output'),
@@ -152,7 +181,8 @@ export default {
             },
             itemStyle: {
               color: 'rgba(118, 205, 238, 1)'
-            }
+            },
+            data: []
           }
         ]
       },
@@ -160,6 +190,12 @@ export default {
       showContent: false,
       field_process: [],
       operations: ['start', 'stop', 'forceStop'],
+      columnsTableName: [
+        {
+          label: '表名称',
+          slotName: 'name'
+        }
+      ],
       columns: [
         {
           label: this.$t('share_detail_call_task'),
@@ -183,7 +219,8 @@ export default {
           slotName: 'operation'
         }
       ],
-      tableDialogVisible: false
+      tableDialogVisible: false,
+      timeRange: [] //时间范围
     }
   },
   computed: {
@@ -198,12 +235,19 @@ export default {
   created() {
     this.id = this.$route.params.id
     this.getData(this.id)
+    this.getChartData(this.id)
   },
 
   destroyed() {
     this.$ws.off('watch', this.taskChange)
   },
   methods: {
+    formatTime(date) {
+      return formatTime(date)
+    },
+    formatMs(ms) {
+      return formatMs(ms)
+    },
     getData(id) {
       this.$api('logcollector')
         .getDetail(id)
@@ -214,28 +258,62 @@ export default {
     getTables() {
       this.tableDialogVisible = true
     },
-    remoteMethod({ page }) {
-      const { ids } = this
-      let { current, size } = page
-      let filter = {
-        where: {
-          id: {
-            inq: ids
-          }
+    getChartData(id) {
+      let data = [
+        {
+          logTime: '2022-02-18T06:50:12.109Z',
+          inputQps: 1000,
+          outputQps: 900
         },
-        limit: size,
-        skip: size * (current - 1)
-      }
-      return this.$api('connections')
-        .get({
-          filter: JSON.stringify(filter)
-        })
-        .then(res => {
-          return {
-            total: res.data.total,
-            data: res.data.items
+        {
+          logTime: '2022-02-18T06:50:12.109Z',
+          inputQps: 1000,
+          outputQps: 900
+        }
+      ]
+      let xArr = data.map(t => formatTime(t.logTime)) //x轴
+      let inArr = data.map(t => t.inputQps)
+      let outArr = data.map(t => t.outputQps)
+
+      this.$refs.chart.chart?.setOption({
+        series: [
+          {
+            data: inArr
+          },
+          {
+            data: outArr
           }
-        })
+        ],
+        xAxis: {
+          data: xArr
+        }
+      })
+      // let filter = {
+      //   where: {
+      //     id: id,
+      //     startTime: '',
+      //     endTime: ''
+      //   }
+      // }
+      // this.$api('logcollector')
+      //   .getChart()
+      //   .then(res => {
+      //     //this.chartData = res?.data
+      //
+      //   })
+    },
+    goDetail(id) {
+      this.$router.push({
+        name: 'dataflowStatistics',
+        params: {
+          id: this.detailData.id,
+          subId: id
+        }
+      })
+    },
+    changeTimeRangeFnc() {
+      this.resetTimer()
+      this.getMeasurement(true)
     }
   }
 }
