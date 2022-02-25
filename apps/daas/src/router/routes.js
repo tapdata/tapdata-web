@@ -54,6 +54,24 @@ export default [
     component: NodeEditor
   },
   {
+    path: '/dataflow/editor',
+    name: 'DataflowNew',
+    component: DagEditor,
+    meta: {
+      title: 'page_title_data_develop',
+      code: 'Data_SYNC_menu'
+    }
+  },
+  {
+    path: '/dataflow/editor/:id',
+    name: 'DataflowEditor',
+    component: DagEditor,
+    meta: {
+      title: 'page_title_data_develop',
+      code: 'Data_SYNC_menu'
+    }
+  },
+  {
     path: '/',
     name: 'layout',
     redirect: 'dashboard',
@@ -170,32 +188,13 @@ export default [
         component: Parent,
         redirect: 'dataflow/',
         meta: {
-          title: 'page_title_data_develop',
-          code: 'Data_SYNC_menu'
+          title: 'page_title_data_develop'
         },
         children: [
           {
             path: '',
             name: 'dataflowList',
             component: () => import('@/views/task/etl/List'),
-            meta: {
-              title: 'page_title_data_develop',
-              code: 'Data_SYNC_menu'
-            }
-          },
-          {
-            path: 'editor',
-            name: 'DataflowNew',
-            component: DagEditor,
-            meta: {
-              title: 'page_title_data_develop',
-              code: 'Data_SYNC_menu'
-            }
-          },
-          {
-            path: 'editor/:id',
-            name: 'DataflowEditor',
-            component: DagEditor,
             meta: {
               title: 'page_title_data_develop',
               code: 'Data_SYNC_menu'
