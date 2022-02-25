@@ -1,5 +1,5 @@
 <template>
-  <div class="echartBox">
+  <div class="echart-box">
     <div class="echarts" :id="echartsId" :echartObj="echartObj" ref="echarts"></div>
   </div>
 </template>
@@ -116,7 +116,7 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-.echartBox {
+.echart-box {
   height: 100%;
   .echarts {
     width: 100%;

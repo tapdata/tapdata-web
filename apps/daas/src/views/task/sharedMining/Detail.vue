@@ -1,6 +1,6 @@
 <template>
-  <div class="share-detail">
-    <div class="share-detail-box flex justify-content-between fs-8">
+  <div class="share-detail section-wrap">
+    <div class="share-detail-box share-detail-head flex justify-content-between fs-8">
       <div class="share-detail-head-left">
         <div class="flex align-items-center mb-2">
           <span class="mb-4 fs-7">{{ $t('share_detail_mining_info') }}</span>
@@ -41,7 +41,7 @@
         </div>
       </div>
     </div>
-    <div class="share-detail-box mt-5 p-5">
+    <div class="share-detail-box share-detail-main mt-5 p-5">
       <TableList
         :data="detailData.taskList"
         :columns="columns"
@@ -244,9 +244,12 @@ export default {
 <style lang="scss" scoped>
 .share-detail {
   width: 100%;
-  padding: 0 20px;
+  padding: 0 20px 20px;
   background-color: #eff1f4;
   .share-detail-box {
+    // &.share-detail-head {
+    //   height: 300px;
+    // }
     width: 100%;
     background: #fff;
     border-radius: 4px;
@@ -276,6 +279,9 @@ export default {
       min-width: 240px;
       align-items: center;
     }
+  }
+  .share-detail-main {
+    flex: 1;
   }
 }
 .statistics-container {

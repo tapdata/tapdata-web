@@ -1,5 +1,5 @@
 <template>
-  <ElContainer v-loading="loading" class="task-details-container flex-column">
+  <ElContainer v-loading="loading" class="task-details-container section-wrap">
     <div class="task-info flex justify-content-between bg-white p-6">
       <div class="task-info__left flex align-items-center">
         <div class="task-info__img flex justify-center align-items-center mr-8">
@@ -553,6 +553,20 @@ export default {
 .task-info {
   .v-icon {
     color: rgba(132, 175, 255, 1);
+  }
+}
+.sub-task {
+  box-sizing: border-box;
+  overflow: hidden;
+  ::v-deep {
+    .el-tabs__content {
+      flex: 1;
+      overflow: hidden;
+      .el-tab-pane,
+      .subtask-container {
+        height: 100%;
+      }
+    }
   }
 }
 .task-info__right {
