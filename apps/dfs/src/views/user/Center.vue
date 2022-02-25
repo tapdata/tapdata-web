@@ -46,7 +46,7 @@
               />
               <span v-else>暂无</span>
             </div>
-            <ElLink type="primary" @click="dialogObj.avatar = true">修改</ElLink>
+            <ElLink type="primary" @click="editAvatar">修改</ElLink>
           </el-col>
         </el-row>
         <el-row :gutter="40" class="section-header mb-6">
@@ -118,7 +118,7 @@
       </div>
       <div class="mt-6 text-center">
         <VButton @click="dialogObj.avatar = false">{{ $t('dataVerify.cancel') }}</VButton>
-        <VButton type="primary" :disabled="!avatar" auto-loading @click="avatarConfirm(arguments[0])">{{
+        <VButton type="primary" :disabled="avatarDisabled()" auto-loading @click="avatarConfirm(arguments[0])">{{
           $t('dataVerify.confirm')
         }}</VButton>
       </div>
@@ -147,7 +147,13 @@
           ></VerificationCode>
         </ElFormItem>
         <ElFormItem prop="newPassword" label="新密码：">
-          <ElInput v-model="passwordForm.newPassword" placeholder="请输入新密码" maxlength="50" show-password></ElInput>
+          <ElInput
+            v-model="passwordForm.newPassword"
+            placeholder="请输入新密码"
+            maxlength="50"
+            show-password
+            onkeyup="value=value.replace(/[^\w\.\/]/ig,'')"
+          ></ElInput>
         </ElFormItem>
         <ElFormItem prop="newAgainPassword" label="确认密码：">
           <ElInput
@@ -155,6 +161,7 @@
             placeholder="请输入新密码"
             maxlength="50"
             show-password
+            onkeyup="value=value.replace(/[^\w\.\/]/ig,'')"
           ></ElInput>
         </ElFormItem>
       </ElForm>
@@ -473,10 +480,18 @@ export default {
       const leftThan = file.size / 1024 < 500
       if (!leftThan) {
         this.$message.error('上传头像图片大小不能超过 500KB!')
+        return
       }
       urlToBase64(URL.createObjectURL(file)).then(res => {
         this.avatar = res
       })
+    },
+    avatarDisabled() {
+      return !this.avatar || this.userData.avatar === this.avatar
+    },
+    editAvatar() {
+      this.avatar = this.userData.avatar
+      this.dialogObj.avatar = true
     },
     avatarConfirm(resetLoading) {
       const avatar = encodeURI(this.avatar)
