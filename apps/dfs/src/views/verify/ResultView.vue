@@ -34,7 +34,7 @@
           </span>
         </li>
         <li>
-          <span>{{ $t('dataVerification.verifyResult') + ' : ' + statsInfo.result }}</span>
+          <span>{{ $t('dataVerification.verifyResult') + ' : ' + (statsInfo.result || '') }}</span>
         </li>
         <li v-if="statsInfo.result !== 'passed'">
           <span>{{ statsInfo.countResultText }}</span>
