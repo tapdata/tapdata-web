@@ -985,7 +985,11 @@ export default {
         })
       } else {
         this.$router.push({
-          path: '/dataFlows?mapping=cluster-clone'
+          // path: '/dataFlows?mapping=cluster-clone'
+          name: 'dataflow',
+          query: {
+            mapping: 'cluster-clone'
+          }
         })
       }
     },

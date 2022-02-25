@@ -177,16 +177,18 @@ export default {
         })
         .then(({ data }) => {
           let list = data || []
-          this.trendData = list
-            .map(v => {
-              let year = v.stats_time.substring(0, 4)
-              let month = v.stats_time.substring(4, 6)
-              let day = v.stats_time.substring(6, 8)
-              v.label = `${year}-${month}-${day}`
-              v.value = Number(v.data.total_data_size / 1024 / 1024 / 1024).toFixed(2)
-              return v
-            })
-            .sort((a, b) => a.stats_time - b.stats_time)
+          if (list?.length) {
+            this.trendData = list
+              .map(v => {
+                let year = v.stats_time.substring(0, 4)
+                let month = v.stats_time.substring(4, 6)
+                let day = v.stats_time.substring(6, 8)
+                v.label = `${year}-${month}-${day}`
+                v.value = Number(v.data.total_data_size / 1024 / 1024 / 1024).toFixed(2)
+                return v
+              })
+              .sort((a, b) => a.stats_time - b.stats_time)
+          }
 
           this.trendChart.setOption(this.trendOptions)
         })
@@ -209,10 +211,13 @@ export default {
         })
         .then(({ data }) => {
           let list = data || []
-          this.topData = list.map(v => ({
-            label: v.data.api_name,
-            value: v.data.total_records
-          }))
+          if (list?.length) {
+            this.topData = list.map(v => ({
+              label: v.data.api_name,
+              value: v.data.total_records
+            }))
+          }
+
           this.topChart.setOption(this.topOptions)
         })
         .finally(() => {

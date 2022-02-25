@@ -561,7 +561,7 @@ export default {
         executionStatus = val === 'countDiff' ? 'row_count' : val
       }
       let routeUrl = this.$router.resolve({
-        path: 'dataVerification',
+        name: 'dataVerification',
         query: { executionStatus: executionStatus }
       })
 

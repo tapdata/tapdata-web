@@ -1,5 +1,5 @@
 <template>
-  <section class="dashboard-wrap" v-if="$window && !$window.getSettingByKey('SHOW_OLD_PAGE')" v-loading="loading">
+  <section class="dashboard-wrap" v-if="!$getSettingByKey('SHOW_OLD_PAGE')" v-loading="loading">
     <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
       <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">
         <div class="dashboard-col-box">
@@ -630,7 +630,7 @@ export default {
 
 <style lang="scss" scoped>
 .dashboard-wrap {
-  padding: 20px;
+  padding: 0 20px 20px;
   overflow-y: auto;
   background-color: #eff1f4;
   .dashboard-row {

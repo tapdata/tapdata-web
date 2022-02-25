@@ -938,24 +938,26 @@ export default {
 
     // api文档
     async openDocument() {
-      let tmp = this.apiServersList.filter(v => v.processId === this.searchParams.api_server_process_id)
-      if (tmp && tmp.length > 0) {
-        let openApi = tmp[0].clientURI + '/openapi.json'
-        let token = await this.apiClient.getAPIServerToken()
-        // let url = `${location.protocol}//${location.hostname}:${location.port}/old/static/explorer/index.html?url=${openApi}&token=${token}#/`
-        // window.open(url,"_blank")
+      if (this.apiServersList?.length) {
+        let tmp = this.apiServersList.filter(v => v.processId === this.searchParams.api_server_process_id)
+        if (tmp && tmp.length > 0) {
+          let openApi = tmp[0].clientURI + '/openapi.json'
+          let token = await this.apiClient.getAPIServerToken()
+          // let url = `${location.protocol}//${location.hostname}:${location.port}/old/static/explorer/index.html?url=${openApi}&token=${token}#/`
+          // window.open(url,"_blank")
 
-        let cols = this.collectionsList.filter(v => v.value === this.searchParams.collection)
-        let api = cols && cols.length === 1 ? cols[0].text : ''
+          let cols = this.collectionsList.filter(v => v.value === this.searchParams.collection)
+          let api = cols && cols.length === 1 ? cols[0].text : ''
 
-        this.$router.push({
-          path: '/apiDocAndTest',
-          query: {
-            id: api,
-            openApi: openApi,
-            token: token
-          }
-        })
+          this.$router.push({
+            name: 'apiDocAndTest',
+            query: {
+              id: api,
+              openApi: openApi,
+              token: token
+            }
+          })
+        }
       }
     },
 

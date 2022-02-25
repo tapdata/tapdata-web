@@ -295,7 +295,11 @@ export default {
     // 批量导入
     handleImport() {
       let routeUrl = this.$router.resolve({
-        path: '/upload?type=Inspect'
+        // path: '/upload?type=Inspect'
+        name: 'upload',
+        query: {
+          type: 'Inspect'
+        }
       })
       window.open(routeUrl.href, '_blank')
     },

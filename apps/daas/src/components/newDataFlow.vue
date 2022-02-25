@@ -186,7 +186,7 @@ export default {
     //跳转发布api
     handleModules() {
       let routeUrl = this.$router.resolve({
-        path: '/module'
+        name: 'module'
       })
       window.open(routeUrl.href, '_blank')
       this.handleClose()

@@ -14,23 +14,26 @@
       @sort-change="handleSortTable"
     >
       <div slot="search">
-        <ul class="search-bar">
-          <li>
-            <el-input
-              clearable
-              class="input-with-select"
-              size="mini"
-              v-model="searchParams.keyword"
-              :placeholder="$t('metadata.namePlaceholder')"
-              @input="table.fetch(1, 800)"
-            >
-              <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
-                <el-option :label="$t('connection.fuzzyQuery')" :value="true"></el-option>
-                <el-option :label="$t('connection.PreciseQuery')" :value="false"></el-option>
-              </el-select>
-            </el-input>
-          </li>
-          <li>
+        <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="table.fetch(1)"> </FilterBar>
+        <!-- <ul class="search-bar" solt="matchSolt">
+          <li> -->
+
+        <el-input
+          slot="matchSolt"
+          clearable
+          class="input-with-select"
+          size="mini"
+          v-model="searchParams.keyword"
+          :placeholder="$t('metadata.namePlaceholder')"
+          @input="table.fetch(1, 800)"
+        >
+          <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
+            <el-option :label="$t('connection.fuzzyQuery')" :value="true"></el-option>
+            <el-option :label="$t('connection.PreciseQuery')" :value="false"></el-option>
+          </el-select>
+        </el-input>
+        <!-- </li> -->
+        <!-- <li>
             <el-select
               clearable
               size="mini"
@@ -65,8 +68,8 @@
             <li>
               <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
             </li>
-          </template>
-        </ul>
+          </template>-->
+        <!-- </ul> -->
       </div>
       <div slot="operation">
         <el-button
@@ -80,8 +83,14 @@
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkTag') }}</span>
         </el-button>
-        <el-button v-readonlybtn="'new_model_creation'" class="btn btn-create" size="mini" @click="openCreateDialog">
-          <i class="iconfont icon-jia add-btn-icon"></i>
+        <el-button
+          v-readonlybtn="'new_model_creation'"
+          type="primary"
+          class="btn btn-create"
+          size="mini"
+          @click="openCreateDialog"
+        >
+          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
           <span>{{ $t('metadata.createModel') }}</span>
         </el-button>
       </div>
@@ -178,12 +187,14 @@
 </template>
 
 <script>
+import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
 
 export default {
   components: {
-    TablePage
+    TablePage,
+    FilterBar
   },
   data() {
     let types =
@@ -262,6 +273,7 @@ export default {
   },
   created() {
     this.getDbOptions()
+    this.getFilterItems()
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -545,6 +557,38 @@ export default {
         //   instance.confirmButtonLoading = false
         // })
       })
+    },
+    search(debounce) {
+      const { delayTrigger } = this.$util
+      delayTrigger(() => {
+        this.$router.replace({
+          name: 'metadataDefinition',
+          query: this.searchParams
+        })
+      }, debounce)
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: this.$t('metadata_type'),
+          key: 'metaType',
+          type: 'select-inner',
+          items: this.metaTypeOptions,
+          selectedWidth: '200px'
+        },
+        {
+          label: this.$t('metadata_db'),
+          key: 'dbId',
+          type: 'select-inner',
+          items: this.dbOptions
+        },
+        {
+          placeholder: this.$t('task_list_search_placeholder'),
+          key: 'keyword',
+          type: 'input',
+          slotName: ''
+        }
+      ]
     }
   }
 }
@@ -577,7 +621,7 @@ export default {
     }
     .metadata-name {
       .name {
-        color: #409eff;
+        color: #2c65ff;
         a {
           color: inherit;
           cursor: pointer;

@@ -789,7 +789,11 @@ export default {
     },
     handleImport() {
       let routeUrl = this.$router.resolve({
-        path: '/upload?type=dataflow'
+        // path: '/upload?type=dataflow'
+        name: 'upload',
+        query: {
+          type: 'dataflow'
+        }
       })
       window.open(routeUrl.href, '_blank')
     },
