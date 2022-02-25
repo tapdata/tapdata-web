@@ -178,7 +178,7 @@
         <ElFormItem prop="current" label="当前手机：">
           <ElInput v-model="phoneForm.current" placeholder="请输入当前手机" maxlength="50"></ElInput>
         </ElFormItem>
-        <ElFormItem prop="newPassword" label="旧手机验证码：" class="inline-form-item">
+        <ElFormItem prop="newPassword" label="验证码：" class="inline-form-item">
           <ElInput v-model="phoneForm.oldCode" placeholder="请输入手机验证码" maxlength="50"></ElInput>
           <VerificationCode
             :request-options="getCodeOptions(phoneForm.current, 'BIND_PHONE')"
