@@ -210,12 +210,12 @@ export default function () {
           }
         ]
       },
-      {
-        type: 'switch',
-        field: 'bidirectional',
-        label: i18n.t('task_setting_two_way_switch'),
-        show: false
-      },
+      // {
+      //   type: 'switch',
+      //   field: 'bidirectional',
+      //   label: i18n.t('task_setting_two_way_switch'),
+      //   show: false
+      // },
       {
         type: 'switch',
         field: 'isOpenAutoDDL',
