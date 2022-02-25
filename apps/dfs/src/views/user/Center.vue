@@ -32,7 +32,7 @@
           <el-col :span="12" class="user-item">
             <div class="user-item__label">手机号：</div>
             <div class="user-item__value">{{ userData.telephone || '未绑定' }}</div>
-            <ElLink v-if="userData.telephone" type="primary" @click="dialogObj.editPhone = true">修改</ElLink>
+            <ElLink v-if="userData.telephone" type="primary" @click="editPhone">修改</ElLink>
             <ElLink v-else type="primary" @click="dialogObj.bindPhone = true">绑定</ElLink>
           </el-col>
           <el-col :span="12" class="user-item">
@@ -59,7 +59,7 @@
           <el-col :span="12" class="user-item">
             <div class="user-item__label">邮箱：</div>
             <div class="user-item__value">{{ userData.email || '未绑定' }}</div>
-            <ElLink v-if="userData.email" type="primary" @click="dialogObj.editEmail = true">修改</ElLink>
+            <ElLink v-if="userData.email" type="primary" @click="editEmail">修改</ElLink>
             <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">绑定</ElLink>
           </el-col>
         </el-row>
@@ -134,7 +134,7 @@
     >
       <ElForm :model="passwordForm" label-width="120px" @submit.native.prevent>
         <ElFormItem prop="current" label="当前手机：">
-          <ElInput v-model="passwordForm.telephone" placeholder="请输入当前手机" maxlength="50"></ElInput>
+          <ElInput v-model="passwordForm.telephone" placeholder="请输入当前手机" maxlength="50" disabled></ElInput>
         </ElFormItem>
         <ElFormItem prop="newPassword" label="手机验证码：" class="inline-form-item">
           <ElInput v-model="passwordForm.code" placeholder="请输入手机验证码" maxlength="50"></ElInput>
@@ -207,7 +207,7 @@
     >
       <ElForm :model="phoneForm" label-width="120px" @submit.native.prevent>
         <ElFormItem prop="current" label="当前手机：">
-          <ElInput v-model="phoneForm.current" placeholder="请输入当前手机" maxlength="50"></ElInput>
+          <ElInput v-model="phoneForm.current" placeholder="请输入当前手机" maxlength="50" disabled></ElInput>
         </ElFormItem>
         <ElFormItem prop="newPassword" label="旧手机验证码：" class="inline-form-item">
           <ElInput v-model="phoneForm.oldCode" placeholder="请输入旧手机验证码" maxlength="50"></ElInput>
@@ -299,7 +299,7 @@
     >
       <ElForm :model="emailForm" label-width="120px" @submit.native.prevent>
         <ElFormItem prop="email" label="邮箱：">
-          <ElInput v-model="emailForm.email" placeholder="请输入邮箱" maxlength="50"></ElInput>
+          <ElInput v-model="emailForm.email" disabled placeholder="请输入邮箱" maxlength="50"></ElInput>
         </ElFormItem>
         <ElFormItem prop="code" label="当前邮箱验证码：" class="inline-form-item">
           <ElInput v-model="emailForm.code" placeholder="请输入验证码" maxlength="50"></ElInput>
@@ -526,6 +526,7 @@ export default {
         })
         return
       }
+      this.passwordForm.telephone = this.userData.telephone
       this.dialogObj.password = true
     },
     passwordConfirm(resetLoading) {
@@ -570,6 +571,10 @@ export default {
         .finally(() => {
           resetLoading?.()
         })
+    },
+    editPhone() {
+      this.phoneForm.current = this.userData.telephone
+      this.dialogObj.editPhone = true
     },
     editPhoneOldSendCode() {
       return this.$axios.get('tm/api/user/sendCode')
@@ -637,6 +642,10 @@ export default {
         .finally(() => {
           resetLoading?.()
         })
+    },
+    editEmail() {
+      this.emailForm.email = this.userData.email
+      this.dialogObj.editEmail = true
     },
     editEmailDisabled() {
       let flag = false
