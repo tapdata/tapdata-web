@@ -2,12 +2,12 @@
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
       <main class="connection-from-main">
-        <div class="connection-from-title" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+        <div class="connection-from-title" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
           {{
             $route.params.id ? this.$t('connection_form_edit_connection') : this.$t('connection_form_creat_connection')
           }}
         </div>
-        <!-- <header class="header" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+        <!-- <header class="header" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
           {{ $route.params.id ? $t('connection_form_edit_connection') : $t('connection_form_creat_connection') }}
         </header> -->
         <!-- <div class="databaseFrom-body">
@@ -41,13 +41,13 @@
                   {{ $t('connection.change') }}
                 </div>
               </div>
-              <div class="tip" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+              <div class="tip" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
                     {{ $t('dataForm.form.guide') }}
                     <a class="color-primary" target="_blank" href="https://docs.tapdata.net/data-source">{{
                       $t('dataForm.form.guideDoc')
                     }}</a>
                   </div>
-                  <div class="tip" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM')">
+                  <div class="tip" v-if="$getSettingByKey('DFS_TCM_PLATFORM')">
                     请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
                   </div>
             </div> -->
@@ -65,7 +65,7 @@
               <div class="url-tip" slot="name" v-if="!$route.params.id">
                 中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
               </div>
-              <div class="url-tip" slot="shareCdc-tip" v-if="mongodbList.length === 0">
+              <div class="url-tip" slot="shareCdc-tip" v-if="mongodbList.length === 0 && model.showShareConfig">
                 <el-link type="primary" target="_blank" href="#/connections/create?databaseType=mongodb"
                   >请先创建mongodb数据源</el-link
                 >
@@ -535,7 +535,7 @@
           </div>
         </footer>
       </main>
-      <GitBook v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"></GitBook>
+      <GitBook v-if="!$getSettingByKey('DFS_TCM_PLATFORM')"></GitBook>
       <!-- </div>
       </main> -->
     </div>
@@ -945,14 +945,13 @@ export default {
         this.getSpaceVika()
       }
       //共享挖掘
-      if (filed === 'shareCdcEnable' && ['oracle', 'mongodb'.includes(this.model.database_type)]) {
-        debugger
+      if (filed === 'shareCdcEnable') {
         //请求是否有全局共享挖掘配置
-        this.handleSetting()
+        this.check()
         //日志时长
         this.changeConfig([], 'logSaveList')
       }
-      if (filed === 'persistenceMongodb_uri_db' && ['oracle', 'mongodb'.includes(this.model.database_type)]) {
+      if (filed === 'persistenceMongodb_uri_db') {
         //请求是否有全局共享挖掘配置
         this.handleTables()
       }
@@ -1063,18 +1062,16 @@ export default {
         })
     },
     // 共享挖掘设置
-    handleSetting() {
+    check() {
       this.$api('logcollector')
-        .getSystemConfig()
+        .check()
         .then(res => {
           if (res) {
-            let systemConfig = res?.data
-            if (!systemConfig?.persistenceMongodb_uri_db) {
+            let result = res?.data?.data
+            if (result) {
               this.showSystemConfig = true
               this.getMongodb()
-            } else {
-              //隐藏全局配置
-              this.changeConfig([], 'hiddenSystemConfig')
+              //打开全局设置
             }
           }
         })
@@ -1094,6 +1091,7 @@ export default {
           if (res) {
             this.mongodbList = res?.data?.items
             this.changeConfig([], 'mongodbList')
+            this.model.showShareConfig = true
           }
         })
     },
@@ -1374,6 +1372,7 @@ export default {
           //映射可用区
           let persistenceMongodb_uri_db = items.find(it => it.field === 'persistenceMongodb_uri_db')
           if (persistenceMongodb_uri_db) {
+            persistenceMongodb_uri_db.show = true
             persistenceMongodb_uri_db.options = this.mongodbList.map(item => {
               return {
                 id: item.id,
@@ -1389,6 +1388,7 @@ export default {
           //映射可用区
           let persistenceMongodb_collection = items.find(it => it.field === 'persistenceMongodb_collection')
           if (persistenceMongodb_collection) {
+            persistenceMongodb_collection.show = true
             persistenceMongodb_collection.options = this.tableList.map(item => {
               return {
                 id: item.tableId,
@@ -1411,21 +1411,6 @@ export default {
                 value: item
               }
             })
-          }
-          break
-        }
-        case 'hiddenSystemConfig': {
-          let share_cdc_ttl_day = items.find(it => it.field === 'share_cdc_ttl_day')
-          if (share_cdc_ttl_day) {
-            share_cdc_ttl_day.show = false
-          }
-          let persistenceMongodb_collection = items.find(it => it.field === 'persistenceMongodb_collection')
-          if (persistenceMongodb_collection) {
-            persistenceMongodb_collection.show = false
-          }
-          let persistenceMongodb_uri_db = items.find(it => it.field === 'persistenceMongodb_uri_db')
-          if (persistenceMongodb_uri_db) {
-            persistenceMongodb_uri_db.show = false
           }
           break
         }

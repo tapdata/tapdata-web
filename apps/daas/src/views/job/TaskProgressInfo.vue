@@ -38,14 +38,14 @@
         :label="$t('taskProgress.sourceLibraryeName')"
         prop="statsData.sourceDbName"
         sortable
-        v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
+        v-if="!$getSettingByKey('DFS_TCM_PLATFORM')"
       >
       </el-table-column>
       <el-table-column
         :label="$t('taskProgress.sourceType')"
         prop="statsData.sourceDatabaseType"
         sortable
-        v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
+        v-if="!$getSettingByKey('DFS_TCM_PLATFORM')"
       >
       </el-table-column>
 
@@ -63,14 +63,14 @@
         :label="$t('taskProgress.targetLibraryName')"
         prop="statsData.targetDbName"
         sortable
-        v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
+        v-if="!$getSettingByKey('DFS_TCM_PLATFORM')"
       >
       </el-table-column>
       <el-table-column
         :label="$t('taskProgress.targetType')"
         prop="statsData.targetDatabaseType"
         sortable
-        v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
+        v-if="!$getSettingByKey('DFS_TCM_PLATFORM')"
       >
       </el-table-column>
 

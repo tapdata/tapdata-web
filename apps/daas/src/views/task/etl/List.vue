@@ -79,7 +79,7 @@
       </template>
       <div class="buttons" slot="operation">
         <el-button
-          v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'SYNC_category_application'"
           size="small"
           class="btn"
@@ -125,7 +125,6 @@
           <span> {{ $t('dataFlow.bulkImport') }}</span>
         </el-button>
         <el-button
-          v-if="!$window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')"
           v-readonlybtn="'SYNC_job_creation'"
           class="btn btn-create"
           type="primary"
@@ -133,17 +132,6 @@
           @click="create"
         >
           <i class="iconfont icon-jia add-btn-icon"></i>
-        </el-button>
-        <el-button
-          v-else
-          v-readonlybtn="'SYNC_job_creation'"
-          class="btn btn-create"
-          type="primary"
-          size="small"
-          @click="creatText"
-        >
-          <i class="iconfont icon-jia add-btn-icon"></i>
-          {{ $t('task_create_task') }}
         </el-button>
       </div>
 
@@ -282,7 +270,7 @@
                 </el-dropdown-item>
                 <el-dropdown-item
                   command="setTag"
-                  v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+                  v-if="$getSettingByKey('SHOW_CLASSIFY')"
                   v-readonlybtn="'SYNC_category_application'"
                 >
                   {{ $t('dataFlow.addTag') }}
@@ -754,11 +742,6 @@ export default {
       // window.open(routeUrl.href, '_blank')
       this.$router.push({
         name: 'DataflowNew'
-      })
-    },
-    async creatText() {
-      this.$router.push({
-        name: 'createTask'
       })
     },
     handleEditor(id) {

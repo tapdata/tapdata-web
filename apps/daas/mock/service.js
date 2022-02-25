@@ -1619,5 +1619,12 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, {
     code: 'ok',
     msg: 'ok',
     data: 'ok'
-  }
+  },
+  '/api/Licenses/expires': {
+    reqId: 'b8b050b0-9ef4-431b-81a0-f20dad252ddf',
+    ts: 1645620145617,
+    code: 'ok',
+    data: { msg: 'No license', expires_on: 1646762402588, status: 'none' }
+  },
+  '/api/Messages/count': { reqId: 'aea4e226-fc68-4915-8c24-90104d8078f1', ts: 1645620145447, code: 'ok', data: 5170 }
 })

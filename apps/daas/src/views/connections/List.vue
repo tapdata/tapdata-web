@@ -19,7 +19,7 @@
       </template>
       <div slot="operation">
         <ElButton
-          v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'datasource_category_application'"
           size="mini"
           class="btn"
@@ -40,12 +40,7 @@
           <span> {{ $t('connection.createNewDataSource') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn
-        v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
-        type="selection"
-        width="45"
-        :reserve-selection="true"
-      >
+      <ElTableColumn v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
       </ElTableColumn>
       <ElTableColumn prop="name" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true" min-width="150">
         <template slot-scope="scope">
@@ -270,7 +265,7 @@ export default {
     let helpUrl = 'https://docs.tapdata.net'
     let guideDoc =
       ` <a style="color: #48B6E2" href="${helpUrl}/data-source">` + this.$t('connection_list_help_doc') + '</a>'
-    if (this.$window.getSettingByKey('SHOW_OLD_PAGE')) {
+    if (this.$getSettingByKey('SHOW_OLD_PAGE')) {
       this.description = this.$t('connection_list_desc')
     } else {
       this.description = this.$t('connection_list_desc') + guideDoc

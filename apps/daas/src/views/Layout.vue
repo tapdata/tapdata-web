@@ -1,144 +1,108 @@
 <template>
-  <el-container class="layout-container">
-    <el-header class="layout-header" height="72px">
+  <ElContainer class="layout-container" direction="vertical">
+    <ElHeader class="layout-header" height="72px">
       <a class="logo" href="/">
         <img :src="logoUrl" />
       </a>
       <div class="button-bar">
-        <span class="expire-msg" v-if="licenseExpireVisible">
-          <span v-if="licenseExpire <= 1">{{
-            $t('menu_title_licenseBefore') + licenseExpire + $t('menu_title_licenseAfterOneDay')
-          }}</span>
-          <span v-if="licenseExpire > 1">{{
-            $t('menu_title_licenseBefore') + licenseExpire + $t('menu_title_licenseAfter')
-          }}</span>
-        </span>
+        <span class="expire-msg" v-if="licenseExpireVisible">{{
+          $t('app_license_expire_warning', [licenseExpire])
+        }}</span>
         <ElButton v-if="creatAuthority" type="primary" size="mini" @click="command('newDataFlow')">
           {{ $t('dataFlow.createNew') }}
         </ElButton>
-        <NotificationPopover v-if="$window.getSettingByKey('SHOW_NOTIFICATION')" class="ml-6"></NotificationPopover>
-        <el-dropdown
-          v-if="$window.getSettingByKey('SHOW_QA_AND_HELP')"
-          class="btn ml-4"
-          placement="bottom"
-          @command="command"
-        >
+        <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-6"></NotificationPopover>
+        <ElDropdown v-if="$getSettingByKey('SHOW_QA_AND_HELP')" class="btn ml-4" placement="bottom" @command="command">
           <VIcon>wenda</VIcon>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="help">{{ $t('app.document') }}</el-dropdown-item>
-            <!-- <el-dropdown-item command="question">{{ $t('app.qa') }}</el-dropdown-item> -->
-            <!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
-          </el-dropdown-menu>
-        </el-dropdown>
-        <el-dropdown
-          v-if="$window.getSettingByKey('SHOW_SETTING_BUTTON') && settingVisibility"
+          <ElDropdownMenu slot="dropdown">
+            <ElDropdownItem command="help">{{ $t('app.document') }}</ElDropdownItem>
+          </ElDropdownMenu>
+        </ElDropdown>
+        <ElDropdown
+          v-if="$getSettingByKey('SHOW_SETTING_BUTTON') && settingVisibility"
           class="btn ml-4"
           placement="bottom"
           @command="command"
         >
           <VIcon>shezhi</VIcon>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="settings" v-if="settingCode">{{ $t('menu_title_settings') }}</el-dropdown-item>
-            <el-dropdown-item command="setting" v-readonlybtn="'home_notice_settings'">{{
+          <ElDropdownMenu slot="dropdown">
+            <ElDropdownItem command="settings" v-if="settingCode">{{ $t('page_title_setting') }}</ElDropdownItem>
+            <ElDropdownItem command="setting" v-readonlybtn="'home_notice_settings'">{{
               $t('notification.setting')
-            }}</el-dropdown-item>
-            <!--						<el-dropdown-item command="verifySetting">{{-->
-            <!--							$t('dataVerify.setting.verifySetting')-->
-            <!--						}}</el-dropdown-item>-->
-          </el-dropdown-menu>
-        </el-dropdown>
-        <el-dropdown
-          v-if="$window.getSettingByKey('SHOW_LANGUAGE')"
+            }}</ElDropdownItem>
+          </ElDropdownMenu>
+        </ElDropdown>
+        <ElDropdown
+          v-if="$getSettingByKey('SHOW_LANGUAGE')"
           class="btn ml-4"
           placement="bottom"
           @command="changeLanguage"
         >
-          <VIcon>{{ { sc: 'shezhi', en: 'shezhi', tc: 'shezhi' }[lang] }}</VIcon>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item v-for="(value, key) in languages" :key="key" :command="key">
+          <VIcon>{{ { sc: 'language-sc', en: 'language-sc', tc: 'language-sc' }[lang] }}</VIcon>
+          <ElDropdownMenu slot="dropdown">
+            <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
               {{ value }}
-            </el-dropdown-item>
-            <!-- <el-dropdown-item>操作引导</el-dropdown-item> -->
-          </el-dropdown-menu>
-        </el-dropdown>
+            </ElDropdownItem>
+          </ElDropdownMenu>
+        </ElDropdown>
         <ElDivider direction="vertical" class="divider mx-6"></ElDivider>
-        <el-dropdown class="menu-user" placement="bottom" @command="command">
+        <ElDropdown class="menu-user" placement="bottom" @command="command">
           <span>
             <span class="user-initials mr-2">{{ initials }}</span>
             <span>{{ userName }}<i class="el-icon-arrow-down ml-2"></i></span>
           </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="account">{{ $t('app.account') }}</el-dropdown-item>
-            <el-dropdown-item command="version">{{ $t('app.version') }}</el-dropdown-item>
-            <el-dropdown-item command="license">{{ $t('menu_title_license') }}</el-dropdown-item>
-            <el-dropdown-item v-if="$window.getSettingByKey('SHOW_HOME_BUTTON')" command="home">
+          <ElDropdownMenu slot="dropdown">
+            <ElDropdownItem command="account">{{ $t('app.account') }}</ElDropdownItem>
+            <ElDropdownItem command="version">{{ $t('app.version') }}</ElDropdownItem>
+            <ElDropdownItem command="license">{{ $t('page_title_license') }}</ElDropdownItem>
+            <ElDropdownItem v-if="$getSettingByKey('SHOW_HOME_BUTTON')" command="home">
               {{ $t('app.home') }}
-            </el-dropdown-item>
-            <el-dropdown-item command="signOut">{{ $t('app.signOut') }}</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+            </ElDropdownItem>
+            <ElDropdownItem command="signOut">{{ $t('app.signOut') }}</ElDropdownItem>
+          </ElDropdownMenu>
+        </ElDropdown>
       </div>
-    </el-header>
-    <el-container style="width: 100%; flex: 1; overflow: hidden">
-      <el-aside class="layout-aside" width="auto">
-        <el-menu class="menu" :default-active="activeMenu" :collapse="isCollapse" @select="menuHandler($event)">
+    </ElHeader>
+    <ElContainer style="width: 100%; flex: 1; overflow: hidden">
+      <ElAside class="layout-aside" width="auto">
+        <ElMenu
+          unique-opened
+          class="menu"
+          :default-active="$route.name"
+          :collapse="isCollapse"
+          :collapse-transition="false"
+          @select="menuHandler"
+        >
           <template v-for="menu in menus">
-            <el-submenu v-if="menu.children && !menu.hidden" :key="menu.alias || menu.name" :index="menu.name">
+            <ElSubmenu v-if="menu.children && !menu.hidden" :key="menu.label" :index="menu.name">
               <template slot="title">
                 <VIcon class="menu-icon mr-4">{{ menu.icon }}</VIcon>
                 <span slot="title">{{ menu.label }}</span>
               </template>
               <template v-for="cMenu in menu.children">
-                <el-menu-item
-                  :key="cMenu.alias || cMenu.name"
-                  :index="cMenu.path + (cMenu.query || '')"
-                  :route="cMenu"
-                  v-if="!cMenu.hidden"
-                >
+                <ElMenuItem v-if="!cMenu.hidden" :key="cMenu.label" :index="cMenu.name">
                   <div class="submenu-item">{{ cMenu.label }}</div>
-                </el-menu-item>
+                </ElMenuItem>
               </template>
-            </el-submenu>
-            <el-menu-item
-              v-else-if="!menu.hidden"
-              :key="menu.alias || menu.name"
-              :index="menu.path + (menu.query || '')"
-              :route="menu"
-            >
+            </ElSubmenu>
+            <ElMenuItem v-else-if="!menu.hidden" :key="menu.label" :index="menu.name">
               <VIcon class="menu-icon mr-4">{{ menu.icon }}</VIcon>
               <span slot="title">{{ menu.label }}</span>
-            </el-menu-item>
+            </ElMenuItem>
           </template>
-          <el-submenu v-if="favMenus.length" index="favorite">
-            <template slot="title">
-              <i class="iconfont icon-shoucang"></i>
-              <span slot="title">{{ $t('menu_title_favorite') }}</span>
-            </template>
-            <el-menu-item
-              v-for="(menu, index) in favMenus"
-              :key="menu.name + '_' + menu.meta.title"
-              :index="'#favorite_' + index"
-            >
-              <div class="submenu-item">
-                <span>{{ menu.meta.title }}</span>
-                <span class="btn-del-fav-menu" @click.stop="delFavMenu(index)">
-                  <i class="el-icon-remove"></i>
-                </span>
-              </div>
-            </el-menu-item>
-          </el-submenu>
-        </el-menu>
+        </ElMenu>
         <div class="menu-footer" @click="isCollapse = !isCollapse">
           <i class="el-icon-d-arrow-left btn-collapse" :class="{ 'is-collapse': isCollapse }"></i>
         </div>
-      </el-aside>
-      <el-main class="layout-main">
-        <router-view class="flex-fill" />
-      </el-main>
-    </el-container>
+      </ElAside>
+      <ElMain class="layout-main">
+        <PageHeader></PageHeader>
+        <RouterView class="flex-fill" />
+      </ElMain>
+    </ElContainer>
     <CustomerService v-model="isShowCustomerService"></CustomerService>
     <newDataFlow :dialogVisible.sync="dialogVisible"></newDataFlow>
-  </el-container>
+  </ElContainer>
 </template>
 <style lang="scss">
 .btn-del-fav-menu {
@@ -232,13 +196,12 @@
       width: 260px;
       //flex: 1;
       padding-bottom: 48px;
-      background: rgba(250, 250, 250, 1);
+      background: #f7f8fa;
 
       overflow-y: auto;
       user-select: none;
       .menu-icon {
-        width: 13px;
-        height: 13px;
+        font-size: 12px;
       }
       .el-menu-item .el-tooltip {
         outline: none;
@@ -248,22 +211,24 @@
       }
       .el-menu-item,
       .el-submenu__title {
+        display: flex;
+        align-items: center;
         height: 50px;
         line-height: 50px;
-        color: rgba(51, 51, 51, 1);
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.6);
+        background: #f7f8fa;
         .submenu-item {
           padding-left: 12px;
         }
+        &.is-active,
         &:hover {
-          background: rgba(241, 241, 241, 1);
-        }
-        &.is-active {
-          color: #409eff;
-          background: rgba(241, 241, 241, 1);
+          color: map-get($color, primary);
+          background: rgba(44, 101, 255, 0.05);
         }
       }
       .is-active .el-submenu__title {
-        background: rgba(241, 241, 241, 1);
+        background: #f7f8fa;
       }
     }
     .menu-footer {
@@ -330,7 +295,7 @@ import newDataFlow from '@/components/newDataFlow'
 import NotificationPopover from './notification/NotificationPopover'
 import { signOut } from '../utils/util'
 import Cookie from '@daas/shared/src/cookie'
-import Breadcrumb from '@/components/Breadcrumb'
+import PageHeader from '@/components/PageHeader'
 
 const Languages = {
   sc: '中文 (简)',
@@ -344,92 +309,59 @@ const LanguagesKey = {
 }
 let menuSetting = [
   { name: 'dashboard', icon: 'gongzuotai' },
-  { name: 'connections', icon: 'agent', code: 'datasource_menu' },
+  { name: 'connectionsList', icon: 'agent' },
   {
-    name: 'dataTransmission',
-    icon: 'chengbenguanlixitong',
+    name: 'dataPipeline',
+    label: 'page_title_data_pipeline',
+    icon: 'huowuchuanshu',
     code: 'data_transmission',
     children: [
-      {
-        name: 'migrate',
-        icon: 'shujukuqianyi1',
-        code: 'Data_SYNC_menu',
-        alias: 'dataFlowsClusterClone'
-        // query: '?mapping=cluster-clone'
-      },
-      {
-        name: 'dataflow',
-        icon: 'shujutongbu',
-        code: 'Data_SYNC_menu',
-        alias: 'dataFlowsCustom'
-        // query: '?mapping=custom'
-      },
-      {
-        name: 'dataVerification',
-        icon: 'hechabidui-copy',
-        code: 'Data_verify_menu'
-      },
-      {
-        name: 'sharedMining',
-        icon: 'shujutongbu'
-      },
-      {
-        name: 'function',
-        icon: 'shujutongbu'
-      }
+      { name: 'migrateList' },
+      { name: 'dataflowList' },
+      { name: 'dataVerificationList' },
+      { name: 'sharedMiningList' },
+      { name: 'functionList' }
     ]
   },
   {
-    name: 'dataGovernance',
-    icon: 'yuanshuju1',
+    name: 'dataDiscovery',
+    label: 'page_title_data_discovery',
+    icon: 'shujuzhili',
     code: 'data_government',
-    children: [
-      { name: 'metadataDefinition', code: 'data_catalog_menu' },
-      // { name: 'metadata', code: 'data_catalog_menu' },
-      { name: 'metadataSearch' },
-      { name: 'dataQuality', code: 'data_quality_menu' },
-      { name: 'timeToLive', code: 'time_to_live_menu' },
-      // { name: 'dataMap', code: 'data_lineage_menu' },
-      { name: 'dataRules', code: 'data_rules_menu' },
-      { name: 'topology', code: 'Topology_menu' },
-      { name: 'dictionary', code: 'dictionary_menu' }
-    ]
+    children: [{ name: 'metadataList' }, { name: 'search' }]
   },
   {
-    name: 'dataPublish',
+    name: 'dataService',
+    label: 'page_title_data_service',
     icon: 'connection',
     code: 'data_publish',
     children: [
-      { name: 'modules', code: 'API_management_menu' },
-      { name: 'dataExplorer', code: 'API_data_explorer_menu' },
-      { name: 'apiDocAndTest', code: 'API_doc_&_test_menu' },
-      { name: 'apiAnalysis', code: 'API_stats_menu' },
-      { name: 'applications', code: 'API_clients_menu' },
-      { name: 'apiServers', code: 'API_server_menu' }
+      { name: 'modules' },
+      { name: 'dataExplorer' },
+      { name: 'apiDocAndTest' },
+      { name: 'apiAnalysis' },
+      { name: 'applications' },
+      { name: 'apiServers' }
     ]
   },
-  // { name: 'dataCollect', icon: 'shujucaiji', code: 'data_collect(old)_menu' },
   {
     name: 'system',
+    label: 'page_title_system',
     icon: 'caozuorizhi',
     code: 'system_management',
     children: [
-      { name: 'tasks', code: 'schedule_jobs_menu' },
-      {
-        name: 'clusterManagement',
-        code: 'Cluster_management_menu',
-        alias: window.getSettingByKey('SHOW_CLUSTER_OR_AGENT') + 'Management'
-      },
-      { name: 'agents', code: 'agents_menu' },
-      { name: 'serversOversee', code: 'servers_oversee_menu' },
-      { name: 'users', code: 'user_management_menu' },
-      { name: 'roles', code: 'role_management_menu' },
-      { name: 'settings', code: 'system_settings_menu' }
+      { name: 'metadataDefinition' },
+      { name: 'tasks' },
+      { name: 'clusterManagement' },
+      { name: 'agents' },
+      { name: 'users' },
+      { name: 'roleList' },
+      { name: 'settings' }
     ]
   }
 ]
 export default {
-  components: { CustomerService, newDataFlow, NotificationPopover, Breadcrumb },
+  components: { CustomerService, newDataFlow, NotificationPopover, PageHeader },
   data() {
     return {
       logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
@@ -442,8 +374,6 @@ export default {
         (this.$has('SYNC_job_creation') && this.$has('Data_SYNC_menu')) ||
         (this.$has('datasource_creation') && this.$has('datasource_menu')),
       menus: [],
-      activeMenu: '',
-      favMenus: [],
       userName: '',
       dialogVisible: false,
       isShowCustomerService: false,
@@ -460,12 +390,7 @@ export default {
     }
   },
   created() {
-    this.activeMenu = this.$route.fullPath
     this.getMenus()
-    this.getFavMenus()
-    this.$root.$on('updateMenu', () => {
-      this.getFavMenus()
-    })
     if (this.$cookie.get('email')) {
       this.userName = this.$cookie.get('username') || this.$cookie.get('email').split('@')[0] || ''
     }
@@ -490,60 +415,40 @@ export default {
   destroyed() {
     this.$root.$off('updateMenu')
   },
-  watch: {
-    '$route.name'() {
-      this.activeMenu = this.$route.path
-    }
-  },
   methods: {
-    async getFavMenus() {
-      let result = await this.$api('users').get([this.$cookie.get('user_id')])
-      if (result && result.data) {
-        let user = result.data || {}
-        this.favMenus = user.favorites || []
-        // this.userName = user.email.split('@')[0] || '';
-      }
-    },
-    delFavMenu(idx) {
-      this.$confirm(
-        this.$t('message.comfirm') + this.$t('menu_title_delFavMenu'),
-        this.$t('menu_title_delFavMenu')
-      ).then(async resFlag => {
-        if (!resFlag) {
-          return
-        }
-        this.favMenus.splice(idx, 1)
-        // this.$cookie.get('user_id'),
-        let result = await this.$api('users').updateById({
-          favorites: this.favMenus
-        })
-        if (result.status === 200) {
-          this.$message.success(this.$t('message.saveOK'))
-        }
-      })
-    },
     getMenus() {
       let permissions = sessionStorage.getItem('tapdata_permissions')
       permissions = permissions ? JSON.parse(permissions) : []
       let routerMap = {}
       let routes = this.$router.options.routes.find(r => r.name === 'layout').children
-      routes.forEach(r => {
-        routerMap[r.name] = r
-      })
+      let getRoutesMap = routes => {
+        routes.forEach(r => {
+          routerMap[r.name] = r
+          if (r.children) {
+            getRoutesMap(r.children)
+          }
+        })
+      }
+      getRoutesMap(routes)
 
       let formatMenu = items => {
         return items.map(item => {
-          let router = routerMap[item.name]
-          let menu = Object.assign({}, item, router)
-          menu.label = this.$t('menu_title_' + (item.alias || menu.name))
+          let route = routerMap[item.name]
+          let menu = item
+          if (route) {
+            menu.to = { name: route.name }
+            menu.label = this.$t(route.meta.title)
+            menu.code = route.meta.code
+          } else {
+            menu.label = this.$t(menu.label)
+          }
           let matched = !menu.code || permissions.some(p => p.code === menu.code)
-          if (menu.children) {
+          menu.hidden = !matched
+          if (matched && menu.children) {
             menu.children = formatMenu(menu.children)
             if (menu.children.every(m => m.hidden)) {
               menu.hidden = true
             }
-          } else if (!matched) {
-            menu.hidden = true
           }
           return menu
         })
@@ -592,7 +497,6 @@ export default {
           this.$router.push({
             name: 'License'
           })
-          // this.$message.info(this.$t('menu_title_licenseDate') + ': ' + this.licenseExpireDate)
           break
         case 'home':
           window.open('https://tapdata.net/', '_blank')
@@ -623,20 +527,13 @@ export default {
           signOut()
         })
     },
-    menuHandler(index) {
-      if (index.includes('#favorite_')) {
-        let i = index.split('#favorite_')[1]
-        let router = this.favMenus[i]
-        if (this.$route.name === router.name) {
-          this.$router.replace(router)
-        }
-        this.$router.push(router)
-      } else {
-        if (this.$route.fullPath === index) {
-          return
-        }
-        this.$router.push(index)
+    menuHandler(name) {
+      if (this.$route.name === name) {
+        return
       }
+      this.$router.push({
+        name
+      })
     },
     changeLanguage(lang) {
       localStorage.setItem('tapdata_localize_lang', lang)

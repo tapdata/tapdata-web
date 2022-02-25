@@ -1,7 +1,7 @@
 <template>
   <el-drawer
     class="connection-drawer"
-    :class="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs' ? 'no-top-drawer' : 'top-drawer'"
+    :class="$getSettingByKey('DFS_TCM_PLATFORM') === 'drs' ? 'no-top-drawer' : 'top-drawer'"
     ref="drawer"
     :visible.sync="visible"
     :title="$t('dataForm.title')"

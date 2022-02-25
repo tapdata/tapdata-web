@@ -31,22 +31,22 @@
         </ul>
       </div>
       <div slot="operation">
-        <el-button
-          class="btn btn-create"
-          type="primary"
-          :disabled="showEditSettingBtn"
-          size="mini"
-          @click="handleSetting"
-        >
+        <el-button class="btn btn-create" type="primary" size="mini" @click="handleSetting">
           <span>{{ $t('share_list_setting') }}</span>
         </el-button>
       </div>
-      <el-table-column :label="$t('share_list_name')" prop="name" sortable="name" :show-overflow-tooltip="true">
+      <el-table-column
+        :label="$t('share_list_name')"
+        prop="name"
+        sortable="name"
+        :show-overflow-tooltip="true"
+        width="360"
+      >
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('share_list_connection')" prop="connections">
+      <el-table-column :label="$t('share_list_connection')" prop="connections" width="250">
         <template slot-scope="scope">
           <div v-for="item in scope.row.connections" :key="item.id">
             <span v-for="op in item" :key="op">{{ op }}</span>
@@ -58,8 +58,8 @@
           {{ scope.row.indexName }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('share_list_creat_time')" prop="createTime"> </el-table-column>
       <el-table-column :label="$t('share_list_time')"> </el-table-column>
+      <el-table-column :label="$t('share_list_creat_time')" prop="createTime" width="160"> </el-table-column>
       <el-table-column :label="$t('share_list_status')" prop="status">
         <template slot-scope="scope">
           <StatusTag type="text" target="shareCdc" :status="scope.row.status" only-img></StatusTag>
@@ -87,13 +87,19 @@
       :close-on-click-modal="false"
       :visible.sync="settingDialogVisible"
     >
-      <el-form :model="digSettingForm" ref="digSettingForm" :rules="rules" label-position="left" label-width="180px">
+      <el-form
+        :model="digSettingForm"
+        ref="digSettingForm"
+        :disabled="!showEditSettingBtn"
+        :rules="rules"
+        label-position="left"
+        label-width="180px"
+      >
         <el-form-item :label="$t('share_form_setting_connection_name')" size="mini" prop="persistenceMongodb_uri_db">
           <el-select v-model="digSettingForm.persistenceMongodb_uri_db" placeholder="请选择" @change="handleTables">
             <el-option v-for="item in mongodbList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
           </el-select>
-
-          <div v-if="mongodbList.length === 0">
+          <div v-if="showEditSettingBtn && mongodbList.length === 0">
             <el-link type="primary" target="_blank" href="#/connections/create?databaseType=mongodb"
               >请先创建mongodb数据源</el-link
             >
@@ -126,7 +132,9 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="settingDialogVisible = false" size="mini">{{ $t('button_cancel') }}</el-button>
-        <el-button type="primary" @click="saveSetting()" size="mini">{{ $t('button_confirm') }}</el-button>
+        <el-button type="primary" :disabled="!showEditSettingBtn" @click="saveSetting()" size="mini">{{
+          $t('button_confirm')
+        }}</el-button>
       </span>
     </el-dialog>
 
@@ -228,7 +236,7 @@ export default {
         stop: { running: true },
         edit: { edit: true, stop: true, error: true }
       },
-      showEditSettingBtn: false, //不能修改
+      showEditSettingBtn: false, //禁用
       //rules
       rules: {
         persistenceMongodb_uri_db: [{ required: true, message: '请选择MongoDB连接名称', trigger: 'blur' }],
@@ -296,7 +304,7 @@ export default {
         .check()
         .then(res => {
           if (res) {
-            this.showEditSettingBtn = res.data
+            this.showEditSettingBtn = res?.data?.data //true是可用，false是禁用
           }
         })
     },

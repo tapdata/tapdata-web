@@ -23,7 +23,7 @@ export default {
   },
   created() {
     // this.$emit('amount').$attrs.classname.isclass = true
-    if (!parseInt(this.$cookie.get('login'))) {
+    if (!parseInt(this.$cookie.get('user_id'))) {
       return this.$router.push({
         path: '/login',
         query: { redirect: '/apiAnalysis' }

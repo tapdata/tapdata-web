@@ -70,7 +70,7 @@
       </div>
       <div slot="operation">
         <el-button
-          v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'data_catalog_category_application'"
           size="mini"
           class="btn"
@@ -85,12 +85,7 @@
           <span>{{ $t('metadata.createModel') }}</span>
         </el-button>
       </div>
-      <el-table-column
-        v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
-        type="selection"
-        width="45"
-        :reserve-selection="true"
-      >
+      <el-table-column v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
       </el-table-column>
       <el-table-column :label="$t('metadata.header.name')" prop="name" sortable="custom">
         <template slot-scope="scope">
@@ -499,7 +494,7 @@ export default {
       })
     },
     toDetails(item) {
-      this.$router.push({ name: 'metadataDetails', query: { id: item.id } })
+      this.$router.push({ name: 'metadataDetails', params: { id: item.id } })
     },
     changeName(item) {
       this.$prompt('', this.$t('connection.rename'), {
