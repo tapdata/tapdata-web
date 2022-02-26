@@ -978,7 +978,7 @@ export default {
           //   this.settingModel.needToCreateIndex = false
           // }
 
-          //mysql、pg、oracle、sql server、mongodb、mariadb 是作为目标 支持自动创建索引
+          // mysql、pg、oracle、sql server、mongodb、mariadb 是作为目标 支持自动创建索引
           if (
             [
               'mysql',
@@ -1213,7 +1213,9 @@ export default {
         case 'setting_twoWay': {
           //映射是否双向同步
           let op = items.find(it => it.field === 'bidirectional')
-          op.show = !!this.supportTwoWay
+          if (op) {
+            op.show = !!this.supportTwoWay
+          }
           break
         }
         case 'databaseType': {
