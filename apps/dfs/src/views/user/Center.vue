@@ -545,7 +545,6 @@ export default {
       this.dialogObj.password = true
     },
     passwordConfirm(resetLoading) {
-      // CryptoJS.RC4.encrypt(this.form.password, 'XWFSxfs8wFcs').toString()
       let { passwordForm } = this
       let { newPassword, newAgainPassword } = passwordForm
       if (newPassword !== newAgainPassword) {
