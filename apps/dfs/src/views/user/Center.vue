@@ -152,7 +152,7 @@
             placeholder="请输入新密码"
             maxlength="50"
             show-password
-            onkeyup="value=value.replace(/[^\w\.\/]/ig,'')"
+            onkeyup="value=value.replace(/[\u4e00-\u9fa5]/ig,'')"
           ></ElInput>
         </ElFormItem>
         <ElFormItem prop="newAgainPassword" label="确认密码：">
@@ -161,7 +161,7 @@
             placeholder="请输入新密码"
             maxlength="50"
             show-password
-            onkeyup="value=value.replace(/[^\w\.\/]/ig,'')"
+            onkeyup="value=value.replace(/[\u4e00-\u9fa5]/ig,'')"
           ></ElInput>
         </ElFormItem>
       </ElForm>
