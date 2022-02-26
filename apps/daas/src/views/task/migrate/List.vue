@@ -15,7 +15,7 @@
       @sort-change="handleSortTable"
     >
       <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="table.fetch(1)"> </FilterBar>
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <div class="buttons" slot="operation">
         <el-button
@@ -1290,15 +1290,6 @@ export default {
     },
     handlePreviewVisible() {
       this.previewVisible = false
-    },
-    search(debounce) {
-      const { delayTrigger } = this.$util
-      delayTrigger(() => {
-        this.$router.replace({
-          name: 'migrate',
-          query: this.searchParams
-        })
-      }, debounce)
     },
     getFilterItems() {
       this.filterItems = [

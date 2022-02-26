@@ -146,7 +146,13 @@ export default {
       this.$emit('input', this.getValue())
       this.$refs.filterForm.validate(res => {
         if (res) {
-          this.$emit('search', item.debounce)
+          const { delayTrigger } = this.$util
+          delayTrigger(() => {
+            this.$router.replace({
+              name: this.$route.name,
+              query: this.getValue()
+            })
+          }, item.debounce)
         }
       })
     },
