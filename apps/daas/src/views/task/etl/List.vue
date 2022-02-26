@@ -15,7 +15,7 @@
       @sort-change="handleSortTable"
     >
       <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="table.fetch(1)"> </FilterBar>
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
         <!-- <ul class="search-bar">
           <li>
             <ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
@@ -1168,15 +1168,6 @@ export default {
       return !data
         .filter(t => t.count > 0)
         .every(t => ['edit', 'draft', 'error', 'pause', 'not_running', 'stop'].includes(t.status))
-    },
-    search(debounce) {
-      const { delayTrigger } = this.$util
-      delayTrigger(() => {
-        this.$router.replace({
-          name: 'dataflow',
-          query: this.searchParams
-        })
-      }, debounce)
     },
     getFilterItems() {
       this.filterItems = [

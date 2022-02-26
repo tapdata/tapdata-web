@@ -15,7 +15,7 @@
       @sort-change="handleSortTable"
     >
       <template slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="table.fetch(1)"> </FilterBar>
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <div slot="operation">
         <ElButton
@@ -657,15 +657,6 @@ export default {
         this.$message.error(this.$t('connection.testConnection') + this.$t('connection.status.invalid'), false)
       }
       this.table.fetch()
-    },
-    search(debounce) {
-      const { delayTrigger } = this.$util
-      delayTrigger(() => {
-        this.$router.replace({
-          name: 'connections',
-          query: this.searchParams
-        })
-      }, debounce)
     },
     getFilterItems() {
       this.filterItems = [
