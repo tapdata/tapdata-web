@@ -13,6 +13,7 @@
     "@daas/api": "workspace:^1.0.0",
     "@daas/form": "workspace:^1.0.0",
     "@daas/shared": "workspace:^1.0.0",
+    "@tapdata/field-mapping": "workspace:^1.0.0",
     "@formily/core": "^2.0.9",
     "@formily/element": "^2.0.9",
     "@formily/reactive": "^2.0.9",
