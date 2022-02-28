@@ -320,7 +320,8 @@ let menuSetting = [
       { name: 'dataflowList' },
       { name: 'dataVerificationList' },
       { name: 'sharedMiningList' },
-      { name: 'functionList' }
+      { name: 'functionList' },
+      { name: 'sharedCacheList' }
     ]
   },
   {
