@@ -1,9 +1,8 @@
 <template>
-  <section class="data-verify-wrap">
+  <section class="data-verify-wrap section-wrap">
     <TablePage
       ref="table"
       row-key="id"
-      :title="$t('app.menu.dataVerification')"
       :remoteMethod="getData"
       @selection-change="handleSelectionChange"
       @sort-change="handleSortTable"
@@ -78,7 +77,7 @@
       </ul>
       <div slot="operation">
         <el-button
-          v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'"
+          v-if="$getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'"
           v-readonlybtn="'SYNC_job_import'"
           size="small"
           class="btn"
@@ -150,7 +149,7 @@
               <span>Error</span>
             </div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
-              <img style="width: 26px; vertical-align: middle" :src="$window._TAPDATA_OPTIONS_.loadingImg" />
+              <img style="width: 26px; vertical-align: middle" :src="loadingImg" />
               <span>{{ statusMap[scope.row.status] }}</span>
             </div>
             <div v-else>-</div>
@@ -242,6 +241,7 @@ export default {
         enabled: '',
         result: ''
       },
+      loadingImg: window._TAPDATA_OPTIONS_.loadingImg,
       order: 'createTime DESC',
       inspectMethod: {
         row_count: this.$t('dataVerification.rowVerify'),
@@ -295,7 +295,11 @@ export default {
     // 批量导入
     handleImport() {
       let routeUrl = this.$router.resolve({
-        path: '/upload?type=Inspect'
+        // path: '/upload?type=Inspect'
+        name: 'upload',
+        query: {
+          type: 'Inspect'
+        }
       })
       window.open(routeUrl.href, '_blank')
     },
@@ -472,6 +476,7 @@ export default {
   }
   .search-bar {
     display: flex;
+    // padding-left: 20px;
     .item {
       margin-right: 10px;
     }
@@ -504,8 +509,8 @@ export default {
   .el-table--border td {
     border-right: 0;
   }
-  .el-table--border th {
-    border-right: 1px solid #dcdfe6;
-  }
+  // .el-table--border th {
+  //   border-right: 1px solid #dcdfe6;
+  // }
 }
 </style>

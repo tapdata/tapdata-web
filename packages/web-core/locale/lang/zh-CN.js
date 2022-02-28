@@ -150,7 +150,8 @@ const cn = {
     roleEdition: 'Tapdata-编辑角色  ',
     systemSettings: 'Tapdata-系统设置',
     account: 'Tapdata-个人设置',
-    settingCenter: 'Tapdata-设置中心'
+    settingCenter: 'Tapdata-设置中心',
+    sharedMining: 'Tapdata-共享挖掘'
   },
   errorCode: {
     networkUnconnected: '网络未连接',
@@ -287,7 +288,9 @@ const cn = {
       licenseDate: 'license到期时间',
       dataFlowsCustom: '数据同步',
       dataFlowsClusterClone: '数据库迁移',
-      topology: '网络拓扑'
+      topology: '网络拓扑',
+      sharedMining: '共享挖掘',
+      function: '函数管理'
     },
     Home: {
       all: '全部',

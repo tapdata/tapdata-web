@@ -2,7 +2,7 @@ export default function (vm) {
   return {
     form: {
       labelPosition: 'left',
-      labelWidth: '120px',
+      labelWidth: '160px',
       labelColon: true
     },
     defaultModel: {
@@ -21,7 +21,11 @@ export default function (vm) {
             value: 'target'
           }
         ],
-        required: true
+        required: true,
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
       },
       {
         type: 'input',

@@ -1,8 +1,8 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '160px'
     },
     defaultModel: {
       connection_type: 'source',
@@ -35,7 +35,11 @@ export default function (vm) {
             value: 'target'
           }
         ],
-        required: true
+        required: true,
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
       },
       {
         type: 'radio',
@@ -58,7 +62,11 @@ export default function (vm) {
             value: 'smb'
           }
         ],
-        required: true
+        required: true,
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
       },
       {
         type: 'select',
@@ -75,7 +83,6 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_host',
-
         label: vm.$t('dataForm.form.file.fileAddr'),
         required: true,
         show: false,
@@ -192,6 +199,10 @@ export default function (vm) {
         field: 'ftp_passive',
         label: vm.$t('dataForm.form.file.connectionMethod'),
         show: false,
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item',
         options: [
           {
             label: vm.$t('dataForm.form.file.activeConnectionMode'),

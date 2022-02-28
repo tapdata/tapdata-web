@@ -127,7 +127,12 @@ export const defaultModel = {
     schema: '',
     tidbPdServer: '', // TiDB
     isCheckValid: false,
-    shareCdcEnable: false
+    shareCdcEnable: false,
+    //共享挖掘配置
+    persistenceMongodb_uri_db: '',
+    persistenceMongodb_collection: '',
+    share_cdc_ttl_day: 3,
+    showShareConfig: false //是否隐藏有全局挖掘设置
   },
   kafka: {
     id: '',

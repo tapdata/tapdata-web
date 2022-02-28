@@ -1,13 +1,6 @@
 <template>
-  <section class="apiserver-wrap">
-    <TablePage
-      ref="table"
-      row-key="id"
-      class="apiserver-list"
-      :title="$t('app.menu.' + $route.name)"
-      :remoteMethod="getData"
-      @sort-change="handleSortTable"
-    >
+  <section class="apiserver-wrap section-wrap">
+    <TablePage ref="table" row-key="id" class="apiserver-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <div slot="search">
         <ul class="search-bar">
           <li>

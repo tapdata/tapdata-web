@@ -25,16 +25,20 @@ export default {
   render(h) {
     let self = this
     let config = Object.assign(this.defaultConfig, self.config)
-    let options = this.filterList.map(opt => {
-      return h('ElOption', {
-        props: {
-          label: opt.label,
-          value: opt.value,
-          disabled: opt.disabled
-        },
-        key: opt.key || opt.value
+    let options = []
+    if (this.filterList?.length) {
+      options = this.filterList.map(opt => {
+        return h('ElOption', {
+          props: {
+            label: opt.label,
+            value: opt.value,
+            disabled: opt.disabled
+          },
+          key: opt.key || opt.value
+        })
       })
-    })
+    }
+
     //当多选时，判断是否显示全选框
     let checkboxEl = null
     if (options.length && config.multiple && config.showAllCheckbox) {

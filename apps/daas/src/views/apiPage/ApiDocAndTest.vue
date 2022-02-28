@@ -1,11 +1,13 @@
 <template>
-  <div class="api-doc">
-    <div class="api-doc-box">
-      <el-button title="导出到postman" size="mini" @click="exportJson">
-        {{ $t('button_export') }}
-      </el-button>
+  <div class="api-doc section-wrap">
+    <div class="section-wrap-box">
+      <div class="api-doc-box">
+        <el-button title="导出到postman" size="mini" @click="exportJson">
+          {{ $t('button_export') }}
+        </el-button>
+      </div>
+      <iframe src frameborder="0" class="doc-test-iframe" id="docTestIframe"></iframe>
     </div>
-    <iframe src frameborder="0" class="doc-test-iframe" id="docTestIframe"></iframe>
   </div>
 </template>
 
@@ -21,9 +23,9 @@ export default {
   },
   created() {
     // this.$emit('amount').$attrs.classname.isclass = true
-    if (!parseInt(this.$cookie.get('login'))) {
+    if (!parseInt(this.$cookie.get('user_id'))) {
       return this.$router.push({
-        path: '/login',
+        name: 'login',
         query: { redirect: '/apiAnalysis' }
       })
     }
@@ -175,17 +177,17 @@ export default {
 <style scoped lang="scss">
 .api-doc {
   position: relative;
-  height: 100%;
-  overflow: hidden !important;
+  // height: 100%;
+  // overflow: hidden !important;
   .api-doc-box {
     position: absolute;
-    left: 10px;
+    left: 43px;
     top: 20px;
     overflow: hidden;
   }
   .doc-test-iframe {
     min-height: 100%;
-    width: calc(100% - 50px);
+    width: 100%;
     padding-left: 60px;
   }
 }

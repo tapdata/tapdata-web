@@ -2,8 +2,14 @@
   <!-- 索引 -->
   <section class="index-list-wrap">
     <div class="table-page-operation-bar">
-      <el-button v-readonlybtn="'new_model_creation'" class="btn btn-create" size="mini" @click="openCreateDialog">
-        <i class="iconfont icon-jia add-btn-icon"></i>
+      <el-button
+        v-readonlybtn="'new_model_creation'"
+        class="btn btn-create"
+        type="primary"
+        size="mini"
+        @click="openCreateDialog"
+      >
+        <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
         <span>{{ $t('metadata.details.index.create') }}</span>
       </el-button>
     </div>
@@ -321,7 +327,7 @@ export default {
               collection_name: _this.indexData.original_name,
               data_type: data_type,
               expireAfterSeconds: typeData,
-              meta_id: _this.$route.query.id,
+              meta_id: _this.$route.params.id,
               key: JSON.stringify(key),
               name: name,
               ttl: ttl,
@@ -367,7 +373,7 @@ export default {
                 uri: _this.indexData.source ? _this.indexData.source.database_uri : '',
                 name: item.name,
                 ns: item.ns,
-                meta_id: _this.$route.query.id
+                meta_id: _this.$route.params.id
               }
             })
             .then(() => {
@@ -402,7 +408,7 @@ export default {
     .btn-create {
       float: right;
       padding: 7px;
-      background: #f5f5f5;
+      // background: #f5f5f5;
       i.iconfont {
         font-size: 12px;
       }

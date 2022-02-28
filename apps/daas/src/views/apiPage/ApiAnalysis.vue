@@ -1,10 +1,9 @@
 <template>
-  <section class="api-analysis-wrap">
+  <section class="api-analysis-wrap section-wrap">
     <TablePage
       ref="table"
       row-key="id"
       class="api-analysis-list"
-      :title="$t('app.menu.' + $route.name)"
       :remoteMethod="getData"
       @sort-change="handleSortTable"
     >
@@ -229,7 +228,7 @@ export default {
         return ''
       }
 
-      switch (this.$t('menu_help')) {
+      switch (this.$t('button_help')) {
         case '帮助':
           this.$moment.updateLocale('en', {
             relativeTime: {

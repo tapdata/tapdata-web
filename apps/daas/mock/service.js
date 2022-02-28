@@ -10,37 +10,39 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, {
   '/api/Connections': {
     code: 'ok',
     msg: 'ok',
-    'data|1-30': [
-      {
-        name: '@name',
-        connection_type: 'target',
-        'database_type|1': ['mysql', 'oracle', 'mongodb'],
-        database_host: '',
-        database_username: '',
-        database_port: Random.integer(0, 5000),
-        database_uri: () => {
-          return 'mongodb://192.168.1.191:' + Random.integer(0, 5000) + '/tapdata_test'
-        },
-        database_name: '',
-        id: '@id',
-        sslCert: '',
-        additionalString: '',
-        'ssl|1': Boolean,
-        sslKey: '',
-        sslPass: '',
-        'schemaAutoUpdate|1': Boolean,
-        sslCA: '',
-        search_databaseType: '',
-        status: 'ready',
-        fill: 'uri',
-        user_id: '@id',
-        last_updated: Random.datetime(),
-        loadCount: Random.integer(0, 100),
-        'loadFieldsStatus|1': ['loading', 'finished', 'error'],
-        tableCount: Random.integer(0, 100),
-        username: '@name'
-      }
-    ]
+    data: {
+      'items|1-30': [
+        {
+          name: '@name',
+          connection_type: 'target',
+          'database_type|1': ['mysql', 'oracle', 'mongodb'],
+          database_host: '',
+          database_username: '',
+          database_port: Random.integer(0, 5000),
+          database_uri: () => {
+            return 'mongodb://192.168.1.191:' + Random.integer(0, 5000) + '/tapdata_test'
+          },
+          database_name: '',
+          id: '@id',
+          sslCert: '',
+          additionalString: '',
+          'ssl|1': Boolean,
+          sslKey: '',
+          sslPass: '',
+          'schemaAutoUpdate|1': Boolean,
+          sslCA: '',
+          search_databaseType: '',
+          status: 'ready',
+          fill: 'uri',
+          user_id: '@id',
+          last_updated: Random.datetime(),
+          loadCount: Random.integer(0, 100),
+          'loadFieldsStatus|1': ['loading', 'finished', 'error'],
+          tableCount: Random.integer(0, 100),
+          username: '@name'
+        }
+      ]
+    }
   },
   '/api/Settings/findOne': {
     data: {
@@ -1082,140 +1084,143 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, {
   '/api/MetadataInstances': {
     code: 'ok',
     msg: 'ok',
-    'data|1-10': [
-      {
-        id: '@id',
-        meta_type: 'database',
-        original_name: '@name',
-        username: '@name',
-        'indexes|1-10': [
-          {
-            create_by: '@name',
-            name: '@name',
-            ns: 'jason_db.d3333',
-            status: 'created',
-            v: 2,
-            key: { _id: 1, CUSTOMER_ID: 1 }
-          }
-        ],
-        source: {
-          name: 'CSS-MongoDB-Test',
-          connection_type: 'source_and_target',
-          database_type: 'mongodb',
-          database_host: '192.168.1.189',
-          database_username: 'root',
-          database_port: 24212,
-          database_uri: '',
-          database_name: 'PC',
-          database_owner: '',
-          retry: 0,
-          nextRetry: null,
-          id: '6076ffbab0f20408b0ec0914',
-          response_body: {
-            validate_details: [
-              {
-                stage_code: 'validate-3000',
-                show_msg: 'CHECK_CONNECT',
-                status: 'passed',
-                sort: 1,
-                error_code: null,
-                fail_message: null,
-                required: true
-              },
-              {
-                stage_code: 'validate-3100',
-                show_msg: 'CHECK_AUTH',
-                status: 'passed',
-                sort: 2,
-                error_code: null,
-                fail_message: null,
-                required: true
-              },
-              {
-                stage_code: 'validate-3400',
-                show_msg: 'CHECK_PERMISSION',
-                status: 'passed',
-                sort: 3,
-                error_code: null,
-                fail_message: null,
-                required: true
-              },
-              {
-                stage_code: 'validate-3200',
-                show_msg: 'LOAD_SCHEMA',
-                status: 'passed',
-                sort: 4,
-                error_code: null,
-                fail_message: null,
-                required: true
-              }
-            ],
-            retry: 0,
-            next_retry: 1619355584409
-          },
-          project: '',
-          submit: true,
-          plain_password: '',
-          table_filter: '',
-          additionalString: 'authSource=admin',
-          thin_type: '',
-          node_name: '',
-          database_schema: '',
-          plugin_name: '',
-          pgsql_log_decorder_plugin_name: '',
-          database_datetype_without_timezone: '',
-          supportUpdatePk: false,
-          ssl: false,
-          sslKey: '',
-          sslPass: '',
-          schemaAutoUpdate: false,
-          sslValidate: false,
-          sslCA: '',
-          search_databaseType: '',
-          sourceType: 'dds',
-          updateSchema: false,
-          editTest: true,
-          sslCert: '',
-          status: 'ready',
-          fill: '',
-          transformed: true,
+    data: {
+      'items|1-10': [
+        {
+          id: '@id',
+          meta_type: 'database',
+          original_name: '@name',
+          username: '@name',
+          'indexes|1-10': [
+            {
+              create_by: '@name',
+              name: '@name',
+              ns: 'jason_db.d3333',
+              status: 'created',
+              v: 2,
+              key: { _id: 1, CUSTOMER_ID: 1 }
+            }
+          ],
           user_id: '6072c1cbbf43e90010570f3c',
-          customId: '60718c178fbae2c47bc294b3',
-          last_updated: '2021-04-25T13:29:36.021Z',
-          createTime: '2021-04-14T14:44:10.392Z',
-          testTime: 1619357376015,
-          dbFullVersion: '4.2.12',
-          db_version: 4,
-          loadCount: 8,
-          loadFieldsStatus: 'finished',
-          loadSchemaField: false,
-          schemaVersion: '08309d72-2d22-48cf-9b9a-b3942e9279ec',
-          tableCount: 8,
-          everLoadSchema: true,
-          errorMsg: 'testing timeout',
-          schema: {},
-          _id: '6076ffbab0f20408b0ec0914'
-        },
-        'fields|10-30': [
-          {
-            autoincrement: false,
-            columnSize: 0,
-            dataType: 7,
-            data_type: 'OBJECT_ID',
-            field_name: '@name',
-            id: '@id',
-            is_nullable: true,
-            javaType: 'String',
-            key: 'PRI',
-            original_field_name: '@name',
-            precision: 0,
-            primary_key_position: 1,
-            scale: 0,
-            table_name: '@name'
-          }
-        ]
-      }
-    ]
+          source: {
+            name: 'CSS-MongoDB-Test',
+            connection_type: 'source_and_target',
+            database_type: 'mongodb',
+            database_host: '192.168.1.189',
+            database_username: 'root',
+            database_port: 24212,
+            database_uri: '',
+            database_name: 'PC',
+            database_owner: '',
+            retry: 0,
+            nextRetry: null,
+            id: '6076ffbab0f20408b0ec0914',
+            response_body: {
+              validate_details: [
+                {
+                  stage_code: 'validate-3000',
+                  show_msg: 'CHECK_CONNECT',
+                  status: 'passed',
+                  sort: 1,
+                  error_code: null,
+                  fail_message: null,
+                  required: true
+                },
+                {
+                  stage_code: 'validate-3100',
+                  show_msg: 'CHECK_AUTH',
+                  status: 'passed',
+                  sort: 2,
+                  error_code: null,
+                  fail_message: null,
+                  required: true
+                },
+                {
+                  stage_code: 'validate-3400',
+                  show_msg: 'CHECK_PERMISSION',
+                  status: 'passed',
+                  sort: 3,
+                  error_code: null,
+                  fail_message: null,
+                  required: true
+                },
+                {
+                  stage_code: 'validate-3200',
+                  show_msg: 'LOAD_SCHEMA',
+                  status: 'passed',
+                  sort: 4,
+                  error_code: null,
+                  fail_message: null,
+                  required: true
+                }
+              ],
+              retry: 0,
+              next_retry: 1619355584409
+            },
+            project: '',
+            submit: true,
+            plain_password: '',
+            table_filter: '',
+            additionalString: 'authSource=admin',
+            thin_type: '',
+            node_name: '',
+            database_schema: '',
+            plugin_name: '',
+            pgsql_log_decorder_plugin_name: '',
+            database_datetype_without_timezone: '',
+            supportUpdatePk: false,
+            ssl: false,
+            sslKey: '',
+            sslPass: '',
+            schemaAutoUpdate: false,
+            sslValidate: false,
+            sslCA: '',
+            search_databaseType: '',
+            sourceType: 'dds',
+            updateSchema: false,
+            editTest: true,
+            sslCert: '',
+            status: 'ready',
+            fill: '',
+            transformed: true,
+            user_id: '6072c1cbbf43e90010570f3c',
+            customId: '60718c178fbae2c47bc294b3',
+            last_updated: '2021-04-25T13:29:36.021Z',
+            createTime: '2021-04-14T14:44:10.392Z',
+            testTime: 1619357376015,
+            dbFullVersion: '4.2.12',
+            db_version: 4,
+            loadCount: 8,
+            loadFieldsStatus: 'finished',
+            loadSchemaField: false,
+            schemaVersion: '08309d72-2d22-48cf-9b9a-b3942e9279ec',
+            tableCount: 8,
+            everLoadSchema: true,
+            errorMsg: 'testing timeout',
+            schema: {},
+            _id: '6076ffbab0f20408b0ec0914'
+          },
+          'fields|10-30': [
+            {
+              autoincrement: false,
+              columnSize: 0,
+              dataType: 7,
+              data_type: 'OBJECT_ID',
+              field_name: '@name',
+              id: '@id',
+              is_nullable: true,
+              javaType: 'String',
+              key: 'PRI',
+              original_field_name: '@name',
+              precision: 0,
+              primary_key_position: 1,
+              scale: 0,
+              table_name: '@name'
+            }
+          ]
+        }
+      ]
+    }
   },
   '/api/MetadataInstances/search': {
     data: {
@@ -1619,5 +1624,12 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, {
     code: 'ok',
     msg: 'ok',
     data: 'ok'
-  }
+  },
+  '/api/Licenses/expires': {
+    reqId: 'b8b050b0-9ef4-431b-81a0-f20dad252ddf',
+    ts: 1645620145617,
+    code: 'ok',
+    data: { msg: 'No license', expires_on: 1646762402588, status: 'none' }
+  },
+  '/api/Messages/count': { reqId: 'aea4e226-fc68-4915-8c24-90104d8078f1', ts: 1645620145447, code: 'ok', data: 5170 }
 })

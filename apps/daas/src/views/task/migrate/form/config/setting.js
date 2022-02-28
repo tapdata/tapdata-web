@@ -207,6 +207,61 @@ export default function () {
         field: 'needToCreateIndex',
         label: '自动创建索引',
         show: true
+      },
+      {
+        type: 'switch',
+        field: 'isSchedule',
+        label: '任务调度',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'sync_type',
+                value: 'initial_sync'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'input',
+        field: 'cronExpression',
+        label: '表达式',
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'isSchedule',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'cdcConcurrency',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              value: false
+            }
+          }
+        ],
+        customClass: 'read-batch-size'
+      },
+      {
+        type: 'slot',
+        slot: 'dd'
       }
       // {
       //   type: 'slot',

@@ -1,10 +1,9 @@
 <template>
-  <section class="data-flow-wrap" v-loading="restLoading">
+  <section class="data-flow-wrap classify-wrap" v-loading="restLoading">
     <TablePage
       ref="table"
       row-key="id"
       class="data-flow-list"
-      :title="mappingTemplate === 'custom' ? $t('dataFlow.custom') : $t('dataFlow.clusterClone')"
       :classify="{ authority: 'SYNC_category_management', types: ['dataflow'] }"
       :remoteMethod="getData"
       @selection-change="
@@ -16,84 +15,17 @@
       @sort-change="handleSortTable"
     >
       <template slot="search">
-        <ul class="search-bar">
-          <li>
-            <ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
-              <ElOption :label="$t('dataFlow.status.all')" value=""></ElOption>
-              <ElOption v-for="(value, label) in statusOptions" :key="value" :label="label" :value="value"> </ElOption>
-            </ElSelect>
-          </li>
-          <li>
-            <el-select
-              v-model="searchParams.progress"
-              size="small"
-              clearable
-              :placeholder="$t('dataFlow.taskSettingPlaceholder')"
-              style="width: 160px"
-              @input="table.fetch(1)"
-            >
-              <el-option
-                v-for="item in progressOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-          </li>
-          <li>
-            <el-select
-              v-model="searchParams.executionStatus"
-              size="small"
-              clearable
-              :placeholder="$t('dataFlow.executionStatus')"
-              style="width: 160px"
-              @input="table.fetch(1)"
-            >
-              <el-option
-                v-for="opt in ['initializing', 'cdc', 'initialized', 'Lag']"
-                :key="opt"
-                :label="$t('dataFlow.status.' + opt)"
-                :value="opt"
-              ></el-option>
-            </el-select>
-          </li>
-          <li>
-            <el-input
-              v-model="searchParams.keyword"
-              clearable
-              size="small"
-              :placeholder="$t('dataFlow.searchPlaceholder')"
-              @input="table.fetch(1, 800)"
-            >
-              <span slot="prefix" class="el-input__icon h-100 ml-1">
-                <VIcon size="14">search</VIcon>
-              </span>
-            </el-input>
-          </li>
-          <li>
-            <ElButton class="btn-refresh" size="small" @click="table.fetch()">
-              <i class="el-icon-refresh"></i>
-            </ElButton>
-          </li>
-        </ul>
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <div class="buttons" slot="operation">
         <el-button
-          v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
-          v-readonlybtn="'SYNC_category_application'"
-          size="small"
-          class="btn"
-          v-show="multipleSelection.length > 0"
-          @click="$refs.table.showClassify(handleSelectTag())"
+          v-if="multipleSelection.length === 0 && bulkOperation"
+          :disabled="multipleSelection.length === 0 && bulkOperation"
         >
-          <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkTag') }}</span>
+          <i class="iconfont icon-piliang back-btn-icon"></i>
+          <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
         </el-button>
-        <el-dropdown
-          class="btn"
-          @command="handleCommand($event)"
-          v-show="multipleSelection.length > 0 && bulkOperation"
-        >
+        <el-dropdown v-else class="btn" @command="handleCommand($event)">
           <el-button class="btn-dropdowm" size="small">
             <i class="iconfont icon-piliang back-btn-icon"></i>
             <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
@@ -116,16 +48,27 @@
             }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button v-readonlybtn="'SYNC_Function_management'" size="small" class="btn" @click="handleGoFunction">
+        <el-button
+          v-if="$getSettingByKey('SHOW_CLASSIFY')"
+          v-readonlybtn="'SYNC_category_application'"
+          size="small"
+          class="btn"
+          v-show="multipleSelection.length > 0"
+          @click="$refs.table.showClassify(handleSelectTag())"
+        >
+          <i class="iconfont icon-biaoqian back-btn-icon"></i>
+          <span> {{ $t('dataFlow.taskBulkTag') }}</span>
+        </el-button>
+
+        <!-- <el-button v-readonlybtn="'SYNC_Function_management'" size="small" class="btn" @click="handleGoFunction">
           <i class="iconfont icon-hanshu back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkFx') }}</span>
-        </el-button>
+        </el-button> -->
         <el-button v-readonlybtn="'SYNC_job_import'" size="small" class="btn" @click="handleImport">
           <i class="iconfont icon-daoru back-btn-icon"></i>
           <span> {{ $t('dataFlow.bulkImport') }}</span>
         </el-button>
         <el-button
-          v-if="!$window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')"
           v-readonlybtn="'SYNC_job_creation'"
           class="btn btn-create"
           type="primary"
@@ -133,17 +76,6 @@
           @click="create"
         >
           <i class="iconfont icon-jia add-btn-icon"></i>
-        </el-button>
-        <el-button
-          v-else
-          v-readonlybtn="'SYNC_job_creation'"
-          class="btn btn-create"
-          type="primary"
-          size="small"
-          @click="creatText"
-        >
-          <i class="iconfont icon-jia add-btn-icon"></i>
-          创建任务
         </el-button>
       </div>
 
@@ -157,7 +89,10 @@
       <el-table-column min-width="200" :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name">
-            <span :class="['name', { 'has-children': row.hasChildren }]" @click="toDetails(row)">{{ row.name }}</span>
+            <!-- @click="toDetails(row)" -->
+            <span :class="['name', { 'has-children': row.hasChildren }]" @click="handlePreview(row.id)">{{
+              row.name
+            }}</span>
             <el-tag v-if="row.listTagId !== undefined" class="tag" type="info" effect="dark" size="mini">
               {{ row.listTagValue }}
             </el-tag>
@@ -171,7 +106,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="160" sortable="custom"></el-table-column>
+      <!-- <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="160" sortable="custom"></el-table-column> -->
       <el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="100">
         <template #default="{ row }">
           <div class="flex align-items-center">
@@ -179,7 +114,7 @@
               <img
                 v-if="statusMap[row.status].icon == 'loading'"
                 style="width: 26px; vertical-align: middle"
-                :src="$window._TAPDATA_OPTIONS_.loadingImg"
+                :src="loadingImg"
               />
               <i v-else :class="'dataflow-table__icon iconfont ' + statusMap[row.status].icon"></i>
             </template>
@@ -268,7 +203,10 @@
             >
               {{ $t('button.edit') }}
             </ElLink>
-            <ElLink
+            <ElLink v-readonlybtn="'SYNC_job_edition'" style="margin-left: 10px" type="primary" @click="toDetails(row)">
+              {{ $t('task_list_button_monitor') }}
+            </ElLink>
+            <!-- <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               style="margin-left: 10px"
               type="primary"
@@ -280,7 +218,7 @@
               @click="handleTaskscheduling(row.id, row)"
             >
               {{ $t('dataFlow.schedule') }}
-            </ElLink>
+            </ElLink> -->
             <el-dropdown
               v-show="moreAuthority"
               size="small"
@@ -313,7 +251,7 @@
                 </el-dropdown-item>
                 <el-dropdown-item
                   command="setTag"
-                  v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+                  v-if="$getSettingByKey('SHOW_CLASSIFY')"
                   v-readonlybtn="'SYNC_category_application'"
                 >
                   {{ $t('dataFlow.addTag') }}
@@ -373,10 +311,12 @@
     </el-dialog>
     <DownAgent ref="agentDialog" type="taskRunning"></DownAgent>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
+    <Preview v-if="previewVisible" :id="id" :visible="previewVisible" @previewVisible="handlePreviewVisible"></Preview>
   </section>
 </template>
 
 <script>
+import Preview from './Preview'
 import factory from '../../../api/factory'
 import ws from '../../../api/ws'
 const dataFlows = factory('DataFlows')
@@ -387,16 +327,21 @@ import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
 import DownAgent from '../../downAgent/agentDown'
 import TablePage from '@/components/TablePage'
-import VIcon from '@/components/VIcon'
+import FilterBar from '@/components/filter-bar'
+// import VIcon from '@/components/VIcon'
 
 let interval = null
 export default {
   name: 'DataflowList',
-  components: { TablePage, DownAgent, SkipError, VIcon },
+  components: { FilterBar, TablePage, DownAgent, SkipError, Preview },
   data() {
     return {
+      id: '',
+      previewVisible: false,
+      filterItems: [],
       restLoading: false,
       mappingTemplate: '',
+      loadingImg: window._TAPDATA_OPTIONS_.loadingImg,
       searchParams: {
         keyword: '',
         status: '',
@@ -495,20 +440,23 @@ export default {
       return this.$refs.table
     },
     statusOptions() {
-      let options = {}
+      // let options = {}
+      let options = [{ label: this.$t('task_list_status_all'), value: '' }]
       let map = this.statusMap
       for (const key in map) {
         const item = map[key]
-        let value = key
-        if (options[item.label]) {
-          value = options[item.label] + ',' + value
-        }
-        options[item.label] = value
+        options.push({ label: item.label, value: key })
+        // let value = key
+        // if (options[item.label]) {
+        //   value = options[item.label] + ',' + value
+        // }
+        // options[item.label] = value
       }
       return options
     }
   },
   created() {
+    this.getFilterItems()
     let { mapping, agentId, status, executionStatus } = this.$route.query
     this.mappingTemplate = mapping ?? 'cluster-clone'
     this.searchParams.agentId = agentId ?? ''
@@ -869,11 +817,6 @@ export default {
         name: 'MigrateNew'
       })
     },
-    async creatText() {
-      this.$router.push({
-        name: 'createTask'
-      })
-    },
     handleDetail(id, type, mappingTemplate, hasChildren) {
       // 子选项 hasChildren 为 true
       if (hasChildren) {
@@ -903,15 +846,6 @@ export default {
           }
         ).then(resFlag => {
           if (!resFlag) {
-            return
-          }
-          if (window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
-            this.$router.push({
-              name: 'editTask',
-              params: {
-                id: id
-              }
-            })
             return
           }
           let routeUrl = this.$router.resolve({
@@ -949,20 +883,8 @@ export default {
     handleEditor(id) {
       const h = this.$createElement
       this.$confirm(
-        h('p', null, [
-          h('span', null, this.$t('dataFlow.modifyEditText')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeLayoutProcess')),
-          h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeAttributes')),
-          h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.matchingRelationship')),
-          h('span', null, '，'),
-          h('span', null, this.$t('dataFlow.afterSubmission')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.reset')),
-          h('span', null, this.$t('dataFlow.runNomally')),
-          h('span', null, this.$t('dataFlow.editLayerTip'))
-        ]),
-        this.$t('dataFlow.importantReminder'),
+        h('p', null, [h('span', null, this.$t('task_list_edit_confirm'))]),
+        this.$t('task_list_important_reminder'),
         {
           customClass: 'dataflow-clickTip',
           confirmButtonText: this.$t('dataFlow.continueEditing'),
@@ -1320,7 +1242,7 @@ export default {
     handleGoFunction() {
       // top.location.href = '/#/JsFuncs'
       this.$router.push({
-        name: 'Function'
+        name: 'function'
       })
     },
     startAndStop(method = 'startBatch', ids, { status, errorEvents }) {
@@ -1361,6 +1283,50 @@ export default {
           id: row.id
         }
       })
+    },
+    handlePreview(id) {
+      this.id = id
+      this.previewVisible = true
+    },
+    handlePreviewVisible() {
+      this.previewVisible = false
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: this.$t('task_list_status'),
+          key: 'status',
+          type: 'select-inner',
+          items: this.statusOptions,
+          selectedWidth: '200px'
+        },
+        {
+          label: this.$t('task_list_sync_type'),
+          key: 'progress',
+          type: 'select-inner',
+          items: this.progressOptions
+        },
+        {
+          label: this.$t('task_list_execution_status'),
+          key: 'executionStatus',
+          type: 'select-inner',
+          menuMinWidth: '250px',
+          items: async () => {
+            let option = ['initializing', 'cdc', 'initialized', 'Lag']
+            return option.map(item => {
+              return {
+                label: this.$t('task_list_status_' + item),
+                value: item
+              }
+            })
+          }
+        },
+        {
+          placeholder: this.$t('task_list_search_placeholder'),
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     }
   }
 }
@@ -1377,16 +1343,16 @@ export default {
     font-size: 16px;
   }
   .data-flow-list {
-    .search-bar {
-      display: flex;
-      flex-wrap: wrap;
-      li {
-        margin-right: 10px;
-        &:last-child {
-          margin-right: 0;
-        }
-      }
-    }
+    // .search-bar {
+    //   display: flex;
+    //   flex-wrap: wrap;
+    //   li {
+    //     margin-right: 10px;
+    //     &:last-child {
+    //       margin-right: 0;
+    //     }
+    //   }
+    // }
     .buttons {
       white-space: nowrap;
       .btn + .btn {

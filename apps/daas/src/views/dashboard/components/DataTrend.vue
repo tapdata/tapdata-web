@@ -119,10 +119,13 @@ export default {
             let list = data || []
             // 合并所查询的数据
             let result = { create: 0, update: 0 }
-            list.forEach(v => {
-              result.create += v.data && v.data.create ? v.data.create : 0
-              result.update += v.data && v.data.update ? v.data.update : 0
-            })
+            if (list?.length) {
+              list.forEach(v => {
+                result.create += v.data && v.data.create ? v.data.create : 0
+                result.update += v.data && v.data.update ? v.data.update : 0
+              })
+            }
+
             resolve(result)
           })
           .catch(err => {
@@ -175,18 +178,21 @@ export default {
         })
         .then(({ data }) => {
           let list = data || []
-          this.trendData = list
-            .map(v => {
-              let year = v.stats_time.substring(0, 4)
-              let month = v.stats_time.substring(4, 6)
-              let day = v.stats_time.substring(6, 8)
-              let hours = v.stats_time.substring(8, 10)
-              let minute = v.stats_time.substring(10, 12)
-              v.label = `${year}-${month}-${day} ${hours}:${minute}`
-              v.value = v.data.create
-              return v
-            })
-            .reverse()
+          if (list?.length) {
+            this.trendData = list
+              .map(v => {
+                let year = v.stats_time.substring(0, 4)
+                let month = v.stats_time.substring(4, 6)
+                let day = v.stats_time.substring(6, 8)
+                let hours = v.stats_time.substring(8, 10)
+                let minute = v.stats_time.substring(10, 12)
+                v.label = `${year}-${month}-${day} ${hours}:${minute}`
+                v.value = v.data.create
+                return v
+              })
+              .reverse()
+          }
+
           this.trendChart.setOption(this.trendOptions)
         })
         .finally(() => {

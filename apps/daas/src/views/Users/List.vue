@@ -1,10 +1,9 @@
 <template>
-  <section class="user-list-wrap">
+  <section class="user-list-wrap classify-wrap">
     <TablePage
       ref="table"
       row-key="id"
       class="user-list"
-      :title="$t('app.menu.' + $route.name)"
       :desc="$t('user.des')"
       :classify="{ authority: 'user_category_management', types: ['user'] }"
       :remoteMethod="getData"
@@ -94,7 +93,7 @@
       </div>
       <div slot="operation">
         <el-button
-          v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'user_category_application'"
           size="mini"
           class="btn"
@@ -130,12 +129,7 @@
           <span>{{ $t('user.creatUser') }}</span>
         </el-button>
       </div>
-      <el-table-column
-        v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
-        type="selection"
-        width="45"
-        :reserve-selection="true"
-      >
+      <el-table-column v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
       </el-table-column>
       <el-table-column :label="$t('user.userName')" prop="username" sortable="username">
         <template slot-scope="scope">
@@ -1004,8 +998,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .user-list-wrap {
-  height: 100%;
-
   .tapNav {
     height: 28px;
     background-color: rgba(239, 241, 244, 100);

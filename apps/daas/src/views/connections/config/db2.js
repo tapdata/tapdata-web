@@ -1,8 +1,8 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '160px'
     },
     defaultModel: {
       connection_type: 'source'
@@ -19,7 +19,11 @@ export default function (vm) {
             value: 'source'
           }
         ],
-        required: true
+        required: true,
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
       },
       // {
       // 	type: 'input',
@@ -140,13 +144,9 @@ export default function (vm) {
         field: 'table_filter',
         domType: 'textarea',
         label: vm.$t('dataForm.form.tableFilter'),
-        // tips: vm.$t('dataForm.form.tableFilterTips'),
+        tip: vm.$t('connection_form_database_owner_tip'),
         maxlength: 500,
         showWordLimit: true
-      },
-      {
-        type: 'slot',
-        slot: 'tableFilter'
       },
       {
         type: 'input',
@@ -157,13 +157,8 @@ export default function (vm) {
         type: 'select',
         field: 'database_datetype_without_timezone',
         label: vm.$t('dataForm.form.timeZone'),
-        //tips: vm.$t('dataForm.form.timeZoneTips'),
+        tip: vm.$t('connection_form_impact_type'),
         options: [],
-        show: true
-      },
-      {
-        type: 'slot',
-        slot: 'timezone',
         show: true
       }
     ]

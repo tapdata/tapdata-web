@@ -1,7 +1,7 @@
 <template>
   <div class="task-main">
     <div class="task-progress">
-      <!-- v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'" -->
+      <!-- v-if="$getSettingByKey('DFS_TCM_PLATFORM') === 'dfs'" -->
       <template>
         <!--  全量+增量  -->
         <div class="progress-container" v-if="dataFlowSettings.sync_type === 'initial_sync+cdc'">
@@ -11,7 +11,7 @@
               class="progress-header_btn"
               type="primary"
               @click="handleInfo()"
-              v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
+              v-if="!$getSettingByKey('DFS_TCM_PLATFORM')"
             >
               <!-- completeTime !== this.$t('taskProgress.fullyCompleted') && -->
               {{ $t('taskProgress.seeDetails') }}
@@ -123,7 +123,7 @@
               class="progress-header_btn"
               type="primary"
               @click="handleInfo()"
-              v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"
+              v-if="!$getSettingByKey('DFS_TCM_PLATFORM')"
             >
               <!-- completeTime !== this.$t('taskProgress.fullyCompleted') && -->
               {{ $t('taskProgress.seeDetails') }}</ElLink
@@ -239,7 +239,7 @@
         </div>
       </template>
     </div>
-    <div class="progress-database" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+    <div class="progress-database" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
       <div class="progress-container">
         <div class="progress-container__header flex justify-between">
           <div class="fw-normal">

@@ -1,8 +1,8 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '160px'
     },
     defaultModel: {
       connection_type: 'source_and_target'
@@ -29,12 +29,15 @@ export default function (vm) {
             value: 'target'
           }
         ],
-        required: true
+        required: true,
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
       },
       {
         type: 'input',
         field: 'database_host',
-
         label: vm.$t('dataForm.form.host'),
         rules: [
           {
@@ -88,10 +91,6 @@ export default function (vm) {
         label: vm.$t('dataForm.form.password'),
         domType: 'password',
         showPassword: true
-      },
-      {
-        type: 'slot',
-        slot: 'tableFilter'
       },
       {
         type: 'input',
