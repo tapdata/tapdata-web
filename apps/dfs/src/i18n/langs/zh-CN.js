@@ -832,6 +832,7 @@ export default {
   operation_log_modify_notification_setting: '修改通知设置',
   operation_log_modify_notification_setting_tip: '修改了系统通知设置',
   operation_log_modify_connection_name: '将连接名称由[${parameter2}]修改为【@{parameter1}】',
+  operation_log_modular_name_user_center: '用户中心',
 
   guide_install_agent: '安装 Agent',
   guide_create_source_connection: '创建源连接',

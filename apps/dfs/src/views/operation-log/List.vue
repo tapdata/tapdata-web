@@ -333,7 +333,12 @@ export default {
         .then(({ total, items }) => {
           return {
             total: total,
-            data: items
+            data: items.map(t => {
+              if (t.modular === 'user') {
+                t.parameter1 = this.$t('operation_log_modular_name_user_center')
+              }
+              return t
+            })
           }
         })
     },
