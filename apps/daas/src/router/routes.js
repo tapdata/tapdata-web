@@ -257,7 +257,7 @@ export default [
             component: () => import('@/views/dataVerification/Form'),
             meta: {
               title: 'page_title_task_create',
-              code: 'page_title_task_create'
+              code: 'verify_job_creation'
             }
           },
           {
@@ -399,6 +399,42 @@ export default [
             meta: {
               title: 'page_title_function_details',
               code: 'SYNC_Function_management'
+            }
+          }
+        ]
+      },
+      /* ---------- 共享缓存  ----------*/
+      {
+        path: '/shared-cache',
+        name: 'sharedCache',
+        component: Parent,
+        redirect: 'shared-cache/',
+        meta: {
+          title: 'page_title_shared_cache'
+        },
+        children: [
+          {
+            path: '',
+            name: 'sharedCacheList',
+            component: () => import('@/views/shared-cache/List'),
+            meta: {
+              title: 'page_title_shared_cache'
+            }
+          },
+          {
+            path: 'create',
+            name: 'sharedCacheCreate',
+            component: () => import('@/views/shared-cache/Form'),
+            meta: {
+              title: 'page_title_shared_cache_create'
+            }
+          },
+          {
+            path: ':id/edit',
+            name: 'sharedCacheEdit',
+            component: () => import('@/views/shared-cache/Form'),
+            meta: {
+              title: 'page_title_shared_cache_edit'
             }
           }
         ]

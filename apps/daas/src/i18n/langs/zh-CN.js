@@ -11,6 +11,9 @@ export default {
 
   // 表格
   column_operation: '操作',
+  column_connection: '所属连接',
+  column_table: '所属表',
+  column_create_time: '创建时间',
 
   //页面标题
   page_title_dashboard: '控制台',
@@ -36,6 +39,9 @@ export default {
   page_title_function_create: '创建函数',
   page_title_function_edit: '编辑函数',
   page_title_function_details: '函数详情',
+  page_title_shared_cache: '共享缓存',
+  page_title_shared_cache_create: '共享缓存',
+  page_title_shared_cache_edit: '共享缓存',
   page_title_data_discovery: '数据发现',
   page_title_data_catalogue: '数据目录',
   page_title_data_search: '数据搜索',
@@ -143,7 +149,6 @@ export default {
   query_fuzzy: '模糊匹配',
   query_precise: '精准匹配',
 
-  message_delete_ornot: '是否删除',
   message_save_ok: '保存成功',
   message_save_fail: '保存失败',
   message_create_ok: '创建成功',
@@ -927,6 +932,19 @@ export default {
   share_task_table_name: '挖掘任务名称',
   share_task_table_time: '挖掘所处时间',
   share_task_table_status: '挖掘所处状态',
+
+  // 共享缓存
+  shared_cache_placeholder_task_name: '请输入缓存任务名搜索',
+  shared_cache_placeholder_connection_name: '请输入连接名称搜索',
+  shared_cache_button_create: '新建缓存',
+
+  shared_cache_name: '缓存名称',
+  shared_cache_status: '缓存状态',
+  shared_cache_time: '缓存时间',
+  shared_cache_keys: '缓存键',
+  shared_cache_fields: '缓存字段',
+  shared_cache_max_rows: '缓存最大记录数',
+  shared_cache_ttl: '过期时间',
 
   // 设置
   setting_email_template: '邮件模板',

@@ -5,8 +5,9 @@ const Random = Mock.Random
 const dataflow = require('./dataflow.js')
 const measurement = require('./measurement.js')
 const subtask = require('./subtask.js')
+const sharedCache = require('./sharedCache.js')
 
-module.exports = Object.assign({}, dataflow, measurement, subtask, {
+module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, {
   '/api/Connections': {
     code: 'ok',
     msg: 'ok',
