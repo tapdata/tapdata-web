@@ -3,7 +3,7 @@
     <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
       <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">
         <div class="dashboard-col-box">
-          <div class="dashboard-title fs-7 font-color-sub">{{ $t('dashboard_' + item.key) }}</div>
+          <div class="dashboard-title fs-7">{{ $t('dashboard_' + item.key) }}</div>
           <div class="dashboard-label fs-5 pt-4 text-center">{{ $t('dashboard_current_' + item.key) }}</div>
           <div class="dashboard-num pt-4 pb-2 text-center">{{ item.value }}</div>
         </div>
@@ -14,7 +14,7 @@
       <el-col :span="12" class="dashboard-col col">
         <div class="charts-list">
           <div class="charts-list-text">
-            <div class="dashboard-title fs-7 font-color-sub">{{ $t('dashboard_copy_overview_title') }}</div>
+            <div class="dashboard-title fs-7">{{ $t('dashboard_copy_overview_title') }}</div>
             <ul class="job-list">
               <li v-for="task in migrationTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
                 <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
@@ -25,15 +25,20 @@
           </div>
 
           <div class="chart">
-            <Chart type="pie" :data="copyPieData" :options="pieOptions" class="type-chart"></Chart>
+            <Chart type="pie" :extend="getPieOption(copyPieData)" class="type-chart"></Chart>
           </div>
         </div>
       </el-col>
       <!-- 复制任务状态 -->
       <el-col :span="12" class="dashboard-col col">
         <div class="dashboard-col-box">
-          <div class="dashboard-title fs-7 font-color-sub">{{ $t('dashboard_copy_status_title') }}</div>
+          <div class="dashboard-title fs-7">{{ $t('dashboard_copy_status_title') }}</div>
           <div class="chart line-chart">
+            <ul>
+              <li v-for="item in copyTaskData" :key="item.name">
+                <span>{{ item.name }} </span> {{ item.value }}
+              </li>
+            </ul>
             <Chart type="bar" :data="copyTaskData" :options="barOptions"></Chart>
           </div>
         </div>
@@ -44,7 +49,7 @@
       <el-col :span="12" class="dashboard-col col">
         <div class="charts-list">
           <div class="charts-list-text">
-            <div class="dashboard-title fs-7 font-color-sub">{{ $t('dashboard_sync_overview_title') }}</div>
+            <div class="dashboard-title fs-7">{{ $t('dashboard_sync_overview_title') }}</div>
             <ul class="job-list">
               <li v-for="task in syncTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
                 <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
@@ -54,14 +59,19 @@
             </ul>
           </div>
           <div class="chart">
-            <Chart type="pie" :data="syncPieData" :options="pieOptions" class="type-chart"></Chart>
+            <Chart type="pie" :extend="getPieOption(syncPieData)" class="type-chart"></Chart>
           </div>
         </div>
       </el-col>
       <el-col :span="12" class="dashboard-col col">
         <div class="dashboard-col-box">
-          <div class="dashboard-title fs-7 font-color-sub">{{ $t('dashboard_sync_status_title') }}</div>
+          <div class="dashboard-title fs-7">{{ $t('dashboard_sync_status_title') }}</div>
           <div class="chart line-chart">
+            <ul>
+              <li v-for="item in syncTaskData" :key="item.name">
+                <span>{{ item.name }} </span> {{ item.value }}
+              </li>
+            </ul>
             <Chart type="bar" :data="syncTaskData" :options="barOptions"></Chart>
           </div>
         </div>
@@ -71,8 +81,13 @@
     <el-row :gutter="20" class="dashboard-row mb-5">
       <el-col :span="12" class="dashboard-col col">
         <div class="dashboard-col-box">
-          <div class="dashboard-title fs-7 font-color-sub">{{ $t('dashboard_valid_title') }}</div>
+          <div class="dashboard-title fs-7">{{ $t('dashboard_valid_title') }}</div>
           <div class="chart line-chart">
+            <ul>
+              <li v-for="item in validBarData" :key="item.name">
+                <span>{{ item.name }} </span> {{ item.value }}
+              </li>
+            </ul>
             <Chart type="bar" :data="validBarData" :options="barOptions"></Chart>
           </div>
         </div>
@@ -80,7 +95,7 @@
       <el-col :span="12" class="dashboard-col col">
         <div class="charts-list">
           <div class="charts-list-text">
-            <div class="dashboard-title fs-7 font-color-sub">{{ $t('dashboard_transfer_overview') }}</div>
+            <div class="dashboard-title fs-7">{{ $t('dashboard_transfer_overview') }}</div>
             <ul class="job-list">
               <li v-for="item in transBarData" :key="item.label" @click="handleMigrationStatus(task.label)">
                 <i class="dots mr-3" :style="`background-color: ${item.color};`"></i>
@@ -90,7 +105,7 @@
             </ul>
           </div>
           <div class="chart">
-            <Chart type="pie" :data="transBarData" :options="pieOptions" class="type-chart"></Chart>
+            <Chart type="pie" :extend="getPieOption(transBarData)" class="type-chart"></Chart>
           </div>
         </div>
       </el-col>
@@ -99,11 +114,12 @@
     <div class="dashboard-row dashboard-col col mb-5">
       <div class="dashboard-col">
         <div class="dashboard-col-box">
-          <div class="dashboard-title fs-7 font-color-sub">服务器进程</div>
+          <div class="dashboard-title fs-7">服务器进程</div>
           <el-row :gutter="20">
             <el-col :span="12" class="server-list pt-3" v-for="item in serverTable" :key="item.id">
               <div class="server-list-box">
-                <img src="../../assets/images/houtai.png" alt="" />
+                <img src="../../assets/images/serve.svg" />
+                <!-- <img src="../../assets/icons/svg/serve.svg" alt="" /> -->
                 <div class="server-main ml-5">
                   <div class="title">{{ item.systemInfo.ip }}</div>
                   <ul class="flex pt-1">
@@ -156,19 +172,7 @@ export default {
       serverTable: [],
       migrationTaskList: [],
       syncTaskList: [],
-      pieOptions: {
-        legend: {
-          show: false
-        },
-        radius: ['40%', '70%'],
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: '40',
-            fontWeight: 'bold'
-          }
-        }
-      },
+      pieOptions: null,
       barOptions: {
         barWidth: '50%',
         grid: {
@@ -188,8 +192,8 @@ export default {
             show: true,
             interval: 'auto'
           },
-          nameTextStyle: {
-            color: '#f00'
+          axisLabel: {
+            color: 'rgba(0,0,0,.65)'
           }
         },
         yAxis: {
@@ -203,6 +207,9 @@ export default {
               color: '#d9d9d9'
             }
           },
+          axisLabel: {
+            color: 'rgba(0,0,0,.65)'
+          },
           splitLine: {
             onZero: true,
             show: true,
@@ -210,11 +217,6 @@ export default {
             lineStyle: {
               type: 'dashed'
             }
-          },
-
-          nameTextStyle: {
-            color: '#f00',
-            fontSize: '18px'
           }
         },
         tooltip: {
@@ -414,11 +416,6 @@ export default {
           ],
           axisPointer: {
             type: 'shadow'
-          },
-
-          nameTextStyle: {
-            verticalAlign: 'bottom',
-            color: '#F00'
           }
         },
         yAxis: {
@@ -623,6 +620,97 @@ export default {
         }
       })
       return statusItem
+    },
+    getPieOption(data) {
+      let dataName = []
+      let total = 0
+      let totalFalg = true
+      if (data?.length) {
+        data.forEach(res => {
+          dataName.push(res.name)
+          total += parseFloat(res.value) * 1
+        })
+        totalFalg = data.some(item => item.value > 0)
+      }
+
+      return {
+        title: {
+          zlevel: 0,
+          text: ['{value|' + total + '}', '{name|总计}'].join('\n'),
+          rich: {
+            value: {
+              color: '#303133',
+              fontSize: 20,
+              fontWeight: 'bold',
+              lineHeight: 20
+            },
+            name: {
+              color: '#909399',
+              lineHeight: 10
+            }
+          },
+          top: 'center',
+          left: '48%',
+          textAlign: 'center',
+          textStyle: {
+            rich: {
+              value: {
+                color: '#303133',
+                fontSize: 20,
+                fontWeight: 'bold',
+                lineHeight: 20,
+                aling: 'center'
+              },
+              name: {
+                color: '#909399',
+                lineHeight: 20,
+                aling: 'center'
+              }
+            }
+          }
+        },
+        legend: {
+          show: false
+        },
+        series: [
+          {
+            name: '访问来源',
+            type: 'pie',
+            radius: ['40%', '70%'],
+            stillShowZeroSum: totalFalg ? false : true,
+            avoidLabelOverlap: false,
+            zlevel: 1,
+            label: {
+              normal: {
+                backgroundColor: '#fff',
+                show: false,
+                position: 'center',
+                formatter: '{name|{c}} \n {value|{b}}',
+                rich: {
+                  name: {
+                    color: 'rgba(0, 0, 0, 0.85)',
+                    lineHeight: 28,
+                    fontSize: 16,
+                    fontWeight: 'bold'
+                  },
+                  value: {
+                    color: 'rgba(0, 0, 0, 0.43)',
+                    fontSize: '12px'
+                  }
+                }
+              },
+              emphasis: {
+                show: true,
+                textStyle: {
+                  fontSize: '16',
+                  fontWeight: 'bold'
+                }
+              }
+            },
+            data: data
+          }
+        ]
+      }
     }
   }
 }
@@ -730,7 +818,23 @@ export default {
         }
       }
       .line-chart {
+        display: flex;
+        flex-direction: column;
         height: 150px;
+        ul {
+          padding-top: 8px;
+          li {
+            display: inline-block;
+            padding-right: 10px;
+            color: #000;
+            font-weight: 600;
+            span {
+              padding-right: 5px;
+              color: rgba(0, 0, 0, 0.43);
+              font-weight: 400;
+            }
+          }
+        }
       }
     }
   }

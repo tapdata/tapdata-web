@@ -75,6 +75,7 @@ export default {
   dialog_button_delete: 'Delete',
 
   //页面标题
+  page_title_overview: 'Overview',
   page_title_dashboard: 'Console',
   page_title_connections: 'Connection management',
   page_title_connections_create: 'Create a connection',

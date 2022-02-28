@@ -82,7 +82,7 @@ export default [
         path: 'dashboard',
         name: 'dashboard',
         component: () => import('@/views/dashboard/Dashboard'),
-        meta: { title: 'page_title_dashboard' }
+        meta: { title: 'page_title_overview' }
       },
       /* ---------- 连接管理  ----------*/
       {

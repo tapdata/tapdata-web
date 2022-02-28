@@ -74,6 +74,7 @@ export default {
   dialog_button_delete: '刪 除',
 
   //頁面標題
+  page_title_overview: '概覽',
   page_title_dashboard: '控制台',
   page_title_connections: '連接管理',
   page_title_connections_create: '創建連接',

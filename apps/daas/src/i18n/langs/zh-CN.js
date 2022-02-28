@@ -74,6 +74,7 @@ export default {
   dialog_button_delete: '删 除',
 
   //页面标题
+  page_title_overview: '概览',
   page_title_dashboard: '控制台',
   page_title_connections: '连接管理',
   page_title_connections_create: '创建连接',
