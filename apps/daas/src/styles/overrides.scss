@@ -107,6 +107,7 @@
 .el-divider__text,
 .el-link {
   font-size: 12px;
+
 }
 .el-link.is-underline:hover:after {
   display: none;
@@ -142,6 +143,7 @@
   background: rgba(0, 0, 0, 0.7);
 }
 .el-button {
+  min-width: 80px;
   font-weight: normal;
 }
 .el-button.is-plain:focus {
@@ -185,6 +187,9 @@
   background-color: map-get($color, primary);
   border-color: map-get($color, primary);
   color: #fff;
+}
+.el-button--text {
+  min-width: auto;
 }
 .el-button--primary.is-disabled,
 .el-button--primary.is-disabled:active,
@@ -333,6 +338,11 @@
   font-size: 14px;
   font-weight: bold;
   color: map-get($fontColor, normal);
+}
+.el-message-box__btns {
+  .el-button {
+    box-sizing: border-box;
+  }
 }
 .el-message-box__headerbtn {
   display: none;
@@ -742,10 +752,17 @@
   }
 }
 .el-dialog {
+  border-radius: 4px;
   .el-dialog__title {
     font-size: 14px;
     font-weight: 500;
-    color: rgba(0, 0, 0, .75);
+    color: #000;
+  }
+  .el-dialog__body {
+    padding: 0 20px 20px;
+  }
+  .el-dialog__footer {
+    padding: 0 20px 20px;
   }
 }
 

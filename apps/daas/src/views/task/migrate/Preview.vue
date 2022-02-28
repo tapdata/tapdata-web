@@ -33,12 +33,18 @@
       </header>
       <ul class="info-list">
         <li v-for="item in previewList" :key="item.label">
-          <span class="label">{{ $t('task_preview_' + item.label) }}</span>
-          <span
-            class="value align-items-center align-middle"
-            :class="{ 'align-top': item.value && item.value.length > 15 }"
-            >{{ item.value }}</span
-          >
+          <img class="label-img" src="../../../assets/images/task/task.png" />
+          <div class="label-text">
+            <div class="label">
+              {{ $t('task_preview_' + item.label) }}
+            </div>
+            <div
+              class="value align-items-center align-middle pl-8"
+              :class="{ 'align-top': item.value && item.value.length > 15 }"
+            >
+              {{ item.value }}
+            </div>
+          </div>
         </li>
       </ul>
     </div>
@@ -282,21 +288,14 @@ export default {
       }
     }
   }
-  .label {
-    color: #999;
-    font-size: 12px;
+  .label-img {
+    float: left;
     display: inline-block;
-    width: 110px;
+    width: 14px;
+    height: 14px;
     margin-right: 15px;
-    text-align: left;
   }
-  .value {
-    width: 62%;
-    color: #666;
-    font-size: 12px;
-    display: inline-block;
-    word-break: break-all;
-  }
+
   .schema-load {
     color: #999;
     display: inline-block;
@@ -309,11 +308,32 @@ export default {
     overflow-y: auto;
     max-height: 690px;
     margin: 0 auto;
-    padding-left: 56px;
+    padding-left: 30px;
     width: 100%;
     box-sizing: border-box;
     li {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
       margin-bottom: 20px;
+      .label-text {
+        margin-right: 16px;
+        .label {
+          width: 110px;
+
+          padding-bottom: 5px;
+          text-align: left;
+          color: rgba(0, 0, 0, 0.6);
+          font-size: 12px;
+        }
+        .value {
+          width: 62%;
+          color: #666;
+          font-size: 12px;
+          display: inline-block;
+          word-break: break-all;
+        }
+      }
     }
   }
   .bar {

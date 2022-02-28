@@ -155,6 +155,8 @@ export default {
   // 元数据管理
   metadata_type: '类型',
   metadata_db: '所属库',
+  metadata_change_name: '改名',
+  metadata_name: '名称',
   metadata_name_placeholder: '请输入表名/数据库名',
   metadata_meta_type_database: '数据库',
   metadata_meta_type_api: '数据种类',

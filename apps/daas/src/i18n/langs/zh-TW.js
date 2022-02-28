@@ -4,6 +4,8 @@ export default {
   tips_must_number: '值必須為數字',
 
   // 通用按钮
+  button_help: '幫助',
+  button_copy: '複製',
   button_confirm: '確定',
   button_cancel: '取消',
   button_back: '返回',
@@ -12,6 +14,26 @@ export default {
   button_delete: '刪除',
   button_setting: '設置',
   button_reduction: '還原',
+  button_details: '詳情',
+  button_preview: '預覽',
+  button_reload: '重新加載schema',
+  button_ok: '確定',
+  button_edit: '編輯',
+  button_restart: '重啟',
+  button_startUp: '啟動',
+  button_close: '關閉',
+  button_filter: '篩選',
+  button_search: '搜索',
+  button_query: '查詢',
+  button_reset: '重置',
+  button_create: '創建',
+  button_export: '導出',
+  button_import: '導入',
+  button_download: '下載',
+  button_button: '新增',
+
+  query_fuzzy: '模糊匹配',
+  query_precise: '精準匹配',
 
   // 通用下拉框
   select_option_all: '全部',
@@ -121,6 +143,24 @@ export default {
   gl_placeholder_select: '请选择',
   gl_placeholder_input: '请输入',
 
+  // 元數據管理
+  metadata_type: '類型',
+  metadata_db: '所屬庫',
+  metadata_change_name: '改名',
+  metadata_name: '名稱',
+  metadata_name_placeholder: '請輸入表名/數據庫名',
+  metadata_meta_type_database: '數據庫',
+  metadata_meta_type_api: '數據種類',
+  metadata_meta_type_job: '任務',
+  metadata_meta_type_collection: '數據集',
+  metadata_meta_type_view: '視圖',
+  metadata_meta_type_directory: '目錄',
+  metadata_meta_type_table: '數據表',
+  metadata_meta_type_dataflow: '任務編排',
+  metadata_meta_type_mongo_view: 'Mongodb視圖',
+  metadata_meta_type_ftp: 'FTP',
+  metadata_meta_type_apiendpoint: 'API連接',
+
   // 数据校验
   verify_details_title: '任務校驗詳情',
   verify_history_title: '任務校驗歷史',
@@ -164,30 +204,6 @@ export default {
 
   // 任务设置
   task_settings_cdc_sync_point_date: '【任務設置】增量採集開始時刻，請選擇時間',
-
-  // 公共區
-  menu_help: '幫助',
-  button_copy: '複製',
-  button_details: '詳情',
-  button_preview: '預覽',
-  button_reload: '重新加載schema',
-  button_ok: '確定',
-  button_edit: '編輯',
-  button_restart: '重啟',
-  button_startUp: '啟動',
-  button_close: '關閉',
-  button_filter: '篩選',
-  button_search: '搜索',
-  button_query: '查詢',
-  button_reset: '重置',
-  button_create: '創建',
-  button_export: '導出',
-  button_import: '導入',
-  button_download: '下載',
-  button_button: '新增',
-
-  query_fuzzy: '模糊匹配',
-  query_precise: '精準匹配',
 
   message_delete_ornot: '是否刪除',
   message_save_ok: '保存成功',

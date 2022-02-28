@@ -281,22 +281,22 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        this.$api('modules').count({ where: JSON.stringify(where) }),
-        this.$api('modules').get({
+      return this.$api('modules')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        this.table.setCache({
-          isFuzzy,
-          keyword,
-          status
+        .then(res => {
+          this.table.setCache({
+            isFuzzy,
+            keyword,
+            status
+          })
+
+          return {
+            total: res.data.count,
+            data: res.data?.items || []
+          }
         })
-        return {
-          total: countRes.data.count,
-          data: res.data
-        }
-      })
     },
     // 获取状态
     getWorkers() {

@@ -18,7 +18,7 @@
         <!-- <ul class="search-bar" solt="matchSolt">
           <li> -->
 
-        <el-input
+        <!-- <el-input
           slot="matchSolt"
           clearable
           class="input-with-select"
@@ -31,7 +31,7 @@
             <el-option :label="$t('connection.fuzzyQuery')" :value="true"></el-option>
             <el-option :label="$t('connection.PreciseQuery')" :value="false"></el-option>
           </el-select>
-        </el-input>
+        </el-input> -->
         <!-- </li> -->
         <!-- <li>
             <el-select
@@ -164,14 +164,14 @@
             type="text"
             :disabled="$disabledByPermission('meta_data_deleting_all_data', scope.row.source ? scope.row.user_id : '')"
             @click="remove(scope.row)"
-            >{{ $t('button.delete') }}</el-button
+            >{{ $t('button_delete') }}</el-button
           >
         </template>
       </el-table-column>
     </TablePage>
     <!-- 创建模型 -->
     <el-dialog
-      width="600px"
+      width="500px"
       custom-class="create-dialog"
       :title="$t('metadata.createNewModel')"
       :close-on-click-modal="false"
@@ -179,8 +179,30 @@
     >
       <FormBuilder ref="form" v-if="createDialogVisible" v-model="createForm" :config="createFormConfig"></FormBuilder>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
-        <el-button type="primary" @click="createNewModel()" size="small">{{ $t('message.confirm') }}</el-button>
+        <el-button class="message-button-cancel" @click="createDialogVisible = false" size="mini">{{
+          $t('button_cancel')
+        }}</el-button>
+        <el-button type="primary" @click="createNewModel()" size="mini">{{ $t('button_confirm') }}</el-button>
+      </span>
+    </el-dialog>
+    <!-- 改名 -->
+    <el-dialog
+      width="500px"
+      custom-class="change-name"
+      :title="$t('metadata_change_name')"
+      :close-on-click-modal="false"
+      :visible.sync="changeNameDialogVisible"
+    >
+      <div class="flex fs-8">
+        <span class="change-name-label">{{ $t('metadata_name') }}:</span>
+        <el-input v-model="changeNameValue"></el-input>
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button class="message-button-cancel" @click="changeNameDialogVisible = false" size="mini">{{
+          $t('button_cancel')
+        }}</el-button>
+        <el-button type="primary" @click="saveChangeName()" size="mini">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -268,7 +290,10 @@ export default {
             ]
           }
         ]
-      }
+      },
+      changeNameDialogVisible: false,
+      changeNameValue: '',
+      changeNameData: null
     }
   },
   created() {
@@ -508,38 +533,57 @@ export default {
     toDetails(item) {
       this.$router.push({ name: 'metadataDetails', params: { id: item.id } })
     },
+    saveChangeName() {
+      this.$api('MetadataInstances')
+        .updateById(this.changeNameData.id, {
+          name: this.changeNameValue
+        })
+        .then(() => {
+          this.$message.success(this.$t('message.saveOK'))
+          this.changeNameDialogVisible = false
+          this.table.fetch()
+        })
+        .catch(() => {
+          this.$message.info(this.$t('message.saveFail'))
+        })
+    },
     changeName(item) {
-      this.$prompt('', this.$t('connection.rename'), {
-        inputPattern: /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/, // eslint-disable-line
-        inputErrorMessage: this.$t('dialog.placeholderTable'),
-        customClass: 'changeName-prompt',
-        inputValue: item.name || item.original_name
-      }).then(resFlag => {
-        if (!resFlag) {
-          return
-        }
-        this.$api('MetadataInstances')
-          .updateById(item.id, {
-            name: resFlag.value
-          })
-          .then(() => {
-            this.$message.success(this.$t('message.saveOK'))
-            this.table.fetch()
-          })
-          .catch(() => {
-            this.$message.info(this.$t('message.saveFail'))
-          })
-      })
+      this.changeNameDialogVisible = true
+      this.changeNameData = item
+      this.changeNameValue = item.name || item.original_name
+      // this.$prompt('', this.$t('connection.rename'), {
+      //   inputPattern: /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/, // eslint-disable-line
+      //   inputErrorMessage: this.$t('dialog.placeholderTable'),
+      //   customClass: 'changeName-prompt',
+      //   cancelButtonClass: 'message-button-cancel',
+      //   inputValue: item.name || item.original_name
+      // }).then(resFlag => {
+      //   if (!resFlag) {
+      //     return
+      //   }
+      //   this.$api('MetadataInstances')
+      //     .updateById(item.id, {
+      //       name: resFlag.value
+      //     })
+      //     .then(() => {
+      //       this.$message.success(this.$t('message.saveOK'))
+      //       this.table.fetch()
+      //     })
+      //     .catch(() => {
+      //       this.$message.info(this.$t('message.saveFail'))
+      //     })
+      // })
     },
     remove(item) {
       const h = this.$createElement
       let message = h('p', [
         this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#409EFF' } }, item.original_name)
+        h('span', { style: { color: '#2C65FF' } }, item.original_name)
       ])
-      this.$confirm(message, this.$t('message_title_prompt'), {
+      this.$confirm(message, '', {
         type: 'warning',
-        closeOnClickModal: false
+        closeOnClickModal: false,
+        showClose: false
       }).then(resFlag => {
         if (!resFlag) {
           return
@@ -608,7 +652,7 @@ export default {
     }
     .btn {
       padding: 7px;
-      background: #f5f5f5;
+      // background: #f5f5f5;
       i.iconfont {
         font-size: 12px;
       }
@@ -647,10 +691,13 @@ export default {
 .metadata-list-wrap {
   .create-dialog {
     .el-dialog__body {
-      padding: 30px;
+      // padding: 30px;
       .el-form {
         .el-form-item {
           margin-bottom: 15px;
+          &:last-child {
+            margin-bottom: 0;
+          }
           .el-form-item__label {
             text-align: left;
           }
@@ -664,12 +711,22 @@ export default {
     }
   }
 }
-.changeName-prompt {
-  .el-message-box__header {
-    padding: 15px 15px 0;
-    .el-message-box__title {
-      padding-left: 0;
-    }
+.change-name {
+  .change-name-label {
+    width: 100px;
+    line-height: 32px;
+    color: #000;
   }
+  // .el-message-box__header {
+  //   padding: 15px 15px 0;
+  //   .el-message-box__title {
+  //     padding-left: 0;
+  //   }
+  // }
+  // .el-message-box__btns {
+  //   .el-button {
+  //     box-sizing: border-box;
+  //   }
+  // }
 }
 </style>

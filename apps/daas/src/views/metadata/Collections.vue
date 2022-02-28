@@ -10,8 +10,14 @@
     > -->
     <div class="collection-box">
       <div class="table-page-operation-bar">
-        <el-button v-readonlybtn="'new_model_creation'" class="btn btn-create" size="mini" @click="openCreateDialog">
-          <i class="iconfont icon-jia add-btn-icon"></i>
+        <el-button
+          v-readonlybtn="'new_model_creation'"
+          type="primary"
+          class="btn btn-create"
+          size="mini"
+          @click="openCreateDialog"
+        >
+          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
           <span>{{ $t('metadata.details.createCollection') }}</span>
         </el-button>
       </div>
@@ -115,7 +121,7 @@ export default {
     // 获取表格数据
     getData() {
       this.$api('MetadataInstances')
-        .get([this.$route.query.id])
+        .get([this.$route.params.id])
         .then(res => {
           if (res) {
             this.collectionTableData = res.data.collections
@@ -240,7 +246,7 @@ export default {
       .btn-create {
         float: right;
         padding: 7px;
-        background: #f5f5f5;
+        // background: #f5f5f5;
         i.iconfont {
           font-size: 12px;
         }

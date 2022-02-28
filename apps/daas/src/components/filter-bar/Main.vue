@@ -23,7 +23,7 @@
     </ElFormItem>
     <ElFormItem v-if="!hideRefresh">
       <ElButton plain class="btn-refresh" @click="fetch">
-        <VIcon class="font-color-sub">refresh</VIcon>
+        <VIcon class="text-primary">refresh</VIcon>
       </ElButton>
     </ElFormItem>
   </ElForm>

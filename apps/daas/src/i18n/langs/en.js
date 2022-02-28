@@ -111,6 +111,24 @@ export default {
   gl_placeholder_select: 'Please select',
   gl_placeholder_input: 'Please input',
 
+  // 元数据管理
+  metadata_type: 'type',
+  metadata_db: 'owned library',
+  metadata_change_name: 'Rename',
+  metadata_name: 'name',
+  metadata_name_placeholder: 'Please enter the table name/database name',
+  metadata_meta_type_database: 'Database',
+  metadata_meta_type_api: 'Data type',
+  metadata_meta_type_job: 'task',
+  metadata_meta_type_collection: 'Dataset',
+  metadata_meta_type_view: 'View',
+  metadata_meta_type_directory: 'directory',
+  metadata_meta_type_table: 'Data table',
+  metadata_meta_type_dataflow: 'Task scheduling',
+  metadata_meta_type_mongo_view: 'Mongodb view',
+  metadata_meta_type_ftp: 'FTP',
+  metadata_meta_type_apiendpoint: 'API connection',
+
   // 数据校验
   verify_details_title: 'Task verification details',
   verify_history_title: 'Task verification history',

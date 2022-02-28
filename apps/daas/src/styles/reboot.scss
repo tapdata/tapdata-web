@@ -144,3 +144,12 @@ body {
     }
   }
 }
+.message-button-cancel {
+  color: #4e5969;
+  border-color: #f2f3f5;
+  background-color: #f2f3f5;
+}
+.message-button-cancel:hover {
+  background-color: #fff;
+  border: 1px solid #2C65FF;
+}

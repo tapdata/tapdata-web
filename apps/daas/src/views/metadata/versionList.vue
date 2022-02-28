@@ -128,14 +128,14 @@ export default {
 </script>
 <style lang="scss" scoped>
 .version-list-wrap {
-  height: calc(100% - 20px);
+  height: 100%;
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
   .history-text {
-    padding: 16px 0;
+    padding-bottom: 16px;
     font-size: 12px;
   }
   .table-page-table {

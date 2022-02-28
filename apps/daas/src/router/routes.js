@@ -407,7 +407,7 @@ export default [
       {
         path: '/catalogue',
         name: 'metadata',
-        component: () => import('@/views/metadata/List'),
+        component: Parent,
         redirect: 'catalogue/',
         meta: {
           title: 'page_title_data_catalogue'

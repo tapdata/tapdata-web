@@ -3,11 +3,11 @@
     <!-- <el-button class="btn-query" size="mini" type="text">
       <i class="iconfont icon-fangdajing" @click="searchFalg = !searchFalg"></i>
     </el-button> -->
-    <el-button class="btn-expand toggle" size="mini" @click="toggle()" v-if="!isExpand">
+    <el-button type="text" class="btn-expand toggle" size="mini" @click="toggle()" v-if="!isExpand">
       <i class="iconfont icon-zhankai2"></i>
     </el-button>
     <div class="classification-header" v-else>
-      <el-button class="btn-expand" size="mini" @click="toggle()">
+      <el-button type="text" class="btn-expand" size="mini" @click="toggle()">
         <i class="iconfont icon-zhankai2"></i>
       </el-button>
       <el-button class="btn-addIcon" size="mini" type="text" v-readonlybtn="authority" @click="showDialog()">
