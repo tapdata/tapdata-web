@@ -634,76 +634,55 @@ export default {
       }
 
       return {
-        title: {
-          zlevel: 0,
-          text: ['{value|' + total + '}', '{name|总计}'].join('\n'),
-          rich: {
-            value: {
-              color: '#303133',
-              fontSize: 20,
-              fontWeight: 'bold',
-              lineHeight: 20
-            },
-            name: {
-              color: '#909399',
-              lineHeight: 10
-            }
-          },
-          top: 'center',
-          left: '48%',
-          textAlign: 'center',
-          textStyle: {
-            rich: {
-              value: {
-                color: '#303133',
-                fontSize: 20,
-                fontWeight: 'bold',
-                lineHeight: 20,
-                aling: 'center'
-              },
-              name: {
-                color: '#909399',
-                lineHeight: 20,
-                aling: 'center'
-              }
-            }
-          }
-        },
         legend: {
           show: false
         },
         series: [
           {
-            name: '访问来源',
             type: 'pie',
             radius: ['40%', '70%'],
             stillShowZeroSum: totalFalg ? false : true,
             avoidLabelOverlap: false,
             zlevel: 1,
             label: {
-              normal: {
-                backgroundColor: '#fff',
-                show: false,
-                position: 'center',
-                formatter: '{name|{c}} \n {value|{b}}',
+              show: true,
+              position: 'center',
+              width: 60,
+              height: 30,
+              fontWeight: 'bold',
+              backgroundColor: '#fff',
+              formatter: `{name|${total}}\n{value|总计}`,
+              rich: {
+                name: {
+                  color: 'rgba(0, 0, 0, 0.85)',
+                  fontSize: 16,
+                  fontWeight: '400'
+                },
+                value: {
+                  color: 'rgba(0, 0, 0, 0.43)',
+                  fontSize: 12,
+                  fontWeight: '400'
+                }
+              }
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontWeight: 'bold',
+                formatter: '{name|{c}}\n{value|{b}}',
+                width: 60,
+                height: 30,
                 rich: {
                   name: {
                     color: 'rgba(0, 0, 0, 0.85)',
-                    lineHeight: 28,
-                    fontSize: 16,
-                    fontWeight: 'bold'
+                    fontSize: '16',
+                    fontWeight: '400'
                   },
                   value: {
                     color: 'rgba(0, 0, 0, 0.43)',
-                    fontSize: '12px'
+                    fontSize: 12,
+                    fontWeight: '400'
                   }
-                }
-              },
-              emphasis: {
-                show: true,
-                textStyle: {
-                  fontSize: '16',
-                  fontWeight: 'bold'
                 }
               }
             },
