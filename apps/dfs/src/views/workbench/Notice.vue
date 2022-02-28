@@ -652,7 +652,7 @@
   <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 11">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
-        <span>云数据库接入成就达成，操作难度再降级，功能优化再升级——Tapdata Cloud 2.1.0 真的来了！</span>
+        <span>Tapdata Cloud 2.1.0 来了：最新支持阿里云数据库接入，Windows版本操作更轻量，使用体验全面升级！</span>
       </div>
       <div class="notice-header__time mt-5 ml-1 flex align-items-center">
         <img src="../../assets/image/logoIconColour.png" alt="" />
@@ -698,12 +698,12 @@
         </div>
         <div class="mb-4 line-height-2">
           作为国内首家异构数据库实时同步云平台，Tapdata Cloud
-          不断拓展能够支持的数据连接版图，力求满足用户的多样化数据源和目标需求，真正实现数据实时同步”全面破壁“。
+          不断拓展能够支持的数据连接版图，力求满足用户的多样化数据源和目标需求，真正实现数据实时同步“全面破壁”。
         </div>
         <div class="mb-4 line-height-2">
           面对大量用户对于连接云数据库的迫切需求，Tapdata Cloud 优先响应。本次更新中，新增支持 Aliyun MariaDB、Aliyun
           MongoDB、Aliyun RDS for SQLServer、Aliyun RDS for PG、Aliyun RDS for MySQL 作为源和目标。放大就看 Tapdata
-          Cloud ”破壁行动“最新战绩 👇：
+          Cloud “破壁行动”最新战绩 👇：
         </div>
         <div>
           <img src="../../../public/images/notice/v2.1.0_p_01.png" alt="" />
