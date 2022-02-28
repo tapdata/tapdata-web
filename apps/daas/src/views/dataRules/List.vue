@@ -40,7 +40,7 @@
         sortable="classification"
       ></el-table-column>
       <el-table-column :label="$t('dataRule.name')" prop="name" sortable="name"></el-table-column>
-      <el-table-column :label="$t('message.operator')" width="120">
+      <el-table-column :label="$t('column_operation')" width="120">
         <template slot-scope="scope">
           <el-button
             v-readonlybtn="'data_rule_management'"

@@ -2,10 +2,17 @@ export default {
   // 通用提示
   tips_not_null: '值不能为空',
   tips_must_number: '值必须为数字',
+
   // 通用下拉框
   select_option_all: '全部',
 
   // 公共区
+  common_no_data: '暂无数据',
+  common_no_match_result: '没有查到符合条件的结果',
+  common_back_to_list: '返回列表',
+  common_placeholder_select: '请选择',
+  common_placeholder_input: '请输入',
+  // 通用按钮
   button_help: '帮助',
   button_edit: '编辑',
   button_confirm: '确定',
@@ -33,6 +40,7 @@ export default {
   button_import: '导入',
   button_download: '下载',
   button_button: '新增',
+  button_see_more: '查看更多',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精准匹配',
@@ -51,14 +59,19 @@ export default {
   message_delete_fail: '删除失败',
   message_deleting: '删除中',
   message_reload_ok: '正在重新加载',
-
-  operator: '操作',
+  message_update_success: '修改成功',
 
   // 表格
   column_operation: '操作',
   column_connection: '所属连接',
   column_table: '所属表',
   column_create_time: '创建时间',
+
+  // dialog按钮
+  dialog_button_cancel: '取 消',
+  dialog_button_confirm: '确 定',
+  dialog_button_save: '保 存',
+  dialog_button_delete: '删 除',
 
   //页面标题
   page_title_dashboard: '控制台',
@@ -150,14 +163,6 @@ export default {
   dashboard_total_update: '总更新',
   dashboard_total_delete: '总删除',
 
-  gl_button_update_success: '修改成功',
-  gl_see_more: '查看更多',
-  gl_no_data: '暂无数据',
-  gl_no_match_result: '没有查到符合条件的结果',
-  gl_back_to_list: '返回列表',
-  gl_placeholder_select: '请选择',
-  gl_placeholder_input: '请输入',
-
   // 元数据管理
   metadata_type: '类型',
   metadata_db: '所属库',
@@ -219,12 +224,6 @@ export default {
 
   // 任务设置
   task_settings_cdc_sync_point_date: '【任务设置】增量采集开始时刻，请选择时间',
-
-  // dialog按钮
-  dialog_button_cancel: '取 消',
-  dialog_button_confirm: '确 定',
-  dialog_button_save: '保 存',
-  dialog_button_delete: '删 除',
 
   // api发布
   modules_all: '全部',

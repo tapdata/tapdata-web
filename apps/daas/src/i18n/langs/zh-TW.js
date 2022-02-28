@@ -3,9 +3,19 @@ export default {
   tips_not_null: '值不能為空',
   tips_must_number: '值必須為數字',
 
+  // 通用下拉框
+  select_option_all: '全部',
+
+  // 公共区
+  common_no_data: '暫無數據',
+  common_no_match_result: '沒有查到符合條件的結果',
+  common_back_to_list: '返回列表',
+  common_placeholder_select: '請選擇',
+  common_placeholder_input: '請輸入',
+
   // 通用按钮
   button_help: '幫助',
-  button_copy: '複製',
+  button_edit: '編輯',
   button_confirm: '確定',
   button_cancel: '取消',
   button_back: '返回',
@@ -14,11 +24,11 @@ export default {
   button_delete: '刪除',
   button_setting: '設置',
   button_reduction: '還原',
+  button_copy: '複製',
   button_details: '詳情',
   button_preview: '預覽',
   button_reload: '重新加載schema',
   button_ok: '確定',
-  button_edit: '編輯',
   button_restart: '重啟',
   button_startUp: '啟動',
   button_close: '關閉',
@@ -35,21 +45,33 @@ export default {
   query_fuzzy: '模糊匹配',
   query_precise: '精準匹配',
 
-  // 通用下拉框
-  select_option_all: '全部',
-
   // 通用消息
   message_title_prompt: '提示',
   message_delete_confirm: '是否刪除',
+  message_delete_ornot: '是否刪除',
+  message_save_ok: '保存成功',
+  message_save_fail: '保存失敗',
+  message_create_ok: '創建成功',
+  message_create_fail: '創建失敗',
+  message_copy_success: '複製成功',
+  message_copy_fail: '複製失敗',
+  message_delete_ok: '刪除成功',
+  message_delete_fail: '刪除失敗',
+  message_deleting: '刪除中',
+  message_reload_ok: '正在重新加載',
+  message_update_success: '修改成功',
 
   // 表格
   column_operation: '操作',
+  column_connection: '所屬連接',
+  column_table: '所屬表',
+  column_create_time: '創建時間',
 
-  // 菜單標題
-  menu_title_data_pipeline: '數據管道',
-  menu_title_data_discovery: '數據發現',
-  menu_title_data_service: '數據服務',
-  menu_title_system: '系統管理',
+  // dialog按鈕
+  dialog_button_cancel: '取 消',
+  dialog_button_confirm: '確 定',
+  dialog_button_save: '保 存',
+  dialog_button_delete: '刪 除',
 
   //頁面標題
   page_title_dashboard: '控制台',
@@ -95,6 +117,9 @@ export default {
   page_title_setting: '系統設置',
   page_title_license: 'License管理',
 
+  // app
+  app_license_expire_warning: '提醒：License剩餘 {0} 天到期',
+
   // 控制台
   dashboard_all_total: '全部任務',
   dashboard_copy_total: '複製任務',
@@ -134,14 +159,6 @@ export default {
   dashboard_total_insert: '總插入',
   dashboard_total_update: '總更新',
   dashboard_total_delete: '總刪除',
-
-  gl_button_update_success: '修改成功',
-  gl_see_more: '查看更多',
-  gl_no_data: '暂无数据',
-  gl_no_match_result: '没有查到符合条件的结果',
-  gl_back_to_list: '返回列表',
-  gl_placeholder_select: '请选择',
-  gl_placeholder_input: '请输入',
 
   // 元數據管理
   metadata_type: '類型',
@@ -204,26 +221,6 @@ export default {
 
   // 任务设置
   task_settings_cdc_sync_point_date: '【任務設置】增量採集開始時刻，請選擇時間',
-
-  message_delete_ornot: '是否刪除',
-  message_save_ok: '保存成功',
-  message_save_fail: '保存失敗',
-  message_create_ok: '創建成功',
-  message_create_fail: '創建失敗',
-  message_copy_success: '複製成功',
-  message_copy_fail: '複製失敗',
-  message_delete_ok: '刪除成功',
-  message_delete_fail: '刪除失敗',
-  message_deleting: '刪除中',
-  message_reload_ok: '正在重新加載',
-
-  operator: '操作',
-
-  // dialog按鈕
-  dialog_button_cancel: '取 消',
-  dialog_button_confirm: '確 定',
-  dialog_button_save: '保 存',
-  dialog_button_delete: '刪 除',
 
   // api發布
   modules_all: '全部',

@@ -65,7 +65,7 @@
         sortable="clientURI"
       >
       </el-table-column>
-      <el-table-column :label="$t('operator')" width="140">
+      <el-table-column :label="$t('column_operation')" width="140">
         <template slot-scope="scope">
           <el-button v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="edit(scope.row)">
             {{ $t('modules_edit') }}

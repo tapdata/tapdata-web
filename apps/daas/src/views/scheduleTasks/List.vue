@@ -56,7 +56,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('message.operator')" width="180">
+      <el-table-column :label="$t('column_operation')" width="180">
         <template slot-scope="scope">
           <el-button
             v-readonlybtn="'schedule_jobs_management'"
