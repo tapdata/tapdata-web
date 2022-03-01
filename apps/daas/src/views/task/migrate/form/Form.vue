@@ -20,12 +20,13 @@
             <!--步骤1-->
             <div class="body" v-if="steps[activeStep].index === 1">
               <div class="mb-8">
-                <span class="title">选择连接</span>
+                <span class="title font-weight-bold">选择连接</span>
                 <span class="desc">
-                  如果你还未添加数据源，请先前往连接管理进行添加。<span
+                  如果你还未添加数据源，请点击添加数据源按钮进行添加，为了方便你的测试，我们建议数据源的数量不少2个<span
                     style="color: #337dff; cursor: pointer"
                     @click="handleCreateDatabase"
-                    >前往连接管理创建连接</span
+                  >
+                    前往连接管理创建连接</span
                   >
                 </span>
               </div>
@@ -133,11 +134,12 @@ export default {
       isFirst: false,
       transform: {
         showBtn: true,
-        stageId: '',
+        nodeId: '',
         field_process: [],
         fieldsNameTransform: '',
         batchOperationList: []
       },
+      nodes: [],
       //保存
       loadingSave: false
     }
@@ -152,24 +154,24 @@ export default {
 
   methods: {
     //编辑模式
-    getData(id) {
-      this.$api('dataFlows')
-        .get([id])
+    intiData(id) {
+      this.$api('Task')
+        .getId([id])
         .then(res => {
           if (res) {
             let data = res?.data
             this.status = data.status
-            this.settingData = Object.assign(this.settingData, data.setting)
+            this.settingData = Object.assign(this.settingData, data.attrs?.task_setting_Data)
             this.settingData.name = data.name
-            this.dataSourceData = data.dataSourceData
-            this.stages = data.stages
-            let syncObjects = this.stages[1].syncObjects
+            this.dataSourceData = data?.attrs?.task_data_source_Data
+            this.nodes = data?.dag?.nodes
+            let syncObjects = this.nodes[1].syncObjects
             this.transferData = {
-              table_prefix: this.stages[1].table_prefix,
-              table_suffix: this.stages[1].table_suffix,
-              tableNameTransform: this.stages[1].tableNameTransform,
-              fieldsNameTransform: this.stages[1].fieldsNameTransform,
-              field_process: this.stages[0].field_process,
+              table_prefix: this.nodes[1].table_prefix,
+              table_suffix: this.nodes[1].table_suffix,
+              tableNameTransform: this.nodes[1].tableNameTransform,
+              fieldsNameTransform: this.nodes[1].fieldsNameTransform,
+              field_process: this.nodes[0].field_process,
               selectSourceArr: syncObjects[0] ? syncObjects[0].objectNames : [],
               topicData:
                 syncObjects[0]?.type === 'topic' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || [],
@@ -177,8 +179,8 @@ export default {
                 syncObjects[0]?.type === 'queue' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || []
             }
             //编辑时不被覆盖
-            this.tableNameTransform = this.stages[1].tableNameTransform
-            this.fieldsNameTransform = this.stages[1].fieldsNameTransform
+            this.tableNameTransform = this.nodes[1].tableNameTransform
+            this.fieldsNameTransform = this.nodes[1].fieldsNameTransform
           }
         })
     },
@@ -229,6 +231,7 @@ export default {
             //检验: 源端目标端选择相同库(id一致)
             if (this.dataSourceData.source_connectionId === this.dataSourceData.target_connectionId) {
               this.showSysncTableTip = true
+              this.$message.info('源端、目标端选择了相同连接')
             }
             //检验: 是否是MQ数据源
             if (this.dataSourceData['target_databaseType'] === 'mq' && this.dataSourceData['mqType'] === '0') {
@@ -247,18 +250,14 @@ export default {
           break
       }
     },
-    //兼容新手引导
-    handleCreateDatabase() {
-      this.$router.push({
-        name: 'Connection',
-        query: {
-          action: 'create'
-        }
-      })
-    },
     //第一步 选择源端
     dataSourceSubmit(verify) {
       this.dataSourceVerify = verify
+    },
+    handleCreateDatabase() {
+      this.$router.push({
+        name: 'connections'
+      })
     },
     //第二步 任务设置配置
     settingSubmit(form) {
@@ -282,15 +281,15 @@ export default {
     tranModelVersionControl() {
       //是否显示字段推演
       let data = this.daft()
-      let stageId = data?.stages?.[1]?.id || ''
+      let nodeId = data?.dag?.nodes?.[1]?.id || ''
       let param = {
-        stages: data?.stages,
-        stageId: stageId
+        nodes: data?.dag?.nodes,
+        nodeId: nodeId
       }
-      this.$api('DataFlows')
+      this.$api('Task')
         .tranModelVersionControl(param)
         .then(res => {
-          this.showFieldMapping = res?.data[stageId]
+          this.showFieldMapping = res?.data[nodeId]
         })
     },
     //接收是否第一次打开
@@ -333,12 +332,16 @@ export default {
       ]
       this.dataSourceData['syncPoints'] = syncPoints
       let postData = {
-        name: this.dataSourceData.name,
+        name: this.settingData.name,
         description: '',
         status: 'paused',
         executeMode: 'normal',
         category: this.$t('task_form_database_clone'),
         stopOnError: false,
+        attrs: {
+          task_data_source_Data: this.dataSourceData,
+          task_setting_Data: this.settingData
+        },
         mappingTemplate: 'cluster-clone',
         dag: {
           edges: [],
@@ -346,7 +349,7 @@ export default {
         },
         dataFlowType: 'normal' //区分创建方式
       }
-      postData = Object.assign({}, postData, this.settingData, this.dataSourceData)
+      postData = Object.assign({}, postData, this.settingData)
       //第四步 数据组装
       let selectTable = []
       if (this.transferData) {
@@ -377,9 +380,9 @@ export default {
       let targetIdB = ''
       if (this.id) {
         postData.status = this.status || 'paused'
-        //编辑状态stages只做变更
-        sourceIdA = this.stages[0]?.id
-        targetIdB = this.stages[1]?.id
+        //编辑状态nodes只做变更
+        sourceIdA = this.nodes[0]?.id
+        targetIdB = this.nodes[1]?.id
         postData.id = this.id
       } else {
         sourceIdA = this.$util.uuid()
@@ -401,13 +404,14 @@ export default {
             id: sourceIdA,
             name: this.dataSourceData.source_connectionName,
             tableName: this.dataSourceData.source_connectionName, //?
-            type: 'database'
+            type: 'database',
+            field_process: this.transform.field_process
           }
         ),
         Object.assign(
           {},
           {
-            connectionId: target.source_connectionId,
+            connectionId: target.target_connectionId,
             databaseType: this.dataSourceData['target_databaseType'] || 'mysql',
             id: targetIdB,
             name: this.dataSourceData.target_connectionName,
@@ -420,22 +424,29 @@ export default {
           }
         )
       ]
-      this.transform.stageId = targetIdB
+      this.transform.nodeId = targetIdB
       return postData
     },
     save() {
+      let verify = this.checkTransfer()
+      if (!verify) {
+        this.$message.error('请先选择表')
+        return
+      }
       let postData = this.daft()
       let promise = null
       if (this.id) {
-        postData['id'] = this.id
-        promise = this.$axios.patch('tm/api/Task/confirm' + this.id, postData)
+        promise = this.$api('Task').edit(postData)
       } else {
-        promise = this.$axios.post('tm/api/DataFlows', postData)
+        promise = this.$api('Task').save(postData)
       }
       this.loadingSave = true
       promise
         .then(() => {
-          this.routerBack()
+          this.$message.success('保存成功')
+          this.$router.push({
+            name: 'migrate'
+          })
         })
         .catch(e => {
           this.handleError(e)
@@ -768,23 +779,5 @@ export default {
 }
 .el-main {
   padding: 24px 0 0;
-}
-.form-builder {
-  ::v-deep {
-    .e-form-builder-item {
-      &.read-batch-size {
-        .el-form-item__content {
-          width: 277px;
-        }
-      }
-    }
-  }
-}
-.step-3 {
-  .ddl-tip {
-    font-size: 12px;
-    margin-top: -10px;
-    color: #aaa;
-  }
 }
 </style>

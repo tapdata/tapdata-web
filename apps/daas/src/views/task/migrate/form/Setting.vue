@@ -1,7 +1,15 @@
 <template>
   <div class="attr-panel">
     <div class="attr-panel-body overflow-auto">
-      <Form class-name="form-wrap" :form="form" :colon="true" labelAlign="left" labelWidth="120" layout="horizontal">
+      <Form
+        class-name="form-wrap"
+        :form="form"
+        :colon="false"
+        labelAlign="left"
+        labelWidth="180"
+        layout="horizontal"
+        wrapperWidth="400"
+      >
         <SchemaField v-if="!!schema" :schema="schema" />
       </Form>
     </div>
@@ -155,17 +163,11 @@ export default {
         properties: {
           layout: {
             type: 'void',
-            'x-component': 'FormLayout',
-            'x-component-props': {
-              colon: false,
-              layout: 'vertical',
-              feedbackLayout: 'terse',
-              wrapperWidth: 300
-            },
             properties: {
               name: {
                 title: '任务名称',
                 type: 'string',
+                required: 'true',
                 'x-decorator': 'FormItem',
                 'x-component': 'Input'
               },

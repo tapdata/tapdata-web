@@ -1,11 +1,11 @@
 <template>
   <el-form
-    :model="dataSourceData"
-    status-icon
-    :rules="rules"
     ref="dataSourceModelForm"
     label-width="100px"
-    class="demo-ruleForm"
+    label-position="left"
+    status-icon
+    :model="dataSourceData"
+    :rules="rules"
   >
     <el-form-item label="源端类型" prop="source_filter_databaseType">
       <el-select v-model="dataSourceData.source_filter_databaseType" @change="getSourceConnection">
@@ -52,8 +52,9 @@ export default {
   },
   mounted() {
     this.allowDatabaseType()
-    this.getSourceConnection()
-    this.getTargetConnection()
+    this.getConnection(this.getWhere('source'), 'source_connectionId', true)
+    this.getConnection(this.getWhere('target'), 'target_connectionId', true)
+    console.log(this.dataSourceData)
   },
   methods: {
     //云版支持数据源
@@ -148,10 +149,12 @@ export default {
     },
     getSourceConnection(val) {
       this.dataSourceData['source_databaseType'] = val
+      this.dataSourceData.source_connectionId = ''
       this.getConnection(this.getWhere('source'), 'source_connectionId', true)
     },
     getTargetConnection(val) {
       this.dataSourceData['target_databaseType'] = val
+      this.dataSourceData.target_connectionId = ''
       this.getConnection(this.getWhere('target'), 'target_connectionId', true)
     },
     save() {

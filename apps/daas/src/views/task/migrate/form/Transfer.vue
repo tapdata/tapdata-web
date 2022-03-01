@@ -186,6 +186,20 @@ export default {
         )
       }
     },
+    confirm(callback, catchCallback, config) {
+      this.$confirm(config.Message + config.name + '?', config.title, {
+        confirmButtonText: config.confirmButtonText,
+        cancelButtonText: config.cancelButtonText,
+        type: 'warning',
+        closeOnClickModal: false
+      }).then(resFlag => {
+        if (resFlag) {
+          callback()
+        } else {
+          catchCallback()
+        }
+      })
+    },
     //请求测试
     testSchema() {
       let parms = {

@@ -26,7 +26,7 @@ export const SETTING_MODEL = {
 
 export const DATASOURCE_MODEL = {
   source_sourceType: '',
-  target_sourceType: '',
+  target_targetType: '',
   source_filter_databaseType: 'all',
   target_filter_databaseType: 'all',
   source_connectionId: '',
