@@ -1,17 +1,18 @@
 import { defineComponent, toRefs, onMounted, h as hr, getCurrentInstance, watch } from 'vue-demi'
-import { Engine, GlobalRegistry } from '../core'
+import { createDesigner, Engine, GlobalRegistry } from '../core'
 import { DesignerEngineContext } from '../context'
 import { useDesigner } from '../hooks'
 import { Layout } from './Layout'
 import * as icons from '../icons'
 
-GlobalRegistry.registerDesignerIcons(icons)
-
-console.log('icons🐰', icons)
+import { Fragment, h as hFrag } from '@formily/vue'
+// GlobalRegistry.registerDesignerIcons(icons)
+//
+// console.log('icons🐰', icons)
 
 export const Designer = defineComponent({
   props: {
-    engine: Object,
+    // engine: Object,
     prefixCls: {
       type: String,
       default: 'dn-'
@@ -21,9 +22,11 @@ export const Designer = defineComponent({
       default: 'light'
     }
   },
-  setup: (props, { slots }) => {
-    const engine = useDesigner()
-    const ref = ref()
+  setup(props, { slots }) {
+    const engine = createDesigner({
+      rootComponentName: 'Form'
+    })
+    /*const ref = ref()
     watch(
       () => props.engine,
       () => {
@@ -42,13 +45,15 @@ export const Designer = defineComponent({
           }
         }
       }
-    )
+    )*/
 
-    if (engine) throw new Error('There can only be one Designable Engine Context in the Tree')
+    // if (engine) throw new Error('There can only be one Designable Engine Context in the Tree')
 
-    return (
+    console.log('engine', engine)
+
+    return () => (
       <Layout {...toRefs(props)}>
-        <DesignerEngineContext.Provider value={props.engine}>{slots?.default?.()}</DesignerEngineContext.Provider>
+        <DesignerEngineContext.Provider value={engine}>{hFrag(Fragment, {}, slots)}</DesignerEngineContext.Provider>
       </Layout>
     )
   }

@@ -1,10 +1,9 @@
 import { TreeNode } from './TreeNode'
 import { Workbench } from './Workbench'
 import { Cursor } from './Cursor'
-import { Keyboard } from './Keyboard'
+// import { Keyboard } from './Keyboard'
 import { Screen } from './Screen'
-import { uid } from '@daas/shared'
-import { Event } from '../events'
+import { uid, Event } from '@daas/shared'
 
 const globalThisPolyfill = window
 

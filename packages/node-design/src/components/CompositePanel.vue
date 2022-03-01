@@ -34,7 +34,7 @@ import 'web-core/assets/icons/svg/component.svg'
 import 'web-core/assets/icons/svg/outline.svg'
 import 'web-core/assets/icons/svg/history.svg'
 import { ResourceWidget } from '../widgets/resource-widget'
-import { Input } from '../sources/input'
+import { Input, Select } from '../sources'
 
 export default {
   name: 'CompositePanel',
@@ -42,7 +42,7 @@ export default {
 
   data() {
     return {
-      sources: [Input],
+      sources: [Input, Select],
       tabItems: [
         {
           name: 'component',
@@ -79,6 +79,10 @@ export default {
 
   &-tabs-header {
     height: 48px;
+  }
+
+  &-tabs-body {
+    overflow-x: hidden;
   }
 
   &-tab {

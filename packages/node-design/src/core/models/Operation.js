@@ -1,89 +1,76 @@
 import { Workspace } from './Workspace'
 import { Engine } from './Engine'
-import { TreeNode, ITreeNode } from './TreeNode'
-import { Selection } from './Selection'
-import { Hover } from './Hover'
+import { TreeNode } from './TreeNode'
+// import { Selection } from './Selection'
+// import { Hover } from './Hover'
 import { action, define, observable } from '@formily/reactive'
-import { Dragon } from './Dragon'
-import {
-  cancelIdle,
-  each,
-  ICustomEvent,
-  IPoint,
-  isFn,
-  requestIdle,
-} from '@designable/shared'
-
-export interface IOperation {
-  tree?: ITreeNode
-  selected?: string[]
-}
+// import { Dragon } from './Dragon'
+import { cancelIdle, each, isFn, requestIdle } from '@daas/shared'
 
 export class Operation {
-  workspace: Workspace
+  workspace
 
-  engine: Engine
+  engine
 
-  tree: TreeNode
+  tree
 
-  selection: Selection
+  selection
 
-  viewportDragon: Dragon
+  viewportDragon
 
-  outlineDragon: Dragon
+  outlineDragon
 
-  hover: Hover
+  hover
 
   requests = {
-    snapshot: null,
+    snapshot: null
   }
 
-  constructor(workspace: Workspace) {
+  constructor(workspace) {
     this.engine = workspace.engine
     this.workspace = workspace
     this.tree = new TreeNode({
       componentName: this.engine.props.rootComponentName,
       ...this.engine.props.defaultComponentTree,
-      operation: this,
+      operation: this
     })
     console.log('构建Operation', this.tree)
-    this.selection = new Selection({
-      operation: this,
-    })
-    this.hover = new Hover({
-      operation: this,
-    })
-    this.outlineDragon = new Dragon({
-      operation: this,
-      sensitive: false,
-      forceBlock: true,
-      viewport: this.workspace.outline,
-    })
-    this.viewportDragon = new Dragon({
-      operation: this,
-      viewport: this.workspace.viewport,
-    })
-    this.selection.select(this.tree)
+    // this.selection = new Selection({
+    //   operation: this
+    // })
+    // this.hover = new Hover({
+    //   operation: this,
+    // })
+    // this.outlineDragon = new Dragon({
+    //   operation: this,
+    //   sensitive: false,
+    //   forceBlock: true,
+    //   viewport: this.workspace.outline,
+    // })
+    // this.viewportDragon = new Dragon({
+    //   operation: this,
+    //   viewport: this.workspace.viewport,
+    // })
+    // this.selection.select(this.tree)
     this.makeObservable()
   }
 
-  dispatch(event: ICustomEvent, callback?: () => void) {
+  dispatch(event, callback) {
     if (this.workspace.dispatch(event) === false) return
     if (isFn(callback)) return callback()
   }
 
   getSelectedNodes() {
-    return this.selection.selected.map((id) => this.tree.findById(id))
+    return this.selection.selected.map(id => this.tree.findById(id))
   }
 
-  setDragNodes(nodes: TreeNode[]) {
+  setDragNodes(nodes) {
     const dragNodes = nodes.reduce((buf, node) => {
       if (isFn(node?.designerProps?.getDragNodes)) {
         const transformed = node.designerProps.getDragNodes(node)
         return transformed ? buf.concat(transformed) : buf
       }
-      if (node.componentName === '$$ResourceNode$$')
-        return buf.concat(node.children)
+      if (node.componentName === '$$ResourceNode$$') return buf.concat(node.children)
       return buf.concat([node])
     }, [])
     this.outlineDragon.setDragNodes(dragNodes)
@@ -97,7 +84,7 @@ export class Operation {
     return this.viewportDragon.dragNodes
   }
 
-  getDropNodes(parent: TreeNode) {
+  getDropNodes(parent) {
     const dragNodes = this.getDragNodes()
     return dragNodes.reduce((buf, node) => {
       if (isFn(node.designerProps?.getDropNodes)) {
@@ -105,8 +92,7 @@ export class Operation {
         const transformed = node.designerProps.getDropNodes(cloned, parent)
         return transformed ? buf.concat(transformed) : buf
       }
-      if (node.componentName === '$$ResourceNode$$')
-        return buf.concat(node.children)
+      if (node.componentName === '$$ResourceNode$$') return buf.concat(node.children)
       return buf.concat([node])
     }, [])
   }
@@ -116,39 +102,36 @@ export class Operation {
   }
 
   getClosestPosition() {
-    return (
-      this.viewportDragon.closestDirection ||
-      this.outlineDragon.closestDirection
-    )
+    return this.viewportDragon.closestDirection || this.outlineDragon.closestDirection
   }
 
-  setTouchNode(node: TreeNode) {
+  setTouchNode(node) {
     this.outlineDragon.setTouchNode(node)
     this.viewportDragon.setTouchNode(node)
   }
 
-  dragWith(point: IPoint, touchNode?: TreeNode) {
+  dragWith(point, touchNode) {
     const viewport = this.workspace.viewport
     const outline = this.workspace.outline
     if (outline.isPointInViewport(point, false)) {
       this.outlineDragon.calculate({
         point,
-        touchNode: touchNode || this.tree,
+        touchNode: touchNode || this.tree
       })
       this.viewportDragon.calculate({
         touchNode: touchNode || this.tree,
         closestNode: this.outlineDragon.closestNode,
-        closestDirection: this.outlineDragon.closestDirection,
+        closestDirection: this.outlineDragon.closestDirection
       })
     } else if (viewport.isPointInViewport(point, false)) {
       this.viewportDragon.calculate({
         point,
-        touchNode: touchNode || this.tree,
+        touchNode: touchNode || this.tree
       })
       this.outlineDragon.calculate({
         touchNode: touchNode || this.tree,
         closestNode: this.viewportDragon.closestNode,
-        closestDirection: this.viewportDragon.closestDirection,
+        closestDirection: this.viewportDragon.closestDirection
       })
     } else {
       this.setTouchNode(null)
@@ -164,7 +147,7 @@ export class Operation {
     return this.outlineDragon.touchNode || this.viewportDragon.touchNode
   }
 
-  setDropNode(node: TreeNode) {
+  setDropNode(node) {
     this.outlineDragon.setDropNode(node)
     this.viewportDragon.setDropNode(node)
   }
@@ -173,7 +156,7 @@ export class Operation {
     return this.outlineDragon.dropNode || this.viewportDragon.dropNode
   }
 
-  removeNodes(nodes: TreeNode[]) {
+  removeNodes(nodes) {
     for (let i = nodes.length - 1; i >= 0; i--) {
       const node = nodes[i]
       if (node.allowDelete()) {
@@ -186,22 +169,22 @@ export class Operation {
     }
   }
 
-  sortNodes(nodes: TreeNode[]) {
+  sortNodes(nodes) {
     return nodes.sort((before, after) => {
       if (before.depth !== after.depth) return 0
       return before.index - after.index >= 0 ? 1 : -1
     })
   }
 
-  cloneNodes(nodes: TreeNode[]) {
-    const groups: { [parentId: string]: TreeNode[] } = {}
-    const lastGroupNode: { [parentId: string]: TreeNode } = {}
-    const filterNestedNode = this.sortNodes(nodes).filter((node) => {
-      return !nodes.some((parent) => {
+  cloneNodes(nodes) {
+    const groups = {}
+    const lastGroupNode = {}
+    const filterNestedNode = this.sortNodes(nodes).filter(node => {
+      return !nodes.some(parent => {
         return node.isMyParents(parent)
       })
     })
-    each(filterNestedNode, (node) => {
+    each(filterNestedNode, node => {
       if (node === node.root) return
       if (!node.allowClone()) return
       groups[node?.parent?.id] = groups[node?.parent?.id] || []
@@ -214,17 +197,14 @@ export class Operation {
         lastGroupNode[node?.parent?.id] = node
       }
     })
-    const parents = new Map<TreeNode, TreeNode[]>()
+    const parents = new Map()
     each(groups, (nodes, parentId) => {
       const lastNode = lastGroupNode[parentId]
       let insertPoint = lastNode
-      each(nodes, (node) => {
+      each(nodes, node => {
         const cloned = node.clone()
         if (!cloned) return
-        if (
-          this.selection.has(node) &&
-          insertPoint.parent.allowAppend([cloned])
-        ) {
+        if (this.selection.has(node) && insertPoint.parent.allowAppend([cloned])) {
           insertPoint.insertAfter(cloned)
           insertPoint = insertPoint.next
         } else if (this.selection.length === 1) {
@@ -250,24 +230,19 @@ export class Operation {
     define(this, {
       hover: observable.ref,
       removeNodes: action,
-      cloneNodes: action,
+      cloneNodes: action
     })
   }
 
-  snapshot(type?: string) {
-    cancelIdle(this.requests.snapshot)
-    if (
-      !this.workspace ||
-      !this.workspace.history ||
-      this.workspace.history.locking
-    )
-      return
-    this.requests.snapshot = requestIdle(() => {
-      this.workspace.history.push(type)
-    })
+  snapshot(type) {
+    // cancelIdle(this.requests.snapshot)
+    // if (!this.workspace || !this.workspace.history || this.workspace.history.locking) return
+    // this.requests.snapshot = requestIdle(() => {
+    //   this.workspace.history.push(type)
+    // })
   }
 
-  from(operation?: IOperation) {
+  from(operation) {
     if (!operation) return
     if (operation.tree) {
       this.tree.from(operation.tree)
@@ -277,10 +252,10 @@ export class Operation {
     }
   }
 
-  serialize(): IOperation {
+  serialize() {
     return {
       tree: this.tree.serialize(),
-      selected: this.selection.selected,
+      selected: this.selection.selected
     }
   }
 }

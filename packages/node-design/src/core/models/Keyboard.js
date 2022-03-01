@@ -1,5 +1,5 @@
 import { observable, define, action } from '@formily/reactive'
-import { KeyCode } from '@designable/shared'
+import { KeyCode } from '@daas/shared'
 import { Shortcut } from './Shortcut'
 
 const Modifiers = [

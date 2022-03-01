@@ -1,5 +1,6 @@
 import { isArr } from '@daas/shared'
-import { TreeNode } from './models'
+import { TreeNode, Engine } from './models'
+import { mergeLocales } from './internals'
 import { untracked } from '@formily/reactive'
 
 export const isBehaviorHost = val => val?.Behavior && isBehaviorList(val.Behavior)
@@ -14,6 +15,14 @@ export const isResourceHost = val => val?.Resource && isResourceList(val.Resourc
 export const isResourceList = val => Array.isArray(val) && val.every(isResource)
 
 export const isResource = val => val?.node && !!val.node.isSourceNode && val.node instanceof TreeNode
+
+export const createLocales = (...packages) => {
+  const results = {}
+  packages.forEach(locales => {
+    mergeLocales(results, locales)
+  })
+  return results
+}
 
 export const createBehavior = (...behaviors) => {
   return behaviors.reduce((buf, behavior) => {

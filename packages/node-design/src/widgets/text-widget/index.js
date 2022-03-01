@@ -1,11 +1,14 @@
 import { isStr, isPlainObj } from '@daas/shared'
 import { GlobalRegistry } from '../../core'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent, computed } from 'vue-demi'
+import { defineComponent, computed, ref } from 'vue-demi'
 
 export const TextWidget = observer(
   defineComponent({
-    setup(props, { slots }) {
+    props: {
+      token: [String, Object]
+    },
+    setup(props, ctx) {
       const takeLocale = message => {
         if (isStr(message)) return message
         if (isPlainObj(message)) {
@@ -24,12 +27,13 @@ export const TextWidget = observer(
         return token
       }
 
-      let txt
+      let txt = ref()
 
-      if (slots.default) {
+      if (ctx.slots.default) {
+        console.log('ctx.slots.default', ctx.slots.default)
         txt = computed(() => {
-          const slot = slots.default?.()
-          console.log('txt：computed', slot)
+          const slot = ctx.slots.default?.()
+          console.log('TextWidget', slot[0]?.text)
           return slot[0]?.text
         })
       }

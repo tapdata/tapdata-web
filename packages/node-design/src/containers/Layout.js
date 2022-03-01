@@ -1,4 +1,4 @@
-import { defineComponent, ref, provide, inject, watch } from 'vue-demi'
+import { defineComponent, ref, provide, inject, watch, onMounted } from 'vue-demi'
 import { each, useContext } from '@daas/shared'
 import { DesignerLayoutContext } from '../context'
 
@@ -19,15 +19,15 @@ export const Layout = defineComponent({
     variables: Array
   },
   setup: (props, { slots }) => {
+    const root = ref(null)
     const layout = useContext(DesignerLayoutContext)
-    const ref = ref(null)
 
     watch(
       () => props.variables,
       () => {
-        if (ref.value) {
+        if (root.value) {
           each(props.variables, (value, key) => {
-            ref.current.style.setProperty(`--${key}`, value)
+            root.value.style.setProperty(`--${key}`, value)
           })
         }
       }
@@ -36,7 +36,7 @@ export const Layout = defineComponent({
     if (layout) {
       return () => slots?.default?.()
     }
-    return () => (
+    /*return () => (
       <div
         ref={ref}
         class={{
@@ -52,6 +52,31 @@ export const Layout = defineComponent({
           }}
         >
           {slots?.default?.()}
+        </DesignerLayoutContext.Provider>
+      </div>
+    )*/
+
+    return { root, layout }
+  },
+
+  render() {
+    if (this.layout) return this.$slots.default?.()
+    return (
+      <div
+        ref="root"
+        class={{
+          [`${this.prefixCls}app`]: true,
+          [`${this.prefixCls}${this.theme}`]: this.theme
+        }}
+      >
+        <DesignerLayoutContext.Provider
+          value={{
+            theme: this.theme,
+            prefixCls: this.prefixCls,
+            position: this.position
+          }}
+        >
+          {this.$slots.default?.()}
         </DesignerLayoutContext.Provider>
       </div>
     )

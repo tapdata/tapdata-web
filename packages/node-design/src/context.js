@@ -1,4 +1,4 @@
-import { createContext } from '@daas/shard'
+import { createContext } from '@daas/shared'
 
 export const DesignerComponentsContext = createContext({})
 
