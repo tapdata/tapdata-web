@@ -191,7 +191,7 @@ export default {
       },
       creator: '',
       selectedStage: '', // 选中的节点
-      selectedTime: '5min',
+      selectedTime: 'default',
       selectedRate: 'second',
       lineData: {
         x: [],
@@ -325,6 +325,11 @@ export default {
         }
       ],
       selectedTimeItems: [
+        {
+          label: '默认',
+          value: 'default',
+          spacing: 0
+        },
         {
           label: '最近五分钟',
           value: '5min',
@@ -521,7 +526,7 @@ export default {
       if (this.selectedStage) {
         let nodeId = this.selectedStage
         let taskTags = tags
-         tags= {
+        tags = {
           subTaskId: subTaskId,
           type: 'node',
           nodeId
@@ -555,7 +560,9 @@ export default {
       }
       if (endTimeStamp) {
         params.samples[0].end = endTimeStamp
-        params.samples[1].end = endTimeStamp
+        if (selectedTime !== 'default') {
+          params.samples[1].end = endTimeStamp
+        }
         // params.samples[2].end = endTimeStamp
       }
       if (startTimeStamp) {
@@ -563,10 +570,14 @@ export default {
           const lastTime = this.lineDataDeep.x[this.lineDataDeep.x.length - 1]
           const lastTimeStamp = lastTime ? new Date(lastTime).getTime() : ''
           params.samples[0].start = lastTimeStamp || startTimeStamp
-          params.samples[1].start = lastTimeStamp || startTimeStamp
+          if (selectedTime !== 'default') {
+            params.samples[1].start = lastTimeStamp || startTimeStamp
+          }
         } else {
           params.samples[0].start = startTimeStamp
-          params.samples[1].start = startTimeStamp
+          if (selectedTime !== 'default') {
+            params.samples[1].start = startTimeStamp
+          }
         }
         // params.samples[2].start = startTimeStamp
       }
@@ -598,9 +609,14 @@ export default {
         }
         // 全量预计完成时间
         this.initialData.length >= 2 && this.initialData.shift()
-        this.initialData.push(Object.assign({
-          time: new Date().getTime()
-        }, writeData))
+        this.initialData.push(
+          Object.assign(
+            {
+              time: new Date().getTime()
+            },
+            writeData
+          )
+        )
         if (this.initialData.length >= 2) {
           const getForecastMs = this.getForecastMs(this.initialData)
           if (getForecastMs) {
@@ -850,6 +866,9 @@ export default {
           break
         case 'custom':
           result = val
+          break
+        default:
+          result[0] = current - 5 * 60 * 1000
           break
       }
       return result
