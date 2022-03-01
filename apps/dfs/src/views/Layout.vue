@@ -62,16 +62,19 @@
         @select="createConnection"
       ></ConnectionTypeSelector>
     </ElDialog>
+    <AgentDownloadModal></AgentDownloadModal>
   </ElContainer>
 </template>
 
 <script>
 import TheHeader from '@/components/the-header'
 import VIcon from '@/components/VIcon'
+import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
 export default {
   components: {
     TheHeader,
-    VIcon
+    VIcon,
+    AgentDownloadModal
   },
   data() {
     const $t = this.$t.bind(this)
