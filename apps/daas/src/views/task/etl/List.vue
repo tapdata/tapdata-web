@@ -16,66 +16,6 @@
     >
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-        <!-- <ul class="search-bar">
-          <li>
-            <ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
-              <ElOption :label="$t('dataFlow.status.all')" value=""></ElOption>
-              <ElOption v-for="(value, label) in statusOptions" :key="value" :label="label" :value="value"> </ElOption>
-            </ElSelect>
-          </li>
-          <li>
-            <el-select
-              v-model="searchParams.progress"
-              size="small"
-              clearable
-              :placeholder="$t('dataFlow.taskSettingPlaceholder')"
-              style="width: 160px"
-              @input="table.fetch(1)"
-            >
-              <el-option
-                v-for="item in progressOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-          </li>
-          <li>
-            <el-select
-              v-model="searchParams.executionStatus"
-              size="small"
-              clearable
-              :placeholder="$t('dataFlow.executionStatus')"
-              style="width: 160px"
-              @input="table.fetch(1)"
-            >
-              <el-option
-                v-for="opt in ['initializing', 'cdc', 'initialized', 'Lag']"
-                :key="opt"
-                :label="$t('dataFlow.status.' + opt)"
-                :value="opt"
-              ></el-option>
-            </el-select>
-          </li>
-          <li>
-            <el-input
-              v-model="searchParams.keyword"
-              clearable
-              size="small"
-              :placeholder="$t('dataFlow.searchPlaceholder')"
-              @input="table.fetch(1, 800)"
-            >
-              <span slot="prefix" class="el-input__icon h-100 ml-1">
-                <VIcon size="14">search</VIcon>
-              </span>
-            </el-input>
-          </li>
-          <li>
-            <ElButton class="btn-refresh" size="small" @click="table.fetch()">
-              <i class="el-icon-refresh"></i>
-            </ElButton>
-          </li>
-        </ul> -->
       </template>
       <div class="buttons" slot="operation">
         <el-button
@@ -144,7 +84,7 @@
 
       <el-table-column min-width="200" :label="$t('task_list_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
-          <span class="dataflow-name">
+          <span class="dataflow-name link-primary">
             <span :class="['name', { 'has-children': row.hasChildren }]" @click="toDetail(row)">{{ row.name }}</span>
             <el-tag v-if="row.listTagId !== undefined" class="tag" type="info" effect="dark" size="mini">
               {{ row.listTagValue }}
@@ -178,8 +118,9 @@
           {{ row.startTime ? $moment(row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="280" fixed="right">
+      <el-table-column :label="$t('column_operation')" width="180" fixed="right">
         <template #default="{ row }">
+          {{ row }}
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
               v-readonlybtn="'SYNC_job_operation'"
@@ -189,16 +130,17 @@
             >
               {{ $t('task_list_run') }}
             </ElLink>
+            <ElDivider direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="
                 $disabledByPermission('SYNC_job_operation_all_data', row.user_id) || stopDisabled(row.statusResult)
               "
-              class="ml-3"
               @click="stop([row.id])"
               >{{ $t('task_list_stop') }}</ElLink
             >
+            <ElDivider direction="vertical"></ElDivider>
             <!--            <ElLink-->
             <!--              v-if="row.status === 'stopping'"-->
             <!--              v-readonlybtn="'SYNC_job_operation'"-->
@@ -213,13 +155,13 @@
             <!--            </ElLink>-->
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
-              style="margin-left: 10px"
               type="primary"
-              :disabled="$disabledByPermission('SYNC_job_edition_all_data', row.user_id)"
+              :disabled="$disabledByPermission('SYNC_job_edition_all_data', row.user_id) || startDisabled(row)"
               @click="handleEditor(row.id)"
             >
-              {{ $t('button.edit') }}
+              {{ $t('button_edit') }}
             </ElLink>
+            <ElDivider direction="vertical"></ElDivider>
             <!-- <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               style="margin-left: 10px"
@@ -233,15 +175,10 @@
             >
               {{ $t('task_list_button_schedule') }}
             </ElLink> -->
-            <el-dropdown
-              v-show="moreAuthority"
-              size="small"
-              style="margin-left: 10px"
-              @command="handleCommand($event, row)"
-            >
-              <ElLink type="primary">
-                {{ $t('button.more') }}
-                <i class="el-icon-arrow-down"></i>
+            <el-dropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
+              <ElLink type="primary" class="rotate-90">
+                <!-- {{ $t('button.more') }} -->
+                <i class="el-icon-more"></i>
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
                 <el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
@@ -1264,7 +1201,6 @@ export default {
       }
       .name {
         &:not(.has-children) {
-          color: #409eff;
           cursor: pointer;
           text-decoration: underline;
         }

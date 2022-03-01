@@ -308,7 +308,7 @@ const LanguagesKey = {
   tc: 'zh_TW'
 }
 let menuSetting = [
-  { name: 'dashboard', icon: 'gongzuotai' },
+  { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
   { name: 'connectionsList', icon: 'agent' },
   {
     name: 'dataPipeline',
@@ -436,12 +436,13 @@ export default {
         return items.map(item => {
           let route = routerMap[item.name]
           let menu = item
+          let label = menu.alias ? menu.alias : menu.label
           if (route) {
             menu.to = { name: route.name }
-            menu.label = this.$t(route.meta.title)
+            menu.label = this.$t(label || route.meta.title)
             menu.code = route.meta.code
           } else {
-            menu.label = this.$t(menu.label)
+            menu.label = this.$t(label)
           }
           let matched = !menu.code || permissions.some(p => p.code === menu.code)
           menu.hidden = !matched

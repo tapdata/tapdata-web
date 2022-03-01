@@ -33,7 +33,7 @@
           <div class="e-col">
             {{ $t('editor.cell.processor.field.form.fieldType') }}
           </div>
-          <div class="e-col">{{ $t('message.operator') }}</div>
+          <div class="e-col">{{ $t('column_operation') }}</div>
         </div>
         <el-main>
           <el-tree

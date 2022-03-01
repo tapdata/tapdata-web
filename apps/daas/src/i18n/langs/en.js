@@ -6,24 +6,78 @@ export default {
   // 通用下拉框
   select_option_all: 'All',
 
+  // 公共区
+  common_no_data: 'No data',
+  common_no_match_result: 'No matching results were found',
+  common_back_to_list: 'Return list',
+  common_placeholder_select: 'Please select',
+  common_placeholder_input: 'Please input',
+
+  // 通用按钮
+  button_help: 'Help',
+  button_edit: 'Edit',
+  button_confirm: 'Confirm',
+  button_cancel: 'Cancel',
+  button_back: 'Back',
+  button_save: 'Save',
+  button_check: 'Details',
+  button_delete: 'Delete',
+  button_setting: 'Setting',
+  button_reduction: 'Reduction',
+  button_copy: 'Copy',
+  button_details: 'Details',
+  button_preview: 'Preview',
+  button_reload: 'Reload schema',
+  button_ok: 'OK',
+  button_restart: 'Restart',
+  button_startUp: 'Start',
+  button_close: 'Close',
+  button_filter: 'Filter',
+  button_search: 'Search',
+  button_query: 'Query',
+  button_reset: 'Reset',
+  button_create: 'Create',
+  button_export: 'Export',
+  button_import: 'Import',
+  button_download: 'Download',
+  button_button: 'Add',
+  button_see_more: 'See more',
+
+  query_fuzzy: 'Fuzzy match',
+  query_precise: 'Exact match',
+
   // 通用消息
   message_title_prompt: 'Hint',
   message_delete_confirm: 'Delete or not',
+  message_delete_ornot: 'Delete or not',
+  message_save_ok: 'Save successfully',
+  message_save_fail: 'Save failed',
+  message_create_ok: 'Created successfully',
+  message_create_fail: 'Create failed',
+  message_copy_success: 'Copy successful',
+  message_copy_fail: 'Copy failed',
+  message_delete_ok: 'Delete successfully',
+  message_delete_fail: 'Deletion failed',
+  message_deleting: 'Deleting',
+  message_reload_ok: 'Reloading in progress',
+  message_update_success: 'Modification succeeded',
 
   // 表格
   column_operation: 'Operate',
   column_connection: 'Belonging to the connection',
-  column_table: 'belonging table',
-  column_create_time: 'create time',
+  column_table: 'Belonging table',
+  column_create_time: 'Create time',
 
   // 菜单标题
 
-  menu_title_data_pipeline: 'Data Pipeline',
-  menu_title_data_discovery: 'Data Discovery',
-  menu_title_data_service: 'Data Service',
-  menu_title_system: 'System Management',
+  // dialog按钮
+  dialog_button_cancel: 'Cancel',
+  dialog_button_confirm: 'OK',
+  dialog_button_save: 'Save',
+  dialog_button_delete: 'Delete',
 
   //页面标题
+  page_title_overview: 'Overview',
   page_title_dashboard: 'Console',
   page_title_connections: 'Connection management',
   page_title_connections_create: 'Create a connection',
@@ -70,6 +124,9 @@ export default {
   page_title_setting: 'System settings',
   page_title_license: 'License management',
 
+  // app
+  app_license_expire_warning: 'Reminder: License expires in {0} days remaining',
+
   // console
   dashboard_all_total: 'All tasks',
   dashboard_copy_total: 'Copy task',
@@ -109,13 +166,6 @@ export default {
   dashboard_total_insert: 'Total insert',
   dashboard_total_update: 'Total update',
   dashboard_total_delete: 'Total delete',
-
-  gl_see_more: 'See more',
-  gl_no_data: 'No data',
-  gl_no_match_result: 'No matching results were found',
-  gl_back_to_list: 'Back to list',
-  gl_placeholder_select: 'Please select',
-  gl_placeholder_input: 'Please input',
 
   // 元数据管理
   metadata_type: 'type',
@@ -184,58 +234,6 @@ export default {
 
   // 任务设置
   task_settings_cdc_sync_point_date: '【Task settings】Incremental acquisition start time, please select the time',
-
-  // public area 公共区
-  menu_help: 'Help',
-  button_edit: 'Edit',
-  button_confirm: 'Confirm',
-  button_cancel: 'Cancel',
-  button_back: 'Back',
-  button_save: 'Save',
-  button_check: 'Details',
-  button_delete: 'Delete',
-  button_setting: 'Setting',
-  button_reduction: 'Reduction',
-  button_copy: 'Copy',
-  button_details: 'Details',
-  button_preview: 'Preview',
-  button_reload: 'Reload schema',
-  button_ok: 'OK',
-  button_restart: 'Restart',
-  button_startUp: 'Start',
-  button_close: 'Close',
-  button_filter: 'Filter',
-  button_search: 'Search',
-  button_query: 'Query',
-  button_reset: 'Reset',
-  button_create: 'Create',
-  button_export: 'Export',
-  button_import: 'Import',
-  button_download: 'Download',
-  button_button: 'Add',
-
-  query_fuzzy: 'Fuzzy match',
-  query_precise: 'Exact match',
-
-  message_delete_ornot: 'Delete or not',
-  message_save_ok: 'Save successfully',
-  message_save_fail: 'Save failed',
-  message_create_ok: 'Created successfully',
-  message_create_fail: 'Create failed',
-  message_copy_success: 'Copy successful',
-  message_copy_fail: 'Copy failed',
-  message_delete_ok: 'Delete successfully',
-  message_delete_fail: 'Deletion failed',
-  message_deleting: 'Deleting',
-  message_reload_ok: 'Reloading in progress',
-
-  operator: 'Operation',
-
-  // dialog button dialog按钮
-  dialog_button_cancel: 'Cancel',
-  dialog_button_confirm: 'OK',
-  dialog_button_save: 'Save',
-  dialog_button_delete: 'Delete',
 
   // api release api发布
   modules_all: 'All',
@@ -408,6 +406,7 @@ export default {
   connection_list_column_schema_status: 'Schema loading status',
   connection_list_column_schema_status_tips: 'Connections after Schema loading can be created normally',
 
+  // 连接管理
   connection_form_connection_type: 'Connection Type',
   connection_form_source_and_target: 'Source and target',
   connection_form_source: 'Source',
@@ -462,8 +461,7 @@ export default {
   connection_form_kafka_ack: 'ACK confirmation mechanism',
   connection_form_kafka_ignore_invalid: 'Ignore non-JSON Object format messages',
   connection_form_kafka_pattern_topic: 'topic expression',
-
-  // connect
+  // 连接
   connection_manage: 'Connection Management',
   connection_list_form_task_status: 'task status',
   connection_list_form_sync_type: 'Sync type',
@@ -600,7 +598,7 @@ export default {
   // 路由名
   app_menu_jsFuncs: 'Function',
 
-  // function
+  // function函数
   js_func_name: 'Function name',
   js_func_parameters: 'Parameters',
   js_func_function_body: 'Function body',
@@ -648,7 +646,7 @@ export default {
   dag_data_setting_runMinute: '每分鐘運行一次',
   dag_data_setting_runDay: '每天2點運行',
 
-  //Field mapping
+  //Field mapping字段映射
   dag_link_button_field_mapping: 'Field mapping',
   dag_link_button_mapping_configuration: 'Mapping configuration',
   dag_link_field_mapping_error_no_table: 'Please select the table to be migrated',
@@ -705,7 +703,7 @@ export default {
   dag_dialog_field_mapping_batch_change_type_target: 'Target field type',
   dag_job_check_source: 'as a source, only full tasks are supported',
 
-  //Task edit
+  //Task edit缓存节点提示
   task_job_setting_tip_title: 'Set reminder',
   task_job_setting_disable: 'Do not de-duplicate',
   task_job_tip_text:
@@ -718,6 +716,12 @@ export default {
   task_list_run: 'Start',
   task_list_stop: 'Stop',
   task_list_force_stop: 'Forced stop',
+  task_list_edit: 'Edit',
+  task_list_verify: 'Data verification',
+  task_list_export: 'Export',
+  task_list_copy: 'Copy',
+  task_list_reset: 'Reset',
+  task_list_delete: 'Delete',
   task_list_name: 'Task name',
   task_list_task_type: 'Task type',
   task_list_status: 'Task status',
@@ -747,6 +751,7 @@ export default {
   task_preview_status_running: 'running',
   task_preview_status_stop: 'stopped',
   task_preview_status_pause: 'Pause',
+  task_preview_status_paused: 'Paused',
 
   task_monitor_progress: 'Task progress',
   task_monitor_full_sync: 'Full synchronization overview',
@@ -971,7 +976,8 @@ export default {
   // 用户
   login_fail_too_many: 'The maximum number of password errors has been reached, please log in after 10 minutes',
   rule_exists_name: 'Save failed, duplicate name',
-  // solution
+
+  // solution解决方案
   solution_name: 'Solution',
   solution_customer_job_logs: 'Customer job logs',
   solution_error_code: 'Error code',
@@ -979,7 +985,7 @@ export default {
   solution_search_result: 'Result',
   solution_search_desc: 'Description',
   solution_search_solutions: 'Solution',
-  // Customer log
+  // Customer log客户日志
   customer_logs_to_solutions: 'View solutions',
   customer_logs_to_link: 'View database error help page',
   customer_logs_no_more_data: 'No more data',
@@ -1034,11 +1040,11 @@ export default {
   shared_cache_placeholder_connection_name: 'Please enter the connection name to search',
   shared_cache_button_create: 'New cache',
 
-  shared_cache_name: 'cache name',
-  shared_cache_status: 'cache status',
-  shared_cache_time: 'cache time',
-  shared_cache_keys: 'cache keys',
-  shared_cache_fields: 'cache fields',
+  shared_cache_name: 'Cache name',
+  shared_cache_status: 'Cache status',
+  shared_cache_time: 'Cache time',
+  shared_cache_keys: 'Cache keys',
+  shared_cache_fields: 'Cache fields',
   shared_cache_max_rows: 'The maximum number of records in the cache',
   shared_cache_ttl: 'Expiration time',
   shared_cache_code: 'Application code',

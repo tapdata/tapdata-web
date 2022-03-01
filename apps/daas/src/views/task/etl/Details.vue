@@ -492,7 +492,7 @@ export default {
         })
         .then(() => {
           this.task.desc = val
-          this.$message.success(this.$t('gl_button_update_success'))
+          this.$message.success(this.$t('message_update_success'))
         })
         .catch(err => {
           this.$message.error(err.data.message)

@@ -59,9 +59,9 @@
           </el-dropdown>
         </span>
       </el-tree>
-      <span v-else v-readonlybtn="authority" @click="showDialog()" class="create">
+      <el-button v-else type="text" v-readonlybtn="authority" @click="showDialog()" class="create">
         {{ types[0] === 'user' ? $t('classification.creatUserGroup') : $t('classification.creatDataClassification') }}
-      </span>
+      </el-button>
     </div>
     <el-dialog :visible.sync="dialogConfig.visible" width="30%" :close-on-click-modal="false">
       <span slot="title" style="font-size: 14px">{{ dialogConfig.title }}</span>
@@ -623,9 +623,9 @@ export default {
     }
   }
   .create {
-    padding: 20px 10px;
+    padding: 5px 10px;
     font-size: 12px;
-    color: #409eff;
+    // color: #409eff;
     cursor: pointer;
   }
 }

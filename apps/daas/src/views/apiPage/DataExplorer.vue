@@ -119,7 +119,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('operator')" min-width="180">
+      <el-table-column :label="$t('column_operation')" min-width="180">
         <template slot-scope="scope">
           <el-button v-if="!downloadFileUrl" size="mini" type="text" @click="downloadFile(scope.row)">
             {{ $t('button_download') }}

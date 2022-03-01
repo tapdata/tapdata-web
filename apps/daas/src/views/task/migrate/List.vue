@@ -19,6 +19,7 @@
       </template>
       <div class="buttons" slot="operation">
         <el-button
+          size="mini"
           v-if="multipleSelection.length === 0 && bulkOperation"
           :disabled="multipleSelection.length === 0 && bulkOperation"
         >
@@ -26,7 +27,7 @@
           <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
         </el-button>
         <el-dropdown v-else class="btn" @command="handleCommand($event)">
-          <el-button class="btn-dropdowm" size="small">
+          <el-button class="btn-dropdowm" size="mini">
             <i class="iconfont icon-piliang back-btn-icon"></i>
             <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
           </el-button>
@@ -88,7 +89,7 @@
 
       <el-table-column min-width="200" :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true">
         <template #default="{ row }">
-          <span class="dataflow-name">
+          <span class="dataflow-name link-primary">
             <!-- @click="toDetails(row)" -->
             <span :class="['name', { 'has-children': row.hasChildren }]" @click="handlePreview(row.id)">{{
               row.name
@@ -138,7 +139,7 @@
           {{ row.startTime ? $moment(row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('dataFlow.operate')" width="280" fixed="right">
+      <el-table-column :label="$t('dataFlow.operate')" width="210" fixed="right">
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <el-tooltip
@@ -159,7 +160,7 @@
                   "
                   @click="run([row.id])"
                 >
-                  {{ $t('dataFlow.run') }}
+                  {{ $t('task_list_run') }}
                 </ElLink>
               </span>
             </el-tooltip>
@@ -171,7 +172,7 @@
                 $disabledByPermission('SYNC_job_operation_all_data', row.user_id) || !statusBtMap['stop'][row.status]
               "
               @click="stop([row.id])"
-              >{{ $t('dataFlow.stop') }}</ElLink
+              >{{ $t('task_list_stop') }}</ElLink
             >
             <ElLink
               v-if="row.status === 'stopping'"
@@ -183,8 +184,9 @@
               "
               @click="forceStop([row.id])"
             >
-              {{ $t('dataFlow.button.force_stop') }}
+              {{ $t('task_list_force_stop') }}
             </ElLink>
+            <ElDivider direction="vertical"></ElDivider>
             <!--            <ElLink-->
             <!--              style="margin-left: 10px"-->
             <!--              type="primary"-->
@@ -194,18 +196,19 @@
             <!--            </ElLink>-->
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
-              style="margin-left: 10px"
               type="primary"
               :disabled="
                 $disabledByPermission('SYNC_job_edition_all_data', row.user_id) || !statusBtMap['edit'][row.status]
               "
               @click="handleEditor(row.id)"
             >
-              {{ $t('button.edit') }}
+              {{ $t('task_list_edit') }}
             </ElLink>
-            <ElLink v-readonlybtn="'SYNC_job_edition'" style="margin-left: 10px" type="primary" @click="toDetails(row)">
+            <ElDivider direction="vertical"></ElDivider>
+            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetails(row)">
               {{ $t('task_list_button_monitor') }}
             </ElLink>
+            <ElDivider direction="vertical"></ElDivider>
             <!-- <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               style="margin-left: 10px"
@@ -219,25 +222,20 @@
             >
               {{ $t('dataFlow.schedule') }}
             </ElLink> -->
-            <el-dropdown
-              v-show="moreAuthority"
-              size="small"
-              style="margin-left: 10px"
-              @command="handleCommand($event, row)"
-            >
-              <ElLink type="primary">
-                {{ $t('button.more') }}
-                <i class="el-icon-arrow-down"></i>
+            <el-dropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
+              <ElLink type="primary" class="rotate-90">
+                <!-- {{ $t('button.more') }} -->
+                <i class="el-icon-more"></i>
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
                 <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
-                  $t('dataVerify.dataVerify')
+                  $t('task_list_verify')
                 }}</el-dropdown-item>
                 <el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
-                  $t('dataFlow.dataFlowExport')
+                  $t('task_list_export')
                 }}</el-dropdown-item>
                 <el-dropdown-item command="copy" v-readonlybtn="'SYNC_job_creation'"
-                  >{{ $t('dataFlow.copy') }}
+                  >{{ $t('task_list_copy') }}
                 </el-dropdown-item>
                 <el-dropdown-item
                   :disabled="
@@ -247,7 +245,7 @@
                   command="initialize"
                   v-readonlybtn="'SYNC_job_operation'"
                 >
-                  {{ $t('dataFlow.button.reset') }}
+                  {{ $t('task_list_reset') }}
                 </el-dropdown-item>
                 <el-dropdown-item
                   command="setTag"
@@ -264,7 +262,7 @@
                   "
                   v-readonlybtn="'SYNC_job_delete'"
                 >
-                  {{ $t('button.delete') }}
+                  {{ $t('task_list_delete') }}
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -1382,7 +1380,7 @@ export default {
       }
       .name {
         &:not(.has-children) {
-          color: #409eff;
+          // color: #409eff;
           cursor: pointer;
           text-decoration: underline;
         }

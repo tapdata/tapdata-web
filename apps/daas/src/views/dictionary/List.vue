@@ -42,7 +42,7 @@
           <span v-for="(key, index) in scope.row.typearr" :key="index">{{ key.key }}:{{ key.value }} </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('message.operator')" width="120">
+      <el-table-column :label="$t('column_operation')" width="120">
         <template slot-scope="scope">
           <el-button
             v-readonlybtn="'dictionary'"

@@ -240,6 +240,7 @@ export default {
   height: 32px;
   line-height: 32px;
   width: 32px;
+  min-width: 32px;
   font-size: 16px;
   &:hover,
   &.is-plain:focus:hover {

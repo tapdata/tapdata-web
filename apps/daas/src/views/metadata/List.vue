@@ -14,7 +14,7 @@
       @sort-change="handleSortTable"
     >
       <div slot="search">
-        <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="table.fetch(1)"> </FilterBar>
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
         <!-- <ul class="search-bar" solt="matchSolt">
           <li> -->
 
@@ -134,7 +134,7 @@
           {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('metadata.details.opera')">
+      <el-table-column :label="$t('metadata.details.opera')" width="150">
         <template slot-scope="scope">
           <el-button
             v-readonlybtn="'data_catalog_edition'"
@@ -145,8 +145,9 @@
             "
             @click="toDetails(scope.row)"
           >
-            {{ $t('button.details') }}
+            {{ $t('button_details') }}
           </el-button>
+          <ElDivider direction="vertical"></ElDivider>
           <el-button
             v-readonlybtn="'data_catalog_edition'"
             size="mini"
@@ -158,6 +159,7 @@
           >
             {{ $t('button.rename') }}
           </el-button>
+          <ElDivider direction="vertical"></ElDivider>
           <el-button
             v-readonlybtn="'meta_data_deleting'"
             size="mini"
@@ -300,6 +302,11 @@ export default {
     this.getDbOptions()
     this.getFilterItems()
   },
+  watch: {
+    '$route.query'() {
+      this.table.fetch(1)
+    }
+  },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
     let cache = this.table.getCache()
@@ -410,6 +417,10 @@ export default {
           connection_type: true,
           status: true
         }
+        // where: {
+        //   database_type: 'mongodb',
+        //   connection_type: ['target', 'source_and_target']
+        // }
       }
       this.$api('connections')
         .get({
@@ -417,7 +428,7 @@ export default {
         })
         .then(res => {
           let dbOptions = res.data?.items || []
-          this.dbOptions = dbOptions
+
           let options = []
           dbOptions.forEach(db => {
             if (db.database_type === 'mongodb' && ['target', 'source_and_target'].includes(db.connection_type)) {
@@ -427,7 +438,9 @@ export default {
               })
             }
           })
-          this.createFormConfig.items[1].options = options
+          this.dbOptions = dbOptions
+          // this.createFormConfig.items[1].options = options
+          this.getFilterItems()
         })
     },
     handleSortTable({ order, prop }) {

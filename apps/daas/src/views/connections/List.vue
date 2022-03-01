@@ -33,7 +33,7 @@
           v-readonlybtn="'datasource_creation'"
           class="btn btn-create"
           type="primary"
-          size="small"
+          size="mini"
           @click="checkTestConnectionAvailable"
         >
           <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
@@ -114,28 +114,25 @@
       <ElTableColumn :label="$t('connection.operate')" width="200">
         <template slot-scope="scope">
           <ElLink type="primary" @click="testConnection(scope.row)">{{ $t('connection.testConnection') }} </ElLink>
+          <ElDivider direction="vertical"></ElDivider>
           <ElLink
             v-readonlybtn="'datasource_edition'"
-            style="margin-left: 10px"
             type="primary"
             :disabled="$disabledByPermission('datasource_edition_all_data', scope.row.user_id)"
             @click="edit(scope.row.id, scope.row.database_type, scope.row)"
-            >{{ $t('message.edit') }}
+            >{{ $t('button_edit') }}
           </ElLink>
-          <ElLink
-            v-readonlybtn="'datasource_creation'"
-            style="margin-left: 10px"
-            type="primary"
-            @click="copy(scope.row)"
-            >{{ $t('message.copy') }}
+          <ElDivider direction="vertical"></ElDivider>
+          <ElLink v-readonlybtn="'datasource_creation'" type="primary" @click="copy(scope.row)"
+            >{{ $t('button_copy') }}
           </ElLink>
+          <ElDivider direction="vertical"></ElDivider>
           <ElLink
             v-readonlybtn="'datasource_delete'"
-            style="margin-left: 10px"
             type="primary"
             :disabled="$disabledByPermission('datasource_delete_all_data', scope.row.user_id)"
             @click="remove(scope.row)"
-            >{{ $t('message.delete') }}
+            >{{ $t('button_delete') }}
           </ElLink>
         </template>
       </ElTableColumn>
@@ -493,8 +490,9 @@ export default {
         ),
         strArr[1]
       ])
-      this.$confirm(msg, this.$t('connection.deteleDatabaseTittle'), {
-        type: 'warning'
+      this.$confirm(msg, '', {
+        type: 'warning',
+        showClose: false
       }).then(resFlag => {
         if (!resFlag) {
           return
@@ -699,14 +697,6 @@ export default {
         font-size: 12px;
       }
     }
-  }
-
-  .btn-refresh {
-    padding: 0;
-    height: 32px;
-    line-height: 32px;
-    width: 32px;
-    font-size: 16px;
   }
 
   .connection-name {

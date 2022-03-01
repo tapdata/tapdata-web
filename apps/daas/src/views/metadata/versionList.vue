@@ -21,7 +21,7 @@
       <el-table-column :label="$t('metadata.details.version.operator')" prop="version_user_name"></el-table-column>
       <el-table-column :label="$t('metadata.details.version.modifyDescription')" prop="version_description">
       </el-table-column>
-      <el-table-column :label="$t('message.operator')" width="80">
+      <el-table-column :label="$t('column_operation')" width="80">
         <template slot-scope="scope">
           <el-button v-readonlybtn="'data_catalog_edition'" size="mini" type="text" @click="toDetails(scope.row)">
             {{ $t('metadata.details.version.compared') }}
