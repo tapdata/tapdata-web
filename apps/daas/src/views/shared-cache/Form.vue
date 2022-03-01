@@ -233,7 +233,7 @@ export default {
             let fields = table.fields || []
             this.fieldOptions = fields.map(opt => opt.field_name)
           } else {
-            this.$message.error('')
+            this.$message.error(this.$t('shared_cache_messge_no_table'))
           }
         })
         .finally(() => {
@@ -272,7 +272,10 @@ export default {
           this.$api('shareCache')
             [method](params)
             .then(() => {
-              this.$message.success('message_save_ok')
+              this.$message.success(this.$t('message_save_ok'))
+              this.router.replace({
+                name: 'sharedCacheList'
+              })
             })
             .finally(() => {
               this.loading = false

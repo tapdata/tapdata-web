@@ -1022,6 +1022,7 @@ export default {
   shared_cache_placeholder_fields: '请选择缓存字段',
   shared_cache_placeholder_max_rows: '请输入缓存最大记录数',
   shared_cache_placeholder_ttl: '请输入过期时间',
+  shared_cache_messge_no_table: '找不对所选表模型',
 
   // 设置
   setting_email_template: '邮件模板',
