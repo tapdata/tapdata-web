@@ -77,36 +77,6 @@
         </ElDropdown>
       </div>
     </div>
-    <div class="dfs-header__dialog">
-      <div :class="['fixed-novice-guide-dialog', { active: guideVisible }]">
-        <div class="guide-dialog__content text-center">
-          <div class="guide-mark">
-            <img src="../../../public/images/guide/guide_mark.png" alt="" />
-          </div>
-          <div class="mt-5 fs-3 text-white">
-            <span>{{ $t('header_welcome') }}</span>
-            <span class="color-primary">Tapdata</span>
-            <span class="ml-1">Cloud</span>
-          </div>
-          <div class="mt-3 fs-6 text-white position-relative inline-block">
-            {{ $t('header_tutorials_tip') }}
-            <el-checkbox v-model="noShow" class="no-show-checkbox text-white position-absolute">{{
-              $t('header_more_reminders')
-            }}</el-checkbox>
-          </div>
-          <div class="guide-operation flex justify-content-center mt-8">
-            <template v-if="lang === 'sc'">
-              <img src="../../../public/images/guide/guid_no.png" alt="" @click="leaveGuide" />
-              <img class="ml-9" src="../../../public/images/guide/guid_yes.png" alt="" @click="toGuidePage" />
-            </template>
-            <template v-else>
-              <img src="../../../public/images/guide/en_guid_no.svg" alt="" @click="leaveGuide" />
-              <img class="ml-9" src="../../../public/images/guide/en_guid_yes.svg" alt="" @click="toGuidePage" />
-            </template>
-          </div>
-        </div>
-      </div>
-    </div>
   </ElHeader>
 </template>
 <script>
@@ -123,12 +93,6 @@ export default {
   data() {
     return {
       user: window.__USER_INFO__ || {},
-      isShowCustomerService: false,
-      guideVisible: false, // 新手指引模态窗
-      isClose: false,
-      btnLoading: false,
-      noShow: false, // 不再显示新手引导
-      selfUser: {}, // self用户信息
       USER_CENTER: window.__config__.USER_CENTER,
       lang: localStorage.getItem('tapdata_localize_lang') || 'sc',
       languages: {
@@ -137,41 +101,7 @@ export default {
       }
     }
   },
-  created() {
-    this.init()
-  },
   methods: {
-    init() {
-      this.getTmUser()
-    },
-    getUser() {
-      this.$axios.get('api/tcm/user').then(data => {
-        this.user = data || {}
-      })
-    },
-    getTmUser() {
-      this.$axios.get('tm/api/users/self').then(data => {
-        if (data) {
-          let guideData = data?.guideData ?? {}
-          this.selfUser = {
-            id: data.id,
-            guideData: guideData
-          }
-          this.noShow = !!guideData?.noShow
-          // 不再显示
-          if (
-            !guideData?.noShow &&
-            !guideData?.action &&
-            (new Date().getTime() - (guideData?.updateTime ?? 0)) / 1000 / 3600 > 24
-          ) {
-            this.showGuide()
-          }
-        }
-      })
-    },
-    showGuide() {
-      this.command('guide')
-    },
     command(command) {
       // let downloadUrl = '';
       switch (command) {
@@ -211,9 +141,6 @@ export default {
         case 'source-center':
           window.open('https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme', '_blank')
           break
-        case 'guide':
-          this.guideVisible = true
-          break
         case 'handbook':
           window.open('https://sourl.cn/sxuj82', '_blank')
           break
@@ -237,29 +164,6 @@ export default {
           document.cookie = keys[i] + '=0;path=/;domain=' + document.domain + ';expires=' + new Date(0).toUTCString()
         }
       }
-    },
-    leaveGuide() {
-      this.guideVisible = false
-      this.updateUser()
-    },
-    toGuidePage() {
-      this.guideVisible = false
-      this.updateUser(true)
-      if (this.$route.name !== 'NoviceGuide') {
-        this.$router.push({
-          name: 'NoviceGuide'
-        })
-      }
-    },
-    updateUser(action = false) {
-      let selfUser = this.selfUser
-      this.$axios.patch('tm/api/users/' + selfUser?.id, {
-        guideData: {
-          noShow: this.noShow,
-          updateTime: new Date().getTime(),
-          action: action || selfUser?.guideData?.action || false
-        }
-      })
     }
   }
 }

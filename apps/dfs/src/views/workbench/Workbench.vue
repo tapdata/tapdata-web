@@ -210,10 +210,6 @@ export default {
       notices: [], // 公告列表
       guides: [
         {
-          name: $t('workbench_guide_novice'),
-          action: 'guide'
-        },
-        {
           name: $t('workbench_guide_documentation'),
           url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme'
         },
