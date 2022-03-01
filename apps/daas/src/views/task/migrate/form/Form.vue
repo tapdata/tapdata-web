@@ -1,19 +1,24 @@
 <template>
-  <ElContainer class="create-task-wrap section-wrap" v-if="steps[activeStep]">
-    <ElContainer class="create-task-container flex-column table-page-main-box section-wrap-box">
+  <ElContainer class="create-task-wrap bg-white" v-if="steps[activeStep]">
+    <ElContainer style="overflow: hidden; flex: 1" class="create-task-container flex-column">
       <div class="steps-header">
-        <ElSteps class="primary pb-6" :active="taskStep" process-status="process" finish-status="success" align-center>
+        <ElSteps
+          class="primary pb-6"
+          :active="activeStep"
+          process-status="process"
+          finish-status="success"
+          align-center
+        >
           <ElStep title="选择连接"></ElStep>
           <ElStep title="设置任务属性"></ElStep>
           <ElStep title="选择表"></ElStep>
-          <ElStep title="表字段映射"></ElStep>
         </ElSteps>
       </div>
       <ElContainer :class="['task-container', 'task-container-' + steps[activeStep].index]">
         <div class="task-container-box flex-fill flex flex-column w-100">
           <ElMain :class="['create-task-main', 'task-main-' + steps[activeStep].index]">
-            <!--步骤2-->
-            <div class="body" v-if="steps[activeStep].index === 2">
+            <!--步骤1-->
+            <div class="body" v-if="steps[activeStep].index === 1">
               <div class="mb-8">
                 <span class="title">选择连接</span>
                 <span class="desc">
@@ -24,66 +29,45 @@
                   >
                 </span>
               </div>
-              <FormBuilder
-                ref="dataSource"
-                v-model="dataSourceModel"
-                :config="config"
-                style="width: 376px"
-                class="form-builder grey"
-                @value-change="formChange"
-              >
-              </FormBuilder>
+              <DataSource ref="dataSource" :dataSourceData="dataSourceData" @submit="dataSourceSubmit"></DataSource>
             </div>
-
-            <!-- 步骤3 -->
-            <div class="body step-3" v-if="steps[activeStep].index === 3">
+            <!-- 步骤2 -->
+            <div class="body step-3" v-if="steps[activeStep].index === 2">
               <div class="mb-8">
                 <span class="title">任务设置</span>
                 <span class="desc">
                   用户可以在任务设置步骤对任务名称、同步类型、遇错处理等进行设置，具体配置说明请查看帮助文档
                 </span>
               </div>
-              <FormBuilder
-                ref="setting"
-                v-model="settingModel"
-                :config="config"
-                class="form-builder grey"
-                style="width: 820px"
-                @submit.native.prevent
-                @value-change="formChangeSetting"
-              >
-              </FormBuilder>
+              <Setting :dataSourceData="dataSourceData" :settingData="settingData" @submit="settingSubmit"></Setting>
             </div>
-            <!-- 步骤4 -->
-            <div class="body step-4" v-if="steps[activeStep].index === 4">
+            <!-- 步骤3 -->
+            <div class="body step-4" v-if="steps[activeStep].index === 3">
               <div class="mb-6">
                 <span class="title">选择表</span>
                 <span class="desc">
                   用户可以点击中间向右的箭头按钮勾选源端待同步表，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输）
                 </span>
+                <FieldMapping
+                  v-if="showFieldMapping"
+                  ref="fieldMapping"
+                  class="fr"
+                  mappingType="cluster-clone"
+                  :transform="transform"
+                  :getDataFlow="daft"
+                  @update-first="returnModel"
+                  @returnFieldMapping="returnFieldMapping"
+                ></FieldMapping>
               </div>
               <div class="create-task-transfer">
                 <Transfer
                   ref="transfer"
                   :transferData="transferData"
+                  :sourceId="sourceId"
                   :mqTransferFlag="mqTransferFlag"
-                  :isTwoWay="settingModel.bidirectional"
+                  :isTwoWay="true"
                 ></Transfer>
               </div>
-            </div>
-            <!-- 步骤5 -->
-            <div class="step-5" v-if="steps[activeStep].index === 5">
-              <FieldMapping
-                ref="fieldMappingDom"
-                :remoteMethod="intiFieldMappingTableData"
-                :typeMappingMethod="getTypeMapping"
-                :hiddenFieldProcess="false"
-                :fieldMappingNavData="fieldMappingNavData"
-                :fieldProcessMethod="updateFieldProcess"
-                :field_process="transferData.field_process"
-                @row-click="saveOperations"
-                @update-nav="updateFieldMappingNavData"
-              ></FieldMapping>
             </div>
           </ElMain>
           <div class="create-task-footer py-6 mx-6" :class="['btns-step-' + steps[activeStep].index]">
@@ -91,8 +75,8 @@
             <VButton
               class="btn-step"
               :loading="loading"
-              v-else-if="steps[activeStep].showBackBtn || (steps[activeStep].index === 3 && !id)"
-              @click="back()"
+              v-else-if="steps[activeStep].showBackBtn || (steps[activeStep].index === 2 && !id)"
+              @click="previous()"
             >
               {{ $t('guide.btn_back') }}
             </VButton>
@@ -101,7 +85,7 @@
               type="primary"
               class="btn-step"
               :loading="loading"
-              @mousedown.native.prevent="next()"
+              @mousedown.native.prevent="nextStep()"
             >
               <span>{{ $t('guide.btn_next') }}</span>
             </VButton>
@@ -109,7 +93,7 @@
               v-if="steps[activeStep].showSaveBtn"
               type="primary"
               class="btn-step"
-              :loading="loading"
+              :loading="loadingSave"
               @click="save()"
             >
               完成
@@ -121,604 +105,222 @@
   </ElContainer>
 </template>
 <script>
-import formConfig from './config'
 import Transfer from './Transfer'
-import { SETTING_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from './const'
-import factory from '@/api/factory'
-const DataFlowsModel = factory('DataFlows')
-const TcmModel = factory('tcm')
-const TypeMappingModel = factory('TypeMapping')
-const ConnectionsModel = factory('connections')
-const MetadataInstancesModel = factory('MetadataInstances')
+import DataSource from './DataSource'
+import Setting from './Setting'
+import FieldMapping from '../../../../components/field-mapping/main'
+import { DATASOURCE_MODEL, SETTING_MODEL, TRANSFER_MODEL } from './const'
 
-let defaultConfig = []
 export default {
-  components: { Transfer },
+  components: { Transfer, DataSource, Setting, FieldMapping },
   data() {
     return {
-      id: '',
-      loading: false,
       steps: [],
       activeStep: 0,
-      errorMsg: '',
-      showConnectDialog: false,
-      showSysncTableTip: false, //dfs 同库不同表提示
-      isFirst: true,
-      twoWayAgentRunningCount: '',
+      id: '',
+      loading: false,
+      //第一步 配置源端
+      dataSourceData: DATASOURCE_MODEL,
+      sourceId: '',
+      dataSourceVerify: false,
+      showSysncTableTip: false,
+      //第二步 配置任务设置
+      settingData: SETTING_MODEL,
+      //第三步 映射表
+      transferData: TRANSFER_MODEL,
       mqTransferFlag: false,
-      platformInfo: JSON.parse(JSON.stringify(INSTANCE_MODEL)),
-      dataSourceModel: JSON.parse(JSON.stringify(DFSDATASOURCE_MODEL)),
-      settingModel: JSON.parse(JSON.stringify(SETTING_MODEL)),
-      mappingModel: {},
-      config: {
-        form: {
-          labelPosition: 'left',
-          labelWidth: '80px',
-          itemStyle: 'margin-bottom: 16px;',
-          size: 'small'
-        },
-        items: []
+      showFieldMapping: false, //是否支持字段映射
+      isFirst: false,
+      transform: {
+        showBtn: true,
+        stageId: '',
+        field_process: [],
+        fieldsNameTransform: '',
+        batchOperationList: []
       },
-      transferData: '',
-      taskType: 'cluster-clone',
-      dialogTestVisible: false,
-      status: '',
-      mdHtml: '',
-      platformInfoZone: '',
-      instanceMock: [],
-      dataSourceZone: '',
-      dataSourceMock: [],
-      dialogDatabaseTypeVisible: false,
-      allowDataType: window.getSettingByKey('ALLOW_CONNECTION_TYPE') || [],
-      supportTwoWay: false,
-      systemTimeZone: '',
-      options: [
-        {
-          label: this.$t('dataFlow.SyncInfo.localTZType'),
-          value: 'localTZ'
-        },
-        {
-          label: this.$t('dataFlow.SyncInfo.connTZType'),
-          value: 'connTZ'
-        },
-        {
-          label: this.$t('dataFlow.SyncInfo.currentType'),
-          value: 'current'
-        }
-      ],
-      //表设置
-      fieldMappingNavData: '',
-      fieldMappingTableData: '',
-      hiddenFieldMapping: false,
-      taskStep: 0
+      //保存
+      loadingSave: false
     }
   },
   created() {
-    this.id = this.$route.params.id
     this.getSteps()
-    // this.getAgentCount()
-    defaultConfig = [
-      {
-        type: 'input',
-        field: 'name',
-        label: '任务名称',
-        labelColon: true,
-        maxlength: 300,
-        showWordLimit: true,
-        required: true,
-        rules: [
-          {
-            required: true,
-            trigger: 'blur',
-            validator: (rule, value, callback) => {
-              if (!value || !value.trim()) {
-                callback(new Error('任务名称不能为空'))
-              } else {
-                let filter = {
-                  where: {
-                    name: value
-                  },
-                  fields: {
-                    name: 1
-                  },
-                  limit: 1
-                }
-                if (this.id) {
-                  filter.where['id'] = { neq: this.id }
-                }
-                DataFlowsModel.get({
-                  filter: JSON.stringify(filter)
-                }).then(res => {
-                  if (res.data?.total) {
-                    callback(new Error('任务名称已存在'))
-                  } else callback()
-                })
-              }
-            }
-          }
-        ]
-      }
-    ]
-    this.dataSourceModel = JSON.parse(JSON.stringify(DFSDATASOURCE_MODEL))
-    this.getFormConfig()
-    this.allowDatabaseType()
-
+    this.id = this.$route.params.id
     if (this.id) {
       this.intiData(this.id)
     }
   },
-  mounted() {
-    let timeZone = new Date().getTimezoneOffset() / 60
-    if (timeZone > 0) {
-      this.systemTimeZone = 0 - timeZone
-    } else {
-      this.systemTimeZone = '+' + -timeZone
-    }
-  },
+
   methods: {
-    //是否支持双向前提
-    getAgentCount() {
-      TcmModel.getAgentCount().then(data => {
-        // eslint-disable-next-line
-        console.log('getAgentCount', data)
-        this.twoWayAgentRunningCount = data.twoWayAgentRunningCount || 0
-      })
+    //编辑模式
+    getData(id) {
+      this.$api('dataFlows')
+        .get([id])
+        .then(res => {
+          if (res) {
+            let data = res?.data
+            this.status = data.status
+            this.settingData = Object.assign(this.settingData, data.setting)
+            this.settingData.name = data.name
+            this.dataSourceData = data.dataSourceData
+            this.stages = data.stages
+            let syncObjects = this.stages[1].syncObjects
+            this.transferData = {
+              table_prefix: this.stages[1].table_prefix,
+              table_suffix: this.stages[1].table_suffix,
+              tableNameTransform: this.stages[1].tableNameTransform,
+              fieldsNameTransform: this.stages[1].fieldsNameTransform,
+              field_process: this.stages[0].field_process,
+              selectSourceArr: syncObjects[0] ? syncObjects[0].objectNames : [],
+              topicData:
+                syncObjects[0]?.type === 'topic' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || [],
+              queueData:
+                syncObjects[0]?.type === 'queue' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || []
+            }
+            //编辑时不被覆盖
+            this.tableNameTransform = this.stages[1].tableNameTransform
+            this.fieldsNameTransform = this.stages[1].fieldsNameTransform
+          }
+        })
+    },
+    getSteps() {
+      this.steps = []
+      if (this.id) {
+        //编辑模式 没有第一步
+        this.steps = [
+          { index: 2, text: this.$t('task_form_task_setting'), type: 'setting', showExitBtn: true, showNextBtn: true },
+          {
+            index: 3,
+            text: this.$t('task_form_mapping_setting'),
+            type: 'mapping',
+            showBackBtn: true,
+            showSaveBtn: true
+          }
+        ]
+      } else {
+        this.steps = [
+          {
+            index: 1,
+            text: this.$t('task_form_source_target_connection'),
+            type: 'dataSource',
+            showExitBtn: true,
+            showNextBtn: true
+          },
+          { index: 2, text: this.$t('task_form_task_setting'), type: 'setting', showBackBtn: true, showNextBtn: true },
+          {
+            index: 3,
+            text: this.$t('task_form_mapping_setting'),
+            type: 'mapping',
+            showBackBtn: true,
+            showSaveBtn: true
+          }
+        ]
+      }
+    },
+    previous() {
+      this.activeStep--
+    },
+    nextStep() {
+      let type = this.steps[this.activeStep].type
+      switch (type) {
+        case 'dataSource':
+          this.$refs.dataSource.save() //表单验证
+          if (this.dataSourceVerify) {
+            this.showSysncTableTip = false //初始化值
+            //检验: 源端目标端选择相同库(id一致)
+            if (this.dataSourceData.source_connectionId === this.dataSourceData.target_connectionId) {
+              this.showSysncTableTip = true
+            }
+            //检验: 是否是MQ数据源
+            if (this.dataSourceData['target_databaseType'] === 'mq' && this.dataSourceData['mqType'] === '0') {
+              this.mqTransferFlag = true
+            } else {
+              this.mqTransferFlag = false
+            }
+            //数据: 第三步请求schema用到sourceId
+            this.sourceId = this.dataSourceData.source_connectionId
+            this.activeStep++
+          }
+          break
+        case 'setting':
+          this.tranModelVersionControl() //是否支持字段映射
+          this.activeStep++
+          break
+      }
     },
     //兼容新手引导
     handleCreateDatabase() {
       this.$router.push({
-        name: 'connections',
+        name: 'Connection',
         query: {
           action: 'create'
         }
       })
     },
-    //初始化数据 编辑跳转
-    intiData(id) {
-      DataFlowsModel.get([id]).then(res => {
-        let data = res.data
-        this.status = data.status
-        this.settingModel = Object.assign(this.settingModel, data.setting)
-        this.settingModel.name = data.name
-        this.platformInfo = data.platformInfo
-        this.dataSourceModel = data.dataSourceModel || {}
-        let stages = data.stages
-        let syncObjects = stages[1].syncObjects
-        this.transferData = {
-          table_prefix: stages[1].table_prefix,
-          table_suffix: stages[1].table_suffix,
-          field_process: stages[0].field_process,
-          selectSourceArr: syncObjects[0] ? syncObjects[0].objectNames : [],
-          topicData: syncObjects[0]?.type === 'topic' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || [],
-          queueData: syncObjects[0]?.type === 'queue' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || []
-        }
-        // TODO 临时为了解决bug现在这里加，回头优化
-        this.getFormConfig()
-      })
+    //第一步 选择源端
+    dataSourceSubmit(verify) {
+      this.dataSourceVerify = verify
     },
-    //云版支持数据源
-    allowDatabaseType() {
-      let result = this.allowDataType
-      if (typeof result === 'string') {
-        result = result.split(',')
-      }
-      this.changeConfig(result, 'databaseType')
+    //第二步 任务设置配置
+    settingSubmit(form) {
+      this.settingData = { ...form.values }
     },
-    formChangeSetting(data) {
-      //删除模式不支持双向
-      let field = data.field || ''
-      let value = data.value
-      let items = this.config.items
-      if (field === 'distinctWriteType') {
-        let target = items.find(it => it.field === 'bidirectional')
-        this.getSupportTwoWay()
-        if (target && value === 'compel') {
-          target.show = false
-          this.settingModel.bidirectional = false
-        } else if (target && value !== 'compel' && this.supportTwoWay) {
-          target.show = true
-        }
+    //第三步 映射表
+    checkTransfer() {
+      //检查是否选择表
+      let result = true
+      if (this.transferData.selectSourceArr.length === 0 && this.dataSourceData['mqType'] !== '0') {
+        result = false
+      } else if (
+        this.transferData.topicData.length === 0 &&
+        this.transferData.queueData.length === 0 &&
+        this.dataSourceData['mqType'] === '0'
+      ) {
+        result = false
       }
+      return result
     },
-    formChange(data) {
-      let field = data.field || '' // 源端 | 目标端
-      if (field === 'source_databaseType') {
-        this.getConnection(this.getWhere('source'), 'source_connectionId', true)
+    tranModelVersionControl() {
+      //是否显示字段推演
+      let data = this.daft()
+      let stageId = data?.stages?.[1]?.id || ''
+      let param = {
+        stages: data?.stages,
+        stageId: stageId
       }
-      if (field === 'target_databaseType') {
-        this.getConnection(this.getWhere('target'), 'target_connectionId', true)
-      }
-    },
-    getSteps() {
-      this.steps = []
-      if (this.id && this.hiddenFieldMapping) {
-        //编辑模式 无字段映射功能
-        this.steps = [
-          { index: 3, text: '任务设置', type: 'setting', showExitBtn: true, showNextBtn: true },
-          { index: 4, text: '映射设置', type: 'mapping', showBackBtn: true, showSaveBtn: true }
-        ]
-      } else if (!this.id && !this.hiddenFieldMapping) {
-        this.steps = [
-          { index: 2, text: '选择源端与目标端连接', type: 'dataSource', showExitBtn: true, showNextBtn: true }, //创建模式 有字段功能
-          { index: 3, text: '任务设置', type: 'setting', showBackBtn: true, showNextBtn: true },
-          { index: 4, text: '映射设置', type: 'mapping', showBackBtn: true, showNextBtn: true },
-          { index: 5, text: '表设置', type: 'table', showBackBtn: true, showSaveBtn: true }
-        ]
-      } else if (this.id && !this.hiddenFieldMapping) {
-        this.steps = [
-          { index: 3, text: '任务设置', type: 'setting', showExitBtn: true, showNextBtn: true }, //编辑模式 有字段功能
-          { index: 4, text: '映射设置', type: 'mapping', showBackBtn: true, showNextBtn: true },
-          { index: 5, text: '表设置', type: 'table', showBackBtn: true, showSaveBtn: true }
-        ]
-      } else if (!this.id && this.hiddenFieldMapping) {
-        this.steps = [
-          { index: 2, text: '选择源端与目标端连接', type: 'dataSource', showExitBtn: true, showNextBtn: true }, //创建模式 无字段功能
-          { index: 3, text: '任务设置', type: 'setting', showBackBtn: true, showNextBtn: true },
-          { index: 4, text: '映射设置', type: 'mapping', showBackBtn: true, showSaveBtn: true }
-        ]
-      }
-    },
-    //下一步
-    next() {
-      let type = this.steps[this.activeStep].type || 'instance'
-      if (type === 'instance') {
-        this.$refs.instance.validate(valid => {
-          if (valid) {
-            this.activeStep += 1
-            this.getFormConfig()
-          }
+      this.$api('DataFlows')
+        .tranModelVersionControl(param)
+        .then(res => {
+          this.showFieldMapping = res?.data[stageId]
         })
-      }
-      if (type === 'dataSource') {
-        this.$refs.dataSource.validate(valid => {
-          if (valid) {
-            //源端目标端不可选择相同库 规则: id一致
-            this.showSysncTableTip = false
-            if (this.dataSourceModel.source_connectionId === this.dataSourceModel.target_connectionId) {
-              this.showSysncTableTip = true // dfs 仅提示
-            }
-            //数据源名称
-            let source = this.handleConnectionName(this.dataSourceModel.source_connectionId, 'source_connectionId')
-            let target = this.handleConnectionName(this.dataSourceModel.target_connectionId, 'target_connectionId')
-            //source.id/target.id = host + port + username
-            if (source.id === target.id) {
-              this.showSysncTableTip = true // dfs 仅提示
-            }
-            this.dataSourceModel.source_connectionName = source.name
-            this.dataSourceModel.target_connectionName = target.name
-            this.dataSourceModel.mqType = target.mqType
-            this.activeStep += 1
-            this.getFormConfig()
-          }
-        })
-      }
-      if (type === 'setting') {
-        this.$refs.setting.validate(valid => {
-          if (valid) {
-            this.activeStep += 1
-            this.getFormConfig()
-            if (this.showSysncTableTip) {
-              this.$message.warning(
-                '温馨提示：您选择了同一数据源作为源和目标，为了保证您的任务可以顺利执行，请修改目标表名与原表不一致。'
-              )
-            }
-          } else {
-            this.$message.error('表单校验不通过')
-          }
-        })
-      }
-      if (type === 'mapping') {
-        this.transferData = this.$refs.transfer.returnData()
-        if (this.transferData.selectSourceArr.length === 0) {
-          this.$message.error('请先选择需要同步的表,若选择的数据源没有表请先在数据库创建表')
-          return
-        }
-        this.fieldProcess()
-      }
-      this.taskStep++
     },
-    back() {
-      let type = this.steps[this.activeStep].type || 'instance'
-      //将复制表内容存起来
-      if (type === 'mapping') {
-        this.transferData = this.$refs.transfer.returnData()
-      }
-      //当前表的字段映射保存
-      if (type === 'table') {
-        //保存字段映射
-        let returnData = this.$refs.fieldMappingDom.returnData(true)
-        let deleteLen = returnData.target.filter(v => !v.is_deleted)
-        if (deleteLen.length !== 0) {
-          this.saveOperations(returnData.row, returnData.operations, returnData.target)
-        }
-      }
-      this.activeStep -= 1
-      this.taskStep--
-      this.getFormConfig()
-      // 重置 数据源类型列表
-      this.allowDatabaseType()
+    //接收是否第一次打开
+    returnModel(value) {
+      this.isFirst = value
     },
-    // 根据步骤获取不同的表单项目
-    async getFormConfig() {
-      let type = this.steps[this.activeStep].type || 'instance'
-      if (type === 'dataSource') {
-        type = 'dfs_dataSource'
-      }
-      let func = formConfig[type]
-      if (func) {
-        let config = func(this)
-        config.form.size = 'small'
-        this.config = config
-        if (type === 'setting') {
-          this.config.items = defaultConfig.concat(config.items)
-        }
-      }
-      switch (type) {
-        case 'instance': {
-          this.changeConfig(this.instanceMock || [], 'region')
-          this.changeInstanceRegion()
-          break
-        }
-        case 'dfs_dataSource': {
-          this.getConnection(this.getWhere('source'), 'source_connectionId')
-          this.getConnection(this.getWhere('target'), 'target_connectionId')
-          break
-        }
-        case 'drs_dataSource': {
-          this.getConnection(this.getWhere('source'), 'source_connectionId')
-          this.getConnection(this.getWhere('target'), 'target_connectionId')
-          break
-        }
-        case 'setting': {
-          this.getSupportTwoWay() // 进入设置页面再判断
-          if (
-            this.dataSourceModel['source_databaseType'] !== 'mysql' ||
-            this.dataSourceModel['target_databaseType'] !== 'mysql'
-          ) {
-            this.changeConfig([], 'setting_isOpenAutoDDL')
-            this.changeConfig([], 'setting_twoWay')
-          }
-          if (this.dataSourceModel['target_databaseType'] === 'kafka') {
-            this.changeConfig([], 'setting_distinctWriteType')
-          }
-          //greenplum做源时不能增量
-          if (this.dataSourceModel['source_databaseType'] === 'greenplum') {
-            this.changeConfig([], 'setting_sync_type')
-            //设置默认值
-            this.settingModel.sync_type = 'initial_sync'
-          }
-          if (this.dataSourceModel['target_databaseType'] === 'mq' && this.dataSourceModel['mqType'] === '0') {
-            this.mqTransferFlag = true
-          } else {
-            this.mqTransferFlag = false
-          }
-          //判断是否有第五步
-          // TypeMappingModel.getId(this.dataSourceModel.target_databaseType)
-          //   .then(data => {
-          //     if (data?.length === 0) {
-          //       this.hiddenFieldMapping = true
-          //       this.getSteps()
-          //     }
-          //   })
-          break
-        }
-        case 'mapping': {
-          this.getSchema()
-          break
-        }
-      }
+    // 字段处理器返回前后缀
+    returnPreFixSuffix(data) {
+      this.transform.fieldsNameTransform = data.fieldsNameTransform
+      this.transform.batchOperationList = data.batchOperationList
     },
-    //获取schema
-    getSchema() {
-      let id = this.dataSourceModel.source_connectionId || ''
-      this.$nextTick(() => {
-        this.$refs.transfer.getTable(id, this.settingModel.bidirectional)
-        this.$refs.transfer.showOperation(this.settingModel.bidirectional || false) //双向模式不可以更改表名
-      })
+    returnFieldMapping(field_process) {
+      this.transform.field_process = field_process
     },
-    //获取当前是否可以展示双向开关
-    getSupportTwoWay() {
-      this.supportTwoWay =
-        this.twoWayAgentRunningCount > 0 &&
-        this.dataSourceModel['source_databaseType'] === 'mongodb' &&
-        this.dataSourceModel['target_databaseType'] === 'mongodb' &&
-        this.settingModel['distinctWriteType'] !== 'compel' // 进入设置页面再判断
-    },
-    getWhere(type) {
-      let where = {}
-      if (type === 'source') {
-        where = {
-          database_type: { in: [this.dataSourceModel.source_databaseType] }
-        }
+    handleError(error) {
+      if (error?.data?.message) {
+        this.$message.error(error.data.message)
       } else {
-        where = {
-          database_type: { in: [this.dataSourceModel.target_databaseType] }
-        }
-      }
-      return where
-    },
-    //获取数据源
-    getConnection(where, type, reset = false) {
-      //接口请求之前 loading = true
-      let items = this.config.items
-      let option = items.find(it => it.field === type)
-      if (option) {
-        option.loading = true
-      }
-      let fields = {
-        name: 1,
-        id: 1,
-        database_type: 1,
-        connection_type: 1,
-        status: 1,
-        database_host: 1,
-        database_port: 1,
-        database_name: 1,
-        database_uri: 1,
-        mqType: 1
-      }
-      if (type === 'source_connectionId') {
-        fields['database_username'] = 1
-      }
-      let filter = {
-        where: where,
-        fields: fields,
-        order: ['status DESC', 'name ASC']
-      }
-      ConnectionsModel.get({
-        filter: JSON.stringify(filter)
-      }).then(res => {
-        this.changeConfig(res.data.items || [], type, reset)
-      })
-    },
-    //change config
-    changeConfig(data, type, reset = false) {
-      let items = this.config.items
-      switch (type) {
-        case 'source_connectionId': {
-          if (reset) {
-            this.dataSourceModel.source_connectionId = ''
-          }
-          // 第二步 数据源连接ID
-          let source_connectionId = items.find(it => it.field === 'source_connectionId')
-          if (source_connectionId) {
-            // 在全部类型下源端不支持的数据源
-            let filterArr = ['redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'clickhouse', 'dameng']
-            data = data.filter(item => filterArr.indexOf(item.database_type) === -1)
-            source_connectionId.loading = false
-            source_connectionId.options = data.map(item => {
-              return {
-                id: item.database_host + item.database_port + item.database_name + item.database_uri,
-                name: item.name,
-                label: item.name,
-                value: item.id,
-                type: item.database_type,
-                mqType: item.mqType || ''
-              }
-            })
-          }
-          break
-        }
-        case 'target_connectionId': {
-          if (reset) {
-            this.dataSourceModel.target_connectionId = ''
-          }
-
-          let target_connectionId = items.find(it => it.field === 'target_connectionId')
-          if (target_connectionId) {
-            target_connectionId.loading = false
-            target_connectionId.options = data.map(item => {
-              return {
-                id: item.database_host + item.database_port + item.database_name + item.database_uri,
-                name: item.name,
-                label: item.name,
-                value: item.id,
-                type: item.database_type,
-                mqType: item.mqType || ''
-              }
-            })
-          }
-          break
-        }
-        case 'setting_isOpenAutoDDL': {
-          //映射可用区
-          let op = items.find(it => it.field === 'isOpenAutoDDL')
-          if (op) {
-            op.show = false
-          }
-          break
-        }
-        case 'setting_distinctWriteType': {
-          //kafka 作为目标 不支持删除模式
-          let op = items.find(it => it.field === 'distinctWriteType')
-          if (op) {
-            op.options = [
-              {
-                label: '更新写入模式',
-                tip: '更新写入模式会判断源端的每条数据在目标端是否存在，若存在则更新，不存在则新增。',
-                value: 'intellect'
-              }
-            ]
-          }
-          break
-        }
-        case 'setting_sync_type': {
-          //greenplum做源时不能增量
-          let op = items.find(it => it.field === 'sync_type')
-          if (op) {
-            op.options = [
-              {
-                label: '全量同步',
-                tip: '全量同步也称初始化同步，即在任务启动时刻将源端数据快照读取，并同步至目标端；该同步有更新写入、删除重写两种模式。',
-                value: 'initial_sync'
-              }
-            ]
-          }
-          break
-        }
-        case 'setting_twoWay': {
-          //映射是否双向同步
-          let op = items.find(it => it.field === 'bidirectional')
-          op.show = !!this.supportTwoWay
-          break
-        }
-        case 'databaseType': {
-          let source = items.find(it => it.field === 'source_databaseType')
-          let TYPEMAP = this.$const.TYPEMAP
-          //不包含远端类型
-          let notContainType = ['clickhouse']
-          if (source) {
-            // dfs源端不支持 redis elasticsearch
-            let options = data
-            let filterArr = ['redis', 'elasticsearch', 'dameng', 'hazelcast_cloud_cluster']
-            options = data.filter(item => filterArr.indexOf(item) === -1)
-            source.options = options
-              .filter(item => !notContainType.includes(item))
-              .map(item => {
-                return {
-                  label: TYPEMAP[item],
-                  value: item
-                }
-              })
-          }
-          let target = items.find(it => it.field === 'target_databaseType')
-          if (target) {
-            target.options = data.map(item => {
-              return {
-                label: TYPEMAP[item],
-                value: item
-              }
-            })
-          }
-          break
-        }
+        // eslint-disable-next-line no-console
+        console.error(error)
+        this.$message.error('出错了')
       }
     },
-    handleName(sourceData, target) {
-      let data = sourceData.filter(item => item.code === target)
-      if (data.length === 0) return
-      return data[0].name
-    },
-    handleConnectionName(target, type) {
-      let items = this.config.items
-      let optionsData = items.find(it => it.field === type)
-      if (optionsData.length === 0) return
-      let data = optionsData.options.filter(op => op.value === target)
-      if (data.length === 0) return
-      return data[0]
-    },
-    //预存数据
+    //储存/提交数据
     daft() {
-      let source = this.dataSourceModel
-      let target = this.dataSourceModel
+      let source = this.dataSourceData
+      let target = this.dataSourceData
       //设置为增量模式
       let timeZone = new Date().getTimezoneOffset() / 60
-      let systemTimeZone = ''
-      if (timeZone > 0) {
-        systemTimeZone = 0 - timeZone
-      } else {
-        systemTimeZone = '+' + -timeZone
-      }
+      let systemTimeZone = (timeZone > 0 ? '+' : '-') + (Math.abs(timeZone) + '').padStart(2, '0') + ':00'
       let syncPoints = [
         {
           connectionId: source.source_connectionId,
@@ -729,43 +331,23 @@ export default {
           timezone: systemTimeZone // 当type为localTZ时有该字段
         }
       ]
-      this.settingModel['syncPoints'] = syncPoints
+      this.dataSourceData['syncPoints'] = syncPoints
       let postData = {
-        name: this.settingModel.name,
+        name: this.dataSourceData.name,
         description: '',
         status: 'paused',
         executeMode: 'normal',
-        category: '数据库克隆',
+        category: this.$t('task_form_database_clone'),
         stopOnError: false,
         mappingTemplate: 'cluster-clone',
-        stages: [],
-        setting: this.settingModel,
-        dataFlowType: 'normal', //区分创建方式
-        dataSourceModel: this.dataSourceModel,
-        platformInfo: Object.assign(
-          {
-            agentType: 'private'
-          },
-          this.platformInfo
-        )
+        dag: {
+          edges: [],
+          nodes: []
+        },
+        dataFlowType: 'normal' //区分创建方式
       }
-      let stageDefault = {
-        connectionId: '',
-        dataQualityTag: false,
-        distance: 1,
-        freeTransform: false,
-        id: '',
-        inputLanes: [],
-        joinTables: [],
-        name: '',
-        outputLanes: [],
-        type: ''
-      }
+      postData = Object.assign({}, postData, this.settingData, this.dataSourceData)
       //第四步 数据组装
-      if (this.hiddenFieldMapping) {
-        //没有第五步 表设置 需要主动调用 transfer.returnData
-        this.transferData = this.$refs.transfer.returnData()
-      }
       let selectTable = []
       if (this.transferData) {
         if (this.transferData.topicData.length || this.transferData.queueData.length) {
@@ -791,273 +373,76 @@ export default {
         }
       }
       //编辑时传原status
+      let sourceIdA = ''
+      let targetIdB = ''
       if (this.id) {
         postData.status = this.status || 'paused'
+        //编辑状态stages只做变更
+        sourceIdA = this.stages[0]?.id
+        targetIdB = this.stages[1]?.id
+        postData.id = this.id
+      } else {
+        sourceIdA = this.$util.uuid()
+        targetIdB = this.$util.uuid()
       }
-      //存实例名称
-      postData.platformInfo.regionName = this.handleName(this.instanceMock || [], this.platformInfo.region)
-      postData.platformInfo.zoneName = this.handleName(this.platformInfoZone || [], this.platformInfo.zone)
-      let sourceIdA = this.$util.uuid()
-      let targetIdB = this.$util.uuid()
-      postData.stages = [
-        Object.assign({}, stageDefault, {
-          id: sourceIdA,
-          connectionId: source.source_connectionId,
-          outputLanes: [targetIdB],
-          distance: 1,
-          name: this.dataSourceModel.source_connectionName,
-          type: 'database',
-          database_type: this.dataSourceModel['source_databaseType'] || 'mysql',
-          dropType: 'no_drop',
-          readBatchSize: 1000,
-          readCdcInterval: 500,
-          field_process: this.transferData.field_process //字段处理器 源
-        }),
-        Object.assign({}, stageDefault, {
-          id: targetIdB,
-          connectionId: target.target_connectionId,
-          inputLanes: [sourceIdA],
-          distance: 0,
-          syncObjects: selectTable,
-          name: this.dataSourceModel.target_connectionName,
-          table_prefix: this.transferData.table_prefix,
-          table_suffix: this.transferData.table_suffix,
-          type: 'database',
-          readBatchSize: 1000,
-          readCdcInterval: 500,
-          dropType: this.settingModel.distinctWriteType === 'compel' ? 'drop_data' : 'no_drop',
-          database_type: this.dataSourceModel['target_databaseType'] || 'mysql'
-        })
+      //节点连接关系
+      postData['dag'].edges = [
+        {
+          source: sourceIdA,
+          target: targetIdB
+        }
       ]
+      postData['dag'].nodes = [
+        Object.assign(
+          {},
+          {
+            connectionId: source.source_connectionId,
+            databaseType: this.dataSourceData['source_databaseType'] || 'mysql',
+            id: sourceIdA,
+            name: this.dataSourceData.source_connectionName,
+            tableName: this.dataSourceData.source_connectionName, //?
+            type: 'database'
+          }
+        ),
+        Object.assign(
+          {},
+          {
+            connectionId: target.source_connectionId,
+            databaseType: this.dataSourceData['target_databaseType'] || 'mysql',
+            id: targetIdB,
+            name: this.dataSourceData.target_connectionName,
+            tableName: this.dataSourceData.target_connectionName, //?
+            type: 'database',
+            table_prefix: this.transferData.table_prefix,
+            table_suffix: this.transferData.table_suffix,
+            tableNameTransform: this.transferData.tableNameTransform,
+            fieldsNameTransform: this.transferData.fieldsNameTransform
+          }
+        )
+      ]
+      this.transform.stageId = targetIdB
       return postData
     },
-    //save
     save() {
-      if (this.loading) {
-        return
-      }
-      //保存字段映射
-      if (!this.hiddenFieldMapping) {
-        let returnData = this.$refs.fieldMappingDom.returnData()
-        if (!returnData.valid) return //检验不通过
-        let deleteLen = returnData.target.filter(v => !v.is_deleted)
-        if (deleteLen.length === 0) {
-          this.$message.error('当前表被删除了所有字段，不允许保存操作')
-          return //所有字段被删除了 不可以保存任务
-        }
-        this.saveOperations(returnData.row, returnData.operations, returnData.target)
-      }
       let postData = this.daft()
       let promise = null
       if (this.id) {
         postData['id'] = this.id
-        promise = DataFlowsModel.patchId(this.id, postData)
+        promise = this.$axios.patch('tm/api/Task/confirm' + this.id, postData)
       } else {
-        promise = DataFlowsModel.create(postData)
+        promise = this.$axios.post('tm/api/DataFlows', postData)
       }
-      this.loading = true
+      this.loadingSave = true
       promise
         .then(() => {
           this.routerBack()
         })
         .catch(e => {
-          if (e?.isException) {
-            if (e.response?.msg === 'duplication for names') {
-              this.$message.error(this.$t('message.exists_name'))
-            } else {
-              this.$message.error(e.response?.msg || e.data?.msg)
-            }
-          }
+          this.handleError(e)
         })
         .finally(() => {
-          this.loading = false
+          this.loadingSave = false
         })
-    },
-    routerBack() {
-      this.$router.push({
-        name: 'migrate'
-      })
-    },
-    //返回任务列表
-    goBackList() {
-      this.$confirm('此操作会丢失当前正在创建/编辑的任务', '是否放弃创建/编辑该任务', {
-        type: 'warning'
-      }).then(resFlag => {
-        if (!resFlag) {
-          return
-        }
-        this.routerBack()
-      })
-    },
-    //表设置
-    fieldProcess() {
-      this.loading = true
-      let data = this.getDataFlowData()
-      if (!data) return
-      if (this.isFirst && !this.id) {
-        data['rollback'] = 'all'
-      } else {
-        delete data['rollback']
-        delete data['rollbackTable'] //确保不会有恢复默认
-      }
-      let promise = DataFlowsModel.getMetadata(data)
-      promise.then(data => {
-        // eslint-disable-next-line
-        console.log('DataFlowsModel.getMetadata(data)', data)
-        this.activeStep += 1
-        this.loading = false
-        this.isFirst = false
-        this.fieldMappingNavData = data.data
-      })
-      promise.catch(error => {
-        if (error?.isException) {
-          this.loading = false
-          this.$message.error('模型推演失败')
-        }
-      })
-    },
-    //恢复默认
-    async updateFieldProcess(rollback, rollbackTable, id) {
-      let data = this.getDataFlowData()
-      if (!data) return
-      if (rollback === 'all') {
-        data['rollback'] = rollback
-        //删除整个字段处理器
-        this.transferData.field_process = []
-      } else if (rollbackTable) {
-        data['rollback'] = rollback
-        data['rollbackTable'] = rollbackTable
-        for (let i = 0; i < this.transferData.field_process.length; i++) {
-          // 删除操作
-          let ops = this.transferData.field_process[i]
-          if (ops.table_id === id) {
-            this.transferData.field_process.splice(i, 1)
-          }
-        }
-      }
-      let result = this.updateAutoFieldProcess(data) //更新字段处理器
-      let promise = await DataFlowsModel.getMetadata(result)
-      return promise
-    },
-    //获取当前任务所有的节点
-    getDataFlowData() {
-      //手动同步更新字段处理器
-      let data = this.daft()
-      let result = this.updateAutoFieldProcess(data)
-      return result
-    },
-    updateAutoFieldProcess(data) {
-      if (data.stages[0]) {
-        data['stages'][0].field_process = this.transferData.field_process
-      }
-      return data
-    },
-    //更新左边导航
-    updateFieldMappingNavData(data) {
-      this.fieldMappingNavData = data
-    },
-    //获取表设置
-    async intiFieldMappingTableData(row) {
-      let sourceResult = await MetadataInstancesModel.originalData(row.sourceQualifiedName)
-      // console.log('source', source)
-      let source = sourceResult.data?.length ? sourceResult.data[0].fields : []
-      let targetResult = await MetadataInstancesModel.originalData(row.sourceQualifiedName)
-      // let target = await MetadataInstancesModel.originalData(row.sourceQualifiedName, true)
-      // console.log('target', target)
-      // 初始化所有字段都映射 只取顶级字段
-      source = source.filter(field => field.field_name.indexOf('.') === -1)
-      let target = targetResult.data?.length ? targetResult.data[0].fields : []
-      //源表 目标表数据组合
-      //是否有字段处理器
-      let operations = this.getFieldOperations(row)
-      if (operations?.length > 0) {
-        source.forEach(item => {
-          let ops = operations.filter(op => op.original_field_name === item.field_name && op.op === 'RENAME')
-          if (!ops || ops?.length === 0) {
-            item.temporary_field_name = item.field_name
-            return
-          }
-          ops = ops[0]
-          item.temporary_field_name = ops.operand
-        })
-        //是否字段被删除
-        source.forEach(item => {
-          let ops = operations.filter(op => op.original_field_name === item.field_name && op.op === 'REMOVE')
-          if (!ops || ops?.length === 0) {
-            item.temporary_is_delete = false //没有被字段处理器操作过
-            return
-          }
-          item.temporary_is_delete = true
-        })
-      } else {
-        source.forEach(item => {
-          item.temporary_field_name = item.field_name
-        })
-      }
-      //源表 目标表数据组合
-      let fieldMappingTableData = []
-      source.forEach(item => {
-        target.forEach(field => {
-          //先检查是否被改过名
-          let node = {
-            t_id: field.id,
-            t_field_name: field.field_name,
-            t_data_type: field.data_type,
-            t_scale: field.scale,
-            t_precision: field.precision,
-            is_deleted: field.is_deleted, //目标决定这个字段是被删除？
-            t_isPrecisionEdit: true, //默认不能编辑
-            t_isScaleEdit: true //默认不能编辑
-          }
-          if (
-            (item.temporary_field_name === field.field_name && field.is_deleted === false) ||
-            (item.temporary_field_name === field.field_name && item.temporary_field_name)
-          ) {
-            fieldMappingTableData.push(Object.assign({}, item, node))
-          }
-        })
-      })
-      return {
-        data: fieldMappingTableData,
-        target: target
-      }
-    },
-    //判断是否改名
-    getFieldOperations(row) {
-      let operations = []
-      if (!this.transferData.field_process || this.transferData.field_process.length === 0) return
-      let field_process = this.transferData.field_process.filter(process => process.table_id === row.sourceTableId)
-      if (field_process.length > 0) {
-        operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
-      }
-      return operations || []
-    },
-    //判断是否改名
-    handleFieldName(row, fieldName) {
-      let operations = this.getFieldOperations(row)
-      if (!operations) return
-      let ops = operations.filter(op => op.operand === fieldName && op.op === 'RENAME')
-      return ops
-    },
-    //获取typeMapping
-    async getTypeMapping(row) {
-      let data = await TypeMappingModel.getId(row.sinkDbType)
-      // eslint-disable-next-line
-      console.log('getTypeMapping', data)
-      return data.data
-    },
-    //保存字段处理器
-    saveOperations(row, operations, target) {
-      if (!target || target?.length === 0) return
-      let where = {
-        qualified_name: row.sinkQulifiedName
-      }
-      let data = {
-        fields: target
-      }
-      if (typeof where === 'object') where = JSON.stringify(where)
-      MetadataInstancesModel.update(where, data)
-      this.transferData.field_process = this.$refs.fieldMappingDom.saveFileOperations()
     }
   }
 }
@@ -1099,7 +484,7 @@ export default {
 .create-task-wrap {
   //padding: 0 20px;
   height: 0;
-  background: #eff1f4;
+  background: rgba(250, 250, 250, 1);
   .step-header {
     display: flex;
     justify-content: center;

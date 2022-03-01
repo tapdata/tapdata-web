@@ -902,6 +902,97 @@ export default {
   task_setting_oracle_custom_analysis: 'OracleSQL custom analysis',
   task_setting_manually_miner_concurrency: 'Concurrent mining threads',
 
+  //字段映射
+  task_form_no_fields_not_save:
+    'All fields in the current table have been deleted, and the save operation is not allowed',
+  task_form_lost_task: 'This operation will lose the task currently being created/edited',
+  task_form_give_up: 'Whether to give up creating/editing this task',
+  task_form_model_deduction_failed: 'Model deduction failed',
+  task_form_no_table_available: 'No table available? ',
+  task_form_reload: 'Reload',
+  task_form_field_mapping: 'Field mapping',
+  task_form_regular:
+    'Start with an English letter, only support English, numbers, underscores, dots, and underscores, with a limit of 0~50 characters',
+  task_form_regular_not_system: 'The prefix is ​​not allowed to start with system',
+  task_form_regular_header:
+    'Start with English letters and underscores, only support English, numbers, underscores, dots, and underscores, limited to 0~50 characters',
+  task_form_following_rules: 'Please enter according to the following rules:',
+  task_form_field_mapped: 'Field to be mapped',
+  task_form_mapped_fields: 'Mapped fields',
+  task_form_field_limit:
+    'Start with English letters and underscores, only support English, numbers, and underscores, with a limit of 1~50 characters',
+  task_form_right_field_duplicate: 'Duplicate name with the field on the right, no further movement allowed',
+  task_form_mapping_field_cannot_empty: 'The mapping field cannot be empty',
+  task_form_table_reset:
+    'Modifying the table name at this time will reset the existing table settings, are you sure to modify?',
+  task_form_restore_table:
+    'At this time, restoring the table name will reset the existing table settings. Are you sure to restore?',
+  task_form_reloadFail: 'Schema loading failed',
+  task_form_source_type: 'Source Type',
+  task_form_source_connection: 'Source connection',
+  task_form_target_type: 'Target type',
+  task_form_target_connection: 'Target connection',
+
+  task_mapping_table_setting: 'Table Settings',
+  task_mapping_table_setting_tip:
+    'Users can set the fields to be synchronized for each table in the source database on this page, as well as the corresponding field names and field types when the target database is automatically created.',
+  task_mapping_table_rename: 'table rename',
+  task_mapping_table_field_rename: 'Field renamed',
+  task_mapping_table_restore_default: 'Restore default',
+  task_mapping_table_search_table: 'Search table',
+  task_mapping_table_selected: 'Selected',
+  task_mapping_table_search_field: 'Search field',
+  task_mapping_table_restore_default_fields: 'Restore default fields',
+  task_mapping_table_source_table_field: 'Source table field name',
+  task_mapping_table_source_table_type: 'Source table type',
+  task_mapping_table_source_table_length: 'Source table length',
+  task_mapping_table_source_table_accuracy: 'Source table accuracy',
+  task_mapping_table_target_table_field: 'Target table field name',
+  task_mapping_table_target_type: 'Target table type',
+  task_mapping_table_target_length: 'Target table length',
+  task_mapping_table_target_accuracy: 'Target table accuracy',
+  task_mapping_table_operate: 'Operation',
+  task_mapping_table_length_range: 'Length range',
+  task_mapping_table_accuracy_range: 'Accuracy range',
+  task_mapping_table_reduction: 'Restore',
+  task_mapping_table_no_data: 'No data temporarily',
+  task_mapping_batch_change_field_title: 'Batch change field name settings',
+  task_mapping_dialog_field_name_case: 'Field name case',
+  task_mapping_dialog_constant: 'Unchanged',
+  task_mapping_dialog_to_uppercase: 'Turn to uppercase',
+  task_mapping_dialog_lowercase: 'turn to lowercase',
+  task_mapping_dialog_modify_target_field_name: 'Modify target field length',
+  task_mapping_dialog_modify_target_field_type: 'Modify the target table field type',
+  task_mapping_dialog_modify_target_field_length: 'Modify the target field length',
+  task_mapping_dialog_modify_target_field_accuracy: 'Modify target table accuracy',
+  task_mapping_batch_change_table_title: 'Batch change table name setting',
+  task_mapping_dialog_table_name_case: 'Table name case',
+  task_mapping_dialog_rule_note: 'Note: The prefix and suffix of the setting also follow the capitalization rule',
+  task_mapping_dialog_enter_prefix: 'Please enter the prefix',
+  task_mapping_dialog_english_letter:
+    'Starting with an English letter, only supports English, numbers, underscores, dots, and underscores, limited to 0~50 characters',
+  task_mapping_dialog_not_allow_system: 'Prefixes are not allowed to start with system',
+  task_mapping_dialog_enter_suffix: 'Please enter the suffix',
+  task_mapping_dialog_underscore_begin:
+    'Start with English letters and underscores, only support English, numbers, underscores, dots, and underscores, limited to 0~50 characters',
+  task_mapping_dialog_example: 'Example',
+  task_mapping_dialog_original_table_name: 'Original table name',
+  task_mapping_dialog_after_modify: 'After modification',
+  task_mapping_dialog_rule_input: 'Please input according to the following rules:',
+  task_mapping_dialog_all_restore_defaults: 'Are you sure you want to restore all defaults? ',
+  task_mapping_dialog_hint: 'Hint',
+  task_mapping_dialog_delete_all_field_tip:
+    'All fields in the current table have been deleted, and the save operation is not allowed',
+  task_mapping_dialog_restore_defaults: 'Are you sure you want to restore the defaults? ',
+  task_mapping_dialog_field_name_restrictions_tip:
+    'Start with English letters and underscores, only support English, numbers, and underscores, limited to 1~50 characters',
+  task_mapping_dialog_target_no_fields: 'Target model not found',
+  task_mapping_dialog_field_range_check: 'The current value does not meet the field range',
+  task_mapping_dialog_field_type_problem:
+    'It has been detected that you have a problem with the field type settings of XXX tables. Please select the problematic table in the table area on the left for processing.',
+  task_mapping_dialog_target_no_fields_problem:
+    'It is detected that you have XXX tables with no fields, please go back to the previous step and remove the tables without fields. ',
+
   // Function management
   function_tips_empty: 'Code lacks JS functions',
   function_button_create_custom_function: 'Create function',
