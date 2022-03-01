@@ -306,7 +306,7 @@ export default {
         .check()
         .then(res => {
           if (res) {
-            this.showEditSettingBtn = res?.data?.data //true是可用，false是禁用
+            this.showEditSettingBtn = res?.data //true是可用，false是禁用
           }
         })
     },

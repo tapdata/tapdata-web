@@ -101,7 +101,7 @@
 import Chart from 'web-core/components/chart'
 import TableList from '@/components/TableList'
 import StatusTag from '@/components/StatusTag'
-import { formatTime, formatMs } from '@/utils/util'
+import { formatTime, formatMs, isEmpty } from '@/utils/util'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 export default {
   name: 'Info',
@@ -273,21 +273,138 @@ export default {
       this.getTableNames()
     },
     getChartData() {
-      let data = [
-        {
-          logTime: '2022-02-18T06:50:12.109Z',
-          inputQps: 66,
-          outputQps: 435
-        },
-        {
-          logTime: '2022-02-19T06:50:12.109Z',
-          inputQps: 1000,
-          outputQps: 900
-        }
-      ]
-      let xArr = data.map(t => formatTime(t.logTime)) //x轴
-      let inArr = data.map(t => t.inputQps)
-      let outArr = data.map(t => t.outputQps)
+      let params = {
+        samples: [
+          {
+            tags: {
+              subTaskId: this.id,
+              type: 'subTask'
+            },
+            fields: ['inputQPS', 'outputQPS'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
+            start: '', //optional
+            end: '', //optional
+            limit: 10, //optional， 没有就返回全部， 服务器保护返回最多1000个
+            guanluary: 'minute'
+          }
+        ],
+        statistics: [
+          {
+            tags: {
+              subTaskId: this.id,
+              type: 'subTask'
+            },
+            fields: ['replicateLag']
+          }
+        ]
+      }
+      this.$api('Measurement')
+        .query(params)
+        .then(res => {
+          let data = res.data
+          let { samples } = data
+          samples.forEach(el => {
+            for (let key in el) {
+              el[key] = el[key].reverse()
+            }
+          })
+          const countObj = samples?.[1] || {}
+          const statistics = data.statistics?.[0] || {}
+          const { overData, writeData } = this
+          // 总输入总输出
+          if (!isEmpty(countObj)) {
+            for (let key in overData) {
+              let val0 = countObj[key]?.[0] || 0
+              let val1 = countObj[key]?.[1] || 0
+              overData[key] += val1 - val0
+            }
+          }
+          for (let key in writeData) {
+            writeData[key] = statistics[key]
+          }
+          // 全量预计完成时间
+          this.initialData.length >= 2 && this.initialData.shift()
+          this.initialData.push(
+            Object.assign(
+              {
+                time: new Date().getTime()
+              },
+              writeData
+            )
+          )
+          if (this.initialData.length >= 2) {
+            const getForecastMs = this.getForecastMs(this.initialData)
+            if (getForecastMs) {
+              this.forecast = getForecastMs
+            }
+          }
+          // 折线图
+          const qpsData = samples[0] || {}
+          let { inputQPS = [], outputQPS = [] } = qpsData
+          let qpsDataTime = qpsData.time || []
+          // 空数据，需要模拟时间点
+          if (!qpsDataTime.length) {
+            qpsDataTime = this.getEmptyData(params.samples[0].start, params.samples[0].end)
+          }
+
+          let xArr = qpsDataTime.map(t => formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
+          const xArrLen = xArr.length
+          if (this.lineDataDeep.x.length > 20) {
+            this.lineDataDeep.x.splice(0, xArrLen)
+            this.lineDataDeep.y[0].splice(0, xArrLen)
+            this.lineDataDeep.y[1].splice(0, xArrLen)
+          }
+          let inArr = []
+          let outArr = []
+          xArr.forEach((el, i) => {
+            let time = el
+            inArr.push({
+              name: time,
+              value: [time, inputQPS[i]]
+            })
+            outArr.push({
+              name: time,
+              value: [time, outputQPS[i]]
+            })
+          })
+          console.log('x轴：', this.lineDataDeep.x.length, xArr)
+          xArr.forEach((el, index) => {
+            if (!this.lineDataDeep.x.includes(el)) {
+              this.lineDataDeep.x.push(el)
+              this.lineDataDeep.y[0].push(inArr[index])
+              this.lineDataDeep.y[1].push(outArr[index])
+            }
+          })
+          this.$nextTick(() => {
+            Object.assign(this.lineOptions, {
+              xAxis: {
+                data: xArr
+              },
+              series: [
+                {
+                  data: inArr
+                },
+                {
+                  data: outArr
+                }
+              ]
+            })
+          })
+        })
+      // let data = [
+      //   {
+      //     logTime: '2022-02-18T06:50:12.109Z',
+      //     inputQps: 66,
+      //     outputQps: 435
+      //   },
+      //   {
+      //     logTime: '2022-02-19T06:50:12.109Z',
+      //     inputQps: 1000,
+      //     outputQps: 900
+      //   }
+      // ]
+      // let xArr = data.map(t => formatTime(t.logTime)) //x轴
+      // let inArr = data.map(t => t.inputQps)
+      // let outArr = data.map(t => t.outputQps)
       // let inArr = data.map(t => {
       //   return {
       //     name: t.logTime,
@@ -300,36 +417,6 @@ export default {
       //     value: [t.logTime, t.outputQps]
       //   }
       // })
-
-      this.$nextTick(() => {
-        Object.assign(this.lineOptions, {
-          xAxis: {
-            data: xArr
-          },
-          series: [
-            {
-              data: inArr
-            },
-            {
-              data: outArr
-            }
-          ]
-        })
-      })
-
-      // let filter = {
-      //   where: {
-      //     id: id,
-      //     startTime: '',
-      //     endTime: ''
-      //   }
-      // }
-      // this.$api('logcollector')
-      //   .getChart()
-      //   .then(res => {
-      //     //this.chartData = res?.data
-      //
-      //   })
     },
     goDetail(id) {
       this.$router.push({
