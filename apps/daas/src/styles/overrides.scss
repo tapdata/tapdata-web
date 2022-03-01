@@ -72,6 +72,16 @@
 .el-input__inner:hover {
   border-color: map-get($color, primary);
 }
+.el-input-group__prepend {
+  color: map-get($color, primary);
+}
+.el-input-group__append {
+  button.el-button {
+    border-color: map-get($color, primary);
+    background-color: map-get($color, primary);
+  }
+}
+
 .el-radio__inner:hover {
   border-color: map-get($color, primary);
 }
@@ -145,6 +155,10 @@
 .el-button {
   min-width: 80px;
   font-weight: normal;
+  color: #4e5969;
+  border-color: #f2f3f5;
+  background-color: #f2f3f5;
+
 }
 .el-button.is-plain:focus {
   border-color: map-get($borderColor, normal);
@@ -155,6 +169,7 @@
   border-color: map-get($color, primary);
 }
 .el-button--primary {
+  color: #fff;
   background-color: map-get($color, primary);
   border: none;
 }
@@ -164,6 +179,7 @@
 //}
 .el-button--text {
   border: none;
+  background-color: #fff;
 }
 .el-button:focus,
 .el-button:hover {

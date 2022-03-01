@@ -298,7 +298,7 @@ export default {
   }
 
   .el-dialog__body {
-    padding: 0 20px;
+    padding: 0 20px 20px;
   }
 
   .test-block {

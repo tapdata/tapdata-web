@@ -3,7 +3,7 @@
     <div class="section-wrap-box">
       <div class="no-search-box-wrap" v-show="showNoSearch">
         <div class="no-search-box">
-          <header class="metadata-search-title">
+          <header class="metadata-search-title link-primary">
             {{ $t('metadata.metadataSearch.title') }}
           </header>
           <el-input
@@ -262,7 +262,7 @@ export default {
       .metadata-search-title {
         width: 250px;
         height: 40px;
-        color: rgba(72, 182, 226, 100);
+        // color: rgba(72, 182, 226, 100);
         font-size: 24px;
         text-align: left;
         margin-bottom: 10px;

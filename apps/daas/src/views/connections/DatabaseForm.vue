@@ -1493,9 +1493,10 @@ export default {
         })
     },
     goBack() {
-      let tip = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接'
+      let msg = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接'
       // let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
-      this.$confirm(tip, '', {
+
+      this.$confirm(msg, '', {
         confirmButtonText: this.$t('connection_form_give_up'),
         cancelButtonText: this.$t('button_cancel'),
         type: 'warning',

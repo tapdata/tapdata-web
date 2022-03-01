@@ -323,7 +323,7 @@ export default [
         component: Parent,
         redirect: 'sharedMining/',
         meta: {
-          title: 'page_title_sharedMining'
+          title: 'page_title_shared_mining'
         },
         children: [
           {

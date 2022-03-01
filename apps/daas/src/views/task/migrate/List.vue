@@ -20,6 +20,7 @@
       <div class="buttons" slot="operation">
         <el-button
           size="mini"
+          class="btn message-button-cancel"
           v-if="multipleSelection.length === 0 && bulkOperation"
           :disabled="multipleSelection.length === 0 && bulkOperation"
         >
@@ -52,8 +53,8 @@
         <el-button
           v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'SYNC_category_application'"
-          size="small"
-          class="btn"
+          size="mini"
+          class="btn message-button-cancel"
           v-show="multipleSelection.length > 0"
           @click="$refs.table.showClassify(handleSelectTag())"
         >
@@ -65,7 +66,12 @@
           <i class="iconfont icon-hanshu back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkFx') }}</span>
         </el-button> -->
-        <el-button v-readonlybtn="'SYNC_job_import'" size="small" class="btn" @click="handleImport">
+        <el-button
+          v-readonlybtn="'SYNC_job_import'"
+          size="mini"
+          class="btn message-button-cancel"
+          @click="handleImport"
+        >
           <i class="iconfont icon-daoru back-btn-icon"></i>
           <span> {{ $t('dataFlow.bulkImport') }}</span>
         </el-button>
@@ -73,10 +79,11 @@
           v-readonlybtn="'SYNC_job_creation'"
           class="btn btn-create"
           type="primary"
-          size="small"
+          size="mini"
           @click="create"
         >
-          <i class="iconfont icon-jia add-btn-icon"></i>
+          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
+          {{ $t('task_create_task') }}
         </el-button>
       </div>
 
@@ -880,15 +887,12 @@ export default {
     },
     handleEditor(id) {
       const h = this.$createElement
-      this.$confirm(
-        h('p', null, [h('span', null, this.$t('task_list_edit_confirm'))]),
-        this.$t('task_list_important_reminder'),
-        {
-          customClass: 'dataflow-clickTip',
-          confirmButtonText: this.$t('dataFlow.continueEditing'),
-          type: 'warning'
-        }
-      ).then(resFlag => {
+      this.$confirm(h('p', null, [h('span', null, this.$t('task_list_edit_confirm'))]), '', {
+        customClass: 'dataflow-clickTip',
+        confirmButtonText: this.$t('dataFlow.continueEditing'),
+        type: 'warning',
+        showClose: false
+      }).then(resFlag => {
         if (!resFlag) {
           return
         }
@@ -1031,25 +1035,25 @@ export default {
     stop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
       let message = msgObj.msg
-      let title = msgObj.title
+      // let title = msgObj.title
       let list = this.table.list
       for (let i = 0; i < list.length; i++) {
         let node = list[i]
         if (ids.includes(node.id)) {
           if (node.setting && !node.setting.sync_type.includes('cdc')) {
             message = this.$t('message.stopInitial_syncMessage')
-            title = this.$t('dataFlow.importantReminder')
           }
           if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
             const h = this.$createElement
             let arr = this.$t('message.stopAggregation_message').split('XXX')
             message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
-            title = this.$t('dataFlow.importantReminder')
+            // title = this.$t('dataFlow.importantReminder')
           }
         }
       }
-      this.$confirm(message, title, {
-        type: 'warning'
+      this.$confirm(message, '', {
+        type: 'warning',
+        showClose: false
       }).then(resFlag => {
         if (!resFlag) {
           return
@@ -1060,8 +1064,9 @@ export default {
     },
     forceStop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('force_stop', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning'
+      this.$confirm(msgObj.msg, '', {
+        type: 'warning',
+        showClose: false
       }).then(resFlag => {
         if (!resFlag) {
           return
@@ -1085,8 +1090,9 @@ export default {
         }
       }
       let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning'
+      this.$confirm(msgObj.msg, '', {
+        type: 'warning',
+        showClose: false
       }).then(resFlag => {
         if (!resFlag) {
           return
@@ -1354,20 +1360,22 @@ export default {
     .buttons {
       white-space: nowrap;
       .btn + .btn {
-        margin-left: 5px;
+        margin-left: 12px;
       }
       .btn {
+        height: 28px;
+        padding: 0 16px;
         i.iconfont {
           font-size: 12px;
         }
         &.btn-dropdowm {
-          margin-left: 5px;
+          margin-left: 12px;
         }
         &.btn-create {
-          margin-left: 5px;
+          margin-left: 12px;
         }
         &.btn-createText {
-          margin-left: 5px;
+          margin-left: 12px;
         }
       }
     }

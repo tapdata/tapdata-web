@@ -1,6 +1,5 @@
 <template>
   <span v-if="onlyImg" class="td-status-tag inline-flex align-items-center">
-    ---{{ statusObj }}
     <img :src="imgSrc" :data-status="statusObj.text" alt="" />
   </span>
   <span v-else class="td-status-tag">

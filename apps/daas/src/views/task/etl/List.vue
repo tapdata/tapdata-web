@@ -120,7 +120,6 @@
       </el-table-column>
       <el-table-column :label="$t('column_operation')" width="180" fixed="right">
         <template #default="{ row }">
-          {{ row }}
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
               v-readonlybtn="'SYNC_job_operation'"
@@ -868,25 +867,26 @@ export default {
     stop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
       let message = msgObj.msg
-      let title = msgObj.title
+      // let title = msgObj.title
       let list = this.table.list
       for (let i = 0; i < list.length; i++) {
         let node = list[i]
         if (ids.includes(node.id)) {
           if (node.setting && !node.setting.sync_type.includes('cdc')) {
             message = this.$t('message.stopInitial_syncMessage')
-            title = this.$t('dataFlow.importantReminder')
+            // title = this.$t('dataFlow.importantReminder')
           }
           if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
             const h = this.$createElement
             let arr = this.$t('message.stopAggregation_message').split('XXX')
             message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
-            title = this.$t('dataFlow.importantReminder')
+            // title = this.$t('dataFlow.importantReminder')
           }
         }
       }
-      this.$confirm(message, title, {
-        type: 'warning'
+      this.$confirm(message, '', {
+        type: 'warning',
+        showClose: false
       }).then(resFlag => {
         if (!resFlag) {
           return
@@ -906,8 +906,9 @@ export default {
     },
     forceStop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('force_stop', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning'
+      this.$confirm(msgObj.msg, '', {
+        type: 'warning',
+        showClose: false
       }).then(resFlag => {
         if (!resFlag) {
           return
@@ -917,7 +918,7 @@ export default {
     },
     del(ids, item = {}) {
       let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg, msgObj.title, {
+      this.$confirm(msgObj.msg, '', {
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {
