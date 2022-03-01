@@ -615,11 +615,11 @@ export default {
     }, 100),
 
     scrollTopOfDBList() {
-      this.$refs.dbList.wrap.scrollTop = 0
+      if (this.$refs.dbList) this.$refs.dbList.wrap.scrollTop = 0
     },
 
     scrollTopOfTableList() {
-      this.$refs.tbList.wrap.scrollTop = 0
+      if (this.$refs.tbList) this.$refs.tbList.wrap.scrollTop = 0
     },
 
     handleTBBlur() {

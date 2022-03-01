@@ -580,6 +580,7 @@ const cn = {
     uploadOK: '上传成功',
     uploadError: '上传失败',
     uploadInfo: '点击查看详情',
+    view: '查看',
     dataFlowExport: '导出',
     addTag: '添加标签',
     bulkImport: '批量导入',

@@ -72,6 +72,15 @@ export default [
     }
   },
   {
+    path: '/dataflow/viewer/:id',
+    name: 'DataflowViewer',
+    component: DagEditor,
+    meta: {
+      title: 'page_title_data_develop',
+      code: 'Data_SYNC_menu'
+    }
+  },
+  {
     path: '/',
     name: 'layout',
     redirect: 'dashboard',

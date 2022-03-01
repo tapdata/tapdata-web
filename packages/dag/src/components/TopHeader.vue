@@ -4,30 +4,40 @@
       <VIcon size="20">left</VIcon>
     </button>
     <div class="title-input-wrap flex align-center mx-2 flex-shrink-0 h-100" :data-value="hiddenValue">
-      <input v-focus-select ref="nameInput" v-model.trim="name" class="title-input" @change="onNameInputChange" />
-      <VIcon @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
+      <input
+        v-focus-select
+        ref="nameInput"
+        v-model.trim="name"
+        class="title-input"
+        :readonly="stateIsReadonly"
+        @change="onNameInputChange"
+      />
+      <VIcon v-if="!stateIsReadonly" @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
     </div>
     <div class="operation-center flex align-center">
-      <ElTooltip transition="tooltip-fade-in" content="撤销">
-        <button @click="$emit('undo')" class="icon-btn">
-          <VIcon size="20">undo</VIcon>
-        </button>
-      </ElTooltip>
-      <ElTooltip transition="tooltip-fade-in" content="重做">
-        <button @click="$emit('redo')" class="icon-btn">
-          <VIcon size="20">redo</VIcon>
-        </button>
-      </ElTooltip>
-      <ElTooltip transition="tooltip-fade-in" content="删除">
-        <button @click="$emit('delete')" class="icon-btn">
-          <VIcon size="20">delete</VIcon>
-        </button>
-      </ElTooltip>
-      <ElTooltip transition="tooltip-fade-in" content="全屏">
+      <template v-if="!stateIsReadonly">
+        <ElTooltip transition="tooltip-fade-in" content="撤销">
+          <button @click="$emit('undo')" class="icon-btn">
+            <VIcon size="20">undo</VIcon>
+          </button>
+        </ElTooltip>
+        <ElTooltip transition="tooltip-fade-in" content="重做">
+          <button @click="$emit('redo')" class="icon-btn">
+            <VIcon size="20">redo</VIcon>
+          </button>
+        </ElTooltip>
+        <ElTooltip transition="tooltip-fade-in" content="删除">
+          <button @click="$emit('delete')" class="icon-btn">
+            <VIcon size="20">delete</VIcon>
+          </button>
+        </ElTooltip>
+      </template>
+
+      <!--<ElTooltip transition="tooltip-fade-in" content="全屏">
         <button @click="$emit('fullscreen')" class="icon-btn">
           <VIcon size="20">fullscreen</VIcon>
         </button>
-      </ElTooltip>
+      </ElTooltip>-->
       <ElTooltip transition="tooltip-fade-in" content="内容居中">
         <button @click="$emit('center-content')" class="icon-btn">
           <VIcon size="20">compress</VIcon>
@@ -72,7 +82,16 @@
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
       <ElButton size="small" plain class="mx-2" @click="$emit('showSettings')"> 设置 </ElButton>
-      <ElButton :loading="isSaving" size="small" type="primary" class="mx-2" @click="$emit('save')"> 保存 </ElButton>
+      <ElButton
+        v-if="!stateIsReadonly"
+        :loading="isSaving"
+        size="small"
+        type="primary"
+        class="mx-2"
+        @click="$emit('save')"
+      >
+        保存
+      </ElButton>
     </div>
   </header>
 </template>
@@ -109,7 +128,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['dataflowId']),
+    ...mapGetters('dataflow', ['dataflowId', 'stateIsReadonly']),
 
     syncTxt() {
       const settings = this.$store.getters['dataflow/dataflowSettings']

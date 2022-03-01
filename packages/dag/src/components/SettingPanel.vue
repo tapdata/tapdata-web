@@ -1,6 +1,13 @@
 <template>
   <div class="setting-panel">
-    <ElForm :model="settings" class="setting-panel-form" label-width="140px" label-position="top" size="small">
+    <ElForm
+      :model="settings"
+      class="setting-panel-form"
+      label-width="140px"
+      label-position="top"
+      size="small"
+      :disabled="stateIsReadonly"
+    >
       <ElTabs v-model="settingPanelType" class="setting-tabs h-100">
         <ElTabPane label="基本设置" name="base">
           <div class="setting-panel-box bg-white pt-3">
@@ -246,7 +253,7 @@ export default {
   },
 
   computed: {
-    ...mapState('dataflow', ['activeNodeId', 'transformStatus']),
+    ...mapState('dataflow', ['activeNodeId', 'transformStatus', 'stateIsReadonly']),
 
     ...mapGetters('dataflow', [
       'activeNode',

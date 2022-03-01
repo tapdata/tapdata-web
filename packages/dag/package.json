@@ -17,6 +17,7 @@
     "@formily/element": "^2.0.9",
     "@formily/reactive": "^2.0.9",
     "dagre": "^0.8.5",
+    "jsplumb": "^2.15.6",
     "mousetrap": "^1.6.5",
     "vuex": "^3.6.2"
   }

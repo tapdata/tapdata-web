@@ -9,7 +9,7 @@
         :open-delay="400"
       />
     </template>
-    <div class="df-node-options" @click.stop>
+    <div v-if="!stateIsReadonly" class="df-node-options" @click.stop>
       <el-popover v-model="showAddMenu" placement="bottom" trigger="click" popper-class="min-width-unset rounded-xl">
         <div slot="reference" class="node-option" titlmoue="添加节点">
           <VIcon>plus</VIcon>
@@ -71,7 +71,8 @@ export default {
       'isNodeSelected',
       'isMultiSelect',
       'processorNodeTypes',
-      'hasNodeError'
+      'hasNodeError',
+      'stateIsReadonly'
     ]),
 
     data() {
@@ -216,9 +217,13 @@ export default {
         uuid: id + '_target'
       })
 
-      this.jsPlumbIns.addEndpoint(this.$el, sourceEndpoint, {
-        uuid: id + '_source'
-      })
+      this.jsPlumbIns.addEndpoint(
+        this.$el,
+        { ...sourceEndpoint, enabled: !this.stateIsReadonly },
+        {
+          uuid: id + '_source'
+        }
+      )
     },
 
     mouseClick(e) {
