@@ -1,13 +1,6 @@
 <template>
-  <section class="apiserver-wrap">
-    <TablePage
-      ref="table"
-      row-key="id"
-      class="apiserver-list"
-      :title="$t('app.menu.' + $route.name)"
-      :remoteMethod="getData"
-      @sort-change="handleSortTable"
-    >
+  <section class="apiserver-wrap section-wrap">
+    <TablePage ref="table" row-key="id" class="apiserver-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <div slot="search">
         <ul class="search-bar">
           <li>
@@ -72,7 +65,7 @@
         sortable="clientURI"
       >
       </el-table-column>
-      <el-table-column :label="$t('operator')" width="140">
+      <el-table-column :label="$t('column_operation')" width="140">
         <template slot-scope="scope">
           <el-button v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="edit(scope.row)">
             {{ $t('modules_edit') }}

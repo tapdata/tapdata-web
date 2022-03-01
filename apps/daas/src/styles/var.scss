@@ -2,9 +2,13 @@
 // 会在每个style元素以及scss文件中注入，因此不允许写具体选择器样式
 $borderRadiusBtn: 4px;
 $borderRadius: 4px;
+$fontFamily: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans',
+  sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+$codeFontFamily: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 
 $color: (
-  primary: #337dff,
+  // primary: #337dff,
+  primary:#2C65FF,
   dprimary: #66b1ff,
   lprimary: #5392ff,
   success: #10c038,

@@ -281,6 +281,7 @@ export default {
       } else if (['inq', 'nin'].includes(this.model.queryCommand)) {
         data.value = this.model.queryValue.split(',')
       }
+      // eslint-disable-next-line
       console.log('data', data)
       this.$emit('input', data)
     },

@@ -1,62 +1,67 @@
 <template>
   <div class="table-page-container">
-    <div class="table-page-header" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM') && title">
+    <div class="table-page-header" v-if="!$getSettingByKey('DFS_TCM_PLATFORM') && title">
       <slot name="header">
-        <div class="page-header-title">{{ title }}</div>
-        <div v-if="desc" class="page-header-desc" v-html="desc"></div>
+        <div class="page-header-title">
+          {{ title }}
+          <span v-if="desc" class="page-header-desc" v-html="desc"></span>
+        </div>
+        <!-- <div v-if="desc" class="page-header-desc" v-html="desc"></div> -->
       </slot>
     </div>
 
     <div class="table-page-main">
-      <div class="table-page-left" v-if="classify && !hideClassify && $window.getSettingByKey('SHOW_CLASSIFY')">
-        <Classification
-          :authority="classify.authority"
-          :types="classify.types"
-          @nodeChecked="nodeChecked"
-        ></Classification>
-      </div>
-      <div class="table-page-body">
-        <div class="table-page-nav">
-          <slot name="nav"></slot>
+      <div class="table-page-main-box">
+        <div class="table-page-left" v-if="classify && !hideClassify && $getSettingByKey('SHOW_CLASSIFY')">
+          <Classification
+            :authority="classify.authority"
+            :types="classify.types"
+            @nodeChecked="nodeChecked"
+          ></Classification>
         </div>
-        <div class="table-page-topbar">
-          <div class="table-page-search-bar">
-            <slot name="search"></slot>
+        <div class="table-page-body">
+          <div class="table-page-nav">
+            <slot name="nav"></slot>
           </div>
-          <div class="table-page-operation-bar">
-            <slot name="operation"></slot>
+          <div class="table-page-topbar">
+            <div class="table-page-search-bar">
+              <slot name="search"></slot>
+            </div>
+            <div class="table-page-operation-bar">
+              <slot name="operation"></slot>
+            </div>
           </div>
+          <el-table
+            border
+            ref="table"
+            v-loading="loading"
+            class="table-page-table table-border"
+            height="100%"
+            :element-loading-text="$t('dataFlow.dataLoading')"
+            :row-key="rowKey"
+            :span-method="spanMethod"
+            :data="list"
+            @selection-change="handleSelectionChange"
+            @sort-change="$emit('sort-change', $event)"
+          >
+            <slot></slot>
+          </el-table>
+          <div class="table-footer">
+            <slot name="tableFooter"></slot>
+          </div>
+          <el-pagination
+            background
+            class="table-page-pagination mt-3"
+            layout="total, sizes, ->, prev, pager, next, jumper"
+            :current-page.sync="page.current"
+            :page-sizes="[10, 20, 50, 100]"
+            :page-size.sync="page.size"
+            :total="page.total"
+            @size-change="fetch(1)"
+            @current-change="fetch"
+          >
+          </el-pagination>
         </div>
-        <el-table
-          border
-          ref="table"
-          v-loading="loading"
-          class="table-page-table table-border"
-          height="100%"
-          :element-loading-text="$t('dataFlow.dataLoading')"
-          :row-key="rowKey"
-          :span-method="spanMethod"
-          :data="list"
-          @selection-change="handleSelectionChange"
-          @sort-change="$emit('sort-change', $event)"
-        >
-          <slot></slot>
-        </el-table>
-        <div class="table-footer">
-          <slot name="tableFooter"></slot>
-        </div>
-        <el-pagination
-          background
-          class="table-page-pagination"
-          layout="total, sizes, ->, prev, pager, next, jumper"
-          :current-page.sync="page.current"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size.sync="page.size"
-          :total="page.total"
-          @size-change="fetch(1)"
-          @current-change="fetch"
-        >
-        </el-pagination>
       </div>
     </div>
     <SelectClassify
@@ -228,11 +233,10 @@ export default {
   width: 100%;
 
   .table-page-header {
-    padding: 15px 10px;
-    padding-left: 20px;
-    background: #ffffff;
+    padding: 20px;
+    background: #eff1f4;
     overflow: hidden;
-    border-bottom: 1px solid #dedee4;
+    // border-bottom: 1px solid #dedee4;
     box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
 
@@ -255,35 +259,45 @@ export default {
   }
 
   .table-page-main {
-    flex: 1;
-    padding: 20px;
     display: flex;
+    flex: 1;
+    // padding: 0 20px 20px 20px;
     overflow: hidden;
+    background-color: #eff1f4;
+    .table-page-main-box {
+      display: flex;
+      flex: 1;
+      width: 100%;
+      border-radius: 4px;
+      background-color: #fff;
+    }
   }
 
-  .table-page-left {
-    margin-right: 10px;
-  }
+  // .table-page-left {
+  //   margin-right: 10px;
+  // }
 
   .table-page-body {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-
+    background-color: #fff;
+    border-radius: 4px;
+    .el-table--border {
+      border: none;
+    }
     .table-page-topbar {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
       flex-wrap: wrap-reverse;
-
       .table-page-search-bar {
-        margin-right: 5px;
-        margin-bottom: 20px;
+        margin: 0 5px 15px 0;
       }
 
       .table-page-operation-bar {
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         text-align: right;
       }
     }
@@ -303,6 +317,10 @@ export default {
 
     .el-table--border th {
       border-right: 1px solid #ebeef5;
+      background-color: #fafafa;
+      &:last-child {
+        border-right: 0;
+      }
       .cell {
         white-space: nowrap;
       }

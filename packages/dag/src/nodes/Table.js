@@ -43,13 +43,13 @@ export class Table extends NodeType {
           align: 'stretch',
           size: 32,
           split: true,
-          filterKey: []
+          filterIndex: []
         },
         'x-reactions': {
           dependencies: ['isSource', 'isTarget'],
           fulfill: {
             schema: {
-              'x-component-props.filterKey': '{{!!$deps[0] || !!$deps[1] ? [] : ["rightCell"]}}'
+              'x-component-props.filterIndex': '{{!!$deps[0] || !!$deps[1] ? [] : [1]}}'
             }
           }
         },

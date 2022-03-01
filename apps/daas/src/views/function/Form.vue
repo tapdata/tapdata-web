@@ -1,91 +1,90 @@
 <template>
-  <section class="custom-form-wrapper">
-    <div class="container-header">
-      {{ $route.params.id ? $t('function_button_edit_function') : $t('function_button_create_custom_function') }}
-    </div>
-    <div v-loading="$route.params.id && !details.id" class="custom-form__body">
-      <div class="main px-6 py-4">
-        <ElForm
-          v-if="!$route.params.id || details.id"
-          ref="form"
-          label-position="left"
-          label-width="120px"
-          size="small"
-          :model="form"
-        >
-          <template v-if="$route.params.id && details.type === 'jar'">
-            <ElFormItem :label="$t('function_jar_file_label') + ':'">
-              <span>{{ details.fileName }}</span>
-            </ElFormItem>
-            <ElFormItem :label="$t('function_package_name_label') + ':'">
-              <span>{{ details.packageName }}</span>
-            </ElFormItem>
-            <ElFormItem :label="$t('function_class_name_label') + ':'">
-              <span>{{ details.classNameFmt }}</span>
-            </ElFormItem>
-            <ElFormItem :label="$t('function_method_name_label') + ':'">
-              <span>{{ details.methodName }}</span>
-            </ElFormItem>
-            <ElFormItem
-              prop="function_name"
-              :label="$t('function_name_label') + ':'"
-              :rules="{ required: true, message: $t('function_name_placeholder') }"
-            >
-              <ElInput
-                v-model="form.function_name"
-                class="form-input"
-                :placeholder="$t('function_name_placeholder')"
-              ></ElInput>
-            </ElFormItem>
-          </template>
+  <section class="custom-form-wrapper section-wrap">
+    <div class="section-wrap-box">
+      <!-- <div class="container-header">
+        {{ $route.params.id ? $t('function_button_edit_function') : $t('function_button_create_custom_function') }}
+      </div> -->
+      <!-- <div v-loading="$route.params.id && !details.id" class="custom-form__body">
+        <div class="main px-6 py-4"> -->
+      <ElForm
+        v-if="!$route.params.id || details.id"
+        ref="form"
+        label-position="left"
+        label-width="120px"
+        size="small"
+        :model="form"
+      >
+        <template v-if="$route.params.id && details.type === 'jar'">
+          <ElFormItem :label="$t('function_jar_file_label') + ':'">
+            <span>{{ details.fileName }}</span>
+          </ElFormItem>
+          <ElFormItem :label="$t('function_package_name_label') + ':'">
+            <span>{{ details.packageName }}</span>
+          </ElFormItem>
+          <ElFormItem :label="$t('function_class_name_label') + ':'">
+            <span>{{ details.classNameFmt }}</span>
+          </ElFormItem>
+          <ElFormItem :label="$t('function_method_name_label') + ':'">
+            <span>{{ details.methodName }}</span>
+          </ElFormItem>
           <ElFormItem
-            v-if="form.type === 'custom'"
-            prop="script"
-            :label="$t('function_script_label') + ':'"
-            :rules="scriptRules"
+            prop="function_name"
+            :label="$t('function_name_label') + ':'"
+            :rules="{ required: true, message: $t('function_name_placeholder') }"
           >
-            <div class="script-editor">
-              <CodeEditor v-model="form.script" ref="editor" lang="javascript" height="200"></CodeEditor>
-            </div>
-          </ElFormItem>
-          <ElFormItem prop="describe" :label="$t('function_describe_label') + ':'">
             <ElInput
-              v-model="form.describe"
+              v-model="form.function_name"
               class="form-input"
-              type="textarea"
-              :placeholder="$t('function_describe_placeholder')"
+              :placeholder="$t('function_name_placeholder')"
             ></ElInput>
           </ElFormItem>
-          <ElFormItem prop="format" :label="$t('function_format') + ':'">
-            <ElInput
-              v-model="form.format"
-              class="form-input"
-              :placeholder="$t('function_format_placeholder')"
-            ></ElInput>
-          </ElFormItem>
-          <ElFormItem prop="parameters_desc" :label="$t('function_parameters_describe_label') + ':'">
-            <ElInput
-              v-model="form.parameters_desc"
-              class="form-input"
-              type="textarea"
-              :placeholder="$t('function_parameters_describe_placeholder')"
-            ></ElInput>
-          </ElFormItem>
-          <ElFormItem prop="return_value" :label="$t('function_return_value_label') + ':'">
-            <ElInput
-              v-model="form.return_value"
-              class="form-input"
-              type="textarea"
-              :placeholder="$t('function_return_value_placeholder')"
-            ></ElInput>
-          </ElFormItem>
-        </ElForm>
-      </div>
+        </template>
+        <ElFormItem
+          v-if="form.type === 'custom'"
+          prop="script"
+          :label="$t('function_script_label') + ':'"
+          :rules="scriptRules"
+        >
+          <div class="script-editor">
+            <CodeEditor v-model="form.script" ref="editor" lang="javascript" height="200"></CodeEditor>
+          </div>
+        </ElFormItem>
+        <ElFormItem prop="describe" :label="$t('function_describe_label') + ':'">
+          <ElInput
+            v-model="form.describe"
+            class="form-input"
+            type="textarea"
+            :placeholder="$t('function_describe_placeholder')"
+          ></ElInput>
+        </ElFormItem>
+        <ElFormItem prop="format" :label="$t('function_format') + ':'">
+          <ElInput v-model="form.format" class="form-input" :placeholder="$t('function_format_placeholder')"></ElInput>
+        </ElFormItem>
+        <ElFormItem prop="parameters_desc" :label="$t('function_parameters_describe_label') + ':'">
+          <ElInput
+            v-model="form.parameters_desc"
+            class="form-input"
+            type="textarea"
+            :placeholder="$t('function_parameters_describe_placeholder')"
+          ></ElInput>
+        </ElFormItem>
+        <ElFormItem prop="return_value" :label="$t('function_return_value_label') + ':'">
+          <ElInput
+            v-model="form.return_value"
+            class="form-input"
+            type="textarea"
+            :placeholder="$t('function_return_value_placeholder')"
+          ></ElInput>
+        </ElFormItem>
+      </ElForm>
       <div class="footer p-6">
         <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('button_back') }}</ElButton>
         <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
       </div>
     </div>
+
+    <!-- </div>
+    </div> -->
   </section>
 </template>
 
@@ -214,10 +213,10 @@ export default {
 
 <style scoped lang="scss">
 .custom-form-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: #fafafa;
+  //   display: flex;
+  //   flex-direction: column;
+  //   height: 100%;
+  //   background: #fafafa;
 }
 .custom-form__body {
   margin: 30px 24px 0 24px;

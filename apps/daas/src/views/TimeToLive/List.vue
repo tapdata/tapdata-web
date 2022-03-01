@@ -1,10 +1,9 @@
 <template>
-  <section class="timeToLive-list-wrap">
+  <section class="timeToLive-list-wrap classify-wrap">
     <TablePage
       ref="table"
       row-key="id+indexName"
       class="timeToLive-list"
-      :title="$t('app.menu.' + $route.name)"
       :classify="{
         authority: 'time_to_live',
         types: ['database']
@@ -383,7 +382,6 @@ export default {
         meta_type: true,
         name: true,
         original_name: true,
-        source: true,
         'source.id': true,
         'source._id': true,
         'source.name': true,
@@ -568,7 +566,6 @@ export default {
           qualified_name: true,
           schema: true,
           indexes: true,
-          source: true,
           'source.database_uri': true,
           'source.name': true,
           fields: true
@@ -790,7 +787,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .timeToLive-list-wrap {
-  height: 100%;
   .timeToLive-list {
     .search-bar {
       display: flex;

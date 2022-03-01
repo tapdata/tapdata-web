@@ -6,8 +6,8 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '160px'
     },
     defaultModel: {
       connection_type: 'target'
@@ -34,12 +34,17 @@ export default function (vm) {
             value: 'target'
           }
         ],
-        required: true
+        required: true,
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
       },
       {
         type: 'input',
         field: 'database_host',
         label: vm.$t('dataForm.form.host'),
+        tip: vm.$t('connection_form_kudu_host_tip'),
         rules: [
           {
             required: true,
@@ -53,10 +58,10 @@ export default function (vm) {
           }
         ]
       },
-      {
-        type: 'slot',
-        slot: 'kududatabase'
-      },
+      // {
+      //   type: 'slot',
+      //   slot: 'kududatabase'
+      // },
       {
         type: 'input',
         field: 'database_username',

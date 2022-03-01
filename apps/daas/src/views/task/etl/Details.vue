@@ -1,5 +1,5 @@
 <template>
-  <ElContainer v-loading="loading" class="task-details-container flex-column">
+  <ElContainer v-loading="loading" class="task-details-container section-wrap">
     <div class="task-info flex justify-content-between bg-white p-6">
       <div class="task-info__left flex align-items-center">
         <div class="task-info__img flex justify-center align-items-center mr-8">
@@ -47,7 +47,7 @@
               <VIcon size="12">pause-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_stop') }}</span>
             </VButton>
-            <VButton @click="handleEditor(task.id)">
+            <VButton :disabled="editDisabled" @click="handleEditor(task.id)">
               <VIcon size="12">edit-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_edit') }}</span>
             </VButton>
@@ -122,6 +122,11 @@ export default {
           key: 'type',
           icon: 'menu',
           label: '同步类型：'
+        },
+        {
+          key: 'type',
+          icon: 'menu',
+          label: '增量滞后'
         }
       ],
       ouputItems: [
@@ -185,7 +190,14 @@ export default {
       const { statusResult, task } = this
       return (
         this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
-        statusResult.every(t => t.status === 'not_running' && t.count)
+        statusResult.every(t => t.status === 'stop' && t.count)
+      )
+    },
+    editDisabled() {
+      const { statusResult, task } = this
+      return (
+        this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
+        statusResult.every(t => t.status === 'running' && t.count)
       )
     }
   },
@@ -236,6 +248,7 @@ export default {
         .get([id])
         .then(res => {
           this.task = this.formatTask(res.data)
+
           this.getSubTaskStatusCount()
         })
         .finally(() => {
@@ -295,6 +308,7 @@ export default {
         let statusResult = getSubTaskStatus(statuses)
         result.statusResult = statusResult
       }
+      this.statusResult = result.statusResult
       return result
     },
     start(id, resetLoading) {
@@ -478,12 +492,13 @@ export default {
         })
         .then(() => {
           this.task.desc = val
-          this.$message.success(this.$t('gl_button_update_success'))
+          this.$message.success(this.$t('message_update_success'))
         })
         .catch(err => {
           this.$message.error(err.data.message)
         })
     },
+    // 编辑
     handleEditor(id) {
       const h = this.$createElement
       this.$confirm(
@@ -538,6 +553,20 @@ export default {
 .task-info {
   .v-icon {
     color: rgba(132, 175, 255, 1);
+  }
+}
+.sub-task {
+  box-sizing: border-box;
+  overflow: hidden;
+  ::v-deep {
+    .el-tabs__content {
+      flex: 1;
+      overflow: hidden;
+      .el-tab-pane,
+      .subtask-container {
+        height: 100%;
+      }
+    }
   }
 }
 .task-info__right {

@@ -1,8 +1,8 @@
 <template>
   <section class="validation-list-wrap">
     <div class="table-page-operation-bar">
-      <el-button class="btn btn-create" size="mini" @click="openCreateDialog">
-        <i class="iconfont icon-jia add-btn-icon"></i>
+      <el-button type="primary" size="mini" class="btn btn-create" @click="openCreateDialog">
+        <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
         <span>{{ $t('metadata.details.validation.create') }}</span>
       </el-button>
     </div>
@@ -608,7 +608,7 @@ export default {
     .btn-create {
       float: right;
       padding: 7px;
-      background: #f5f5f5;
+      // background: #f5f5f5;
       i.iconfont {
         font-size: 12px;
       }

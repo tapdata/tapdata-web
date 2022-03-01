@@ -713,14 +713,22 @@ export default {
 
     // 打开数据目录数据库
     handDatabase() {
-      let href = '/#/metadataDetails?id=' + this.databaseData[0].id
-      window.open(href)
+      this.$router.push({
+        name: 'metadataDetails',
+        params: {
+          id: this.databaseData[0].id
+        }
+      })
     },
 
     // 跳转到数据目录当前表
     handTableName() {
-      let href = '/#/metadataDetails?id=' + this.model.tableId
-      window.open(href)
+      this.$router.push({
+        name: 'metadataDetails',
+        params: {
+          id: this.model.tableId
+        }
+      })
     },
 
     // 获取数据库id

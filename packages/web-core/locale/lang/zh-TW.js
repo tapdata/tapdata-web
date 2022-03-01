@@ -132,7 +132,8 @@ const tc = {
     roleEdition: 'Tapdata-編輯角色 ',
     systemSettings: 'Tapdata-系統設置',
     account: 'Tapdata-個人設置',
-    settingCenter: 'Tapdata-設置中心'
+    settingCenter: 'Tapdata-設置中心',
+    sharedMining: 'Tapdata-共享挖掘'
   },
   errorCode: {
     networkUnconnected: '網絡未連接',
@@ -269,7 +270,9 @@ const tc = {
       licenseDate: 'License到期時間',
       dataFlowsCustom: '數據同步',
       dataFlowsClusterClone: '數據庫遷移',
-      topology: '網絡拓撲'
+      topology: '網絡拓撲',
+      sharedMining: '共享挖掘',
+      function: '函數管理'
     },
     Home: {
       all: '全部',

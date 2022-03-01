@@ -236,7 +236,7 @@
             <span class="info-label">{{ $t('dataForm.form.mq.mqQueueSet') }}:</span>
             <span class="info-text">{{ stage.mqQueueSet }}</span>
           </div>
-          <div class="info-list" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
+          <div class="info-list" v-if="$getSettingByKey('DFS_TCM_PLATFORM') === 'drs'">
             <span class="info-label">实例地域:</span>
             <span class="info-text">
               {{ stage.platformInfo ? stage.platformInfo.regionName : '' }} |
@@ -428,7 +428,7 @@
         </div>
       </div>
 
-      <div v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'" class="echartlist">
+      <div v-if="$getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'" class="echartlist">
         <EchartHeader :data="screeningObj" @twoRadio="getTwoRadio"></EchartHeader>
         <shaftless-echart
           :sliderBar="sliderBar"
@@ -501,7 +501,7 @@ import i18n from '@/i18n'
 import ws from '../../api/ws'
 import { formatTimeByTime } from '@/utils/util'
 // import _ from "lodash";
-const dataFlows = factory('DataFlows')
+// const dataFlows = factory('DataFlows')
 const connectionApi = factory('connections')
 const DataFlowInsights = factory('DataFlowInsights')
 let currentStageData = null
@@ -1068,20 +1068,16 @@ export default {
 
     // 点击节点跳转到表
     handTableName(data) {
-      if (!window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
-        if (['database', 'tcp_udp'].includes(this.stageType)) {
-          window.open('/#/metadataDetails?id=' + data.connMetadataInstanceId)
-        } else {
-          window.open('/#/metadataDetails?id=' + data.tableMetadataInstanceId)
-        }
+      let id = data.tableMetadataInstanceId
+      if (['database', 'tcp_udp'].includes(this.stageType)) {
+        id = data.connMetadataInstanceId
       }
+      this.$router.push({ name: 'metadataDetails', params: { id } })
     },
 
     // 跳转到所属库
     handDatabaseName(data) {
-      if (!window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')) {
-        window.open('/#/metadataDetails?id=' + data.connMetadataInstanceId)
-      }
+      this.$router.push({ name: 'metadataDetails', params: { id: data.connMetadataInstanceId } })
     },
 
     // 获取节点名称

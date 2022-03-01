@@ -1,13 +1,6 @@
 <template>
-  <section class="data-quality-detail-wrap" v-loading="!showTable">
-    <TablePage
-      v-if="showTable"
-      ref="table"
-      :hideClassify="true"
-      :title="$t('dataQuality.title')"
-      :desc="$t('dataQuality.desc')"
-      :remoteMethod="getDataFromApi"
-    >
+  <section class="data-quality-detail-wrap section-wrap" v-loading="!showTable">
+    <TablePage v-if="showTable" ref="table" :hideClassify="true" :remoteMethod="getDataFromApi">
       <!-- 面包屑 -->
       <div slot="header">
         <a class="page-header-title link" @click="$router.push({ name: 'dataQuality' })">
@@ -973,7 +966,6 @@ export default {
 
 <style lang="scss" scoped>
 .data-quality-detail-wrap {
-  height: 100%;
   .search-bar {
     display: flex;
     li + li {

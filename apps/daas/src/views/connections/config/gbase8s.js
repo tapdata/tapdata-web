@@ -1,8 +1,8 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '160px'
     },
     defaultModel: {
       connection_type: 'source'
@@ -19,12 +19,15 @@ export default function (vm) {
             value: 'source'
           }
         ],
-        required: true
+        require: true,
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
       },
       {
         type: 'input',
         field: 'database_host',
-
         label: vm.$t('dataForm.form.host'),
         rules: [
           {
@@ -90,13 +93,9 @@ export default function (vm) {
         field: 'table_filter',
         domType: 'textarea',
         label: vm.$t('dataForm.form.tableFilter'),
-        //tips: vm.$t('dataForm.form.tableFilterTips'),
+        tip: vm.$t('connection_form_database_owner_tip'),
         maxlength: 500,
         showWordLimit: true
-      },
-      {
-        type: 'slot',
-        slot: 'tableFilter'
       },
       {
         type: 'input',

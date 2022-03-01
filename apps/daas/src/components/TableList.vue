@@ -4,7 +4,9 @@
       <slot name="empty">
         <div class="instance-table__empty" slot="empty">
           <VIcon size="120">no-data-color</VIcon>
-          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
+          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+            {{ $t('dag_dialog_field_mapping_no_data') }}
+          </div>
         </div>
       </slot>
     </div>

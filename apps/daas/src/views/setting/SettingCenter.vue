@@ -1,26 +1,34 @@
 <template>
-  <div class="setting-center">
-    <div class="setting-left-sidebar">
-      <div class="title">{{ $t('account.setCenter') }}</div>
-      <ul>
-        <li :class="activePanel === 'settings' ? 'active' : ''" v-if="authoritySetting" @click="changeName('settings')">
-          <i class="iconfont icon-shezhi1"></i>
-          <span slot="title">{{ this.$t('account.systemSetting') }}</span>
-        </li>
-        <li
-          v-for="item in settingList"
-          :key="item.icon"
-          :class="activePanel === item.key ? 'active' : ''"
-          @click="changeName(item.key)"
-        >
-          <i :class="['iconfont', item.icon]"></i>
-          <VIcon>{{ item.icon }}</VIcon>
-          <span slot="title">{{ item.name }}</span>
-        </li>
-      </ul>
-    </div>
-    <div class="setting-main">
-      <router-view></router-view>
+  <div class="section-wrap">
+    <div class="section-wrap-box">
+      <div class="setting-center">
+        <div class="setting-left-sidebar">
+          <div class="title">{{ $t('account.setCenter') }}</div>
+          <ul>
+            <li
+              :class="activePanel === 'settings' ? 'active' : ''"
+              v-if="authoritySetting"
+              @click="changeName('settings')"
+            >
+              <i class="iconfont icon-shezhi1"></i>
+              <span slot="title">{{ this.$t('account.systemSetting') }}</span>
+            </li>
+            <li
+              v-for="item in settingList"
+              :key="item.icon"
+              :class="activePanel === item.key ? 'active' : ''"
+              @click="changeName(item.key)"
+            >
+              <i :class="['iconfont', item.icon]"></i>
+              <VIcon>{{ item.icon }}</VIcon>
+              <span slot="title">{{ item.name }}</span>
+            </li>
+          </ul>
+        </div>
+        <div class="setting-main">
+          <router-view></router-view>
+        </div>
+      </div>
     </div>
   </div>
 </template>

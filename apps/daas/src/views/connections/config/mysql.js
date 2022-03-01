@@ -2,7 +2,7 @@ export default function (vm) {
   return {
     form: {
       labelPosition: 'left',
-      labelWidth: '180px',
+      labelWidth: '160px',
       labelColon: true
     },
     defaultModel: {
@@ -78,7 +78,6 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_host',
-
         label: vm.$t('dataForm.form.host'),
         rules: [
           {
@@ -143,13 +142,9 @@ export default function (vm) {
         field: 'table_filter',
         domType: 'textarea',
         label: vm.$t('dataForm.form.tableFilter'),
-        //tips: vm.$t('dataForm.form.tableFilterTips'),
+        tip: vm.$t('connection_form_database_owner_tip'),
         maxlength: 500,
         showWordLimit: true
-      },
-      {
-        type: 'slot',
-        slot: 'tableFilter'
       },
       {
         type: 'input',
@@ -160,14 +155,117 @@ export default function (vm) {
         type: 'select',
         field: 'database_datetype_without_timezone',
         label: vm.$t('dataForm.form.timeZone'),
-        //tips: vm.$t('dataForm.form.timeZoneTips'),
+        tip: vm.$t('connection_form_impact_type'),
         options: [],
         show: true
       },
       {
+        type: 'switch',
+        field: 'shareCdcEnable',
+        label: vm.$t('connection_form_shared_mining'),
+        tip: vm.$t('connection_form_shared_mining_tip')
+      },
+      {
+        type: 'switch',
+        field: 'showShareConfig',
+        show: false
+      },
+      {
+        type: 'select',
+        field: 'persistenceMongodb_uri_db',
+        label: vm.$t('share_form_setting_connection_name'),
+        options: [],
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'shareCdcEnable',
+                value: true
+              },
+              {
+                field: 'showShareConfig',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
         type: 'slot',
-        slot: 'timezone',
-        show: true
+        slot: 'shareCdc-tip',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'shareCdcEnable',
+                value: true
+              },
+              {
+                field: 'showShareConfig',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'select',
+        field: 'persistenceMongodb_collection',
+        label: vm.$t('share_form_setting_table_name'),
+        options: [],
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'shareCdcEnable',
+                value: true
+              },
+              {
+                field: 'showShareConfig',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'select',
+        field: 'share_cdc_ttl_day',
+        label: vm.$t('share_form_setting_log_time'),
+        options: [],
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'shareCdcEnable',
+                value: true
+              },
+              {
+                field: 'showShareConfig',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       }
     ]
   }

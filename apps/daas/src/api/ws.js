@@ -4,7 +4,7 @@
  * @description
  */
 import EventEmitter from '../editor/lib/EventEmitter'
-import Cookie from 'tiny-cookie'
+import * as Cookie from 'tiny-cookie'
 import log from '../log'
 import factory from './factory'
 
@@ -189,11 +189,11 @@ class WSClient extends EventEmitter {
   ready(cb, isSendWhenOpen) {
     if (isSendWhenOpen) {
       this.on('opened', cb)
-      if (this.ws.readyState == 1) {
+      if (this.ws?.readyState == 1) {
         cb && cb()
       }
     } else {
-      if (this.ws.readyState == 1) {
+      if (this.ws?.readyState == 1) {
         cb && cb()
       } else {
         setTimeout(() => {

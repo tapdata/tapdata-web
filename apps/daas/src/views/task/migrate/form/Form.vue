@@ -1,6 +1,6 @@
 <template>
-  <ElContainer class="create-task-wrap bg-white" v-if="steps[activeStep]">
-    <ElContainer style="overflow: hidden; flex: 1" class="create-task-container flex-column">
+  <ElContainer class="create-task-wrap section-wrap" v-if="steps[activeStep]">
+    <ElContainer class="create-task-container flex-column table-page-main-box section-wrap-box">
       <div class="steps-header">
         <ElSteps class="primary pb-6" :active="taskStep" process-status="process" finish-status="success" align-center>
           <ElStep title="选择连接"></ElStep>
@@ -34,6 +34,7 @@
               >
               </FormBuilder>
             </div>
+
             <!-- 步骤3 -->
             <div class="body step-3" v-if="steps[activeStep].index === 3">
               <div class="mb-8">
@@ -258,6 +259,7 @@ export default {
     //是否支持双向前提
     getAgentCount() {
       TcmModel.getAgentCount().then(data => {
+        // eslint-disable-next-line
         console.log('getAgentCount', data)
         this.twoWayAgentRunningCount = data.twoWayAgentRunningCount || 0
       })
@@ -900,6 +902,7 @@ export default {
       }
       let promise = DataFlowsModel.getMetadata(data)
       promise.then(data => {
+        // eslint-disable-next-line
         console.log('DataFlowsModel.getMetadata(data)', data)
         this.activeStep += 1
         this.loading = false
@@ -1039,6 +1042,7 @@ export default {
     //获取typeMapping
     async getTypeMapping(row) {
       let data = await TypeMappingModel.getId(row.sinkDbType)
+      // eslint-disable-next-line
       console.log('getTypeMapping', data)
       return data.data
     },
@@ -1095,7 +1099,7 @@ export default {
 .create-task-wrap {
   //padding: 0 20px;
   height: 0;
-  background: rgba(250, 250, 250, 1);
+  background: #eff1f4;
   .step-header {
     display: flex;
     justify-content: center;

@@ -2,7 +2,7 @@
   <section class="page-sign-in">
     <Header></Header>
     <main>
-      <div class="body" :class="{ dk: $window.getSettingByKey('SHOW_OLD_PAGE') }">
+      <div class="body" :class="{ dk: $getSettingByKey('SHOW_OLD_PAGE') }">
         <div class="dk-login-cover">
           <img src="../../assets/images/loginCover_dk.png" />
         </div>
@@ -12,9 +12,7 @@
         <el-card class="sign-in-panel">
           <div class="title">
             {{ $t('app.signIn.signIn') }}
-            <span @click="registry" v-if="$window.getSettingByKey('SHOW_REGISTER')">{{
-              $t('app.signIn.Registration')
-            }}</span>
+            <span @click="registry" v-if="$getSettingByKey('SHOW_REGISTER')">{{ $t('app.signIn.Registration') }}</span>
           </div>
           <div class="error-tips" v-show="errorMessage">
             <i class="el-icon-warning-outline"></i>
@@ -140,10 +138,7 @@ export default {
         this.$cookie.set('isAdmin', parseInt(user.data.role) || 0)
         this.$cookie.set('user_id', data.userId)
         this.$cookie.set('lang', this.langMap[localStorage.getItem('tapdata_localize_lang')] || 'zh-CN')
-        this.$cookie.delete('show_guide')
-        if (!user.data.isCompleteGuide) {
-          this.$cookie.set('show_guide', 1)
-        }
+
         history.go(-1)
         setTimeout(() => {
           location.reload()

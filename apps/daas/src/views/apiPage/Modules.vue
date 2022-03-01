@@ -1,10 +1,9 @@
 <template>
-  <section class="modules-list-wrap">
+  <section class="modules-list-wrap classify-wrap">
     <TablePage
       ref="table"
       row-key="id"
       class="modules-list"
-      :title="$t('app.menu.' + $route.name)"
       :classify="{
         authority: 'API_category_management',
         types: ['api']
@@ -67,7 +66,7 @@
         <el-button size="mini" @click.native="exportFile">{{ $t('modules_export') }}</el-button>
         <el-button size="mini" @click.native="importFile">{{ $t('modules_import') }}</el-button>
         <el-button
-          v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-show="multipleSelection.length > 0"
           v-readonlybtn="'data_catalog_category_application'"
           size="mini"
@@ -82,12 +81,7 @@
           <span>{{ $t('modules_create') }}</span>
         </el-button>
       </div>
-      <el-table-column
-        v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
-        type="selection"
-        width="45"
-        :reserve-selection="true"
-      >
+      <el-table-column v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
       </el-table-column>
       <el-table-column :label="$t('modules_header_api_name')" prop="name" sortable="name"></el-table-column>
       <el-table-column :label="$t('modules_header_tablename')" prop="tablename" sortable="tablename"> </el-table-column>
@@ -287,22 +281,22 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        this.$api('modules').count({ where: JSON.stringify(where) }),
-        this.$api('modules').get({
+      return this.$api('modules')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        this.table.setCache({
-          isFuzzy,
-          keyword,
-          status
+        .then(res => {
+          this.table.setCache({
+            isFuzzy,
+            keyword,
+            status
+          })
+
+          return {
+            total: res.data.count,
+            data: res.data?.items || []
+          }
         })
-        return {
-          total: countRes.data.count,
-          data: res.data
-        }
-      })
     },
     // 获取状态
     getWorkers() {

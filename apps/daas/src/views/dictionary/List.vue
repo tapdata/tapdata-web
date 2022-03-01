@@ -1,13 +1,6 @@
 <template>
-  <section class="dictionary-list-wrap">
-    <TablePage
-      ref="table"
-      row-key="id"
-      class="process-list"
-      :title="$t('app.menu.' + $route.name)"
-      :remoteMethod="getData"
-      @sort-change="handleSortTable"
-    >
+  <section class="dictionary-list-wrap section-wrap">
+    <TablePage ref="table" row-key="id" class="process-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <div slot="search">
         <ul class="search-bar">
           <li>
@@ -49,7 +42,7 @@
           <span v-for="(key, index) in scope.row.typearr" :key="index">{{ key.key }}:{{ key.value }} </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('message.operator')" width="120">
+      <el-table-column :label="$t('column_operation')" width="120">
         <template slot-scope="scope">
           <el-button
             v-readonlybtn="'dictionary'"
@@ -486,8 +479,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .dictionary-list-wrap {
-  height: 100%;
-
   .tapNav {
     height: 28px;
     background-color: rgba(239, 241, 244, 100);
@@ -551,24 +542,6 @@ export default {
 </style>
 <style lang="scss">
 .dictionary-list-wrap {
-  .table-page-container {
-    .table-page-body {
-      box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);
-      .table-page-topbar {
-        padding: 10px 10px 0 10px;
-        background-color: #fff;
-      }
-      .el-table {
-        box-sizing: border-box;
-      }
-      .table-page-pagination {
-        margin-top: 0;
-        padding: 5px 20px;
-        background-color: #fff;
-        box-sizing: border-box;
-      }
-    }
-  }
   .el-form {
     .el-form-item {
       margin-bottom: 5px;

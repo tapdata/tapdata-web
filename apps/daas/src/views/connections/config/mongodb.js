@@ -2,7 +2,7 @@ export default function (vm) {
   return {
     form: {
       labelPosition: 'left',
-      labelWidth: '180px'
+      labelWidth: '160px'
     },
     defaultModel: {
       connection_type: 'source_and_target',
@@ -32,7 +32,11 @@ export default function (vm) {
             value: 'target'
           }
         ],
-        required: true
+        required: true,
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
       },
       {
         type: 'radio',
@@ -83,7 +87,11 @@ export default function (vm) {
             byValue: true,
             value: ''
           }
-        ]
+        ],
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
       },
       {
         type: 'input',
@@ -113,7 +121,6 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_host',
-
         label: vm.$t('dataForm.form.host'),
         placeholder: vm.$t('dataForm.form.databaseHostPlaceholder'),
         rules: [
@@ -249,7 +256,11 @@ export default function (vm) {
             byValue: true,
             value: ''
           }
-        ]
+        ],
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
       },
       {
         type: 'file',
@@ -376,13 +387,117 @@ export default function (vm) {
         field: 'table_filter',
         domType: 'textarea',
         label: vm.$t('dataForm.form.tableFilter'),
-        //tips: vm.$t('dataForm.form.tableFilterTips'),
+        tip: vm.$t('connection_form_impact_type'),
         maxlength: 500,
         showWordLimit: true
       },
       {
+        type: 'switch',
+        field: 'shareCdcEnable',
+        label: vm.$t('connection_form_shared_mining'),
+        tip: vm.$t('connection_form_shared_mining_tip')
+      },
+      {
+        type: 'switch',
+        field: 'showShareConfig',
+        show: false
+      },
+      {
+        type: 'select',
+        field: 'persistenceMongodb_uri_db',
+        label: vm.$t('share_form_setting_connection_name'),
+        options: [],
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'shareCdcEnable',
+                value: true
+              },
+              {
+                field: 'showShareConfig',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
         type: 'slot',
-        slot: 'tableFilter'
+        slot: 'shareCdc-tip',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'shareCdcEnable',
+                value: true
+              },
+              {
+                field: 'showShareConfig',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'select',
+        field: 'persistenceMongodb_collection',
+        label: vm.$t('share_form_setting_table_name'),
+        options: [],
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'shareCdcEnable',
+                value: true
+              },
+              {
+                field: 'showShareConfig',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'select',
+        field: 'share_cdc_ttl_day',
+        label: vm.$t('share_form_setting_log_time'),
+        options: [],
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'shareCdcEnable',
+                value: true
+              },
+              {
+                field: 'showShareConfig',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       }
     ]
   }

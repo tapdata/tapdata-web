@@ -2,12 +2,12 @@
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
       <main class="connection-from-main">
-        <div class="connection-from-title" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+        <div class="connection-from-title" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
           {{
             $route.params.id ? this.$t('connection_form_edit_connection') : this.$t('connection_form_creat_connection')
           }}
         </div>
-        <!-- <header class="header" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+        <!-- <header class="header" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
           {{ $route.params.id ? $t('connection_form_edit_connection') : $t('connection_form_creat_connection') }}
         </header> -->
         <!-- <div class="databaseFrom-body">
@@ -41,13 +41,13 @@
                   {{ $t('connection.change') }}
                 </div>
               </div>
-              <div class="tip" v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')">
+              <div class="tip" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
                     {{ $t('dataForm.form.guide') }}
                     <a class="color-primary" target="_blank" href="https://docs.tapdata.net/data-source">{{
                       $t('dataForm.form.guideDoc')
                     }}</a>
                   </div>
-                  <div class="tip" v-if="$window.getSettingByKey('DFS_TCM_PLATFORM')">
+                  <div class="tip" v-if="$getSettingByKey('DFS_TCM_PLATFORM')">
                     请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
                   </div>
             </div> -->
@@ -65,9 +65,16 @@
               <div class="url-tip" slot="name" v-if="!$route.params.id">
                 中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
               </div>
-              <div class="url-tip" slot="kududatabase">
-                {{ $t('dataForm.form.kuduhost') }}
+              <div class="url-tip" slot="shareCdc-tip" v-if="mongodbList.length === 0 && model.showShareConfig">
+                <el-link type="primary" target="_blank" href="#/connections/create?databaseType=mongodb"
+                  >请先创建mongodb数据源</el-link
+                >
+                /
+                <span class="refresh" @click="getMongodb"> 刷新数据 <VIcon class="font-color-sub">refresh</VIcon></span>
               </div>
+              <!-- <div class="url-tip" slot="kududatabase">
+                {{ $t('dataForm.form.kuduhost') }}
+              </div> -->
               <div class="url-tip" slot="ecsList" v-if="model.sourceType === 'ecs'">
                 <el-select
                   v-model="model.ecs"
@@ -99,34 +106,34 @@
                 </span>
               </div>
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
-              <div class="url-tip" slot="tableFilter">
+              <!-- <div class="url-tip" slot="tableFilter">
                 {{ $t('connection_form_database_owner_tip') }}
-              </div>
-              <div class="url-tip" slot="timezone">
+              </div> -->
+              <!-- <div class="url-tip" slot="timezone">
                 {{ $t('dataForm.form.timeZoneTips') }}
-              </div>
-              <div class="url-tip" slot="kafkaUri">
+              </div> -->
+              <!-- <div class="url-tip" slot="kafkaUri">
                 {{ $t('dataForm.form.kafka.hostPlaceHolder') }}
-              </div>
-              <div class="url-tip" slot="lonoreFormatTip">
+              </div> -->
+              <!-- <div class="url-tip" slot="lonoreFormatTip">
                 {{ $t('dataForm.form.kafka.lonoreFormatTip') }}
-              </div>
-              <div class="url-tip" slot="pushErrorTip">
+              </div> -->
+              <!-- <div class="url-tip" slot="pushErrorTip">
                 {{ $t('dataForm.form.kafka.pushErrorTip') }}
-              </div>
+              </div> -->
 
-              <div class="url-tip" slot="queueTip" v-if="model.mqType !== '2'">
+              <!-- <div class="url-tip" slot="queueTip" v-if="model.mqType !== '2'">
                 {{ $t('dataForm.form.mq.queueSetTip') }}
-              </div>
-              <div class="url-tip" slot="topicTip" v-if="model.mqType !== '1'">
+              </div> -->
+              <!-- <div class="url-tip" slot="topicTip" v-if="model.mqType !== '1'">
                 {{ $t('dataForm.form.mq.topicSetTip') }}
-              </div>
-              <div class="url-tip" slot="brokerUrlTip" v-if="model.mqType === '0'">
+              </div> -->
+              <!-- <div class="url-tip" slot="brokerUrlTip" v-if="model.mqType === '0'">
                 {{ $t('dataForm.form.mq.brokerUrlTip') }}
-              </div>
-              <div class="url-tip" slot="file_schema_tip">
+              </div> -->
+              <!-- <div class="url-tip" slot="file_schema_tip">
                 <div>{{ $t('dataForm.form.gridfs.file_schema_tip') }}</div>
-              </div>
+              </div> -->
               <!-- rest api -->
               <div class="url-tip" slot="req_pre_process">
                 <div>function request_process(url, headers, request_params, offset) {</div>
@@ -528,7 +535,7 @@
           </div>
         </footer>
       </main>
-      <GitBook v-if="!$window.getSettingByKey('DFS_TCM_PLATFORM')"></GitBook>
+      <GitBook v-if="!$getSettingByKey('DFS_TCM_PLATFORM')"></GitBook>
       <!-- </div>
       </main> -->
     </div>
@@ -646,43 +653,47 @@ export default {
       createStrategyDisabled: false,
       timezones: [],
       dataTypes: [],
-      whiteList: [
-        'mysql',
-        'oracle',
-        'mongodb',
-        'sqlserver',
-        'postgres',
-        'elasticsearch',
-        'redis',
-        'file',
-        'db2',
-        'kafka',
-        'mariadb',
-        'mysql pxc',
-        // 'jira',
-        'mq',
-        'dameng',
-        'gbase-8s',
-        'sybase ase',
-        'gaussdb200',
-        'dummy db',
-        'rest api',
-        'custom_connection',
-        'gridfs',
-        'hive',
-        'tcp_udp',
-        'hbase',
-        'kudu',
-        'greenplum',
-        'tidb',
-        'hana',
-        'clickhouse',
-        'kundb',
-        'adb_postgres',
-        'adb_mysql',
-        'vika',
-        'hazelcast_cloud_cluster'
-      ],
+      logSaveList: [1, 2, 3, 4, 5, 6, 7],
+      mongodbList: [],
+      showSystemConfig: false,
+      tableList: [], //共享挖掘
+      // whiteList: [
+      //   'mysql',
+      //   'oracle',
+      //   'mongodb',
+      //   'sqlserver',
+      //   'postgres',
+      //   'elasticsearch',
+      //   'redis',
+      //   'file',
+      //   'db2',
+      //   'kafka',
+      //   'mariadb',
+      //   'mysql pxc',
+      //   // 'jira',
+      //   'mq',
+      //   'dameng',
+      //   'gbase-8s',
+      //   'sybase ase',
+      //   'gaussdb200',
+      //   'dummy db',
+      //   'rest api',
+      //   'custom_connection',
+      //   'gridfs',
+      //   'hive',
+      //   'tcp_udp',
+      //   'hbase',
+      //   'kudu',
+      //   'greenplum',
+      //   'tidb',
+      //   'hana',
+      //   'clickhouse',
+      //   'kundb',
+      //   'adb_postgres',
+      //   'adb_mysql',
+      //   'vika',
+      //   'hazelcast_cloud_cluster'
+      // ],
       model: '',
       config: {
         items: []
@@ -933,6 +944,17 @@ export default {
       if (filed === 'plain_password' && this.model.database_type === 'vika') {
         this.getSpaceVika()
       }
+      //共享挖掘
+      if (filed === 'shareCdcEnable') {
+        //请求是否有全局共享挖掘配置
+        this.check()
+        //日志时长
+        this.changeConfig([], 'logSaveList')
+      }
+      if (filed === 'persistenceMongodb_uri_db') {
+        //请求是否有全局共享挖掘配置
+        this.handleTables()
+      }
     },
     async initData(data) {
       let editData = null
@@ -1039,6 +1061,68 @@ export default {
           }
         })
     },
+    // 共享挖掘设置
+    check() {
+      this.$api('logcollector')
+        .check()
+        .then(res => {
+          if (res) {
+            let result = res?.data?.data
+            if (result) {
+              this.showSystemConfig = true
+              this.getMongodb()
+              //打开全局设置
+            }
+          }
+        })
+    },
+    //获取所有mongo连接
+    getMongodb() {
+      let filter = {
+        where: {
+          database_type: 'mongodb'
+        }
+      }
+      this.$api('connections')
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          if (res) {
+            this.mongodbList = res?.data?.items
+            this.changeConfig([], 'mongodbList')
+            this.model.showShareConfig = true
+          }
+        })
+    },
+    //根据已选connectionId->tables
+    handleTables() {
+      this.$api('connections')
+        .customQuery(this.model.persistenceMongodb_uri_db, { schema: true })
+        .then(res => {
+          if (res) {
+            this.tableList = res?.data?.schema?.tables || []
+            this.changeConfig([], 'tableList')
+          }
+        })
+    },
+    //保存全局挖掘设置
+    saveSetting() {
+      let digSettingForm = {
+        persistenceMongodb_uri_db: this.model.persistenceMongodb_uri_db,
+        persistenceMongodb_collection: this.model.persistenceMongodb_collection,
+        share_cdc_ttl_day: this.model.share_cdc_ttl_day
+      }
+      this.$api('logcollector')
+        .patchSystemConfig(digSettingForm)
+        .then(res => {
+          if (res) {
+            this.settingDialogVisible = false
+            this.$message.success('保存全局设置成功')
+          }
+        })
+    },
+
     //rest api addUrl
     addUrlInfo(type) {
       let urlInfo = {
@@ -1283,6 +1367,53 @@ export default {
           }
           break
         }
+        //共享挖掘
+        case 'mongodbList': {
+          //映射可用区
+          let persistenceMongodb_uri_db = items.find(it => it.field === 'persistenceMongodb_uri_db')
+          if (persistenceMongodb_uri_db) {
+            persistenceMongodb_uri_db.show = true
+            persistenceMongodb_uri_db.options = this.mongodbList.map(item => {
+              return {
+                id: item.id,
+                name: item.name,
+                label: item.name,
+                value: item.id
+              }
+            })
+          }
+          break
+        }
+        case 'tableList': {
+          //映射可用区
+          let persistenceMongodb_collection = items.find(it => it.field === 'persistenceMongodb_collection')
+          if (persistenceMongodb_collection) {
+            persistenceMongodb_collection.show = true
+            persistenceMongodb_collection.options = this.tableList.map(item => {
+              return {
+                id: item.tableId,
+                name: item.table_name,
+                label: item.table_name,
+                value: item.table_name
+              }
+            })
+          }
+          break
+        }
+        case 'logSaveList': {
+          let share_cdc_ttl_day = items.find(it => it.field === 'share_cdc_ttl_day')
+          if (share_cdc_ttl_day) {
+            share_cdc_ttl_day.options = this.logSaveList.map(item => {
+              return {
+                id: item,
+                name: item + this.$t('share_form_edit_day'),
+                label: item + this.$t('share_form_edit_day'),
+                value: item
+              }
+            })
+          }
+          break
+        }
       }
     },
     handleTestVisible() {
@@ -1488,6 +1619,14 @@ export default {
       // }
       this.$refs.form.validate(valid => {
         if (valid && flag) {
+          //提交全局挖掘设置
+          if (this.showSystemConfig) {
+            this.saveSetting()
+          } else {
+            delete this.model.persistenceMongodb_uri_db
+            delete this.model.persistenceMongodb_collection
+            delete this.model.share_cdc_ttl_day
+          }
           let params = Object.assign(
             {},
             {
@@ -1703,18 +1842,13 @@ export default {
     },
     handleDatabaseType(type) {
       this.dialogDatabaseTypeVisible = false
-      if (this.whiteList.includes(type)) {
-        this.$router.push({
-          name: 'connectionsOldCreate',
-          query: {
-            databaseType: type
-          }
-        })
-        location.reload()
-      } else {
-        top.location.href = '/#/connection'
-        localStorage.setItem('connectionDatabaseType', type)
-      }
+      this.$router.push({
+        name: 'connectionsCreate',
+        query: {
+          databaseType: type
+        }
+      })
+      location.reload()
     },
     // 文件类型添加文件路径
     addPathRow() {
@@ -1770,11 +1904,14 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding: 0 20px 20px 20px;
   overflow: hidden;
+  background-color: #eff1f4;
   .connection-from-body {
     display: flex;
     flex: 1;
     padding-left: 24px;
+    border-radius: 4px;
     overflow: hidden;
     background: #fff;
     .connection-from-main {
@@ -1800,7 +1937,7 @@ export default {
           margin-right: 4px;
         }
         .label {
-          width: 180px;
+          width: 160px;
           font-size: 12px;
           color: #606266;
         }
@@ -1859,6 +1996,11 @@ export default {
                     font-size: 12px;
                     font-weight: 400;
                     color: map-get($fontColor, slight);
+                  }
+                }
+                .fb-radio-group {
+                  .el-radio--mini.is-bordered {
+                    padding-top: 0;
                   }
                 }
               }

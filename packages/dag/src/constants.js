@@ -15,7 +15,9 @@ export const DEFAULT_SETTINGS = {
   increaseSyncInterval: 500, // 增量同步间隔(ms)
   readBatchSize: 100, // 每次读取行数
   processorThreadNum: 1, // 处理器线程数
-  shareCdcEnable: false //开启共享挖掘
+  shareCdcEnable: false, //开启共享挖掘
+  isSchedule: false,
+  cronExpression: ' '
 
   // readBatchSize: 100,
   // notificationWindow: 0,

@@ -57,7 +57,7 @@ export default {
           break
         case 'notification':
           this.$router.push({
-            path: '/notification/setting'
+            name: 'notificationSetting'
           })
           break
         case 'account':

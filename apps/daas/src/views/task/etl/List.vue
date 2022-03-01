@@ -1,5 +1,5 @@
 <template>
-  <section class="data-flow-wrap" v-loading="restLoading">
+  <section class="data-flow-wrap classify-wrap" v-loading="restLoading">
     <TablePage
       ref="table"
       row-key="id"
@@ -15,7 +15,8 @@
       @sort-change="handleSortTable"
     >
       <template slot="search">
-        <ul class="search-bar">
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+        <!-- <ul class="search-bar">
           <li>
             <ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
               <ElOption :label="$t('dataFlow.status.all')" value=""></ElOption>
@@ -74,11 +75,11 @@
               <i class="el-icon-refresh"></i>
             </ElButton>
           </li>
-        </ul>
+        </ul> -->
       </template>
       <div class="buttons" slot="operation">
         <el-button
-          v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'SYNC_category_application'"
           size="small"
           class="btn"
@@ -115,16 +116,15 @@
             }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button v-readonlybtn="'SYNC_Function_management'" size="small" class="btn" @click="handleGoFunction">
+        <!-- <el-button v-readonlybtn="'SYNC_Function_management'" size="small" class="btn" @click="handleGoFunction">
           <i class="iconfont icon-hanshu back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkFx') }}</span>
-        </el-button>
+        </el-button> -->
         <el-button v-readonlybtn="'SYNC_job_import'" size="small" class="btn" @click="handleImport">
           <i class="iconfont icon-daoru back-btn-icon"></i>
           <span> {{ $t('dataFlow.bulkImport') }}</span>
         </el-button>
         <el-button
-          v-if="!$window.getSettingByKey('DFS_CREATE_DATAFLOW_BY_FORM')"
           v-readonlybtn="'SYNC_job_creation'"
           class="btn btn-create"
           type="primary"
@@ -132,17 +132,6 @@
           @click="create"
         >
           <i class="iconfont icon-jia add-btn-icon"></i>
-        </el-button>
-        <el-button
-          v-else
-          v-readonlybtn="'SYNC_job_creation'"
-          class="btn btn-create"
-          type="primary"
-          size="small"
-          @click="creatText"
-        >
-          <i class="iconfont icon-jia add-btn-icon"></i>
-          {{ $t('task_create_task') }}
         </el-button>
       </div>
 
@@ -153,7 +142,7 @@
       >
       </el-table-column>
 
-      <el-table-column min-width="200" :label="$t('dataFlow.taskName')" :show-overflow-tooltip="true">
+      <el-table-column min-width="200" :label="$t('task_list_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name">
             <span :class="['name', { 'has-children': row.hasChildren }]" @click="toDetail(row)">{{ row.name }}</span>
@@ -163,26 +152,33 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('dataFlow.syncType')" min-width="150">
+      <el-table-column :label="$t('task_list_task_type')" min-width="150">
         <template #default="{ row }">
           <span>
             {{ row.type ? syncType[row.type] : '' }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column>
-      <el-table-column prop="status" :label="$t('dataFlow.taskStatus')" width="180">
+      <!-- <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column> -->
+      <el-table-column prop="status" :label="$t('task_list_status')" width="180">
         <template #default="{ row }">
           <StatusItem :value="row.statusResult"></StatusItem>
         </template>
       </el-table-column>
 
-      <el-table-column prop="startTime" :label="$t('dataFlow.creationTime')" width="170" sortable="custom">
+      <el-table-column
+        prop="lag"
+        :label="$t('task_list_execution_status')"
+        width="180"
+        sortable="custom"
+      ></el-table-column>
+
+      <el-table-column prop="startTime" :label="$t('task_list_start_time')" width="170" sortable="custom">
         <template #default="{ row }">
           {{ row.startTime ? $moment(row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('dataFlow.operate')" width="280" fixed="right">
+      <el-table-column :label="$t('column_operation')" width="280" fixed="right">
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
@@ -224,7 +220,7 @@
             >
               {{ $t('button.edit') }}
             </ElLink>
-            <ElLink
+            <!-- <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               style="margin-left: 10px"
               type="primary"
@@ -235,8 +231,8 @@
               "
               @click="handleTaskscheduling(row.id, row)"
             >
-              {{ $t('dataFlow.schedule') }}
-            </ElLink>
+              {{ $t('task_list_button_schedule') }}
+            </ElLink> -->
             <el-dropdown
               v-show="moreAuthority"
               size="small"
@@ -274,7 +270,7 @@
                 </el-dropdown-item>
                 <el-dropdown-item
                   command="setTag"
-                  v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+                  v-if="$getSettingByKey('SHOW_CLASSIFY')"
                   v-readonlybtn="'SYNC_category_application'"
                 >
                   {{ $t('dataFlow.addTag') }}
@@ -340,7 +336,8 @@ import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
 import DownAgent from '../../downAgent/agentDown'
 import TablePage from '@/components/TablePage'
-import VIcon from '@/components/VIcon'
+import FilterBar from '@/components/filter-bar'
+// import VIcon from '@/components/VIcon'
 import StatusItem from './StatusItem'
 import { ETL_STATUS_MAP } from '@/const'
 import { getSubTaskStatus } from './util'
@@ -348,9 +345,10 @@ import { getSubTaskStatus } from './util'
 let interval = null
 export default {
   name: 'TaskList',
-  components: { TablePage, DownAgent, SkipError, VIcon, StatusItem },
+  components: { FilterBar, TablePage, DownAgent, SkipError, StatusItem },
   data() {
     return {
+      filterItems: [],
       restLoading: false,
       searchParams: {
         keyword: '',
@@ -424,20 +422,23 @@ export default {
       return this.$refs.table
     },
     statusOptions() {
-      let options = {}
+      let options = [{ label: this.$t('task_list_status_all'), value: '' }]
+      // let op = {}
       let map = ETL_STATUS_MAP
       for (const key in map) {
         const item = map[key]
-        let value = key
-        if (options[item.text]) {
-          value = options[item.text] + ',' + value
-        }
-        options[item.text] = value
+        options.push({ label: item.text, value: key })
+        // let value = key
+        // if (options[item.text]) {
+        //   value = options[item.text] + ',' + value
+        // }
+        // options[item.text] = value
       }
       return options
     }
   },
   created() {
+    this.getFilterItems()
     let { status } = this.$route.query
     this.searchParams.status = status ?? ''
     ws.on('watch', this.dataflowChange)
@@ -505,9 +506,14 @@ export default {
           }
         }
       }
-      ws.ready(() => {
-        ws.send(msg)
-      }, true)
+      try {
+        ws.ready(() => {
+          ws.send(msg)
+        }, true)
+      } catch (e) {
+        // eslint-disable-next-line
+        console.log('e', e)
+      }
     },
     reset() {
       this.searchParams = {
@@ -559,7 +565,7 @@ export default {
         }
       }
       region && (where['platformInfo.region'] = region)
-      syncType && (where['setting.sync_type'] = syncType)
+      syncType && (where['type'] = syncType)
       if (executionStatus) {
         if (executionStatus === 'Lag') {
           // where['stats.stagesMetrics'] = {
@@ -605,7 +611,7 @@ export default {
           where.status = status
         }
       }
-      progress && (where['setting.sync_type'] = progress)
+      progress && (where['type'] = progress)
       let filter = {
         order: this.order,
         limit: size,
@@ -738,11 +744,6 @@ export default {
         name: 'DataflowNew'
       })
     },
-    async creatText() {
-      this.$router.push({
-        name: 'createTask'
-      })
-    },
     handleEditor(id) {
       const h = this.$createElement
       this.$confirm(
@@ -788,7 +789,11 @@ export default {
     },
     handleImport() {
       let routeUrl = this.$router.resolve({
-        path: '/upload?type=dataflow'
+        // path: '/upload?type=dataflow'
+        name: 'upload',
+        query: {
+          type: 'dataflow'
+        }
       })
       window.open(routeUrl.href, '_blank')
     },
@@ -1132,7 +1137,7 @@ export default {
     handleGoFunction() {
       // top.location.href = '/#/JsFuncs'
       this.$router.push({
-        name: 'Function'
+        name: 'function'
       })
     },
     toDetail(row) {
@@ -1167,6 +1172,43 @@ export default {
       return !data
         .filter(t => t.count > 0)
         .every(t => ['edit', 'draft', 'error', 'pause', 'not_running', 'stop'].includes(t.status))
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: this.$t('task_list_status'),
+          key: 'status',
+          type: 'select-inner',
+          items: this.statusOptions,
+          selectedWidth: '200px'
+        },
+        {
+          label: this.$t('task_list_sync_type'),
+          key: 'progress',
+          type: 'select-inner',
+          items: this.progressOptions
+        },
+        {
+          label: this.$t('task_list_execution_status'),
+          key: 'executionStatus',
+          type: 'select-inner',
+          menuMinWidth: '250px',
+          items: async () => {
+            let option = ['initializing', 'cdc', 'initialized', 'Lag']
+            return option.map(item => {
+              return {
+                label: this.$t('task_list_status_' + item),
+                value: item
+              }
+            })
+          }
+        },
+        {
+          placeholder: this.$t('task_list_search_placeholder'),
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     }
   }
 }

@@ -2,7 +2,7 @@
   <el-popover placement="bottom" trigger="hover" @show="activeTab = 'system'">
     <div class="btn" slot="reference" @click="toCenter()">
       <el-badge class="item-badge" :value="unRead" :max="99" :hidden="!unRead">
-        <VIcon>bells</VIcon>
+        <VIcon>xiaoxi-2</VIcon>
       </el-badge>
     </div>
     <el-tabs stretch class="notification-popover-wrap" v-model="activeTab" type="border-card" @tab-click="tabHandler">

@@ -6,8 +6,8 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '160px'
     },
     defaultModel: {
       connection_type: 'source_and_target'
@@ -54,7 +54,11 @@ export default function (vm) {
             value: 'target'
           }
         ],
-        required: true
+        required: true,
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
       },
 
       {
@@ -62,6 +66,7 @@ export default function (vm) {
         field: 'mqTopicSet',
         show: true,
         label: vm.$t('connection_form_mq_topic_set'),
+        tip: vm.$t('connection_form_mq_topic_tip'),
         required: true,
         dependOn: [
           {
@@ -100,15 +105,12 @@ export default function (vm) {
         ]
       },
       {
-        type: 'slot',
-        slot: 'topicTip'
-      },
-      {
         type: 'input',
         field: 'mqQueueSet',
         label: vm.$t('connection_form_mq_queue_set'),
         show: true,
         required: false,
+        tip: vm.$t('connection_form_mq_queue_tip'),
         dependOn: [
           {
             triggerOptions: [
@@ -135,15 +137,12 @@ export default function (vm) {
         ]
       },
       {
-        type: 'slot',
-        slot: 'queueTip'
-      },
-      {
         type: 'input',
         field: 'brokerURL',
         label: vm.$t('connection_form_mq_broker_url'),
         required: true,
         show: false,
+        tip: vm.$t('connection_form_mq_broker_url_tip'),
         dependOn: [
           {
             triggerOptions: [
@@ -157,10 +156,6 @@ export default function (vm) {
             }
           }
         ]
-      },
-      {
-        type: 'slot',
-        slot: 'brokerUrlTip'
       },
       {
         type: 'input',

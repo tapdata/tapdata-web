@@ -1,103 +1,106 @@
 <template>
-  <section class="setting-list-wrap">
-    <el-form :model="formData" class="e-form" label-position="top">
-      <div v-for="(item, index) in formData.items" :key="index" class="item">
-        <template v-if="item.category !== 'license'">
-          <span class="title">{{ $t('setting.' + item.category) }}</span>
-          <span class="btns" v-if="item.category === 'SMTP'">
-            <a @click="checkTemplate()">{{ $t('setting.email_template') }}</a>
-            <a @click="connectAndTest()">{{ $t('setting.connect_and_test') }}</a>
-          </span>
-        </template>
+  <section class="setting-list-wrap section-wrap">
+    <div class="section-wrap-box">
+      <el-form :model="formData" class="e-form" label-position="top">
+        <div v-for="(item, index) in formData.items" :key="index" class="item">
+          <template v-if="item.category !== 'license'">
+            <span class="title">{{ $t('setting_' + item.category) }}</span>
+            <span class="btns" v-if="item.category === 'SMTP'">
+              <a @click="checkTemplate()">{{ $t('setting_email_template') }}</a>
+              <a @click="connectAndTest()">{{ $t('setting_connect_and_test') }}</a>
+            </span>
+          </template>
 
-        <div class="box" v-for="(childItem, childIndex) in item.items" :key="childIndex">
-          <div v-if="item.category === 'license'">
-            <div class="license" v-for="(licenseItem, licenseIndex) in item.liceseItems" :key="licenseIndex">
-              <div>{{ $t('setting.nameserver') }}: {{ licenseItem.hostname }}</div>
-              <!--authorization報錯 隱藏到期時間-->
-              <!-- <div>
-                {{ $t('setting.expiredate') }}:
+          <div class="box" v-for="(childItem, childIndex) in item.items" :key="childIndex">
+            <div v-if="item.category === 'license'">
+              <div class="license" v-for="(licenseItem, licenseIndex) in item.liceseItems" :key="licenseIndex">
+                <div>{{ $t('setting_nameserver') }}: {{ licenseItem.hostname }}</div>
+                <!--authorization報錯 隱藏到期時間-->
+                <!-- <div>
+                {{ $t('setting_expiredate') }}:
                 {{
                   licenseItem.authorization ? $moment(licenseItem.authorization.validity_period.expires_on || '') : ''
                 }}
               </div> -->
+              </div>
+
+              <el-button @click="importlicense(licenseItem)">{{ $t('setting_import') }}</el-button>
+              <el-button @click="hrefApply(licenseItem)">{{ $t('setting_apply') }}</el-button>
             </div>
 
-            <el-button @click="importlicense(licenseItem)">{{ $t('setting.import') }}</el-button>
-            <el-button @click="hrefApply(licenseItem)">{{ $t('setting.apply') }}</el-button>
+            <el-row v-else>
+              <el-col :span="24">
+                <el-form-item>
+                  <span slot="label">
+                    <span>{{
+                      $t('setting_' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label
+                    }}</span>
+                    <el-tooltip effect="dark" placement="top" v-if="childItem.documentation">
+                      <div style="max-width: 300px" slot="content">
+                        {{
+                          $t(
+                            'setting_' +
+                              (childItem.documentation || '')
+                                .split('/')
+                                .join('_')
+                                .split(',')
+                                .join('_')
+                                .split(':')
+                                .join('_')
+                                .split('，')
+                                .join('_')
+                                .split('"')
+                                .join('_')
+                                .split(' ')
+                                .join('_')
+                                .split('(')
+                                .join('_')
+                                .split(')')
+
+                                .join('_')
+                                .split('.')
+                                .join('_')
+                          )
+                        }}
+                      </div>
+                      <span
+                        class="icon iconfont icon-tishi1"
+                        style="vertical-align: bottom; padding-left: 10px; font-size: 18px"
+                      ></span>
+                    </el-tooltip>
+                  </span>
+                  <el-input
+                    v-if="!childItem.enums || childItem.enums.length === 0"
+                    :type="childItem.key.match(/password/) ? 'password' : 'text'"
+                    v-model="childItem.value"
+                    :disabled="item.category === 'license'"
+                    :mask="childItem.mask"
+                    size="mini"
+                    :label="$t('setting_' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label"
+                  >
+                  </el-input>
+
+                  <el-select v-else v-model="childItem.value" size="mini">
+                    <el-option
+                      v-for="options in childItem.enums"
+                      :key="options"
+                      :value="options"
+                      :label="options"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </div>
-
-          <el-row v-else>
-            <el-col :span="24">
-              <el-form-item>
-                <span slot="label">
-                  <span>{{
-                    $t('setting.' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label
-                  }}</span>
-                  <el-tooltip effect="dark" placement="top" v-if="childItem.documentation">
-                    <div style="max-width: 300px" slot="content">
-                      {{
-                        $t(
-                          'setting.' +
-                            (childItem.documentation || '')
-                              .split('/')
-                              .join('_')
-                              .split(',')
-                              .join('_')
-                              .split(':')
-                              .join('_')
-                              .split('，')
-                              .join('_')
-                              .split('"')
-                              .join('_')
-                              .split(' ')
-                              .join('_')
-                              .split('(')
-                              .join('_')
-                              .split(')')
-
-                              .join('_')
-                              .split('.')
-                              .join('_')
-                        )
-                      }}
-                    </div>
-                    <span
-                      class="icon iconfont icon-tishi1"
-                      style="vertical-align: bottom; padding-left: 10px; font-size: 18px"
-                    ></span>
-                  </el-tooltip>
-                </span>
-                <el-input
-                  v-if="!childItem.enums || childItem.enums.length === 0"
-                  :type="childItem.key.match(/password/) ? 'password' : 'text'"
-                  v-model="childItem.value"
-                  :disabled="item.category === 'license'"
-                  :mask="childItem.mask"
-                  size="mini"
-                  :label="$t('setting.' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label"
-                >
-                </el-input>
-
-                <el-select v-else v-model="childItem.value" size="mini">
-                  <el-option
-                    v-for="options in childItem.enums"
-                    :key="options"
-                    :value="options"
-                    :label="options"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
         </div>
-      </div>
-      <div class="footer">
-        <el-button @click="save" size="mini" type="primary">保存</el-button>
-      </div>
-    </el-form>
+        <div class="footer">
+          <el-button @click="save" size="mini" type="primary">保存</el-button>
+        </div>
+      </el-form>
+    </div>
+
     <el-dialog
-      :title="$t('setting.email_template')"
+      :title="$t('setting_email_template')"
       :close-on-click-modal="false"
       custom-class="dialog-email-template"
       :visible.sync="emailTemplateDialog"
@@ -119,15 +122,15 @@
         <el-col :span="18">
           <div class="settings-email-template">
             <p>
-              {{ $t('setting.email_template_from') }} :
+              {{ $t('setting_email_template_from') }} :
               {{ SMTP['Email_Send_Address'] }}
             </p>
             <p>
-              {{ $t('setting.email_template_to') }} :
+              {{ $t('setting_email_template_to') }} :
               {{ SMTP['Email_Receivers'] }}
             </p>
             <p>
-              {{ $t('setting.email_template_subject') }} : {{ SMTP['Send_Email_Title_Prefix'] }} Tapdata Notification:
+              {{ $t('setting_email_template_subject') }} : {{ SMTP['Send_Email_Title_Prefix'] }} Tapdata Notification:
               <span v-show="activeTab <= 4">Job {{ emailTabs[activeTab].status }}</span>
               <span v-show="activeTab > 4">DDL Warn, please perform DDL operation manually.</span>
             </p>
@@ -181,26 +184,26 @@ export default {
       activeTab: 0,
       emailTabs: [
         {
-          label: this.$t('setting.Email_Template_Running'),
+          label: this.$t('setting_Email_Template_Running'),
           status: 'running'
         },
         {
-          label: this.$t('setting.Email_Template_Paused'),
+          label: this.$t('setting_Email_Template_Paused'),
           status: 'paused'
         },
         {
-          label: this.$t('setting.Email_Template_Error'),
+          label: this.$t('setting_Email_Template_Error'),
           status: 'error'
         },
         {
-          label: this.$t('setting.Email_Template_Draft'),
+          label: this.$t('setting_Email_Template_Draft'),
           status: 'draft'
         },
         {
-          label: this.$t('setting.Email_Template_CDC'),
+          label: this.$t('setting_Email_Template_CDC'),
           status: 'CDC Lag'
         },
-        { label: this.$t('setting.Email_Template_DDL') }
+        { label: this.$t('setting_Email_Template_DDL') }
       ]
     }
   },
@@ -228,7 +231,6 @@ export default {
     deep: true,
     formData: {
       handler(value) {
-        console.log('########', value)
         this.formData = value
       }
     }
@@ -332,7 +334,7 @@ export default {
       let duration = Math.floor((now - lastTime) / 1000)
       if (lastTime && duration < 60) {
         return this.snackbarfun(
-          this.$message.success(this.$t('setting.test_email_countdown')) + '(' + (60 - duration) + 's)',
+          this.$message.success(this.$t('setting_test_email_countdown')) + '(' + (60 - duration) + 's)',
           2
         )
       }
@@ -341,10 +343,10 @@ export default {
           .testEmail()
           .then(() => {
             localStorage.setItem('Tapdata_settings_email_countdown', now)
-            this.$message.success(this.$t('setting.test_email_success'))
+            this.$message.success(this.$t('setting_test_email_success'))
           })
       } catch (error) {
-        this.$message.error(this.$t('setting.requestFailed'))
+        this.$message.error(this.$t('setting_requestFailed'))
       }
     }
   }
@@ -352,10 +354,7 @@ export default {
 </script>
 <style lang="scss">
 .setting-list-wrap {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  padding: 30px 0 48px;
+  // position: relative;
   overflow: hidden;
   box-sizing: border-box;
   .e-form {
@@ -395,12 +394,12 @@ export default {
       }
     }
     .footer {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 48px;
-      margin: auto;
+      // position: absolute;
+      // bottom: 0;
+      // left: 0;
+      // right: 0;
+      // height: 48px;
+      // margin: auto;
       line-height: 48px;
       text-align: center;
       border-top: 1px solid #eee;

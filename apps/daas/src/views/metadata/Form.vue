@@ -305,8 +305,7 @@ export default {
       let result = []
       let unavailableTable = []
       for (let i = 0; i < this.form.relation.length; i++) {
-        if (index === i) {
-        } else {
+        if (index !== i) {
           unavailableTable.push(this.form.relation[i].table_name)
         }
       }
