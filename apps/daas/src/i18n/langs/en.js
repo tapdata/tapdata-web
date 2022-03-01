@@ -12,6 +12,9 @@ export default {
 
   // 表格
   column_operation: 'Operate',
+  column_connection: 'Belonging to the connection',
+  column_table: 'belonging table',
+  column_create_time: 'create time',
 
   // 菜单标题
 
@@ -44,6 +47,9 @@ export default {
   page_title_function_create: 'Create function',
   page_title_function_edit: 'Edit function',
   page_title_function_details: 'Function details',
+  page_title_shared_cache: 'Shared cache',
+  page_title_shared_cache_create: 'Create cache',
+  page_title_shared_cache_edit: 'Edit cache',
   page_title_data_discovery: 'Data Discovery',
   page_title_data_catalogue: 'Data catalog',
   page_title_data_search: 'Data search',
@@ -1022,6 +1028,32 @@ export default {
   share_task_table_name: 'Mining task name',
   share_task_table_time: 'Mining time',
   share_task_table_status: 'Mining status',
+
+  // 共享緩存
+  shared_cache_placeholder_task_name: 'Please enter the cache task name to search',
+  shared_cache_placeholder_connection_name: 'Please enter the connection name to search',
+  shared_cache_button_create: 'New cache',
+
+  shared_cache_name: 'cache name',
+  shared_cache_status: 'cache status',
+  shared_cache_time: 'cache time',
+  shared_cache_keys: 'cache keys',
+  shared_cache_fields: 'cache fields',
+  shared_cache_max_rows: 'The maximum number of records in the cache',
+  shared_cache_ttl: 'Expiration time',
+  shared_cache_code: 'Application code',
+  shared_cache_custom_max_record: 'Custom maximum number of records',
+  shared_cache_custom_no_limit: 'Unlimited number of entries',
+  shared_cache_custom_record_unit: 'article',
+  shared_cache_ttl_unit: 'day',
+  shared_cache_placeholder_name: 'Please enter the cache name',
+  shared_cache_placeholder_connection: 'Please select a connection',
+  shared_cache_placeholder_table: 'Please select a table',
+  shared_cache_placeholder_keys: 'Please select a cache key',
+  shared_cache_placeholder_fields: 'Please select a cache field',
+  shared_cache_placeholder_max_rows: 'Please enter the maximum number of records in the cache',
+  shared_cache_placeholder_ttl: 'Please enter the expiration time',
+
   // 设置
   setting_email_template: 'Email template',
   setting_connect_and_test: 'Connection test',

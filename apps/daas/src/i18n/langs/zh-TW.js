@@ -44,6 +44,9 @@ export default {
 
   // 表格
   column_operation: '操作',
+  column_connection: '所屬連接',
+  column_table: '所屬表',
+  column_create_time: '創建時間',
 
   // 菜單標題
   menu_title_data_pipeline: '數據管道',
@@ -75,6 +78,9 @@ export default {
   page_title_function_create: '創建函數',
   page_title_function_edit: '編輯函數',
   page_title_function_details: '函數詳情',
+  page_title_shared_cache: '共享緩存',
+  page_title_shared_cache_create: '創建緩存',
+  page_title_shared_cache_edit: '編輯緩存',
   page_title_data_discovery: '數據發現',
   page_title_data_catalogue: '數據目錄',
   page_title_data_search: '數據搜索',
@@ -979,6 +985,31 @@ export default {
   share_task_table_name: '挖掘任務名稱',
   share_task_table_time: '挖掘所處時間',
   share_task_table_status: '挖掘所處狀態',
+
+  // 共享緩存
+  shared_cache_placeholder_task_name: '請輸入緩存任務名搜索',
+  shared_cache_placeholder_connection_name: '請輸入連接名稱搜索',
+  shared_cache_button_create: '新建緩存',
+
+  shared_cache_name: '緩存名稱',
+  shared_cache_status: '緩存狀態',
+  shared_cache_time: '緩存時間',
+  shared_cache_keys: '緩存鍵',
+  shared_cache_fields: '緩存欄位',
+  shared_cache_max_rows: '緩存最大記錄數',
+  shared_cache_ttl: '過期時間',
+  shared_cache_code: '應用代碼',
+  shared_cache_custom_max_record: '自定義最大記錄數',
+  shared_cache_custom_no_limit: '條數不限',
+  shared_cache_custom_record_unit: '條',
+  shared_cache_ttl_unit: '天',
+  shared_cache_placeholder_name: '請輸入緩存名稱',
+  shared_cache_placeholder_connection: '請選擇連接',
+  shared_cache_placeholder_table: '請選擇表',
+  shared_cache_placeholder_keys: '請選擇緩存鍵',
+  shared_cache_placeholder_fields: '請選擇緩存欄位',
+  shared_cache_placeholder_max_rows: '請輸入緩存最大記錄數',
+  shared_cache_placeholder_ttl: '請輸入過期時間',
 
   // 设置
   setting_email_template: '郵件模板',

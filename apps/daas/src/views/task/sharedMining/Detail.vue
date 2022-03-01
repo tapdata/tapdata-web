@@ -101,7 +101,7 @@
 import Chart from 'web-core/components/chart'
 import TableList from '@/components/TableList'
 import StatusTag from '@/components/StatusTag'
-import { formatTime, formatMs, isEmpty } from '@/utils/util'
+import { formatTime, formatMs } from '@/utils/util'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 export default {
   name: 'Info',
@@ -268,11 +268,11 @@ export default {
           this.detailData = res?.data
         })
     },
-    getTables(id) {
+    getTables() {
       this.tableDialogVisible = true
       this.getTableNames()
     },
-    getChartData(id) {
+    getChartData() {
       let data = [
         {
           logTime: '2022-02-18T06:50:12.109Z',
@@ -418,9 +418,6 @@ export default {
   .card-box {
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.02);
     ::v-deep {
-      .table-list {
-        //height: 300px;
-      }
       .el-tab-pane {
         min-height: 400px;
       }

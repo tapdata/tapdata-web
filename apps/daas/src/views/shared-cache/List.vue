@@ -18,7 +18,7 @@
         </template>
       </ElTableColumn>
       <ElTableColumn prop="createTimeFmt" :label="$t('column_create_time')"></ElTableColumn>
-      <ElTableColumn prop="cacheTimeFmt" :label="$t('shared_cache_time')"></ElTableColumn>
+      <ElTableColumn prop="cacheTimeAtFmt" :label="$t('shared_cache_time')"></ElTableColumn>
       <ElTableColumn :label="$t('column_operation')">
         <template #default="{ row }">
           <ElLink type="primary" @click="edit(row.id)">{{ $t('button_edit') }}</ElLink>
@@ -88,9 +88,8 @@ export default {
           return {
             total: res.data?.total,
             data: list.map(item => {
-              item.connectionName = item.connection?.name || ''
               item.createTimeFmt = this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
-              item.cacheTimeFmt = this.$moment(item.cacheTime).format('YYYY-MM-DD HH:mm:ss')
+              item.cacheTimeAtFmt = this.$moment(item.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss')
               return item
             })
           }
