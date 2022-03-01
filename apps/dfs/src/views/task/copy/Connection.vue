@@ -9,11 +9,7 @@
     >
       <template slot="name" slot-scope="scope">
         <div class="flex flex-row align-items-center p-2">
-          <img
-            class="mr-2"
-            style="width: 24px; height: 24px"
-            :src="getDatabaseImg(scope.row)"
-          />
+          <img class="mr-2" style="width: 24px; height: 24px" :src="getDatabaseImg(scope.row)" />
           <!--:src="require('static/editor/' + scope.row.database_type.toLowerCase() + '.svg')"  -->
           <ElLink
             type="primary"
@@ -291,9 +287,19 @@ export default {
       this.$refs.preview.open(id, type)
     },
     getDatabaseImg(row) {
-      let aliyun = ['aliyun_mariadb', 'aliyun_mongodb', 'aliyun_mysql', 'aliyun_postgres', 'aliyun_sqlserver']
+      let aliyun = [
+        'aliyun_mariadb',
+        'aliyun_mongodb',
+        'aliyun_mysql',
+        'aliyun_postgres',
+        'aliyun_sqlserver',
+        'tencent_mariadb',
+        'tencent_mongodb',
+        'tencent_mysql',
+        'tencent_postgres',
+        'tencent_sqlserver'
+      ]
       if (aliyun.includes(row.database_type)) {
-        //packages/web-core/assets/icons/node/aliyun_mariadb.svg
         return require('web-core/assets/icons/node/' + row.database_type.toLowerCase() + '.svg')
       }
       return require('web-core/assets/images/connection-type/' + row.database_type.toLowerCase() + '.png')

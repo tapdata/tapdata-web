@@ -706,9 +706,18 @@ export default {
         let target = items.find(it => it.field === 'syncPoints')
         if (
           value === 'cdc' &&
-          ['mysql', 'oracle', 'sqlserver', 'mongodb', 'aliyun_mysql', 'aliyun_mongodb', 'aliyun_sqlserver'].includes(
-            this.dataSourceModel['source_databaseType']
-          )
+          [
+            'mysql',
+            'oracle',
+            'sqlserver',
+            'mongodb',
+            'aliyun_mysql',
+            'tencent_mysql',
+            'aliyun_mongodb',
+            'tencent_mongodb',
+            'aliyun_sqlserver',
+            'tencent_sqlserver'
+          ].includes(this.dataSourceModel['source_databaseType'])
         ) {
           target.show = true
         } else {
@@ -950,8 +959,8 @@ export default {
         case 'setting': {
           this.getSupportTwoWay() // 进入设置页面再判断
           if (
-            !['mysql', 'aliyun_mysql'].includes(this.dataSourceModel['source_databaseType']) ||
-            !['mysql', 'aliyun_mysql'].includes(this.dataSourceModel['target_databaseType'])
+            !['mysql', 'aliyun_mysql', 'tencent_mysql'].includes(this.dataSourceModel['source_databaseType']) ||
+            !['mysql', 'aliyun_mysql', 'tencent_mysql'].includes(this.dataSourceModel['target_databaseType'])
           ) {
             this.changeConfig([], 'setting_isOpenAutoDDL')
             this.changeConfig([], 'setting_twoWay')
@@ -991,7 +1000,12 @@ export default {
               'aliyun_mariadb',
               'aliyun_mongodb',
               'aliyun_sqlserver',
-              'aliyun_postgres'
+              'aliyun_postgres',
+              'tencent_mariadb',
+              'tencent_mongodb',
+              'tencent_mysql',
+              'tencent_postgres',
+              'tencent_sqlserver'
             ].includes(this.dataSourceModel['target_databaseType'])
           ) {
             this.changeConfig([], 'setting_needToCreateIndex')
@@ -1002,9 +1016,18 @@ export default {
           let target = this.config.items.find(it => it.field === 'syncPoints')
           if (
             this.settingModel.sync_type === 'cdc' &&
-            ['mysql', 'oracle', 'sqlserver', 'mongodb', 'aliyun_mysql', 'aliyun_mongodb', 'aliyun_sqlserver'].includes(
-              this.dataSourceModel['source_databaseType']
-            )
+            [
+              'mysql',
+              'oracle',
+              'sqlserver',
+              'mongodb',
+              'aliyun_mysql',
+              'tencent_mysql',
+              'aliyun_mongodb',
+              'tencent_mongodb',
+              'aliyun_sqlserver',
+              'tencent_sqlserver'
+            ].includes(this.dataSourceModel['source_databaseType'])
           ) {
             target.show = true
           } else {
@@ -1049,8 +1072,8 @@ export default {
     getSupportTwoWay() {
       this.supportTwoWay =
         (this.twoWayAgentRunningCount > 0 &&
-          !['mongodb', 'aliyun_mongodb'].includes(this.dataSourceModel['source_databaseType'])) ||
-        !['mongodb', 'aliyun_mongodb'].includes(this.dataSourceModel['target_databaseType'])
+          !['mongodb', 'aliyun_mongodb', 'tencent_mongodb'].includes(this.dataSourceModel['source_databaseType'])) ||
+        !['mongodb', 'aliyun_mongodb', 'tencent_mongodb'].includes(this.dataSourceModel['target_databaseType'])
       this.settingModel['distinctWriteType'] !== 'compel' // 进入设置页面再判断
     },
     getWhere(type) {

@@ -362,7 +362,7 @@ export default {
       let editData = null
       let id = this.$route.params.id
       if (id) {
-        if (['mongodb', 'aliyun_mongodb'].includes(this.model.database_type)) {
+        if (['mongodb', 'aliyun_mongodb', 'tencent_mongodb'].includes(this.model.database_type)) {
           editData = await this.$axios.get(`tm/api/Connections/${id}/customQuery`)
         } else {
           editData = await this.$axios.get(`tm/api/Connections/${id}?noSchema=1`)
@@ -447,14 +447,14 @@ export default {
         let sslKey = items.find(it => it.field === 'sslKeyFile')
         let sslCA = items.find(it => it.field === 'sslCAFile')
         let id = this.$route.params.id
-        if (['mongodb', 'aliyun_mongodb'].includes(this.model.database_type) && id && itemIsUrl) {
+        if (['mongodb', 'aliyun_mongodb', 'tencent_mongodb'].includes(this.model.database_type) && id && itemIsUrl) {
           itemIsUrl.options[0].disabled = true //编辑模式下mongodb不支持URL模式
         }
         ////编辑模式下mongodb 不校验证书
-        if (['mongodb', 'aliyun_mongodb'].includes(this.model.database_type) && id && sslKey) {
+        if (['mongodb', 'aliyun_mongodb', 'tencent_mongodb'].includes(this.model.database_type) && id && sslKey) {
           sslKey.rules = []
         }
-        if (['mongodb', 'aliyun_mongodb'].includes(this.model.database_type) && id && sslCA) {
+        if (['mongodb', 'aliyun_mongodb', 'tencent_mongodb'].includes(this.model.database_type) && id && sslCA) {
           sslCA.rules = []
         }
         let plain_password = items.find(it => it.field === 'plain_password')
@@ -554,7 +554,7 @@ export default {
             delete params.id
             params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
           }
-          if (['mongodb', 'aliyun_mongodb'].includes(params.database_type)) {
+          if (['mongodb', 'aliyun_mongodb', 'tencent_mongodb'].includes(params.database_type)) {
             params.fill = params.isUrl ? 'uri' : ''
             //delete params.isUrl
           }
@@ -607,7 +607,7 @@ export default {
         this.$refs.form.validate(valid => {
           if (valid) {
             let data = Object.assign({}, this.model)
-            if (['mongodb', 'aliyun_mongodb'].includes(data.database_type) && !data.isUrl) {
+            if (['mongodb', 'aliyun_mongodb', 'tencent_mongodb'].includes(data.database_type) && !data.isUrl) {
               data.database_uri = ''
             }
             if (this.$route.params.id) {
@@ -615,7 +615,7 @@ export default {
               this.$refs.test.start(data, true, false, true)
             } else {
               delete data.id
-              if (!data.isUrl && ['mongodb', 'aliyun_mongodb'].includes(data.database_type)) {
+              if (!data.isUrl && ['mongodb', 'aliyun_mongodb', 'tencent_mongodb'].includes(data.database_type)) {
                 data.database_password = data.plain_password || ''
               }
               this.$refs.test.start(data)

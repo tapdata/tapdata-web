@@ -24,6 +24,11 @@ import dfs_aliyun_mariadb from './dfs_aliyun_mariadb'
 import dfs_aliyun_mongodb from './dfs_aliyun_mongodb'
 import dfs_aliyun_postgres from './dfs_aliyun_postgres'
 import dfs_aliyun_sqlserver from './dfs_aliyun_sqlserver'
+import dfs_tencent_mariadb from './dfs_tencent_mariadb'
+import dfs_tencent_mongodb from './dfs_tencent_mongodb'
+import dfs_tencent_mysql from './dfs_tencent_mysql'
+import dfs_tencent_postgres from './dfs_tencent_postgres'
+import dfs_tencent_sqlserver from './dfs_tencent_sqlserver'
 
 export default {
   dfs_mysql,
@@ -51,5 +56,10 @@ export default {
   dfs_aliyun_mariadb,
   dfs_aliyun_mongodb,
   dfs_aliyun_postgres,
-  dfs_aliyun_sqlserver
+  dfs_aliyun_sqlserver,
+  dfs_tencent_mariadb,
+  dfs_tencent_mongodb,
+  dfs_tencent_mysql,
+  dfs_tencent_postgres,
+  dfs_tencent_sqlserver
 }

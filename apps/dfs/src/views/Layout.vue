@@ -51,7 +51,12 @@
           'aliyun_mongodb',
           'aliyun_mysql',
           'aliyun_postgres',
-          'aliyun_sqlserver'
+          'aliyun_sqlserver',
+          'tencent_mariadb',
+          'tencent_mongodb',
+          'tencent_mysql',
+          'tencent_postgres',
+          'tencent_sqlserver'
         ]"
         :comingTypes="['db2', 'sybase ase', 'gbase-8s']"
         @select="createConnection"

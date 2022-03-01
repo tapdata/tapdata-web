@@ -39,5 +39,10 @@ export const TYPEMAP = {
   aliyun_mongodb: 'Aliyun RDS for MongoDB',
   aliyun_mysql: 'Aliyun RDS for MySQL',
   aliyun_postgres: 'Aliyun RDS for PG',
-  aliyun_sqlserver: 'Aliyun RDS for SQLServer'
+  aliyun_sqlserver: 'Aliyun RDS for SQLServer',
+  tencent_mariadb: 'TencentDB for MariaDB',
+  tencent_mongodb: 'TencentDB for MongoDB',
+  tencent_mysql: 'TencentDB for MySQL',
+  tencent_postgres: 'TencentDB for PG',
+  tencent_sqlserver: 'TencentDB for SQLServer'
 }
