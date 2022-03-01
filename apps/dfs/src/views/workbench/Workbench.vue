@@ -345,7 +345,7 @@ export default {
           id: 11,
           type: '',
           name: 'Tapdata Cloud 2.1.0 版本发布啦！',
-          time: '2022-02-26 14:00:00'
+          time: '2022-02-28 14:00:00'
         },
         {
           id: 10,
