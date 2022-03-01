@@ -51,6 +51,9 @@ export default {
   workbench_guide_documentation: '产品文档',
   workbench_guide_problem: '常见问题',
   workbench_guide_data_safe: 'Tapdata cloud 如何保障数据安全？',
+  workbench_statistics_title: '任务数据量统计',
+  workbench_statistics__sub_title: '输入数据量',
+  workbench_statistics__sub_title_label: '累计',
 
   // 头部
   header_question: '问答支持',
@@ -157,6 +160,7 @@ export default {
   tap_agent_download_now: 'Agent 立即下载',
   tap_upgrade: 'Agent 升级',
   tap_contact_us: '联系我们',
+  tap_user_center: '用户中心',
 
   // Agent
   agent_key: 'Agent',
@@ -240,11 +244,12 @@ export default {
   agent_deploy_start_install: '开始安装',
   agent_deploy_start_install_button_copy: '复制',
   agent_deploy_start_install_button_copied: '已复制',
-  agent_deploy_start_install_windows_first:
-    '1.将下载好的Tapdata Agent放入要安装Agent的目录，双击执行安装，在打开的窗口内输入下方命令执行即可实现Tapdata Agent的自动部署及启动：',
-  agent_deploy_start_install_windows_second:
-    '2.待Agent启动成功后窗口会自动关闭，tapdata会在您的安装目录生成如下目录结构：',
-  agent_deploy_start_install_windows_third: '3.如果您在安装和使用过程中遇到任何问题，请参考',
+  agent_deploy_start_install_windows_first: '1.点击',
+  agent_deploy_start_install_windows_first_download: '下载Tapdata Agent',
+  agent_deploy_start_install_windows_second: '2.将tapdata.exe放入您要安装的目录，安装路径不能有中文和特殊字符。',
+  agent_deploy_start_install_windows_third: '3.双击执行tapdata.exe开始安装。',
+  agent_deploy_start_install_windows_fourth: '4.等待安装过程提示要输入Token时，复制下方Token，在命令窗口右键进行粘贴',
+  agent_deploy_start_install_windows_fifth: '5.耐心等待，即可完成Tapdata Agent的安装和启动。',
   agent_deploy_link_agent_operation: '《Agent安装手册及常见QA》',
   agent_deploy_link_agent_operation_desc: '或者直接扫描右方二维码加入社群获取技术支持。',
   agent_deploy_before_prepare_linux_first: '1.安装前请确认您的部署环境中已安装Java1.8版本并正确配置环境变量。',
@@ -827,6 +832,7 @@ export default {
   operation_log_modify_notification_setting: '修改通知设置',
   operation_log_modify_notification_setting_tip: '修改了系统通知设置',
   operation_log_modify_connection_name: '将连接名称由[${parameter2}]修改为【@{parameter1}】',
+  operation_log_modular_name_user_center: '用户中心',
 
   guide_install_agent: '安装 Agent',
   guide_create_source_connection: '创建源连接',
@@ -903,6 +909,9 @@ export default {
   verify_button_create: '新建',
   verify_see_details: '查看详情',
   verify_checking: '校验中...',
+  verify_operation: '操作',
+  verify_operation_verify_again: '重新校验',
+  verify_operation_verify_again_info: '当未选择表时默认只对上次校验不一致的表进行重新校验',
 
   verify_title_create: '新建校验',
   verify_title_edit: '编辑校验',

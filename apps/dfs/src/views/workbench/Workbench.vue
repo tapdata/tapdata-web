@@ -102,16 +102,32 @@
         </el-col>
       </el-row>
     </div>
+    <!--  任务数据量统计  -->
+    <div class="workbench-overview workbench-section">
+      <div class="main-title py-6">{{ $t('workbench_statistics_title') }}</div>
+      <div class="p-6" style="background-color: #fff">
+        <div class="fs-7" style="color: #000">
+          <span class="mr-4">{{ $t('workbench_statistics__sub_title') }}</span>
+          <span class="mr-1">{{ $t('workbench_statistics__sub_title_label') }}</span>
+          <span class="color-primary" style="font-family: DIN">{{ numToThousands(taskInputNumber) }}</span>
+        </div>
+        <div class="pr-4" style="height: 200px">
+          <Chart type="bar" :data="barData" :options="barOptions"></Chart>
+        </div>
+      </div>
+    </div>
   </div>
   <router-view v-else></router-view>
 </template>
 
 <script>
 import VIcon from '@/components/VIcon'
+import Chart from 'web-core/components/chart'
+import { formatTime, numToThousands } from '@/util'
 
 export default {
   name: 'Workbench',
-  components: { VIcon },
+  components: { VIcon, Chart },
   data() {
     const $t = this.$t.bind(this)
     return {
@@ -210,17 +226,69 @@ export default {
           url: 'https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_chan-pin-jia-gou-ji-yuan-li'
         }
       ],
-      isGuide: true
+      isGuide: true,
+      taskInputNumber: 0,
+      barData: [],
+      barOptions: {
+        barWidth: '50%',
+        grid: {
+          top: 20,
+          bottom: 0,
+          left: 0,
+          right: 0
+        },
+        xAxis: {
+          axisLabel: {
+            formatter: val => {
+              return formatTime(val, 'MM-DD')
+            }
+          },
+          axisLine: {
+            onZero: false
+          }
+        },
+        yAxis: {
+          show: true,
+          type: 'log',
+          min: 1,
+          logBase: 10,
+          axisLabel: {
+            formatter: val => {
+              let res = val === 1 ? 0 : val
+              if (res / 1000 >= 1) {
+                res = res / 1000 + 'K'
+              }
+              return res
+            }
+          }
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: params => {
+            let item = params
+            let val = item.value
+            if (val === 1.1) {
+              val = 1
+            }
+            val = numToThousands(val)
+            let html = item.marker + params.name + `<span style="padding: 0 4px"></span><br/>` + val
+            return html
+          }
+        }
+      },
+      colorList: ['rgba(44, 101, 255, 0.85)', 'rgba(44, 101, 255, 0.5)']
     }
   },
   mounted() {
     this.init()
+    this.hideCustomTip()
   },
   methods: {
     init() {
       this.loadAgent() // agent
       this.loadConnection() // 连接、任务
       this.loadNotices() // 通知公告
+      this.loadBarData()
     },
     loadAgent() {
       let agentList = this.agentList
@@ -273,6 +341,12 @@ export default {
     },
     loadNotices() {
       this.notices = [
+        {
+          id: 11,
+          type: '',
+          name: 'Tapdata Cloud 2.1.0 版本发布啦！',
+          time: '2022-02-28 14:00:00'
+        },
         {
           id: 10,
           type: '',
@@ -329,6 +403,30 @@ export default {
         }
       ]
     },
+    loadBarData() {
+      let granularity = 'month'
+      this.$axios
+        .get('tm/api/DataFlowInsights/statistics', {
+          params: {
+            granularity
+          }
+        })
+        .then(data => {
+          const list = data.inputDataStatistics || []
+          this.taskInputNumber = data.totalInputDataCount || 0
+          this.barData = list.map((el, index) => {
+            let value = el.count
+            if (value === 1) {
+              value = 1.1
+            }
+            return {
+              name: el.time,
+              value: value,
+              color: this.colorList[index % 2]
+            }
+          })
+        })
+    },
     createAgent() {
       this.$router.push({
         name: 'Instance',
@@ -362,6 +460,14 @@ export default {
     },
     formatFromNow(date) {
       return this.$moment(date)?.fromNow()
+    },
+    hideCustomTip() {
+      setTimeout(() => {
+        document.getElementById('titlediv').style.display = 'none'
+      }, 5000)
+    },
+    numToThousands() {
+      return numToThousands(...arguments)
     }
   }
 }

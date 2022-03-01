@@ -6,6 +6,7 @@ const connection = require('./connection.js')
 const messages = require('./messages.js')
 const verification = require('./verification.js')
 const metadata = require('./metadata.js')
+const user = require('./user.js')
 
 const agent = {
   id: '@guid',
@@ -67,7 +68,7 @@ const agent = {
   },
   'agentType|1': ['Cloud', '']
 }
-module.exports = Object.assign({}, dataflow, connection, messages, verification, metadata, {
+module.exports = Object.assign({}, dataflow, connection, messages, verification, metadata, user, {
   '/tm/api/users/self': {
     data: {
       account_status: 1,

@@ -1404,5 +1404,46 @@ module.exports = {
         }
       ]
     }
+  },
+  '/tm/api/DataFlowInsights/statistics': {
+    reqId: '77b5587a-fe9c-4ccc-b970-81b45f6f865f',
+    ts: 1644486895566,
+    code: 'ok',
+    data: {
+      granularity: 'week',
+      inputDataStatistics: [
+        { time: '2022-02-01', count: '@integer(0, 10))' },
+        { time: '2022-02-02', count: '@integer(0, 10)' },
+        { time: '2022-02-03', count: '@integer(0, 10)' },
+        { time: '2022-02-04', count: '@integer(0, 10)' },
+        { time: '2022-02-05', count: '@integer(0, 10)' },
+        { time: '2022-02-06', count: '@integer(0, 10)' },
+        { time: '2022-02-07', count: '@integer(0, 10)' },
+        { time: '2022-02-08', count: '@integer(0, 10)' },
+        { time: '2022-02-09', count: '@integer(0, 10)' },
+        { time: '2022-02-10', count: '@integer(0, 10)' },
+        { time: '2022-02-11', count: '@integer(0, 10)' },
+        { time: '2022-02-12', count: '@integer(0, 10)' },
+        { time: '2022-02-13', count: '@integer(0, 10)' },
+        { time: '2022-02-14', count: '@integer(0, 10)' },
+        { time: '2022-02-15', count: '@integer(0, 10)' },
+        { time: '2022-02-16', count: '@integer(0, 10)' },
+        { time: '2022-02-17', count: '@integer(0, 10)' },
+        { time: '2022-02-18', count: '@integer(0, 10)' },
+        { time: '2022-02-19', count: '@integer(0, 10)' },
+        { time: '2022-02-20', count: '@integer(0, 10)' },
+        { time: '2022-02-21', count: '@integer(0, 10)' },
+        { time: '2022-02-22', count: '@integer(0, 10)' },
+        { time: '2022-02-23', count: '@integer(0, 10)' },
+        { time: '2022-02-24', count: '@integer(0, 10)' },
+        { time: '2022-02-25', count: '@integer(0, 10)' },
+        { time: '2022-02-26', count: '@integer(0, 10)' },
+        { time: '2022-02-27', count: '@integer(0, 10)' },
+        { time: '2022-02-28', count: '@integer(0, 10)' },
+        { time: '2022-02-29', count: '@integer(0, 10)' },
+        { time: '2022-02-30', count: '@integer(0, 10)' }
+      ],
+      totalInputDataCount: '@integer(0, 100)'
+    }
   }
 }

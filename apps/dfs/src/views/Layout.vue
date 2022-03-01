@@ -46,7 +46,12 @@
           'hazelcast_cloud_cluster',
           'dummy db',
           'tidb',
-          'mariadb'
+          'mariadb',
+          'aliyun_mariadb',
+          'aliyun_mongodb',
+          'aliyun_mysql',
+          'aliyun_postgres',
+          'aliyun_sqlserver'
         ]"
         :comingTypes="['db2', 'sybase ase', 'gbase-8s']"
         @select="createConnection"
@@ -117,6 +122,7 @@ export default {
     this.getBreadcrumb(this.$route)
     this.$root.$on('select-connection-type', this.selectConnectionType)
     this.$root.$on('show-guide', this.showGuide)
+    this.$root.$on('get-user', this.getUser)
   },
   watch: {
     $route(route) {
@@ -144,6 +150,9 @@ export default {
     },
     showGuide() {
       this.$refs.theHeader?.showGuide?.()
+    },
+    getUser() {
+      this.$refs.theHeader?.getUser?.()
     },
     selectConnectionType() {
       this.dialogVisible = true

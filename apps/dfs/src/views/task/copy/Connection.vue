@@ -12,7 +12,7 @@
           <img
             class="mr-2"
             style="width: 24px; height: 24px"
-            :src="require('web-core/assets/images/connection-type/' + scope.row.database_type.toLowerCase() + '.png')"
+            :src="getDatabaseImg(scope.row)"
           />
           <!--:src="require('static/editor/' + scope.row.database_type.toLowerCase() + '.svg')"  -->
           <ElLink
@@ -289,6 +289,14 @@ export default {
     },
     preview(id, type) {
       this.$refs.preview.open(id, type)
+    },
+    getDatabaseImg(row) {
+      let aliyun = ['aliyun_mariadb', 'aliyun_mongodb', 'aliyun_mysql', 'aliyun_postgres', 'aliyun_sqlserver']
+      if (aliyun.includes(row.database_type)) {
+        //packages/web-core/assets/icons/node/aliyun_mariadb.svg
+        return require('web-core/assets/icons/node/' + row.database_type.toLowerCase() + '.svg')
+      }
+      return require('web-core/assets/images/connection-type/' + row.database_type.toLowerCase() + '.png')
     }
   }
 }

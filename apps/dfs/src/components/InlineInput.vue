@@ -4,7 +4,10 @@
       <span :class="[wordBreak ? 'word-break' : 'ellipsis']" :title="value" @click="$emit('click-text')">{{
         value
       }}</span>
-      <ElLink class="inline-input-link" style="margin-left: 5px" @click="editing = true">
+      <ElLink v-if="type === 'text'" type="primary" class="inline-input-link" style="margin-left: 5px" @click="editing = true">
+        {{ editText }}
+      </ElLink>
+      <ElLink v-else class="inline-input-link" style="margin-left: 5px" @click="editing = true">
         <VIcon color="#999" v-bind="iconConfig">edit-outline</VIcon>
       </ElLink>
     </span>
@@ -24,6 +27,12 @@
           ><VIcon size="12">check</VIcon></ElButton
         >
         <ElButton class="icon-button ml-2" size="medium" @click="cancel"><VIcon size="12">close</VIcon></ElButton>
+      </template>
+      <template v-else-if="type === 'text'">
+        <ElButton type="text" class="icon-button ml-4" size="medium" :disabled="disabled" @click="save">{{
+          saveText
+        }}</ElButton>
+        <ElButton type="text" class="icon-button ml-2" size="medium" @click="cancel">{{ cancelText }}</ElButton>
       </template>
       <template v-else>
         <ElButton
@@ -59,6 +68,18 @@ export default {
     max: {
       type: Number,
       default: 32
+    },
+    editText: {
+      type: String,
+      default: '编辑'
+    },
+    saveText: {
+      type: String,
+      default: '保存'
+    },
+    cancelText: {
+      type: String,
+      default: '取消'
     }
   },
   data() {

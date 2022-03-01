@@ -34,5 +34,10 @@ export const TYPEMAP = {
   adb_postgres: 'ADB PostgreSQL',
   vika: 'Vika',
   kundb: 'KunDB',
-  hazelcast_cloud_cluster: 'Hazelcast Cloud'
+  hazelcast_cloud_cluster: 'Hazelcast Cloud',
+  aliyun_mariadb: 'Aliyun RDS for MariaDB',
+  aliyun_mongodb: 'Aliyun RDS for MongoDB',
+  aliyun_mysql: 'Aliyun RDS for MySQL',
+  aliyun_postgres: 'Aliyun RDS for PG',
+  aliyun_sqlserver: 'Aliyun RDS for SQLServer'
 }

@@ -706,7 +706,9 @@ export default {
         let target = items.find(it => it.field === 'syncPoints')
         if (
           value === 'cdc' &&
-          ['mysql', 'oracle', 'sqlserver', 'mongodb'].includes(this.dataSourceModel['source_databaseType'])
+          ['mysql', 'oracle', 'sqlserver', 'mongodb', 'aliyun_mysql', 'aliyun_mongodb', 'aliyun_sqlserver'].includes(
+            this.dataSourceModel['source_databaseType']
+          )
         ) {
           target.show = true
         } else {
@@ -948,8 +950,8 @@ export default {
         case 'setting': {
           this.getSupportTwoWay() // 进入设置页面再判断
           if (
-            this.dataSourceModel['source_databaseType'] !== 'mysql' ||
-            this.dataSourceModel['target_databaseType'] !== 'mysql'
+            !['mysql', 'aliyun_mysql'].includes(this.dataSourceModel['source_databaseType']) ||
+            !['mysql', 'aliyun_mysql'].includes(this.dataSourceModel['target_databaseType'])
           ) {
             this.changeConfig([], 'setting_isOpenAutoDDL')
             this.changeConfig([], 'setting_twoWay')
@@ -976,11 +978,21 @@ export default {
           //   this.settingModel.needToCreateIndex = false
           // }
 
-          //mysql、pg、oracle、sql server、mongodb、mariadb 是作为目标 支持自动创建索引
+          // mysql、pg、oracle、sql server、mongodb、mariadb 是作为目标 支持自动创建索引
           if (
-            ['mysql', 'postgres', 'oracle', 'sqlserver', 'mongodb', 'mariadb'].includes(
-              this.dataSourceModel['target_databaseType']
-            )
+            [
+              'mysql',
+              'postgres',
+              'oracle',
+              'sqlserver',
+              'mongodb',
+              'mariadb',
+              'aliyun_mysql',
+              'aliyun_mariadb',
+              'aliyun_mongodb',
+              'aliyun_sqlserver',
+              'aliyun_postgres'
+            ].includes(this.dataSourceModel['target_databaseType'])
           ) {
             this.changeConfig([], 'setting_needToCreateIndex')
             //设置默认值
@@ -990,7 +1002,9 @@ export default {
           let target = this.config.items.find(it => it.field === 'syncPoints')
           if (
             this.settingModel.sync_type === 'cdc' &&
-            ['mysql', 'oracle', 'sqlserver', 'mongodb'].includes(this.dataSourceModel['source_databaseType'])
+            ['mysql', 'oracle', 'sqlserver', 'mongodb', 'aliyun_mysql', 'aliyun_mongodb', 'aliyun_sqlserver'].includes(
+              this.dataSourceModel['source_databaseType']
+            )
           ) {
             target.show = true
           } else {
@@ -1034,10 +1048,10 @@ export default {
     //获取当前是否可以展示双向开关
     getSupportTwoWay() {
       this.supportTwoWay =
-        this.twoWayAgentRunningCount > 0 &&
-        this.dataSourceModel['source_databaseType'] === 'mongodb' &&
-        this.dataSourceModel['target_databaseType'] === 'mongodb' &&
-        this.settingModel['distinctWriteType'] !== 'compel' // 进入设置页面再判断
+        (this.twoWayAgentRunningCount > 0 &&
+          !['mongodb', 'aliyun_mongodb'].includes(this.dataSourceModel['source_databaseType'])) ||
+        !['mongodb', 'aliyun_mongodb'].includes(this.dataSourceModel['target_databaseType'])
+      this.settingModel['distinctWriteType'] !== 'compel' // 进入设置页面再判断
     },
     getWhere(type) {
       let where = {
@@ -1199,7 +1213,9 @@ export default {
         case 'setting_twoWay': {
           //映射是否双向同步
           let op = items.find(it => it.field === 'bidirectional')
-          op.show = !!this.supportTwoWay
+          if (op) {
+            op.show = !!this.supportTwoWay
+          }
           break
         }
         case 'databaseType': {

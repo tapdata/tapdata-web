@@ -52,6 +52,9 @@ export default {
   workbench_guide_documentation: 'Product Documentation',
   workbench_guide_problem: 'Common problems',
   workbench_guide_data_safe: 'How does Tapdata cloud ensure data security? ',
+  workbench_statistics_title: 'Task data volume statistics',
+  workbench_statistics__sub_title: 'Input data volume',
+  workbench_statistics__sub_title_label: 'cumulative',
 
   // head
   header_question: 'Question and answer support',
@@ -248,12 +251,15 @@ export default {
   agent_deploy_start_install: 'Start installation',
   agent_deploy_start_install_button_copy: 'Copy',
   agent_deploy_start_install_button_copied: 'Copied',
-  agent_deploy_start_install_windows_first:
-    '1. Put the downloaded Tapdata Agent into the directory where you want to install the Agent, double-click to execute the installation, and enter the command below in the opened window to execute the automatic deployment and startup of the Tapdata Agent:',
+  agent_deploy_start_install_windows_first: '1. Click',
+  agent_deploy_start_install_windows_first_download: 'Download Tapdata Agent',
   agent_deploy_start_install_windows_second:
-    '2. After the Agent starts successfully, the window will automatically close, and tapdata will generate the following directory structure in your installation directory:',
-  agent_deploy_start_install_windows_third:
-    '3. If you encounter any problems during installation and use, please refer to',
+    '2. Put tapdata.exe into the directory you want to install. The installation path cannot contain Chinese and special characters. ',
+  agent_deploy_start_install_windows_third: '3. Double-click to execute tapdata.exe to start the installation. ',
+  agent_deploy_start_install_windows_fourth:
+    '4. When the installation process prompts you to enter the Token, copy the Token below and right-click in the command window to paste it',
+  agent_deploy_start_install_windows_fifth:
+    '5. Wait patiently to complete the installation and startup of Tapdata Agent. ',
   agent_deploy_link_agent_operation: '"Agent Installation Manual and Common QA"',
   agent_deploy_link_agent_operation_desc:
     'Or directly scan the QR code on the right to join the community for technical support. ',
@@ -938,6 +944,10 @@ export default {
   verify_button_create: 'Create',
   verify_see_details: 'View details',
   verify_checking: 'Checking...',
+  verify_operation: 'operation',
+  verify_operation_verify_again: 'Re-verify',
+  verify_operation_verify_again_info:
+    'When no table is selected, by default only the table that is inconsistent with the last verification will be re-verified',
 
   verify_title_create: 'New verification',
   verify_title_edit: 'Edit Verification',

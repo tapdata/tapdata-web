@@ -57,13 +57,20 @@
           <!--						{{ user.username }}-->
           <!--					</el-button>-->
           <div class="username flex align-items-center">
-            <VIcon class="mr-2" size="17">account</VIcon>
+            <img
+              v-if="user.avatar"
+              :src="user.avatar"
+              alt=""
+              class="mr-2"
+              style="width: 30px; height: 30px; border-radius: 50%"
+            />
+            <VIcon v-else class="mr-2" size="20">account</VIcon>
             <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
           </div>
 
           <ElDropdownMenu slot="dropdown">
             <!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
-            <!--            <ElDropdownItem command="userCenter"> 用户中心 </ElDropdownItem>-->
+            <ElDropdownItem command="userCenter"> 用户中心 </ElDropdownItem>
             <ElDropdownItem command="home"> {{ $t('header_official_website') }} </ElDropdownItem>
             <ElDropdownItem command="signOut"> {{ $t('header_sign_out') }} </ElDropdownItem>
           </ElDropdownMenu>
@@ -137,6 +144,11 @@ export default {
     init() {
       this.getTmUser()
     },
+    getUser() {
+      this.$axios.get('api/tcm/user').then(data => {
+        this.user = data || {}
+      })
+    },
     getTmUser() {
       this.$axios.get('tm/api/users/self').then(data => {
         if (data) {
@@ -176,7 +188,10 @@ export default {
           window.open('https://cloud.tapdata.net/', '_blank')
           break
         case 'userCenter':
-          window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
+          // window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
+          this.$router.push({
+            name: 'userCenter'
+          })
           break
         case 'signOut':
           this.$confirm(this.$t('header_log_out_tip'), this.$t('header_log_out_title'), {

@@ -649,6 +649,142 @@
       </div>
     </div>
   </div>
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 11">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>Tapdata Cloud 2.1.0 来了：最新支持阿里云数据库接入，Windows版本操作更轻量，使用体验全面升级！</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2022-02-28</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-4">
+          此次发布的 2.1.0 版又有大动作：正式开始接入云数据库，优化 Windows
+          版本操作流程，沿着真实使用环境下的切实需求点，全面升级用户体验。
+        </div>
+        <div class="mb-2 p-4" style="background-color: rgb(241, 248, 255)">
+          <div class="mb-4">更新速览👇</div>
+          <div class="ml-2 mb-4">
+            1. 数据连接上新，<span class="fw-bold font-color-main">开始支持云数据库接入</span>，本轮新增 Aliyun
+            MariaDB、Aliyun MongoDB、Aliyun RDS for SQLServer、Aliyun RDS for PG、Aliyun RDS for MySQL 作为源和目标；
+          </div>
+          <div class="ml-2 mb-4">
+            2.
+            <span class="fw-bold font-color-main">优化 Windows 版本打包和安装流程</span>，流程更清晰，部署操作更简洁；
+          </div>
+          <div class="ml-2 mb-4">
+            3.
+            <span class="fw-bold font-color-main">新增用户中心模块</span
+            >：支持修改注册初始信息，包括对昵称、头像、密码、企业信息的编辑，以及手机号、邮箱的新增绑定和切换；
+          </div>
+          <div class="ml-2 mb-4">
+            4.
+            <span class="fw-bold font-color-main">新增任务数据可视化模块</span
+            >：用户工作台可见「任务每日数据量趋势图」➕「累计数据量图」
+          </div>
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">01</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>开始支持云数据库接入</strong>
+            </div>
+            <div class="number-title-box__desc">数据连接又上新 千呼万唤「云」来了</div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          作为国内首家异构数据库实时同步云平台，Tapdata Cloud
+          不断拓展能够支持的数据连接版图，力求满足用户的多样化数据源和目标需求，真正实现数据实时同步“全面破壁”。
+        </div>
+        <div class="mb-4 line-height-2">
+          面对大量用户对于连接云数据库的迫切需求，Tapdata Cloud 优先响应。本次更新中，新增支持 Aliyun MariaDB、Aliyun
+          MongoDB、Aliyun RDS for SQLServer、Aliyun RDS for PG、Aliyun RDS for MySQL 作为源和目标。放大就看 Tapdata
+          Cloud “破壁行动”最新战绩 👇：
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.0_p_01.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">02</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>Windows 版本流程优化</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>「傻瓜模式」再升级 安装部署更高效</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">Tapdata Cloud 的安装部署简单易上手？我们还可以更简单👉</div>
+        <div class="mb-4 line-height-2">本次更新重点针对 Windows 版本操作流程再优化：</div>
+        <div class="mb-4 line-height-2">在 Agent 部署方式方面：用户下载 Agent 安装包后，双击执行即可完成安装部署</div>
+        <div class="mb-4 line-height-2">
+          在安装过程中：新版本会自动检测用户的 Java 环境，如果用户的 Java 环境不满足运行需要，会自动下载 JRE
+          使用，无需再提前进行 Java 环境配置。（*手动划重点：下载的 JRE 对客户环境<span class="color-danger"
+            >无任何侵入</span
+          >）
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.0_p_02.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">03</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>新增「用户中心」页面</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>你的个性化设置新功能已上线</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          想要自主修改注册初始信息、设置头像/昵称/密码，或是需要绑定新的手机号和邮箱的伙伴们，入口来啦！鼠标悬停于右上角个人账号处，下拉菜单内选中【用户中心】标签，点击即可进入个人及企业信息编辑界面。
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.0_p_003.gif" alt="" />
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.0_p_004.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">04</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>新增任务数据量统计图表展示</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>因为可视 所以更清晰</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          这一次，我们还在【用户工作台】底部新增了「每日数据量趋势图」和「累计数量图」。可以点击进入工作台后下滑查看自己的任务数据统计——一表直览，让你的任务更清晰。
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.0_p_005.gif" alt="" />
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.0_p_006.png" alt="" />
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.0_p_007.png" alt="" />
+        </div>
+        <div class="line-height-2">
+          重视成长路上收获的每一条反馈，不断完善，持续优化，Tapdata一直在路上。始于细节，成于大美，期待下一个新版本再和大家见面
+          <img
+            src="../../../public/images/notice/love.png"
+            alt=""
+            style="width: 20px; height: 20px; vertical-align: text-bottom"
+          />。
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>

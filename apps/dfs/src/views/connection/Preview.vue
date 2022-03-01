@@ -31,7 +31,12 @@
           </el-button>
           <el-button class="flex-fill" @click="beforeTest()"> {{ $t('connection_preview_test') }} </el-button>
         </div>
-        <el-progress v-if="showProgress" class="mt-2" color="#2c65ff" :percentage="progress"></el-progress>
+        <el-progress
+          v-if="showProgress"
+          class="flex align-items-center mt-2"
+          color="#2c65ff"
+          :percentage="progress"
+        ></el-progress>
       </div>
       <div v-for="(item, index) in list" :key="index + ''" class="container-item flex">
         <div class="pt-3">
