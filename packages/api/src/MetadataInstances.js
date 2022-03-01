@@ -52,4 +52,13 @@ export class MetadataInstances extends PublicApi {
       }
     })
   }
+
+  /**
+   * 获取元数据表
+   */
+  originalData(qualified_name, target) {
+    if (target) {
+      return axios.get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name) + target)
+    } else return axios.get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name))
+  }
 }

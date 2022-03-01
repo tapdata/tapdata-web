@@ -2,11 +2,12 @@
   <div class="attr-panel">
     <div class="attr-panel-body overflow-auto">
       <Form
-        class-name="form-wrap"
+        class-name="form-wrap-task-setting"
         :form="form"
-        :colon="false"
+        :colon="true"
         labelAlign="left"
-        labelWidth="180"
+        labelWidth="150"
+        size="small"
         layout="horizontal"
         wrapperWidth="400"
       >

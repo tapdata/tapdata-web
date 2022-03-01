@@ -1,14 +1,8 @@
 <template>
   <div>
-    <el-button
-      v-if="transform.showBtn"
-      size="mini"
-      class="e-button"
-      :loading="loading"
-      :disabled="isDisable"
-      @click="fieldProcess()"
-      >{{ $t('dag_link_button_field_mapping') }}</el-button
-    >
+    <el-button v-if="transform.showBtn" size="mini" :loading="loading" :disabled="isDisable" @click="fieldProcess()">{{
+      $t('dag_link_button_field_mapping')
+    }}</el-button>
     <el-dialog
       v-if="dialogFieldProcessVisible"
       width="85%"
@@ -60,7 +54,7 @@ export default {
     /*
      * 模型推演
      * 新建任务，首次全部恢复默认
-     * 过滤条件：当前目标节点 stageId
+     * 过滤条件：当前目标节点 nodeId
      * 触发父组件：首次条件
      * */
     fieldProcess() {
@@ -70,8 +64,8 @@ export default {
       }
 
       if (!this.dataFlow) return
-      if (this.transform.stageId) {
-        this.dataFlow['stageId'] = this.transform.stageId //任务同步目标节点stageID 推演
+      if (this.transform.nodeId) {
+        this.dataFlow['nodeId'] = this.transform.nodeId //任务同步目标节点nodeId 推演
       }
       //迁移任务需要同步字段处理器
       if (this.mappingType && this.mappingType === 'cluster-clone') {
@@ -120,7 +114,7 @@ export default {
         dataFlowId: {
           like: id
         },
-        sinkStageId: this.transform.stageId
+        sinkNodeId: this.transform.nodeId //todo 返回是否为sinkNodeId
       }
       if (value) {
         let filterObj = { like: value, options: 'i' }
@@ -144,9 +138,9 @@ export default {
     },
     //任务迁移需要主动更新
     updateAutoFieldProcess(data) {
-      for (let i = 0; i < data.stages.length; i++) {
-        if (data.stages[i].outputLanes?.length > 0) {
-          data['stages'][i].field_process = this.field_process
+      for (let i = 0; i < data['dag']['nodes'].length; i++) {
+        if (data['dag']['edges']['target'] === data['dag']['nodes'][i].id) {
+          data['dag']['nodes'][i].field_process = this.field_process
         }
       }
       return data
@@ -154,8 +148,8 @@ export default {
     //是否目标有connectionID
     hasConnectionId(data) {
       let result = false
-      for (let i = 0; i < data.stages.length; i++) {
-        if (data.stages[i].id === this.transform.stageId && data.stages[i].connectionId !== '') {
+      for (let i = 0; i < data['dag']['nodes'].length; i++) {
+        if (data['dag']['nodes'][i].id === this.transform.nodeId && data['dag']['nodes'][i].connectionId !== '') {
           result = true
         }
       }
@@ -210,18 +204,18 @@ export default {
     },
     //清空表改名 字段改名
     clearTransform() {
-      for (let i = 0; i < this.dataFlow.stages.length; i++) {
-        if (this.dataFlow.stages[i].id === this.transform.stageId) {
-          this.dataFlow['stages'][i].fieldsNameTransform = ''
+      for (let i = 0; i < this.dataFlow['dag']['nodes'].length; i++) {
+        if (this.dataFlow['dag']['nodes'][i].id === this.transform.nodeId) {
+          this.dataFlow['dag']['nodes'][i].fieldsNameTransform = ''
           this.dataFlow['batchOperation'] = []
         }
       }
     },
     updateAutoTransform(type, data) {
       for (let i = 0; i < this.dataFlow.stages.length; i++) {
-        if (this.dataFlow.stages[i].id === this.transform.stageId) {
-          this.dataFlow['stages'][i].fieldsNameTransform = data.fieldsNameTransform
-          this.dataFlow['stages'][i].batchOperationList = data.batchOperationList
+        if (this.dataFlow['dag']['nodes'][i].id === this.transform.nodeId) {
+          this.dataFlow['dag']['nodes'][i].fieldsNameTransform = data.fieldsNameTransform
+          this.dataFlow['dag']['nodes'][i].batchOperationList = data.batchOperationList
         }
       }
     },
@@ -377,7 +371,7 @@ export default {
         type: 'metadataTransformerProgress',
         data: {
           dataFlowId: id,
-          stageId: this.transform.stageId
+          nodeId: this.transform.nodeId
         }
       }
       ws.ready(() => {
@@ -418,11 +412,5 @@ export default {
     padding: 0 50px;
     color: #666;
   }
-}
-.e-button {
-  padding: 4px 10px;
-  color: #666;
-  background-color: #f5f5f5;
-  margin-left: 10px;
 }
 </style>

@@ -37,12 +37,14 @@ importers:
 
   apps/daas:
     specifiers:
+      '@daas/api': workspace:^1.0.0
       '@daas/dag': workspace:^1.0.0
       '@daas/form': workspace:^1.0.0
       '@daas/node-design': workspace:^1.0.0
       '@daas/shared': workspace:^1.0.0
       '@formily/core': ^2.0.9
       '@formily/reactive': ^2.0.9
+      '@tapdata/field-mapping': workspace:^1.0.0
       '@vue/cli-plugin-babel': ~4.5.0
       '@vue/cli-plugin-eslint': ~4.5.0
       '@vue/cli-plugin-router': ~4.5.0
@@ -109,9 +111,11 @@ importers:
       vuex-persistedstate: ^3.0.0
       ws: ^8.4.2
     dependencies:
+      '@daas/api': link:../../packages/api
       '@daas/dag': link:../../packages/dag
       '@daas/node-design': link:../../packages/node-design
       '@daas/shared': link:../../packages/shared
+      '@tapdata/field-mapping': link:../../packages/field-mapping
       ace-builds: registry.npmmirror.com/ace-builds/1.4.14
       ajv: registry.npmmirror.com/ajv/8.10.0
       axios: registry.npmmirror.com/axios/0.21.4
@@ -313,6 +317,7 @@ importers:
       '@formily/core': ^2.0.9
       '@formily/element': ^2.0.9
       '@formily/reactive': ^2.0.9
+      '@tapdata/field-mapping': workspace:^1.0.0
       dagre: ^0.8.5
       mousetrap: ^1.6.5
       vuex: ^3.6.2
@@ -323,9 +328,16 @@ importers:
       '@formily/core': registry.npmmirror.com/@formily/core/2.0.11
       '@formily/element': registry.npmmirror.com/@formily/element/2.0.11_element-ui@2.15.7+vue@2.6.14
       '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.11
+      '@tapdata/field-mapping': link:../field-mapping
       dagre: registry.npmmirror.com/dagre/0.8.5
       mousetrap: registry.npmmirror.com/mousetrap/1.6.5
       vuex: registry.npmmirror.com/vuex/3.6.2_vue@2.6.14
+
+  packages/field-mapping:
+    specifiers:
+      '@daas/api': workspace:^1.0.0
+    dependencies:
+      '@daas/api': link:../api
 
   packages/form:
     specifiers:

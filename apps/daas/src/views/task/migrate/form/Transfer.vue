@@ -8,7 +8,19 @@
         }}</el-button>
         <span v-if="showProgress" class="ml-2"><VIcon>loading</VIcon> {{ progress }} %</span>
       </div>
-      <el-button size="mini" @click="dialogTableVisible = true">{{ $t('task_mapping_table_rename') }}</el-button>
+      <div>
+        <el-button class="mr-2" size="mini" @click="dialogTableVisible = true">{{
+          $t('task_mapping_table_rename')
+        }}</el-button>
+        <FieldMapping
+          ref="fieldMapping"
+          class="fr"
+          :transform="transferData"
+          :getDataFlow="getTask"
+          @update-first="returnModel"
+          @returnFieldMapping="returnFieldMappingData"
+        ></FieldMapping>
+      </div>
     </div>
 
     <VirtualTransfer
@@ -62,11 +74,17 @@ import VIcon from '@/components/VIcon'
 import VirtualTransfer from 'web-core/components/virtual-transfer'
 import MqTransfer from 'web-core/components/mq-transfer'
 import TableFieldFilter from './TableFieldFilter'
+import FieldMapping from '@tapdata/field-mapping'
 
 export default {
-  components: { VIcon, MqTransfer, VirtualTransfer, TableFieldFilter },
-
-  props: ['transferData', 'isTwoWay', 'mqTransferFlag', 'sourceId'],
+  components: { VIcon, MqTransfer, VirtualTransfer, TableFieldFilter, FieldMapping },
+  props: {
+    transferData: Object,
+    isTwoWay: Boolean,
+    mqTransferFlag: Boolean,
+    sourceId: String,
+    getTask: Function
+  },
 
   data() {
     return {
@@ -82,11 +100,14 @@ export default {
       bidirectional: '',
       loadFieldsStatus: 'finished',
       reloadCount: 0,
-      reloadLoading: false // 重新加载
+      reloadLoading: false, // 重新加载
+      //字段映射
+      showFieldMapping: true
     }
   },
   mounted() {
     this.getTable(this.sourceId)
+    this.tranModelVersionControl()
   },
 
   methods: {
@@ -159,6 +180,31 @@ export default {
     // 穿梭框值改变的时候 (重命名 或者还原)
     handleChangeTransfer() {
       this.$emit('select-table')
+    },
+    //字段映射
+    tranModelVersionControl() {
+      let data = this.getTask()
+      //是否显示字段推演
+      let nodeId = data?.dag?.nodes?.[1]?.id || ''
+      let param = {
+        nodes: data?.dag?.nodes,
+        nodeId: nodeId
+      }
+      this.$api('Task')
+        .tranModelVersionControl(param)
+        .then(res => {
+          this.showFieldMapping = res?.data[nodeId]
+        })
+    },
+    //接收是否第一次打开
+    returnModel(value) {
+      this.transferData.isFirst = value
+    },
+    // 字段处理器返回前后缀
+    returnFieldMappingData(data) {
+      this.transferData.fieldsNameTransform = data.fieldsNameTransform
+      this.transferData.batchOperationList = data.batchOperationList
+      this.transferData.field_process = data.field_process
     },
 
     //重新加载模型

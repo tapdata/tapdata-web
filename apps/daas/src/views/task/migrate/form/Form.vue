@@ -49,16 +49,6 @@
                 <span class="desc">
                   用户可以点击中间向右的箭头按钮勾选源端待同步表，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输）
                 </span>
-                <FieldMapping
-                  v-if="showFieldMapping"
-                  ref="fieldMapping"
-                  class="fr"
-                  mappingType="cluster-clone"
-                  :transform="transform"
-                  :getDataFlow="daft"
-                  @update-first="returnModel"
-                  @returnFieldMapping="returnFieldMapping"
-                ></FieldMapping>
               </div>
               <div class="create-task-transfer">
                 <Transfer
@@ -67,6 +57,7 @@
                   :sourceId="sourceId"
                   :mqTransferFlag="mqTransferFlag"
                   :isTwoWay="true"
+                  :getTask="daft"
                 ></Transfer>
               </div>
             </div>
@@ -109,11 +100,10 @@
 import Transfer from './Transfer'
 import DataSource from './DataSource'
 import Setting from './Setting'
-import FieldMapping from '../../../../components/field-mapping/main'
 import { DATASOURCE_MODEL, SETTING_MODEL, TRANSFER_MODEL } from './const'
 
 export default {
-  components: { Transfer, DataSource, Setting, FieldMapping },
+  components: { Transfer, DataSource, Setting },
   data() {
     return {
       steps: [],
@@ -131,14 +121,6 @@ export default {
       transferData: TRANSFER_MODEL,
       mqTransferFlag: false,
       showFieldMapping: false, //是否支持字段映射
-      isFirst: false,
-      transform: {
-        showBtn: true,
-        nodeId: '',
-        field_process: [],
-        fieldsNameTransform: '',
-        batchOperationList: []
-      },
       nodes: [],
       //保存
       loadingSave: false
@@ -218,6 +200,11 @@ export default {
         ]
       }
     },
+    goBackList() {
+      this.$router.push({
+        name: 'migrate'
+      })
+    },
     previous() {
       this.activeStep--
     },
@@ -245,7 +232,6 @@ export default {
           }
           break
         case 'setting':
-          this.tranModelVersionControl() //是否支持字段映射
           this.activeStep++
           break
       }
@@ -278,32 +264,7 @@ export default {
       }
       return result
     },
-    tranModelVersionControl() {
-      //是否显示字段推演
-      let data = this.daft()
-      let nodeId = data?.dag?.nodes?.[1]?.id || ''
-      let param = {
-        nodes: data?.dag?.nodes,
-        nodeId: nodeId
-      }
-      this.$api('Task')
-        .tranModelVersionControl(param)
-        .then(res => {
-          this.showFieldMapping = res?.data[nodeId]
-        })
-    },
-    //接收是否第一次打开
-    returnModel(value) {
-      this.isFirst = value
-    },
-    // 字段处理器返回前后缀
-    returnPreFixSuffix(data) {
-      this.transform.fieldsNameTransform = data.fieldsNameTransform
-      this.transform.batchOperationList = data.batchOperationList
-    },
-    returnFieldMapping(field_process) {
-      this.transform.field_process = field_process
-    },
+
     handleError(error) {
       if (error?.data?.message) {
         this.$message.error(error.data.message)
@@ -330,7 +291,7 @@ export default {
           timezone: systemTimeZone // 当type为localTZ时有该字段
         }
       ]
-      this.dataSourceData['syncPoints'] = syncPoints
+      this.settingData['syncPoints'] = syncPoints
       let postData = {
         name: this.settingData.name,
         description: '',
@@ -405,7 +366,7 @@ export default {
             name: this.dataSourceData.source_connectionName,
             tableName: this.dataSourceData.source_connectionName, //?
             type: 'database',
-            field_process: this.transform.field_process
+            field_process: this.transferData.field_process
           }
         ),
         Object.assign(
@@ -417,6 +378,7 @@ export default {
             name: this.dataSourceData.target_connectionName,
             tableName: this.dataSourceData.target_connectionName, //?
             type: 'database',
+            syncObjects: this.transferData.selectSourceArr,
             table_prefix: this.transferData.table_prefix,
             table_suffix: this.transferData.table_suffix,
             tableNameTransform: this.transferData.tableNameTransform,
@@ -424,7 +386,7 @@ export default {
           }
         )
       ]
-      this.transform.nodeId = targetIdB
+      this.transferData.nodeId = targetIdB
       return postData
     },
     save() {

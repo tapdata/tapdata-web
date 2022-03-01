@@ -3,6 +3,6 @@
  * @date 2022/2/24
  * @description
  */
-import FieldMapping from './main'
+import FieldMapping from './V1/main'
 
 export default FieldMapping

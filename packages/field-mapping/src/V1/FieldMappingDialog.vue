@@ -466,10 +466,10 @@ export default {
     }
     this.initNavData()
     //接收数据
-    let id = this.transform.stageId
+    let id = this.transform.nodeId
     let self = this
     ws.on('metadataTransformerProgress', function (res) {
-      if (res?.data?.stageId === id) {
+      if (res?.data?.nodeId === id) {
         let { finished, total, status } = res?.data
         self.progress.finished = finished
         self.progress.total = total
