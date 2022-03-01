@@ -528,5 +528,15 @@ export default {
       }
     }
   }
+  .filter-datetime-range {
+    font-size: 12px;
+    line-height: 32px;
+    ::v-deep {
+      font-size: 12px;
+      .el-input {
+        font-size: 12px;
+      }
+    }
+  }
 }
 </style>
