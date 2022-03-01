@@ -155,7 +155,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="$disabledByPermission('SYNC_job_edition_all_data', row.user_id) || startDisabled(row)"
+              :disabled="$disabledByPermission('SYNC_job_edition_all_data', row.user_id) || row.status === 'running'"
               @click="handleEditor(row.id)"
             >
               {{ $t('button_edit') }}
@@ -180,6 +180,7 @@
                 <i class="el-icon-more"></i>
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
+                <el-dropdown-item command="toView">{{ $t('dataFlow.view') }}</el-dropdown-item>
                 <el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
                   $t('dataFlow.dataFlowExport')
                 }}</el-dropdown-item>
@@ -639,8 +640,10 @@ export default {
       let statuses = item.statuses
       item.statusResult = []
       if (statuses?.length) {
-        let result = getSubTaskStatus(statuses)
-        item.statusResult = result
+        item.statusResult = getSubTaskStatus(statuses)
+      } else if (ETL_STATUS_MAP[item.status]) {
+        // 贴膏药，如果创建任务，没有手动点击保存，statuses 为空，主任务状态为 edit, 则显示编辑中（靠ETL_STATUS_MAP维护）
+        item.statusResult = [{ ...ETL_STATUS_MAP[item.status], count: 1 }]
       }
       return item
     },
@@ -766,6 +769,17 @@ export default {
         ids = this.multipleSelection.map(item => item.id)
       }
       this[command](ids, node)
+    },
+    toView([id]) {
+      window.open(
+        this.$router.resolve({
+          name: 'DataflowViewer',
+          params: {
+            id
+          }
+        }).href,
+        'viewer_' + id
+      )
     },
     export(ids) {
       let where = {

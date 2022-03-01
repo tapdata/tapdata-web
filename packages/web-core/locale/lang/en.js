@@ -574,6 +574,7 @@ const en = {
     uploadOK: 'Upload successful',
     uploadError: 'Upload failed',
     uploadInfo: 'Click to view details',
+    view: 'View',
     dataFlowExport: 'Export',
     addTag: 'Add tag',
     overWrite: 'Overwrite existing data',
