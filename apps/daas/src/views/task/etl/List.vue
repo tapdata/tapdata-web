@@ -215,7 +215,7 @@
               v-readonlybtn="'SYNC_job_edition'"
               style="margin-left: 10px"
               type="primary"
-              :disabled="$disabledByPermission('SYNC_job_edition_all_data', row.user_id)"
+              :disabled="$disabledByPermission('SYNC_job_edition_all_data', row.user_id) || row.status === 'running'"
               @click="handleEditor(row.id)"
             >
               {{ $t('button.edit') }}
@@ -703,8 +703,10 @@ export default {
       let statuses = item.statuses
       item.statusResult = []
       if (statuses?.length) {
-        let result = getSubTaskStatus(statuses)
-        item.statusResult = result
+        item.statusResult = getSubTaskStatus(statuses)
+      } else if (ETL_STATUS_MAP[item.status]) {
+        // 贴膏药，如果创建任务，没有手动点击保存，statuses 为空，主任务状态为 edit, 则显示编辑中（靠ETL_STATUS_MAP维护）
+        item.statusResult = [{ ...ETL_STATUS_MAP[item.status], count: 1 }]
       }
       return item
     },
