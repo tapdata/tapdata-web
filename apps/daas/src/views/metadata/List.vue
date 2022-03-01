@@ -134,7 +134,7 @@
           {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('metadata.details.opera')">
+      <el-table-column :label="$t('metadata.details.opera')" width="150">
         <template slot-scope="scope">
           <el-button
             v-readonlybtn="'data_catalog_edition'"
@@ -145,8 +145,9 @@
             "
             @click="toDetails(scope.row)"
           >
-            {{ $t('button.details') }}
+            {{ $t('button_details') }}
           </el-button>
+          <ElDivider direction="vertical"></ElDivider>
           <el-button
             v-readonlybtn="'data_catalog_edition'"
             size="mini"
@@ -158,6 +159,7 @@
           >
             {{ $t('button.rename') }}
           </el-button>
+          <ElDivider direction="vertical"></ElDivider>
           <el-button
             v-readonlybtn="'meta_data_deleting'"
             size="mini"
@@ -623,7 +625,6 @@ export default {
       }, debounce)
     },
     getFilterItems() {
-      console.log('TTTTTTTTTTT', this.dbOptions)
       this.filterItems = [
         {
           label: this.$t('metadata_type'),

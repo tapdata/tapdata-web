@@ -185,31 +185,25 @@
             @click="startTask(scope.row.id)"
             >{{ $t('dataVerification.executeVerifyTip') }}</ElLink
           >
-          <ElLink
-            style="margin-left: 10px"
-            type="primary"
-            :disabled="!scope.row.InspectResult"
-            @click="toTableInfo(scope.row.id)"
-            >{{ $t('dataVerification.detailTip') }}</ElLink
-          >
-          <ElLink
-            style="margin-left: 10px"
-            type="primary"
-            :disabled="!scope.row.InspectResult"
-            @click="toTableHistory(scope.row.id)"
-            >{{ $t('dataVerification.historyTip') }}</ElLink
-          >
+          <ElDivider direction="vertical"></ElDivider>
+          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">{{
+            $t('dataVerification.detailTip')
+          }}</ElLink>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableHistory(scope.row.id)">{{
+            $t('dataVerification.historyTip')
+          }}</ElLink>
+          <ElDivider direction="vertical"></ElDivider>
           <ElLink
             v-readonlybtn="'verify_job_edition'"
-            style="margin-left: 10px"
             type="primary"
             :disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
             @click="goEdit(scope.row.id, scope.row.flowId)"
             >{{ $t('dataVerification.configurationTip') }}</ElLink
           >
+          <ElDivider direction="vertical"></ElDivider>
           <ElLink
             v-readonlybtn="'verify_job_delete'"
-            style="margin-left: 10px"
             type="primary"
             :disabled="$disabledByPermission('verify_job_delete_all_data', scope.row.user_id)"
             @click="remove(scope.row.name, scope.row.id)"

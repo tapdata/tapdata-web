@@ -9,23 +9,26 @@
     :before-close="handleClose"
   >
     <div class="task-drawer-wrap" v-loading="previewLoading">
-      <div class="bar">
+      <!-- <div class="bar">
         <button type="button" class="el-button back-btn-icon-box el-button--default" @click="handleClose">
           <span>
             <VIcon class="back-btn-icon">arrow-right-circle</VIcon>
           </span>
         </button>
         <span class="back-btn-text">{{ $t('task_preview_title') }}</span>
-      </div>
+      </div> -->
       <header class="header">
         <div class="tab">
           <div class="img-box">
-            <img src="../../../assets/images/task/task.png" />
+            <img src="../../../assets/images/migrate/headImage.png" />
           </div>
           <div class="content">
-            <div>{{ previewData.name }}</div>
-            <div class="fs-8 py-2">{{ $t('task_details_desc') }}:{{ previewData.description }}</div>
+            <div class="name fs-6">{{ previewData.name }}</div>
+            <div class="fs-8 py-1 desc">
+              {{ $t('task_details_desc') }}: <span>{{ previewData.description }}</span>
+            </div>
             <div class="status">
+              <!-- <img :src="getSatusImgSrc(previewData.status)" alt="" /> -->
               {{ $t('task_preview_status_' + previewData.status) }}
             </div>
           </div>
@@ -33,13 +36,11 @@
       </header>
       <ul class="info-list">
         <li v-for="item in previewList" :key="item.label">
-          <img class="label-img" src="../../../assets/images/task/task.png" />
+          <img class="label-img" :src="getImgByData(item.label)" />
           <div class="label-text">
-            <div class="label">
-              {{ $t('task_preview_' + item.label) }}
-            </div>
+            <div class="label">{{ $t('task_preview_' + item.label) }}:</div>
             <div
-              class="value align-items-center align-middle pl-8"
+              class="value align-items-center align-middle"
               :class="{ 'align-top': item.value && item.value.length > 15 }"
             >
               {{ item.value }}
@@ -52,11 +53,8 @@
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
-
 export default {
   name: 'MigratePreview',
-  components: { VIcon },
   props: {
     id: {
       required: true,
@@ -77,26 +75,12 @@ export default {
       previewList: [],
       data: {},
       name: '',
-      type: '',
       status: '',
       progress: 0,
-      timer: null,
       showProgress: false,
       dialogTestVisible: false,
       previewLoading: false,
-      userId: '',
-      kafkaACK: [
-        { label: this.$t('dataForm.form.kafka.kafkaAcks0'), value: '0' },
-        { label: this.$t('dataForm.form.kafka.kafkaAcks1'), value: '1' },
-        { label: this.$t('dataForm.form.kafka.kafkaAcks_1'), value: '-1' },
-        { label: this.$t('dataForm.form.kafka.kafkaAcksAll'), value: 'all' }
-      ],
-      sourceType: {
-        rds: 'RDS实例',
-        ecs: 'ECS自建库',
-        selfDB: '云外自建库',
-        dds: 'DDS实例'
-      }
+      userId: ''
     }
   },
   watch: {
@@ -112,23 +96,7 @@ export default {
   created() {
     this.getData(this.id)
   },
-  beforeDestroy() {
-    this.clearInterval()
-  },
-  destroyed() {
-    this.form = {}
-    this.clearInterval()
-  },
   methods: {
-    returnTestData(data) {
-      if (!data.status || data.status === null) return
-      this.status = data.status
-    },
-    clearInterval() {
-      // 清除定时器
-      clearInterval(this.timer)
-      this.timer = null
-    },
     async getData(id) {
       this.loading = true
       this.$api('DataFlows')
@@ -144,7 +112,12 @@ export default {
                 item = 'sync_type'
               }
               if (['createUser', 'sync_type', 'id', 'createTime', 'startTime'].includes(item)) {
+                if (['createTime', 'startTime'].includes(item)) {
+                  res.data[item] = this.$moment(res.data[item]).format('YYYY-MM-DD HH:mm:ss')
+                }
                 previewData.push({ label: item, value: res.data[item] })
+
+                // this.getSatusImgSrc(res.data.status)
               }
             }
             this.previewList = previewData
@@ -154,75 +127,14 @@ export default {
           this.loading = false
         })
     },
+    getImgByData(data) {
+      return require(`@/assets/images/migrate/${data}.png`)
+    },
+    getSatusImgSrc(status) {
+      return require(`@/assets/icons/colorSvg/${status}.png`)
+    },
     handleClose() {
-      this.form = {}
-      this.clearInterval()
       this.$emit('previewVisible', false)
-    },
-    confirm(callback, catchCallback, config) {
-      this.$confirm(config.Message + config.name + '?', config.title, {
-        confirmButtonText: config.confirmButtonText,
-        cancelButtonText: config.cancelButtonText,
-        type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
-        if (resFlag) {
-          callback()
-        } else {
-          catchCallback()
-        }
-      })
-    },
-    reloadApi(type) {
-      this.clearInterval()
-      let parms
-      if (type === 'first') {
-        parms = {
-          loadCount: 0,
-          loadFieldsStatus: 'loading'
-        }
-        this.loadFieldsStatus = 'loading'
-      }
-      this.$api('connections')
-        .updateById(this.data.id, parms)
-        .then(result => {
-          if (result.data) {
-            let data = result.data
-            this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
-            if (type === 'first') {
-              this.$refs.test.start(true)
-            }
-            if (data.loadFieldsStatus === 'finished') {
-              this.progress = 100
-              setTimeout(() => {
-                this.showProgress = false
-                this.progress = 0 //加载完成
-              }, 800)
-            } else {
-              let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
-              this.progress = progress ? progress : 0
-              this.timer = setInterval(() => {
-                this.reloadApi()
-              }, 800)
-            }
-          }
-        })
-        .catch(() => {
-          this.$message.error(this.$t('connection.reloadFail'))
-          this.showProgress = false
-          this.progress = 0 //加载完成
-        })
-    },
-    //test
-    handleTestVisible() {
-      this.dialogTestVisible = false
-    },
-    //检测agent 是否可用
-    async checkTestConnectionAvailable() {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-      }
     }
   }
 }
@@ -253,15 +165,14 @@ export default {
     padding-top: 10px;
     .img-box {
       display: flex;
-      width: 60px;
-      height: 60px;
+      width: 20px;
+      height: 20px;
       justify-content: center;
       align-items: center;
       background: #fff;
       //border: 1px solid #dedee4;
       border-radius: 3px;
-      margin-left: 30px;
-      margin-right: 20px;
+      margin: 5px 20px 0 30px;
       img {
         width: 100%;
       }
@@ -271,11 +182,20 @@ export default {
       font-weight: 500;
       margin-top: 4px;
       width: 100%;
+      .name {
+        color: #000;
+        font-weight: 400;
+      }
+      .desc {
+        color: rgba(0, 0, 0, 0.6);
+        span {
+          color: #000;
+        }
+      }
     }
     .status {
       font-size: 12px;
       padding-bottom: 2px;
-      margin-top: 4px;
       border-top-width: 2px;
       .error {
         color: #f56c6c;
@@ -294,6 +214,7 @@ export default {
     width: 14px;
     height: 14px;
     margin-right: 15px;
+    margin-top: 2px;
   }
 
   .schema-load {
@@ -315,22 +236,25 @@ export default {
       display: flex;
       flex-direction: row;
       width: 100%;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       .label-text {
+        width: 100%;
         margin-right: 16px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f2f2f2;
         .label {
-          width: 110px;
-
-          padding-bottom: 5px;
+          width: 100%;
           text-align: left;
           color: rgba(0, 0, 0, 0.6);
           font-size: 12px;
         }
         .value {
-          width: 62%;
+          display: inline-block;
+          width: 100%;
+          padding-top: 5px;
           color: #666;
           font-size: 12px;
-          display: inline-block;
+          color: #000;
           word-break: break-all;
         }
       }

@@ -211,7 +211,13 @@ export default {
   color: rgba(0, 0, 0, 0.75);
 }
 .v-icon {
-  margin-right: 5px;
+  width: 18px !important;
+  height: 18px !important;
+  margin-right: 10px;
+  margin-top: 3px;
+}
+.el-message-box__message {
+  font-size: 14px;
 }
 .el-button {
   padding: 8px 16px;

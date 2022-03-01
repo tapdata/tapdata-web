@@ -564,9 +564,9 @@
         >
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelRename" size="mini">{{ $t('dataForm.cancel') }}</el-button>
+        <el-button @click="handleCancelRename" size="mini">{{ $t('button_cancel') }}</el-button>
         <el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
-          $t('message.confirm')
+          $t('button_confirm')
         }}</el-button>
       </span>
     </el-dialog>
@@ -1494,11 +1494,12 @@ export default {
     },
     goBack() {
       let tip = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接'
-      let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
-      this.$confirm(tip, title, {
-        confirmButtonText: '放弃',
-        cancelButtonText: '取消',
-        type: 'warning'
+      // let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
+      this.$confirm(tip, '', {
+        confirmButtonText: this.$t('connection_form_give_up'),
+        cancelButtonText: this.$t('button_cancel'),
+        type: 'warning',
+        showClose: false
       }).then(resFlag => {
         if (!resFlag) {
           return
