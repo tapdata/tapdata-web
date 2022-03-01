@@ -560,6 +560,7 @@ const tc = {
     uploadOK: '上傳成功',
     uploadError: '上傳失敗',
     uploadInfo: '點擊查看詳情',
+    view: '查看',
     dataFlowExport: '導出',
     addTag: '添加標籤',
     overWrite: '覆蓋已有數據',

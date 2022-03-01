@@ -21,6 +21,7 @@
     <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
       <LeftSidebar
+        v-if="!stateIsReadonly"
         v-resize.right="{
           minWidth: 230,
           maxWidth: 400
@@ -54,7 +55,10 @@
               @quick-add-node="quickAddNode"
             ></DFNode>
           </PaperScroller>
-          <PaperEmpty v-if="!allNodes.length"></PaperEmpty>
+          <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
+            <EmptyItem></EmptyItem>
+          </div>
+          <PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>
           <ElPopover
             ref="nodeMenu"
             v-model="nodeMenu.show"
@@ -114,6 +118,7 @@ import { validateBySchema } from '@daas/form/src/shared/validate'
 import resize from 'web-core/directives/resize'
 import { merge } from 'lodash'
 import PaperEmpty from './components/PaperEmpty'
+import EmptyItem from './components/EmptyItem'
 
 const databaseTypesApi = new DatabaseTypes()
 const taskApi = new Task()
@@ -127,14 +132,8 @@ export default {
 
   mixins: [deviceSupportHelpers, titleChange, showMessage],
 
-  props: {
-    listRoute: {
-      type: Object,
-      default: () => ({ name: 'Task' })
-    }
-  },
-
   components: {
+    EmptyItem,
     PaperEmpty,
     ConfigPanel,
     PaperScroller,
@@ -178,6 +177,7 @@ export default {
       'isActionActive',
       'nodeById',
       'stateIsDirty',
+      'stateIsReadonly',
       'processorNodeTypes',
       'hasNodeError'
     ]),
@@ -228,6 +228,7 @@ export default {
   methods: {
     ...mapMutations('dataflow', [
       'setStateDirty',
+      'setStateReadonly',
       'setEdges',
       'setTaskId',
       'setNodeTypes',
@@ -275,51 +276,58 @@ export default {
         return Promise.resolve()
       }
 
-      if (this.stateIsDirty) {
-        // 状态已被修改
-        const importConfirm = await this.confirmMessage(
-          `当您切换数据流时，您当前的数据流更改将丢失。`,
-          '确定切换？',
-          'warning',
-          '确定（不保存）'
-        )
-        if (importConfirm === false) {
-          return Promise.resolve()
-        }
-      }
-
       const { id } = this.$route.params
 
-      if (id) {
+      this.stopDagWatch?.()
+
+      if (this.$route.name === 'DataflowViewer') {
+        this.setStateReadonly(true)
         await this.openDataflow(id)
       } else {
-        await this.newDataflow()
-        // this.handleShowSettings() // 默认打开设置
-      }
+        this.setStateReadonly(false)
 
-      this.stopDagWatch?.()
-      this.stopDagWatch = this.$watch(() => this.allNodes.length + this.allEdges.length, this.updateDag)
+        if (this.stateIsDirty) {
+          // 状态已被修改
+          const importConfirm = await this.confirmMessage(
+            `当您切换数据流时，您当前的数据流更改将丢失。`,
+            '确定切换？',
+            'warning',
+            '确定（不保存）'
+          )
+          if (importConfirm === false) {
+            return Promise.resolve()
+          }
+        }
+
+        if (id) {
+          await this.openDataflow(id)
+        } else {
+          await this.newDataflow()
+        }
+
+        this.stopDagWatch = this.$watch(() => this.allNodes.length + this.allEdges.length, this.updateDag)
+      }
     },
 
     initCommand() {
       this.command = new CommandManager(this.$store, this.jsPlumbIns)
       Mousetrap.bind('mod+c', () => {
-        this.copyNodes()
+        !this.stateIsReadonly && this.copyNodes()
       })
       Mousetrap.bind('mod+v', () => {
-        this.pasteNodes(this.command)
+        !this.stateIsReadonly && this.pasteNodes(this.command)
       })
       Mousetrap.bind('mod+z', () => {
-        this.command.undo()
+        !this.stateIsReadonly && this.command.undo()
       })
       Mousetrap.bind('mod+shift+z', () => {
-        this.command.redo()
+        !this.stateIsReadonly && this.command.redo()
       })
       Mousetrap.bind('mod+shift+o', () => {
         this.$refs.paperScroller.toggleMiniView()
       })
       Mousetrap.bind('backspace', () => {
-        this.handleDelete()
+        !this.stateIsReadonly && this.handleDelete()
       })
       Mousetrap.bind(['option+command+l', 'ctrl+alt+l'], e => {
         e.preventDefault()
@@ -384,8 +392,10 @@ export default {
         const connection = { source, target }
 
         info.connection.bind('mouseover', () => {
-          info.connection.showOverlay('removeConn')
-          info.connection.showOverlay('addNodeOnConn')
+          if (!this.stateIsReadonly) {
+            info.connection.showOverlay('removeConn')
+            info.connection.showOverlay('addNodeOnConn')
+          }
         })
         info.connection.bind('mouseout', () => {
           info.connection.hideOverlay('removeConn')
@@ -1373,7 +1383,9 @@ export default {
     },
 
     handlePageReturn() {
-      this.$router.push(this.listRoute)
+      this.$router.push({
+        name: 'dataflowList'
+      })
     },
 
     initWS() {

@@ -244,6 +244,7 @@
                 <i class="el-icon-arrow-down"></i>
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
+                <el-dropdown-item command="toView">{{ $t('dataFlow.view') }}</el-dropdown-item>
                 <el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
                   $t('dataFlow.dataFlowExport')
                 }}</el-dropdown-item>
@@ -832,6 +833,17 @@ export default {
         ids = this.multipleSelection.map(item => item.id)
       }
       this[command](ids, node)
+    },
+    toView([id]) {
+      window.open(
+        this.$router.resolve({
+          name: 'DataflowViewer',
+          params: {
+            id
+          }
+        }).href,
+        'viewer_' + id
+      )
     },
     export(ids) {
       let where = {
