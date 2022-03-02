@@ -133,7 +133,7 @@
           </ul>
         </template>
         <div class="result-item mt-4 text-center">
-          <div v-if="isFinished" class="loading-item">
+          <div v-if="!isFinished" class="loading-item">
             <VIcon class="v-icon animation-rotate color-success" size="24" color="rgb(61, 156, 64)"
               >loading-circle</VIcon
             >
@@ -182,24 +182,39 @@ export default {
   },
   methods: {
     init() {
-      this.setTimer()
-      this.$once('hook:beforeDestroy', () => {
-        this.clearTimer()
-      })
       this.checkAgent()
     },
     setTimer() {
-      this.timer = setInterval(() => {}, 10000)
+      this.timer = setInterval(() => {
+        this.getAgentStatus()
+      }, 10000)
     },
     clearTimer() {
       this.timer && clearInterval(this.timer)
     },
+    getAgentStatus() {
+      let filter = {
+        where: {
+          id: this.agentId
+        },
+        limit: 10
+      }
+      this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
+        this.isFinished = data?.[1]?.status === 'Running'
+      })
+    },
     checkAgent() {
       this.$axios.get('api/tcm/orders/checkAgent').then(data => {
         if (data.agentId) {
+          this.agentId = data.agentId
           this.dialogVisible = true
           data.deployInfo.links.forEach(el => {
             this[el.os + 'Link'] = el.command
+          })
+          this.getAgentStatus()
+          this.setTimer()
+          this.$once('hook:beforeDestroy', () => {
+            this.clearTimer()
           })
         }
       })
