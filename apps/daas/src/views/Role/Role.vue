@@ -1,134 +1,135 @@
 <template>
-  <div class="role" v-loading="loading">
-    <head class="head">
-      <i class="iconfont icon-left-circle back-btn-icon" style="color: #409eff; cursor: pointer" @click="back"></i>
-      <h1>{{ $t('role.settingTitle') }}</h1>
-      <span>{{ $t('role.currentRole') }}: {{ roleName }}</span>
-    </head>
+  <div class="role section-wrap" v-loading="loading">
+    <div class="section-wrap-box">
+      <head class="head">
+        <i class="iconfont icon-left-circle back-btn-icon" style="color: #409eff; cursor: pointer" @click="back"></i>
+        <h1>{{ $t('role.settingTitle') }}</h1>
+        <span>{{ $t('role.currentRole') }}: {{ roleName }}</span>
+      </head>
 
-    <div class="role-tableBox">
-      <div class="headTitle">
-        <h4>{{ $t('role.pageVisible') }}</h4>
-        <p>{{ $t('role.pageShowTip') }}</p>
-      </div>
-      <ul class="role-table page-table">
-        <li class="role-head">
-          <el-row class="e-row">
-            <el-col class="e-col borderRight" :span="21">
-              {{ $t('role.choosePage') }}
-            </el-col>
-            <el-col class="e-col" :span="3">{{ $t('role.bulkOperate') }} </el-col>
-          </el-row>
-        </li>
-        <li v-for="item in dataList" :key="item.id">
-          <el-row class="e-row">
-            <el-col class="e-col borderRight" :span="21">
-              <template v-for="second in item.children">
-                <el-checkbox
-                  :key="second.name"
-                  v-model="second.checkAll"
-                  v-if="second.id"
-                  @change="handleCheckChange($event, item)"
-                  v-cloak
-                >
+      <div class="role-tableBox">
+        <div class="headTitle">
+          <h4>{{ $t('role.pageVisible') }}</h4>
+          <p>{{ $t('role.pageShowTip') }}</p>
+        </div>
+        <ul class="role-table page-table">
+          <li class="role-head">
+            <el-row class="e-row">
+              <el-col class="e-col borderRight" :span="21">
+                {{ $t('role.choosePage') }}
+              </el-col>
+              <el-col class="e-col" :span="3">{{ $t('role.bulkOperate') }} </el-col>
+            </el-row>
+          </li>
+          <li v-for="item in dataList" :key="item.id">
+            <el-row class="e-row">
+              <el-col class="e-col borderRight" :span="21">
+                <template v-for="second in item.children">
+                  <el-checkbox
+                    :key="second.name"
+                    v-model="second.checkAll"
+                    v-if="second.id"
+                    @change="handleCheckChange($event, item)"
+                    v-cloak
+                  >
+                    <span>
+                      {{ $t('role.page.' + second.name) }}
+                    </span>
+                  </el-checkbox>
+                </template>
+              </el-col>
+              <el-col class="e-col" :span="3">
+                <el-checkbox v-model="item.checked" @change="handleAllCheck($event, item)" v-cloak>
                   <span>
-                    {{ $t('role.page.' + second.name) }}
+                    {{ $t('role.allCheck') }}
                   </span>
                 </el-checkbox>
-              </template>
-            </el-col>
-            <el-col class="e-col" :span="3">
-              <el-checkbox v-model="item.checked" @change="handleAllCheck($event, item)" v-cloak>
-                <span>
-                  {{ $t('role.allCheck') }}
-                </span>
-              </el-checkbox>
-            </el-col>
-          </el-row>
-        </li>
-      </ul>
-      <div class="headTitle">
-        <h4>{{ $t('role.funcPermission') }}</h4>
-        <p>{{ $t('role.choosePermissionTip') }}</p>
-      </div>
-      <ul class="role-table">
-        <li class="role-head">
-          <el-row class="e-row">
-            <el-col class="e-col" :span="3">
-              {{ $t('role.module') }}
-            </el-col>
-            <el-col class="e-col borderLeft" :span="18">
-              {{ $t('role.functionDataPermission') }}
-            </el-col>
-            <el-col class="e-col borderLeft" :span="3">{{ $t('role.bulkOperate') }} </el-col>
-          </el-row>
-        </li>
-        <li class="module-style">
-          <el-row class="e-row" v-for="item in moduleList" :key="item.id">
-            <el-col :span="3" style="line-height: 40px">
-              <span class="nav">{{ $t('role.moduleMeun.' + item.name) }}</span>
-            </el-col>
-            <el-col :span="21" class="e-col borderLine">
-              <!-- 权限 -->
-              <el-row class="box">
-                <el-col class="e-col" :span="20" v-if="item.children">
-                  <el-checkbox
-                    v-for="second in item.children"
-                    :key="second.name"
-                    v-model="second.checked"
-                    v-show="second.id"
-                    :disabled="second.type === 'read'"
-                    @change="handleOneCheckAll($event, item, item.children, second, 'children')"
-                    :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
-                    v-cloak
-                  >
-                    <div>{{ $t('role.roleNavName.' + second.name) }}</div>
+              </el-col>
+            </el-row>
+          </li>
+        </ul>
+        <div class="headTitle">
+          <h4>{{ $t('role.funcPermission') }}</h4>
+          <p>{{ $t('role.choosePermissionTip') }}</p>
+        </div>
+        <ul class="role-table">
+          <li class="role-head">
+            <el-row class="e-row">
+              <el-col class="e-col" :span="3">
+                {{ $t('role.module') }}
+              </el-col>
+              <el-col class="e-col borderLeft" :span="18">
+                {{ $t('role.functionDataPermission') }}
+              </el-col>
+              <el-col class="e-col borderLeft" :span="3">{{ $t('role.bulkOperate') }} </el-col>
+            </el-row>
+          </li>
+          <li class="module-style">
+            <el-row class="e-row" v-for="item in moduleList" :key="item.id">
+              <el-col :span="3" style="line-height: 40px">
+                <span class="nav">{{ $t('role.moduleMeun.' + item.name) }}</span>
+              </el-col>
+              <el-col :span="21" class="e-col borderLine">
+                <!-- 权限 -->
+                <el-row class="box">
+                  <el-col class="e-col" :span="20" v-if="item.children">
                     <el-checkbox
-                      class="e-checkbox"
-                      v-show="second.allName"
-                      :disabled="!second.checked || second.allName === 'data_catalog_all_data'"
-                      v-model="second.checkAllData"
-                      @change="handleOneAllData($event, item, item.children, second, 'children')"
+                      v-for="second in item.children"
+                      :key="second.name"
+                      v-model="second.checked"
+                      v-show="second.id"
+                      :disabled="second.type === 'read'"
+                      @change="handleOneCheckAll($event, item, item.children, second, 'children')"
+                      :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
                       v-cloak
                     >
-                      <div>{{ $t('role.allData') }}</div>
+                      <div>{{ $t('role.roleNavName.' + second.name) }}</div>
+                      <el-checkbox
+                        class="e-checkbox"
+                        v-show="second.allName"
+                        :disabled="!second.checked || second.allName === 'data_catalog_all_data'"
+                        v-model="second.checkAllData"
+                        @change="handleOneAllData($event, item, item.children, second, 'children')"
+                        v-cloak
+                      >
+                        <div>{{ $t('role.allData') }}</div>
+                      </el-checkbox>
                     </el-checkbox>
-                  </el-checkbox>
-                </el-col>
-                <el-col :span="4" v-if="item.children" style="padding-top: 8px">
-                  <el-checkbox
-                    v-model="item.checkAll"
-                    @change="handleAuthoritySelectAll($event, item, item.children)"
-                    v-cloak
-                  >
-                    <div>{{ $t('role.chooseAllFunction') }}</div>
-                  </el-checkbox>
-                  <el-checkbox
-                    class="e-checkbox"
-                    v-model="item.checkedAllData"
-                    @change="handleCheckedAllData($event, item, item.children)"
-                    v-cloak
-                  >
-                    <div>{{ $t('role.chooseAllRole') }}</div>
-                  </el-checkbox>
-                </el-col>
-              </el-row>
-              <div class="line" v-if="item.children && item.classification"></div>
-              <!-- 分类权限 -->
-              <el-row class="box heightStyle" v-if="item.classification">
-                <el-col class="e-col" :span="20">
-                  <el-checkbox
-                    v-for="second in item.classification"
-                    :key="second.name"
-                    v-model="second.checked"
-                    v-show="second.id"
-                    :disabled="second.type === 'read'"
-                    @change="handleOneCheckAll($event, item, item.classification, second, 'classify')"
-                    :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
-                    v-cloak
-                  >
-                    <div>{{ $t('role.roleNavName.' + second.name) }}</div>
-                    <!-- <el-checkbox
+                  </el-col>
+                  <el-col :span="4" v-if="item.children" style="padding-top: 8px">
+                    <el-checkbox
+                      v-model="item.checkAll"
+                      @change="handleAuthoritySelectAll($event, item, item.children)"
+                      v-cloak
+                    >
+                      <div>{{ $t('role.chooseAllFunction') }}</div>
+                    </el-checkbox>
+                    <el-checkbox
+                      class="e-checkbox"
+                      v-model="item.checkedAllData"
+                      @change="handleCheckedAllData($event, item, item.children)"
+                      v-cloak
+                    >
+                      <div>{{ $t('role.chooseAllRole') }}</div>
+                    </el-checkbox>
+                  </el-col>
+                </el-row>
+                <div class="line" v-if="item.children && item.classification"></div>
+                <!-- 分类权限 -->
+                <el-row class="box heightStyle" v-if="item.classification">
+                  <el-col class="e-col" :span="20">
+                    <el-checkbox
+                      v-for="second in item.classification"
+                      :key="second.name"
+                      v-model="second.checked"
+                      v-show="second.id"
+                      :disabled="second.type === 'read'"
+                      @change="handleOneCheckAll($event, item, item.classification, second, 'classify')"
+                      :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
+                      v-cloak
+                    >
+                      <div>{{ $t('role.roleNavName.' + second.name) }}</div>
+                      <!-- <el-checkbox
 											class="e-checkbox"
 											v-show="second.allName"
 											:disabled="!item.checked"
@@ -138,57 +139,58 @@
 										>
 											<div>All data</div>
 										</el-checkbox> -->
-                  </el-checkbox>
-                </el-col>
-                <el-col class="e-col allSelectBox" :span="4">
-                  <el-checkbox
-                    class="checkbox-radio checkbox-position"
-                    v-model="item.classifiyCheckAll"
-                    @change="handleAuthoritySelectAll($event, item, item.classification)"
-                    v-cloak
-                  >
-                    <div>{{ $t('role.chooseAllFunction') }}</div>
-                  </el-checkbox>
-                </el-col>
-              </el-row>
-              <div class="line" v-if="item.classification && item.functional"></div>
-              <!-- 导入导出 -->
-              <el-row class="box heightStyle" v-if="item.functional">
-                <el-col class="e-col" :span="20">
-                  <el-checkbox
-                    v-for="second in item.functional"
-                    :key="second.name"
-                    v-show="second.id"
-                    :disabled="second.type === 'read'"
-                    v-model="second.checked"
-                    @change="handleOneCheckAll($event, item, item.functional, second, 'functional')"
-                    :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
-                    v-cloak
-                  >
-                    <div>{{ $t('role.roleNavName.' + second.name) }}</div>
-                  </el-checkbox>
-                </el-col>
-                <el-col class="e-col" :span="4">
-                  <el-checkbox
-                    class="checkbox-radio checkbox-position"
-                    v-model="item.functionCheckAll"
-                    @change="handleAuthoritySelectAll($event, item, item.functional)"
-                    v-cloak
-                  >
-                    <div>{{ $t('role.chooseAllFunction') }}</div>
-                  </el-checkbox>
-                </el-col>
-              </el-row>
-            </el-col>
-          </el-row>
-        </li>
-      </ul>
-    </div>
-    <div class="btn">
-      <el-button size="mini" @click="back">{{ $t('dataVerify.back') }} </el-button>
-      <el-button size="mini" type="primary" :loading="saveloading" @click="saveSubmit('ruleForm')"
-        >{{ $t('app.save') }}
-      </el-button>
+                    </el-checkbox>
+                  </el-col>
+                  <el-col class="e-col allSelectBox" :span="4">
+                    <el-checkbox
+                      class="checkbox-radio checkbox-position"
+                      v-model="item.classifiyCheckAll"
+                      @change="handleAuthoritySelectAll($event, item, item.classification)"
+                      v-cloak
+                    >
+                      <div>{{ $t('role.chooseAllFunction') }}</div>
+                    </el-checkbox>
+                  </el-col>
+                </el-row>
+                <div class="line" v-if="item.classification && item.functional"></div>
+                <!-- 导入导出 -->
+                <el-row class="box heightStyle" v-if="item.functional">
+                  <el-col class="e-col" :span="20">
+                    <el-checkbox
+                      v-for="second in item.functional"
+                      :key="second.name"
+                      v-show="second.id"
+                      :disabled="second.type === 'read'"
+                      v-model="second.checked"
+                      @change="handleOneCheckAll($event, item, item.functional, second, 'functional')"
+                      :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
+                      v-cloak
+                    >
+                      <div>{{ $t('role.roleNavName.' + second.name) }}</div>
+                    </el-checkbox>
+                  </el-col>
+                  <el-col class="e-col" :span="4">
+                    <el-checkbox
+                      class="checkbox-radio checkbox-position"
+                      v-model="item.functionCheckAll"
+                      @change="handleAuthoritySelectAll($event, item, item.functional)"
+                      v-cloak
+                    >
+                      <div>{{ $t('role.chooseAllFunction') }}</div>
+                    </el-checkbox>
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          </li>
+        </ul>
+      </div>
+      <div class="btn">
+        <el-button size="mini" @click="back">{{ $t('dataVerify.back') }} </el-button>
+        <el-button size="mini" type="primary" :loading="saveloading" @click="saveSubmit('ruleForm')"
+          >{{ $t('app.save') }}
+        </el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -937,7 +939,7 @@ export default {
     // display: flex;
     // flex-direction: column;
     height: calc(100% - 120px);
-    padding: 10px 20px;
+    padding: 10px 0;
     box-sizing: border-box;
     overflow: auto;
     .headTitle {

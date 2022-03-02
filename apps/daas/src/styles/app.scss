@@ -1,35 +1,56 @@
-:root {
-  --blue: #0d6efd;
-  --indigo: #6610f2;
-  --purple: #6f42c1;
-  --pink: #d63384;
-  --red: #dc3545;
-  --orange: #fd7e14;
-  --yellow: #ffc107;
-  --green: #198754;
-  --teal: #20c997;
-  --cyan: #0dcaf0;
-  --white: #fff;
-  --gray: #6c757d;
-  --gray-dark: #343a40;
-  --primary: #1890ff;
-  --secondary: #6c757d;
-  --success: #198754;
-  --info: #0dcaf0;
-  --warning: #ffc107;
-  --danger: #dc3545;
-  --light: #f8f9fa;
-  --dark: #212529;
-  --font-sans-serif: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
-    'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  --font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-  --gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
-  --primary-hover: #40a9ff;
-  --primary-hover-l: #f0f7ff;
-}
 @import 'var';
 @import 'reboot';
 @import 'overrides';
 //@import '~web-core/styles/utilities';
 @import 'utilities';
 @import '~@/assets/style/font/iconfont.css';
+
+#app {
+  width: 100%;
+  min-width: 1200px;
+  height: 100%;
+  font-size: 12px;
+  font-weight: 400;
+  font-style: normal;
+  -webkit-font-smoothing: unset;
+}
+
+/*滚动条整体样式*/
+#app::-webkit-scrollbar {
+  width: 10px;
+  height: 1px;
+}
+
+/*滚动条滑块*/
+#app::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  background: #535353;
+}
+
+/*滚动条轨道*/
+#app::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 1px rgba(0, 0, 0, 0);
+  border-radius: 10px;
+  background: #ccc;
+}
+
+.iconfont {
+  font-family: 'iconfont' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: 400;
+  font-variant: normal;
+  text-transform: none;
+  //vertical-align: baseline;
+  display: inline-block;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.g-panel-container {
+  background: #fff;
+  padding: 24px;
+  border-radius: 4px;
+  box-sizing: border-box;
+}

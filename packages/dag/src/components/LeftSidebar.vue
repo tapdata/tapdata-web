@@ -50,8 +50,17 @@
               <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore" class="px-2 pt-1">
                 <div
                   v-for="db in dbList"
+                  v-mouse-drag="{
+                    item: db,
+                    container: '#dfEditorContent',
+                    getDragDom,
+                    onStart,
+                    onMove,
+                    onDrop,
+                    onStop
+                  }"
                   :key="db.id"
-                  class="db-item flex align-center px-4 clickable user-select-none rounded-2"
+                  class="db-item grabbable flex align-center px-4 user-select-none rounded-2"
                   :class="{ active: activeConnection.id === db.id }"
                   @click="handleSelectDB(db)"
                 >
@@ -286,7 +295,7 @@ export default {
       activeConnection: {
         id: '',
         name: '',
-        database_type: ''
+        databaseType: ''
       },
       dragStarting: false,
       dragMoving: false,
@@ -431,9 +440,23 @@ export default {
 
       this.dbTotal = data.total
 
+      const dbList = data.items.map(item => ({
+        id: item.id,
+        name: item.name,
+        type: 'table',
+        group: 'data',
+        constructor: 'Table',
+        databaseType: item.database_type,
+        attr: {
+          tableName: '',
+          databaseType: item.database_type,
+          connectionId: item.id
+        }
+      }))
+
       if (loadMore) {
         // 防止重复push
-        data.items.forEach(item => {
+        dbList.forEach(item => {
           if (!this.dbIdMap[item.id]) {
             this.dbList.push(item)
             this.dbIdMap[item.id] = true
@@ -442,10 +465,10 @@ export default {
         this.dbLoadingMore = false
       } else {
         this.scrollTopOfDBList()
-        this.dbList = data.items
+        this.dbList = dbList
         this.dbLoading = false
         // 缓存所有dbId
-        this.dbIdMap = data.items.reduce((map, item) => ((map[item.id] = true), map), {})
+        this.dbIdMap = dbList.reduce((map, item) => ((map[item.id] = true), map), {})
       }
       return this.dbList
     },
@@ -503,10 +526,10 @@ export default {
         type: 'table',
         group: 'data',
         constructor: 'Table',
-        databaseType: connection.database_type,
+        databaseType: connection.databaseType,
         attr: {
           tableName: tb.original_name,
-          databaseType: connection.database_type,
+          databaseType: connection.databaseType,
           connectionId: connection.id
         }
       }))
@@ -541,7 +564,7 @@ export default {
     },
 
     genIconSrc(item) {
-      return require(`web-core/assets/icons/node/${item.database_type}.svg`)
+      return require(`web-core/assets/icons/node/${item.databaseType}.svg`)
     },
 
     getNodeHtml(n) {
@@ -592,11 +615,11 @@ export default {
     }, 100),
 
     scrollTopOfDBList() {
-      this.$refs.dbList.wrap.scrollTop = 0
+      if (this.$refs.dbList) this.$refs.dbList.wrap.scrollTop = 0
     },
 
     scrollTopOfTableList() {
-      this.$refs.tbList.wrap.scrollTop = 0
+      if (this.$refs.tbList) this.$refs.tbList.wrap.scrollTop = 0
     },
 
     handleTBBlur() {
@@ -641,10 +664,10 @@ export default {
         type: 'table',
         group: 'data',
         constructor: 'Table',
-        databaseType: connection.database_type,
+        databaseType: connection.databaseType,
         attr: {
           tableName: name,
-          databaseType: connection.database_type,
+          databaseType: connection.databaseType,
           connectionId: connection.id
         }
       })

@@ -117,8 +117,8 @@
             </v-button>
           </div>
         </div>
-      </el-container> </el-container
-    >`
+      </el-container>
+    </el-container>
   </el-container>
 </template>
 

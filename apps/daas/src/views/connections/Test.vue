@@ -69,12 +69,9 @@
     </el-table>
     <!--    <span v-show="testData.testLogs && testData.testLogs.length > 0">ERROR: {{ wsErrorMsg }}</span>-->
     <span slot="footer" class="dialog-footer">
-      <el-button
-        size="mini"
-        @click="start()"
-        v-if="isTimeout && $window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'"
-        >{{ $t('dataForm.test.retryBtn') }}</el-button
-      >
+      <el-button size="mini" @click="start()" v-if="isTimeout && $getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'">{{
+        $t('dataForm.test.retryBtn')
+      }}</el-button>
       <el-button size="mini" type="primary" @click="handleClose()">{{ $t('dataForm.close') }}</el-button>
     </span>
   </el-dialog>
@@ -300,7 +297,7 @@ export default {
   }
 
   .el-dialog__body {
-    padding: 0 20px;
+    padding: 0 20px 20px;
   }
 
   .test-block {

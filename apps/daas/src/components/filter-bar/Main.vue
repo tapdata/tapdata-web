@@ -23,7 +23,7 @@
     </ElFormItem>
     <ElFormItem v-if="!hideRefresh">
       <ElButton plain class="btn-refresh" @click="fetch">
-        <VIcon class="font-color-sub">refresh</VIcon>
+        <VIcon class="text-primary">refresh</VIcon>
       </ElButton>
     </ElFormItem>
   </ElForm>
@@ -146,7 +146,13 @@ export default {
       this.$emit('input', this.getValue())
       this.$refs.filterForm.validate(res => {
         if (res) {
-          this.$emit('search', item.debounce)
+          const { delayTrigger } = this.$util
+          delayTrigger(() => {
+            this.$router.replace({
+              name: this.$route.name,
+              query: this.getValue()
+            })
+          }, item.debounce)
         }
       })
     },
@@ -234,10 +240,11 @@ export default {
   height: 32px;
   line-height: 32px;
   width: 32px;
+  min-width: 32px;
   font-size: 16px;
   &:hover,
   &.is-plain:focus:hover {
-    border-color: #d9d9d9;
+    border-color: #2c65ff;
     background-color: #f5f6f7;
   }
 }

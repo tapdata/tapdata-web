@@ -660,11 +660,14 @@ export default {
         }
       }
     }
-    .el-button.cancel {
-      color: #666;
-      border: 0;
-      background-color: #eee;
+    .el-dialog__footer {
+      padding-top: 20px;
     }
+    // .el-button.cancel {
+    //   color: #666;
+    //   border: 0;
+    //   background-color: #eee;
+    // }
   }
 }
 .dialogDictionary {

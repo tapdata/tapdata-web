@@ -36,6 +36,7 @@ const findByCod = (arr, cond) => {
 // 初始化 state
 const state = () => ({
   stateIsDirty: false, // 状态是否被污染，标识数据改变
+  stateIsReadonly: false, // 状态是否被污染，标识数据改变
   nodeTypes: [], // 所有节点类型
   nodeErrorState: {}, // 节点错误状态
   processorNodeTypes: [
@@ -100,6 +101,10 @@ const state = () => ({
 const getters = {
   stateIsDirty: state => {
     return state.stateIsDirty
+  },
+
+  stateIsReadonly: state => {
+    return state.stateIsReadonly
   },
 
   // 判断action是否被标记
@@ -225,6 +230,10 @@ const mutations = {
    */
   setStateDirty(state, dirty) {
     state.stateIsDirty = dirty
+  },
+
+  setStateReadonly(state, readonly) {
+    state.stateIsReadonly = readonly
   },
 
   /**

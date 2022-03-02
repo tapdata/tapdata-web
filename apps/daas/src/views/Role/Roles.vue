@@ -1,13 +1,6 @@
 <template>
-  <section class="roles-list-wrap">
-    <TablePage
-      ref="table"
-      row-key="id"
-      class="roles-list"
-      :title="$t('app.menu.' + $route.name)"
-      :remoteMethod="getData"
-      @sort-change="handleSortTable"
-    >
+  <section class="roles-list-wrap section-wrap">
+    <TablePage ref="table" row-key="id" class="roles-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <div slot="search">
         <ul class="search-bar">
           <li>
@@ -582,36 +575,6 @@ export default {
 </style>
 <style lang="scss">
 .roles-list-wrap {
-  height: 100%;
-  .table-page-container {
-    .table-page-body {
-      box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);
-
-      .table-page-topbar {
-        padding: 10px 10px 0 10px;
-        background-color: #fff;
-      }
-
-      .el-table {
-        // padding: 0 10px;
-        box-sizing: border-box;
-        // border-top: 0;
-        // .has-gutter {
-        // 	th {
-        // 		background-color: #eff1f4 !important;
-        // 	}
-        // }
-      }
-
-      .table-page-pagination {
-        margin-top: 0;
-        padding: 5px 20px;
-        background-color: #fff;
-        box-sizing: border-box;
-      }
-    }
-  }
-
   .userBox {
     .el-select,
     .el-input {

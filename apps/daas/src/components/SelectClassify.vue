@@ -45,8 +45,8 @@
       </span>
     </el-tree>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="handleCancel" size="mini">{{ $t('dataForm.cancel') }}</el-button>
-      <el-button type="primary" @click="handleAdd" size="mini">{{ $t('dataForm.submit') }}</el-button>
+      <el-button class="message-button-cancel" @click="handleCancel" size="mini">{{ $t('button_cancel') }}</el-button>
+      <el-button type="primary" @click="handleAdd" size="mini">{{ $t('button_save') }}</el-button>
     </span>
   </el-dialog>
 </template>

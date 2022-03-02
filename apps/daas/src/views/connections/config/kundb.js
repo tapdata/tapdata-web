@@ -1,8 +1,8 @@
 export default function (vm) {
   return {
     form: {
-      labelPosition: 'right',
-      labelWidth: '200px'
+      labelPosition: 'left',
+      labelWidth: '160px'
     },
     defaultModel: {
       connection_type: 'source_and_target'
@@ -29,12 +29,14 @@ export default function (vm) {
             value: 'target'
           }
         ],
-        required: true
+        isVertical: false,
+        button: true,
+        outerTip: true,
+        customClass: 'large-item'
       },
       {
         type: 'input',
         field: 'database_host',
-
         disabled: false,
         label: vm.$t('dataForm.form.host'),
         rules: [
@@ -100,10 +102,9 @@ export default function (vm) {
         type: 'select',
         field: 'database_datetype_without_timezone',
         label: vm.$t('dataForm.form.timeZone'),
-        //tips: vm.$t('dataForm.form.timeZoneTips'),
+        tip: vm.$t('connection_form_impact_type'),
         options: [],
-        show: true,
-        tip: '影响类型: DATE'
+        show: true
       }
     ]
   }

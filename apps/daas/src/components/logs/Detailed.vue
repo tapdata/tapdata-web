@@ -191,6 +191,7 @@ export default {
 .monitor-log-wrap {
   display: flex;
   //max-height: 450px;
+  font-size: 14px;
   .search-input {
     width: 343px;
   }

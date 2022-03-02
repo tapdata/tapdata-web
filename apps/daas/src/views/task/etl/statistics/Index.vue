@@ -9,6 +9,9 @@
         <ElTabPane label="运行日志" name="log" lazy>
           <Log :id="task.id"></Log>
         </ElTabPane>
+        <ElTabPane label="挖掘任务" name="sharedMing" lazy>
+          <ShareMining :id="task.id"></ShareMining>
+        </ElTabPane>
       </ElTabs>
     </div>
   </div>
@@ -17,13 +20,15 @@
 <script>
 import Info from './Info'
 import Schedule from './Schedule'
+import ShareMining from './ShareMining'
 import Log from '@/components/logs/Index'
 
 export default {
   name: 'Statistics',
-  components: { Info, Schedule, Log },
+  components: { Info, Schedule, Log, ShareMining },
   data() {
     return {
+      timer: null,
       task: {},
       selectFlow: 'flow_', // 选中节点
       dataOverviewAll: 'flow',
@@ -91,6 +96,9 @@ export default {
         }
       }
     })
+    this.timer = setInterval(() => {
+      this.loadTask()
+    }, 5000)
   },
   mounted() {
     this.init()
@@ -108,6 +116,9 @@ export default {
       this.$api('SubTask')
         .get([id])
         .then(res => {
+          if (JSON.stringify(this.formatTask(res.data)) === JSON.stringify(this.task)) {
+            return
+          }
           this.task = this.formatTask(res.data)
         })
         .finally(() => {
@@ -140,6 +151,9 @@ export default {
         .then(res => {
           return res.data
         })
+    },
+    clearTimer() {
+      this.timer && clearInterval(this.timer)
     }
   }
 }

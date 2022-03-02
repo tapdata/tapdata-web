@@ -136,7 +136,8 @@ const en = {
     roleEdition: 'Tapdata-RoleEdition ',
     systemSettings: 'Tapdata-SystemSettings',
     account: 'Tapdata-Account',
-    settingCenter: 'Tapdata-Setting Center'
+    settingCenter: 'Tapdata-Setting Center',
+    sharedMining: 'Tapdata-shared mining'
   },
   errorCode: {
     networkUnconnected: 'Network unconnected',
@@ -275,7 +276,9 @@ const en = {
       licenseAfterOneDay: ' day',
       dataFlowsClusterClone: 'Database Migration',
       dataFlowsCustom: 'Data Sync',
-      topology: 'Topology'
+      topology: 'Topology',
+      sharedMining: 'Shared Mining',
+      function: 'function management'
     },
     Home: {
       all: 'All',
@@ -571,6 +574,7 @@ const en = {
     uploadOK: 'Upload successful',
     uploadError: 'Upload failed',
     uploadInfo: 'Click to view details',
+    view: 'View',
     dataFlowExport: 'Export',
     addTag: 'Add tag',
     overWrite: 'Overwrite existing data',

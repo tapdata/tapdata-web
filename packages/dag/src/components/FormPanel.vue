@@ -400,7 +400,15 @@ export default {
   computed: {
     ...mapState('dataflow', ['activeNodeId', 'transformStatus']),
 
-    ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection', 'activeType', 'hasNodeError', 'allEdges']),
+    ...mapGetters('dataflow', [
+      'activeNode',
+      'nodeById',
+      'activeConnection',
+      'activeType',
+      'hasNodeError',
+      'allEdges',
+      'stateIsReadonly'
+    ]),
 
     node() {
       return this.activeConnection ? this.nodeById(this.activeConnection.targetId) : this.activeNode
@@ -486,9 +494,9 @@ export default {
       await this.$nextTick()
 
       this.form = createForm({
+        disabled: this.stateIsReadonly,
         values: values || this.node,
-        effects: this.useEffects,
-        editable: !this.isMonitor
+        effects: this.stateIsReadonly ? null : this.useEffects
       })
       this.schema = JSON.parse(JSON.stringify(schema))
     },

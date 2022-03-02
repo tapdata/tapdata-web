@@ -1905,12 +1905,12 @@
   padding: 9px 15px;
 }
 .el-radio-button--mini .el-radio-button__inner {
-  padding: 7px 15px;
+  padding: 8px 15px;
   font-size: 12px;
   border-radius: 0;
 }
 .el-radio-button--mini .el-radio-button__inner.is-round {
-  padding: 7px 15px;
+  padding: 8px 15px;
 }
 .el-radio-button:focus:not(.is-focus):not(:active):not(.is-disabled) {
   -webkit-box-shadow: 0 0 2px 2px #409eff;
@@ -10893,8 +10893,8 @@
 .el-button.is-plain:focus,
 .el-button.is-plain:hover {
   background: #fff;
-  border-color: #409eff;
-  color: #409eff;
+  border-color: #2C65FF;
+  color: #2C65FF;
 }
 .el-button.is-active,
 .el-button.is-plain:active {
@@ -10953,8 +10953,8 @@
 }
 .el-button--primary {
   color: #fff;
-  background-color: #409eff;
-  border-color: #409eff;
+  background-color: #2C65FF;
+  border-color: #2C65FF;
 }
 .el-button--primary:focus,
 .el-button--primary:hover {
@@ -10987,7 +10987,7 @@
 .el-button--primary.is-plain:focus,
 .el-button--primary.is-plain:hover {
   background: #409eff;
-  border-color: #409eff;
+  border-color: #2C65FF;
   color: #fff;
 }
 .el-button--primary.is-plain:active {

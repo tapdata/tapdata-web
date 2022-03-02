@@ -249,7 +249,7 @@ export default {
       `'`
 
     // 是否允许下载agent
-    if (this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
+    if (this.$getSettingByKey('ALLOW_DOWNLOAD_AGENT')) {
       this.getDataApi('firstAgent')
       self.timer = setInterval(() => {
         if (self.downLoadNum > 0) {
@@ -339,7 +339,7 @@ export default {
       this.installSuccessDialog = false
     },
     checkAgent() {
-      let flag = !this.$window.getSettingByKey('ALLOW_DOWNLOAD_AGENT') || this.downLoadNum
+      let flag = !this.$getSettingByKey('ALLOW_DOWNLOAD_AGENT') || this.downLoadNum
       if (!flag) {
         this.dialogVisible = true
       }

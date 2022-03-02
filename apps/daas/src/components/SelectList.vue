@@ -108,7 +108,7 @@
     <div
       v-else
       ref="reference"
-      :class="['inner-select', { 'is-focus': visible }, 'inline-flex align-items-center fs-7']"
+      :class="['inner-select', { 'is-focus': visible }, 'inline-flex align-items-center fs-8']"
       :validate-event="false"
       @mouseenter="inputHovering = true"
       @mouseleave="inputHovering = false"
@@ -117,7 +117,7 @@
       <span
         :class="['inner-select__selected', { placeholder: !selectedLabel }]"
         :style="{ 'max-width': selectedWidth }"
-        >{{ selectedLabel || $t('gl_placeholder_select') }}</span
+        >{{ selectedLabel || $t('common_placeholder_select') }}</span
       >
       <VIcon v-if="showClose" size="10" class="icon-btn ml-1" @click.native="handleClearClick">close</VIcon>
       <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>

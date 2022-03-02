@@ -1,10 +1,9 @@
 <template>
-  <section class="metadata-list-wrap">
+  <section class="metadata-list-wrap classify-wrap">
     <TablePage
       ref="table"
       row-key="id"
       class="metadata-list"
-      :title="$t('app.menu.' + $route.name)"
       :classify="{
         authority: 'data_catalog_category_management',
         types: metaType
@@ -15,23 +14,26 @@
       @sort-change="handleSortTable"
     >
       <div slot="search">
-        <ul class="search-bar">
-          <li>
-            <el-input
-              clearable
-              class="input-with-select"
-              size="mini"
-              v-model="searchParams.keyword"
-              :placeholder="$t('metadata.namePlaceholder')"
-              @input="table.fetch(1, 800)"
-            >
-              <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
-                <el-option :label="$t('connection.fuzzyQuery')" :value="true"></el-option>
-                <el-option :label="$t('connection.PreciseQuery')" :value="false"></el-option>
-              </el-select>
-            </el-input>
-          </li>
-          <li>
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+        <!-- <ul class="search-bar" solt="matchSolt">
+          <li> -->
+
+        <!-- <el-input
+          slot="matchSolt"
+          clearable
+          class="input-with-select"
+          size="mini"
+          v-model="searchParams.keyword"
+          :placeholder="$t('metadata.namePlaceholder')"
+          @input="table.fetch(1, 800)"
+        >
+          <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
+            <el-option :label="$t('connection.fuzzyQuery')" :value="true"></el-option>
+            <el-option :label="$t('connection.PreciseQuery')" :value="false"></el-option>
+          </el-select>
+        </el-input> -->
+        <!-- </li> -->
+        <!-- <li>
             <el-select
               clearable
               size="mini"
@@ -66,12 +68,12 @@
             <li>
               <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
             </li>
-          </template>
-        </ul>
+          </template>-->
+        <!-- </ul> -->
       </div>
       <div slot="operation">
         <el-button
-          v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'data_catalog_category_application'"
           size="mini"
           class="btn"
@@ -81,17 +83,18 @@
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkTag') }}</span>
         </el-button>
-        <el-button v-readonlybtn="'new_model_creation'" class="btn btn-create" size="mini" @click="openCreateDialog">
-          <i class="iconfont icon-jia add-btn-icon"></i>
+        <el-button
+          v-readonlybtn="'new_model_creation'"
+          type="primary"
+          class="btn btn-create"
+          size="mini"
+          @click="openCreateDialog"
+        >
+          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
           <span>{{ $t('metadata.createModel') }}</span>
         </el-button>
       </div>
-      <el-table-column
-        v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
-        type="selection"
-        width="45"
-        :reserve-selection="true"
-      >
+      <el-table-column v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
       </el-table-column>
       <el-table-column :label="$t('metadata.header.name')" prop="name" sortable="custom">
         <template slot-scope="scope">
@@ -131,7 +134,7 @@
           {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('metadata.details.opera')">
+      <el-table-column :label="$t('metadata.details.opera')" width="150">
         <template slot-scope="scope">
           <el-button
             v-readonlybtn="'data_catalog_edition'"
@@ -142,8 +145,9 @@
             "
             @click="toDetails(scope.row)"
           >
-            {{ $t('button.details') }}
+            {{ $t('button_details') }}
           </el-button>
+          <ElDivider direction="vertical"></ElDivider>
           <el-button
             v-readonlybtn="'data_catalog_edition'"
             size="mini"
@@ -155,41 +159,66 @@
           >
             {{ $t('button.rename') }}
           </el-button>
+          <ElDivider direction="vertical"></ElDivider>
           <el-button
             v-readonlybtn="'meta_data_deleting'"
             size="mini"
             type="text"
             :disabled="$disabledByPermission('meta_data_deleting_all_data', scope.row.source ? scope.row.user_id : '')"
             @click="remove(scope.row)"
-            >{{ $t('button.delete') }}</el-button
+            >{{ $t('button_delete') }}</el-button
           >
         </template>
       </el-table-column>
     </TablePage>
     <!-- 创建模型 -->
     <el-dialog
-      width="600px"
+      width="500px"
       custom-class="create-dialog"
       :title="$t('metadata.createNewModel')"
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
-      <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
+      <FormBuilder ref="form" v-if="createDialogVisible" v-model="createForm" :config="createFormConfig"></FormBuilder>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
-        <el-button type="primary" @click="createNewModel()" size="small">{{ $t('message.confirm') }}</el-button>
+        <el-button class="message-button-cancel" @click="createDialogVisible = false" size="mini">{{
+          $t('button_cancel')
+        }}</el-button>
+        <el-button type="primary" @click="createNewModel()" size="mini">{{ $t('button_confirm') }}</el-button>
+      </span>
+    </el-dialog>
+    <!-- 改名 -->
+    <el-dialog
+      width="500px"
+      custom-class="change-name"
+      :title="$t('metadata_change_name')"
+      :close-on-click-modal="false"
+      :visible.sync="changeNameDialogVisible"
+    >
+      <div class="flex fs-8">
+        <span class="change-name-label">{{ $t('metadata_name') }}:</span>
+        <el-input v-model="changeNameValue"></el-input>
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button class="message-button-cancel" @click="changeNameDialogVisible = false" size="mini">{{
+          $t('button_cancel')
+        }}</el-button>
+        <el-button type="primary" @click="saveChangeName()" size="mini">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
   </section>
 </template>
 
 <script>
+import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
 
 export default {
   components: {
-    TablePage
+    TablePage,
+    FilterBar
   },
   data() {
     let types =
@@ -263,11 +292,20 @@ export default {
             ]
           }
         ]
-      }
+      },
+      changeNameDialogVisible: false,
+      changeNameValue: '',
+      changeNameData: null
     }
   },
   created() {
     this.getDbOptions()
+    this.getFilterItems()
+  },
+  watch: {
+    '$route.query'() {
+      this.table.fetch(1)
+    }
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -322,7 +360,6 @@ export default {
         create_time: true,
         collection: true,
         id: true,
-        source: true,
         'source._id': true,
         'source.user_id': true,
         databaseId: true,
@@ -380,6 +417,10 @@ export default {
           connection_type: true,
           status: true
         }
+        // where: {
+        //   database_type: 'mongodb',
+        //   connection_type: ['target', 'source_and_target']
+        // }
       }
       this.$api('connections')
         .get({
@@ -387,7 +428,7 @@ export default {
         })
         .then(res => {
           let dbOptions = res.data?.items || []
-          this.dbOptions = dbOptions
+
           let options = []
           dbOptions.forEach(db => {
             if (db.database_type === 'mongodb' && ['target', 'source_and_target'].includes(db.connection_type)) {
@@ -397,7 +438,9 @@ export default {
               })
             }
           })
-          this.createFormConfig.items[1].options = options
+          this.dbOptions = dbOptions
+          // this.createFormConfig.items[1].options = options
+          this.getFilterItems()
         })
     },
     handleSortTable({ order, prop }) {
@@ -501,40 +544,59 @@ export default {
       })
     },
     toDetails(item) {
-      this.$router.push({ name: 'metadataDetails', query: { id: item.id } })
+      this.$router.push({ name: 'metadataDetails', params: { id: item.id } })
+    },
+    saveChangeName() {
+      this.$api('MetadataInstances')
+        .updateById(this.changeNameData.id, {
+          name: this.changeNameValue
+        })
+        .then(() => {
+          this.$message.success(this.$t('message.saveOK'))
+          this.changeNameDialogVisible = false
+          this.table.fetch()
+        })
+        .catch(() => {
+          this.$message.info(this.$t('message.saveFail'))
+        })
     },
     changeName(item) {
-      this.$prompt('', this.$t('connection.rename'), {
-        inputPattern: /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/, // eslint-disable-line
-        inputErrorMessage: this.$t('dialog.placeholderTable'),
-        customClass: 'changeName-prompt',
-        inputValue: item.name || item.original_name
-      }).then(resFlag => {
-        if (!resFlag) {
-          return
-        }
-        this.$api('MetadataInstances')
-          .updateById(item.id, {
-            name: resFlag.value
-          })
-          .then(() => {
-            this.$message.success(this.$t('message.saveOK'))
-            this.table.fetch()
-          })
-          .catch(() => {
-            this.$message.info(this.$t('message.saveFail'))
-          })
-      })
+      this.changeNameDialogVisible = true
+      this.changeNameData = item
+      this.changeNameValue = item.name || item.original_name
+      // this.$prompt('', this.$t('connection.rename'), {
+      //   inputPattern: /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/, // eslint-disable-line
+      //   inputErrorMessage: this.$t('dialog.placeholderTable'),
+      //   customClass: 'changeName-prompt',
+      //   cancelButtonClass: 'message-button-cancel',
+      //   inputValue: item.name || item.original_name
+      // }).then(resFlag => {
+      //   if (!resFlag) {
+      //     return
+      //   }
+      //   this.$api('MetadataInstances')
+      //     .updateById(item.id, {
+      //       name: resFlag.value
+      //     })
+      //     .then(() => {
+      //       this.$message.success(this.$t('message.saveOK'))
+      //       this.table.fetch()
+      //     })
+      //     .catch(() => {
+      //       this.$message.info(this.$t('message.saveFail'))
+      //     })
+      // })
     },
     remove(item) {
       const h = this.$createElement
       let message = h('p', [
         this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#409EFF' } }, item.original_name)
+        h('span', { style: { color: '#2C65FF' } }, item.original_name)
       ])
-      this.$confirm(message, this.$t('message_title_prompt'), {
+      this.$confirm(message, '', {
         type: 'warning',
-        closeOnClickModal: false
+        closeOnClickModal: false,
+        showClose: false
       }).then(resFlag => {
         if (!resFlag) {
           return
@@ -552,6 +614,38 @@ export default {
         //   instance.confirmButtonLoading = false
         // })
       })
+    },
+    search(debounce) {
+      const { delayTrigger } = this.$util
+      delayTrigger(() => {
+        this.$router.replace({
+          name: 'metadataDefinition',
+          query: this.searchParams
+        })
+      }, debounce)
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: this.$t('metadata_type'),
+          key: 'metaType',
+          type: 'select-inner',
+          items: this.metaTypeOptions,
+          selectedWidth: '200px'
+        },
+        {
+          label: this.$t('metadata_db'),
+          key: 'dbId',
+          type: 'select-inner',
+          items: this.dbOptions
+        },
+        {
+          placeholder: this.$t('task_list_search_placeholder'),
+          key: 'keyword',
+          type: 'input',
+          slotName: ''
+        }
+      ]
     }
   }
 }
@@ -571,7 +665,7 @@ export default {
     }
     .btn {
       padding: 7px;
-      background: #f5f5f5;
+      // background: #f5f5f5;
       i.iconfont {
         font-size: 12px;
       }
@@ -584,7 +678,7 @@ export default {
     }
     .metadata-name {
       .name {
-        color: #409eff;
+        color: #2c65ff;
         a {
           color: inherit;
           cursor: pointer;
@@ -610,10 +704,13 @@ export default {
 .metadata-list-wrap {
   .create-dialog {
     .el-dialog__body {
-      padding: 30px;
+      // padding: 30px;
       .el-form {
         .el-form-item {
           margin-bottom: 15px;
+          &:last-child {
+            margin-bottom: 0;
+          }
           .el-form-item__label {
             text-align: left;
           }
@@ -627,12 +724,22 @@ export default {
     }
   }
 }
-.changeName-prompt {
-  .el-message-box__header {
-    padding: 15px 15px 0;
-    .el-message-box__title {
-      padding-left: 0;
-    }
+.change-name {
+  .change-name-label {
+    width: 100px;
+    line-height: 32px;
+    color: #000;
   }
+  // .el-message-box__header {
+  //   padding: 15px 15px 0;
+  //   .el-message-box__title {
+  //     padding-left: 0;
+  //   }
+  // }
+  // .el-message-box__btns {
+  //   .el-button {
+  //     box-sizing: border-box;
+  //   }
+  // }
 }
 </style>

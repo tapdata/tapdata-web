@@ -1,6 +1,6 @@
 <template>
   <div class="verification-result-view panel-box" v-loading="loading">
-    <div class="tip" style="padding-left: 10px">
+    <div class="header">
       {{ $t('dataVerification.verifyDetail') }}
     </div>
     <div class="main">
@@ -44,7 +44,7 @@
         </li>
       </ul>
       <div class="success-band" v-if="statsInfo.result === 'passed'">
-        <img style="height: 30px; margin-right: 5px" :src="require('web-core/assets/images/zhuhe.png')" />
+        <img style="height: 30px; margin-right: 5px" src="../../assets/images/zhuhe.png" />
         <span>{{ $t('dataVerification.success') }}</span>
       </div>
       <div class="error-band" v-if="statsInfo.status === 'error'">
@@ -53,52 +53,30 @@
       </div>
       <template v-if="statsInfo.result !== 'passed'">
         <div class="inspect-result-box" v-if="!showAdvancedVerification">
-          <template v-if="verifyType === 'cdcCount'">
-            <div v-for="item in resultList" :key="item.id" class="inspect-details">
-              <ul class="father-table">
-                <li>{{ $t('verify_details_field_name') }}</li>
-                <li>{{ $t('verify_details_source_value') }}</li>
-                <li>{{ $t('verify_details_target_value') }}</li>
-              </ul>
-              <ul class="sub-table" v-for="detail in item.details" :key="detail.id">
-                <li>{{ detail.source.key }}</li>
-                <li :class="{ red: detail.red }">
-                  {{ detail.source.value }}
-                </li>
-                <li :class="{ red: detail.red }">
-                  {{ detail.target.value }}
-                </li>
-              </ul>
-            </div>
-          </template>
-          <template v-else>
-            <div v-for="item in resultList" :key="item.id" class="inspect-details">
-              <ul class="father-table">
-                <li>{{ $t('dataVerification.inconsistentType') }}</li>
-                <li>{{ $t('dataVerification.sourceFieldName') }}</li>
-                <li>{{ $t('dataVerification.Value') }}</li>
-                <li>{{ $t('dataVerification.targetFieldName') }}</li>
-                <li>{{ $t('dataVerification.Value') }}</li>
-              </ul>
-              <ul class="sub-table" v-for="detail in item.details" :key="detail.id">
-                <li>
-                  {{
-                    detail.type === 'uniqueField'
-                      ? $t('dataVerification.uniqueField')
-                      : $t('dataVerification.otherField')
-                  }}
-                </li>
-                <li>{{ detail.source.key }}</li>
-                <li :class="{ red: detail.red }">
-                  {{ detail.source.value }}
-                </li>
-                <li>{{ detail.target.key }}</li>
-                <li :class="{ red: detail.red }">
-                  {{ detail.target.value }}
-                </li>
-              </ul>
-            </div>
-          </template>
+          <div v-for="item in resultList" :key="item.id" class="inspect-details">
+            <ul class="father-table">
+              <li>{{ $t('dataVerification.inconsistentType') }}</li>
+              <li>{{ $t('dataVerification.sourceFieldName') }}</li>
+              <li>{{ $t('dataVerification.Value') }}</li>
+              <li>{{ $t('dataVerification.targetFieldName') }}</li>
+              <li>{{ $t('dataVerification.Value') }}</li>
+            </ul>
+            <ul class="sub-table" v-for="detail in item.details" :key="detail.id">
+              <li>
+                {{
+                  detail.type === 'uniqueField' ? $t('dataVerification.uniqueField') : $t('dataVerification.otherField')
+                }}
+              </li>
+              <li>{{ detail.source.key }}</li>
+              <li :class="{ red: detail.red }">
+                {{ detail.source.value }}
+              </li>
+              <li>{{ detail.target.key }}</li>
+              <li :class="{ red: detail.red }">
+                {{ detail.target.value }}
+              </li>
+            </ul>
+          </div>
         </div>
         <div class="inspect-ad-box" v-if="showAdvancedVerification">
           <div class="title-box">
@@ -123,10 +101,10 @@
         </div>
       </template>
     </div>
-    <el-pagination
-      class="pagination"
+    <ElPagination
+      class="result-view-pagination"
       background
-      layout="total,prev, pager, next,sizes"
+      layout="total, ->, prev, pager, next, sizes"
       :page-sizes="!showAdvancedVerification ? [20, 30, 50, 100] : [1]"
       :page-size.sync="page.size"
       :total="page.total"
@@ -134,7 +112,7 @@
       @current-change="fetch"
       @size-change="fetch(1)"
     >
-    </el-pagination>
+    </ElPagination>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -144,26 +122,20 @@ $margin: 10px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  &.panel-box {
-    margin: 20px 20px 20px 0;
-    border-left: 1px solid #dedee4;
-    border-bottom: 1px solid #dedee4;
-    border-right: 1px solid #dedee4;
-  }
-  .tip {
-    height: 30px;
+  border-left: 1px solid #f2f2f2;
+  .header {
+    padding: 12px 24px;
     font-size: 12px;
     background: #f5f5f5;
-    border: 1px solid #dedee4;
-    border-left: 0;
-    border-right: 0;
-    line-height: 30px;
+    font-size: 14px;
+    line-height: 22px;
   }
   .main {
+    padding-bottom: 16px;
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: auto;
     .error-band {
       background: #fdf6ec;
       border: 1px solid #f8e2c0;
@@ -190,10 +162,11 @@ $margin: 10px;
       }
     }
     .inspect-result {
+      padding: 16px 24px;
       font-size: 12px;
-      margin: $margin;
       li {
-        margin-top: 10px;
+        line-height: 22px;
+        margin-top: 8px;
       }
     }
     .inspect-ad-box {
@@ -252,12 +225,6 @@ $margin: 10px;
           overflow: auto;
           height: 350px;
         }
-        li:last-child {
-          border-right: 1px solid #dedee4;
-        }
-      }
-      .sub-table:last-child {
-        border-bottom: 1px solid #dedee4;
       }
     }
     .inspect-result-box {
@@ -266,8 +233,8 @@ $margin: 10px;
         color: #ee5353;
       }
       .inspect-details {
-        margin: 0 10px;
         li {
+          padding: 8px;
           min-width: 0;
           font-size: 12px;
           box-sizing: border-box;
@@ -275,34 +242,34 @@ $margin: 10px;
           vertical-align: middle;
           position: relative;
           text-align: left;
-          padding: 3px 10px;
           word-wrap: break-word;
+        }
+        li + li {
+          border-left: 1px solid #f2f2f2;
         }
         .father-table {
           display: flex;
+          border-top: 1px solid #f2f2f2;
           li {
+            padding-top: 16px;
+            padding-bottom: 16px;
             flex: 1;
-            background-color: #f5f5f5;
-            border-left: 1px solid #dedee4;
-            border-top: 1px solid #dedee4;
-          }
-          li:last-child {
-            border-right: 1px solid #dedee4;
+            &:first-child {
+              padding-left: 24px;
+            }
           }
         }
         .sub-table {
           display: flex;
+          &:nth-child(2n + 1) {
+            background: #fafafa;
+          }
           li {
             flex: 1;
-            border-left: 1px solid #dedee4;
-            border-top: 1px solid #dedee4;
+            &:first-child {
+              padding-left: 24px;
+            }
           }
-          li:last-child {
-            border-right: 1px solid #dedee4;
-          }
-        }
-        .sub-table:last-child {
-          border-bottom: 1px solid #dedee4;
         }
         div {
           font-size: 12px;
@@ -316,15 +283,7 @@ $margin: 10px;
           border: 1px solid #dedee4;
         }
       }
-      .inspect-details {
-        margin-bottom: 10px;
-        margin-top: 10px;
-      }
     }
-  }
-  .pagination {
-    border-top: 1px solid #dedee4;
-    padding: 10px 5px;
   }
   .back-btn-icon-box {
     width: 30px;
@@ -336,13 +295,10 @@ $margin: 10px;
     cursor: pointer;
     background: #409eff;
     border: 0;
-    -webkit-appearance: none;
     text-align: center;
-    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     outline: 0;
     margin: 0;
-    -webkit-transition: 0.1s;
     transition: 0.1s;
     font-weight: normal;
     padding: 0;
@@ -350,6 +306,17 @@ $margin: 10px;
   }
   .back-btn-icon-box:hover {
     background: #6dc5e8;
+  }
+}
+</style>
+<style lang="scss">
+.result-view-pagination {
+  padding-left: 24px;
+  .el-pagination__sizes {
+    margin-right: 0;
+    .el-select .el-input {
+      margin-right: 0;
+    }
   }
 }
 </style>
@@ -362,8 +329,7 @@ export default {
     VIcon
   },
   props: {
-    remoteMethod: Function,
-    verifyType: String
+    remoteMethod: Function
   },
   data() {
     return {
@@ -382,8 +348,8 @@ export default {
     fetch(current) {
       this.loading = true
       this.remoteMethod({ current, size: this.page.size })
-        .then(({ statsInfo, resultList, total, showAdvancedVerification }) => {
-          if (statsInfo.result === 'failed') {
+        .then(({ statsInfo = {}, resultList, total, showAdvancedVerification }) => {
+          if (statsInfo?.result === 'failed') {
             let countResultText = ''
             let contentResultText = ''
             let diffCount = statsInfo.target_total - statsInfo.source_total
@@ -415,5 +381,3 @@ export default {
   }
 }
 </script>
-
-<style></style>

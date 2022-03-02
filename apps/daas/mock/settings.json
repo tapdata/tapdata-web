@@ -1192,7 +1192,7 @@
     {
       "category": "Frontend",
       "key": "SHOW_LANGUAGE",
-      "value": 0,
+      "value": 1,
       "id": "604f4b80e1ca905fa75452e8"
     },
     {
@@ -1216,37 +1216,37 @@
     {
       "category": "Frontend",
       "key": "SHOW_PAGE_TITLE",
-      "value": 0,
+      "value": 1,
       "id": "604f4b80e1ca905fa75452f0"
     },
     {
       "category": "Frontend",
       "key": "SHOW_LICENSE",
-      "value": 0,
+      "value": 1,
       "id": "604f4b80e1ca905fa75452f2"
     },
     {
       "category": "Frontend",
       "key": "SHOW_NOTIFICATION",
-      "value": 0,
+      "value": 1,
       "id": "604f4b80e1ca905fa75452f4"
     },
     {
       "category": "Frontend",
       "key": "SHOW_QA_AND_HELP",
-      "value": 0,
+      "value": 1,
       "id": "604f4b80e1ca905fa75452f6"
     },
     {
       "category": "Frontend",
       "key": "SHOW_SETTING_BUTTON",
-      "value": 0,
+      "value": 1,
       "id": "604f4b80e1ca905fa75452f8"
     },
     {
       "category": "Frontend",
       "key": "SHOW_HOME_BUTTON",
-      "value": 0,
+      "value": 1,
       "id": "604f4b80e1ca905fa75452fa"
     },
     {

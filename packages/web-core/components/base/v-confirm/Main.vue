@@ -5,9 +5,9 @@
         :class="['message-box position-relative', customClass, center && 'el-message-box--center']"
         :style="{ width: width }"
       >
-        <div class="message-box__header position-relative">
+        <!-- <div class="message-box__header position-relative">
           <div class="message-box__title flex align-items-center">
-            <VIcon v-if="icon && !onlyMessage" :size="iconSize" :color="iconColor" :class="['v-icon', iconClass]">{{
+            <VIcon v-if="icon && onlyMessage" :size="iconSize" :color="iconColor" :class="['v-icon', iconClass]">{{
               icon
             }}</VIcon>
             <span v-if="title" :class="titleClass">{{ title }}</span>
@@ -22,17 +22,14 @@
           >
             <i class="el-message-box__close el-icon-close"></i>
           </button>
-        </div>
+        </div> -->
         <div class="message-box__body">
           <div class="el-message-box__container">
             <div class="el-message-box__message flex" v-if="message !== ''">
-              <VIcon
-                v-if="icon && onlyMessage"
-                :size="iconSize"
-                :color="iconColor"
-                :class="['v-icon', 'flex-shrink-0', iconClass]"
-                >{{ icon }}</VIcon
-              >
+              <!-- v-if="icon && !onlyMessage" -->
+              <VIcon :size="iconSize" :color="iconColor" :class="['v-icon', 'flex-shrink-0', iconClass]">{{
+                icon
+              }}</VIcon>
               <slot>
                 <div v-if="!dangerouslyUseHTMLString" :class="['message-box__content', messageClass]">
                   {{ message }}
@@ -45,9 +42,9 @@
         <div class="message-box__btns">
           <el-button
             :loading="cancelButtonLoading"
-            :class="[cancelButtonClasses]"
+            :class="[{ cancelButtonClasses }, 'message-button-cancel']"
             v-if="showCancelButton"
-            size="small"
+            size="mini"
             @click.native="handleAction('cancel')"
             @keydown.enter="handleAction('cancel')"
           >
@@ -59,7 +56,7 @@
             ref="confirm"
             :class="[confirmButtonClasses]"
             v-show="showConfirmButton"
-            size="small"
+            size="mini"
             @click.native="handleAction('confirm')"
             @keydown.enter="handleAction('confirm')"
           >
@@ -211,7 +208,13 @@ export default {
   color: rgba(0, 0, 0, 0.75);
 }
 .v-icon {
-  margin-right: 15px;
+  width: 18px !important;
+  height: 18px !important;
+  margin-right: 10px;
+  margin-top: 1px;
+}
+.el-message-box__message {
+  font-size: 14px;
 }
 .el-button {
   padding: 8px 16px;
@@ -231,18 +234,30 @@ export default {
   cursor: pointer;
 }
 .message-box__body {
-  margin: 24px 0;
-  padding: 0 24px;
+  // margin: 0 0 24px;
+  padding: 24px;
   flex: 1;
   overflow: auto;
   font-size: 12px;
   color: rgba(0, 0, 0, 0.65);
 }
 .message-box__content {
-  padding-top: 4px;
+  // padding-top: 4px;
 }
 .message-box__btns {
   padding: 0 24px 24px;
   text-align: right;
+  .el-button {
+    padding: 0 16px;
+    &.el-button--mini {
+      height: 28px;
+      line-height: 28px;
+    }
+  }
+}
+.message-button-cancel {
+  color: #4e5969;
+  border: 0;
+  background-color: #f2f3f5;
 }
 </style>

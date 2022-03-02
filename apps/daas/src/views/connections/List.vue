@@ -1,10 +1,10 @@
 <template>
-  <section class="connection-list-wrap">
+  <section class="connection-list-wrap classify-wrap">
+    <!-- :title="$t('connection.databaseTittle')"
+      :desc="description" -->
     <TablePage
       ref="table"
       row-key="id"
-      :title="$t('connection.databaseTittle')"
-      :desc="description"
       :classify="{
         authority: 'datasource_catalog_management',
         types: ['database']
@@ -14,60 +14,12 @@
       @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
     >
-      <ul class="search-bar" slot="search">
-        <li class="item">
-          <ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
-            <ElOption :label="$t('connection.status.all')" value=""></ElOption>
-            <ElOption v-for="item in databaseStatusOptions" :key="item.value" :label="item.label" :value="item.value">
-            </ElOption>
-          </ElSelect>
-        </li>
-        <li class="item">
-          <ElSelect
-            v-model="searchParams.databaseModel"
-            clearable
-            size="small"
-            @input="table.fetch(1)"
-            :placeholder="$t('connection.connectionType')"
-          >
-            <ElOption v-for="item in databaseModelOptions" :key="item.value" :label="item.label" :value="item.value">
-            </ElOption>
-          </ElSelect>
-        </li>
-        <li class="item">
-          <ElSelect
-            v-model="searchParams.databaseType"
-            filterable
-            clearable
-            size="small"
-            @input="table.fetch(1)"
-            :placeholder="$t('connection.dataBaseType')"
-          >
-            <ElOption v-for="item in databaseTypeOptions" :key="item.type" :label="item.name" :value="item.type">
-            </ElOption>
-          </ElSelect>
-        </li>
-        <li class="item">
-          <ElInput
-            v-model="searchParams.keyword"
-            clearable
-            class="input-with-select"
-            size="small"
-            :placeholder="$t('connection.dataBaseSearch')"
-            @input="table.fetch(1, 800)"
-          >
-            <i slot="prefix" class="el-input__icon el-icon-search"></i>
-          </ElInput>
-        </li>
-        <li class="item">
-          <ElButton plain class="btn-refresh" size="small" @click="table.fetch()">
-            <i class="el-icon-refresh"></i>
-          </ElButton>
-        </li>
-      </ul>
+      <template slot="search">
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+      </template>
       <div slot="operation">
         <ElButton
-          v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
+          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'datasource_category_application'"
           size="mini"
           class="btn"
@@ -81,19 +33,14 @@
           v-readonlybtn="'datasource_creation'"
           class="btn btn-create"
           type="primary"
-          size="small"
+          size="mini"
           @click="checkTestConnectionAvailable"
         >
-          <i class="iconfont icon-jia add-btn-icon"></i>
+          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
           <span> {{ $t('connection.createNewDataSource') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn
-        v-if="$window.getSettingByKey('SHOW_CLASSIFY')"
-        type="selection"
-        width="45"
-        :reserve-selection="true"
-      >
+      <ElTableColumn v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
       </ElTableColumn>
       <ElTableColumn prop="name" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true" min-width="150">
         <template slot-scope="scope">
@@ -152,7 +99,7 @@
         <div slot="header">
           {{ $t('connection_list_column_schema_status') }}
           <ElTooltip placement="top" :content="$t('connection_list_column_schema_status_tips')">
-            <VIcon>question-circle</VIcon>
+            <VIcon class="color-primary" size="14">info</VIcon>
           </ElTooltip>
         </div>
         <template slot-scope="scope">
@@ -164,31 +111,28 @@
           {{ scope.row.lastUpdateTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('connection.operate')" width="220">
+      <ElTableColumn :label="$t('connection.operate')" width="200">
         <template slot-scope="scope">
           <ElLink type="primary" @click="testConnection(scope.row)">{{ $t('connection.testConnection') }} </ElLink>
+          <ElDivider direction="vertical"></ElDivider>
           <ElLink
             v-readonlybtn="'datasource_edition'"
-            style="margin-left: 10px"
             type="primary"
             :disabled="$disabledByPermission('datasource_edition_all_data', scope.row.user_id)"
             @click="edit(scope.row.id, scope.row.database_type, scope.row)"
-            >{{ $t('message.edit') }}
+            >{{ $t('button_edit') }}
           </ElLink>
-          <ElLink
-            v-readonlybtn="'datasource_creation'"
-            style="margin-left: 10px"
-            type="primary"
-            @click="copy(scope.row)"
-            >{{ $t('message.copy') }}
+          <ElDivider direction="vertical"></ElDivider>
+          <ElLink v-readonlybtn="'datasource_creation'" type="primary" @click="copy(scope.row)"
+            >{{ $t('button_copy') }}
           </ElLink>
+          <ElDivider direction="vertical"></ElDivider>
           <ElLink
             v-readonlybtn="'datasource_delete'"
-            style="margin-left: 10px"
             type="primary"
             :disabled="$disabledByPermission('datasource_delete_all_data', scope.row.user_id)"
             @click="remove(scope.row)"
-            >{{ $t('message.delete') }}
+            >{{ $t('button_delete') }}
           </ElLink>
         </template>
       </ElTableColumn>
@@ -220,13 +164,15 @@ import DatabaseTypeDialog from './DatabaseTypeDialog'
 import Preview from './Preview'
 import { defaultModel, verify, desensitization } from './util'
 import Test from './Test'
+import FilterBar from '@/components/filter-bar'
 
 let timeout = null
 
 export default {
-  components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress },
+  components: { TablePage, DatabaseTypeDialog, Preview, Test, VIcon, SchemaProgress, FilterBar },
   data() {
     return {
+      filterItems: [],
       user_id: this.$cookie.get('user_id'),
       dialogDatabaseTypeVisible: false,
       previewVisible: false,
@@ -238,70 +184,37 @@ export default {
       order: 'createTime DESC',
       databaseModelOptions: [
         {
-          label: this.$t('connection.type.source'),
+          label: this.$t('connection_list_source'),
           value: 'source'
         },
         {
-          label: this.$t('connection.type.target'),
+          label: this.$t('connection_list_target'),
           value: 'target'
         },
         {
-          label: this.$t('connection.type.source_and_target'),
+          label: this.$t('connection_list_source_and_target'),
           value: 'source_and_target'
         }
       ],
       databaseStatusOptions: [
         {
-          label: this.$t('connection.status.ready'),
+          label: this.$t('connection_list_all_status'),
+          value: ''
+        },
+        {
+          label: this.$t('connection_list_efficient'),
           value: 'ready'
         },
         {
-          label: this.$t('connection.status.invalid'),
+          label: this.$t('connection_list_invalidation'),
           value: 'invalid'
         },
         {
-          label: this.$t('connection.status.testing'),
+          label: this.$t('connection_list_testing'),
           value: 'testing'
         }
       ],
       databaseTypeOptions: [],
-      whiteList: [
-        'mysql',
-        'oracle',
-        'mongodb',
-        'sqlserver',
-        'postgres',
-        'elasticsearch',
-        'redis',
-        'file',
-        'db2',
-        'kafka',
-        'mariadb',
-        'mysql pxc',
-        // 'jira',
-        'dameng',
-        'hive',
-        'gbase-8s',
-        'sybase ase',
-        'gaussdb200',
-        'dummy db',
-        'rest api',
-        'custom_connection',
-        'gridfs',
-        'tcp_udp',
-        'mq',
-        'hbase',
-        // 'kudu',
-        'greenplum',
-        'tidb',
-        'hana',
-        'clickhouse',
-        'kundb',
-        'adb_postgres',
-        'adb_mysql',
-        'vika',
-        'hazelcast_cloud_cluster'
-      ], //目前白名单,
       searchParams: {
         databaseType: '',
         keyword: '',
@@ -334,7 +247,7 @@ export default {
   },
   watch: {
     '$route.query'() {
-      this.searchParams = Object.assign(this.searchParams, this.table.getCache())
+      // this.searchParams = Object.assign(this.searchParams, this.table.getCache())
       this.table.fetch(1)
     }
   },
@@ -348,11 +261,11 @@ export default {
     // this.description = this.$t('connection.desc') + guideDoc
     let helpUrl = 'https://docs.tapdata.net'
     let guideDoc =
-      ` <a style="color: #48B6E2" href="${helpUrl}/data-source">` + this.$t('dataForm.form.guideDoc') + '</a>'
-    if (this.$window.getSettingByKey('SHOW_OLD_PAGE')) {
-      this.description = this.$t('connection.desc')
+      ` <a style="color: #48B6E2" href="${helpUrl}/data-source">` + this.$t('connection_list_help_doc') + '</a>'
+    if (this.$getSettingByKey('SHOW_OLD_PAGE')) {
+      this.description = this.$t('connection_list_desc')
     } else {
-      this.description = this.$t('connection.desc') + this.$t('connection.helpDesc') + guideDoc
+      this.description = this.$t('connection_list_desc') + guideDoc
     }
     //定时轮询
     timeout = setInterval(() => {
@@ -406,9 +319,16 @@ export default {
     },
     async getDatabaseType() {
       let databaseTypes = await this.$api('DatabaseTypes').get()
-      this.databaseTypeOptions = databaseTypes.data
+      let databaseTypeOptions = databaseTypes.data
         .filter(dt => dt.type !== 'kudu')
         .sort((t1, t2) => (t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1))
+      this.databaseTypeOptions = databaseTypeOptions.map(item => {
+        return {
+          label: item.name,
+          value: item.type
+        }
+      })
+      this.getFilterItems()
     },
     getData({ page, tags }) {
       let region = this.$route.query.region
@@ -422,7 +342,7 @@ export default {
         where.name = { like: verify(keyword), options: 'i' }
       }
       where.database_type = {
-        in: this.whiteList
+        in: window.getSettingByKey('ALLOW_CONNECTION_TYPE').split(',')
       }
       region && (where['platformInfo.region'] = region)
       databaseType && (where.database_type = databaseType)
@@ -510,12 +430,7 @@ export default {
     preview(id, type) {
       this.id = id
       this.databaseType = type
-      if (this.whiteList.includes(type)) {
-        this.previewVisible = true
-      } else {
-        top.location.href = '/#/connection/' + id
-        localStorage.setItem('connectionDatabaseType', type)
-      }
+      this.previewVisible = true
     },
     handlePreviewVisible() {
       this.previewVisible = false
@@ -524,27 +439,16 @@ export default {
       if (item.search_databaseType) {
         type = item.search_databaseType
       }
-      if (this.whiteList.includes(type) || type === 'rest api') {
-        this.$router.push({
-          name: 'connectionsOldEdit',
-          params: {
-            id: id
-          },
-          query: {
-            databaseType: type
-          }
-        })
-      } else {
-        this.$router.push({
-          name: 'connectionsEdit',
-          params: {
-            id: id
-          },
-          query: {
-            databaseType: type
-          }
-        })
-      }
+      this.$router.push({
+        name: 'connectionsEdit',
+        params: {
+          id: id,
+          databaseType: type
+        },
+        query: {
+          databaseType: type
+        }
+      })
     },
     copy(data) {
       let headersName = { 'lconname-name': data.name }
@@ -586,8 +490,9 @@ export default {
         ),
         strArr[1]
       ])
-      this.$confirm(msg, this.$t('connection.deteleDatabaseTittle'), {
-        type: 'warning'
+      this.$confirm(msg, '', {
+        type: 'warning',
+        showClose: false
       }).then(resFlag => {
         if (!resFlag) {
           return
@@ -689,21 +594,12 @@ export default {
     },
     handleDatabaseType(type) {
       this.handleDialogDatabaseTypeVisible()
-      if (this.whiteList.includes(type) || type === 'rest api') {
-        this.$router.push({
-          name: 'connectionsOldCreate',
-          query: {
-            databaseType: type
-          }
-        })
-      } else {
-        this.$router.push({
-          name: 'connectionsCreate',
-          query: {
-            databaseType: type
-          }
-        })
-      }
+      this.$router.push({
+        name: 'connectionsCreate',
+        query: {
+          databaseType: type
+        }
+      })
     },
 
     //检测agent 是否可用
@@ -759,20 +655,48 @@ export default {
         this.$message.error(this.$t('connection.testConnection') + this.$t('connection.status.invalid'), false)
       }
       this.table.fetch()
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: this.$t('connection_list_status'),
+          key: 'status',
+          type: 'select-inner',
+          items: this.databaseStatusOptions,
+          selectedWidth: '200px'
+        },
+        {
+          label: this.$t('connection_list_form_sync_type'),
+          key: 'databaseModel',
+          type: 'select-inner',
+          items: this.databaseModelOptions
+        },
+        {
+          label: this.$t('connection_list_form_database_type'),
+          key: 'databaseType',
+          type: 'select-inner',
+          menuMinWidth: '250px',
+          items: this.databaseTypeOptions
+        },
+        {
+          placeholder: this.$t('task_list_search_placeholder'),
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     }
   }
 }
 </script>
 <style lang="scss" scoped>
 .connection-list-wrap {
-  height: 100%;
-
-  .btn-refresh {
-    padding: 0;
-    height: 32px;
-    line-height: 32px;
-    width: 32px;
-    font-size: 16px;
+  overflow: hidden;
+  ::v-deep {
+    .el-select-dropdown__item {
+      span {
+        font-size: 12px;
+      }
+    }
   }
 
   .connection-name {

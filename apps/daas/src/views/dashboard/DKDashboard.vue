@@ -1,6 +1,6 @@
 <!-- 电科控制台自定义展示 -->
 <template>
-  <div class="dk-dashboard">
+  <div class="dk-dashboard section-wrap">
     <div class="panel">
       <div class="panel-title">
         <img :src="require('@/assets/icons/dashboard1.png')" alt="" />
@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel mt-4">
       <div class="panel-title">
         <img :src="require('@/assets/icons/dashboard2.png')" alt="" />
         <span>{{ $t('dkDashboard.trendCount') }}</span>
@@ -31,7 +31,7 @@
       <DataTrend />
     </div>
 
-    <div class="panel">
+    <div class="panel mt-4">
       <div class="panel-title">
         <img :src="require('@/assets/icons/dashboard3.png')" alt="" />
         <span>{{ $t('dkDashboard.typeCount') }}</span>
@@ -88,6 +88,7 @@ export default {
 
 <style lang="scss">
 .dk-dashboard {
+  overflow: auto;
   .el-table.el-table--border {
     th.is-leaf {
       border-bottom: 1px solid #ebeef5;
@@ -109,10 +110,11 @@ export default {
 
 <style lang="scss" scoped>
 .dk-dashboard {
-  padding: 0 16px 16px;
+  // padding: 0 16px 16px;
   .panel {
     box-shadow: 0 2px 12px 0 rgb(0 0 0 / 12%);
     border-radius: 3px;
+    background-color: #fff;
     .panel-title {
       border-radius: 3px 3px 0 0;
       height: 42px;
@@ -122,7 +124,7 @@ export default {
       display: flex;
       align-items: center;
       background-color: #36a2eb;
-      margin-top: 14px;
+      // margin-top: 14px;
       > img {
         margin-right: 6px;
       }

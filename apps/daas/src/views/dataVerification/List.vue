@@ -1,9 +1,8 @@
 <template>
-  <section class="data-verify-wrap">
+  <section class="data-verify-wrap section-wrap">
     <TablePage
       ref="table"
       row-key="id"
-      :title="$t('app.menu.dataVerification')"
       :remoteMethod="getData"
       @selection-change="handleSelectionChange"
       @sort-change="handleSortTable"
@@ -78,7 +77,7 @@
       </ul>
       <div slot="operation">
         <el-button
-          v-if="$window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'"
+          v-if="$getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'"
           v-readonlybtn="'SYNC_job_import'"
           size="small"
           class="btn"
@@ -150,7 +149,7 @@
               <span>Error</span>
             </div>
             <div v-else-if="scope.row.status !== 'done'" class="data-verify__status">
-              <img style="width: 26px; vertical-align: middle" :src="$window._TAPDATA_OPTIONS_.loadingImg" />
+              <img style="width: 26px; vertical-align: middle" :src="loadingImg" />
               <span>{{ statusMap[scope.row.status] }}</span>
             </div>
             <div v-else>-</div>
@@ -186,31 +185,25 @@
             @click="startTask(scope.row.id)"
             >{{ $t('dataVerification.executeVerifyTip') }}</ElLink
           >
-          <ElLink
-            style="margin-left: 10px"
-            type="primary"
-            :disabled="!scope.row.InspectResult"
-            @click="toTableInfo(scope.row.id)"
-            >{{ $t('dataVerification.detailTip') }}</ElLink
-          >
-          <ElLink
-            style="margin-left: 10px"
-            type="primary"
-            :disabled="!scope.row.InspectResult"
-            @click="toTableHistory(scope.row.id)"
-            >{{ $t('dataVerification.historyTip') }}</ElLink
-          >
+          <ElDivider direction="vertical"></ElDivider>
+          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">{{
+            $t('dataVerification.detailTip')
+          }}</ElLink>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableHistory(scope.row.id)">{{
+            $t('dataVerification.historyTip')
+          }}</ElLink>
+          <ElDivider direction="vertical"></ElDivider>
           <ElLink
             v-readonlybtn="'verify_job_edition'"
-            style="margin-left: 10px"
             type="primary"
             :disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
             @click="goEdit(scope.row.id, scope.row.flowId)"
             >{{ $t('dataVerification.configurationTip') }}</ElLink
           >
+          <ElDivider direction="vertical"></ElDivider>
           <ElLink
             v-readonlybtn="'verify_job_delete'"
-            style="margin-left: 10px"
             type="primary"
             :disabled="$disabledByPermission('verify_job_delete_all_data', scope.row.user_id)"
             @click="remove(scope.row.name, scope.row.id)"
@@ -242,11 +235,13 @@ export default {
         enabled: '',
         result: ''
       },
+      loadingImg: window._TAPDATA_OPTIONS_.loadingImg,
       order: 'createTime DESC',
       inspectMethod: {
         row_count: this.$t('dataVerification.rowVerify'),
         field: this.$t('dataVerification.contentVerify'),
-        jointField: this.$t('dataVerification.jointVerify')
+        jointField: this.$t('dataVerification.jointVerify'),
+        cdcCount: '动态校验'
       },
       statusMap: {
         waiting: this.$t('dataVerification.waiting'),
@@ -294,7 +289,11 @@ export default {
     // 批量导入
     handleImport() {
       let routeUrl = this.$router.resolve({
-        path: '/upload?type=Inspect'
+        // path: '/upload?type=Inspect'
+        name: 'upload',
+        query: {
+          type: 'Inspect'
+        }
       })
       window.open(routeUrl.href, '_blank')
     },
@@ -471,6 +470,7 @@ export default {
   }
   .search-bar {
     display: flex;
+    // padding-left: 20px;
     .item {
       margin-right: 10px;
     }
@@ -503,8 +503,8 @@ export default {
   .el-table--border td {
     border-right: 0;
   }
-  .el-table--border th {
-    border-right: 1px solid #dcdfe6;
-  }
+  // .el-table--border th {
+  //   border-right: 1px solid #dcdfe6;
+  // }
 }
 </style>

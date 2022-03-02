@@ -190,7 +190,7 @@ export default {
 <style lang="scss" scoped>
 .pipeline-list-wrap {
   height: 100%;
-  padding: 30px 50px;
+  padding: 0x 30px;
   .btn-create {
     float: right;
   }

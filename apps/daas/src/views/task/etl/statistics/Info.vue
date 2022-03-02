@@ -77,7 +77,7 @@
       ></SelectList>
     </div>
     <div class="flex justify-content-between mt-6">
-      <div class="p-6 grey-background" style="min-width: 200px">
+      <div class="p-6 grey-background" style="min-width: 240px">
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_input') }}</span>
@@ -191,7 +191,7 @@ export default {
       },
       creator: '',
       selectedStage: '', // 选中的节点
-      selectedTime: '5min',
+      selectedTime: 'default',
       selectedRate: 'second',
       lineData: {
         x: [],
@@ -204,35 +204,38 @@ export default {
       lineOptions: {
         tooltip: {
           trigger: 'axis'
+          // formatter: params => {
+          //   let [item1, item2] = params
+          //   let html = formatTime(item1.name)
+          //   html += `<div style="display: flex;justify-content: space-between"><span>${item1.marker}${item1.seriesName}</span>` + `<span>${item1.value?.[1]}</span></div>`
+          //   html += `<div style="display: flex;justify-content: space-between"><span>${item2.marker}${item2.seriesName}</span>` + `<span>${item2.value?.[1]}</span></div>`
+          //   return html
+          // }
         },
         legend: {
           top: 4,
           right: 0,
           show: true
         },
-        dataZoom: [
-          // {
-          //   type: 'slider',
-          //   show: true,
-          //   height: 20,
-          //   bottom: '2%',
-          //   textStyle: {
-          //     color: '#2c65ff',
-          //     fontSize: 11
-          //   }
-          // },
-          {
-            type: 'inside',
-            minSpan: 1,
-            maxSpan: 100
-          }
-        ],
+        // dataZoom: [
+        //   {
+        //     type: 'inside',
+        //     minSpan: 1,
+        //     maxSpan: 100
+        //   }
+        // ],
         xAxis: {
           type: 'time'
+          // axisLabel: {
+          //   formatter: val => {
+          //     return formatTime(val)
+          //   }
+          // },
         },
         yAxis: [
           {
             // max: 'dataMax',
+            name: 'QPS',
             axisLabel: {
               formatter: function (value) {
                 if (value >= 1000) {
@@ -257,7 +260,7 @@ export default {
         grid: {
           left: 0,
           right: '2px',
-          top: '24px',
+          top: '36px',
           bottom: 0
         },
         series: [
@@ -322,6 +325,11 @@ export default {
         }
       ],
       selectedTimeItems: [
+        {
+          label: '默认',
+          value: 'default',
+          spacing: 0
+        },
         {
           label: '最近五分钟',
           value: '5min',
@@ -488,9 +496,9 @@ export default {
           ? (endTimeStamp || new Date().getTime()) - startTimeStamp
           : selectedTimeItems.find(t => t.value === selectedTime).spacing
       let guanluary = this.getGuanluary(diff)
-
+      let formatGuanluaryTime = this.getGuanluary(diff, true)
       let subTaskId = this.$route.params?.subId
-      let lineDataDeep = this.lineDataDeep
+      // let lineDataDeep = this.lineDataDeep
       let tags = {
         subTaskId: subTaskId,
         type: 'subTask'
@@ -517,6 +525,7 @@ export default {
       }
       if (this.selectedStage) {
         let nodeId = this.selectedStage
+        let taskTags = tags
         tags = {
           subTaskId: subTaskId,
           type: 'node',
@@ -538,31 +547,37 @@ export default {
           ],
           statistics: [
             {
-              tags
+              tags: taskTags
             }
           ]
         }
       }
       if (reset) {
-        lineDataDeep = {
+        this.lineDataDeep = {
           x: [],
           y: [[], []]
         }
       }
       if (endTimeStamp) {
         params.samples[0].end = endTimeStamp
-        params.samples[1].end = endTimeStamp
+        if (selectedTime !== 'default') {
+          params.samples[1].end = endTimeStamp
+        }
         // params.samples[2].end = endTimeStamp
       }
       if (startTimeStamp) {
         if (selectedTime && selectedTime !== 'custom') {
-          const lastTime = lineDataDeep.x[lineDataDeep.x.length - 1]
+          const lastTime = this.lineDataDeep.x[this.lineDataDeep.x.length - 1]
           const lastTimeStamp = lastTime ? new Date(lastTime).getTime() : ''
           params.samples[0].start = lastTimeStamp || startTimeStamp
-          params.samples[1].start = lastTimeStamp || startTimeStamp
+          if (selectedTime !== 'default') {
+            params.samples[1].start = lastTimeStamp || startTimeStamp
+          }
         } else {
           params.samples[0].start = startTimeStamp
-          params.samples[1].start = startTimeStamp
+          if (selectedTime !== 'default') {
+            params.samples[1].start = startTimeStamp
+          }
         }
         // params.samples[2].start = startTimeStamp
       }
@@ -575,7 +590,7 @@ export default {
         })
         const countObj = samples?.[1] || {}
         const statistics = data.statistics?.[0] || {}
-        const { overData, writeData, initialData } = this
+        const { overData, writeData } = this
         // 总输入总输出
         if (!isEmpty(countObj)) {
           for (let key in overData) {
@@ -589,16 +604,21 @@ export default {
             }
           }
         }
-
         for (let key in writeData) {
           writeData[key] = statistics[key]
         }
-        writeData.replicateLag = data.samples?.[1]?.replicateLag?.[0] || 0
         // 全量预计完成时间
-        initialData.length >= 2 && initialData.shift()
-        initialData.push(Object.assign({}, writeData))
-        if (initialData.length >= 2) {
-          const getForecastMs = this.getForecastMs(initialData)
+        this.initialData.length >= 2 && this.initialData.shift()
+        this.initialData.push(
+          Object.assign(
+            {
+              time: new Date().getTime()
+            },
+            writeData
+          )
+        )
+        if (this.initialData.length >= 2) {
+          const getForecastMs = this.getForecastMs(this.initialData)
           if (getForecastMs) {
             this.forecast = getForecastMs
           }
@@ -612,12 +632,12 @@ export default {
           qpsDataTime = this.getEmptyData(params.samples[0].start, params.samples[0].end)
         }
 
-        let xArr = qpsDataTime.map(t => formatTime(t))
+        let xArr = qpsDataTime.map(t => formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
         const xArrLen = xArr.length
-        if (lineDataDeep.x.length > 20) {
-          lineDataDeep.x.splice(0, xArrLen)
-          lineDataDeep.y[0].splice(0, xArrLen)
-          lineDataDeep.y[1].splice(0, xArrLen)
+        if (this.lineDataDeep.x.length > 20) {
+          this.lineDataDeep.x.splice(0, xArrLen)
+          this.lineDataDeep.y[0].splice(0, xArrLen)
+          this.lineDataDeep.y[1].splice(0, xArrLen)
         }
         let inArr = []
         let outArr = []
@@ -632,23 +652,33 @@ export default {
             value: [time, outputQPS[i]]
           })
         })
+        console.log('x轴：', this.lineDataDeep.x.length, xArr)
         if (reset) {
-          lineDataDeep.x = xArr
-          lineDataDeep.y[0] = inArr
-          lineDataDeep.y[1] = outArr
+          this.lineDataDeep.x = xArr
+          this.lineDataDeep.y[0] = inArr
+          this.lineDataDeep.y[1] = outArr
         } else {
-          lineDataDeep.x.push(...xArr)
-          lineDataDeep.y[0].push(...inArr)
-          lineDataDeep.y[1].push(...outArr)
+          xArr.forEach((el, index) => {
+            if (!this.lineDataDeep.x.includes(el)) {
+              this.lineDataDeep.x.push(el)
+              this.lineDataDeep.y[0].push(inArr[index])
+              this.lineDataDeep.y[1].push(outArr[index])
+            }
+          })
+          // this.lineDataDeep.x.push(...xArr)
+          // this.lineDataDeep.y[0].push(...inArr)
+          // this.lineDataDeep.y[1].push(...outArr)
         }
-
+        // this.lineOptions.xAxis.axisLabel.formatter = val => {
+        //   return formatTime(val, formatGuanluaryTime)
+        // }
         this.$refs.chart.chart?.setOption({
           series: [
             {
-              data: lineDataDeep.y[0]
+              data: Object.assign([], this.lineDataDeep.y[0])
             },
             {
-              data: lineDataDeep.y[1]
+              data: Object.assign([], this.lineDataDeep.y[1])
             }
           ]
         })
@@ -664,12 +694,16 @@ export default {
       // <= 24m+ --> month, day point, max 30 * 24 = 720
       if (diff <= 1 * 60 * 60) {
         timeType = 'minute'
+        formatRes = 'YYYY-MM-DD HH:mm:ss'
       } else if (diff <= 12 * 60 * 60) {
         timeType = 'hour'
+        formatRes = 'YYYY-MM-DD HH:mm'
       } else if (diff <= 30 * 24 * 60 * 60) {
         timeType = 'day'
+        formatRes = 'YYYY-MM-DD HH:00'
       } else {
         timeType = 'month'
+        formatRes = 'YYYY-MM-DD'
       }
       if (format) {
         return formatRes
@@ -727,7 +761,7 @@ export default {
     getForecastMs(data) {
       const [start, end] = data
       const num = end.initialWrite - start.initialWrite
-      const timeDiff = new Date(end.initialTime).getTime() - new Date(start.initialTime).getTime()
+      const timeDiff = end.time - start.time
       if (!num) {
         return
       }
@@ -832,6 +866,9 @@ export default {
           break
         case 'custom':
           result = val
+          break
+        default:
+          result[0] = current - 5 * 60 * 1000
           break
       }
       return result

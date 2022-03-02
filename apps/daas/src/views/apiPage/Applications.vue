@@ -1,10 +1,9 @@
 <template>
-  <section class="applications-wrap">
+  <section class="applications-wrap section-wrap">
     <TablePage
       ref="table"
       row-key="id"
       class="applications-list"
-      :title="$t('app.menu.' + $route.name)"
       :remoteMethod="getData"
       @sort-change="handleSortTable"
     >
@@ -84,7 +83,7 @@
           <span v-for="item in scope.row.scopes" :key="item" class="table-span">{{ item }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('operator')" min-width="120">
+      <el-table-column :label="$t('column_operation')" min-width="120">
         <template slot-scope="scope">
           <el-button v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="edit(scope.row)">
             {{ $t('modules_edit') }}

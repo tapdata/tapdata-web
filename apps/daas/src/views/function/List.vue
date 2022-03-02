@@ -1,6 +1,6 @@
 <template>
-  <section class="function-list-wrapper">
-    <TablePage ref="table" class="h-100" :title="$t('menu_title_function')" :remoteMethod="getData">
+  <section class="function-list-wrapper section-wrap">
+    <TablePage ref="table" class="h-100" :remoteMethod="getData">
       <ul class="search-bar" slot="search">
         <li class="item">
           <ElRadioGroup v-model="searchParams.type" size="small" @input="table.fetch(1)">
@@ -11,7 +11,7 @@
           </ElRadioGroup>
         </li>
         <li class="item">
-          <ElButton plain class="btn-refresh" size="small" @click="table.fetch()">
+          <ElButton plain class="btn-refresh" size="mini" @click="table.fetch()">
             <i class="el-icon-refresh"></i>
           </ElButton>
         </li>
@@ -151,7 +151,6 @@ export default {
 
 <style scoped lang="scss">
 .function-list-wrapper {
-  height: 100%;
   .search-bar {
     display: flex;
 
@@ -163,6 +162,7 @@ export default {
       height: 32px;
       line-height: 32px;
       width: 32px;
+      min-width: 32px;
       font-size: 16px;
     }
   }

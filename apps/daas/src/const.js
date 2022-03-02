@@ -26,6 +26,12 @@ export const TOPOLOGY_MAP = topologyMap,
     'force stopping': { text: '强制停止中', icon: 'qiangzhitingzhi', type: 'success' },
     finished: { text: '已完成', icon: 'yiwancheng', type: 'success' }
   },
+  SHARECDC_MAP = {
+    running: { text: '运行中', icon: 'running', type: 'success' },
+    stop: { text: '已暂停', icon: 'stop' },
+    error: { text: '错误', icon: 'error', type: 'warning' },
+    edit: { text: '编辑', icon: 'edit', type: 'warning' }
+  },
   CONNECTION_STATUS_MAP = {
     ready: { text: '有效', type: 'success' },
     invalid: { text: '失效', type: 'danger' },
@@ -39,6 +45,7 @@ export const TOPOLOGY_MAP = topologyMap,
     paused: { text: '已暂停', icon: 'yizanting' }
   },
   ETL_STATUS_MAP = {
+    edit: { text: '编辑中', type: 'disable' },
     running: { text: '运行中', type: 'success' },
     not_running: { text: '未运行', type: 'disable' },
     error: { text: '错误', type: 'danger' }
