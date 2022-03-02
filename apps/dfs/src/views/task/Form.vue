@@ -76,6 +76,49 @@
                     <span class="font-color-sub fs-8">{{ $t('task_form_setting_sync_points_tip') }}</span>
                   </el-row>
                 </template>
+                <template slot="scheduledRunTime">
+                  <ElRow>
+                    <ElDatePicker
+                      value-format="timestamp"
+                      format="yyyy-MM-dd HH:mm:ss"
+                      v-model="settingModel.scheduledRunTime"
+                      type="datetime"
+                      :picker-options="getCurrentOptions()"
+                    ></ElDatePicker>
+                  </ElRow>
+                </template>
+                <template slot="cronExpression">
+                  <ElRow class="flex align-items-center" style="height: 32px">
+                    <div class="flex align-items-center">
+                      <ElSwitch v-model="settingModel.isSchedule"></ElSwitch>
+                      <template v-if="settingModel.isSchedule">
+                        <el-input
+                          v-model="settingModel.cronExpression"
+                          :placeholder="$t('dataFlow.cronExpression')"
+                          size="mini"
+                          class="jobSchedule ml-4"
+                        ></el-input>
+                        <el-popover popper-class="jobSeceduleDialog" placement="top-start" width="500" trigger="hover">
+                          <div class="text box">
+                            <p>{{ $t('dialog.jobSchedule.explanation') }}</p>
+                            <p>{{ $t('dialog.jobSchedule.grammar') }}</p>
+                            <ul class="flex">
+                              <li v-for="item in timeTextArr" :key="item" class="mr-3 text-center">
+                                <p>{{ $t('dialog.jobSchedule.' + item) }}</p>
+                                <span>*</span>
+                              </li>
+                            </ul>
+                            <p>{{ $t('dialog.jobSchedule.example') }}</p>
+                            <p>0 */1 * * * ? * // {{ $t('dialog.jobSchedule.runMinute') }}</p>
+                            <p>0 0 2 * * ? * // {{ $t('dialog.jobSchedule.runDay') }}</p>
+                          </div>
+                          <!--                      <span class="icon iconfont icon-tishi1" slot="reference"></span>-->
+                          <VIcon slot="reference" class="color-disable ml-2" size="14">info</VIcon>
+                        </el-popover>
+                      </template>
+                    </div>
+                  </ElRow>
+                </template>
               </form-builder>
             </div>
             <!-- 步骤4 -->
@@ -495,11 +538,12 @@
 import formConfig from '../task/config'
 import Transfer from './Transfer'
 import FieldMapping from '@/components/field-mapping/main'
+import VIcon from '@/components/VIcon'
 import { SETTING_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from '../task/const'
 
 let defaultConfig = []
 export default {
-  components: { Transfer, FieldMapping },
+  components: { Transfer, FieldMapping, VIcon },
   data() {
     return {
       id: '',
@@ -568,7 +612,8 @@ export default {
       taskStep: 0,
       tableNameTransform: '',
       fieldsNameTransform: '',
-      updateTransfer: false
+      updateTransfer: false,
+      timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year']
     }
   },
 
@@ -1559,6 +1604,14 @@ export default {
       }
       let result = await this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
       return result?.items?.[0]
+    },
+    getCurrentOptions() {
+      return {
+        disabledDate: time => {
+          return new Date(time).getTime() < new Date().getTime()
+        },
+        selectableRange: null
+      }
     }
   }
 }

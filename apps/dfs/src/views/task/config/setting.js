@@ -235,6 +235,46 @@ export default function () {
         slot: 'syncPoints',
         label: '增量采集开始时刻',
         show: false
+      },
+      {
+        type: 'slot',
+        field: 'cronExpression',
+        slot: 'cronExpression',
+        label: '定期调度任务',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'sync_type',
+                value: 'initial_sync'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'slot',
+        field: 'scheduledRunTime',
+        slot: 'scheduledRunTime',
+        label: '计划运行时间',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'sync_type',
+                value: 'initial_sync+cdc'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       }
     ]
   }

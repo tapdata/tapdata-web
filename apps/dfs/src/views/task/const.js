@@ -21,7 +21,10 @@ export const SETTING_MODEL = {
       name: '',
       timezone: '+08:00' // 当type为localTZ时有该字段
     }
-  ]
+  ],
+  isSchedule: false,
+  cronExpression: '',
+  scheduledRunTime: ''
 }
 
 export const DATASOURCE_MODEL = {
