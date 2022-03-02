@@ -49,7 +49,9 @@ export const Designer = defineComponent({
 
     // if (engine) throw new Error('There can only be one Designable Engine Context in the Tree')
 
-    console.log('engine', engine)
+    onMounted(() => {
+      engine.mount()
+    })
 
     return () => (
       <Layout {...toRefs(props)}>

@@ -1,5 +1,5 @@
 import { Engine } from './Engine'
-// import { Viewport } from './Viewport'
+import { Viewport } from './Viewport'
 import { Operation } from './Operation'
 // import { History } from './History'
 import { uid } from '@daas/shared'
@@ -31,13 +31,13 @@ export class Workspace {
     this.id = props.id || uid()
     this.title = props.title
     this.description = props.description
-    // this.viewport = new Viewport({
-    //   engine: this.engine,
-    //   workspace: this,
-    //   viewportElement: props.viewportElement,
-    //   contentWindow: props.contentWindow,
-    //   nodeIdAttrName: this.engine.props.nodeIdAttrName
-    // })
+    this.viewport = new Viewport({
+      engine: this.engine,
+      workspace: this,
+      viewportElement: props.viewportElement,
+      contentWindow: props.contentWindow,
+      nodeIdAttrName: this.engine.props.nodeIdAttrName
+    })
     // this.outline = new Viewport({
     //   engine: this.engine,
     //   workspace: this,

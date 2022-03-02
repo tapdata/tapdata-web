@@ -1,7 +1,7 @@
 import { Workspace } from './Workspace'
 import { Engine } from './Engine'
 import { TreeNode } from './TreeNode'
-// import { Selection } from './Selection'
+import { Selection } from './Selection'
 // import { Hover } from './Hover'
 import { action, define, observable } from '@formily/reactive'
 // import { Dragon } from './Dragon'
@@ -35,9 +35,9 @@ export class Operation {
       operation: this
     })
     console.log('构建Operation', this.tree)
-    // this.selection = new Selection({
-    //   operation: this
-    // })
+    this.selection = new Selection({
+      operation: this
+    })
     // this.hover = new Hover({
     //   operation: this,
     // })
@@ -51,7 +51,7 @@ export class Operation {
     //   operation: this,
     //   viewport: this.workspace.viewport,
     // })
-    // this.selection.select(this.tree)
+    this.selection.select(this.tree)
     this.makeObservable()
   }
 

@@ -2,6 +2,7 @@ import { isArr } from '@daas/shared'
 import { TreeNode, Engine } from './models'
 import { mergeLocales } from './internals'
 import { untracked } from '@formily/reactive'
+import { DEFAULT_DRIVERS, DEFAULT_EFFECTS } from './presets'
 
 export const isBehaviorHost = val => val?.Behavior && isBehaviorList(val.Behavior)
 
@@ -57,8 +58,8 @@ export const createDesigner = (props = {}) => {
     () =>
       new Engine({
         ...props,
-        effects: [...effects],
-        drivers: [...drivers],
+        effects: [...effects, ...DEFAULT_EFFECTS],
+        drivers: [...drivers, ...DEFAULT_DRIVERS],
         shortcuts: [...shortcuts]
       })
   )

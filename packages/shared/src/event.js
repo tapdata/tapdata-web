@@ -41,10 +41,11 @@ export class EventDriver {
     return this.engine.subscribeWith(type, subscriber)
   }
 
+  // eslint-disable-next-line no-unused-vars
   attach(container) {
     console.error('attach must implement.')
   }
-
+  // eslint-disable-next-line no-unused-vars
   detach(container) {
     console.error('attach must implement.')
   }

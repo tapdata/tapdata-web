@@ -1,0 +1,34 @@
+$namespace: 'el';
+
+.dn-designable-form {
+  .#{$namespace}-input,
+  .#{$namespace}-input-number,
+  .#{$namespace}-input-affix-wrapper,
+  .#{$namespace}-cascader-picker,
+  .#{$namespace}-picker-input,
+  .#{$namespace}-picker,
+  .#{$namespace}-cascader-picker-label,
+  .#{$namespace}-slider,
+  .#{$namespace}-checkbox,
+  .#{$namespace}-rate,
+  .#{$namespace}-switch,
+  .#{$namespace}-radio,
+  .#{$namespace}-radio-wrapper,
+  .#{$namespace}-checkbox-group,
+  .#{$namespace}-checkbox-wrapper,
+  .#{$namespace}-radio-group,
+  .#{$namespace}-upload,
+  .#{$namespace}-transfer,
+  .#{$namespace}-select,
+  .#{$namespace}-select-selector {
+    pointer-events: none !important;
+
+    input {
+      pointer-events: none !important;
+    }
+  }
+
+  .v-icon svg {
+    pointer-events: none;
+  }
+}

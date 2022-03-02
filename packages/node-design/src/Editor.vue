@@ -31,10 +31,11 @@
             <ComponentTreeWidget :components="components"></ComponentTreeWidget>
           </WorkspacePanel>
         </Workspace>
+        <!--设置区域面板-->
+        <SettingsPanel title="panels.PropertySettings">
+          <SettingsForm></SettingsForm>
+        </SettingsPanel>
       </Designer>
-
-      <!--设置区域面板-->
-      <SettingsPanel></SettingsPanel>
     </div>
   </div>
 </template>
@@ -43,13 +44,16 @@
 import PanelHeader from './components/PanelHeader'
 import CompositePanel from './components/CompositePanel'
 import WorkspacePanel from './components/WorkspacePanel'
-import SettingsPanel from './components/SettingsPanel'
+// import SettingsPanel from './components/SettingsPanel'
+import { SettingsPanel } from './components/panels'
 import { GlobalRegistry } from './core'
 import * as icons from './icons'
 import './theme.scss'
+import './locales'
 import { Designer, Workspace } from './containers'
-import { ComponentTreeWidget } from './widgets/component-tree-widget'
+import { ComponentTreeWidget } from './widgets'
 import { Input, Field, Select, Form, FormLayout } from './sources'
+import { SettingsForm } from './components/settings-form'
 
 GlobalRegistry.registerDesignerIcons(icons)
 GlobalRegistry.registerDesignerLocales({
@@ -73,7 +77,16 @@ GlobalRegistry.registerDesignerLocales({
 
 export default {
   name: 'Editor',
-  components: { SettingsPanel, WorkspacePanel, CompositePanel, PanelHeader, Designer, Workspace, ComponentTreeWidget },
+  components: {
+    SettingsPanel,
+    WorkspacePanel,
+    CompositePanel,
+    PanelHeader,
+    Designer,
+    Workspace,
+    ComponentTreeWidget,
+    SettingsForm
+  },
 
   data() {
     return {

@@ -33,7 +33,7 @@ import VIcon from 'web-core/components/VIcon'
 import 'web-core/assets/icons/svg/component.svg'
 import 'web-core/assets/icons/svg/outline.svg'
 import 'web-core/assets/icons/svg/history.svg'
-import { ResourceWidget } from '../widgets/resource-widget'
+import { ResourceWidget } from '../widgets/ResourceWidget'
 import { Input, Select } from '../sources'
 
 export default {
