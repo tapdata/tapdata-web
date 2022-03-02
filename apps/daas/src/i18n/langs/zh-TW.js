@@ -66,6 +66,7 @@ export default {
   column_connection: '所屬連接',
   column_table: '所屬表',
   column_create_time: '創建時間',
+  column_creator: '創建人',
 
   // dialog按鈕
   dialog_button_cancel: '取 消',
@@ -995,6 +996,9 @@ export default {
 
   shared_cache_name: '緩存名稱',
   shared_cache_status: '緩存狀態',
+  shared_cache_status_error: '錯誤',
+  shared_cache_status_running: '運行中',
+  shared_cache_status_ready: '待啟動',
   shared_cache_time: '緩存時間',
   shared_cache_keys: '緩存鍵',
   shared_cache_fields: '緩存欄位',
