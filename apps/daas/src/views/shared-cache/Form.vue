@@ -157,24 +157,28 @@ export default {
   },
   created() {
     this.getConnectionOptions()
+    let id = this.$route.params.id
+    if (id) {
+      this.getData(id)
+    }
   },
   methods: {
-    getData() {
+    getData(id) {
       this.$api('shareCache')
-        .findOne(this.$route.params.id)
+        .findOne(id)
         .then(res => {
           let data = res?.data || {}
-          let source = data?.dag?.nodes?.[0] || {}
-          let target = data?.dag?.nodes?.[1] || {}
           this.form = {
             name: data.name,
-            connectionId: source.connectionId,
-            tableName: source.tableName,
-            cacheKeys: target.cacheKeys,
-            fields: source?.attrs?.fields?.join(',') || '',
-            maxRows: target.maxRows,
-            ttl: target.ttl
+            connectionId: data.connectionId,
+            tableName: data.tableName,
+            cacheKeys: data.cacheKeys,
+            fields: data.fields?.join(',') || '',
+            maxRows: data.maxRows,
+            ttl: data.ttl
           }
+          this.getTableOptions(data.connectionId)
+          this.getTableSchema(data.tableName)
         })
     },
     getConnectionOptions() {
@@ -244,7 +248,9 @@ export default {
       this.$refs.form.validate(flag => {
         if (flag) {
           let { name, connectionId, tableName, cacheKeys, fields, maxRows, ttl } = this.form
+          let id = this.$route.params.id
           let params = {
+            id,
             name,
             dag: {
               nodes: [
@@ -266,14 +272,13 @@ export default {
               edges: []
             }
           }
-          let id = this.$route.params.id
           let method = id ? 'patch' : 'post'
           this.loading = true
           this.$api('shareCache')
             [method](params)
             .then(() => {
               this.$message.success(this.$t('message_save_ok'))
-              this.router.replace({
+              this.$router.replace({
                 name: 'sharedCacheList'
               })
             })
