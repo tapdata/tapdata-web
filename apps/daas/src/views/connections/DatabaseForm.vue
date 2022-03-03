@@ -1063,18 +1063,16 @@ export default {
     },
     // 共享挖掘设置
     check() {
-      this.$api('logcollector')
-        .check()
-        .then(res => {
-          if (res) {
-            let result = res?.data?.data
-            if (result) {
-              this.showSystemConfig = true
-              this.getMongodb()
-              //打开全局设置
-            }
+      Promise.all([this.$api('logcollector').check(), this.$api('logcollector').getSystemConfig()]).then(
+        ([check, res]) => {
+          let verify = check?.data
+          let digSettingForm = res?.data
+          if (verify && !digSettingForm?.persistenceMongodb_uri_db) {
+            this.showSystemConfig = true
+            this.getMongodb() //打开全局设置
           }
-        })
+        }
+      )
     },
     //获取所有mongo连接
     getMongodb() {
@@ -1372,7 +1370,6 @@ export default {
           //映射可用区
           let persistenceMongodb_uri_db = items.find(it => it.field === 'persistenceMongodb_uri_db')
           if (persistenceMongodb_uri_db) {
-            persistenceMongodb_uri_db.show = true
             persistenceMongodb_uri_db.options = this.mongodbList.map(item => {
               return {
                 id: item.id,
