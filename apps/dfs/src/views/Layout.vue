@@ -59,6 +59,7 @@
           'tencent_sqlserver'
         ]"
         :comingTypes="['db2', 'sybase ase', 'gbase-8s']"
+        :hide-type="true"
         @select="createConnection"
       ></ConnectionTypeSelector>
     </ElDialog>
