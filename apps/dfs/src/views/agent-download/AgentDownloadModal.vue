@@ -200,7 +200,7 @@ export default {
         limit: 10
       }
       this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
-        this.isFinished = data?.[0]?.status === 'Running'
+        this.isFinished = data?.items[0]?.status === 'Running'
       })
     },
     checkAgent() {
