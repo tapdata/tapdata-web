@@ -175,11 +175,31 @@
     <el-dialog
       width="500px"
       custom-class="create-dialog"
-      :title="$t('metadata.createNewModel')"
+      :title="$t('metadata_form_create')"
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
-      <FormBuilder ref="form" v-if="createDialogVisible" v-model="createForm" :config="createFormConfig"></FormBuilder>
+      <ElForm ref="form" label-position="left" label-width="100px" size="mini" :model="createForm" :rules="createRules">
+        <ElFormItem :label="$t('metadata_form_type')" required prop="model_type">
+          <ElSelect v-model="createForm.model_type" width="100%">
+            <ElOption
+              v-for="item in modelTyoeList"
+              :label="item.label"
+              :value="item.value"
+              :key="item.value"
+            ></ElOption>
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem :label="$t('metadata_form_database')" required prop="database">
+          <ElSelect v-model="createForm.database" width="100%">
+            <ElOption v-for="item in dbOptions" :label="item.label" :value="item.value" :key="item.value"></ElOption>
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem :label="$t('metadata_form_table_name')" required prop="tableName">
+          <ElInput v-model="createForm.tableName"></ElInput>
+        </ElFormItem>
+      </ElForm>
+
       <span slot="footer" class="dialog-footer">
         <el-button class="message-button-cancel" @click="createDialogVisible = false" size="mini">{{
           $t('button_cancel')
@@ -248,54 +268,48 @@ export default {
         database: '',
         tableName: ''
       },
-      createFormConfig: {
-        form: {
-          labelPosition: 'right',
-          labelWidth: '100px'
+      modelTyoeList: [
+        {
+          label: this.$t('metadata_form_collection'),
+          value: 'collection'
         },
-        items: [
+        {
+          label: this.$t('metadata_form_mongo_view'),
+          value: 'mongo_view'
+        }
+      ],
+      createRules: {
+        database: [
           {
-            type: 'select',
-            label: this.$t('metadata.form.type'),
-            field: 'model_type',
-            options: ['collection', 'mongo_view'].map(t => ({
-              label: this.$t('metadata.metaType.' + t),
-              value: t
-            })),
-            required: true
-          },
-          {
-            type: 'select',
-            label: this.$t('metadata.form.database'),
-            field: 'database',
-            options: [],
-            required: true
-          },
-          {
-            type: 'input',
-            label: this.$t('metadata.form.tableName'),
-            field: 'tableName',
-            rules: [
-              {
-                required: true,
-                validator: (rule, v, callback) => {
-                  if (!v || !v.trim()) {
-                    return callback(new Error(this.$t('metadata.form.none_table_name')))
-                  }
-                  const flag = /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/.test(v) // eslint-disable-line
-                  if (v.split('.')[0] == 'system' || !flag) {
-                    return callback(new Error(this.$t('dialog.placeholderTable')))
-                  }
-                  return callback()
-                }
+            required: true,
+            validator: (rule, v, callback) => {
+              if (!v || !v.trim()) {
+                return callback(new Error(this.$t('metadata_form_database') + this.$t('tips_rule_not_empty')))
               }
-            ]
+              return callback()
+            }
+          }
+        ],
+        tableName: [
+          {
+            required: true,
+            validator: (rule, v, callback) => {
+              if (!v || !v.trim()) {
+                return callback(new Error(this.$t('metadata_form_table_name') + this.$t('tips_rule_not_empty')))
+              }
+                  const flag = /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/.test(v) // eslint-disable-line
+              if (v.split('.')[0] == 'system' || !flag) {
+                return callback(new Error(this.$t('dialog.placeholderTable')))
+              }
+              return callback()
+            }
           }
         ]
       },
       changeNameDialogVisible: false,
       changeNameValue: '',
-      changeNameData: null
+      changeNameData: null,
+      filterItems: []
     }
   },
   created() {
@@ -416,11 +430,11 @@ export default {
           database_type: true,
           connection_type: true,
           status: true
+        },
+        where: {
+          database_type: 'mongodb',
+          connection_type: { $in: ['target', 'source_and_target'] }
         }
-        // where: {
-        //   database_type: 'mongodb',
-        //   connection_type: ['target', 'source_and_target']
-        // }
       }
       this.$api('connections')
         .get({
@@ -429,18 +443,9 @@ export default {
         .then(res => {
           let dbOptions = res.data?.items || []
 
-          let options = []
-          dbOptions.forEach(db => {
-            if (db.database_type === 'mongodb' && ['target', 'source_and_target'].includes(db.connection_type)) {
-              options.push({
-                label: db.name,
-                value: db.id
-              })
-            }
+          this.dbOptions = dbOptions.map(item => {
+            return { label: item.name, value: item.id }
           })
-          this.dbOptions = dbOptions
-          // this.createFormConfig.items[1].options = options
-          this.getFilterItems()
         })
     },
     handleSortTable({ order, prop }) {
@@ -625,6 +630,15 @@ export default {
       }, debounce)
     },
     getFilterItems() {
+      let filter = {
+        fields: {
+          name: true,
+          id: true,
+          database_type: true,
+          connection_type: true,
+          status: true
+        }
+      }
       this.filterItems = [
         {
           label: this.$t('metadata_type'),
@@ -637,7 +651,18 @@ export default {
           label: this.$t('metadata_db'),
           key: 'dbId',
           type: 'select-inner',
-          items: this.dbOptions
+          items: async () => {
+            let data = await this.$api('connections').get({
+              filter: JSON.stringify(filter)
+            })
+            let items = data?.data?.items?.length ? data.data.items : []
+            return items.map(item => {
+              return {
+                label: item.name,
+                value: item.id
+              }
+            })
+          }
         },
         {
           placeholder: this.$t('task_list_search_placeholder'),
@@ -715,6 +740,9 @@ export default {
             text-align: left;
           }
           .el-form-item__content {
+            .el-select {
+              width: 100%;
+            }
             .el-form-item__error {
               line-height: 12px;
             }

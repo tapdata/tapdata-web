@@ -621,20 +621,6 @@ export default {
 </style>
 <style lang="scss">
 .validation-list-wrap {
-  .table-page-table {
-    th {
-      padding: 0;
-      line-height: 30px;
-      background-color: #eff1f4 !important;
-    }
-    td,
-    .is-scrolling-left ~ .el-table__fixed {
-      border-right: 0;
-    }
-    th {
-      border-right: 1px solid #dcdfe6;
-    }
-  }
   .create-dialog {
     .el-dialog__body {
       padding: 30px;

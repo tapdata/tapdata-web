@@ -625,6 +625,7 @@ export default {
       let dataName = []
       let total = 0
       let totalFalg = true
+      let totalText = this.$t('dashboard_total')
       if (data?.length) {
         data.forEach(res => {
           dataName.push(res.name)
@@ -648,12 +649,13 @@ export default {
               show: true,
               position: 'center',
               width: 60,
-              height: 30,
+              height: 34,
               fontWeight: 'bold',
               backgroundColor: '#fff',
-              formatter: `{name|${total}}\n{value|总计}`,
+              formatter: `{name|${total}}\n{value|${totalText}}`,
               rich: {
                 name: {
+                  lineHeight: 24,
                   color: 'rgba(0, 0, 0, 0.85)',
                   fontSize: 16,
                   fontWeight: '400'
@@ -671,9 +673,10 @@ export default {
                 fontWeight: 'bold',
                 formatter: '{name|{c}}\n{value|{b}}',
                 width: 60,
-                height: 30,
+                height: 34,
                 rich: {
                   name: {
+                    lineHeight: 24,
                     color: 'rgba(0, 0, 0, 0.85)',
                     fontSize: '16',
                     fontWeight: '400'

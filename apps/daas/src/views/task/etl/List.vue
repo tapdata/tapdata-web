@@ -71,7 +71,8 @@
           size="small"
           @click="create"
         >
-          <i class="iconfont icon-jia add-btn-icon"></i>
+          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
+          {{ $t('task_create_task') }}
         </el-button>
       </div>
 
@@ -1200,7 +1201,7 @@ export default {
           margin-left: 5px;
         }
         &.btn-create {
-          margin-left: 5px;
+          margin-left: 10px;
         }
         &.btn-createText {
           margin-left: 5px;

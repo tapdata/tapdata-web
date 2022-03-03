@@ -11,7 +11,7 @@
       {{ $t('metadata.details.version.lastVersion') }}
     </div>
     <!-- 数据校验表格 start -->
-    <el-table border :data="tableData" class="table-page-table" height="100%">
+    <el-table :data="tableData" class="table-page-table" height="100%">
       <el-table-column :label="$t('metadata.details.version.versionNum')" prop="version"> </el-table-column>
       <el-table-column :label="$t('metadata.details.version.updateTime')" prop="version_time">
         <template slot-scope="scope">
@@ -92,7 +92,7 @@ export default {
       if (this.histories.histories)
         this.histories.histories.forEach(item => {
           let version_description = item.version_description
-          let descriptionArr = version_description.split(';')
+          let descriptionArr = version_description?.split(';')
           let localizeDescriptionArr = []
           version_description = ''
           descriptionArr.forEach(desc => {

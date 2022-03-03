@@ -2066,7 +2066,7 @@
   box-sizing: border-box;
 }
 .el-select-dropdown__item {
-  font-size: 14px;
+  font-size: 12px;
   padding: 0 20px;
   position: relative;
   white-space: nowrap;

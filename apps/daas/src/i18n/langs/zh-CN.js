@@ -2,6 +2,7 @@ export default {
   // 通用提示
   tips_not_null: '值不能为空',
   tips_must_number: '值必须为数字',
+  tips_rule_not_empty: '不能为空',
 
   // 通用下拉框
   select_option_all: '全部',
@@ -141,7 +142,7 @@ export default {
   dashboard_valid_title: '数据校验',
   dashboard_transfer_overview: '传输总览',
   dashboard_server_title: '服务器进程',
-  dashboard_total: '全部校验任务',
+  dashboard_total_valid: '全部校验任务',
   dashboard_passed: '校验一致',
   dashboard_countDiff: 'Count不一致',
   dashboard_valueDiff: '内容差异',
@@ -164,6 +165,7 @@ export default {
   dashboard_total_insert: '总插入',
   dashboard_total_update: '总更新',
   dashboard_total_delete: '总删除',
+  dashboard_total: '总计',
 
   // 元数据管理
   metadata_type: '类型',
@@ -183,6 +185,13 @@ export default {
   metadata_meta_type_ftp: 'FTP',
   metadata_meta_type_apiendpoint: 'API连接',
 
+  metadata_form_create: '创建模型',
+  metadata_form_type: '类型',
+  metadata_form_database: '数据库',
+  metadata_form_table_name: '名称',
+  metadata_form_collection: '数据集',
+  metadata_form_mongo_view: 'Mongodb视图',
+  metadata_form_rule_table_name: '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
   // 数据校验
   verify_details_title: '任务校验详情',
   verify_history_title: '任务校验历史',

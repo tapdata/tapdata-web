@@ -30,7 +30,7 @@ export function getSubTaskStatus(rows = []) {
         item.status = key
         item.count = 0
         rows.forEach(el => {
-          if (statusMap[key].includes(el.status)) {
+          if (statusMap[key] && statusMap[key].includes(el.status)) {
             item.count++
           }
         })
