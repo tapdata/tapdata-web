@@ -19,12 +19,12 @@ export const FormItem = {
     labelCol: {
       type: 'number',
       'x-decorator': 'FormItem',
-      'x-component': 'NumberPicker'
+      'x-component': 'InputNumber'
     },
     wrapperCol: {
       type: 'number',
       'x-decorator': 'FormItem',
-      'x-component': 'NumberPicker'
+      'x-component': 'InputNumber'
     },
     labelWidth: {
       'x-decorator': 'FormItem',
@@ -50,7 +50,7 @@ export const FormItem = {
     gridSpan: {
       type: 'number',
       'x-decorator': 'FormItem',
-      'x-component': 'NumberPicker'
+      'x-component': 'InputNumber'
     },
     feedbackLayout: {
       type: 'string',

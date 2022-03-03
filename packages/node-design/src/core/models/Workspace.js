@@ -38,13 +38,13 @@ export class Workspace {
       contentWindow: props.contentWindow,
       nodeIdAttrName: this.engine.props.nodeIdAttrName
     })
-    // this.outline = new Viewport({
-    //   engine: this.engine,
-    //   workspace: this,
-    //   viewportElement: props.viewportElement,
-    //   contentWindow: props.contentWindow,
-    //   nodeIdAttrName: this.engine.props.outlineNodeIdAttrName
-    // })
+    this.outline = new Viewport({
+      engine: this.engine,
+      workspace: this,
+      viewportElement: props.viewportElement,
+      contentWindow: props.contentWindow,
+      nodeIdAttrName: this.engine.props.outlineNodeIdAttrName
+    })
     this.operation = new Operation(this)
     // this.history = new History(this, {
     //   onPush: item => {

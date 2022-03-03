@@ -13,5 +13,6 @@ export * from './form-title'
 export * from './join-expression'
 export * from './join-expression'
 export * from './example-file'
+export * from './form-item'
 
 export * from '@formily/element'

@@ -6,20 +6,32 @@ import { IconWidget, NodePathWidget } from '../../widgets'
 import { SettingsFormContext } from '../../context'
 import { useLocales } from './useLocales'
 import './styles.scss'
-import { defineComponent, computed } from 'vue-demi'
+import { defineComponent, computed, reactive, toRef, ref, watch, watchEffect } from 'vue-demi'
+import { requestIdle, cancelIdle } from '@daas/shared'
+
+const GlobalState = {
+  idleRequest: null
+}
 
 export const SettingsForm = observer(
   defineComponent({
+    props: {
+      components: Object
+    },
     setup: props => {
+      console.log('SettingsForm')
       const workbench = useWorkbench()
       const currentWorkspace = workbench?.activeWorkspace || workbench?.currentWorkspace
       const currentWorkspaceId = currentWorkspace?.id
       const operation = useOperation(currentWorkspaceId)
       const node = useCurrentNode(currentWorkspaceId)
-      const selected = useSelected(currentWorkspaceId)
+      let selected = useSelected(currentWorkspaceId)
       const prefix = usePrefix('settings-form')
       const schema = node?.designerProps?.propsSchema
       const isEmpty = !(node && node.designerProps?.propsSchema && selected.length === 1)
+
+      currentWorkspace.operation.selection.selected = ['seif']
+
       const form = computed(() => {
         return createForm({
           initialValues: node?.designerProps?.defaultProps,
@@ -30,7 +42,6 @@ export const SettingsForm = observer(
           }
         })
       })
-      // }, [node, node?.props, schema, operation, isEmpty])
 
       const render = () => {
         if (!isEmpty) {
@@ -55,16 +66,17 @@ export const SettingsForm = observer(
         return <div class={prefix + '-empty'}>空空如也</div>
       }
 
-      return () => (
-        // <IconWidget.Provider tooltip>
-        <div class={prefix + '-wrapper'}>
-          {!isEmpty && <NodePathWidget workspaceId={currentWorkspaceId} />}
-          <div class={prefix + '-content'}>{render()}</div>
-        </div>
-        // </IconWidget.Provider>
-      )
+      return () => {
+        console.log('currentWorkspace---Form', currentWorkspace)
+        return (
+          <div class={prefix + '-wrapper'}>
+            {!isEmpty && <NodePathWidget workspaceId={currentWorkspaceId} />}
+            <div class={prefix + '-content'}>{render()}</div>
+          </div>
+        )
+      }
     }
-  }) /*,
+  }),
   {
     scheduler: update => {
       cancelIdle(GlobalState.idleRequest)
@@ -72,5 +84,5 @@ export const SettingsForm = observer(
         timeout: 500
       })
     }
-  }*/
+  }
 )

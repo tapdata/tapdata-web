@@ -4,12 +4,12 @@ export const FormLayout = {
     labelCol: {
       type: 'number',
       'x-decorator': 'FormItem',
-      'x-component': 'NumberPicker'
+      'x-component': 'InputNumber'
     },
     wrapperCol: {
       type: 'number',
       'x-decorator': 'FormItem',
-      'x-component': 'NumberPicker'
+      'x-component': 'InputNumber'
     },
     labelWidth: {
       'x-decorator': 'FormItem',

@@ -1,7 +1,7 @@
 import { TreeNode } from './TreeNode'
 import { Workbench } from './Workbench'
 import { Cursor } from './Cursor'
-// import { Keyboard } from './Keyboard'
+import { Keyboard } from './Keyboard'
 import { Screen } from './Screen'
 import { uid, Event } from '@daas/shared'
 
@@ -38,7 +38,7 @@ export class Engine extends Event {
     this.workbench = new Workbench(this)
     this.screen = new Screen(this)
     this.cursor = new Cursor(this)
-    // this.keyboard = new Keyboard(this)
+    this.keyboard = new Keyboard(this)
   }
 
   setCurrentTree(tree) {

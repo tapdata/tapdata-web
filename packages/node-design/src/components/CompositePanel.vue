@@ -1,6 +1,6 @@
 <template>
   <div class="composite-panel flex">
-    <div class="composite-panel-tabs border-end">
+    <!--<div class="composite-panel-tabs border-end">
       <div
         v-for="(item, i) in tabItems"
         :key="i"
@@ -15,7 +15,7 @@
           <VIcon size="20">{{ item.name }}</VIcon>
         </ElTooltip>
       </div>
-    </div>
+    </div>-->
     <div class="composite-panel-tabs-content h-100 border-end">
       <div class="composite-panel-tabs-header px-2 flex justify-space-between align-center border-bottom">
         <div class="composite-panel-tabs-header-title">{{ tabItems[activeTab].title }}</div>

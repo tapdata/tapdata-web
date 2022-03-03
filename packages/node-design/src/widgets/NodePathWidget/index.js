@@ -1,4 +1,4 @@
-import { Breadcrumb } from 'element-ui'
+import { Breadcrumb, BreadcrumbItem } from 'element-ui'
 import { useCurrentNode, useSelection, usePrefix, useHover } from '../../hooks'
 import { IconWidget } from '../IconWidget'
 import { NodeTitleWidget } from '../NodeTitleWidget'
@@ -20,11 +20,12 @@ export const NodePathWidget = observer(
         .slice(0, maxItems - 1)
         .reverse()
         .concat(selected)
+      console.log('nodes', nodes)
       return () => (
         <Breadcrumb class={prefix}>
           {nodes.map((node, key) => {
             return (
-              <Breadcrumb.Item key={key}>
+              <BreadcrumbItem key={key}>
                 {key === 0 && <IconWidget infer="Position" style={{ marginRight: 3 }} />}
                 <a
                   href=""
@@ -39,7 +40,7 @@ export const NodePathWidget = observer(
                 >
                   <NodeTitleWidget node={node} />
                 </a>
-              </Breadcrumb.Item>
+              </BreadcrumbItem>
             )
           })}
         </Breadcrumb>

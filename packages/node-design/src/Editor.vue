@@ -33,7 +33,7 @@
         </Workspace>
         <!--设置区域面板-->
         <SettingsPanel title="panels.PropertySettings">
-          <SettingsForm></SettingsForm>
+          <SettingsForm :components="settingsFormComponents"></SettingsForm>
         </SettingsPanel>
       </Designer>
     </div>
@@ -52,8 +52,28 @@ import './theme.scss'
 import './locales'
 import { Designer, Workspace } from './containers'
 import { ComponentTreeWidget } from './widgets'
-import { Input, Field, Select, Form, FormLayout } from './sources'
-import { SettingsForm } from './components/settings-form'
+import { Input, Field, Select, Form, FormLayout, InputNumber } from './sources'
+import {
+  SettingsForm,
+  SizeInput
+  // ColorInput,
+  // ImageInput,
+  // BackgroundImageInput,
+  // PositionInput,
+  // CornerInput,
+  // MonacoInput,
+  // ValueInput,
+  // BoxStyleSetter,
+  // BorderStyleSetter,
+  // BorderRadiusStyleSetter,
+  // BackgroundStyleSetter,
+  // BoxShadowStyleSetter,
+  // FontStyleSetter,
+  // DisplayStyleSetter,
+  // FlexStyleSetter,
+  // DrawerSetter,
+  // CollapseItem
+} from './components/settings-form'
 
 GlobalRegistry.registerDesignerIcons(icons)
 GlobalRegistry.registerDesignerLocales({
@@ -90,7 +110,8 @@ export default {
 
   data() {
     return {
-      components: { Field, Input, Select, Form, FormLayout }
+      components: { Field, Input, Select, Form, FormLayout, InputNumber },
+      settingsFormComponents: { SizeInput }
     }
   }
 }

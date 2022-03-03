@@ -4,7 +4,6 @@ import { KeyCode, Point } from '@daas/shared'
 
 export const useSelectionEffect = engine => {
   engine.subscribeTo(MouseClickEvent, event => {
-    console.log('MouseClickEvent', event)
     if (engine.cursor.status !== CursorStatus.Normal) return
     const target = event.data.target
     const el = target?.closest?.(`
@@ -59,5 +58,7 @@ export const useSelectionEffect = engine => {
     } else {
       selection.select(tree, true)
     }
+
+    console.log('currentWorkspace', currentWorkspace)
   })
 }

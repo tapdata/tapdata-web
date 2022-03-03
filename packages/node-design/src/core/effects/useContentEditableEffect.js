@@ -1,7 +1,8 @@
+import { requestIdle } from '@daas/shared'
 import { Path } from '@formily/path'
 import { MouseDoubleClickEvent, MouseClickEvent } from '../events'
 
-/*function getAllRanges(sel) {
+function getAllRanges(sel) {
   const ranges = []
   for (let i = 0; i < sel.rangeCount; i++) {
     const range = sel.getRangeAt(i)
@@ -12,7 +13,7 @@ import { MouseDoubleClickEvent, MouseClickEvent } from '../events'
     }
   }
   return ranges
-}*/
+}
 
 function setEndOfContenteditable(contentEditableElement) {
   const range = document.createRange()
@@ -23,7 +24,7 @@ function setEndOfContenteditable(contentEditableElement) {
   selection.addRange(range)
 }
 
-/*function createCaretCache(el) {
+function createCaretCache(el) {
   const currentSelection = window.getSelection()
   if (currentSelection.containsNode(el)) return
   const ranges = getAllRanges(currentSelection)
@@ -40,7 +41,7 @@ function setEndOfContenteditable(contentEditableElement) {
       sel.addRange(range)
     })
   }
-}*/
+}
 
 export const useContentEditableEffect = engine => {
   const globalState = {
@@ -66,7 +67,12 @@ export const useContentEditableEffect = engine => {
       const handler = () => {
         globalState.queue.length = 0
         if (globalState.isComposition) return
+        const restore = createCaretCache(target)
         Path.setIn(node.props, this.getAttribute(engine.props.contentEditableAttrName), target?.textContent)
+        requestIdle(() => {
+          node.takeSnapshot('update:node:props')
+          restore()
+        })
       }
       globalState.queue.push(handler)
       clearTimeout(globalState.requestTimer)

@@ -1,5 +1,5 @@
 import { observer } from '@formily/reactive-vue'
-import { Fragment, h as hFrag } from '@formily/vue'
+import { FragmentComponent } from '@formily/vue'
 import { defineComponent } from 'vue-demi'
 
 export const NodeTitleWidget = observer(
@@ -14,13 +14,7 @@ export const NodeTitleWidget = observer(
         return node
       }
       const node = takeNode()
-      hFrag(
-        Fragment,
-        {},
-        {
-          default: () => node.getMessage('title') || node.componentName
-        }
-      )
+      return () => <FragmentComponent>{node.getMessage('title') || node.componentName}</FragmentComponent>
     }
   })
 )

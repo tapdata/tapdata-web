@@ -51,23 +51,23 @@
   animation-name: fadeIn;
 }
 
-.dn-settings-form-wrapper {
+.#{$prefix-cls}-settings-form-wrapper {
   height: 100%;
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
 
-  .dn-node-path {
+  .#{$prefix-cls}-node-path {
     flex-grow: 0;
   }
 
-  .dn-settings-form-content {
+  .#{$prefix-cls}-settings-form-content {
     flex-grow: 1;
     overflow: overlay;
   }
 
-  .el-formily-item {
+  .formily-element-form-item {
     border-bottom: 1px solid $--border-color-base;
     padding-bottom: 8px;
     margin-bottom: 8px;
@@ -77,7 +77,7 @@
       font-size: 13px;
     }
 
-    .el-formily-item-control-content-component {
+    &-control-content-component {
       display: flex;
       align-items: center;
       justify-content: flex-end;
@@ -108,7 +108,7 @@
   }
 }
 
-.dn-settings-form {
+.#{$prefix-cls}-settings-form {
   padding: 0 20px;
 
   &-empty {

@@ -100,7 +100,7 @@ export const Select = {
     listHeight: {
       type: 'number',
       'x-decorator': 'FormItem',
-      'x-component': 'NumberPicker',
+      'x-component': 'InputNumber',
       'x-component-props': {
         defaultValue: 256
       }
@@ -108,7 +108,7 @@ export const Select = {
     maxTagCount: {
       type: 'number',
       'x-decorator': 'FormItem',
-      'x-component': 'NumberPicker'
+      'x-component': 'InputNumber'
     },
     maxTagPlaceholder: {
       type: 'string',
@@ -118,7 +118,7 @@ export const Select = {
     maxTagTextLength: {
       type: 'number',
       'x-decorator': 'FormItem',
-      'x-component': 'NumberPicker'
+      'x-component': 'InputNumber'
     },
     notFoundContent: {
       type: 'string',

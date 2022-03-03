@@ -1,14 +1,15 @@
 @import '../../variables';
 
-.dn-node-path {
+.#{$prefix-cls}-node-path {
   padding: 4px 10px !important;
   border-bottom: 1px solid var(--dn-panel-border-color);
+  line-height: 1.5715;
 
-  .dn-icon {
+  .#{$prefix-cls}-icon {
     font-size: 11px;
   }
 
-  .el-breadcrumb-separator {
+  .el-breadcrumb__separator {
     margin: 0 4px !important;
   }
 

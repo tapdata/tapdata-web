@@ -37,7 +37,7 @@ export const Input = {
     maxLength: {
       type: 'number',
       'x-decorator': 'FormItem',
-      'x-component': 'NumberPicker'
+      'x-component': 'InputNumber'
     },
     placeholder: {
       type: 'string',
@@ -70,7 +70,7 @@ Input.TextArea = {
     maxLength: {
       type: 'number',
       'x-decorator': 'FormItem',
-      'x-component': 'NumberPicker'
+      'x-component': 'InputNumber'
     },
     placeholder: {
       type: 'string',
