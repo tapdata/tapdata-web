@@ -4,6 +4,7 @@
     width="1000px"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
+    :close-on-press-escape="false"
     :show-close="false"
   >
     <section class="fast-download down-page">
