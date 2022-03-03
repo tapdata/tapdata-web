@@ -241,12 +241,14 @@ export default {
       this.$api('MetadataInstances')
         .getTables(connectionId)
         .then(res => {
-          let options = res?.data || []
-          options.forEach(opt => {
+          let options = []
+          let list = res?.data || []
+          list.forEach(opt => {
             if (opt) {
-              this.tableOptions.push({ label: opt, value: opt })
+              options.push({ label: opt, value: opt })
             }
           })
+          this.tableOptions = options
         })
         .finally(() => {
           this.tableOptionsLoading = false
