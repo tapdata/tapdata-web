@@ -81,8 +81,8 @@ export default {
       this.$emit('input', Array.from(new Set(values.filter(v => !!v.trim()))).join(','))
     },
     remove(index) {
-      let values = this.values.splice(index, 1)
-      this.inputHandler(values)
+      this.values.splice(index, 1)
+      this.inputHandler(this.values)
     }
   }
 }
