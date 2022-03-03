@@ -11,7 +11,7 @@
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
           <div class="fw-bold head-label">{{ $t('share_detail_log_mining_time') }}:</div>
-          <div class="font-color-sub">{{ detailData.logTime }}</div>
+          <div class="font-color-sub">{{ $moment(detailData.logTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
           <div class="fw-bold head-label">{{ $t('share_detail_log_time') }}:</div>
@@ -48,10 +48,10 @@
         ref="tableList"
       >
         <template slot="sourceTimestamp" slot-scope="scope">
-          <span>{{ scope.row.sourceTimestamp }}</span>
+          <span>{{ $moment(scope.row.sourceTimestamp).format('YYYY-MM-DD HH:mm:ss') }}</span>
         </template>
         <template slot="syncTimestamp" slot-scope="scope">
-          <span>{{ scope.row.syncTimestamp }}</span>
+          <span> {{ $moment(scope.row.syncTimestamp).format('YYYY-MM-DD HH:mm:ss') }}</span>
         </template>
         <template slot="status" slot-scope="scope">
           <StatusTag type="text" target="shareCdc" :status="scope.row.status" only-img></StatusTag>
@@ -155,10 +155,10 @@ export default {
           }
         ],
         grid: {
-          left: 0,
-          right: '2px',
+          // left: 0,
+          right: '8px',
           top: '24px',
-          bottom: '24px'
+          bottom: '30px'
         },
         series: [
           {

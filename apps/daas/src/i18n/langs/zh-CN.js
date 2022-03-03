@@ -416,7 +416,8 @@ export default {
   connection_form_user_name: '账号',
   connection_form_password: '密码',
   connection_form_shared_mining: '共享挖掘',
-  connection_form_shared_mining_tip: '共享挖掘开启，您可在任务列表中管理共享挖掘任务',
+  connection_form_shared_mining_tip:
+    '共享挖掘会挖掘增量日志，当有多个增量任务时不需要重复开启日志采集进程，能极大缓解源库资源的占用和浪费',
 
   connection_form_mq_type: 'MQ类型',
   connection_form_mq_topic_set: '主题名称',

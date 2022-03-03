@@ -420,7 +420,8 @@ export default {
   connection_form_user_name: 'Account',
   connection_form_password: 'Password',
   connection_form_shared_mining: 'Shared mining',
-  connection_form_shared_mining_tip: 'Shared mining is enabled, you can manage shared mining tasks in the task list',
+  connection_form_shared_mining_tip:
+    'Shared mining will mine incremental logs. When there are multiple incremental tasks, there is no need to repeatedly start the log collection process, which can greatly reduce the occupation and waste of source library resources.',
 
   connection_form_mq_type: 'MQ Type',
   connection_form_mq_topic_set: 'topic name',
