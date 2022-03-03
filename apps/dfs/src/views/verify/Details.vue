@@ -4,13 +4,13 @@
       <div>
         <span style="font-size: 14px">{{ inspect.name }}</span>
         <span class="font-color-linfo ml-3">{{ typeMap[type] }}</span>
-        <!--        <ElButton type="text" class="ml-8" @click.prevent.stop="verifyAgain([])">{{-->
-        <!--          $t('verify_operation_verify_again')-->
-        <!--        }}</ElButton>-->
-        <!--        <span class="button-icon">-->
-        <!--          <VIcon class="color-disable" size="14">info</VIcon>-->
-        <!--          <span class="button-icon__info ml-2">{{ $t('verify_operation_verify_again_info') }}</span>-->
-        <!--        </span>-->
+        <ElButton type="text" class="ml-8" :disabled="verifyAgainDisabled" @click.prevent.stop="verifyAgain([])">{{
+          $t('verify_operation_verify_again')
+        }}</ElButton>
+        <span class="button-icon">
+          <VIcon class="color-disable" size="14">info</VIcon>
+          <span class="button-icon__info ml-2">{{ $t('verify_operation_verify_again_info') }}</span>
+        </span>
       </div>
       <div v-if="inspect.inspectMethod !== 'row_count'">
         <div class="flex align-items-center">
@@ -131,6 +131,9 @@ export default {
     },
     tableData() {
       return this.resultInfo.stats || []
+    },
+    verifyAgainDisabled() {
+      return !['done', 'error'].includes(this.inspect.status)
     }
   },
   created() {

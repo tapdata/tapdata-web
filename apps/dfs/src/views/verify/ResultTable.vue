@@ -72,13 +72,13 @@
         </div>
       </template>
     </ElTableColumn>
-    <!--    <ElTableColumn prop="status" :label="$t('verify_operation')">-->
-    <!--      <template slot-scope="scope">-->
-    <!--        <ElButton type="text" :disabled="verifyAgainDisabled" @click.prevent.stop="verifyAgain(scope.row)">{{-->
-    <!--          $t('verify_operation_verify_again')-->
-    <!--        }}</ElButton>-->
-    <!--      </template>-->
-    <!--    </ElTableColumn>-->
+    <ElTableColumn prop="status" :label="$t('verify_operation')">
+      <template slot-scope="scope">
+        <ElButton type="text" :disabled="verifyAgainDisabled" @click.prevent.stop="verifyAgain(scope.row)">{{
+          $t('verify_operation_verify_again')
+        }}</ElButton>
+      </template>
+    </ElTableColumn>
   </el-table>
 </template>
 <style lang="scss" scoped>
@@ -132,7 +132,7 @@ export default {
       return list
     },
     verifyAgainDisabled() {
-      return !this.list.every(t => ['waiting', 'done'].includes(t.status))
+      return !this.list.every(t => ['done', 'error'].includes(t.status))
     }
   },
   methods: {
