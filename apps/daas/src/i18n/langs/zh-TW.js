@@ -949,6 +949,14 @@ export default {
   customer_logs_copy_result: '已復製到剪貼板',
 
   // 共享挖掘
+  shared_cdc_placeholder_task_name: '請輸入挖掘任務名搜索',
+  shared_cdc_placeholder_connection_name: '請輸入連接名稱搜索',
+  shared_cdc_setting_no_mongodb_tip: ' 請先創建mongodb數據源',
+  shared_cdc_setting_refresh: '刷新數據',
+  shared_cdc_setting_select_mongodb_tip: '請選擇mongodb連接',
+  shared_cdc_setting_select_table_tip: '請選擇表名',
+  shared_cdc_setting_select_time_tip: '請選擇日誌保存時長',
+  shared_cdc_setting_message_edit_save: '保存成功，重啟任務後生效',
   share_list_name: '挖掘名稱',
   share_list_connection: '所屬連接',
   share_list_time_excavation: '挖掘所處時間點',
@@ -984,6 +992,8 @@ export default {
   share_detail_start_time: '開始時間',
   share_detail_end_time: '結束時間',
   share_detail_to: '至',
+  share_detail_incremental_play: '增量延遲',
+  share_detail_incremental_time: '增量延遲所處的時間點',
 
   share_task_table_name: '挖掘任務名稱',
   share_task_table_time: '挖掘所處時間',

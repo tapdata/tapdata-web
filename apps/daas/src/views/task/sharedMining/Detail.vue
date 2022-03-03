@@ -32,9 +32,9 @@
       </div>
       <div class="flex share-detail-head-right text-center">
         <div class="box py-3 mt-2">
-          <div class="title fs-8">增量延迟</div>
+          <div class="title fs-8">{{ $t('share_detail_incremental_play') }}</div>
           <div class="time py-4 fs-4 text-primary">{{ replicateLag }}</div>
-          <div class="text-muted">增量所处时间点：{{ formatTime(detailData.cdcTime) }}</div>
+          <div class="text-muted">{{ $t('share_detail_incremental_time') }}：{{ formatTime(detailData.cdcTime) }}</div>
         </div>
       </div>
     </div>
