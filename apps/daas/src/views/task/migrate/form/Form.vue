@@ -378,7 +378,7 @@ export default {
             name: this.dataSourceData.target_connectionName,
             tableName: this.dataSourceData.target_connectionName, //?
             type: 'database',
-            syncObjects: this.transferData.selectSourceArr,
+            syncObjects: selectTable,
             table_prefix: this.transferData.table_prefix,
             table_suffix: this.transferData.table_suffix,
             tableNameTransform: this.transferData.tableNameTransform,
