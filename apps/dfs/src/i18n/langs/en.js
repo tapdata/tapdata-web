@@ -58,8 +58,8 @@ export default {
 
   // head
   header_question: 'Question and answer support',
-  header_scan_code: 'Scan the code to add an official assistant',
-  header_join_group: 'Remark "cloud version" to enter the group for support',
+  header_scan_code: 'Encountered problems during use? ',
+  header_join_group: 'Scan the code to add a small assistant to get technical support',
   header_scan_code_title1: 'Scan the code to follow the Tapdata WeChat service account',
   header_scan_code_desc1: 'Get the latest information and technical dry goods',
   header_manual: 'User Manual',
