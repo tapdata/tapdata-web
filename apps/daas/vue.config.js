@@ -7,8 +7,8 @@ const serveUrlMap = {
   dev: 'http://localhost:3000', // TM端本地默认地址
   // test: 'http://192.168.1.181:3003',
   jet: 'http://jet.devops.tapdata.net:31613',
+  test: 'http://192.168.1.181:30726/' // tm 重构
   // test: 'http://192.168.1.126:3003/' // tm 重构
-  test: 'http://192.168.1.126:3003'
   // test: 'http://192.168.1.181:30300'
   // test: 'http://192.168.3.3:8080/' // haosheng
   // test: 'http://192.168.1.181:30474/' // v1-30

@@ -48,7 +48,7 @@
       <el-pagination
         background
         class="table-page-pagination"
-        layout="total, sizes, ->, prev, pager, next, jumper"
+        layout=" ->,total, sizes, prev, pager, next, jumper"
         :current-page.sync="pageCurrent"
         :page-sizes="[10, 20, 50, 100]"
         :page-size.sync="pageSize"
@@ -271,20 +271,7 @@ export default {
       padding: 30px;
     }
   }
-  .table-page-table {
-    th {
-      padding: 0;
-      line-height: 30px;
-      background-color: #eff1f4 !important;
-    }
-    td,
-    .is-scrolling-left ~ .el-table__fixed {
-      border-right: 0;
-    }
-    th {
-      border-right: 1px solid #dcdfe6;
-    }
-  }
+
   .table-page-pagination {
     padding-top: 5px;
     box-sizing: border-box;

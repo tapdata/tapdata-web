@@ -2,6 +2,7 @@ export default {
   // 通用提示
   tips_not_null: '值不能為空',
   tips_must_number: '值必須為數字',
+  tips_rule_not_empty: '不能為空',
 
   // 通用下拉框
   select_option_all: '全部',
@@ -140,7 +141,7 @@ export default {
   dashboard_valid_title: '數據校驗',
   dashboard_transfer_overview: '傳輸總覽',
   dashboard_server_title: '服務器進程',
-  dashboard_total: '全部校驗任務',
+  dashboard_total_valid: '全部校驗任務',
   dashboard_passed: '校驗一致',
   dashboard_countDiff: 'Count不一致',
   dashboard_valueDiff: '內容差異',
@@ -163,6 +164,7 @@ export default {
   dashboard_total_insert: '總插入',
   dashboard_total_update: '總更新',
   dashboard_total_delete: '總刪除',
+  dashboard_total: '總計',
 
   // 元數據管理
   metadata_type: '類型',
@@ -181,6 +183,14 @@ export default {
   metadata_meta_type_mongo_view: 'Mongodb視圖',
   metadata_meta_type_ftp: 'FTP',
   metadata_meta_type_apiendpoint: 'API連接',
+
+  metadata_form_create: '創建模型',
+  metadata_form_type: '類型',
+  metadata_form_database: '數據庫',
+  metadata_form_table_name: '名稱',
+  metadata_form_collection: '數據集',
+  metadata_form_mongo_view: 'Mongodb視圖',
+  metadata_form_rule_table_name: '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
 
   // 数据校验
   verify_details_title: '任務校驗詳情',
