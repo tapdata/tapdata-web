@@ -67,6 +67,7 @@ export default {
   column_connection: '所属连接',
   column_table: '所属表',
   column_create_time: '创建时间',
+  column_creator: '创建人',
 
   // dialog按钮
   dialog_button_cancel: '取 消',
@@ -1014,6 +1015,9 @@ export default {
 
   shared_cache_name: '缓存名称',
   shared_cache_status: '缓存状态',
+  shared_cache_status_error: '错误',
+  shared_cache_status_running: '运行中',
+  shared_cache_status_ready: '待启动',
   shared_cache_time: '缓存时间',
   shared_cache_keys: '缓存键',
   shared_cache_fields: '缓存字段',

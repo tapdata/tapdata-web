@@ -68,6 +68,7 @@ export default {
   column_connection: 'Belonging to the connection',
   column_table: 'Belonging table',
   column_create_time: 'Create time',
+  column_creator: 'Creator',
 
   // 菜单标题
 
@@ -1053,6 +1054,9 @@ export default {
 
   shared_cache_name: 'Cache name',
   shared_cache_status: 'Cache status',
+  shared_cache_status_error: 'error',
+  shared_cache_status_running: 'running',
+  shared_cache_status_ready: 'ready',
   shared_cache_time: 'Cache time',
   shared_cache_keys: 'Cache keys',
   shared_cache_fields: 'Cache fields',
