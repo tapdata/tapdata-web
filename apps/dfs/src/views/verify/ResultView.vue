@@ -147,6 +147,8 @@ $margin: 10px;
       overflow-y: auto;
       font-size: 12px;
       padding: 8px;
+      min-height: 40px;
+      box-sizing: border-box;
     }
     .success-band {
       line-height: 20px;
