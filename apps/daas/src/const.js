@@ -32,7 +32,7 @@ export const TOPOLOGY_MAP = topologyMap,
     error: { text: '错误', icon: 'error', type: 'warning' },
     edit: { text: '待启动', icon: 'edit' },
     scheduling: { text: '启动中', icon: 'scheduling', type: 'success' },
-    pausing: { text: '停止中', icon: 'pausing', type: 'success' }
+    stopping: { text: '停止中', icon: 'stopping', type: 'warning' }
     // pause: { text: '强制停止中', icon: 'pause', type: 'success' },
     //complete: { text: '已完成', icon: 'complete', type: 'success' }
   },

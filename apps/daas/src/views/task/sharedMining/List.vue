@@ -150,6 +150,7 @@ import FilterBar from '@/components/filter-bar'
 import DownAgent from '../../downAgent/agentDown'
 import StatusTag from '@/components/StatusTag'
 
+let timeout = null
 export default {
   components: {
     TablePage,
@@ -189,8 +190,6 @@ export default {
       editForm: {
         id: '',
         name: '',
-        syncTimePoint: 'localTZ',
-        syncTineZone: '',
         storageTime: 3
       },
       options: [
@@ -230,6 +229,10 @@ export default {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
     //是否可以全局设置
     this.check()
+    //定时轮询
+    timeout = setInterval(() => {
+      this.table.fetch(null, 0, true)
+    }, 30000)
   },
   computed: {
     table() {
@@ -240,6 +243,9 @@ export default {
     '$route.query'() {
       this.table.fetch(1)
     }
+  },
+  destroyed() {
+    clearInterval(timeout)
   },
   methods: {
     // 获取列表数据
@@ -383,7 +389,9 @@ export default {
     // 编辑
     edit(item) {
       this.editDialogVisible = true
-      this.editForm = item
+      this.editForm.id = item.id
+      this.editForm.name = item.name
+      this.editForm.storageTime = item.storageTime
     },
     // 取消编辑
     cancelEdit() {
