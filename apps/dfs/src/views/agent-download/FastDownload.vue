@@ -168,7 +168,7 @@
       <div class="wx-img text-center">
         <img style="width: 120px; height: 120px" src="../../../public/images/wx_user_support.png" alt="" />
         <div>{{ $t('header_scan_code') }}</div>
-        <div>{{ $t('header_join_group') }}</div>
+        <div class="mt-1">{{ $t('header_join_group') }}</div>
       </div>
     </main>
     <footer class="footer">

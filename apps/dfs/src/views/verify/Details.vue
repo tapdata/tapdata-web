@@ -318,7 +318,7 @@ export default {
         }
       })
     },
-    verifyAgain() {
+    verifyAgain(ids = []) {
       this.$axios
         .post(
           'tm/api/Inspects/update?where=' +
@@ -330,7 +330,7 @@ export default {
           {
             status: 'scheduling',
             inspectResultId: this.resultInfo.id,
-            taskIds: []
+            taskIds: ids
           }
         )
         .then(() => {
