@@ -232,6 +232,10 @@ export default {
           }
           break
         case 'setting':
+          if (!this.settingData.name || this.settingData.name === '') {
+            this.$message.error('表单检验不通过，任务名称必填')
+            return
+          }
           this.activeStep++
           break
       }
