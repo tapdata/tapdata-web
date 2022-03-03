@@ -414,6 +414,7 @@ export default {
         .then(res => {
           if (res) {
             this.editDialogVisible = false
+            this.table.fetch(1)
             this.$message.success(this.$t('shared_cdc_setting_message_edit_save'))
           }
         })
