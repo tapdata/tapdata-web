@@ -211,6 +211,7 @@ export default {
           data.deployInfo.links.forEach(el => {
             this[el.os + 'Link'] = el.command
           })
+          this.downloadUrl = data.deployInfo?.downloadUrl
           this.getAgentStatus()
           this.setTimer()
           this.$once('hook:beforeDestroy', () => {
