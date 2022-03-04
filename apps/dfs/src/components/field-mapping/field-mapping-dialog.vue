@@ -39,7 +39,10 @@
             </div>
             <div class="task-form-text-box">
               <div class="source">{{ item.sourceObjectName }}</div>
-              <div class="target">{{ item.sinkObjectName }}</div>
+              <div class="target">
+                <span>{{ item.sinkObjectName }}</span>
+                <VIcon class="color-primary ml-2" size="14" @click="showChangeTableNameModal(item)">edit-outline</VIcon>
+              </div>
               <div class="select">
                 {{
                   `${$t('task_mapping_table_selected')} ${
@@ -320,6 +323,39 @@
         <el-button size="mini" type="primary" @click="handleFieldSave()">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      width="800px"
+      append-to-body
+      :title="'修改目标表名'"
+      custom-class="field-maping-table-dialog"
+      :visible.sync="changeTableNameForm.visible"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div class="table-box">
+        <el-form
+          :rules="changeTableNameFormRules"
+          ref="changeTableNameFormRef"
+          :model="changeTableNameForm"
+          label-position="top"
+          style="width: 100%"
+        >
+          <ElInput v-model="changeTableNameForm.new" size="mini" maxlength="50" show-word-limit></ElInput>
+          <VIcon class="color-primary" size="14">info</VIcon>
+          <span>自定义名称的表，不会应用：前后缀和大小写转换操作</span>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="changeTableNameForm.visible = false">{{ $t('button_cancel') }}</el-button>
+        <el-button
+          size="mini"
+          type="primary"
+          :disabled="changeTableNameForm.old === changeTableNameForm.new"
+          @click="handleOneTableNameSave()"
+          >{{ $t('button_confirm') }}</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -404,6 +440,14 @@ export default {
       rules: {
         table_prefix: [{ validator: validatePrefix, trigger: 'blur' }],
         table_suffix: [{ validator: validateSuffix, trigger: 'blur' }]
+      },
+      changeTableNameFormRules: {
+        new: [{ required: true, trigger: 'change' }]
+      },
+      changeTableNameForm: {
+        old: '',
+        new: '',
+        visible: false
       }
     }
   },
@@ -571,6 +615,12 @@ export default {
       this.form.table_prefix = this.currentForm.table_prefix
       this.form.table_suffix = this.currentForm.table_suffix
     },
+    /*单个表改名称弹窗显示*/
+    showChangeTableNameModal(item = {}) {
+      this.changeTableNameForm.visible = true
+      this.changeTableNameForm.old = item.sinkObjectName
+      this.changeTableNameForm.new = item.sinkObjectName
+    },
     /*字段改名弹窗取消*/
     handleFieldClose() {
       this.dialogFieldVisible = false
@@ -583,6 +633,23 @@ export default {
           this.dialogTableVisible = false
           this.copyForm()
           this.updateParentMetaData('table', this.form)
+        }
+      })
+    },
+    /*单个表改名弹窗保存*/
+    handleOneTableNameSave() {
+      this.$refs.changeTableNameFormRef.validate(valid => {
+        if (valid) {
+          this.changeTableNameForm.visible = false
+          this.updateParentMetaData('table', {
+            tableOperations: [
+              {
+                type: 'rename',
+                originalTableName: this.changeTableNameForm.old,
+                tableName: this.changeTableNameForm.new
+              }
+            ]
+          })
         }
       })
     },

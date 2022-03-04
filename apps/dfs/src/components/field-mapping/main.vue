@@ -150,6 +150,9 @@ export default {
     updateAutoTransform(type, data) {
       for (let i = 0; i < this.dataFlow.stages.length; i++) {
         if (this.dataFlow.stages[i].id === this.stageId) {
+          if (data.tableOperations) {
+            this.dataFlow['stages'][i].tableOperations = data.tableOperations // 单个表改名
+          }
           this.dataFlow['stages'][i].fieldsNameTransform = data.fieldsNameTransform
           this.dataFlow['stages'][i].tableNameTransform = data.tableNameTransform
           this.dataFlow['stages'][i].table_prefix = data.table_prefix
