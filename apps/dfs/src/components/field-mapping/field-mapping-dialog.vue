@@ -619,7 +619,7 @@ export default {
     /*单个表改名称弹窗显示*/
     showChangeTableNameModal(item = {}) {
       this.changeTableNameForm.visible = true
-      this.changeTableNameForm.old = item.sinkObjectName
+      this.changeTableNameForm.old = item.sourceObjectName
       this.changeTableNameForm.new = item.sinkObjectName
     },
     /*字段改名弹窗取消*/
