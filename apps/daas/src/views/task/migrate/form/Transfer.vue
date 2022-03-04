@@ -147,10 +147,10 @@ export default {
               }
             }
 
-            if (bidirectional && (this.transferData.table_prefix !== '' || this.transferData.table_suffix !== '')) {
+            if (bidirectional && (this.transferData.tablePrefix !== '' || this.transferData.tableSuffix !== '')) {
               //true 表示 双向且有修改过前后缀
-              this.transferData.table_prefix = ''
-              this.transferData.table_suffix = ''
+              this.transferData.tablePrefix = ''
+              this.transferData.tableSuffix = ''
               this.transferData.selectSourceArr = []
             }
           }
@@ -161,19 +161,19 @@ export default {
     },
     getTableLabel(label) {
       if (this.transferData.tableNameTransform === 'toUpperCase') {
-        label = (this.transferData.table_prefix + label + this.transferData.table_suffix).toUpperCase()
+        label = (this.transferData.tablePrefix + label + this.transferData.tableSuffix).toUpperCase()
       } else if (this.transferData.tableNameTransform === 'toLowerCase') {
-        label = (this.transferData.table_prefix + label + this.transferData.table_suffix).toLowerCase()
+        label = (this.transferData.tablePrefix + label + this.transferData.tableSuffix).toLowerCase()
       } else {
-        label = (this.transferData.table_prefix || '') + label + (this.transferData.table_suffix || '')
+        label = (this.transferData.tablePrefix || '') + label + (this.transferData.tableSuffix || '')
       }
       return label
     },
     //表改名（前缀，后缀，大小写）
     handleTableName(form) {
       this.transferData.tableNameTransform = form.tableNameTransform
-      this.transferData.table_prefix = form.table_prefix
-      this.transferData.table_suffix = form.table_suffix
+      this.transferData.tablePrefix = form.tablePrefix
+      this.transferData.tableSuffix = form.tableSuffix
       this.dialogTableVisible = false
     },
 
@@ -204,7 +204,7 @@ export default {
     returnFieldMappingData(data) {
       this.transferData.fieldsNameTransform = data.fieldsNameTransform
       this.transferData.batchOperationList = data.batchOperationList
-      this.transferData.field_process = data.field_process
+      this.transferData.fieldProcess = data.fieldProcess
     },
 
     //重新加载模型

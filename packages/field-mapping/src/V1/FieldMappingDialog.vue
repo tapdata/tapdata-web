@@ -395,7 +395,7 @@ export default {
     fieldProcessMethod: Function,
     updateMetadata: Function,
     getNavDataMethod: Function,
-    field_process: Array,
+    fieldProcess: Array,
     transform: Object
   },
   data() {
@@ -579,7 +579,7 @@ export default {
       this.page.current = 1
       this.initNavData()
       this.operations = []
-      if (this.field_process?.length > 0) {
+      if (this.fieldProcess?.length > 0) {
         this.getFieldProcess()
       }
     },
@@ -818,7 +818,7 @@ export default {
       this.fieldCount = item.sourceFieldCount - item.userDeletedNum || 0
       this.position = index
       this.operations = []
-      if (this.field_process?.length > 0) {
+      if (this.fieldProcess?.length > 0) {
         this.getFieldProcess()
       }
       this.initTableData()
@@ -1172,9 +1172,9 @@ export default {
     /*获取字段处理器*/
     getFieldProcess() {
       this.operations = []
-      let field_process = this.field_process.filter(process => process.table_id === this.selectRow.sourceTableId)
-      if (field_process.length > 0) {
-        this.operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
+      let fieldProcess = this.fieldProcess.filter(process => process.table_id === this.selectRow.sourceTableId)
+      if (fieldProcess.length > 0) {
+        this.operations = fieldProcess[0].operations ? JSON.parse(JSON.stringify(fieldProcess[0].operations)) : []
       }
     },
     restOperation(id) {
@@ -1185,21 +1185,21 @@ export default {
       }
     },
     saveFileOperations() {
-      let field_process = {
+      let fieldProcess = {
         table_id: this.selectRow.sourceTableId, //存源表名 兼容旧版字段处理器
         table_name: this.selectRow.sourceObjectName,
         operations: this.operations
       }
-      if (this.field_process && this.field_process.length > 0) {
-        let process = this.field_process.filter(fields => fields.table_id === this.selectRow.sourceTableId)
+      if (this.fieldProcess && this.fieldProcess.length > 0) {
+        let process = this.fieldProcess.filter(fields => fields.table_id === this.selectRow.sourceTableId)
         if (process.length > 0) {
-          field_process = process[0]
-          field_process.table_id = this.selectRow.sourceTableId
-          field_process.table_name = this.selectRow.sourceObjectName
-          field_process.operations = this.operations
-        } else this.field_process.push(field_process)
-      } else this.field_process.push(field_process)
-      return this.field_process
+          fieldProcess = process[0]
+          fieldProcess.table_id = this.selectRow.sourceTableId
+          fieldProcess.table_name = this.selectRow.sourceObjectName
+          fieldProcess.operations = this.operations
+        } else this.fieldProcess.push(fieldProcess)
+      } else this.fieldProcess.push(fieldProcess)
+      return this.fieldProcess
     },
     returnData(hiddenMsg) {
       let result = this.checkTable()

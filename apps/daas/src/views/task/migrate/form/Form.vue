@@ -149,11 +149,12 @@ export default {
             this.nodes = data?.dag?.nodes
             let syncObjects = this.nodes[1].syncObjects
             this.transferData = {
-              table_prefix: this.nodes[1].table_prefix,
-              table_suffix: this.nodes[1].table_suffix,
+              tablePrefix: this.nodes[1].tablePrefix,
+              tableSuffix: this.nodes[1].tableSuffix,
               tableNameTransform: this.nodes[1].tableNameTransform,
               fieldsNameTransform: this.nodes[1].fieldsNameTransform,
-              field_process: this.nodes[0].field_process,
+              batchOperationList: this.nodes[1].batchOperationList,
+              fieldProcess: this.nodes[0].fieldProcess,
               selectSourceArr: syncObjects[0] ? syncObjects[0].objectNames : [],
               topicData:
                 syncObjects[0]?.type === 'topic' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || [],
@@ -370,7 +371,7 @@ export default {
             name: this.dataSourceData.source_connectionName,
             tableName: this.dataSourceData.source_connectionName, //?
             type: 'database',
-            field_process: this.transferData.field_process
+            fieldProcess: this.transferData.fieldProcess
           }
         ),
         Object.assign(
@@ -383,10 +384,11 @@ export default {
             tableName: this.dataSourceData.target_connectionName, //?
             type: 'database',
             syncObjects: selectTable,
-            table_prefix: this.transferData.table_prefix,
-            table_suffix: this.transferData.table_suffix,
+            tablePrefix: this.transferData.tablePrefix,
+            tableSuffix: this.transferData.tableSuffix,
             tableNameTransform: this.transferData.tableNameTransform,
-            fieldsNameTransform: this.transferData.fieldsNameTransform
+            fieldsNameTransform: this.transferData.fieldsNameTransform,
+            batchOperationList: this.transferData.batchOperationList
           }
         )
       ]

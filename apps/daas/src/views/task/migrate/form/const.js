@@ -46,15 +46,15 @@ export const DFSDATASOURCE_MODEL = {
 }
 export const TRANSFER_MODEL = {
   tableNameTransform: '', //表名大小写
-  table_prefix: '', //前缀,
-  table_suffix: '', //后缀
+  tablePrefix: '', //前缀,
+  tableSuffix: '', //后缀
   selectSourceArr: [], //可用区,
   topicData: [],
   queueData: [],
   showBtn: true,
   isFirst: false,
   nodeId: '',
-  field_process: [],
+  fieldProcess: [],
   fieldsNameTransform: '',
   batchOperationList: []
 }

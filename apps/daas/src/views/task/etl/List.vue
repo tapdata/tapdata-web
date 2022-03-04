@@ -534,7 +534,7 @@ export default {
       let { keyword, status, progress, executionStatus, timeData, syncType, agentId } = this.searchParams
 
       let where = {
-        mappingTemplate: this.mappingTemplate
+        syncType: 'sync'
       }
       let fields = {
         id: true,

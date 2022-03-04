@@ -559,7 +559,7 @@ export default {
       let { keyword, status, progress, executionStatus, timeData, syncType, agentId } = this.searchParams
 
       let where = {
-        mappingTemplate: this.mappingTemplate
+        syncType: 'migrate'
       }
       let fields = {
         id: true,
@@ -676,7 +676,7 @@ export default {
           }
         })
       }
-      return dataFlows
+      return this.$api('Task')
         .get({
           filter: JSON.stringify(filter)
         })

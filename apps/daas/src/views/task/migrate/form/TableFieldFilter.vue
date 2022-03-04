@@ -18,15 +18,15 @@
           </el-select>
         </el-form-item>
         <div class="tip">{{ $t('task_mapping_dialog_rule_note') }}</div>
-        <el-form-item :label="$t('task_mapping_dialog_enter_prefix')" prop="table_prefix">
-          <el-input size="mini" v-model="form.table_prefix" maxlength="50" show-word-limit></el-input>
+        <el-form-item :label="$t('task_mapping_dialog_enter_prefix')" prop="tablePrefix">
+          <el-input size="mini" v-model="form.tablePrefix" maxlength="50" show-word-limit></el-input>
         </el-form-item>
         <div class="tip">
           <span>{{ $t('task_mapping_dialog_english_letter') }}</span>
           <div>{{ $t('task_mapping_dialog_not_allow_system') }}</div>
         </div>
-        <el-form-item :label="$t('task_mapping_dialog_enter_suffix')" prop="table_suffix">
-          <el-input size="mini" v-model="form.table_suffix" maxlength="50" show-word-limit></el-input>
+        <el-form-item :label="$t('task_mapping_dialog_enter_suffix')" prop="tableSuffix">
+          <el-input size="mini" v-model="form.tableSuffix" maxlength="50" show-word-limit></el-input>
         </el-form-item>
         <div class="tip">
           <span>{{ $t('task_mapping_dialog_underscore_begin') }}</span>
@@ -74,8 +74,8 @@ export default {
       form: {},
       currentForm: {},
       rules: {
-        table_prefix: [{ validator: validatePrefix, trigger: 'blur' }],
-        table_suffix: [{ validator: validateSuffix, trigger: 'blur' }]
+        tablePrefix: [{ validator: validatePrefix, trigger: 'blur' }],
+        tableSuffix: [{ validator: validateSuffix, trigger: 'blur' }]
       }
     }
   },
@@ -84,8 +84,8 @@ export default {
       this.form = {
         tableNameTransform: this.transform.tableNameTransform || '',
         fieldsNameTransform: this.transform.fieldsNameTransform,
-        table_prefix: this.transform.table_prefix,
-        table_suffix: this.transform.table_suffix
+        tablePrefix: this.transform.tablePrefix,
+        tableSuffix: this.transform.tableSuffix
       }
       this.currentForm = JSON.parse(JSON.stringify(this.form))
     })
@@ -94,11 +94,11 @@ export default {
     tableName() {
       let tableName = ''
       if (this.form.tableNameTransform === 'toUpperCase') {
-        tableName = (this.form.table_prefix + 'tableName' + this.form.table_suffix).toUpperCase()
+        tableName = (this.form.tablePrefix + 'tableName' + this.form.tableSuffix).toUpperCase()
       } else if (this.form.tableNameTransform === 'toLowerCase') {
-        tableName = (this.form.table_prefix + 'tableName' + this.form.table_suffix).toLowerCase()
+        tableName = (this.form.tablePrefix + 'tableName' + this.form.tableSuffix).toLowerCase()
       } else {
-        tableName = this.form.table_prefix + 'tableName' + this.form.table_suffix
+        tableName = this.form.tablePrefix + 'tableName' + this.form.tableSuffix
       }
       return tableName
     }
@@ -111,8 +111,8 @@ export default {
     },
     handleTableClose() {
       this.form.tableNameTransform = this.currentForm.tableNameTransform
-      this.form.table_prefix = this.currentForm.table_prefix
-      this.form.table_suffix = this.currentForm.table_suffix
+      this.form.tablePrefix = this.currentForm.tablePrefix
+      this.form.tableSuffix = this.currentForm.tableSuffix
       this.$emit('update:visible', false)
     },
     handleTableNameSave() {

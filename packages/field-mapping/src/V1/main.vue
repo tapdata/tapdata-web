@@ -20,7 +20,7 @@
         :fieldProcessMethod="updateFieldProcess"
         :getNavDataMethod="getMetadataTransformer"
         :updateMetadata="updateMetadata"
-        :field_process="transform.field_process"
+        :fieldProcess="transform.fieldProcess"
         :transform="transform"
         @row-click="saveOperations"
         @update-nav="updateFieldMappingNavData"
@@ -47,7 +47,7 @@ export default {
       fieldMappingTableData: '', //右边table
       dialogFieldProcessVisible: false,
       loading: false,
-      field_process: this.transform.field_process
+      fieldProcess: this.transform.fieldProcess
     }
   },
   methods: {
@@ -140,7 +140,7 @@ export default {
     updateAutoFieldProcess(data) {
       for (let i = 0; i < data['dag']['nodes'].length; i++) {
         if (data['dag']['edges']['target'] === data['dag']['nodes'][i].id) {
-          data['dag']['nodes'][i].field_process = this.field_process
+          data['dag']['nodes'][i].fieldProcess = this.fieldProcess
         }
       }
       return data
@@ -167,25 +167,25 @@ export default {
       if (rollback === 'all') {
         this.dataFlow['rollback'] = rollback
         //删除整个字段处理器
-        this.field_process = []
+        this.fieldProcess = []
         //清空表改名 字段改名
         this.clearTransform()
       } else if (rollbackTable) {
         this.dataFlow['rollback'] = rollback
         this.dataFlow['rollbackTable'] = rollbackTable
-        if (this.field_process?.length > 0) {
-          for (let i = 0; i < this.field_process.length; i++) {
+        if (this.fieldProcess?.length > 0) {
+          for (let i = 0; i < this.fieldProcess.length; i++) {
             // 删除操作
-            let ops = this.field_process[i]
+            let ops = this.fieldProcess[i]
             if (ops.table_id === id) {
-              this.field_process.splice(i, 1)
+              this.fieldProcess.splice(i, 1)
             }
           }
         }
         let result = this.$refs.fieldMappingDom.returnForm()
         this.updateAutoTransform('', result)
       }
-      this.$emit('returnFieldMapping', this.field_process)
+      this.$emit('returnFieldMapping', this.fieldProcess)
       //迁移任务需要同步字段处理器
       if (this.mappingType && this.mappingType === 'cluster-clone') {
         this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
@@ -333,10 +333,10 @@ export default {
     //获取字段处理器
     getFieldOperations(row) {
       let operations = []
-      if (!this.field_process || this.field_process.length === 0) return
-      let field_process = this.field_process.filter(process => process.table_id === row.sourceTableId)
-      if (field_process.length > 0) {
-        operations = field_process[0].operations ? JSON.parse(JSON.stringify(field_process[0].operations)) : []
+      if (!this.fieldProcess || this.fieldProcess.length === 0) return
+      let fieldProcess = this.fieldProcess.filter(process => process.table_id === row.sourceTableId)
+      if (fieldProcess.length > 0) {
+        operations = fieldProcess[0].operations ? JSON.parse(JSON.stringify(fieldProcess[0].operations)) : []
       }
       return operations || []
     },
@@ -377,8 +377,8 @@ export default {
       }
       this.$api('MetadataInstances').update(where, data)
       if (this.transform.hiddenFieldProcess) return //任务同步 没有字段处理器
-      this.field_process = this.$refs.fieldMappingDom.saveFileOperations()
-      this.$emit('returnFieldMapping', this.field_process)
+      this.fieldProcess = this.$refs.fieldMappingDom.saveFileOperations()
+      this.$emit('returnFieldMapping', this.fieldProcess)
     },
     //实时获取schema加载进度
     initWSSed() {
