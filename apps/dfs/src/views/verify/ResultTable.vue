@@ -72,7 +72,7 @@
         </div>
       </template>
     </ElTableColumn>
-    <ElTableColumn prop="status" :label="$t('verify_operation')">
+    <ElTableColumn v-if="$route.name !== 'VerifyResult'" prop="status" :label="$t('verify_operation')">
       <template slot-scope="scope">
         <ElButton type="text" :disabled="verifyAgainDisabled" @click.prevent.stop="verifyAgain(scope.row)">{{
           $t('verify_operation_verify_again')
