@@ -82,7 +82,7 @@
       </el-table-column>
     </TablePage>
     <!-- 创建客户端 -->
-    <el-dialog
+    <ElDialog
       width="600px"
       custom-class="create-dialog"
       :title="$t('metadata.createNewModel')"
@@ -133,7 +133,7 @@
         <ElButton @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</ElButton>
         <ElButton type="primary" @click="createApplication()" size="small">{{ $t('message.confirm') }}</ElButton>
       </span>
-    </el-dialog>
+    </ElDialog>
   </section>
 </template>
 

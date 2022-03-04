@@ -91,7 +91,7 @@
     background: #ffe9cf;
   }
   &.icon-status--error {
-    color: #d44d4d;
+    color: map-get($color, danger);
     background: #ffecec;
   }
 }

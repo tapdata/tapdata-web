@@ -167,13 +167,14 @@
     <el-dialog
       width="600px"
       custom-class="export-dialog"
-      :title="$t('dataExplorer_file_type')"
+      :title="$t('dataExplorer_export')"
       :close-on-click-modal="false"
       :visible.sync="exportDialog"
     >
-      <el-button type="primary" @click="exportData('csv')">CSV</el-button>
-      <el-button type="primary" @click="exportData('excel')">Excel</el-button>
-      <el-button type="primary" @click="exportData('json')">JSON</el-button>
+      <span class="pr-5">{{ $t('dataExplorer_type') }}:</span>
+      <el-button size="mini" @click="exportData('csv')">CSV</el-button>
+      <el-button size="mini" @click="exportData('excel')">Excel</el-button>
+      <el-button size="mini" @click="exportData('json')">JSON</el-button>
     </el-dialog>
     <!-- 查询 -->
     <BrowseQuery
@@ -200,9 +201,9 @@
         <li v-for="(item, index) in jsonDocHint" :key="index">{{ item }}</li>
       </ul>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="openCreateDialog = false" size="small">{{ $t('dialog_button_cancel') }}</el-button>
-        <el-button type="primary" @click="formatJson()" size="small">{{ $t('dataExplorer_format') }}</el-button>
-        <el-button type="primary" @click="createSave()" size="small">{{ $t('dialog_button_save') }}</el-button>
+        <el-button @click="openCreateDialog = false" size="mini">{{ $t('dialog_button_cancel') }}</el-button>
+        <el-button @click="formatJson()" size="mini">{{ $t('dataExplorer_format') }}</el-button>
+        <el-button type="primary" @click="createSave()" size="mini">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -337,7 +338,6 @@ export default {
           label = item.label
         }
       })
-      debugger
       return label
     }
   },
@@ -402,7 +402,6 @@ export default {
         .then(res => {
           if (res) {
             this.collectionsList = []
-            debugger
             Object.keys(res.data?.items).forEach(item => {
               let operations = res.data[item].api,
                 apiId = res.data[item].apiId,
@@ -1397,7 +1396,7 @@ export default {
           height: 25px;
           padding: 0 10px;
           line-height: 25px;
-          color: #d44d4d;
+          color: map-get($color, danger);
           border-radius: 2px;
           background-color: #ffecec;
         }

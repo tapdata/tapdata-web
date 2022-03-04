@@ -492,7 +492,7 @@ export default {
       transform: rotate(180deg);
       .icon-zhankai2 {
         font-size: 16px;
-        color: #337dff;
+        color: map-get($color, primary);
         &:hover {
           color: #409eff;
         }
@@ -532,7 +532,7 @@ export default {
         font-size: 16px;
         color: #666;
         &:hover {
-          color: #409eff;
+          color: map-get($color, primary);
         }
       }
     }

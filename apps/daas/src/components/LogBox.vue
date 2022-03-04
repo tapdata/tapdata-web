@@ -126,7 +126,7 @@ export default {
     }
     .clickLoad {
       cursor: pointer;
-      color: #409eff;
+      color: map-get($color, primary);
     }
   }
 }

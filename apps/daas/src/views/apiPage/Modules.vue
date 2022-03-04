@@ -19,58 +19,18 @@
           <span class="status-text" :class="status">{{ $t('modules_status_' + status) }}</span>
         </div>
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-        <!-- <ul class="search-bar">
-          <li>
-            <el-input
-              clearable
-              class="input-with-select"
-              size="mini"
-              v-model="searchParams.keyword"
-              :placeholder="$t('metadata.namePlaceholder')"
-              @input="table.fetch(1, 800)"
-            >
-              <el-select v-model="searchParams.isFuzzy" style="width: 120px" slot="prepend" @input="table.fetch(1)">
-                <el-option :label="$t('connection.fuzzyQuery')" :value="true"></el-option>
-                <el-option :label="$t('connection.PreciseQuery')" :value="false"></el-option>
-              </el-select>
-            </el-input>
-          </li>
-          <li>
-            <el-select
-              v-model="searchParams.status"
-              clearable
-              size="mini"
-              :placeholder="$t('metadata.typePlaceholder')"
-              @input="statusChange"
-            >
-              <el-option v-for="opt in statusList" :key="opt.value" :label="opt.label" :value="opt.value"></el-option>
-            </el-select>
-          </li>
-          <template v-if="searchParams.keyword || searchParams.status">
-            <li>
-              <el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
-            </li>
-            <li>
-              <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
-            </li>
-          </template>
-          <li v-if="status">
-            {{ $t('modules.apiServerStatus') }}:
-            <span class="status-text" :class="status">{{ $t('modules_status_' + status) }}</span>
-          </li>
-        </ul> -->
       </div>
       <div slot="operation">
-        <el-button size="mini" v-if="selectedStopped.length" @click="batch('active')">{{
+        <ElButton size="mini" v-if="selectedStopped.length" @click="batch('active')">{{
           $t('modules_allarelease')
-        }}</el-button>
+        }}</ElButton>
 
-        <el-button size="mini" v-if="selectedRunning.length" @click="batch('pending')">{{
+        <ElButton size="mini" v-if="selectedRunning.length" @click="batch('pending')">{{
           $t('modules_allacancel')
-        }}</el-button>
-        <el-button size="mini" @click.native="exportFile">{{ $t('modules_export') }}</el-button>
-        <el-button size="mini" @click.native="importFile">{{ $t('modules_import') }}</el-button>
-        <el-button
+        }}</ElButton>
+        <ElButton size="mini" @click.native="exportFile">{{ $t('modules_export') }}</ElButton>
+        <ElButton size="mini" @click.native="importFile">{{ $t('modules_import') }}</ElButton>
+        <ElButton
           v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-show="multipleSelection.length > 0"
           v-readonlybtn="'data_catalog_category_application'"
@@ -80,8 +40,8 @@
         >
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkTag') }}</span>
-        </el-button>
-        <el-button
+        </ElButton>
+        <ElButton
           v-readonlybtn="'API_creation'"
           class="btn btn-create"
           type="primary"
@@ -90,7 +50,7 @@
         >
           <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
           <span>{{ $t('modules_create') }}</span>
-        </el-button>
+        </ElButton>
       </div>
       <el-table-column v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
       </el-table-column>
@@ -126,15 +86,17 @@
           {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_operator')" width="390">
+      <el-table-column :label="$t('modules_header_operator')" width="380" fixed="right">
         <template slot-scope="scope">
-          <el-button v-readonlybtn="'API_creation'" size="mini" type="text" @click="copy(scope.row)">
+          <ElButton v-readonlybtn="'API_creation'" size="mini" type="text" @click="copy(scope.row)">
             {{ $t('button_copy') }}
-          </el-button>
-          <el-button v-readonlybtn="'API_data_explorer'" size="mini" type="text" @click="toDetails(scope.row)">
+          </ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton v-readonlybtn="'API_data_explorer'" size="mini" type="text" @click="toDetails(scope.row)">
             {{ $t('button_preview') }}
-          </el-button>
-          <el-button
+          </ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton
             v-readonlybtn="'API_doc_&_test'"
             v-if="scope.row.status === 'active'"
             size="mini"
@@ -142,8 +104,9 @@
             @click="toDocumentTest(scope.row)"
           >
             {{ $t('modules_api_test') }}
-          </el-button>
-          <el-button
+          </ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton
             v-readonlybtn="'API_publish'"
             v-if="scope.row.status === 'pending'"
             size="mini"
@@ -152,8 +115,8 @@
             @click="publish(scope.row)"
           >
             {{ $t('modules_publish_api') }}
-          </el-button>
-          <el-button
+          </ElButton>
+          <ElButton
             v-else
             v-readonlybtn="'API_publish'"
             size="mini"
@@ -162,24 +125,67 @@
             @click="unpublish(scope.row)"
           >
             {{ $t('modules_unpublish_api') }}
-          </el-button>
-          <el-button v-readonlybtn="'API_edition'" size="mini" type="text" @click="edit(scope.row)">
+          </ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton v-readonlybtn="'API_edition'" size="mini" type="text" @click="edit(scope.row)">
             {{ $t('modules_edit') }}
-          </el-button>
-          <el-button v-readonlybtn="'API_export'" size="mini" type="text" @click="handleDownload(scope.row)">
+          </ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton v-readonlybtn="'API_export'" size="mini" type="text" @click="handleDownload(scope.row)">
             {{ $t('modules_export') }}
-          </el-button>
-          <el-button
+          </ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton
             v-readonlybtn="'API_delete'"
             size="mini"
             type="text"
             :disabled="$disabledByPermission('API_delete_all_data', scope.row.user_id)"
             @click="remove(scope.row)"
-            >{{ $t('button_delete') }}</el-button
+            >{{ $t('button_delete') }}</ElButton
           >
         </template>
       </el-table-column>
     </TablePage>
+    <!-- 导入 -->
+    <ElDialog
+      width="600px"
+      custom-class="import-dialog"
+      :title="$t('modules_import_title')"
+      :close-on-click-modal="false"
+      :visible.sync="importDialogVisible"
+    >
+      <ElForm ref="form" :model="importForm" class="applications-form" label-width="100px">
+        <ElFormItem :label="$t('modules_dialog_condition') + ':'" required>
+          <el-radio v-model="importForm.upsert" :label="1">{{ $t('modules_dialog_overwrite_data') }}</el-radio>
+          <el-radio v-model="importForm.upsert" :label="0">{{ $t('modules_dialog_skip_data') }}</el-radio>
+        </ElFormItem>
+        <ElFormItem :label="$t('modules_dialog_group') + ':'" required>
+          <ElSelect v-model="importForm.tag" multiple size="mini">
+            <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem :label="$t('modules_dialog_file') + ':'" required>
+          <ElUpload
+            class="upload-demo"
+            ref="upload"
+            :action="importForm.action"
+            :accept="importForm.accept"
+            :file-list="importForm.fileList"
+            :auto-upload="false"
+            :on-success="handleSuccess"
+            :on-change="handleChange"
+          >
+            <ElButton type="text" plain slot="trigger" size="small">{{ $t('modules_dialog_upload_files') }}</ElButton>
+          </ElUpload>
+        </ElFormItem>
+      </ElForm>
+      <span slot="footer" class="dialog-footer">
+        <ElButton @click="importDialogVisible = false" size="small">{{ $t('button_cancel') }}</ElButton>
+        <ElButton type="primary" :disabled="importForm.fileList.length === 0" @click="submitUpload()" size="small">{{
+          $t('button_confirm')
+        }}</ElButton>
+      </span>
+    </ElDialog>
   </section>
 </template>
 
@@ -187,6 +193,7 @@
 import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '@/utils/util'
+import * as Cookie from 'tiny-cookie'
 
 export default {
   name: 'Modules',
@@ -220,7 +227,16 @@ export default {
         }
       ],
       multipleSelection: [],
-      intervalId: 0
+      intervalId: 0,
+      importDialogVisible: false,
+      importForm: {
+        tag: [],
+        fileList: [],
+        action: '',
+        upsert: 1,
+        accept: '.gz'
+      },
+      classifyList: []
     }
   },
   created() {
@@ -279,7 +295,7 @@ export default {
         'source.user_id': true
       }
       if (keyword && keyword.trim()) {
-        let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword
+        let filterObj = { like: toRegExp(keyword), options: 'i' }
         where.or = [{ basePath: filterObj }, { description: filterObj }]
       }
       status && (where.status = status)
@@ -545,7 +561,9 @@ export default {
     },
     // 导入按钮
     importFile() {
-      this.$router.push('/upload?type=api')
+      this.importDialogVisible = true
+      this.getClassify()
+      // this.$router.push('/upload?type=api')
     },
     // 批量导出
     exportFile() {
@@ -602,6 +620,48 @@ export default {
           type: 'input'
         }
       ]
+    },
+    // 获取分类
+    getClassify() {
+      let filter = {
+        where: { or: [{ item_type: 'api' }] }
+      }
+      this.$api('MetadataDefinitions')
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          if (res) {
+            this.classifyList = res.data?.items || []
+          }
+        })
+    },
+    // 上传文件成功失败钩子
+    handleChange(file) {
+      this.importForm.fileList = [file]
+      this.importForm.action =
+        window.location.origin +
+        window.location.pathname +
+        'api/MetadataInstances/upload?upsert=' +
+        this.importForm.upsert +
+        '&listtags=' +
+        encodeURIComponent(JSON.stringify(this.tag)) +
+        '&type=APIServer' +
+        `&access_token=${Cookie.get('token')}`
+    },
+
+    handleSuccess(response) {
+      if (response.code === '110500' || response.code === '110401') {
+        this.status = false
+        this.$message.error(this.$t('dataFlow.uploadError'))
+      } else {
+        this.status = true
+      }
+    },
+    // 上传保存
+    submitUpload() {
+      this.importDialogVisible = false
+      this.$refs.upload.submit()
     }
   },
   beforeDestroy() {

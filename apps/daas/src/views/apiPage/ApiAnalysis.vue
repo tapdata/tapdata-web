@@ -101,7 +101,7 @@ export default {
         stats_name: 'ALL-time:ALL-user:EVERY-api'
       }
       if (keyword && keyword.trim()) {
-        let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword
+        let filterObj = { like: toRegExp(keyword), options: 'i' }
         where.or = [{ 'data.api_method': filterObj }, { 'data.api_path': filterObj }]
       }
 
