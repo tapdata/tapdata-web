@@ -52,7 +52,7 @@
           <el-pagination
             background
             class="table-page-pagination mt-3"
-            layout="total, sizes, ->, prev, pager, next, jumper"
+            layout="->,total, sizes,  prev, pager, next, jumper"
             :current-page.sync="page.current"
             :page-sizes="[10, 20, 50, 100]"
             :page-size.sync="page.size"

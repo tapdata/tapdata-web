@@ -1,5 +1,6 @@
 <template>
   <section class="api-analysis-wrap section-wrap">
+    <!-- api统计 -->
     <TablePage
       ref="table"
       row-key="id"
@@ -7,32 +8,8 @@
       :remoteMethod="getData"
       @sort-change="handleSortTable"
     >
-      <div slot="search">
-        <ul class="search-bar">
-          <li>
-            <el-input
-              clearable
-              class="input-with-select"
-              size="mini"
-              v-model="searchParams.keyword"
-              :placeholder="$t('api_asnalysis_name')"
-              @input="table.fetch(1, 800)"
-            >
-              <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
-                <el-option :label="$t('query_fuzzy')" :value="true"></el-option>
-                <el-option :label="$t('query_precise')" :value="false"></el-option>
-              </el-select>
-            </el-input>
-          </li>
-          <template v-if="searchParams.keyword">
-            <li>
-              <el-button size="mini" type="text" @click="reset()">{{ $t('button_query') }}</el-button>
-            </li>
-            <li>
-              <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button_reset') }}</el-button>
-            </li>
-          </template>
-        </ul>
+      <div slot="search" class="search-bar">
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </div>
       <el-table-column :label="$t('api_asnalysis_header_api')" width="260">
         <template slot-scope="scope">
@@ -71,13 +48,15 @@
 </template>
 
 <script>
+import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '@/utils/util'
 
 export default {
   name: 'ApiAnalysis',
   components: {
-    TablePage
+    TablePage,
+    FilterBar
   },
   data() {
     return {
@@ -85,8 +64,12 @@ export default {
         keyword: '',
         isFuzzy: true
       },
+      filterItems: [],
       order: 'data.api_calls DESC'
     }
+  },
+  created() {
+    this.getFilterItems()
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -135,21 +118,20 @@ export default {
         where
       }
       return Promise.all([
-        this.$api('insights').count({ where: JSON.stringify(where) }),
         this.$api('insights').get({
           filter: JSON.stringify(totalFilter)
         }),
         this.$api('insights').get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, totalRes, res]) => {
+      ]).then(([totalRes, res]) => {
         this.table.setCache({
           isFuzzy,
           keyword
         })
 
-        if (totalRes.data) {
-          res.data = res.data.concat(totalRes.data)
+        if (totalRes.data?.items?.length) {
+          res.data = res.data.concat(totalRes.data.items)
         }
         let listData = []
         if (res.data?.length) {
@@ -158,7 +140,7 @@ export default {
             api_path: item.data.api_path,
             api_status: item.data.api_status,
             api_calls: this.formatNum(item.data.api_calls),
-            time_of_api_last_used: this.formatDate(item.data.time_of_api_last_used),
+            time_of_api_last_used: this.$moment(item.data.time_of_api_last_used).fromNow(),
             res_rows: this.formatNum(item.data.res_rows),
             req_bytes: this.dataSize(item.data.req_bytes),
             res_bytes: this.dataSize(item.data.res_bytes),
@@ -169,8 +151,8 @@ export default {
         res.data = listData
 
         return {
-          total: countRes.data.count,
-          data: res.data
+          total: res.data?.total || 0,
+          data: res.data || []
         }
       })
     },
@@ -346,6 +328,15 @@ export default {
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'clientName'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          placeholder: this.$t('api_server_name'),
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     }
   }
 }

@@ -13,8 +13,13 @@
       @classify-submit="handleOperationClassify"
       @sort-change="handleSortTable"
     >
-      <div slot="search">
-        <ul class="search-bar">
+      <div slot="search" class="search-bar">
+        <div class="search-status pr-4">
+          {{ $t('modules_api_server_status') }}:
+          <span class="status-text" :class="status">{{ $t('modules_status_' + status) }}</span>
+        </div>
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+        <!-- <ul class="search-bar">
           <li>
             <el-input
               clearable
@@ -53,7 +58,7 @@
             {{ $t('modules.apiServerStatus') }}:
             <span class="status-text" :class="status">{{ $t('modules_status_' + status) }}</span>
           </li>
-        </ul>
+        </ul> -->
       </div>
       <div slot="operation">
         <el-button size="mini" v-if="selectedStopped.length" @click="batch('active')">{{
@@ -76,40 +81,46 @@
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkTag') }}</span>
         </el-button>
-        <el-button v-readonlybtn="'API_creation'" class="btn btn-create" size="mini" @click="openCreateDialog">
-          <i class="iconfont icon-jia add-btn-icon"></i>
+        <el-button
+          v-readonlybtn="'API_creation'"
+          class="btn btn-create"
+          type="primary"
+          size="mini"
+          @click="openCreateDialog"
+        >
+          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
           <span>{{ $t('modules_create') }}</span>
         </el-button>
       </div>
       <el-table-column v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
       </el-table-column>
-      <el-table-column :label="$t('modules_header_api_name')" prop="name" sortable="name"></el-table-column>
-      <el-table-column :label="$t('modules_header_tablename')" prop="tablename" sortable="tablename"> </el-table-column>
-      <el-table-column :label="$t('modules_header_dataSource')" prop="connection" sortable="connection">
+      <el-table-column :label="$t('modules_header_api_name')"></el-table-column>
+      <el-table-column :label="$t('modules_header_tablename')"> </el-table-column>
+      <el-table-column :label="$t('modules_header_dataSource')">
         <template slot-scope="scope" v-if="scope.row.source">
           <span
             @click.stop="dataSourceFn(scope.row)"
             :title="scope.row.source.name"
-            style="cursor: pointer; color: #1976d2"
+            style="cursor: pointer; color: #2c65ff"
             >{{ scope.row.source.name }}({{
               $t('modules_status_' + (scope.row.source && scope.row.source.status))
             }})</span
           >
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_status')" prop="status" sortable="status">
+      <el-table-column :label="$t('modules_header_status')">
         <template slot-scope="scope">
           <span>{{ $t('modules_' + scope.row.status) }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_basePath')" prop="basePath" sortable="basePath"> </el-table-column>
-      <el-table-column :label="$t('modules_header_version')" prop="version" sortable="custom"> </el-table-column>
-      <el-table-column :label="$t('modules_header_classifications')" prop="classifications" sortable="classifications">
+      <el-table-column :label="$t('modules_header_basePath')"> </el-table-column>
+      <el-table-column :label="$t('modules_header_version')"> </el-table-column>
+      <el-table-column :label="$t('modules_header_classifications')">
         <template slot-scope="scope" v-if="scope.row.listtags">
           <div v-for="item in scope.row.listtags" :key="item.value">{{ item.value }}</div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_username')" prop="user" sortable="user"> </el-table-column>
+      <el-table-column :label="$t('modules_header_username')"> </el-table-column>
       <el-table-column :label="$t('modules_header_last_updated')" prop="last_updated" sortable="custom">
         <template slot-scope="scope">
           {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
@@ -173,13 +184,15 @@
 </template>
 
 <script>
+import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '@/utils/util'
 
 export default {
   name: 'Modules',
   components: {
-    TablePage
+    TablePage,
+    FilterBar
   },
   data() {
     return {
@@ -188,20 +201,21 @@ export default {
         isFuzzy: true,
         status: 'all'
       },
+      filterItems: [],
       order: 'tablename DESC',
-      status: '',
+      status: 'stop',
       dbOptions: [],
       statusList: [
-        // {
-        //   label: this.$t('modules.all'),
-        //   value: 'all'
-        // },
         {
-          label: this.$t('modules.active'),
+          label: this.$t('modules_all'),
+          value: 'all'
+        },
+        {
+          label: this.$t('modules_active'),
           value: 'active'
         },
         {
-          label: this.$t('modules.pending'),
+          label: this.$t('modules_pending'),
           value: 'pending'
         }
       ],
@@ -212,6 +226,7 @@ export default {
   created() {
     // this.getDbOptions()
     this.getWorkers()
+    this.getFilterItems()
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -293,7 +308,7 @@ export default {
           })
 
           return {
-            total: res.data.count,
+            total: res.data.total,
             data: res.data?.items || []
           }
         })
@@ -320,8 +335,8 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          if (res) {
-            let record = res.data[0] || {}
+          if (res?.data?.items?.length) {
+            let record = res?.data?.items[0] || {}
             let workerStatus = record.worker_status || {}
             if (this.status !== workerStatus.status) {
               this.status = workerStatus.status
@@ -571,6 +586,22 @@ export default {
         .catch(() => {
           this.$message.error(this.$t('message_copy_fail'))
         })
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: this.$t('modules_type'),
+          key: 'status',
+          type: 'select-inner',
+          items: this.statusList,
+          selectedWidth: '200px'
+        },
+        {
+          placeholder: this.$t('modules_name_placeholder'),
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     }
   },
   beforeDestroy() {
@@ -586,14 +617,21 @@ export default {
   .modules-list {
     .search-bar {
       display: flex;
-      li + li {
-        margin-left: 10px;
+      flex-direction: row;
+      .search-status {
+        line-height: 34px;
+        .status-text {
+          display: inline-block;
+          font-weight: bold;
+          height: 25px;
+          padding: 0 10px;
+          line-height: 25px;
+          color: #d44d4d;
+          border-radius: 2px;
+          background-color: #ffecec;
+        }
       }
-      .status-text {
-        font-weight: bold;
-        width: 150px;
-        display: inline-block;
-      }
+
       .deploying,
       .running,
       .restart,
@@ -609,8 +647,8 @@ export default {
       margin-left: 5px;
     }
     .btn {
-      padding: 7px;
-      background: #f5f5f5;
+      // padding: 7px;
+      // background: #f5f5f5;
       i.iconfont {
         font-size: 12px;
       }
@@ -618,7 +656,7 @@ export default {
         margin-left: 5px;
       }
       &.btn-create {
-        margin-left: 5px;
+        margin-left: 10px;
       }
     }
     .modules-name {

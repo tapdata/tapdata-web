@@ -348,8 +348,10 @@ let menuSetting = [
       { name: 'dataExplorer' },
       { name: 'apiDocAndTest' },
       { name: 'apiAnalysis' },
+      { name: 'apiClient' },
+      { name: 'apiServers' },
       { name: 'applications' },
-      { name: 'apiServers' }
+      { name: 'apiMonitor' }
     ]
   },
   {

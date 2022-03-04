@@ -239,9 +239,20 @@ export default {
     padding: 0 10px;
     max-height: 500px;
     overflow-y: auto;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    border: 1px solid #edeeee;
     pre {
       line-height: 20px;
+    }
+    ::v-deep {
+      .el-collapse {
+        border: 0;
+      }
+      .el-collapse-item__header {
+        border-bottom: 0;
+      }
+      .el-collapse-item__wrap {
+        border-bottom: 0;
+      }
     }
   }
 }

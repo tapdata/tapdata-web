@@ -18,7 +18,7 @@
             <ul class="job-list">
               <li v-for="task in migrationTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
                 <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
-                <span class="text">{{ $t('dataFlow.status.' + task.label) }}</span
+                <span class="text">{{ $t('dashboard_status_' + task.label) }}</span
                 ><span class="num pl-7">{{ task.value }}</span>
               </li>
             </ul>
@@ -97,7 +97,7 @@
           <div class="charts-list-text">
             <div class="dashboard-title fs-7">{{ $t('dashboard_transfer_overview') }}</div>
             <ul class="job-list">
-              <li v-for="item in transBarData" :key="item.label" @click="handleMigrationStatus(task.label)">
+              <li v-for="item in transBarData" :key="item.key">
                 <i class="dots mr-3" :style="`background-color: ${item.color};`"></i>
                 <span class="text">{{ item.name }}</span
                 ><span class="num pl-7">{{ item.value }}</span>
@@ -239,66 +239,66 @@ export default {
         { key: 'valid_total', value: 0 }
       ],
 
-      copyTaskOptions: {
-        tooltip: {
-          trigger: 'bar'
-        },
-        legend: {
-          // top: 4,
-          // right: 0,
-          // show: true
-        },
-        xAxis: {
-          type: 'category',
-          axisTick: {
-            show: true,
-            alignWithLabel: true
-          },
-          axisLine: {
-            show: true,
-            lineStyle: {
-              color: '#D9D9D9'
-            }
-          },
-          axisLabel: {
-            show: true,
-            interval: 'auto',
-            margin: '8'
-          },
-          // prettier-ignore
-          data: ['初始化中', '初始化完成', '增量中', '增量滞后']
-        },
-        yAxis: {
-          type: 'value',
-          name: 'Evaporation',
-          position: 'right',
-          alignTicks: true,
-          axisLine: {
-            show: true,
-            lineStyle: {
-              color: '#f00'
-            }
-          },
-          axisLabel: {
-            formatter: '{value} ml'
-          }
-          // axisLabel: {
-          //   formatter: function (value) {
-          //     if (value >= 1000) {
-          //       value = value / 1000 + 'K'
-          //     }
-          //     return value
-          //   }
-          // }
-        },
-        grid: {
-          left: 0,
-          right: 0,
-          top: '24px',
-          bottom: 0
-        },
-        series: []
-      },
+      // copyTaskOptions: {
+      //   tooltip: {
+      //     trigger: 'bar'
+      //   },
+      //   legend: {
+      //     // top: 4,
+      //     // right: 0,
+      //     // show: true
+      //   },
+      //   xAxis: {
+      //     type: 'category',
+      //     axisTick: {
+      //       show: true,
+      //       alignWithLabel: true
+      //     },
+      //     axisLine: {
+      //       show: true,
+      //       lineStyle: {
+      //         color: '#D9D9D9'
+      //       }
+      //     },
+      //     axisLabel: {
+      //       show: true,
+      //       interval: 'auto',
+      //       margin: '8'
+      //     },
+      //     // prettier-ignore
+      //     data: ['初始化中', '初始化完成', '增量中', '增量滞后']
+      //   },
+      //   yAxis: {
+      //     type: 'value',
+      //     name: 'Evaporation',
+      //     position: 'right',
+      //     alignTicks: true,
+      //     axisLine: {
+      //       show: true,
+      //       lineStyle: {
+      //         color: '#f00'
+      //       }
+      //     },
+      //     axisLabel: {
+      //       formatter: '{value} ml'
+      //     }
+      //     // axisLabel: {
+      //     //   formatter: function (value) {
+      //     //     if (value >= 1000) {
+      //     //       value = value / 1000 + 'K'
+      //     //     }
+      //     //     return value
+      //     //   }
+      //     // }
+      //   },
+      //   grid: {
+      //     left: 0,
+      //     right: 0,
+      //     top: '24px',
+      //     bottom: 0
+      //   },
+      //   series: []
+      // },
       loading: false,
       migrationTotal: '',
       syncTotal: '',
@@ -311,7 +311,8 @@ export default {
       colorMap: {
         running: '#82C647',
         paused: '#AE86C9',
-        draft: '#88DBDA',
+        wait_run: '#AE86C9',
+        edit: '#88DBDA',
         error: '#F7D762',
         stopping: '#E6B450',
         scheduled: '#2EA0EA'
@@ -328,41 +329,41 @@ export default {
         'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
       },
 
-      allTaskEchart: {
-        tooltip: {
-          trigger: 'item',
-          formatter: '{b}<br/> {c}'
-        },
-        legend: {
-          data: []
-        },
-        grid: {
-          containLabel: true,
-          bottom: '1%'
-        },
-        series: [
-          {
-            data: [],
-            type: 'pie',
-            labelLine: {
-              show: false
-            },
-            avoidLabelOverlap: false,
-            label: {
-              show: false,
-              position: 'center'
-            },
-            emphasis: {
-              label: {
-                show: true,
-                fontSize: '30',
-                fontWeight: 'bold'
-              }
-            },
-            radius: ['40%', '70%']
-          }
-        ]
-      },
+      // allTaskEchart: {
+      //   tooltip: {
+      //     trigger: 'item',
+      //     formatter: '{b}<br/> {c}'
+      //   },
+      //   legend: {
+      //     data: []
+      //   },
+      //   grid: {
+      //     containLabel: true,
+      //     bottom: '1%'
+      //   },
+      //   series: [
+      //     {
+      //       data: [],
+      //       type: 'pie',
+      //       labelLine: {
+      //         show: false
+      //       },
+      //       avoidLabelOverlap: false,
+      //       label: {
+      //         show: false,
+      //         position: 'center'
+      //       },
+      //       emphasis: {
+      //         label: {
+      //           show: true,
+      //           fontSize: '30',
+      //           fontWeight: 'bold'
+      //         }
+      //       },
+      //       radius: ['40%', '70%']
+      //     }
+      //   ]
+      // },
       transfer: {
         height: 360,
         isHeader: false,
@@ -373,89 +374,89 @@ export default {
       syncJobStatusObj: {},
       migrationJobStatusObj: {},
       dataValidationObj: {}, //数据校验
-      allsyncJobsEchart: null,
+      // allsyncJobsEchart: null,
       // allMigrationJobsEchart: null,
       // allTransEchart: null,
-      dataScreening: {
-        tooltip: {
-          show: false,
-          trigger: 'axis',
-          axisPointer: {
-            type: 'none'
-            // crossStyle: {
-            // 	color: '#999'
-            // }
-          }
-        },
-        toolbox: {
-          show: false
-        },
-        legend: {},
-        grid: {
-          left: '25%',
-          right: '30%',
-          bottom: '3%',
-          containLabel: true
-        },
-        xAxis: {
-          type: 'category',
-          show: true,
-          axisLine: {
-            show: false,
-            lineStyle: {
-              color: '#666',
-              width: 0
-            }
-          },
-          data: [
-            this.$t('dataFlow.totalOutput'),
-            this.$t('dataFlow.totalInput'),
-            this.$t('dataFlow.totalInsert'),
-            this.$t('dataFlow.totalUpdate'),
-            this.$t('dataFlow.totalDelete')
-          ],
-          axisPointer: {
-            type: 'shadow'
-          }
-        },
-        yAxis: {
-          axisLine: { show: false },
-          axisTick: { show: false },
-          splitLine: { show: false },
-          splitArea: { show: false }
-        },
-        series: [
-          {
-            type: 'bar',
-            data: [],
-            barWidth: '100%',
-            barGap: '-100%',
-            itemStyle: {
-              normal: {
-                color: function (params) {
-                  var colorList = ['#7ba75d', '#409EFF', '#d9742c', '#e6b451', '#e06c6c']
-                  return colorList[params.dataIndex]
-                },
-                label: {
-                  show: true,
-                  // verticalAlign: 'middle',
-                  position: 'top',
-                  distance: 10,
-                  formatter: function (value) {
-                    if (value.data / (1000 * 1000 * 1000) > 1) {
-                      return (value.data / (1000 * 1000 * 1000)).toFixed(1) + ' T'
-                    } else if (value.data / (1000 * 1000) > 1) {
-                      return (value.data / (1000 * 1000)).toFixed(1) + ' M'
-                    } else if (value.data / 1000 > 1) {
-                      return (value.data / 1000).toFixed(1) + ' K'
-                    }
-                  }
-                }
-              }
-            }
-          }
-        ]
-      },
+      // dataScreening: {
+      //   tooltip: {
+      //     show: false,
+      //     trigger: 'axis',
+      //     axisPointer: {
+      //       type: 'none'
+      //       // crossStyle: {
+      //       // 	color: '#999'
+      //       // }
+      //     }
+      //   },
+      //   toolbox: {
+      //     show: false
+      //   },
+      //   legend: {},
+      //   grid: {
+      //     left: '25%',
+      //     right: '30%',
+      //     bottom: '3%',
+      //     containLabel: true
+      //   },
+      //   xAxis: {
+      //     type: 'category',
+      //     show: true,
+      //     axisLine: {
+      //       show: false,
+      //       lineStyle: {
+      //         color: '#666',
+      //         width: 0
+      //       }
+      //     },
+      //     data: [
+      //       this.$t('dataFlow.totalOutput'),
+      //       this.$t('dataFlow.totalInput'),
+      //       this.$t('dataFlow.totalInsert'),
+      //       this.$t('dataFlow.totalUpdate'),
+      //       this.$t('dataFlow.totalDelete')
+      //     ],
+      //     axisPointer: {
+      //       type: 'shadow'
+      //     }
+      //   },
+      //   yAxis: {
+      //     axisLine: { show: false },
+      //     axisTick: { show: false },
+      //     splitLine: { show: false },
+      //     splitArea: { show: false }
+      //   },
+      //   series: [
+      //     {
+      //       type: 'bar',
+      //       data: [],
+      //       barWidth: '100%',
+      //       barGap: '-100%',
+      //       itemStyle: {
+      //         normal: {
+      //           color: function (params) {
+      //             var colorList = ['#7ba75d', '#409EFF', '#d9742c', '#e6b451', '#e06c6c']
+      //             return colorList[params.dataIndex]
+      //           },
+      //           label: {
+      //             show: true,
+      //             // verticalAlign: 'middle',
+      //             position: 'top',
+      //             distance: 10,
+      //             formatter: function (value) {
+      //               if (value.data / (1000 * 1000 * 1000) > 1) {
+      //                 return (value.data / (1000 * 1000 * 1000)).toFixed(1) + ' T'
+      //               } else if (value.data / (1000 * 1000) > 1) {
+      //                 return (value.data / (1000 * 1000)).toFixed(1) + ' M'
+      //               } else if (value.data / 1000 > 1) {
+      //                 return (value.data / 1000).toFixed(1) + ' K'
+      //               }
+      //             }
+      //           }
+      //         }
+      //       }
+      //     }
+      //   ]
+      // },
       // 传输总览颜色
       transBarData: [
         { name: this.$t('dashboard_total_input'), value: 0, key: 'inputTotal', color: '#82C647' },
@@ -487,25 +488,25 @@ export default {
   mounted() {
     if (this.$has('Data_SYNC') || this.$has('Data_verify')) {
       this.getDataFlowApi()
-      this.getMeasurement()
+      // this.getMeasurement()
     }
 
     if (this.$has('Cluster_management') || this.$has('Cluster_management_menu')) {
       this.getClsterDataApi()
     }
 
-    this.allsyncJobsEchart = JSON.parse(JSON.stringify(this.allTaskEchart))
-    this.copyTaskOptions = JSON.parse(JSON.stringify(this.allTaskEchart))
+    // this.allsyncJobsEchart = JSON.parse(JSON.stringify(this.allTaskEchart))
+    // this.copyTaskOptions = JSON.parse(JSON.stringify(this.allTaskEchart))
   },
   methods: {
     // 点击迁移运行状态跳转到任务列表
-    handleMigrationStatus(status) {
-      let routeUrl = this.$router.resolve({
-        name: 'migrate',
-        query: { status: status }
-      })
-      window.open(routeUrl.href)
-    },
+    // handleMigrationStatus(status) {
+    //   let routeUrl = this.$router.resolve({
+    //     name: 'migrate',
+    //     query: { status: status }
+    //   })
+    //   window.open(routeUrl.href)
+    // },
 
     // 获取服务器与进程的数据
     getClsterDataApi() {
@@ -523,7 +524,7 @@ export default {
       self.loading = true
       DataFlows.chart()
         .then(res => {
-          if (res && res.data) {
+          if (res?.data) {
             let setColor = list => {
               return list.map(item => {
                 item.itemStyle = {
@@ -532,19 +533,24 @@ export default {
                 return item
               })
             }
-            self.migrationTaskList = self.handleDataProcessing(res.data.chart1)
-            self.syncTaskList = self.handleDataProcessing(res.data.chart5)
-            self.allsyncJobsEchart.series[0].data = setColor(self.syncTaskList)
 
-            self.syncTotal = res.data.chart5.totalDataFlows
-            self.migrationTotal = res.data.chart1.totalDataFlows
+            self.migrationTaskList = res.data.chart1?.items ? self.handleDataProcessing(res.data.chart1.items) : []
+            self.syncTaskList = res.data?.chart3 ? self.handleDataProcessing(res.data.chart3) : []
+            // self.allsyncJobsEchart.series[0].data = self.syncTaskList?.length ? setColor(self.syncTaskList) : []
+
+            // self.syncTotal = res.data.chart5.totalDataFlows
+            // self.migrationTotal = res.data.chart1.totalDataFlows
 
             // 全部数据
+            let copy_total = res.data?.chart1?.total || 0
+            let sync_total = res.data?.chart3?.total || 0
+            let valid_total = res.data?.chart5?.total || 0
+
             let total = {
-              all_total: res.data.chart1.totalDataFlows + res.data.chart5.totalDataFlows + res.data.chart7.total,
-              copy_total: res.data.chart1.totalDataFlows,
-              sync_total: res.data.chart5.totalDataFlows,
-              valid_total: res.data.chart7.total
+              all_total: copy_total + sync_total + valid_total,
+              copy_total: copy_total,
+              sync_total: sync_total,
+              valid_total: valid_total
             }
             let result = []
             this.taskList.forEach(el => {
@@ -557,10 +563,11 @@ export default {
             this.taskList = result
 
             self.copyPieData = setColor(self.migrationTaskList)
-            self.copyTaskData = this.handleChart(res.data.chart4)
+            self.copyTaskData = this.handleChart(res.data.chart2)
             self.syncPieData = setColor(self.syncTaskList)
-            self.syncTaskData = this.handleChart(res.data.chart6)
-            self.validBarData = this.handleChart(res.data.chart7)
+            self.syncTaskData = this.handleChart(res.data.chart4)
+            self.validBarData = this.handleChart(res.data.chart5)
+            self.transBarData = this.handleChart(res.data.chart6, this.transBarData)
           }
         })
         .finally(() => {
@@ -569,56 +576,70 @@ export default {
     },
 
     // echart数据转换
-    handleChart(data) {
+    handleChart(data, defaultData) {
       let echartData = []
-      for (let item in data) {
-        echartData.push({
-          name: this.$t('dashboard_' + item),
-          value: data[item],
-          color: '#2EA0EA'
+      if (defaultData?.length) {
+        echartData = defaultData.filter(item => {
+          for (let el in data) {
+            if (item.key === el) {
+              return (item.value = data[el])
+            }
+          }
         })
+      } else {
+        for (let item in data) {
+          echartData.push({
+            name: this.$t('dashboard_' + item),
+            value: data[item],
+            color: '#2EA0EA'
+          })
+        }
       }
+
       return echartData
     },
-    // 指标
-    getMeasurement() {
-      this.$api('Measurement')
-        .queryTransmitTotal()
-        .then(({ data }) => {
-          let result = []
-          this.transBarData.forEach(el => {
-            result.push(
-              Object.assign({}, el, {
-                value: data[el.key]
-              })
-            )
-          })
-          // eslint-disable-next-line
-          console.log('result', result)
-          this.transBarData = result
-        })
-        .catch(err => {
-          // eslint-disable-next-line
-          console.log('err', err)
-        })
-    },
+    // // 指标
+    // getMeasurement() {
+    //   this.$api('Measurement')
+    //     .queryTransmitTotal()
+    //     .then(({ data }) => {
+    //       let result = []
+    //       this.transBarData.forEach(el => {
+    //         result.push(
+    //           Object.assign({}, el, {
+    //             value: data[el.key]
+    //           })
+    //         )
+    //       })
+    //       // eslint-disable-next-line
+    //       console.log('result', result)
+    //       this.transBarData = result
+    //     })
+    //     .catch(err => {
+    //       // eslint-disable-next-line
+    //       console.log('err', err)
+    //     })
+    // },
 
     // 数据处理
     handleDataProcessing(dataItem) {
       let statusItem = []
-      dataItem.statusCount.sort((a, b) => (a._id > b._id ? 1 : a._id === b._id ? 0 : -1))
-      dataItem.statusCount.forEach(element => {
-        statusItem.unshift({
-          name: this.$t('dataFlow.status.' + element._id),
-          label: element._id,
-          value: element.count
+      if (dataItem?.length) {
+        dataItem.sort((a, b) => (a._id > b._id ? 1 : a._id === b._id ? 0 : -1))
+        dataItem.forEach(element => {
+          statusItem.unshift({
+            name: this.$t('dashboard_status_' + element._id),
+            label: element._id,
+            value: element.count
+          })
         })
-      })
-      statusItem.filter((item, index) => {
-        if (item.name === 'stopping' || item.name === 'scheduled') {
-          statusItem.splice(index, 1)
-        }
-      })
+        statusItem.filter((item, index) => {
+          if (item.name === 'stopping' || item.name === 'scheduled') {
+            statusItem.splice(index, 1)
+          }
+        })
+      }
+
       return statusItem
     },
     getPieOption(data) {
@@ -689,6 +710,29 @@ export default {
                 }
               }
             },
+            // itemStyle: {
+            //   normal: {
+            //     // color: function (params) {
+            //     //   var colorList = ['#7ba75d', '#409EFF', '#d9742c', '#e6b451', '#e06c6c']
+            //     //   return colorList[params.dataIndex]
+            //     // },
+            //     label: {
+            //       show: true,
+            //       // verticalAlign: 'middle',
+            //       // position: 'top',
+            //       // distance: 10,
+            //       formatter: function (value) {
+            //         if (value.data / (1000 * 1000 * 1000) > 1) {
+            //           return (value.data / (1000 * 1000 * 1000)).toFixed(1) + ' T'
+            //         } else if (value.data / (1000 * 1000) > 1) {
+            //           return (value.data / (1000 * 1000)).toFixed(1) + ' M'
+            //         } else if (value.data / 1000 > 1) {
+            //           return (value.data / 1000).toFixed(1) + ' K'
+            //         }
+            //       }
+            //     }
+            //   }
+            // },
             data: data
           }
         ]

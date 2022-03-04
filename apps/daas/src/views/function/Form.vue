@@ -233,7 +233,7 @@ export default {
     }
     .el-form-item--mini.el-form-item,
     .el-form-item--small.el-form-item {
-      margin-bottom: 24px;
+      margin-bottom: 30px;
     }
   }
   .script-editor {

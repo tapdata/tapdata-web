@@ -548,6 +548,27 @@ export default [
           code: 'API_doc_&_test_menu'
         }
       },
+      /* ---------- API客户端  ----------*/
+      {
+        path: '/api-client',
+        name: 'apiClient',
+        component: () => import('@/views/apiPage/Applications'),
+        meta: {
+          title: 'page_title_api_client',
+          code: 'API_clients_menu'
+        }
+      },
+      /* ---------- API服务端  ----------*/
+      {
+        path: '/api-servers',
+        name: 'apiServers',
+        component: () => import('@/views/apiPage/ApiServers'),
+        meta: {
+          title: 'page_title_api_servers',
+          code: 'API_server_menu'
+        }
+      },
+
       /* ---------- API统计  ----------*/
       {
         path: '/api-statistics',
@@ -571,7 +592,7 @@ export default [
       /* ---------- API监控  ----------*/
       {
         path: '/api-monitor',
-        name: 'apiServers',
+        name: 'apiMonitor',
         component: () => import('@/views/apiPage/ApiServers'),
         meta: {
           title: 'page_title_api_monitor',

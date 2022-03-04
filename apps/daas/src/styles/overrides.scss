@@ -66,11 +66,27 @@
   border-color: map-get($color, primary);
 }
 .el-input__inner {
+  color: #000;
   border-radius: $borderRadius;
-  border: 1px solid #d9d9d9;
+  border: 1px solid rgba(221, 221, 221, 0.4);
+  background-color:  rgba(239, 241, 244, 0.2);
 }
 .el-input__inner:hover {
   border-color: map-get($color, primary);
+}
+.el-textarea__inner {
+  border: 1px solid rgba(221, 221, 221, 0.4);
+  background-color:  rgba(239, 241, 244, 0.2);
+}
+.el-input,.el-textarea {
+  .el-input__count {
+    background-color:  rgba(239, 241, 244, 0.2);
+    .el-input__count-inner {
+      color: rgba(0,0,0,.65);
+      background-color:  rgba(239, 241, 244, 0.2);
+    }
+  }
+
 }
 .el-input-number.is-controls-right .el-input__inner {
   padding-left: 10px;
@@ -84,6 +100,13 @@
     border-color: map-get($color, primary);
     background-color: map-get($color, primary);
   }
+}
+.el-radio .el-radio__label {
+  font-size: 12px;
+  color: map-get($fontColor, rdlevel);
+}
+.el-radio__input.is-checked+.el-radio__label {
+  color: map-get($color, primary);
 }
 
 .el-radio__inner:hover {
@@ -761,11 +784,13 @@
   color: map-get($fontColor, normal);
 }
 /* --------------------- */
-.el-form-item--small,
-.el-form-item--mini {
+.el-form-item.el-form-item--small,
+.el-form-item.el-form-item--mini {
+  margin-bottom: 30px;
   .el-form-item__label {
-    color: #333;
+    color: map-get($fontColor, main);
     font-size: 12px;
+    text-align: left;
   }
 }
 .el-dialog {

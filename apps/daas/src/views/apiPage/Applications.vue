@@ -1,5 +1,6 @@
 <template>
   <section class="applications-wrap section-wrap">
+    <!-- api客户端 -->
     <TablePage
       ref="table"
       row-key="id"
@@ -7,38 +8,19 @@
       :remoteMethod="getData"
       @sort-change="handleSortTable"
     >
-      <div slot="search">
-        <ul class="search-bar">
-          <li>
-            <el-input
-              clearable
-              class="input-with-select"
-              size="mini"
-              v-model="searchParams.keyword"
-              :placeholder="$t('api_asnalysis_name')"
-              @input="table.fetch(1, 800)"
-            >
-              <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
-                <el-option :label="$t('query_fuzzy')" :value="true"></el-option>
-                <el-option :label="$t('query_precise')" :value="false"></el-option>
-              </el-select>
-            </el-input>
-          </li>
-          <template v-if="searchParams.keyword">
-            <li>
-              <el-button size="mini" type="text" @click="reset()">{{ $t('button_query') }}</el-button>
-            </li>
-            <li>
-              <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button_reset') }}</el-button>
-            </li>
-          </template>
-        </ul>
+      <div slot="search" class="search-bar">
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </div>
       <div slot="operation">
-        <el-button v-readonlybtn="'API_creation'" class="btn btn-create" size="mini" @click="openCreateDialog">
-          <i class="iconfont icon-jia add-btn-icon"></i>
+        <ElButton
+          v-readonlybtn="'API_creation'"
+          class="btn btn-create"
+          size="mini"
+          type="primary"
+          @click="openCreateDialog"
+        >
           <span>{{ $t('application_create') }}</span>
-        </el-button>
+        </ElButton>
       </div>
       <el-table-column :label="$t('application_header_id')" :show-overflow-tooltip="true" prop="id" width="220">
         <!-- <template slot-scope="scope"> -->
@@ -83,18 +65,18 @@
           <span v-for="item in scope.row.scopes" :key="item" class="table-span">{{ item }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" min-width="120">
+      <el-table-column :label="$t('column_operation')" min-width="120" fixed="right">
         <template slot-scope="scope">
-          <el-button v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="edit(scope.row)">
+          <ElButton v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="edit(scope.row)">
             {{ $t('modules_edit') }}
-          </el-button>
-          <el-button
+          </ElButton>
+          <ElButton
             v-readonlybtn="'API_clients_amangement'"
             v-if="scope.row.clientName !== 'Data Explorer'"
             size="mini"
             type="text"
             @click="remove(scope.row)"
-            >{{ $t('button_delete') }}</el-button
+            >{{ $t('button_delete') }}</ElButton
           >
         </template>
       </el-table-column>
@@ -107,56 +89,64 @@
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
-      <el-form ref="form" :model="createForm" class="applications-form" label-width="100px">
-        <el-form-item :label="$t('application_header_client_name')" required>
-          <el-input v-model="createForm.clientName" size="mini"></el-input>
-        </el-form-item>
-        <el-form-item :label="$t('application_header_grant_type')" required>
-          <el-select v-model="createForm.grantTypes" multiple size="mini">
-            <el-option label="Implicit" value="implicit"></el-option>
-            <el-option label="Client Credentials" value="client_credentials"></el-option>
-            <el-option label="Refresh Token" value="refresh_token"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('application_header_client_secret')" required>
-          <el-col :span="20">
-            <el-input v-model="createForm.clientSecret" size="mini"></el-input>
-          </el-col>
-          <el-col :span="4" style="text-align: right">
-            <el-button type="primary" size="mini" @click="generatorSecret">{{ $t('application_generator') }}</el-button>
-          </el-col>
-        </el-form-item>
-        <el-form-item :label="$t('application_header_scopes')" required>
-          <el-select v-model="createForm.scopes" multiple size="mini">
-            <el-option v-for="item in roles" :label="item.name" :value="item.id" :key="item.id"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('application_header_redirect_uri')" required>
-          <el-input v-model="createForm.redirectURIs" size="mini" :maxlength="200" :showWordLimit="true"></el-input>
-        </el-form-item>
-        <el-form-item :label="$t('application_show_menu')" required>
-          <el-select v-model="createForm.showMenu" size="mini">
-            <el-option :label="$t('application_true')" :value="true"></el-option>
-            <el-option :label="$t('application_false')" :value="false"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
+      <ElForm ref="form" :model="createForm" class="applications-form" label-width="100px">
+        <ElFormItem :label="$t('application_header_client_name')" required>
+          <ElInput v-model="createForm.clientName" size="mini"></ElInput>
+        </ElFormItem>
+        <ElFormItem :label="$t('application_header_grant_type')" required>
+          <ElSelect v-model="createForm.grantTypes" multiple size="mini">
+            <ElOption label="Implicit" value="implicit"></ElOption>
+            <ElOption label="Client Credentials" value="client_credentials"></ElOption>
+            <ElOption label="Refresh Token" value="refresh_token"></ElOption>
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem :label="$t('application_header_client_secret')" required>
+          <ElCol :span="22">
+            <ElInput v-model="createForm.clientSecret" size="mini"></ElInput>
+          </ElCol>
+          <ElCol :span="2" style="text-align: right">
+            <ElButton type="text" size="mini" @click="generatorSecret">{{ $t('application_generator') }}</ElButton>
+          </ElCol>
+        </ElFormItem>
+        <ElFormItem :label="$t('application_header_scopes')" required>
+          <ElSelect v-model="createForm.scopes" multiple size="mini">
+            <ElOption v-for="item in roles" :label="item.name" :value="item.id" :key="item.id"></ElOption>
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem :label="$t('application_header_redirect_uri')" required>
+          <ElInput
+            v-model="createForm.redirectURIs"
+            type="textarea"
+            size="mini"
+            :maxlength="200"
+            :showWordLimit="true"
+          ></ElInput>
+        </ElFormItem>
+        <ElFormItem :label="$t('application_show_menu')" required>
+          <ElSelect v-model="createForm.showMenu" size="mini">
+            <ElOption :label="$t('application_true')" :value="true"></ElOption>
+            <ElOption :label="$t('application_false')" :value="false"></ElOption>
+          </ElSelect>
+        </ElFormItem>
+      </ElForm>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
-        <el-button type="primary" @click="createApplication()" size="small">{{ $t('message.confirm') }}</el-button>
+        <ElButton @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</ElButton>
+        <ElButton type="primary" @click="createApplication()" size="small">{{ $t('message.confirm') }}</ElButton>
       </span>
     </el-dialog>
   </section>
 </template>
 
 <script>
+import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
 
 export default {
   name: 'Applications',
   components: {
-    TablePage
+    TablePage,
+    FilterBar
   },
   data() {
     return {
@@ -164,6 +154,7 @@ export default {
         keyword: '',
         isFuzzy: true
       },
+      filterItems: [],
       order: 'clientName DESC',
       createDialogVisible: false,
       roles: [],
@@ -176,6 +167,9 @@ export default {
         showMenu: true
       }
     }
+  },
+  created() {
+    this.getFilterItems()
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -291,7 +285,7 @@ export default {
       let { isFuzzy, keyword } = this.searchParams
       let where = {}
       if (keyword && keyword.trim()) {
-        let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword
+        let filterObj = { like: toRegExp(keyword), options: 'i' }
         where.or = [{ clientName: filterObj }]
       }
 
@@ -301,21 +295,20 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        this.$api('Application').count({ where: JSON.stringify(where) }),
-        this.$api('Application').get({
+      return this.$api('Application')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        this.table.setCache({
-          isFuzzy,
-          keyword
+        .then(res => {
+          this.table.setCache({
+            isFuzzy,
+            keyword
+          })
+          return {
+            total: res.data?.total || 0,
+            data: res.data?.items || []
+          }
         })
-        return {
-          total: countRes.data.count,
-          data: res.data
-        }
-      })
     },
     // 获取角色
     getRoles() {
@@ -332,6 +325,15 @@ export default {
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          placeholder: this.$t('modules_name_placeholder'),
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     }
   }
 }
@@ -362,7 +364,7 @@ export default {
   }
   .applications-form {
     .el-form-item {
-      margin-bottom: 18px;
+      // margin-bottom: 18px;
       .el-form-item__label,
       .el-form-item__content {
         line-height: 28px;
