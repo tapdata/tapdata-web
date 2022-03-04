@@ -11,7 +11,7 @@
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
           <div class="fw-bold head-label">{{ $t('share_detail_log_mining_time') }}:</div>
-          <div class="font-color-sub">{{ detailData.logTime }}</div>
+          <div class="font-color-sub">{{ $moment(detailData.logTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
           <div class="fw-bold head-label">{{ $t('share_detail_log_time') }}:</div>
@@ -32,9 +32,9 @@
       </div>
       <div class="flex share-detail-head-right text-center">
         <div class="box py-3 mt-2">
-          <div class="title fs-8">增量延迟</div>
-          <div class="time py-4 fs-4 text-primary">{{ detailData.delayTime }}</div>
-          <div class="text-muted">增量所处时间点：{{ formatTime(detailData.cdcTime) }}</div>
+          <div class="title fs-8">{{ $t('share_detail_incremental_play') }}</div>
+          <div class="time py-4 fs-4 text-primary">{{ replicateLag }}</div>
+          <div class="text-muted">{{ $t('share_detail_incremental_time') }}：{{ formatTime(detailData.cdcTime) }}</div>
         </div>
       </div>
     </div>
@@ -48,10 +48,10 @@
         ref="tableList"
       >
         <template slot="sourceTimestamp" slot-scope="scope">
-          <span>{{ scope.row.sourceTimestamp }}</span>
+          <span>{{ $moment(scope.row.sourceTimestamp).format('YYYY-MM-DD HH:mm:ss') }}</span>
         </template>
         <template slot="syncTimestamp" slot-scope="scope">
-          <span>{{ scope.row.syncTimestamp }}</span>
+          <span> {{ $moment(scope.row.syncTimestamp).format('YYYY-MM-DD HH:mm:ss') }}</span>
         </template>
         <template slot="status" slot-scope="scope">
           <StatusTag type="text" target="shareCdc" :status="scope.row.status" only-img></StatusTag>
@@ -127,11 +127,12 @@ export default {
           show: true
         },
         xAxis: {
-          type: 'category'
+          type: 'time'
         },
         yAxis: [
           {
             // max: 'dataMax',
+            name: 'QPS',
             axisLabel: {
               formatter: function (value) {
                 if (value >= 1000) {
@@ -154,10 +155,10 @@ export default {
           }
         ],
         grid: {
-          left: 0,
-          right: '2px',
+          // left: 0,
+          right: '8px',
           top: '24px',
-          bottom: '24px'
+          bottom: '30px'
         },
         series: [
           {
@@ -232,7 +233,9 @@ export default {
       tableNameList: [],
       currentPage: 1,
       pageSize: 20,
-      tableNameTotal: 0
+      tableNameTotal: 0,
+      replicateLag: 0,
+      timer: null //定时器
     }
   },
   computed: {
@@ -248,11 +251,8 @@ export default {
     this.id = this.$route.params.id
     this.getData(this.id)
   },
-  mounted() {
-    this.getChartData(this.id)
-  },
-  destroyed() {
-    this.$ws.off('watch', this.taskChange)
+  beforeDestroy() {
+    this.timer && clearInterval(this.timer)
   },
   methods: {
     formatTime(date) {
@@ -261,75 +261,102 @@ export default {
     formatMs(ms) {
       return formatMs(ms)
     },
+
     getData(id) {
       this.$api('logcollector')
         .getDetail(id)
         .then(res => {
           this.detailData = res?.data
+          this.getMeasurement()
         })
     },
     getTables() {
       this.tableDialogVisible = true
       this.getTableNames()
     },
-    getChartData() {
-      let data = [
-        {
-          logTime: '2022-02-18T06:50:12.109Z',
-          inputQps: 66,
-          outputQps: 435
-        },
-        {
-          logTime: '2022-02-19T06:50:12.109Z',
-          inputQps: 1000,
-          outputQps: 900
-        }
-      ]
-      let xArr = data.map(t => formatTime(t.logTime)) //x轴
-      let inArr = data.map(t => t.inputQps)
-      let outArr = data.map(t => t.outputQps)
-      // let inArr = data.map(t => {
-      //   return {
-      //     name: t.logTime,
-      //     value: [t.logTime, t.inputQps]
-      //   }
-      // })
-      // let outArr = data.map(t => {
-      //   return {
-      //     name: t.logTime,
-      //     value: [t.logTime, t.outputQps]
-      //   }
-      // })
-
-      this.$nextTick(() => {
-        Object.assign(this.lineOptions, {
-          xAxis: {
-            data: xArr
-          },
-          series: [
-            {
-              data: inArr
+    getMeasurement() {
+      let params = {
+        samples: [
+          {
+            tags: {
+              subTaskId: this.detailData.subTaskId,
+              type: 'subTask'
             },
-            {
-              data: outArr
+            fields: ['inputQPS', 'outputQPS'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
+            start: this.timeRange?.[0], //optional
+            end: this.timeRange?.[1], //optional
+            limit: 10, //optional， 没有就返回全部， 服务器保护返回最多1000个
+            guanluary: 'minute'
+          }
+        ],
+        statistics: [
+          {
+            tags: {
+              subTaskId: this.detailData.subTaskId,
+              type: 'subTask'
+            },
+            fields: ['replicateLag']
+          }
+        ]
+      }
+      this.$api('Measurement')
+        .query(params)
+        .then(res => {
+          let data = res?.data
+          let { samples } = data
+          samples.forEach(el => {
+            for (let key in el) {
+              el[key] = el[key].reverse()
             }
-          ]
-        })
-      })
+          })
+          let statistics = data.statistics?.[0] || {}
+          this.replicateLag = statistics.replicateLag || 0
+          // 折线图
+          const qpsData = samples[0] || {}
+          let { inputQPS = [], outputQPS = [] } = qpsData
+          let qpsDataTime = qpsData.time || []
+          // 空数据，需要模拟时间点
+          if (!qpsDataTime.length) {
+            qpsDataTime = this.getEmptyData(params.samples[0].start, params.samples[0].end)
+          }
 
-      // let filter = {
-      //   where: {
-      //     id: id,
-      //     startTime: '',
-      //     endTime: ''
-      //   }
-      // }
-      // this.$api('logcollector')
-      //   .getChart()
-      //   .then(res => {
-      //     //this.chartData = res?.data
-      //
-      //   })
+          let xArr = qpsDataTime.map(t => formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
+          let inArr = []
+          let outArr = []
+          xArr.forEach((el, i) => {
+            let time = el
+            inArr.push({
+              name: time,
+              value: [time, inputQPS[i]]
+            })
+            outArr.push({
+              name: time,
+              value: [time, outputQPS[i]]
+            })
+          })
+          this.$nextTick(() => {
+            Object.assign(this.lineOptions, {
+              xAxis: {
+                data: xArr
+              },
+              series: [
+                {
+                  data: inArr
+                },
+                {
+                  data: outArr
+                }
+              ]
+            })
+          })
+        })
+    },
+    resetTimer() {
+      let ms = 60 * 1000
+      this.timer && clearInterval(this.timer)
+      this.timer = setInterval(() => {
+        this.getMeasurement()
+      }, ms)
     },
     goDetail(id) {
       this.$router.push({
@@ -340,8 +367,68 @@ export default {
         }
       })
     },
+    getEmptyData(start, end) {
+      let result = []
+      let startTimeStamp = start || new Date().getTime()
+      let endTimeStamp = end || new Date().getTime()
+      let diff = endTimeStamp - startTimeStamp
+      let timeSpacing = this.getTimeSpacing(this.getGuanluary(diff))
+      for (let i = start; i < endTimeStamp; i += timeSpacing) {
+        result.push(i)
+      }
+      return result.slice(1)
+    },
+    getGuanluary(val, format) {
+      let diff = val / 1000
+      let timeType
+      let formatRes = ''
+      // <= 1h(1 * 60 * 60s) --> minute, second point, max 60 * 12 = 720
+      // <= 12h(12 * 60 * 60s) --> hour, minute point, max 12 * 60 = 720
+      // <= 30d(30 * 24 * 60 * 60s) --> day, hour point, max 24 * 30 = 720
+      // <= 24m+ --> month, day point, max 30 * 24 = 720
+      if (diff <= 1 * 60 * 60) {
+        timeType = 'minute'
+        formatRes = 'YYYY-MM-DD HH:mm:ss'
+      } else if (diff <= 12 * 60 * 60) {
+        timeType = 'hour'
+        formatRes = 'YYYY-MM-DD HH:mm'
+      } else if (diff <= 30 * 24 * 60 * 60) {
+        timeType = 'day'
+        formatRes = 'YYYY-MM-DD HH:00'
+      } else {
+        timeType = 'month'
+        formatRes = 'YYYY-MM-DD'
+      }
+      if (format) {
+        return formatRes
+      }
+      return timeType
+    },
+    getTimeSpacing(type) {
+      // <= 1h(1 * 60 * 60s) --> minute, second point, max 60 * 12 = 720 period 5s
+      // <= 12h(12 * 60 * 60s) --> hour, minute point, max 12 * 60 = 720 period 1m
+      // <= 30d(30 * 24 * 60 * 60s) --> day, hour point, max 24 * 30 = 720 period 1h
+      // <= 24m+ --> month, day point, max 30 * 24 = 720 period 1d
+      let result = ''
+      switch (type) {
+        case 'minute':
+          result = 5 * 1000
+          break
+        case 'hour':
+          result = 1 * 60 * 1000
+          break
+        case 'day':
+          result = 1 * 60 * 60 * 1000
+          break
+        case 'month':
+          result = 1 * 24 * 60 * 60 * 1000
+          break
+      }
+      return result
+    },
     changeTimeRangeFnc() {
-      this.resetTimer()
+      this.getMeasurement()
+      //this.resetTimer()
     },
     getTableNames() {
       let filter = {
@@ -438,6 +525,16 @@ export default {
     ::v-deep {
       .el-tabs__content {
         overflow-y: auto;
+      }
+    }
+  }
+  .filter-datetime-range {
+    font-size: 12px;
+    line-height: 32px;
+    ::v-deep {
+      font-size: 12px;
+      .el-input {
+        font-size: 12px;
       }
     }
   }

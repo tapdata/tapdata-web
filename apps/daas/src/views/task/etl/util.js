@@ -4,7 +4,8 @@ export function getSubTaskStatus(rows = []) {
   const statusMap = {
     running: ['scheduling', 'running', 'pausing', 'stopping', 'scheduling'],
     not_running: ['edit', 'wait_run', 'pause', 'stop', 'complete', 'schedule_failed'],
-    error: ['error']
+    error: ['error'],
+    edit: ['edit']
   }
   const len = rows.length
   let result = [],

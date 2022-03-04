@@ -320,7 +320,6 @@ export default {
       if (statuses?.length) {
         let statusResult = getSubTaskStatus(statuses)
         result.statusResult = statusResult
-        let a = statusResult.every(t => t.status === 'not_running' && t.count)
       }
       this.statusResult = result.statusResult
       return result

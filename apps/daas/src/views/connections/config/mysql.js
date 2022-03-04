@@ -163,7 +163,21 @@ export default function (vm) {
         type: 'switch',
         field: 'shareCdcEnable',
         label: vm.$t('connection_form_shared_mining'),
-        tip: vm.$t('connection_form_shared_mining_tip')
+        tip: vm.$t('connection_form_shared_mining_tip'),
+        show: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'connection_type',
+                value: 'target'
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          }
+        ]
       },
       {
         type: 'switch',
@@ -222,6 +236,7 @@ export default function (vm) {
         field: 'persistenceMongodb_collection',
         label: vm.$t('share_form_setting_table_name'),
         options: [],
+        allowCreate: true,
         required: true,
         show: false,
         dependOn: [

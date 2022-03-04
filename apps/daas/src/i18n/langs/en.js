@@ -442,7 +442,8 @@ export default {
   connection_form_user_name: 'Account',
   connection_form_password: 'Password',
   connection_form_shared_mining: 'Shared mining',
-  connection_form_shared_mining_tip: 'Shared mining is enabled, you can manage shared mining tasks in the task list',
+  connection_form_shared_mining_tip:
+    'Shared mining will mine incremental logs. When there are multiple incremental tasks, there is no need to repeatedly start the log collection process, which can greatly reduce the occupation and waste of source library resources.',
 
   connection_form_mq_type: 'MQ Type',
   connection_form_mq_topic_set: 'topic name',
@@ -1016,6 +1017,14 @@ export default {
   customer_logs_copy_result: 'copied to clipboard',
 
   // 共享挖掘
+  shared_cdc_placeholder_task_name: 'Please enter the mining task name to search',
+  shared_cdc_placeholder_connection_name: 'Please enter the connection name to search',
+  shared_cdc_setting_no_mongodb_tip: 'Please create a mongodb data source first',
+  shared_cdc_setting_refresh: 'Refresh data',
+  shared_cdc_setting_select_mongodb_tip: 'Please select mongodb connection',
+  shared_cdc_setting_select_table_tip: 'Please select the table name',
+  shared_cdc_setting_select_time_tip: 'Please select the log saving time',
+  shared_cdc_setting_message_edit_save: 'Save successfully, it will take effect after restarting the task',
   share_list_name: 'Mining name',
   share_list_connection: 'Belonging to the connection',
   share_list_time_excavation: 'Excavation time point',
@@ -1052,6 +1061,8 @@ export default {
   share_detail_start_time: 'Start time',
   share_detail_end_time: 'End time',
   share_detail_to: 'to',
+  share_detail_incremental_play: 'Incremental delay',
+  share_detail_incremental_time: 'The time point at which the incremental delay is located',
 
   share_task_table_name: 'Mining task name',
   share_task_table_time: 'Mining time',

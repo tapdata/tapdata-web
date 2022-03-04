@@ -1,9 +1,12 @@
 <template>
   <section class="shared-cache-form section-wrap" v-loading="loading">
     <div class="section-wrap-box flex">
+      <div class="title mb-6">
+        {{ $t($route.params.id ? 'page_title_shared_cache_edit' : 'page_title_shared_cache_create') }}
+      </div>
       <ElForm
         ref="form"
-        class="flex-fill overflow-auto"
+        class="flex-fill overflow-auto pb-4"
         label-width="120px"
         label-position="left"
         :model="form"
@@ -111,6 +114,12 @@
   </section>
 </template>
 <style lang="scss" scoped>
+.shared-cache-form .title {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.85);
+  line-height: 22px;
+}
 .form-input {
   width: 504px;
 }
@@ -186,6 +195,7 @@ export default {
   },
   methods: {
     getData(id) {
+      this.loading = true
       this.$api('shareCache')
         .findOne(id)
         .then(res => {
@@ -201,6 +211,9 @@ export default {
           }
           this.getTableOptions(data.connectionId)
           this.getTableSchema(data.tableName)
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
     getConnectionOptions() {
@@ -228,12 +241,14 @@ export default {
       this.$api('MetadataInstances')
         .getTables(connectionId)
         .then(res => {
-          let options = res?.data || []
-          options.forEach(opt => {
+          let options = []
+          let list = res?.data || []
+          list.forEach(opt => {
             if (opt) {
-              this.tableOptions.push({ label: opt, value: opt })
+              options.push({ label: opt, value: opt })
             }
           })
+          this.tableOptions = options
         })
         .finally(() => {
           this.tableOptionsLoading = false

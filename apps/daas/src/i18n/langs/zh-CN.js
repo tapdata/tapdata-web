@@ -438,7 +438,8 @@ export default {
   connection_form_user_name: '账号',
   connection_form_password: '密码',
   connection_form_shared_mining: '共享挖掘',
-  connection_form_shared_mining_tip: '共享挖掘开启，您可在任务列表中管理共享挖掘任务',
+  connection_form_shared_mining_tip:
+    '共享挖掘会挖掘增量日志，当有多个增量任务时不需要重复开启日志采集进程，能极大缓解源库资源的占用和浪费',
 
   connection_form_mq_type: 'MQ类型',
   connection_form_mq_topic_set: '主题名称',
@@ -978,6 +979,14 @@ export default {
   customer_logs_copy_result: '已复制到剪贴板',
 
   // 共享挖掘
+  shared_cdc_placeholder_task_name: '请输入挖掘任务名搜索',
+  shared_cdc_placeholder_connection_name: '请输入连接名称搜索',
+  shared_cdc_setting_no_mongodb_tip: ' 请先创建mongodb数据源',
+  shared_cdc_setting_refresh: '刷新数据',
+  shared_cdc_setting_select_mongodb_tip: '请选择mongodb连接',
+  shared_cdc_setting_select_table_tip: '请选择表名',
+  shared_cdc_setting_select_time_tip: '请选择日志保存时长',
+  shared_cdc_setting_message_edit_save: '保存成功，重启任务后生效',
   share_list_name: '挖掘名称',
   share_list_connection: '所属连接',
   share_list_time_excavation: '挖掘所处时间点',
@@ -1015,6 +1024,8 @@ export default {
   share_detail_start_time: '开始时间',
   share_detail_end_time: '结束时间',
   share_detail_to: '至',
+  share_detail_incremental_play: '增量延迟',
+  share_detail_incremental_time: '增量延迟所处的时间点',
 
   share_task_table_name: '挖掘任务名称',
   share_task_table_time: '挖掘所处时间',

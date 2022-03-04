@@ -1,66 +1,34 @@
 <template>
   <section class="share-list-wrap section-wrap">
-    <TablePage
-      ref="table"
-      row-key="id+indexName"
-      class="share-list"
-      :remoteMethod="getData"
-      @sort-change="handleSortTable"
-    >
-      <div slot="search">
-        <ul class="search-bar">
-          <li>
-            <el-input
-              clearable
-              class="input-with-select"
-              size="mini"
-              v-model="searchParams.keyword"
-              :placeholder="$t('share_list_dig_task_search')"
-              @input="table.fetch(1, 800)"
-            >
-            </el-input>
-          </li>
-          <template v-if="searchParams.keyword">
-            <li>
-              <el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
-            </li>
-            <li>
-              <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
-            </li>
-          </template>
-        </ul>
-      </div>
+    <TablePage ref="table" row-key="id+indexName" class="share-list" :remoteMethod="getData">
+      <template slot="search">
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+      </template>
       <div slot="operation">
         <el-button class="btn btn-create" type="primary" size="mini" @click="handleSetting">
           <span>{{ $t('share_list_setting') }}</span>
         </el-button>
       </div>
-      <el-table-column
-        :label="$t('share_list_name')"
-        prop="name"
-        sortable="name"
-        :show-overflow-tooltip="true"
-        width="360"
-      >
+      <el-table-column width="360" prop="name" :label="$t('share_list_name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('share_list_connection')" prop="connections" width="250">
+      <el-table-column prop="connections" width="250" :label="$t('share_list_connection')">
         <template slot-scope="scope">
           <div v-for="item in scope.row.connections" :key="item.id">
             <span v-for="op in item" :key="op">{{ op }}</span>
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('share_list_time_excavation')" prop="name">
+      <el-table-column prop="name" :label="$t('share_list_time_excavation')">
         <template slot-scope="scope">
           {{ scope.row.indexName }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('share_list_time')"> </el-table-column>
-      <el-table-column :label="$t('share_list_creat_time')" prop="createTime" width="160"> </el-table-column>
-      <el-table-column :label="$t('share_list_status')" prop="status">
+      <el-table-column :label="$t('share_list_time')" sortable></el-table-column>
+      <el-table-column prop="createTime" width="160" :label="$t('share_list_creat_time')" sortable> </el-table-column>
+      <el-table-column prop="status" :label="$t('share_list_status')">
         <template slot-scope="scope">
           <StatusTag type="text" target="shareCdc" :status="scope.row.status" only-img></StatusTag>
         </template>
@@ -88,29 +56,35 @@
       :visible.sync="settingDialogVisible"
     >
       <el-form
-        :model="digSettingForm"
         ref="digSettingForm"
-        :disabled="!showEditSettingBtn"
-        :rules="rules"
         label-position="left"
         label-width="180px"
+        :model="digSettingForm"
+        :disabled="!showEditSettingBtn"
+        :rules="rules"
       >
-        <el-form-item :label="$t('share_form_setting_connection_name')" size="mini" prop="persistenceMongodb_uri_db">
-          <el-select v-model="digSettingForm.persistenceMongodb_uri_db" placeholder="请选择" @change="handleTables">
+        <el-form-item prop="persistenceMongodb_uri_db" size="mini" :label="$t('share_form_setting_connection_name')">
+          <el-select
+            v-model="digSettingForm.persistenceMongodb_uri_db"
+            :placeholder="$t('shared_cdc_setting_select_mongodb_tip')"
+            @change="handleTables"
+          >
             <el-option v-for="item in mongodbList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
           </el-select>
           <div v-if="showEditSettingBtn && mongodbList.length === 0">
-            <el-link type="primary" target="_blank" href="#/connections/create?databaseType=mongodb"
-              >请先创建mongodb数据源</el-link
-            >
+            <el-link type="primary" target="_blank" href="#/connections/create?databaseType=mongodb">{{
+              $t('shared_cdc_setting_no_mongodb_tip')
+            }}</el-link>
             /
-            <span class="refresh" @click="getMongodb"> 刷新数据 <VIcon class="font-color-sub">refresh</VIcon></span>
+            <span class="refresh" @click="getMongodb">
+              {{ $t('shared_cdc_setting_refresh') }} <VIcon class="font-color-sub">refresh</VIcon></span
+            >
           </div>
         </el-form-item>
-        <el-form-item :label="$t('share_form_setting_table_name')" size="mini" prop="persistenceMongodb_collection">
+        <el-form-item prop="persistenceMongodb_collection" size="mini" :label="$t('share_form_setting_table_name')">
           <el-select
             v-model="digSettingForm.persistenceMongodb_collection"
-            placeholder="请选择"
+            :placeholder="$t('shared_cdc_setting_select_table_tip')"
             allow-create
             filterable
           >
@@ -123,18 +97,21 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('share_form_setting_log_time')" size="mini">
-          <el-select v-model="digSettingForm.share_cdc_ttl_day" placeholder="请选择" allow-create filterable>
+        <el-form-item size="mini" :label="$t('share_form_setting_log_time')">
+          <el-select
+            allow-create
+            filterable
+            v-model="digSettingForm.share_cdc_ttl_day"
+            :placeholder="$t('shared_cdc_setting_select_time_tip')"
+          >
             <el-option v-for="op in logSaveList" :key="op" :label="op + $t('share_form_edit_day')" :value="op">
             </el-option>
           </el-select>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button class="message-button-cancel" @click="settingDialogVisible = false" size="mini">{{
-          $t('button_cancel')
-        }}</el-button>
-        <el-button type="primary" :disabled="!showEditSettingBtn" @click="saveSetting()" size="mini">{{
+        <el-button size="mini" @click="settingDialogVisible = false">{{ $t('button_cancel') }}</el-button>
+        <el-button size="mini" type="primary" :disabled="!showEditSettingBtn" @click="saveSetting()">{{
           $t('button_confirm')
         }}</el-button>
       </span>
@@ -147,36 +124,20 @@
       :close-on-click-modal="false"
       :visible.sync="editDialogVisible"
     >
-      <el-form :model="editForm" label-position="left" label-width="150px">
-        <el-form-item :label="$t('share_form_edit_name')" size="mini" required>
+      <el-form label-position="left" label-width="150px" :model="editForm">
+        <el-form-item size="mini" required :label="$t('share_form_edit_name')">
           <el-input v-model="editForm.name"></el-input>
         </el-form-item>
-        <!--        <el-form-item :label="$t('share_form_edit_dig_time')" size="mini" required>-->
-        <!--          <el-row>-->
-        <!--            <el-col :span="24" class="pb-3">-->
-        <!--              <el-select v-model="editForm.syncTimePoint" placeholder="请选择">-->
-        <!--                <el-option v-for="op in options" :key="op.value" :label="op.label" :value="op.value"> </el-option>-->
-        <!--              </el-select>-->
-        <!--            </el-col>-->
-        <!--            <el-col :span="24">-->
-        <!--              <el-date-picker-->
-        <!--                format="yyyy-MM-dd HH:mm:ss"-->
-        <!--                v-model="editForm.syncTineZone"-->
-        <!--                type="datetime"-->
-        <!--              ></el-date-picker>-->
-        <!--            </el-col>-->
-        <!--          </el-row>-->
-        <!--        </el-form-item>-->
-        <el-form-item :label="$t('share_form_setting_log_time')" size="mini">
+        <el-form-item size="mini" :label="$t('share_form_setting_log_time')">
           <el-select v-model="editForm.storageTime" placeholder="请选择">
             <el-option v-for="op in logSaveList" :key="op" :label="op + $t('share_form_edit_day')" :value="op">
             </el-option>
           </el-select>
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button class="message-button-cancel" @click="cancelEdit" size="mini">{{ $t('button_cancel') }}</el-button>
-        <el-button type="primary" @click="saveEdit()" size="mini">{{ $t('button_confirm') }}</el-button>
+      <span class="dialog-footer" slot="footer">
+        <el-button @click="cancelEdit" size="mini">{{ $t('button_cancel') }}</el-button>
+        <el-button size="mini" type="primary" @click="saveEdit()">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
     <DownAgent ref="agentDialog" type="taskRunning"></DownAgent>
@@ -185,20 +146,36 @@
 
 <script>
 import TablePage from '@/components/TablePage'
+import FilterBar from '@/components/filter-bar'
 import DownAgent from '../../downAgent/agentDown'
 import StatusTag from '@/components/StatusTag'
 
+let timeout = null
 export default {
   components: {
     TablePage,
+    FilterBar,
     DownAgent,
     StatusTag
   },
   data() {
     return {
       searchParams: {
-        keyword: ''
+        taskName: '',
+        connectionName: ''
       },
+      filterItems: [
+        {
+          placeholder: this.$t('shared_cdc_placeholder_task_name'),
+          key: 'taskName',
+          type: 'input'
+        },
+        {
+          placeholder: this.$t('shared_cdc_placeholder_connection_name'),
+          key: 'connectionName',
+          type: 'input'
+        }
+      ],
       order: 'createTime DESC',
       list: null,
       settingDialogVisible: false,
@@ -213,8 +190,6 @@ export default {
       editForm: {
         id: '',
         name: '',
-        syncTimePoint: 'localTZ',
-        syncTineZone: '',
         storageTime: 3
       },
       options: [
@@ -241,8 +216,12 @@ export default {
       showEditSettingBtn: false, //禁用
       //rules
       rules: {
-        persistenceMongodb_uri_db: [{ required: true, message: '请选择MongoDB连接名称', trigger: 'blur' }],
-        persistenceMongodb_collection: [{ required: true, message: '请选择MongoDB表名', trigger: 'blur' }]
+        persistenceMongodb_uri_db: [
+          { required: true, message: this.$t('shared_cdc_setting_select_mongodb_tip'), trigger: 'blur' }
+        ],
+        persistenceMongodb_collection: [
+          { required: true, message: this.$t('shared_cdc_setting_select_table_tip'), trigger: 'blur' }
+        ]
       }
     }
   },
@@ -250,43 +229,42 @@ export default {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
     //是否可以全局设置
     this.check()
+    //定时轮询
+    timeout = setInterval(() => {
+      this.table.fetch(null, 0, true)
+    }, 30000)
   },
   computed: {
     table() {
       return this.$refs.table
     }
   },
-  methods: {
-    expandChange() {},
-    // 重置
-    reset(name) {
-      if (name === 'reset') {
-        this.searchParams = {
-          keyword: '',
-          isFuzzy: true
-        }
-      }
+  watch: {
+    '$route.query'() {
       this.table.fetch(1)
-    },
-
+    }
+  },
+  destroyed() {
+    clearInterval(timeout)
+  },
+  methods: {
     // 获取列表数据
     getData({ page }) {
       let { current, size } = page
-      let { keyword } = this.searchParams
+      let { taskName, connectionName } = this.searchParams
       let where = {}
-      if (keyword && keyword.trim()) {
-        let filterObj = { like: keyword, options: 'i' }
-        where.or = [{ name: filterObj }]
-      }
-
+      taskName && (where.taskName = taskName)
+      connectionName && (where.connectionName = connectionName)
       let filter = {
-        order: this.order,
+        order: 'createTime DESC',
         limit: size,
         skip: (current - 1) * size,
         where
       }
       return this.$api('logcollector')
-        .get(filter)
+        .get({
+          filter: JSON.stringify(filter)
+        })
         .then(res => {
           let list = res.data?.items || []
           // this.table.setCache({ keyword })
@@ -360,7 +338,7 @@ export default {
             .then(res => {
               if (res) {
                 this.settingDialogVisible = false
-                this.$message.success('保存全局设置成功')
+                this.$message.success(this.$t('message_save_ok'))
               }
             })
         }
@@ -411,7 +389,9 @@ export default {
     // 编辑
     edit(item) {
       this.editDialogVisible = true
-      this.editForm = item
+      this.editForm.id = item.id
+      this.editForm.name = item.name
+      this.editForm.storageTime = item.storageTime
     },
     // 取消编辑
     cancelEdit() {
@@ -434,7 +414,8 @@ export default {
         .then(res => {
           if (res) {
             this.editDialogVisible = false
-            this.$message.success('保存成功，重启任务后生效')
+            this.table.fetch(1)
+            this.$message.success(this.$t('shared_cdc_setting_message_edit_save'))
           }
         })
     },
@@ -446,12 +427,6 @@ export default {
           id: item.id
         }
       })
-    },
-
-    // 表格排序
-    handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
-      this.table.fetch(1)
     }
   }
 }
