@@ -258,8 +258,8 @@ export default function () {
       },
       {
         type: 'slot',
-        field: 'scheduledRunTime',
-        slot: 'scheduledRunTime',
+        field: 'scheduleTime',
+        slot: 'scheduleTime',
         label: '计划运行时间',
         show: false,
         dependOn: [
@@ -268,6 +268,17 @@ export default function () {
               {
                 field: 'sync_type',
                 value: 'initial_sync+cdc'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'sync_type',
+                value: 'cdc'
               }
             ],
             triggerConfig: {

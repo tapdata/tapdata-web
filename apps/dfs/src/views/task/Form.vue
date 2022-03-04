@@ -76,13 +76,16 @@
                     <span class="font-color-sub fs-8">{{ $t('task_form_setting_sync_points_tip') }}</span>
                   </el-row>
                 </template>
-                <template slot="scheduledRunTime">
+                <template slot="scheduleTime">
                   <ElRow>
+                    <ElSwitch v-model="settingModel.isSchedule"></ElSwitch>
                     <ElDatePicker
-                      value-format="timestamp"
+                      v-if="settingModel.isSchedule"
+                      value-format="yyyy-MM-dd HH:mm:ss"
                       format="yyyy-MM-dd HH:mm:ss"
-                      v-model="settingModel.scheduledRunTime"
+                      v-model="settingModel.scheduleTime"
                       type="datetime"
+                      class="ml-4"
                       :picker-options="getCurrentOptions()"
                     ></ElDatePicker>
                   </ElRow>
@@ -1606,12 +1609,23 @@ export default {
       return result?.items?.[0]
     },
     getCurrentOptions() {
-      return {
+      let current = new Date()
+      let options = {
         disabledDate: time => {
-          return new Date(time).getTime() < new Date().getTime()
+          return time.getTime() < current.getTime() - 8.64e7
         },
         selectableRange: null
       }
+      // same day
+      if (
+        this.$moment(current).format('YYYY-MM-DD') ===
+        this.$moment(this.settingModel.scheduleTime || current).format('YYYY-MM-DD')
+      ) {
+        options.selectableRange = this.$moment(current).format('HH:mm:ss') + '-23:59:59'
+      } else {
+        options.selectableRange = '00:00:00' + '-23:59:59'
+      }
+      return options
     }
   }
 }

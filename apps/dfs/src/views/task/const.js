@@ -24,7 +24,7 @@ export const SETTING_MODEL = {
   ],
   isSchedule: false,
   cronExpression: '',
-  scheduledRunTime: ''
+  scheduleTime: ''
 }
 
 export const DATASOURCE_MODEL = {
