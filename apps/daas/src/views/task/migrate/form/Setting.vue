@@ -215,6 +215,12 @@ export default {
                 'x-component': 'Switch'
                 // default: true
               },
+              automaticallyCreateTables: {
+                title: '自动建表',
+                type: 'boolean',
+                'x-decorator': 'FormItem',
+                'x-component': 'Switch'
+              },
               noPrimaryKey: {
                 title: '支持无主键同步',
                 type: 'boolean',

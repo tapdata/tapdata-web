@@ -4,15 +4,23 @@
       <strong>{{ $t('dag_dialog_field_mapping_table_setting') }}</strong
       >: {{ $t('dag_dialog_field_mapping_tip') }}
       <div class="float-end mt-5">
-        <ElButton v-if="!readOnly && !transform.hiddenChangeValue" size="mini" @click="dialogFieldVisible = true">{{
-          $t('dag_dialog_field_mapping_field_rename')
-        }}</ElButton>
-        <ElButton v-if="!readOnly && !transform.hiddenChangeValue" size="mini" @click="handleBatchDataType">
+        <ElButton
+          v-if="modeMapping[transform.mode]['batch_field_rename']"
+          size="mini"
+          @click="dialogFieldVisible = true"
+          >{{ $t('dag_dialog_field_mapping_field_rename') }}</ElButton
+        >
+        <ElButton v-if="modeMapping[transform.mode]['batch_field_type']" size="mini" @click="handleBatchDataType">
           {{ $t('dag_dialog_field_mapping_change_type_field_rename') }}</ElButton
         >
-        <ElButton v-if="!readOnly" class="mr-5" size="mini" type="primary" @click="rollbackAll">{{
-          $t('dag_dialog_field_mapping_rollback_all')
-        }}</ElButton>
+        <ElButton
+          v-if="modeMapping[transform.mode]['batch_rollback']"
+          class="mr-5"
+          size="mini"
+          type="primary"
+          @click="rollbackAll"
+          >{{ $t('dag_dialog_field_mapping_rollback_all') }}</ElButton
+        >
       </div>
     </div>
     <div class="task-form-body">
@@ -73,6 +81,7 @@
           </div>
           <div class="item ml-5" v-if="!readOnly">
             <ElButton
+              v-if="modeMapping[transform.mode]['rollback']"
               size="mini"
               style="padding: 6px 15px"
               @click.stop="rollbackTable(selectRow.sinkObjectName, selectRow.sourceTableId)"
@@ -119,7 +128,7 @@
           <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')" width="260">
             <template slot-scope="scope">
               <div
-                v-if="!scope.row.is_deleted && !hiddenFieldProcess && !readOnly"
+                v-if="!scope.row.is_deleted && modeMapping[transform.mode]['field_rename']"
                 @click="edit(scope.row, 'field_name')"
               >
                 <span :show-overflow-tooltip="true"
@@ -131,7 +140,10 @@
           </ElTableColumn>
           <ElTableColumn :label="$t('dag_dialog_field_mapping_target_type')" width="150">
             <template slot-scope="scope">
-              <div v-if="!scope.row.is_deleted && !readOnly" @click="edit(scope.row, 'data_type')">
+              <div
+                v-if="!scope.row.is_deleted && modeMapping[transform.mode]['field_type']"
+                @click="edit(scope.row, 'data_type')"
+              >
                 <span>{{ scope.row.t_data_type }}</span>
                 <i v-if="!scope.row.t_data_type" class="icon-error el-icon-warning"></i>
                 <i class="icon el-icon-arrow-down"></i>
@@ -144,7 +156,7 @@
           <ElTableColumn :label="$t('dag_dialog_field_mapping_target_precision')" width="150">
             <template slot-scope="scope">
               <div
-                v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && !readOnly"
+                v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && modeMapping[transform.mode]['precision']"
                 @click="edit(scope.row, 'precision')"
               >
                 <span>{{ scope.row.t_precision }}</span>
@@ -158,7 +170,7 @@
           <ElTableColumn :label="$t('dag_dialog_field_mapping_target_scale')" width="100">
             <template slot-scope="scope">
               <div
-                v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit && !readOnly"
+                v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit && modeMapping[transform.mode]['scale']"
                 @click="edit(scope.row, 'scale')"
               >
                 <span>{{ scope.row.t_scale }}</span>
@@ -172,7 +184,7 @@
           <ElTableColumn
             :label="$t('dag_dialog_field_mapping_operate')"
             width="80"
-            v-if="!hiddenFieldProcess && !readOnly"
+            v-if="modeMapping[transform.mode]['field_table_ops']"
           >
             <template slot-scope="scope">
               <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true)">
@@ -373,6 +385,7 @@ import VIcon from 'web-core/components/VIcon'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
 import { ws } from '@daas/api'
 import { delayTrigger } from '@/utils/util'
+import { modeMapping } from './const'
 export default {
   name: 'FieldMappingDialog',
   components: { VIcon },
@@ -383,15 +396,7 @@ export default {
     updateMetadata: Function,
     getNavDataMethod: Function,
     field_process: Array,
-    transform: Object,
-    hiddenFieldProcess: {
-      type: Boolean,
-      default: false
-    },
-    readOnly: {
-      type: Boolean,
-      default: false
-    }
+    transform: Object
   },
   data() {
     return {
@@ -453,7 +458,13 @@ export default {
       sourceList: [],
       showAddBtn: false, //展示新增按钮
       oldBatchOperationList: [],
-      sourceTypeMapping: []
+      sourceTypeMapping: [],
+      modeMapping
+    }
+  },
+  created() {
+    if (!this.transform?.mode || this.transform?.mode === '') {
+      this.transform.mode = 'all' //没有特殊处理都是全部功能打开
     }
   },
   mounted() {
