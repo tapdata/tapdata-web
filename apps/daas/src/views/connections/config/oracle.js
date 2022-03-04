@@ -310,6 +310,7 @@ export default function (vm) {
         label: vm.$t('share_form_setting_table_name'),
         options: [],
         required: true,
+        allowCreate: true,
         show: false,
         dependOn: [
           {

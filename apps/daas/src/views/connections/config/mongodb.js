@@ -468,6 +468,7 @@ export default function (vm) {
         field: 'persistenceMongodb_collection',
         label: vm.$t('share_form_setting_table_name'),
         options: [],
+        allowCreate: true,
         required: true,
         show: false,
         dependOn: [
