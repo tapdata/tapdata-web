@@ -324,7 +324,7 @@
       </span>
     </el-dialog>
     <el-dialog
-      width="800px"
+      width="500px"
       append-to-body
       :title="'修改目标表名'"
       custom-class="field-maping-table-dialog"
@@ -340,7 +340,7 @@
           label-position="top"
           style="width: 100%"
         >
-          <ElInput v-model="changeTableNameForm.new" size="mini" maxlength="50" show-word-limit></ElInput>
+          <ElInput v-model="changeTableNameForm.new" size="mini" maxlength="50" show-word-limit class="mb-3"></ElInput>
           <VIcon class="color-primary" size="14">info</VIcon>
           <span>自定义名称的表，不会应用：前后缀和大小写转换操作</span>
         </el-form>
@@ -350,7 +350,7 @@
         <el-button
           size="mini"
           type="primary"
-          :disabled="changeTableNameForm.old === changeTableNameForm.new"
+          :disabled="changeTableNameForm.new && changeTableNameForm.old === changeTableNameForm.new"
           @click="handleOneTableNameSave()"
           >{{ $t('button_confirm') }}</el-button
         >
@@ -442,7 +442,7 @@ export default {
         table_suffix: [{ validator: validateSuffix, trigger: 'blur' }]
       },
       changeTableNameFormRules: {
-        new: [{ required: true, trigger: 'change' }]
+        new: [{ required: true, message: '请输入表名', trigger: 'blur' }]
       },
       changeTableNameForm: {
         old: '',
