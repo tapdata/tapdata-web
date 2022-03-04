@@ -4,6 +4,13 @@
       <div>
         <span style="font-size: 14px">{{ inspect.name }}</span>
         <span class="font-color-linfo ml-3">{{ typeMap[type] }}</span>
+        <ElButton type="text" class="ml-8" :disabled="verifyAgainDisabled" @click.prevent.stop="verifyAgain([])">{{
+          $t('verify_operation_verify_again')
+        }}</ElButton>
+        <span class="button-icon">
+          <VIcon class="color-disable" size="14">info</VIcon>
+          <span class="button-icon__info ml-2">{{ $t('verify_operation_verify_again_info') }}</span>
+        </span>
       </div>
       <div v-if="inspect.inspectMethod !== 'row_count'">
         <div class="flex align-items-center">
@@ -27,8 +34,14 @@
         <VIcon class="ml-2 color-info" size="12">close</VIcon>
       </span>
     </div>
-    <div class="result-table mt-4" v-if="inspect && !['running', 'scheduling'].includes(inspect.status)">
-      <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
+    <div class="result-table mt-4" v-loading="inspect && !['running', 'scheduling'].includes(inspect.status)">
+      <ResultTable
+        ref="singleTable"
+        :type="type"
+        :data="tableData"
+        @row-click="rowClick"
+        @verify-again="verifyAgain"
+      ></ResultTable>
       <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
     </div>
   </section>
@@ -60,12 +73,24 @@
   display: flex;
   overflow: auto;
 }
+.button-icon {
+  margin-left: 12px;
+  .button-icon__info {
+    display: none;
+  }
+  &:hover {
+    .button-icon__info {
+      display: inline;
+    }
+  }
+}
 </style>
 <script>
 import ResultTable from './ResultTable'
 import ResultView from './ResultView'
+import VIcon from '@/components/VIcon'
 export default {
-  components: { ResultTable, ResultView },
+  components: { ResultTable, ResultView, VIcon },
   data() {
     return {
       loading: false,
@@ -93,6 +118,9 @@ export default {
       //   })
       // }
       return list
+    },
+    verifyAgainDisabled() {
+      return !['done', 'error'].includes(this.inspect.status)
     }
   },
   created() {
@@ -233,6 +261,25 @@ export default {
     },
     showErrorMessage() {
       this.$alert(this.errorMsg)
+    },
+    verifyAgain(ids = []) {
+      this.$axios
+        .post(
+          'tm/api/Inspects/update?where=' +
+            encodeURIComponent(
+              JSON.stringify({
+                id: this.resultInfo.inspect_id
+              })
+            ),
+          {
+            status: 'scheduling',
+            inspectResultId: this.resultInfo.id,
+            taskIds: ids
+          }
+        )
+        .then(() => {
+          this.getData()
+        })
     }
   }
 }
