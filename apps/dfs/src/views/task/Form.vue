@@ -575,6 +575,7 @@ export default {
       transferData: {
         table_prefix: '',
         table_suffix: '',
+        tableOperations: [],
         selectSourceArr: [],
         topicData: [],
         queueData: []
@@ -714,6 +715,7 @@ export default {
         this.transferData = {
           table_prefix: stages[1].table_prefix,
           table_suffix: stages[1].table_suffix,
+          tableOperations: stages[1].tableOperations,
           tableNameTransform: stages[1].tableNameTransform,
           fieldsNameTransform: stages[1].fieldsNameTransform,
           field_process: stages[0].field_process,
@@ -1462,6 +1464,7 @@ export default {
           name: this.dataSourceModel.target_connectionName,
           table_prefix: this.transferData.table_prefix,
           table_suffix: this.transferData.table_suffix,
+          tableOperations: this.transferData.tableOperations,
           tableNameTransform: this.transferData.tableNameTransform,
           fieldsNameTransform: this.transferData.fieldsNameTransform,
           type: 'database',
@@ -1559,6 +1562,7 @@ export default {
       this.transferData.table_suffix = data.table_suffix
       this.transferData.tableNameTransform = data.tableNameTransform
       this.transferData.fieldsNameTransform = data.fieldsNameTransform
+      this.transferData.tableOperations = data.tableOperations
     },
     selectRowFieldProcess(field_process) {
       this.transferData.field_process = field_process

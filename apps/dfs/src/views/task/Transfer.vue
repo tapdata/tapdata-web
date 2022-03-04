@@ -24,7 +24,10 @@
       @change="handleChangeTransfer"
     >
       <template #right="{ option }">
-        <span>
+        <span v-if="tableOperations.length > 0">
+          <span>{{ getRenameTableLabel(option) }}</span>
+        </span>
+        <span v-else>
           <span>{{ transferData.table_prefix }}</span>
           <span>{{ option.label }}</span>
           <span>{{ transferData.table_suffix }}</span>
@@ -47,7 +50,10 @@
       @change="handleChangeTransfer"
     >
       <template #right="{ option }">
-        <span>
+        <span v-if="tableOperations.length > 0">
+          <span>{{ getRenameTableLabel(option) }}</span>
+        </span>
+        <span v-else>
           <span>{{ transferData.table_prefix }}</span>
           <span>{{ option.label }}</span>
           <span>{{ transferData.table_suffix }}</span>
@@ -87,7 +93,11 @@ export default {
       reloadLoading: false // 重新加载
     }
   },
-
+  computed: {
+    tableOperations() {
+      return this.transferData?.tableOperations || []
+    }
+  },
   methods: {
     //获取左边数据
     getTable(id, bidirectional) {
@@ -209,6 +219,9 @@ export default {
           this.reloadLoading = false
           this.progress = 0 //加载完成
         })
+    },
+    getRenameTableLabel(opt = {}) {
+      return this.tableOperations.find(t => t.originalTableName === opt.key)?.tableName || ''
     }
   }
 }

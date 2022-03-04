@@ -40,7 +40,7 @@
             <div class="task-form-text-box">
               <div class="source">{{ item.sourceObjectName }}</div>
               <div class="target">
-                <span>{{ item.sinkObjectName }}</span>
+                <span class="target-span">{{ item.sinkObjectName }}</span>
                 <VIcon class="color-primary ml-2" size="14" @click="showChangeTableNameModal(item)">edit-outline</VIcon>
               </div>
               <div class="select">
@@ -463,7 +463,8 @@ export default {
           tableNameTransform: this.transform.tableNameTransform || '',
           fieldsNameTransform: this.transform.fieldsNameTransform,
           table_prefix: this.transform.table_prefix,
-          table_suffix: this.transform.table_suffix
+          table_suffix: this.transform.table_suffix,
+          tableOperations: this.transform.tableOperations || []
         }
         this.currentForm = JSON.parse(JSON.stringify(this.form))
       }
@@ -641,15 +642,22 @@ export default {
       this.$refs.changeTableNameFormRef.validate(valid => {
         if (valid) {
           this.changeTableNameForm.visible = false
-          this.updateParentMetaData('table', {
-            tableOperations: [
-              {
-                type: 'rename',
-                originalTableName: this.changeTableNameForm.old,
-                tableName: this.changeTableNameForm.new
-              }
-            ]
+          let isInclude = false
+          this.form.tableOperations.forEach(el => {
+            if (el.originalTableName === this.changeTableNameForm.old) {
+              el.tableName = this.changeTableNameForm.new
+              isInclude = true
+            }
           })
+          if (!isInclude) {
+            this.form.tableOperations.push({
+              type: 'rename',
+              originalTableName: this.changeTableNameForm.old,
+              tableName: this.changeTableNameForm.new
+            })
+          }
+          this.copyForm()
+          this.updateParentMetaData('table', this.form)
         }
       })
     },
@@ -675,7 +683,8 @@ export default {
             tableNameTransform: '',
             fieldsNameTransform: '',
             table_prefix: '',
-            table_suffix: ''
+            table_suffix: '',
+            tableOperations: []
           }
           this.copyForm()
           this.$nextTick(() => {
@@ -1072,7 +1081,8 @@ export default {
         table_prefix: this.form.table_prefix,
         table_suffix: this.form.table_suffix,
         tableNameTransform: this.form.tableNameTransform,
-        fieldsNameTransform: this.form.fieldsNameTransform
+        fieldsNameTransform: this.form.fieldsNameTransform,
+        tableOperations: this.form.tableOperations
       }
       if ((result.checkDataType || result.checkInvalid) && result.noFieldsTable === 0) {
         if (!hiddenMsg) {
@@ -1268,15 +1278,22 @@ export default {
             white-space: nowrap;
           }
           .target {
+            display: flex;
+            align-items: center;
             font-size: 12px;
             font-weight: 400;
             color: #ef9868;
             line-height: 17px;
             margin-top: 16px;
             text-align: left;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            //overflow: hidden;
+            //text-overflow: ellipsis;
+            //white-space: nowrap;
+            .target-span {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
           }
           .select {
             font-size: 12px;
