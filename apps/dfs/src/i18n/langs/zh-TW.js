@@ -490,7 +490,7 @@ export default {
   task_mapping_dialog_constant: '不變',
   task_mapping_dialog_to_uppercase: '轉大寫',
   task_mapping_dialog_lowercase: '轉小寫',
-  task_mapping_dialog_modify_target_field_name: '修改目標字段長度',
+  task_mapping_dialog_modify_target_field_name: '修改目标字段名称',
   task_mapping_dialog_modify_target_field_type: '修改目標表字段類型',
   task_mapping_dialog_modify_target_field_length: '修改目標字段長度',
   task_mapping_dialog_modify_target_field_accuracy: '修改目標表精度',

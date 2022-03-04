@@ -750,7 +750,7 @@ export default {
   task_mapping_dialog_constant: 'Unchanged',
   task_mapping_dialog_to_uppercase: 'Turn to uppercase',
   task_mapping_dialog_lowercase: 'turn to lowercase',
-  task_mapping_dialog_modify_target_field_name: 'Modify target field length',
+  task_mapping_dialog_modify_target_field_name: 'Modify target field name',
   task_mapping_dialog_modify_target_field_type: 'Modify the target table field type',
   task_mapping_dialog_modify_target_field_length: 'Modify the target field length',
   task_mapping_dialog_modify_target_field_accuracy: 'Modify target table accuracy',
