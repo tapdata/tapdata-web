@@ -13,7 +13,7 @@
           <Connection ref="connection" :ids="connectionIds" @change="loadTask"></Connection>
         </ElTabPane>
         <ElTabPane :label="$t('task_monitor_history_run_record')" name="history" lazy>
-          <History :ids="[task.id]" :operations="operations"></History>
+          <History :ids="[task.id]" :operations="operations" :task="task"></History>
         </ElTabPane>
         <ElTabPane v-if="showContent" :label="$t('task_monitor_sync_content')" name="content" lazy>
           <FieldMapping ref="fieldMapping" :readOnly="true" :field_process="field_process"></FieldMapping>

@@ -1445,5 +1445,27 @@ module.exports = {
       ],
       totalInputDataCount: '@integer(0, 100)'
     }
+  },
+  '/tm/api/DataFlowRecord': {
+    reqId: 'd8c5f1bb-e617-4e2e-93ab-24c248eccef1',
+    ts: 1646476290267,
+    code: 'ok',
+    data: {
+      total: 1,
+      'items|1-50': [
+        {
+          id: '@id',
+          customId: '60cc0c304e190a579cbe306c',
+          createUser: 'jason@tapdata.io',
+          dataFlowId: '62233405b3e2d40f364b48f3',
+          dataFlowStartTime: '2022-03-05T09:57:28.503+00:00',
+          dataFlowEndTime: '2022-03-05T09:59:05.171+00:00',
+          'startType|1': ['manual', 'auto'],
+          'dataFlowStatus|1': ['running', 'completed', 'paused', 'error'],
+          createTime: '2022-03-05T10:31:25.787+00:00',
+          user_id: '60cc0c5887e32100106b6a17'
+        }
+      ]
+    }
   }
 }
