@@ -111,7 +111,7 @@
             v-if="scope.row.status === 'pending'"
             size="mini"
             type="text"
-            :disabled="$disabledByPermission('API_publish_all_data', scope.row.user_id)"
+            :disabled="$disabledByPermission('API_publish_all_data', scope.row.userId)"
             @click="publish(scope.row)"
           >
             {{ $t('modules_publish_api') }}
@@ -121,7 +121,7 @@
             v-readonlybtn="'API_publish'"
             size="mini"
             type="text"
-            :disabled="$disabledByPermission('API_publish_all_data', scope.row.user_id)"
+            :disabled="$disabledByPermission('API_publish_all_data', scope.row.userId)"
             @click="unpublish(scope.row)"
           >
             {{ $t('modules_unpublish_api') }}
@@ -139,7 +139,7 @@
             v-readonlybtn="'API_delete'"
             size="mini"
             type="text"
-            :disabled="$disabledByPermission('API_delete_all_data', scope.row.user_id)"
+            :disabled="$disabledByPermission('API_delete_all_data', scope.row.userId)"
             @click="remove(scope.row)"
             >{{ $t('button_delete') }}</ElButton
           >
@@ -479,10 +479,7 @@ export default {
     // 删除列表
     remove(item) {
       const h = this.$createElement
-      let message = h('p', [
-        this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#409EFF' } }, item.name)
-      ])
+      let message = h('p', [this.$t('message.deleteOrNot') + ' ' + item.name])
       this.$confirm(message, this.$t('message.prompt'), {
         type: 'warning'
       }).then(resFlag => {

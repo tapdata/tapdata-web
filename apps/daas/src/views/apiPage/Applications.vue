@@ -85,7 +85,7 @@
     <ElDialog
       width="600px"
       custom-class="create-dialog"
-      :title="$t('metadata.createNewModel')"
+      :title="$t('application_create')"
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
@@ -221,10 +221,7 @@ export default {
     // 移除
     remove(item) {
       const h = this.$createElement
-      let message = h('p', [
-        this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#409EFF' } }, item.name)
-      ])
+      let message = h('p', [this.$t('message.deleteOrNot') + ' ' + item.name])
       this.$confirm(message, this.$t('message.prompt'), {
         type: 'warning'
       }).then(resFlag => {
@@ -316,7 +313,7 @@ export default {
         .get({})
         .then(res => {
           if (res) {
-            this.roles = res.data
+            this.roles = res.data?.items || []
           }
         })
     },

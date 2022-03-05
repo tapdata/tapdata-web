@@ -99,7 +99,7 @@ export default {
   methods: {
     async getData(id) {
       this.loading = true
-      this.$api('DataFlows')
+      this.$api('Task')
         .get([id])
         .then(res => {
           if (res) {
@@ -111,8 +111,23 @@ export default {
                 res.data['sync_type'] = setting.sync_type
                 item = 'sync_type'
               }
-              if (['createUser', 'sync_type', 'id', 'createTime', 'startTime'].includes(item)) {
-                if (['createTime', 'startTime'].includes(item)) {
+              if (
+                [
+                  'createUser',
+                  'sync_type',
+                  'id',
+                  'createAt',
+                  'startTime',
+                  'initStartTime',
+                  'cdcStartTime',
+                  'taskFinishTime',
+                  'taskLastHour',
+                  'eventTime',
+                  'cdcDelayTime',
+                  'failCount'
+                ].includes(item)
+              ) {
+                if (['createAt', 'startTime', 'initStartTime', 'cdcStartTime', 'taskFinishTime'].includes(item)) {
                   res.data[item] = this.$moment(res.data[item]).format('YYYY-MM-DD HH:mm:ss')
                 }
                 previewData.push({ label: item, value: res.data[item] })

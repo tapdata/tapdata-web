@@ -354,10 +354,7 @@ export default {
     remove(item) {
       const h = this.$createElement
       let _this = this
-      let message = h('p', [
-        this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#48b6e2' } }, item.name)
-      ])
+      let message = h('p', [this.$t('message.deleteOrNot') + ' ' + item.name])
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false

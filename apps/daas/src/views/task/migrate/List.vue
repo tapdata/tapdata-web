@@ -681,7 +681,7 @@ export default {
           }
         })
       }
-      return dataFlows
+      return this.$api('Task')
         .get({
           filter: JSON.stringify(filter)
         })

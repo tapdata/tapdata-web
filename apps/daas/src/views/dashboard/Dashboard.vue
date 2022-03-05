@@ -221,13 +221,19 @@ export default {
         },
         tooltip: {
           trigger: 'item',
+          borderWidth: 0,
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          textStyle: {
+            color: '#fff',
+            fontSize: 12
+          },
           formatter: params => {
             let item = params
             let val = item.value
             if (val === 1.1) {
               val = 1
             }
-            let html = item.marker + params.name + `<span style="padding: 0 4px"></span><br/>` + val
+            let html = params.name + `<span style="padding: 0 4px; text-align: center;"></span><br/>` + val
             return html
           }
         }
@@ -238,67 +244,13 @@ export default {
         { key: 'sync_total', value: 0 },
         { key: 'valid_total', value: 0 }
       ],
+      statusList: [
+        { name: this.$t('task_preview_status_running'), label: 'running', value: 0 },
+        { name: this.$t('task_preview_status_edit'), label: 'wait_run', value: 0 },
+        { name: this.$t('task_preview_status_pause'), label: 'pause', value: 0 },
+        { name: this.$t('task_preview_status_error'), key: 'error', value: 0 }
+      ],
 
-      // copyTaskOptions: {
-      //   tooltip: {
-      //     trigger: 'bar'
-      //   },
-      //   legend: {
-      //     // top: 4,
-      //     // right: 0,
-      //     // show: true
-      //   },
-      //   xAxis: {
-      //     type: 'category',
-      //     axisTick: {
-      //       show: true,
-      //       alignWithLabel: true
-      //     },
-      //     axisLine: {
-      //       show: true,
-      //       lineStyle: {
-      //         color: '#D9D9D9'
-      //       }
-      //     },
-      //     axisLabel: {
-      //       show: true,
-      //       interval: 'auto',
-      //       margin: '8'
-      //     },
-      //     // prettier-ignore
-      //     data: ['初始化中', '初始化完成', '增量中', '增量滞后']
-      //   },
-      //   yAxis: {
-      //     type: 'value',
-      //     name: 'Evaporation',
-      //     position: 'right',
-      //     alignTicks: true,
-      //     axisLine: {
-      //       show: true,
-      //       lineStyle: {
-      //         color: '#f00'
-      //       }
-      //     },
-      //     axisLabel: {
-      //       formatter: '{value} ml'
-      //     }
-      //     // axisLabel: {
-      //     //   formatter: function (value) {
-      //     //     if (value >= 1000) {
-      //     //       value = value / 1000 + 'K'
-      //     //     }
-      //     //     return value
-      //     //   }
-      //     // }
-      //   },
-      //   grid: {
-      //     left: 0,
-      //     right: 0,
-      //     top: '24px',
-      //     bottom: 0
-      //   },
-      //   series: []
-      // },
       loading: false,
       migrationTotal: '',
       syncTotal: '',
@@ -329,41 +281,6 @@ export default {
         'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
       },
 
-      // allTaskEchart: {
-      //   tooltip: {
-      //     trigger: 'item',
-      //     formatter: '{b}<br/> {c}'
-      //   },
-      //   legend: {
-      //     data: []
-      //   },
-      //   grid: {
-      //     containLabel: true,
-      //     bottom: '1%'
-      //   },
-      //   series: [
-      //     {
-      //       data: [],
-      //       type: 'pie',
-      //       labelLine: {
-      //         show: false
-      //       },
-      //       avoidLabelOverlap: false,
-      //       label: {
-      //         show: false,
-      //         position: 'center'
-      //       },
-      //       emphasis: {
-      //         label: {
-      //           show: true,
-      //           fontSize: '30',
-      //           fontWeight: 'bold'
-      //         }
-      //       },
-      //       radius: ['40%', '70%']
-      //     }
-      //   ]
-      // },
       transfer: {
         height: 360,
         isHeader: false,
@@ -374,89 +291,7 @@ export default {
       syncJobStatusObj: {},
       migrationJobStatusObj: {},
       dataValidationObj: {}, //数据校验
-      // allsyncJobsEchart: null,
-      // allMigrationJobsEchart: null,
-      // allTransEchart: null,
-      // dataScreening: {
-      //   tooltip: {
-      //     show: false,
-      //     trigger: 'axis',
-      //     axisPointer: {
-      //       type: 'none'
-      //       // crossStyle: {
-      //       // 	color: '#999'
-      //       // }
-      //     }
-      //   },
-      //   toolbox: {
-      //     show: false
-      //   },
-      //   legend: {},
-      //   grid: {
-      //     left: '25%',
-      //     right: '30%',
-      //     bottom: '3%',
-      //     containLabel: true
-      //   },
-      //   xAxis: {
-      //     type: 'category',
-      //     show: true,
-      //     axisLine: {
-      //       show: false,
-      //       lineStyle: {
-      //         color: '#666',
-      //         width: 0
-      //       }
-      //     },
-      //     data: [
-      //       this.$t('dataFlow.totalOutput'),
-      //       this.$t('dataFlow.totalInput'),
-      //       this.$t('dataFlow.totalInsert'),
-      //       this.$t('dataFlow.totalUpdate'),
-      //       this.$t('dataFlow.totalDelete')
-      //     ],
-      //     axisPointer: {
-      //       type: 'shadow'
-      //     }
-      //   },
-      //   yAxis: {
-      //     axisLine: { show: false },
-      //     axisTick: { show: false },
-      //     splitLine: { show: false },
-      //     splitArea: { show: false }
-      //   },
-      //   series: [
-      //     {
-      //       type: 'bar',
-      //       data: [],
-      //       barWidth: '100%',
-      //       barGap: '-100%',
-      //       itemStyle: {
-      //         normal: {
-      //           color: function (params) {
-      //             var colorList = ['#7ba75d', '#409EFF', '#d9742c', '#e6b451', '#e06c6c']
-      //             return colorList[params.dataIndex]
-      //           },
-      //           label: {
-      //             show: true,
-      //             // verticalAlign: 'middle',
-      //             position: 'top',
-      //             distance: 10,
-      //             formatter: function (value) {
-      //               if (value.data / (1000 * 1000 * 1000) > 1) {
-      //                 return (value.data / (1000 * 1000 * 1000)).toFixed(1) + ' T'
-      //               } else if (value.data / (1000 * 1000) > 1) {
-      //                 return (value.data / (1000 * 1000)).toFixed(1) + ' M'
-      //               } else if (value.data / 1000 > 1) {
-      //                 return (value.data / 1000).toFixed(1) + ' K'
-      //               }
-      //             }
-      //           }
-      //         }
-      //       }
-      //     }
-      //   ]
-      // },
+
       // 传输总览颜色
       transBarData: [
         { name: this.$t('dashboard_total_input'), value: 0, key: 'inputTotal', color: '#82C647' },
@@ -553,6 +388,20 @@ export default {
               valid_total: valid_total
             }
             let result = []
+            let handlestatus = list => {
+              if (list?.length) {
+                this.statusList.map(status => {
+                  list.filter(item => {
+                    if (item.label === status.key) {
+                      debugger
+                      return (status.value = item.value)
+                    }
+                  })
+                  return status
+                })
+              }
+            }
+            // this.taskList = statusList(result)
             this.taskList.forEach(el => {
               result.push(
                 Object.assign({}, el, {
@@ -562,12 +411,13 @@ export default {
             })
             this.taskList = result
 
-            self.copyPieData = setColor(self.migrationTaskList)
+            // self.copyPieData = setColor(handlestatus(self.migrationTaskList))
+            console.log(handlestatus(self.migrationTaskList))
             self.copyTaskData = this.handleChart(res.data.chart2)
             self.syncPieData = setColor(self.syncTaskList)
             self.syncTaskData = this.handleChart(res.data.chart4)
             self.validBarData = this.handleChart(res.data.chart5)
-            self.transBarData = this.handleChart(res.data.chart6, this.transBarData)
+            self.transBarData = this.handleChart(res.data.chart6)
           }
         })
         .finally(() => {
@@ -576,24 +426,14 @@ export default {
     },
 
     // echart数据转换
-    handleChart(data, defaultData) {
+    handleChart(data) {
       let echartData = []
-      if (defaultData?.length) {
-        echartData = defaultData.filter(item => {
-          for (let el in data) {
-            if (item.key === el) {
-              return (item.value = data[el])
-            }
-          }
+      for (let item in data) {
+        echartData.push({
+          name: this.$t('dashboard_' + item),
+          value: data[item],
+          color: '#2EA0EA'
         })
-      } else {
-        for (let item in data) {
-          echartData.push({
-            name: this.$t('dashboard_' + item),
-            value: data[item],
-            color: '#2EA0EA'
-          })
-        }
       }
 
       return echartData

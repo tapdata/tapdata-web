@@ -501,7 +501,7 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           let { model_type, database, tableName } = this.createForm
-          let db = this.dbOptions.find(it => it.id === database)
+          let db = this.dbOptions.find(it => it.value === database)
           let fields = [
             {
               checked: false,
@@ -528,22 +528,28 @@ export default {
             }
           ]
           let params = {
-            connectionId: db.id,
+            connectionId: db.value,
             original_name: tableName,
             is_deleted: false,
             meta_type: model_type,
             create_source: 'manual',
-            databaseId: db.id,
-            classifications: db.classifications,
+            databaseId: db.value,
+            // classifications: db.classifications ? db.classifications : [],
             alias_name: '',
             comment: ''
           }
           params.fields = model_type === 'collection' ? fields : []
           this.$api('MetadataInstances')
             .post(params)
-            .then(() => {
-              this.createDialogVisible = false
+            .then(res => {
+              if (res) {
+                this.createDialogVisible = false
+                this.$message.success(this.$t('message_save_ok'))
+              }
               // this.toDetails(res.data);
+            })
+            .catch(() => {
+              this.$message.success(this.$t('message_save_fail'))
             })
         }
       })

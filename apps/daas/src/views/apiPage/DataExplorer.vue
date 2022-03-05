@@ -894,10 +894,7 @@ export default {
     // 移除
     async remove(item) {
       const h = this.$createElement
-      let message = h('p', [
-        this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#409EFF' } }, item.clientName)
-      ])
+      let message = h('p', [this.$t('message.deleteOrNot') + ' ' + item.clientName])
       this.$confirm(message, this.$t('message.prompt'), {
         type: 'warning'
       }).then(

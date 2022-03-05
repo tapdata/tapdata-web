@@ -529,11 +529,11 @@ export default {
     },
     // 保存
     submit() {
-      this.loadingFrom = true
       if (this.createForm.paths?.length < 1) {
         this.$message.error(this.$t('module_form_noPath'))
         return
       }
+      this.loadingFrom = true
       const id = this.$route.query.id
       const method = id ? 'patch' : 'post'
 
