@@ -59,11 +59,6 @@
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkTag') }}</span>
         </el-button>
-
-        <!-- <el-button v-readonlybtn="'SYNC_Function_management'" size="small" class="btn" @click="handleGoFunction">
-          <i class="iconfont icon-hanshu back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkFx') }}</span>
-        </el-button> -->
         <el-button v-readonlybtn="'SYNC_job_import'" size="small" class="btn" @click="handleImport">
           <i class="iconfont icon-daoru back-btn-icon"></i>
           <span> {{ $t('dataFlow.bulkImport') }}</span>
@@ -157,7 +152,7 @@
                     !statusBtMap['run'][row.status] ||
                     (row.status === 'draft' && row.checked === false)
                   "
-                  @click="run([row.id])"
+                  @click="start([row.id])"
                 >
                   {{ $t('dataFlow.run') }}
                 </ElLink>
@@ -185,13 +180,6 @@
             >
               {{ $t('dataFlow.button.force_stop') }}
             </ElLink>
-            <!--            <ElLink-->
-            <!--              style="margin-left: 10px"-->
-            <!--              type="primary"-->
-            <!--              @click="handleDetail(row.id, 'detail', row.mappingTemplate, row.hasChildren)"-->
-            <!--            >-->
-            <!--              {{ $t('dataFlow.runningMonitor') }}-->
-            <!--            </ElLink>-->
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               style="margin-left: 10px"
@@ -206,19 +194,6 @@
             <ElLink v-readonlybtn="'SYNC_job_edition'" style="margin-left: 10px" type="primary" @click="toDetails(row)">
               {{ $t('task_list_button_monitor') }}
             </ElLink>
-            <!-- <ElLink
-              v-readonlybtn="'SYNC_job_edition'"
-              style="margin-left: 10px"
-              type="primary"
-              :disabled="
-                $disabledByPermission('SYNC_job_edition_all_data', row.user_id) ||
-                row.sync_type !== 'initial_sync' ||
-                row.status === 'running'
-              "
-              @click="handleTaskscheduling(row.id, row)"
-            >
-              {{ $t('dataFlow.schedule') }}
-            </ElLink> -->
             <el-dropdown
               v-show="moreAuthority"
               size="small"
@@ -322,13 +297,12 @@ import ws from '../../../api/ws'
 const dataFlows = factory('DataFlows')
 const MetadataInstance = factory('MetadataInstances')
 const TaskModel = factory('Task')
-// const cluster = factory('cluster');
+
 import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
 import DownAgent from '../../downAgent/agentDown'
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
-// import VIcon from '@/components/VIcon'
 
 let interval = null
 export default {
@@ -440,17 +414,11 @@ export default {
       return this.$refs.table
     },
     statusOptions() {
-      // let options = {}
       let options = [{ label: this.$t('task_list_status_all'), value: '' }]
       let map = this.statusMap
       for (const key in map) {
         const item = map[key]
         options.push({ label: item.label, value: key })
-        // let value = key
-        // if (options[item.label]) {
-        //   value = options[item.label] + ',' + value
-        // }
-        // options[item.label] = value
       }
       return options
     }
@@ -602,12 +570,6 @@ export default {
       syncType && (where['setting.sync_type'] = syncType)
       if (executionStatus) {
         if (executionStatus === 'Lag') {
-          // where['stats.stagesMetrics'] = {
-          //   $elemMatch: {
-          //     status: 'cdc',
-          //     replicationLag: { $gt: 0 }
-          //   }
-          // }
           where.Lag = true
         } else if (executionStatus === 'initialized') {
           where.and = [
@@ -735,18 +697,6 @@ export default {
           if (d > 0) {
             r = parseInt(d) + this.$t('timeToLive.d') + r
           }
-          // let m = this.$moment.duration(lag)
-          // if (m.days()) {
-          //   r = m.days() + 'd'
-          // } else if (m.hours()) {
-          //   r = m.hours() + 'h'
-          // } else if (m.minutes()) {
-          //   r = m.minutes() + 'min'
-          //   // } else if (m.seconds()) {
-          //   //   r = m.seconds() + 's'
-          // } else {
-          //   r = lag + 's'
-          // }
         }
         return r
       }
@@ -857,8 +807,6 @@ export default {
               it.outerHTML = ''
             })
             window.open(routeUrl.href, 'edit_' + id)
-            // window.windows.push(window.open(routeUrl.href, 'edit_' + id));
-            // window.windows[window.windows.length - 1].tempKeys = this.getTempKeys();
           }, 200)
         })
       } else {
@@ -949,7 +897,7 @@ export default {
       }
       MetadataInstance.download(where, 'DataFLow')
     },
-    run(ids) {
+    start(ids) {
       let _this = this
       let id = ids[0]
       let filter = {
@@ -962,73 +910,39 @@ export default {
             inq: ids
           }
         }
-        // where: {
-        //   or: ids.map(item => {
-        //     return {
-        //       'contextMap.dataFlowId': {
-        //         like: item
-        //       }
-        //     }
-        //   }),
-        //   level: 'ERROR'
-        // }
       }
 
       if (this.$refs.agentDialog.checkAgent()) {
-        _this
-          .$api('DataFlows')
+        this.$api('Task')
           .get({ filter: JSON.stringify(filter) })
           .then(res => {
-            let falg = false
-
-            if (res.data?.items?.length) {
-              res.data.items.forEach(item => {
+            let flag = false
+            let items = res.data?.items || []
+            if (items.length) {
+              items.forEach(item => {
                 if (item?.errorEvents?.length) {
-                  falg = true
+                  flag = true
                 }
               })
             }
-            if (falg) {
+            this.$api('Task')
+              .batchStart(ids)
+              .then(res => {
+                this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+                this.table.fetch()
+              })
+              .catch(err => {
+                this.$message.error(err.data?.message)
+              })
+            if (flag) {
               _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {
-                _this.startAndStop('startBatch', ids, { status: 'scheduled' })
+                // _this.changeStatus(ids, { status: 'scheduled' })
               })
             } else {
-              _this.startAndStop('startBatch', ids, { status: 'scheduled' })
+              // _this.changeStatus(ids, { status: 'scheduled' })
             }
           })
       }
-      // if (node) {
-      // 	this.$refs.errorHandler.checkError(node, () => {
-      // 		//启动任务时判断任务内是否存在聚合处理器，若存在，则弹框提示
-      // 		if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
-      // 			const h = this.$createElement;
-      // 			let arr = this.$t('message.startAggregation_message').split('XXX');
-      // 			this.$confirm(
-      // 				h('p', [
-      // 					arr[0] + '(',
-      // 					h('span', { style: { color: '#409EFF' } }, node.name),
-      // 					')' + arr[1]
-      // 				]),
-      // 				this.$t('dataFlow.importantReminder'),
-      // 				{
-      // 					type: 'warning',
-      // 					closeOnClickModal: false
-      // 				}
-      // 			)
-      // 				.then(() => {
-      // 					//若任务内存在聚合处理器，启动前先重置
-      // 					dataFlows.reset(node.id).then(() => {
-      // 						this.changeStatus(ids, { status: 'scheduled' });
-      // 					});
-      // 				})
-      // 				.catch(() => {
-      // 					this.table.fetch();
-      // 				});
-      // 		} else {
-      // 			this.changeStatus(ids, { status: 'scheduled' });
-      // 		}
-      // 	});
-      // } else {
     },
     stop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
@@ -1056,8 +970,15 @@ export default {
         if (!resFlag) {
           return
         }
-        this.startAndStop('stopBatch', ids, { status: 'stopping' })
-        // this.changeStatus(ids, { status: 'stopping' })
+        this.$api('Task')
+          .batchStop(ids)
+          .then(res => {
+            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.table.fetch()
+          })
+          .catch(err => {
+            this.$message.error(err.data?.message)
+          })
       })
     },
     forceStop(ids, item = {}) {
@@ -1068,24 +989,10 @@ export default {
         if (!resFlag) {
           return
         }
-        // this.changeStatus(ids, { status: 'force stopping' })
-        this.$api('DataFlows')
-          .patchId(ids[0], { status: 'force stopping' })
-          .then(res => {
-            this.table.fetch()
-            this.responseHandler(res.data, this.$t('message.operationSuccuess'))
-          })
-          .catch(err => {
-            this.$message.error(err.data.message)
-          })
+        this.changeStatus(ids, { status: 'force stopping' })
       })
     },
     del(ids, item = {}) {
-      let where = {
-        _id: {
-          inq: ids
-        }
-      }
       let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning'
@@ -1093,14 +1000,16 @@ export default {
         if (!resFlag) {
           return
         }
-        dataFlows.deleteAll(where).then(res => {
-          if (res.data && res.data.success) {
-            this.table.fetch()
-            this.responseHandler(res.data, this.$t('message.deleteOK'))
-          } else if (res.data && res.data.fail) {
-            this.$message.info(this.$t('message.deleteFail'))
-          }
-        })
+        this.$api('Task')
+          .batchDelete(ids)
+          .then(res => {
+            if (res) {
+              this.table.fetch()
+              this.responseHandler(res.data, this.$t('message.deleteOK'))
+            } else if (res.data && res.data.fail) {
+              this.$message.info(this.$t('message.deleteFail'))
+            }
+          })
       })
     },
     initialize(ids, item = {}) {
@@ -1112,8 +1021,8 @@ export default {
           return
         }
         this.restLoading = true
-        dataFlows
-          .resetAll({ id: ids })
+        this.$api('Task')
+          .batchRenew(ids)
           .then(res => {
             this.table.fetch()
             this.responseHandler(res.data, this.$t('message.resetOk'))
@@ -1133,7 +1042,7 @@ export default {
       })
     },
     copy(ids, node) {
-      dataFlows
+      this.$api('Task')
         .copy(node.id)
         .then(() => {
           this.table.fetch()
@@ -1157,7 +1066,7 @@ export default {
         status
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      dataFlows
+      this.$api('Task')
         .update(where, attributes)
         .then(res => {
           this.table.fetch()
@@ -1225,7 +1134,7 @@ export default {
       let data = this.formSchedule.taskData.setting || {}
       data.isSchedule = this.formSchedule.isSchedule
       data.cronExpression = this.formSchedule.cronExpression
-      dataFlows
+      this.$api('Task')
         .patchId(this.formSchedule.id, { setting: data })
         .then(result => {
           if (result && result.data) {
@@ -1246,11 +1155,6 @@ export default {
       })
     },
     startAndStop(method = 'startBatch', ids, { status, errorEvents }) {
-      // let where = {
-      //   _id: {
-      //     in: ids
-      //   }
-      // }
       let attributes = {
         status
       }
@@ -1343,16 +1247,6 @@ export default {
     font-size: 16px;
   }
   .data-flow-list {
-    // .search-bar {
-    //   display: flex;
-    //   flex-wrap: wrap;
-    //   li {
-    //     margin-right: 10px;
-    //     &:last-child {
-    //       margin-right: 0;
-    //     }
-    //   }
-    // }
     .buttons {
       white-space: nowrap;
       .btn + .btn {

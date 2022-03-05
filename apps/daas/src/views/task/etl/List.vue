@@ -1052,7 +1052,7 @@ export default {
         status
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      dataFlows
+      this.$api('Task')
         .update(where, attributes)
         .then(res => {
           this.table.fetch()
@@ -1120,7 +1120,7 @@ export default {
       let data = this.formSchedule.taskData.setting || {}
       data.isSchedule = this.formSchedule.isSchedule
       data.cronExpression = this.formSchedule.cronExpression
-      dataFlows
+      this.$api('Task')
         .patchId(this.formSchedule.id, { setting: data })
         .then(result => {
           if (result && result.data) {
