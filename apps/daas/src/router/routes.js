@@ -474,7 +474,7 @@ export default [
             component: () => import('@/views/metadata/Info'),
             meta: {
               code: 'data_catalog_menu',
-              title: 'tap.dataCatalog'
+              title: 'page_title_data_catalogue_info'
             }
           }
         ]
@@ -723,7 +723,7 @@ export default [
         component: () => import('@/views/scheduleTasks/Histories'),
         meta: {
           code: 'schedule_jobs_menu',
-          title: 'tap.taskHistories'
+          title: 'page_title_schedule_history'
         }
       },
       {

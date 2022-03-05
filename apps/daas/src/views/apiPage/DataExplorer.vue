@@ -196,7 +196,10 @@
       :close-on-click-modal="false"
       :visible.sync="openCreateDialog"
     >
-      <el-input type="textarea" v-model="jsonDoc" :autosize="{ maxRows: 15 }"></el-input>
+      <div class="create-dialog-box">
+        <el-input type="textarea" v-model="jsonDoc" :autosize="{ maxRows: 15 }"></el-input>
+      </div>
+
       <ul v-if="jsonDocHint.length">
         <li v-for="(item, index) in jsonDocHint" :key="index">{{ item }}</li>
       </ul>
@@ -1432,12 +1435,17 @@ export default {
       margin-right: 10px;
     }
   }
-  .create-dialog {
+}
+.create-dialog {
+  .create-dialog-box {
+    padding: 15px;
+    background-color: #3a3d4c;
     ::v-deep {
-      .el-textarea__inner {
-        min-height: 240px;
-        color: #fff;
+      .el-textarea .el-textarea__inner {
+        min-height: 200px !important;
+        color: #82b290;
         background-color: #262838;
+        border: 0;
       }
     }
   }

@@ -75,15 +75,16 @@
                   </div>
                   <div style="margin-left: 10px">
                     <el-tooltip class="item" effect="dark" :content="$t('button_delete')" placement="bottom">
-                      <span title="remove" @click="removeApiPath(index)" style="margin-right: 10px; cursor: pointer"
-                        ><i class="fa fa-times el-icon-delete"></i
-                      ></span>
+                      <ElButton type="text" title="remove" size="mini" @click="removeApiPath(index)">
+                        <!-- <i class="fa fa-times el-icon-delete"></i> -->
+                        {{ $t('button_delete') }}
+                      </ElButton>
                     </el-tooltip>
-                    <el-tooltip class="item" effect="dark" :content="$t('button_edit')" placement="left">
+                    <!-- <el-tooltip class="item" effect="dark" :content="$t('button_edit')" placement="left">
                       <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
                         ><i class="fa fa-edit el-icon-edit-outline"></i
                       ></span>
-                    </el-tooltip>
+                    </el-tooltip> -->
                   </div>
                 </div>
               </div>
@@ -426,11 +427,11 @@ export default {
       this.dialogVisible = true
     },
     // 编辑自定义api路径
-    editApiPath(item) {
-      this.apiData = item
-      this.apiData.createType = 'edit'
-      this.dialogVisible = true
-    },
+    // editApiPath(item) {
+    //   this.apiData = item
+    //   this.apiData.createType = 'edit'
+    //   this.dialogVisible = true
+    // },
     // 打开api文档
     openDocument() {
       this.apiClient = new APIClient()
@@ -751,6 +752,7 @@ export default {
             .el-input__inner,
             .el-textarea__inner {
               width: 500px;
+              background-color: rgba(239, 241, 244, 0.2);
             }
             .el-radio--mini.is-bordered {
               padding: 0 15px 0 10px;

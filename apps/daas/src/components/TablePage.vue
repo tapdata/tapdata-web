@@ -199,6 +199,9 @@ export default {
               })
               .finally(() => {
                 this.loading = false
+                this.$nextTick(() => {
+                  this.$refs.table.doLayout()
+                })
                 callback?.(this.getData())
               })
         }, debounce)
@@ -308,6 +311,15 @@ export default {
       border-radius: 3px;
       background: #fff;
       overflow: hidden;
+      // .el-table__fixed-right {
+      //   height: 100% !important; //设置高优先，以覆盖内联样式
+      // }
+      .el-table__fixed-body-wrapper {
+        background-color: #fff;
+      }
+      .el-table__fixed {
+        height: auto !important; //设置高优先，以覆盖内联样式
+      }
     }
 
     .el-table--border td,

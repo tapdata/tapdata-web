@@ -201,7 +201,7 @@ export default {
 </script>
 <style scoped lang="scss">
 .condition-group-wrap {
-  margin-bottom: 32px;
+  margin-bottom: 10px;
   border: 1px solid #edeeee;
   border-left-width: 3px;
   overflow: hidden;

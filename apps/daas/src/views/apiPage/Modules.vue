@@ -56,7 +56,7 @@
       </el-table-column>
       <el-table-column :label="$t('modules_header_api_name')"></el-table-column>
       <el-table-column :label="$t('modules_header_tablename')"> </el-table-column>
-      <el-table-column :label="$t('modules_header_dataSource')">
+      <el-table-column :label="$t('modules_header_dataSource')" width="140">
         <template slot-scope="scope" v-if="scope.row.source">
           <span
             @click.stop="dataSourceFn(scope.row)"
@@ -81,7 +81,7 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('modules_header_username')"> </el-table-column>
-      <el-table-column :label="$t('modules_header_last_updated')" prop="last_updated" sortable="custom">
+      <el-table-column :label="$t('modules_header_last_updated')" prop="last_updated" sortable="custom" width="120">
         <template slot-scope="scope">
           {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
@@ -150,21 +150,21 @@
     <ElDialog
       width="600px"
       custom-class="import-dialog"
-      :title="$t('modules_import_title')"
+      :title="$t('modules_dialog_import_title')"
       :close-on-click-modal="false"
       :visible.sync="importDialogVisible"
     >
       <ElForm ref="form" :model="importForm" class="applications-form" label-width="100px">
-        <ElFormItem :label="$t('modules_dialog_condition') + ':'" required>
+        <ElFormItem :label="$t('modules_dialog_condition') + ':'">
           <el-radio v-model="importForm.upsert" :label="1">{{ $t('modules_dialog_overwrite_data') }}</el-radio>
           <el-radio v-model="importForm.upsert" :label="0">{{ $t('modules_dialog_skip_data') }}</el-radio>
         </ElFormItem>
-        <ElFormItem :label="$t('modules_dialog_group') + ':'" required>
-          <ElSelect v-model="importForm.tag" multiple size="mini">
+        <ElFormItem :label="$t('modules_dialog_group') + ':'">
+          <ElSelect v-model="importForm.tag" multiple size="mini" class="w-75">
             <ElOption v-for="item in classifyList" :label="item.value" :value="item.id" :key="item.id"></ElOption>
           </ElSelect>
         </ElFormItem>
-        <ElFormItem :label="$t('modules_dialog_file') + ':'" required>
+        <ElFormItem :label="$t('modules_dialog_file') + ':'">
           <ElUpload
             class="upload-demo"
             ref="upload"
@@ -181,9 +181,7 @@
       </ElForm>
       <span slot="footer" class="dialog-footer">
         <ElButton @click="importDialogVisible = false" size="small">{{ $t('button_cancel') }}</ElButton>
-        <ElButton type="primary" :disabled="importForm.fileList.length === 0" @click="submitUpload()" size="small">{{
-          $t('button_confirm')
-        }}</ElButton>
+        <ElButton type="primary" @click="submitUpload()" size="small">{{ $t('button_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </section>

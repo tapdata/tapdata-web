@@ -26,7 +26,7 @@
           <ElTableColumn prop="javaType" :label="$t('module_form_datatype')"></ElTableColumn>
         </ElTable>
       </ElFormItem>
-      <ElFormItem :label="$t('module_form_condition')">
+      <ElFormItem :label="$t('module_form_condition')" style="margin-bottom: 0">
         <!-- 过滤条件 -->
         <QueryBuild
           v-model="model.condition"

@@ -63,20 +63,36 @@
   }
 }
 .el-select .el-input.is-focus .el-input__inner {
-  border-color: map-get($color, primary);
+  // border-color: map-get($color, primary);
+}
+.el-select .el-select__tags {
+  .el-tag.el-tag--info {
+    color: #1D2129;
+    font-weight: 400;
+    border: 0;
+    border-radius: 2px;
+    background-color: #F2F3F5;
+  }
+  .el-tag__close.el-icon-close {
+    background-color: #F2F3F5;
+    &:hover {
+      color: #000;
+    }
+
+  }
 }
 .el-input__inner {
   color: #000;
   border-radius: $borderRadius;
-  border: 1px solid rgba(221, 221, 221, 0.4);
-  background-color:  rgba(239, 241, 244, 0.2);
+  // border: 1px solid rgba(221, 221, 221, 0.4);
+  // background-color:  rgba(239, 241, 244, 0.2);
 }
 .el-input__inner:hover {
   border-color: map-get($color, primary);
 }
 .el-textarea__inner {
-  border: 1px solid rgba(221, 221, 221, 0.4);
-  background-color:  rgba(239, 241, 244, 0.2);
+  // border: 1px solid rgba(221, 221, 221, 0.4);
+  // background-color:  rgba(239, 241, 244, 0.2);
 }
 .el-input,.el-textarea {
   .el-input__count {

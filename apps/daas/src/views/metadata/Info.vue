@@ -53,14 +53,13 @@
       <el-main class="matadata-main mt-4">
         <!-- 元数据管理详情 左侧信息 start -->
         <div class="aside" v-if="!asideFalg">
-          <i @click="asideFalg = true" class="iconfont icon-indent"></i>
-          <p>{{ $t('metadata.details.propertyDetails') }}</p>
+          <i @click="asideFalg = true" class="iconfont icon-indent text-primary"></i>
         </div>
         <el-aside class="metadata-aside" v-show="asideFalg">
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
               <span class="fs-7">{{ $t('metadata.details.basicAttributes') }}</span>
-              <i @click.stop="asideFalg = false" class="iconfont icon-outdent"></i>
+              <i @click.stop="asideFalg = false" class="iconfont icon-outdent text-primary"></i>
             </div>
             <ul class="metadata-aside-main pt-4">
               <!-- <li>
@@ -982,6 +981,9 @@ export default {
           overflow: auto;
           .metadata-aside-head {
             display: flex;
+            i {
+              cursor: pointer;
+            }
           }
           .metadata-aside-main {
             font-size: 12px;
@@ -1045,11 +1047,11 @@ export default {
       .aside {
         width: 28px;
         height: 100%;
-        padding: 5px 0;
+        padding: 23px 0;
         text-align: center;
-        color: #666;
         font-size: 12px;
         background-color: #fff;
+        border-right: 1px solid #f2f2f2;
         box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
         .iconfont {
           cursor: pointer;

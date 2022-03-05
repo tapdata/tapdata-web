@@ -665,7 +665,7 @@ export default {
           }
         },
         {
-          placeholder: this.$t('task_list_search_placeholder'),
+          placeholder: this.$t('metadata_name_placeholder'),
           key: 'keyword',
           type: 'input',
           slotName: ''
