@@ -393,7 +393,6 @@ export default {
                 this.statusList.map(status => {
                   list.filter(item => {
                     if (item.label === status.key) {
-                      debugger
                       return (status.value = item.value)
                     }
                   })
