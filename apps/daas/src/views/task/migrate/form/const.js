@@ -13,6 +13,7 @@ export const SETTING_MODEL = {
   tableNameTransform: '',
   noPrimaryKey: true,
   needToCreateIndex: true,
+  existDataProcessMode: 'keepData',
   syncPoints: [
     {
       connectionId: '',

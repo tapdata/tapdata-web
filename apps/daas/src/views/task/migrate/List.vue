@@ -659,12 +659,8 @@ export default {
       })
     },
     create() {
-      // let routeUrl = this.$router.resolve({
-      //   name: 'taskNew'
-      // })
-      // window.open(routeUrl.href, '_blank')
       this.$router.push({
-        name: 'DataflowNew'
+        name: 'MigrateNew'
       })
     },
     handleEditor(id) {
