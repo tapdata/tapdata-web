@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-button v-if="transform.showBtn" size="mini" :loading="loading" :disabled="isDisable" @click="fieldProcess()">{{
+    <el-button v-if="transform.showBtn" size="mini" :loading="loading" :disabled="isDisable" @click="getMetaData()">{{
       $t('dag_link_button_field_mapping')
     }}</el-button>
     <el-dialog
@@ -57,7 +57,7 @@ export default {
      * 过滤条件：当前目标节点 nodeId
      * 触发父组件：首次条件
      * */
-    fieldProcess() {
+    getMetaData() {
       //点击按钮重新拿值
       if (this.getDataFlow) {
         this.dataFlow = this.getDataFlow()

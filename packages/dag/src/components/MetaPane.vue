@@ -34,6 +34,7 @@ export default {
       loading: false,
       transform: {
         showBtn: true,
+        mode: 'metaData',
         stageId: '',
         field_process: [],
         fieldsNameTransform: '',

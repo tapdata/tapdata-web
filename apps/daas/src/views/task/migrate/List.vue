@@ -491,18 +491,6 @@ export default {
       let where = {
         syncType: 'migrate'
       }
-      let fields = {
-        id: true,
-        name: true,
-        status: true,
-        last_updated: true,
-        createTime: true,
-        user_id: true,
-        startTime: true,
-        agentId: true,
-        statuses: true,
-        type: true
-      }
       if (keyword && keyword.trim()) {
         where.or = [
           { name: { like: toRegExp(keyword), options: 'i' } },
@@ -564,7 +552,6 @@ export default {
       let filter = {
         order: this.order,
         limit: size,
-        fields: fields,
         skip: (current - 1) * size,
         where
       }
