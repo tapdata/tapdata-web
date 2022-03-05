@@ -117,6 +117,7 @@ export default {
       showSysncTableTip: false,
       //第二步 配置任务设置
       settingData: SETTING_MODEL,
+      form: '',
       //第三步 映射表
       transferData: TRANSFER_MODEL,
       mqTransferFlag: false,
@@ -233,11 +234,14 @@ export default {
           }
           break
         case 'setting':
-          if (!this.settingData.name || this.settingData.name === '') {
-            this.$message.error('表单检验不通过，任务名称必填')
-            return
-          }
-          this.activeStep++
+          this.form
+            .validate()
+            .then(() => {
+              this.activeStep++
+            })
+            .catch(() => {
+              this.$message.error('表单检验不通过，任务名称必填')
+            })
           break
       }
     },
@@ -253,6 +257,7 @@ export default {
     //第二步 任务设置配置
     settingSubmit(form) {
       this.settingData = { ...form.values }
+      this.form = form
     },
     //第三步 映射表
     checkTransfer() {

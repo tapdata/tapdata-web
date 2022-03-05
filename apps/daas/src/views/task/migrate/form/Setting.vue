@@ -61,7 +61,6 @@ export default {
         effects: this.useEffects
       })
       this.schema = this.getSettingSchema()
-      console.log(this.schema)
     },
     getSettingSchema() {
       //根据配置规则生成schema
@@ -171,6 +170,23 @@ export default {
                 required: 'true',
                 'x-decorator': 'FormItem',
                 'x-component': 'Input'
+                // 'x-validator': {
+                //   triggerType: 'onBlur',
+                //   validator: `{{(value) => {
+                //     return new Promise((resolve) => {
+                //       setTimeout(() => {
+                //         if (!value) {
+                //           resolve('')
+                //         }
+                //         if (value === '123') {
+                //           resolve('')
+                //         } else {
+                //           resolve('错误❎')
+                //         }
+                //       }, 1000)
+                //     })
+                //   }}}`
+                // }
               },
               sync_type: {
                 title: '同步类型',
