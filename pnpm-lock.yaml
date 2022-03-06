@@ -37,7 +37,6 @@ importers:
 
   apps/daas:
     specifiers:
-      '@daas/api': workspace:^1.0.0
       '@daas/dag': workspace:^1.0.0
       '@daas/form': workspace:^1.0.0
       '@daas/node-design': workspace:^1.0.0
@@ -111,7 +110,6 @@ importers:
       vuex-persistedstate: ^3.0.0
       ws: ^8.4.2
     dependencies:
-      '@daas/api': link:../../packages/api
       '@daas/dag': link:../../packages/dag
       '@daas/node-design': link:../../packages/node-design
       '@daas/shared': link:../../packages/shared
@@ -2677,7 +2675,7 @@ packages:
     dependencies:
       '@babel/core': registry.npmmirror.com/@babel/core/7.17.4
       '@vue/babel-preset-app': registry.npmmirror.com/@vue/babel-preset-app/4.5.15_vue@2.6.14
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_sass-loader@10.2.1
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.15
       babel-loader: registry.npmmirror.com/babel-loader/8.2.3_6fb82b936942eb9f11ea0fd3e177918b
       cache-loader: registry.npmmirror.com/cache-loader/4.1.0_webpack@4.46.0
@@ -2699,7 +2697,7 @@ packages:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
       eslint: '>= 1.6.0 < 7.0.0'
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_sass-loader@10.2.1
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.15
       eslint: registry.npmmirror.com/eslint/6.8.0
       eslint-loader: registry.npmmirror.com/eslint-loader/2.2.1_eslint@6.8.0+webpack@4.46.0
@@ -2720,7 +2718,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_sass-loader@10.2.1
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.15
     dev: true
 
@@ -2732,7 +2730,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_sass-loader@10.2.1
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
     dev: true
 
   registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164:
