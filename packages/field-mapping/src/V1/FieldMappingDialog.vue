@@ -79,7 +79,7 @@
             <span class="task-form__text"> {{ $t('dag_dialog_field_mapping_search_field') }} : </span>
             <ElInput v-model="searchField" size="mini" @input="search('field')"></ElInput>
           </div>
-          <div class="item ml-5" v-if="!readOnly">
+          <div class="item ml-5">
             <ElButton
               v-if="modeMapping[transform.mode]['rollback']"
               size="mini"
@@ -383,9 +383,9 @@
 <script>
 import VIcon from 'web-core/components/VIcon'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
-import { ws } from '@daas/api'
 import { delayTrigger } from '@/utils/util'
 import { modeMapping } from './const'
+
 export default {
   name: 'FieldMappingDialog',
   components: { VIcon },
@@ -468,7 +468,7 @@ export default {
     }
   },
   mounted() {
-    if (!this.readOnly && this.transform) {
+    if (modeMapping[this.transform.mode] !== 'readOnly' && this.transform) {
       this.form = {
         fieldsNameTransform: this.transform.fieldsNameTransform,
         batchOperationList: this.transform?.batchOperationList || [] //类型操作
@@ -479,7 +479,7 @@ export default {
     //接收数据
     let id = this.transform.nodeId
     let self = this
-    ws.on('metadataTransformerProgress', function (res) {
+    this.transform.ws.on('metadataTransformerProgress', function (res) {
       if (res?.data?.nodeId === id) {
         let { finished, total, status } = res?.data
         self.progress.finished = finished
@@ -802,7 +802,7 @@ export default {
     //左边导航区域
     /*切换表*/
     select(item, index) {
-      if (!this.readOnly) {
+      if (modeMapping[this.transform.mode] !== 'readOnly') {
         let data = JSON.parse(JSON.stringify(this.target))
         let deleteLen = data.filter(v => !v.is_deleted)
         if (deleteLen.length === 0 && this.target?.length > 0) {

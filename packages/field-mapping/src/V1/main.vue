@@ -34,8 +34,9 @@
 
 <script>
 import FieldMappingDialog from './FieldMappingDialog'
-import { ws } from '@daas/api'
+import { Task } from '@daas/api'
 
+const taskApi = new Task()
 export default {
   name: 'FieldMapping',
   components: { FieldMappingDialog },
@@ -97,7 +98,7 @@ export default {
         delete this.dataFlow['rollback']
         delete this.dataFlow['rollbackTable']
       }
-      let promise = this.$api('DataFlows').getMetadata(this.dataFlow)
+      let promise = taskApi.getMetadata(this.dataFlow)
       promise
         .then(() => {
           this.dialogFieldProcessVisible = true
@@ -191,7 +192,7 @@ export default {
         this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
       }
       let data = ''
-      this.$api('DataFlows')
+      taskApi
         .getMetadata(this.dataFlow)
         .then(res => {
           data = res
@@ -234,7 +235,7 @@ export default {
         this.dataFlow['batchOperation'] = batchOperation
         delete this.dataFlow['rollback']
       }
-      let promise = await this.$api('DataFlows').getMetadata(this.dataFlow)
+      let promise = await taskApi.getMetadata(this.dataFlow)
       this.initWSSed() //发送ws 监听schema进度
       return promise?.data
     },
@@ -390,8 +391,8 @@ export default {
           nodeId: this.transform.nodeId
         }
       }
-      ws.ready(() => {
-        ws.send(msg)
+      this.transform.ws.ready(() => {
+        this.transform.ws.send(msg)
       }, true)
 
       //总任务
@@ -401,8 +402,8 @@ export default {
           dataFlowId: this.dataFlow?.id
         }
       }
-      ws.ready(() => {
-        ws.send(msgData)
+      this.transform.ws.ready(() => {
+        this.transform.ws.send(msgData)
       }, true)
     }
   }

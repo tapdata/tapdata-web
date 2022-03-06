@@ -132,6 +132,8 @@ export default {
     this.id = this.$route.params.id
     if (this.id) {
       this.intiData(this.id)
+    } else {
+      this.createData() //创建一个新的空任务
     }
   },
 
@@ -165,6 +167,22 @@ export default {
             //编辑时不被覆盖
             this.tableNameTransform = this.nodes[1].tableNameTransform
             this.fieldsNameTransform = this.nodes[1].fieldsNameTransform
+          }
+        })
+    },
+    createData() {
+      let data = {
+        syncType: 'migrate',
+        name: '新任务@' + new Date().toLocaleTimeString(),
+        dag: {}
+      }
+      this.$api('Task')
+        .post(data)
+        .then(res => {
+          if (res) {
+            let data = res?.data
+            this.settingData.name = data.name
+            this.id = data.id
           }
         })
     },
@@ -350,15 +368,10 @@ export default {
       let sourceIdA = ''
       let targetIdB = ''
       if (this.id) {
-        postData.status = this.status || 'paused'
-        //编辑状态nodes只做变更
-        sourceIdA = this.nodes[0]?.id
-        targetIdB = this.nodes[1]?.id
         postData.id = this.id
-      } else {
-        sourceIdA = this.$util.uuid()
-        targetIdB = this.$util.uuid()
       }
+      sourceIdA = this.nodes[0]?.id || this.$util.uuid()
+      targetIdB = this.nodes[1]?.id || this.$util.uuid()
       //节点连接关系
       postData['dag'].edges = [
         {

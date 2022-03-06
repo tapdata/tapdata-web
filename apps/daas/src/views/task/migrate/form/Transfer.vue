@@ -75,6 +75,7 @@ import VirtualTransfer from 'web-core/components/virtual-transfer'
 import MqTransfer from 'web-core/components/mq-transfer'
 import TableFieldFilter from './TableFieldFilter'
 import FieldMapping from '@tapdata/field-mapping'
+import ws from '../../../../api/ws'
 
 export default {
   components: { VIcon, MqTransfer, VirtualTransfer, TableFieldFilter, FieldMapping },
@@ -108,6 +109,7 @@ export default {
   mounted() {
     this.getTable(this.sourceId)
     this.tranModelVersionControl()
+    this.transferData.ws = ws
   },
 
   methods: {
