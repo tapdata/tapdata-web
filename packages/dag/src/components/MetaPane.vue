@@ -70,7 +70,8 @@ export default {
       this.loading = true
 
       try {
-        const data = await metadataApi.nodeSchema(this.activeNode.id)
+        let data = await metadataApi.nodeSchema(this.activeNode.id)
+        data = data?.[0]
         data.fields.sort((a, b) => {
           if (a.unique !== b.unique) {
             return a.unique ? -1 : 1
