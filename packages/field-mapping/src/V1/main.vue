@@ -114,9 +114,7 @@ export default {
     getMetadataTransformer(page, value) {
       let id = this.dataFlow?.id
       let where = {
-        dataFlowId: {
-          like: id
-        },
+        dataFlowId: id,
         sinkNodeId: this.transform.nodeId //todo 返回是否为sinkNodeId
       }
       if (value) {
@@ -390,11 +388,11 @@ export default {
         type: 'metadataTransformerProgress',
         data: {
           dataFlowId: id,
-          nodeId: this.transform.nodeId
+          stageId: this.transform.nodeId
         }
       }
-      this.transform.ws.ready(() => {
-        this.transform.ws.send(msg)
+      this.$ws.ready(() => {
+        this.$ws.send(msg)
       }, true)
 
       //总任务
@@ -404,8 +402,8 @@ export default {
           dataFlowId: this.dataFlow?.id
         }
       }
-      this.transform.ws.ready(() => {
-        this.transform.ws.send(msgData)
+      this.$ws.ready(() => {
+        this.$ws.send(msgData)
       }, true)
     }
   }

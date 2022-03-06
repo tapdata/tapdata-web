@@ -479,8 +479,8 @@ export default {
     //接收数据
     let id = this.transform.nodeId
     let self = this
-    this.transform.ws.on('metadataTransformerProgress', function (res) {
-      if (res?.data?.nodeId === id) {
+    this.$ws.on('metadataTransformerProgress', function (res) {
+      if (res?.data?.stageId === id) {
         let { finished, total, status } = res?.data
         self.progress.finished = finished
         self.progress.total = total
