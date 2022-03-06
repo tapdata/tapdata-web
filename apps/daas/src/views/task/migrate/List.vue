@@ -251,9 +251,9 @@
               {{ $t('task_list_edit') }}
             </ElLink>
             <ElDivider direction="vertical"></ElDivider>
-            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetails(row)">
-              {{ $t('task_list_button_monitor') }}
-            </ElLink>
+            <!--            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetails(row)">-->
+            <!--              {{ $t('task_list_button_monitor') }}-->
+            <!--            </ElLink>-->
             <ElDivider direction="vertical"></ElDivider>
             <!-- <ElLink
               v-readonlybtn="'SYNC_job_edition'"
