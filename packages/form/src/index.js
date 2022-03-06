@@ -11,7 +11,6 @@ export * from './components/array-aggregate'
 export * from './components/field-processor'
 export * from './components/form-title'
 export * from './components/join-expression'
-export * from './components/join-expression'
 export * from './components/example-file'
 
 export * from '@formily/element'
