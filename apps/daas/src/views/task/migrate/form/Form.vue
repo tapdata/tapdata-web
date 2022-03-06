@@ -256,6 +256,7 @@ export default {
             .validate()
             .then(() => {
               this.activeStep++
+              this.transferData.automaticallyCreateTables = this.settingData.automaticallyCreateTables
             })
             .catch(() => {
               this.$message.error('表单检验不通过，任务名称必填')

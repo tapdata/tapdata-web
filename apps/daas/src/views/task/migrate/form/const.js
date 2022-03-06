@@ -55,6 +55,8 @@ export const TRANSFER_MODEL = {
   showBtn: true,
   isFirst: false,
   nodeId: '',
+  mode: 'all',
+  automaticallyCreateTables: true,
   fieldProcess: [],
   fieldsNameTransform: '',
   batchOperationList: []

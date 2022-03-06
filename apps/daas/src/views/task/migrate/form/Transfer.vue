@@ -110,6 +110,9 @@ export default {
     this.getTable(this.sourceId)
     this.tranModelVersionControl()
     this.transferData.ws = ws
+    if (!this.transferData.automaticallyCreateTables) {
+      this.transferData.mode = 'readOnly'
+    }
   },
 
   methods: {
