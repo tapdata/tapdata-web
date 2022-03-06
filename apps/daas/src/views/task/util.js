@@ -1,5 +1,6 @@
 import i18n from '@/i18n'
 import { formatTime } from '@/utils/util'
+import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from '@/const'
 // 全量任务，标识为已完成
 export function isFinished(data = {}) {
   // 全量状态下，任务完成状态时，前端识别为已停止
@@ -125,4 +126,47 @@ export function getOverviewData(data) {
     completeTime,
     currentStatus
   }
+}
+
+// 获取子任务状态统计
+export function getSubTaskStatus(rows = []) {
+  const statusMap = {
+    running: ['scheduling', 'running', 'pausing', 'stopping', 'scheduling'],
+    not_running: ['edit', 'wait_run', 'pause', 'stop', 'complete', 'schedule_failed'],
+    error: ['error']
+  }
+  const len = rows.length
+  let result = [],
+    item = {}
+  switch (len) {
+    case 0:
+      result = [
+        Object.assign({ count: 1 }, ETL_STATUS_MAP['not_running'], {
+          status: 'not_running'
+        })
+      ]
+      break
+    case 1:
+      result = [
+        Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP[rows[0]?.status], {
+          status: rows[0]?.status
+        })
+      ]
+      break
+    default:
+      for (let key in ETL_STATUS_MAP) {
+        item = Object.assign({}, ETL_STATUS_MAP[key])
+        item.status = key
+        item.count = 0
+        rows.forEach(el => {
+          if (statusMap[key].includes(el.status)) {
+            item.count++
+          }
+        })
+        result.push(item)
+      }
+
+      break
+  }
+  return result
 }
