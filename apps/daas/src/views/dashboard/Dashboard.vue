@@ -53,7 +53,7 @@
             <ul class="job-list">
               <li v-for="task in syncTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
                 <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
-                <span class="text">{{ $t('dataFlow.status.' + task.label) }}</span
+                <span class="text">{{ $t('dashboard_status_' + task.label) }}</span
                 ><span class="num pl-7">{{ task.value }}</span>
               </li>
             </ul>
@@ -245,10 +245,12 @@ export default {
         { key: 'valid_total', value: 0 }
       ],
       statusList: [
-        { name: this.$t('task_preview_status_running'), label: 'running', value: 0 },
-        { name: this.$t('task_preview_status_edit'), label: 'wait_run', value: 0 },
-        { name: this.$t('task_preview_status_pause'), label: 'pause', value: 0 },
-        { name: this.$t('task_preview_status_error'), key: 'error', value: 0 }
+        { name: this.$t('dashboard_status_running'), label: 'running', value: 0 },
+        { name: this.$t('dashboard_status_edit'), label: 'edit', value: 0 },
+        { name: this.$t('dashboard_status_wait_run'), label: 'wait_run', value: 0 },
+        { name: this.$t('dashboard_status_stop'), label: 'stop', value: 0 },
+        { name: this.$t('dashboard_status_complete'), label: 'complete', value: 0 },
+        { name: this.$t('dashboard_status_error'), label: 'error', value: 0 }
       ],
 
       loading: false,
@@ -266,8 +268,8 @@ export default {
         wait_run: '#AE86C9',
         edit: '#88DBDA',
         error: '#F7D762',
-        stopping: '#E6B450',
-        scheduled: '#2EA0EA'
+        stop: '#E6B450',
+        complete: '#2EA0EA'
       },
       colorServeMap: {
         starting: '#409EFF',
@@ -357,7 +359,8 @@ export default {
     getDataFlowApi() {
       let self = this
       self.loading = true
-      DataFlows.chart()
+      this.$api('Task')
+        .chart()
         .then(res => {
           if (res?.data) {
             let setColor = list => {
@@ -368,14 +371,6 @@ export default {
                 return item
               })
             }
-
-            self.migrationTaskList = res.data.chart1?.items ? self.handleDataProcessing(res.data.chart1.items) : []
-            self.syncTaskList = res.data?.chart3 ? self.handleDataProcessing(res.data.chart3) : []
-            // self.allsyncJobsEchart.series[0].data = self.syncTaskList?.length ? setColor(self.syncTaskList) : []
-
-            // self.syncTotal = res.data.chart5.totalDataFlows
-            // self.migrationTotal = res.data.chart1.totalDataFlows
-
             // 全部数据
             let copy_total = res.data?.chart1?.total || 0
             let sync_total = res.data?.chart3?.total || 0
@@ -388,19 +383,6 @@ export default {
               valid_total: valid_total
             }
             let result = []
-            let handlestatus = list => {
-              if (list?.length) {
-                this.statusList.map(status => {
-                  list.filter(item => {
-                    if (item.label === status.key) {
-                      return (status.value = item.value)
-                    }
-                  })
-                  return status
-                })
-              }
-            }
-            // this.taskList = statusList(result)
             this.taskList.forEach(el => {
               result.push(
                 Object.assign({}, el, {
@@ -410,13 +392,17 @@ export default {
             })
             this.taskList = result
 
-            // self.copyPieData = setColor(handlestatus(self.migrationTaskList))
-            console.log(handlestatus(self.migrationTaskList))
+            self.migrationTaskList = res.data.chart1?.items
+              ? self.handleDataProcessing(res.data.chart1.items, self.statusList)
+              : []
+            self.syncTaskList = res.data?.chart3 ? self.handleDataProcessing(res.data.chart3, self.statusList) : []
+
+            self.copyPieData = setColor(self.migrationTaskList)
             self.copyTaskData = this.handleChart(res.data.chart2)
             self.syncPieData = setColor(self.syncTaskList)
             self.syncTaskData = this.handleChart(res.data.chart4)
             self.validBarData = this.handleChart(res.data.chart5)
-            self.transBarData = this.handleChart(res.data.chart6)
+            self.transBarData = this.handleChart(res.data.chart6, self.transBarData)
           }
         })
         .finally(() => {
@@ -425,14 +411,27 @@ export default {
     },
 
     // echart数据转换
-    handleChart(data) {
+    handleChart(data, originalData) {
       let echartData = []
-      for (let item in data) {
-        echartData.push({
-          name: this.$t('dashboard_' + item),
-          value: data[item],
-          color: '#2EA0EA'
+      if (originalData?.length) {
+        originalData.forEach(el => {
+          for (let item in data) {
+            if (el.key === item)
+              echartData.push({
+                name: el.name || this.$t('dashboard_' + item),
+                value: data[item],
+                color: el.color
+              })
+          }
         })
+      } else {
+        for (let item in data) {
+          echartData.push({
+            name: this.$t('dashboard_' + item),
+            value: data[item],
+            color: '#2EA0EA'
+          })
+        }
       }
 
       return echartData
@@ -461,24 +460,25 @@ export default {
     // },
 
     // 数据处理
-    handleDataProcessing(dataItem) {
+    handleDataProcessing(dataItem, statusData) {
       let statusItem = []
       if (dataItem?.length) {
         dataItem.sort((a, b) => (a._id > b._id ? 1 : a._id === b._id ? 0 : -1))
-        dataItem.forEach(element => {
-          statusItem.unshift({
-            name: this.$t('dashboard_status_' + element._id),
-            label: element._id,
-            value: element.count
+        statusData.forEach(item => {
+          dataItem.forEach(element => {
+            if (item.label === element._id) {
+              statusItem.push({
+                name: item.name,
+                label: element._id,
+                value: element.count
+              })
+            }
           })
         })
-        statusItem.filter((item, index) => {
-          if (item.name === 'stopping' || item.name === 'scheduled') {
-            statusItem.splice(index, 1)
-          }
-        })
+      } else {
+        statusItem = statusData
       }
-
+      console.log(statusItem)
       return statusItem
     },
     getPieOption(data) {
@@ -623,7 +623,7 @@ export default {
           padding: 20px 30px 20px 20px;
         }
         .job-list {
-          padding: 30px 30px 20px 60px;
+          padding: 16px 30px 20px 60px;
           box-sizing: border-box;
           li {
             margin-bottom: 5px;

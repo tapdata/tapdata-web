@@ -100,7 +100,7 @@ export default {
     async getData(id) {
       this.loading = true
       this.$api('Task')
-        .get([id])
+        .findTaskDetailById([id])
         .then(res => {
           if (res) {
             let previewData = []
