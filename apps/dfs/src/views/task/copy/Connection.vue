@@ -204,8 +204,8 @@ export default {
           id: row.id
         }
         this.$confirm(config.Message + config.name + '?', config.title, {
-          confirmButtonText: config.confirmButtonText,
-          cancelButtonText: config.cancelButtonText,
+          // confirmButtonText: config.confirmButtonText,
+          // cancelButtonText: config.cancelButtonText,
           type: 'warning',
           closeOnClickModal: false
         }).then(resFlag => {
