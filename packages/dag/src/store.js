@@ -69,6 +69,12 @@ const state = () => ({
       name: '连接',
       type: 'join',
       constructor: 'Join'
+    },
+    {
+      icon: 'join',
+      name: '主从合并',
+      type: 'merge_table_processor',
+      constructor: 'MergeTable'
     }
     // {
     //   icon: 'joint-cache',

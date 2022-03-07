@@ -13,4 +13,7 @@ export class Task extends PublicApi {
   save(params) {
     return axios.patch(this.url + '/confirm/' + params.id, params)
   }
+  getMetadata(params) {
+    return axios.post(this.url + '/metadata', params)
+  }
 }
