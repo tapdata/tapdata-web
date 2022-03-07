@@ -233,14 +233,14 @@ export default function () {
         type: 'slot',
         field: 'syncPoints',
         slot: 'syncPoints',
-        label: '增量采集开始时刻',
+        label: i18n.t('task_setting_sync_points'),
         show: false
       },
       {
         type: 'slot',
         field: 'cronExpression',
         slot: 'cronExpression',
-        label: '定期调度任务',
+        label: i18n.t('task_setting_cron_expression'),
         show: false,
         dependOn: [
           {
@@ -260,7 +260,7 @@ export default function () {
         type: 'slot',
         field: 'scheduleTime',
         slot: 'scheduleTime',
-        label: '计划运行时间',
+        label: i18n.t('task_setting_schedule_time'),
         show: false,
         dependOn: [
           {

@@ -77,48 +77,110 @@
                   </el-row>
                 </template>
                 <template slot="scheduleTime">
-                  <ElRow>
+                  <ElRow class="flex align-items-center" style="height: 32px">
                     <ElSwitch v-model="settingModel.isSchedule"></ElSwitch>
-                    <ElDatePicker
-                      v-if="settingModel.isSchedule"
-                      value-format="yyyy-MM-dd HH:mm:ss"
-                      format="yyyy-MM-dd HH:mm:ss"
-                      v-model="settingModel.scheduleTime"
-                      type="datetime"
-                      class="ml-4"
-                      :picker-options="getCurrentOptions()"
-                    ></ElDatePicker>
+                    <ElForm
+                      :model="settingModel"
+                      ref="scheduleTimeForm"
+                      inline
+                      class="ml-4 pt-7"
+                      @submit.native.prevent
+                    >
+                      <ElFormItem
+                        v-if="settingModel.isSchedule"
+                        required
+                        class="form-item"
+                        prop="scheduleTime"
+                        label=""
+                        :rules="[
+                          {
+                            required: true,
+                            message: $t('task_setting_schedule_time') + $t('gl_form_can_not_be_empty'),
+                            trigger: ['blur', 'change']
+                          }
+                        ]"
+                      >
+                        <ElDatePicker
+                          value-format="yyyy-MM-dd HH:mm:ss"
+                          format="yyyy-MM-dd HH:mm:ss"
+                          v-model="settingModel.scheduleTime"
+                          type="datetime"
+                          :picker-options="getCurrentOptions()"
+                        ></ElDatePicker>
+                      </ElFormItem>
+                    </ElForm>
+                    <!--                    <ElDatePicker-->
+                    <!--                      v-if="settingModel.isSchedule"-->
+                    <!--                      value-format="yyyy-MM-dd HH:mm:ss"-->
+                    <!--                      format="yyyy-MM-dd HH:mm:ss"-->
+                    <!--                      v-model="settingModel.scheduleTime"-->
+                    <!--                      type="datetime"-->
+                    <!--                      class="ml-4"-->
+                    <!--                      :picker-options="getCurrentOptions()"-->
+                    <!--                    ></ElDatePicker>-->
                   </ElRow>
                 </template>
                 <template slot="cronExpression">
                   <ElRow class="flex align-items-center" style="height: 32px">
                     <div class="flex align-items-center">
                       <ElSwitch v-model="settingModel.isSchedule"></ElSwitch>
-                      <template v-if="settingModel.isSchedule">
-                        <el-input
-                          v-model="settingModel.cronExpression"
-                          :placeholder="$t('dataFlow.cronExpression')"
-                          size="mini"
-                          class="jobSchedule ml-4"
-                        ></el-input>
-                        <el-popover popper-class="jobSeceduleDialog" placement="top-start" width="500" trigger="hover">
-                          <div class="text box">
-                            <p>{{ $t('dialog.jobSchedule.explanation') }}</p>
-                            <p>{{ $t('dialog.jobSchedule.grammar') }}</p>
-                            <ul class="flex">
-                              <li v-for="item in timeTextArr" :key="item" class="mr-3 text-center">
-                                <p>{{ $t('dialog.jobSchedule.' + item) }}</p>
-                                <span>*</span>
-                              </li>
-                            </ul>
-                            <p>{{ $t('dialog.jobSchedule.example') }}</p>
-                            <p>0 */1 * * * ? * // {{ $t('dialog.jobSchedule.runMinute') }}</p>
-                            <p>0 0 2 * * ? * // {{ $t('dialog.jobSchedule.runDay') }}</p>
+                      <ElForm
+                        :model="settingModel"
+                        ref="cronExpressionForm"
+                        inline
+                        class="ml-4 pt-7"
+                        @submit.native.prevent
+                      >
+                        <ElFormItem
+                          v-if="settingModel.isSchedule"
+                          required
+                          class="form-item"
+                          prop="cronExpression"
+                          label=""
+                          :rules="[
+                            {
+                              required: true,
+                              message: $t('task_setting_cron_expression') + $t('gl_form_can_not_be_empty'),
+                              trigger: ['blur', 'change']
+                            },
+                            {
+                              required: true,
+                              trigger: 'blur',
+                              validator: cronExpressionValidator
+                            }
+                          ]"
+                        >
+                          <div class="flex">
+                            <ElInput
+                              v-model="settingModel.cronExpression"
+                              :placeholder="$t('dataFlow.cronExpression')"
+                              size="mini"
+                              class="jobSchedule"
+                            ></ElInput>
+                            <ElPopover
+                              popper-class="jobSeceduleDialog"
+                              placement="top-start"
+                              width="500"
+                              trigger="hover"
+                            >
+                              <div class="text box">
+                                <p>{{ $t('dialog.jobSchedule.explanation') }}</p>
+                                <p>{{ $t('dialog.jobSchedule.grammar') }}</p>
+                                <ul class="flex">
+                                  <li v-for="item in timeTextArr" :key="item" class="mr-3 text-center">
+                                    <p>{{ $t('dialog.jobSchedule.' + item) }}</p>
+                                    <span>*</span>
+                                  </li>
+                                </ul>
+                                <p>{{ $t('dialog.jobSchedule.example') }}</p>
+                                <p>0 */1 * * * ? // {{ $t('dialog.jobSchedule.runMinute') }}</p>
+                                <p>0 0 2 * * ? // {{ $t('dialog.jobSchedule.runDay') }}</p>
+                              </div>
+                              <VIcon slot="reference" class="color-disable ml-2" size="14">info</VIcon>
+                            </ElPopover>
                           </div>
-                          <!--                      <span class="icon iconfont icon-tishi1" slot="reference"></span>-->
-                          <VIcon slot="reference" class="color-disable ml-2" size="14">info</VIcon>
-                        </el-popover>
-                      </template>
+                        </ElFormItem>
+                      </ElForm>
                     </div>
                   </ElRow>
                 </template>
@@ -617,7 +679,18 @@ export default {
       tableNameTransform: '',
       fieldsNameTransform: '',
       updateTransfer: false,
-      timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year']
+      timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week'],
+      cronExpressionValidator: (rule, value, callback) => {
+        if (!value || !value.trim()) {
+          callback(new Error(this.$t('task_form_task_cannot_empty')))
+        } else {
+          this.$axios.get('tm/api/DataFlows/cron/isValidExpression?cron=' + value).then(({ isValid }) => {
+            if (!isValid) {
+              callback(new Error(this.$t('task_setting_cron_expression_valid_false')))
+            } else callback()
+          })
+        }
+      }
     }
   },
 
@@ -660,7 +733,7 @@ export default {
                   .get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter)))
                   .then(({ items }) => {
                     if (items?.length !== 0) {
-                      callback(new Error('任务名称已存在'))
+                      callback(new Error(this.$t('task_setting_task_name_already_exists')))
                     } else callback()
                   })
               }
@@ -888,10 +961,26 @@ export default {
       if (type === 'setting') {
         this.$refs.setting.validate(valid => {
           if (valid) {
-            this.activeStep += 1
-            this.getFormConfig()
-            if (this.showSysncTableTip) {
-              this.$message.warning(this.$t('task_form_table_name_cannot_consistent'))
+            // field: 'sync_type',
+            let { sync_type } = this.settingModel
+            if (sync_type === 'initial_sync') {
+              // 开启了调度时间
+              this.$refs.cronExpressionForm.validate(v => {
+                if (v) {
+                  this.settingNextFnc()
+                } else {
+                  this.$message.error(this.$t('task_form_validation_failed'))
+                }
+              })
+            } else {
+              // 开启了计划启动时间
+              this.$refs.scheduleTimeForm.validate(v => {
+                if (v) {
+                  this.settingNextFnc()
+                } else {
+                  this.$message.error(this.$t('task_form_validation_failed'))
+                }
+              })
             }
           } else {
             this.$message.error(this.$t('task_form_validation_failed'))
@@ -909,6 +998,13 @@ export default {
         this.getFormConfig()
       }
       this.taskStep++
+    },
+    settingNextFnc() {
+      this.activeStep += 1
+      this.getFormConfig()
+      if (this.showSysncTableTip) {
+        this.$message.warning(this.$t('task_form_table_name_cannot_consistent'))
+      }
     },
     selectTransfer() {
       this.isTransfer = !this.checkTransfer()

@@ -1467,5 +1467,11 @@ module.exports = {
         }
       ]
     }
+  },
+  '/tm/api/DataFlows/cron/isValidExpression': {
+    reqId: '2d2ef280-ca64-443a-9d74-51c1d89de1a4',
+    ts: 1646646169872,
+    code: 'ok',
+    data: { isValid: false }
   }
 }

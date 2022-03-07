@@ -15,6 +15,7 @@ export default {
   gl_qr_code_tip: '扫码咨询',
   gl_qr_code_wx_customer_service: '微信客服',
   gl_telephone_tip: '电话咨询',
+  gl_form_can_not_be_empty: '不能为空',
 
   // 按钮
   button_edit: '编辑',
@@ -699,7 +700,11 @@ export default {
   task_setting_automatic_ddl: '自动DDL',
   task_setting_automatic_ddl_tip: '自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作',
   task_setting_automatic_index: '自动创建索引',
-
+  task_setting_sync_points: '增量采集开始时刻',
+  task_setting_cron_expression: '定期调度任务',
+  task_setting_schedule_time: '计划运行时间',
+  task_setting_task_name_already_exists: '任务名称已存在',
+  task_setting_cron_expression_valid_false: '调度表达式错误',
   task_instance_select_area: '选择区域',
   task_instance_choose_area: '选择可用区',
 
