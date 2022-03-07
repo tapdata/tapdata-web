@@ -207,7 +207,8 @@ export default {
   metadata_form_mongo_view: 'Mongodb view',
   metadata_form_rule_table_name:
     'Only supports English, numbers, underscores, dots, minus signs, and starts with English letters, not allowed to start with system',
-
+  metadata_detail_original_table_name: 'Original table name',
+  metadata_detail_original_database_name: 'Original database name',
   // 数据校验
   verify_details_title: 'Task verification details',
   verify_history_title: 'Task verification history',

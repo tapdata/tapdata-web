@@ -203,7 +203,8 @@ export default {
   metadata_form_collection: '數據集',
   metadata_form_mongo_view: 'Mongodb視圖',
   metadata_form_rule_table_name: '僅支持英文、數字、下劃線、點、減號，並以英文字母開頭，不允許 system 開頭',
-
+  metadata_detail_original_table_name: '原表名',
+  metadata_detail_original_database_name: '原庫名',
   // 数据校验
   verify_details_title: '任務校驗詳情',
   verify_history_title: '任務校驗歷史',

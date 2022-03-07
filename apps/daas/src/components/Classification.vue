@@ -476,7 +476,7 @@ export default {
     border: 0;
   }
   .toggle {
-    margin-top: 20px;
+    margin-top: 28px;
     color: #337dff;
   }
   &.expand {

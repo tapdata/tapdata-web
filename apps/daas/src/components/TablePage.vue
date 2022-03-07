@@ -276,9 +276,10 @@ export default {
     }
   }
 
-  // .table-page-left {
-  //   margin-right: 10px;
-  // }
+  .table-page-left {
+    border-right: 1px solid #ebeef5;
+    // margin-right: 10px;
+  }
 
   .table-page-body {
     flex: 1;
