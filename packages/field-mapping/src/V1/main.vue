@@ -213,7 +213,7 @@ export default {
       }
     },
     updateAutoTransform(type, data) {
-      for (let i = 0; i < this.dataFlow.stages.length; i++) {
+      for (let i = 0; i < this.dataFlow['dag']['nodes'].length; i++) {
         if (this.dataFlow['dag']['nodes'][i].id === this.transform.nodeId) {
           this.dataFlow['dag']['nodes'][i].fieldsNameTransform = data.fieldsNameTransform
           this.dataFlow['dag']['nodes'][i].batchOperationList = data.batchOperationList

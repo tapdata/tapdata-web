@@ -1,6 +1,11 @@
 <template>
   <div>
-    <FieldMapping ref="fieldMapping" class="mt-2" :transform="transform" :getDataFlow="getDataFlow"></FieldMapping>
+    <FieldMapping
+      ref="fieldMapping"
+      class="flex justify-content-end mr-5 mt-3"
+      :transform="transform"
+      :getDataFlow="getDataFlow"
+    ></FieldMapping>
     <ElTable v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
       <ElTableColumn prop="field_name" label="字段名称">
         <template #default="{ row }">
@@ -35,7 +40,7 @@ export default {
       transform: {
         showBtn: true,
         mode: 'metaData',
-        stageId: '',
+        nodeId: '',
         field_process: [],
         fieldsNameTransform: '',
         batchOperationList: []
@@ -55,6 +60,7 @@ export default {
   watch: {
     activeNodeId() {
       this.loadFields()
+      this.transform.nodeId = this.activeNode.id
     },
 
     transformStatus(v) {
@@ -91,16 +97,14 @@ export default {
       const dag = this.$store.getters['dataflow/dag']
       const editVersion = this.$store.state.dataflow.editVersion
       let dataflow = this.$store.state.dataflow
-      console.log(dataflow)
       return {
         dag,
         editVersion,
-        ...this.dataflow
+        ...dataflow
       }
     },
     getDataFlow() {
       const data = this.getDataflowDataToSave()
-      console.log(data)
       return data
     }
   }

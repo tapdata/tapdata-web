@@ -6,7 +6,7 @@
 export const modeMapping = {
   all: {
     batch_field_rename: true,
-    batch_field_type: true,
+    batch_field_type: false,
     field_rename: true,
     field_type: true,
     precision: true,
@@ -17,7 +17,7 @@ export const modeMapping = {
   },
   metaData: {
     batch_field_rename: false,
-    batch_field_type: true,
+    batch_field_type: false,
     field_rename: false,
     field_type: true,
     precision: true,

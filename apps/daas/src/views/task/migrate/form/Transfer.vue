@@ -18,7 +18,8 @@
           :transform="transferData"
           :getDataFlow="getTask"
           @update-first="returnModel"
-          @returnFieldMapping="returnFieldMappingData"
+          @returnPreFixSuffix="returnFieldMappingData"
+          @returnFieldMapping="saveFieldProcess"
         ></FieldMapping>
       </div>
     </div>
@@ -207,9 +208,10 @@ export default {
     returnFieldMappingData(data) {
       this.transferData.fieldsNameTransform = data.fieldsNameTransform
       this.transferData.batchOperationList = data.batchOperationList
-      this.transferData.fieldProcess = data.fieldProcess
     },
-
+    saveFieldProcess(data) {
+      this.transferData.fieldProcess = data
+    },
     //重新加载模型
     async reload() {
       let result = await this.$api('Workers').getAvailableAgent()
