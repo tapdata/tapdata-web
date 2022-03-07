@@ -1,6 +1,6 @@
 import { NodeType } from './extends/NodeType'
 
-export class Merge extends NodeType {
+export class MergeTable extends NodeType {
   constructor(node) {
     super(node)
 

@@ -385,7 +385,7 @@ export default {
           let fields
           try {
             const data = await metadataApi.nodeSchema(nodeId)
-            fields = data.fields
+            fields = data?.[0]?.fields || []
           } catch (e) {
             // eslint-disable-next-line no-console
             console.error('nodeSchema', e)
