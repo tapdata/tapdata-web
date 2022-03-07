@@ -312,7 +312,7 @@
         }}</span>
       </div>
       <div class="table-box flex flex-column">
-        <template v-if="form.batchOperationList.length !== 0">
+        <template v-if="form.batchOperationList && form.batchOperationList.length !== 0">
           <div
             class="flex flex-row flex-1 mb-3 align-items-center"
             v-for="(ops, index) in form.batchOperationList"
@@ -534,9 +534,11 @@ export default {
         this.getNavDataMethod &&
           this.getNavDataMethod(this.page)
             .then(({ data, total }) => {
-              this.fieldMappingNavData = data
-              this.selectRow = data[this.position] || data[0]
-              this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
+              if (data?.[0]) {
+                this.fieldMappingNavData = data
+                this.selectRow = data[this.position] || data?.[0]
+                this.fieldCount = this.selectRow?.sourceFieldCount - this.selectRow?.userDeletedNum || 0
+              }
               this.page.total = total
               //初始化右侧列表
               this.initTableData()
@@ -1185,21 +1187,27 @@ export default {
       }
     },
     saveFileOperations() {
-      let fieldProcess = {
+      let field_process = {
         table_id: this.selectRow.sourceTableId, //存源表名 兼容旧版字段处理器
         table_name: this.selectRow.sourceObjectName,
         operations: this.operations
       }
-      if (this.fieldProcess && this.fieldProcess.length > 0) {
-        let process = this.fieldProcess.filter(fields => fields.table_id === this.selectRow.sourceTableId)
+      if (this.field_process && this.field_process.length > 0) {
+        let process = this.field_process.filter(fields => fields.table_id === this.selectRow.sourceTableId)
         if (process.length > 0) {
-          fieldProcess = process[0]
-          fieldProcess.table_id = this.selectRow.sourceTableId
-          fieldProcess.table_name = this.selectRow.sourceObjectName
-          fieldProcess.operations = this.operations
-        } else this.fieldProcess.push(fieldProcess)
-      } else this.fieldProcess.push(fieldProcess)
-      return this.fieldProcess
+          for (let i = 0; i < this.field_process.length; i++) {
+            if (this.field_process[i].table_id === this.selectRow.sourceTableId) {
+              this.field_process[i].operations = this.operations
+            }
+          }
+        } else {
+          this.field_process.push(field_process)
+        }
+      } else {
+        this.field_process = []
+        this.field_process.push(field_process)
+      }
+      return this.field_process
     },
     returnData(hiddenMsg) {
       let result = this.checkTable()

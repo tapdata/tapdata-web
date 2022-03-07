@@ -8,7 +8,7 @@
       width="85%"
       :title="$t('dag_link_button_mapping_configuration')"
       :visible.sync="dialogFieldProcessVisible"
-      :modal-append-to-body="false"
+      append-to-body
       custom-class="database-filed-mapping-dialog"
       :close-on-click-modal="false"
     >
@@ -472,7 +472,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .database-filed-mapping-dialog {
   height: 800px;
   overflow: hidden;
