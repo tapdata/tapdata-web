@@ -203,6 +203,10 @@ export default {
   metadata_form_collection: '数据集',
   metadata_form_mongo_view: 'Mongodb视图',
   metadata_form_rule_table_name: '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
+
+  metadata_detail_original_table_name: '原表名',
+  metadata_detail_original_database_name: '原库名',
+
   // 数据校验
   verify_details_title: '任务校验详情',
   verify_history_title: '任务校验历史',

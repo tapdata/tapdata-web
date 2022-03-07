@@ -20,7 +20,11 @@
             </span>
 
             <span v-if="metadataDataObj.alias_name">(</span>
-            {{ $t('metadata.details.originalTableName') }}：{{ metadataDataObj.original_name }}
+            {{
+              metadataDataObj.meta_type === 'database'
+                ? $t('metadata_detail_original_database_name')
+                : $t('metadata_detail_original_table_name')
+            }}：{{ metadataDataObj.original_name }}
             <span v-if="metadataDataObj.alias_name">)</span>
             <el-button type="text" @click="handleChangeName" style="padding: 0 10px">{{
               $t('metadata.details.renamed')
@@ -30,7 +34,6 @@
             <span v-if="metadataDataObj.comment">{{ metadataDataObj.comment }}</span>
 
             <span v-else>{{ $t('metadata.details.clickAddDes') }}</span>
-
             <el-button
               class="e-button"
               type="text"
@@ -642,7 +645,7 @@ export default {
     getData() {
       let id = this.$route?.params?.id || ''
       return this.$api('MetadataInstances')
-        .get([id])
+        .findTablesById([id])
         .then(res => {
           this.metadataDataObj = res.data
           this.pageTotal = res.data.fields?.length || 0
@@ -1048,7 +1051,7 @@ export default {
         width: 28px;
         height: 100%;
         padding: 23px 0;
-        text-align: center;
+        text-align: right;
         font-size: 12px;
         background-color: #fff;
         border-right: 1px solid #f2f2f2;
