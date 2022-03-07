@@ -50,12 +50,14 @@ export default {
         {
           label: this.$t('task_info_running_time'),
           prop: 'dataFlowStartTime',
-          dataType: 'time'
+          dataType: 'time',
+          default: '-'
         },
         {
           label: this.$t('task_info_running_end_time'),
           prop: 'dataFlowEndTime',
-          dataType: 'time'
+          dataType: 'time',
+          default: '-'
         },
         {
           label: this.$t('task_info_history_start_type'),

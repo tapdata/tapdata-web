@@ -42,6 +42,9 @@ export default {
   },
   methods: {
     formatTime(time, fmt = 'YYYY-MM-DD HH:mm:ss') {
+      if (!time) {
+        return
+      }
       return moment(time).format(fmt)
     },
     getValue(val, d) {
