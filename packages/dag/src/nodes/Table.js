@@ -376,16 +376,6 @@ export class Table extends NodeType {
                       filterable: true
                     },
                     'x-reactions': ['{{useAsyncDataSource(loadNodeFieldNames)}}']
-                  },
-                  automaticallyCreateTables: {
-                    title: '自动建表',
-                    type: 'string',
-                    default: true,
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      wrapperWidth: 240
-                    },
-                    'x-component': 'Switch'
                   }
                 }
               }
