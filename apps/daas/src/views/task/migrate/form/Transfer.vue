@@ -13,6 +13,7 @@
           $t('task_mapping_table_rename')
         }}</el-button>
         <FieldMapping
+          v-if="showFieldMapping"
           ref="fieldMapping"
           class="fr"
           :transform="transferData"
@@ -188,8 +189,9 @@ export default {
     //字段映射
     tranModelVersionControl() {
       let data = this.getTask()
+      //查找目标节点
       //是否显示字段推演
-      let nodeId = data?.dag?.nodes?.[1]?.id || ''
+      let nodeId = data?.dag?.edges?.[0]?.target || ''
       let param = {
         nodes: data?.dag?.nodes,
         nodeId: nodeId
