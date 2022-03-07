@@ -4,7 +4,8 @@ export function getSubTaskStatus(rows = []) {
   const statusMap = {
     running: ['scheduling', 'running', 'pausing', 'stopping', 'scheduling'],
     not_running: ['edit', 'wait_run', 'pause', 'stop', 'complete', 'schedule_failed'],
-    error: ['error']
+    error: ['error'],
+    edit: ['edit']
   }
   const len = rows.length
   let result = [],
@@ -30,7 +31,7 @@ export function getSubTaskStatus(rows = []) {
         item.status = key
         item.count = 0
         rows.forEach(el => {
-          if (statusMap[key].includes(el.status)) {
+          if (statusMap[key] && statusMap[key].includes(el.status)) {
             item.count++
           }
         })

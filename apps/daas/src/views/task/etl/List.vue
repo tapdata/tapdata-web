@@ -71,7 +71,8 @@
           size="small"
           @click="create"
         >
-          <i class="iconfont icon-jia add-btn-icon"></i>
+          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
+          {{ $t('task_create_task') }}
         </el-button>
       </div>
 
@@ -265,7 +266,6 @@
 
 <script>
 import factory from '../../../api/factory'
-import ws from '../../../api/ws'
 const dataFlows = factory('DataFlows')
 const MetadataInstance = factory('MetadataInstances')
 // const cluster = factory('cluster');
@@ -275,11 +275,11 @@ import DownAgent from '../../downAgent/agentDown'
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 // import VIcon from '@/components/VIcon'
-import StatusItem from './StatusItem'
+import StatusItem from '../StatusItem'
 import { ETL_STATUS_MAP } from '@/const'
-import { getSubTaskStatus } from './util'
+import { getSubTaskStatus } from '../util'
 
-let interval = null
+let timeout = null
 export default {
   name: 'TaskList',
   components: { FilterBar, TablePage, DownAgent, SkipError, StatusItem },
@@ -378,14 +378,16 @@ export default {
     this.getFilterItems()
     let { status } = this.$route.query
     this.searchParams.status = status ?? ''
-    ws.on('watch', this.dataflowChange)
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
+    //定时轮询
+    timeout = setInterval(() => {
+      this.table.fetch(null, 0, true)
+    }, 50000)
   },
   beforeDestroy() {
-    ws.off('watch', this.dataflowChange)
-    clearInterval(interval)
+    clearInterval(timeout)
   },
   watch: {
     '$route.query'() {
@@ -417,41 +419,6 @@ export default {
         }
       }
     },
-    watchDataflowList(ids) {
-      let msg = {
-        type: 'watch',
-        collection: 'DataFlows',
-        filter: {
-          where: { 'fullDocument._id': { $in: ids } }, //查询条件
-          fields: {
-            'fullDocument.id': true,
-            'fullDocument.name': true,
-            'fullDocument.status': true,
-            'fullDocument.checked': true,
-            'fullDocument.executeMode': true,
-            'fullDocument.stopOnError': true,
-            'fullDocument.last_updated': true,
-            'fullDocument.startTime': true,
-            'fullDocument.children': true,
-            'fullDocument.stats': true,
-            'fullDocument.stages.id': true,
-            'fullDocument.stages.name': true,
-            'fullDocument.errorEvents': true,
-            'fullDocument.agentId': true,
-            'fullDocument.setting': true,
-            'fullDocument.listtags': true
-          }
-        }
-      }
-      try {
-        ws.ready(() => {
-          ws.send(msg)
-        }, true)
-      } catch (e) {
-        // eslint-disable-next-line
-        console.log('e', e)
-      }
-    },
     reset() {
       this.searchParams = {
         keyword: '',
@@ -471,7 +438,7 @@ export default {
       let { keyword, status, progress, executionStatus, timeData, syncType, agentId } = this.searchParams
 
       let where = {
-        mappingTemplate: this.mappingTemplate
+        syncType: 'sync'
       }
       let fields = {
         id: true,
@@ -564,7 +531,6 @@ export default {
         .then(res => {
           let data = res.data
           let list = data?.items || []
-          this.watchDataflowList(list.map(it => it.id))
           this.table.setCache({
             keyword,
             status,
@@ -845,38 +811,6 @@ export default {
             }
           })
       }
-      // if (node) {
-      // 	this.$refs.errorHandler.checkError(node, () => {
-      // 		//启动任务时判断任务内是否存在聚合处理器，若存在，则弹框提示
-      // 		if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
-      // 			const h = this.$createElement;
-      // 			let arr = this.$t('message.startAggregation_message').split('XXX');
-      // 			this.$confirm(
-      // 				h('p', [
-      // 					arr[0] + '(',
-      // 					h('span', { style: { color: '#409EFF' } }, node.name),
-      // 					')' + arr[1]
-      // 				]),
-      // 				this.$t('dataFlow.importantReminder'),
-      // 				{
-      // 					type: 'warning',
-      // 					closeOnClickModal: false
-      // 				}
-      // 			)
-      // 				.then(() => {
-      // 					//若任务内存在聚合处理器，启动前先重置
-      // 					dataFlows.reset(node.id).then(() => {
-      // 						this.changeStatus(ids, { status: 'scheduled' });
-      // 					});
-      // 				})
-      // 				.catch(() => {
-      // 					this.table.fetch();
-      // 				});
-      // 		} else {
-      // 			this.changeStatus(ids, { status: 'scheduled' });
-      // 		}
-      // 	});
-      // } else {
     },
     stop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
@@ -1004,7 +938,7 @@ export default {
         status
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      dataFlows
+      this.$api('Task')
         .update(where, attributes)
         .then(res => {
           this.table.fetch()
@@ -1072,7 +1006,7 @@ export default {
       let data = this.formSchedule.taskData.setting || {}
       data.isSchedule = this.formSchedule.isSchedule
       data.cronExpression = this.formSchedule.cronExpression
-      dataFlows
+      this.$api('Task')
         .patchId(this.formSchedule.id, { setting: data })
         .then(result => {
           if (result && result.data) {
@@ -1200,7 +1134,7 @@ export default {
           margin-left: 5px;
         }
         &.btn-create {
-          margin-left: 5px;
+          margin-left: 10px;
         }
         &.btn-createText {
           margin-left: 5px;

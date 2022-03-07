@@ -8,25 +8,25 @@
     :append-to-body="true"
     :visible.sync="dialogFormVisible"
   >
-    <el-form :model="model" ref="form" label-width="120px">
-      <el-form-item :label="$t('module_form_describtion')">
-        <el-input v-model="model.describtion" size="mini"></el-input>
-      </el-form-item>
-      <el-form-item :label="$t('module_form_method')">
-        <el-select v-model="model.method" placeholder="请选择" size="mini">
-          <el-option label="GET" value="GET"></el-option>
-          <el-option label="STREAM" value="STREAM"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item :label="$t('module_form_fields')">
+    <ElForm :model="model" ref="form" label-width="120px">
+      <ElFormItem :label="$t('module_form_describtion')">
+        <ElInput v-model="model.describtion" size="mini"></ElInput>
+      </ElFormItem>
+      <ElFormItem :label="$t('module_form_method')">
+        <ElSelect v-model="model.method" placeholder="请选择" size="mini">
+          <ElOption label="GET" value="GET"></ElOption>
+          <ElOption label="STREAM" value="STREAM"></ElOption>
+        </ElSelect>
+      </ElFormItem>
+      <ElFormItem :label="$t('module_form_fields')">
         <!-- 字段 -->
-        <el-table :data="fields" ref="table" border @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="45" :reserve-selection="true"> </el-table-column>
-          <el-table-column prop="field_name" :label="$t('module_form_fields')"></el-table-column>
-          <el-table-column prop="javaType" :label="$t('module_form_datatype')"></el-table-column>
-        </el-table>
-      </el-form-item>
-      <el-form-item :label="$t('module_form_condition')">
+        <ElTable :data="fields" ref="table" @selection-change="handleSelectionChange">
+          <ElTableColumn type="selection" width="45" :reserve-selection="true"> </ElTableColumn>
+          <ElTableColumn prop="field_name" :label="$t('module_form_fields')"></ElTableColumn>
+          <ElTableColumn prop="javaType" :label="$t('module_form_datatype')"></ElTableColumn>
+        </ElTable>
+      </ElFormItem>
+      <ElFormItem :label="$t('module_form_condition')" style="margin-bottom: 0">
         <!-- 过滤条件 -->
         <QueryBuild
           v-model="model.condition"
@@ -36,33 +36,33 @@
           field-value="field_name"
         ></QueryBuild>
         <!-- <QueryBuild v-model="model.condition" :fields="fields"></QueryBuild> -->
-      </el-form-item>
-      <el-form-item :label="$t('module_form_available_query_field')" v-if="model.method !== 'STREAM'">
-        <el-select v-model="model.availableQueryField" multiple filterable size="mini">
-          <el-option
+      </ElFormItem>
+      <ElFormItem :label="$t('module_form_available_query_field')" v-if="model.method !== 'STREAM'">
+        <ElSelect v-model="model.availableQueryField" multiple filterable size="mini">
+          <ElOption
             v-for="item in model.fields"
             :label="item.field_name"
             :value="item.field_name"
             :key="item.field_name"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item :label="$t('module_form_required_query_field')" v-if="model.method !== 'STREAM'">
-        <el-select v-model="model.requiredQueryField" multiple filterable size="mini">
-          <el-option
+          ></ElOption>
+        </ElSelect>
+      </ElFormItem>
+      <ElFormItem :label="$t('module_form_required_query_field')" v-if="model.method !== 'STREAM'">
+        <ElSelect v-model="model.requiredQueryField" multiple filterable size="mini">
+          <ElOption
             v-for="item in model.fields"
             :label="item.field_name"
             :value="item.field_name"
             :key="item.field_name"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-    </el-form>
+          ></ElOption>
+        </ElSelect>
+      </ElFormItem>
+    </ElForm>
     <div slot="footer" class="dialog-footer">
       <el-button class="cancel" @click="handleClose()" size="small">
-        {{ $t('message.cancel') }}
+        {{ $t('button_cancel') }}
       </el-button>
-      <el-button type="primary" @click="save()" size="small">{{ $t('message.save') }}</el-button>
+      <el-button type="primary" @click="save()" size="small">{{ $t('button_save') }}</el-button>
     </div>
   </el-dialog>
 </template>
@@ -206,9 +206,9 @@ export default {
     height: calc(100% - 126px);
     padding: 10px 20px 0;
     overflow-y: auto;
-    .el-form-item {
-      margin-bottom: 10px;
-    }
+  }
+  .dialog-footer {
+    text-align: left;
   }
 }
 </style>

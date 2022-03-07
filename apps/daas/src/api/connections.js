@@ -48,4 +48,10 @@ export default class Connections extends PublicAPI {
   patch(id, params) {
     return axios.patch(`${this.url}/${id}`, params)
   }
+  getDataTypes() {
+    return axios.get(`${this.url}/databaseType`)
+  }
+  getConnections(filter) {
+    return axios.get(`${this.url}?filter=` + encodeURIComponent(JSON.stringify(filter)))
+  }
 }

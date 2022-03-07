@@ -168,6 +168,11 @@ export default {
         this.filterChange()
       }
     },
+    'model.queryField': {
+      handler() {
+        this.filterChange()
+      }
+    },
     'model.queryCommand': {
       handler() {
         this.filterChange()
@@ -296,7 +301,7 @@ export default {
 <style scoped lang="scss">
 .condition-warp {
   .condition-warp-group {
-    padding: 0 10px 0 24px;
+    // padding: 0 10px 0 24px;
     .condition-warp-group-item {
       display: flex;
       justify-content: space-between;

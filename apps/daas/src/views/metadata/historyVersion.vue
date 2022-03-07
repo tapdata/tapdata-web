@@ -288,7 +288,7 @@ export default {
   methods: {
     getData() {
       let params = {
-        history_version: this.comparedData.version
+        historyVersion: this.comparedData.version
       }
       this.$api('MetadataInstances')
         .compareHistory([this.comparedData.id], { params: params })

@@ -474,7 +474,7 @@ export default [
             component: () => import('@/views/metadata/Info'),
             meta: {
               code: 'data_catalog_menu',
-              title: 'tap.dataCatalog'
+              title: 'page_title_data_catalogue_info'
             }
           }
         ]
@@ -548,6 +548,27 @@ export default [
           code: 'API_doc_&_test_menu'
         }
       },
+      /* ---------- API客户端  ----------*/
+      {
+        path: '/api-client',
+        name: 'apiClient',
+        component: () => import('@/views/apiPage/Applications'),
+        meta: {
+          title: 'page_title_api_client',
+          code: 'API_clients_menu'
+        }
+      },
+      /* ---------- API服务端  ----------*/
+      {
+        path: '/api-servers',
+        name: 'apiServers',
+        component: () => import('@/views/apiPage/ApiServers'),
+        meta: {
+          title: 'page_title_api_servers',
+          code: 'API_server_menu'
+        }
+      },
+
       /* ---------- API统计  ----------*/
       {
         path: '/api-statistics',
@@ -571,7 +592,7 @@ export default [
       /* ---------- API监控  ----------*/
       {
         path: '/api-monitor',
-        name: 'apiServers',
+        name: 'apiMonitor',
         component: () => import('@/views/apiPage/ApiServers'),
         meta: {
           title: 'page_title_api_monitor',
@@ -702,7 +723,7 @@ export default [
         component: () => import('@/views/scheduleTasks/Histories'),
         meta: {
           code: 'schedule_jobs_menu',
-          title: 'tap.taskHistories'
+          title: 'page_title_schedule_history'
         }
       },
       {

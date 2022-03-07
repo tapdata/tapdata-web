@@ -21,7 +21,7 @@
             class="title-input text-truncate"
             @change="handleChangeName"
           />
-          <VIcon @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
+          <VIcon v-if="!stateIsReadonly" @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
         </div>
       </div>
       <ElTabs v-model="currentTab" class="config-tabs">
@@ -68,7 +68,7 @@ export default {
   components: { VIcon, MetaPane, DataPane, FormPanel, SettingPanel },
 
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById']),
+    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
 
     icon() {
       const node = this.activeNode

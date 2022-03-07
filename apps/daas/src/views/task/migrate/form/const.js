@@ -2,6 +2,7 @@ export const SETTING_MODEL = {
   name: '',
   sync_type: 'initial_sync+cdc',
   distinctWriteType: 'intellect',
+  automaticallyCreateTables: true,
   stopOnError: false,
   isOpenAutoDDL: false,
   bidirectional: false,
@@ -12,6 +13,7 @@ export const SETTING_MODEL = {
   tableNameTransform: '',
   noPrimaryKey: true,
   needToCreateIndex: true,
+  existDataProcessMode: 'keepData',
   syncPoints: [
     {
       connectionId: '',
@@ -21,14 +23,14 @@ export const SETTING_MODEL = {
       name: '',
       timezone: '+08:00' // 当type为localTZ时有该字段
     }
-  ],
-  isSchedule: false,
-  cronExpression: ''
+  ]
 }
 
 export const DATASOURCE_MODEL = {
-  source_sourceType: 'rds',
-  target_sourceType: 'dds',
+  source_sourceType: '',
+  target_targetType: '',
+  source_filter_databaseType: 'all',
+  target_filter_databaseType: 'all',
   source_connectionId: '',
   target_connectionId: '',
   source_connectionName: '',
@@ -43,10 +45,19 @@ export const DFSDATASOURCE_MODEL = {
   target_connectionName: '',
   mqType: '0'
 }
-
-export const INSTANCE_MODEL = {
-  region: '', //区域
-  zone: '', //可用区,
-  regionName: '', //区域
-  zoneName: '' //可用区,
+export const TRANSFER_MODEL = {
+  tableNameTransform: '', //表名大小写
+  tablePrefix: '', //前缀,
+  tableSuffix: '', //后缀
+  selectSourceArr: [], //可用区,
+  topicData: [],
+  queueData: [],
+  showBtn: true,
+  isFirst: false,
+  nodeId: '',
+  mode: 'all',
+  automaticallyCreateTables: true,
+  fieldProcess: [],
+  fieldsNameTransform: '',
+  batchOperationList: []
 }

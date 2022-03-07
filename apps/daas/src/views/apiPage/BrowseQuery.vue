@@ -18,7 +18,7 @@
         field-value="value"
       ></QueryBuild>
       <div class="browse_button">
-        <el-button type="primary" @click="handleFavorite()" size="small">
+        <el-button @click="handleFavorite()" size="mini">
           {{ $t('dataExplorer_add_favorite') }}
         </el-button>
         <!-- <el-button type="primary" @click="search(1)" size="small">
@@ -27,7 +27,7 @@
       </div>
     </div>
     <div class="browse_rows">
-      <h3>{{ $t('dataExplorer_show_column') }}</h3>
+      <h3 class="pb-4">{{ $t('dataExplorer_show_column') }}</h3>
       <el-checkbox :indeterminate="isIndeterminate" v-model="showAllColumn" @change="showAllColumns">全选</el-checkbox>
       <div style="margin: 15px 0"></div>
       <el-checkbox-group v-model="selectionRow" @change="handleCheckedFieldChange">
@@ -41,10 +41,10 @@
     </div>
 
     <div slot="footer" class="dialog-footer">
-      <el-button class="cancel" @click="handleClose()" size="small">
-        {{ $t('message.cancel') }}
+      <el-button class="cancel" @click="handleClose()" size="mini">
+        {{ $t('button_cancel') }}
       </el-button>
-      <el-button type="primary" @click="save()" size="small">{{ $t('message.save') }}</el-button>
+      <el-button type="primary" @click="save()" size="mini">{{ $t('button_confirm') }}</el-button>
     </div>
   </el-dialog>
 </template>
@@ -144,50 +144,23 @@ export default {
 
     // 收藏
     handleFavorite() {
-      this.$prompt('', this.$t('connection.rename'), {
-        customClass: 'changeName-prompt',
-        inputValue: this.favoriteName,
-        beforeClose: (action, instance, done) => {
+      this.$prompt('', this.$t('dataExplorer_add_favorite_name'), {
+        customClass: 'change-name-prompt',
+        inputValue: this.favoriteName
+      }).then(res => {
+        if (res) {
           let exists = false
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-
-            this.$api('users')
-              .get()
-              .then(res => {
-                if (res) {
-                  let collect = res.data.favorites.filter(v => v.meta.title === this.favoriteName)
-                  exists = collect.length > 0
-                }
-                if (exists) {
-                  this.$message.error('dataExplorer_exists')
-                }
-                // let collection = this.collections.filter(v => v.value === this.collection)
-                // let fields = {}
-                // this.fieldData.forEach(h => {
-                //   fields[h.value] = h.show
-                // })
-                // this.$emit('addFavorite', {
-                //   name: 'dataExplorer',
-                //   query: {
-                //     apiServer: 'apiServerId',
-                //     collection: collection,
-                //     condition: JSON.stringify(this.condition),
-                //     sortBy: this.pagination.sortBy,
-                //     fields: JSON.stringify(fields)
-                //   },
-                //   meta: {
-                //     title: this.favoriteName + ''
-                //   }
-                // })
-                done()
-              })
-              .finally(() => {
-                instance.confirmButtonLoading = false
-              })
-          } else {
-            done()
-          }
+          this.$api('users')
+            .get()
+            .then(res => {
+              if (res) {
+                let collect = res.data.favorites.filter(v => v.meta.title === this.favoriteName)
+                exists = collect.length > 0
+              }
+              if (exists) {
+                this.$message.error('dataExplorer_exists')
+              }
+            })
         }
       })
     },
@@ -244,6 +217,22 @@ export default {
   .browse_button {
     padding-top: 10px;
     text-align: right;
+  }
+}
+.change-name-prompt {
+  .el-message-box__header {
+    padding: 15px 15px 0;
+    .el-message-box__title {
+      padding-left: 0;
+      color: rgba(0, 0, 0, 0.85);
+      font-weight: 400;
+    }
+  }
+  .el-message-box__content {
+    padding-bottom: 0;
+    .el-message-box__input {
+      padding-top: 0;
+    }
   }
 }
 </style>

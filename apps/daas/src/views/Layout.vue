@@ -215,7 +215,6 @@
         align-items: center;
         height: 50px;
         line-height: 50px;
-        font-weight: 500;
         color: rgba(0, 0, 0, 0.6);
         background: #f7f8fa;
         .submenu-item {
@@ -226,6 +225,13 @@
           color: map-get($color, primary);
           background: rgba(44, 101, 255, 0.05);
         }
+      }
+      .submenu-item {
+        font-weight: 400;
+      }
+      .el-menu-item,
+      .el-submenu__title {
+        font-weight: 500;
       }
       .is-active .el-submenu__title {
         background: #f7f8fa;
@@ -271,6 +277,7 @@
     }
   }
   .layout-main {
+    position: relative;
     padding: 0;
     background: #fff;
     display: flex;
@@ -341,8 +348,10 @@ let menuSetting = [
       { name: 'dataExplorer' },
       { name: 'apiDocAndTest' },
       { name: 'apiAnalysis' },
+      { name: 'apiClient' },
+      { name: 'apiServers' },
       { name: 'applications' },
-      { name: 'apiServers' }
+      { name: 'apiMonitor' }
     ]
   },
   {

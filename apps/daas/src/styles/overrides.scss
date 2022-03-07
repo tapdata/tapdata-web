@@ -63,14 +63,50 @@
   }
 }
 .el-select .el-input.is-focus .el-input__inner {
-  border-color: map-get($color, primary);
+  // border-color: map-get($color, primary);
+}
+.el-select .el-select__tags {
+  .el-tag.el-tag--info {
+    color: #1D2129;
+    font-weight: 400;
+    border: 0;
+    border-radius: 2px;
+    background-color: #F2F3F5;
+  }
+  .el-tag__close.el-icon-close {
+    background-color: #F2F3F5;
+    &:hover {
+      color: #000;
+    }
+
+  }
 }
 .el-input__inner {
+  color: #000;
   border-radius: $borderRadius;
-  border: 1px solid #d9d9d9;
+  // border: 1px solid rgba(221, 221, 221, 0.4);
+  // background-color:  rgba(239, 241, 244, 0.2);
 }
 .el-input__inner:hover {
   border-color: map-get($color, primary);
+}
+.el-textarea__inner {
+  // border: 1px solid rgba(221, 221, 221, 0.4);
+  // background-color:  rgba(239, 241, 244, 0.2);
+}
+.el-input,.el-textarea {
+  .el-input__count {
+    background-color:  rgba(239, 241, 244, 0.2);
+    .el-input__count-inner {
+      color: rgba(0,0,0,.65);
+      background-color:  rgba(239, 241, 244, 0.2);
+    }
+  }
+
+}
+.el-input-number.is-controls-right .el-input__inner {
+  padding-left: 10px;
+  padding-right: 45px;
 }
 .el-input-group__prepend {
   color: map-get($color, primary);
@@ -80,6 +116,13 @@
     border-color: map-get($color, primary);
     background-color: map-get($color, primary);
   }
+}
+.el-radio .el-radio__label {
+  font-size: 12px;
+  color: map-get($fontColor, rdlevel);
+}
+.el-radio__input.is-checked+.el-radio__label {
+  color: map-get($color, primary);
 }
 
 .el-radio__inner:hover {
@@ -117,7 +160,6 @@
 .el-divider__text,
 .el-link {
   font-size: 12px;
-
 }
 .el-link.is-underline:hover:after {
   display: none;
@@ -158,7 +200,6 @@
   color: #4e5969;
   border-color: #f2f3f5;
   background-color: #f2f3f5;
-
 }
 .el-button.is-plain:focus {
   border-color: map-get($borderColor, normal);
@@ -179,7 +220,7 @@
 //}
 .el-button--text {
   border: none;
-  background-color: #fff;
+  background-color: inherit;
 }
 .el-button:focus,
 .el-button:hover {
@@ -697,7 +738,6 @@
 }
 .el-table::before {
   display: none;
-
 }
 .el-table::after {
   background-color: #fff;
@@ -760,11 +800,13 @@
   color: map-get($fontColor, normal);
 }
 /* --------------------- */
-.el-form-item--small,
-.el-form-item--mini {
+.el-form-item.el-form-item--small,
+.el-form-item.el-form-item--mini {
+  margin-bottom: 30px;
   .el-form-item__label {
-    color: #333;
+    color: map-get($fontColor, main);
     font-size: 12px;
+    text-align: left;
   }
 }
 .el-dialog {
@@ -781,5 +823,3 @@
     padding: 0 20px 20px;
   }
 }
-
-

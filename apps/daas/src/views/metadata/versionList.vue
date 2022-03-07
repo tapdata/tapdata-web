@@ -11,7 +11,7 @@
       {{ $t('metadata.details.version.lastVersion') }}
     </div>
     <!-- 数据校验表格 start -->
-    <el-table border :data="tableData" class="table-page-table" height="100%">
+    <el-table :data="tableData" class="table-page-table" height="100%">
       <el-table-column :label="$t('metadata.details.version.versionNum')" prop="version"> </el-table-column>
       <el-table-column :label="$t('metadata.details.version.updateTime')" prop="version_time">
         <template slot-scope="scope">
@@ -88,28 +88,30 @@ export default {
   },
   methods: {
     getData() {
+      let self = this
       this.tableData = []
-      if (this.histories.histories)
-        this.histories.histories.forEach(item => {
-          let version_description = item.version_description
-          let descriptionArr = version_description.split(';')
-          let localizeDescriptionArr = []
-          version_description = ''
-          descriptionArr.forEach(desc => {
-            if (desc) {
-              localizeDescriptionArr.push(desc ? this.$t('metadata.details.' + desc) : '')
-            }
-          })
-          if (localizeDescriptionArr && localizeDescriptionArr.length > 0) {
-            version_description = localizeDescriptionArr.join(', ')
-          }
+      let histories = self.histories?.histories || []
+      if (histories?.length)
+        histories.forEach(item => {
+          // let version_description = item.version_description
+          // let descriptionArr = version_description?.split(';')
+          // let localizeDescriptionArr = []
+          // version_description = ''
+          // descriptionArr.forEach(desc => {
+          //   if (desc) {
+          //     localizeDescriptionArr.push(desc ? this.$t('metadata.details.' + desc) : '')
+          //   }
+          // })
+          // if (localizeDescriptionArr && localizeDescriptionArr.length > 0) {
+          //   version_description = localizeDescriptionArr.join(', ')
+          // }
           this.tableData.unshift({
             id: this.histories.id,
             version: item.version,
             version_user_id: item.version_user_id,
             version_user_name: item.version_user_name,
-            version_time: item.version_time,
-            version_description: version_description
+            version_time: item.version_time
+            // version_description: version_description
           })
           this.currentVersion = this.histories.version
         })

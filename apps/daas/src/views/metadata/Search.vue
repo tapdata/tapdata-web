@@ -236,7 +236,7 @@ export default {
 </style>
 <style scoped lang="scss">
 .metadata-change-background {
-  background: #fafafa;
+  // background: #fafafa;
   display: flex;
   height: 100%;
   overflow: hidden;
@@ -250,6 +250,13 @@ export default {
   }
   .input-with {
     width: 605px;
+    ::v-deep {
+      .el-input-group__prepend {
+        .el-input__inner {
+          color: map-get($color, primary);
+        }
+      }
+    }
   }
   .no-search-box-wrap {
     display: flex;
@@ -277,6 +284,7 @@ export default {
   }
   .search-box-wrap {
     width: 100%;
+    overflow: hidden;
     .search-box {
       display: flex;
       flex-direction: column;
@@ -292,7 +300,7 @@ export default {
       color: #d54e21;
     }
     .search-header {
-      padding: 15px 10px;
+      padding: 15px 0;
       background: #ffffff;
       overflow: hidden;
       border-bottom: 1px solid #dedee4;
@@ -310,15 +318,15 @@ export default {
       color: #666;
     }
     .search-result {
-      margin: 10px;
-      padding: 10px;
+      // margin: 10px;
+      // padding: 10px;
       max-height: 800px;
       overflow-y: auto;
       border-radius: 3px;
       background-color: rgba(255, 255, 255, 100);
       color: rgba(16, 16, 16, 100);
       font-size: 14px;
-      box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+      // box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
       border: 1px solid rgba(255, 255, 255, 100);
     }
     .desc {
@@ -361,7 +369,7 @@ export default {
     .info-box {
       margin-left: 10px;
       .title {
-        color: #409eff;
+        color: map-get($color, primary);
       }
     }
     .more {

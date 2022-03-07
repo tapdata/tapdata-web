@@ -2,21 +2,55 @@
   <section class="module-warp section-wrap" v-loading="loadingFrom">
     <div class="module-warp-box section-wrap-box">
       <div class="module-form">
+        <ElForm :model="createForm" size="small">
+          <ElFormItem :label="$t('module_form_connection')" prop="datasource" :rules="rules" required>
+            <ElSelect v-model="createForm.datasource" size="mini" placeholder="请选择" :disabled="$route.query.id">
+              <ElOption v-for="item in databaseOptions" :key="item.value" :label="item.label" :value="item.value">
+              </ElOption>
+            </ElSelect>
+          </ElFormItem>
+          <ElFormItem :label="$t('module_form_tablename')" prop="tablename" :rules="rules" required>
+            <VirtualSelect
+              v-model="createForm.tablename"
+              size="mini"
+              filterable
+              clearable
+              :item-size="34"
+              :items="tableNameSelectConfig.options"
+              :loading="tableNameSelectConfig.loading"
+              :disabled="tableNameSelectConfig.disabled"
+              :placeholder="tableNameSelectConfig.placeholder"
+              @change="handleChangeTableName"
+            />
+            <!-- @change="handleFieldFilterType" -->
+          </ElFormItem>
+        </ElForm>
         <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
-        <div class="module-path">
+        <div class="url-tip pb-5">
+          <span>{{ $t('module_form_path') }}</span>
+          <span>
+            <el-radio-group v-model="createForm.apiType" @change="changeApiType">
+              <el-radio label="defaultApi">{{ $t('module_form_default_Api') }}</el-radio>
+              <el-radio label="customerApi">{{ $t('module_form_customer_Api') }}</el-radio>
+            </el-radio-group>
+            <div class="pt-4">{{ createForm.path }}</div>
+          </span>
+        </div>
+        <div class="module-path mt-5">
           <div class="module-path-header">
             <span>{{ $t('module_form_path') }}</span>
             <div class="module-path-button">
               <el-button
                 v-if="createForm.apiType == 'customerApi' && createForm.paths.length < 1"
                 size="mini"
+                type="primary"
                 @click="customeApiPath"
                 >{{ $t('module_form_customer_Api') }}</el-button
               >
-              <el-button size="mini" v-if="apiAuthority === 'edit'" @click="updateAuthority">{{
+              <!-- <el-button size="mini" v-if="apiAuthority === 'edit'" @click="updateAuthority">{{
                 $t('module_form_security')
               }}</el-button>
-              <el-button size="mini" v-else @click="updateAuthority">{{ $t('module_form_edit') }}</el-button>
+              <el-button size="mini" v-else @click="updateAuthority">{{ $t('module_form_edit') }}</el-button> -->
               <el-button size="mini" v-if="createForm.status === 'active'" @click="openDocument">{{
                 $t('module_form_document')
               }}</el-button>
@@ -25,54 +59,37 @@
           </div>
           <div class="module-path-content">
             <div class="module-path-item" v-for="(item, index) in createForm.paths" :key="index">
-              <div class="module-path-item-group" v-if="apiAuthority === 'edit'">
+              <div class="module-path-item-group">
                 <div class="module-path-item-button">
                   <span class="module-path-item-method" :class="'label-' + getstyle(item)">{{ item.method }}</span>
+                  <span class="module-path-item-description pl-2">{{ item.description }}</span>
                   <span class="module-path-item-text">{{ item.path }}</span>
                 </div>
                 <div class="module-path-button-box">
-                  <div class="module-path-item-description">{{ item.description }}</div>
+                  <div class="module-path-item-role fw-sub">
+                    <span>{{ $t('module_form_permission') }}: </span>
+                    <el-select v-model="item.acl" multiple size="mini" placeholder="请选择">
+                      <el-option v-for="item in roles" :key="item.name" :label="item.name" :value="item.name">
+                      </el-option>
+                    </el-select>
+                  </div>
                   <div style="margin-left: 10px">
                     <el-tooltip class="item" effect="dark" :content="$t('button_delete')" placement="bottom">
-                      <span title="remove" @click="removeApiPath(index)" style="margin-right: 10px; cursor: pointer"
-                        ><i class="fa fa-times el-icon-delete"></i
-                      ></span>
+                      <ElButton type="text" title="remove" size="mini" @click="removeApiPath(index)">
+                        <!-- <i class="fa fa-times el-icon-delete"></i> -->
+                        {{ $t('button_delete') }}
+                      </ElButton>
                     </el-tooltip>
-                    <el-tooltip class="item" effect="dark" :content="$t('button_edit')" placement="left">
+                    <!-- <el-tooltip class="item" effect="dark" :content="$t('button_edit')" placement="left">
                       <span title="edit" @click="editApiPath(item)" v-if="item.type !== 'preset'"
                         ><i class="fa fa-edit el-icon-edit-outline"></i
                       ></span>
-                    </el-tooltip>
+                    </el-tooltip> -->
                   </div>
                 </div>
               </div>
-              <template v-else>
-                <div>
-                  <span class="module-path-item-method" :class="'label-' + getstyle(item)">{{ item.method }}</span>
-                  <span class="module-path-item-text">{{ item.path }}</span>
-                </div>
-                <div class="module-path-item-role">
-                  <el-select v-model="item.acl" multiple size="mini" placeholder="请选择">
-                    <el-option v-for="item in roles" :key="item.name" :label="item.name" :value="item.name">
-                    </el-option>
-                  </el-select>
-                </div>
-              </template>
             </div>
-            <div class="module-path-item" v-if="createForm.paths.length === 0">No record found</div>
-          </div>
-          <div class="module-tags">
-            <span>{{ $t('module_form_tags') }}</span>
-            <span v-for="item in createForm.listtags" :key="item.id">{{ item.value }}</span>
-            <el-button type="primary" @click="handleOpenTag()" size="small">
-              {{ $t('module_form_edit') }}
-            </el-button>
-          </div>
-          <div class="module-form-footer">
-            <el-button class="cancel" @click="handleBack()" size="small">
-              {{ $t('button_back') }}
-            </el-button>
-            <el-button type="primary" @click="submit()" size="small"> {{ $t('button_save') }}</el-button>
+            <div class="module-path-item pb-5" v-if="createForm.paths.length === 0">No record found</div>
           </div>
         </div>
         <CustomerApiForm
@@ -84,6 +101,19 @@
         ></CustomerApiForm>
         <SelectClassify ref="classify" :types="['api']" @operationsClassify="saveClassify"></SelectClassify>
       </div>
+      <div class="module-tags py-5">
+        <span>{{ $t('module_form_tags') }}</span>
+        <span v-for="item in createForm.listtags" :key="item.id">{{ item.value }}</span>
+        <el-button type="text" size="small" class="pl-5" @click="handleOpenTag()">
+          {{ $t('module_form_choose') }}
+        </el-button>
+      </div>
+      <div class="module-form-footer">
+        <el-button class="cancel" @click="handleBack()" size="mini">
+          {{ $t('button_back') }}
+        </el-button>
+        <el-button type="primary" @click="submit()" size="mini"> {{ $t('button_save') }}</el-button>
+      </div>
     </div>
   </section>
 </template>
@@ -92,9 +122,10 @@
 import APIClient from '@/api/ApiClient'
 import CustomerApiForm from './CustomerApiForm'
 import SelectClassify from '@/components/SelectClassify'
+import VirtualSelect from 'web-core/components/virtual-select'
 export default {
   name: 'ModuleForm',
-  components: { CustomerApiForm, SelectClassify },
+  components: { CustomerApiForm, SelectClassify, VirtualSelect },
   data() {
     return {
       createFormConfig: null,
@@ -122,7 +153,23 @@ export default {
       fields: [],
       tagFlag: false,
       apiAuthority: 'edit',
-      loadingFrom: false
+      loadingFrom: false,
+      databaseOptions: [],
+      tableNameSelectConfig: {
+        size: 'mini',
+        placeholder: this.$t('editor.cell.data_node.collection.form.collection.placeholder'),
+        loading: false,
+        filterable: true,
+        options: [],
+        allowCreate: false,
+        defaultFirstOption: false,
+        clearable: true,
+        disabled: false
+      },
+      rules: {
+        datasource: [{ required: true, trigger: 'blur', message: `Please select database` }],
+        tablename: [{ required: true, trigger: 'blur', message: `Please select tablename` }]
+      }
     }
   },
   created() {
@@ -130,6 +177,7 @@ export default {
     this.getConnection()
     if (this.$route.query.id) {
       this.getDetail()
+      this.tableNameSelectConfig.disabled = true
     }
 
     this.getRoles()
@@ -141,14 +189,16 @@ export default {
     'createForm.datasource'() {
       this.getTableData()
     },
-    'createForm.tablename'(val) {
-      let fields = []
-      let selectedCollections = this.createFormConfig.items[1].options.filter(v => v.value === val)
-      selectedCollections.forEach(v => {
-        fields = fields.concat(v.fields)
-      })
-      this.fields = fields
-    },
+    // 'createForm.tablename'() {
+    // let fields = []
+    // debugger
+    // let selectedCollections = this.tableNameSelectConfig.options.filter(v => v.value === val)
+    // selectedCollections.forEach(v => {
+    //   fields = fields.concat(v.fields)
+    // })
+    // this.fields = fields
+    // this.getFieldsData()
+    // },
     'createForm.apiType'(newType, oldType) {
       if (this.$route.query.id && (newType === oldType || oldType === '')) return
       this.createForm.paths = []
@@ -170,6 +220,35 @@ export default {
     }
   },
   methods: {
+    // 表名称改变
+    handleChangeTableName() {
+      this.getFieldsData()
+    },
+    // 获取字段模型
+    getFieldsData() {
+      let params = {
+        filter: JSON.stringify({
+          where: {
+            'source.id': this.createForm.datasource,
+            original_name: this.createForm.tablename,
+            is_deleted: false
+          }
+        })
+      }
+      this.$api('MetadataInstances')
+        .get(params)
+        .then(res => {
+          let table = res?.data?.items?.[0]
+          this.createForm.fields = this.fields = table.fields
+        })
+    },
+    // api类型改变
+    changeApiType() {
+      this.createForm.paths = []
+      if (this.createForm.apiType === 'defaultApi') {
+        this.initPresetPaths()
+      }
+    },
     // 关闭自定义api弹窗
     handleDialogVisible() {
       this.dialogVisible = false
@@ -236,38 +315,34 @@ export default {
           filter: JSON.stringify(params)
         })
         .then(res => {
-          let options = []
+          let options = res?.data?.items || []
           options = res.data.items.map(db => {
             return {
               label: db.name,
               value: db.id
             }
           })
-          this.createFormConfig.items[0].options = options
+          this.databaseOptions = options
         })
     },
     // 获取表数据
     getTableData() {
-      let params = {
-        where: {
-          id: this.createForm.datasource
-        }
-      }
-      this.$api('connections')
-        .get({
-          filter: JSON.stringify(params)
+      this.$api('MetadataInstances')
+        .getTables(this.createForm.datasource)
+        .then(result => {
+          let schemas = result?.data || []
+          if (schemas?.length) {
+            let tableList = schemas
+              .sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
+              .map(item => ({
+                label: item,
+                value: item
+              }))
+            this.tableNameSelectConfig.options = tableList
+          }
         })
-        .then(res => {
-          let options = []
-          if (res.data?.items?.length && res.data.schema?.tables?.length)
-            options = res.data.items[0].schema.tables.map(table => {
-              return {
-                label: table.table_name,
-                value: table.table_name,
-                fields: table.fields
-              }
-            })
-          this.createFormConfig.items[1].options = options
+        .finally(() => {
+          this.tableNameSelectConfig.loading = false
         })
     },
 
@@ -352,11 +427,11 @@ export default {
       this.dialogVisible = true
     },
     // 编辑自定义api路径
-    editApiPath(item) {
-      this.apiData = item
-      this.apiData.createType = 'edit'
-      this.dialogVisible = true
-    },
+    // editApiPath(item) {
+    //   this.apiData = item
+    //   this.apiData.createType = 'edit'
+    //   this.dialogVisible = true
+    // },
     // 打开api文档
     openDocument() {
       this.apiClient = new APIClient()
@@ -392,7 +467,7 @@ export default {
         .get({})
         .then(res => {
           if (res) {
-            this.roles = res.data
+            this.roles = res?.data?.items || []
             this.roles.push({
               name: this.$t('module_form_public_api'),
               id: '$everyone'
@@ -403,10 +478,10 @@ export default {
           this.$message.error(e.response.msg)
         })
     },
-    // 更新权限编辑按钮展示
-    updateAuthority() {
-      this.apiAuthority = this.apiAuthority === 'edit' ? 'security' : 'edit'
-    },
+    // // 更新权限编辑按钮展示
+    // updateAuthority() {
+    //   this.apiAuthority = this.apiAuthority === 'edit' ? 'security' : 'edit'
+    // },
 
     // 打开数据目录
     handleOpenTag() {
@@ -454,11 +529,11 @@ export default {
     },
     // 保存
     submit() {
-      this.loadingFrom = true
       if (this.createForm.paths?.length < 1) {
         this.$message.error(this.$t('module_form_noPath'))
         return
       }
+      this.loadingFrom = true
       const id = this.$route.query.id
       const method = id ? 'patch' : 'post'
 
@@ -503,24 +578,24 @@ export default {
     getForm() {
       this.createFormConfig = {
         form: {
-          labelPosition: 'right',
+          labelPosition: 'left',
           labelWidth: '100px'
         },
         items: [
-          {
-            type: 'select',
-            label: this.$t('module_form_connection'),
-            field: 'datasource',
-            options: [],
-            required: true
-          },
-          {
-            type: 'select',
-            label: this.$t('module_form_tablename'),
-            field: 'tablename',
-            options: [],
-            required: true
-          },
+          // {
+          //   type: 'select',
+          //   label: this.$t('module_form_connection'),
+          //   field: 'datasource',
+          //   options: [],
+          //   required: true
+          // },
+          // {
+          //   type: 'select',
+          //   label: this.$t('module_form_tablename'),
+          //   field: 'tablename',
+          //   options: [],
+          //   required: true
+          // },
           {
             type: 'select',
             label: 'readPreference',
@@ -635,24 +710,15 @@ export default {
                 }
               }
             ]
-          },
-          {
-            type: 'input',
-            label: this.$t('module_form_path'),
-            field: 'path',
-            disabled: true,
-            maxlength: 100,
-            showWordLimit: true
-          },
-          {
-            type: 'radio',
-            field: 'apiType',
-            label: this.$t('module_form_method'),
-            options: [
-              { label: this.$t('module_form_default_Api'), value: 'defaultApi' },
-              { label: this.$t('module_form_customer_Api'), value: 'customerApi' }
-            ]
           }
+          // {
+          //   type: 'input',
+          //   label: this.$t('module_form_path'),
+          //   field: 'path',
+          //   disabled: true,
+          //   maxlength: 100,
+          //   showWordLimit: true
+          // }
         ]
       }
     }
@@ -669,105 +735,153 @@ export default {
     // height: 100%;
     overflow: auto;
     .module-form {
-      width: 1000px;
+      width: 100%;
       margin: 0 auto;
       box-sizing: border-box;
       // overflow: hidden;
-      ::deep {
+      ::v-deep {
         .el-form-item {
-          margin-bottom: 20px;
+          width: 640px;
           .el-form-item__label {
             width: 140px !important;
-            text-align: right;
+            text-align: left;
           }
           .el-form-item__content {
             margin-left: 140px !important;
+            .el-select,
+            .el-input__inner,
+            .el-textarea__inner {
+              width: 500px;
+              background-color: rgba(239, 241, 244, 0.2);
+            }
             .el-radio--mini.is-bordered {
               padding: 0 15px 0 10px;
             }
           }
         }
       }
-      .module-path-header {
+      .url-tip {
         display: flex;
-        justify-content: space-between;
+        flex-direction: row;
         span {
           display: inline-block;
-          width: 140px;
-          padding-right: 20px;
-          text-align: right;
-          box-sizing: border-box;
+          min-width: 140px;
         }
       }
-      .module-path-content {
-        padding: 20px 0 20px 70px;
-        .module-path-item {
-          padding: 10px 15px 12px;
-          border: 1px solid #eee;
-          border-top: 0;
-          color: #999;
-          font-size: 10px;
-          cursor: pointer;
-          &:first-child {
-            border-top: 1px solid #eee;
-          }
-          .module-path-item-group {
-            display: flex;
-            justify-content: space-between;
-          }
-          .module-path-button-box {
-            display: flex;
-          }
-          .module-path-item-method {
+      .module-path {
+        border-radius: 4px;
+        border: 1px solid #edeeee;
+        .module-path-header {
+          display: flex;
+          justify-content: space-between;
+          height: 54px;
+          padding: 0 20px;
+          line-height: 54px;
+          background-color: #fafafa;
+          border-bottom: 1px solid #edeeee;
+          span {
             display: inline-block;
-            width: 80px;
-            padding: 3px;
-            text-align: center;
-            font-size: 11px;
-            color: #fff;
+            width: 140px;
+            padding-right: 20px;
+            text-align: left;
+            box-sizing: border-box;
+            font-size: 12px;
+            font-weight: 500;
+            color: rgba(0, 0, 0, 0.85);
           }
-          .module-path-item-text {
-            padding-left: 20px;
-          }
-          .module-path-item-button {
-            span {
-              padding: 0 5px;
+        }
+        .module-path-content {
+          padding: 20px 20px 0;
+          .module-path-item {
+            padding: 10px 15px 10px;
+            border-bottom: 1px solid #edeeee;
+            border-top: 0;
+            color: #000;
+            font-size: 10px;
+            cursor: pointer;
+            &:last-child {
+              border: 0;
             }
-          }
-          .module-path-item-role {
-            margin-top: 10px;
-            ::v-deep {
-              .el-select {
-                width: 100%;
-                .el-select__tags {
-                  max-width: 100%;
+            .module-path-item-group {
+              display: flex;
+              justify-content: space-between;
+              .module-path-item-button {
+                display: flex;
+                justify-content: row;
+                margin-top: 3px;
+                height: 22px;
+                line-height: 22px;
+                span {
+                  display: inline-block;
+                }
+                .module-path-item-description {
+                  min-width: 190px;
+                  color: rgba(0, 0, 0, 0.65);
                 }
               }
             }
-          }
-          .label-default {
-            background-color: #999 !important;
-          }
-          .label-primary {
-            background-color: #dc6767 !important;
-          }
-          .label-red {
-            background-color: #bf4346 !important;
-          }
-          .label-orange {
-            background-color: #e9662c !important;
-          }
-          .label-green {
-            background-color: #488c6c !important;
-          }
-          .label-yellow {
-            background-color: #f2994b !important;
-          }
-          .label-blue {
-            background-color: #0a819c !important;
+            .module-path-button-box {
+              display: flex;
+              width: 50%;
+            }
+            .module-path-item-method {
+              display: inline-block;
+              width: 62px;
+              text-align: center;
+              font-size: 11px;
+              color: #fff;
+              border-radius: 2px;
+            }
+            .module-path-item-text {
+              padding-left: 20px;
+            }
+            // .module-path-item-button {
+            //   span {
+            //     padding: 0 5px;
+            //   }
+            // }
+            .module-path-item-role {
+              display: flex;
+              flex-direction: row;
+              width: 100%;
+              span {
+                width: 60px;
+                line-height: 28px;
+              }
+              ::v-deep {
+                .el-select {
+                  width: 100%;
+                  .el-select__tags {
+                    max-width: 100%;
+                  }
+                }
+              }
+            }
+            .label-default {
+              background-color: #999 !important;
+            }
+            .label-primary {
+              background-color: #dc6767 !important;
+            }
+            .label-red {
+              background-color: #bf4346 !important;
+            }
+            .label-orange {
+              background-color: #e9662c !important;
+            }
+            .label-green {
+              background-color: #488c6c !important;
+            }
+            .label-yellow {
+              background-color: #f2994b !important;
+            }
+            .label-blue {
+              background-color: #0a819c !important;
+            }
           }
         }
       }
+
       .module-tags {
         padding: 20px 0 20px 70px;
         font-size: 12px;

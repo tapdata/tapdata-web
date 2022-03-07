@@ -12,53 +12,30 @@
       @selection-change="handleSelectionChange"
       @sort-change="handleSortTable"
     >
-      <div slot="search">
-        <ul class="search-bar">
-          <li>
-            <el-select v-model="searchParams.api_server_process_id" size="mini" @input="table.fetch(1)">
-              <el-option
-                v-for="opt in apiServersList"
-                :label="opt.clientName"
-                :value="opt.processId"
-                :key="opt.processId"
-              ></el-option>
-            </el-select>
-          </li>
-          <li>
-            <el-select
-              v-model="searchParams.collection"
-              ref="collectionSelect"
-              size="mini"
-              @input="table.fetch(1)"
-              @change="changeCollection"
-            >
-              <el-option
-                v-for="opt in collectionsList"
-                :label="opt.text"
-                :value="opt.value"
-                :key="opt.value"
-              ></el-option>
-            </el-select>
-          </li>
-          <template v-if="searchParams.collection">
-            <li>
-              <el-button size="mini" type="text" @click="reset()">{{ $t('button_query') }}</el-button>
-            </li>
-            <li>
-              <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button_reset') }}</el-button>
-            </li>
-          </template>
-          <li v-if="status">
-            {{ $t('modules_apiServerStatus') }}:
-            <span class="status-text" :class="status">{{ $t('modules_status_' + status) }}</span>
-          </li>
-        </ul>
+      <div slot="search" class="search-bar">
+        <div class="search-status pr-4">
+          {{ $t('modules_api_server_status') }}:
+          <span class="status-text" :class="status">{{ $t('modules_status_' + status) }}</span>
+        </div>
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </div>
       <div slot="operation">
-        <el-button v-readonlybtn="'API_data_time_zone_editing'" class="btn" size="mini" @click="timeZoneDialog = true">
+        <!-- <el-button v-readonlybtn="'API_data_time_zone_editing'" class="btn" size="mini" @click="timeZoneDialog = true">
           <span v-if="save_timezone === 0 || save_timezone === '0'">{{ $t('dataExplorer_zone') }}</span>
           <span v-else>{{ timezoneLabel }}</span>
-        </el-button>
+        </el-button> -->
+        <ElSelect
+          v-model="without_timezone"
+          size="mini"
+          width="100%"
+          :label="
+            $t('dataExplorer_datetype_without_timezone') + '. ' + $t('dataExplorer_mysql_datetype_without_timezone')
+          "
+          class="timezone"
+          @change="saveTimeZone"
+        >
+          <ElOption v-for="item in timezones" :label="item.label" :value="item.value" :key="item.value"></ElOption>
+        </ElSelect>
         <el-button v-readonlybtn="'API_data_explorer_export'" class="btn" size="mini" @click="exportDialog = true">
           <span>{{ $t('button_export') }}</span>
         </el-button>
@@ -73,9 +50,9 @@
           v-readonlybtn="'API_creation'"
           class="btn btn-create"
           size="mini"
+          type="primary"
           @click="openCreate"
         >
-          <i class="iconfont icon-jia add-btn-icon"></i>
           <span>{{ $t('button_create') }}</span>
         </el-button>
       </div>
@@ -164,7 +141,7 @@
       </div>
     </TablePage>
     <!-- 时区设置 -->
-    <el-dialog
+    <!-- <el-dialog
       width="600px"
       custom-class="zone-setting-dialog"
       :title="$t('dataExplorer_zone_setting')"
@@ -185,18 +162,19 @@
         <el-button @click="timeZoneDialog = false" size="small">{{ $t('message.cancel') }}</el-button>
         <el-button type="primary" @click="saveTimeZone()" size="small">{{ $t('message.confirm') }}</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
     <!-- 导出 -->
     <el-dialog
       width="600px"
       custom-class="export-dialog"
-      :title="$t('dataExplorer_file_type')"
+      :title="$t('dataExplorer_export')"
       :close-on-click-modal="false"
       :visible.sync="exportDialog"
     >
-      <el-button type="primary" @click="exportData('csv')">CSV</el-button>
-      <el-button type="primary" @click="exportData('excel')">Excel</el-button>
-      <el-button type="primary" @click="exportData('json')">JSON</el-button>
+      <span class="pr-5">{{ $t('dataExplorer_type') }}:</span>
+      <el-button size="mini" @click="exportData('csv')">CSV</el-button>
+      <el-button size="mini" @click="exportData('excel')">Excel</el-button>
+      <el-button size="mini" @click="exportData('json')">JSON</el-button>
     </el-dialog>
     <!-- 查询 -->
     <BrowseQuery
@@ -218,20 +196,24 @@
       :close-on-click-modal="false"
       :visible.sync="openCreateDialog"
     >
-      <el-input type="textarea" v-model="jsonDoc" :autosize="{ maxRows: 15 }"></el-input>
+      <div class="create-dialog-box">
+        <el-input type="textarea" v-model="jsonDoc" :autosize="{ maxRows: 15 }"></el-input>
+      </div>
+
       <ul v-if="jsonDocHint.length">
         <li v-for="(item, index) in jsonDocHint" :key="index">{{ item }}</li>
       </ul>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="openCreateDialog = false" size="small">{{ $t('dialog_button_cancel') }}</el-button>
-        <el-button type="primary" @click="formatJson()" size="small">{{ $t('dataExplorer_format') }}</el-button>
-        <el-button type="primary" @click="createSave()" size="small">{{ $t('dialog_button_save') }}</el-button>
+        <el-button @click="openCreateDialog = false" size="mini">{{ $t('dialog_button_cancel') }}</el-button>
+        <el-button @click="formatJson()" size="mini">{{ $t('dataExplorer_format') }}</el-button>
+        <el-button type="primary" @click="createSave()" size="mini">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
   </section>
 </template>
 
 <script>
+import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import BrowseQuery from './BrowseQuery'
 import APIClient from '@/api/ApiClient'
@@ -240,7 +222,8 @@ export default {
   name: 'DataExplorer',
   components: {
     TablePage,
-    BrowseQuery
+    BrowseQuery,
+    FilterBar
   },
   data() {
     return {
@@ -248,7 +231,8 @@ export default {
         api_server_process_id: '',
         collection: ''
       },
-      status: '',
+      filterItems: [],
+      status: 'stop',
       apiServersList: [],
       collectionsList: [],
       tableHeader: [],
@@ -273,7 +257,7 @@ export default {
       timezones: [],
       editValue: '', // 要编辑的字段的值
       editCol: '', // 当前编辑的字段名
-      timeZoneDialog: false,
+      // timeZoneDialog: false,
       exportDialog: false,
       showFilterDialog: false,
       openCreateDialog: false,
@@ -288,13 +272,14 @@ export default {
     let defaultCollection = this.$route.query.collection || this.$route.query['id']
     this.apiClient = new APIClient(defaultCollection)
     this.initTimezones() // 获取时区下拉值
-    this.getApiServer() // 获取API Server下拉值
+    // this.getApiServer() // 获取API Server下拉值
     this.getCollections() // 获取api下拉值
     this.getWorkers() // 获取状态
     this.getHandleTimeZone() //获取时区
     if (!this.without_timezone) {
       this.without_timezone = this.timezones[12]
     }
+    this.getFilterItems()
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -398,20 +383,20 @@ export default {
         }
       })
     },
-    // 获取API Server下拉值
-    getApiServer() {
-      this.$api('ApiServer')
-        .get({})
-        .then(res => {
-          if (res) {
-            this.apiServersList = res.data
-            if (this.apiServersList.length) {
-              this.searchParams.api_server_process_id = this.apiServersList[0].processId
-              this.apiClient.setApiServer(this.apiServersList[0])
-            }
-          }
-        })
-    },
+    // // 获取API Server下拉值
+    // getApiServer() {
+    //   this.$api('ApiServer')
+    //     .get({})
+    //     .then(res => {
+    //       if (res) {
+    //         this.apiServersList = res.data?.items
+    //         if (this.apiServersList.length) {
+    //           this.searchParams.api_server_process_id = this.apiServersList[0].processId
+    //           this.apiClient.setApiServer(this.apiServersList[0])
+    //         }
+    //       }
+    //     })
+    // },
     // 获取api下拉数据
     async loadOpenAPI(tag) {
       let _this = this
@@ -420,7 +405,7 @@ export default {
         .then(res => {
           if (res) {
             this.collectionsList = []
-            Object.keys(res.data).forEach(item => {
+            Object.keys(res.data?.items).forEach(item => {
               let operations = res.data[item].api,
                 apiId = res.data[item].apiId,
                 _apiName = res.data[item].apiName || '',
@@ -909,10 +894,7 @@ export default {
     // 移除
     async remove(item) {
       const h = this.$createElement
-      let message = h('p', [
-        this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#409EFF' } }, item.clientName)
-      ])
+      let message = h('p', [this.$t('message.deleteOrNot') + ' ' + item.clientName])
       this.$confirm(message, this.$t('message.prompt'), {
         type: 'warning'
       }).then(
@@ -1022,11 +1004,11 @@ export default {
       _this.intervalId = setTimeout(_this.getWorkers, 5000)
     },
 
-    // 切换api
-    changeCollection() {
-      // 重置查询的条件
-      this.queryBuildKey++
-    },
+    // // 切换api
+    // changeCollection() {
+    //   // 重置查询的条件
+    //   this.queryBuildKey++
+    // },
 
     // 获取数据
     async getData({ page, tags }) {
@@ -1258,18 +1240,18 @@ export default {
         .update(where, parmas)
         .then(() => {
           this.table.fetch()
-          this.$message.success(this.$t('message_save_ok'))
+          // this.$message.success(this.$t('message_save_ok'))
         })
-        .catch(() => {
-          this.$message.error(this.$t('message_save_fail'))
-        })
-        .finally(() => {
-          this.timeZoneDialog = false
-        })
+      // .catch(() => {
+      //   this.$message.error(this.$t('message_save_fail'))
+      // })
+      // .finally(() => {
+      //   this.timeZoneDialog = false
+      // })
     },
     // 初始化时区下拉
     initTimezones() {
-      let timezones = [{ label: '(Database Timezone)', value: '' }]
+      let timezones = [{ label: '数据库时区', value: '' }]
 
       for (let i = -11; i < 15; i++) {
         let timezone = ''
@@ -1318,7 +1300,6 @@ export default {
             } else {
               this.without_timezone = '+' + this.without_timezone
             }
-
             this.without_timezone += ':00'
           }
         })
@@ -1345,6 +1326,53 @@ export default {
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'clientName'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: 'api服务器',
+          key: 'api_server_process_id',
+          type: 'select-inner',
+          items: async () => {
+            let res = await this.$api('ApiServer').get({})
+            let items = res?.data?.items || []
+            this.apiServersList = items
+            this.searchParams.api_server_process_id = this.apiServersList[0].processId
+            this.apiClient.setApiServer(this.apiServersList[0])
+            return items.map(item => {
+              return {
+                label: item.clientName,
+                value: item.processId
+              }
+            })
+          },
+          selectedWidth: '200px'
+        },
+        {
+          label: '基础路径',
+          key: 'api_server_process_id',
+          type: 'select-inner',
+          items: async () => {
+            let res = await this.$api('ApiServer').get({})
+            let items = res?.data?.items || []
+            this.apiServersList = items
+            this.searchParams.api_server_process_id = this.apiServersList[0].processId
+            this.apiClient.setApiServer(this.apiServersList[0])
+            return items.map(item => {
+              return {
+                label: item.clientName,
+                value: item.processId
+              }
+            })
+          },
+          selectedWidth: '200px'
+        },
+        {
+          placeholder: this.$t('modules_name_placeholder'),
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     }
   },
   beforeDestroy() {
@@ -1359,15 +1387,19 @@ export default {
   .apiserver-list {
     .search-bar {
       display: flex;
-      li + li {
-        margin-left: 10px;
-        line-height: 28px;
-        font-size: 12px;
-      }
-      .status-text {
-        font-weight: bold;
-        // width: 150px;
-        display: inline-block;
+      flex-direction: row;
+      .search-status {
+        line-height: 34px;
+        .status-text {
+          display: inline-block;
+          font-weight: bold;
+          height: 25px;
+          padding: 0 10px;
+          line-height: 25px;
+          color: map-get($color, danger);
+          border-radius: 2px;
+          background-color: #ffecec;
+        }
       }
       .deploying,
       .running,
@@ -1381,7 +1413,7 @@ export default {
       }
     }
     .btn + .btn {
-      margin-left: 5px;
+      margin-left: 10px;
     }
     .edit-text {
       height: 22px;
@@ -1393,6 +1425,24 @@ export default {
         padding: 0 50px 0 10px;
         font-size: 12px;
         color: #606266;
+      }
+    }
+    .timezone {
+      width: 100px;
+      margin-right: 10px;
+    }
+  }
+}
+.create-dialog {
+  .create-dialog-box {
+    padding: 15px;
+    background-color: #3a3d4c;
+    ::v-deep {
+      .el-textarea .el-textarea__inner {
+        min-height: 200px !important;
+        color: #82b290;
+        background-color: #262838;
+        border: 0;
       }
     }
   }

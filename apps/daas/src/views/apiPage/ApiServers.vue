@@ -1,37 +1,20 @@
 <template>
   <section class="apiserver-wrap section-wrap">
+    <!-- api服务器 -->
     <TablePage ref="table" row-key="id" class="apiserver-list" :remoteMethod="getData" @sort-change="handleSortTable">
-      <div slot="search">
-        <ul class="search-bar">
-          <li>
-            <el-input
-              clearable
-              class="input-with-select"
-              size="mini"
-              v-model="searchParams.keyword"
-              :placeholder="$t('api_server_user')"
-              @input="table.fetch(1, 800)"
-            >
-              <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
-                <el-option :label="$t('query_fuzzy')" :value="true"></el-option>
-                <el-option :label="$t('query_precise')" :value="false"></el-option>
-              </el-select>
-            </el-input>
-          </li>
-          <template v-if="searchParams.keyword">
-            <li>
-              <el-button size="mini" type="text" @click="reset()">{{ $t('button_query') }}</el-button>
-            </li>
-            <li>
-              <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button_reset') }}</el-button>
-            </li>
-          </template>
-        </ul>
+      <div slot="search" class="search-bar">
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </div>
       <div slot="operation">
-        <el-button v-readonlybtn="'API_creation'" class="btn btn-create" size="mini" @click="openCreateDialog">
-          <i class="iconfont icon-jia add-btn-icon"></i>
-          <span>{{ $t('button_create') }}</span>
+        <el-button
+          v-readonlybtn="'API_creation'"
+          type="primary"
+          class="btn btn-create"
+          size="mini"
+          @click="openCreateDialog"
+        >
+          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
+          <span>{{ $t('api_server_create') }}</span>
         </el-button>
       </div>
       <el-table-column
@@ -65,7 +48,7 @@
         sortable="clientURI"
       >
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="140">
+      <el-table-column :label="$t('column_operation')" width="140" fixed="right">
         <template slot-scope="scope">
           <el-button v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="edit(scope.row)">
             {{ $t('modules_edit') }}
@@ -89,7 +72,7 @@
     <el-dialog
       width="600px"
       custom-class="create-dialog"
-      :title="$t('metadata.createNewModel')"
+      :title="createForm.id ? $t('button_edit') : $t('api_server_create_server')"
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
@@ -103,20 +86,23 @@
 </template>
 
 <script>
+import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
 
 export default {
   name: 'ApiServers',
   components: {
-    TablePage
+    TablePage,
+    FilterBar
   },
   data() {
     return {
       searchParams: {
-        keyword: '',
-        isFuzzy: true
+        keyword: ''
+        // isFuzzy: true
       },
+      filterItems: [],
       order: 'clientName DESC',
       createDialogVisible: false,
       createForm: {
@@ -126,7 +112,7 @@ export default {
       },
       createFormConfig: {
         form: {
-          labelPosition: 'right',
+          labelPosition: 'left',
           labelWidth: '140px'
         },
         items: [
@@ -159,6 +145,9 @@ export default {
         ]
       }
     }
+  },
+  created() {
+    this.getFilterItems()
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -205,11 +194,8 @@ export default {
     // 移除
     remove(item) {
       const h = this.$createElement
-      let message = h('p', [
-        this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#409EFF' } }, item.clientName)
-      ])
-      this.$confirm(message, this.$t('message.prompt'), {
+      let message = h('p', [this.$t('message.deleteOrNot') + ' ' + item.clientName])
+      this.$confirm(message, '', {
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {
@@ -271,7 +257,7 @@ export default {
       let { isFuzzy, keyword } = this.searchParams
       let where = {}
       if (keyword && keyword.trim()) {
-        let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword
+        let filterObj = { like: toRegExp(keyword), options: 'i' }
         where.or = [{ clientName: filterObj }]
       }
 
@@ -281,27 +267,37 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return Promise.all([
-        this.$api('ApiServer').count({ where: JSON.stringify(where) }),
-        this.$api('ApiServer').get({
+      return this.$api('ApiServer')
+        .get({
           filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        this.table.setCache({
-          isFuzzy,
-          keyword
+        .then(res => {
+          if (res) {
+            this.table.setCache({
+              isFuzzy,
+              keyword
+            })
+            return {
+              total: res.data?.total || 0,
+              data: res.data?.items || []
+            }
+          }
         })
-        return {
-          total: countRes.data.count,
-          data: res.data
-        }
-      })
     },
 
     // 表格排序
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'clientName'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          placeholder: this.$t('api_server_name'),
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     }
   }
 }

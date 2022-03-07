@@ -40,4 +40,32 @@ export default class TaskAPI extends PublicAPI {
   patchId(id, params) {
     return axios.patch(`${this.url}/${id}`, params)
   }
+  chart(id) {
+    if (id) {
+      return axios.get(`${this.url}/chart?user_id=${id}`)
+    } else {
+      return axios.get(this.url + '/chart')
+    }
+  }
+  findTaskDetailById(id) {
+    return axios.get(this.url + '/findTaskDetailById/' + id)
+  }
+  tranModelVersionControl(params) {
+    return axios.post(this.url + '/tranModelVersionControl', params)
+  }
+  getId(id, params, filter) {
+    if (Array.isArray(params)) {
+      filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
+      let qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
+      return axios.get(this.url + '/' + id + params.join('/') + qs)
+    }
+    params = params || {}
+    return axios.get(this.url + '/' + id, { params })
+  }
+  edit(params) {
+    return axios.patch(this.url + '/confirm/' + params.id, params)
+  }
+  save(params) {
+    return axios.patch(this.url + '/confirm', params)
+  }
 }

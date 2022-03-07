@@ -168,11 +168,16 @@ select {
     .el-form-item {
       height: 60px;
       line-height: 60px;
-      margin-bottom: 0;
+      margin-bottom: 30px;
+      &:last-child {
+        margin-bottom: 0;
+      }
       .el-form-item__label {
         height: 60px;
         line-height: 60px;
         font-size: 12px;
+        font-weight: 500;
+        color:  map-get($fontColor, rdlevel);
       }
       .el-form-item__content {
         line-height: 60px !important;
@@ -180,6 +185,7 @@ select {
       .el-input {
         .el-input__inner {
           padding-left: 5px;
+          background-color: rgba(239, 241, 244, 0.2);
           .el-icon-date {
             display: none;
           }
@@ -249,7 +255,7 @@ input[type='password'] + .el-input__suffix {
 }
 
 $color: (
-  primary: #409eff,
+  primary: #2C65FF,
   lprimary: #66b1ff,
   success: #67c23a,
   lsuccess: #85ce61,

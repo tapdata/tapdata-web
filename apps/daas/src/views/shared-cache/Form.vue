@@ -1,124 +1,155 @@
 <template>
   <section class="shared-cache-form section-wrap" v-loading="loading">
     <div class="section-wrap-box flex">
+      <div class="title mb-6">
+        {{ $t($route.params.id ? 'page_title_shared_cache_edit' : 'page_title_shared_cache_create') }}
+      </div>
       <ElForm
         ref="form"
-        class="flex-fill overflow-auto"
-        label-width="100px"
+        class="flex-fill overflow-auto pb-4"
+        label-width="120px"
         label-position="left"
         :model="form"
         :rules="rules"
       >
         <ElFormItem prop="name" :label="$t('shared_cache_name') + ':'">
-          <ElInput v-model="form.name" style="width: 504px"></ElInput>
+          <ElInput v-model="form.name" class="form-input" :placeholder="$t('shared_cache_placeholder_name')"></ElInput>
         </ElFormItem>
         <ElFormItem prop="connectionId" :label="$t('column_connection') + ':'">
           <VirtualSelect
             v-model="form.connectionId"
             filterable
+            class="form-input"
             :item-size="50"
             :items="connectionOptions"
             :loading="!connectionOptions.length"
-            @input="getTableOptions"
+            :placeholder="$t('shared_cache_placeholder_connection')"
+            @input="connectionInputHandler"
           />
         </ElFormItem>
         <ElFormItem prop="tableName" :label="$t('column_table') + ':'">
           <VirtualSelect
             v-model="form.tableName"
             filterable
+            class="form-input"
             :item-size="50"
             :items="tableOptions"
             :loading="tableOptionsLoading"
-            @input="getTableSchema"
+            :placeholder="$t('shared_cache_placeholder_table')"
+            @input="tableInputHandler"
           />
         </ElFormItem>
         <ElFormItem prop="cacheKeys" :label="$t('shared_cache_keys') + ':'">
-          <MultiSelection v-model="form.cacheKeys" :options="fieldOptions"></MultiSelection>
+          <FieldSelector
+            v-model="form.cacheKeys"
+            class="form-field-selector"
+            :options="fieldOptions"
+            :placeholder="$t('shared_cache_placeholder_keys')"
+          ></FieldSelector>
         </ElFormItem>
         <ElFormItem prop="fields" :label="$t('shared_cache_fields') + ':'">
-          <MultiSelection v-model="form.fields" :options="fieldOptions"></MultiSelection>
+          <FieldSelector
+            v-model="form.fields"
+            class="form-field-selector"
+            :options="fieldOptions"
+            :placeholder="$t('shared_cache_placeholder_fields')"
+          ></FieldSelector>
         </ElFormItem>
         <ElFormItem prop="maxRows" :label="$t('shared_cache_max_rows') + ':'">
-          <div class="flex">
-            <ElSelect v-model="form.maxRows">
-              <ElOption :label="$t('shared_cache_custom_max_record')" :value="10000"></ElOption>
-              <ElOption :label="$t('shared_cache_custom_no_limit')" :value="0"></ElOption>
+          <div class="flex align-center">
+            <ElSelect :value="form.maxRows > 0" @input="form.maxRows = $event ? 10000 : 0" style="width: 355px">
+              <ElOption :label="$t('shared_cache_custom_max_record')" :value="true"></ElOption>
+              <ElOption :label="$t('shared_cache_custom_no_limit')" :value="false"></ElOption>
             </ElSelect>
             <template v-if="form.maxRows > 0">
-              <ElInput v-model.number="form.maxRows" class="ml-3" style="width: 100px"> </ElInput>
+              <ElInputNumber
+                v-model.number="form.maxRows"
+                class="ml-3"
+                style="width: 100px"
+                controls-position="right"
+              ></ElInputNumber>
               <span class="ml-1">{{ $t('shared_cache_custom_record_unit') }}</span>
             </template>
           </div>
         </ElFormItem>
         <ElFormItem prop="ttl" :label="$t('shared_cache_ttl') + ':'">
-          <ElInput v-model="form.ttl" style="width: 100px"></ElInput>
+          <ElInputNumber v-model="form.ttl" style="width: 100px" controls-position="right"></ElInputNumber>
           <span class="ml-1">{{ $t('shared_cache_ttl_unit') }}</span>
         </ElFormItem>
-        <ElFormItem :label="$t('shared_cache_code') + ':'">
-          <template>
-            <div class="overflow-hidden">
-              <div class="code">
-                <span class="color-primary">var</span> cachedRow = CacheService.getCache(
-                <span class="color-danger">'{{ form.name || 'cachename' }}'</span>
-                <template v-if="!form.cacheKeys || !form.cacheKeys.length">
-                  ,<span class="bold">record</span>.<span class="color-danger">category_code</span>
-                </template>
-                <span v-for="key in form.cacheKeys.split(',')" :key="key">
-                  <template v-if="key">
-                    , <span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
-                  </template>
-                </span>
-                );<br />
-                <span class="bold">record</span>.category_name = cachedRow.category_name;<br />
-              </div>
-              <span>OR</span>
-              <div class="code">
-                <span class="bold">record</span>.category_name = CacheService.getCacheItem(
-                <span class="color-danger">'{{ form.name || 'cachename' }}'</span>, <span>'category_name'</span>,
-                defaultValue
-                <span v-for="key in form.cacheKeys.split(',')" :key="key">
-                  <template v-if="key">
-                    ,<span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
-                  </template>
-                </span>
-                );
-              </div>
-            </div>
-          </template>
-        </ElFormItem>
+        <ElFormItem :label="$t('shared_cache_code') + ':'"></ElFormItem>
+        <div class="example-wrapper overflow-hidden">
+          <div class="code">
+            <span class="color-primary">var</span> cachedRow = CacheService.getCache(
+            <span class="color-danger">'{{ form.name || 'cachename' }}'</span>
+            <template v-if="!form.cacheKeys || !form.cacheKeys.length">
+              ,<span class="bold">record</span>.<span class="color-danger">category_code</span>
+            </template>
+            <span v-for="key in form.cacheKeys.split(',')" :key="key">
+              <template v-if="key">
+                , <span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
+              </template>
+            </span>
+            );<br />
+            <span class="bold">record</span>.category_name = cachedRow.category_name;<br />
+          </div>
+          <div class="my-2">OR</div>
+          <div class="code">
+            <span class="bold">record</span>.category_name = CacheService.getCacheItem(
+            <span class="color-danger">'{{ form.name || 'cachename' }}'</span>, <span>'category_name'</span>,
+            defaultValue
+            <span v-for="key in form.cacheKeys.split(',')" :key="key">
+              <template v-if="key">
+                ,<span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
+              </template>
+            </span>
+            );
+          </div>
+        </div>
       </ElForm>
       <div class="pt-6">
-        <ElButton @click="$router.back()">{{ $t('button_cancel') }}</ElButton>
+        <ElButton @click="$router.back()">{{ $t('button_back') }}</ElButton>
         <ElButton type="primary" @click="submit">{{ $t('button_save') }}</ElButton>
       </div>
     </div>
   </section>
 </template>
 <style lang="scss" scoped>
+.shared-cache-form .title {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.85);
+  line-height: 22px;
+}
+.form-input {
+  width: 504px;
+}
+.form-field-selector {
+  width: 905px;
+}
+.example-wrapper {
+  padding: 16px;
+  width: 950px;
+  background: #3a3d4c;
+  border-radius: 2px;
+  color: #bfd0ff;
+}
 .code {
-  padding: 5px 15px;
-  max-width: 886px;
-  background: #fff;
-  overflow-x: auto;
+  padding: 8px;
   white-space: nowrap;
-  background: rgba(239, 241, 244, 0.2);
-  .color-primary {
-    color: #409eff;
-  }
-  .color-danger {
-    color: #ee5353;
-  }
+  border-radius: 2px;
+  background: #262838;
+  overflow-x: auto;
+  color: #82b290;
   .bold {
     font-weight: bold;
   }
 }
 </style>
 <script>
-// import CodeEditor from '@/components/CodeEditor'
 import VirtualSelect from 'web-core/components/virtual-select'
-import MultiSelection from '@/components/MultiSelection'
+import FieldSelector from './FieldSelector'
 export default {
-  components: { VirtualSelect, MultiSelection },
+  components: { VirtualSelect, FieldSelector },
   data() {
     return {
       loading: false,
@@ -157,24 +188,32 @@ export default {
   },
   created() {
     this.getConnectionOptions()
+    let id = this.$route.params.id
+    if (id) {
+      this.getData(id)
+    }
   },
   methods: {
-    getData() {
+    getData(id) {
+      this.loading = true
       this.$api('shareCache')
-        .findOne(this.$route.params.id)
+        .findOne(id)
         .then(res => {
           let data = res?.data || {}
-          let source = data?.dag?.nodes?.[0] || {}
-          let target = data?.dag?.nodes?.[1] || {}
           this.form = {
             name: data.name,
-            connectionId: source.connectionId,
-            tableName: source.tableName,
-            cacheKeys: target.cacheKeys,
-            fields: source?.attrs?.fields?.join(',') || '',
-            maxRows: target.maxRows,
-            ttl: target.ttl
+            connectionId: data.connectionId,
+            tableName: data.tableName,
+            cacheKeys: data.cacheKeys,
+            fields: data.fields?.join(',') || '',
+            maxRows: data.maxRows,
+            ttl: data.ttl
           }
+          this.getTableOptions(data.connectionId)
+          this.getTableSchema(data.tableName)
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
     getConnectionOptions() {
@@ -197,24 +236,30 @@ export default {
           this.connectionOptions = options.map(opt => ({ label: opt.name, value: opt.id }))
         })
     },
-    getTableOptions(id) {
+    getTableOptions(connectionId) {
       this.tableOptionsLoading = true
       this.$api('MetadataInstances')
-        .getTables(id)
+        .getTables(connectionId)
         .then(res => {
-          let options = res?.data || []
-          this.tableOptions = options.map(opt => ({ label: opt, value: opt }))
+          let options = []
+          let list = res?.data || []
+          list.forEach(opt => {
+            if (opt) {
+              options.push({ label: opt, value: opt })
+            }
+          })
+          this.tableOptions = options
         })
         .finally(() => {
           this.tableOptionsLoading = false
         })
     },
-    getTableSchema(name) {
+    getTableSchema(tableName) {
       let params = {
         filter: JSON.stringify({
           where: {
             'source.id': this.form.connectionId,
-            original_name: name,
+            original_name: tableName,
             is_deleted: false,
             'fields.is_deleted': false
           },
@@ -240,11 +285,26 @@ export default {
           this.fieldOptionsLoading = false
         })
     },
+    connectionInputHandler(connectionId) {
+      this.form.tableName = ''
+      this.form.cacheKeys = ''
+      this.form.fields = ''
+      this.fieldOptions = []
+      this.getTableOptions(connectionId)
+    },
+    tableInputHandler(tableName) {
+      this.form.cacheKeys = ''
+      this.form.fields = ''
+      this.fieldOptions = []
+      this.getTableSchema(tableName)
+    },
     submit() {
       this.$refs.form.validate(flag => {
         if (flag) {
           let { name, connectionId, tableName, cacheKeys, fields, maxRows, ttl } = this.form
+          let id = this.$route.params.id
           let params = {
+            id,
             name,
             dag: {
               nodes: [
@@ -266,14 +326,13 @@ export default {
               edges: []
             }
           }
-          let id = this.$route.params.id
           let method = id ? 'patch' : 'post'
           this.loading = true
           this.$api('shareCache')
             [method](params)
             .then(() => {
               this.$message.success(this.$t('message_save_ok'))
-              this.router.replace({
+              this.$router.replace({
                 name: 'sharedCacheList'
               })
             })

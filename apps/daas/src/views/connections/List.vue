@@ -252,7 +252,6 @@ export default {
     }
   },
   created() {
-    this.getDatabaseType()
     //header
     // let guideDoc =
     //   ' <a target="_blank" style="color: #409EFF" href="https://docs.tapdata.net/data-source">' +
@@ -271,6 +270,7 @@ export default {
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 10000)
+    this.getFilterItems()
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -317,19 +317,7 @@ export default {
       this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
-    async getDatabaseType() {
-      let databaseTypes = await this.$api('DatabaseTypes').get()
-      let databaseTypeOptions = databaseTypes.data
-        .filter(dt => dt.type !== 'kudu')
-        .sort((t1, t2) => (t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1))
-      this.databaseTypeOptions = databaseTypeOptions.map(item => {
-        return {
-          label: item.name,
-          value: item.type
-        }
-      })
-      this.getFilterItems()
-    },
+
     getData({ page, tags }) {
       let region = this.$route.query.region
       let { current, size } = page
@@ -676,7 +664,18 @@ export default {
           key: 'databaseType',
           type: 'select-inner',
           menuMinWidth: '250px',
-          items: this.databaseTypeOptions
+          items: async () => {
+            let databaseTypes = await this.$api('DatabaseTypes').get()
+            let databaseTypeOptions = databaseTypes.data
+              .filter(dt => dt.type !== 'kudu')
+              .sort((t1, t2) => (t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1))
+            return databaseTypeOptions.map(item => {
+              return {
+                label: item.name,
+                value: item.type
+              }
+            })
+          }
         },
         {
           placeholder: this.$t('task_list_search_placeholder'),

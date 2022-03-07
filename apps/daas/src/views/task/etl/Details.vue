@@ -94,7 +94,7 @@ import VIcon from '@/components/VIcon'
 import InlineInput from '@/components/InlineInput'
 import Connection from '../migrate/details/Connection'
 import History from '../migrate/details/History'
-import Subtask from './Subtask'
+import Subtask from '../Subtask'
 import Chart from 'web-core/components/chart'
 import { ETL_SUB_STATUS_MAP } from '@/const'
 import { getSubTaskStatus } from './util'
@@ -126,7 +126,8 @@ export default {
         {
           key: 'type',
           icon: 'menu',
-          label: '增量滞后'
+          label: '增量滞后:',
+          show: 'cdc'
         }
       ],
       ouputItems: [
@@ -181,24 +182,36 @@ export default {
     },
     startDisabled() {
       const { statusResult, task } = this
-      return (
-        this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
-        statusResult.every(t => t.status === 'running' && t.count)
-      )
+      let data = []
+      if (statusResult?.length) {
+        data =
+          this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
+          statusResult.filter(t => t.status === 'running' && t.count)
+      }
+      let flag = data?.[0]?.count === task.statuses?.length ? true : false
+      return flag
     },
     stopDisabled() {
       const { statusResult, task } = this
-      return (
-        this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
-        statusResult.every(t => t.status === 'stop' && t.count)
-      )
+      let data = []
+      if (statusResult?.length) {
+        data =
+          this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
+          statusResult.filter(t => ['not_running', 'stop'].includes(t.status) && t.count)
+      }
+      let flag = data?.[0]?.count === task.statuses?.length ? true : false
+      return flag
     },
     editDisabled() {
       const { statusResult, task } = this
-      return (
-        this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
-        statusResult.every(t => t.status === 'running' && t.count)
-      )
+      let data = []
+      if (statusResult?.length) {
+        data =
+          this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
+          statusResult.filter(t => t.status === 'running' && t.count)
+      }
+      let flag = data?.[0]?.count === task.statuses?.length ? true : false
+      return flag
     }
   },
   created() {
