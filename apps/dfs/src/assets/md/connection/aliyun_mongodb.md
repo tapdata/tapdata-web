@@ -1,5 +1,5 @@
 ## **连接配置帮助**
-###  **1. Aliyun RDS for MongoDB安装说明**
+###  **1. Aliyun MongoDB安装说明**
 请遵循以下说明以确保在 Tapdata 中成功添加和使用MongoDB数据库。
 > **注意**：MongoDB 作为源端连接时，必须是副本集。
 #### **2. 支持版本**
