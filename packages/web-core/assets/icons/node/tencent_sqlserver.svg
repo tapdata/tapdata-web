@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>RDS SQL</title>
-    <defs>
-        <polygon id="path-1" points="0 0 13.0205 0 13.0205 27.744 0 27.744"></polygon>
-    </defs>
-    <g id="RDS-SQL" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="编组" transform="translate(6.000000, 1.000000)">
-            <g transform="translate(0.000000, 5.373000)">
-                <mask id="mask-2" fill="white">
-                    <use xlink:href="#path-1"></use>
-                </mask>
-                <g id="Clip-2"></g>
-                <path d="M13.0205,25.961 C6.7595,25.366 1.8605,20.095 1.8605,13.678 C1.8605,8.397 5.1785,3.894 9.8415,2.131 L10.3795,0 C4.3935,1.67 -0.0005,7.159 -0.0005,13.678 C-0.0005,20.862 5.3365,26.798 12.2615,27.744 L13.0205,25.961 Z" id="Fill-1" fill="#EB681A" mask="url(#mask-2)"></path>
+    <title>TencentDB for SQLServer</title>
+    <g id="TencentDB-for-SQLServer" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="tencent-sqlserver" transform="translate(4.000000, 4.000000)" fill-rule="nonzero">
+            <rect id="Rectangle-Copy" fill="#444444" opacity="0" x="0" y="0" width="32" height="32"></rect>
+            <g id="Group-2" transform="translate(2.000000, 2.000000)" fill="#00A4FF">
+                <path d="M10.3,26 C5.6,25.7 2,24.5 2,23 L0,23 C0,25.5 4.5,27.6 10.3,27.9 L10.3,27 L10.3,26 Z" id="Shape"></path>
+                <path d="M24,9 L24,11 L22,11 L22,9 L22,7.8 C19.9,9.1 16.2,10 12,10 C7.8,10 4.1,9.1 2,7.8 L2,14 C2,15.5 5.6,16.7 10.3,17 L10.3,19 C6.9,18.8 3.9,18 2,16.8 L2,23 L0,23 L0,5 C0,2.2 5.4,0 12,0 C18.6,0 24,2.2 24,5 L24,9 Z M12,8 C17.5,8 22,6.7 22,5 C22,3.3 17.5,2 12,2 C6.5,2 2,3.3 2,5 C2,6.7 6.5,8 12,8 Z" id="Combined-Shape"></path>
+                <g id="田" transform="translate(13.000000, 14.000000)">
+                    <path d="M2,2 L2,12 L12,12 L12,2 L2,2 Z M0,0 L14,0 L14,14 L0,14 L0,0 Z" id="Rectangle-167"></path>
+                    <rect id="Rectangle-169" x="6" y="0" width="2" height="14"></rect>
+                    <rect id="Rectangle-169" transform="translate(7.000000, 7.000000) rotate(90.000000) translate(-7.000000, -7.000000) " x="6" y="0" width="2" height="14"></rect>
+                </g>
             </g>
-            <path d="M15.9389,4.958 L15.4809,6.775 C21.6959,7.415 26.5429,12.666 26.5429,19.051 C26.5429,24.227 23.3549,28.656 18.8359,30.489 L17.8649,32.773 C23.9329,31.158 28.4049,25.628 28.4049,19.051 C28.4049,11.795 22.9619,5.815 15.9389,4.958" id="Fill-3" fill="#EB681A"></path>
-            <path d="M15.2309,2.7427 L6.4839,17.2647 C5.5579,18.8037 5.9579,20.7937 7.4059,21.8567 L7.9419,22.2497 C9.4639,23.3667 11.6089,23.0007 12.6759,21.4437 L16.2229,16.2657 C17.1979,14.8437 19.1269,14.4537 20.5769,15.3867 L21.0019,15.6597 C22.3899,16.5517 22.8609,18.3597 22.0849,19.8147 L14.0549,34.8687" id="Stroke-5" stroke="#E0661F" stroke-width="2"></path>
-            <polygon id="Fill-7" fill="#E0661F" points="13.4677 1.959 16.7987 3.722 16.7987 0"></polygon>
-            <polygon id="Fill-9" fill="#E0661F" points="12.4296 37.6738 15.6166 35.6638 12.3886 33.8108"></polygon>
         </g>
     </g>
 </svg>
