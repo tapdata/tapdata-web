@@ -22,14 +22,7 @@
         </el-button>
       </div>
       <!-- 索引表格 start -->
-      <el-table
-        ref="table"
-        class="table-page-table"
-        height="100%"
-        border
-        v-loading="loading"
-        :data="collectionTableData"
-      >
+      <el-table ref="table" class="table-page-table" height="100%" v-loading="loading" :data="collectionTableData">
         <el-table-column :label="$t('metadata.details.collectionName')" prop="name">
           <template slot-scope="scope">
             <el-button type="text" @click="handleJumpTable(scope.row)" style="padding: 0 10px">{{
@@ -121,7 +114,7 @@ export default {
     // 获取表格数据
     getData() {
       this.$api('MetadataInstances')
-        .get([this.$route.params.id])
+        .findTablesById([this.$route.params.id])
         .then(res => {
           if (res) {
             this.collectionTableData = res.data.collections
@@ -154,15 +147,15 @@ export default {
         if (valid) {
           let params = {
             meta_type: 'collection',
-            original_id: _this.collectionData.id,
-            original_name: _this.createForm.name,
+            // original_id: _this.collectionData.id,
+            // original_name: _this.createForm.name,
             qualified_name: '',
-            source: _this.collectionData.source,
-            is_deleted: false,
+            // source: _this.collectionData.source,
+            // is_deleted: false,
             databaseId: _this.collectionData.id,
             name: _this.createForm.name
           }
-          params.qualified_name = params.source.database_uri + '_' + params.name
+          params.qualified_name = _this.collectionData.source.database_uri + '_' + params.name
           params.qualified_name = params.qualified_name
             // eslint-disable-next-line
             .split(/\/|\.|@|\&|:|\?|%|=/)
@@ -265,7 +258,10 @@ export default {
 .collection-list-wrap {
   .create-dialog {
     .el-dialog__body {
-      padding: 30px;
+      .el-form-item.el-form-item--small,
+      .el-form-item.el-form-item--mini {
+        margin-bottom: 0;
+      }
     }
   }
 

@@ -110,7 +110,7 @@ export default {
     this.tranModelVersionControl()
     if (!this.transferData.automaticallyCreateTables) {
       this.transferData.mode = 'readOnly'
-    }
+    } else this.transferData.mode = 'all'
   },
 
   methods: {

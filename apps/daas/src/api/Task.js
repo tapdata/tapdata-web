@@ -40,6 +40,16 @@ export default class TaskAPI extends PublicAPI {
   patchId(id, params) {
     return axios.patch(`${this.url}/${id}`, params)
   }
+  chart(id) {
+    if (id) {
+      return axios.get(`${this.url}/chart?user_id=${id}`)
+    } else {
+      return axios.get(this.url + '/chart')
+    }
+  }
+  findTaskDetailById(id) {
+    return axios.get(this.url + '/findTaskDetailById/' + id)
+  }
   tranModelVersionControl(params) {
     return axios.post(this.url + '/tranModelVersionControl', params)
   }

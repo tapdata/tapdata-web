@@ -136,6 +136,8 @@ export default {
   dashboard_status_edit: '编辑中',
   dashboard_status_error: '错误',
   dashboard_status_wait_run: '待启动',
+  dashboard_status_complete: '完成',
+  dashboard_status_stop: '已停止',
   dashboard_all_total: '全部任务',
   dashboard_copy_total: '复制任务',
   dashboard_sync_total: '开发任务',
@@ -201,6 +203,10 @@ export default {
   metadata_form_collection: '数据集',
   metadata_form_mongo_view: 'Mongodb视图',
   metadata_form_rule_table_name: '仅支持英文、数字、下划线、点、减号，并以英文字母开头，不允许 system 开头',
+
+  metadata_detail_original_table_name: '原表名',
+  metadata_detail_original_database_name: '原库名',
+
   // 数据校验
   verify_details_title: '任务校验详情',
   verify_history_title: '任务校验历史',
@@ -760,7 +766,9 @@ export default {
   task_preview_cdcDelayTime: '增量最大滞后时间',
   task_preview_failCount: '失败总次数',
   task_preview_status_error: '错误',
-  task_preview_status_edit: '待启动',
+  task_preview_status_edit: '编辑中',
+  task_preview_status_wait_run: '待启动',
+  task_preview_status_complete: '已完成',
   task_preview_status_running: '运行中',
   task_preview_status_stop: '已停止',
   task_preview_status_pause: '暂停',

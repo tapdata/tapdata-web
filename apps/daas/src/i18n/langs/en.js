@@ -136,9 +136,11 @@ export default {
   // console
   dashboard_status_running: 'Running',
   dashboard_status_paused: 'Paused',
-  dashboard_status_edit: 'Edit',
+  dashboard_status_edit: 'Editing',
   dashboard_status_error: 'Error',
   dashboard_status_wait_run: 'Wait run',
+  dashboard_status_complete: 'Completed',
+  dashboard_status_stop: 'stopped',
   dashboard_all_total: 'All tasks',
   dashboard_copy_total: 'Copy task',
   dashboard_sync_total: 'Development tasks',
@@ -205,7 +207,8 @@ export default {
   metadata_form_mongo_view: 'Mongodb view',
   metadata_form_rule_table_name:
     'Only supports English, numbers, underscores, dots, minus signs, and starts with English letters, not allowed to start with system',
-
+  metadata_detail_original_table_name: 'Original table name',
+  metadata_detail_original_database_name: 'Original database name',
   // 数据校验
   verify_details_title: 'Task verification details',
   verify_history_title: 'Task verification history',
@@ -788,7 +791,9 @@ export default {
   task_preview_cdcDelayTime: 'Incremental max delay time',
   task_preview_failCount: 'Total number of failures',
   task_preview_status_error: 'Error',
-  task_preview_status_edit: 'to be started',
+  task_preview_status_edit: 'editing',
+  task_preview_status_wait_run: 'Wait run',
+  task_preview_status_complete: 'Completed',
   task_preview_status_running: 'running',
   task_preview_status_stop: 'stopped',
   task_preview_status_pause: 'Pause',

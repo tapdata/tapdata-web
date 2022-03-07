@@ -723,7 +723,7 @@ export default {
           return
         }
         let routeUrl = this.$router.resolve({
-          name: 'DataflowEditor',
+          name: 'MigrateEditor',
           params: { id: id }
         })
         setTimeout(() => {

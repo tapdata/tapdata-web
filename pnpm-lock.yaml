@@ -107,7 +107,6 @@ importers:
       vue-template-compiler: ^2.6.11
       vue-virtual-scroller: ^1.0.10
       vuex: ^3.4.0
-      vuex-persistedstate: ^3.0.0
       ws: ^8.4.2
     dependencies:
       '@daas/dag': link:../../packages/dag
@@ -152,7 +151,6 @@ importers:
       vue-router: registry.npmmirror.com/vue-router/3.5.3
       vue-virtual-scroller: registry.npmmirror.com/vue-virtual-scroller/1.0.10_vue@2.6.14
       vuex: registry.npmmirror.com/vuex/3.6.2_vue@2.6.14
-      vuex-persistedstate: registry.npmmirror.com/vuex-persistedstate/3.2.1_vue@2.6.14+vuex@3.6.2
       ws: registry.npmmirror.com/ws/8.5.0
     devDependencies:
       '@daas/form': link:../../packages/form
@@ -3650,7 +3648,7 @@ packages:
     name: axios
     version: 0.21.4
     dependencies:
-      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8_debug@4.3.3
+      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8
     transitivePeerDependencies:
       - debug
     dev: false
@@ -5502,13 +5500,6 @@ packages:
     version: 1.5.2
     engines: {node: '>=0.10.0'}
 
-  registry.npmmirror.com/deepmerge/4.2.2:
-    resolution: {integrity: sha512-FJ3UgI4gIl+PHZm53knsuSFpE+nESMr7M4v9QcgB7S63Kj/6WqMiFQJpBBYz1Pt+66bZpP3Q7Lye0Oo9MPKEdg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/deepmerge/-/deepmerge-4.2.2.tgz}
-    name: deepmerge
-    version: 4.2.2
-    engines: {node: '>=0.10.0'}
-    dev: false
-
   registry.npmmirror.com/default-gateway/4.2.0:
     resolution: {integrity: sha512-h6sMrVB1VMWVrW13mSc6ia/DwYYw5MN6+exNu1OaJeFac5aSAvwM7lZ0NVfTABuSkQelr4h5oebg3KB1XPdjgA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/default-gateway/-/default-gateway-4.2.0.tgz}
     name: default-gateway
@@ -6894,9 +6885,8 @@ packages:
       readable-stream: registry.npmmirror.com/readable-stream/2.3.7
     dev: true
 
-  registry.npmmirror.com/follow-redirects/1.14.8_debug@4.3.3:
+  registry.npmmirror.com/follow-redirects/1.14.8:
     resolution: {integrity: sha512-1x0S9UVJHsQprFcEC/qnNzBLcIxsjAV905f/UkQxbclCsoTWlacCNOpQa/anodLl2uaEKFhfWOvM2Qg77+15zA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.14.8.tgz}
-    id: registry.npmmirror.com/follow-redirects/1.14.8
     name: follow-redirects
     version: 1.14.8
     engines: {node: '>=4.0'}
@@ -6905,8 +6895,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dependencies:
-      debug: registry.npmmirror.com/debug/4.3.3
 
   registry.npmmirror.com/for-in/1.0.2:
     resolution: {integrity: sha512-7EwmXrOjyL+ChxMhmG5lnW9MPt1aIeZEwKhQzoBUdTV0N3zuwWDZYVJatDvZ2OyzPUvdIAZDsCetk3coyMfcnQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/for-in/-/for-in-1.0.2.tgz}
@@ -7769,7 +7757,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: registry.npmmirror.com/eventemitter3/4.0.7
-      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8_debug@4.3.3
+      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8
       requires-port: registry.npmmirror.com/requires-port/1.0.0
     transitivePeerDependencies:
       - debug
@@ -12354,12 +12342,6 @@ packages:
     version: 1.7.3
     dev: true
 
-  registry.npmmirror.com/shvl/2.0.3:
-    resolution: {integrity: sha512-V7C6S9Hlol6SzOJPnQ7qzOVEWUQImt3BNmmzh40wObhla3XOYMe4gGiYzLrJd5TFa+cI2f9LKIRJTTKZSTbWgw==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/shvl/-/shvl-2.0.3.tgz}
-    name: shvl
-    version: 2.0.3
-    dev: false
-
   registry.npmmirror.com/side-channel/1.0.4:
     resolution: {integrity: sha512-q5XPytqFEIKHkGdiMIrY10mvLRvnQh42/+GoBlFW3b2LXLE2xxJpZFdm94we0BaoV3RwJyGqg5wS7epxTv0Zvw==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/side-channel/-/side-channel-1.0.4.tgz}
     name: side-channel
@@ -14227,22 +14209,6 @@ packages:
     resolution: {integrity: sha512-x2284lgYvjOMj3Za7kqzRcUSxBboHqtgRE2zlos1qWaOye5yUmHn42LB1250NJBLRwEcdrB0JRwyPTEPhfQjiQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue/-/vue-2.6.14.tgz}
     name: vue
     version: 2.6.14
-    dev: false
-
-  registry.npmmirror.com/vuex-persistedstate/3.2.1_vue@2.6.14+vuex@3.6.2:
-    resolution: {integrity: sha512-0OnHKGsCHJcvbEraaGZvuvX4aybM2oQWYRuZmIQB7zUjVM6tP+Hg+oXLrq9r6elT4she9SGtEbGE1L2+XdFgUw==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vuex-persistedstate/-/vuex-persistedstate-3.2.1.tgz}
-    id: registry.npmmirror.com/vuex-persistedstate/3.2.1
-    name: vuex-persistedstate
-    version: 3.2.1
-    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
-    peerDependencies:
-      vue: ^2.0.0
-      vuex: ^2.0.0 || ^3.0.0
-    dependencies:
-      deepmerge: registry.npmmirror.com/deepmerge/4.2.2
-      shvl: registry.npmmirror.com/shvl/2.0.3
-      vue: registry.npmmirror.com/vue/2.6.14
-      vuex: registry.npmmirror.com/vuex/3.6.2_vue@2.6.14
     dev: false
 
   registry.npmmirror.com/vuex/3.6.2_vue@2.6.14:
