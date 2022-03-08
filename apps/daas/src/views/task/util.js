@@ -131,8 +131,9 @@ export function getOverviewData(data) {
 // 获取子任务状态统计
 export function getSubTaskStatus(rows = []) {
   const statusMap = {
+    edit: ['edit'],
     running: ['scheduling', 'running', 'stopping'],
-    not_running: ['edit', 'wait_run', 'stop', 'complete', 'schedule_failed'],
+    not_running: ['wait_run', 'stop', 'complete', 'schedule_failed'],
     error: ['error']
   }
   const len = rows.length

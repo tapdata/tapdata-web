@@ -1049,7 +1049,7 @@ export default {
       )
     },
     deleteDisabled(data) {
-      return !data.filter(t => t.count > 0).every(t => ['not_running', 'error'].includes(t.status))
+      return !data.filter(t => t.count > 0).every(t => ['edit', 'not_running', 'error'].includes(t.status))
     },
     getFilterItems() {
       this.filterItems = [
