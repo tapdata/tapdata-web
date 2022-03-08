@@ -1,6 +1,12 @@
 <template>
   <div>
-    <FieldMapping ref="fieldMapping" class="mt-2" :transform="transform" :getDataFlow="getDataFlow"></FieldMapping>
+    <FieldMapping
+      v-if="isTarget"
+      ref="fieldMapping"
+      class="flex justify-content-end mr-5 mt-3"
+      :transform="transform"
+      :getDataFlow="getDataFlow"
+    ></FieldMapping>
     <ElTable v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
       <ElTableColumn prop="field_name" label="字段名称">
         <template #default="{ row }">
@@ -32,10 +38,11 @@ export default {
     return {
       tableData: [],
       loading: false,
+      isTarget: false,
       transform: {
         showBtn: true,
         mode: 'metaData',
-        stageId: '',
+        nodeId: '',
         field_process: [],
         fieldsNameTransform: '',
         batchOperationList: []
@@ -44,7 +51,7 @@ export default {
   },
 
   computed: {
-    ...mapState('dataflow', ['activeNodeId', 'transformStatus']),
+    ...mapState('dataflow', ['activeNodeId', 'transformStatus', 'stateIsDirty']),
     ...mapGetters('dataflow', ['activeNode']),
 
     showLoading() {
@@ -55,12 +62,18 @@ export default {
   watch: {
     activeNodeId() {
       this.loadFields()
+      this.checkTarget()
     },
 
     transformStatus(v) {
       if (v === 'finished') {
         this.loadFields()
       }
+    }
+  },
+  mounted() {
+    if (this.stateIsReadonly) {
+      this.transform.mode = 'readOnly'
     }
   },
 
@@ -85,23 +98,28 @@ export default {
       }
 
       this.loading = false
-      this.transform.stageId = this.activeNode.id
     },
     getDataflowDataToSave() {
       const dag = this.$store.getters['dataflow/dag']
       const editVersion = this.$store.state.dataflow.editVersion
       let dataflow = this.$store.state.dataflow
-      console.log(dataflow)
       return {
         dag,
         editVersion,
-        ...this.dataflow
+        ...dataflow
       }
     },
     getDataFlow() {
       const data = this.getDataflowDataToSave()
-      console.log(data)
       return data
+    },
+    checkTarget() {
+      //是否目标节点
+      const dag = this.$store.getters['dataflow/dag']
+      const id = this.activeNode.id
+      const allEdges = dag.edges
+      this.isTarget = allEdges.some(({ target }) => target === id)
+      this.transform.nodeId = this.activeNode.id
     }
   }
 }

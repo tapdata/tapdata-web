@@ -213,7 +213,7 @@ export default {
       }
     },
     updateAutoTransform(type, data) {
-      for (let i = 0; i < this.dataFlow.stages.length; i++) {
+      for (let i = 0; i < this.dataFlow['dag']['nodes'].length; i++) {
         if (this.dataFlow['dag']['nodes'][i].id === this.transform.nodeId) {
           this.dataFlow['dag']['nodes'][i].fieldsNameTransform = data.fieldsNameTransform
           this.dataFlow['dag']['nodes'][i].batchOperationList = data.batchOperationList
@@ -445,7 +445,7 @@ export default {
     },
     //实时获取schema加载进度
     initWSSed() {
-      let id = this.dataFlow?.id
+      let id = this.dataFlow?.id || this.dataFlow?.taskId
       let msg = {
         type: 'metadataTransformerProgress',
         data: {
@@ -461,7 +461,7 @@ export default {
       let msgData = {
         type: 'metadataTransformerProgress',
         data: {
-          dataFlowId: this.dataFlow?.id
+          dataFlowId: id
         }
       }
       this.$ws.ready(() => {

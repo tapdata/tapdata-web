@@ -13,12 +13,14 @@
           $t('task_mapping_table_rename')
         }}</el-button>
         <FieldMapping
+          v-if="showFieldMapping"
           ref="fieldMapping"
           class="fr"
           :transform="transferData"
           :getDataFlow="getTask"
           @update-first="returnModel"
-          @returnFieldMapping="returnFieldMappingData"
+          @returnPreFixSuffix="returnFieldMappingData"
+          @returnFieldMapping="saveFieldProcess"
         ></FieldMapping>
       </div>
     </div>
@@ -187,8 +189,9 @@ export default {
     //字段映射
     tranModelVersionControl() {
       let data = this.getTask()
+      //查找目标节点
       //是否显示字段推演
-      let nodeId = data?.dag?.nodes?.[1]?.id || ''
+      let nodeId = data?.dag?.edges?.[0]?.target || ''
       let param = {
         nodes: data?.dag?.nodes,
         nodeId: nodeId
@@ -207,9 +210,10 @@ export default {
     returnFieldMappingData(data) {
       this.transferData.fieldsNameTransform = data.fieldsNameTransform
       this.transferData.batchOperationList = data.batchOperationList
-      this.transferData.fieldProcess = data.fieldProcess
     },
-
+    saveFieldProcess(data) {
+      this.transferData.fieldProcess = data
+    },
     //重新加载模型
     async reload() {
       let result = await this.$api('Workers').getAvailableAgent()

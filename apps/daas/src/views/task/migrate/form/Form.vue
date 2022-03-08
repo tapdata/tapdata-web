@@ -128,12 +128,12 @@ export default {
     }
   },
   created() {
-    this.getSteps()
     this.id = this.$route.params.id
     if (this.id) {
       this.intiData(this.id)
     } else {
       this.createData() //创建一个新的空任务
+      this.getSteps()
     }
   },
 
@@ -146,27 +146,45 @@ export default {
           if (res) {
             let data = res?.data
             this.status = data.status
-            this.settingData = Object.assign(this.settingData, data.attrs?.task_setting_Data)
+            this.settingData = data.attrs?.task_setting_Data
             this.settingData.name = data.name
             this.dataSourceData = data?.attrs?.task_data_source_Data
             this.nodes = data?.dag?.nodes
-            let syncObjects = this.nodes[1].syncObjects
+            let edges = data?.dag?.edges
+            //查找目标节点
+            let nodeMapping = {}
+            let sourceNodeMapping = {}
+            let targetNodeMapping = {}
+            this.nodes.forEach(item => {
+              nodeMapping[item.id] = item
+            })
+            edges.forEach(item => {
+              sourceNodeMapping = nodeMapping[item.source]
+              targetNodeMapping = nodeMapping[item.target]
+            })
+
             this.transferData = {
-              tablePrefix: this.nodes[1].tablePrefix,
-              tableSuffix: this.nodes[1].tableSuffix,
-              tableNameTransform: this.nodes[1].tableNameTransform,
-              fieldsNameTransform: this.nodes[1].fieldsNameTransform,
-              batchOperationList: this.nodes[1].batchOperationList,
-              fieldProcess: this.nodes[0].fieldProcess,
-              selectSourceArr: syncObjects[0] ? syncObjects[0].objectNames : [],
+              tablePrefix: targetNodeMapping.tablePrefix,
+              tableSuffix: targetNodeMapping.tableSuffix,
+              tableNameTransform: targetNodeMapping.tableNameTransform,
+              fieldsNameTransform: targetNodeMapping.fieldsNameTransform,
+              batchOperationList: targetNodeMapping.batchOperationList,
+              fieldProcess: sourceNodeMapping.fieldProcess,
+              selectSourceArr: targetNodeMapping.syncObjects[0] ? targetNodeMapping.syncObjects[0].objectNames : [],
               topicData:
-                syncObjects[0]?.type === 'topic' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || [],
+                targetNodeMapping.syncObjects[0]?.type === 'topic'
+                  ? targetNodeMapping.syncObjects[0].objectNames
+                  : targetNodeMapping.syncObjects[1]?.objectNames || [],
               queueData:
-                syncObjects[0]?.type === 'queue' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || []
+                targetNodeMapping.syncObjects[0]?.type === 'queue'
+                  ? targetNodeMapping.syncObjects[0].objectNames
+                  : targetNodeMapping.syncObjects[1]?.objectNames || []
             }
+            this.transferData = Object.assign({}, TRANSFER_MODEL, this.transferData)
             //编辑时不被覆盖
-            this.tableNameTransform = this.nodes[1].tableNameTransform
-            this.fieldsNameTransform = this.nodes[1].fieldsNameTransform
+            this.tableNameTransform = targetNodeMapping.tableNameTransform
+            this.fieldsNameTransform = targetNodeMapping.fieldsNameTransform
+            this.getSteps()
           }
         })
     },
@@ -246,8 +264,6 @@ export default {
             } else {
               this.mqTransferFlag = false
             }
-            //数据: 第三步请求schema用到sourceId
-            this.sourceId = this.dataSourceData.source_connectionId
             this.activeStep++
           }
           break
@@ -255,6 +271,8 @@ export default {
           this.form
             .validate()
             .then(() => {
+              //数据: 第三步请求schema用到sourceId
+              this.sourceId = this.dataSourceData.source_connectionId
               this.activeStep++
               this.transferData.automaticallyCreateTables = this.settingData.automaticallyCreateTables
             })
