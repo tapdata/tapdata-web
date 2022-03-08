@@ -16,66 +16,6 @@
     >
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-        <!-- <ul class="search-bar">
-          <li>
-            <ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
-              <ElOption :label="$t('dataFlow.status.all')" value=""></ElOption>
-              <ElOption v-for="(value, label) in statusOptions" :key="value" :label="label" :value="value"> </ElOption>
-            </ElSelect>
-          </li>
-          <li>
-            <el-select
-              v-model="searchParams.progress"
-              size="small"
-              clearable
-              :placeholder="$t('dataFlow.taskSettingPlaceholder')"
-              style="width: 160px"
-              @input="table.fetch(1)"
-            >
-              <el-option
-                v-for="item in progressOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-          </li>
-          <li>
-            <el-select
-              v-model="searchParams.executionStatus"
-              size="small"
-              clearable
-              :placeholder="$t('dataFlow.executionStatus')"
-              style="width: 160px"
-              @input="table.fetch(1)"
-            >
-              <el-option
-                v-for="opt in ['initializing', 'cdc', 'initialized', 'Lag']"
-                :key="opt"
-                :label="$t('dataFlow.status.' + opt)"
-                :value="opt"
-              ></el-option>
-            </el-select>
-          </li>
-          <li>
-            <el-input
-              v-model="searchParams.keyword"
-              clearable
-              size="small"
-              :placeholder="$t('dataFlow.searchPlaceholder')"
-              @input="table.fetch(1, 800)"
-            >
-              <span slot="prefix" class="el-input__icon h-100 ml-1">
-                <VIcon size="14">search</VIcon>
-              </span>
-            </el-input>
-          </li>
-          <li>
-            <ElButton class="btn-refresh" size="small" @click="table.fetch()">
-              <i class="el-icon-refresh"></i>
-            </ElButton>
-          </li>
-        </ul> -->
       </template>
       <div class="buttons" slot="operation">
         <el-button
@@ -127,11 +67,6 @@
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkTag') }}</span>
         </el-button>
-
-        <!-- <el-button v-readonlybtn="'SYNC_Function_management'" size="small" class="btn" @click="handleGoFunction">
-          <i class="iconfont icon-hanshu back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkFx') }}</span>
-        </el-button> -->
         <el-button
           v-readonlybtn="'SYNC_job_import'"
           size="mini"
@@ -163,7 +98,9 @@
       <el-table-column min-width="200" :label="$t('task_list_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name link-primary">
-            <span :class="['name', { 'has-children': row.hasChildren }]" @click="toDetail(row)">{{ row.name }}</span>
+            <span :class="['name', { 'has-children': row.hasChildren }]" @click.stop="handlePreview(row.id)">{{
+              row.name
+            }}</span>
             <el-tag v-if="row.listTagId !== undefined" class="tag" type="info" effect="dark" size="mini">
               {{ row.listTagValue }}
             </el-tag>
@@ -180,7 +117,13 @@
       <!-- <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column> -->
       <el-table-column prop="status" :label="$t('task_list_status')" width="180">
         <template #default="{ row }">
-          <StatusItem :value="row.statusResult"></StatusItem>
+          <span :class="['status-' + row.status, 'status-block']">
+            {{ $t('task_preview_status_' + row.status) }}
+          </span>
+          <div>
+            <span v-if="row.transformStatus">{{ statusTransformMap[row.transformStatus] }} </span>
+            <span v-if="row.transformProcess">{{ row.transformProcess * 100 }} %</span>
+          </div>
         </template>
       </el-table-column>
 
@@ -196,7 +139,7 @@
           {{ row.startTime ? $moment(row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="210" fixed="right">
+      <el-table-column :label="$t('column_operation')" width="220" fixed="right">
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
@@ -251,9 +194,9 @@
               {{ $t('task_list_edit') }}
             </ElLink>
             <ElDivider direction="vertical"></ElDivider>
-            <!--            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetails(row)">-->
-            <!--              {{ $t('task_list_button_monitor') }}-->
-            <!--            </ElLink>-->
+            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetail(row)">
+              {{ $t('task_list_button_monitor') }}
+            </ElLink>
             <ElDivider direction="vertical"></ElDivider>
             <!-- <ElLink
               v-readonlybtn="'SYNC_job_edition'"
@@ -317,7 +260,7 @@
         </template>
       </el-table-column>
     </TablePage>
-    <el-dialog
+    <!-- <el-dialog
       :title="$t('dialog.jobSchedule.jobSecheduleSetting')"
       :close-on-click-modal="false"
       :visible.sync="taskSettingsDialog"
@@ -353,9 +296,49 @@
         <el-button @click="taskSettingsDialog = false">{{ $t('message.cancel') }}</el-button>
         <el-button type="primary" @click="saveTaskSetting">{{ $t('app.save') }}</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
     <DownAgent ref="agentDialog" type="taskRunning"></DownAgent>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
+    <Drawer class="task-drawer" :visible.sync="isShowDetails">
+      <div class="task-drawer-wrap" v-loading="previewLoading">
+        <header class="header">
+          <div class="tab">
+            <div class="img-box">
+              <img src="../../../assets/images/migrate/headImage.png" />
+            </div>
+            <div class="content">
+              <div class="name fs-6">{{ previewData.name }}</div>
+              <div class="fs-8 py-1 desc">
+                {{ $t('task_details_desc') }}: <span>{{ previewData.desc }}</span>
+              </div>
+              <div class="status">
+                <!-- <img :src="getSatusImgSrc(previewData.status)" alt="" /> -->
+                <span :class="['status-' + previewData.status, 'status-block']">
+                  {{ $t('task_preview_status_' + previewData.status) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </header>
+        <ul class="info-list">
+          <li v-for="item in previewList" :key="item.label">
+            <!-- {{ previewData[item] }} -->
+            <template v-if="!!item.value">
+              <img class="label-img" :src="getImgByData(item.label)" />
+              <div class="label-text">
+                <div class="label">{{ $t('task_preview_' + item.label) }}:</div>
+                <div
+                  class="value align-items-center align-middle"
+                  :class="{ 'align-top': item.value && item.value.length > 15 }"
+                >
+                  {{ item.value }}
+                </div>
+              </div>
+            </template>
+          </li>
+        </ul>
+      </div>
+    </Drawer>
   </section>
 </template>
 
@@ -369,17 +352,25 @@ import SkipError from '../../../components/SkipError'
 import DownAgent from '../../downAgent/agentDown'
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
+import Drawer from '@/components/Drawer'
 // import VIcon from '@/components/VIcon'
-import StatusItem from '../StatusItem'
+// import StatusItem from '../StatusItem'
 import { ETL_STATUS_MAP } from '@/const'
 import { getSubTaskStatus } from '../util'
 
 let timeout = null
 export default {
   name: 'TaskList',
-  components: { FilterBar, TablePage, DownAgent, SkipError, StatusItem },
+  components: { FilterBar, TablePage, DownAgent, SkipError, Drawer },
   data() {
     return {
+      previewData: {},
+      previewList: [],
+      data: {},
+      name: '',
+      status: '',
+      isShowDetails: false,
+      previewLoading: false,
       filterItems: [],
       restLoading: false,
       searchParams: {
@@ -423,6 +414,11 @@ export default {
         edit: { edit: true, stop: true, error: true },
         reset: { draft: true, error: true, pause: true },
         forceStop: { stopping: true }
+      },
+      statusTransformMap: {
+        running: this.$t('task_list_transform_running'),
+        done: this.$t('task_list_transform_done'),
+        error: this.$t('task_list_transform_error')
       },
       dataFlowId: '',
 
@@ -1018,14 +1014,14 @@ export default {
       }
     },
     // 任务调度设置
-    handleTaskscheduling(id, data) {
-      this.taskSettingsDialog = true
-      this.formSchedule.id = id
-      this.formSchedule.name = data.name
-      this.formSchedule.isSchedule = data.isSchedule
-      this.formSchedule.cronExpression = data.cronExpression
-      this.formSchedule.taskData = data
-    },
+    // handleTaskscheduling(id, data) {
+    //   this.taskSettingsDialog = true
+    //   this.formSchedule.id = id
+    //   this.formSchedule.name = data.name
+    //   this.formSchedule.isSchedule = data.isSchedule
+    //   this.formSchedule.cronExpression = data.cronExpression
+    //   this.formSchedule.taskData = data
+    // },
     // 任务调度设置保存
     saveTaskSetting() {
       // let data = this.formSchedule.taskData;
@@ -1060,6 +1056,10 @@ export default {
         }
       })
     },
+    handlePreview(id) {
+      this.getPreviewData(id)
+      this.isShowDetails = true
+    },
     startDisabled(row) {
       const statusResult = row.statusResult || []
       const statusLength = row.statuses?.length || 0
@@ -1084,6 +1084,45 @@ export default {
       return !data
         .filter(t => t.count > 0)
         .every(t => ['edit', 'draft', 'error', 'pause', 'not_running', 'stop'].includes(t.status))
+    },
+    async getPreviewData(id) {
+      this.loading = true
+      this.$api('Task')
+        .findTaskDetailById([id])
+        .then(res => {
+          if (res) {
+            let previewData = []
+            this.previewData = res.data
+            for (let item in res.data) {
+              if (item === 'setting') {
+                let setting = res.data[item]
+                res.data['sync_type'] = setting.sync_type
+                item = 'sync_type'
+              }
+              if (['createAt', 'startTime', 'initStartTime', 'cdcStartTime', 'taskFinishTime'].includes(item)) {
+                res.data[item] = this.$moment(res.data[item]).format('YYYY-MM-DD HH:mm:ss')
+              }
+
+              if (
+                !['customId', 'lastUpdAt', 'userId', 'lastUpdBy', 'lastUpdBy', 'status', 'desc', 'name'].includes(item)
+              ) {
+                previewData.push({ label: item, value: res.data[item] })
+              }
+
+              // this.getSatusImgSrc(res.data.status)
+            }
+            this.previewList = previewData
+          }
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    getImgByData(data) {
+      return require(`@/assets/images/migrate/${data}.png`)
+    },
+    getSatusImgSrc(status) {
+      return require(`@/assets/icons/colorSvg/${status}.png`)
     },
     getFilterItems() {
       this.filterItems = [
@@ -1202,6 +1241,166 @@ export default {
   color: #f56c6c;
   &.is-disabled {
     color: #bbb;
+  }
+}
+.task-drawer {
+  padding: 16px;
+  .task-drawer-wrap {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100%;
+  }
+  .header {
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0;
+    border-bottom: 1px solid #eee;
+  }
+  .test-progress {
+    width: 94.5%;
+    margin: 0 10px 10px 30px;
+  }
+  .tab {
+    display: flex;
+    justify-content: flex-start;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    .img-box {
+      display: flex;
+      width: 20px;
+      height: 20px;
+      justify-content: center;
+      align-items: center;
+      background: #fff;
+      //border: 1px solid #dedee4;
+      border-radius: 3px;
+      margin: 5px 20px 0 30px;
+      img {
+        width: 100%;
+      }
+    }
+    .content {
+      margin-left: 10px;
+      font-weight: 500;
+      margin-top: 4px;
+      width: 100%;
+      .name {
+        color: #000;
+        font-weight: 400;
+      }
+      .desc {
+        color: rgba(0, 0, 0, 0.6);
+        span {
+          color: #000;
+        }
+      }
+    }
+    .status {
+      padding-top: 5px;
+      font-size: 12px;
+      border-top-width: 2px;
+      .error {
+        color: #f56c6c;
+      }
+      .success {
+        color: #67c23a;
+      }
+      .warning {
+        color: #e6a23c;
+      }
+    }
+  }
+  .label-img {
+    float: left;
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 15px;
+    margin-top: 2px;
+  }
+
+  .schema-load {
+    color: #999;
+    display: inline-block;
+    margin-left: 20px;
+    font-size: 12px;
+    font-weight: normal;
+  }
+  .info-list {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 690px;
+    margin: 0 auto;
+    padding-left: 30px;
+    width: 100%;
+    box-sizing: border-box;
+    li {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      margin-bottom: 10px;
+      .label-text {
+        width: 100%;
+        margin-right: 16px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f2f2f2;
+        .label {
+          width: 100%;
+          text-align: left;
+          color: rgba(0, 0, 0, 0.6);
+          font-size: 12px;
+        }
+        .value {
+          display: inline-block;
+          width: 100%;
+          padding-top: 5px;
+          color: #666;
+          font-size: 12px;
+          color: #000;
+          word-break: break-all;
+        }
+      }
+    }
+  }
+  .bar {
+    display: block;
+    width: 100%;
+    height: 30px;
+    background: #f5f5f5;
+    border-bottom: 1px solid #dedee4;
+  }
+  .back-btn-icon-box {
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    font-weight: normal;
+    font-size: 14px;
+    color: red;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+    outline: 0;
+    border: 0;
+    border-radius: 0;
+    box-sizing: border-box;
+    background: #409eff;
+    transition: 0.1s;
+    -webkit-appearance: none;
+    -webkit-box-sizing: border-box;
+    -webkit-transition: 0.1s;
+  }
+  .back-btn-icon-box:hover {
+    background: #6dc5e8;
+  }
+  .back-btn-icon {
+    color: #fff;
+  }
+  .back-btn-text {
+    padding-left: 10px;
+    font-size: 12px;
   }
 }
 </style>

@@ -12107,6 +12107,43 @@
   text-overflow: ellipsis;
 }
 
+.status-running,.status-complete,.status-finish,.status-finished {
+  color: #178061;
+  background-color: #C4F3CB;
+}
+.status-block {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 2px;
+}
+.status-error {
+  color: #D44D4D;
+  background-color: #FFECEC;
+}
+.status-paused {
+  color: #D5760E;
+  background-color: #FFE9CF;
+}
+.status-edit {
+  color: #0083C7;
+  background-color: #D1EEFD;
+}
+.status-scheduled,.status-scheduling,.status-pause {
+  color: #2C65FF;
+  background-color: #DDEBFF;
+}
+.status-wait_run,.status-waiting {
+  color: #C39700;
+  background-color: #FDF1C8;
+}
+.status-pausing,.status-stop {
+  color: #D5760E;
+  background-color: #FFE9CF;
+}
+.status-stopping {
+  color: #C39700;
+  background-color: #FDF1C8;
+}
 // 动画类
 .animation-rotate {
   animation: rotate 5s linear infinite;

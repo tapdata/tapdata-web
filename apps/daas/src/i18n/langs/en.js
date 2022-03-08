@@ -432,6 +432,8 @@ export default {
   dataExplorer_format: 'Format code',
   dataExplorer_exists: 'Already exists',
   dataExplorer_type: 'type',
+  dataExplorer_apiservr: 'Api server',
+  dataExplorer_base_path: 'Base path',
   // api documentation and testing api文档及测试
   file_test_generate_code: 'Generate code',
 
@@ -750,6 +752,9 @@ export default {
   data_flow_manually: 'manually',
   data_flow_oracle_logminer: 'Oracle Logminer Mode',
 
+  task_list_transform_running: 'Field mapping running',
+  task_list_transform_done: 'Field mapping completed',
+  task_list_transform_error: 'Field mapping failed',
   task_list_run: 'Start',
   task_list_stop: 'Stop',
   task_list_force_stop: 'Forced stop',
