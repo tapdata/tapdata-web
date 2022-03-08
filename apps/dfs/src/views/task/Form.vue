@@ -106,6 +106,7 @@
                           v-model="settingModel.scheduleTime"
                           type="datetime"
                           :picker-options="getCurrentOptions()"
+                          popper-class="schedule-time-date-picker"
                         ></ElDatePicker>
                       </ElFormItem>
                     </ElForm>
@@ -284,6 +285,13 @@
       .name {
         margin-left: 10px;
       }
+    }
+  }
+}
+.schedule-time-date-picker {
+  .el-picker-panel__footer {
+    .el-picker-panel__link-btn:first-child {
+      display: none;
     }
   }
 }
