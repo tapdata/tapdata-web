@@ -63,28 +63,33 @@
             </div>
           </ElMain>
           <div class="create-task-footer py-6 mx-6" :class="['btns-step-' + steps[activeStep].index]">
-            <VButton class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()"> 取消 </VButton>
-            <VButton
+            <ElButton class="btn-step" size="mini" v-if="steps[activeStep].showExitBtn" @click="goBackList()">
+              取消
+            </ElButton>
+            <ElButton
               class="btn-step"
+              size="mini"
               :loading="loading"
               v-else-if="steps[activeStep].showBackBtn || (steps[activeStep].index === 2 && !id)"
               @click="previous()"
             >
               {{ $t('guide.btn_back') }}
-            </VButton>
-            <VButton
+            </ElButton>
+            <ElButton
               v-if="steps[activeStep].showNextBtn"
               type="primary"
               class="btn-step"
+              size="mini"
               :loading="loading"
               @mousedown.native.prevent="nextStep()"
             >
               <span>{{ $t('guide.btn_next') }}</span>
-            </VButton>
+            </ElButton>
             <VButton
               v-if="steps[activeStep].showSaveBtn"
               type="primary"
               class="btn-step"
+              size="mini"
               :loading="loadingSave"
               @click="save()"
             >
@@ -654,7 +659,7 @@ export default {
     }
   }
   .btn-step {
-    width: 212px;
+    // width: 212px;
     position: relative;
     .btn-pass {
       position: absolute;

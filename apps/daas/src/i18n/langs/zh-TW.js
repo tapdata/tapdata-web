@@ -420,6 +420,8 @@ export default {
   dataExplorer_format: '格式化代碼',
   dataExplorer_exists: '已存在',
   dataExplorer_type: '類型',
+  dataExplorer_apiservr: 'api服務器',
+  dataExplorer_base_path: '基礎路徑',
   // api文檔及測試
   file_test_generate_code: '生成代碼',
 

@@ -432,6 +432,8 @@ export default {
   dataExplorer_format: 'Format code',
   dataExplorer_exists: 'Already exists',
   dataExplorer_type: 'type',
+  dataExplorer_apiservr: 'Api server',
+  dataExplorer_base_path: 'Base path',
   // api documentation and testing api文档及测试
   file_test_generate_code: 'Generate code',
 

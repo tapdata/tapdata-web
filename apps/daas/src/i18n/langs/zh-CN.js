@@ -424,6 +424,8 @@ export default {
   dataExplorer_format: '格式化代码',
   dataExplorer_exists: '已存在',
   dataExplorer_type: '类型',
+  dataExplorer_apiservr: 'api服务器',
+  dataExplorer_base_path: '基础路径',
   // api文档及测试
   file_test_generate_code: '生成代码',
   // 数据源

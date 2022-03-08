@@ -114,7 +114,7 @@
     <div class="dashboard-row dashboard-col col mb-5">
       <div class="dashboard-col">
         <div class="dashboard-col-box">
-          <div class="dashboard-title fs-7">服务器进程</div>
+          <div class="dashboard-title fs-7">{{ $t('dashboard_server_title') }}</div>
           <el-row :gutter="20">
             <el-col :span="12" class="server-list pt-3" v-for="item in serverTable" :key="item.id">
               <div class="server-list-box">
@@ -158,7 +158,6 @@ import DKDashboard from './DKDashboard'
 import factory from '../../api/factory'
 import Chart from 'web-core/components/chart'
 const cluster = factory('cluster')
-const DataFlows = factory('DataFlows')
 
 export default {
   components: { DKDashboard, Chart },
@@ -174,7 +173,7 @@ export default {
       syncTaskList: [],
       pieOptions: null,
       barOptions: {
-        barWidth: '50%',
+        barWidth: 35,
         grid: {
           top: 20,
           bottom: 0,
@@ -478,7 +477,6 @@ export default {
       } else {
         statusItem = statusData
       }
-      console.log(statusItem)
       return statusItem
     },
     getPieOption(data) {
@@ -497,6 +495,24 @@ export default {
       return {
         legend: {
           show: false
+        },
+        tooltip: {
+          trigger: 'item',
+          borderWidth: 0,
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          textStyle: {
+            color: '#fff',
+            fontSize: 12
+          },
+          formatter: params => {
+            let item = params
+            let val = item.value
+            if (val === 1.1) {
+              val = 1
+            }
+            let html = params.name + `<span style="padding: 0 4px; text-align: center;"></span><br/>` + val
+            return html
+          }
         },
         series: [
           {
@@ -656,7 +672,7 @@ export default {
         }
         .chart {
           float: left;
-          width: 40%;
+          width: 55%;
           height: 210px;
         }
       }

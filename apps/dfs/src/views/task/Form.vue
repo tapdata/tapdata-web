@@ -110,18 +110,18 @@
             </div>
           </el-main>
           <div class="create-task-footer py-6 mx-6" :class="['btns-step-' + steps[activeStep].index]">
-            <v-button class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()">
+            <ElButton class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()">
               {{ $t('button_cancel') }}
-            </v-button>
-            <v-button
+            </ElButton>
+            <ElButton
               class="btn-step"
               :loading="loading"
               v-else-if="steps[activeStep].showBackBtn || (steps[activeStep].index === 3 && !id)"
               @click="back()"
             >
               {{ $t('guide.btn_back') }}
-            </v-button>
-            <v-button
+            </ElButton>
+            <ElButton
               v-if="steps[activeStep].showNextBtn"
               type="primary"
               class="btn-step"
@@ -130,8 +130,8 @@
               @mousedown.native.prevent="next()"
             >
               <span>{{ $t('guide.btn_next') }}</span>
-            </v-button>
-            <v-button
+            </ElButton>
+            <ElButton
               v-if="steps[activeStep].showSaveBtn"
               type="primary"
               class="btn-step"
@@ -140,7 +140,7 @@
               @click="save()"
             >
               {{ $t('button_finish') }}
-            </v-button>
+            </ElButton>
           </div>
         </div>
       </el-container>

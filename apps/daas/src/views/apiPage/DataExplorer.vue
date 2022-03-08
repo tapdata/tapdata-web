@@ -272,7 +272,7 @@ export default {
     let defaultCollection = this.$route.query.collection || this.$route.query['id']
     this.apiClient = new APIClient(defaultCollection)
     this.initTimezones() // 获取时区下拉值
-    // this.getApiServer() // 获取API Server下拉值
+    this.getApiServer() // 获取API Server下拉值
     this.getCollections() // 获取api下拉值
     this.getWorkers() // 获取状态
     this.getHandleTimeZone() //获取时区
@@ -301,12 +301,12 @@ export default {
     'searchParams.collection': {
       handler(val) {
         if (val) {
-          this.getTableHeader()
           this.collectionsList.forEach(item => {
             if (item.value === val) {
               this.apiType = item.type
             }
           })
+          this.getTableHeader()
         }
       },
       deep: true
@@ -383,20 +383,20 @@ export default {
         }
       })
     },
-    // // 获取API Server下拉值
-    // getApiServer() {
-    //   this.$api('ApiServer')
-    //     .get({})
-    //     .then(res => {
-    //       if (res) {
-    //         this.apiServersList = res.data?.items
-    //         if (this.apiServersList.length) {
-    //           this.searchParams.api_server_process_id = this.apiServersList[0].processId
-    //           this.apiClient.setApiServer(this.apiServersList[0])
-    //         }
-    //       }
-    //     })
-    // },
+    // 获取API Server下拉值
+    getApiServer() {
+      this.$api('ApiServer')
+        .get({})
+        .then(res => {
+          if (res) {
+            this.apiServersList = res.data?.items
+            if (this.apiServersList.length) {
+              this.searchParams.api_server_process_id = this.apiServersList[0].processId
+              this.apiClient.setApiServer(this.apiServersList[0])
+            }
+          }
+        })
+    },
     // 获取api下拉数据
     async loadOpenAPI(tag) {
       let _this = this
@@ -405,21 +405,11 @@ export default {
         .then(res => {
           if (res) {
             this.collectionsList = []
-            Object.keys(res.data?.items).forEach(item => {
+            Object.keys(res.data).forEach(item => {
               let operations = res.data[item].api,
                 apiId = res.data[item].apiId,
                 _apiName = res.data[item].apiName || '',
-                // tableName = res.data[item].tableName || '',
-                // brackets = '',
-                // brackets2 = '',
                 downloadFileUrl = ''
-              // if (tableName) {
-              //   brackets = '('
-              //   brackets2 = ')'
-              // } else {
-              //   brackets = ''
-              //   brackets2 = ''
-              // }
               if (operations['downloadById']) {
                 downloadFileUrl = operations['downloadById'].url
               }
@@ -440,7 +430,8 @@ export default {
                   let url = operations[operationName].url
                   _this.collectionsList.push({
                     collection: item,
-                    text: item + '/' + url.substring(url.lastIndexOf('/') + 1),
+                    text: url.substring(url.lastIndexOf('/') + 1),
+                    // text: item + '/' + url.substring(url.lastIndexOf('/') + 1),
                     value: url,
                     method: operations[operationName].method,
                     downloadFileUrl: downloadFileUrl,
@@ -451,7 +442,7 @@ export default {
                 }
               })
             })
-            // 数据类目
+
             if (_this.collectionsList.length) {
               let collectionsArr = []
               // 去重
@@ -460,6 +451,7 @@ export default {
                 obj[next.text] ? '' : (obj[next.text] = true && cur.push(next))
                 return cur
               }, [])
+
               _this.collectionsList.forEach(item => {
                 // 数据类目
                 if (tag && tag.length) {
@@ -472,7 +464,14 @@ export default {
                 }
               })
 
-              _this.collectionsList = collectionsArr
+              _this.collectionsList = collectionsArr?.length ? collectionsArr : _this.collectionsList
+              // 基础路径下拉获取值
+              _this.filterItems[1].items = _this.collectionsList.map(item => {
+                return {
+                  label: item.text,
+                  value: item.value
+                }
+              })
             }
 
             // 页面缓存改变api
@@ -543,6 +542,7 @@ export default {
       _this.apiClient.setCollection(selectCollection)
       // 根据当前表获取表api浏览表格头
       let headers = await _this.apiClient.getHeaders(selectCollection.collection, selectCollection.operationName)
+
       if (headers?.length)
         headers.forEach(col => {
           if (col) _this.tableHeader.push(col)
@@ -1004,7 +1004,7 @@ export default {
       _this.intervalId = setTimeout(_this.getWorkers, 5000)
     },
 
-    // // 切换api
+    // 切换api
     // changeCollection() {
     //   // 重置查询的条件
     //   this.queryBuildKey++
@@ -1330,7 +1330,7 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          label: 'api服务器',
+          label: this.$t('dataExplorer_apiservr'),
           key: 'api_server_process_id',
           type: 'select-inner',
           items: async () => {
@@ -1349,22 +1349,10 @@ export default {
           selectedWidth: '200px'
         },
         {
-          label: '基础路径',
-          key: 'api_server_process_id',
+          label: this.$t('dataExplorer_base_path'),
+          key: 'collection',
           type: 'select-inner',
-          items: async () => {
-            let res = await this.$api('ApiServer').get({})
-            let items = res?.data?.items || []
-            this.apiServersList = items
-            this.searchParams.api_server_process_id = this.apiServersList[0].processId
-            this.apiClient.setApiServer(this.apiServersList[0])
-            return items.map(item => {
-              return {
-                label: item.clientName,
-                value: item.processId
-              }
-            })
-          },
+          items: this.collectionsList,
           selectedWidth: '200px'
         },
         {
@@ -1396,20 +1384,20 @@ export default {
           height: 25px;
           padding: 0 10px;
           line-height: 25px;
-          color: map-get($color, danger);
           border-radius: 2px;
-          background-color: #ffecec;
         }
       }
       .deploying,
       .running,
       .restart,
       .starting {
-        color: #44a501;
+        color: #178061;
+        background-color: #c4f3cb;
       }
       .deploy_fail,
       .stop {
-        color: red;
+        color: map-get($color, danger);
+        background-color: #ffecec;
       }
     }
     .btn + .btn {
