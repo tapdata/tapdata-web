@@ -309,7 +309,7 @@
             <div class="content">
               <div class="name fs-6">{{ previewData.name }}</div>
               <div class="fs-8 py-1 desc">
-                {{ $t('task_details_desc') }}: <span>{{ previewData.description }}</span>
+                {{ $t('task_details_desc') }}: <span>{{ previewData.desc }}</span>
               </div>
               <div class="status">
                 <!-- <img :src="getSatusImgSrc(previewData.status)" alt="" /> -->
@@ -1103,7 +1103,9 @@ export default {
                 res.data[item] = this.$moment(res.data[item]).format('YYYY-MM-DD HH:mm:ss')
               }
 
-              if (!['customId', 'lastUpdAt', 'userId', 'lastUpdBy', 'lastUpdBy', 'status'].includes(item)) {
+              if (
+                !['customId', 'lastUpdAt', 'userId', 'lastUpdBy', 'lastUpdBy', 'status', 'desc', 'name'].includes(item)
+              ) {
                 previewData.push({ label: item, value: res.data[item] })
               }
 
