@@ -1,7 +1,7 @@
 <template>
   <div>
     <FieldMapping
-      v-if="isTarget"
+      v-if="isTarget && showFieldMapping"
       ref="fieldMapping"
       class="flex justify-content-end mr-5 mt-3"
       :transform="transform"
@@ -39,6 +39,7 @@ export default {
       tableData: [],
       loading: false,
       isTarget: false,
+      showFieldMapping: false,
       transform: {
         showBtn: true,
         mode: 'metaData',
@@ -63,6 +64,7 @@ export default {
     activeNodeId() {
       this.loadFields()
       this.checkTarget()
+      this.checkNodeType()
     },
 
     transformStatus(v) {
@@ -120,6 +122,14 @@ export default {
       const allEdges = dag.edges
       this.isTarget = allEdges.some(({ target }) => target === id)
       this.transform.nodeId = this.activeNode.id
+    },
+    checkNodeType() {
+      //处理节点没有字段映射功能
+      if (this.activeNode.catalog === 'processor') {
+        this.showFieldMapping = false
+      } else {
+        this.showFieldMapping = true
+      }
     }
   }
 }
