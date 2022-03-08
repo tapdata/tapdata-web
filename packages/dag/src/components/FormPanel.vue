@@ -285,6 +285,18 @@ export default {
             }
           })
         },
+        getTargetNode: field => {
+          const id = field.form.values.id
+          const edges = this.$store.getters['dataflow/allEdges']
+          const nodes = this.$store.getters['dataflow/allNodes']
+          const sourceArr = edges.filter(({ source }) => source === id)
+          return sourceArr.map(({ target }) => {
+            return {
+              value: target,
+              label: nodes.find(node => node.id === target).name
+            }
+          })
+        },
 
         /**
          * 加载源节点的schema
