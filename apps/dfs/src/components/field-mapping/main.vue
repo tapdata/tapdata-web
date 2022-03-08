@@ -102,7 +102,15 @@ export default {
             }
           }
         }
-        let result = this.$refs.fieldMappingDom.returnForm()
+        let result = Object.assign({}, this.$refs.fieldMappingDom.returnForm(), {
+          tableOperations: []
+        })
+        result.tableOperations.forEach((el, i) => {
+          if (rollbackTable === 'AUTO_CUSTOMER__123') {
+            result.tableOperations = []
+            el.tableOperations.splice(i, 1)
+          }
+        })
         this.updateAutoTransform('', result)
       }
       this.$emit('returnFieldMapping', this.field_process)
@@ -144,19 +152,18 @@ export default {
           this.dataFlow['stages'][i].tableNameTransform = ''
           this.dataFlow['stages'][i].table_suffix = ''
           this.dataFlow['stages'][i].table_prefix = ''
+          this.dataFlow['stages'][i].tableOperations = []
         }
       }
     },
     updateAutoTransform(type, data) {
       for (let i = 0; i < this.dataFlow.stages.length; i++) {
         if (this.dataFlow.stages[i].id === this.stageId) {
-          if (data.tableOperations) {
-            this.dataFlow['stages'][i].tableOperations = data.tableOperations // 单个表改名
-          }
           this.dataFlow['stages'][i].fieldsNameTransform = data.fieldsNameTransform
           this.dataFlow['stages'][i].tableNameTransform = data.tableNameTransform
           this.dataFlow['stages'][i].table_prefix = data.table_prefix
           this.dataFlow['stages'][i].table_suffix = data.table_suffix
+          this.dataFlow['stages'][i].tableOperations = data.tableOperations
         }
       }
     },

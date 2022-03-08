@@ -24,14 +24,7 @@
       @change="handleChangeTransfer"
     >
       <template #right="{ option }">
-        <span v-if="tableOperations.length > 0">
-          <span>{{ getRenameTableLabel(option) }}</span>
-        </span>
-        <span v-else>
-          <span>{{ transferData.table_prefix }}</span>
-          <span>{{ option.label }}</span>
-          <span>{{ transferData.table_suffix }}</span>
-        </span>
+        <span>{{ getRenameTableLabel(option) }}</span>
       </template>
     </VirtualTransfer>
 
@@ -50,14 +43,7 @@
       @change="handleChangeTransfer"
     >
       <template #right="{ option }">
-        <span v-if="tableOperations.length > 0">
-          <span>{{ getRenameTableLabel(option) }}</span>
-        </span>
-        <span v-else>
-          <span>{{ transferData.table_prefix }}</span>
-          <span>{{ option.label }}</span>
-          <span>{{ transferData.table_suffix }}</span>
-        </span>
+        <span>{{ getRenameTableLabel(option) }}</span>
       </template>
     </MqTransfer>
     <!-- E MQ穿梭框 -->
@@ -221,7 +207,13 @@ export default {
         })
     },
     getRenameTableLabel(opt = {}) {
-      return this.tableOperations.find(t => t.originalTableName === opt.key)?.tableName || ''
+      let { tableOperations, transferData } = this
+      let res = transferData.table_prefix + opt.label + transferData.table_suffix
+      let findOne = tableOperations.find(t => t.originalTableName === opt.key)
+      if (findOne) {
+        res = findOne?.tableName
+      }
+      return res
     }
   }
 }
