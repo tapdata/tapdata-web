@@ -41,7 +41,7 @@
               <div class="source">{{ item.sourceObjectName }}</div>
               <div class="target">
                 <span class="target-span">{{ item.sinkObjectName }}</span>
-                <VIcon class="color-primary ml-2" size="14" @click="showChangeTableNameModal(item)">edit-outline</VIcon>
+                <VIcon v-if="!readOnly" class="color-primary ml-2" size="14" @click="showChangeTableNameModal(item)">edit-outline</VIcon>
               </div>
               <div class="select">
                 {{

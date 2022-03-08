@@ -1,17 +1,17 @@
 <template>
-  <el-container class="create-task-wrap bg-white" v-if="steps[activeStep]">
-    <el-container style="overflow: hidden; flex: 1" class="create-task-container flex-column">
+  <ElContainer class="create-task-wrap bg-white" v-if="steps[activeStep]">
+    <ElContainer style="overflow: hidden; flex: 1" class="create-task-container flex-column">
       <div class="steps-header">
-        <el-steps class="primary pb-6" :active="taskStep" process-status="process" finish-status="success" align-center>
-          <el-step :title="$t('task_form_select_connection')"></el-step>
-          <el-step :title="$t('task_form_set_task_properties')"></el-step>
-          <el-step :title="$t('task_form_select_table')"></el-step>
-          <el-step :title="$t('task_form_table_field')"></el-step>
-        </el-steps>
+        <ElSteps class="primary pb-6" :active="taskStep" process-status="process" finish-status="success" align-center>
+          <ElStep :title="$t('task_form_select_connection')"></ElStep>
+          <ElStep :title="$t('task_form_set_task_properties')"></ElStep>
+          <ElStep :title="$t('task_form_select_table')"></ElStep>
+          <ElStep :title="$t('task_form_table_field')"></ElStep>
+        </ElSteps>
       </div>
-      <el-container :class="['task-container', 'task-container-' + steps[activeStep].index]">
+      <ElContainer :class="['task-container', 'task-container-' + steps[activeStep].index]">
         <div class="task-container-box flex-fill flex flex-column w-100">
-          <el-main :class="['create-task-main', 'task-main-' + steps[activeStep].index]">
+          <ElMain :class="['create-task-main', 'task-main-' + steps[activeStep].index]">
             <!--步骤2-->
             <div class="body" v-if="steps[activeStep].index === 2">
               <div class="mb-8">
@@ -51,30 +51,30 @@
                 @value-change="formChangeSetting"
               >
                 <template slot="syncPoints">
-                  <el-row>
+                  <ElRow>
                     {{ $t('connection_form_data_source') }}：{{ dataSourceModel.source_connectionName }}
-                  </el-row>
-                  <el-row>
-                    <el-col :span="8" style="margin-right: 10px">
-                      <el-select v-model="settingModel.syncPoints[0].type" :placeholder="$t('gl_placeholder_select')">
-                        <el-option v-for="op in options" :key="op.value" :label="op.label" :value="op.value">
-                        </el-option>
-                      </el-select>
-                    </el-col>
-                    <el-col :span="12" v-if="settingModel.syncPoints[0].type !== 'current'">
-                      <el-date-picker
+                  </ElRow>
+                  <ElRow>
+                    <ElCol :span="8" style="margin-right: 10px">
+                      <ElSelect v-model="settingModel.syncPoints[0].type" :placeholder="$t('gl_placeholder_select')">
+                        <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value">
+                        </ElOption>
+                      </ElSelect>
+                    </ElCol>
+                    <ElCol :span="12" v-if="settingModel.syncPoints[0].type !== 'current'">
+                      <ElDatePicker
                         value-format="yyyy-MM-dd HH:mm:ss"
                         format="yyyy-MM-dd HH:mm:ss"
                         v-model="settingModel.syncPoints[0].date"
                         type="datetime"
                         :disabled="settingModel.syncPoints[0].type === 'current'"
-                      ></el-date-picker>
-                    </el-col>
-                  </el-row>
-                  <el-row>
+                      ></ElDatePicker>
+                    </ElCol>
+                  </ElRow>
+                  <ElRow>
                     <i class="el-icon-info color-primary mr-2"></i>
                     <span class="font-color-sub fs-8">{{ $t('task_form_setting_sync_points_tip') }}</span>
-                  </el-row>
+                  </ElRow>
                 </template>
                 <template slot="scheduleTime">
                   <ElRow class="flex align-items-center" style="height: 32px">
@@ -216,7 +216,7 @@
                 @row-click="selectRowFieldProcess"
               ></FieldMapping>
             </div>
-          </el-main>
+          </ElMain>
           <div class="create-task-footer py-6 mx-6" :class="['btns-step-' + steps[activeStep].index]">
             <v-button class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()">
               {{ $t('button_cancel') }}
@@ -251,9 +251,9 @@
             </v-button>
           </div>
         </div>
-      </el-container>
-    </el-container>
-  </el-container>
+      </ElContainer>
+    </ElContainer>
+  </ElContainer>
 </template>
 <style lang="scss">
 .create-task-wrap {
