@@ -16,66 +16,6 @@
     >
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-        <!-- <ul class="search-bar">
-          <li>
-            <ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
-              <ElOption :label="$t('dataFlow.status.all')" value=""></ElOption>
-              <ElOption v-for="(value, label) in statusOptions" :key="value" :label="label" :value="value"> </ElOption>
-            </ElSelect>
-          </li>
-          <li>
-            <el-select
-              v-model="searchParams.progress"
-              size="small"
-              clearable
-              :placeholder="$t('dataFlow.taskSettingPlaceholder')"
-              style="width: 160px"
-              @input="table.fetch(1)"
-            >
-              <el-option
-                v-for="item in progressOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-          </li>
-          <li>
-            <el-select
-              v-model="searchParams.executionStatus"
-              size="small"
-              clearable
-              :placeholder="$t('dataFlow.executionStatus')"
-              style="width: 160px"
-              @input="table.fetch(1)"
-            >
-              <el-option
-                v-for="opt in ['initializing', 'cdc', 'initialized', 'Lag']"
-                :key="opt"
-                :label="$t('dataFlow.status.' + opt)"
-                :value="opt"
-              ></el-option>
-            </el-select>
-          </li>
-          <li>
-            <el-input
-              v-model="searchParams.keyword"
-              clearable
-              size="small"
-              :placeholder="$t('dataFlow.searchPlaceholder')"
-              @input="table.fetch(1, 800)"
-            >
-              <span slot="prefix" class="el-input__icon h-100 ml-1">
-                <VIcon size="14">search</VIcon>
-              </span>
-            </el-input>
-          </li>
-          <li>
-            <ElButton class="btn-refresh" size="small" @click="table.fetch()">
-              <i class="el-icon-refresh"></i>
-            </ElButton>
-          </li>
-        </ul> -->
       </template>
       <div class="buttons" slot="operation">
         <el-button
@@ -127,11 +67,6 @@
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkTag') }}</span>
         </el-button>
-
-        <!-- <el-button v-readonlybtn="'SYNC_Function_management'" size="small" class="btn" @click="handleGoFunction">
-          <i class="iconfont icon-hanshu back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkFx') }}</span>
-        </el-button> -->
         <el-button
           v-readonlybtn="'SYNC_job_import'"
           size="mini"
@@ -181,6 +116,10 @@
       <el-table-column prop="status" :label="$t('task_list_status')" width="180">
         <template #default="{ row }">
           <StatusItem :value="row.statusResult"></StatusItem>
+          <div>
+            <span v-if="row.transformStatus">{{ statusTransformMap[row.transformStatus] }} </span>
+            <span v-if="row.transformProcess">{{ row.transformProcess * 100 }} %</span>
+          </div>
         </template>
       </el-table-column>
 
@@ -423,6 +362,11 @@ export default {
         edit: { edit: true, stop: true, error: true },
         reset: { draft: true, error: true, pause: true },
         forceStop: { stopping: true }
+      },
+      statusTransformMap: {
+        running: this.$t('task_list_transform_running'),
+        done: this.$t('task_list_transform_done'),
+        error: this.$t('task_list_transform_error')
       },
       dataFlowId: '',
 
