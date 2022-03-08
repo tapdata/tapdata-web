@@ -67,11 +67,6 @@
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkTag') }}</span>
         </el-button>
-
-        <!-- <el-button v-readonlybtn="'SYNC_Function_management'" size="small" class="btn" @click="handleGoFunction">
-          <i class="iconfont icon-hanshu back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkFx') }}</span>
-        </el-button> -->
         <el-button
           v-readonlybtn="'SYNC_job_import'"
           size="mini"
@@ -125,8 +120,10 @@
           <span :class="['status-' + row.status, 'status-block']">
             {{ $t('task_preview_status_' + row.status) }}
           </span>
-
-          <!-- <StatusItem :value="row.statusResult"></StatusItem> -->
+          <div>
+            <span v-if="row.transformStatus">{{ statusTransformMap[row.transformStatus] }} </span>
+            <span v-if="row.transformProcess">{{ row.transformProcess * 100 }} %</span>
+          </div>
         </template>
       </el-table-column>
 
@@ -417,6 +414,11 @@ export default {
         edit: { edit: true, stop: true, error: true },
         reset: { draft: true, error: true, pause: true },
         forceStop: { stopping: true }
+      },
+      statusTransformMap: {
+        running: this.$t('task_list_transform_running'),
+        done: this.$t('task_list_transform_done'),
+        error: this.$t('task_list_transform_error')
       },
       dataFlowId: '',
 

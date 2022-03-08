@@ -1,6 +1,6 @@
 import { NodeType } from './extends/NodeType'
 
-export class Merge extends NodeType {
+export class MergeTable extends NodeType {
   constructor(node) {
     super(node)
 
@@ -20,25 +20,12 @@ export class Merge extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
-      sourceNode: {
-        type: 'array',
-        'x-visible': false,
-        'x-reactions': '{{getSourceNode}}'
-      },
       mergeProperties: {
         type: 'array',
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'ArrayItems',
-        'x-reactions': {
-          dependencies: ['sourceNode'],
-          fulfill: {
-            state: {
-              value:
-                '{{$deps[0] && $deps[0].map( item =>({ sourceId: item.value, sourceName: item.label, mergeType: "updateOrInsert", joinKeys: [{source: "", target:""}], source: item.source }) )}}'
-            }
-          }
-        },
+        'x-reactions': '{{getSourceNode}}',
         items: {
           type: 'object',
           properties: {
@@ -46,7 +33,7 @@ export class Merge extends NodeType {
               type: 'void',
               'x-component': 'FormLayout',
               'x-component-props': {
-                labelWidth: 120,
+                labelWidth: 150,
                 wrapperWidth: 500,
                 labelAlign: 'left',
                 style: {
@@ -60,16 +47,30 @@ export class Merge extends NodeType {
                   type: 'string',
                   title: '节点名称',
                   'x-decorator': 'FormItem',
-                  'x-component': 'PreviewText.Input'
+                  'x-component': 'PreviewText.Input',
+                  'x-reactions': {
+                    fulfill: {
+                      state: {
+                        value: '{{ $values.mergeProperties[$self.indexes[0]].label }}'
+                      }
+                    }
+                  }
                 },
                 sourceId: {
                   type: 'string',
-                  'x-display': 'hidden',
+                  'x-hidden': true,
                   'x-decorator': 'FormItem',
-                  'x-component': 'PreviewText.Input'
+                  'x-component': 'PreviewText.Input',
+                  'x-reactions': {
+                    fulfill: {
+                      state: {
+                        value: '{{ $values.mergeProperties[$self.indexes[0]].value }}'
+                      }
+                    }
+                  }
                 },
                 mergeType: {
-                  type: 'select',
+                  type: 'string',
                   title: '写入模式',
                   'x-decorator': 'FormItem',
                   'x-component': 'Select',
@@ -78,7 +79,44 @@ export class Merge extends NodeType {
                     { label: '追加写入', value: 'updateOrInsert' },
                     { label: '更新写入', value: 'appendWrite' },
                     { label: '更新已存在或插入新数据', value: 'updateWrite' },
-                    { label: '更新进内嵌数组', value: 'updateWrite' }
+                    { label: '更新进内嵌数组', value: 'updateIntoArray' }
+                  ]
+                },
+                targetPath: {
+                  type: 'string',
+                  title: '关联后写入路径',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Input',
+                  default: 'targetPath',
+                  'x-reactions': {
+                    dependencies: ['.mergeType'],
+                    fulfill: {
+                      state: {
+                        visible: '{{ $deps[0] !== "updateOrInsert" }}'
+                      }
+                    }
+                  }
+                },
+                arrayKeys: {
+                  type: 'string',
+                  title: '内嵌数组匹配条件',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Select',
+                  'x-component-props': {
+                    'allow-create': true,
+                    multiple: true,
+                    filterable: true
+                  },
+                  'x-reactions': [
+                    {
+                      dependencies: ['.mergeType'],
+                      fulfill: {
+                        state: {
+                          visible: '{{ $deps[0] === "updateIntoArray" }}'
+                        }
+                      }
+                    },
+                    '{{useAsyncDataSource(loadNodeFieldNames, "dataSource", $values.mergeProperties[$self.indexes[0]].sourceId)}}'
                   ]
                 },
                 joinKeys: {
@@ -91,7 +129,15 @@ export class Merge extends NodeType {
                       border: '1px solid #f2f2f2'
                     }
                   },
-                  default: [{ source: '', target: '' }],
+                  default: [{}],
+                  'x-reactions': {
+                    dependencies: ['.mergeType'],
+                    fulfill: {
+                      schema: {
+                        'x-decorator-props.style.display': '{{ $deps[0] !== "updateOrInsert" ? "flex" : "none" }}'
+                      }
+                    }
+                  },
                   items: {
                     type: 'object',
                     properties: {
@@ -100,7 +146,8 @@ export class Merge extends NodeType {
                         'x-component': 'ArrayTable.Column',
                         'x-component-props': {
                           title: '源表字段',
-                          align: 'center'
+                          align: 'center',
+                          asterisk: false
                         },
                         properties: {
                           source: {
@@ -123,14 +170,22 @@ export class Merge extends NodeType {
                         'x-component': 'ArrayTable.Column',
                         'x-component-props': {
                           title: '目标表字段',
-                          align: 'center'
+                          align: 'center',
+                          asterisk: false
                         },
                         properties: {
                           target: {
                             type: 'string',
                             required: true,
                             'x-decorator': 'FormItem',
-                            'x-component': 'Input'
+                            'x-component': 'Select',
+                            'x-component-props': {
+                              'allow-create': true,
+                              filterable: true
+                            },
+                            'x-reactions': [
+                              '{{useAsyncDataSource(loadNodeFieldNames, "dataSource", getTargetNode($self).value)}}'
+                            ]
                           }
                         }
                       },
