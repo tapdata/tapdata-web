@@ -445,7 +445,7 @@ export default {
     },
     //实时获取schema加载进度
     initWSSed() {
-      let id = this.dataFlow?.id
+      let id = this.dataFlow?.id || this.dataFlow?.taskId
       let msg = {
         type: 'metadataTransformerProgress',
         data: {
@@ -461,7 +461,7 @@ export default {
       let msgData = {
         type: 'metadataTransformerProgress',
         data: {
-          dataFlowId: this.dataFlow?.id
+          dataFlowId: id
         }
       }
       this.$ws.ready(() => {
