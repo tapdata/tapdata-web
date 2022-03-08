@@ -604,13 +604,7 @@ export default {
         }
       }
       let statuses = item.statuses
-      item.statusResult = []
-      if (statuses?.length) {
-        item.statusResult = getSubTaskStatus(statuses)
-      } else if (ETL_STATUS_MAP[item.status]) {
-        // 贴膏药，如果创建任务，没有手动点击保存，statuses 为空，主任务状态为 edit, 则显示编辑中（靠ETL_STATUS_MAP维护）
-        item.statusResult = [{ ...ETL_STATUS_MAP[item.status], count: 1 }]
-      }
+      item.statusResult = getSubTaskStatus(statuses)
       return item
     },
     handleSelectTag() {
@@ -1055,9 +1049,7 @@ export default {
       )
     },
     deleteDisabled(data) {
-      return !data
-        .filter(t => t.count > 0)
-        .every(t => ['edit', 'draft', 'error', 'pause', 'not_running', 'stop'].includes(t.status))
+      return !data.filter(t => t.count > 0).every(t => ['not_running', 'error'].includes(t.status))
     },
     getFilterItems() {
       this.filterItems = [
