@@ -67,8 +67,7 @@ export default {
   data() {
     return {
       searchParams: {
-        keyword: '',
-        isFuzzy: true
+        keyword: ''
       },
       filterItems: [],
       order: 'data.api_calls DESC'
@@ -79,9 +78,9 @@ export default {
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-    let cache = this.table.getCache()
-    cache.isFuzzy = cache.isFuzzy === true
-    this.searchParams = cache
+    // let cache = this.table.getCache()
+    // cache.isFuzzy = cache.isFuzzy === true
+    // this.searchParams = cache
   },
   computed: {
     table() {
@@ -93,8 +92,7 @@ export default {
     reset(name) {
       if (name === 'reset') {
         this.searchParams = {
-          keyword: '',
-          isFuzzy: true
+          keyword: ''
         }
       }
       this.table.fetch(1)
@@ -102,7 +100,7 @@ export default {
     // 获取数据
     getData({ page }) {
       let { current, size } = page
-      let { isFuzzy, keyword } = this.searchParams
+      let { keyword } = this.searchParams
       let where = {
         stats_name: 'ALL-time:ALL-user:EVERY-api'
       }
@@ -132,12 +130,11 @@ export default {
         })
       ]).then(([totalRes, res]) => {
         this.table.setCache({
-          isFuzzy,
           keyword
         })
 
         if (totalRes.data?.items?.length) {
-          res.data = res.data.concat(totalRes.data.items)
+          res.data = res.data.items.concat(totalRes.data.items)
         }
         let listData = []
         if (res.data?.length) {
@@ -155,8 +152,6 @@ export default {
           }))
         }
         res.data = listData
-        // res.data = listData.sort((t1, t2) => (t1.api_path > t2.api_path ? 1 : t1.api_path === t2.api_path ? 0 : -1))
-        console.log('#########', res.data)
 
         return {
           total: res.data?.total || 0,
@@ -340,7 +335,7 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          placeholder: this.$t('api_server_name'),
+          placeholder: this.$t('api_asnalysis_placeholder'),
           key: 'keyword',
           type: 'input'
         }

@@ -380,6 +380,7 @@ export default {
   api_asnalysis_header_avg_res_timespan: '平均响应时间（毫秒）',
   api_asnalysis_total: '统计',
   api_asnalysis_name: '名称',
+  api_asnalysis_placeholder: '请求方式/路径',
 
   // api服务器
   api_server_name: '名称',

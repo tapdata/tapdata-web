@@ -151,8 +151,7 @@ export default {
   data() {
     return {
       searchParams: {
-        keyword: '',
-        isFuzzy: true
+        keyword: ''
       },
       filterItems: [],
       order: 'clientName DESC',
@@ -173,9 +172,6 @@ export default {
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-    let cache = this.table.getCache()
-    cache.isFuzzy = cache.isFuzzy === true
-    this.searchParams = cache
 
     this.getRoles()
   },
@@ -189,8 +185,7 @@ export default {
     reset(name) {
       if (name === 'reset') {
         this.searchParams = {
-          keyword: '',
-          isFuzzy: true
+          keyword: ''
         }
       }
       this.table.fetch(1)
@@ -279,7 +274,7 @@ export default {
     // 获取数据
     getData({ page }) {
       let { current, size } = page
-      let { isFuzzy, keyword } = this.searchParams
+      let { keyword } = this.searchParams
       let where = {}
       if (keyword && keyword.trim()) {
         let filterObj = { like: toRegExp(keyword), options: 'i' }
@@ -298,7 +293,6 @@ export default {
         })
         .then(res => {
           this.table.setCache({
-            isFuzzy,
             keyword
           })
           return {

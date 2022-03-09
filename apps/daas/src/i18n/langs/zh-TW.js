@@ -378,6 +378,7 @@ export default {
   api_asnalysis_header_avg_res_timespan: '平均響應時間（毫秒）',
   api_asnalysis_total: '統計',
   api_asnalysis_name: '名稱',
+  api_asnalysis_placeholder: '請求方式/路徑',
 
   // api服務器
   api_server_name: '名稱',
