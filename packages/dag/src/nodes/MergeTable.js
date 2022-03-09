@@ -20,12 +20,24 @@ export class MergeTable extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
+      sourceNode: {
+        type: 'array',
+        'x-visible': false,
+        'x-reactions': '{{getSourceNode}}'
+      },
       mergeProperties: {
         type: 'array',
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'ArrayItems',
-        'x-reactions': '{{getSourceNode}}',
+        'x-reactions': {
+          dependencies: ['sourceNode'],
+          fulfill: {
+            state: {
+              value: '{{ $deps[0] && $deps[0] }}'
+            }
+          }
+        },
         items: {
           type: 'object',
           properties: {
@@ -74,7 +86,7 @@ export class MergeTable extends NodeType {
                   title: '写入模式',
                   'x-decorator': 'FormItem',
                   'x-component': 'Select',
-                  default: 'updateOrInsert',
+                  default: 'appendWrite',
                   enum: [
                     { label: '追加写入', value: 'appendWrite' },
                     { label: '更新写入', value: 'updateWrite' },
@@ -92,7 +104,7 @@ export class MergeTable extends NodeType {
                     dependencies: ['.mergeType'],
                     fulfill: {
                       state: {
-                        visible: '{{ $deps[0] !== "updateOrInsert" }}'
+                        visible: '{{ $deps[0] !== "appendWrite" }}'
                       }
                     }
                   }
@@ -134,7 +146,7 @@ export class MergeTable extends NodeType {
                     dependencies: ['.mergeType'],
                     fulfill: {
                       schema: {
-                        'x-decorator-props.style.display': '{{ $deps[0] !== "updateOrInsert" ? "flex" : "none" }}'
+                        'x-decorator-props.style.display': '{{ $deps[0] !== "appendWrite" ? "flex" : "none" }}'
                       }
                     }
                   },
