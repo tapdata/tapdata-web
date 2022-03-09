@@ -132,6 +132,16 @@
             </ElLink>
             <ElDivider direction="vertical"></ElDivider>
             <ElLink
+              v-if="isShowForceStop(row.statusResult)"
+              v-readonlybtn="'SYNC_job_operation'"
+              type="primary"
+              :disabled="$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
+              @click="forceStop([row.id])"
+            >
+              {{ $t('task_list_force_stop') }}
+            </ElLink>
+            <ElLink
+              v-else
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="
@@ -141,22 +151,10 @@
               >{{ $t('task_list_stop') }}</ElLink
             >
             <ElDivider direction="vertical"></ElDivider>
-            <!--            <ElLink-->
-            <!--              v-if="row.status === 'stopping'"-->
-            <!--              v-readonlybtn="'SYNC_job_operation'"-->
-            <!--              type="primary"-->
-            <!--              :disabled="-->
-            <!--                $disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||-->
-            <!--                !statusBtMap['forceStop'][row.status]-->
-            <!--              "-->
-            <!--              @click="forceStop([row.id])"-->
-            <!--            >-->
-            <!--              {{ $t('dataFlow.button.force_stop') }}-->
-            <!--            </ElLink>-->
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="$disabledByPermission('SYNC_job_edition_all_data', row.user_id) || row.status === 'running'"
+              :disabled="startDisabled(row)"
               @click="handleEditor(row.id)"
             >
               {{ $t('button_edit') }}
@@ -327,8 +325,7 @@ export default {
         stop: { running: true },
         delete: { edit: true, draft: true, error: true, pause: true },
         edit: { edit: true, stop: true, error: true },
-        reset: { draft: true, error: true, pause: true },
-        forceStop: { stopping: true }
+        reset: { draft: true, error: true, pause: true }
         //     编辑中（edit）- 编辑中
         // 启动中（start）- 启动中
         // 运行中（running）- 运行中
@@ -1028,28 +1025,38 @@ export default {
         }
       })
     },
+    isShowForceStop(data) {
+      return data.filter(t => t.count > 0).every(t => ['stopping'].includes(t.status))
+    },
     startDisabled(row) {
       const statusResult = row.statusResult || []
-      const statusLength = row.statuses?.length || 0
       return (
         this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
-        statusResult.every(t => t.status === 'running' && t.count > 0 && t.count === statusLength)
+        statusResult
+          .filter(t => t.count > 0)
+          .every(t => ['wait_run', 'scheduling', 'running', 'stopping'].includes(t.status))
       )
     },
     stopDisabled(data) {
-      let stopData = data.filter(t => t.count > 0).find(t => ['running'].includes(t.status))
-      return stopData ? false : true
+      return data
+        .filter(t => t.count > 0)
+        .every(t =>
+          ['edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed', 'stopping'].includes(t.status)
+        )
     },
     resetDisabled(row) {
       const statusResult = row.statusResult || []
-      const statusLength = row.statuses?.length || 0
       return (
         this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
-        statusResult.some(t => t.status === 'running' && t.count > 0 && t.count === statusLength)
+        statusResult
+          .filter(t => t.count > 0)
+          .every(t => ['edit', 'wait_run', 'scheduling', 'running', 'stopping'].includes(t.status))
       )
     },
     deleteDisabled(data) {
-      return !data.filter(t => t.count > 0).every(t => ['edit', 'not_running', 'error'].includes(t.status))
+      return !data
+        .filter(t => t.count > 0)
+        .every(t => ['edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed'].includes(t.status))
     },
     getFilterItems() {
       this.filterItems = [

@@ -2,8 +2,8 @@ import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from '@/const'
 // 获取子任务状态统计
 export function getSubTaskStatus(rows = []) {
   const statusMap = {
-    running: ['scheduling', 'running', 'pausing', 'stopping', 'scheduling'],
-    not_running: ['edit', 'wait_run', 'pause', 'stop', 'complete', 'schedule_failed'],
+    running: ['scheduling', 'running', 'pausing', 'stopping', 'scheduling', 'wait_run'],
+    not_running: ['edit', 'pause', 'stop', 'complete', 'schedule_failed'],
     error: ['error'],
     edit: ['edit']
   }
