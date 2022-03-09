@@ -45,17 +45,17 @@ const CoverRect = defineComponent({
 export const Cover = observer(
   defineComponent({
     setup: () => {
-      const viewportDragon = useDragon()
+      const viewportDragonRef = useDragon()
       const viewportRef = useViewport()
       const cursorRef = useCursor()
       const renderDropCover = () => {
         if (
-          !viewportDragon.closestNode ||
-          !viewportDragon.closestNode?.allowAppend(viewportDragon.dragNodes) ||
-          viewportDragon.closestDirection !== ClosestPosition.Inner
+          !viewportDragonRef.value.closestNode ||
+          !viewportDragonRef.value.closestNode?.allowAppend(viewportDragonRef.value.dragNodes) ||
+          viewportDragonRef.value.closestDirection !== ClosestPosition.Inner
         )
           return null
-        return <CoverRect node={viewportDragon.closestNode} dropping />
+        return <CoverRect node={viewportDragonRef.value.closestNode} dropping />
       }
 
       return () => {
@@ -64,7 +64,7 @@ export const Cover = observer(
         if (cursor.status !== CursorStatus.Dragging) return null
         return (
           <FragmentComponent>
-            {viewportDragon.dragNodes.map(node => {
+            {viewportDragonRef.value.dragNodes.map(node => {
               if (!node) return
               if (!viewport.findElementById(node.id)) return
               return <CoverRect key={node.id} node={node} dragging />

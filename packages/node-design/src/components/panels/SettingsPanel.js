@@ -8,11 +8,11 @@ export const SettingsPanel = observer(
     props: ['title', 'extra'],
     setup: (props, { slots }) => {
       const prefix = usePrefix('settings-panel')
-      const workbench = useWorkbench()
+      const workbenchRef = useWorkbench()
       const innerVisible = ref(true)
       const pinning = ref(false)
       const visible = ref(true)
-      const workbenchType = ref(workbench.type)
+      const workbenchType = ref(workbenchRef.value.type)
 
       watch([visible, workbenchType], () => {
         if (visible || workbenchType.value === 'DESIGNABLE') {
@@ -26,7 +26,7 @@ export const SettingsPanel = observer(
         }
       })
 
-      if (workbench.type !== 'DESIGNABLE') {
+      if (workbenchRef.value.type !== 'DESIGNABLE') {
         if (innerVisible.value) innerVisible.value = false
         return null
       }

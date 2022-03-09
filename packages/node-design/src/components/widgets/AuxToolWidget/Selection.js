@@ -61,16 +61,17 @@ export const SelectionBox = defineComponent({
 export const Selection = observer(
   defineComponent({
     setup() {
-      const selection = useSelection()
-      const tree = useTree()
+      const selectionRef = useSelection()
+      const treeRef = useTree()
       const cursor = useCursor()
-      const viewportDragon = useDragon()
+      const viewportDragonRef = useDragon()
       return () => {
-        if (cursor.value.status !== 'NORMAL' && viewportDragon.touchNode) return null
+        if (cursor.value.status !== 'NORMAL' && viewportDragonRef.value.touchNode) return null
+        const selection = selectionRef.value
         return (
           <FragmentComponent>
             {selection.selected.map(id => {
-              const node = tree.findById(id)
+              const node = treeRef.value.findById(id)
               if (!node) return
               if (node.hidden) return
               return <SelectionBox key={id} node={node} showHelpers={selection.selected.length === 1} />

@@ -8,12 +8,12 @@ import { defineComponent } from 'vue-demi'
 export const Insertion = observer(
   defineComponent({
     setup() {
-      const viewportDragon = useDragon()
+      const viewportDragonRef = useDragon()
       const prefix = usePrefix('aux-insertion')
       const createInsertionStyle = () => {
-        const closestDirection = viewportDragon.closestDirection
-        const closestRect = viewportDragon.closestOffsetRect
-        const isInlineLayout = viewportDragon.getClosestLayout() === 'horizontal'
+        const closestDirection = viewportDragonRef.value.closestDirection
+        const closestRect = viewportDragonRef.value.closestOffsetRect
+        const isInlineLayout = viewportDragonRef.value.getClosestLayout() === 'horizontal'
         const baseStyle = {
           position: 'absolute',
           transform: 'perspective(1px) translate3d(0,0,0)',

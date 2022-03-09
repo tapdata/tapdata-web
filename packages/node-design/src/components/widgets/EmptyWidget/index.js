@@ -10,10 +10,11 @@ export const EmptyWidget = observer(
       dragTipsDirection: { type: String, default: 'left' }
     },
     setup: (props, { slots }) => {
-      const tree = useTree()
+      const treeRef = useTree()
       const prefix = usePrefix('empty')
 
       return () => {
+        const tree = treeRef.value
         const renderEmpty = () => {
           return (
             <div style={{ display: 'flex', flexDirection: 'column' }}>

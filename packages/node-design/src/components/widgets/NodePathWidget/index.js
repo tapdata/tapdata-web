@@ -13,7 +13,7 @@ export const NodePathWidget = observer(
     },
     setup: props => {
       const selectedRef = useCurrentNode(props.workspaceId)
-      const selection = useSelection(props.workspaceId)
+      const selectionRef = useSelection(props.workspaceId)
       const hoverRef = useHover(props.workspaceId)
       const prefix = usePrefix('node-path')
 
@@ -43,7 +43,7 @@ export const NodePathWidget = observer(
                     onClick={e => {
                       e.stopPropagation()
                       e.preventDefault()
-                      selection.select(node)
+                      selectionRef.value.select(node)
                     }}
                   >
                     <NodeTitleWidget node={node} />

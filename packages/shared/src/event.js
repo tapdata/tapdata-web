@@ -180,7 +180,7 @@ export class Event extends Subscribable {
       return this.attachEvents(container.document, container, context)
     }
     if (container[ATTACHED_SYMBOL]) return
-    console.log('attachEvents', container, this.#drivers)
+
     container[ATTACHED_SYMBOL] = this.#drivers.map(EventDriver => {
       const driver = new EventDriver(this, context)
       driver.contentWindow = contentWindow

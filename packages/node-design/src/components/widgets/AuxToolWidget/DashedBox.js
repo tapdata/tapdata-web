@@ -12,9 +12,10 @@ const DashedBoxComponent = observer(
       const viewport = viewportRef.value
       const hoverRef = useHover()
       const prefix = usePrefix('aux-dashed-box')
-      const selection = useSelection()
+      const selectionRef = useSelection()
 
       return () => {
+        const selection = selectionRef.value
         const createTipsStyle = () => {
           const baseStyle = {
             top: 0,

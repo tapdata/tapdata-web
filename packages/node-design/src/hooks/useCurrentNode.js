@@ -4,9 +4,9 @@ import { computed } from 'vue-demi'
 
 export const useCurrentNode = workspaceId => {
   const selected = useSelected(workspaceId)
-  const tree = useTree(workspaceId)
+  const treeRef = useTree(workspaceId)
   // return tree?.findById?.(selected.value[0])
   return computed(() => {
-    return tree?.findById?.(selected.value[0])
+    return treeRef.value?.findById?.(selected.value[0])
   })
 }

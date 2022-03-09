@@ -39,7 +39,7 @@ export const Selector = observer(
       const hoverRef = useHover()
       const expand = ref(false)
       const elRef = computed(() => refs.ref)
-      const selection = useSelection()
+      const selectionRef = useSelection()
       const prefix = usePrefix('aux-selector')
       const renderIcon = node => {
         const icon = node.designerProps.icon
@@ -72,7 +72,7 @@ export const Selector = observer(
                   key={parent.id}
                   type="primary"
                   onClick={() => {
-                    selection.select(parent.id)
+                    selectionRef.value.select(parent.id)
                   }}
                   vOn:mouseenter_native={() => {
                     hover.setHover(parent)

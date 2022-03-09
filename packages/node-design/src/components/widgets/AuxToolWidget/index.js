@@ -10,17 +10,18 @@ import { defineComponent } from 'vue-demi'
 export const AuxToolWidget = defineComponent({
   setup: (props, { refs }) => {
     const engine = useDesigner()
-    const viewport = useViewport()
+    const viewportRef = useViewport()
     const prefix = usePrefix('auxtool')
 
     engine.value.subscribeWith('viewport:scroll', () => {
-      if (viewport.value.isIframe && refs.root) {
-        refs.root.style.transform = `perspective(1px) translate3d(${-viewport.scrollX}px,${-viewport.scrollY}px,0)`
+      if (viewportRef.value.isIframe && refs.root) {
+        refs.root.style.transform = `perspective(1px) translate3d(${-viewportRef.value.scrollX}px,${-viewportRef.value
+          .scrollY}px,0)`
       }
     })
 
     return () => {
-      if (!viewport.value) return null
+      if (!viewportRef.value) return null
       return (
         <div ref="root" class={prefix}>
           <Insertion />

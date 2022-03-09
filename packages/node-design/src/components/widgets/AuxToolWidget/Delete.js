@@ -7,7 +7,7 @@ export const Delete = defineComponent({
   props: ['node'],
   setup: props => {
     const node = props.node
-    const operation = useOperation()
+    const operationRef = useOperation()
     const prefix = usePrefix('aux-copy')
 
     return () => {
@@ -17,7 +17,7 @@ export const Delete = defineComponent({
           class={prefix}
           type="primary"
           onClick={() => {
-            operation.removeNodes([node])
+            operationRef.value.removeNodes([node])
           }}
         >
           <IconWidget infer="Remove" />

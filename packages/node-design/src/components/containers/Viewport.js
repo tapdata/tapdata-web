@@ -13,35 +13,35 @@ export const Viewport = defineComponent({
     const dragTipsDirection = props.dragTipsDirection
     const loaded = ref(false)
     const prefix = usePrefix('viewport')
-    const viewport = useViewport()
+    const _viewportRef = useViewport()
     // const ref = useRef<HTMLDivElement>()
     const viewportRef = ref()
     const isFrameRef = ref(false)
 
     onMounted(() => {
       const frameElement = refs.root?.querySelector('iframe')
-      if (!viewport.value) return
-      if (viewportRef.value && viewportRef.value !== viewport.value) {
+      if (!_viewportRef.value) return
+      if (viewportRef.value && viewportRef.value !== _viewportRef.value) {
         viewportRef.value.onUnmount()
       }
       if (frameElement) {
         frameElement.addEventListener('load', () => {
-          viewport.value.onMount(frameElement, frameElement.contentWindow)
+          _viewportRef.value.onMount(frameElement, frameElement.contentWindow)
           requestIdle(() => {
             isFrameRef.value = true
             loaded.value = true
           })
         })
       } else {
-        viewport.value.onMount(refs.root, window)
+        _viewportRef.value.onMount(refs.root, window)
         requestIdle(() => {
           isFrameRef.value = false
           loaded.value = true
         })
       }
-      viewportRef.value = viewport.value
+      viewportRef.value = _viewportRef.value
       return () => {
-        viewport.value.onUnmount()
+        _viewportRef.value.onUnmount()
       }
     })
 

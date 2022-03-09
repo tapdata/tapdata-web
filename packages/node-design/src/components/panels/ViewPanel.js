@@ -11,8 +11,8 @@ export const ViewPanel = observer(
       dragTipsDirection: { type: String }
     },
     setup: (props, { slots }) => {
-      const workbench = useWorkbench()
-      const tree = useTree()
+      const workbenchRef = useWorkbench()
+      const treeRef = useTree()
       // useEffect(() => {
       //   if (workbench.type === props.type) {
       //     requestIdle(() => {
@@ -26,6 +26,8 @@ export const ViewPanel = observer(
       // }, [workbench.type])
 
       return () => {
+        const workbench = workbenchRef.value
+        const tree = treeRef.value
         if (workbench.type !== props.type) return null
         const render = () => {
           return slots.default(tree, payload => {

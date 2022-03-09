@@ -7,7 +7,7 @@ export const Copy = defineComponent({
   props: ['node'],
   setup: props => {
     const node = props.node
-    const operation = useOperation()
+    const operationRef = useOperation()
     const prefix = usePrefix('aux-copy')
     return () => {
       if (node === node.root) return null
@@ -16,7 +16,7 @@ export const Copy = defineComponent({
           class={prefix}
           type="primary"
           onClick={() => {
-            operation.cloneNodes([node])
+            operationRef.value.cloneNodes([node])
           }}
         >
           <IconWidget infer="Clone" />

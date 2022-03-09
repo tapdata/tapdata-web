@@ -1,6 +1,7 @@
 import { useOperation } from './useOperation'
+import { computed } from 'vue-demi'
 
 export const useTree = workspaceId => {
-  const operation = useOperation(workspaceId)
-  return operation?.tree
+  const operationRef = useOperation(workspaceId)
+  return computed(() => operationRef.value?.tree)
 }

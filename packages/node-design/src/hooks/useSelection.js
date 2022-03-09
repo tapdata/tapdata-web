@@ -1,6 +1,7 @@
 import { useOperation } from './useOperation'
+import { computed } from 'vue-demi'
 
 export const useSelection = workspaceId => {
-  const operation = useOperation(workspaceId)
-  return operation?.selection
+  const operationRef = useOperation(workspaceId)
+  return computed(() => operationRef.value?.selection)
 }

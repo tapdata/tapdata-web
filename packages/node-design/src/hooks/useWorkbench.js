@@ -1,6 +1,7 @@
 import { useDesigner } from './useDesigner'
+import { computed } from 'vue-demi'
 
 export const useWorkbench = () => {
-  const designer = useDesigner()
-  return designer.value.workbench
+  const designerRef = useDesigner()
+  return computed(() => designerRef.value.workbench)
 }

@@ -1,12 +1,17 @@
 import { useContext } from '@daas/shared'
 import { useDesigner } from './useDesigner'
 import { WorkspaceContext } from '../context'
+import { computed, ref } from 'vue-demi'
 
 export const useWorkspace = id => {
   const designer = useDesigner()
-  const workspaceId = id || useContext(WorkspaceContext)?.id
+
+  const workspaceRef = ref()
+  const workspaceId = computed(() => id || useContext(WorkspaceContext).value?.id)
   if (workspaceId) {
-    return designer.value.workbench.findWorkspaceById(workspaceId)
+    workspaceRef.value = designer.value.workbench.findWorkspaceById(workspaceId.value)
   }
-  return designer.value.workbench.currentWorkspace
+
+  workspaceRef.value = designer.value.workbench.currentWorkspace
+  return workspaceRef
 }

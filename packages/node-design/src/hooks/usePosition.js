@@ -1,5 +1,7 @@
 import { useLayout } from './useLayout'
+import { computed } from 'vue-demi'
 
 export const usePosition = () => {
-  return useLayout()?.value?.position
+  const layoutRef = useLayout()
+  return computed(() => layoutRef.value.position)
 }

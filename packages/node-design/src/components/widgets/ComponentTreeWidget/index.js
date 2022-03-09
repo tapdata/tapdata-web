@@ -2,7 +2,7 @@ import { useTree, usePrefix, useDesigner, useComponents } from '../../../hooks'
 import { TreeNodeContext, DesignerComponentsContext } from '../../../context'
 import { TreeNode, GlobalRegistry } from '../../../core'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent, toRefs, watchEffect, h as $h } from 'vue-demi'
+import { defineComponent, ref, watchEffect, h as $h } from 'vue-demi'
 // import { h as $h, Fragment } from '@formily/vue'
 import './styles.scss'
 
@@ -63,13 +63,13 @@ export const ComponentTreeWidget = observer(
       components: Object
     },
     setup: props => {
-      const tree = useTree()
+      const treeRef = useTree()
       const prefix = usePrefix('component-tree')
       const designer = useDesigner()
       const dataId = {}
 
-      if (designer && tree) {
-        dataId[designer.value?.props?.nodeIdAttrName] = tree.id
+      if (designer && treeRef.value) {
+        dataId[designer.value?.props?.nodeIdAttrName] = treeRef.value.id
       }
 
       watchEffect(() => {
@@ -77,9 +77,9 @@ export const ComponentTreeWidget = observer(
       })
 
       return () => (
-        <div style={{ ...tree?.props?.style }} class={prefix} attrs={dataId}>
+        <div style={{ ...treeRef.value?.props?.style }} class={prefix} attrs={dataId}>
           <DesignerComponentsContext.Provider value={props.components}>
-            <TreeNodeWidget node={tree} />
+            <TreeNodeWidget node={treeRef.value} />
           </DesignerComponentsContext.Provider>
         </div>
       )

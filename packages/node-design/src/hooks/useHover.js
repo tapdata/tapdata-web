@@ -2,7 +2,7 @@ import { useOperation } from './useOperation'
 import { computed } from 'vue-demi'
 
 export const useHover = workspaceId => {
-  const operation = useOperation(workspaceId)
-  return computed(() => operation?.hover)
+  const operationRef = useOperation(workspaceId)
+  return computed(() => operationRef.value?.hover)
   // return operation?.hover
 }

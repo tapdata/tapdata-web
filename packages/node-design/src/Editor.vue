@@ -61,9 +61,9 @@ import {
   // BoxShadowStyleSetter,
   // FontStyleSetter,
   DisplayStyleSetter,
-  FlexStyleSetter
+  FlexStyleSetter,
   // DrawerSetter,
-  // CollapseItem
+  CollapseItem
 } from './components'
 
 GlobalRegistry.registerDesignerIcons(icons)
@@ -105,7 +105,7 @@ export default {
   data() {
     return {
       components: { Field, Input, Select, Form, FormLayout, InputNumber },
-      settingsFormComponents: { SizeInput, DisplayStyleSetter, FlexStyleSetter, Slider }
+      settingsFormComponents: { SizeInput, DisplayStyleSetter, FlexStyleSetter, Slider, CollapseItem }
     }
   }
 }

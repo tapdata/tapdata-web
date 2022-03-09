@@ -8,22 +8,22 @@ export const FreeSelection = observer(
   defineComponent({
     setup: () => {
       const cursor = useCursor()
-      const viewport = useViewport()
+      const viewportRef = useViewport()
       const prefix = usePrefix('aux-free-selection')
       const createSelectionStyle = () => {
-        const startDragPoint = viewport.getOffsetPoint({
+        const startDragPoint = viewportRef.value.getOffsetPoint({
           x: cursor.dragStartPosition.topClientX,
           y: cursor.dragStartPosition.topClientY
         })
-        const currentPoint = viewport.getOffsetPoint({
+        const currentPoint = viewportRef.value.getOffsetPoint({
           x: cursor.position.topClientX,
           y: cursor.position.topClientY
         })
         const rect = calcRectByStartEndPoint(
           startDragPoint,
           currentPoint,
-          viewport.scrollX - cursor.dragStartScrollOffset.scrollX,
-          viewport.scrollY - cursor.dragStartScrollOffset.scrollY
+          viewportRef.value.scrollX - cursor.dragStartScrollOffset.scrollX,
+          viewportRef.value.scrollY - cursor.dragStartScrollOffset.scrollY
         )
         const baseStyle = {
           position: 'absolute',
