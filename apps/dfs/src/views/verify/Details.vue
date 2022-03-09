@@ -130,10 +130,16 @@ export default {
       return this.inspect?.inspectMethod || ''
     },
     tableData() {
-      return this.resultInfo.stats || []
+      return (
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.resultInfo.stats?.sort((a, b) => {
+          let value1 = a.taskId
+          let value2 = b.taskId
+          return value1.localeCompare(value2)
+        }) || []
+      )
     },
     verifyAgainDisabled() {
-      // return !['done', 'error'].includes(this.inspect.status)
       return this.tableData.every(t => t.result === 'passed')
     }
   },
