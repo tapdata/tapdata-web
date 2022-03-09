@@ -166,7 +166,6 @@ export default {
       statusBtMap: {
         start: {
           edit: true,
-          wait_run: true,
           stop: true,
           complete: true
         },
@@ -496,7 +495,7 @@ export default {
           ? (endTimeStamp || new Date().getTime()) - startTimeStamp
           : selectedTimeItems.find(t => t.value === selectedTime).spacing
       let guanluary = this.getGuanluary(diff)
-      let formatGuanluaryTime = this.getGuanluary(diff, true)
+      // let formatGuanluaryTime = this.getGuanluary(diff, true)
       let subTaskId = this.$route.params?.subId
       // let lineDataDeep = this.lineDataDeep
       let tags = {
@@ -652,6 +651,7 @@ export default {
             value: [time, outputQPS[i]]
           })
         })
+        // eslint-disable-next-line
         console.log('x轴：', this.lineDataDeep.x.length, xArr)
         if (reset) {
           this.lineDataDeep.x = xArr

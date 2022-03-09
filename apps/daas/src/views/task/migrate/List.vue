@@ -117,13 +117,12 @@
       <!-- <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column> -->
       <el-table-column prop="status" :label="$t('task_list_status')" width="180">
         <template #default="{ row }">
-          <span :class="['status-' + row.status, 'status-block']">
+          <span :class="['status-' + row.status, 'status-block', 'mr-2']">
             {{ $t('task_preview_status_' + row.status) }}
           </span>
-          <div>
-            <span v-if="row.transformStatus">{{ statusTransformMap[row.transformStatus] }} </span>
-            <span v-if="row.transformProcess">{{ row.transformProcess * 100 }} %</span>
-          </div>
+          <span v-if="row.transformStatus && row.transformStatus === 'running'">
+            <span v-if="row.transformProcess && row.transformProcess !== 1">{{ row.transformProcess * 100 }} %</span>
+          </span>
         </template>
       </el-table-column>
 

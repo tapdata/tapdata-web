@@ -58,6 +58,7 @@
                   :mqTransferFlag="mqTransferFlag"
                   :isTwoWay="true"
                   :getTask="daft"
+                  :saveTask="createTask"
                 ></Transfer>
               </div>
             </div>
@@ -137,7 +138,6 @@ export default {
     if (this.id) {
       this.intiData(this.id)
     } else {
-      this.createData() //创建一个新的空任务
       this.getSteps()
     }
   },
@@ -152,7 +152,6 @@ export default {
             let data = res?.data
             this.status = data.status
             this.settingData = data.attrs?.task_setting_Data
-            this.settingData.name = data.name
             this.dataSourceData = data?.attrs?.task_data_source_Data
             this.nodes = data?.dag?.nodes
             let edges = data?.dag?.edges
@@ -190,22 +189,6 @@ export default {
             this.tableNameTransform = targetNodeMapping.tableNameTransform
             this.fieldsNameTransform = targetNodeMapping.fieldsNameTransform
             this.getSteps()
-          }
-        })
-    },
-    createData() {
-      let data = {
-        syncType: 'migrate',
-        name: '新任务@' + new Date().toLocaleTimeString(),
-        dag: {}
-      }
-      this.$api('Task')
-        .post(data)
-        .then(res => {
-          if (res) {
-            let data = res?.data
-            this.settingData.name = data.name
-            this.id = data.id
           }
         })
     },
@@ -276,10 +259,20 @@ export default {
           this.form
             .validate()
             .then(() => {
-              //数据: 第三步请求schema用到sourceId
-              this.sourceId = this.dataSourceData.source_connectionId
-              this.activeStep++
-              this.transferData.automaticallyCreateTables = this.settingData.automaticallyCreateTables
+              //检查任务名是否重复
+              this.$api('Task')
+                .checkName(this.settingData.name)
+                .then(res => {
+                  let result = res?.data?.data
+                  if (result) {
+                    this.$message.error('表单检验不通过，任务名称重复！')
+                    return
+                  }
+                  //数据: 第三步请求schema用到sourceId
+                  this.sourceId = this.dataSourceData.source_connectionId
+                  this.activeStep++
+                  this.transferData.automaticallyCreateTables = this.settingData.automaticallyCreateTables
+                })
             })
             .catch(() => {
               this.$message.error('表单检验不通过，任务名称必填')
@@ -436,6 +429,15 @@ export default {
       ]
       this.transferData.nodeId = targetIdB
       return postData
+    },
+    createTask() {
+      if (this.id) return
+      let postData = this.daft()
+      let promise = this.$api('Task').save(postData)
+      promise.then(res => {
+        this.id = res?.data?.id
+      })
+      return promise
     },
     save() {
       let verify = this.checkTransfer()
