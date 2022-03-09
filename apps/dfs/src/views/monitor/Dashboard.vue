@@ -402,7 +402,7 @@ export default {
           }
           let host = c.database_host
           // mongo 不追加port
-          if (!['mongodb', 'mq'].includes(c.database_type)) {
+          if (!['mongodb', 'aliyun_mongodb', 'tencent_mongodb', 'mq'].includes(c.database_type)) {
             host += ':' + c.database_port
           }
           switch (c.database_type) {
