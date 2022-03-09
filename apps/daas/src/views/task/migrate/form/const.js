@@ -56,6 +56,7 @@ export const TRANSFER_MODEL = {
   isFirst: false,
   nodeId: '',
   mode: 'all',
+  syncType: 'migrate',
   automaticallyCreateTables: true,
   fieldProcess: [],
   fieldsNameTransform: '',
