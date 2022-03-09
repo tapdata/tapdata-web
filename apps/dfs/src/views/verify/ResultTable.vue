@@ -8,7 +8,7 @@
     @row-click="rowClickHandler"
     @selection-change="handleSelectionChange"
   >
-    <ElTableColumn type="selection" width="55"> </ElTableColumn>
+    <ElTableColumn type="selection" width="55" :selectable="checkSelectableFnc"> </ElTableColumn>
     <ElTableColumn :label="$t('dataVerification.sourceTable')">
       <template slot-scope="scope">
         <span>{{ scope.row.source ? scope.row.source.table : '' }}</span>
@@ -74,7 +74,7 @@
     </ElTableColumn>
     <ElTableColumn v-if="$route.name !== 'VerifyResult'" prop="status" :label="$t('verify_operation')">
       <template slot-scope="scope">
-        <ElButton type="text" :disabled="verifyAgainDisabled" @click.prevent.stop="verifyAgain(scope.row)">{{
+        <ElButton type="text" :disabled="scope.row.result === 'passed'" @click.prevent.stop="verifyAgain(scope.row)">{{
           $t('verify_operation_verify_again')
         }}</ElButton>
       </template>
@@ -147,8 +147,14 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
+    getMultipleSelection() {
+      return this.multipleSelection || []
+    },
     verifyAgain(row) {
       this.$emit('verify-again', [row.taskId])
+    },
+    checkSelectableFnc(row) {
+      return row.result !== 'passed'
     }
   }
 }

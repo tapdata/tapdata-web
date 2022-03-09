@@ -4,7 +4,7 @@
       <div>
         <span style="font-size: 14px">{{ inspect.name }}</span>
         <span class="font-color-linfo ml-3">{{ typeMap[type] }}</span>
-        <ElButton type="text" class="ml-8" :disabled="verifyAgainDisabled" @click.prevent.stop="verifyAgain([])">{{
+        <ElButton type="text" class="ml-8" :disabled="verifyAgainDisabled" @click.prevent.stop="verifyAgain()">{{
           $t('verify_operation_verify_again')
         }}</ElButton>
         <span class="button-icon">
@@ -133,7 +133,8 @@ export default {
       return this.resultInfo.stats || []
     },
     verifyAgainDisabled() {
-      return !['done', 'error'].includes(this.inspect.status)
+      // return !['done', 'error'].includes(this.inspect.status)
+      return this.tableData.every(t => t.result === 'passed')
     }
   },
   created() {
@@ -319,6 +320,11 @@ export default {
       })
     },
     verifyAgain(ids = []) {
+      let taskIds = ids
+      let getMultipleSelection = this.$refs.singleTable.getMultipleSelection()
+      if (getMultipleSelection.length) {
+        taskIds = getMultipleSelection
+      }
       this.$axios
         .post(
           'tm/api/Inspects/update?where=' +
@@ -330,7 +336,7 @@ export default {
           {
             status: 'scheduling',
             inspectResultId: this.resultInfo.id,
-            taskIds: ids
+            taskIds
           }
         )
         .then(() => {

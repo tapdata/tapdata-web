@@ -922,7 +922,8 @@ export default {
   verify_checking: '校验中...',
   verify_operation: '操作',
   verify_operation_verify_again: '重新校验',
-  verify_operation_verify_again_info: '当未选择表时默认只对上次校验不一致的表进行重新校验',
+  verify_operation_verify_again_info:
+    '可以选择校验结果不一致的表进行重新校验，不选择时默认对当前所有不一致的表进行校验。',
 
   verify_title_create: '新建校验',
   verify_title_edit: '编辑校验',
