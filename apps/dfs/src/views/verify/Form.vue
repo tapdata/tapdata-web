@@ -533,7 +533,8 @@ export default {
                   id: true,
                   name: true,
                   stages: true,
-                  mappingTemplate: true
+                  mappingTemplate: true,
+                  stats: true
                 }
               })
             )
@@ -583,6 +584,7 @@ export default {
           // 当stage存在syncObjects字段说明是目标节点
           let obj = stg.syncObjects[0]
           let tables = obj.objectNames || []
+          let tableOperations = stg.tableOperations
           tables.forEach(t => {
             // 迁移时，可以同时从目标节点获取源和目标的表名，匹配目标表名时注意大小写和前后缀配置
             tableNames.push(t)
@@ -591,6 +593,10 @@ export default {
             // 大小写转换
             if (stg.tableNameTransform) {
               name = name[stg.tableNameTransform]()
+            }
+            let findOne = tableOperations.find(f => f.originalTableName === t)
+            if (findOne) {
+              name = findOne.tableName
             }
             tableNames.push(name)
           })
@@ -690,10 +696,15 @@ export default {
 
         let obj = target.syncObjects[0]
         let sourceTablesNames = obj.objectNames || []
+        let tableOperations = target.tableOperations
         sourceTablesNames.forEach(name => {
           let targetTableName = target.table_prefix + name + target.table_suffix
           if (target.tableNameTransform) {
             targetTableName = targetTableName[target.tableNameTransform]()
+          }
+          let findOne = tableOperations.find(f => f.originalTableName === name)
+          if (findOne) {
+            targetTableName = findOne.tableName
           }
           let sourceTable = tables.find(tb => tb.original_name === name && tb.source.id === source.connectionId)
           let targetTable = tables.find(
