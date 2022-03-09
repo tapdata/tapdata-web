@@ -132,8 +132,8 @@ export function getOverviewData(data) {
 export function getSubTaskStatus(rows = []) {
   const statusMap = {
     edit: ['edit'],
-    running: ['scheduling', 'running', 'stopping'],
-    not_running: ['wait_run', 'stop', 'complete', 'schedule_failed'],
+    running: ['wait_run', 'scheduling', 'running', 'stopping'],
+    not_running: ['stop', 'complete', 'schedule_failed'],
     error: ['error']
   }
   const len = rows.length

@@ -65,7 +65,7 @@
       </div>
     </div>
     <div class="sub-task flex-fill mt-6 p-6 bg-white">
-      <ElTabs v-model="activeTab" class="dashboard-tabs flex flex-column overflow-hidden h-100">
+      <ElTabs v-model="activeTab" class="dashboard-tabs">
         <ElTabPane label="子任务" name="subTask">
           <div slot="label">
             <span class="mr-2">{{ $t('task_details_sub_task') }}</span>
@@ -76,14 +76,12 @@
               <VIcon class="color-primary" size="14">info</VIcon>
             </ElTooltip>
           </div>
-          <Subtask :task="task"></Subtask>
         </ElTabPane>
-        <ElTabPane label="连接" name="connect" lazy>
-          <Connection :ids="connectionIds" @change="loadData"></Connection>
-        </ElTabPane>
-        <ElTabPane label="历史运行记录" name="history" lazy>
-          <History v-if="task.id" :ids="[task.id]" :operations="operations"></History>
-        </ElTabPane>
+        <ElTabPane label="连接" name="connect"></ElTabPane>
+        <ElTabPane label="历史运行记录" name="history"></ElTabPane>
+        <Subtask v-if="activeTab === 'subTask'" :task="task"></Subtask>
+        <Connection v-if="activeTab === 'connect'" :ids="connectionIds" @change="loadData"></Connection>
+        <History v-if="activeTab === 'history' && task.id" :ids="[task.id]" :operations="operations"></History>
       </ElTabs>
     </div>
   </ElContainer>
