@@ -33,8 +33,8 @@ import VIcon from 'web-core/components/VIcon'
 import 'web-core/assets/icons/svg/component.svg'
 import 'web-core/assets/icons/svg/outline.svg'
 import 'web-core/assets/icons/svg/history.svg'
-import { ResourceWidget } from '../widgets/ResourceWidget'
-import { Input, Select } from '../sources'
+import { ResourceWidget } from './widgets/ResourceWidget'
+import { Input, Select, InputNumber } from '../sources'
 
 export default {
   name: 'CompositePanel',
@@ -42,7 +42,7 @@ export default {
 
   data() {
     return {
-      sources: [Input, Select],
+      sources: [Input, Select, InputNumber],
       tabItems: [
         {
           name: 'component',
@@ -71,7 +71,7 @@ export default {
 
 <style scoped lang="scss">
 .composite-panel {
-  width: 350px;
+  //width: 350px;
 
   &-tabs-content {
     width: 300px;

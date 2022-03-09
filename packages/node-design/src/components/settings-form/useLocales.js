@@ -1,7 +1,7 @@
 import { isVoidField, onFieldReact } from '@formily/core'
 import { GlobalRegistry } from '../../core'
 import { isStr } from '@daas/shared'
-import { IconWidget } from '../../widgets'
+import { IconWidget } from '../widgets'
 
 const takeIcon = message => {
   if (!isStr(message)) return

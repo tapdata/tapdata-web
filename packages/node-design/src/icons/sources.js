@@ -655,7 +655,7 @@ export const TimeRangePickerSource = () => (
   </svg>
 )
 
-export const NumberPickerSource = () => (
+export const InputNumberSource = () => (
   <svg viewBox="0 0 1424 1024">
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <path

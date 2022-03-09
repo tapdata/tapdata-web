@@ -1,5 +1,5 @@
 import { Button } from 'element-ui'
-import { IconWidget } from '../../../widgets'
+import { IconWidget } from '../../widgets'
 import { usePrefix } from '../../../hooks'
 import './styles.scss'
 import { defineComponent, ref, toRefs, watch, computed } from 'vue-demi'

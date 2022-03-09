@@ -44,7 +44,7 @@ const setCursorStyle = (contentWindow, style) => {
 export class Cursor {
   engine
 
-  type
+  type = CursorType.Move
 
   status = CursorStatus.Normal
 

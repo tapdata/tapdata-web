@@ -1,5 +1,5 @@
 import { observer } from '@formily/reactive-vue'
-import { TextWidget, IconWidget } from '../../widgets'
+import { TextWidget, IconWidget } from '../widgets'
 import { usePrefix, useWorkbench } from '../../hooks'
 import { defineComponent, ref, watch } from 'vue-demi'
 

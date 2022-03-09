@@ -2,9 +2,9 @@ import { Workspace } from './Workspace'
 import { Engine } from './Engine'
 import { TreeNode } from './TreeNode'
 import { Selection } from './Selection'
-// import { Hover } from './Hover'
+import { Hover } from './Hover'
 import { action, define, observable } from '@formily/reactive'
-// import { Dragon } from './Dragon'
+import { Dragon } from './Dragon'
 import { cancelIdle, each, isFn, requestIdle } from '@daas/shared'
 
 export class Operation {
@@ -34,23 +34,22 @@ export class Operation {
       ...this.engine.props.defaultComponentTree,
       operation: this
     })
-    console.log('构建Operation', this.tree)
     this.selection = new Selection({
       operation: this
     })
-    // this.hover = new Hover({
-    //   operation: this,
-    // })
-    // this.outlineDragon = new Dragon({
-    //   operation: this,
-    //   sensitive: false,
-    //   forceBlock: true,
-    //   viewport: this.workspace.outline,
-    // })
-    // this.viewportDragon = new Dragon({
-    //   operation: this,
-    //   viewport: this.workspace.viewport,
-    // })
+    this.hover = new Hover({
+      operation: this
+    })
+    this.outlineDragon = new Dragon({
+      operation: this,
+      sensitive: false,
+      forceBlock: true,
+      viewport: this.workspace.outline
+    })
+    this.viewportDragon = new Dragon({
+      operation: this,
+      viewport: this.workspace.viewport
+    })
     this.selection.select(this.tree)
     this.makeObservable()
   }

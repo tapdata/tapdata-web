@@ -1,10 +1,11 @@
-import { MouseClickDriver } from './drivers'
+import { MouseClickDriver, DragDropDriver, MouseMoveDriver } from './drivers'
 import {
   useCursorEffect,
   useSelectionEffect,
   useAutoScrollEffect,
   useContentEditableEffect,
-  useWorkspaceEffect
+  useWorkspaceEffect,
+  useDragDropEffect
 } from './effects'
 
 export const DEFAULT_EFFECTS = [
@@ -12,7 +13,8 @@ export const DEFAULT_EFFECTS = [
   useSelectionEffect,
   useAutoScrollEffect,
   useContentEditableEffect,
-  useWorkspaceEffect
+  useWorkspaceEffect,
+  useDragDropEffect
 ]
 
-export const DEFAULT_DRIVERS = [MouseClickDriver]
+export const DEFAULT_DRIVERS = [MouseClickDriver, DragDropDriver, MouseMoveDriver]

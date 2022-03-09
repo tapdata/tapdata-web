@@ -113,9 +113,6 @@ export const FormBaseItem = defineComponent({
 
     return () => {
       const gridStyles = {}
-
-      console.log('deepLayoutRef', deepLayoutRef)
-
       const deepLayout = deepLayoutRef.value
       const {
         label,
@@ -152,7 +149,6 @@ export const FormBaseItem = defineComponent({
 
       // 固定宽度
       let enableCol = false
-      console.log('wrapperWidth', wrapperWidth)
       if (labelWidth || wrapperWidth) {
         if (labelWidth) {
           const width = takeUnitVal(labelWidth)

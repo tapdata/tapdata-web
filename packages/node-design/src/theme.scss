@@ -1,6 +1,8 @@
-.node-design {
+@import "variables";
+
+.#{$prefix-cls}-app {
   //品牌色
-  --dn-brand-color: rgba(24, 144, 255, 1);
+  --dn-brand-color: rgba(44, 101, 255, 1);
   --dn-brand-hovering: rgba(64, 169, 255, 1);
   --dn-brand-dragging: rgba(24, 144, 255, 0.26);
   --dn-brand-dropping: rgba(24, 144, 255, 0.34);
@@ -17,7 +19,6 @@
   --dn-gray-lighter: #666;
   --dn-gray-dark: #222;
   --dn-black: #1a1a1a;
-
 
   --dn-aux-cover-rect-dragging-color: var(--dn-brand-dragging);
   --dn-aux-cover-rect-dropping-color: var(--dn-brand-dropping);
@@ -94,4 +95,42 @@
   --dn-droppable-border-color: var(--dn-white-gray-dark);
   --dn-droppable-color: var(--dn-gray-lighter);
 
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--dn-scrollbar-color);
+    border-radius: 0;
+    transition: all 0.25s ease-in-out;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--dn-scrollbar-hover-color);
+  }
+
+  color: var(--dn-gray-dark);
+  font-size: 14px;
+  line-height: 1.5715;
+
+  *[contenteditable='true'] {
+    min-width: 1px;
+    min-height: 14px;
+    cursor: text !important;
+    outline: none !important;
+  }
+
+  *[data-content-editable]:not(*[contenteditable='true']) {
+    &:empty::before {
+      content: 'Please Input';
+      display: block;
+      opacity: 0.6;
+    }
+
+    &:hover {
+      cursor: text !important;
+      opacity: 0.8;
+    }
+  }
 }

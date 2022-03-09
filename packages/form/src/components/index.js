@@ -14,5 +14,6 @@ export * from './join-expression'
 export * from './join-expression'
 export * from './example-file'
 export * from './form-item'
+export * from './slider'
 
 export * from '@formily/element'

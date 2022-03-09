@@ -14,30 +14,31 @@ export const CSSStyle = {
     'style.display': {
       'x-component': 'DisplayStyleSetter'
     },
-    'style.background': {
-      'x-component': 'BackgroundStyleSetter'
-    },
-    'style.boxShadow': {
-      'x-component': 'BoxShadowStyleSetter'
-    },
-    'style.font': {
-      'x-component': 'FontStyleSetter'
-    },
-    'style.margin': {
-      'x-component': 'BoxStyleSetter'
-    },
-    'style.padding': {
-      'x-component': 'BoxStyleSetter'
-    },
-    'style.borderRadius': {
-      'x-component': 'BorderRadiusStyleSetter'
-    },
-    'style.border': {
-      'x-component': 'BorderStyleSetter'
-    },
+    // 'style.background': {
+    //   'x-component': 'BackgroundStyleSetter'
+    // },
+    // 'style.boxShadow': {
+    //   'x-component': 'BoxShadowStyleSetter'
+    // },
+    // 'style.font': {
+    //   'x-component': 'FontStyleSetter'
+    // },
+    // 'style.margin': {
+    //   'x-component': 'BoxStyleSetter'
+    // },
+    // 'style.padding': {
+    //   'x-component': 'BoxStyleSetter'
+    // },
+    // 'style.borderRadius': {
+    //   'x-component': 'BorderRadiusStyleSetter'
+    // },
+    // 'style.border': {
+    //   'x-component': 'BorderStyleSetter'
+    // },
     'style.opacity': {
       'x-decorator': 'FormItem',
       'x-component': 'Slider',
+      default: 1,
       'x-component-props': {
         defaultValue: 1,
         min: 0,

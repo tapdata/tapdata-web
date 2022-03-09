@@ -1,26 +1,27 @@
-$namespace: 'el';
+@import "../../../variables";
 
-.dn-designable-form {
-  .#{$namespace}-input,
-  .#{$namespace}-input-number,
-  .#{$namespace}-input-affix-wrapper,
-  .#{$namespace}-cascader-picker,
-  .#{$namespace}-picker-input,
-  .#{$namespace}-picker,
-  .#{$namespace}-cascader-picker-label,
-  .#{$namespace}-slider,
-  .#{$namespace}-checkbox,
-  .#{$namespace}-rate,
-  .#{$namespace}-switch,
-  .#{$namespace}-radio,
-  .#{$namespace}-radio-wrapper,
-  .#{$namespace}-checkbox-group,
-  .#{$namespace}-checkbox-wrapper,
-  .#{$namespace}-radio-group,
-  .#{$namespace}-upload,
-  .#{$namespace}-transfer,
-  .#{$namespace}-select,
-  .#{$namespace}-select-selector {
+.#{$prefix-cls}-designable-form {
+  .el-input,
+  .el-textarea,
+  .el-input-number,
+  .el-input-affix-wrapper,
+  .el-cascader-picker,
+  .el-picker-input,
+  .el-picker,
+  .el-cascader-picker-label,
+  .el-slider,
+  .el-checkbox,
+  .el-rate,
+  .el-switch,
+  .el-radio,
+  .el-radio-wrapper,
+  .el-checkbox-group,
+  .el-checkbox-wrapper,
+  .el-radio-group,
+  .el-upload,
+  .el-transfer,
+  .el-select,
+  .el-select-selector {
     pointer-events: none !important;
 
     input {

@@ -366,6 +366,7 @@ importers:
       '@formily/reactive': ^2.0.11
       '@formily/reactive-vue': ^2.0.11
       '@formily/shared': ^2.0.9
+      resize-observer-polyfill: ^1.5.1
     dependencies:
       '@daas/form': link:../form
       '@daas/shared': link:../shared
@@ -374,6 +375,7 @@ importers:
       '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.11
       '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.0.11_vue@2.6.14
       '@formily/shared': registry.npmmirror.com/@formily/shared/2.0.11
+      resize-observer-polyfill: registry.npmmirror.com/resize-observer-polyfill/1.5.1
 
   packages/shared:
     specifiers:
@@ -2702,7 +2704,7 @@ packages:
     dependencies:
       '@babel/core': registry.npmmirror.com/@babel/core/7.17.4
       '@vue/babel-preset-app': registry.npmmirror.com/@vue/babel-preset-app/4.5.15_vue@2.6.14
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_sass-loader@10.2.1
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.15
       babel-loader: registry.npmmirror.com/babel-loader/8.2.3_6fb82b936942eb9f11ea0fd3e177918b
       cache-loader: registry.npmmirror.com/cache-loader/4.1.0_webpack@4.46.0
@@ -2724,7 +2726,7 @@ packages:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
       eslint: '>= 1.6.0 < 7.0.0'
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_sass-loader@10.2.1
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.15
       eslint: registry.npmmirror.com/eslint/6.8.0
       eslint-loader: registry.npmmirror.com/eslint-loader/2.2.1_eslint@6.8.0+webpack@4.46.0
@@ -2745,7 +2747,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_sass-loader@10.2.1
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.15
     dev: true
 
@@ -2757,7 +2759,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_sass-loader@10.2.1
     dev: true
 
   registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164:
@@ -6924,6 +6926,22 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
+    dev: false
+
+  registry.npmmirror.com/follow-redirects/1.14.8_debug@4.3.3:
+    resolution: {integrity: sha512-1x0S9UVJHsQprFcEC/qnNzBLcIxsjAV905f/UkQxbclCsoTWlacCNOpQa/anodLl2uaEKFhfWOvM2Qg77+15zA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.14.8.tgz}
+    id: registry.npmmirror.com/follow-redirects/1.14.8
+    name: follow-redirects
+    version: 1.14.8
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dependencies:
+      debug: registry.npmmirror.com/debug/4.3.3
+    dev: true
 
   registry.npmmirror.com/for-in/1.0.2:
     resolution: {integrity: sha512-7EwmXrOjyL+ChxMhmG5lnW9MPt1aIeZEwKhQzoBUdTV0N3zuwWDZYVJatDvZ2OyzPUvdIAZDsCetk3coyMfcnQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/for-in/-/for-in-1.0.2.tgz}
@@ -7786,7 +7804,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: registry.npmmirror.com/eventemitter3/4.0.7
-      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8
+      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8_debug@4.3.3
       requires-port: registry.npmmirror.com/requires-port/1.0.0
     transitivePeerDependencies:
       - debug

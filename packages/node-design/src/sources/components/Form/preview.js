@@ -18,8 +18,6 @@ export const Form = observer(
         })
       )
 
-      console.log('Enter Form !!!', props, attrs)
-
       return () => (
         <BaseForm {...{ attrs: { ...attrs } }} class={prefix} form={form}>
           {slots.default?.()}

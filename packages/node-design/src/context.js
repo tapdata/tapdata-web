@@ -11,3 +11,5 @@ export const TreeNodeContext = createContext(null)
 export const WorkspaceContext = createContext(null)
 
 export const SettingsFormContext = createContext(null)
+
+export const IconContext = createContext(null)

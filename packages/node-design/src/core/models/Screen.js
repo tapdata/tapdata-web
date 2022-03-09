@@ -1,5 +1,11 @@
 import { action, define, observable } from '@formily/reactive'
 
+export const ScreenType = {
+  PC: 'PC',
+  Responsive: 'Responsive',
+  Mobile: 'Mobile'
+}
+
 export class Screen {
   type
   scale = 1
