@@ -76,8 +76,8 @@
           <template v-for="menu in menus">
             <ElSubmenu v-if="menu.children && !menu.hidden" :key="menu.label" :index="menu.name">
               <template slot="title">
-                <VIcon class="menu-icon mr-4">{{ menu.icon }}</VIcon>
-                <span slot="title">{{ menu.label }}</span>
+                <VIcon class="menu-icon">{{ menu.icon }}</VIcon>
+                <span slot="title" class="ml-4">{{ menu.label }}</span>
               </template>
               <template v-for="cMenu in menu.children">
                 <ElMenuItem v-if="!cMenu.hidden" :key="cMenu.label" :index="cMenu.name">
@@ -86,8 +86,8 @@
               </template>
             </ElSubmenu>
             <ElMenuItem v-else-if="!menu.hidden" :key="menu.label" :index="menu.name">
-              <VIcon class="menu-icon mr-4">{{ menu.icon }}</VIcon>
-              <span slot="title">{{ menu.label }}</span>
+              <VIcon class="menu-icon">{{ menu.icon }}</VIcon>
+              <span slot="title" class="ml-4">{{ menu.label }}</span>
             </ElMenuItem>
           </template>
         </ElMenu>
@@ -208,6 +208,11 @@
       }
       &.el-menu--collapse {
         width: 64px;
+        .el-submenu__title {
+          span {
+            display: none;
+          }
+        }
       }
       .el-menu-item,
       .el-submenu__title {

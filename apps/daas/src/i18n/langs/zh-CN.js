@@ -881,6 +881,7 @@ export default {
   task_info_operator_content: '操作内容',
   task_info_connection_test: '测试',
 
+  task_stetting_name: '任务名称',
   task_setting_sync_type: '同步类型',
   task_setting_initial_sync: '全量同步',
   task_setting_cdc: '增量同步',
@@ -910,6 +911,9 @@ export default {
   task_setting_automatic_ddl: '自动DDL',
   task_setting_automatic_ddl_tip: '自动DDL操作支持字段和索引的重命名以及新增、删除、更新等操作',
   task_setting_automatic_index: '自动创建索引',
+  task_setting_share_cdc_mode: '共享增量读取的模式',
+  task_setting_streaming: '流式读取',
+  task_setting_polling: '轮询读取',
 
   task_name: '任务名称',
   task_status: '任务状态',
@@ -1332,5 +1336,21 @@ export default {
   setting_share_cdc_persistence_mongodb_collection: '存储MongoDB的表名',
   setting_share_cdc_persistence_mongodb_collection_doc: '该项配置只有模式选择MongoDB时生效，输入存储的表名',
   setting_share_cdc_persistence_rocksdb_path: 'RocksDB存储的本地路径',
-  setting_share_cdc_persistence_rocksdb_path_doc: '该项配置只有模式选择RocksDB时生效，RocksDB存储的本地路径'
+  setting_share_cdc_persistence_rocksdb_path_doc: '该项配置只有模式选择RocksDB时生效，RocksDB存储的本地路径',
+
+  process_name: '名称/worker 类型',
+  process_worker_ip: '地址',
+  process_version: '版本',
+  process_online: '在线',
+  process_offline: '离线',
+  process_all: '所有',
+  process_state: '状态',
+  process_job_ids: '明细',
+  process_running_thread: '运行中的线程',
+  process_total_thread: '线程数量',
+  process_worker_type: 'Worker 类型',
+  process_ping_time: 'Ping 时间',
+  process_start_time: '开始时间',
+  process_process_id: '进程 ID',
+  process_process_state: '工作进程状态'
 }

@@ -13,6 +13,12 @@
       </div>
       <el-table-column :label="$t('api_asnalysis_header_api')" width="260">
         <template slot-scope="scope">
+          <!-- <div class="api-analysis-table-apiname">
+            <span class="status">{{ scope.row.api_status }}</span>
+            <span :class="scope.row.api_method">{{ scope.row.api_method }}</span>
+            <span>{{ scope.row.api_path }}</span>
+          </div> -->
+
           <div
             :title="scope.row.api_path"
             class="api-analysis-table-apiname"
@@ -149,6 +155,8 @@ export default {
           }))
         }
         res.data = listData
+        // res.data = listData.sort((t1, t2) => (t1.api_path > t2.api_path ? 1 : t1.api_path === t2.api_path ? 0 : -1))
+        console.log('#########', res.data)
 
         return {
           total: res.data?.total || 0,
@@ -161,7 +169,7 @@ export default {
       if (p == 'T O T A L :') {
         return (p = this.$t('api_asnalysis_total'))
       } else {
-        return `<span class="${s}"></span> ${m}<br>${p}`
+        return `<span class="${s} status"></span> <span class="${m?.toLowerCase()} method">${m}</span>${p}`
       }
     },
     // 数字处理
@@ -354,23 +362,50 @@ export default {
     .btn + .btn {
       margin-left: 5px;
     }
-  }
-}
-</style>
-<style lang="scss">
-.api-analysis-wrap {
-  .api-analysis-table-apiname {
-    span {
-      display: inline-block;
-      height: 10px;
-      width: 10px;
-      border-radius: 50%;
-    }
-    .pending {
-      background-color: red;
-    }
-    .active {
-      background-color: green;
+    ::v-deep {
+      .api-analysis-table-apiname {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        // span {
+        //   height: 6px;
+        //   width: 6px;
+        //   border-radius: 50%;
+        //   background-color: #fff;
+        // }
+        .status {
+          height: 6px;
+          width: 6px;
+          border-radius: 50%;
+        }
+        .method {
+          min-width: 62px;
+          margin: 0 10px;
+          padding: 2px 0;
+          border-radius: 2px;
+          color: #fff;
+          text-align: center;
+          white-space: nowrap;
+        }
+        .post {
+          background-color: #178061;
+        }
+        .get {
+          background-color: #09819c;
+        }
+        .patch {
+          background-color: #f2994b;
+        }
+        .delete {
+          background-color: #db5050;
+        }
+        .pending {
+          background-color: red;
+        }
+        .active {
+          background-color: green;
+        }
+      }
     }
   }
 }

@@ -59,7 +59,13 @@
           </el-dropdown>
         </span>
       </el-tree>
-      <el-button v-else type="text" v-readonlybtn="authority" @click="showDialog()" class="create">
+      <el-button
+        v-if="treeData.length === 0 && isExpand"
+        type="text"
+        v-readonlybtn="authority"
+        @click="showDialog()"
+        class="create"
+      >
         {{ types[0] === 'user' ? $t('classification.creatUserGroup') : $t('classification.creatDataClassification') }}
       </el-button>
     </div>
@@ -73,9 +79,9 @@
         show-word-limit
       ></el-input>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="hideDialog()">{{ $t('message.cancel') }}</el-button>
+        <el-button size="mini" @click="hideDialog()">{{ $t('button_cancel') }}</el-button>
         <el-button size="mini" type="primary" @click="dialogSubmit()">
-          {{ $t('message.confirm') }}
+          {{ $t('button_confirm') }}
         </el-button>
       </span>
     </el-dialog>

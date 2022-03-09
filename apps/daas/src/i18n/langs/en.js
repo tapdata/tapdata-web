@@ -301,9 +301,11 @@ export default {
   modules_allarelease: 'Batch release',
   modules_releasefb: 'Are you sure you want to release the following APIs in batches?',
   modules_releasecancel: 'Are you sure you want to cancel the following APIs in batches?',
-  modules_apiServerStatus: 'API Service Status',
+  modules_api_server_status: 'API Service Status',
   modules_sure: 'Are you sure you want',
   modules_cancel_failed: 'Unpublished API failed',
+  modules_type: 'type',
+  modules_name_placeholder: 'Please enter the table name/database name',
 
   module_form_connection: 'Database',
   module_form_tablename: 'table name',
@@ -1387,5 +1389,21 @@ export default {
     'This configuration takes effect only when MongoDB is selected as the mode, enter the stored collection name',
   setting_share_cdc_persistence_rocksdb_path: 'The local path to the RocksDB store',
   setting_share_cdc_persistence_rocksdb_path_doc:
-    'This configuration takes effect only when RocksDB is selected as the mode, and the local path stored by RocksDB'
+    'This configuration takes effect only when RocksDB is selected as the mode, and the local path stored by RocksDB',
+
+  process_name: 'name/worker type',
+  process_worker_ip: 'Address',
+  process_version: 'version',
+  process_online: 'Online',
+  process_offline: 'Offline',
+  process_all: 'All',
+  process_state: 'State',
+  process_job_ids: 'Details',
+  process_running_thread: 'Running thread',
+  process_total_thread: 'Number of threads',
+  process_worker_type: 'Worker type',
+  process_ping_time: 'Ping time',
+  process_start_time: 'Start time',
+  process_process_id: 'Process ID',
+  process_process_state: 'Worker process state'
 }
