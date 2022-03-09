@@ -68,4 +68,7 @@ export default class TaskAPI extends PublicAPI {
   save(params) {
     return axios.patch(this.url + '/confirm', params)
   }
+  checkName(name) {
+    return axios.post(this.url + '/checkName?name=' + name)
+  }
 }

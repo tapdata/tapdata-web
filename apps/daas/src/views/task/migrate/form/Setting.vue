@@ -103,6 +103,7 @@ export default {
         mongodb: {
           cdcEngineFilter: {
             title: '启用引擎过滤', //仅MongoDB作为源
+            default: false,
             type: 'boolean',
             'x-decorator': 'FormItem',
             'x-component': 'Switch',
@@ -170,30 +171,13 @@ export default {
                 required: 'true',
                 'x-decorator': 'FormItem',
                 'x-component': 'Input'
-                // 'x-validator': {
-                //   triggerType: 'onBlur',
-                //   validator: `{{(value) => {
-                //     return new Promise((resolve) => {
-                //       setTimeout(() => {
-                //         if (!value) {
-                //           resolve('')
-                //         }
-                //         if (value === '123') {
-                //           resolve('')
-                //         } else {
-                //           resolve('错误❎')
-                //         }
-                //       }, 1000)
-                //     })
-                //   }}}`
-                // }
               },
               sync_type: {
                 title: '同步类型',
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Radio.Group',
-                // default: 'initial_sync+cdc',
+                default: 'initial_sync+cdc',
                 enum: [
                   {
                     label: '全量+增量',
@@ -228,8 +212,8 @@ export default {
                 title: '自动创建索引',
                 type: 'boolean',
                 'x-decorator': 'FormItem',
-                'x-component': 'Switch'
-                // default: true
+                'x-component': 'Switch',
+                default: true
               },
               automaticallyCreateTables: {
                 title: '自动建表',
@@ -245,6 +229,7 @@ export default {
               },
               isSerialMode: {
                 title: '增量数据处理机制',
+                default: false,
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
@@ -284,8 +269,8 @@ export default {
                     label: this.$t('dataFlow.setting.compel'),
                     value: 'compel'
                   }
-                ]
-                // default: 'intellect'
+                ],
+                default: 'intellect'
               },
               readShareLogMode: {
                 title: '共享增量读取的模式',
@@ -301,8 +286,8 @@ export default {
                     label: '轮询读取',
                     value: 'POLLING'
                   }
-                ]
-                // default: 'STREAMING'
+                ],
+                default: 'STREAMING'
               },
               increment: {
                 title: '自动创建索引',
@@ -376,15 +361,15 @@ export default {
                 'x-component-props': {
                   min: 1,
                   max: 100
-                }
-                // default: 1
+                },
+                default: 1
               },
               cdcConcurrency: {
                 title: '增量同步并发写入',
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch',
-                // default: false,
+                default: false,
                 'x-reactions': {
                   dependencies: ['sync_type'],
                   fulfill: {
@@ -410,8 +395,8 @@ export default {
                       visible: '{{$deps[0] !== "cdc" || ($deps[0] === "cdc" && $deps[1])}}'
                     }
                   }
-                }
-                // default: 8
+                },
+                default: 1
               },
               syncPoints: {
                 title: '增量采集开始时刻',
@@ -448,6 +433,7 @@ export default {
                             'x-component-props': {
                               placeholder: '请选择'
                             },
+                            default: 'localTZ',
                             enum: [
                               {
                                 label: this.$t('dataFlow.SyncInfo.localTZType'),
@@ -489,6 +475,7 @@ export default {
               },
               lagTime: {
                 title: '增量滞后判断时间设置(秒)',
+                default: false,
                 type: 'void',
                 'x-decorator': 'FormItem',
                 'x-component': 'Space',

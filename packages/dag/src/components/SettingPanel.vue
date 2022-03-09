@@ -37,7 +37,7 @@
                 </ElCol>
               </ElRow>
               <ElRow class="pb-5">
-                <ElCol :span="12">
+                <ElCol :span="12" v-if="settings.type === 'initial_sync'">
                   <ElFormItem label="任务调度" required="">
                     <ElSwitch v-model="settings.isSchedule"></ElSwitch>
                   </ElFormItem>

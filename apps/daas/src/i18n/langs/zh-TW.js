@@ -291,9 +291,11 @@ export default {
   modules_allarelease: '批量發布',
   modules_releasefb: '你確定要批量發布以下API嗎?',
   modules_releasecancel: '你確定要批量取消以下API嗎?',
-  modules_apiServerStatus: 'API 服務狀態',
+  modules_api_server_status: 'API 服務狀態',
   modules_sure: '你確定要',
   modules_cancel_failed: '取消發布API失敗',
+  modules_type: '類型',
+  modules_name_placeholder: '請輸入表名/數據庫名',
 
   module_form_connection: '數據庫',
   module_form_tablename: '表名稱',
@@ -1314,5 +1316,21 @@ export default {
   setting_share_cdc_persistence_mongodb_collection: '存儲MongoDB的表名',
   setting_share_cdc_persistence_mongodb_collection_doc: '該項配置只有模式選擇MongoDB時生效，輸入存儲的表名',
   setting_share_cdc_persistence_rocksdb_path: 'RocksDB存儲的本地路徑',
-  setting_share_cdc_persistence_rocksdb_path_doc: '該項配置只有模式選擇RocksDB時生效，RocksDB存儲的本地路徑'
+  setting_share_cdc_persistence_rocksdb_path_doc: '該項配置只有模式選擇RocksDB時生效，RocksDB存儲的本地路徑',
+
+  process_name: '名稱/worker 類型',
+  process_worker_ip: '地址',
+  process_version: '版本',
+  process_online: '在線',
+  process_offline: 'offline',
+  process_all: '所有',
+  process_state: '狀態',
+  process_job_ids: '明細',
+  process_running_thread: '運行中的線程',
+  process_total_thread: '線程數量',
+  process_worker_type: 'Worker 類型',
+  process_ping_time: 'Ping 時間',
+  process_start_time: '開始時間',
+  process_process_id: '進程 ID',
+  process_process_state: '工作進程狀態'
 }
