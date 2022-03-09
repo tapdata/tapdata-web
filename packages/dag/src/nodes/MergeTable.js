@@ -12,7 +12,7 @@ export class MergeTable extends NodeType {
   }
 
   attr = {
-    // maxOutputs: 1 // 最大输入个数
+    maxOutputs: 1 // 最大输出个数
   }
 
   group = 'processor'
@@ -220,5 +220,9 @@ export class MergeTable extends NodeType {
         }
       }
     }
+  }
+
+  allowTarget(target) {
+    return target.type === 'table' && target.databaseType === 'mongodb'
   }
 }
