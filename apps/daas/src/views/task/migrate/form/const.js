@@ -52,7 +52,7 @@ export const TRANSFER_MODEL = {
   selectSourceArr: [], //可用区,
   topicData: [],
   queueData: [],
-  showBtn: true,
+  showBtn: false,
   isFirst: false,
   nodeId: '',
   mode: 'all',

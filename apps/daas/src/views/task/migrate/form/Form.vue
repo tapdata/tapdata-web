@@ -58,6 +58,7 @@
                   :mqTransferFlag="mqTransferFlag"
                   :isTwoWay="true"
                   :getTask="daft"
+                  :saveTask="createTask"
                 ></Transfer>
               </div>
             </div>
@@ -258,11 +259,20 @@ export default {
           this.form
             .validate()
             .then(() => {
-              //数据: 第三步请求schema用到sourceId
-              this.sourceId = this.dataSourceData.source_connectionId
-              this.activeStep++
-              this.transferData.automaticallyCreateTables = this.settingData.automaticallyCreateTables
-              this.createTask()
+              //检查任务名是否重复
+              this.$api('Task')
+                .checkName(this.settingData.name)
+                .then(res => {
+                  let result = res?.data?.data
+                  if (result) {
+                    this.$message.error('表单检验不通过，任务名称重复！')
+                    return
+                  }
+                  //数据: 第三步请求schema用到sourceId
+                  this.sourceId = this.dataSourceData.source_connectionId
+                  this.activeStep++
+                  this.transferData.automaticallyCreateTables = this.settingData.automaticallyCreateTables
+                })
             })
             .catch(() => {
               this.$message.error('表单检验不通过，任务名称必填')
@@ -427,6 +437,7 @@ export default {
       promise.then(res => {
         this.id = res?.data?.id
       })
+      return promise
     },
     save() {
       let verify = this.checkTransfer()
