@@ -102,13 +102,10 @@ export default {
             }
           }
         }
-        let result = Object.assign({}, this.$refs.fieldMappingDom.returnForm(), {
-          tableOperations: []
-        })
+        let result = this.$refs.fieldMappingDom.returnForm()
         result.tableOperations.forEach((el, i) => {
-          if (rollbackTable === 'AUTO_CUSTOMER__123') {
-            result.tableOperations = []
-            el.tableOperations.splice(i, 1)
+          if (el.tableName === rollbackTable) {
+            result.tableOperations.splice(i, 1)
           }
         })
         this.updateAutoTransform('', result)

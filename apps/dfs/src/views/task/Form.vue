@@ -1049,6 +1049,7 @@ export default {
         this.updateTransfer = true
         this.transferData.table_prefix = returnData.changNameData?.table_prefix
         this.transferData.table_suffix = returnData.changNameData?.table_suffix
+        this.transferData.tableOperations = returnData.changNameData?.tableOperations
         this.transferData.tableNameTransform = returnData.changNameData?.tableNameTransform
         this.transferData.fieldsNameTransform = returnData.changNameData?.fieldsNameTransform
         let deleteLen = returnData.target.filter(v => !v.is_deleted)
