@@ -43,7 +43,7 @@ export class MergeTable extends NodeType {
                 }
               },
               properties: {
-                sourceName: {
+                tableName: {
                   type: 'string',
                   title: '节点名称',
                   'x-decorator': 'FormItem',
