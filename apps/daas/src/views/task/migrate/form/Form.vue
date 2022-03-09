@@ -174,17 +174,21 @@ export default {
               fieldsNameTransform: targetNodeMapping.fieldsNameTransform,
               batchOperationList: targetNodeMapping.batchOperationList,
               fieldProcess: sourceNodeMapping.fieldProcess,
-              selectSourceArr: targetNodeMapping.syncObjects[0] ? targetNodeMapping.syncObjects[0].objectNames : [],
+              selectSourceArr: targetNodeMapping?.syncObjects?.[0]
+                ? targetNodeMapping?.syncObjects?.[0].objectNames
+                : [],
               topicData:
-                targetNodeMapping.syncObjects[0]?.type === 'topic'
-                  ? targetNodeMapping.syncObjects[0].objectNames
-                  : targetNodeMapping.syncObjects[1]?.objectNames || [],
+                targetNodeMapping?.syncObjects?.[0]?.type === 'topic'
+                  ? targetNodeMapping?.syncObjects?.[0].objectNames
+                  : targetNodeMapping?.syncObjects?.[1]?.objectNames || [],
               queueData:
-                targetNodeMapping.syncObjects[0]?.type === 'queue'
-                  ? targetNodeMapping.syncObjects[0].objectNames
-                  : targetNodeMapping.syncObjects[1]?.objectNames || []
+                targetNodeMapping?.syncObjects?.[0]?.type === 'queue'
+                  ? targetNodeMapping?.syncObjects?.[0].objectNames
+                  : targetNodeMapping?.syncObjects?.[1]?.objectNames || []
             }
+
             this.transferData = Object.assign({}, TRANSFER_MODEL, this.transferData)
+
             //编辑时不被覆盖
             this.tableNameTransform = targetNodeMapping.tableNameTransform
             this.fieldsNameTransform = targetNodeMapping.fieldsNameTransform

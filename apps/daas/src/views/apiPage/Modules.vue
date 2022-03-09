@@ -203,7 +203,6 @@ export default {
     return {
       searchParams: {
         keyword: '',
-        isFuzzy: true,
         status: 'all'
       },
       filterItems: [],
@@ -244,9 +243,6 @@ export default {
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-    let cache = this.table.getCache()
-    cache.isFuzzy = cache.isFuzzy === true
-    this.searchParams = cache
   },
   computed: {
     table() {
@@ -265,7 +261,6 @@ export default {
       if (name === 'reset') {
         this.searchParams = {
           keyword: '',
-          isFuzzy: true,
           status: ''
         }
       }
@@ -274,7 +269,7 @@ export default {
     // 获取数据
     getData({ page, tags }) {
       let { current, size } = page
-      let { isFuzzy, keyword, status } = this.searchParams
+      let { keyword, status } = this.searchParams
       let where = {}
       let fields = {
         apiVersion: true,
@@ -316,7 +311,6 @@ export default {
         })
         .then(res => {
           this.table.setCache({
-            isFuzzy,
             keyword,
             status
           })

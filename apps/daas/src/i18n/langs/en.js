@@ -389,6 +389,7 @@ export default {
   api_asnalysis_header_avg_res_timespan: 'Average response time (milliseconds)',
   api_asnalysis_total: 'Statistics',
   api_asnalysis_name: 'Name',
+  api_asnalysis_placeholder: 'Request method/path',
 
   // api server api浏览
   api_server_name: 'Name',
