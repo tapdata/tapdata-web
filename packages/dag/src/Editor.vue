@@ -1485,7 +1485,7 @@ export default {
           id: uuid(),
           name: item.name,
           type: item.type,
-          attrs: { position }
+          attrs: { position, pdkType: item.attr?.pdkType, pdkHash: item.attr?.pdkHash }
         },
         ins.getExtraAttr()
       )

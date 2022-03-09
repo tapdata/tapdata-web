@@ -65,7 +65,7 @@
                   :class="{ active: activeConnection.id === db.id }"
                   @click="handleSelectDB(db)"
                 >
-                  <ElImage class="flex-shrink-0" :src="genIconSrc(db)"></ElImage>
+                  <ElImage class="flex-shrink-0" :src="getIcon(db)"></ElImage>
                   <div class="db-item-txt text-truncate ml-4">{{ db.name }}</div>
                 </div>
                 <EmptyItem v-if="!dbList.length"></EmptyItem>
@@ -491,7 +491,9 @@ export default {
           status: 1,
           accessNodeType: 1,
           accessNodeProcessId: 1,
-          accessNodeProcessIdList: 1
+          accessNodeProcessIdList: 1,
+          pdkType: 1,
+          pdkHash: 1
         },
         order: ['status DESC', 'name ASC']
       }
@@ -529,7 +531,9 @@ export default {
           databaseType: item.database_type,
           connectionId: item.id,
           connectionType: item.connection_type,
-          accessNodeProcessId: item.accessNodeProcessId
+          accessNodeProcessId: item.accessNodeProcessId,
+          pdkType: item.pdkType,
+          pdkHash: item.pdkHash
         }
       }))
 
@@ -591,6 +595,7 @@ export default {
      */
     async loadDatabaseTable(loadMore) {
       const connection = this.activeConnection
+      const { pdkType, pdkHash } = connection?.attr || {}
       this.cancelSource?.cancel()
       this.cancelSource = CancelToken.source()
 
@@ -625,7 +630,9 @@ export default {
           databaseType: connection.databaseType,
           connectionId: connection.id,
           connectionType: connection.attr.connectionType,
-          accessNodeProcessId: connection.attr.accessNodeProcessId
+          accessNodeProcessId: connection.attr.accessNodeProcessId,
+          pdkType,
+          pdkHash
           // accessNodeProcessId: '61935c9684103d36ce972daa-1fkjq3ar4'
           // accessNodeProcessId: 'f9e0e041-a72f-4e3f-87ff-0354eed0af92'
         }
@@ -658,10 +665,6 @@ export default {
     saveConnection() {
       this.connectionFormDialog = false
       this.init()
-    },
-
-    genIconSrc(item) {
-      return require(`web-core/assets/icons/node/${item.databaseType}.svg`)
     },
 
     getNodeHtml(n) {
@@ -755,6 +758,7 @@ export default {
 
     handleSaveTable(name) {
       const connection = this.activeConnection
+      const { pdkType, pdkHash } = connection?.attr || {}
 
       this.$emit('add-table-as-node', {
         name,
@@ -765,7 +769,9 @@ export default {
         attr: {
           tableName: name,
           databaseType: connection.databaseType,
-          connectionId: connection.id
+          connectionId: connection.id,
+          pdkType,
+          pdkHash
         }
       })
     },

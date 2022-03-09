@@ -43,7 +43,7 @@
         <template slot-scope="scope">
           <div class="connection-name">
             <div class="database-img">
-              <img :src="$util.getConnectionTypeDialogImg(scope.row.database_type)" />
+              <img :src="getConnectionIcon(scope.row)" alt="" />
             </div>
             <div class="database-text">
               <ElLink type="primary" style="display: block; line-height: 20px" @click.stop="preview(scope.row)">
@@ -152,11 +152,12 @@ import SchemaProgress from 'web-core/components/SchemaProgress'
 import TablePage from '@/components/TablePage'
 import VIcon from '@/components/VIcon'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
-import Preview from './Preview.vue'
+import Preview from './Preview'
 import { defaultModel, verify, desensitization } from './util'
 import Test from './Test'
 import FilterBar from '@/components/filter-bar'
 import { TYPEMAP } from 'web-core/const'
+import { getConnectionIcon } from './util'
 
 let timeout = null
 
@@ -403,15 +404,20 @@ export default {
       if (item.search_databaseType) {
         type = item.search_databaseType
       }
+      let query = {
+        databaseType: type
+      }
+      if (item.pdkType) {
+        query.pdkType = item.pdkType
+        query.pdkHash = item.pdkHash
+      }
       this.$router.push({
         name: 'connectionsEdit',
         params: {
           id: id,
           databaseType: type
         },
-        query: {
-          databaseType: type
-        }
+        query
       })
     },
     copy(data) {
@@ -562,13 +568,18 @@ export default {
     handleDialogDatabaseTypeVisible() {
       this.dialogDatabaseTypeVisible = false
     },
-    handleDatabaseType(type) {
+    handleDatabaseType(type, item) {
       this.handleDialogDatabaseTypeVisible()
+      let query = {
+        databaseType: type
+      }
+      if (item) {
+        query.pdkType = item.pdkType
+        query.pdkHash = item.pdkHash
+      }
       this.$router.push({
         name: 'connectionsCreate',
-        query: {
-          databaseType: type
-        }
+        query
       })
     },
 
@@ -659,6 +670,9 @@ export default {
           type: 'input'
         }
       ]
+    },
+    getConnectionIcon() {
+      return getConnectionIcon(...arguments)
     }
   }
 }

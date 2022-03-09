@@ -1,3 +1,6 @@
+import Cookie from '@tap/shared/src/cookie'
+import { getConnectionTypeDialogImg } from 'web-core/util'
+
 /**
  * @author lg<lirufei0808@gmail.com>
  * @date 2020/12/9
@@ -589,4 +592,12 @@ export const CONFIG_MODEL = {
       ]
     }
   ]
+}
+// 数据源图标
+export const getConnectionIcon = row => {
+  const token = Cookie.get('token')
+  if (row.pdkType) {
+    return `/api/pdk/icon?access_token=${token}&pdkHash=${row.pdkHash}`
+  }
+  return getConnectionTypeDialogImg(row.database_type || row.databaseType)
 }

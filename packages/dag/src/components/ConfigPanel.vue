@@ -36,6 +36,9 @@
         <!--<ElTabPane label="数据详情">
           <DataPane></DataPane>
         </ElTabPane>-->
+        <ElTabPane v-if="isPdk" label="pdk表单">
+          <PdkPane :activeNode="activeNode"></PdkPane>
+        </ElTabPane>
       </ElTabs>
     </div>
   </section>
@@ -49,9 +52,11 @@ import FormPanel from './FormPanel'
 import SettingPanel from './SettingPanel'
 // import DataPane from './DataPane'
 import MetaPane from './MetaPane'
+import PdkPane from './PdkPane'
 import VIcon from 'web-core/components/VIcon'
 import { NODE_TYPE_ICON } from '../constants'
 import focusSelect from 'web-core/directives/focusSelect'
+import util from '../mixins/util'
 
 export default {
   name: 'ConfigPanel',
@@ -61,22 +66,25 @@ export default {
     focusSelect
   },
 
+  mixins: [util],
+
   data() {
     return {
       currentTab: '0'
     }
   },
 
-  components: { VIcon, MetaPane, /*DataPane,*/ FormPanel, SettingPanel },
+  components: { VIcon, MetaPane, DataPane, FormPanel, SettingPanel, PdkPane },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
 
     icon() {
-      const node = this.activeNode
-      if (!node) return null
-      const icon = node.type === 'table' ? node.databaseType : NODE_TYPE_ICON[node.type]
-      return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
+      return this.getIcon(this.activeNode)
+    },
+
+    isPdk() {
+      return this.activeNode?.attrs?.pdkType === 'pdk'
     }
   },
 

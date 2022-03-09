@@ -43,7 +43,7 @@
     >
       <el-table-column prop="show_msg" :label="$t('dataForm.test.items')">
         <template slot-scope="scope">
-          <span>{{ $t(`dataForm.form.response_body.${scope.row.show_msg}`) }}</span>
+          <span>{{ isPdk ? scope.row.show_msg : $t(`dataForm.form.response_body.${scope.row.show_msg}`) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="status" :label="$t('dataForm.test.result')" width="150">
@@ -132,6 +132,11 @@ export default {
         failed: this.$t('dataForm.test.fail'),
         unTest: this.$t('dataForm.test.unTest')
       }
+    }
+  },
+  computed: {
+    isPdk() {
+      return this.formData?.pdkType === 'pdk'
     }
   },
   mounted() {

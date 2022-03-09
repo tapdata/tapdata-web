@@ -2,16 +2,21 @@
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
       <main class="connection-from-main">
-        <div class="connection-from-title">
+        <div class="connection-from-title" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
           {{
             $route.params.id ? this.$t('connection_form_edit_connection') : this.$t('connection_form_creat_connection')
           }}
         </div>
+        <!-- <header class="header" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
+          {{ $route.params.id ? $t('connection_form_edit_connection') : $t('connection_form_creat_connection') }}
+        </header> -->
+        <!-- <div class="databaseFrom-body">
+          <main class="databaseFrom-main"> -->
         <div class="connection-from-label" v-if="$route.params.id">
           <label class="label">{{ $t('connection_form_data_source') }}: </label>
           <div class="content-box">
             <div class="img-box ml-2">
-              <img :src="$util.getConnectionTypeDialogImg(databaseType)" />
+              <img :src="getConnectionIcon()" alt="" />
             </div>
             <div class="content ml-2">{{ model.name }}</div>
             <div class="addBtn color-primary ml-2" @click="dialogEditNameVisible = true">
@@ -23,9 +28,9 @@
           <label class="label">{{ $t('connection_form_data_source_type') }}:</label>
           <div class="content-box">
             <div class="img-box ml-2">
-              <img :src="$util.getConnectionTypeDialogImg(databaseType)" />
+              <img :src="getConnectionIcon()" alt="" />
             </div>
-            <span class="ml-2">{{ typeMap[databaseType] }}</span>
+            <span class="ml-2">{{ databaseTypeLabel }}</span>
             <el-button class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
               {{ $t('connection_form_change') }}
             </el-button>
@@ -519,7 +524,7 @@
           </div>
         </footer>
       </main>
-      <GitBook></GitBook>
+      <GitBook v-if="!isPdk"></GitBook>
       <!-- </div>
       </main> -->
     </div>
@@ -566,13 +571,15 @@ import Test from './Test'
 import { TYPEMAPCONFIG, defaultModel } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import VIcon from '@/components/VIcon'
+import SchemaToForm from '@/components/SchemaToForm'
 import { checkConnectionName } from '@/utils/util'
 
+const databaseTypesModel = factory('DatabaseTypes')
 const connectionsModel = factory('connections')
 let defaultConfig = []
 export default {
   name: 'DatabaseForm',
-  components: { GitBook, Test, DatabaseTypeDialog, CodeEditor, VIcon },
+  components: { GitBook, Test, DatabaseTypeDialog, CodeEditor, VIcon, SchemaToForm },
   data() {
     let validateExcelHeader = (rule, value, callback) => {
       let start = this.model.excel_header_start
@@ -620,6 +627,7 @@ export default {
       visible: false,
       createStrategyDisabled: false,
       timezones: [],
+      dataTypes: [],
       logSaveList: [1, 2, 3, 4, 5, 6, 7],
       mongodbList: [],
       showSystemConfig: false,
@@ -689,7 +697,25 @@ export default {
       },
       renameRules: {
         rename: [{ validator: validateRename, trigger: 'blur' }]
+      },
+      pdkOptions: {},
+      schemaData: null,
+      pdkFormModel: {}
+    }
+  },
+  computed: {
+    isPdk() {
+      return [this.$route.query.pdkType, this.$store.state.pdkType].includes('pdk')
+    },
+    schemaFormInstance() {
+      return this.$refs.schemaToForm.getForm?.()
+    },
+    databaseTypeLabel() {
+      const { isPdk, databaseType, typeMap } = this
+      if (isPdk) {
+        return databaseType
       }
+      return typeMap[databaseType]
     }
   },
   created() {
@@ -784,6 +810,9 @@ export default {
     this.initTimezones()
     this.checkDataTypeOptions(this.databaseType)
     this.getCluster()
+    if (this.isPdk) {
+      this.getPdkForm()
+    }
   },
   watch: {
     'model.multiTenant'(val) {
@@ -811,12 +840,6 @@ export default {
       if (!this.ecsList || this.ecsList.length === 0) return
       this.handleStrategy()
     }
-    // 'model.accessNodeType'(val) {
-    //   if (val === 'MANUALLY_SPECIFIED_BY_THE_USER') {
-    //     debugger
-    //     this.model.accessNodeProcessId = this.accessNodeList[0].processId
-    //   }
-    // }
   },
   methods: {
     formChange(data) {
@@ -1467,6 +1490,10 @@ export default {
       return platformInfo
     },
     submit() {
+      if (this.isPdk) {
+        this.submitPdk()
+        return
+      }
       this.submitBtnLoading = true
       let flag = true
       this.model.search_databaseType = ''
@@ -1634,9 +1661,85 @@ export default {
         }
       })
     },
+    submitPdk() {
+      this.pdkFormModel = this.$refs.schemaToForm?.getForm?.()
+      this.schemaFormInstance?.validate().then(() => {
+        this.submitBtnLoading = true
+        // 保存数据源
+        let id = this.$route.params?.id
+        let { pdkOptions } = this
+        let formValues = this.$refs.schemaToForm?.getFormValues?.()
+        let { __connection_database_name__ } = formValues
+        delete formValues.__connection_database_name__
+        let params = Object.assign(
+          {
+            name: __connection_database_name__, // 必填，需要渲染
+            connection_type: pdkOptions.connectionType, // 必填 data.connectionType
+            database_type: pdkOptions.type
+          },
+          {
+            status: 'testing',
+            schema: {},
+            retry: 0,
+            nextRetry: null,
+            response_body: {},
+            project: '',
+            submit: true,
+            pdkType: 'pdk'
+          },
+          {
+            config: formValues
+          }
+        )
+        if (id) {
+          params.id = id
+        }
+        if (!params.id) {
+          params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
+        }
+        connectionsModel[params.id ? 'patchId' : 'post'](params)
+          .then(() => {
+            this.$message.success(this.$t('message.saveOK'))
+            if (this.$route.query.step) {
+              this.$router.push({
+                name: 'connections',
+                query: {
+                  step: this.$route.query.step
+                }
+              })
+            } else {
+              this.$router.push({
+                name: 'connections'
+              })
+            }
+          })
+          .catch(err => {
+            if (err && err.response) {
+              if (err.response.msg.indexOf('duplication for names') > -1) {
+                this.$message.error(this.$t('dataForm.error.connectionNameExist'))
+              } else if (err.response.msg.indexOf('duplicate source') > -1) {
+                this.$message.error(this.$t('dataForm.error.duplicateSource'))
+              } else {
+                this.$message.error(err.response.msg)
+              }
+            } else {
+              this.$message.error(this.$t('message.saveFail'))
+            }
+          })
+          .finally(() => {
+            this.submitBtnLoading = false
+          })
+      })
+    },
     //开始测试
     async startTest() {
       this.$root.checkAgent(() => {
+        if (this.isPdk) {
+          this.schemaFormInstance.validate().then(() => {
+            this.startTestPdk()
+          })
+          return
+        }
         this.$refs.form.validate(valid => {
           if (valid) {
             let data = Object.assign({}, this.model)
@@ -1664,6 +1767,21 @@ export default {
           }
         })
       })
+    },
+    startTestPdk() {
+      let formValues = this.$refs.schemaToForm?.getFormValues?.()
+      this.model.name = formValues.__connection_database_name__
+      delete formValues.__connection_database_name__
+      this.model.config = formValues
+      this.model.pdkType = 'pdk'
+      this.dialogTestVisible = true
+      if (this.$route.params.id) {
+        //编辑需要特殊标识 updateSchema = false editTest = true
+        this.$refs.test.start(false, true)
+      } else {
+        delete this.model.id
+        this.$refs.test.start(false)
+      }
     },
     returnTestData(data) {
       if (!data.status || data.status === null) return
@@ -1721,13 +1839,18 @@ export default {
     clickLinkSource() {
       window.open('/#/connection/' + this.connectionObj.id, '_blank')
     },
-    handleDatabaseType(type) {
+    handleDatabaseType(type, item) {
       this.dialogDatabaseTypeVisible = false
+      let query = {
+        databaseType: type
+      }
+      if (item) {
+        query.pdkType = item.pdkType
+        query.pdkHash = item.pdkHash
+      }
       this.$router.push({
         name: 'connectionsCreate',
-        query: {
-          databaseType: type
-        }
+        query
       })
       location.reload()
     },
@@ -1788,6 +1911,57 @@ export default {
             self.model.accessNodeProcessId = items?.[0]?.processId
           }
         })
+    },
+    getPdkForm() {
+      const pdkHash = this.$route.query?.pdkHash
+      this.$api('DatabaseTypes')
+        .pdkHash(pdkHash)
+        .then(data => {
+          this.pdkOptions = data
+          let result = {}
+          if (!this.id && !this.$route.query.id) {
+            // 连接名称是必填项
+            result.__connection_database_name__ = {
+              type: 'string',
+              title: '连接名称',
+              required: true,
+              'x-decorator': 'FormItem',
+              'x-component': 'Input'
+            }
+          }
+          let connection = {}
+          if (data?.properties?.connection) {
+            connection = data.properties.connection
+            let properties = connection.properties
+            for (let key in properties) {
+              result[key] = properties[key]
+            }
+          }
+          connection.properties = result
+          this.schemaData = connection
+          this.getPdkData()
+        })
+    },
+    getPdkData() {
+      this.$api('connections')
+        .get([this.id || this.$route.query.id])
+        .then(res => {
+          this.model = res.data
+          this.schemaFormInstance.setValues(res.data?.config)
+          this.renameData.rename = this.model.name
+        })
+    },
+    getConnectionIcon() {
+      const { databaseType, isPdk } = this
+      let result = {
+        database_type: databaseType
+      }
+      if (isPdk) {
+        const { pdkHash, pdkType } = this.$route.query || {}
+        result.pdkHash = pdkHash
+        result.pdkType = pdkType
+      }
+      return getConnectionIcon(result)
     }
   }
 }

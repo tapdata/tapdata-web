@@ -1,7 +1,7 @@
 <template functional>
   <div v-bind="data.attrs" v-on="listeners" class="df-node" :class="[data.class, data.staticClass]" :style="data.style">
     <div class="df-node-icon">
-      <ElImage :src="$options.getIcon(props.node)"></ElImage>
+      <ElImage :src="$options.getNodeIcon(props.node)"></ElImage>
     </div>
     <slot name="text" v-bind:text="props.node.name">
       <div class="df-node-text">{{ props.node.name }}</div>
@@ -11,16 +11,17 @@
 </template>
 
 <script>
-import { NODE_TYPE_ICON } from '../constants'
+// import { NODE_TYPE_ICON } from '../constants'
+import util from '../mixins/util'
 
 export default {
   name: 'BaseNode',
   props: {
     node: Object
   },
-  getIcon(node) {
-    let icon = node.type === 'table' ? node.databaseType : NODE_TYPE_ICON[node.type]
-    return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
+  mixins: [util],
+  getNodeIcon(node) {
+    return this.methods.getIcon(node)
   }
 }
 </script>

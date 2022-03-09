@@ -83,6 +83,7 @@ export default {
     }
     this.database = allowDataType.filter(type => this.database.includes(type)) || []
     this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || []
+    this.getDatabaseType()
   },
   methods: {
     getImgByType,
@@ -91,8 +92,25 @@ export default {
       this.$emit('update:dialogVisible', false)
     },
     databaseType(type) {
+      if (typeof type === 'object') {
+        this.$emit('databaseType', type.type, type)
+        this.$store.commit('createConnection', { databaseType: type.type, item: type })
+        return
+      }
       this.$emit('databaseType', type)
       this.$store.commit('createConnection', { databaseType: type })
+    },
+    getDatabaseType() {
+      this.$api('DatabaseTypes')
+        .get()
+        .then(res => {
+          if (res.data) {
+            this.getPdkData(res.data)
+          }
+        })
+    },
+    getPdkData(data) {
+      this.database.push(...data.filter(t => t.pdkType === 'pdk'))
     }
   }
 }
