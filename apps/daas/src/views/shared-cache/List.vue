@@ -40,8 +40,8 @@
         <VIcon class="icon">agent</VIcon>
         <div class="flex-fill ml-4">
           <div class="fs-6">{{ details.name }}</div>
-          <span :class="'mt-2 icon-status icon-status--' + details.status">{{
-            $t('shared_cache_status_' + details.status)
+          <span :class="'mt-2 icon-status icon-status--' + details.statusColor">{{
+            $t('shared_cache_status_' + details.statusResult)
           }}</span>
         </div>
       </div>
