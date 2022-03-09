@@ -43,6 +43,9 @@
       <ElTableColumn :label="$t('task_start_time')" prop="startTime" sortable="custom" width="150">
         <template slot-scope="scope">{{ scope.row.startTimeFmt }}</template>
       </ElTableColumn>
+      <ElTableColumn :label="$t('task_next_run_time')" prop="nextScheduledTime" sortable="custom" width="150">
+        <template slot-scope="scope">{{ scope.row.nextScheduledTimeFmt }}</template>
+      </ElTableColumn>
       <ElTableColumn :label="$t('task_operate')" width="280">
         <template slot-scope="scope">
           <ElTooltip
@@ -513,7 +516,8 @@ export default {
         listtags: true,
         mappingTemplate: true,
         platformInfo: true,
-        agentId: true
+        agentId: true,
+        nextScheduledTime: true
       }
       let where = {}
       if (type) {
@@ -571,6 +575,9 @@ export default {
       item.statusText = statusInfo.text || ''
       item.statusIcon = statusInfo.icon || ''
       item.startTimeFmt = item.startTime ? this.$moment(item.startTime).format('YYYY-MM-DD HH:mm:ss') : '-'
+      item.nextScheduledTimeFmt = item.nextScheduledTime
+        ? this.$moment(item.nextScheduledTime).format('YYYY-MM-DD HH:mm:ss')
+        : '-'
       item.isFinished = isFinished(item) // 全量状态下，任务完成状态时，前端识别为已停止
       return item
     },
@@ -738,6 +745,24 @@ export default {
       }
     },
     run(ids, row, resetLoading) {
+      const { setting } = row
+      if (setting.isSchedule && setting.scheduleTime) {
+        this.$confirm(
+          '该任务已设置了计划运行时间，手动启动会使计划运行时间失效，是否确认继续启动？',
+          '是否启动该任务？',
+          {
+            type: 'warning'
+          }
+        ).then(resFlag => {
+          if (resFlag) {
+            this.runTask(ids, row, resetLoading)
+          }
+        })
+      } else {
+        this.runTask(ids, row, resetLoading)
+      }
+    },
+    runTask(ids, row, resetLoading) {
       this.$checkAgentStatus(() => {
         this.changeStatus(ids, {
           status: 'scheduled',

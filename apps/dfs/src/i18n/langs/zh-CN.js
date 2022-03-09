@@ -466,6 +466,7 @@ export default {
   task_agent: '所属agent',
   task_type: '任务类型',
   task_start_time: '启动时间',
+  task_next_run_time: '下次运行时间',
   task_operate: '操作',
   task_config_not_completed: '任务配置未完成，无法启动',
   task_start_task: '启动任务',
