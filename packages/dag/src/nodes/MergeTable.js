@@ -76,9 +76,9 @@ export class MergeTable extends NodeType {
                   'x-component': 'Select',
                   default: 'updateOrInsert',
                   enum: [
-                    { label: '追加写入', value: 'updateOrInsert' },
-                    { label: '更新写入', value: 'appendWrite' },
-                    { label: '更新已存在或插入新数据', value: 'updateWrite' },
+                    { label: '追加写入', value: 'appendWrite' },
+                    { label: '更新写入', value: 'updateWrite' },
+                    { label: '更新已存在或插入新数据', value: 'updateOrInsert' },
                     { label: '更新进内嵌数组', value: 'updateIntoArray' }
                   ]
                 },
