@@ -126,7 +126,7 @@ export default {
       // console.log('sourceEndpoint, targetEndpoint', sourceEndpoint, targetEndpoint) // eslint-disable-line
       const targetParams = { ...targetEndpoint, maxConnections: this.ins.attr.maxInputs || -1 }
 
-      this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
+      // this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
 
       this.jsPlumbIns.makeTarget(id, targetParams)
 
@@ -219,7 +219,11 @@ export default {
 
       this.jsPlumbIns.addEndpoint(
         this.$el,
-        { ...sourceEndpoint, enabled: !this.stateIsReadonly },
+        {
+          ...sourceEndpoint,
+          enabled: !this.stateIsReadonly,
+          maxConnections: this.ins.attr.maxOutputs || -1
+        },
         {
           uuid: id + '_source'
         }
