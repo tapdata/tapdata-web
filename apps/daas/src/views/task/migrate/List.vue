@@ -120,8 +120,9 @@
           <span :class="['status-' + row.status, 'status-block', 'mr-2']">
             {{ $t('task_preview_status_' + row.status) }}
           </span>
-          <span v-if="row.transformStatus">{{ statusTransformMap[row.transformStatus] }} </span>
-          <span v-if="row.transformProcess">{{ row.transformProcess * 100 }} %</span>
+          <span v-if="row.transformStatus && row.transformStatus === 'running'">
+            <span v-if="row.transformProcess && row.transformProcess !== 1">{{ row.transformProcess * 100 }} %</span>
+          </span>
         </template>
       </el-table-column>
 
