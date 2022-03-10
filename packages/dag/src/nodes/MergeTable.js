@@ -102,8 +102,9 @@ export class MergeTable extends NodeType {
                   }
                 },
                 arrayKeys: {
-                  type: 'string',
+                  type: 'array',
                   title: '内嵌数组匹配条件',
+                  required: true,
                   'x-decorator': 'FormItem',
                   'x-component': 'Select',
                   'x-component-props': {
