@@ -328,8 +328,8 @@ export default {
     verifyAgain(ids = []) {
       let taskIds = ids
       let getMultipleSelection = this.$refs.singleTable.getMultipleSelection()
-      if (getMultipleSelection.length) {
-        taskIds = getMultipleSelection
+      if (ids.length === 0 && getMultipleSelection.length) {
+        taskIds = getMultipleSelection.map(t => t.taskId)
       }
       this.$axios
         .post(
