@@ -258,7 +258,7 @@ export default {
       }
     },
     confirm(callback, catchCallback, config) {
-      this.$confirm(config.Message + config.name + '?', config.title, {
+      this.$confirm(config.Message + '?', config.title, {
         confirmButtonText: config.confirmButtonText,
         cancelButtonText: config.cancelButtonText,
         type: 'warning',
