@@ -253,7 +253,15 @@ export default {
                   min: 1,
                   max: 1000
                 },
-                default: 1
+                default: 1,
+                'x-reactions': {
+                  dependencies: ['isSerialMode'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] === false}}'
+                    }
+                  }
+                }
               },
               distinctWriteType: {
                 title: '去重写入机制',
