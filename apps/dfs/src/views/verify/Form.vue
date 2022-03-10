@@ -881,6 +881,10 @@ export default {
               task.target.sortColumn = targetSortColumn.join(',')
             }
           }
+          let findTargetNewName = task.target.fields?.find(t => t.original_field_name === task.target.sortColumn)
+          if (findTargetNewName) {
+            task.target.sortColumn = findTargetNewName.field_name
+          }
         }
       }
     },
