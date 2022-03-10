@@ -36,8 +36,8 @@
             <div class="body step-3" v-if="steps[activeStep].index === 2">
               <div class="mb-8">
                 <span class="title">任务设置</span>
-                <span class="desc">
-                  用户可以在任务设置步骤对任务名称、同步类型、遇错处理等进行设置，具体配置说明请查看帮助文档
+                <span class="desc"
+                  >用户可以在任务设置步骤对任务名称、同步类型、遇错处理等进行设置，具体配置说明请查看帮助文档
                 </span>
               </div>
               <Setting :dataSourceData="dataSourceData" :settingData="settingData" @submit="settingSubmit"></Setting>
@@ -643,6 +643,15 @@ export default {
       font-size: 16px;
       font-weight: bold;
       margin: 10px 0;
+    }
+    .step-3 {
+      ::v-deep {
+        .el-select {
+          .el-input--small .el-input__icon {
+            line-height: 24px;
+          }
+        }
+      }
     }
     .step-5 {
       height: 100%;

@@ -62,9 +62,13 @@
     }
   }
 }
-.el-select .el-input.is-focus .el-input__inner {
-  // border-color: map-get($color, primary);
+.el-select .el-input.is-focus .el-input__inner,
+.el-select .el-input__inner:focus,
+.el-input.is-active .el-input__inner,
+.el-input__inner:focus {
+  border-color: map-get($color, primary);
 }
+
 .el-select .el-select__tags {
   .el-tag.el-tag--info {
     color: #1D2129;
@@ -107,6 +111,12 @@
 .el-input-number.is-controls-right .el-input__inner {
   padding-left: 10px;
   padding-right: 45px;
+}
+.el-input-number__decrease:hover, .el-input-number__increase:hover {
+  color: map-get($color, primary);
+}
+.el-input-number__increase:hover:not(.is-disabled)~.el-input .el-input__inner:not(.is-disabled) {
+  border-color: map-get($color, primary);
 }
 .el-input-group__prepend {
   color: map-get($color, primary);
@@ -156,6 +166,10 @@
   color: map-get($color, primary);
   background-color: #fff;
   border-color: map-get($color, primary);
+}
+.el-switch.is-checked .el-switch__core {
+  border-color: map-get($color, primary);
+  background-color: map-get($color, primary);
 }
 .el-divider__text,
 .el-link {
