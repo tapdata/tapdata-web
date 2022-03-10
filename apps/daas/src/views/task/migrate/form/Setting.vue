@@ -7,7 +7,6 @@
         :colon="true"
         labelAlign="left"
         labelWidth="160"
-        size="small"
         layout="horizontal"
         wrapperWidth="400"
       >
@@ -531,3 +530,12 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.attr-panel {
+  ::v-deep {
+    .formily-element-form-item-label label {
+      font-size: 12px;
+    }
+  }
+}
+</style>
