@@ -350,17 +350,19 @@ export default {
     },
     // 获取任务数据
     getData() {
+      const { id } = this.$route.params || {}
       this.loading = true
-      this.$axios
-        .get(`tm/api/Dataflows/${this.$route.params.id}`)
-        .then(data => {
-          this.task = this.formatTask(data)
-          this.getConnections(data)
-          this.showContentTab(data)
-        })
-        .finally(() => {
-          this.loading = false
-        })
+      id &&
+        this.$axios
+          .get(`tm/api/Dataflows/${id}`)
+          .then(data => {
+            this.task = this.formatTask(data)
+            this.getConnections(data)
+            this.showContentTab(data)
+          })
+          .finally(() => {
+            this.loading = false
+          })
     },
     // 获取左侧栏连接信息
     getConnections(data) {
