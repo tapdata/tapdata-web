@@ -359,18 +359,22 @@ importers:
 
   packages/node-design:
     specifiers:
+      '@daas/api': workspace:^1.0.0
       '@daas/form': workspace:^1.0.0
       '@daas/shared': workspace:^1.0.0
       '@formily/core': ^2.0.11
+      '@formily/json-schema': ^2.0.9
       '@formily/path': ^2.0.12
       '@formily/reactive': ^2.0.11
       '@formily/reactive-vue': ^2.0.11
       '@formily/shared': ^2.0.9
       resize-observer-polyfill: ^1.5.1
     dependencies:
+      '@daas/api': link:../api
       '@daas/form': link:../form
       '@daas/shared': link:../shared
       '@formily/core': registry.npmmirror.com/@formily/core/2.0.11
+      '@formily/json-schema': registry.npmmirror.com/@formily/json-schema/2.0.11
       '@formily/path': registry.npmmirror.com/@formily/path/2.0.12
       '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.11
       '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.0.11_vue@2.6.14

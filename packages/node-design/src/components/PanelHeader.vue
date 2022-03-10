@@ -25,35 +25,4 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-.panel-header {
-  $hoverBg: #eef3ff;
-
-  height: 48px;
-
-  &-nav {
-    width: 48px;
-  }
-
-  &-btn {
-    width: 30px;
-    height: 30px;
-    background: #fff;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-
-    &:hover {
-      color: map-get($color, primary);
-      background: $hoverBg;
-    }
-  }
-
-  &-logo {
-    .v-icon {
-      color: map-get($color, primary);
-    }
-  }
-}
-</style>
+<style scoped lang="scss"></style>

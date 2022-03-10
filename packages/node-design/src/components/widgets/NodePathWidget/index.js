@@ -9,6 +9,7 @@ import { defineComponent } from 'vue-demi'
 export const NodePathWidget = observer(
   defineComponent({
     props: {
+      maxItems: Number,
       workspaceId: String
     },
     setup: props => {
@@ -28,6 +29,8 @@ export const NodePathWidget = observer(
           .slice(0, maxItems - 1)
           .reverse()
           .concat(selected)
+
+        console.log('NodePath.nodes', nodes)
 
         return (
           <Breadcrumb class={prefix}>

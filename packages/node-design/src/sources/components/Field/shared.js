@@ -105,10 +105,10 @@ export const createFieldSchema = (component, decorator = AllSchemas.FormItem) =>
               defaultValue: 'editable'
             }
           },
-          default: {
-            'x-decorator': 'FormItem',
-            'x-component': 'ValueInput'
-          },
+          // default: {
+          //   'x-decorator': 'FormItem',
+          //   'x-component': 'ValueInput'
+          // },
           required: {
             type: 'boolean',
             'x-decorator': 'FormItem',

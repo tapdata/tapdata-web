@@ -12,47 +12,59 @@ export const TreeNodeWidget = observer(
       node: Object
     },
     setup: props => {
-      const designer = useDesigner(props.node?.designerProps?.effects)
-      const components = useComponents()
-      const node = props.node
-      const renderChildren = () => {
-        if (node?.designerProps?.selfRenderChildren) return []
-        const children = node?.children?.map(child => {
-          return <TreeNodeWidget key={child.id} node={child} />
-        })
-        return children
-      }
-      const renderProps = extendsProps => {
-        const attrs = {
-          ...node.designerProps?.defaultProps,
-          ...extendsProps,
-          ...node.props,
-          ...node.designerProps?.getComponentProps?.(node)
-        }
-        if (node.depth === 0) {
-          delete attrs.style
-        }
-        return { attrs }
-      }
-      const renderComponent = () => {
-        const componentName = node.componentName
-        const Component = components.value[componentName]
-        const dataId = {}
-        if (Component) {
-          if (designer) {
-            dataId[designer.value.props?.nodeIdAttrName] = node.id
-          }
-          return <Component {...renderProps(dataId)}>{renderChildren()}</Component>
-        } else {
-          if (node?.children?.length) {
-            return renderChildren()
-          }
-        }
-      }
+      const designerRef = useDesigner(props.node?.designerProps?.effects)
+      const componentsRef = useComponents()
 
-      if (!node) return null
-      if (node.hidden) return null
-      return () => <TreeNodeContext.Provider value={node}>{renderComponent()}</TreeNodeContext.Provider>
+      return () => {
+        if (!props.node) return null
+        if (props.node.hidden) return null
+
+        const node = props.node
+
+        console.log('渲染Node', node.props)
+
+        const renderChildren = () => {
+          if (node?.designerProps?.selfRenderChildren) return []
+          const children = node?.children?.map(child => {
+            return <TreeNodeWidget key={child.id} node={child} />
+          })
+          return children
+        }
+        const renderProps = extendsProps => {
+          const props = {
+            ...node.designerProps?.defaultProps,
+            ...extendsProps,
+            ...node.props,
+            ...node.designerProps?.getComponentProps?.(node)
+          }
+          if (node.depth === 0) {
+            delete props.style
+          }
+          return props
+        }
+        const renderComponent = () => {
+          const componentName = node.componentName
+          const Com = componentsRef.value[componentName]
+          const dataId = {}
+          if (Com) {
+            if (designerRef.value) {
+              dataId[designerRef.value.props?.nodeIdAttrName] = node.id
+            }
+            const { style, ...attrs } = renderProps(dataId)
+            return (
+              <Com attrs={attrs} style={style} key={node.id}>
+                {renderChildren()}
+              </Com>
+            )
+          } else {
+            if (node?.children?.length) {
+              return renderChildren()
+            }
+          }
+        }
+
+        return <TreeNodeContext.Provider value={node}>{renderComponent()}</TreeNodeContext.Provider>
+      }
     }
   })
 )

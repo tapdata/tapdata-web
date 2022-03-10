@@ -42,7 +42,6 @@ export function createPolyInput(polyTypes = []) {
       const typesValue = ref({})
 
       watch([value], () => {
-        console.log('watch', value)
         types?.forEach(({ checker, type }) => {
           if (checker(value)) {
             current.value = type
@@ -63,7 +62,6 @@ export function createPolyInput(polyTypes = []) {
       return () => {
         let type = types?.find(({ type }) => type === current.value)
         let component = type?.component
-        console.log('props', props)
         return (
           <div class={prefix}>
             {component && (

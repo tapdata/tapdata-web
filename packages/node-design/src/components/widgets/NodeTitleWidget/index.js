@@ -13,8 +13,11 @@ export const NodeTitleWidget = observer(
         }
         return node
       }
-      const node = takeNode()
-      return () => <FragmentComponent>{node.getMessage('title') || node.componentName}</FragmentComponent>
+
+      return () => {
+        const node = takeNode()
+        return <FragmentComponent>{node.getMessage('title') || node.componentName}</FragmentComponent>
+      }
     }
   })
 )

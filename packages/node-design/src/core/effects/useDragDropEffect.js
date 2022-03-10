@@ -41,7 +41,7 @@ export const useDragDropEffect = engine => {
         }
       }
     })
-    engine.cursor.setStyle('move')
+    engine.cursor.setStyle('grabbing')
   })
 
   engine.subscribeTo(DragMoveEvent, event => {

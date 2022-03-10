@@ -27,6 +27,82 @@
     &.relative {
       position: relative;
     }
+
+    .panel-header {
+      $hoverBg: #eef3ff;
+
+      height: 48px;
+
+      &-nav {
+        width: 48px;
+      }
+
+      &-btn {
+        width: 30px;
+        height: 30px;
+        background: #fff;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+
+        &:hover {
+          color: map-get($color, primary);
+          background: $hoverBg;
+        }
+      }
+
+      &-logo {
+        .v-icon {
+          color: map-get($color, primary);
+        }
+      }
+
+      .title-input-wrap {
+        position: relative;
+        flex: 1;
+        max-width: 214px;
+        font-size: 13px;
+
+        &:hover {
+          .title-input {
+            border-color: #dcdfe6;
+          }
+          .title-input-icon {
+            color: map-get($color, primary);
+          }
+        }
+
+        .title-input {
+          position: relative;
+          padding-left: 4px;
+          padding-right: 28px;
+          width: 230px;
+          height: 28px;
+          line-height: 28px;
+          font-size: 14px;
+          outline: none;
+          box-shadow: none;
+          background: 0 0;
+          border: 1px solid transparent;
+          border-radius: 4px;
+          transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+
+          &:focus {
+            border-color: #409eff;
+            & + .title-input-icon {
+              color: map-get($color, primary);
+            }
+          }
+        }
+
+        .title-input-icon {
+          position: absolute;
+          right: 8px;
+          height: 28px;
+        }
+      }
+    }
   }
 
   &-header {

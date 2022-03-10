@@ -81,22 +81,22 @@ export const Select = {
         defaultValue: true
       }
     },
-    filterOption: {
-      type: 'boolean',
-      'x-decorator': 'FormItem',
-      'x-component': 'ValueInput',
-      'x-component-props': {
-        include: ['BOOLEAN', 'EXPRESSION']
-      }
-    },
-    filterSort: {
-      type: 'boolean',
-      'x-decorator': 'FormItem',
-      'x-component': 'ValueInput',
-      'x-component-props': {
-        include: ['EXPRESSION']
-      }
-    },
+    // filterOption: {
+    //   type: 'boolean',
+    //   'x-decorator': 'FormItem',
+    //   'x-component': 'ValueInput',
+    //   'x-component-props': {
+    //     include: ['BOOLEAN', 'EXPRESSION']
+    //   }
+    // },
+    // filterSort: {
+    //   type: 'boolean',
+    //   'x-decorator': 'FormItem',
+    //   'x-component': 'ValueInput',
+    //   'x-component-props': {
+    //     include: ['EXPRESSION']
+    //   }
+    // },
     listHeight: {
       type: 'number',
       'x-decorator': 'FormItem',

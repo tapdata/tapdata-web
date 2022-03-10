@@ -4,8 +4,11 @@
   <!--<Designer class="main-panel-container flex flex-column vh-100 node-designmain-panel flex flex-1 min-h-0">-->
   <Designer class="node-design">
     <StudioPanel>
-      <PanelHeader slot="header"></PanelHeader>
-      <CompositePanel></CompositePanel>
+      <CompositePanel>
+        <CompositePanel.Item title="panels.Component" icon="Component">
+          <ResourceWidget title="sources.Inputs" :sources="sources"></ResourceWidget>
+        </CompositePanel.Item>
+      </CompositePanel>
       <Workspace id="form">
         <WorkspacePanel>
           <ViewportPanel :style="{ height: '100%' }">
@@ -24,9 +27,12 @@
 </template>
 
 <script>
-import PanelHeader from './components/PanelHeader'
-import CompositePanel from './components/CompositePanel'
+// import PanelHeader from './components/PanelHeader'
+// import CompositePanel from './components/CompositePanel'
 // import WorkspacePanel from './components/WorkspacePanel'
+import 'web-core/assets/icons/svg/component.svg'
+import 'web-core/assets/icons/svg/outline.svg'
+import 'web-core/assets/icons/svg/history.svg'
 
 import {
   Designer,
@@ -34,9 +40,11 @@ import {
   Workspace,
   SettingsPanel,
   ComponentTreeWidget,
+  ResourceWidget,
   WorkspacePanel,
   ViewportPanel,
-  ViewPanel
+  ViewPanel,
+  CompositePanel
 } from './components'
 import { GlobalRegistry } from './core'
 import * as icons from './icons'
@@ -94,16 +102,17 @@ export default {
     WorkspacePanel,
     ViewportPanel,
     CompositePanel,
-    PanelHeader,
     Designer,
     Workspace,
     ComponentTreeWidget,
     SettingsForm,
-    ViewPanel
+    ViewPanel,
+    ResourceWidget
   },
 
   data() {
     return {
+      sources: [Input, Select, InputNumber],
       components: { Field, Input, Select, Form, FormLayout, InputNumber },
       settingsFormComponents: { SizeInput, DisplayStyleSetter, FlexStyleSetter, Slider, CollapseItem }
     }

@@ -105,9 +105,10 @@ const toDesignableFieldProps = (schema, components, nodeIdAttrName, id) => {
   } else if (component) {
     FormPath.setIn(props['component'][1], nodeIdAttrName, id)
   }
-  props.title = props.title && <span data-content-editable="title">{props.title}</span>
+  const title = props.title
+  props.title = props.title && (() => <span data-content-editable="title">{title}</span>)
   props.description = props.description && <span data-content-editable="description">{props.description}</span>
-  return { props }
+  return props
 }
 
 export const Field = observer(
@@ -116,33 +117,35 @@ export const Field = observer(
     setup(props, { attrs, slots }) {
       const designer = useDesigner()
       const components = useComponents()
-      const node = useTreeNode()
-      if (!node) return null
-      const fieldProps = toDesignableFieldProps(
-        attrs,
-        components.value,
-        designer.value.props.nodeIdAttrName,
-        node.value.id
-      )
+      const nodeRef = useTreeNode()
+
       return () => {
+        if (!nodeRef?.value) return null
+
+        const node = nodeRef.value
+
+        const fieldProps = toDesignableFieldProps(attrs, components.value, designer.value.props.nodeIdAttrName, node.id)
+
+        console.log('fieldProps', fieldProps)
+
         if (attrs.type === 'object') {
           return (
             <Container>
-              <ObjectField {...fieldProps} name={node.value.id}>
+              <ObjectField attrs={fieldProps} name={node.id}>
                 {slots.default?.()}
               </ObjectField>
             </Container>
           )
         } else if (attrs.type === 'array') {
-          return <ArrayField {...fieldProps} name={node.value.id} />
-        } else if (node.value.props.type === 'void') {
+          return <ArrayField attrs={fieldProps} name={node.id} />
+        } else if (node.props.type === 'void') {
           return (
-            <VoidField {...fieldProps} name={node.value.id}>
+            <VoidField attrs={fieldProps} name={node.id}>
               {slots.default?.()}
             </VoidField>
           )
         }
-        return <InternalField {...fieldProps} name={node.value.id} />
+        return <InternalField attrs={fieldProps} name={node.id} />
       }
     }
   })
