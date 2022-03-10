@@ -51,14 +51,11 @@
                 @value-change="formChangeSetting"
               >
                 <template slot="syncPoints">
-                  <ElRow>
-                    {{ $t('connection_form_data_source') }}：{{ dataSourceModel.source_connectionName }}
-                  </ElRow>
+                  <ElRow> {{ $t('connection_form_data_source') }}：{{ dataSourceModel.source_connectionName }} </ElRow>
                   <ElRow>
                     <ElCol :span="8" style="margin-right: 10px">
                       <ElSelect v-model="settingModel.syncPoints[0].type" :placeholder="$t('gl_placeholder_select')">
-                        <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value">
-                        </ElOption>
+                        <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value"> </ElOption>
                       </ElSelect>
                     </ElCol>
                     <ElCol :span="12" v-if="settingModel.syncPoints[0].type !== 'current'">
@@ -613,6 +610,7 @@ import Transfer from './Transfer'
 import FieldMapping from '@/components/field-mapping/main'
 import VIcon from '@/components/VIcon'
 import { SETTING_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from '../task/const'
+import { uniqueArr } from '@/util'
 
 let defaultConfig = []
 export default {
@@ -1595,7 +1593,7 @@ export default {
           this.$message.error(this.$t('task_form_no_fields_not_save'))
           return //所有字段被删除了 不可以保存任务
         }
-        this.saveOperations(returnData.row, returnData.operations, returnData.target)
+        this.saveOperations(returnData.row, returnData.operations, uniqueArr(returnData.target, 'field_name'))
         this.saveChangNameData(returnData.changNameData)
         this.updateTransfer = true
       } else {
