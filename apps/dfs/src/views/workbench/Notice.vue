@@ -887,19 +887,19 @@
         <div>
           <img src="../../../public/images/notice/v2.1.1_03.png" alt="" />
         </div>
-        <div class="text-center font-color-disable">打开设置</div>
+        <div class="py-1 text-center font-color-disable">打开设置</div>
         <div>
           <img src="../../../public/images/notice/v2.1.1_04.png" alt="" />
         </div>
-        <div class="text-center font-color-disable">选择运行时间</div>
+        <div class="py-1 text-center font-color-disable">选择运行时间</div>
         <div>
           <img src="../../../public/images/notice/v2.1.1_05.png" alt="" />
         </div>
-        <div class="text-center font-color-disable">设置时间前，任务未启动</div>
+        <div class="py-1 text-center font-color-disable">设置时间前，任务未启动</div>
         <div>
           <img src="../../../public/images/notice/v2.1.1_06.png" alt="" />
         </div>
-        <div class="text-center font-color-disable">设置时间到，任务启动</div>
+        <div class="py-1 text-center font-color-disable">设置时间到，任务启动</div>
         <div class="my-4 fs-6" style="color: rgb(0, 122, 181)">【全量】任务可以指定「运行周期」</div>
         <div class="mb-4 line-height-2">
           针对【全量】任务，任务属性设置里新增【定期调度任务】设置，该设置同样默认关闭，也是按需选择开启。
@@ -910,27 +910,27 @@
         <div>
           <img src="../../../public/images/notice/v2.1.1_07.png" alt="" />
         </div>
-        <div class="text-center font-color-disable">打开设置</div>
+        <div class="py-1 text-center font-color-disable">打开设置</div>
         <div>
           <img src="../../../public/images/notice/v2.1.1_08.png" alt="" />
         </div>
-        <div class="text-center font-color-disable">指路输入框后方，可见调度表达式填写指引</div>
+        <div class="py-1 text-center font-color-disable">指路输入框后方，可见调度表达式填写指引</div>
         <div>
           <img src="../../../public/images/notice/v2.1.1_09.png" alt="" />
         </div>
-        <div class="text-center font-color-disable">示例：设置调度周期为每五分钟运行一次</div>
+        <div class="py-1 text-center font-color-disable">示例：设置调度周期为每五分钟运行一次</div>
         <div>
           <img src="../../../public/images/notice/v2.1.1_10.png" alt="" />
         </div>
-        <div class="text-center font-color-disable">任务未启动</div>
+        <div class="py-1 text-center font-color-disable">任务未启动</div>
         <div>
           <img src="../../../public/images/notice/v2.1.1_11.png" alt="" />
         </div>
-        <div class="text-center font-color-disable">任务第一次启动</div>
+        <div class="py-1 text-center font-color-disable">任务第一次启动</div>
         <div>
           <img src="../../../public/images/notice/v2.1.1_12.png" alt="" />
         </div>
-        <div class="text-center font-color-disable">任务再次启动</div>
+        <div class="py-1 text-center font-color-disable">任务再次启动</div>
         <div class="number-title-box mt-8">
           <div class="number-title-box__number">03</div>
           <div class="number-title-box__content">
