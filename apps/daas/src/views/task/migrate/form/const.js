@@ -3,7 +3,7 @@ export const SETTING_MODEL = {
   sync_type: 'initial_sync+cdc',
   distinctWriteType: 'intellect',
   automaticallyCreateTables: true,
-  stopOnError: false,
+  stopOnError: true,
   isOpenAutoDDL: false,
   bidirectional: false,
   readBatchSize: 1000,

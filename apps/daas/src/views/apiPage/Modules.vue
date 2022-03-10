@@ -345,7 +345,7 @@ export default {
         .then(res => {
           if (res?.data?.items?.length) {
             let record = res?.data?.items[0] || {}
-            let workerStatus = record.worker_status || {}
+            let workerStatus = record.workerStatus || {}
             if (this.status !== workerStatus.status) {
               this.status = workerStatus.status
             }
@@ -675,9 +675,7 @@ export default {
           height: 25px;
           padding: 0 10px;
           line-height: 25px;
-          color: #d44d4d;
           border-radius: 2px;
-          background-color: #ffecec;
         }
       }
 
@@ -686,10 +684,12 @@ export default {
       .restart,
       .starting {
         color: #44a501;
+        background-color: #c4f3cb;
       }
       .deploy_fail,
       .stop {
-        color: red;
+        color: #d44d4d;
+        background-color: #ffecec;
       }
     }
     .btn + .btn {
