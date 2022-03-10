@@ -404,6 +404,30 @@ export default {
           }
 
           return fields ? fields.map(item => item.field_name) : []
+        },
+        getMergeItemsFromSourceNode(field, sourceNodes) {
+          let mergeList = field.value || []
+          let list = []
+          sourceNodes.forEach(it => {
+            let item = mergeList.find(mit => mit.sourceId === it.value)
+            if (!item) {
+              list.push({
+                tableName: it.label,
+                sourceId: it.value,
+                mergeType: 'appendWrite',
+                tablePath: '',
+                joinKeys: [
+                  {
+                    source: '',
+                    target: ''
+                  }
+                ]
+              })
+            } else {
+              list.push(item)
+            }
+          })
+          field.value = list
         }
       }
     }

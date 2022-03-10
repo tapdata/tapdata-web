@@ -33,9 +33,7 @@ export class MergeTable extends NodeType {
         'x-reactions': {
           dependencies: ['sourceNode'],
           fulfill: {
-            state: {
-              value: '{{ $deps[0] && $deps[0] }}'
-            }
+            run: '{{ getMergeItemsFromSourceNode($self, $deps[0]) }}'
           }
         },
         items: {
@@ -59,47 +57,41 @@ export class MergeTable extends NodeType {
                   type: 'string',
                   title: '节点名称',
                   'x-decorator': 'FormItem',
-                  'x-component': 'PreviewText.Input',
-                  'x-reactions': {
-                    fulfill: {
-                      state: {
-                        value: '{{ $values.mergeProperties[$self.indexes[0]].label }}'
-                      }
-                    }
-                  }
+                  'x-component': 'PreviewText.Input'
                 },
                 sourceId: {
                   type: 'string',
                   'x-hidden': true,
                   'x-decorator': 'FormItem',
-                  'x-component': 'PreviewText.Input',
-                  'x-reactions': {
-                    fulfill: {
-                      state: {
-                        value: '{{ $values.mergeProperties[$self.indexes[0]].value }}'
-                      }
-                    }
-                  }
+                  'x-component': 'PreviewText.Input'
                 },
                 mergeType: {
                   type: 'string',
                   title: '写入模式',
                   'x-decorator': 'FormItem',
                   'x-component': 'Select',
-                  default: 'appendWrite',
                   enum: [
                     { label: '追加写入', value: 'appendWrite' },
                     { label: '更新写入', value: 'updateWrite' },
                     { label: '更新已存在或插入新数据', value: 'updateOrInsert' },
                     { label: '更新进内嵌数组', value: 'updateIntoArray' }
-                  ]
+                  ],
+                  'x-reactions': {
+                    target: 'mergeProperties.*.targetPath',
+                    effects: ['onFieldValueChange'],
+                    fulfill: {
+                      state: {
+                        value:
+                          '{{ $self.index === $target.index ? $self.value === "updateOrInsert" ? "" : $values.mergeProperties[$target.index].tableName : $target.value }}'
+                      }
+                    }
+                  }
                 },
                 targetPath: {
                   type: 'string',
                   title: '关联后写入路径',
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
-                  default: 'targetPath',
                   'x-reactions': {
                     dependencies: ['.mergeType'],
                     fulfill: {
@@ -128,7 +120,7 @@ export class MergeTable extends NodeType {
                         }
                       }
                     },
-                    '{{useAsyncDataSource(loadNodeFieldNames, "dataSource", $values.mergeProperties[$self.indexes[0]].sourceId)}}'
+                    '{{useAsyncDataSource(loadNodeFieldNames, "dataSource", $values.mergeProperties[$self.indexes[0]] ? $values.mergeProperties[$self.indexes[0]].sourceId : "")}}'
                   ]
                 },
                 joinKeys: {
@@ -141,7 +133,6 @@ export class MergeTable extends NodeType {
                       border: '1px solid #f2f2f2'
                     }
                   },
-                  default: [{}],
                   'x-reactions': {
                     dependencies: ['.mergeType'],
                     fulfill: {
@@ -172,7 +163,7 @@ export class MergeTable extends NodeType {
                               filterable: true
                             },
                             'x-reactions': [
-                              '{{useAsyncDataSource(loadNodeFieldNames, "dataSource", $values.mergeProperties[$self.indexes[0]].sourceId)}}'
+                              '{{useAsyncDataSource(loadNodeFieldNames, "dataSource", $values.mergeProperties[$self.indexes[0]] ? $values.mergeProperties[$self.indexes[0]].sourceId : "")}}'
                             ]
                           }
                         }
