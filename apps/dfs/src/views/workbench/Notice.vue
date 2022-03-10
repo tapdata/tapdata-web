@@ -785,6 +785,214 @@
       </div>
     </div>
   </div>
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 12">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span
+          >新增腾讯云数据库连接，任务可定时发布，重新校验可指定表单——以用户体验为先的 Tapdata
+          Cloud，又对功能细节下手了</span
+        >
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2022-03-11</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-4">需求持续更新，优化一刻不停——Tapdata Cloud 3 月版本又更新啦！</div>
+        <div class="mb-4">
+          最新发布的 2.1.1
+          版中，腾讯云数据库连接上新，再次拓宽云数据库接入面之余，秉承用户体验优先的迭代导向，重点拔除了三颗既往使用过程中容易踢到的“小钉子”。
+        </div>
+        <div class="mb-2 p-4" style="background-color: rgb(241, 248, 255)">
+          <div class="mb-4">更新速览👇</div>
+          <div class="ml-2 mb-4">
+            1.<span class="fw-bold font-color-main">数据连接上新，云数据库接入再添新</span>：此番增加了 TencentDB for
+            MySQL、TencentDB for MariaDB、TencentDB for PG、TencentDB for SQLServer，以及 TencentDB MongoDB
+            作为源和目标；
+          </div>
+          <div class="ml-2 mb-4">
+            2.
+            <span class="fw-bold font-color-main">开始支持任务「定时发布」</span
+            >：【全量】任务可以指定「执行周期」，【全量+增量】&【增量】任务亦可设置「计划运行时间」，1
+            秒解放打工人，非工作时间不苦等；
+          </div>
+          <div class="ml-2 mb-4">
+            3.
+            <span class="fw-bold font-color-main">开始支持指定单表或多个表「重新校验」</span
+            >：数据校验环节，可以单独对校验不一致的表发起重新校验，不必从头来过，大量数据、多个表也不怕；
+          </div>
+          <div class="ml-2 mb-4">
+            4.
+            <span class="fw-bold font-color-main">字段映射过程中支持修改单个表名</span
+            >：在原有的批量改表名基础上，新增针对单个表名的修改，实现改表名自由，操作更顺手。
+          </div>
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">01</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>云数据库接入再上新</strong>
+            </div>
+            <div class="number-title-box__desc">版图又见新貌，腾讯云数据库现已入驻</div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          作为国内首家异构数据库实时同步云平台，Tapdata Cloud
+          不断拓展能够支持的数据连接版图，力求满足用户的多样化数据源和目标需求，真正实现数据实时同步“全面破壁”
+        </div>
+        <div class="mb-4 line-height-2">
+          继 2.1.0 版本首次实现云数据库接入，Tapdata Cloud 持续发力，本次更新中云数据库再下五城，新增支持 TencentDB for
+          MySQL、TencentDB for MariaDB、TencentDB for PG、TencentDB for SQLServer、TencentDB MongoDB 作为源和目标，
+          <span class="fw-bold font-color-main"
+            >数据源据点数量扩张至<span class="fs-6" style="font-family: DIN;color: rgb(0, 122, 181)">30</span></span
+          >
+          。放大就看 Tapdata Cloud “破壁行动”最新战绩 👇：
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_01.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">02</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>Hi，你的任务已定时发布</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>不被动加班，从自主设置「执行周期」和「运行」时间做起</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">还在为需要在非工作时间启动任务而郁闷吗？</div>
+        <div class="mb-4 line-height-2">还在为需要周而复始地手动启动周期性全量任务而头疼吗？</div>
+        <div class="mb-4 line-height-2">——你想要的「任务定时发布」功能已上线。</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_02.gif" alt="" />
+        </div>
+        <div class="my-4 fs-6" style="color: rgb(0, 122, 181)">【全量+增量】及【增量】任务可以指定「启动时间」</div>
+        <div class="mb-4 line-height-2">
+          针对【全量+增量】以及【增量】任务，任务属性设置里新增【计划运行时间】设置，该设置默认关闭，可以根据实际需要选择是否启用。
+        </div>
+        <div class="mb-4 line-height-2">
+          具体流程：打开设置，显示时间选择控件→按需选择计划运行时间，可选时间为：[当前时间，+∞)→完成其他设置并保存任务→任务在指定时间触发启动并运行
+          <span class="color: rgb(136, 136, 136);"
+            >（*手动划重点：如果【任务保存时间】≥【计划运行时间】，则设置成功保存的同时，任务就会启动，<span
+              style="color: rgb(255, 76, 0)"
+              >保存前请务必仔细检查时间设置是否有误</span
+            >）</span
+          >
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_03.png" alt="" />
+        </div>
+        <div class="text-center font-color-disable">打开设置</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_04.png" alt="" />
+        </div>
+        <div class="text-center font-color-disable">选择运行时间</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_05.png" alt="" />
+        </div>
+        <div class="text-center font-color-disable">设置时间前，任务未启动</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_06.png" alt="" />
+        </div>
+        <div class="text-center font-color-disable">设置时间到，任务启动</div>
+        <div class="my-4 fs-6" style="color: rgb(0, 122, 181)">【全量】任务可以指定「运行周期」</div>
+        <div class="mb-4 line-height-2">
+          针对【全量】任务，任务属性设置里新增【定期调度任务】设置，该设置同样默认关闭，也是按需选择开启。
+        </div>
+        <div class="mb-4 line-height-2">
+          具体流程：打开设置，显示【调度表达式】输入框→帮助图标悬停，显示cron表达式的输入帮助和样例→按照指引，依据实际需求填写任务周期→完成其他设置并保存任务→任务按照设置的固定时间、日期、间隔稳定运行
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_07.png" alt="" />
+        </div>
+        <div class="text-center font-color-disable">打开设置</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_08.png" alt="" />
+        </div>
+        <div class="text-center font-color-disable">指路输入框后方，可见调度表达式填写指引</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_09.png" alt="" />
+        </div>
+        <div class="text-center font-color-disable">示例：设置调度周期为每五分钟运行一次</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_10.png" alt="" />
+        </div>
+        <div class="text-center font-color-disable">任务未启动</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_11.png" alt="" />
+        </div>
+        <div class="text-center font-color-disable">任务第一次启动</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_12.png" alt="" />
+        </div>
+        <div class="text-center font-color-disable">任务再次启动</div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">03</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>支持对指定表发起重新校验</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>只有个别表校验不一致？现在可以划定小范围重新校验了！</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          📣从这一版开始，碰上数据校验不一致的问题时，就无需再重新执行整个校验任务啦！
+        </div>
+        <div class="mb-4 line-height-2">
+          新版本支持在数据校验结果页面，从当前执行结果中选择其中一个或多个表再次启动数据校验任务，任务执行状态和结果会直接更新当前校验结果。重来bye
+          bye，效率high high~
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_13.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">04</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>字段映射时</strong>
+              <strong class="block">支持修改单个表名</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>打破局限，更多便捷</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          Tapdata Cloud 2.1.1
+          针对历史版本中“仅支持表名批量更改”的功能在实际操作环境中的局限性，从用户真实需求出发，在原有「批量改表名」功能的基础上，新增「单个表名修改」能力。
+        </div>
+        <div class="mb-4 line-height-2">新功能下，用户可以：</div>
+        <ul class="pl-8">
+          <li class="mb-4 line-height-2 list-style-disc">
+            在迁移过程中自由修改表名（不仅仅是前后缀），从而实现将<span class="fw-bold font-color-main">源表数据</span
+            >写入<span class="fw-bold font-color-main">指定目标表</span>
+          </li>
+          <li class="mb-4 line-height-2 list-style-disc">
+            通过修改目标表名为同一表名，从而实现将<span class="fw-bold font-color-main">多个结构相同的源表</span
+            >写入<span class="fw-bold font-color-main">同一目标表</span>
+          </li>
+        </ul>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_14.png" alt="" />
+        </div>
+        <div class="line-height-2">
+          重视成长路上收获的每一条反馈，不断完善，持续优化，Tapdata一直在路上。始于细节，成于大美，期待下一个新版本再和大家见面
+          <img
+            src="../../../public/images/notice/love.png"
+            alt=""
+            style="width: 20px; height: 20px; vertical-align: text-bottom"
+          />。
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -1035,5 +1243,8 @@ export default {
 
 :root .number-title-box__title {
   filter: none;
+}
+.list-style-disc {
+  list-style: disc;
 }
 </style>
