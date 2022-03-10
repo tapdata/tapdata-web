@@ -107,12 +107,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column
+      <!-- <el-table-column
         prop="lag"
         :label="$t('task_list_execution_status')"
         width="180"
         sortable="custom"
-      ></el-table-column>
+      ></el-table-column> -->
 
       <el-table-column prop="startTime" :label="$t('task_list_start_time')" width="170" sortable="custom">
         <template #default="{ row }">
@@ -1073,21 +1073,21 @@ export default {
           type: 'select-inner',
           items: this.progressOptions
         },
-        {
-          label: this.$t('task_list_execution_status'),
-          key: 'executionStatus',
-          type: 'select-inner',
-          menuMinWidth: '250px',
-          items: async () => {
-            let option = ['initializing', 'cdc', 'initialized', 'Lag']
-            return option.map(item => {
-              return {
-                label: this.$t('task_list_status_' + item),
-                value: item
-              }
-            })
-          }
-        },
+        // {
+        //   label: this.$t('task_list_execution_status'),
+        //   key: 'executionStatus',
+        //   type: 'select-inner',
+        //   menuMinWidth: '250px',
+        //   items: async () => {
+        //     let option = ['initializing', 'cdc', 'initialized', 'Lag']
+        //     return option.map(item => {
+        //       return {
+        //         label: this.$t('task_list_status_' + item),
+        //         value: item
+        //       }
+        //     })
+        //   }
+        // },
         {
           placeholder: this.$t('task_list_search_placeholder'),
           key: 'keyword',
