@@ -258,7 +258,7 @@ export default {
                   dependencies: ['isSerialMode'],
                   fulfill: {
                     state: {
-                      display: '{{$deps[0] === false}}'
+                      display: '{{$deps[0] === false ? "visible" : "hidden"}}'
                     }
                   }
                 }
