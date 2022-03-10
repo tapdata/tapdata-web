@@ -813,7 +813,7 @@ export default {
           this.handleClose() //名字无改变
           return
         }
-        let existsName = this.handleExistsName(value) //检查是否重名
+        let existsName = this.handleExistsName(value, this.currentOperationData?.table_name) //检查是否重名
         if (existsName) {
           return
         }
@@ -997,10 +997,10 @@ export default {
         op.label = value
       }
     },
-    handleExistsName(value) {
+    handleExistsName(value, table_name) {
       // 改名前查找同级中是否重名，若有则return且还原改动并提示
       let exist = false
-      let filterData = this.target.filter(v => value === v.field_name && !v.is_deleted)
+      let filterData = this.target.filter(v => value === v.field_name && !v.is_deleted && table_name === v.table_name)
       if (filterData.length > 0) {
         this.$message.error(value + this.$t('message.exists_name'))
         exist = true
