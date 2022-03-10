@@ -252,8 +252,16 @@ export default {
                 'x-component-props': {
                   min: 1,
                   max: 1000
+                },
+                default: 1,
+                'x-reactions': {
+                  dependencies: ['isSerialMode'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] === false ? "visible" : "hidden"}}'
+                    }
+                  }
                 }
-                // default: 1
               },
               distinctWriteType: {
                 title: '去重写入机制',
@@ -339,9 +347,10 @@ export default {
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Input',
-                'x-component-props': {
+                'x-content': {
                   append: 'ms'
-                }
+                },
+                default: 500
               },
               readBatchSize: {
                 title: '每次读取数量',
