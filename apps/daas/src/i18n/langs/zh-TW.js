@@ -771,6 +771,7 @@ export default {
   task_preview_status_running: '運行中',
   task_preview_status_stop: '已停止',
   task_preview_status_stopping: '停止中',
+  task_preview_status_preparing: '准备中',
   task_preview_status_scheduling: '調度中',
   task_preview_status_schedule_failed: '調度失敗',
 

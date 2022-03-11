@@ -805,6 +805,7 @@ export default {
   task_preview_status_running: 'running',
   task_preview_status_stop: 'stopped',
   task_preview_status_stopping: 'Stopping',
+  task_preview_status_preparing: 'preparing',
   task_preview_status_scheduling: 'Scheduling',
   task_preview_status_schedule_failed: 'Scheduling failed',
 

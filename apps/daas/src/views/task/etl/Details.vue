@@ -97,6 +97,7 @@ import Chart from 'web-core/components/chart'
 import { ETL_SUB_STATUS_MAP } from '@/const'
 import { getSubTaskStatus } from './util'
 
+let timeout = null
 export default {
   name: 'TaskDetails',
   components: { VIcon, InlineInput, Connection, History, Subtask, Chart },
@@ -195,7 +196,7 @@ export default {
       if (statusResult?.length) {
         data =
           this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
-          statusResult.filter(t => ['not_running', 'stopping'].includes(t.status) && t.count)
+          statusResult.filter(t => ['not_running', 'error', 'stopping'].includes(t.status) && t.count)
       }
       let flag = data?.[0]?.count === task.statuses?.length ? true : false
       return flag
@@ -244,17 +245,24 @@ export default {
   },
   mounted() {
     this.init()
+    //定时轮询
+    timeout = setInterval(() => {
+      this.loadData(true)
+    }, 15000)
   },
   destroyed() {
     this.$ws.off('watch', this.taskChange)
+    clearInterval(timeout)
   },
   methods: {
     init() {
       this.loadData()
     },
-    loadData() {
+    loadData(hiddenLoading) {
       let id = this.$route.params?.id
-      this.loading = true
+      if (!hiddenLoading) {
+        this.loading = true
+      }
       this.$api('Task')
         .get([id])
         .then(res => {

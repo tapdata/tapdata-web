@@ -125,8 +125,7 @@ export default {
         start: {
           edit: true,
           stop: true,
-          complete: true,
-          stopping: true
+          complete: true
         },
         pause: {
           running: true
