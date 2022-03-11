@@ -381,7 +381,7 @@ export default {
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
-    }, 50000)
+    }, 8000)
   },
   beforeDestroy() {
     clearInterval(timeout)
@@ -852,7 +852,15 @@ export default {
         if (!resFlag) {
           return
         }
-        this.changeStatus(ids, { status: 'force stopping' })
+        this.$api('Task')
+          .forceStop(ids)
+          .then(res => {
+            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.table.fetch()
+          })
+          .catch(err => {
+            this.$message.error(err.data?.message)
+          })
       })
     },
     del(ids, item = {}) {
