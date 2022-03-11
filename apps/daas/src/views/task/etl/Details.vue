@@ -195,7 +195,7 @@ export default {
       if (statusResult?.length) {
         data =
           this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
-          statusResult.filter(t => ['not_running', 'stop'].includes(t.status) && t.count)
+          statusResult.filter(t => ['not_running', 'stopping'].includes(t.status) && t.count)
       }
       let flag = data?.[0]?.count === task.statuses?.length ? true : false
       return flag

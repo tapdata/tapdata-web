@@ -777,8 +777,9 @@ export default {
   task_preview_status_complete: '已完成',
   task_preview_status_running: '运行中',
   task_preview_status_stop: '已停止',
-  task_preview_status_pause: '暂停',
-  task_preview_status_paused: '已暂停',
+  task_preview_status_stopping: '停止中',
+  task_preview_status_scheduling: '调度中',
+  task_preview_status_schedule_failed: '调度失败',
 
   task_monitor_progress: '任务进度',
   task_monitor_full_sync: '全量同步概览',

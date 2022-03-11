@@ -125,20 +125,12 @@
           </span>
         </template>
       </el-table-column>
-
-      <!-- <el-table-column
-        prop="lag"
-        :label="$t('task_list_execution_status')"
-        width="180"
-        sortable="custom"
-      ></el-table-column> -->
-
       <el-table-column prop="startTime" :label="$t('task_list_start_time')" width="170" sortable="custom">
         <template #default="{ row }">
           {{ row.startTime ? $moment(row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="220" fixed="right">
+      <el-table-column :label="$t('column_operation')" width="270" fixed="right">
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
@@ -149,7 +141,18 @@
             >
               {{ $t('task_list_run') }}
             </ElLink>
+            <ElDivider direction="vertical"></ElDivider>
             <ElLink
+              v-if="isShowForceStop(row.statusResult)"
+              v-readonlybtn="'SYNC_job_operation'"
+              type="primary"
+              :disabled="$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
+              @click="forceStop([row.id])"
+            >
+              {{ $t('task_list_force_stop') }}
+            </ElLink>
+            <ElLink
+              v-else
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="
@@ -159,31 +162,7 @@
               @click="stop([row.id])"
               >{{ $t('task_list_stop') }}</ElLink
             >
-            <ElLink
-              v-if="row.status === 'stopping'"
-              v-readonlybtn="'SYNC_job_operation'"
-              type="primary"
-              :disabled="
-                $disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
-                !statusBtMap['forceStop'][row.status]
-              "
-              @click="forceStop([row.id])"
-            >
-              {{ $t('task_list_force_stop') }}
-            </ElLink>
             <ElDivider direction="vertical"></ElDivider>
-            <!--            <ElLink-->
-            <!--              v-if="row.status === 'stopping'"-->
-            <!--              v-readonlybtn="'SYNC_job_operation'"-->
-            <!--              type="primary"-->
-            <!--              :disabled="-->
-            <!--                $disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||-->
-            <!--                !statusBtMap['forceStop'][row.status]-->
-            <!--              "-->
-            <!--              @click="forceStop([row.id])"-->
-            <!--            >-->
-            <!--              {{ $t('dataFlow.button.force_stop') }}-->
-            <!--            </ElLink>-->
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -197,19 +176,6 @@
               {{ $t('task_list_button_monitor') }}
             </ElLink>
             <ElDivider direction="vertical"></ElDivider>
-            <!-- <ElLink
-              v-readonlybtn="'SYNC_job_edition'"
-              style="margin-left: 10px"
-              type="primary"
-              :disabled="
-                $disabledByPermission('SYNC_job_edition_all_data', row.user_id) ||
-                row.sync_type !== 'initial_sync' ||
-                row.status === 'running'
-              "
-              @click="handleTaskscheduling(row.id, row)"
-            >
-              {{ $t('task_list_button_schedule') }}
-            </ElLink> -->
             <el-dropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
               <ElLink type="primary" class="rotate-90">
                 <!-- {{ $t('button.more') }} -->
@@ -259,43 +225,6 @@
         </template>
       </el-table-column>
     </TablePage>
-    <!-- <el-dialog
-      :title="$t('dialog.jobSchedule.jobSecheduleSetting')"
-      :close-on-click-modal="false"
-      :visible.sync="taskSettingsDialog"
-      custom-class="jobSeceduleDialog"
-      width="50%"
-    >
-      <el-form :model="formSchedule" label-width="100px">
-        <el-form-item :label="$t('dialog.jobSchedule.job')">
-          <div>{{ formSchedule.name }}</div>
-        </el-form-item>
-        <el-form-item :label="$t('dialog.jobSchedule.sync')">
-          <el-switch v-model="formSchedule.isSchedule"> </el-switch>
-        </el-form-item>
-        <el-form-item :label="$t('dialog.jobSchedule.expression')" v-if="formSchedule.isSchedule">
-          <el-input v-model="formSchedule.cronExpression" :placeholder="$t('dialog.jobSchedule.expressionPlaceholder')">
-          </el-input>
-        </el-form-item>
-      </el-form>
-      <div v-if="formSchedule.isSchedule" class="text">
-        <p>{{ $t('dialog.jobSchedule.explanation') }}</p>
-        <p>{{ $t('dialog.jobSchedule.grammar') }}</p>
-        <ul>
-          <li v-for="item in timeTextArr" :key="item">
-            <p>{{ $t('dialog.jobSchedule.' + item) }}</p>
-            <span>*</span>
-          </li>
-        </ul>
-        <p>{{ $t('dialog.jobSchedule.example') }}</p>
-        <p>0 */1 * * * ? * // {{ $t('dialog.jobSchedule.runMinute') }}</p>
-        <p>0 0 2 * * ? * // {{ $t('dialog.jobSchedule.runDay') }}</p>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="taskSettingsDialog = false">{{ $t('message.cancel') }}</el-button>
-        <el-button type="primary" @click="saveTaskSetting">{{ $t('app.save') }}</el-button>
-      </span>
-    </el-dialog> -->
     <DownAgent ref="agentDialog" type="taskRunning"></DownAgent>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <Drawer class="task-drawer" :visible.sync="isShowDetails">
@@ -406,14 +335,6 @@ export default {
         cdc: this.$t('dataFlow.cdc'),
         'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
       },
-      statusBtMap: {
-        start: { draft: true, error: true, pause: true },
-        stop: { running: true },
-        delete: { edit: true, draft: true, error: true, pause: true },
-        edit: { edit: true, stop: true, error: true },
-        reset: { draft: true, error: true, pause: true },
-        forceStop: { stopping: true }
-      },
       statusTransformMap: {
         running: this.$t('task_list_transform_running'),
         done: this.$t('task_list_transform_done'),
@@ -463,7 +384,7 @@ export default {
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
-    }, 50000)
+    }, 8000)
   },
   beforeDestroy() {
     clearInterval(timeout)
@@ -881,7 +802,15 @@ export default {
         if (!resFlag) {
           return
         }
-        this.changeStatus(ids, { status: 'force stopping' })
+        this.$api('Task')
+          .forceStop(ids)
+          .then(res => {
+            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.table.fetch()
+          })
+          .catch(err => {
+            this.$message.error(err.data?.message)
+          })
       })
     },
     del(ids, item = {}) {
@@ -1083,6 +1012,9 @@ export default {
       return !data
         .filter(t => t.count > 0)
         .every(t => ['edit', 'draft', 'error', 'pause', 'not_running', 'stop'].includes(t.status))
+    },
+    isShowForceStop(data) {
+      return data.filter(t => t.count > 0).every(t => ['stopping'].includes(t.status))
     },
     async getPreviewData(id) {
       this.loading = true
