@@ -326,7 +326,7 @@
     <el-dialog
       width="500px"
       append-to-body
-      :title="'修改目标表名'"
+      :title="$t('task_mapping_dialog_rename_a_single_table_title')"
       custom-class="field-maping-table-dialog"
       :visible.sync="changeTableNameForm.visible"
       :close-on-click-modal="false"
@@ -339,10 +339,11 @@
           :model="changeTableNameForm"
           label-position="top"
           style="width: 100%"
+          @submit.prevent.stop
         >
           <ElInput v-model="changeTableNameForm.new" size="mini" maxlength="50" show-word-limit class="mb-3"></ElInput>
           <VIcon class="color-primary" size="14">info</VIcon>
-          <span>自定义名称的表，不会应用：前后缀和大小写转换操作</span>
+          <span>{{ $t('task_mapping_dialog_rename_a_single_table_input_desc') }}</span>
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">

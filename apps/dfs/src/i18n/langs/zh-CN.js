@@ -763,6 +763,8 @@ export default {
   task_mapping_dialog_field_type_problem:
     '检测到您还有 XXX 张表的字段类型设置存在问题，请在左侧表区域选择有问题的表进行处理',
   task_mapping_dialog_target_no_fields_problem: '检测到您有 XXX 张表中没有字段，请先返回上一步将没有字段的表移除',
+  task_mapping_dialog_rename_a_single_table_title: '修改目标表名',
+  task_mapping_dialog_rename_a_single_table_input_desc: '自定义名称的表，不会应用：前后缀和大小写转换操作',
 
   // 里程碑
   milestone_label_init_dataflow: '【前期准备】解析dag路径创建子任务',
