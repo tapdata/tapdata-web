@@ -645,14 +645,14 @@ export default {
       this.$confirm(
         h('p', null, [
           h('span', null, this.$t('dataFlow.modifyEditText')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeLayoutProcess')),
+          h('span', { style: 'color: #2C65FF' }, this.$t('dataFlow.nodeLayoutProcess')),
           h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeAttributes')),
+          h('span', { style: 'color: #2C65FF' }, this.$t('dataFlow.nodeAttributes')),
           h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.matchingRelationship')),
+          h('span', { style: 'color: #2C65FF' }, this.$t('dataFlow.matchingRelationship')),
           h('span', null, '，'),
           h('span', null, this.$t('dataFlow.afterSubmission')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.reset')),
+          h('span', { style: 'color: #2C65FF' }, this.$t('dataFlow.reset')),
           h('span', null, this.$t('dataFlow.runNomally')),
           h('span', null, this.$t('dataFlow.editLayerTip'))
         ]),

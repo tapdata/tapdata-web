@@ -39,7 +39,7 @@
                 <span>{{ item.name }} </span> {{ item.value }}
               </li>
             </ul>
-            <Chart type="bar" :data="copyTaskData" :options="barOptions"></Chart>
+            <Chart type="bar" class="bar-chart" :data="copyTaskData" :options="barOptions"></Chart>
           </div>
         </div>
       </el-col>
@@ -72,7 +72,7 @@
                 <span>{{ item.name }} </span> {{ item.value }}
               </li>
             </ul>
-            <Chart type="bar" :data="syncTaskData" :options="barOptions"></Chart>
+            <Chart type="bar" class="bar-chart" :data="syncTaskData" :options="barOptions"></Chart>
           </div>
         </div>
       </el-col>
@@ -88,7 +88,7 @@
                 <span>{{ item.name }} </span> {{ item.value }}
               </li>
             </ul>
-            <Chart type="bar" :data="validBarData" :options="barOptions"></Chart>
+            <Chart type="bar" class="bar-chart" :data="validBarData" :options="barOptions"></Chart>
           </div>
         </div>
       </el-col>
@@ -632,11 +632,12 @@ export default {
         overflow: hidden;
         box-sizing: border-box;
         background-color: #fff;
+        border-radius: 3px;
         box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
         .charts-list-text {
           float: left;
           width: 40%;
-          padding: 20px 30px 20px 20px;
+          padding: 20px 30px 12px 20px;
         }
         .job-list {
           padding: 16px 30px 20px 60px;
@@ -715,6 +716,9 @@ export default {
               font-weight: 400;
             }
           }
+        }
+        .bar-chart {
+          height: calc(100% - 24px);
         }
       }
     }
