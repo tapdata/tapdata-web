@@ -28,7 +28,13 @@
       </span>
     </div>
     <div class="result-table mt-4" v-if="inspect && !['running', 'scheduling'].includes(inspect.status)">
-      <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
+      <ResultTable
+        ref="singleTable"
+        :type="type"
+        :firstCheckId="resultInfo.firstCheckId"
+        :data="tableData"
+        @row-click="rowClick"
+      ></ResultTable>
       <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
     </div>
   </section>

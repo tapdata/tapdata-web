@@ -59,6 +59,7 @@
         <ResultTable
           ref="singleTable"
           :type="type"
+          :firstCheckId="resultInfo.firstCheckId"
           :data="tableData"
           @row-click="rowClick"
           @verify-again="verifyAgain"
