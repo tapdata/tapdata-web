@@ -53,9 +53,7 @@
       }
 
       &-logo {
-        .v-icon {
-          color: map-get($color, primary);
-        }
+        color: map-get($color, primary);
       }
 
       .title-input-wrap {
@@ -80,7 +78,7 @@
           width: 230px;
           height: 28px;
           line-height: 28px;
-          font-size: 14px;
+          font-size: 16px;
           outline: none;
           box-shadow: none;
           background: 0 0;
@@ -89,7 +87,7 @@
           transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 
           &:focus {
-            border-color: #409eff;
+            border-color: map-get($color, primary);
             & + .title-input-icon {
               color: map-get($color, primary);
             }

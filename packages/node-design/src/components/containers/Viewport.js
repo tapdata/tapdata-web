@@ -57,7 +57,7 @@ export const Viewport = defineComponent({
       >
         {slots.default?.()}
         <AuxToolWidget />
-        {/*<EmptyWidget dragTipsDirection={dragTipsDirection}>{placeholder}</EmptyWidget>*/}
+        <EmptyWidget dragTipsDirection={dragTipsDirection}>{placeholder}</EmptyWidget>
       </div>
     )
   }

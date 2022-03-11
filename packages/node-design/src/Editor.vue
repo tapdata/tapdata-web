@@ -27,9 +27,6 @@
 </template>
 
 <script>
-// import PanelHeader from './components/PanelHeader'
-// import CompositePanel from './components/CompositePanel'
-// import WorkspacePanel from './components/WorkspacePanel'
 import 'web-core/assets/icons/svg/component.svg'
 import 'web-core/assets/icons/svg/outline.svg'
 import 'web-core/assets/icons/svg/history.svg'

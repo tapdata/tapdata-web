@@ -1,13 +1,14 @@
 import { isStr, isFn, isObj, isPlainObj, useContext } from '@daas/shared'
+import { FragmentComponent } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { Tooltip } from 'element-ui'
-import { defineComponent } from 'vue-demi'
+import { defineComponent, onMounted } from 'vue-demi'
 import { usePrefix, useRegistry, useTheme } from '../../../hooks'
 import './styles.scss'
 import { IconContext } from '../../../context'
 
 const cloneElement = (VNode, props = {}) => {
-  const attrs = { ...VNode.data.attrs, ...props }
+  const attrs = { ...VNode.data?.attrs, ...props }
   const data = { ...VNode.data, attrs }
 
   return { ...VNode, data }
@@ -15,11 +16,15 @@ const cloneElement = (VNode, props = {}) => {
 
 const isNumSize = val => /^[\d.]+$/.test(val)
 
+const isVNode = val => {
+  return isObj(val) && val?.context?._isVue
+}
+
 export const IconWidget = observer(
   defineComponent({
     props: ['infer', 'size', 'width', 'height', 'tooltip'],
     setup(props, { listeners, attrs, emit }) {
-      // const theme = useTheme()
+      const theme = useTheme()
       const contextRef = useContext(IconContext)
       const registry = useRegistry()
       const prefix = usePrefix('icon')
@@ -33,19 +38,20 @@ export const IconWidget = observer(
             return takeIcon(finded)
           }
           return <img src={infer} height={height} width={width} />
-        } else if (isPlainObj(infer) && infer.render && isFn(infer.render)) {
+        } else if (isPlainObj(infer) && isFn(infer.render)) {
           // eslint-disable-next-line no-undef
-          const vm = h(infer)
-          if (vm.tag === 'svg') {
-            return cloneElement(vm, {
+          return takeIcon(h(infer))
+        } else if (isVNode(infer)) {
+          if (infer.tag === 'svg') {
+            return cloneElement(infer, {
               height,
               width,
               fill: 'currentColor',
-              viewBox: vm.data.attrs.viewBox || '0 0 1024 1024',
+              viewBox: infer.data?.attrs?.viewBox || '0 0 1024 1024',
               focusable: 'false',
               'aria-hidden': 'true'
             })
-          } else if (vm.tag === 'path' || vm.tag === 'g') {
+          } else if (infer.tag === 'path' || infer.tag === 'g') {
             return (
               <svg
                 viewBox="0 0 1024 1024"
@@ -55,11 +61,18 @@ export const IconWidget = observer(
                 focusable="false"
                 aria-hidden="true"
               >
-                {vm}
+                {infer}
               </svg>
             )
           }
           return infer
+        } else if (isPlainObj(infer)) {
+          if (infer[theme]) {
+            return takeIcon(infer[theme])
+          } else if (infer['shadow']) {
+            return <IconWidget.ShadowSVG width={width} height={height} content={infer['shadow']} />
+          }
+          return null
         }
       }
       const renderTooltips = children => {
@@ -68,6 +81,17 @@ export const IconWidget = observer(
         const tooltip = props.tooltip || registry.getDesignerMessage(`icons.${props.infer}`)
         if (tooltip) {
           const props = isObj(tooltip) ? tooltip : { content: tooltip }
+          if (isVNode(props.content)) {
+            const content = props.content
+            delete props.content
+
+            return (
+              <Tooltip props={{ placement: 'top', openDelay: 100, ...props }}>
+                <FragmentComponent slot="content">{content}</FragmentComponent>
+                {children}
+              </Tooltip>
+            )
+          }
           return <Tooltip props={{ placement: 'top', openDelay: 100, ...props }}>{children}</Tooltip>
         }
         return children
@@ -88,21 +112,24 @@ export const IconWidget = observer(
             {takeIcon(props.infer)}
           </span>
         )
-
-      /*return (t1, t2) => {
-        return (
-          <span
-            {...props}
-            class={[prefix, props.className]}
-            style={{
-              ...props.style,
-              cursor: props.onClick ? 'pointer' : props.style?.cursor
-            }}
-          >
-            {takeIcon(props.infer)}
-          </span>
-        )
-      }*/
     }
   })
 )
+
+IconWidget.ShadowSVG = defineComponent({
+  props: ['width', 'height', 'content'],
+  setup: (props, { refs }) => {
+    const width = isNumSize(props.width) ? `${props.width}px` : props.width
+    const height = isNumSize(props.height) ? `${props.height}px` : props.height
+
+    onMounted(() => {
+      if (!refs.ref) return
+      const root = refs.ref.attachShadow({
+        mode: 'open'
+      })
+      root.innerHTML = `<svg viewBox="0 0 1024 1024" style="width:${width};height:${height}">${props.content}</svg>`
+    })
+
+    return () => <div ref="ref"></div>
+  }
+})

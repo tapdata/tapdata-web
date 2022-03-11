@@ -18,14 +18,14 @@ export const EmptyWidget = observer(
         const renderEmpty = () => {
           return (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {/*<div class="animations">
+              <div class="animations">
                 <IconWidget
                   infer={props.dragTipsDirection === 'left' ? 'DragLeftSourceAnimation' : 'DragRightSourceAnimation'}
                   size={240}
                 />
                 <IconWidget infer="BatchDragAnimation" size={240} />
-              </div>*/}
-              <div class="hotkeys-list">
+              </div>
+              {/*<div class="hotkeys-list">
                 <div>
                   Selection <IconWidget infer="Command" /> + Click / <IconWidget infer="Shift" /> + Click /{' '}
                   <IconWidget infer="Command" /> + A
@@ -36,7 +36,7 @@ export const EmptyWidget = observer(
                 <div>
                   Delete <IconWidget infer="Delete" />
                 </div>
-              </div>
+              </div>*/}
             </div>
           )
         }

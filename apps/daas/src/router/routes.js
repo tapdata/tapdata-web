@@ -50,6 +50,11 @@ export default [
   },
   {
     path: '/node/editor',
+    name: 'NodeNew',
+    component: NodeEditor
+  },
+  {
+    path: '/node/editor/:id',
     name: 'NodeEditor',
     component: NodeEditor
   },

@@ -1,17 +1,22 @@
 import { usePrefix, usePosition, useDesigner, useWorkbench } from '../../hooks'
 import { Layout } from '../containers'
-import { defineComponent } from 'vue-demi'
+import { defineComponent, watch } from 'vue-demi'
 import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
-import { transformToSchema } from '../../core'
+import { transformToSchema, transformToTreeNode } from '../../core'
 import { CustomNode } from '@daas/api'
+import { IconWidget } from '../widgets'
+
+import { Component } from '../../icons'
+
+console.log('Component', Component)
 
 const service = new CustomNode()
 
 export const StudioPanel = defineComponent({
   props: ['theme', 'prefixCls', 'position'],
   directives: { focusSelect },
-  setup: (props, { slots, refs }) => {
+  setup: (props, { slots, refs, root }) => {
     const prefix = usePrefix('main-panel')
     const position = usePosition()
     const baseCls = ['root', position]
@@ -22,6 +27,18 @@ export const StudioPanel = defineComponent({
       refs.nameInput.focus()
     }
 
+    watch(
+      () => root.$route,
+      async route => {
+        if (route.params?.id) {
+          const customNode = await service.get([route.params?.id])
+          designerRef.value.setCurrentTree(transformToTreeNode(customNode.formSchema))
+          workbenchRef.value.name = customNode.name
+        }
+      },
+      { immediate: true }
+    )
+
     const save = () => {
       const customNode = {
         name: workbenchRef.value.name,
@@ -29,24 +46,6 @@ export const StudioPanel = defineComponent({
       }
 
       service.post(customNode)
-      /*service.post({
-        id: {
-          timestamp: 0,
-          date: '2022-03-11T03:22:17.017Z'
-        },
-        customId: 'string',
-        lastUpdBy: 'string',
-        createUser: 'string',
-        name: workbenchRef.value.name,
-        desc: 'string',
-        icon: 'string',
-        formSchema: transformToSchema(designerRef.value.getCurrentTree()),
-        template: 'string',
-        createTime: '2022-03-11T03:22:17.017Z',
-        last_updated: '2022-03-11T03:22:17.017Z',
-        user_id: 'string'
-      })*/
-      // service.post(JSON.stringify(customNode))
       console.log('保存', customNode)
     }
 
@@ -59,8 +58,9 @@ export const StudioPanel = defineComponent({
                 <VIcon size="20">left</VIcon>
               </button>
             </div>
-            <div class="panel-header-logo mx-2">
-              <VIcon size="24">component</VIcon>
+            <div class="panel-header-logo mx-2 flex align-center">
+              <IconWidget size="24" infer="CustomNode" />
+              {/*<VIcon size="24">component</VIcon>*/}
             </div>
             <div class="panel-header-title">
               <div class="title-input-wrap flex align-center flex-shrink-0 h-100" data-value="hiddenValue">
