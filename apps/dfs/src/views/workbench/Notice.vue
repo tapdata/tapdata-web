@@ -956,8 +956,7 @@
           <div class="number-title-box__number">04</div>
           <div class="number-title-box__content">
             <div class="number-title-box__title">
-              <strong>字段映射时</strong>
-              <strong class="block">支持修改单个表名</strong>
+              <strong>字段映射时支持修改单个表名</strong>
             </div>
             <div class="number-title-box__desc">
               <p>打破局限，更多便捷</p>
