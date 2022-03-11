@@ -29,6 +29,24 @@ export const StudioPanel = defineComponent({
       }
 
       service.post(customNode)
+      /*service.post({
+        id: {
+          timestamp: 0,
+          date: '2022-03-11T03:22:17.017Z'
+        },
+        customId: 'string',
+        lastUpdBy: 'string',
+        createUser: 'string',
+        name: workbenchRef.value.name,
+        desc: 'string',
+        icon: 'string',
+        formSchema: transformToSchema(designerRef.value.getCurrentTree()),
+        template: 'string',
+        createTime: '2022-03-11T03:22:17.017Z',
+        last_updated: '2022-03-11T03:22:17.017Z',
+        user_id: 'string'
+      })*/
+      // service.post(JSON.stringify(customNode))
       console.log('保存', customNode)
     }
 
