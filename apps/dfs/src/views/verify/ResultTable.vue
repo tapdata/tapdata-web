@@ -27,7 +27,7 @@
     </ElTableColumn>
     <ElTableColumn v-if="$route.name === 'VerifyDiffDetails'" :label="$t('dataVerification.sourceRows')">
       <template slot-scope="scope">
-        <span>{{ scope.row.source_total || 0 }}</span>
+        <span>{{ scope.row.firstSourceTotal || 0 }}</span>
         <!--        <div>-->
         <!--          {{ scope.row.target_total || 0 }}-->
         <!--        </div>-->
@@ -111,6 +111,10 @@ export default {
           let countResultText = ''
           let contentResultText = ''
           let diffCount = item.target_total - item.source_total
+          // 差异校验
+          if (this.$route.name === 'VerifyDiffDetails') {
+            diffCount = item.firstTargetTotal - item.firstSourceTotal
+          }
           let diffCountNum = Math.abs(diffCount)
           if (diffCount > 0) {
             countResultText = this.$t('verify_result_count_more', [diffCountNum])

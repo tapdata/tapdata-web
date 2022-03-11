@@ -441,6 +441,10 @@ export default {
       if (result) {
         sourceTotal = result.source_total
         targetTotal = result.target_total
+        if (result.firstCheckId) {
+          sourceTotal = result.firstSourceTotal
+          targetTotal = result.firstTargetTotal
+        }
       }
       item.lastStartTime = item.lastStartTime ? this.$moment(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss') : '-'
       item.sourceTotal = sourceTotal
