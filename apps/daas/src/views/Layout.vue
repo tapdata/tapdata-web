@@ -321,7 +321,7 @@ const LanguagesKey = {
 }
 let menuSetting = [
   { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
-  { name: 'connectionsList', icon: 'agent' },
+  { name: 'connectionsList', icon: 'agent', code: 'datasource_menu' },
   {
     name: 'dataPipeline',
     label: 'page_title_data_pipeline',

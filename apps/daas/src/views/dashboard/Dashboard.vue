@@ -10,7 +10,7 @@
       </el-col>
     </el-row>
     <!-- 复制任务概览 -->
-    <el-row :gutter="20" class="dashboard-row mb-5">
+    <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
       <el-col :span="12" class="dashboard-col col">
         <div class="charts-list">
           <div class="charts-list-text">
@@ -45,7 +45,7 @@
       </el-col>
     </el-row>
     <!-- 开发任务概览  -->
-    <el-row :gutter="20" class="dashboard-row mb-5">
+    <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
       <el-col :span="12" class="dashboard-col col">
         <div class="charts-list">
           <div class="charts-list-text">
@@ -79,7 +79,7 @@
     </el-row>
     <!-- 数据校验 -->
     <el-row :gutter="20" class="dashboard-row mb-5">
-      <el-col :span="12" class="dashboard-col col">
+      <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_verify_menu'">
         <div class="dashboard-col-box">
           <div class="dashboard-title fs-7">{{ $t('dashboard_valid_title') }}</div>
           <div class="chart line-chart">
@@ -111,7 +111,7 @@
       </el-col>
     </el-row>
     <!-- 服务器进程 -->
-    <div class="dashboard-row dashboard-col col mb-5">
+    <div class="dashboard-row dashboard-col col mb-5" v-readonlybtn="'Cluster_management_menu'">
       <div class="dashboard-col">
         <div class="dashboard-col-box">
           <div class="dashboard-title fs-7">{{ $t('dashboard_server_title') }}</div>
