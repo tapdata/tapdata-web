@@ -12,12 +12,6 @@ export class Workbench {
 
   type = 'DESIGNABLE'
 
-  name
-
-  icon
-
-  template
-
   constructor(engine) {
     this.engine = engine
     this.workspaces = []

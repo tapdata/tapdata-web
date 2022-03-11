@@ -58,7 +58,5 @@ export const useSelectionEffect = engine => {
     } else {
       selection.select(tree, true)
     }
-
-    console.log('currentWorkspace', currentWorkspace)
   })
 }

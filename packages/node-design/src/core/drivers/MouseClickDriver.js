@@ -3,7 +3,6 @@ import { MouseClickEvent, MouseDoubleClickEvent } from '../events'
 
 export class MouseClickDriver extends EventDriver {
   onMouseClick = e => {
-    console.log('MouseClickDriver', e)
     const target = e.target
     if (target?.closest(`*[${this.engine.props.clickStopPropagationAttrName}]`)) {
       return
