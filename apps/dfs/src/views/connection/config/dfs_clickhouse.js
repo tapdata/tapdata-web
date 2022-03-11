@@ -127,15 +127,15 @@ export default function (vm) {
         field: 'schemaAutoUpdate',
         label: vm.$t('dataForm.form.ReloadSchema')
       },
-      {
-        type: 'input',
-        field: 'table_filter',
-        domType: 'textarea',
-        label: vm.$t('dataForm.form.tableFilter'),
-        tip: vm.$t('dataForm.form.tableFilterTips'),
-        maxlength: 500,
-        showWordLimit: true
-      },
+      // {
+      //   type: 'input',
+      //   field: 'table_filter',
+      //   domType: 'textarea',
+      //   label: vm.$t('dataForm.form.tableFilter'),
+      //   tip: vm.$t('dataForm.form.tableFilterTips'),
+      //   maxlength: 500,
+      //   showWordLimit: true
+      // },
       {
         type: 'input',
         field: 'additionalString',
