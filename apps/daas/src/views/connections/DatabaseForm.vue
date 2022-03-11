@@ -953,6 +953,7 @@ export default {
       }
       if (filed === 'persistenceMongodb_uri_db') {
         //请求是否有全局共享挖掘配置
+        this.model.persistenceMongodb_collection = '' //清空之前的数据
         this.handleTables()
       }
     },
