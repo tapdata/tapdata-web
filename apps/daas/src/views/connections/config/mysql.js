@@ -237,6 +237,7 @@ export default function (vm) {
         label: vm.$t('share_form_setting_table_name'),
         options: [],
         allowCreate: true,
+        filterable: true,
         required: true,
         show: false,
         dependOn: [
@@ -263,6 +264,8 @@ export default function (vm) {
         label: vm.$t('share_form_setting_log_time'),
         options: [],
         required: true,
+        allowCreate: true,
+        filterable: true,
         show: false,
         dependOn: [
           {
