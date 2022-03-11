@@ -171,6 +171,7 @@ export default {
             }
           })
       }
+      return Promise.reject()
     },
     rowClick(row) {
       this.taskId = row.taskId
