@@ -847,7 +847,7 @@
           继 2.1.0 版本首次实现云数据库接入，Tapdata Cloud 持续发力，本次更新中云数据库再下五城，新增支持 TencentDB for
           MySQL、TencentDB for MariaDB、TencentDB for PG、TencentDB for SQLServer、TencentDB MongoDB 作为源和目标，
           <span class="fw-bold font-color-main"
-            >数据源据点数量扩张至<span class="fs-6" style="font-family: DIN;color: rgb(0, 122, 181)">30</span></span
+            >数据源据点数量扩张至<span class="fs-6" style="font-family: DIN;color: rgb(0, 122, 181)">28</span></span
           >
           。放大就看 Tapdata Cloud “破壁行动”最新战绩 👇：
         </div>
