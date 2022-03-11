@@ -286,18 +286,18 @@ export default {
       } else {
         this.setStateReadonly(false)
 
-        if (this.stateIsDirty) {
-          // 状态已被修改
-          const importConfirm = await this.confirmMessage(
-            `当您切换数据流时，您当前的数据流更改将丢失。`,
-            '确定切换？',
-            'warning',
-            '确定（不保存）'
-          )
-          if (importConfirm === false) {
-            return Promise.resolve()
-          }
-        }
+        // if (this.stateIsDirty) {
+        //   // 状态已被修改
+        //   const importConfirm = await this.confirmMessage(
+        //     `当您切换数据流时，您当前的数据流更改将丢失。`,
+        //     '确定切换？',
+        //     'warning',
+        //     '确定（不保存'
+        //   )
+        //   if (importConfirm === false) {
+        //     return Promise.resolve()
+        //   }
+        // }
 
         if (id) {
           await this.openDataflow(id)

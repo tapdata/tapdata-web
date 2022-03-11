@@ -1105,13 +1105,13 @@ export default {
     padding: 30px;
     .el-form {
       .el-form-item {
-        margin-bottom: 22px;
+        // margin-bottom: 22px;
         .el-form-item__label {
           text-align: left;
         }
-        .el-form-item__error {
-          line-height: 12px;
-        }
+        // .el-form-item__error {
+        //   line-height: 12px;
+        // }
       }
     }
     .label {

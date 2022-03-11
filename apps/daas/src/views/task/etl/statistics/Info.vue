@@ -596,7 +596,8 @@ export default {
             // let l = countObj[key].length
             let val0 = countObj[key]?.[0] || 0
             let val1 = countObj[key]?.[1] || 0
-            if (reset) {
+            // 默认是查询任务的，不做叠加
+            if (reset || selectedTime === 'default') {
               overData[key] = val1 - val0
             } else {
               overData[key] += val1 - val0

@@ -589,11 +589,11 @@ export default {
   .el-dialog__body {
     padding: 30px;
     .el-form-item {
-      margin-bottom: 15px;
+      // margin-bottom: 15px;
     }
     .el-form-item__error {
-      padding-top: 0;
-      line-height: 12px;
+      // padding-top: 0;
+      // line-height: 12px;
     }
   }
 

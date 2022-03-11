@@ -171,7 +171,7 @@
         height: 30px;
         background: #ffa158;
         border-radius: 50%;
-        line-height: 30px;
+        line-height: 28px;
         text-align: center;
         font-size: 14px;
         color: #fff;
