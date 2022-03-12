@@ -770,8 +770,10 @@ export default {
   task_preview_status_complete: '已完成',
   task_preview_status_running: '運行中',
   task_preview_status_stop: '已停止',
-  task_preview_status_pause: '暫停',
-  task_preview_status_paused: '已暫停',
+  task_preview_status_stopping: '停止中',
+  task_preview_status_preparing: '准备中',
+  task_preview_status_scheduling: '調度中',
+  task_preview_status_schedule_failed: '調度失敗',
 
   task_monitor_progress: '任務進度',
   task_monitor_full_sync: '全量同步概覽',

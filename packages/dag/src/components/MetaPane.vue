@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="metadata-list-wrap">
     <FieldMapping
       v-if="isTarget && showFieldMapping"
       ref="fieldMapping"
@@ -134,3 +134,9 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.metadata-list-wrap {
+  height: 100%;
+  overflow: auto;
+}
+</style>

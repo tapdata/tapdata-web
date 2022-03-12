@@ -60,7 +60,7 @@
         </span>
       </el-tree>
       <el-button
-        v-if="treeData.length === 0 && isExpand"
+        v-if="treeData && treeData.length === 0 && isExpand"
         type="text"
         v-readonlybtn="authority"
         @click="showDialog()"
@@ -209,6 +209,7 @@ export default {
               }))
             }
             this.treeData = this.formatData(treeData)
+
             cb && cb(treeData)
           }
         })

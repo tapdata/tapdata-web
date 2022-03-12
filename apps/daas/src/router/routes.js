@@ -665,7 +665,7 @@ export default [
       /* ---------- 角色管理  ----------*/
       {
         path: '/role',
-        name: 'role',
+        name: 'roles',
         component: Parent,
         redirect: 'role/',
         meta: {

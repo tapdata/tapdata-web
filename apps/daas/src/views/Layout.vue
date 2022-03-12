@@ -171,7 +171,7 @@
         height: 30px;
         background: #ffa158;
         border-radius: 50%;
-        line-height: 30px;
+        line-height: 28px;
         text-align: center;
         font-size: 14px;
         color: #fff;
@@ -321,7 +321,7 @@ const LanguagesKey = {
 }
 let menuSetting = [
   { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
-  { name: 'connectionsList', icon: 'agent' },
+  { name: 'connectionsList', icon: 'agent', code: 'datasource_menu' },
   {
     name: 'dataPipeline',
     label: 'page_title_data_pipeline',

@@ -17,7 +17,7 @@ import restapi from './restapi'
 import custom_connection from './custom_connection'
 import gridfs from './gridfs'
 import dummydb from './dummydb'
-// import jira from './jira'
+import jira from './jira'
 import dameng from './dameng'
 import hive from './hive'
 import tcp_udp from './tcp_udp'
@@ -47,7 +47,7 @@ export default {
   kafka,
   mariadb,
   mysqlpxc,
-  // jira,
+  jira,
   hive,
   vika,
   sybasease,

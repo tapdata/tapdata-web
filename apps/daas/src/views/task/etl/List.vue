@@ -107,12 +107,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column
+      <!-- <el-table-column
         prop="lag"
         :label="$t('task_list_execution_status')"
         width="180"
         sortable="custom"
-      ></el-table-column>
+      ></el-table-column> -->
 
       <el-table-column prop="startTime" :label="$t('task_list_start_time')" width="170" sortable="custom">
         <template #default="{ row }">
@@ -381,7 +381,7 @@ export default {
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
-    }, 50000)
+    }, 8000)
   },
   beforeDestroy() {
     clearInterval(timeout)
@@ -645,14 +645,14 @@ export default {
       this.$confirm(
         h('p', null, [
           h('span', null, this.$t('dataFlow.modifyEditText')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeLayoutProcess')),
+          h('span', { style: 'color: #2C65FF' }, this.$t('dataFlow.nodeLayoutProcess')),
           h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeAttributes')),
+          h('span', { style: 'color: #2C65FF' }, this.$t('dataFlow.nodeAttributes')),
           h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.matchingRelationship')),
+          h('span', { style: 'color: #2C65FF' }, this.$t('dataFlow.matchingRelationship')),
           h('span', null, '，'),
           h('span', null, this.$t('dataFlow.afterSubmission')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.reset')),
+          h('span', { style: 'color: #2C65FF' }, this.$t('dataFlow.reset')),
           h('span', null, this.$t('dataFlow.runNomally')),
           h('span', null, this.$t('dataFlow.editLayerTip'))
         ]),
@@ -852,7 +852,15 @@ export default {
         if (!resFlag) {
           return
         }
-        this.changeStatus(ids, { status: 'force stopping' })
+        this.$api('Task')
+          .forceStop(ids)
+          .then(res => {
+            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.table.fetch()
+          })
+          .catch(err => {
+            this.$message.error(err.data?.message)
+          })
       })
     },
     del(ids, item = {}) {
@@ -1073,21 +1081,21 @@ export default {
           type: 'select-inner',
           items: this.progressOptions
         },
-        {
-          label: this.$t('task_list_execution_status'),
-          key: 'executionStatus',
-          type: 'select-inner',
-          menuMinWidth: '250px',
-          items: async () => {
-            let option = ['initializing', 'cdc', 'initialized', 'Lag']
-            return option.map(item => {
-              return {
-                label: this.$t('task_list_status_' + item),
-                value: item
-              }
-            })
-          }
-        },
+        // {
+        //   label: this.$t('task_list_execution_status'),
+        //   key: 'executionStatus',
+        //   type: 'select-inner',
+        //   menuMinWidth: '250px',
+        //   items: async () => {
+        //     let option = ['initializing', 'cdc', 'initialized', 'Lag']
+        //     return option.map(item => {
+        //       return {
+        //         label: this.$t('task_list_status_' + item),
+        //         value: item
+        //       }
+        //     })
+        //   }
+        // },
         {
           placeholder: this.$t('task_list_search_placeholder'),
           key: 'keyword',

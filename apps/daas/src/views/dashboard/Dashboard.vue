@@ -10,7 +10,7 @@
       </el-col>
     </el-row>
     <!-- 复制任务概览 -->
-    <el-row :gutter="20" class="dashboard-row mb-5">
+    <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
       <el-col :span="12" class="dashboard-col col">
         <div class="charts-list">
           <div class="charts-list-text">
@@ -39,13 +39,13 @@
                 <span>{{ item.name }} </span> {{ item.value }}
               </li>
             </ul>
-            <Chart type="bar" :data="copyTaskData" :options="barOptions"></Chart>
+            <Chart type="bar" class="bar-chart" :data="copyTaskData" :options="barOptions"></Chart>
           </div>
         </div>
       </el-col>
     </el-row>
     <!-- 开发任务概览  -->
-    <el-row :gutter="20" class="dashboard-row mb-5">
+    <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
       <el-col :span="12" class="dashboard-col col">
         <div class="charts-list">
           <div class="charts-list-text">
@@ -72,14 +72,14 @@
                 <span>{{ item.name }} </span> {{ item.value }}
               </li>
             </ul>
-            <Chart type="bar" :data="syncTaskData" :options="barOptions"></Chart>
+            <Chart type="bar" class="bar-chart" :data="syncTaskData" :options="barOptions"></Chart>
           </div>
         </div>
       </el-col>
     </el-row>
     <!-- 数据校验 -->
     <el-row :gutter="20" class="dashboard-row mb-5">
-      <el-col :span="12" class="dashboard-col col">
+      <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_verify_menu'">
         <div class="dashboard-col-box">
           <div class="dashboard-title fs-7">{{ $t('dashboard_valid_title') }}</div>
           <div class="chart line-chart">
@@ -88,7 +88,7 @@
                 <span>{{ item.name }} </span> {{ item.value }}
               </li>
             </ul>
-            <Chart type="bar" :data="validBarData" :options="barOptions"></Chart>
+            <Chart type="bar" class="bar-chart" :data="validBarData" :options="barOptions"></Chart>
           </div>
         </div>
       </el-col>
@@ -111,7 +111,7 @@
       </el-col>
     </el-row>
     <!-- 服务器进程 -->
-    <div class="dashboard-row dashboard-col col mb-5">
+    <div class="dashboard-row dashboard-col col mb-5" v-readonlybtn="'Cluster_management_menu'">
       <div class="dashboard-col">
         <div class="dashboard-col-box">
           <div class="dashboard-title fs-7">{{ $t('dashboard_server_title') }}</div>
@@ -632,11 +632,12 @@ export default {
         overflow: hidden;
         box-sizing: border-box;
         background-color: #fff;
+        border-radius: 3px;
         box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
         .charts-list-text {
           float: left;
           width: 40%;
-          padding: 20px 30px 20px 20px;
+          padding: 20px 30px 12px 20px;
         }
         .job-list {
           padding: 16px 30px 20px 60px;
@@ -715,6 +716,9 @@ export default {
               font-weight: 400;
             }
           }
+        }
+        .bar-chart {
+          height: calc(100% - 24px);
         }
       }
     }
