@@ -49,7 +49,7 @@ export default {
         useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
           return field => {
             field.loading = true
-            service(field, ...serviceParams).then(
+            service({ field }, ...serviceParams).then(
               action.bound(data => {
                 if (fieldName === 'value') {
                   field.setValue(data)
@@ -60,13 +60,38 @@ export default {
           }
         },
 
+        useRemoteQuery: (service, fieldName = 'dataSource', ...serviceParams) => {
+          return field => {
+            const handle = keyword => {
+              field.loading = true
+              service({ field, keyword }, ...serviceParams).then(
+                action.bound(data => {
+                  if (fieldName === 'value') {
+                    field.setValue(data)
+                  } else field[fieldName] = data
+                  field.loading = false
+                })
+              )
+            }
+
+            if (!field.componentProps.remoteMethod) {
+              field.setComponentProps({
+                remoteMethod: value => {
+                  handle(value)
+                }
+              })
+            }
+            handle()
+          }
+        },
+
         /**
          * 加载数据库
          * @param field
          * @param databaseType 数据库类型，String或Array
          * @returns {Promise<*[]|*>}
          */
-        loadDatabase: async (field, databaseType = field.form.values.databaseType) => {
+        loadDatabase: async ({ field }, databaseType = field.form.values.databaseType) => {
           try {
             let result = await connections.get({
               filter: JSON.stringify({
@@ -110,7 +135,7 @@ export default {
          * @param connectionId
          * @returns {Promise<AxiosResponse<any>>}
          */
-        loadDatabaseInfo: async (field, connectionId = field.query('connectionId').get('value')) => {
+        loadDatabaseInfo: async ({ field }, connectionId = field.query('connectionId').get('value')) => {
           if (!connectionId) return
           return await connections.customQuery([connectionId], {
             schema: true
@@ -120,26 +145,33 @@ export default {
         /**
          * 加载数据库的表，只返回表名的集合
          * @param field
+         * @param keyword
          * @param connectionId
          * @returns {Promise<*|AxiosResponse<any>>}
          */
-        loadDatabaseTable: async (field, connectionId = field.query('connectionId').get('value')) => {
+        loadDatabaseTable: async ({ field, keyword }, connectionId = field.query('connectionId').get('value')) => {
           if (!connectionId) return
-          const params = {
-            filter: JSON.stringify({
-              where: {
-                'source.id': connectionId,
-                meta_type: {
-                  in: ['collection', 'table', 'view'] //,
-                },
-                is_deleted: false
+          const filter = {
+            where: {
+              'source.id': connectionId,
+              meta_type: {
+                in: ['collection', 'table', 'view'] //,
               },
-              fields: {
-                original_name: true
-              }
-            })
+              is_deleted: false
+            },
+            fields: {
+              original_name: true
+            }
           }
-          const data = await metadataApi.get(params)
+
+          if (keyword) {
+            filter.where.original_name = {
+              like: keyword,
+              options: 'i'
+            }
+          }
+
+          const data = await metadataApi.get({ filter: JSON.stringify(filter) })
           return data.items.map(item => item.original_name)
         },
 
@@ -151,7 +183,7 @@ export default {
          * @returns {Promise<AxiosResponse<any>>}
          */
         loadTableInfo: async (
-          field,
+          { field },
           connectionId = field.query('connectionId').get('value'),
           tableName = field.query('tableName').get('value')
         ) => {
@@ -177,7 +209,7 @@ export default {
          * @returns {Promise<*>}
          */
         loadTableField: async (
-          field,
+          { field },
           connectionId = field.query('connectionId').get('value'),
           tableName = field.query('tableName').get('value')
         ) => {
@@ -201,7 +233,7 @@ export default {
         },
 
         // 加载数据集
-        loadCollections: async (field, connectionId = field.query('connectionId').get('value')) => {
+        loadCollections: async ({ field }, connectionId = field.query('connectionId').get('value')) => {
           if (!connectionId) return
           let result = await connections.get([connectionId])
           const tables = result.data?.schema?.tables || []
