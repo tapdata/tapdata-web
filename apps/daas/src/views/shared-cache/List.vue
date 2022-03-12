@@ -185,7 +185,7 @@ export default {
       let { current, size } = page
       let { taskName, connectionName } = this.searchParams
       let where = {}
-      taskName && (where.taskName = { like: toRegExp(taskName), options: 'i' })
+      taskName && (where.name = { like: toRegExp(taskName), options: 'i' })
       connectionName && (where.connectionName = { like: toRegExp(connectionName), options: 'i' })
       let filter = {
         order: 'createTime DESC',
