@@ -862,7 +862,7 @@ export default {
       if (source && source.connectionId) {
         let sourceStage = stages.find(stg => stg.connectionId === source.connectionId && stg.tableName === source.table)
         if (sourceStage) {
-          task.target = this.setTable(targetStage, source)
+          task.target = this.setTable(targetStage)
           task.targetTable = [targetStage.connectionId, targetStage.tableName]
           if (targetStage.joinTables) {
             let joinTable = targetStage.joinTables.find(ts => ts.stageId === sourceStage.id)
@@ -881,10 +881,10 @@ export default {
               task.target.sortColumn = targetSortColumn.join(',')
             }
           }
-          let findTargetNewName = task.target.fields?.find(t => t.original_field_name === task.target.sortColumn)
-          if (findTargetNewName) {
-            task.target.sortColumn = findTargetNewName.field_name
-          }
+          // let findTargetNewName = task.target.fields?.find(t => t.original_field_name === task.target.sortColumn)
+          // if (findTargetNewName) {
+          //   task.target.sortColumn = findTargetNewName.field_name
+          // }
         }
       }
     },
