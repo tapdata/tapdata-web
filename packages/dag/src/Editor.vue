@@ -849,7 +849,7 @@ export default {
         return this.$t('editor.cell.validate.none_data_node')
       }
 
-      await this.validateAllNodes()
+      // await this.validateAllNodes()
 
       const sourceMap = {},
         targetMap = {},
