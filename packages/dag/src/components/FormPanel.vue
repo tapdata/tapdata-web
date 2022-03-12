@@ -336,7 +336,7 @@ export default {
          * @param dataType 数据类型 默认 array（二维数组） | object （key是节点ID，value是字段数组）
          * @returns {Promise<{}>}
          */
-        loadSourceNodeField: async (field, dataType = 'array') => {
+        loadSourceNodeField: async ({ field }, dataType = 'array') => {
           const id = field.form.values.id
           const allEdges = this.$store.getters['dataflow/allEdges']
           const sourceArr = allEdges.filter(({ target }) => target === id)
@@ -370,7 +370,12 @@ export default {
           stopWatch?.()
 
           if (dataType === 'array') {
-            return result.reduce((arr, item) => (item.fields && arr.push(item.fields), arr), [])
+            return result.reduce((arr, [item]) => {
+              if (item.fields) {
+                arr.push(item.fields)
+              }
+              return arr
+            }, [])
           }
           const data = {}
           result.forEach((item, i) => {

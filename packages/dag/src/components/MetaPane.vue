@@ -125,11 +125,7 @@ export default {
     },
     checkNodeType() {
       //处理节点没有字段映射功能
-      if (this.activeNode.catalog === 'processor') {
-        this.showFieldMapping = false
-      } else {
-        this.showFieldMapping = true
-      }
+      this.showFieldMapping = this.activeNode.type === 'table'
     }
   }
 }
