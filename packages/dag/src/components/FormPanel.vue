@@ -467,9 +467,7 @@ export default {
 
       // 如果节点存在错误状态，走一遍校验，可以让用户看到错误信息
       if (this.hasNodeError(n)) {
-        this.form.validate().then(() => {
-          this.clearNodeError(n)
-        })
+        await this.validate()
       }
 
       // 校验上一个节点配置
@@ -522,6 +520,21 @@ export default {
     ...mapMutations('dataflow', ['setNodeValue', 'updateNodeProperties', 'setNodeError', 'clearNodeError']),
 
     ...mapActions('dataflow', ['updateDag']),
+
+    /**
+     * 校验表单
+     * @returns {Promise<void>}
+     */
+    async validate() {
+      const id = this.activeNodeId
+      if (!id) return
+      try {
+        await this.form.validate()
+        this.clearNodeError(id)
+      } catch (e) {
+        this.setNodeError(id)
+      }
+    },
 
     // 设置schema
     async setSchema(schema, values) {

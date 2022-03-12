@@ -80,14 +80,14 @@
           </ElPopover>
         </main>
         <!--配置面板-->
-        <ConfigPanel :settings="dataflow" @hide="onHideSidebar"></ConfigPanel>
+        <ConfigPanel ref="configPanel" :settings="dataflow" @hide="onHideSidebar"></ConfigPanel>
       </section>
     </section>
   </section>
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/TopHeader'
 import LeftSidebar from './components/LeftSidebar'
@@ -171,6 +171,7 @@ export default {
   },
 
   computed: {
+    ...mapState('dataflow', ['activeNodeId']),
     ...mapGetters('dataflow', [
       'allNodes',
       'allEdges',
@@ -250,7 +251,9 @@ export default {
       'setTransformStatus',
       'setEditVersion',
       'copyNodes',
-      'pasteNodes'
+      'pasteNodes',
+      'setNodeError',
+      'clearNodeError'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag']),
@@ -837,7 +840,7 @@ export default {
       }
     },
 
-    validate() {
+    async validate() {
       if (!this.dataflow.name) return this.$t('editor.cell.validate.empty_name')
 
       // 至少两个数据节点
@@ -845,6 +848,8 @@ export default {
       if (tableNode.length < 2) {
         return this.$t('editor.cell.validate.none_data_node')
       }
+
+      await this.validateAllNodes()
 
       const sourceMap = {},
         targetMap = {},
@@ -916,18 +921,18 @@ export default {
     },
 
     async save() {
-      // this.validateNodes()
-      const errorMsg = this.validate()
+      this.isSaving = true
+
+      const errorMsg = await this.validate()
       if (errorMsg) {
         this.$message.error(errorMsg)
+        this.isSaving = false
         return
       }
 
       if (!this.dataflow.id) {
         return this.saveAsNewDataflow()
       }
-
-      this.isSaving = true
 
       const data = this.getDataflowDataToSave()
 
@@ -1128,28 +1133,25 @@ export default {
       this.resetSelectedNodes()
     },
 
-    getError() {
-      if (!this.dataflow.name) return this.$t('editor.cell.validate.empty_name')
-
-      if (this.allNodes.length < 2) {
-        return this.$t('editor.cell.validate.none_data_node')
+    async validateNode(node) {
+      try {
+        await validateBySchema(node.__Ctor.formSchema, node)
+        this.clearNodeError(node.id)
+      } catch (e) {
+        this.setNodeError(node.id)
       }
-
-      if (this.jsPlumbIns.getConnections('*').length < 1) return this.$t('editor.cell.validate.none_link_node')
-
-      return null
     },
 
-    async validateNodes() {
-      const { allNodes } = this
-      const result = await Promise.all(allNodes.map(node => validateBySchema(node.__Ctor.formSchema, node))).catch(
-        error => {
-          // eslint-disable-next-line no-console
-          console.log('validateNodes', error)
-        }
+    async validateAllNodes() {
+      await Promise.all(
+        this.allNodes.map(node => {
+          if (this.activeNodeId === node.id) {
+            return this.$refs.configPanel.validateForm()
+          } else {
+            return this.validateNode(node)
+          }
+        })
       )
-      // eslint-disable-next-line no-console
-      console.log('validateNodes-result', result)
     },
 
     /**
