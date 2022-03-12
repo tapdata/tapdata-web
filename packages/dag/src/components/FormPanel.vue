@@ -422,7 +422,7 @@ export default {
          * @param nodeId
          * @returns {Promise<{}|*>}
          */
-        loadNodeFieldNames: async (field, nodeId) => {
+        loadNodeFieldNames: async ({ field }, nodeId) => {
           if (!nodeId) {
             const id = field.form.values.id
             const allEdges = this.$store.getters['dataflow/allEdges']
