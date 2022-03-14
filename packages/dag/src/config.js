@@ -3,7 +3,7 @@ export default {
   // 动态锚点、位置自适应
   Anchors: ['Top', 'TopCenter', 'Right', 'Bottom', 'BottomCenter', 'Left'],
   Anchor: ['Perimeter', { shape: 'Dot' }],
-  Connector: ['Flowchart', { cornerRadius: 8, gap: 5, alwaysRespectStubs: true, stub: 15 }],
+  Connector: ['Flowchart', { cornerRadius: 8, gap: 0, alwaysRespectStubs: true, stub: 15 }],
   ConnectionOverlays: [
     [
       'PlainArrow',

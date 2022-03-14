@@ -9,7 +9,7 @@ export const targetEndpoint = {
   cssClass: 'targetPoint',
   isTarget: true,
   anchor: 'Left',
-  endpoint: 'Dot',
+  endpoint: 'Blank',
   maxConnections: -1,
   paintStyle: {
     cursor: 'pointer',
@@ -36,7 +36,7 @@ export const sourceEndpoint = {
   maxConnections: -1,
   paintStyle: {
     cursor: 'pointer',
-    stroke: '#dedee4',
+    stroke: '#9f9f9f',
     fill: '#FFF',
     radius: 6
   },
