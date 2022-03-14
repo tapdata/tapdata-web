@@ -460,6 +460,8 @@ export default {
   connection_form_shared_mining: '共享挖掘',
   connection_form_shared_mining_tip:
     '共享挖掘会挖掘增量日志，当有多个增量任务时不需要重复开启日志采集进程，能极大缓解源库资源的占用和浪费',
+  connection_form_oracle_redoLog_parser: '裸日志',
+  connection_form_oracle_redoLog_parser_post: '日志解析服务地址IP',
 
   connection_form_mq_type: 'MQ类型',
   connection_form_mq_topic_set: '主题名称',
