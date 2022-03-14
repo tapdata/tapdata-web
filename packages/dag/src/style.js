@@ -9,7 +9,7 @@ export const targetEndpoint = {
   cssClass: 'targetPoint',
   isTarget: true,
   anchor: 'Left',
-  endpoint: 'Dot',
+  endpoint: 'Blank',
   maxConnections: -1,
   paintStyle: {
     cursor: 'pointer',
@@ -36,8 +36,10 @@ export const sourceEndpoint = {
   maxConnections: -1,
   paintStyle: {
     cursor: 'pointer',
-    stroke: '#dedee4',
-    fill: '#FFF',
+    // stroke: '#9f9f9f',
+    // fill: '#FFF',
+    stroke: 'transparent',
+    fill: 'transparent',
     radius: 6
   },
   hoverPaintStyle: {

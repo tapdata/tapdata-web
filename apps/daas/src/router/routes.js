@@ -261,9 +261,18 @@ export default [
             }
           },
           {
+            path: 'old/create',
+            name: 'oldDataVerificationCreate',
+            component: () => import('@/views/dataVerification/Form'),
+            meta: {
+              title: 'page_title_task_create',
+              code: 'verify_job_creation'
+            }
+          },
+          {
             path: 'create',
             name: 'dataVerificationCreate',
-            component: () => import('@/views/dataVerification/Form'),
+            component: () => import('@/views/dataVerification/2.0/Form'),
             meta: {
               title: 'page_title_task_create',
               code: 'verify_job_creation'
