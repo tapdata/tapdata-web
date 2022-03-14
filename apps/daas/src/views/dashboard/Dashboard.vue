@@ -78,7 +78,7 @@
       </el-col>
     </el-row>
     <!-- 数据校验 -->
-    <el-row :gutter="20" class="dashboard-row mb-5">
+    <el-row :gutter="20" class="dashboard-row mb-5" v-if="syncValidFalg">
       <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_verify_menu'">
         <div class="dashboard-col-box">
           <div class="dashboard-title fs-7">{{ $t('dashboard_valid_title') }}</div>
@@ -92,7 +92,7 @@
           </div>
         </div>
       </el-col>
-      <el-col :span="12" class="dashboard-col col">
+      <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_SYNC_menu'">
         <div class="charts-list">
           <div class="charts-list-text">
             <div class="dashboard-title fs-7">{{ $t('dashboard_transfer_overview') }}</div>
@@ -237,6 +237,7 @@ export default {
           }
         }
       },
+      syncValidFalg: this.$has('Data_verify_menu') || this.$has('Data_SYNC_menu'),
       taskList: [
         { key: 'all_total', value: 0 },
         { key: 'copy_total', value: 0 },
