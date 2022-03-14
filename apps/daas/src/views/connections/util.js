@@ -132,7 +132,10 @@ export const defaultModel = {
     persistenceMongodb_uri_db: '',
     persistenceMongodb_collection: '',
     share_cdc_ttl_day: 3,
-    showShareConfig: false //是否隐藏有全局挖掘设置
+    showShareConfig: false, //是否隐藏有全局挖掘设置
+    redoLogParserEnable: false,
+    redoLogParserHost: '',
+    redoLogParserPort: ''
   },
   kafka: {
     id: '',
