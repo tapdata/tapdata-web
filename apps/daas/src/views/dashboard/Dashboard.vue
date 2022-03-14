@@ -395,7 +395,9 @@ export default {
             self.migrationTaskList = res.data.chart1?.items
               ? self.handleDataProcessing(res.data.chart1.items, self.statusList)
               : []
-            self.syncTaskList = res.data?.chart3 ? self.handleDataProcessing(res.data.chart3, self.statusList) : []
+            self.syncTaskList = res.data?.chart3
+              ? self.handleDataProcessing(res.data.chart3.items, self.statusList)
+              : []
 
             self.copyPieData = setColor(self.migrationTaskList)
             self.copyTaskData = this.handleChart(res.data.chart2)
