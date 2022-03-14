@@ -119,6 +119,7 @@ import resize from 'web-core/directives/resize'
 import { merge } from 'lodash'
 import PaperEmpty from './components/PaperEmpty'
 import EmptyItem from './components/EmptyItem'
+import formScope from './mixins/formScope'
 
 const databaseTypesApi = new DatabaseTypes()
 const taskApi = new Task()
@@ -130,7 +131,7 @@ export default {
     resize
   },
 
-  mixins: [deviceSupportHelpers, titleChange, showMessage],
+  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope],
 
   components: {
     EmptyItem,
@@ -849,7 +850,7 @@ export default {
         return this.$t('editor.cell.validate.none_data_node')
       }
 
-      // await this.validateAllNodes()
+      await this.validateAllNodes()
 
       const sourceMap = {},
         targetMap = {},
@@ -1135,9 +1136,11 @@ export default {
 
     async validateNode(node) {
       try {
-        await validateBySchema(node.__Ctor.formSchema, node)
+        await validateBySchema(node.__Ctor.formSchema, node, this.scope)
         this.clearNodeError(node.id)
       } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log('节点校验错误', e)
         this.setNodeError(node.id)
       }
     },

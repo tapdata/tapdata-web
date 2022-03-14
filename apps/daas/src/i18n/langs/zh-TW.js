@@ -558,6 +558,8 @@ export default {
 
   connection_form_kudu_host_tip: 'IP地址:端口; 支持多個; 用 , 分割',
   connection_oracle_config_share_log_switch: '共享挖掘',
+  connection_form_oracle_redoLog_parser: '裸日誌',
+  connection_form_oracle_redoLog_parser_post: '日誌解析服務地址IP',
 
   // 路由名
   app_menu_jsFuncs: '函數',

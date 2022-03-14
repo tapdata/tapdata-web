@@ -430,8 +430,8 @@ export default {
                   let url = operations[operationName].url
                   _this.collectionsList.push({
                     collection: item,
-                    text: url.substring(url.lastIndexOf('/') + 1),
-                    // text: item + '/' + url.substring(url.lastIndexOf('/') + 1),
+                    // text: url.substring(url.lastIndexOf('/') + 1),
+                    text: item + '/' + url.substring(url.lastIndexOf('/') + 1),
                     value: url,
                     method: operations[operationName].method,
                     downloadFileUrl: downloadFileUrl,
@@ -443,7 +443,7 @@ export default {
               })
             })
 
-            if (_this.collectionsList.length) {
+            if (_this.collectionsList?.length) {
               let collectionsArr = []
               // 去重
               let obj = {}
@@ -991,9 +991,9 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          if (res?.data?.length) {
-            let record = res.data[0] || {}
-            let workerStatus = record.worker_status || {}
+          if (res?.data?.items?.length) {
+            let record = res.data?.items?.[0] || {}
+            let workerStatus = record.workerStatus || {}
             if (_this.status !== workerStatus.status) {
               _this.status = workerStatus.status
             }
@@ -1036,7 +1036,6 @@ export default {
       time = new Date().getTime()
       _this.queryTime = 0
       _this.renderTime = 0
-
       // 获取字段
       if (_this.apiId) {
         await _this
@@ -1070,58 +1069,57 @@ export default {
           oldHeaders.forEach(v => {
             headerMap[v.value] = v
           })
-          // console.log('res[0].data.data', res[0].data.data)
-          res[0].data.data.forEach(record => {
-            Object.keys(record).forEach(v => {
-              let isValidDate =
-                typeof record[v] === 'string' &&
-                /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3}Z)?(\+\d{2}:\d{2})?$/.test(record[v])
-              if (!headerMap[v]) {
-                let value = record[v]
-                let h = {
-                  show: true,
-                  text: this.aliasNameObj[v] || v,
-                  type: typeMap[Object.prototype.toString.call(value)],
-                  value: v
+          let findData = res?.[0]?.data?.data || []
+          if (findData?.length) {
+            findData.forEach(record => {
+              Object.keys(record).forEach(v => {
+                let isValidDate =
+                  typeof record[v] === 'string' &&
+                  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3}Z)?(\+\d{2}:\d{2})?$/.test(record[v])
+                if (!headerMap[v]) {
+                  let value = record[v]
+                  let h = {
+                    show: true,
+                    text: this.aliasNameObj[v] || v,
+                    type: typeMap[Object.prototype.toString.call(value)],
+                    value: v
+                  }
+                  let header = oldHeaders.find(it => it.value === v)
+                  if (header) {
+                    h.show = header.show
+                  } else if (isValidDate) {
+                    h.type = 'date'
+                  }
+                  headerMap[v] = h
                 }
-                let header = oldHeaders.find(it => it.value === v)
-                if (header) {
-                  h.show = header.show
-                } else if (isValidDate) {
-                  h.type = 'date'
-                }
-                headerMap[v] = h
-              }
-              if (isValidDate) {
-                let time = _this.$moment(new Date(record[v])).format('YYYY-MM-DD HH:mm:ss')
-                record[v] = _this.timeZoneConversion(time)
-              }
-            })
-            this.$set(record, 'isshow', {})
-            this.$set(record, 'isspancen', {})
-            for (let i in record) {
-              record.isshow[i] = false
-              record.isspancen[i] = true
-            }
-            if (fields.length) {
-              Object.keys(fields).forEach((v, index) => {
-                if (fields[index].dictionary) {
-                  fields[index].dictionary.forEach(j => {
-                    if (j.key == record['' + fields[index].field_name + '']) {
-                      record['' + fields[index].field_name + ''] = j.value
-                    }
-                  })
+                if (isValidDate) {
+                  let time = _this.$moment(new Date(record[v])).format('YYYY-MM-DD HH:mm:ss')
+                  record[v] = _this.timeZoneConversion(time)
                 }
               })
-            }
-            tableData.push(record)
-            record.istrue = false
-          })
+              this.$set(record, 'isshow', {})
+              this.$set(record, 'isspancen', {})
+              for (let i in record) {
+                record.isshow[i] = false
+                record.isspancen[i] = true
+              }
+              if (fields.length) {
+                Object.keys(fields).forEach((v, index) => {
+                  if (fields[index].dictionary) {
+                    fields[index].dictionary.forEach(j => {
+                      if (j.key == record['' + fields[index].field_name + '']) {
+                        record['' + fields[index].field_name + ''] = j.value
+                      }
+                    })
+                  }
+                })
+              }
+              tableData.push(record)
+              record.istrue = false
+            })
+          }
+
           this.tableData = tableData
-          // 表头字段赋值
-          // if (!searchBtn) {
-          //   _this.tableHeader = Object.values(headerMap);
-          // }
           _this.queryTime = formatTime(new Date().getTime() - time)
           return {
             total: res[0].data.total.count,

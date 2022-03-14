@@ -54,8 +54,16 @@
       </div>
       <el-table-column v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
       </el-table-column>
-      <el-table-column :label="$t('modules_header_api_name')"></el-table-column>
-      <el-table-column :label="$t('modules_header_tablename')"> </el-table-column>
+      <el-table-column :label="$t('modules_header_api_name')">
+        <template slot-scope="scope">
+          {{ scope.row.name }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('modules_header_tablename')">
+        <template slot-scope="scope">
+          {{ scope.row.tablename }}
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('modules_header_dataSource')" width="140">
         <template slot-scope="scope" v-if="scope.row.source">
           <span
