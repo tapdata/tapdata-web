@@ -567,7 +567,9 @@ export default {
             let val0 = countObj[key]?.[0] || 0
             let val1 = countObj[key]?.[1] || 0
             // 默认是查询任务的，不做叠加
-            if (reset || selectedTime === 'default') {
+            if (selectedTime === 'default') {
+              overData[key] = Math.max(val1, val0)
+            } else if (reset) {
               overData[key] = val1 - val0
             } else {
               overData[key] += val1 - val0
