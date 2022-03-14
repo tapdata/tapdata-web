@@ -4,8 +4,8 @@
     <div class="overview-bar__content p-4">
       <div class="flex justify-content-between mb-2 font-color-main">
         <div>
-          <span>{{ $t('task_monitor_migrate_table_rows') }} {{ info.totalDataNum || 0 }}</span>
-          <span class="ml-3">{{ $t('task_monitor_migrate_table_rows_completed') }} {{ info.finishNumber || 0 }}</span>
+          <span>{{ $t('task_info_table_number') }} {{ info.totalTaleNum || 0 }}</span>
+          <span class="ml-3">{{ $t('task_info_completed') }} {{ info.completeTaleNum || 0 }}</span>
         </div>
         <div>{{ $t('task_monitor_full_completion_time') }}：{{ info.finishDuration }}</div>
       </div>

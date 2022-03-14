@@ -876,9 +876,8 @@ export default {
   task_info_throughputpop:
     'Input and output statistics: average source data collection speed and target write speed per second, the larger the value, the better',
   task_info_overview: 'Overview',
-  task_info_plan: 'Plan',
-  task_info_table_number: 'Number of tables',
-  task_info_completed: 'Completed',
+  task_info_table_number: 'Number of scheduled full synchronization tables',
+  task_info_completed: 'The number of full synchronization tables has been completed',
   task_info_expected: 'Expected',
   task_info_completed_time: 'Completed time',
   task_info_info: 'Details',
