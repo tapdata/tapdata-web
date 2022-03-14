@@ -27,6 +27,7 @@
     <ElTooltip v-if="hasNodeError(data.id)" content="请检查节点配置" placement="top">
       <VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>
     </ElTooltip>
+    <div class="node-anchor"></div>
   </BaseNode>
 </template>
 
@@ -126,7 +127,7 @@ export default {
       // console.log('sourceEndpoint, targetEndpoint', sourceEndpoint, targetEndpoint) // eslint-disable-line
       const targetParams = { ...targetEndpoint, maxConnections: this.ins.attr.maxInputs || -1 }
 
-      this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
+      // this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
 
       this.jsPlumbIns.makeTarget(id, targetParams)
 
@@ -219,7 +220,11 @@ export default {
 
       this.jsPlumbIns.addEndpoint(
         this.$el,
-        { ...sourceEndpoint, enabled: !this.stateIsReadonly },
+        {
+          ...sourceEndpoint,
+          enabled: !this.stateIsReadonly,
+          maxConnections: this.ins.attr.maxOutputs || -1
+        },
         {
           uuid: id + '_source'
         }
@@ -285,14 +290,51 @@ export default {
   transform: translateY(-6px);
 }
 
-.df-node.jtk-drag {
-  &:after {
-    content: '';
+.df-node {
+  &.jtk-drag {
+    &:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+    }
+  }
+
+  .node-anchor {
+    display: none;
+    width: 16px;
+    height: 16px;
+    border-color: inherit;
     position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
+    cursor: crosshair;
+    left: 100%;
+    transform: translateX(-50%);
+    place-content: center;
+    place-items: center;
+
+    &:before {
+      content: '';
+      position: absolute;
+      border-width: 1px;
+      border-style: solid;
+      border-color: inherit;
+      border-radius: 50%;
+      background: #fff;
+      width: 12px;
+      height: 12px;
+    }
+
+    //&:hover:before {
+    //  border-width: 2px;
+    //  width: 16px;
+    //  height: 16px;
+    //}
+  }
+
+  &:hover .node-anchor {
+    display: flex;
   }
 }
 </style>

@@ -314,6 +314,14 @@ export default {
     },
     value() {
       this.getSelectLabel()
+    },
+    items: {
+      deep: true,
+      handler(v1, v2) {
+        if (v1 && v2 && JSON.stringify(v1) !== JSON.stringify(v2)) {
+          this.init()
+        }
+      }
     }
   },
   mounted() {

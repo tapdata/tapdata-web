@@ -1,35 +1,18 @@
 <template>
   <section class="roles-list-wrap section-wrap">
     <TablePage ref="table" row-key="id" class="roles-list" :remoteMethod="getData" @sort-change="handleSortTable">
-      <div slot="search">
-        <ul class="search-bar">
-          <li>
-            <el-input
-              clearable
-              class="input-with-select"
-              size="mini"
-              v-model="searchParams.keyword"
-              :placeholder="$t('role.selectRoleName')"
-              @input="table.fetch(1, 800)"
-            >
-              <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
-                <el-option :label="$t('role.fuzzyMatching')" :value="true"></el-option>
-                <el-option :label="$t('role.preciseMatching')" :value="false"></el-option>
-              </el-select>
-            </el-input>
-          </li>
-          <li v-if="searchParams.keyword">
-            <el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }} </el-button>
-          </li>
-
-          <li v-if="searchParams.keyword">
-            <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }} </el-button>
-          </li>
-        </ul>
+      <div slot="search" class="search-bar">
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </div>
       <div slot="operation">
-        <el-button v-readonlybtn="'role_creation'" class="btn btn-create" size="mini" @click="openCreateDialog()">
-          <i class="iconfont icon-jia add-btn-icon"></i>
+        <el-button
+          v-readonlybtn="'role_creation'"
+          type="primary"
+          class="btn btn-create"
+          size="mini"
+          @click="openCreateDialog()"
+        >
+          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
           <span>{{ $t('role.create') }}</span>
         </el-button>
       </div>
@@ -90,16 +73,15 @@
             :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id)"
             @click="openCreateDialog(scope.row.id, scope.row)"
           >
-            {{ $t('role.edit') }}
+            {{ $t('button_edit') }}
           </el-button>
           <el-button
             type="text"
-            style="color: #f56c6c"
             @click="handleDelete(scope.row)"
             :disabled="$disabledByPermission('role_delete_all_data', scope.row.user_id) || scope.row.name === 'admin'"
             v-readonlybtn="'role_delete'"
           >
-            {{ $t('role.delete') }}
+            {{ $t('button_delete') }}
           </el-button>
         </template>
       </el-table-column>
@@ -120,13 +102,8 @@
         >
           <el-input v-model="form.name" :placeholder="$t('role.selectRoleName')" size="small"></el-input>
         </el-form-item>
-        <el-form-item :label="$t('role.roleDesc')" style="margin-bottom: 10px">
-          <el-input
-            type="textarea"
-            :placeholder="$t('role.selectDesc')"
-            v-model="form.description"
-            autocomplete="off"
-          ></el-input>
+        <el-form-item :label="$t('role.roleDesc')">
+          <el-input type="textarea" v-model="form.description" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item :label="$t('role.defaultRole')">
           <el-switch
@@ -185,18 +162,19 @@
 </template>
 
 <script>
+import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '@/utils/util'
 
 export default {
   components: {
-    TablePage
+    TablePage,
+    FilterBar
   },
   data() {
     return {
       searchParams: {
-        keyword: '',
-        isFuzzy: true
+        keyword: ''
         // time: ''
       },
       order: 'last_updated DESC',
@@ -221,16 +199,23 @@ export default {
       deleteObj: {
         id: '',
         name: ''
-      }
+      },
+      filterItems: []
     }
   },
   created() {
     this.getUserData()
+    this.getFilterItems()
     // this.getDbOptions();
     // this.getCount();
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
+  },
+  watch: {
+    '$route.query'() {
+      this.table.fetch(1)
+    }
   },
   computed: {
     table() {
@@ -238,23 +223,13 @@ export default {
     }
   },
   methods: {
-    // 重置
-    reset(name) {
-      if (name === 'reset') {
-        this.searchParams = {
-          keyword: '',
-          isFuzzy: true
-        }
-      }
-      this.table.fetch(1)
-    },
     // 获取数据
     getData({ page }) {
       let { current, size } = page
-      let { isFuzzy, keyword } = this.searchParams
+      let { keyword } = this.searchParams
       let where = {}
       if (keyword && keyword.trim()) {
-        let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword
+        let filterObj = { like: toRegExp(keyword), options: 'i' }
         where.or = [{ name: filterObj }]
       }
       let filter = {
@@ -529,6 +504,16 @@ export default {
             this.table.fetch()
           }
         })
+    },
+
+    getFilterItems() {
+      this.filterItems = [
+        {
+          placeholder: this.$t('role.selectRoleName'),
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     }
   }
 }
@@ -589,11 +574,11 @@ export default {
   .el-dialog__body {
     padding: 30px;
     .el-form-item {
-      margin-bottom: 15px;
+      // margin-bottom: 15px;
     }
     .el-form-item__error {
-      padding-top: 0;
-      line-height: 12px;
+      // padding-top: 0;
+      // line-height: 12px;
     }
   }
 

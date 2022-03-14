@@ -297,7 +297,7 @@ export default {
             this.digSettingForm = res.data
             this.getMongodb()
             if (this.digSettingForm?.persistenceMongodb_uri_db) {
-              this.handleTables(this.digSettingForm?.persistenceMongodb_uri_db) //编辑页面请求tables
+              this.handleTables(this.digSettingForm?.persistenceMongodb_uri_db, true) //编辑页面请求tables
             }
           }
         })
@@ -320,11 +320,14 @@ export default {
         })
     },
     //根据已选connectionId->tables
-    handleTables(id) {
+    handleTables(id, isClear) {
       this.$api('connections')
         .customQuery(id, { schema: true })
         .then(res => {
           if (res) {
+            if (!isClear) {
+              this.digSettingForm.persistenceMongodb_collection = ''
+            }
             this.tableList = res?.data?.schema?.tables || []
           }
         })

@@ -13,6 +13,12 @@
       </div>
       <el-table-column :label="$t('api_asnalysis_header_api')" width="260">
         <template slot-scope="scope">
+          <!-- <div class="api-analysis-table-apiname">
+            <span class="status">{{ scope.row.api_status }}</span>
+            <span :class="scope.row.api_method">{{ scope.row.api_method }}</span>
+            <span>{{ scope.row.api_path }}</span>
+          </div> -->
+
           <div
             :title="scope.row.api_path"
             class="api-analysis-table-apiname"
@@ -61,8 +67,7 @@ export default {
   data() {
     return {
       searchParams: {
-        keyword: '',
-        isFuzzy: true
+        keyword: ''
       },
       filterItems: [],
       order: 'data.api_calls DESC'
@@ -73,9 +78,9 @@ export default {
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-    let cache = this.table.getCache()
-    cache.isFuzzy = cache.isFuzzy === true
-    this.searchParams = cache
+    // let cache = this.table.getCache()
+    // cache.isFuzzy = cache.isFuzzy === true
+    // this.searchParams = cache
   },
   computed: {
     table() {
@@ -87,8 +92,7 @@ export default {
     reset(name) {
       if (name === 'reset') {
         this.searchParams = {
-          keyword: '',
-          isFuzzy: true
+          keyword: ''
         }
       }
       this.table.fetch(1)
@@ -96,7 +100,7 @@ export default {
     // 获取数据
     getData({ page }) {
       let { current, size } = page
-      let { isFuzzy, keyword } = this.searchParams
+      let { keyword } = this.searchParams
       let where = {
         stats_name: 'ALL-time:ALL-user:EVERY-api'
       }
@@ -126,12 +130,11 @@ export default {
         })
       ]).then(([totalRes, res]) => {
         this.table.setCache({
-          isFuzzy,
           keyword
         })
 
         if (totalRes.data?.items?.length) {
-          res.data = res.data.concat(totalRes.data.items)
+          res.data = res.data.items.concat(totalRes.data.items)
         }
         let listData = []
         if (res.data?.length) {
@@ -161,7 +164,7 @@ export default {
       if (p == 'T O T A L :') {
         return (p = this.$t('api_asnalysis_total'))
       } else {
-        return `<span class="${s}"></span> ${m}<br>${p}`
+        return `<span class="${s} status"></span> <span class="${m?.toLowerCase()} method">${m}</span>${p}`
       }
     },
     // 数字处理
@@ -332,7 +335,7 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          placeholder: this.$t('api_server_name'),
+          placeholder: this.$t('api_asnalysis_placeholder'),
           key: 'keyword',
           type: 'input'
         }
@@ -354,23 +357,50 @@ export default {
     .btn + .btn {
       margin-left: 5px;
     }
-  }
-}
-</style>
-<style lang="scss">
-.api-analysis-wrap {
-  .api-analysis-table-apiname {
-    span {
-      display: inline-block;
-      height: 10px;
-      width: 10px;
-      border-radius: 50%;
-    }
-    .pending {
-      background-color: red;
-    }
-    .active {
-      background-color: green;
+    ::v-deep {
+      .api-analysis-table-apiname {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        // span {
+        //   height: 6px;
+        //   width: 6px;
+        //   border-radius: 50%;
+        //   background-color: #fff;
+        // }
+        .status {
+          height: 6px;
+          width: 6px;
+          border-radius: 50%;
+        }
+        .method {
+          min-width: 62px;
+          margin: 0 10px;
+          padding: 2px 0;
+          border-radius: 2px;
+          color: #fff;
+          text-align: center;
+          white-space: nowrap;
+        }
+        .post {
+          background-color: #178061;
+        }
+        .get {
+          background-color: #09819c;
+        }
+        .patch {
+          background-color: #f2994b;
+        }
+        .delete {
+          background-color: #db5050;
+        }
+        .pending {
+          background-color: red;
+        }
+        .active {
+          background-color: green;
+        }
+      }
     }
   }
 }

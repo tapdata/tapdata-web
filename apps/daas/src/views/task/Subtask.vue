@@ -124,10 +124,8 @@ export default {
       statusBtMap: {
         start: {
           edit: true,
-          wait_run: true,
           stop: true,
-          complete: true,
-          stopping: true
+          complete: true
         },
         pause: {
           running: true
@@ -144,7 +142,6 @@ export default {
           running: true
         },
         reset: {
-          wait_run: true,
           pause: true,
           stop: true,
           complete: true,

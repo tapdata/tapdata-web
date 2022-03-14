@@ -138,7 +138,7 @@ export default {
   dashboard_status_paused: 'Paused',
   dashboard_status_edit: 'Editing',
   dashboard_status_error: 'Error',
-  dashboard_status_wait_run: 'Wait run',
+  dashboard_status_wait_run: 'Scheduled',
   dashboard_status_complete: 'Completed',
   dashboard_status_stop: 'stopped',
   dashboard_all_total: 'All tasks',
@@ -301,9 +301,11 @@ export default {
   modules_allarelease: 'Batch release',
   modules_releasefb: 'Are you sure you want to release the following APIs in batches?',
   modules_releasecancel: 'Are you sure you want to cancel the following APIs in batches?',
-  modules_apiServerStatus: 'API Service Status',
+  modules_api_server_status: 'API Service Status',
   modules_sure: 'Are you sure you want',
   modules_cancel_failed: 'Unpublished API failed',
+  modules_type: 'type',
+  modules_name_placeholder: 'Please enter the table name/database name',
 
   module_form_connection: 'Database',
   module_form_tablename: 'table name',
@@ -387,6 +389,7 @@ export default {
   api_asnalysis_header_avg_res_timespan: 'Average response time (milliseconds)',
   api_asnalysis_total: 'Statistics',
   api_asnalysis_name: 'Name',
+  api_asnalysis_placeholder: 'Request method/path',
 
   // api server api浏览
   api_server_name: 'Name',
@@ -432,6 +435,8 @@ export default {
   dataExplorer_format: 'Format code',
   dataExplorer_exists: 'Already exists',
   dataExplorer_type: 'type',
+  dataExplorer_apiservr: 'Api server',
+  dataExplorer_base_path: 'Base path',
   // api documentation and testing api文档及测试
   file_test_generate_code: 'Generate code',
 
@@ -623,6 +628,8 @@ export default {
   connection_test_schema_tips:
     'Possible reason: there is a problem with the Schema case setting, you can try to modify the case and try again',
   connection_oracle_config_share_log_switch: 'Shared mining',
+  connection_form_oracle_redoLog_parser: 'Redo log',
+  connection_form_oracle_redoLog_parser_post: 'Log parsing service address IP',
 
   connection_preview_load_schema: 'Load Schema',
   connection_preview_edit: 'Edit',
@@ -750,6 +757,9 @@ export default {
   data_flow_manually: 'manually',
   data_flow_oracle_logminer: 'Oracle Logminer Mode',
 
+  task_list_transform_running: 'Field mapping running',
+  task_list_transform_done: 'Field mapping completed',
+  task_list_transform_error: 'Field mapping failed',
   task_list_run: 'Start',
   task_list_stop: 'Stop',
   task_list_force_stop: 'Forced stop',
@@ -791,13 +801,15 @@ export default {
   task_preview_cdcDelayTime: 'Incremental max delay time',
   task_preview_failCount: 'Total number of failures',
   task_preview_status_error: 'Error',
-  task_preview_status_edit: 'editing',
-  task_preview_status_wait_run: 'Wait run',
+  task_preview_status_edit: 'Edit',
+  task_preview_status_wait_run: 'Scheduled',
   task_preview_status_complete: 'Completed',
   task_preview_status_running: 'running',
   task_preview_status_stop: 'stopped',
-  task_preview_status_pause: 'Pause',
-  task_preview_status_paused: 'Paused',
+  task_preview_status_stopping: 'Stopping',
+  task_preview_status_preparing: 'preparing',
+  task_preview_status_scheduling: 'Scheduling',
+  task_preview_status_schedule_failed: 'Scheduling failed',
 
   task_monitor_progress: 'Task progress',
   task_monitor_full_sync: 'Full synchronization overview',
@@ -1382,5 +1394,21 @@ export default {
     'This configuration takes effect only when MongoDB is selected as the mode, enter the stored collection name',
   setting_share_cdc_persistence_rocksdb_path: 'The local path to the RocksDB store',
   setting_share_cdc_persistence_rocksdb_path_doc:
-    'This configuration takes effect only when RocksDB is selected as the mode, and the local path stored by RocksDB'
+    'This configuration takes effect only when RocksDB is selected as the mode, and the local path stored by RocksDB',
+
+  process_name: 'name/worker type',
+  process_worker_ip: 'Address',
+  process_version: 'version',
+  process_online: 'Online',
+  process_offline: 'Offline',
+  process_all: 'All',
+  process_state: 'State',
+  process_job_ids: 'Details',
+  process_running_thread: 'Running thread',
+  process_total_thread: 'Number of threads',
+  process_worker_type: 'Worker type',
+  process_ping_time: 'Ping time',
+  process_start_time: 'Start time',
+  process_process_id: 'Process ID',
+  process_process_state: 'Worker process state'
 }

@@ -107,12 +107,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column
+      <!-- <el-table-column
         prop="lag"
         :label="$t('task_list_execution_status')"
         width="180"
         sortable="custom"
-      ></el-table-column>
+      ></el-table-column> -->
 
       <el-table-column prop="startTime" :label="$t('task_list_start_time')" width="170" sortable="custom">
         <template #default="{ row }">
@@ -132,6 +132,16 @@
             </ElLink>
             <ElDivider direction="vertical"></ElDivider>
             <ElLink
+              v-if="isShowForceStop(row.statusResult)"
+              v-readonlybtn="'SYNC_job_operation'"
+              type="primary"
+              :disabled="$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
+              @click="forceStop([row.id])"
+            >
+              {{ $t('task_list_force_stop') }}
+            </ElLink>
+            <ElLink
+              v-else
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="
@@ -141,22 +151,10 @@
               >{{ $t('task_list_stop') }}</ElLink
             >
             <ElDivider direction="vertical"></ElDivider>
-            <!--            <ElLink-->
-            <!--              v-if="row.status === 'stopping'"-->
-            <!--              v-readonlybtn="'SYNC_job_operation'"-->
-            <!--              type="primary"-->
-            <!--              :disabled="-->
-            <!--                $disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||-->
-            <!--                !statusBtMap['forceStop'][row.status]-->
-            <!--              "-->
-            <!--              @click="forceStop([row.id])"-->
-            <!--            >-->
-            <!--              {{ $t('dataFlow.button.force_stop') }}-->
-            <!--            </ElLink>-->
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="$disabledByPermission('SYNC_job_edition_all_data', row.user_id) || row.status === 'running'"
+              :disabled="startDisabled(row)"
               @click="handleEditor(row.id)"
             >
               {{ $t('button_edit') }}
@@ -327,8 +325,7 @@ export default {
         stop: { running: true },
         delete: { edit: true, draft: true, error: true, pause: true },
         edit: { edit: true, stop: true, error: true },
-        reset: { draft: true, error: true, pause: true },
-        forceStop: { stopping: true }
+        reset: { draft: true, error: true, pause: true }
         //     编辑中（edit）- 编辑中
         // 启动中（start）- 启动中
         // 运行中（running）- 运行中
@@ -384,7 +381,7 @@ export default {
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
-    }, 50000)
+    }, 8000)
   },
   beforeDestroy() {
     clearInterval(timeout)
@@ -604,13 +601,7 @@ export default {
         }
       }
       let statuses = item.statuses
-      item.statusResult = []
-      if (statuses?.length) {
-        item.statusResult = getSubTaskStatus(statuses)
-      } else if (ETL_STATUS_MAP[item.status]) {
-        // 贴膏药，如果创建任务，没有手动点击保存，statuses 为空，主任务状态为 edit, 则显示编辑中（靠ETL_STATUS_MAP维护）
-        item.statusResult = [{ ...ETL_STATUS_MAP[item.status], count: 1 }]
-      }
+      item.statusResult = getSubTaskStatus(statuses)
       return item
     },
     handleSelectTag() {
@@ -654,14 +645,14 @@ export default {
       this.$confirm(
         h('p', null, [
           h('span', null, this.$t('dataFlow.modifyEditText')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeLayoutProcess')),
+          h('span', { style: 'color: #2C65FF' }, this.$t('dataFlow.nodeLayoutProcess')),
           h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeAttributes')),
+          h('span', { style: 'color: #2C65FF' }, this.$t('dataFlow.nodeAttributes')),
           h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.matchingRelationship')),
+          h('span', { style: 'color: #2C65FF' }, this.$t('dataFlow.matchingRelationship')),
           h('span', null, '，'),
           h('span', null, this.$t('dataFlow.afterSubmission')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.reset')),
+          h('span', { style: 'color: #2C65FF' }, this.$t('dataFlow.reset')),
           h('span', null, this.$t('dataFlow.runNomally')),
           h('span', null, this.$t('dataFlow.editLayerTip'))
         ]),
@@ -861,7 +852,15 @@ export default {
         if (!resFlag) {
           return
         }
-        this.changeStatus(ids, { status: 'force stopping' })
+        this.$api('Task')
+          .forceStop(ids)
+          .then(res => {
+            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.table.fetch()
+          })
+          .catch(err => {
+            this.$message.error(err.data?.message)
+          })
       })
     },
     del(ids, item = {}) {
@@ -1034,30 +1033,38 @@ export default {
         }
       })
     },
+    isShowForceStop(data) {
+      return data.filter(t => t.count > 0).every(t => ['stopping'].includes(t.status))
+    },
     startDisabled(row) {
       const statusResult = row.statusResult || []
-      const statusLength = row.statuses?.length || 0
       return (
         this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
-        statusResult.every(t => t.status === 'running' && t.count > 0 && t.count === statusLength)
+        statusResult
+          .filter(t => t.count > 0)
+          .every(t => ['wait_run', 'scheduling', 'running', 'stopping'].includes(t.status))
       )
     },
     stopDisabled(data) {
-      let stopData = data.filter(t => t.count > 0).find(t => ['running'].includes(t.status))
-      return stopData ? false : true
+      return data
+        .filter(t => t.count > 0)
+        .every(t =>
+          ['edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed', 'stopping'].includes(t.status)
+        )
     },
     resetDisabled(row) {
       const statusResult = row.statusResult || []
-      const statusLength = row.statuses?.length || 0
       return (
         this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
-        statusResult.some(t => t.status === 'running' && t.count > 0 && t.count === statusLength)
+        statusResult
+          .filter(t => t.count > 0)
+          .every(t => ['edit', 'wait_run', 'scheduling', 'running', 'stopping'].includes(t.status))
       )
     },
     deleteDisabled(data) {
       return !data
         .filter(t => t.count > 0)
-        .every(t => ['edit', 'draft', 'error', 'pause', 'not_running', 'stop'].includes(t.status))
+        .every(t => ['edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed'].includes(t.status))
     },
     getFilterItems() {
       this.filterItems = [
@@ -1074,21 +1081,21 @@ export default {
           type: 'select-inner',
           items: this.progressOptions
         },
-        {
-          label: this.$t('task_list_execution_status'),
-          key: 'executionStatus',
-          type: 'select-inner',
-          menuMinWidth: '250px',
-          items: async () => {
-            let option = ['initializing', 'cdc', 'initialized', 'Lag']
-            return option.map(item => {
-              return {
-                label: this.$t('task_list_status_' + item),
-                value: item
-              }
-            })
-          }
-        },
+        // {
+        //   label: this.$t('task_list_execution_status'),
+        //   key: 'executionStatus',
+        //   type: 'select-inner',
+        //   menuMinWidth: '250px',
+        //   items: async () => {
+        //     let option = ['initializing', 'cdc', 'initialized', 'Lag']
+        //     return option.map(item => {
+        //       return {
+        //         label: this.$t('task_list_status_' + item),
+        //         value: item
+        //       }
+        //     })
+        //   }
+        // },
         {
           placeholder: this.$t('task_list_search_placeholder'),
           key: 'keyword',

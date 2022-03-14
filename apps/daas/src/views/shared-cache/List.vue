@@ -18,15 +18,17 @@
       <ElTableColumn prop="tableName" :label="$t('column_table')"></ElTableColumn>
       <ElTableColumn :label="$t('shared_cache_status')">
         <template #default="{ row }">
-          <span :class="'icon-status icon-status--' + row.status">{{ $t('shared_cache_status_' + row.status) }}</span>
+          <span :class="'icon-status icon-status--' + row.statusColor">{{
+            $t('shared_cache_status_' + row.statusResult)
+          }}</span>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="createTimeFmt" :label="$t('column_create_time')"></ElTableColumn>
       <ElTableColumn prop="cacheTimeAtFmt" :label="$t('shared_cache_time')"></ElTableColumn>
       <ElTableColumn :label="$t('column_operation')">
         <template #default="{ row }">
-          <ElLink type="primary" @click="edit(row.id)">{{ $t('button_edit') }}</ElLink>
-          <ElDivider direction="vertical"></ElDivider>
+          <!-- <ElLink type="primary" @click="edit(row.id)">{{ $t('button_edit') }}</ElLink> -->
+          <!-- <ElDivider direction="vertical"></ElDivider> -->
           <ElLink type="primary" @click.stop="checkDetails(row)">{{ $t('button_check') }}</ElLink>
           <ElDivider direction="vertical"></ElDivider>
           <ElLink type="primary" @click="del(row.id)">{{ $t('button_delete') }}</ElLink>
@@ -38,8 +40,8 @@
         <VIcon class="icon">agent</VIcon>
         <div class="flex-fill ml-4">
           <div class="fs-6">{{ details.name }}</div>
-          <span :class="'mt-2 icon-status icon-status--' + details.status">{{
-            $t('shared_cache_status_' + details.status)
+          <span :class="'mt-2 icon-status icon-status--' + details.statusColor">{{
+            $t('shared_cache_status_' + details.statusResult)
           }}</span>
         </div>
       </div>
@@ -82,15 +84,15 @@
   box-sizing: border-box;
   overflow: hidden;
   text-align: center;
-  &.icon-status--running {
+  &.icon-status--success {
     color: #178061;
     background: #c4f3cb;
   }
-  &.icon-status--ready {
+  &.icon-status--warning {
     color: #d5760e;
     background: #ffe9cf;
   }
-  &.icon-status--error {
+  &.icon-status--danger {
     color: map-get($color, danger);
     background: #ffecec;
   }
@@ -184,7 +186,7 @@ export default {
       let { taskName, connectionName } = this.searchParams
       let where = {}
       taskName && (where.name = { like: toRegExp(taskName), options: 'i' })
-      connectionName && (where.name = { like: toRegExp(connectionName), options: 'i' })
+      connectionName && (where.connectionName = { like: toRegExp(connectionName), options: 'i' })
       let filter = {
         order: 'createTime DESC',
         limit: size,
@@ -197,9 +199,23 @@ export default {
         })
         .then(res => {
           let list = res.data?.items || []
+          let map = {
+            error: { color: 'danger', include: ['error', 'schedule_failed'] },
+            running: { color: 'success', include: ['running', 'stopping', 'wait_run', 'scheduling'] },
+            ready: { color: 'warning', include: ['edit', 'stop', 'complete'] }
+          }
           return {
             total: res.data?.total,
             data: list.map(item => {
+              for (const key in map) {
+                let statusObj = map[key]
+                let includeStatus = statusObj.include
+                if (includeStatus.includes(item.status)) {
+                  item.statusResult = key
+                  item.statusColor = statusObj.color
+                  break
+                }
+              }
               item.createTimeFmt = this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               item.cacheTimeAtFmt = this.$moment(item.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss')
               return item
@@ -242,6 +258,7 @@ export default {
             .delete(id)
             .then(() => {
               this.$$message.success(this.$t('message_delete_ok'))
+              this.table.fetch()
             })
         }
       })

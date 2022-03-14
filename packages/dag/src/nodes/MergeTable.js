@@ -12,7 +12,7 @@ export class MergeTable extends NodeType {
   }
 
   attr = {
-    // maxOutputs: 1 // 最大输入个数
+    maxOutputs: 1 // 最大输出个数
   }
 
   group = 'processor'
@@ -33,10 +33,7 @@ export class MergeTable extends NodeType {
         'x-reactions': {
           dependencies: ['sourceNode'],
           fulfill: {
-            state: {
-              value:
-                '{{$deps[0] && $deps[0].map( item =>({ sourceId: item.value, sourceName: item.label, mergeType: "updateOrInsert", joinKeys: [{source: "", target:""}], source: item.source }) )}}'
-            }
+            run: '{{ getMergeItemsFromSourceNode($self, $deps[0]) }}'
           }
         },
         items: {
@@ -46,7 +43,7 @@ export class MergeTable extends NodeType {
               type: 'void',
               'x-component': 'FormLayout',
               'x-component-props': {
-                labelWidth: 120,
+                labelWidth: 150,
                 wrapperWidth: 500,
                 labelAlign: 'left',
                 style: {
@@ -56,7 +53,7 @@ export class MergeTable extends NodeType {
                 }
               },
               properties: {
-                sourceName: {
+                tableName: {
                   type: 'string',
                   title: '节点名称',
                   'x-decorator': 'FormItem',
@@ -64,21 +61,67 @@ export class MergeTable extends NodeType {
                 },
                 sourceId: {
                   type: 'string',
-                  'x-display': 'hidden',
+                  'x-hidden': true,
                   'x-decorator': 'FormItem',
                   'x-component': 'PreviewText.Input'
                 },
                 mergeType: {
-                  type: 'select',
+                  type: 'string',
                   title: '写入模式',
                   'x-decorator': 'FormItem',
                   'x-component': 'Select',
-                  default: 'updateOrInsert',
                   enum: [
-                    { label: '追加写入', value: 'updateOrInsert' },
-                    { label: '更新写入', value: 'appendWrite' },
-                    { label: '更新已存在或插入新数据', value: 'updateWrite' },
-                    { label: '更新进内嵌数组', value: 'updateWrite' }
+                    { label: '追加写入', value: 'appendWrite' },
+                    { label: '更新写入', value: 'updateWrite' },
+                    { label: '更新已存在或插入新数据', value: 'updateOrInsert' },
+                    { label: '更新进内嵌数组', value: 'updateIntoArray' }
+                  ],
+                  'x-reactions': {
+                    target: 'mergeProperties.*.targetPath',
+                    effects: ['onFieldValueChange'],
+                    fulfill: {
+                      state: {
+                        value:
+                          '{{ $self.index === $target.index ? $self.value === "updateOrInsert" ? "" : $values.mergeProperties[$target.index].tableName : $target.value }}'
+                      }
+                    }
+                  }
+                },
+                targetPath: {
+                  type: 'string',
+                  title: '关联后写入路径',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Input',
+                  'x-reactions': {
+                    dependencies: ['.mergeType'],
+                    fulfill: {
+                      state: {
+                        visible: '{{ $deps[0] !== "appendWrite" }}'
+                      }
+                    }
+                  }
+                },
+                arrayKeys: {
+                  type: 'array',
+                  title: '内嵌数组匹配条件',
+                  required: true,
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Select',
+                  'x-component-props': {
+                    'allow-create': true,
+                    multiple: true,
+                    filterable: true
+                  },
+                  'x-reactions': [
+                    {
+                      dependencies: ['.mergeType'],
+                      fulfill: {
+                        state: {
+                          visible: '{{ $deps[0] === "updateIntoArray" }}'
+                        }
+                      }
+                    },
+                    '{{useAsyncDataSource(loadNodeFieldNames, "dataSource", $values.mergeProperties[$self.indexes[0]] ? $values.mergeProperties[$self.indexes[0]].sourceId : "")}}'
                   ]
                 },
                 joinKeys: {
@@ -91,7 +134,14 @@ export class MergeTable extends NodeType {
                       border: '1px solid #f2f2f2'
                     }
                   },
-                  default: [{ source: '', target: '' }],
+                  'x-reactions': {
+                    dependencies: ['.mergeType'],
+                    fulfill: {
+                      schema: {
+                        'x-decorator-props.style.display': '{{ $deps[0] !== "appendWrite" ? "flex" : "none" }}'
+                      }
+                    }
+                  },
                   items: {
                     type: 'object',
                     properties: {
@@ -100,7 +150,8 @@ export class MergeTable extends NodeType {
                         'x-component': 'ArrayTable.Column',
                         'x-component-props': {
                           title: '源表字段',
-                          align: 'center'
+                          align: 'center',
+                          asterisk: false
                         },
                         properties: {
                           source: {
@@ -113,7 +164,7 @@ export class MergeTable extends NodeType {
                               filterable: true
                             },
                             'x-reactions': [
-                              '{{useAsyncDataSource(loadNodeFieldNames, "dataSource", $values.mergeProperties[$self.indexes[0]].sourceId)}}'
+                              '{{useAsyncDataSource(loadNodeFieldNames, "dataSource", $values.mergeProperties[$self.indexes[0]] ? $values.mergeProperties[$self.indexes[0]].sourceId : "")}}'
                             ]
                           }
                         }
@@ -123,14 +174,22 @@ export class MergeTable extends NodeType {
                         'x-component': 'ArrayTable.Column',
                         'x-component-props': {
                           title: '目标表字段',
-                          align: 'center'
+                          align: 'center',
+                          asterisk: false
                         },
                         properties: {
                           target: {
                             type: 'string',
                             required: true,
                             'x-decorator': 'FormItem',
-                            'x-component': 'Input'
+                            'x-component': 'Select',
+                            'x-component-props': {
+                              'allow-create': true,
+                              filterable: true
+                            },
+                            'x-reactions': [
+                              '{{useAsyncDataSource(loadNodeFieldNames, "dataSource", getTargetNode($self).value)}}'
+                            ]
                           }
                         }
                       },
@@ -165,5 +224,9 @@ export class MergeTable extends NodeType {
         }
       }
     }
+  }
+
+  allowTarget(target) {
+    return target.type === 'table' && target.databaseType === 'mongodb'
   }
 }

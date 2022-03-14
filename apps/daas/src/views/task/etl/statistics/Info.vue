@@ -146,9 +146,6 @@ import Chart from 'web-core/components/chart'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import { formatTime, formatMs, isEmpty } from '@/utils/util'
 
-let now = new Date(1997, 9, 3)
-let oneDay = 24 * 3600 * 1000
-let value1 = Math.random() * 1000
 export default {
   name: 'Info',
   components: { StatusTag, VIcon, SelectList, Chart, DatetimeRange },
@@ -166,7 +163,6 @@ export default {
       statusBtMap: {
         start: {
           edit: true,
-          wait_run: true,
           stop: true,
           complete: true
         },
@@ -399,20 +395,6 @@ export default {
         return 100
       }
       return Math.floor((initialWrite * 100) / initialTotal)
-    },
-    secondDisabled() {
-      return false
-    },
-    minuteDisabled() {
-      return false
-    },
-    hourDisabled() {
-      const { selectedTime } = this
-      return !['30min', '60min'].includes(selectedTime)
-    },
-    dayDisabled() {
-      const { selectedTime } = this
-      return !['60min'].includes(selectedTime)
     }
   },
   watch: {
@@ -456,24 +438,7 @@ export default {
         // }
       }, ms)
     },
-    randomData() {
-      now = new Date(+now + oneDay)
-      return [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/')
-    },
-    randomData1() {
-      now = new Date(+now + oneDay)
-      value1 = value1 + Math.random() * 21 - 10
-      return {
-        name: now.toString(),
-        value: [[now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'), Math.round(value1)]
-      }
-    },
-    randomTime() {
-      now = new Date(+now + oneDay)
-      return [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/')
-    },
-    // param1：数组前后操作，  param2:：滑块范围是否追加，false表示范围不变，true表示会扩张
-    getMeasurement(reset = false) {
+    getParams(reset) {
       const { selectedTime, selectedTimeItems } = this
       let startTimeStamp, endTimeStamp
       if (selectedTime) {
@@ -496,9 +461,7 @@ export default {
           ? (endTimeStamp || new Date().getTime()) - startTimeStamp
           : selectedTimeItems.find(t => t.value === selectedTime).spacing
       let guanluary = this.getGuanluary(diff)
-      let formatGuanluaryTime = this.getGuanluary(diff, true)
       let subTaskId = this.$route.params?.subId
-      // let lineDataDeep = this.lineDataDeep
       let tags = {
         subTaskId: subTaskId,
         type: 'subTask'
@@ -581,6 +544,12 @@ export default {
         }
         // params.samples[2].start = startTimeStamp
       }
+      return params
+    },
+    // param1：true 清除数据，做覆盖操作
+    getMeasurement(reset = false) {
+      const { selectedTime } = this
+      let params = this.getParams(reset)
       this.remoteMethod(params).then(data => {
         let { samples } = data
         samples.forEach(el => {
@@ -597,7 +566,10 @@ export default {
             // let l = countObj[key].length
             let val0 = countObj[key]?.[0] || 0
             let val1 = countObj[key]?.[1] || 0
-            if (reset) {
+            // 默认是查询任务的，不做叠加
+            if (selectedTime === 'default') {
+              overData[key] = Math.max(val1, val0)
+            } else if (reset) {
               overData[key] = val1 - val0
             } else {
               overData[key] += val1 - val0
@@ -652,6 +624,7 @@ export default {
             value: [time, outputQPS[i]]
           })
         })
+        // eslint-disable-next-line
         console.log('x轴：', this.lineDataDeep.x.length, xArr)
         if (reset) {
           this.lineDataDeep.x = xArr
@@ -737,17 +710,6 @@ export default {
       const { selectedTime, selectedTimeItems } = this
       let startTimeStamp = start || new Date().getTime()
       let endTimeStamp = end || new Date().getTime()
-      // let timeType = 'second'
-      // let startTimeStamp, endTimeStamp
-      // if (selectedTime) {
-      //   ;[startTimeStamp, endTimeStamp] = this.getTimeRangeByType(selectedTime, this.timeRange)
-      //   if (isNaN(startTimeStamp)) {
-      //     startTimeStamp = null
-      //   }
-      //   if (isNaN(endTimeStamp)) {
-      //     endTimeStamp = null
-      //   }
-      // }
       let diff =
         this.selectedTime === 'custom'
           ? endTimeStamp - startTimeStamp
@@ -874,27 +836,6 @@ export default {
       return result
     },
     changePeriodFnc() {
-      // switch (val) {
-      //   case '5min':
-      //     this.selectTime = 'second'
-      //     this.selectedRate = 'second'
-      //     break
-      //   case '15min':
-      //     this.selectTime = 'minute'
-      //     this.selectedRate = 'second'
-      //     break
-      //   case '30min':
-      //     this.selectTime = 'hour'
-      //     this.selectedRate = 'second'
-      //     break
-      //   case '60min':
-      //     this.selectTime = 'day'
-      //     this.selectedRate = 'minute'
-      //     break
-      //   default:
-      //     this.selectTime = 'second'
-      //     break
-      // }
       this.resetTimer()
       this.getMeasurement(true)
     },

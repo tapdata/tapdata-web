@@ -54,8 +54,16 @@
       </div>
       <el-table-column v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
       </el-table-column>
-      <el-table-column :label="$t('modules_header_api_name')"></el-table-column>
-      <el-table-column :label="$t('modules_header_tablename')"> </el-table-column>
+      <el-table-column :label="$t('modules_header_api_name')">
+        <template slot-scope="scope">
+          {{ scope.row.name }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('modules_header_tablename')">
+        <template slot-scope="scope">
+          {{ scope.row.tablename }}
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('modules_header_dataSource')" width="140">
         <template slot-scope="scope" v-if="scope.row.source">
           <span
@@ -203,7 +211,6 @@ export default {
     return {
       searchParams: {
         keyword: '',
-        isFuzzy: true,
         status: 'all'
       },
       filterItems: [],
@@ -244,9 +251,6 @@ export default {
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-    let cache = this.table.getCache()
-    cache.isFuzzy = cache.isFuzzy === true
-    this.searchParams = cache
   },
   computed: {
     table() {
@@ -265,7 +269,6 @@ export default {
       if (name === 'reset') {
         this.searchParams = {
           keyword: '',
-          isFuzzy: true,
           status: ''
         }
       }
@@ -274,7 +277,7 @@ export default {
     // 获取数据
     getData({ page, tags }) {
       let { current, size } = page
-      let { isFuzzy, keyword, status } = this.searchParams
+      let { keyword, status } = this.searchParams
       let where = {}
       let fields = {
         apiVersion: true,
@@ -316,7 +319,6 @@ export default {
         })
         .then(res => {
           this.table.setCache({
-            isFuzzy,
             keyword,
             status
           })
@@ -351,7 +353,7 @@ export default {
         .then(res => {
           if (res?.data?.items?.length) {
             let record = res?.data?.items[0] || {}
-            let workerStatus = record.worker_status || {}
+            let workerStatus = record.workerStatus || {}
             if (this.status !== workerStatus.status) {
               this.status = workerStatus.status
             }
@@ -681,9 +683,7 @@ export default {
           height: 25px;
           padding: 0 10px;
           line-height: 25px;
-          color: #d44d4d;
           border-radius: 2px;
-          background-color: #ffecec;
         }
       }
 
@@ -692,10 +692,12 @@ export default {
       .restart,
       .starting {
         color: #44a501;
+        background-color: #c4f3cb;
       }
       .deploy_fail,
       .stop {
-        color: red;
+        color: #d44d4d;
+        background-color: #ffecec;
       }
     }
     .btn + .btn {

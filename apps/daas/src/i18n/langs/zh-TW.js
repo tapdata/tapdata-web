@@ -135,7 +135,7 @@ export default {
   dashboard_status_paused: '已暫停',
   dashboard_status_edit: '編輯中',
   dashboard_status_error: '錯誤',
-  dashboard_status_wait_run: '待啟動',
+  dashboard_status_wait_run: '啟動中',
   dashboard_status_complete: '完成',
   dashboard_status_stop: '已停止',
   dashboard_all_total: '全部任務',
@@ -291,9 +291,11 @@ export default {
   modules_allarelease: '批量發布',
   modules_releasefb: '你確定要批量發布以下API嗎?',
   modules_releasecancel: '你確定要批量取消以下API嗎?',
-  modules_apiServerStatus: 'API 服務狀態',
+  modules_api_server_status: 'API 服務狀態',
   modules_sure: '你確定要',
   modules_cancel_failed: '取消發布API失敗',
+  modules_type: '類型',
+  modules_name_placeholder: '請輸入表名/數據庫名',
 
   module_form_connection: '數據庫',
   module_form_tablename: '表名稱',
@@ -376,6 +378,7 @@ export default {
   api_asnalysis_header_avg_res_timespan: '平均響應時間（毫秒）',
   api_asnalysis_total: '統計',
   api_asnalysis_name: '名稱',
+  api_asnalysis_placeholder: '請求方式/路徑',
 
   // api服務器
   api_server_name: '名稱',
@@ -420,6 +423,8 @@ export default {
   dataExplorer_format: '格式化代碼',
   dataExplorer_exists: '已存在',
   dataExplorer_type: '類型',
+  dataExplorer_apiservr: 'api服務器',
+  dataExplorer_base_path: '基礎路徑',
   // api文檔及測試
   file_test_generate_code: '生成代碼',
 
@@ -553,6 +558,8 @@ export default {
 
   connection_form_kudu_host_tip: 'IP地址:端口; 支持多個; 用 , 分割',
   connection_oracle_config_share_log_switch: '共享挖掘',
+  connection_form_oracle_redoLog_parser: '裸日誌',
+  connection_form_oracle_redoLog_parser_post: '日誌解析服務地址IP',
 
   // 路由名
   app_menu_jsFuncs: '函數',
@@ -716,6 +723,9 @@ export default {
   data_flow_manually: '手動挖掘',
   data_flow_oracle_logminer: 'Oracle日誌挖掘模式',
 
+  ask_list_transform_running: '推演中',
+  task_list_transform_done: '推演完成',
+  task_list_transform_error: '推演失敗',
   task_list_run: '啟動',
   task_list_stop: '停止',
   task_list_force_stop: '強制停止',
@@ -758,12 +768,14 @@ export default {
   task_preview_failCount: '失敗總次數',
   task_preview_status_error: '錯誤',
   task_preview_status_edit: '編輯中',
-  task_preview_status_wait_run: '待啟動',
+  task_preview_status_wait_run: '啟動中',
   task_preview_status_complete: '已完成',
   task_preview_status_running: '運行中',
   task_preview_status_stop: '已停止',
-  task_preview_status_pause: '暫停',
-  task_preview_status_paused: '已暫停',
+  task_preview_status_stopping: '停止中',
+  task_preview_status_preparing: '准备中',
+  task_preview_status_scheduling: '調度中',
+  task_preview_status_schedule_failed: '調度失敗',
 
   task_monitor_progress: '任務進度',
   task_monitor_full_sync: '全量同步概覽',
@@ -1309,5 +1321,21 @@ export default {
   setting_share_cdc_persistence_mongodb_collection: '存儲MongoDB的表名',
   setting_share_cdc_persistence_mongodb_collection_doc: '該項配置只有模式選擇MongoDB時生效，輸入存儲的表名',
   setting_share_cdc_persistence_rocksdb_path: 'RocksDB存儲的本地路徑',
-  setting_share_cdc_persistence_rocksdb_path_doc: '該項配置只有模式選擇RocksDB時生效，RocksDB存儲的本地路徑'
+  setting_share_cdc_persistence_rocksdb_path_doc: '該項配置只有模式選擇RocksDB時生效，RocksDB存儲的本地路徑',
+
+  process_name: '名稱/worker 類型',
+  process_worker_ip: '地址',
+  process_version: '版本',
+  process_online: '在線',
+  process_offline: 'offline',
+  process_all: '所有',
+  process_state: '狀態',
+  process_job_ids: '明細',
+  process_running_thread: '運行中的線程',
+  process_total_thread: '線程數量',
+  process_worker_type: 'Worker 類型',
+  process_ping_time: 'Ping 時間',
+  process_start_time: '開始時間',
+  process_process_id: '進程 ID',
+  process_process_state: '工作進程狀態'
 }

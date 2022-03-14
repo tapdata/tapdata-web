@@ -469,6 +469,7 @@ export default function (vm) {
         label: vm.$t('share_form_setting_table_name'),
         options: [],
         allowCreate: true,
+        filterable: true,
         required: true,
         show: false,
         dependOn: [
@@ -496,6 +497,8 @@ export default function (vm) {
         options: [],
         required: true,
         show: false,
+        allowCreate: true,
+        filterable: true,
         dependOn: [
           {
             triggerOptions: [

@@ -40,13 +40,13 @@
                     </h2>
                   </div>
                   <div class="operation-bar" v-readonlybtn="'Cluster_operation'">
-                    <el-button
+                    <ElButton
                       size="mini"
                       type="danger"
                       v-if="item.canUpdate"
                       @click="updateFn(item, item.management.status, 'management', 'update')"
                       >{{ $t('cluster.update') }}
-                    </el-button>
+                    </ElButton>
                     <i
                       class="iconfont icon-icon_tianjia"
                       v-readonlybtn="'Cluster_operation'"
@@ -79,26 +79,25 @@
                     </el-col>
                     <el-col :span="12">
                       <div class="btn fr" v-readonlybtn="'Cluster_operation'">
-                        <el-button
-                          size="mini"
+                        <ElButton
                           :type="item.management.status == 'stopped' ? 'primary' : 'info'"
                           :disabled="item.management.status == 'stopped' ? false : true"
                           @click="startFn(item, item.management.status, 'management', 'start')"
                           >{{ $t('cluster.start') }}
-                        </el-button>
-                        <el-button
+                        </ElButton>
+                        <ElButton
                           size="mini"
                           :type="item.management.status == 'running' ? 'danger' : 'info'"
                           :disabled="item.management.status == 'running' ? false : true"
                           @click="closeFn(item, item.management.status, 'management', 'stop')"
                           >{{ $t('cluster.close') }}
-                        </el-button>
-                        <el-button
+                        </ElButton>
+                        <ElButton
                           type="text"
                           :disabled="item.management.status == 'running' ? false : true"
                           @click="restartFn(item, item.management.status, 'management', 'restart')"
                           >{{ $t('cluster.restart') }}
-                        </el-button>
+                        </ElButton>
                       </div>
                     </el-col>
                   </el-row>
@@ -111,25 +110,25 @@
                     </el-col>
                     <el-col :span="12">
                       <div class="btn fr" v-readonlybtn="'Cluster_operation'">
-                        <el-button
+                        <ElButton
                           size="mini"
                           :type="item.engine.status == 'stopped' ? 'primary' : 'info'"
                           :disabled="item.engine.status == 'stopped' ? false : true"
                           @click="startFn(item, item.engine.status, 'engine')"
-                          >{{ $t('cluster.start') }}</el-button
+                          >{{ $t('cluster.start') }}</ElButton
                         >
-                        <el-button
+                        <ElButton
                           size="mini"
                           :type="item.engine.status == 'running' ? 'danger' : 'info'"
                           :disabled="item.engine.status == 'running' ? false : true"
                           @click="closeFn(item, item.engine.status, 'engine')"
-                          >{{ $t('cluster.close') }}</el-button
+                          >{{ $t('cluster.close') }}</ElButton
                         >
-                        <el-button
+                        <ElButton
                           type="text"
                           :disabled="item.engine.status == 'running' ? false : true"
                           @click="restartFn(item, item.engine.status, 'engine')"
-                          >{{ $t('cluster.restart') }}</el-button
+                          >{{ $t('cluster.restart') }}</ElButton
                         >
                       </div>
                     </el-col>
@@ -145,25 +144,25 @@
                     </el-col>
                     <el-col :span="12">
                       <div class="btn fr" v-readonlybtn="'Cluster_operation'">
-                        <el-button
+                        <ElButton
                           size="mini"
                           :type="item.apiServer.status == 'stopped' ? 'primary' : 'info'"
                           :disabled="item.apiServer.status == 'stopped' ? false : true"
                           @click="startFn(item, item.apiServer.status, 'apiServer')"
-                          >{{ $t('cluster.start') }}</el-button
+                          >{{ $t('cluster.start') }}</ElButton
                         >
-                        <el-button
+                        <ElButton
                           size="mini"
                           :type="item.apiServer.status == 'running' ? 'danger' : 'info'"
                           :disabled="item.apiServer.status == 'running' ? false : true"
                           @click="closeFn(item, item.apiServer.status, 'apiServer')"
-                          >{{ $t('cluster.close') }}</el-button
+                          >{{ $t('cluster.close') }}</ElButton
                         >
-                        <el-button
+                        <ElButton
                           type="text"
                           :disabled="item.apiServer.status == 'running' ? false : true"
                           @click="restartFn(item, item.apiServer.status, 'apiServer')"
-                          >{{ $t('cluster.restart') }}</el-button
+                          >{{ $t('cluster.restart') }}</ElButton
                         >
                       </div>
                     </el-col>
@@ -177,12 +176,12 @@
                     </el-col>
                     <el-col :span="7" :offset="5" v-readonlybtn="'Cluster_operation'">
                       <div class="btn fr">
-                        <el-button type="text" @click="delServe(child, item.status)">{{
+                        <ElButton type="text" @click="delServe(child, item.status)">{{
                           $t('cluster.delete')
-                        }}</el-button>
-                        <el-button type="text" @click="editServe(child, item.status, item)">{{
+                        }}</ElButton>
+                        <ElButton type="text" @click="editServe(child, item.status, item)">{{
                           $t('cluster.edit')
-                        }}</el-button>
+                        }}</ElButton>
                       </div>
                     </el-col>
                   </el-row>
@@ -209,8 +208,8 @@
     >
       <addServe :data="currentData" :editItem="editItem" ref="childRules"></addServe>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="closeDialogForm()">{{ $t('cluster.cancel') }}</el-button>
-        <el-button size="small" type="primary" @click="submitForm('ruleForm')">{{ $t('cluster.confirm') }}</el-button>
+        <ElButton size="small" @click="closeDialogForm()">{{ $t('cluster.cancel') }}</ElButton>
+        <ElButton size="small" type="primary" @click="submitForm('ruleForm')">{{ $t('cluster.confirm') }}</ElButton>
       </div>
     </el-dialog>
     <el-dialog
@@ -243,10 +242,10 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="editAgentDialog = false">{{ $t('cluster.cancel') }}</el-button>
-        <el-button size="small" type="primary" @click="submitEditAgent('editAgentForm')">{{
+        <ElButton size="small" @click="editAgentDialog = false">{{ $t('cluster.cancel') }}</ElButton>
+        <ElButton size="small" type="primary" @click="submitEditAgent('editAgentForm')">{{
           $t('cluster.confirm')
-        }}</el-button>
+        }}</ElButton>
       </div>
     </el-dialog>
     <el-dialog

@@ -15,61 +15,6 @@
     >
       <div slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-        <!-- <ul class="search-bar" solt="matchSolt">
-          <li> -->
-
-        <!-- <el-input
-          slot="matchSolt"
-          clearable
-          class="input-with-select"
-          size="mini"
-          v-model="searchParams.keyword"
-          :placeholder="$t('metadata.namePlaceholder')"
-          @input="table.fetch(1, 800)"
-        >
-          <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
-            <el-option :label="$t('connection.fuzzyQuery')" :value="true"></el-option>
-            <el-option :label="$t('connection.PreciseQuery')" :value="false"></el-option>
-          </el-select>
-        </el-input> -->
-        <!-- </li> -->
-        <!-- <li>
-            <el-select
-              clearable
-              size="mini"
-              v-model="searchParams.metaType"
-              :placeholder="$t('metadata.typePlaceholder')"
-              @input="metaTypeChange"
-            >
-              <el-option
-                v-for="opt in metaTypeOptions"
-                :key="opt.value"
-                :label="opt.label"
-                :value="opt.value"
-              ></el-option>
-            </el-select>
-          </li>
-          <li v-if="whiteList.includes(searchParams.metaType)">
-            <el-select
-              clearable
-              filterable
-              size="mini"
-              v-model="searchParams.dbId"
-              :placeholder="$t('metadata.databasePlaceholder')"
-              @input="table.fetch(1)"
-            >
-              <el-option v-for="opt in dbOptions" :key="opt.id" :label="opt.name" :value="opt.id"></el-option>
-            </el-select>
-          </li>
-          <template v-if="searchParams.keyword || searchParams.metaType || searchParams.dbId">
-            <li>
-              <el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
-            </li>
-            <li>
-              <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
-            </li>
-          </template>-->
-        <!-- </ul> -->
       </div>
       <div slot="operation">
         <el-button
@@ -248,7 +193,6 @@ export default {
       whiteList: ['table', 'collection', 'mongo_view', 'view'],
       searchParams: {
         keyword: '',
-        isFuzzy: true,
         metaType: '',
         dbId: ''
       },
@@ -323,9 +267,9 @@ export default {
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-    let cache = this.table.getCache()
-    cache.isFuzzy = cache.isFuzzy === true
-    this.searchParams = cache
+    // let cache = this.table.getCache()
+    // cache.isFuzzy = cache.isFuzzy === true
+    // this.searchParams = cache
   },
   computed: {
     table() {
@@ -345,7 +289,6 @@ export default {
       if (name === 'reset') {
         this.searchParams = {
           keyword: '',
-          isFuzzy: true,
           metaType: '',
           dbId: ''
         }
@@ -355,7 +298,7 @@ export default {
     },
     getData({ page, tags }) {
       let { current, size } = page
-      let { isFuzzy, keyword, metaType, dbId } = this.searchParams
+      let { keyword, metaType, dbId } = this.searchParams
       let where = {
         is_deleted: false
       }
@@ -374,13 +317,12 @@ export default {
         create_time: true,
         collection: true,
         id: true,
-        'source._id': true,
-        'source.user_id': true,
+        source: true,
         databaseId: true,
         user_id: true
       }
       if (keyword && keyword.trim()) {
-        let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword
+        let filterObj = { like: toRegExp(keyword), options: 'i' }
         where.or = [{ name: filterObj }, { original_name: filterObj }, { 'source.name': filterObj }]
       }
 
@@ -411,7 +353,6 @@ export default {
         })
         .then(res => {
           this.table.setCache({
-            isFuzzy,
             keyword,
             metaType,
             dbId

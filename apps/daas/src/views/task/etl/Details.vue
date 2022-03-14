@@ -65,7 +65,7 @@
       </div>
     </div>
     <div class="sub-task flex-fill mt-6 p-6 bg-white">
-      <ElTabs v-model="activeTab" class="dashboard-tabs flex flex-column overflow-hidden h-100">
+      <ElTabs v-model="activeTab" class="dashboard-tabs">
         <ElTabPane label="子任务" name="subTask">
           <div slot="label">
             <span class="mr-2">{{ $t('task_details_sub_task') }}</span>
@@ -76,14 +76,12 @@
               <VIcon class="color-primary" size="14">info</VIcon>
             </ElTooltip>
           </div>
-          <Subtask :task="task"></Subtask>
         </ElTabPane>
-        <ElTabPane label="连接" name="connect" lazy>
-          <Connection :ids="connectionIds" @change="loadData"></Connection>
-        </ElTabPane>
-        <ElTabPane label="历史运行记录" name="history" lazy>
-          <History v-if="task.id" :ids="[task.id]" :operations="operations"></History>
-        </ElTabPane>
+        <ElTabPane label="连接" name="connect"></ElTabPane>
+        <ElTabPane label="历史运行记录" name="history"></ElTabPane>
+        <Subtask v-if="activeTab === 'subTask'" :task="task"></Subtask>
+        <Connection v-if="activeTab === 'connect'" :ids="connectionIds" @change="loadData"></Connection>
+        <History v-if="activeTab === 'history' && task.id" :ids="[task.id]" :operations="operations"></History>
       </ElTabs>
     </div>
   </ElContainer>
@@ -99,6 +97,7 @@ import Chart from 'web-core/components/chart'
 import { ETL_SUB_STATUS_MAP } from '@/const'
 import { getSubTaskStatus } from './util'
 
+let timeout = null
 export default {
   name: 'TaskDetails',
   components: { VIcon, InlineInput, Connection, History, Subtask, Chart },
@@ -197,7 +196,7 @@ export default {
       if (statusResult?.length) {
         data =
           this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
-          statusResult.filter(t => ['not_running', 'stop'].includes(t.status) && t.count)
+          statusResult.filter(t => ['not_running', 'error', 'stopping'].includes(t.status) && t.count)
       }
       let flag = data?.[0]?.count === task.statuses?.length ? true : false
       return flag
@@ -246,17 +245,24 @@ export default {
   },
   mounted() {
     this.init()
+    //定时轮询
+    timeout = setInterval(() => {
+      this.loadData(true)
+    }, 15000)
   },
   destroyed() {
     this.$ws.off('watch', this.taskChange)
+    clearInterval(timeout)
   },
   methods: {
     init() {
       this.loadData()
     },
-    loadData() {
+    loadData(hiddenLoading) {
       let id = this.$route.params?.id
-      this.loading = true
+      if (!hiddenLoading) {
+        this.loading = true
+      }
       this.$api('Task')
         .get([id])
         .then(res => {

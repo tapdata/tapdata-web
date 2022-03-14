@@ -12,13 +12,18 @@
         <el-button class="mr-2" size="mini" @click="dialogTableVisible = true">{{
           $t('task_mapping_table_rename')
         }}</el-button>
+        <el-button class="mr-2" size="mini" :loading="loading" v-if="!transferData.showBtn" @click="getFieldMapping">{{
+          $t('dag_link_button_field_mapping')
+        }}</el-button>
         <FieldMapping
+          v-if="showFieldMapping"
           ref="fieldMapping"
           class="fr"
           :transform="transferData"
           :getDataFlow="getTask"
           @update-first="returnModel"
-          @returnFieldMapping="returnFieldMappingData"
+          @returnPreFixSuffix="returnFieldMappingData"
+          @returnFieldMapping="saveFieldProcess"
         ></FieldMapping>
       </div>
     </div>
@@ -83,7 +88,8 @@ export default {
     isTwoWay: Boolean,
     mqTransferFlag: Boolean,
     sourceId: String,
-    getTask: Function
+    getTask: Function,
+    saveTask: Function
   },
 
   data() {
@@ -101,8 +107,10 @@ export default {
       loadFieldsStatus: 'finished',
       reloadCount: 0,
       reloadLoading: false, // 重新加载
+      loading: false,
       //字段映射
-      showFieldMapping: true
+      showFieldMapping: true,
+      taskId: ''
     }
   },
   mounted() {
@@ -187,8 +195,13 @@ export default {
     //字段映射
     tranModelVersionControl() {
       let data = this.getTask()
+      this.taskId = data.id
+      if (this.taskId) {
+        this.transferData.showBtn = true
+      }
+      //查找目标节点
       //是否显示字段推演
-      let nodeId = data?.dag?.nodes?.[1]?.id || ''
+      let nodeId = data?.dag?.edges?.[0]?.target || ''
       let param = {
         nodes: data?.dag?.nodes,
         nodeId: nodeId
@@ -199,6 +212,14 @@ export default {
           this.showFieldMapping = res?.data[nodeId]
         })
     },
+    //保存任务
+    getFieldMapping() {
+      this.loading = true
+      this.saveTask().then(() => {
+        this.$refs.fieldMapping.getMetaData()
+        this.loading = false
+      })
+    },
     //接收是否第一次打开
     returnModel(value) {
       this.transferData.isFirst = value
@@ -207,9 +228,10 @@ export default {
     returnFieldMappingData(data) {
       this.transferData.fieldsNameTransform = data.fieldsNameTransform
       this.transferData.batchOperationList = data.batchOperationList
-      this.transferData.fieldProcess = data.fieldProcess
     },
-
+    saveFieldProcess(data) {
+      this.transferData.fieldProcess = data
+    },
     //重新加载模型
     async reload() {
       let result = await this.$api('Workers').getAvailableAgent()
@@ -236,7 +258,7 @@ export default {
       }
     },
     confirm(callback, catchCallback, config) {
-      this.$confirm(config.Message + config.name + '?', config.title, {
+      this.$confirm(config.Message + '?', config.title, {
         confirmButtonText: config.confirmButtonText,
         cancelButtonText: config.cancelButtonText,
         type: 'warning',
@@ -257,20 +279,22 @@ export default {
       }
       this.loadFieldsStatus = 'loading'
       this.$api('connections')
-        .patchId(this.sourceId, parms)
-        .then(data => {
+        .updateById(this.sourceId, parms)
+        .then(res => {
           if (!this?.$refs?.test) {
             return
           }
+          let data = res?.data
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
-          this.$refs.test.start(this.data, false, true)
+          this.$refs.test.start(data, false, true)
           this.getProgress()
         })
     },
     getProgress() {
       this.$api('connections')
         .getNoSchema(this.sourceId)
-        .then(data => {
+        .then(res => {
+          let data = res?.data
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           if (data.loadFieldsStatus === 'finished') {
             this.progress = 100

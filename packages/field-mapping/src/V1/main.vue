@@ -71,14 +71,7 @@ export default {
         this.dataFlow['nodeId'] = this.transform.nodeId //任务同步目标节点nodeId 推演
       }
       //迁移任务需要同步字段处理器
-      if (this.mappingType && this.mappingType === 'cluster-clone') {
-        //是否目标有connectionIDld
-        let checkTargetConnectionId = this.hasConnectionId(this.dataFlow)
-        if (!checkTargetConnectionId || checkTargetConnectionId === false) {
-          this.$message.error(this.$t('dag_link_field_mapping_error_tip'))
-          return
-        }
-        this.dataFlow = this.updateAutoFieldProcess(this.dataFlow)
+      if (this.transform?.syncType === 'migrate') {
         //是否有选中的表
         if (
           this.transform?.topicData?.length === 0 &&
@@ -213,7 +206,7 @@ export default {
       }
     },
     updateAutoTransform(type, data) {
-      for (let i = 0; i < this.dataFlow.stages.length; i++) {
+      for (let i = 0; i < this.dataFlow['dag']['nodes'].length; i++) {
         if (this.dataFlow['dag']['nodes'][i].id === this.transform.nodeId) {
           this.dataFlow['dag']['nodes'][i].fieldsNameTransform = data.fieldsNameTransform
           this.dataFlow['dag']['nodes'][i].batchOperationList = data.batchOperationList
@@ -445,7 +438,7 @@ export default {
     },
     //实时获取schema加载进度
     initWSSed() {
-      let id = this.dataFlow?.id
+      let id = this.dataFlow?.id || this.dataFlow?.taskId
       let msg = {
         type: 'metadataTransformerProgress',
         data: {
@@ -461,7 +454,7 @@ export default {
       let msgData = {
         type: 'metadataTransformerProgress',
         data: {
-          dataFlowId: this.dataFlow?.id
+          dataFlowId: id
         }
       }
       this.$ws.ready(() => {

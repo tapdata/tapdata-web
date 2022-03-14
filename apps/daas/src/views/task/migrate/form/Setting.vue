@@ -6,8 +6,7 @@
         :form="form"
         :colon="true"
         labelAlign="left"
-        labelWidth="150"
-        size="small"
+        labelWidth="160"
         layout="horizontal"
         wrapperWidth="400"
       >
@@ -70,17 +69,17 @@ export default {
       let mapping = {
         oracle: {
           readShareLogMode: {
-            title: '共享增量读取的模式', // 共享增量读取的模式 支持oracle和mongodb
+            title: this.$t('task_setting_share_cdc_mode'), // 共享增量读取的模式 支持oracle和mongodb
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: [
               {
-                label: '流式读取',
+                label: this.$t('task_setting_streaming'), //流式读取
                 value: 'STREAMING'
               },
               {
-                label: '轮询读取',
+                label: this.$t('task_setting_polling'), //轮询读取
                 value: 'POLLING'
               }
             ],
@@ -94,7 +93,7 @@ export default {
             }
           },
           maxTransactionLength: {
-            title: '事务最大时长(小时)',
+            title: this.$t('task_setting_maximum_transaction'), //事务最大时长(小时)
             type: 'number',
             'x-decorator': 'FormItem',
             'x-component': 'InputNumber'
@@ -102,7 +101,8 @@ export default {
         },
         mongodb: {
           cdcEngineFilter: {
-            title: '启用引擎过滤', //仅MongoDB作为源
+            title: this.$t('task_setting_cdc_engine_filter'), //仅MongoDB作为源   启用引擎过滤
+            default: false,
             type: 'boolean',
             'x-decorator': 'FormItem',
             'x-component': 'Switch',
@@ -116,17 +116,17 @@ export default {
             }
           },
           readShareLogMode: {
-            title: '共享增量读取的模式', // 共享增量读取的模式 支持oracle和mongodb
+            title: this.$t('task_setting_share_cdc_mode'), // 共享增量读取的模式 支持oracle和mongodb
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: [
               {
-                label: '流式读取',
+                label: this.$t('task_setting_streaming'),
                 value: 'STREAMING'
               },
               {
-                label: '轮询读取',
+                label: this.$t('task_setting_polling'),
                 value: 'POLLING'
               }
             ],
@@ -142,7 +142,7 @@ export default {
         },
         mysql: {
           isOpenAutoDDL: {
-            title: '自动处理DDL', //仅支持MySQL
+            title: this.$t('task_setting_automatic_ddl'), //仅支持MySQL
             type: 'boolean',
             'x-decorator': 'FormItem',
             'x-component': 'Switch',
@@ -165,46 +165,29 @@ export default {
             type: 'void',
             properties: {
               name: {
-                title: '任务名称',
+                title: this.$t('task_stetting_name'), //任务名称
                 type: 'string',
                 required: 'true',
                 'x-decorator': 'FormItem',
                 'x-component': 'Input'
-                // 'x-validator': {
-                //   triggerType: 'onBlur',
-                //   validator: `{{(value) => {
-                //     return new Promise((resolve) => {
-                //       setTimeout(() => {
-                //         if (!value) {
-                //           resolve('')
-                //         }
-                //         if (value === '123') {
-                //           resolve('')
-                //         } else {
-                //           resolve('错误❎')
-                //         }
-                //       }, 1000)
-                //     })
-                //   }}}`
-                // }
               },
               sync_type: {
-                title: '同步类型',
+                title: this.$t('task_setting_sync_type'),
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Radio.Group',
-                // default: 'initial_sync+cdc',
+                default: 'initial_sync+cdc',
                 enum: [
                   {
-                    label: '全量+增量',
+                    label: this.$t('task_setting_initial_sync_cdc'), //全量+增量
                     value: 'initial_sync+cdc'
                   },
                   {
-                    label: '全量',
+                    label: this.$t('task_setting_initial_sync'), //全量
                     value: 'initial_sync'
                   },
                   {
-                    label: '增量',
+                    label: this.$t('task_setting_cdc'), //增量
                     value: 'cdc'
                   }
                 ],
@@ -218,60 +201,69 @@ export default {
                 }
               },
               stopOnError: {
-                title: '遇到错误停止',
+                title: this.$t('task_setting_stop_on_error'), //遇到错误停止
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch'
                 // default: true
               },
               needToCreateIndex: {
-                title: '自动创建索引',
+                title: this.$t('task_setting_automatic_index'), //自动创建索引
                 type: 'boolean',
                 'x-decorator': 'FormItem',
-                'x-component': 'Switch'
-                // default: true
+                'x-component': 'Switch',
+                default: true
               },
               automaticallyCreateTables: {
-                title: '自动建表',
+                title: this.$t('task_setting_create_tables'), //自动建表
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch'
               },
               noPrimaryKey: {
-                title: '支持无主键同步',
+                title: this.$t('task_setting_no_primary_key'), //支持无主键同步
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch'
               },
               isSerialMode: {
-                title: '增量数据处理机制',
+                title: this.$t('task_setting_cdc_data_process'), //增量数据处理机制
+                default: false,
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
                 enum: [
                   {
-                    label: '批量',
+                    label: this.$t('task_setting_batch'), //批量
                     value: false
                   },
                   {
-                    label: '逐条',
+                    label: this.$t('task_setting_onebyone'), //逐条
                     value: true
                   }
                 ]
               },
               cdcFetchSize: {
-                title: '增量批次读取条数',
+                title: this.$t('task_setting_cdc_fetch_size'), //增量批次读取条数
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'InputNumber',
                 'x-component-props': {
                   min: 1,
                   max: 1000
+                },
+                default: 1,
+                'x-reactions': {
+                  dependencies: ['isSerialMode'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] === false ? "visible" : "hidden"}}'
+                    }
+                  }
                 }
-                // default: 1
               },
               distinctWriteType: {
-                title: '去重写入机制',
+                title: this.$t('task_setting_distinct_write_type'), //去重写入机制
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
@@ -284,28 +276,28 @@ export default {
                     label: this.$t('dataFlow.setting.compel'),
                     value: 'compel'
                   }
-                ]
-                // default: 'intellect'
+                ],
+                default: 'intellect'
               },
               readShareLogMode: {
-                title: '共享增量读取的模式',
+                title: this.$t('task_setting_share_cdc_mode'), //共享增量读取的模式
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
                 enum: [
                   {
-                    label: '流式读取',
+                    label: this.$t('task_setting_streaming'), //流式读取
                     value: 'STREAMING'
                   },
                   {
-                    label: '轮询读取',
+                    label: this.$t('task_setting_polling'), //轮询读取
                     value: 'POLLING'
                   }
-                ]
-                // default: 'STREAMING'
+                ],
+                default: 'STREAMING'
               },
               increment: {
-                title: '自动创建索引',
+                title: this.$t('task_setting_automatic_index'), //自动创建索引
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch',
@@ -319,7 +311,7 @@ export default {
                 }
               },
               isSchedule: {
-                title: '定期调度任务',
+                title: this.$t('task_setting_is_schedule'), //定期调度任务
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch',
@@ -338,7 +330,7 @@ export default {
                 'x-decorator': 'FormItem',
                 'x-component': 'Input',
                 'x-component-props': {
-                  placeholder: '请输入调度表达式'
+                  placeholder: this.$t('task_setting_cron_expression')
                 },
                 'x-reactions': {
                   dependencies: ['sync_type', 'isSchedule'],
@@ -350,16 +342,17 @@ export default {
                 }
               },
               readCdcInterval: {
-                title: '增量同步间隔',
+                title: this.$t('task_setting_read_cdc_interval'), //增量同步间隔
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Input',
-                'x-component-props': {
+                'x-content': {
                   append: 'ms'
-                }
+                },
+                default: 500
               },
               readBatchSize: {
-                title: '每次读取数量',
+                title: this.$t('task_setting_read_batch_size'), //每次读取数量
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Input',
@@ -369,22 +362,22 @@ export default {
                 // default: 100
               },
               processorConcurrency: {
-                title: '处理器线程数',
+                title: this.$t('task_setting_processor_concurrency'), //处理器线程数
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'InputNumber',
                 'x-component-props': {
                   min: 1,
                   max: 100
-                }
-                // default: 1
+                },
+                default: 1
               },
               cdcConcurrency: {
-                title: '增量同步并发写入',
+                title: this.$t('task_setting_cdc_concurrency'), //增量同步并发写入
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch',
-                // default: false,
+                default: false,
                 'x-reactions': {
                   dependencies: ['sync_type'],
                   fulfill: {
@@ -395,7 +388,7 @@ export default {
                 }
               },
               transformerConcurrency: {
-                title: '目标写入线程数',
+                title: this.$t('task_setting_transformer_concurrency'), //目标写入线程数
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'InputNumber',
@@ -410,11 +403,11 @@ export default {
                       visible: '{{$deps[0] !== "cdc" || ($deps[0] === "cdc" && $deps[1])}}'
                     }
                   }
-                }
-                // default: 8
+                },
+                default: 1
               },
               syncPoints: {
-                title: '增量采集开始时刻',
+                title: this.$t('task_setting_sync_point'), //增量采集开始时刻
                 type: 'array',
                 'x-decorator': 'FormItem',
                 'x-component': 'ArrayItems',
@@ -448,6 +441,7 @@ export default {
                             'x-component-props': {
                               placeholder: '请选择'
                             },
+                            default: 'localTZ',
                             enum: [
                               {
                                 label: this.$t('dataFlow.SyncInfo.localTZType'),
@@ -482,13 +476,14 @@ export default {
                 ]
               },
               cdcShareFilterOnServer: {
-                title: '共享挖掘日志过滤',
+                title: this.$t('task_setting_cdc_share_filter_on_server'), //共享挖掘日志过滤
                 type: 'boolean',
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch'
               },
               lagTime: {
-                title: '增量滞后判断时间设置(秒)',
+                title: this.$t('task_setting_lag_time'), //增量滞后判断时间设置(秒)
+                default: false,
                 type: 'void',
                 'x-decorator': 'FormItem',
                 'x-component': 'Space',
@@ -535,3 +530,12 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.attr-panel {
+  ::v-deep {
+    .formily-element-form-item-label label {
+      font-size: 12px;
+    }
+  }
+}
+</style>

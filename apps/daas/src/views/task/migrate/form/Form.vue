@@ -36,8 +36,8 @@
             <div class="body step-3" v-if="steps[activeStep].index === 2">
               <div class="mb-8">
                 <span class="title">任务设置</span>
-                <span class="desc">
-                  用户可以在任务设置步骤对任务名称、同步类型、遇错处理等进行设置，具体配置说明请查看帮助文档
+                <span class="desc"
+                  >用户可以在任务设置步骤对任务名称、同步类型、遇错处理等进行设置，具体配置说明请查看帮助文档
                 </span>
               </div>
               <Setting :dataSourceData="dataSourceData" :settingData="settingData" @submit="settingSubmit"></Setting>
@@ -58,33 +58,39 @@
                   :mqTransferFlag="mqTransferFlag"
                   :isTwoWay="true"
                   :getTask="daft"
+                  :saveTask="createTask"
                 ></Transfer>
               </div>
             </div>
           </ElMain>
           <div class="create-task-footer py-6 mx-6" :class="['btns-step-' + steps[activeStep].index]">
-            <VButton class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()"> 取消 </VButton>
-            <VButton
+            <ElButton class="btn-step" size="mini" v-if="steps[activeStep].showExitBtn" @click="goBackList()">
+              取消
+            </ElButton>
+            <ElButton
               class="btn-step"
+              size="mini"
               :loading="loading"
               v-else-if="steps[activeStep].showBackBtn || (steps[activeStep].index === 2 && !id)"
               @click="previous()"
             >
               {{ $t('guide.btn_back') }}
-            </VButton>
-            <VButton
+            </ElButton>
+            <ElButton
               v-if="steps[activeStep].showNextBtn"
               type="primary"
               class="btn-step"
+              size="mini"
               :loading="loading"
               @mousedown.native.prevent="nextStep()"
             >
               <span>{{ $t('guide.btn_next') }}</span>
-            </VButton>
+            </ElButton>
             <VButton
               v-if="steps[activeStep].showSaveBtn"
               type="primary"
               class="btn-step"
+              size="mini"
               :loading="loadingSave"
               @click="save()"
             >
@@ -128,12 +134,11 @@ export default {
     }
   },
   created() {
-    this.getSteps()
     this.id = this.$route.params.id
     if (this.id) {
       this.intiData(this.id)
     } else {
-      this.createData() //创建一个新的空任务
+      this.getSteps()
     }
   },
 
@@ -146,43 +151,48 @@ export default {
           if (res) {
             let data = res?.data
             this.status = data.status
-            this.settingData = Object.assign(this.settingData, data.attrs?.task_setting_Data)
-            this.settingData.name = data.name
+            this.settingData = data.attrs?.task_setting_Data
             this.dataSourceData = data?.attrs?.task_data_source_Data
             this.nodes = data?.dag?.nodes
-            let syncObjects = this.nodes[1].syncObjects
+            let edges = data?.dag?.edges
+            //查找目标节点
+            let nodeMapping = {}
+            let sourceNodeMapping = {}
+            let targetNodeMapping = {}
+            this.nodes.forEach(item => {
+              nodeMapping[item.id] = item
+            })
+            edges.forEach(item => {
+              sourceNodeMapping = nodeMapping[item.source]
+              targetNodeMapping = nodeMapping[item.target]
+            })
+
             this.transferData = {
-              tablePrefix: this.nodes[1].tablePrefix,
-              tableSuffix: this.nodes[1].tableSuffix,
-              tableNameTransform: this.nodes[1].tableNameTransform,
-              fieldsNameTransform: this.nodes[1].fieldsNameTransform,
-              batchOperationList: this.nodes[1].batchOperationList,
-              fieldProcess: this.nodes[0].fieldProcess,
-              selectSourceArr: syncObjects[0] ? syncObjects[0].objectNames : [],
+              tablePrefix: targetNodeMapping.tablePrefix,
+              tableSuffix: targetNodeMapping.tableSuffix,
+              tableNameTransform: targetNodeMapping.tableNameTransform,
+              fieldsNameTransform: targetNodeMapping.fieldsNameTransform,
+              batchOperationList: targetNodeMapping.batchOperationList,
+              fieldProcess: sourceNodeMapping.fieldProcess,
+              selectSourceArr: targetNodeMapping?.syncObjects?.[0]
+                ? targetNodeMapping?.syncObjects?.[0].objectNames
+                : [],
               topicData:
-                syncObjects[0]?.type === 'topic' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || [],
+                targetNodeMapping?.syncObjects?.[0]?.type === 'topic'
+                  ? targetNodeMapping?.syncObjects?.[0].objectNames
+                  : targetNodeMapping?.syncObjects?.[1]?.objectNames || [],
               queueData:
-                syncObjects[0]?.type === 'queue' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || []
+                targetNodeMapping?.syncObjects?.[0]?.type === 'queue'
+                  ? targetNodeMapping?.syncObjects?.[0].objectNames
+                  : targetNodeMapping?.syncObjects?.[1]?.objectNames || []
             }
+
+            this.transferData = Object.assign({}, TRANSFER_MODEL, this.transferData)
+
             //编辑时不被覆盖
-            this.tableNameTransform = this.nodes[1].tableNameTransform
-            this.fieldsNameTransform = this.nodes[1].fieldsNameTransform
-          }
-        })
-    },
-    createData() {
-      let data = {
-        syncType: 'migrate',
-        name: '新任务@' + new Date().toLocaleTimeString(),
-        dag: {}
-      }
-      this.$api('Task')
-        .post(data)
-        .then(res => {
-          if (res) {
-            let data = res?.data
-            this.settingData.name = data.name
-            this.id = data.id
+            this.tableNameTransform = targetNodeMapping.tableNameTransform
+            this.fieldsNameTransform = targetNodeMapping.fieldsNameTransform
+            this.getSteps()
           }
         })
     },
@@ -246,8 +256,6 @@ export default {
             } else {
               this.mqTransferFlag = false
             }
-            //数据: 第三步请求schema用到sourceId
-            this.sourceId = this.dataSourceData.source_connectionId
             this.activeStep++
           }
           break
@@ -255,8 +263,20 @@ export default {
           this.form
             .validate()
             .then(() => {
-              this.activeStep++
-              this.transferData.automaticallyCreateTables = this.settingData.automaticallyCreateTables
+              //检查任务名是否重复
+              this.$api('Task')
+                .checkName(this.settingData.name)
+                .then(res => {
+                  let result = res?.data?.data
+                  if (result) {
+                    this.$message.error('表单检验不通过，任务名称重复！')
+                    return
+                  }
+                  //数据: 第三步请求schema用到sourceId
+                  this.sourceId = this.dataSourceData.source_connectionId
+                  this.activeStep++
+                  this.transferData.automaticallyCreateTables = this.settingData.automaticallyCreateTables
+                })
             })
             .catch(() => {
               this.$message.error('表单检验不通过，任务名称必填')
@@ -413,6 +433,15 @@ export default {
       ]
       this.transferData.nodeId = targetIdB
       return postData
+    },
+    createTask() {
+      if (this.id) return
+      let postData = this.daft()
+      let promise = this.$api('Task').save(postData)
+      promise.then(res => {
+        this.id = res?.data?.id
+      })
+      return promise
     },
     save() {
       let verify = this.checkTransfer()
@@ -615,6 +644,15 @@ export default {
       font-weight: bold;
       margin: 10px 0;
     }
+    .step-3 {
+      ::v-deep {
+        .el-select {
+          .el-input--small .el-input__icon {
+            line-height: 24px;
+          }
+        }
+      }
+    }
     .step-5 {
       height: 100%;
       min-height: 300px;
@@ -654,7 +692,7 @@ export default {
     }
   }
   .btn-step {
-    width: 212px;
+    // width: 212px;
     position: relative;
     .btn-pass {
       position: absolute;
