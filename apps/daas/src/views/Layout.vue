@@ -328,11 +328,11 @@ let menuSetting = [
     icon: 'huowuchuanshu',
     code: 'data_transmission',
     children: [
-      { name: 'migrateList' },
-      { name: 'dataflowList' },
-      { name: 'dataVerificationList' },
+      { name: 'migrateList', code: 'Data_SYNC_menu' },
+      { name: 'dataflowList', code: 'Data_SYNC_menu' },
+      { name: 'dataVerificationList', code: 'Data_verify_menu' },
       { name: 'sharedMiningList' },
-      { name: 'functionList' },
+      { name: 'functionList', code: 'SYNC_Function_management' },
       { name: 'sharedCacheList' }
     ]
   },
@@ -341,7 +341,7 @@ let menuSetting = [
     label: 'page_title_data_discovery',
     icon: 'shujuzhili',
     code: 'data_government',
-    children: [{ name: 'metadataList' }, { name: 'search' }]
+    children: [{ name: 'metadataList', code: 'data_catalog_menu' }, { name: 'search' }]
   },
   {
     name: 'dataService',
@@ -349,12 +349,12 @@ let menuSetting = [
     icon: 'connection',
     code: 'data_publish',
     children: [
-      { name: 'modules' },
-      { name: 'dataExplorer' },
-      { name: 'apiDocAndTest' },
-      { name: 'apiAnalysis' },
-      { name: 'apiClient' },
-      { name: 'apiServers' },
+      { name: 'modules', code: 'API_management_menu' },
+      { name: 'dataExplorer', code: 'API_data_explorer_menu' },
+      { name: 'apiDocAndTest', code: 'API_doc_&_test_menu' },
+      { name: 'apiAnalysis', code: 'API_stats_menu' },
+      { name: 'apiClient', code: 'API_clients_menu' },
+      { name: 'apiServers', code: 'API_server_menu' },
       { name: 'applications' },
       { name: 'apiMonitor' }
     ]
@@ -365,13 +365,13 @@ let menuSetting = [
     icon: 'caozuorizhi',
     code: 'system_management',
     children: [
-      { name: 'metadataDefinition' },
-      { name: 'tasks' },
-      { name: 'clusterManagement' },
-      { name: 'agents' },
-      { name: 'users' },
-      { name: 'roleList' },
-      { name: 'settings' }
+      { name: 'metadataDefinition', code: 'data_catalog_menu' },
+      { name: 'tasks', code: 'schedule_jobs_menu' },
+      { name: 'clusterManagement', code: 'Cluster_management_menu' },
+      { name: 'agents', code: 'agents_menu' },
+      { name: 'users', code: 'user_management_menu' },
+      { name: 'roleList', code: 'role_management_menu' },
+      { name: 'settings', code: 'system_settings_menu' }
     ]
   }
 ]
