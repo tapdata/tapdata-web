@@ -1,22 +1,15 @@
 <template>
   <div class="overview-bar">
-    <div class="mb-4 fs-7 font-color-main fw-bolder">{{ info.label }}{{ this.$t('task_info_overview') }}</div>
+    <div class="mb-4 fs-7 font-color-main fw-bolder">{{ this.$t('task_monitor_full_sync') }}</div>
     <div class="overview-bar__content p-4">
       <div class="flex justify-content-between mb-2 font-color-main">
         <div>
-          <span
-            >{{ $t('task_info_plan') }}{{ info.label }}{{ $t('task_info_table_number') }} {{ info.source || 0 }}</span
-          >
-          <span class="ml-3"
-            >{{ $t('task_info_completed') }}{{ info.label }}{{ $t('task_info_table_number') }}
-            {{ info.success || 0 }}</span
-          >
+          <span>{{ $t('task_monitor_migrate_table_rows') }} {{ info.totalDataNum || 0 }}</span>
+          <span class="ml-3">{{ $t('task_monitor_migrate_table_rows_completed') }} {{ info.finishNumber || 0 }}</span>
         </div>
-        <div>
-          {{ $t('task_info_expected') }}{{ info.label }}{{ $t('task_info_completed_time') }}：{{ info.completeTime }}
-        </div>
+        <div>{{ $t('task_monitor_full_completion_time') }}：{{ info.finishDuration }}</div>
       </div>
-      <ElProgress :percentage="info.progressBar" :show-text="false"></ElProgress>
+      <ElProgress :percentage="info.progress" :show-text="false"></ElProgress>
     </div>
   </div>
 </template>

@@ -34,7 +34,11 @@
         </div>
         <ElDivider class="my-6"></ElDivider>
         <!--   概览   -->
-        <Overview v-if="['structure', 'initial_sync']" :info="overviewInfo" :status="task.status"></Overview>
+        <Overview
+          v-if="['initial_sync'].includes(currentStep.group)"
+          :info="syncOverViewData"
+          :status="task.status"
+        ></Overview>
         <div v-if="currentStep.group === 'structure'" class="mt-6">
           <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
           <div></div>
@@ -58,16 +62,22 @@
           <TableList
             v-if="columns.length"
             ref="initialTableList"
-            :data="runtimeInfo.fullSync.tableStatus"
+            :data="syncTableList"
             :columns="columns"
             max-height="300"
             key="initial_sync"
             hide-on-single-page
           >
-            <template slot="schedule" slot-scope="scope">
-              <span>{{ getSchedule(scope.row) }}</span>
-            </template>
           </TableList>
+          <el-pagination
+            @current-change="getSyncTableData"
+            :current-page="currentPage"
+            :page-sizes="[20, 50, 100]"
+            :page-size="pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="tableTotal"
+          >
+          </el-pagination>
         </div>
         <div v-else class="mt-6">
           <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
@@ -80,7 +90,7 @@
       <!--  里程碑  -->
       <Milestone :list="milestonesData" :taskStatus="task && task.status" :fold="false"></Milestone>
       <ElDivider class="my-6"></ElDivider>
-      <Overview :info="overviewInfo" :status="task.status"></Overview>
+      <Overview :info="syncOverViewData" :status="task.status"></Overview>
       <div v-if="currentStep.group === 'structure'" class="mt-6">
         <div class="mb-4 fs-7 font-color-main fw-bolder">
           {{ $t('task_info_task_structure') }}{{ $t('task_info_info') }}
@@ -106,7 +116,7 @@
         </div>
         <TableList
           v-if="columns.length"
-          :data="runtimeInfo.fullSync.tableStatus"
+          :data="syncTableList"
           :columns="columns"
           max-height="300"
           key="initial_sync"
@@ -130,7 +140,6 @@ import TableList from '@/components/TableList'
 import Milestone from '../../migrate/details/Milestone'
 import Overview from './Overview'
 import { formatTime } from '@/utils/util'
-import { getOverviewData } from '@/views/task/util'
 
 export default {
   name: 'Schedule',
@@ -144,6 +153,7 @@ export default {
   },
   data() {
     return {
+      id: '',
       active: 0,
       showActive: 0,
       isClickStep: false,
@@ -155,11 +165,13 @@ export default {
       structureColumns: [], // 结构迁移
       cdcColumns: [], // 增量
       columns: [],
+      syncOverViewData: {},
+      pageSize: 10,
+      currentPage: 1,
+      tableTotal: 0,
+      syncTableList: [], //全量同步列表数据
       runtimeInfo: {},
       list: [],
-      overviewStats: {},
-      progressBar: 0, // 进度
-      completeTime: '-', // 完成时间
       progressGroupByDB: [],
       filterItems: [],
       milestonesData: [], // 里程碑
@@ -168,14 +180,6 @@ export default {
           color: '',
           text: this.$t('task_info_synced')
         }
-      },
-      overviewInfo: {
-        label: '',
-        source: 0,
-        success: 0,
-        start: new Date().getTime(),
-        progressBar: 0,
-        completeTime: ''
       },
       groupMap: {
         init: this.$t('task_info_task_init'),
@@ -206,14 +210,16 @@ export default {
   methods: {
     init() {
       this.loadRuntimeInfo()
+      this.getSyncTableData()
+      this.getSyncOverViewData()
       // this.getStep()
       // this.getSearchItems()
       // this.getColumns()
     },
     loadRuntimeInfo() {
-      let id = this.$route.params?.subId
+      this.id = this.$route.params?.subId
       this.$api('SubTask')
-        .runtimeInfo(id)
+        .runtimeInfo(this.id)
         .then(res => {
           // eslint-disable-next-line
           console.log('loadRuntimeInfo', res)
@@ -251,7 +257,6 @@ export default {
         this.showActive = this.active
       }
       this.getMilestonesData()
-      this.getOverviewInfo()
     },
     getMilestonesData() {
       this.milestonesData = (this.runtimeInfo?.milestones || [])
@@ -267,33 +272,6 @@ export default {
             tipDisabled: true
           }
         })
-    },
-    getOverviewInfo() {
-      const group = this.currentStep.group
-      const { groupMap, runtimeInfo, overviewInfo } = this
-      const structureMigrate = runtimeInfo?.structureMigrate || {}
-      const fullSync = runtimeInfo?.fullSync || {}
-      overviewInfo.label = groupMap[group]
-      switch (group) {
-        case 'structure':
-          overviewInfo.source = structureMigrate.tableNum || 0
-          overviewInfo.success = structureMigrate.successNum || 0
-          overviewInfo.start = structureMigrate.start
-            ? new Date(structureMigrate.start).getTime()
-            : new Date().getTime()
-          break
-        case 'initial_sync':
-          overviewInfo.source = fullSync.tableNum || 0
-          overviewInfo.success = fullSync.successTableNum || 0
-          overviewInfo.start = fullSync.start ? new Date(fullSync.start).getTime() : new Date().getTime()
-          break
-      }
-      let { progress, overview, completeTime } = getOverviewData(this.task)
-      overviewInfo.progressBar = progress
-      overviewInfo.completeTime = completeTime
-      this.progressBar = progress
-      this.overviewStats = overview
-      this.completeTime = completeTime
     },
     getColumns() {
       // 结构迁移
@@ -344,32 +322,31 @@ export default {
       this.columns = [
         {
           label: this.$t('task_info_source_database'),
-          prop: 'sourceConnectionName'
+          prop: 'srcName'
         },
         {
           label: this.$t('task_info_source_table'),
-          prop: 'sourceTableName'
+          prop: 'srcTableName'
         },
         {
           label: this.$t('task_info_data_row'),
-          prop: 'sourceRowNum'
+          prop: 'totalNum'
         },
         {
           label: this.$t('task_info_target_database'),
-          prop: 'targetConnectionName'
+          prop: 'tgtName'
         },
         {
           label: this.$t('task_info_target_table'),
-          prop: 'targetTableName'
+          prop: 'tgtTableName'
         },
         {
           label: this.$t('task_info_amount_sync_data'),
-          prop: 'targetRowNum'
+          prop: 'finishNumber'
         },
         {
           label: this.$t('schedule'),
-          prop: 'schedule',
-          slotName: 'schedule'
+          prop: 'process'
         },
         {
           label: this.$t('task_monitor_status'),
@@ -448,17 +425,6 @@ export default {
           }
         })
     },
-    getSchedule(row = {}) {
-      const { sourceRowNum, targetRowNum } = row
-      let result = 0
-      if (sourceRowNum !== 0) {
-        result = (targetRowNum / sourceRowNum) * 100
-      }
-      if (result !== 100) {
-        result = result.toFixed(1)
-      }
-      return result + '%'
-    },
     clickStep(index = 0) {
       if (index + 1 > this.active) {
         return
@@ -466,6 +432,27 @@ export default {
       this.isClickStep = true
       this.showActive = index + 1
       this.getMilestonesData()
+    },
+    //获取全量同步详情表数据
+    getSyncTableData() {
+      let filter = {
+        limit: this.pageSize,
+        skip: (this.currentPage - 1) * this.pageSize
+      }
+      this.$api('SubTask')
+        .syncTable(this.id, filter)
+        .then(res => {
+          this.syncTableList = res?.data?.items
+          this.tableTotal = res?.data?.total
+        })
+    },
+    //概览信息
+    getSyncOverViewData() {
+      this.$api('SubTask')
+        .syncOverView(this.id)
+        .then(res => {
+          this.syncOverViewData = res?.data
+        })
     }
   }
 }
