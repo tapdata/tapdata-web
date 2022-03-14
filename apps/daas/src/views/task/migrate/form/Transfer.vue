@@ -279,20 +279,22 @@ export default {
       }
       this.loadFieldsStatus = 'loading'
       this.$api('connections')
-        .patchId(this.sourceId, parms)
-        .then(data => {
+        .updateById(this.sourceId, parms)
+        .then(res => {
           if (!this?.$refs?.test) {
             return
           }
+          let data = res?.data
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
-          this.$refs.test.start(this.data, false, true)
+          this.$refs.test.start(data, false, true)
           this.getProgress()
         })
     },
     getProgress() {
       this.$api('connections')
         .getNoSchema(this.sourceId)
-        .then(data => {
+        .then(res => {
+          let data = res?.data
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           if (data.loadFieldsStatus === 'finished') {
             this.progress = 100

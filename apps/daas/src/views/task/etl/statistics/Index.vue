@@ -105,6 +105,7 @@ export default {
   },
   destroyed() {
     this.$ws.off('watch', this.taskChange)
+    this.timer && clearInterval(this.timer)
   },
   methods: {
     init() {

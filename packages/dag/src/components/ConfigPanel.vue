@@ -26,7 +26,7 @@
       </div>
       <ElTabs v-model="currentTab" class="config-tabs">
         <ElTabPane label="属性设置">
-          <FormPanel v-on="$listeners"></FormPanel>
+          <FormPanel v-on="$listeners" ref="formPanel"></FormPanel>
         </ElTabPane>
         <ElTabPane label="元数据">
           <MetaPane></MetaPane>
@@ -96,6 +96,10 @@ export default {
 
     handleClosePanel() {
       this.setActiveType(null)
+    },
+
+    async validateForm() {
+      await this.$refs.formPanel?.validate()
     }
   }
 }

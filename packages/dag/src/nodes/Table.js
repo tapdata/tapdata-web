@@ -83,10 +83,11 @@ export class Table extends NodeType {
                 'x-component': 'Select',
                 'x-component-props': {
                   allowCreate: false,
-                  filterable: true
+                  filterable: true,
+                  remote: true
                 },
                 'x-reactions': [
-                  '{{useAsyncDataSource(loadDatabaseTable)}}',
+                  '{{useRemoteQuery(loadDatabaseTable)}}',
                   {
                     dependencies: ['isTarget'],
                     fulfill: {
