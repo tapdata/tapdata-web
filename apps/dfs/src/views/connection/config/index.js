@@ -29,6 +29,7 @@ import dfs_tencent_mongodb from './dfs_tencent_mongodb'
 import dfs_tencent_mysql from './dfs_tencent_mysql'
 import dfs_tencent_postgres from './dfs_tencent_postgres'
 import dfs_tencent_sqlserver from './dfs_tencent_sqlserver'
+import dfs_vika from './dfs_vika'
 
 export default {
   dfs_mysql,
@@ -61,5 +62,6 @@ export default {
   dfs_tencent_mongodb,
   dfs_tencent_mysql,
   dfs_tencent_postgres,
-  dfs_tencent_sqlserver
+  dfs_tencent_sqlserver,
+  dfs_vika
 }

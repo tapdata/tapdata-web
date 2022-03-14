@@ -56,7 +56,8 @@
           'tencent_mongodb',
           'tencent_mysql',
           'tencent_postgres',
-          'tencent_sqlserver'
+          'tencent_sqlserver',
+          'vika'
         ]"
         :comingTypes="['db2', 'sybase ase', 'gbase-8s']"
         :hide-type="true"
