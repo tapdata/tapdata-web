@@ -9,7 +9,7 @@ function recursiveField(form, schema, scope, basePath, name) {
     if (isStr(reactions) && /use\w+\(.+\)/.test(reactions)) {
       delete schema['x-reactions']
     } else if (Array.isArray(reactions)) {
-      schema['x-reactions'] = reactions.filter(item => !isStr(item) || !item.includes('useAsyncDataSource'))
+      schema['x-reactions'] = reactions.filter(item => !(isStr(item) && /use\w+\(.+\)/.test(item)))
     }
   }
   delete schema.default
