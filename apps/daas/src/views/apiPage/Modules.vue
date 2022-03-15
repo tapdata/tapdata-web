@@ -81,14 +81,26 @@
           <span>{{ $t('modules_' + scope.row.status) }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_basePath')"> </el-table-column>
-      <el-table-column :label="$t('modules_header_version')"> </el-table-column>
+      <el-table-column :label="$t('modules_header_basePath')">
+        <template slot-scope="scope">
+          {{ scope.row.basePath }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('modules_header_version')">
+        <template slot-scope="scope">
+          {{ scope.row.apiVersion }}
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('modules_header_classifications')">
         <template slot-scope="scope" v-if="scope.row.listtags">
           <div v-for="item in scope.row.listtags" :key="item.value">{{ item.value }}</div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_username')"> </el-table-column>
+      <el-table-column :label="$t('modules_header_username')">
+        <template slot-scope="scope">
+          {{ scope.row.user }}
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('modules_header_last_updated')" prop="last_updated" sortable="custom" width="120">
         <template slot-scope="scope">
           {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
