@@ -353,7 +353,7 @@ export default {
         .then(res => {
           if (res?.data?.items?.length) {
             let record = res?.data?.items[0] || {}
-            let workerStatus = record.workerStatus || {}
+            let workerStatus = record.workerStatus || record.worker_status || {}
             if (this.status !== workerStatus.status) {
               this.status = workerStatus.status
             }

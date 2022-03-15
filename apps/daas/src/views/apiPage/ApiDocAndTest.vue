@@ -36,13 +36,13 @@ export default {
         'filter[where][clientName]': 'Default APIServer'
       })
 
-      if (apiServers.data.length > 0) {
+      if (apiServers?.data?.items?.length) {
         let defaultCollection = this.$route.query.collection || this.$route.query['id']
 
         this.apiClient = new APIClient(defaultCollection)
-        this.apiClient.setApiServer(apiServers.data[0])
+        this.apiClient.setApiServer(apiServers.data.items[0])
 
-        let openApi = `${apiServers.data[0].clientURI}/openapi.json`
+        let openApi = `${apiServers.data.items[0].clientURI}/openapi.json`
         // let openApiObj = await axios.get(openApi)
         let res = await fetch(openApi)
         let openApiObj = await res.json()
