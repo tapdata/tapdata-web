@@ -7,7 +7,10 @@
           <span>{{ $t('task_info_table_number') }} {{ info.totalTaleNum || 0 }}</span>
           <span class="ml-3">{{ $t('task_info_completed') }} {{ info.completeTaleNum || 0 }}</span>
         </div>
-        <div>{{ $t('task_monitor_full_completion_time') }}：{{ info.finishDuration }}</div>
+        <div v-if="info.progress !== 100">
+          {{ $t('task_monitor_full_completion_time') }}：{{ info.finishDuration || 0 }}
+        </div>
+        <div v-else>{{ $t('task_info_fully_completed') }}</div>
       </div>
       <ElProgress :percentage="info.progress" :show-text="false"></ElProgress>
     </div>

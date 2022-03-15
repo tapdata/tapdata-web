@@ -68,6 +68,9 @@
             key="initial_sync"
             hide-on-single-page
           >
+            <template slot="schedule" slot-scope="scope">
+              <span>{{ scope.row }} %</span>
+            </template>
           </TableList>
           <el-pagination
             @current-change="getSyncTableData"
@@ -345,8 +348,9 @@ export default {
           prop: 'finishNumber'
         },
         {
-          label: this.$t('schedule'),
-          prop: 'progress'
+          label: this.$t('task_info_schedule'),
+          prop: 'progress',
+          slot: 'schedule'
         },
         {
           label: this.$t('task_monitor_status'),
@@ -452,7 +456,43 @@ export default {
         .syncOverView(this.id)
         .then(res => {
           this.syncOverViewData = res?.data
+          this.syncOverViewData.finishDuration = this.handleTime(this.syncOverViewData?.finishDuration)
         })
+    },
+    handleTime(time) {
+      let r = ''
+      if (time) {
+        let s = time,
+          m = 0,
+          h = 0,
+          d = 0
+        if (s > 60) {
+          m = parseInt(s / 60)
+          s = parseInt(s % 60)
+          if (m > 60) {
+            h = parseInt(m / 60)
+            m = parseInt(m % 60)
+            if (h > 24) {
+              d = parseInt(h / 24)
+              h = parseInt(h % 24)
+            }
+          }
+        }
+        if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
+          r = 1 + this.$t('taskProgress.m')
+        }
+        // r = parseInt(s) + i18n.t('timeToLive.s')
+        if (m > 0) {
+          r = parseInt(m) + this.$t('taskProgress.m')
+        }
+        if (h > 0) {
+          r = parseInt(h) + this.$t('taskProgress.h') + r
+        }
+        if (d > 0) {
+          r = parseInt(d) + this.$t('taskProgress.d') + r
+        }
+        return r
+      }
     }
   }
 }
