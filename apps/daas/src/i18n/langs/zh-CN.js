@@ -884,6 +884,11 @@ export default {
   task_info_operator: '操作者',
   task_info_operator_content: '操作内容',
   task_info_connection_test: '测试',
+  task_info_overView_error_msg: '计算出错',
+  task_info_overView_status: '计算中',
+  task_info_status_waiting: '待运行',
+  task_info_status_running: '同步中',
+  task_info_status_done: '已完成',
 
   task_stetting_name: '任务名称',
   task_setting_sync_type: '同步类型',

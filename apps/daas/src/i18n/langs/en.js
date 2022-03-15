@@ -914,6 +914,11 @@ export default {
   task_info_operator: 'Operator',
   task_info_operator_content: 'Operation content',
   task_info_connection_test: 'Test',
+  task_info_overView_error_msg: 'Calculation error',
+  task_info_overView_status: 'Calculating',
+  task_info_status_waiting: 'Waiting',
+  task_info_status_running: 'Running',
+  task_info_status_done: 'Done',
 
   task_setting_sync_type: 'Sync Type',
   task_setting_initial_sync: 'Full synchronization',

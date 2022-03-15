@@ -68,13 +68,29 @@
             key="initial_sync"
             hide-on-single-page
           >
+            <template slot="totalNum" slot-scope="scope">
+              <span v-if="scope.row.totalNum === -2">
+                <span style="color: red">{{ $t('task_info_overView_error_msg') }} </span>
+                <ElTooltip placement="top" :content="scope.row.errorMsg">
+                  <VIcon class="color-primary" size="14">error</VIcon>
+                </ElTooltip></span
+              >
+              <span v-else
+                >{{ scope.row.totalNum === -1 ? $t('task_info_overView_status') : scope.row.totalNum }}
+              </span>
+            </template>
             <template slot="progress" slot-scope="scope">
               <span>{{ scope.row.progress }} %</span>
+            </template>
+            <template slot="status" slot-scope="scope">
+              <span :class="['status-' + scope.row.status, 'status-block', 'mr-2']">
+                {{ $t('task_info_status_' + scope.row.status) }}
+              </span>
             </template>
           </TableList>
           <el-pagination
             @current-change="getSyncTableData"
-            :current-page="currentPage"
+            :current-page.sync="currentPage"
             :page-sizes="[20, 50, 100]"
             :page-size="pageSize"
             layout="total, prev, pager, next, jumper"
@@ -330,7 +346,8 @@ export default {
         },
         {
           label: this.$t('task_info_data_row'),
-          prop: 'totalNum'
+          prop: 'totalNum',
+          slotName: 'totalNum'
         },
         {
           label: this.$t('task_info_target_database'),
@@ -351,7 +368,8 @@ export default {
         },
         {
           label: this.$t('task_monitor_status'),
-          prop: 'status'
+          prop: 'status',
+          slotName: 'status'
         }
       ]
       this.$refs.initialTableList?.fetch?.()
