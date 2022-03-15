@@ -1,6 +1,6 @@
 import { FormPath } from '@formily/core'
 import { toJS } from '@formily/reactive'
-import { ArrayField, Field as InternalField, ObjectField, VoidField, Schema } from '@formily/vue'
+import { ArrayField, Field as InternalField, ObjectField, VoidField, Schema, h as CreateElement } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { FormItem } from '@daas/form'
 import { each, reduce } from '@formily/shared'
@@ -146,6 +146,17 @@ export const Field = observer(
           )
         }
         return <InternalField attrs={fieldProps} name={node.id} />
+        /*return CreateElement(
+          InternalField,
+          {
+            props: {},
+            attrs: {
+              ...fieldProps,
+              name: node.id
+            }
+          },
+          {}
+        )*/
       }
     }
   })

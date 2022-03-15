@@ -12,6 +12,11 @@
             <ViewPanel type="DESIGNABLE">
               <ComponentTreeWidget :components="components"></ComponentTreeWidget>
             </ViewPanel>
+            <ViewPanel type="JSONTREE" :scrollable="false">
+              <template #default="{ tree, onChange }">
+                <SchemaEditorWidget :tree="tree" :onChange="onChange" />
+              </template>
+            </ViewPanel>
           </ViewportPanel>
         </WorkspacePanel>
       </Workspace>
@@ -35,6 +40,7 @@ import {
   SettingsPanel,
   ComponentTreeWidget,
   ResourceWidget,
+  SchemaEditorWidget,
   WorkspacePanel,
   ViewportPanel,
   ViewPanel,
@@ -101,7 +107,8 @@ export default {
     ComponentTreeWidget,
     SettingsForm,
     ViewPanel,
-    ResourceWidget
+    ResourceWidget,
+    SchemaEditorWidget
   },
 
   data() {

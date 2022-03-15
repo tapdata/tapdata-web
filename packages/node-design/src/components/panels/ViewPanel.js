@@ -30,9 +30,11 @@ export const ViewPanel = observer(
         const tree = treeRef.value
         if (workbench.type !== props.type) return null
         const render = () => {
+          console.log('slots.default', tree)
           return slots.default(tree, payload => {
+            console.log('ViewPanel.onChange', payload)
             tree.from(payload)
-            tree.takeSnapshot()
+            // tree.takeSnapshot()
           })
         }
         if (workbench.type === 'DESIGNABLE')

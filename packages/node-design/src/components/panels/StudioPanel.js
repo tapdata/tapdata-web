@@ -1,4 +1,4 @@
-import { usePrefix, usePosition, useDesigner } from '../../hooks'
+import { usePrefix, usePosition, useDesigner, useWorkbench } from '../../hooks'
 import { Layout } from '../containers'
 import { defineComponent, watch, reactive, ref } from 'vue-demi'
 import VIcon from 'web-core/components/VIcon'
@@ -13,6 +13,7 @@ export const StudioPanel = defineComponent({
   props: ['theme', 'prefixCls', 'position'],
   directives: { focusSelect },
   setup: (props, { slots, refs, root }) => {
+    const workbenchRef = useWorkbench()
     const prefix = usePrefix('main-panel')
     const position = usePosition()
     const baseCls = ['root', position]
@@ -95,6 +96,48 @@ export const StudioPanel = defineComponent({
                   edit-outline
                 </VIcon>
               </div>
+            </div>
+            <div class="panel-header-tools flex align-center">
+              <ElTooltip transition="tooltip-fade-in" content="表单设计">
+                <button
+                  class={['icon-btn', { active: workbenchRef.value.type === 'DESIGNABLE' }]}
+                  onClick={() => {
+                    workbenchRef.value.type = 'DESIGNABLE'
+                  }}
+                >
+                  <IconWidget infer="Design" size={20} />
+                </button>
+              </ElTooltip>
+              <ElTooltip transition="tooltip-fade-in" content="JSON Schema">
+                <button
+                  class={['icon-btn', { active: workbenchRef.value.type === 'JSONTREE' }]}
+                  onClick={() => {
+                    workbenchRef.value.type = 'JSONTREE'
+                  }}
+                >
+                  <IconWidget infer="JSON" size={20} />
+                </button>
+              </ElTooltip>
+              <ElTooltip transition="tooltip-fade-in" content="代码编辑">
+                <button
+                  class={['icon-btn', { active: workbenchRef.value.type === 'CODE' }]}
+                  onClick={() => {
+                    workbenchRef.value.type = 'CODE'
+                  }}
+                >
+                  <IconWidget infer="Code" size={20} />
+                </button>
+              </ElTooltip>
+              <ElTooltip transition="tooltip-fade-in" content="预览表单">
+                <button
+                  class={['icon-btn', { active: workbenchRef.value.type === 'PREVIEW' }]}
+                  onClick={() => {
+                    workbenchRef.value.type = 'PREVIEW'
+                  }}
+                >
+                  <IconWidget infer="Play" size={20} />
+                </button>
+              </ElTooltip>
             </div>
             <div class="panel-header-actions text-end flex-grow-1 mr-3">
               <ElButton loading={saving.value} size="small" type="primary" onClick={save}>

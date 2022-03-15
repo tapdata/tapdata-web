@@ -30,7 +30,9 @@
 
     .panel-header {
       $hoverBg: #eef3ff;
+      $radius: 4px;
 
+      position: relative;
       height: 48px;
 
       &-nav {
@@ -99,6 +101,38 @@
           right: 8px;
           height: 28px;
         }
+      }
+
+      &-tools {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .icon-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+        padding: 5px;
+        background: #fff;
+        border: 1px solid transparent;
+        border-radius: $radius;
+        transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+        cursor: pointer;
+
+        &:hover,
+        &.active {
+          color: map-get($color, primary);
+          background: $hoverBg;
+        }
+      }
+
+      .icon-btn + .icon-btn {
+        margin-left: 16px;
       }
     }
   }
