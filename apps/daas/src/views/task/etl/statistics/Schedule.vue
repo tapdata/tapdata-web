@@ -346,7 +346,7 @@ export default {
         },
         {
           label: this.$t('schedule'),
-          prop: 'process'
+          prop: 'progress'
         },
         {
           label: this.$t('task_monitor_status'),
