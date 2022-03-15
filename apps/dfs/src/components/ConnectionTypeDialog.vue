@@ -27,11 +27,11 @@
           <div class="database__name">{{ item.name }}</div>
         </li>
       </ul>
-      <div v-else class="text-center" slot="empty">
+      <div v-else class="text-center">
         <VIcon size="120">search-no-data-color</VIcon>
         <div class="flex justify-content-center lh-sm font-color-sub">
           <span>{{ $t('gl_no_match_result') }}</span>
-          <span class="color-primary cursor-pointer" @click="reset">查看全部</span>
+          <span class="color-primary cursor-pointer" @click="reset">{{ $t('gl_search_show_all') }}</span>
         </div>
       </div>
     </div>
@@ -58,14 +58,7 @@ export default {
       dialogVisible: false,
       searchKey: '',
       searchType: '',
-      options: [
-        { name: '', desc: '全部' },
-        { name: 'localDatabase', desc: '本地自建库' },
-        { name: 'cloudDatabase', desc: '云数据库' },
-        { name: 'mq', desc: '消息队列' },
-        { name: 'nosql', desc: 'NoSQL数据库' },
-        { name: 'saas', desc: 'SaaS应用' }
-      ],
+      options: [],
       list: []
     }
   },
@@ -79,7 +72,13 @@ export default {
   },
   methods: {
     init() {
+      this.getOptions()
       this.getData()
+    },
+    getOptions() {
+      this.$axios.get('tm/api/DatabaseTags/availableTags').then(data => {
+        this.options = [{ name: '', desc: this.$t('gl_select_option_all') }, ...data]
+      })
     },
     getData() {
       let filter = {

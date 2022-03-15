@@ -5,6 +5,7 @@ export default {
   gl_no_match_result: '没有查到符合条件的结果',
   gl_back_to_list: '返回列表',
   gl_placeholder_select: '请选择',
+  gl_select_option_all: '全部',
   gl_placeholder_input: '请输入',
   gl_button_cancel: '取消',
   gl_button_confirm: '确定',
@@ -16,6 +17,7 @@ export default {
   gl_qr_code_wx_customer_service: '微信客服',
   gl_telephone_tip: '电话咨询',
   gl_form_can_not_be_empty: '不能为空',
+  gl_search_show_all: '查看全部',
 
   // 按钮
   button_edit: '编辑',
