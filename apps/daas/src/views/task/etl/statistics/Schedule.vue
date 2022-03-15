@@ -100,7 +100,14 @@
         </div>
         <div v-else class="mt-6">
           <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
-          <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page></TableList>
+          <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page>
+            <template slot="operation" slot-scope="scope">
+              <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{ $t('button_clear') }}</ElButton>
+              <ElButton size="mini" type="text" @click="handleRollback(scope.row)">{{
+                $t('button_rollback')
+              }}</ElButton></template
+            >
+          </TableList>
         </div>
       </div>
     </template>
@@ -231,6 +238,7 @@ export default {
       this.loadRuntimeInfo()
       this.getSyncTableData()
       this.getSyncOverViewData()
+      this.getCdcTableList()
     },
     loadRuntimeInfo() {
       this.id = this.$route.params?.subId
@@ -314,30 +322,41 @@ export default {
       // 增量同步
       this.cdcColumns = [
         {
-          label: this.$t('task_info_source_database'),
-          prop: 'sourceConnectionName'
+          label: this.$t('task_info_srcName'),
+          prop: 'srcName'
         },
         {
-          label: this.$t('task_info_target_database'),
-          prop: 'targetConnectionName'
+          label: this.$t('task_info_srcTableName'),
+          prop: 'srcTableName'
+        },
+        {
+          label: this.$t('task_info_tgtName'),
+          prop: 'tgtName'
+        },
+        {
+          label: this.$t('task_info_tgtTableName'),
+          prop: 'tgtTableName'
+        },
+        {
+          label: this.$t('task_info_cdc_delay'),
+          prop: 'delay',
+          dataType: 'time'
         },
         {
           label: this.$t('task_info_cdc_time'),
-          prop: 'cdcTime',
+          prop: 'currentTime',
           dataType: 'time'
+        },
+        {
+          label: this.$t('column_operation'),
+          prop: 'operation',
+          slotName: 'operation'
         }
       ]
-      this.list = (this.task.cdcLastTimes || []).map(item => {
-        return {
-          cdcTime: item.cdcTime,
-          sourceConnectionName: item.sourceConnectionName,
-          targetConnectionName: item.targetConnectionName
-        }
-      })
       // 全量同步
       this.columns = [
         {
-          label: this.$t('task_info_source_database'),
+          label: this.$t('task_info_srcName'),
           prop: 'srcName'
         },
         {
@@ -350,7 +369,7 @@ export default {
           slotName: 'totalNum'
         },
         {
-          label: this.$t('task_info_target_database'),
+          label: this.$t('task_info_tgtName'),
           prop: 'tgtName'
         },
         {
@@ -513,7 +532,26 @@ export default {
         }
         return r
       }
-    }
+    },
+    getCdcTableList() {
+      this.$api('SubTask')
+        .cdcIncrease(this.id)
+        .then(res => {
+          this.list = res?.data
+        })
+    },
+    handleClear(row) {
+      let params = {
+        srcNode: row.srcId,
+        tgtNode: row.tgtId
+      }
+      this.$api('SubTask')
+        .clearIncrease(this.id, params)
+        .then(() => {
+          this.$message.success(this.$t('message_update_success'))
+        })
+    },
+    handleRollback() {}
   }
 }
 </script>
