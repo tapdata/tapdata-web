@@ -368,7 +368,7 @@ export default {
               let targetTotal = '-'
               if (result) {
                 sourceTotal = result.sourceTotal
-                targetTotal = result.target_total
+                targetTotal = result.targetTotal
               }
               item.lastStartTime = item.lastStartTime
                 ? this.$moment(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss')
