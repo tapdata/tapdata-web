@@ -69,7 +69,7 @@
             hide-on-single-page
           >
             <template slot="progress" slot-scope="scope">
-              <span>{{ scope.row }} %</span>
+              <span>{{ scope.row.progress }} %</span>
             </template>
           </TableList>
           <el-pagination
