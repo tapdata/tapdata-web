@@ -576,7 +576,7 @@ export default {
 }
 .sub-task {
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: auto;
   ::v-deep {
     .el-tabs__content {
       flex: 1;

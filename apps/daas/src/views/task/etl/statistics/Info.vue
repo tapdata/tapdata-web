@@ -113,17 +113,15 @@
             <ElProgress
               type="circle"
               color="rgba(44, 101, 255, 1)"
-              :percentage="progressBar"
+              :percentage="progress"
               :show-text="false"
               :width="50"
             ></ElProgress>
             <div class="flex justify-content-center position-absolute color-primary fw-bolder fs-7">
-              {{ progressBar }}%
+              {{ progress }}%
             </div>
           </div>
-          <div v-if="progressBar === 100" class="font-color-sub">
-            全量完成时间：{{ formatTime(writeData.initialTime) }}
-          </div>
+          <div v-if="progress === 100" class="font-color-sub">全量完成时间：{{ finishDuration }}</div>
           <div v-else class="font-color-sub">
             {{ $t('task_monitor_full_completion_time') + '：' + (forecast || '计算中') }}
           </div>
@@ -159,6 +157,8 @@ export default {
   },
   data() {
     return {
+      finishDuration: 0,
+      progress: 0,
       selectTime: 'second',
       statusBtMap: {
         start: {
@@ -409,6 +409,56 @@ export default {
     this.timer && clearInterval(this.timer)
   },
   methods: {
+    //概览信息
+    getSyncOverViewData() {
+      this.$api('SubTask')
+        .syncOverView(this.id)
+        .then(res => {
+          let data = res?.data
+          this.finishDuration = this.handleTime(data?.finishDuration)
+          this.progress = data?.progress
+          if (data?.progress !== 100) {
+            setTimeout(() => {
+              this.getSyncOverViewData()
+            }, 800)
+          }
+        })
+    },
+    handleTime(time) {
+      let r = ''
+      if (time) {
+        let s = time,
+          m = 0,
+          h = 0,
+          d = 0
+        if (s > 60) {
+          m = parseInt(s / 60)
+          s = parseInt(s % 60)
+          if (m > 60) {
+            h = parseInt(m / 60)
+            m = parseInt(m % 60)
+            if (h > 24) {
+              d = parseInt(h / 24)
+              h = parseInt(h % 24)
+            }
+          }
+        }
+        if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
+          r = 1 + this.$t('taskProgress.m')
+        }
+        // r = parseInt(s) + i18n.t('timeToLive.s')
+        if (m > 0) {
+          r = parseInt(m) + this.$t('taskProgress.m')
+        }
+        if (h > 0) {
+          r = parseInt(h) + this.$t('taskProgress.h') + r
+        }
+        if (d > 0) {
+          r = parseInt(d) + this.$t('taskProgress.d') + r
+        }
+        return r
+      }
+    },
     init() {
       if (this.task.creator) {
         this.creator = this.task.creator
@@ -567,7 +617,9 @@ export default {
             let val0 = countObj[key]?.[0] || 0
             let val1 = countObj[key]?.[1] || 0
             // 默认是查询任务的，不做叠加
-            if (reset || selectedTime === 'default') {
+            if (selectedTime === 'default') {
+              overData[key] = Math.max(val1, val0)
+            } else if (reset) {
               overData[key] = val1 - val0
             } else {
               overData[key] += val1 - val0

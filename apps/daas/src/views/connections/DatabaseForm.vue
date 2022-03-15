@@ -892,17 +892,9 @@ export default {
     formChange(data) {
       let filed = data.field || ''
       let value = data.value
-      if (filed === 'sourceType') {
-        this.model.database_host = ''
-      }
-      if (filed === 'region') {
-        this.model.zone = ''
-      }
-      if (filed === 'zone') {
-        this.getDataSourceRegion() //选择完zone 联动实例vip 接口
-      }
-      if (filed === 's_region') {
-        this.model.s_zone = ''
+      if (filed === 'connection_type') {
+        this.model.redoLogParserEnable = false
+        this.model.shareCdcEnable = false
       }
       //rest api
       if (filed === 'data_sync_mode') {
