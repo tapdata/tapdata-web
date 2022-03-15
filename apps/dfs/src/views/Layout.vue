@@ -26,44 +26,7 @@
         <RouterView></RouterView>
       </ElMain>
     </ElContainer>
-    <ElDialog :title="$t('connection_form_creat_connection')" :visible.sync="dialogVisible" width="730px">
-      <ConnectionTypeSelector
-        :types="[
-          'mysql',
-          'oracle',
-          'sqlserver',
-          'mongodb',
-          'postgres',
-          'elasticsearch',
-          'kafka',
-          'dameng',
-          'greenplum',
-          'mq',
-          'clickhouse',
-          'kundb',
-          'adb_mysql',
-          'adb_postgres',
-          'hazelcast_cloud_cluster',
-          'dummy db',
-          'tidb',
-          'mariadb',
-          'aliyun_mariadb',
-          'aliyun_mongodb',
-          'aliyun_mysql',
-          'aliyun_postgres',
-          'aliyun_sqlserver',
-          'tencent_mariadb',
-          'tencent_mongodb',
-          'tencent_mysql',
-          'tencent_postgres',
-          'tencent_sqlserver',
-          'vika'
-        ]"
-        :comingTypes="['db2', 'sybase ase', 'gbase-8s']"
-        :hide-type="true"
-        @select="createConnection"
-      ></ConnectionTypeSelector>
-    </ElDialog>
+    <ConnectionTypeDialog v-model="dialogVisible" @select="createConnection"></ConnectionTypeDialog>
     <AgentDownloadModal></AgentDownloadModal>
   </ElContainer>
 </template>
@@ -71,11 +34,14 @@
 <script>
 import TheHeader from '@/components/the-header'
 import VIcon from '@/components/VIcon'
+import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
+
 export default {
   components: {
     TheHeader,
     VIcon,
+    ConnectionTypeDialog,
     AgentDownloadModal
   },
   data() {
