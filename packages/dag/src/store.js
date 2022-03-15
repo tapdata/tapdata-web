@@ -67,7 +67,7 @@ const state = () => ({
     {
       icon: 'join',
       name: '连接',
-      type: 'join',
+      type: 'join_processor',
       constructor: 'Join'
     },
     {
