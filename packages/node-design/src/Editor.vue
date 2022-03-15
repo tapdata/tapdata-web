@@ -17,6 +17,16 @@
                 <SchemaEditorWidget :tree="tree" :onChange="onChange" />
               </template>
             </ViewPanel>
+            <ViewPanel type="CODE" :scrollable="false">
+              <template #default="{ tree, onChange }">
+                <CodeEditorWidget :tree="tree" :onChange="onChange" />
+              </template>
+            </ViewPanel>
+            <ViewPanel type="PREVIEW" :scrollable="false">
+              <template #default="{ tree, onChange }">
+                <PreviewWidget :tree="tree" :onChange="onChange" />
+              </template>
+            </ViewPanel>
           </ViewportPanel>
         </WorkspacePanel>
       </Workspace>
@@ -41,6 +51,8 @@ import {
   ComponentTreeWidget,
   ResourceWidget,
   SchemaEditorWidget,
+  CodeEditorWidget,
+  PreviewWidget,
   WorkspacePanel,
   ViewportPanel,
   ViewPanel,
@@ -108,7 +120,9 @@ export default {
     SettingsForm,
     ViewPanel,
     ResourceWidget,
-    SchemaEditorWidget
+    SchemaEditorWidget,
+    CodeEditorWidget,
+    PreviewWidget
   },
 
   data() {
