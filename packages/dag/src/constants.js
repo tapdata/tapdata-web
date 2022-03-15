@@ -97,7 +97,7 @@ export const NODE_TYPE_ICON = {
   aggregation_processor: 'aggregator',
   row_filter_processor: 'row-filter',
   cache_lookup_processor: 'joint-cache',
-  join: 'join',
+  join_processor: 'join',
   merge_table_processor: 'join'
 }
 
