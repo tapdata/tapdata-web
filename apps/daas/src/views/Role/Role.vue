@@ -3,7 +3,7 @@
     <div class="section-wrap-box">
       <head class="head">
         <i class="iconfont icon-left-circle back-btn-icon" style="color: #409eff; cursor: pointer" @click="back"></i>
-        <h1>{{ $t('role.settingTitle') }}</h1>
+        <h1 class="pl-2">{{ $t('role.settingTitle') }}</h1>
         <span>{{ $t('role.currentRole') }}: {{ roleName }}</span>
       </head>
 
@@ -914,7 +914,6 @@ export default {
   overflow: hidden;
   .head {
     display: block;
-    padding: 0 20px;
     border-bottom: 1px solid #dedee4;
     i {
       display: inline-block;

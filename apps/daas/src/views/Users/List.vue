@@ -4,7 +4,6 @@
       ref="table"
       row-key="id"
       class="user-list"
-      :desc="$t('user.des')"
       :classify="{ authority: 'user_category_management', types: ['user'] }"
       :remoteMethod="getData"
       @selection-change="handleSelectionChange"
@@ -12,86 +11,42 @@
       @sort-change="handleSortTable"
     >
       <div class="tapNav" slot="nav">
-        <ul class="mune">
-          <li
-            v-for="item in muneList"
-            :key="item.icon"
-            :class="activePanel === item.key ? 'active' : ''"
-            @click="handleTapClick(item.key)"
-          >
-            <i :class="['iconfont', item.icon]"></i>
-            <span slot="title">{{ item.name }}</span>
-            <!-- <i class="" v-if="item.key !== 'all' && item.key + 'Count' > 0">
-							{{ item.key + 'Count' }}
-						</i> -->
-
-            <el-badge
-              class="item-badge"
-              v-if="item.key + 'Count' === 'notActivatedCount'"
-              :value="notActivatedCount"
-              :max="99"
-              :hidden="!notActivatedCount"
-            >
-            </el-badge>
-            <el-badge
-              class="item-badge"
-              v-if="item.key + 'Count' === 'notVerifiedCount'"
-              :value="notVerifiedCount"
-              :max="99"
-              :hidden="!notVerifiedCount"
-            >
-            </el-badge>
-            <el-badge
-              class="item-badge"
-              v-if="item.key + 'Count' === 'rejectedCount'"
-              :value="rejectedCount"
-              :max="99"
-              :hidden="!rejectedCount"
-            >
-            </el-badge>
-          </li>
-        </ul>
+        <ElTabs v-model="activePanel" @tab-click="handleTapClick">
+          <ElTabPane v-for="item in muneList" :key="item.icon" :name="item.key">
+            <span slot="label"
+              >{{ item.name }}
+              <ElBadge
+                class="item-badge"
+                v-if="item.key + 'Count' == 'notActivatedCount'"
+                :value="notActivatedCount"
+                :max="99"
+                :hidden="!notActivatedCount"
+              >
+              </ElBadge>
+              <ElBadge
+                class="item-badge"
+                v-if="item.key + 'Count' == 'notVerifiedCount'"
+                :value="notVerifiedCount"
+                :max="99"
+                :hidden="!notVerifiedCount"
+              >
+              </ElBadge>
+              <ElBadge
+                class="item-badge"
+                v-if="item.key + 'Count' == 'rejectedCount'"
+                :value="rejectedCount"
+                :max="99"
+                :hidden="!rejectedCount"
+              >
+              </ElBadge>
+            </span>
+          </ElTabPane>
+        </ElTabs>
       </div>
-      <div slot="search">
-        <ul class="search-bar flex">
-          <li>
-            <el-input
-              clearable
-              class="input-with-select"
-              size="mini"
-              v-model="searchParams.keyword"
-              :placeholder="$t('user.userNameEmail')"
-              @input="table.fetch(1, 800)"
-            >
-              <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
-                <el-option :label="$t('connection.fuzzyQuery')" :value="true"></el-option>
-                <el-option :label="$t('connection.PreciseQuery')" :value="false"></el-option>
-              </el-select>
-            </el-input>
-          </li>
-          <!-- <li>
-						<el-date-picker
-							v-model="searchParams.time"
-							size="mini"
-							type="datetimerange"
-							:start-placeholder="$t('user.startTime')"
-							:end-placeholder="$t('user.endTime')"
-							:placeholder="$t('user.changeTime')"
-							@input="table.fetch(1)"
-						>
-						</el-date-picker>
-					</li> -->
-
-          <li v-if="searchParams.keyword">
-            <el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
-          </li>
-
-          <li v-if="searchParams.keyword">
-            <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
-          </li>
-        </ul>
+      <div slot="search" class="search-bar">
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </div>
-      <div slot="operation">
+      <div slot="operation" class="pt-4">
         <el-button
           v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'user_category_application'"
@@ -100,8 +55,7 @@
           v-show="multipleSelection.length > 0"
           @click="$refs.table.showClassify(handleSelectTag())"
         >
-          <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkTag') }}</span>
+          <span> {{ $t('button_bulk_tag') }}</span>
         </el-button>
         <el-dropdown
           @command="handleCommand($event)"
@@ -110,28 +64,33 @@
         >
           <el-button class="btn btn-dropdowm" size="mini">
             <i class="iconfont icon-piliang back-btn-icon"></i>
-            <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
+            <span> {{ $t('button_bulk_operation') }}</span>
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="activated" v-readonlybtn="'user_edition'">{{
-              $t('user.bulkActivation')
+              $t('user_list_bulk_activation')
             }}</el-dropdown-item>
             <el-dropdown-item command="rejected" v-readonlybtn="'user_edition'">{{
-              $t('user.bulkFreeze')
+              $t('user_list_bulk_freeze')
             }}</el-dropdown-item>
             <el-dropdown-item command="notActivated" v-readonlybtn="'user_edition'">{{
-              $t('user.bulkCheck')
+              $t('user_list_bulk_check')
             }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button v-readonlybtn="'new_model_creation'" class="btn btn-create" size="mini" @click="openCreateDialog">
-          <i class="iconfont icon-jia add-btn-icon"></i>
+        <el-button
+          v-readonlybtn="'new_model_creation'"
+          class="btn btn-create"
+          type="primary"
+          size="mini"
+          @click="openCreateDialog"
+        >
           <span>{{ $t('user.creatUser') }}</span>
         </el-button>
       </div>
       <el-table-column v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
       </el-table-column>
-      <el-table-column :label="$t('user.userName')" prop="username" sortable="username">
+      <el-table-column :label="$t('user_list_user_name')" prop="username" sortable="username">
         <template slot-scope="scope">
           <div class="metadata-name">
             <p>{{ scope.row.username }}</p>
@@ -141,38 +100,29 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('user.role')" prop="roleMappings">
+      <el-table-column :label="$t('user_list_role')" prop="roleMappings">
         <template slot-scope="scope">
           {{ permissionsmethod(scope.row.roleMappings) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('user.changeTime')" prop="last_updated" sortable="last_updated">
+      <el-table-column :label="$t('user_list_change_time')" prop="last_updated" sortable="last_updated">
         <template slot-scope="scope">
           {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('user.source')" prop="source">
+      <el-table-column :label="$t('user_list_source')" prop="source">
         <template slot-scope="scope">
-          {{ scope.row.source ? $t('user.' + scope.row.source) : '' }}
+          {{ scope.row.source ? $t('user_status_' + scope.row.source) : '' }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('user.status')" prop="status" sortable="status">
+      <el-table-column :label="$t('user_list_status')" prop="status" sortable="status">
         <template slot-scope="scope">
-          <span
-            :style="`color: ${
-              {
-                activated: '#67C23A',
-                notActivated: '#F19149',
-                notVerified: '#cccccc',
-                rejected: '#f53724'
-              }[scope.row.status]
-            };`"
-          >
-            {{ scope.row.status ? $t('user.' + scope.row.status) : '' }}
+          <span :class="[scope.row.status, 'status']">
+            {{ scope.row.status ? $t('user_status_' + scope.row.status) : '' }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('user.opera')" width="160">
+      <el-table-column :label="$t('column_operation')" width="160">
         <template slot-scope="scope">
           <div>
             <el-button
@@ -183,7 +133,7 @@
               :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
               @click="handleActive(scope.row)"
             >
-              {{ $t('user.activation') }}
+              {{ $t('user_list_activation') }}
             </el-button>
             <el-button
               v-readonlybtn="'user_edition'"
@@ -193,7 +143,7 @@
               :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
               @click="handleFreeze(scope.row)"
             >
-              {{ $t('user.freeze') }}
+              {{ $t('user_list_freeze') }}
             </el-button>
             <el-button
               v-readonlybtn="'user_edition'"
@@ -202,7 +152,7 @@
               v-if="['notVerified'].includes(scope.row.status)"
               :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
               @click="handleCheck(scope.row)"
-              >{{ $t('user.check') }}</el-button
+              >{{ $t('user_list_check') }}</el-button
             >
             <el-button
               v-readonlybtn="'user_edition'"
@@ -211,16 +161,15 @@
               v-if="['activated', 'rejected'].includes(scope.row.status)"
               :disabled="$disabledByPermission('user_edition_all_data', scope.row.user_id)"
               @click="edit(scope.row)"
-              >{{ $t('user.edit') }}</el-button
+              >{{ $t('button_edit') }}</el-button
             >
             <el-button
               v-readonlybtn="'user_delete'"
               size="mini"
               type="text"
-              style="color: #f56c6c"
               :disabled="$disabledByPermission('user_delete_all_data', scope.row.user_id)"
               @click="remove(scope.row)"
-              >{{ $t('user.delete') }}</el-button
+              >{{ $t('button_delete') }}</el-button
             >
           </div>
         </template>
@@ -228,37 +177,37 @@
     </TablePage>
     <el-dialog
       width="600px"
-      :title="createForm.id ? $t('user.editUser') : $t('user.creatUser')"
+      :title="createForm.id ? $t('user_list_edit_user') : $t('user_list_creat_user')"
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
       custom-class="creatDialog"
     >
       <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
       <div>
-        <span class="label">{{ $t('user.activationCode') }}</span>
+        <span class="label">{{ $t('user_form_activation_code') }}</span>
         <span style="padding-right: 30px">{{ createForm.accesscode || '-' }}</span>
-        <el-button @click="resetAccesCode" type="text" size="mini">{{ $t('button.reset') }}</el-button>
+        <el-button @click="resetAccesCode" type="text" size="mini">{{ $t('button_reset') }}</el-button>
         <el-tooltip
           placement="top"
           manual
-          :content="$t('dialog.downAgent.copied')"
+          :content="$t('dialog_tip_copied')"
           popper-class="copy-tooltip"
           :value="showTooltip"
           v-if="createForm.accesscode"
         >
           <span
-            class="operaKey"
+            class="pl-4"
             v-clipboard:copy="createForm.accesscode"
             v-clipboard:success="onCopy"
             @mouseleave="showTooltip = false"
           >
-            <el-button type="text" size="mini">{{ $t('message.copy') }}</el-button>
+            <el-button type="text" size="mini">{{ $t('button_copy') }}</el-button>
           </span>
         </el-tooltip>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="mini">{{ $t('message.cancel') }}</el-button>
-        <el-button type="primary" @click="createNewUser()" size="mini">{{ $t('message.save') }}</el-button>
+        <el-button @click="createDialogVisible = false" size="mini">{{ $t('button_cancel') }}</el-button>
+        <el-button type="primary" @click="createNewUser()" size="mini">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -267,10 +216,11 @@
 <script>
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
-
+import FilterBar from '@/components/filter-bar'
 export default {
   components: {
-    TablePage
+    TablePage,
+    FilterBar
   },
   data() {
     return {
@@ -287,10 +237,10 @@ export default {
       createDialogVisible: false,
       activePanel: 'all',
       muneList: [
-        { name: this.$t('user.all'), key: 'all' },
-        { name: this.$t('user.notActivated'), key: 'notActivated', count: 0 },
-        { name: this.$t('user.notVerified'), key: 'notVerified', count: 0 },
-        { name: this.$t('user.rejected'), key: 'rejected', count: 0 }
+        { name: this.$t('user_list_all'), key: 'all' },
+        { name: this.$t('user_status_notVerified'), key: 'notActivated', count: 0 },
+        { name: this.$t('user_status_notActivated'), key: 'notVerified', count: 0 },
+        { name: this.$t('user_status_rejected'), key: 'rejected', count: 0 }
       ],
       notActivatedCount: 0,
       notVerifiedCount: 0,
@@ -313,7 +263,7 @@ export default {
         items: [
           {
             type: 'input',
-            label: this.$t('user.userName'),
+            label: this.$t('user_list_user_name'),
             field: 'username',
             maxlength: 100,
             required: true,
@@ -321,7 +271,7 @@ export default {
           },
           {
             type: 'input',
-            label: this.$t('user.email'),
+            label: this.$t('user_form_email'),
             field: 'email',
             required: true,
             maxlength: 100,
@@ -332,10 +282,10 @@ export default {
                 required: true,
                 validator: (rule, v, callback) => {
                   if (!v || !v.trim()) {
-                    return callback(new Error(this.$t('user.emailNull')))
+                    return callback(new Error(this.$t('user_form_password_null')))
                   } else if (!/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/.test(v)) {
                     // eslint-disable-line
-                    return callback(new Error(this.$t('user.email_must_valid')))
+                    return callback(new Error(this.$t('user_form_email_must_valid')))
                   } else {
                     return callback()
                   }
@@ -359,7 +309,7 @@ export default {
           {
             type: 'input',
             field: 'password',
-            label: this.$t('user.password'),
+            label: this.$t('user_form_password'),
             domType: 'password',
             maxlength: 32,
             showPassword: true,
@@ -371,11 +321,11 @@ export default {
                     return callback()
                   }
                   if (!v || !v.trim()) {
-                    return callback(new Error(this.$t('user.passwordNull')))
+                    return callback(new Error(this.$t('user_form_password_null')))
                   } else if (v.length < 5 || v.length > 32) {
-                    return callback(new Error(this.$t('user.pass_hint')))
+                    return callback(new Error(this.$t('user_form_pass_hint')))
                   } else if (/[\s\u4E00-\u9FA5]/.test(v)) {
-                    return callback(new Error(this.$t('account.passwordNotCN')))
+                    return callback(new Error(this.$t('user_form_password_not_cn')))
                   } else {
                     return callback()
                   }
@@ -385,7 +335,7 @@ export default {
           },
           {
             type: 'select',
-            label: this.$t('user.role'),
+            label: this.$t('user_form_role'),
             field: 'roleusers',
             multiple: true,
             options: [],
@@ -393,13 +343,13 @@ export default {
           },
           {
             type: 'select',
-            label: this.$t('user.status'),
+            label: this.$t('user_form_status'),
             field: 'status',
             options: [
-              { label: this.$t('user.notVerified'), value: 'notVerified' },
-              { label: this.$t('user.notActivated'), value: 'notActivated' },
-              { label: this.$t('user.activated'), value: 'activated' },
-              { label: this.$t('user.rejected'), value: 'rejected' }
+              { label: this.$t('user_status_notVerified'), value: 'notVerified' },
+              { label: this.$t('user_status_notActivated'), value: 'notActivated' },
+              { label: this.$t('user_status_activated'), value: 'activated' },
+              { label: this.$t('user_status_rejected'), value: 'rejected' }
             ],
             required: true
           }
@@ -413,6 +363,7 @@ export default {
   created() {
     this.getDbOptions()
     // this.getCount();
+    this.getFilterItems()
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -500,16 +451,24 @@ export default {
     getCount() {
       Promise.all([
         this.$api('users').count({
-          where: { emailVerified: true, account_status: 2 }
+          where: JSON.stringify({
+            where: { emailVerified: true, account_status: 2 }
+          })
         }),
         this.$api('users').count({
-          where: { emailVerified: false, account_status: { neq: 0 } }
+          where: JSON.stringify({
+            where: { emailVerified: false, account_status: { neq: 0 } }
+          })
         }),
-        this.$api('users').count({ where: { account_status: 0 } })
+        this.$api('users').count({
+          where: JSON.stringify({
+            where: { account_status: 0 }
+          })
+        })
       ]).then(([notActivatedCount, notVerifiedCount, rejectedCount]) => {
-        this.notActivatedCount = notActivatedCount.data.total
-        this.notVerifiedCount = notVerifiedCount.data.total
-        this.rejectedCount = rejectedCount.data.total
+        this.notActivatedCount = notActivatedCount.data.count
+        this.notVerifiedCount = notVerifiedCount.data.count
+        this.rejectedCount = rejectedCount.data.count
       })
     },
     // 获取角色下拉值
@@ -716,16 +675,16 @@ export default {
                   .$api('roleMapping')
                   .saveAll(newRoleMappings)
                   .then(() => {
-                    that.$message.success(this.$t('message.saveOK'))
+                    that.$message.success(this.$t('message_save_ok'))
                   })
                 this.table.fetch()
               }
             })
             .catch(e => {
               if (e.response.msg.indexOf('User already exists') !== -1) {
-                that.$message.error(this.$t('user.alreadyExists'))
+                that.$message.error(this.$t('user_form_already_exists'))
               } else {
-                that.$message.error(this.$t('message.saveFail'))
+                that.$message.error(this.$t('message_save_fail'))
               }
             })
             .finally(() => {
@@ -736,38 +695,9 @@ export default {
     },
     // 删除用户
     remove(item) {
-      const h = this.$createElement
-      let message = h('div', [
-        h('h1', [
-          h('i', {
-            class: 'el-icon-warning',
-            style: {
-              paddingRight: '10px',
-              fontSize: '20px',
-              color: '#fe983d',
-              verticalAlign: 'text-top'
-            }
-          }),
-          h('span', { style: { color: '#333', fontSize: '16px' } }, this.$t('user.delUserTitle'))
-        ]),
-        h(
-          'p',
-          {
-            style: { paddingTop: '12px', paddingLeft: '32px', fontSize: '12px' }
-          },
-          [
-            this.$t('user.delUser') + ' ',
-            h('span', { style: { color: '#409EFF' } }, item.username),
-            this.$t('user.deluserLast')
-          ]
-        )
-      ])
-      this.$confirm(message, {
-        // type: 'warning',
+      this.$confirm(this.$t('user_list_del_user', [item.username]), '', {
+        type: 'warning',
         closeOnClickModal: false,
-        confirmButtonText: this.$t('user.delete'),
-        confirmButtonClass: 'delConfirmbtn',
-        customClass: 'user-confirm',
         showClose: false,
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
@@ -793,129 +723,49 @@ export default {
     },
     // 激活
     handleActive(item) {
-      const h = this.$createElement
-      let message = h('div', [
-        h('h1', [
-          h('i', {
-            class: 'el-icon-warning',
-            style: {
-              paddingRight: '10px',
-              fontSize: '20px',
-              color: '#fe983d',
-              verticalAlign: 'text-top'
-            }
-          }),
-          h('span', { style: { color: '#333', fontSize: '16px' } }, this.$t('user.activationUserTitle'))
-        ]),
-        h(
-          'p',
-          {
-            style: { paddingTop: '12px', paddingLeft: '32px', fontSize: '12px' }
-          },
-          [
-            this.$t('user.activetionUser') + ' ',
-            h('span', { style: { color: '#409EFF' } }, item.username),
-            this.$t('user.activetionUserLast')
-          ]
-        )
-      ])
       let params = {
         id: item.id,
         account_status: 1
       }
-      let successMsg = this.$t('user.activetionSuccess')
-      let errorMsg = this.$t('user.activetionError')
-      this.$confirm(message, this.handleStatus(params, successMsg, errorMsg, this.$t('user.activation')))
+      let successMsg = this.$t('user_list_activetion_success')
+      let errorMsg = this.$t('user_list_activetion_error')
+      this.$confirm(
+        this.$t('user_list_activetion_user', [item.username]),
+        this.handleStatus(params, successMsg, errorMsg, this.$t('user_list_activation'))
+      )
     },
     // 冻结
     handleFreeze(item) {
-      const h = this.$createElement
-
-      let message = h('div', [
-        h('h1', [
-          h('i', {
-            class: 'el-icon-warning',
-            style: {
-              paddingRight: '10px',
-              fontSize: '20px',
-              color: '#fe983d',
-              verticalAlign: 'text-top'
-            }
-          }),
-          h('span', { style: { color: '#333', fontSize: '16px' } }, this.$t('user.freezeUserTitle'))
-        ]),
-        h(
-          'p',
-          {
-            style: { paddingTop: '12px', paddingLeft: '32px', fontSize: '12px' }
-          },
-          [
-            this.$t('user.freezeUser') + ' ',
-            h('span', { style: { color: '#409EFF' } }, item.username),
-            this.$t('user.freezeUserLast')
-          ]
-        )
-      ])
       let params = {
         id: item.id,
         account_status: 0
       }
-      let successMsg = this.$t('user.freezeSuccess')
-      let errorMsg = this.$t('user.freezeError')
+      let successMsg = this.$t('user_list_freeze_success')
+      let errorMsg = this.$t('user_list_freeze_error')
       this.$confirm(
-        message,
-
-        this.handleStatus(params, successMsg, errorMsg, this.$t('user.freeze'))
+        this.$t('user_list_freeze_user', [item.username]),
+        this.handleStatus(params, successMsg, errorMsg, this.$t('user_list_freeze'))
       )
     },
     // 校验
     handleCheck(item) {
-      const h = this.$createElement
-
-      let message = h('div', [
-        h('h1', [
-          h('i', {
-            class: 'el-icon-warning',
-            style: {
-              paddingRight: '10px',
-              fontSize: '20px',
-              color: '#fe983d',
-              verticalAlign: 'text-top'
-            }
-          }),
-          h('span', { style: { color: '#333', fontSize: '16px' } }, this.$t('user.checkUserTitle'))
-        ]),
-        h(
-          'p',
-          {
-            style: { paddingTop: '12px', paddingLeft: '32px', fontSize: '12px' }
-          },
-          [
-            this.$t('user.checkUser') + ' ',
-            h('span', { style: { color: '#409EFF' } }, item.username),
-            this.$t('user.checkUserLast')
-          ]
-        )
-      ])
       let params = {
         id: item.id,
         emailVerified: true
       }
-      let successMsg = this.$t('user.checkSuccess')
-      let errorMsg = this.$t('user.checkError')
+      let successMsg = this.$t('user_list_check_success')
+      let errorMsg = this.$t('user_list_check_error')
       this.$confirm(
-        message,
-
-        this.handleStatus(params, successMsg, errorMsg, this.$t('user.checkSuccess'))
+        this.$t('user_list_check_user', [item.username]),
+        this.handleStatus(params, successMsg, errorMsg, this.$t('user_list_check'))
       )
     },
     // 改变状态提示
     handleStatus(data, successMsg, errorMsg, confirmButton) {
       return {
+        type: 'warning',
         closeOnClickModal: false,
         confirmButtonText: confirmButton,
-        customClass: 'user-confirm',
-        showClose: false,
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
@@ -962,9 +812,14 @@ export default {
       }
       this.$api('users')
         .update(where, params)
-        .then(() => {
-          this.table.fetch()
-          this.$message.success(this.$t('message.operationSuccuess'))
+        .then(res => {
+          if (res) {
+            this.table.fetch()
+            this.$message.success(this.$t('message_operation_succuess'))
+          }
+        })
+        .catch(() => {
+          this.$message.error(this.$t('message_operation_error'))
         })
     },
     // 关联用户
@@ -992,6 +847,15 @@ export default {
     // 复制激活码
     onCopy() {
       this.showTooltip = true
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          placeholder: this.$t('user_list_user_name_email'),
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     }
   }
 }
@@ -1000,15 +864,15 @@ export default {
 .user-list-wrap {
   .tapNav {
     height: 28px;
-    background-color: rgba(239, 241, 244, 100);
+    // background-color: rgba(239, 241, 244, 100);
     .mune {
       display: inline-block;
       height: 28px;
       line-height: 25px;
       font-size: 12px;
-      border-radius: 0px 3px 0px 0px;
-      background-color: rgba(244, 245, 247, 100);
-      box-shadow: 0 -1px 10px 0px rgba(0, 0, 0, 0.15);
+      // border-radius: 0px 3px 0px 0px;
+      // background-color: rgba(244, 245, 247, 100);
+      // box-shadow: 0 -1px 10px 0px rgba(0, 0, 0, 0.15);
       li {
         float: left;
         width: 100px;
@@ -1045,15 +909,14 @@ export default {
     }
     .btn {
       padding: 7px;
-      background: #f5f5f5;
       i.iconfont {
         font-size: 12px;
       }
       &.btn-dropdowm {
-        margin-left: 5px;
+        margin-left: 10px;
       }
       &.btn-create {
-        margin-left: 5px;
+        margin-left: 10px;
       }
     }
     .metadata-name {
@@ -1083,8 +946,11 @@ export default {
     .table-page-body {
       box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);
       .table-page-topbar {
-        padding: 10px 10px 0 10px;
+        padding-top: 20px;
         background-color: #fff;
+        .search-bar {
+          padding-top: 10px;
+        }
       }
       .el-table {
         // padding: 0 10px;
@@ -1096,6 +962,26 @@ export default {
         padding: 5px 20px;
         background-color: #fff;
         box-sizing: border-box;
+      }
+      .status {
+        padding: 5px 10px;
+        border-radius: 4px;
+      }
+      .activated {
+        color: #178061;
+        background-color: #c4f3cb;
+      }
+      .notActivated {
+        color: #2c65ff;
+        background-color: #ddebff;
+      }
+      .notVerified {
+        color: #d5760e;
+        background-color: #ffe9cf;
+      }
+      .rejected {
+        color: #d44d4d;
+        background-color: #ffecec;
       }
     }
   }
@@ -1124,15 +1010,15 @@ export default {
     }
   }
 }
-.user-confirm {
-  width: 500px;
-  padding-bottom: 20px;
-  .el-message-box__content {
-    padding: 20px 30px;
-  }
-  .delConfirmbtn {
-    background-color: #f56c6c;
-    border: 1px solid #f56c6c;
-  }
-}
+// .user-confirm {
+//   width: 500px;
+//   padding-bottom: 20px;
+//   .el-message-box__content {
+//     padding: 20px 30px;
+//   }
+//   .delConfirmbtn {
+//     background-color: #f56c6c;
+//     border: 1px solid #f56c6c;
+//   }
+// }
 </style>

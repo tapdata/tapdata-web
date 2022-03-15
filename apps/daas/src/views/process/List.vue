@@ -255,8 +255,9 @@ export default {
     .status {
       display: inline-block;
       min-width: 62px;
-      padding: 1px 0;
+      padding: 3px 0;
       text-align: center;
+      font-weight: 500;
       border-radius: 2px;
     }
     .online {

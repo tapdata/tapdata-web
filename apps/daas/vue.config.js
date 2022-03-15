@@ -8,7 +8,7 @@ const serveUrlMap = {
   jet: 'http://jet.devops.tapdata.net:31613',
   // test: 'http://192.168.1.181:30726' // v2-dev
   // test: 'http://192.168.1.181:30126' // tm 重构
-  test: 'http://192.168.1.181:31762' // tm 重构
+  test: 'http://192.168.1.181:31814/' // tm 重构
   // test: 'http://192.168.1.181:30474/' // v1-30
   // test: 'http://192.168.1.132:32535/' // v1-29
   // test: 'http://192.168.1.181:32220/' // v1-28

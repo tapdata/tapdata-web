@@ -13,32 +13,32 @@
           @click="openCreateDialog()"
         >
           <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
-          <span>{{ $t('role.create') }}</span>
+          <span>{{ $t('role_list_create') }}</span>
         </el-button>
       </div>
-      <el-table-column :label="$t('role.roleName')" :show-overflow-tooltip="true">
+      <el-table-column :label="$t('role_list_role_name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <div>{{ scope.row.name }}</div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('role.description')" :show-overflow-tooltip="true">
+      <el-table-column :label="$t('role_list_description')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <div>{{ scope.row.description }}</div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('role.associatUsers')" width="100">
+      <el-table-column :label="$t('role_list_associat_users')" width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.userCount }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('role.founder')">
+      <el-table-column :label="$t('role_list_founder')">
         <template slot-scope="scope">
           <div>
             {{ scope.row.userEmail }}
           </div>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('role.defaultRole')" width="90">
+      <el-table-column :label="$t('role_list_default_role')" width="90">
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.register_user_default"
@@ -48,7 +48,7 @@
           </el-switch>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('role.operate')" width="310">
+      <el-table-column :label="$t('column_operation')" width="310">
         <template slot-scope="scope">
           <el-button
             type="text"
@@ -56,7 +56,7 @@
             :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id)"
             @click="handleSettingPermissions(scope.row.id, scope.row.name)"
           >
-            {{ $t('role.settingPermissions') }}
+            {{ $t('role_list_setting_permissions') }}
           </el-button>
 
           <el-button
@@ -65,7 +65,7 @@
             :disabled="$disabledByPermission('role_edition_all_data', scope.row.user_id) || scope.row.name === 'admin'"
             v-readonlybtn="'role_edition'"
           >
-            {{ $t('role.associatUsers') }}
+            {{ $t('role_list_associat_users') }}
           </el-button>
           <el-button
             type="text"
@@ -88,7 +88,7 @@
     </TablePage>
     <!-- 创建角色 -->
     <el-dialog
-      :title="$t('role.createRole')"
+      :title="roleId ? $t('role_list_edit') : $t('role_list_create')"
       :close-on-click-modal="false"
       :visible.sync="dialogFormVisible"
       custom-class="create-role"
@@ -96,66 +96,50 @@
     >
       <el-form :model="form" ref="form" label-width="120px">
         <el-form-item
-          :label="$t('role.roleName')"
+          :label="$t('role_list_role_name')"
           prop="name"
           :rules="[{ required: true, message: $t('role.role_null'), trigger: 'blur' }]"
         >
           <el-input v-model="form.name" :placeholder="$t('role.selectRoleName')" size="small"></el-input>
         </el-form-item>
-        <el-form-item :label="$t('role.roleDesc')">
+        <el-form-item
+          :label="$t('role_list_description')"
+          prop="description"
+          :rules="[{ required: true, message: $t('role.role_null'), trigger: 'blur' }]"
+        >
           <el-input type="textarea" v-model="form.description" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item :label="$t('role.defaultRole')">
+        <el-form-item :label="$t('role_list_default_role')">
           <el-switch
             v-model="form.register_user_default"
             inactive-color="#dcdfe6"
-            :active-text="form.register_user_default ? $t('role.yes') : $t('role.no')"
+            :active-text="form.register_user_default ? $t('role_form_yes') : $t('role_form_no')"
             style="margin-right: 20px"
           ></el-switch>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogFormVisible = false">{{ $t('message.cancel') }} </el-button>
-        <el-button size="mini" type="primary" @click="createSave">{{ $t('message.confirm') }} </el-button>
+        <el-button size="mini" @click="dialogFormVisible = false">{{ $t('button_cancel') }} </el-button>
+        <el-button size="mini" type="primary" @click="createSave">{{ $t('button_confirm') }} </el-button>
       </div>
     </el-dialog>
 
     <!-- 关联用户 -->
     <el-dialog
-      :title="$t('role.associatUsers')"
+      :title="$t('role_list_associat_users')"
       :close-on-click-modal="false"
       :visible.sync="dialogUserVisible"
       width="600px"
     >
       <div class="userBox">
-        <el-select v-model="roleusers" filterable multiple :placeholder="$t('role.selectUser')">
+        <el-select v-model="roleusers" filterable multiple :placeholder="$t('role_form_selectUser')">
           <el-option v-for="item in userGroup" :key="item.id" :label="item.email" :value="item.id"> </el-option>
         </el-select>
-        <div class="num">{{ $t('role.connected') }}: {{ roleusers.length }}</div>
+        <div class="num fs-8">{{ $t('role_form_connected') }}: {{ roleusers.length }}</div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogUserVisible = false">{{ $t('message.cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="saveUser">{{ $t('dataForm.submit') }}</el-button>
-      </span>
-    </el-dialog>
-
-    <!-- 删除角色 -->
-    <el-dialog
-      :title="$t('dataFlow.importantReminder')"
-      :close-on-click-modal="false"
-      :visible.sync="deleteDialogVisible"
-      width="30%"
-    >
-      <p>
-        {{ $t('role.delete_remind') }}
-        <span @click="delLinkRole(deleteObj.id)" style="color: #409eff; cursor: pointer"> {{ deleteObj.name }}</span>
-        ?
-      </p>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="deleteDialogVisible = false">{{ $t('message.cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="confirmDelete">
-          {{ $t('classification.deleteNode') }}
-        </el-button>
+        <el-button size="mini" @click="dialogUserVisible = false">{{ $t('button_cancel') }}</el-button>
+        <el-button size="mini" type="primary" @click="saveUser">{{ $t('button_confirm') }}</el-button>
       </span>
     </el-dialog>
   </section>
@@ -188,18 +172,13 @@ export default {
       totalNum: 0,
       currentPage: 1,
       dialogFormVisible: false,
+      dialogUserVisible: false,
       form: {
         name: '',
         description: '',
         register_user_default: false
       },
-      deleteDialogVisible: false,
-      dialogUserVisible: false,
       roleId: '',
-      deleteObj: {
-        id: '',
-        name: ''
-      },
       filterItems: []
     }
   },
@@ -305,31 +284,25 @@ export default {
       this.$router.push({ name: 'role', query: { id: id, name: name } })
     },
 
-    // 删除角色
-    handleDelete(data) {
-      this.deleteObj = {
-        id: data.id,
-        name: data.name
-      }
-      this.deleteDialogVisible = true
-    },
-
     // 确认删除角色
-    async confirmDelete() {
-      this.$api('role')
-        .delete(this.deleteObj.id, this.deleteObj.name)
-        .then(res => {
-          if (res && res.data) {
-            this.table.fetch()
-            this.$message.success(this.$t('role.delete_success'))
-          }
-        })
-        .catch(() => {
-          this.$message.error(this.$t('role.delete_error'))
-        })
-        .finally(() => {
-          this.deleteDialogVisible = false
-        })
+    handleDelete(item) {
+      this.$confirm(this.$t('role_list_delete_remind', [item.name]), '', {
+        type: 'warning'
+      }).then(res => {
+        if (res) {
+          this.$api('role')
+            .delete(item.id, item.name)
+            .then(res => {
+              if (res && res.data) {
+                this.table.fetch()
+                this.$message.success(this.$t('role_list_delete_success'))
+              }
+            })
+            .catch(() => {
+              this.$message.error(this.$t('role_list_delete_error'))
+            })
+        }
+      })
     },
     // 查看删除角色权限
     delLinkRole(id) {
@@ -373,11 +346,11 @@ export default {
                     .then(res => {
                       if (res && res.data) {
                         // roleMappingModel.post(newRoleMappings);
-                        this.$message.success(this.$t('message.saveOK'))
+                        this.$message.success(this.$t('message_save_ok'))
                       }
                     })
                 } else {
-                  this.$message.success(this.$t('message.saveOK'))
+                  this.$message.success(this.$t('message_save_ok'))
                 }
                 this.table.fetch()
               }
@@ -385,7 +358,7 @@ export default {
             .catch(e => {
               if (e.response && e.response.msg) {
                 if (e.response.msg.indexOf('already exists')) {
-                  this.$message.error(this.$t('role.alreadyExists'))
+                  this.$message.error(this.$t('role_form_already_exists'))
                 } else {
                   this.$message.error(`${e.response.msg}`)
                 }
@@ -474,13 +447,13 @@ export default {
             })
 
             this.table.fetch()
-            this.$message.success(this.$t('message.saveOK'))
+            this.$message.success(this.$t('message_save_ok'))
           }
         })
         .catch(e => {
           if (e.response && e.response.msg) {
             if (e.response.msg.indexOf('already exists')) {
-              this.$message.error(this.$t('role.alreadyExists'))
+              this.$message.error(this.$t('role_form_already_exists'))
             } else {
               this.$message.error(`${e.response.msg}`)
             }
@@ -509,7 +482,7 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          placeholder: this.$t('role.selectRoleName'),
+          placeholder: this.$t('role_list_select_role_name'),
           key: 'keyword',
           type: 'input'
         }
@@ -572,7 +545,7 @@ export default {
   }
 
   .el-dialog__body {
-    padding: 30px;
+    // padding: 30px;
     .el-form-item {
       // margin-bottom: 15px;
     }

@@ -166,7 +166,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="$disabledByPermission('SYNC_job_edition_all_data', row.user_id)"
+              :disabled="$disabledByPermission('SYNC_job_edition_all_data', row.user_id) || row.status === 'running'"
               @click="handleEditor(row.id)"
             >
               {{ $t('task_list_edit') }}
