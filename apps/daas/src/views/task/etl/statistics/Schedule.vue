@@ -68,7 +68,7 @@
             key="initial_sync"
             hide-on-single-page
           >
-            <template slot="schedule" slot-scope="scope">
+            <template slot="progress" slot-scope="scope">
               <span>{{ scope.row }} %</span>
             </template>
           </TableList>
@@ -215,9 +215,6 @@ export default {
       this.loadRuntimeInfo()
       this.getSyncTableData()
       this.getSyncOverViewData()
-      // this.getStep()
-      // this.getSearchItems()
-      // this.getColumns()
     },
     loadRuntimeInfo() {
       this.id = this.$route.params?.subId
@@ -350,7 +347,7 @@ export default {
         {
           label: this.$t('task_info_schedule'),
           prop: 'progress',
-          slot: 'schedule'
+          slotName: 'progress'
         },
         {
           label: this.$t('task_monitor_status'),
@@ -457,6 +454,11 @@ export default {
         .then(res => {
           this.syncOverViewData = res?.data
           this.syncOverViewData.finishDuration = this.handleTime(this.syncOverViewData?.finishDuration)
+          if (this.syncOverViewData.progress !== 100) {
+            setTimeout(() => {
+              this.getSyncOverViewData()
+            }, 800)
+          }
         })
     },
     handleTime(time) {
