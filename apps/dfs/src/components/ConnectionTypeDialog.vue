@@ -27,7 +27,7 @@
           <div class="database__name">{{ item.name }}</div>
         </li>
       </ul>
-      <div v-else class="connection-table__empty text-center" slot="empty">
+      <div v-else class="text-center" slot="empty">
         <VIcon size="120">search-no-data-color</VIcon>
         <div class="flex justify-content-center lh-sm font-color-sub">
           <span>{{ $t('gl_no_match_result') }}</span>
@@ -126,8 +126,11 @@ export default {
   width: 240px;
 }
 .search-box__input {
-  margin-left: 28px;
+  margin-left: 16px;
   width: 240px;
+}
+.database {
+  font-size: 12px;
 }
 .database__list {
   overflow: auto;
@@ -163,7 +166,7 @@ export default {
 .database__name {
   margin-top: 8px;
   width: 80px;
-  font-size: 12px;
+  height: 30px;
   word-wrap: break-word;
   word-break: normal;
 }
