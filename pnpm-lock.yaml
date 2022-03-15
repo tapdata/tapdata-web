@@ -37,6 +37,7 @@ importers:
 
   apps/daas:
     specifiers:
+      '@daas/api': workspace:^1.0.0
       '@daas/dag': workspace:^1.0.0
       '@daas/form': workspace:^1.0.0
       '@daas/node-design': workspace:^1.0.0
@@ -109,6 +110,7 @@ importers:
       vuex: ^3.4.0
       ws: ^8.4.2
     dependencies:
+      '@daas/api': link:../../packages/api
       '@daas/dag': link:../../packages/dag
       '@daas/node-design': link:../../packages/node-design
       '@daas/shared': link:../../packages/shared
@@ -346,6 +348,7 @@ importers:
       '@formily/reactive-vue': ^2.0.9
       '@formily/shared': ^2.0.9
       '@vue/composition-api': ^1.2.4
+      ace-builds: ^1.4.13
       resize-observer-polyfill: ^1.5.1
     dependencies:
       '@formily/core': registry.npmmirror.com/@formily/core/2.0.11
@@ -355,6 +358,7 @@ importers:
       '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.0.11_3f39d8fe5118d28f4db30f0090a1b0cf
       '@formily/shared': registry.npmmirror.com/@formily/shared/2.0.11
       '@vue/composition-api': registry.npmmirror.com/@vue/composition-api/1.4.6_vue@2.6.14
+      ace-builds: registry.npmmirror.com/ace-builds/1.4.14
       resize-observer-polyfill: registry.npmmirror.com/resize-observer-polyfill/1.5.1
 
   packages/node-design:
@@ -3234,7 +3238,7 @@ packages:
     dev: true
 
   registry.npmmirror.com/ace-builds/1.4.14:
-    resolution: {integrity: sha512-NBOQlm9+7RBqRqZwimpgquaLeTJFayqb9UEPtTkpC3TkkwDnlsT/TwsCC0svjt9kEZ6G9mH5AEOHSz6Q/HrzQQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/ace-builds/-/ace-builds-1.4.14.tgz}
+    resolution: {integrity: sha512-NBOQlm9+7RBqRqZwimpgquaLeTJFayqb9UEPtTkpC3TkkwDnlsT/TwsCC0svjt9kEZ6G9mH5AEOHSz6Q/HrzQQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/ace-builds/-/ace-builds-1.4.14.tgz}
     name: ace-builds
     version: 1.4.14
 

@@ -417,6 +417,25 @@ export default [
           }
         ]
       },
+      /* ---------- 自定义节点  ----------*/
+      {
+        path: '/customNode',
+        name: 'customNode',
+        component: Parent,
+        meta: {
+          title: 'page_title_custom_node'
+        },
+        children: [
+          {
+            path: '',
+            name: 'customNodeList',
+            component: () => import('@/views/customNode/List'),
+            meta: {
+              title: 'page_title_custom_node'
+            }
+          }
+        ]
+      },
       /* ---------- 共享缓存  ----------*/
       {
         path: '/shared-cache',

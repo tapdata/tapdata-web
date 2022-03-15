@@ -65,7 +65,14 @@ export const StudioPanel = defineComponent({
         <div class={[`${prefix}-container flex flex-1 min-h-0`, ...baseCls]}>
           <div class="panel-header flex align-center border-bottom">
             <div class="panel-header-nav text-center">
-              <button class="panel-header-btn inline-flex align-center p-1">
+              <button
+                onClick={() => {
+                  root.$router.push({
+                    name: 'customNodeList'
+                  })
+                }}
+                class="panel-header-btn inline-flex align-center p-1"
+              >
                 <VIcon size="20">left</VIcon>
               </button>
             </div>

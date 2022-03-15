@@ -13,6 +13,7 @@
     "mock": "nodemon mock/mock.js"
   },
   "dependencies": {
+    "@daas/api": "workspace:^1.0.0",
     "@daas/dag": "workspace:^1.0.0",
     "@daas/node-design": "workspace:^1.0.0",
     "@daas/shared": "workspace:^1.0.0",

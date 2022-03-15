@@ -126,6 +126,7 @@ export default {
   page_title_role: '角色管理',
   page_title_setting: '系统设置',
   page_title_license: 'License管理',
+  page_title_custom_node: '自定义节点',
 
   // app
   app_license_expire_warning: '提醒：License剩余 {0} 天到期',
@@ -1376,5 +1377,9 @@ export default {
   process_ping_time: 'Ping 时间',
   process_start_time: '开始时间',
   process_process_id: '进程 ID',
-  process_process_state: '工作进程状态'
+  process_process_state: '工作进程状态',
+
+  // 自定义节点
+  custom_node_name: '节点名称',
+  custom_node_name_placeholder: '请输入节点名称搜索'
 }

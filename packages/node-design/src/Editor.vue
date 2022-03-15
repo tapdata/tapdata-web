@@ -1,7 +1,4 @@
 <template>
-  <!--<div class="main-panel-container flex flex-column vh-100 node-design">-->
-  <!--头部区域-->
-  <!--<Designer class="main-panel-container flex flex-column vh-100 node-designmain-panel flex flex-1 min-h-0">-->
   <Designer class="node-design">
     <StudioPanel>
       <CompositePanel>
