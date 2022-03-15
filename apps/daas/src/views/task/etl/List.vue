@@ -77,6 +77,7 @@
       </div>
 
       <el-table-column
+        reserve-selection
         type="selection"
         width="45"
         :selectable="row => !row.hasChildren && !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"

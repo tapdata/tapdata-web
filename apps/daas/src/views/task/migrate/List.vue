@@ -57,17 +57,6 @@
           </el-dropdown-menu>
         </el-dropdown>
         <el-button
-          v-if="$getSettingByKey('SHOW_CLASSIFY')"
-          v-readonlybtn="'SYNC_category_application'"
-          size="mini"
-          class="btn message-button-cancel"
-          v-show="multipleSelection.length > 0"
-          @click="$refs.table.showClassify(handleSelectTag())"
-        >
-          <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkTag') }}</span>
-        </el-button>
-        <el-button
           v-readonlybtn="'SYNC_job_import'"
           size="mini"
           class="btn message-button-cancel"
@@ -89,6 +78,7 @@
       </div>
 
       <el-table-column
+        reserve-selection
         type="selection"
         width="45"
         :selectable="row => !row.hasChildren && !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
@@ -1124,7 +1114,6 @@ export default {
       }
       .btn {
         height: 28px;
-        padding: 0 16px;
         i.iconfont {
           font-size: 12px;
         }
