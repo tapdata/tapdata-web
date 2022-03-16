@@ -1,0 +1,109 @@
+<template>
+  <!--  绑定手机号  -->
+  <ElDialog
+    width="435px"
+    append-to-body
+    title="绑定手机号"
+    :close-on-click-modal="!!$props.closeOnClickModal"
+    :close-on-press-escape="!!$props.closeOnPressEscape"
+    :show-close="!!$props.showClose"
+    :visible.sync="dialogVisible"
+  >
+    <ElForm :model="phoneForm" label-width="120px" @submit.native.prevent>
+      <ElFormItem prop="current" label="当前手机：">
+        <ElInput v-model="phoneForm.current" placeholder="请输入当前手机" maxlength="50"></ElInput>
+      </ElFormItem>
+      <ElFormItem prop="newPassword" label="验证码：" class="inline-form-item">
+        <ElInput v-model="phoneForm.oldCode" placeholder="请输入手机验证码" maxlength="50"></ElInput>
+        <VerificationCode
+          :request-options="getCodeOptions(phoneForm.current, 'BIND_PHONE')"
+          :disabled="!phoneForm.current"
+          :style="{ width: '120px', textAlign: 'center' }"
+          class="ml-6"
+          type="text"
+        ></VerificationCode>
+      </ElFormItem>
+    </ElForm>
+
+    <span slot="footer" class="dialog-footer">
+      <VButton v-if="!!$props.showClose" @click="dialogVisible = false">{{ $t('dataVerify.cancel') }}</VButton>
+      <VButton
+        type="primary"
+        :disabled="!phoneForm.current || !phoneForm.oldCode"
+        auto-loading
+        @click="bindPhoneConfirm(arguments[0])"
+        >{{ $t('dataVerify.confirm') }}</VButton
+      >
+    </span>
+  </ElDialog>
+</template>
+
+<script>
+import VerificationCode from './VerificationCode'
+import { getCodeOptions } from '../util'
+
+export default {
+  name: 'BindPhone',
+  components: { VerificationCode },
+  props: {
+    visible: {
+      type: Boolean
+    }
+  },
+  watch: {
+    visible(v) {
+      console.log('watch', v)
+      this.dialogVisible = !!v
+    }
+  },
+  data() {
+    return {
+      dialogVisible: false,
+      phoneForm: {
+        current: '',
+        oldCode: '',
+        newPhone: '',
+        newCode: ''
+      }
+    }
+  },
+  methods: {
+    getCodeOptions,
+    bindPhoneConfirm(resetLoading) {
+      let { phoneForm } = this
+      this.$axios
+        .post('api/tcm/user/phone', {
+          phone: phoneForm.current,
+          code: phoneForm.oldCode
+        })
+        .then(() => {
+          this.$message.success('绑定手机成功')
+          this.$emit('success', phoneForm.current)
+          this.dialogVisible = false
+        })
+        .catch(e => {
+          this.$emit('error', phoneForm.current, e)
+        })
+        .finally(() => {
+          resetLoading?.()
+        })
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+::v-deep {
+  .el-form-item__label {
+    text-align: left;
+  }
+  .el-form-item__content {
+    display: flex;
+  }
+  .inline-input {
+    .inline-input-body {
+      justify-content: space-between;
+    }
+  }
+}
+</style>

@@ -159,6 +159,15 @@ import VIcon from '@/components/VIcon'
 export default {
   name: 'FastDownload',
   components: { VIcon },
+  props: {
+    visible: {
+      type: Boolean
+    },
+    source: {
+      type: Object,
+      default: () => {}
+    }
+  },
   data() {
     return {
       downLoadType: 'Linux',
@@ -178,13 +187,18 @@ export default {
       isFinished: false
     }
   },
-  created() {
-    this.init()
+  watch: {
+    visible(v) {
+      this.dialogVisible = !!v
+    },
+    source: {
+      deep: true,
+      handler(v) {
+        v && this.loadData()
+      }
+    }
   },
   methods: {
-    init() {
-      this.checkAgent()
-    },
     setTimer() {
       this.timer = setInterval(() => {
         this.getAgentStatus()
@@ -204,21 +218,18 @@ export default {
         this.isFinished = data?.items[0]?.status === 'Running'
       })
     },
-    checkAgent() {
-      this.$axios.get('api/tcm/orders/checkAgent').then(data => {
-        if (data.agentId) {
-          this.agentId = data.agentId
-          this.dialogVisible = true
-          data.deployInfo.links.forEach(el => {
-            this[el.os + 'Link'] = el.command
-          })
-          this.downloadUrl = data.deployInfo?.downloadUrl
-          this.getAgentStatus()
-          this.setTimer()
-          this.$once('hook:beforeDestroy', () => {
-            this.clearTimer()
-          })
-        }
+    loadData() {
+      let data = Object.assign({}, this.source)
+      this.agentId = data.agentId
+      // this.dialogVisible = true
+      data.deployInfo.links.forEach(el => {
+        this[el.os + 'Link'] = el.command
+      })
+      this.downloadUrl = data.deployInfo?.downloadUrl
+      this.getAgentStatus()
+      this.setTimer()
+      this.$once('hook:beforeDestroy', () => {
+        this.clearTimer()
       })
     },
     handleDownLoad() {

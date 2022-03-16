@@ -27,7 +27,8 @@
       </ElMain>
     </ElContainer>
     <ConnectionTypeDialog v-model="dialogVisible" @select="createConnection"></ConnectionTypeDialog>
-    <AgentDownloadModal></AgentDownloadModal>
+    <AgentDownloadModal :visible.sync="agentDownload.visible" :source="agentDownload.data"></AgentDownloadModal>
+    <BindPhone :visible.sync="bindPhoneVisible" @success="bindPhoneSuccess"></BindPhone>
   </ElContainer>
 </template>
 
@@ -36,13 +37,15 @@ import TheHeader from '@/components/the-header'
 import VIcon from '@/components/VIcon'
 import ConnectionTypeDialog from '@/components/ConnectionTypeDialog'
 import AgentDownloadModal from '@/views/agent-download/AgentDownloadModal'
+import BindPhone from '@/views/user/components/BindPhone'
 
 export default {
   components: {
     TheHeader,
     VIcon,
     ConnectionTypeDialog,
-    AgentDownloadModal
+    AgentDownloadModal,
+    BindPhone
   },
   data() {
     const $t = this.$t.bind(this)
@@ -84,7 +87,12 @@ export default {
       ],
       breadcrumbData: [],
       hideBreadcrumb: false,
-      dialogVisible: false
+      dialogVisible: false,
+      agentDownload: {
+        visible: false,
+        data: {}
+      },
+      bindPhoneVisible: false
     }
   },
   created() {
@@ -99,6 +107,9 @@ export default {
     this.$root.$on('select-connection-type', this.selectConnectionType)
     this.$root.$on('show-guide', this.showGuide)
     this.$root.$on('get-user', this.getUser)
+  },
+  mounted() {
+    this.checkDialogState()
   },
   watch: {
     $route(route) {
@@ -157,6 +168,35 @@ export default {
     },
     back() {
       this.$router.back()
+    },
+    checkDialogState() {
+      if (this.checkWechatPhone()) {
+        return
+      }
+      this.checkAgent()
+    },
+    // 检查微信用户，是否绑定手机号
+    checkWechatPhone() {
+      let user = window.__USER_INFO__
+      this.bindPhoneVisible = user?.registerSource === 'social:wechatmp-qrcode' && !user?.telephone
+      return this.bindPhoneVisible
+    },
+    // 检查是否有安装过agent
+    checkAgent() {
+      this.$axios.get('api/tcm/orders/checkAgent').then(data => {
+        if (data.agentId) {
+          this.agentDownload.visible = true
+          this.agentDownload.data = data
+        }
+      })
+    },
+    bindPhoneSuccess(val) {
+      if (val) {
+        if (window.__USER_INFO__) {
+          window.__USER_INFO__.telephone = val
+        }
+        this.checkDialogState()
+      }
     }
   }
 }
