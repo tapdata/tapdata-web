@@ -26,3 +26,4 @@ export * from './useSelected'
 export * from './useComponents'
 
 export * from './useEffect'
+export * from './useCustomNode'

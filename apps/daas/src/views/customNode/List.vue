@@ -103,7 +103,7 @@ export default {
           return
         }
         api.delete(item.id).then(res => {
-          if (res) this.table.fetch()
+          this.table.fetch()
         })
       })
     },

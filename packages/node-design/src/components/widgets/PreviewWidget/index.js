@@ -1,5 +1,5 @@
 import { createForm } from '@formily/core'
-import { SchemaField } from '@daas/form'
+import { Form, SchemaField } from '@daas/form'
 import { transformToSchema } from '../../../core'
 import { defineComponent } from 'vue-demi'
 
@@ -9,7 +9,7 @@ export const PreviewWidget = defineComponent({
     const form = createForm()
     const { form: formProps, schema } = transformToSchema(props.tree)
     return () => (
-      <Form props={{ ...formProps }} form={form}>
+      <Form attrs={formProps} form={form}>
         <SchemaField schema={schema} />
       </Form>
     )

@@ -1,5 +1,5 @@
-import { defineComponent, toRefs, onMounted, h as hr, getCurrentInstance, watch } from 'vue-demi'
-import { createDesigner, Engine, GlobalRegistry } from '../../core'
+import { defineComponent, onMounted, h as hr, getCurrentInstance, watch } from 'vue-demi'
+import { createDesigner, CustomNode } from '../../core'
 import { DesignerEngineContext } from '../../context'
 import { useDesigner } from '../../hooks'
 import { Layout } from './Layout'
@@ -26,28 +26,8 @@ export const Designer = defineComponent({
     const engine = createDesigner({
       rootComponentName: 'Form'
     })
-    /*const ref = ref()
-    watch(
-      () => props.engine,
-      () => {
-        if (props.engine) {
-          if (props.engine && ref.current) {
-            if (props.engine !== ref.current) {
-              ref.current.unmount()
-            }
-          }
-          props.engine.mount()
-          ref.current = props.engine
-        }
-        return () => {
-          if (props.engine) {
-            props.engine.unmount()
-          }
-        }
-      }
-    )*/
 
-    // if (engine) throw new Error('There can only be one Designable Engine Context in the Tree')
+    engine.props.customNode = new CustomNode(engine)
 
     onMounted(() => {
       engine.mount()

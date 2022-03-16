@@ -13,30 +13,17 @@ export const ViewPanel = observer(
     setup: (props, { slots }) => {
       const workbenchRef = useWorkbench()
       const treeRef = useTree()
-      // useEffect(() => {
-      //   if (workbench.type === props.type) {
-      //     requestIdle(() => {
-      //       requestAnimationFrame(() => {
-      //         setVisible(true)
-      //       })
-      //     })
-      //   } else {
-      //     setVisible(false)
-      //   }
-      // }, [workbench.type])
 
       return () => {
         const workbench = workbenchRef.value
         const tree = treeRef.value
         if (workbench.type !== props.type) return null
         const render = () => {
-          console.log('slots.default', tree)
           return slots.default({
             tree,
+            customNode: workbench.engine.props.customNode,
             onChange: payload => {
-              console.log('ViewPanel.onChange', payload)
               tree.from(payload)
-              // tree.takeSnapshot()
             }
           })
         }

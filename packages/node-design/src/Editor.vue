@@ -18,8 +18,8 @@
               </template>
             </ViewPanel>
             <ViewPanel type="CODE" :scrollable="false">
-              <template #default="{ tree, onChange }">
-                <CodeEditorWidget :tree="tree" :onChange="onChange" />
+              <template #default="{ customNode, tree, onChange }">
+                <CodeEditorWidget :customNode="customNode" :tree="tree" :onChange="onChange" />
               </template>
             </ViewPanel>
             <ViewPanel type="PREVIEW" :scrollable="false">
@@ -35,7 +35,6 @@
       </SettingsPanel>
     </StudioPanel>
   </Designer>
-  <!--</div>-->
 </template>
 
 <script>

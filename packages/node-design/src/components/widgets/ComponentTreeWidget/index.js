@@ -51,6 +51,7 @@ export const TreeNodeWidget = observer(
               dataId[designerRef.value.props?.nodeIdAttrName] = node.id
             }
             const { style, ...attrs } = renderProps(dataId)
+            console.log('renderComponent', style, attrs)
             return (
               <Com attrs={attrs} style={style} key={node.id}>
                 {renderChildren()}
