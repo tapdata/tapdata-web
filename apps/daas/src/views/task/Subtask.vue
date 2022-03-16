@@ -125,28 +125,21 @@ export default {
         start: {
           edit: true,
           stop: true,
-          complete: true
-        },
-        pause: {
-          running: true
-        },
-        recover: {
-          pause: true,
-          schedule_failed: true,
-          error: true
+          error: true,
+          complete: true,
+          schedule_failed: true
         },
         stop: {
-          pause: true,
-          schedule_failed: true,
-          error: true,
-          running: true
+          scheduling: true,
+          preparing: true,
+          running: true,
+          wait_run: true
         },
         reset: {
-          pause: true,
           stop: true,
+          error: true,
           complete: true,
-          schedule_failed: true,
-          error: true
+          schedule_failed: true
         }
       }
     }

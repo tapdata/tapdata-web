@@ -31,9 +31,9 @@ export default {
   data() {
     return {
       statusMap: {
-        running: ['scheduling', 'running', 'pausing', 'stopping', 'scheduling', 'wait_run'],
-        not_running: ['edit', 'pause', 'stop', 'complete', 'schedule_failed'],
-        error: ['error']
+        running: ['preparing', 'scheduling', 'running', 'stopping', 'wait_run'],
+        not_running: ['edit', 'stop', 'complete'],
+        error: ['error', 'schedule_failed']
       }
     }
   },
