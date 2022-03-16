@@ -160,6 +160,7 @@ module.exports = {
       .end()
 
     config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('../../packages/web-core'))
+    config.plugins.delete('prefetch-index')
   },
   css: {
     loaderOptions: {
