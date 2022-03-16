@@ -281,7 +281,7 @@ export default [
           {
             path: ':id/edit',
             name: 'dataVerificationEdit',
-            component: () => import('@/views/dataVerification/Form'),
+            component: () => import('@/views/dataVerification/2.0/Form'),
             meta: {
               title: 'page_title_task_edit',
               code: 'verify_job_edition'

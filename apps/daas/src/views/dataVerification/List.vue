@@ -434,10 +434,10 @@ export default {
       })
     },
     goEdit(id, flowId) {
-      this.$api('DataFlows')
+      this.$api('Task')
         .getId(flowId)
         .then(res => {
-          if (['running', 'paused', 'error'].includes(res.data.status)) {
+          if (['running', 'stop'].includes(res.data.status)) {
             // this.$router.push('dataVerification/' + id + '/edit')
             this.$router.push({
               name: 'dataVerificationEdit',
