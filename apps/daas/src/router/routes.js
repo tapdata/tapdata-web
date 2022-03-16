@@ -171,6 +171,15 @@ export default [
             }
           },
           {
+            path: 'viewer/:id',
+            name: 'MigrateViewer',
+            component: MigrateForm,
+            meta: {
+              title: 'page_title_task_edit',
+              code: 'Data_SYNC_menu'
+            }
+          },
+          {
             path: 'editor/:id',
             name: 'MigrateEditor',
             component: MigrateForm,

@@ -57,6 +57,7 @@ export default {
       await this.$nextTick()
       this.form = createForm({
         values: this.settingData,
+        disabled: this.$store.state.dataflow.stateIsReadonly,
         effects: this.useEffects
       })
       this.schema = this.getSettingSchema()

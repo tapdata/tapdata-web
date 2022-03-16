@@ -4,6 +4,7 @@
     label-width="100px"
     label-position="left"
     status-icon
+    :disabled="stateIsReadonly"
     :model="dataSourceData"
     :rules="rules"
   >
@@ -38,6 +39,7 @@ export default {
   props: ['dataSourceData'],
   data() {
     return {
+      stateIsReadonly: this.$store.state.dataflow.stateIsReadonly,
       allowSourceDatabaseTypes: [],
       allowTargetDatabaseTypes: [],
       sourceData: [],
@@ -54,7 +56,6 @@ export default {
     this.allowDatabaseType()
     this.getConnection(this.getWhere('source'), 'source_connectionId', true)
     this.getConnection(this.getWhere('target'), 'target_connectionId', true)
-    console.log(this.dataSourceData)
   },
   methods: {
     //云版支持数据源
