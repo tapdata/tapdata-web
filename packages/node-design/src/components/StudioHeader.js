@@ -28,6 +28,8 @@ export const StudioHeader = observer(
             const data = await API.get([route.params?.id])
             designerRef.value.setCurrentTree(transformToTreeNode(data.formSchema))
             customNodeRef.value.from(data)
+
+            API.checkUsed(route.params.id)
           } else {
             customNodeRef.value.from({})
           }
