@@ -490,7 +490,7 @@ export default {
     height: 100%;
     //width: 100%;
     padding: 20px 0;
-    border-right: 1px solid #f2f2f2;
+    // border-right: 1px solid #f2f2f2;
     width: 214px;
     .btn-expand {
       position: absolute;

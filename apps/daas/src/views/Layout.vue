@@ -354,9 +354,9 @@ let menuSetting = [
       { name: 'apiDocAndTest', code: 'API_doc_&_test_menu' },
       { name: 'apiAnalysis', code: 'API_stats_menu' },
       { name: 'apiClient', code: 'API_clients_menu' },
-      { name: 'apiServers', code: 'API_server_menu' },
-      { name: 'applications' },
-      { name: 'apiMonitor' }
+      { name: 'apiServers', code: 'API_server_menu' }
+      // { name: 'applications' },
+      // { name: 'apiMonitor' }
     ]
   },
   {
@@ -365,13 +365,13 @@ let menuSetting = [
     icon: 'caozuorizhi',
     code: 'system_management',
     children: [
-      { name: 'metadataDefinition', code: 'data_catalog_menu' },
-      { name: 'tasks', code: 'schedule_jobs_menu' },
+      // { name: 'metadataDefinition', code: 'data_catalog_menu' },
+      // { name: 'tasks', code: 'schedule_jobs_menu' },
       { name: 'clusterManagement', code: 'Cluster_management_menu' },
-      { name: 'agents', code: 'agents_menu' },
+      // { name: 'agents', code: 'agents_menu' },
       { name: 'users', code: 'user_management_menu' },
-      { name: 'roleList', code: 'role_management_menu' },
-      { name: 'settings', code: 'system_settings_menu' }
+      { name: 'roleList', code: 'role_management_menu' }
+      // { name: 'settings', code: 'system_settings_menu', alias: 'page_title_setting' }
     ]
   }
 ]

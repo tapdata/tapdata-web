@@ -695,7 +695,7 @@ export default {
         // this.lineOptions.xAxis.axisLabel.formatter = val => {
         //   return formatTime(val, formatGuanluaryTime)
         // }
-        this.$refs.chart.chart?.setOption({
+        this.$refs.chart?.chart?.setOption({
           series: [
             {
               data: Object.assign([], this.lineDataDeep.y[0])
