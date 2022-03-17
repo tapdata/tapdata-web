@@ -606,19 +606,7 @@ export default {
     handleEditor(id) {
       const h = this.$createElement
       this.$confirm(
-        h('p', null, [
-          h('span', null, this.$t('dataFlow.modifyEditText')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeLayoutProcess')),
-          h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeAttributes')),
-          h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.matchingRelationship')),
-          h('span', null, '，'),
-          h('span', null, this.$t('dataFlow.afterSubmission')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.reset')),
-          h('span', null, this.$t('dataFlow.runNomally')),
-          h('span', null, this.$t('dataFlow.editLayerTip'))
-        ]),
+        h('p', null, [h('span', null, this.$t('task_list_edit_confirm'))]),
         this.$t('dataFlow.importantReminder'),
         {
           customClass: 'dataflow-clickTip',
