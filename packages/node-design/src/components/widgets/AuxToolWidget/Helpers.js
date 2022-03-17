@@ -1,5 +1,5 @@
 import { reaction } from '@formily/reactive'
-import { useDesigner, usePrefix, useViewport, useEffect } from '../../../hooks'
+import { usePrefix, useViewport, useEffect } from '../../../hooks'
 import { Selector } from './Selector'
 import { Copy } from './Copy'
 import { Delete } from './Delete'
@@ -14,7 +14,6 @@ export const Helpers = defineComponent({
     const node = props.node
     const nodeRect = props.nodeRect
     const prefix = usePrefix('aux-helpers')
-    const designer = useDesigner()
     const viewportRef = useViewport()
     const unmountRef = ref(false)
     const position = ref('top-right')

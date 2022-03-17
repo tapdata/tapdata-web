@@ -10,7 +10,7 @@ import { defineComponent } from 'vue-demi'
 
 export const BackgroundStyleSetter = observer(
   defineComponent({
-    setup: props => {
+    setup: () => {
       const fieldRef = useField()
       const prefix = usePrefix('background-style-setter')
       return () => {

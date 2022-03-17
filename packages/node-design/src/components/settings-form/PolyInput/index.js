@@ -2,7 +2,7 @@ import { Button } from 'element-ui'
 import { IconWidget } from '../../widgets'
 import { usePrefix } from '../../../hooks'
 import './styles.scss'
-import { defineComponent, ref, toRefs, watch, computed } from 'vue-demi'
+import { defineComponent, ref, toRefs, watch } from 'vue-demi'
 
 const isValid = val => val !== undefined && val !== null
 

@@ -5,7 +5,7 @@ import { IconWidget } from '../widgets'
 
 const takeIcon = message => {
   if (!isStr(message)) return
-  const matched = message.match(/@([^:\s]+)(?:\s*\:\s*([\s\S]+))?/)
+  const matched = message.match(/@([^:\s]+)(?:\s*:\s*([\s\S]+))?/)
   if (matched) return [matched[1], matched[2]]
   return
 }

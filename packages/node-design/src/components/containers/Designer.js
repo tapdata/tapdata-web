@@ -1,14 +1,10 @@
-import { defineComponent, onMounted, h as hr, getCurrentInstance, watch } from 'vue-demi'
+import { defineComponent, onMounted } from 'vue-demi'
 import { createDesigner, CustomNode } from '../../core'
 import { DesignerEngineContext } from '../../context'
-import { useDesigner } from '../../hooks'
 import { Layout } from './Layout'
-import * as icons from '../../icons'
 import { GhostWidget } from '../widgets'
 import { FragmentComponent } from '@formily/vue'
 // GlobalRegistry.registerDesignerIcons(icons)
-//
-// console.log('icons🐰', icons)
 
 export const Designer = defineComponent({
   props: {

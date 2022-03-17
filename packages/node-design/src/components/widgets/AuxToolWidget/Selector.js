@@ -1,4 +1,4 @@
-import { useHover, useSelection, usePrefix, useEffect } from '../../../hooks'
+import { useHover, useSelection, usePrefix } from '../../../hooks'
 import { IconWidget } from '../IconWidget'
 import { NodeTitleWidget } from '../NodeTitleWidget'
 import { Button } from 'element-ui'

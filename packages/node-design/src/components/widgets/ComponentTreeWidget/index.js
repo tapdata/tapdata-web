@@ -1,9 +1,8 @@
 import { useTree, usePrefix, useDesigner, useComponents } from '../../../hooks'
 import { TreeNodeContext, DesignerComponentsContext } from '../../../context'
-import { TreeNode, GlobalRegistry } from '../../../core'
+import { GlobalRegistry } from '../../../core'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent, ref, watchEffect, h as $h } from 'vue-demi'
-// import { h as $h, Fragment } from '@formily/vue'
+import { defineComponent, watchEffect } from 'vue-demi'
 import './styles.scss'
 
 export const TreeNodeWidget = observer(
@@ -20,9 +19,6 @@ export const TreeNodeWidget = observer(
         if (props.node.hidden) return null
 
         const node = props.node
-
-        console.log('渲染Node', node.props)
-
         const renderChildren = () => {
           if (node?.designerProps?.selfRenderChildren) return []
           const children = node?.children?.map(child => {

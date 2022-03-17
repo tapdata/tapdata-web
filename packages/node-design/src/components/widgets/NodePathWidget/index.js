@@ -30,8 +30,6 @@ export const NodePathWidget = observer(
           .reverse()
           .concat(selected)
 
-        console.log('NodePath.nodes', nodes)
-
         return (
           <Breadcrumb class={prefix}>
             {nodes.map((node, key) => {

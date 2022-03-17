@@ -1,6 +1,6 @@
 import { FormPath } from '@formily/core'
 import { toJS } from '@formily/reactive'
-import { ArrayField, Field as InternalField, ObjectField, VoidField, Schema, h as CreateElement } from '@formily/vue'
+import { ArrayField, Field as InternalField, ObjectField, VoidField, Schema } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { FormItem } from '@daas/form'
 import { each, reduce } from '@formily/shared'
@@ -125,8 +125,6 @@ export const Field = observer(
         const node = nodeRef.value
 
         const fieldProps = toDesignableFieldProps(attrs, components.value, designer.value.props.nodeIdAttrName, node.id)
-
-        console.log('fieldProps', fieldProps)
 
         if (attrs.type === 'object') {
           return (

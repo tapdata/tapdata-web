@@ -1,64 +1,26 @@
-import { createForm, Form as FormilyForm } from '@formily/core'
+import { createForm } from '@formily/core'
 import { Form, SchemaField } from '@daas/form'
-import { observer } from '@formily/reactive-vue'
-import { reaction, observe, toJS } from '@formily/reactive'
-import { IconWidget, NodePathWidget } from '../widgets'
+import { observe } from '@formily/reactive'
+import { NodePathWidget } from '../widgets'
 import { SettingsFormContext, IconContext } from '../../context'
-import { usePrefix, useSelected, useOperation, useCurrentNode, useWorkbench, useSelection } from '../../hooks'
+import { usePrefix, useSelected, useCurrentNode, useWorkbench } from '../../hooks'
 import { useLocales } from './useLocales'
 import { Empty } from 'element-ui'
 import './styles.scss'
-import {
-  computed,
-  defineComponent,
-  getCurrentInstance,
-  nextTick,
-  onBeforeUnmount,
-  onUpdated,
-  provide,
-  reactive,
-  ref,
-  watch
-} from 'vue-demi'
+import { defineComponent, nextTick, reactive, ref, watch } from 'vue-demi'
 import { requestIdle, cancelIdle, uid } from '@daas/shared'
 
-const GlobalState = {
-  idleRequest: null
-}
-// className?: string
-// style?: CSSProperties
-// uploadAction?: string
-// components?: Record<string, VueComponent<any>>
-// effects?: (form: Form) => void
-// scope?: any
-function useKeyUp() {
-  const keyboardRef = ref(false)
-
-  const listener = () => {
-    keyboardRef.value = true
-  }
-  window.addEventListener('keyup', listener)
-
-  onBeforeUnmount(() => {
-    window.removeEventListener('keyup', listener)
-  })
-
-  return keyboardRef
-}
 export const SettingsForm = defineComponent({
   props: ['uploadAction', 'components', 'effects', 'scope', 'headers'],
   setup(props) {
-    const instance = getCurrentInstance()
     const workbenchRef = useWorkbench()
     const prefixRef = usePrefix('settings-form')
 
     const currentWorkspace = workbenchRef.value?.activeWorkspace || workbenchRef.value?.currentWorkspace
     const currentWorkspaceId = currentWorkspace?.id
 
-    const operationRef = useOperation(currentWorkspaceId)
     const nodeRef = useCurrentNode(currentWorkspaceId)
     const selectedRef = useSelected(currentWorkspaceId)
-    const keyupRef = useKeyUp()
     const idleTaskRef = ref(null)
 
     const sources = reactive({
@@ -67,7 +29,6 @@ export const SettingsForm = defineComponent({
       isEmpty: !(nodeRef.value && nodeRef.value.designerProps?.propsSchema && selectedRef.value.length === 1)
     })
 
-    // [node, node?.props, schema, operation, isEmpty]
     const formRef = ref()
 
     const requestIdleTask = () => {
@@ -89,22 +50,17 @@ export const SettingsForm = defineComponent({
     }
     requestIdleTask()
 
-    observe(nodeRef.value, change => {
+    observe(nodeRef.value, () => {
       nextTick(() => {
         requestIdleTask()
       })
     })
 
-    watch(selectedRef, change => {
+    watch(selectedRef, () => {
       nextTick(() => {
         requestIdleTask()
       })
     })
-
-    /*provide(
-      SettingsFormSymbol,
-      computed(() => props)
-    )*/
 
     return () => {
       const prefix = prefixRef

@@ -16,7 +16,6 @@ export const InputItems = defineComponent({
   },
   setup: (props, { attrs, slots }) => {
     const prefix = usePrefix('input-items')
-    console.log('InputItems', props)
     return () => (
       <InputItemsContext.Provider value={props}>
         <div class={[prefix, attrs.class]} style={attrs.style}>
@@ -41,7 +40,6 @@ InputItems.Item = defineComponent({
     const ctxRef = useContext(InputItemsContext)
     return () => {
       const ctx = ctxRef.value
-      console.log('InputItems.Item', props)
       return (
         <div
           class={[

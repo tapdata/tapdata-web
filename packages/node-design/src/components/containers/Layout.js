@@ -1,6 +1,5 @@
-import { defineComponent, ref, provide, inject, watch, onMounted } from 'vue-demi'
+import { defineComponent, watch } from 'vue-demi'
 import { each, useContext } from '@daas/shared'
-import { FragmentComponent, Fragment, h as CreateElement } from '@formily/vue'
 import { DesignerLayoutContext } from '../../context'
 
 export const Layout = defineComponent({

@@ -1,9 +1,6 @@
-import { Engine } from './Engine'
 import { Viewport } from './Viewport'
 import { Operation } from './Operation'
-// import { History } from './History'
 import { uid } from '@daas/shared'
-import { HistoryGotoEvent, HistoryRedoEvent, HistoryUndoEvent, HistoryPushEvent } from '../events'
 
 //工作区模型
 export class Workspace {
@@ -46,23 +43,6 @@ export class Workspace {
       nodeIdAttrName: this.engine.props.outlineNodeIdAttrName
     })
     this.operation = new Operation(this)
-    // this.history = new History(this, {
-    //   onPush: item => {
-    //     this.operation.dispatch(new HistoryPushEvent(item))
-    //   },
-    //   onRedo: item => {
-    //     this.operation.hover.clear()
-    //     this.operation.dispatch(new HistoryRedoEvent(item))
-    //   },
-    //   onUndo: item => {
-    //     this.operation.hover.clear()
-    //     this.operation.dispatch(new HistoryUndoEvent(item))
-    //   },
-    //   onGoto: item => {
-    //     this.operation.hover.clear()
-    //     this.operation.dispatch(new HistoryGotoEvent(item))
-    //   }
-    // })
   }
 
   getEventContext() {

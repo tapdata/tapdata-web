@@ -1,4 +1,3 @@
-import { Engine } from '../models'
 import { SelectNodeEvent } from '../events'
 
 export const useWorkspaceEffect = engine => {

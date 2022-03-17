@@ -1,11 +1,9 @@
-import { Workspace } from './Workspace'
-import { Engine } from './Engine'
 import { TreeNode } from './TreeNode'
 import { Selection } from './Selection'
 import { Hover } from './Hover'
 import { action, define, observable } from '@formily/reactive'
 import { Dragon } from './Dragon'
-import { cancelIdle, each, isFn, requestIdle } from '@daas/shared'
+import { each, isFn } from '@daas/shared'
 
 export class Operation {
   workspace
@@ -234,6 +232,8 @@ export class Operation {
   }
 
   snapshot(type) {
+    // eslint-disable-next-line no-console
+    console.log('snapshot.type', type)
     // cancelIdle(this.requests.snapshot)
     // if (!this.workspace || !this.workspace.history || this.workspace.history.locking) return
     // this.requests.snapshot = requestIdle(() => {

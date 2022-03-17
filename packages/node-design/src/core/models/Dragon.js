@@ -1,7 +1,6 @@
 import { observable, define, action } from '@formily/reactive'
 import { calcDistanceOfPointToRect, calcDistancePointToEdge, isNearAfter, isPointInRect } from '@daas/shared'
 import { DragNodeEvent, DropNodeEvent } from '../events'
-import { Viewport } from './Viewport'
 
 export const ClosestPosition = {
   Before: 'BEFORE',

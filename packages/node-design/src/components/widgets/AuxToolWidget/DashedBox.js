@@ -1,10 +1,8 @@
-import { useHover, usePrefix, useValidNodeOffsetRect, useSelection, useViewport } from '../../../hooks'
+import { useHover, usePrefix, useSelection, useViewport } from '../../../hooks'
 import { observer } from '@formily/reactive-vue'
-import { defineComponent, ref } from 'vue-demi'
-import { FragmentComponent as Fragment } from '@formily/vue'
+import { defineComponent } from 'vue-demi'
 
 // 组件hover的虚线框
-
 const DashedBoxComponent = observer(
   defineComponent({
     setup() {
@@ -66,14 +64,8 @@ const DashedBoxComponent = observer(
 export const DashedBox = observer(
   defineComponent({
     setup() {
-      const hoverRef = useHover()
       return () => {
         return <DashedBoxComponent></DashedBoxComponent>
-        /*return (
-          <Fragment>
-            <DashedBoxComponent></DashedBoxComponent>
-          </Fragment>
-        )*/
       }
     }
   })

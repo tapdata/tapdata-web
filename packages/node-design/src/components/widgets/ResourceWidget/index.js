@@ -5,7 +5,7 @@ import './index.scss'
 import { IconWidget } from '../IconWidget'
 import { TextWidget } from '../TextWidget'
 import { observer } from '@formily/reactive-vue'
-import { useDesigner, useTree } from '../../../hooks'
+import { useDesigner } from '../../../hooks'
 
 export const ResourceWidget = observer(
   defineComponent({
@@ -23,10 +23,6 @@ export const ResourceWidget = observer(
       const designer = useDesigner()
       const prefix = 'fd-resource'
       const expand = ref(props.defaultExpand)
-      const onClickNode = id => {
-        const node = designer.value.findNodeById(id)
-        designer.value.getCurrentTree().append(node.children[0])
-      }
       const renderNode = source => {
         const { node, icon, title, thumb, span } = source
         return (
@@ -35,7 +31,6 @@ export const ResourceWidget = observer(
             style={{ gridColumnStart: `span ${span || 1}` }}
             key={node.id}
             data-designer-source-id={node.id}
-            // onClick={() => onClickNode(node.id)}
           >
             {thumb && <img class={prefix + '-item-thumb'} src={thumb} />}
             <IconWidget class={prefix + '-item-icon'} infer={icon} width={150} height={40} />

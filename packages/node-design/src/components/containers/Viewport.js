@@ -1,4 +1,4 @@
-import { usePrefix, useViewport, useEffect } from '../../hooks'
+import { usePrefix, useViewport } from '../../hooks'
 import { AuxToolWidget, EmptyWidget } from '../widgets'
 import { requestIdle } from '@daas/shared'
 import { defineComponent, ref, onMounted } from 'vue-demi'

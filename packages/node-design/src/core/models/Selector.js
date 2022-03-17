@@ -16,6 +16,7 @@ export class Selector {
     return results
   }
 
+  // eslint-disable-next-line no-dupe-class-members
   #_query(target, selector) {
     if (!target) return
     const results = target?.querySelector(selector)
@@ -28,6 +29,7 @@ export class Selector {
     return results
   }
 
+  // eslint-disable-next-line no-dupe-class-members
   #_clean(target, key) {
     const caches = this.#store.get(key)
     if (caches) {
