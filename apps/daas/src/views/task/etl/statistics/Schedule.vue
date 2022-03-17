@@ -181,6 +181,7 @@ export default {
     return {
       id: '',
       active: 0,
+      timer: null,
       showActive: 0,
       isClickStep: false,
       steps: [],
@@ -232,6 +233,9 @@ export default {
         v && this.init()
       }
     }
+  },
+  destroyed() {
+    clearTimeout(this.timer)
   },
   methods: {
     init() {
@@ -486,13 +490,16 @@ export default {
     },
     //概览信息
     getSyncOverViewData() {
+      //调用前 清掉定时器
+      clearTimeout(this.timer)
+      this.timer = null
       this.$api('SubTask')
         .syncOverView(this.id)
         .then(res => {
           this.syncOverViewData = res?.data
           this.syncOverViewData.finishDuration = this.handleTime(this.syncOverViewData?.finishDuration)
           if (this.syncOverViewData.progress !== 100) {
-            setTimeout(() => {
+            this.timer = setTimeout(() => {
               this.getSyncOverViewData()
             }, 800)
           }
