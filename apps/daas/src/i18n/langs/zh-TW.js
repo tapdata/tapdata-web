@@ -1342,5 +1342,6 @@ export default {
 
   // 自定义节点
   custom_node_name: '節點名稱',
-  custom_node_name_placeholder: '請輸入節點名稱搜索'
+  custom_node_name_placeholder: '請輸入節點名稱搜索',
+  custom_node_name_required: '請輸入節點名稱'
 }

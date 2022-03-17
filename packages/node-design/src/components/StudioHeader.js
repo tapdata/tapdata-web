@@ -39,6 +39,11 @@ export const StudioHeader = observer(
 
       const save = async () => {
         const customNode = customNodeRef.value
+        if (!customNode.name) {
+          focusNameInput()
+          root.$message.warning(root.$t('custom_node_name_required'))
+          return
+        }
         saving.value = true
         try {
           await customNode.save(designerRef.value.getCurrentTree())
