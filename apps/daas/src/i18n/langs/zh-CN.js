@@ -133,6 +133,7 @@ export default {
   page_title_role: '角色管理',
   page_title_setting: '系统设置',
   page_title_license: 'License管理',
+  page_title_custom_node: '自定义节点',
 
   // app
   app_license_expire_warning: '提醒：License剩余 {0} 天到期',
@@ -1455,5 +1456,10 @@ export default {
   role_form_selectUser: '请选择用户名',
   role_form_connected: '已关联',
   role_form_already_exists: '角色名称重复',
-  role_null: '角色名称不能为空'
+  role_null: '角色名称不能为空',
+
+  // 自定义节点
+  custom_node_name: '节点名称',
+  custom_node_name_placeholder: '请输入节点名称搜索',
+  custom_node_name_required: '请输入节点名称'
 }

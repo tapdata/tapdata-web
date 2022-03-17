@@ -131,6 +131,7 @@ export default {
   page_title_role: '角色管理',
   page_title_setting: '系統設置',
   page_title_license: 'License管理',
+  page_title_custom_node: '自定義節點',
 
   // app
   app_license_expire_warning: '提醒：License剩餘 {0} 天到期',
@@ -1414,5 +1415,10 @@ export default {
   role_form_selectUser: '請選擇用戶名',
   role_form_connected: '已關聯',
   role_form_already_exists: '角色名稱重複',
-  role_null: '角色名稱不能為空'
+  role_null: '角色名稱不能為空',
+
+  // 自定义节点
+  custom_node_name: '節點名稱',
+  custom_node_name_placeholder: '請輸入節點名稱搜索',
+  custom_node_name_required: '請輸入節點名稱'
 }

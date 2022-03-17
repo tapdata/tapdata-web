@@ -257,7 +257,7 @@ export default {
       'clearNodeError'
     ]),
 
-    ...mapActions('dataflow', ['addNodeAsync', 'updateDag']),
+    ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
 
     async confirmMessage(message, headline, type, confirmButtonText, cancelButtonText) {
       try {
@@ -343,6 +343,7 @@ export default {
       let _nodeTypes = nodeTypes
       this.setNodeTypes(_nodeTypes)
       this.setCtorTypes(ctorTypes)
+      await this.loadCustomNode()
     },
 
     /**
@@ -1211,13 +1212,15 @@ export default {
       const getCtor = this.$store.getters['dataflow/getCtor']
       const Ctor = getCtor(item.constructor)
       const ins = new Ctor(item)
-      const node = {
-        id: uuid(),
-        name: item.name,
-        type: item.type,
-        attrs: { position },
-        ...ins.getExtraAttr() // 附加属性
-      }
+      const node = merge(
+        {
+          id: uuid(),
+          name: item.name,
+          type: item.type,
+          attrs: { position }
+        },
+        ins.getExtraAttr()
+      )
 
       // 设置属性__Ctor不可枚举
       Object.defineProperty(node, '__Ctor', {

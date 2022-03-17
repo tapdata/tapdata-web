@@ -333,6 +333,7 @@ let menuSetting = [
       { name: 'dataVerificationList', code: 'Data_verify_menu' },
       { name: 'sharedMiningList' },
       { name: 'functionList', code: 'SYNC_Function_management' },
+      { name: 'customNodeList' },
       { name: 'sharedCacheList' }
     ]
   },

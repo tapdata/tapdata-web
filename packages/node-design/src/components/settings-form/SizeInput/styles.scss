@@ -1,0 +1,23 @@
+@import '../../../variables';
+
+.#{$prefix-cls}-size-input {
+  display: flex;
+  width: 100%;
+
+  .el-input-number {
+    flex-grow: 2;
+    margin-right: 2px;
+  }
+
+  .#{$prefix-cls}-size-input-unit {
+    border: 1px solid $--border-color-base;
+    border-radius: 2px;
+    cursor: pointer;
+    height: 32px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 0;
+  }
+}

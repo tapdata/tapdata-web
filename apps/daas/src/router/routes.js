@@ -50,6 +50,11 @@ export default [
   },
   {
     path: '/node/editor',
+    name: 'NodeNew',
+    component: NodeEditor
+  },
+  {
+    path: '/node/editor/:id',
     name: 'NodeEditor',
     component: NodeEditor
   },
@@ -426,6 +431,25 @@ export default [
             meta: {
               title: 'page_title_function_details',
               code: 'SYNC_Function_management'
+            }
+          }
+        ]
+      },
+      /* ---------- 自定义节点  ----------*/
+      {
+        path: '/customNode',
+        name: 'customNode',
+        component: Parent,
+        meta: {
+          title: 'page_title_custom_node'
+        },
+        children: [
+          {
+            path: '',
+            name: 'customNodeList',
+            component: () => import('@/views/customNode/List'),
+            meta: {
+              title: 'page_title_custom_node'
             }
           }
         ]
