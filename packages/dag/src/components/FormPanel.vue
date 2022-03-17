@@ -154,7 +154,13 @@ export default {
       })
       if (schema.schema && schema.form) {
         // 临时判断从自定义节点过来的schema
-        this.schema = JSON.parse(JSON.stringify(schema.schema))
+        // 表单数据存储到form对象
+        this.schema = {
+          type: 'object',
+          properties: {
+            form: JSON.parse(JSON.stringify(schema.schema))
+          }
+        }
       } else {
         this.schema = JSON.parse(JSON.stringify(schema))
       }

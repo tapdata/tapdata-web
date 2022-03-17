@@ -136,7 +136,7 @@ const getters = {
       const dbType = node.databaseType
       foundType = allNodeTypes.find(typeData => typeData.type === nodeType && typeData.attr.databaseType === dbType)
     } else if (nodeType === 'custom_processor') {
-      foundType = state.processorNodeTypes.find(typeData => typeData.id === node.attrs.customNodeId)
+      foundType = state.processorNodeTypes.find(typeData => typeData.attr?.customNodeId === node.customNodeId)
     } else {
       foundType = allNodeTypes.find(typeData => typeData.type === nodeType)
     }
@@ -235,12 +235,12 @@ const actions = {
       'addProcessorNode',
       items.map(item => {
         return {
-          id: item.id,
           icon: 'custom-node',
           name: item.name,
           type: 'custom_processor',
-          constructor: 'Common',
+          constructor: 'CustomProcessor',
           attr: {
+            customNodeId: item.id,
             formSchema: item.formSchema
           }
         }
