@@ -1,19 +1,20 @@
 <template>
   <!--  绑定手机号  -->
   <ElDialog
-    width="435px"
+    width="300px"
     append-to-body
-    title="绑定手机号"
+    title="请绑定手机号"
     :close-on-click-modal="!!$props.closeOnClickModal"
     :close-on-press-escape="!!$props.closeOnPressEscape"
     :show-close="!!$props.showClose"
     :visible.sync="dialogVisible"
+    custom-class="bind-phone-dialog"
   >
-    <ElForm :model="phoneForm" label-width="120px" @submit.native.prevent>
-      <ElFormItem prop="current" label="当前手机：">
-        <ElInput v-model="phoneForm.current" placeholder="请输入当前手机" maxlength="50"></ElInput>
+    <ElForm :model="phoneForm" :label-width="showLabel ? '120px' : null" @submit.native.prevent>
+      <ElFormItem prop="current" :label="showLabel ? '当前手机：' : ''">
+        <ElInput v-model="phoneForm.current" placeholder="请输入手机" maxlength="50"></ElInput>
       </ElFormItem>
-      <ElFormItem prop="newPassword" label="验证码：" class="inline-form-item">
+      <ElFormItem prop="newPassword" :label="showLabel ? '验证码：' : ''" class="inline-form-item">
         <ElInput v-model="phoneForm.oldCode" placeholder="请输入手机验证码" maxlength="50"></ElInput>
         <VerificationCode
           :request-options="getCodeOptions(phoneForm.current, 'BIND_PHONE')"
@@ -48,11 +49,14 @@ export default {
   props: {
     visible: {
       type: Boolean
+    },
+    showLabel: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
     visible(v) {
-      console.log('watch', v)
       this.dialogVisible = !!v
     }
   },
@@ -103,6 +107,30 @@ export default {
   .inline-input {
     .inline-input-body {
       justify-content: space-between;
+    }
+  }
+}
+</style>
+
+<style lang="scss">
+.bind-phone-dialog {
+  border-radius: 4px;
+  .el-dialog__header {
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+  .el-dialog__body {
+    padding-bottom: 0;
+  }
+  .el-dialog__footer {
+    .dialog-footer {
+      .v-button {
+        width: 100%;
+        .el-button {
+          width: 100%;
+          height: 32px;
+        }
+      }
     }
   }
 }
