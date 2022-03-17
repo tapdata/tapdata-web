@@ -3,16 +3,20 @@ import { defineComponent } from 'vue-demi'
 import CodeEditor from 'web-core/components/base/VCodeEditor'
 
 export const SchemaEditorWidget = defineComponent({
-  props: ['tree', 'onChange'],
+  props: ['tree', 'onChange', 'options'],
   setup: props => {
-    console.log('SchemaEditorWidget.props', props.tree)
+    const options = {
+      showPrintMargin: false,
+      ...props.options
+    }
     return () => (
       <CodeEditor
         value={JSON.stringify(transformToSchema(props.tree), null, 2)}
         onInput={value => {
           props.onChange?.(transformToTreeNode(JSON.parse(value)))
         }}
-        language="json"
+        lang="json"
+        options={options}
       />
     )
   }
