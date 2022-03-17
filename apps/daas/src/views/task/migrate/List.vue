@@ -172,6 +172,7 @@
                 <i class="el-icon-more"></i>
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
+                <el-dropdown-item command="toView">{{ $t('dataFlow.view') }}</el-dropdown-item>
                 <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
                   $t('task_list_verify')
                 }}</el-dropdown-item>
@@ -605,19 +606,7 @@ export default {
     handleEditor(id) {
       const h = this.$createElement
       this.$confirm(
-        h('p', null, [
-          h('span', null, this.$t('dataFlow.modifyEditText')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeLayoutProcess')),
-          h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeAttributes')),
-          h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.matchingRelationship')),
-          h('span', null, '，'),
-          h('span', null, this.$t('dataFlow.afterSubmission')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.reset')),
-          h('span', null, this.$t('dataFlow.runNomally')),
-          h('span', null, this.$t('dataFlow.editLayerTip'))
-        ]),
+        h('p', null, [h('span', null, this.$t('task_list_edit_confirm'))]),
         this.$t('dataFlow.importantReminder'),
         {
           customClass: 'dataflow-clickTip',
@@ -688,6 +677,17 @@ export default {
         ids = this.multipleSelection.map(item => item.id)
       }
       this[command](ids, node)
+    },
+    toView([id]) {
+      window.open(
+        this.$router.resolve({
+          name: 'MigrateViewer',
+          params: {
+            id
+          }
+        }).href,
+        'viewer_' + id
+      )
     },
     export(ids) {
       Task.export(ids)

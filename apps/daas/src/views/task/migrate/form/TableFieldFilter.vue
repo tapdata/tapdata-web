@@ -9,7 +9,15 @@
     :before-close="handleTableClose"
   >
     <div class="table-box">
-      <el-form :rules="rules" ref="fieldForm" :model="form" label-position="top" class="table-form" label-width="120px">
+      <el-form
+        :rules="rules"
+        ref="fieldForm"
+        :model="form"
+        :disabled="stateIsReadonly"
+        label-position="top"
+        class="table-form"
+        label-width="120px"
+      >
         <el-form-item :label="$t('task_mapping_dialog_table_name_case')">
           <el-select size="mini" v-model="form.tableNameTransform">
             <el-option :label="$t('task_mapping_dialog_constant')" value=""></el-option>
@@ -40,7 +48,9 @@
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button size="mini" @click="handleTableClose()">{{ $t('button_cancel') }}</el-button>
-      <el-button size="mini" type="primary" @click="handleTableNameSave()">{{ $t('button_confirm') }}</el-button>
+      <el-button size="mini" type="primary" :disabled="stateIsReadonly" @click="handleTableNameSave()">{{
+        $t('button_confirm')
+      }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -71,6 +81,7 @@ export default {
       }
     }
     return {
+      stateIsReadonly: this.$store.state.dataflow.stateIsReadonly,
       form: {},
       currentForm: {},
       rules: {
