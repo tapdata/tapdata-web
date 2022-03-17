@@ -409,7 +409,7 @@ export default {
           return
         }
         const id = this.task.id
-          this.$router.push({
+        this.$router.push({
           name: 'MigrateEditor',
           params: {
             id: id
