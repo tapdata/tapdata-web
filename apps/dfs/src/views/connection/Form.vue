@@ -713,13 +713,32 @@ export default {
       if ((!this.model.plain_password || this.model.plain_password === '') && !id) {
         return
       }
+      let filter = {
+        where: {
+          status: 'Running'
+        },
+        size: 1
+      }
 
-      this.$ws.send({
-        type: 'loadVika',
-        load_type: 'space',
-        api_token: this.model.plain_password || 'uskqJoFhJzKindGHykV5UEJ',
-        database_host: 'https://api.vika.cn/fusion/v1'
+      this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(({ items }) => {
+        let obj = {
+          type: 'pipe',
+          receive: items[0]?.tmInfo?.agentId,
+          data: {
+            type: 'loadVika',
+            load_type: 'space',
+            api_token: this.model.plain_password,
+            database_host: 'https://api.vika.cn/fusion/v1'
+          }
+        }
+        this.$ws.send(obj)
       })
+      // this.$ws.send({
+      //   type: 'loadVika',
+      //   load_type: 'space',
+      //   api_token: this.model.plain_password || 'uskqJoFhJzKindGHykV5UEJ',
+      //   database_host: 'https://api.vika.cn/fusion/v1'
+      // })
     },
     setSpaceVika(data) {
       let vika_space_id = this.config.items.find(it => it.field === 'vika_space_id')
