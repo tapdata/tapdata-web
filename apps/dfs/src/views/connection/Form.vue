@@ -718,7 +718,7 @@ export default {
       this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(({ items }) => {
         let obj = {
           type: 'pipe',
-          receive: items[0]?.tmInfo?.agentId,
+          receiver: items[0]?.tmInfo?.agentId,
           data: {
             type: 'loadVika',
             load_type: 'space',
