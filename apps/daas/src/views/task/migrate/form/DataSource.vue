@@ -119,7 +119,8 @@ export default {
         database_port: 1,
         database_name: 1,
         database_uri: 1,
-        mqType: 1
+        mqType: 1,
+        shareCdcEnable: 1
       }
       if (type === 'source_connectionId') {
         fields['database_username'] = 1
@@ -140,7 +141,8 @@ export default {
               label: item.name,
               value: item.id,
               type: item.database_type,
-              mqType: item.mqType || ''
+              mqType: item.mqType || '',
+              shareCdcEnable: item.shareCdcEnable || ''
             }
           })
           if (type === 'source_connectionId') {
@@ -168,6 +170,7 @@ export default {
           this.dataSourceData['source_databaseType'] = source.type
           this.dataSourceData['target_databaseType'] = target.type
           this.dataSourceData.mqType = target.mqType
+          this.dataSourceData.shareCdcEnable = source.shareCdcEnable
           this.$emit('submit', true)
         }
       })

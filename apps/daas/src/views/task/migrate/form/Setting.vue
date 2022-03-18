@@ -476,12 +476,6 @@ export default {
                   }
                 ]
               },
-              cdcShareFilterOnServer: {
-                title: this.$t('task_setting_cdc_share_filter_on_server'), //共享挖掘日志过滤
-                type: 'boolean',
-                'x-decorator': 'FormItem',
-                'x-component': 'Switch'
-              },
               lagTime: {
                 title: this.$t('task_setting_lag_time'), //增量滞后判断时间设置(秒)
                 default: false,
@@ -523,9 +517,23 @@ export default {
         }
       }
 
+      //特殊配置需要源表满足条件
+      let shareCdcEnable = {
+        shareCdcEnable: {
+          title: this.$t('connection_form_shared_mining'), //共享挖掘日志过滤
+          type: 'boolean',
+          'x-decorator': 'FormItem',
+          'x-component': 'Switch'
+        }
+      }
       //合并配置
       let target = mapping[type] || {}
       config.properties.layout.properties = Object.assign(config?.properties?.layout?.properties, target)
+
+      //源表连接开启了日志挖掘功能
+      if (this.dataSourceData?.shareCdcEnable) {
+        config.properties.layout.properties = Object.assign(config?.properties?.layout?.properties, shareCdcEnable)
+      }
       return config
     }
   }
