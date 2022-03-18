@@ -166,6 +166,7 @@
   color: map-get($color, primary);
   background-color: #fff;
   border-color: map-get($color, primary);
+  box-shadow: -1px 0 0 0 map-get($color, primary);
 }
 .el-switch.is-checked .el-switch__core {
   border-color: map-get($color, primary);
@@ -816,7 +817,7 @@
 /* --------------------- */
 .el-form-item.el-form-item--small,
 .el-form-item.el-form-item--mini {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   .el-form-item__label {
     color: map-get($fontColor, main);
     font-size: 12px;

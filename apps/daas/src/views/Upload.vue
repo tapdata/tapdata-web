@@ -5,18 +5,19 @@
       <el-radio v-model="upsert" :label="1">{{ $t('dataFlow.overWrite') }}</el-radio>
       <el-radio v-model="upsert" :label="0">{{ $t('dataFlow.skipData') }}</el-radio>
     </div>
-    <div class="dataflow-radio">
+    <!-- <div class="dataflow-radio">
       <el-tag :key="tag" v-for="tag in tagList" :closable="true" @close="handleClose(tag)">
         {{ tag.value }}<span style="cursor: pointer" @click="handleClose(tag)"> X </span>
       </el-tag>
       <span @click="handleClassify" class="classify">{{ $t('dataFlow.taskBulkTag') }}</span>
-    </div>
+    </div> -->
 
     <el-upload
       class="upload-demo"
       ref="upload"
       :action="action"
       :accept="accept"
+      :data="{ cover: upsert === 1 }"
       :file-list="fileList"
       :auto-upload="false"
       :on-success="handleSuccess"
@@ -133,23 +134,16 @@ export default {
     handleChange(file) {
       this.fileList = [file]
       this.action =
-        window.location.origin +
-        window.location.pathname +
-        'api/MetadataInstances/upload?upsert=' +
-        this.upsert +
-        '&listtags=' +
-        encodeURIComponent(JSON.stringify(this.tagList)) +
-        '&type=' +
-        this.downType +
-        `&access_token=${this.accessToken}`
+        window.location.origin + window.location.pathname + 'api/Task/batch/import?access_token=' + this.accessToken
     },
 
     handleSuccess(response) {
-      if (response.code === '110500' || response.code === '110401') {
-        this.status = false
-        this.$message.error(this.$t('dataFlow.uploadError'))
-      } else {
+      if (response.code === 'ok') {
         this.status = true
+        this.$message.success(this.$t('dataFlow.uploadOK'))
+      } else {
+        this.status = false
+        this.$message.error(response.message || this.$t('dataFlow.uploadError'))
       }
     },
 

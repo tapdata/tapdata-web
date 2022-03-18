@@ -180,6 +180,9 @@ export default {
       this.table.fetch(1)
     }
   },
+  created() {
+    this.getFilterItems()
+  },
   methods: {
     getData({ page }) {
       let { current, size } = page
@@ -262,6 +265,46 @@ export default {
             })
         }
       })
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: this.$t('connection_list_status'),
+          key: 'status',
+          type: 'select-inner',
+          items: this.databaseStatusOptions,
+          selectedWidth: '200px'
+        },
+        {
+          label: this.$t('connection_list_form_sync_type'),
+          key: 'databaseModel',
+          type: 'select-inner',
+          items: this.databaseModelOptions
+        },
+        {
+          label: this.$t('connection_list_form_database_type'),
+          key: 'databaseType',
+          type: 'select-inner',
+          menuMinWidth: '250px',
+          items: async () => {
+            let databaseTypes = await this.$api('DatabaseTypes').get()
+            let databaseTypeOptions = databaseTypes.data
+              .filter(dt => dt.type !== 'kudu')
+              .sort((t1, t2) => (t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1))
+            return databaseTypeOptions.map(item => {
+              return {
+                label: item.name,
+                value: item.type
+              }
+            })
+          }
+        },
+        {
+          placeholder: this.$t('task_list_search_placeholder'),
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     }
   }
 }

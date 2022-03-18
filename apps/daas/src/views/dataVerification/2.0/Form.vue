@@ -1,12 +1,12 @@
 <template>
   <section class="verify-form-wrap section-wrap flex-fill" v-loading="loading">
-    <div class="section-wrap-box">
+    <div class="section-wrap-box position-relative">
       <div class="verify-form-title">
         {{ $route.params.id ? $t('verify_title_edit') : $t('verify_title_create') }}
       </div>
       <ElForm
         inline-message
-        class="overflow-auto grey"
+        class="grey"
         ref="baseForm"
         label-position="left"
         label-width="96px"
@@ -1295,10 +1295,8 @@ export default {
               }
             })
             .catch(err => {
-              let message = err?.response?.msg || err?.data?.msg || ''
-              if (message === 'duplication for names') {
-                this.$message.error(this.$t('message.exists_name'))
-              }
+              let message = err?.data?.message || this.$t('message_operation_error')
+              this.$message.error(message)
             })
         }
       })

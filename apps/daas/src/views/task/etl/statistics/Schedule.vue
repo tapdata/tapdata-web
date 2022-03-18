@@ -26,6 +26,17 @@
       <div v-if="['initial_sync'].indexOf(currentStep.group) === -1">
         <!--  里程碑  -->
         <Milestone :list="milestonesData" :taskStatus="task && task.status" :fold="false"></Milestone>
+        <div v-if="currentStep.group === 'cdc'" class="mt-6">
+          <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
+          <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page>
+            <template slot="operation" slot-scope="scope">
+              <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{ $t('button_clear') }}</ElButton>
+              <ElButton size="mini" type="text" @click="handleRollback(scope.row)">{{
+                $t('button_rollback')
+              }}</ElButton></template
+            >
+          </TableList>
+        </div>
       </div>
       <!--  结构迁移  -->
       <div v-else>
@@ -98,7 +109,7 @@
           >
           </el-pagination>
         </div>
-        <div v-else class="mt-6">
+        <div v-if="currentStep.group === 'cdc'" class="mt-6">
           <div class="mb-4 fs-7 font-color-main fw-bolder">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
           <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page>
             <template slot="operation" slot-scope="scope">
@@ -153,7 +164,7 @@
           </template>
         </TableList>
       </div>
-      <div v-if="runtimeInfo.milestones && runtimeInfo.milestones.length" class="mt-6">
+      <div class="mt-6">
         <div class="mb-4 fs-7 font-color-main fw-bolder">{{ $t('task_info_task_cdc') }}{{ $t('task_info_info') }}</div>
         <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page></TableList>
       </div>
@@ -285,6 +296,7 @@ export default {
         this.showActive = this.active
       }
       this.getMilestonesData()
+      console.log(this.steps)
     },
     getMilestonesData() {
       this.milestonesData = (this.runtimeInfo?.milestones || [])
@@ -540,6 +552,7 @@ export default {
         return r
       }
     },
+    //增量同步
     getCdcTableList() {
       this.$api('SubTask')
         .cdcIncrease(this.id)

@@ -2,27 +2,27 @@
   <section class="addServe-wrap">
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="addServe">
       <el-form-item
-        label="name"
+        :label="$t('cluster_server_nickname')"
         prop="name"
         :rules="{
           required: true,
-          message: $t('message.nullContent'),
+          message: $t('tips_rule_not_empty'),
           trigger: 'blur'
         }"
       >
-        <el-input v-model="ruleForm.name" size="mini" :placeholder="$t('message.placeholderMonServer')"></el-input>
+        <el-input v-model="ruleForm.name" size="mini" :placeholder="$t('cluster_placeholder_mon_server')"></el-input>
       </el-form-item>
 
       <el-form-item
-        label="command"
+        :label="$t('cluster_command')"
         prop="command"
         :rules="{
           required: true,
-          message: $t('message.nullContent'),
+          message: $t('tips_rule_not_empty'),
           trigger: 'blur'
         }"
       >
-        <el-input v-model="ruleForm.command" size="mini" :placeholder="$t('message.placeholderCommand')"></el-input>
+        <el-input v-model="ruleForm.command" size="mini" :placeholder="$t('cluster_placeholder_command')"></el-input>
       </el-form-item>
 
       <el-form-item label="arguements" prop="arguements">

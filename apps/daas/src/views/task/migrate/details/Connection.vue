@@ -120,8 +120,8 @@ export default {
     init() {
       this.clearInterval()
       this.fetchTimer = setInterval(() => {
-        // this.fetch()
-      }, 3000)
+        this.fetch()
+      }, 5000)
     },
     remoteMethod({ page }) {
       const { ids } = this
@@ -219,78 +219,27 @@ export default {
             if (resFlag) {
               this.showProgress = true
               this.progress = 0
-              this.reloadApi(row, 'first')
+              this.testSchema(row)
             }
           })
         })
     },
-    reloadApi(row, type) {
-      this.reloadLoading = true
-      // this.clearInterval()
-      let parms
-      if (type === 'first') {
-        parms = {
-          loadCount: 0,
-          loadFieldsStatus: 'loading'
-        }
-        this.loadFieldsStatus = 'loading'
+    //请求测试
+    testSchema(row) {
+      let parms = {
+        loadCount: 0,
+        loadFieldsStatus: 'loading'
       }
+      this.loadFieldsStatus = 'loading'
+      this.reloadLoading = true
       this.$api('connections')
         .patch(row.id, parms)
-        .then(data => {
-          this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
-          if (type === 'first') {
-            this.$refs.test.start(row, false, true)
+        .then(res => {
+          if (!this?.$refs?.test) {
+            return
           }
-          if (data.loadFieldsStatus === 'finished') {
-            this.progress = 100
-            setTimeout(() => {
-              this.showProgress = false
-              this.progress = 0 //加载完成
-            }, 800)
-            this.reloadLoading = false
-          } else {
-            let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
-            this.progress = progress ? progress : 0
-            this.getSchemaProgress(row)
-            this.fetch()
-          }
-        })
-        .catch(error => {
-          if (error?.isException) {
-            this.$message.error(this.$t('connection.reloadFail'))
-            this.showProgress = false
-            this.progress = 0 //加载完成
-            this.reloadLoading = false
-          }
-        })
-    },
-    getSchemaProgress(row) {
-      // this.clearInterval()
-      this.$api('connections')
-        .customQuery(row.id)
-        .then(data => {
-          this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
-          if (data.loadFieldsStatus === 'finished') {
-            this.progress = 100
-            setTimeout(() => {
-              this.showProgress = false
-              this.progress = 0 //加载完成
-            }, 800)
-            this.reloadLoading = false
-          } else {
-            let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
-            this.progress = progress ? progress : 0
-            this.timer = setTimeout(() => {
-              this.getSchemaProgress(row)
-            }, 800)
-          }
-        })
-        .catch(() => {
-          this.$message.error(this.$t('connection.reloadFail'))
-          this.showProgress = false
-          this.progress = 0 //加载完成
-          this.reloadLoading = false
+          this.loadFieldsStatus = res?.data.loadFieldsStatus //同步reload状态
+          this.$refs.test.start(row, false, true)
         })
     }
   }

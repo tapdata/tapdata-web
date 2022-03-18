@@ -1,16 +1,11 @@
 <template>
   <section class="clusterManagement-container section-wrap">
     <div class="section-wrap-box">
-      <!-- <div class="header">
-        <div class="page-header-title">
-          <span class="title">{{ $t('cluster.serviceCluMange') }}</span>
-          <div class="logBtn" v-readonlybtn="'status_log'" @click="goDailyRecord">
-            {{ $t('cluster.statusLog') }}
-          </div>
-        </div>
-      </div> -->
+      <div class="search-bar">
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="getDataApi()"> </FilterBar>
+      </div>
       <div class="main">
-        <ul class="search-bar">
+        <!-- <ul class="search-bar">
           <li>
             <el-input
               clearable
@@ -27,17 +22,22 @@
               {{ $t('button.reset') }}
             </el-button>
           </li>
-        </ul>
-        <div class="content" v-if="waterfallData.length > 0">
+        </ul> -->
+        <div class="content" v-if="waterfallData.length">
           <el-row :gutter="20" class="waterfall">
             <el-col class="list" :md="12" :sm="24" v-for="(element, i) in waterfallData" :key="i">
-              <div class="grid-content listBox" v-for="item in element" :key="item.ip">
-                <div class="boxTop">
-                  <div style="width: 60%">
-                    <i class="circular" :class="item.status !== 'running' ? 'bgred' : 'bggreen'"></i>
-                    <h2 class="name">
-                      {{ item.agentName ? item.agentName : item.systemInfo.hostname }}
-                    </h2>
+              <div class="grid-content list-box" v-for="item in element" :key="item.ip">
+                <div class="list-box-header">
+                  <div class="list-box-header-left">
+                    <img class="mr-4" src="../../assets/images/serve.svg" />
+                    <i class="circular mr-2 mt-2" :class="item.status !== 'running' ? 'bgred' : 'bggreen'"></i>
+                    <div class="list-box-header-main">
+                      <h2 class="name fs-7">
+                        {{ item.agentName ? item.agentName : item.systemInfo.hostname }}
+                      </h2>
+                      <div class="uuid fs-8 my-1">{{ item.systemInfo.uuid }}</div>
+                      <span class="ip">{{ item.custIP ? item.custIP : item.systemInfo.ip }}</span>
+                    </div>
                   </div>
                   <div class="operation-bar" v-readonlybtn="'Cluster_operation'">
                     <ElButton
@@ -45,7 +45,7 @@
                       type="danger"
                       v-if="item.canUpdate"
                       @click="updateFn(item, item.management.status, 'management', 'update')"
-                      >{{ $t('cluster.update') }}
+                      >{{ $t(' cluster_update') }}
                     </ElButton>
                     <i
                       class="iconfont icon-icon_tianjia"
@@ -56,131 +56,150 @@
                     <i v-show="item.status !== 'running'" class="iconfont icon-shanchu" @click="delConfirm(item)"></i>
                   </div>
                 </div>
-                <div class="info">
-                  <span>{{ item.custIP ? item.custIP : item.systemInfo.ip }}</span>
-                  <template v-if="item.metricValues">
-                    <span class="usageRate">{{ $t('cluster.cpuUsage') }}: {{ item.metricValues.CpuUsage }}</span>
-                    <span class="usageRate"
-                      >{{ $t('cluster.heapMemoryUsage') }}: {{ item.metricValues.HeapMemoryUsage }}</span
-                    >
-                  </template>
-
-                  <div class="uuid">{{ item.systemInfo.uuid }}</div>
+                <div class="list-box-main" v-if="item.metricValues">
+                  <div class="usageRate">
+                    <div class="fs-5 pb-1 fw-bolder">{{ item.metricValues.CpuUsage }}</div>
+                    {{ $t('cluster_cpu_usage') }}
+                  </div>
+                  <div class="line"></div>
+                  <div class="usageRate">
+                    <div class="fs-5 pb-1 fw-bolder">{{ item.metricValues.HeapMemoryUsage }}</div>
+                    {{ $t('cluster_heap_memory_usage') }}
+                  </div>
                 </div>
-                <div class="boxBottom">
-                  <el-row :gutter="20" class="data-list">
-                    <el-col :span="8">
-                      <span class="txt"><i class="icon iconfont iconhoutai"></i>{{ $t('cluster.manageSys') }}</span>
+                <!-- 监控数据 -->
+                <div class="list-box-footer">
+                  <el-row :gutter="20" class="list-box-footer-header">
+                    <el-col :span="12">
+                      <span class="txt fw-sub">{{ $t('cluster_name') }}</span>
                     </el-col>
-                    <el-col :span="4">
-                      <span :class="item.management.status == 'stopped' ? 'red' : 'green'">{{
-                        item.management.status
+                    <el-col :span="6">
+                      <span>{{ $t('cluster_status') }}</span>
+                    </el-col>
+                    <el-col :span="6">
+                      <div class="btn">
+                        {{ $t('column_operation') }}
+                      </div>
+                    </el-col>
+                  </el-row>
+                  <el-row :gutter="20" class="data-list">
+                    <el-col :span="12">
+                      <span class="txt fw-normal">{{ $t('cluster_manage_sys') }}</span>
+                    </el-col>
+                    <el-col :span="6">
+                      <span :class="[item.management.status, 'status']">{{
+                        $t('cluster_' + item.management.status)
                       }}</span>
                     </el-col>
-                    <el-col :span="12">
-                      <div class="btn fr" v-readonlybtn="'Cluster_operation'">
+                    <el-col :span="6">
+                      <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
-                          :type="item.management.status == 'stopped' ? 'primary' : 'info'"
+                          type="text"
                           :disabled="item.management.status == 'stopped' ? false : true"
                           @click="startFn(item, item.management.status, 'management', 'start')"
-                          >{{ $t('cluster.start') }}
+                          >{{ $t('button_start') }}
                         </ElButton>
+                        <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           size="mini"
-                          :type="item.management.status == 'running' ? 'danger' : 'info'"
+                          type="text"
                           :disabled="item.management.status == 'running' ? false : true"
                           @click="closeFn(item, item.management.status, 'management', 'stop')"
-                          >{{ $t('cluster.close') }}
+                          >{{ $t('button_close') }}
                         </ElButton>
+                        <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           type="text"
                           :disabled="item.management.status == 'running' ? false : true"
                           @click="restartFn(item, item.management.status, 'management', 'restart')"
-                          >{{ $t('cluster.restart') }}
+                          >{{ $t('button_restart') }}
                         </ElButton>
                       </div>
                     </el-col>
                   </el-row>
                   <el-row :gutter="20" class="data-list">
-                    <el-col :span="8">
-                      <span class="txt"><i class="icon iconfont icontongbu"></i>{{ $t('cluster.syncGover') }}</span>
-                    </el-col>
-                    <el-col :span="4">
-                      <span :class="item.engine.status == 'stopped' ? 'red' : 'green'">{{ item.engine.status }}</span>
-                    </el-col>
                     <el-col :span="12">
-                      <div class="btn fr" v-readonlybtn="'Cluster_operation'">
+                      <span class="txt fw-normal">{{ $t('cluster_sync_gover') }}</span>
+                    </el-col>
+                    <el-col :span="6">
+                      <span :class="[item.engine.status, 'status']">{{ $t('cluster_' + item.engine.status) }}</span>
+                    </el-col>
+                    <el-col :span="6">
+                      <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
                           size="mini"
-                          :type="item.engine.status == 'stopped' ? 'primary' : 'info'"
+                          type="text"
                           :disabled="item.engine.status == 'stopped' ? false : true"
                           @click="startFn(item, item.engine.status, 'engine')"
-                          >{{ $t('cluster.start') }}</ElButton
+                          >{{ $t('button_start') }}</ElButton
                         >
+                        <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           size="mini"
-                          :type="item.engine.status == 'running' ? 'danger' : 'info'"
+                          type="text"
                           :disabled="item.engine.status == 'running' ? false : true"
                           @click="closeFn(item, item.engine.status, 'engine')"
-                          >{{ $t('cluster.close') }}</ElButton
+                          >{{ $t('button_close') }}</ElButton
                         >
+                        <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           type="text"
                           :disabled="item.engine.status == 'running' ? false : true"
                           @click="restartFn(item, item.engine.status, 'engine')"
-                          >{{ $t('cluster.restart') }}</ElButton
+                          >{{ $t('button_restart') }}</ElButton
                         >
                       </div>
                     </el-col>
                   </el-row>
                   <el-row :gutter="20" class="data-list">
-                    <el-col :span="8">
-                      <span class="txt"><i class="icon iconfont iconAPI"></i>API server</span>
+                    <el-col :span="12">
+                      <span class="txt fw-normal">API server</span>
                     </el-col>
-                    <el-col :span="4">
-                      <span :class="item.apiServer.status == 'stopped' ? 'red' : 'green'">{{
-                        item.apiServer.status
+                    <el-col :span="6">
+                      <span :class="[item.apiServer.status, 'status']">{{
+                        $t('cluster_' + item.apiServer.status)
                       }}</span>
                     </el-col>
-                    <el-col :span="12">
-                      <div class="btn fr" v-readonlybtn="'Cluster_operation'">
+                    <el-col :span="6">
+                      <div class="btn" v-readonlybtn="'Cluster_operation'">
                         <ElButton
                           size="mini"
-                          :type="item.apiServer.status == 'stopped' ? 'primary' : 'info'"
+                          type="text"
                           :disabled="item.apiServer.status == 'stopped' ? false : true"
                           @click="startFn(item, item.apiServer.status, 'apiServer')"
-                          >{{ $t('cluster.start') }}</ElButton
+                          >{{ $t('button_start') }}</ElButton
                         >
+                        <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           size="mini"
-                          :type="item.apiServer.status == 'running' ? 'danger' : 'info'"
+                          type="text"
                           :disabled="item.apiServer.status == 'running' ? false : true"
                           @click="closeFn(item, item.apiServer.status, 'apiServer')"
-                          >{{ $t('cluster.close') }}</ElButton
+                          >{{ $t('button_close') }}</ElButton
                         >
+                        <ElDivider direction="vertical"></ElDivider>
                         <ElButton
                           type="text"
                           :disabled="item.apiServer.status == 'running' ? false : true"
                           @click="restartFn(item, item.apiServer.status, 'apiServer')"
-                          >{{ $t('cluster.restart') }}</ElButton
+                          >{{ $t('button_restart') }}</ElButton
                         >
                       </div>
                     </el-col>
                   </el-row>
                   <el-row :gutter="20" class="data-list" v-for="child in item.customMonitorStatus" :key="child.id">
-                    <el-col :span="7" :offset="1">
+                    <el-col :span="12" :offset="1">
                       <span class="txt">{{ child.name }}</span>
                     </el-col>
-                    <el-col :span="4">
-                      <span :class="item.apiServer.status == 'stopped' ? 'red' : 'green'">{{ child.status }}</span>
+                    <el-col :span="6">
+                      <span :class="child.status">{{ child.status }}</span>
                     </el-col>
-                    <el-col :span="7" :offset="5" v-readonlybtn="'Cluster_operation'">
-                      <div class="btn fr">
-                        <ElButton type="text" @click="delServe(child, item.status)">{{
-                          $t('cluster.delete')
-                        }}</ElButton>
+                    <el-col :span="6" :offset="5" v-readonlybtn="'Cluster_operation'">
+                      <div class="btn">
+                        <ElButton type="text" @click="delServe(child, item.status)">{{ $t('button_delete') }}</ElButton>
+                        <ElDivider direction="vertical"></ElDivider>
                         <ElButton type="text" @click="editServe(child, item.status, item)">{{
-                          $t('cluster.edit')
+                          $t('button_edit')
                         }}</ElButton>
                       </div>
                     </el-col>
@@ -190,14 +209,14 @@
             </el-col>
           </el-row>
         </div>
-        <div v-else class="noText">
+        <div v-else class="no-text">
           <i class="iconfont icon iconkongyemian_zanwuwendang" style="font-size: 174px"></i>
         </div>
       </div>
     </div>
 
     <el-dialog
-      :title="$t('cluster.addServerMon')"
+      :title="$t('cluster_add_server_mon')"
       custom-class="serverDialog"
       :visible.sync="dialogForm"
       :append-to-body="true"
@@ -208,8 +227,8 @@
     >
       <addServe :data="currentData" :editItem="editItem" ref="childRules"></addServe>
       <div slot="footer" class="dialog-footer">
-        <ElButton size="small" @click="closeDialogForm()">{{ $t('cluster.cancel') }}</ElButton>
-        <ElButton size="small" type="primary" @click="submitForm('ruleForm')">{{ $t('cluster.confirm') }}</ElButton>
+        <ElButton size="small" @click="closeDialogForm()">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="small" type="primary" @click="submitForm('ruleForm')">{{ $t('button_confirm') }}</ElButton>
       </div>
     </el-dialog>
     <el-dialog
@@ -221,54 +240,37 @@
       width="600px"
       @close="editAgentDialog = false"
     >
-      <el-form ref="editAgentForm" label-width="100px" class="editAgentForm">
-        <el-form-item :label="$t('cluster.serverName')">
+      <el-form ref="editAgentForm" label-width="100px" class="edit-agent-form">
+        <el-form-item :label="$t('cluster_server_name')">
           <div class="name-box">
             <el-input
               style="width: 85%"
               v-model="agentName"
               size="mini"
               show-word-limit
-              :placeholder="$t('cluster.placeholderMonServer')"
+              :placeholder="$t('cluster_placeholder_mon_server')"
             ></el-input>
-            <span class="restBtn" @click="editNameRest">{{ $t('cluster.reduction') }}</span>
+            <ElButton type="text" class="rest-btn" @click="editNameRest">{{ $t('button_reduction') }}</ElButton>
           </div>
         </el-form-item>
-        <el-form-item :label="$t('cluster.iPDisplay')" prop="command">
-          <el-select v-model="custIP" :placeholder="$t('cluster.iPDisplay')" size="mini" style="width: 85%">
+        <el-form-item :label="$t('cluster_ip_display')" prop="command">
+          <el-select v-model="custIP" :placeholder="$t('cluster_ip_display')" size="mini" style="width: 85%">
             <el-option v-for="item in ips" :key="item" :label="item" :value="item"> </el-option>
           </el-select>
-          <div class="ipTip">{{ $t('cluster.ipTip') }}</div>
+          <div class="ip-tip pt-2">{{ $t('cluster_ip_tip') }}</div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <ElButton size="small" @click="editAgentDialog = false">{{ $t('cluster.cancel') }}</ElButton>
+        <ElButton size="small" @click="editAgentDialog = false">{{ $t('button_cancel') }}</ElButton>
         <ElButton size="small" type="primary" @click="submitEditAgent('editAgentForm')">{{
-          $t('cluster.confirm')
+          $t('button_confirm')
         }}</ElButton>
       </div>
-    </el-dialog>
-    <el-dialog
-      :title="$t('cluster.delTittle')"
-      :close-on-click-modal="false"
-      :visible.sync="deleteDialogVisible"
-      width="30%"
-    >
-      <p>
-        {{ $t('cluster.delMessage') }}
-        <span style="color: #409eff; cursor: pointer">
-          {{ delData.agentName }}
-        </span>
-        ?
-      </p>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="deleteDialogVisible = false" size="mini">{{ $t('cluster.cancel') }}</el-button>
-        <el-button type="primary" @click="removeNode(delData.id)" size="mini">{{ $t('cluster.confirm') }}</el-button>
-      </span>
     </el-dialog>
   </section>
 </template>
 <script>
+import FilterBar from '@/components/filter-bar'
 import addServe from './component/addServe'
 import factory from '../../api/factory'
 const cluster = factory('cluster')
@@ -277,7 +279,8 @@ const cluster = factory('cluster')
 // const dataFlows = factory('DataFlows');
 export default {
   components: {
-    addServe
+    addServe,
+    FilterBar
   },
   data() {
     return {
@@ -285,7 +288,6 @@ export default {
       currentData: null,
       dialogForm: false,
       activeIndex: '1',
-      sourch: '',
       serveStatus: '',
       isStop: false,
       engineState: '',
@@ -304,7 +306,17 @@ export default {
       agentName: '',
       currentNde: {},
       delData: '',
-      processIdData: []
+      processIdData: [],
+      searchParams: {
+        keyword: ''
+      },
+      filterItems: [
+        {
+          placeholder: this.$t('modules_name_placeholder'),
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     }
   },
   created() {
@@ -317,10 +329,10 @@ export default {
     this.getDataApi()
     // 这是一个定时器
     // TODO 集群管理轮询替换成webstocek
-    let that = this
-    this.timer = setInterval(() => {
-      that.getDataApi()
-    }, 10000)
+    // let that = this
+    // this.timer = setInterval(() => {
+    //   that.getDataApi()
+    // }, 10000)
   },
   methods: {
     // 获取最大cpu、内存使用率
@@ -364,10 +376,10 @@ export default {
               .then(() => {
                 this.dialogForm = false
                 this.getDataApi()
-                this.$message.success(this.$t('cluster.saveOK'))
+                this.$message.success(this.$t('message_save_ok'))
               })
               .catch(() => {
-                this.$message.error(this.$t('cluster.saveFail'))
+                this.$message.error(this.$t('message_save_fail'))
               })
               .finally(() => {
                 this.dialogForm = false
@@ -379,10 +391,10 @@ export default {
               .then(() => {
                 this.dialogForm = false
                 this.getDataApi()
-                this.$message.success(this.$t('cluster.saveOK'))
+                this.$message.success(this.$t('message_save_ok'))
               })
               .catch(() => {
-                this.$message.error(this.$t('cluster.saveFail'))
+                this.$message.error(this.$t('message_save_fail'))
               })
               .finally(() => {
                 this.dialogForm = false
@@ -390,7 +402,7 @@ export default {
           }
         }
       } else {
-        this.$message.error(this.$t('cluster.startupAfter_add'))
+        this.$message.error(this.$t('cluster_startup_after_add'))
       }
     },
     editServe(item, status, data) {
@@ -406,9 +418,8 @@ export default {
       }
 
       if (status === 'running') {
-        this.$confirm(this.$t('cluster.deleteOrNot') + '?', {
-          confirmButtonText: this.$t('cluster.confirm'),
-          cancelButtonText: this.$t('cluster.cancel')
+        this.$confirm(this.$t('cluster_deleteor_not') + '?', {
+          type: 'warning'
         }).then(resFlag => {
           if (!resFlag) {
             return
@@ -417,14 +428,14 @@ export default {
             .removeMonitor(params)
             .then(() => {
               this.getDataApi()
-              this.$message.success(this.$t('cluster.deleteOK'))
+              this.$message.success(this.$t('message_save_ok'))
             })
             .catch(() => {
-              this.$message.error(this.$t('cluster.deleteFail'))
+              this.$message.error(this.$t('message_save_fail'))
             })
         })
       } else {
-        this.$message.error(this.$t('cluster.startupAfter_delete'))
+        this.$message.error(this.$t('cluster_startup_after_delete'))
       }
     },
     addServeFn(item) {
@@ -440,9 +451,8 @@ export default {
           server: server,
           operation: 'start'
         }
-        this.$confirm(this.$t('cluster.confirmText') + name + this.$t('cluster.restartServer') + '?', {
-          confirmButtonText: this.$t('cluster.confirm'),
-          cancelButtonText: this.$t('cluster.cancel'),
+        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_restart_server') + '?', {
+          type: 'warning',
           closeOnClickModal: false
         }).then(resFlag => {
           if (!resFlag) {
@@ -458,9 +468,9 @@ export default {
       if (server === 'apiServer') {
         name = 'API SEVER'
       } else if (server === 'engine') {
-        name = this.$t('cluster.syncGover')
+        name = this.$t('cluster_sync_gover')
       } else {
-        name = this.$t('cluster.manageSys')
+        name = this.$t('cluster_manage_sys')
       }
       if (status === 'running') {
         let data = {
@@ -468,9 +478,8 @@ export default {
           server: server,
           operation: 'stop'
         }
-        this.$confirm(this.$t('cluster.confirmText') + name + this.$t('cluster.startServer') + '?', {
-          confirmButtonText: this.$t('cluster.confirm'),
-          cancelButtonText: this.$t('cluster.cancel'),
+        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_start_server') + '?', {
+          type: 'warning',
           closeOnClickModal: false
         }).then(resFlag => {
           if (!resFlag) {
@@ -485,9 +494,9 @@ export default {
       if (server === 'apiServer') {
         name = 'API SEVER'
       } else if (server === 'engine') {
-        name = this.$t('cluster.syncGover')
+        name = this.$t('cluster_sync_gover')
       } else {
-        name = this.$t('cluster.manageSys')
+        name = this.$t('cluster_manage_sys')
       }
       if (status === 'running') {
         let data = {
@@ -495,9 +504,8 @@ export default {
           server: server,
           operation: 'restart'
         }
-        this.$confirm(this.$t('cluster.confirmText') + name + this.$t('cluster.restartServer') + '?', {
-          confirmButtonText: this.$t('cluster.confirm'),
-          cancelButtonText: this.$t('cluster.cancel'),
+        this.$confirm(this.$t('cluster_confirm_text') + name + this.$t('cluster_restart_server') + '?', {
+          type: 'warning',
           closeOnClickModal: false
         }).then(resFlag => {
           if (!resFlag) {
@@ -564,15 +572,11 @@ export default {
         }
       })
     },
-    // 筛选
-    rest() {
-      this.sourch = ''
-      this.getDataApi()
-    },
+
     // 获取数据
     async getDataApi() {
       let params = { index: 1 }
-      if (this.sourch) {
+      if (this.searchParams.keyword) {
         params['filter'] = {
           where: {
             or: [
@@ -581,18 +585,18 @@ export default {
                   $exists: false
                 },
                 'systemInfo.hostname': {
-                  like: this.sourch
+                  like: this.searchParams.keyword
                 }
               },
               {
                 agentName: '',
                 'systemInfo.hostname': {
-                  like: this.sourch
+                  like: this.searchParams.keyword
                 }
               },
               {
                 agentName: {
-                  like: this.sourch
+                  like: this.searchParams.keyword
                 }
               }
             ]
@@ -624,20 +628,39 @@ export default {
       this.$refs.childRules.closeDialogForm()
     },
     //删除agent
-    delConfirm(data) {
-      this.deleteDialogVisible = true
-      this.delData = data
-      this.delData.agentName = this.delData.agentName || this.delData.systemInfo.hostname
+    delConfirm(item) {
+      // this.deleteDialogVisible = true
+      // this.delData = data
+      // this.delData.agentName = this.delData.agentName || this.delData.systemInfo.hostname
+      let agentName = item.agentName || item.systemInfo.hostname
+      const h = this.$createElement
+      let message = h('p', [this.$t('cluster_del_delete_or_not') + ' ' + agentName])
+      this.$confirm(message, {
+        type: 'warning'
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        this.$api('modules')
+          .delete(item.id, item.name)
+          .then(() => {
+            this.$message.success(this.$t('message_delete_ok'))
+            this.table.fetch()
+          })
+          .catch(() => {
+            this.$message.info(this.$t('message_delete_fail'))
+          })
+      })
     },
     removeNode(id) {
       this.$api('cluster')
         .delete(id)
         .then(() => {
           this.deleteDialogVisible = false
-          this.$message.success(this.$t('cluster.deleteOK'))
+          this.$message.success(this.$t('message_delete_ok'))
         })
         .catch(() => {
-          this.$message.error(this.$t('cluster.deleteFail'))
+          this.$message.error(this.$t('message_delete_fail'))
         })
     },
     //编辑
@@ -653,7 +676,7 @@ export default {
     submitEditAgent() {
       if (this.agentName === '') {
         this.agentName = this.currentNde.hostname
-        this.$message.error(this.$t('cluster.serverName') + this.$t('cluster.noneText'))
+        this.$message.error(this.$t('cluster_server_name') + this.$t('cluster_none_text'))
         return
       }
       let data = {
@@ -664,10 +687,10 @@ export default {
         .editAgent(this.custId, data)
         .then(() => {
           this.editAgentDialog = false
-          this.$message.success(this.$t('cluster.saveOK'))
+          this.$message.success(this.$t('message_delete_ok'))
         })
         .catch(() => {
-          this.$message.error(this.$t('cluster.saveFail'))
+          this.$message.error(this.$t('message_delete_fail'))
         })
     },
     editNameRest() {
@@ -700,7 +723,7 @@ export default {
       color: #333;
       font-weight: 600;
     }
-    .logBtn {
+    .log_btn {
       font-size: 14px;
       color: #409eff;
       cursor: pointer;
@@ -709,8 +732,9 @@ export default {
   }
   .main {
     flex: 1;
-    padding: 10px;
     display: flex;
+    height: 100%;
+    padding-top: 10px;
     overflow: hidden;
     flex-direction: column;
     .search-bar {
@@ -722,48 +746,65 @@ export default {
     }
     .content {
       width: 100%;
-      padding: 10px;
+      height: 100%;
       box-sizing: border-box;
-      overflow-y: auto;
+      .waterfall {
+        height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
       .list {
         padding: 5px 0 10px 0;
         padding-left: 0;
         overflow: hidden;
         box-sizing: border-box;
-        .listBox {
-          position: relative;
-          margin-bottom: 20px;
-          padding: 0 25px 10px 50px;
+        .list-box {
           background-color: #fff;
-          box-shadow: 0.707px 0.707px 3px rgba(0, 0, 0, 0.13);
-          .boxTop {
-            padding-top: 15px;
+          border-radius: 3px;
+          border: 1px solid #f2f2f2;
+          .list-box-header {
             overflow: hidden;
             display: flex;
             flex-direction: row;
             justify-content: space-between;
+            padding: 12px 16px;
+            .list-box-header-left {
+              display: flex;
+              flex-direction: row;
+              img {
+                width: 43px;
+                height: 43px;
+              }
+              .circular {
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+              }
+              .list-box-header-main {
+                .name {
+                  margin: 0;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                  overflow: hidden;
+                  color: map-get($fontColor, main);
+                }
+                .uuid {
+                  color: map-get($fontColor, sub);
+                }
+                .ip {
+                  display: inline-block;
+                  padding: 2px 10px;
+                  color: #2c65ff;
+                  border-radius: 2px;
+                  background-color: #ebf3fd;
+                }
+              }
+            }
             .iconfont {
               color: #999;
               cursor: pointer;
-              margin-left: 5px;
-            }
-            .circular {
-              display: inline-block;
-              position: absolute;
-              left: 20px;
-              top: 18px;
-              width: 13px;
-              height: 13px;
-              border-radius: 50%;
-              background-color: #f00;
-            }
-            .name {
-              margin: 0;
-              font-size: 18px;
-              color: #409eff;
-              white-space: nowrap;
-              text-overflow: ellipsis;
-              overflow: hidden;
+              margin-left: 10px;
             }
 
             .addBtn {
@@ -773,25 +814,65 @@ export default {
             }
           }
 
-          .boxBottom {
-            padding-top: 10px;
+          .list-box-main {
+            display: flex;
+            justify-content: center;
+            padding: 16px 0;
+            text-align: center;
+            border-top: 1px solid #f2f2f2;
+            .usageRate {
+              width: 50%;
+              text-align: center;
+              font-size: 12px;
+              font-weight: 400;
+              color: map-get($fontColor, sub);
+              div {
+                color: map-get($fontColor, main);
+              }
+            }
+            .line {
+              width: 1px;
+              height: 50px;
+              background-color: #f2f2f2;
+            }
+          }
+
+          .list-box-footer {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 16px;
+            justify-content: center;
+            .list-box-footer-header {
+              width: 100%;
+              height: 35px;
+              margin: 0 !important;
+              line-height: 35px;
+              font-size: 12px;
+              background-color: #fafafa;
+            }
             .data-list {
               width: 100%;
+              margin: 0 !important;
               margin-bottom: 5px;
               line-height: 35px;
-              background-color: #f0fafe;
-              list-style: none;
+              border-bottom: 1px solid #f2f2f2;
+              &:last-child {
+                border-bottom: 0;
+              }
               .txt {
                 display: inline-block;
                 width: 120px;
-                //padding-left: 15px;
                 font-size: 12px;
-                color: #000;
+                color: map-get($fontColor, main);
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 i {
                   padding-right: 5px;
                 }
+              }
+              .status {
+                padding: 3px 10px;
+                border-radius: 2px;
               }
 
               .btn {
@@ -803,6 +884,14 @@ export default {
                 transform: rotate(180deg);
                 cursor: pointer;
               }
+            }
+            .running {
+              color: #178061;
+              background-color: #c4f3cb;
+            }
+            .stopped {
+              color: #d44d4d;
+              background-color: #ffecec;
             }
           }
         }
@@ -843,7 +932,7 @@ export default {
       }
     }
   }
-  .noText {
+  .no-text {
     display: flex;
     height: calc(100% - 60px);
     align-items: center;
@@ -852,15 +941,14 @@ export default {
     font-size: 16px;
     background-color: #fff;
   }
-  .editAgentForm {
-    .restBtn {
+  .edit-agent-form {
+    .rest-btn {
       display: inline-block;
       margin-left: 10px;
-      color: #409eff;
       cursor: pointer;
     }
-    .ipTip {
-      color: #999;
+    .ip-tip {
+      color: rgba(0, 0, 0, 0.46);
       font-size: 12px;
       line-height: 15px;
     }
@@ -869,7 +957,7 @@ export default {
 </style>
 <style lang="scss">
 .clusterManagement-container {
-  .editAgentForm {
+  .edit-agent-form {
     .el-form-item {
       margin-bottom: 15px;
     }

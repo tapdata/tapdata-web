@@ -1,6 +1,6 @@
 <template>
   <div class="composite-panel flex">
-    <div class="composite-panel-tabs border-end">
+    <!--<div class="composite-panel-tabs border-end">
       <div
         v-for="(item, i) in tabItems"
         :key="i"
@@ -15,13 +15,15 @@
           <VIcon size="20">{{ item.name }}</VIcon>
         </ElTooltip>
       </div>
-    </div>
+    </div>-->
     <div class="composite-panel-tabs-content h-100 border-end">
       <div class="composite-panel-tabs-header px-2 flex justify-space-between align-center border-bottom">
         <div class="composite-panel-tabs-header-title">{{ tabItems[activeTab].title }}</div>
         <div class="composite-panel-tabs-header-actions"></div>
       </div>
-      <div class="composite-panel-tabs-body"></div>
+      <div class="composite-panel-tabs-body">
+        <ResourceWidget title="sources.Inputs" :sources="sources"></ResourceWidget>
+      </div>
     </div>
   </div>
 </template>
@@ -31,13 +33,16 @@ import VIcon from 'web-core/components/VIcon'
 import 'web-core/assets/icons/svg/component.svg'
 import 'web-core/assets/icons/svg/outline.svg'
 import 'web-core/assets/icons/svg/history.svg'
+import { ResourceWidget } from './widgets/ResourceWidget'
+import { Input, Select, InputNumber } from '../sources'
 
 export default {
   name: 'CompositePanel',
-  components: { VIcon },
+  components: { VIcon, ResourceWidget },
 
   data() {
     return {
+      sources: [Input, Select, InputNumber],
       tabItems: [
         {
           name: 'component',
@@ -66,7 +71,7 @@ export default {
 
 <style scoped lang="scss">
 .composite-panel {
-  width: 350px;
+  //width: 350px;
 
   &-tabs-content {
     width: 300px;
@@ -74,6 +79,10 @@ export default {
 
   &-tabs-header {
     height: 48px;
+  }
+
+  &-tabs-body {
+    overflow-x: hidden;
   }
 
   &-tab {

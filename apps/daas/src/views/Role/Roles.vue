@@ -58,7 +58,7 @@
           >
             {{ $t('role_list_setting_permissions') }}
           </el-button>
-
+          <ElDivider direction="vertical"></ElDivider>
           <el-button
             type="text"
             @click="handleAssociatUsers(scope.row.id)"
@@ -67,6 +67,7 @@
           >
             {{ $t('role_list_associat_users') }}
           </el-button>
+          <ElDivider direction="vertical"></ElDivider>
           <el-button
             type="text"
             v-readonlybtn="'role_edition'"
@@ -75,6 +76,7 @@
           >
             {{ $t('button_edit') }}
           </el-button>
+          <ElDivider direction="vertical"></ElDivider>
           <el-button
             type="text"
             @click="handleDelete(scope.row)"

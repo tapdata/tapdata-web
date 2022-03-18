@@ -126,6 +126,7 @@ $unreadColor: #ee5353;
       }
     }
     .main-panel {
+      position: relative;
       flex: 1;
     }
   }
