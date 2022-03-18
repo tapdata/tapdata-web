@@ -1,4 +1,4 @@
-@import "../../../variables";
+@import '../../../variables';
 
 .#{$prefix-cls}-designable-form {
   .el-input,
@@ -21,7 +21,8 @@
   .el-upload,
   .el-transfer,
   .el-select,
-  .el-select-selector {
+  .el-select-selector,
+  .el-input__suffix-inner {
     pointer-events: none !important;
 
     input {
