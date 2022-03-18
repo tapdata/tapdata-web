@@ -1,6 +1,6 @@
 import VIcon from 'web-core/components/VIcon'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
-import { h, connect, mapProps, useForm, useField, useFieldSchema, RecursionField } from '@formily/vue'
+import { h as createElement, connect, mapProps, useForm, useField, useFieldSchema, RecursionField } from '@formily/vue'
 import { defineComponent } from '@vue/composition-api/dist/vue-composition-api'
 import { observer } from '@formily/reactive-vue'
 import { FormBaseItem as FormItem, FormLayout } from '@formily/element'
@@ -60,7 +60,6 @@ export const JoinExpression = connect(
 
       setup() {
         const formRef = useForm()
-        const form = formRef.value
         const field = useField()
         const schemaRef = useFieldSchema()
         const schema = schemaRef.value.items.properties
@@ -80,8 +79,8 @@ export const JoinExpression = connect(
         }
 
         return {
-          form,
-          formValue: form.values,
+          form: formRef,
+          formValue: formRef.value.values,
           address: field.value.address,
           leftSchema,
           rightSchema
@@ -105,21 +104,29 @@ export const JoinExpression = connect(
               {this.fieldArr.map((item, i) => (
                 <div class="flex join-expression-row" key={i}>
                   <div class="join-field">
-                    {h(RecursionField, {
-                      props: {
-                        name: i,
-                        schema: this.leftSchema
-                      }
-                    })}
+                    {createElement(
+                      RecursionField,
+                      {
+                        props: {
+                          name: i,
+                          schema: this.leftSchema
+                        }
+                      },
+                      {}
+                    )}
                   </div>
                   <FormItem class="join-operator">=</FormItem>
                   <div class="join-field">
-                    {h(RecursionField, {
-                      props: {
-                        name: i,
-                        schema: this.rightSchema
-                      }
-                    })}
+                    {createElement(
+                      RecursionField,
+                      {
+                        props: {
+                          name: i,
+                          schema: this.rightSchema
+                        }
+                      },
+                      {}
+                    )}
                   </div>
                   <FormItem>
                     <ElButton class="ml-3 align-middle" size="mini" type="text" onClick={() => this.handleAdd()}>

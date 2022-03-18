@@ -611,21 +611,20 @@ export default {
         const statistics = data.statistics?.[0] || {}
         const { overData, writeData } = this
         // 总输入总输出
-        if (!isEmpty(countObj)) {
-          for (let key in overData) {
-            // let l = countObj[key].length
-            let val0 = countObj[key]?.[0] || 0
-            let val1 = countObj[key]?.[1] || 0
-            // 默认是查询任务的，不做叠加
-            if (selectedTime === 'default') {
-              overData[key] = Math.max(val1, val0)
-            } else if (reset) {
-              overData[key] = val1 - val0
-            } else {
-              overData[key] += val1 - val0
-            }
+        // if (!isEmpty(countObj)) {
+        for (let key in overData) {
+          let val0 = countObj[key]?.[0] || 0
+          let val1 = countObj[key]?.[1] || 0
+          // 默认是查询任务的，不做叠加
+          if (selectedTime === 'default') {
+            overData[key] = Math.max(val1, val0)
+          } else if (reset) {
+            overData[key] = val1 - val0
+          } else {
+            overData[key] += val1 - val0
           }
         }
+        // }
         for (let key in writeData) {
           writeData[key] = statistics[key]
         }

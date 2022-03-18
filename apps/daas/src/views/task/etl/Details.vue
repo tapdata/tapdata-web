@@ -5,21 +5,21 @@
         <div class="task-info__img flex justify-center align-items-center mr-8">
           <img src="../../../assets/images/task/task.png" alt="" />
         </div>
-        <div>
+        <div style="flex: 1">
           <div class="flex align-items-center">
             <span class="fs-6 color-primary">{{ task.name }}</span>
           </div>
-          <div class="flex align-items-center mt-4" style="height: 30px">
+          <div class="flex flex-wrap align-items-center">
             <div
               v-for="(item, index) in infoItems"
               :key="index"
-              :class="['flex', 'align-items-center', { 'ml-6': index !== 0 }]"
+              :class="['flex', 'align-items-center', 'mr-6', 'mt-4']"
             >
               <VIcon size="12" class="v-icon">{{ item.icon }}</VIcon>
               <span class="ml-1">{{ item.label }}</span>
               <span>{{ task[item.key] }}</span>
             </div>
-            <div class="ml-6 flex align-items-center">
+            <div class="mr-6 mt-4 flex align-items-center">
               <VIcon size="12" class="v-icon">document</VIcon>
               <span class="ml-1">{{ $t('task_details_desc') }}：</span>
               <InlineInput
@@ -593,7 +593,7 @@ export default {
     width: 100px;
     height: 100px;
   }
-  max-width: 350px;
+  width: 250px;
   border-left: 1px solid #e8e8e8;
 }
 .pie-status__item {

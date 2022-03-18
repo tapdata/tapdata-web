@@ -7,7 +7,9 @@
       :transform="transform"
       :getDataFlow="getDataFlow"
     ></FieldMapping>
+    <div class="total">共有{{ tableData.length }}个字段</div>
     <ElTable v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
+      <ElTableColumn type="index" label="序号"> </ElTableColumn>
       <ElTableColumn prop="field_name" label="字段名称">
         <template #default="{ row }">
           <span class="flex align-center"
@@ -134,5 +136,9 @@ export default {
 .metadata-list-wrap {
   height: 100%;
   overflow: auto;
+  .total {
+    margin-left: 10px;
+    color: map-get($color, info);
+  }
 }
 </style>

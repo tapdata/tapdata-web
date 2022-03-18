@@ -116,6 +116,7 @@ export default {
       activeStep: 0,
       id: '',
       loading: false,
+      stateIsReadonly: false, //只读模式
       //第一步 配置源端
       dataSourceData: DATASOURCE_MODEL,
       sourceId: '',
@@ -135,6 +136,13 @@ export default {
   },
   created() {
     this.id = this.$route.params.id
+    if (this.$route.name === 'MigrateViewer') {
+      this.$store.commit('dataflow/setStateReadonly', true)
+    } else {
+      this.$store.commit('dataflow/setStateReadonly', false)
+    }
+    //读取当前的store
+    this.stateIsReadonly = this.$store.state.dataflow.stateIsReadonly
     if (this.id) {
       this.intiData(this.id)
     } else {
@@ -198,7 +206,7 @@ export default {
     },
     getSteps() {
       this.steps = []
-      if (this.id) {
+      if (this.id && !this.stateIsReadonly) {
         //编辑模式 没有第一步
         this.steps = [
           { index: 2, text: this.$t('task_form_task_setting'), type: 'setting', showExitBtn: true, showNextBtn: true },
@@ -444,6 +452,12 @@ export default {
       return promise
     },
     save() {
+      if (this.stateIsReadonly) {
+        this.$router.push({
+          name: 'migrate'
+        })
+        return
+      }
       let verify = this.checkTransfer()
       if (!verify) {
         this.$message.error('请先选择表')

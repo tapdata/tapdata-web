@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import { isObject, uuid } from '@daas/shared'
-import { Task } from '@daas/api'
+import { Task, CustomNode } from '@daas/api'
 import { debounce } from 'lodash'
 import { AddDagCommand } from './command'
 
 const taskApi = new Task()
+const customNodeApi = new CustomNode()
 
 const find = (obj, nameParts, conditions) => {
   if (!nameParts.length) return obj
@@ -67,7 +68,7 @@ const state = () => ({
     {
       icon: 'join',
       name: '连接',
-      type: 'join',
+      type: 'join_processor',
       constructor: 'Join'
     },
     {
@@ -134,6 +135,8 @@ const getters = {
     if (nodeType === 'database') {
       const dbType = node.databaseType
       foundType = allNodeTypes.find(typeData => typeData.type === nodeType && typeData.attr.databaseType === dbType)
+    } else if (nodeType === 'custom_processor') {
+      foundType = state.processorNodeTypes.find(typeData => typeData.attr?.customNodeId === node.customNodeId)
     } else {
       foundType = allNodeTypes.find(typeData => typeData.type === nodeType)
     }
@@ -224,6 +227,26 @@ const actions = {
   async addNodeAsync({ dispatch, commit }, nodeData) {
     commit('addNode', nodeData)
     await dispatch('updateDag')
+  },
+
+  async loadCustomNode({ commit }) {
+    const { items } = await customNodeApi.get()
+    commit(
+      'addProcessorNode',
+      items.map(item => {
+        return {
+          icon: 'custom-node',
+          name: item.name,
+          type: 'custom_processor',
+          constructor: 'CustomProcessor',
+          attr: {
+            customNodeId: item.id,
+            formSchema: item.formSchema
+          }
+        }
+      })
+    )
+    // console.log('loadCustomNode', data)
   }
 }
 
@@ -606,6 +629,10 @@ const mutations = {
       // 存储
       localStorage['DAG_CLIPBOARD'] = JSON.stringify(dag)
     }
+  },
+
+  addProcessorNode(state, nodes) {
+    state.processorNodeTypes.push(...nodes)
   }
 }
 

@@ -3,9 +3,14 @@
     <div class="reload-schema flex justify-content-between mb-5">
       <div class="text-wrap" style="width: 240px">
         {{ this.$t('task_form_no_table_available') }}
-        <el-button class="border-0" type="text" :loading="reloadLoading" @click="reload()">{{
-          this.$t('task_form_reload')
-        }}</el-button>
+        <el-button
+          class="border-0"
+          type="text"
+          :disabled="stateIsReadonly"
+          :loading="reloadLoading"
+          @click="reload()"
+          >{{ this.$t('task_form_reload') }}</el-button
+        >
         <span v-if="showProgress" class="ml-2"><VIcon>loading</VIcon> {{ progress }} %</span>
       </div>
       <div>
@@ -94,6 +99,7 @@ export default {
 
   data() {
     return {
+      stateIsReadonly: this.$store.state.dataflow.stateIsReadonly,
       transferLoading: false,
       showOperationBtn: false,
       dialogTableVisible: false,
@@ -116,7 +122,7 @@ export default {
   mounted() {
     this.getTable(this.sourceId)
     this.tranModelVersionControl()
-    if (!this.transferData.automaticallyCreateTables) {
+    if (!this.transferData.automaticallyCreateTables || this.stateIsReadonly) {
       this.transferData.mode = 'readOnly'
     } else this.transferData.mode = 'all'
   },
@@ -142,7 +148,7 @@ export default {
                 .map(table => ({
                   label: table.table_name,
                   key: table.table_name,
-                  disabled: this.disabled,
+                  disabled: this.stateIsReadonly,
                   id: table.id
                 }))
                 .reduce((item, next) => {

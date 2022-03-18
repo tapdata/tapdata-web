@@ -135,6 +135,7 @@ export default {
   page_title_role: '角色管理',
   page_title_setting: '系統設置',
   page_title_license: 'License管理',
+  page_title_custom_node: '自定義節點',
 
   // app
   app_license_expire_warning: '提醒：License剩餘 {0} 天到期',
@@ -1479,5 +1480,9 @@ export default {
   license_try_out: '試用',
   license_copied_clipboard: '已復製到剪貼板',
   license_select_node: '請先選擇節點',
-  license_renew_success: '更新成功'
+  license_renew_success: '更新成功',
+  // 自定义节点
+  custom_node_name: '節點名稱',
+  custom_node_name_placeholder: '請輸入節點名稱搜索',
+  custom_node_name_required: '請輸入節點名稱'
 }

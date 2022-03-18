@@ -77,6 +77,7 @@
       </div>
 
       <el-table-column
+        reserve-selection
         type="selection"
         width="45"
         :selectable="row => !row.hasChildren && !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
@@ -265,7 +266,7 @@
 <script>
 import factory from '../../../api/factory'
 const dataFlows = factory('DataFlows')
-const MetadataInstance = factory('MetadataInstances')
+const Task = factory('Task')
 // const cluster = factory('cluster');
 import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
@@ -739,12 +740,7 @@ export default {
       )
     },
     export(ids) {
-      let where = {
-        _id: {
-          in: ids
-        }
-      }
-      MetadataInstance.download(where, 'DataFLow')
+      Task.export(ids)
     },
     start(ids) {
       let _this = this

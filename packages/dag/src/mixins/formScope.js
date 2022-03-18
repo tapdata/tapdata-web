@@ -347,7 +347,7 @@ export default {
             }, [])
           }
           const data = {}
-          result.forEach((item, i) => {
+          result.forEach(([item], i) => {
             if (item) data[sourceArr[i].source] = item.fields
           })
           return data

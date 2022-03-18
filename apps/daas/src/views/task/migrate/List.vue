@@ -57,17 +57,6 @@
           </el-dropdown-menu>
         </el-dropdown>
         <el-button
-          v-if="$getSettingByKey('SHOW_CLASSIFY')"
-          v-readonlybtn="'SYNC_category_application'"
-          size="mini"
-          class="btn message-button-cancel"
-          v-show="multipleSelection.length > 0"
-          @click="$refs.table.showClassify(handleSelectTag())"
-        >
-          <i class="iconfont icon-biaoqian back-btn-icon"></i>
-          <span> {{ $t('dataFlow.taskBulkTag') }}</span>
-        </el-button>
-        <el-button
           v-readonlybtn="'SYNC_job_import'"
           size="mini"
           class="btn message-button-cancel"
@@ -89,6 +78,7 @@
       </div>
 
       <el-table-column
+        reserve-selection
         type="selection"
         width="45"
         :selectable="row => !row.hasChildren && !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
@@ -182,6 +172,7 @@
                 <i class="el-icon-more"></i>
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
+                <el-dropdown-item command="toView">{{ $t('dataFlow.view') }}</el-dropdown-item>
                 <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
                   $t('task_list_verify')
                 }}</el-dropdown-item>
@@ -273,7 +264,7 @@
 <script>
 import factory from '../../../api/factory'
 const dataFlows = factory('DataFlows')
-const MetadataInstance = factory('MetadataInstances')
+const Task = factory('Task')
 // const cluster = factory('cluster');
 import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
@@ -615,19 +606,7 @@ export default {
     handleEditor(id) {
       const h = this.$createElement
       this.$confirm(
-        h('p', null, [
-          h('span', null, this.$t('dataFlow.modifyEditText')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeLayoutProcess')),
-          h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeAttributes')),
-          h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.matchingRelationship')),
-          h('span', null, '，'),
-          h('span', null, this.$t('dataFlow.afterSubmission')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.reset')),
-          h('span', null, this.$t('dataFlow.runNomally')),
-          h('span', null, this.$t('dataFlow.editLayerTip'))
-        ]),
+        h('p', null, [h('span', null, this.$t('task_list_edit_confirm'))]),
         this.$t('dataFlow.importantReminder'),
         {
           customClass: 'dataflow-clickTip',
@@ -699,13 +678,19 @@ export default {
       }
       this[command](ids, node)
     },
+    toView([id]) {
+      window.open(
+        this.$router.resolve({
+          name: 'MigrateViewer',
+          params: {
+            id
+          }
+        }).href,
+        'viewer_' + id
+      )
+    },
     export(ids) {
-      let where = {
-        _id: {
-          in: ids
-        }
-      }
-      MetadataInstance.download(where, 'DataFLow')
+      Task.export(ids)
     },
     start(ids) {
       let _this = this
@@ -1124,7 +1109,6 @@ export default {
       }
       .btn {
         height: 28px;
-        padding: 0 16px;
         i.iconfont {
           font-size: 12px;
         }

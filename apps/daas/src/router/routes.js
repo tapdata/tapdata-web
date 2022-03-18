@@ -50,6 +50,11 @@ export default [
   },
   {
     path: '/node/editor',
+    name: 'NodeNew',
+    component: NodeEditor
+  },
+  {
+    path: '/node/editor/:id',
     name: 'NodeEditor',
     component: NodeEditor
   },
@@ -171,6 +176,15 @@ export default [
             }
           },
           {
+            path: 'viewer/:id',
+            name: 'MigrateViewer',
+            component: MigrateForm,
+            meta: {
+              title: 'page_title_task_edit',
+              code: 'Data_SYNC_menu'
+            }
+          },
+          {
             path: 'editor/:id',
             name: 'MigrateEditor',
             component: MigrateForm,
@@ -281,7 +295,7 @@ export default [
           {
             path: ':id/edit',
             name: 'dataVerificationEdit',
-            component: () => import('@/views/dataVerification/Form'),
+            component: () => import('@/views/dataVerification/2.0/Form'),
             meta: {
               title: 'page_title_task_edit',
               code: 'verify_job_edition'
@@ -417,6 +431,25 @@ export default [
             meta: {
               title: 'page_title_function_details',
               code: 'SYNC_Function_management'
+            }
+          }
+        ]
+      },
+      /* ---------- 自定义节点  ----------*/
+      {
+        path: '/customNode',
+        name: 'customNode',
+        component: Parent,
+        meta: {
+          title: 'page_title_custom_node'
+        },
+        children: [
+          {
+            path: '',
+            name: 'customNodeList',
+            component: () => import('@/views/customNode/List'),
+            meta: {
+              title: 'page_title_custom_node'
             }
           }
         ]
