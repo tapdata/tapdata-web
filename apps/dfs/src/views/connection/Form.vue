@@ -58,7 +58,13 @@
         </div>
         <div class="form-wrap">
           <div class="form">
-            <form-builder ref="form" class="form-builder grey" v-model="model" :config="config">
+            <form-builder
+              ref="form"
+              class="form-builder grey"
+              v-model="model"
+              :config="config"
+              @value-change="formChange"
+            >
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
             </form-builder>
             <el-button v-if="databaseType === 'hazelcast_cloud_cluster'" type="text" size="mini" @click="startTest()">{{
@@ -222,6 +228,14 @@ export default {
   created() {
     this.init()
   },
+  destroyed() {
+    if (this.$ws) {
+      return
+    }
+    if (this.model.database_type === 'vika') {
+      this.$ws.off('loadVika', this.setSpaceVika)
+    }
+  },
   watch: {
     $route() {
       this.init()
@@ -357,6 +371,15 @@ export default {
           ]
         }
       ]
+      this.loadWs()
+    },
+    loadWs() {
+      if (this.$ws) {
+        return
+      }
+      if (this.model.database_type === 'vika') {
+        this.$ws.on('loadVika', this.setSpaceVika)
+      }
     },
     async initData(data) {
       let editData = null
@@ -380,6 +403,10 @@ export default {
 
         this.renameData.rename = this.model.name
         this.model.isUrl = false
+        if (this.model.database_type === 'vika') {
+          //初始化维格表
+          this.getSpaceVika(this.$route.params.id)
+        }
       } else {
         this.model = Object.assign(this.model, data, { name: this.model.name })
         this.model.isUrl = true
@@ -458,7 +485,8 @@ export default {
           sslCA.rules = []
         }
         let plain_password = items.find(it => it.field === 'plain_password')
-        if (this.model.database_type === 'hazelcast_cloud_cluster' && id && plain_password) {
+        //编辑模式下vika不校验plain_password
+        if (['hazelcast_cloud_cluster', 'vika'].includes(this.model.database_type) && id && plain_password) {
           plain_password.required = false
         }
         if (id) {
@@ -671,6 +699,40 @@ export default {
             })
         }
       })
+    },
+    formChange(data) {
+      let filed = data.field || ''
+      let value = data.value
+      //维格表
+      if (filed === 'plain_password' && this.model.database_type === 'vika') {
+        this.getSpaceVika()
+      }
+    },
+    //获取维格表的空间
+    getSpaceVika(id) {
+      if ((!this.model.plain_password || this.model.plain_password === '') && !id) {
+        return
+      }
+
+      this.$ws.send({
+        type: 'loadVika',
+        load_type: 'space',
+        api_token: this.model.plain_password || 'uskqJoFhJzKindGHykV5UEJ',
+        database_host: 'https://api.vika.cn/fusion/v1'
+      })
+    },
+    setSpaceVika(data) {
+      let vika_space_id = this.config.items.find(it => it.field === 'vika_space_id')
+      if (vika_space_id) {
+        vika_space_id.options = data.map(item => {
+          return {
+            id: item.id,
+            name: item.name,
+            label: item.name,
+            value: item.id
+          }
+        })
+      }
     }
   }
 }

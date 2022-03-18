@@ -195,6 +195,15 @@ export const DEFAULT_MODEL = {
     additionalString: '',
     database_datetype_without_timezone: ''
   }
+  // vika: {
+  //   name: '',
+  //   database_type: '',
+  //   connection_type: '',
+  //   database_host: '',
+  //   plain_password: '',
+  //   vika_space_name: '',
+  //   vika_space_id: ''
+  // }
 }
 export const CONFIG_MODEL = {
   default: [
