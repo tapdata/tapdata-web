@@ -226,15 +226,11 @@ export default {
     }
   },
   created() {
+    this.loadWs()
     this.init()
   },
   destroyed() {
-    if (this.$ws) {
-      return
-    }
-    if (this.model.database_type === 'vika') {
-      this.$ws.off('loadVika', this.setSpaceVika)
-    }
+    this.clearWs()
   },
   watch: {
     $route() {
@@ -262,6 +258,8 @@ export default {
         this.model = Object.assign({}, DEFAULT_MODEL['default'], DEFAULT_MODEL['gridfs'])
       } else if (type === 'tcp_udp') {
         this.model = Object.assign({}, DEFAULT_MODEL['tcp'])
+      } else if (type === 'vika') {
+        this.model = Object.assign({}, DEFAULT_MODEL['vika'])
       } else if (DEFAULT_MODEL[type]) {
         this.model = Object.assign({}, DEFAULT_MODEL[type])
       }
@@ -371,14 +369,19 @@ export default {
           ]
         }
       ]
-      this.loadWs()
     },
     loadWs() {
-      if (this.$ws) {
+      if (!this.$ws) {
+        return
+      }
+      this.$ws.on('loadVikaResult', this.setSpaceVika)
+    },
+    clearWs() {
+      if (!this.$ws) {
         return
       }
       if (this.model.database_type === 'vika') {
-        this.$ws.on('loadVika', this.setSpaceVika)
+        this.$ws.off('loadVikaResult', this.setSpaceVika)
       }
     },
     async initData(data) {
@@ -728,17 +731,12 @@ export default {
         }
         this.$ws.send(obj)
       })
-      // this.$ws.send({
-      //   type: 'loadVika',
-      //   load_type: 'space',
-      //   api_token: this.model.plain_password || 'uskqJoFhJzKindGHykV5UEJ',
-      //   database_host: 'https://api.vika.cn/fusion/v1'
-      // })
     },
     setSpaceVika(data) {
+      let result = data?.result || []
       let vika_space_id = this.config.items.find(it => it.field === 'vika_space_id')
       if (vika_space_id) {
-        vika_space_id.options = data.map(item => {
+        vika_space_id.options = result.map(item => {
           return {
             id: item.id,
             name: item.name,
