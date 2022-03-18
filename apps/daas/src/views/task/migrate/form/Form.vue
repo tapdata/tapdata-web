@@ -368,6 +368,7 @@ export default {
         dataFlowType: 'normal' //区分创建方式
       }
       postData = Object.assign({}, postData, this.settingData)
+      postData.type = this.settingData.sync_type
       //第四步 数据组装
       let selectTable = []
       if (this.transferData) {
