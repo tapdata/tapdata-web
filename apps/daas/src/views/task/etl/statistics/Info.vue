@@ -628,22 +628,6 @@ export default {
         for (let key in writeData) {
           writeData[key] = statistics[key]
         }
-        // 全量预计完成时间
-        this.initialData.length >= 2 && this.initialData.shift()
-        this.initialData.push(
-          Object.assign(
-            {
-              time: new Date().getTime()
-            },
-            writeData
-          )
-        )
-        if (this.initialData.length >= 2) {
-          const getForecastMs = this.getForecastMs(this.initialData)
-          if (getForecastMs) {
-            this.forecast = getForecastMs
-          }
-        }
         // 折线图
         const qpsData = samples[0] || {}
         let { inputQPS = [], outputQPS = [] } = qpsData
@@ -768,20 +752,6 @@ export default {
         result.push(i)
       }
       return result.slice(1)
-    },
-    getForecastMs(data) {
-      const [start, end] = data
-      const num = end.initialWrite - start.initialWrite
-      const timeDiff = end.time - start.time
-      if (!num) {
-        return
-      }
-      const speed = num / timeDiff
-      if (!speed) {
-        return
-      }
-      const result = (end.initialTotal - start.initialWrite) / speed
-      return formatMs(result)
     },
     formatTime(date) {
       return formatTime(date)
