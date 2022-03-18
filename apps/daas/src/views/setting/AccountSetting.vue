@@ -6,11 +6,12 @@
         <li v-for="item in infoList" :key="item.key">
           <span class="label">{{ item.label }}</span>
           <span class="text"> {{ item.value }} </span>
-          <i
+          <ElButton type="text" v-if="item.key !== 'email'" @click="handleChange(item.key)">{{ item.icon }}</ElButton>
+          <!-- <i
             :class="['iconfont', item.icon, rotateFlag && item.key == 'accessCode' ? 'rotateActive' : 'backActive']"
             v-if="item.key !== 'email'"
             @click="handleChange(item.key)"
-          ></i>
+          ></i> -->
         </li>
       </ul>
     </div>
@@ -72,7 +73,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="save">{{ $t('app.save') }}</el-button>
+        <el-button type="primary" size="mini" @click="save">{{ $t('app.save') }}</el-button>
       </div>
     </el-dialog>
     <!-- 修改邮箱 -->
@@ -91,7 +92,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="send">{{ $t('account.sendEmail') }}</el-button>
+        <el-button type="primary" size="mini" @click="send">{{ $t('account.sendEmail') }}</el-button>
       </div>
     </el-dialog>
     <!-- 用户名称 -->
@@ -113,7 +114,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="confirm">{{ $t('dialog.downAgent.ok') }}</el-button>
+        <el-button type="primary" size="mini" @click="confirm">{{ $t('dialog.downAgent.ok') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -169,25 +170,25 @@ export default {
           label: this.$t('account.email'),
           value: '',
           key: 'email',
-          icon: 'icon-bibianji'
+          icon: this.$t('button_revise')
         },
         {
           label: this.$t('account.userName'),
           value: '',
           key: 'username',
-          icon: 'icon-bibianji'
+          icon: this.$t('button_revise')
         },
         {
           label: this.$t('account.password'),
           value: '******',
           key: 'password',
-          icon: 'icon-bibianji'
+          icon: this.$t('button_revise')
         },
         {
           label: this.$t('account.accessCode'),
           value: '',
           key: 'accessCode',
-          icon: 'icon-shuaxin3'
+          icon: this.$t('button_refresh')
         }
       ],
       emailDialogFalg: false,
@@ -404,16 +405,15 @@ $unreadColor: #ee5353;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  margin: 30px 0 0 20px;
+  padding: 30px 0 0 20px;
   .title {
-    padding-bottom: 30px;
-    font-size: 18px;
-    color: #333;
+    padding-bottom: 20px;
+    font-size: 14px;
+    color: #1d2129;
     font-weight: bold;
   }
   .content {
     width: 600px;
-    padding-left: 30px;
     li {
       display: flex;
       padding: 20px 0;
@@ -449,10 +449,6 @@ $unreadColor: #ee5353;
     //   border-radius: 0;
     //   border-bottom: 1px solid #d9d9d9;
     // }
-  }
-
-  .el-button {
-    padding: 12px 30px;
   }
 }
 </style>

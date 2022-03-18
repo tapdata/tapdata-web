@@ -5,73 +5,83 @@
         <div class="notification-head">
           <div class="title">{{ $t('notification.systemNotice') }}</div>
         </div>
-        <div style="overflow-y: auto">
-          <section style="color: #999">
+        <div class="notification-main-box" style="overflow-y: auto">
+          <section class="notification-tip">
             {{ $t('notification.tip') }}
           </section>
           <section class="run-notification" v-show="runNotification && runNotification.length > 0">
-            <span class="block"></span><span class="title">{{ $t('notification.jobOperationNotice') }}</span>
+            <span class="title">{{ $t('notification.jobOperationNotice') }}</span>
             <ul>
               <li v-for="(item, index) in runNotification" :key="index">
                 <span class="label">{{ notificationMAP[item.label] }}</span>
                 <el-checkbox class="notice" v-model="item.notice">{{ $t('notification.systemNotice') }}</el-checkbox>
                 <el-checkbox class="email" v-model="item.email">{{ $t('notification.emailNotice') }}</el-checkbox>
-                <span class="sort-label" v-if="item.lagTime">{{ notificationMAP[item.lagTime] }}</span>
-                <span v-if="item.label === 'CDCLagTime'">
-                  <el-input
-                    v-model="item.lagTimeInterval"
-                    class="item-input"
-                    size="mini"
-                    onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-                    onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-                  >
-                    <el-select v-model="item.lagTimeUtil" slot="append" placeholder="请选择" class="input-with-select">
-                      <el-option label="hour" value="hour"></el-option>
-                      <el-option label="second" value="second"></el-option>
-                    </el-select>
-                  </el-input>
-                </span>
-                <span class="sort-label" v-if="item.noticeInterval && item.email">{{
-                  notificationMAP[item.noticeInterval]
-                }}</span>
-                <span v-if="item.label === 'CDCLagTime' && item.email">
-                  <el-input
-                    v-model="item.noticeIntervalInterval"
-                    class="item-input"
-                    size="mini"
-                    onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-                    onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-                  >
-                    <el-select
-                      v-model="item.noticeIntervalUtil"
-                      slot="append"
-                      placeholder="请选择"
-                      class="input-with-select"
+                <div class="mt-4" v-if="item.lagTime">
+                  <span class="sort-label label" v-if="item.lagTime">{{ notificationMAP[item.lagTime] }}</span>
+                  <span v-if="item.label === 'CDCLagTime'">
+                    <el-input
+                      v-model="item.lagTimeInterval"
+                      class="item-input"
+                      size="mini"
+                      onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                      onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
                     >
-                      <el-option label="hour" value="hour"></el-option>
-                      <el-option label="second" value="second"></el-option>
-                    </el-select>
-                  </el-input>
-                </span>
-                <span v-if="item.label === 'jobEncounterError' && item.email">
-                  <el-input
-                    v-model="item.Interval"
-                    class="item-input"
-                    size="mini"
-                    onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-                    onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-                  >
-                    <el-select v-model="item.util" slot="append" placeholder="请选择" class="input-with-select">
-                      <el-option label="hour" value="hour"></el-option>
-                      <el-option label="second" value="second"></el-option>
-                    </el-select>
-                  </el-input>
-                </span>
+                      <el-select
+                        v-model="item.lagTimeUtil"
+                        slot="append"
+                        placeholder="请选择"
+                        class="input-with-select"
+                      >
+                        <el-option label="hour" value="hour"></el-option>
+                        <el-option label="second" value="second"></el-option>
+                      </el-select>
+                    </el-input>
+                  </span>
+                </div>
+
+                <div class="mt-4" v-if="item.noticeInterval && item.email">
+                  <span class="sort-label label" v-if="item.noticeInterval && item.email">
+                    {{ notificationMAP[item.noticeInterval] }}
+                  </span>
+                  <span v-if="item.label === 'CDCLagTime' && item.email">
+                    <el-input
+                      v-model="item.noticeIntervalInterval"
+                      class="item-input"
+                      size="mini"
+                      onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                      onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+                    >
+                      <el-select
+                        v-model="item.noticeIntervalUtil"
+                        slot="append"
+                        placeholder="请选择"
+                        class="input-with-select"
+                      >
+                        <el-option label="hour" value="hour"></el-option>
+                        <el-option label="second" value="second"></el-option>
+                      </el-select>
+                    </el-input>
+                  </span>
+                  <span v-if="item.label === 'jobEncounterError' && item.email">
+                    <el-input
+                      v-model="item.Interval"
+                      class="item-input"
+                      size="mini"
+                      onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                      onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+                    >
+                      <el-select v-model="item.util" slot="append" placeholder="请选择" class="input-with-select">
+                        <el-option label="hour" value="hour"></el-option>
+                        <el-option label="second" value="second"></el-option>
+                      </el-select>
+                    </el-input>
+                  </span>
+                </div>
               </li>
             </ul>
           </section>
           <section class="run-notification" v-show="systemNotification && systemNotification.length > 0">
-            <span class="block"></span><span class="title">{{ $t('notification.systemSetting') }}</span>
+            <span class="title">{{ $t('notification.systemSetting') }}</span>
             <ul>
               <li v-for="(item, index) in systemNotification" :key="index">
                 <span class="label">{{ notificationMAP[item.label] }}</span>
@@ -81,7 +91,7 @@
             </ul>
           </section>
           <section class="run-notification" v-show="agentNotification && agentNotification.length > 0">
-            <span class="block"></span><span class="title">{{ $t('notification.agentNotice') }}</span>
+            <span class="title">{{ $t('notification.agentNotice') }}</span>
             <ul>
               <li v-for="(item, index) in agentNotification" :key="index">
                 <span class="label">{{ notificationMAP[item.label] }}</span>
@@ -91,13 +101,15 @@
             </ul>
           </section>
         </div>
-        <el-button
+      </div>
+      <div class="notification-footer">
+        <ElButton
           class="btn"
           @click="submit"
           size="mini"
           type="primary"
           :disabled="!runNotification || !systemNotification || !agentNotification"
-          >{{ $t('dataForm.submit') }}</el-button
+          >{{ $t('dataForm.submit') }}</ElButton
         >
       </div>
     </div>
@@ -187,21 +199,21 @@ $unreadColor: #ee5353;
   align-items: center;
   font-size: 12px;
   color: #409eff;
-  padding: 20px 20px 20px 0;
+  padding: 20px 20px 0 0;
   .title {
-    font-size: 18px;
+    font-size: 14px;
     font-weight: bold;
-    color: rgba(51, 51, 51, 1);
+    color: #1d2129;
     line-height: 34px;
   }
   .search {
-    margin-top: 10px;
     margin-right: 10px;
     width: 200px;
   }
 }
 .notification-main {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   height: 100%;
   .notification-left-sidebar {
@@ -233,22 +245,32 @@ $unreadColor: #ee5353;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    margin-left: 20px;
-    .block {
-      width: 11px;
-      height: 14px;
-      background: #409eff;
-      display: inline-block !important;
-      margin-right: 10px;
+    padding-left: 20px;
+    .notification-tip {
+      display: inline-block;
+      padding: 4px 100px 4px 20px;
+      font-size: 12px;
+      color: #86909c;
+      border: 1px solid #f2f2f2;
+      border-left: 2px solid #2c65ff;
     }
     .run-notification {
       margin-top: 15px;
       .title {
-        font-size: 16px;
+        font-size: 14px;
         font-weight: bold;
-        color: #333333;
+        color: #1d2129;
         line-height: 32px;
         margin-bottom: 20px;
+      }
+      // ::v-deep {
+      //   .el-checkbox__label {
+      //     color: #86909c;
+      //   }
+      // }
+      .notice,
+      .email {
+        color: #86909c;
       }
       ul {
         // margin-left: 0;
@@ -259,12 +281,13 @@ $unreadColor: #ee5353;
         .label {
           display: inline-block;
           width: 30%;
-          color: #666;
+          color: #4e5969;
+          font-weight: 500;
         }
         .sort-label {
-          display: inline-block;
-          width: 100px;
-          margin-left: 40px;
+          // display: inline-block;
+          // width: 100px;
+          // margin-left: 40px;
           color: #666;
         }
         .item-input {
@@ -275,6 +298,14 @@ $unreadColor: #ee5353;
         width: 90px;
       }
     }
+  }
+  .notification-footer {
+    flex: 0 0 auto;
+    width: 100%;
+    padding: 0 20px;
+    line-height: 48px;
+    text-align: right;
+    border-top: 1px solid #f2f2f2;
   }
 }
 .pagination {

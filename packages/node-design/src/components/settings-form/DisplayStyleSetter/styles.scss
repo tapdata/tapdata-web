@@ -1,0 +1,16 @@
+@import "../../../variables";
+
+.#{$prefix-cls}display-style-setter {
+  &-radio {
+    display: flex !important;
+    width: 100%;
+
+    .#{$formily-prefix}-radio-button-wrapper {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+    }
+  }
+}

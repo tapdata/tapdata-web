@@ -135,6 +135,7 @@
             >
               {{ $t('user_list_activation') }}
             </el-button>
+            <ElDivider v-if="['rejected', 'notActivated'].includes(scope.row.status)" direction="vertical"></ElDivider>
             <el-button
               v-readonlybtn="'user_edition'"
               size="mini"
@@ -145,6 +146,7 @@
             >
               {{ $t('user_list_freeze') }}
             </el-button>
+            <ElDivider v-if="!['rejected'].includes(scope.row.status)" direction="vertical"></ElDivider>
             <el-button
               v-readonlybtn="'user_edition'"
               size="mini"
@@ -154,6 +156,7 @@
               @click="handleCheck(scope.row)"
               >{{ $t('user_list_check') }}</el-button
             >
+            <ElDivider v-if="['notVerified'].includes(scope.row.status)" direction="vertical"></ElDivider>
             <el-button
               v-readonlybtn="'user_edition'"
               size="mini"
@@ -163,6 +166,7 @@
               @click="edit(scope.row)"
               >{{ $t('button_edit') }}</el-button
             >
+            <ElDivider v-if="['activated', 'rejected'].includes(scope.row.status)" direction="vertical"></ElDivider>
             <el-button
               v-readonlybtn="'user_delete'"
               size="mini"

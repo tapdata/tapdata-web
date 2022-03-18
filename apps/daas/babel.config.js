@@ -1,5 +1,14 @@
 module.exports = {
-  presets: ['@vue/cli-plugin-babel/preset'],
+  presets: [
+    [
+      '@vue/cli-plugin-babel/preset',
+      {
+        jsx: {
+          compositionAPI: true
+        }
+      }
+    ]
+  ],
   env: {
     development: {
       // 解决热加载编译速度慢问题，引入按需加载插件 dynamic-import-node
