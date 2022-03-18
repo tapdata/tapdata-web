@@ -121,7 +121,7 @@
               {{ progress }}%
             </div>
           </div>
-          <div v-if="progress === 100" class="font-color-sub">全量完成时间：{{ forecast }}</div>
+          <div v-if="progress === 100" class="font-color-sub">全量完成时间：{{ endTs }}</div>
           <div v-else class="font-color-sub">
             {{ $t('task_monitor_full_completion_time') + '：' + (finishDuration || '计算中') }}
           </div>
@@ -307,7 +307,7 @@ export default {
         replicateLag: 0
       },
       initialData: [], // 缓存最近两次全量的进度数据
-      forecast: '', // 预计完成时间
+      endTs: '', // 预计完成时间
       searchParams: {
         start: '',
         end: ''
@@ -417,7 +417,7 @@ export default {
           let data = res?.data
           this.finishDuration = this.handleTime(data?.finishDuration)
           this.progress = data?.progress
-          this.forecast = data?.forecast
+          this.endTs = data?.endTs
           if (data?.progress !== 100) {
             setTimeout(() => {
               this.getSyncOverViewData()

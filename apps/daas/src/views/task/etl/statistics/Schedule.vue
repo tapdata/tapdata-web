@@ -169,6 +169,30 @@
         <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page></TableList>
       </div>
     </div>
+    <ElDialog width="500px" append-to-body :title="$t('button_rollback')" :visible.sync="rollbackVisible">
+      <ElRow>
+        <ElRow :span="8" style="margin-bottom: 10px">
+          <label>类型：</label>
+          <ElSelect v-model="syncPointType" placeholder="请选择">
+            <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value"> </ElOption>
+          </ElSelect>
+        </ElRow>
+        <ElRow :span="14" v-if="syncPointTime !== 'current'">
+          <label>时间：</label>
+          <ElDatePicker
+            format="yyyy-MM-dd HH:mm:ss"
+            style="width: 70%"
+            v-model="syncPointDate"
+            type="datetime"
+            :disabled="syncPointType === 'current'"
+          ></ElDatePicker>
+        </ElRow>
+      </ElRow>
+      <span slot="footer" class="dialog-footer">
+        <ElButton size="mini" @click="handleRollbackClose()">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" @click="submitRollBack()">{{ $t('button_confirm') }}</ElButton>
+      </span>
+    </ElDialog>
   </div>
 </template>
 
@@ -224,7 +248,25 @@ export default {
         structure: this.$t('task_info_task_structure'),
         cdc: this.$t('task_info_task_cdc'),
         initial_sync: this.$t('task_setting_initial_sync')
-      }
+      },
+      rollbackVisible: false,
+      options: [
+        {
+          label: '用户浏览器时区',
+          value: 'localTZ'
+        },
+        {
+          label: '数据库时区',
+          value: 'connTZ'
+        },
+        {
+          label: '此刻',
+          value: 'current'
+        }
+      ],
+      currentRow: {},
+      syncPointType: '',
+      syncPointDate: ''
     }
   },
   computed: {
@@ -554,11 +596,23 @@ export default {
     },
     //增量同步
     getCdcTableList() {
-      this.$api('SubTask')
-        .cdcIncrease(this.id)
-        .then(res => {
-          this.list = res?.data
-        })
+      // this.$api('SubTask')
+      //   .cdcIncrease(this.id)
+      //   .then(res => {
+      //     this.list = res?.data
+      //   })
+      this.list = [
+        {
+          srcId: '1', //源数据源id
+          srcName: '2', //源数据源名称
+          srcTableName: '2', //源表名称
+          tgtId: '2', //目标数据源id
+          tgtName: '1', //目标数据源名称
+          tgtTableName: '2', //目标表名称
+          delay: 0, //延迟  单位毫秒
+          cdcTime: '' //当前时间
+        }
+      ]
     },
     handleClear(row) {
       let params = {
@@ -571,7 +625,40 @@ export default {
           this.$message.success(this.$t('message_update_success'))
         })
     },
-    handleRollback() {}
+    handleRollback(row) {
+      this.rollbackVisible = true
+      this.currentRow = row
+    },
+    handleRollbackClose() {
+      this.rollbackVisible = false
+      this.syncPointTime = ''
+      this.syncPointDate = ''
+    },
+    submitRollBack() {
+      let systemTimeZone = ''
+      let timeZone = new Date().getTimezoneOffset() / 60
+      if (timeZone > 0) {
+        systemTimeZone = 0 - timeZone
+      } else {
+        systemTimeZone = '+' + -timeZone
+      }
+      let params = {
+        srcNode: this.currentRow.srcId,
+        tgtNode: this.currentRow.tgtId,
+        syncPoint: [
+          {
+            time: this.syncPointDate,
+            type: this.syncPointType,
+            timezone: systemTimeZone
+          }
+        ]
+      }
+      this.$api('SubTask')
+        .rollbackIncrease(this.id, params)
+        .then(() => {
+          this.$message.success(this.$t('message_update_success'))
+        })
+    }
   }
 }
 </script>
