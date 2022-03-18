@@ -713,12 +713,7 @@ export default {
       if ((!this.model.plain_password || this.model.plain_password === '') && !id) {
         return
       }
-      let filter = {
-        where: {
-          status: 'Running'
-        },
-        size: 1
-      }
+      let filter = { where: { status: { $in: ['Running'] } }, size: 10, page: 1, sort: ['createAt desc'] }
 
       this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(({ items }) => {
         let obj = {
