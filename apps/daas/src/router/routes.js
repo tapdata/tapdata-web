@@ -507,7 +507,8 @@ export default [
             meta: {
               title: 'page_title_data_catalogue',
               code: 'data_catalog_menu',
-              types: ['table', 'view', 'collection', 'mongo_view']
+              types: ['table', 'view', 'collection']
+              // 'mongo_view'
             }
           },
           {
