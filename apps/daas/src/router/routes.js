@@ -507,7 +507,8 @@ export default [
             meta: {
               title: 'page_title_data_catalogue',
               code: 'data_catalog_menu',
-              types: ['table', 'view', 'collection', 'mongo_view']
+              types: ['table', 'view', 'collection']
+              // 'mongo_view'
             }
           },
           {
@@ -743,16 +744,7 @@ export default [
           }
         ]
       },
-      /* ---------- 系统设置  ----------*/
-      {
-        path: '/settings',
-        name: 'settings',
-        component: () => import('@/views/setting/Setting'),
-        meta: {
-          title: 'page_title_setting',
-          code: 'system_settings_menu'
-        }
-      },
+
       /* ---------- 不确定路由  ----------*/
       {
         path: '/relations',
@@ -869,7 +861,7 @@ export default [
         redirect: 'settingCenter/accountSetting',
         component: () => import('@/views/setting/SettingCenter'),
         meta: {
-          title: 'tap.settingCenter'
+          title: 'page_title_back_menu'
         },
         children: [
           {
@@ -883,6 +875,16 @@ export default [
             name: 'notificationSetting',
             component: () => import('@/views/setting/NotificationSetting'),
             meta: { title: 'notification.setting' }
+          },
+          /* ---------- 系统设置  ----------*/
+          {
+            path: 'settings',
+            name: 'settings',
+            component: () => import('@/views/setting/Setting'),
+            meta: {
+              title: 'page_title_setting',
+              code: 'system_settings_menu'
+            }
           }
         ]
       },

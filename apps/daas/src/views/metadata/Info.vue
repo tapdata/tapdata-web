@@ -484,37 +484,37 @@ export default {
             'apiendpoint'
           ],
           key: 'version'
-        },
-        {
-          name: this.$t('metadata.details.index.title'),
-          mateTypes: ['collection'],
-          key: 'indexes'
-        },
-        {
-          name: this.$t('metadata.details.validation.title'),
-          mateTypes: ['collection'],
-          key: 'validation'
-        },
-        {
-          name: this.$t('metadata.details.pipeline.title'),
-          mateTypes: ['collection', 'mongo_view'],
-          key: 'pipeline'
-        },
-        {
-          name: this.$t('metadata.details.preview.title'),
-          mateTypes: ['collection', 'api'],
-          key: 'preview'
-        },
-        {
-          name: this.$t('metadata.details.collection'),
-          mateTypes: ['database'],
-          key: 'collections'
-        },
-        {
-          name: this.$t('relations.blood'),
-          mateTypes: ['collection', 'table', 'mongo_view', 'view'],
-          key: 'relations'
         }
+        // {
+        //   name: this.$t('metadata.details.index.title'),
+        //   mateTypes: ['collection'],
+        //   key: 'indexes'
+        // },
+        // {
+        //   name: this.$t('metadata.details.validation.title'),
+        //   mateTypes: ['collection'],
+        //   key: 'validation'
+        // },
+        // {
+        //   name: this.$t('metadata.details.pipeline.title'),
+        //   mateTypes: ['collection', 'mongo_view'],
+        //   key: 'pipeline'
+        // },
+        // {
+        //   name: this.$t('metadata.details.preview.title'),
+        //   mateTypes: ['collection', 'api'],
+        //   key: 'preview'
+        // },
+        // {
+        //   name: this.$t('metadata.details.collection'),
+        //   mateTypes: ['database'],
+        //   key: 'collections'
+        // },
+        // {
+        //   name: this.$t('relations.blood'),
+        //   mateTypes: ['collection', 'table', 'mongo_view', 'view'],
+        //   key: 'relations'
+        // }
       ],
       description: '',
       searchParams: {},

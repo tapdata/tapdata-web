@@ -7,76 +7,11 @@
       @selection-change="handleSelectionChange"
       @sort-change="handleSortTable"
     >
-      <ul class="search-bar" slot="search">
-        <li class="item">
-          <ElInput
-            v-model="searchParams.keyword"
-            clearable
-            size="small"
-            :placeholder="$t('dataVerification.verifyjobname')"
-            @input="table.fetch(1, 800)"
-          >
-            <span slot="prefix" class="el-input__icon h-100 ml-1">
-              <VIcon size="14">search</VIcon>
-            </span>
-          </ElInput>
-        </li>
-        <li class="item">
-          <ElSelect
-            v-model="searchParams.inspectMethod"
-            clearable
-            size="small"
-            :placeholder="$t('dataVerification.verifyType')"
-            @input="inspectMethodChange"
-          >
-            <ElOption :label="$t('dataVerification.rowVerify')" value="row_count"></ElOption>
-            <ElOption :label="$t('dataVerification.contentVerify')" value="field"></ElOption>
-            <ElOption :label="$t('dataVerification.jointVerify')" value="jointField"></ElOption>
-          </ElSelect>
-        </li>
-        <li class="item">
-          <ElSelect
-            v-model="searchParams.mode"
-            clearable
-            size="small"
-            :placeholder="$t('dataVerification.singleRepeatingVerify')"
-            @input="table.fetch(1)"
-          >
-            <ElOption :label="$t('dataVerification.singleVerify')" value="manual"></ElOption>
-            <ElOption :label="$t('dataVerification.repeatingVerify')" value="cron"></ElOption>
-          </ElSelect>
-        </li>
-        <li class="item">
-          <ElSelect
-            v-model="searchParams.enabled"
-            clearable
-            size="small"
-            :placeholder="$t('dataVerification.isEnabled')"
-            @input="table.fetch(1)"
-          >
-            <ElOption :label="$t('dataVerification.enable')" :value="1"></ElOption>
-            <ElOption :label="$t('dataVerification.disable')" :value="2"></ElOption>
-          </ElSelect>
-        </li>
-        <li class="item">
-          <ElSelect
-            v-model="searchParams.result"
-            clearable
-            size="small"
-            :placeholder="$t('dataVerification.result')"
-            @input="table.fetch(1)"
-          >
-            <ElOption v-for="item in validList" :key="item.value" :label="item.name" :value="item.value"></ElOption>
-          </ElSelect>
-        </li>
-        <li class="item">
-          <ElButton plain class="btn-refresh" size="small" @click="table.fetch()">
-            <i class="el-icon-refresh"></i>
-          </ElButton>
-        </li>
-      </ul>
+      <div class="search-bar" slot="search">
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+      </div>
       <div slot="operation">
-        <el-button
+        <!-- <el-button
           v-if="$getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'"
           v-readonlybtn="'SYNC_job_import'"
           size="small"
@@ -85,7 +20,7 @@
         >
           <i class="iconfont icon-daoru back-btn-icon"></i>
           <span> {{ $t('dataFlow.bulkImport') }}</span>
-        </el-button>
+        </el-button> -->
         <el-button
           v-readonlybtn="'SYNC_category_application'"
           size="small"
@@ -103,7 +38,7 @@
           size="small"
           @click="$router.push({ name: 'dataVerificationCreate' })"
         >
-          <i class="iconfont icon-jia add-btn-icon"></i>
+          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
           <span> {{ $t('dataVerification.addVerifyTip') }}</span>
         </ElButton>
       </div>
@@ -219,11 +154,13 @@
 import TablePage from '@/components/TablePage'
 import { toRegExp } from '../../utils/util'
 import VIcon from '@/components/VIcon'
+import FilterBar from '@/components/filter-bar'
 let timeout = null
 export default {
   components: {
     TablePage,
-    VIcon
+    VIcon,
+    FilterBar
   },
   data() {
     return {
@@ -235,6 +172,7 @@ export default {
         enabled: '',
         result: ''
       },
+      filterItems: [],
       loadingImg: window._TAPDATA_OPTIONS_.loadingImg,
       order: 'createTime DESC',
       inspectMethod: {
@@ -251,10 +189,15 @@ export default {
         running: this.$t('dataVerification.running')
       },
       validList: [
-        { name: this.$t('app.Home.checkSame'), value: 'passed' },
-        { name: this.$t('app.Home.countDifference'), value: 'row_count' },
-        { name: this.$t('app.Home.contentDifference'), value: 'valueDiff' },
-        { name: 'ERROR', value: 'error' }
+        { label: this.$t('verify_check_same'), value: 'passed' },
+        { label: this.$t('verify_count_difference'), value: 'row_count' },
+        { label: this.$t('verify_content_difference'), value: 'valueDiff' },
+        { label: 'ERROR', value: 'error' }
+      ],
+      verifyTypeList: [
+        { label: this.$t('verify_row_verify'), value: 'row_count' },
+        { label: this.$t('verify_content_verify'), value: 'field' },
+        { label: this.$t('verify_joint_verify'), value: 'jointField' }
       ],
       multipleSelection: []
     }
@@ -272,6 +215,7 @@ export default {
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 10000)
+    this.getFilterItems()
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -453,6 +397,46 @@ export default {
             )
           }
         })
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: this.$t('verify_type'),
+          key: 'inspectMethod',
+          type: 'select-inner',
+          items: this.verifyTypeList,
+          selectedWidth: '200px'
+        },
+        {
+          label: this.$t('verify_check_frequency'),
+          key: 'mode',
+          type: 'select-inner',
+          items: [
+            { label: this.$t('verify_single'), value: 'manual' },
+            { label: this.$t('verify_repeating'), value: 'cron' }
+          ]
+        },
+        {
+          label: this.$t('verify_is_enabled'),
+          key: 'enabled',
+          type: 'select-inner',
+          items: [
+            { label: this.$t('verify_job_enable'), value: 1 },
+            { label: this.$t('verify_job_disable'), value: 2 }
+          ]
+        },
+        {
+          label: this.$t('verify_result'),
+          key: 'result',
+          type: 'select-inner',
+          items: this.validList
+        },
+        {
+          placeholder: this.$t('verify_task_name'),
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     }
   }
 }
@@ -476,7 +460,7 @@ export default {
     }
   }
   .btn + .btn {
-    margin-left: 5px;
+    margin-left: 10px;
   }
   .btn {
     i.iconfont {
