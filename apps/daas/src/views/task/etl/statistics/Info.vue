@@ -121,9 +121,9 @@
               {{ progress }}%
             </div>
           </div>
-          <div v-if="progress === 100" class="font-color-sub">全量完成时间：{{ finishDuration }}</div>
+          <div v-if="progress === 100" class="font-color-sub">全量完成时间：{{ forecast }}</div>
           <div v-else class="font-color-sub">
-            {{ $t('task_monitor_full_completion_time') + '：' + (forecast || '计算中') }}
+            {{ $t('task_monitor_full_completion_time') + '：' + (finishDuration || '计算中') }}
           </div>
         </div>
         <div class="right-box mt-4 grey-background">
@@ -417,6 +417,7 @@ export default {
           let data = res?.data
           this.finishDuration = this.handleTime(data?.finishDuration)
           this.progress = data?.progress
+          this.forecast = data?.forecast
           if (data?.progress !== 100) {
             setTimeout(() => {
               this.getSyncOverViewData()
