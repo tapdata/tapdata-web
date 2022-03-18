@@ -140,9 +140,10 @@ export default {
     handleSuccess(response) {
       if (response.code === 'ok') {
         this.status = true
+        this.$message.success(this.$t('dataFlow.uploadOK'))
       } else {
         this.status = false
-        this.$message.error(this.$t('dataFlow.uploadError'))
+        this.$message.error(response.message || this.$t('dataFlow.uploadError'))
       }
     },
 

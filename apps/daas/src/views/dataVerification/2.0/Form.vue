@@ -1295,7 +1295,7 @@ export default {
               }
             })
             .catch(err => {
-              let message = err?.response?.msg || err?.data?.msg || ''
+              let message = err?.data?.message || this.$t('message_operation_error')
               this.$message.error(message)
             })
         }
