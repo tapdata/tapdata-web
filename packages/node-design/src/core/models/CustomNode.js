@@ -61,6 +61,6 @@ export class CustomNode {
 
   async save(tree) {
     this.formSchema = transformToSchema(tree)
-    await api[this.id ? 'patch' : 'post'](this.serialize())
+    return await api[this.id ? 'patch' : 'post'](this.serialize())
   }
 }

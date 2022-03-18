@@ -30,7 +30,7 @@ const createTypes = (types, exclude, include) => {
 export function createPolyInput(polyTypes = []) {
   return defineComponent({
     props: {
-      value: [String, Number],
+      value: {},
       exclude: Array,
       include: Array
     },

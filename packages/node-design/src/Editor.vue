@@ -72,7 +72,7 @@ import {
   // PositionInput,
   // CornerInput,
   // MonacoInput,
-  // ValueInput,
+  ValueInput,
   // BoxStyleSetter,
   // BorderStyleSetter,
   // BorderRadiusStyleSetter,
@@ -128,7 +128,7 @@ export default {
     return {
       sources: [Input, Select, InputNumber],
       components: { Field, Input, Select, Form, FormLayout, InputNumber },
-      settingsFormComponents: { SizeInput, DisplayStyleSetter, FlexStyleSetter, Slider, CollapseItem }
+      settingsFormComponents: { SizeInput, DisplayStyleSetter, FlexStyleSetter, Slider, CollapseItem, ValueInput }
     }
   }
 }
