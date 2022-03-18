@@ -153,14 +153,15 @@
               >{{ $t('task_list_stop') }}</ElLink
             >
             <ElDivider direction="vertical"></ElDivider>
-            <ElLink
+            <ElButton
               v-readonlybtn="'SYNC_job_edition'"
-              type="primary"
+              type="text"
+              :loading="loadingEdit"
               :disabled="$disabledByPermission('SYNC_job_edition_all_data', row.user_id) || row.status === 'running'"
               @click="handleEditor(row.id)"
             >
               {{ $t('task_list_edit') }}
-            </ElLink>
+            </ElButton>
             <ElDivider direction="vertical"></ElDivider>
             <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetail(row)">
               {{ $t('task_list_button_monitor') }}
@@ -265,15 +266,12 @@
 import factory from '../../../api/factory'
 const dataFlows = factory('DataFlows')
 const Task = factory('Task')
-// const cluster = factory('cluster');
 import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
 import DownAgent from '../../downAgent/agentDown'
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import Drawer from '@/components/Drawer'
-// import VIcon from '@/components/VIcon'
-// import StatusItem from '../StatusItem'
 import { ETL_STATUS_MAP } from '@/const'
 import { getSubTaskStatus } from '../util'
 
@@ -290,6 +288,7 @@ export default {
       status: '',
       isShowDetails: false,
       previewLoading: false,
+      loadingEdit: false,
       filterItems: [],
       restLoading: false,
       searchParams: {
@@ -604,35 +603,55 @@ export default {
       })
     },
     handleEditor(id) {
-      const h = this.$createElement
-      this.$confirm(
-        h('p', null, [h('span', null, this.$t('task_list_edit_confirm'))]),
-        this.$t('dataFlow.importantReminder'),
-        {
-          customClass: 'dataflow-clickTip',
-          confirmButtonText: this.$t('dataFlow.continueEditing'),
-          type: 'warning'
-        }
-      ).then(resFlag => {
-        if (!resFlag) {
-          return
-        }
-        let routeUrl = this.$router.resolve({
-          name: 'MigrateEditor',
-          params: { id: id }
+      //先检查是否待启动
+      this.loadingEdit = true
+      this.$api('Task')
+        .checkRun(id)
+        .then(res => {
+          let checkResult = res?.data?.neverRun //true表示没有运行过，或者重置过 false表示运行过，并且没有重置
+          if (checkResult) {
+            this.$router.push({
+              name: 'MigrateEditor',
+              params: {
+                id: id,
+                isEdit: 'all'
+              }
+            })
+          } else {
+            const h = this.$createElement
+            this.$confirm(
+              h('p', null, [h('span', null, this.$t('task_list_edit_confirm'))]),
+              this.$t('dataFlow.importantReminder'),
+              {
+                customClass: 'dataflow-clickTip',
+                confirmButtonText: this.$t('dataFlow.continueEditing'),
+                type: 'warning'
+              }
+            ).then(resFlag => {
+              if (!resFlag) {
+                return
+              }
+              let routeUrl = this.$router.resolve({
+                name: 'MigrateEditor',
+                params: { id: id }
+              })
+              setTimeout(() => {
+                document.querySelectorAll('.el-tooltip__popper').forEach(it => {
+                  it.outerHTML = ''
+                })
+                window.open(routeUrl.href, 'edit_' + id)
+              }, 200)
+            })
+            setTimeout(() => {
+              document.querySelectorAll('.el-tooltip__popper').forEach(it => {
+                it.outerHTML = ''
+              })
+            }, 200)
+          }
         })
-        setTimeout(() => {
-          document.querySelectorAll('.el-tooltip__popper').forEach(it => {
-            it.outerHTML = ''
-          })
-          window.open(routeUrl.href, 'edit_' + id)
-        }, 200)
-      })
-      setTimeout(() => {
-        document.querySelectorAll('.el-tooltip__popper').forEach(it => {
-          it.outerHTML = ''
+        .finally(() => {
+          this.loadingEdit = false
         })
-      }, 200)
     },
     handleImport() {
       let routeUrl = this.$router.resolve({

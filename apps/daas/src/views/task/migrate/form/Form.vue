@@ -206,7 +206,8 @@ export default {
     },
     getSteps() {
       this.steps = []
-      if (this.id && !this.stateIsReadonly) {
+      let isEdit = this.$route.params.isEdit
+      if (this.id && !this.stateIsReadonly && !isEdit) {
         //编辑模式 没有第一步
         this.steps = [
           { index: 2, text: this.$t('task_form_task_setting'), type: 'setting', showExitBtn: true, showNextBtn: true },
