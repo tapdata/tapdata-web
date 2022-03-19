@@ -1273,7 +1273,8 @@ export default {
         this.form.tableOperations.push({
           type: 'rename',
           originalTableName: this.vikaForm.originalTableName,
-          tableName: this.vikaForm.table
+          tableName: this.vikaForm.table,
+          nodeId: this.vikaForm.currentNode.data.id
         })
       }
       this.vikaForm.visible = false
