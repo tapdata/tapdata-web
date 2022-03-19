@@ -1,5 +1,11 @@
 <template>
   <div class="section-wrap setting-warp">
+    <ElBreadcrumb class="section-wrap-breadcrumb" separator-class="el-icon-arrow-right">
+      <ElBreadcrumbItem :to="{ path: '/' }">
+        {{ $t('page_title_back_menu') }}
+      </ElBreadcrumbItem>
+      <ElBreadcrumbItem style="color: #4e5969">{{ breadcrumbName }}</ElBreadcrumbItem>
+    </ElBreadcrumb>
     <div class="setting-warp-box">
       <div class="setting-center">
         <div class="setting-left-sidebar">
@@ -26,7 +32,6 @@
 
 <script>
 import VIcon from '@/components/VIcon'
-
 export default {
   components: { VIcon },
   data() {
@@ -39,7 +44,7 @@ export default {
         },
         {
           icon: 'bells',
-          name: this.$t('notification.setting'),
+          name: this.$t('notify_setting'),
           key: 'notificationSetting'
         },
         {
@@ -50,6 +55,11 @@ export default {
       ],
       activePanel: '',
       authoritySetting: this.$has('system_settings') && this.$has('system_settings_menu')
+    }
+  },
+  computed: {
+    breadcrumbName() {
+      return this.$t(this.$route.meta?.title)
     }
   },
   watch: {
@@ -73,6 +83,9 @@ export default {
 
 <style scoped lang="scss">
 .setting-warp {
+  .section-wrap-breadcrumb {
+    padding: 25px 0;
+  }
   .setting-warp-box {
     height: 100%;
     border-radius: 4px;
@@ -101,6 +114,7 @@ export default {
             line-height: 44px;
             padding-left: 20px;
             cursor: pointer;
+            color: #4e5969;
             i {
               color: #666;
             }

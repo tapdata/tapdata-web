@@ -100,16 +100,22 @@
         <el-form-item
           :label="$t('role_list_role_name')"
           prop="name"
-          :rules="[{ required: true, message: $t('role.role_null'), trigger: 'blur' }]"
+          :rules="[{ required: true, message: $t('role_null'), trigger: 'blur' }]"
         >
-          <el-input v-model="form.name" :placeholder="$t('role.selectRoleName')" size="small"></el-input>
+          <el-input v-model="form.name" :placeholder="$t('role_list_select_role_name')" size="small"></el-input>
         </el-form-item>
         <el-form-item
           :label="$t('role_list_description')"
           prop="description"
-          :rules="[{ required: true, message: $t('role.role_null'), trigger: 'blur' }]"
+          :rules="[{ required: true, message: $t('role_form_description'), trigger: 'blur' }]"
         >
-          <el-input type="textarea" v-model="form.description" autocomplete="off"></el-input>
+          <el-input
+            type="textarea"
+            v-model="form.description"
+            autocomplete="off"
+            maxlength="200"
+            show-word-limit
+          ></el-input>
         </el-form-item>
         <el-form-item :label="$t('role_list_default_role')">
           <el-switch

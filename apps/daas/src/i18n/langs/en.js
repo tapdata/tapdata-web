@@ -138,6 +138,7 @@ export default {
   page_title_setting: 'System settings',
   page_title_license: 'License management',
   page_title_custom_node: 'Custom Node',
+  page_title_account: 'Personal settings',
 
   // app
   app_license_expire_warning: 'Reminder: License expires in {0} days remaining',

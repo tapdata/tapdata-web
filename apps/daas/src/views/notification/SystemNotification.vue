@@ -1,11 +1,11 @@
 <template>
   <div class="system-notification" v-loading="loading">
     <div class="notification-head">
-      <div class="title">{{ $t('notification.systemNotice') }}</div>
+      <div class="title">{{ $t('notify_system_notice') }}</div>
       <div class="operation">
         <el-select
           v-model="search"
-          :placeholder="$t('notification.noticeLevel')"
+          :placeholder="$t('notify_notice_level')"
           class="search"
           @change="getData()"
           clearable
@@ -15,7 +15,7 @@
         </el-select>
         <el-select
           v-model="msg"
-          :placeholder="$t('notification.noticeType')"
+          :placeholder="$t('notify_notice_type')"
           class="search"
           @change="getData()"
           clearable
@@ -23,18 +23,18 @@
         >
           <el-option v-for="item in msgOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
         </el-select>
-        <span @click="handlePageRead()">{{ $t('notification.maskRead') }}</span>
-        <span @click="handleAllRead()">{{ $t('notification.maskReadAll') }}</span>
+        <span class="link-primary" @click="handlePageRead()">{{ $t('notify_mask_read') }}</span>
+        <span class="link-primary" @click="handleAllRead()">{{ $t('notify_mask_read_all') }}</span>
         <span v-readonlybtn="'home_notice_settings'">
           <router-link to="/settingCenter/notificationSetting"
-            ><span style="color: #409eff">{{ $t('notification.setting') }}</span></router-link
+            ><span class="link-primary">{{ $t('notify_setting') }}</span></router-link
           >
         </span>
       </div>
     </div>
     <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-      <el-tab-pane :label="$t('notification.allNotice')" name="first"></el-tab-pane>
-      <el-tab-pane :label="$t('notification.unreadNotice')" name="second"></el-tab-pane>
+      <el-tab-pane :label="$t('notify_user_all_notice')" name="first"></el-tab-pane>
+      <el-tab-pane :label="$t('notify_unread_notice')" name="second"></el-tab-pane>
     </el-tabs>
     <ul class="cuk-list clearfix cuk-list-type-block">
       <li class="list-item" v-for="item in listData" :key="item.id" @click="handleRead(item.id)">
@@ -44,15 +44,15 @@
             <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
             <span>{{ systemMap[item.system] }}</span>
             <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate">
-              <span style="color: #409eff">
+              <span class="link-primary">
                 {{ `${item.serverName} , ` }}
               </span>
             </router-link>
             <span>
               {{
-                `${$t('notification.sourceName')} : ${item.sourceName} , ${$t('notification.databaseName')} : ${
+                `${$t('notify_source_name')} : ${item.sourceName} , ${$t('notify_database_name')} : ${
                   item.databaseName
-                } , ${$t('notification.schemaName')} : ${item.schemaName} ,`
+                } , ${$t('notify_schema_name')} : ${item.schemaName} ,`
               }}
             </span>
             <el-tooltip :content="item.sql" placement="top">
@@ -70,12 +70,12 @@
           <div class="list-item-desc">
             <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
             <span>{{ systemMap[item.system] }}</span>
-            <span style="color: #409eff" @click="handleGo(item)">
+            <span class="link-primary" @click="handleGo(item)">
               {{ item.serverName }}
             </span>
             <span>{{ typeMap[item.msg] }}</span>
             <span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
-            <span v-if="item.restDay">{{ item.restDay }} {{ $t('notification.day') }}</span>
+            <span v-if="item.restDay">{{ item.restDay }} {{ $t('notify_day') }}</span>
           </div>
           <div class="list-item-time">
             <span>{{ item.createTime }}</span>
@@ -121,13 +121,13 @@ export default {
         INFO: '#409EFF'
       },
       systemMap: {
-        sync: this.$t('notification.sync'),
-        migration: this.$t('notification.migration'),
-        dataFlow: this.$t('notification.dataFlow'),
-        agent: this.$t('notification.manageSever'),
-        inspect: this.$t('notification.inspect'),
-        JobDDL: this.$t('notification.ddlDeal'),
-        system: this.$t('notification.system')
+        sync: this.$t('notify_sync'),
+        migration: this.$t('notify_migration'),
+        dataFlow: this.$t('notify_data_flow'),
+        agent: this.$t('notify_manage_sever'),
+        inspect: this.$t('notify_inspect'),
+        JobDDL: this.$t('notify_ddl_deal'),
+        system: this.$t('notify_system')
       },
       options: [
         {

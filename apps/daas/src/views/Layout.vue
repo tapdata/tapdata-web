@@ -28,7 +28,7 @@
           <ElDropdownMenu slot="dropdown">
             <ElDropdownItem command="settings" v-if="settingCode">{{ $t('page_title_setting') }}</ElDropdownItem>
             <ElDropdownItem command="setting" v-readonlybtn="'home_notice_settings'">{{
-              $t('notification.setting')
+              $t('notify_setting')
             }}</ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>

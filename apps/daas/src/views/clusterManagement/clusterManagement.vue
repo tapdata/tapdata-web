@@ -47,12 +47,16 @@
                       @click="updateFn(item, item.management.status, 'management', 'update')"
                       >{{ $t(' cluster_update') }}
                     </ElButton>
-                    <i
+                    <VIcon class="mr-2 link-primary" v-readonlybtn="'Cluster_operation'" @click="addServeFn(item)"
+                      >bg-add</VIcon
+                    >
+                    <VIcon class="link-primary" @click="editAgent(item)">cluster-setting</VIcon>
+                    <!-- <i
                       class="iconfont icon-icon_tianjia"
                       v-readonlybtn="'Cluster_operation'"
                       @click="addServeFn(item)"
-                    ></i>
-                    <i class="iconfont icon-icon_shezhi" @click="editAgent(item)"></i>
+                    ></i> -->
+                    <!-- <i class="iconfont icon-icon_shezhi" @click="editAgent(item)"></i> -->
                     <i v-show="item.status !== 'running'" class="iconfont icon-shanchu" @click="delConfirm(item)"></i>
                   </div>
                 </div>
@@ -802,7 +806,7 @@ export default {
               }
             }
             .iconfont {
-              color: #999;
+              // color: #999;
               cursor: pointer;
               margin-left: 10px;
             }

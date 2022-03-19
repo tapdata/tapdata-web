@@ -2,7 +2,7 @@
   <section class="addServe-wrap">
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="addServe">
       <el-form-item
-        :label="$t('cluster_server_nickname')"
+        :label="$t('cluster_server_nickname') + ':'"
         prop="name"
         :rules="{
           required: true,
@@ -14,7 +14,7 @@
       </el-form-item>
 
       <el-form-item
-        :label="$t('cluster_command')"
+        :label="$t('cluster_command') + ':'"
         prop="command"
         :rules="{
           required: true,
@@ -25,7 +25,7 @@
         <el-input v-model="ruleForm.command" size="mini" :placeholder="$t('cluster_placeholder_command')"></el-input>
       </el-form-item>
 
-      <el-form-item label="arguements" prop="arguements">
+      <el-form-item label="arguements:" prop="arguements">
         <el-input v-model="ruleForm.arguments" size="mini" placeholder="arguements"></el-input>
       </el-form-item>
     </el-form>

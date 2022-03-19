@@ -2,16 +2,16 @@
   <section class="notification-wrap section-wrap">
     <div class="notification-wrap-box">
       <div class="left-panel">
-        <div class="header">{{ $t('notification.noticeCenter') }}</div>
+        <div class="header">{{ $t('notify_notice_center') }}</div>
         <ul class="menu">
           <li :class="{ active: activePanel === 'system' }" @click="selectPanel('system')">
             <VIcon>bells</VIcon>
-            <span class="content">{{ $t('notification.systemNotice') }}</span>
+            <span class="content">{{ $t('notify_system_notice') }}</span>
             <span class="unread" v-show="unRead > 0">{{ unRead }}</span>
           </li>
           <li :class="{ active: activePanel === 'user' }" @click="selectPanel('user')">
             <i class="iconfont icon-lishijilu"></i>
-            <span class="content">{{ $t('notification.userNotice') }}</span>
+            <span class="content">{{ $t('notify_user_notice') }}</span>
           </li>
         </ul>
       </div>

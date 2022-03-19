@@ -136,6 +136,7 @@ export default {
   page_title_setting: '系統設置',
   page_title_license: 'License管理',
   page_title_custom_node: '自定義節點',
+  page_title_account: '個人設置',
 
   // app
   app_license_expire_warning: '提醒：License剩餘 {0} 天到期',

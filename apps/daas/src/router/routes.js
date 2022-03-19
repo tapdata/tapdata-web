@@ -49,6 +49,39 @@ export default [
     }
   },
   {
+    path: '/settingCenter',
+    name: 'settingCenter',
+    redirect: 'settingCenter/accountSetting',
+    component: () => import('@/views/setting/SettingCenter'),
+    meta: {
+      title: 'page_title_back_menu'
+    },
+    children: [
+      {
+        path: 'accountSetting',
+        name: 'accountSetting',
+        component: () => import('@/views/setting/AccountSetting'),
+        meta: { title: 'page_title_account' }
+      },
+      {
+        path: 'notificationSetting',
+        name: 'notificationSetting',
+        component: () => import('@/views/setting/NotificationSetting'),
+        meta: { title: 'notify_setting' }
+      },
+      /* ---------- 系统设置  ----------*/
+      {
+        path: 'settings',
+        name: 'settings',
+        component: () => import('@/views/setting/Setting'),
+        meta: {
+          title: 'page_title_setting',
+          code: 'system_settings_menu'
+        }
+      }
+    ]
+  },
+  {
     path: '/node/editor',
     name: 'NodeNew',
     component: NodeEditor
@@ -852,42 +885,10 @@ export default [
         name: 'notification',
         component: () => import('@/views/notification/Center'),
         meta: {
-          title: 'notification.systemNotice'
+          title: 'notify_system_notice'
         }
       },
-      {
-        path: '/settingCenter',
-        name: 'settingCenter',
-        redirect: 'settingCenter/accountSetting',
-        component: () => import('@/views/setting/SettingCenter'),
-        meta: {
-          title: 'page_title_back_menu'
-        },
-        children: [
-          {
-            path: 'accountSetting',
-            name: 'accountSetting',
-            component: () => import('@/views/setting/AccountSetting'),
-            meta: { title: 'tap.account' }
-          },
-          {
-            path: 'notificationSetting',
-            name: 'notificationSetting',
-            component: () => import('@/views/setting/NotificationSetting'),
-            meta: { title: 'notification.setting' }
-          },
-          /* ---------- 系统设置  ----------*/
-          {
-            path: 'settings',
-            name: 'settings',
-            component: () => import('@/views/setting/Setting'),
-            meta: {
-              title: 'page_title_setting',
-              code: 'system_settings_menu'
-            }
-          }
-        ]
-      },
+
       {
         path: '/taskProgressInfo',
         name: 'taskProgressInfo',

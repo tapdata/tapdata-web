@@ -289,8 +289,8 @@ export const defaultModel = {
     database_port: '',
     mqType: '0', //MQ类型
     brokerURL: '', //MQ连接串
-    mqUserName: '',
-    mqPassword: '',
+    database_username: '',
+    plain_password: '',
     mqQueueSet: '', //队列名集合
     mqTopicSet: '', //主题名称
     routeKeyField: '', //消息路由

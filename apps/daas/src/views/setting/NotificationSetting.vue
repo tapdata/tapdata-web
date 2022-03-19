@@ -3,19 +3,19 @@
     <div class="notification-main">
       <div class="notification-right-list">
         <div class="notification-head">
-          <div class="title">{{ $t('notification.systemNotice') }}</div>
+          <div class="title">{{ $t('notify_system_notice') }}</div>
         </div>
         <div class="notification-main-box" style="overflow-y: auto">
           <section class="notification-tip">
-            {{ $t('notification.tip') }}
+            {{ $t('notify_tip') }}
           </section>
           <section class="run-notification" v-show="runNotification && runNotification.length > 0">
-            <span class="title">{{ $t('notification.jobOperationNotice') }}</span>
+            <span class="title">{{ $t('notify_job_operation_notice') }}</span>
             <ul>
               <li v-for="(item, index) in runNotification" :key="index">
                 <span class="label">{{ notificationMAP[item.label] }}</span>
-                <el-checkbox class="notice" v-model="item.notice">{{ $t('notification.systemNotice') }}</el-checkbox>
-                <el-checkbox class="email" v-model="item.email">{{ $t('notification.emailNotice') }}</el-checkbox>
+                <el-checkbox class="notice" v-model="item.notice">{{ $t('notify_system_notice') }}</el-checkbox>
+                <el-checkbox class="email" v-model="item.email">{{ $t('notify_email_notice') }}</el-checkbox>
                 <div class="mt-4" v-if="item.lagTime">
                   <span class="sort-label label" v-if="item.lagTime">{{ notificationMAP[item.lagTime] }}</span>
                   <span v-if="item.label === 'CDCLagTime'">
@@ -81,12 +81,12 @@
             </ul>
           </section>
           <section class="run-notification" v-show="systemNotification && systemNotification.length > 0">
-            <span class="title">{{ $t('notification.systemSetting') }}</span>
+            <span class="title">{{ $t('notify_system_setting') }}</span>
             <ul>
               <li v-for="(item, index) in systemNotification" :key="index">
                 <span class="label">{{ notificationMAP[item.label] }}</span>
-                <el-checkbox class="notice" v-model="item.notice">{{ $t('notification.systemNotice') }}</el-checkbox>
-                <el-checkbox class="email" v-model="item.email">{{ $t('notification.emailNotice') }}</el-checkbox>
+                <el-checkbox class="notice" v-model="item.notice">{{ $t('notify_system_notice') }}</el-checkbox>
+                <el-checkbox class="email" v-model="item.email">{{ $t('notify_email_notice') }}</el-checkbox>
               </li>
             </ul>
           </section>
@@ -95,8 +95,8 @@
             <ul>
               <li v-for="(item, index) in agentNotification" :key="index">
                 <span class="label">{{ notificationMAP[item.label] }}</span>
-                <el-checkbox class="notice" v-model="item.notice">{{ $t('notification.systemNotice') }}</el-checkbox>
-                <el-checkbox class="email" v-model="item.email">{{ $t('notification.emailNotice') }}</el-checkbox>
+                <el-checkbox class="notice" v-model="item.notice">{{ $t('notify_system_notice') }}</el-checkbox>
+                <el-checkbox class="email" v-model="item.email">{{ $t('notify_email_notice') }}</el-checkbox>
               </li>
             </ul>
           </section>

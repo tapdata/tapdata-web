@@ -87,6 +87,7 @@ export default {
           })
         })
       }
+      debugger
       this.breadcrumbData = data
     }
   }

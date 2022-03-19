@@ -1,7 +1,7 @@
 <template>
   <div class="user-notification" v-loading="loading">
     <div class="header">
-      <div class="title">{{ $t('notification.userNotice') }}</div>
+      <div class="title">{{ $t('notify_user_notice') }}</div>
       <div class="search-bar">
         <el-input
           clearable

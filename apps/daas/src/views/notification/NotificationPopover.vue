@@ -6,7 +6,7 @@
       </el-badge>
     </div>
     <el-tabs stretch class="notification-popover-wrap" v-model="activeTab" type="border-card" @tab-click="tabHandler">
-      <el-tab-pane class="tab-item" :label="$t('notification.systemNotice')" name="system">
+      <el-tab-pane class="tab-item" :label="$t('notify_system_notice')" name="system">
         <div class="tab-item-container">
           <ul class="tab-list cuk-list">
             <li class="list-item" v-for="(item, index) in listData" :key="index" @click="handleRead(item.id)">
@@ -16,15 +16,15 @@
                   <span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
                   <span>{{ systemMap[item.system] }}</span>
                   <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate">
-                    <span style="color: #409eff">
+                    <span class="link-primary">
                       {{ `${item.serverName} , ` }}
                     </span>
                   </router-link>
                   <span class="list-item-platform">
                     {{
-                      `${$t('notification.sourceName')} : ${item.sourceName} , ${$t('notification.databaseName')} : ${
+                      `${$t('notify_source_name')} : ${item.sourceName} , ${$t('notify_database_name')} : ${
                         item.databaseName
-                      } , ${$t('notification.schemaName')} : ${item.schemaName} ,`
+                      } , ${$t('notify_schema_name')} : ${item.schemaName} ,`
                     }}
                   </span>
                   <el-tooltip :content="item.sql" placement="top">
@@ -42,7 +42,7 @@
                 <div class="list-item-desc">
                   <span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
                   <span>{{ systemMap[item.system] }}</span>
-                  <span style="color: #409eff" @click="handleGo(item)">
+                  <span class="link-primary" @click="handleGo(item)">
                     {{ item.serverName }}
                   </span>
                   <span>{{ typeMap[item.msg] }}</span>
@@ -58,21 +58,21 @@
             <span v-readonlybtn="'home_notice_settings'">
               <router-link to="/settingCenter/notificationSetting">
                 <span>
-                  {{ $t('notification.setting') }}
+                  {{ $t('notify_setting') }}
                 </span>
               </router-link>
             </span>
             <span class="notice-footer-text">
               <router-link to="/notification">
                 <span>
-                  {{ $t('notification.viewMore') }}
+                  {{ $t('notify_view_more') }}
                 </span>
               </router-link>
             </span>
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane class="tab-item" :label="$t('notification.userNotice')" name="user" v-loading="loading">
+      <el-tab-pane class="tab-item" :label="$t('notify_user_notice')" name="user" v-loading="loading">
         <div class="tab-item-container">
           <ul class="tab-list notification-list">
             <li class="notification-item" v-for="record in userOperations" :key="record.id">
@@ -86,7 +86,7 @@
             <span></span>
             <router-link to="/notification?type=user">
               <span class="more-text">
-                {{ $t('notification.viewMore') }}
+                {{ $t('notify_view_more') }}
               </span>
             </router-link>
           </div>
@@ -120,13 +120,13 @@ export default {
       },
       typeMap: TYPEMAP,
       systemMap: {
-        sync: this.$t('notification.sync'),
-        migration: this.$t('notification.migration'),
-        dataFlow: this.$t('notification.dataFlow'),
-        agent: this.$t('notification.manageSever'),
-        inspect: this.$t('notification.inspect'),
-        JobDDL: this.$t('notification.ddlDeal'),
-        system: this.$t('notification.system')
+        sync: this.$t('notify_sync'),
+        migration: this.$t('notify_migration'),
+        dataFlow: this.$t('notify_data_flow'),
+        agent: this.$t('notify_manage_sever'),
+        inspect: this.$t('notify_inspect'),
+        JobDDL: this.$t('notify_ddl_deal'),
+        system: this.$t('notify_system')
       },
       userOperations: []
     }
