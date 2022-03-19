@@ -31,5 +31,8 @@
     justify-content: center;
     flex-grow: 0;
     min-width: 33px; // 宽度对齐数字输入框的右侧按钮
+    * {
+      font-size: 12px;
+    }
   }
 }

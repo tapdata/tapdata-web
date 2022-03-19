@@ -1,4 +1,5 @@
 import { AllSchemas } from '../../schemas'
+import { DataSourceSetter } from '../../../components'
 
 export const createComponentSchema = (component, decorator) => {
   return {
@@ -105,10 +106,14 @@ export const createFieldSchema = (component, decorator = AllSchemas.FormItem) =>
               defaultValue: 'editable'
             }
           },
-          // default: {
-          //   'x-decorator': 'FormItem',
-          //   'x-component': 'ValueInput'
-          // },
+          default: {
+            'x-decorator': 'FormItem',
+            'x-component': 'ValueInput'
+          },
+          enum: {
+            'x-decorator': 'FormItem',
+            'x-component': DataSourceSetter
+          },
           required: {
             type: 'boolean',
             'x-decorator': 'FormItem',

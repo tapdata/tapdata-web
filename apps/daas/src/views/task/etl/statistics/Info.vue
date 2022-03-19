@@ -121,9 +121,9 @@
               {{ progress }}%
             </div>
           </div>
-          <div v-if="progress === 100" class="font-color-sub">全量完成时间：{{ finishDuration }}</div>
+          <div v-if="progress === 100" class="font-color-sub">全量完成时间：{{ endTs }}</div>
           <div v-else class="font-color-sub">
-            {{ $t('task_monitor_full_completion_time') + '：' + (forecast || '计算中') }}
+            {{ $t('task_monitor_full_completion_time') + '：' + (finishDuration || '计算中') }}
           </div>
         </div>
         <div class="right-box mt-4 grey-background">
@@ -307,7 +307,7 @@ export default {
         replicateLag: 0
       },
       initialData: [], // 缓存最近两次全量的进度数据
-      forecast: '', // 预计完成时间
+      endTs: '', // 预计完成时间
       searchParams: {
         start: '',
         end: ''
@@ -417,6 +417,7 @@ export default {
           let data = res?.data
           this.finishDuration = this.handleTime(data?.finishDuration)
           this.progress = data?.progress
+          this.endTs = data?.endTs
           if (data?.progress !== 100) {
             setTimeout(() => {
               this.getSyncOverViewData()
@@ -628,22 +629,6 @@ export default {
         for (let key in writeData) {
           writeData[key] = statistics[key]
         }
-        // 全量预计完成时间
-        this.initialData.length >= 2 && this.initialData.shift()
-        this.initialData.push(
-          Object.assign(
-            {
-              time: new Date().getTime()
-            },
-            writeData
-          )
-        )
-        if (this.initialData.length >= 2) {
-          const getForecastMs = this.getForecastMs(this.initialData)
-          if (getForecastMs) {
-            this.forecast = getForecastMs
-          }
-        }
         // 折线图
         const qpsData = samples[0] || {}
         let { inputQPS = [], outputQPS = [] } = qpsData
@@ -768,20 +753,6 @@ export default {
         result.push(i)
       }
       return result.slice(1)
-    },
-    getForecastMs(data) {
-      const [start, end] = data
-      const num = end.initialWrite - start.initialWrite
-      const timeDiff = end.time - start.time
-      if (!num) {
-        return
-      }
-      const speed = num / timeDiff
-      if (!speed) {
-        return
-      }
-      const result = (end.initialTotal - start.initialWrite) / speed
-      return formatMs(result)
     },
     formatTime(date) {
       return formatTime(date)

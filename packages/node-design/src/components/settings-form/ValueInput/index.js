@@ -3,33 +3,35 @@
  * Todo: JSON、富文本，公式
  */
 import { createPolyInput } from '../PolyInput'
-import { Input, Button, Popover, InputNumber, Select } from 'antd'
-import { MonacoInput } from '../MonacoInput'
-import { TextWidget } from '@designable/react'
+import { Button, Popover, Select, Option } from 'element-ui'
+import { Input, InputNumber } from '@daas/form'
+import { TextWidget } from '../../widgets'
+import { defineComponent } from 'vue-demi'
+import CodeEditor from 'web-core/components/base/VCodeEditor'
 
 const STARTTAG_REX =
   /<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/
 
 const EXPRESSION_REX = /^\{\{([\s\S]*)\}\}$/
 
-const isNumber = (value: any) => typeof value === 'number'
+const isNumber = value => typeof value === 'number'
 
-const isBoolean = (value: any) => typeof value === 'boolean'
+const isBoolean = value => typeof value === 'boolean'
 
-const isExpression = (value: any) => {
+const isExpression = value => {
   return typeof value === 'string' && EXPRESSION_REX.test(value)
 }
 
-const isRichText = (value: any) => {
+const isRichText = value => {
   return typeof value === 'string' && STARTTAG_REX.test(value)
 }
 
-const isNormalText = (value: any) => {
+const isNormalText = value => {
   return typeof value === 'string' && !isExpression(value) && !isRichText(value)
 }
 
-const takeNumber = (value: any) => {
-  const num = String(value).replace(/[^\d\.]+/, '')
+const takeNumber = value => {
+  const num = String(value).replace(/[^\d.]+/, '')
   if (num === '') return
   return Number(num)
 }
@@ -44,30 +46,40 @@ export const ValueInput = createPolyInput([
   {
     type: 'EXPRESSION',
     icon: 'Expression',
-    component: (props: any) => {
-      return (
-        <Popover
-          content={
+    component: defineComponent({
+      props: ['value'],
+      setup: (props, { emit }) => {
+        return () => (
+          <Popover trigger="click">
             <div
               style={{
-                width: 400,
-                height: 200,
-                marginLeft: -16,
-                marginRight: -16,
-                marginBottom: -12
+                width: '400px',
+                height: '200px',
+                margin: ' -12px',
+                overflow: 'hidden',
+                borderRadius: '4px'
               }}
             >
-              <MonacoInput {...props} language="javascript.expression" />
+              <CodeEditor
+                props={props}
+                lang="javascript"
+                options={{
+                  enableBasicAutocompletion: true,
+                  enableLiveAutocompletion: true,
+                  showPrintMargin: false
+                }}
+                onInput={val => {
+                  emit('change', val)
+                }}
+              />
             </div>
-          }
-          trigger="click"
-        >
-          <Button block>
-            <TextWidget token="SettingComponents.ValueInput.expression" />
-          </Button>
-        </Popover>
-      )
-    },
+            <Button slot="reference" block>
+              <TextWidget token="SettingComponents.ValueInput.expression" />
+            </Button>
+          </Popover>
+        )
+      }
+    }),
     checker: isExpression,
     toInputValue: value => {
       if (!value || value === '{{}}') return
@@ -83,15 +95,22 @@ export const ValueInput = createPolyInput([
   {
     type: 'BOOLEAN',
     icon: 'Boolean',
-    component: (props: any) => (
-      <Select
-        {...props}
-        options={[
-          { label: 'True', value: true },
-          { label: 'False', value: false }
-        ]}
-      />
-    ),
+    component: defineComponent({
+      props: ['value'],
+      setup: (props, { emit }) => {
+        return () => (
+          <Select
+            onChange={val => {
+              emit('change', val)
+            }}
+            value={props.value}
+          >
+            <Option label="True" value={true} />
+            <Option label="False" value={false} />
+          </Select>
+        )
+      }
+    }),
     checker: isBoolean,
     toInputValue: value => {
       return !!value

@@ -40,4 +40,7 @@ export default class TaskAPI extends PublicAPI {
   clearIncrease(id, params) {
     return axios.post(this.url + `/view/increase/clear/${id}`, params)
   }
+  rollbackIncrease(id, params) {
+    return axios.post(this.url + `/view/increase/backtracking/${id}`, params)
+  }
 }
