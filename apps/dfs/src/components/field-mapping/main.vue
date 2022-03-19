@@ -11,6 +11,7 @@
     :hiddenFieldProcess="false"
     :field_process="field_process"
     :transform="transform"
+    v-bind="$attrs"
     @row-click="saveOperations"
     @update-nav="updateFieldMappingNavData"
   ></FieldMappingDialog>

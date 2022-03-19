@@ -209,6 +209,7 @@
                 :transform="transferData"
                 :isFirst="isFirst"
                 :getDataFlow="getDataFlow"
+                :dataSourceModel="dataSourceModel"
                 @update-first="returnModel"
                 @update-transform="updateTranForm"
                 @row-click="selectRowFieldProcess"

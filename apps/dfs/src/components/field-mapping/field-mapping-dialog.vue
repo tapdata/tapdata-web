@@ -5,13 +5,13 @@
       >:
       {{ $t('task_mapping_table_setting_tip') }}
       <div class="float-end">
-        <el-button v-if="!readOnly" size="mini" @click="handleChangTableName">{{
+        <el-button v-if="!readOnly && !targetIsVika" size="mini" @click="handleChangTableName">{{
           $t('task_mapping_table_rename')
         }}</el-button>
-        <el-button v-if="!readOnly" size="mini" @click="dialogFieldVisible = true">{{
+        <el-button v-if="!readOnly && !targetIsVika" size="mini" @click="dialogFieldVisible = true">{{
           $t('task_mapping_table_field_rename')
         }}</el-button>
-        <el-button v-if="!readOnly" class="mr-5" size="mini" type="primary" @click="rollbackAll">{{
+        <el-button v-if="!readOnly && !targetIsVika" class="mr-5" size="mini" type="primary" @click="rollbackAll">{{
           $t('task_mapping_table_restore_default')
         }}</el-button>
       </div>
@@ -41,7 +41,9 @@
               <div class="source">{{ item.sourceObjectName }}</div>
               <div class="target">
                 <span class="target-span">{{ item.sinkObjectName }}</span>
-                <VIcon v-if="!readOnly" class="color-primary ml-2" size="14" @click="showChangeTableNameModal(item)">edit-outline</VIcon>
+                <VIcon v-if="!readOnly" class="color-primary ml-2" size="14" @click="showChangeTableNameModal(item)"
+                  >edit-outline</VIcon
+                >
               </div>
               <div class="select">
                 {{
@@ -60,7 +62,7 @@
             <span> {{ $t('task_mapping_table_search_field') }}：</span>
             <el-input v-model="searchField" size="mini" @change="search('field')"></el-input>
           </div>
-          <div class="item ml-5" v-if="!readOnly">
+          <div class="item ml-5" v-if="!readOnly && !targetIsVika">
             <el-tooltip effect="dark" :content="$t('task_mapping_table_restore_default_fields')" placement="top-start">
               <el-button
                 size="mini"
@@ -121,7 +123,7 @@
           </ElTableColumn>
           <ElTableColumn :label="$t('task_mapping_table_target_type')" width="150">
             <template slot-scope="scope">
-              <div v-if="!scope.row.is_deleted && !readOnly" @click="edit(scope.row, 'data_type')">
+              <div v-if="!scope.row.is_deleted && !readOnly && !targetIsVika" @click="edit(scope.row, 'data_type')">
                 <span>{{ scope.row.t_data_type }}</span>
                 <i v-if="!scope.row.t_data_type" class="icon-error el-icon-warning"></i>
                 <i class="icon el-icon-arrow-down"></i>
@@ -134,7 +136,7 @@
           <ElTableColumn :label="$t('task_mapping_table_target_length')" width="150">
             <template slot-scope="scope">
               <div
-                v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && !readOnly"
+                v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && !readOnly && !targetIsVika"
                 @click="edit(scope.row, 'precision')"
               >
                 <span v-if="scope.row.t_precision < 0"></span>
@@ -150,7 +152,7 @@
           <ElTableColumn :label="$t('task_mapping_table_target_accuracy')" width="100">
             <template slot-scope="scope">
               <div
-                v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit && !readOnly"
+                v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit && !readOnly && !targetIsVika"
                 @click="edit(scope.row, 'scale')"
               >
                 <span>{{ scope.row.t_scale }}</span>
@@ -357,6 +359,54 @@
         >
       </span>
     </el-dialog>
+    <!-- vika目录 -->
+    <el-dialog
+      width="500px"
+      append-to-body
+      :title="'vika目录'"
+      custom-class="vika-field-maping-table-dialog"
+      :visible.sync="vikaForm.visible"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div>
+        <ElForm label-position="top" :model="vikaForm" style="width: 100%" @submit.prevent.stop>
+          <ElFormItem label="目标：" props="table" class="mb-0">
+            <ElInput
+              v-model="vikaForm.table"
+              size="mini"
+              maxlength="50"
+              show-word-limit
+              class="mb-3"
+              readonly
+            ></ElInput>
+          </ElFormItem>
+        </ElForm>
+        <div style="border: 1px solid #ccc">
+          <!--            :data="getTreeData(vikaForm.nodes)"-->
+          <ElTree
+            highlight-current
+            lazy
+            accordion
+            check-on-click-node
+            ref="vikaTree"
+            :props="{
+              label: 'name',
+              children: 'children',
+              isLeaf: 'leaf'
+            }"
+            :load="loadNode"
+            @node-click="vikaNodeClick"
+          ></ElTree>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <ElButton size="mini" @click="vikaForm.visible = false">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" :disabled="!vikaForm.table" @click="vikaSaveTable()">{{
+          $t('button_confirm')
+        }}</ElButton>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -380,6 +430,10 @@ export default {
     readOnly: {
       type: Boolean,
       default: false
+    },
+    dataSourceModel: {
+      type: Object,
+      default: () => {}
     }
   },
   data() {
@@ -449,8 +503,32 @@ export default {
         old: '',
         new: '',
         visible: false
+      },
+      model: {
+        connectionId: '',
+        type: 'vika',
+        dataBaseType: 'vika',
+        tableName: '',
+        tableId: '',
+        field_process: [],
+        isFirst: true,
+        vikaNodes: [],
+        vika_space_id: '',
+        database_host: '',
+        plain_password: ''
+      },
+      vikaForm: {
+        visible: false,
+        originalTableName: '',
+        table: '',
+        agentId: '621ee2403420bd2637459f24-1ft4a7jc1',
+        currentNode: {},
+        rootNode: []
       }
     }
+  },
+  destroyed() {
+    this.clearWs()
   },
   mounted() {
     if (this.fieldMappingNavData) {
@@ -471,6 +549,10 @@ export default {
       }
     })
     this.updateView()
+    if (this.targetIsVika) {
+      this.loadConnection()
+      this.load
+    }
   },
   computed: {
     tableName() {
@@ -483,6 +565,9 @@ export default {
         tableName = this.form.table_prefix + this.sourceTableName + this.form.table_suffix
       }
       return tableName
+    },
+    targetIsVika() {
+      return this.dataSourceModel?.target_databaseType === 'vika'
     }
   },
   methods: {
@@ -619,6 +704,11 @@ export default {
     },
     /*单个表改名称弹窗显示*/
     showChangeTableNameModal(item = {}) {
+      if (this.targetIsVika) {
+        this.vikaForm.visible = true
+        this.vikaForm.table = ''
+        return
+      }
       this.changeTableNameForm.visible = true
       this.changeTableNameForm.old = item.sourceObjectName
       this.changeTableNameForm.new = item.sinkObjectName
@@ -1170,6 +1260,171 @@ export default {
     },
     returnForm() {
       return this.form
+    },
+    vikaSaveTable() {
+      let isInclude = false
+      this.form.tableOperations.forEach(el => {
+        if (el.originalTableName === this.vikaForm.originalTableName) {
+          el.tableName = this.vikaForm.table
+          isInclude = true
+        }
+      })
+      if (!isInclude) {
+        this.form.tableOperations.push({
+          type: 'rename',
+          originalTableName: this.vikaForm.originalTableName,
+          tableName: this.vikaForm.table
+        })
+      }
+      this.vikaForm.visible = false
+      this.copyForm()
+      this.updateParentMetaData('table', this.form)
+      this.loadVikaField()
+    },
+    getTreeData(data) {
+      let result = JSON.parse(JSON.stringify(data))
+      return result.map(t => {
+        return Object.assign({}, t, {
+          label: t.name
+        })
+      })
+    },
+    loadConnection() {
+      this.$axios.get('tm/api/Connections/' + this.dataSourceModel.target_connectionId).then(data => {
+        if (data) {
+          this.model.vika_space_id = data?.vika_space_id
+          this.model.database_host = data?.database_host
+          this.model.plain_password = data?.plain_password
+          this.model.connectionId = this.dataSourceModel.target_connectionId
+          this.getSpaceVika()
+        }
+      })
+    },
+    vikaNodeClick(data, node) {
+      if (node.isLeaf) {
+        this.vikaForm.table = data.name
+        this.vikaForm.currentNode = node
+      }
+    },
+    //获取维格表的空间
+    getSpaceVika() {
+      let filter = { where: { status: { $in: ['Running'] } }, size: 10, page: 1, sort: ['createAt desc'] }
+      this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(({ items }) => {
+        this.vikaForm.agentId = items[0]?.tmInfo?.agentId
+        this.$ws.once('loadVikaResult', data => {
+          //过滤目录结构
+          let result = data.result
+          result = result.filter(v => v.type === 'Datasheet' || v.type === 'Folder')
+          for (let i = 0; i < result.length; i++) {
+            if (result[i].type === 'Datasheet') {
+              result[i]['leaf'] = true
+            } else {
+              result[i]['leaf'] = false
+            }
+          }
+          this.vikaForm.rootNode = result
+        })
+        let obj = {
+          type: 'pipe',
+          receiver: this.vikaForm.agentId,
+          data: {
+            type: 'loadVika',
+            load_type: 'node',
+            space_id: this.model.vika_space_id,
+            database_host: this.model.database_host,
+            // connection_id: this.model.connectionId || ''
+            api_token: this.model.plain_password
+          }
+        }
+        this.$ws.send(obj)
+      })
+    },
+    loadNode(node, resolve) {
+      if (node.level === 0) {
+        return resolve([...this.vikaForm.rootNode])
+      }
+      this.$ws.once('loadVikaResult', data => {
+        this.setChildNode(data, node, resolve)
+      })
+      let obj = {
+        type: 'pipe',
+        receiver: this.vikaForm.agentId,
+        data: {
+          type: 'loadVika',
+          load_type: 'node',
+          node_id: node?.data?.id,
+          space_id: this.model.vika_space_id,
+          database_host: this.model.database_host,
+          api_token: this.model.plain_password
+        }
+      }
+      this.$ws.send(obj)
+    },
+    setChildNode(data, node, resolve) {
+      if (data.status === 'SUCCESS') {
+        let children = data?.result.children || []
+        children = children.filter(v => v.type === 'Datasheet' || v.type === 'Folder')
+        for (let i = 0; i < children.length; i++) {
+          if (children[i].type === 'Datasheet') {
+            children[i]['leaf'] = true
+          } else {
+            children[i]['leaf'] = false
+          }
+        }
+        resolve(data?.result.children)
+      }
+    },
+    handleNodeClick(data, node) {
+      if (this.model.tableName === data.name) {
+        return //当前node 重复点击
+      }
+      this.model.vikaNodes = [] //每次都放入最新的node 目录
+      if (data.type === 'Datasheet') {
+        this.model.tableName = data.name
+        this.model.tableId = data.id
+        //组装数据 递归寻找当前结构
+        let self = this
+        let fn = function (node) {
+          let item = {
+            id: node.data.id,
+            name: node.data.name,
+            type: node.data.type
+          }
+          self.model.vikaNodes.push(item)
+          self.model.vikaNodes.reverse()
+          if (node.level !== 1) {
+            fn(node.parent)
+          }
+        }
+        fn(node)
+        this.changeSchema()
+      } else {
+        this.model.tableName = ''
+        this.model.tableId = ''
+      }
+    },
+    loadVikaField() {
+      this.$ws.once('loadVikaResult', data => {
+        console.log('loadVikaField', data)
+      })
+      let obj = {
+        type: 'pipe',
+        receiver: this.vikaForm.agentId,
+        data: {
+          type: 'loadVika',
+          load_type: 'field',
+          space_id: this.model.vika_space_id,
+          node_id: this.vikaForm.currentNode.data.id,
+          database_host: this.model.database_host
+        }
+      }
+      this.$ws.send(obj)
+    },
+    clearWs() {
+      if (!this.$ws) {
+        return
+      }
+      this.$ws.off('loadVikaResult')
     }
   }
 }
@@ -1192,6 +1447,11 @@ export default {
   margin-top: 10px;
   font-size: 12px;
   color: #999;
+}
+.vika-field-maping-table-dialog {
+  .el-form-item__label {
+    padding: 0;
+  }
 }
 </style>
 <style scoped lang="scss">
