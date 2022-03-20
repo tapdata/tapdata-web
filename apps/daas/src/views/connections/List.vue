@@ -667,7 +667,7 @@ export default {
           items: async () => {
             let databaseTypes = await this.$api('DatabaseTypes').get()
             let databaseTypeOptions = databaseTypes.data
-              .filter(dt => dt.type !== 'kudu')
+              // .filter(dt => dt.type !== 'kudu')
               .sort((t1, t2) => (t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1))
             return databaseTypeOptions.map(item => {
               return {

@@ -25,6 +25,7 @@ export const StudioHeader = observer(
         () => root.$route,
         async route => {
           if (route.params?.id) {
+            if (route.params.action === 'nodeSave') return
             const data = await API.get([route.params?.id])
             designerRef.value.setCurrentTree(transformToTreeNode(data.formSchema))
             customNodeRef.value.from(data)
@@ -46,9 +47,19 @@ export const StudioHeader = observer(
         }
         saving.value = true
         try {
-          await customNode.save(designerRef.value.getCurrentTree())
+          const data = await customNode.save(designerRef.value.getCurrentTree())
+
+          if (!customNode.id) {
+            customNode.id = data.id
+            root.$router.replace({
+              name: 'NodeEditor',
+              params: { id: data.id, action: 'nodeSave' }
+            })
+          }
           root.$message.success(root.$t('message.saveOK'))
         } catch (e) {
+          // eslint-disable-next-line no-console
+          console.log('CustomNode save error', e)
           root.$message.error(root.$t('message.saveFail'))
         }
         saving.value = false

@@ -107,15 +107,52 @@ export default {
         })
       })
     },
-    toEdit(row) {
-      window.open(
-        this.$router.resolve({
-          name: 'NodeEditor',
-          params: {
-            id: row.id
+    async toEdit(row) {
+      const usedData = await api.checkUsed(row.id)
+      if (usedData?.length) {
+        this.$confirm(
+          <div class="w-100">
+            <div>检测到该节点被以下任务调用, 如果要配置生效需先停止任务启动</div>
+            <div class="p-3 mt-3" style="background: #FAFAFA; font-size: 12px;">
+              {usedData.map(item => {
+                return (
+                  <a
+                    class="block"
+                    style="color: #2C65FF;line-height: 1.5;"
+                    target="_blank"
+                    href={
+                      this.$router.resolve({
+                        name: 'dataflowDetailsContainer',
+                        params: {
+                          id: item.id
+                        }
+                      }).href
+                    }
+                  >
+                    {item.name}
+                  </a>
+                )
+              })}
+            </div>
+          </div>,
+          this.$t('dataFlow.importantReminder'),
+          {
+            customClass: 'custom-node-edit-confirm',
+            confirmButtonText: this.$t('dataFlow.continueEditing'),
+            type: 'warning'
           }
-        }).href
-      )
+        ).then(resFlag => {
+          if (!resFlag) return
+          window.open(
+            this.$router.resolve({
+              name: 'NodeEditor',
+              params: {
+                id: row.id
+              }
+            }).href
+          )
+        })
+      }
     },
     toCreate() {
       window.open(
@@ -128,4 +165,8 @@ export default {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style lang="scss">
+.custom-node-edit-confirm {
+  width: 480px !important;
+}
+</style>
