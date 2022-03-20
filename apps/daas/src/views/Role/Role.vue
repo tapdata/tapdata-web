@@ -33,7 +33,7 @@
                     v-cloak
                   >
                     <span>
-                      {{ $t('role.page.' + second.name) }}
+                      {{ $t('role_page_' + second.name) }}
                     </span>
                   </el-checkbox>
                 </template>
@@ -41,7 +41,7 @@
               <el-col class="e-col" :span="3">
                 <el-checkbox v-model="item.checked" @change="handleAllCheck($event, item)" v-cloak>
                   <span>
-                    {{ $t('role.allCheck') }}
+                    {{ $t('role_all_check') }}
                   </span>
                 </el-checkbox>
               </el-col>
@@ -67,7 +67,7 @@
           <li class="module-style">
             <el-row class="e-row" v-for="item in moduleList" :key="item.id">
               <el-col :span="3" style="line-height: 40px">
-                <span class="nav">{{ $t('role.moduleMeun.' + item.name) }}</span>
+                <span class="nav">{{ $t('role_module_meun_' + item.name) }}</span>
               </el-col>
               <el-col :span="21" class="e-col borderLine">
                 <!-- 权限 -->
@@ -204,18 +204,26 @@ let pageSort = [
   { children: [{ name: 'datasource_menu' }] },
   {
     name: 'data_transmission',
-    children: [{ name: 'Data_SYNC_menu' }, { name: 'Data_verify_menu' }]
+    children: [
+      { name: 'Data_SYNC_menu' },
+      { name: 'Data_verify_menu' },
+      { name: 'log_collector' },
+      { name: 'function_manager' },
+      { name: 'custom_node' },
+      { name: 'shared_cache' }
+    ]
   },
   {
     name: 'data_government',
     children: [
       { name: 'data_catalog_menu' },
-      { name: 'data_quality_menu' },
-      { name: 'time_to_live_menu' },
-      { name: 'data_lineage_menu' },
-      { name: 'data_rules_menu' },
-      { name: 'Topology_menu' },
-      { name: 'dictionary_menu' }
+      { name: 'data_search' }
+      // { name: 'data_quality_menu' },
+      // { name: 'time_to_live_menu' },
+      // { name: 'data_lineage_menu' },
+      // { name: 'data_rules_menu' },
+      // { name: 'Topology_menu' },
+      // { name: 'dictionary_menu' }
     ]
   },
   {
@@ -229,17 +237,17 @@ let pageSort = [
       { name: 'API_server_menu' }
     ]
   },
-  { children: [{ name: 'data_collect_menu' }] },
+  // { children: [{ name: 'data_collect_menu' }] },
   {
     name: 'system_management',
     children: [
-      { name: 'schedule_jobs_menu' },
+      // { name: 'schedule_jobs_menu' },
       { name: 'Cluster_management_menu' },
-      { name: 'agents_menu' },
-      { name: 'servers_oversee_menu' },
+      // { name: 'agents_menu' },
+      // { name: 'servers_oversee_menu' },
       { name: 'user_management_menu' },
-      { name: 'role_management_menu' },
-      { name: 'system_settings_menu' }
+      { name: 'role_management_menu' }
+      // { name: 'system_settings_menu' }
     ]
   }
 ]
@@ -298,38 +306,38 @@ let moduleMapping = [
       { name: 'meta_data_deleting', allName: 'meta_data_deleting_all_data' }
     ]
   },
-  {
-    name: 'data_quality',
-    children: [
-      { name: 'data_quality', allName: 'data_quality_all_data' },
-      { name: 'data_quality_edition', allName: 'data_quality_edition_all_data' }
-    ]
-  },
-  {
-    name: 'dictionary',
-    children: [{ name: 'dictionary', allName: 'dictionary_all_data' }]
-  },
-  {
-    name: 'data_rules',
-    children: [
-      { name: 'data_rules', allName: 'data_rules_all_data' },
-      { name: 'data_rule_management', allName: 'data_rule_management_all_data' }
-    ]
-  },
-  {
-    name: 'time_to_live',
-    children: [
-      { name: 'time_to_live', allName: 'time_to_live_all_data' },
-      {
-        name: 'time_to_live_management',
-        allName: 'time_to_live_management_all_data'
-      }
-    ]
-  },
-  {
-    name: 'data_lineage',
-    functional: [{ name: 'data_lineage' }]
-  },
+  // {
+  //   name: 'data_quality',
+  //   children: [
+  //     { name: 'data_quality', allName: 'data_quality_all_data' },
+  //     { name: 'data_quality_edition', allName: 'data_quality_edition_all_data' }
+  //   ]
+  // },
+  // {
+  //   name: 'dictionary',
+  //   children: [{ name: 'dictionary', allName: 'dictionary_all_data' }]
+  // },
+  // {
+  //   name: 'data_rules',
+  //   children: [
+  //     { name: 'data_rules', allName: 'data_rules_all_data' },
+  //     { name: 'data_rule_management', allName: 'data_rule_management_all_data' }
+  //   ]
+  // },
+  // {
+  //   name: 'time_to_live',
+  //   children: [
+  //     { name: 'time_to_live', allName: 'time_to_live_all_data' },
+  //     {
+  //       name: 'time_to_live_management',
+  //       allName: 'time_to_live_management_all_data'
+  //     }
+  //   ]
+  // },
+  // {
+  //   name: 'data_lineage',
+  //   functional: [{ name: 'data_lineage' }]
+  // },
 
   {
     name: 'API_management',
@@ -370,15 +378,15 @@ let moduleMapping = [
     name: 'API_server',
     functional: [{ name: 'API_server' }, { name: 'API_server_management' }]
   },
-  {
-    name: 'data_collect',
-    children: [{ name: 'data_collect', allName: 'data_collect_all_data' }]
-  },
+  // {
+  //   name: 'data_collect',
+  //   children: [{ name: 'data_collect', allName: 'data_collect_all_data' }]
+  // },
 
-  {
-    name: 'schedule_jobs',
-    functional: [{ name: 'schedule_jobs' }, { name: 'schedule_jobs_management' }]
-  },
+  // {
+  //   name: 'schedule_jobs',
+  //   functional: [{ name: 'schedule_jobs' }, { name: 'schedule_jobs_management' }]
+  // },
   {
     name: 'Cluster_management',
     children: [
@@ -387,10 +395,10 @@ let moduleMapping = [
       { name: 'status_log' }
     ]
   },
-  {
-    name: 'agents',
-    functional: [{ name: 'agents' }]
-  },
+  // {
+  //   name: 'agents',
+  //   functional: [{ name: 'agents' }]
+  // },
   {
     name: 'user_management',
     children: [

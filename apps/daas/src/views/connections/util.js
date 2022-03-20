@@ -192,6 +192,7 @@ export const defaultModel = {
     ]
   },
   jira: {
+    name: '',
     multiTenant: false,
     pdb: '',
     jiraUrl: '',
