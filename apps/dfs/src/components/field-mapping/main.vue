@@ -34,6 +34,11 @@ export default {
       stageId: ''
     }
   },
+  computed: {
+    targetIsVika() {
+      return this.$attrs?.dataSourceModel?.target_databaseType === 'vika'
+    }
+  },
   methods: {
     /*
      * 模型推演
@@ -64,6 +69,14 @@ export default {
       } else {
         let promise = this.$axios.post('tm/api/DataFlows/metadata', taskData)
         promise.then(data => {
+          if (this.$route.name === 'DataflowCreate') {
+            data = data.map(t => {
+              return Object.assign(t, {
+                invalid: true,
+                sinkObjectName: ''
+              })
+            })
+          }
           this.fieldMappingNavData = data
           this.loadingMetadata = false
           if (this.$refs.fieldMappingDom) {
@@ -140,6 +153,20 @@ export default {
     },
     //更新左边导航
     updateFieldMappingNavData(data) {
+      if (this.targetIsVika && this.$route.name === 'DataflowCreate') {
+        let { stages } = this.getDataFlow?.() || {}
+        let targetStages = stages.find(t => t.inputLanes.length > 0)
+        let tableOperations = targetStages.targetStages || []
+        data = data.map(t => {
+          if (tableOperations.find(item => item.tableName === t.sinkObjectName)) {
+            return t
+          }
+          return Object.assign(t, {
+            invalid: true,
+            sinkObjectName: ''
+          })
+        })
+      }
       this.fieldMappingNavData = data
     },
     //清空表改名 字段改名
@@ -193,7 +220,7 @@ export default {
       )
       // 初始化所有字段都映射 只取顶级字段
       source = source.filter(field => field.field_name.indexOf('.') === -1)
-      target = target && target.length > 0 ? target[0].fields : []
+      target = target?.length > 0 ? target[0].fields : []
       if (source?.length > 0 && target?.length === 0) {
         this.$message.error(this.$t('task_mapping_dialog_target_no_fields') + '(' + row.sinkQulifiedName + ')')
         return {
@@ -233,7 +260,7 @@ export default {
       //源表 目标表数据组合
       let fieldMappingTableData = []
       source.forEach(item => {
-        target.forEach(field => {
+        ;(target || []).forEach(field => {
           //先检查是否被改过名
           let node = {
             t_id: field.id,
@@ -251,9 +278,31 @@ export default {
           }
         })
       })
+      console.log('fieldMappingTableData', fieldMappingTableData)
+      // vika字段处理
+      if (this.targetIsVika) {
+        let field = target?.[0] || {}
+        fieldMappingTableData = source.map(t => {
+          let node = {
+            t_id: field.id,
+            t_field_name: null,
+            t_data_type: field.data_type,
+            t_scale: field.scale,
+            t_precision: field.precision,
+            is_deleted: field.is_deleted, //目标决定这个字段是被删除？
+            t_isPrecisionEdit: true, //默认不能编辑
+            t_isScaleEdit: true //默认不能编辑
+          }
+          let findOne = target?.find(f => f.field_name === t.field_name)
+          if (findOne) {
+            node.t_field_name = findOne.field_name
+          }
+          return Object.assign({}, t, node)
+        })
+      }
       return {
         data: fieldMappingTableData,
-        target: target
+        target: target || []
       }
     },
     //获取字段操作记录

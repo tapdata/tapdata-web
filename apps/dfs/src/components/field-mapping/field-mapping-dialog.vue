@@ -5,6 +5,9 @@
       >:
       {{ $t('task_mapping_table_setting_tip') }}
       <div class="float-end">
+        <el-button v-if="!readOnly && !targetIsVika" size="mini" @click="batchFieldTypeForm.visible = true">{{
+          $t('task_mapping_table_field_type_change')
+        }}</el-button>
         <el-button v-if="!readOnly && !targetIsVika" size="mini" @click="handleChangTableName">{{
           $t('task_mapping_table_rename')
         }}</el-button>
@@ -175,7 +178,8 @@
           </ElTableColumn>
           <div class="field-mapping-table__empty" slot="empty">
             <i class="el-icon-folder-opened"></i>
-            <span class="ml-1">{{ $t('task_mapping_table_no_data') }}</span>
+            <span v-if="targetIsVika" class="ml-1">{{ $t('task_mapping_table_no_data_vika') }}</span>
+            <span v-else class="ml-1">{{ $t('task_mapping_table_no_data') }}</span>
           </div>
         </El-table>
       </div>
@@ -188,9 +192,21 @@
       :close-on-click-modal="false"
       :before-close="handleClose"
     >
+      <el-select
+        v-if="['field_name'].includes(currentOperationType) && targetIsVika"
+        v-model="editValueType[currentOperationType]"
+        filterable
+      >
+        <el-option
+          v-for="(item, index) in target"
+          :label="item.field_name"
+          :value="item.id"
+          :key="index"
+        ></el-option>
+      </el-select>
       <el-input
         v-model="editValueType[currentOperationType]"
-        v-if="['field_name'].includes(currentOperationType)"
+        v-else-if="['field_name'].includes(currentOperationType)"
       ></el-input>
       <div v-if="['precision', 'scale'].includes(currentOperationType)">
         <el-input-number v-model="editValueType[currentOperationType]"></el-input-number>
@@ -360,7 +376,7 @@
       </span>
     </el-dialog>
     <!-- vika目录 -->
-    <el-dialog
+    <ElDialog
       width="500px"
       append-to-body
       :title="'vika目录'"
@@ -406,7 +422,71 @@
           $t('button_confirm')
         }}</ElButton>
       </span>
-    </el-dialog>
+    </ElDialog>
+    <!-- 批量修改字段类型 -->
+    <ElDialog
+      width="500px"
+      append-to-body
+      :title="'批量修改字段类型'"
+      custom-class="batch-field-type-maping-table-dialog"
+      :visible.sync="batchFieldTypeForm.visible"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div>
+        <ElRow>
+          <ElCol :span="12"> 源字段类型 </ElCol>
+          <ElCol :span="12"> 源字段类型 </ElCol>
+        </ElRow>
+        <ElRow v-for="(item, index) in batchFieldTypeForm.list" :key="index" class="mt-4">
+          <ElCol :span="12" class="flex">
+            <el-select v-model="item.sourceType" filterable required clearable @change="initDataType">
+              <el-option
+                :label="item.dbType"
+                :value="item.dbType"
+                v-for="(item, index) in typeMapping"
+                :key="index"
+              ></el-option>
+            </el-select>
+            <div class="flex justify-content-center align-items-center px-2" style="height: 32px">
+              <VIcon size="14" class="color-primary">d-arrow-right</VIcon>
+            </div>
+          </ElCol>
+          <ElCol :span="12" class="flex">
+            <el-select v-model="item.targetType" filterable required clearable @change="initDataType">
+              <el-option
+                :label="item.dbType"
+                :value="item.dbType"
+                v-for="(item, index) in typeMapping"
+                :key="index"
+              ></el-option>
+            </el-select>
+            <div class="flex align-items-center justify-content-center pl-2" style="height: 32px">
+              <VIcon size="16" class="mr-2 cursor-pointer hover-primary" @click="fieldTypeChangeAddItem(index, item)"
+                >plus-circle</VIcon
+              >
+              <VIcon
+                size="16"
+                class="cursor-pointer hover-primary"
+                :class="{ invisible: batchFieldTypeForm.list.length <= 1 }"
+                @click="batchFieldTypeForm.list.splice(index, 1)"
+                >minus-circle</VIcon
+              >
+            </div>
+          </ElCol>
+        </ElRow>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <ElButton size="mini" @click="batchFieldTypeForm.visible = false">{{ $t('button_cancel') }}</ElButton>
+        <ElButton
+          size="mini"
+          type="primary"
+          :disabled="!batchFieldTypeForm.list.every(t => t.sourceType && t.targetType)"
+          @click="vikaSaveTable()"
+          >{{ $t('button_confirm') }}</ElButton
+        >
+      </span>
+    </ElDialog>
   </div>
 </template>
 
@@ -524,6 +604,16 @@ export default {
         agentId: '621ee2403420bd2637459f24-1ft4a7jc1',
         currentNode: {},
         rootNode: []
+      },
+      batchFieldTypeForm: {
+        visible: false,
+        list: [
+          {
+            sourceType: '',
+            targetType: ''
+          }
+        ],
+        options: []
       }
     }
   },
@@ -706,7 +796,8 @@ export default {
     showChangeTableNameModal(item = {}) {
       if (this.targetIsVika) {
         this.vikaForm.visible = true
-        this.vikaForm.table = ''
+        this.vikaForm.table = item.sinkObjectName
+        this.vikaForm.originalTableName = item.sourceObjectName
         return
       }
       this.changeTableNameForm.visible = true
@@ -909,6 +1000,19 @@ export default {
           return
         }
         this.fieldProcessRename(id, key, value)
+        // vika 需要更新：字段名、字段类型、长度、精度
+        if (this.targetIsVika) {
+          if (!verify) {
+            return
+          }
+          //触发target更新
+          this.updateTarget(id, 'data_type', this.currentOperationData.data_type)
+          this.updateTarget(id, 'precision', this.currentOperationData.precision)
+          this.updateTarget(id, 'scale', this.currentOperationData.scale)
+          this.checkTable() //消除感叹号
+          this.handleClose()
+          return
+        }
       } else if (key === 'data_type') {
         let option = this.target.filter(v => v.id === id)
         if (option.length === 0) return
@@ -1280,7 +1384,10 @@ export default {
       this.vikaForm.visible = false
       this.copyForm()
       this.updateParentMetaData('table', this.form)
-      this.loadVikaField()
+    },
+    fieldTypeChangeSaveTable() {
+      console.log('this.batchFieldTypeForm', this.batchFieldTypeForm)
+      this.batchFieldTypeForm.visible = false
     },
     getTreeData(data) {
       let result = JSON.parse(JSON.stringify(data))
@@ -1404,28 +1511,14 @@ export default {
         this.model.tableId = ''
       }
     },
-    loadVikaField() {
-      this.$ws.once('loadVikaResult', data => {
-        console.log('loadVikaField', data)
-      })
-      let obj = {
-        type: 'pipe',
-        receiver: this.vikaForm.agentId,
-        data: {
-          type: 'loadVika',
-          load_type: 'field',
-          space_id: this.model.vika_space_id,
-          node_id: this.vikaForm.currentNode.data.id,
-          database_host: this.model.database_host
-        }
-      }
-      this.$ws.send(obj)
-    },
     clearWs() {
       if (!this.$ws) {
         return
       }
       this.$ws.off('loadVikaResult')
+    },
+    fieldTypeChangeAddItem(index, item) {
+      this.batchFieldTypeForm.list.splice(index, 0, Object.assign({}, item))
     }
   }
 }
@@ -1609,6 +1702,11 @@ export default {
         }
       }
     }
+  }
+}
+.hover-primary {
+  &:hover {
+    color: map-get($color, primary);
   }
 }
 </style>

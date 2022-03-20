@@ -714,6 +714,7 @@ export default {
   task_mapping_table_setting: '表设置',
   task_mapping_table_setting_tip:
     '用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型',
+  task_mapping_table_field_type_change: '类型修改',
   task_mapping_table_rename: '表改名',
   task_mapping_table_field_rename: '字段改名',
   task_mapping_table_restore_default: '恢复默认',
@@ -734,6 +735,7 @@ export default {
   task_mapping_table_accuracy_range: '精度范围',
   task_mapping_table_reduction: '还原',
   task_mapping_table_no_data: '暂无数据，可能正在首次加载表结构，请稍候再试',
+  task_mapping_table_no_data_vika: '暂无数据，请先选择目标表，等待加载表结构，或者请稍候再试',
   task_mapping_batch_change_field_title: '批量改字段名设置',
   task_mapping_dialog_field_name_case: '字段名大小写',
   task_mapping_dialog_constant: '不变',
