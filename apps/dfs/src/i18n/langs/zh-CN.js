@@ -734,6 +734,8 @@ export default {
   task_mapping_table_length_range: '长度范围',
   task_mapping_table_accuracy_range: '精度范围',
   task_mapping_table_reduction: '还原',
+  task_mapping_table_field_name_empty_edit: '请编辑字段名',
+  task_mapping_table_field_name_empty_check: '当前表字段名不能为空，不允许保存操作',
   task_mapping_table_no_data: '暂无数据，可能正在首次加载表结构，请稍候再试',
   task_mapping_table_no_data_vika: '暂无数据，请先选择目标表，等待加载表结构，或者请稍候再试',
   task_mapping_batch_change_field_title: '批量改字段名设置',

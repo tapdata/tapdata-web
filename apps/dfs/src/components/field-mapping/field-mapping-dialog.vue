@@ -34,7 +34,7 @@
             :class="{ active: position === index }"
             @click.prevent="select(item, index)"
           >
-            <div class="task-form__img" v-if="item.invalid">
+            <div class="task-form__img" v-if="getItemInvalid(item)">
               <img src="../../assets/image/fieldMapping-table-error.png" alt="" />
             </div>
             <div class="task-form__img" v-else>
@@ -117,8 +117,9 @@
                 v-if="!scope.row.is_deleted && !hiddenFieldProcess && !readOnly"
                 @click="edit(scope.row, 'field_name')"
               >
-                <span :show-overflow-tooltip="true"
-                  >{{ scope.row.t_field_name }}<i class="icon el-icon-edit-outline"></i
+                <span :show-overflow-tooltip="true" :class="{ 'color-danger': !scope.row.t_field_name }"
+                  >{{ scope.row.t_field_name || $t('task_mapping_table_field_name_empty_edit')
+                  }}<i class="icon el-icon-edit-outline"></i
                 ></span>
               </div>
               <span v-else :show-overflow-tooltip="true">{{ scope.row.t_field_name }}</span>
@@ -168,10 +169,10 @@
           </ElTableColumn>
           <ElTableColumn :label="$t('task_mapping_table_operate')" width="80" v-if="!hiddenFieldProcess && !readOnly">
             <template slot-scope="scope">
-              <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true)">
+              <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true, scope.row)">
                 {{ $t('button_delete') }}
               </ElLink>
-              <ElLink type="primary" v-else @click="del(scope.row.t_id, false)">
+              <ElLink type="primary" v-else @click="del(scope.row.t_id, false, scope.row)">
                 {{ $t('task_mapping_table_reduction') }}
               </ElLink>
             </template>
@@ -200,7 +201,8 @@
         <el-option
           v-for="(item, index) in target"
           :label="item.field_name"
-          :value="item.id"
+          :value="item.field_name"
+          :disabled="!!fieldMappingTableData.find(t => t.t_field_name === item.field_name)"
           :key="index"
         ></el-option>
       </el-select>
@@ -896,6 +898,12 @@ export default {
           this.$message.error(this.$t('task_mapping_dialog_delete_all_field_tip'))
           return //所有字段被删除了 不可以保存任务
         }
+        if (this.targetIsVika) {
+          if (this.fieldMappingTableData.some(t => !t.t_field_name)) {
+            this.$message.error(this.$t('task_mapping_table_field_name_empty_check'))
+            return
+          }
+        }
         this.$emit('row-click', this.selectRow, this.operations, this.target)
       }
       this.position = '' //再次点击清空去一个样式
@@ -983,6 +991,22 @@ export default {
       let verify = true
       //任务-字段处理器
       if (key === 'field_name') {
+        // vika 需要更新：字段名、字段类型、长度、精度
+        if (this.targetIsVika) {
+          if (!verify) {
+            return
+          }
+          let findOne = this.target.find(t => t.field_name === value) || {}
+          //触发target更新
+          this.fieldProcessRenameVika(id, key, value)
+          this.updateTableData(id, `t_field_name`, findOne.field_name)
+          this.updateTableData(id, `t_data_type`, findOne.data_type)
+          this.updateTableData(id, `t_precision`, findOne.precision)
+          this.updateTableData(id, `t_scale`, findOne.scale)
+          this.checkTable() //消除感叹号
+          this.handleClose()
+          return
+        }
         let option = this.target.filter(v => v.id === id && !v.is_deleted)
         if (option.length === 0) return
         option = option[0]
@@ -1000,19 +1024,6 @@ export default {
           return
         }
         this.fieldProcessRename(id, key, value)
-        // vika 需要更新：字段名、字段类型、长度、精度
-        if (this.targetIsVika) {
-          if (!verify) {
-            return
-          }
-          //触发target更新
-          this.updateTarget(id, 'data_type', this.currentOperationData.data_type)
-          this.updateTarget(id, 'precision', this.currentOperationData.precision)
-          this.updateTarget(id, 'scale', this.currentOperationData.scale)
-          this.checkTable() //消除感叹号
-          this.handleClose()
-          return
-        }
       } else if (key === 'data_type') {
         let option = this.target.filter(v => v.id === id)
         if (option.length === 0) return
@@ -1192,6 +1203,39 @@ export default {
         op.label = value
       }
     },
+    //目标任务 字段处理器
+    //rename操作
+    fieldProcessRenameVika(id, key, value) {
+      let option = this.target.find(v => v.field_name === value)
+      if (!option) return
+      // if (value === option.original_field_name || option.field) {
+      //   this.restRenameVika(id) //用户手动改为最原始的名字
+      //   return
+      // }
+      //rename类型
+      let op = {
+        op: 'RENAME',
+        id: id,
+        field: option.field_name,
+        operand: value, //改过名的字段
+        table_name: option.table_name,
+        type: option.data_type,
+        primary_key_position: option.primary_key_position,
+        label: value,
+        original_field_name: option.original_field_name,
+        data_type: option.data_type,
+        precision: option.precision,
+        scale: option.scale
+      }
+      let ops = this.operations.filter(v => v.id === option.id && v.op === 'RENAME')
+      if (ops.length === 0) {
+        this.operations.push(op)
+      } else {
+        op = ops[0]
+        op.operand = value
+        op.label = value
+      }
+    },
     handleExistsName(value, table_name) {
       // 改名前查找同级中是否重名，若有则return且还原改动并提示
       let exist = false
@@ -1214,6 +1258,9 @@ export default {
       }
       //删除类型
       let option = this.target.filter(v => v.id === id)
+      if (this.targetIsVika) {
+        option = this.fieldMappingTableData.filter(v => v.t_id === id)
+      }
       if (option.length === 0) return
       option = option[0]
       let op = {
@@ -1279,7 +1326,11 @@ export default {
         fieldsNameTransform: this.form.fieldsNameTransform,
         tableOperations: this.form.tableOperations
       }
-      if ((result.checkDataType || result.checkInvalid) && result.noFieldsTable === 0) {
+      let flag = (result.checkDataType || result.checkInvalid) && result.noFieldsTable === 0
+      if (this.targetIsVika) {
+        flag = flag || this.fieldMappingTableData.some(t => !t.t_field_name)
+      }
+      if (flag) {
         if (!hiddenMsg) {
           let arr = this.$t('task_mapping_dialog_field_type_problem').split('XXX')
           let msg = arr[0] + result.count + arr[1]
@@ -1386,7 +1437,6 @@ export default {
       this.updateParentMetaData('table', this.form)
     },
     fieldTypeChangeSaveTable() {
-      console.log('this.batchFieldTypeForm', this.batchFieldTypeForm)
       this.batchFieldTypeForm.visible = false
     },
     getTreeData(data) {
@@ -1519,6 +1569,12 @@ export default {
     },
     fieldTypeChangeAddItem(index, item) {
       this.batchFieldTypeForm.list.splice(index, 0, Object.assign({}, item))
+    },
+    getItemInvalid(item) {
+      if (this.targetIsVika) {
+        return item.invalid || this.fieldMappingTableData.some(t => !t.t_field_name)
+      }
+      return item.invalid
     }
   }
 }
