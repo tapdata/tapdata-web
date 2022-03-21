@@ -71,7 +71,7 @@
             <span class="mr-2">{{ $t('task_details_sub_task') }}</span>
             <ElTooltip
               placement="top"
-              content="在Tapdata Cloud中你创建任务里的每个目标节点均会被定义为子任务 您可以在下方查看每个子任务详情"
+              content="在Tapdata中你创建任务里的每个目标节点均会被定义为子任务 您可以在下方查看每个子任务详情"
             >
               <VIcon class="color-primary" size="14">info</VIcon>
             </ElTooltip>

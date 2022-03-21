@@ -3,7 +3,7 @@
     <el-radio-group class="pb-5" v-model="type" @change="changeType">
       <el-radio-button label="sourcedata">{{ $t('connection_form_data_source') }}</el-radio-button>
       <el-radio-button label="other">Other Type</el-radio-button>
-      <el-radio-button label="automation">Automation Type</el-radio-button>
+      <!-- <el-radio-button label="automation">Automation Type</el-radio-button> -->
     </el-radio-group>
     <template v-if="type === 'sourcedata'">
       <ul class="database-ul" :class="[large ? 'customNthChild' : 'primaryNthChild']">

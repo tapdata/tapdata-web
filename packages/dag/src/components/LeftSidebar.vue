@@ -199,10 +199,10 @@
         :types="database"
         :commingTypes="comingAllowDatabase"
         :otherTypes="otherType"
-        :automationType="automationType"
         :large="true"
         @select="createConnection"
       ></ConnectionTypeSelector>
+      <!-- :automationType="automationType" -->
     </ElDialog>
     <!-- <ElDialog
       title="创建连接"
