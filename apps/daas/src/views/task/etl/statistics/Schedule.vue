@@ -338,7 +338,6 @@ export default {
         this.showActive = this.active
       }
       this.getMilestonesData()
-      console.log(this.steps)
     },
     getMilestonesData() {
       this.milestonesData = (this.runtimeInfo?.milestones || [])

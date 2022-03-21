@@ -11,10 +11,10 @@
       :types="database"
       :commingTypes="comingAllowDatabase"
       :otherTypes="otherType"
-      :automationType="automationType"
       :large="true"
       @select="databaseType"
     ></ConnectionTypeSelector>
+    <!-- :automationType="automationType" -->
   </el-dialog>
 </template>
 

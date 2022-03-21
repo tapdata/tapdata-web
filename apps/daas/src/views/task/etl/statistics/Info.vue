@@ -142,7 +142,7 @@ import VIcon from '@/components/VIcon'
 import SelectList from '@/components/SelectList'
 import Chart from 'web-core/components/chart'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
-import { formatTime, formatMs, isEmpty } from '@/utils/util'
+import { formatTime, formatMs } from '@/utils/util'
 
 export default {
   name: 'Info',
