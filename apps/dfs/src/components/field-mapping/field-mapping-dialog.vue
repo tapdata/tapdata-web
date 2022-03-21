@@ -463,6 +463,8 @@
                 :key="index"
               ></el-option>
             </el-select>
+            <ElInputNumber v-model="item.precision"></ElInputNumber>
+            <ElInputNumber v-model="item.length"></ElInputNumber>
             <div class="flex align-items-center justify-content-center pl-2" style="height: 32px">
               <VIcon size="16" class="mr-2 cursor-pointer hover-primary" @click="fieldTypeChangeAddItem(index, item)"
                 >plus-circle</VIcon
@@ -612,7 +614,9 @@ export default {
         list: [
           {
             sourceType: '',
-            targetType: ''
+            targetType: '',
+            precision: null,
+            length: null
           }
         ],
         options: []
@@ -635,7 +639,8 @@ export default {
           fieldsNameTransform: this.transform.fieldsNameTransform,
           table_prefix: this.transform.table_prefix,
           table_suffix: this.transform.table_suffix,
-          tableOperations: this.transform.tableOperations || []
+          tableOperations: this.transform.tableOperations || [],
+          vikaMappings: this.transform.vikaMappings || {}
         }
         this.currentForm = JSON.parse(JSON.stringify(this.form))
       }
@@ -643,7 +648,6 @@ export default {
     this.updateView()
     if (this.targetIsVika) {
       this.loadConnection()
-      this.load
     }
   },
   computed: {
@@ -868,7 +872,8 @@ export default {
             fieldsNameTransform: '',
             table_prefix: '',
             table_suffix: '',
-            tableOperations: []
+            tableOperations: [],
+            vikaMappings: {}
           }
           this.copyForm()
           this.$nextTick(() => {
@@ -899,7 +904,10 @@ export default {
           return //所有字段被删除了 不可以保存任务
         }
         if (this.targetIsVika) {
-          if (this.fieldMappingTableData.some(t => !t.t_field_name)) {
+          this.fieldMappingTableData.forEach((el, index) => {
+            console.log('!t.t_field_name && !t.is_deleted', !!el.t_field_name, !!el.is_deleted, index)
+          })
+          if (this.fieldMappingTableData.some(t => !t.t_field_name && !t.is_deleted)) {
             this.$message.error(this.$t('task_mapping_table_field_name_empty_check'))
             return
           }
@@ -1324,11 +1332,12 @@ export default {
         table_suffix: this.form.table_suffix,
         tableNameTransform: this.form.tableNameTransform,
         fieldsNameTransform: this.form.fieldsNameTransform,
-        tableOperations: this.form.tableOperations
+        tableOperations: this.form.tableOperations,
+        vikaMappings: this.form.vikaMappings
       }
       let flag = (result.checkDataType || result.checkInvalid) && result.noFieldsTable === 0
       if (this.targetIsVika) {
-        flag = flag || this.fieldMappingTableData.some(t => !t.t_field_name)
+        flag = flag || this.fieldMappingTableData.some(t => !t.t_field_name && !t.is_deleted)
       }
       if (flag) {
         if (!hiddenMsg) {
@@ -1431,6 +1440,7 @@ export default {
           tableName: this.vikaForm.table,
           nodeId: this.vikaForm.currentNode.data.id
         })
+        this.form.vikaMappings[this.vikaForm.table] = this.vikaForm.currentNode.data.id
       }
       this.vikaForm.visible = false
       this.copyForm()
@@ -1572,7 +1582,7 @@ export default {
     },
     getItemInvalid(item) {
       if (this.targetIsVika) {
-        return item.invalid || this.fieldMappingTableData.some(t => !t.t_field_name)
+        return item.invalid || this.fieldMappingTableData.some(t => !t.t_field_name && !t.is_deleted)
       }
       return item.invalid
     }

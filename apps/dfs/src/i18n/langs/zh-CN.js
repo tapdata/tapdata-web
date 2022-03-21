@@ -734,8 +734,9 @@ export default {
   task_mapping_table_length_range: '长度范围',
   task_mapping_table_accuracy_range: '精度范围',
   task_mapping_table_reduction: '还原',
-  task_mapping_table_field_name_empty_edit_vika: '当前表字段未设置完成，请保证所有源字段都已关联目标字段，不需要同步的源字段请直接删除',
-  task_mapping_table_field_name_empty_check: '当前表字段名不能为空，不允许保存操作',
+  task_mapping_table_field_name_empty_edit_vika: '请编辑字段名称',
+  task_mapping_table_field_name_empty_check:
+    '当前表字段未设置完成，请保证所有源字段都已关联目标字段，不需要同步的源字段请直接删除',
   task_mapping_table_no_data: '暂无数据，可能正在首次加载表结构，请稍候再试',
   task_mapping_table_no_data_vika: '请选择目标维格表，并等待表结构信息加载完成',
   task_mapping_batch_change_field_title: '批量改字段名设置',
