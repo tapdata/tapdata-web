@@ -83,7 +83,7 @@
                       :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
                       v-cloak
                     >
-                      <div>{{ $t('role.roleNavName.' + second.name) }}</div>
+                      <div>{{ $t('role_name_' + second.name) }}</div>
                       <el-checkbox
                         class="e-checkbox"
                         v-show="second.allName"
@@ -128,7 +128,7 @@
                       :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
                       v-cloak
                     >
-                      <div>{{ $t('role.roleNavName.' + second.name) }}</div>
+                      <div>{{ $t('role_name_' + second.name) }}</div>
                       <!-- <el-checkbox
 											class="e-checkbox"
 											v-show="second.allName"
@@ -166,7 +166,7 @@
                       :class="[{ 'checkbox-position': !second.allName }, 'checkbox-radio']"
                       v-cloak
                     >
-                      <div>{{ $t('role.roleNavName.' + second.name) }}</div>
+                      <div>{{ $t('role_name_' + second.name) }}</div>
                     </el-checkbox>
                   </el-col>
                   <el-col class="e-col" :span="4">
@@ -207,17 +207,17 @@ let pageSort = [
     children: [
       { name: 'Data_SYNC_menu' },
       { name: 'Data_verify_menu' },
-      { name: 'log_collector' },
-      { name: 'function_manager' },
-      { name: 'custom_node' },
-      { name: 'shared_cache' }
+      { name: 'log_collector_menu' },
+      { name: 'SYNC_Function_management_menu' },
+      { name: 'custom_node_menu' },
+      { name: 'shared_cache_menu' }
     ]
   },
   {
     name: 'data_government',
     children: [
       { name: 'data_catalog_menu' },
-      { name: 'data_search' }
+      { name: 'data_search_menu' }
       // { name: 'data_quality_menu' },
       // { name: 'time_to_live_menu' },
       // { name: 'data_lineage_menu' },
@@ -276,10 +276,7 @@ let moduleMapping = [
     classification: [{ name: 'SYNC_category_management' }, { name: 'SYNC_category_application' }],
     functional: [{ name: 'SYNC_job_import' }, { name: 'SYNC_job_export' }]
   },
-  {
-    name: 'SYNC_Function_management',
-    functional: [{ name: 'SYNC_Function_management' }]
-  },
+
   {
     name: 'Data_verify',
     children: [
@@ -289,6 +286,22 @@ let moduleMapping = [
       { name: 'verify_job_delete', allName: 'verify_job_delete_all_data' }
       // { name: 'verify_job_execution', allName: 'verify_job_execution_all_data' }
     ]
+  },
+  {
+    name: 'SYNC_Function_management',
+    functional: [{ name: 'SYNC_Function_management' }]
+  },
+  {
+    name: 'log_collector',
+    functional: [{ name: 'log_collector' }]
+  },
+  {
+    name: 'custom_node',
+    functional: [{ name: 'custom_node' }]
+  },
+  {
+    name: 'shared_cache',
+    functional: [{ name: 'shared_cache' }]
   },
   {
     name: 'data_government',
@@ -467,8 +480,8 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          if (res && res.data && res.data?.items.length) {
-            res.data?.items.forEach(item => {
+          if (res?.data?.length) {
+            res.data.forEach(item => {
               if (item.principalType === 'USER') {
                 this.roleusers.push(item.principalId)
               }
@@ -618,7 +631,7 @@ export default {
               })
             }
           }
-          if (res && res.data && res.data?.items.length === 0) {
+          if (res?.data?.length === 0) {
             if (mappingData.length)
               mappingData.filter(item => {
                 if (item.children && item.children.length) {
@@ -830,15 +843,16 @@ export default {
 
       // 获取选中数据
       let pageArr = [],
+        pageMenuArr = [],
         childreArr = [],
         childreArrAll = [],
         classifyArr = [],
         functionalArr = []
-
       this.dataList.forEach(item => {
         item.children.forEach(child => {
           if (child.checkAll) {
             pageArr.push(child.name)
+            pageMenuArr.push(item.name)
           }
         })
       })
@@ -866,7 +880,7 @@ export default {
           })
       })
 
-      let saveRoleArr = [...pageArr, ...childreArr, ...childreArrAll, ...classifyArr, ...functionalArr]
+      let saveRoleArr = [...pageMenuArr, ...pageArr, ...childreArr, ...childreArrAll, ...classifyArr, ...functionalArr]
 
       let newRoleMappings = []
 

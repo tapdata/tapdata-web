@@ -331,10 +331,10 @@ let menuSetting = [
       { name: 'migrateList', code: 'Data_SYNC_menu' },
       { name: 'dataflowList', code: 'Data_SYNC_menu' },
       { name: 'dataVerificationList', code: 'Data_verify_menu' },
-      { name: 'sharedMiningList' },
+      { name: 'sharedMiningList', code: 'log_collector_menu' },
       { name: 'functionList', code: 'SYNC_Function_management' },
-      { name: 'customNodeList' },
-      { name: 'sharedCacheList' }
+      { name: 'customNodeList', code: 'custom_node_menu' },
+      { name: 'sharedCacheList', code: 'shared_cache_menu' }
     ]
   },
   {
@@ -342,7 +342,10 @@ let menuSetting = [
     label: 'page_title_data_discovery',
     icon: 'shujuzhili',
     code: 'data_government',
-    children: [{ name: 'metadataList', code: 'data_catalog_menu' }, { name: 'search' }]
+    children: [
+      { name: 'metadataList', code: 'data_catalog_menu' },
+      { name: 'search', code: 'data_search_menu' }
+    ]
   },
   {
     name: 'dataService',
@@ -434,6 +437,7 @@ export default {
   methods: {
     getMenus() {
       let permissions = sessionStorage.getItem('tapdata_permissions')
+
       permissions = permissions ? JSON.parse(permissions) : []
       let routerMap = {}
       let routes = this.$router.options.routes.find(r => r.name === 'layout').children
@@ -460,6 +464,7 @@ export default {
             menu.label = this.$t(label)
           }
           let matched = !menu.code || permissions.some(p => p.code === menu.code)
+
           menu.hidden = !matched
           if (matched && menu.children) {
             menu.children = formatMenu(menu.children)

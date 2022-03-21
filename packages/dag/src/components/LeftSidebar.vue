@@ -190,29 +190,17 @@
 
     <ElDialog
       title="选择数据源类型"
-      width="730px"
+      width="1030px"
       :visible.sync="connectionDialog"
       :close-on-click-modal="false"
       :append-to-body="true"
     >
       <ConnectionTypeSelector
-        :types="[
-          'mysql',
-          'oracle',
-          'sqlserver',
-          'mongodb',
-          'postgres',
-          'elasticsearch',
-          'kafka',
-          'dameng',
-          'greenplum',
-          'mq',
-          'clickhouse',
-          'kundb',
-          'adb_postgres',
-          'adb_mysql',
-          'hazelcast_cloud_cluster'
-        ]"
+        :types="database"
+        :commingTypes="comingAllowDatabase"
+        :otherTypes="otherType"
+        :automationType="automationType"
+        :large="true"
         @select="createConnection"
       ></ConnectionTypeSelector>
     </ElDialog>
@@ -310,6 +298,41 @@ export default {
       tbLoadingMore: false,
       skeletonThrottle: 0,
 
+      database: [
+        'mysql',
+        'oracle',
+        'mongodb',
+        'sqlserver',
+        'postgres',
+        'elasticsearch',
+        'redis',
+        'gbase-8s',
+        'sybase ase',
+        'gaussdb200',
+        'db2',
+        'kafka',
+        'mariadb',
+        'mysql pxc',
+        'jira',
+        'mq',
+        'dameng',
+        'hive',
+        'tcp_udp',
+        'hbase',
+        'kudu',
+        'greenplum',
+        'tidb',
+        'hana',
+        'clickhouse',
+        'kundb',
+        'adb_postgres',
+        'adb_mysql',
+        'hazelcast_cloud_cluster'
+      ],
+      comingAllowDatabase: [], // 即将上线
+      otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],
+      automationType: '', //插件化数据源
+
       dialogData: {
         type: 'table',
         title: this.$t('dialog.createTable'),
@@ -364,6 +387,19 @@ export default {
 
   created() {
     this.init()
+
+    let allowDataType = window.getSettingByKey('ALLOW_CONNECTION_TYPE') || []
+    if (typeof allowDataType === 'string') {
+      allowDataType = allowDataType.split(',')
+    }
+
+    let comingAllowDataType = window.getSettingByKey('COMING_ONLINE_CONNECTION_TYPE') || []
+    this.comingAllowDatabase = comingAllowDataType.filter(type => this.database.includes(type)) || []
+    this.database = allowDataType.filter(type => this.database.includes(type)) || []
+    this.database.push('vika')
+
+    this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || []
+    this.getDatabaseType()
   },
 
   mounted() {
@@ -380,6 +416,22 @@ export default {
     // 创建连接
     creat() {
       this.connectionDialog = true
+    },
+    getDatabaseType() {
+      this.$api('DatabaseTypes')
+        .get()
+        .then(res => {
+          if (res.data) {
+            this.automationType = res.data || []
+            this.automationType = this.automationType.filter(
+              item =>
+                !this.otherType.includes(item.type) &&
+                !this.database.includes(item.type) &&
+                !this.comingAllowDatabase.includes(item.type) &&
+                !['mem_cache', 'rest api', 'log_collect'].includes(item.type)
+            )
+          }
+        })
     },
     createConnection(type) {
       this.connectionDialog = false

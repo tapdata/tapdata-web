@@ -1034,14 +1034,24 @@ export default {
                 res.data['sync_type'] = setting.sync_type
                 item = 'sync_type'
               }
-              if (['createAt', 'startTime', 'initStartTime', 'cdcStartTime', 'taskFinishTime'].includes(item)) {
+              if (
+                [
+                  'createAt',
+                  'startTime',
+                  'initStartTime',
+                  'cdcStartTime',
+                  'initStartTime',
+                  'taskFinishTime',
+                  'eventTime'
+                ].includes(item)
+              ) {
                 res.data[item] = this.$moment(res.data[item]).format('YYYY-MM-DD HH:mm:ss')
               }
 
               if (
                 !['customId', 'lastUpdAt', 'userId', 'lastUpdBy', 'lastUpdBy', 'status', 'desc', 'name'].includes(item)
               ) {
-                previewData.push({ label: item, value: res.data[item] })
+                previewData.push({ label: item, value: res.data[item] || '-' })
               }
 
               // this.getSatusImgSrc(res.data.status)

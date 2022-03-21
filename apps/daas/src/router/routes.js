@@ -397,7 +397,7 @@ export default [
             component: () => import('@/views/task/sharedMining/List'),
             meta: {
               title: 'page_title_shared_mining',
-              code: 'Data_SYNC_menu'
+              code: 'log_collector_menu'
             }
           },
           {
@@ -406,7 +406,7 @@ export default [
             component: () => import('@/views/task/sharedMining/Detail'),
             meta: {
               title: 'page_title_shared_mining_details',
-              code: 'Data_SYNC_menu'
+              code: 'log_collector_menu'
             }
           }
         ]
@@ -482,7 +482,8 @@ export default [
             name: 'customNodeList',
             component: () => import('@/views/customNode/List'),
             meta: {
-              title: 'page_title_custom_node'
+              title: 'page_title_custom_node',
+              code: 'custom_node_menu'
             }
           }
         ]
@@ -502,7 +503,8 @@ export default [
             name: 'sharedCacheList',
             component: () => import('@/views/shared-cache/List'),
             meta: {
-              title: 'page_title_shared_cache'
+              title: 'page_title_shared_cache',
+              code: 'shared_cache_menu'
             }
           },
           {
@@ -510,7 +512,8 @@ export default [
             name: 'sharedCacheCreate',
             component: () => import('@/views/shared-cache/Form'),
             meta: {
-              title: 'page_title_shared_cache_create'
+              title: 'page_title_shared_cache_create',
+              code: 'shared_cache_menu'
             }
           },
           {
@@ -518,7 +521,8 @@ export default [
             name: 'sharedCacheEdit',
             component: () => import('@/views/shared-cache/Form'),
             meta: {
-              title: 'page_title_shared_cache_edit'
+              title: 'page_title_shared_cache_edit',
+              code: 'shared_cache_menu'
             }
           }
         ]
@@ -562,7 +566,7 @@ export default [
         component: () => import('@/views/metadata/Search'),
         meta: {
           title: 'page_title_data_search',
-          code: 'data_catalog_menu'
+          code: 'data_search_menu'
         }
       },
       /* ---------- API发布  ----------*/

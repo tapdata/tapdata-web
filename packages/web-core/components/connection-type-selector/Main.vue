@@ -169,6 +169,7 @@ export default {
     }
   }
   .customNthChild {
+    max-height: 500px;
     li:nth-child(9n + 1) {
       margin-left: 0;
     }
