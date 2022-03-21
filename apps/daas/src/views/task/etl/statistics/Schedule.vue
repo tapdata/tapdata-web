@@ -596,23 +596,11 @@ export default {
     },
     //增量同步
     getCdcTableList() {
-      // this.$api('SubTask')
-      //   .cdcIncrease(this.id)
-      //   .then(res => {
-      //     this.list = res?.data
-      //   })
-      this.list = [
-        {
-          srcId: '1', //源数据源id
-          srcName: '2', //源数据源名称
-          srcTableName: '2', //源表名称
-          tgtId: '2', //目标数据源id
-          tgtName: '1', //目标数据源名称
-          tgtTableName: '2', //目标表名称
-          delay: 0, //延迟  单位毫秒
-          cdcTime: '' //当前时间
-        }
-      ]
+      this.$api('SubTask')
+        .cdcIncrease(this.id)
+        .then(res => {
+          this.list = res?.data
+        })
     },
     handleClear(row) {
       let params = {

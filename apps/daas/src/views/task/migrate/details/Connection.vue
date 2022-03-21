@@ -205,7 +205,7 @@ export default {
           let config = {
             title: this.$t('connection.reloadTittle'),
             Message: this.$t('connection.reloadMsg'),
-            confirmButtonText: this.$t('button_save'),
+            confirmButtonText: this.$t('button_confirm'),
             cancelButtonText: this.$t('button_close'),
             name: row.name,
             id: row.id
