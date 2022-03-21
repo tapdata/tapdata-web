@@ -94,7 +94,7 @@ import LeftSidebar from './components/LeftSidebar'
 import DFNode from './components/DFNode'
 import jsPlumbIns from './instance'
 import { connectorActiveStyle } from './style'
-import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from './constants'
+import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
 import { ctorTypes, nodeTypes } from './nodes/loader'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
@@ -254,6 +254,7 @@ export default {
       'copyNodes',
       'pasteNodes',
       'setNodeError',
+      'setNodeErrorMsg',
       'clearNodeError'
     ]),
 
@@ -896,6 +897,39 @@ export default {
           return true
         }
       })
+
+      const nodeNames = []
+      let typeName = ''
+      // 根据任务类型(全量、增量),检查不支持此类型的节点
+      // 脏代码。这里的校验是有节点错误信息提示的，和节点表单校验揉在了一起，但是校验没有一起做
+      if (this.dataflow.type === 'initial_sync') {
+        typeName = '全量'
+        tableNode.forEach(node => {
+          if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
+            nodeNames.push(node.name)
+            this.setNodeErrorMsg({
+              id: node.id,
+              msg: '该节点不支持' + typeName
+            })
+          }
+        })
+      } else if (this.dataflow.type === 'cdc') {
+        typeName = '增量'
+        tableNode.forEach(node => {
+          if (sourceMap[node.id] && NONSUPPORT_CDC.includes(node.databaseType)) {
+            nodeNames.push(node.name)
+            this.setNodeErrorMsg({
+              id: node.id,
+              msg: '该节点不支持' + typeName
+            })
+          }
+        })
+      }
+
+      if (nodeNames.length) {
+        someErrorMsg = `存在不支持${typeName}的节点`
+      }
+
       if (someErrorMsg) return someErrorMsg
 
       // 检查链路的末尾节点类型是否是表节点
@@ -1131,7 +1165,7 @@ export default {
       )
       this.deselectAllNodes()
       this.reset()
-      this.setActiveType(null)
+      this.setActiveNode(null)
       this.resetSelectedNodes()
     },
 

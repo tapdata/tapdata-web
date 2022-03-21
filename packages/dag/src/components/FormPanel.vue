@@ -71,7 +71,9 @@ export default {
       await this.setSchema(this.ins.formSchema || formSchema.node)
 
       // 如果节点存在错误状态，走一遍校验，可以让用户看到错误信息
-      if (this.hasNodeError(n)) {
+      // 脏代码。节点错误原先是布尔值，又增加字符串类型
+      // 布尔值代表表单校验，字符串目前仅是任务增量、全量校验
+      if (this.hasNodeError(n) && typeof this.hasNodeError(n) !== 'string') {
         await this.validate()
       }
 

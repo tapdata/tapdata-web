@@ -189,7 +189,7 @@ export const STATUS_MAP = {
   }
 }
 
-/*// 不支持全量
+// 不支持全量
 export const NONSUPPORT_SYNC = ['elasticsearch', 'redis', 'hive', 'tcp_udp', 'clickhouse', 'hazelcast_cloud_cluster']
 // 不支持增量
 export const NONSUPPORT_CDC = [
@@ -210,5 +210,3 @@ export const NONSUPPORT_CDC = [
   'clickhouse',
   'hazelcast_cloud_cluster'
 ]
-// 不支持作为目标
-export const NONSUPPORT_TARGET = ['hbase', 'adb_mysql']*/

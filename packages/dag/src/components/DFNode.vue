@@ -24,7 +24,7 @@
         <VIcon>close</VIcon>
       </div>
     </div>
-    <ElTooltip v-if="hasNodeError(data.id)" content="请检查节点配置" placement="top">
+    <ElTooltip v-if="hasNodeError(data.id)" :content="nodeErrorMsg" placement="top">
       <VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>
     </ElTooltip>
     <div v-if="!canNotBeSource" class="node-anchor"></div>
@@ -117,6 +117,14 @@ export default {
         left: left + 'px',
         top: top + 'px'
       }
+    },
+
+    nodeErrorMsg() {
+      const res = this.hasNodeError(this.data.id)
+      if (res) {
+        return typeof res === 'string' ? res : '请检查节点配置'
+      }
+      return null
     }
   },
 

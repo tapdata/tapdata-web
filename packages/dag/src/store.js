@@ -481,6 +481,10 @@ const mutations = {
     Vue.set(state.nodeErrorState, id, true)
   },
 
+  setNodeErrorMsg(state, { id, msg }) {
+    Vue.set(state.nodeErrorState, id, msg)
+  },
+
   /**
    * 清除节点错误状态
    * @param state
