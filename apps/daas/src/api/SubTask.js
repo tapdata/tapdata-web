@@ -37,10 +37,10 @@ export default class TaskAPI extends PublicAPI {
   cdcIncrease(id) {
     return axios.get(this.url + `/view/increase/${id}`)
   }
-  clearIncrease(id, params) {
-    return axios.post(this.url + `/view/increase/clear/${id}`, params)
+  clearIncrease(id, srcId, tgtId) {
+    return axios.post(this.url + `/increase/clear/${id}?srcNode=${srcId}&tgtNode=${tgtId}`)
   }
-  rollbackIncrease(id, params) {
-    return axios.post(this.url + `/view/increase/backtracking/${id}`, params)
+  rollbackIncrease(id, srcId, tgtId, params) {
+    return axios.post(this.url + `/increase/backtracking/${id}?srcNode=${srcId}&tgtNode=${tgtId}`, params)
   }
 }

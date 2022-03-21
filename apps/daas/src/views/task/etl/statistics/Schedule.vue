@@ -177,7 +177,7 @@
             <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value"> </ElOption>
           </ElSelect>
         </ElRow>
-        <ElRow :span="14" v-if="syncPointTime !== 'current'">
+        <ElRow :span="14" v-if="syncPointType !== 'current'">
           <label>时间：</label>
           <ElDatePicker
             format="yyyy-MM-dd HH:mm:ss"
@@ -397,8 +397,7 @@ export default {
         },
         {
           label: this.$t('task_info_cdc_delay'),
-          prop: 'delay',
-          dataType: 'time'
+          prop: 'delay'
         },
         {
           label: this.$t('task_info_cdc_time'),
@@ -596,31 +595,15 @@ export default {
     },
     //增量同步
     getCdcTableList() {
-      // this.$api('SubTask')
-      //   .cdcIncrease(this.id)
-      //   .then(res => {
-      //     this.list = res?.data
-      //   })
-      this.list = [
-        {
-          srcId: '1', //源数据源id
-          srcName: '2', //源数据源名称
-          srcTableName: '2', //源表名称
-          tgtId: '2', //目标数据源id
-          tgtName: '1', //目标数据源名称
-          tgtTableName: '2', //目标表名称
-          delay: 0, //延迟  单位毫秒
-          cdcTime: '' //当前时间
-        }
-      ]
+      this.$api('SubTask')
+        .cdcIncrease(this.id)
+        .then(res => {
+          this.list = res?.data
+        })
     },
     handleClear(row) {
-      let params = {
-        srcNode: row.srcId,
-        tgtNode: row.tgtId
-      }
       this.$api('SubTask')
-        .clearIncrease(this.id, params)
+        .clearIncrease(this.id, row.srcId, row.tgtId)
         .then(() => {
           this.$message.success(this.$t('message_update_success'))
         })
@@ -631,7 +614,7 @@ export default {
     },
     handleRollbackClose() {
       this.rollbackVisible = false
-      this.syncPointTime = ''
+      this.syncPointType = ''
       this.syncPointDate = ''
     },
     submitRollBack() {
@@ -643,19 +626,14 @@ export default {
         systemTimeZone = '+' + -timeZone
       }
       let params = {
-        srcNode: this.currentRow.srcId,
-        tgtNode: this.currentRow.tgtId,
-        syncPoint: [
-          {
-            time: this.syncPointDate,
-            type: this.syncPointType,
-            timezone: systemTimeZone
-          }
-        ]
+        dateTime: this.syncPointDate,
+        pointType: this.syncPointType,
+        timeZone: systemTimeZone
       }
       this.$api('SubTask')
-        .rollbackIncrease(this.id, params)
+        .rollbackIncrease(this.id, this.currentRow.srcId, this.currentRow.tgtId, params)
         .then(() => {
+          this.rollbackVisible = false
           this.$message.success(this.$t('message_update_success'))
         })
     }
