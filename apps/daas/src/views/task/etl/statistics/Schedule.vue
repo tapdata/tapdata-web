@@ -397,8 +397,7 @@ export default {
         },
         {
           label: this.$t('task_info_cdc_delay'),
-          prop: 'delay',
-          dataType: 'time'
+          prop: 'delay'
         },
         {
           label: this.$t('task_info_cdc_time'),
