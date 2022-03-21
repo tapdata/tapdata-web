@@ -177,7 +177,7 @@
             <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value"> </ElOption>
           </ElSelect>
         </ElRow>
-        <ElRow :span="14" v-if="syncPointTime !== 'current'">
+        <ElRow :span="14" v-if="syncPointType !== 'current'">
           <label>时间：</label>
           <ElDatePicker
             format="yyyy-MM-dd HH:mm:ss"
@@ -603,12 +603,8 @@ export default {
         })
     },
     handleClear(row) {
-      let params = {
-        srcNode: row.srcId,
-        tgtNode: row.tgtId
-      }
       this.$api('SubTask')
-        .clearIncrease(this.id, params)
+        .clearIncrease(this.id, row.srcId, row.tgtId)
         .then(() => {
           this.$message.success(this.$t('message_update_success'))
         })
@@ -619,7 +615,7 @@ export default {
     },
     handleRollbackClose() {
       this.rollbackVisible = false
-      this.syncPointTime = ''
+      this.syncPointType = ''
       this.syncPointDate = ''
     },
     submitRollBack() {
@@ -631,19 +627,14 @@ export default {
         systemTimeZone = '+' + -timeZone
       }
       let params = {
-        srcNode: this.currentRow.srcId,
-        tgtNode: this.currentRow.tgtId,
-        syncPoint: [
-          {
-            time: this.syncPointDate,
-            type: this.syncPointType,
-            timezone: systemTimeZone
-          }
-        ]
+        dateTime: this.syncPointDate,
+        pointType: this.syncPointType,
+        timeZone: systemTimeZone
       }
       this.$api('SubTask')
-        .rollbackIncrease(this.id, params)
+        .rollbackIncrease(this.id, this.currentRow.srcId, this.currentRow.tgtId, params)
         .then(() => {
+          this.rollbackVisible = false
           this.$message.success(this.$t('message_update_success'))
         })
     }
