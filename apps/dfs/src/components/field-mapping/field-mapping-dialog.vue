@@ -118,7 +118,7 @@
                 @click="edit(scope.row, 'field_name')"
               >
                 <span :show-overflow-tooltip="true" :class="{ 'color-danger': !scope.row.t_field_name }"
-                  >{{ scope.row.t_field_name || $t('task_mapping_table_field_name_empty_edit')
+                  >{{ scope.row.t_field_name || $t('task_mapping_table_field_name_empty_edit_vika')
                   }}<i class="icon el-icon-edit-outline"></i
                 ></span>
               </div>
