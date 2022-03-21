@@ -188,3 +188,27 @@ export const STATUS_MAP = {
     edit: true
   }
 }
+
+/*// 不支持全量
+export const NONSUPPORT_SYNC = ['elasticsearch', 'redis', 'hive', 'tcp_udp', 'clickhouse', 'hazelcast_cloud_cluster']
+// 不支持增量
+export const NONSUPPORT_CDC = [
+  'db2',
+  'sybase ase',
+  'gaussdb200',
+  'elasticsearch',
+  'redis',
+  'hive',
+  'tcp_udp',
+  'hbase',
+  'kudu',
+  'greenplum',
+  'hana',
+  'adb_mysql',
+  'adb_postgres',
+  'kundb',
+  'clickhouse',
+  'hazelcast_cloud_cluster'
+]
+// 不支持作为目标
+export const NONSUPPORT_TARGET = ['hbase', 'adb_mysql']*/

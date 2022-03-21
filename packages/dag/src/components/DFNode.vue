@@ -27,7 +27,7 @@
     <ElTooltip v-if="hasNodeError(data.id)" content="请检查节点配置" placement="top">
       <VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>
     </ElTooltip>
-    <div class="node-anchor"></div>
+    <div v-if="!canNotBeSource" class="node-anchor"></div>
   </BaseNode>
 </template>
 
@@ -84,6 +84,22 @@ export default {
       return this.data.__Ctor
     },
 
+    canNotBeTarget() {
+      const connectionType = this.data.attrs.connectionType
+      if (connectionType) {
+        return !connectionType.includes('target')
+      }
+      return false
+    },
+
+    canNotBeSource() {
+      const connectionType = this.data.attrs.connectionType
+      if (connectionType) {
+        return !connectionType.includes('source')
+      }
+      return false
+    },
+
     nodeClass() {
       const list = []
       if (this.isNodeActive(this.nodeId)) list.push('active')
@@ -125,11 +141,11 @@ export default {
       const { id, nodeId } = this
 
       // console.log('sourceEndpoint, targetEndpoint', sourceEndpoint, targetEndpoint) // eslint-disable-line
-      const targetParams = { ...targetEndpoint, maxConnections: this.ins.attr.maxInputs || -1 }
+      const targetParams = { ...targetEndpoint, maxConnections: this.ins.attr.maxInputs ?? -1 }
 
       // this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
 
-      this.jsPlumbIns.makeTarget(id, targetParams)
+      !this.canNotBeTarget && this.jsPlumbIns.makeTarget(id, targetParams)
 
       this.jsPlumbIns.draggable(this.$el, {
         // containment: 'parent',
@@ -218,17 +234,19 @@ export default {
         uuid: id + '_target'
       })
 
-      this.jsPlumbIns.addEndpoint(
-        this.$el,
-        {
-          ...sourceEndpoint,
-          enabled: !this.stateIsReadonly,
-          maxConnections: this.ins.attr.maxOutputs || -1
-        },
-        {
-          uuid: id + '_source'
-        }
-      )
+      if (!this.canNotBeSource) {
+        this.jsPlumbIns.addEndpoint(
+          this.$el,
+          {
+            ...sourceEndpoint,
+            enabled: !this.stateIsReadonly,
+            maxConnections: this.ins.attr.maxOutputs ?? -1
+          },
+          {
+            uuid: id + '_source'
+          }
+        )
+      }
     },
 
     mouseClick(e) {

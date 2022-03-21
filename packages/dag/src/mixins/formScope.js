@@ -62,26 +62,44 @@ export default {
          */
         loadDatabase: async ({ field }, databaseType = field.form.values.databaseType) => {
           try {
+            const { isSource, isTarget } = field.form.values
+            const filter = {
+              where: {
+                database_type: databaseType
+                  ? {
+                      $in: Array.isArray(databaseType) ? databaseType : [databaseType]
+                    }
+                  : {
+                      $nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
+                    }
+              },
+              fields: {
+                name: 1,
+                id: 1,
+                database_type: 1,
+                connection_type: 1,
+                status: 1
+              },
+              order: ['status DESC', 'name ASC']
+            }
+
+            // 过滤连接类型
+            if (isSource && isTarget) {
+              filter.where.connection_type = 'source_and_target'
+            } else if (isSource) {
+              filter.where.connection_type = {
+                like: 'source',
+                options: 'i'
+              }
+            } else if (isTarget) {
+              filter.where.connection_type = {
+                like: 'target',
+                options: 'i'
+              }
+            }
+
             let result = await connections.get({
-              filter: JSON.stringify({
-                where: {
-                  database_type: databaseType
-                    ? {
-                        $in: Array.isArray(databaseType) ? databaseType : [databaseType]
-                      }
-                    : {
-                        $nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
-                      }
-                },
-                fields: {
-                  name: 1,
-                  id: 1,
-                  database_type: 1,
-                  connection_type: 1,
-                  status: 1
-                },
-                order: ['status DESC', 'name ASC']
-              })
+              filter: JSON.stringify(filter)
             })
             return (result.items || result).map(item => {
               return {

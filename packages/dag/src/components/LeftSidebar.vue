@@ -451,7 +451,8 @@ export default {
         attr: {
           tableName: '',
           databaseType: item.database_type,
-          connectionId: item.id
+          connectionId: item.id,
+          connectionType: item.connection_type
         }
       }))
 
@@ -531,7 +532,8 @@ export default {
         attr: {
           tableName: tb.original_name,
           databaseType: connection.databaseType,
-          connectionId: connection.id
+          connectionId: connection.id,
+          connectionType: connection.attr.connectionType
         }
       }))
 
