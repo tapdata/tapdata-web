@@ -108,7 +108,7 @@
       </div>
       <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
         <div class="right-box grey-background">
-          <div class="fw-bold">全量进度</div>
+          <div class="fw-bold mb-3">全量进度</div>
           <div class="progress-box flex justify-content-center align-items-center position-relative">
             <ElProgress
               type="circle"
@@ -117,16 +117,14 @@
               :show-text="false"
               :width="50"
             ></ElProgress>
-            <div class="flex justify-content-center position-absolute color-primary fw-bolder fs-7">
-              {{ progress }}%
-            </div>
+            <div class="flex justify-content-center position-absolute color-primary fw-bolder">{{ progress }}%</div>
           </div>
-          <div v-if="progress === 100" class="font-color-sub">全量完成时间：{{ endTs }}</div>
-          <div v-else class="font-color-sub">
+          <div v-if="progress === 100" class="font-color-sub mt-3">全量完成时间：{{ formatTime(endTs) }}</div>
+          <div v-else class="font-color-sub mt-2">
             {{ $t('task_monitor_full_completion_time') + '：' + (finishDuration || '计算中') }}
           </div>
         </div>
-        <div class="right-box mt-4 grey-background">
+        <div class="right-box mt-3 grey-background">
           <div class="fw-bold">增量延迟</div>
           <div class="color-primary fw-bolder fs-5">{{ formatMs(writeData.replicateLag) }}</div>
           <div class="font-color-sub">增量所处时间点：{{ formatTime(writeData.cdcTime) }}</div>
@@ -408,11 +406,14 @@ export default {
   beforeDestroy() {
     this.timer && clearInterval(this.timer)
   },
+  mounted() {
+    this.getSyncOverViewData()
+  },
   methods: {
     //概览信息
     getSyncOverViewData() {
       this.$api('SubTask')
-        .syncOverView(this.id)
+        .syncOverView(this.$route.params?.subId)
         .then(res => {
           let data = res?.data
           this.finishDuration = this.handleTime(data?.finishDuration)
