@@ -50,48 +50,48 @@
                 {{ data.last_updated ? $moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss') : '' }}</span
               >
             </div>
-            <div class="panelBtn">
-              <ul>
-                <li class="item">
-                  <el-button
-                    class="btn"
-                    size="mini"
-                    v-readonlybtn="'datasource_edition'"
-                    :disabled="$disabledByPermission('datasource_edition_all_data', userId)"
-                    @click="edit(id, type)"
-                  >
-                    <i class="iconfont icon-edit"> {{ $t('connection.preview.edit') }}</i>
-                  </el-button>
-                </li>
-                <li class="item">
-                  <el-button
-                    class="btn"
-                    size="mini"
-                    v-readonlybtn="'datasource_edition'"
-                    @click="reload()"
-                    :disabled="
-                      $disabledByPermission('datasource_edition_all_data', userId) || !['ready'].includes(this.status)
-                    "
-                  >
-                    <i class="iconfont icon-kujitongbucopy">{{ $t('connection.preview.reloadName') }}</i>
-                  </el-button>
-                </li>
-                <li class="item">
-                  <el-button
-                    class="btn"
-                    size="mini"
-                    v-readonlybtn="'datasource_edition'"
-                    :disabled="$disabledByPermission('datasource_edition_all_data', userId)"
-                    @click="beforeTest(id)"
-                  >
-                    <i class="iconfont icon-lianjie1">
-                      {{ $t('connection.preview.test') }}
-                    </i>
-                  </el-button>
-                </li>
-              </ul>
-            </div>
           </div>
+        </div>
+        <div class="panelBtn">
+          <ul>
+            <li class="item">
+              <ElButton
+                size="mini"
+                type="primary"
+                v-readonlybtn="'datasource_edition'"
+                @click="reload()"
+                :disabled="
+                  $disabledByPermission('datasource_edition_all_data', userId) || !['ready'].includes(this.status)
+                "
+              >
+                <!-- <i class="iconfont icon-kujitongbucopy"></i> -->
+                {{ $t('connection.preview.reloadName') }}
+              </ElButton>
+            </li>
+            <li class="item">
+              <ElButton
+                size="mini"
+                v-readonlybtn="'datasource_edition'"
+                :disabled="$disabledByPermission('datasource_edition_all_data', userId)"
+                @click="edit(id, type)"
+              >
+                <!-- <i class="iconfont icon-edit"></i> -->
+                {{ $t('connection.preview.edit') }}
+              </ElButton>
+            </li>
+
+            <li class="item">
+              <ElButton
+                size="mini"
+                v-readonlybtn="'datasource_edition'"
+                :disabled="$disabledByPermission('datasource_edition_all_data', userId)"
+                @click="beforeTest(id)"
+              >
+                <!-- <i class="iconfont icon-lianjie1"></i> -->
+                {{ $t('connection.preview.test') }}
+              </ElButton>
+            </li>
+          </ul>
         </div>
         <el-progress
           type="line"
@@ -654,7 +654,6 @@ export default {
     display: flex;
     flex-direction: column;
     margin: 20px 0;
-    border-bottom: 1px solid #eee;
   }
   .test-progress {
     width: 94.5%;
@@ -701,23 +700,7 @@ export default {
         color: #e6a23c;
       }
     }
-    .panelBtn {
-      display: flex;
-      align-items: center;
-      margin-top: 10px;
-      .item {
-        margin-right: 10px;
-        float: left;
-      }
-      .iconfont {
-        display: inline-block;
-        font-size: 12px;
-        transform: rotate(00deg);
-      }
-    }
-    .panelBtn:hover {
-      color: #409eff;
-    }
+
     .btn + .btn {
       margin-left: 5px;
     }
@@ -728,6 +711,29 @@ export default {
         font-size: 12px;
       }
     }
+  }
+  .panelBtn {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    ul {
+      width: 100%;
+      padding: 10px 0;
+      border-top: 1px solid #f2f2f2;
+      border-bottom: 1px solid #f2f2f2;
+    }
+    .item {
+      margin-right: 10px;
+      float: left;
+    }
+    .iconfont {
+      display: inline-block;
+      font-size: 12px;
+      transform: rotate(00deg);
+    }
+  }
+  .panelBtn:hover {
+    color: #409eff;
   }
   .label {
     color: #999;
