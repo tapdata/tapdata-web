@@ -264,7 +264,6 @@
 
 <script>
 import factory from '../../../api/factory'
-const dataFlows = factory('DataFlows')
 const Task = factory('Task')
 import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
@@ -592,7 +591,7 @@ export default {
         id: ids,
         listtags
       }
-      dataFlows.batchUpdateListtags(attributes).then(() => {
+      Task.batchUpdateListtags(attributes).then(() => {
         this.dataFlowId = ''
         this.table.fetch()
       })
