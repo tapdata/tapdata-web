@@ -252,7 +252,7 @@ export default {
           }
         ],
         grid: {
-          left: 0,
+          left: 12, // 没有数据的时候，Y轴单位显示不全。后面可以通过判断设置该值
           right: '2px',
           top: '36px',
           bottom: 0
