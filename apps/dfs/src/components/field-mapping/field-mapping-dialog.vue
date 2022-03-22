@@ -1215,6 +1215,7 @@ export default {
     //rename操作
     fieldProcessRenameVika(id, key, value) {
       let option = this.target.find(v => v.field_name === value)
+      let findSource = this.fieldMappingTableData.find(v => v.original_field_name === value)
       if (!option) return
       // if (value === option.original_field_name || option.field) {
       //   this.restRenameVika(id) //用户手动改为最原始的名字
@@ -1224,13 +1225,13 @@ export default {
       let op = {
         op: 'RENAME',
         id: id,
-        field: option.field_name,
+        field: findSource.field_name,
         operand: value, //改过名的字段
-        table_name: option.table_name,
+        table_name: '',
         type: option.data_type,
-        primary_key_position: option.primary_key_position,
+        primary_key_position: findSource.primary_key_position,
         label: value,
-        original_field_name: option.original_field_name,
+        original_field_name: findSource.original_field_name,
         data_type: option.data_type,
         precision: option.precision,
         scale: option.scale
