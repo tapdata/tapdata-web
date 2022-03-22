@@ -772,6 +772,7 @@ export default {
   task_mapping_dialog_target_no_fields_problem: '检测到您有 XXX 张表中没有字段，请先返回上一步将没有字段的表移除',
   task_mapping_dialog_rename_a_single_table_title: '修改目标表名',
   task_mapping_dialog_rename_a_single_table_input_desc: '自定义名称的表，不会应用：前后缀和大小写转换操作',
+  task_mapping_dialog_batch_change_field_type_desc: '实际可用长度取决于目标数据库类型定义，请按需设置',
 
   // 里程碑
   milestone_label_init_dataflow: '【前期准备】解析dag路径创建子任务',

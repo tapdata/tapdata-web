@@ -210,6 +210,7 @@
                 :isFirst="isFirst"
                 :getDataFlow="getDataFlow"
                 :dataSourceModel="dataSourceModel"
+                :customTypeMappings.sync="customTypeMappings"
                 @update-first="returnModel"
                 @update-transform="updateTranForm"
                 @row-click="selectRowFieldProcess"
@@ -698,7 +699,8 @@ export default {
             } else callback()
           })
         }
-      }
+      },
+      customTypeMappings: []
     }
   },
 
@@ -805,6 +807,7 @@ export default {
           topicData: syncObjects[0]?.type === 'topic' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || [],
           queueData: syncObjects[0]?.type === 'queue' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || []
         }
+        this.customTypeMappings = data.customTypeMappings || []
         //编辑时不被覆盖
         this.tableNameTransform = stages[1].tableNameTransform
         this.fieldsNameTransform = stages[1].fieldsNameTransform
@@ -1488,7 +1491,8 @@ export default {
             agentType: 'private'
           },
           this.platformInfo
-        )
+        ),
+        customTypeMappings: this.customTypeMappings
       }
       let stageDefault = {
         connectionId: '',

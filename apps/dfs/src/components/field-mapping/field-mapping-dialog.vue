@@ -5,7 +5,7 @@
       >:
       {{ $t('task_mapping_table_setting_tip') }}
       <div class="float-end">
-        <el-button v-if="!readOnly && !targetIsVika" size="mini" @click="batchFieldTypeForm.visible = true">{{
+        <el-button v-if="!readOnly && !targetIsVika" size="mini" @click="handleBatchChangeFieldType">{{
           $t('task_mapping_table_field_type_change')
         }}</el-button>
         <el-button v-if="!readOnly && !targetIsVika" size="mini" @click="handleChangTableName">{{
@@ -427,7 +427,7 @@
     </ElDialog>
     <!-- 批量修改字段类型 -->
     <ElDialog
-      width="500px"
+      width="800px"
       append-to-body
       :title="'批量修改字段类型'"
       custom-class="batch-field-type-maping-table-dialog"
@@ -437,25 +437,35 @@
     >
       <div>
         <ElRow>
-          <ElCol :span="12"> 源字段类型 </ElCol>
-          <ElCol :span="12"> 源字段类型 </ElCol>
+          <ElCol :span="9"> 源字段类型 </ElCol>
+          <ElCol :span="7"> 目标字段类型 </ElCol>
+          <ElCol :span="3"> 长度 </ElCol>
+          <ElCol :span="3"> 精度 </ElCol>
+          <ElCol :span="2"> 操作 </ElCol>
         </ElRow>
         <ElRow v-for="(item, index) in batchFieldTypeForm.list" :key="index" class="mt-4">
-          <ElCol :span="12" class="flex">
-            <el-select v-model="item.sourceType" filterable required clearable @change="initDataType">
+          <ElCol :span="9" class="flex">
+            <el-select v-model="item.sourceType" :disabled="item.disabled" filterable required clearable>
               <el-option
                 :label="item.dbType"
                 :value="item.dbType"
                 v-for="(item, index) in typeMapping"
                 :key="index"
+                :disabled="!!batchFieldTypeForm.list.find(t => t.sourceType === item.dbType)"
               ></el-option>
             </el-select>
             <div class="flex justify-content-center align-items-center px-2" style="height: 32px">
               <VIcon size="14" class="color-primary">d-arrow-right</VIcon>
             </div>
           </ElCol>
-          <ElCol :span="12" class="flex">
-            <el-select v-model="item.targetType" filterable required clearable @change="initDataType">
+          <ElCol :span="7" class="flex pr-2">
+            <el-select
+              v-model="item.targetType"
+              filterable
+              required
+              clearable
+              @change="initBatchDataType(arguments[0], item)"
+            >
               <el-option
                 :label="item.dbType"
                 :value="item.dbType"
@@ -463,13 +473,41 @@
                 :key="index"
               ></el-option>
             </el-select>
-            <ElInputNumber v-model="item.precision"></ElInputNumber>
-            <ElInputNumber v-model="item.length"></ElInputNumber>
+          </ElCol>
+          <ElCol :span="3" class="flex pl-1">
+            <ElTooltip :content="item.lengthTooltip" :disabled="!item.lengthTooltip" placement="bottom" effect="light">
+              <ElInputNumber
+                v-model="item.length"
+                controls-position="right"
+                :disabled="item.lengthDisabled"
+                :min="item.minScale"
+                :max="item.maxScale"
+              ></ElInputNumber>
+            </ElTooltip>
+          </ElCol>
+          <ElCol :span="3" class="flex">
+            <ElTooltip
+              :content="item.precisionTooltip"
+              :disabled="!item.precisionTooltip"
+              placement="bottom"
+              effect="light"
+            >
+              <ElInputNumber
+                v-model="item.precision"
+                controls-position="right"
+                :disabled="item.precisionDisabled"
+                :min="item.minPrecision"
+                :max="item.maxPrecision"
+              ></ElInputNumber>
+            </ElTooltip>
+          </ElCol>
+          <ElCol :span="2" class="flex">
             <div class="flex align-items-center justify-content-center pl-2" style="height: 32px">
               <VIcon size="16" class="mr-2 cursor-pointer hover-primary" @click="fieldTypeChangeAddItem(index, item)"
                 >plus-circle</VIcon
               >
               <VIcon
+                v-if="!item.disabled"
                 size="16"
                 class="cursor-pointer hover-primary"
                 :class="{ invisible: batchFieldTypeForm.list.length <= 1 }"
@@ -479,16 +517,16 @@
             </div>
           </ElCol>
         </ElRow>
+        <div class="flex align-items-center mt-4">
+          <VIcon class="color-primary">info</VIcon>
+          <span class="fs-8">{{ $t('task_mapping_dialog_batch_change_field_type_desc') }}</span>
+        </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="batchFieldTypeForm.visible = false">{{ $t('button_cancel') }}</ElButton>
-        <ElButton
-          size="mini"
-          type="primary"
-          :disabled="!batchFieldTypeForm.list.every(t => t.sourceType && t.targetType)"
-          @click="vikaSaveTable()"
-          >{{ $t('button_confirm') }}</ElButton
-        >
+        <ElButton size="mini" @click="batchFieldTypeFormCancel">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" :disabled="batchFieldTypeFormDisabled()" @click="batchFieldTypeFormSave">{{
+          $t('button_confirm')
+        }}</ElButton>
       </span>
     </ElDialog>
   </div>
@@ -518,6 +556,10 @@ export default {
     dataSourceModel: {
       type: Object,
       default: () => {}
+    },
+    customTypeMappings: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -605,20 +647,12 @@ export default {
         visible: false,
         originalTableName: '',
         table: '',
-        agentId: '621ee2403420bd2637459f24-1ft4a7jc1',
-        currentNode: {},
-        rootNode: []
+        agentId: '',
+        currentNode: {}
       },
       batchFieldTypeForm: {
         visible: false,
-        list: [
-          {
-            sourceType: '',
-            targetType: '',
-            precision: null,
-            length: null
-          }
-        ],
+        list: [],
         options: []
       }
     }
@@ -643,6 +677,7 @@ export default {
           vikaMappings: this.transform.vikaMappings || {}
         }
         this.currentForm = JSON.parse(JSON.stringify(this.form))
+        this.loadCustomTypeMappingsData()
       }
     })
     this.updateView()
@@ -904,9 +939,6 @@ export default {
           return //所有字段被删除了 不可以保存任务
         }
         if (this.targetIsVika) {
-          this.fieldMappingTableData.forEach((el, index) => {
-            console.log('!t.t_field_name && !t.is_deleted', !!el.t_field_name, !!el.is_deleted, index)
-          })
           if (this.fieldMappingTableData.some(t => !t.t_field_name && !t.is_deleted)) {
             this.$message.error(this.$t('task_mapping_table_field_name_empty_check'))
             return
@@ -1148,6 +1180,27 @@ export default {
       if (target?.length > 0) {
         this.currentTypeRules = target[0]?.rules || []
       } else this.currentTypeRules = '' //清除上一个字段范围
+    },
+    initBatchDataType(val, item) {
+      let target = this.typeMapping.find(type => type.dbType === val)
+      if (!target) {
+        return
+      }
+      let rule = target.rules[0] || {}
+      for (let key in rule) {
+        item[key] = rule[key]
+      }
+      item.precision = item.minPrecision
+      item.precisionDisabled = item.minPrecision === item.maxPrecision
+      item.length = item.minScale
+      item.lengthDisabled = item.minScale === item.maxScale
+      if (!item.precisionDisabled) {
+        item.precisionTooltip =
+          this.$t('task_mapping_table_accuracy_range') + `[ ${item.minPrecision} , ${item.maxPrecision} ]`
+      }
+      if (!item.lengthDisabled) {
+        item.lengthTooltip = this.$t('task_mapping_table_length_range') + `[ ${item.minScale} , ${item.maxScale} ]`
+      }
     },
     handleClose() {
       this.dialogVisible = false
@@ -1480,18 +1533,12 @@ export default {
       let filter = { where: { status: { $in: ['Running'] } }, size: 10, page: 1, sort: ['createAt desc'] }
       this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(({ items }) => {
         this.vikaForm.agentId = items[0]?.tmInfo?.agentId
+      })
+    },
+    loadNode(node, resolve) {
+      if (node.level === 0) {
         this.$ws.once('loadVikaResult', data => {
-          //过滤目录结构
-          let result = data.result
-          result = result.filter(v => v.type === 'Datasheet' || v.type === 'Folder')
-          for (let i = 0; i < result.length; i++) {
-            if (result[i].type === 'Datasheet') {
-              result[i]['leaf'] = true
-            } else {
-              result[i]['leaf'] = false
-            }
-          }
-          this.vikaForm.rootNode = result
+          this.loadRootNode(data, node, resolve)
         })
         let obj = {
           type: 'pipe',
@@ -1501,16 +1548,11 @@ export default {
             load_type: 'node',
             space_id: this.model.vika_space_id,
             database_host: this.model.database_host,
-            // connection_id: this.model.connectionId || ''
             api_token: this.model.plain_password
           }
         }
         this.$ws.send(obj)
-      })
-    },
-    loadNode(node, resolve) {
-      if (node.level === 0) {
-        return resolve([...this.vikaForm.rootNode])
+        return
       }
       this.$ws.once('loadVikaResult', data => {
         this.setChildNode(data, node, resolve)
@@ -1528,6 +1570,19 @@ export default {
         }
       }
       this.$ws.send(obj)
+    },
+    loadRootNode(data, node, resolve) {
+      //过滤目录结构
+      let result = data.result
+      result = result.filter(v => v.type === 'Datasheet' || v.type === 'Folder')
+      for (let i = 0; i < result.length; i++) {
+        if (result[i].type === 'Datasheet') {
+          result[i]['leaf'] = true
+        } else {
+          result[i]['leaf'] = false
+        }
+      }
+      resolve(result)
     },
     setChildNode(data, node, resolve) {
       if (data.status === 'SUCCESS') {
@@ -1579,13 +1634,70 @@ export default {
       this.$ws.off('loadVikaResult')
     },
     fieldTypeChangeAddItem(index, item) {
-      this.batchFieldTypeForm.list.splice(index, 0, Object.assign({}, item))
+      let result = {}
+      for (let key in item) {
+        result[key] = undefined
+      }
+      this.batchFieldTypeForm.list.splice(index + 1, 0, result)
     },
     getItemInvalid(item) {
       if (this.targetIsVika) {
         return item.invalid || this.fieldMappingTableData.some(t => !t.t_field_name && !t.is_deleted)
       }
       return item.invalid
+    },
+    handleBatchChangeFieldType() {
+      let { batchFieldTypeForm } = this
+      if (!batchFieldTypeForm.list.length) {
+        batchFieldTypeForm.list = [
+          {
+            sourceType: '',
+            targetType: '',
+            precision: undefined,
+            length: undefined
+          }
+        ]
+      }
+      batchFieldTypeForm.visible = true
+    },
+    batchFieldTypeFormCancel() {
+      this.loadCustomTypeMappingsData()
+      this.batchFieldTypeForm.visible = false
+    },
+    // 批量修改字段类型
+    batchFieldTypeFormSave() {
+      this.batchFieldTypeForm.visible = false
+      this.batchFieldTypeForm.list.forEach(el => {
+        el.disabled = true
+      })
+      this.updateParentMetaData('customTypeMappings', this.getCustomTypeMappings())
+    },
+    getCustomTypeMappings() {
+      let arr = ['sourceType', 'targetType', 'precision', 'length']
+      return this.batchFieldTypeForm.list.map(t => {
+        let result = {}
+        let obj = t || {}
+        for (let key in obj) {
+          if (arr.includes(key)) {
+            result[key] = obj[key]
+          }
+        }
+        return result
+      })
+    },
+    batchFieldTypeFormDisabled() {
+      let flag = false
+      flag = !this.batchFieldTypeForm.list.every(t => t.sourceType && t.targetType)
+      if (flag) {
+        return flag
+      }
+      let getCustomTypeMappings = this.getCustomTypeMappings()
+      flag = JSON.stringify(getCustomTypeMappings) === JSON.stringify(this.customTypeMappings)
+      return flag
+    },
+    loadCustomTypeMappingsData() {
+      let arr = JSON.parse(JSON.stringify(this.customTypeMappings)).map(t => Object.assign(t, { disabled: true }))
+      this.batchFieldTypeForm.list = arr
     }
   }
 }

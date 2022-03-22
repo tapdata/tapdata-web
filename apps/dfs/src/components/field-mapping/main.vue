@@ -130,8 +130,14 @@ export default {
     },
     //获取左边导航数据 - 表
     async updateMetadata(type, data, row, operations) {
-      //将表改名 字段改名 放在setting里面
-      this.updateAutoTransform(type, data)
+      if (type === 'customTypeMappings') {
+        let result = JSON.parse(JSON.stringify(data))
+        this.dataFlow[type] = result
+        this.$emit('update:customTypeMappings', result)
+      } else {
+        //将表改名 字段改名 放在setting里面
+        this.updateAutoTransform(type, data)
+      }
       // if (type !== 'dataType') {
       //   this.dataFlow['rollback'] = 'all'
       // }
