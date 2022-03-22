@@ -378,6 +378,7 @@ export class Table extends NodeType {
                   updateConditionFields: {
                     title: '更新条件字段',
                     type: 'array',
+                    required: true,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       wrapperWidth: 240,
