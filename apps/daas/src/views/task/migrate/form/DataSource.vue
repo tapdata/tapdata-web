@@ -3,19 +3,26 @@
     ref="dataSourceModelForm"
     label-width="100px"
     label-position="left"
-    status-icon
     :disabled="stateIsReadonly"
     :model="dataSourceData"
     :rules="rules"
   >
     <el-form-item label="源端类型" prop="source_filter_databaseType">
-      <el-select v-model="dataSourceData.source_filter_databaseType" @change="getSourceConnection">
+      <el-select v-model="dataSourceData.source_filter_databaseType" filterable @change="getSourceConnection">
         <el-option v-for="item in allowSourceDatabaseTypes" :key="item.value" :label="item.label" :value="item.value">
         </el-option>
       </el-select>
     </el-form-item>
     <el-form-item label="源端连接" prop="source_connectionId">
-      <el-select v-model="dataSourceData.source_connectionId">
+      <el-select
+        v-model="dataSourceData.source_connectionId"
+        filterable
+        clearable
+        remote
+        :clear="clearSourceMethod"
+        :loading="loadingSource"
+        :remote-method="remoteSourceMethod"
+      >
         <el-option v-for="item in sourceData" :key="item.value" :label="item.label" :value="item.value"> </el-option>
       </el-select>
     </el-form-item>
@@ -26,7 +33,15 @@
       </el-select>
     </el-form-item>
     <el-form-item label="目标端连接" prop="target_connectionId">
-      <el-select v-model="dataSourceData.target_connectionId">
+      <el-select
+        v-model="dataSourceData.target_connectionId"
+        filterable
+        clearable
+        remote
+        :loading="loadingTarget"
+        :clear="clearTargetMethod"
+        :remote-method="remoteTargetMethod"
+      >
         <el-option v-for="item in targetData" :key="item.value" :label="item.label" :value="item.value"> </el-option>
       </el-select>
     </el-form-item>
@@ -34,6 +49,8 @@
 </template>
 
 <script>
+import { verify } from '../../../connections/util'
+
 export default {
   name: 'Source',
   props: ['dataSourceData'],
@@ -49,13 +66,15 @@ export default {
         source_connectionId: [{ required: true, message: '请选择源端连接', trigger: 'change' }],
         target_filter_databaseType: [{ required: true, message: '请选择目标端类型', trigger: 'change' }],
         target_connectionId: [{ required: true, message: '请选择目标端连接', trigger: 'change' }]
-      }
+      },
+      loadingSource: false,
+      loadingTarget: false
     }
   },
   mounted() {
     this.allowDatabaseType()
-    this.getConnection(this.getWhere('source'), 'source_connectionId', true)
-    this.getConnection(this.getWhere('target'), 'target_connectionId', true)
+    this.getConnection(this.getWhere('source'), 'source_connectionId')
+    this.getConnection(this.getWhere('target'), 'target_connectionId')
   },
   methods: {
     //云版支持数据源
@@ -108,7 +127,7 @@ export default {
         this.getConnection(where, `${type}_connectionId`)
       }
     },
-    getConnection(where, type) {
+    getConnection(where, type, keyword) {
       let fields = {
         name: 1,
         id: 1,
@@ -124,6 +143,12 @@ export default {
       }
       if (type === 'source_connectionId') {
         fields['database_username'] = 1
+        this.loadingSource = true
+      } else {
+        this.loadingTarget = true
+      }
+      if (keyword && keyword.trim()) {
+        where.name = { like: verify(keyword), options: 'i' }
       }
       let filter = {
         where: where,
@@ -149,16 +174,33 @@ export default {
             this.sourceData = options
           } else this.targetData = options
         })
+        .finally(() => {
+          if (type === 'source_connectionId') {
+            this.loadingSource = false
+          } else this.loadingTarget = false
+        })
     },
     getSourceConnection(val) {
       this.dataSourceData['source_databaseType'] = val
       this.dataSourceData.source_connectionId = ''
-      this.getConnection(this.getWhere('source'), 'source_connectionId', true)
+      this.getConnection(this.getWhere('source'), 'source_connectionId')
     },
     getTargetConnection(val) {
       this.dataSourceData['target_databaseType'] = val
       this.dataSourceData.target_connectionId = ''
-      this.getConnection(this.getWhere('target'), 'target_connectionId', true)
+      this.getConnection(this.getWhere('target'), 'target_connectionId')
+    },
+    clearSourceMethod() {
+      this.getConnection(this.getWhere('source'), 'source_connectionId')
+    },
+    clearTargetMethod() {
+      this.getConnection(this.getWhere('target'), 'target_connectionId')
+    },
+    remoteSourceMethod(keyword) {
+      this.getConnection(this.getWhere('source'), 'source_connectionId', keyword)
+    },
+    remoteTargetMethod(keyword) {
+      this.getConnection(this.getWhere('target'), 'target_connectionId', keyword)
     },
     save() {
       this.$refs.dataSourceModelForm.validate(valid => {

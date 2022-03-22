@@ -102,7 +102,7 @@ table {
 }
 
 body {
-  font-family: var(--font-sans-serif);
+  font-family: $fontFamily;
 }
 // 无分类列表/详情页面/表单页面
 .section-wrap {
