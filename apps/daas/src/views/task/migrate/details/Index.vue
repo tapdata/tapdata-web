@@ -1,9 +1,9 @@
 <template>
   <div v-loading="loading" class="statistics-container section-wrap">
     <div class="section-wrap-box">
-      <Info :task="task" class="card-box card-box__info" @reload="loadTask"></Info>
+      <Info :task="task" class="card-box card-box__info" :remote-method="infoRemoteMethod" @reload="loadTask"></Info>
       <div class="card-box__content">
-        <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100" @tab-click="tabHandler">
+        <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
           <ElTabPane :label="$t('task_monitor_progress')" name="schedule">
             <Schedule :task="task"></Schedule>
           </ElTabPane>
@@ -19,9 +19,6 @@
           <ElTabPane :label="$t('task_monitor_mining_task')" name="task">
             <Task :id="task.id"></Task>
           </ElTabPane>
-          <!--        <ElTabPane v-if="showContent" :label="$t('task_monitor_sync_content')" name="content" lazy>-->
-          <!--          <FieldMapping ref="fieldMapping" :readOnly="true" :field_process="field_process" :getDataFlow="getDataFlow"></FieldMapping>-->
-          <!--        </ElTabPane>-->
         </ElTabs>
       </div>
     </div>
@@ -86,7 +83,7 @@ export default {
   computed: {
     connectionIds() {
       return (
-        this.task?.stages?.map(item => {
+        this.task?.dag?.nodes?.map(item => {
           return item.connectionId
         }) || []
       )
@@ -98,7 +95,7 @@ export default {
       type: 'watch',
       collection: 'DataFlows',
       filter: {
-        where: { 'fullDocument._id': { $in: [this.$route.params.id] } }, //查询条件
+        where: { 'fullDocument._id': { $in: [this.$route.query.id] } }, //查询条件
         fields: {
           'fullDocument.id': true,
           'fullDocument._id': true,
@@ -133,14 +130,16 @@ export default {
     init() {
       this.loadTask()
     },
-    loadTask() {
-      let id = this.$route.params?.id
+    async loadTask() {
+      let id = this.$route.query?.subId
       this.loading = true
-      this.$api('DataFlows')
+      this.$api('SubTask')
         .get([id])
         .then(res => {
+          if (JSON.stringify(this.formatTask(res.data)) === JSON.stringify(this.task)) {
+            return
+          }
           this.task = this.formatTask(res.data)
-          this.showContentTab(this.task)
         })
         .finally(() => {
           this.loading = false
@@ -153,16 +152,10 @@ export default {
       }
     },
     formatTask(data) {
-      if (!data) {
-        return
-      }
       data.totalOutput = data.stats?.output?.rows || 0
       data.totalInput = data.stats?.input?.rows || 0
-      data.creator = data.creator || data.createUser || data.username || data.user?.username || ''
-      data.typeText =
-        data.mappingTemplate === 'cluster-clone'
-          ? this.$t('task_monitor_migration_task')
-          : this.$t('task_monitor_sync_task')
+      data.creator = data.creator || data.createUser || data.username || data.user?.username || '-'
+      data.typeText = data.mappingTemplate === 'cluster-clone' ? '迁移任务' : '同步任务'
       let cdcTime = data.cdcLastTimes?.[0]?.cdcTime || ''
       data.startTimeFmt = this.formatTime(data.startTime)
       data.endTimeFmt = data.startTime ? this.formatTime(data.finishTime) : '-'
@@ -172,33 +165,15 @@ export default {
     formatTime(time) {
       return time ? this.$moment(time).format('YYYY-MM-DD HH:mm:ss') : '-'
     },
-    tabHandler() {
-      this.$nextTick(() => {
-        const { activeTab } = this
-        if (activeTab === 'content') {
-          this.$refs.fieldMapping.getMetaData(this.task)
-          this.field_process = this.task?.stages[0]?.field_process || []
-        }
-        if (activeTab !== 'connect') {
-          this.$refs.connection?.clearInterval?.()
-        }
-      })
-    },
-    //是否支持同步内容
-    showContentTab(data) {
-      let stageId = data?.stages?.[1]?.id || ''
-      let param = {
-        stages: data?.stages,
-        stageId: stageId
-      }
-      this.$api('DataFlows')
-        .tranModelVersionControl(param)
+    infoRemoteMethod(params) {
+      return this.$api('Measurement')
+        .query(params)
         .then(res => {
-          this.showContent = res.data?.[stageId] || false
+          return res.data
         })
     },
-    getDataFlow() {
-      return this.task
+    clearTimer() {
+      this.timer && clearInterval(this.timer)
     }
   }
 }

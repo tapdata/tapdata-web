@@ -987,7 +987,11 @@ export default {
         return
       }
       this.$router.push({
-        path: `/dataflow/details/${row.id}/statistics/${subId}`
+        name: 'MigrateStatistics',
+        query: {
+          id: row.id,
+          subId: subId
+        }
       })
     },
     handlePreview(id) {
