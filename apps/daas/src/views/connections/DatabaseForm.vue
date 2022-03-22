@@ -1180,16 +1180,6 @@ export default {
         if (this.model.database_type === 'mongodb' && this.$route.params.id && itemIsUrl) {
           itemIsUrl.options[0].disabled = true //编辑模式下mongodb不支持URL模式
         }
-        // else if (this.model.database_type === 'mongodb' && !this.$route.params.id && itemIsUrl) {
-        //   itemIsUrl.options[1].disabled = true
-        // }
-        //编辑模式下mongodb 不校验证书
-        if (this.model.database_type === 'mongodb' && this.$route.params.id && sslKey) {
-          sslKey.rules = []
-        }
-        if (this.model.database_type === 'mongodb' && this.$route.params.id && sslCA) {
-          sslCA.rules = []
-        }
         //编辑模式下vika不校验plain_password
         let plain_password = items.find(it => it.field === 'plain_password')
         if (this.model.database_type === 'vika' && this.$route.params.id && plain_password) {
