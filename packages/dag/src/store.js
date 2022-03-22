@@ -459,6 +459,25 @@ const mutations = {
     state.stateIsDirty = true
   },
 
+  /**
+   * 批量删除节点
+   * @param state
+   * @param nodeIds
+   */
+  batchRemoveNode(state, nodeIds) {
+    state.dag.nodes = state.dag.nodes.filter(node => !nodeIds.includes(node.id))
+
+    if (nodeIds.includes(state.activeNodeId) && state.activeType === 'node') {
+      state.activeType = null
+    }
+
+    state.dag.edges = state.dag.edges.filter(
+      ({ source, target }) => !nodeIds.includes(source) && !nodeIds.includes(target)
+    )
+
+    state.stateIsDirty = true
+  },
+
   // 移除所有节点
   removeAllNodes(state, data) {
     if (data?.setStateDirty === true) {

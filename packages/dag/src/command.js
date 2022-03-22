@@ -57,55 +57,73 @@ class Command {
   }
 }
 
+class NodeCommand extends Command {
+  constructor(nodes) {
+    super()
+    this.nodes = nodes
+    this.elIds = this.nodes.map(n => NODE_PREFIX + n.id)
+    this.nodeIds = this.nodes.map(n => n.id)
+  }
+
+  removeNode(state) {
+    const managedElements = state.instance.getManagedElements()
+
+    state.instance.setSuspendDrawing(true)
+
+    this.elIds.forEach(id => {
+      const el = document.querySelector('#' + id)
+      state.instance.removeAllEndpoints(id)
+      state.instance.destroyDraggable(el)
+      state.instance.destroyDroppable(el)
+      delete managedElements[id] // 删除managed可以出发锚点位置更新
+
+      // remove 暂时不用了，会引发vue的虚拟dom更新错误
+      // state.instance.remove(NODE_PREFIX + node.id)
+    })
+
+    state.store.commit('dataflow/batchRemoveNode', this.nodeIds)
+
+    Vue.nextTick(() => {
+      state.instance.setSuspendDrawing(false, true)
+    })
+  }
+}
+
 /**
  * 添加节点
  */
-class AddNodeCommand extends Command {
+class AddNodeCommand extends NodeCommand {
   constructor(node) {
-    super()
-    // this.node = node
-    this.nodes = Array.isArray(node) ? node : [node]
+    super(Array.isArray(node) ? node : [node])
   }
 
   exec(state) {
     state.store.commit('dataflow/addNodes', this.nodes)
-    // state.store.commit('dataflow/addNode', this.node)
   }
 
   undo(state) {
-    this.nodes.forEach(node => {
-      state.instance.remove(NODE_PREFIX + node.id)
-      state.store.commit('dataflow/removeNode', node)
-    })
+    this.removeNode(state)
   }
 }
 
 /**
  * 删除节点
  */
-class RemoveNodeCommand extends Command {
+class RemoveNodeCommand extends NodeCommand {
   constructor(node) {
-    super()
-    this.nodes = Array.isArray(node) ? node : [node]
-    this.nodeIds = this.nodes.map(n => NODE_PREFIX + n.id)
+    super(Array.isArray(node) ? node : [node])
   }
 
-  exec(state) {
-    state.instance.setSuspendDrawing(true)
-
+  async exec(state) {
     this.connections = state.instance
       .getConnections('*')
-      .filter(c => this.nodeIds.includes(c.targetId) || this.nodeIds.includes(c.sourceId))
+      .filter(c => this.elIds.includes(c.targetId) || this.elIds.includes(c.sourceId))
+      .map(c => ({
+        sourceId: c.sourceId,
+        targetId: c.targetId
+      }))
 
-    this.nodeIds.forEach(id => state.instance.remove(id))
-
-    this.nodeIds.forEach((id, i) => {
-      state.store.commit('dataflow/removeNode', this.nodes[i])
-    })
-
-    Vue.nextTick(() => {
-      state.instance.setSuspendDrawing(false, true)
-    })
+    this.removeNode(state)
   }
 
   undo(state) {
@@ -279,10 +297,9 @@ class QuickAddTargetCommand extends ConnectionCommand {
 /**
  * 添加dag，包含节点和连线
  */
-class AddDagCommand extends Command {
+class AddDagCommand extends NodeCommand {
   constructor(dag) {
-    super()
-    this.nodes = dag.nodes
+    super(dag.nodes)
     this.edges = dag.edges
   }
 
@@ -296,10 +313,7 @@ class AddDagCommand extends Command {
   }
 
   undo(state) {
-    this.nodes.forEach(node => {
-      state.instance.remove(NODE_PREFIX + node.id)
-      state.store.commit('dataflow/removeNode', node)
-    })
+    this.removeNode(state)
   }
 }
 
