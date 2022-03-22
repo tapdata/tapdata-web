@@ -1,4 +1,5 @@
 import { NodeType } from './extends/NodeType'
+// import { NONSUPPORT_CDC, NONSUPPORT_SYNC, NONSUPPORT_TARGET } from '../constants'
 
 export class Table extends NodeType {
   constructor(node) {
@@ -9,6 +10,18 @@ export class Table extends NodeType {
       if (attr.formSchema) this.formSchema = attr.formSchema
       if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
     }
+
+    /*const { databaseType } = this.attr
+
+    // 不能作为源节点
+    if (NONSUPPORT_SYNC.includes(databaseType) && NONSUPPORT_CDC.includes(databaseType)) {
+      this.attr.maxOutputs = 0
+    }
+
+    // 不能作为目标节点
+    if (NONSUPPORT_TARGET.includes(databaseType)) {
+      this.attr.maxInputs = 0
+    }*/
   }
 
   attr = {
@@ -390,11 +403,14 @@ export class Table extends NodeType {
    * 获取额外添加到节点上的属性
    */
   getExtraAttr() {
-    const { tableName, databaseType, connectionId } = this.attr
+    const { tableName, databaseType, connectionId, connectionType } = this.attr
     return {
       tableName,
       databaseType,
-      connectionId
+      connectionId,
+      attrs: {
+        connectionType
+      }
     }
   }
 }
