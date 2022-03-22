@@ -1,6 +1,6 @@
 <template>
-  <ElContainer class="create-task-wrap bg-white" v-if="steps[activeStep]">
-    <ElContainer style="overflow: hidden; flex: 1" class="create-task-container flex-column">
+  <ElContainer class="create-task-wrap" v-if="steps[activeStep]">
+    <ElContainer style="overflow: hidden; flex: 1" class="create-task-container flex-column bg-white">
       <div class="steps-header">
         <ElSteps
           class="primary pb-6"
@@ -490,7 +490,7 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .create-task-wrap {
   .select-connection-popper {
     .el-select-dropdown__item {
@@ -525,9 +525,9 @@ export default {
 </style>
 <style lang="scss" scoped>
 .create-task-wrap {
-  //padding: 0 20px;
   height: 0;
-  background: rgba(250, 250, 250, 1);
+  padding: 0 20px 20px 20px;
+  background-color: #eff1f4;
   .step-header {
     display: flex;
     justify-content: center;
