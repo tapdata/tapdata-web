@@ -994,8 +994,10 @@ export default {
       })
     },
     handlePreview(id) {
-      this.getPreviewData(id)
-      this.isShowDetails = true
+      this.isShowDetails = !this.isShowDetails
+      if (this.isShowDetails) {
+        this.getPreviewData(id)
+      }
     },
     startDisabled(row) {
       const statusResult = row.statusResult || []
@@ -1168,7 +1170,7 @@ export default {
         &:not(.has-children) {
           // color: #409eff;
           cursor: pointer;
-          text-decoration: underline;
+          // text-decoration: underline;
         }
       }
     }
