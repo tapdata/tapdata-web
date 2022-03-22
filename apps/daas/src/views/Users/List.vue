@@ -495,8 +495,7 @@ export default {
         })
     },
     // taps标签页切换
-    handleTapClick(val) {
-      this.activePanel = val
+    handleTapClick() {
       this.table.fetch(1)
     },
     handleSortTable({ order, prop }) {
