@@ -981,11 +981,13 @@ export default {
       })
     },
     toDetail(row) {
+      let subId = row.statuses[0]?.id || ''
+      if (!subId) {
+        this.$message.error('该复制任务没有子任务')
+        return
+      }
       this.$router.push({
-        name: 'dataflowDetails',
-        params: {
-          id: row.id
-        }
+        path: `/dataflow/details/${row.id}/statistics/${subId}`
       })
     },
     handlePreview(id) {
