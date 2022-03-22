@@ -164,6 +164,14 @@ export default {
       statusResult: [],
       pieData: [],
       pieOptions: {
+        title: {
+          text: '任务状态',
+          left: 'center',
+          top: 'center',
+          textStyle: {
+            fontSize: '12'
+          }
+        },
         legend: {
           show: false
         },
