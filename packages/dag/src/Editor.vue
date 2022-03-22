@@ -225,6 +225,7 @@ export default {
   destroyed() {
     this.command = null
     this.resetWorkspace()
+    // this.resetState()
   },
 
   methods: {
@@ -255,7 +256,9 @@ export default {
       'pasteNodes',
       'setNodeError',
       'setNodeErrorMsg',
-      'clearNodeError'
+      'clearNodeError',
+      'clearNodeError',
+      'resetState'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
@@ -387,7 +390,7 @@ export default {
 
     initNodeView() {
       const { jsPlumbIns } = this
-      jsPlumbIns.setContainer('#node-view')
+      // jsPlumbIns.setContainer(this.$refs.paperScroller.$refs.paperContent)
       jsPlumbIns.registerConnectionType('active', connectorActiveStyle)
 
       jsPlumbIns.bind('connection', (info, event) => {

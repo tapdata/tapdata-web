@@ -34,8 +34,7 @@ const findByCod = (arr, cond) => {
   })
 }
 
-// 初始化 state
-const state = () => ({
+const getState = () => ({
   stateIsDirty: false, // 状态是否被污染，标识数据改变
   stateIsReadonly: false, // 状态是否被污染，标识数据改变
   nodeTypes: [], // 所有节点类型
@@ -103,6 +102,9 @@ const state = () => ({
   dagPromise: null,
   editVersion: null
 })
+
+// 初始化 state
+const state = getState()
 
 // getters
 const getters = {
@@ -521,6 +523,50 @@ const mutations = {
     state.taskId = null
     state.dag.nodes = []
     state.dag.edges = []
+    state.processorNodeTypes = [
+      {
+        icon: 'javascript',
+        name: 'JavaScript',
+        type: 'js_processor',
+        constructor: 'JavaScript'
+      },
+      {
+        icon: 'field-processor',
+        name: '字段处理',
+        type: 'field_processor',
+        constructor: 'FieldProcessor'
+      },
+      {
+        icon: 'aggregator',
+        name: '聚合',
+        type: 'aggregation_processor',
+        constructor: 'Aggregate'
+      },
+      {
+        icon: 'row-filter',
+        name: 'Row Filter',
+        type: 'row_filter_processor',
+        constructor: 'RowFilter'
+      },
+      {
+        icon: 'join',
+        name: '连接',
+        type: 'join_processor',
+        constructor: 'Join'
+      },
+      {
+        icon: 'join',
+        name: '主从合并',
+        type: 'merge_table_processor',
+        constructor: 'MergeTable'
+      }
+      // {
+      //   icon: 'joint-cache',
+      //   name: '关联缓存',
+      //   type: 'cache_lookup_processor',
+      //   constructor: 'JointCache'
+      // }
+    ]
   },
 
   setEdges(state, edges) {
@@ -656,6 +702,10 @@ const mutations = {
 
   addProcessorNode(state, nodes) {
     state.processorNodeTypes.push(...nodes)
+  },
+
+  resetState(state) {
+    Object.assign(state, getState())
   }
 }
 
