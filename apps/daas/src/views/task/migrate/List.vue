@@ -264,7 +264,6 @@
 
 <script>
 import factory from '../../../api/factory'
-const dataFlows = factory('DataFlows')
 const Task = factory('Task')
 import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
@@ -592,7 +591,7 @@ export default {
         id: ids,
         listtags
       }
-      dataFlows.batchUpdateListtags(attributes).then(() => {
+      Task.batchUpdateListtags(attributes).then(() => {
         this.dataFlowId = ''
         this.table.fetch()
       })
@@ -981,16 +980,24 @@ export default {
       })
     },
     toDetail(row) {
+      let subId = row.statuses[0]?.id || ''
+      if (!subId) {
+        this.$message.error('该复制任务没有子任务')
+        return
+      }
       this.$router.push({
-        name: 'dataflowDetails',
-        params: {
-          id: row.id
+        name: 'MigrateStatistics',
+        query: {
+          id: row.id,
+          subId: subId
         }
       })
     },
     handlePreview(id) {
-      this.getPreviewData(id)
-      this.isShowDetails = true
+      this.isShowDetails = !this.isShowDetails
+      if (this.isShowDetails) {
+        this.getPreviewData(id)
+      }
     },
     startDisabled(row) {
       const statusResult = row.statusResult || []
@@ -1163,7 +1170,7 @@ export default {
         &:not(.has-children) {
           // color: #409eff;
           cursor: pointer;
-          text-decoration: underline;
+          // text-decoration: underline;
         }
       }
     }

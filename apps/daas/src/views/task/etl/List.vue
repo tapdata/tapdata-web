@@ -265,7 +265,6 @@
 
 <script>
 import factory from '../../../api/factory'
-const dataFlows = factory('DataFlows')
 const Task = factory('Task')
 // const cluster = factory('cluster');
 import { toRegExp } from '../../../utils/util'
@@ -627,10 +626,12 @@ export default {
         id: ids,
         listtags
       }
-      dataFlows.batchUpdateListtags(attributes).then(() => {
-        this.dataFlowId = ''
-        this.table.fetch()
-      })
+      this.$api('Task')
+        .batchUpdateListtags(attributes)
+        .then(() => {
+          this.dataFlowId = ''
+          this.table.fetch()
+        })
     },
     create() {
       // let routeUrl = this.$router.resolve({
@@ -1154,7 +1155,7 @@ export default {
       .name {
         &:not(.has-children) {
           cursor: pointer;
-          text-decoration: underline;
+          // text-decoration: underline;
         }
       }
     }

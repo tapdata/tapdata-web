@@ -1,6 +1,6 @@
 <template>
   <section class="custom-form-wrapper section-wrap">
-    <div class="section-wrap-box">
+    <div class="section-wrap-box overflow-auto">
       <!-- <div class="container-header">
         {{ $route.params.id ? $t('function_button_edit_function') : $t('function_button_create_custom_function') }}
       </div> -->
@@ -77,10 +77,10 @@
           ></ElInput>
         </ElFormItem>
       </ElForm>
-      <div class="footer p-6">
-        <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('button_back') }}</ElButton>
-        <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
-      </div>
+    </div>
+    <div class="footer p-6">
+      <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('button_back') }}</ElButton>
+      <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
     </div>
 
     <!-- </div>
@@ -246,12 +246,13 @@ export default {
     flex: 1;
     overflow: auto;
   }
-  .footer {
-    border-top: 1px solid #f0f0f0;
-    box-shadow: 0px -1px 2px 0px #f6f6f6;
-    .btn {
-      width: 80px;
-    }
+}
+.footer {
+  background: #fff;
+  border-top: 1px solid #f0f0f0;
+  box-shadow: 0px -1px 2px 0px #f6f6f6;
+  .btn {
+    width: 80px;
   }
 }
 </style>

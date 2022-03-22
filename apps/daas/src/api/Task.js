@@ -81,4 +81,8 @@ export default class TaskAPI extends PublicAPI {
   checkRun(id) {
     return axios.get(this.url + '/checkRun/' + id)
   }
+
+  batchUpdateListtags(params) {
+    return axios.patch(`${this.url}/batchUpdateListtags`, params)
+  }
 }
