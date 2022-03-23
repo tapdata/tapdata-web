@@ -1,8 +1,14 @@
 <template>
   <div>
-    <el-button v-if="transform.showBtn" size="mini" :loading="loading" :disabled="isDisable" @click="getMetaData()">{{
-      $t('dag_link_button_field_mapping')
-    }}</el-button>
+    <el-button
+      v-if="transform.showBtn"
+      type="primary"
+      size="mini"
+      :loading="loading"
+      :disabled="isDisable"
+      @click="getMetaData()"
+      >{{ $t('dag_link_button_field_mapping') }}</el-button
+    >
     <el-dialog
       v-if="dialogFieldProcessVisible"
       width="85%"
