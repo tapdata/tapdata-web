@@ -167,7 +167,7 @@ export default [
             }
           },
           {
-            path: 'editor',
+            path: 'create',
             name: 'MigrateNew',
             component: MigrateForm,
             meta: {
@@ -185,7 +185,7 @@ export default [
             }
           },
           {
-            path: 'editor/:id',
+            path: 'edit/:id',
             name: 'MigrateEditor',
             component: MigrateForm,
             meta: {

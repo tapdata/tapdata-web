@@ -118,15 +118,15 @@ export default {
       loading: false,
       stateIsReadonly: false, //只读模式
       //第一步 配置源端
-      dataSourceData: DATASOURCE_MODEL,
+      dataSourceData: Object.assign({}, DATASOURCE_MODEL),
       sourceId: '',
       dataSourceVerify: false,
       showSysncTableTip: false,
       //第二步 配置任务设置
-      settingData: SETTING_MODEL,
-      form: '',
+      settingData: Object.assign({}, SETTING_MODEL),
+      form: null,
       //第三步 映射表
-      transferData: TRANSFER_MODEL,
+      transferData: Object.assign({}, TRANSFER_MODEL),
       mqTransferFlag: false,
       showFieldMapping: false, //是否支持字段映射
       nodes: [],
@@ -149,7 +149,6 @@ export default {
       this.getSteps()
     }
   },
-
   methods: {
     //编辑模式
     intiData(id) {
