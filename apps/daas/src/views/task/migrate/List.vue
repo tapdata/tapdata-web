@@ -1226,7 +1226,7 @@ export default {
       background: #fff;
       //border: 1px solid #dedee4;
       border-radius: 3px;
-      margin: 5px 20px 0 30px;
+      margin: 5px 0 0 0;
       img {
         width: 100%;
       }
@@ -1283,7 +1283,6 @@ export default {
     overflow-y: auto;
     max-height: 690px;
     margin: 0 auto;
-    padding-left: 30px;
     width: 100%;
     box-sizing: border-box;
     li {
