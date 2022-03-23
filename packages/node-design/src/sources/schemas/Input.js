@@ -1,38 +1,10 @@
 export const Input = {
   type: 'object',
   properties: {
-    addonBefore: {
-      type: 'string',
-      'x-decorator': 'FormItem',
-      'x-component': 'Input'
-    },
-    addonAfter: {
-      type: 'string',
-      'x-decorator': 'FormItem',
-      'x-component': 'Input'
-    },
-    prefix: {
-      type: 'string',
-      'x-decorator': 'FormItem',
-      'x-component': 'Input'
-    },
-    suffix: {
-      type: 'string',
-      'x-decorator': 'FormItem',
-      'x-component': 'Input'
-    },
-    allowClear: {
+    clearable: {
       type: 'boolean',
       'x-decorator': 'FormItem',
       'x-component': 'Switch'
-    },
-    bordered: {
-      type: 'boolean',
-      'x-decorator': 'FormItem',
-      'x-component': 'Switch',
-      'x-component-props': {
-        defaultChecked: true
-      }
     },
     maxLength: {
       type: 'number',
@@ -59,14 +31,6 @@ export const Input = {
 Input.TextArea = {
   type: 'object',
   properties: {
-    bordered: {
-      type: 'boolean',
-      'x-decorator': 'FormItem',
-      'x-component': 'Switch',
-      'x-component-props': {
-        defaultChecked: true
-      }
-    },
     maxLength: {
       type: 'number',
       'x-decorator': 'FormItem',
@@ -77,12 +41,12 @@ Input.TextArea = {
       'x-decorator': 'FormItem',
       'x-component': 'Input'
     },
-    autoSize: {
+    autosize: {
       type: 'boolean',
       'x-decorator': 'FormItem',
       'x-component': 'Switch'
     },
-    showCount: {
+    showWordLimit: {
       'x-decorator': 'FormItem',
       'x-component': 'Switch'
     }

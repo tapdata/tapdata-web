@@ -26,7 +26,7 @@ export const Field = {
       'decorator-style-group': '容器样式',
       'x-component-props': {
         size: { title: '尺寸', dataSource: ['大', '小', '默认', '继承'] },
-        allowClear: '允许清除内容',
+        clearable: '允许清除内容',
         autoFocus: '自动获取焦点',
         showSearch: '支持搜索',
         notFoundContent: '空状态内容',
@@ -128,7 +128,7 @@ export const Field = {
           title: 'Size',
           dataSource: ['Large', 'Small', 'Default', 'Inherit']
         },
-        allowClear: 'Allow Clear',
+        clearable: 'Clearable',
         autoFocus: 'Auto Focus',
         showSearch: 'Show Search',
         notFoundContent: 'Not Found Content',
