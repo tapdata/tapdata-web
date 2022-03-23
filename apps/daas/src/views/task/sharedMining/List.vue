@@ -33,15 +33,13 @@
           <StatusTag type="text" target="shareCdc" :status="scope.row.status" only-img></StatusTag>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="200">
+      <el-table-column :label="$t('column_operation')" width="200" fixed="right">
         <template slot-scope="scope">
           <el-button size="mini" type="text" @click="run([scope.row.id])">{{ $t('task_list_run') }}</el-button>
           <el-divider direction="vertical"></el-divider>
           <el-button size="mini" type="text" @click="stop([scope.row.id])">{{ $t('task_list_stop') }}</el-button>
           <el-divider direction="vertical"></el-divider>
-          <el-button size="mini" type="text" style="color: #f56c6c" @click="edit(scope.row)">{{
-            $t('button_edit')
-          }}</el-button>
+          <el-button size="mini" type="text" @click="edit(scope.row)">{{ $t('button_edit') }}</el-button>
           <el-divider direction="vertical"></el-divider>
           <el-button size="mini" type="text" @click="detail(scope.row)">{{ $t('button_details') }}</el-button>
         </template>

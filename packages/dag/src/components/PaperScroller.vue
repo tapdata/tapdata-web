@@ -9,9 +9,10 @@
   >
     <div ref="scrollerBg" class="paper-scroller-background" :style="scrollerBgStyle">
       <div ref="paper" class="paper" :style="paperStyle">
-        <div ref="paperContent" class="paper-content-wrap" :style="contentWrapStyle">
+        <slot></slot>
+        <!--<div ref="paperContent" class="paper-content-wrap" :style="contentWrapStyle">
           <slot></slot>
-        </div>
+        </div>-->
       </div>
       <div v-show="showSelectBox" class="select-box" :style="selectBoxStyle"></div>
     </div>
@@ -143,8 +144,7 @@ export default {
         top: this.paperOffset.top + 'px',
         width: this.paperSize.width + 'px',
         height: this.paperSize.height + 'px',
-        transform: `scale(${this.paperScale})`
-        // transformOrigin: `${this.scalePosition[0]}px ${this.scalePosition[1]}px`
+        transform: `scale(${this.paperScale}) translate(${this.paperReverseSize.w}px, ${this.paperReverseSize.h}px)`
       }
     },
     contentWrapStyle() {
