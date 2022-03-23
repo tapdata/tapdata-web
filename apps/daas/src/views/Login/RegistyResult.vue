@@ -115,14 +115,14 @@ export default {
 
     // 去注册
     backRegisty() {
-      this.$router.push({
+      this.$router.replace({
         name: 'registry'
       })
     },
 
     // 去登录
     goLogin() {
-      this.$router.push({
+      this.$router.replace({
         name: 'login',
         query: { email: this.email }
       })

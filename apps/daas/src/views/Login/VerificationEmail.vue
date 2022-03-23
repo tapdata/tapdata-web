@@ -132,7 +132,7 @@ export default {
 
     // 邮件跳转登录
     backLogin() {
-      this.$router.push({
+      this.$router.replace({
         name: 'login',
         query: { email: this.email }
       })
