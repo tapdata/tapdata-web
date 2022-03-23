@@ -102,7 +102,7 @@ export default {
         if (!resFlag) {
           return
         }
-        api.delete(item.id).then(res => {
+        api.delete(item.id).then(() => {
           this.table.fetch()
         })
       })
