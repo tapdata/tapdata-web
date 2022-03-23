@@ -165,9 +165,9 @@ export default {
         order: ['status DESC', 'name ASC']
       }
       this.$api('connections')
-        .getConnections(filter)
+        .findAll(filter)
         .then(res => {
-          let data = res?.data?.items || []
+          let data = res?.data || []
           let options = data.map(item => {
             return {
               id: item.database_host + item.database_port + item.database_name + item.database_uri,
