@@ -1190,16 +1190,18 @@ export default {
       for (let key in rule) {
         item[key] = rule[key]
       }
-      item.precision = item.maxPrecision
-      item.precisionDisabled = item.minPrecision === item.maxPrecision
-      item.length = item.maxScale
-      item.lengthDisabled = item.minScale === item.maxScale
-      if (!item.precisionDisabled) {
-        item.precisionTooltip =
-          this.$t('task_mapping_table_accuracy_range') + `[ ${item.minPrecision} , ${item.maxPrecision} ]`
-      }
+      // 长度
+      item.length = item.maxPrecision
+      item.lengthDisabled = item.minPrecision === item.maxPrecision
       if (!item.lengthDisabled) {
-        item.lengthTooltip = this.$t('task_mapping_table_length_range') + `[ ${item.minScale} , ${item.maxScale} ]`
+        item.lengthTooltip =
+          this.$t('task_mapping_table_length_range') + `[ ${item.minPrecision} , ${item.maxPrecision} ]`
+      }
+      // 精度
+      item.precision = item.maxScale
+      item.precisionDisabled = item.minScale === item.maxScale
+      if (!item.precisionDisabled) {
+        item.precisionTooltip = this.$t('task_mapping_table_accuracy_range') + `[ ${item.minScale} , ${item.maxScale} ]`
       }
     },
     handleClose() {
