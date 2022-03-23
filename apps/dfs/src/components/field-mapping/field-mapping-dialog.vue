@@ -1277,20 +1277,7 @@ export default {
       //   return
       // }
       //rename类型
-      let op = {
-        op: 'RENAME',
-        id: id,
-        field: findSource.field_name,
-        operand: value, //改过名的字段
-        table_name: '',
-        type: option.data_type,
-        primary_key_position: findSource.primary_key_position,
-        label: value,
-        original_field_name: findSource.original_field_name,
-        data_type: option.data_type,
-        precision: option.precision,
-        scale: option.scale
-      }
+      let op = this.getFieldProcessItem(id, option, findSource, value, 'RENAME')
       let ops = this.operations.filter(v => v.id === option.id && v.op === 'RENAME')
       if (ops.length === 0) {
         this.operations.push(op)
@@ -1704,6 +1691,25 @@ export default {
     loadCustomTypeMappingsData() {
       let arr = JSON.parse(JSON.stringify(this.customTypeMappings)).map(t => Object.assign(t, { disabled: true }))
       this.batchFieldTypeForm.list = arr
+    },
+    getFieldProcessItem(id = '', target = {}, source = {}, value = '', op = 'RENAME') {
+      return {
+        op: op,
+        id: id,
+        field: source.field_name,
+        operand: value, //改过名的字段
+        table_name: '',
+        type: target.data_type,
+        primary_key_position: source.primary_key_position,
+        label: value,
+        original_field_name: source.original_field_name,
+        data_type: target.data_type,
+        precision: target.precision,
+        scale: target.scale
+      }
+    },
+    addOperations() {
+      this.operations.push(this.getFieldProcessItem(...arguments))
     }
   }
 }

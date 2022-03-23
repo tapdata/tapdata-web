@@ -271,40 +271,39 @@ export default {
       // vika字段处理
       if (this.targetIsVika) {
         let field = target?.[0] || {}
-        fieldMappingTableData = source
-          .map(t => {
-            let node = {
-              t_id: t.id,
-              t_field_name: null,
-              t_data_type: field.data_type,
-              t_scale: field.scale,
-              t_precision: field.precision,
-              is_deleted: false, // 默认不删除
-              t_isPrecisionEdit: true, // 默认不能编辑
-              t_isScaleEdit: true // 默认不能编辑
-            }
-            // 自动匹配字段名相同的
-            let findOne = target?.find(f => f.field_name === t.field_name)
-            if (findOne) {
-              node.t_field_name = findOne.field_name
-            }
-            // 字段处理器过滤
-            if (operations?.length) {
-              let findInOperations = operations?.find(item => item.id === t.id)
-              if (findInOperations) {
-                node.t_field_name = findInOperations.field
-                node.t_data_type = findInOperations.data_type
-                node.t_precision = findInOperations.precision
-                node.t_scale = findInOperations.scale
-                node.is_deleted = findInOperations.op === 'REMOVE'
-                return Object.assign({}, t, node)
-              } else {
-                return null
-              }
-            }
-            return Object.assign({}, t, node)
-          })
-          .filter(t => !!t)
+        let addOperations = this.$refs.fieldMappingDom.addOperations
+        fieldMappingTableData = source.map(t => {
+          let node = {
+            t_id: t.id,
+            t_field_name: null,
+            t_data_type: field.data_type,
+            t_scale: field.scale,
+            t_precision: field.precision,
+            is_deleted: false, // 默认不删除
+            t_isPrecisionEdit: true, // 默认不能编辑
+            t_isScaleEdit: true // 默认不能编辑
+          }
+          // 自动匹配字段名相同的
+          let findOne = target?.find(f => f.field_name === t.field_name)
+          let findInOperations = operations?.find(item => item.id === t.id)
+          // 优先字段处理器
+          if (findInOperations) {
+            node.t_field_name = findInOperations.field
+            node.t_data_type = findInOperations.data_type
+            node.t_precision = findInOperations.precision
+            node.t_scale = findInOperations.scale
+            node.is_deleted = findInOperations.op === 'REMOVE'
+          } else if (findOne) {
+            // 自动匹配，字段名称相同的
+            node.t_field_name = findOne.field_name
+            node.t_data_type = findOne.data_type
+            node.t_precision = findOne.precision
+            node.t_scale = findOne.scale
+            // 需要添加到字段处理器中
+            addOperations(t.id, findOne, t, findOne.field_name)
+          }
+          return Object.assign({}, t, node)
+        })
       }
       return {
         data: fieldMappingTableData,
