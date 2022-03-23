@@ -51,6 +51,10 @@
               <VIcon size="12">edit-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_edit') }}</span>
             </VButton>
+            <VButton @click="toView(task.id)">
+              <VIcon size="12">yulan</VIcon>
+              <span class="ml-1">{{ $t('button_check') }}</span>
+            </VButton>
           </div>
         </div>
       </div>
@@ -568,6 +572,18 @@ export default {
           it.outerHTML = ''
         })
       }, 200)
+    },
+
+    toView(id) {
+      window.open(
+        this.$router.resolve({
+          name: 'DataflowViewer',
+          params: {
+            id
+          }
+        }).href,
+        'viewer_' + id
+      )
     }
   }
 }
