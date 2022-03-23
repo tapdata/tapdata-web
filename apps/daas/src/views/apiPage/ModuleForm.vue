@@ -311,12 +311,10 @@ export default {
         where
       }
       this.$api('connections')
-        .get({
-          filter: JSON.stringify(params)
-        })
+        .findAll(params)
         .then(res => {
-          let options = res?.data?.items || []
-          options = res.data.items.map(db => {
+          let options = res?.data || []
+          options = options.map(db => {
             return {
               label: db.name,
               value: db.id
