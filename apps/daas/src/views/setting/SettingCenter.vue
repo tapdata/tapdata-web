@@ -1,11 +1,11 @@
 <template>
   <div class="section-wrap setting-warp">
-    <ElBreadcrumb class="section-wrap-breadcrumb" separator-class="el-icon-arrow-right">
+    <!-- <ElBreadcrumb class="section-wrap-breadcrumb" separator-class="el-icon-arrow-right">
       <ElBreadcrumbItem :to="{ path: '/' }">
         {{ $t('page_title_back_menu') }}
       </ElBreadcrumbItem>
       <ElBreadcrumbItem style="color: #4e5969">{{ breadcrumbName }}</ElBreadcrumbItem>
-    </ElBreadcrumb>
+    </ElBreadcrumb> -->
     <div class="setting-warp-box">
       <div class="setting-center">
         <div class="setting-left-sidebar">
@@ -83,13 +83,16 @@ export default {
 
 <style scoped lang="scss">
 .setting-warp {
-  .section-wrap-breadcrumb {
-    padding: 25px 0;
-  }
+  height: 100%;
+  overflow: hidden;
+  // .section-wrap-breadcrumb {
+  //   padding: 25px 0;
+  // }
   .setting-warp-box {
-    height: 100%;
+    flex: 1 1 auto;
     border-radius: 4px;
     background-color: #fff;
+    overflow: hidden;
     .setting-center {
       height: 100%;
       font-size: 12px;
@@ -97,7 +100,7 @@ export default {
       justify-content: space-between;
       height: 100%;
       .setting-left-sidebar {
-        padding-top: 20px;
+        padding-top: 16px;
         border-right: 1px solid #fafafa;
         width: 200px;
         // .title {

@@ -346,12 +346,12 @@ export default {
         this.$message.error(this.$t('classification.nodeName'))
         return
       }
-      let nameExist = await this.checkName(value)
-      if (nameExist) {
-        return this.$message.error(this.$t('classification.nameExist'))
-      }
 
       if (this.types[0] === 'user') {
+        let nameExist = await this.checkName(value)
+        if (nameExist) {
+          return this.$message.error(this.$t('classification.nameExist'))
+        }
         let params = {
           name: value
         }

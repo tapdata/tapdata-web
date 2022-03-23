@@ -115,14 +115,14 @@ export default {
 
     // 去注册
     backRegisty() {
-      this.$router.push({
+      this.$router.replace({
         name: 'registry'
       })
     },
 
     // 去登录
     goLogin() {
-      this.$router.push({
+      this.$router.replace({
         name: 'login',
         query: { email: this.email }
       })
@@ -151,7 +151,7 @@ export default {
       .image {
         padding: 2px 20px 0 0;
         font-size: 30px;
-        color: #409eff;
+        color: map-get($color, primary);
       }
       .errorIcon {
         color: #f00 !important;
@@ -167,13 +167,13 @@ export default {
           user-select: none;
           padding-bottom: 6px;
           i {
-            color: #409eff;
+            color: map-get($color, primary);
           }
         }
         div {
           text-align: left;
           span {
-            color: #409eff;
+            color: map-get($color, primary);
             cursor: pointer;
             i {
               color: #666;

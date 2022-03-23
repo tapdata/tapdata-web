@@ -172,7 +172,7 @@ export default {
           return
         }
         this.$cookie.set('user_id', data.id)
-        this.$router.push({
+        this.$router.replace({
           name: 'verificationEmail',
           params: { data: this.form }
         })
@@ -196,7 +196,7 @@ export default {
 
     // 跳转登录
     backLogin() {
-      this.$router.push({
+      this.$router.replace({
         name: 'login',
         query: { email: this.form.email }
       })

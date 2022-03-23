@@ -238,7 +238,7 @@ export default {
           padding-top: 16px;
           font-size: 12px;
           text-align: right;
-          color: #409eff;
+          color: map-get($color, primary);
           cursor: pointer;
         }
       }
@@ -291,7 +291,7 @@ export default {
       .remember {
         padding-top: 16px;
         font-size: 12px;
-        color: #409eff;
+        color: map-get($color, primary);
         span {
           cursor: pointer;
         }
