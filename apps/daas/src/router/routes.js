@@ -49,39 +49,6 @@ export default [
     }
   },
   {
-    path: '/settingCenter',
-    name: 'settingCenter',
-    redirect: 'settingCenter/accountSetting',
-    component: () => import('@/views/setting/SettingCenter'),
-    meta: {
-      title: 'page_title_back_menu'
-    },
-    children: [
-      {
-        path: 'accountSetting',
-        name: 'accountSetting',
-        component: () => import('@/views/setting/AccountSetting'),
-        meta: { title: 'page_title_account' }
-      },
-      {
-        path: 'notificationSetting',
-        name: 'notificationSetting',
-        component: () => import('@/views/setting/NotificationSetting'),
-        meta: { title: 'notify_setting' }
-      },
-      /* ---------- 系统设置  ----------*/
-      {
-        path: 'settings',
-        name: 'settings',
-        component: () => import('@/views/setting/Setting'),
-        meta: {
-          title: 'page_title_setting',
-          code: 'system_settings_menu'
-        }
-      }
-    ]
-  },
-  {
     path: '/node/editor',
     name: 'NodeNew',
     component: NodeEditor
@@ -777,6 +744,42 @@ export default [
             meta: {
               title: 'page_title_role',
               code: 'role_edition'
+            }
+          }
+        ]
+      },
+      /* ---------- 设置  ----------*/
+      {
+        path: '/settingCenter',
+        name: 'settingCenter',
+        redirect: 'settingCenter/accountSetting',
+        component: () => import('@/views/setting/SettingCenter'),
+        meta: {
+          title: 'page_title_back_menu',
+          isNotAside: true
+        },
+        children: [
+          {
+            path: 'accountSetting',
+            name: 'accountSetting',
+            component: () => import('@/views/setting/AccountSetting'),
+            meta: { title: 'page_title_account', isNotAside: true }
+          },
+          {
+            path: 'notificationSetting',
+            name: 'notificationSetting',
+            component: () => import('@/views/setting/NotificationSetting'),
+            meta: { title: 'notify_setting', isNotAside: true }
+          },
+          /* ---------- 系统设置  ----------*/
+          {
+            path: 'settings',
+            name: 'settings',
+            component: () => import('@/views/setting/Setting'),
+            meta: {
+              title: 'page_title_setting',
+              code: 'system_settings_menu',
+              isNotAside: true
             }
           }
         ]

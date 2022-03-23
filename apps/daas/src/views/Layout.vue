@@ -64,7 +64,7 @@
       </div>
     </ElHeader>
     <ElContainer style="width: 100%; flex: 1; overflow: hidden">
-      <ElAside class="layout-aside" width="auto">
+      <ElAside class="layout-aside" width="auto" v-if="!isNotAside">
         <ElMenu
           unique-opened
           class="menu"
@@ -400,12 +400,18 @@ export default {
       licenseExpireVisible: false,
       licenseExpireDate: '',
       breadcrumbData: [],
-      isCollapse: false
+      isCollapse: false,
+      isNotAside: this.$route?.meta?.isNotAside || false
     }
   },
   computed: {
     initials() {
       return this.userName.substring(0, 1)
+    }
+  },
+  watch: {
+    $route(data) {
+      this.isNotAside = data?.meta?.isNotAside || false
     }
   },
   created() {

@@ -110,13 +110,13 @@ export default {
           })
         }, 500)
       } catch (e) {
-        if (e.response.msg) {
-          if (e.response.msg === '找不到电子邮件') {
+        if (e?.data?.message) {
+          if (e.data.message === '找不到电子邮件') {
             this.errorMessage = this.$t('app.signIn.notMailbox')
-          } else if (e.response.msg === '尚未验证电子邮件') {
+          } else if (e.data.message === '尚未验证电子邮件') {
             this.errorMessage = this.$t('app.signIn.email_invalid')
           } else {
-            this.errorMessage = e.response.msg
+            this.errorMessage = e.data.message
           }
         }
       } finally {
@@ -184,7 +184,8 @@ export default {
         background: rgba(254, 240, 240, 1);
         border: 1px solid rgba(245, 108, 108, 0.44);
         border-radius: 3px;
-        font-size: 14px;
+        font-size: 12px;
+        white-space: nowrap;
         color: rgba(245, 108, 108, 1);
       }
       // form {
@@ -229,7 +230,7 @@ export default {
         color: #666;
         user-select: none;
         span {
-          color: #409eff;
+          color: map-get($color, primary);
           cursor: pointer;
         }
       }

@@ -401,7 +401,8 @@ $unreadColor: #ee5353;
 // 		height: 100%;
 .account {
   width: 100%;
-  flex: 1;
+  height: 100%;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   overflow: hidden;
