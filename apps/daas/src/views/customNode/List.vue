@@ -108,6 +108,15 @@ export default {
       })
     },
     async toEdit(row) {
+      const open = () =>
+        window.open(
+          this.$router.resolve({
+            name: 'NodeEditor',
+            params: {
+              id: row.id
+            }
+          }).href
+        )
       const usedData = await api.checkUsed(row.id)
       if (usedData?.length) {
         this.$confirm(
@@ -143,15 +152,10 @@ export default {
           }
         ).then(resFlag => {
           if (!resFlag) return
-          window.open(
-            this.$router.resolve({
-              name: 'NodeEditor',
-              params: {
-                id: row.id
-              }
-            }).href
-          )
+          open()
         })
+      } else {
+        open()
       }
     },
     toCreate() {
