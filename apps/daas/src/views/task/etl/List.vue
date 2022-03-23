@@ -1155,7 +1155,7 @@ export default {
       .name {
         &:not(.has-children) {
           cursor: pointer;
-          text-decoration: underline;
+          // text-decoration: underline;
         }
       }
     }

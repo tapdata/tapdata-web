@@ -87,7 +87,7 @@ export default {
     }
     this.comingAllowDatabase = comingAllowDataType.filter(type => this.database.includes(type)) || []
     this.database = allowDataType.filter(type => this.database.includes(type)) || []
-    this.database.push('vika')
+    //this.database.push('vika')
     this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || []
     this.getDatabaseType()
   },

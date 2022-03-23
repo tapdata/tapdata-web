@@ -986,12 +986,18 @@ export default {
         return
       }
       this.$router.push({
-        path: `/dataflow/details/${row.id}/statistics/${subId}`
+        name: 'MigrateStatistics',
+        query: {
+          id: row.id,
+          subId: subId
+        }
       })
     },
     handlePreview(id) {
-      this.getPreviewData(id)
-      this.isShowDetails = true
+      this.isShowDetails = !this.isShowDetails
+      if (this.isShowDetails) {
+        this.getPreviewData(id)
+      }
     },
     startDisabled(row) {
       const statusResult = row.statusResult || []
@@ -1164,7 +1170,7 @@ export default {
         &:not(.has-children) {
           // color: #409eff;
           cursor: pointer;
-          text-decoration: underline;
+          // text-decoration: underline;
         }
       }
     }

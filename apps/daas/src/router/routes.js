@@ -201,6 +201,15 @@ export default [
               title: 'page_title_task_details',
               code: 'Data_SYNC_menu'
             }
+          },
+          {
+            path: 'Statistics',
+            name: 'MigrateStatistics',
+            component: () => import('@/views/task/migrate/details/Index'),
+            meta: {
+              title: 'page_title_task_stat',
+              code: 'Data_SYNC_menu'
+            }
           }
         ]
       },

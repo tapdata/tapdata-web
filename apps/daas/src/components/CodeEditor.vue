@@ -100,7 +100,7 @@ export default {
       this.$api('Javascript_functions')
         .get()
         .then(res => {
-          let items = res?.data || []
+          let items = res?.data?.items || []
           items.sort((a, b) => {
             let scoreMap = {
               custom: 0,
