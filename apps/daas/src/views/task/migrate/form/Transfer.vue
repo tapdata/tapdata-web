@@ -17,9 +17,15 @@
         <el-button class="mr-2" size="mini" @click="dialogTableVisible = true">{{
           $t('task_mapping_table_rename')
         }}</el-button>
-        <el-button class="mr-2" size="mini" :loading="loading" v-if="!transferData.showBtn" @click="getFieldMapping">{{
-          $t('dag_link_button_field_mapping')
-        }}</el-button>
+        <el-button
+          type="primary"
+          class="mr-2"
+          size="mini"
+          :loading="loading"
+          v-if="!transferData.showBtn"
+          @click="getFieldMapping"
+          >{{ $t('dag_link_button_field_mapping') }}</el-button
+        >
         <FieldMapping
           v-if="showFieldMapping"
           ref="fieldMapping"
