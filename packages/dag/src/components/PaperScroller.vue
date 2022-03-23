@@ -9,7 +9,7 @@
   >
     <div ref="scrollerBg" class="paper-scroller-background" :style="scrollerBgStyle">
       <div ref="paper" class="paper" :style="paperStyle">
-        <div ref="paperContent" class="paper-content-wrap w-100 h-100" :style="contentWrapStyle">
+        <div ref="paperContent" class="paper-content-wrap" :style="contentWrapStyle">
           <slot></slot>
         </div>
       </div>
