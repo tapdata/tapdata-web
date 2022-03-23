@@ -29,8 +29,25 @@
           </div>
         </div>
       </el-col>
-      <!-- 复制任务状态 -->
       <el-col :span="12" class="dashboard-col col">
+        <div class="charts-list">
+          <div class="charts-list-text">
+            <div class="dashboard-title fs-7">{{ $t('dashboard_sync_overview_title') }}</div>
+            <ul class="job-list">
+              <li v-for="task in syncTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
+                <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
+                <span class="text">{{ $t('dashboard_status_' + task.label) }}</span
+                ><span class="num pl-7">{{ task.value }}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="chart">
+            <Chart type="pie" :extend="getPieOption(syncPieData)" class="type-chart"></Chart>
+          </div>
+        </div>
+      </el-col>
+      <!-- 复制任务状态 -->
+      <!-- <el-col :span="12" class="dashboard-col col">
         <div class="dashboard-col-box">
           <div class="dashboard-title fs-7">{{ $t('dashboard_copy_status_title') }}</div>
           <div class="chart line-chart">
@@ -42,10 +59,10 @@
             <Chart type="bar" class="bar-chart" :data="copyTaskData" :options="barOptions"></Chart>
           </div>
         </div>
-      </el-col>
+      </el-col> -->
     </el-row>
     <!-- 开发任务概览  -->
-    <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
+    <!-- <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
       <el-col :span="12" class="dashboard-col col">
         <div class="charts-list">
           <div class="charts-list-text">
@@ -76,7 +93,7 @@
           </div>
         </div>
       </el-col>
-    </el-row>
+    </el-row> -->
     <!-- 数据校验 -->
     <el-row :gutter="20" class="dashboard-row mb-5" v-if="syncValidFalg">
       <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_verify_menu'">
@@ -184,7 +201,7 @@ export default {
           axisLine: {
             show: true,
             lineStyle: {
-              color: '#D9D9D9'
+              color: 'rgba(232, 232, 232, 0.75)'
             }
           },
           axisTick: {
@@ -224,7 +241,8 @@ export default {
           backgroundColor: 'rgba(0,0,0,0.8)',
           textStyle: {
             color: '#fff',
-            fontSize: 12
+            fontSize: 12,
+            align: 'center'
           },
           formatter: params => {
             let item = params

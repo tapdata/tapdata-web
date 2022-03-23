@@ -369,6 +369,8 @@ export default {
   }
 }
 .e-debug-log {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
   box-sizing: border-box;
@@ -383,6 +385,7 @@ export default {
   }
 }
 .logs-list {
+  overflow: auto;
   background: rgba(229, 236, 255, 0.22);
   .el-loading-spinner .el-loading-text {
     font-size: 12px;

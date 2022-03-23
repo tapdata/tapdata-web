@@ -85,9 +85,17 @@ export default {
         .then(res => {
           let data = res?.data || []
           //过滤不支持作为源的数据源
-          let filterArrSource = ['redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'clickhouse', 'dameng']
+          let filterArrSource = [
+            'redis',
+            'hazelcast_cloud_cluster',
+            'elasticsearch',
+            'clickhouse',
+            'dameng',
+            'jira',
+            'tcp_udp'
+          ]
           //过滤不支持作为目标的数据源
-          let filterArrTarget = ['adb_mysql']
+          let filterArrTarget = ['adb_mysql', 'jira', 'tcp_udp']
           this.allowSourceDatabaseTypes = []
           this.allowTargetDatabaseTypes = []
           data.forEach(item => {
