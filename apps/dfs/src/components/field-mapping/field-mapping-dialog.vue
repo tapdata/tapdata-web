@@ -437,14 +437,14 @@
     >
       <div>
         <ElRow>
-          <ElCol :span="9"> 源字段类型 </ElCol>
-          <ElCol :span="7"> 目标字段类型 </ElCol>
-          <ElCol :span="3"> 长度 </ElCol>
-          <ElCol :span="3"> 精度 </ElCol>
-          <ElCol :span="2"> 操作 </ElCol>
+          <ElCol :span="7"> 源字段类型 </ElCol>
+          <ElCol :span="6"> 目标字段类型 </ElCol>
+          <ElCol :span="4"> 长度 </ElCol>
+          <ElCol :span="4"> 精度 </ElCol>
+          <ElCol :span="3"> 操作 </ElCol>
         </ElRow>
         <ElRow v-for="(item, index) in batchFieldTypeForm.list" :key="index" class="mt-4">
-          <ElCol :span="9" class="flex">
+          <ElCol :span="7" class="flex">
             <el-select v-model="item.sourceType" :disabled="item.disabled" filterable required clearable>
               <el-option
                 :label="item.dbType"
@@ -458,7 +458,7 @@
               <VIcon size="14" class="color-primary">d-arrow-right</VIcon>
             </div>
           </ElCol>
-          <ElCol :span="7" class="flex pr-2">
+          <ElCol :span="6" class="flex pr-2">
             <el-select
               v-model="item.targetType"
               filterable
@@ -474,7 +474,7 @@
               ></el-option>
             </el-select>
           </ElCol>
-          <ElCol :span="3" class="flex pl-1">
+          <ElCol :span="4" class="flex pr-2">
             <ElTooltip :content="item.lengthTooltip" :disabled="!item.lengthTooltip" placement="bottom" effect="light">
               <ElInputNumber
                 v-model="item.length"
@@ -485,7 +485,7 @@
               ></ElInputNumber>
             </ElTooltip>
           </ElCol>
-          <ElCol :span="3" class="flex">
+          <ElCol :span="4" class="flex pr-2">
             <ElTooltip
               :content="item.precisionTooltip"
               :disabled="!item.precisionTooltip"
@@ -501,7 +501,7 @@
               ></ElInputNumber>
             </ElTooltip>
           </ElCol>
-          <ElCol :span="2" class="flex">
+          <ElCol :span="3" class="flex">
             <div class="flex align-items-center justify-content-center pl-2" style="height: 32px">
               <VIcon size="16" class="mr-2 cursor-pointer hover-primary" @click="fieldTypeChangeAddItem(index, item)"
                 >plus-circle</VIcon
@@ -1190,9 +1190,9 @@ export default {
       for (let key in rule) {
         item[key] = rule[key]
       }
-      item.precision = item.minPrecision
+      item.precision = item.maxPrecision
       item.precisionDisabled = item.minPrecision === item.maxPrecision
-      item.length = item.minScale
+      item.length = item.maxScale
       item.lengthDisabled = item.minScale === item.maxScale
       if (!item.precisionDisabled) {
         item.precisionTooltip =
@@ -1657,6 +1657,10 @@ export default {
             length: undefined
           }
         ]
+      } else {
+        batchFieldTypeForm.list.forEach(item => {
+          this.initBatchDataType(item.targetType, item)
+        })
       }
       batchFieldTypeForm.visible = true
     },
