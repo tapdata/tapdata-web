@@ -92,7 +92,7 @@ import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/TopHeader'
 import LeftSidebar from './components/LeftSidebar'
 import DFNode from './components/DFNode'
-import jsPlumbIns from './instance'
+import { jsPlumb, config } from './instance'
 import { connectorActiveStyle } from './style'
 import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
 import { ctorTypes, nodeTypes } from './nodes/loader'
@@ -150,7 +150,7 @@ export default {
       loading: true,
       editable: false,
       isSaving: false,
-      jsPlumbIns,
+      jsPlumbIns: jsPlumb.getInstance(config),
       navLines: [],
       selectBoxAttr: null,
       selectActive: false,
@@ -222,10 +222,11 @@ export default {
     })
   },
 
-  destroyed() {
+  beforeDestroy() {
     this.command = null
+    this.jsPlumbIns?.destroy()
     this.resetWorkspace()
-    // this.resetState()
+    this.resetState()
   },
 
   methods: {
@@ -390,7 +391,7 @@ export default {
 
     initNodeView() {
       const { jsPlumbIns } = this
-      // jsPlumbIns.setContainer(this.$refs.paperScroller.$refs.paperContent)
+      jsPlumbIns.setContainer('#node-view')
       jsPlumbIns.registerConnectionType('active', connectorActiveStyle)
 
       jsPlumbIns.bind('connection', (info, event) => {
@@ -1156,9 +1157,6 @@ export default {
     },
 
     resetWorkspace() {
-      if (this.jsPlumbIns) {
-        this.jsPlumbIns.deleteEveryEndpoint()
-      }
       this.dataflow = merge(
         {
           id: '',
