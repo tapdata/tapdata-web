@@ -178,7 +178,7 @@ export default {
       if (targetData.length === 0) return
       targetData.forEach(item => {
         if (item.table) {
-          item.table.name = this.markKeyword(this.keyword, item.table.name)
+          item.table.name = this.markKeyword(this.keyword, item.table.name ? item.table.name : '')
           item.table.original_name = this.markKeyword(this.keyword, item.table.original_name)
           if (item.table.comment) item.table.comment = this.markKeyword(this.keyword, item.table.comment)
         }
