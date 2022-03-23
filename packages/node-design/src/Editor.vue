@@ -61,7 +61,7 @@ import { GlobalRegistry } from './core'
 import * as icons from './icons'
 import './theme.scss'
 import './locales'
-import { Input, Field, Select, Form, FormLayout, InputNumber } from './sources'
+import { Input, Field, Select, Form, FormLayout, InputNumber, Checkbox, Radio } from './sources'
 import { Slider } from '@daas/form'
 import {
   SettingsForm,
@@ -126,8 +126,8 @@ export default {
 
   data() {
     return {
-      sources: [Input, Select, InputNumber],
-      components: { Field, Input, Select, Form, FormLayout, InputNumber },
+      sources: [Input, Select, InputNumber, Checkbox, Radio],
+      components: { Field, Input, Select, Form, FormLayout, InputNumber, Checkbox, Radio },
       settingsFormComponents: { SizeInput, DisplayStyleSetter, FlexStyleSetter, Slider, CollapseItem, ValueInput }
     }
   }
