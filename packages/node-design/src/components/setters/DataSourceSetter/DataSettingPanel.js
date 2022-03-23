@@ -9,10 +9,10 @@ import { TextWidget } from '../../widgets'
 import { Header } from './Header'
 import { traverseTree } from './shared'
 import './styles.scss'
-import { defineComponent, computed, ref, nextTick } from 'vue-demi'
+import { defineComponent, ref } from 'vue-demi'
 import { GlobalRegistry } from '../../../core'
 import { cancelIdle, requestIdle, uid } from '@daas/shared'
-import { useLocales } from '../../settings-form/useLocales'
+// import { useLocales } from '../../settings-form/useLocales'
 import { observe } from '@formily/reactive'
 
 const { SchemaField, SchemaVoidField, SchemaStringField, SchemaArrayField, SchemaObjectField } = createSchemaField({
@@ -81,7 +81,7 @@ export const DataSettingPanel = observer(
                   slot="extra"
                   type="text"
                   onClick={() => {
-                    form.value.setFieldState('map', state => {
+                    formRef.value.setFieldState('map', state => {
                       state.value.push({})
                     })
                   }}

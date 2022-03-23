@@ -3,7 +3,7 @@ import { uid } from '@daas/shared'
 import { observer } from '@formily/reactive-vue'
 import { FragmentComponent } from '@formily/vue'
 import { usePrefix } from '../../../hooks'
-import { TextWidget, IconWidget } from '../../widgets'
+import { TextWidget } from '../../widgets'
 import { Title } from './Title'
 import { Header } from './Header'
 import { traverseTree } from './shared'
@@ -93,6 +93,7 @@ export const TreePanel = observer(
                   map: initialKeyValuePairs,
                   children: []
                 })
+                // eslint-disable-next-line
                 console.log('dataSource', dataSource)
               }}
               icon="el-icon-plus"
@@ -113,10 +114,12 @@ export const TreePanel = observer(
               onDragEnter={() => {}}
               onDrop={dropHandler}
               renderContent={(_h, { node, data, store }) => {
+                // eslint-disable-next-line
                 console.log('renderContent', node, data, store)
                 return <Title props={{ ...data }} treeDataSource={props.treeDataSource}></Title>
               }}
               vOn:node-click={(data, node) => {
+                // eslint-disable-next-line
                 console.log('selectedKeys, node', data, node)
                 if (data) {
                   props.treeDataSource.selectedKey = data.key

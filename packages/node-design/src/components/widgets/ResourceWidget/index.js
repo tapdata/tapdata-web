@@ -5,7 +5,7 @@ import './index.scss'
 import { IconWidget } from '../IconWidget'
 import { TextWidget } from '../TextWidget'
 import { observer } from '@formily/reactive-vue'
-import { useDesigner } from '../../../hooks'
+// import { useDesigner } from '../../../hooks'
 
 export const ResourceWidget = observer(
   defineComponent({
@@ -20,7 +20,7 @@ export const ResourceWidget = observer(
     },
 
     setup(props) {
-      const designer = useDesigner()
+      // const designer = useDesigner()
       const prefix = 'fd-resource'
       const expand = ref(props.defaultExpand)
       const renderNode = source => {

@@ -1175,8 +1175,8 @@ export default {
           databaseName.allowSpace = false
         }
         let itemIsUrl = items.find(it => it.field === 'isUrl')
-        let sslKey = items.find(it => it.field === 'sslKeyFile')
-        let sslCA = items.find(it => it.field === 'sslCAFile')
+        // let sslKey = items.find(it => it.field === 'sslKeyFile')
+        // let sslCA = items.find(it => it.field === 'sslCAFile')
         if (this.model.database_type === 'mongodb' && this.$route.params.id && itemIsUrl) {
           itemIsUrl.options[0].disabled = true //编辑模式下mongodb不支持URL模式
         }
