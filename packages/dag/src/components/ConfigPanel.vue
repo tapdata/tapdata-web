@@ -31,9 +31,9 @@
         <ElTabPane label="元数据">
           <MetaPane></MetaPane>
         </ElTabPane>
-        <ElTabPane label="数据详情">
+        <!--<ElTabPane label="数据详情">
           <DataPane></DataPane>
-        </ElTabPane>
+        </ElTabPane>-->
       </ElTabs>
     </div>
   </section>
@@ -45,7 +45,7 @@ import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
 import FormPanel from './FormPanel'
 import SettingPanel from './SettingPanel'
-import DataPane from './DataPane'
+// import DataPane from './DataPane'
 import MetaPane from './MetaPane'
 import VIcon from 'web-core/components/VIcon'
 import { NODE_TYPE_ICON } from '../constants'
@@ -65,7 +65,7 @@ export default {
     }
   },
 
-  components: { VIcon, MetaPane, DataPane, FormPanel, SettingPanel },
+  components: { VIcon, MetaPane, /*DataPane,*/ FormPanel, SettingPanel },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
