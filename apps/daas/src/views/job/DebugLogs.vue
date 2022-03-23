@@ -171,7 +171,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .e-debug-log {
-  width: 100%;
+  display: flex;
+  flex-direction: column;
   height: 100%;
   padding: 10px 5px 5px 20px;
   box-sizing: border-box;

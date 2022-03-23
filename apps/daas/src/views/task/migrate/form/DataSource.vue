@@ -85,7 +85,16 @@ export default {
         .then(res => {
           let data = res?.data || []
           //过滤不支持作为源的数据源
-          let filterArrSource = ['redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'clickhouse', 'dameng', 'tidb']
+          let filterArrSource = [
+            'redis',
+            'hazelcast_cloud_cluster',
+            'elasticsearch',
+            'clickhouse',
+            'dameng',
+            'tidb',
+            'jira',
+            'tcp_udp'
+          ]
           data = data.filter(item => filterArrSource.indexOf(item) === -1)
           this.allowSourceDatabaseTypes = data.map(item => {
             return {
@@ -96,7 +105,7 @@ export default {
           this.allowSourceDatabaseTypes.unshift({ label: '全部', value: 'all' })
 
           //过滤不支持作为目标的数据源
-          let filterArr = ['adb_mysql']
+          let filterArr = ['adb_mysql', 'jira', 'tcp_udp']
           data = data.filter(item => filterArr.indexOf(item) === -1)
           this.allowTargetDatabaseTypes = data.map(item => {
             return {

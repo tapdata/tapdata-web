@@ -67,7 +67,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .debug-logs {
-  padding: 10px 5px 5px 20px;
+  padding: 0 5px 5px 20px;
   height: 100%;
   box-sizing: border-box;
   overflow: hidden;
