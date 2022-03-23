@@ -8,7 +8,7 @@ import { DataSettingPanel } from './DataSettingPanel'
 import { TreePanel } from './TreePanel'
 import { transformDataToValue, transformValueToData } from './shared'
 import './styles.scss'
-import { defineComponent, ref, computed, watch } from 'vue-demi'
+import { defineComponent, ref, watch } from 'vue-demi'
 
 export const DataSourceSetter = observer(
   defineComponent({
@@ -29,7 +29,7 @@ export const DataSourceSetter = observer(
       effects: {}
     },
     setup: (props, { attrs, emit }) => {
-      const { onChange, allowTree = true, allowExtendOption = true, defaultOptionValue, effects = () => {} } = props
+      const { allowTree = true, allowExtendOption = true, defaultOptionValue, effects = () => {} } = props
       const theme = useTheme()
       const prefix = usePrefix('data-source-setter')
       const modalVisible = ref(false)
@@ -41,6 +41,7 @@ export const DataSourceSetter = observer(
       watch(
         () => [props.value, modalVisible],
         () => {
+          // eslint-disable-next-line
           console.log('watch.inner')
         }
       )
@@ -51,6 +52,7 @@ export const DataSourceSetter = observer(
           selectedKey: ''
         })
       })*/
+      // eslint-disable-next-line
       console.log('treeDataSource', treeDataSource)
       const openModal = () => (modalVisible.value = true)
       const closeModal = () => (modalVisible.value = false)

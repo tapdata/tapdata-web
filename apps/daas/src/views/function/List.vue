@@ -97,27 +97,26 @@ export default {
       let where = {}
       type && (where.type = type)
       let filter = {
-        where: where,
+        where,
         order: this.order,
         limit: size,
         skip: (current - 1) * size
       }
-      return Promise.all([
-        this.$api('Javascript_functions').count({ where: where }),
-        this.$api('Javascript_functions').get({
-          filter: filter
+      return this.$api('Javascript_functions')
+        .get({
+          filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        let list = res?.data?.items || []
-        return {
-          total: countRes.data.count,
-          data: list.map(item => {
-            item.typeFmt = this.typeMapping[item.type]
-            item.lastUpdatedFmt = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
-            return item
-          })
-        }
-      })
+        .then(res => {
+          let list = res?.data?.items || []
+          return {
+            total: res.data?.total,
+            data: list.map(item => {
+              item.typeFmt = this.typeMapping[item.type]
+              item.lastUpdatedFmt = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              return item
+            })
+          }
+        })
     },
     remove(item) {
       this.$confirm(this.$t('function_message_delete_content'), this.$t('function_message_delete_title'), {

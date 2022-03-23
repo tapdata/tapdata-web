@@ -308,6 +308,7 @@ export default {
               this.showProgress = false
               this.reloadLoading = false
               this.progress = 0 //加载完成
+              this.getTable(this.sourceId) //更新schema
             }, 1000)
           } else {
             let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100

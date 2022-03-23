@@ -27,7 +27,7 @@
       </el-select>
     </el-form-item>
     <el-form-item label="目标端类型" prop="target_filter_databaseType">
-      <el-select v-model="dataSourceData.target_filter_databaseType" @change="getTargetConnection">
+      <el-select v-model="dataSourceData.target_filter_databaseType" filterable @change="getTargetConnection">
         <el-option v-for="item in allowTargetDatabaseTypes" :key="item.value" :label="item.label" :value="item.value">
         </el-option>
       </el-select>
@@ -85,25 +85,26 @@ export default {
         .then(res => {
           let data = res?.data || []
           //过滤不支持作为源的数据源
-          let filterArrSource = ['redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'clickhouse', 'dameng', 'tidb']
-          data = data.filter(item => filterArrSource.indexOf(item) === -1)
-          this.allowSourceDatabaseTypes = data.map(item => {
-            return {
-              label: TYPEMAP[item],
-              value: item
+          let filterArrSource = ['redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'clickhouse', 'dameng']
+          //过滤不支持作为目标的数据源
+          let filterArrTarget = ['adb_mysql']
+          this.allowSourceDatabaseTypes = []
+          this.allowTargetDatabaseTypes = []
+          data.forEach(item => {
+            if (filterArrSource.indexOf(item) === -1) {
+              this.allowSourceDatabaseTypes.push({
+                label: TYPEMAP[item],
+                value: item
+              })
+            }
+            if (filterArrTarget.indexOf(item) === -1) {
+              this.allowTargetDatabaseTypes.push({
+                label: TYPEMAP[item],
+                value: item
+              })
             }
           })
           this.allowSourceDatabaseTypes.unshift({ label: '全部', value: 'all' })
-
-          //过滤不支持作为目标的数据源
-          let filterArr = ['adb_mysql']
-          data = data.filter(item => filterArr.indexOf(item) === -1)
-          this.allowTargetDatabaseTypes = data.map(item => {
-            return {
-              label: TYPEMAP[item],
-              value: item
-            }
-          })
           this.allowTargetDatabaseTypes.unshift({ label: '全部', value: 'all' })
         })
     },
