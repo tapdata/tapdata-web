@@ -85,7 +85,7 @@ export default {
         .then(res => {
           let data = res?.data || []
           //过滤不支持作为源的数据源
-          let filterArrSource = ['redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'clickhouse', 'dameng', 'tidb']
+          let filterArrSource = ['redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'clickhouse', 'dameng']
           data = data.filter(item => filterArrSource.indexOf(item) === -1)
           this.allowSourceDatabaseTypes = data.map(item => {
             return {
