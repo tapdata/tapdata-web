@@ -27,7 +27,7 @@
       </el-select>
     </el-form-item>
     <el-form-item label="目标端类型" prop="target_filter_databaseType">
-      <el-select v-model="dataSourceData.target_filter_databaseType" @change="getTargetConnection">
+      <el-select v-model="dataSourceData.target_filter_databaseType" filterable @change="getTargetConnection">
         <el-option v-for="item in allowTargetDatabaseTypes" :key="item.value" :label="item.label" :value="item.value">
         </el-option>
       </el-select>
