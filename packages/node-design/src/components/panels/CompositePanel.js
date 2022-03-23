@@ -85,24 +85,6 @@ export const CompositePanel = defineComponent({
             </div>
             <div class={prefix + '-tabs-header-actions'}>
               <div class={prefix + '-tabs-header-extra'}>{currentItem.extra}</div>
-              {/*{!pinningRef.value && (
-                <IconWidget
-                  infer="PushPinOutlined"
-                  class={prefix + '-tabs-header-pin'}
-                  onClick={() => {
-                    pinningRef.value = !pinningRef.value
-                  }}
-                />
-              )}
-              {pinningRef.value && (
-                <IconWidget
-                  infer="PushPinFilled"
-                  class={prefix + '-tabs-header-pin-filled'}
-                  onClick={() => {
-                    pinningRef.value = !pinningRef.value
-                  }}
-                />
-              )}*/}
               <IconWidget
                 infer="Close"
                 class={prefix + '-tabs-header-close'}
