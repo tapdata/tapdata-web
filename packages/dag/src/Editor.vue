@@ -1034,6 +1034,7 @@ export default {
       const selectNodes = this.$store.getters['dataflow/getSelectedNodes']
       this.command.exec(new RemoveNodeCommand(selectNodes))
       this.resetSelectedNodes()
+      this.deleteSelectedConnections()
     },
 
     handleDeleteById(id) {
@@ -1450,6 +1451,29 @@ export default {
         opType: 'subscribe',
         taskId: this.dataflow.id
       })
+    },
+
+    deleteSelectedConnections() {
+      const selectedConnections = this.$store.state.dataflow.selectedConnections
+      if (!selectedConnections.length) return
+
+      selectedConnections.forEach(({ target, source }) => {
+        const conn = this.jsPlumbIns.select({
+          target: NODE_PREFIX + target,
+          source: NODE_PREFIX + source
+        })
+
+        if (conn) {
+          this.command.exec(
+            new RemoveConnectionCommand({
+              source,
+              target
+            })
+          )
+        }
+      })
+
+      this.deselectAllConnections()
     }
   }
 }
