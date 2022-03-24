@@ -149,8 +149,14 @@ export default {
     __init() {
       const { id, nodeId } = this
 
-      // console.log('sourceEndpoint, targetEndpoint', sourceEndpoint, targetEndpoint) // eslint-disable-line
-      const targetParams = { ...targetEndpoint, maxConnections: this.ins.attr.maxInputs ?? -1 }
+      const targetParams = {
+        ...targetEndpoint,
+        maxConnections: this.canNotBeTarget ? 0 : this.ins.attr.maxInputs ?? -1,
+        onMaxConnections: () => {
+          // eslint-disable-next-line no-console
+          console.warn(`「${this.data.name}」该节点已经达到最大连接限制或不能作为目标节点`)
+        }
+      }
 
       // this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
 
