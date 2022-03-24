@@ -235,7 +235,7 @@
               type="primary"
               class="btn-step"
               :loading="loading"
-              :disabled="(isTransfer && steps[activeStep].type === 'mapping') || reloadLoading"
+              :disabled="(isTransfer || reloadLoading) && steps[activeStep].type === 'mapping'"
               @mousedown.native.prevent="next()"
             >
               <span>{{ $t('guide.btn_next') }}</span>
@@ -437,6 +437,9 @@
     .step-5 {
       height: 100%;
       min-height: 300px;
+      > .field-mapping {
+        padding-bottom: 50px;
+      }
       .search {
         display: flex;
         justify-content: flex-start;
@@ -702,7 +705,7 @@ export default {
         }
       },
       customTypeMappings: [],
-      reloadLoading: false // 重新加载schema的loading
+      reloadLoading: true // 重新加载schema的loading
     }
   },
 

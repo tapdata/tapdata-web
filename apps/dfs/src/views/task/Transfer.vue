@@ -6,7 +6,7 @@
         <el-button class="border-0" type="text" :loading="reloadLoading" @click="reload()">{{
           this.$t('task_form_reload')
         }}</el-button>
-        <span v-if="showProgress" class="ml-2"><VIcon>loading</VIcon> {{ progress }} %</span>
+        <span v-if="reloadLoading" class="ml-2"><VIcon>loading</VIcon> {{ progress }} %</span>
       </div>
     </div>
 
@@ -65,7 +65,6 @@ export default {
   data() {
     return {
       transferLoading: false,
-      showOperationBtn: false,
       sourceData: [],
       titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')],
       mqTitles: [this.$t('editor.cell.link.migrationObjece'), 'Topic', 'Queue'],
@@ -76,7 +75,8 @@ export default {
       bidirectional: '',
       loadFieldsStatus: 'finished',
       reloadCount: 0,
-      reloadLoading: false // 重新加载
+      reloadLoading: true, // 重新加载
+      timer: null
     }
   },
   computed: {
@@ -84,7 +84,14 @@ export default {
       return this.transferData?.tableOperations || []
     }
   },
+  created() {
+    this.timer = setInterval(this.getSchemaProgress, 800)
+    this.$once('hook:beforeDestroy', this.clearTimer)
+  },
   methods: {
+    clearTimer() {
+      this.timer && clearInterval(this.timer)
+    },
     //获取左边数据
     getTable(id, bidirectional) {
       this.transferLoading = true
@@ -158,9 +165,6 @@ export default {
           closeOnClickModal: false
         }).then(resFlag => {
           if (resFlag) {
-            this.showProgress = true
-            this.reloadLoading = true
-            this.$emit('update:reloadLoading', this.reloadLoading)
             this.progress = 0
             this.reloadCount++
             this.reloadApi('first')
@@ -169,48 +173,54 @@ export default {
       })
     },
 
-    reloadApi(type) {
+    reloadApi() {
+      let params = {
+        loadCount: 0,
+        loadFieldsStatus: 'loading'
+      }
+      this.loadFieldsStatus = 'loading'
+      this.reloadLoading = true
+      this.$emit('update:reloadLoading', this.reloadLoading)
+      this.$axios
+        .patch('tm/api/Connections/' + this.sourceId, params)
+        .then(data => {
+          this.$refs.test.start(data, false, true)
+          this.setTableAndProgress(data)
+        })
+        .catch(this.getSchemaCatch)
+    },
+    getSchemaProgress() {
       if (!this.reloadLoading) {
         return
       }
-      let parms = {}
-      if (type === 'first') {
-        parms = {
-          loadCount: 0,
-          loadFieldsStatus: 'loading'
-        }
-        this.loadFieldsStatus = 'loading'
-      }
       this.$axios
-        .patch('tm/api/Connections/' + this.sourceId, parms)
+        .get('tm/api/Connections/' + this.sourceId)
         .then(data => {
-          if (type === 'first') {
-            this.$refs.test.start(data, false, true)
-          }
-          if (data.loadFieldsStatus === 'finished') {
-            this.progress = 100
-            this.getTable(this.sourceId, this.bidirectional) //重新加载表
-            setTimeout(() => {
-              this.showProgress = false
-              this.reloadLoading = false
-              this.$emit('update:reloadLoading', this.reloadLoading)
-              this.progress = 0 //加载完成
-            }, 800)
-          } else {
-            let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
-            this.progress = progress ? progress : 0
-            setTimeout(() => {
-              this.reloadApi()
-            }, 800)
-          }
+          this.setTableAndProgress(data)
         })
-        .catch(() => {
-          this.$message.error(this.$t('task_form_reloadFail'))
-          this.showProgress = false
+        .catch(this.getSchemaCatch)
+    },
+    setTableAndProgress(data) {
+      if (data.loadFieldsStatus === 'finished') {
+        this.progress = 100
+        this.getTable(this.sourceId, this.bidirectional) //重新加载表
+        setTimeout(() => {
           this.reloadLoading = false
           this.$emit('update:reloadLoading', this.reloadLoading)
           this.progress = 0 //加载完成
-        })
+        }, 800)
+      } else {
+        let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
+        this.progress = progress ? progress : 0
+        this.reloadLoading = true
+        this.$emit('update:reloadLoading', this.reloadLoading)
+      }
+    },
+    getSchemaCatch() {
+      this.$message.error(this.$t('task_form_reloadFail'))
+      this.reloadLoading = false
+      this.$emit('update:reloadLoading', this.reloadLoading)
+      this.progress = 0 //加载完成
     },
     getRenameTableLabel(opt = {}) {
       let { tableOperations, transferData } = this
@@ -220,9 +230,6 @@ export default {
         res = findOne?.tableName
       }
       return res
-    },
-    stopReloadSchema() {
-      this.reloadLoading = false
     }
   }
 }
