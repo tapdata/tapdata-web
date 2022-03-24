@@ -73,7 +73,8 @@ export default {
       'isMultiSelect',
       'processorNodeTypes',
       'hasNodeError',
-      'stateIsReadonly'
+      'stateIsReadonly',
+      'activeType'
     ]),
 
     data() {
@@ -102,7 +103,7 @@ export default {
 
     nodeClass() {
       const list = []
-      if (this.isNodeActive(this.nodeId)) list.push('active')
+      if (this.isNodeActive(this.nodeId) && this.activeType === 'node') list.push('active')
       // 多个节点选中显示高亮效果
       // if (this.isNodeSelected(this.nodeId) && this.isMultiSelect) list.push('jtk-drag-selected')
       if (this.isNodeSelected(this.nodeId)) list.push('selected')
