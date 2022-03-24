@@ -185,7 +185,7 @@ export default {
         .patch('tm/api/Connections/' + this.sourceId, params)
         .then(data => {
           this.$refs.test.start(data, false, true)
-          this.setTableAndProgress(data)
+          // this.setTableAndProgress(data)
         })
         .catch(this.getSchemaCatch)
     },
