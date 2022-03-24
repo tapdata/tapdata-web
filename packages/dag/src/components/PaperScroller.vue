@@ -512,7 +512,19 @@ export default {
     getMouseToPage(e) {
       const scale = this.paperScale
       const paper = this.$refs.paper.getBoundingClientRect()
-      return { x: (e.x - paper.left) / scale, y: (e.y - paper.top) / scale }
+      return {
+        x: (e.x - paper.left) / scale - this.paperReverseSize.w,
+        y: (e.y - paper.top) / scale - this.paperReverseSize.h
+      }
+    },
+
+    getMouseToPageOriginal(e) {
+      const scale = this.paperScale
+      const paper = this.$refs.paper.getBoundingClientRect()
+      return {
+        x: (e.x - paper.left) / scale,
+        y: (e.y - paper.top) / scale
+      }
     },
 
     /**
@@ -522,7 +534,7 @@ export default {
      */
     wheelToScaleArtboard(scale, scalePoint) {
       scalePoint = scalePoint || this.getScaleAbsolutePoint()
-      const scaleOrigin = this.getMouseToPage(scalePoint)
+      const scaleOrigin = this.getMouseToPageOriginal(scalePoint)
       const area = this.visibleArea
       const offset = this.paperOffset
       const left = scalePoint.x - area.left // 光标与可视区左边的距离
