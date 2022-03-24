@@ -952,6 +952,7 @@ export default {
   task_info_status_done: 'Done',
 
   task_stetting_name: 'Task name',
+  task_stetting_desc: 'Task description',
   task_setting_sync_type: 'Sync type',
   task_setting_initial_sync: 'full synchronization',
   task_setting_cdc: 'Incremental synchronization',
