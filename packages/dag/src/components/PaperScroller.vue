@@ -9,10 +9,9 @@
   >
     <div ref="scrollerBg" class="paper-scroller-background" :style="scrollerBgStyle">
       <div ref="paper" class="paper" :style="paperStyle">
-        <slot></slot>
-        <!--<div ref="paperContent" class="paper-content-wrap" :style="contentWrapStyle">
+        <div class="paper-content-wrap" :style="contentWrapStyle">
           <slot></slot>
-        </div>-->
+        </div>
       </div>
       <div v-show="showSelectBox" class="select-box" :style="selectBoxStyle"></div>
     </div>
@@ -144,7 +143,8 @@ export default {
         top: this.paperOffset.top + 'px',
         width: this.paperSize.width + 'px',
         height: this.paperSize.height + 'px',
-        transform: `scale(${this.paperScale}) translate(${this.paperReverseSize.w}px, ${this.paperReverseSize.h}px)`
+        transform: `scale(${this.paperScale})`
+        // transform: `scale(${this.paperScale}) translate(${this.paperReverseSize.w}px, ${this.paperReverseSize.h}px)`
       }
     },
     contentWrapStyle() {
@@ -512,7 +512,19 @@ export default {
     getMouseToPage(e) {
       const scale = this.paperScale
       const paper = this.$refs.paper.getBoundingClientRect()
-      return { x: (e.x - paper.left) / scale, y: (e.y - paper.top) / scale }
+      return {
+        x: (e.x - paper.left) / scale - this.paperReverseSize.w,
+        y: (e.y - paper.top) / scale - this.paperReverseSize.h
+      }
+    },
+
+    getMouseToPageOriginal(e) {
+      const scale = this.paperScale
+      const paper = this.$refs.paper.getBoundingClientRect()
+      return {
+        x: (e.x - paper.left) / scale,
+        y: (e.y - paper.top) / scale
+      }
     },
 
     /**
@@ -522,7 +534,7 @@ export default {
      */
     wheelToScaleArtboard(scale, scalePoint) {
       scalePoint = scalePoint || this.getScaleAbsolutePoint()
-      const scaleOrigin = this.getMouseToPage(scalePoint)
+      const scaleOrigin = this.getMouseToPageOriginal(scalePoint)
       const area = this.visibleArea
       const offset = this.paperOffset
       const left = scalePoint.x - area.left // 光标与可视区左边的距离

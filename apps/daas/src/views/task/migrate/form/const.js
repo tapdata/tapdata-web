@@ -1,19 +1,27 @@
 export const SETTING_MODEL = {
   name: '',
-  sync_type: 'initial_sync+cdc',
-  distinctWriteType: 'intellect',
-  automaticallyCreateTables: true,
-  stopOnError: true,
-  isOpenAutoDDL: false,
-  bidirectional: false,
-  readBatchSize: 1000,
-  cdcConcurrency: false,
-  transformerConcurrency: 8,
-  fieldNameTransform: '',
-  tableNameTransform: '',
+  sync_type: 'initial_sync+cdc', //'全量+增量'
+  automaticallyCreateTables: true, //自动建表
+  isStopOnError: true, //遇到错误停止
+  isSchedule: true, //定时调度任务
+  isAutoCreateIndex: true, //自动创建索引
+  crontabExpression: '', //crontab表达式
+  isFilter: false, //启动引擎过滤 默认false
+  writeThreadSize: 8, //目标写入线程数
+  deduplicWriteMode: 'intellect',
+  readShareLogMode: false, //共享挖掘
+  isOpenAutoDDL: false, //自动处理ddl
+  increOperationMode: true, //增量数据处理模式，支持批量false  跟逐行true
+  increShareReadMode: '', //共享增量读取模式, 支持流式读取STREAMING和轮询读取POLLING两种模式
+  increSyncConcurrency: false, //增量同步并发写入 默认关闭
+  increHysteresis: false, //增量滞后判断时间设置  默认关闭
+  increaseReadSize: 500, //增量读取条数
+  increaseSyncInterval: 500, //增量同步间隔
+  readBatchSize: 500, //全量一批读取条数
+  hysteresisInterval: 500, //增量之后判断时间间隔 ms
   noPrimaryKey: true,
-  needToCreateIndex: true,
-  existDataProcessMode: 'keepData',
+  existDataProcessMode: 'keepData', //已有数据处理模式 保持已存在的数据 keepData，运行前删除已存在的数据removeData，删除表结构 dropTable
+  writeStrategy: '', //数据写入策略配置，数据写入模式： 更新已存在或者插入新数据（updateOrInsert）， 追加写入(appendWrite)， 更新写入(updateWrite)
   syncPoints: [
     {
       connectionId: '',

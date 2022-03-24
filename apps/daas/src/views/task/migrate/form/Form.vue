@@ -365,7 +365,8 @@ export default {
           edges: [],
           nodes: []
         },
-        dataFlowType: 'normal' //区分创建方式
+        dataFlowType: 'normal', //区分创建方式,
+        syncType: 'migrate'
       }
       postData = Object.assign({}, postData, this.settingData)
       postData.type = this.settingData.sync_type
