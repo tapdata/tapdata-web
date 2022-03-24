@@ -345,22 +345,19 @@ export default {
         this.$has('SYNC_job_operation') ||
         this.$has('SYNC_category_application'),
       bulkOperation: this.$has('SYNC_job_export') || this.$has('SYNC_job_operation') || this.$has('SYNC_job_delete'),
-      timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year']
+      timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year'],
+      statusOptions: [
+        { label: this.$t('task_preview_status_running'), value: 'running' },
+        { label: this.$t('task_preview_status_stop'), value: 'stop' },
+        { label: this.$t('task_preview_status_edit'), value: 'edit' },
+        { label: this.$t('task_preview_status_error'), value: 'error' },
+        { label: this.$t('task_preview_status_complete'), value: 'complete' }
+      ]
     }
   },
   computed: {
     table() {
       return this.$refs.table
-    },
-    statusOptions() {
-      let options = [{ label: this.$t('task_list_status_all'), value: '' }]
-      // let op = {}
-      let map = ETL_STATUS_MAP
-      for (const key in map) {
-        const item = map[key]
-        options.push({ label: item.text, value: key })
-      }
-      return options
     }
   },
   created() {

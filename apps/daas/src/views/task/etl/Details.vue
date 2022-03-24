@@ -80,12 +80,14 @@
               <VIcon class="color-primary" size="14">info</VIcon>
             </ElTooltip>
           </div>
+          <Subtask v-if="activeTab === 'subTask'" :task="task"></Subtask>
         </ElTabPane>
-        <ElTabPane label="连接" name="connect"></ElTabPane>
-        <ElTabPane label="历史运行记录" name="history"></ElTabPane>
-        <Subtask v-if="activeTab === 'subTask'" :task="task"></Subtask>
-        <Connection v-if="activeTab === 'connect'" :ids="connectionIds" @change="loadData"></Connection>
-        <History v-if="activeTab === 'history' && task.id" :ids="[task.id]" :operations="operations"></History>
+        <ElTabPane label="连接" name="connect">
+          <Connection v-if="activeTab === 'connect'" :ids="connectionIds" @change="loadData"></Connection>
+        </ElTabPane>
+        <ElTabPane label="历史运行记录" name="history">
+          <History v-if="activeTab === 'history' && task.id" :ids="[task.id]" :operations="operations"></History>
+        </ElTabPane>
       </ElTabs>
     </div>
   </ElContainer>
@@ -594,17 +596,25 @@ export default {
   font-size: 12px;
 }
 .task-info {
+  border-radius: 4px;
   .v-icon {
     color: rgba(132, 175, 255, 1);
   }
 }
 .sub-task {
   box-sizing: border-box;
-  overflow: auto;
+  overflow: hidden;
+  border-radius: 4px;
+  .dashboard-tabs {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
   ::v-deep {
     .el-tabs__content {
-      flex: 1;
-      overflow: hidden;
+      height: 100%;
+      // flex: 1;
+      overflow: auto;
       .el-tab-pane,
       .subtask-container {
         height: 100%;

@@ -96,6 +96,7 @@ export default {
   page_title_task_edit: '編輯任務',
   page_title_task_details: '任務詳情',
   page_title_task_stat: '任務統計',
+  page_title_run_monitor: '運行監控',
   page_title_data_develop: '數據開發',
   page_title_data_verification: '數據校驗',
   page_title_data_verification_history: '任務校驗歷史',
@@ -1754,5 +1755,23 @@ export default {
   role_name_create_new_table_in_SYNC: '任務中創建表',
   role_name_servers_oversee: '瀏覽運維',
   role_name_dictionary: '瀏覽字典模板管理',
-  role_name_Topology: '瀏覽網絡拓撲'
+  role_name_Topology: '瀏覽網絡拓撲',
+
+  milestone_label_init_dataflow: '【前期準備】解析dag路徑創建子任務',
+  milestone_label_connect_to_source: '【前期準備】連接源端數據源',
+  milestone_label_connect_to_target: '【前期準備】連接目標端數據源',
+  milestone_label_init_connector: '【前期準備】掃描源端信息，初始化源端採集器',
+  milestone_label_init_transformer: '【前期準備】掃描目標端信息，初始化目標端處理器',
+  milestone_label_read_source_ddl: '【前期準備】讀取源端ddl信息',
+  milestone_label_drop_target_schema: '【前期準備】刪除目標端模型',
+  milestone_label_clear_target_data: '【前期準備】清空目標表數據',
+  milestone_label_create_target_table: '【前期準備】自動創建目標表',
+  milestone_label_create_target_index: '【前期準備】創建目標表索引',
+  milestone_label_create_target_view: '【前期準備】自動創建目標端視圖',
+  milestone_label_create_target_function: '【前期準備】自動創建目標端函數',
+  milestone_label_create_target_procedure: '【前期準備】自動創建目標端存儲過程',
+  milestone_label_read_snapshot: '【數據傳輸】全量讀取源端數據快照',
+  milestone_label_write_snapshot: '【數據傳輸】目標端全量寫入數據快照',
+  milestone_label_read_cdc_event: '【數據傳輸】源端採集器進入增量讀取模式',
+  milestone_label_write_cdc_event: '【數據傳輸】目標處理器進入增量寫入模式'
 }

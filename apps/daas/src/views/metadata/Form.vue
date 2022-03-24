@@ -60,7 +60,7 @@
         </el-form-item>
       </div>
       <!-- 字典模板 -->
-      <div class="box">
+      <!-- <div class="box">
         <h2>{{ $t('metadata.details.dictionarySettings') }}</h2>
         <el-table :data="form.dictionary" border class="e-table" style="width: 100%">
           <el-table-column prop="key" :label="$t('metadata.details.initialValue')">
@@ -90,7 +90,7 @@
             $t('metadata.details.chooseTemplate')
           }}</el-button>
         </div>
-      </div>
+      </div> -->
       <!-- 外键设置 -->
       <div class="box">
         <h2>{{ $t('metadata.details.foreignKeySetting') }}</h2>

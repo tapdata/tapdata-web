@@ -78,10 +78,10 @@
                       <span class="txt fw-sub">{{ $t('cluster_name') }}</span>
                     </el-col>
                     <el-col :span="6">
-                      <span>{{ $t('cluster_status') }}</span>
+                      <span class="txt fw-sub">{{ $t('cluster_status') }}</span>
                     </el-col>
                     <el-col :span="6">
-                      <div class="btn">
+                      <div class="btn txt fw-sub">
                         {{ $t('column_operation') }}
                       </div>
                     </el-col>

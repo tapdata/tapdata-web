@@ -207,7 +207,7 @@ export default [
             name: 'MigrateStatistics',
             component: () => import('@/views/task/migrate/details/Index'),
             meta: {
-              title: 'page_title_task_stat',
+              title: 'page_title_run_monitor',
               code: 'Data_SYNC_menu'
             }
           }

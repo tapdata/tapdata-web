@@ -1,26 +1,24 @@
 <template>
   <div v-loading="loading" class="statistics-container section-wrap">
-    <div class="section-wrap-box">
-      <Info :task="task" class="card-box card-box__info" :remote-method="infoRemoteMethod" @reload="loadTask"></Info>
-      <div class="card-box__content">
-        <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
-          <ElTabPane :label="$t('task_monitor_progress')" name="schedule">
-            <Schedule :task="task"></Schedule>
-          </ElTabPane>
-          <ElTabPane :label="$t('task_monitor_run_log')" name="log" lazy>
-            <Log :id="task.id" style="max-height: 450px"></Log>
-          </ElTabPane>
-          <ElTabPane :label="$t('task_monitor_run_connection')" name="connect" lazy>
-            <Connection ref="connection" :ids="connectionIds" @change="loadTask"></Connection>
-          </ElTabPane>
-          <ElTabPane :label="$t('task_monitor_history_run_record')" name="history" lazy>
-            <History :ids="[task.id]" :operations="operations"></History>
-          </ElTabPane>
-          <ElTabPane :label="$t('task_monitor_mining_task')" name="task">
-            <Task :id="task.id"></Task>
-          </ElTabPane>
-        </ElTabs>
-      </div>
+    <Info :task="task" class="card-box card-box__info" :remote-method="infoRemoteMethod" @reload="loadTask"></Info>
+    <div class="card-box__content card-box px-6 py-2 mt-6">
+      <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
+        <ElTabPane :label="$t('task_monitor_progress')" name="schedule">
+          <Schedule :task="task"></Schedule>
+        </ElTabPane>
+        <ElTabPane :label="$t('task_monitor_run_log')" name="log" lazy>
+          <Log :id="task.id" style="max-height: 450px"></Log>
+        </ElTabPane>
+        <ElTabPane :label="$t('task_monitor_run_connection')" name="connect" lazy>
+          <Connection ref="connection" :ids="connectionIds" @change="loadTask"></Connection>
+        </ElTabPane>
+        <ElTabPane :label="$t('task_monitor_history_run_record')" name="history" lazy>
+          <History :ids="[task.id]" :operations="operations"></History>
+        </ElTabPane>
+        <ElTabPane :label="$t('task_monitor_mining_task')" name="task">
+          <Task :id="task.id"></Task>
+        </ElTabPane>
+      </ElTabs>
     </div>
   </div>
 </template>
@@ -182,10 +180,11 @@ export default {
 <style lang="scss" scoped>
 .statistics-container {
   font-size: 12px;
-  overflow-y: auto;
+  overflow: auto !important;
 }
 .card-box {
   background: #fff;
+  border-radius: 4px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.02);
   ::v-deep {
     // .table-list {
@@ -208,9 +207,6 @@ export default {
 }
 .card-box__content {
   flex: 1;
-  // padding-left: 24px;
-  overflow: hidden;
-  //height: 0;
   ::v-deep {
     .el-tabs__content {
       flex: 1;

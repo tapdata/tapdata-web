@@ -599,10 +599,8 @@ export default {
           key: 'dbId',
           type: 'select-inner',
           items: async () => {
-            let data = await this.$api('connections').get({
-              filter: JSON.stringify(filter)
-            })
-            let items = data?.data?.items?.length ? data.data.items : []
+            let data = await this.$api('connections').findAll(filter)
+            let items = data?.data?.length ? data.data : []
             return items.map(item => {
               return {
                 label: item.name,
