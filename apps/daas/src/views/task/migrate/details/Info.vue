@@ -12,7 +12,7 @@
         <!--          所属Agent：<span>{{ task.belongAgent }}</span>-->
         <!--        </span>-->
         <span class="ml-6 font-color-sub">
-          {{ $t('task_monitor_founder') }}：<span>{{ creator }}</span>
+          {{ $t('task_monitor_founder') }}：<span>{{ task.creator }}</span>
         </span>
         <span class="ml-6 font-color-sub">
           {{ $t('task_info_start_time') }}：<span>{{ formatTime(task.startTime) || '-' }}</span>
@@ -183,7 +183,6 @@ export default {
           pause: true
         }
       },
-      creator: '',
       selectedStage: '', // 选中的节点
       selectedTime: 'default',
       selectedRate: 'second',
@@ -462,9 +461,6 @@ export default {
       }
     },
     init() {
-      if (this.task.creator) {
-        this.creator = this.task.creator
-      }
       this.getMeasurement()
       this.resetTimer()
     },
