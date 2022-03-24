@@ -480,8 +480,8 @@
                 v-model="item.length"
                 controls-position="right"
                 :disabled="item.lengthDisabled"
-                :min="item.minScale"
-                :max="item.maxScale"
+                :min="item.minPrecision"
+                :max="item.maxPrecision"
               ></ElInputNumber>
             </ElTooltip>
           </ElCol>
@@ -496,8 +496,8 @@
                 v-model="item.precision"
                 controls-position="right"
                 :disabled="item.precisionDisabled"
-                :min="item.minPrecision"
-                :max="item.maxPrecision"
+                :min="item.minScale"
+                :max="item.maxScale"
               ></ElInputNumber>
             </ElTooltip>
           </ElCol>
