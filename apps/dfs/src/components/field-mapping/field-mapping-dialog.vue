@@ -503,20 +503,21 @@
           </ElCol>
           <ElCol :span="3" class="flex">
             <div class="flex align-items-center justify-content-center pl-2" style="height: 32px">
-              <VIcon size="16" class="mr-2 cursor-pointer hover-primary" @click="fieldTypeChangeAddItem(index, item)"
-                >plus-circle</VIcon
-              >
-              <VIcon
-                v-if="!item.disabled"
-                size="16"
-                class="cursor-pointer hover-primary"
-                :class="{ invisible: batchFieldTypeForm.list.length <= 1 }"
-                @click="batchFieldTypeForm.list.splice(index, 1)"
+              <VIcon size="16" class="cursor-pointer hover-primary" @click="batchFieldTypeForm.list.splice(index, 1)"
                 >minus-circle</VIcon
               >
             </div>
           </ElCol>
         </ElRow>
+        <div class="mt-4">
+          <span
+            class="inline-flex align-items-center cursor-pointer"
+            @click="fieldTypeChangeAddItem(batchFieldTypeForm.list.length)"
+          >
+            <VIcon size="16" class="mr-1 cursor-pointer color-primary">plus-circle</VIcon>
+            <span class="color-primary">添加</span>
+          </span>
+        </div>
         <div class="flex align-items-center mt-4">
           <VIcon class="color-primary">info</VIcon>
           <span class="fs-8">{{ $t('task_mapping_dialog_batch_change_field_type_desc') }}</span>
@@ -1622,12 +1623,16 @@ export default {
       }
       this.$ws.off('loadVikaResult')
     },
-    fieldTypeChangeAddItem(index, item) {
-      let result = {}
-      for (let key in item) {
-        result[key] = undefined
+    fieldTypeChangeAddItem(index = 0) {
+      this.batchFieldTypeForm.list.splice(index + 1, 0, this.getBatchFieldTypeItem())
+    },
+    getBatchFieldTypeItem() {
+      return {
+        sourceType: '',
+        targetType: '',
+        precision: undefined,
+        length: undefined
       }
-      this.batchFieldTypeForm.list.splice(index + 1, 0, result)
     },
     getItemInvalid(item) {
       if (this.targetIsVika) {
@@ -1638,14 +1643,7 @@ export default {
     handleBatchChangeFieldType() {
       let { batchFieldTypeForm } = this
       if (!batchFieldTypeForm.list.length) {
-        batchFieldTypeForm.list = [
-          {
-            sourceType: '',
-            targetType: '',
-            precision: undefined,
-            length: undefined
-          }
-        ]
+        batchFieldTypeForm.list = [this.getBatchFieldTypeItem()]
       } else {
         batchFieldTypeForm.list.forEach(item => {
           this.initBatchDataType(item.targetType, item)
