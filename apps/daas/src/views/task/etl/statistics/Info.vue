@@ -126,7 +126,7 @@
         </div>
         <div class="right-box mt-3 grey-background">
           <div class="fw-bold">增量延迟</div>
-          <div class="color-primary fw-bolder fs-5">{{ formatMs(writeData.replicateLag) }}</div>
+          <div class="color-primary fw-bolder fs-5">{{ getReplicateLagTime(writeData.replicateLag) }}</div>
           <div class="font-color-sub">增量所处时间点：{{ formatTime(writeData.cdcTime) }}</div>
         </div>
       </div>
@@ -754,8 +754,13 @@ export default {
     formatTime(date) {
       return formatTime(date)
     },
-    formatMs(ms) {
-      return formatMs(ms)
+    getReplicateLagTime(val) {
+      if (val < 1000) {
+        return '<1' + this.$t('task_info_s')
+      } else if (val > 24 * 60 * 60 * 1000) {
+        return '>1' + this.$t('task_info_d')
+      }
+      return formatMs(val, 'time')
     },
     start(row = {}, resetLoading) {
       this.$api('SubTask')
