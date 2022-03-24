@@ -198,6 +198,7 @@
                   :transferData="transferData"
                   :mqTransferFlag="mqTransferFlag"
                   :isTwoWay="settingModel.bidirectional"
+                  :reloadLoading.sync="reloadLoading"
                   @select-table="selectTransfer"
                 ></Transfer>
               </div>
@@ -234,7 +235,7 @@
               type="primary"
               class="btn-step"
               :loading="loading"
-              :disabled="isTransfer && steps[activeStep].type === 'mapping'"
+              :disabled="(isTransfer && steps[activeStep].type === 'mapping') || reloadLoading"
               @mousedown.native.prevent="next()"
             >
               <span>{{ $t('guide.btn_next') }}</span>
@@ -700,7 +701,8 @@ export default {
           })
         }
       },
-      customTypeMappings: []
+      customTypeMappings: [],
+      reloadLoading: false // 重新加载schema的loading
     }
   },
 

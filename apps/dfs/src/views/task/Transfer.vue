@@ -160,6 +160,7 @@ export default {
           if (resFlag) {
             this.showProgress = true
             this.reloadLoading = true
+            this.$emit('update:reloadLoading', this.reloadLoading)
             this.progress = 0
             this.reloadCount++
             this.reloadApi('first')
@@ -169,6 +170,9 @@ export default {
     },
 
     reloadApi(type) {
+      if (!this.reloadLoading) {
+        return
+      }
       let parms = {}
       if (type === 'first') {
         parms = {
@@ -189,6 +193,7 @@ export default {
             setTimeout(() => {
               this.showProgress = false
               this.reloadLoading = false
+              this.$emit('update:reloadLoading', this.reloadLoading)
               this.progress = 0 //加载完成
             }, 800)
           } else {
@@ -203,6 +208,7 @@ export default {
           this.$message.error(this.$t('task_form_reloadFail'))
           this.showProgress = false
           this.reloadLoading = false
+          this.$emit('update:reloadLoading', this.reloadLoading)
           this.progress = 0 //加载完成
         })
     },
@@ -214,6 +220,9 @@ export default {
         res = findOne?.tableName
       }
       return res
+    },
+    stopReloadSchema() {
+      this.reloadLoading = false
     }
   }
 }
