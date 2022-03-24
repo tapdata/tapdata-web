@@ -1022,7 +1022,7 @@ export default {
     deleteDisabled(data) {
       return !data
         .filter(t => t.count > 0)
-        .every(t => ['edit', 'draft', 'error', 'pause', 'not_running', 'stop'].includes(t.status))
+        .every(t => ['edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed'].includes(t.status))
     },
     isShowForceStop(data) {
       return data.filter(t => t.count > 0).every(t => ['stopping'].includes(t.status))
