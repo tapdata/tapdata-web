@@ -108,7 +108,7 @@ export const formatTimeByTime = (time, type) => {
   return result
 }
 // 毫秒换算成时分秒
-export const formatMs = (msTime = 0) => {
+export const formatMs = (msTime = 0, type = 'time') => {
   let time = msTime / 1000
   let arr = []
   arr.push({
@@ -128,6 +128,13 @@ export const formatMs = (msTime = 0) => {
     value: Math.floor(time) % 60
   }) // second
   let result = ''
+  if (type === 'time') {
+    result = arr
+      .slice(1)
+      .map(t => (t.value + '').padStart(2, '0'))
+      .join(':')
+    return result
+  }
   arr.forEach(el => {
     if (el.value) {
       result += el.value + el.label
