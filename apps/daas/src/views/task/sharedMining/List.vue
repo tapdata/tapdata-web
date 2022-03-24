@@ -28,9 +28,11 @@
       </el-table-column>
       <el-table-column :label="$t('share_list_time')" sortable></el-table-column>
       <el-table-column prop="createTime" width="160" :label="$t('share_list_creat_time')" sortable> </el-table-column>
-      <el-table-column prop="status" :label="$t('share_list_status')">
-        <template slot-scope="scope">
-          <StatusTag type="text" target="shareCdc" :status="scope.row.status" only-img></StatusTag>
+      <el-table-column prop="status" :label="$t('share_list_status')" width="100">
+        <template #default="{ row }">
+          <span :class="['status-' + row.status, 'status-block', 'mr-2']">
+            {{ $t('task_preview_status_' + row.status) }}
+          </span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('column_operation')" width="200" fixed="right">

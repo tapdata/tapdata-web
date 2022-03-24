@@ -832,10 +832,10 @@ export default {
   task_preview_status_edit: 'Edit',
   task_preview_status_wait_run: 'Scheduled',
   task_preview_status_complete: 'Completed',
-  task_preview_status_running: 'running',
-  task_preview_status_stop: 'stopped',
+  task_preview_status_running: 'Running',
+  task_preview_status_stop: 'Stopped',
   task_preview_status_stopping: 'Stopping',
-  task_preview_status_preparing: 'preparing',
+  task_preview_status_preparing: 'Preparing',
   task_preview_status_scheduling: 'Scheduling',
   task_preview_status_schedule_failed: 'Scheduling failed',
 
