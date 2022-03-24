@@ -168,10 +168,17 @@
               }"
               class="node-item flex flex-column align-center px-1 py-2 grabbable user-select-none"
             >
-              <div class="node-item-icon flex justify-center align-center">
+              <div class="node-item-icon flex justify-center align-center mb-2">
                 <VIcon size="24" color="#2C65FF">{{ n.icon }}</VIcon>
               </div>
-              <div class="node-item-txt mt-2">{{ n.name }}</div>
+              <OverflowTooltip
+                class="node-item-txt text-center w-100"
+                :text="n.name"
+                popper-class="df-node-text-tooltip"
+                placement="top"
+                :open-delay="400"
+              />
+              <!--<div class="node-item-txt mt-2">{{ n.name }}</div>-->
             </div>
           </ElCol>
         </ElRow>
@@ -739,6 +746,7 @@ $hoverBg: #eef3ff;
   position: fixed !important;
   z-index: 1000;
   pointer-events: none;
+  opacity: 0;
 }
 
 .layout-sidebar.--left {

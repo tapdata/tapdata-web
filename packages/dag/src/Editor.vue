@@ -23,7 +23,7 @@
       <LeftSidebar
         v-if="!stateIsReadonly"
         v-resize.right="{
-          minWidth: 230,
+          minWidth: 260,
           maxWidth: 400
         }"
         @move-node="handleDragMoveNode"
@@ -1483,7 +1483,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$sidebarW: 230px;
+$sidebarW: 260px;
 $hoverBg: #e1e1e1;
 $radius: 3px;
 $baseHeight: 26px;
