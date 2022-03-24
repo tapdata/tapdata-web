@@ -111,7 +111,7 @@ export default {
   data() {
     return {
       searchFalg: false,
-      isExpand: true,
+      isExpand: false,
       filterText: '',
       treeData: [],
       default_expanded: false,

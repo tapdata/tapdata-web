@@ -445,6 +445,16 @@
 .table-page-main {
   background: #fff;
 }
+//  滚动条
+.el-loading-spinner {
+  color: map-get($color, primary);
+  .el-loading-text,.circular {
+    color: map-get($color, primary);
+    .path {
+      stroke: map-get($color, primary);
+    }
+  }
+}
 //覆盖表单创建任务
 .CT-task-wrap {
   .CT-task-container {
