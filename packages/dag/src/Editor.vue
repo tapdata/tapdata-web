@@ -1253,7 +1253,10 @@ export default {
     handleAddTableAsNode(item) {
       const { x, y } = this.$refs.paperScroller.getPaperCenterPos()
       const position = this.getNewNodePosition([x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2], [0, 120])
-      this.handleAddNodeToPos(position, item)
+      const node = this.handleAddNodeToPos(position, item)
+      if (position[1] !== y) {
+        this.$refs.paperScroller.centerNode(node)
+      }
     },
 
     createNode(position, item) {
