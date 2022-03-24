@@ -243,7 +243,7 @@ const routes = [
         name: 'userCenter',
         component: UserCenter,
         meta: {
-          title: i18n.t('tap_Beginner_guide')
+          title: i18n.t('tap_user_center')
         }
       }
     ]
