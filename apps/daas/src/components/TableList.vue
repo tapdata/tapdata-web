@@ -1,9 +1,9 @@
 <template>
   <VTable v-bind="$attrs" v-on="$listeners" ref="table" class="table-list">
-    <div slot="empty">
+    <div slot="empty" class="pt-6">
       <slot name="empty">
         <div class="instance-table__empty" slot="empty">
-          <VIcon size="120">no-data-color</VIcon>
+          <VIcon size="120">null</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             {{ $t('dag_dialog_field_mapping_no_data') }}
           </div>

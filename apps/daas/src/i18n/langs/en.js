@@ -98,6 +98,7 @@ export default {
   page_title_task_edit: 'Edit task',
   page_title_task_details: 'Task details',
   page_title_task_stat: 'Task statistics',
+  page_title_run_monitor: 'Run Monitor',
   page_title_data_develop: 'Data Development',
   page_title_data_verification: 'Data verification',
   page_title_data_verification_history: 'Task verification history',
@@ -831,10 +832,10 @@ export default {
   task_preview_status_edit: 'Edit',
   task_preview_status_wait_run: 'Scheduled',
   task_preview_status_complete: 'Completed',
-  task_preview_status_running: 'running',
-  task_preview_status_stop: 'stopped',
+  task_preview_status_running: 'Running',
+  task_preview_status_stop: 'Stopped',
   task_preview_status_stopping: 'Stopping',
-  task_preview_status_preparing: 'preparing',
+  task_preview_status_preparing: 'Preparing',
   task_preview_status_scheduling: 'Scheduling',
   task_preview_status_schedule_failed: 'Scheduling failed',
 
@@ -1828,5 +1829,24 @@ export default {
   role_name_create_new_table_in_SYNC: 'Create table in task',
   role_name_servers_oversee: 'Browse O&M',
   role_name_dictionary: 'Browse dictionary template management',
-  role_name_Topology: 'Browse network topology'
+  role_name_Topology: 'Browse network topology',
+
+  milestone_label_init_dataflow: '[Preliminary preparation] Parse dag path to create subtasks',
+  milestone_label_connect_to_source: '[Preliminary preparation] Connect to source data source',
+  milestone_label_connect_to_target: '[Preliminary preparation] Connect to the target data source',
+  milestone_label_init_connector: '[Preliminary preparation] Scan source information and initialize source collector',
+  milestone_label_init_transformer:
+    '[Preliminary preparation] Scan the target information and initialize the target processor',
+  milestone_label_read_source_ddl: '[Preliminary preparation] Read source ddl information',
+  milestone_label_drop_target_schema: '[Preliminary preparation] Delete the target model',
+  milestone_label_clear_target_data: '[Preliminary preparation] Clear the target table data',
+  milestone_label_create_target_table: '[Preliminary preparation] Automatically create target table',
+  milestone_label_create_target_index: '[Preliminary preparation] Create target table index',
+  milestone_label_create_target_view: '[Preliminary preparation] Automatically create target view',
+  milestone_label_create_target_function: '[Preliminary preparation] Automatically create target-side function',
+  milestone_label_create_target_procedure: '[Preliminary preparation] Automatically create the target stored procedure',
+  milestone_label_read_snapshot: '[Data transfer] Full read source data snapshot',
+  milestone_label_write_snapshot: '[Data transfer] The target end writes data snapshots in full',
+  milestone_label_read_cdc_event: '[Data transmission] The source collector enters incremental read mode',
+  milestone_label_write_cdc_event: '[Data transfer] The target processor enters incremental write mode'
 }

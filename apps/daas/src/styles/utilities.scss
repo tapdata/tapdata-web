@@ -12113,8 +12113,11 @@
 }
 .status-block {
   display: inline-block;
+  min-width: 60px;
   padding: 3px 10px;
+  text-align: center;
   border-radius: 2px;
+  box-sizing: border-box;
 }
 .status-error {
   color: #D44D4D;

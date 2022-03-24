@@ -77,8 +77,8 @@ export default {
       max-height: 300px;
     }
     .vue-recycle-scroller {
-      padding: 24px;
-      height: 250px;
+      padding: 12px 24px;
+      height: 400px;
       max-height: 300px;
       font-size: 14px;
       color: #333;

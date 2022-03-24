@@ -362,17 +362,6 @@ export default {
                 }
                 // default: 100
               },
-              processorConcurrency: {
-                title: this.$t('task_setting_processor_concurrency'), //处理器线程数
-                type: 'string',
-                'x-decorator': 'FormItem',
-                'x-component': 'InputNumber',
-                'x-component-props': {
-                  min: 1,
-                  max: 100
-                },
-                default: 1
-              },
               increSyncConcurrency: {
                 title: this.$t('task_setting_cdc_concurrency'), //增量同步并发写入
                 type: 'boolean',

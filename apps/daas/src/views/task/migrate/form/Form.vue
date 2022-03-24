@@ -1,6 +1,6 @@
 <template>
-  <ElContainer class="create-task-wrap" v-if="steps[activeStep]">
-    <ElContainer style="overflow: hidden; flex: 1" class="create-task-container flex-column bg-white">
+  <ElContainer class="create-task-wrap section-wrap" v-if="steps[activeStep]">
+    <ElContainer style="overflow: hidden; flex: 1" class="create-task-container flex-column section-wrap-box">
       <div class="steps-header">
         <ElSteps
           class="primary pb-6"
@@ -63,7 +63,7 @@
               </div>
             </div>
           </ElMain>
-          <div class="create-task-footer py-6 mx-6" :class="['btns-step-' + steps[activeStep].index]">
+          <div class="create-task-footer pt-4 mx-6" :class="['btns-step-' + steps[activeStep].index]">
             <ElButton class="btn-step" size="mini" v-if="steps[activeStep].showExitBtn" @click="goBackList()">
               取消
             </ElButton>

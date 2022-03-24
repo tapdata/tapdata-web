@@ -12,7 +12,7 @@
         <!--          所属Agent：<span>{{ task.belongAgent }}</span>-->
         <!--        </span>-->
         <span class="ml-6 font-color-sub">
-          {{ $t('task_monitor_founder') }}：<span>{{ creator }}</span>
+          {{ $t('task_monitor_founder') }}：<span>{{ task.creator }}</span>
         </span>
         <span class="ml-6 font-color-sub">
           {{ $t('task_info_start_time') }}：<span>{{ formatTime(task.startTime) || '-' }}</span>
@@ -126,7 +126,7 @@
         </div>
         <div class="right-box mt-3 grey-background">
           <div class="fw-bold">增量延迟</div>
-          <div class="color-primary fw-bolder fs-5">{{ formatMs(writeData.replicateLag) }}</div>
+          <div class="color-primary fw-bolder fs-5">{{ getReplicateLagTime(writeData.replicateLag) }}</div>
           <div class="font-color-sub">增量所处时间点：{{ formatTime(writeData.cdcTime) }}</div>
         </div>
       </div>
@@ -183,7 +183,6 @@ export default {
           pause: true
         }
       },
-      creator: '',
       selectedStage: '', // 选中的节点
       selectedTime: 'default',
       selectedRate: 'second',
@@ -462,9 +461,6 @@ export default {
       }
     },
     init() {
-      if (this.task.creator) {
-        this.creator = this.task.creator
-      }
       this.getMeasurement()
       this.resetTimer()
     },
@@ -758,8 +754,13 @@ export default {
     formatTime(date) {
       return formatTime(date)
     },
-    formatMs(ms) {
-      return formatMs(ms)
+    getReplicateLagTime(val) {
+      if (val < 1000) {
+        return '<1' + this.$t('task_info_s')
+      } else if (val > 24 * 60 * 60 * 1000) {
+        return '>1' + this.$t('task_info_d')
+      }
+      return formatMs(val, 'time')
     },
     start(row = {}, resetLoading) {
       this.$api('SubTask')
