@@ -506,13 +506,28 @@ export default {
         const source = this.nodeById(this.getRealId(sourceId))
         const target = this.nodeById(this.getRealId(targetId))
 
-        // target.__Ctor.allowSource(source)
+        const connectionType = target.attrs.connectionType
+        if (connectionType && !connectionType.includes('target')) {
+          this.$message.info('该节点仅支持作为源')
+          return false
+        }
 
         if (!this.nodeELIsConnected(sourceId, targetId) && this.allowConnect(source.id, target.id)) {
           return target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source, _instance)
         }
 
         return false
+      })
+
+      jsPlumbIns.bind('beforeDrag', ({ sourceId }) => {
+        // 根据连接类型判断，节点是否仅支持作为目标
+        const node = this.nodeById(this.getRealId(sourceId))
+        const connectionType = node.attrs.connectionType
+        if (connectionType && !connectionType.includes('source')) {
+          this.$message.info('该节点仅支持作为目标')
+          return false
+        }
+        return true
       })
     },
 
