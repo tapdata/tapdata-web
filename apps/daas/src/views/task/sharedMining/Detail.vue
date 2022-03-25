@@ -54,7 +54,9 @@
           <span> {{ $moment(scope.row.syncTimestamp).format('YYYY-MM-DD HH:mm:ss') }}</span>
         </template>
         <template slot="status" slot-scope="scope">
-          <StatusTag type="text" target="shareCdc" :status="scope.row.status" only-img></StatusTag>
+          <span :class="['status-' + scope.row.status, 'status-block', 'mr-2']">
+            {{ $t('task_preview_status_' + scope.row.status) }}
+          </span>
         </template>
         <template slot="operation" slot-scope="scope">
           <div class="operate-columns">

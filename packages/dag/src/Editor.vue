@@ -23,7 +23,7 @@
       <LeftSidebar
         v-if="!stateIsReadonly"
         v-resize.right="{
-          minWidth: 230,
+          minWidth: 260,
           maxWidth: 400
         }"
         @move-node="handleDragMoveNode"
@@ -259,7 +259,9 @@ export default {
       'setNodeErrorMsg',
       'clearNodeError',
       'clearNodeError',
-      'resetState'
+      'resetState',
+      'selectConnection',
+      'deselectAllConnections'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
@@ -395,12 +397,19 @@ export default {
       jsPlumbIns.registerConnectionType('active', connectorActiveStyle)
 
       jsPlumbIns.bind('connection', (info, event) => {
-        // console.log('connectionEvent', info) // eslint-disable-line
         const { sourceId, targetId } = info
         const source = this.getRealId(sourceId)
         const target = this.getRealId(targetId)
         const connection = { source, target }
 
+        info.connection.bind('click', conn => {
+          if (this.stateIsReadonly) return
+
+          conn.showOverlay('removeConn')
+          conn.showOverlay('addNodeOnConn')
+          conn.addClass('connection-selected')
+          this.selectConnection(connection)
+        })
         info.connection.bind('mouseover', () => {
           if (!this.stateIsReadonly) {
             info.connection.showOverlay('removeConn')
@@ -408,6 +417,7 @@ export default {
           }
         })
         info.connection.bind('mouseout', () => {
+          if (info.connection.hasClass('connection-selected')) return
           info.connection.hideOverlay('removeConn')
           info.connection.hideOverlay('addNodeOnConn')
         })
@@ -782,38 +792,40 @@ export default {
      * 取消选择所有节点
      */
     deselectAllNodes() {
-      // console.log('deselectAllNodes') // eslint-disable-line
       this.jsPlumbIns.clearDragSelection()
       this.resetSelectedNodes()
-      this.deselectConnection()
-      // this.setActiveNode(null)
+      this.handleDeselectAllConnections()
     },
 
     /**
      * 取消选中连线
      */
-    deselectConnection() {
-      const activeConnection = this.$store.getters['dataflow/activeConnection']
-      if (!activeConnection) return
+    handleDeselectAllConnections() {
+      const selectedConnections = this.$store.state.dataflow.selectedConnections
+      if (!selectedConnections.length) return
 
       const { NODE_PREFIX, jsPlumbIns } = this
-      const conn = jsPlumbIns.select({
-        target: NODE_PREFIX + activeConnection.targetId,
-        source: NODE_PREFIX + activeConnection.sourceId
+
+      selectedConnections.forEach(({ target, source }) => {
+        const conn = jsPlumbIns.select({
+          target: NODE_PREFIX + target,
+          source: NODE_PREFIX + source
+        })
+
+        if (conn) {
+          conn.removeClass('connection-selected')
+          conn.hideOverlay('removeConn')
+          conn.hideOverlay('addNodeOnConn')
+        }
       })
 
-      if (conn) {
-        conn.removeClass('connection-selected')
-        conn.hideOverlay('remove-connection')
-      }
-
-      this.setActiveConnection(null)
+      this.deselectAllConnections()
     },
 
     onHideSidebar() {
       const activeType = this.$store.getters['dataflow/activeType']
       if (activeType === 'connection') {
-        this.deselectConnection(...arguments)
+        this.handleDeselectAllConnections(...arguments)
       }
       this.setActiveType(null)
     },
@@ -1022,6 +1034,7 @@ export default {
       const selectNodes = this.$store.getters['dataflow/getSelectedNodes']
       this.command.exec(new RemoveNodeCommand(selectNodes))
       this.resetSelectedNodes()
+      this.deleteSelectedConnections()
     },
 
     handleDeleteById(id) {
@@ -1240,7 +1253,10 @@ export default {
     handleAddTableAsNode(item) {
       const { x, y } = this.$refs.paperScroller.getPaperCenterPos()
       const position = this.getNewNodePosition([x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2], [0, 120])
-      this.handleAddNodeToPos(position, item)
+      const node = this.handleAddNodeToPos(position, item)
+      if (position[1] !== y) {
+        this.$refs.paperScroller.centerNode(node)
+      }
     },
 
     createNode(position, item) {
@@ -1438,13 +1454,36 @@ export default {
         opType: 'subscribe',
         taskId: this.dataflow.id
       })
+    },
+
+    deleteSelectedConnections() {
+      const selectedConnections = this.$store.state.dataflow.selectedConnections
+      if (!selectedConnections.length) return
+
+      selectedConnections.forEach(({ target, source }) => {
+        const conn = this.jsPlumbIns.select({
+          target: NODE_PREFIX + target,
+          source: NODE_PREFIX + source
+        })
+
+        if (conn) {
+          this.command.exec(
+            new RemoveConnectionCommand({
+              source,
+              target
+            })
+          )
+        }
+      })
+
+      this.deselectAllConnections()
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-$sidebarW: 230px;
+$sidebarW: 260px;
 $hoverBg: #e1e1e1;
 $radius: 3px;
 $baseHeight: 26px;
@@ -1484,11 +1523,11 @@ $sidebarBg: #fff;
     .connection-highlight,
     .connection-selected {
       path:nth-child(2) {
-        stroke: #fa6303;
+        stroke: #2c65ff;
       }
       path:nth-child(3) {
-        fill: #fa6303;
-        stroke: #fa6303;
+        fill: #2c65ff;
+        stroke: #2c65ff;
       }
     }
 

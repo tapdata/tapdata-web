@@ -111,7 +111,7 @@
           {{ scope.row.lastUpdateTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('connection.operate')" width="200">
+      <ElTableColumn :label="$t('connection.operate')" width="200" fixed="right">
         <template slot-scope="scope">
           <ElLink type="primary" @click="testConnection(scope.row)">{{ $t('connection.testConnection') }} </ElLink>
           <ElDivider direction="vertical"></ElDivider>

@@ -90,6 +90,7 @@ const getState = () => ({
   activeConnection: null, // 当前激活的连接
   activeActions: [], // 激活的动作
   selectedNodes: [], // 选中的节点
+  selectedConnections: [], // 选中的线
   activeType: null,
   formSchema: null,
   taskId: null,
@@ -378,6 +379,22 @@ const mutations = {
   // 重置选择的节点
   resetSelectedNodes(state) {
     state.selectedNodes = []
+  },
+
+  selectConnection(state, connection) {
+    state.selectedConnections.push(connection)
+  },
+
+  deselectConnection(state, connection) {
+    const { selectedConnections } = state
+    const index = selectedConnections.findIndex((target, source) => {
+      return connection.target === target && connection.source === source
+    })
+    ~index && selectedConnections.splice(index, 1)
+  },
+
+  deselectAllConnections(state) {
+    state.selectedConnections = []
   },
 
   // 针对数组，修改某个项的值

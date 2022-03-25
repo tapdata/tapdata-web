@@ -151,7 +151,7 @@ export const ArrayAggregate = connect(
                       {'{'}
                       <div style="padding-left: 10px">_tapd8_sub_name : {aggregations[0].name}</div>
                       {aggregations[0].groupByExpression.map(group => {
-                        return <div style="padding-left: 10px"> {{ group }} : XXX</div>
+                        return <div style="padding-left: 10px"> {group} : XXX</div>
                       })}
                       {'}'},
                     </div>
@@ -173,7 +173,7 @@ export const ArrayAggregate = connect(
                 {aggregations[0].groupByExpression.map(group => {
                   return (
                     <li>
-                      <span class="text">{{ group }}: XXX</span>
+                      <span class="text">{group}: XXX</span>
                       <span class="comment">// 分组汇总的字段名，如果不填写则不显示</span>
                     </li>
                   )

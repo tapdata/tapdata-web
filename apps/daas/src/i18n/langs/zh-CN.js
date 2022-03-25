@@ -925,6 +925,7 @@ export default {
   task_info_status_done: '已完成',
 
   task_stetting_name: '任务名称',
+  task_stetting_desc: '任务描述',
   task_setting_sync_type: '同步类型',
   task_setting_initial_sync: '全量同步',
   task_setting_cdc: '增量同步',

@@ -833,10 +833,10 @@ export default {
   task_preview_status_edit: 'Edit',
   task_preview_status_wait_run: 'Scheduled',
   task_preview_status_complete: 'Completed',
-  task_preview_status_running: 'running',
-  task_preview_status_stop: 'stopped',
+  task_preview_status_running: 'Running',
+  task_preview_status_stop: 'Stopped',
   task_preview_status_stopping: 'Stopping',
-  task_preview_status_preparing: 'preparing',
+  task_preview_status_preparing: 'Preparing',
   task_preview_status_scheduling: 'Scheduling',
   task_preview_status_schedule_failed: 'Scheduling failed',
 
@@ -953,6 +953,7 @@ export default {
   task_info_status_done: 'Done',
 
   task_stetting_name: 'Task name',
+  task_stetting_desc: 'Task description',
   task_setting_sync_type: 'Sync type',
   task_setting_initial_sync: 'full synchronization',
   task_setting_cdc: 'Incremental synchronization',
