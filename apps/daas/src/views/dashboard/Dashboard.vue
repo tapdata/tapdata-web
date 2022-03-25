@@ -1,53 +1,54 @@
 <template>
   <section class="dashboard-wrap" v-if="!$getSettingByKey('SHOW_OLD_PAGE')" v-loading="loading">
-    <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
-      <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">
-        <div class="dashboard-col-box">
-          <div class="dashboard-title fs-7">{{ $t('dashboard_' + item.key) }}</div>
-          <div class="dashboard-label fs-5 pt-4 text-center">{{ $t('dashboard_current_' + item.key) }}</div>
-          <div class="dashboard-num pt-4 pb-2 text-center">{{ item.value }}</div>
-        </div>
-      </el-col>
-    </el-row>
-    <!-- 复制任务概览 -->
-    <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
-      <el-col :span="12" class="dashboard-col col">
-        <div class="charts-list">
-          <div class="charts-list-text">
-            <div class="dashboard-title fs-7">{{ $t('dashboard_copy_overview_title') }}</div>
-            <ul class="job-list">
-              <li v-for="task in migrationTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
-                <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
-                <span class="text">{{ $t('dashboard_status_' + task.label) }}</span
-                ><span class="num pl-7">{{ task.value }}</span>
-              </li>
-            </ul>
+    <template v-if="noPermission">
+      <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
+        <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">
+          <div class="dashboard-col-box">
+            <div class="dashboard-title fs-7">{{ $t('dashboard_' + item.key) }}</div>
+            <div class="dashboard-label fs-5 pt-4 text-center">{{ $t('dashboard_current_' + item.key) }}</div>
+            <div class="dashboard-num pt-4 pb-2 text-center">{{ item.value }}</div>
           </div>
+        </el-col>
+      </el-row>
+      <!-- 复制任务概览 -->
+      <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
+        <el-col :span="12" class="dashboard-col col">
+          <div class="charts-list">
+            <div class="charts-list-text">
+              <div class="dashboard-title fs-7">{{ $t('dashboard_copy_overview_title') }}</div>
+              <ul class="job-list">
+                <li v-for="task in migrationTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
+                  <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
+                  <span class="text">{{ $t('dashboard_status_' + task.label) }}</span
+                  ><span class="num pl-7">{{ task.value }}</span>
+                </li>
+              </ul>
+            </div>
 
-          <div class="chart">
-            <Chart type="pie" :extend="getPieOption(copyPieData)" class="type-chart"></Chart>
+            <div class="chart">
+              <Chart type="pie" :extend="getPieOption(copyPieData)" class="type-chart"></Chart>
+            </div>
           </div>
-        </div>
-      </el-col>
-      <el-col :span="12" class="dashboard-col col">
-        <div class="charts-list">
-          <div class="charts-list-text">
-            <div class="dashboard-title fs-7">{{ $t('dashboard_sync_overview_title') }}</div>
-            <ul class="job-list">
-              <li v-for="task in syncTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
-                <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
-                <span class="text">{{ $t('dashboard_status_' + task.label) }}</span
-                ><span class="num pl-7">{{ task.value }}</span>
-              </li>
-            </ul>
+        </el-col>
+        <el-col :span="12" class="dashboard-col col">
+          <div class="charts-list">
+            <div class="charts-list-text">
+              <div class="dashboard-title fs-7">{{ $t('dashboard_sync_overview_title') }}</div>
+              <ul class="job-list">
+                <li v-for="task in syncTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
+                  <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
+                  <span class="text">{{ $t('dashboard_status_' + task.label) }}</span
+                  ><span class="num pl-7">{{ task.value }}</span>
+                </li>
+              </ul>
+            </div>
+            <div class="chart">
+              <Chart type="pie" :extend="getPieOption(syncPieData)" class="type-chart"></Chart>
+            </div>
           </div>
-          <div class="chart">
-            <Chart type="pie" :extend="getPieOption(syncPieData)" class="type-chart"></Chart>
-          </div>
-        </div>
-      </el-col>
-      <!-- 复制任务状态 -->
-      <!-- <el-col :span="12" class="dashboard-col col">
+        </el-col>
+        <!-- 复制任务状态 -->
+        <!-- <el-col :span="12" class="dashboard-col col">
         <div class="dashboard-col-box">
           <div class="dashboard-title fs-7">{{ $t('dashboard_copy_status_title') }}</div>
           <div class="chart line-chart">
@@ -60,9 +61,9 @@
           </div>
         </div>
       </el-col> -->
-    </el-row>
-    <!-- 开发任务概览  -->
-    <!-- <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
+      </el-row>
+      <!-- 开发任务概览  -->
+      <!-- <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
       <el-col :span="12" class="dashboard-col col">
         <div class="charts-list">
           <div class="charts-list-text">
@@ -94,78 +95,85 @@
         </div>
       </el-col>
     </el-row> -->
-    <!-- 数据校验 -->
-    <el-row :gutter="20" class="dashboard-row mb-5" v-if="syncValidFalg">
-      <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_verify_menu'">
-        <div class="dashboard-col-box">
-          <div class="dashboard-title fs-7">{{ $t('dashboard_valid_title') }}</div>
-          <div class="chart line-chart">
-            <ul>
-              <li v-for="item in validBarData" :key="item.name">
-                <span>{{ item.name }} </span> {{ item.value }}
-              </li>
-            </ul>
-            <Chart type="bar" class="bar-chart" :data="validBarData" :options="barOptions"></Chart>
+      <!-- 数据校验 -->
+      <el-row :gutter="20" class="dashboard-row mb-5" v-if="syncValidFalg">
+        <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_verify_menu'">
+          <div class="dashboard-col-box">
+            <div class="dashboard-title fs-7">{{ $t('dashboard_valid_title') }}</div>
+            <div class="chart line-chart">
+              <ul>
+                <li v-for="item in validBarData" :key="item.name">
+                  <span>{{ item.name }} </span> {{ item.value }}
+                </li>
+              </ul>
+              <Chart type="bar" class="bar-chart" :data="validBarData" :options="barOptions"></Chart>
+            </div>
           </div>
-        </div>
-      </el-col>
-      <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_SYNC_menu'">
-        <div class="charts-list">
-          <div class="charts-list-text">
-            <div class="dashboard-title fs-7">{{ $t('dashboard_transfer_overview') }}</div>
-            <ul class="job-list">
-              <li v-for="item in transBarData" :key="item.key">
-                <i class="dots mr-3" :style="`background-color: ${item.color};`"></i>
-                <span class="text">{{ item.name }}</span
-                ><span class="num pl-7">{{ item.value }}</span>
-              </li>
-            </ul>
+        </el-col>
+        <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_SYNC_menu'">
+          <div class="charts-list">
+            <div class="charts-list-text">
+              <div class="dashboard-title fs-7">{{ $t('dashboard_transfer_overview') }}</div>
+              <ul class="job-list">
+                <li v-for="item in transBarData" :key="item.key">
+                  <i class="dots mr-3" :style="`background-color: ${item.color};`"></i>
+                  <span class="text">{{ item.name }}</span
+                  ><span class="num pl-7">{{ item.value }}</span>
+                </li>
+              </ul>
+            </div>
+            <div class="chart">
+              <Chart type="pie" :extend="getPieOption(transBarData)" class="type-chart"></Chart>
+            </div>
           </div>
-          <div class="chart">
-            <Chart type="pie" :extend="getPieOption(transBarData)" class="type-chart"></Chart>
-          </div>
-        </div>
-      </el-col>
-    </el-row>
-    <!-- 服务器进程 -->
-    <div class="dashboard-row dashboard-col col mb-5" v-readonlybtn="'Cluster_management_menu'">
-      <div class="dashboard-col">
-        <div class="dashboard-col-box">
-          <div class="dashboard-title fs-7">{{ $t('dashboard_server_title') }}</div>
-          <el-row :gutter="20">
-            <el-col :span="12" class="server-list pt-3" v-for="item in serverTable" :key="item.id">
-              <div class="server-list-box">
-                <img src="../../assets/images/serve.svg" />
-                <!-- <img src="../../assets/icons/svg/serve.svg" alt="" /> -->
-                <div class="server-main ml-5">
-                  <div class="title">{{ item.systemInfo.ip }}</div>
-                  <ul class="flex pt-1">
-                    <li class="pr-5">
-                      <label class="label pr-2">{{ $t('dashboard_management') }}</label>
-                      <span :style="`color: ${colorServeMap[item.management.status]};`">{{
-                        $t('dashboard_' + item.management.status)
-                      }}</span>
-                    </li>
-                    <li class="pr-5">
-                      <label class="label pr-2">{{ $t('dashboard_task_transfer') }}</label>
-                      <span :style="`color: ${colorServeMap[item.engine.status]};`">{{
-                        $t('dashboard_' + item.engine.status)
-                      }}</span>
-                    </li>
-                    <li>
-                      <label class="label pr-2">{{ $t('dashboard_api_service') }}</label>
-                      <span :style="`color: ${colorServeMap[item.apiServer.status]};`">{{
-                        $t('dashboard_' + item.apiServer.status)
-                      }}</span>
-                    </li>
-                  </ul>
+        </el-col>
+      </el-row>
+      <!-- 服务器进程 -->
+      <div class="dashboard-row dashboard-col col mb-5" v-readonlybtn="'Cluster_management_menu'">
+        <div class="dashboard-col">
+          <div class="dashboard-col-box">
+            <div class="dashboard-title fs-7">{{ $t('dashboard_server_title') }}</div>
+            <el-row :gutter="20">
+              <el-col :span="12" class="server-list pt-3" v-for="item in serverTable" :key="item.id">
+                <div class="server-list-box">
+                  <img src="../../assets/images/serve.svg" />
+                  <!-- <img src="../../assets/icons/svg/serve.svg" alt="" /> -->
+                  <div class="server-main ml-5">
+                    <div class="title">{{ item.systemInfo.ip }}</div>
+                    <ul class="flex pt-1">
+                      <li class="pr-5">
+                        <label class="label pr-2">{{ $t('dashboard_management') }}</label>
+                        <span :style="`color: ${colorServeMap[item.management.status]};`">{{
+                          $t('dashboard_' + item.management.status)
+                        }}</span>
+                      </li>
+                      <li class="pr-5">
+                        <label class="label pr-2">{{ $t('dashboard_task_transfer') }}</label>
+                        <span :style="`color: ${colorServeMap[item.engine.status]};`">{{
+                          $t('dashboard_' + item.engine.status)
+                        }}</span>
+                      </li>
+                      <li>
+                        <label class="label pr-2">{{ $t('dashboard_api_service') }}</label>
+                        <span :style="`color: ${colorServeMap[item.apiServer.status]};`">{{
+                          $t('dashboard_' + item.apiServer.status)
+                        }}</span>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
-              </div>
-            </el-col>
-          </el-row>
+              </el-col>
+            </el-row>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
+    <template v-else>
+      <div class="dashboard-wrap-box">
+        <img src="../../assets/images/undraw_secure_files_re_6vdh.svg" />
+        <div class="txt pt-4">{{ $t('dashboard_no_data_here') }}</div>
+      </div>
+    </template>
   </section>
   <DKDashboard v-else />
 </template>
@@ -336,7 +344,8 @@ export default {
       },
       unitData: [],
       kbData: [],
-      unitType: ''
+      unitType: '',
+      noPermission: this.$has('Data_SYNC_menu') || this.$has('Data_verify_menu') || this.$has('Cluster_management_menu')
     }
   },
 
@@ -742,6 +751,19 @@ export default {
           height: calc(100% - 24px);
         }
       }
+    }
+  }
+  .dashboard-wrap-box {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #fff;
+    border-radius: 4px;
+    justify-content: center;
+    align-items: center;
+    .txt {
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.43);
     }
   }
 }

@@ -31,3 +31,16 @@ export default {
   }
 }
 </script>
+<style scoped lang="scss">
+.table-list {
+  ::v-deep {
+    .el-table__header {
+      th {
+        color: map-get($fontColor, rdlevel);
+        font-weight: 500;
+        background-color: #fafafa;
+      }
+    }
+  }
+}
+</style>

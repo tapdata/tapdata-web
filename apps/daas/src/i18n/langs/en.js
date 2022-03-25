@@ -191,6 +191,7 @@ export default {
   dashboard_total_update: 'Total update',
   dashboard_total_delete: 'Total delete',
   dashboard_total: 'Total',
+  dashboard_no_data_here: 'There is no data here~',
 
   // 元数据管理
   metadata_type: 'Type',

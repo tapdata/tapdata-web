@@ -190,6 +190,7 @@ export default {
   dashboard_total_update: '总更新',
   dashboard_total_delete: '总删除',
   dashboard_total: '总计',
+  dashboard_no_data_here: '这里没用数据哦~',
 
   // 元数据管理
   metadata_type: '类型',

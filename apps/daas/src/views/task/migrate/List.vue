@@ -271,7 +271,7 @@ import DownAgent from '../../downAgent/agentDown'
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import Drawer from '@/components/Drawer'
-import { ETL_STATUS_MAP } from '@/const'
+// import { ETL_STATUS_MAP } from '@/const'
 import { getSubTaskStatus } from '../util'
 
 let timeout = null
@@ -588,10 +588,16 @@ export default {
         id: ids,
         listtags
       }
-      Task.batchUpdateListtags(attributes).then(() => {
-        this.dataFlowId = ''
-        this.table.fetch()
-      })
+      Task.batchUpdateListtags(attributes)
+        .then(() => {
+          this.dataFlowId = ''
+          this.table.fetch()
+        })
+        .catch(err => {
+          if (err.response?.code === 'MetadataDefinition.Value.Exist') {
+            this.$message.error('分类名称已存在')
+          }
+        })
     },
     create() {
       this.$router.push({
