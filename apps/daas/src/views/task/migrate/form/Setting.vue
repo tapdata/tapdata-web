@@ -10,7 +10,7 @@
         layout="horizontal"
         wrapperWidth="400"
       >
-        <SchemaField v-if="!!schema" :schema="schema" />
+        <SchemaField v-if="!!schema" :schema="schema" :scope="scope" />
       </Form>
     </div>
   </div>
@@ -33,7 +33,12 @@ export default {
   data() {
     return {
       form: createForm(),
-      schema: null
+      schema: null,
+      scope: {
+        checkName: value => {
+          return this.$api('Task').checkName(value)
+        }
+      }
     }
   },
   mounted() {
@@ -158,6 +163,7 @@ export default {
           }
         }
       }
+      let repeatNameMessage = this.$t('task_form_error_name_duplicate')
       //默认配置
       let config = {
         type: 'object',
@@ -170,7 +176,18 @@ export default {
                 type: 'string',
                 required: 'true',
                 'x-decorator': 'FormItem',
-                'x-component': 'Input'
+                'x-component': 'Input',
+                'x-validator': `{{(value) => {
+                  return new Promise((resolve) => {
+                    checkName(value).then((res) => {
+                      if(res.data === true) {
+                        resolve('${repeatNameMessage}')
+                      } else {
+                        resolve()
+                      }
+                    })
+                  })
+                }}}`
               },
               desc: {
                 title: this.$t('task_stetting_desc'), //任务描述

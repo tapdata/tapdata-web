@@ -753,6 +753,7 @@ export default {
   data_flow_automatically: '自動挖掘',
   data_flow_manually: '手動挖掘',
   data_flow_oracle_logminer: 'Oracle日誌挖掘模式',
+  task_form_error_name_duplicate: '任務名稱已存在，請重新輸入',
 
   ask_list_transform_running: '推演中',
   task_list_transform_done: '推演完成',
