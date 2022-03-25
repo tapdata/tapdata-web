@@ -5,7 +5,7 @@
         <span class="mr-4 fs-6 font-color-main">{{ task.name }}</span>
         <StatusTag
           type="text"
-          target="migrate"
+          target="etlSub"
           :status="task.isFinished ? 'finished' : task.status || 'running'"
         ></StatusTag>
         <!--        <span class="ml-6 font-color-sub">-->
