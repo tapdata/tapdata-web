@@ -125,7 +125,7 @@
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
               v-readonlybtn="'SYNC_job_operation'"
-              :disabled="startDisabled(row)"
+              :disabled="!statusBtMap['start'][row.status]"
               type="primary"
               @click="start([row.id])"
             >
@@ -133,7 +133,7 @@
             </ElLink>
             <ElDivider direction="vertical"></ElDivider>
             <ElLink
-              v-if="isShowForceStop(row.statusResult)"
+              v-if="row.status === 'stopping'"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
@@ -146,7 +146,7 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="
-                $disabledByPermission('SYNC_job_operation_all_data', row.user_id) || stopDisabled(row.statusResult)
+                $disabledByPermission('SYNC_job_operation_all_data', row.user_id) || !statusBtMap['stop'][row.status]
               "
               class="ml-3"
               @click="stop([row.id])"
@@ -185,7 +185,7 @@
                 </el-dropdown-item>
 
                 <el-dropdown-item
-                  :disabled="resetDisabled(row)"
+                  :disabled="!statusBtMap['reset'][row.status]"
                   command="initialize"
                   v-readonlybtn="'SYNC_job_operation'"
                 >
@@ -195,7 +195,7 @@
                   class="btn-delete"
                   command="del"
                   :disabled="
-                    $disabledByPermission('SYNC_job_delete_all_data', row.user_id) || deleteDisabled(row.statusResult)
+                    $disabledByPermission('SYNC_job_delete_all_data', row.user_id) || !statusBtMap['delete'][row.status]
                   "
                   v-readonlybtn="'SYNC_job_delete'"
                 >
@@ -334,7 +334,35 @@ export default {
         error: this.$t('task_list_transform_error')
       },
       dataFlowId: '',
-
+      statusBtMap: {
+        start: {
+          edit: true,
+          stop: true,
+          error: true,
+          complete: true,
+          schedule_failed: true
+        },
+        stop: {
+          scheduling: true,
+          preparing: true,
+          running: true,
+          wait_run: true
+        },
+        reset: {
+          stop: true,
+          error: true,
+          complete: true,
+          schedule_failed: true
+        },
+        delete: {
+          edit: true,
+          stop: true,
+          error: true,
+          not_running: true,
+          complete: true,
+          schedule_failed: true
+        }
+      },
       formSchedule: {
         id: '',
         name: '',
@@ -945,15 +973,6 @@ export default {
         this.$message.success(msg)
       }
     },
-    // 任务调度设置
-    // handleTaskscheduling(id, data) {
-    //   this.taskSettingsDialog = true
-    //   this.formSchedule.id = id
-    //   this.formSchedule.name = data.name
-    //   this.formSchedule.isSchedule = data.isSchedule
-    //   this.formSchedule.cronExpression = data.cronExpression
-    //   this.formSchedule.taskData = data
-    // },
     // 任务调度设置保存
     saveTaskSetting() {
       // let data = this.formSchedule.taskData;
@@ -999,34 +1018,6 @@ export default {
       if (this.isShowDetails) {
         this.getPreviewData(id)
       }
-    },
-    startDisabled(row) {
-      const statusResult = row.statusResult || []
-      const statusLength = row.statuses?.length || 0
-      return (
-        this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
-        statusResult.every(t => t.status === 'running' && t.count > 0 && t.count === statusLength)
-      )
-    },
-    stopDisabled(data) {
-      let stopData = data.filter(t => t.count > 0).find(t => ['running'].includes(t.status))
-      return stopData ? false : true
-    },
-    resetDisabled(row) {
-      const statusResult = row.statusResult || []
-      const statusLength = row.statuses?.length || 0
-      return (
-        this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
-        statusResult.some(t => t.status === 'running' && t.count > 0 && t.count === statusLength)
-      )
-    },
-    deleteDisabled(data) {
-      return !data
-        .filter(t => t.count > 0)
-        .every(t => ['edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed'].includes(t.status))
-    },
-    isShowForceStop(data) {
-      return data.filter(t => t.count > 0).every(t => ['stopping'].includes(t.status))
     },
     async getPreviewData(id) {
       this.loading = true
