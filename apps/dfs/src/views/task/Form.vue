@@ -438,9 +438,6 @@
     .step-5 {
       height: 100%;
       min-height: 300px;
-      > .field-mapping {
-        padding-bottom: 50px;
-      }
       .search {
         display: flex;
         justify-content: flex-start;
