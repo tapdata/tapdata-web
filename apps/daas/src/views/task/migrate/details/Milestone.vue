@@ -27,7 +27,7 @@
         </ElButton>
       </template>
       <template slot="status" slot-scope="scope">
-        <StatusTag type="text" target="milestone" :status="getMilestoneStatus(scope.row.status)"></StatusTag>
+        <StatusTag type="text" target="milestone" :status="getMilestoneStatus(scope.row.status)" only-img></StatusTag>
       </template>
     </TableList>
   </div>

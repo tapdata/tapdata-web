@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="103px" height="25px" viewBox="0 0 103 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>force stopping</title>
+    <g id="控件" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="force-stopping">
+            <rect id="矩形" fill="#FFECEC" x="0" y="0" width="103" height="25" rx="4"></rect>
+            <circle id="椭圆形" fill="#DB5050" cx="9.5" cy="12.5" r="4.5"></circle>
+            <rect id="矩形" fill="#FFFFFF" x="7.60748942" y="10.6074894" width="3.78502117" height="3.78502117" rx="0.5"></rect>
+            <text font-family="PingFangSC-Regular, PingFang SC" font-size="12" font-weight="normal" fill="#DB5050">
+                <tspan x="16" y="17">force stopping</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

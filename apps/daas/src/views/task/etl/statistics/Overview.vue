@@ -4,8 +4,10 @@
     <div class="overview-bar__content p-4">
       <div class="flex justify-content-between mb-2 font-color-main">
         <div>
-          <span>{{ $t('task_info_table_number') }} {{ info.totalDataNum || 0 }}</span>
-          <span class="ml-3">{{ $t('task_info_completed') }} {{ info.finishNumber || 0 }}</span>
+          <span
+            >{{ $t('task_info_table_number') }} : {{ info.totalDataNum < 0 ? '计算中' : info.totalDataNum || 0 }}</span
+          >
+          <span class="ml-3">{{ $t('task_info_completed') }} : {{ info.finishNumber || 0 }}</span>
         </div>
         <div v-if="info.progress !== 100">
           {{ $t('task_monitor_full_completion_time') }}：{{ info.finishDuration || 0 }}

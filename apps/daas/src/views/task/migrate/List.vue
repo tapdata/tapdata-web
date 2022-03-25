@@ -221,14 +221,18 @@
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <Drawer class="task-drawer" :visible.sync="isShowDetails">
       <div class="task-drawer-wrap" v-loading="previewLoading">
-        <header class="header">
-          <div class="tab">
+        <header class="header mb-3">
+          <div class="tab pb-3">
             <div class="img-box">
               <img src="../../../assets/images/migrate/headImage.png" />
             </div>
             <div class="content">
-              <div class="name fs-6">{{ previewData.name }}</div>
-              <div class="fs-8 py-1 desc">
+              <div class="name fs-6">
+                <el-tooltip class="item" effect="dark" :content="previewData.name" placement="top-start">
+                  <span> {{ previewData.name }}</span>
+                </el-tooltip>
+              </div>
+              <div class="fs-8 mt-2 mb-2 desc">
                 {{ $t('task_details_desc') }}: <span>{{ previewData.desc }}</span>
               </div>
               <div class="status">
@@ -1202,7 +1206,6 @@ export default {
   .header {
     display: flex;
     flex-direction: column;
-    margin: 20px 0;
     border-bottom: 1px solid #eee;
   }
   .test-progress {
@@ -1212,8 +1215,6 @@ export default {
   .tab {
     display: flex;
     justify-content: flex-start;
-    padding-bottom: 10px;
-    padding-top: 10px;
     .img-box {
       display: flex;
       width: 20px;
@@ -1230,17 +1231,19 @@ export default {
     }
     .content {
       margin-left: 10px;
-      font-weight: 500;
       margin-top: 4px;
       width: 100%;
+      overflow: hidden;
       .name {
-        color: #000;
-        font-weight: 400;
+        color: map-get($fontColor, normal);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
       .desc {
-        color: rgba(0, 0, 0, 0.6);
+        color: map-get($fontColor, light);
         span {
-          color: #000;
+          color: map-get($fontColor, slight);
         }
       }
     }
