@@ -1644,6 +1644,7 @@ export default {
       return item.invalid
     },
     handleBatchChangeFieldType() {
+      this.loadCustomTypeMappingsData()
       let { batchFieldTypeForm } = this
       if (!batchFieldTypeForm.list.length) {
         batchFieldTypeForm.list = [this.getBatchFieldTypeItem()]

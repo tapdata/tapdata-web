@@ -96,6 +96,9 @@ export default {
         this.field_process = []
         //清空表改名 字段改名
         this.clearTransform()
+        // 清空批量修改字段类型
+        this.$emit('update:customTypeMappings', [])
+        this.dataFlow['customTypeMappings'] = []
       } else if (rollbackTable) {
         this.dataFlow['rollback'] = rollback
         this.dataFlow['rollbackTable'] = rollbackTable
