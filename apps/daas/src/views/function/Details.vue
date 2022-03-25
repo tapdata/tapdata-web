@@ -81,13 +81,14 @@ export default {
         jar: this.$t('function_type_option_jar'),
         system: this.$t('function_type_option_system')
       }
+      let filter = {
+        where: {
+          id: this.$route.params.id
+        }
+      }
       this.$api('Javascript_functions')
         .findOne({
-          filter: {
-            where: {
-              id: this.$route.params.id
-            }
-          }
+          filter: JSON.stringify(filter)
         })
         .then(res => {
           let details = res?.data || {}
