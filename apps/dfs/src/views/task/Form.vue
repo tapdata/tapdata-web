@@ -1012,6 +1012,9 @@ export default {
           this.$message.error(this.$t('task_form_no_bable_tip'))
           return
         }
+        if (this.reloadLoading) {
+          return
+        }
         this.activeStep += 1
         this.getFormConfig()
       }
