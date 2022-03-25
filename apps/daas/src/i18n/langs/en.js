@@ -191,6 +191,7 @@ export default {
   dashboard_total_update: 'Total update',
   dashboard_total_delete: 'Total delete',
   dashboard_total: 'Total',
+  dashboard_no_data_here: 'There is no data here~',
 
   // 元数据管理
   metadata_type: 'Type',
@@ -952,6 +953,7 @@ export default {
   task_info_status_done: 'Done',
 
   task_stetting_name: 'Task name',
+  task_stetting_desc: 'Task description',
   task_setting_sync_type: 'Sync type',
   task_setting_initial_sync: 'full synchronization',
   task_setting_cdc: 'Incremental synchronization',
@@ -1848,5 +1850,7 @@ export default {
   milestone_label_read_snapshot: '[Data transfer] Full read source data snapshot',
   milestone_label_write_snapshot: '[Data transfer] The target end writes data snapshots in full',
   milestone_label_read_cdc_event: '[Data transmission] The source collector enters incremental read mode',
-  milestone_label_write_cdc_event: '[Data transfer] The target processor enters incremental write mode'
+  milestone_label_write_cdc_event: '[Data transfer] The target processor enters incremental write mode',
+
+  classification_name_already_exists: 'Classification name already exists'
 }

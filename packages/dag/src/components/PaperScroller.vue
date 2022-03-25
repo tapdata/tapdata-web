@@ -273,6 +273,29 @@ export default {
       this.doChangePageScroll(scrollLeft, scrollTop)
     },
 
+    /**
+     * 画布居中节点
+     * @param node
+     * @param ifZoomToFit
+     */
+    centerNode(node, ifZoomToFit) {
+      const [left, top] = node.attrs.position
+      let scale = Math.min(this.visibleArea.width / NODE_WIDTH, this.visibleArea.height / NODE_HEIGHT)
+
+      if (!ifZoomToFit) {
+        scale = Math.min(1, scale)
+      }
+
+      this.changeScale(scale)
+
+      const scrollLeft =
+        this.paperOffset.left + (left + this.paperReverseSize.w) * scale - (this.visibleArea.width - NODE_WIDTH) / 2
+      const scrollTop =
+        this.paperOffset.top + (top + this.paperReverseSize.h) * scale - (this.visibleArea.height - NODE_HEIGHT) / 2
+
+      this.doChangePageScroll(scrollLeft, scrollTop)
+    },
+
     // 自动延伸画布，类似于无限画布
     autoResizePaper() {
       const { width, height } = this.options

@@ -359,6 +359,9 @@
 .el-table .cell {
   line-height: 30px;
 }
+.el-table .el-table__header th {
+  background-color: #fafafa;
+}
 .el-table__body tr.hover-row > td {
   background-color: map-get($bgColor, hover);
 }
