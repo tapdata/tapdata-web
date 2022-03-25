@@ -190,6 +190,7 @@ export default {
   dashboard_total_update: '总更新',
   dashboard_total_delete: '总删除',
   dashboard_total: '总计',
+  dashboard_no_data_here: '这里没用数据哦~',
 
   // 元数据管理
   metadata_type: '类型',
@@ -759,6 +760,7 @@ export default {
   data_flow_automatically: '自动挖掘',
   data_flow_manually: '手动挖掘',
   data_flow_oracle_logminer: 'Oracle日志挖掘模式',
+  task_form_error_name_duplicate: '任务名称已存在，请重新输入',
 
   task_list_transform_running: '推演中',
   task_list_transform_done: '推演完成',
@@ -924,6 +926,7 @@ export default {
   task_info_status_done: '已完成',
 
   task_stetting_name: '任务名称',
+  task_stetting_desc: '任务描述',
   task_setting_sync_type: '同步类型',
   task_setting_initial_sync: '全量同步',
   task_setting_cdc: '增量同步',
@@ -1790,5 +1793,7 @@ export default {
   milestone_label_read_snapshot: '【数据传输】全量读取源端数据快照',
   milestone_label_write_snapshot: '【数据传输】目标端全量写入数据快照',
   milestone_label_read_cdc_event: '【数据传输】源端采集器进入增量读取模式',
-  milestone_label_write_cdc_event: '【数据传输】目标处理器进入增量写入模式'
+  milestone_label_write_cdc_event: '【数据传输】目标处理器进入增量写入模式',
+
+  classification_name_already_exists: '分类名称已存在'
 }

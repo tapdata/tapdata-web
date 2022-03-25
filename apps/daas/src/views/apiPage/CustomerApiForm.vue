@@ -20,7 +20,7 @@
       </ElFormItem>
       <ElFormItem :label="$t('module_form_fields')">
         <!-- 字段 -->
-        <ElTable :data="fields" ref="table" @selection-change="handleSelectionChange">
+        <ElTable :data="fields" ref="table" class="api-field-table" @selection-change="handleSelectionChange">
           <ElTableColumn type="selection" width="45" :reserve-selection="true"> </ElTableColumn>
           <ElTableColumn prop="field_name" :label="$t('module_form_fields')"></ElTableColumn>
           <ElTableColumn prop="javaType" :label="$t('module_form_datatype')"></ElTableColumn>
@@ -59,10 +59,10 @@
       </ElFormItem>
     </ElForm>
     <div slot="footer" class="dialog-footer">
-      <el-button class="cancel" @click="handleClose()" size="small">
+      <el-button class="cancel" @click="handleClose()" size="mini">
         {{ $t('button_cancel') }}
       </el-button>
-      <el-button type="primary" @click="save()" size="small">{{ $t('button_save') }}</el-button>
+      <el-button type="primary" @click="save()" size="mini">{{ $t('button_save') }}</el-button>
     </div>
   </el-dialog>
 </template>
@@ -197,15 +197,31 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .customer_form {
   height: 90%;
   margin: 50px auto 0 !important;
   overflow: hidden;
-  .el-dialog__body {
-    height: calc(100% - 126px);
-    padding: 10px 20px 0;
-    overflow-y: auto;
+  .api-field-table {
+    ::v-deep {
+      .el-table__header {
+        .el-table__cell {
+          padding: 3px 0;
+          .cell {
+            padding-left: 14px;
+            color: map-get($fontColor, rdlevel);
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+  ::v-deep {
+    .el-dialog__body {
+      height: calc(100% - 126px);
+      padding: 10px 20px 0;
+      overflow-y: auto;
+    }
   }
   .dialog-footer {
     text-align: left;

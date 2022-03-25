@@ -213,10 +213,22 @@ export default {
     padding: 0 10px;
     background-color: map-get($bgColor, main);
     .query-build-header-left {
+      font-size: 12px;
       span {
         display: inline-block;
         color: map-get($fontColor, rdlevel);
       }
+      ::v-deep {
+        .el-radio {
+          .el-radio__label {
+            color: #000000;
+          }
+          &.is-checked .el-radio__label {
+            color: rgba(0, 0, 0, 0.65);
+          }
+        }
+      }
+
       .query-build-header-radio {
         padding: 4px 20px 0;
       }
@@ -224,6 +236,7 @@ export default {
     .query-build-header-right {
       ::v-deep {
         .el-button--text {
+          font-size: 12px;
           background-color: #fafafa;
         }
       }
@@ -240,6 +253,7 @@ export default {
       width: 100%;
       .query-build-group-button {
         width: 70px;
+        text-align: right;
       }
     }
   }

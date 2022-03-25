@@ -129,18 +129,26 @@
 }
 .el-radio .el-radio__label {
   font-size: 12px;
-  color: map-get($fontColor, rdlevel);
+  color: map-get($fontColor, main);
 }
 .el-radio__input.is-checked+.el-radio__label {
-  color: map-get($color, primary);
+  color: map-get($fontColor, main);
 }
-
+.el-radio__inner {
+  width: 16px;
+  height: 16px;
+}
 .el-radio__inner:hover {
   border-color: map-get($color, primary);
 }
-.el-radio__input.is-checked .el-radio__inner {
-  border-color: map-get($color, primary);
+.el-radio__inner::after {
+  width: 8px;
+  height: 8px;
   background-color: map-get($color, primary);
+}
+.el-radio__input.is-checked .el-radio__inner {
+  // border-color: map-get($color, primary);
+  background-color: #fff;
 }
 .el-radio-button__inner {
   font-weight: normal;
@@ -358,6 +366,9 @@
 }
 .el-table .cell {
   line-height: 30px;
+}
+.el-table .el-table__header th {
+  background-color: #fafafa;
 }
 .el-table__body tr.hover-row > td {
   background-color: map-get($bgColor, hover);

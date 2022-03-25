@@ -119,11 +119,11 @@
             prop="data_type"
             width="150"
           ></ElTableColumn>
-          <ElTableColumn
-            :label="$t('dag_dialog_field_mapping_source_precision')"
-            prop="precision"
-            width="150"
-          ></ElTableColumn>
+          <ElTableColumn :label="$t('dag_dialog_field_mapping_source_precision')" prop="precision" width="150">
+            <template slot-scope="scope">
+              <span>{{ scope.row.precision === -1 ? '' : scope.row.precision }}</span>
+            </template>
+          </ElTableColumn>
           <ElTableColumn :label="$t('dag_dialog_field_mapping_source_scale')" prop="scale" width="100"></ElTableColumn>
           <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')" width="260">
             <template slot-scope="scope">

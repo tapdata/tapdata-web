@@ -43,7 +43,7 @@
           <!--          >-->
           <!--            {{ $t('task_button_recover') }}-->
           <!--          </VButton>-->
-          <VButton
+          <ElButton
             :disabled="!statusBtMap['start'][scope.row.status]"
             auto-loading
             inner-loading
@@ -51,7 +51,8 @@
             @click="start(scope.row, arguments[0])"
           >
             {{ $t('task_button_start') }}
-          </VButton>
+          </ElButton>
+          <ElDivider direction="vertical"></ElDivider>
           <!--          <VButton-->
           <!--            v-if="scope.row.status === 'stopping'"-->
           <!--            :disabled="!statusBtMap['task_button_force_stop'][scope.row.status]"-->
@@ -61,23 +62,23 @@
           <!--          >-->
           <!--            {{ $t('task_button_force_stop') }}-->
           <!--          </VButton>-->
-          <VButton
+          <ElButton
             :disabled="!statusBtMap['stop'][scope.row.status]"
-            class="mr-2"
             type="text"
             @click="stop(scope.row, arguments[0])"
           >
             {{ $t('task_button_stop') }}
-          </VButton>
-          <VButton
+          </ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton
             :disabled="!statusBtMap['reset'][scope.row.status]"
-            class="mr-2"
             type="text"
             @click="renew(scope.row, arguments[0])"
           >
             {{ $t('task_button_reset') }}
-          </VButton>
-          <VButton type="text" @click="toStatistics(scope.row)">{{ $t('task_details_running_statistics') }}</VButton>
+          </ElButton>
+          <ElDivider direction="vertical"></ElDivider>
+          <ElButton type="text" @click="toStatistics(scope.row)">{{ $t('task_details_running_statistics') }}</ElButton>
         </div>
       </template>
     </TableList>

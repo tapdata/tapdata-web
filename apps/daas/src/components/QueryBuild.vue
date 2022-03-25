@@ -251,8 +251,13 @@ export default {
         padding-bottom: 5px;
         border-bottom: 0;
         color: #2c65ff;
+        font-size: 12px;
         .el-collapse-item__arrow {
-          margin: 0;
+          margin-left: 6px;
+          transform: rotate(90deg);
+        }
+        .el-collapse-item__arrow.is-active {
+          transform: rotate(270deg);
         }
       }
       .el-collapse-item__wrap {

@@ -57,6 +57,11 @@ export default {
       type: String
     }
   },
+  data() {
+    return {
+      lang: localStorage.getItem('tapdata_localize_lang') || 'sc'
+    }
+  },
   computed: {
     map() {
       return (
@@ -76,8 +81,15 @@ export default {
     statusObj() {
       return this.map[this.status] || this.map[this.defaultStatus] || {}
     },
+    // imgSrc() {
+    //   return require(`@/assets/icons/colorSvg/${this.statusObj.icon}.png`)
+    // }
     imgSrc() {
-      return require(`@/assets/icons/colorSvg/${this.statusObj.icon}.png`)
+      if (this.lang === 'en') {
+        return require(`@/assets/icons/milestone/${this.statusObj.icon}.svg`)
+      } else {
+        return require(`@/assets/icons/milestone/${this.statusObj.icon}.png`)
+      }
     }
   }
 }

@@ -10,7 +10,7 @@
         layout="horizontal"
         wrapperWidth="400"
       >
-        <SchemaField v-if="!!schema" :schema="schema" />
+        <SchemaField v-if="!!schema" :schema="schema" :scope="scope" />
       </Form>
     </div>
   </div>
@@ -33,7 +33,12 @@ export default {
   data() {
     return {
       form: createForm(),
-      schema: null
+      schema: null,
+      scope: {
+        checkName: value => {
+          return this.$api('Task').checkName(value)
+        }
+      }
     }
   },
   mounted() {
@@ -158,6 +163,7 @@ export default {
           }
         }
       }
+      let repeatNameMessage = this.$t('task_form_error_name_duplicate')
       //默认配置
       let config = {
         type: 'object',
@@ -170,13 +176,33 @@ export default {
                 type: 'string',
                 required: 'true',
                 'x-decorator': 'FormItem',
-                'x-component': 'Input'
+                'x-component': 'Input',
+                'x-validator': `{{(value) => {
+                  return new Promise((resolve) => {
+                    checkName(value).then((res) => {
+                      if(res.data === true) {
+                        resolve('${repeatNameMessage}')
+                      } else {
+                        resolve()
+                      }
+                    })
+                  })
+                }}}`
+              },
+              desc: {
+                title: this.$t('task_stetting_desc'), //任务描述
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Input.TextArea'
               },
               sync_type: {
                 title: this.$t('task_setting_sync_type'),
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Radio.Group',
+                'x-component-props': {
+                  optionType: 'button'
+                },
                 default: 'initial_sync+cdc',
                 enum: [
                   {
@@ -201,6 +227,26 @@ export default {
                   }
                 }
               },
+              deduplicWriteMode: {
+                title: this.$t('task_setting_distinct_write_type'), //去重写入机制
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Radio.Group',
+                'x-component-props': {
+                  optionType: 'button'
+                },
+                enum: [
+                  {
+                    label: this.$t('dataFlow.setting.intellect'),
+                    value: 'intellect'
+                  },
+                  {
+                    label: this.$t('dataFlow.setting.compel'),
+                    value: 'compel'
+                  }
+                ],
+                default: 'intellect'
+              },
               isStopOnError: {
                 title: this.$t('task_setting_stop_on_error'), //遇到错误停止
                 type: 'boolean',
@@ -221,12 +267,12 @@ export default {
                 'x-decorator': 'FormItem',
                 'x-component': 'Switch'
               },
-              noPrimaryKey: {
-                title: this.$t('task_setting_no_primary_key'), //支持无主键同步
-                type: 'boolean',
-                'x-decorator': 'FormItem',
-                'x-component': 'Switch'
-              },
+              // noPrimaryKey: {
+              //   title: this.$t('task_setting_no_primary_key'), //支持无主键同步
+              //   type: 'boolean',
+              //   'x-decorator': 'FormItem',
+              //   'x-component': 'Switch'
+              // },
               increOperationMode: {
                 title: this.$t('task_setting_cdc_data_process'), //增量数据处理机制
                 default: false,
@@ -262,23 +308,6 @@ export default {
                     }
                   }
                 }
-              },
-              deduplicWriteMode: {
-                title: this.$t('task_setting_distinct_write_type'), //去重写入机制
-                type: 'string',
-                'x-decorator': 'FormItem',
-                'x-component': 'Select',
-                enum: [
-                  {
-                    label: this.$t('dataFlow.setting.intellect'),
-                    value: 'intellect'
-                  },
-                  {
-                    label: this.$t('dataFlow.setting.compel'),
-                    value: 'compel'
-                  }
-                ],
-                default: 'intellect'
               },
               increShareReadMode: {
                 title: this.$t('task_setting_share_cdc_mode'), //共享增量读取的模式
@@ -342,26 +371,26 @@ export default {
                   }
                 }
               },
-              increaseSyncInterval: {
-                title: this.$t('task_setting_read_cdc_interval'), //增量同步间隔
-                type: 'string',
-                'x-decorator': 'FormItem',
-                'x-component': 'Input',
-                'x-content': {
-                  append: 'ms'
-                },
-                default: 500
-              },
-              readBatchSize: {
-                title: this.$t('task_setting_read_batch_size'), //每次读取数量
-                type: 'string',
-                'x-decorator': 'FormItem',
-                'x-component': 'Input',
-                'x-content': {
-                  append: 'row'
-                }
-                // default: 100
-              },
+              // increaseSyncInterval: {
+              //   title: this.$t('task_setting_read_cdc_interval'), //增量同步间隔
+              //   type: 'string',
+              //   'x-decorator': 'FormItem',
+              //   'x-component': 'Input',
+              //   'x-content': {
+              //     append: 'ms'
+              //   },
+              //   default: 500
+              // },
+              // readBatchSize: {
+              //   title: this.$t('task_setting_read_batch_size'), //每次读取数量
+              //   type: 'string',
+              //   'x-decorator': 'FormItem',
+              //   'x-component': 'Input',
+              //   'x-content': {
+              //     append: 'row'
+              //   }
+              //   // default: 100
+              // },
               increSyncConcurrency: {
                 title: this.$t('task_setting_cdc_concurrency'), //增量同步并发写入
                 type: 'boolean',
@@ -396,75 +425,75 @@ export default {
                 },
                 default: 1
               },
-              syncPoints: {
-                title: this.$t('task_setting_sync_point'), //增量采集开始时刻
-                type: 'array',
-                'x-decorator': 'FormItem',
-                'x-component': 'ArrayItems',
-                'x-reactions': {
-                  dependencies: ['sync_type'],
-                  fulfill: {
-                    state: {
-                      visible: '{{$deps[0] === "cdc"}}'
-                    }
-                  }
-                },
-                items: [
-                  {
-                    type: 'object',
-                    properties: {
-                      row: {
-                        type: 'void',
-                        'x-component': 'Row',
-                        'x-component-props': {
-                          type: 'flex',
-                          gap: '10px'
-                        },
-                        properties: {
-                          type: {
-                            type: 'string',
-                            'x-decorator': 'Col',
-                            'x-decorator-props': {
-                              span: 8
-                            },
-                            'x-component': 'Select',
-                            'x-component-props': {
-                              placeholder: '请选择'
-                            },
-                            default: 'localTZ',
-                            enum: [
-                              {
-                                label: this.$t('dataFlow.SyncInfo.localTZType'),
-                                value: 'localTZ'
-                              },
-                              {
-                                label: this.$t('dataFlow.SyncInfo.connTZType'),
-                                value: 'connTZ'
-                              },
-                              {
-                                label: this.$t('dataFlow.SyncInfo.currentType'),
-                                value: 'current'
-                              }
-                            ]
-                          },
-                          date: {
-                            type: 'string',
-                            'x-decorator': 'Col',
-                            'x-decorator-props': {
-                              span: 14
-                            },
-                            'x-component': 'DatePicker',
-                            'x-component-props': {
-                              type: 'datetime',
-                              format: 'yyyy-MM-dd HH:mm:ss'
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                ]
-              },
+              // syncPoints: {
+              //   title: this.$t('task_setting_sync_point'), //增量采集开始时刻
+              //   type: 'array',
+              //   'x-decorator': 'FormItem',
+              //   'x-component': 'ArrayItems',
+              //   'x-reactions': {
+              //     dependencies: ['sync_type'],
+              //     fulfill: {
+              //       state: {
+              //         visible: '{{$deps[0] === "cdc"}}'
+              //       }
+              //     }
+              //   },
+              //   items: [
+              //     {
+              //       type: 'object',
+              //       properties: {
+              //         row: {
+              //           type: 'void',
+              //           'x-component': 'Row',
+              //           'x-component-props': {
+              //             type: 'flex',
+              //             gap: '10px'
+              //           },
+              //           properties: {
+              //             type: {
+              //               type: 'string',
+              //               'x-decorator': 'Col',
+              //               'x-decorator-props': {
+              //                 span: 8
+              //               },
+              //               'x-component': 'Select',
+              //               'x-component-props': {
+              //                 placeholder: '请选择'
+              //               },
+              //               default: 'localTZ',
+              //               enum: [
+              //                 {
+              //                   label: this.$t('dataFlow.SyncInfo.localTZType'),
+              //                   value: 'localTZ'
+              //                 },
+              //                 {
+              //                   label: this.$t('dataFlow.SyncInfo.connTZType'),
+              //                   value: 'connTZ'
+              //                 },
+              //                 {
+              //                   label: this.$t('dataFlow.SyncInfo.currentType'),
+              //                   value: 'current'
+              //                 }
+              //               ]
+              //             },
+              //             date: {
+              //               type: 'string',
+              //               'x-decorator': 'Col',
+              //               'x-decorator-props': {
+              //                 span: 14
+              //               },
+              //               'x-component': 'DatePicker',
+              //               'x-component-props': {
+              //                 type: 'datetime',
+              //                 format: 'yyyy-MM-dd HH:mm:ss'
+              //               }
+              //             }
+              //           }
+              //         }
+              //       }
+              //     }
+              //   ]
+              // },
               increHysteresis: {
                 title: this.$t('task_setting_lag_time'), //增量滞后判断时间设置(秒)
                 default: false,
