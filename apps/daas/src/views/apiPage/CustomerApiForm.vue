@@ -59,10 +59,10 @@
       </ElFormItem>
     </ElForm>
     <div slot="footer" class="dialog-footer">
-      <el-button class="cancel" @click="handleClose()" size="small">
+      <el-button class="cancel" @click="handleClose()" size="mini">
         {{ $t('button_cancel') }}
       </el-button>
-      <el-button type="primary" @click="save()" size="small">{{ $t('button_save') }}</el-button>
+      <el-button type="primary" @click="save()" size="mini">{{ $t('button_save') }}</el-button>
     </div>
   </el-dialog>
 </template>
@@ -222,9 +222,9 @@ export default {
       padding: 10px 20px 0;
       overflow-y: auto;
     }
-    .dialog-footer {
-      text-align: left;
-    }
+  }
+  .dialog-footer {
+    text-align: left;
   }
 }
 </style>
