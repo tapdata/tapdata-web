@@ -60,7 +60,7 @@ import MqTransfer from 'web-core/components/mq-transfer'
 export default {
   components: { VIcon, MqTransfer, VirtualTransfer },
 
-  props: ['transferData', 'isTwoWay', 'mqTransferFlag'],
+  props: ['transferData', 'isTwoWay', 'mqTransferFlag', 'dataSourceModel'],
 
   data() {
     return {
@@ -75,7 +75,7 @@ export default {
       bidirectional: '',
       loadFieldsStatus: 'finished',
       reloadCount: 0,
-      reloadLoading: true, // 重新加载
+      reloadLoading: false, // 重新加载
       timer: null
     }
   },
@@ -84,8 +84,10 @@ export default {
       return this.transferData?.tableOperations || []
     }
   },
-  created() {
-    this.timer = setInterval(this.getSchemaProgress, 800)
+  mounted() {
+    this.sourceId = this.dataSourceModel?.source_connectionId
+    this.getSchemaProgress(true)
+    this.timer = setInterval(this.getSchemaProgress, 1000)
     this.$once('hook:beforeDestroy', this.clearTimer)
   },
   methods: {
@@ -189,8 +191,11 @@ export default {
         })
         .catch(this.getSchemaCatch)
     },
-    getSchemaProgress() {
-      if (!this.reloadLoading) {
+    getSchemaProgress(ignore = false) {
+      if (!ignore && !this.reloadLoading) {
+        return
+      }
+      if (!this.sourceId) {
         return
       }
       this.$axios

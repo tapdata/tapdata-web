@@ -5,11 +5,11 @@
       >:
       {{ $t('task_mapping_table_setting_tip') }}
       <div class="float-end">
-        <el-button v-if="!readOnly && !targetIsVika" size="mini" @click="handleBatchChangeFieldType">{{
-          $t('task_mapping_table_field_type_change')
-        }}</el-button>
         <el-button v-if="!readOnly && !targetIsVika" size="mini" @click="handleChangTableName">{{
           $t('task_mapping_table_rename')
+        }}</el-button>
+        <el-button v-if="!readOnly && !targetIsVika" size="mini" @click="handleBatchChangeFieldType">{{
+          $t('task_mapping_table_field_type_change')
         }}</el-button>
         <el-button v-if="!readOnly && !targetIsVika" size="mini" @click="dialogFieldVisible = true">{{
           $t('task_mapping_table_field_rename')

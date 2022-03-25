@@ -196,6 +196,7 @@
                 <Transfer
                   ref="transfer"
                   :transferData="transferData"
+                  :dataSourceModel="dataSourceModel"
                   :mqTransferFlag="mqTransferFlag"
                   :isTwoWay="settingModel.bidirectional"
                   :reloadLoading.sync="reloadLoading"
@@ -705,7 +706,7 @@ export default {
         }
       },
       customTypeMappings: [],
-      reloadLoading: true // 重新加载schema的loading
+      reloadLoading: false // 重新加载schema的loading
     }
   },
 
