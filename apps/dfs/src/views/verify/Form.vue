@@ -693,6 +693,9 @@ export default {
         let sourceTablesNames = obj.objectNames || []
         let tableOperations = target.tableOperations
         sourceTablesNames.forEach(name => {
+          if (!this.flowStages) {
+            return
+          }
           let targetTableName = target.table_prefix + name + target.table_suffix
           if (target.tableNameTransform) {
             targetTableName = targetTableName[target.tableNameTransform]()
@@ -712,14 +715,14 @@ export default {
             let outputLanes = target.connectionId + targetTableName
             let key = source.connectionId + name
             this.stageMap[key] = [outputLanes]
-            this.flowStages?.push({
+            this.flowStages.push({
               id: key,
               connectionId: sourceTable.source.id,
               connectionName: sourceTable.source.name,
               fields: sourceTable.fields,
               tableName: sourceTable.original_name
             })
-            this.flowStages?.push({
+            this.flowStages.push({
               id: outputLanes,
               connectionId: targetTable.source.id,
               connectionName: targetTable.source.name,
