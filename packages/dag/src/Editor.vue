@@ -261,7 +261,8 @@ export default {
       'clearNodeError',
       'resetState',
       'selectConnection',
-      'deselectAllConnections'
+      'deselectAllConnections',
+      'setCanBeConnectedNodeIds'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
@@ -391,6 +392,33 @@ export default {
       })
     },
 
+    checkCanBeConnected(sourceId, targetId, showMsg) {
+      if (sourceId === targetId) return false
+
+      const source = this.nodeById(sourceId)
+      const target = this.nodeById(targetId)
+      const maxInputs = target.__Ctor.attr.maxInputs ?? -1
+      const connectionType = target.attrs.connectionType
+
+      if (connectionType && !connectionType.includes('target')) {
+        showMsg && this.$message.info(`该节点「${target.name}」仅支持作为源`)
+        return false
+      }
+
+      const connections = this.jsPlumbIns.getConnections({ target: NODE_PREFIX + targetId })
+
+      if (connections?.length && maxInputs !== -1 && connections.length >= maxInputs) {
+        showMsg && this.$message.info('该节点已经达到最大连线限制')
+        return false
+      }
+
+      if (!this.isConnected(sourceId, targetId) && this.allowConnect(sourceId, targetId)) {
+        return target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source)
+      }
+
+      return false
+    },
+
     initNodeView() {
       const { jsPlumbIns } = this
       jsPlumbIns.setContainer('#node-view')
@@ -485,7 +513,29 @@ export default {
         }
       })
 
-      const _instance = {
+      /*let sourceMap
+      let targetMap
+      const initSourceAndTargetMap = () => {
+        const edges = this.allEdges
+        edges.forEach(item => {
+          let _source = sourceMap[item.source]
+          let _target = targetMap[item.target]
+
+          if (!_source) {
+            sourceMap[item.source] = [item]
+          } else {
+            _source.push(item)
+          }
+
+          if (!_target) {
+            targetMap[item.target] = [item]
+          } else {
+            _target.push(item)
+          }
+        })
+      }*/
+
+      /*const _instance = {
         getConnections(params) {
           // console.log('_instance', params) // eslint-disable-line
           if (typeof params === 'object') {
@@ -494,12 +544,14 @@ export default {
           }
           return jsPlumbIns.getConnections(params)
         }
-      }
+      }*/
 
       jsPlumbIns.bind('beforeDrop', info => {
         const { sourceId, targetId } = info
 
-        if (sourceId === targetId) return false
+        return this.checkCanBeConnected(this.getRealId(sourceId), this.getRealId(targetId), true)
+
+        /*if (sourceId === targetId) return false
 
         // console.log('beforeDrop', info) // eslint-disable-line
 
@@ -516,7 +568,7 @@ export default {
           return target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source, _instance)
         }
 
-        return false
+        return false*/
       })
 
       jsPlumbIns.bind('beforeDrag', ({ sourceId }) => {
@@ -524,10 +576,21 @@ export default {
         const node = this.nodeById(this.getRealId(sourceId))
         const connectionType = node.attrs.connectionType
         if (connectionType && !connectionType.includes('source')) {
-          this.$message.info('该节点仅支持作为目标')
+          this.$message.info(`该节点「${node.name}」仅支持作为目标`)
           return false
         }
         return true
+      })
+
+      // 连线拖动时，可以被连的节点在画布上凸显
+      jsPlumbIns.bind('connectionDrag', info => {
+        const source = this.nodeById(this.getRealId(info.sourceId))
+        const canBeConnectedNodes = this.allNodes.filter(target => this.checkCanBeConnected(source.id, target.id))
+        this.setCanBeConnectedNodeIds(canBeConnectedNodes.map(n => n.id))
+      })
+
+      jsPlumbIns.bind('connectionDragStop', () => {
+        this.setCanBeConnectedNodeIds([])
       })
     },
 

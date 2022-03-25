@@ -27,12 +27,13 @@
     <ElTooltip v-if="hasNodeError(data.id)" :content="nodeErrorMsg" placement="top">
       <VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>
     </ElTooltip>
-    <div class="node-anchor"></div>
+    <div class="node-anchor input"></div>
+    <div class="node-anchor output"></div>
   </BaseNode>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { sourceEndpoint, targetEndpoint } from '../style'
 import { NODE_PREFIX } from '../constants'
@@ -65,6 +66,7 @@ export default {
   },
 
   computed: {
+    ...mapState('dataflow', ['canBeConnectedNodeIds']),
     ...mapGetters('dataflow', [
       'nodeById',
       'isActionActive',
@@ -96,10 +98,9 @@ export default {
     nodeClass() {
       const list = []
       if (this.isNodeActive(this.nodeId) && this.activeType === 'node') list.push('active')
-      // 多个节点选中显示高亮效果
-      // if (this.isNodeSelected(this.nodeId) && this.isMultiSelect) list.push('jtk-drag-selected')
       if (this.isNodeSelected(this.nodeId)) list.push('selected')
       if (this.showAddMenu) list.push('options-active')
+      if (this.canBeConnectedNodeIds.includes(this.nodeId)) list.push('can-be-connected')
       list.push(`node--${this.ins.group}`)
       return list
     },
@@ -142,11 +143,7 @@ export default {
       const { id, nodeId } = this
 
       const targetParams = {
-        ...targetEndpoint,
-        maxConnections: this.canNotBeTarget ? 0 : this.ins.attr.maxInputs ?? -1,
-        onMaxConnections: () => {
-          this.$message.info('该节点已经达到最大连线限制')
-        }
+        ...targetEndpoint
       }
 
       // this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
@@ -252,7 +249,7 @@ export default {
             beforeStart: ({ el }) => {
               // 源point没有onMaxConnections事件回调，故用次事件内提示
               if (maxOutputs !== -1 && el._jsPlumb.connections.length >= maxOutputs) {
-                this.$message.info('该节点已经达到最大连线限制')
+                this.$message.info(`该节点「${this.data.name}」已经达到最大连线限制`)
               }
             }
           }
@@ -358,6 +355,10 @@ export default {
       height: 12px;
     }
 
+    &.input {
+      left: 0;
+    }
+
     //&:hover:before {
     //  border-width: 2px;
     //  width: 16px;
@@ -365,7 +366,7 @@ export default {
     //}
   }
 
-  &:hover .node-anchor {
+  &:hover .node-anchor.output {
     display: flex;
   }
 }
