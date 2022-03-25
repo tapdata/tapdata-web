@@ -1484,7 +1484,10 @@ export default {
           tableName: this.vikaForm.table,
           nodeId: this.vikaForm.currentNode.data.id
         })
-        this.form.vikaMappings[this.vikaForm.originalTableName] = this.vikaForm.currentNode.data.id
+        this.form.vikaMappings[this.vikaForm.originalTableName] = {
+          id: this.vikaForm.currentNode.data.id,
+          name: this.vikaForm.table
+        }
       }
       this.vikaForm.visible = false
       this.copyForm()
