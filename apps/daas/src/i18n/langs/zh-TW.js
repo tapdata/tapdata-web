@@ -189,6 +189,7 @@ export default {
   dashboard_total_update: '總更新',
   dashboard_total_delete: '總刪除',
   dashboard_total: '總計',
+  dashboard_no_data_here: '這裡沒用數據哦~',
 
   // 元數據管理
   metadata_type: '類型',
@@ -1774,5 +1775,7 @@ export default {
   milestone_label_read_snapshot: '【數據傳輸】全量讀取源端數據快照',
   milestone_label_write_snapshot: '【數據傳輸】目標端全量寫入數據快照',
   milestone_label_read_cdc_event: '【數據傳輸】源端採集器進入增量讀取模式',
-  milestone_label_write_cdc_event: '【數據傳輸】目標處理器進入增量寫入模式'
+  milestone_label_write_cdc_event: '【數據傳輸】目標處理器進入增量寫入模式',
+
+  classification_name_already_exists: '分類名稱已存在'
 }

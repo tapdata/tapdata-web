@@ -240,6 +240,7 @@ export default {
       width: 100%;
       .query-build-group-button {
         width: 70px;
+        text-align: right;
       }
     }
   }

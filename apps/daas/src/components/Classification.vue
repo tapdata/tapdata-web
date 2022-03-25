@@ -401,7 +401,11 @@ export default {
             }
           })
           .catch(e => {
-            this.$message.error('MetadataInstances error' + e)
+            if (e.data?.code === 'MetadataDefinition.Value.Exist') {
+              this.$message.error(this.$t('classification_name_already_exists'))
+            } else {
+              this.$message.error('MetadataInstances error' + e)
+            }
           })
       }
     },

@@ -190,6 +190,7 @@ export default {
   dashboard_total_update: '总更新',
   dashboard_total_delete: '总删除',
   dashboard_total: '总计',
+  dashboard_no_data_here: '这里没用数据哦~',
 
   // 元数据管理
   metadata_type: '类型',
@@ -1791,5 +1792,7 @@ export default {
   milestone_label_read_snapshot: '【数据传输】全量读取源端数据快照',
   milestone_label_write_snapshot: '【数据传输】目标端全量写入数据快照',
   milestone_label_read_cdc_event: '【数据传输】源端采集器进入增量读取模式',
-  milestone_label_write_cdc_event: '【数据传输】目标处理器进入增量写入模式'
+  milestone_label_write_cdc_event: '【数据传输】目标处理器进入增量写入模式',
+
+  classification_name_already_exists: '分类名称已存在'
 }
