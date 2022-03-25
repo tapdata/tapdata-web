@@ -130,6 +130,7 @@ export default {
       mqTransferFlag: false,
       showFieldMapping: false, //是否支持字段映射
       nodes: [],
+      edges: [],
       //保存
       loadingSave: false
     }
@@ -161,18 +162,11 @@ export default {
             this.settingData = data.attrs?.task_setting_Data
             this.dataSourceData = data?.attrs?.task_data_source_Data
             this.nodes = data?.dag?.nodes
-            let edges = data?.dag?.edges
+            this.edges = data?.dag?.edges
             //查找目标节点
-            let nodeMapping = {}
-            let sourceNodeMapping = {}
-            let targetNodeMapping = {}
-            this.nodes.forEach(item => {
-              nodeMapping[item.id] = item
-            })
-            edges.forEach(item => {
-              sourceNodeMapping = nodeMapping[item.source]
-              targetNodeMapping = nodeMapping[item.target]
-            })
+            let nodeMapping = this.nodeMapping(this.nodes, this.edges)
+            let sourceNodeMapping = nodeMapping.sourceNodeMapping
+            let targetNodeMapping = nodeMapping.targetNodeMapping
 
             this.transferData = {
               tablePrefix: targetNodeMapping.tablePrefix,
@@ -202,6 +196,24 @@ export default {
             this.getSteps()
           }
         })
+    },
+    //数据映射
+    nodeMapping(nodes, edges) {
+      //查找目标节点
+      let nodeMapping = {}
+      let sourceNodeMapping = {}
+      let targetNodeMapping = {}
+      nodes.forEach(item => {
+        nodeMapping[item.id] = item
+      })
+      edges.forEach(item => {
+        sourceNodeMapping = nodeMapping[item.source]
+        targetNodeMapping = nodeMapping[item.target]
+      })
+      return {
+        sourceNodeMapping: sourceNodeMapping,
+        targetNodeMapping: targetNodeMapping
+      }
     },
     getSteps() {
       this.steps = []
@@ -401,8 +413,12 @@ export default {
       if (this.id) {
         postData.id = this.id
       }
-      sourceIdA = this.nodes[0]?.id || this.$util.uuid()
-      targetIdB = this.nodes[1]?.id || this.$util.uuid()
+      //查找目标节点
+      let nodeMapping = this.nodeMapping(this.nodes, this.edges)
+      let sourceNodeMapping = nodeMapping.sourceNodeMapping
+      let targetNodeMapping = nodeMapping.targetNodeMapping
+      sourceIdA = sourceNodeMapping?.id || this.$util.uuid()
+      targetIdB = targetNodeMapping?.id || this.$util.uuid()
       //节点连接关系
       postData['dag'].edges = [
         {
