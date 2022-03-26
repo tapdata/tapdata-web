@@ -22,6 +22,7 @@
         :clear="clearSourceMethod"
         :loading="loadingSource"
         :remote-method="remoteSourceMethod"
+        @change="$emit('change')"
       >
         <el-option v-for="item in sourceData" :key="item.value" :label="item.label" :value="item.value"> </el-option>
       </el-select>
@@ -41,6 +42,7 @@
         :loading="loadingTarget"
         :clear="clearTargetMethod"
         :remote-method="remoteTargetMethod"
+        @change="$emit('change')"
       >
         <el-option v-for="item in targetData" :key="item.value" :label="item.label" :value="item.value"> </el-option>
       </el-select>
@@ -200,13 +202,11 @@ export default {
       this.dataSourceData['source_databaseType'] = val
       this.dataSourceData.source_connectionId = ''
       this.getConnection(this.getWhere('source'), 'source_connectionId')
-      this.$emit('change')
     },
     getTargetConnection(val) {
       this.dataSourceData['target_databaseType'] = val
       this.dataSourceData.target_connectionId = ''
       this.getConnection(this.getWhere('target'), 'target_connectionId')
-      this.$emit('change')
     },
     clearSourceMethod() {
       this.getConnection(this.getWhere('source'), 'source_connectionId')
