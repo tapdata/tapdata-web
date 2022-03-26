@@ -70,7 +70,7 @@ export default {
     getSettingSchema() {
       //根据配置规则生成schema
       let type = this.dataSourceData?.target_databaseType
-      //let sourceType = this.dataSourceData?.source_databaseType
+      let sourceType = this.dataSourceData?.source_databaseType
 
       let mapping = {
         oracle: {
@@ -571,9 +571,13 @@ export default {
         }
       }
       //合并配置
-      let target = mapping[type] || {}
+      let target = {}
+      if (['hana'].includes(sourceType)) {
+        target = mapping[sourceType] || {}
+      } else {
+        target = mapping[type] || {}
+      }
       config.properties.layout.properties = Object.assign(config?.properties?.layout?.properties, target)
-
       //源表连接开启了日志挖掘功能
       if (this.dataSourceData?.shareCdcEnable) {
         config.properties.layout.properties = Object.assign(config?.properties?.layout?.properties, shareCdcEnable)

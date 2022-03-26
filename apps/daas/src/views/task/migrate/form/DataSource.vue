@@ -129,13 +129,6 @@ export default {
       }
       return where
     },
-    queryConnection(type) {
-      return query => {
-        const where = this.getWhere(type)
-        where.name = { like: query, options: 'i' }
-        this.getConnection(where, `${type}_connectionId`)
-      }
-    },
     getConnection(where, type, keyword) {
       let fields = {
         name: 1,
@@ -193,11 +186,13 @@ export default {
       this.dataSourceData['source_databaseType'] = val
       this.dataSourceData.source_connectionId = ''
       this.getConnection(this.getWhere('source'), 'source_connectionId')
+      this.$emit('change')
     },
     getTargetConnection(val) {
       this.dataSourceData['target_databaseType'] = val
       this.dataSourceData.target_connectionId = ''
       this.getConnection(this.getWhere('target'), 'target_connectionId')
+      this.$emit('change')
     },
     clearSourceMethod() {
       this.getConnection(this.getWhere('source'), 'source_connectionId')
