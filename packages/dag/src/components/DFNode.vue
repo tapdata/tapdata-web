@@ -11,7 +11,7 @@
     </template>
     <div v-if="!stateIsReadonly" class="df-node-options" @click.stop>
       <el-popover v-model="showAddMenu" placement="bottom" trigger="click" popper-class="min-width-unset rounded-xl">
-        <div slot="reference" class="node-option" titlmoue="添加节点">
+        <div slot="reference" class="node-option" title="添加节点">
           <VIcon>plus</VIcon>
         </div>
         <div class="df-menu-list">
@@ -27,12 +27,13 @@
     <ElTooltip v-if="hasNodeError(data.id)" :content="nodeErrorMsg" placement="top">
       <VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>
     </ElTooltip>
-    <div v-if="!canNotBeSource" class="node-anchor"></div>
+    <div class="node-anchor input"></div>
+    <div class="node-anchor output"></div>
   </BaseNode>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { sourceEndpoint, targetEndpoint } from '../style'
 import { NODE_PREFIX } from '../constants'
@@ -65,6 +66,7 @@ export default {
   },
 
   computed: {
+    ...mapState('dataflow', ['canBeConnectedNodeIds']),
     ...mapGetters('dataflow', [
       'nodeById',
       'isActionActive',
@@ -93,21 +95,12 @@ export default {
       return false
     },
 
-    canNotBeSource() {
-      const connectionType = this.data.attrs.connectionType
-      if (connectionType) {
-        return !connectionType.includes('source')
-      }
-      return false
-    },
-
     nodeClass() {
       const list = []
       if (this.isNodeActive(this.nodeId) && this.activeType === 'node') list.push('active')
-      // 多个节点选中显示高亮效果
-      // if (this.isNodeSelected(this.nodeId) && this.isMultiSelect) list.push('jtk-drag-selected')
       if (this.isNodeSelected(this.nodeId)) list.push('selected')
       if (this.showAddMenu) list.push('options-active')
+      if (this.canBeConnectedNodeIds.includes(this.nodeId)) list.push('can-be-connected')
       list.push(`node--${this.ins.group}`)
       return list
     },
@@ -150,17 +143,12 @@ export default {
       const { id, nodeId } = this
 
       const targetParams = {
-        ...targetEndpoint,
-        maxConnections: this.canNotBeTarget ? 0 : this.ins.attr.maxInputs ?? -1,
-        onMaxConnections: () => {
-          // eslint-disable-next-line no-console
-          console.warn(`「${this.data.name}」该节点已经达到最大连接限制或不能作为目标节点`)
-        }
+        ...targetEndpoint
       }
 
       // this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
 
-      !this.canNotBeTarget && this.jsPlumbIns.makeTarget(id, targetParams)
+      this.jsPlumbIns.makeTarget(id, targetParams)
 
       this.jsPlumbIns.draggable(this.$el, {
         // containment: 'parent',
@@ -249,19 +237,27 @@ export default {
         uuid: id + '_target'
       })
 
-      if (!this.canNotBeSource) {
-        this.jsPlumbIns.addEndpoint(
-          this.$el,
-          {
-            ...sourceEndpoint,
-            enabled: !this.stateIsReadonly,
-            maxConnections: this.ins.attr.maxOutputs ?? -1
-          },
-          {
-            uuid: id + '_source'
+      const maxOutputs = this.ins.attr.maxOutputs ?? -1
+
+      this.jsPlumbIns.addEndpoint(
+        this.$el,
+        {
+          ...sourceEndpoint,
+          enabled: !this.stateIsReadonly,
+          maxConnections: maxOutputs,
+          dragOptions: {
+            beforeStart: ({ el }) => {
+              // 源point没有onMaxConnections事件回调，故用次事件内提示
+              if (maxOutputs !== -1 && el._jsPlumb.connections.length >= maxOutputs) {
+                this.$message.info(`该节点「${this.data.name}」已经达到最大连线限制`)
+              }
+            }
           }
-        )
-      }
+        },
+        {
+          uuid: id + '_source'
+        }
+      )
     },
 
     mouseClick(e) {
@@ -359,6 +355,10 @@ export default {
       height: 12px;
     }
 
+    &.input {
+      left: 0;
+    }
+
     //&:hover:before {
     //  border-width: 2px;
     //  width: 16px;
@@ -366,7 +366,7 @@ export default {
     //}
   }
 
-  &:hover .node-anchor {
+  &:hover .node-anchor.output {
     display: flex;
   }
 }

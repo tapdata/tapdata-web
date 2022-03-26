@@ -36,6 +36,11 @@ const metadataApi = new MetadataInstances()
 export default {
   name: 'MetaPane',
   components: { VIcon, FieldMapping },
+
+  props: {
+    isShow: Boolean
+  },
+
   data() {
     return {
       tableData: [],
@@ -64,7 +69,7 @@ export default {
 
   watch: {
     activeNodeId() {
-      this.loadFields()
+      this.isShow && this.loadFields()
       this.checkTarget()
       this.checkNodeType()
     },
@@ -73,6 +78,10 @@ export default {
       if (v === 'finished') {
         this.loadFields()
       }
+    },
+
+    isShow(v) {
+      v && this.loadFields()
     }
   },
   mounted() {

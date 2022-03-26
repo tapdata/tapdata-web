@@ -1,7 +1,8 @@
 .jtk-connector {
   cursor: pointer;
   z-index: 4;
-  &.jtk-hover {
+  &.jtk-hover,
+  &.jtk-dragging {
     z-index: 1000;
   }
 }

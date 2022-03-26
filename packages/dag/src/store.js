@@ -101,7 +101,9 @@ const getState = () => ({
   },
 
   dagPromise: null,
-  editVersion: null
+  editVersion: null,
+
+  canBeConnectedNodeIds: []
 })
 
 // 初始化 state
@@ -540,50 +542,6 @@ const mutations = {
     state.taskId = null
     state.dag.nodes = []
     state.dag.edges = []
-    state.processorNodeTypes = [
-      {
-        icon: 'javascript',
-        name: 'JavaScript',
-        type: 'js_processor',
-        constructor: 'JavaScript'
-      },
-      {
-        icon: 'field-processor',
-        name: '字段处理',
-        type: 'field_processor',
-        constructor: 'FieldProcessor'
-      },
-      {
-        icon: 'aggregator',
-        name: '聚合',
-        type: 'aggregation_processor',
-        constructor: 'Aggregate'
-      },
-      {
-        icon: 'row-filter',
-        name: 'Row Filter',
-        type: 'row_filter_processor',
-        constructor: 'RowFilter'
-      },
-      {
-        icon: 'join',
-        name: '连接',
-        type: 'join_processor',
-        constructor: 'Join'
-      },
-      {
-        icon: 'join',
-        name: '主从合并',
-        type: 'merge_table_processor',
-        constructor: 'MergeTable'
-      }
-      // {
-      //   icon: 'joint-cache',
-      //   name: '关联缓存',
-      //   type: 'cache_lookup_processor',
-      //   constructor: 'JointCache'
-      // }
-    ]
   },
 
   setEdges(state, edges) {
@@ -723,6 +681,10 @@ const mutations = {
 
   resetState(state) {
     Object.assign(state, getState())
+  },
+
+  setCanBeConnectedNodeIds(state, ids) {
+    state.canBeConnectedNodeIds = ids
   }
 }
 

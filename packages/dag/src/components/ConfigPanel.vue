@@ -29,7 +29,7 @@
           <FormPanel v-on="$listeners" ref="formPanel"></FormPanel>
         </ElTabPane>
         <ElTabPane label="元数据">
-          <MetaPane></MetaPane>
+          <MetaPane :is-show="currentTab === '1'"></MetaPane>
         </ElTabPane>
         <!--<ElTabPane label="数据详情">
           <DataPane></DataPane>
