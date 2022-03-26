@@ -118,13 +118,27 @@ export default {
     },
     getWhere(type) {
       let where = {}
-      if (type === 'source' && this.dataSourceData.source_filter_databaseType !== 'all') {
-        where = {
-          database_type: { in: [this.dataSourceData.source_databaseType] }
+      if (type === 'source') {
+        if (this.dataSourceData.source_filter_databaseType !== 'all') {
+          where = {
+            database_type: { in: [this.dataSourceData.source_databaseType] },
+            connection_type: { in: ['source', 'source_and_target'] }
+          }
+        } else {
+          where = {
+            connection_type: { in: ['source', 'source_and_target'] }
+          }
         }
-      } else if (type === 'target' && this.dataSourceData.target_filter_databaseType !== 'all') {
-        where = {
-          database_type: { in: [this.dataSourceData.target_databaseType] }
+      } else if (type === 'target') {
+        if (this.dataSourceData.target_filter_databaseType !== 'all') {
+          where = {
+            database_type: { in: [this.dataSourceData.target_databaseType] },
+            connection_type: { in: ['target', 'source_and_target'] }
+          }
+        } else {
+          where = {
+            connection_type: { in: ['target', 'source_and_target'] }
+          }
         }
       }
       return where
