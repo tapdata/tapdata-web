@@ -996,7 +996,21 @@ export default {
       let typeName = ''
       // 根据任务类型(全量、增量),检查不支持此类型的节点
       // 脏代码。这里的校验是有节点错误信息提示的，和节点表单校验揉在了一起，但是校验没有一起做
-      if (this.dataflow.type === 'initial_sync') {
+      if (this.dataflow.type === 'initial_sync+cdc') {
+        typeName = '全量+增量'
+        tableNode.forEach(node => {
+          if (
+            sourceMap[node.id] &&
+            (NONSUPPORT_SYNC.includes(node.databaseType) || NONSUPPORT_CDC.includes(node.databaseType))
+          ) {
+            nodeNames.push(node.name)
+            this.setNodeErrorMsg({
+              id: node.id,
+              msg: '该节点不支持' + typeName
+            })
+          }
+        })
+      } else if (this.dataflow.type === 'initial_sync') {
         typeName = '全量'
         tableNode.forEach(node => {
           if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
