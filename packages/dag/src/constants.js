@@ -194,10 +194,12 @@ export const NONSUPPORT_SYNC = ['elasticsearch', 'redis', 'hive', 'tcp_udp', 'cl
 // 不支持增量
 export const NONSUPPORT_CDC = [
   'db2',
+  'gbase-8s',
   'sybase ase',
   'gaussdb200',
   'elasticsearch',
   'redis',
+  'dameng',
   'hive',
   'tcp_udp',
   'hbase',
