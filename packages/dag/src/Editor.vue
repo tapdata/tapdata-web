@@ -394,6 +394,7 @@ export default {
 
     checkCanBeConnected(sourceId, targetId, showMsg) {
       if (sourceId === targetId) return false
+      if (this.isConnected(sourceId, targetId)) return false
 
       const source = this.nodeById(sourceId)
       const target = this.nodeById(targetId)
@@ -412,11 +413,11 @@ export default {
         return false
       }
 
-      if (!this.isConnected(sourceId, targetId) && this.allowConnect(sourceId, targetId)) {
+      if (this.allowConnect(sourceId, targetId)) {
         return target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source)
       }
 
-      return false
+      return true
     },
 
     initNodeView() {
