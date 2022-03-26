@@ -161,6 +161,32 @@ export default {
               }
             }
           }
+        },
+        hana: {
+          sync_type: {
+            title: this.$t('task_setting_sync_type'),
+            type: 'string',
+            'x-decorator': 'FormItem',
+            'x-component': 'Radio.Group',
+            'x-component-props': {
+              optionType: 'button'
+            },
+            default: 'initial_sync',
+            enum: [
+              {
+                label: this.$t('task_setting_initial_sync'), //全量
+                value: 'initial_sync'
+              }
+            ],
+            'x-reactions': {
+              target: '*(increOperationMode, increaseReadSize)',
+              fulfill: {
+                state: {
+                  visible: '{{$self.value !== "initial_sync"}}'
+                }
+              }
+            }
+          }
         }
       }
       let repeatNameMessage = this.$t('task_form_error_name_duplicate')
