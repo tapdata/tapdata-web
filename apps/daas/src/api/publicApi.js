@@ -108,7 +108,7 @@ axios.interceptors.response.use(
               response: {
                 code: '110500',
                 status: 500,
-                msg: data.msg,
+                msg: data.message,
                 data: data.data || []
               }
             })
@@ -118,7 +118,7 @@ axios.interceptors.response.use(
               response: {
                 code: '110400',
                 status: 500,
-                msg: data.msg
+                msg: data.message
               }
             })
             break
@@ -126,7 +126,7 @@ axios.interceptors.response.use(
             signOut()
             setTimeout(() => {
               Message.error({
-                message: data.msg
+                message: data.message
               })
             }, 500)
             break
@@ -135,7 +135,7 @@ axios.interceptors.response.use(
             reject({
               response: {
                 code: '110403',
-                msg: data.msg
+                msg: data.message
               }
             })
             Message.error({
@@ -143,13 +143,13 @@ axios.interceptors.response.use(
             })
             break
           case 'SystemError':
-            if (data.msg === 'System error: null') {
+            if (data.message === 'System error: null') {
               Message.error({
                 message: i18n.t('message_request_error')
               })
             } else {
               Message.error({
-                message: data.msg
+                message: data.message
               })
             }
             break
