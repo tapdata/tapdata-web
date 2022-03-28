@@ -109,6 +109,7 @@ export default i18n => {
       if (['login', 'registry', 'passwordReset', 'verificationEmail', 'registyResult'].includes(to.name)) {
         next()
       } else {
+        window.lastLocationHref = location.href
         next('/login')
       }
     }
