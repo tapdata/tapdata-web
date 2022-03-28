@@ -310,7 +310,8 @@ export default {
       }
       return {
         data: fieldMappingTableData,
-        target: target || []
+        target: target || [],
+        source: source || []
       }
     },
     //获取字段操作记录

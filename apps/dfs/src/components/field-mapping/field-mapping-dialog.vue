@@ -449,7 +449,7 @@
               <el-option
                 :label="item.dbType"
                 :value="item.dbType"
-                v-for="(item, index) in typeMapping"
+                v-for="(item, index) in sourceTypeMapping"
                 :key="index"
                 :disabled="!!batchFieldTypeForm.list.find(t => t.sourceType === item.dbType)"
               ></el-option>
@@ -535,6 +535,7 @@
 
 <script>
 import VIcon from '../VIcon'
+import { uniqueArr } from '@/util'
 export default {
   name: 'FieldMapping',
   components: { VIcon },
@@ -590,6 +591,7 @@ export default {
       searchTable: '',
       loading: false,
       loadingPage: false,
+      sourceTypeMapping: [],
       typeMapping: [],
       currentTypeRules: [],
       defaultFieldMappingNavData: '',
@@ -710,9 +712,15 @@ export default {
       this.$nextTick(() => {
         this.remoteMethod &&
           this.remoteMethod(this.selectRow)
-            .then(({ data, target }) => {
+            .then(({ data, target, source }) => {
               this.target = target
               this.fieldMappingTableData = data
+              let sourceDTypes = source?.map(t => {
+                return {
+                  dbType: t.data_type
+                }
+              })
+              this.sourceTypeMapping = uniqueArr(sourceDTypes || [], 'dbType')
               this.initShowEdit()
               this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData)) //保留一份原始数据 查询用
             })
