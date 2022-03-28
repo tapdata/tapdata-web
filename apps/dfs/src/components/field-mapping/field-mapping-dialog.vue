@@ -592,6 +592,7 @@ export default {
       loading: false,
       loadingPage: false,
       sourceTypeMapping: [],
+      targetTypeMapping: [],
       typeMapping: [],
       currentTypeRules: [],
       defaultFieldMappingNavData: '',
@@ -715,12 +716,8 @@ export default {
             .then(({ data, target, source }) => {
               this.target = target
               this.fieldMappingTableData = data
-              let sourceDTypes = source?.map(t => {
-                return {
-                  dbType: t.data_type
-                }
-              })
-              this.sourceTypeMapping = uniqueArr(sourceDTypes || [], 'dbType')
+              this.sourceTypeMapping = this.getTypeMapping(source)
+              this.targetTypeMapping = this.getTypeMapping(target)
               this.initShowEdit()
               this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData)) //保留一份原始数据 查询用
             })
@@ -728,6 +725,28 @@ export default {
               this.loading = false
             })
       })
+    },
+    getTypeMapping(data = []) {
+      let result = []
+      let obj = {}
+      data.forEach(el => {
+        if (obj[el.data_type]) {
+          obj[el.data_type].precision.push(el.precision)
+          obj[el.data_type].scale.push(el.scale)
+        } else {
+          obj[el.data_type] = {
+            dbType: el.data_type,
+            precision: [el.precision],
+            scale: [el.scale]
+          }
+        }
+      })
+      for (let key in obj) {
+        let item = obj[key]
+        result.push(item)
+      }
+      console.log('result', result)
+      return result
     },
     /* 初始化字段类型列表*/
     initTypeMapping() {
@@ -1191,7 +1210,12 @@ export default {
       } else this.currentTypeRules = '' //清除上一个字段范围
     },
     initBatchDataType(val, item) {
-      let target = this.typeMapping.find(type => type.dbType === val)
+      let { typeMapping, targetTypeMapping } = this
+      let target = Object.assign(
+        {},
+        targetTypeMapping.find(type => type.dbType === val) || {},
+        typeMapping.find(type => type.dbType === val) || {}
+      )
       if (!target) {
         return
       }
@@ -1200,15 +1224,21 @@ export default {
         item[key] = rule[key]
       }
       // 长度
-      item.length = item.maxPrecision
       item.lengthDisabled = item.minPrecision === item.maxPrecision
+      if (!item.length) {
+        let max = target.precision?.length > 0 ? Math.max(...target.precision) : null
+        item.length = max || item.maxPrecision
+      }
       if (!item.lengthDisabled) {
         item.lengthTooltip =
           this.$t('task_mapping_table_length_range') + `[ ${item.minPrecision} , ${item.maxPrecision} ]`
       }
       // 精度
-      item.precision = item.maxScale
       item.precisionDisabled = item.minScale === item.maxScale
+      if (!item.precision) {
+        let max = target.scale?.length > 0 ? Math.max(...target.scale) : null
+        item.precision = max || item.maxScale
+      }
       if (!item.precisionDisabled) {
         item.precisionTooltip = this.$t('task_mapping_table_accuracy_range') + `[ ${item.minScale} , ${item.maxScale} ]`
       }
