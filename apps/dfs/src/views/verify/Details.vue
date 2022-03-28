@@ -182,19 +182,18 @@ export default {
             .then(data => {
               let result = data
               if (result) {
-                if (result) {
-                  this.resultInfo = result
-                  let stats = result.stats
-                  if (stats.length) {
-                    this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
-                    this.taskId = stats[0].taskId
-                    this.$nextTick(() => {
-                      this.$refs.resultView?.fetch(1)
-                      if (this.type !== 'row_count') {
-                        this.$refs.singleTable?.setCurrentRow(stats[0])
-                      }
-                    })
-                  }
+                this.resultInfo = result
+                let stats = result.stats
+                if (stats.length) {
+                  this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
+                  let firstStats = this.tableData?.[0] || {}
+                  this.taskId = firstStats.taskId
+                  this.$nextTick(() => {
+                    this.$refs.resultView?.fetch(1)
+                    if (this.type !== 'row_count') {
+                      this.$refs.singleTable?.setCurrentRow(firstStats)
+                    }
+                  })
                 }
               }
             })
