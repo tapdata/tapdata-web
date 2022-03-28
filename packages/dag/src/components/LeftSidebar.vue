@@ -147,41 +147,42 @@
       </div>
     </div>
 
-    <ElCollapse value="process">
+    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse" value="process">
       <ElCollapseItem name="process">
         <template #title>
           <div class="flex align-center flex-1">
             <span class="flex-1 user-select-none">处理节点</span>
           </div>
         </template>
-        <ElRow class="node-list flex-wrap px-2" :gutter="0" type="flex">
-          <ElCol :span="8" v-for="(n, ni) in processorNodeTypes" :key="ni" class="p-1">
-            <div
-              v-mouse-drag="{
-                item: n,
-                container: '#dfEditorContent',
-                getDragDom,
-                onStart,
-                onMove,
-                onDrop,
-                onStop
-              }"
-              class="node-item flex flex-column align-center px-1 py-2 grabbable user-select-none"
-            >
-              <div class="node-item-icon flex justify-center align-center mb-2">
-                <VIcon size="24" color="#2C65FF">{{ n.icon }}</VIcon>
+        <ElScrollbar ref="processorList" tag="div" wrap-class="" :wrap-style="scrollbarWrapStyle">
+          <ElRow class="node-list flex-wrap px-2" :gutter="0" type="flex">
+            <ElCol :span="8" v-for="(n, ni) in processorNodeTypes" :key="ni" class="p-1">
+              <div
+                v-mouse-drag="{
+                  item: n,
+                  container: '#dfEditorContent',
+                  getDragDom,
+                  onStart,
+                  onMove,
+                  onDrop,
+                  onStop
+                }"
+                class="node-item flex flex-column align-center px-1 py-2 grabbable user-select-none"
+              >
+                <div class="node-item-icon flex justify-center align-center mb-2">
+                  <VIcon size="24" color="#2C65FF">{{ n.icon }}</VIcon>
+                </div>
+                <OverflowTooltip
+                  class="node-item-txt text-center w-100"
+                  :text="n.name"
+                  popper-class="df-node-text-tooltip"
+                  placement="top"
+                  :open-delay="400"
+                />
               </div>
-              <OverflowTooltip
-                class="node-item-txt text-center w-100"
-                :text="n.name"
-                popper-class="df-node-text-tooltip"
-                placement="top"
-                :open-delay="400"
-              />
-              <!--<div class="node-item-txt mt-2">{{ n.name }}</div>-->
-            </div>
-          </ElCol>
-        </ElRow>
+            </ElCol>
+          </ElRow>
+        </ElScrollbar>
       </ElCollapseItem>
     </ElCollapse>
 
@@ -410,13 +411,15 @@ export default {
   },
 
   mounted() {
-    addResizeListener(this.$refs.dbCollapse.$el, this.$refs.dbList.update)
-    addResizeListener(this.$refs.tbList.$el, this.$refs.tbList.update)
+    addResizeListener(this.$refs.dbCollapse.$el, this.updateDBScrollbar)
+    addResizeListener(this.$refs.tbList.$el, this.updateTBScrollbar)
+    addResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
   },
 
   beforeDestroy() {
-    removeResizeListener(this.$refs.dbCollapse.$el, this.$refs.dbList.update)
-    removeResizeListener(this.$refs.tbList.$el, this.$refs.tbList.update)
+    removeResizeListener(this.$refs.dbCollapse.$el, this.updateDBScrollbar)
+    removeResizeListener(this.$refs.tbList.$el, this.updateTBScrollbar)
+    removeResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
   },
 
   methods: {
@@ -733,6 +736,18 @@ export default {
           connectionId: connection.id
         }
       })
+    },
+
+    updateDBScrollbar() {
+      setTimeout(this.$refs.dbList.update, 350)
+    },
+
+    updateTBScrollbar() {
+      setTimeout(this.$refs.tbList.update, 350)
+    },
+
+    updateProcessorScrollbar() {
+      setTimeout(this.$refs.processorList.update, 350)
     }
   }
 }
@@ -833,6 +848,9 @@ $hoverBg: #eef3ff;
 
     .el-collapse {
       border-top: 0;
+      &.processor-collapse {
+        max-height: 50%;
+      }
       &.collapse-fill {
         .el-collapse-item:first-child:last-child {
           height: 100%;
