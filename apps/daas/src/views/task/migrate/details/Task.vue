@@ -3,7 +3,7 @@
     <TableList
       :remoteMethod="remoteMethod"
       :columns="columns"
-      :remote-data="ids"
+      :remote-data="id"
       height="100%"
       :has-pagination="false"
       ref="tableList"
@@ -25,8 +25,8 @@ export default {
   components: { TableList },
   props: {
     id: {
-      type: Array,
-      default: () => []
+      type: String,
+      default: () => ''
     }
   },
   data() {
@@ -36,11 +36,12 @@ export default {
       columns: [
         {
           label: this.$t('task_monitor_mining_task_name'),
+          prop: 'name',
           slotName: 'name'
         },
         {
           label: this.$t('task_monitor_mining_task_point_time'),
-          prop: 'point'
+          prop: 'pointTime'
         },
         {
           label: this.$t('task_monitor_mining_task_status'),
@@ -56,25 +57,35 @@ export default {
   },
   methods: {
     remoteMethod({ page }) {
-      const { ids } = this
+      const { id } = this
       let { current, size } = page
       let filter = {
         where: {
-          id: {
-            inq: ids
-          }
+          connections: [id]
         },
         limit: size,
         skip: size * (current - 1)
       }
-      return this.$api('connections')
+      return this.$api('logcollector')
         .get({
           filter: JSON.stringify(filter)
         })
         .then(res => {
+          let list = res.data?.items || []
+          let pointTime = new Date()
+
           return {
             total: res.data.total,
-            data: res.data.items
+            data: list.map(item => {
+              this.$set(item, 'pointTime', pointTime)
+              if (item.syncTimePoint === 'current') {
+                item.pointTime = this.$moment(pointTime).format('YYYY-MM-DD HH:mm:ss')
+              } else {
+                item.pointTime = item.syncTimeZone
+              }
+              item.createTime = this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              return item
+            })
           }
         })
     },

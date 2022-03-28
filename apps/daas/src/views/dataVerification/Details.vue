@@ -22,7 +22,7 @@
               "
               class="flex align-items-center ml-4"
             >
-              <VButton type="primary" @click="diffInspect">{{ $t('verify_button_diff_verify') }}</VButton>
+              <ElButton type="primary" @click="diffInspect">{{ $t('verify_button_diff_verify') }}</ElButton>
               <ElTooltip effect="dark" placement="top">
                 <div slot="content" style="width: 232px">
                   {{ $t('verify_button_diff_verify_tips') }}

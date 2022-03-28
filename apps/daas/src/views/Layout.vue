@@ -220,7 +220,7 @@
         align-items: center;
         height: 50px;
         line-height: 50px;
-        color: rgba(0, 0, 0, 0.6);
+        color: #4e5969;
         background: #f7f8fa;
         .submenu-item {
           padding-left: 12px;
@@ -231,15 +231,27 @@
           background: rgba(44, 101, 255, 0.05);
         }
       }
-      .submenu-item {
-        font-weight: 400;
-      }
+      // .submenu-item {
+      //   font-weight: 400;
+      // }
       .el-menu-item,
       .el-submenu__title {
         font-weight: 500;
       }
       .is-active .el-submenu__title {
         background: #f7f8fa;
+      }
+      .el-menu {
+        background-color: initial;
+        .el-menu-item {
+          border-left: 0;
+          &.is-active {
+            background-color: rgba(44, 101, 255, 0.05);
+            .submenu-item {
+              font-weight: 500;
+            }
+          }
+        }
       }
     }
     .menu-footer {

@@ -81,15 +81,8 @@ export default {
     statusObj() {
       return this.map[this.status] || this.map[this.defaultStatus] || {}
     },
-    // imgSrc() {
-    //   return require(`@/assets/icons/colorSvg/${this.statusObj.icon}.png`)
-    // }
     imgSrc() {
-      if (this.lang === 'en') {
-        return require(`@/assets/icons/milestone/${this.statusObj.icon}.svg`)
-      } else {
-        return require(`@/assets/icons/milestone/${this.statusObj.icon}.png`)
-      }
+      return require(`@/assets/icons/colorSvg/${this.statusObj.icon}.png`)
     }
   }
 }

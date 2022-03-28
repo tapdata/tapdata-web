@@ -23,7 +23,7 @@
       </el-table-column>
       <el-table-column prop="name" :label="$t('share_list_time_excavation')">
         <template slot-scope="scope">
-          {{ scope.row.indexName }}
+          {{ scope.row.pointTime }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('share_list_time')" sortable></el-table-column>
@@ -148,15 +148,13 @@
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import DownAgent from '../../downAgent/agentDown'
-import StatusTag from '@/components/StatusTag'
 
 let timeout = null
 export default {
   components: {
     TablePage,
     FilterBar,
-    DownAgent,
-    StatusTag
+    DownAgent
   },
   data() {
     return {
@@ -268,9 +266,16 @@ export default {
         .then(res => {
           let list = res.data?.items || []
           // this.table.setCache({ keyword })
+          let pointTime = new Date()
           return {
             total: res.data.total,
             data: list.map(item => {
+              this.$set(item, 'pointTime', pointTime)
+              if (item.syncTimePoint === 'current') {
+                item.pointTime = this.$moment(pointTime).format('YYYY-MM-DD HH:mm:ss')
+              } else {
+                item.pointTime = item.syncTimeZone
+              }
               item.createTime = this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               return item
             })

@@ -331,8 +331,11 @@ export default {
     }
 
     .el-table--border th {
-      border-right: 1px solid #ebeef5;
+      border-right: 0;
       background-color: #fafafa;
+      &:hover {
+        border-right: 1px solid #ebeef5;
+      }
       &:last-child {
         border-right: 0;
       }

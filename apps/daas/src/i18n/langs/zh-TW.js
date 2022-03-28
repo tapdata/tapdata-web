@@ -1159,6 +1159,7 @@ export default {
   share_list_name: '挖掘名稱',
   share_list_connection: '所屬連接',
   share_list_time_excavation: '挖掘所處時間點',
+  share_list_time: '挖掘延遲',
   share_list_creat_time: '創建時間',
   share_list_setting: '挖掘設置',
   share_list_dig_task_search: '挖掘任務名/連接名搜索',
@@ -1777,6 +1778,9 @@ export default {
   milestone_label_write_snapshot: '【數據傳輸】目標端全量寫入數據快照',
   milestone_label_read_cdc_event: '【數據傳輸】源端採集器進入增量讀取模式',
   milestone_label_write_cdc_event: '【數據傳輸】目標處理器進入增量寫入模式',
+
+  milestone_list_status_finish: '已完成',
+  milestone_list_status_error: '错误',
 
   classification_name_already_exists: '分類名稱已存在'
 }

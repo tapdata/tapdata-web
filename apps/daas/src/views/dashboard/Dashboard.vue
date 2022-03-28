@@ -540,7 +540,7 @@ export default {
             if (val === 1.1) {
               val = 1
             }
-            let html = params.name + `<span style="padding: 0 4px; text-align: center;"></span><br/>` + val
+            let html = `<div style="text-align: center;"> ${params.name}<div>${val}</div></div>`
             return html
           }
         },

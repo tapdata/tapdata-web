@@ -27,20 +27,23 @@
         </ElButton>
       </template>
       <template slot="status" slot-scope="scope">
-        <StatusTag type="text" target="milestone" :status="getMilestoneStatus(scope.row.status)" only-img></StatusTag>
+        <span :class="['status-' + scope.row.status, 'fs-8', 'px-2', 'py-1', 'rounded-md']">
+          {{ $t('milestone_list_status_' + scope.row.status) }}
+        </span>
+
+        <!-- <StatusTag type="text" target="milestone" :status="getMilestoneStatus(scope.row.status)"></StatusTag> -->
       </template>
     </TableList>
   </div>
 </template>
 
 <script>
-import StatusTag from '@/components/StatusTag'
 import TableList from '@/components/TableList'
 import VIcon from '@/components/VIcon'
 
 export default {
   name: 'Milestone',
-  components: { StatusTag, TableList, VIcon },
+  components: { TableList, VIcon },
   props: {
     list: {
       type: Array,

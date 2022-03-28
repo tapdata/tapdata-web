@@ -2,7 +2,10 @@
   <div class="card-box p-6">
     <div class="flex justify-content-between align-items-center">
       <div class="info-line align-items-center">
-        <span class="mr-4 fs-6 font-color-main">{{ task.name }}</span>
+        <ElTooltip class="item" effect="dark" :content="task.name" placement="top">
+          <span class="mr-4 fs-6 font-color-main info-name">{{ task.name }}</span>
+        </ElTooltip>
+
         <StatusTag
           type="text"
           target="migrate"
@@ -873,6 +876,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.info-name {
+  display: inline-block;
+  width: 60%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.operation {
+  width: 200px;
+  white-space: nowrap;
+}
 .grey-background {
   background-color: #fafafa;
 }

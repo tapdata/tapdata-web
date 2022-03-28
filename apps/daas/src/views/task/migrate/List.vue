@@ -148,7 +148,6 @@
               :disabled="
                 $disabledByPermission('SYNC_job_operation_all_data', row.user_id) || !statusBtMap['stop'][row.status]
               "
-              class="ml-3"
               @click="stop([row.id])"
               >{{ $t('task_list_stop') }}</ElLink
             >
@@ -275,7 +274,7 @@ import DownAgent from '../../downAgent/agentDown'
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import Drawer from '@/components/Drawer'
-import { ETL_STATUS_MAP } from '@/const'
+// import { ETL_STATUS_MAP } from '@/const'
 import { getSubTaskStatus } from '../util'
 
 let timeout = null
@@ -1209,15 +1208,14 @@ export default {
     .img-box {
       display: flex;
       width: 20px;
-      height: 20px;
       justify-content: center;
-      align-items: center;
+      align-items: start;
       background: #fff;
       //border: 1px solid #dedee4;
       border-radius: 3px;
       margin: 5px 0 0 0;
       img {
-        width: 100%;
+        width: 20px;
       }
     }
     .content {
