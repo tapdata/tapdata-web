@@ -815,6 +815,7 @@ export default {
   task_preview_status_preparing: '准备中',
   task_preview_status_scheduling: '调度中',
   task_preview_status_schedule_failed: '调度失败',
+  task_preview_status_ready: '待启动',
 
   task_monitor_progress: '任务进度',
   task_monitor_full_sync: '全量同步概览',

@@ -107,8 +107,8 @@
       <!-- <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column> -->
       <el-table-column prop="status" :label="$t('task_list_status')" width="180">
         <template #default="{ row }">
-          <span :class="['status-' + row.status, 'status-block', 'mr-2']">
-            {{ $t('task_preview_status_' + row.status) }}
+          <span :class="['status-' + row.statusResult[0].status, 'status-block', 'mr-2']">
+            {{ $t('task_preview_status_' + row.statusResult[0].status) }}
           </span>
           <span v-if="row.transformStatus && row.transformStatus === 'running'">
             <span v-if="row.transformProcess && row.transformProcess !== 1">{{ row.transformProcess * 100 }} %</span>
@@ -590,11 +590,7 @@ export default {
         }
       }
       let statuses = item.statuses
-      item.statusResult = []
-      if (statuses?.length) {
-        let result = getSubTaskStatus(statuses)
-        item.statusResult = result
-      }
+      item.statusResult = getSubTaskStatus(statuses)
       return item
     },
     handleSelectTag() {
@@ -1252,7 +1248,6 @@ export default {
     }
   }
   .label-img {
-    float: left;
     display: inline-block;
     width: 14px;
     height: 14px;

@@ -133,7 +133,7 @@
             </ElLink>
             <ElDivider direction="vertical"></ElDivider>
             <ElLink
-              v-if="isShowForceStop(row.statusResult)"
+              v-if="isShowForceStop(row.statuses)"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
@@ -1031,7 +1031,7 @@ export default {
       })
     },
     isShowForceStop(data) {
-      return data.filter(t => t.count > 0).every(t => ['stopping'].includes(t.status))
+      return data.every(t => ['stopping'].includes(t.status))
     },
     startDisabled(row) {
       const statusResult = row.statusResult || []

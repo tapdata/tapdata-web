@@ -808,6 +808,7 @@ export default {
   task_preview_status_preparing: '准备中',
   task_preview_status_scheduling: '調度中',
   task_preview_status_schedule_failed: '調度失敗',
+  task_preview_status_ready: '待啟動',
 
   task_monitor_progress: '任務進度',
   task_monitor_full_sync: '全量同步概覽',
