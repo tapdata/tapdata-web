@@ -1794,5 +1794,8 @@ export default {
   milestone_label_read_cdc_event: '【数据传输】源端采集器进入增量读取模式',
   milestone_label_write_cdc_event: '【数据传输】目标处理器进入增量写入模式',
 
+  milestone_list_status_finish: '已完成',
+  milestone_list_status_error: '错误',
+
   classification_name_already_exists: '分类名称已存在'
 }

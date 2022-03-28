@@ -64,7 +64,6 @@ export default {
      * 触发父组件：首次条件
      * */
     fieldProcess() {
-      debugger
       //点击按钮重新拿值
       if (this.getDataFlow) {
         this.dataFlow = this.getDataFlow()

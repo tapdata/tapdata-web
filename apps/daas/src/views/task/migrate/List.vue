@@ -148,7 +148,6 @@
               :disabled="
                 $disabledByPermission('SYNC_job_operation_all_data', row.user_id) || stopDisabled(row.statusResult)
               "
-              class="ml-3"
               @click="stop([row.id])"
               >{{ $t('task_list_stop') }}</ElLink
             >
@@ -227,7 +226,9 @@
               <img src="../../../assets/images/migrate/headImage.png" />
             </div>
             <div class="content">
-              <div class="name fs-6">{{ previewData.name }}</div>
+              <ElTooltip class="item" effect="dark" :content="previewData.name" placement="top">
+                <div class="name fs-6">{{ previewData.name }}</div>
+              </ElTooltip>
               <div class="fs-8 py-1 desc">
                 {{ $t('task_details_desc') }}: <span>{{ previewData.desc }}</span>
               </div>
@@ -271,7 +272,7 @@ import DownAgent from '../../downAgent/agentDown'
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import Drawer from '@/components/Drawer'
-import { ETL_STATUS_MAP } from '@/const'
+// import { ETL_STATUS_MAP } from '@/const'
 import { getSubTaskStatus } from '../util'
 
 let timeout = null
@@ -999,6 +1000,7 @@ export default {
     startDisabled(row) {
       const statusResult = row.statusResult || []
       const statusLength = row.statuses?.length || 0
+      // const status = row.statuses?.[0]?.status
       return (
         this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
         statusResult.every(t => t.status === 'running' && t.count > 0 && t.count === statusLength)
@@ -1217,15 +1219,14 @@ export default {
     .img-box {
       display: flex;
       width: 20px;
-      height: 20px;
       justify-content: center;
-      align-items: center;
+      align-items: start;
       background: #fff;
       //border: 1px solid #dedee4;
       border-radius: 3px;
       margin: 5px 0 0 0;
       img {
-        width: 100%;
+        width: 20px;
       }
     }
     .content {
@@ -1233,7 +1234,11 @@ export default {
       font-weight: 500;
       margin-top: 4px;
       width: 100%;
+      overflow: hidden;
       .name {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
         color: #000;
         font-weight: 400;
       }

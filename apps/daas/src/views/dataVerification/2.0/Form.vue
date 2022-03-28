@@ -277,9 +277,9 @@
               </div>
               <div class="setting-item mt-4" v-if="item.showAdvancedVerification && form.inspectMethod === 'field'">
                 <label class="item-label">{{ $t('verify_form_label_script') }}: </label>
-                <VButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)">{{
+                <ElButton v-if="!item.webScript || item.webScript === ''" @click="addScript(index)">{{
                   $t('verify_button_add_script')
-                }}</VButton>
+                }}</ElButton>
                 <template v-else>
                   <ElLink type="primary" class="ml-4" @click="editScript(index)">{{ $t('button_edit') }}</ElLink>
                   <ElLink type="primary" class="ml-4" @click="removeScript(index)">{{ $t('button_delete') }}</ElLink>
@@ -300,15 +300,17 @@
           </li>
         </ul>
         <div class="joint-table-footer">
-          <VButton @click="addTable()">{{ $t('verify_button_add_table') }}</VButton>
-          <VButton type="primary" @click="autoAddTable()">{{ $t('verify_button_auto_add_table') }}</VButton>
+          <ElButton size="mini" @click="addTable()">{{ $t('verify_button_add_table') }}</ElButton>
+          <ElButton type="primary" size="mini" @click="autoAddTable()">{{
+            $t('verify_button_auto_add_table')
+          }}</ElButton>
         </div>
       </div>
       <div class="mt-8">
-        <VButton @click="goBack()">{{ $t('button_back') }}</VButton>
-        <VButton type="primary" :disabled="!flowStages || !flowStages.length" @click="nextStep()">{{
+        <ElButton size="mini" @click="goBack()">{{ $t('button_back') }}</ElButton>
+        <ElButton type="primary" size="mini" :disabled="!flowStages || !flowStages.length" @click="nextStep()">{{
           $t('button_save')
-        }}</VButton>
+        }}</ElButton>
       </div>
     </div>
 
@@ -329,8 +331,8 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <VButton @click="handleAddScriptClose">{{ $t('button_cancel') }}</VButton>
-        <VButton type="primary" @click="submitScript">{{ $t('button_confirm') }}</VButton>
+        <ElButton size="mini" @click="handleAddScriptClose">{{ $t('button_cancel') }}</ElButton>
+        <ElButton type="primary" size="mini" @click="submitScript">{{ $t('button_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </section>
