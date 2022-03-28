@@ -107,7 +107,8 @@ export default {
                 name: item.name,
                 label: `${item.name} (${this.$t('connection.status.' + item.status) || item.status})`,
                 value: item.id,
-                databaseType: item.database_type
+                databaseType: item.database_type,
+                connectionType: item.connection_type
               }
             })
           } catch (e) {

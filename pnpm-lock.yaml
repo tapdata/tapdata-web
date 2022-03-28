@@ -314,6 +314,7 @@ importers:
       '@daas/shared': workspace:^1.0.0
       '@formily/core': ^2.0.9
       '@formily/element': ^2.0.9
+      '@formily/path': ^2.0.12
       '@formily/reactive': ^2.0.9
       '@tapdata/field-mapping': workspace:^1.0.0
       dagre: ^0.8.5
@@ -326,6 +327,7 @@ importers:
       '@daas/shared': link:../shared
       '@formily/core': registry.npmmirror.com/@formily/core/2.0.11
       '@formily/element': registry.npmmirror.com/@formily/element/2.0.11_element-ui@2.15.7+vue@2.6.14
+      '@formily/path': registry.npmmirror.com/@formily/path/2.0.12
       '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.11
       '@tapdata/field-mapping': link:../field-mapping
       dagre: registry.npmmirror.com/dagre/0.8.5
