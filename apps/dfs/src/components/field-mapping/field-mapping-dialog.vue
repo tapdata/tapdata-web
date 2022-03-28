@@ -44,7 +44,11 @@
               <div class="source">{{ item.sourceObjectName }}</div>
               <div class="target">
                 <span class="target-span">{{ item.sinkObjectName }}</span>
-                <VIcon v-if="!readOnly" class="color-primary ml-2" size="14" @click="showChangeTableNameModal(item)"
+                <VIcon
+                  v-if="!readOnly"
+                  class="color-primary ml-2"
+                  size="14"
+                  @click.stop.prevent="showChangeTableNameModal(item)"
                   >edit-outline</VIcon
                 >
               </div>
@@ -745,7 +749,6 @@ export default {
         let item = obj[key]
         result.push(item)
       }
-      console.log('result', result)
       return result
     },
     /* 初始化字段类型列表*/
