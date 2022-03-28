@@ -36,7 +36,8 @@ export default {
       schema: null,
       scope: {
         checkName: value => {
-          return this.$api('Task').checkName(value)
+          let id = this.$route.params.id || '' //当前任务id
+          return this.$api('Task').checkName(value, id)
         }
       }
     }
@@ -161,35 +162,11 @@ export default {
               }
             }
           }
-        },
-        hana: {
-          sync_type: {
-            title: this.$t('task_setting_sync_type'),
-            type: 'string',
-            'x-decorator': 'FormItem',
-            'x-component': 'Radio.Group',
-            'x-component-props': {
-              optionType: 'button'
-            },
-            default: 'initial_sync',
-            enum: [
-              {
-                label: this.$t('task_setting_initial_sync'), //全量
-                value: 'initial_sync'
-              }
-            ],
-            'x-reactions': {
-              target: '*(increOperationMode, increaseReadSize)',
-              fulfill: {
-                state: {
-                  visible: '{{$self.value !== "initial_sync"}}'
-                }
-              }
-            }
-          }
         }
       }
       let repeatNameMessage = this.$t('task_form_error_name_duplicate')
+      let id = this.$route.params.id || ''
+      console.log(id)
       //默认配置
       let config = {
         type: 'object',
@@ -572,8 +549,48 @@ export default {
       }
       //合并配置
       let target = {}
-      if (['hana'].includes(sourceType)) {
-        target = mapping[sourceType] || {}
+      if (
+        [
+          'hana',
+          'gbase-8s',
+          'dameng',
+          'kundb',
+          'adb_postgres',
+          'adb_mysql',
+          'greenplum',
+          'db2',
+          'sybase ase',
+          'gaussdb200',
+          'kudu',
+          'hbase'
+        ].includes(sourceType) //只支持全量同步
+      ) {
+        target = {
+          sync_type: {
+            title: this.$t('task_setting_sync_type'),
+            type: 'string',
+            'x-decorator': 'FormItem',
+            'x-component': 'Radio.Group',
+            'x-component-props': {
+              optionType: 'button'
+            },
+            default: 'initial_sync',
+            enum: [
+              {
+                label: this.$t('task_setting_initial_sync'), //全量
+                value: 'initial_sync'
+              }
+            ],
+            'x-reactions': {
+              target: '*(increOperationMode, increaseReadSize)',
+              fulfill: {
+                state: {
+                  visible: '{{$self.value !== "initial_sync"}}'
+                }
+              }
+            }
+          }
+        }
       } else {
         target = mapping[type] || {}
       }
