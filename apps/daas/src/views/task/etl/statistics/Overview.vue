@@ -10,7 +10,9 @@
           <span class="ml-3">{{ $t('task_info_completed') }} : {{ info.finishNumber || 0 }}</span>
         </div>
         <div v-if="info.progress !== 100">
-          {{ $t('task_monitor_full_completion_time') }}：{{ info.finishDuration || 0 }}
+          {{ $t('task_monitor_full_completion_time') }}：{{
+            info.finishDuration < 0 ? '计算中' : info.finishDuration || 0
+          }}
         </div>
         <div v-else>{{ $t('task_info_fully_completed') }}</div>
       </div>
