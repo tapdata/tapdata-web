@@ -70,6 +70,8 @@ export default {
   message_update_success: 'Modification succeeded',
   message_operation_succuess: 'The operation succeeded',
   message_operation_error: 'Operation failed',
+  message_request_error: 'Request data failed',
+  message_no_permission: 'Login has expired, please log in again',
 
   // 表格
   column_operation: 'Operate',

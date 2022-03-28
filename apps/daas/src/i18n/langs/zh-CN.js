@@ -69,6 +69,8 @@ export default {
   message_update_success: '修改成功',
   message_operation_succuess: '操作成功',
   message_operation_error: '操作失败',
+  message_request_error: '请求数据失败',
+  message_no_permission: '登录已过期，请重新登录',
 
   // 表格
   column_operation: '操作',

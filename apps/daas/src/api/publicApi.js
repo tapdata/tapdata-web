@@ -139,8 +139,19 @@ axios.interceptors.response.use(
               }
             })
             Message.error({
-              message: i18n.t('message.noPermission')
+              message: i18n.t('message_no_permission')
             })
+            break
+          case 'SystemError':
+            if (data.msg === 'System error: null') {
+              Message.error({
+                message: i18n.t('message_request_error')
+              })
+            } else {
+              Message.error({
+                message: data.msg
+              })
+            }
             break
           default:
             reject(response)
