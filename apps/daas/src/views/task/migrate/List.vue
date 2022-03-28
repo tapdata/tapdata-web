@@ -1009,10 +1009,8 @@ export default {
       })
     },
     handlePreview(id) {
-      this.isShowDetails = !this.isShowDetails
-      if (this.isShowDetails) {
-        this.getPreviewData(id)
-      }
+      this.isShowDetails = true
+      this.getPreviewData(id)
     },
     async getPreviewData(id) {
       this.loading = true
