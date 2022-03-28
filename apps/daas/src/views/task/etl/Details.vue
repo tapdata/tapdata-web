@@ -47,7 +47,7 @@
               <VIcon size="12">pause-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_stop') }}</span>
             </VButton>
-            <VButton :disabled="editDisabled" @click="handleEditor(task.id)">
+            <VButton :disabled="startDisabled" @click="handleEditor(task.id)">
               <VIcon size="12">edit-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_edit') }}</span>
             </VButton>
@@ -195,36 +195,25 @@ export default {
     },
     startDisabled() {
       const { statusResult, task } = this
-      let data = []
-      if (statusResult?.length) {
-        data =
-          this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
-          statusResult.filter(t => t.status === 'running' && t.count)
-      }
-      let flag = data?.[0]?.count === task.statuses?.length ? true : false
-      return flag
+      return (
+        this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
+        statusResult
+          .filter(t => t.count > 0)
+          .every(t => ['wait_run', 'scheduling', 'running', 'stopping'].includes(t.status))
+      )
     },
     stopDisabled() {
       const { statusResult, task } = this
-      let data = []
-      if (statusResult?.length) {
-        data =
-          this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
-          statusResult.filter(t => ['not_running', 'error', 'stopping'].includes(t.status) && t.count)
-      }
-      let flag = data?.[0]?.count === task.statuses?.length ? true : false
-      return flag
-    },
-    editDisabled() {
-      const { statusResult, task } = this
-      let data = []
-      if (statusResult?.length) {
-        data =
-          this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
-          statusResult.filter(t => t.status === 'running' && t.count)
-      }
-      let flag = data?.[0]?.count === task.statuses?.length ? true : false
-      return flag
+      return (
+        this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
+        statusResult
+          .filter(t => t.count > 0)
+          .every(t =>
+            ['ready', 'edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed', 'stopping'].includes(
+              t.status
+            )
+          )
+      )
     }
   },
   created() {
