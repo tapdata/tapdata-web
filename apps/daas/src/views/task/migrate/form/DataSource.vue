@@ -22,6 +22,7 @@
         :clear="clearSourceMethod"
         :loading="loadingSource"
         :remote-method="remoteSourceMethod"
+        @change="$emit('change')"
       >
         <el-option v-for="item in sourceData" :key="item.value" :label="item.label" :value="item.value"> </el-option>
       </el-select>
@@ -41,6 +42,7 @@
         :loading="loadingTarget"
         :clear="clearTargetMethod"
         :remote-method="remoteTargetMethod"
+        @change="$emit('change')"
       >
         <el-option v-for="item in targetData" :key="item.value" :label="item.label" :value="item.value"> </el-option>
       </el-select>
@@ -118,23 +120,30 @@ export default {
     },
     getWhere(type) {
       let where = {}
-      if (type === 'source' && this.dataSourceData.source_filter_databaseType !== 'all') {
-        where = {
-          database_type: { in: [this.dataSourceData.source_databaseType] }
+      if (type === 'source') {
+        if (this.dataSourceData.source_filter_databaseType !== 'all') {
+          where = {
+            database_type: { in: [this.dataSourceData.source_databaseType] },
+            connection_type: { in: ['source', 'source_and_target'] }
+          }
+        } else {
+          where = {
+            connection_type: { in: ['source', 'source_and_target'] }
+          }
         }
-      } else if (type === 'target' && this.dataSourceData.target_filter_databaseType !== 'all') {
-        where = {
-          database_type: { in: [this.dataSourceData.target_databaseType] }
+      } else if (type === 'target') {
+        if (this.dataSourceData.target_filter_databaseType !== 'all') {
+          where = {
+            database_type: { in: [this.dataSourceData.target_databaseType] },
+            connection_type: { in: ['target', 'source_and_target'] }
+          }
+        } else {
+          where = {
+            connection_type: { in: ['target', 'source_and_target'] }
+          }
         }
       }
       return where
-    },
-    queryConnection(type) {
-      return query => {
-        const where = this.getWhere(type)
-        where.name = { like: query, options: 'i' }
-        this.getConnection(where, `${type}_connectionId`)
-      }
     },
     getConnection(where, type, keyword) {
       let fields = {

@@ -76,16 +76,18 @@ export class MergeTable extends NodeType {
                     { label: '更新已存在或插入新数据', value: 'updateOrInsert' },
                     { label: '更新进内嵌数组', value: 'updateIntoArray' }
                   ],
-                  'x-reactions': {
-                    target: 'mergeProperties.*.targetPath',
-                    effects: ['onFieldValueChange'],
-                    fulfill: {
-                      state: {
-                        value:
-                          '{{ $self.index === $target.index ? $self.value === "updateOrInsert" ? "" : $values.mergeProperties[$target.index].tableName : $target.value }}'
+                  'x-reactions': [
+                    {
+                      target: 'mergeProperties.*.targetPath',
+                      effects: ['onFieldValueChange'],
+                      fulfill: {
+                        state: {
+                          value:
+                            '{{ $self.index === $target.index ? $self.value === "updateOrInsert" ? "" : $values.mergeProperties[$target.index].tableName : $target.value }}'
+                        }
                       }
                     }
-                  }
+                  ]
                 },
                 targetPath: {
                   type: 'string',
@@ -104,7 +106,6 @@ export class MergeTable extends NodeType {
                 arrayKeys: {
                   type: 'array',
                   title: '内嵌数组匹配条件',
-                  required: true,
                   'x-decorator': 'FormItem',
                   'x-component': 'Select',
                   'x-component-props': {
@@ -118,6 +119,9 @@ export class MergeTable extends NodeType {
                       fulfill: {
                         state: {
                           visible: '{{ $deps[0] === "updateIntoArray" }}'
+                        },
+                        schema: {
+                          required: '{{ $deps[0] === "updateIntoArray" }}'
                         }
                       }
                     },
@@ -156,7 +160,6 @@ export class MergeTable extends NodeType {
                         properties: {
                           source: {
                             type: 'string',
-                            required: true,
                             'x-decorator': 'FormItem',
                             'x-component': 'Select',
                             'x-component-props': {
@@ -164,7 +167,15 @@ export class MergeTable extends NodeType {
                               filterable: true
                             },
                             'x-reactions': [
-                              '{{useAsyncDataSource(loadNodeFieldNames, "dataSource", $values.mergeProperties[$self.indexes[0]] ? $values.mergeProperties[$self.indexes[0]].sourceId : "")}}'
+                              '{{useAsyncDataSource(loadNodeFieldNames, "dataSource", $values.mergeProperties[$self.indexes[0]] ? $values.mergeProperties[$self.indexes[0]].sourceId : "")}}',
+                              {
+                                fulfill: {
+                                  schema: {
+                                    required:
+                                      '{{ $values.mergeProperties[$self.indexes[0]].mergeType !== "appendWrite" }}'
+                                  }
+                                }
+                              }
                             ]
                           }
                         }
@@ -180,7 +191,6 @@ export class MergeTable extends NodeType {
                         properties: {
                           target: {
                             type: 'string',
-                            required: true,
                             'x-decorator': 'FormItem',
                             'x-component': 'Select',
                             'x-component-props': {
@@ -188,7 +198,15 @@ export class MergeTable extends NodeType {
                               filterable: true
                             },
                             'x-reactions': [
-                              '{{useAsyncDataSource(loadNodeFieldNames, "dataSource", getTargetNode($self).value)}}'
+                              '{{useAsyncDataSource(loadNodeFieldNames, "dataSource", getTargetNode($self).value)}}',
+                              {
+                                fulfill: {
+                                  schema: {
+                                    required:
+                                      '{{ $values.mergeProperties[$self.indexes[0]].mergeType !== "appendWrite" }}'
+                                  }
+                                }
+                              }
                             ]
                           }
                         }

@@ -10,7 +10,7 @@
         layout="horizontal"
         wrapperWidth="400"
       >
-        <SchemaField v-if="!!schema" :schema="schema" />
+        <SchemaField v-if="!!schema" :schema="schema" :scope="scope" />
       </Form>
     </div>
   </div>
@@ -33,7 +33,13 @@ export default {
   data() {
     return {
       form: createForm(),
-      schema: null
+      schema: null,
+      scope: {
+        checkName: value => {
+          let id = this.$route.params.id || '' //当前任务id
+          return this.$api('Task').checkName(value, id)
+        }
+      }
     }
   },
   mounted() {
@@ -65,7 +71,7 @@ export default {
     getSettingSchema() {
       //根据配置规则生成schema
       let type = this.dataSourceData?.target_databaseType
-      //let sourceType = this.dataSourceData?.source_databaseType
+      let sourceType = this.dataSourceData?.source_databaseType
 
       let mapping = {
         oracle: {
@@ -158,6 +164,9 @@ export default {
           }
         }
       }
+      let repeatNameMessage = this.$t('task_form_error_name_duplicate')
+      let id = this.$route.params.id || ''
+      console.log(id)
       //默认配置
       let config = {
         type: 'object',
@@ -170,7 +179,18 @@ export default {
                 type: 'string',
                 required: 'true',
                 'x-decorator': 'FormItem',
-                'x-component': 'Input'
+                'x-component': 'Input',
+                'x-validator': `{{(value) => {
+                  return new Promise((resolve) => {
+                    checkName(value).then((res) => {
+                      if(res.data === true) {
+                        resolve('${repeatNameMessage}')
+                      } else {
+                        resolve()
+                      }
+                    })
+                  })
+                }}}`
               },
               desc: {
                 title: this.$t('task_stetting_desc'), //任务描述
@@ -528,9 +548,53 @@ export default {
         }
       }
       //合并配置
-      let target = mapping[type] || {}
+      let target = {}
+      if (
+        [
+          'hana',
+          'gbase-8s',
+          'dameng',
+          'kundb',
+          'adb_postgres',
+          'adb_mysql',
+          'greenplum',
+          'db2',
+          'sybase ase',
+          'gaussdb200',
+          'kudu',
+          'hbase'
+        ].includes(sourceType) //只支持全量同步
+      ) {
+        target = {
+          sync_type: {
+            title: this.$t('task_setting_sync_type'),
+            type: 'string',
+            'x-decorator': 'FormItem',
+            'x-component': 'Radio.Group',
+            'x-component-props': {
+              optionType: 'button'
+            },
+            default: 'initial_sync',
+            enum: [
+              {
+                label: this.$t('task_setting_initial_sync'), //全量
+                value: 'initial_sync'
+              }
+            ],
+            'x-reactions': {
+              target: '*(increOperationMode, increaseReadSize)',
+              fulfill: {
+                state: {
+                  visible: '{{$self.value !== "initial_sync"}}'
+                }
+              }
+            }
+          }
+        }
+      } else {
+        target = mapping[type] || {}
+      }
       config.properties.layout.properties = Object.assign(config?.properties?.layout?.properties, target)
-
       //源表连接开启了日志挖掘功能
       if (this.dataSourceData?.shareCdcEnable) {
         config.properties.layout.properties = Object.assign(config?.properties?.layout?.properties, shareCdcEnable)

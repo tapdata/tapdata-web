@@ -785,6 +785,7 @@ export default {
   data_flow_automatically: 'automatically',
   data_flow_manually: 'manually',
   data_flow_oracle_logminer: 'Oracle Logminer Mode',
+  task_form_error_name_Duplicate: 'Task name already exists, please re-enter',
 
   task_list_transform_running: 'Field mapping running',
   task_list_transform_done: 'Field mapping completed',

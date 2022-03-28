@@ -30,7 +30,12 @@
                   >
                 </span>
               </div>
-              <DataSource ref="dataSource" :dataSourceData="dataSourceData" @submit="dataSourceSubmit"></DataSource>
+              <DataSource
+                ref="dataSource"
+                :dataSourceData="dataSourceData"
+                @submit="dataSourceSubmit"
+                @change="handleSettingValue"
+              ></DataSource>
             </div>
             <!-- 步骤2 -->
             <div class="body step-3" v-if="steps[activeStep].index === 2">
@@ -124,6 +129,7 @@ export default {
       showSysncTableTip: false,
       //第二步 配置任务设置
       settingData: Object.assign({}, SETTING_MODEL),
+      taskName: '',
       form: null,
       //第三步 映射表
       transferData: Object.assign({}, TRANSFER_MODEL),
@@ -256,6 +262,12 @@ export default {
       })
     },
     previous() {
+      let type = this.steps[this.activeStep].type
+      switch (type) {
+        case 'setting':
+          this.taskName = this.settingData.name //返回上一步 选择数据源 存储当前任务名
+          break
+      }
       this.activeStep--
     },
     nextStep() {
@@ -280,25 +292,18 @@ export default {
           }
           break
         case 'setting':
+          this.loading = true
           this.form
             .validate()
             .then(() => {
-              //检查任务名是否重复
-              this.$api('Task')
-                .checkName(this.settingData.name)
-                .then(res => {
-                  let result = res?.data?.data
-                  if (result) {
-                    this.$message.error('表单检验不通过，任务名称重复！')
-                    return
-                  }
-                  //数据: 第三步请求schema用到sourceId
-                  this.sourceId = this.dataSourceData.source_connectionId
-                  this.activeStep++
-                  this.transferData.automaticallyCreateTables = this.settingData.automaticallyCreateTables
-                })
+              //数据: 第三步请求schema用到sourceId
+              this.loading = false
+              this.sourceId = this.dataSourceData.source_connectionId
+              this.activeStep++
+              this.transferData.automaticallyCreateTables = this.settingData.automaticallyCreateTables
             })
             .catch(() => {
+              this.loading = false
               this.$message.error('表单检验不通过，任务名称必填')
             })
           break
@@ -307,6 +312,10 @@ export default {
     //第一步 选择源端
     dataSourceSubmit(verify) {
       this.dataSourceVerify = verify
+    },
+    handleSettingValue() {
+      this.settingData = Object.assign({}, SETTING_MODEL) //第一步切換数据源初始化任务配置
+      this.settingData.name = this.taskName //名字不需要清除
     },
     handleCreateDatabase() {
       this.$router.push({

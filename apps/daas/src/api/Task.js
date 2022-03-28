@@ -71,8 +71,12 @@ export default class TaskAPI extends PublicAPI {
   save(params) {
     return axios.patch(this.url + '/confirm', params)
   }
-  checkName(name) {
-    return axios.post(this.url + '/checkName?name=' + name)
+  checkName(name, id) {
+    if (id) {
+      return axios.post(this.url + '/checkName?name=' + name + '&id=' + id)
+    } else {
+      return axios.post(this.url + '/checkName?name=' + name)
+    }
   }
   export(ids) {
     let href = this.url + `/batch/load?taskId=${ids.join('&taskId=')}&access_token=${window.VueCookie.get('token')}`

@@ -173,6 +173,31 @@ $height: 50px;
       display: flex;
     }
   }
+  &.can-be-connected {
+    .node-anchor.input {
+      display: flex;
+
+      &:before {
+        content: '';
+        position: absolute;
+        border-width: 1px;
+        border-style: solid;
+        border-color: inherit;
+        border-radius: 50%;
+        background: #fff;
+        width: 12px;
+        height: 12px;
+      }
+    }
+
+    &.dropHover .node-anchor.input {
+      &:before {
+        width: 16px;
+        height: 16px;
+        border-color: #2c65ff;
+      }
+    }
+  }
 }
 
 .df-menu-list {
