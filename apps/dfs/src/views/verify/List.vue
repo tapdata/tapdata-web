@@ -69,7 +69,7 @@
         sortable="custom"
         width="160"
       ></ElTableColumn>
-      <ElTableColumn :label="$t('dataVerification.operation')" width="300" fixed="right">
+      <ElTableColumn :label="$t('dataVerification.operation')" width="300">
         <template slot-scope="scope">
           <ElLink
             type="primary"
