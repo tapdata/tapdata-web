@@ -63,7 +63,6 @@
                   :mqTransferFlag="mqTransferFlag"
                   :isTwoWay="true"
                   :getTask="daft"
-                  :saveTask="createTask"
                 ></Transfer>
               </div>
             </div>
@@ -166,6 +165,7 @@ export default {
             let data = res?.data
             this.status = data.status
             this.settingData = data.attrs?.task_setting_Data
+            this.settingData.name = data?.name
             this.dataSourceData = data?.attrs?.task_data_source_Data
             this.nodes = data?.dag?.nodes
             this.edges = data?.dag?.edges
@@ -287,6 +287,11 @@ export default {
               this.mqTransferFlag = true
             } else {
               this.mqTransferFlag = false
+            }
+            //赋值
+            if (!this.id) {
+              this.id = this.dataSourceData.id
+              this.settingData.name = this.dataSourceData.name
             }
             this.activeStep++
           }
@@ -469,17 +474,9 @@ export default {
       this.transferData.nodeId = targetIdB
       return postData
     },
-    createTask() {
-      if (this.id) return
-      let postData = this.daft()
-      let promise = this.$api('Task').save(postData)
-      promise.then(res => {
-        this.id = res?.data?.id
-      })
-      return promise
-    },
     save() {
       if (this.stateIsReadonly) {
+        //查看 不保存 直接退出
         this.$router.push({
           name: 'migrate'
         })

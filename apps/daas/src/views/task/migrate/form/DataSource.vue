@@ -52,6 +52,7 @@
 
 <script>
 import { verify } from '../../../connections/util'
+import { SETTING_MODEL } from './const'
 
 export default {
   name: 'Source',
@@ -77,8 +78,66 @@ export default {
     this.allowDatabaseType()
     this.getConnection(this.getWhere('source'), 'source_connectionId')
     this.getConnection(this.getWhere('target'), 'target_connectionId')
+    //创建任务
+    let id = this.$route.params.id || this.dataSourceData.id
+    if (!id) {
+      this.createTask()
+    }
+  },
+  destroyed() {
+    //当前创建任务 是否删除
+    let check = false
+    if (
+      this.dataSourceData.source_filter_databaseType !== 'all' ||
+      this.dataSourceData.target_filter_databaseType !== 'all' ||
+      this.dataSourceData.source_connectionId !== '' ||
+      this.dataSourceData.target_connectionId !== ''
+    ) {
+      check = true
+    }
+    if (!check) {
+      //检查不通过删除当前创建任务
+      this.$api('Task').delete(this.dataSourceData.id)
+    } else {
+      //保存当前改动
+      let data = this.postData()
+      data.name = this.dataSourceData.name
+      data.id = this.dataSourceData.id
+      this.$api('Task').patch(data)
+    }
   },
   methods: {
+    //创建任务
+    createTask() {
+      let data = this.postData()
+      data.name = '新任务@' + new Date().toLocaleTimeString()
+      let promise = this.$api('Task').post(data)
+      promise.then(res => {
+        this.dataSourceData.id = res?.data?.id
+        this.dataSourceData.name = res?.data?.name
+      })
+    },
+    postData() {
+      let settingData = Object.assign({}, SETTING_MODEL)
+      settingData.name = this.dataSourceData.name || ''
+      return {
+        description: '',
+        status: 'edit',
+        syncType: 'migrate',
+        executeMode: 'normal',
+        category: this.$t('task_form_database_clone'),
+        stopOnError: false,
+        attrs: {
+          task_data_source_Data: this.dataSourceData,
+          task_setting_Data: Object.assign({}, SETTING_MODEL)
+        },
+        dag: {
+          edges: [],
+          nodes: []
+        },
+        dataFlowType: 'normal' //区分创建方式,
+      }
+    },
     //云版支持数据源
     allowDatabaseType() {
       let TYPEMAP = this.$const.TYPEMAP

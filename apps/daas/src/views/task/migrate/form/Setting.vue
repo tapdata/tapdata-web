@@ -36,7 +36,7 @@ export default {
       schema: null,
       scope: {
         checkName: value => {
-          let id = this.$route.params.id || '' //当前任务id
+          let id = this.$route.params.id || this.dataSourceData.id || '' //当前任务id
           return this.$api('Task').checkName(value, id)
         }
       }
@@ -165,8 +165,6 @@ export default {
         }
       }
       let repeatNameMessage = this.$t('task_form_error_name_duplicate')
-      let id = this.$route.params.id || ''
-      console.log(id)
       //默认配置
       let config = {
         type: 'object',
