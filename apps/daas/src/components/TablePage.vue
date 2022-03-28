@@ -41,6 +41,7 @@
             :row-key="rowKey"
             :span-method="spanMethod"
             :data="list"
+            :default-sort="defaultSort"
             @selection-change="handleSelectionChange"
             @sort-change="$emit('sort-change', $event)"
           >
@@ -100,7 +101,8 @@ export default {
     },
     remoteMethod: Function,
     rowKey: [String, Function],
-    spanMethod: [Function]
+    spanMethod: [Function],
+    defaultSort: Object
   },
   data() {
     return {
