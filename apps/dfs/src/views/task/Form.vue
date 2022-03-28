@@ -1131,8 +1131,8 @@ export default {
             this.changeConfig([], 'setting_isOpenAutoDDL')
             this.changeConfig([], 'setting_twoWay')
           }
-          //kafka 作为目标 不支持删除模式
-          if (this.dataSourceModel['target_databaseType'] === 'kafka') {
+          //kafka, vika 作为目标 不支持删除模式
+          if (['kafka', 'vika'].includes(this.dataSourceModel['target_databaseType'])) {
             this.changeConfig([], 'setting_distinctWriteType')
           }
           //greenplum、ADB mysql、kundb做源时不能增量
