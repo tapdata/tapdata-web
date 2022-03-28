@@ -1053,7 +1053,9 @@ export default {
       return data
         .filter(t => t.count > 0)
         .every(t =>
-          ['edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed', 'stopping'].includes(t.status)
+          ['ready', 'edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed', 'stopping'].includes(
+            t.status
+          )
         )
     },
     resetDisabled(row) {
@@ -1062,13 +1064,13 @@ export default {
         this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
         statusResult
           .filter(t => t.count > 0)
-          .every(t => ['edit', 'wait_run', 'scheduling', 'running', 'stopping'].includes(t.status))
+          .every(t => ['wait_run', 'scheduling', 'running', 'stopping'].includes(t.status))
       )
     },
     deleteDisabled(data) {
       return !data
         .filter(t => t.count > 0)
-        .every(t => ['edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed'].includes(t.status))
+        .every(t => ['ready', 'edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed'].includes(t.status))
     },
     getFilterItems() {
       this.filterItems = [
