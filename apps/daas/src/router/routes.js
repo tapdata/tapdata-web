@@ -569,7 +569,7 @@ export default [
             name: 'module',
             component: () => import('@/views/apiPage/ModuleForm'),
             meta: {
-              title: 'page_title_api_publish',
+              title: 'page_title_api_publish_create',
               code: 'API_creation'
             }
           },
@@ -578,7 +578,7 @@ export default [
             name: 'editModule',
             component: () => import('@/views/apiPage/ModuleForm'),
             meta: {
-              title: 'page_title_api_publish',
+              title: 'page_title_api_publish_edit',
               code: 'API_edition'
             }
           }

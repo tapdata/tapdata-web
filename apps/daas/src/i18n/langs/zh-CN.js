@@ -119,6 +119,8 @@ export default {
   page_title_data_search: '数据搜索',
   page_title_data_service: '数据服务',
   page_title_api_publish: 'API发布',
+  page_title_api_publish_create: '创建API发布',
+  page_title_api_publish_edit: '编辑API发布',
   page_title_api_browse: 'API浏览',
   page_title_api_test: 'API测试',
   page_title_api_client: 'API客户端',
@@ -1797,6 +1799,12 @@ export default {
 
   milestone_list_status_finish: '已完成',
   milestone_list_status_error: '错误',
+  milestone_list_status_waiting: '待执行',
 
-  classification_name_already_exists: '分类名称已存在'
+  classification_name_already_exists: '分类名称已存在',
+
+  signin_code: '发送验证码',
+  signin_verify_code: '请输入验证码',
+  signin_verify_code_success: '验证码发送成功',
+  signin_verify_code_error: '验证码发送失败'
 }

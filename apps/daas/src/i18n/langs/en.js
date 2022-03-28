@@ -121,6 +121,8 @@ export default {
   page_title_data_search: 'Data search',
   page_title_data_service: 'Data Service',
   page_title_api_publish: 'API publish',
+  page_title_api_publish_create: 'Create API Publish',
+  page_title_api_publish_edit: 'Edit API Publish',
   page_title_api_browse: 'API browse',
   page_title_api_test: 'API test',
   page_title_api_client: 'API client',
@@ -138,6 +140,7 @@ export default {
   page_title_role: 'Role management',
   page_title_setting: 'System settings',
   page_title_license: 'License management',
+  page_title_back_menu: 'Back menu',
   page_title_custom_node: 'Custom Node',
   page_title_account: 'Personal settings',
 
@@ -1855,6 +1858,12 @@ export default {
 
   milestone_list_status_finish: 'finish',
   milestone_list_status_error: 'Error',
+  milestone_list_status_waiting: 'Waiting',
 
-  classification_name_already_exists: 'Classification name already exists'
+  classification_name_already_exists: 'Classification name already exists',
+
+  signin_code: 'Send verification code',
+  signin_verify_code: 'Please enter the verification code',
+  signin_verify_code_success: 'Verification code sent successfully',
+  signin_verify_code_error: 'Failed to send verification code'
 }

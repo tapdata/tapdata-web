@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     width="900px"
-    custom-class="customer_form"
+    custom-class="customer-form"
     :before-close="handleClose"
     :title="$t('module_form_customer_Api')"
     :close-on-click-modal="false"
@@ -197,8 +197,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.customer_form {
+<style lang="scss">
+.customer-form {
   height: 90%;
   margin: 50px auto 0 !important;
   overflow: hidden;
@@ -216,15 +216,24 @@ export default {
       }
     }
   }
-  ::v-deep {
-    .el-dialog__body {
-      height: calc(100% - 126px);
-      padding: 10px 20px 0;
-      overflow-y: auto;
+  .el-dialog__body {
+    height: calc(100% - 120px);
+    padding: 10px 20px 0;
+    overflow-y: auto;
+    .el-form {
+      .el-input__inner {
+        border: 1px solid map-get($borderColor, form);
+        background-color: map-get($bgColor, form);
+      }
     }
   }
-  .dialog-footer {
-    text-align: left;
+  .el-dialog__footer {
+    padding-bottom: 0;
+    overflow: hidden;
+    .dialog-footer {
+      padding-top: 20px;
+      text-align: left;
+    }
   }
 }
 </style>

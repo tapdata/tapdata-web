@@ -119,6 +119,8 @@ export default {
   page_title_data_search: '數據搜索',
   page_title_data_service: '數據服務',
   page_title_api_publish: 'API發布',
+  page_title_api_publish_create: '創建API發布',
+  page_title_api_publish_edit: '編輯API發布',
   page_title_api_browse: 'API瀏覽',
   page_title_api_test: 'API測試',
   page_title_api_client: 'API客戶端',
@@ -136,6 +138,7 @@ export default {
   page_title_role: '角色管理',
   page_title_setting: '系統設置',
   page_title_license: 'License管理',
+  page_title_back_menu: '返回菜单',
   page_title_custom_node: '自定義節點',
   page_title_account: '個人設置',
 
@@ -1781,6 +1784,12 @@ export default {
 
   milestone_list_status_finish: '已完成',
   milestone_list_status_error: '错误',
+  milestone_list_status_waiting: '待執行',
 
-  classification_name_already_exists: '分類名稱已存在'
+  classification_name_already_exists: '分類名稱已存在',
+
+  signin_code: '發送驗證碼',
+  signin_verify_code: '請輸入驗證碼',
+  signin_verify_code_success: '驗證碼發送成功',
+  signin_verify_code_error: '驗證碼發送失敗'
 }

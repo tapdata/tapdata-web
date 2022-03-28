@@ -1,11 +1,11 @@
 <template>
-  <el-popover placement="bottom" trigger="hover" @show="activeTab = 'system'">
+  <el-popover popper-class="notification-popover" placement="bottom" trigger="hover" @show="activeTab = 'system'">
     <div class="btn" slot="reference" @click="toCenter()">
       <el-badge class="item-badge" :value="unRead" :max="99" :hidden="!unRead">
         <VIcon>xiaoxi-2</VIcon>
       </el-badge>
     </div>
-    <el-tabs stretch class="notification-popover-wrap" v-model="activeTab" type="border-card" @tab-click="tabHandler">
+    <el-tabs stretch class="notification-popover-wrap" v-model="activeTab" @tab-click="tabHandler">
       <el-tab-pane class="tab-item" :label="$t('notify_system_notice')" name="system">
         <div class="tab-item-container">
           <ul class="tab-list cuk-list">
@@ -273,12 +273,35 @@ export default {
 }
 </script>
 <style lang="scss">
-.notification-popover-wrap {
-  > .el-tabs__content {
-    padding: 0 !important;
-  }
-  .tab-item {
-    margin-bottom: 1px;
+.notification-popover {
+  overflow: hidden;
+  .notification-popover-wrap {
+    overflow: hidden;
+    .el-tabs__header {
+      border-bottom: 1px solid map-get($borderColor, light);
+      .el-tabs__nav-wrap {
+        .el-tabs__nav-scroll {
+          width: 200px;
+        }
+      }
+      .el-tabs__item {
+        &.is-active {
+          color: map-get($color, primary);
+          border-color: map-get($color, primary);
+        }
+      }
+      .el-tabs__active-bar {
+        width: 100px;
+      }
+    }
+    .el-tabs__nav-scroll {
+    }
+    > .el-tabs__content {
+      padding: 0 !important;
+    }
+    .tab-item {
+      margin-bottom: 1px;
+    }
   }
 }
 </style>
