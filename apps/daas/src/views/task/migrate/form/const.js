@@ -36,6 +36,8 @@ export const SETTING_MODEL = {
 }
 
 export const DATASOURCE_MODEL = {
+  id: '',
+  name: '',
   source_sourceType: '',
   target_targetType: '',
   source_filter_databaseType: 'all',

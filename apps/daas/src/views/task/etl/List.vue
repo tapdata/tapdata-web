@@ -6,6 +6,7 @@
       class="data-flow-list"
       :classify="{ authority: 'SYNC_category_management', types: ['dataflow'] }"
       :remoteMethod="getData"
+      :default-sort="{ prop: 'createTime', order: 'descending' }"
       @selection-change="
         val => {
           multipleSelection = val
@@ -115,9 +116,15 @@
         sortable="custom"
       ></el-table-column> -->
 
-      <el-table-column prop="startTime" :label="$t('task_list_start_time')" width="170" sortable="custom">
+      <!--引擎暂时未回写启动时间，暂时注释-->
+      <!--<el-table-column prop="startTime" :label="$t('task_list_start_time')" width="170" sortable="custom">
         <template #default="{ row }">
           {{ row.startTime ? $moment(row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
+        </template>
+      </el-table-column>-->
+      <el-table-column prop="createTime" :label="$t('column_create_time')" width="170" sortable="custom">
+        <template #default="{ row }">
+          {{ row.createTime ? $moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('column_operation')" width="180" fixed="right">
@@ -133,7 +140,7 @@
             </ElLink>
             <ElDivider direction="vertical"></ElDivider>
             <ElLink
-              v-if="isShowForceStop(row.statusResult)"
+              v-if="isShowForceStop(row.statuses)"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
@@ -1031,7 +1038,7 @@ export default {
       })
     },
     isShowForceStop(data) {
-      return data.filter(t => t.count > 0).every(t => ['stopping'].includes(t.status))
+      return data.every(t => ['stopping'].includes(t.status))
     },
     startDisabled(row) {
       const statusResult = row.statusResult || []
@@ -1046,7 +1053,9 @@ export default {
       return data
         .filter(t => t.count > 0)
         .every(t =>
-          ['edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed', 'stopping'].includes(t.status)
+          ['ready', 'edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed', 'stopping'].includes(
+            t.status
+          )
         )
     },
     resetDisabled(row) {
@@ -1055,13 +1064,13 @@ export default {
         this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
         statusResult
           .filter(t => t.count > 0)
-          .every(t => ['edit', 'wait_run', 'scheduling', 'running', 'stopping'].includes(t.status))
+          .every(t => ['ready', 'edit', 'wait_run', 'scheduling', 'running', 'stopping'].includes(t.status))
       )
     },
     deleteDisabled(data) {
       return !data
         .filter(t => t.count > 0)
-        .every(t => ['edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed'].includes(t.status))
+        .every(t => ['ready', 'edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed'].includes(t.status))
     },
     getFilterItems() {
       this.filterItems = [

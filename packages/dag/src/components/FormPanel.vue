@@ -13,6 +13,7 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import * as components from '@daas/form'
 import { createSchemaField } from '@formily/vue'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
+import { Path } from '@formily/path'
 import { validateBySchema } from '@daas/form/src/shared/validate'
 import { debounce } from 'lodash'
 import formScope from '../mixins/formScope'
@@ -607,8 +608,10 @@ export default {
     // 更新节点属性
     updateNodeProps: debounce(function (form) {
       const formValues = { ...form.values }
-      const filterProps = ['id', 'isSource', 'isTarget', 'attrs', 'sourceNode'] // 排除属性的更新
-      filterProps.forEach(key => (formValues[key] = undefined))
+      const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode'] // 排除属性的更新
+      filterProps.forEach(path => {
+        Path.setIn(formValues, path, undefined)
+      })
 
       this.updateNodeProperties({
         id: this.node.id,

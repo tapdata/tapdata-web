@@ -397,6 +397,18 @@ export class Table extends NodeType {
             }
           }
         }
+      },
+
+      // 切换连接，保存连接的类型
+      'attrs.connectionType': {
+        type: 'string',
+        'x-display': 'hidden',
+        'x-reactions': {
+          dependencies: ['connectionId'],
+          fulfill: {
+            run: '{{$self.value = $form.query("connectionId").get("dataSource")?.find(item=>item.id===$deps[0])?.connectionType}}'
+          }
+        }
       }
     }
   }

@@ -69,6 +69,8 @@ export default {
   message_update_success: '修改成功',
   message_operation_succuess: '操作成功',
   message_operation_error: '操作失败',
+  message_request_error: '请求数据失败',
+  message_no_permission: '登录已过期，请重新登录',
 
   // 表格
   column_operation: '操作',
@@ -817,6 +819,7 @@ export default {
   task_preview_status_preparing: '准备中',
   task_preview_status_scheduling: '调度中',
   task_preview_status_schedule_failed: '调度失败',
+  task_preview_status_ready: '待启动',
 
   task_monitor_progress: '任务进度',
   task_monitor_full_sync: '全量同步概览',

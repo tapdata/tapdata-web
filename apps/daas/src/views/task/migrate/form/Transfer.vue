@@ -17,15 +17,6 @@
         <el-button class="mr-2" size="mini" @click="dialogTableVisible = true">{{
           $t('task_mapping_table_rename')
         }}</el-button>
-        <el-button
-          type="primary"
-          class="mr-2"
-          size="mini"
-          :loading="loading"
-          v-if="!transferData.showBtn"
-          @click="getFieldMapping"
-          >{{ $t('dag_link_button_field_mapping') }}</el-button
-        >
         <FieldMapping
           v-if="showFieldMapping"
           ref="fieldMapping"
@@ -99,8 +90,7 @@ export default {
     isTwoWay: Boolean,
     mqTransferFlag: Boolean,
     sourceId: String,
-    getTask: Function,
-    saveTask: Function
+    getTask: Function
   },
 
   data() {
@@ -223,14 +213,6 @@ export default {
         .then(res => {
           this.showFieldMapping = res?.data[nodeId]
         })
-    },
-    //保存任务
-    getFieldMapping() {
-      this.loading = true
-      this.saveTask().then(() => {
-        this.$refs.fieldMapping.getMetaData()
-        this.loading = false
-      })
     },
     //接收是否第一次打开
     returnModel(value) {

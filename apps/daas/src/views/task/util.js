@@ -131,30 +131,33 @@ export function getOverviewData(data) {
 // 获取子任务状态统计
 export function getSubTaskStatus(rows = []) {
   const statusMap = {
-    edit: ['edit'],
     running: ['wait_run', 'scheduling', 'running', 'stopping'],
-    not_running: ['stop', 'complete', 'schedule_failed'],
-    error: ['error']
+    not_running: ['edit', 'stop', 'complete'],
+    error: ['error', 'schedule_failed']
   }
   const len = rows.length
   let result = [],
     item = {}
-  switch (len) {
-    case 0:
+  if (len === 0) {
+    result = [
+      Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP['edit'], {
+        status: 'edit'
+      })
+    ]
+  } else {
+    let tempMap = {}
+    rows.forEach(r => {
+      tempMap[r.status] = true
+    })
+    if (Object.keys(tempMap).length === 1) {
+      let status = rows[0]?.status
+      status = status === 'edit' ? 'ready' : status
       result = [
-        Object.assign({ count: 1 }, ETL_STATUS_MAP['not_running'], {
-          status: 'not_running'
+        Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP[status], {
+          status: status
         })
       ]
-      break
-    case 1:
-      result = [
-        Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP[rows[0]?.status], {
-          status: rows[0]?.status
-        })
-      ]
-      break
-    default:
+    } else {
       for (let key in ETL_STATUS_MAP) {
         item = Object.assign({}, ETL_STATUS_MAP[key])
         item.status = key
@@ -166,8 +169,7 @@ export function getSubTaskStatus(rows = []) {
         })
         result.push(item)
       }
-
-      break
+    }
   }
   return result
 }

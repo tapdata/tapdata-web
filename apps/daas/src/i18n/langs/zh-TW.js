@@ -70,6 +70,8 @@ export default {
   message_update_success: '修改成功',
   message_operation_succuess: '操作成功',
   message_operation_error: '操作失敗',
+  message_request_error: '請求數據失敗',
+  message_no_permission: '登錄已過期，請重新登錄',
 
   // 表格
   column_operation: '操作',
@@ -811,6 +813,7 @@ export default {
   task_preview_status_preparing: '准备中',
   task_preview_status_scheduling: '調度中',
   task_preview_status_schedule_failed: '調度失敗',
+  task_preview_status_ready: '待啟動',
 
   task_monitor_progress: '任務進度',
   task_monitor_full_sync: '全量同步概覽',

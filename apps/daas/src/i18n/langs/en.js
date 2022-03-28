@@ -70,6 +70,8 @@ export default {
   message_update_success: 'Modification succeeded',
   message_operation_succuess: 'The operation succeeded',
   message_operation_error: 'Operation failed',
+  message_request_error: 'Request data failed',
+  message_no_permission: 'Login has expired, please log in again',
 
   // 表格
   column_operation: 'Operate',
@@ -843,6 +845,7 @@ export default {
   task_preview_status_preparing: 'Preparing',
   task_preview_status_scheduling: 'Scheduling',
   task_preview_status_schedule_failed: 'Scheduling failed',
+  task_preview_status_ready: 'Ready',
 
   task_monitor_progress: 'Task progress',
   task_monitor_full_sync: 'Full synchronization overview',

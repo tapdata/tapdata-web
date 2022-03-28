@@ -49,20 +49,20 @@ export const TOPOLOGY_MAP = topologyMap,
     paused: { text: '已暂停', icon: 'yizanting' }
   },
   ETL_STATUS_MAP = {
-    edit: { text: '编辑中', type: 'disable' },
     running: { text: '运行中', type: 'success' },
     not_running: { text: '未运行', type: 'disable' },
     error: { text: '错误', type: 'danger' }
   },
   ETL_SUB_STATUS_MAP = {
+    ready: { text: '待启动', type: 'disable' },
     edit: { text: '编辑中', type: 'primary' },
     scheduling: { text: '启动中', type: 'success' },
     schedule_failed: { text: '错误', type: 'danger' },
     wait_run: { text: '启动中', type: 'success' },
     running: { text: '运行中', type: 'success' },
-    pausing: { text: ' 暂停中', type: 'warning' },
+    // pausing: { text: ' 暂停中', type: 'warning' },
     stopping: { text: '停止中', type: 'danger' },
-    pause: { text: '暂停', type: 'warning' },
+    // pause: { text: '暂停', type: 'warning' },
     stop: { text: '已停止', type: 'danger' },
     complete: { text: '已完成', type: 'primary' },
     error: { text: '错误', type: 'danger' }
