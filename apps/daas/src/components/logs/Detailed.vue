@@ -14,6 +14,7 @@
           <ElCheckbox label="INFO">INFO</ElCheckbox>
           <ElCheckbox label="WARN">WARN</ElCheckbox>
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>
+          <ElCheckbox label="FATAL">FATAL</ElCheckbox>
         </ElCheckboxGroup>
       </div>
       <slot></slot>
@@ -48,7 +49,7 @@ export default {
       keyword: '',
       logs: [],
       isScrollBottom: true,
-      checkList: ['INFO', 'WARN', 'ERROR']
+      checkList: ['INFO', 'WARN', 'ERROR', 'FATAL']
     }
   },
   created() {

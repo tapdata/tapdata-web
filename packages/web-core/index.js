@@ -1,6 +1,5 @@
 import locale from './locale'
 import baseComponents from './components/base'
-import VConfirm from './components/base/v-confirm'
 import FormBuilder from './components/form-builder'
 import ConnectionTypeSelector from './components/connection-type-selector'
 import ConnectionTest from './components/ConnectionTest'
@@ -16,17 +15,6 @@ const components = [ConnectionTypeSelector, ConnectionTest, FieldMapping, CheckS
 const install = Vue => {
   Vue.prototype.$util = _util
   Vue.prototype.$const = _const
-  Vue.prototype.$confirm = (message, title, options) => {
-    return new Promise((resolve, reject) => {
-      VConfirm.confirm(message, title, options)
-        .then(() => {
-          resolve(true)
-        })
-        .catch(() => {
-          reject(false)
-        })
-    }).catch(() => {})
-  }
 
   Vue.use(FormBuilder)
 

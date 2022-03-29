@@ -12,6 +12,7 @@ import TapdataWebCore from 'web-core'
 import Cookie from '@daas/shared/src/cookie'
 import VIcon from '@/components/VIcon'
 import getRouter from '@/router'
+import VConfirm from 'web-core/components/base/v-confirm'
 
 import '@/plugins/element'
 import '@/plugins/icon'
@@ -37,6 +38,28 @@ Vue.prototype.$cache = new Cache()
 Vue.component(VIcon.name, VIcon)
 
 window.VueCookie = VueCookie
+
+Vue.prototype.$confirm = (message, title, options) => {
+  return new Promise((resolve, reject) => {
+    VConfirm.confirm(
+      message,
+      title,
+      Object.assign(
+        {
+          cancelButtonText: window.App.$t('button_cancel'),
+          confirmButtonText: window.App.$t('button_confirm')
+        },
+        options
+      )
+    )
+      .then(() => {
+        resolve(true)
+      })
+      .catch(() => {
+        reject(false)
+      })
+  }).catch(() => {})
+}
 
 window.openDebug = () => {
   localStorage.setItem('tapdata_debug', 'true')

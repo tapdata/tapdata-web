@@ -82,7 +82,18 @@ export class Table extends NodeType {
                 'x-component-props': {
                   config: { placeholder: '请选择数据库' }
                 },
-                'x-reactions': '{{useAsyncDataSource(loadDatabase, "dataSource")}}'
+                'x-reactions': [
+                  '{{useAsyncDataSource(loadDatabase, "dataSource")}}',
+                  {
+                    target: 'tableName',
+                    effects: ['onFieldValueChange'],
+                    fulfill: {
+                      state: {
+                        value: ''
+                      }
+                    }
+                  }
+                ]
               },
               tableName: {
                 title: '表',
@@ -102,6 +113,24 @@ export class Table extends NodeType {
                 'x-reactions': [
                   '{{useRemoteQuery(loadDatabaseTable)}}',
                   {
+                    target: 'name',
+                    effects: ['onFieldInputValueChange'],
+                    fulfill: {
+                      state: {
+                        value: '{{$self.value}}'
+                      }
+                    }
+                  },
+                  {
+                    target: 'updateConditionFields',
+                    effects: ['onFieldValueChange'],
+                    fulfill: {
+                      state: {
+                        value: null
+                      }
+                    }
+                  },
+                  {
                     dependencies: ['isTarget'],
                     fulfill: {
                       schema: {
@@ -115,15 +144,7 @@ export class Table extends NodeType {
               },
               name: {
                 type: 'string',
-                'x-display': 'hidden',
-                'x-reactions': {
-                  dependencies: ['.tableName'],
-                  fulfill: {
-                    state: {
-                      value: '{{$deps[0]}}'
-                    }
-                  }
-                }
+                'x-display': 'hidden'
               }
             }
           },
