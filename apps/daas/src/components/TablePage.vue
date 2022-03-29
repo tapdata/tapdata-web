@@ -202,7 +202,7 @@ export default {
               .finally(() => {
                 this.loading = false
                 this.$nextTick(() => {
-                  this.$refs.table.doLayout()
+                  this.$refs.table?.doLayout()
                 })
                 callback?.(this.getData())
               })
