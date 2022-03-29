@@ -163,7 +163,7 @@
                 <i class="icon el-icon-edit-outline"></i>
               </div>
               <div v-else>
-                <span>{{ scope.row.t_precision }}</span>
+                <span>{{ scope.row.t_precision === -1 ? '' : scope.row.t_precision }}</span>
               </div>
             </template>
           </ElTableColumn>
