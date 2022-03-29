@@ -411,7 +411,7 @@ export class Table extends NodeType {
                       multiple: true,
                       filterable: true
                     },
-                    'x-reactions': ['{{useAsyncDataSource(loadNodeFieldNames)}}']
+                    'x-reactions': ['{{useAsyncDataSource(loadNodeFieldNames,"dataSource",$values.id)}}']
                   }
                 }
               }
