@@ -16,7 +16,7 @@
         </div>
         <div v-else>{{ $t('task_info_fully_completed') }}</div>
       </div>
-      <ElProgress :percentage="info.progress" :show-text="false"></ElProgress>
+      <ElProgress color="#2C65FF" :percentage="info.progress" :show-text="false"></ElProgress>
     </div>
   </div>
 </template>

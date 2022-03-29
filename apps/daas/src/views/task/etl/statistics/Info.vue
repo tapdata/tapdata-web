@@ -43,7 +43,7 @@
         size="mini"
         style="min-width: 240px"
         menu-min-width="240px"
-        placeholder="请选择节点"
+        :placeholder="$t('task_info_select_node')"
         @change="changeStageFnc"
       ></SelectList>
       <SelectList
@@ -52,7 +52,7 @@
         last-page-text=""
         clearable
         size="mini"
-        placeholder="请选择周期"
+        :placeholder="$t('task_info_select_period')"
         class="ml-4"
         style="min-width: 180px"
         @change="changePeriodFnc"
@@ -70,7 +70,7 @@
         last-page-text=""
         clearable
         size="mini"
-        placeholder="请选择频率"
+        :placeholder="$t('task_info_select_frequency')"
         class="ml-4"
         style="min-width: 180px"
         @change="changeRateFnc"
@@ -108,7 +108,7 @@
       </div>
       <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
         <div class="right-box grey-background">
-          <div class="fw-bold mb-3">全量进度</div>
+          <div class="fw-bold mb-3">{{ $t('task_info_full_progress') }}</div>
           <div class="progress-box flex justify-content-center align-items-center position-relative">
             <ElProgress
               type="circle"
@@ -121,15 +121,19 @@
               {{ progress }}%
             </div>
           </div>
-          <div v-if="progress === 100" class="font-color-sub mt-3">全量完成时间：{{ formatTime(endTs) }}</div>
+          <div v-if="progress === 100" class="font-color-sub mt-3">
+            {{ $t('task_info_full_time') }}：{{ formatTime(endTs) }}
+          </div>
           <div v-else class="font-color-sub mt-2">
             {{ $t('task_monitor_full_completion_time') + '：' + (finishDuration || '计算中') }}
           </div>
         </div>
         <div class="right-box mt-3 grey-background">
-          <div class="fw-bold">增量延迟</div>
+          <div class="fw-bold">{{ $t('task_info_incremental_delay') }}</div>
           <div class="color-primary fw-bolder fs-5 din-font">{{ getReplicateLagTime(writeData.replicateLag) }}</div>
-          <div class="font-color-sub">增量所处时间点：{{ formatTime(writeData.cdcTime) }}</div>
+          <div class="font-color-sub">
+            {{ $t('task_info_increment_time_point') }}：{{ formatTime(writeData.cdcTime) }}
+          </div>
         </div>
       </div>
     </div>

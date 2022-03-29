@@ -4,13 +4,13 @@
       <Info :task="task" class="card-box card-box__info" :remote-method="infoRemoteMethod" @reload="loadTask"></Info>
       <div class="flex-1 mt-6 section-wrap-box">
         <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
-          <ElTabPane label="任务进度" name="schedule">
+          <ElTabPane :label="$t('task_monitor_progress')" name="schedule">
             <Schedule :task="task"></Schedule>
           </ElTabPane>
-          <ElTabPane label="运行日志" name="log" lazy>
+          <ElTabPane :label="$t('task_monitor_run_log')" name="log" lazy>
             <Log :id="task.id"></Log>
           </ElTabPane>
-          <ElTabPane label="挖掘任务" name="sharedMing" lazy>
+          <ElTabPane :label="$t('task_monitor_mining_task')" name="sharedMing" lazy>
             <ShareMining :id="task.id"></ShareMining>
           </ElTabPane>
         </ElTabs>

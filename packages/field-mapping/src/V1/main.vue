@@ -70,6 +70,7 @@ export default {
       //点击按钮重新拿值
       if (this.getDataFlow) {
         this.dataFlow = this.getDataFlow()
+        this.dataFlow.id = this.dataFlow.id || this.dataFlow?.taskId
       }
 
       if (!this.dataFlow) return
