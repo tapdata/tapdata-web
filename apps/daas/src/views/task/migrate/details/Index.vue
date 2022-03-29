@@ -16,7 +16,7 @@
           <History :ids="[task.id]" :operations="operations"></History>
         </ElTabPane>
         <ElTabPane :label="$t('task_monitor_mining_task')" name="task">
-          <Task :id="task.id"></Task>
+          <ShareMining :id="task.id"></ShareMining>
         </ElTabPane>
       </ElTabs>
     </div>
@@ -29,12 +29,12 @@ import Schedule from './Schedule'
 import Log from '@/components/logs/Index'
 import Connection from './Connection'
 import History from './History'
-import Task from './Task'
+import ShareMining from '../../etl/statistics/ShareMining'
 // import FieldMapping from '@/components/FieldMapping'
 
 export default {
   name: 'Index',
-  components: { Info, Schedule, Log, Connection, History, Task },
+  components: { Info, Schedule, Log, Connection, History, ShareMining },
   data() {
     return {
       loading: true,

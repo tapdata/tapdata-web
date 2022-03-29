@@ -2,8 +2,8 @@
   <div class="card-box p-6">
     <div class="flex justify-content-between align-items-center">
       <div class="info-line align-items-center">
-        <ElTooltip class="item" effect="dark" :content="task.parentTask ? task.parentTask.name : ''" placement="top">
-          <span class="mr-4 fs-6 font-color-main info-name">{{ task.parentTask ? task.parentTask.name : '' }}</span>
+        <ElTooltip v-if="task.parentTask" class="item" effect="dark" :content="task.parentTask.name" placement="top">
+          <span v-if="task.parentTask" class="mr-4 fs-6 font-color-main info-name">{{ task.parentTask.name }}</span>
         </ElTooltip>
 
         <StatusTag
