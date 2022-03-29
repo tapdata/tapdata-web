@@ -874,7 +874,7 @@ export default {
         this.getConnection(this.getWhere('target'), 'target_connectionId', true)
       }
       if (field === 'target_connectionId') {
-        if (this.dataSourceModel['target_databaseType'] === 'vika' && data.value) {
+        if (data.value) {
           // vika clear tableOperations、field_process
           this.transferData.tableOperations = []
           this.transferData.field_process = []
@@ -1235,6 +1235,7 @@ export default {
     },
     //获取schema
     getSchema() {
+      console.log('this.transferData', this.transferData)
       let id = this.dataSourceModel.source_connectionId || ''
       this.$nextTick(() => {
         this.$refs.transfer.getTable(id, this.settingModel.bidirectional)
