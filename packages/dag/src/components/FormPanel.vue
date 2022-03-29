@@ -633,6 +633,7 @@ export default {
         properties: JSON.parse(JSON.stringify(formValues))
       })
       this.updateDag()
+      this.confirmNodeHasError()
     }, 100),
 
     // 绑定表单事件
@@ -644,14 +645,15 @@ export default {
       onFormInputChange(form => {
         console.log('onFormInputChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
         this.updateNodeProps(form)
-        setTimeout(() => {
-          // 节点已经没有错误，清除节点的告警图标
-          const res = this.hasNodeError(this.activeNodeId)
-          if (res && typeof res === 'boolean' && !form.errors.length) {
-            this.clearNodeError(this.activeNodeId)
-          }
-        }, 100)
       })
+    },
+
+    confirmNodeHasError() {
+      // 节点已经没有错误，清除节点的告警图标
+      const res = this.hasNodeError(this.activeNodeId)
+      if (res && typeof res === 'boolean' && !this.form.errors.length) {
+        this.clearNodeError(this.activeNodeId)
+      }
     }
   }
 }
