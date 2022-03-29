@@ -30,7 +30,7 @@
             <ElRadioButton label="row_count">{{ $t('verify_type_row_count') }}</ElRadioButton>
             <ElRadioButton label="field">{{ $t('verify_type_field') }}</ElRadioButton>
             <ElRadioButton label="jointField">{{ $t('verify_type_joint_field') }}</ElRadioButton>
-            <ElRadioButton label="cdcCount"
+            <!-- <ElRadioButton label="cdcCount"
               >动态校验
               <ElTooltip
                 class="item"
@@ -40,7 +40,7 @@
               >
                 <i class="el-icon-warning-outline"></i>
               </ElTooltip>
-            </ElRadioButton>
+            </ElRadioButton> -->
           </ElRadioGroup>
           <div>
             <i class="el-icon-info color-primary mr-1"></i>
