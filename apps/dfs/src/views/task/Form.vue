@@ -875,8 +875,9 @@ export default {
       }
       if (field === 'target_connectionId') {
         if (this.dataSourceModel['target_databaseType'] === 'vika' && data.value) {
-          // vika clear tableOperations
+          // vika clear tableOperations、field_process
           this.transferData.tableOperations = []
+          this.transferData.field_process = []
         }
       }
     },
