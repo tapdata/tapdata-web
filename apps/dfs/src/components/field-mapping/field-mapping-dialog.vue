@@ -432,7 +432,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <ElButton size="mini" @click="vikaForm.visible = false">{{ $t('button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" :disabled="!vikaForm.table" @click="vikaSaveTable()">{{
+        <ElButton size="mini" type="primary" :disabled="vikaSaveTableDisabled()" @click="vikaSaveTable()">{{
           $t('button_confirm')
         }}</ElButton>
       </span>
@@ -1520,12 +1520,18 @@ export default {
     returnForm() {
       return this.form
     },
+    vikaSaveTableDisabled() {
+      let { vikaForm, form } = this
+      return !vikaForm.table || form.vikaMappings[vikaForm.originalTableName]?.id === vikaForm.currentNode?.data?.id
+    },
     vikaSaveTable() {
       let isInclude = false
       this.form.tableOperations.forEach(el => {
         if (el.originalTableName === this.vikaForm.originalTableName) {
           el.tableName = this.vikaForm.table
           isInclude = true
+          // 清空之前的设置
+          this.fieldProcessMethod('all')
         }
       })
       if (!isInclude) {
