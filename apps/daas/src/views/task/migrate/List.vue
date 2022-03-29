@@ -155,9 +155,11 @@
             <ElButton
               v-readonlybtn="'SYNC_job_edition'"
               type="text"
-              :loading="loadingEdit"
-              :disabled="$disabledByPermission('SYNC_job_edition_all_data', row.user_id) || row.status === 'running'"
-              @click="handleEditor(row.id)"
+              :loading="row.loadingEdit"
+              :disabled="
+                $disabledByPermission('SYNC_job_edition_all_data', row.user_id) || !statusBtMap['edit'][row.status]
+              "
+              @click="handleEditor(row.id, row)"
             >
               {{ $t('task_list_edit') }}
             </ElButton>
@@ -290,7 +292,6 @@ export default {
       status: '',
       isShowDetails: false,
       previewLoading: false,
-      loadingEdit: false,
       filterItems: [],
       restLoading: false,
       searchParams: {
@@ -334,6 +335,13 @@ export default {
       },
       dataFlowId: '',
       statusBtMap: {
+        edit: {
+          stop: true,
+          error: true,
+          not_running: true,
+          complete: true,
+          schedule_failed: true
+        },
         start: {
           edit: true,
           stop: true,
@@ -625,9 +633,9 @@ export default {
         name: 'MigrateNew'
       })
     },
-    handleEditor(id) {
+    handleEditor(id, row) {
       //先检查是否待启动
-      this.loadingEdit = true
+      this.$set(row, 'loadingEdit', true)
       this.$api('Task')
         .checkRun(id)
         .then(res => {
@@ -673,7 +681,7 @@ export default {
           }
         })
         .finally(() => {
-          this.loadingEdit = false
+          this.$set(row, 'loadingEdit', false)
         })
     },
     handleImport() {
