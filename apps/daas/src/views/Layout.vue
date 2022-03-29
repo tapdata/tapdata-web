@@ -13,7 +13,7 @@
         </ElButton>
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-6"></NotificationPopover>
         <ElDropdown v-if="$getSettingByKey('SHOW_QA_AND_HELP')" class="btn ml-4" placement="bottom" @command="command">
-          <VIcon>wenda</VIcon>
+          <VIcon size="16">wenda</VIcon>
           <ElDropdownMenu slot="dropdown">
             <ElDropdownItem command="help">{{ $t('app.document') }}</ElDropdownItem>
           </ElDropdownMenu>
@@ -24,7 +24,7 @@
           placement="bottom"
           @command="command"
         >
-          <VIcon>shezhi</VIcon>
+          <VIcon size="16">shezhi</VIcon>
           <ElDropdownMenu slot="dropdown">
             <ElDropdownItem command="settings" v-if="settingCode">{{ $t('page_title_setting') }}</ElDropdownItem>
             <ElDropdownItem command="setting" v-readonlybtn="'home_notice_settings'">{{
@@ -38,7 +38,7 @@
           placement="bottom"
           @command="changeLanguage"
         >
-          <VIcon>{{ { sc: 'language-sc', en: 'language-sc', tc: 'language-sc' }[lang] }}</VIcon>
+          <VIcon size="16">{{ { sc: 'language-sc', en: 'language-sc', tc: 'language-sc' }[lang] }}</VIcon>
           <ElDropdownMenu slot="dropdown">
             <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
               {{ value }}
@@ -76,7 +76,7 @@
           <template v-for="menu in menus">
             <ElSubmenu v-if="menu.children && !menu.hidden" :key="menu.label" :index="menu.name">
               <template slot="title">
-                <VIcon class="menu-icon">{{ menu.icon }}</VIcon>
+                <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
                 <span slot="title" class="ml-4">{{ menu.label }}</span>
               </template>
               <template v-for="cMenu in menu.children">
@@ -86,7 +86,7 @@
               </template>
             </ElSubmenu>
             <ElMenuItem v-else-if="!menu.hidden" :key="menu.label" :index="menu.name">
-              <VIcon class="menu-icon">{{ menu.icon }}</VIcon>
+              <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
               <span slot="title" class="ml-4">{{ menu.label }}</span>
             </ElMenuItem>
           </template>
@@ -319,6 +319,7 @@ import NotificationPopover from './notification/NotificationPopover'
 import { signOut } from '../utils/util'
 import Cookie from '@daas/shared/src/cookie'
 import PageHeader from '@/components/PageHeader'
+import VIcon from 'web-core/components/VIcon'
 
 const Languages = {
   sc: '中文 (简)',
@@ -391,7 +392,7 @@ let menuSetting = [
   }
 ]
 export default {
-  components: { CustomerService, newDataFlow, NotificationPopover, PageHeader },
+  components: { CustomerService, newDataFlow, NotificationPopover, PageHeader, VIcon },
   data() {
     return {
       logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
