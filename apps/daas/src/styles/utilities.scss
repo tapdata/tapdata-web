@@ -2,6 +2,9 @@
 * Bootstrap Utility API
 * https://getbootstrap.com/docs/5.0/utilities/api/
 */
+.din-font {
+  font-family: 'DIN';
+}
 .clearfix::after {
   display: block;
   clear: both;
