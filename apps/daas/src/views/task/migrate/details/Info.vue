@@ -2,8 +2,8 @@
   <div class="card-box p-6">
     <div class="flex justify-content-between align-items-center">
       <div class="info-line align-items-center">
-        <ElTooltip class="item" effect="dark" :content="task.parentTask.name" placement="top">
-          <span class="mr-4 fs-6 font-color-main info-name">{{ task.parentTask.name }}</span>
+        <ElTooltip class="item" effect="dark" :content="task.parentTask ? task.parentTask.name : ''" placement="top">
+          <span class="mr-4 fs-6 font-color-main info-name">{{ task.parentTask ? task.parentTask.name : '' }}</span>
         </ElTooltip>
 
         <StatusTag
@@ -46,7 +46,7 @@
         size="mini"
         style="min-width: 240px"
         menu-min-width="240px"
-        placeholder="请选择节点"
+        :placeholder="$t('task_info_select_node')"
         @change="changeStageFnc"
       ></SelectList>
       <SelectList
@@ -55,7 +55,7 @@
         last-page-text=""
         clearable
         size="mini"
-        placeholder="请选择周期"
+        :placeholder="$t('task_info_select_period')"
         class="ml-4"
         style="min-width: 180px"
         @change="changePeriodFnc"
@@ -73,7 +73,7 @@
         last-page-text=""
         clearable
         size="mini"
-        placeholder="请选择频率"
+        :placeholder="$t('task_info_select_frequency')"
         class="ml-4"
         style="min-width: 180px"
         @change="changeRateFnc"
@@ -111,7 +111,7 @@
       </div>
       <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
         <div class="right-box grey-background">
-          <div class="fw-bold mb-3">全量进度</div>
+          <div class="fw-bold mb-3">{{ $t('task_info_full_progress') }}</div>
           <div class="progress-box flex justify-content-center align-items-center position-relative">
             <ElProgress
               type="circle"
@@ -124,15 +124,19 @@
               {{ progress }}%
             </div>
           </div>
-          <div v-if="progress === 100" class="font-color-sub mt-3">全量完成时间：{{ formatTime(endTs) }}</div>
+          <div v-if="progress === 100" class="font-color-sub mt-3">
+            {{ $t('task_info_full_time') }}：{{ formatTime(endTs) }}
+          </div>
           <div v-else class="font-color-sub mt-2">
-            {{ $t('task_monitor_full_completion_time') + '：' + (finishDuration || '计算中') }}
+            {{ $t('task_monitor_full_completion_time') + '：' + (finishDuration || $t('task_info_calculating')) }}
           </div>
         </div>
         <div class="right-box mt-3 grey-background">
-          <div class="fw-bold">增量延迟</div>
+          <div class="fw-bold">{{ $t('task_info_incremental_delay') }}</div>
           <div class="color-primary fw-bolder fs-5 din-font">{{ formatMs(writeData.replicateLag) }}</div>
-          <div class="font-color-sub">增量所处时间点：{{ formatTime(writeData.cdcTime) }}</div>
+          <div class="font-color-sub">
+            {{ $t('task_info_increment_time_point') }}：{{ formatTime(writeData.cdcTime) }}
+          </div>
         </div>
       </div>
     </div>
@@ -316,7 +320,7 @@ export default {
       },
       filterItems: [
         {
-          label: '统计时间',
+          label: this.$t('task_info_statistics_time'),
           key: 'start,end',
           type: 'datetimerange',
           timeDiff: 60 * 1000
@@ -324,42 +328,42 @@ export default {
       ],
       selectedTimeItems: [
         {
-          label: '默认',
+          label: this.$t('task_info_default'),
           value: 'default',
           spacing: 0
         },
         {
-          label: '最近五分钟',
+          label: this.$t('task_info_five_min'),
           value: '5min',
           spacing: 5 * 60 * 1000
         },
         {
-          label: '最近十五分钟',
+          label: this.$t('task_info_fifteen_min'),
           value: '15min',
           spacing: 15 * 60 * 1000
         },
         {
-          label: '最近三十分钟',
+          label: this.$t('task_info_thirty_min'),
           value: '30min',
           spacing: 30 * 60 * 1000
         },
         {
-          label: '最近一小时',
+          label: this.$t('task_info_last_hour'),
           value: '60min',
           spacing: 60 * 60 * 1000
         },
         {
-          label: '自定义时间',
+          label: this.$t('task_info_custom_time'),
           value: 'custom'
         }
       ],
       selectedRateItems: [
         {
-          label: '5秒',
+          label: this.$t('task_info_five_seconds'),
           value: 'second'
         },
         {
-          label: '1分钟',
+          label: this.$t('task_info_one_min'),
           value: 'minute'
         }
       ],
