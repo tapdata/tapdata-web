@@ -1089,7 +1089,7 @@ export default {
       })
     },
     isShowForceStop(data) {
-      return data.every(t => ['stopping'].includes(t.status))
+      return data?.length && data.every(t => ['stopping'].includes(t.status))
     },
     startDisabled(row) {
       const statusResult = row.statusResult || []
