@@ -35,11 +35,14 @@ $bgColor: (
   disable: #f5f5f5,
   active: #ecf5ff,
   hover: #f5f8ff,
-  main: #fafafa
+  main: #fafafa,
+  form: rgba(239, 241, 244, 0.2)
 );
 
 $borderColor: (
   disable: #d9d9d9,
   normal: #ddd,
-  slight: #f6f7f7
+  slight: #f6f7f7,
+  light: #f2f2f2,
+  form:  rgba(221, 221, 221, 0.4)
 );

@@ -113,7 +113,7 @@
       </ElTableColumn>
       <ElTableColumn :label="$t('connection.operate')" width="200" fixed="right">
         <template slot-scope="scope">
-          <ElLink type="primary" @click="testConnection(scope.row)">{{ $t('connection.testConnection') }} </ElLink>
+          <ElLink type="primary" @click="testConnection(scope.row)">{{ $t('connection_list_test_button') }} </ElLink>
           <ElDivider direction="vertical"></ElDivider>
           <ElLink
             v-readonlybtn="'datasource_edition'"

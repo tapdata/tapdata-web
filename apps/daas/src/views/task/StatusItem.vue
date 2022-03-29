@@ -28,15 +28,6 @@ export default {
       default: false
     }
   },
-  data() {
-    return {
-      statusMap: {
-        running: ['preparing', 'scheduling', 'running', 'stopping', 'wait_run'],
-        not_running: ['edit', 'stop', 'complete'],
-        error: ['error', 'schedule_failed']
-      }
-    }
-  },
   computed: {
     showCount() {
       return this.value.length > 1

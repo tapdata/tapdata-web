@@ -2,8 +2,8 @@
   <div class="card-box p-6">
     <div class="flex justify-content-between align-items-center">
       <div class="info-line align-items-center">
-        <ElTooltip class="item" effect="dark" :content="task.name" placement="top">
-          <span class="mr-4 fs-6 font-color-main info-name">{{ task.name }}</span>
+        <ElTooltip class="item" effect="dark" :content="task.parentTask.name" placement="top">
+          <span class="mr-4 fs-6 font-color-main info-name">{{ task.parentTask.name }}</span>
         </ElTooltip>
 
         <StatusTag
@@ -85,28 +85,28 @@
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_input') }}</span>
         </div>
-        <div class="mb-4 fs-4 font-color-main">{{ overData.inputTotal }}</div>
+        <div class="mb-4 fs-4 font-color-main din-font">{{ overData.inputTotal }}</div>
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-success" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_output') }}</span>
         </div>
-        <div class="mb-6 fs-4 font-color-main">{{ overData.outputTotal }}</div>
+        <div class="mb-6 fs-4 font-color-main din-font">{{ overData.outputTotal }}</div>
         <div class="flex justify-content-between text-center">
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_insert') }}</div>
-            <div class="fs-6 font-color-main">{{ overData.insertedTotal }}</div>
+            <div class="fs-6 font-color-main din-font">{{ overData.insertedTotal }}</div>
           </div>
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_update') }}</div>
-            <div class="fs-6 font-color-main">{{ overData.updatedTotal }}</div>
+            <div class="fs-6 font-color-main din-font">{{ overData.updatedTotal }}</div>
           </div>
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_delete') }}</div>
-            <div class="fs-6 font-color-main">{{ overData.deletedTotal }}</div>
+            <div class="fs-6 font-color-main din-font">{{ overData.deletedTotal }}</div>
           </div>
         </div>
       </div>
-      <div class="flex flex-column flex-fill pl-10" style="height: 250px">
+      <div class="flex flex-column flex-fill ml-10" style="height: 250px">
         <Chart ref="chart" type="line" :data="lineData" :options="lineOptions" class="type-chart h-100"></Chart>
       </div>
       <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
@@ -120,7 +120,9 @@
               :show-text="false"
               :width="50"
             ></ElProgress>
-            <div class="flex justify-content-center position-absolute color-primary fw-bolder">{{ progress }}%</div>
+            <div class="flex justify-content-center position-absolute color-primary fw-bolder din-font">
+              {{ progress }}%
+            </div>
           </div>
           <div v-if="progress === 100" class="font-color-sub mt-3">全量完成时间：{{ formatTime(endTs) }}</div>
           <div v-else class="font-color-sub mt-2">
@@ -129,7 +131,7 @@
         </div>
         <div class="right-box mt-3 grey-background">
           <div class="fw-bold">增量延迟</div>
-          <div class="color-primary fw-bolder fs-5">{{ formatMs(writeData.replicateLag) }}</div>
+          <div class="color-primary fw-bolder fs-5 din-font">{{ formatMs(writeData.replicateLag) }}</div>
           <div class="font-color-sub">增量所处时间点：{{ formatTime(writeData.cdcTime) }}</div>
         </div>
       </div>

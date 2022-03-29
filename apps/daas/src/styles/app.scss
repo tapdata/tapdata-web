@@ -4,6 +4,7 @@
 //@import '~web-core/styles/utilities';
 @import 'utilities';
 @import '~@/assets/style/font/iconfont.css';
+@import '~@/assets/fonts/DIN/index.css';
 
 #app {
   width: 100%;
@@ -54,5 +55,112 @@
   border-radius: 4px;
   box-sizing: border-box;
 }
-input::-webkit-input-placeholder{color: rgba(0,0,0,.25); font-weight: 500} /* 使用webkit内核的浏览器 */
-textarea::-webkit-input-placeholder{color: rgba(0,0,0,.25); font-weight: 500} /* 使用webkit内核的浏览器 */
+input::-webkit-input-placeholder {
+  color: rgba(0, 0, 0, 0.25);
+  font-weight: 500;
+} /* 使用webkit内核的浏览器 */
+textarea::-webkit-input-placeholder {
+  color: rgba(0, 0, 0, 0.25);
+  font-weight: 500;
+} /* 使用webkit内核的浏览器 */
+
+.status-running,
+.status-complete,
+.status-finish,
+.status-finished {
+  color: #178061;
+  background-color: #c4f3cb;
+}
+.status-block {
+  display: inline-block;
+  min-width: 60px;
+  padding: 3px 10px;
+  text-align: center;
+  border-radius: 2px;
+  box-sizing: border-box;
+}
+.status-error {
+  color: #d44d4d;
+  background-color: #ffecec;
+}
+.status-paused {
+  color: #d5760e;
+  background-color: #ffe9cf;
+}
+.status-edit {
+  color: #0083c7;
+  background-color: #d1eefd;
+}
+.status-scheduled,
+.status-scheduling,
+.status-pause {
+  color: #2c65ff;
+  background-color: #ddebff;
+}
+.status-wait_run,
+.status-waiting {
+  color: #c39700;
+  background-color: #fdf1c8;
+}
+.status-pausing,
+.status-stop {
+  color: #d5760e;
+  background-color: #ffe9cf;
+}
+.status-stopping {
+  color: #c39700;
+  background-color: #fdf1c8;
+}
+.status-ready {
+  color: #0083c7;
+  background-color: #d1eefd;
+}
+
+// 无分类列表/详情页面/表单页面
+.section-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0 20px 20px 20px;
+  background-color: #eff1f4;
+  box-sizing: border-box;
+  overflow: hidden;
+  .section-wrap-box {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 20px;
+    border-radius: 4px;
+    background-color: #fff;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  .table-page-main-box {
+    padding: 20px;
+    border-radius: 4px;
+  }
+}
+// 有分类列表
+.classify-wrap {
+  display: flex;
+  flex: 1;
+  padding: 0 20px 20px 20px;
+  background-color: #eff1f4;
+  overflow: hidden;
+  .table-page-container {
+    .table-page-main {
+      .table-page-body {
+        padding: 20px;
+      }
+    }
+  }
+}
+.message-button-cancel {
+  color: #4e5969;
+  border-color: #f2f3f5;
+  background-color: #f2f3f5;
+}
+.message-button-cancel:hover {
+  background-color: #fff;
+  border: 1px solid #2c65ff;
+}

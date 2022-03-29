@@ -485,6 +485,11 @@ export default {
     box-sizing: border-box;
     // background: #eff1f4;
     border: 0;
+    .icon-zhankai2 {
+      &:hover {
+        color: map-get($color, lprimary);
+      }
+    }
   }
   .toggle {
     margin-top: 28px;
@@ -505,7 +510,7 @@ export default {
         font-size: 16px;
         color: map-get($color, primary);
         &:hover {
-          color: #409eff;
+          color: map-get($color, lprimary);
         }
       }
     }

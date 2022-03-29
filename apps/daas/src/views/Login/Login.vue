@@ -139,9 +139,12 @@ export default {
         this.$cookie.set('user_id', data.userId)
         this.$cookie.set('lang', this.langMap[localStorage.getItem('tapdata_localize_lang')] || 'zh-CN')
 
-        history.go(-1)
+        if (window.lastLocationHref) {
+          location.href = window.lastLocationHref
+        }
         setTimeout(() => {
           location.reload()
+          window.lastLocationHref = null
         }, 50)
       } catch (e) {
         let msg = e?.data?.message

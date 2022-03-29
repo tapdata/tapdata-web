@@ -70,6 +70,8 @@ export default {
   message_update_success: '修改成功',
   message_operation_succuess: '操作成功',
   message_operation_error: '操作失敗',
+  message_request_error: '請求數據失敗',
+  message_no_permission: '登錄已過期，請重新登錄',
 
   // 表格
   column_operation: '操作',
@@ -119,6 +121,8 @@ export default {
   page_title_data_search: '數據搜索',
   page_title_data_service: '數據服務',
   page_title_api_publish: 'API發布',
+  page_title_api_publish_create: '創建API發布',
+  page_title_api_publish_edit: '編輯API發布',
   page_title_api_browse: 'API瀏覽',
   page_title_api_test: 'API測試',
   page_title_api_client: 'API客戶端',
@@ -136,6 +140,7 @@ export default {
   page_title_role: '角色管理',
   page_title_setting: '系統設置',
   page_title_license: 'License管理',
+  page_title_back_menu: '返回菜单',
   page_title_custom_node: '自定義節點',
   page_title_account: '個人設置',
 
@@ -571,6 +576,7 @@ export default {
   connection_list_desc:
     '數據源包括數據庫、結構化文件、應用程序RESTful API、自定義接口等類型，必須先創建數據源才能創建遷移或同步任務。更多配置說明，請點擊',
   connection_list_help_doc: '幫助文檔',
+  connection_list_test_button: '連接測試',
 
   connection_form_database_name: '數據庫名稱',
   connection_form_database_username: '賬號',
@@ -808,6 +814,7 @@ export default {
   task_preview_status_preparing: '准备中',
   task_preview_status_scheduling: '調度中',
   task_preview_status_schedule_failed: '調度失敗',
+  task_preview_status_ready: '待啟動',
 
   task_monitor_progress: '任務進度',
   task_monitor_full_sync: '全量同步概覽',
@@ -1781,6 +1788,12 @@ export default {
 
   milestone_list_status_finish: '已完成',
   milestone_list_status_error: '错误',
+  milestone_list_status_waiting: '待執行',
 
-  classification_name_already_exists: '分類名稱已存在'
+  classification_name_already_exists: '分類名稱已存在',
+
+  signin_code: '發送驗證碼',
+  signin_verify_code: '請輸入驗證碼',
+  signin_verify_code_success: '驗證碼發送成功',
+  signin_verify_code_error: '驗證碼發送失敗'
 }

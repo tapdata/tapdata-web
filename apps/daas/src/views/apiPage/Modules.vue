@@ -56,6 +56,7 @@
       </el-table-column>
       <el-table-column :label="$t('modules_header_api_name')">
         <template slot-scope="scope">
+          <div style="white-space: nowrap"></div>
           {{ scope.row.name }}
         </template>
       </el-table-column>
@@ -101,7 +102,7 @@
           {{ scope.row.user }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_last_updated')" prop="last_updated" sortable="custom" width="120">
+      <el-table-column :label="$t('modules_header_last_updated')" prop="last_updated" sortable="custom" width="140">
         <template slot-scope="scope">
           {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
         </template>

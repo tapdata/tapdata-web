@@ -38,6 +38,21 @@
                 />
               </el-input>
             </el-form-item>
+            <el-form-item>
+              <el-row :gutter="10">
+                <el-col :span="17">
+                  <el-input
+                    v-model="form.validateCode"
+                    autocomplete="username"
+                    type="email"
+                    :placeholder="$t('signin_verify_code')"
+                  ></el-input>
+                </el-col>
+                <el-col :span="7">
+                  <ElButton @click="handleSendCode">{{ $t('signin_code') }}</ElButton>
+                </el-col>
+              </el-row>
+            </el-form-item>
             <el-button class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
               {{ $t('app.signIn.nextStep') }}
             </el-button>
@@ -66,6 +81,7 @@ export default {
       form: {
         email: '',
         newPassword: '',
+        validateCode: '',
         location_origin: window.location.origin
       },
       errorMessage: '',
@@ -122,6 +138,37 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+
+    // 发送验证码
+    handleSendCode() {
+      let form = this.form
+      let message = ''
+      if (!form.email || !form.email.trim()) {
+        message = this.$t('app.signIn.email_require')
+      } else if (
+        // eslint-disable-next-line
+        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)
+      ) {
+        message = this.$t('app.signIn.email_invalid')
+      }
+      if (message) {
+        this.errorMessage = message
+        return
+      }
+      let params = {
+        email: this.form.email
+      }
+      this.$api('users')
+        .sendValidateCode(params)
+        .then(res => {
+          if (res) {
+            this.$message.success(this.$t('signin_verify_code_success'))
+          }
+        })
+        .catch(() => {
+          this.$message.success(this.$t('signin_verify_code_error'))
+        })
     },
 
     // 跳转登录

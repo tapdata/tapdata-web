@@ -70,6 +70,8 @@ export default {
   message_update_success: 'Modification succeeded',
   message_operation_succuess: 'The operation succeeded',
   message_operation_error: 'Operation failed',
+  message_request_error: 'Request data failed',
+  message_no_permission: 'Login has expired, please log in again',
 
   // 表格
   column_operation: 'Operate',
@@ -89,7 +91,7 @@ export default {
   //页面标题
   page_title_overview: 'Overview',
   page_title_dashboard: 'Console',
-  page_title_connections: 'Connection management',
+  page_title_connections: 'Connection',
   page_title_connections_create: 'Create a connection',
   page_title_connections_edit: 'Edit connections',
   page_title_data_pipeline: 'Data Pipeline',
@@ -121,6 +123,8 @@ export default {
   page_title_data_search: 'Data search',
   page_title_data_service: 'Data Service',
   page_title_api_publish: 'API publish',
+  page_title_api_publish_create: 'Create API Publish',
+  page_title_api_publish_edit: 'Edit API Publish',
   page_title_api_browse: 'API browse',
   page_title_api_test: 'API test',
   page_title_api_client: 'API client',
@@ -128,7 +132,7 @@ export default {
   page_title_api_stat: 'API statistics',
   page_title_api_audit: 'API Audit',
   page_title_api_monitor: 'API monitor',
-  page_title_system: 'System Management',
+  page_title_system: 'System',
   page_title_data_metadata: 'Metadata management',
   page_title_schedule: 'Scheduling tasks',
   page_title_schedule_history: 'Scheduling History',
@@ -138,6 +142,7 @@ export default {
   page_title_role: 'Role management',
   page_title_setting: 'System settings',
   page_title_license: 'License management',
+  page_title_back_menu: 'Back menu',
   page_title_custom_node: 'Custom Node',
   page_title_account: 'Personal settings',
 
@@ -569,6 +574,7 @@ export default {
   connection_list_desc:
     'Data sources include types such as databases, structured files, application RESTful APIs, custom interfaces, etc. A data source must be created before a migration or synchronization task can be created. For more configuration instructions, please click ',
   connection_list_help_doc: 'Help Documentation',
+  connection_list_test_button: 'Test',
 
   // 连接管理
   connection_form_change: 'change',
@@ -840,6 +846,7 @@ export default {
   task_preview_status_preparing: 'Preparing',
   task_preview_status_scheduling: 'Scheduling',
   task_preview_status_schedule_failed: 'Scheduling failed',
+  task_preview_status_ready: 'Ready',
 
   task_monitor_progress: 'Task progress',
   task_monitor_full_sync: 'Full synchronization overview',
@@ -1855,6 +1862,12 @@ export default {
 
   milestone_list_status_finish: 'finish',
   milestone_list_status_error: 'Error',
+  milestone_list_status_waiting: 'Waiting',
 
-  classification_name_already_exists: 'Classification name already exists'
+  classification_name_already_exists: 'Classification name already exists',
+
+  signin_code: 'Send verification code',
+  signin_verify_code: 'Please enter the verification code',
+  signin_verify_code_success: 'Verification code sent successfully',
+  signin_verify_code_error: 'Failed to send verification code'
 }

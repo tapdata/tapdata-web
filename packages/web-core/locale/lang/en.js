@@ -875,7 +875,7 @@ const en = {
     reloadTittle: 'Reload schema',
     desc: 'Source Connection includes database, files, RESTful API, custom API etc. You must create at least one data source before you can create migration or replication job. In addition to the standard configuration, you can also configure whether to automatic/manual reload database schema, time zone, and table filter settings. See more details click',
     deteleDatabaseTittle: 'Do you want to delete the connection?',
-    deteleDatabaseMsg: 'After deleting connection XXX, this connection cannot be restored. ',
+    deteleDatabaseMsg: 'After deleting connection xxx, this connection cannot be restored. ',
     reloadMsg: 'It may take a long time to reload schema, are you sure to reload the schema of the database',
     checkMsg: 'This data source is used by transmission job or API, cannot be deleted',
     copyFailedMsg:
