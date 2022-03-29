@@ -410,7 +410,7 @@ export default {
          * @param nodeId
          * @returns {Promise<{}|*>}
          */
-        loadNodeFieldNames: async ({ field }, nodeId) => {
+        loadNodeFieldNames: async ({ field }, nodeId, defaultValueType) => {
           if (!nodeId) {
             const id = field.form.values.id
             const allEdges = this.$store.getters['dataflow/allEdges']
@@ -427,8 +427,21 @@ export default {
             // eslint-disable-next-line no-console
             console.error('nodeSchema', e)
           }
+          let primaryKeys = []
+          let result = []
+          for (let i = 0; i < fields.length; i++) {
+            const f = fields[i]
+            if (f.primary_key_position > 0) {
+              primaryKeys.push(f.field_name)
+            }
+            result.push(f.field_name)
+          }
+          if (field.value && !field.value.length && defaultValueType === 'primaryKey') {
+            field.setInitialValue(primaryKeys)
+            field.validate()
+          }
 
-          return fields ? fields.map(item => item.field_name) : []
+          return result
         },
         getMergeItemsFromSourceNode(field, sourceNodes) {
           let mergeList = field.value || []
