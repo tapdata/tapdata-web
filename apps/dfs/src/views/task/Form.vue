@@ -873,6 +873,12 @@ export default {
         this.dataSourceModel['target_databaseType'] = data.value
         this.getConnection(this.getWhere('target'), 'target_connectionId', true)
       }
+      if (field === 'target_connectionId') {
+        if (this.dataSourceModel['target_databaseType'] === 'vika' && data.value) {
+          // vika clear tableOperations
+          this.transferData.tableOperations = []
+        }
+      }
     },
     getSteps() {
       this.steps = []
