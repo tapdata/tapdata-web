@@ -129,7 +129,7 @@
           {{ row.createTime ? $moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="180" fixed="right">
+      <el-table-column :label="$t('column_operation')" width="270" fixed="right">
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
@@ -183,6 +183,10 @@
             >
               {{ $t('task_list_button_schedule') }}
             </ElLink> -->
+            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetail(row)">
+              {{ $t('task_list_button_monitor') }}
+            </ElLink>
+            <ElDivider direction="vertical"></ElDivider>
             <el-dropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
               <ElLink type="primary" class="rotate-90">
                 <!-- {{ $t('button.more') }} -->
