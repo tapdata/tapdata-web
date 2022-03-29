@@ -267,6 +267,50 @@
     </el-dialog>
     <DownAgent ref="agentDialog" type="taskRunning"></DownAgent>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
+    <Drawer class="task-drawer" :visible.sync="isShowDetails">
+      <div class="task-drawer-wrap" v-loading="previewLoading">
+        <header class="header mb-3">
+          <div class="tab pb-3">
+            <div class="img-box">
+              <img src="../../../assets/images/migrate/headImage.png" />
+            </div>
+            <div class="content">
+              <div class="name fs-6">
+                <el-tooltip class="item" effect="dark" :content="previewData.name" placement="top-start">
+                  <span> {{ previewData.name }}</span>
+                </el-tooltip>
+              </div>
+              <div class="fs-8 mt-2 mb-2 desc">
+                {{ $t('task_details_desc') }}: <span>{{ previewData.desc }}</span>
+              </div>
+              <div class="status">
+                <!-- <img :src="getSatusImgSrc(previewData.status)" alt="" /> -->
+                <span :class="['status-' + previewData.status, 'status-block']">
+                  {{ $t('task_preview_status_' + previewData.status) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </header>
+        <ul class="info-list">
+          <li v-for="item in previewList" :key="item.label">
+            <!-- {{ previewData[item] }} -->
+            <template v-if="!!item.value">
+              <img class="label-img" :src="getImgByData(item.label)" />
+              <div class="label-text">
+                <div class="label">{{ $t('task_preview_' + item.label) }}:</div>
+                <div
+                  class="value align-items-center align-middle"
+                  :class="{ 'align-top': item.value && item.value.length > 15 }"
+                >
+                  {{ item.value }}
+                </div>
+              </div>
+            </template>
+          </li>
+        </ul>
+      </div>
+    </Drawer>
   </section>
 </template>
 
@@ -281,15 +325,17 @@ import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 // import VIcon from '@/components/VIcon'
 import StatusItem from '../StatusItem'
+import Drawer from '@/components/Drawer'
 import { ETL_STATUS_MAP } from '@/const'
 import { getSubTaskStatus } from '../util'
 
 let timeout = null
 export default {
   name: 'TaskList',
-  components: { FilterBar, TablePage, DownAgent, SkipError, StatusItem },
+  components: { FilterBar, TablePage, DownAgent, SkipError, StatusItem, Drawer },
   data() {
     return {
+      isShowDetails: false,
       filterItems: [],
       restLoading: false,
       searchParams: {
@@ -1071,6 +1117,54 @@ export default {
       return !data
         .filter(t => t.count > 0)
         .every(t => ['ready', 'edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed'].includes(t.status))
+    },
+    // 打开预览
+    handlePreview(id) {
+      this.isShowDetails = true
+      this.getPreviewData(id)
+    },
+    async getPreviewData(id) {
+      this.loading = true
+      this.$api('Task')
+        .findTaskDetailById([id])
+        .then(res => {
+          if (res) {
+            let previewData = []
+            this.previewData = res.data
+            for (let item in res.data) {
+              if (item === 'setting') {
+                let setting = res.data[item]
+                res.data['sync_type'] = setting.sync_type
+                item = 'sync_type'
+              }
+              if (
+                [
+                  'createAt',
+                  'startTime',
+                  'initStartTime',
+                  'cdcStartTime',
+                  'initStartTime',
+                  'taskFinishTime',
+                  'eventTime'
+                ].includes(item)
+              ) {
+                res.data[item] = this.$moment(res.data[item]).format('YYYY-MM-DD HH:mm:ss')
+              }
+
+              if (
+                !['customId', 'lastUpdAt', 'userId', 'lastUpdBy', 'lastUpdBy', 'status', 'desc', 'name'].includes(item)
+              ) {
+                previewData.push({ label: item, value: res.data[item] || '-' })
+              }
+
+              // this.getSatusImgSrc(res.data.status)
+            }
+            this.previewList = previewData
+          }
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     getFilterItems() {
       this.filterItems = [

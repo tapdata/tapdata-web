@@ -251,6 +251,9 @@
   color: map-get($color, lprimary);
   background-color: initial;
 }
+.el-button--text:focus {
+  background-color: initial!important;
+}
 .el-button--text.is-disabled {
   color: map-get($color, disable);
 }

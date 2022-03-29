@@ -6,7 +6,7 @@
           <div class="dashboard-col-box">
             <div class="dashboard-title fs-7">{{ $t('dashboard_' + item.key) }}</div>
             <div class="dashboard-label fs-5 pt-4 text-center">{{ $t('dashboard_current_' + item.key) }}</div>
-            <div class="dashboard-num pt-4 pb-2 text-center">{{ item.value }}</div>
+            <div class="dashboard-num pt-4 pb-2 text-center din-font">{{ item.value }}</div>
           </div>
         </el-col>
       </el-row>
@@ -540,7 +540,7 @@ export default {
             if (val === 1.1) {
               val = 1
             }
-            let html = `<div style="text-align: center;"> ${params.name}<div>${val}</div></div>`
+            let html = `<div style="text-align: center;"> ${params.name}<div style="font-family: 'DIN'">${val}</div></div>`
             return html
           }
         },

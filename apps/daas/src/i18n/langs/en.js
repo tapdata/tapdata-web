@@ -91,7 +91,7 @@ export default {
   //页面标题
   page_title_overview: 'Overview',
   page_title_dashboard: 'Console',
-  page_title_connections: 'Connection management',
+  page_title_connections: 'Connection',
   page_title_connections_create: 'Create a connection',
   page_title_connections_edit: 'Edit connections',
   page_title_data_pipeline: 'Data Pipeline',
@@ -132,7 +132,7 @@ export default {
   page_title_api_stat: 'API statistics',
   page_title_api_audit: 'API Audit',
   page_title_api_monitor: 'API monitor',
-  page_title_system: 'System Management',
+  page_title_system: 'System',
   page_title_data_metadata: 'Metadata management',
   page_title_schedule: 'Scheduling tasks',
   page_title_schedule_history: 'Scheduling History',
@@ -574,6 +574,7 @@ export default {
   connection_list_desc:
     'Data sources include types such as databases, structured files, application RESTful APIs, custom interfaces, etc. A data source must be created before a migration or synchronization task can be created. For more configuration instructions, please click ',
   connection_list_help_doc: 'Help Documentation',
+  connection_list_test_button: 'Test',
 
   // 连接管理
   connection_form_change: 'change',

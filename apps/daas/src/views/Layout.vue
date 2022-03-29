@@ -193,7 +193,7 @@
       display: none;
     }
     .menu {
-      width: 260px;
+      width: 200px;
       //flex: 1;
       padding-bottom: 48px;
       background: #f7f8fa;
@@ -244,7 +244,6 @@
       .el-menu {
         background-color: initial;
         .el-menu-item {
-          border-left: 0;
           &.is-active {
             background-color: rgba(44, 101, 255, 0.05);
             .submenu-item {
