@@ -255,7 +255,6 @@ export default {
         }
       }
       this.callback()
-      this.$ws.on('open', this.callback)
     }
   }
 }
