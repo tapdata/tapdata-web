@@ -1318,7 +1318,7 @@ export default {
       display: flex;
       width: 20px;
       justify-content: center;
-      align-items: start;
+      align-items: flex-start;
       background: #fff;
       //border: 1px solid #dedee4;
       border-radius: 3px;

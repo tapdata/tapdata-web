@@ -575,7 +575,6 @@ export default {
       })
     },
     changeLanguage(lang) {
-      debugger
       localStorage.setItem('tapdata_localize_lang', lang)
       Cookie.set('lang', LanguagesKey[lang])
       location.reload()
