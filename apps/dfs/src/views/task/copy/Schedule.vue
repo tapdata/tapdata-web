@@ -209,6 +209,10 @@ export default {
     isSupport() {
       const type = this.task?.stages?.find(t => t.outputLanes.length)?.database_type
       return this.supportList.includes(type)
+    },
+    vikaMappings() {
+      let stages = this.task?.stages || []
+      return stages.find(t => !!t.inputLanes.length)?.vikaMappings || {}
     }
   },
   watch: {
@@ -422,7 +426,11 @@ export default {
           return {
             total: res.total,
             data: res.items.map(item => {
-              return Object.assign(item, item.statsData)
+              let obj = Object.assign(item, item.statsData)
+              if (obj.targetDatabaseType === 'vika') {
+                obj.targetTableName = this.vikaMappings[obj.sourceTableName]?.name
+              }
+              return obj
             })
           }
         })
