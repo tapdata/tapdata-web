@@ -417,7 +417,7 @@ export default {
         return target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source)
       }
 
-      return true
+      return false
     },
 
     initNodeView() {
@@ -1231,6 +1231,9 @@ export default {
     },
 
     nodeELIsConnected(s, t) {
+      const connections = this.jsPlumbIns.getConnections('*')
+      // eslint-disable-next-line
+      console.log('connections', connections)
       return this.jsPlumbIns.getConnections('*').some(c => `${c.sourceId}` === s && `${c.targetId}` === t)
     },
 

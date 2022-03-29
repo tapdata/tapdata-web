@@ -453,6 +453,29 @@ export default {
             }
           })
           field.value = list
+        },
+
+        /**
+         * 获取源节点的字段，和sourceNode搭配使用
+         * @param field
+         * @param nodeId
+         * @returns {Promise<*[]>}
+         */
+        loadSourceNodeFieldNames: async ({ field }, nodeId) => {
+          const sourceNode = field.query('sourceNode').get('value')
+
+          if (!sourceNode?.length) return []
+
+          nodeId = sourceNode[0].value
+
+          try {
+            const data = await metadataApi.nodeSchema(nodeId)
+            return (data?.[0]?.fields || []).map(item => item.field_name)
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('nodeSchema', e)
+            return []
+          }
         }
       }
     }
