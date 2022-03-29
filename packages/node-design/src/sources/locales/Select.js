@@ -3,10 +3,8 @@ export const Select = {
     title: '选择框',
     settings: {
       'x-component-props': {
-        mode: {
-          title: '模式',
-          dataSource: ['多选', '标签', '单选']
-        },
+        multiple: '多选',
+        allowCreate: '允许新增',
         autoClearSearchValue: {
           title: '选中自动清除',
           tooltip: '仅在多选或者标签模式下支持'
@@ -43,10 +41,8 @@ export const Select = {
     title: 'Select',
     settings: {
       'x-component-props': {
-        mode: {
-          title: 'Mode',
-          dataSource: ['Multiple', 'Tags', 'Single']
-        },
+        multiple: 'Multiple',
+        allowCreate: 'Allow Create',
         autoClearSearchValue: {
           title: 'Auto Clear Search Value',
           tooltip: 'Only used to multiple and tags mode'

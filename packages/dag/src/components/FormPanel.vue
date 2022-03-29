@@ -161,6 +161,12 @@ export default {
         this.schema = {
           type: 'object',
           properties: {
+            // 自定节点附加属性
+            sourceNode: {
+              type: 'array',
+              'x-visible': false,
+              'x-reactions': '{{getSourceNode}}'
+            },
             form: JSON.parse(JSON.stringify(schema.schema))
           }
         }
