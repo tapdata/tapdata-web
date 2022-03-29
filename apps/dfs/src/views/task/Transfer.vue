@@ -169,7 +169,11 @@ export default {
           if (resFlag) {
             this.progress = 0
             this.reloadCount++
-            this.reloadApi('first')
+            this.reloadApi()
+            const { target_databaseType } = this.dataSourceModel || {}
+            if (target_databaseType === 'vika') {
+              this.reloadApiVika()
+            }
           }
         })
       })
@@ -190,6 +194,16 @@ export default {
           // this.setTableAndProgress(data)
         })
         .catch(this.getSchemaCatch)
+    },
+    reloadApiVika() {
+      let params = {
+        loadCount: 0,
+        loadFieldsStatus: 'loading'
+      }
+      const { target_connectionId } = this.dataSourceModel || {}
+      this.$axios.patch('tm/api/Connections/' + target_connectionId, params).then(data => {
+        this.$refs.test.start(data, false, true)
+      })
     },
     getSchemaProgress(ignore = false) {
       if (!ignore && !this.reloadLoading) {
