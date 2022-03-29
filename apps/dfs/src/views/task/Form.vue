@@ -1235,7 +1235,6 @@ export default {
     },
     //获取schema
     getSchema() {
-      console.log('this.transferData', this.transferData)
       let id = this.dataSourceModel.source_connectionId || ''
       this.$nextTick(() => {
         this.$refs.transfer.getTable(id, this.settingModel.bidirectional)
