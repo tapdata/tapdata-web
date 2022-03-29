@@ -1521,8 +1521,7 @@ export default {
       return this.form
     },
     vikaSaveTableDisabled() {
-      let { vikaForm, form } = this
-      return !vikaForm.table || form.vikaMappings[vikaForm.originalTableName]?.id === vikaForm.currentNode?.data?.id
+      return !this.vikaForm.table
     },
     vikaSaveTable() {
       let isInclude = false
@@ -1530,8 +1529,8 @@ export default {
         if (el.originalTableName === this.vikaForm.originalTableName) {
           el.tableName = this.vikaForm.table
           isInclude = true
-          // 清空之前的设置
-          this.fieldProcessMethod('all')
+          // 清空字段处理器
+          this.$emit('update:field_process', [])
         }
       })
       if (!isInclude) {

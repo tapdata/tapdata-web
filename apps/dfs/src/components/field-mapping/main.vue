@@ -9,7 +9,7 @@
     :fieldProcessMethod="updateFieldProcess"
     :updateMetadata="updateMetadata"
     :hiddenFieldProcess="false"
-    :field_process="field_process"
+    :field_process.sync="field_process"
     :transform="transform"
     v-bind="$attrs"
     @row-click="saveOperations"
@@ -266,7 +266,7 @@ export default {
             t_isScaleEdit: true //默认不能编辑
           }
           //检查当前name个数
-          if (item.temporary_field_name === field.field_name) {
+          if (item.temporary_field_name === field.field_name && !item.is_deleted) {
             fieldMappingTableData.push(Object.assign({}, item, node))
           }
         })
