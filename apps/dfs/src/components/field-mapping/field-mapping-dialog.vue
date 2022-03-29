@@ -357,7 +357,7 @@
       :close-on-press-escape="false"
     >
       <div class="table-box">
-        <el-form
+        <ElForm
           :rules="changeTableNameFormRules"
           ref="changeTableNameFormRef"
           :model="changeTableNameForm"
@@ -365,10 +365,18 @@
           style="width: 100%"
           @submit.prevent.stop
         >
-          <ElInput v-model="changeTableNameForm.new" size="mini" maxlength="50" show-word-limit class="mb-3"></ElInput>
-          <VIcon class="color-primary" size="14">info</VIcon>
-          <span>{{ $t('task_mapping_dialog_rename_a_single_table_input_desc') }}</span>
-        </el-form>
+          <ElFormItem props="new">
+            <ElInput
+              v-model="changeTableNameForm.new"
+              size="mini"
+              maxlength="50"
+              show-word-limit
+              class="mb-3"
+            ></ElInput>
+            <VIcon class="color-primary" size="14">info</VIcon>
+            <span>{{ $t('task_mapping_dialog_rename_a_single_table_input_desc') }}</span>
+          </ElFormItem>
+        </ElForm>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="changeTableNameForm.visible = false">{{ $t('button_cancel') }}</el-button>
@@ -453,7 +461,7 @@
               <el-option
                 :label="item.dbType"
                 :value="item.dbType"
-                v-for="(item, index) in sourceTypeMapping"
+                v-for="(item, index) in typeMappingSource"
                 :key="index"
                 :disabled="!!batchFieldTypeForm.list.find(t => t.sourceType === item.dbType)"
               ></el-option>
@@ -595,9 +603,10 @@ export default {
       searchTable: '',
       loading: false,
       loadingPage: false,
-      sourceTypeMapping: [],
-      targetTypeMapping: [],
+      sourceTypeMappingCurrent: [],
+      targetTypeMappingCurrent: [],
       typeMapping: [],
+      typeMappingSource: [],
       currentTypeRules: [],
       defaultFieldMappingNavData: '',
       defaultFieldMappingTableData: '',
@@ -720,8 +729,8 @@ export default {
             .then(({ data, target, source }) => {
               this.target = target
               this.fieldMappingTableData = data
-              this.sourceTypeMapping = this.getTypeMapping(source)
-              this.targetTypeMapping = this.getTypeMapping(target)
+              this.sourceTypeMappingCurrent = this.getTypeMapping(source)
+              this.targetTypeMappingCurrent = this.getTypeMapping(target)
               this.initShowEdit()
               this.defaultFieldMappingTableData = JSON.parse(JSON.stringify(this.fieldMappingTableData)) //保留一份原始数据 查询用
             })
@@ -755,8 +764,9 @@ export default {
     initTypeMapping() {
       this.$nextTick(() => {
         this.typeMappingMethod &&
-          this.typeMappingMethod(this.selectRow).then(data => {
-            this.typeMapping = data
+          this.typeMappingMethod(this.selectRow).then(({ source, target }) => {
+            this.typeMappingSource = source
+            this.typeMapping = target
           })
       })
     },
@@ -1213,10 +1223,10 @@ export default {
       } else this.currentTypeRules = '' //清除上一个字段范围
     },
     initBatchDataType(val, item) {
-      let { typeMapping, targetTypeMapping } = this
+      let { typeMapping, targetTypeMappingCurrent } = this
       let target = Object.assign(
         {},
-        targetTypeMapping.find(type => type.dbType === val) || {},
+        targetTypeMappingCurrent.find(type => type.dbType === val) || {},
         typeMapping.find(type => type.dbType === val) || {}
       )
       if (!target) {

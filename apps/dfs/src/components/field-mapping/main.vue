@@ -326,8 +326,16 @@ export default {
     },
     //获取typeMapping
     async getTypeMapping(row) {
-      let data = await this.$axios.get('tm/api/TypeMappings/dataType?databaseType=' + row.sinkDbType)
-      return data
+      let { sourceDbType, sinkDbType } = row || {}
+      let source = []
+      let target = []
+      if (sourceDbType) {
+        source = await this.$axios.get('tm/api/TypeMappings/dataType?databaseType=' + sourceDbType)
+      }
+      if (sinkDbType) {
+        target = await this.$axios.get('tm/api/TypeMappings/dataType?databaseType=' + sinkDbType)
+      }
+      return { source, target }
     },
     //保存字段映射操作
     saveOperations(row, operations, target) {
