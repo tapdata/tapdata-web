@@ -146,7 +146,7 @@ export default {
               }
             }
           }
-        },
+        } /*,
         mysql: {
           isOpenAutoDDL: {
             title: this.$t('task_setting_automatic_ddl'), //仅支持MySQL
@@ -162,7 +162,7 @@ export default {
               }
             }
           }
-        }
+        }*/
       }
       let repeatNameMessage = this.$t('task_form_error_name_duplicate')
       //默认配置
@@ -593,6 +593,25 @@ export default {
         target = mapping[type] || {}
       }
       config.properties.layout.properties = Object.assign(config?.properties?.layout?.properties, target)
+
+      // AutoDDL
+      if (type === sourceType && ['mysql', 'oracle'].includes(type)) {
+        config.properties.layout.properties.isOpenAutoDDL = {
+          title: this.$t('task_setting_automatic_ddl'),
+          type: 'boolean',
+          'x-decorator': 'FormItem',
+          'x-component': 'Switch',
+          'x-reactions': {
+            dependencies: ['sync_type'],
+            fulfill: {
+              state: {
+                visible: '{{$deps[0] !== "initial_sync"}}' // 只有增量或全量+增量支持
+              }
+            }
+          }
+        }
+      }
+
       //源表连接开启了日志挖掘功能
       if (this.dataSourceData?.shareCdcEnable) {
         config.properties.layout.properties = Object.assign(config?.properties?.layout?.properties, shareCdcEnable)
