@@ -584,7 +584,7 @@ export default {
           // 当stage存在syncObjects字段说明是目标节点
           let obj = stg.syncObjects[0]
           let tables = obj.objectNames || []
-          let tableOperations = stg.tableOperations
+          let tableOperations = stg.tableOperations || []
           tables.forEach(t => {
             // 迁移时，可以同时从目标节点获取源和目标的表名，匹配目标表名时注意大小写和前后缀配置
             tableNames.push(t)
