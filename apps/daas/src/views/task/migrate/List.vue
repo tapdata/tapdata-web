@@ -398,6 +398,7 @@ export default {
         { label: this.$t('task_preview_status_running'), value: 'running' },
         { label: this.$t('task_preview_status_stop'), value: 'stop' },
         { label: this.$t('task_preview_status_edit'), value: 'edit' },
+        { label: this.$t('task_preview_status_ready'), value: 'ready' },
         { label: this.$t('task_preview_status_error'), value: 'error' },
         { label: this.$t('task_preview_status_complete'), value: 'complete' }
       ]
