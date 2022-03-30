@@ -123,7 +123,12 @@
             :label="$t('task_monitor_sync_content')"
             name="content"
           >
-            <FieldMapping ref="fieldMapping" :readOnly="true" :field_process="field_process"></FieldMapping>
+            <FieldMapping
+              ref="fieldMapping"
+              :readOnly="true"
+              :dataSourceModel="task ? task.dataSourceModel : {}"
+              :field_process="field_process"
+            ></FieldMapping>
           </ElTabPane>
         </ElTabs>
       </div>

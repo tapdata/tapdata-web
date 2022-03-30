@@ -340,6 +340,12 @@ export default {
     loadNotices() {
       this.notices = [
         {
+          id: 13,
+          type: '',
+          name: 'Tapdata Cloud 2.1.2 版本发布啦！',
+          time: '2022-03-30 18:00:00'
+        },
+        {
           id: 12,
           type: '',
           name: 'Tapdata Cloud 2.1.1 版本发布啦！',

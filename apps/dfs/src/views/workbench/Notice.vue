@@ -847,7 +847,7 @@
           继 2.1.0 版本首次实现云数据库接入，Tapdata Cloud 持续发力，本次更新中云数据库再下五城，新增支持 TencentDB for
           MySQL、TencentDB for MariaDB、TencentDB for PG、TencentDB for SQLServer、TencentDB MongoDB 作为源和目标，
           <span class="fw-bold font-color-main"
-            >数据源据点数量扩张至<span class="fs-6" style="font-family: DIN;color: rgb(0, 122, 181)">28</span></span
+            >数据源据点数量扩张至<span class="fs-6" style="font-family: DIN; color: rgb(0, 122, 181)">28</span></span
           >
           。放大就看 Tapdata Cloud “破壁行动”最新战绩 👇：
         </div>
@@ -992,6 +992,178 @@
       </div>
     </div>
   </div>
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 13">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span
+          >Tapdata Cloud 2.1.2 来啦：大波细节已就绪！字段类型可批量修改、支持微信扫码登录、新增支持 Vika 为目标</span
+        >
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2022-03-30</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-4">需求持续更新，优化一刻不停——Tapdata Cloud 2.1.2 版来啦！</div>
+        <div class="mb-4 line-height-2">
+          最新发布的这一版本中，新增支持 Vika
+          为目标，为快速导入数据，利用维格表实现零代码协作系统搭建“架桥”。同时继续秉承用户体验优先的迭代导向，开放支持微信扫码注册和登录，从细节处着眼，重点提升
+          Tapdata Cloud 在实际操作层面的易用性。
+        </div>
+        <div class="mb-2 p-4" style="background-color: rgb(241, 248, 255)">
+          <div class="mb-4">更新速览👇</div>
+          <div class="ml-2 mb-4">
+            1.<span class="fw-bold font-color-main">新增支持 Vika 为目标</span
+            >：打通与「新一代团队数据协作+项目管理神器」之间的实时数据通路，助力进一步提升业务转化与协同效率；
+          </div>
+          <div class="ml-2 mb-4">
+            2.
+            <span class="fw-bold font-color-main">字段类型可批量修改</span
+            >：字段映射过程新增类型批量修改能力，修改类型时可选择应用于当前任务全部表；
+          </div>
+          <div class="ml-2 mb-4">
+            3.
+            <span class="fw-bold font-color-main">扫码登录功能上线</span
+            >：支持微信扫码注册和登录，一键操作，即扫即用更快捷；
+          </div>
+          <div class="ml-2 mb-4">
+            4.
+            <span class="fw-bold font-color-main">更多细节优化</span>：
+            <p class="mt-2">✔️短信通知策略优化，短信通知默认关闭，可根据需要自行打开</p>
+            <p class="mt-2">✔️创建连接时支持通过连接类型、连接名称，快速搜索并定位数据源和目标</p>
+          </div>
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">01</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>开始支持 Vika 作为目标</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p class="mb-2">数据连接又添新成员</p>
+              <p>轻量+轻量=更加易用</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          作为国内首家异构数据库实时同步云平台，Tapdata Cloud
+          不断拓展能够支持的数据连接版图，力求满足用户的多样化数据源和目标需求，真正实现数据实时同步“全面破壁”。
+        </div>
+        <div class="mb-4 line-height-2">
+          本次更新中新增的数据目标 Vika
+          维格表，将底层的可视化数据库、电子表格、实时网络协同、低代码开发技术四合为一，让数据管理变得轻量化。当轻量化的异构数据实时同步工具，遇上轻量化的数据管理工具，就会在数字化新时期创造出
+          1+1＞2 的效果。用户借助 Tapdata Cloud
+          可以快速实现向维格表导入业务系统等数据，为更敏捷地使用维格表展开团队数据协作和项目管理提供稳定、可靠的数字基础。至此，Tapdata
+          Cloud 数据连接据点数量扩张至
+          <span class="fw-bold font-color-main"
+            ><span class="fs-6" style="font-family: DIN; color: rgb(0, 122, 181)">29</span></span
+          >
+          。放大就看 Tapdata Cloud “破壁行动”最新战绩 👇：
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.2/01.jpg" alt="" />
+        </div>
+        <div class="my-4">
+          另附操作演示，点击查看如何<span class="font-color-main fw-bold">将学生成绩导入 Vika</span> ：
+        </div>
+        <div>
+          <!--<img src="../../../public/images/notice/v2.1.2/02.gif" alt="" />-->
+          <video src="../../../public/images/notice/v2.1.2/demo.mp4" controls="controls"></video>
+        </div>
+        <div class="text-center color-disable">操作演示：将学生成绩导入 Vika</div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">02</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>支持字段类型批量修改</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>字段类型转换异常导致任务出错怎么办？现在可以手动修改啦！</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          Tapdata Cloud 2.1.2
+          针对历史版本中，数据迁移时会遇到的因字段类型转换出现异常，而导致任务出错的问题，开始支持批量修改字段类型（修改时可选择应用于当前任务全部表），为用户提供手动修改字段类型转换映射关系的能力。
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.2/03.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">03</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>实现扫码注册和登录</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>即扫即用，快捷随心</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">账号密码容易混，短信验证还要等，想要快捷登录怎么办？</div>
+        <div class="mb-4 line-height-2">
+          📣从现在开始，微信扫一扫，即可开启你的 Tapdata Cloud 异构数据实时同步之旅——新版本 Tapdata Cloud
+          支持新用户通过微信扫码实现一键快速注册、登录，让旅程的第一步更便捷；同时也支持老用户微信关联绑定已有账号，优化登录体验。
+        </div>
+        <div class="mb-4 line-height-2">
+          初次扫码登录即可同步关注 Tapdata 公众号，第一时间 get 一线案例分析、新版操作指南等一手资料，热门讯息尽在掌握。
+        </div>
+        <div class="mb-4">
+          <img src="../../../public/images/notice/v2.1.2/04.png" alt="" />
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.2/05.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">04</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>更多细节优化</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>微小但贴心，使用体验不断升级</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">用户导向，细节至上——这一次，我们对短信通知策略，以及连接创建过程做了优化。</div>
+        <div class="mb-4 font-color-main fs-7 fw-bold"><span class="dot mr-4"></span>自助开关短信通知权限</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.2/06.png" alt="" />
+        </div>
+        <div class="mb-4 line-height-2">
+          Agent 离线提示、Agent 运行通知、任务异常告警——不想被被非必要的短信提醒频繁打扰？
+        </div>
+        <div class="mb-4 line-height-2">
+          新版本的短信通知策略已优化，新用户短信通知将默认关闭（老用户的设置保持不变），可以根据实际需要在通知设置中，自行选择打开或保持关闭状态。
+        </div>
+        <div class="mb-4 font-color-main fs-7 fw-bold"><span class="dot mr-4"></span>更快定位连接类型</div>
+        <div class="mb-4">
+          <img src="../../../public/images/notice/v2.1.2/07.png" alt="" />
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.2/08.png" alt="" />
+        </div>
+        <div class="mb-4 line-height-2">
+          所谓版图之大，一屏装不下，随着 Tapdata Cloud
+          支持的数据连接类型不断扩展，在创建连接的过程中快速定位数据源和目标的需求也被提上了日程。
+        </div>
+        <div class="mb-4 line-height-2">
+          新版本支持在创建连接时，通过连接类型筛选，以及连接名称模糊查询，快速搜索并定位数据源和目标——一切改变，都是为了更方便地使用。
+        </div>
+        <div class="line-height-2">
+          重视成长路上收获的每一条反馈，不断完善，持续优化，Tapdata一直在路上。始于细节，成于大美，期待下一个新版本再和大家见面
+          <img
+            src="../../../public/images/notice/love.png"
+            alt=""
+            style="width: 20px; height: 20px; vertical-align: text-bottom"
+          />。
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -1016,6 +1188,9 @@ export default {
 .notice-body {
   background: #fff;
   img {
+    width: 100%;
+  }
+  video {
     width: 100%;
   }
   .notice-body__step {
@@ -1245,5 +1420,13 @@ export default {
 }
 .list-style-disc {
   list-style: disc;
+}
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  display: inline-block;
+  background: #000;
+  vertical-align: middle;
 }
 </style>
