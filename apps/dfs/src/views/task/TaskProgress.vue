@@ -41,21 +41,21 @@
         <div class="task-progress-search-bar">
           <ul class="search-bar">
             <li class="item">
-              <el-input
+              <ElInput
                 clearable
                 class="input-with-select"
                 size="mini"
                 v-model="searchParams.keyword"
                 placeholder="请输入表名称"
               >
-              </el-input>
+              </ElInput>
             </li>
             <li class="ml-6">
               状态：
               <!-- @input="table.fetch(1)" -->
-              <el-select clearable size="mini" v-model="searchParams.metaType">
-                <el-option v-for="opt in typeList" :key="opt.value" :label="opt.label" :value="opt.value"></el-option>
-              </el-select>
+              <ElSelect clearable size="mini" v-model="searchParams.metaType">
+                <ElOption v-for="opt in typeList" :key="opt.value" :label="opt.label" :value="opt.value"></ElOption>
+              </ElSelect>
             </li>
           </ul>
         </div>

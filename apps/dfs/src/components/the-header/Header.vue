@@ -11,7 +11,7 @@
           <span>社区</span>
         </div> -->
         <!--        <div class="mr-6 pointer" @click="command('questions')">问答支持</div>-->
-        <el-popover placement="top-start" width="400" min-width="0" trigger="click">
+        <ElPopover placement="top-start" width="400" min-width="0" trigger="click">
           <div class="flex justify-content-between text-center">
             <div>
               <img style="width: 120px; height: 120px" src="../../../public/images/wx_user_support.png" alt="" />
@@ -28,7 +28,7 @@
             <VIcon class="mr-2" size="17">question</VIcon>
             <span>{{ $t('header_question') }}</span>
           </div>
-        </el-popover>
+        </ElPopover>
         <div class="command-item mr-6" @click="command('handbook')">
           <VIcon class="mr-2" size="17">send</VIcon>
           <span>{{ $t('header_manual') }}</span>
@@ -53,9 +53,9 @@
           </ElDropdownMenu>
         </ElDropdown> -->
         <ElDropdown class="command-item menu-user" placement="bottom" @command="command">
-          <!--					<el-button class="menu-button" size="mini">-->
+          <!--					<ElButton class="menu-button" size="mini">-->
           <!--						{{ user.username }}-->
-          <!--					</el-button>-->
+          <!--					</ElButton>-->
           <div class="username flex align-items-center">
             <img
               v-if="user.avatar"

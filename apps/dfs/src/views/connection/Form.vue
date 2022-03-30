@@ -20,17 +20,17 @@
               <img :src="$util.getConnectionTypeImg(databaseType)" />
             </div>
             <span class="ml-2">{{ model.name }}</span>
-            <el-button
+            <ElButton
               v-if="databaseType === 'hazelcast_cloud_cluster'"
               class="ml-2"
               type="text"
               @click="dialogEditNameVisible = true"
             >
               {{ $t('connection_form_hazecast_rename') }}
-            </el-button>
-            <el-button v-else class="ml-2" type="text" @click="dialogEditNameVisible = true">
+            </ElButton>
+            <ElButton v-else class="ml-2" type="text" @click="dialogEditNameVisible = true">
               {{ $t('connection_form_rename') }}
-            </el-button>
+            </ElButton>
           </div>
         </div>
         <div class="connection-from-label" v-else>
@@ -43,17 +43,17 @@
               <img :src="$util.getConnectionTypeImg(databaseType)" />
             </div>
             <span class="ml-2">{{ typeMap[databaseType] }}</span>
-            <el-button
+            <ElButton
               v-if="databaseType === 'hazelcast_cloud_cluster'"
               class="ml-2"
               type="text"
               @click="$root.$emit('select-connection-type')"
             >
               {{ $t('connection_form_hazecast_change') }}
-            </el-button>
-            <el-button v-else class="ml-2" type="text" @click="$root.$emit('select-connection-type')">
+            </ElButton>
+            <ElButton v-else class="ml-2" type="text" @click="$root.$emit('select-connection-type')">
               {{ $t('connection_form_change') }}
-            </el-button>
+            </ElButton>
           </div>
         </div>
         <div class="form-wrap">
@@ -67,19 +67,19 @@
             >
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
             </form-builder>
-            <el-button v-if="databaseType === 'hazelcast_cloud_cluster'" type="text" size="mini" @click="startTest()">{{
+            <ElButton v-if="databaseType === 'hazelcast_cloud_cluster'" type="text" size="mini" @click="startTest()">{{
               $t('connection_form_hazecast_connection_test')
-            }}</el-button>
-            <el-button v-else type="text" size="mini" @click="startTest()">{{ $t('connection_list_test') }}</el-button>
+            }}</ElButton>
+            <ElButton v-else type="text" size="mini" @click="startTest()">{{ $t('connection_list_test') }}</ElButton>
             <span>
               <StatusTag type="text" class="ml-4" target="connection" :status="status"></StatusTag>
             </span>
             <footer class="mt-2 pb-4">
               <template v-if="databaseType === 'hazelcast_cloud_cluster'">
-                <el-button size="mini" class="connection-from-btn" @click="goBack()">{{
+                <ElButton size="mini" class="connection-from-btn" @click="goBack()">{{
                   $t('connection_form_hazecast_cancel')
-                }}</el-button>
-                <el-button
+                }}</ElButton>
+                <ElButton
                   size="mini"
                   class="connection-from-btn"
                   type="primary"
@@ -87,13 +87,11 @@
                   @click="submit"
                 >
                   {{ $t('connection_form_hazecast_save') }}
-                </el-button>
+                </ElButton>
               </template>
               <template v-else>
-                <el-button size="mini" class="connection-from-btn" @click="goBack()">{{
-                  $t('button_cancel')
-                }}</el-button>
-                <el-button
+                <ElButton size="mini" class="connection-from-btn" @click="goBack()">{{ $t('button_cancel') }}</ElButton>
+                <ElButton
                   size="mini"
                   class="connection-from-btn"
                   type="primary"
@@ -101,7 +99,7 @@
                   @click="submit"
                 >
                   {{ $t('button_submit') }}
-                </el-button>
+                </ElButton>
               </template>
             </footer>
           </div>
@@ -114,16 +112,16 @@
       ></GitBook>
     </div>
     <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
-    <el-dialog
+    <ElDialog
       :title="$t('connection.rename')"
       :close-on-click-modal="false"
       :visible.sync="dialogEditNameVisible"
       width="30%"
     >
-      <el-form :model="renameData" :rules="renameRules" ref="renameForm" @submit.native.prevent>
-        <el-form-item prop="rename">
-          <el-input v-model="renameData.rename" maxlength="100" show-word-limit></el-input>
-        </el-form-item>
+      <ElForm :model="renameData" :rules="renameRules" ref="renameForm" @submit.native.prevent>
+        <ElFormItem prop="rename">
+          <ElInput v-model="renameData.rename" maxlength="100" show-word-limit></ElInput>
+        </ElFormItem>
         <span
           v-if="databaseType === 'hazelcast_cloud_cluster'"
           style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block"
@@ -132,22 +130,22 @@
         <span v-else style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block">{{
           $t('connection_form_name_rules')
         }}</span>
-      </el-form>
+      </ElForm>
       <span slot="footer" class="dialog-footer">
         <template v-if="databaseType === 'hazelcast_cloud_cluster'">
-          <el-button @click="handleCancelRename" size="mini">{{ $t('connection_form_hazecast_cancel') }}</el-button>
-          <el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
+          <ElButton @click="handleCancelRename" size="mini">{{ $t('connection_form_hazecast_cancel') }}</ElButton>
+          <ElButton @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
             $t('connection_form_hazecast_save')
-          }}</el-button>
+          }}</ElButton>
         </template>
         <template v-else>
-          <el-button @click="handleCancelRename" size="mini">{{ $t('button_cancel') }}</el-button>
-          <el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
+          <ElButton @click="handleCancelRename" size="mini">{{ $t('button_cancel') }}</ElButton>
+          <ElButton @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
             $t('button_confirm')
-          }}</el-button>
+          }}</ElButton>
         </template>
       </span>
-    </el-dialog>
+    </ElDialog>
   </div>
 </template>
 

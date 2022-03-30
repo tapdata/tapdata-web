@@ -4,7 +4,13 @@
       <span :class="[wordBreak ? 'word-break' : 'ellipsis']" :title="value" @click="$emit('click-text')">{{
         value
       }}</span>
-      <ElLink v-if="type === 'text'" type="primary" class="inline-input-link" style="margin-left: 5px" @click="editing = true">
+      <ElLink
+        v-if="type === 'text'"
+        type="primary"
+        class="inline-input-link"
+        style="margin-left: 5px"
+        @click="editing = true"
+      >
         {{ editText }}
       </ElLink>
       <ElLink v-else class="inline-input-link" style="margin-left: 5px" @click="editing = true">

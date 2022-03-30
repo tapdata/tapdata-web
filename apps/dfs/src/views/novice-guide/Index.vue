@@ -1,12 +1,12 @@
 <template>
   <div v-if="$route.name === 'NoviceGuide'" class="novice-guide-wrapper g-panel-container">
     <div class="container-section p-6">
-      <el-steps class="primary pb-6" :active="step" process-status="process" finish-status="success" align-center>
-        <el-step :title="$t('guide_install_agent')"></el-step>
-        <el-step :title="$t('guide_create_source_connection')"></el-step>
-        <el-step :title="$t('guide_create_target_connection')"></el-step>
-        <el-step :title="$t('guide_config_sync_task')"></el-step>
-      </el-steps>
+      <ElSteps class="primary pb-6" :active="step" process-status="process" finish-status="success" align-center>
+        <ElStep :title="$t('guide_install_agent')"></ElStep>
+        <ElStep :title="$t('guide_create_source_connection')"></ElStep>
+        <ElStep :title="$t('guide_create_target_connection')"></ElStep>
+        <ElStep :title="$t('guide_config_sync_task')"></ElStep>
+      </ElSteps>
       <!--   第1步   -->
       <div v-if="step === 0" class="step-content mt-7">
         <div class="step-content__title fs-6 fw-bolder">{{ $t('guide_install_agent') }}</div>
@@ -32,22 +32,22 @@
               {{ $t('guide_install_agent_test_tip1') }}
             </div>
             <div class="agent-btn mt-4">
-              <el-button
+              <ElButton
                 v-if="!agent.status"
                 type="text"
                 class="color-primary"
                 :loading="startAgentLoading"
                 @click="startAgent"
-                >{{ $t('guide_start_test_agent') }}</el-button
+                >{{ $t('guide_start_test_agent') }}</ElButton
               >
-              <el-button
+              <ElButton
                 v-else
                 type="text"
                 class="color-primary"
                 :loading="stopAgentLoading"
                 style="visibility: hidden"
                 @click="stopAgent"
-                >{{ $t('guide_stop_test_agent') }}</el-button
+                >{{ $t('guide_stop_test_agent') }}</ElButton
               >
             </div>
           </div>
@@ -56,13 +56,13 @@
           </div>
         </div>
         <div class="operation mt-7">
-          <el-button
+          <ElButton
             type="primary"
             size="mini"
             :disabled="agent.status !== 'Running'"
             :loading="agentNextLoading"
             @click="toNext"
-            >{{ $t('guide_next_step') }}</el-button
+            >{{ $t('guide_next_step') }}</ElButton
           >
           <span v-if="agentNextLoading" class="ml-2 font-color-sub">{{ $t('guide_install_agent_test_tip') }}</span>
         </div>
@@ -86,80 +86,80 @@
           </div>
         </template>
 
-        <el-form ref="sourceElForm" v-model="sourceForm" label-width="80px" class="source-form mt-6">
-          <el-form-item :label="$t('guide_database_type')" prop="database_type" class="database-type">
+        <ElForm ref="sourceElForm" v-model="sourceForm" label-width="80px" class="source-form mt-6">
+          <ElFormItem :label="$t('guide_database_type')" prop="database_type" class="database-type">
             <div class="flex w-100">
-              <el-radio-group v-model="sourceForm.database_type" size="mini" @change="changeSourceDatabaseType">
-                <el-radio-button v-for="(item, index) in databaseTypeItems" :key="index" :label="item.value">
+              <ElRadioGroup v-model="sourceForm.database_type" size="mini" @change="changeSourceDatabaseType">
+                <ElRadioButton v-for="(item, index) in databaseTypeItems" :key="index" :label="item.value">
                   <VIcon size="16" class="color-primary">{{ item.icon }}</VIcon>
                   {{ item.label }}
-                </el-radio-button>
-              </el-radio-group>
-              <el-button
+                </ElRadioButton>
+              </ElRadioGroup>
+              <ElButton
                 class="ml-4"
                 :disabled="!!sourceForm.id"
                 :loading="initDatabaseLoading"
                 type="primary"
                 size="mini"
                 @click="initDatabase"
-                >{{ $t('guide_init_database') }}</el-button
+                >{{ $t('guide_init_database') }}</ElButton
               >
             </div>
-          </el-form-item>
+          </ElFormItem>
           <template v-if="sourceForm.id">
-            <el-form-item :label="$t('guide_connection_name')" prop="name" class="medium-width">
-              <el-input v-model="sourceForm.name" size="mini" readonly disabled>
+            <ElFormItem :label="$t('guide_connection_name')" prop="name" class="medium-width">
+              <ElInput v-model="sourceForm.name" size="mini" readonly disabled>
                 <span slot="suffix">{{ $t('guide_only_test') }}</span>
-              </el-input>
-            </el-form-item>
-            <el-form-item :label="$t('guide_address_port')" prop="database_host" class="database-uri-port medium-width">
+              </ElInput>
+            </ElFormItem>
+            <ElFormItem :label="$t('guide_address_port')" prop="database_host" class="database-uri-port medium-width">
               <div class="flex justify-content-between w-100">
-                <el-input
+                <ElInput
                   v-model="sourceForm.database_host"
                   size="mini"
                   class="database-uri"
                   readonly
                   disabled
-                ></el-input>
-                <el-input
+                ></ElInput>
+                <ElInput
                   v-model="sourceForm.database_port"
                   size="mini"
                   class="database-port"
                   readonly
                   disabled
-                ></el-input>
+                ></ElInput>
               </div>
-            </el-form-item>
-            <el-form-item :label="$t('guide_database_name')" prop="database_name" class="mini-width">
-              <el-input v-model="sourceForm.database_name" size="mini" readonly disabled></el-input>
-            </el-form-item>
-            <el-form-item :label="$t('guide_database_account')" prop="database_username" class="mini-width">
-              <el-input v-model="sourceForm.database_username" size="mini" readonly disabled></el-input>
-            </el-form-item>
-            <el-form-item :label="$t('guide_database_password')" prop="database_password" class="mini-width">
-              <el-input v-model="sourceForm.database_password" size="mini" readonly disabled></el-input>
-            </el-form-item>
-            <el-form-item
+            </ElFormItem>
+            <ElFormItem :label="$t('guide_database_name')" prop="database_name" class="mini-width">
+              <ElInput v-model="sourceForm.database_name" size="mini" readonly disabled></ElInput>
+            </ElFormItem>
+            <ElFormItem :label="$t('guide_database_account')" prop="database_username" class="mini-width">
+              <ElInput v-model="sourceForm.database_username" size="mini" readonly disabled></ElInput>
+            </ElFormItem>
+            <ElFormItem :label="$t('guide_database_password')" prop="database_password" class="mini-width">
+              <ElInput v-model="sourceForm.database_password" size="mini" readonly disabled></ElInput>
+            </ElFormItem>
+            <ElFormItem
               v-if="sourceForm.database_type === 'postgres'"
               label="Schema"
               prop="database_owner"
               class="mini-width"
             >
-              <el-input v-model="sourceForm.database_owner" size="mini" readonly disabled></el-input>
-            </el-form-item>
+              <ElInput v-model="sourceForm.database_owner" size="mini" readonly disabled></ElInput>
+            </ElFormItem>
           </template>
-        </el-form>
+        </ElForm>
         <div class="operation mt-7">
-          <el-button v-if="step !== 0" class="mr-4" size="mini" @click="toPrev" key="preBtn">{{
+          <ElButton v-if="step !== 0" class="mr-4" size="mini" @click="toPrev" key="preBtn">{{
             $t('guide_previous')
-          }}</el-button>
-          <el-button
+          }}</ElButton>
+          <ElButton
             type="primary"
             size="mini"
             :disabled="!sourceForm.id"
             :loading="connectionNextLoading"
             @click="toNext"
-            >{{ $t('guide_next_step') }}</el-button
+            >{{ $t('guide_next_step') }}</ElButton
           >
         </div>
       </div>
@@ -168,11 +168,11 @@
         <div class="step-content__title fs-6 fw-bolder">{{ $t('guide_config_sync_task') }}</div>
         <div class="flex mt-6">
           <div class="task-item-label mr-4 flex align-items-center">{{ $t('guide_sync_task') }}</div>
-          <el-radio-group v-model="taskForm.type" size="mini">
-            <el-radio-button v-for="(item, index) in taskTypeItems" :key="index" :label="item.value">
+          <ElRadioGroup v-model="taskForm.type" size="mini">
+            <ElRadioButton v-for="(item, index) in taskTypeItems" :key="index" :label="item.value">
               {{ item.label }}
-            </el-radio-button>
-          </el-radio-group>
+            </ElRadioButton>
+          </ElRadioGroup>
         </div>
         <div class="flex mt-6">
           <div class="task-item-label mr-4">{{ $t('guide_mapping_setting') }}</div>
@@ -180,7 +180,7 @@
             <div class="mb-4 text-black-50">
               {{ $t('guide_mapping_setting_tip') }}
             </div>
-            <el-transfer
+            <ElTransfer
               v-model="taskForm.selectSourceArr"
               :titles="[$t('guide_selected'), $t('guide_table_selected')]"
               :filter-method="filterMethod"
@@ -191,18 +191,18 @@
               @change="handleChangeTransfer"
               @right-check-change="handleSelectTable"
             >
-            </el-transfer>
+            </ElTransfer>
           </div>
         </div>
         <div class="operation mt-7">
-          <el-button
+          <ElButton
             type="primary"
             size="mini"
             :disabled="createTaskDisabled"
             :loading="createTaskLoading"
             style="margin-left: 105px"
             @click="createTask"
-            >{{ $t('guide_finish') }}</el-button
+            >{{ $t('guide_finish') }}</ElButton
           >
         </div>
       </div>
@@ -213,8 +213,8 @@
         </div>
         <div class="mt-6 fs-7">{{ $t('guide_complete_novice_guide') }}</div>
         <div class="mt-6">
-          <el-button class="mr-4" type="primary" @click="toWorkbench">{{ $t('guide_back_workbench') }}</el-button>
-          <el-button @click="toTaskDetail">{{ $t('guide_view_task_monitor') }}</el-button>
+          <ElButton class="mr-4" type="primary" @click="toWorkbench">{{ $t('guide_back_workbench') }}</ElButton>
+          <ElButton @click="toTaskDetail">{{ $t('guide_view_task_monitor') }}</ElButton>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 <template>
-  <el-table
+  <ElTable
     highlight-current-row
     ref="table"
     height="100%"
@@ -78,7 +78,7 @@
         }}</ElButton>
       </template>
     </ElTableColumn>
-  </el-table>
+  </ElTable>
 </template>
 <style lang="scss" scoped>
 .verify-icon {

@@ -5,18 +5,18 @@
       >:
       {{ $t('task_mapping_table_setting_tip') }}
       <div class="float-end">
-        <el-button v-if="!readOnly && !targetIsVika" size="mini" @click="handleChangTableName">{{
+        <ElButton v-if="!readOnly && !targetIsVika" size="mini" @click="handleChangTableName">{{
           $t('task_mapping_table_rename')
-        }}</el-button>
-        <el-button v-if="!readOnly && !targetIsVika" size="mini" @click="handleBatchChangeFieldType">{{
+        }}</ElButton>
+        <ElButton v-if="!readOnly && !targetIsVika" size="mini" @click="handleBatchChangeFieldType">{{
           $t('task_mapping_table_field_type_change')
-        }}</el-button>
-        <el-button v-if="!readOnly && !targetIsVika" size="mini" @click="dialogFieldVisible = true">{{
+        }}</ElButton>
+        <ElButton v-if="!readOnly && !targetIsVika" size="mini" @click="dialogFieldVisible = true">{{
           $t('task_mapping_table_field_rename')
-        }}</el-button>
-        <el-button v-if="!readOnly && !targetIsVika" class="mr-5" size="mini" type="primary" @click="rollbackAll">{{
+        }}</ElButton>
+        <ElButton v-if="!readOnly && !targetIsVika" class="mr-5" size="mini" type="primary" @click="rollbackAll">{{
           $t('task_mapping_table_restore_default')
-        }}</el-button>
+        }}</ElButton>
       </div>
     </div>
     <div class="task-form-body">
@@ -24,7 +24,7 @@
         <div class="flex mb-5 ml-6">
           <div class="flex">
             <span class="text"> {{ $t('task_mapping_table_search_table') }}：</span>
-            <el-input v-model="searchTable" size="mini" @change="search('table')"></el-input>
+            <ElInput v-model="searchTable" size="mini" @change="search('table')"></ElInput>
           </div>
         </div>
         <ul class="task-form-left__ul flex-column">
@@ -67,21 +67,21 @@
         <div class="search mb-5 ml-2">
           <div class="item">
             <span> {{ $t('task_mapping_table_search_field') }}：</span>
-            <el-input v-model="searchField" size="mini" @change="search('field')"></el-input>
+            <ElInput v-model="searchField" size="mini" @change="search('field')"></ElInput>
           </div>
           <div class="item ml-5" v-if="!readOnly && !targetIsVika">
-            <el-tooltip effect="dark" :content="$t('task_mapping_table_restore_default_fields')" placement="top-start">
-              <el-button
+            <ElTooltip effect="dark" :content="$t('task_mapping_table_restore_default_fields')" placement="top-start">
+              <ElButton
                 size="mini"
                 style="padding: 6px 15px"
                 @click.stop="rollbackTable(selectRow.sinkObjectName, selectRow.sourceTableId)"
               >
                 <VIcon class="color-primary" size="14">rollback</VIcon>
-              </el-button>
-            </el-tooltip>
+              </ElButton>
+            </ElTooltip>
           </div>
         </div>
-        <El-table
+        <ElTable
           class="field-mapping-table table-border"
           height="100%"
           border
@@ -186,10 +186,10 @@
             <span v-if="targetIsVika" class="ml-1">{{ $t('task_mapping_table_no_data_vika') }}</span>
             <span v-else class="ml-1">{{ $t('task_mapping_table_no_data') }}</span>
           </div>
-        </El-table>
+        </ElTable>
       </div>
     </div>
-    <el-dialog
+    <ElDialog
       :title="titleType[currentOperationType]"
       :visible.sync="dialogVisible"
       width="30%"
@@ -197,25 +197,25 @@
       :close-on-click-modal="false"
       :before-close="handleClose"
     >
-      <el-select
+      <ElSelect
         v-if="['field_name'].includes(currentOperationType) && targetIsVika"
         v-model="editValueType[currentOperationType]"
         filterable
       >
-        <el-option
+        <ElOption
           v-for="(item, index) in target"
           :label="item.field_name"
           :value="item.field_name"
           :disabled="!!fieldMappingTableData.find(t => t.t_field_name === item.field_name)"
           :key="index"
-        ></el-option>
-      </el-select>
-      <el-input
+        ></ElOption>
+      </ElSelect>
+      <ElInput
         v-model="editValueType[currentOperationType]"
         v-else-if="['field_name'].includes(currentOperationType)"
-      ></el-input>
+      ></ElInput>
       <div v-if="['precision', 'scale'].includes(currentOperationType)">
-        <el-input-number v-model="editValueType[currentOperationType]"></el-input-number>
+        <ElInputNumber v-model="editValueType[currentOperationType]"></ElInputNumber>
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
           <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
             <div
@@ -241,14 +241,14 @@
         </div>
       </div>
       <div v-if="['data_type'].includes(currentOperationType)">
-        <el-select v-model="editValueType[currentOperationType]" filterable @change="initDataType">
-          <el-option
+        <ElSelect v-model="editValueType[currentOperationType]" filterable @change="initDataType">
+          <ElOption
             :label="item.dbType"
             :value="item.dbType"
             v-for="(item, index) in typeMapping"
             :key="index"
-          ></el-option>
-        </el-select>
+          ></ElOption>
+        </ElSelect>
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
           <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
             <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
@@ -267,11 +267,11 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose()">{{ $t('button_cancel') }}</el-button>
-        <el-button type="primary" @click="editSave()">{{ $t('button_confirm') }}</el-button>
+        <ElButton @click="handleClose()">{{ $t('button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="editSave()">{{ $t('button_confirm') }}</ElButton>
       </span>
-    </el-dialog>
-    <el-dialog
+    </ElDialog>
+    <ElDialog
       width="800px"
       append-to-body
       :title="$t('task_mapping_batch_change_table_title')"
@@ -281,7 +281,7 @@
       :before-close="handleTableClose"
     >
       <div class="table-box">
-        <el-form
+        <ElForm
           :rules="rules"
           ref="fieldForm"
           :model="form"
@@ -289,28 +289,28 @@
           class="table-form"
           label-width="120px"
         >
-          <el-form-item :label="$t('task_mapping_dialog_table_name_case')">
-            <el-select size="mini" v-model="form.tableNameTransform">
-              <el-option :label="$t('task_mapping_dialog_constant')" value=""></el-option>
-              <el-option :label="$t('task_mapping_dialog_to_uppercase')" value="toUpperCase"></el-option>
-              <el-option :label="$t('task_mapping_dialog_lowercase')" value="toLowerCase"></el-option>
-            </el-select>
-          </el-form-item>
+          <ElFormItem :label="$t('task_mapping_dialog_table_name_case')">
+            <ElSelect size="mini" v-model="form.tableNameTransform">
+              <ElOption :label="$t('task_mapping_dialog_constant')" value=""></ElOption>
+              <ElOption :label="$t('task_mapping_dialog_to_uppercase')" value="toUpperCase"></ElOption>
+              <ElOption :label="$t('task_mapping_dialog_lowercase')" value="toLowerCase"></ElOption>
+            </ElSelect>
+          </ElFormItem>
           <div class="tip">{{ $t('task_mapping_dialog_rule_note') }}</div>
-          <el-form-item :label="$t('task_mapping_dialog_enter_prefix')" prop="table_prefix">
-            <el-input size="mini" v-model="form.table_prefix" maxlength="50" show-word-limit></el-input>
-          </el-form-item>
+          <ElFormItem :label="$t('task_mapping_dialog_enter_prefix')" prop="table_prefix">
+            <ElInput size="mini" v-model="form.table_prefix" maxlength="50" show-word-limit></ElInput>
+          </ElFormItem>
           <div class="tip">
             <span>{{ $t('task_mapping_dialog_english_letter') }}</span>
             <div>{{ $t('task_mapping_dialog_not_allow_system') }}</div>
           </div>
-          <el-form-item :label="$t('task_mapping_dialog_enter_suffix')" prop="table_suffix">
-            <el-input size="mini" v-model="form.table_suffix" maxlength="50" show-word-limit></el-input>
-          </el-form-item>
+          <ElFormItem :label="$t('task_mapping_dialog_enter_suffix')" prop="table_suffix">
+            <ElInput size="mini" v-model="form.table_suffix" maxlength="50" show-word-limit></ElInput>
+          </ElFormItem>
           <div class="tip">
             <span>{{ $t('task_mapping_dialog_underscore_begin') }}</span>
           </div>
-        </el-form>
+        </ElForm>
         <div class="table-example">
           <h3>{{ $t('task_mapping_dialog_example') }}:</h3>
           <p>{{ $t('task_mapping_dialog_original_table_name') }}: tableName</p>
@@ -318,11 +318,11 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="handleTableClose()">{{ $t('button_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="handleTableNameSave()">{{ $t('button_confirm') }}</el-button>
+        <ElButton size="mini" @click="handleTableClose()">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" @click="handleTableNameSave()">{{ $t('button_confirm') }}</ElButton>
       </span>
-    </el-dialog>
-    <el-dialog
+    </ElDialog>
+    <ElDialog
       width="600px"
       append-to-body
       :title="$t('task_mapping_batch_change_field_title')"
@@ -332,22 +332,22 @@
       :before-close="handleFieldClose"
     >
       <div class="table-box">
-        <el-form ref="form" class="table-form" :model="form" label-width="120px">
-          <el-form-item :label="$t('task_mapping_dialog_field_name_case')">
-            <el-select size="mini" v-model="form.fieldsNameTransform">
-              <el-option :label="$t('task_mapping_dialog_constant')" value=""></el-option>
-              <el-option :label="$t('task_mapping_dialog_to_uppercase')" value="toUpperCase"></el-option>
-              <el-option :label="$t('task_mapping_dialog_lowercase')" value="toLowerCase"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
+        <ElForm ref="form" class="table-form" :model="form" label-width="120px">
+          <ElFormItem :label="$t('task_mapping_dialog_field_name_case')">
+            <ElSelect size="mini" v-model="form.fieldsNameTransform">
+              <ElOption :label="$t('task_mapping_dialog_constant')" value=""></ElOption>
+              <ElOption :label="$t('task_mapping_dialog_to_uppercase')" value="toUpperCase"></ElOption>
+              <ElOption :label="$t('task_mapping_dialog_lowercase')" value="toLowerCase"></ElOption>
+            </ElSelect>
+          </ElFormItem>
+        </ElForm>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="handleFieldClose">{{ $t('button_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="handleFieldSave()">{{ $t('button_confirm') }}</el-button>
+        <ElButton size="mini" @click="handleFieldClose">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" @click="handleFieldSave()">{{ $t('button_confirm') }}</ElButton>
       </span>
-    </el-dialog>
-    <el-dialog
+    </ElDialog>
+    <ElDialog
       width="500px"
       append-to-body
       :title="$t('task_mapping_dialog_rename_a_single_table_title')"
@@ -379,16 +379,16 @@
         </ElForm>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="changeTableNameForm.visible = false">{{ $t('button_cancel') }}</el-button>
-        <el-button
+        <ElButton size="mini" @click="changeTableNameForm.visible = false">{{ $t('button_cancel') }}</ElButton>
+        <ElButton
           size="mini"
           type="primary"
           :disabled="changeTableNameForm.new && changeTableNameForm.old === changeTableNameForm.new"
           @click="handleOneTableNameSave()"
-          >{{ $t('button_confirm') }}</el-button
+          >{{ $t('button_confirm') }}</ElButton
         >
       </span>
-    </el-dialog>
+    </ElDialog>
     <!-- vika目录 -->
     <ElDialog
       width="500px"
@@ -457,34 +457,34 @@
         </ElRow>
         <ElRow v-for="(item, index) in batchFieldTypeForm.list" :key="index" class="mt-4">
           <ElCol :span="7" class="flex">
-            <el-select v-model="item.sourceType" :disabled="item.disabled" filterable required clearable>
-              <el-option
+            <ElSelect v-model="item.sourceType" :disabled="item.disabled" filterable required clearable>
+              <ElOption
                 :label="item.dbType"
                 :value="item.dbType"
                 v-for="(item, index) in typeMappingSource"
                 :key="index"
                 :disabled="!!batchFieldTypeForm.list.find(t => t.sourceType === item.dbType)"
-              ></el-option>
-            </el-select>
+              ></ElOption>
+            </ElSelect>
             <div class="flex justify-content-center align-items-center px-2" style="height: 32px">
               <VIcon size="14" class="color-primary">d-arrow-right</VIcon>
             </div>
           </ElCol>
           <ElCol :span="6" class="flex pr-2">
-            <el-select
+            <ElSelect
               v-model="item.targetType"
               filterable
               required
               clearable
               @change="initBatchDataType(arguments[0], item)"
             >
-              <el-option
+              <ElOption
                 :label="item.dbType"
                 :value="item.dbType"
                 v-for="(item, index) in typeMapping"
                 :key="index"
-              ></el-option>
-            </el-select>
+              ></ElOption>
+            </ElSelect>
           </ElCol>
           <ElCol :span="4" class="flex pr-2">
             <ElTooltip :content="item.lengthTooltip" :disabled="!item.lengthTooltip" placement="bottom" effect="light">

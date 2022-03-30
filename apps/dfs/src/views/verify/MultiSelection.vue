@@ -1,6 +1,6 @@
 <template>
   <div class="multi-selection-data-verify">
-    <el-select
+    <ElSelect
       :value="values"
       multiple
       filterable
@@ -12,7 +12,7 @@
       @change="$emit('change', $event)"
       @input="inputHandler"
     >
-      <el-option
+      <ElOption
         v-for="opt in options.filter(i => !!i)"
         :key="opt.id + opt.field_name"
         :label="opt.field_name"
@@ -35,8 +35,8 @@
           v-if="opt.primary_key_position > 0"
           >PK</span
         >
-      </el-option>
-    </el-select>
+      </ElOption>
+    </ElSelect>
   </div>
 </template>
 

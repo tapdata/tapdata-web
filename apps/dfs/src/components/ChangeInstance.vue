@@ -1,13 +1,13 @@
 <template>
-  <el-dialog
+  <ElDialog
     class="changeInstance-dialog"
     title="版本切换"
     :visible.sync="dialogVisible"
     width="30%"
     :before-close="handleClose"
   >
-    <el-select v-model="currentVersion" size="mini" @change="handleChangeList">
-      <el-option
+    <ElSelect v-model="currentVersion" size="mini" @change="handleChangeList">
+      <ElOption
         class="label"
         placeholder="请选择实例版本"
         :value="item.version"
@@ -15,14 +15,14 @@
         v-for="item in list"
         :key="item"
         :disabled="item.enable"
-      ></el-option>
-    </el-select>
+      ></ElOption>
+    </ElSelect>
     <div class="changelist" v-html="changeList"></div>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="handleClose">取 消</el-button>
-      <el-button type="primary" @click="changeInstance">确 定</el-button>
+      <ElButton @click="handleClose">取 消</ElButton>
+      <ElButton type="primary" @click="changeInstance">确 定</ElButton>
     </span>
-  </el-dialog>
+  </ElDialog>
 </template>
 
 <script>

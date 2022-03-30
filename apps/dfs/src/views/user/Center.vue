@@ -4,14 +4,14 @@
     <ElDivider class="my-6"></ElDivider>
     <div>
       <div>
-        <el-row :gutter="40" class="section-header mb-6">
-          <el-col :span="12" class="user-item">
+        <ElRow :gutter="40" class="section-header mb-6">
+          <ElCol :span="12" class="user-item">
             <div class="user-item__label">用户名：</div>
             <div class="user-item__value">{{ userData.username }}</div>
-          </el-col>
-        </el-row>
-        <el-row :gutter="40" class="section-header mb-6">
-          <el-col :span="12" class="user-item">
+          </ElCol>
+        </ElRow>
+        <ElRow :gutter="40" class="section-header mb-6">
+          <ElCol :span="12" class="user-item">
             <div class="user-item__label">用户昵称：</div>
             <InlineInput
               class="inline-input fs-8"
@@ -21,21 +21,21 @@
               style="width: 202px"
               @save="updateName($event)"
             ></InlineInput>
-          </el-col>
-          <el-col :span="12" class="user-item">
+          </ElCol>
+          <ElCol :span="12" class="user-item">
             <div class="user-item__label">密码：</div>
             <div class="user-item__value">******</div>
             <ElLink type="primary" @click="editPassword">修改</ElLink>
-          </el-col>
-        </el-row>
-        <el-row :gutter="40" class="section-header mb-6">
-          <el-col :span="12" class="user-item">
+          </ElCol>
+        </ElRow>
+        <ElRow :gutter="40" class="section-header mb-6">
+          <ElCol :span="12" class="user-item">
             <div class="user-item__label">手机号：</div>
             <div class="user-item__value">{{ userData.telephone || '未绑定' }}</div>
             <ElLink v-if="userData.telephone" type="primary" @click="editPhone">修改</ElLink>
             <ElLink v-else type="primary" @click="dialogObj.bindPhone = true">绑定</ElLink>
-          </el-col>
-          <el-col :span="12" class="user-item">
+          </ElCol>
+          <ElCol :span="12" class="user-item">
             <div class="user-item__label">头像：</div>
             <div class="user-item__value position-relative">
               <img
@@ -47,52 +47,52 @@
               <span v-else>暂无</span>
             </div>
             <ElLink type="primary" @click="editAvatar">修改</ElLink>
-          </el-col>
-        </el-row>
-        <el-row :gutter="40" class="section-header mb-6">
-          <!--          <el-col :span="12" class="user-item">-->
+          </ElCol>
+        </ElRow>
+        <ElRow :gutter="40" class="section-header mb-6">
+          <!--          <ElCol :span="12" class="user-item">-->
           <!--            <div class="user-item__label">微信：</div>-->
           <!--            <div class="user-item__value">{{ userData.wx || '未绑定' }}</div>-->
           <!--            <ElLink v-if="userData.wx" type="primary" @click="unbindWx">解绑</ElLink>-->
           <!--            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">绑定</ElLink>-->
-          <!--          </el-col>-->
-          <el-col :span="12" class="user-item">
+          <!--          </ElCol>-->
+          <ElCol :span="12" class="user-item">
             <div class="user-item__label">邮箱：</div>
             <div class="user-item__value">{{ userData.email || '未绑定' }}</div>
             <ElLink v-if="userData.email" type="primary" @click="editEmail">修改</ElLink>
             <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">绑定</ElLink>
-          </el-col>
-        </el-row>
+          </ElCol>
+        </ElRow>
       </div>
     </div>
     <div class="mt-12 fs-7">企业信息</div>
     <ElDivider class="my-6"></ElDivider>
     <div>
       <div>
-        <el-row :gutter="40" class="section-header mb-2">
-          <el-col :span="12" class="enterprise-item">
+        <ElRow :gutter="40" class="section-header mb-2">
+          <ElCol :span="12" class="enterprise-item">
             <div class="enterprise-item__label">公司名称：</div>
             <div v-if="!isEdit" class="enterprise-item__value">{{ enData.companyName || '未填写' }}</div>
             <ElInput v-else v-model="enForm.companyName" class="enterprise-item__value"></ElInput>
-          </el-col>
-          <el-col :span="12" class="enterprise-item">
+          </ElCol>
+          <ElCol :span="12" class="enterprise-item">
             <div class="enterprise-item__label">公司官网：</div>
             <div v-if="!isEdit" class="enterprise-item__value">{{ enData.website || '未填写' }}</div>
             <ElInput v-else v-model="enForm.website" class="enterprise-item__value"></ElInput>
-          </el-col>
-        </el-row>
-        <el-row :gutter="40" class="section-header mb-2">
-          <el-col :span="12" class="enterprise-item">
+          </ElCol>
+        </ElRow>
+        <ElRow :gutter="40" class="section-header mb-2">
+          <ElCol :span="12" class="enterprise-item">
             <div class="enterprise-item__label">所属行业：</div>
             <div v-if="!isEdit" class="enterprise-item__value">{{ enData.industry || '未填写' }}</div>
             <ElInput v-else v-model="enForm.industry" class="enterprise-item__value"></ElInput>
-          </el-col>
-          <el-col :span="12" class="enterprise-item">
+          </ElCol>
+          <ElCol :span="12" class="enterprise-item">
             <div class="enterprise-item__label">所属城市：</div>
             <div v-if="!isEdit" class="enterprise-item__value">{{ enData.city || '未填写' }}</div>
             <ElInput v-else v-model="enForm.city" class="enterprise-item__value"></ElInput>
-          </el-col>
-        </el-row>
+          </ElCol>
+        </ElRow>
         <VButton v-if="!isEdit" type="text" @click="editEnData">企业信息修改</VButton>
         <template v-else>
           <VButton type="text" @click="cancelEditEnData">取消</VButton>

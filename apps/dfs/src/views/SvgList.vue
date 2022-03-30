@@ -13,13 +13,13 @@
         >
           <VIcon class="mx-auto mb-3" size="24">{{ item }}</VIcon>
           <div class="icon-name">{{ item }}</div>
-          <el-button
+          <ElButton
             type="primary"
             class="mt-2 position-absolute bottom-0 w-100"
             size="mini"
             v-clipboard:copy="`<VIcon>${item}</VIcon>`"
             v-clipboard:success="copySuccess"
-            >Copy</el-button
+            >Copy</ElButton
           >
         </li>
       </ul>
@@ -32,13 +32,13 @@
         >
           <VIcon class="mx-auto mb-3" size="24">{{ item }}</VIcon>
           <div class="icon-name">{{ item }}</div>
-          <el-button
+          <ElButton
             type="primary"
             class="mt-2 position-absolute bottom-0 w-100"
             size="mini"
             v-clipboard:copy="`<VIcon>${item}</VIcon>`"
             v-clipboard:success="copySuccess"
-            >Copy</el-button
+            >Copy</ElButton
           >
         </li>
       </ul>

@@ -28,7 +28,7 @@
     </div>
     <div slot="footer" class="dialog-footer">
       <span class="text">进程已重启？请点击</span>
-      <el-button type="primary" size="small">刷新</el-button>
+      <ElButton type="primary" size="small">刷新</ElButton>
     </div>
   </ElDialog>
 </template>

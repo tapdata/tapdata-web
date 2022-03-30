@@ -2,12 +2,12 @@
   <div v-if="$route.name === 'Workbench'" class="workbench-container">
     <!--	快速开始	-->
     <div class="workbench-start workbench-section">
-      <el-row :gutter="40" class="section-header py-6">
-        <el-col :span="18" class="main-title">{{ $t('workbench_quick_start') }}</el-col>
-        <el-col :span="6" class="aside-title">{{ $t('workbench_notice') }}</el-col>
-      </el-row>
-      <el-row :gutter="40" class="section-body">
-        <el-col :span="6" v-for="(item, index) in createList" :key="index">
+      <ElRow :gutter="40" class="section-header py-6">
+        <ElCol :span="18" class="main-title">{{ $t('workbench_quick_start') }}</ElCol>
+        <ElCol :span="6" class="aside-title">{{ $t('workbench_notice') }}</ElCol>
+      </ElRow>
+      <ElRow :gutter="40" class="section-body">
+        <ElCol :span="6" v-for="(item, index) in createList" :key="index">
           <div class="create-list__item flex p-6">
             <div class="create-list__index block flex justify-content-center align-items-center flex-shrink-0">
               {{ index + 1 }}
@@ -15,14 +15,14 @@
             <div class="create-list__main ml-4">
               <div class="create-list__name mb-4 fs-6">{{ item.name }}</div>
               <div class="create-list__desc">{{ item.desc }}</div>
-              <el-link type="primary" class="float-end pointer" @click="item.action">
+              <ElLink type="primary" class="float-end pointer" @click="item.action">
                 <span>{{ item.btnName }}</span>
                 <VIcon class="ml-2" size="12">right</VIcon>
-              </el-link>
+              </ElLink>
             </div>
           </div>
-        </el-col>
-        <el-col :span="6">
+        </ElCol>
+        <ElCol :span="6">
           <div class="aside-main notice-list flex-grow-1 p-6">
             <ul class="notice-list__list">
               <li
@@ -33,7 +33,7 @@
                 <div v-if="item.type" class="notice-list__type mr-4 p-1">
                   {{ item.type }}
                 </div>
-                <!--                <el-link-->
+                <!--                <ElLink-->
                 <!--                  v-if="item.id === 9"-->
                 <!--                  target="_blank"-->
                 <!--                  type="primary"-->
@@ -41,31 +41,31 @@
                 <!--                  href="https://sourl.cn/2f3mPF"-->
                 <!--                >-->
                 <!--                  {{ item.name }}-->
-                <!--                </el-link>-->
-                <el-link
+                <!--                </ElLink>-->
+                <ElLink
                   type="primary"
                   class="notice-list__name flex-grow-1 ellipsis block pointer"
                   @click="toNotice(item)"
                 >
                   {{ item.name }}
-                </el-link>
+                </ElLink>
                 <div class="notice-list__time">
                   {{ formatFromNow(item.time) }}
                 </div>
               </li>
             </ul>
           </div>
-        </el-col>
-      </el-row>
+        </ElCol>
+      </ElRow>
     </div>
     <!--	概览	-->
     <div class="workbench-overview workbench-section">
-      <el-row :gutter="40" class="section-header py-6">
-        <el-col :span="18" class="main-title">{{ $t('workbench_overview') }}</el-col>
-        <el-col :span="6" class="aside-title">{{ $t('workbench_guide') }}</el-col>
-      </el-row>
-      <el-row :gutter="40" class="section-body">
-        <el-col :span="18">
+      <ElRow :gutter="40" class="section-header py-6">
+        <ElCol :span="18" class="main-title">{{ $t('workbench_overview') }}</ElCol>
+        <ElCol :span="6" class="aside-title">{{ $t('workbench_guide') }}</ElCol>
+      </ElRow>
+      <ElRow :gutter="40" class="section-body">
+        <ElCol :span="18">
           <ul class="agent-list__list flex-grow-1 flex justify-content-around px-5">
             <li v-for="(item, index) in agentList" :key="index" class="agent-list__item py-6" :ref="item.key">
               <div class="agent-list__name flex align-items-center justify-content-center mx-auto mb-3">
@@ -84,11 +84,11 @@
               </div>
             </li>
           </ul>
-        </el-col>
-        <el-col :span="6">
+        </ElCol>
+        <ElCol :span="6">
           <div class="aside-main guide-list flex-grow-1 p-6">
             <div class="guide-list__list">
-              <el-link
+              <ElLink
                 v-for="(item, index) in guides"
                 :key="index"
                 type="primary"
@@ -96,11 +96,11 @@
                 @click="clickGuide(item)"
               >
                 {{ item.name }}
-              </el-link>
+              </ElLink>
             </div>
           </div>
-        </el-col>
-      </el-row>
+        </ElCol>
+      </ElRow>
     </div>
     <!--  任务数据量统计  -->
     <div class="workbench-overview workbench-section">

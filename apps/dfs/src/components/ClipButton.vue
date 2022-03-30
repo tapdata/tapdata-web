@@ -1,12 +1,12 @@
 <template>
-  <el-tooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
+  <ElTooltip placement="top" manual content="已复制" popper-class="copy-tooltip" :value="showTooltip">
     <i
       class="el-icon-document-copy"
       v-clipboard:copy="value"
       v-clipboard:success="onCopy"
       @mouseleave="showTooltip = false"
     ></i>
-  </el-tooltip>
+  </ElTooltip>
 </template>
 
 <script>

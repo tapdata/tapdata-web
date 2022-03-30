@@ -1,5 +1,5 @@
 <template>
-  <el-drawer
+  <ElDrawer
     :modal="false"
     :visible.sync="drawer"
     :direction="direction"
@@ -35,7 +35,7 @@
         </div>
       </div>
     </div>
-  </el-drawer>
+  </ElDrawer>
 </template>
 
 <script>
