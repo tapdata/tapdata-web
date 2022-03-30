@@ -15,5 +15,7 @@ export * from './join-expression'
 export * from './example-file'
 export * from './form-item'
 export * from './slider'
+export * from './field-value'
+export * from './field-rename'
 
 export * from '@formily/element'

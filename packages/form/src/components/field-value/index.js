@@ -2,9 +2,7 @@ import { connect, mapProps, useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import VIcon from 'web-core/components/VIcon'
-import { uuid, handleOperation } from './util'
 import './fieldProessor.scss'
-// import de from 'element-ui/src/locale/lang/de'
 
 export const FieldValue = connect(
   observer(
@@ -58,51 +56,6 @@ export const FieldValue = connect(
         console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options?.[0] || []
         this.originalFields = JSON.parse(JSON.stringify(fields))
-        // apply operations to schema
-        //查找是否有被删除的字段且operation有操作
-        let temporary = handleOperation(fields, this.operations)
-        temporary.map(item => {
-          let targetIndex = fields.findIndex(n => n.id === item.id)
-          if (targetIndex === -1 && item.op !== 'CREATE') {
-            // data.operations.splice(index,1); //删除找不到id的数据
-            return
-          }
-          if (item.op === 'CONVERT') {
-            fields[targetIndex].java_type = item.operand
-          } else if (item.op === 'RENAME') {
-            const name = fields[targetIndex].field_name
-            let newName = name.split('.')
-            newName[newName.length - 1] = item.operand
-            const newNameStr = newName.join('.')
-            fields[targetIndex].field_name = newNameStr
-
-            // change children field name
-            fields.forEach(field => {
-              if (field.field_name.startsWith(name + '.')) {
-                field.field_name = newNameStr + field.field_name.substring(name.length)
-              }
-            })
-          } else if (item.op === 'CREATE') {
-            let triggerFieldId = item.triggerFieldId
-            let newField = {
-              id: item.id,
-              field_name: item.field || item.field_name,
-              table_name: item.tableName || item.table_name,
-              original_field_name: item.field || item.field_name,
-              java_type: item.java_type,
-              data_type: 'STRING',
-              primary_key_position: 0,
-              dataType: 2,
-              is_nullable: true,
-              columnSize: 0,
-              autoincrement: false
-            }
-            if (triggerFieldId) {
-              let triggerFieldIndex = fields.findIndex(f => f.id === triggerFieldId)
-              fields.splice(triggerFieldIndex + 1, 0, newField)
-            } else fields.push(newField)
-          }
-        })
         // eslint-disable-next-line
         console.log('FieldProcess.mergeOutputSchema', fields)
         return (
@@ -110,7 +63,7 @@ export const FieldValue = connect(
             <div class="field-processor-operation flex">
               <ElCheckbox class="check-all mr-4" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
               <span class="field-name inline-block">字段名称</span>
-              <span class="field-desc inline-block">字段描述</span>
+              <span class="field-desc inline-block">字段赋值</span>
               <span class="field-ops inline-block">
                 <VIcon class="clickable ml-5" small onClick={() => this.handleAllReset()}>
                   revoke
@@ -134,12 +87,7 @@ export const FieldValue = connect(
                       <span>{data.field_name}</span>
                       <span class="e-desc">{data.desc}</span>
                       <span class="e-ops">
-                        <ElButton
-                          type="text"
-                          class="ml-5"
-                          disabled={this.isRemove(data.id)}
-                          onClick={() => this.handleScript(node, data)}
-                        >
+                        <ElButton type="text" class="ml-5" onClick={() => this.handleScript(node, data)}>
                           <VIcon>js</VIcon>
                         </ElButton>
                       </span>
@@ -215,60 +163,6 @@ export const FieldValue = connect(
           }
           fn(fields)
           return field
-        },
-        handleReset(node, data) {
-          console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
-          let parentId = node.parent.data.id
-          let dataLabel = JSON.parse(JSON.stringify(data.field_name))
-          let indexId = this.operations.filter(v => v.op === 'REMOVE' && v.id === parentId)
-          if (parentId && indexId.length !== 0) {
-            return
-          }
-          let self = this
-          let fn = function (node, data) {
-            let nativeData = self.getNativeData(data.id)
-            for (let i = 0; i < node.childNodes.length; i++) {
-              let childNode = node.childNodes[i]
-              fn(childNode, childNode.data)
-            }
-            for (let i = 0; i < self.operations.length; i++) {
-              if (self.operations[i].id === data.id) {
-                let ops = self.operations[i]
-                if (ops.op === 'REMOVE') {
-                  self.operations.splice(i, 1)
-                  i--
-                  continue
-                }
-                if (ops.op === 'CREATE') {
-                  self.operations.splice(i, 1)
-                  i--
-                  self.$refs.tree.remove(node)
-                  continue
-                }
-                if (ops.op === 'RENAME') {
-                  let existsName = self.handleExistsName(node, data)
-                  if (existsName) {
-                    return
-                  }
-                  if (nativeData) node.data.field_name = nativeData.original_field_name
-                  self.operations.splice(i, 1)
-                  i--
-                  continue
-                }
-                if (ops.op === 'CONVERT') {
-                  if (nativeData) node.data.type = nativeData.type
-                  self.operations.splice(i, 1)
-                  i--
-                  continue
-                }
-              }
-            }
-          }
-          fn(node, data)
-          let existsName = this.handleExistsName(node, data)
-          if (existsName) {
-            data.field_name = dataLabel
-          }
         },
         getParentFieldName(node) {
           let fieldName = node.data && node.data.field_name ? node.data.field_name : ''

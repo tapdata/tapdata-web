@@ -80,7 +80,7 @@ const getState = () => ({
       icon: 'field_calc',
       name: '字段计算',
       type: 'field_calc_processor',
-      constructor: 'FieldValue'
+      constructor: 'FieldCalc'
     },
     {
       icon: 'field_mod_type',
@@ -92,7 +92,7 @@ const getState = () => ({
       icon: 'field_rename',
       name: '字段改名',
       type: 'field_rename_processor',
-      constructor: 'FieldValue'
+      constructor: 'FieldRename'
     },
     {
       icon: 'field_add_del',
