@@ -497,8 +497,8 @@ export default {
               this.table.fetch()
             }
           })
-          .catch(({ response }) => {
-            let msg = response && response.msg
+          .catch(err => {
+            let msg = err?.data?.message
             if (msg && (msg.jobs || msg.modules)) {
               this.$message.error(this.$t('connection.cannot_delete_remind'))
               // const h = this.$createElement;
@@ -509,6 +509,8 @@ export default {
               // 		...msg.modules.map(j => h('div', {}, []))
               // 	])
               // );
+            } else if (err?.data?.code === 'Datasource.LinkJobs') {
+              this.$message.error(this.$t('connection_list_delete_link_job'))
             } else {
               this.$message.error(msg || this.$t('connection.deleteFail'))
             }

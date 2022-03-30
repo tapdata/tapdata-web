@@ -6,6 +6,7 @@
       class="data-flow-list"
       :classify="{ authority: 'SYNC_category_management', types: ['dataflow'] }"
       :remoteMethod="getData"
+      :default-sort="{ prop: 'createTime', order: 'descending' }"
       @selection-change="
         val => {
           multipleSelection = val
@@ -115,9 +116,17 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="startTime" :label="$t('task_list_start_time')" width="170" sortable="custom">
+
+      <!--引擎暂时未回写启动时间，暂时注释-->
+      <!--<el-table-column prop="startTime" :label="$t('task_list_start_time')" width="170" sortable="custom">
         <template #default="{ row }">
           {{ row.startTime ? $moment(row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
+        </template>
+      </el-table-column>-->
+
+      <el-table-column prop="createTime" :label="$t('column_create_time')" width="210" sortable="custom">
+        <template #default="{ row }">
+          {{ row.createTime ? $moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('column_operation')" width="270" fixed="right">
@@ -1034,6 +1043,9 @@ export default {
                 res.data['sync_type'] = setting.sync_type
                 item = 'sync_type'
               }
+              if (['cdcDelayTime', 'taskLastHour'].includes(item)) {
+                res.data[item] = this.handleTimeConvert(res.data[item])
+              }
               if (
                 [
                   'createAt',
@@ -1105,6 +1117,42 @@ export default {
           type: 'input'
         }
       ]
+    },
+    // 毫秒转时间
+    handleTimeConvert(time) {
+      let r = ''
+      if (time) {
+        let s = time,
+          m = 0,
+          h = 0,
+          d = 0
+        if (s > 60) {
+          m = parseInt(s / 60)
+          s = parseInt(s % 60)
+          if (m > 60) {
+            h = parseInt(m / 60)
+            m = parseInt(m % 60)
+            if (h > 24) {
+              d = parseInt(h / 24)
+              h = parseInt(h % 24)
+            }
+          }
+        }
+        if (m === 0 && h === 0 && d === 0 && s < 60 && s > 0) {
+          r = 1 + this.$t('task_info_m')
+        }
+        // r = parseInt(s) + this.$t('timeToLive.s')
+        if (m > 0) {
+          r = parseInt(m) + this.$t('task_info_m')
+        }
+        if (h > 0) {
+          r = parseInt(h) + this.$t('task_info_h') + r
+        }
+        if (d > 0) {
+          r = parseInt(d) + this.$t('task_info_d') + r
+        }
+      }
+      return r
     }
   }
 }
