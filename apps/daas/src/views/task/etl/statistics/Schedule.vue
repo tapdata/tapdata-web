@@ -366,7 +366,7 @@ export default {
           prop: 'table'
         },
         {
-          label: this.$t('schedule'),
+          label: this.$t('task_info_schedule'),
           prop: 'schedule',
           slotName: 'schedule'
         },

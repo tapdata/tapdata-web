@@ -6,6 +6,7 @@
       class="data-flow-list"
       :classify="{ authority: 'SYNC_category_management', types: ['dataflow'] }"
       :remoteMethod="getData"
+      :default-sort="{ prop: 'createTime', order: 'descending' }"
       @selection-change="
         val => {
           multipleSelection = val
@@ -115,9 +116,17 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="startTime" :label="$t('task_list_start_time')" width="170" sortable="custom">
+
+      <!--引擎暂时未回写启动时间，暂时注释-->
+      <!--<el-table-column prop="startTime" :label="$t('task_list_start_time')" width="170" sortable="custom">
         <template #default="{ row }">
           {{ row.startTime ? $moment(row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
+        </template>
+      </el-table-column>-->
+
+      <el-table-column prop="createTime" :label="$t('column_create_time')" width="210" sortable="custom">
+        <template #default="{ row }">
+          {{ row.createTime ? $moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('column_operation')" width="270" fixed="right">

@@ -401,18 +401,11 @@ export default {
       return Math.floor((initialWrite * 100) / initialTotal)
     }
   },
-  watch: {
-    task: {
-      deep: true,
-      handler() {
-        this.init()
-      }
-    }
-  },
   beforeDestroy() {
     this.timer && clearInterval(this.timer)
   },
   mounted() {
+    this.init()
     this.getSyncOverViewData()
   },
   methods: {

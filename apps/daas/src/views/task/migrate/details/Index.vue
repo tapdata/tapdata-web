@@ -138,7 +138,6 @@ export default {
             return
           }
           this.task = this.formatTask(res.data)
-          console.log('#######', this.task)
         })
         .finally(() => {
           this.loading = false

@@ -1,7 +1,7 @@
 <template>
   <div class="attr-panel">
     <div class="attr-panel-body overflow-auto">
-      <Form class-name="form-wrap" :form="form" :colon="false" layout="horizontal" label-align="left" label-width="120">
+      <Form class-name="form-wrap" :form="form" v-bind="formProps">
         <SchemaField v-if="!!schema" :schema="schema" :scope="scope" />
       </Form>
     </div>
@@ -34,6 +34,15 @@ export default {
   data() {
     return {
       form: createForm(),
+
+      formProps: {
+        colon: false,
+        labelAlign: 'left',
+        labelWidth: '120',
+        // layout: 'vertical',
+        layout: 'horizontal',
+        feedbackLayout: 'terse'
+      },
 
       schema: null
     }
@@ -624,6 +633,7 @@ export default {
         properties: JSON.parse(JSON.stringify(formValues))
       })
       this.updateDag()
+      this.confirmNodeHasError()
     }, 100),
 
     // 绑定表单事件
@@ -636,6 +646,14 @@ export default {
         console.log('onFormInputChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
         this.updateNodeProps(form)
       })
+    },
+
+    confirmNodeHasError() {
+      // 节点已经没有错误，清除节点的告警图标
+      const res = this.hasNodeError(this.activeNodeId)
+      if (res && typeof res === 'boolean' && !this.form.errors.length) {
+        this.clearNodeError(this.activeNodeId)
+      }
     }
   }
 }
