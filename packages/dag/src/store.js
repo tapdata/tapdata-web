@@ -71,15 +71,33 @@ const getState = () => ({
       constructor: 'Join'
     },
     {
-      icon: 'join',
+      icon: 'merge_table',
       name: '主从合并',
       type: 'merge_table_processor',
       constructor: 'MergeTable'
     },
     {
-      icon: 'field-processor',
+      icon: 'field_calc',
       name: '字段计算',
       type: 'field_calc_processor',
+      constructor: 'FieldValue'
+    },
+    {
+      icon: 'field_mod_type',
+      name: '类型修改',
+      type: 'field_mod_type_processor',
+      constructor: 'FieldValue'
+    },
+    {
+      icon: 'field_rename',
+      name: '字段改名',
+      type: 'field_rename_processor',
+      constructor: 'FieldValue'
+    },
+    {
+      icon: 'field_add_del',
+      name: '字段新增',
+      type: 'field_add_del_processor',
       constructor: 'FieldValue'
     }
     // {
