@@ -368,48 +368,6 @@ export default {
           type: '',
           name: 'Tapdata Cloud 1.0.9 版本发布啦！',
           time: '2021-12-21'
-        },
-        {
-          id: 7,
-          type: '',
-          name: 'Tapdata 在线研讨会：DaaS vs 大数据平台，是竞争还是共处？',
-          time: '2021-12-03'
-        },
-        {
-          id: 6,
-          type: '',
-          name: 'Tapdata Cloud 最新功能概览',
-          time: '2021-12-03'
-        },
-        {
-          id: 5,
-          type: '',
-          name: 'Tapdata Cloud 1.0.8 版本发布啦！',
-          time: '2021-12-03'
-        },
-        {
-          id: 4,
-          type: '',
-          name: 'Tapdata Cloud 1.0.7 版本发布啦！',
-          time: '2021-10-26'
-        },
-        {
-          id: 3,
-          type: '',
-          name: 'Tapdata Cloud 1.0.6 版本发布啦！',
-          time: '2021-08-30'
-        },
-        {
-          id: 2,
-          type: '',
-          name: '异构数据库同步云平台 Tapdata Cloud 开启有奖公测',
-          time: '2021-07-31'
-        },
-        {
-          id: 1,
-          type: '',
-          name: 'Tapdata Cloud上线公测',
-          time: '2021-07-01'
         }
       ]
     },
