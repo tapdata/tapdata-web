@@ -20,8 +20,8 @@
     </div>
     <div class="database">
       <ul v-if="list.length" class="database__list">
-        <li v-for="(item, index) in list" :key="index" class="database__item">
-          <div class="database__img" @click="selectItem(item)">
+        <li v-for="(item, index) in list" :key="index" class="database__item" @click="selectItem(item)">
+          <div class="database__img">
             <ElImage :src="$util.getConnectionTypeDialogImg(item.type)" />
           </div>
           <div class="database__name">{{ item.name }}</div>
@@ -140,6 +140,7 @@ export default {
   margin-bottom: 12px;
   text-align: center;
   box-sizing: border-box;
+  cursor: pointer;
   &:nth-child(6n) {
     margin-right: 0;
   }
