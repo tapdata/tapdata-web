@@ -1476,7 +1476,9 @@ export default {
         stageId: stageId
       }
       this.$axios.post('tm/api/DataFlows/tranModelVersionControl', param).then(data => {
-        this.hiddenFieldMapping = !data?.[stageId] || false
+        if (data && data?.[stageId] !== undefined) {
+          this.hiddenFieldMapping = !data[stageId] || false
+        }
         this.getSteps()
       })
     },
