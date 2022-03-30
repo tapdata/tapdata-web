@@ -30,14 +30,14 @@
           <template slot-scope="scope">
             <div class="flex">
               <div>
-                <inline-input
+                <InlineInput
                   :class="['inline-input', 'color-primary', { 'cursor-pointer': scope.row.agentType !== 'Cloud' }]"
                   :value="scope.row.name"
                   :icon-config="{ class: 'color-primary', size: '12' }"
                   type="icon"
                   @click-text="handleDetails(scope.row)"
                   @save="updateName($event, scope.row.id)"
-                ></inline-input>
+                ></InlineInput>
               </div>
               <div class="flex align-items-center">
                 <img
@@ -53,7 +53,7 @@
         </ElTableColumn>
         <ElTableColumn :label="$t('agent_status')" width="120">
           <template slot-scope="scope">
-            <status-tag type="text" :status="scope.row.status" default-status="Stopped"></status-tag>
+            <StatusTag type="text" :status="scope.row.status" default-status="Stopped"></StatusTag>
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('agent_task_number')" width="120">
@@ -222,14 +222,14 @@
       <!--  详情    -->
       <Details v-model="showDetails" :detail-id="detailId" @closed="detailsClosedFnc" @load-data="loadDetailsData">
         <div slot="title">
-          <inline-input
+          <InlineInput
             :value="selectedRow.name"
             :icon-config="{ class: 'color-primary' }"
             :input-style="{ width: '140px' }"
             type="icon"
             word-break
             @save="updateName($event, selectedRow.id)"
-          ></inline-input>
+          ></InlineInput>
         </div>
         <div slot="operation" class="flex">
           <VButton

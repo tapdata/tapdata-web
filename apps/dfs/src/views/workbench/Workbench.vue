@@ -117,7 +117,7 @@
       </div>
     </div>
   </div>
-  <router-view v-else></router-view>
+  <RouterView v-else></RouterView>
 </template>
 
 <script>

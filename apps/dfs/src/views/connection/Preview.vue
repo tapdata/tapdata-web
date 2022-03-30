@@ -18,7 +18,7 @@
         </div>
         <div class="ml-4">
           <div class="fs-6 mb-2 ellipsis">{{ connection.name }}</div>
-          <div><status-tag type="text" target="connection" :status="connection.status"></status-tag></div>
+          <div><StatusTag type="text" target="connection" :status="connection.status"></StatusTag></div>
         </div>
       </div>
       <div v-if="!hideOperation" class="button-line container-item border-item pt-4 pb-5">

@@ -58,7 +58,7 @@
         </div>
         <div class="form-wrap">
           <div class="form">
-            <form-builder
+            <FormBuilder
               ref="form"
               class="form-builder grey"
               v-model="model"
@@ -66,7 +66,7 @@
               @value-change="formChange"
             >
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
-            </form-builder>
+            </FormBuilder>
             <ElButton v-if="databaseType === 'hazelcast_cloud_cluster'" type="text" size="mini" @click="startTest()">{{
               $t('connection_form_hazecast_connection_test')
             }}</ElButton>

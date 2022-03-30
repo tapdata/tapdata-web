@@ -23,7 +23,7 @@
                   }}</span>
                 </span>
               </div>
-              <form-builder
+              <FormBuilder
                 ref="dataSource"
                 v-model="dataSourceModel"
                 :config="config"
@@ -31,7 +31,7 @@
                 class="form-builder grey"
                 @value-change="formChange"
               >
-              </form-builder>
+              </FormBuilder>
             </div>
             <!-- 步骤3 -->
             <div class="body step-3" v-if="steps[activeStep].index === 3">
@@ -41,7 +41,7 @@
                   {{ $t('task_form_task_setting_tip') }}
                 </span>
               </div>
-              <form-builder
+              <FormBuilder
                 ref="setting"
                 v-model="settingModel"
                 :config="config"
@@ -182,7 +182,7 @@
                     </div>
                   </ElRow>
                 </template>
-              </form-builder>
+              </FormBuilder>
             </div>
             <!-- 步骤4 -->
             <div class="body step-4" v-if="steps[activeStep].index === 4">
@@ -220,18 +220,18 @@
             </div>
           </ElMain>
           <div class="create-task-footer py-6 mx-6" :class="['btns-step-' + steps[activeStep].index]">
-            <v-button class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()">
+            <VButton class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()">
               {{ $t('button_cancel') }}
-            </v-button>
-            <v-button
+            </VButton>
+            <VButton
               class="btn-step"
               :loading="loading"
               v-else-if="steps[activeStep].showBackBtn || (steps[activeStep].index === 3 && !id)"
               @click="back()"
             >
               {{ $t('guide.btn_back') }}
-            </v-button>
-            <v-button
+            </VButton>
+            <VButton
               v-if="steps[activeStep].showNextBtn"
               type="primary"
               class="btn-step"
@@ -240,8 +240,8 @@
               @mousedown.native.prevent="next()"
             >
               <span>{{ $t('guide.btn_next') }}</span>
-            </v-button>
-            <v-button
+            </VButton>
+            <VButton
               v-if="steps[activeStep].showSaveBtn"
               type="primary"
               class="btn-step"
@@ -250,7 +250,7 @@
               @click="save()"
             >
               {{ $t('button_finish') }}
-            </v-button>
+            </VButton>
           </div>
         </div>
       </ElContainer>

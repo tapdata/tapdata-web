@@ -17,7 +17,7 @@
         </div>
         <div class="ml-4">
           <div class="fs-6 mb-2 ellipsis"><slot name="title"></slot></div>
-          <div><status-tag type="text" :status="agent.status"></status-tag></div>
+          <div><StatusTag type="text" :status="agent.status"></StatusTag></div>
         </div>
       </div>
       <div class="button-line container-item border-item pt-4 pb-5">

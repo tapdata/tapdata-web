@@ -26,7 +26,7 @@
           <span class="el-select__tags-text">+ {{ selected.length - 1 }}</span>
         </ElTag>
       </span>
-      <transition-group @after-leave="resetInputHeight" v-if="!collapseTags">
+      <TransitionGroup @after-leave="resetInputHeight" v-if="!collapseTags">
         <ElTag
           v-for="item in selected"
           :key="getValueKey(item)"
@@ -39,7 +39,7 @@
         >
           <span class="el-select__tags-text">{{ item.currentLabel }}</span>
         </ElTag>
-      </transition-group>
+      </TransitionGroup>
 
       <input
         type="text"

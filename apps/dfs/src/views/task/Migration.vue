@@ -32,12 +32,12 @@
       <ElTableColumn :label="$t('task_type')" prop="syncTypeText" width="130"></ElTableColumn>
       <ElTableColumn :label="$t('task_status')" width="120">
         <template slot-scope="scope">
-          <status-tag
+          <StatusTag
             type="text"
             target="task"
             :status="scope.row.isFinished ? 'finished' : scope.row.status"
             only-img
-          ></status-tag>
+          ></StatusTag>
         </template>
       </ElTableColumn>
       <ElTableColumn :label="$t('task_start_time')" prop="startTime" sortable="custom" width="150">
