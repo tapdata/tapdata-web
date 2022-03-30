@@ -1832,6 +1832,13 @@ export default {
 
   signin_code: '发送验证码',
   signin_verify_code: '请输入验证码',
+  signin_verify_email_invalid: '请输入有效邮箱地址',
   signin_verify_code_success: '验证码发送成功',
-  signin_verify_code_error: '验证码发送失败'
+  signin_verify_code_error: '验证码发送失败',
+  signin_email_require: '邮箱地址必填',
+  signin_verify_code_not_empty: '验证码必填',
+  signin_verify_code_not_incorrect: '验证码错误',
+  signin_verify_password_invalid: '验证码至少5个字符',
+  signin_verify_password_notCN: '密碼僅允許英文、數字和英文標點符號',
+  signin_not_mailbox: 'oops~此邮箱尚未注册'
 }

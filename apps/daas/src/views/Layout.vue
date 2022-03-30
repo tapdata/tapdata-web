@@ -240,9 +240,9 @@
           background: rgba(44, 101, 255, 0.05);
         }
       }
-      // .submenu-item {
-      //   font-weight: 400;
-      // }
+      .submenu-item {
+        font-weight: 500;
+      }
       .el-menu-item,
       .el-submenu__title {
         font-weight: 500;

@@ -1817,6 +1817,13 @@ export default {
 
   signin_code: '發送驗證碼',
   signin_verify_code: '請輸入驗證碼',
+  signin_verify_email_invalid: '請輸入有效郵箱地址',
   signin_verify_code_success: '驗證碼發送成功',
-  signin_verify_code_error: '驗證碼發送失敗'
+  signin_verify_code_error: '驗證碼發送失敗',
+  signin_email_require: '郵箱地址必填',
+  signin_verify_code_not_empty: '验证码必填',
+  signin_verify_code_not_incorrect: '验证码错误',
+  signin_verify_password_invalid: '驗證碼至少5個字符',
+  signin_verify_password_notCN: '密碼僅允許英文、數字和英文標點符號',
+  signin_not_mailbox: 'oops~此郵箱尚未註冊'
 }

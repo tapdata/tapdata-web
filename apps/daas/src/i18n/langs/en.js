@@ -1889,8 +1889,14 @@ export default {
 
   classification_name_already_exists: 'Classification name already exists',
 
-  signin_code: 'Send verification code',
+  signin_code: 'Send',
   signin_verify_code: 'Please enter the verification code',
   signin_verify_code_success: 'Verification code sent successfully',
-  signin_verify_code_error: 'Failed to send verification code'
+  signin_verify_code_error: 'Failed to send verification code',
+  signin_email_require: 'Email address is required',
+  signin_verify_code_not_empty: 'Verification code must be filled',
+  signin_verify_code_not_incorrect: 'Verification code error',
+  signin_verify_password_invalid: 'Verification code at least 5 characters',
+  signin_verify_password_notCN: 'Password only allows English, numbers and English punctuation',
+  signin_not_mailbox: 'oops~This mailbox has not been registered yet'
 }
