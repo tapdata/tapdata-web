@@ -1885,6 +1885,7 @@ export default {
   milestone_list_status_finish: 'finish',
   milestone_list_status_error: 'Error',
   milestone_list_status_waiting: 'Waiting',
+  milestone_list_status_running: 'Running',
 
   classification_name_already_exists: 'Classification name already exists',
 

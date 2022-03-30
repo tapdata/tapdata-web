@@ -103,7 +103,7 @@
           </div>
         </div>
       </div>
-      <div class="flex flex-column flex-fill ml-10" style="height: 250px">
+      <div class="flex flex-column flex-fill ml-10" style="height: 250px" v-loading="chartLoading">
         <Chart ref="chart" type="line" :data="lineData" :options="lineOptions" class="type-chart h-100"></Chart>
       </div>
       <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
@@ -161,6 +161,7 @@ export default {
   },
   data() {
     return {
+      chartLoading: true,
       finishDuration: 0,
       progress: 0,
       selectTime: 'second',
@@ -168,7 +169,8 @@ export default {
         start: {
           edit: true,
           stop: true,
-          complete: true
+          complete: true,
+          error: true
         },
         pause: {
           running: true
@@ -598,6 +600,7 @@ export default {
       const { selectedTime } = this
       let params = this.getParams(reset)
       this.remoteMethod(params).then(data => {
+        this.chartLoading = false
         let { samples } = data
         samples.forEach(el => {
           for (let key in el) {
