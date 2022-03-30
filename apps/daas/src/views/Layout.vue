@@ -128,11 +128,15 @@
   height: 100%;
   background: rgba(250, 250, 250, 1);
   .layout-header {
+    position: fixed;
+    top: 0;
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
     background: #212a3b;
+    z-index: 2;
     .logo {
       margin-left: 23px;
       display: block;
@@ -185,10 +189,15 @@
     }
   }
   .layout-aside {
-    position: relative;
+    position: fixed;
+    top: 72px;
+    left: 0;
+    bottom: 0;
     display: flex;
-    height: 100%;
+    height: calc(100% - 72px);
     overflow: hidden;
+    z-index: 2;
+    border: 1px solid #e1e3e9;
     .el-menu--popup .submenu-item .btn-del {
       display: none;
     }
@@ -231,9 +240,9 @@
           background: rgba(44, 101, 255, 0.05);
         }
       }
-      // .submenu-item {
-      //   font-weight: 400;
-      // }
+      .submenu-item {
+        font-weight: 500;
+      }
       .el-menu-item,
       .el-submenu__title {
         font-weight: 500;
@@ -294,10 +303,13 @@
   }
   .layout-main {
     position: relative;
-    padding: 0;
-    background: #fff;
     display: flex;
     flex-direction: column;
+    height: calc(100% - 72px);
+    margin-left: 200px;
+    margin-top: 72px;
+    padding: 0;
+    background: #fff;
     box-sizing: border-box;
     overflow-y: hidden;
   }

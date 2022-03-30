@@ -1,4 +1,12 @@
 export default {
+  // 通用文本
+  loading: '加载中',
+  connection: '连接',
+  table: '表',
+  processor_node: '处理节点',
+  connection_name_search_placeholder: '请输入连接名称搜索',
+  table_name_search_placeholder: '请输入表名称搜索',
+
   // 通用提示
   tips_not_null: '值不能为空',
   tips_must_number: '值必须为数字',
@@ -585,6 +593,7 @@ export default {
     '数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。更多配置说明，请点击',
   connection_list_help_doc: '帮助文档',
   connection_list_test_button: '连接测试',
+  connection_list_delete_link_job: '连接被应用,不能删除',
 
   connection_form_database_name: '数据库名称',
   connection_form_database_username: '账号',
@@ -1832,20 +1841,21 @@ export default {
   milestone_list_status_finish: '已完成',
   milestone_list_status_error: '错误',
   milestone_list_status_waiting: '待执行',
+  milestone_list_status_running: '运行中',
 
   classification_name_already_exists: '分类名称已存在',
 
   signin_code: '发送验证码',
   signin_verify_code: '请输入验证码',
+  signin_verify_email_invalid: '请输入有效邮箱地址',
   signin_verify_code_success: '验证码发送成功',
   signin_verify_code_error: '验证码发送失败',
-
-  loading: '加载中',
-  connection: '连接',
-  table: '表',
-  processor_node: '处理节点',
-  connection_name_search_placeholder: '请输入连接名称搜索',
-  table_name_search_placeholder: '请输入表名称搜索',
+  signin_email_require: '邮箱地址必填',
+  signin_verify_code_not_empty: '验证码必填',
+  signin_verify_code_not_incorrect: '验证码错误',
+  signin_verify_password_invalid: '验证码至少5个字符',
+  signin_verify_password_notCN: '密碼僅允許英文、數字和英文標點符號',
+  signin_not_mailbox: 'oops~此邮箱尚未注册',
 
   dag_create_table_as_node: '创建新表作为节点使用',
   dag_join: '连接',

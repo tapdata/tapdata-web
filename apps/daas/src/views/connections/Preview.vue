@@ -471,6 +471,13 @@ export default {
               }
             })
           }
+          if (data.database_type === 'redis') {
+            items.forEach(el => {
+              if (['isCheckValid'].includes(el.field)) {
+                el.show = false
+              }
+            })
+          }
           this.form = items
         }
       }

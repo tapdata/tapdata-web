@@ -1,4 +1,12 @@
 export default {
+  // 通用文本
+  loading: 'Loading',
+  connection: 'Connection',
+  table: 'Table',
+  processor_node: 'Processor Node',
+  connection_name_search_placeholder: 'Please enter the connection name to search',
+  table_name_search_placeholder: 'Please enter the table name to search',
+
   // 通用提示
   tips_not_null: 'The value cannot be empty',
   tips_must_number: 'The value must be a number',
@@ -581,6 +589,7 @@ export default {
     'Data sources include types such as databases, structured files, application RESTful APIs, custom interfaces, etc. A data source must be created before a migration or synchronization task can be created. For more configuration instructions, please click ',
   connection_list_help_doc: 'Help Documentation',
   connection_list_test_button: 'Test',
+  connection_list_delete_link_job: 'The connection is applied and cannot be deleted',
 
   // 连接管理
   connection_form_change: 'change',
@@ -1891,20 +1900,20 @@ export default {
   milestone_list_status_finish: 'finish',
   milestone_list_status_error: 'Error',
   milestone_list_status_waiting: 'Waiting',
+  milestone_list_status_running: 'Running',
 
   classification_name_already_exists: 'Classification name already exists',
 
-  signin_code: 'Send verification code',
+  signin_code: 'Send',
   signin_verify_code: 'Please enter the verification code',
   signin_verify_code_success: 'Verification code sent successfully',
   signin_verify_code_error: 'Failed to send verification code',
-
-  loading: 'Loading',
-  connection: 'Connection',
-  table: 'Table',
-  processor_node: 'Processor Node',
-  connection_name_search_placeholder: 'Please enter the connection name to search',
-  table_name_search_placeholder: 'Please enter the table name to search',
+  signin_email_require: 'Email address is required',
+  signin_verify_code_not_empty: 'Verification code must be filled',
+  signin_verify_code_not_incorrect: 'Verification code error',
+  signin_verify_password_invalid: 'Verification code at least 5 characters',
+  signin_verify_password_notCN: 'Password only allows English, numbers and English punctuation',
+  signin_not_mailbox: 'oops~This mailbox has not been registered yet',
 
   dag_create_table_as_node: 'Create a new table to use as a node',
   dag_join: 'Join',
