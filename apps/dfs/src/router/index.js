@@ -229,14 +229,6 @@ const routes = [
         }
       },
       {
-        path: '/noviceGuide',
-        name: 'NoviceGuide',
-        component: () => import(/* webpackChunkName: "instance" */ '../views/novice-guide/Index.vue'),
-        meta: {
-          title: i18n.t('tap_Beginner_guide')
-        }
-      },
-      {
         path: '/user/center',
         name: 'userCenter',
         component: UserCenter,

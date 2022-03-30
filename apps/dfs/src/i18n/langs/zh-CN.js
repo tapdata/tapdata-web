@@ -158,7 +158,6 @@ export default {
   tap_task_verification_history: '任务校验历史',
   tap_difference_check_history: '差异校验历史',
   tap_operation_log: '操作日志',
-  tap_Beginner_guide: '新手引导',
   tap_agent_download: 'Agent 下载',
   tap_agent_download_now: 'Agent 立即下载',
   tap_upgrade: 'Agent 升级',
