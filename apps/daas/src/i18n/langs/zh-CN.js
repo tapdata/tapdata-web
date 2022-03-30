@@ -1827,6 +1827,7 @@ export default {
   milestone_list_status_finish: '已完成',
   milestone_list_status_error: '错误',
   milestone_list_status_waiting: '待执行',
+  milestone_list_status_running: '运行中',
 
   classification_name_already_exists: '分类名称已存在',
 

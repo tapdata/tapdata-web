@@ -1,8 +1,10 @@
 <template>
   <div class="card-box p-6">
     <div class="flex justify-content-between align-items-center">
-      <div class="info-line align-items-center">
-        <span class="mr-4 fs-6 font-color-main">{{ task.name }}</span>
+      <div class="info-line flex align-items-center">
+        <ElTooltip v-if="task" class="item" effect="dark" :content="task.name" placement="top">
+          <span class="mr-4 fs-6 flex-1 font-color-main ellipsis info-name">{{ task.name }}</span>
+        </ElTooltip>
         <StatusTag
           type="text"
           target="etlSub"
@@ -14,7 +16,7 @@
         <span class="ml-6 font-color-sub">
           {{ $t('task_monitor_founder') }}：<span>{{ task.creator }}</span>
         </span>
-        <span class="ml-6 font-color-sub">
+        <span class="mx-6 font-color-sub">
           {{ $t('task_info_start_time') }}：<span>{{ formatTime(task.startTime) || '-' }}</span>
         </span>
       </div>
@@ -103,7 +105,7 @@
           </div>
         </div>
       </div>
-      <div class="flex flex-column flex-fill ml-4" style="height: 250px">
+      <div class="flex flex-column flex-fill ml-4" style="height: 250px" v-loading="!lineDataDeep.x.length">
         <Chart ref="chart" type="line" :data="lineData" :options="lineOptions" class="type-chart h-100"></Chart>
       </div>
       <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
@@ -169,7 +171,8 @@ export default {
         start: {
           edit: true,
           stop: true,
-          complete: true
+          complete: true,
+          error: true
         },
         pause: {
           running: true
@@ -365,7 +368,8 @@ export default {
           value: 'minute'
         }
       ],
-      timeRange: []
+      timeRange: [],
+      timer: null
     }
   },
   computed: {
@@ -878,6 +882,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.info-line > span {
+  line-height: 26px;
+}
+.info-name {
+  display: inline-block;
+}
 .grey-background {
   background-color: #fafafa;
 }

@@ -134,7 +134,9 @@
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
               v-readonlybtn="'SYNC_job_operation'"
-              :disabled="!statusBtMap['start'][row.status]"
+              :disabled="
+                $disabledByPermission('SYNC_job_edition_all_data', row.user_id) || !statusBtMap['start'][row.status]
+              "
               type="primary"
               @click="start([row.id])"
             >
@@ -161,17 +163,16 @@
               >{{ $t('task_list_stop') }}</ElLink
             >
             <ElDivider direction="vertical"></ElDivider>
-            <ElButton
+            <ElLink
               v-readonlybtn="'SYNC_job_edition'"
-              type="text"
-              :loading="row.loadingEdit"
+              type="primary"
               :disabled="
                 $disabledByPermission('SYNC_job_edition_all_data', row.user_id) || !statusBtMap['edit'][row.status]
               "
-              @click="handleEditor(row.id, row)"
+              @click="handleEditor(row.id)"
             >
               {{ $t('task_list_edit') }}
-            </ElButton>
+            </ElLink>
             <ElDivider direction="vertical"></ElDivider>
             <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetail(row)">
               {{ $t('task_list_button_monitor') }}
@@ -345,11 +346,13 @@ export default {
       dataFlowId: '',
       statusBtMap: {
         edit: {
+          edit: true,
           stop: true,
           error: true,
           not_running: true,
           complete: true,
-          schedule_failed: true
+          schedule_failed: true,
+          edit: true
         },
         start: {
           edit: true,
@@ -398,6 +401,7 @@ export default {
         { label: this.$t('task_preview_status_running'), value: 'running' },
         { label: this.$t('task_preview_status_stop'), value: 'stop' },
         { label: this.$t('task_preview_status_edit'), value: 'edit' },
+        { label: this.$t('task_preview_status_ready'), value: 'ready' },
         { label: this.$t('task_preview_status_error'), value: 'error' },
         { label: this.$t('task_preview_status_complete'), value: 'complete' }
       ]
@@ -642,56 +646,13 @@ export default {
         name: 'MigrateNew'
       })
     },
-    handleEditor(id, row) {
-      //先检查是否待启动
-      this.$set(row, 'loadingEdit', true)
-      this.$api('Task')
-        .checkRun(id)
-        .then(res => {
-          let checkResult = res?.data?.neverRun //true表示没有运行过，或者重置过 false表示运行过，并且没有重置
-          if (checkResult) {
-            this.$router.push({
-              name: 'MigrateEditor',
-              params: {
-                id: id,
-                isEdit: 'all'
-              }
-            })
-          } else {
-            const h = this.$createElement
-            this.$confirm(
-              h('p', null, [h('span', null, this.$t('task_list_edit_confirm'))]),
-              this.$t('dataFlow.importantReminder'),
-              {
-                customClass: 'dataflow-clickTip',
-                confirmButtonText: this.$t('dataFlow.continueEditing'),
-                type: 'warning'
-              }
-            ).then(resFlag => {
-              if (!resFlag) {
-                return
-              }
-              let routeUrl = this.$router.resolve({
-                name: 'MigrateEditor',
-                params: { id: id }
-              })
-              setTimeout(() => {
-                document.querySelectorAll('.el-tooltip__popper').forEach(it => {
-                  it.outerHTML = ''
-                })
-                window.open(routeUrl.href, 'edit_' + id)
-              }, 200)
-            })
-            setTimeout(() => {
-              document.querySelectorAll('.el-tooltip__popper').forEach(it => {
-                it.outerHTML = ''
-              })
-            }, 200)
-          }
-        })
-        .finally(() => {
-          this.$set(row, 'loadingEdit', false)
-        })
+    handleEditor(id) {
+      this.$router.push({
+        name: 'MigrateEditor',
+        params: {
+          id: id
+        }
+      })
     },
     handleImport() {
       let routeUrl = this.$router.resolve({
