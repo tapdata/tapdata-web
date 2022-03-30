@@ -75,6 +75,12 @@ const getState = () => ({
       name: '主从合并',
       type: 'merge_table_processor',
       constructor: 'MergeTable'
+    },
+    {
+      icon: 'field-processor',
+      name: '字段计算',
+      type: 'field_calc_processor',
+      constructor: 'FieldValue'
     }
     // {
     //   icon: 'joint-cache',
