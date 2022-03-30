@@ -60,7 +60,11 @@ export default {
       }
       this.loadingMetadata = true
       if (taskData?.metadataMappings?.length > 0) {
-        this.fieldMappingNavData = taskData.metadataMappings
+        let metadataMappings = taskData.metadataMappings
+        if (this.targetIsVika) {
+          this.formatUserDeletedNum(metadataMappings, taskData.stages[0]?.field_process)
+        }
+        this.fieldMappingNavData = metadataMappings
         this.loadingMetadata = false
         if (this.$refs.fieldMappingDom) {
           this.$emit('update-first', false) //新建任务 第一次需要恢复默认
@@ -69,6 +73,9 @@ export default {
       } else {
         let promise = this.$axios.post('tm/api/DataFlows/metadata', taskData)
         promise.then(data => {
+          if (this.targetIsVika) {
+            this.formatUserDeletedNum(data, this.field_process)
+          }
           this.fieldMappingNavData = data
           this.loadingMetadata = false
           if (this.$refs.fieldMappingDom) {
@@ -380,6 +387,13 @@ export default {
         this.field_process.push(field_process)
       }
       return this.field_process
+    },
+    // 格式化vika标记删除的字段数量
+    formatUserDeletedNum(data, field_process = []) {
+      data.forEach(el => {
+        let findOne = field_process.find(t => t.table_id === el.sourceTableId)
+        el.userDeletedNum = findOne.operations.filter(t => t.op === 'REMOVE')?.length || 0
+      })
     }
   }
 }
