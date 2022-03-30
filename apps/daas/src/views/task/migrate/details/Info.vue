@@ -7,10 +7,9 @@
             task.parentTask.name
           }}</span>
         </ElTooltip>
-
         <StatusTag
           type="text"
-          target="migrate"
+          target="etlSub"
           :status="task.isFinished ? 'finished' : task.status || 'running'"
         ></StatusTag>
         <!--        <span class="ml-6 font-color-sub">-->
@@ -432,9 +431,11 @@ export default {
           this.finishDuration = this.handleTime(data?.finishDuration)
           this.progress = data?.progress
           this.endTs = data?.endTs
-          if (data?.progress !== 100) {
+          if (data?.progress !== 100 && this.task.status === 'running') {
             setTimeout(() => {
-              this.getSyncOverViewData()
+              if (this && !this._isDestroyed) {
+                this.getSyncOverViewData()
+              }
             }, 800)
           }
         })

@@ -368,7 +368,8 @@ export default {
           value: 'minute'
         }
       ],
-      timeRange: []
+      timeRange: [],
+      timer: null
     }
   },
   computed: {
