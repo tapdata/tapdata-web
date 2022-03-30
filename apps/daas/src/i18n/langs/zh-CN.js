@@ -48,6 +48,12 @@ export default {
   button_rollback: '回溯',
   button_revise: '修改',
   button_refresh: '刷新',
+  button_redo: '重做',
+  button_undo: '撤销',
+  button_center_content: '内容居中',
+  button_auto_layout: '自动布局',
+  button_zoom_in: '放大',
+  button_zoom_out: '缩小',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精准匹配',
@@ -1832,5 +1838,20 @@ export default {
   signin_code: '发送验证码',
   signin_verify_code: '请输入验证码',
   signin_verify_code_success: '验证码发送成功',
-  signin_verify_code_error: '验证码发送失败'
+  signin_verify_code_error: '验证码发送失败',
+
+  loading: '加载中',
+  connection: '连接',
+  table: '表',
+  processor_node: '处理节点',
+  connection_name_search_placeholder: '请输入连接名称搜索',
+  table_name_search_placeholder: '请输入表名称搜索',
+
+  dag_create_table_as_node: '创建新表作为节点使用',
+  dag_join: '连接',
+  dag_aggregator: '聚合',
+  dag_merge_table: '主从合并',
+  dag_field_processor: '字段处理',
+  dag_property_setting: '属性设置',
+  dag_meta_data: '元数据'
 }

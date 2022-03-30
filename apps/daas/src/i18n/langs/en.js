@@ -49,6 +49,12 @@ export default {
   button_rollback: 'rollback',
   button_revise: 'revise',
   button_refresh: 'Refresh',
+  button_redo: 'Redo',
+  button_undo: 'Undo',
+  button_center_content: 'Center Content',
+  button_auto_layout: 'Auto Layout',
+  button_zoom_in: 'Zoom In',
+  button_zoom_out: 'Zoom Out',
 
   query_fuzzy: 'Fuzzy match',
   query_precise: 'Exact match',
@@ -1891,5 +1897,20 @@ export default {
   signin_code: 'Send verification code',
   signin_verify_code: 'Please enter the verification code',
   signin_verify_code_success: 'Verification code sent successfully',
-  signin_verify_code_error: 'Failed to send verification code'
+  signin_verify_code_error: 'Failed to send verification code',
+
+  loading: 'Loading',
+  connection: 'Connection',
+  table: 'Table',
+  processor_node: 'Processor Node',
+  connection_name_search_placeholder: 'Please enter the connection name to search',
+  table_name_search_placeholder: 'Please enter the table name to search',
+
+  dag_create_table_as_node: 'Create a new table to use as a node',
+  dag_join: 'Join',
+  dag_aggregator: 'Aggregator',
+  dag_merge_table: 'Merge Table',
+  dag_field_processor: 'Field Processor',
+  dag_property_setting: 'Property Setting',
+  dag_meta_data: 'Meta Data'
 }

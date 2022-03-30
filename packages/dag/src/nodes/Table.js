@@ -76,7 +76,7 @@ export class Table extends NodeType {
                 required: true,
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
-                  wrapperWidth: 240
+                  wrapperWidth: 300
                 },
                 'x-component': 'Select',
                 'x-component-props': {
@@ -101,7 +101,7 @@ export class Table extends NodeType {
                 required: true,
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
-                  wrapperWidth: 240,
+                  wrapperWidth: 300,
                   feedbackText: ''
                 },
                 'x-component': 'Select',
@@ -135,8 +135,8 @@ export class Table extends NodeType {
                     fulfill: {
                       schema: {
                         // title: '{{console.log("tableName", $deps[0]),$deps[0] ? "表(可输入创建新表)" : "表"}}',
-                        'x-component-props.allowCreate': '{{$deps[0]}}',
-                        'x-decorator-props.feedbackText': '{{$deps[0] && "可输入创建新表"}}'
+                        'x-component-props.allowCreate': '{{$deps[0]}}'
+                        // 'x-decorator-props.feedbackText': '{{$deps[0] && "可输入创建新表"}}'
                       }
                     }
                   }
@@ -179,7 +179,7 @@ export class Table extends NodeType {
                     ],
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 240
+                      wrapperWidth: 300
                     },
                     'x-component': 'Radio.Group'
                   },
@@ -218,7 +218,7 @@ export class Table extends NodeType {
                     ],
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 240
+                      wrapperWidth: 300
                     },
                     'x-component': 'Radio.Group',
                     'x-reactions': {
@@ -255,7 +255,7 @@ export class Table extends NodeType {
                     required: true,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 240
+                      wrapperWidth: 300
                     },
                     'x-component': 'Input',
                     'x-reactions': {
@@ -360,7 +360,7 @@ export class Table extends NodeType {
                     ],
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 240
+                      wrapperWidth: 300
                     },
                     'x-component': 'Select'
                   },
@@ -384,7 +384,7 @@ export class Table extends NodeType {
                     ],
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 240
+                      wrapperWidth: 300
                     },
                     'x-component': 'Select',
                     'x-reactions': {
@@ -402,8 +402,8 @@ export class Table extends NodeType {
                     required: true,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 240,
-                      feedbackText: '可输入创建新字段'
+                      wrapperWidth: 300
+                      // feedbackText: '可输入创建新字段'
                     },
                     'x-component': 'Select',
                     'x-component-props': {
