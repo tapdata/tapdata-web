@@ -63,6 +63,7 @@
                   :mqTransferFlag="mqTransferFlag"
                   :isTwoWay="true"
                   :getTask="daft"
+                  :saveTask="createTask"
                 ></Transfer>
               </div>
             </div>
@@ -121,6 +122,7 @@ export default {
       id: '',
       loading: false,
       stateIsReadonly: false, //只读模式
+      isEditAll: false, //编辑所有步骤
       //第一步 配置源端
       dataSourceData: Object.assign({}, DATASOURCE_MODEL),
       sourceId: '',
@@ -156,6 +158,23 @@ export default {
     }
   },
   methods: {
+    checkEditor(id) {
+      //先检查是否待启动
+      this.$api('Task')
+        .checkRun(id)
+        .then(res => {
+          let checkResult = res?.data?.neverRun //true表示没有运行过，或者重置过 false表示运行过，并且没有重置
+          this.isEditAll = checkResult //不弹窗支持改所有
+          this.getSteps()
+          if (!checkResult) {
+            this.$confirm(this.$t('task_list_edit_confirm'), this.$t('dataFlow.importantReminder'), {
+              confirmButtonText: this.$t('dialog_button_confirm'),
+              showCancelButton: false,
+              type: 'warning'
+            })
+          }
+        })
+    },
     //编辑模式
     intiData(id) {
       this.$api('Task')
@@ -199,7 +218,7 @@ export default {
             //编辑时不被覆盖
             this.tableNameTransform = targetNodeMapping.tableNameTransform
             this.fieldsNameTransform = targetNodeMapping.fieldsNameTransform
-            this.getSteps()
+            this.checkEditor(this.id)
           }
         })
     },
@@ -223,8 +242,7 @@ export default {
     },
     getSteps() {
       this.steps = []
-      let isEdit = this.$route.params.isEdit
-      if (this.id && !this.stateIsReadonly && !isEdit) {
+      if (this.id && !this.stateIsReadonly && !this.isEditAll) {
         //编辑模式 没有第一步
         this.steps = [
           { index: 2, text: this.$t('task_form_task_setting'), type: 'setting', showExitBtn: true, showNextBtn: true },
@@ -287,11 +305,6 @@ export default {
               this.mqTransferFlag = true
             } else {
               this.mqTransferFlag = false
-            }
-            //赋值
-            if (!this.id) {
-              this.id = this.dataSourceData.id
-              this.settingData.name = this.dataSourceData.name
             }
             this.activeStep++
           }
@@ -356,6 +369,15 @@ export default {
         console.error(error)
         this.$message.error('出错了')
       }
+    },
+    createTask() {
+      if (this.id) return
+      let postData = this.daft()
+      let promise = this.$api('Task').save(postData)
+      promise.then(res => {
+        this.id = res?.data?.id
+      })
+      return promise
     },
     //储存/提交数据
     daft() {
