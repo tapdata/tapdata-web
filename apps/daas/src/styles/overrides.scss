@@ -697,6 +697,9 @@
 // }
 
 // 页签
+.el-tabs__nav-wrap::after {
+  height: 1px;
+}
 .el-tabs__item.is-active {
   color: map-get($color, primary);
 }
@@ -709,6 +712,7 @@
 .el-tabs__item {
   color: map-get($fontColor, sub);
   font-weight: 400;
+  user-select:none;
 }
 .el-tabs--border-card>.el-tabs__header .el-tabs__item.is-active {
   color: map-get($color, primary);

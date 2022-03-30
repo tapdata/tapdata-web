@@ -579,6 +579,7 @@ export default {
     '数据源包括数据库、结构化文件、应用程序RESTful API、自定义接口等类型，必须先创建数据源才能创建迁移或同步任务。更多配置说明，请点击',
   connection_list_help_doc: '帮助文档',
   connection_list_test_button: '连接测试',
+  connection_list_delete_link_job: '连接被应用,不能删除',
 
   connection_form_database_name: '数据库名称',
   connection_form_database_username: '账号',

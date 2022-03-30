@@ -575,6 +575,7 @@ export default {
     'Data sources include types such as databases, structured files, application RESTful APIs, custom interfaces, etc. A data source must be created before a migration or synchronization task can be created. For more configuration instructions, please click ',
   connection_list_help_doc: 'Help Documentation',
   connection_list_test_button: 'Test',
+  connection_list_delete_link_job: 'The connection is applied and cannot be deleted',
 
   // 连接管理
   connection_form_change: 'change',

@@ -577,6 +577,7 @@ export default {
     '數據源包括數據庫、結構化文件、應用程序RESTful API、自定義接口等類型，必須先創建數據源才能創建遷移或同步任務。更多配置說明，請點擊',
   connection_list_help_doc: '幫助文檔',
   connection_list_test_button: '連接測試',
+  connection_list_delete_link_job: '連接被應用,不能刪除',
 
   connection_form_database_name: '數據庫名稱',
   connection_form_database_username: '賬號',
