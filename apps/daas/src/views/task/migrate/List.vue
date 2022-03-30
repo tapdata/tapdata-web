@@ -134,7 +134,9 @@
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
               v-readonlybtn="'SYNC_job_operation'"
-              :disabled="!statusBtMap['start'][row.status]"
+              :disabled="
+                $disabledByPermission('SYNC_job_edition_all_data', row.user_id) || !statusBtMap['start'][row.status]
+              "
               type="primary"
               @click="start([row.id])"
             >
@@ -349,7 +351,8 @@ export default {
           error: true,
           not_running: true,
           complete: true,
-          schedule_failed: true
+          schedule_failed: true,
+          edit: true
         },
         start: {
           edit: true,
