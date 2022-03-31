@@ -13,7 +13,7 @@
       <component
         v-else
         v-bind="getOptions(item)"
-        v-model.trim="item.value"
+        v-model="item.value"
         :is="getComponent(item.type)"
         :style="getStyle(item)"
         @input="search(item)"
@@ -112,6 +112,9 @@ export default {
                 result[k] = el.value[i]
               })
             }
+          } else if (el.type === 'input') {
+            let value = el.value?.trim() || ''
+            result[el.key] = value
           } else {
             result[el.key] = el.value
           }
@@ -144,11 +147,11 @@ export default {
       this.rules = result
     },
     search(item) {
-      this.$emit('input', this.getValue())
       this.$refs.filterForm.validate(res => {
         if (res) {
           const { delayTrigger } = this.$util
           delayTrigger(() => {
+            this.$emit('input', this.getValue())
             this.$router.replace({
               name: this.$route.name,
               query: this.getValue()
