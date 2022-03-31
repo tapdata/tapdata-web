@@ -125,10 +125,12 @@
 }
 .form-field-selector {
   width: 905px;
+  max-width: 100%;
 }
 .example-wrapper {
   padding: 16px;
   width: 950px;
+  max-width: 100%;
   background: #3a3d4c;
   border-radius: 2px;
   color: #bfd0ff;
