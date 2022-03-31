@@ -88,7 +88,7 @@
       <el-table-column min-width="200" :label="$t('task_list_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name link-primary">
-            <span :class="['name', { 'has-children': row.hasChildren }]" @click.stop="handlePreview(row.id)">{{
+            <span :class="['name', { 'has-children': row.hasChildren }]" @click.stop="handlePreview(row)">{{
               row.name
             }}</span>
             <el-tag v-if="row.listTagId !== undefined" class="tag" type="info" effect="dark" size="mini">
@@ -289,11 +289,22 @@
               <div class="fs-8 mt-2 mb-2 desc">
                 {{ $t('task_details_desc') }}: <span>{{ previewData.desc }}</span>
               </div>
-              <div class="status">
-                <!-- <img :src="getSatusImgSrc(previewData.status)" alt="" /> -->
-                <span :class="['status-' + previewData.status, 'status-block']">
-                  {{ $t('task_preview_status_' + previewData.status) }}
+              <div class="status bg-main rounded-1 py-3 px-2">
+                <span class="mr-2" v-for="item in previewData.statusResult" :key="item.status">
+                  <span class="din-font fs-6 text-rdlevel">{{ item.count }}</span>
+                  <span class="pl-1 fs-8 text-sub">{{ item.text }} </span>
                 </span>
+                <div class="proportion">
+                  <span
+                    v-for="item in proportionData"
+                    :key="item.label"
+                    :style="{ background: item.color, width: item.value + '%' }"
+                  ></span>
+                </div>
+                <!-- <img :src="getSatusImgSrc(previewData.status)" alt="" /> -->
+                <!-- <span :class="['status-' + previewData.status, 'status-block']">
+                  {{ $t('task_preview_status_' + previewData.status) }}
+                </span> -->
               </div>
             </div>
           </div>
@@ -344,6 +355,7 @@ export default {
   components: { FilterBar, TablePage, DownAgent, SkipError, StatusItem, Drawer, Upload },
   data() {
     return {
+      proportionData: [],
       isShowDetails: false,
       previewLoading: false,
       previewData: null,
@@ -512,7 +524,8 @@ export default {
         startTime: true,
         agentId: true,
         statuses: true,
-        type: true
+        type: true,
+        desc: true
       }
       if (keyword && keyword.trim()) {
         where.or = [
@@ -1132,53 +1145,48 @@ export default {
         .every(t => ['ready', 'edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed'].includes(t.status))
     },
     // 打开预览
-    handlePreview(id) {
+    handlePreview(data) {
+      let previewList = [{ label: 'subtasks', value: data.statuses.length }]
+
+      let statusResult = data.statusResult || []
+      let colorMap = {
+        error: '#F64E3E',
+        running: '#2CD36F',
+        not_running: '#FFBF00',
+        stop: '#FF7D00',
+        edit: '#2C65FF'
+      }
+      let total = statusResult.reduce((prev, cur) => {
+        return cur.count + prev
+      }, 0)
+      let proportionData = statusResult.map(item => {
+        return {
+          label: item.status,
+          key: item.count,
+          value: (item.count / total) * 100,
+          color: colorMap[item.status]
+        }
+      })
+      this.proportionData = proportionData
+      console.log('proportionData', data, total, proportionData)
+
       this.isShowDetails = true
-      this.getPreviewData(id)
-    },
-    async getPreviewData(id) {
-      this.previewLoading = true
-      this.$api('Task')
-        .findTaskDetailById([id])
-        .then(res => {
-          if (res) {
-            let previewData = []
-            this.previewData = res.data
-            for (let item in res.data) {
-              if (item === 'setting') {
-                let setting = res.data[item]
-                res.data['sync_type'] = setting.sync_type
-                item = 'sync_type'
-              }
-              if (
-                [
-                  'createAt',
-                  'startTime',
-                  'initStartTime',
-                  'cdcStartTime',
-                  'initStartTime',
-                  'taskFinishTime',
-                  'eventTime'
-                ].includes(item)
-              ) {
-                res.data[item] = this.$moment(res.data[item]).format('YYYY-MM-DD HH:mm:ss')
-              }
-
-              if (
-                !['customId', 'lastUpdAt', 'userId', 'lastUpdBy', 'lastUpdBy', 'status', 'desc', 'name'].includes(item)
-              ) {
-                previewData.push({ label: item, value: res.data[item] || '-' })
-              }
-
-              // this.getSatusImgSrc(res.data.status)
-            }
-            this.previewList = previewData
+      this.previewData = data
+      for (let item in data) {
+        if (['createUser', 'type', 'id', 'createTime'].includes(item)) {
+          if (['type'].includes(item)) {
+            data[item] = this.syncType[data[item]]
           }
-        })
-        .finally(() => {
-          this.previewLoading = false
-        })
+
+          if (['createTime'].includes(item)) {
+            data[item] = data[item] ? this.$moment(data[item]).format('YYYY-MM-DD HH:mm:ss') : '-'
+          }
+          previewList.push({ label: item, value: data[item] || '-' })
+        }
+      }
+      this.previewList = previewList
     },
+
     getImgByData(data) {
       return require(`@/assets/images/migrate/${data}.png`)
     },
@@ -1350,9 +1358,29 @@ export default {
       }
     }
     .status {
-      padding-top: 5px;
       font-size: 12px;
       border-top-width: 2px;
+      box-sizing: border-box;
+      .proportion {
+        height: 6px;
+        background-color: map-get($bgColor, main);
+        span {
+          display: inline-block;
+          height: 6px;
+          &:first-child {
+            border-top-left-radius: 2px;
+            border-bottom-left-radius: 2px;
+          }
+          &:first-child {
+            border-top-left-radius: 2px;
+            border-bottom-left-radius: 2px;
+          }
+          &:last-child {
+            border-top-right-radius: 2px;
+            border-bottom-right-radius: 2px;
+          }
+        }
+      }
       .error {
         color: #f56c6c;
       }
