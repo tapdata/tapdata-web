@@ -36,7 +36,7 @@
       </ElTableColumn>
     </TablePage>
     <Drawer class="shared-cache-details" :visible.sync="isShowDetails">
-      <div class="shared-cache-details--header flex pb-3">
+      <div v-if="details.id" class="shared-cache-details--header flex pb-3">
         <VIcon class="icon">agent</VIcon>
         <div class="flex-fill ml-4">
           <div class="fs-6">{{ details.name }}</div>
