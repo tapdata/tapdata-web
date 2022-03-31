@@ -64,6 +64,8 @@ export default {
   message_copy_fail: '复制失败',
   message_delete_ok: '删除成功',
   message_delete_fail: '删除失败',
+  message_upload_success: '上传成功',
+  message_upload_fail: '上传失败',
   message_deleting: '删除中',
   message_reload_ok: '正在重新加载',
   message_update_success: '修改成功',

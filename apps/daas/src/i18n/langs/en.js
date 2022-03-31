@@ -65,6 +65,8 @@ export default {
   message_copy_fail: 'Copy failed',
   message_delete_ok: 'Delete successfully',
   message_delete_fail: 'Deletion failed',
+  message_upload_success: 'Upload successful',
+  message_upload_fail: 'Upload failed',
   message_deleting: 'Deleting',
   message_reload_ok: 'Reloading in progress',
   message_update_success: 'Modification succeeded',
@@ -1707,6 +1709,7 @@ export default {
   role_form_connected: 'connected',
   role_form_already_exists: 'The role name is repeated',
   role_null: 'The role name cannot be empty',
+  role_form_description: 'The role description cannot be empty',
 
   role_page_Dashboard_menu: 'Console',
   role_page_datasource_menu: 'Connection management',

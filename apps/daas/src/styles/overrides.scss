@@ -95,6 +95,8 @@
   border-color: map-get($color, primary);
 }
 .el-textarea__inner {
+  font-family: Arial;
+  color: map-get($fontColor, main);
   // border: 1px solid rgba(221, 221, 221, 0.4);
   // background-color:  rgba(239, 241, 244, 0.2);
 }
@@ -474,6 +476,16 @@
     padding: 0 15px 15px 15px;
     font-size: 14px;
   }
+}
+
+.el-upload-list__item-name {
+  padding: 3px 10px;
+  color: #1D2129;
+  background-color: #F7F8FA;
+}
+.el-upload-list__item .el-icon-close {
+  display: block;
+  top: 10px;
 }
 .table-page-main {
   background: #fff;
