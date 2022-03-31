@@ -24,6 +24,7 @@ export const FieldValue = connect(
         return {
           nodeKey: '',
           originalFields: [],
+          fields: [],
           checkAll: false,
           scriptDialog: {
             open: false,
@@ -56,10 +57,9 @@ export const FieldValue = connect(
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options?.[0] || []
-        fields = convertSchemaToTreeData(fields)
+        fields = convertSchemaToTreeData(fields) || []
+        this.fields = fields
         this.originalFields = JSON.parse(JSON.stringify(fields))
-        // eslint-disable-next-line
-        console.log('FieldProcess.mergeOutputSchema', fields)
         return (
           <div class="field-processor-tree-warp bg-body pt-2 pb-5">
             <div class="field-processor-operation flex">
@@ -79,6 +79,7 @@ export const FieldValue = connect(
                 node-key="id"
                 default-expand-all={true}
                 show-checkbox={true}
+                expand-on-click-node={false}
                 class="field-processor-tree"
                 scopedSlots={{
                   default: ({ node, data }) => (
@@ -88,9 +89,13 @@ export const FieldValue = connect(
                     >
                       <span class="field-name inline-block">
                         {data.field_name}
-                        <VIcon v-if="data.primary_key_position > 0" size="12" class="text-warning ml-1">
-                          key
-                        </VIcon>
+                        {data.primary_key_position > 0 ? (
+                          <VIcon size="12" class="text-warning ml-1">
+                            key
+                          </VIcon>
+                        ) : (
+                          ''
+                        )}
                       </span>
                       <span class="field-name inline-block">{this.isScript(data.id)}</span>
                       <span class="e-ops">
@@ -100,7 +105,7 @@ export const FieldValue = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          onClick={() => this.handleReset(data.id)}
+                          onClick={() => this.handleReset(node, data)}
                           disabled={!this.isScript(data.id)}
                         >
                           <VIcon>revoke</VIcon>
@@ -237,17 +242,22 @@ export const FieldValue = connect(
             self.scriptDialog.script = ''
           }
         },
-        handleReset(id) {
+        handleReset(node, data) {
           if (!this.scripts || this.scripts?.length < 0) return
-          for (let i = 0; i < this.scripts.length; i++) {
-            if (id === this.scripts[i].id) {
-              this.scripts.splice(i, 1)
-              i--
-              this.$nextTick(() => {
-                this.isScript(id) //更新页面的值
-              })
+          let self = this
+          let fn = function (node, data) {
+            for (let i = 0; i < node.childNodes.length; i++) {
+              let childNode = node.childNodes[i]
+              fn(childNode, childNode.data)
+            }
+            for (let i = 0; i < self.scripts.length; i++) {
+              if (self.scripts[i].id === data.id) {
+                self.scripts.splice(i, 1)
+                i--
+              }
             }
           }
+          fn(node, data)
         },
         handleAllReset() {
           let ids = this.$refs.tree.getCheckedNodes(false, true)
@@ -255,19 +265,20 @@ export const FieldValue = connect(
             ids.map(id => {
               let node = this.$refs.tree.getNode(id)
               if (node) {
-                this.handleReset(id)
+                this.handleReset(node, node.data)
               }
             })
           }
         },
         handleCheckAllChange() {
-          let fields = this.options?.[0] || []
-          if (!this.checkAll) {
-            this.$refs.tree.setCheckedNodes(fields)
-            this.checkAll = true
+          if (this.checkAll) {
+            this.$nextTick(() => {
+              this.$refs.tree.setCheckedNodes(this.fields)
+            })
           } else {
-            this.$refs.tree.setCheckedKeys([])
-            this.checkAll = false
+            this.$nextTick(() => {
+              this.$refs.tree.setCheckedKeys([])
+            })
           }
         }
       }

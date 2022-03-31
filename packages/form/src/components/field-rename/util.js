@@ -67,6 +67,7 @@ export const convertSchemaToTreeData = function (Schema) {
     return null
   }
 }
+
 export const getFieldsIds = function (fields) {
   let fieldIds = []
   if (fields) {

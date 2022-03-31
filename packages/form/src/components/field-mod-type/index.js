@@ -84,8 +84,9 @@ export const FieldModType = connect(
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options?.[0] || []
+        fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
+        fields = this.checkOps(fields)
         this.originalFields = JSON.parse(JSON.stringify(fields))
-        fields = convertSchemaToTreeData(fields) //将模型转换成tree
         return (
           <div class="field-processor-tree-warp bg-body pt-2 pb-5">
             <div class="field-processor-operation flex">
@@ -106,6 +107,7 @@ export const FieldModType = connect(
                 node-key="id"
                 default-expand-all={true}
                 show-checkbox={true}
+                expand-on-click-node={false}
                 class="field-processor-tree"
                 scopedSlots={{
                   default: ({ node, data }) => (
@@ -126,7 +128,12 @@ export const FieldModType = connect(
                         ))}
                       </ElSelect>
                       <span class="e-ops">
-                        <ElButton type="text" class="ml-5" onClick={() => this.handleReset(node, data)}>
+                        <ElButton
+                          type="text"
+                          class="ml-5"
+                          disabled={!this.isConvertDataType(data.id)}
+                          onClick={() => this.handleReset(node, data)}
+                        >
                           <VIcon>revoke</VIcon>
                         </ElButton>
                       </span>
@@ -163,46 +170,46 @@ export const FieldModType = connect(
           fn(fields)
           return field
         },
+        checkOps(fields) {
+          if (this.operations?.length > 0 && fields?.length > 0) {
+            for (let i = 0; i < this.operations.length; i++) {
+              if (this.operations[i]?.op === 'CONVERT') {
+                let targetIndex = fields.findIndex(n => n.id === this.operations[i].id)
+                if (targetIndex === -1) return
+                fields[targetIndex].java_type = this.operations[i].operand
+              }
+            }
+          }
+          return fields
+        },
         handleDataType(node, data) {
           console.log('fieldProcessor.handleDataType', node, data) //eslint-disable-line
-          let createOps = this.operations.filter(v => v.id === data.id && v.op === 'CREATE')
-          if (createOps && createOps.length > 0) {
-            let op = createOps[0]
-            op.java_type = data.java_type
+          let nativeData = this.getNativeData(data.id)
+          let ops = this.operations.filter(v => v.id === data.id && v.op === 'CONVERT')
+          let op
+          if (ops.length === 0) {
+            op = Object.assign(JSON.parse(JSON.stringify(this.CONVERT_OPS_TPL)), {
+              id: data.id,
+              field: nativeData.original_field_name,
+              operand: data.java_type,
+              originalDataType: nativeData.original_java_type,
+              table_name: data.table_name,
+              type: data.type,
+              primary_key_position: data.primary_key_position,
+              color: data.color,
+              label: data.field_name,
+              field_name: data.field_name
+            })
+            this.operations.push(op)
           } else {
-            let nativeData = this.getNativeData(data.id)
-            let ops = this.operations.filter(v => v.id === data.id && v.op === 'CONVERT')
-            let op
-            if (ops.length === 0) {
-              op = Object.assign(JSON.parse(JSON.stringify(this.CONVERT_OPS_TPL)), {
-                id: data.id,
-                field: nativeData.original_field_name,
-                operand: data.java_type,
-                originalDataType: nativeData.original_java_type,
-                table_name: data.table_name,
-                type: data.java_type,
-                primary_key_position: data.primary_key_position,
-                color: data.color,
-                label: data.field_name,
-                field_name: data.field_name
-              })
-              this.operations.push(op)
-            } else {
-              op = ops[0]
-              op.type = data.java_type
-              op.operand = data.java_type
-              op.originalDataType = nativeData.original_java_type
-            }
+            op = ops[0]
+            op.java_type = data.java_type
+            op.operand = data.java_type
+            op.originalDataType = nativeData.original_java_type
           }
         },
         handleReset(node, data) {
           console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
-          let parentId = node.parent.data.id
-          let dataLabel = JSON.parse(JSON.stringify(data.field_name))
-          let indexId = this.operations.filter(v => v.op === 'REMOVE' && v.id === parentId)
-          if (parentId && indexId.length !== 0) {
-            return
-          }
           let self = this
           let fn = function (node, data) {
             let nativeData = self.getNativeData(data.id)
@@ -213,29 +220,8 @@ export const FieldModType = connect(
             for (let i = 0; i < self.operations.length; i++) {
               if (self.operations[i].id === data.id) {
                 let ops = self.operations[i]
-                if (ops.op === 'REMOVE') {
-                  self.operations.splice(i, 1)
-                  i--
-                  continue
-                }
-                if (ops.op === 'CREATE') {
-                  self.operations.splice(i, 1)
-                  i--
-                  self.$refs.tree.remove(node)
-                  continue
-                }
-                if (ops.op === 'RENAME') {
-                  let existsName = self.handleExistsName(node, data)
-                  if (existsName) {
-                    return
-                  }
-                  if (nativeData) node.data.field_name = nativeData.original_field_name
-                  self.operations.splice(i, 1)
-                  i--
-                  continue
-                }
                 if (ops.op === 'CONVERT') {
-                  if (nativeData) node.data.type = nativeData.type
+                  if (nativeData) node.data.java_type = nativeData.type
                   self.operations.splice(i, 1)
                   i--
                   continue
@@ -244,10 +230,6 @@ export const FieldModType = connect(
             }
           }
           fn(node, data)
-          let existsName = this.handleExistsName(node, data)
-          if (existsName) {
-            data.field_name = dataLabel
-          }
         },
         getParentFieldName(node) {
           let fieldName = node.data && node.data.field_name ? node.data.field_name : ''
@@ -269,13 +251,14 @@ export const FieldModType = connect(
           }
         },
         handleCheckAllChange() {
-          let fields = this.options?.[0] || []
-          if (!this.checkAll) {
-            this.$refs.tree.setCheckedNodes(fields)
-            this.checkAll = true
+          if (this.checkAll) {
+            this.$nextTick(() => {
+              this.$refs.tree.setCheckedNodes(this.fields)
+            })
           } else {
-            this.$refs.tree.setCheckedKeys([])
-            this.checkAll = false
+            this.$nextTick(() => {
+              this.$refs.tree.setCheckedKeys([])
+            })
           }
         }
       }

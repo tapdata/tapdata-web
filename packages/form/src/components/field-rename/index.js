@@ -101,6 +101,7 @@ export const FieldRename = connect(
                 node-key="id"
                 default-expand-all={true}
                 show-checkbox={true}
+                expand-on-click-node={false}
                 class="field-processor-tree"
                 scopedSlots={{
                   default: ({ node, data }) => (
@@ -326,13 +327,14 @@ export const FieldRename = connect(
           }
         },
         handleCheckAllChange() {
-          let fields = this.options?.[0] || []
-          if (!this.checkAll) {
-            this.$refs.tree.setCheckedNodes(fields)
-            this.checkAll = true
+          if (this.checkAll) {
+            this.$nextTick(() => {
+              this.$refs.tree.setCheckedNodes(this.fields)
+            })
           } else {
-            this.$refs.tree.setCheckedKeys([])
-            this.checkAll = false
+            this.$nextTick(() => {
+              this.$refs.tree.setCheckedKeys([])
+            })
           }
         }
       }

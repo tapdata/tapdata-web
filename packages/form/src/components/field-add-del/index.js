@@ -26,7 +26,6 @@ export const FieldAddDel = connect(
           nodeKey: '',
           originalFields: [],
           checkAll: false,
-          firstId: '',
           fields: [],
           /*字段处理器支持功能类型*/
           REMOVE_OPS_TPL: {
@@ -59,11 +58,13 @@ export const FieldAddDel = connect(
       render() {
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
-        let fields = this.options?.[0] || []
-        this.originalFields = JSON.parse(JSON.stringify(fields))
+        let fields = JSON.parse(JSON.stringify(this.options?.[0] || []))
+        //读取op 配置
+        fields = this.checkOps(fields)
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
+        this.originalFields = JSON.parse(JSON.stringify(fields))
         this.fields = fields
-        this.firstId = fields[0]?.id || ''
+
         return (
           <div class="field-processor-tree-warp bg-body pt-2 pb-5">
             <div class="field-processor-operation flex">
@@ -143,6 +144,29 @@ export const FieldAddDel = connect(
           let ops = this.operations.filter(v => v.id === id && v.op === 'CREATE')
           return ops && ops.length > 0
         },
+        checkOps(fields) {
+          if (this.operations?.length > 0) {
+            for (let i = 0; i < this.operations.length; i++) {
+              if (this.operations[i]?.op === 'CREATE') {
+                let newField = {
+                  id: this.operations[i].id,
+                  field_name: this.operations[i].field,
+                  table_name: this.operations[i].tableName || this.operations[i].table_name,
+                  original_field_name: this.operations[i].field || this.operations[i].field_name,
+                  java_type: this.operations[i].java_type,
+                  data_type: 'STRING',
+                  primary_key_position: 0,
+                  dataType: 2,
+                  is_nullable: true,
+                  columnSize: 0,
+                  autoincrement: false
+                }
+                fields.unshift(newField)
+              }
+            }
+          }
+          return fields
+        },
         getNativeData(id) {
           let fields = this.originalFields || []
           let field = null
@@ -166,7 +190,6 @@ export const FieldAddDel = connect(
         handleReset(node, data) {
           console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
           let parentId = node.parent.data.id
-          let dataLabel = JSON.parse(JSON.stringify(data.field_name))
           let indexId = this.operations.filter(v => v.op === 'REMOVE' && v.id === parentId)
           if (parentId && indexId.length !== 0) {
             return
@@ -195,10 +218,6 @@ export const FieldAddDel = connect(
             }
           }
           fn(node, data)
-          let existsName = this.handleExistsName(node, data)
-          if (existsName) {
-            data.field_name = dataLabel
-          }
         },
         getParentFieldName(node) {
           let fieldName = node.data && node.data.field_name ? node.data.field_name : ''
@@ -220,7 +239,7 @@ export const FieldAddDel = connect(
           let fieldId = uuid()
           let newFieldOperation = Object.assign(JSON.parse(JSON.stringify(this.CREATE_OPS_TPL)), {
             field: 'newFieldName',
-            tableName: '',
+            tableName: this.fields[0]?.tableName || '',
             java_type: 'String',
             id: fieldId,
             action: 'create_sibling',
@@ -234,10 +253,10 @@ export const FieldAddDel = connect(
             label: 'newFieldName',
             type: 'String',
             primary_key_position: 0,
-            table_name: '',
+            tableName: this.fields[0]?.tableName || '',
             field_name: 'newFieldName'
           }
-          let node = this.$refs.tree.getNode(this.firstId)
+          let node = this.$refs.tree.getNode(this.fields[0]?.id || '')
           let existsName = this.handleExistsName(node)
           if (existsName) return
           this.$refs.tree.insertBefore(newNodeData, node)
@@ -276,7 +295,6 @@ export const FieldAddDel = connect(
               })
               self.operations.push(op)
             }
-
             if (field.children) {
               field.children.forEach(fn)
             }
@@ -305,12 +323,14 @@ export const FieldAddDel = connect(
           }
         },
         handleCheckAllChange() {
-          if (!this.checkAll) {
-            this.$refs.tree.setCheckedNodes(this.fields)
-            this.checkAll = true
+          if (this.checkAll) {
+            this.$nextTick(() => {
+              this.$refs.tree.setCheckedNodes(this.fields)
+            })
           } else {
-            this.$refs.tree.setCheckedKeys([])
-            this.checkAll = false
+            this.$nextTick(() => {
+              this.$refs.tree.setCheckedKeys([])
+            })
           }
         }
       }
