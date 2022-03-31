@@ -205,7 +205,7 @@ export default {
           break
         case 'input':
           this.setDefaultValue(item, 'debounce', 800)
-          this.setDefaultValue(item, 'icon', 'search')
+          this.setDefaultValue(item, 'suffix-icon', 'search')
           this.setDefaultValue(item, 'class', 'filter-el-input')
           break
         case 'input-pop':
