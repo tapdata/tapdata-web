@@ -13,7 +13,7 @@
       <component
         v-else
         v-bind="getOptions(item)"
-        v-model="item.value"
+        v-model.trim="item.value"
         :is="getComponent(item.type)"
         :style="getStyle(item)"
         @input="search(item)"

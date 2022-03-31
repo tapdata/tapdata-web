@@ -237,7 +237,7 @@
             <div class="img-box">
               <img src="../../../assets/images/migrate/headImage.png" />
             </div>
-            <div class="content">
+            <div class="content" v-if="previewData">
               <div class="name fs-6">
                 <el-tooltip class="item" effect="dark" :content="previewData.name" placement="top-start">
                   <span> {{ previewData.name }}</span>
@@ -295,7 +295,7 @@ export default {
   components: { FilterBar, TablePage, DownAgent, SkipError, Drawer },
   data() {
     return {
-      previewData: {},
+      previewData: null,
       previewList: [],
       data: {},
       name: '',
@@ -351,8 +351,7 @@ export default {
           error: true,
           not_running: true,
           complete: true,
-          schedule_failed: true,
-          edit: true
+          schedule_failed: true
         },
         start: {
           edit: true,
@@ -991,7 +990,7 @@ export default {
       this.getPreviewData(id)
     },
     async getPreviewData(id) {
-      this.loading = true
+      this.previewLoading = true
       this.$api('Task')
         .findTaskDetailById([id])
         .then(res => {
@@ -1033,7 +1032,7 @@ export default {
           }
         })
         .finally(() => {
-          this.loading = false
+          this.previewLoading = false
         })
     },
     getImgByData(data) {
