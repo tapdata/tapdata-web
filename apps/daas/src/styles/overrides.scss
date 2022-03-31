@@ -209,6 +209,7 @@
 }
 .el-link.el-link--primary.is-disabled {
   color: map-get($color, disable);
+  cursor: no-drop;
 }
 .el-tooltip__popper {
   padding: 5px 10px;
@@ -247,7 +248,9 @@
   border: none;
   background-color: inherit;
 }
-.el-button.el-button--text:hover {
+.el-button.el-button--text:hover,
+.el-button.el-button--text:focus,
+.el-button.el-button--text:active {
   color: map-get($color, lprimary);
   background-color: initial;
 }
@@ -255,6 +258,9 @@
   background-color: initial!important;
 }
 .el-button--text.is-disabled {
+  color: map-get($color, disable);
+}
+.el-button--text.is-disabled:hover {
   color: map-get($color, disable);
 }
 .el-button:focus,
@@ -697,6 +703,9 @@
 // }
 
 // 页签
+.el-tabs__nav-wrap::after {
+  height: 1px;
+}
 .el-tabs__item.is-active {
   color: map-get($color, primary);
 }
@@ -709,6 +718,7 @@
 .el-tabs__item {
   color: map-get($fontColor, sub);
   font-weight: 400;
+  user-select:none;
 }
 .el-tabs--border-card>.el-tabs__header .el-tabs__item.is-active {
   color: map-get($color, primary);

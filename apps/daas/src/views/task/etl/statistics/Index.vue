@@ -2,7 +2,7 @@
   <div class="statistics-container flex flex-column font-color-sub h-100 section-wrap">
     <div class="statistics-container-box">
       <Info :task="task" class="card-box card-box__info" :remote-method="infoRemoteMethod" @reload="loadTask"></Info>
-      <div class="flex-1 mt-6 section-wrap-box">
+      <div class="flex-1 mt-6 pb-12 section-wrap-box">
         <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
           <ElTabPane :label="$t('task_monitor_progress')" name="schedule">
             <Schedule :task="task"></Schedule>
@@ -174,7 +174,7 @@ export default {
         //overflow-y: auto;
       }
       .scroller {
-        height: 200px;
+        min-height: 400px;
         overflow-y: auto;
       }
     }

@@ -1,8 +1,10 @@
 <template>
   <div class="card-box p-6">
     <div class="flex justify-content-between align-items-center">
-      <div class="info-line align-items-center">
-        <span class="mr-4 fs-6 font-color-main">{{ task.name }}</span>
+      <div class="info-line flex align-items-center">
+        <ElTooltip v-if="task" class="item" effect="dark" :content="task.name" placement="top">
+          <span class="mr-4 fs-6 flex-1 font-color-main ellipsis info-name">{{ task.name }}</span>
+        </ElTooltip>
         <StatusTag
           type="text"
           target="etlSub"
@@ -14,7 +16,7 @@
         <span class="ml-6 font-color-sub">
           {{ $t('task_monitor_founder') }}：<span>{{ task.creator }}</span>
         </span>
-        <span class="ml-6 font-color-sub">
+        <span class="mx-6 font-color-sub">
           {{ $t('task_info_start_time') }}：<span>{{ formatTime(task.startTime) || '-' }}</span>
         </span>
       </div>
@@ -82,28 +84,28 @@
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_input') }}</span>
         </div>
-        <div class="mb-4 fs-4 font-color-main din-font">{{ overData.inputTotal }}</div>
+        <div class="mb-4 fs-4 fw-bolder din-font" style="color: #409488">{{ overData.inputTotal }}</div>
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-success" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_output') }}</span>
         </div>
-        <div class="mb-6 fs-4 font-color-main din-font">{{ overData.outputTotal }}</div>
+        <div class="mb-6 fs-4 fw-bolder din-font" style="color: #377ab9">{{ overData.outputTotal }}</div>
         <div class="flex justify-content-between text-center">
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_insert') }}</div>
-            <div class="fs-6 font-color-main din-font">{{ overData.insertedTotal }}</div>
+            <div class="fs-6 font-color-main fw-bolder din-font">{{ overData.insertedTotal }}</div>
           </div>
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_update') }}</div>
-            <div class="fs-6 font-color-main din-font">{{ overData.updatedTotal }}</div>
+            <div class="fs-6 font-color-main fw-bolder din-font">{{ overData.updatedTotal }}</div>
           </div>
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_delete') }}</div>
-            <div class="fs-6 font-color-main din-font">{{ overData.deletedTotal }}</div>
+            <div class="fs-6 font-color-main fw-bolder din-font">{{ overData.deletedTotal }}</div>
           </div>
         </div>
       </div>
-      <div class="flex flex-column flex-fill ml-10" style="height: 250px">
+      <div class="flex flex-column flex-fill ml-4" style="height: 250px" v-loading="!lineDataDeep.x.length">
         <Chart ref="chart" type="line" :data="lineData" :options="lineOptions" class="type-chart h-100"></Chart>
       </div>
       <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
@@ -113,6 +115,7 @@
             <ElProgress
               type="circle"
               color="rgba(44, 101, 255, 1)"
+              :stroke-width="3"
               :percentage="progress"
               :show-text="false"
               :width="50"
@@ -130,7 +133,7 @@
         </div>
         <div class="right-box mt-3 grey-background">
           <div class="fw-bold">{{ $t('task_info_incremental_delay') }}</div>
-          <div class="color-primary fw-bolder fs-5 din-font">{{ getReplicateLagTime(writeData.replicateLag) }}</div>
+          <div class="color-primary fw-bolder fs-5">{{ getReplicateLagTime(writeData.replicateLag) }}</div>
           <div class="font-color-sub">
             {{ $t('task_info_increment_time_point') }}：{{ formatTime(writeData.cdcTime) }}
           </div>
@@ -168,7 +171,8 @@ export default {
         start: {
           edit: true,
           stop: true,
-          complete: true
+          complete: true,
+          error: true
         },
         pause: {
           running: true
@@ -214,7 +218,7 @@ export default {
         legend: {
           top: 4,
           right: 0,
-          show: true
+          show: false
         },
         // dataZoom: [
         //   {
@@ -234,7 +238,7 @@ export default {
         yAxis: [
           {
             // max: 'dataMax',
-            name: 'QPS',
+            // name: 'QPS',
             axisLabel: {
               formatter: function (value) {
                 if (value >= 1000) {
@@ -364,7 +368,8 @@ export default {
           value: 'minute'
         }
       ],
-      timeRange: []
+      timeRange: [],
+      timer: null
     }
   },
   computed: {
@@ -400,18 +405,11 @@ export default {
       return Math.floor((initialWrite * 100) / initialTotal)
     }
   },
-  watch: {
-    task: {
-      deep: true,
-      handler() {
-        this.init()
-      }
-    }
-  },
   beforeDestroy() {
     this.timer && clearInterval(this.timer)
   },
   mounted() {
+    this.init()
     this.getSyncOverViewData()
   },
   methods: {
@@ -884,6 +882,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.info-line > span {
+  line-height: 26px;
+}
+.info-name {
+  display: inline-block;
+}
 .grey-background {
   background-color: #fafafa;
 }

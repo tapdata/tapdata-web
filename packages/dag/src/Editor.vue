@@ -258,7 +258,6 @@ export default {
       'setNodeError',
       'setNodeErrorMsg',
       'clearNodeError',
-      'clearNodeError',
       'resetState',
       'selectConnection',
       'deselectAllConnections',
@@ -603,7 +602,9 @@ export default {
         data = await taskApi.get([id])
         if (data.temp) data.dag = data.temp // 和后端约定了，如果缓存有数据则获取temp
       } catch (e) {
-        this.$showError(e, '任务加载出错', '加载任务出现的问题:')
+        // this.$showError(e, '任务加载出错', '加载任务出现的问题:')
+        // eslint-disable-next-line no-console
+        console.error('任务加载出错', e)
         return
       }
 
@@ -1108,7 +1109,9 @@ export default {
           params: { id: dataflow.id, action: 'dataflowSave' }
         })
       } catch (e) {
-        this.$showError(e, '任务保存出错', '出现的问题:')
+        // this.$showError(e, '任务保存出错', '出现的问题:')
+        // eslint-disable-next-line no-console
+        console.error('任务保存出错', e)
       }
     },
 

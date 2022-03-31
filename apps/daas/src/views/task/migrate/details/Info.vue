@@ -1,14 +1,15 @@
 <template>
   <div class="card-box p-6">
     <div class="flex justify-content-between align-items-center">
-      <div class="info-line align-items-center">
+      <div class="info-line flex align-items-center">
         <ElTooltip v-if="task.parentTask" class="item" effect="dark" :content="task.parentTask.name" placement="top">
-          <span v-if="task.parentTask" class="mr-4 fs-6 font-color-main info-name">{{ task.parentTask.name }}</span>
+          <span v-if="task.parentTask" class="mr-4 fs-6 flex-1 font-color-main ellipsis info-name">{{
+            task.parentTask.name
+          }}</span>
         </ElTooltip>
-
         <StatusTag
           type="text"
-          target="migrate"
+          target="etlSub"
           :status="task.isFinished ? 'finished' : task.status || 'running'"
         ></StatusTag>
         <!--        <span class="ml-6 font-color-sub">-->
@@ -17,7 +18,7 @@
         <span class="ml-6 font-color-sub">
           {{ $t('task_monitor_founder') }}：<span>{{ task.creator }}</span>
         </span>
-        <span class="ml-6 font-color-sub">
+        <span class="mx-6 font-color-sub">
           {{ $t('task_info_start_time') }}：<span>{{ formatTime(task.startTime) || '-' }}</span>
         </span>
       </div>
@@ -85,28 +86,29 @@
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_input') }}</span>
         </div>
-        <div class="mb-4 fs-4 font-color-main din-font">{{ overData.inputTotal }}</div>
+        <div class="mb-4 fs-4 fw-bolder din-font" style="color: #409488">{{ overData.inputTotal }}</div>
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-success" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_output') }}</span>
         </div>
-        <div class="mb-6 fs-4 font-color-main din-font">{{ overData.outputTotal }}</div>
+        <div class="mb-6 fs-4 fw-bolder din-font" style="color: #377ab9">{{ overData.outputTotal }}</div>
         <div class="flex justify-content-between text-center">
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_insert') }}</div>
-            <div class="fs-6 font-color-main din-font">{{ overData.insertedTotal }}</div>
+            <div class="fs-6 font-color-main fw-bolder din-font">{{ overData.insertedTotal }}</div>
           </div>
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_update') }}</div>
-            <div class="fs-6 font-color-main din-font">{{ overData.updatedTotal }}</div>
+            <div class="fs-6 font-color-main fw-bolder din-font">{{ overData.updatedTotal }}</div>
           </div>
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_delete') }}</div>
-            <div class="fs-6 font-color-main din-font">{{ overData.deletedTotal }}</div>
+            <div class="fs-6 font-color-main fw-bolder din-font">{{ overData.deletedTotal }}</div>
           </div>
         </div>
       </div>
-      <div class="flex flex-column flex-fill ml-10" style="height: 250px">
+
+      <div class="flex flex-column flex-fill ml-4" style="height: 250px" v-loading="!lineDataDeep.x.length">
         <Chart ref="chart" type="line" :data="lineData" :options="lineOptions" class="type-chart h-100"></Chart>
       </div>
       <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
@@ -116,6 +118,7 @@
             <ElProgress
               type="circle"
               color="rgba(44, 101, 255, 1)"
+              :stroke-width="3"
               :percentage="progress"
               :show-text="false"
               :width="50"
@@ -133,7 +136,7 @@
         </div>
         <div class="right-box mt-3 grey-background">
           <div class="fw-bold">{{ $t('task_info_incremental_delay') }}</div>
-          <div class="color-primary fw-bolder fs-5 din-font">{{ formatMs(writeData.replicateLag) }}</div>
+          <div class="color-primary fw-bolder fs-5">{{ formatMs(writeData.replicateLag) }}</div>
           <div class="font-color-sub">
             {{ $t('task_info_increment_time_point') }}：{{ formatTime(writeData.cdcTime) }}
           </div>
@@ -217,7 +220,7 @@ export default {
         legend: {
           top: 4,
           right: 0,
-          show: true
+          show: false
         },
         // dataZoom: [
         //   {
@@ -227,17 +230,18 @@ export default {
         //   }
         // ],
         xAxis: {
-          type: 'time'
-          // axisLabel: {
-          //   formatter: val => {
-          //     return formatTime(val)
-          //   }
-          // },
+          type: 'time',
+          axisLabel: {
+            // interval: 1
+            //   formatter: val => {
+            //     return formatTime(val)
+            //   }
+          }
         },
         yAxis: [
           {
             // max: 'dataMax',
-            name: 'QPS',
+            // name: 'QPS',
             axisLabel: {
               formatter: function (value) {
                 if (value >= 1000) {
@@ -427,9 +431,11 @@ export default {
           this.finishDuration = this.handleTime(data?.finishDuration)
           this.progress = data?.progress
           this.endTs = data?.endTs
-          if (data?.progress !== 100) {
+          if (data?.progress !== 100 && this.task.status === 'running') {
             setTimeout(() => {
-              this.getSyncOverViewData()
+              if (this && !this._isDestroyed) {
+                this.getSyncOverViewData()
+              }
             }, 800)
           }
         })
@@ -882,12 +888,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.info-line > span {
+  line-height: 26px;
+}
 .info-name {
   display: inline-block;
-  width: 60%;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
 }
 .operation {
   width: 200px;

@@ -364,7 +364,7 @@ export default {
           prop: 'table'
         },
         {
-          label: this.$t('schedule'),
+          label: this.$t('task_info_schedule'),
           prop: 'schedule',
           slotName: 'schedule'
         },
@@ -548,7 +548,7 @@ export default {
         .then(res => {
           this.syncOverViewData = res?.data
           this.syncOverViewData.finishDuration = this.handleTime(this.syncOverViewData?.finishDuration)
-          if (this.syncOverViewData.progress !== 100) {
+          if (this.syncOverViewData.progress !== 100 && this.task.status === 'running') {
             this.timer = setTimeout(() => {
               this.getSyncOverViewData()
             }, 800)

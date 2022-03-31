@@ -7,7 +7,8 @@
             <div class="flex align-center flex-1 overflow-hidden">
               <template v-if="collapseMode === 'db'">
                 <span class="flex-1 user-select-none text-truncate flex align-center">
-                  连接
+                  <!--连接-->
+                  {{ $t('connection') }}
                   <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
                 </span>
                 <VIcon size="20" class="click-btn" @click.stop="creat">add-outline</VIcon>
@@ -19,7 +20,7 @@
                 v-model="dbSearchTxt"
                 ref="dbInput"
                 class="header__input"
-                placeholder="请输入连接名称搜索"
+                :placeholder="$t('connection_name_search_placeholder')"
                 size="mini"
                 clearable
                 @keydown.native.stop
@@ -69,7 +70,7 @@
                 </div>
                 <EmptyItem v-if="!dbList.length"></EmptyItem>
                 <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                  加载中<span class="dotting"></span>
+                  {{ $t('loading') }}<span class="dotting"></span>
                 </div>
               </div>
             </ElSkeleton>
@@ -79,10 +80,13 @@
 
       <div class="flex-1 min-h-0 flex flex-column border-bottom">
         <div class="tb-header flex align-center px-4">
-          <span class="flex-1 user-select-none text-truncate flex align-center"
-            >数据表<span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span></span
-          >
-          <ElTooltip content="创建新表作为节点使用" placement="top">
+          <span class="flex-1 user-select-none text-truncate flex align-center">
+            <!--表-->
+            {{ $t('table') }}
+            <span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span>
+          </span>
+          <!--创建新表作为节点使用-->
+          <ElTooltip :content="$t('dag_create_table_as_node')" placement="top">
             <VIcon size="20" class="click-btn" @click.stop="handleAddTable">add-outline</VIcon>
           </ElTooltip>
           <VIcon size="20" class="click-btn" @click.stop="handleShowTBInput">search-outline</VIcon>
@@ -92,7 +96,7 @@
             v-model="tbSearchTxt"
             ref="tbInput"
             class="header__input"
-            placeholder="请输入表名称搜索"
+            :placeholder="$t('table_name_search_placeholder')"
             size="mini"
             clearable
             @keydown.native.stop
@@ -139,7 +143,7 @@
               </div>
               <EmptyItem v-if="!tbList.length"></EmptyItem>
               <div v-if="tbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                加载中<span class="dotting"></span>
+                {{ $t('loading') }}<span class="dotting"></span>
               </div>
             </div>
           </ElSkeleton>
@@ -151,7 +155,10 @@
       <ElCollapseItem name="process">
         <template #title>
           <div class="flex align-center flex-1">
-            <span class="flex-1 user-select-none">处理节点</span>
+            <span class="flex-1 user-select-none">
+              <!--处理节点-->
+              {{ $t('processor_node') }}
+            </span>
           </div>
         </template>
         <ElScrollbar ref="processorList" tag="div" wrap-class="" :wrap-style="scrollbarWrapStyle">
@@ -249,10 +256,7 @@ import resize from 'web-core/directives/resize'
 import BaseNode from './BaseNode'
 import { debounce, throttle } from 'lodash'
 import { Connections, MetadataInstances } from '@daas/api'
-// import Form from '@/views/connection/Form'
-
 import { Select } from 'element-ui'
-// import ElScrollbar from 'element-ui/packages/scrollbar'
 const connections = new Connections()
 const metadataApi = new MetadataInstances()
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
@@ -854,7 +858,7 @@ $hoverBg: #eef3ff;
     .el-collapse {
       border-top: 0;
       &.processor-collapse {
-        max-height: 50%;
+        max-height: 38.2%;
       }
       &.collapse-fill {
         .el-collapse-item:first-child:last-child {

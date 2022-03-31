@@ -25,10 +25,12 @@
         </div>
       </div>
       <ElTabs v-model="currentTab" class="config-tabs">
-        <ElTabPane label="属性设置">
+        <!--属性设置-->
+        <ElTabPane :label="$t('dag_property_setting')">
           <FormPanel v-on="$listeners" ref="formPanel"></FormPanel>
         </ElTabPane>
-        <ElTabPane label="元数据">
+        <!--元数据-->
+        <ElTabPane :label="$t('dag_meta_data')">
           <MetaPane :is-show="currentTab === '1'"></MetaPane>
         </ElTabPane>
         <!--<ElTabPane label="数据详情">

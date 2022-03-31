@@ -1,4 +1,12 @@
 export default {
+  // 通用文本
+  loading: 'Loading',
+  connection: 'Connection',
+  table: 'Table',
+  processor_node: 'Processor Node',
+  connection_name_search_placeholder: 'Please enter the connection name to search',
+  table_name_search_placeholder: 'Please enter the table name to search',
+
   // 通用提示
   tips_not_null: 'The value cannot be empty',
   tips_must_number: 'The value must be a number',
@@ -49,6 +57,12 @@ export default {
   button_rollback: 'rollback',
   button_revise: 'revise',
   button_refresh: 'Refresh',
+  button_redo: 'Redo',
+  button_undo: 'Undo',
+  button_center_content: 'Center Content',
+  button_auto_layout: 'Auto Layout',
+  button_zoom_in: 'Zoom In',
+  button_zoom_out: 'Zoom Out',
 
   query_fuzzy: 'Fuzzy match',
   query_precise: 'Exact match',
@@ -575,6 +589,7 @@ export default {
     'Data sources include types such as databases, structured files, application RESTful APIs, custom interfaces, etc. A data source must be created before a migration or synchronization task can be created. For more configuration instructions, please click ',
   connection_list_help_doc: 'Help Documentation',
   connection_list_test_button: 'Test',
+  connection_list_delete_link_job: 'The connection is applied and cannot be deleted',
 
   // 连接管理
   connection_form_change: 'change',
@@ -942,6 +957,7 @@ export default {
   task_info_cdc_delay: 'Delay (ms)',
   task_info_cdc_time: 'The time point of the increment',
   task_info_source_table: 'Source data table',
+  task_info_source_database: 'Source database',
   task_info_data_row: 'Data volume (row)',
   task_info_target_table: 'Target data table',
   task_info_amount_sync_data: 'Completed synchronization data amount (rows)',
@@ -949,6 +965,8 @@ export default {
   task_info_table_name: 'table name',
   task_info_milestone: 'Milestone',
   task_info_error: 'Error',
+  task_start_task: 'Start task',
+  task_stop_task: 'Stop task',
   task_info_forced_stop_task: 'Force stop task',
   task_info_running_time: 'running time',
   task_info_operator: 'Operator',
@@ -1882,11 +1900,26 @@ export default {
   milestone_list_status_finish: 'finish',
   milestone_list_status_error: 'Error',
   milestone_list_status_waiting: 'Waiting',
+  milestone_list_status_running: 'Running',
 
   classification_name_already_exists: 'Classification name already exists',
 
-  signin_code: 'Send verification code',
+  signin_code: 'Send',
   signin_verify_code: 'Please enter the verification code',
   signin_verify_code_success: 'Verification code sent successfully',
-  signin_verify_code_error: 'Failed to send verification code'
+  signin_verify_code_error: 'Failed to send verification code',
+  signin_email_require: 'Email address is required',
+  signin_verify_code_not_empty: 'Verification code must be filled',
+  signin_verify_code_not_incorrect: 'Verification code error',
+  signin_verify_password_invalid: 'Verification code at least 5 characters',
+  signin_verify_password_notCN: 'Password only allows English, numbers and English punctuation',
+  signin_not_mailbox: 'oops~This mailbox has not been registered yet',
+
+  dag_create_table_as_node: 'Create a new table to use as a node',
+  dag_join: 'Join',
+  dag_aggregator: 'Aggregator',
+  dag_merge_table: 'Merge Table',
+  dag_field_processor: 'Field Processor',
+  dag_property_setting: 'Property Setting',
+  dag_meta_data: 'Meta Data'
 }

@@ -446,8 +446,7 @@ export default [
       },
       /* ---------- 自定义节点  ----------*/
       {
-        path: '/customNode',
-        name: 'customNode',
+        path: '/custom-node',
         component: Parent,
         meta: {
           title: 'page_title_custom_node'
