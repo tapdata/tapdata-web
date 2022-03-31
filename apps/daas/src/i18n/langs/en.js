@@ -1,9 +1,6 @@
 export default {
   // 通用文本
   loading: 'Loading',
-  connection: 'Connection',
-  table: 'Table',
-  processor_node: 'Processor Node',
   connection_name_search_placeholder: 'Please enter the connection name to search',
   table_name_search_placeholder: 'Please enter the table name to search',
 
@@ -1921,5 +1918,8 @@ export default {
   dag_merge_table: 'Merge Table',
   dag_field_processor: 'Field Processor',
   dag_property_setting: 'Property Setting',
-  dag_meta_data: 'Meta Data'
+  dag_meta_data: 'Meta Data',
+  dag_connection: 'Connection',
+  dag_table: 'Table',
+  dag_processor_node: 'Processor Node'
 }

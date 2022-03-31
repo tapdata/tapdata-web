@@ -1,9 +1,6 @@
 export default {
   // 通用文本
   loading: '加載中',
-  connection: '連接',
-  table: '表',
-  processor_node: '處理節點',
   connection_name_search_placeholder: '請輸入連接名稱搜索',
   table_name_search_placeholder: '請輸入表名稱搜索',
 
@@ -1848,5 +1845,8 @@ export default {
   dag_merge_table: '主從合併',
   dag_field_processor: '字段處理',
   dag_property_setting: '屬性設置',
-  dag_meta_data: '元數據'
+  dag_meta_data: '元數據',
+  dag_connection: '連接',
+  dag_table: '表',
+  dag_processor_node: '處理節點'
 }
