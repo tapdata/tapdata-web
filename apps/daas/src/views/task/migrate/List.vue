@@ -274,6 +274,8 @@
         </ul>
       </div>
     </Drawer>
+    <!-- 导入 -->
+    <Upload :type="'dataflow'" ref="upload"></Upload>
   </section>
 </template>
 
@@ -286,13 +288,14 @@ import DownAgent from '../../downAgent/agentDown'
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import Drawer from '@/components/Drawer'
+import Upload from '@/components/UploadDialog'
 // import { ETL_STATUS_MAP } from '@/const'
 import { getSubTaskStatus } from '../util'
 
 let timeout = null
 export default {
   name: 'TaskList',
-  components: { FilterBar, TablePage, DownAgent, SkipError, Drawer },
+  components: { FilterBar, TablePage, DownAgent, SkipError, Drawer, Upload },
   data() {
     return {
       previewData: null,
@@ -654,14 +657,15 @@ export default {
       })
     },
     handleImport() {
-      let routeUrl = this.$router.resolve({
-        // path: '/upload?type=dataflow'
-        name: 'upload',
-        query: {
-          type: 'dataflow'
-        }
-      })
-      window.open(routeUrl.href, '_blank')
+      this.$refs.upload.show()
+      // let routeUrl = this.$router.resolve({
+      //   // path: '/upload?type=dataflow'
+      //   name: 'upload',
+      //   query: {
+      //     type: 'dataflow'
+      //   }
+      // })
+      // window.open(routeUrl.href, '_blank')
     },
     getConfirmMessage(operateStr, isBulk, name) {
       let title = operateStr + '_confirm_title',

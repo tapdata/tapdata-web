@@ -1,9 +1,6 @@
 export default {
   // 通用文本
   loading: 'Loading',
-  connection: 'Connection',
-  table: 'Table',
-  processor_node: 'Processor Node',
   connection_name_search_placeholder: 'Please enter the connection name to search',
   table_name_search_placeholder: 'Please enter the table name to search',
 
@@ -79,6 +76,8 @@ export default {
   message_copy_fail: 'Copy failed',
   message_delete_ok: 'Delete successfully',
   message_delete_fail: 'Deletion failed',
+  message_upload_success: 'Upload successful',
+  message_upload_fail: 'Upload failed',
   message_deleting: 'Deleting',
   message_reload_ok: 'Reloading in progress',
   message_update_success: 'Modification succeeded',
@@ -1721,6 +1720,7 @@ export default {
   role_form_connected: 'connected',
   role_form_already_exists: 'The role name is repeated',
   role_null: 'The role name cannot be empty',
+  role_form_description: 'The role description cannot be empty',
 
   role_page_Dashboard_menu: 'Console',
   role_page_datasource_menu: 'Connection management',
@@ -1921,5 +1921,8 @@ export default {
   dag_merge_table: 'Merge Table',
   dag_field_processor: 'Field Processor',
   dag_property_setting: 'Property Setting',
-  dag_meta_data: 'Meta Data'
+  dag_meta_data: 'Meta Data',
+  dag_connection: 'Connection',
+  dag_table: 'Table',
+  dag_processor_node: 'Processor Node'
 }

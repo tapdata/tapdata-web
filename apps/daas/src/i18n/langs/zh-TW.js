@@ -1,9 +1,6 @@
 export default {
   // 通用文本
   loading: '加載中',
-  connection: '連接',
-  table: '表',
-  processor_node: '處理節點',
   connection_name_search_placeholder: '請輸入連接名稱搜索',
   table_name_search_placeholder: '請輸入表名稱搜索',
 
@@ -79,6 +76,8 @@ export default {
   message_copy_fail: '複製失敗',
   message_delete_ok: '刪除成功',
   message_delete_fail: '刪除失敗',
+  message_upload_success: '上傳成功',
+  message_upload_fail: '上傳失敗',
   message_deleting: '刪除中',
   message_reload_ok: '正在重新加載',
   message_update_success: '修改成功',
@@ -1648,6 +1647,7 @@ export default {
   role_form_connected: '已關聯',
   role_form_already_exists: '角色名稱重複',
   role_null: '角色名稱不能為空',
+  role_form_description: '角色描述不能为空',
 
   role_page_Dashboard_menu: '控制台',
   role_page_datasource_menu: '連接管理',
@@ -1848,5 +1848,8 @@ export default {
   dag_merge_table: '主從合併',
   dag_field_processor: '字段處理',
   dag_property_setting: '屬性設置',
-  dag_meta_data: '元數據'
+  dag_meta_data: '元數據',
+  dag_connection: '連接',
+  dag_table: '表',
+  dag_processor_node: '處理節點'
 }
