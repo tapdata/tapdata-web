@@ -392,7 +392,9 @@ export default {
     formatUserDeletedNum(data, field_process = []) {
       data.forEach(el => {
         let findOne = field_process.find(t => t.table_id === el.sourceTableId)
-        el.userDeletedNum = findOne.operations.filter(t => t.op === 'REMOVE')?.length || 0
+        if (findOne) {
+          el.userDeletedNum = findOne.operations?.filter(t => t.op === 'REMOVE')?.length || 0
+        }
       })
     }
   }
