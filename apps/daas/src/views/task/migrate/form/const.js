@@ -1,7 +1,7 @@
 export const SETTING_MODEL = {
   name: '',
   desc: '',
-  sync_type: '', //'全量+增量'
+  sync_type: 'initial_sync+cdc', //'全量+增量'
   automaticallyCreateTables: true, //自动建表
   isStopOnError: true, //遇到错误停止
   isSchedule: true, //定时调度任务

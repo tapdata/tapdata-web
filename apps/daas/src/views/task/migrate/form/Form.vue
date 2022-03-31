@@ -310,11 +310,11 @@ export default {
           }
           break
         case 'setting':
-          this.loading = true
           this.form
             .validate()
             .then(() => {
               //数据: 第三步请求schema用到sourceId
+              this.settingData = { ...this.form.values } //保存表单
               this.loading = false
               this.sourceId = this.dataSourceData.source_connectionId
               this.activeStep++
@@ -323,6 +323,9 @@ export default {
             .catch(() => {
               this.loading = false
               this.$message.error('表单检验不通过，任务名称必填')
+            })
+            .finally(() => {
+              this.loading = false
             })
           break
       }
@@ -342,7 +345,6 @@ export default {
     },
     //第二步 任务设置配置
     settingSubmit(form) {
-      this.settingData = { ...form.values }
       this.form = form
     },
     //第三步 映射表
@@ -376,6 +378,8 @@ export default {
       let promise = this.$api('Task').save(postData)
       promise.then(res => {
         this.id = res?.data?.id
+        this.transferData.showBtn = true
+        this.dataSourceData.id = res?.data?.id //设置页面 checkname使用
       })
       return promise
     },
