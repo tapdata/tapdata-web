@@ -501,9 +501,7 @@
                 </div>
               </div>
             </template>
-            <el-button type="primary" size="mini" class="test" @click="startTest()">{{
-              $t('connection.testConnection')
-            }}</el-button>
+
             <span class="status">
               <span class="error" v-if="['invalid'].includes(status)">
                 <VIcon>error</VIcon>
@@ -528,9 +526,10 @@
         </div>
         <footer slot="footer" class="footer">
           <div class="footer-btn">
-            <el-button size="mini" @click="goBack()">{{ $t('dataForm.cancel') }}</el-button>
+            <el-button size="mini" @click="goBack()">{{ $t('button_back') }}</el-button>
+            <el-button size="mini" class="test" @click="startTest()">{{ $t('connection_list_test_button') }}</el-button>
             <el-button size="mini" type="primary" :loading="submitBtnLoading" @click="submit">
-              {{ $t('dataForm.submit') }}
+              {{ $t('button_save') }}
             </el-button>
           </div>
         </footer>
@@ -2198,18 +2197,17 @@ export default {
     .footer-btn {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: flex-start;
       margin: 0 auto;
       padding-top: 18px;
-      width: 450px;
     }
-    button {
-      margin-left: 10px;
-      padding: 0 15px;
-      height: 32px;
-      line-height: 32px;
-      border-radius: 2px;
-    }
+    // button {
+    //   margin-left: 10px;
+    //   padding: 0 15px;
+    //   height: 32px;
+    //   line-height: 32px;
+    //   border-radius: 2px;
+    // }
   }
 }
 </style>

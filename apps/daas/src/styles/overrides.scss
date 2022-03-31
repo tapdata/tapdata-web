@@ -209,6 +209,7 @@
 }
 .el-link.el-link--primary.is-disabled {
   color: map-get($color, disable);
+  cursor: no-drop;
 }
 .el-tooltip__popper {
   padding: 5px 10px;
@@ -247,7 +248,9 @@
   border: none;
   background-color: inherit;
 }
-.el-button.el-button--text:hover {
+.el-button.el-button--text:hover,
+.el-button.el-button--text:focus,
+.el-button.el-button--text:active {
   color: map-get($color, lprimary);
   background-color: initial;
 }
@@ -255,6 +258,9 @@
   background-color: initial!important;
 }
 .el-button--text.is-disabled {
+  color: map-get($color, disable);
+}
+.el-button--text.is-disabled:hover {
   color: map-get($color, disable);
 }
 .el-button:focus,

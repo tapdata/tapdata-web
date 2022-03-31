@@ -1,8 +1,11 @@
 import Vue from 'vue'
-import { isObject, uuid } from '@daas/shared'
+import { isObject, uuid, mergeLocales, lowerSnake } from '@daas/shared'
 import { Task, CustomNode } from '@daas/api'
 import { debounce } from 'lodash'
 import { AddDagCommand } from './command'
+import { Path } from '@formily/path'
+import { observable } from '@formily/reactive'
+import { AllLocales } from './nodes/locales'
 
 const taskApi = new Task()
 const customNodeApi = new CustomNode()
@@ -34,6 +37,12 @@ const findByCod = (arr, cond) => {
   })
 }
 
+const langMap = {
+  sc: 'zh-CN',
+  tc: 'zh-TW',
+  en: 'en-US'
+}
+
 const getState = () => ({
   stateIsDirty: false, // 状态是否被污染，标识数据改变
   stateIsReadonly: false, // 状态是否被污染，标识数据改变
@@ -44,7 +53,8 @@ const getState = () => ({
       icon: 'javascript',
       name: 'JavaScript',
       type: 'js_processor',
-      constructor: 'JavaScript'
+      constructor: 'JavaScript',
+      locales: AllLocales.JavaScript
     },
     {
       icon: 'field-processor',
@@ -103,7 +113,8 @@ const getState = () => ({
   dagPromise: null,
   editVersion: null,
 
-  canBeConnectedNodeIds: []
+  canBeConnectedNodeIds: [],
+  LOCALES_STORE: observable.ref({})
 })
 
 // 初始化 state
@@ -215,7 +226,25 @@ const getters = {
 
   formSchema: state => state.formSchema,
 
-  hasNodeError: state => id => state.nodeErrorState[id]
+  hasNodeError: state => id => state.nodeErrorState[id],
+
+  language: () => {
+    return langMap[localStorage.getItem('tapdata_localize_lang')].toLocaleLowerCase()
+  },
+
+  getMessage: (state, getters) => (token, locales) => {
+    const lang = getters.language
+    const locale = locales ? locales[lang] : state.LOCALES_STORE.value[lang]
+    if (!locale) {
+      for (let key in state.LOCALES_STORE.value) {
+        const message = Path.getIn(state.LOCALES_STORE.value[key], lowerSnake(token))
+        if (message) return message
+      }
+      return
+    }
+    // return Path.getIn(locale, lowerSnake(token))
+    return Path.getIn(locale, token)
+  }
 }
 
 // actions
@@ -685,6 +714,12 @@ const mutations = {
 
   setCanBeConnectedNodeIds(state, ids) {
     state.canBeConnectedNodeIds = ids
+  },
+
+  registerLocales: (state, packages) => {
+    packages.forEach(locales => {
+      mergeLocales(state.LOCALES_STORE.value, locales)
+    })
   }
 }
 
