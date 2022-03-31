@@ -16,17 +16,20 @@
     </div>
     <div class="operation-center flex align-center">
       <template v-if="!stateIsReadonly">
-        <ElTooltip transition="tooltip-fade-in" content="撤销">
+        <!--撤销-->
+        <ElTooltip transition="tooltip-fade-in" :content="$t('button_undo')">
           <button @click="$emit('undo')" class="icon-btn">
             <VIcon size="20">undo</VIcon>
           </button>
         </ElTooltip>
-        <ElTooltip transition="tooltip-fade-in" content="重做">
+        <!--重做-->
+        <ElTooltip transition="tooltip-fade-in" :content="$t('button_redo')">
           <button @click="$emit('redo')" class="icon-btn">
             <VIcon size="20">redo</VIcon>
           </button>
         </ElTooltip>
-        <ElTooltip transition="tooltip-fade-in" content="删除">
+        <!--删除-->
+        <ElTooltip transition="tooltip-fade-in" :content="$t('button_delete')">
           <button @click="$emit('delete')" class="icon-btn">
             <VIcon size="20">delete</VIcon>
           </button>
@@ -38,18 +41,21 @@
           <VIcon size="20">fullscreen</VIcon>
         </button>
       </ElTooltip>-->
-      <ElTooltip transition="tooltip-fade-in" content="内容居中">
+      <!--内容居中-->
+      <ElTooltip transition="tooltip-fade-in" :content="$t('button_center_content')">
         <button @click="$emit('center-content')" class="icon-btn">
           <VIcon size="20">compress</VIcon>
         </button>
       </ElTooltip>
-      <ElTooltip transition="tooltip-fade-in" content="自动布局">
+      <!--自动布局-->
+      <ElTooltip transition="tooltip-fade-in" :content="$t('button_auto_layout')">
         <button @click="$emit('auto-layout')" class="icon-btn">
           <VIcon size="20">auto-layout</VIcon>
         </button>
       </ElTooltip>
       <VDivider class="mx-4" vertical inset></VDivider>
-      <ElTooltip transition="tooltip-fade-in" content="缩小">
+      <!--缩小-->
+      <ElTooltip transition="tooltip-fade-in" :content="$t('button_zoom_out')">
         <button @click="$emit('zoom-out')" class="icon-btn">
           <VIcon size="20">remove-outline</VIcon>
         </button>
@@ -59,11 +65,11 @@
           <div slot="reference" class="size-wrap">{{ scaleTxt }}</div>
           <div class="choose-list p-2">
             <div @click="$emit('zoom-in')" class="choose-item pl-4 flex justify-content-between align-center">
-              <span class="title">放大</span>
+              <span class="title">{{ $t('button_zoom_out') }}</span>
               <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>+</kbd></div>
             </div>
             <div @click="$emit('zoom-out')" class="choose-item pl-4 flex justify-content-between align-center">
-              <span class="title">缩小</span>
+              <span class="title">{{ $t('button_zoom_in') }}</span>
               <div class="kbd-wrap flex align-center mr-2"><kbd>⌘</kbd><span class="mx-1">+</span><kbd>–</kbd></div>
             </div>
             <VDivider class="my-2"></VDivider>
@@ -73,7 +79,8 @@
           </div>
         </ElPopover>
       </div>
-      <ElTooltip transition="tooltip-fade-in" content="放大">
+      <!--放大-->
+      <ElTooltip transition="tooltip-fade-in" :content="$t('button_zoom_in')">
         <button @click="$emit('zoom-in')" class="icon-btn">
           <VIcon size="20">add-outline</VIcon>
         </button>
@@ -81,7 +88,10 @@
     </div>
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
-      <ElButton size="small" plain class="mx-2" @click="$emit('showSettings')"> 设置 </ElButton>
+      <ElButton size="small" plain class="mx-2" @click="$emit('showSettings')">
+        <!--设置-->
+        {{ $t('button_setting') }}
+      </ElButton>
       <ElButton
         v-if="!stateIsReadonly"
         :loading="isSaving"
@@ -90,7 +100,8 @@
         class="mx-2"
         @click="$emit('save')"
       >
-        保存
+        <!--保存-->
+        {{ $t('button_save') }}
       </ElButton>
     </div>
   </header>

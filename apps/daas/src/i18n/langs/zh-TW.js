@@ -1,4 +1,12 @@
 export default {
+  // 通用文本
+  loading: '加載中',
+  connection: '連接',
+  table: '表',
+  processor_node: '處理節點',
+  connection_name_search_placeholder: '請輸入連接名稱搜索',
+  table_name_search_placeholder: '請輸入表名稱搜索',
+
   // 通用提示
   tips_not_null: '值不能為空',
   tips_must_number: '值必須為數字',
@@ -49,6 +57,12 @@ export default {
   button_rollback: '回溯',
   button_revise: '修改',
   button_refresh: '刷新',
+  button_redo: '重做',
+  button_undo: '撤銷',
+  button_center_content: '內容居中',
+  button_auto_layout: '自動佈局',
+  button_zoom_in: '放大',
+  button_zoom_out: '縮小',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精準匹配',
@@ -1829,5 +1843,13 @@ export default {
   signin_verify_code_not_incorrect: '验证码错误',
   signin_verify_password_invalid: '驗證碼至少5個字符',
   signin_verify_password_notCN: '密碼僅允許英文、數字和英文標點符號',
-  signin_not_mailbox: 'oops~此郵箱尚未註冊'
+  signin_not_mailbox: 'oops~此郵箱尚未註冊',
+
+  dag_create_table_as_node: '創建新表作為節點使用',
+  dag_join: '連接',
+  dag_aggregator: '聚合',
+  dag_merge_table: '主從合併',
+  dag_field_processor: '字段處理',
+  dag_property_setting: '屬性設置',
+  dag_meta_data: '元數據'
 }

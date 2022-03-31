@@ -10,26 +10,28 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import * as components from '@daas/form'
-import { createSchemaField } from '@formily/vue'
-import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
+import { Form, SchemaField } from '@daas/form'
+import { createForm, onFormInputChange, onFormValuesChange, onFieldReact, isVoidField } from '@formily/core'
 import { Path } from '@formily/path'
 import { validateBySchema } from '@daas/form/src/shared/validate'
 import { debounce } from 'lodash'
 import formScope from '../mixins/formScope'
 
-const { SchemaField } = createSchemaField({
-  components: {
-    ...components
+const mapEnum = dataSource => (item, index) => {
+  const label = dataSource[index] || dataSource[item.value] || item.label
+  return {
+    ...item,
+    value: item?.value ?? null,
+    label: label?.label ?? label
   }
-})
+}
 
 export default {
   name: 'FormPanel',
 
   mixins: [formScope],
 
-  components: { Form: components.Form, SchemaField },
+  components: { Form, SchemaField },
 
   data() {
     return {
@@ -38,9 +40,9 @@ export default {
       formProps: {
         colon: false,
         labelAlign: 'left',
-        labelWidth: '120',
-        // layout: 'vertical',
-        layout: 'horizontal',
+        // labelWidth: '120',
+        layout: 'vertical',
+        // layout: 'horizontal',
         feedbackLayout: 'terse'
       },
 
@@ -58,7 +60,8 @@ export default {
       'activeType',
       'hasNodeError',
       'allEdges',
-      'stateIsReadonly'
+      'stateIsReadonly',
+      'getMessage'
     ]),
 
     node() {
@@ -71,6 +74,12 @@ export default {
 
     ins() {
       return this.node?.__Ctor
+    },
+
+    nodeType() {
+      const { getters } = this.$store
+      const getNodeType = getters['dataflow/nodeType']
+      return getNodeType(this.activeNode)
     }
   },
 
@@ -622,6 +631,7 @@ export default {
 
     // 更新节点属性
     updateNodeProps: debounce(function (form) {
+      if (!this.node) return
       const formValues = { ...form.values }
       const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode'] // 排除属性的更新
       filterProps.forEach(path => {
@@ -645,6 +655,44 @@ export default {
       onFormInputChange(form => {
         console.log('onFormInputChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
         this.updateNodeProps(form)
+      })
+      onFieldReact('*', field => {
+        const path = field.path.toString().replace(/\.[\d+]/g, '')
+        const takeMessage = prop => {
+          const token = `${path}${prop ? `.${prop}` : ''}`
+          return this.getMessage(token, this.nodeType.locales)
+        }
+        const title = takeMessage('title') || takeMessage()
+        const description = takeMessage('description')
+        const tooltip = takeMessage('tooltip')
+        const dataSource = takeMessage('dataSource')
+        const placeholder = takeMessage('placeholder')
+
+        if (title) {
+          field.title = title
+        }
+        if (description) {
+          field.description = description
+        }
+        if (tooltip) {
+          field.decorator[1] = field.decorator[1] || []
+          field.decorator[1].tooltip = tooltip
+        }
+        if (placeholder) {
+          field.component[1] = field.component[1] || []
+          field.component[1].placeholder = placeholder
+        }
+        if (!isVoidField(field)) {
+          if (dataSource?.length) {
+            if (field.dataSource?.length) {
+              field.dataSource = field.dataSource.map(mapEnum(dataSource))
+            } else {
+              field.dataSource = dataSource.slice()
+            }
+          } else {
+            field.dataSource = field.dataSource?.filter(Boolean)
+          }
+        }
       })
     },
 

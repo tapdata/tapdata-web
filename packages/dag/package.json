@@ -17,6 +17,7 @@
     "@formily/element": "^2.0.9",
     "@formily/path": "^2.0.12",
     "@formily/reactive": "^2.0.9",
+    "@formily/reactive-vue": "*",
     "@tapdata/field-mapping": "workspace:^1.0.0",
     "dagre": "^0.8.5",
     "jsplumb": "^2.15.6",

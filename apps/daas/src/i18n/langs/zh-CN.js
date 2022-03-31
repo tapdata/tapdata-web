@@ -1,4 +1,12 @@
 export default {
+  // 通用文本
+  loading: '加载中',
+  connection: '连接',
+  table: '表',
+  processor_node: '处理节点',
+  connection_name_search_placeholder: '请输入连接名称搜索',
+  table_name_search_placeholder: '请输入表名称搜索',
+
   // 通用提示
   tips_not_null: '值不能为空',
   tips_must_number: '值必须为数字',
@@ -48,6 +56,12 @@ export default {
   button_rollback: '回溯',
   button_revise: '修改',
   button_refresh: '刷新',
+  button_redo: '重做',
+  button_undo: '撤销',
+  button_center_content: '内容居中',
+  button_auto_layout: '自动布局',
+  button_zoom_in: '放大',
+  button_zoom_out: '缩小',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精准匹配',
@@ -1843,5 +1857,13 @@ export default {
   signin_verify_code_not_incorrect: '验证码错误',
   signin_verify_password_invalid: '验证码至少5个字符',
   signin_verify_password_notCN: '密碼僅允許英文、數字和英文標點符號',
-  signin_not_mailbox: 'oops~此邮箱尚未注册'
+  signin_not_mailbox: 'oops~此邮箱尚未注册',
+
+  dag_create_table_as_node: '创建新表作为节点使用',
+  dag_join: '连接',
+  dag_aggregator: '聚合',
+  dag_merge_table: '主从合并',
+  dag_field_processor: '字段处理',
+  dag_property_setting: '属性设置',
+  dag_meta_data: '元数据'
 }
