@@ -3,6 +3,7 @@ import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import VIcon from 'web-core/components/VIcon'
 import './fieldProessor.scss'
+import { convertSchemaToTreeData } from '../field-rename/util'
 
 export const FieldValue = connect(
   observer(
@@ -55,6 +56,7 @@ export const FieldValue = connect(
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options?.[0] || []
+        fields = convertSchemaToTreeData(fields)
         this.originalFields = JSON.parse(JSON.stringify(fields))
         // eslint-disable-next-line
         console.log('FieldProcess.mergeOutputSchema', fields)
@@ -63,7 +65,7 @@ export const FieldValue = connect(
             <div class="field-processor-operation flex">
               <ElCheckbox class="check-all mr-4" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
               <span class="field-name inline-block">字段名称</span>
-              <span class="field-desc inline-block">字段赋值</span>
+              <span class="field-name inline-block">字段赋值</span>
               <span class="field-ops inline-block">
                 <VIcon class="clickable ml-5" small onClick={() => this.handleAllReset()}>
                   revoke
@@ -84,11 +86,24 @@ export const FieldValue = connect(
                       class="tree-node flex flex-1 justify-content-center align-items flex-row"
                       slot-scope="{ node, data }"
                     >
-                      <span>{data.field_name}</span>
-                      <span class="e-desc">{data.desc}</span>
+                      <span class="field-name inline-block">
+                        {data.field_name}
+                        <VIcon v-if="data.primary_key_position > 0" size="12" class="text-warning ml-1">
+                          key
+                        </VIcon>
+                      </span>
+                      <span class="field-name inline-block">{this.isScript(data.id)}</span>
                       <span class="e-ops">
                         <ElButton type="text" class="ml-5" onClick={() => this.handleScript(node, data)}>
                           <VIcon>js</VIcon>
+                        </ElButton>
+                        <ElButton
+                          type="text"
+                          class="ml-5"
+                          onClick={() => this.handleReset(data.id)}
+                          disabled={!this.isScript(data.id)}
+                        >
+                          <VIcon>revoke</VIcon>
                         </ElButton>
                       </span>
                     </span>
@@ -139,7 +154,7 @@ export const FieldValue = connect(
       methods: {
         isScript(id) {
           let scripts = this.scripts.filter(v => v.id === id)
-          return scripts && scripts.length > 0
+          return scripts.length > 0 ? scripts[0].script : ''
         },
         /*rename
          * @node 当前tree
@@ -222,23 +237,17 @@ export const FieldValue = connect(
             self.scriptDialog.script = ''
           }
         },
-        delScript(operations, scripts, id) {
-          let fieldIds = []
-          if (operations) {
-            fieldIds = operations.map(field => field.id)
-          }
-          if (scripts) {
-            for (let i = 0; i < scripts.length; i++) {
-              if (!fieldIds.includes(scripts[i].id)) {
-                scripts.splice(i, 1)
-                i--
-              } else if (id === scripts[i].id) {
-                scripts.splice(i, 1)
-                i--
-              }
+        handleReset(id) {
+          if (!this.scripts || this.scripts?.length < 0) return
+          for (let i = 0; i < this.scripts.length; i++) {
+            if (id === this.scripts[i].id) {
+              this.scripts.splice(i, 1)
+              i--
+              this.$nextTick(() => {
+                this.isScript(id) //更新页面的值
+              })
             }
           }
-          return scripts
         },
         handleAllReset() {
           let ids = this.$refs.tree.getCheckedNodes(false, true)
@@ -246,7 +255,7 @@ export const FieldValue = connect(
             ids.map(id => {
               let node = this.$refs.tree.getNode(id)
               if (node) {
-                this.handleReset(node, node.data)
+                this.handleReset(id)
               }
             })
           }

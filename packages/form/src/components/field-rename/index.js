@@ -2,9 +2,8 @@ import { connect, mapProps, useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import VIcon from 'web-core/components/VIcon'
-import { handleOperation } from './util'
+import { handleOperation, convertSchemaToTreeData } from './util'
 import './fieldProessor.scss'
-// import de from 'element-ui/src/locale/lang/de'
 
 export const FieldRename = connect(
   observer(
@@ -49,29 +48,32 @@ export const FieldRename = connect(
         console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options?.[0] || []
         this.originalFields = JSON.parse(JSON.stringify(fields))
+        fields = convertSchemaToTreeData(fields) //将模型转换成tree
         //查找是否有被删除的字段且operation有操作
-        let temporary = handleOperation(fields, this.operations)
-        temporary.map(item => {
-          let targetIndex = fields.findIndex(n => n.id === item.id)
-          if (targetIndex === -1 && item.op !== 'CREATE') {
-            // data.operations.splice(index,1); //删除找不到id的数据
-            return
-          }
-          if (item.op === 'RENAME') {
-            const name = fields[targetIndex].field_name
-            let newName = name.split('.')
-            newName[newName.length - 1] = item.operand
-            const newNameStr = newName.join('.')
-            fields[targetIndex].field_name = newNameStr
+        if (this.operations?.length > 0) {
+          let temporary = handleOperation(fields, this.operations)
+          temporary.map(item => {
+            let targetIndex = fields.findIndex(n => n.id === item.id)
+            if (targetIndex === -1 && item.op !== 'CREATE') {
+              // data.operations.splice(index,1); //删除找不到id的数据
+              return
+            }
+            if (item.op === 'RENAME') {
+              const name = fields[targetIndex].field_name
+              let newName = name.split('.')
+              newName[newName.length - 1] = item.operand
+              const newNameStr = newName.join('.')
+              fields[targetIndex].field_name = newNameStr
 
-            // change children field name
-            fields.forEach(field => {
-              if (field.field_name.startsWith(name + '.')) {
-                field.field_name = newNameStr + field.field_name.substring(name.length)
-              }
-            })
-          }
-        })
+              // change children field name
+              fields.forEach(field => {
+                if (field.field_name.startsWith(name + '.')) {
+                  field.field_name = newNameStr + field.field_name.substring(name.length)
+                }
+              })
+            }
+          })
+        }
         // eslint-disable-next-line
         console.log('FieldProcess.mergeOutputSchema', fields)
         return (
@@ -79,13 +81,16 @@ export const FieldRename = connect(
             <div class="field-processor-operation flex">
               <ElCheckbox class="check-all mr-4" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
               <span class="field-name inline-block">源字段名</span>
-              <span class="field-desc inline-block">目标字段名</span>
+              <span class="field-name inline-block">目标字段名</span>
               <span class="field-ops inline-block">
                 <VIcon class="clickable ml-5" small onClick={() => this.handleAllToUpperCase()}>
                   toUpperCase
                 </VIcon>
                 <VIcon class="clickable ml-5" small onClick={() => this.handleAllToLowerCase()}>
                   toLowerCase
+                </VIcon>
+                <VIcon class="clickable ml-5" small onClick={() => this.handleAllReset()}>
+                  revoke
                 </VIcon>
               </span>
             </div>
@@ -103,7 +108,7 @@ export const FieldRename = connect(
                       class="tree-node flex flex-1 justify-content-center align-items flex-row"
                       slot-scope="{ node, data }"
                     >
-                      <span>{data.field_name}</span>
+                      <span class="field-name inline-block">{data.label}</span>
                       <span class={['tree-field-input-wrap', 'item', 'inline-block', 'e-label']}>
                         <ElInput
                           class="tree-field-input"

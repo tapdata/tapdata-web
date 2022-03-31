@@ -17,5 +17,7 @@ export * from './form-item'
 export * from './slider'
 export * from './field-value'
 export * from './field-rename'
+export * from './field-add-del'
+export * from './field-mod-type'
 
 export * from '@formily/element'

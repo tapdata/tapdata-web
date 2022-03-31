@@ -1,6 +1,6 @@
 import { NodeType } from './extends/NodeType'
 
-export class FieldRename extends NodeType {
+export class FieldModType extends NodeType {
   constructor(node) {
     super(node)
 
@@ -24,7 +24,7 @@ export class FieldRename extends NodeType {
         type: 'array',
         title: '',
         'x-decorator': 'FormItem',
-        'x-component': 'FieldRename',
+        'x-component': 'FieldModType',
         'x-reactions': ['{{useAsyncDataSource(loadSourceNodeField)}}']
       }
     }

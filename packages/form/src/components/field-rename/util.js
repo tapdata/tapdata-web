@@ -3,6 +3,70 @@
  * @date 2020/11/27
  * @description
  */
+import _ from 'lodash'
+export const convertSchemaToTreeData = function (Schema) {
+  if (Schema) {
+    let root = {}
+    let fields = Schema || []
+    fields = _.sortBy(fields, [field => field.table_name + field.field_name])
+    for (let i = 0; i < fields.length; i++) {
+      let field = fields[i]
+      if (field && field.field_name && field.original_field_name) {
+        // let jsonPath = field.original_field_name.split('.');
+        let jsonPathForFieldName = field.field_name.split('.')
+        let treeItem = {
+          id:
+            field.id ||
+            `${field.table_name}${field.original_field_name ? '_' + field.original_field_name : ''}`.replace(
+              /\./g,
+              '_'
+            ),
+          label: jsonPathForFieldName[jsonPathForFieldName.length - 1],
+          field_name: jsonPathForFieldName[jsonPathForFieldName.length - 1],
+          type: field.javaType || field.java_type,
+          java_type: field.javaType || field.java_type,
+          primary_key_position: field.primary_key_position,
+          table_name: field.table_name || 'table',
+          original_field_name: field.original_field_name || field.field_name,
+          is_deleted: field.is_deleted,
+          comment: field.comment
+        }
+        let path = 'children.' + jsonPathForFieldName.join('.children.')
+        let partField = _.get(root, path)
+        if (!partField) {
+          _.set(root, path, treeItem)
+        } else {
+          _.set(root, path, _.merge(partField, treeItem))
+        }
+      }
+    }
+    let re = function (field, count) {
+      if (field && field.children) {
+        count++
+        field.children = Object.values(field.children).map(it => {
+          it.level = count
+          return it
+        })
+        field.children.forEach(it => {
+          re(it, count)
+        })
+      }
+    }
+    re(root, 0)
+
+    let sort = function (node) {
+      if (node.children && node.children.length > 0) {
+        node.children.sort((c1, c2) => (c1.table_name > c2.table_name ? 1 : c1.table_name === c2.table_name ? 0 : -1))
+        node.children.forEach(sort)
+      }
+    }
+    sort(root)
+    fields = root.children
+    return fields
+  } else {
+    return null
+  }
+}
 export const getFieldsIds = function (fields) {
   let fieldIds = []
   if (fields) {

@@ -96,7 +96,7 @@ const getState = () => ({
       icon: 'field_mod_type',
       name: '类型修改',
       type: 'field_mod_type_processor',
-      constructor: 'FieldValue'
+      constructor: 'FieldModType'
     },
     {
       icon: 'field_rename',
@@ -106,9 +106,9 @@ const getState = () => ({
     },
     {
       icon: 'field_add_del',
-      name: '字段新增',
+      name: '增删字段',
       type: 'field_add_del_processor',
-      constructor: 'FieldValue'
+      constructor: 'FieldAddDel'
     }
     // {
     //   icon: 'joint-cache',
