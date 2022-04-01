@@ -3,7 +3,7 @@ import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import VIcon from 'web-core/components/VIcon'
 import { convertSchemaToTreeData, uuid } from '../field-rename/util'
-import '../field-rename/fieldProessor.scss'
+import '../field-rename/index.scss'
 // import de from 'element-ui/src/locale/lang/de'
 
 export const FieldAddDel = connect(
@@ -26,6 +26,7 @@ export const FieldAddDel = connect(
           nodeKey: '',
           originalFields: [],
           checkAll: false,
+          showInput: false,
           fields: [],
           /*字段处理器支持功能类型*/
           REMOVE_OPS_TPL: {
@@ -66,23 +67,28 @@ export const FieldAddDel = connect(
         this.fields = fields
 
         return (
-          <div class="field-processor-tree-warp bg-body pt-2 pb-5">
+          <div class="field-processors-tree-warp bg-body pt-2 pb-5">
             <div class="field-processor-operation flex">
-              <ElCheckbox class="check-all mr-4" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
-              <span class="field-name inline-block">字段名称</span>
-              <span class="field-ops inline-block">
-                <VIcon class="clickable ml-5" small onClick={() => this.handleAllDelete()}>
+              <ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
+              <span class="flex-1 text inline-block ml-15">字段名称</span>
+              <span class="field-ops inline-block ml-10">
+                <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllDelete()}>
                   delete
                 </VIcon>
-                <VIcon class="clickable ml-5" small onClick={() => this.handleAllReset()}>
-                  revoke
-                </VIcon>
-                <VIcon class="clickable ml-5" small disabled={fields.length === 0} onClick={() => this.handleCreate()}>
+                <VIcon
+                  class="clickable ml-5"
+                  size="12"
+                  disabled={fields.length === 0}
+                  onClick={() => this.handleCreate()}
+                >
                   add
+                </VIcon>
+                <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllReset()}>
+                  revoke
                 </VIcon>
               </span>
             </div>
-            <div className="field-processor-tree-warp">
+            <div className="field-processors-tree-warp">
               <ElTree
                 ref="tree"
                 data={fields}
@@ -97,21 +103,44 @@ export const FieldAddDel = connect(
                       class={['tree-node', 'flex flex-1', 'justify-content-center', 'align-items', 'flex-row']}
                       slot-scope="{ node, data }"
                     >
-                      <span
-                        class={[
-                          'inline-block',
-                          'field-name',
-                          this.isCreate(data.id) ? 'active__name' : '',
-                          this.isRemove(data.id) ? 'active__delete' : ''
-                        ]}
-                      >
-                        {data.field_name}
-                        {data.primary_key_position > 0 ? (
-                          <VIcon size="12" class="text-warning ml-1">
-                            key
-                          </VIcon>
+                      <span class={['inline-block', 'flex-1', 'ml-15']}>
+                        {this.isCreate(data.id) ? (
+                          <span
+                            class={[
+                              this.isRemove(data.id) ? 'active__delete' : '',
+                              this.isCreate(data.id) ? 'active__name' : ''
+                            ]}
+                          >
+                            {this.showInput ? (
+                              <ElInput
+                                class="tree-field-input text__inner"
+                                v-model={data.field_name}
+                                onChange={() => this.handleRename(node, data)}
+                                onBlur={() => (this.showInput = false)}
+                              />
+                            ) : (
+                              <span class="text__inner">{data.field_name}</span>
+                            )}
+                            {!this.showInput ? (
+                              <VIcon class={['ml-3', 'clickable']} size="12" onClick={() => (this.showInput = true)}>
+                                edit-outline
+                              </VIcon>
+                            ) : (
+                              ''
+                            )}
+                          </span>
                         ) : (
-                          ''
+                          //不是新建字段
+                          <span class={[this.isRemove(data.id) ? 'active__delete' : '']}>
+                            {data.field_name}
+                            {data.primary_key_position > 0 ? (
+                              <VIcon size="12" class="text-warning ml-1">
+                                key
+                              </VIcon>
+                            ) : (
+                              ''
+                            )}
+                          </span>
                         )}
                       </span>
                       <span class="e-ops">
@@ -129,7 +158,7 @@ export const FieldAddDel = connect(
                           disabled={!this.isRemove(data.id)}
                           onClick={() => this.handleReset(node, data)}
                         >
-                          <VIcon>revoke</VIcon>
+                          <VIcon size="12">revoke</VIcon>
                         </ElButton>
                       </span>
                     </span>
@@ -155,6 +184,8 @@ export const FieldAddDel = connect(
               if (this.operations[i]?.op === 'CREATE') {
                 let newField = {
                   id: this.operations[i].id,
+                  level: 1,
+                  label: this.operations[i].field,
                   field_name: this.operations[i].field,
                   table_name: this.operations[i].tableName || this.operations[i].table_name,
                   original_field_name: this.operations[i].field || this.operations[i].field_name,
@@ -191,6 +222,19 @@ export const FieldAddDel = connect(
           }
           fn(fields)
           return field
+        },
+        handleRename(node, data) {
+          let nativeData = this.getNativeData(data.id) //查找初始schema
+          let existsName = this.handleExistsName(node, data)
+          if (existsName) {
+            data.field_name = nativeData.field_name
+            return
+          }
+          let createOps = this.operations.filter(v => v.id === data.id && v.op === 'CREATE')
+          if (createOps && createOps.length > 0) {
+            let op = createOps[0]
+            op.field = data.field_name
+          }
         },
         handleReset(node, data) {
           console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
@@ -240,10 +284,13 @@ export const FieldAddDel = connect(
          * @param data
          */
         handleCreate() {
+          let existsName = this.handleExistsName()
+          if (existsName) return
           console.log('fieldProcessor.handleCreate') //eslint-disable-line
           let fieldId = uuid()
           let newFieldOperation = Object.assign(JSON.parse(JSON.stringify(this.CREATE_OPS_TPL)), {
             field: 'newFieldName',
+            label: 'newFieldName',
             tableName: this.fields[0]?.tableName || '',
             java_type: 'String',
             id: fieldId,
@@ -259,22 +306,19 @@ export const FieldAddDel = connect(
             type: 'String',
             primary_key_position: 0,
             tableName: this.fields[0]?.tableName || '',
-            field_name: 'newFieldName'
+            field_name: 'newFieldName',
+            level: 1
           }
           let node = this.$refs.tree.getNode(this.fields[0]?.id || '')
-          let existsName = this.handleExistsName(node)
-          if (existsName) return
           this.$refs.tree.insertAfter(newNodeData, node)
         },
-        handleExistsName(node) {
+        handleExistsName() {
           // 改名前查找同级中是否重名，若有则return且还原改动并提示
           let exist = false
-          if (node && node.parent && node.parent.childNodes) {
-            let parentNode = node.parent.childNodes.filter(v => 'newFieldName' === v.data.field_name)
-            if (parentNode && parentNode.length === 1) {
-              this.$message.error('newFieldName' + this.$t('message.exists_name'))
-              exist = true
-            }
+          let parentNode = this.fields.filter(v => 'newFieldName' === v.field_name)
+          if (parentNode && parentNode.length !== 0) {
+            this.$message.error('newFieldName' + this.$t('message.exists_name'))
+            exist = true
           }
           return exist
         },

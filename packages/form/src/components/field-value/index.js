@@ -2,7 +2,7 @@ import { connect, mapProps, useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import VIcon from 'web-core/components/VIcon'
-import './fieldProessor.scss'
+import '../field-rename/index.scss'
 import { convertSchemaToTreeData } from '../field-rename/util'
 
 export const FieldValue = connect(
@@ -63,18 +63,18 @@ export const FieldValue = connect(
         this.fields = fields
         this.originalFields = JSON.parse(JSON.stringify(fields))
         return (
-          <div class="field-processor-tree-warp bg-body pt-2 pb-5">
+          <div class="field-processors-tree-warp bg-body pt-2 pb-5">
             <div class="field-processor-operation flex">
-              <ElCheckbox class="check-all mr-4" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
-              <span class="field-name inline-block">字段名称</span>
-              <span class="field-name inline-block">字段赋值</span>
-              <span class="field-ops inline-block">
-                <VIcon class="clickable ml-5" small onClick={() => this.handleAllReset()}>
+              <ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
+              <span class="flex-1 text inline-block ml-15">字段名称</span>
+              <span class="flex-1 text inline-block">字段赋值</span>
+              <span class="field-ops inline-block ml-10">
+                <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllReset()}>
                   revoke
                 </VIcon>
               </span>
             </div>
-            <div className="field-processor-tree-warp">
+            <div className="field-processors-tree-warp">
               <ElTree
                 ref="tree"
                 data={fields}
@@ -89,7 +89,7 @@ export const FieldValue = connect(
                       class="tree-node flex flex-1 justify-content-center align-items flex-row"
                       slot-scope="{ node, data }"
                     >
-                      <span class="field-name inline-block">
+                      <span class="field-name inline-block ml-15">
                         {data.field_name}
                         {data.primary_key_position > 0 ? (
                           <VIcon size="12" class="text-warning ml-1">
@@ -110,7 +110,7 @@ export const FieldValue = connect(
                           onClick={() => this.handleReset(node, data)}
                           disabled={!this.isScript(data.id)}
                         >
-                          <VIcon>revoke</VIcon>
+                          <VIcon size="12">revoke</VIcon>
                         </ElButton>
                       </span>
                     </span>

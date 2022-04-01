@@ -3,7 +3,7 @@ import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import VIcon from 'web-core/components/VIcon'
 import { handleOperation, convertSchemaToTreeData } from './util'
-import './fieldProessor.scss'
+import './index.scss'
 
 export const FieldRename = connect(
   observer(
@@ -78,24 +78,24 @@ export const FieldRename = connect(
         // eslint-disable-next-line
         console.log('FieldProcess.mergeOutputSchema', fields)
         return (
-          <div class="field-processor-tree-warp bg-body pt-2 pb-5">
+          <div class="field-processors-tree-warp bg-body pt-2 pb-5">
             <div class="field-processor-operation flex">
-              <ElCheckbox class="check-all mr-4" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
-              <span class="field-name text inline-block ml-15 ">源字段名</span>
-              <span class="field-name text inline-block">目标字段名</span>
+              <ElCheckbox class="check-all " v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
+              <span class="flex-1 text inline-block ml-15 ">源字段名</span>
+              <span class="flex-1 text inline-block">目标字段名</span>
               <span class="field-ops  inline-block mr-12">
-                <VIcon class="clickable ml-5" size="14" onClick={() => this.handleAllToUpperCase()}>
+                <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllToUpperCase()}>
                   toUpperCase
                 </VIcon>
-                <VIcon class="clickable ml-5" size="14" onClick={() => this.handleAllToLowerCase()}>
+                <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllToLowerCase()}>
                   toLowerCase
                 </VIcon>
-                <VIcon class="clickable ml-5" size="14" onClick={() => this.handleAllReset()}>
+                <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllReset()}>
                   revoke
                 </VIcon>
               </span>
             </div>
-            <div className="field-processor-tree-warp">
+            <div className="field-processors-tree-warp">
               <ElTree
                 ref="tree"
                 data={fields}
@@ -110,7 +110,16 @@ export const FieldRename = connect(
                       class="tree-node flex flex-1 justify-content-center align-items flex-row"
                       slot-scope="{ node, data }"
                     >
-                      <span class="field-name text__inner inline-block ml-15">{data.label}</span>
+                      <span class="flex-1 text__inner inline-block ml-15">
+                        {data.label}
+                        {data.primary_key_position > 0 ? (
+                          <VIcon size="12" class="text-warning ml-1">
+                            key
+                          </VIcon>
+                        ) : (
+                          ''
+                        )}
+                      </span>
                       <span class={['tree-field-input-wrap', 'item', 'inline-block', 'e-label']}>
                         {this.showInput ? (
                           <ElInput
@@ -123,8 +132,15 @@ export const FieldRename = connect(
                           <span class="text__inner">{data.field_name}</span>
                         )}
                         {!this.showInput ? (
-                          <VIcon class={['ml-3', 'clickable']} size="14" onClick={() => (this.showInput = true)}>
+                          <VIcon class={['ml-3', 'clickable']} size="12" onClick={() => (this.showInput = true)}>
                             edit-outline
+                          </VIcon>
+                        ) : (
+                          ''
+                        )}
+                        {this.isRename(data.id) ? (
+                          <VIcon class={['ml-3', 'clickable']} size="12">
+                            info
                           </VIcon>
                         ) : (
                           ''
@@ -137,7 +153,7 @@ export const FieldRename = connect(
                           disabled={!this.isRename(data.id)}
                           onClick={() => this.handleReset(node, data)}
                         >
-                          <VIcon size="14">revoke</VIcon>
+                          <VIcon size="12">revoke</VIcon>
                         </ElButton>
                       </span>
                     </span>
