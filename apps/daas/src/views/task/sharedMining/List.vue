@@ -9,7 +9,7 @@
           <span>{{ $t('share_list_setting') }}</span>
         </el-button>
       </div>
-      <el-table-column width="360" prop="name" :label="$t('share_list_name')" :show-overflow-tooltip="true">
+      <el-table-column width="360" :label="$t('share_list_name')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           {{ scope.row.name }}
         </template>
@@ -21,21 +21,21 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="name" :label="$t('share_list_time_excavation')">
+      <el-table-column width="150" :label="$t('share_list_time_excavation')">
         <template slot-scope="scope">
           {{ scope.row.pointTime }}
         </template>
       </el-table-column>
       <el-table-column :label="$t('share_list_time')" sortable></el-table-column>
       <el-table-column prop="createTime" width="160" :label="$t('share_list_creat_time')" sortable> </el-table-column>
-      <el-table-column prop="status" :label="$t('share_list_status')" width="100">
+      <el-table-column width="100" prop="status" :label="$t('share_list_status')">
         <template #default="{ row }">
           <span :class="['status-' + row.statusResult, 'status-block', 'mr-2']">
             {{ $t('task_preview_status_' + row.statusResult) }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="200" fixed="right">
+      <el-table-column width="200" fixed="right" :label="$t('column_operation')">
         <template slot-scope="scope">
           <el-button size="mini" type="text" @click="run([scope.row.id])">{{ $t('task_list_run') }}</el-button>
           <el-divider direction="vertical"></el-divider>
@@ -124,9 +124,9 @@
       :close-on-click-modal="false"
       :visible.sync="editDialogVisible"
     >
-      <el-form label-position="left" label-width="150px" :model="editForm">
-        <el-form-item size="mini" required :label="$t('share_form_edit_name')">
-          <el-input v-model="editForm.name"></el-input>
+      <el-form ref="editForm" label-position="left" label-width="150px" :model="editForm" :rules="rulesEdit">
+        <el-form-item size="mini" :label="$t('share_form_edit_name')" prop="edit_name">
+          <el-input clearable v-model="editForm.name"></el-input>
         </el-form-item>
         <el-form-item size="mini" :label="$t('share_form_setting_log_time')">
           <el-select v-model="editForm.storageTime" placeholder="请选择">
@@ -137,7 +137,7 @@
       </el-form>
       <span class="dialog-footer" slot="footer">
         <el-button @click="cancelEdit" size="mini">{{ $t('button_cancel') }}</el-button>
-        <el-button size="mini" type="primary" @click="saveEdit()">{{ $t('button_confirm') }}</el-button>
+        <el-button size="mini" type="primary" @click="saveEdit()">{{ $t('button_save') }}</el-button>
       </span>
     </el-dialog>
     <DownAgent ref="agentDialog" type="taskRunning"></DownAgent>
@@ -221,6 +221,9 @@ export default {
         persistenceMongodb_collection: [
           { required: true, message: this.$t('shared_cdc_setting_select_table_tip'), trigger: 'blur' }
         ]
+      },
+      rulesEdit: {
+        edit_name: [{ required: true, message: this.$t('shared_cdc_name'), trigger: 'blur' }]
       }
     }
   },
@@ -419,16 +422,20 @@ export default {
 
     // 保存编辑
     saveEdit() {
-      let id = this.editForm?.id
-      this.$api('logcollector')
-        .patch(id, this.editForm)
-        .then(res => {
-          if (res) {
-            this.editDialogVisible = false
-            this.table.fetch(1)
-            this.$message.success(this.$t('shared_cdc_setting_message_edit_save'))
-          }
-        })
+      this.$refs['editForm'].validate(valid => {
+        if (valid) {
+          let id = this.editForm?.id
+          this.$api('logcollector')
+            .patch(id, this.editForm)
+            .then(res => {
+              if (res) {
+                this.editDialogVisible = false
+                this.table.fetch(1)
+                this.$message.success(this.$t('shared_cdc_setting_message_edit_save'))
+              }
+            })
+        }
+      })
     },
 
     detail(item) {
@@ -499,7 +506,6 @@ export default {
       padding: 10px 20px;
       .el-form {
         .el-form-item {
-          margin-bottom: 12px;
           .el-form-item__label {
             font-size: 12px;
           }
