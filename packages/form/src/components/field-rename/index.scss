@@ -19,6 +19,9 @@
   .active__delete{
     color: map-get($color, disable);
   }
+  .field-type{
+    width: 100px;
+  }
   .active__name{
     color: map-get($color, primary);
   }

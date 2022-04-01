@@ -83,6 +83,7 @@ export const FieldModType = connect(
       render() {
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
+        debugger
         let fields = this.options?.[0] || []
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
         fields = this.checkOps(fields)
@@ -92,7 +93,7 @@ export const FieldModType = connect(
           <div class="field-processors-tree-warp bg-body pt-2 pb-5">
             <div class="field-processor-operation flex">
               <ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
-              <span class="flex-1  text inline-block ml-15">字段名称</span>
+              <span class="flex-1 text inline-block ml-15">字段名称</span>
               <span class="flex-1 text inline-block">源字段类型</span>
               <span class="field-type text inline-block">目标字段类型</span>
               <span class="field-ops inline-block ml-10">
