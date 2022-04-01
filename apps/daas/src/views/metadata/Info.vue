@@ -314,11 +314,6 @@
 
                   <!-- 模型 end -->
                 </div>
-                <!-- 表链路图 start-->
-                <div class="table-box" v-if="activePanel == 'relations'">
-                  <Relations :tableId="metadataDataObj.qualified_name"></Relations>
-                </div>
-                <!-- 表链路图 end-->
                 <!-- 版本管理 start -->
                 <div class="table-box" v-if="activePanel == 'version'">
                   <VersionList :histories="metadataDataObj"></VersionList>
@@ -437,7 +432,6 @@
 <script>
 import VersionList from './versionList'
 import FormPage from './Form'
-import Relations from '../relations/relations'
 import IndexManager from './IndexManager'
 import Validation from './Validation'
 import Preview from './Preview'
@@ -447,7 +441,6 @@ import VIcon from '@/components/VIcon'
 export default {
   components: {
     VersionList,
-    Relations,
     FormPage,
     IndexManager,
     Validation,
@@ -510,11 +503,6 @@ export default {
         //   mateTypes: ['database'],
         //   key: 'collections'
         // },
-        // {
-        //   name: this.$t('relations.blood'),
-        //   mateTypes: ['collection', 'table', 'mongo_view', 'view'],
-        //   key: 'relations'
-        // }
       ],
       description: '',
       searchParams: {},

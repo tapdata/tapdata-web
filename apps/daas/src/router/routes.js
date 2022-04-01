@@ -795,11 +795,6 @@ export default [
 
       /* ---------- 不确定路由  ----------*/
       {
-        path: '/relations',
-        name: 'relations',
-        component: () => import('@/views/relations/relations')
-      },
-      {
         path: '/taskHistories',
         name: 'taskHistories',
         component: () => import('@/views/scheduleTasks/Histories'),
@@ -866,15 +861,6 @@ export default [
         meta: {
           code: 'dictionary_menu',
           title: 'tap.dictionary'
-        }
-      },
-      {
-        path: '/dataMap',
-        name: 'dataMap',
-        component: () => import('@/views/dataMap/DataMap'),
-        meta: {
-          code: 'data_lineage_menu',
-          title: 'tap.dataLineage'
         }
       },
       {
