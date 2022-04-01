@@ -117,6 +117,10 @@ _axios.interceptors.response.use(function (response) {
       if (['Datasource.TableNotFound'].includes(code)) {
         return reject(Object.assign(response))
       }
+      // 文件处理
+      if (response?.config?.responseType === 'blob') {
+        return resolve(response)
+      }
       let msg = data?.message || data?.msg || ''
       console.log(`${code}： ${msg}`)
       Message.error(msg)

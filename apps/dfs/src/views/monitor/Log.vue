@@ -1,19 +1,24 @@
 <template>
   <div class="monitor-log-wrap h-100 flex flex-column">
-    <div class="filter-row">
-      <ElInput
-        class="search-input mt-2"
-        v-model="keyword"
-        clearable
-        prefix-icon="el-icon-search"
-        placeholder="请输入日志内容"
-        @input="search"
-      ></ElInput>
-      <ElCheckboxGroup v-model="checkList" :min="1" class="inline-block ml-4" @change="changeType">
-        <ElCheckbox label="INFO">INFO</ElCheckbox>
-        <ElCheckbox label="WARN">WARN</ElCheckbox>
-        <ElCheckbox label="ERROR">ERROR</ElCheckbox>
-      </ElCheckboxGroup>
+    <div class="filter-row flex justify-content-between align-items-center">
+      <div>
+        <ElInput
+          class="search-input mt-2"
+          v-model="keyword"
+          clearable
+          prefix-icon="el-icon-search"
+          placeholder="请输入日志内容"
+          @input="search"
+        ></ElInput>
+        <ElCheckboxGroup v-model="checkList" :min="1" class="inline-block ml-4" @change="changeType">
+          <ElCheckbox label="INFO">INFO</ElCheckbox>
+          <ElCheckbox label="WARN">WARN</ElCheckbox>
+          <ElCheckbox label="ERROR">ERROR</ElCheckbox>
+        </ElCheckboxGroup>
+      </div>
+      <ElTooltip effect="dark" content="下载任务日志" placement="bottom">
+        <VIcon class="color-primary mr-6" @click="downloadForm.visible = true">download</VIcon>
+      </ElTooltip>
     </div>
     <div ref="logs" class="log-container flex-fit mt-6 py-6 overflow-auto" @scroll="loadOld">
       <div v-show="!noMore && loading" class="pb-4 text-center fs-5">
@@ -34,6 +39,29 @@
         </div>
       </div>
     </div>
+    <ElDialog
+      title="下载任务日志"
+      :visible.sync="downloadForm.visible"
+      width="500px"
+      top="30vh"
+      append-to-body
+      :close-on-click-modal="false"
+    >
+      <div class="flex align-items-center pl-6">
+        <div class="mr-4">选择日志范围</div>
+        <ElSelect v-model="downloadForm.select" size="mini">
+          <ElOption
+            v-for="(item, index) in downloadForm.items"
+            :label="item.label"
+            :value="item.value"
+            :key="index"
+          ></ElOption>
+        </ElSelect>
+      </div>
+      <div class="text-center mt-10">
+        <VButton type="primary" auto-loading @click="downloadNow(arguments[0])">立即下载</VButton>
+      </div>
+    </ElDialog>
   </div>
 </template>
 <style lang="scss">
@@ -61,6 +89,7 @@
 </style>
 <script>
 import VIcon from '@/components/VIcon'
+import { downloadBlob } from '@/util'
 
 export default {
   components: { VIcon },
@@ -74,7 +103,29 @@ export default {
       keyword: '',
       logs: null,
       isScrollBottom: true,
-      checkList: ['INFO', 'WARN', 'ERROR']
+      checkList: ['INFO', 'WARN', 'ERROR'],
+      downloadForm: {
+        visible: false,
+        select: 6,
+        items: [
+          {
+            label: '最近6个小时',
+            value: 6
+          },
+          {
+            label: '最近1天',
+            value: 24
+          },
+          {
+            label: '最近3天',
+            value: 3 * 24
+          },
+          {
+            label: '最近5天',
+            value: 5 * 24
+          }
+        ]
+      }
     }
   },
   created() {
@@ -227,6 +278,24 @@ export default {
     },
     changeType() {
       this.getLogs(true)
+    },
+    downloadNow(resetLoading) {
+      console.log('this.', this.downloadForm)
+      let start = Date.now() - this.downloadForm.select * 60 * 60 * 1000
+      let params = {
+        dataFlowId: this.id,
+        start
+      }
+      this.$axios
+        .get('tm/api/Logs/export?where=' + encodeURIComponent(JSON.stringify(params)), {
+          responseType: 'blob'
+        })
+        .then(res => {
+          downloadBlob(res)
+        })
+        .finally(() => {
+          resetLoading?.()
+        })
     }
   }
 }
