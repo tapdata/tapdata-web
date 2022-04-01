@@ -25,6 +25,7 @@ export const FieldRename = connect(
           nodeKey: '',
           originalFields: [],
           checkAll: false,
+          showInput: false,
           /*字段处理器支持功能类型*/
           RENAME_OPS_TPL: {
             id: '',
@@ -111,14 +112,23 @@ export const FieldRename = connect(
                     >
                       <span class="field-name inline-block">{data.label}</span>
                       <span class={['tree-field-input-wrap', 'item', 'inline-block', 'e-label']}>
-                        <ElInput
-                          class="tree-field-input"
-                          v-model={data.field_name}
-                          onChange={() => this.handleRename(node, data)}
-                        />
-                        <VIcon class="title-input-icon" size="14">
-                          edit-outline
-                        </VIcon>
+                        {this.showInput ? (
+                          <ElInput
+                            class="tree-field-input"
+                            v-model={data.field_name}
+                            onChange={() => this.handleRename(node, data)}
+                            onBlur={() => (this.showInput = false)}
+                          />
+                        ) : (
+                          <span>{data.field_name}</span>
+                        )}
+                        {!this.showInput ? (
+                          <VIcon class={['ml-3', 'clickable']} size="14" onClick={() => (this.showInput = true)}>
+                            edit-outline
+                          </VIcon>
+                        ) : (
+                          ''
+                        )}
                       </span>
                       <span class="e-ops">
                         <ElButton
