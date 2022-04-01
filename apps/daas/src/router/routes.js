@@ -557,7 +557,7 @@ export default [
           {
             path: '',
             name: 'modules',
-            component: () => import('@/views/apiPage/Modules'),
+            component: () => import('@/views/api-page/Modules'),
             meta: {
               title: 'page_title_api_publish',
               code: 'API_management_menu'
@@ -566,7 +566,7 @@ export default [
           {
             path: 'create',
             name: 'module',
-            component: () => import('@/views/apiPage/ModuleForm'),
+            component: () => import('@/views/api-page/ModuleForm'),
             meta: {
               title: 'page_title_api_publish_create',
               code: 'API_creation'
@@ -575,7 +575,7 @@ export default [
           {
             path: ':id/edit',
             name: 'editModule',
-            component: () => import('@/views/apiPage/ModuleForm'),
+            component: () => import('@/views/api-page/ModuleForm'),
             meta: {
               title: 'page_title_api_publish_edit',
               code: 'API_edition'
@@ -587,7 +587,7 @@ export default [
       {
         path: '/api-browse',
         name: 'dataExplorer',
-        component: () => import('@/views/apiPage/DataExplorer'),
+        component: () => import('@/views/api-page/DataExplorer'),
         meta: {
           title: 'page_title_api_browse',
           code: 'API_data_explorer_menu'
@@ -597,7 +597,7 @@ export default [
       {
         path: '/api-test',
         name: 'apiDocAndTest',
-        component: () => import('@/views/apiPage/ApiDocAndTest'),
+        component: () => import('@/views/api-page/ApiDocAndTest'),
         meta: {
           title: 'page_title_api_test',
           code: 'API_doc_&_test_menu'
@@ -607,7 +607,7 @@ export default [
       {
         path: '/api-client',
         name: 'apiClient',
-        component: () => import('@/views/apiPage/Applications'),
+        component: () => import('@/views/api-page/Applications'),
         meta: {
           title: 'page_title_api_client',
           code: 'API_clients_menu'
@@ -617,7 +617,7 @@ export default [
       {
         path: '/api-servers',
         name: 'apiServers',
-        component: () => import('@/views/apiPage/ApiServers'),
+        component: () => import('@/views/api-page/ApiServers'),
         meta: {
           title: 'page_title_api_servers',
           code: 'API_server_menu'
@@ -628,7 +628,7 @@ export default [
       {
         path: '/api-statistics',
         name: 'apiAnalysis',
-        component: () => import('@/views/apiPage/ApiAnalysis'),
+        component: () => import('@/views/api-page/ApiAnalysis'),
         meta: {
           title: 'page_title_api_stat',
           code: 'API_stats_menu'
@@ -638,7 +638,7 @@ export default [
       {
         path: '/api-audit',
         name: 'applications',
-        component: () => import('@/views/apiPage/Applications'),
+        component: () => import('@/views/api-page/Applications'),
         meta: {
           title: 'page_title_api_audit',
           code: 'API_clients_menu'
@@ -648,7 +648,7 @@ export default [
       {
         path: '/api-monitor',
         name: 'apiMonitor',
-        component: () => import('@/views/apiPage/ApiServers'),
+        component: () => import('@/views/api-page/ApiServers'),
         meta: {
           title: 'page_title_api_monitor',
           code: 'API_server_menu'
@@ -691,7 +691,7 @@ export default [
       {
         path: '/cluster',
         name: 'clusterManagement',
-        component: () => import('@/views/clusterManagement/clusterManagement'),
+        component: () => import('@/views/cluster/clusterManagement'),
         meta: {
           title: 'page_title_cluster',
           code: 'Cluster_management_menu'
@@ -806,7 +806,7 @@ export default [
       {
         path: '/dailyRecord',
         name: 'dailyRecord',
-        component: () => import('@/views/clusterManagement/dailyRecord')
+        component: () => import('@/views/cluster/dailyRecord')
       },
       {
         path: '/upload',
