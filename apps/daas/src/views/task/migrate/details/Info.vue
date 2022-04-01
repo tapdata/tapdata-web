@@ -37,15 +37,15 @@
         <!--        </VButton>-->
       </div>
     </div>
-    <div class="filter-bar flex align-center mt-3">
+    <div class="flex align-center mt-3">
       <SelectList
         v-if="stagesItems.length"
         v-model="selectedStage"
         :items="stagesItems"
-        inner-label="节点"
-        none-border
         last-page-text=""
         clearable
+        size="mini"
+        style="min-width: 240px"
         menu-min-width="240px"
         :placeholder="$t('task_info_select_node')"
         @change="changeStageFnc"
@@ -53,10 +53,12 @@
       <SelectList
         v-model="selectedTime"
         :items="selectedTimeItems"
-        inner-label="周期"
-        none-border
         last-page-text=""
+        clearable
+        size="mini"
         :placeholder="$t('task_info_select_period')"
+        class="ml-4"
+        style="min-width: 180px"
         @change="changePeriodFnc"
       ></SelectList>
       <DatetimeRange
@@ -69,15 +71,17 @@
       <SelectList
         v-model="selectedRate"
         :items="selectedRateItems"
-        inner-label="频率"
-        none-border
         last-page-text=""
+        clearable
+        size="mini"
         :placeholder="$t('task_info_select_frequency')"
+        class="ml-4"
+        style="min-width: 180px"
         @change="changeRateFnc"
       ></SelectList>
     </div>
-    <div class="flex justify-content-between mt-6" style="height: 247px">
-      <div class="p-6 grey-background" style="min-width: 194px">
+    <div class="flex justify-content-between mt-6">
+      <div class="p-6 grey-background" style="min-width: 240px">
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_input') }}</span>
@@ -107,34 +111,46 @@
       <div class="flex flex-column flex-fill ml-4" style="height: 250px" v-loading="!lineDataDeep.x.length">
         <Chart ref="chart" type="line" :data="lineData" :options="lineOptions" class="type-chart h-100"></Chart>
       </div>
-      <div class="ml-3 flex flex-column text-center" style="min-width: 278px">
-        <div class="right-box grey-background">
-          <div class="fw-bold mb-3">{{ $t('task_info_full_progress') }}</div>
-          <div class="progress-box flex justify-content-center align-items-center position-relative">
-            <ElProgress
-              type="circle"
-              color="rgba(44, 101, 255, 1)"
-              :stroke-width="3"
-              :percentage="progress"
-              :show-text="false"
-              :width="50"
-            ></ElProgress>
-            <div class="flex justify-content-center position-absolute color-primary fw-bolder din-font">
-              {{ progress }}%
+      <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
+        <div
+          v-if="task && task.parentTask && ['initial_sync', 'initial_sync+cdc'].includes(task.parentTask.type)"
+          class="right-box grey-background"
+        >
+          <div class="fw-bold right-box-text">{{ $t('task_info_full_progress') }}</div>
+          <div class="flex-1 flex flex-column justify-content-center">
+            <div class="progress-box flex justify-content-center align-items-center position-relative mt-1">
+              <ElProgress
+                type="circle"
+                color="rgba(44, 101, 255, 1)"
+                :stroke-width="3"
+                :percentage="progress"
+                :show-text="false"
+                :width="48"
+              ></ElProgress>
+              <div class="flex justify-content-center position-absolute color-primary fw-bolder din-font">
+                {{ progress }}%
+              </div>
+            </div>
+            <div v-if="progress === 100" class="right-box-text font-color-sub mt-1">
+              {{ $t('task_info_full_time') }}：{{ formatTime(endTs) }}
+            </div>
+            <div v-else class="right-box-text font-color-sub mt-1">
+              {{ $t('task_monitor_full_completion_time') + '：' + (finishDuration || $t('task_info_calculating')) }}
             </div>
           </div>
-          <div v-if="progress === 100" class="font-color-sub mt-2">
-            {{ $t('task_info_full_time') }}：{{ formatTime(endTs) }}
-          </div>
-          <div v-else class="font-color-sub mt-2">
-            {{ $t('task_monitor_full_completion_time') + '：' + (finishDuration || $t('task_info_calculating')) }}
-          </div>
         </div>
-        <div class="right-box mt-3 grey-background">
-          <div class="fw-bold">{{ $t('task_info_incremental_delay') }}</div>
-          <div class="color-primary fw-bolder fs-5">{{ formatMs(writeData.replicateLag) }}</div>
-          <div class="font-color-sub">
-            {{ $t('task_info_increment_time_point') }}：{{ formatTime(writeData.cdcTime) }}
+        <div
+          v-if="task && task.parentTask && ['cdc', 'initial_sync+cdc'].includes(task.parentTask.type)"
+          class="right-box grey-background"
+        >
+          <div class="fw-bold right-box-text">{{ $t('task_info_incremental_delay') }}</div>
+          <div class="flex-1 flex flex-column justify-content-center">
+            <div class="color-primary fw-bolder fs-5 mt-1" style="height: 48px; line-height: 48px">
+              {{ formatMs(writeData.replicateLag) }}
+            </div>
+            <div class="right-box-text font-color-sub mt-1">
+              {{ $t('task_info_increment_time_point') }}：{{ formatTime(writeData.cdcTime) }}
+            </div>
           </div>
         </div>
       </div>
@@ -662,11 +678,11 @@ export default {
           let time = el
           inArr.push({
             name: time,
-            value: [time, inputQPS[i] || 0]
+            value: [time, inputQPS[i]]
           })
           outArr.push({
             name: time,
-            value: [time, outputQPS[i] || 0]
+            value: [time, outputQPS[i]]
           })
         })
         // eslint-disable-next-line
@@ -902,10 +918,15 @@ export default {
 .right-box {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 16px;
+  padding: 8px 0;
   flex: 1;
   height: 50%;
+}
+.right-box + .right-box {
+  margin-top: 16px;
+}
+.right-box-text {
+  line-height: 22px;
 }
 .filter-datetime-range {
   font-size: 12px;
@@ -917,10 +938,86 @@ export default {
     }
   }
 }
-.operation {
-  white-space: nowrap;
+
+.ant-layout.authing-guard-layout {
+  padding: 0;
 }
-.filter-bar {
-  line-height: 32px;
+.g2-view-login {
+  height: 100%;
+}
+.g2-view-header {
+  text-align: center;
+}
+.g2-view-container .g2-view-tabs [class*='authing-'].authing-ant-tabs-tab {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  font-size: 16px;
+}
+/*
+    Edit login page css
+    eg：
+    .authing-guard-layout {
+      background: black !important;
+    }
+    Change the background color
+  */
+.react-joyride {
+  position: relative;
+  flex: 1;
+  margin-top: 0;
+  padding-bottom: 100vh;
+  width: 65%;
+}
+.react-joyride::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: url(https://cloud.tapdata.net/assets/img/login/bg.png) no-repeat center center;
+  background-size: 80%;
+}
+.ant-layout.authing-guard-layout {
+  flex-direction: row;
+  justify-content: unset;
+  align-items: unset;
+}
+body .styles_container__24ljE {
+  margin: 0;
+  padding-top: 100px;
+  width: 35%;
+}
+.styles_container__28TSZ {
+  margin-bottom: 30px;
+}
+.styles_authing-tabs-inner__KEW7v {
+  text-align: center;
+}
+.styles_authing-tab-item__2W-41 {
+  flex: 1;
+  margin-right: 0;
+  font-size: 16px;
+}
+.styles_authing-tab-item__active__1E7DK {
+  font-size: 16px;
+}
+.styles_authing-tab-item__active__1E7DK:after {
+  width: 100%;
+}
+.ant-form-item {
+  margin-bottom: 30px;
+}
+.ant-input-lg {
+  font-size: 14px;
+}
+.styles_registerBtn__37rJN {
+  margin-bottom: 24px;
+}
+.styles_pageFooter__1Gi3w,
+.styles_problem__2ff93,
+.styles_problem__3qBot {
+  display: none;
 }
 </style>

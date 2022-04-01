@@ -267,7 +267,12 @@ export default {
       this.$api('logcollector')
         .getDetail(id)
         .then(res => {
-          this.detailData = res?.data
+          let detailData = res?.data
+          detailData.taskList = detailData.taskList?.map(item => {
+            item.status = item.status === 'edit' ? 'ready' : item.status
+            return item
+          })
+          this.detailData = detailData
           this.getMeasurement()
         })
     },

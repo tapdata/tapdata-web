@@ -61,7 +61,7 @@
         <el-aside class="metadata-aside" v-show="asideFalg">
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
-              <span class="fs-7">{{ $t('metadata.details.basicAttributes') }}</span>
+              <span class="fs-7 text-rdlevel fw-sub">{{ $t('metadata.details.basicAttributes') }}</span>
               <i @click.stop="asideFalg = false" class="iconfont icon-outdent text-primary"></i>
             </div>
             <ul class="metadata-aside-main pt-4">
@@ -128,7 +128,7 @@
 
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
-              <span class="fs-7">{{ $t('metadata.details.businessAttributes') }}</span>
+              <span class="fs-7 text-rdlevel fw-sub">{{ $t('metadata.details.businessAttributes') }}</span>
               <el-button type="text" size="mini" @click.stop="creatBusiness"
                 >+ {{ $t('metadata.details.creat') }}</el-button
               >
@@ -899,7 +899,6 @@ export default {
     }
   }
   .metadata-content {
-    padding: 10px;
     box-sizing: border-box;
     overflow: hidden;
     .matadata-head {
@@ -994,8 +993,10 @@ export default {
               .label + span {
                 display: inline-block;
                 max-width: calc(100% - 100px);
+                width: 100%;
                 text-overflow: ellipsis;
                 overflow: hidden;
+                text-align: right;
               }
             }
             li.business {

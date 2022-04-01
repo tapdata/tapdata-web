@@ -11,7 +11,9 @@
       ref="tableList"
     >
       <template slot="status" slot-scope="scope">
-        <StatusTag type="text" target="etlSub" :status="scope.row.status"></StatusTag>
+        <span :class="['status-' + scope.row.status, 'status-block']">
+          {{ $t('task_preview_status_' + scope.row.status) }}
+        </span>
       </template>
       <template slot="schemaHeader">
         <div>
@@ -87,13 +89,12 @@
 
 <script>
 import TableList from '@/components/TableList'
-import StatusTag from '@/components/StatusTag'
 import VIcon from '@/components/VIcon'
 import { deepCopy } from '@/utils/util'
 
 export default {
   name: 'Subtask',
-  components: { TableList, StatusTag, VIcon },
+  components: { TableList, VIcon },
   props: {
     task: {
       type: Object,
@@ -169,6 +170,7 @@ export default {
         .then(res => {
           let items = res.data
           let data = items.map(item => {
+            item.status = item.status === 'edit' ? 'ready' : item.status
             return deepCopy(item)
           })
           return {
