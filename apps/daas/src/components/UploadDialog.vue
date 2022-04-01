@@ -152,15 +152,21 @@ export default {
           display: none;
         }
       }
+      .el-upload-list__item-name {
+        i {
+          font-size: 18px;
+          color: map-get($color, primary);
+        }
+      }
       .el-upload-list__item-status-label {
         right: 50px;
         top: 3px;
       }
       .el-upload-list__item:hover {
         background-color: initial;
-        .el-icon-close {
-          color: map-get($color, primary);
-        }
+      }
+      .el-icon-close:hover {
+        color: map-get($color, primary);
       }
       .el-icon-close:before {
         content: '';
