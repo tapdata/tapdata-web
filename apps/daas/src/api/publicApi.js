@@ -54,10 +54,6 @@ axios.interceptors.request.use(
         config.url = `${config.url}?access_token=${accessToken}`
       }
     }
-    let xToken = Cookie.get('xToken')
-    if (xToken) {
-      config.headers['X-Token'] = xToken
-    }
     let apiPre = window.getSettingByKey('DFS_TM_API_PRE_URL') || ''
     let tcmApiPre = window.getSettingByKey('DFS_TCM_API_PRE_URL') || ''
     let preUrl = ''

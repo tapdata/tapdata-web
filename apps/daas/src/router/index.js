@@ -27,14 +27,13 @@ export default i18n => {
     }
     let cookie = window.VueCookie
     let token = cookie.get('token')
-    let xToken = cookie.get('xToken')
     let userId = cookie.get('user_id')
 
-    if (token || xToken) {
+    if (token) {
       //若token存在，获取权限
       let permissions = sessionStorage.getItem('tapdata_permissions')
       if (!permissions || isFirst) {
-        if (xToken) {
+        if (token) {
           try {
             let res = await usersModel.getUserInfo()
             let user = res.data
