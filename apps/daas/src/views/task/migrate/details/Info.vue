@@ -895,7 +895,6 @@ export default {
   display: inline-block;
 }
 .operation {
-  width: 200px;
   white-space: nowrap;
 }
 .grey-background {

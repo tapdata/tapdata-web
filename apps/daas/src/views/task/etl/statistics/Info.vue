@@ -909,6 +909,9 @@ export default {
     }
   }
 }
+.operation {
+  white-space: nowrap;
+}
 
 .ant-layout.authing-guard-layout {
   padding: 0;
