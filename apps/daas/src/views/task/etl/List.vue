@@ -1114,7 +1114,7 @@ export default {
         this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
         statusResult
           .filter(t => t.count > 0)
-          .every(t => ['wait_run', 'scheduling', 'running', 'stopping'].includes(t.status))
+          .every(t => ['edit', 'wait_run', 'scheduling', 'running', 'stopping'].includes(t.status))
       )
     },
     stopDisabled(data) {

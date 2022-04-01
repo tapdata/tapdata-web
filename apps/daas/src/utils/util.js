@@ -21,7 +21,6 @@ export function setPermission(list) {
 export function signOut() {
   let cookie = window.VueCookie
 
-  sessionStorage.removeItem('tapdata_permissions')
   cookie.delete('token')
   cookie.delete('user_id')
   cookie.delete('login')
@@ -29,6 +28,7 @@ export function signOut() {
   cookie.delete('email')
   cookie.delete('username')
   cookie.delete('isReadonly')
+  sessionStorage.setItem('lastLocationHref', location.href)
   if (window !== top) {
     top.window.location.href = '/login'
   } else {
