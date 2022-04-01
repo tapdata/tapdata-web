@@ -26,7 +26,6 @@ export const FieldAddDel = connect(
           nodeKey: '',
           originalFields: [],
           checkAll: false,
-          showInput: false,
           fields: [],
           /*字段处理器支持功能类型*/
           REMOVE_OPS_TPL: {
@@ -111,18 +110,18 @@ export const FieldAddDel = connect(
                               this.isCreate(data.id) ? 'active__name' : ''
                             ]}
                           >
-                            {this.showInput ? (
+                            {data.showInput ? (
                               <ElInput
                                 class="tree-field-input text__inner"
                                 v-model={data.field_name}
                                 onChange={() => this.handleRename(node, data)}
-                                onBlur={() => (this.showInput = false)}
+                                onBlur={() => this.closeInput(node.data)}
                               />
                             ) : (
                               <span class="text__inner">{data.field_name}</span>
                             )}
-                            {!this.showInput ? (
-                              <VIcon class={['ml-3', 'clickable']} size="12" onClick={() => (this.showInput = true)}>
+                            {!data.showInput ? (
+                              <VIcon class={['ml-3', 'clickable']} size="12" onClick={() => this.showInput(node.data)}>
                                 edit-outline
                               </VIcon>
                             ) : (
@@ -223,9 +222,19 @@ export const FieldAddDel = connect(
           fn(fields)
           return field
         },
+        showInput(data) {
+          this.$set(data, 'showInput', true) //打开loading
+          //将输入框自动获取焦点
+          // this.$nextTick(() => {
+          //   this.$refs[data.id].focus()
+          // })
+        },
+        closeInput(data) {
+          this.$set(data, 'showInput', false) //打开loading
+        },
         handleRename(node, data) {
           let nativeData = this.getNativeData(data.id) //查找初始schema
-          let existsName = this.handleExistsName(node, data)
+          let existsName = this.handleExistsName(data.field_name)
           if (existsName) {
             data.field_name = nativeData.field_name
             return
@@ -284,7 +293,8 @@ export const FieldAddDel = connect(
          * @param data
          */
         handleCreate() {
-          let existsName = this.handleExistsName()
+          let node = this.$refs.tree.getNode(this.fields[0]?.id || '')
+          let existsName = this.handleExistsName(node?.data.field_name)
           if (existsName) return
           console.log('fieldProcessor.handleCreate') //eslint-disable-line
           let fieldId = uuid()
@@ -309,15 +319,15 @@ export const FieldAddDel = connect(
             field_name: 'newFieldName',
             level: 1
           }
-          let node = this.$refs.tree.getNode(this.fields[0]?.id || '')
           this.$refs.tree.insertAfter(newNodeData, node)
         },
-        handleExistsName() {
+        handleExistsName(name) {
           // 改名前查找同级中是否重名，若有则return且还原改动并提示
+          name = name || 'newFieldName'
           let exist = false
-          let parentNode = this.fields.filter(v => 'newFieldName' === v.field_name)
-          if (parentNode && parentNode.length !== 0) {
-            this.$message.error('newFieldName' + this.$t('message.exists_name'))
+          let parentNode = this.fields.filter(v => name === v.field_name)
+          if (parentNode && parentNode.length > 1) {
+            this.$message.error(name + this.$t('message.exists_name'))
             exist = true
           }
           return exist

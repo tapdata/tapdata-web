@@ -22,6 +22,11 @@
   .active__name{
     color: map-get($color, primary);
   }
+  .active__name__inner {
+    .el-input__inner{
+      color: map-get($color, primary);
+    }
+  }
   .active__type {
     .el-input__inner{
       color: map-get($color, primary);

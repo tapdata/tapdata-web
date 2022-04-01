@@ -25,7 +25,6 @@ export const FieldRename = connect(
           nodeKey: '',
           originalFields: [],
           checkAll: false,
-          showInput: false,
           /*字段处理器支持功能类型*/
           RENAME_OPS_TPL: {
             id: '',
@@ -121,18 +120,18 @@ export const FieldRename = connect(
                         )}
                       </span>
                       <span class={['tree-field-input-wrap', 'item', 'inline-block', 'e-label']}>
-                        {this.showInput ? (
+                        {data.showInput ? (
                           <ElInput
                             class="tree-field-input text__inner"
                             v-model={data.field_name}
                             onChange={() => this.handleRename(node, data)}
-                            onBlur={() => (this.showInput = false)}
+                            onBlur={() => this.closeInput(node.data)}
                           />
                         ) : (
                           <span class="text__inner">{data.field_name}</span>
                         )}
-                        {!this.showInput ? (
-                          <VIcon class={['ml-3', 'clickable']} size="12" onClick={() => (this.showInput = true)}>
+                        {!data.showInput ? (
+                          <VIcon class={['ml-3', 'clickable']} size="12" onClick={() => this.showInput(node.data)}>
                             edit-outline
                           </VIcon>
                         ) : (
@@ -168,6 +167,16 @@ export const FieldRename = connect(
         isRename(id) {
           let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME')
           return ops && ops.length > 0
+        },
+        showInput(data) {
+          this.$set(data, 'showInput', true) //打开loading
+          //将输入框自动获取焦点
+          // this.$nextTick(() => {
+          //   this.$refs[data.id].focus()
+          // })
+        },
+        closeInput(data) {
+          this.$set(data, 'showInput', false) //打开loading
         },
         /*rename
          * @node 当前tree
