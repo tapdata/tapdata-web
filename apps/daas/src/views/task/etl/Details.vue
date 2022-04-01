@@ -101,7 +101,7 @@ import History from '../migrate/details/History'
 import Subtask from '../Subtask'
 import Chart from 'web-core/components/chart'
 import { ETL_SUB_STATUS_MAP } from '@/const'
-import { getSubTaskStatus } from './util'
+import { getSubTaskStatus } from '../util'
 
 let timeout = null
 export default {

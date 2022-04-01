@@ -1168,6 +1168,7 @@ export default {
         }
       })
       this.proportionData = proportionData
+      // eslint-disable-next-line
       console.log('proportionData', data, total, proportionData)
 
       this.isShowDetails = true
