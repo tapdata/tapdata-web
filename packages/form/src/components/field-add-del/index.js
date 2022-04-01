@@ -60,8 +60,8 @@ export const FieldAddDel = connect(
         console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = JSON.parse(JSON.stringify(this.options?.[0] || []))
         //读取op 配置
-        fields = this.checkOps(fields)
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
+        fields = this.checkOps(fields)
         this.originalFields = JSON.parse(JSON.stringify(fields))
         this.fields = fields
 
@@ -123,7 +123,12 @@ export const FieldAddDel = connect(
                         >
                           <VIcon> delete</VIcon>
                         </ElButton>
-                        <ElButton type="text" class="ml-5" onClick={() => this.handleReset(node, data)}>
+                        <ElButton
+                          type="text"
+                          class="ml-5"
+                          disabled={!this.isRemove(data.id)}
+                          onClick={() => this.handleReset(node, data)}
+                        >
                           <VIcon>revoke</VIcon>
                         </ElButton>
                       </span>
@@ -259,7 +264,7 @@ export const FieldAddDel = connect(
           let node = this.$refs.tree.getNode(this.fields[0]?.id || '')
           let existsName = this.handleExistsName(node)
           if (existsName) return
-          this.$refs.tree.insertBefore(newNodeData, node)
+          this.$refs.tree.insertAfter(newNodeData, node)
         },
         handleExistsName(node) {
           // 改名前查找同级中是否重名，若有则return且还原改动并提示
@@ -275,31 +280,47 @@ export const FieldAddDel = connect(
         },
         handleDelete(node, data) {
           console.log('fieldProcessor.handleDelete', node, data) // eslint-disable-line
-          let originalField = this.getNativeData(data.id)
-          let self = this
-          self.operations = self.operations || []
-          let fn = function (field) {
-            let ops = self.operations.filter(v => v.op === 'REMOVE' && v.id === field.id)
-            let op
-            if (ops.length === 0) {
-              op = Object.assign(JSON.parse(JSON.stringify(self.REMOVE_OPS_TPL)), {
-                id: field.id,
-                field: field.original_field_name,
-                operand: true,
-                table_name: field.table_name,
-                type: field.java_type,
-                primary_key_position: field.primary_key_position,
-                color: field.color,
-                label: field.field_name,
-                field_name: field.field_name
-              })
-              self.operations.push(op)
+          let createOpsIndex = this.operations.findIndex(v => v.id === data.id && v.op === 'CREATE')
+          if (createOpsIndex >= 0) {
+            let fieldName = this.operations[createOpsIndex].field_name + '.'
+            this.operations.splice(createOpsIndex, 1)
+
+            for (let i = 0; i < this.operations.length; i++) {
+              let op = this.operations[i]
+              let opFieldName = op.field || op.field_name
+              if (opFieldName.indexOf(fieldName) === 0 && opFieldName.length === fieldName.length) {
+                this.operations.splice(i, 1)
+                i--
+              }
             }
-            if (field.children) {
-              field.children.forEach(fn)
+            this.$refs.tree.remove(node)
+          } else {
+            let originalField = this.getNativeData(data.id)
+            let self = this
+            self.operations = self.operations || []
+            let fn = function (field) {
+              let ops = self.operations.filter(v => v.op === 'REMOVE' && v.id === field.id)
+              let op
+              if (ops.length === 0) {
+                op = Object.assign(JSON.parse(JSON.stringify(self.REMOVE_OPS_TPL)), {
+                  id: field.id,
+                  field: field.original_field_name,
+                  operand: true,
+                  table_name: field.table_name,
+                  type: field.java_type,
+                  primary_key_position: field.primary_key_position,
+                  color: field.color,
+                  label: field.field_name,
+                  field_name: field.field_name
+                })
+                self.operations.push(op)
+              }
+              if (field.children) {
+                field.children.forEach(fn)
+              }
             }
+            if (originalField) fn(originalField)
           }
-          if (originalField) fn(originalField)
           console.log('fieldProcessor.handleDelete', self.operations) // eslint-disable-line
         },
         handleAllDelete() {
@@ -309,6 +330,7 @@ export const FieldAddDel = connect(
               let node = this.$refs.tree.getNode(id)
               this.handleDelete(node, node.data)
             })
+            this.checkAll = false
           }
         },
         handleAllReset() {
@@ -320,6 +342,7 @@ export const FieldAddDel = connect(
                 this.handleReset(node, node.data)
               }
             })
+            this.checkAll = false
           }
         },
         handleCheckAllChange() {

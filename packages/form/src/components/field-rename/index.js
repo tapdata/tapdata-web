@@ -121,7 +121,12 @@ export const FieldRename = connect(
                         </VIcon>
                       </span>
                       <span class="e-ops">
-                        <ElButton type="text" class="ml-5" onClick={() => this.handleReset(node, data)}>
+                        <ElButton
+                          type="text"
+                          class="ml-5"
+                          disabled={!this.isRename(data.id)}
+                          onClick={() => this.handleReset(node, data)}
+                        >
                           <VIcon>revoke</VIcon>
                         </ElButton>
                       </span>

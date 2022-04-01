@@ -32,6 +32,7 @@ export const FieldValue = connect(
             fieldName: '',
             fn: function () {}
           },
+          current: '',
           /*字段处理器支持功能类型*/
           SCRIPT_TPL: {
             tableName: '',
@@ -58,6 +59,7 @@ export const FieldValue = connect(
         console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options?.[0] || []
         fields = convertSchemaToTreeData(fields) || []
+        fields = this.checkOps(fields) || []
         this.fields = fields
         this.originalFields = JSON.parse(JSON.stringify(fields))
         return (
@@ -97,7 +99,7 @@ export const FieldValue = connect(
                           ''
                         )}
                       </span>
-                      <span class="field-name inline-block">{this.isScript(data.id)}</span>
+                      <span class="field-name inline-block">{data.script}</span>
                       <span class="e-ops">
                         <ElButton type="text" class="ml-5" onClick={() => this.handleScript(node, data)}>
                           <VIcon>js</VIcon>
@@ -184,6 +186,18 @@ export const FieldValue = connect(
           fn(fields)
           return field
         },
+        checkOps(fields) {
+          if (this.scripts?.length > 0 && fields?.length > 0) {
+            for (let i = 0; i < this.scripts.length; i++) {
+              if (this.scripts[i]?.scriptType === 'js') {
+                let targetIndex = fields.findIndex(n => n.id === this.scripts[i].id)
+                if (targetIndex === -1) return
+                fields[targetIndex].script = this.scripts[i].script
+              }
+            }
+          }
+          return fields
+        },
         getParentFieldName(node) {
           let fieldName = node.data && node.data.field_name ? node.data.field_name : ''
           if (node.level > 1 && node.parent && node.parent.data) {
@@ -256,6 +270,9 @@ export const FieldValue = connect(
                 i--
               }
             }
+            self.$nextTick(() => {
+              self.isScript(data.id) //热更新
+            })
           }
           fn(node, data)
         },

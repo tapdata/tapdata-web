@@ -86,6 +86,7 @@ export const FieldModType = connect(
         let fields = this.options?.[0] || []
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
         fields = this.checkOps(fields)
+        this.fields = fields
         this.originalFields = JSON.parse(JSON.stringify(fields))
         return (
           <div class="field-processor-tree-warp bg-body pt-2 pb-5">
@@ -230,6 +231,7 @@ export const FieldModType = connect(
             }
           }
           fn(node, data)
+          this.checkAll = false
         },
         getParentFieldName(node) {
           let fieldName = node.data && node.data.field_name ? node.data.field_name : ''
