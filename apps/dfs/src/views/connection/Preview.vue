@@ -1,5 +1,5 @@
 <template>
-  <el-drawer
+  <ElDrawer
     :modal="false"
     :visible.sync="visible"
     :direction="direction"
@@ -18,25 +18,25 @@
         </div>
         <div class="ml-4">
           <div class="fs-6 mb-2 ellipsis">{{ connection.name }}</div>
-          <div><status-tag type="text" target="connection" :status="connection.status"></status-tag></div>
+          <div><StatusTag type="text" target="connection" :status="connection.status"></StatusTag></div>
         </div>
       </div>
       <div v-if="!hideOperation" class="button-line container-item border-item pt-4 pb-5">
         <div slot="operation" class="flex">
-          <el-button type="primary" class="flex-fill" @click="reload()">
+          <ElButton type="primary" class="flex-fill" @click="reload()">
             {{ $t('connection_preview_load_schema') }}
-          </el-button>
-          <el-button class="flex-fill" :disabled="connection.agentType === 'Cloud'" @click="edit()">
+          </ElButton>
+          <ElButton class="flex-fill" :disabled="connection.agentType === 'Cloud'" @click="edit()">
             {{ $t('connection_preview_edit') }}
-          </el-button>
-          <el-button class="flex-fill" @click="beforeTest()"> {{ $t('connection_preview_test') }} </el-button>
+          </ElButton>
+          <ElButton class="flex-fill" @click="beforeTest()"> {{ $t('connection_preview_test') }} </ElButton>
         </div>
-        <el-progress
+        <ElProgress
           v-if="showProgress"
           class="flex align-items-center mt-2"
           color="#2c65ff"
           :percentage="progress"
-        ></el-progress>
+        ></ElProgress>
       </div>
       <div v-for="(item, index) in list" :key="index + ''" class="container-item flex">
         <div class="pt-3">
@@ -46,14 +46,14 @@
           <div v-for="(temp, k) in item.items" :key="index + '' + k" class="box-line">
             <div class="box-line__label">{{ temp.label }}:</div>
 
-            <el-tooltip
+            <ElTooltip
               v-if="connection[temp.key] && temp.key !== 'mqType' && connection[temp.key].toString()"
               effect="dark"
               :content="connection[temp.key].toString()"
               placement="right-end"
             >
               <div class="box-line__value ellipsis">{{ connection[temp.key] || '-' }}</div>
-            </el-tooltip>
+            </ElTooltip>
             <!-- MQ文字转换 start -->
             <div v-else-if="connection[temp.key] && temp.key === 'mqType'" class="box-line__value ellipsis">
               <span>{{ mqType[connection[temp.key]] || '-' }}</span>
@@ -71,7 +71,7 @@
       </div>
     </div>
     <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
-  </el-drawer>
+  </ElDrawer>
 </template>
 
 <script>

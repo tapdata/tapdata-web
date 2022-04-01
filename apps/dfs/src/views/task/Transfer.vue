@@ -3,9 +3,9 @@
     <div class="reload-schema flex justify-content-between mb-5">
       <div class="text-wrap" style="width: 240px">
         {{ this.$t('task_form_no_table_available') }}
-        <el-button class="border-0" type="text" :loading="reloadLoading" @click="reload()">{{
+        <ElButton class="border-0" type="text" :loading="reloadLoading" @click="reload()">{{
           this.$t('task_form_reload')
-        }}</el-button>
+        }}</ElButton>
         <span v-if="reloadLoading" class="ml-2"><VIcon>loading</VIcon> {{ progress }} %</span>
       </div>
     </div>

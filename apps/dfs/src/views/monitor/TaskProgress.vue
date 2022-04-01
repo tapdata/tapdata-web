@@ -9,13 +9,13 @@
           </div>
           <div>
             <div class="progress-box flex justify-content-center align-items-center position-relative">
-              <el-progress
+              <ElProgress
                 type="circle"
                 color="rgba(44, 101, 255, 1)"
                 :percentage="progressBar"
                 :show-text="false"
                 :width="120"
-              ></el-progress>
+              ></ElProgress>
               <div class="progress-box__value flex justify-content-center align-items-center">{{ progressBar }}%</div>
             </div>
           </div>
@@ -30,13 +30,13 @@
           </div>
           <div class="pb-6">
             <div class="progress-box flex justify-content-center align-items-center position-relative">
-              <el-progress
+              <ElProgress
                 type="circle"
                 color="rgba(44, 101, 255, 1)"
                 :percentage="100"
                 :show-text="false"
                 :width="120"
-              ></el-progress>
+              ></ElProgress>
               <div class="progress-box__value flex flex-column justify-content-center align-items-center">
                 <div class="fs-5">{{ replicateObj.currentStatus || $t('task_monitor_delay') }}</div>
                 <div class="mt-2" v-if="!replicateObj.currentStatus">{{ replicateObj.value }}</div>
@@ -59,13 +59,13 @@
         <!-- 非全量 -->
         <div v-if="task && task.setting.sync_type !== 'initial_sync'">
           <div class="mb-10 fs-7 dots">{{ $t('task_monitor_cdc_details') }}</div>
-          <el-table :data="cdcLastTimes">
-            <el-table-column :label="$t('task_monitor_source_library')" prop="sourceConnectionName"></el-table-column>
-            <el-table-column :label="$t('task_monitor_time')" prop="cdcTime">
+          <ElTable :data="cdcLastTimes">
+            <ElTableColumn :label="$t('task_monitor_source_library')" prop="sourceConnectionName"></ElTableColumn>
+            <ElTableColumn :label="$t('task_monitor_time')" prop="cdcTime">
               <template slot-scope="scope">{{ $moment(scope.row.cdcTime).format('YYYY-MM-DD HH:mm:ss') }}</template>
-            </el-table-column>
-            <el-table-column :label="$t('task_monitor_target_library')" prop="targetConnectionName"></el-table-column>
-          </el-table>
+            </ElTableColumn>
+            <ElTableColumn :label="$t('task_monitor_target_library')" prop="targetConnectionName"></ElTableColumn>
+          </ElTable>
         </div>
       </div>
     </div>

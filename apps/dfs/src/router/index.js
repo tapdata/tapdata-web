@@ -1,7 +1,5 @@
 import Layout from '../views/Layout.vue'
 import Error from '../views/Error.vue'
-import SvgList from '../views/SvgList.vue'
-import AgentDownload from '@/views/agent-download/AgentPage.vue'
 import FastDownload from '@/views/agent-download/FastDownload.vue'
 import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
 import ContactUs from '@/views/ContactUs'
@@ -231,14 +229,6 @@ const routes = [
         }
       },
       {
-        path: '/noviceGuide',
-        name: 'NoviceGuide',
-        component: () => import(/* webpackChunkName: "instance" */ '../views/novice-guide/Index.vue'),
-        meta: {
-          title: i18n.t('tap_Beginner_guide')
-        }
-      },
-      {
         path: '/user/center',
         name: 'userCenter',
         component: UserCenter,
@@ -247,14 +237,6 @@ const routes = [
         }
       }
     ]
-  },
-  {
-    path: '/agentDownload',
-    name: 'AgentDownload',
-    component: AgentDownload,
-    meta: {
-      title: i18n.t('tap_agent_download')
-    }
   },
   {
     path: '/fastDownload',
@@ -299,11 +281,6 @@ const routes = [
     path: '/off',
     name: 'Off',
     component: Error
-  },
-  {
-    path: '/svg',
-    name: 'SvgList',
-    component: SvgList
   },
   {
     path: '/dataflow/editor',
