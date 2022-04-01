@@ -8,6 +8,8 @@ export default {
   data() {
     return {
       scope: {
+        $index: null, // 数组索引，防止使用该值，在表单校验(validateBySchema)时出错
+
         /**
          * 统一的异步数据源方法
          * @param service

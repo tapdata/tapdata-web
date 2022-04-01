@@ -268,7 +268,7 @@
 .el-button:focus,
 .el-button:hover {
   background-color: map-get($color, primary);
-  color: #fff;
+  //color: #fff;
   border-color: map-get($color, primary);
 }
 .el-button--primary:hover {

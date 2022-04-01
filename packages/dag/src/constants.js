@@ -7,6 +7,7 @@ export const DEFAULT_SETTINGS = {
   type: 'initial_sync+cdc', // 任务类型：全量+增量
   desc: '', // 任务描述
   isAutoCreateIndex: true, // 自动创建索引
+  isOpenAutoDDL: false, // 自动DDL
   writeThreadSize: 8, // 目标写入线程数
   deduplicWriteMode: 'intelligent', // 去重写入机制: 智能去重写入
   increOperationMode: false, // 增量数据处理模式：批量,
