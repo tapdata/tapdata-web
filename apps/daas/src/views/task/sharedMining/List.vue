@@ -30,8 +30,8 @@
       <el-table-column prop="createTime" width="160" :label="$t('share_list_creat_time')" sortable> </el-table-column>
       <el-table-column prop="status" :label="$t('share_list_status')" width="100">
         <template #default="{ row }">
-          <span :class="['status-' + row.status, 'status-block', 'mr-2']">
-            {{ $t('task_preview_status_' + row.status) }}
+          <span :class="['status-' + row.statusResult, 'status-block', 'mr-2']">
+            {{ $t('task_preview_status_' + row.statusResult) }}
           </span>
         </template>
       </el-table-column>
@@ -148,6 +148,7 @@
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import DownAgent from '../../downAgent/agentDown'
+import { getSubTaskStatus } from '../util'
 
 let timeout = null
 export default {
@@ -277,6 +278,8 @@ export default {
                 item.pointTime = item.syncTimeZone
               }
               item.createTime = this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+              let statuses = item.statuses
+              item.statusResult = getSubTaskStatus(statuses)[0].status
               return item
             })
           }
