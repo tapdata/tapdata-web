@@ -205,6 +205,7 @@ export default {
   },
 
   created() {
+    this.setValidateLanguage()
     this.initNodeType()
   },
 
@@ -260,7 +261,8 @@ export default {
       'resetState',
       'selectConnection',
       'deselectAllConnections',
-      'setCanBeConnectedNodeIds'
+      'setCanBeConnectedNodeIds',
+      'setValidateLanguage'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),

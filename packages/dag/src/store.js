@@ -6,6 +6,7 @@ import { AddDagCommand } from './command'
 import { Path } from '@formily/path'
 import { observable } from '@formily/reactive'
 import { AllLocales } from './nodes/locales'
+import { setValidateLanguage } from '@formily/core'
 
 const taskApi = new Task()
 const customNodeApi = new CustomNode()
@@ -797,6 +798,10 @@ const mutations = {
     packages.forEach(locales => {
       mergeLocales(state.LOCALES_STORE.value, locales)
     })
+  },
+
+  setValidateLanguage() {
+    setValidateLanguage(langMap[localStorage.getItem('tapdata_localize_lang')])
   }
 }
 
