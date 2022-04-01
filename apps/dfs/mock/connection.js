@@ -336,5 +336,155 @@ module.exports = {
     code: 'ok',
     msg: 'ok'
   },
-  '/tm/api/DatabaseTypes': { data: [], code: 'ok', msg: 'ok' }
+  '/tm/api/DatabaseTypes': {
+    reqId: 'fa6593e9-4483-46cf-9a7c-19f202459484',
+    ts: 1648781377692,
+    code: 'ok',
+    data: [
+      {
+        id: '61b871cd5237fe00136db766',
+        name: 'MySQL',
+        type: 'mysql',
+        createTime: '2021-12-14T10:28:29.850+00:00',
+        last_updated: '2021-12-14T10:28:29.850+00:00'
+      },
+      {
+        id: '61b871ce47697e0012c3e7d3',
+        name: 'Oracle',
+        type: 'oracle',
+        createTime: '2021-12-14T10:28:30.142+00:00',
+        last_updated: '2021-12-14T10:28:30.142+00:00'
+      },
+      {
+        id: '61b871ce059b0f0019bc467d',
+        name: 'MongoDB',
+        type: 'mongodb',
+        createTime: '2021-12-14T10:28:30.228+00:00',
+        last_updated: '2021-12-14T10:28:30.228+00:00'
+      },
+      {
+        id: '61b871ce095ae30011087218',
+        name: 'SQL Server',
+        type: 'sqlserver',
+        createTime: '2021-12-14T10:28:30.427+00:00',
+        last_updated: '2021-12-14T10:28:30.427+00:00'
+      },
+      {
+        id: '61b871ced18b230013072895',
+        name: 'Dummy DB',
+        type: 'dummy db',
+        createTime: '2021-12-14T10:28:30.612+00:00',
+        last_updated: '2021-12-14T10:28:30.612+00:00'
+      },
+      {
+        id: '61b871ce47697e0012c3e7d4',
+        name: 'PostgreSQL',
+        type: 'postgres',
+        createTime: '2021-12-14T10:28:30.794+00:00',
+        last_updated: '2021-12-14T10:28:30.794+00:00'
+      },
+      {
+        id: '61b871ce04616e00193aed4b',
+        name: 'Greenplum',
+        type: 'greenplum',
+        createTime: '2021-12-14T10:28:30.815+00:00',
+        last_updated: '2021-12-14T10:28:30.815+00:00'
+      },
+      {
+        id: '61b871cea42c5b00121c9c3b',
+        name: 'Elasticsearch',
+        type: 'elasticsearch',
+        createTime: '2021-12-14T10:28:30.839+00:00',
+        last_updated: '2021-12-14T10:28:30.839+00:00'
+      },
+      {
+        id: '61b871cfd18b230013072896',
+        name: 'MariaDB',
+        type: 'mariadb',
+        createTime: '2021-12-14T10:28:31.003+00:00',
+        last_updated: '2021-12-14T10:28:31.003+00:00'
+      },
+      {
+        id: '61b871cf9da2630011dfa379',
+        name: 'Kafka',
+        type: 'kafka',
+        createTime: '2021-12-14T10:28:31.033+00:00',
+        last_updated: '2021-12-14T10:28:31.033+00:00'
+      },
+      {
+        id: '61b871cf059b0f0019bc4681',
+        name: 'MQ',
+        type: 'mq',
+        createTime: '2021-12-14T10:28:31.054+00:00',
+        last_updated: '2021-12-14T10:28:31.054+00:00'
+      },
+      {
+        id: '61b871cf2c82dd00194d946e',
+        name: 'DM DB',
+        type: 'dameng',
+        createTime: '2021-12-14T10:28:31.153+00:00',
+        last_updated: '2021-12-14T10:28:31.153+00:00'
+      },
+      {
+        id: '61b871cf059b0f0019bc4682',
+        name: 'TiDB',
+        type: 'tidb',
+        createTime: '2021-12-14T10:28:31.474+00:00',
+        last_updated: '2021-12-14T10:28:31.474+00:00'
+      },
+      {
+        id: '61b871cf004b090011b682d8',
+        name: 'ClickHouse',
+        type: 'clickhouse',
+        createTime: '2021-12-14T10:28:31.498+00:00',
+        last_updated: '2021-12-14T10:28:31.498+00:00'
+      },
+      {
+        id: '61b871cfd18b230013072898',
+        name: 'KunDB',
+        type: 'kundb',
+        createTime: '2021-12-14T10:28:31.524+00:00',
+        last_updated: '2021-12-14T10:28:31.524+00:00'
+      },
+      {
+        id: '61b871cf47697e0012c3e7d7',
+        name: 'ADB MySQL',
+        type: 'adb_mysql',
+        createTime: '2021-12-14T10:28:31.553+00:00',
+        last_updated: '2021-12-14T10:28:31.553+00:00'
+      },
+      {
+        id: '61b871cf095ae3001108721a',
+        name: 'ADB PostgreSQL',
+        type: 'adb_postgres',
+        createTime: '2021-12-14T10:28:31.569+00:00',
+        last_updated: '2021-12-14T10:28:31.569+00:00'
+      },
+      {
+        id: '61b871cf004b090011b682d9',
+        name: 'Hazelcast Cloud',
+        type: 'hazelcast_cloud_cluster',
+        createTime: '2021-12-14T10:28:31.634+00:00',
+        last_updated: '2021-12-14T10:28:31.634+00:00'
+      },
+      {
+        id: '623156c1699420a614cb8bfe',
+        name: 'Vika',
+        type: 'vika',
+        createTime: '2022-03-15T12:03:21.098+00:00',
+        last_updated: '2022-03-15T12:03:21.098+00:00'
+      },
+      { id: '6232d76c0277a7e119470d97', name: 'Aliyun RDS for MariaDB', type: 'aliyun_mariadb' },
+      { id: '6232d76c0277a7e119470dab', name: 'Aliyun MongoDB', type: 'aliyun_mongodb' },
+      { id: '6232d76c0277a7e119470dcc', name: 'Aliyun RDS for MySQL', type: 'aliyun_mysql' },
+      { id: '6232d76c0277a7e119470de4', name: 'Aliyun RDS for PG', type: 'aliyun_postgres' },
+      { id: '6232d76c0277a7e119470df2', name: 'Aliyun RDS for SQLServer', type: 'aliyun_sqlserver' },
+      { id: '6232d76c0277a7e119470dfe', name: 'TencentDB for MariaDB', type: 'tencent_mariadb' },
+      { id: '6232d76c0277a7e119470e2b', name: 'TencentDB MongoDB', type: 'tencent_mongodb' },
+      { id: '6232d76c0277a7e119470e66', name: 'TencentDB for MySQL', type: 'tencent_mysql' },
+      { id: '6232d76c0277a7e119470e8a', name: 'TencentDB for PG', type: 'tencent_postgres' },
+      { id: '6232d76c0277a7e119470ea3', name: 'TencentDB for SQLServer', type: 'tencent_sqlserver' },
+      { id: '6246669b699420a614cb8c00', name: 'apache doris', type: 'doris' }
+    ]
+  }
 }
