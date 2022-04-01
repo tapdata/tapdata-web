@@ -132,7 +132,7 @@ export default {
         setPermission(data.permissions)
         let user = await usersModel.getUserById(`/${data.userId}?access_token=${data.id}`)
         // eslint-disable-next-line
-        console.lg('登录成功：', data)
+        console.log('登录成功：', data)
         this.$cookie.set('email', this.form.email)
         this.$cookie.set('username', user.data.username || '')
         this.$cookie.set('login', 1)
