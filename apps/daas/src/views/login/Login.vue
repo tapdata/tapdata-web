@@ -52,7 +52,6 @@
 </template>
 
 <script>
-import { setPermission } from '@/utils/util'
 import crypto from 'crypto'
 import CryptoJS from 'crypto-js'
 import Header from './Header'
@@ -129,7 +128,6 @@ export default {
         // 	this.errorMessage = this.$t('app.signIn.permission_denied');
         // 	return;
         // }
-        setPermission(data.permissions)
         let user = await usersModel.getUserById(`/${data.userId}?access_token=${data.id}`)
         // eslint-disable-next-line
         console.log('登录成功：', data)
@@ -141,12 +139,13 @@ export default {
         this.$cookie.set('user_id', data.userId)
         this.$cookie.set('lang', this.langMap[localStorage.getItem('tapdata_localize_lang')] || 'zh-CN')
 
-        if (window.lastLocationHref) {
-          location.href = window.lastLocationHref
+        let lastLocationHref = sessionStorage.getItem('lastLocationHref')
+        if (lastLocationHref) {
+          location.href = lastLocationHref
         }
         setTimeout(() => {
+          sessionStorage.removeItem('lastLocationHref')
           location.reload()
-          window.lastLocationHref = null
         }, 50)
       } catch (e) {
         let msg = e?.data?.message
