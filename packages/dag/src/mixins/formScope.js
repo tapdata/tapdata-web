@@ -10,6 +10,8 @@ export default {
       scope: {
         $index: null, // 数组索引，防止使用该值，在表单校验(validateBySchema)时出错
 
+        $NodeMap: {},
+
         /**
          * 统一的异步数据源方法
          * @param service
@@ -295,18 +297,19 @@ export default {
           field.value = allEdges.some(({ target }) => target === id)
         },
 
-        getSourceNode: (field, fieldName = 'value') => {
+        getSourceNode: field => {
           const id = field.form.values.id
           const edges = this.$store.getters['dataflow/allEdges']
           const nodes = this.$store.getters['dataflow/allNodes']
           const sourceArr = edges.filter(({ target }) => target === id)
-          field[fieldName] = sourceArr.map(({ source }) => {
+          field.value = sourceArr.map(({ source }) => {
             return {
               value: source,
               label: nodes.find(node => node.id === source).name
             }
           })
         },
+
         getTargetNode: field => {
           const id = field.form.values.id
           const edges = this.$store.getters['dataflow/allEdges']

@@ -683,17 +683,24 @@ export default {
           field.component[1] = field.component[1] || []
           field.component[1].placeholder = placeholder
         }
-        if (!isVoidField(field)) {
-          if (dataSource?.length) {
+        if (dataSource?.length && !isVoidField(field)) {
+          if (field.dataSource?.length) {
+            field.dataSource = field.dataSource.map(mapEnum(dataSource))
+          } else {
+            field.dataSource = dataSource.slice()
+          }
+        }
+        /*if (!isVoidField(field)) {
+          if (dataSource?.length && !isVoidField(field)) {
             if (field.dataSource?.length) {
               field.dataSource = field.dataSource.map(mapEnum(dataSource))
             } else {
               field.dataSource = dataSource.slice()
             }
           } else {
-            field.dataSource = field.dataSource?.filter(Boolean)
+            field.dataSource = field.dataSource?.filter?.(Boolean)
           }
-        }
+        }*/
       })
     },
 

@@ -90,9 +90,9 @@ export class Join extends NodeType {
                   wrapperWidth: 240
                 },
                 'x-component': 'Select'
-              },
+              }
 
-              embeddedMode: {
+              /*embeddedMode: {
                 type: 'boolean',
                 title: '内嵌模式',
                 'x-decorator': 'FormItem',
@@ -160,7 +160,7 @@ export class Join extends NodeType {
                     'x-component': 'Radio.Group'
                   }
                 }
-              }
+              }*/
             }
           },
 
@@ -176,15 +176,27 @@ export class Join extends NodeType {
                   type: 'object',
                   properties: {
                     left: {
+                      title: '左侧',
                       type: 'string',
                       required: true,
                       'x-decorator': 'FormItem',
+                      'x-decorator-props': {
+                        labelStyle: {
+                          display: 'none'
+                        }
+                      },
                       'x-component': 'Select'
                     },
                     right: {
+                      title: '右侧',
                       type: 'string',
                       required: true,
                       'x-decorator': 'FormItem',
+                      'x-decorator-props': {
+                        labelStyle: {
+                          display: 'none'
+                        }
+                      },
                       'x-component': 'Select'
                     }
                   }
