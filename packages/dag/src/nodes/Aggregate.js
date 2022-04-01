@@ -73,7 +73,7 @@ export class Aggregate extends NodeType {
                         dependencies: ['aggregations'],
                         fulfill: {
                           state: {
-                            visible: `{{console.log('$deps[0]', $deps[0]),$deps[0].length > 1 }}`
+                            visible: `{{$deps[0].length > 1}}`
                           }
                         }
                       }
@@ -83,6 +83,7 @@ export class Aggregate extends NodeType {
                       'x-component': 'FormGrid',
                       properties: {
                         aggFunction: {
+                          type: 'string',
                           title: '聚合函数',
                           enum: [
                             {
@@ -111,6 +112,7 @@ export class Aggregate extends NodeType {
                           'x-component': 'Select'
                         },
                         aggExpression: {
+                          type: 'string',
                           title: '作用目标',
                           required: true,
                           'x-decorator': 'FormItem',
@@ -143,6 +145,7 @@ export class Aggregate extends NodeType {
                     },
 
                     name: {
+                      type: 'string',
                       title: '子处理名称',
                       required: true,
                       'x-decorator': 'FormItem',
@@ -155,7 +158,7 @@ export class Aggregate extends NodeType {
                           dependencies: ['.aggFunction'],
                           fulfill: {
                             state: {
-                              value: `{{console.log('子处理名称', $deps, $index, $deps[0]+($index > 0 ? '_'+($index):'')), $deps[0]+($index > 0 ? '_'+($index):'')}}`
+                              value: `{{$deps[0]+($index > 0 ? '_'+($index):'')}}`
                             }
                           }
                         }
