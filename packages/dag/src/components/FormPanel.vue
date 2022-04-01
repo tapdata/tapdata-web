@@ -39,6 +39,7 @@ export default {
 
       formProps: {
         colon: false,
+        shallow: false,
         labelAlign: 'left',
         // labelWidth: '120',
         layout: 'vertical',
@@ -784,6 +785,10 @@ $headerBg: #fff;
       .el-input-number--small {
         width: 130px;
       }
+    }
+
+    .formily-element-form-item-layout-vertical .formily-element-form-item-label-tooltip {
+      height: 40px;
     }
   }
 }
