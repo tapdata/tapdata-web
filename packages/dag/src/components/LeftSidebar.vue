@@ -8,7 +8,7 @@
               <template v-if="collapseMode === 'db'">
                 <span class="flex-1 user-select-none text-truncate flex align-center">
                   <!--连接-->
-                  {{ $t('connection') }}
+                  {{ $t('dag_connection') }}
                   <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
                 </span>
                 <VIcon size="20" class="click-btn" @click.stop="creat">add-outline</VIcon>
@@ -82,7 +82,7 @@
         <div class="tb-header flex align-center px-4">
           <span class="flex-1 user-select-none text-truncate flex align-center">
             <!--表-->
-            {{ $t('table') }}
+            {{ $t('dag_table') }}
             <span v-show="tbTotal > 0" class="badge">{{ tbTotal }}</span>
           </span>
           <!--创建新表作为节点使用-->
@@ -157,7 +157,7 @@
           <div class="flex align-center flex-1">
             <span class="flex-1 user-select-none">
               <!--处理节点-->
-              {{ $t('processor_node') }}
+              {{ $t('dag_processor_node') }}
             </span>
           </div>
         </template>

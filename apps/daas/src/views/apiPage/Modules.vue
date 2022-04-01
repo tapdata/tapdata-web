@@ -168,9 +168,10 @@
       </el-table-column>
     </TablePage>
     <!-- 导入 -->
-    <ElDialog
+    <Upload :type="'api'" ref="upload"></Upload>
+    <!-- <ElDialog
       width="600px"
-      custom-class="import-dialog"
+      custom-class="import-upload-dialog"
       :title="$t('modules_dialog_import_title')"
       :close-on-click-modal="false"
       :visible.sync="importDialogVisible"
@@ -196,7 +197,10 @@
             :on-success="handleSuccess"
             :on-change="handleChange"
           >
-            <ElButton type="text" plain slot="trigger" size="small">{{ $t('modules_dialog_upload_files') }}</ElButton>
+            <ElButton type="text" plain slot="trigger" size="small">
+              <VIcon class="mr-1 link-primary" size="18">upload</VIcon>
+              {{ $t('modules_dialog_upload_files') }}</ElButton
+            >
           </ElUpload>
         </ElFormItem>
       </ElForm>
@@ -204,21 +208,23 @@
         <ElButton @click="importDialogVisible = false" size="small">{{ $t('button_cancel') }}</ElButton>
         <ElButton type="primary" @click="submitUpload()" size="small">{{ $t('button_confirm') }}</ElButton>
       </span>
-    </ElDialog>
+    </ElDialog> -->
   </section>
 </template>
 
 <script>
 import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
+import Upload from '@/components/UploadDialog'
 import { toRegExp } from '@/utils/util'
-import * as Cookie from 'tiny-cookie'
+// import * as Cookie from 'tiny-cookie'
 
 export default {
   name: 'Modules',
   components: {
     TablePage,
-    FilterBar
+    FilterBar,
+    Upload
   },
   data() {
     return {
@@ -245,16 +251,16 @@ export default {
         }
       ],
       multipleSelection: [],
-      intervalId: 0,
-      importDialogVisible: false,
-      importForm: {
-        tag: [],
-        fileList: [],
-        action: '',
-        upsert: 1,
-        accept: '.gz'
-      },
-      classifyList: []
+      intervalId: 0
+      // importDialogVisible: false,
+      // importForm: {
+      //   tag: [],
+      //   fileList: [],
+      //   action: '',
+      //   upsert: 1,
+      //   accept: '.gz'
+      // },
+      // classifyList: []
     }
   },
   created() {
@@ -571,8 +577,9 @@ export default {
     },
     // 导入按钮
     importFile() {
-      this.importDialogVisible = true
-      this.getClassify()
+      this.$refs.upload.show()
+      // this.importDialogVisible = true
+      // this.getClassify()
       // this.$router.push('/upload?type=api')
     },
     // 批量导出
@@ -630,49 +637,35 @@ export default {
           type: 'input'
         }
       ]
-    },
-    // 获取分类
-    getClassify() {
-      let filter = {
-        where: { or: [{ item_type: 'api' }] }
-      }
-      this.$api('MetadataDefinitions')
-        .get({
-          filter: JSON.stringify(filter)
-        })
-        .then(res => {
-          if (res) {
-            this.classifyList = res.data?.items || []
-          }
-        })
-    },
-    // 上传文件成功失败钩子
-    handleChange(file) {
-      this.importForm.fileList = [file]
-      this.importForm.action =
-        window.location.origin +
-        window.location.pathname +
-        'api/MetadataInstances/upload?upsert=' +
-        this.importForm.upsert +
-        '&listtags=' +
-        encodeURIComponent(JSON.stringify(this.tag)) +
-        '&type=APIServer' +
-        `&access_token=${Cookie.get('token')}`
-    },
-
-    handleSuccess(response) {
-      if (response.code === '110500' || response.code === '110401') {
-        this.status = false
-        this.$message.error(this.$t('dataFlow.uploadError'))
-      } else {
-        this.status = true
-      }
-    },
-    // 上传保存
-    submitUpload() {
-      this.importDialogVisible = false
-      this.$refs.upload.submit()
     }
+
+    // // 上传文件成功失败钩子
+    // handleChange(file) {
+    //   this.importForm.fileList = [file]
+    //   this.importForm.action =
+    //     window.location.origin +
+    //     window.location.pathname +
+    //     'api/MetadataInstances/upload?upsert=' +
+    //     this.importForm.upsert +
+    //     '&listtags=' +
+    //     encodeURIComponent(JSON.stringify(this.importForm.tag)) +
+    //     '&type=APIServer' +
+    //     `&access_token=${Cookie.get('token')}`
+    // },
+
+    // handleSuccess(response) {
+    //   if (response.code === '110500' || response.code === '110401') {
+    //     this.status = false
+    //     this.$message.error(this.$t('dataFlow.uploadError'))
+    //   } else {
+    //     this.status = true
+    //   }
+    // },
+    // // 上传保存
+    // submitUpload() {
+    //   this.importDialogVisible = false
+    //   this.$refs.upload.submit()
+    // }
   },
   beforeDestroy() {
     if (this.intervalId) {

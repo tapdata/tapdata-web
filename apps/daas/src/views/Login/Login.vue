@@ -131,6 +131,8 @@ export default {
         // }
         setPermission(data.permissions)
         let user = await usersModel.getUserById(`/${data.userId}?access_token=${data.id}`)
+        // eslint-disable-next-line
+        console.log('登录成功：', data)
         this.$cookie.set('email', this.form.email)
         this.$cookie.set('username', user.data.username || '')
         this.$cookie.set('login', 1)
@@ -149,17 +151,7 @@ export default {
       } catch (e) {
         let msg = e?.data?.message
         if (msg) {
-          if (msg === 'WAITING_APPROVE') {
-            this.errorMessage = this.$t('app.signIn.watingApprove')
-          } else if (msg.indexOf('not been verified') !== -1 || msg === 'EMAIL_NON_VERIFLED') {
-            this.errorMessage = this.$t('app.signIn.hasVerified')
-          } else if (msg === 'ACCOUNT_DISABLED') {
-            this.errorMessage = this.$t('app.signIn.accountDisabled')
-          } else if (msg === 'Too many logins') {
-            this.errorMessage = this.$t('login_fail_too_many')
-          } else {
-            this.errorMessage = this.$t('app.signIn.signInFail')
-          }
+          this.$message.error(msg)
           this.loading = false
           this.form.password = oldPassword
         }

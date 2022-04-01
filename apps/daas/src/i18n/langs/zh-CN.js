@@ -1,9 +1,6 @@
 export default {
   // 通用文本
   loading: '加载中',
-  connection: '连接',
-  table: '表',
-  processor_node: '处理节点',
   connection_name_search_placeholder: '请输入连接名称搜索',
   table_name_search_placeholder: '请输入表名称搜索',
 
@@ -78,6 +75,8 @@ export default {
   message_copy_fail: '复制失败',
   message_delete_ok: '删除成功',
   message_delete_fail: '删除失败',
+  message_upload_success: '上传成功',
+  message_upload_fail: '上传失败',
   message_deleting: '删除中',
   message_reload_ok: '正在重新加载',
   message_update_success: '修改成功',
@@ -815,8 +814,10 @@ export default {
   task_preview_title: '数据库迁移详情',
   task_preview_createUser: '创建人', //后台数据返回
   task_preview_sync_type: '任务同步',
+  task_preview_type: '任务同步',
   task_preview_id: '任务ID',
   task_preview_createAt: '创建时间',
+  task_preview_createTime: '创建时间',
   task_preview_startTime: '启动时间',
   task_preview_initStartTime: '全量开始时间',
   task_preview_cdcStartTime: '增量开始时间',
@@ -825,6 +826,7 @@ export default {
   task_preview_eventTime: '增量所处时间点',
   task_preview_cdcDelayTime: '增量最大滞后时间',
   task_preview_failCount: '失败总次数',
+  task_preview_subtasks: '子任务',
   task_preview_status_error: '错误',
   task_preview_status_edit: '编辑中',
   task_preview_status_wait_run: '启动中',
@@ -1863,5 +1865,8 @@ export default {
   dag_merge_table: '主从合并',
   dag_field_processor: '字段处理',
   dag_property_setting: '属性设置',
-  dag_meta_data: '元数据'
+  dag_meta_data: '元数据',
+  dag_connection: '连接',
+  dag_table: '表',
+  dag_processor_node: '处理节点'
 }

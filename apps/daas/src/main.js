@@ -115,11 +115,10 @@ let init = settings => {
   let tcmApiPre = window.getSettingByKey('DFS_TCM_API_PRE_URL') || ''
   let path = (tcmApiPre === '/console' ? '' : tcmApiPre) + apiPre
   let token = Cookie.get('token')
-  let xToken = Cookie.get('xToken')
-  let tokenParam = xToken ? 'X-Token=' + xToken : 'access_token=' + token
+  let tokenParam = 'access_token=' + token
   wsUrl += '//' + host
   wsUrl += path + '/ws/agent'
-  wsUrl += `?xxxxpoolIdxxxx=CIDC-RP-25&${tokenParam}`
+  wsUrl += `?${tokenParam}`
 
   window.App = new Vue({
     el: '#app',

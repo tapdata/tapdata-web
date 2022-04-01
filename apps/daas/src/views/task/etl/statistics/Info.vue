@@ -602,6 +602,9 @@ export default {
     getMeasurement(reset = false) {
       const { selectedTime } = this
       let params = this.getParams(reset)
+      if (!params) {
+        return
+      }
       this.remoteMethod(params).then(data => {
         let { samples } = data
         samples.forEach(el => {
@@ -908,6 +911,9 @@ export default {
       font-size: 12px;
     }
   }
+}
+.operation {
+  white-space: nowrap;
 }
 
 .ant-layout.authing-guard-layout {

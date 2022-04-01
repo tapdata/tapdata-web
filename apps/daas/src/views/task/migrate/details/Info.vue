@@ -613,6 +613,9 @@ export default {
     getMeasurement(reset = false) {
       const { selectedTime } = this
       let params = this.getParams(reset)
+      if (!params) {
+        return
+      }
       this.remoteMethod(params).then(data => {
         let { samples } = data
         samples.forEach(el => {
@@ -895,7 +898,6 @@ export default {
   display: inline-block;
 }
 .operation {
-  width: 200px;
   white-space: nowrap;
 }
 .grey-background {

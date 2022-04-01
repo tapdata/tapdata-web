@@ -21,7 +21,6 @@ export function signOut() {
   let cookie = window.VueCookie
 
   sessionStorage.removeItem('tapdata_permissions')
-  cookie.delete('xToken')
   cookie.delete('token')
   cookie.delete('user_id')
   cookie.delete('login')

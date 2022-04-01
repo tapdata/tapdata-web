@@ -356,22 +356,22 @@ export default {
                 }
                 // default: false
               },
-              crontabExpression: {
-                type: 'string',
-                'x-decorator': 'FormItem',
-                'x-component': 'Input',
-                'x-component-props': {
-                  placeholder: this.$t('task_setting_cron_expression')
-                },
-                'x-reactions': {
-                  dependencies: ['sync_type', 'isSchedule'],
-                  fulfill: {
-                    state: {
-                      display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
-                    }
-                  }
-                }
-              },
+              // crontabExpression: { //调度表达式
+              //   type: 'string',
+              //   'x-decorator': 'FormItem',
+              //   'x-component': 'Input',
+              //   'x-component-props': {
+              //     placeholder: this.$t('task_setting_cron_expression')
+              //   },
+              //   'x-reactions': {
+              //     dependencies: ['sync_type', 'isSchedule'],
+              //     fulfill: {
+              //       state: {
+              //         display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
+              //       }
+              //     }
+              //   }
+              // },
               // increaseSyncInterval: {
               //   title: this.$t('task_setting_read_cdc_interval'), //增量同步间隔
               //   type: 'string',

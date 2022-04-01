@@ -1,9 +1,6 @@
 export default {
   // 通用文本
   loading: '加載中',
-  connection: '連接',
-  table: '表',
-  processor_node: '處理節點',
   connection_name_search_placeholder: '請輸入連接名稱搜索',
   table_name_search_placeholder: '請輸入表名稱搜索',
 
@@ -79,6 +76,8 @@ export default {
   message_copy_fail: '複製失敗',
   message_delete_ok: '刪除成功',
   message_delete_fail: '刪除失敗',
+  message_upload_success: '上傳成功',
+  message_upload_fail: '上傳失敗',
   message_deleting: '刪除中',
   message_reload_ok: '正在重新加載',
   message_update_success: '修改成功',
@@ -809,8 +808,10 @@ export default {
   task_preview_title: '數據庫遷移詳情',
   task_preview_createUser: '創建人',
   task_preview_sync_type: '任務同步',
+  task_preview_type: '任務同步',
   task_preview_id: '任務ID',
   task_preview_createAt: '創建時間',
+  task_preview_createTime: '創建時間',
   task_preview_startTime: '啟動時間',
   task_preview_initStartTime: '全量開始時間',
   task_preview_cdcStartTime: '增量開始時間',
@@ -819,6 +820,7 @@ export default {
   task_preview_eventTime: '增量所處時間點',
   task_preview_cdcDelayTime: '增量最大滯後時間',
   task_preview_failCount: '失敗總次數',
+  task_preview_subtasks: '子任務',
   task_preview_status_error: '錯誤',
   task_preview_status_edit: '編輯中',
   task_preview_status_wait_run: '啟動中',
@@ -1648,6 +1650,7 @@ export default {
   role_form_connected: '已關聯',
   role_form_already_exists: '角色名稱重複',
   role_null: '角色名稱不能為空',
+  role_form_description: '角色描述不能为空',
 
   role_page_Dashboard_menu: '控制台',
   role_page_datasource_menu: '連接管理',
@@ -1848,5 +1851,8 @@ export default {
   dag_merge_table: '主從合併',
   dag_field_processor: '字段處理',
   dag_property_setting: '屬性設置',
-  dag_meta_data: '元數據'
+  dag_meta_data: '元數據',
+  dag_connection: '連接',
+  dag_table: '表',
+  dag_processor_node: '處理節點'
 }
