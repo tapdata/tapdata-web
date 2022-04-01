@@ -13,13 +13,13 @@ export default [
   {
     path: '/login',
     name: 'login',
-    component: () => import('@/views/login/Login'),
+    component: () => import('@/views/login-page/Login'),
     title: 'tap.login'
   },
   {
     path: '/registry',
     name: 'registry',
-    component: () => import('@/views/login/Registration'),
+    component: () => import('@/views/login-page/Registration'),
     meta: {
       title: 'tap.registry'
     }
@@ -27,7 +27,7 @@ export default [
   {
     path: '/verificationEmail',
     name: 'verificationEmail',
-    component: () => import('@/views/login/VerificationEmail'),
+    component: () => import('@/views/login-page/VerificationEmail'),
     meta: {
       title: 'tap.verificationEmail'
     }
@@ -35,7 +35,7 @@ export default [
   {
     path: '/registyResult',
     name: 'registyResult',
-    component: () => import('@/views/login/RegistyResult'),
+    component: () => import('@/views/login-page/RegistyResult'),
     meta: {
       title: 'tap.registry'
     }
@@ -43,7 +43,7 @@ export default [
   {
     path: '/passwordReset',
     name: 'passwordReset',
-    component: () => import('@/views/login/PasswordReset'),
+    component: () => import('@/views/login-page/PasswordReset'),
     meta: {
       title: 'tap.passwordReset'
     }
@@ -711,7 +711,7 @@ export default [
       {
         path: '/user',
         name: 'users',
-        component: () => import('@/views/user/List'),
+        component: () => import('@/views/user-page/List'),
         meta: {
           title: 'page_title_user',
           code: 'user_management_menu'
@@ -730,7 +730,7 @@ export default [
           {
             path: '',
             name: 'roleList',
-            component: () => import('@/views/role/Roles'),
+            component: () => import('@/views/role-page/Roles'),
             meta: {
               title: 'page_title_role',
               code: 'role_management_menu'
@@ -739,7 +739,7 @@ export default [
           {
             path: 'create',
             name: 'role',
-            component: () => import('@/views/role/Role'),
+            component: () => import('@/views/role-page/Role'),
             meta: {
               title: 'page_title_role',
               code: 'role_creation'
@@ -748,7 +748,7 @@ export default [
           {
             path: ':id/edit',
             name: 'editRole',
-            component: () => import('@/views/role/Role'),
+            component: () => import('@/views/role-page/Role'),
             meta: {
               title: 'page_title_role',
               code: 'role_edition'
