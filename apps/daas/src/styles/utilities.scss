@@ -2590,6 +2590,20 @@
   color: inherit !important;
 }
 
+.text-main {
+  color: map-get($fontColor , main );
+}
+.text-sub{
+  color: map-get($fontColor , sub );
+}
+.text-rdlevel{
+  color: map-get($fontColor , rdlevel );
+}
+
+.bg-main {
+  background-color: #fafafa !important;
+}
+
 .bg-primary {
   background-color: #2c65ff !important;
 }

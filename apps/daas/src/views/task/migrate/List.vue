@@ -1021,7 +1021,7 @@ export default {
                   'eventTime'
                 ].includes(item)
               ) {
-                res.data[item] = this.$moment(res.data[item]).format('YYYY-MM-DD HH:mm:ss')
+                res.data[item] = res.data[item] ? this.$moment(res.data[item]).format('YYYY-MM-DD HH:mm:ss') : '-'
               }
 
               if (

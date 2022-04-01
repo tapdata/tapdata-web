@@ -814,8 +814,10 @@ export default {
   task_preview_title: '数据库迁移详情',
   task_preview_createUser: '创建人', //后台数据返回
   task_preview_sync_type: '任务同步',
+  task_preview_type: '任务同步',
   task_preview_id: '任务ID',
   task_preview_createAt: '创建时间',
+  task_preview_createTime: '创建时间',
   task_preview_startTime: '启动时间',
   task_preview_initStartTime: '全量开始时间',
   task_preview_cdcStartTime: '增量开始时间',
@@ -824,6 +826,7 @@ export default {
   task_preview_eventTime: '增量所处时间点',
   task_preview_cdcDelayTime: '增量最大滞后时间',
   task_preview_failCount: '失败总次数',
+  task_preview_subtasks: '子任务',
   task_preview_status_error: '错误',
   task_preview_status_edit: '编辑中',
   task_preview_status_wait_run: '启动中',

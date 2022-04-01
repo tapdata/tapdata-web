@@ -77,7 +77,7 @@
             <ElSubmenu v-if="menu.children && !menu.hidden" :key="menu.label" :index="menu.name">
               <template slot="title">
                 <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
-                <span slot="title" class="ml-4">{{ menu.label }}</span>
+                <span slot="title" class="ml-4 title">{{ menu.label }}</span>
               </template>
               <template v-for="cMenu in menu.children">
                 <ElMenuItem v-if="!cMenu.hidden" :key="cMenu.label" :index="cMenu.name">
@@ -87,7 +87,7 @@
             </ElSubmenu>
             <ElMenuItem v-else-if="!menu.hidden" :key="menu.label" :index="menu.name">
               <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
-              <span slot="title" class="ml-4">{{ menu.label }}</span>
+              <span slot="title" class="ml-4 title">{{ menu.label }}</span>
             </ElMenuItem>
           </template>
         </ElMenu>
@@ -95,7 +95,8 @@
           <i class="el-icon-d-arrow-left btn-collapse" :class="{ 'is-collapse': isCollapse }"></i>
         </div>
       </ElAside>
-      <ElMain class="layout-main">
+
+      <ElMain class="layout-main" :style="{ marginLeft: isCollapse ? '66px' : '200px' }">
         <PageHeader></PageHeader>
         <RouterView class="flex-fill" />
       </ElMain>
@@ -215,10 +216,16 @@
       .el-menu-item .el-tooltip {
         outline: none;
       }
+
       &.el-menu--collapse {
         width: 64px;
+        & > .el-menu-item span,
+        & > .el-submenu > .el-submenu__title span {
+          visibility: visible;
+          overflow: initial;
+        }
         .el-submenu__title {
-          span {
+          span.title {
             display: none;
           }
         }
@@ -306,7 +313,6 @@
     display: flex;
     flex-direction: column;
     height: calc(100% - 72px);
-    margin-left: 200px;
     margin-top: 72px;
     padding: 0;
     background: #fff;
