@@ -113,7 +113,7 @@
       </div>
       <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
         <div
-          v-if="task && ['initial_sync', 'initial_sync+cdc'].includes(task.parentTask.type)"
+          v-if="task && task.parentTask && ['initial_sync', 'initial_sync+cdc'].includes(task.parentTask.type)"
           class="right-box grey-background"
         >
           <div class="fw-bold right-box-text">{{ $t('task_info_full_progress') }}</div>
@@ -140,7 +140,7 @@
           </div>
         </div>
         <div
-          v-if="task && ['cdc', 'initial_sync+cdc'].includes(task.parentTask.type)"
+          v-if="task && task.parentTask && ['cdc', 'initial_sync+cdc'].includes(task.parentTask.type)"
           class="right-box grey-background"
         >
           <div class="fw-bold right-box-text">{{ $t('task_info_incremental_delay') }}</div>
