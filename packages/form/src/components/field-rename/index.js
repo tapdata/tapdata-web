@@ -81,16 +81,16 @@ export const FieldRename = connect(
           <div class="field-processor-tree-warp bg-body pt-2 pb-5">
             <div class="field-processor-operation flex">
               <ElCheckbox class="check-all mr-4" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
-              <span class="field-name inline-block">源字段名</span>
-              <span class="field-name inline-block">目标字段名</span>
-              <span class="field-ops inline-block">
-                <VIcon class="clickable ml-5" small onClick={() => this.handleAllToUpperCase()}>
+              <span class="field-name text inline-block ml-15 ">源字段名</span>
+              <span class="field-name text inline-block">目标字段名</span>
+              <span class="field-ops  inline-block mr-12">
+                <VIcon class="clickable ml-5" size="14" onClick={() => this.handleAllToUpperCase()}>
                   toUpperCase
                 </VIcon>
-                <VIcon class="clickable ml-5" small onClick={() => this.handleAllToLowerCase()}>
+                <VIcon class="clickable ml-5" size="14" onClick={() => this.handleAllToLowerCase()}>
                   toLowerCase
                 </VIcon>
-                <VIcon class="clickable ml-5" small onClick={() => this.handleAllReset()}>
+                <VIcon class="clickable ml-5" size="14" onClick={() => this.handleAllReset()}>
                   revoke
                 </VIcon>
               </span>
@@ -110,17 +110,17 @@ export const FieldRename = connect(
                       class="tree-node flex flex-1 justify-content-center align-items flex-row"
                       slot-scope="{ node, data }"
                     >
-                      <span class="field-name inline-block">{data.label}</span>
+                      <span class="field-name text__inner inline-block ml-15">{data.label}</span>
                       <span class={['tree-field-input-wrap', 'item', 'inline-block', 'e-label']}>
                         {this.showInput ? (
                           <ElInput
-                            class="tree-field-input"
+                            class="tree-field-input text__inner"
                             v-model={data.field_name}
                             onChange={() => this.handleRename(node, data)}
                             onBlur={() => (this.showInput = false)}
                           />
                         ) : (
-                          <span>{data.field_name}</span>
+                          <span class="text__inner">{data.field_name}</span>
                         )}
                         {!this.showInput ? (
                           <VIcon class={['ml-3', 'clickable']} size="14" onClick={() => (this.showInput = true)}>
@@ -130,14 +130,14 @@ export const FieldRename = connect(
                           ''
                         )}
                       </span>
-                      <span class="e-ops">
+                      <span class="e-ops mr-12">
                         <ElButton
                           type="text"
                           class="ml-5"
                           disabled={!this.isRename(data.id)}
                           onClick={() => this.handleReset(node, data)}
                         >
-                          <VIcon>revoke</VIcon>
+                          <VIcon size="14">revoke</VIcon>
                         </ElButton>
                       </span>
                     </span>
