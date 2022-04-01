@@ -17,7 +17,7 @@
         </ElCheckboxGroup>
       </div>
       <ElTooltip effect="dark" content="下载任务日志" placement="bottom">
-        <VIcon class="color-primary mr-6" @click="downloadForm.visible = true">download</VIcon>
+        <VIcon class="color-primary mr-6" @click="openDownload">download</VIcon>
       </ElTooltip>
     </div>
     <div ref="logs" class="log-container flex-fit mt-6 py-6 overflow-auto" @scroll="loadOld">
@@ -279,8 +279,11 @@ export default {
     changeType() {
       this.getLogs(true)
     },
+    openDownload() {
+      this.downloadForm.visible = true
+      this.downloadForm.select = 6
+    },
     downloadNow(resetLoading) {
-      console.log('this.', this.downloadForm)
       let start = Date.now() - this.downloadForm.select * 60 * 60 * 1000
       let params = {
         dataFlowId: this.id,
@@ -292,6 +295,7 @@ export default {
         })
         .then(res => {
           downloadBlob(res)
+          this.downloadForm.visible = false
         })
         .finally(() => {
           resetLoading?.()
