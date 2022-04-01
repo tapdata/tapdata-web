@@ -1206,8 +1206,11 @@ export default {
           } else {
             target.show = false
           }
-          // kafka、mq作为源不支持无主键同步
-          if (['kafka', 'mq'].includes(this.dataSourceModel['source_databaseType'])) {
+          // kafka、mq作为源不支持无主键同步， doris作为目标不支持无主键同步
+          if (
+            ['kafka', 'mq'].includes(this.dataSourceModel['source_databaseType']) ||
+            ['doris'].includes(this.dataSourceModel['target_databaseType'])
+          ) {
             this.changeConfig([], 'setting_noPrimaryKey')
             this.settingModel.noPrimaryKey = false
           }
