@@ -82,6 +82,10 @@ export default {
             'x-component': 'Select',
             enum: [
               {
+                label: this.$t('task_setting_off'),
+                value: ''
+              },
+              {
                 label: this.$t('task_setting_streaming'), //流式读取
                 value: 'STREAMING'
               },
@@ -90,11 +94,12 @@ export default {
                 value: 'POLLING'
               }
             ],
+            default: 'STREAMING',
             'x-reactions': {
               dependencies: ['sync_type'],
               fulfill: {
                 state: {
-                  visible: '{{$deps[0] !== "cdc" || ($deps[0] === "cdc" && $deps[1])}}'
+                  visible: '{{$deps[0] !== "initial_sync"}}'
                 }
               }
             }
@@ -137,11 +142,12 @@ export default {
                 value: 'POLLING'
               }
             ],
+            default: 'STREAMING',
             'x-reactions': {
               dependencies: ['sync_type'],
               fulfill: {
                 state: {
-                  visible: '{{$deps[0] !== "cdc" || ($deps[0] === "cdc" && $deps[1])}}'
+                  visible: '{{$deps[0] !== "initial_sync"}}'
                 }
               }
             }
@@ -309,23 +315,6 @@ export default {
                     }
                   }
                 }
-              },
-              increShareReadMode: {
-                title: this.$t('task_setting_share_cdc_mode'), //共享增量读取的模式
-                type: 'string',
-                'x-decorator': 'FormItem',
-                'x-component': 'Select',
-                enum: [
-                  {
-                    label: this.$t('task_setting_streaming'), //流式读取
-                    value: 'STREAMING'
-                  },
-                  {
-                    label: this.$t('task_setting_polling'), //轮询读取
-                    value: 'POLLING'
-                  }
-                ],
-                default: 'STREAMING'
               },
               increment: {
                 title: this.$t('task_setting_automatic_index'), //自动创建索引

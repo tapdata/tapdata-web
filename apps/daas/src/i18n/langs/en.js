@@ -1036,6 +1036,7 @@ export default {
   task_setting_share_cdc_mode: 'Shared incremental read mode',
   task_setting_streaming: 'Streaming reading',
   task_setting_polling: 'Polling read',
+  task_setting_off: 'Off',
   task_setting_cdc_engine_filter: 'Enable engine filtering',
   task_setting_maximum_transaction: 'Transaction maximum duration (hours)',
   task_setting_create_tables: 'Automatically create tables',
