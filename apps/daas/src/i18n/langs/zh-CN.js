@@ -1207,6 +1207,7 @@ export default {
   shared_cdc_placeholder_task_name: '请输入挖掘任务名搜索',
   shared_cdc_placeholder_connection_name: '请输入连接名称搜索',
   shared_cdc_setting_no_mongodb_tip: ' 请先创建mongodb数据源',
+  shared_cdc_name: '请输入挖掘名称',
   shared_cdc_setting_refresh: '刷新数据',
   shared_cdc_setting_select_mongodb_tip: '请选择mongodb连接',
   shared_cdc_setting_select_table_tip: '请选择表名',

@@ -1253,6 +1253,7 @@ export default {
   shared_cdc_placeholder_task_name: 'Please enter the mining task name to search',
   shared_cdc_placeholder_connection_name: 'Please enter the connection name to search',
   shared_cdc_setting_no_mongodb_tip: 'Please create a mongodb data source first',
+  shared_cdc_name: 'Please enter the task name ',
   shared_cdc_setting_refresh: 'Refresh data',
   shared_cdc_setting_select_mongodb_tip: 'Please select mongodb connection',
   shared_cdc_setting_select_table_tip: 'Please select the table name',
