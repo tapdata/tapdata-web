@@ -165,6 +165,7 @@ import Preview from './Preview'
 import { defaultModel, verify, desensitization } from './util'
 import Test from './Test'
 import FilterBar from '@/components/filter-bar'
+import { TYPEMAP } from 'web-core/const'
 
 let timeout = null
 
@@ -666,14 +667,15 @@ export default {
           type: 'select-inner',
           menuMinWidth: '250px',
           items: async () => {
-            let databaseTypes = await this.$api('DatabaseTypes').get()
-            let databaseTypeOptions = databaseTypes.data
-              .filter(dt => !['jira', 'tcp_udp'].includes(dt.type))
-              .sort((t1, t2) => (t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1))
+            let res = await this.$api('connections').getDataTypes()
+            let databaseTypes = res?.data || []
+            let databaseTypeOptions = databaseTypes.sort((t1, t2) =>
+              t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1
+            )
             return databaseTypeOptions.map(item => {
               return {
-                label: item.name,
-                value: item.type
+                label: TYPEMAP[item],
+                value: item
               }
             })
           }
