@@ -229,7 +229,7 @@
       width="600px"
       @close="closeDialogForm()"
     >
-      <addServe :data="currentData" :editItem="editItem" ref="childRules"></addServe>
+      <AddServe :data="currentData" :editItem="editItem" ref="childRules"></AddServe>
       <div slot="footer" class="dialog-footer">
         <ElButton size="small" @click="closeDialogForm()">{{ $t('button_cancel') }}</ElButton>
         <ElButton size="small" type="primary" @click="submitForm('ruleForm')">{{ $t('button_confirm') }}</ElButton>
@@ -275,7 +275,7 @@
 </template>
 <script>
 import FilterBar from '@/components/filter-bar'
-import addServe from './component/addServe'
+import AddServe from './AddServe'
 import factory from '../../api/factory'
 const cluster = factory('cluster')
 // const clusterVersion = factory('clusterVersion');
@@ -283,7 +283,7 @@ const cluster = factory('cluster')
 // const dataFlows = factory('DataFlows');
 export default {
   components: {
-    addServe,
+    AddServe,
     FilterBar
   },
   data() {

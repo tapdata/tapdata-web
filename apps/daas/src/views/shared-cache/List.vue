@@ -18,7 +18,7 @@
       <ElTableColumn prop="tableName" :label="$t('column_table')"></ElTableColumn>
       <ElTableColumn :label="$t('shared_cache_status')">
         <template #default="{ row }">
-          <span :class="['status-' + row.statusResult, 'status-block', 'mr-2']">
+          <span :class="['status-' + row.statusResult, 'status-block']">
             {{ $t('task_preview_status_' + row.statusResult) }}
           </span>
         </template>
@@ -144,7 +144,7 @@ import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import Drawer from '@/components/Drawer'
 import { toRegExp } from '@/utils/util'
-import { getSubTaskStatus } from '../task/util'
+import { getSubTaskStatus } from '@/utils/util'
 
 export default {
   components: { TablePage, FilterBar, Drawer },

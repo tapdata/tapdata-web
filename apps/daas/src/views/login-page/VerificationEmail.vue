@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import Header from './component/header'
+import Header from './Header'
 import factory from '@/api/factory'
 import Cookie from '@daas/shared/src/cookie'
 const usersModel = factory('users')

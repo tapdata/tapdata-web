@@ -54,7 +54,7 @@
           <span> {{ $moment(scope.row.syncTimestamp).format('YYYY-MM-DD HH:mm:ss') }}</span>
         </template>
         <template slot="status" slot-scope="scope">
-          <span :class="['status-' + scope.row.status, 'status-block', 'mr-2']">
+          <span :class="['status-' + scope.row.status, 'status-block']">
             {{ $t('task_preview_status_' + scope.row.status) }}
           </span>
         </template>
@@ -102,12 +102,11 @@
 <script>
 import Chart from 'web-core/components/chart'
 import TableList from '@/components/TableList'
-import StatusTag from '@/components/StatusTag'
 import { formatTime, formatMs } from '@/utils/util'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 export default {
   name: 'Info',
-  components: { Chart, TableList, StatusTag, DatetimeRange },
+  components: { Chart, TableList, DatetimeRange },
   data() {
     return {
       id: '',

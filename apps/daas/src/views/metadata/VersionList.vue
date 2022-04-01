@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import HistoryVersion from './historyVersion'
+import HistoryVersion from './HistoryVersion'
 // import { toRegExp } from '../../utils/util'
 
 export default {

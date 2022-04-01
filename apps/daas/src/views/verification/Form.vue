@@ -511,7 +511,7 @@ const META_INSTANCE_FIELDS = {
   databaseId: true,
   meta_type: true
 }
-import MultiSelection from '../MultiSelection.vue'
+import MultiSelection from './MultiSelection.vue'
 import CodeEditor from '@/components/CodeEditor.vue'
 
 import { DATA_NODE_TYPES } from '@/const.js'
@@ -604,7 +604,7 @@ export default {
   },
   created() {
     this.getFlowOptions()
-    this.htmlMD = require(`../functionInfo.md`)
+    this.htmlMD = require(`./functionInfo.md`)
   },
   methods: {
     handleChangeAdvanced(item) {

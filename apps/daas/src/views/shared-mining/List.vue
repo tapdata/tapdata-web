@@ -30,7 +30,7 @@
       <el-table-column prop="createTime" width="160" :label="$t('share_list_creat_time')" sortable> </el-table-column>
       <el-table-column width="100" prop="status" :label="$t('share_list_status')">
         <template #default="{ row }">
-          <span :class="['status-' + row.statusResult, 'status-block', 'mr-2']">
+          <span :class="['status-' + row.statusResult, 'status-block']">
             {{ $t('task_preview_status_' + row.statusResult) }}
           </span>
         </template>
@@ -140,22 +140,19 @@
         <el-button size="mini" type="primary" @click="saveEdit()">{{ $t('button_save') }}</el-button>
       </span>
     </el-dialog>
-    <DownAgent ref="agentDialog" type="taskRunning"></DownAgent>
   </section>
 </template>
 
 <script>
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
-import DownAgent from '../../downAgent/agentDown'
-import { getSubTaskStatus } from '../util'
+import { getSubTaskStatus } from '@/utils/util'
 
 let timeout = null
 export default {
   components: {
     TablePage,
-    FilterBar,
-    DownAgent
+    FilterBar
   },
   data() {
     return {
@@ -364,23 +361,21 @@ export default {
           id: ids[0]
         }
       }
-      if (this.$refs.agentDialog.checkAgent()) {
-        this.$api('Task')
-          .get({ filter: JSON.stringify(filter) })
-          .then(res => {
-            if (res) {
-              this.$api('Task')
-                .batchStart(ids)
-                .then(res => {
-                  this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
-                  this.table.fetch()
-                })
-                .catch(err => {
-                  this.$message.error(err.data?.message)
-                })
-            }
-          })
-      }
+      this.$api('Task')
+        .get({ filter: JSON.stringify(filter) })
+        .then(res => {
+          if (res) {
+            this.$api('Task')
+              .batchStart(ids)
+              .then(res => {
+                this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+                this.table.fetch()
+              })
+              .catch(err => {
+                this.$message.error(err.data?.message)
+              })
+          }
+        })
     },
     stop(ids) {
       this.$confirm(this.$t('message.stopInitial_syncMessage'), this.$t('dataFlow.importantReminder'), {

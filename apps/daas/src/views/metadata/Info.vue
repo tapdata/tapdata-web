@@ -430,7 +430,7 @@
   </section>
 </template>
 <script>
-import VersionList from './versionList'
+import VersionList from './VersionList'
 import FormPage from './Form'
 import IndexManager from './IndexManager'
 import Validation from './Validation'

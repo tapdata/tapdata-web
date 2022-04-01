@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import Header from './component/header'
+import Header from './Header'
 // import factory from '@/api/factory'
 // const usersModel = factory('users')
 

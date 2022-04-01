@@ -73,7 +73,7 @@
 <script>
 // import crypto from 'crypto';
 // import CryptoJS from 'crypto-js';
-import Header from './component/header'
+import Header from './Header'
 // import _ from 'lodash';
 
 // const Languages = {
