@@ -174,7 +174,7 @@ export default {
         order: ['status DESC', 'name ASC']
       }
       this.$api('connections')
-        .logCollectorInfo(filter)
+        .listAll(filter)
         .then(res => {
           let data = res?.data || []
           let options = data.map(item => {
