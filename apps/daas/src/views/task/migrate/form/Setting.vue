@@ -536,6 +536,7 @@ export default {
       }
       //合并配置
       let target = {}
+      let source = {}
       if (
         [
           'hana',
@@ -552,7 +553,7 @@ export default {
           'hbase'
         ].includes(sourceType) //只支持全量同步
       ) {
-        target = {
+        source = {
           sync_type: {
             title: this.$t('task_setting_sync_type'),
             type: 'string',
@@ -578,10 +579,9 @@ export default {
             }
           }
         }
-      } else {
-        target = mapping[type] || {}
       }
-      config.properties.layout.properties = Object.assign(config?.properties?.layout?.properties, target)
+      target = mapping[type] || {}
+      config.properties.layout.properties = Object.assign(config?.properties?.layout?.properties, target, source)
 
       // AutoDDL
       if (type === sourceType && ['mysql', 'oracle'].includes(type)) {
