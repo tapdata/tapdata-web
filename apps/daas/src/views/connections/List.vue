@@ -137,12 +137,7 @@
         </template>
       </ElTableColumn>
     </TablePage>
-    <Preview
-      :id="id"
-      :visible="previewVisible"
-      :databaseType="databaseType"
-      v-on:previewVisible="handlePreviewVisible"
-    ></Preview>
+    <Preview ref="preview"></Preview>
     <DatabaseTypeDialog
       :dialogVisible="dialogDatabaseTypeVisible"
       @dialogVisible="handleDialogDatabaseTypeVisible"
@@ -161,7 +156,7 @@ import SchemaProgress from 'web-core/components/SchemaProgress'
 import TablePage from '@/components/TablePage'
 import VIcon from '@/components/VIcon'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
-import Preview from './Preview'
+import Preview from './Preview.vue'
 import { defaultModel, verify, desensitization } from './util'
 import Test from './Test'
 import FilterBar from '@/components/filter-bar'
@@ -417,12 +412,7 @@ export default {
       this.multipleSelection = val
     },
     preview(id, type) {
-      this.id = id
-      this.databaseType = type
-      this.previewVisible = true
-    },
-    handlePreviewVisible() {
-      this.previewVisible = false
+      this.$refs.preview.open(id, type)
     },
     edit(id, type, item) {
       if (item.search_databaseType) {
