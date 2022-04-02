@@ -13,13 +13,13 @@ export default [
   {
     path: '/login',
     name: 'login',
-    component: () => import('@/views/Login/Login'),
+    component: () => import('@/views/login/Login'),
     title: 'tap.login'
   },
   {
     path: '/registry',
     name: 'registry',
-    component: () => import('@/views/Login/Registration'),
+    component: () => import('@/views/login/Registration'),
     meta: {
       title: 'tap.registry'
     }
@@ -27,7 +27,7 @@ export default [
   {
     path: '/verificationEmail',
     name: 'verificationEmail',
-    component: () => import('@/views/Login/VerificationEmail'),
+    component: () => import('@/views/login/VerificationEmail'),
     meta: {
       title: 'tap.verificationEmail'
     }
@@ -35,7 +35,7 @@ export default [
   {
     path: '/registyResult',
     name: 'registyResult',
-    component: () => import('@/views/Login/RegistyResult'),
+    component: () => import('@/views/login/RegistyResult'),
     meta: {
       title: 'tap.registry'
     }
@@ -43,7 +43,7 @@ export default [
   {
     path: '/passwordReset',
     name: 'passwordReset',
-    component: () => import('@/views/Login/PasswordReset'),
+    component: () => import('@/views/login/PasswordReset'),
     meta: {
       title: 'tap.passwordReset'
     }
@@ -277,7 +277,7 @@ export default [
           {
             path: '',
             name: 'dataVerificationList',
-            component: () => import('@/views/dataVerification/List'),
+            component: () => import('@/views/verification/List'),
             meta: {
               title: 'page_title_data_verification',
               code: 'Data_verify_menu'
@@ -286,7 +286,7 @@ export default [
           {
             path: 'old/create',
             name: 'oldDataVerificationCreate',
-            component: () => import('@/views/dataVerification/Form'),
+            component: () => import('@/views/verification/Form'),
             meta: {
               title: 'page_title_task_create',
               code: 'verify_job_creation'
@@ -295,7 +295,7 @@ export default [
           {
             path: 'create',
             name: 'dataVerificationCreate',
-            component: () => import('@/views/dataVerification/2.0/Form'),
+            component: () => import('@/views/verification/Form'),
             meta: {
               title: 'page_title_task_create',
               code: 'verify_job_creation'
@@ -304,7 +304,7 @@ export default [
           {
             path: ':id/edit',
             name: 'dataVerificationEdit',
-            component: () => import('@/views/dataVerification/2.0/Form'),
+            component: () => import('@/views/verification/Form'),
             meta: {
               title: 'page_title_task_edit',
               code: 'verify_job_edition'
@@ -313,7 +313,7 @@ export default [
           {
             path: ':id/details',
             name: 'dataVerifyDetails',
-            component: () => import('@/views/dataVerification/Details'),
+            component: () => import('@/views/verification/Details'),
             meta: {
               title: 'page_title_task_details',
               code: 'Data_verify'
@@ -322,7 +322,7 @@ export default [
           {
             path: ':id/history',
             name: 'dataVerifyHistory',
-            component: () => import('@/views/dataVerification/History'),
+            component: () => import('@/views/verification/History'),
             meta: {
               title: 'page_title_data_verification_history',
               code: 'Data_verify'
@@ -331,7 +331,7 @@ export default [
           {
             path: '/dataVerifyResult/:id/history',
             name: 'VerifyDiffHistory',
-            component: () => import('@/views/dataVerification/History'),
+            component: () => import('@/views/verification/History'),
             meta: {
               title: 'page_title_diff_verification_history',
               code: 'Data_verify'
@@ -340,7 +340,7 @@ export default [
           {
             path: '/dataVerifyResult/:id/details',
             name: 'VerifyDiffDetails',
-            component: () => import('@/views/dataVerification/Result'),
+            component: () => import('@/views/verification/Result'),
             meta: {
               title: 'page_title_diff_verification_details',
               code: 'Data_verify'
@@ -349,7 +349,7 @@ export default [
           {
             path: '/dataVerifyResult/:id',
             name: 'dataVerifyResult',
-            component: () => import('@/views/dataVerification/Result'),
+            component: () => import('@/views/verification/Result'),
             meta: {
               title: 'page_title_data_verification_result',
               code: 'Data_verify'
@@ -370,7 +370,7 @@ export default [
           {
             path: '',
             name: 'sharedMiningList',
-            component: () => import('@/views/task/sharedMining/List'),
+            component: () => import('@/views/shared-mining/List'),
             meta: {
               title: 'page_title_shared_mining',
               code: 'log_collector_menu'
@@ -379,7 +379,7 @@ export default [
           {
             path: 'details/:id',
             name: 'SharedMiningDetails',
-            component: () => import('@/views/task/sharedMining/Detail'),
+            component: () => import('@/views/shared-mining/Detail'),
             meta: {
               title: 'page_title_shared_mining_details',
               code: 'log_collector_menu'
@@ -455,7 +455,7 @@ export default [
           {
             path: '',
             name: 'customNodeList',
-            component: () => import('@/views/customNode/List'),
+            component: () => import('@/views/custom-proccessor-node/List'),
             meta: {
               title: 'page_title_custom_node',
               code: 'custom_node_menu'
@@ -557,7 +557,7 @@ export default [
           {
             path: '',
             name: 'modules',
-            component: () => import('@/views/apiPage/Modules'),
+            component: () => import('@/views/api-page/Modules'),
             meta: {
               title: 'page_title_api_publish',
               code: 'API_management_menu'
@@ -566,7 +566,7 @@ export default [
           {
             path: 'create',
             name: 'module',
-            component: () => import('@/views/apiPage/ModuleForm'),
+            component: () => import('@/views/api-page/ModuleForm'),
             meta: {
               title: 'page_title_api_publish_create',
               code: 'API_creation'
@@ -575,7 +575,7 @@ export default [
           {
             path: ':id/edit',
             name: 'editModule',
-            component: () => import('@/views/apiPage/ModuleForm'),
+            component: () => import('@/views/api-page/ModuleForm'),
             meta: {
               title: 'page_title_api_publish_edit',
               code: 'API_edition'
@@ -587,7 +587,7 @@ export default [
       {
         path: '/api-browse',
         name: 'dataExplorer',
-        component: () => import('@/views/apiPage/DataExplorer'),
+        component: () => import('@/views/api-page/DataExplorer'),
         meta: {
           title: 'page_title_api_browse',
           code: 'API_data_explorer_menu'
@@ -597,7 +597,7 @@ export default [
       {
         path: '/api-test',
         name: 'apiDocAndTest',
-        component: () => import('@/views/apiPage/ApiDocAndTest'),
+        component: () => import('@/views/api-page/ApiDocAndTest'),
         meta: {
           title: 'page_title_api_test',
           code: 'API_doc_&_test_menu'
@@ -607,7 +607,7 @@ export default [
       {
         path: '/api-client',
         name: 'apiClient',
-        component: () => import('@/views/apiPage/Applications'),
+        component: () => import('@/views/api-page/Applications'),
         meta: {
           title: 'page_title_api_client',
           code: 'API_clients_menu'
@@ -617,7 +617,7 @@ export default [
       {
         path: '/api-servers',
         name: 'apiServers',
-        component: () => import('@/views/apiPage/ApiServers'),
+        component: () => import('@/views/api-page/ApiServers'),
         meta: {
           title: 'page_title_api_servers',
           code: 'API_server_menu'
@@ -628,7 +628,7 @@ export default [
       {
         path: '/api-statistics',
         name: 'apiAnalysis',
-        component: () => import('@/views/apiPage/ApiAnalysis'),
+        component: () => import('@/views/api-page/ApiAnalysis'),
         meta: {
           title: 'page_title_api_stat',
           code: 'API_stats_menu'
@@ -638,7 +638,7 @@ export default [
       {
         path: '/api-audit',
         name: 'applications',
-        component: () => import('@/views/apiPage/Applications'),
+        component: () => import('@/views/api-page/Applications'),
         meta: {
           title: 'page_title_api_audit',
           code: 'API_clients_menu'
@@ -648,7 +648,7 @@ export default [
       {
         path: '/api-monitor',
         name: 'apiMonitor',
-        component: () => import('@/views/apiPage/ApiServers'),
+        component: () => import('@/views/api-page/ApiServers'),
         meta: {
           title: 'page_title_api_monitor',
           code: 'API_server_menu'
@@ -681,7 +681,7 @@ export default [
       {
         path: '/schedule-task',
         name: 'tasks',
-        component: () => import('@/views/scheduleTasks/List'),
+        component: () => import('@/views/schedule-task/List'),
         meta: {
           title: 'page_title_schedule',
           code: 'schedule_jobs_menu'
@@ -691,7 +691,7 @@ export default [
       {
         path: '/cluster',
         name: 'clusterManagement',
-        component: () => import('@/views/clusterManagement/clusterManagement'),
+        component: () => import('@/views/cluster/Cluster'),
         meta: {
           title: 'page_title_cluster',
           code: 'Cluster_management_menu'
@@ -711,7 +711,7 @@ export default [
       {
         path: '/user',
         name: 'users',
-        component: () => import('@/views/Users/List'),
+        component: () => import('@/views/user/List'),
         meta: {
           title: 'page_title_user',
           code: 'user_management_menu'
@@ -730,7 +730,7 @@ export default [
           {
             path: '',
             name: 'roleList',
-            component: () => import('@/views/Role/Roles'),
+            component: () => import('@/views/role/Roles'),
             meta: {
               title: 'page_title_role',
               code: 'role_management_menu'
@@ -739,7 +739,7 @@ export default [
           {
             path: 'create',
             name: 'role',
-            component: () => import('@/views/Role/Role'),
+            component: () => import('@/views/role/Role'),
             meta: {
               title: 'page_title_role',
               code: 'role_creation'
@@ -748,7 +748,7 @@ export default [
           {
             path: ':id/edit',
             name: 'editRole',
-            component: () => import('@/views/Role/Role'),
+            component: () => import('@/views/role/Role'),
             meta: {
               title: 'page_title_role',
               code: 'role_edition'
@@ -795,14 +795,9 @@ export default [
 
       /* ---------- 不确定路由  ----------*/
       {
-        path: '/relations',
-        name: 'relations',
-        component: () => import('@/views/relations/relations')
-      },
-      {
         path: '/taskHistories',
         name: 'taskHistories',
-        component: () => import('@/views/scheduleTasks/Histories'),
+        component: () => import('@/views/schedule-task/Histories'),
         meta: {
           code: 'schedule_jobs_menu',
           title: 'page_title_schedule_history'
@@ -811,7 +806,7 @@ export default [
       {
         path: '/dailyRecord',
         name: 'dailyRecord',
-        component: () => import('@/views/clusterManagement/dailyRecord')
+        component: () => import('@/views/cluster/DailyRecord')
       },
       {
         path: '/upload',
@@ -820,43 +815,6 @@ export default [
         meta: {
           title: 'tap.upload',
           code: 'SYNC_job_import'
-        }
-      },
-      {
-        path: '/dataQuality/:id',
-        name: 'dataQualityDetail',
-        component: () => import('@/views/dataQuality/DataQualityDetail'),
-        meta: {
-          code: 'data_quality_edition',
-          title: 'tap.dataQuality'
-        }
-      },
-      {
-        path: '/dataQuality',
-        name: 'dataQuality',
-        component: () => import('@/views/dataQuality/DataQuality'),
-        meta: {
-          code: 'data_quality_menu',
-          title: 'tap.dataQuality',
-          types: ['collection']
-        }
-      },
-      {
-        path: '/ttl',
-        name: 'timeToLive',
-        component: () => import('@/views/TimeToLive/List'),
-        meta: {
-          code: 'time_to_live_menu',
-          title: 'tap.TimeToLive'
-        }
-      },
-      {
-        path: '/dataRules',
-        name: 'dataRules',
-        component: () => import('@/views/dataRules/List'),
-        meta: {
-          code: 'data_rules_menu',
-          title: 'tap.dataRules'
         }
       },
       {
@@ -869,45 +827,12 @@ export default [
         }
       },
       {
-        path: '/dataMap',
-        name: 'dataMap',
-        component: () => import('@/views/dataMap/DataMap'),
-        meta: {
-          code: 'data_lineage_menu',
-          title: 'tap.dataLineage'
-        }
-      },
-      {
-        path: '/apiInfo',
-        name: 'apiInfo',
-        component: () => import('@/views/job/apiInfo'),
-        meta: { title: 'tap.apiInfo' }
-      },
-
-      {
-        path: '/tableFlows',
-        name: 'tableFlows',
-        component: () => import('@/views/task/TableFlows')
-      },
-
-      {
-        path: '/agentDown',
-        name: 'agentDown',
-        component: () => import('@/views/downAgent/agentDown')
-      },
-      {
         path: '/notification',
         name: 'notification',
         component: () => import('@/views/notification/Center'),
         meta: {
           title: 'notify_system_notice'
         }
-      },
-
-      {
-        path: '/taskProgressInfo',
-        name: 'taskProgressInfo',
-        component: () => import('@/views/job/TaskProgressInfo')
       },
       {
         path: 'license',

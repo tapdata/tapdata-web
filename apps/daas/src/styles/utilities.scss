@@ -2600,6 +2600,13 @@
   color: map-get($fontColor , rdlevel );
 }
 
+.text-normal {
+  color: map-get($fontColor , normal );
+}
+.text-light {
+  color: map-get($fontColor , light );
+}
+
 .bg-main {
   background-color: #fafafa !important;
 }

@@ -61,7 +61,7 @@
         <el-aside class="metadata-aside" v-show="asideFalg">
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
-              <span class="fs-7">{{ $t('metadata.details.basicAttributes') }}</span>
+              <span class="fs-7 text-rdlevel fw-sub">{{ $t('metadata.details.basicAttributes') }}</span>
               <i @click.stop="asideFalg = false" class="iconfont icon-outdent text-primary"></i>
             </div>
             <ul class="metadata-aside-main pt-4">
@@ -128,7 +128,7 @@
 
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
-              <span class="fs-7">{{ $t('metadata.details.businessAttributes') }}</span>
+              <span class="fs-7 text-rdlevel fw-sub">{{ $t('metadata.details.businessAttributes') }}</span>
               <el-button type="text" size="mini" @click.stop="creatBusiness"
                 >+ {{ $t('metadata.details.creat') }}</el-button
               >
@@ -314,11 +314,6 @@
 
                   <!-- 模型 end -->
                 </div>
-                <!-- 表链路图 start-->
-                <div class="table-box" v-if="activePanel == 'relations'">
-                  <Relations :tableId="metadataDataObj.qualified_name"></Relations>
-                </div>
-                <!-- 表链路图 end-->
                 <!-- 版本管理 start -->
                 <div class="table-box" v-if="activePanel == 'version'">
                   <VersionList :histories="metadataDataObj"></VersionList>
@@ -435,9 +430,8 @@
   </section>
 </template>
 <script>
-import VersionList from './versionList'
+import VersionList from './VersionList'
 import FormPage from './Form'
-import Relations from '../relations/relations'
 import IndexManager from './IndexManager'
 import Validation from './Validation'
 import Preview from './Preview'
@@ -447,7 +441,6 @@ import VIcon from '@/components/VIcon'
 export default {
   components: {
     VersionList,
-    Relations,
     FormPage,
     IndexManager,
     Validation,
@@ -510,11 +503,6 @@ export default {
         //   mateTypes: ['database'],
         //   key: 'collections'
         // },
-        // {
-        //   name: this.$t('relations.blood'),
-        //   mateTypes: ['collection', 'table', 'mongo_view', 'view'],
-        //   key: 'relations'
-        // }
       ],
       description: '',
       searchParams: {},
@@ -911,7 +899,6 @@ export default {
     }
   }
   .metadata-content {
-    padding: 10px;
     box-sizing: border-box;
     overflow: hidden;
     .matadata-head {
@@ -1006,8 +993,10 @@ export default {
               .label + span {
                 display: inline-block;
                 max-width: calc(100% - 100px);
+                width: 100%;
                 text-overflow: ellipsis;
                 overflow: hidden;
+                text-align: right;
               }
             }
             li.business {

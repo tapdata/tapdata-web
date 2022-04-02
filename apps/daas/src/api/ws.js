@@ -3,7 +3,7 @@
  * @date 5/29/20
  * @description
  */
-import EventEmitter from '../editor/lib/EventEmitter'
+import EventEmitter from '@/plugins/event-emitter.js'
 import * as Cookie from 'tiny-cookie'
 import log from '../log'
 import factory from './factory'

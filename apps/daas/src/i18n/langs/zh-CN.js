@@ -154,7 +154,7 @@ export default {
   page_title_setting: '系统设置',
   page_title_license: 'License管理',
   page_title_back_menu: '返回菜单',
-  page_title_custom_node: '自定义节点',
+  page_title_custom_node: '自定义处理节点',
   page_title_account: '个人设置',
 
   // app
@@ -1004,6 +1004,7 @@ export default {
   task_setting_share_cdc_mode: '共享增量读取的模式',
   task_setting_streaming: '流式读取',
   task_setting_polling: '轮询读取',
+  task_setting_off: '关闭',
   task_setting_cdc_engine_filter: '启用引擎过滤',
   task_setting_maximum_transaction: '事务最大时长(小时)',
   task_setting_create_tables: '自动建表',
@@ -1207,6 +1208,7 @@ export default {
   shared_cdc_placeholder_task_name: '请输入挖掘任务名搜索',
   shared_cdc_placeholder_connection_name: '请输入连接名称搜索',
   shared_cdc_setting_no_mongodb_tip: ' 请先创建mongodb数据源',
+  shared_cdc_name: '请输入挖掘名称',
   shared_cdc_setting_refresh: '刷新数据',
   shared_cdc_setting_select_mongodb_tip: '请选择mongodb连接',
   shared_cdc_setting_select_table_tip: '请选择表名',

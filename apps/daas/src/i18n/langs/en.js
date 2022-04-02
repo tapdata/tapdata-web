@@ -156,7 +156,7 @@ export default {
   page_title_setting: 'System settings',
   page_title_license: 'License',
   page_title_back_menu: 'Back menu',
-  page_title_custom_node: 'Custom Node',
+  page_title_custom_node: 'Custom Proccessor Node',
   page_title_account: 'Personal settings',
 
   // app
@@ -1036,6 +1036,7 @@ export default {
   task_setting_share_cdc_mode: 'Shared incremental read mode',
   task_setting_streaming: 'Streaming reading',
   task_setting_polling: 'Polling read',
+  task_setting_off: 'Off',
   task_setting_cdc_engine_filter: 'Enable engine filtering',
   task_setting_maximum_transaction: 'Transaction maximum duration (hours)',
   task_setting_create_tables: 'Automatically create tables',
@@ -1253,6 +1254,7 @@ export default {
   shared_cdc_placeholder_task_name: 'Please enter the mining task name to search',
   shared_cdc_placeholder_connection_name: 'Please enter the connection name to search',
   shared_cdc_setting_no_mongodb_tip: 'Please create a mongodb data source first',
+  shared_cdc_name: 'Please enter the task name ',
   shared_cdc_setting_refresh: 'Refresh data',
   shared_cdc_setting_select_mongodb_tip: 'Please select mongodb connection',
   shared_cdc_setting_select_table_tip: 'Please select the table name',

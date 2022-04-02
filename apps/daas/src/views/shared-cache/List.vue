@@ -18,9 +18,9 @@
       <ElTableColumn prop="tableName" :label="$t('column_table')"></ElTableColumn>
       <ElTableColumn :label="$t('shared_cache_status')">
         <template #default="{ row }">
-          <span :class="'icon-status icon-status--' + row.statusColor">{{
-            $t('shared_cache_status_' + row.statusResult)
-          }}</span>
+          <span :class="['status-' + row.statusResult, 'status-block']">
+            {{ $t('task_preview_status_' + row.statusResult) }}
+          </span>
         </template>
       </ElTableColumn>
       <ElTableColumn prop="createTimeFmt" :label="$t('column_create_time')"></ElTableColumn>
@@ -40,9 +40,9 @@
         <VIcon class="icon">agent</VIcon>
         <div class="flex-fill ml-4">
           <div class="fs-6">{{ details.name }}</div>
-          <span :class="'mt-2 icon-status icon-status--' + details.statusColor">{{
-            $t('shared_cache_status_' + details.statusResult)
-          }}</span>
+          <span :class="['status-' + details.statusResult, 'status-block', 'mt-2']">
+            {{ $t('task_preview_status_' + details.statusResult) }}
+          </span>
         </div>
       </div>
       <ul class="mt-2">
@@ -144,19 +144,20 @@ import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import Drawer from '@/components/Drawer'
 import { toRegExp } from '@/utils/util'
+import { getSubTaskStatus } from '@/utils/util'
 
 export default {
   components: { TablePage, FilterBar, Drawer },
   data() {
     return {
       searchParams: {
-        taskName: '',
+        name: '',
         connectionName: ''
       },
       filterItems: [
         {
           placeholder: this.$t('shared_cache_placeholder_task_name'),
-          key: 'taskName',
+          key: 'name',
           type: 'input'
         },
         {
@@ -180,15 +181,12 @@ export default {
       this.table.fetch(1)
     }
   },
-  created() {
-    this.getFilterItems()
-  },
   methods: {
     getData({ page }) {
       let { current, size } = page
-      let { taskName, connectionName } = this.searchParams
+      let { name, connectionName } = this.searchParams
       let where = {}
-      taskName && (where.name = { like: toRegExp(taskName), options: 'i' })
+      name && (where.name = { like: toRegExp(name), options: 'i' })
       connectionName && (where.connectionName = { like: toRegExp(connectionName), options: 'i' })
       let filter = {
         order: 'createTime DESC',
@@ -202,25 +200,14 @@ export default {
         })
         .then(res => {
           let list = res.data?.items || []
-          let map = {
-            error: { color: 'danger', include: ['error', 'schedule_failed'] },
-            running: { color: 'success', include: ['running', 'stopping', 'wait_run', 'scheduling'] },
-            ready: { color: 'warning', include: ['edit', 'stop', 'complete'] }
-          }
           return {
             total: res.data?.total,
             data: list.map(item => {
-              for (const key in map) {
-                let statusObj = map[key]
-                let includeStatus = statusObj.include
-                if (includeStatus.includes(item.status)) {
-                  item.statusResult = key
-                  item.statusColor = statusObj.color
-                  break
-                }
-              }
               item.createTimeFmt = this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               item.cacheTimeAtFmt = this.$moment(item.cacheTimeAt).format('YYYY-MM-DD HH:mm:ss')
+
+              let statuses = item.statuses
+              item.statusResult = getSubTaskStatus(statuses)[0].status
               return item
             })
           }
@@ -265,46 +252,6 @@ export default {
             })
         }
       })
-    },
-    getFilterItems() {
-      this.filterItems = [
-        {
-          label: this.$t('connection_list_status'),
-          key: 'status',
-          type: 'select-inner',
-          items: this.databaseStatusOptions,
-          selectedWidth: '200px'
-        },
-        {
-          label: this.$t('connection_list_form_sync_type'),
-          key: 'databaseModel',
-          type: 'select-inner',
-          items: this.databaseModelOptions
-        },
-        {
-          label: this.$t('connection_list_form_database_type'),
-          key: 'databaseType',
-          type: 'select-inner',
-          menuMinWidth: '250px',
-          items: async () => {
-            let databaseTypes = await this.$api('DatabaseTypes').get()
-            let databaseTypeOptions = databaseTypes.data
-              .filter(dt => dt.type !== 'kudu')
-              .sort((t1, t2) => (t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1))
-            return databaseTypeOptions.map(item => {
-              return {
-                label: item.name,
-                value: item.type
-              }
-            })
-          }
-        },
-        {
-          placeholder: this.$t('task_list_search_placeholder'),
-          key: 'keyword',
-          type: 'input'
-        }
-      ]
     }
   }
 }

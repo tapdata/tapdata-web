@@ -228,7 +228,6 @@
         </template>
       </el-table-column>
     </TablePage>
-    <DownAgent ref="agentDialog" type="taskRunning"></DownAgent>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
     <Drawer class="task-drawer" :visible.sync="isShowDetails">
       <div class="task-drawer-wrap" v-loading="previewLoading">
@@ -284,18 +283,17 @@ import factory from '../../../api/factory'
 const Task = factory('Task')
 import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
-import DownAgent from '../../downAgent/agentDown'
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 import Drawer from '@/components/Drawer'
 import Upload from '@/components/UploadDialog'
 // import { ETL_STATUS_MAP } from '@/const'
-import { getSubTaskStatus } from '../util'
+import { getSubTaskStatus } from '@/utils/util'
 
 let timeout = null
 export default {
   name: 'TaskList',
-  components: { FilterBar, TablePage, DownAgent, SkipError, Drawer, Upload },
+  components: { FilterBar, TablePage, SkipError, Drawer, Upload },
   data() {
     return {
       previewData: null,
@@ -730,37 +728,35 @@ export default {
         }
       }
 
-      if (this.$refs.agentDialog.checkAgent()) {
-        this.$api('Task')
-          .get({ filter: JSON.stringify(filter) })
-          .then(res => {
-            let flag = false
-            let items = res.data?.items || []
-            if (items.length) {
-              items.forEach(item => {
-                if (item?.errorEvents?.length) {
-                  flag = true
-                }
-              })
-            }
-            this.$api('Task')
-              .batchStart(ids)
-              .then(res => {
-                this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
-                this.table.fetch()
-              })
-              .catch(err => {
-                this.$message.error(err.data?.message)
-              })
-            if (flag) {
-              _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {
-                // _this.changeStatus(ids, { status: 'scheduled' })
-              })
-            } else {
+      this.$api('Task')
+        .get({ filter: JSON.stringify(filter) })
+        .then(res => {
+          let flag = false
+          let items = res.data?.items || []
+          if (items.length) {
+            items.forEach(item => {
+              if (item?.errorEvents?.length) {
+                flag = true
+              }
+            })
+          }
+          this.$api('Task')
+            .batchStart(ids)
+            .then(res => {
+              this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+              this.table.fetch()
+            })
+            .catch(err => {
+              this.$message.error(err.data?.message)
+            })
+          if (flag) {
+            _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {
               // _this.changeStatus(ids, { status: 'scheduled' })
-            }
-          })
-      }
+            })
+          } else {
+            // _this.changeStatus(ids, { status: 'scheduled' })
+          }
+        })
     },
     stop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)

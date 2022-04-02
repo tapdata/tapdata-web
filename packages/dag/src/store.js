@@ -66,7 +66,8 @@ const getState = () => ({
       icon: 'aggregator',
       name: '聚合',
       type: 'aggregation_processor',
-      constructor: 'Aggregate'
+      constructor: 'Aggregate',
+      locales: AllLocales.Aggregate
     },
     {
       icon: 'row-filter',
@@ -78,7 +79,8 @@ const getState = () => ({
       icon: 'join',
       name: '连接',
       type: 'join_processor',
-      constructor: 'Join'
+      constructor: 'Join',
+      locales: AllLocales.Join
     },
     {
       icon: 'merge_table',

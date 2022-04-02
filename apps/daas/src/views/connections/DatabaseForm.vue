@@ -569,23 +569,6 @@
         }}</el-button>
       </span>
     </el-dialog>
-    <!-- <el-dialog
-			:title="$t('dataForm.dialogTitle')"
-			:close-on-click-modal="false"
-			:visible.sync="repeatDialogVisible"
-			width="30%"
-		>
-			<p>
-				{{ $t('dataForm.error.sourceNameExist') }}
-				<span @click="clickLinkSource" style="color:#409EFF;cursor: pointer">
-					{{ connectionObj.name }}</span
-				>
-				{{ $t('dataForm.error.noCreate') }}
-			</p>
-			<span slot="footer" class="dialog-footer">
-				<el-button @click="repeatDialogVisible = false">{{ $t('dataForm.close') }}</el-button>
-			</span>
-		</el-dialog> -->
   </div>
 </template>
 
@@ -595,11 +578,10 @@ import formConfig from './config'
 import GitBook from './GitBook'
 import CodeEditor from '@/components/CodeEditor'
 import Test from './Test'
-import { TYPEMAPCONFIG, defaultModel, defaultCloudModel } from './util'
+import { TYPEMAPCONFIG, defaultModel } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import VIcon from '@/components/VIcon'
 
-const databaseTypesModel = factory('DatabaseTypes')
 const connectionsModel = factory('connections')
 let defaultConfig = []
 export default {
@@ -651,48 +633,10 @@ export default {
       visible: false,
       createStrategyDisabled: false,
       timezones: [],
-      dataTypes: [],
       logSaveList: [1, 2, 3, 4, 5, 6, 7],
       mongodbList: [],
       showSystemConfig: false,
       tableList: [], //共享挖掘
-      // whiteList: [
-      //   'mysql',
-      //   'oracle',
-      //   'mongodb',
-      //   'sqlserver',
-      //   'postgres',
-      //   'elasticsearch',
-      //   'redis',
-      //   'file',
-      //   'db2',
-      //   'kafka',
-      //   'mariadb',
-      //   'mysql pxc',
-      //   // 'jira',
-      //   'mq',
-      //   'dameng',
-      //   'gbase-8s',
-      //   'sybase ase',
-      //   'gaussdb200',
-      //   'dummy db',
-      //   'rest api',
-      //   'custom_connection',
-      //   'gridfs',
-      //   'hive',
-      //   'tcp_udp',
-      //   'hbase',
-      //   'kudu',
-      //   'greenplum',
-      //   'tidb',
-      //   'hana',
-      //   'clickhouse',
-      //   'kundb',
-      //   'adb_postgres',
-      //   'adb_mysql',
-      //   'vika',
-      //   'hazelcast_cloud_cluster'
-      // ],
       model: '',
       config: {
         items: []
@@ -765,11 +709,8 @@ export default {
     this.id = this.$route.params.id || ''
     this.databaseType = this.$route.query.databaseType || this.$store.state.createConnection.databaseType
     //确认类型 按照type 初始化变量
-    if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-      this.model = Object.assign({}, defaultCloudModel['default'], defaultCloudModel['drs'])
-    } else {
-      this.model = Object.assign({}, defaultModel['default'])
-    }
+
+    this.model = Object.assign({}, defaultModel['default'])
     switch (this.databaseType) {
       case 'kafka':
         this.model = Object.assign({}, defaultModel['kafka'])
@@ -802,7 +743,7 @@ export default {
         this.model = Object.assign({}, defaultModel['vika'])
         break
     }
-    this.getDT(this.databaseType)
+    this.checkDataTypeOptions(this.databaseType)
     this.initTimezones()
     let self = this
     defaultConfig = [
@@ -993,9 +934,9 @@ export default {
     checkDataTypeOptions(type) {
       this.model.database_type = type
       this.getFormConfig()
-      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-        this.getInstanceRegion()
-      }
+      // if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
+      //   this.getInstanceRegion()
+      // }
     },
     initTimezones() {
       let timezones = [{ label: '(Database Timezone)', value: '' }]
@@ -1020,17 +961,6 @@ export default {
         timezones.push({ label: UTCName, value: timezone })
       }
       this.timezones = timezones
-    },
-    // 获取数据库类型列表
-    async getDT(type) {
-      let result = await databaseTypesModel.get()
-      if (result.data) {
-        let options = result.data.map(dt => {
-          return { label: dt.name, value: dt.type }
-        })
-        this.dataTypes = options
-        this.checkDataTypeOptions(type)
-      }
     },
     //获取维格表的空间
     getSpaceVika(id) {
@@ -1155,11 +1085,6 @@ export default {
     getFormConfig() {
       let type = this.model.database_type
       type = TYPEMAPCONFIG[type] || type //特殊数据源名称转换
-      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-        type = 'drs_' + type
-      } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-        type = 'dfs_' + type
-      }
       let func = formConfig[type]
 
       if (func) {
@@ -1208,21 +1133,21 @@ export default {
       this.loadingFrom = false
     },
     //第一步 选择实例
-    getInstanceRegion() {
-      this.$api('tcm')
-        .getRegionZone()
-        .then(data => {
-          this.instanceMock = data.data || []
-          if (this.model.region === '' && this.instanceMock.length > 0) {
-            this.model.region = this.instanceMock[0].code
-          }
-          this.changeConfig(this.instanceMock || [], 'region')
-          this.changeInstanceRegion()
-        })
-        .catch(() => {
-          this.$message.error('请求失败')
-        })
-    },
+    // getInstanceRegion() {
+    //   this.$api('tcm')
+    //     .getRegionZone()
+    //     .then(data => {
+    //       this.instanceMock = data.data || []
+    //       if (this.model.region === '' && this.instanceMock.length > 0) {
+    //         this.model.region = this.instanceMock[0].code
+    //       }
+    //       this.changeConfig(this.instanceMock || [], 'region')
+    //       this.changeInstanceRegion()
+    //     })
+    //     .catch(() => {
+    //       this.$message.error('请求失败')
+    //     })
+    // },
     changeInstanceRegion() {
       let zone = this.instanceMock.filter(item => item.code === this.model.region)
       if (zone.length > 0) {

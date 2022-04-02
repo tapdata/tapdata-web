@@ -69,8 +69,8 @@ export default {
       ],
       comingAllowDatabase: [], // 即将上线
       otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],
-      typeMap: TYPEMAP,
-      automationType: '' //插件化数据源
+      typeMap: TYPEMAP
+      // automationType: '' //插件化数据源
     }
   },
   created() {
@@ -89,7 +89,7 @@ export default {
     this.database = allowDataType.filter(type => this.database.includes(type)) || []
     //this.database.push('vika')
     this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || []
-    this.getDatabaseType()
+    // this.getDatabaseType()
   },
   methods: {
     getImgByType,
@@ -100,22 +100,6 @@ export default {
     databaseType(type) {
       this.$emit('databaseType', type)
       this.$store.commit('createConnection', { databaseType: type })
-    },
-    getDatabaseType() {
-      this.$api('DatabaseTypes')
-        .get()
-        .then(res => {
-          if (res.data) {
-            this.automationType = res.data || []
-            this.automationType = this.automationType.filter(
-              item =>
-                !this.otherType.includes(item.type) &&
-                !this.database.includes(item.type) &&
-                !this.comingAllowDatabase.includes(item.type) &&
-                !['mem_cache', 'rest api', 'log_collect'].includes(item.type)
-            )
-          }
-        })
     }
   }
 }

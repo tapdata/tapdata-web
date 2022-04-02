@@ -6,7 +6,6 @@ import { Loading, Message } from 'element-ui'
 import routes from './routes'
 
 Vue.use(Router)
-
 export default i18n => {
   const router = new Router({
     routes: routes
@@ -33,27 +32,6 @@ export default i18n => {
       //若token存在，获取权限
       let permissions = sessionStorage.getItem('tapdata_permissions')
       if (!permissions || isFirst) {
-        if (token) {
-          try {
-            let res = await usersModel.getUserInfo()
-            let user = res.data
-            cookie.set('email', user.email)
-            cookie.set('username', user.username || '')
-            cookie.set('isAdmin', parseInt(user.role) || 0)
-            cookie.set('user_id', user.id)
-            cookie.delete('show_guide')
-            if (!user.isCompleteGuide) {
-              cookie.set('show_guide', 1)
-            }
-            userId = user.id
-          } catch (e) {
-            if (e.response && e.response.msg) {
-              Message.error({
-                message: e.response.msg
-              })
-            }
-          }
-        }
         //无权限，说明是首次进入页面，重新请求后台获取
         let loading = Loading.service({
           fullscreen: true,
@@ -108,7 +86,7 @@ export default i18n => {
       if (['login', 'registry', 'passwordReset', 'verificationEmail', 'registyResult'].includes(to.name)) {
         next()
       } else {
-        window.lastLocationHref = location.href
+        sessionStorage.setItem('lastLocationHref', location.href)
         next('/login')
       }
     }

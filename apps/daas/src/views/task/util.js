@@ -1,6 +1,5 @@
 import i18n from '@/i18n'
 import { formatTime } from '@/utils/util'
-import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from '@/const'
 // 全量任务，标识为已完成
 export function isFinished(data = {}) {
   // 全量状态下，任务完成状态时，前端识别为已停止
@@ -126,50 +125,4 @@ export function getOverviewData(data) {
     completeTime,
     currentStatus
   }
-}
-
-// 获取子任务状态统计
-export function getSubTaskStatus(rows = []) {
-  const statusMap = {
-    running: ['wait_run', 'scheduling', 'running', 'stopping'],
-    not_running: ['edit', 'stop', 'complete'],
-    error: ['error', 'schedule_failed']
-  }
-  const len = rows.length
-  let result = [],
-    item = {}
-  if (len === 0) {
-    result = [
-      Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP['edit'], {
-        status: 'edit'
-      })
-    ]
-  } else {
-    let tempMap = {}
-    rows.forEach(r => {
-      tempMap[r.status] = true
-    })
-    if (Object.keys(tempMap).length === 1) {
-      let status = rows[0]?.status
-      status = status === 'edit' ? 'ready' : status
-      result = [
-        Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP[status], {
-          status: status
-        })
-      ]
-    } else {
-      for (let key in ETL_STATUS_MAP) {
-        item = Object.assign({}, ETL_STATUS_MAP[key])
-        item.status = key
-        item.count = 0
-        rows.forEach(el => {
-          if (statusMap[key].includes(el.status)) {
-            item.count++
-          }
-        })
-        result.push(item)
-      }
-    }
-  }
-  return result
 }

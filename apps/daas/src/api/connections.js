@@ -57,4 +57,7 @@ export default class Connections extends PublicAPI {
   findAll(filter) {
     return axios.get(`${this.url}/findAll?filter=` + encodeURIComponent(JSON.stringify(filter)))
   }
+  listAll(filter) {
+    return axios.get(`${this.url}/listAll?filter=` + encodeURIComponent(JSON.stringify(filter)))
+  }
 }

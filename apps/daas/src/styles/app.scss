@@ -64,13 +64,6 @@ textarea::-webkit-input-placeholder {
   font-weight: 500;
 } /* 使用webkit内核的浏览器 */
 
-.status-running,
-.status-complete,
-.status-finish,
-.status-finished {
-  color: #178061;
-  background-color: #c4f3cb;
-}
 .status-block {
   display: inline-block;
   min-width: 60px;
@@ -78,6 +71,16 @@ textarea::-webkit-input-placeholder {
   text-align: center;
   border-radius: 2px;
   box-sizing: border-box;
+}
+.status-running {
+  color: #178061;
+  background-color: #c4f3cb;
+}
+.status-complete,
+.status-finish,
+.status-finished{
+  color: #008B58;
+  background-color: #B4EDD8;
 }
 .status-error {
   color: #d44d4d;
@@ -93,19 +96,20 @@ textarea::-webkit-input-placeholder {
 }
 .status-scheduled,
 .status-scheduling,
+.status-wait_run,
 .status-pause {
   color: #2c65ff;
   background-color: #ddebff;
 }
-.status-wait_run,
+
 .status-waiting {
   color: #c39700;
   background-color: #fdf1c8;
 }
 .status-pausing,
 .status-stop {
-  color: #d5760e;
-  background-color: #ffe9cf;
+  color: #C88500;
+  background-color: #FFE4AE;
 }
 .status-stopping {
   color: #c39700;
