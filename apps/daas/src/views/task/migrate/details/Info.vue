@@ -112,33 +112,45 @@
         <Chart ref="chart" type="line" :data="lineData" :options="lineOptions" class="type-chart h-100"></Chart>
       </div>
       <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
-        <div class="right-box grey-background">
-          <div class="fw-bold mb-3">{{ $t('task_info_full_progress') }}</div>
-          <div class="progress-box flex justify-content-center align-items-center position-relative">
-            <ElProgress
-              type="circle"
-              color="rgba(44, 101, 255, 1)"
-              :stroke-width="3"
-              :percentage="progress"
-              :show-text="false"
-              :width="50"
-            ></ElProgress>
-            <div class="flex justify-content-center position-absolute color-primary fw-bolder din-font">
-              {{ progress }}%
+        <div
+          v-if="task && task.parentTask && ['initial_sync', 'initial_sync+cdc'].includes(task.parentTask.type)"
+          class="right-box grey-background"
+        >
+          <div class="fw-bold right-box-text">{{ $t('task_info_full_progress') }}</div>
+          <div class="flex-1 flex flex-column justify-content-center">
+            <div class="progress-box flex justify-content-center align-items-center position-relative mt-1">
+              <ElProgress
+                type="circle"
+                color="rgba(44, 101, 255, 1)"
+                :stroke-width="3"
+                :percentage="progress"
+                :show-text="false"
+                :width="48"
+              ></ElProgress>
+              <div class="flex justify-content-center position-absolute color-primary fw-bolder din-font">
+                {{ progress }}%
+              </div>
+            </div>
+            <div v-if="progress === 100" class="right-box-text font-color-sub mt-1">
+              {{ $t('task_info_full_time') }}：{{ formatTime(endTs) }}
+            </div>
+            <div v-else class="right-box-text font-color-sub mt-1">
+              {{ $t('task_monitor_full_completion_time') + '：' + (finishDuration || $t('task_info_calculating')) }}
             </div>
           </div>
-          <div v-if="progress === 100" class="font-color-sub mt-3">
-            {{ $t('task_info_full_time') }}：{{ formatTime(endTs) }}
-          </div>
-          <div v-else class="font-color-sub mt-2">
-            {{ $t('task_monitor_full_completion_time') + '：' + (finishDuration || $t('task_info_calculating')) }}
-          </div>
         </div>
-        <div class="right-box mt-3 grey-background">
-          <div class="fw-bold">{{ $t('task_info_incremental_delay') }}</div>
-          <div class="color-primary fw-bolder fs-5">{{ formatMs(writeData.replicateLag) }}</div>
-          <div class="font-color-sub">
-            {{ $t('task_info_increment_time_point') }}：{{ formatTime(writeData.cdcTime) }}
+        <div
+          v-if="task && task.parentTask && ['cdc', 'initial_sync+cdc'].includes(task.parentTask.type)"
+          class="right-box grey-background"
+        >
+          <div class="fw-bold right-box-text">{{ $t('task_info_incremental_delay') }}</div>
+          <div class="flex-1 flex flex-column justify-content-center">
+            <div class="color-primary fw-bolder fs-5 mt-1" style="height: 48px; line-height: 48px">
+              {{ formatMs(writeData.replicateLag) }}
+            </div>
+            <div class="right-box-text font-color-sub mt-1">
+              {{ $t('task_info_increment_time_point') }}：{{ formatTime(writeData.cdcTime) }}
+            </div>
           </div>
         </div>
       </div>
@@ -900,10 +912,15 @@ export default {
 .right-box {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 16px;
+  padding: 8px 0;
   flex: 1;
   height: 50%;
+}
+.right-box + .right-box {
+  margin-top: 16px;
+}
+.right-box-text {
+  line-height: 22px;
 }
 .filter-datetime-range {
   font-size: 12px;

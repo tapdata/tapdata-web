@@ -82,6 +82,10 @@ export default {
             'x-component': 'Select',
             enum: [
               {
+                label: this.$t('task_setting_off'),
+                value: ''
+              },
+              {
                 label: this.$t('task_setting_streaming'), //流式读取
                 value: 'STREAMING'
               },
@@ -90,11 +94,12 @@ export default {
                 value: 'POLLING'
               }
             ],
+            default: 'STREAMING',
             'x-reactions': {
               dependencies: ['sync_type'],
               fulfill: {
                 state: {
-                  visible: '{{$deps[0] !== "cdc" || ($deps[0] === "cdc" && $deps[1])}}'
+                  visible: '{{$deps[0] !== "initial_sync"}}'
                 }
               }
             }
@@ -137,11 +142,12 @@ export default {
                 value: 'POLLING'
               }
             ],
+            default: 'STREAMING',
             'x-reactions': {
               dependencies: ['sync_type'],
               fulfill: {
                 state: {
-                  visible: '{{$deps[0] !== "cdc" || ($deps[0] === "cdc" && $deps[1])}}'
+                  visible: '{{$deps[0] !== "initial_sync"}}'
                 }
               }
             }
@@ -309,23 +315,6 @@ export default {
                     }
                   }
                 }
-              },
-              increShareReadMode: {
-                title: this.$t('task_setting_share_cdc_mode'), //共享增量读取的模式
-                type: 'string',
-                'x-decorator': 'FormItem',
-                'x-component': 'Select',
-                enum: [
-                  {
-                    label: this.$t('task_setting_streaming'), //流式读取
-                    value: 'STREAMING'
-                  },
-                  {
-                    label: this.$t('task_setting_polling'), //轮询读取
-                    value: 'POLLING'
-                  }
-                ],
-                default: 'STREAMING'
               },
               increment: {
                 title: this.$t('task_setting_automatic_index'), //自动创建索引
@@ -547,6 +536,7 @@ export default {
       }
       //合并配置
       let target = {}
+      let source = {}
       if (
         [
           'hana',
@@ -563,7 +553,7 @@ export default {
           'hbase'
         ].includes(sourceType) //只支持全量同步
       ) {
-        target = {
+        source = {
           sync_type: {
             title: this.$t('task_setting_sync_type'),
             type: 'string',
@@ -589,10 +579,9 @@ export default {
             }
           }
         }
-      } else {
-        target = mapping[type] || {}
       }
-      config.properties.layout.properties = Object.assign(config?.properties?.layout?.properties, target)
+      target = mapping[type] || {}
+      config.properties.layout.properties = Object.assign(config?.properties?.layout?.properties, target, source)
 
       // AutoDDL
       if (type === sourceType && ['mysql', 'oracle'].includes(type)) {

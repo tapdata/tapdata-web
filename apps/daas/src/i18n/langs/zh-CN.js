@@ -1004,6 +1004,7 @@ export default {
   task_setting_share_cdc_mode: '共享增量读取的模式',
   task_setting_streaming: '流式读取',
   task_setting_polling: '轮询读取',
+  task_setting_off: '关闭',
   task_setting_cdc_engine_filter: '启用引擎过滤',
   task_setting_maximum_transaction: '事务最大时长(小时)',
   task_setting_create_tables: '自动建表',

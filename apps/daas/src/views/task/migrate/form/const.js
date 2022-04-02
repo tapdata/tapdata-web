@@ -1,7 +1,7 @@
 export const SETTING_MODEL = {
   name: '',
   desc: '',
-  sync_type: '', //'全量+增量'
+  // sync_type: '', //'全量+增量'
   automaticallyCreateTables: true, //自动建表
   isStopOnError: true, //遇到错误停止
   isSchedule: true, //定时调度任务
@@ -13,7 +13,7 @@ export const SETTING_MODEL = {
   readShareLogMode: false, //共享挖掘
   isOpenAutoDDL: false, //自动处理ddl
   increOperationMode: true, //增量数据处理模式，支持批量false  跟逐行true
-  increShareReadMode: '', //共享增量读取模式, 支持流式读取STREAMING和轮询读取POLLING两种模式
+  // increShareReadMode: '', //共享增量读取模式, 支持流式读取STREAMING和轮询读取POLLING两种模式
   increSyncConcurrency: false, //增量同步并发写入 默认关闭
   existDataProcessMode: 'keepData', //已有数据处理模式 保持已存在的数据 keepData，运行前删除已存在的数据removeData，删除表结构 dropTable
   writeStrategy: 'updateOrInsert', //数据写入策略配置，数据写入模式： 更新已存在或者插入新数据（updateOrInsert）， 追加写入(appendWrite)， 更新写入(updateWrite)15
