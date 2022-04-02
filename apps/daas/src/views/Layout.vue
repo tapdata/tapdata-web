@@ -96,7 +96,7 @@
         </div>
       </ElAside>
 
-      <ElMain class="layout-main" :style="{ marginLeft: isCollapse ? '66px' : '200px' }">
+      <ElMain class="layout-main" :style="{ marginLeft: isCollapse ? '66px' : isNotAside ? 0 : '200px' }">
         <PageHeader></PageHeader>
         <RouterView class="flex-fill" />
       </ElMain>
