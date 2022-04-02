@@ -280,7 +280,8 @@ export default {
       })
       // vika字段处理
       if (this.targetIsVika) {
-        let field = target?.[0] || {}
+        target = target?.filter(t => !t.is_deleted) || []
+        let field = target[0] || {}
         let addOperations = this.$refs.fieldMappingDom.addOperations
         fieldMappingTableData = source
           .filter(t => !t.is_deleted)
