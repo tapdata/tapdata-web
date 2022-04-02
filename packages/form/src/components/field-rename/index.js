@@ -47,17 +47,14 @@ export const FieldRename = connect(
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options?.[0] || []
+        fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
+        this.fields = fields || []
         this.originalFields = JSON.parse(JSON.stringify(fields))
-        fields = convertSchemaToTreeData(fields) //将模型转换成tree
         //查找是否有被删除的字段且operation有操作
         if (this.operations?.length > 0) {
           let temporary = handleOperation(fields, this.operations)
           temporary.map(item => {
             let targetIndex = fields.findIndex(n => n.id === item.id)
-            if (targetIndex === -1 && item.op !== 'CREATE') {
-              // data.operations.splice(index,1); //删除找不到id的数据
-              return
-            }
             if (item.op === 'RENAME') {
               const name = fields[targetIndex].field_name
               let newName = name.split('.')
@@ -344,6 +341,7 @@ export const FieldRename = connect(
               this.handleRename(node, node.data)
             })
           }
+          this.checkAll = false
         },
         handleAllToLowerCase() {
           let ids = this.$refs.tree.getCheckedNodes()
@@ -354,6 +352,7 @@ export const FieldRename = connect(
               this.handleRename(node, node.data)
             })
           }
+          this.checkAll = false
         },
         handleAllReset() {
           let ids = this.$refs.tree.getCheckedNodes(false, true)
@@ -365,6 +364,7 @@ export const FieldRename = connect(
               }
             })
           }
+          this.checkAll = false
         },
         handleCheckAllChange() {
           if (this.checkAll) {

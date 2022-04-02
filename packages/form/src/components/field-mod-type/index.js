@@ -83,7 +83,6 @@ export const FieldModType = connect(
       render() {
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
-        debugger
         let fields = this.options?.[0] || []
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
         fields = this.checkOps(fields)
