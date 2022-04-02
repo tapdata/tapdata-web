@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="$t('dataFlow.createNew')"
+    :title="$t('dataFlow.advancedMode')"
     :visible="dialogVisible"
     width="60%"
     :before-close="handleClose"
@@ -9,7 +9,7 @@
   >
     <div class="creat">
       <ul class="item" v-readonlybtn="'Data_SYNC_menu'">
-        <li v-if="$getSettingByKey('SHOW_SIMPLE_SCENE')" @click="db2db" v-readonlybtn="'SYNC_job_creation'">
+        <!-- <li v-if="$getSettingByKey('SHOW_SIMPLE_SCENE')" @click="db2db" v-readonlybtn="'SYNC_job_creation'">
           <span class="model">{{ $t('dataFlow.guidingMode') }}</span>
           <div class="content">
             <i class="iconfont icon-shujukuqianyi2"></i>
@@ -18,9 +18,9 @@
               {{ $t('dataFlow.databseMigration') }}</span
             >
           </div>
-        </li>
+        </li> -->
         <li @click="goNew" v-readonlybtn="'SYNC_job_creation'">
-          <span class="model">{{ $t('dataFlow.advancedMode') }}</span>
+          <!-- <span class="model">{{ $t('dataFlow.advancedMode') }}</span> -->
           <div class="content">
             <i class="iconfont icon-shujukuqianyi2"></i>
             <span>
@@ -29,7 +29,7 @@
             >
           </div>
         </li>
-        <li class="marTop25" @click="goNewCust" v-readonlybtn="'SYNC_job_creation'">
+        <li @click="goNewCust" v-readonlybtn="'SYNC_job_creation'">
           <div class="content">
             <i class="iconfont icon-renwubianpai2"></i>
             <span>
@@ -58,7 +58,7 @@
           </div>
         </li>
         <template v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
-          <li class="marTop25" @click="handleModules" v-if="$has('API_management_menu') && $has('API_creation')">
+          <li @click="handleModules" v-if="$has('API_management_menu') && $has('API_creation')">
             <div class="content">
               <i class="iconfont icon-api2"></i>
               <span>
@@ -67,11 +67,7 @@
               >
             </div>
           </li>
-          <li
-            class="marTop25"
-            @click="handleDataVerification"
-            v-if="$has('Data_verify_menu') && $has('verify_job_creation')"
-          >
+          <li @click="handleDataVerification" v-if="$has('Data_verify_menu') && $has('verify_job_creation')">
             <div class="content">
               <i class="iconfont icon-hechabidui-copy"></i>
               <span>
@@ -234,9 +230,6 @@ $color: #999999;
     box-sizing: border-box;
     overflow: hidden;
   }
-  li.marTop25 {
-    margin-top: 25px;
-  }
   .model {
     display: block;
     color: $color;
@@ -286,7 +279,7 @@ $color: #999999;
 .simple-scene {
   .el-dialog__body {
     min-height: 240px;
-    padding: 30px 90px;
+    // padding: 30px 90px;
   }
 }
 </style>

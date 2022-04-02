@@ -76,6 +76,7 @@ export default {
 
 <style lang="scss" scoped>
 .filter-datetime {
+  position: relative;
   padding-left: 8px;
   .filter-datetime__title {
     margin-right: 8px;
@@ -92,10 +93,15 @@ export default {
       }
     }
     &.empty-time {
-      width: auto;
+      width: 90px !important;
       ::v-deep {
         .el-input__inner {
           width: 80px;
+          text-align: center;
+          font-weight: 400;
+        }
+        .el-input__inner::placeholder {
+          color: map-get($fontColor, sub);
         }
       }
     }
@@ -128,6 +134,6 @@ export default {
   position: absolute;
   top: 11px;
   right: 4px;
-  color: map-get($fontColor, sub);
+  color: #d8d8d8;
 }
 </style>

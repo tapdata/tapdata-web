@@ -290,8 +290,8 @@
               </div>
               <div class="status bg-main rounded-1 py-3 px-2">
                 <span class="mr-2" v-for="item in previewData.statusResult" :key="item.status">
-                  <span class="din-font fs-6 text-rdlevel">{{ item.count }}</span>
-                  <span class="pl-1 fs-8 text-sub">{{ item.text }} </span>
+                  <span class="din-font fs-6 font-color-rdlevel">{{ item.count }}</span>
+                  <span class="pl-1 fs-8 font-color-sub">{{ item.text }} </span>
                 </span>
                 <div class="proportion">
                   <span
@@ -1164,8 +1164,6 @@ export default {
         }
       })
       this.proportionData = proportionData
-      // eslint-disable-next-line
-      console.log('proportionData', data, total, proportionData)
 
       this.isShowDetails = true
       this.previewData = data

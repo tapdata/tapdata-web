@@ -2590,22 +2590,7 @@
   color: inherit !important;
 }
 
-.text-main {
-  color: map-get($fontColor , main );
-}
-.text-sub{
-  color: map-get($fontColor , sub );
-}
-.text-rdlevel{
-  color: map-get($fontColor , rdlevel );
-}
 
-.text-normal {
-  color: map-get($fontColor , normal );
-}
-.text-light {
-  color: map-get($fontColor , light );
-}
 
 .bg-main {
   background-color: #fafafa !important;
@@ -12084,11 +12069,21 @@
 .font-color-main {
   color: map-get($fontColor, main) !important;
 }
-
 .font-color-sub {
   color: map-get($fontColor, sub) !important;
 }
-
+.font-color-rdlevel{
+  color: map-get($fontColor , rdlevel )!important;
+}
+.font-color-normal {
+  color: map-get($fontColor , normal )!important;
+}
+.font-color-light {
+  color: map-get($fontColor , light )!important;
+}
+.font-color-slight {
+  color: map-get($fontColor , slight )!important;
+}
 .font-color-disable {
   color: map-get($fontColor, disable) !important;
 }
@@ -12113,6 +12108,11 @@
 .bg-color-disable {
   background-color: map-get($color, disable) !important;
 }
+
+.bg-color-main {
+  background-color: map-get($bgColor, main) !important;
+}
+
 
 /*
 * public 具体的样式类

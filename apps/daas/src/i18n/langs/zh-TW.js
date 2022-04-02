@@ -1240,7 +1240,7 @@ export default {
   share_detail_end_time: '結束時間',
   share_detail_to: '至',
   share_detail_incremental_play: '增量延遲',
-  share_detail_incremental_time: '增量延遲所處的時間點',
+  share_detail_incremental_time: '所處的時間點',
 
   share_task_table_name: '挖掘任務名稱',
   share_task_table_time: '挖掘所處時間',

@@ -1001,6 +1001,7 @@ export default {
               if (item === 'setting') {
                 let setting = res.data[item]
                 res.data['sync_type'] = setting.sync_type
+                res.data[item] = this.syncType[res.data[item]]
                 item = 'sync_type'
               }
               if (['cdcDelayTime', 'taskLastHour'].includes(item)) {

@@ -11,10 +11,10 @@
       <!-- 元数据管理详情 头部信息 start -->
       <el-header class="matadata-head">
         <div class="img-box">
-          <img src="static/editor/table.svg" />
+          <img src="@/assets/images/tu.png" />
         </div>
         <div class="table-info">
-          <h3>
+          <h3 class="fs-7 font-color-main">
             <span v-if="metadataDataObj.alias_name">
               {{ metadataDataObj.alias_name }}
             </span>
@@ -30,7 +30,7 @@
               $t('metadata.details.renamed')
             }}</el-button>
           </h3>
-          <div class="description">
+          <div class="description pt-2">
             <span v-if="metadataDataObj.comment">{{ metadataDataObj.comment }}</span>
 
             <span v-else>{{ $t('metadata.details.clickAddDes') }}</span>
@@ -61,7 +61,7 @@
         <el-aside class="metadata-aside" v-show="asideFalg">
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
-              <span class="fs-7 text-rdlevel fw-sub">{{ $t('metadata.details.basicAttributes') }}</span>
+              <span class="fs-7 font-color-rdlevel fw-sub">{{ $t('metadata.details.basicAttributes') }}</span>
               <i @click.stop="asideFalg = false" class="iconfont icon-outdent text-primary"></i>
             </div>
             <ul class="metadata-aside-main pt-4">
@@ -128,7 +128,7 @@
 
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
-              <span class="fs-7 text-rdlevel fw-sub">{{ $t('metadata.details.businessAttributes') }}</span>
+              <span class="fs-7 font-color-rdlevel fw-sub">{{ $t('metadata.details.businessAttributes') }}</span>
               <el-button type="text" size="mini" @click.stop="creatBusiness"
                 >+ {{ $t('metadata.details.creat') }}</el-button
               >
@@ -912,20 +912,24 @@ export default {
       overflow: hidden;
       box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
       .img-box {
-        width: 32px;
-        height: 32px;
+        width: 55px;
+        height: 55px;
+        line-height: 55px;
+        border-radius: 50%;
+        text-align: center;
+        background-color: rgba(44, 101, 255, 0.08);
+        img {
+          width: 30px;
+          vertical-align: middle;
+        }
       }
       .table-info {
         padding-left: 20px;
-        h3 {
-          font-size: 18px;
-          color: #333;
-        }
         .description {
           padding: 0 0 5px;
           font-size: 12px;
           span {
-            color: #aaa;
+            color: rgba(0, 0, 0, 0.2);
           }
           .e-button {
             padding: 5px 12px;

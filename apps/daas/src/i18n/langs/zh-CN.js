@@ -1251,7 +1251,7 @@ export default {
   share_detail_end_time: '结束时间',
   share_detail_to: '至',
   share_detail_incremental_play: '增量延迟',
-  share_detail_incremental_time: '增量延迟所处的时间点',
+  share_detail_incremental_time: '所处的时间点',
 
   share_task_table_name: '挖掘任务名称',
   share_task_table_time: '挖掘所处时间',

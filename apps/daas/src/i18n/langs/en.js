@@ -1296,7 +1296,7 @@ export default {
   share_detail_end_time: 'End time',
   share_detail_to: 'to',
   share_detail_incremental_play: 'Incremental delay',
-  share_detail_incremental_time: 'The time point at which the incremental delay is located',
+  share_detail_incremental_time: 'The time point',
 
   share_task_table_name: 'Mining task name',
   share_task_table_time: 'Mining time',

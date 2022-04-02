@@ -230,13 +230,7 @@ export default {
         //   }
         // ],
         xAxis: {
-          type: 'time',
-          axisLabel: {
-            // interval: 1
-            //   formatter: val => {
-            //     return formatTime(val)
-            //   }
-          }
+          type: 'time'
         },
         yAxis: [
           {
@@ -264,8 +258,8 @@ export default {
           }
         ],
         grid: {
-          left: 0,
-          right: '2px',
+          // left: 0,
+          right: '8px',
           top: '36px',
           bottom: 0
         },
