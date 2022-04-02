@@ -128,6 +128,33 @@ export default {
           this.setNodeError(o)
         }
       }
+
+      this.setNodeInputsWatcher(
+        this.$watch('node.$inputs', v => {
+          if (!this.node || !v) return
+          const $inputs = this.form.getFieldState('$inputs')
+          // eslint-disable-next-line no-console
+          console.log('🤖️ node.$inputs', this.node.name, v)
+          if ($inputs && $inputs.value.join(',') !== v.join(',')) {
+            // eslint-disable-next-line no-console
+            console.log('👷 更新$inputs', $inputs.value)
+            this.form.setValuesIn('$inputs', [...v])
+          }
+        })
+      )
+      this.setNodeOutputsWatcher(
+        this.$watch('node.$outputs', v => {
+          if (!this.node || !v) return
+          const $outputs = this.form.getFieldState('$outputs')
+          // eslint-disable-next-line no-console
+          console.log('🤖️ node.$outputs', this.node.name, v)
+          if ($outputs && $outputs.value.join(',') !== v.join(',')) {
+            // eslint-disable-next-line no-console
+            console.log('👷 更新$outputs', $outputs.value)
+            this.form.setValuesIn('$outputs', [...v])
+          }
+        })
+      )
     },
 
     // 监听连线变动
@@ -159,7 +186,14 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['setNodeValue', 'updateNodeProperties', 'setNodeError', 'clearNodeError']),
+    ...mapMutations('dataflow', [
+      'setNodeValue',
+      'updateNodeProperties',
+      'setNodeError',
+      'clearNodeError',
+      'setNodeInputsWatcher',
+      'setNodeOutputsWatcher'
+    ]),
 
     ...mapActions('dataflow', ['updateDag']),
 

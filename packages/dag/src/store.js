@@ -119,7 +119,9 @@ const getState = () => ({
   editVersion: null,
 
   canBeConnectedNodeIds: [],
-  LOCALES_STORE: observable.ref({})
+  LOCALES_STORE: observable.ref({}),
+  nodeInputsWatcher: null,
+  nodeOutputsWatcher: null
 })
 
 // 初始化 state
@@ -346,7 +348,13 @@ const mutations = {
 
   // 设置激活节点
   setActiveNode(state, nodeId) {
-    console.log('setActiveNode', nodeId) // eslint-disable-line
+    if (!nodeId || state.activeNodeId !== nodeId) {
+      // eslint-disable-next-line no-console
+      console.log('清空节点输入输出的监听')
+      state.nodeInputsWatcher?.()
+      state.nodeOutputsWatcher?.()
+    }
+
     state.activeNodeId = nodeId
     state.activeType = nodeId ? 'node' : null
   },
@@ -577,17 +585,23 @@ const mutations = {
 
       if (node.$outputs?.length) {
         node.$outputs.forEach(id => {
-          const { $inputs = [] } = state.NodeMap[id]
-          const i = $inputs.indexOf(id)
-          if (~i) $inputs.splice(i, 1)
+          const outputNode = state.NodeMap[id]
+          if (outputNode) {
+            const { $inputs = [] } = outputNode
+            const i = $inputs.indexOf(id)
+            if (~i) $inputs.splice(i, 1)
+          }
         })
       }
 
       if (node.$inputs?.length) {
         node.$inputs.forEach(id => {
-          const { $outputs = [] } = state.NodeMap[id]
-          const i = $outputs.indexOf(id)
-          if (~i) $outputs.splice(i, 1)
+          const inputNode = state.NodeMap[id]
+          if (inputNode) {
+            const { $outputs = [] } = inputNode
+            const i = $outputs.indexOf(id)
+            if (~i) $outputs.splice(i, 1)
+          }
         })
       }
     })
@@ -802,6 +816,14 @@ const mutations = {
 
   setValidateLanguage() {
     setValidateLanguage(langMap[localStorage.getItem('tapdata_localize_lang')])
+  },
+
+  setNodeInputsWatcher(state, watcher) {
+    state.nodeInputsWatcher = watcher
+  },
+
+  setNodeOutputsWatcher(state, watcher) {
+    state.nodeOutputsWatcher = watcher
   }
 }
 

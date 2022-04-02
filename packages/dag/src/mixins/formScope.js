@@ -10,7 +10,9 @@ export default {
       scope: {
         $index: null, // 数组索引，防止使用该值，在表单校验(validateBySchema)时出错
 
-        $NodeMap: {},
+        findNodeById: id => {
+          return this.$store.state.dataflow.NodeMap[id]
+        },
 
         /**
          * 统一的异步数据源方法
@@ -486,6 +488,17 @@ export default {
 
           nodeId = sourceNode[0].value
 
+          try {
+            const data = await metadataApi.nodeSchema(nodeId)
+            return (data?.[0]?.fields || []).map(item => item.field_name)
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('nodeSchema', e)
+            return []
+          }
+        },
+
+        loadNodeFieldNamesById: async nodeId => {
           try {
             const data = await metadataApi.nodeSchema(nodeId)
             return (data?.[0]?.fields || []).map(item => item.field_name)

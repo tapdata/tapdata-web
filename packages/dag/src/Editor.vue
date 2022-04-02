@@ -329,7 +329,8 @@ export default {
       Mousetrap.bind('mod+v', () => {
         !this.stateIsReadonly && this.pasteNodes(this.command)
       })
-      Mousetrap.bind('mod+z', () => {
+      Mousetrap.bind('mod+z', e => {
+        e.preventDefault()
         !this.stateIsReadonly && this.command.undo()
       })
       Mousetrap.bind('mod+shift+z', () => {
