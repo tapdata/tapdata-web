@@ -35,6 +35,29 @@ export default {
           }
         },
 
+        /**
+         * 可配置的异步加载
+         * @param config
+         * @param serviceParams
+         * @returns {(function(*): void)|*}
+         */
+        useAsyncDataSourceByConfig: (config, ...serviceParams) => {
+          // withoutField: 不往service方法传field参数
+          const { service, fieldName = 'dataSource', withoutField = false } = config
+          return field => {
+            field.loading = true
+            let fetch = withoutField ? service(...serviceParams) : service(field, ...serviceParams)
+            fetch.then(
+              action.bound(data => {
+                if (fieldName === 'value') {
+                  field.setValue(data)
+                } else field[fieldName] = data
+                field.loading = false
+              })
+            )
+          }
+        },
+
         useRemoteQuery: (service, fieldName = 'dataSource', ...serviceParams) => {
           return field => {
             const handle = keyword => {
@@ -499,6 +522,7 @@ export default {
         },
 
         loadNodeFieldNamesById: async nodeId => {
+          if (!nodeId) return []
           try {
             const data = await metadataApi.nodeSchema(nodeId)
             return (data?.[0]?.fields || []).map(item => item.field_name)
