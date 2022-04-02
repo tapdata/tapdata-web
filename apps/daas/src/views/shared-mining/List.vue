@@ -122,10 +122,11 @@
       custom-class="edit-dialog"
       :title="$t('share_list_edit_title')"
       :close-on-click-modal="false"
+      :destroy-on-close="true"
       :visible.sync="editDialogVisible"
     >
       <el-form ref="editForm" label-position="left" label-width="150px" :model="editForm" :rules="rulesEdit">
-        <el-form-item size="mini" :label="$t('share_form_edit_name')" prop="edit_name">
+        <el-form-item size="mini" :label="$t('share_form_edit_name')" prop="name">
           <el-input clearable v-model="editForm.name"></el-input>
         </el-form-item>
         <el-form-item size="mini" :label="$t('share_form_setting_log_time')">
@@ -220,7 +221,7 @@ export default {
         ]
       },
       rulesEdit: {
-        edit_name: [{ required: true, message: this.$t('shared_cdc_name'), trigger: 'blur' }]
+        name: [{ required: true, message: this.$t('shared_cdc_name'), trigger: 'blur' }]
       }
     }
   },
