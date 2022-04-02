@@ -224,11 +224,7 @@ export default {
     }
   },
   created() {
-    this.loadWs()
     this.init()
-  },
-  destroyed() {
-    this.clearWs()
   },
   watch: {
     $route() {
@@ -367,20 +363,6 @@ export default {
           ]
         }
       ]
-    },
-    loadWs() {
-      if (!this.$ws) {
-        return
-      }
-      this.$ws.on('loadVikaResult', this.setSpaceVika)
-    },
-    clearWs() {
-      if (!this.$ws) {
-        return
-      }
-      if (this.model.database_type === 'vika') {
-        this.$ws.off('loadVikaResult', this.setSpaceVika)
-      }
     },
     async initData(data) {
       let editData = null
@@ -703,15 +685,20 @@ export default {
     },
     formChange(data) {
       let filed = data.field || ''
-      let value = data.value
       //维格表
       if (filed === 'plain_password' && this.model.database_type === 'vika') {
-        this.getSpaceVika()
+        this.getSpaceVika('', data => {
+          // 不在列表中，清空空间站
+          if (!data?.result?.find(t => t.id === this.model.vika_space_id)) {
+            this.model.vika_space_id = ''
+          }
+        })
       }
     },
     //获取维格表的空间
-    getSpaceVika(id) {
-      if ((!this.model.plain_password || this.model.plain_password === '') && !id) {
+    getSpaceVika(id, callback) {
+      let { plain_password } = this.model
+      if (!plain_password && !id) {
         return
       }
       let filter = { where: { status: { $in: ['Running'] } }, size: 10, page: 1, sort: ['createAt desc'] }
@@ -723,10 +710,18 @@ export default {
           data: {
             type: 'loadVika',
             load_type: 'space',
-            api_token: this.model.plain_password,
+            api_token: plain_password,
             database_host: 'https://api.vika.cn/fusion/v1'
           }
         }
+        if (!plain_password) {
+          obj.data.id = id
+        }
+        this.$ws.once('loadVikaResult', data => {
+          this.setSpaceVika(data)
+          callback?.(data)
+          this.$ws.off('loadVikaResult', this.setSpaceVika)
+        })
         this.$ws.send(obj)
       })
     },
