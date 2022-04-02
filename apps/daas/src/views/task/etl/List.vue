@@ -164,7 +164,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="startDisabled(row)"
+              :disabled="editDisabled(row)"
               @click="handleEditor(row.id)"
             >
               {{ $t('button_edit') }}
@@ -1115,6 +1115,16 @@ export default {
         statusResult
           .filter(t => t.count > 0)
           .every(t => ['edit', 'wait_run', 'scheduling', 'running', 'stopping'].includes(t.status))
+      )
+    },
+    editDisabled(row) {
+      const statusResult = row.statusResult || []
+      // 按钮可用状态： 待启动  错误  已停止 完成 编辑中
+      return (
+        this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
+        statusResult
+          .filter(t => t.count > 0)
+          .every(t => !['ready', 'error', 'stop', 'complete', 'edit'].includes(t.status))
       )
     },
     stopDisabled(data) {
