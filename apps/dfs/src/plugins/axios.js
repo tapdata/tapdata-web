@@ -75,6 +75,9 @@ _axios.interceptors.request.use(function (config) {
   let user = window.__USER_INFO__
   if (user) {
     config.headers['X-Token'] = user.token
+    if (process.env.NODE_ENV === 'development') {
+      config.headers['user_id'] = user.id
+    }
   }
   config.withCredentials = true
 
