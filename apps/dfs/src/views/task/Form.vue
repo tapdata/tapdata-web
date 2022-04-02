@@ -614,7 +614,7 @@ import Transfer from './Transfer'
 import FieldMapping from '@/components/field-mapping/main'
 import VIcon from '@/components/VIcon'
 import { SETTING_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from '../task/const'
-import { uniqueArr } from '@/util'
+import { uniqueArr, getDatabaseTypes } from '@/util'
 
 let defaultConfig = []
 export default {
@@ -662,7 +662,6 @@ export default {
       dataSourceZone: '',
       dataSourceMock: [],
       dialogDatabaseTypeVisible: false,
-      allowDataType: this.$settings.ALLOW_CONNECTION_TYPE,
       supportTwoWay: false,
       systemTimeZone: '',
       options: [
@@ -1419,7 +1418,7 @@ export default {
         }
         case 'databaseType': {
           let source = items.find(it => it.field === 'source_filter_databaseType')
-          let TYPEMAP = this.$const.TYPEMAP
+          let TYPEMAP = getDatabaseTypes(true)
           //不包含远端类型
           if (source) {
             // dfs源端不支持 redis elasticsearch

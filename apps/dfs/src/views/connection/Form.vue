@@ -155,6 +155,7 @@ import formConfig from './config'
 import GitBook from './GitBook'
 import StatusTag from '../../components/StatusTag'
 import { SUPPORT_DB } from '../../const'
+import { getDatabaseTypes } from '@/util'
 let defaultConfig = []
 export default {
   components: { GitBook, StatusTag },
@@ -186,7 +187,7 @@ export default {
       },
       checkItems: null,
       databaseType: '',
-      typeMap: this.$const.TYPEMAP,
+      typeMap: getDatabaseTypes(true),
       timer: null,
       status: '',
       loadingFrom: true,

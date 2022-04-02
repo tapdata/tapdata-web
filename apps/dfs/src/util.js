@@ -1,33 +1,5 @@
-import { TOPOLOGY_MAP } from './const'
 import moment from 'moment'
 
-export function formatAgent(data) {
-  let { regionMap, zoneMap } = window.__REGION__
-  data.regionFmt = `${regionMap[data.region] || data.region} | ${zoneMap[data.zone] || data.zone}`
-  data.topology = TOPOLOGY_MAP[data.spec?.direction]?.split('（')[0]
-  data.endTimeStr = data.endTime ? moment(data.endTime).format('YYYY-DD-MM') : ''
-  return data
-}
-export function queryParams(data, isPrefix) {
-  isPrefix = isPrefix ? isPrefix : false
-  let prefix = isPrefix ? '?' : ''
-  let _result = []
-  for (let key in data) {
-    let value = data[key]
-    // 去掉为空的参数
-    if (['', undefined, null].includes(value)) {
-      continue
-    }
-    if (value.constructor === Array) {
-      value.forEach(_value => {
-        _result.push(encodeURIComponent(key) + '[]=' + encodeURIComponent(_value))
-      })
-    } else {
-      _result.push(encodeURIComponent(key) + '=' + encodeURIComponent(value))
-    }
-  }
-  return _result.length ? prefix + _result.join('&') : ''
-}
 export function toDecimal2(x) {
   var float = parseFloat(x)
   if (isNaN(float)) {
@@ -92,30 +64,6 @@ export function uniqueArr(arr = [], key = 'id') {
     }
     return cur
   }, [])
-}
-// cookie
-export const cookie = {
-  // 设置cookie
-  set: (name, value, day) => {
-    const date = new Date()
-    date.setDate(date.getDate() + day)
-    document.cookie = name + '=' + value + ';expires=' + date.toUTCString()
-  },
-  // 获取cookie
-  get: key => {
-    var arr = document.cookie.split('; ')
-    for (var i = 0; i < arr.length; i++) {
-      var arr1 = arr[i].split('=')
-      if (arr1[0] == key) {
-        return arr1[1]
-      }
-    }
-    return ''
-  },
-  // 删除cookie
-  remove: name => {
-    cookie.set(name, '', -1)
-  }
 }
 let timeout = null
 export function delayTrigger(func, t) {
@@ -202,4 +150,21 @@ export const downloadBlob = (res, name = '') => {
   dom.click()
   dom.parentNode.removeChild(dom)
   window.URL.revokeObjectURL(url)
+}
+// 设置数据源
+export const setDatabaseTypes = (data = []) => {
+  localStorage.setItem('DatabaseTypes', JSON.stringify(data))
+}
+// 支持的数据源
+export const getDatabaseTypes = (mapping = false) => {
+  let str = localStorage.getItem('DatabaseTypes')
+  let result = str ? JSON.parse(str) : []
+  if (mapping) {
+    let obj = {}
+    result.forEach(el => {
+      obj[el.type] = el.name
+    })
+    return obj
+  }
+  return result
 }

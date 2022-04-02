@@ -213,6 +213,7 @@ import TaskProgress from './TaskProgress'
 import FieldMapping from '@/components/field-mapping/main'
 import Log from './Log.vue'
 import { isFinished } from '../task/copy/util'
+import { getDatabaseTypes } from '@/util'
 export default {
   components: { StatusTag, TaskProgress, Log, FieldMapping },
   data() {
@@ -382,11 +383,12 @@ export default {
           source = stage
         }
       })
+      let typeMap = getDatabaseTypes(true)
       Object.assign(this.task, {
         sourceName: source.name,
         targetName: target.name,
-        sourceType: this.$const.TYPEMAP[source.databaseType] || this.$const.TYPEMAP[source.database_type],
-        targetType: this.$const.TYPEMAP[target.databaseType] || this.$const.TYPEMAP[target.database_type]
+        sourceType: typeMap[source.databaseType] || typeMap[source.database_type],
+        targetType: typeMap[target.databaseType] || typeMap[target.database_type]
       })
       let ids = [source.connectionId, target.connectionId]
       let filter = {

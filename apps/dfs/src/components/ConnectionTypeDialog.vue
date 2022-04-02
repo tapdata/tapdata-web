@@ -40,6 +40,7 @@
 
 <script>
 import VIcon from '@/components/VIcon'
+import { setDatabaseTypes } from '@/util'
 
 export default {
   name: 'connectionTypeDialog',
@@ -94,6 +95,7 @@ export default {
       }
       this.$axios.get('tm/api/DatabaseTypes?filter=' + encodeURIComponent(JSON.stringify(filter))).then(data => {
         this.list = data
+        setDatabaseTypes(data)
       })
     },
     changeFnc() {
