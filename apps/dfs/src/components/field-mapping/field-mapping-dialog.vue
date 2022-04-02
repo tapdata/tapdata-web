@@ -1597,7 +1597,8 @@ export default {
             load_type: 'node',
             space_id: this.model.vika_space_id,
             database_host: this.model.database_host,
-            api_token: this.model.plain_password
+            api_token: this.model.plain_password,
+            id: this.model.connectionId
           }
         }
         this.$ws.send(obj)
@@ -1615,7 +1616,8 @@ export default {
           node_id: node?.data?.id,
           space_id: this.model.vika_space_id,
           database_host: this.model.database_host,
-          api_token: this.model.plain_password
+          api_token: this.model.plain_password,
+          id: this.model.connectionId
         }
       }
       this.$ws.send(obj)
