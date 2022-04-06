@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="85px" height="44px" viewBox="0 0 85 44" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Console_icon_New data development</title>
+    <defs>
+        <rect id="path-1" x="0" y="-2.13162821e-14" width="83.6047059" height="42.9" rx="2"></rect>
+    </defs>
+    <g id="控制台" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="控制台-新建" transform="translate(-754.000000, -320.000000)">
+            <g id="Console_icon_New-data-development" transform="translate(754.971765, 320.695000)">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <use id="蒙版" fill="#FFFFFF" xlink:href="#path-1"></use>
+                <line x1="35.8195173" y1="12.87" x2="45.0161138" y2="12.87" id="直线" stroke="#2C65FF" stroke-linecap="square" mask="url(#mask-2)"></line>
+                <line x1="56.3889291" y1="12.87" x2="65.5855256" y2="12.87" id="直线" stroke="#2C65FF" stroke-linecap="square" mask="url(#mask-2)"></line>
+                <rect id="矩形" fill="#DCDEE8" mask="url(#mask-2)" x="21.0313894" y="10.8901706" width="16.5882353" height="4.54395448" rx="1"></rect>
+                <rect id="矩形" fill="#DCDEE8" mask="url(#mask-2)" x="42.2643306" y="11.0554053" width="16.5882353" height="4.54395448" rx="1"></rect>
+                <rect id="矩形" fill="#DCDEE8" mask="url(#mask-2)" x="21.0313894" y="18.8101706" width="16.5882353" height="4.54395448" rx="1"></rect>
+                <rect id="矩形" fill="#DCDEE8" mask="url(#mask-2)" x="42.2643306" y="18.9754053" width="16.5882353" height="4.54395448" rx="1"></rect>
+                <rect id="矩形" fill="#DCDEE8" mask="url(#mask-2)" x="63.4972718" y="11.0554053" width="16.5882353" height="4.54395448" rx="1"></rect>
+                <rect id="矩形" fill-opacity="0.709330952" fill="#2C65FF" mask="url(#mask-2)" x="-0.201551754" y="-0.429829375" width="17.9152941" height="43" rx="2"></rect>
+                <rect id="矩形" fill="#F7F9FD" mask="url(#mask-2)" x="1.12550707" y="1.65017062" width="15.2611765" height="2.64" rx="1"></rect>
+                <rect id="矩形" fill="#F7F9FD" opacity="0.213321504" mask="url(#mask-2)" x="1.12550707" y="11.5501706" width="15.2611765" height="1.32" rx="0.66"></rect>
+                <rect id="矩形" fill="#F7F9FD" opacity="0.213321504" mask="url(#mask-2)" x="1.12550707" y="15.5101706" width="15.2611765" height="1.32" rx="0.66"></rect>
+                <rect id="矩形" fill="#F7F9FD" opacity="0.213321504" mask="url(#mask-2)" x="1.12550707" y="19.4701706" width="15.2611765" height="1.32" rx="0.66"></rect>
+                <rect id="矩形" fill="#9DB8EF" mask="url(#mask-2)" x="2.45256589" y="28.0501706" width="3.31764706" height="3.3" rx="1"></rect>
+                <rect id="矩形" fill="#9DB8EF" mask="url(#mask-2)" x="7.09727178" y="28.0501706" width="3.31764706" height="3.3" rx="1"></rect>
+                <rect id="矩形" fill="#9DB8EF" mask="url(#mask-2)" x="11.7419777" y="28.0501706" width="3.31764706" height="3.3" rx="1"></rect>
+                <rect id="矩形" fill="#9DB8EF" mask="url(#mask-2)" x="2.45256589" y="23.4301706" width="3.31764706" height="3.3" rx="1"></rect>
+                <rect id="矩形" fill="#9DB8EF" mask="url(#mask-2)" x="7.09727178" y="23.4301706" width="3.31764706" height="3.3" rx="1"></rect>
+                <rect id="矩形" fill="#9DB8EF" mask="url(#mask-2)" x="11.7419777" y="23.4301706" width="3.31764706" height="3.3" rx="1"></rect>
+            </g>
+        </g>
+    </g>
+</svg>
