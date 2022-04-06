@@ -1,5 +1,4 @@
 import { NodeType } from './extends/NodeType'
-// import { NONSUPPORT_CDC, NONSUPPORT_SYNC, NONSUPPORT_TARGET } from '../constants'
 
 export class Table extends NodeType {
   constructor(node) {
@@ -10,18 +9,6 @@ export class Table extends NodeType {
       if (attr.formSchema) this.formSchema = attr.formSchema
       if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
     }
-
-    /*const { databaseType } = this.attr
-
-    // 不能作为源节点
-    if (NONSUPPORT_SYNC.includes(databaseType) && NONSUPPORT_CDC.includes(databaseType)) {
-      this.attr.maxOutputs = 0
-    }
-
-    // 不能作为目标节点
-    if (NONSUPPORT_TARGET.includes(databaseType)) {
-      this.attr.maxInputs = 0
-    }*/
   }
 
   attr = {
@@ -34,21 +21,18 @@ export class Table extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
-      isSource: {
-        type: 'boolean',
-        'x-visible': false,
-        'x-reactions': '{{isSource}}'
+      $inputs: {
+        type: 'array',
+        'x-display': 'hidden'
       },
-      isTarget: {
-        type: 'boolean',
-        'x-visible': false,
-        'x-reactions': '{{isTarget}}'
+      $outputs: {
+        type: 'array',
+        'x-display': 'hidden'
       },
       databaseType: {
         type: 'string',
         'x-display': 'hidden'
       },
-
       grid: {
         type: 'void',
         'x-component': 'Space',
@@ -59,10 +43,10 @@ export class Table extends NodeType {
           filterIndex: []
         },
         'x-reactions': {
-          dependencies: ['isSource', 'isTarget'],
+          dependencies: ['$inputs', '$outputs'],
           fulfill: {
             schema: {
-              'x-component-props.filterIndex': '{{!!$deps[0] || !!$deps[1] ? [] : [1]}}'
+              'x-component-props.filterIndex': '{{$deps[0]?.length || $deps[1]?.length ? [] : [1]}}'
             }
           }
         },
@@ -131,11 +115,11 @@ export class Table extends NodeType {
                     }
                   },
                   {
-                    dependencies: ['isTarget'],
+                    dependencies: ['$inputs'],
                     fulfill: {
                       schema: {
                         // title: '{{console.log("tableName", $deps[0]),$deps[0] ? "表(可输入创建新表)" : "表"}}',
-                        'x-component-props.allowCreate': '{{$deps[0]}}'
+                        'x-component-props.allowCreate': '{{$deps[0].length>0}}'
                         // 'x-decorator-props.feedbackText': '{{$deps[0] && "可输入创建新表"}}'
                       }
                     }
@@ -148,17 +132,16 @@ export class Table extends NodeType {
               }
             }
           },
-
           rightCell: {
             type: 'void',
             properties: {
               sourceNodeConfig: {
                 type: 'void',
                 'x-reactions': {
-                  dependencies: ['isSource'],
+                  dependencies: ['$outputs'],
                   fulfill: {
                     state: {
-                      visible: '{{!!$deps[0]}}'
+                      visible: '{{$deps[0].length > 0}}'
                     }
                   }
                 },
@@ -220,15 +203,7 @@ export class Table extends NodeType {
                     'x-decorator-props': {
                       wrapperWidth: 300
                     },
-                    'x-component': 'Radio.Group',
-                    'x-reactions': {
-                      dependencies: ['isSource'],
-                      fulfill: {
-                        state: {
-                          visible: '{{!!$deps[0]}}'
-                        }
-                      }
-                    }
+                    'x-component': 'Radio.Group'
                   },
                   increasesql: {
                     type: 'string',
@@ -332,10 +307,10 @@ export class Table extends NodeType {
               targetNodeConfig: {
                 type: 'void',
                 'x-reactions': {
-                  dependencies: ['isTarget'],
+                  dependencies: ['$inputs'],
                   fulfill: {
                     state: {
-                      visible: '{{!!$deps[0]}}'
+                      visible: '{{$deps[0].length > 0}}'
                     }
                   }
                 },
@@ -411,7 +386,10 @@ export class Table extends NodeType {
                       multiple: true,
                       filterable: true
                     },
-                    'x-reactions': ['{{useAsyncDataSource(loadNodeFieldNames,"dataSource",$values.id, "primaryKey")}}']
+                    'x-reactions': [
+                      // $values.tableName 的作用仅是收集该字段的依赖，tableName字段更新时会重新运行下面的方法
+                      '{{useAfterPatchAsyncDataSource({service: loadNodeFieldNames}, $values.id, "primaryKey", $values.tableName)}}'
+                    ]
                   }
                 }
               }
