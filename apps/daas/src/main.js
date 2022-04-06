@@ -71,7 +71,7 @@ window.openDebug = () => {
 // }
 
 window._TAPDATA_OPTIONS_ = {
-  logoUrl: require('@/assets/images/logo.png'),
+  logoUrl: require('@/assets/images/login.png'),
   version: 'DAAS_BUILD_NUMBER',
   loadingImg: require('@/assets/icons/loading.svg')
 }
