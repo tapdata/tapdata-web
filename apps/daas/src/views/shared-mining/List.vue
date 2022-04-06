@@ -36,14 +36,23 @@
         </template>
       </el-table-column>
       <el-table-column width="200" fixed="right" :label="$t('column_operation')">
-        <template slot-scope="scope">
-          <el-button size="mini" type="text" @click="run([scope.row.id])">{{ $t('task_list_run') }}</el-button>
+        <template #default="{ row }">
+          <el-button size="mini" type="text" :disabled="row.disabledData.start" @click="run([row.id])">{{
+            $t('task_list_run')
+          }}</el-button>
           <el-divider direction="vertical"></el-divider>
-          <el-button size="mini" type="text" @click="stop([scope.row.id])">{{ $t('task_list_stop') }}</el-button>
+          <ElLink v-if="isShowForceStop(row.statuses)" type="primary" @click="forceStop([row.id])">
+            {{ $t('task_list_force_stop') }}
+          </ElLink>
+          <el-button v-else size="mini" type="text" :disabled="row.disabledData.stop" @click="stop([row.id])">{{
+            $t('task_list_stop')
+          }}</el-button>
           <el-divider direction="vertical"></el-divider>
-          <el-button size="mini" type="text" @click="edit(scope.row)">{{ $t('button_edit') }}</el-button>
+          <el-button size="mini" type="text" :disabled="row.disabledData.edit" @click="edit(row)">{{
+            $t('button_edit')
+          }}</el-button>
           <el-divider direction="vertical"></el-divider>
-          <el-button size="mini" type="text" @click="detail(scope.row)">{{ $t('button_details') }}</el-button>
+          <el-button size="mini" type="text" @click="detail(row)">{{ $t('button_details') }}</el-button>
         </template>
       </el-table-column>
     </TablePage>
@@ -147,7 +156,7 @@
 <script>
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
-import { getSubTaskStatus } from '@/utils/util'
+import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 
 let timeout = null
 export default {
@@ -279,6 +288,8 @@ export default {
               }
               item.createTime = this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               let statuses = item.statuses
+              console.log('getTaskBtnDisabled', getTaskBtnDisabled(item))
+              item.disabledData = getTaskBtnDisabled(item)
               item.statusResult = getSubTaskStatus(statuses)[0].status
               return item
             })
@@ -382,6 +393,34 @@ export default {
           }
         })
     },
+    getConfirmMessage(operateStr, isBulk, name) {
+      let title = operateStr + '_confirm_title',
+        message = operateStr + '_confirm_message'
+      if (isBulk) {
+        title = 'bulk_' + title
+        message = 'bulk_' + message
+      }
+      const h = this.$createElement
+      let strArr = this.$t('dataFlow.' + message).split('xxx')
+      let msg = h('p', null, [
+        strArr[0],
+        h(
+          'span',
+          {
+            class: 'color-primary'
+          },
+          name
+        ),
+        strArr[1]
+      ])
+      return {
+        msg,
+        title: this.$t('dataFlow.' + title)
+      }
+    },
+    isShowForceStop(data) {
+      return data?.length && data.every(t => ['stopping'].includes(t.status))
+    },
     stop(ids) {
       this.$confirm(this.$t('message.stopInitial_syncMessage'), this.$t('dataFlow.importantReminder'), {
         type: 'warning'
@@ -391,6 +430,26 @@ export default {
         }
         this.$api('Task')
           .batchStop(ids)
+          .then(res => {
+            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.table.fetch()
+          })
+          .catch(err => {
+            this.$message.error(err.data?.message)
+          })
+      })
+    },
+    forceStop(ids, item = {}) {
+      let msgObj = this.getConfirmMessage('force_stop', ids.length > 1, item.name)
+      this.$confirm(msgObj.msg, '', {
+        type: 'warning',
+        showClose: false
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        this.$api('Task')
+          .forceStop(ids)
           .then(res => {
             this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
             this.table.fetch()
