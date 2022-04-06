@@ -80,7 +80,7 @@
             {{ $t('task_button_reset') }}
           </ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton type="text" @click="toStatistics(scope.row)">{{ $t('task_details_running_statistics') }}</ElButton>
+          <ElButton type="text" @click="toStatistics(scope.row)">{{ $t('page_title_task_stat') }}</ElButton>
         </div>
       </template>
     </TableList>
