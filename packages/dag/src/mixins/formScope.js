@@ -537,8 +537,11 @@ export default {
             const data = await metadataApi.nodeSchema(nodeId)
             const fields = data?.[0]?.fields || []
             fields.sort((a, b) => {
-              if (a.unique !== b.unique) {
-                return a.unique ? -1 : 1
+              const aIsPrimaryKey = a.primary_key_position > 0
+              const bIsPrimaryKey = b.primary_key_position > 0
+
+              if (aIsPrimaryKey !== bIsPrimaryKey) {
+                return aIsPrimaryKey ? -1 : 1
               } else {
                 return a.field_name.localeCompare(b.field_name)
               }
