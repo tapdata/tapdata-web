@@ -36,7 +36,7 @@ export default {
   name: 'LoginHeader',
   data() {
     return {
-      logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
+      logoUrl: window._TAPDATA_OPTIONS_.loginUrl,
       languages: Languages,
       lang: localStorage.getItem('tapdata_localize_lang')
     }
