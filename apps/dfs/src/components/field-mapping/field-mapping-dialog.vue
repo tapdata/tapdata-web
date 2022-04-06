@@ -459,10 +459,10 @@
           <ElCol :span="7" class="flex">
             <ElSelect v-model="item.sourceType" :disabled="item.disabled" filterable required clearable>
               <ElOption
-                :label="item.dbType"
-                :value="item.dbType"
                 v-for="(item, index) in typeMappingSource"
                 :key="index"
+                :label="item.dbType"
+                :value="item.dbType"
                 :disabled="!!batchFieldTypeForm.list.find(t => t.sourceType === item.dbType)"
               ></ElOption>
             </ElSelect>
@@ -479,9 +479,9 @@
               @change="initBatchDataType(arguments[0], item)"
             >
               <ElOption
+                v-for="(item, index) in typeMapping"
                 :label="item.dbType"
                 :value="item.dbType"
-                v-for="(item, index) in typeMapping"
                 :key="index"
               ></ElOption>
             </ElSelect>
@@ -547,7 +547,6 @@
 
 <script>
 import VIcon from '../VIcon'
-import { uniqueArr } from '@/util'
 export default {
   name: 'FieldMapping',
   components: { VIcon },
@@ -1233,27 +1232,24 @@ export default {
         return
       }
       let rule = target.rules[0] || {}
-      for (let key in rule) {
-        item[key] = rule[key]
-      }
       // 长度
-      item.lengthDisabled = item.minPrecision === item.maxPrecision
-      if (!item.length) {
-        let max = target.precision?.length > 0 ? Math.max(...target.precision) : null
-        item.length = max || item.maxPrecision
-      }
+      item.lengthDisabled = rule.minPrecision === undefined || rule.maxPrecision === undefined
+      let maxLength = target.precision?.length > 0 ? Math.max(...target.precision) : null
+      item.length = maxLength || rule.maxPrecision
       if (!item.lengthDisabled) {
         item.lengthTooltip =
-          this.$t('task_mapping_table_length_range') + `[ ${item.minPrecision} , ${item.maxPrecision} ]`
+          this.$t('task_mapping_table_length_range') + `[ ${rule.minPrecision} , ${rule.maxPrecision} ]`
+      } else {
+        item.lengthTooltip = null
       }
       // 精度
-      item.precisionDisabled = item.minScale === item.maxScale
-      if (!item.precision) {
-        let max = target.scale?.length > 0 ? Math.max(...target.scale) : null
-        item.precision = max || item.maxScale
-      }
+      item.precisionDisabled = rule.minScale === undefined || rule.maxScale === undefined
+      let maxPrecision = target.scale?.length > 0 ? Math.max(...target.scale) : null
+      item.precision = maxPrecision || rule.maxScale
       if (!item.precisionDisabled) {
-        item.precisionTooltip = this.$t('task_mapping_table_accuracy_range') + `[ ${item.minScale} , ${item.maxScale} ]`
+        item.precisionTooltip = this.$t('task_mapping_table_accuracy_range') + `[ ${rule.minScale} , ${rule.maxScale} ]`
+      } else {
+        item.precisionTooltip = null
       }
     },
     handleClose() {
