@@ -12,8 +12,8 @@
             <i class="el-icon-warning-outline"></i>
             {{ errorMessage }}
           </div>
-          <el-form ref="form" :model="form">
-            <el-form-item>
+          <el-form ref="form" :model="form" :rules="rules">
+            <el-form-item prop="email">
               <el-input
                 v-model="form.email"
                 autocomplete="username"
@@ -21,7 +21,7 @@
                 :placeholder="$t('app.signIn.email_placeholder')"
               ></el-input>
             </el-form-item>
-            <el-form-item>
+            <el-form-item prop="newPassword">
               <el-input
                 v-model="form.newPassword"
                 autocomplete="current-password"
@@ -38,7 +38,7 @@
                 />
               </el-input>
             </el-form-item>
-            <el-form-item>
+            <el-form-item prop="validateCode">
               <el-row :gutter="10">
                 <el-col :span="17">
                   <el-input
@@ -86,7 +86,53 @@ export default {
       },
       errorMessage: '',
       flag: false,
-      passwordType: 'password'
+      passwordType: 'password',
+      rules: {
+        email: [
+          {
+            required: true,
+            trigger: 'blur',
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback(new Error(this.$t('signin_email_require')))
+                // eslint-disable-next-line
+              } else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
+                callback(new Error(this.$t('signin_verify_email_invalid')))
+              } else {
+                callback()
+              }
+            }
+          }
+        ],
+        newPassword: [
+          {
+            required: true,
+            trigger: 'blur',
+            validator: (rule, value, callback) => {
+              if (!value || value.length < 5) {
+                callback(new Error(this.$t('signin_verify_password_invalid')))
+              } else if (/[\s\u4E00-\u9FA5]/.test(value)) {
+                callback(new Error(this.$t('signin_verify_password_notCN')))
+              } else {
+                callback()
+              }
+            }
+          }
+        ],
+        validateCode: [
+          {
+            required: true,
+            trigger: 'blur',
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback(new Error(this.$t('signin_verify_code_not_empty')))
+              } else {
+                callback()
+              }
+            }
+          }
+        ]
+      }
     }
   },
 
@@ -96,56 +142,62 @@ export default {
       this.passwordType = this.flag ? 'text' : 'password'
     },
     submit() {
-      let form = this.form
-      let message = ''
-      if (!form.email || !form.email.trim()) {
-        message = this.$t('signin_email_require')
-      } else if (
-        // eslint-disable-next-line
-        !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)
-      ) {
-        message = this.$t('signin_verify_email_invalid')
-      } else if (!form.newPassword || form.newPassword.length < 5) {
-        message = this.$t('signin_verify_password_invalid')
-        // eslint-disable-next-line
-      } else if (/[\s\u4E00-\u9FA5]/.test(form.newPassword)) {
-        message = this.$t('signin_verify_password_notCN')
-      } else if (!form.validateCode) {
-        message = this.$t('signin_verify_code_not_empty')
-      }
+      // let form = this.form
+      // let message = ''
+      // if (!form.email || !form.email.trim()) {
+      //   message = this.$t('signin_email_require')
+      // } else if (
+      //   // eslint-disable-next-line
+      //   !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(form.email)
+      // ) {
+      //   message = this.$t('signin_verify_email_invalid')
+      // } else if (!form.newPassword || form.newPassword.length < 5) {
+      //   message = this.$t('signin_verify_password_invalid')
+      //   // eslint-disable-next-line
+      // } else if (/[\s\u4E00-\u9FA5]/.test(form.newPassword)) {
+      //   message = this.$t('signin_verify_password_notCN')
+      // } else if (!form.validateCode) {
+      //   message = this.$t('signin_verify_code_not_empty')
+      // }
 
-      if (message) {
-        this.errorMessage = message
-        return
-      }
-      this.loading = true
+      // if (message) {
+      //   this.errorMessage = message
+      //   return
+      // }
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+          this.loading = true
 
-      this.$api('users')
-        .reset(this.form)
-        .then(res => {
-          if (res) {
-            this.$router.push({
-              name: 'verificationEmail',
-              params: { first: 1, data: this.form, type: 'reset' }
+          this.$api('users')
+            .reset(this.form)
+            .then(res => {
+              if (res) {
+                this.$router.push({
+                  name: 'verificationEmail',
+                  params: { first: 1, data: this.form, type: 'reset' }
+                })
+              }
             })
-          }
-        })
-        .catch(e => {
-          if (e?.data?.message) {
-            if (e.data.message === '找不到电子邮件') {
-              this.errorMessage = this.$t('signin_not_mailbox')
-            } else if (e.data.message === '尚未验证电子邮件') {
-              this.errorMessage = this.$t('signin_verify_email_invalid')
-            } else if (e.data.message.includes('Incorect')) {
-              this.errorMessage = this.$t('signin_verify_code_not_incorrect')
-            } else {
-              this.errorMessage = e.data.message
-            }
-          }
-        })
-        .finally(() => {
-          this.loading = false
-        })
+            .catch(e => {
+              if (e?.data?.message) {
+                if (e.data.message === '找不到电子邮件') {
+                  this.errorMessage = this.$t('signin_not_mailbox')
+                } else if (e.data.message === '尚未验证电子邮件') {
+                  this.errorMessage = this.$t('signin_verify_email_invalid')
+                } else if (e.data.message.includes('Incorect')) {
+                  this.errorMessage = this.$t('signin_verify_code_not_incorrect')
+                } else {
+                  this.errorMessage = e.data.message
+                }
+              }
+            })
+            .finally(() => {
+              this.loading = false
+            })
+        } else {
+          return false
+        }
+      })
       this.loading = false
     },
 
@@ -176,7 +228,7 @@ export default {
           }
         })
         .catch(() => {
-          this.$message.success(this.$t('signin_verify_code_error'))
+          this.$message.error(this.$t('signin_verify_code_error'))
         })
     },
 

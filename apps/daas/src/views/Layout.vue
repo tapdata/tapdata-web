@@ -236,14 +236,15 @@
         align-items: center;
         height: 50px;
         line-height: 50px;
-        color: #4e5969;
+        color: rgba(0, 0, 0, 0.6);
         background: #f7f8fa;
         .submenu-item {
+          color: rgba(0, 0, 0, 0.6);
           padding-left: 12px;
         }
         &.is-active,
         &:hover {
-          color: map-get($color, primary);
+          color: map-get($color, primary) !important;
           background: rgba(44, 101, 255, 0.05);
         }
       }
@@ -264,6 +265,7 @@
             background-color: rgba(44, 101, 255, 0.05);
             .submenu-item {
               font-weight: 500;
+              color: map-get($color, primary) !important;
             }
           }
         }
