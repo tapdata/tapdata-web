@@ -127,7 +127,7 @@ export const FieldProcess = connect(
       render() {
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
-        let fields = this.options?.[0] || []
+        let fields = this.options || []
         this.originalFields = JSON.parse(JSON.stringify(fields))
         // apply operations to schema
         //查找是否有被删除的字段且operation有操作
@@ -783,7 +783,7 @@ export const FieldProcess = connect(
           }
         },
         handleCheckAllChange() {
-          let fields = this.options?.[0] || []
+          let fields = this.options || []
           if (!this.checkAll) {
             this.$refs.tree.setCheckedNodes(fields)
             this.checkAll = true

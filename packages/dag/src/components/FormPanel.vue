@@ -81,11 +81,7 @@ export default {
     ]),
 
     node() {
-      return this.activeConnection ? this.nodeById(this.activeConnection.targetId) : this.activeNode
-    },
-
-    sourceNode() {
-      return this.activeConnection ? this.nodeById(this.activeConnection.sourceId) : null
+      return this.activeNode
     },
 
     ins() {
@@ -683,7 +679,7 @@ export default {
     updateNodeProps: debounce(function (form) {
       if (!this.node) return
       const formValues = { ...form.values }
-      const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode'] // 排除属性的更新
+      const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode', '$inputs', '$outputs'] // 排除属性的更新
       filterProps.forEach(path => {
         Path.setIn(formValues, path, undefined)
       })

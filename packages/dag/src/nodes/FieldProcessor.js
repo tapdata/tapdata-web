@@ -20,12 +20,17 @@ export class FieldProcessor extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
+      $inputs: {
+        type: 'array',
+        display: 'none'
+      },
       operations: {
         type: 'array',
         title: '',
         'x-decorator': 'FormItem',
         'x-component': 'FieldProcess',
-        'x-reactions': ['{{useAsyncDataSource(loadSourceNodeField)}}']
+        'x-reactions':
+          '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $values.$inputs[0])}}'
       },
       scripts: {
         type: 'array',
