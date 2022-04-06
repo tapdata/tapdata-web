@@ -19,7 +19,6 @@
                 class="mr-2 db-img"
                 :src="require('web-core/assets/icons/node/' + scope.row.database_type.toLowerCase() + '.svg')"
               />
-              <!-- require('web-core/assets/images/connection-type/' + scope.row.database_type.toLowerCase() + '.png') -->
               <ElLink
                 type="primary"
                 style="display: block; line-height: 20px"
