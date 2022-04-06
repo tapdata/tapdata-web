@@ -1373,6 +1373,11 @@ export default {
         label: option.field_name,
         original_field_name: option.original_field_name
       }
+      if (this.targetIsVika) {
+        op.data_type = option.t_data_type
+        op.precision = option.t_precision
+        op.scale = option.t_scale
+      }
       this.operations.push(op)
       //更新当前选中行数
       this.fieldCount = this.fieldCount - 1
