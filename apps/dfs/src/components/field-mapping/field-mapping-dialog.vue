@@ -979,6 +979,9 @@ export default {
           return //所有字段被删除了 不可以保存任务
         }
         if (this.targetIsVika) {
+          if (index === this.position) {
+            return
+          }
           if (this.fieldMappingTableData.some(t => !t.t_field_name && !t.is_deleted)) {
             this.$message.error(this.$t('task_mapping_table_field_name_empty_check'))
             return
