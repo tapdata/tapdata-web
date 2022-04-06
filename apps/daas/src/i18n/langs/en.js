@@ -1929,5 +1929,23 @@ export default {
   dag_meta_data: 'Meta Data',
   dag_connection: 'Connection',
   dag_table: 'Table',
-  dag_processor_node: 'Processor Node'
+  dag_processor_node: 'Processor Node',
+
+  new_advanced_mode: 'Standard Mode',
+  new_more_features: 'More features',
+  new_data_copy: 'Data copy',
+  new_data_development: 'Data Development',
+  new_data_copy_desc:
+    'Copy the database across databases, suitable for data migration, disaster recovery backup, system multi-activity and other scenarios',
+  new_data_development_desc:
+    'Extract source data and process calculation transformation, such as row filtering, field processing, multi-table merging, etc.',
+  new_create_connection: 'Create data source',
+  new_create_api: 'Create API',
+  new_data_valid: 'Data validation',
+  new_create_connection_desc:
+    'The data source is the premise of creating a transfer task, and all the database and table data nodes in the task come from the data source',
+  new_create_api_desc:
+    'API is data publishing, you can create a new collection API based on the existing collection or through synchronization tasks',
+  new_data_valid_desc:
+    'It can compare and verify the data between the data source and the target of the migration synchronization task, including fast count verification, full table field value verification, associated field value verification, etc.'
 }
