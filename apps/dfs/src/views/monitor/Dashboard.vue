@@ -67,12 +67,12 @@
         <div class="info-item info-title fs-7">{{ infoObj.source.title }}</div>
         <div v-for="(item, index) in infoObj.source.items" :key="'source' + index" class="info-item">
           <span class="font-color-sub">{{ item.label }}: </span>
-          <span class="font-color-main">{{ task[item.key] }}</span>
+          <span class="font-color-main">{{ task[item.key] || '-' }}</span>
         </div>
         <div class="info-item info-title fs-7">{{ infoObj.target.title }}</div>
         <div v-for="(item, index) in infoObj.target.items" :key="'target' + index" class="info-item">
           <span class="font-color-sub">{{ item.label }}: </span>
-          <span class="font-color-main">{{ task[item.key] }}</span>
+          <span class="font-color-main">{{ task[item.key] || '-' }}</span>
         </div>
       </div>
       <div class="panel-right flex-fit h-100 overflow-hidden p-6">
@@ -411,7 +411,7 @@ export default {
           }
           let host = c.database_host
           // mongo 不追加port
-          if (!['mongodb', 'aliyun_mongodb', 'tencent_mongodb', 'mq'].includes(c.database_type)) {
+          if (c.database_port && !['mongodb', 'aliyun_mongodb', 'tencent_mongodb', 'mq'].includes(c.database_type)) {
             host += ':' + c.database_port
           }
           switch (c.database_type) {
