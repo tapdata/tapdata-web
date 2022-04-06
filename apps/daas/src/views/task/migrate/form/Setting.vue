@@ -531,7 +531,15 @@ export default {
           title: this.$t('connection_form_shared_mining'), //共享挖掘日志过滤
           type: 'boolean',
           'x-decorator': 'FormItem',
-          'x-component': 'Switch'
+          'x-component': 'Switch',
+          'x-reactions': {
+            dependencies: ['sync_type'],
+            fulfill: {
+              state: {
+                visible: '{{$deps[0] !== "initial_sync"}}' // 只有增量或全量+增量支持
+              }
+            }
+          }
         }
       }
       //合并配置

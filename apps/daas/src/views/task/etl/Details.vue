@@ -36,18 +36,22 @@
           <div class="operation-row mt-4">
             <VButton
               type="primary"
-              :disabled="startDisabled"
+              :disabled="task.disabledData && task.disabledData.start"
               auto-loading
               @click="start($route.params.id, arguments[0])"
             >
               <VIcon size="12">start-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_start') }}</span>
             </VButton>
-            <VButton :disabled="stopDisabled" :loading="loadingObj.stop" @click="stop($route.params.id, arguments[0])">
+            <VButton
+              :disabled="task.disabledData && task.disabledData.stop"
+              :loading="loadingObj.stop"
+              @click="stop($route.params.id, arguments[0])"
+            >
               <VIcon size="12">pause-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_stop') }}</span>
             </VButton>
-            <VButton :disabled="startDisabled" @click="handleEditor(task.id)">
+            <VButton :disabled="task.disabledData && task.disabledData.edit" @click="handleEditor(task.id)">
               <VIcon size="12">edit-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_edit') }}</span>
             </VButton>
@@ -101,7 +105,7 @@ import History from '../migrate/details/History'
 import Subtask from '../Subtask'
 import Chart from 'web-core/components/chart'
 import { ETL_SUB_STATUS_MAP } from '@/const'
-import { getSubTaskStatus } from '@/utils/util'
+import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 
 let timeout = null
 export default {
@@ -191,28 +195,6 @@ export default {
         this.task?.dag?.nodes?.map(item => {
           return item.connectionId
         }) || []
-      )
-    },
-    startDisabled() {
-      const { statusResult, task } = this
-      return (
-        this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
-        statusResult
-          .filter(t => t.count > 0)
-          .every(t => ['wait_run', 'scheduling', 'running', 'stopping'].includes(t.status))
-      )
-    },
-    stopDisabled() {
-      const { statusResult, task } = this
-      return (
-        this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
-        statusResult
-          .filter(t => t.count > 0)
-          .every(t =>
-            ['ready', 'edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed', 'stopping'].includes(
-              t.status
-            )
-          )
       )
     }
   },
@@ -324,12 +306,11 @@ export default {
       result.creator = result.creator || result.username || result.user?.username || '-'
       result.updatedTime = result.last_updated ? this.formatTime(result.last_updated) : '-'
       result.type = this.syncTypeMap[result.type]
-      let statuses = result.statuses
-      result.statusResult = []
-      if (statuses?.length) {
-        let statusResult = getSubTaskStatus(statuses)
-        result.statusResult = statusResult
-      }
+      result.statusResult = getSubTaskStatus(result.statuses)
+      result.disabledData = getTaskBtnDisabled(
+        result,
+        this.$disabledByPermission('SYNC_job_operation_all_data', result.user_id)
+      )
       this.statusResult = result.statusResult
       return result
     },

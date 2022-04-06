@@ -287,3 +287,53 @@ export function getSubTaskStatus(rows = []) {
   }
   return result
 }
+
+// 同步主任务，按钮的禁用逻辑
+export function getTaskBtnDisabled(row, or) {
+  let result = {
+    start: false,
+    stop: false,
+    edit: false,
+    reset: false,
+    delete: false
+  }
+  let statusResult = []
+  if (row.statusResult) {
+    statusResult = row.statusResult
+  } else {
+    statusResult = getSubTaskStatus(row.statuses)
+  }
+  let filterArr = statusResult.filter(t => t.count > 0)
+  // 统计出3种状态：运行中running、未运行not_running、错误error
+  if (statusResult.length > 1) {
+    // 启动禁用：运行中
+    result.start = filterArr.every(t => ['running'].includes(t.status))
+    // 停止禁用：未运行、错误
+    result.stop = filterArr.every(t => ['not_running', 'error'].includes(t.status))
+    // 编辑可用：未运行、错误
+    result.edit = !filterArr.every(t => ['not_running', 'error'].includes(t.status))
+    // 重置禁用：运行中
+    result.reset = filterArr.every(t => ['running'].includes(t.status))
+    // 删除可用：未运行、错误
+    result.delete = !filterArr.every(t => ['not_running', 'error'].includes(t.status))
+  } else {
+    // 启动可用：待启动、已完成、错误、已停止
+    result.start = !filterArr.every(t => ['ready', 'complete', 'error', 'stop'].includes(t.status))
+    // 停止可用：运行中、停止中
+    result.stop = !filterArr.every(t => ['running', 'stopping'].includes(t.status))
+    // 编辑可用：编辑中、待启动、已完成、错误、已停止 或者 未运行状态
+    result.edit = !filterArr.every(t =>
+      ['edit', 'ready', 'complete', 'error', 'stop', 'not_running'].includes(t.status)
+    )
+    // 重置可用：已完成、错误、已停止
+    result.reset = !filterArr.every(t => ['complete', 'error', 'stop'].includes(t.status))
+    // 删除可用：编辑中、待启动、已完成、错误、已停止
+    result.delete = !filterArr.every(t => ['edit', 'ready', 'complete', 'error', 'stop'].includes(t.status))
+  }
+  if (or) {
+    for (let key in result) {
+      result[key] = or || result[key]
+    }
+  }
+  return result
+}
