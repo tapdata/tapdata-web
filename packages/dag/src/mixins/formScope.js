@@ -1,5 +1,7 @@
 import { Connections, MetadataInstances } from '@daas/api'
 import { action } from '@formily/reactive'
+import { mapState } from 'vuex'
+import { isPlainObj } from '@daas/shared'
 
 const connections = new Connections()
 const metadataApi = new MetadataInstances()
@@ -449,14 +451,7 @@ export default {
             nodeId = edge.source
           }
 
-          let fields
-          try {
-            const data = await metadataApi.nodeSchema(nodeId)
-            fields = data?.[0]?.fields || []
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error('nodeSchema', e)
-          }
+          let fields = await this.scope.loadNodeFieldsById(nodeId)
           let primaryKeys = []
           let result = []
           for (let i = 0; i < fields.length; i++) {
@@ -521,18 +516,85 @@ export default {
           }
         },
 
+        /**
+         * 返回的是字符串数组
+         * @param nodeId
+         * @returns {Promise<*>}
+         */
         loadNodeFieldNamesById: async nodeId => {
+          const fields = await this.scope.loadNodeFieldsById(nodeId)
+          return fields.map(item => item.field_name)
+        },
+
+        /**
+         * 返回的是数组包对象
+         * @param nodeId
+         * @returns {Promise<*|*[]>}
+         */
+        loadNodeFieldsById: async nodeId => {
           if (!nodeId) return []
           try {
             const data = await metadataApi.nodeSchema(nodeId)
-            return (data?.[0]?.fields || []).map(item => item.field_name)
+            const fields = data?.[0]?.fields || []
+            fields.sort((a, b) => {
+              const aIsPrimaryKey = a.primary_key_position > 0
+              const bIsPrimaryKey = b.primary_key_position > 0
+
+              if (aIsPrimaryKey !== bIsPrimaryKey) {
+                return aIsPrimaryKey ? -1 : 1
+              } else {
+                return a.field_name.localeCompare(b.field_name)
+              }
+            })
+            return fields
           } catch (e) {
             // eslint-disable-next-line no-console
             console.error('nodeSchema', e)
             return []
           }
+        },
+
+        /**
+         * 在dag更新接口请求完之后运行
+         * @param service
+         * @param fieldName
+         * @param serviceParams
+         * @returns {(function(*): void)|*}
+         */
+        useAfterPatchAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
+          let withoutField
+          if (isPlainObj(service)) {
+            // 第一个参数是个对象配置
+            let config = service
+            serviceParams.unshift(fieldName)
+            service = config.service
+            fieldName = config.fieldName || 'dataSource'
+            withoutField = config.withoutField // 不往service方法传递field对象
+          }
+
+          return field => {
+            field.loading = true
+            const watcher = this.$watch('editVersion', v => {
+              // eslint-disable-next-line no-console
+              console.log('editVersion', v)
+              watcher()
+              const fetch = withoutField ? service(...serviceParams) : service({ field }, ...serviceParams)
+              fetch.then(
+                action.bound(data => {
+                  if (fieldName === 'value') {
+                    field.setValue(data)
+                  } else field[fieldName] = data
+                  field.loading = false
+                })
+              )
+            })
+          }
         }
       }
     }
+  },
+
+  computed: {
+    ...mapState('dataflow', ['editVersion'])
   }
 }

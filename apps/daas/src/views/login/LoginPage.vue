@@ -1,16 +1,18 @@
 <template>
-  <div class="header">
-    <header>
-      <div class="logo">
-        <img :src="logoUrl" />
+  <div class="page">
+    <img :src="logoUrl" />
+
+    <div class="page-main">
+      <div class="page-main-box">
         <div class="switch-lang" v-if="$getSettingByKey('SHOW_LANGUAGE')">
           <span v-for="(value, key) in languages" :key="key" :class="{ bold: key === lang }" @click="langChange(key)">
             {{ value }}
+            <ElDivider direction="vertical" v-if="key !== 'tc'"></ElDivider>
           </span>
         </div>
+        <slot name="main"></slot>
       </div>
-      <!-- <div class="slogan">{{ $t('app.signIn.slogan') }}</div> -->
-    </header>
+    </div>
   </div>
 </template>
 <script>
@@ -34,7 +36,7 @@ export default {
   name: 'LoginHeader',
   data() {
     return {
-      logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
+      logoUrl: window._TAPDATA_OPTIONS_.loginUrl,
       languages: Languages,
       lang: localStorage.getItem('tapdata_localize_lang')
     }
@@ -50,6 +52,48 @@ export default {
 }
 </script>
 <style scoped lang="scss">
+.page {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  img {
+    height: 100%;
+  }
+  .page-main {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    .page-main-box {
+      display: flex;
+      flex-direction: column;
+      width: 500px;
+      height: 100%;
+    }
+    .switch-lang {
+      padding-top: 50px;
+      text-align: right;
+      color: #c9cdd4;
+      font-weight: 500;
+      font-size: 14px;
+      span {
+        display: inline-block;
+        box-sizing: border-box;
+        height: 18px;
+        line-height: 18px;
+        cursor: pointer;
+        &:hover {
+          color: map-get($fontColor, normal);
+        }
+      }
+      .bold {
+        color: map-get($fontColor, normal);
+        font-weight: 500;
+      }
+    }
+  }
+}
 header {
   padding: 70px 80px 0 80px;
   margin: 0 auto;
@@ -82,10 +126,6 @@ header {
         &:hover {
           color: #333;
         }
-      }
-      .bold {
-        color: #333333;
-        font-weight: 500;
       }
     }
   }

@@ -1,7 +1,6 @@
 <template>
-  <section class="page-registry_email" v-loading="loading">
-    <Header></Header>
-    <main>
+  <LoginPage>
+    <section class="page-registry_email" v-loading="loading">
       <div class="email-main">
         <div class="image iconfont icon-fasongyoujian"></div>
         <div class="text">
@@ -24,12 +23,12 @@
           </div>
         </div>
       </div>
-    </main>
-  </section>
+    </section>
+  </LoginPage>
 </template>
 
 <script>
-import Header from './Header'
+import LoginPage from './LoginPage'
 import factory from '@/api/factory'
 import Cookie from '@daas/shared/src/cookie'
 const usersModel = factory('users')
@@ -42,7 +41,7 @@ const LanguagesKey = {
 
 export default {
   name: 'SignIn',
-  components: { Header },
+  components: { LoginPage },
   data() {
     return {
       type: 'reset',
@@ -199,44 +198,40 @@ export default {
     }
   }
 
-  main {
-    position: relative;
-    margin-top: 100px;
-    .email-main {
-      display: flex;
-      flex-direction: row;
-      width: 500px;
-      height: 150px;
-      margin: 0 auto;
-      text-align: left;
-      .image {
-        padding: 2px 20px 0 0;
-        font-size: 30px;
-        color: map-get($color, primary);
+  .email-main {
+    display: flex;
+    flex-direction: row;
+    width: 500px;
+    height: 150px;
+    margin: 0 auto;
+    text-align: left;
+    .image {
+      padding: 2px 20px 0 0;
+      font-size: 30px;
+      color: map-get($color, primary);
+    }
+    .text {
+      font-size: 14px;
+      color: #666;
+      p {
+        font-size: 18px;
+        user-select: none;
+        padding-bottom: 6px;
+        i {
+          color: map-get($color, primary);
+        }
       }
-      .text {
-        font-size: 14px;
-        color: #666;
-        p {
-          font-size: 18px;
-          user-select: none;
-          padding-bottom: 6px;
+      div {
+        padding-top: 20px;
+        span {
+          color: map-get($color, primary);
+          cursor: pointer;
           i {
-            color: map-get($color, primary);
+            color: #666;
           }
         }
-        div {
-          padding-top: 20px;
-          span {
-            color: map-get($color, primary);
-            cursor: pointer;
-            i {
-              color: #666;
-            }
-          }
-          .noClick {
-            cursor: default;
-          }
+        .noClick {
+          cursor: default;
         }
       }
     }
