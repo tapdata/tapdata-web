@@ -1871,6 +1871,7 @@ export default {
   dag_connection: '连接',
   dag_table: '表',
   dag_processor_node: '处理节点',
+  dag_save_fail: '保存出错，请检查节点',
 
   // 新建
   new_advanced_mode: '标准模式',

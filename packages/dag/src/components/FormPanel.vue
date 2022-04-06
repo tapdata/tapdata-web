@@ -117,7 +117,10 @@ export default {
             // eslint-disable-next-line no-console
             console.log('上一个激活的节点校验结果', result)
           }
-          this.clearNodeError(o)
+
+          if (this.hasNodeError(o) && typeof this.hasNodeError(o) !== 'string') {
+            this.clearNodeError(o)
+          }
         } catch (e) {
           // eslint-disable-next-line no-console
           console.error(e)

@@ -1857,6 +1857,7 @@ export default {
   dag_connection: '連接',
   dag_table: '表',
   dag_processor_node: '處理節點',
+  dag_save_fail: '保存出錯，請檢查節點',
 
   new_advanced_mode: '標準模式',
   new_more_features: '更多功能',

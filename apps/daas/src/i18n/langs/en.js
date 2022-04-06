@@ -1930,6 +1930,7 @@ export default {
   dag_connection: 'Connection',
   dag_table: 'Table',
   dag_processor_node: 'Processor Node',
+  dag_save_fail: 'Save failed, please check node',
 
   new_advanced_mode: 'Standard Mode',
   new_more_features: 'More features',
