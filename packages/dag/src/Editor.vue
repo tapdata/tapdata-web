@@ -101,7 +101,7 @@ import { titleChange } from 'web-core/mixins/titleChange'
 import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from './components/ConfigPanel'
 import { uuid } from '@daas/shared'
-import { DatabaseTypes, Task } from '@daas/api'
+import { Task } from '@daas/api'
 import {
   AddConnectionCommand,
   AddNodeCommand,
@@ -121,7 +121,6 @@ import PaperEmpty from './components/PaperEmpty'
 import EmptyItem from './components/EmptyItem'
 import formScope from './mixins/formScope'
 
-const databaseTypesApi = new DatabaseTypes()
 const taskApi = new Task()
 
 export default {
@@ -206,6 +205,7 @@ export default {
   },
 
   created() {
+    this.setValidateLanguage()
     this.initNodeType()
   },
 
@@ -261,7 +261,8 @@ export default {
       'resetState',
       'selectConnection',
       'deselectAllConnections',
-      'setCanBeConnectedNodeIds'
+      'setCanBeConnectedNodeIds',
+      'setValidateLanguage'
     ]),
 
     ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
@@ -328,7 +329,8 @@ export default {
       Mousetrap.bind('mod+v', () => {
         !this.stateIsReadonly && this.pasteNodes(this.command)
       })
-      Mousetrap.bind('mod+z', () => {
+      Mousetrap.bind('mod+z', e => {
+        e.preventDefault()
         !this.stateIsReadonly && this.command.undo()
       })
       Mousetrap.bind('mod+shift+z', () => {
@@ -351,44 +353,6 @@ export default {
       this.setNodeTypes(_nodeTypes)
       this.setCtorTypes(ctorTypes)
       await this.loadCustomNode()
-    },
-
-    /**
-     * 加载插件化数据源节点
-     * @param allNodeTypes
-     * @returns {Promise<*>}
-     */
-    async loadDatabaseTypes(allNodeTypes) {
-      // 临时过滤本地的数据库节点
-      const localTypes = allNodeTypes.map(item => item.attr.databaseType)
-
-      const { data } = await databaseTypesApi.get({
-        filter: {
-          fields: {
-            id: 1,
-            type: 1,
-            name: 1
-          },
-          where: {
-            type: {
-              nin: localTypes
-            }
-          }
-        }
-      })
-
-      return data.map(item => {
-        return {
-          name: item.name,
-          icon: 'tigerdb',
-          group: 'plugin',
-          type: 'database',
-          constructor: 'Database',
-          attr: {
-            databaseType: item.type
-          }
-        }
-      })
     },
 
     checkCanBeConnected(sourceId, targetId, showMsg) {
@@ -653,6 +617,25 @@ export default {
       const { getters } = this.$store
       const getNodeType = getters['dataflow/nodeType']
       const getCtor = getters['dataflow/getCtor']
+      const outputsMap = {}
+      const inputsMap = {}
+
+      edges.forEach(({ source, target }) => {
+        let _source = outputsMap[source]
+        let _target = inputsMap[target]
+
+        if (!_source) {
+          outputsMap[source] = [target]
+        } else {
+          _source.push(target)
+        }
+
+        if (!_target) {
+          inputsMap[target] = [source]
+        } else {
+          _target.push(source)
+        }
+      })
 
       // 创建节点
       let nodeType
@@ -668,6 +651,9 @@ export default {
             value: ins,
             enumerable: false
           })
+
+          node.$inputs = inputsMap[node.id] || []
+          node.$outputs = outputsMap[node.id] || []
 
           this.addNode(node)
         }

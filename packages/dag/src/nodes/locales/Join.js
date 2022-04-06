@@ -13,7 +13,11 @@ export const Join = {
         dataSource: ['文档', '数组']
       }
     },
-    joinExpressions: '连接字段设置'
+    joinExpressions: {
+      title: '连接字段设置',
+      left: '左侧',
+      right: '右侧'
+    }
   },
   'zh-tw': {
     joinType: {
@@ -29,7 +33,7 @@ export const Join = {
       title: '內嵌類型',
       dataSource: ['文檔', '數組']
     },
-    joinExpressions: '連接字段設置'
+    joinExpressions: { title: '連接字段設置', left: '左侧', right: '右侧' }
   },
   'en-us': {
     joinType: {
@@ -45,6 +49,6 @@ export const Join = {
         dataSource: ['Object', 'Array']
       }
     },
-    joinExpressions: 'Join Expressions'
+    joinExpressions: { title: 'Join Expressions', left: 'Left', right: 'Right' }
   }
 }

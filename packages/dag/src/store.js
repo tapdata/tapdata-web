@@ -6,6 +6,7 @@ import { AddDagCommand } from './command'
 import { Path } from '@formily/path'
 import { observable } from '@formily/reactive'
 import { AllLocales } from './nodes/locales'
+import { setValidateLanguage } from '@formily/core'
 
 const taskApi = new Task()
 const customNodeApi = new CustomNode()
@@ -81,13 +82,13 @@ const getState = () => ({
       type: 'join_processor',
       constructor: 'Join',
       locales: AllLocales.Join
-    },
-    {
+    }
+    /*{
       icon: 'join',
       name: '主从合并',
       type: 'merge_table_processor',
       constructor: 'MergeTable'
-    }
+    }*/
     // {
     //   icon: 'joint-cache',
     //   name: '关联缓存',
@@ -112,11 +113,15 @@ const getState = () => ({
     edges: [] // 连线数据
   },
 
+  NodeMap: {},
+
   dagPromise: null,
   editVersion: null,
 
   canBeConnectedNodeIds: [],
-  LOCALES_STORE: observable.ref({})
+  LOCALES_STORE: observable.ref({}),
+  nodeInputsWatcher: null,
+  nodeOutputsWatcher: null
 })
 
 // 初始化 state
@@ -343,7 +348,13 @@ const mutations = {
 
   // 设置激活节点
   setActiveNode(state, nodeId) {
-    console.log('setActiveNode', nodeId) // eslint-disable-line
+    if (!nodeId || state.activeNodeId !== nodeId) {
+      // eslint-disable-next-line no-console
+      console.log('清空节点输入输出的监听')
+      state.nodeInputsWatcher?.()
+      state.nodeOutputsWatcher?.()
+    }
+
     state.activeNodeId = nodeId
     state.activeType = nodeId ? 'node' : null
   },
@@ -362,10 +373,14 @@ const mutations = {
   // 添加节点
   addNode(state, nodeData) {
     state.dag.nodes.push(nodeData)
+    Vue.set(state.NodeMap, nodeData.id, nodeData)
   },
 
   addNodes(state, nodes) {
-    state.dag.nodes.push(...nodes)
+    nodes.forEach(node => {
+      state.dag.nodes.push(node)
+      Vue.set(state.NodeMap, node.id, node)
+    })
   },
 
   // 更新节点属性
@@ -480,8 +495,22 @@ const mutations = {
   addConnection(state, connection) {
     const { source, target } = connection
     const index = state.dag.edges.findIndex(item => item.source === source && item.target === target)
+    const sourceNode = state.NodeMap[source]
+    const targetNode = state.NodeMap[target]
+    const { $outputs = [] } = sourceNode
+    const { $inputs = [] } = targetNode
 
     if (!~index) state.dag.edges.push(connection)
+
+    if (!$outputs.includes(target)) {
+      $outputs.push(target)
+      Vue.set(sourceNode, '$outputs', $outputs)
+    }
+
+    if (!$inputs.includes(source)) {
+      $inputs.push(source)
+      Vue.set(targetNode, '$inputs', $inputs)
+    }
   },
 
   // 删除连接，清空input中的sourceId、output中的targetId
@@ -490,6 +519,21 @@ const mutations = {
     const index = state.dag.edges.findIndex(item => item.source === source && item.target === target)
 
     if (~index) state.dag.edges.splice(index, 1)
+
+    const sourceNode = state.NodeMap[source]
+    const targetNode = state.NodeMap[target]
+
+    const { $outputs = [] } = sourceNode
+    const { $inputs = [] } = targetNode
+
+    const ti = $outputs.indexOf(target)
+    const si = $inputs.indexOf(source)
+
+    if (~ti) $outputs.splice(ti, 1)
+    if (~si) $inputs.splice(si, 1)
+
+    // Vue.set(sourceNode, '$outputs', $outputs)
+    // Vue.set(targetNode, '$inputs', $inputs)
   },
 
   // 移除节点
@@ -505,8 +549,25 @@ const mutations = {
     }
 
     nodes.splice(index, 1)
+    Vue.delete(state.NodeMap, nodeId)
 
     state.dag.edges = edges.filter(({ source, target }) => nodeId !== source && nodeId !== target)
+
+    if (node.$outputs?.length) {
+      node.$outputs.forEach(id => {
+        const { $inputs = [] } = state.NodeMap[id]
+        const i = $inputs.indexOf(id)
+        if (~i) $inputs.splice(i, 1)
+      })
+    }
+
+    if (node.$inputs?.length) {
+      node.$inputs.forEach(id => {
+        const { $outputs = [] } = state.NodeMap[id]
+        const i = $outputs.indexOf(id)
+        if (~i) $outputs.splice(i, 1)
+      })
+    }
 
     state.stateIsDirty = true
   },
@@ -517,11 +578,39 @@ const mutations = {
    * @param nodeIds
    */
   batchRemoveNode(state, nodeIds) {
-    state.dag.nodes = state.dag.nodes.filter(node => !nodeIds.includes(node.id))
+    nodeIds.forEach(id => {
+      const node = state.NodeMap[id]
+
+      Vue.delete(state.NodeMap, id)
+
+      if (node.$outputs?.length) {
+        node.$outputs.forEach(id => {
+          const outputNode = state.NodeMap[id]
+          if (outputNode) {
+            const { $inputs = [] } = outputNode
+            const i = $inputs.indexOf(id)
+            if (~i) $inputs.splice(i, 1)
+          }
+        })
+      }
+
+      if (node.$inputs?.length) {
+        node.$inputs.forEach(id => {
+          const inputNode = state.NodeMap[id]
+          if (inputNode) {
+            const { $outputs = [] } = inputNode
+            const i = $outputs.indexOf(id)
+            if (~i) $outputs.splice(i, 1)
+          }
+        })
+      }
+    })
 
     if (nodeIds.includes(state.activeNodeId) && state.activeType === 'node') {
       state.activeType = null
     }
+
+    state.dag.nodes = state.dag.nodes.filter(node => !nodeIds.includes(node.id))
 
     state.dag.edges = state.dag.edges.filter(
       ({ source, target }) => !nodeIds.includes(source) && !nodeIds.includes(target)
@@ -536,6 +625,7 @@ const mutations = {
       state.stateIsDirty = true
     }
     state.dag.nodes.splice(0, state.dag.nodes.length)
+    state.NodeMap = {}
   },
 
   setFormSchema(state, schema) {
@@ -722,6 +812,18 @@ const mutations = {
     packages.forEach(locales => {
       mergeLocales(state.LOCALES_STORE.value, locales)
     })
+  },
+
+  setValidateLanguage() {
+    setValidateLanguage(langMap[localStorage.getItem('tapdata_localize_lang')])
+  },
+
+  setNodeInputsWatcher(state, watcher) {
+    state.nodeInputsWatcher = watcher
+  },
+
+  setNodeOutputsWatcher(state, watcher) {
+    state.nodeOutputsWatcher = watcher
   }
 }
 

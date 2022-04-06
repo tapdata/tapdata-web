@@ -10,6 +10,10 @@ export default {
       scope: {
         $index: null, // 数组索引，防止使用该值，在表单校验(validateBySchema)时出错
 
+        findNodeById: id => {
+          return this.$store.state.dataflow.NodeMap[id]
+        },
+
         /**
          * 统一的异步数据源方法
          * @param service
@@ -21,6 +25,29 @@ export default {
           return field => {
             field.loading = true
             service({ field }, ...serviceParams).then(
+              action.bound(data => {
+                if (fieldName === 'value') {
+                  field.setValue(data)
+                } else field[fieldName] = data
+                field.loading = false
+              })
+            )
+          }
+        },
+
+        /**
+         * 可配置的异步加载
+         * @param config
+         * @param serviceParams
+         * @returns {(function(*): void)|*}
+         */
+        useAsyncDataSourceByConfig: (config, ...serviceParams) => {
+          // withoutField: 不往service方法传field参数
+          const { service, fieldName = 'dataSource', withoutField = false } = config
+          return field => {
+            field.loading = true
+            let fetch = withoutField ? service(...serviceParams) : service(field, ...serviceParams)
+            fetch.then(
               action.bound(data => {
                 if (fieldName === 'value') {
                   field.setValue(data)
@@ -295,18 +322,19 @@ export default {
           field.value = allEdges.some(({ target }) => target === id)
         },
 
-        getSourceNode: (field, fieldName = 'value') => {
+        getSourceNode: field => {
           const id = field.form.values.id
           const edges = this.$store.getters['dataflow/allEdges']
           const nodes = this.$store.getters['dataflow/allNodes']
           const sourceArr = edges.filter(({ target }) => target === id)
-          field[fieldName] = sourceArr.map(({ source }) => {
+          field.value = sourceArr.map(({ source }) => {
             return {
               value: source,
               label: nodes.find(node => node.id === source).name
             }
           })
         },
+
         getTargetNode: field => {
           const id = field.form.values.id
           const edges = this.$store.getters['dataflow/allEdges']
@@ -483,6 +511,18 @@ export default {
 
           nodeId = sourceNode[0].value
 
+          try {
+            const data = await metadataApi.nodeSchema(nodeId)
+            return (data?.[0]?.fields || []).map(item => item.field_name)
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('nodeSchema', e)
+            return []
+          }
+        },
+
+        loadNodeFieldNamesById: async nodeId => {
+          if (!nodeId) return []
           try {
             const data = await metadataApi.nodeSchema(nodeId)
             return (data?.[0]?.fields || []).map(item => item.field_name)

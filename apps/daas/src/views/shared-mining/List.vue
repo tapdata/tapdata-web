@@ -5,7 +5,7 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <div slot="operation">
-        <el-button class="btn btn-create" type="primary" size="mini" @click="handleSetting">
+        <el-button class="btn btn-create" type="primary" size="mini" :loading="loadingConfig" @click="handleSetting">
           <span>{{ $t('share_list_setting') }}</span>
         </el-button>
       </div>
@@ -122,10 +122,11 @@
       custom-class="edit-dialog"
       :title="$t('share_list_edit_title')"
       :close-on-click-modal="false"
+      :destroy-on-close="true"
       :visible.sync="editDialogVisible"
     >
       <el-form ref="editForm" label-position="left" label-width="150px" :model="editForm" :rules="rulesEdit">
-        <el-form-item size="mini" :label="$t('share_form_edit_name')" prop="edit_name">
+        <el-form-item size="mini" :label="$t('share_form_edit_name')" prop="name">
           <el-input clearable v-model="editForm.name"></el-input>
         </el-form-item>
         <el-form-item size="mini" :label="$t('share_form_setting_log_time')">
@@ -176,6 +177,7 @@ export default {
       list: null,
       settingDialogVisible: false,
       editDialogVisible: false,
+      loadingConfig: false,
       digSettingForm: {
         persistenceMongodb_uri_db: '',
         persistenceMongodb_collection: '',
@@ -220,14 +222,12 @@ export default {
         ]
       },
       rulesEdit: {
-        edit_name: [{ required: true, message: this.$t('shared_cdc_name'), trigger: 'blur' }]
+        name: [{ required: true, message: this.$t('shared_cdc_name'), trigger: 'blur' }]
       }
     }
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-    //是否可以全局设置
-    this.check()
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
@@ -286,28 +286,33 @@ export default {
         })
     },
 
-    // 挖掘设置
-    check() {
+    handleSetting() {
+      //是否可以全局设置
+      this.loadingConfig = true
       this.$api('logcollector')
         .check()
         .then(res => {
           if (res) {
             this.showEditSettingBtn = res?.data?.data //true是可用，false是禁用
+            this.settingDialogVisible = true
+            this.$api('logcollector')
+              .getSystemConfig()
+              .then(res => {
+                if (res) {
+                  this.digSettingForm = res.data
+                  this.getMongodb()
+                  if (this.digSettingForm?.persistenceMongodb_uri_db) {
+                    this.handleTables(this.digSettingForm?.persistenceMongodb_uri_db, true) //编辑页面请求tables
+                  }
+                }
+              })
+              .finally(() => {
+                this.loadingConfig = false
+              })
           }
         })
-    },
-    handleSetting() {
-      this.settingDialogVisible = true
-      this.$api('logcollector')
-        .getSystemConfig()
-        .then(res => {
-          if (res) {
-            this.digSettingForm = res.data
-            this.getMongodb()
-            if (this.digSettingForm?.persistenceMongodb_uri_db) {
-              this.handleTables(this.digSettingForm?.persistenceMongodb_uri_db, true) //编辑页面请求tables
-            }
-          }
+        .catch(() => {
+          this.loadingConfig = false
         })
     },
     //获取所有mongo连接

@@ -125,6 +125,7 @@ export default {
       ],
       statusBtMap: {
         start: {
+          ready: true,
           edit: true,
           stop: true,
           error: true,
