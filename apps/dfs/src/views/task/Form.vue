@@ -1474,6 +1474,8 @@ export default {
       if (!item) {
         const connection = await this.findOneConnection(target)
         item = this.getConnectionItem(connection)
+      } else {
+        item.id = item.value
       }
 
       return item
