@@ -288,25 +288,34 @@ export default {
                       display: '{{$deps[0] === "initial_sync" ? "visible" : "hidden"}}'
                     }
                   }
-                }
-                // default: false
+                },
+                default: false
               },
-              // crontabExpression: { //调度表达式
-              //   type: 'string',
-              //   'x-decorator': 'FormItem',
-              //   'x-component': 'Input',
-              //   'x-component-props': {
-              //     placeholder: this.$t('task_setting_cron_expression')
-              //   },
-              //   'x-reactions': {
-              //     dependencies: ['sync_type', 'isSchedule'],
-              //     fulfill: {
-              //       state: {
-              //         display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
-              //       }
-              //     }
-              //   }
-              // },
+              crontabExpression: {
+                //调度表达式
+                title: this.$t('dag_data_setting_expression'), //定期调度任务
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: this.$t('task_setting_cron_expression')
+                },
+                'x-decorator-props': {
+                  feedbackStatus: 'info',
+                  feedbackText:
+                    '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务 语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 * 年',
+                  extra: '0 */1 * * * ? * //每分钟运行一次  0 0 2 * * ? * //每天2点运行',
+                  feedbackLayout: 'terse'
+                },
+                'x-reactions': {
+                  dependencies: ['sync_type', 'isSchedule'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
+                    }
+                  }
+                }
+              },
               // increaseSyncInterval: {
               //   title: this.$t('task_setting_read_cdc_interval'), //增量同步间隔
               //   type: 'string',
