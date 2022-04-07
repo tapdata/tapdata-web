@@ -69,7 +69,7 @@
         </template>
         <template slot="operation" slot-scope="scope">
           <div class="operate-columns">
-            <ElButton size="mini" type="text" @click="goDetail(scope.row.id)">{{ $t('button_check') }}</ElButton>
+            <ElButton size="mini" type="text" @click="goDetail(scope.row)">{{ $t('button_check') }}</ElButton>
             <ElButton size="mini" type="text" @click="getTables(scope.row.id)">{{
               $t('share_detail_button_table_info')
             }}</ElButton>
@@ -360,7 +360,7 @@ export default {
             })
           })
           // eslint-disable-next-line
-        console.log('挖掘详情x轴：', this.lineDataDeep.x.length, xArr)
+          console.log('挖掘详情x轴：', this.lineDataDeep.x.length, xArr)
           xArr.forEach((el, index) => {
             if (!this.lineDataDeep.x.includes(el)) {
               this.lineDataDeep.x.push(el)
@@ -393,14 +393,24 @@ export default {
         this.getMeasurement()
       }, ms)
     },
-    goDetail(id) {
-      this.$router.push({
-        name: 'dataflowStatistics',
-        params: {
-          id: this.detailData.id,
-          subId: id
-        }
-      })
+    goDetail(row) {
+      if (row?.syncType === 'migrate') {
+        this.$router.push({
+          name: 'MigrateStatistics',
+          query: {
+            id: row.parentId || this.detailData.id,
+            subId: row.id
+          }
+        })
+      } else {
+        this.$router.push({
+          name: 'dataflowStatistics',
+          params: {
+            id: row.parentId || this.detailData.id,
+            subId: row.id
+          }
+        })
+      }
     },
     getEmptyData(start, end) {
       let result = []

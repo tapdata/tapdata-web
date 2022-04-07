@@ -75,35 +75,6 @@ export default {
 
       let mapping = {
         oracle: {
-          increShareReadMode: {
-            title: this.$t('task_setting_share_cdc_mode'), // 共享增量读取的模式 支持oracle和mongodb
-            type: 'string',
-            'x-decorator': 'FormItem',
-            'x-component': 'Select',
-            enum: [
-              {
-                label: this.$t('task_setting_off'),
-                value: ''
-              },
-              {
-                label: this.$t('task_setting_streaming'), //流式读取
-                value: 'STREAMING'
-              },
-              {
-                label: this.$t('task_setting_polling'), //轮询读取
-                value: 'POLLING'
-              }
-            ],
-            default: 'STREAMING',
-            'x-reactions': {
-              dependencies: ['sync_type'],
-              fulfill: {
-                state: {
-                  visible: '{{$deps[0] !== "initial_sync"}}'
-                }
-              }
-            }
-          },
           maxTransactionLength: {
             title: this.$t('task_setting_maximum_transaction'), //事务最大时长(小时)
             type: 'number',
@@ -123,31 +94,6 @@ export default {
               fulfill: {
                 state: {
                   visible: '{{$deps[0] !== "cdc" || ($deps[0] === "cdc" && $deps[1])}}'
-                }
-              }
-            }
-          },
-          increShareReadMode: {
-            title: this.$t('task_setting_share_cdc_mode'), // 共享增量读取的模式 支持oracle和mongodb
-            type: 'string',
-            'x-decorator': 'FormItem',
-            'x-component': 'Select',
-            enum: [
-              {
-                label: this.$t('task_setting_streaming'),
-                value: 'STREAMING'
-              },
-              {
-                label: this.$t('task_setting_polling'),
-                value: 'POLLING'
-              }
-            ],
-            default: 'STREAMING',
-            'x-reactions': {
-              dependencies: ['sync_type'],
-              fulfill: {
-                state: {
-                  visible: '{{$deps[0] !== "initial_sync"}}'
                 }
               }
             }
@@ -530,8 +476,49 @@ export default {
         shareCdcEnable: {
           title: this.$t('connection_form_shared_mining'), //共享挖掘日志过滤
           type: 'boolean',
+          default: false,
           'x-decorator': 'FormItem',
-          'x-component': 'Switch'
+          'x-component': 'Switch',
+          'x-reactions': {
+            dependencies: ['sync_type'],
+            fulfill: {
+              state: {
+                visible: '{{$deps[0] !== "initial_sync"}}' // 只有增量或全量+增量支持
+              }
+            }
+          }
+        }
+      }
+      //源表连接开启了日志挖掘功能
+      if (this.dataSourceData?.shareCdcEnable) {
+        config.properties.layout.properties = Object.assign(config?.properties?.layout?.properties, shareCdcEnable)
+        //共享增量读取的模式 共享挖掘打开且目标数据源是mongodb 或者 oracle
+        if (['mongodb', 'oracle'].includes(type)) {
+          config.properties.layout.properties.increShareReadMode = {
+            title: this.$t('task_setting_share_cdc_mode'), // 共享增量读取的模式 支持oracle和mongodb
+            type: 'string',
+            'x-decorator': 'FormItem',
+            'x-component': 'Select',
+            enum: [
+              {
+                label: this.$t('task_setting_streaming'), //流式读取
+                value: 'STREAMING'
+              },
+              {
+                label: this.$t('task_setting_polling'), //轮询读取
+                value: 'POLLING'
+              }
+            ],
+            default: 'STREAMING',
+            'x-reactions': {
+              dependencies: ['sync_type', 'shareCdcEnable'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0] !== "initial_sync" && $deps[1] }}'
+                }
+              }
+            }
+          }
         }
       }
       //合并配置
@@ -599,11 +586,6 @@ export default {
             }
           }
         }
-      }
-
-      //源表连接开启了日志挖掘功能
-      if (this.dataSourceData?.shareCdcEnable) {
-        config.properties.layout.properties = Object.assign(config?.properties?.layout?.properties, shareCdcEnable)
       }
       return config
     }

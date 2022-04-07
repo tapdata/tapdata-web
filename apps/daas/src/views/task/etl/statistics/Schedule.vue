@@ -426,11 +426,14 @@ export default {
         },
         {
           label: this.$t('task_info_tgtName'),
-          prop: 'tgtName'
+          prop: 'tgtName',
+          width: 150
         },
         {
           label: this.$t('task_info_target_table'),
-          prop: 'tgtTableName'
+          prop: 'tgtTableName',
+          showOverflowTooltip: true,
+          width: 200
         },
         {
           label: this.$t('task_info_amount_sync_data'),

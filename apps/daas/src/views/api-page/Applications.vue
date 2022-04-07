@@ -55,8 +55,8 @@
       <el-table-column
         :label="$t('application_header_redirect_uri')"
         :show-overflow-tooltip="true"
-        prop="redirectURIs"
-        sortable="redirectURIs"
+        prop="redirectUris"
+        sortable="redirectUris"
         min-width="140"
       >
       </el-table-column>
@@ -115,7 +115,7 @@
         </ElFormItem>
         <ElFormItem :label="$t('application_header_redirect_uri')" required>
           <ElInput
-            v-model="createForm.redirectURIs"
+            v-model="createForm.redirectUris"
             type="textarea"
             size="mini"
             :maxlength="200"
@@ -162,7 +162,7 @@ export default {
         grantTypes: [],
         clientSecret: '',
         scopes: [],
-        redirectURIs: '',
+        redirectUris: '',
         showMenu: true
       }
     }
@@ -201,7 +201,7 @@ export default {
         grantTypes: ['implicit', 'client_credentials'],
         clientSecret: '',
         scopes: [],
-        redirectURIs: '',
+        redirectUris: '',
         showMenu: true
       }
     },

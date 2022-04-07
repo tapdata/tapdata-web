@@ -134,7 +134,7 @@
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
               v-readonlybtn="'SYNC_job_operation'"
-              :disabled="startDisabled(row)"
+              :disabled="row.disabledData.start"
               type="primary"
               @click="start([row.id])"
             >
@@ -154,9 +154,7 @@
               v-else
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
-              :disabled="
-                $disabledByPermission('SYNC_job_operation_all_data', row.user_id) || stopDisabled(row.statusResult)
-              "
+              :disabled="row.disabledData.stop"
               @click="stop([row.id])"
               >{{ $t('task_list_stop') }}</ElLink
             >
@@ -164,7 +162,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="editDisabled(row)"
+              :disabled="row.disabledData.edit"
               @click="handleEditor(row.id)"
             >
               {{ $t('button_edit') }}
@@ -202,7 +200,7 @@
                 </el-dropdown-item>
 
                 <el-dropdown-item
-                  :disabled="resetDisabled(row)"
+                  :disabled="row.disabledData.reset"
                   command="initialize"
                   v-readonlybtn="'SYNC_job_operation'"
                 >
@@ -211,9 +209,7 @@
                 <el-dropdown-item
                   class="btn-delete"
                   command="del"
-                  :disabled="
-                    $disabledByPermission('SYNC_job_delete_all_data', row.user_id) || deleteDisabled(row.statusResult)
-                  "
+                  :disabled="row.disabledData.delete"
                   v-readonlybtn="'SYNC_job_delete'"
                 >
                   {{ $t('button.delete') }}
@@ -345,7 +341,8 @@ import Upload from '@/components/UploadDialog'
 import StatusItem from '../StatusItem'
 import Drawer from '@/components/Drawer'
 import { ETL_STATUS_MAP } from '@/const'
-import { getSubTaskStatus } from '@/utils/util'
+import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
+// import { getTaskBtnDisabled } from '../util'
 
 let timeout = null
 export default {
@@ -677,6 +674,10 @@ export default {
         }
       }
       let statuses = item.statuses
+      item.disabledData = getTaskBtnDisabled(
+        item,
+        this.$disabledByPermission('SYNC_job_operation_all_data', item.user_id)
+      )
       item.statusResult = getSubTaskStatus(statuses)
       return item
     },
@@ -1108,52 +1109,10 @@ export default {
     isShowForceStop(data) {
       return data?.length && data.every(t => ['stopping'].includes(t.status))
     },
-    startDisabled(row) {
-      const statusResult = row.statusResult || []
-      return (
-        this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
-        statusResult
-          .filter(t => t.count > 0)
-          .every(t => ['edit', 'wait_run', 'scheduling', 'running', 'stopping'].includes(t.status))
-      )
-    },
-    editDisabled(row) {
-      const statusResult = row.statusResult || []
-      // 按钮可用状态： 待启动  错误  已停止 完成 编辑中
-      return (
-        this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
-        statusResult
-          .filter(t => t.count > 0)
-          .every(t => !['ready', 'error', 'stop', 'complete', 'edit'].includes(t.status))
-      )
-    },
-    stopDisabled(data) {
-      return data
-        .filter(t => t.count > 0)
-        .every(t =>
-          ['ready', 'edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed', 'stopping'].includes(
-            t.status
-          )
-        )
-    },
-    resetDisabled(row) {
-      const statusResult = row.statusResult || []
-      return (
-        this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
-        statusResult
-          .filter(t => t.count > 0)
-          .every(t => ['ready', 'edit', 'wait_run', 'scheduling', 'running', 'stopping'].includes(t.status))
-      )
-    },
-    deleteDisabled(data) {
-      return !data
-        .filter(t => t.count > 0)
-        .every(t => ['ready', 'edit', 'not_running', 'error', 'stop', 'complete', 'schedule_failed'].includes(t.status))
-    },
     // 打开预览
     handlePreview(data) {
       let previewList = [{ label: 'subtasks', value: data.statuses.length }]
-
+      console.log('handlePreview', data)
       let statusResult = data.statusResult || []
       let colorMap = {
         error: '#F64E3E',

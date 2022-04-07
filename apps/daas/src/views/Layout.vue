@@ -14,7 +14,7 @@
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-6"></NotificationPopover>
         <ElDropdown v-if="$getSettingByKey('SHOW_QA_AND_HELP')" class="btn ml-4" placement="bottom" @command="command">
           <VIcon size="16">wenda</VIcon>
-          <ElDropdownMenu slot="dropdown">
+          <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="help">{{ $t('app.document') }}</ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
@@ -25,7 +25,7 @@
           @command="command"
         >
           <VIcon size="16">shezhi</VIcon>
-          <ElDropdownMenu slot="dropdown">
+          <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="settings" v-if="settingCode">{{ $t('page_title_setting') }}</ElDropdownItem>
             <ElDropdownItem command="setting" v-readonlybtn="'home_notice_settings'">{{
               $t('notify_setting')
@@ -39,7 +39,7 @@
           @command="changeLanguage"
         >
           <VIcon size="16">{{ { sc: 'language-sc', en: 'language-sc', tc: 'language-sc' }[lang] }}</VIcon>
-          <ElDropdownMenu slot="dropdown">
+          <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
               {{ value }}
             </ElDropdownItem>
@@ -51,7 +51,7 @@
             <span class="user-initials mr-2">{{ initials }}</span>
             <span>{{ userName }}<i class="el-icon-arrow-down ml-2"></i></span>
           </span>
-          <ElDropdownMenu slot="dropdown">
+          <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="account">{{ $t('app.account') }}</ElDropdownItem>
             <ElDropdownItem command="version">{{ $t('app.version') }}</ElDropdownItem>
             <ElDropdownItem command="license">{{ $t('page_title_license') }}</ElDropdownItem>
@@ -137,7 +137,7 @@
     justify-content: space-between;
     width: 100%;
     background: #212a3b;
-    z-index: 2;
+    z-index: 100;
     .logo {
       margin-left: 23px;
       display: block;
@@ -197,7 +197,7 @@
     display: flex;
     height: calc(100% - 72px);
     overflow: hidden;
-    z-index: 2;
+    z-index: 100;
     border: 1px solid #e1e3e9;
     .el-menu--popup .submenu-item .btn-del {
       display: none;
@@ -236,19 +236,20 @@
         align-items: center;
         height: 50px;
         line-height: 50px;
-        color: #4e5969;
+        color: rgba(0, 0, 0, 0.6);
         background: #f7f8fa;
         .submenu-item {
+          color: rgba(0, 0, 0, 0.6);
           padding-left: 12px;
         }
         &.is-active,
         &:hover {
-          color: map-get($color, primary);
+          color: map-get($color, primary) !important;
           background: rgba(44, 101, 255, 0.05);
         }
       }
       .submenu-item {
-        font-weight: 500;
+        font-weight: 400;
       }
       .el-menu-item,
       .el-submenu__title {
@@ -264,6 +265,7 @@
             background-color: rgba(44, 101, 255, 0.05);
             .submenu-item {
               font-weight: 500;
+              color: map-get($color, primary) !important;
             }
           }
         }
@@ -326,6 +328,11 @@
     font-weight: 500;
     color: rgba(255, 255, 255, 0.85);
     line-height: 17px;
+  }
+}
+.no-triangle {
+  .popper__arrow {
+    display: none;
   }
 }
 </style>

@@ -222,6 +222,7 @@
 }
 .el-button {
   min-width: 80px;
+  line-height: initial;
   font-weight: normal;
   color: #4e5969;
   border-color: #f2f3f5;
@@ -330,6 +331,9 @@
 }
 .el-dropdown-menu__item {
   color: map-get($fontColor, normal);
+}
+.el-dropdown-menu--small {
+  white-space: nowrap;
 }
 .el-dropdown-menu--small .el-dropdown-menu__item {
   line-height: 32px;

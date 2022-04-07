@@ -97,6 +97,7 @@ const getState = () => ({
     // }
   ],
   nodeViewOffsetPosition: [0, 0],
+  spaceKeyPressed: false,
   paperMoveInProgress: false,
   ctorTypes: {}, // 所有节点构造类型
   activeNodeId: null, // 当前激活的节点ID
@@ -333,6 +334,10 @@ const mutations = {
     state.paperMoveInProgress = value
   },
 
+  setPaperSpaceKeyPressed(state, value) {
+    state.spaceKeyPressed = value
+  },
+
   setNodeViewOffsetPosition(state, data) {
     state.nodeViewOffsetPosition = data.newOffset
   },
@@ -372,12 +377,16 @@ const mutations = {
 
   // 添加节点
   addNode(state, nodeData) {
+    if (!nodeData.$inputs) nodeData.$inputs = []
+    if (!nodeData.$outputs) nodeData.$outputs = []
     state.dag.nodes.push(nodeData)
     Vue.set(state.NodeMap, nodeData.id, nodeData)
   },
 
   addNodes(state, nodes) {
     nodes.forEach(node => {
+      if (!node.$inputs) node.$inputs = []
+      if (!node.$outputs) node.$outputs = []
       state.dag.nodes.push(node)
       Vue.set(state.NodeMap, node.id, node)
     })

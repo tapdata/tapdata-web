@@ -60,6 +60,7 @@ export default {
   button_auto_layout: '自動佈局',
   button_zoom_in: '放大',
   button_zoom_out: '縮小',
+  button_move_paper: '移動畫布[按住空格]',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精準匹配',
@@ -1856,5 +1857,26 @@ export default {
   dag_meta_data: '元數據',
   dag_connection: '連接',
   dag_table: '表',
-  dag_processor_node: '處理節點'
+  dag_processor_node: '處理節點',
+  dag_save_fail: '保存出錯，請檢查節點',
+  meta_table_index: '序號',
+  meta_table_field_name: '字段名稱',
+  meta_table_field_type: '字段類型',
+  meta_table_scale: '精度',
+  meta_table_precision: '長度',
+  meta_table_comment: '字段注釋',
+
+  new_advanced_mode: '標準模式',
+  new_more_features: '更多功能',
+  new_data_copy: '數據複製',
+  new_data_development: '數據開發',
+  new_data_copy_desc: '對數據庫進行跨庫複製，適用於數據遷移，容災備份，系統多活等場景',
+  new_data_development_desc: '抽取源端數據並加工計算轉換、例如行過濾、字段處理、多表合併等',
+  new_create_connection: '創建數據源',
+  new_create_api: '創建API',
+  new_data_valid: '數據校驗',
+  new_create_connection_desc: '數據源是創建傳輸任務的前提，任務重所有的數據庫和表數據節點都來自數據源',
+  new_create_api_desc: 'API即數據發布，可以根據現有collection或者通過同步任務創建新的collection對外發布的API',
+  new_data_valid_desc:
+    '可對遷移同步任務的數據源與目標之間的數據進行比對校驗，包含快速count校驗，全表字段值校驗，關聯字段值校驗等'
 }

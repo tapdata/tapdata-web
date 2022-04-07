@@ -247,7 +247,7 @@ export default [
                 name: 'dataflowDetails',
                 component: () => import('@/views/task/etl/Details'),
                 meta: {
-                  title: 'page_title_task_details',
+                  title: 'page_title_run_monitor',
                   code: 'Data_SYNC_menu'
                 }
               },
