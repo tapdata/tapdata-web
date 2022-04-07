@@ -766,6 +766,7 @@ export default {
           this.typeMappingMethod(this.selectRow).then(({ source, target }) => {
             this.typeMappingSource = source
             this.typeMapping = target
+            this.initShowEdit()
           })
       })
     },
