@@ -699,6 +699,102 @@
       </div>
     </div>
   </div>
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 14">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>Tapdata 2.1.3 来啦：新增支持 Apache Doris 为目标，任务查询更快捷！</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2022-04-07 21:00</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-4">需求持续更新，优化一刻不停——Tapdata Cloud 2.1.3 来啦！</div>
+        <div class="mb-4 line-height-2">
+          最新发布的版中，在新增支持 Apache Doris 为目标之余，任务日志的查询也更加人性化。
+        </div>
+        <div class="mb-2 p-4" style="background-color: rgb(241, 248, 255)">
+          <div class="mb-4">更新速览👇</div>
+          <div class="ml-2 mb-4">
+            1.<span class="fw-bold font-color-main">新增支持 Apache Doris 为目标</span
+            >：牵手更多优秀国产数据库，强强联手，探索新一代数据架构的更多可能；
+          </div>
+          <div class="ml-2 mb-4">
+            2.
+            <span class="fw-bold font-color-main">任务日志查询路径优化</span
+            >：开始支持在任务运行监控页面直接导出日志，查询更快捷；
+          </div>
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">01</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>开始支持 Doris 为目标</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p class="mb-2">强强联手，共建下一代数据架构</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          作为国内首家异构数据库实时同步云平台，Tapdata Cloud
+          不断拓展能够支持的数据连接版图，力求满足用户的多样化数据源和目标需求，真正实现数据实时同步“全面破壁”。
+        </div>
+        <div class="mb-4 line-height-2">
+          随着新兴国产数据库不断涌现，Tapdata Cloud 持续发力，与更多优质国产数据库牵手。本次更新中新增的数据目标 Apache
+          Doris，同时也是近日启动的 Tapdata PDK 生态共建计划的首批共建伙伴之一，将与 Tapdata
+          牵手，破局数据孤岛，共建下一代数据架构，为用户提供高效、统一的数据应用及分析平台。
+        </div>
+        <div class="mb-4 line-height-2">
+          至此，Tapdata Cloud
+          <span class="fw-bold font-color-main"
+            >数据连接据点数量扩张至<span class="fs-6 pl-1" style="font-family: DIN; color: rgb(0, 122, 181)">30</span></span
+          >
+          。放大就看 Tapdata Cloud “破壁行动”最新战绩 👇：
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.3/01.png" alt="" />
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.3/02.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">02</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>任务日志查询路径优化</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>小优化，更贴心</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          📣从这一版开始，需要查询任务日志时，无需再回到 Agent 拉取啦！
+        </div>
+        <div class="mb-4 line-height-2">
+          新版本下，当用户任务出现问题，需要查看日志定位问题时，可以直接在运行监控页面导出日志（支持选择【时间范围】），无需再返回 Agent 部署服务器查找日志文件。操作更加人性化！
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.3/03.png" alt="" />
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.3/04.png" alt="" />
+        </div>
+        <div class="line-height-2">
+          重视成长路上收获的每一条反馈，不断完善，持续优化，Tapdata一直在路上。始于细节，成于大美，期待下一个新版本再和大家见面
+          <img
+            src="../../../public/images/notice/love.png"
+            alt=""
+            style="width: 20px; height: 20px; vertical-align: text-bottom"
+          />。
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
