@@ -1,7 +1,7 @@
 <template>
   <LoginPage>
     <section class="page-registry" slot="main">
-      <el-card class="sign-in-panel">
+      <div class="sign-in-panel">
         <div class="title">{{ $t('app.signIn.modifyPassword') }}</div>
         <div class="tip">
           {{ $t('app.signIn.newPasswordTip') }}
@@ -59,7 +59,7 @@
           {{ $t('app.signIn.rememberPasswords') }}
           <span @click="backLogin">{{ $t('app.signIn.backLogin') }}</span>
         </div>
-      </el-card>
+      </div>
     </section>
   </LoginPage>
 </template>
@@ -252,7 +252,7 @@ export default {
     width: 400px;
     height: 500px;
     margin: auto;
-    padding: 25px 5px;
+    padding: 25px;
 
     .title {
       margin-bottom: 30px;

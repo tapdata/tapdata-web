@@ -80,24 +80,28 @@
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_input') }}</span>
         </div>
-        <div class="mb-4 fs-4 fw-bolder din-font" style="color: #409488">{{ overData.inputTotal }}</div>
+        <div class="mb-4 fs-4 fw-bolder din-font" style="color: #409488">
+          {{ handleChangeUnit(overData.inputTotal) }}
+        </div>
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-success" size="18">mark</VIcon>
           <span>{{ $t('task_monitor_total_output') }}</span>
         </div>
-        <div class="mb-6 fs-4 fw-bolder din-font" style="color: #377ab9">{{ overData.outputTotal }}</div>
+        <div class="mb-6 fs-4 fw-bolder din-font" style="color: #377ab9">
+          {{ handleChangeUnit(overData.outputTotal) }}
+        </div>
         <div class="flex justify-content-between text-center">
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_insert') }}</div>
-            <div class="fs-6 font-color-main fw-bolder din-font">{{ overData.insertedTotal }}</div>
+            <div class="fs-6 font-color-main fw-bolder din-font">{{ handleChangeUnit(overData.insertedTotal) }}</div>
           </div>
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_update') }}</div>
-            <div class="fs-6 font-color-main fw-bolder din-font">{{ overData.updatedTotal }}</div>
+            <div class="fs-6 font-color-main fw-bolder din-font">{{ handleChangeUnit(overData.updatedTotal) }}</div>
           </div>
           <div>
             <div class="mb-3">{{ $t('task_monitor_total_delete') }}</div>
-            <div class="fs-6 font-color-main fw-bolder din-font">{{ overData.deletedTotal }}</div>
+            <div class="fs-6 font-color-main fw-bolder din-font">{{ handleChangeUnit(overData.deletedTotal) }}</div>
           </div>
         </div>
       </div>
@@ -409,6 +413,49 @@ export default {
     this.getSyncOverViewData()
   },
   methods: {
+    // 转化单位
+    handleChangeUnit(val) {
+      let size = ''
+      // if (val < 0.1 * 1024) {
+      //   //如果小于0.1KB转化成B
+      //   size = val.toFixed(1) + 'B'
+      // } else if (val < 0.1 * 1024 * 1024) {
+      //   //如果小于0.1MB转化成KB
+      //   size = (val / 1024).toFixed(1) + 'K'
+      // } else if (val < 0.1 * 1024 * 1024 * 1024) {
+      //   //如果小于0.1GB转化成MB
+      //   size = (val / (1024 * 1024)).toFixed(1) + 'M'
+      // } else if (val < 0.1 * 1024 * 1024 * 1024 * 1024) {
+      //   //其他转化成GB
+      //   size = (val / (1024 * 1024 * 1024)).toFixed(1) + 'G'
+      // } else if (val < 0.1 * 1024 * 1024 * 1024 * 1024 * 1024) {
+      //   //其他转化成GB
+      //   size = (val / (1024 * 1024 * 1024 * 1024)).toFixed(1) + 'T'
+      // }
+
+      // return size
+      if (val / (1024 * 1024 * 1024 * 1024) >= 1) {
+        size = (val / (1024 * 1024 * 1024 * 1024)).toFixed(1) + 'T'
+      } else if (val / (1024 * 1024 * 1024) >= 1) {
+        size = (val / (1024 * 1024 * 1024)).toFixed(1) + 'G'
+      } else if (val / (1024 * 1024) >= 1) {
+        size = (val / (1024 * 1024)).toFixed(1) + 'M'
+      } else if (val / 1024 >= 1) {
+        size = (val / 1024).toFixed(1) + 'K'
+      } else {
+        size = val.toFixed(2) + 'B'
+      }
+      var sizestr = size + ''
+      // eslint-disable-next-line
+      var len = sizestr.indexOf('\.')
+      var dec = sizestr.substr(len + 1, 1)
+      if (dec == '0') {
+        //当小数点后为00时 去掉小数部分
+        return sizestr.substring(0, len) + sizestr.substr(len + 2, 1)
+      }
+      return sizestr
+      // return size
+    },
     //概览信息
     getSyncOverViewData() {
       this.$api('SubTask')

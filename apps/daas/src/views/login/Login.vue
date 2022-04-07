@@ -1,7 +1,7 @@
 <template>
   <LoginPage>
     <section class="page-sign-in" slot="main">
-      <el-card class="sign-in-panel">
+      <div class="sign-in-panel">
         <div class="title">
           {{ $t('app.signIn.signIn') }}
           <span @click="registry" v-if="$getSettingByKey('SHOW_REGISTER')">{{ $t('app.signIn.Registration') }}</span>
@@ -37,7 +37,7 @@
         <div class="remember">
           <span @click="forgetPassword">{{ $t('app.signIn.forgetPassword') }}</span>
         </div>
-      </el-card>
+      </div>
     </section>
   </LoginPage>
 </template>
@@ -173,7 +173,7 @@ export default {
   overflow: auto;
   box-sizing: border-box;
   .sign-in-panel {
-    padding: 25px 5px;
+    padding: 25px;
     width: 400px;
     height: 500px;
     .title {
