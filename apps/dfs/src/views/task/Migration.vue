@@ -618,7 +618,7 @@ export default {
           .then(data => {
             if (data.success.length > 0) {
               this.$message.success(this.$t('task_reset_success'))
-              this.reset()
+              this.fetch(1)
             } else {
               this.$message.success(this.$t('task_reset_failed'))
             }
