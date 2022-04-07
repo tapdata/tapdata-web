@@ -1,42 +1,46 @@
 <template>
   <div class="system-notification" v-loading="loading">
-    <div class="notification-head">
-      <div class="title">{{ $t('notify_system_notice') }}</div>
-      <div class="operation">
-        <el-select
-          v-model="search"
-          :placeholder="$t('notify_notice_level')"
-          class="search"
-          @change="getData()"
-          clearable
-          size="mini"
-        >
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-        </el-select>
-        <el-select
-          v-model="msg"
-          :placeholder="$t('notify_notice_type')"
-          class="search"
-          @change="getData()"
-          clearable
-          size="mini"
-        >
-          <el-option v-for="item in msgOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-        </el-select>
-        <span class="link-primary" @click="handlePageRead()">{{ $t('notify_mask_read') }}</span>
-        <span class="link-primary" @click="handleAllRead()">{{ $t('notify_mask_read_all') }}</span>
-        <span v-readonlybtn="'home_notice_settings'">
-          <router-link to="/settingCenter/notificationSetting"
-            ><span class="link-primary">{{ $t('notify_setting') }}</span></router-link
-          >
-        </span>
-      </div>
+    <div class="notification-head pt-8 pb-4 px-6">
+      <div class="title font-color-normal fs-7">{{ $t('notify_system_notice') }}</div>
     </div>
-    <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+      <div class="operation">
+        <ElButton type="primary" size="mini" @click="handlePageRead()">{{ $t('notify_mask_read') }}</ElButton>
+        <ElButton size="mini" @click="handleAllRead()">{{ $t('notify_mask_read_all') }}</ElButton>
+        <ElButton size="mini" v-readonlybtn="'home_notice_settings'" @click="handleSetting">
+          {{ $t('notify_setting') }}
+        </ElButton>
+      </div>
       <el-tab-pane :label="$t('notify_user_all_notice')" name="first"></el-tab-pane>
       <el-tab-pane :label="$t('notify_unread_notice')" name="second"></el-tab-pane>
     </el-tabs>
     <ul class="cuk-list clearfix cuk-list-type-block">
+      <div class="py-2">
+        <SelectList
+          v-if="options.length"
+          v-model="searchParams.search"
+          :items="options"
+          :inner-label="$t('notify_notice_level')"
+          none-border
+          last-page-text=""
+          clearable
+          menu-min-width="240px"
+          @change="getData()"
+        ></SelectList>
+        <SelectList
+          v-if="msgOptions.length"
+          v-model="searchParams.msg"
+          :items="msgOptions"
+          :inner-label="$t('notify_notice_type')"
+          none-border
+          last-page-text=""
+          clearable
+          menu-min-width="240px"
+          @change="getData()"
+        ></SelectList>
+      </div>
+
       <li class="list-item" v-for="item in listData" :key="item.id" @click="handleRead(item.id)">
         <div class="list-item-content" v-if="item.msg === 'JobDDL'">
           <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
@@ -99,19 +103,23 @@
 </template>
 
 <script>
-import factory from '../../api/factory'
-const notification = factory('notification')
 import * as moment from 'moment'
 import { TYPEMAP } from './tyepMap'
+import SelectList from '@/components/SelectList'
 export default {
+  components: { SelectList },
   data() {
     return {
+      filterItems: [],
       activeName: 'first',
       listData: [],
       read: true,
       loading: false,
-      search: '',
-      msg: '',
+      searchParams: {
+        search: '',
+        msg: ''
+      },
+
       currentPage: 1,
       pagesize: 20,
       total: 0,
@@ -131,15 +139,15 @@ export default {
       },
       options: [
         {
-          value: 'error',
+          value: 'ERROR',
           label: 'ERROR'
         },
         {
-          value: 'warn',
+          value: 'WARN',
           label: 'WARN'
         },
         {
-          value: 'info',
+          value: 'INFO',
           label: 'INFO'
         }
       ],
@@ -154,6 +162,10 @@ export default {
         },
         {
           value: 'stoppedByError',
+          label: this.$t('notification.stoppedByError')
+        },
+        {
+          value: 'jobStateError',
           label: this.$t('notification.jobStateError')
         },
         {
@@ -196,22 +208,27 @@ export default {
   created() {
     this.getData()
     this.getUnreadNum() //未读消息数量
+    this.getFilterItems()
     this.$root.$on('notificationUpdate', () => {
       this.getUnreadNum() //未读消息数量
       this.getData()
     })
   },
   methods: {
+    handleSetting() {
+      this.$router.push({ name: 'notificationSetting' })
+    },
     getData() {
+      let { search, msg } = this.searchParams
       let where = {}
       if (!this.read) {
         where.read = false
       }
-      if (this.search || this.search !== '') {
-        where.level = this.search
+      if (search || search !== '') {
+        where.level = search
       }
-      if (this.msg || this.msg !== '') {
-        where.msg = this.msg
+      if (msg || msg !== '') {
+        where.msg = msg
       }
       let filter = {
         where,
@@ -221,7 +238,7 @@ export default {
       }
 
       this.loading = true
-      notification
+      this.$api('notification')
         .get({ filter: JSON.stringify(filter) })
         .then(res => {
           if (res.data) {
@@ -253,13 +270,13 @@ export default {
       if (read === false) {
         where.read = false
       }
-      if (this.search || this.search !== '') {
-        where.level = this.search
+      if (this.searchParams.search || this.searchParams.search !== '') {
+        where.level = this.searchParams.search
       }
-      if (this.msg || this.msg !== '') {
-        where.msg = this.msg
+      if (this.searchParams.msg || this.searchParams.msg !== '') {
+        where.msg = this.searchParams.msg
       }
-      notification
+      this.$api('notification')
         .count({ where: JSON.stringify(where) })
         .then(res => {
           if (res.data) {
@@ -276,22 +293,26 @@ export default {
           read: false
         }
       }
-      notification.get({ filter: JSON.stringify(filter) }).then(res => {
-        if (res.data) {
-          this.count = res.data.total || 0
-        }
-      })
+      this.$api('notification')
+        .get({ filter: JSON.stringify(filter) })
+        .then(res => {
+          if (res.data) {
+            this.count = res.data.total || 0
+          }
+        })
     },
     handleRead(id) {
       let read = this.read
-      notification.patch({ read: true, id: id }).then(res => {
-        if (res.data) {
-          this.getUnreadNum() //未读消息数量
-          this.getData()
-          this.read = read
-          this.$root.$emit('notificationUpdate')
-        }
-      })
+      this.$api('notification')
+        .patch({ read: true, id: id })
+        .then(res => {
+          if (res.data) {
+            this.getUnreadNum() //未读消息数量
+            this.getData()
+            this.read = read
+            this.$root.$emit('notificationUpdate')
+          }
+        })
     },
     handlePageRead() {
       let ids = []
@@ -308,14 +329,16 @@ export default {
       }
       where = JSON.stringify(where)
       let read = this.read
-      notification.upsertWithWhere(where, data).then(res => {
-        if (res.data) {
-          this.getUnreadNum() //未读消息数量
-          this.getData()
-          this.read = read
-          this.$root.$emit('notificationUpdate')
-        }
-      })
+      this.$api('notification')
+        .upsertWithWhere(where, data)
+        .then(res => {
+          if (res.data) {
+            this.getUnreadNum() //未读消息数量
+            this.getData()
+            this.read = read
+            this.$root.$emit('notificationUpdate')
+          }
+        })
     },
     handleAllRead() {
       let where = {}
@@ -324,14 +347,16 @@ export default {
       }
       where = JSON.stringify(where)
       let read = this.read
-      notification.readAll(where, data).then(res => {
-        if (res.data) {
-          this.getUnreadNum() //未读消息数量
-          this.getData()
-          this.read = read
-          this.$root.$emit('notificationUpdate')
-        }
-      })
+      this.$api('notification')
+        .readAll(where, data)
+        .then(res => {
+          if (res.data) {
+            this.getUnreadNum() //未读消息数量
+            this.getData()
+            this.read = read
+            this.$root.$emit('notificationUpdate')
+          }
+        })
     },
     handleClick(tab) {
       this.currentPage = 1
@@ -389,6 +414,23 @@ export default {
           })
           break
       }
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: this.$t('notify_notice_level'),
+          key: 'search',
+          type: 'select-inner',
+          items: this.options,
+          selectedWidth: '200px'
+        },
+        {
+          label: this.$t('notify_notice_type'),
+          key: 'msg',
+          type: 'select-inner',
+          items: this.msgOptions
+        }
+      ]
     }
   }
 }
@@ -397,24 +439,14 @@ export default {
 <style scoped lang="scss">
 $unreadColor: #ee5353;
 .system-notification {
-  margin-left: 20px;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
   font-size: 12px;
   .notification-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-    color: #409eff;
-    padding: 20px 20px 20px 0;
     .title {
-      font-size: 18px;
       font-weight: bold;
-      color: rgba(51, 51, 51, 1);
-      line-height: 34px;
     }
     .search {
       margin-top: 10px;
@@ -423,6 +455,9 @@ $unreadColor: #ee5353;
     }
   }
   .operation {
+    position: absolute;
+    top: -50px;
+    right: 0;
     cursor: pointer;
     span {
       display: inline-block;
@@ -432,7 +467,13 @@ $unreadColor: #ee5353;
   ul.cuk-list {
     list-style: none;
     flex: 1;
+    padding-left: 24px;
     overflow: auto;
+    .inner-select {
+      &:first-child {
+        padding-left: 0;
+      }
+    }
   }
   .clearfix {
     zoom: 1;
@@ -457,7 +498,6 @@ $unreadColor: #ee5353;
       position: relative;
       height: 50px;
       line-height: 50px;
-      padding-left: 14px;
       box-sizing: border-box;
       overflow: hidden;
       display: block;
@@ -483,7 +523,7 @@ $unreadColor: #ee5353;
     }
     .list-item-time {
       float: right;
-      color: #666;
+      color: #86909c;
       font-size: 12px;
     }
     &:hover {
@@ -498,10 +538,37 @@ $unreadColor: #ee5353;
 </style>
 <style lang="scss">
 .system-notification {
+  .el-tabs {
+    position: relative;
+    .el-tabs__header {
+      padding: 0 24px;
+    }
+    .el-tabs__content {
+      overflow: initial;
+      .operation {
+        position: absolute;
+        top: -55px;
+        right: 24px;
+      }
+    }
+  }
+  ul.cuk-list {
+    .v-select-list {
+      &:first-child .inner-select {
+        padding-left: 0;
+      }
+    }
+  }
   .el-tabs__item {
-    height: 32px;
-    line-height: 32px;
-    font-size: 12px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 14px;
+    color: #86909c;
+    font-weight: 400;
+    &.is-active {
+      font-weight: 500;
+      color: map-get($color, primary);
+    }
   }
 }
 </style>

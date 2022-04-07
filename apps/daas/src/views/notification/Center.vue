@@ -1,8 +1,7 @@
 <template>
   <section class="notification-wrap section-wrap">
     <div class="notification-wrap-box">
-      <div class="left-panel">
-        <div class="header">{{ $t('notify_notice_center') }}</div>
+      <div class="left-panel pt-5">
         <ul class="menu">
           <li :class="{ active: activePanel === 'system' }" @click="selectPanel('system')">
             <VIcon>bells</VIcon>
@@ -75,32 +74,27 @@ $unreadColor: #ee5353;
     height: 100%;
     background-color: #fff;
     .left-panel {
-      background: rgba(250, 250, 250, 1);
-      border: 1px solid rgba(230, 230, 232, 1);
-      width: 250px;
-      .header {
-        padding: 30px 20px 20px 20px;
-        line-height: 34px;
-        font-size: 14px;
-        font-weight: bold;
-        color: rgba(51, 51, 51, 1);
-      }
+      border-right: 1px solid #f2f2f2;
+      width: 200px;
       ul.menu li {
         display: flex;
-        align-items: center;
         height: 44px;
+        padding-left: 20px;
+        align-items: center;
         font-size: 12px;
         font-weight: 400;
-        color: rgba(102, 102, 102, 1);
-        line-height: 44px;
-        padding-left: 20px;
+        color: #4e5969;
         cursor: pointer;
         &.active,
         &:hover {
-          background: rgba(238, 238, 238, 1);
+          background: rgba(44, 101, 255, 0.05);
+          .iconfont {
+            color: #2c65ff;
+          }
         }
         .iconfont {
           margin-right: 5px;
+          color: #4e5969;
         }
         .content {
           flex: 1;

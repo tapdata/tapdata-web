@@ -6,9 +6,10 @@
       </el-badge>
     </div>
     <el-tabs stretch class="notification-popover-wrap" v-model="activeTab" @tab-click="tabHandler">
+      <ElButton type="text" @click="handleNotify">{{ $t('notify_view_all_notify') }}</ElButton>
       <el-tab-pane class="tab-item" :label="$t('notify_system_notice')" name="system">
         <div class="tab-item-container">
-          <ul class="tab-list cuk-list">
+          <ul class="tab-list cuk-list" v-if="listData.length">
             <li class="list-item" v-for="(item, index) in listData" :key="index" @click="handleRead(item.id)">
               <div class="list-item-content" v-if="item.msg === 'JobDDL'">
                 <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
@@ -54,7 +55,8 @@
               </div>
             </li>
           </ul>
-          <div class="notice-footer">
+          <div></div>
+          <!-- <div class="notice-footer">
             <span v-readonlybtn="'home_notice_settings'">
               <router-link to="/settingCenter/notificationSetting">
                 <span>
@@ -69,7 +71,7 @@
                 </span>
               </router-link>
             </span>
-          </div>
+          </div> -->
         </div>
       </el-tab-pane>
       <el-tab-pane class="tab-item" :label="$t('notify_user_notice')" name="user" v-loading="loading">
@@ -138,6 +140,9 @@ export default {
     this.init()
   },
   methods: {
+    handleNotify() {
+      this.$router.push({ name: 'notification' })
+    },
     init() {
       let msg = {
         type: 'notification'
@@ -276,6 +281,7 @@ export default {
 .notification-popover {
   overflow: hidden;
   .notification-popover-wrap {
+    padding: 10px 16px;
     overflow: hidden;
     .el-tabs__header {
       border-bottom: 1px solid map-get($borderColor, light);
@@ -285,8 +291,12 @@ export default {
         }
       }
       .el-tabs__item {
+        font-size: 14px;
+        font-weight: 500;
+        color: map-get($fontColor, sub);
         &.is-active {
           color: map-get($color, primary);
+          font-weight: 400;
           border-color: map-get($color, primary);
         }
       }
@@ -294,10 +304,15 @@ export default {
         width: 100px;
       }
     }
-    .el-tabs__nav-scroll {
-    }
     > .el-tabs__content {
       padding: 0 !important;
+      overflow: initial;
+      & > .el-button {
+        position: absolute;
+        right: 0;
+        top: -52px;
+        font-weight: 400;
+      }
     }
     .tab-item {
       margin-bottom: 1px;
@@ -396,7 +411,7 @@ export default {
       box-sizing: border-box;
       .notification-item {
         padding: 5px 20px 4px 20px;
-        border-bottom: 1px solid #dedee4;
+        border-bottom: 1px solid #f2f2f2;
         font-size: 12px;
         color: #666;
         &:hover {

@@ -403,7 +403,7 @@ let menuSetting = [
   {
     name: 'system',
     label: 'page_title_system',
-    icon: 'caozuorizhi',
+    icon: 'system',
     code: 'system_management',
     children: [
       // { name: 'metadataDefinition', code: 'data_catalog_menu' },

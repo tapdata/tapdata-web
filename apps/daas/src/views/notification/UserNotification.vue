@@ -1,17 +1,10 @@
 <template>
   <div class="user-notification" v-loading="loading">
-    <div class="header">
-      <div class="title">{{ $t('notify_user_notice') }}</div>
-      <div class="search-bar">
-        <el-input
-          clearable
-          class="search-item"
-          size="mini"
-          v-model="search.keyword"
-          :placeholder="$t('notification.placeholder.keyword')"
-          @change="getData(1)"
-        ></el-input>
-        <el-date-picker
+    <div class="header pt-8 pb-4 px-6">
+      <div class="title font-color-normal fs-7">{{ $t('notify_user_notice') }}</div>
+    </div>
+    <div class="search-bar px-6">
+      <!-- <el-date-picker
           class="search-item"
           popper-class="user-notification-data-picker"
           style="width: 320px"
@@ -23,8 +16,35 @@
           :end-placeholder="$t('dataFlow.endTime')"
           @change="getData(1)"
         >
-        </el-date-picker>
-        <el-select
+        </el-date-picker> -->
+      <DatetimeRange
+        v-model="search.range"
+        value-format="timestamp"
+        class="filter-datetime-range"
+        @change="getData(1)"
+      ></DatetimeRange>
+      <SelectList
+        class="search-item"
+        v-if="isAdmin"
+        v-model="search.userId"
+        :items="userOptions"
+        :inner-label="$t('notify_operator')"
+        none-border
+        last-page-text=""
+        clearable
+        menu-min-width="240px"
+        @change="getData(1)"
+      ></SelectList>
+
+      <el-input
+        clearable
+        class="search-item"
+        size="mini"
+        v-model="search.keyword"
+        :placeholder="$t('notification.placeholder.keyword')"
+        @change="getData(1)"
+      ></el-input>
+      <!-- <el-select
           clearable
           v-if="isAdmin"
           class="search-item"
@@ -34,10 +54,9 @@
           @change="getData(1)"
         >
           <el-option v-for="user in userOptions" :key="user.id" :value="user.id" :label="user.username"></el-option>
-        </el-select>
-      </div>
+        </el-select> -->
     </div>
-    <ul class="list">
+    <ul class="list pl-6">
       <li class="item" v-for="record in list" :key="record._id">
         <UserOperation :record="record"></UserOperation>
         <span class="item-time">{{ $moment(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
@@ -59,11 +78,15 @@
 </template>
 <script>
 import UserOperation from './UserOperation'
+import SelectList from '@/components/SelectList'
+import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import { toRegExp } from '../../utils/util'
 
 export default {
   components: {
-    UserOperation
+    UserOperation,
+    SelectList,
+    DatetimeRange
   },
   data() {
     return {
@@ -96,9 +119,16 @@ export default {
       this.$api('users')
         .get()
         .then(res => {
-          this.userOptions = res.data?.items || []
+          let data = res.data?.items || []
+          this.userOptions = data.map(item => {
+            return {
+              label: item.username,
+              value: item.id
+            }
+          })
         })
     },
+
     getData(pageNum) {
       this.loading = true
       let { keyword, range, userId } = this.search
@@ -116,7 +146,15 @@ export default {
         }
       }
       if (range && range.length) {
-        where.and = [{ createTime: { gte: range[0].toISOString() } }, { createTime: { lte: range[1].toISOString() } }]
+        let startTime = this.$moment(range[0]).format('YYYY-MM-DD HH:mm:ss') || ''
+        let endTime = this.$moment(range[1]).format('YYYY-MM-DD HH:mm:ss') || ''
+        if (startTime) {
+          where.and = [{ createTime: { gte: startTime } }]
+        } else if (endTime) {
+          where.and = [{ createTime: { lte: endTime } }]
+        } else {
+          where.and = [{ createTime: { gte: startTime } }, { createTime: { lte: endTime } }]
+        }
       }
       let filter = {
         order: 'createTime DESC',
@@ -157,44 +195,66 @@ export default {
 </style>
 <style lang="scss" scoped>
 .user-notification {
-  padding-left: 20px;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  .filter-datetime-range {
+    padding-left: 0;
+    text-align: left;
+    font-size: 12px;
+    line-height: 32px;
+    ::v-deep {
+      .filter-datetime:first-child {
+        padding-left: 0;
+        .el-date-editor .el-input {
+          text-align: left;
+        }
+      }
+      .el-input {
+        font-size: 12px;
+      }
+    }
+  }
   .header {
-    padding: 20px 20px 20px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
+    // padding: 20px 20px 20px 0;
     .title {
-      line-height: 34px;
-      font-size: 18px;
       font-weight: bold;
     }
-    .search-bar {
-      display: flex;
-      align-items: center;
-      .search-item {
-        margin-left: 15px;
-        width: 200px;
+  }
+  .search-bar {
+    display: flex;
+    align-items: center;
+    .search-item {
+      margin-right: 15px;
+      // width: 200px;
+      ::v-deep {
+        .v-select-list {
+          &:first-child {
+            .inner-select {
+              padding-left: 0;
+            }
+          }
+        }
       }
     }
   }
   .list {
     flex: 1;
     overflow: auto;
+
     padding-right: 20px;
     .item {
       display: flex;
       justify-content: space-between;
       align-items: center;
       line-height: 50px;
-      border-bottom: 1px solid #f5f7fa;
+      border-bottom: 1px solid #f2f2f2;
       font-size: 12px;
       color: #202d40;
       .item-time {
-        color: #999;
+        color: #86909c;
+        font-weight: 400;
       }
     }
   }
