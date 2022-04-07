@@ -24,7 +24,7 @@ export class NodeType {
   }
 
   /**
-   * 验证接受源连接
+   * 验证接收源连接
    */
   allowSource() {
     return true

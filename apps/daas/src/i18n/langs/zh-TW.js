@@ -1299,7 +1299,7 @@ export default {
   setting_SMTP_Server_Port: 'SMTP 服務端口',
   setting_SMTP_Server_User: 'SMTP 服務賬號',
   setting_SMTP_Server_password: 'SMTP 服務密碼',
-  setting_Email_Receivers: 'Email接受郵件地址',
+  setting_Email_Receivers: 'Email接收郵件地址',
   setting_Email_Send_Address: 'Email發送郵件地址',
   setting_SMTP_Server_Host: 'SMTP 服務Host',
   setting_Send_Email_Title_Prefix: '發​​送Email標題的前綴（可選）',
@@ -1329,7 +1329,7 @@ export default {
   setting_Worker_Heartbeat_Expire: '進程心跳過期時間(秒)',
   setting_License_Key: '證書秘鑰',
   setting_Enter_jobs_log_level__error_warn_info_debug_trace: '輸入任務日誌等級: error/warn/info/debug/trace',
-  setting_Email_Receivers_Multiple_separated_by_semicolons: '郵件接受者,可輸入多個，通過逗號分隔',
+  setting_Email_Receivers_Multiple_separated_by_semicolons: '郵件接收者,可輸入多個，通過逗號分隔',
   setting_Keep_recent_n_hours_message_before_the_last_processed_message_s_time_: '保持最近n小時消息',
   setting_Store_full_record_as_embedded_document_in_target_collection_for_update_operations:
     '緩存一份當前整體數據，合併到目標數據集中',
