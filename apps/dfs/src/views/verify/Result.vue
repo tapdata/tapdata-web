@@ -143,7 +143,7 @@ export default {
     },
     getResultData({ current, size }) {
       let taskId = this.taskId
-      let task = this.inspect.tasks?.find(item => item.taskId === taskId)
+      let task = this.tableData?.find(item => item.taskId === taskId)
       if (task) {
         let showAdvancedVerification = task.showAdvancedVerification
         let statsInfo = this.tableData.find(item => item.taskId === this.taskId)
