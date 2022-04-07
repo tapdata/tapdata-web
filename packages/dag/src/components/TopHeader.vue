@@ -54,6 +54,12 @@
         </button>
       </ElTooltip>
       <VDivider class="mx-4" vertical inset></VDivider>
+      <!--移动画布-->
+      <ElTooltip transition="tooltip-fade-in" :content="$t('button_move_paper')">
+        <button @click="toggleMovePaper" class="icon-btn" :class="{ active: spaceKeyPressed }">
+          <VIcon size="20">hand</VIcon>
+        </button>
+      </ElTooltip>
       <!--缩小-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('button_zoom_out')">
         <button @click="$emit('zoom-out')" class="icon-btn">
@@ -110,7 +116,7 @@
 <script>
 import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import VDivider from 'web-core/components/VDivider'
 
 export default {
@@ -140,6 +146,7 @@ export default {
 
   computed: {
     ...mapGetters('dataflow', ['dataflowId', 'stateIsReadonly']),
+    ...mapState('dataflow', ['spaceKeyPressed']),
 
     syncTxt() {
       const settings = this.$store.getters['dataflow/dataflowSettings']
@@ -167,7 +174,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['setActiveType']),
+    ...mapMutations('dataflow', ['setActiveType', 'setPaperSpaceKeyPressed']),
 
     onNameInputChange() {
       if (!this.name) {
@@ -199,6 +206,10 @@ export default {
         }
       }
       backToList()
+    },
+
+    toggleMovePaper() {
+      this.setPaperSpaceKeyPressed(!this.spaceKeyPressed)
     }
   }
 }
@@ -321,6 +332,7 @@ $sidebarBg: #fff;
     transition: background, color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
     cursor: pointer;
 
+    &.active,
     &:hover {
       color: map-get($color, primary);
       background: $hoverBg;

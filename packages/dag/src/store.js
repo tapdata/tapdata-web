@@ -97,6 +97,7 @@ const getState = () => ({
     // }
   ],
   nodeViewOffsetPosition: [0, 0],
+  spaceKeyPressed: false,
   paperMoveInProgress: false,
   ctorTypes: {}, // 所有节点构造类型
   activeNodeId: null, // 当前激活的节点ID
@@ -331,6 +332,10 @@ const mutations = {
 
   setPaperMoveInProgress(state, value) {
     state.paperMoveInProgress = value
+  },
+
+  setPaperSpaceKeyPressed(state, value) {
+    state.spaceKeyPressed = value
   },
 
   setNodeViewOffsetPosition(state, data) {
