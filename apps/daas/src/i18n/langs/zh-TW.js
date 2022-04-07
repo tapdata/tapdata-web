@@ -1011,6 +1011,7 @@ export default {
   task_setting_distinct_write_type: '去重寫入機制',
   task_setting_is_schedule: '定期調度任務',
   task_setting_cron_expression: '請輸入調度表達式',
+  task_setting_cron_expression_label: '表達式',
   task_setting_read_cdc_interval: '增量同步間隔',
   task_setting_read_batch_size: '每次讀取數量',
   task_setting_processor_concurrency: '處理器線程數',
@@ -1040,6 +1041,9 @@ export default {
   task_job_link_confirm_message_rollback:
     '複製view時暫不支持設置字段映射，勾選此項下方字段映射功能會被禁用，已設置的字段映射將會被重置，是否確認勾選？ ',
   task_setting_oracle_custom_analysis: 'OracleSQL自定義解析',
+  task_setting_cron_feedbackText:
+    '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務。語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 * 年.',
+  task_setting_cron_extra: '例子: 0 */1 * * * ? * //每分鐘運行一次  0 0 2 * * ? * //每天2點運行',
 
   //字段映射
   task_form_no_fields_not_save: '當前表被刪除了所有字段，不允許保存操作',
@@ -1065,6 +1069,10 @@ export default {
   task_form_source_connection: '源端連接',
   task_form_target_type: '目標端類型',
   task_form_target_connection: '目標端連接',
+  task_form_source_type_check: '請選擇源端類型',
+  task_form_source_connection_check: '請選擇源端連接',
+  task_form_target_type_check: '請選擇目標端類型',
+  task_form_target_connection_check: '請選擇目標端連接',
 
   task_mapping_table_setting: '表設置',
   task_mapping_table_setting_tip:

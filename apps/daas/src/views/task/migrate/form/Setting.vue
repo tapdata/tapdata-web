@@ -288,25 +288,33 @@ export default {
                       display: '{{$deps[0] === "initial_sync" ? "visible" : "hidden"}}'
                     }
                   }
-                }
-                // default: false
+                },
+                default: false
               },
-              // crontabExpression: { //调度表达式
-              //   type: 'string',
-              //   'x-decorator': 'FormItem',
-              //   'x-component': 'Input',
-              //   'x-component-props': {
-              //     placeholder: this.$t('task_setting_cron_expression')
-              //   },
-              //   'x-reactions': {
-              //     dependencies: ['sync_type', 'isSchedule'],
-              //     fulfill: {
-              //       state: {
-              //         display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
-              //       }
-              //     }
-              //   }
-              // },
+              crontabExpression: {
+                //调度表达式
+                title: this.$t('task_setting_cron_expression_label'), //定期调度任务
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: this.$t('task_setting_cron_expression')
+                },
+                'x-decorator-props': {
+                  feedbackStatus: 'info',
+                  feedbackText: this.$t('task_setting_cron_feedbackText'),
+                  extra: this.$t('task_setting_cron_extra'),
+                  feedbackLayout: 'terse'
+                },
+                'x-reactions': {
+                  dependencies: ['sync_type', 'isSchedule'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
+                    }
+                  }
+                }
+              },
               // increaseSyncInterval: {
               //   title: this.$t('task_setting_read_cdc_interval'), //增量同步间隔
               //   type: 'string',
@@ -597,6 +605,16 @@ export default {
   ::v-deep {
     .formily-element-form-item-label label {
       font-size: 12px;
+    }
+    .formily-element-form-item-info-help {
+      font-size: 12px;
+      line-height: 24px;
+      width: 340px;
+    }
+    .formily-element-form-item-extra {
+      font-size: 12px;
+      line-height: 24px;
+      width: 340px;
     }
   }
 }

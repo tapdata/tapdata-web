@@ -1017,6 +1017,7 @@ export default {
   task_setting_distinct_write_type: '去重写入机制',
   task_setting_is_schedule: '定期调度任务',
   task_setting_cron_expression: '请输入调度表达式',
+  task_setting_cron_expression_label: '表达式',
   task_setting_read_cdc_interval: '增量同步间隔',
   task_setting_read_batch_size: '每次读取数量',
   task_setting_processor_concurrency: '处理器线程数',
@@ -1025,6 +1026,9 @@ export default {
   task_setting_sync_point: '增量采集开始时刻',
   task_setting_cdc_share_filter_on_server: '共享挖掘日志过滤',
   task_setting_lag_time: '增量滞后判断时间设置',
+  task_setting_cron_feedbackText:
+    '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务。 语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 * 年.',
+  task_setting_cron_extra: '例子: 0 */1 * * * ? * //每分钟运行一次  0 0 2 * * ? * //每天2点运行',
 
   task_name: '任务名称',
   task_status: '任务状态',
@@ -1072,6 +1076,10 @@ export default {
   task_form_source_connection: '源端连接',
   task_form_target_type: '目标端类型',
   task_form_target_connection: '目标端连接',
+  task_form_source_type_check: '请选择源端类型',
+  task_form_source_connection_check: '请选择源端连接',
+  task_form_target_type_check: '请选择目标端类型',
+  task_form_target_connection_check: '请选择目标端连接',
 
   task_mapping_table_setting: '表设置',
   task_mapping_table_setting_tip:

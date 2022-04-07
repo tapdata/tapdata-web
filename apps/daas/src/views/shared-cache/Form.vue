@@ -230,11 +230,11 @@ export default {
         }
       }
       this.$api('connections')
-        .get({
+        .listAll({
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          let options = res?.data?.items || []
+          let options = res?.data || []
           this.connectionOptions = options.map(opt => ({ label: opt.name, value: opt.id }))
         })
     },

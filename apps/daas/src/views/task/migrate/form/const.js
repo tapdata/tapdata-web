@@ -4,7 +4,7 @@ export const SETTING_MODEL = {
   // sync_type: '', //'全量+增量'
   automaticallyCreateTables: true, //自动建表
   isStopOnError: true, //遇到错误停止
-  isSchedule: true, //定时调度任务
+  isSchedule: false, //定时调度任务
   isAutoCreateIndex: true, //自动创建索引
   crontabExpression: '', //crontab表达式
   isFilter: false, //启动引擎过滤 默认false

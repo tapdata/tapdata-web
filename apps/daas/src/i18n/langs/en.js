@@ -1049,6 +1049,7 @@ export default {
   task_setting_distinct_write_type: 'De-duplication write mechanism',
   task_setting_is_schedule: 'Scheduled tasks regularly',
   task_setting_cron_expression: 'Please enter the scheduling expression',
+  task_setting_cron_expression_label: 'Expression',
   task_setting_read_cdc_interval: 'Incremental synchronization interval',
   task_setting_read_batch_size: 'Number of reads each time',
   task_setting_processor_concurrency: 'Number of processor threads',
@@ -1057,6 +1058,9 @@ export default {
   task_setting_sync_point: 'Incremental collection start time',
   task_setting_cdc_share_filter_on_server: 'Shared mining log filtering',
   task_setting_lag_time: 'Incremental lag judgment time setting',
+  task_setting_cron_feedbackText:
+    'You can run periodic tasks at a fixed time, date, and interval through cron expressions. Syntax: second * minute * hour * day * month * week * year.',
+  task_setting_cron_extra: 'Example: 0 */1 * * * ? * // Run every minute 0 0 2 * * ? * // Run at 2 every day',
 
   task_name: 'Task name',
   task_status: 'Task Status',
@@ -1110,6 +1114,10 @@ export default {
   task_form_source_connection: 'Source connection',
   task_form_target_type: 'Target type',
   task_form_target_connection: 'Target connection',
+  ask_form_source_type_check: 'Please select the source type',
+  task_form_source_connection_check: 'Please select the source connection',
+  task_form_target_type_check: 'Please select the target type',
+  task_form_target_connection_check: 'Please select the target connection',
 
   task_mapping_table_setting: 'Table Settings',
   task_mapping_table_setting_tip:
