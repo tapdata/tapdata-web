@@ -8,7 +8,7 @@
       :getDataFlow="getDataFlow"
     ></FieldMapping>
     <div class="total">共有{{ tableData.length }}个字段</div>
-    <ElTable v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
+    <ElTable ref="table" v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
       <ElTableColumn type="index" label="序号"> </ElTableColumn>
       <ElTableColumn prop="field_name" label="字段名称">
         <template #default="{ row }">
@@ -81,7 +81,10 @@ export default {
     },
 
     isShow(v) {
-      v && this.loadFields()
+      if (v) {
+        this.loadFields()
+        this.$refs.table.doLayout()
+      }
     }
   },
   mounted() {
