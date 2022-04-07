@@ -1,6 +1,4 @@
-.field-processor-tree-warp {
-  border: 1px solid;
-  border-color: map-get($borderColor, normal);
+.field-processors-tree-warp {
   .clickable{
     color: map-get($color, primary);
   }
@@ -10,11 +8,27 @@
     color: #C0C4CC;
     cursor: not-allowed;
   }
-  .active__name{
-    color: map-get($color, primary);
+  .text{
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .text__inner{
+    font-size: 12px;
+    font-weight: 400;
   }
   .active__delete{
     color: map-get($color, disable);
+  }
+  .field-type{
+    width: 100px;
+  }
+  .active__name{
+    color: map-get($color, primary);
+  }
+  .active__name__inner {
+    .el-input__inner{
+      color: map-get($color, primary);
+    }
   }
   .active__type {
     .el-input__inner{
@@ -23,35 +37,25 @@
   }
   .check-all{
     padding-left: 24px;
+    margin-right: 8px;
   }
   .field-name{
     flex:1;
   }
-  .field-type{
-    width: 100px;
-  }
+
   .field-ops{
     width: 250px;
     text-align: right;
     margin-right: 24px;
   }
-  .field-desc{
-    width: 250px;
-  }
-  .field-text{
-    display: inline-block;
-    font-weight: bold;
-  }
   .tree-node{
-    line-height: 50px;
+    line-height: 43px;
   }
   .field-processor-operation{
-    height: 36px;
-  }
-  .title-input-icon{
-    position: absolute;
-    right: 10px;
-    top: 19px;
+    height: 40px;
+    line-height:40px;
+    color: #4e5969;
+    background-color: #fafafa;
   }
   .field-processor-tree {
     .tree-field-input-wrap{
@@ -59,7 +63,7 @@
     }
     .tree-field-input .el-input__inner:hover{
       border: 1px solid;
-      border-color: map-get($borderColor, disable)
+      border-color: #eceef1
     }
     .el-input__inner{
       border: none;
@@ -71,7 +75,7 @@
       height: 50px;
       cursor: pointer;
       border-top: 1px solid;
-      border-color: map-get($borderColor, slight);
+      border-color: #eceef1;
       font-size: 12px;
     }
     .el-input__prefix, .el-input__suffix .el-select__caret{

@@ -57,12 +57,12 @@ const getState = () => ({
       constructor: 'JavaScript',
       locales: AllLocales.JavaScript
     },
-    {
-      icon: 'field-processor',
-      name: '字段处理',
-      type: 'field_processor',
-      constructor: 'FieldProcessor'
-    },
+    // {
+    //   icon: 'field-processor',
+    //   name: '字段处理',
+    //   type: 'field_processor',
+    //   constructor: 'FieldProcessor'
+    // },
     {
       icon: 'aggregator',
       name: '聚合',
@@ -82,13 +82,37 @@ const getState = () => ({
       type: 'join_processor',
       constructor: 'Join',
       locales: AllLocales.Join
-    }
+    },
     /*{
-      icon: 'join',
+      icon: 'merge_table',
       name: '主从合并',
       type: 'merge_table_processor',
       constructor: 'MergeTable'
-    }*/
+    },*/
+    {
+      icon: 'field_calc',
+      name: '字段计算',
+      type: 'field_calc_processor',
+      constructor: 'FieldCalc'
+    },
+    {
+      icon: 'field_mod_type',
+      name: '类型修改',
+      type: 'field_mod_type_processor',
+      constructor: 'FieldModType'
+    },
+    {
+      icon: 'field_rename',
+      name: '字段改名',
+      type: 'field_rename_processor',
+      constructor: 'FieldRename'
+    },
+    {
+      icon: 'field_add_del',
+      name: '增删字段',
+      type: 'field_add_del_processor',
+      constructor: 'FieldAddDel'
+    }
     // {
     //   icon: 'joint-cache',
     //   name: '关联缓存',
