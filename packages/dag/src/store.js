@@ -82,13 +82,13 @@ const getState = () => ({
       type: 'join_processor',
       constructor: 'Join',
       locales: AllLocales.Join
-    }
+    },
     /*{
       icon: 'merge_table',
       name: '主从合并',
       type: 'merge_table_processor',
       constructor: 'MergeTable'
-    },
+    },*/
     {
       icon: 'field_calc',
       name: '字段计算',
