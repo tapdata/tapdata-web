@@ -9,8 +9,8 @@
     ></FieldMapping>
     <div class="total">共有{{ tableData.length }}个字段</div>
     <ElTable ref="table" v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
-      <ElTableColumn type="index" label="序号"> </ElTableColumn>
-      <ElTableColumn prop="field_name" label="字段名称">
+      <ElTableColumn width="56" type="index" :label="$t('meta_table_index')"> </ElTableColumn>
+      <ElTableColumn prop="field_name" :label="$t('meta_table_field_name')">
         <template #default="{ row }">
           <span class="flex align-center"
             >{{ row.field_name }}
@@ -18,10 +18,10 @@
           </span>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="data_type" label="字段类型"> </ElTableColumn>
-      <ElTableColumn prop="scale" label="精度"> </ElTableColumn>
-      <ElTableColumn prop="oriPrecision" label="长度"> </ElTableColumn>
-      <ElTableColumn prop="comment" label="字段注释"> </ElTableColumn>
+      <ElTableColumn prop="data_type" :label="$t('meta_table_field_type')"> </ElTableColumn>
+      <ElTableColumn prop="scale" :label="$t('meta_table_scale')"> </ElTableColumn>
+      <ElTableColumn prop="oriPrecision" :label="$t('meta_table_precision')"> </ElTableColumn>
+      <ElTableColumn prop="comment" :label="$t('meta_table_comment')"> </ElTableColumn>
     </ElTable>
   </div>
 </template>
