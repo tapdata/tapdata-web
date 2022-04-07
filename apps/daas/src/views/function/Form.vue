@@ -148,11 +148,11 @@ export default {
     getData(id) {
       this.$api('Javascript_functions')
         .findOne({
-          filter: {
+          filter: JSON.stringify({
             where: {
               id
             }
-          }
+          })
         })
         .then(res => {
           let details = res?.data || {}
