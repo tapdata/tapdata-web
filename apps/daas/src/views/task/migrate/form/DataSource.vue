@@ -8,7 +8,12 @@
     :rules="rules"
   >
     <el-form-item label="源端类型" prop="source_filter_databaseType">
-      <el-select v-model="dataSourceData.source_filter_databaseType" filterable @change="getSourceConnection">
+      <el-select
+        v-model="dataSourceData.source_filter_databaseType"
+        style="width: 300px"
+        filterable
+        @change="getSourceConnection"
+      >
         <el-option v-for="item in allowSourceDatabaseTypes" :key="item.value" :label="item.label" :value="item.value">
         </el-option>
       </el-select>
@@ -16,6 +21,7 @@
     <el-form-item label="源端连接" prop="source_connectionId">
       <el-select
         v-model="dataSourceData.source_connectionId"
+        style="width: 300px"
         filterable
         clearable
         remote
@@ -28,7 +34,12 @@
       </el-select>
     </el-form-item>
     <el-form-item label="目标端类型" prop="target_filter_databaseType">
-      <el-select v-model="dataSourceData.target_filter_databaseType" filterable @change="getTargetConnection">
+      <el-select
+        v-model="dataSourceData.target_filter_databaseType"
+        style="width: 300px"
+        filterable
+        @change="getTargetConnection"
+      >
         <el-option v-for="item in allowTargetDatabaseTypes" :key="item.value" :label="item.label" :value="item.value">
         </el-option>
       </el-select>
@@ -36,6 +47,7 @@
     <el-form-item label="目标端连接" prop="target_connectionId">
       <el-select
         v-model="dataSourceData.target_connectionId"
+        style="width: 300px"
         filterable
         clearable
         remote
