@@ -81,29 +81,33 @@
       ></SelectList>
     </div>
     <div class="flex justify-content-between mt-6">
-      <div class="p-6 grey-background" style="min-width: 240px">
+      <div class="px-4 py-6 grey-background" style="min-width: 220px">
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
-          <span>{{ $t('task_monitor_total_input') }}</span>
+          <span class="font-color-slight">{{ $t('task_monitor_total_input') }}</span>
         </div>
-        <div class="mb-4 fs-4 fw-bolder din-font" style="color: #409488">{{ overData.inputTotal }}</div>
+        <div class="mb-4 fs-4 fw-bolder din-font" style="color: #409488">
+          {{ handleChangeUnit(overData.inputTotal) }}
+        </div>
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-success" size="18">mark</VIcon>
-          <span>{{ $t('task_monitor_total_output') }}</span>
+          <span class="font-color-slight">{{ $t('task_monitor_total_output') }}</span>
         </div>
-        <div class="mb-6 fs-4 fw-bolder din-font" style="color: #377ab9">{{ overData.outputTotal }}</div>
+        <div class="mb-6 fs-4 fw-bolder din-font" style="color: #377ab9">
+          {{ handleChangeUnit(overData.outputTotal) }}
+        </div>
         <div class="flex justify-content-between text-center">
           <div>
-            <div class="mb-3">{{ $t('task_monitor_total_insert') }}</div>
-            <div class="fs-6 font-color-main fw-bolder din-font">{{ overData.insertedTotal }}</div>
+            <div class="mb-3 font-color-slight">{{ $t('task_monitor_total_insert') }}</div>
+            <div class="fs-7 font-color-normal fw-bolder din-font">{{ handleChangeUnit(overData.insertedTotal) }}</div>
           </div>
           <div>
-            <div class="mb-3">{{ $t('task_monitor_total_update') }}</div>
-            <div class="fs-6 font-color-main fw-bolder din-font">{{ overData.updatedTotal }}</div>
+            <div class="mb-3 font-color-slight">{{ $t('task_monitor_total_update') }}</div>
+            <div class="fs-67 font-color-normal fw-bolder din-font">{{ handleChangeUnit(overData.updatedTotal) }}</div>
           </div>
           <div>
-            <div class="mb-3">{{ $t('task_monitor_total_delete') }}</div>
-            <div class="fs-6 font-color-main fw-bolder din-font">{{ overData.deletedTotal }}</div>
+            <div class="mb-3 font-color-slight">{{ $t('task_monitor_total_delete') }}</div>
+            <div class="fs-7 font-color-normal fw-bolder din-font">{{ handleChangeUnit(overData.deletedTotal) }}</div>
           </div>
         </div>
       </div>
@@ -431,6 +435,18 @@ export default {
     this.getSyncOverViewData()
   },
   methods: {
+    // 转化单位
+    handleChangeUnit(val) {
+      if (val / (1000 * 1000 * 1000) > 1) {
+        return (val / (1000 * 1000 * 1000)).toFixed(1) + 'T'
+      } else if (val / (1000 * 1000) > 1) {
+        return (val / (1000 * 1000)).toFixed(1) + 'M'
+      } else if (val / 1000 > 1) {
+        return (val / 1000).toFixed(1) + 'K'
+      } else {
+        return val
+      }
+    },
     //概览信息
     getSyncOverViewData() {
       //调用前 先清掉上一个定时器
