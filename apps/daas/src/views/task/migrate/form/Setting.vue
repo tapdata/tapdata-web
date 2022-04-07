@@ -293,7 +293,7 @@ export default {
               },
               crontabExpression: {
                 //调度表达式
-                title: this.$t('dag_data_setting_expression'), //定期调度任务
+                title: this.$t('task_setting_cron_expression_label'), //定期调度任务
                 type: 'string',
                 'x-decorator': 'FormItem',
                 'x-component': 'Input',
@@ -302,9 +302,8 @@ export default {
                 },
                 'x-decorator-props': {
                   feedbackStatus: 'info',
-                  feedbackText:
-                    '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务 语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 * 年',
-                  extra: '0 */1 * * * ? * //每分钟运行一次  0 0 2 * * ? * //每天2点运行',
+                  feedbackText: this.$t('task_setting_cron_feedbackText'),
+                  extra: this.$t('task_setting_cron_extra'),
                   feedbackLayout: 'terse'
                 },
                 'x-reactions': {
@@ -606,6 +605,16 @@ export default {
   ::v-deep {
     .formily-element-form-item-label label {
       font-size: 12px;
+    }
+    .formily-element-form-item-info-help {
+      font-size: 12px;
+      line-height: 24px;
+      width: 340px;
+    }
+    .formily-element-form-item-extra {
+      font-size: 12px;
+      line-height: 24px;
+      width: 340px;
     }
   }
 }
