@@ -15,10 +15,7 @@
         <ElTableColumn label="连接名" prop="name" min-width="200px">
           <template slot-scope="scope">
             <div class="flex flex-row align-items-center">
-              <img
-                class="mr-2 db-img"
-                :src="require('web-core/assets/icons/node/' + scope.row.database_type.toLowerCase() + '.svg')"
-              />
+              <img class="mr-2 db-img" :src="getSvg(scope.row)" />
               <ElLink
                 type="primary"
                 style="display: block; line-height: 20px"
@@ -294,7 +291,8 @@ export default {
         loadFieldsStatus: true,
         loadCount: true,
         tableCount: true,
-        loadFieldErrMsg: true
+        loadFieldErrMsg: true,
+        database_type: true
       }
       let filter = {
         fields,
@@ -506,6 +504,12 @@ export default {
     },
     isCloud(row) {
       return row.agentType === 'Cloud'
+    },
+    getSvg(row = {}) {
+      if (!row.database_type) {
+        return null
+      }
+      return require('web-core/assets/icons/node/' + row.database_type.toLowerCase() + '.svg')
     }
   }
 }
