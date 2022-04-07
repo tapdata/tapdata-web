@@ -137,7 +137,7 @@
     justify-content: space-between;
     width: 100%;
     background: #212a3b;
-    z-index: 2;
+    z-index: 100;
     .logo {
       margin-left: 23px;
       display: block;
@@ -197,7 +197,7 @@
     display: flex;
     height: calc(100% - 72px);
     overflow: hidden;
-    z-index: 2;
+    z-index: 100;
     border: 1px solid #e1e3e9;
     .el-menu--popup .submenu-item .btn-del {
       display: none;
