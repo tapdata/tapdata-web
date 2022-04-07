@@ -143,6 +143,7 @@ export default {
         if (lastLocationHref) {
           location.href = lastLocationHref
         }
+        debugger
         setTimeout(() => {
           sessionStorage.removeItem('lastLocationHref')
           location.reload()
