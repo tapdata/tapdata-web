@@ -396,7 +396,7 @@ export default {
 
         info.connection.bind('click', conn => {
           if (this.stateIsReadonly) return
-
+          this.handleDeselectAllConnections()
           conn.showOverlay('removeConn')
           conn.showOverlay('addNodeOnConn')
           conn.addClass('connection-selected')

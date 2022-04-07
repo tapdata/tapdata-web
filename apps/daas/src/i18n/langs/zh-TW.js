@@ -60,6 +60,7 @@ export default {
   button_auto_layout: '自動佈局',
   button_zoom_in: '放大',
   button_zoom_out: '縮小',
+  button_move_paper: '移動畫布[按住空格]',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精準匹配',

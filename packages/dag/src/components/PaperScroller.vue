@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import { on, off } from '@daas/shared'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { getDataflowCorners } from '../helpers'
@@ -72,7 +72,7 @@ export default {
         h: 0
       },
       // 按下空格键
-      spaceKeyPressed: false,
+      // spaceKeyPressed: false,
       // 累积的缩放系数
       cumulativeZoomFactor: 1,
       // 缩放系数
@@ -87,6 +87,7 @@ export default {
 
   computed: {
     ...mapGetters('dataflow', ['getCtor', 'isActionActive']),
+    ...mapState('dataflow', ['spaceKeyPressed']),
 
     selectBoxStyle() {
       let attr = this.selectBoxAttr
@@ -169,7 +170,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['addNode', 'setActiveType']),
+    ...mapMutations('dataflow', ['addNode', 'setActiveType', 'setPaperSpaceKeyPressed']),
 
     /**
      * 获取节点拖放后的坐标
@@ -356,7 +357,8 @@ export default {
       }
 
       if (e.which === 32) {
-        this.spaceKeyPressed = true
+        // this.spaceKeyPressed = true
+        this.setPaperSpaceKeyPressed(true)
         if (e.target === this.$el) e.preventDefault()
       }
     },
@@ -367,7 +369,8 @@ export default {
       }
 
       if (e.which === 32) {
-        this.spaceKeyPressed = false
+        // this.spaceKeyPressed = false
+        this.setPaperSpaceKeyPressed(false)
       }
     },
 

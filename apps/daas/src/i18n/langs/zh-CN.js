@@ -59,6 +59,7 @@ export default {
   button_auto_layout: '自动布局',
   button_zoom_in: '放大',
   button_zoom_out: '缩小',
+  button_move_paper: '移动画布[按住空格]',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精准匹配',
