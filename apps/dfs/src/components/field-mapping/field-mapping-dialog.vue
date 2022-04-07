@@ -1702,7 +1702,12 @@ export default {
     },
     getItemInvalid(item) {
       if (this.targetIsVika) {
-        return item.invalid || this.fieldMappingTableData.some(t => !t.t_field_name && !t.is_deleted)
+        return (
+          item.invalid ||
+          this.fieldMappingTableData.some(
+            t => t.table_name === item.sourceObjectName && !t.t_field_name && !t.is_deleted
+          )
+        )
       }
       return item.invalid
     },
