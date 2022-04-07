@@ -218,7 +218,13 @@ export default {
             //编辑时不被覆盖
             this.tableNameTransform = targetNodeMapping.tableNameTransform
             this.fieldsNameTransform = targetNodeMapping.fieldsNameTransform
-            this.checkEditor(this.id)
+
+            //查看 不需要检测是否启动过
+            if (!this.stateIsReadonly) {
+              this.checkEditor(this.id)
+            } else {
+              this.getSteps()
+            }
           }
         })
     },

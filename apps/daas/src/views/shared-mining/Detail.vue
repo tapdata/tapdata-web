@@ -69,7 +69,7 @@
         </template>
         <template slot="operation" slot-scope="scope">
           <div class="operate-columns">
-            <ElButton size="mini" type="text" @click="goDetail(scope.row.id)">{{ $t('button_check') }}</ElButton>
+            <ElButton size="mini" type="text" @click="goDetail(scope.row)">{{ $t('button_check') }}</ElButton>
             <ElButton size="mini" type="text" @click="getTables(scope.row.id)">{{
               $t('share_detail_button_table_info')
             }}</ElButton>
@@ -393,12 +393,12 @@ export default {
         this.getMeasurement()
       }, ms)
     },
-    goDetail(id) {
+    goDetail(row) {
       this.$router.push({
         name: 'dataflowStatistics',
         params: {
-          id: this.detailData.id,
-          subId: id
+          id: row.parentId || this.detailData.id,
+          subId: row.id
         }
       })
     },

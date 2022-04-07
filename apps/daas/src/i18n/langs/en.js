@@ -1930,6 +1930,13 @@ export default {
   dag_connection: 'Connection',
   dag_table: 'Table',
   dag_processor_node: 'Processor Node',
+  dag_save_fail: 'Save failed, please check node',
+  meta_table_index: 'Index',
+  meta_table_field_name: 'Name',
+  meta_table_field_type: 'Type',
+  meta_table_scale: 'Scale',
+  meta_table_precision: 'Precision',
+  meta_table_comment: 'Comment',
 
   new_advanced_mode: 'Standard Mode',
   new_more_features: 'More features',

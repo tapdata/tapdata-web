@@ -6,6 +6,7 @@ import { observer } from '@formily/reactive-vue'
 import { FormBaseItem as FormItem } from '@formily/element'
 import { watch } from 'vue-demi'
 import './style.scss'
+import { action } from '@formily/reactive'
 
 export const JoinExpression = observer(
   defineComponent({
@@ -88,14 +89,19 @@ export const JoinExpression = observer(
           fieldArr.splice(index, 1)
         }
 
-        const handleExchange = () => {
+        const doExchange = action.bound(() => {
           form.setValuesIn('leftNodeId', rightNodeId)
           form.setValuesIn('rightNodeId', leftNodeId)
+        })
+
+        const handleExchange = () => {
+          doExchange()
           props.value.forEach(item => {
             const { left, right } = item
             item.left = right
             item.right = left
           })
+          fieldRef.value.validate()
         }
 
         const renderItems = () => {

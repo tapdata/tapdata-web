@@ -166,6 +166,8 @@ export default {
     return {
       finishDuration: 0,
       progress: 0,
+      timer: null, //cdcTime 定时器
+      timerOverView: null,
       selectTime: 'second',
       statusBtMap: {
         start: {
@@ -368,8 +370,7 @@ export default {
           value: 'minute'
         }
       ],
-      timeRange: [],
-      timer: null
+      timeRange: []
     }
   },
   computed: {
@@ -407,6 +408,7 @@ export default {
   },
   beforeDestroy() {
     this.timer && clearInterval(this.timer)
+    this.timerOverView && clearTimeout(this.timerOverView)
   },
   mounted() {
     this.init()
@@ -458,6 +460,8 @@ export default {
     },
     //概览信息
     getSyncOverViewData() {
+      //调用前 先清掉上一个定时器
+      clearTimeout(this.timerOverView)
       this.$api('SubTask')
         .syncOverView(this.$route.params?.subId)
         .then(res => {
@@ -466,7 +470,7 @@ export default {
           this.progress = data?.progress
           this.endTs = data?.endTs
           if (data?.progress !== 100) {
-            setTimeout(() => {
+            this.timerOverView = setTimeout(() => {
               this.getSyncOverViewData()
             }, 800)
           }

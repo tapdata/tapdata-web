@@ -1,3 +1,4 @@
+@use "sass:math";
 .join-expression {
   $nw: 300px;
   $ow: 60px;
@@ -21,7 +22,7 @@
 
   .join-exchange {
     position: absolute;
-    left: $nw + $ow / 2;
+    left: $nw + math.div($ow, 2);
     transform: translateX(-50%);
   }
 }
