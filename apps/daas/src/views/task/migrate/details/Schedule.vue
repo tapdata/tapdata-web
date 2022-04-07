@@ -380,18 +380,18 @@ export default {
           label: this.$t('task_info_srcName'),
           prop: 'srcName'
         },
-        {
-          label: this.$t('task_info_srcTableName'),
-          prop: 'srcTableName'
-        },
+        // {
+        //   label: this.$t('task_info_srcTableName'),
+        //   prop: 'srcTableName'
+        // },
         {
           label: this.$t('task_info_tgtName'),
           prop: 'tgtName'
         },
-        {
-          label: this.$t('task_info_tgtTableName'),
-          prop: 'tgtTableName'
-        },
+        // {
+        //   label: this.$t('task_info_tgtTableName'),
+        //   prop: 'tgtTableName'
+        // },
         {
           label: this.$t('task_info_cdc_delay'),
           prop: 'delay'

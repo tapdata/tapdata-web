@@ -3,6 +3,7 @@
  * @date 2020/12/9
  * @description
  */
+import i18n from '@/i18n'
 export const getImgByType = function (type) {
   if (!type || type === 'jira') {
     type = 'default'
@@ -361,4 +362,191 @@ export const defaultCloudModel = {
       strategyExistence: false
     }
   }
+}
+export const CONFIG_MODEL = {
+  default: [
+    {
+      icon: 'time',
+      items: [
+        {
+          label: i18n.t('connection_preview_load_schema'),
+          key: 'last_updated'
+        }
+      ]
+    },
+    {
+      icon: 'database',
+      items: [
+        {
+          label: i18n.t('connection_form_database_address'),
+          key: 'database_host'
+        }
+      ]
+    },
+    {
+      icon: 'port',
+      items: [
+        {
+          label: i18n.t('connection_form_port'),
+          key: 'database_port'
+        }
+      ]
+    },
+    {
+      icon: 'name',
+      items: [
+        {
+          label: i18n.t('connection_form_database_name'),
+          key: 'database_name'
+        }
+      ]
+    },
+    {
+      icon: 'database-user-name',
+      items: [
+        {
+          label: i18n.t('connection_form_database_username'),
+          key: 'database_username'
+        }
+      ]
+    },
+    {
+      icon: 'database-password',
+      items: [
+        {
+          label: i18n.t('connection_form_database_password'),
+          key: 'database_password'
+        }
+      ]
+    },
+    {
+      icon: 'additional-string',
+      items: [
+        {
+          label: i18n.t('connection_form_additional_string'),
+          key: 'additionalString'
+        }
+      ]
+    },
+    {
+      icon: 'origin-time',
+      items: [
+        {
+          label: i18n.t('connection_form_timezone'),
+          key: 'database_datetype_without_timezone'
+        }
+      ]
+    }
+  ],
+  kafka: [
+    {
+      icon: 'time',
+      items: [
+        {
+          label: i18n.t('connection_preview_load_schema'),
+          key: 'last_updated'
+        }
+      ]
+    },
+    {
+      icon: 'database',
+      items: [
+        {
+          label: i18n.t('connection_form_database_address'),
+          key: 'kafkaBootstrapServers'
+        },
+        {
+          label: i18n.t('connection_form_kafka_pattern_topic'),
+          key: 'kafkaPatternTopics'
+        },
+        {
+          label: i18n.t('connection_form_kafka_ignore_invalid'),
+          key: 'kafkaIgnoreInvalidRecord'
+        },
+        {
+          label: i18n.t('connection_form_kafka_ack'),
+          key: 'kafkaAcks'
+        },
+        {
+          label: i18n.t('connection_form_kafka_compression_type'),
+          key: 'kafkaCompressionType'
+        },
+        {
+          label: i18n.t('connection_form_kafka_ignore_push'),
+          key: 'kafkaIgnorePushError'
+        }
+      ]
+    }
+  ],
+  mq: [
+    {
+      icon: 'time',
+      items: [
+        {
+          label: i18n.t('connection_preview_load_schema'),
+          key: 'last_updated'
+        }
+      ]
+    },
+    {
+      icon: 'database',
+      items: [
+        {
+          label: i18n.t('connection_form_database_address'),
+          key: 'database_host'
+        }
+      ]
+    },
+    {
+      icon: 'port',
+      items: [
+        {
+          label: i18n.t('connection_form_port'),
+          key: 'database_port'
+        },
+        {
+          label: i18n.t('connection_form_mq_type'),
+          key: 'mqType'
+        },
+        {
+          label: i18n.t('connection_form_broker_url'),
+          key: 'brokerURL'
+        },
+        {
+          label: i18n.t('connection_form_mq_queue_set'),
+          key: 'mqQueueSet'
+        },
+        {
+          label: i18n.t('connection_form_mq_topic_set'),
+          key: 'mqTopicSet'
+        },
+        {
+          label: i18n.t('connection_form_route_key_field'),
+          key: 'routeKeyField'
+        },
+        {
+          label: i18n.t('connection_form_virtual_host'),
+          key: 'virtualHost'
+        }
+      ]
+    },
+    {
+      icon: 'database-user-name',
+      items: [
+        {
+          label: i18n.t('connection_form_database_username'),
+          key: 'mqUserName'
+        }
+      ]
+    },
+    {
+      icon: 'database-password',
+      items: [
+        {
+          label: i18n.t('connection_form_database_password'),
+          key: 'plain_password'
+        }
+      ]
+    }
+  ]
 }

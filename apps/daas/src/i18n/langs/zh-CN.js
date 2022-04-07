@@ -1252,7 +1252,7 @@ export default {
   share_detail_end_time: '结束时间',
   share_detail_to: '至',
   share_detail_incremental_play: '增量延迟',
-  share_detail_incremental_time: '增量延迟所处的时间点',
+  share_detail_incremental_time: '所处的时间点',
 
   share_task_table_name: '挖掘任务名称',
   share_task_table_time: '挖掘所处时间',
@@ -1870,5 +1870,21 @@ export default {
   dag_meta_data: '元数据',
   dag_connection: '连接',
   dag_table: '表',
-  dag_processor_node: '处理节点'
+  dag_processor_node: '处理节点',
+  dag_save_fail: '保存出错，请检查节点',
+
+  // 新建
+  new_advanced_mode: '标准模式',
+  new_more_features: '更多功能',
+  new_data_copy: '数据复制',
+  new_data_development: '数据开发',
+  new_data_copy_desc: '对数据库进行跨库复制，适用于数据迁移，容灾备份，系统多活等场景',
+  new_data_development_desc: '抽取源端数据并加工计算转换、例如行过滤、字段处理、多表合并等',
+  new_create_connection: '创建数据源',
+  new_create_api: '创建API',
+  new_data_valid: '数据校验',
+  new_create_connection_desc: '数据源是创建传输任务的前提，任务重所有的数据库和表数据节点都来自数据源',
+  new_create_api_desc: 'API即数据发布，可以根据现有collection或者通过同步任务创建新的collection对外发布的API',
+  new_data_valid_desc:
+    '可对迁移同步任务的数据源与目标之间的数据进行比对校验，包含快速count校验，全表字段值校验，关联字段值校验等'
 }

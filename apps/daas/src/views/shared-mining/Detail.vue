@@ -1,26 +1,28 @@
 <template>
   <div class="share-detail section-wrap">
     <div class="share-detail-box share-detail-head flex justify-content-between fs-8">
-      <div class="share-detail-head-left">
-        <div class="flex align-items-center mb-2">
-          <span class="fw-bold mb-4 fs-7">{{ $t('share_detail_mining_info') }}</span>
+      <div class="share-detail-head-left py-6 px-4">
+        <div class="flex align-items-center">
+          <span class="fw-sub mb-4 fs-7">{{ $t('share_detail_mining_info') }}</span>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
-          <div class="fw-bold head-label">{{ $t('share_detail_name') }}:</div>
-          <div class="font-color-sub">{{ detailData.name }}</div>
+          <div class="fw-normal head-label font-color-slight">{{ $t('share_detail_name') }}:</div>
+          <ElTooltip effect="dark" :content="detailData.name" placement="top-start">
+            <div class="name font-color-normal fw-normal">{{ detailData.name }}</div>
+          </ElTooltip>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
-          <div class="fw-bold head-label">{{ $t('share_detail_log_mining_time') }}:</div>
-          <div class="font-color-sub">{{ $moment(detailData.logTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
+          <div class="fw-normal head-label font-color-slight">{{ $t('share_detail_log_mining_time') }}:</div>
+          <div class="font-color-normal fw-normal">{{ $moment(detailData.logTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
-          <div class="fw-bold head-label">{{ $t('share_detail_log_time') }}:</div>
-          <div class="font-color-sub">{{ detailData.storageTime }}</div>
+          <div class="fw-normal head-label font-color-slight">{{ $t('share_detail_log_time') }}:</div>
+          <div class="font-color-normal fw-normal">{{ detailData.storageTime }}</div>
         </div>
       </div>
-      <div class="share-detail-head-center py-3" style="min-height: 250px">
-        <div class="flex ml-3 pt-3">
-          <span class="label fs-8">{{ $t('share_detail_statistics_time') }}</span>
+      <div class="share-detail-head-center py-5 px-6" style="min-height: 250px">
+        <div class="flex">
+          <span class="label font-color-main fs-8">{{ $t('share_detail_statistics_time') }}</span>
           <DatetimeRange
             v-model="timeRange"
             value-format="timestamp"
@@ -28,13 +30,20 @@
             @change="changeTimeRangeFnc"
           ></DatetimeRange>
         </div>
-        <Chart ref="chart" type="line" :extend="lineOptions" class="v-echart h-100"></Chart>
+        <!-- <Chart ref="chart" type="line" :extend="lineOptions" class="v-echart h-100"></Chart> -->
+        <div class="flex flex-column flex-fill" style="height: 250px" v-loading="!lineDataDeep.x.length">
+          <Chart ref="chart" type="line" :data="lineData" :options="lineOptions" class="type-chart h-100"></Chart>
+        </div>
       </div>
-      <div class="flex share-detail-head-right text-center">
-        <div class="box py-3 mt-2">
-          <div class="title fs-8">{{ $t('share_detail_incremental_play') }}</div>
-          <div class="time py-4 fs-4 text-primary">{{ replicateLag }}</div>
-          <div class="text-muted">{{ $t('share_detail_incremental_time') }}：{{ formatTime(detailData.cdcTime) }}</div>
+      <div class="flex share-detail-head-right text-center p-6 pl-0">
+        <div class="flex text-center bg-color-main w-100 h-100">
+          <div class="box py-3">
+            <div class="title fs-7 font-color-normal">{{ $t('share_detail_incremental_play') }}</div>
+            <div class="time py-4 fs-2 text-primary">{{ replicateLag }}</div>
+            <div class="text-muted font-color-sub fs-8" v-if="detailData.cdcTime">
+              {{ $t('share_detail_incremental_time') }}：{{ formatTime(detailData.cdcTime) }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -60,7 +69,7 @@
         </template>
         <template slot="operation" slot-scope="scope">
           <div class="operate-columns">
-            <ElButton size="mini" type="text" @click="goDetail(scope.row.id)">{{ $t('button_check') }}</ElButton>
+            <ElButton size="mini" type="text" @click="goDetail(scope.row)">{{ $t('button_check') }}</ElButton>
             <ElButton size="mini" type="text" @click="getTables(scope.row.id)">{{
               $t('share_detail_button_table_info')
             }}</ElButton>
@@ -116,6 +125,10 @@ export default {
         x: [],
         y: [[], []]
       },
+      lineDataDeep: {
+        x: [],
+        y: [[], []]
+      },
       loading: true,
       task: {},
       lineOptions: {
@@ -125,7 +138,7 @@ export default {
         legend: {
           top: 4,
           right: 0,
-          show: true
+          show: false
         },
         xAxis: {
           type: 'time'
@@ -133,7 +146,7 @@ export default {
         yAxis: [
           {
             // max: 'dataMax',
-            name: 'QPS',
+            // name: 'QPS',
             axisLabel: {
               formatter: function (value) {
                 if (value >= 1000) {
@@ -156,10 +169,10 @@ export default {
           }
         ],
         grid: {
-          // left: 0,
-          right: '8px',
+          left: 0,
+          right: 0,
           top: '24px',
-          bottom: '30px'
+          bottom: 0
         },
         series: [
           {
@@ -175,7 +188,7 @@ export default {
             itemStyle: {
               color: 'rgba(24, 144, 255, 1)'
             },
-            type: 'line',
+            // type: 'line',
             data: []
           },
           {
@@ -191,7 +204,7 @@ export default {
             itemStyle: {
               color: 'rgba(118, 205, 238, 1)'
             },
-            type: 'line',
+            // type: 'line',
             data: []
           }
         ]
@@ -327,6 +340,12 @@ export default {
           }
 
           let xArr = qpsDataTime.map(t => formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
+          const xArrLen = xArr.length
+          if (this.lineDataDeep.x.length > 20) {
+            this.lineDataDeep.x.splice(0, xArrLen)
+            this.lineDataDeep.y[0].splice(0, xArrLen)
+            this.lineDataDeep.y[1].splice(0, xArrLen)
+          }
           let inArr = []
           let outArr = []
           xArr.forEach((el, i) => {
@@ -340,17 +359,27 @@ export default {
               value: [time, outputQPS[i]]
             })
           })
+          // eslint-disable-next-line
+        console.log('挖掘详情x轴：', this.lineDataDeep.x.length, xArr)
+          xArr.forEach((el, index) => {
+            if (!this.lineDataDeep.x.includes(el)) {
+              this.lineDataDeep.x.push(el)
+              this.lineDataDeep.y[0].push(inArr[index])
+              this.lineDataDeep.y[1].push(outArr[index])
+            }
+          })
           this.$nextTick(() => {
-            Object.assign(this.lineOptions, {
-              xAxis: {
-                data: xArr
-              },
+            this.$refs.chart?.chart?.setOption({
+              // Object.assign(this.lineOptions, {
+              //   xAxis: {
+              //     data: xArr
+              //   },
               series: [
                 {
-                  data: inArr
+                  data: Object.assign([], this.lineDataDeep.y[0])
                 },
                 {
-                  data: outArr
+                  data: Object.assign([], this.lineDataDeep.y[1])
                 }
               ]
             })
@@ -364,12 +393,12 @@ export default {
         this.getMeasurement()
       }, ms)
     },
-    goDetail(id) {
+    goDetail(row) {
       this.$router.push({
         name: 'dataflowStatistics',
         params: {
-          id: this.detailData.id,
-          subId: id
+          id: row.parentId || this.detailData.id,
+          subId: row.id
         }
       })
     },
@@ -465,14 +494,19 @@ export default {
     background: #fff;
     border-radius: 4px;
     .share-detail-head-left {
-      min-width: 240px;
-      padding: 20px;
+      width: 260px;
       border-right: 1px solid #f2f2f2;
       .head-label {
-        width: 100px;
+        min-width: 100px;
+      }
+      .name {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
     }
     .share-detail-head-center {
+      width: 100%;
       .label {
         width: 70px;
         line-height: 28px;
@@ -487,8 +521,13 @@ export default {
       }
     }
     .share-detail-head-right {
-      min-width: 240px;
+      width: 240px;
       align-items: center;
+      overflow: hidden;
+      & > div {
+        align-items: center;
+        justify-content: center;
+      }
     }
   }
   .share-detail-main {

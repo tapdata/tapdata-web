@@ -5,7 +5,7 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <div slot="operation">
-        <el-button class="btn btn-create" type="primary" size="mini" @click="handleSetting">
+        <el-button class="btn btn-create" type="primary" size="mini" :loading="loadingConfig" @click="handleSetting">
           <span>{{ $t('share_list_setting') }}</span>
         </el-button>
       </div>
@@ -36,14 +36,23 @@
         </template>
       </el-table-column>
       <el-table-column width="200" fixed="right" :label="$t('column_operation')">
-        <template slot-scope="scope">
-          <el-button size="mini" type="text" @click="run([scope.row.id])">{{ $t('task_list_run') }}</el-button>
+        <template #default="{ row }">
+          <el-button size="mini" type="text" :disabled="row.disabledData.start" @click="run([row.id])">{{
+            $t('task_list_run')
+          }}</el-button>
           <el-divider direction="vertical"></el-divider>
-          <el-button size="mini" type="text" @click="stop([scope.row.id])">{{ $t('task_list_stop') }}</el-button>
+          <ElLink v-if="isShowForceStop(row.statuses)" type="primary" @click="forceStop([row.id])">
+            {{ $t('task_list_force_stop') }}
+          </ElLink>
+          <el-button v-else size="mini" type="text" :disabled="row.disabledData.stop" @click="stop([row.id])">{{
+            $t('task_list_stop')
+          }}</el-button>
           <el-divider direction="vertical"></el-divider>
-          <el-button size="mini" type="text" @click="edit(scope.row)">{{ $t('button_edit') }}</el-button>
+          <el-button size="mini" type="text" :disabled="row.disabledData.edit" @click="edit(row)">{{
+            $t('button_edit')
+          }}</el-button>
           <el-divider direction="vertical"></el-divider>
-          <el-button size="mini" type="text" @click="detail(scope.row)">{{ $t('button_details') }}</el-button>
+          <el-button size="mini" type="text" @click="detail(row)">{{ $t('button_details') }}</el-button>
         </template>
       </el-table-column>
     </TablePage>
@@ -122,10 +131,11 @@
       custom-class="edit-dialog"
       :title="$t('share_list_edit_title')"
       :close-on-click-modal="false"
+      :destroy-on-close="true"
       :visible.sync="editDialogVisible"
     >
       <el-form ref="editForm" label-position="left" label-width="150px" :model="editForm" :rules="rulesEdit">
-        <el-form-item size="mini" :label="$t('share_form_edit_name')" prop="edit_name">
+        <el-form-item size="mini" :label="$t('share_form_edit_name')" prop="name">
           <el-input clearable v-model="editForm.name"></el-input>
         </el-form-item>
         <el-form-item size="mini" :label="$t('share_form_setting_log_time')">
@@ -146,7 +156,7 @@
 <script>
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
-import { getSubTaskStatus } from '@/utils/util'
+import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 
 let timeout = null
 export default {
@@ -176,6 +186,7 @@ export default {
       list: null,
       settingDialogVisible: false,
       editDialogVisible: false,
+      loadingConfig: false,
       digSettingForm: {
         persistenceMongodb_uri_db: '',
         persistenceMongodb_collection: '',
@@ -220,14 +231,12 @@ export default {
         ]
       },
       rulesEdit: {
-        edit_name: [{ required: true, message: this.$t('shared_cdc_name'), trigger: 'blur' }]
+        name: [{ required: true, message: this.$t('shared_cdc_name'), trigger: 'blur' }]
       }
     }
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-    //是否可以全局设置
-    this.check()
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
@@ -279,6 +288,8 @@ export default {
               }
               item.createTime = this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               let statuses = item.statuses
+              console.log('getTaskBtnDisabled', getTaskBtnDisabled(item))
+              item.disabledData = getTaskBtnDisabled(item)
               item.statusResult = getSubTaskStatus(statuses)[0].status
               return item
             })
@@ -286,28 +297,33 @@ export default {
         })
     },
 
-    // 挖掘设置
-    check() {
+    handleSetting() {
+      //是否可以全局设置
+      this.loadingConfig = true
       this.$api('logcollector')
         .check()
         .then(res => {
           if (res) {
             this.showEditSettingBtn = res?.data?.data //true是可用，false是禁用
+            this.settingDialogVisible = true
+            this.$api('logcollector')
+              .getSystemConfig()
+              .then(res => {
+                if (res) {
+                  this.digSettingForm = res.data
+                  this.getMongodb()
+                  if (this.digSettingForm?.persistenceMongodb_uri_db) {
+                    this.handleTables(this.digSettingForm?.persistenceMongodb_uri_db, true) //编辑页面请求tables
+                  }
+                }
+              })
+              .finally(() => {
+                this.loadingConfig = false
+              })
           }
         })
-    },
-    handleSetting() {
-      this.settingDialogVisible = true
-      this.$api('logcollector')
-        .getSystemConfig()
-        .then(res => {
-          if (res) {
-            this.digSettingForm = res.data
-            this.getMongodb()
-            if (this.digSettingForm?.persistenceMongodb_uri_db) {
-              this.handleTables(this.digSettingForm?.persistenceMongodb_uri_db, true) //编辑页面请求tables
-            }
-          }
+        .catch(() => {
+          this.loadingConfig = false
         })
     },
     //获取所有mongo连接
@@ -377,6 +393,34 @@ export default {
           }
         })
     },
+    getConfirmMessage(operateStr, isBulk, name) {
+      let title = operateStr + '_confirm_title',
+        message = operateStr + '_confirm_message'
+      if (isBulk) {
+        title = 'bulk_' + title
+        message = 'bulk_' + message
+      }
+      const h = this.$createElement
+      let strArr = this.$t('dataFlow.' + message).split('xxx')
+      let msg = h('p', null, [
+        strArr[0],
+        h(
+          'span',
+          {
+            class: 'color-primary'
+          },
+          name
+        ),
+        strArr[1]
+      ])
+      return {
+        msg,
+        title: this.$t('dataFlow.' + title)
+      }
+    },
+    isShowForceStop(data) {
+      return data?.length && data.every(t => ['stopping'].includes(t.status))
+    },
     stop(ids) {
       this.$confirm(this.$t('message.stopInitial_syncMessage'), this.$t('dataFlow.importantReminder'), {
         type: 'warning'
@@ -386,6 +430,26 @@ export default {
         }
         this.$api('Task')
           .batchStop(ids)
+          .then(res => {
+            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.table.fetch()
+          })
+          .catch(err => {
+            this.$message.error(err.data?.message)
+          })
+      })
+    },
+    forceStop(ids, item = {}) {
+      let msgObj = this.getConfirmMessage('force_stop', ids.length > 1, item.name)
+      this.$confirm(msgObj.msg, '', {
+        type: 'warning',
+        showClose: false
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        this.$api('Task')
+          .forceStop(ids)
           .then(res => {
             this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
             this.table.fetch()

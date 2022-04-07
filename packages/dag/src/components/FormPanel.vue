@@ -11,11 +11,26 @@
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { Form, SchemaField } from '@daas/form'
-import { createForm, onFormInputChange, onFormValuesChange, onFieldReact, isVoidField } from '@formily/core'
+import {
+  createForm,
+  onFormInputChange,
+  onFormValuesChange,
+  onFieldReact,
+  isVoidField,
+  registerValidateMessageTemplateEngine
+} from '@formily/core'
 import { Path } from '@formily/path'
 import { validateBySchema } from '@daas/form/src/shared/validate'
 import { debounce } from 'lodash'
 import formScope from '../mixins/formScope'
+
+registerValidateMessageTemplateEngine((message, context) => {
+  // console.log('registerValidateMessageTemplateEngine', message, context)
+  if (context.field?.props?.name === 'tableName') {
+    return '请选择表'
+  }
+  return message
+})
 
 const mapEnum = dataSource => (item, index) => {
   const label = dataSource[index] || dataSource[item.value] || item.label
@@ -66,11 +81,7 @@ export default {
     ]),
 
     node() {
-      return this.activeConnection ? this.nodeById(this.activeConnection.targetId) : this.activeNode
-    },
-
-    sourceNode() {
-      return this.activeConnection ? this.nodeById(this.activeConnection.sourceId) : null
+      return this.activeNode
     },
 
     ins() {
@@ -106,13 +117,43 @@ export default {
             // eslint-disable-next-line no-console
             console.log('上一个激活的节点校验结果', result)
           }
-          this.clearNodeError(o)
+
+          if (this.hasNodeError(o) && typeof this.hasNodeError(o) !== 'string') {
+            this.clearNodeError(o)
+          }
         } catch (e) {
           // eslint-disable-next-line no-console
           console.error(e)
           this.setNodeError(o)
         }
       }
+
+      this.setNodeInputsWatcher(
+        this.$watch('node.$inputs', v => {
+          if (!this.node || !v) return
+          const $inputs = this.form.getFieldState('$inputs')
+          // eslint-disable-next-line no-console
+          console.log('🤖️ node.$inputs', this.node.name, v)
+          if ($inputs && $inputs.value.join(',') !== v.join(',')) {
+            // eslint-disable-next-line no-console
+            console.log('👷 更新$inputs', $inputs.value)
+            this.form.setValuesIn('$inputs', [...v])
+          }
+        })
+      )
+      this.setNodeOutputsWatcher(
+        this.$watch('node.$outputs', v => {
+          if (!this.node || !v) return
+          const $outputs = this.form.getFieldState('$outputs')
+          // eslint-disable-next-line no-console
+          console.log('🤖️ node.$outputs', this.node.name, v)
+          if ($outputs && $outputs.value.join(',') !== v.join(',')) {
+            // eslint-disable-next-line no-console
+            console.log('👷 更新$outputs', $outputs.value)
+            this.form.setValuesIn('$outputs', [...v])
+          }
+        })
+      )
     },
 
     // 监听连线变动
@@ -144,7 +185,14 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['setNodeValue', 'updateNodeProperties', 'setNodeError', 'clearNodeError']),
+    ...mapMutations('dataflow', [
+      'setNodeValue',
+      'updateNodeProperties',
+      'setNodeError',
+      'clearNodeError',
+      'setNodeInputsWatcher',
+      'setNodeOutputsWatcher'
+    ]),
 
     ...mapActions('dataflow', ['updateDag']),
 
@@ -634,7 +682,7 @@ export default {
     updateNodeProps: debounce(function (form) {
       if (!this.node) return
       const formValues = { ...form.values }
-      const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode'] // 排除属性的更新
+      const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode', '$inputs', '$outputs'] // 排除属性的更新
       filterProps.forEach(path => {
         Path.setIn(formValues, path, undefined)
       })
@@ -683,17 +731,24 @@ export default {
           field.component[1] = field.component[1] || []
           field.component[1].placeholder = placeholder
         }
-        if (!isVoidField(field)) {
-          if (dataSource?.length) {
+        if (dataSource?.length && !isVoidField(field)) {
+          if (field.dataSource?.length) {
+            field.dataSource = field.dataSource.map(mapEnum(dataSource))
+          } else {
+            field.dataSource = dataSource.slice()
+          }
+        }
+        /*if (!isVoidField(field)) {
+          if (dataSource?.length && !isVoidField(field)) {
             if (field.dataSource?.length) {
               field.dataSource = field.dataSource.map(mapEnum(dataSource))
             } else {
               field.dataSource = dataSource.slice()
             }
           } else {
-            field.dataSource = field.dataSource?.filter(Boolean)
+            field.dataSource = field.dataSource?.filter?.(Boolean)
           }
-        }
+        }*/
       })
     },
 

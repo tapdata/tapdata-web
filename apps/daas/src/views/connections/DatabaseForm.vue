@@ -706,45 +706,6 @@ export default {
     }
   },
   created() {
-    this.id = this.$route.params.id || ''
-    this.databaseType = this.$route.query.databaseType || this.$store.state.createConnection.databaseType
-    //确认类型 按照type 初始化变量
-
-    this.model = Object.assign({}, defaultModel['default'])
-    switch (this.databaseType) {
-      case 'kafka':
-        this.model = Object.assign({}, defaultModel['kafka'])
-        break
-      case 'file':
-        this.model = Object.assign({}, defaultModel['file'])
-        break
-      case 'jira':
-        this.model = Object.assign({}, defaultModel['jira'])
-        break
-      case 'rest api':
-        this.model = Object.assign({}, defaultModel['restApi'])
-        break
-      case 'custom_connection':
-        this.model = Object.assign({}, defaultModel['custom_connection'])
-        break
-      case 'mq':
-        this.model = Object.assign({}, defaultModel['mq'])
-        break
-      case 'gridfs':
-        this.model = Object.assign({}, defaultModel['default'], defaultModel['gridfs'])
-        break
-      case 'tcp_udp':
-        this.model = Object.assign({}, defaultModel['tcp'])
-        break
-      case 'hana':
-        this.model = Object.assign({}, defaultModel['default'], defaultModel['hana'])
-        break
-      case 'vika':
-        this.model = Object.assign({}, defaultModel['vika'])
-        break
-    }
-    this.checkDataTypeOptions(this.databaseType)
-    this.initTimezones()
     let self = this
     defaultConfig = [
       {
@@ -800,6 +761,45 @@ export default {
         ]
       }
     ]
+    this.id = this.$route.params.id || ''
+    this.databaseType = this.$route.query.databaseType || this.$store.state.createConnection.databaseType
+    //确认类型 按照type 初始化变量
+
+    this.model = Object.assign({}, defaultModel['default'])
+    switch (this.databaseType) {
+      case 'kafka':
+        this.model = Object.assign({}, defaultModel['kafka'])
+        break
+      case 'file':
+        this.model = Object.assign({}, defaultModel['file'])
+        break
+      case 'jira':
+        this.model = Object.assign({}, defaultModel['jira'])
+        break
+      case 'rest api':
+        this.model = Object.assign({}, defaultModel['restApi'])
+        break
+      case 'custom_connection':
+        this.model = Object.assign({}, defaultModel['custom_connection'])
+        break
+      case 'mq':
+        this.model = Object.assign({}, defaultModel['mq'])
+        break
+      case 'gridfs':
+        this.model = Object.assign({}, defaultModel['default'], defaultModel['gridfs'])
+        break
+      case 'tcp_udp':
+        this.model = Object.assign({}, defaultModel['tcp'])
+        break
+      case 'hana':
+        this.model = Object.assign({}, defaultModel['default'], defaultModel['hana'])
+        break
+      case 'vika':
+        this.model = Object.assign({}, defaultModel['vika'])
+        break
+    }
+    this.checkDataTypeOptions(this.databaseType)
+    this.initTimezones()
   },
   watch: {
     'model.multiTenant'(val) {

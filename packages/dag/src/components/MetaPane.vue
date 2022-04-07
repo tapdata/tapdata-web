@@ -14,7 +14,7 @@
         <template #default="{ row }">
           <span class="flex align-center"
             >{{ row.field_name }}
-            <VIcon v-if="row.unique" size="12" class="text-warning ml-1">key</VIcon>
+            <VIcon v-if="row.primary_key_position > 0" size="12" class="text-warning ml-1">key</VIcon>
           </span>
         </template>
       </ElTableColumn>
@@ -99,8 +99,11 @@ export default {
         let data = await metadataApi.nodeSchema(this.activeNode.id)
         data = data?.[0]
         data.fields.sort((a, b) => {
-          if (a.unique !== b.unique) {
-            return a.unique ? -1 : 1
+          const aIsPrimaryKey = a.primary_key_position > 0
+          const bIsPrimaryKey = b.primary_key_position > 0
+
+          if (aIsPrimaryKey !== bIsPrimaryKey) {
+            return aIsPrimaryKey ? -1 : 1
           } else {
             return a.field_name.localeCompare(b.field_name)
           }

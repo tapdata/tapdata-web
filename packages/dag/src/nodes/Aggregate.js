@@ -20,6 +20,26 @@ export class Aggregate extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
+      $inputs: {
+        type: 'array',
+        display: 'none'
+      },
+      fieldNames: {
+        type: 'array',
+        visible: false,
+        'x-reactions': [
+          '{{useAsyncDataSourceByConfig({service: loadNodeFieldNamesById, fieldName: "value", withoutField: true}, $values.$inputs[0])}}',
+          {
+            target: '*(primaryKeys,aggregations.*.aggExpression,aggregations.*.groupByExpression)',
+            fulfill: {
+              state: {
+                dataSource: '{{$self.value}}',
+                loading: '{{$self.loading}}'
+              }
+            }
+          }
+        ]
+      },
       grid: {
         type: 'void',
         'x-component': 'FormGrid',
@@ -40,8 +60,7 @@ export class Aggregate extends NodeType {
                 'x-component': 'Select',
                 'x-component-props': {
                   multiple: true
-                },
-                'x-reactions': ['{{useAsyncDataSource(loadNodeFieldNames)}}']
+                }
               },
               aggregations: {
                 type: 'array',
@@ -123,14 +142,6 @@ export class Aggregate extends NodeType {
                           },
                           'x-reactions': [
                             {
-                              dependencies: ['primaryKeys'],
-                              fulfill: {
-                                state: {
-                                  dataSource: '{{$form.getFieldState("primaryKeys").dataSource}}'
-                                }
-                              }
-                            },
-                            {
                               dependencies: ['.aggFunction'],
                               fulfill: {
                                 state: {
@@ -176,14 +187,6 @@ export class Aggregate extends NodeType {
                       'x-component': 'Select',
                       'x-component-props': {
                         multiple: true
-                      },
-                      'x-reactions': {
-                        dependencies: ['primaryKeys'],
-                        fulfill: {
-                          state: {
-                            dataSource: '{{$form.getFieldState("primaryKeys").dataSource}}'
-                          }
-                        }
                       }
                     }
                   }
@@ -212,15 +215,7 @@ export class Aggregate extends NodeType {
             title: '返回示例',
             type: 'void',
             'x-decorator': 'FormItem',
-            'x-component': 'ArrayAggregate',
-            'x-reactions': {
-              dependencies: ['primaryKeys'],
-              fulfill: {
-                state: {
-                  dataSource: '{{$form.getFieldState("primaryKeys").dataSource}}'
-                }
-              }
-            }
+            'x-component': 'ArrayAggregate'
           }
         }
       }
