@@ -1,65 +1,56 @@
 <template>
-  <section class="page-sign-in">
-    <Header></Header>
-    <main>
-      <div class="body" :class="{ dk: $getSettingByKey('SHOW_OLD_PAGE') }">
-        <div class="dk-login-cover">
-          <img src="../../assets/images/loginCover_dk.png" />
+  <LoginPage>
+    <section class="page-sign-in" slot="main">
+      <div class="sign-in-panel">
+        <div class="title">
+          {{ $t('app.signIn.signIn') }}
+          <span @click="registry" v-if="$getSettingByKey('SHOW_REGISTER')">{{ $t('app.signIn.Registration') }}</span>
         </div>
-        <div class="carousel">
-          <img src="../../assets/images/loginCover.png" />
+        <div class="error-tips" v-show="errorMessage">
+          <i class="el-icon-warning-outline"></i>
+          {{ errorMessage }}
         </div>
-        <el-card class="sign-in-panel">
-          <div class="title">
-            {{ $t('app.signIn.signIn') }}
-            <span @click="registry" v-if="$getSettingByKey('SHOW_REGISTER')">{{ $t('app.signIn.Registration') }}</span>
-          </div>
-          <div class="error-tips" v-show="errorMessage">
-            <i class="el-icon-warning-outline"></i>
-            {{ errorMessage }}
-          </div>
-          <form>
-            <input
-              class="input"
-              type="email"
-              autocomplete="username"
-              :placeholder="$t('app.signIn.email_placeholder')"
-              v-model="form.email"
-            />
-            <input
-              class="input"
-              type="password"
-              autocomplete="current-password"
-              :placeholder="$t('app.signIn.password_placeholder')"
-              v-model="form.password"
-              @keyup.13="submit"
-            />
-          </form>
-          <el-checkbox class="keep-sign-in" v-model="keepSignIn">
-            {{ $t('app.signIn.keepSignIn') }}
-          </el-checkbox>
-          <el-button class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
-            {{ $t('app.signIn.signIn') }}
-          </el-button>
+        <form>
+          <input
+            class="input"
+            type="email"
+            autocomplete="username"
+            :placeholder="$t('app.signIn.email_placeholder')"
+            v-model="form.email"
+          />
+          <input
+            class="input"
+            type="password"
+            autocomplete="current-password"
+            :placeholder="$t('app.signIn.password_placeholder')"
+            v-model="form.password"
+            @keyup.13="submit"
+          />
+        </form>
+        <el-checkbox class="keep-sign-in" v-model="keepSignIn">
+          {{ $t('app.signIn.keepSignIn') }}
+        </el-checkbox>
+        <el-button class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
+          {{ $t('app.signIn.signIn') }}
+        </el-button>
 
-          <div class="remember">
-            <span @click="forgetPassword">{{ $t('app.signIn.forgetPassword') }}</span>
-          </div>
-        </el-card>
+        <div class="remember">
+          <span @click="forgetPassword">{{ $t('app.signIn.forgetPassword') }}</span>
+        </div>
       </div>
-    </main>
-  </section>
+    </section>
+  </LoginPage>
 </template>
 
 <script>
 import crypto from 'crypto'
 import CryptoJS from 'crypto-js'
-import Header from './Header'
+import LoginPage from './LoginPage'
 import _ from 'lodash'
 
 export default {
   name: 'SignIn',
-  components: { Header },
+  components: { LoginPage },
   data() {
     return {
       loading: false,
@@ -143,6 +134,7 @@ export default {
         if (lastLocationHref) {
           location.href = lastLocationHref
         }
+        debugger
         setTimeout(() => {
           sessionStorage.removeItem('lastLocationHref')
           location.reload()
@@ -173,122 +165,85 @@ export default {
 
 <style lang="scss" scoped>
 .page-sign-in {
-  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  // background: #fafafa;
+  width: 100%;
   height: 100%;
   overflow: auto;
   box-sizing: border-box;
-
-  main .body.dk {
-    display: flex;
-    justify-content: center;
-    height: 510px;
-    .carousel {
-      display: none;
-    }
-    .dk-login-cover {
-      display: block;
-      position: relative;
-      img {
-        display: block;
-      }
-    }
-    .sign-in-panel {
-      position: relative;
-      right: 0;
-      top: 0;
-    }
-  }
-  main {
-    position: relative;
-    margin-top: 60px;
-    .body {
-      margin: 0 auto;
-      position: relative;
-      height: 600px;
-      width: 1400px;
-      box-sizing: border-box;
-      .dk-login-cover {
-        display: none;
-      }
-      .carousel {
-        position: absolute;
-        top: 0;
-        left: 80px;
-      }
-    }
-    .sign-in-panel {
-      position: absolute;
-      top: 60px;
-      right: 80px;
-      padding: 25px 5px;
-      width: 400px;
-      .title {
-        margin-bottom: 30px;
-        font-size: 26px;
-        font-weight: 500;
-        color: rgba(51, 51, 51, 1);
-        span {
-          float: right;
-          padding-top: 16px;
-          font-size: 12px;
-          text-align: right;
-          color: map-get($color, primary);
-          cursor: pointer;
-        }
-      }
-      .error-tips {
-        margin-bottom: 22px;
-        padding: 0 15px;
-        line-height: 42px;
-        background: rgba(254, 240, 240, 1);
-        border: 1px solid rgba(245, 108, 108, 0.44);
-        border-radius: 3px;
-        font-size: 14px;
-        color: rgba(245, 108, 108, 1);
-      }
-      form {
-        border-radius: 4px;
-        overflow: hidden;
-        border: 1px solid #dedee4;
-        .input {
-          display: block;
-          padding-left: 15px;
-          width: 100%;
-          height: 44px;
-          color: #606266;
-          line-height: 44px;
-          border-radius: 0;
-          box-sizing: border-box;
-          border: none;
-          outline: none;
-          font-size: 14px;
-          font-family: inherit;
-          &:last-child {
-            border-top: 1px solid #dedee4;
-          }
-          &::placeholder {
-            font-size: 14px;
-            color: rgba(204, 204, 204, 1);
-          }
-        }
-      }
-      .keep-sign-in {
-        margin-top: 15px;
-        font-size: 14px;
-        color: rgba(153, 153, 153, 1);
-      }
-      .btn-sign-in {
-        display: block;
-        width: 100%;
-        margin-top: 50px;
-      }
-      .remember {
+  .sign-in-panel {
+    padding: 25px;
+    width: 400px;
+    height: 500px;
+    .title {
+      margin-bottom: 30px;
+      font-size: 32px;
+      font-weight: 600;
+      color: map-get($fontColor, normal);
+      span {
+        float: right;
         padding-top: 16px;
         font-size: 12px;
+        text-align: right;
         color: map-get($color, primary);
-        span {
-          cursor: pointer;
+        cursor: pointer;
+      }
+    }
+    .error-tips {
+      margin-bottom: 22px;
+      padding: 0 15px;
+      line-height: 42px;
+      background: rgba(254, 240, 240, 1);
+      border: 1px solid rgba(245, 108, 108, 0.44);
+      border-radius: 3px;
+      font-size: 14px;
+      color: rgba(245, 108, 108, 1);
+    }
+    form {
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid #dedee4;
+      .input {
+        display: block;
+        padding-left: 15px;
+        width: 100%;
+        height: 44px;
+        color: #606266;
+        line-height: 44px;
+        border-radius: 0;
+        box-sizing: border-box;
+        border: none;
+        outline: none;
+        font-size: 14px;
+        font-family: inherit;
+        &:last-child {
+          border-top: 1px solid #dedee4;
         }
+        &::placeholder {
+          font-size: 14px;
+          color: rgba(204, 204, 204, 1);
+        }
+      }
+    }
+    .keep-sign-in {
+      margin-top: 15px;
+      font-size: 14px;
+      color: rgba(153, 153, 153, 1);
+    }
+    .btn-sign-in {
+      display: block;
+      width: 100%;
+      margin-top: 50px;
+    }
+    .remember {
+      padding-top: 16px;
+      font-size: 12px;
+      color: map-get($color, primary);
+      span {
+        cursor: pointer;
+        user-select: none;
       }
     }
   }

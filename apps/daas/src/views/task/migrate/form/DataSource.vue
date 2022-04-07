@@ -1,21 +1,27 @@
 <template>
   <el-form
     ref="dataSourceModelForm"
-    label-width="100px"
+    label-width="140px"
     label-position="left"
     :disabled="stateIsReadonly"
     :model="dataSourceData"
     :rules="rules"
   >
-    <el-form-item label="源端类型" prop="source_filter_databaseType">
-      <el-select v-model="dataSourceData.source_filter_databaseType" filterable @change="getSourceConnection">
+    <el-form-item :label="$t('task_form_source_type')" prop="source_filter_databaseType">
+      <el-select
+        v-model="dataSourceData.source_filter_databaseType"
+        style="width: 300px"
+        filterable
+        @change="getSourceConnection"
+      >
         <el-option v-for="item in allowSourceDatabaseTypes" :key="item.value" :label="item.label" :value="item.value">
         </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="源端连接" prop="source_connectionId">
+    <el-form-item :label="$t('task_form_source_connection')" prop="source_connectionId">
       <el-select
         v-model="dataSourceData.source_connectionId"
+        style="width: 300px"
         filterable
         clearable
         remote
@@ -27,15 +33,21 @@
         <el-option v-for="item in sourceData" :key="item.value" :label="item.label" :value="item.value"> </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="目标端类型" prop="target_filter_databaseType">
-      <el-select v-model="dataSourceData.target_filter_databaseType" filterable @change="getTargetConnection">
+    <el-form-item :label="$t('task_form_target_type')" prop="target_filter_databaseType">
+      <el-select
+        v-model="dataSourceData.target_filter_databaseType"
+        style="width: 300px"
+        filterable
+        @change="getTargetConnection"
+      >
         <el-option v-for="item in allowTargetDatabaseTypes" :key="item.value" :label="item.label" :value="item.value">
         </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="目标端连接" prop="target_connectionId">
+    <el-form-item :label="$t('task_form_target_connection')" prop="target_connectionId">
       <el-select
         v-model="dataSourceData.target_connectionId"
+        style="width: 300px"
         filterable
         clearable
         remote
@@ -64,10 +76,18 @@ export default {
       sourceData: [],
       targetData: [],
       rules: {
-        source_filter_databaseType: [{ required: true, message: '请选择源端类型', trigger: 'change' }],
-        source_connectionId: [{ required: true, message: '请选择源端连接', trigger: 'change' }],
-        target_filter_databaseType: [{ required: true, message: '请选择目标端类型', trigger: 'change' }],
-        target_connectionId: [{ required: true, message: '请选择目标端连接', trigger: 'change' }]
+        source_filter_databaseType: [
+          { required: true, message: this.$t('task_form_source_type_check'), trigger: 'change' }
+        ],
+        source_connectionId: [
+          { required: true, message: this.$t('task_form_source_connection_check'), trigger: 'change' }
+        ],
+        target_filter_databaseType: [
+          { required: true, message: this.$t('task_form_target_type_check'), trigger: 'change' }
+        ],
+        target_connectionId: [
+          { required: true, message: this.$t('task_form_target_connection_check'), trigger: 'change' }
+        ]
       },
       loadingSource: false,
       loadingTarget: false
@@ -114,8 +134,8 @@ export default {
               })
             }
           })
-          this.allowSourceDatabaseTypes.unshift({ label: '全部', value: 'all' })
-          this.allowTargetDatabaseTypes.unshift({ label: '全部', value: 'all' })
+          this.allowSourceDatabaseTypes.unshift({ label: this.$t('query_build_all'), value: 'all' })
+          this.allowTargetDatabaseTypes.unshift({ label: this.$t('query_build_all'), value: 'all' })
         })
     },
     getWhere(type) {

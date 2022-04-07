@@ -99,8 +99,12 @@ export const NODE_TYPE_ICON = {
   row_filter_processor: 'row-filter',
   cache_lookup_processor: 'joint-cache',
   join_processor: 'join',
-  merge_table_processor: 'join',
-  custom_processor: 'custom'
+  merge_table_processor: 'merge_table',
+  custom_processor: 'custom',
+  field_rename_processor: 'field_rename',
+  field_add_del_processor: 'field_add_del',
+  field_calc_processor: 'field_calc',
+  field_mod_type_processor: 'field_mod_type'
 }
 
 export const STATUS_MAP = {

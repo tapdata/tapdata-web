@@ -69,7 +69,8 @@ textarea::-webkit-input-placeholder {
   min-width: 60px;
   padding: 3px 10px;
   text-align: center;
-  border-radius: 2px;
+  font-weight: 500;
+  border-radius: 4px;
   box-sizing: border-box;
 }
 .status-running {
@@ -87,8 +88,8 @@ textarea::-webkit-input-placeholder {
   background-color: #ffecec;
 }
 .status-paused {
-  color: #d5760e;
-  background-color: #ffe9cf;
+  color: #2C65FF;
+  background-color: #DDEBFF;
 }
 .status-edit {
   color: #0083c7;
@@ -106,7 +107,10 @@ textarea::-webkit-input-placeholder {
   color: #c39700;
   background-color: #fdf1c8;
 }
-.status-pausing,
+.status-pausing {
+  color: #6350D2;
+  background-color: #DCD6FF;
+}
 .status-stop {
   color: #C88500;
   background-color: #FFE4AE;
@@ -116,8 +120,8 @@ textarea::-webkit-input-placeholder {
   background-color: #fdf1c8;
 }
 .status-ready {
-  color: #0083c7;
-  background-color: #d1eefd;
+  color: #C39700;
+  background-color: #FDF1C8;
 }
 
 // 无分类列表/详情页面/表单页面

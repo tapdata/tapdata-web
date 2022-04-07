@@ -9,7 +9,7 @@
           </span>
         </div>
       </div>
-      <div class="slogan">{{ $t('app.signIn.slogan') }}</div>
+      <!-- <div class="slogan">{{ $t('app.signIn.slogan') }}</div> -->
     </header>
   </div>
 </template>
@@ -58,6 +58,7 @@ header {
   box-sizing: border-box;
   .logo {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
     img {

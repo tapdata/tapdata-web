@@ -75,35 +75,6 @@ export default {
 
       let mapping = {
         oracle: {
-          increShareReadMode: {
-            title: this.$t('task_setting_share_cdc_mode'), // 共享增量读取的模式 支持oracle和mongodb
-            type: 'string',
-            'x-decorator': 'FormItem',
-            'x-component': 'Select',
-            enum: [
-              {
-                label: this.$t('task_setting_off'),
-                value: ''
-              },
-              {
-                label: this.$t('task_setting_streaming'), //流式读取
-                value: 'STREAMING'
-              },
-              {
-                label: this.$t('task_setting_polling'), //轮询读取
-                value: 'POLLING'
-              }
-            ],
-            default: 'STREAMING',
-            'x-reactions': {
-              dependencies: ['sync_type'],
-              fulfill: {
-                state: {
-                  visible: '{{$deps[0] !== "initial_sync"}}'
-                }
-              }
-            }
-          },
           maxTransactionLength: {
             title: this.$t('task_setting_maximum_transaction'), //事务最大时长(小时)
             type: 'number',
@@ -123,31 +94,6 @@ export default {
               fulfill: {
                 state: {
                   visible: '{{$deps[0] !== "cdc" || ($deps[0] === "cdc" && $deps[1])}}'
-                }
-              }
-            }
-          },
-          increShareReadMode: {
-            title: this.$t('task_setting_share_cdc_mode'), // 共享增量读取的模式 支持oracle和mongodb
-            type: 'string',
-            'x-decorator': 'FormItem',
-            'x-component': 'Select',
-            enum: [
-              {
-                label: this.$t('task_setting_streaming'),
-                value: 'STREAMING'
-              },
-              {
-                label: this.$t('task_setting_polling'),
-                value: 'POLLING'
-              }
-            ],
-            default: 'STREAMING',
-            'x-reactions': {
-              dependencies: ['sync_type'],
-              fulfill: {
-                state: {
-                  visible: '{{$deps[0] !== "initial_sync"}}'
                 }
               }
             }
@@ -342,25 +288,33 @@ export default {
                       display: '{{$deps[0] === "initial_sync" ? "visible" : "hidden"}}'
                     }
                   }
-                }
-                // default: false
+                },
+                default: false
               },
-              // crontabExpression: { //调度表达式
-              //   type: 'string',
-              //   'x-decorator': 'FormItem',
-              //   'x-component': 'Input',
-              //   'x-component-props': {
-              //     placeholder: this.$t('task_setting_cron_expression')
-              //   },
-              //   'x-reactions': {
-              //     dependencies: ['sync_type', 'isSchedule'],
-              //     fulfill: {
-              //       state: {
-              //         display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
-              //       }
-              //     }
-              //   }
-              // },
+              crontabExpression: {
+                //调度表达式
+                title: this.$t('task_setting_cron_expression_label'), //定期调度任务
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: this.$t('task_setting_cron_expression')
+                },
+                'x-decorator-props': {
+                  feedbackStatus: 'info',
+                  feedbackText: this.$t('task_setting_cron_feedbackText'),
+                  extra: this.$t('task_setting_cron_extra'),
+                  feedbackLayout: 'terse'
+                },
+                'x-reactions': {
+                  dependencies: ['sync_type', 'isSchedule'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
+                    }
+                  }
+                }
+              },
               // increaseSyncInterval: {
               //   title: this.$t('task_setting_read_cdc_interval'), //增量同步间隔
               //   type: 'string',
@@ -530,6 +484,7 @@ export default {
         shareCdcEnable: {
           title: this.$t('connection_form_shared_mining'), //共享挖掘日志过滤
           type: 'boolean',
+          default: false,
           'x-decorator': 'FormItem',
           'x-component': 'Switch',
           'x-reactions': {
@@ -537,6 +492,38 @@ export default {
             fulfill: {
               state: {
                 visible: '{{$deps[0] !== "initial_sync"}}' // 只有增量或全量+增量支持
+              }
+            }
+          }
+        }
+      }
+      //源表连接开启了日志挖掘功能
+      if (this.dataSourceData?.shareCdcEnable) {
+        config.properties.layout.properties = Object.assign(config?.properties?.layout?.properties, shareCdcEnable)
+        //共享增量读取的模式 共享挖掘打开且目标数据源是mongodb 或者 oracle
+        if (['mongodb', 'oracle'].includes(type)) {
+          config.properties.layout.properties.increShareReadMode = {
+            title: this.$t('task_setting_share_cdc_mode'), // 共享增量读取的模式 支持oracle和mongodb
+            type: 'string',
+            'x-decorator': 'FormItem',
+            'x-component': 'Select',
+            enum: [
+              {
+                label: this.$t('task_setting_streaming'), //流式读取
+                value: 'STREAMING'
+              },
+              {
+                label: this.$t('task_setting_polling'), //轮询读取
+                value: 'POLLING'
+              }
+            ],
+            default: 'STREAMING',
+            'x-reactions': {
+              dependencies: ['sync_type', 'shareCdcEnable'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0] !== "initial_sync" && $deps[1] }}'
+                }
               }
             }
           }
@@ -608,11 +595,6 @@ export default {
           }
         }
       }
-
-      //源表连接开启了日志挖掘功能
-      if (this.dataSourceData?.shareCdcEnable) {
-        config.properties.layout.properties = Object.assign(config?.properties?.layout?.properties, shareCdcEnable)
-      }
       return config
     }
   }
@@ -623,6 +605,16 @@ export default {
   ::v-deep {
     .formily-element-form-item-label label {
       font-size: 12px;
+    }
+    .formily-element-form-item-info-help {
+      font-size: 12px;
+      line-height: 24px;
+      width: 340px;
+    }
+    .formily-element-form-item-extra {
+      font-size: 12px;
+      line-height: 24px;
+      width: 340px;
     }
   }
 }

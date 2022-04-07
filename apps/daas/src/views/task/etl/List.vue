@@ -674,7 +674,6 @@ export default {
         }
       }
       let statuses = item.statuses
-      console.log('getTaskBtnDisabled', getTaskBtnDisabled(item))
       item.disabledData = getTaskBtnDisabled(
         item,
         this.$disabledByPermission('SYNC_job_operation_all_data', item.user_id)

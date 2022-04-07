@@ -11,9 +11,10 @@
     cursor: not-allowed;
   }
   .active__name{
-    .el-input__inner{
-      color: map-get($color, primary);
-    }
+    color: map-get($color, primary);
+  }
+  .active__delete{
+    color: map-get($color, disable);
   }
   .active__type {
     .el-input__inner{

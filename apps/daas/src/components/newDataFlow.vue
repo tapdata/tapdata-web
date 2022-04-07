@@ -239,7 +239,6 @@ $color: #999999;
         padding: 16px 16px 16px 24px;
         cursor: pointer;
         border-radius: 4px;
-        box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.2);
         .desc {
           color: rgba(0, 0, 0, 0.43);
         }
@@ -250,7 +249,7 @@ $color: #999999;
         height: 116px;
         border-radius: 4px;
         cursor: pointer;
-        box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.2);
+        border: 1px solid #f3f3f3;
         .desc {
           color: rgba(0, 0, 0, 0.43);
           overflow: hidden;

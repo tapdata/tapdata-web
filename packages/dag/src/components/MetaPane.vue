@@ -8,20 +8,20 @@
       :getDataFlow="getDataFlow"
     ></FieldMapping>
     <div class="total">共有{{ tableData.length }}个字段</div>
-    <ElTable v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
-      <ElTableColumn type="index" label="序号"> </ElTableColumn>
-      <ElTableColumn prop="field_name" label="字段名称">
+    <ElTable ref="table" v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
+      <ElTableColumn width="56" type="index" :label="$t('meta_table_index')"> </ElTableColumn>
+      <ElTableColumn prop="field_name" :label="$t('meta_table_field_name')">
         <template #default="{ row }">
           <span class="flex align-center"
             >{{ row.field_name }}
-            <VIcon v-if="row.unique" size="12" class="text-warning ml-1">key</VIcon>
+            <VIcon v-if="row.primary_key_position > 0" size="12" class="text-warning ml-1">key</VIcon>
           </span>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="data_type" label="字段类型"> </ElTableColumn>
-      <ElTableColumn prop="scale" label="精度"> </ElTableColumn>
-      <ElTableColumn prop="oriPrecision" label="长度"> </ElTableColumn>
-      <ElTableColumn prop="comment" label="字段注释"> </ElTableColumn>
+      <ElTableColumn prop="data_type" :label="$t('meta_table_field_type')"> </ElTableColumn>
+      <ElTableColumn prop="scale" :label="$t('meta_table_scale')"> </ElTableColumn>
+      <ElTableColumn prop="oriPrecision" :label="$t('meta_table_precision')"> </ElTableColumn>
+      <ElTableColumn prop="comment" :label="$t('meta_table_comment')"> </ElTableColumn>
     </ElTable>
   </div>
 </template>
@@ -81,7 +81,10 @@ export default {
     },
 
     isShow(v) {
-      v && this.loadFields()
+      if (v) {
+        this.loadFields()
+        this.$refs.table.doLayout()
+      }
     }
   },
   mounted() {
@@ -99,8 +102,11 @@ export default {
         let data = await metadataApi.nodeSchema(this.activeNode.id)
         data = data?.[0]
         data.fields.sort((a, b) => {
-          if (a.unique !== b.unique) {
-            return a.unique ? -1 : 1
+          const aIsPrimaryKey = a.primary_key_position > 0
+          const bIsPrimaryKey = b.primary_key_position > 0
+
+          if (aIsPrimaryKey !== bIsPrimaryKey) {
+            return aIsPrimaryKey ? -1 : 1
           } else {
             return a.field_name.localeCompare(b.field_name)
           }

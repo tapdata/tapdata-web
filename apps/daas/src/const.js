@@ -54,18 +54,18 @@ export const TOPOLOGY_MAP = topologyMap,
     error: { text: '错误', type: 'danger' }
   },
   ETL_SUB_STATUS_MAP = {
-    ready: { text: '待启动', type: 'disable' },
-    edit: { text: '编辑中', type: 'primary' },
-    scheduling: { text: '启动中', type: 'success' },
-    schedule_failed: { text: '错误', type: 'danger' },
-    wait_run: { text: '启动中', type: 'success' },
-    running: { text: '运行中', type: 'success' },
+    ready: { text: '待启动', type: 'ready' },
+    edit: { text: '编辑中', type: 'edit' },
+    scheduling: { text: '启动中', type: 'scheduling' },
+    schedule_failed: { text: '错误', type: 'schedule_failed' },
+    wait_run: { text: '启动中', type: 'wait_run' },
+    running: { text: '运行中', type: 'running' },
     // pausing: { text: ' 暂停中', type: 'warning' },
-    stopping: { text: '停止中', type: 'danger' },
+    stopping: { text: '停止中', type: 'stopping' },
     // pause: { text: '暂停', type: 'warning' },
-    stop: { text: '已停止', type: 'danger' },
-    complete: { text: '已完成', type: 'primary' },
-    error: { text: '错误', type: 'danger' }
+    stop: { text: '已停止', type: 'stop' },
+    complete: { text: '已完成', type: 'complete' },
+    error: { text: '错误', type: 'error' }
   },
   MIGRATE_STATUS_MAP = {
     running: {

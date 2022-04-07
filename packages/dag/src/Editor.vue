@@ -396,7 +396,7 @@ export default {
 
         info.connection.bind('click', conn => {
           if (this.stateIsReadonly) return
-
+          this.handleDeselectAllConnections()
           conn.showOverlay('removeConn')
           conn.showOverlay('addNodeOnConn')
           conn.addClass('connection-selected')
@@ -1495,7 +1495,22 @@ export default {
     },
 
     handleError(error) {
-      if (error?.data?.message) {
+      if (error.data.code === 'Task.ListWarnMessage') {
+        let names = []
+        if (error.data.data) {
+          Object.keys(error.data.data).forEach(key => {
+            const node = this.$store.state.dataflow.NodeMap[key]
+            if (node) {
+              names.push(node.name)
+              this.setNodeErrorMsg({
+                id: node.id,
+                msg: error.data.data[key][0].msg
+              })
+            }
+          })
+        }
+        this.$message.error(`${this.$t('dag_save_fail')} ${names.join('，')}`)
+      } else if (error?.data?.message) {
         this.$message.error(error.data.message)
       } else {
         // eslint-disable-next-line no-console

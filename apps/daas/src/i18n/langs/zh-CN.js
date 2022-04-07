@@ -59,6 +59,7 @@ export default {
   button_auto_layout: '自动布局',
   button_zoom_in: '放大',
   button_zoom_out: '缩小',
+  button_move_paper: '移动画布[按住空格]',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精准匹配',
@@ -1016,6 +1017,7 @@ export default {
   task_setting_distinct_write_type: '去重写入机制',
   task_setting_is_schedule: '定期调度任务',
   task_setting_cron_expression: '请输入调度表达式',
+  task_setting_cron_expression_label: '表达式',
   task_setting_read_cdc_interval: '增量同步间隔',
   task_setting_read_batch_size: '每次读取数量',
   task_setting_processor_concurrency: '处理器线程数',
@@ -1024,6 +1026,9 @@ export default {
   task_setting_sync_point: '增量采集开始时刻',
   task_setting_cdc_share_filter_on_server: '共享挖掘日志过滤',
   task_setting_lag_time: '增量滞后判断时间设置',
+  task_setting_cron_feedbackText:
+    '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务。 语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 * 年.',
+  task_setting_cron_extra: '例子: 0 */1 * * * ? * //每分钟运行一次  0 0 2 * * ? * //每天2点运行',
 
   task_name: '任务名称',
   task_status: '任务状态',
@@ -1071,6 +1076,10 @@ export default {
   task_form_source_connection: '源端连接',
   task_form_target_type: '目标端类型',
   task_form_target_connection: '目标端连接',
+  task_form_source_type_check: '请选择源端类型',
+  task_form_source_connection_check: '请选择源端连接',
+  task_form_target_type_check: '请选择目标端类型',
+  task_form_target_connection_check: '请选择目标端连接',
 
   task_mapping_table_setting: '表设置',
   task_mapping_table_setting_tip:
@@ -1310,7 +1319,7 @@ export default {
   setting_SMTP_Server_Port: 'SMTP 服务端口',
   setting_SMTP_Server_User: 'SMTP 服务账号',
   setting_SMTP_Server_password: 'SMTP 服务密码',
-  setting_Email_Receivers: 'Email接受邮件地址',
+  setting_Email_Receivers: 'Email接收邮件地址',
   setting_Email_Send_Address: 'Email发送邮件地址',
   setting_SMTP_Server_Host: 'SMTP 服务Host',
   setting_Send_Email_Title_Prefix: '发送Email标题的前缀（可选）',
@@ -1340,7 +1349,7 @@ export default {
   setting_Worker_Heartbeat_Expire: '进程心跳过期时间(秒)',
   setting_License_Key: '证书秘钥',
   setting_Enter_jobs_log_level__error_warn_info_debug_trace: '输入任务日志等级: error/warn/info/debug/trace',
-  setting_Email_Receivers_Multiple_separated_by_semicolons: '邮件接受者,可输入多个，通过逗号分隔',
+  setting_Email_Receivers_Multiple_separated_by_semicolons: '邮件接收者,可输入多个，通过逗号分隔',
 
   setting_Keep_recent_n_hours_message_before_the_last_processed_message_s_time_: '保持最近n小时消息',
   setting_Store_full_record_as_embedded_document_in_target_collection_for_update_operations:
@@ -1871,6 +1880,13 @@ export default {
   dag_connection: '连接',
   dag_table: '表',
   dag_processor_node: '处理节点',
+  dag_save_fail: '保存出错，请检查节点',
+  meta_table_index: '序号',
+  meta_table_field_name: '字段名称',
+  meta_table_field_type: '字段类型',
+  meta_table_scale: '精度',
+  meta_table_precision: '长度',
+  meta_table_comment: '字段注释',
 
   // 新建
   new_advanced_mode: '标准模式',

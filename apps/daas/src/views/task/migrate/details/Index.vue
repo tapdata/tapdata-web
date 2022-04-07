@@ -15,7 +15,7 @@
         <ElTabPane :label="$t('task_monitor_history_run_record')" name="history" lazy>
           <History :ids="[task.id]" :operations="operations"></History>
         </ElTabPane>
-        <ElTabPane :label="$t('task_monitor_mining_task')" name="task">
+        <ElTabPane :label="$t('task_monitor_mining_task')" name="sharedMing" lazy>
           <ShareMining :id="task.id"></ShareMining>
         </ElTabPane>
       </ElTabs>
@@ -117,6 +117,9 @@ export default {
         }
       }
     })
+    this.timer = setInterval(() => {
+      this.loadTask()
+    }, 5000)
   },
   mounted() {
     this.init()
