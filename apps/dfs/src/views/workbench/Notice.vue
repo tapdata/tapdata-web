@@ -719,12 +719,13 @@
         <div class="mb-2 p-4" style="background-color: rgb(241, 248, 255)">
           <div class="mb-4">更新速览👇</div>
           <div class="ml-2 mb-4">
-            1.<span class="fw-bold font-color-main">新增支持 Apache Doris 为目标</span
+            <span>1.</span
+            ><span class="fw-bold font-color-main pl-1">新增支持 Apache Doris 为目标</span
             >：牵手更多优秀国产数据库，强强联手，探索新一代数据架构的更多可能；
           </div>
           <div class="ml-2 mb-4">
-            2.
-            <span class="fw-bold font-color-main">任务日志查询路径优化</span
+            <span>2.</span>
+            <span class="fw-bold font-color-main pl-1">任务日志查询路径优化</span
             >：开始支持在任务运行监控页面直接导出日志，查询更快捷；
           </div>
         </div>
@@ -745,13 +746,23 @@
         </div>
         <div class="mb-4 line-height-2">
           随着新兴国产数据库不断涌现，Tapdata Cloud 持续发力，与更多优质国产数据库牵手。本次更新中新增的数据目标 Apache
-          Doris，同时也是近日启动的 Tapdata PDK 生态共建计划的首批共建伙伴之一，将与 Tapdata
+          Doris，同时也是近日启动的
+          <ElLink
+            type="primary"
+            href="https://tapdata.net/tapdata-PDK-program.html?fromColId=2"
+            target="_blank"
+            class="fs-7 align-baseline"
+            >Tapdata PDK 生态共建计划</ElLink
+          >
+          的首批共建伙伴之一，将与 Tapdata
           牵手，破局数据孤岛，共建下一代数据架构，为用户提供高效、统一的数据应用及分析平台。
         </div>
         <div class="mb-4 line-height-2">
           至此，Tapdata Cloud
           <span class="fw-bold font-color-main"
-            >数据连接据点数量扩张至<span class="fs-6 pl-1" style="font-family: DIN; color: rgb(0, 122, 181)">30</span></span
+            >数据连接据点数量扩张至<span class="fs-6 pl-1" style="font-family: DIN; color: rgb(0, 122, 181)"
+              >30</span
+            ></span
           >
           。放大就看 Tapdata Cloud “破壁行动”最新战绩 👇：
         </div>
@@ -772,11 +783,10 @@
             </div>
           </div>
         </div>
+        <div class="mb-4 line-height-2">📣从这一版开始，需要查询任务日志时，无需再回到 Agent 拉取啦！</div>
         <div class="mb-4 line-height-2">
-          📣从这一版开始，需要查询任务日志时，无需再回到 Agent 拉取啦！
-        </div>
-        <div class="mb-4 line-height-2">
-          新版本下，当用户任务出现问题，需要查看日志定位问题时，可以直接在运行监控页面导出日志（支持选择【时间范围】），无需再返回 Agent 部署服务器查找日志文件。操作更加人性化！
+          新版本下，当用户任务出现问题，需要查看日志定位问题时，可以直接在运行监控页面导出日志（支持选择【时间范围】），无需再返回
+          Agent 部署服务器查找日志文件。操作更加人性化！
         </div>
         <div>
           <img src="../../../public/images/notice/v2.1.3/03.png" alt="" />
