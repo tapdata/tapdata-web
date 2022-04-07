@@ -423,6 +423,7 @@ export default {
     task: {
       deep: true,
       handler() {
+        console.log(this.task, '#######')
         this.init()
       }
     }
