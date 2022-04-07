@@ -1,7 +1,7 @@
 <template>
   <section class="tapdata-transfer-wrap">
     <div class="reload-schema flex justify-content-between mb-5">
-      <div class="text-wrap" style="width: 240px">
+      <div class="text-wrap" style="width: 400px">
         {{ this.$t('task_form_no_table_available') }}
         <el-button
           class="border-0"

@@ -117,6 +117,9 @@ export default {
         }
       }
     })
+    this.timer = setInterval(() => {
+      this.loadTask()
+    }, 5000)
   },
   mounted() {
     this.init()
