@@ -19,13 +19,18 @@ export class FieldModType extends NodeType {
 
   formSchema = {
     type: 'object',
+    $inputs: {
+      type: 'array',
+      display: 'none'
+    },
     properties: {
       operations: {
         type: 'array',
         title: '',
         'x-decorator': 'FormItem',
         'x-component': 'FieldModType',
-        'x-reactions': ['{{useAsyncDataSource(loadSourceNodeField)}}']
+        'x-reactions':
+          '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $values.$inputs[0])}}'
       }
     }
   }

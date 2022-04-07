@@ -19,13 +19,18 @@ export class FieldCalc extends NodeType {
 
   formSchema = {
     type: 'object',
+    $inputs: {
+      type: 'array',
+      display: 'none'
+    },
     properties: {
       scripts: {
         type: 'array',
         title: '',
         'x-decorator': 'FormItem',
         'x-component': 'FieldValue',
-        'x-reactions': ['{{useAsyncDataSource(loadSourceNodeField)}}']
+        'x-reactions':
+          '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $values.$inputs[0])}}'
       }
     }
   }

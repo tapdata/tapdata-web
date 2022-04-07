@@ -46,7 +46,7 @@ export const FieldRename = connect(
       render() {
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
-        let fields = this.options?.[0] || []
+        let fields = this.options || []
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
         this.fields = fields || []
         this.originalFields = JSON.parse(JSON.stringify(fields))

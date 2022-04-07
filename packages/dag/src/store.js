@@ -57,12 +57,12 @@ const getState = () => ({
       constructor: 'JavaScript',
       locales: AllLocales.JavaScript
     },
-    {
-      icon: 'field-processor',
-      name: '字段处理',
-      type: 'field_processor',
-      constructor: 'FieldProcessor'
-    },
+    // {
+    //   icon: 'field-processor',
+    //   name: '字段处理',
+    //   type: 'field_processor',
+    //   constructor: 'FieldProcessor'
+    // },
     {
       icon: 'aggregator',
       name: '聚合',

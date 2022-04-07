@@ -58,7 +58,7 @@ export const FieldAddDel = connect(
       render() {
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
-        let fields = JSON.parse(JSON.stringify(this.options?.[0] || []))
+        let fields = JSON.parse(JSON.stringify(this.options || []))
         //读取op 配置
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
         fields = this.checkOps(fields)
