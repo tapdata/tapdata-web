@@ -663,10 +663,10 @@ export default {
       this.dragMoving = false
     },
 
-    onMove: throttle(function (item, position) {
+    onMove() {
       this.dragMoving = true
-      this.$emit('move-node', item, position)
-    }, 100),
+      this.$emit('move-node', ...arguments)
+    },
 
     onDrop() {
       this.$emit('drop-node', ...arguments)
@@ -771,6 +771,7 @@ $hoverBg: #eef3ff;
   z-index: 1000;
   pointer-events: none;
   opacity: 0;
+  transform-origin: center center;
 }
 
 .layout-sidebar.--left {

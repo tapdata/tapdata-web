@@ -11,6 +11,7 @@
       <div ref="paper" class="paper" :style="paperStyle">
         <div class="paper-content-wrap" :style="contentWrapStyle">
           <slot></slot>
+          <div class="nav-line" v-for="(l, i) in navLines" :key="`l-${i}`" :style="l"></div>
         </div>
       </div>
       <div v-show="showSelectBox" class="select-box" :style="selectBoxStyle"></div>
@@ -42,6 +43,7 @@ export default {
   name: 'PaperScroller',
   components: { MiniView },
   mixins: [deviceSupportHelpers, movePaper],
+  props: { navLines: Array },
 
   data() {
     return {
@@ -170,7 +172,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['addNode', 'setActiveType', 'setPaperSpaceKeyPressed']),
+    ...mapMutations('dataflow', ['addNode', 'setActiveType', 'setPaperSpaceKeyPressed', 'removeActiveAction']),
 
     /**
      * 获取节点拖放后的坐标
@@ -179,6 +181,19 @@ export default {
      * @returns {*[]}
      */
     getDropPositionWithinPaper(position, size) {
+      const rect = this.$refs.paper.getBoundingClientRect()
+      const scale = this.paperScale
+      let [x, y] = position
+
+      x -= rect.x + this.paperReverseSize.w * scale + (size.width * scale) / 2
+      y -= rect.y + this.paperReverseSize.h * scale + (size.height * scale) / 2
+      x /= scale
+      y /= scale
+
+      return [x, y]
+    },
+
+    getPositionWithinPaper(position, size) {
       const rect = this.$refs.paper.getBoundingClientRect()
       const scale = this.paperScale
       let [x, y] = position
@@ -427,6 +442,7 @@ export default {
 
       this.mouseUpMouseSelect()
       this.mouseUpMovePaper()
+      this.removeActiveAction('dragActive')
     },
 
     mouseUpMouseSelect() {
@@ -646,5 +662,15 @@ export default {
   background: rgba(44, 101, 255, 0.07);
   border: 1px solid #2c65ff;
   border-radius: 2px;
+}
+
+.nav-line {
+  position: absolute;
+  width: 0;
+  height: 0;
+  top: 0;
+  left: 0;
+  border-top: 1px dashed #ff5b37;
+  border-left: 1px dashed #ff5b37;
 }
 </style>
