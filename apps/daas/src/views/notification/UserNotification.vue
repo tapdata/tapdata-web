@@ -24,7 +24,6 @@
         @change="getData(1)"
       ></DatetimeRange>
       <SelectList
-        class="search-item"
         v-if="isAdmin"
         v-model="search.userId"
         :items="userOptions"
@@ -38,7 +37,7 @@
 
       <el-input
         clearable
-        class="search-item"
+        class="search-item pl-4"
         size="mini"
         v-model="search.keyword"
         :placeholder="$t('notification.placeholder.keyword')"
@@ -146,13 +145,13 @@ export default {
         }
       }
       if (range && range.length) {
-        let startTime = this.$moment(range[0]).format('YYYY-MM-DD HH:mm:ss') || ''
-        let endTime = this.$moment(range[1]).format('YYYY-MM-DD HH:mm:ss') || ''
+        let startTime = range[0] ? this.$moment(range[0]).format('YYYY-MM-DD HH:mm:ss') : ''
+        let endTime = range[1] ? this.$moment(range[1]).format('YYYY-MM-DD HH:mm:ss') : ''
         if (startTime) {
           where.and = [{ createTime: { gte: startTime } }]
         } else if (endTime) {
           where.and = [{ createTime: { lte: endTime } }]
-        } else {
+        } else if (startTime && endTime) {
           where.and = [{ createTime: { gte: startTime } }, { createTime: { lte: endTime } }]
         }
       }
@@ -207,7 +206,7 @@ export default {
     ::v-deep {
       .filter-datetime:first-child {
         padding-left: 0;
-        .el-date-editor .el-input {
+        .el-date-editor.empty-time .el-input__inner {
           text-align: left;
         }
       }
@@ -227,16 +226,7 @@ export default {
     align-items: center;
     .search-item {
       margin-right: 15px;
-      // width: 200px;
-      ::v-deep {
-        .v-select-list {
-          &:first-child {
-            .inner-select {
-              padding-left: 0;
-            }
-          }
-        }
-      }
+      width: 200px;
     }
   }
   .list {
@@ -253,7 +243,7 @@ export default {
       font-size: 12px;
       color: #202d40;
       .item-time {
-        color: #86909c;
+        color: map-get($fontColor, secondary);
         font-weight: 400;
       }
     }

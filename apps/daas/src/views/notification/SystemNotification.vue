@@ -523,7 +523,7 @@ $unreadColor: #ee5353;
     }
     .list-item-time {
       float: right;
-      color: #86909c;
+      color: map-get($fontColor, secondary);
       font-size: 12px;
     }
     &:hover {
@@ -563,7 +563,7 @@ $unreadColor: #ee5353;
     height: 40px;
     line-height: 40px;
     font-size: 14px;
-    color: #86909c;
+    color: map-get($fontColor, secondary);
     font-weight: 400;
     &.is-active {
       font-weight: 500;

@@ -73,6 +73,7 @@ $unreadColor: #ee5353;
     flex-direction: row;
     height: 100%;
     background-color: #fff;
+    border-radius: 4px;
     .left-panel {
       border-right: 1px solid #f2f2f2;
       width: 200px;

@@ -831,7 +831,8 @@ export default [
         name: 'notification',
         component: () => import('@/views/notification/Center'),
         meta: {
-          title: 'notify_system_notice'
+          title: 'notify_system_notice',
+          isNotAside: true
         }
       },
       {

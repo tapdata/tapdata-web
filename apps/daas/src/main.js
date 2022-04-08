@@ -90,6 +90,11 @@ window.getSettingByKey = key => {
 }
 Vue.prototype.$getSettingByKey = window.getSettingByKey
 
+const langMap = {
+  sc: 'zh-CN',
+  tc: 'zh-TW',
+  en: 'en'
+}
 const LanguagesKey = {
   sc: 'zh_CN',
   en: 'en_US',
@@ -102,6 +107,7 @@ let init = settings => {
     lang = window.getSettingByKey('DEFAULT_LANGUAGE')
     localStorage.setItem('tapdata_localize_lang', lang || 'en')
     Cookie.set('lang', LanguagesKey[lang || 'en'])
+    i18n.locale = langMap[lang]
   }
 
   document.title = window.getSettingByKey('PRODUCT_TITLE') || 'Tapdata'
