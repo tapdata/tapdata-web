@@ -5,7 +5,7 @@
     :direction="direction"
     :show-close="false"
     :with-header="false"
-    size="304px"
+    size="320px"
     style="top: 70px"
     @closed="handleClose"
   >
@@ -23,13 +23,15 @@
       </div>
       <div v-if="!hideOperation" class="button-line container-item border-item pt-4 pb-5">
         <div slot="operation" class="flex">
-          <el-button type="primary" class="flex-fill" @click="reload()">
+          <el-button type="primary" size="mini" class="flex-fill" @click="reload()">
             {{ $t('connection_preview_load_schema') }}
           </el-button>
-          <el-button class="flex-fill" @click="edit()">
+          <el-button class="flex-fill" size="mini" @click="edit()">
             {{ $t('connection_preview_edit') }}
           </el-button>
-          <el-button class="flex-fill" @click="beforeTest()"> {{ $t('connection_preview_test') }} </el-button>
+          <el-button class="flex-fill" size="mini" @click="beforeTest()">
+            {{ $t('connection_preview_test') }}
+          </el-button>
         </div>
         <el-progress v-if="showProgress" class="mt-2" color="#2c65ff" :percentage="progress"></el-progress>
       </div>

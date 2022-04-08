@@ -234,7 +234,8 @@
         <header class="header mb-3">
           <div class="tab pb-3">
             <div class="img-box">
-              <img src="../../../assets/images/migrate/headImage.png" />
+              <VIcon class="icon">text</VIcon>
+              <!-- <img src="../../../assets/images/migrate/headImage.png" /> -->
             </div>
             <div class="content" v-if="previewData">
               <div class="name fs-6">
@@ -258,7 +259,8 @@
           <li v-for="item in previewList" :key="item.label">
             <!-- {{ previewData[item] }} -->
             <template v-if="!!item.value">
-              <img class="label-img" :src="getImgByData(item.label)" />
+              <VIcon class="icon mr-4">{{ item.label }}</VIcon>
+              <!-- <img class="label-img" :src="getImgByData(item.label)" /> -->
               <div class="label-text">
                 <div class="label">{{ $t('task_preview_' + item.label) }}:</div>
                 <div
@@ -998,12 +1000,10 @@ export default {
             let previewData = []
             this.previewData = res.data
             for (let item in res.data) {
-              if (item === 'setting') {
-                let setting = res.data[item]
-                res.data['sync_type'] = setting.sync_type
+              if (['type'].includes(item)) {
                 res.data[item] = this.syncType[res.data[item]]
-                item = 'sync_type'
               }
+
               if (['cdcDelayTime', 'taskLastHour'].includes(item)) {
                 res.data[item] = this.handleTimeConvert(res.data[item])
               }
@@ -1026,9 +1026,9 @@ export default {
               ) {
                 previewData.push({ label: item, value: res.data[item] || '-' })
               }
-
               // this.getSatusImgSrc(res.data.status)
             }
+
             this.previewList = previewData
           }
         })
@@ -1036,12 +1036,7 @@ export default {
           this.previewLoading = false
         })
     },
-    getImgByData(data) {
-      return require(`@/assets/images/migrate/${data}.png`)
-    },
-    getSatusImgSrc(status) {
-      return require(`@/assets/icons/colorSvg/${status}.png`)
-    },
+
     getFilterItems() {
       this.filterItems = [
         {

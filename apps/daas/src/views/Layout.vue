@@ -1,6 +1,6 @@
 <template>
   <ElContainer class="layout-container" direction="vertical">
-    <ElHeader class="layout-header" height="72px">
+    <ElHeader class="layout-header" height="60px">
       <a class="logo" href="/">
         <img :src="logoUrl" />
       </a>
@@ -189,11 +189,11 @@
   }
   .layout-aside {
     position: fixed;
-    top: 72px;
+    top: 60px;
     left: 0;
     bottom: 0;
     display: flex;
-    height: calc(100% - 72px);
+    height: calc(100% - 60px);
     overflow: hidden;
     z-index: 100;
     border: 1px solid #e1e3e9;
@@ -312,8 +312,8 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    height: calc(100% - 72px);
-    margin-top: 72px;
+    height: calc(100% - 60px);
+    margin-top: 60px;
     padding: 0;
     background: #fff;
     box-sizing: border-box;
