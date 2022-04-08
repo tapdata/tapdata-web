@@ -334,10 +334,6 @@ export default {
           const qpsData = samples[0] || {}
           let { inputQPS = [], outputQPS = [] } = qpsData
           let qpsDataTime = qpsData.time || []
-          // 空数据，需要模拟时间点
-          if (!qpsDataTime.length) {
-            qpsDataTime = this.getEmptyData(params.samples[0].start, params.samples[0].end)
-          }
 
           let xArr = qpsDataTime.map(t => formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
           const xArrLen = xArr.length
@@ -412,17 +408,6 @@ export default {
         })
       }
     },
-    getEmptyData(start, end) {
-      let result = []
-      let startTimeStamp = start || new Date().getTime()
-      let endTimeStamp = end || new Date().getTime()
-      let diff = endTimeStamp - startTimeStamp
-      let timeSpacing = this.getTimeSpacing(this.getGuanluary(diff))
-      for (let i = start; i < endTimeStamp; i += timeSpacing) {
-        result.push(i)
-      }
-      return result.slice(1)
-    },
     getGuanluary(val, format) {
       let diff = val / 1000
       let timeType
@@ -448,28 +433,6 @@ export default {
         return formatRes
       }
       return timeType
-    },
-    getTimeSpacing(type) {
-      // <= 1h(1 * 60 * 60s) --> minute, second point, max 60 * 12 = 720 period 5s
-      // <= 12h(12 * 60 * 60s) --> hour, minute point, max 12 * 60 = 720 period 1m
-      // <= 30d(30 * 24 * 60 * 60s) --> day, hour point, max 24 * 30 = 720 period 1h
-      // <= 24m+ --> month, day point, max 30 * 24 = 720 period 1d
-      let result = ''
-      switch (type) {
-        case 'minute':
-          result = 5 * 1000
-          break
-        case 'hour':
-          result = 1 * 60 * 1000
-          break
-        case 'day':
-          result = 1 * 60 * 60 * 1000
-          break
-        case 'month':
-          result = 1 * 24 * 60 * 60 * 1000
-          break
-      }
-      return result
     },
     changeTimeRangeFnc() {
       this.getMeasurement()
