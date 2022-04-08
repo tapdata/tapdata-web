@@ -398,6 +398,7 @@ export default {
       bulkOperation: this.$has('SYNC_job_export') || this.$has('SYNC_job_operation') || this.$has('SYNC_job_delete'),
       timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week', 'year'],
       statusOptions: [
+        { label: this.$t('task_list_status_all'), value: '' },
         { label: this.$t('task_preview_status_running'), value: 'running' },
         { label: this.$t('task_preview_status_stop'), value: 'stop' },
         { label: this.$t('task_preview_status_edit'), value: 'edit' },
