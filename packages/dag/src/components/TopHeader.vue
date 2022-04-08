@@ -53,13 +53,47 @@
           <VIcon size="20">auto-layout</VIcon>
         </button>
       </ElTooltip>
-      <VDivider class="mx-4" vertical inset></VDivider>
       <!--移动画布-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('button_move_paper')">
         <button @click="toggleMovePaper" class="icon-btn" :class="{ active: spaceKeyPressed }">
           <VIcon size="20">hand</VIcon>
         </button>
       </ElTooltip>
+      <!--搜索节点-->
+      <ElPopover
+        v-model="showSearchNodePopover"
+        placement="bottom"
+        trigger="click"
+        popper-class="rounded-xl p-0"
+        @after-leave="nodeSearchInput = null"
+      >
+        <ElTooltip slot="reference" transition="tooltip-fade-in" :content="$t('button_search_node')">
+          <button class="icon-btn ml-2">
+            <VIcon size="20">magnify</VIcon>
+          </button>
+        </ElTooltip>
+
+        <div class="choose-pane-wrap">
+          <ElInput class="input-filled" v-model="nodeSearchInput" :placeholder="$t('dag_search_node_placeholder')">
+            <template #prefix>
+              <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
+            </template>
+          </ElInput>
+          <ElDivider class="m-0" />
+          <ElScrollbar tag="div" wrap-class="choose-list-wrap" view-class="choose-list p-2">
+            <div
+              v-for="(node, i) in nodeList"
+              :key="i"
+              class="choose-item ellipsis pl-4"
+              @click="handleClickNode(node)"
+            >
+              {{ node.name }}
+            </div>
+            <EmptyItem v-if="!nodeList.length"></EmptyItem>
+          </ElScrollbar>
+        </div>
+      </ElPopover>
+      <VDivider class="mx-4" vertical inset></VDivider>
       <!--缩小-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('button_zoom_out')">
         <button @click="$emit('zoom-out')" class="icon-btn">
@@ -118,6 +152,8 @@ import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import VDivider from 'web-core/components/VDivider'
+import { Select } from 'element-ui'
+import EmptyItem from './EmptyItem'
 
 export default {
   name: 'TopHeader',
@@ -130,7 +166,7 @@ export default {
     scale: Number
   },
 
-  components: { VDivider, VIcon },
+  components: { EmptyItem, VDivider, VIcon, ElScrollbar: Select.components.ElScrollbar },
 
   data() {
     return {
@@ -140,12 +176,14 @@ export default {
         initial_sync: this.$t('dataFlow.initial_sync'),
         cdc: this.$t('dataFlow.cdc')
       },
-      chooseItems: [4, 2, 1.5, 1, 0.5, 0.25]
+      chooseItems: [4, 2, 1.5, 1, 0.5, 0.25],
+      showSearchNodePopover: false,
+      nodeSearchInput: ''
     }
   },
 
   computed: {
-    ...mapGetters('dataflow', ['dataflowId', 'stateIsReadonly']),
+    ...mapGetters('dataflow', ['dataflowId', 'stateIsReadonly', 'allNodes']),
     ...mapState('dataflow', ['spaceKeyPressed']),
 
     syncTxt() {
@@ -160,6 +198,14 @@ export default {
 
     scaleTxt() {
       return Math.round(this.scale * 100) + '%'
+    },
+
+    nodeList() {
+      if (this.nodeSearchInput) {
+        const txt = this.nodeSearchInput.toLocaleLowerCase()
+        return this.allNodes.filter(node => node.name.toLocaleLowerCase().includes(txt))
+      }
+      return this.allNodes
     }
   },
 
@@ -210,6 +256,11 @@ export default {
 
     toggleMovePaper() {
       this.setPaperSpaceKeyPressed(!this.spaceKeyPressed)
+    },
+
+    handleClickNode(node) {
+      this.showSearchNodePopover = false
+      this.$emit('locate-node', node)
     }
   }
 }
@@ -416,6 +467,24 @@ $sidebarBg: #fff;
 </style>
 
 <style lang="scss">
+.choose-pane-wrap {
+  max-width: 450px;
+  .input-filled .el-input__inner {
+    height: 40px;
+    line-height: 40px;
+  }
+}
+
+.input-filled {
+  .el-input__inner {
+    border: 0;
+    border-radius: 0;
+    background: unset;
+  }
+}
+.choose-list-wrap {
+  max-height: 274px;
+}
 .choose-list {
   .choose-item {
     margin-bottom: 2px;

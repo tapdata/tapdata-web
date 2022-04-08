@@ -17,6 +17,7 @@
       @center-content="handleCenterContent"
       @auto-layout="handleAutoLayout"
       @change-name="handleUpdateName"
+      @locate-node="handleLocateNode"
     ></TopHeader>
     <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
@@ -1685,6 +1686,11 @@ export default {
       this.$router.push({
         name: 'dataflowList'
       })
+    },
+
+    handleLocateNode(node) {
+      this.$refs.paperScroller.centerNode(node)
+      this.nodeSelectedById(node.id, true, true)
     },
 
     initWS() {
