@@ -76,7 +76,6 @@ export default {
       const node = this.activeNode
       if (!node) return null
       const icon = node.type === 'table' ? node.databaseType : NODE_TYPE_ICON[node.type]
-      console.log(icon)
       return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
     }
   },

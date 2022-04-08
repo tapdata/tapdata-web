@@ -254,7 +254,7 @@ import VIcon from 'web-core/components/VIcon'
 import ConnectionTypeSelector from 'web-core/components/connection-type-selector'
 import resize from 'web-core/directives/resize'
 import BaseNode from './BaseNode'
-import { debounce, throttle } from 'lodash'
+import { debounce } from 'lodash'
 import { Connections, MetadataInstances } from '@daas/api'
 import { Select } from 'element-ui'
 const connections = new Connections()
