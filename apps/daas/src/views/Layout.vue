@@ -516,7 +516,7 @@ export default {
           return menu
         })
       }
-      let menus = menuSetting.concat()
+      let menus = JSON.parse(JSON.stringify(menuSetting))
       this.menus = formatMenu(menus)
     },
     command(command) {

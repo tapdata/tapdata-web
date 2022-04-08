@@ -82,7 +82,12 @@ export default {
           data.push({
             name: this.$t(route.meta?.title),
             to: {
-              name: route.name === this.$route.name ? null : route.name === 'settingCenter' ? 'layout' : route.name
+              name:
+                route.name === this.$route.name
+                  ? null
+                  : ['settingCenter', 'notification'].includes(route.name)
+                  ? 'layout'
+                  : route.name
             }
           })
         })
