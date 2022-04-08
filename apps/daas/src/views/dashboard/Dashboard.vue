@@ -13,7 +13,7 @@
       <!-- 复制任务概览 -->
       <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
         <el-col :span="12" class="dashboard-col col">
-          <div class="charts-list">
+          <div class="charts-list flex flex-row">
             <div class="charts-list-text">
               <div class="dashboard-title fs-7">{{ $t('dashboard_copy_overview_title') }}</div>
               <ul class="job-list">
@@ -24,14 +24,27 @@
                 </li>
               </ul>
             </div>
-
-            <div class="chart">
+            <!-- {{ copyPieData }} -->
+            <div
+              v-if="copyPieData.every(item => item.value === 0)"
+              class="flex justify-content-center align-items-center w-100"
+            >
+              <div
+                class="flex justify-content-center align-items-center"
+                v-html="
+                  $t('dashboard_no_statistics', [
+                    '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_copy_total') + '</span>'
+                  ])
+                "
+              ></div>
+            </div>
+            <div class="chart" v-else>
               <Chart type="pie" :extend="getPieOption(copyPieData)" class="type-chart"></Chart>
             </div>
           </div>
         </el-col>
         <el-col :span="12" class="dashboard-col col">
-          <div class="charts-list">
+          <div class="charts-list flex flex-row">
             <div class="charts-list-text">
               <div class="dashboard-title fs-7">{{ $t('dashboard_sync_overview_title') }}</div>
               <ul class="job-list">
@@ -42,7 +55,20 @@
                 </li>
               </ul>
             </div>
-            <div class="chart">
+            <div
+              v-if="syncPieData.every(item => item.value === 0)"
+              class="flex justify-content-center align-items-center w-100"
+            >
+              <div
+                class="flex justify-content-center align-items-center"
+                v-html="
+                  $t('dashboard_no_statistics', [
+                    '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_sync_total') + '</span>'
+                  ])
+                "
+              ></div>
+            </div>
+            <div class="chart" v-else>
               <Chart type="pie" :extend="getPieOption(syncPieData)" class="type-chart"></Chart>
             </div>
           </div>
@@ -100,18 +126,31 @@
         <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_verify_menu'">
           <div class="dashboard-col-box">
             <div class="dashboard-title fs-7">{{ $t('dashboard_valid_title') }}</div>
-            <div class="chart line-chart">
+            <div class="chart line-chart flex flex-column">
               <ul>
                 <li v-for="item in validBarData" :key="item.name">
                   <span>{{ item.name }} </span> {{ item.value }}
                 </li>
               </ul>
-              <Chart type="bar" class="bar-chart" :data="validBarData" :options="barOptions"></Chart>
+              <div
+                v-if="validBarData.every(item => item.value === 0)"
+                class="flex justify-content-center align-items-center h-100"
+              >
+                <div
+                  class="flex justify-content-center align-items-center"
+                  v-html="
+                    $t('dashboard_no_statistics', [
+                      '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_valid_title') + '</span>'
+                    ])
+                  "
+                ></div>
+              </div>
+              <Chart v-else type="bar" class="bar-chart" :data="validBarData" :options="barOptions"></Chart>
             </div>
           </div>
         </el-col>
         <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_SYNC_menu'">
-          <div class="charts-list">
+          <div class="charts-list flex flex-row">
             <div class="charts-list-text">
               <div class="dashboard-title fs-7">{{ $t('dashboard_transfer_overview') }}</div>
               <ul class="job-list">
@@ -122,7 +161,20 @@
                 </li>
               </ul>
             </div>
-            <div class="chart">
+            <div
+              v-if="transBarData.every(item => item.value === 0)"
+              class="flex justify-content-center align-items-center w-100"
+            >
+              <div
+                class="flex justify-content-center align-items-center"
+                v-html="
+                  $t('dashboard_no_statistics', [
+                    '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_transfer_overview') + '</span>'
+                  ])
+                "
+              ></div>
+            </div>
+            <div class="chart" v-else>
               <Chart type="pie" :extend="getPieOption(transBarData)" class="type-chart"></Chart>
             </div>
           </div>
@@ -133,13 +185,14 @@
         <div class="dashboard-col">
           <div class="dashboard-col-box">
             <div class="dashboard-title fs-7">{{ $t('dashboard_server_title') }}</div>
-            <el-row :gutter="20">
+            <el-row :gutter="20" v-if="serverTable.length">
               <el-col :span="12" class="server-list pt-3" v-for="item in serverTable" :key="item.id">
                 <div class="server-list-box">
                   <img src="../../assets/images/serve.svg" />
                   <!-- <img src="../../assets/icons/svg/serve.svg" alt="" /> -->
                   <div class="server-main ml-5">
                     <div class="title">{{ item.systemInfo.ip }}</div>
+
                     <ul class="flex pt-1">
                       <li class="pr-5">
                         <label class="label pr-2">{{ $t('dashboard_management') }}</label>
@@ -164,6 +217,16 @@
                 </div>
               </el-col>
             </el-row>
+            <div v-else class="flex justify-content-center align-items-center h-100 py-4">
+              <div
+                class="flex justify-content-center align-items-center"
+                v-html="
+                  $t('dashboard_no_statistics', [
+                    '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_server_title') + '</span>'
+                  ])
+                "
+              ></div>
+            </div>
           </div>
         </div>
       </div>
@@ -188,6 +251,7 @@ export default {
   components: { DKDashboard, Chart },
   data() {
     return {
+      h: this.$createElement,
       copyPieData: [],
       copyTaskData: [],
       syncPieData: [],
@@ -659,6 +723,7 @@ export default {
         color: #2c65ff;
       }
       .charts-list {
+        height: 100%;
         overflow: hidden;
         box-sizing: border-box;
         background-color: #fff;
