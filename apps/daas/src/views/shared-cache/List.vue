@@ -37,7 +37,7 @@
     </TablePage>
     <Drawer class="shared-cache-details" :visible.sync="isShowDetails">
       <div v-if="details.id" class="shared-cache-details--header flex pb-3">
-        <VIcon class="icon">agent</VIcon>
+        <VIcon class="icon">text</VIcon>
         <div class="flex-fill ml-4">
           <div class="fs-6">{{ details.name }}</div>
           <span :class="['status-' + details.statusResult, 'status-block', 'mt-2']">
@@ -222,15 +222,15 @@ export default {
       row.cacheKeysArr = row.cacheKeys?.split(',') || []
       this.details = row
       this.info = [
-        { label: this.$t('column_creator'), value: row.createUser, icon: 'database-user-name' },
-        { label: this.$t('column_create_time'), value: row.cacheTimeAtFmt, icon: 'add' },
-        { label: this.$t('column_connection'), value: row.connectionName, icon: 'add' },
-        { label: this.$t('column_table'), value: row.tableName, icon: 'add' },
-        { label: this.$t('shared_cache_max_rows'), value: row.maxRows, icon: 'add' },
+        { label: this.$t('column_creator'), value: row.createUser, icon: 'createUser' },
+        { label: this.$t('column_create_time'), value: row.cacheTimeAtFmt, icon: 'cacheTimeAtFmt' },
+        { label: this.$t('column_connection'), value: row.connectionName, icon: 'connectionName' },
+        { label: this.$t('column_table'), value: row.tableName, icon: 'table' },
+        { label: this.$t('shared_cache_max_rows'), value: row.maxRows, icon: 'record' },
         {
           label: this.$t('shared_cache_ttl'),
           value: `${row.ttl / 86400}${this.$t('shared_cache_ttl_unit')}`,
-          icon: 'add'
+          icon: 'taskLastHour'
         }
       ]
       this.isShowDetails = true

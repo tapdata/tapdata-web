@@ -253,7 +253,10 @@
                         <div class="database-text" style="margin-left: 0">
                           <div>
                             {{ scope.row.field_name }}
-                            <i v-if="scope.row.primary_key" class="iconfont icon-yuechi1"></i>
+                            <i
+                              v-if="scope.row.primary_key || scope.row.primary_key_position > 0"
+                              class="iconfont icon-yuechi1"
+                            ></i>
                           </div>
                         </div>
                       </template>

@@ -273,7 +273,8 @@
         <header class="header mb-3">
           <div class="tab pb-3">
             <div class="img-box">
-              <img src="../../../assets/images/migrate/headImage.png" />
+              <VIcon class="icon">text</VIcon>
+              <!-- <img src="../../../assets/images/migrate/headImage.png" /> -->
             </div>
             <div class="content" v-if="previewData">
               <div class="name fs-6">
@@ -308,7 +309,8 @@
           <li v-for="item in previewList" :key="item.label">
             <!-- {{ previewData[item] }} -->
             <template v-if="!!item.value">
-              <img class="label-img" :src="getImgByData(item.label)" />
+              <VIcon class="icon mr-4">{{ item.label }}</VIcon>
+              <!-- <img class="label-img" :src="getImgByData(item.label)" /> -->
               <div class="label-text">
                 <div class="label">{{ $t('task_preview_' + item.label) }}:</div>
                 <div
@@ -1112,7 +1114,6 @@ export default {
     // 打开预览
     handlePreview(data) {
       let previewList = [{ label: 'subtasks', value: data.statuses.length }]
-      console.log('handlePreview', data)
       let statusResult = data.statusResult || []
       let colorMap = {
         error: '#F64E3E',
@@ -1151,9 +1152,6 @@ export default {
       this.previewList = previewList
     },
 
-    getImgByData(data) {
-      return require(`@/assets/images/migrate/${data}.png`)
-    },
     getFilterItems() {
       this.filterItems = [
         {
