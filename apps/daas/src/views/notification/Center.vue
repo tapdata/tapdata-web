@@ -51,12 +51,27 @@ export default {
   },
   methods: {
     selectPanel(name) {
-      this.$router.replace({
-        name: 'notification',
-        query: {
-          type: name
-        }
-      })
+      if (name === 'system') {
+        this.$router.push({
+          name: 'systemNotification',
+          query: {
+            type: name
+          }
+        })
+      } else {
+        this.$router.push({
+          name: 'userNotification',
+          query: {
+            type: name
+          }
+        })
+      }
+      // this.$router.replace({
+      //   name: 'notification',
+      //   query: {
+      //     type: name
+      //   }
+      // })
     }
   }
 }
