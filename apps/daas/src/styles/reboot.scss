@@ -104,3 +104,7 @@ table {
 body {
   font-family: $fontFamily;
 }
+
+button, input, select, textarea {
+  font-family: inherit;
+}
