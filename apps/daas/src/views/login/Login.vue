@@ -134,10 +134,9 @@ export default {
         if (lastLocationHref) {
           location.href = lastLocationHref
         }
-        debugger
         setTimeout(() => {
           sessionStorage.removeItem('lastLocationHref')
-          location.reload()
+          // location.reload()
         }, 50)
       } catch (e) {
         let msg = e?.data?.message
