@@ -226,10 +226,10 @@ export default {
         { label: this.$t('column_create_time'), value: row.cacheTimeAtFmt, icon: 'cacheTimeAtFmt' },
         { label: this.$t('column_connection'), value: row.connectionName, icon: 'connectionName' },
         { label: this.$t('column_table'), value: row.tableName, icon: 'table' },
-        { label: this.$t('shared_cache_max_rows'), value: row.maxRows, icon: 'maxRows' },
+        { label: this.$t('shared_cache_max_rows'), value: row.maxRows, icon: 'record' },
         {
           label: this.$t('shared_cache_ttl'),
-          value: this.$moment(row.ttl).format('YYYY-MM-DD HH:mm:ss'),
+          value: `${row.ttl / 86400}${this.$t('shared_cache_ttl_unit')}`,
           icon: 'taskLastHour'
         }
       ]
