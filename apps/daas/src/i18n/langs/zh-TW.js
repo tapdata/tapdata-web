@@ -61,6 +61,7 @@ export default {
   button_zoom_in: '放大',
   button_zoom_out: '縮小',
   button_move_paper: '移動畫布[按住空格]',
+  button_search_node: '搜索節點',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精準匹配',
@@ -1871,6 +1872,7 @@ export default {
   dag_table: '表',
   dag_processor_node: '處理節點',
   dag_save_fail: '保存出錯，請檢查節點',
+  dag_search_node_placeholder: '請輸入節點名稱搜索',
   meta_table_index: '序號',
   meta_table_field_name: '字段名稱',
   meta_table_field_type: '字段類型',

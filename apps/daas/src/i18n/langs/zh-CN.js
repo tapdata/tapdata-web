@@ -60,6 +60,7 @@ export default {
   button_zoom_in: '放大',
   button_zoom_out: '缩小',
   button_move_paper: '移动画布[按住空格]',
+  button_search_node: '搜索节点',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精准匹配',
@@ -1885,6 +1886,7 @@ export default {
   dag_table: '表',
   dag_processor_node: '处理节点',
   dag_save_fail: '保存出错，请检查节点',
+  dag_search_node_placeholder: '请输入节点名称搜索',
   meta_table_index: '序号',
   meta_table_field_name: '字段名称',
   meta_table_field_type: '字段类型',

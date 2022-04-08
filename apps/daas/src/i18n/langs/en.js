@@ -61,6 +61,7 @@ export default {
   button_zoom_in: 'Zoom in',
   button_zoom_out: 'Zoom out',
   button_move_paper: 'Move canvas[Press space]',
+  button_search_node: 'Search node',
 
   query_fuzzy: 'Fuzzy match',
   query_precise: 'Exact match',
@@ -1944,6 +1945,7 @@ export default {
   dag_table: 'Table',
   dag_processor_node: 'Processor Node',
   dag_save_fail: 'Save failed, please check node',
+  dag_search_node_placeholder: '请输入节点名称搜索',
   meta_table_index: 'Index',
   meta_table_field_name: 'Name',
   meta_table_field_type: 'Type',

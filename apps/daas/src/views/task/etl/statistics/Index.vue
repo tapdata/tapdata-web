@@ -4,7 +4,7 @@
       <Info :task="task" class="card-box card-box__info" :remote-method="infoRemoteMethod" @reload="loadTask"></Info>
       <div class="flex-1 mt-6 pb-12 section-wrap-box">
         <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
-          <ElTabPane :label="$t('task_monitor_progress')" name="schedule">
+          <ElTabPane :label="$t('task_monitor_progress')" name="schedule" lazy>
             <Schedule :task="task"></Schedule>
           </ElTabPane>
           <ElTabPane :label="$t('task_monitor_run_log')" name="log" lazy>
