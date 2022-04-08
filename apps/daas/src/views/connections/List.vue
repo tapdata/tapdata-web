@@ -567,6 +567,10 @@ export default {
         .batchUpdateListtags(attributes)
         .then(() => {
           this.table.fetch()
+          this.$message.success(this.$t('message_save_ok'))
+        })
+        .catch(() => {
+          this.$message.error(this.$t('message_save_fail'))
         })
     },
     //选择创建类型

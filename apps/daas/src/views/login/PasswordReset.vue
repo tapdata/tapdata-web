@@ -246,7 +246,7 @@ export default {
   justify-content: center;
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
   box-sizing: border-box;
   .sign-in-panel {
     width: 400px;

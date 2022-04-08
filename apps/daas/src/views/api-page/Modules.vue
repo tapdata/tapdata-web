@@ -403,18 +403,19 @@ export default {
       return tagList
     },
     // 数据分类查询数据
-    handleOperationClassify(classifications) {
-      this.$api('MetadataInstances')
-        .classification({
-          metadatas: this.multipleSelection.map(it => {
-            return {
-              id: it.id,
-              classifications: classifications
-            }
-          })
-        })
+    handleOperationClassify(listtags) {
+      let attributes = {
+        id: this.multipleSelection.map(r => r.id),
+        listtags
+      }
+      this.$api('modules')
+        .batchUpdateListtags(attributes)
         .then(() => {
           this.table.fetch()
+          this.$message.success(this.$t('message_save_ok'))
+        })
+        .catch(() => {
+          this.$message.error(this.$t('message_save_fail'))
         })
     },
     // 状态改变查询

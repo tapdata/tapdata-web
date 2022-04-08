@@ -37,6 +37,7 @@ export default {
   components: { Info, Schedule, Log, Connection, History, ShareMining },
   data() {
     return {
+      timer: null,
       loading: true,
       task: {},
       selectFlow: 'flow_', // 选中节点
@@ -126,6 +127,7 @@ export default {
   },
   destroyed() {
     this.$ws.off('watch', this.taskChange)
+    this.timer && clearInterval(this.timer)
   },
   methods: {
     init() {
