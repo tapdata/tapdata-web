@@ -11,6 +11,7 @@
       <div ref="paper" class="paper" :style="paperStyle">
         <div class="paper-content-wrap" :style="contentWrapStyle">
           <slot></slot>
+          <div class="nav-line" v-for="(l, i) in navLines" :key="`l-${i}`" :style="l"></div>
         </div>
       </div>
       <div v-show="showSelectBox" class="select-box" :style="selectBoxStyle"></div>
@@ -29,7 +30,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import { on, off } from '@daas/shared'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { getDataflowCorners } from '../helpers'
@@ -42,6 +43,7 @@ export default {
   name: 'PaperScroller',
   components: { MiniView },
   mixins: [deviceSupportHelpers, movePaper],
+  props: { navLines: Array },
 
   data() {
     return {
@@ -72,7 +74,7 @@ export default {
         h: 0
       },
       // 按下空格键
-      spaceKeyPressed: false,
+      // spaceKeyPressed: false,
       // 累积的缩放系数
       cumulativeZoomFactor: 1,
       // 缩放系数
@@ -87,6 +89,7 @@ export default {
 
   computed: {
     ...mapGetters('dataflow', ['getCtor', 'isActionActive']),
+    ...mapState('dataflow', ['spaceKeyPressed']),
 
     selectBoxStyle() {
       let attr = this.selectBoxAttr
@@ -169,7 +172,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['addNode', 'setActiveType']),
+    ...mapMutations('dataflow', ['addNode', 'setActiveType', 'setPaperSpaceKeyPressed', 'removeActiveAction']),
 
     /**
      * 获取节点拖放后的坐标
@@ -178,6 +181,19 @@ export default {
      * @returns {*[]}
      */
     getDropPositionWithinPaper(position, size) {
+      const rect = this.$refs.paper.getBoundingClientRect()
+      const scale = this.paperScale
+      let [x, y] = position
+
+      x -= rect.x + this.paperReverseSize.w * scale + (size.width * scale) / 2
+      y -= rect.y + this.paperReverseSize.h * scale + (size.height * scale) / 2
+      x /= scale
+      y /= scale
+
+      return [x, y]
+    },
+
+    getPositionWithinPaper(position, size) {
       const rect = this.$refs.paper.getBoundingClientRect()
       const scale = this.paperScale
       let [x, y] = position
@@ -356,7 +372,8 @@ export default {
       }
 
       if (e.which === 32) {
-        this.spaceKeyPressed = true
+        // this.spaceKeyPressed = true
+        this.setPaperSpaceKeyPressed(true)
         if (e.target === this.$el) e.preventDefault()
       }
     },
@@ -367,7 +384,8 @@ export default {
       }
 
       if (e.which === 32) {
-        this.spaceKeyPressed = false
+        // this.spaceKeyPressed = false
+        this.setPaperSpaceKeyPressed(false)
       }
     },
 
@@ -424,6 +442,7 @@ export default {
 
       this.mouseUpMouseSelect()
       this.mouseUpMovePaper()
+      this.removeActiveAction('dragActive')
     },
 
     mouseUpMouseSelect() {
@@ -643,5 +662,15 @@ export default {
   background: rgba(44, 101, 255, 0.07);
   border: 1px solid #2c65ff;
   border-radius: 2px;
+}
+
+.nav-line {
+  position: absolute;
+  width: 0;
+  height: 0;
+  top: 0;
+  left: 0;
+  border-top: 1px dashed #ff5b37;
+  border-left: 1px dashed #ff5b37;
 }
 </style>

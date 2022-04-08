@@ -360,7 +360,7 @@ export default {
             })
           })
           // eslint-disable-next-line
-        console.log('挖掘详情x轴：', this.lineDataDeep.x.length, xArr)
+          console.log('挖掘详情x轴：', this.lineDataDeep.x.length, xArr)
           xArr.forEach((el, index) => {
             if (!this.lineDataDeep.x.includes(el)) {
               this.lineDataDeep.x.push(el)
@@ -394,13 +394,23 @@ export default {
       }, ms)
     },
     goDetail(row) {
-      this.$router.push({
-        name: 'dataflowStatistics',
-        params: {
-          id: row.parentId || this.detailData.id,
-          subId: row.id
-        }
-      })
+      if (row?.syncType === 'migrate') {
+        this.$router.push({
+          name: 'MigrateStatistics',
+          query: {
+            id: row.parentId || this.detailData.id,
+            subId: row.id
+          }
+        })
+      } else {
+        this.$router.push({
+          name: 'dataflowStatistics',
+          params: {
+            id: row.parentId || this.detailData.id,
+            subId: row.id
+          }
+        })
+      }
     },
     getEmptyData(start, end) {
       let result = []

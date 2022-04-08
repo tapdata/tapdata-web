@@ -35,6 +35,7 @@
         <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
           <PaperScroller
             ref="paperScroller"
+            :nav-lines="navLines"
             @add-node="handleAddNodeToPos"
             @mouse-select="handleMouseSelect"
             @change-scale="handleChangeScale"
@@ -396,7 +397,7 @@ export default {
 
         info.connection.bind('click', conn => {
           if (this.stateIsReadonly) return
-
+          this.handleDeselectAllConnections()
           conn.showOverlay('removeConn')
           conn.showOverlay('addNodeOnConn')
           conn.addClass('connection-selected')
@@ -1295,13 +1296,148 @@ export default {
      * 从侧边栏拖拽节点时，判断是否能放置到连线，并且高亮可以放置的线
      * @param item
      * @param position
+     * @param el
      */
-    handleDragMoveNode(item, position) {
+    handleDragMoveNode(item, position, el) {
       this.jsPlumbIns.select().removeClass('connection-highlight')
       const $elemBelow = document.elementFromPoint(...position)
-      if ($elemBelow.nodeName === 'path' && $elemBelow.parentElement._jsPlumb) {
+
+      if ($elemBelow?.nodeName === 'path' && $elemBelow.parentElement._jsPlumb) {
         $elemBelow.parentElement.classList.add('connection-highlight')
       }
+
+      let lines = []
+
+      if (document.getElementById('dfEditorContent').contains($elemBelow)) {
+        el.style.transform = `scale(${this.scale})`
+        let nw = el.offsetWidth
+        let nh = el.offsetHeight
+        const pos = this.$refs.paperScroller.getDropPositionWithinPaper(position, {
+          width: nw,
+          height: nh
+        })
+        let diffPos = { x: 0, y: 0 }
+        let horiArr = []
+        let verArr = []
+        let rangeX = 10
+        let rangeY = 10
+
+        this.allNodes.forEach(item => {
+          let [x, y] = item.attrs.position
+          let _x = x - pos[0]
+          let _y = y - pos[1]
+          if (Math.abs(_x) <= Math.abs(rangeX)) {
+            if (_x === rangeX) {
+              verArr.push(y)
+            } else {
+              rangeX = _x
+              verArr = [y]
+            }
+            diffPos.x = rangeX
+          }
+          if (Math.abs(_y) <= Math.abs(rangeY)) {
+            if (_y === rangeY) {
+              horiArr.push(x)
+            } else {
+              rangeY = _y
+              horiArr = [x]
+            }
+            diffPos.y = rangeY
+          }
+        })
+
+        pos[0] += diffPos.x
+        pos[1] += diffPos.y
+
+        // console.log('diffPos', diffPos.x, diffPos.y)
+        el.style.left = parseInt(el.style.left) + diffPos.x * this.scale + 'px'
+        el.style.top = parseInt(el.style.top) + diffPos.y * this.scale + 'px'
+
+        let t = pos[1],
+          b = pos[1] + nh,
+          l = pos[0],
+          r = pos[0] + nw
+        verArr.forEach(y => {
+          t = Math.min(y + nh, t)
+          b = Math.max(y, b)
+        })
+        horiArr.forEach(x => {
+          l = Math.min(x + nw, l)
+          r = Math.max(x, r)
+        })
+
+        // 组装导航线
+        if (t < pos[1]) {
+          let top = t + 'px',
+            height = pos[1] - t + 'px'
+          lines.push(
+            {
+              top,
+              left: pos[0] + 'px',
+              height
+            },
+            {
+              top,
+              left: pos[0] + nw + 'px',
+              height
+            }
+          )
+        }
+        if (b > pos[1] + nh) {
+          let top = pos[1] + nh + 'px',
+            height = b - pos[1] - nh + 'px'
+          lines.push(
+            {
+              top,
+              left: pos[0] + 'px',
+              height
+            },
+            {
+              top,
+              left: pos[0] + nw + 'px',
+              height
+            }
+          )
+        }
+
+        if (l < pos[0]) {
+          let left = l + 'px',
+            width = pos[0] - l + 'px'
+          lines.push(
+            {
+              top: pos[1] + 'px',
+              left,
+              width
+            },
+            {
+              top: pos[1] + nh + 'px',
+              left,
+              width
+            }
+          )
+        }
+
+        if (r > pos[0] + nw) {
+          let left = pos[0] + nw + 'px',
+            width = r - pos[0] - nw + 'px'
+          lines.push(
+            {
+              top: pos[1] + 'px',
+              left,
+              width
+            },
+            {
+              top: pos[1] + nh + 'px',
+              left,
+              width
+            }
+          )
+        }
+      } else {
+        el.style.transform = 'scale(1)'
+      }
+
+      this.navLines = lines
     },
 
     /**
@@ -1309,11 +1445,13 @@ export default {
      * 🎉 支持拖到连线上快速添加
      * @param item
      * @param position
-     * @param size
+     * @param rect
      */
-    handleAddNodeByDrag(item, position, size) {
+    handleAddNodeByDrag(item, position, rect) {
       const paper = this.$refs.paperScroller
-      const newPosition = paper.getDropPositionWithinPaper(position, size)
+      // const newPosition = paper.getDropPositionWithinPaper(position, rect)
+      const point = paper.getMouseToPage(rect)
+      const newPosition = [point.x, point.y]
       const $elemBelow = document.elementFromPoint(...position)
 
       // 节点拖放在连线上
@@ -1327,6 +1465,8 @@ export default {
       }
 
       paper.autoResizePaper()
+      // 重置导航线
+      this.navLines = []
     },
 
     handleAddNodeToPos(position, item) {

@@ -18,7 +18,6 @@ export default {
   props: {
     node: Object
   },
-
   getIcon(node) {
     let icon = node.type === 'table' ? node.databaseType : NODE_TYPE_ICON[node.type]
     return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null

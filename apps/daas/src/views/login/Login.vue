@@ -136,7 +136,7 @@ export default {
         }
         setTimeout(() => {
           sessionStorage.removeItem('lastLocationHref')
-          location.reload()
+          // location.reload()
         }, 50)
       } catch (e) {
         let msg = e?.data?.message
