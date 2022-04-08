@@ -134,10 +134,9 @@ export default {
         if (lastLocationHref) {
           location.href = lastLocationHref
         }
-        debugger
         setTimeout(() => {
           sessionStorage.removeItem('lastLocationHref')
-          location.reload()
+          // location.reload()
         }, 50)
       } catch (e) {
         let msg = e?.data?.message
@@ -171,12 +170,13 @@ export default {
   // background: #fafafa;
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
   box-sizing: border-box;
   .sign-in-panel {
     padding: 25px;
     width: 400px;
     height: 500px;
+    margin: auto;
     .title {
       margin-bottom: 30px;
       font-size: 32px;

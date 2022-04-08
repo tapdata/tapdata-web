@@ -8,17 +8,17 @@ export default {
   },
   render(h) {
     let record = this.record
-    let activeTextStyle = 'color: #409EFF'
+    let activeTextStyle = 'color: #2C65FF; padding-right: 5px;'
     return h(
       'div',
       {
         class: 'user-operation-wrap'
       },
       [
-        this.$t('notification.account'),
+        this.$t('notification.account') + ' ',
         h('span', { style: activeTextStyle }, record.username || record.email),
         this.$t('notification.operation.' + record.operation),
-        this.$t('notification.modular.' + record.modular),
+        this.$t('notification.modular.' + record.modular) + ' ',
         h('span', { style: activeTextStyle }, record.parameter1)
       ]
     )

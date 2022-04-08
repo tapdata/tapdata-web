@@ -1,11 +1,5 @@
 <template>
   <div class="section-wrap setting-warp">
-    <!-- <ElBreadcrumb class="section-wrap-breadcrumb" separator-class="el-icon-arrow-right">
-      <ElBreadcrumbItem :to="{ path: '/' }">
-        {{ $t('page_title_back_menu') }}
-      </ElBreadcrumbItem>
-      <ElBreadcrumbItem style="color: #4e5969">{{ breadcrumbName }}</ElBreadcrumbItem>
-    </ElBreadcrumb> -->
     <div class="setting-warp-box">
       <div class="setting-center">
         <div class="setting-left-sidebar">
@@ -101,7 +95,7 @@ export default {
       height: 100%;
       .setting-left-sidebar {
         padding-top: 16px;
-        border-right: 1px solid #fafafa;
+        border-right: 1px solid #f2f2f2;
         width: 200px;
         // .title {
         //   height: 14px;
@@ -118,9 +112,6 @@ export default {
             padding-left: 20px;
             cursor: pointer;
             color: #4e5969;
-            i {
-              color: #666;
-            }
             ::v-deep {
               .iconfont {
                 color: #4e5969;

@@ -829,10 +829,26 @@ export default [
       {
         path: '/notification',
         name: 'notification',
+        redirect: 'notification/systemNotification',
         component: () => import('@/views/notification/Center'),
         meta: {
-          title: 'notify_system_notice'
-        }
+          title: 'page_title_back_menu',
+          isNotAside: true
+        },
+        children: [
+          {
+            path: 'systemNotification',
+            name: 'systemNotification',
+            component: () => import('@/views/notification/SystemNotification'),
+            meta: { title: 'notify_system_notice', isNotAside: true }
+          },
+          {
+            path: 'userNotification',
+            name: 'userNotification',
+            component: () => import('@/views/notification/UserNotification'),
+            meta: { title: 'notify_user_notice', isNotAside: true }
+          }
+        ]
       },
       {
         path: 'license',

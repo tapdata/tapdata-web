@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loading" class="statistics-container section-wrap">
+  <div v-loading="loading" class="statistics-container font-color-sub section-wrap">
     <Info :task="task" class="card-box card-box__info" :remote-method="infoRemoteMethod" @reload="loadTask"></Info>
     <div class="card-box__content card-box px-6 py-2 mt-6">
       <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
@@ -37,6 +37,7 @@ export default {
   components: { Info, Schedule, Log, Connection, History, ShareMining },
   data() {
     return {
+      timer: null,
       loading: true,
       task: {},
       selectFlow: 'flow_', // 选中节点
@@ -126,6 +127,7 @@ export default {
   },
   destroyed() {
     this.$ws.off('watch', this.taskChange)
+    this.timer && clearInterval(this.timer)
   },
   methods: {
     init() {

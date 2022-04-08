@@ -19,11 +19,11 @@ export class FieldCalc extends NodeType {
 
   formSchema = {
     type: 'object',
-    $inputs: {
-      type: 'array',
-      display: 'none'
-    },
     properties: {
+      $inputs: {
+        type: 'array',
+        display: 'none'
+      },
       scripts: {
         type: 'array',
         title: '',

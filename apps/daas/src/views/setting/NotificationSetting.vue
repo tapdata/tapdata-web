@@ -214,7 +214,7 @@ $unreadColor: #ee5353;
       span {
         padding: 4px 100px 4px 20px;
         font-size: 12px;
-        color: #86909c;
+        color: map-get($fontColor, secondary);
         border: 1px solid #f2f2f2;
         border-left: 2px solid #2c65ff;
         box-sizing: border-box;
@@ -236,7 +236,7 @@ $unreadColor: #ee5353;
       // }
       .notice,
       .email {
-        color: #86909c;
+        color: map-get($fontColor, secondary);
       }
       ul {
         // margin-left: 0;
@@ -259,7 +259,7 @@ $unreadColor: #ee5353;
         ::v-deep {
           .el-checkbox {
             .el-checkbox__label {
-              color: #86909c;
+              color: map-get($fontColor, secondary);
             }
           }
         }

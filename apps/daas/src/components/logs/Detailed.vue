@@ -80,7 +80,10 @@ export default {
     },
     loadNew(data) {
       let list = data || []
-      list = data.reverse().map(this.formatLog)
+      list = data
+        .reverse()
+        .filter(it => this.checkList.includes(it.level))
+        .map(this.formatLog)
       this.logs.push(...list)
       this.scrollToBottom()
     },

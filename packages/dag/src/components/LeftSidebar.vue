@@ -254,7 +254,7 @@ import VIcon from 'web-core/components/VIcon'
 import ConnectionTypeSelector from 'web-core/components/connection-type-selector'
 import resize from 'web-core/directives/resize'
 import BaseNode from './BaseNode'
-import { debounce, throttle } from 'lodash'
+import { debounce } from 'lodash'
 import { Connections, MetadataInstances } from '@daas/api'
 import { Select } from 'element-ui'
 const connections = new Connections()
@@ -663,10 +663,10 @@ export default {
       this.dragMoving = false
     },
 
-    onMove: throttle(function (item, position) {
+    onMove() {
       this.dragMoving = true
-      this.$emit('move-node', item, position)
-    }, 100),
+      this.$emit('move-node', ...arguments)
+    },
 
     onDrop() {
       this.$emit('drop-node', ...arguments)
@@ -771,6 +771,7 @@ $hoverBg: #eef3ff;
   z-index: 1000;
   pointer-events: none;
   opacity: 0;
+  transform-origin: center center;
 }
 
 .layout-sidebar.--left {

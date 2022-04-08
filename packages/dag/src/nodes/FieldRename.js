@@ -19,11 +19,11 @@ export class FieldRename extends NodeType {
 
   formSchema = {
     type: 'object',
-    $inputs: {
-      type: 'array',
-      display: 'none'
-    },
     properties: {
+      $inputs: {
+        type: 'array',
+        display: 'none'
+      },
       operations: {
         type: 'array',
         title: '',

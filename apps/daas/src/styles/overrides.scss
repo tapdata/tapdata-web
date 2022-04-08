@@ -410,18 +410,19 @@
 }
 .el-breadcrumb__inner a,
 .el-breadcrumb__inner.is-link {
-  font-weight: normal;
-  color: map-get($color, primary);
+  font-weight: 400;
+  color: map-get($fontColor, secondary);
 }
 .el-breadcrumb__inner a:hover,
 .el-breadcrumb__inner.is-link:hover {
-  color: map-get($color, lprimary);
+
+  color: map-get($color, primary);
 }
 .el-breadcrumb__item:last-child .el-breadcrumb__inner,
 .el-breadcrumb__item:last-child .el-breadcrumb__inner a,
 .el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover,
 .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
-  color: map-get($fontColor, normal);
+  color: map-get($fontColor, light);
 }
 .el-tag--small {
   border-radius: $borderRadius;

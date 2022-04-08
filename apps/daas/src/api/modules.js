@@ -45,4 +45,8 @@ export default class Modules extends PublicAPI {
   getdata(id) {
     return axios.get(this.url + '/getSchema/' + id.mondeid)
   }
+
+  batchUpdateListtags(params) {
+    return axios.patch(`${this.url}/batchUpdateListtags`, params)
+  }
 }

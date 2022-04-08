@@ -226,13 +226,12 @@ export default {
           name: true
         },
         where: {
-          database_type: 'mongodb'
+          database_type: 'mongodb',
+          connection_type: { in: ['source', 'source_and_target'] }
         }
       }
       this.$api('connections')
-        .listAll({
-          filter: JSON.stringify(filter)
-        })
+        .listAll(filter)
         .then(res => {
           let options = res?.data || []
           this.connectionOptions = options.map(opt => ({ label: opt.name, value: opt.id }))

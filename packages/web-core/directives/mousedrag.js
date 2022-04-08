@@ -76,7 +76,8 @@ export default {
       onStop?.(item, [posX, posY])
 
       if ($drag) {
-        const { width, height } = $drag.getBoundingClientRect()
+        // const { width, height } = $drag.getBoundingClientRect()
+        const rect = $drag.getBoundingClientRect()
         domHtml && $drag.remove()
         $drag = null
 
@@ -84,7 +85,7 @@ export default {
           const $con = document.querySelector(container)
           const $elemBelow = document.elementFromPoint(posX, posY)
           if ($con && $con.contains($elemBelow)) {
-            onDrop?.(item, [posX, posY], { width, height })
+            onDrop?.(item, [posX, posY], rect)
           }
         }
       }

@@ -1,6 +1,8 @@
 <template>
   <div class="page">
-    <img :src="logoUrl" />
+    <div class="page-image">
+      <!-- <img :src="logoUrl" /> -->
+    </div>
 
     <div class="page-main">
       <div class="page-main-box">
@@ -55,13 +57,22 @@ export default {
 .page {
   display: flex;
   flex-direction: row;
+  min-width: 1440px;
   height: 100%;
-  img {
-    height: 100%;
+  .page-image {
+    flex: 1;
+    background: url('../../assets/images/login-bg.png') no-repeat left 0;
+    background-size: cover;
+    overflow: hidden;
+    img {
+      width: 100%;
+      height: 100%;
+    }
   }
+
   .page-main {
     display: flex;
-    width: 100%;
+    flex: 1;
     justify-content: center;
     align-items: center;
     background-color: #fff;

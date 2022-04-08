@@ -1,6 +1,6 @@
 <template>
   <ElContainer class="layout-container" direction="vertical">
-    <ElHeader class="layout-header" height="72px">
+    <ElHeader class="layout-header" height="60px">
       <a class="logo" href="/">
         <img :src="logoUrl" />
       </a>
@@ -11,8 +11,8 @@
         <ElButton v-if="creatAuthority" type="primary" size="mini" @click="command('newDataFlow')">
           {{ $t('dataFlow.createNew') }}
         </ElButton>
-        <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-6"></NotificationPopover>
-        <ElDropdown v-if="$getSettingByKey('SHOW_QA_AND_HELP')" class="btn ml-4" placement="bottom" @command="command">
+        <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
+        <ElDropdown v-if="$getSettingByKey('SHOW_QA_AND_HELP')" class="btn" placement="bottom" @command="command">
           <VIcon size="16">wenda</VIcon>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="help">{{ $t('app.document') }}</ElDropdownItem>
@@ -20,7 +20,7 @@
         </ElDropdown>
         <ElDropdown
           v-if="$getSettingByKey('SHOW_SETTING_BUTTON') && settingVisibility"
-          class="btn ml-4"
+          class="btn"
           placement="bottom"
           @command="command"
         >
@@ -32,12 +32,7 @@
             }}</ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
-        <ElDropdown
-          v-if="$getSettingByKey('SHOW_LANGUAGE')"
-          class="btn ml-4"
-          placement="bottom"
-          @command="changeLanguage"
-        >
+        <ElDropdown v-if="$getSettingByKey('SHOW_LANGUAGE')" class="btn" placement="bottom" @command="changeLanguage">
           <VIcon size="16">{{ { sc: 'language-sc', en: 'language-sc', tc: 'language-sc' }[lang] }}</VIcon>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
@@ -46,7 +41,7 @@
           </ElDropdownMenu>
         </ElDropdown>
         <ElDivider direction="vertical" class="divider mx-6"></ElDivider>
-        <ElDropdown class="menu-user" placement="bottom" @command="command">
+        <ElDropdown class="menu-user btn" placement="bottom" @command="command">
           <span>
             <span class="user-initials mr-2">{{ initials }}</span>
             <span>{{ userName }}<i class="el-icon-arrow-down ml-2"></i></span>
@@ -154,6 +149,7 @@
       display: flex;
       align-items: center;
       .btn {
+        padding: 6px 12px;
         color: rgba(255, 255, 255, 0.85);
         cursor: pointer;
         i {
@@ -164,7 +160,9 @@
           width: 28px;
         }
         &:hover {
-          color: map-get($color, primary);
+          background-color: rgba(239, 241, 244, 0.23);
+          border-radius: 4px;
+          // color: map-get($color, primary);
         }
       }
       .divider {
@@ -183,19 +181,19 @@
       }
       .menu-user {
         color: rgba(255, 255, 255, 0.85);
-        &:hover {
-          color: map-get($color, primary);
-        }
+        // &:hover {
+        //   color: map-get($color, primary);
+        // }
       }
     }
   }
   .layout-aside {
     position: fixed;
-    top: 72px;
+    top: 60px;
     left: 0;
     bottom: 0;
     display: flex;
-    height: calc(100% - 72px);
+    height: calc(100% - 60px);
     overflow: hidden;
     z-index: 100;
     border: 1px solid #e1e3e9;
@@ -314,8 +312,8 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    height: calc(100% - 72px);
-    margin-top: 72px;
+    height: calc(100% - 60px);
+    margin-top: 60px;
     padding: 0;
     background: #fff;
     box-sizing: border-box;
@@ -403,7 +401,7 @@ let menuSetting = [
   {
     name: 'system',
     label: 'page_title_system',
-    icon: 'caozuorizhi',
+    icon: 'system',
     code: 'system_management',
     children: [
       // { name: 'metadataDefinition', code: 'data_catalog_menu' },
@@ -518,7 +516,7 @@ export default {
           return menu
         })
       }
-      let menus = menuSetting.concat()
+      let menus = JSON.parse(JSON.stringify(menuSetting))
       this.menus = formatMenu(menus)
     },
     command(command) {

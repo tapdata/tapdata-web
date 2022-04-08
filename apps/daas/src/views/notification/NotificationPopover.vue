@@ -6,9 +6,15 @@
       </el-badge>
     </div>
     <el-tabs stretch class="notification-popover-wrap" v-model="activeTab" @tab-click="tabHandler">
+      <ElButton type="text" v-if="activeTab === 'system'" @click="handleNotify">{{
+        $t('notify_view_all_notify')
+      }}</ElButton>
+      <ElButton type="text" v-else @click="$router.push({ name: 'notification', query: { type: 'user' } })">{{
+        $t('notify_view_more')
+      }}</ElButton>
       <el-tab-pane class="tab-item" :label="$t('notify_system_notice')" name="system">
         <div class="tab-item-container">
-          <ul class="tab-list cuk-list">
+          <ul class="tab-list cuk-list" v-if="listData.length">
             <li class="list-item" v-for="(item, index) in listData" :key="index" @click="handleRead(item.id)">
               <div class="list-item-content" v-if="item.msg === 'JobDDL'">
                 <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
@@ -54,7 +60,13 @@
               </div>
             </li>
           </ul>
-          <div class="notice-footer">
+          <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
+            <div>
+              <VIcon size="76">no-notice</VIcon>
+              <div class="pt-4 fs-8 text-center font-color-sub fw-normal">{{ $t('notify_view_more') }}</div>
+            </div>
+          </div>
+          <!-- <div class="notice-footer">
             <span v-readonlybtn="'home_notice_settings'">
               <router-link to="/settingCenter/notificationSetting">
                 <span>
@@ -69,12 +81,12 @@
                 </span>
               </router-link>
             </span>
-          </div>
+          </div> -->
         </div>
       </el-tab-pane>
       <el-tab-pane class="tab-item" :label="$t('notify_user_notice')" name="user" v-loading="loading">
         <div class="tab-item-container">
-          <ul class="tab-list notification-list">
+          <ul class="tab-list notification-list" v-if="userOperations.length">
             <li class="notification-item" v-for="record in userOperations" :key="record.id">
               <UserOperation :record="record"></UserOperation>
               <div class="item-time">
@@ -82,14 +94,20 @@
               </div>
             </li>
           </ul>
-          <div class="notice-footer">
+          <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
+            <div>
+              <VIcon size="76">no-notice</VIcon>
+              <div class="pt-4 fs-8 text-center font-color-sub fw-normal">{{ $t('notify_view_more') }}</div>
+            </div>
+          </div>
+          <!-- <div class="notice-footer">
             <span></span>
             <router-link to="/notification?type=user">
               <span class="more-text">
                 {{ $t('notify_view_more') }}
               </span>
             </router-link>
-          </div>
+          </div> -->
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -138,6 +156,9 @@ export default {
     this.init()
   },
   methods: {
+    handleNotify() {
+      this.$router.push({ name: 'notification' })
+    },
     init() {
       let msg = {
         type: 'notification'
@@ -276,6 +297,7 @@ export default {
 .notification-popover {
   overflow: hidden;
   .notification-popover-wrap {
+    padding: 10px 16px;
     overflow: hidden;
     .el-tabs__header {
       border-bottom: 1px solid map-get($borderColor, light);
@@ -285,8 +307,12 @@ export default {
         }
       }
       .el-tabs__item {
+        font-size: 14px;
+        font-weight: 500;
+        color: map-get($fontColor, sub);
         &.is-active {
           color: map-get($color, primary);
+          font-weight: 400;
           border-color: map-get($color, primary);
         }
       }
@@ -294,13 +320,20 @@ export default {
         width: 100px;
       }
     }
-    .el-tabs__nav-scroll {
-    }
     > .el-tabs__content {
       padding: 0 !important;
+      overflow: initial;
+      & > .el-button {
+        position: absolute;
+        right: 0;
+        top: -52px;
+        font-weight: 400;
+      }
     }
     .tab-item {
       margin-bottom: 1px;
+      .notification-no-data {
+      }
     }
   }
 }
@@ -396,7 +429,7 @@ export default {
       box-sizing: border-box;
       .notification-item {
         padding: 5px 20px 4px 20px;
-        border-bottom: 1px solid #dedee4;
+        border-bottom: 1px solid #f2f2f2;
         font-size: 12px;
         color: #666;
         &:hover {
