@@ -398,7 +398,7 @@ export default {
         },
         {
           label: this.$t('task_info_cdc_time'),
-          prop: 'currentTime',
+          prop: 'cdcTime',
           dataType: 'time'
         },
         {
@@ -551,7 +551,7 @@ export default {
           if (this.syncOverViewData.progress !== 100 && this.task.status === 'running') {
             this.timer = setTimeout(() => {
               this.getSyncOverViewData()
-            }, 800)
+            }, 2500)
           }
         })
     },
