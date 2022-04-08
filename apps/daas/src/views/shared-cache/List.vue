@@ -222,12 +222,16 @@ export default {
       row.cacheKeysArr = row.cacheKeys?.split(',') || []
       this.details = row
       this.info = [
-        { label: this.$t('column_creator'), value: row.createUser, icon: 'add' },
+        { label: this.$t('column_creator'), value: row.createUser, icon: 'database-user-name' },
         { label: this.$t('column_create_time'), value: row.cacheTimeAtFmt, icon: 'add' },
         { label: this.$t('column_connection'), value: row.connectionName, icon: 'add' },
         { label: this.$t('column_table'), value: row.tableName, icon: 'add' },
         { label: this.$t('shared_cache_max_rows'), value: row.maxRows, icon: 'add' },
-        { label: this.$t('shared_cache_ttl'), value: this.$moment(row.ttl).format('YYYY-MM-DD HH:mm:ss'), icon: 'add' }
+        {
+          label: this.$t('shared_cache_ttl'),
+          value: `${row.ttl / 86400}${this.$t('shared_cache_ttl_unit')}`,
+          icon: 'add'
+        }
       ]
       this.isShowDetails = true
     },
