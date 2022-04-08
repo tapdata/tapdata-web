@@ -231,9 +231,7 @@ export default {
         }
       }
       this.$api('connections')
-        .listAll({
-          filter: JSON.stringify(filter)
-        })
+        .listAll(filter)
         .then(res => {
           let options = res?.data || []
           this.connectionOptions = options.map(opt => ({ label: opt.name, value: opt.id }))
