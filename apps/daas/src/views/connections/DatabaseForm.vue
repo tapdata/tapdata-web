@@ -1670,6 +1670,9 @@ export default {
             this.dialogTestVisible = true
             if (this.$route.params.id) {
               //编辑需要特殊标识 updateSchema = false editTest = true
+              if (data.database_type === 'mongodb') {
+                delete database_uri
+              }
               this.$refs.test.start(false, true)
             } else {
               delete this.model.id
