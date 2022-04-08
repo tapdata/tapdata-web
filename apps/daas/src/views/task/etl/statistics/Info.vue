@@ -10,9 +10,6 @@
           target="etlSub"
           :status="task.isFinished ? 'finished' : task.status || 'running'"
         ></StatusTag>
-        <!--        <span class="ml-6 font-color-sub">-->
-        <!--          所属Agent：<span>{{ task.belongAgent }}</span>-->
-        <!--        </span>-->
         <span class="ml-6 font-color-sub">
           {{ $t('task_monitor_founder') }}：<span>{{ task.creator }}</span>
         </span>
@@ -60,6 +57,7 @@
       <DatetimeRange
         v-if="selectedTime === 'custom'"
         v-model="timeRange"
+        :range="2 * 365 * 24 * 60 * 60 * 1000"
         value-format="timestamp"
         class="filter-datetime-range ml-2"
         @change="changeTimeRangeFnc"
@@ -106,7 +104,7 @@
         </div>
       </div>
       <div class="flex flex-column flex-fill ml-4" v-loading="!lineDataDeep.x.length">
-        <Chart ref="chart" type="line" :data="lineData" :options="lineOptions" class="type-chart h-100"></Chart>
+        <Chart ref="chart" :extend="lineOptions" class="type-chart h-100"></Chart>
       </div>
       <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
         <div
@@ -205,15 +203,18 @@ export default {
         edit: {
           edit: true,
           pause: true
+        },
+        reset: {
+          stop: true,
+          error: true,
+          complete: true,
+          schedule_failed: true
         }
       },
       selectedStage: '', // 选中的节点
       selectedTime: 'default',
       selectedRate: 'second',
-      lineData: {
-        x: [],
-        y: [[], []]
-      },
+      guanluaryFormat: '',
       lineDataDeep: {
         x: [],
         y: [[], []]
@@ -221,67 +222,49 @@ export default {
       lineOptions: {
         tooltip: {
           trigger: 'axis'
-          // formatter: params => {
-          //   let [item1, item2] = params
-          //   let html = formatTime(item1.name)
-          //   html += `<div style="display: flex;justify-content: space-between"><span>${item1.marker}${item1.seriesName}</span>` + `<span>${item1.value?.[1]}</span></div>`
-          //   html += `<div style="display: flex;justify-content: space-between"><span>${item2.marker}${item2.seriesName}</span>` + `<span>${item2.value?.[1]}</span></div>`
-          //   return html
-          // }
         },
         legend: {
           top: 4,
           right: 0,
           show: false
         },
-        // dataZoom: [
-        //   {
-        //     type: 'inside',
-        //     minSpan: 1,
-        //     maxSpan: 100
-        //   }
-        // ],
         xAxis: {
-          type: 'time'
-          // axisLabel: {
-          //   formatter: val => {
-          //     return formatTime(val)
-          //   }
-          // },
+          type: 'time',
+          splitLine: {
+            show: false
+          }
         },
-        yAxis: [
-          {
-            // max: 'dataMax',
-            // name: 'QPS',
-            axisLabel: {
-              formatter: function (value) {
-                if (value >= 1000) {
-                  value = value / 1000 + 'K'
-                }
-                return value
+        yAxis: {
+          axisLabel: {
+            formatter: function (value) {
+              if (value >= 1000) {
+                value = value / 1000 + 'K'
               }
+              return value
             }
           },
-          {
-            // max: 'dataMax',
-            axisLabel: {
-              formatter: function (value) {
-                if (value >= 1000) {
-                  value = value / 1000 + 'K'
-                }
-                return value
-              }
+          axisLine: {
+            show: true
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              type: 'dashed'
             }
           }
-        ],
+        },
         grid: {
-          left: 12, // 没有数据的时候，Y轴单位显示不全。后面可以通过判断设置该值
-          right: '2px',
+          left: '24px', // 没有数据的时候，Y轴单位显示不全。后面可以通过判断设置该值
+          right: '12px',
           top: '8px',
-          bottom: 0
+          bottom: 0,
+          containLabel: true,
+          borderWidth: 1,
+          borderColor: '#ccc'
         },
         series: [
           {
+            type: 'line',
             name: this.$t('task_info_input'),
             lineStyle: {
               color: 'rgba(24, 144, 255, 1)',
@@ -297,6 +280,7 @@ export default {
             data: []
           },
           {
+            type: 'line',
             name: this.$t('task_info_output'),
             lineStyle: {
               color: 'rgba(118, 205, 238, 1)',
@@ -327,20 +311,7 @@ export default {
         initialWrite: 0,
         replicateLag: 0
       },
-      initialData: [], // 缓存最近两次全量的进度数据
       endTs: '', // 预计完成时间
-      searchParams: {
-        start: '',
-        end: ''
-      },
-      filterItems: [
-        {
-          label: '统计时间',
-          key: 'start,end',
-          type: 'datetimerange',
-          timeDiff: 60 * 1000
-        }
-      ],
       selectedTimeItems: [
         {
           label: '默认',
@@ -406,16 +377,6 @@ export default {
         }
       })
       return result || []
-    },
-    progressBar() {
-      const { writeData } = this
-      const { initialWrite, initialTotal } = writeData
-      if (!initialTotal) {
-        return 0
-      } else if (initialWrite >= initialTotal) {
-        return 100
-      }
-      return Math.floor((initialWrite * 100) / initialTotal)
     }
   },
   beforeDestroy() {
@@ -514,9 +475,6 @@ export default {
         if (!(selectedTime === 'custom')) {
           this.getMeasurement()
         }
-        // if (!this.selectedTime || this.selectedTime !== 'custom') {
-        //   this.getMeasurement()
-        // }
       }, ms)
     },
     getParams(reset) {
@@ -537,11 +495,14 @@ export default {
           return
         }
       }
+      // 获取维度
       let diff =
         this.selectedTime === 'custom'
           ? (endTimeStamp || new Date().getTime()) - startTimeStamp
           : selectedTimeItems.find(t => t.value === selectedTime).spacing
       let guanluary = this.getGuanluary(diff)
+      // 维度需要展示的格式
+      this.guanluaryFormat = this.getGuanluary(diff, true)
       let subTaskId = this.$route.params?.subId
       let tags = {
         subTaskId: subTaskId,
@@ -596,6 +557,7 @@ export default {
           ]
         }
       }
+      // 轮询需要传递上一次的参数
       if (reset) {
         this.lineDataDeep = {
           x: [],
@@ -607,7 +569,6 @@ export default {
         if (selectedTime !== 'default') {
           params.samples[1].end = endTimeStamp
         }
-        // params.samples[2].end = endTimeStamp
       }
       if (startTimeStamp) {
         if (selectedTime && selectedTime !== 'custom') {
@@ -623,7 +584,6 @@ export default {
             params.samples[1].start = startTimeStamp
           }
         }
-        // params.samples[2].start = startTimeStamp
       }
       return params
     },
@@ -645,7 +605,6 @@ export default {
         const statistics = data.statistics?.[0] || {}
         const { overData, writeData } = this
         // 总输入总输出
-        // if (!isEmpty(countObj)) {
         for (let key in overData) {
           let val0 = countObj[key]?.[0] || 0
           let val1 = countObj[key]?.[1] || 0
@@ -658,7 +617,7 @@ export default {
             overData[key] += val1 - val0
           }
         }
-        // }
+        // 右侧增量延迟信息
         for (let key in writeData) {
           writeData[key] = statistics[key]
         }
@@ -666,11 +625,6 @@ export default {
         const qpsData = samples[0] || {}
         let { inputQPS = [], outputQPS = [] } = qpsData
         let qpsDataTime = qpsData.time || []
-        // 空数据，需要模拟时间点
-        if (!qpsDataTime.length) {
-          qpsDataTime = this.getEmptyData(params.samples[0].start, params.samples[0].end)
-        }
-
         let xArr = qpsDataTime.map(t => formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
         const xArrLen = xArr.length
         if (this.lineDataDeep.x.length > 20) {
@@ -691,28 +645,29 @@ export default {
             value: [time, outputQPS[i] || 0]
           })
         })
-        // eslint-disable-next-line
-        console.log('x轴：', this.lineDataDeep.x.length, xArr)
         if (reset) {
           this.lineDataDeep.x = xArr
           this.lineDataDeep.y[0] = inArr
           this.lineDataDeep.y[1] = outArr
         } else {
           xArr.forEach((el, index) => {
+            // 过滤重复的时间点
             if (!this.lineDataDeep.x.includes(el)) {
               this.lineDataDeep.x.push(el)
               this.lineDataDeep.y[0].push(inArr[index])
               this.lineDataDeep.y[1].push(outArr[index])
             }
           })
-          // this.lineDataDeep.x.push(...xArr)
-          // this.lineDataDeep.y[0].push(...inArr)
-          // this.lineDataDeep.y[1].push(...outArr)
         }
-        // this.lineOptions.xAxis.axisLabel.formatter = val => {
-        //   return formatTime(val, formatGuanluaryTime)
-        // }
+        // 更新chart数据
         this.$refs.chart?.chart?.setOption({
+          xAxis: {
+            axisLabel: {
+              formatter: val => {
+                return formatTime(val, this.guanluaryFormat)
+              }
+            }
+          },
           series: [
             {
               data: Object.assign([], this.lineDataDeep.y[0])
@@ -728,19 +683,19 @@ export default {
       let diff = val / 1000
       let timeType
       let formatRes = ''
-      // <= 1h(1 * 60 * 60s) --> minute, second point, max 60 * 12 = 720
-      // <= 12h(12 * 60 * 60s) --> hour, minute point, max 12 * 60 = 720
-      // <= 30d(30 * 24 * 60 * 60s) --> day, hour point, max 24 * 30 = 720
-      // <= 24m+ --> month, day point, max 30 * 24 = 720
+      // <= 1h(1 * 60 * 60s) --> minute, second point, max 60 * 12 = 720 period 5s
+      // <= 12h(12 * 60 * 60s) --> hour, minute point, max 12 * 60 = 720 period 1m
+      // <= 30d(30 * 24 * 60 * 60s) --> day, hour point, max 24 * 30 = 720 period 1h
+      // <= 24m+ --> month, day point, max 30 * 24 = 720 period 1d
       if (diff <= 1 * 60 * 60) {
         timeType = 'minute'
-        formatRes = 'YYYY-MM-DD HH:mm:ss'
+        formatRes = 'HH:mm:ss'
       } else if (diff <= 12 * 60 * 60) {
         timeType = 'hour'
-        formatRes = 'YYYY-MM-DD HH:mm'
+        formatRes = 'MM-DD HH:mm'
       } else if (diff <= 30 * 24 * 60 * 60) {
         timeType = 'day'
-        formatRes = 'YYYY-MM-DD HH:00'
+        formatRes = 'MM-DD HH:00'
       } else {
         timeType = 'month'
         formatRes = 'YYYY-MM-DD'
@@ -749,43 +704,6 @@ export default {
         return formatRes
       }
       return timeType
-    },
-    getTimeSpacing(type) {
-      // <= 1h(1 * 60 * 60s) --> minute, second point, max 60 * 12 = 720 period 5s
-      // <= 12h(12 * 60 * 60s) --> hour, minute point, max 12 * 60 = 720 period 1m
-      // <= 30d(30 * 24 * 60 * 60s) --> day, hour point, max 24 * 30 = 720 period 1h
-      // <= 24m+ --> month, day point, max 30 * 24 = 720 period 1d
-      let result = ''
-      switch (type) {
-        case 'minute':
-          result = 5 * 1000
-          break
-        case 'hour':
-          result = 1 * 60 * 1000
-          break
-        case 'day':
-          result = 1 * 60 * 60 * 1000
-          break
-        case 'month':
-          result = 1 * 24 * 60 * 60 * 1000
-          break
-      }
-      return result
-    },
-    getEmptyData(start, end) {
-      let result = []
-      const { selectedTime, selectedTimeItems } = this
-      let startTimeStamp = start || new Date().getTime()
-      let endTimeStamp = end || new Date().getTime()
-      let diff =
-        this.selectedTime === 'custom'
-          ? endTimeStamp - startTimeStamp
-          : selectedTimeItems.find(t => t.value === selectedTime).spacing
-      let timeSpacing = this.getTimeSpacing(this.getGuanluary(diff))
-      for (let i = start; i < endTimeStamp; i += timeSpacing) {
-        result.push(i)
-      }
-      return result.slice(1)
     },
     formatTime(date) {
       return formatTime(date)
@@ -823,6 +741,10 @@ export default {
         .finally(resetLoading)
     },
     edit() {
+      let row = this.task || {}
+      this.handleDetail(row.id, 'edit', row.mappingTemplate, row.hasChildren)
+    },
+    reset() {
       let row = this.task || {}
       this.handleDetail(row.id, 'edit', row.mappingTemplate, row.hasChildren)
     },
