@@ -1671,7 +1671,7 @@ export default {
             if (this.$route.params.id) {
               //编辑需要特殊标识 updateSchema = false editTest = true
               if (data.database_type === 'mongodb') {
-                delete database_uri
+                delete data.database_uri
               }
               this.$refs.test.start(false, true)
             } else {
