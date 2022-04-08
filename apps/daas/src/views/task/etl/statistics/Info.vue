@@ -314,42 +314,42 @@ export default {
       endTs: '', // 预计完成时间
       selectedTimeItems: [
         {
-          label: '默认',
+          label: this.$t('task_info_default'),
           value: 'default',
           spacing: 0
         },
         {
-          label: '最近五分钟',
+          label: this.$t('task_info_five_min'),
           value: '5min',
           spacing: 5 * 60 * 1000
         },
         {
-          label: '最近十五分钟',
+          label: this.$t('task_info_fifteen_min'),
           value: '15min',
           spacing: 15 * 60 * 1000
         },
         {
-          label: '最近三十分钟',
+          label: this.$t('task_info_thirty_min'),
           value: '30min',
           spacing: 30 * 60 * 1000
         },
         {
-          label: '最近一小时',
+          label: this.$t('task_info_last_hour'),
           value: '60min',
           spacing: 60 * 60 * 1000
         },
         {
-          label: '自定义时间',
+          label: this.$t('task_info_custom_time'),
           value: 'custom'
         }
       ],
       selectedRateItems: [
         {
-          label: '5秒',
+          label: this.$t('task_info_five_seconds'),
           value: 'second'
         },
         {
-          label: '1分钟',
+          label: this.$t('task_info_one_min'),
           value: 'minute'
         }
       ],
