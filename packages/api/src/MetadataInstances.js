@@ -1,5 +1,6 @@
 import axios from './axios'
 import PublicApi from './PublicApi'
+import { isPlainObj } from '@daas/shared'
 export class MetadataInstances extends PublicApi {
   constructor() {
     super('/api/MetadataInstances')
@@ -60,5 +61,18 @@ export class MetadataInstances extends PublicApi {
     if (target) {
       return axios.get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name) + target)
     } else return axios.get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name))
+  }
+
+  get(params = {}, filter) {
+    if (Array.isArray(params)) {
+      filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
+      let qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
+      return axios.get(this.url + '/' + params.join('/') + qs)
+    }
+    const config = { params }
+    if (isPlainObj(filter)) {
+      Object.assign(config, filter)
+    }
+    return axios.get(this.url, config)
   }
 }

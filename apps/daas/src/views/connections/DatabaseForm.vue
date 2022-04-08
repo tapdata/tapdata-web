@@ -1670,6 +1670,9 @@ export default {
             this.dialogTestVisible = true
             if (this.$route.params.id) {
               //编辑需要特殊标识 updateSchema = false editTest = true
+              if (['mongodb', 'gridfs'].includes(data.database_type) && data?.database_uri) {
+                delete this.model.database_uri
+              }
               this.$refs.test.start(false, true)
             } else {
               delete this.model.id

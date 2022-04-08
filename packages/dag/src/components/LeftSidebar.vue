@@ -255,7 +255,7 @@ import ConnectionTypeSelector from 'web-core/components/connection-type-selector
 import resize from 'web-core/directives/resize'
 import BaseNode from './BaseNode'
 import { debounce } from 'lodash'
-import { Connections, MetadataInstances } from '@daas/api'
+import { CancelToken, Connections, MetadataInstances } from '@daas/api'
 import { Select } from 'element-ui'
 const connections = new Connections()
 const metadataApi = new MetadataInstances()
@@ -469,7 +469,6 @@ export default {
       } else {
         this.tbLoading = false
       }
-      this.skeletonThrottle = 500
     },
 
     getDbFilter() {
@@ -582,6 +581,8 @@ export default {
      */
     async loadDatabaseTable(loadMore) {
       const connection = this.activeConnection
+      this.cancelSource?.cancel()
+      this.cancelSource = CancelToken.source()
 
       if (loadMore) {
         this.tbPage++
@@ -591,7 +592,16 @@ export default {
         this.tbPage = 1
       }
 
-      const data = await metadataApi.get(this.getTableFilter())
+      let data
+      try {
+        data = await metadataApi.get(this.getTableFilter(), {
+          cancelToken: this.cancelSource.token
+        })
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log('loadDatabaseTable', e)
+        return
+      }
 
       const tables = data.items.map(tb => ({
         id: tb.id,

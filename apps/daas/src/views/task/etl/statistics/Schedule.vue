@@ -294,6 +294,7 @@ export default {
     init() {
       this.loadRuntimeInfo()
       this.getSyncTableData()
+      //如果是增量就不用这个全量的轮询
       this.getSyncOverViewData()
       this.getCdcTableList()
     },
@@ -400,7 +401,7 @@ export default {
         },
         {
           label: this.$t('task_info_cdc_time'),
-          prop: 'currentTime',
+          prop: 'cdcTime',
           dataType: 'time'
         },
         {
@@ -556,7 +557,7 @@ export default {
           if (this.syncOverViewData.progress !== 100) {
             this.timer = setTimeout(() => {
               this.getSyncOverViewData()
-            }, 800)
+            }, 2500)
           }
         })
     },
