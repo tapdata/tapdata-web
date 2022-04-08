@@ -1628,6 +1628,7 @@ export default {
   notify_system_notice: 'System notification',
   notify_user_notice: 'User notification',
   notify_view_more: 'View all',
+  notify_no_notice: 'No notification',
   notify_view_all_notify: 'View all notifications',
   notify_user_all_notice: 'Notify all',
   notify_unread_notice: 'Unread message',

@@ -1556,6 +1556,7 @@ export default {
   notify_system_notice: '系统通知',
   notify_user_notice: '用户通知',
   notify_view_more: '查看全部',
+  notify_no_notice: 'No notification',
   notify_view_all_notify: '查看所有通知',
   notify_user_all_notice: '全部通知',
   notify_unread_notice: '未读消息',
