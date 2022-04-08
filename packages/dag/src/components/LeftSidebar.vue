@@ -243,6 +243,11 @@ import 'web-core/assets/icons/svg/aggregator.svg'
 import 'web-core/assets/icons/svg/field-processor.svg'
 import 'web-core/assets/icons/svg/join.svg'
 import 'web-core/assets/icons/svg/custom-node.svg'
+import 'web-core/assets/icons/svg/merge_table.svg'
+import 'web-core/assets/icons/svg/field_calc.svg'
+import 'web-core/assets/icons/svg/field_add_del.svg'
+import 'web-core/assets/icons/svg/field_rename.svg'
+import 'web-core/assets/icons/svg/field_mod_type.svg'
 import { mapGetters } from 'vuex'
 import mouseDrag from 'web-core/directives/mousedrag'
 import VIcon from 'web-core/components/VIcon'
@@ -658,10 +663,10 @@ export default {
       this.dragMoving = false
     },
 
-    onMove: throttle(function (item, position) {
+    onMove() {
       this.dragMoving = true
-      this.$emit('move-node', item, position)
-    }, 100),
+      this.$emit('move-node', ...arguments)
+    },
 
     onDrop() {
       this.$emit('drop-node', ...arguments)
@@ -766,6 +771,7 @@ $hoverBg: #eef3ff;
   z-index: 1000;
   pointer-events: none;
   opacity: 0;
+  transform-origin: center center;
 }
 
 .layout-sidebar.--left {

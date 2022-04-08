@@ -1011,6 +1011,7 @@ export default {
   task_setting_distinct_write_type: '去重寫入機制',
   task_setting_is_schedule: '定期調度任務',
   task_setting_cron_expression: '請輸入調度表達式',
+  task_setting_cron_expression_label: '表達式',
   task_setting_read_cdc_interval: '增量同步間隔',
   task_setting_read_batch_size: '每次讀取數量',
   task_setting_processor_concurrency: '處理器線程數',
@@ -1040,6 +1041,9 @@ export default {
   task_job_link_confirm_message_rollback:
     '複製view時暫不支持設置字段映射，勾選此項下方字段映射功能會被禁用，已設置的字段映射將會被重置，是否確認勾選？ ',
   task_setting_oracle_custom_analysis: 'OracleSQL自定義解析',
+  task_setting_cron_feedbackText:
+    '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務。語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 * 年.',
+  task_setting_cron_extra: '例子: 0 */1 * * * ? * //每分鐘運行一次  0 0 2 * * ? * //每天2點運行',
 
   //字段映射
   task_form_no_fields_not_save: '當前表被刪除了所有字段，不允許保存操作',
@@ -1065,6 +1069,10 @@ export default {
   task_form_source_connection: '源端連接',
   task_form_target_type: '目標端類型',
   task_form_target_connection: '目標端連接',
+  task_form_source_type_check: '請選擇源端類型',
+  task_form_source_connection_check: '請選擇源端連接',
+  task_form_target_type_check: '請選擇目標端類型',
+  task_form_target_connection_check: '請選擇目標端連接',
 
   task_mapping_table_setting: '表設置',
   task_mapping_table_setting_tip:
@@ -1299,7 +1307,7 @@ export default {
   setting_SMTP_Server_Port: 'SMTP 服務端口',
   setting_SMTP_Server_User: 'SMTP 服務賬號',
   setting_SMTP_Server_password: 'SMTP 服務密碼',
-  setting_Email_Receivers: 'Email接受郵件地址',
+  setting_Email_Receivers: 'Email接收郵件地址',
   setting_Email_Send_Address: 'Email發送郵件地址',
   setting_SMTP_Server_Host: 'SMTP 服務Host',
   setting_Send_Email_Title_Prefix: '發​​送Email標題的前綴（可選）',
@@ -1329,7 +1337,7 @@ export default {
   setting_Worker_Heartbeat_Expire: '進程心跳過期時間(秒)',
   setting_License_Key: '證書秘鑰',
   setting_Enter_jobs_log_level__error_warn_info_debug_trace: '輸入任務日誌等級: error/warn/info/debug/trace',
-  setting_Email_Receivers_Multiple_separated_by_semicolons: '郵件接受者,可輸入多個，通過逗號分隔',
+  setting_Email_Receivers_Multiple_separated_by_semicolons: '郵件接收者,可輸入多個，通過逗號分隔',
   setting_Keep_recent_n_hours_message_before_the_last_processed_message_s_time_: '保持最近n小時消息',
   setting_Store_full_record_as_embedded_document_in_target_collection_for_update_operations:
     '緩存一份當前整體數據，合併到目標數據集中',
