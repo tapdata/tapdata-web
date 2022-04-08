@@ -58,8 +58,8 @@
                 {{ scope.row.classifications[0].value }}
               </el-tag>
             </div>
-            <div class="parent ellipsis" v-if="scope.row.database">
-              {{ scope.row.database.name }}
+            <div class="parent ellipsis" v-if="scope.row.source">
+              {{ scope.row.source.name }}
             </div>
           </div>
         </template>
