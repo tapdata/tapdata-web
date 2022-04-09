@@ -8,7 +8,8 @@ export default {
   tips_not_null: '值不能为空',
   tips_must_number: '值必须为数字',
   tips_rule_not_empty: '不能为空',
-
+  text_open: '开启',
+  text_close: '关闭',
   // 通用下拉框
   select_option_all: '全部',
 

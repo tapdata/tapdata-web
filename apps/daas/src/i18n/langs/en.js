@@ -8,6 +8,8 @@ export default {
   tips_not_null: 'The value cannot be empty',
   tips_must_number: 'The value must be a number',
   tips_rule_not_empty: ' cannot be empty',
+  text_open: 'Open',
+  text_close: 'Close',
 
   // 通用下拉框
   select_option_all: 'All',

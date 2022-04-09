@@ -420,6 +420,15 @@ export const CONFIG_MODEL = {
       ]
     },
     {
+      icon: '',
+      items: [
+        {
+          label: i18n.t('dataForm.form.databaseOwner'),
+          key: 'database_owner'
+        }
+      ]
+    },
+    {
       icon: 'additional-string',
       items: [
         {
@@ -434,6 +443,24 @@ export const CONFIG_MODEL = {
         {
           label: i18n.t('connection_form_timezone'),
           key: 'database_datetype_without_timezone'
+        }
+      ]
+    },
+    {
+      icon: '',
+      items: [
+        {
+          label: i18n.t('connection_form_shared_mining'),
+          key: 'shareCdcEnable'
+        }
+      ]
+    },
+    {
+      icon: '',
+      items: [
+        {
+          label: i18n.t('connection_form_oracle_redoLog_parser'),
+          key: 'redoLogParserEnable'
         }
       ]
     }
