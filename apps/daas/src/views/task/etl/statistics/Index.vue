@@ -1,11 +1,17 @@
 <template>
   <div class="statistics-container flex flex-column font-color-sub h-100 section-wrap">
     <div class="statistics-container-box">
-      <Info :task="task" class="card-box card-box__info" :remote-method="infoRemoteMethod" @reload="loadTask"></Info>
+      <Info
+        :task="task"
+        class="card-box card-box__info"
+        :syncData="syncData"
+        :remote-method="infoRemoteMethod"
+        @reload="loadTask"
+      ></Info>
       <div class="flex-1 mt-6 pb-12 section-wrap-box">
         <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
           <ElTabPane :label="$t('task_monitor_progress')" name="schedule" lazy>
-            <Schedule :task="task"></Schedule>
+            <Schedule :task="task" @sync="getSyncData"></Schedule>
           </ElTabPane>
           <ElTabPane :label="$t('task_monitor_run_log')" name="log" lazy>
             <Log :id="task.id"></Log>
@@ -65,7 +71,8 @@ export default {
         input: 0,
         output: 0
       },
-      activeTab: 'schedule'
+      activeTab: 'schedule',
+      syncData: {}
     }
   },
   created() {
@@ -99,7 +106,7 @@ export default {
       }
     })
     this.timer = setInterval(() => {
-      this.loadTask()
+      this.loadTask(true)
     }, 5000)
   },
   mounted() {
@@ -113,9 +120,11 @@ export default {
     init() {
       this.loadTask()
     },
-    async loadTask() {
+    async loadTask(hiddenLoading) {
       let id = this.$route.params?.subId
-      this.loading = true
+      if (!hiddenLoading) {
+        this.loading = true
+      }
       this.$api('SubTask')
         .get([id])
         .then(res => {
@@ -157,6 +166,10 @@ export default {
     },
     clearTimer() {
       this.timer && clearInterval(this.timer)
+    },
+    //接收全量同步的实时数据
+    getSyncData(data) {
+      this.syncData = data
     }
   }
 }
