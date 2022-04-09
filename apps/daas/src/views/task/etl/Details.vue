@@ -36,22 +36,31 @@
           <div class="operation-row mt-4">
             <VButton
               type="primary"
-              :disabled="task.disabledData && task.disabledData.start"
               auto-loading
+              :disabled="task.disabledData.start"
               @click="start($route.params.id, arguments[0])"
             >
               <VIcon size="12">start-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_start') }}</span>
             </VButton>
             <VButton
-              :disabled="task.disabledData && task.disabledData.stop"
+              v-if="isShowForceStop(task.statuses)"
+              :disabled="$disabledByPermission('SYNC_job_operation_all_data', task.user_id)"
+              @click="forceStop($route.params.id)"
+            >
+              {{ $t('task_list_force_stop') }}
+            </VButton>
+            <VButton
+              v-else
+              auto-loading
+              :disabled="task.disabledData.stop"
               :loading="loadingObj.stop"
               @click="stop($route.params.id, arguments[0])"
             >
               <VIcon size="12">pause-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_stop') }}</span>
             </VButton>
-            <VButton :disabled="task.disabledData && task.disabledData.edit" @click="handleEditor(task.id)">
+            <VButton :disabled="task.disabledData.edit" @click="handleEditor(task.id)">
               <VIcon size="12">edit-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_edit') }}</span>
             </VButton>
@@ -115,7 +124,9 @@ export default {
     return {
       loading: true,
       activeTab: 'subTask',
-      task: {},
+      task: {
+        disabledData: {}
+      },
       infoItems: [
         {
           key: 'creator',
@@ -149,15 +160,6 @@ export default {
           label: '总输入'
         }
       ],
-      statusBtMap: {
-        // scheduled, draft, running, stopping, error, pause, force stopping
-        run: { draft: true, error: true, pause: true },
-        stop: { running: true },
-        delete: { draft: true, error: true, pause: true },
-        edit: { draft: true, error: true, pause: true },
-        reset: { draft: true, error: true, pause: true },
-        forceStop: { stopping: true }
-      },
       syncTypeMap: {
         initial_sync: '全量',
         cdc: '增量',
@@ -171,7 +173,6 @@ export default {
         reset: false
       },
       operations: ['start', 'stop', 'forceStop'],
-      statusResult: [],
       pieData: [],
       pieOptions: {
         title: {
@@ -233,7 +234,7 @@ export default {
     //定时轮询
     timeout = setInterval(() => {
       this.loadData(true)
-    }, 15000)
+    }, 2000)
   },
   destroyed() {
     this.$ws.off('watch', this.taskChange)
@@ -278,6 +279,9 @@ export default {
         item.value = obj[t].count
         item.name = obj[t].text
         if (t === 'edit') {
+          item.name = obj['ready'].text
+        }
+        if (t === 'running') {
           item.value += obj['wait_run'].count
         } else if (t === 'error') {
           item.value += obj['schedule_failed'].count
@@ -311,16 +315,17 @@ export default {
         result,
         this.$disabledByPermission('SYNC_job_operation_all_data', result.user_id)
       )
-      this.statusResult = result.statusResult
       return result
+    },
+    isShowForceStop(data) {
+      return data?.length && data.every(t => ['stopping'].includes(t.status))
     },
     start(id, resetLoading) {
       // this.changeStatus(id, { status: 'scheduled', finallyEvents: resetLoading })
       this.$api('Task')
         .start(id)
-        .then(res => {
-          this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
-          this.table.fetch()
+        .then(() => {
+          this.$message.success(this.$t('message.operationSuccuess'))
         })
         .catch(err => {
           this.$message.error(err.data?.message)
@@ -342,15 +347,15 @@ export default {
         message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
         title = '重要提醒'
       }
+      resetLoading.stop = true
       this.$confirm(message, title, {
         type: 'warning'
       }).then(resFlag => {
         if (resFlag) {
           this.$api('Task')
             .stop(id)
-            .then(res => {
-              this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
-              this.table.fetch()
+            .then(() => {
+              this.$message.success(this.$t('message.operationSuccuess'))
             })
             .catch(err => {
               this.$message.error(err.data?.message)
@@ -361,17 +366,20 @@ export default {
         }
       })
     },
-    forceStop(id, resetLoading) {
+    forceStop(id) {
       let msgObj = this.getConfirmMessage('force_stop', this.task.name)
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning'
       }).then(resFlag => {
         if (resFlag) {
-          this.loadingObj.forceStop = true
-          this.changeStatus(id, { status: 'force stopping', finallyEvents: resetLoading })
-          this.loadingObj.forceStop = false
-        } else {
-          resetLoading?.()
+          this.$api('Task')
+            .forceStop([id])
+            .then(() => {
+              this.$message.success(this.$t('message.operationSuccuess'))
+            })
+            .catch(err => {
+              this.$message.error(err.data?.message)
+            })
         }
       })
     },

@@ -118,19 +118,23 @@
                 type="circle"
                 color="rgba(44, 101, 255, 1)"
                 :stroke-width="3"
-                :percentage="progress"
+                :percentage="syncData.progress"
                 :show-text="false"
                 :width="48"
               ></ElProgress>
               <div class="flex justify-content-center position-absolute color-primary fw-bolder din-font">
-                {{ progress }}%
+                {{ syncData.progress }}%
               </div>
             </div>
-            <div v-if="progress === 100" class="right-box-text font-color-sub mt-1">
-              {{ $t('task_info_full_time') }}：{{ formatTime(endTs) }}
+            <div v-if="syncData.progress === 100" class="right-box-text font-color-sub mt-1">
+              {{ $t('task_info_full_time') }}：{{ formatTime(syncData.endTs) }}
             </div>
             <div v-else class="right-box-text font-color-sub mt-1">
-              {{ $t('task_monitor_full_completion_time') + '：' + (finishDuration || $t('task_info_calculating')) }}
+              {{
+                $t('task_monitor_full_completion_time') +
+                '：' +
+                (handleTime(syncData.finishDuration) || $t('task_info_calculating'))
+              }}
             </div>
           </div>
         </div>
@@ -168,6 +172,10 @@ export default {
     task: {
       type: Object,
       required: true,
+      default: () => {}
+    },
+    syncData: {
+      type: Object,
       default: () => {}
     },
     remoteMethod: Function
@@ -385,7 +393,6 @@ export default {
   },
   mounted() {
     this.init()
-    this.getSyncOverViewData()
   },
   methods: {
     // 转化单位
@@ -401,24 +408,7 @@ export default {
         return val
       }
     },
-    //概览信息
-    getSyncOverViewData() {
-      //调用前 先清掉上一个定时器
-      clearTimeout(this.timerOverView)
-      this.$api('SubTask')
-        .syncOverView(this.$route.params?.subId)
-        .then(res => {
-          let data = res?.data
-          this.finishDuration = this.handleTime(data?.finishDuration)
-          this.progress = data?.progress
-          this.endTs = data?.endTs
-          if (data?.progress !== 100) {
-            this.timerOverView = setTimeout(() => {
-              this.getSyncOverViewData()
-            }, 800)
-          }
-        })
-    },
+
     handleTime(time) {
       let r = ''
       if (time) {

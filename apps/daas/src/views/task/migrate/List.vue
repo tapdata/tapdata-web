@@ -134,9 +134,7 @@
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
               v-readonlybtn="'SYNC_job_operation'"
-              :disabled="
-                $disabledByPermission('SYNC_job_edition_all_data', row.user_id) || !statusBtMap['start'][row.status]
-              "
+              :disabled="row.disabledData.start"
               type="primary"
               @click="start([row.id])"
             >
@@ -156,9 +154,7 @@
               v-else
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
-              :disabled="
-                $disabledByPermission('SYNC_job_operation_all_data', row.user_id) || !statusBtMap['stop'][row.status]
-              "
+              :disabled="row.disabledData.stop"
               @click="stop([row.id])"
               >{{ $t('task_list_stop') }}</ElLink
             >
@@ -166,9 +162,7 @@
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
-              :disabled="
-                $disabledByPermission('SYNC_job_edition_all_data', row.user_id) || !statusBtMap['edit'][row.status]
-              "
+              :disabled="row.disabledData.edit"
               @click="handleEditor(row.id)"
             >
               {{ $t('task_list_edit') }}
@@ -196,7 +190,7 @@
                 </el-dropdown-item>
 
                 <el-dropdown-item
-                  :disabled="!statusBtMap['reset'][row.status]"
+                  :disabled="row.disabledData.reset"
                   command="initialize"
                   v-readonlybtn="'SYNC_job_operation'"
                 >
@@ -205,9 +199,7 @@
                 <el-dropdown-item
                   class="btn-delete"
                   command="del"
-                  :disabled="
-                    $disabledByPermission('SYNC_job_delete_all_data', row.user_id) || !statusBtMap['delete'][row.status]
-                  "
+                  :disabled="row.disabledData.delete"
                   v-readonlybtn="'SYNC_job_delete'"
                 >
                   {{ $t('task_list_delete') }}
@@ -290,7 +282,7 @@ import FilterBar from '@/components/filter-bar'
 import Drawer from '@/components/Drawer'
 import Upload from '@/components/UploadDialog'
 // import { ETL_STATUS_MAP } from '@/const'
-import { getSubTaskStatus } from '@/utils/util'
+import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 
 let timeout = null
 export default {
@@ -347,43 +339,6 @@ export default {
         error: this.$t('task_list_transform_error')
       },
       dataFlowId: '',
-      statusBtMap: {
-        edit: {
-          edit: true,
-          stop: true,
-          error: true,
-          not_running: true,
-          complete: true,
-          schedule_failed: true
-        },
-        start: {
-          edit: true,
-          stop: true,
-          error: true,
-          complete: true,
-          schedule_failed: true
-        },
-        stop: {
-          scheduling: true,
-          preparing: true,
-          running: true,
-          wait_run: true
-        },
-        reset: {
-          stop: true,
-          error: true,
-          complete: true,
-          schedule_failed: true
-        },
-        delete: {
-          edit: true,
-          stop: true,
-          error: true,
-          not_running: true,
-          complete: true,
-          schedule_failed: true
-        }
-      },
       formSchedule: {
         id: '',
         name: '',
@@ -615,6 +570,10 @@ export default {
       }
       let statuses = item.statuses
       item.statusResult = getSubTaskStatus(statuses)
+      item.disabledData = getTaskBtnDisabled(
+        item,
+        this.$disabledByPermission('SYNC_job_operation_all_data', item.user_id)
+      )
       return item
     },
     handleSelectTag() {
