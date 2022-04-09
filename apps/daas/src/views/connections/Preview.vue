@@ -249,6 +249,9 @@ export default {
         .getNoSchema(this.connection.id)
         .then(res => {
           let data = res.data
+          this.connection = res.data
+          //组装数据
+          this.connection['last_updated'] = this.$moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           if (data.loadFieldsStatus === 'finished') {
             this.progress = 100
