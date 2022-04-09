@@ -1063,7 +1063,7 @@ export default {
   task_setting_cdc_share_filter_on_server: 'Shared mining log filtering',
   task_setting_lag_time: 'Incremental lag judgment time setting',
   task_setting_cron_feedbackText:
-    'You can run periodic tasks at a fixed time, date, and interval through cron expressions. Syntax: second * minute * hour * day * month * week * year.',
+    'You can run periodic tasks at a fixed time, date, and interval through cron expressions. Syntax: second * minute * hour * day * month * week ? year ',
   task_setting_cron_extra: 'Example: 0 */1 * * * ? * // Run every minute 0 0 2 * * ? * // Run at 2 every day',
 
   task_name: 'Task name',

@@ -1030,7 +1030,7 @@ export default {
   task_setting_cdc_share_filter_on_server: '共享挖掘日志过滤',
   task_setting_lag_time: '增量滞后判断时间设置',
   task_setting_cron_feedbackText:
-    '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务。 语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 * 年.',
+    '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务。 语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 ',
   task_setting_cron_extra: '例子: 0 */1 * * * ? * //每分钟运行一次  0 0 2 * * ? * //每天2点运行',
 
   task_name: '任务名称',
