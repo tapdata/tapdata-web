@@ -99,7 +99,7 @@ export default {
       }
     })
     this.timer = setInterval(() => {
-      this.loadTask()
+      this.loadTask(true)
     }, 5000)
   },
   mounted() {
@@ -113,9 +113,11 @@ export default {
     init() {
       this.loadTask()
     },
-    async loadTask() {
+    async loadTask(hiddenLoading) {
       let id = this.$route.params?.subId
-      this.loading = true
+      if (!hiddenLoading) {
+        this.loading = true
+      }
       this.$api('SubTask')
         .get([id])
         .then(res => {
