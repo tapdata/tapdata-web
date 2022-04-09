@@ -210,6 +210,7 @@ export default {
   dashboard_total_delete: '总删除',
   dashboard_total: '总计',
   dashboard_no_data_here: '这里没用数据哦~',
+  dashboard_no_statistics: '暂无{0}统计',
 
   // 元数据管理
   metadata_type: '类型',
