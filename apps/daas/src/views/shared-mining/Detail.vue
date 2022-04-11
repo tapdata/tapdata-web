@@ -302,8 +302,6 @@ export default {
               type: 'subTask'
             },
             fields: ['inputQPS', 'outputQPS'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
-            start: this.timeRange?.[0], //optional
-            end: this.timeRange?.[1], //optional
             limit: 10, //optional， 没有就返回全部， 服务器保护返回最多1000个
             guanluary: 'minute'
           }
@@ -318,6 +316,15 @@ export default {
           }
         ]
       }
+      let start = this.timeRange?.[0]
+      let end = this.timeRange?.[1]
+      if (start && !isNaN(start)) {
+        params.samples[0].start = start
+      }
+      if (end && !isNaN(end)) {
+        params.samples[0].end = end
+      }
+
       this.$api('Measurement')
         .query(params)
         .then(res => {
