@@ -42,9 +42,12 @@
         <div class="flex-fill ml-4">
           <div v-for="(temp, k) in item.items" :key="index + '' + k" class="box-line">
             <div class="box-line__label">{{ temp.label }}:</div>
-
             <el-tooltip
-              v-if="connection[temp.key] && temp.key !== 'mqType' && connection[temp.key].toString()"
+              v-if="
+                connection[temp.key] &&
+                !['mqType', 'mqQueueSet', 'mqTopicSet', 'shareCdcEnable', 'redoLogParserEnable'].includes(temp.key) &&
+                connection[temp.key].toString()
+              "
               effect="dark"
               :content="connection[temp.key].toString()"
               placement="right-end"
@@ -60,6 +63,13 @@
               class="box-line__value ellipsis"
             >
               <span>{{ connection[temp.key].length > 0 ? connection[temp.key] : '-' }}</span>
+            </div>
+            <!-- 共享挖掘文字转换 /裸日志文字转换  start -->
+            <div
+              v-else-if="(connection[temp.key] && temp.key === 'shareCdcEnable') || temp.key === 'redoLogParserEnable'"
+              class="box-line__value ellipsis"
+            >
+              <span>{{ connection[temp.key] ? $t('text_open') : $t('text_close') }}</span>
             </div>
             <!-- MQ文字转换 end -->
             <div v-else class="box-line__value ellipsis">{{ connection[temp.key] || '-' }}</div>
@@ -239,6 +249,9 @@ export default {
         .getNoSchema(this.connection.id)
         .then(res => {
           let data = res.data
+          this.connection = res.data
+          //组装数据
+          this.connection['last_updated'] = this.$moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
           if (data.loadFieldsStatus === 'finished') {
             this.progress = 100

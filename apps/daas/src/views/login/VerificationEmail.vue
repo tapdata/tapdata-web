@@ -1,6 +1,6 @@
 <template>
   <LoginPage>
-    <section class="page-registry_email" v-loading="loading">
+    <section class="page-registry_email" v-loading="loading" slot="main">
       <div class="email-main">
         <div class="image iconfont icon-fasongyoujian"></div>
         <div class="text">
@@ -147,9 +147,12 @@ export default {
 
 <style lang="scss" scoped>
 .page-registry_email {
-  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
   box-sizing: border-box;
   header {
     padding: 70px 80px 0 80px;

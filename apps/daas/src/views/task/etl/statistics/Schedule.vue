@@ -216,7 +216,6 @@ export default {
     return {
       id: '',
       active: 0,
-      timer: null,
       showActive: 0,
       isClickStep: false,
       steps: [],
@@ -276,6 +275,12 @@ export default {
     currentStep() {
       const { steps, active, showActive } = this
       let index = showActive || active
+      if (steps[index - 1]?.group === 'cdc') {
+        this.getCdcTableList()
+      } else if (steps[index - 1]?.group === 'initial_sync') {
+        this.getSyncOverViewData()
+        this.getSyncTableData()
+      }
       return steps[index - 1] || {}
     }
   },
@@ -287,23 +292,15 @@ export default {
       }
     }
   },
-  destroyed() {
-    clearTimeout(this.timer)
-  },
   methods: {
     init() {
       this.loadRuntimeInfo()
-      this.getSyncTableData()
-      this.getSyncOverViewData()
-      this.getCdcTableList()
     },
     loadRuntimeInfo() {
       this.id = this.$route.params?.subId
       this.$api('SubTask')
         .runtimeInfo(this.id)
         .then(res => {
-          // eslint-disable-next-line
-          console.log('loadRuntimeInfo', res)
           this.runtimeInfo = res.data || {}
           this.getStep()
           this.getColumns()
@@ -400,7 +397,7 @@ export default {
         },
         {
           label: this.$t('task_info_cdc_time'),
-          prop: 'currentTime',
+          prop: 'cdcTime',
           dataType: 'time'
         },
         {
@@ -545,19 +542,12 @@ export default {
     },
     //概览信息
     getSyncOverViewData() {
-      //调用前 清掉定时器
-      clearTimeout(this.timer)
-      this.timer = null
       this.$api('SubTask')
         .syncOverView(this.id)
         .then(res => {
           this.syncOverViewData = res?.data
+          this.$emit('sync', res?.data)
           this.syncOverViewData.finishDuration = this.handleTime(this.syncOverViewData?.finishDuration)
-          if (this.syncOverViewData.progress !== 100) {
-            this.timer = setTimeout(() => {
-              this.getSyncOverViewData()
-            }, 800)
-          }
         })
     },
     handleTime(time) {

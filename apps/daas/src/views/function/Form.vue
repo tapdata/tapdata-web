@@ -1,5 +1,5 @@
 <template>
-  <section class="custom-form-wrapper section-wrap">
+  <section v-loading="loading" class="custom-form-wrapper section-wrap">
     <div class="section-wrap-box overflow-auto">
       <!-- <div class="container-header">
         {{ $route.params.id ? $t('function_button_edit_function') : $t('function_button_create_custom_function') }}
@@ -109,6 +109,7 @@ export default {
   data() {
     let self = this
     return {
+      loading: false,
       details: {},
       form: {
         type: 'custom',
@@ -146,6 +147,7 @@ export default {
   },
   methods: {
     getData(id) {
+      this.loading = true
       this.$api('Javascript_functions')
         .findOne({
           filter: JSON.stringify({
@@ -158,13 +160,16 @@ export default {
           let details = res?.data || {}
           // 处理老数据问题
           if (details.type === 'custom' && !details.script) {
-            details.script = `function ${details.function_name}() ${details.function_body}`
+            details.script = `function ${details.function_name}(${details.parameters}) ${details.function_body}`
           }
           if (details.type === 'jar') {
             details.classNameFmt = details.className?.split(details.packageName + '.')?.[1] || ''
           }
           this.details = details
           this.form = Object.assign({}, this.form, details)
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
     save() {
@@ -187,6 +192,7 @@ export default {
               params.id = id
               method = 'patch'
             }
+            this.loading = true
             this.$api('Javascript_functions')
               [method](
                 Object.assign({}, this.form, params, {
@@ -196,12 +202,15 @@ export default {
               )
               .then(res => {
                 if (res) {
-                  this.$message.success(this.$t('message.saveOK'))
+                  this.$message.success(this.$t('message_save_ok'))
                   this.$router.back()
                 }
               })
-              .catch(e => {
-                this.$message.error(e.response.msg)
+              .catch(err => {
+                this.$message.error(err?.data?.message || this.$t('message_save_fail'))
+              })
+              .finally(() => {
+                this.loading = false
               })
           }
         })

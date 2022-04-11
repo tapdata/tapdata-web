@@ -8,6 +8,8 @@ export default {
   tips_not_null: 'The value cannot be empty',
   tips_must_number: 'The value must be a number',
   tips_rule_not_empty: ' cannot be empty',
+  text_open: 'Open',
+  text_close: 'Close',
 
   // 通用下拉框
   select_option_all: 'All',
@@ -212,6 +214,7 @@ export default {
   dashboard_total_delete: 'Total delete',
   dashboard_total: 'Total',
   dashboard_no_data_here: 'There is no data here~',
+  dashboard_no_statistics: 'No {0} statistics yet',
 
   // 元数据管理
   metadata_type: 'Type',
@@ -1060,7 +1063,7 @@ export default {
   task_setting_cdc_share_filter_on_server: 'Shared mining log filtering',
   task_setting_lag_time: 'Incremental lag judgment time setting',
   task_setting_cron_feedbackText:
-    'You can run periodic tasks at a fixed time, date, and interval through cron expressions. Syntax: second * minute * hour * day * month * week * year.',
+    'You can run periodic tasks at a fixed time, date, and interval through cron expressions. Syntax: second * minute * hour * day * month * week ? year ',
   task_setting_cron_extra: 'Example: 0 */1 * * * ? * // Run every minute 0 0 2 * * ? * // Run at 2 every day',
 
   task_name: 'Task name',

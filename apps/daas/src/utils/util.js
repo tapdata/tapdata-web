@@ -324,9 +324,7 @@ export function getTaskBtnDisabled(row, or) {
     // 删除可用：编辑中、待启动、已完成、错误、已停止
     result.start = !filterArr.every(t => ['ready', 'complete', 'error', 'stop'].includes(t.status))
     result.stop = !filterArr.every(t => ['running', 'stopping'].includes(t.status))
-    result.edit = !filterArr.every(t =>
-      ['edit', 'ready', 'complete', 'error', 'stop', 'not_running'].includes(t.status)
-    )
+    result.edit = !filterArr.every(t => ['edit', 'ready', 'complete', 'error', 'stop'].includes(t.status))
     result.reset = !filterArr.every(t => ['complete', 'error', 'stop'].includes(t.status))
     result.delete = !filterArr.every(t => ['edit', 'ready', 'complete', 'error', 'stop'].includes(t.status))
   }

@@ -4,7 +4,7 @@
     <div class="card-box__content card-box px-6 py-2 mt-6">
       <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
         <ElTabPane :label="$t('task_monitor_progress')" name="schedule">
-          <Schedule :task="task"></Schedule>
+          <Schedule :task="task" @sync="getSyncData"></Schedule>
         </ElTabPane>
         <ElTabPane :label="$t('task_monitor_run_log')" name="log" lazy>
           <Log :id="task.id" style="max-height: 450px"></Log>
@@ -76,7 +76,8 @@ export default {
       activeTab: 'schedule',
       showContent: false,
       field_process: [],
-      operations: ['start', 'stop', 'forceStop']
+      operations: ['start', 'stop', 'forceStop'],
+      syncData: {}
     }
   },
   computed: {
@@ -119,7 +120,7 @@ export default {
       }
     })
     this.timer = setInterval(() => {
-      this.loadTask()
+      this.loadTask(true)
     }, 5000)
   },
   mounted() {
@@ -133,9 +134,11 @@ export default {
     init() {
       this.loadTask()
     },
-    async loadTask() {
+    async loadTask(hiddenLoading) {
+      if (!hiddenLoading) {
+        this.loading = true
+      }
       let id = this.$route.query?.subId
-      this.loading = true
       this.$api('SubTask')
         .get([id])
         .then(res => {
@@ -177,6 +180,10 @@ export default {
     },
     clearTimer() {
       this.timer && clearInterval(this.timer)
+    },
+    //接收全量同步的实时数据
+    getSyncData(data) {
+      this.syncData = data
     }
   }
 }
