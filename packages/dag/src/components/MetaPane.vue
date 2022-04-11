@@ -20,7 +20,7 @@
       </ElTableColumn>
       <ElTableColumn prop="data_type" :label="$t('meta_table_field_type')"> </ElTableColumn>
       <ElTableColumn prop="scale" :label="$t('meta_table_scale')"> </ElTableColumn>
-      <ElTableColumn prop="oriPrecision" :label="$t('meta_table_precision')"> </ElTableColumn>
+      <ElTableColumn prop="precision" :label="$t('meta_table_precision')"> </ElTableColumn>
       <ElTableColumn prop="comment" :label="$t('meta_table_comment')"> </ElTableColumn>
     </ElTable>
   </div>
