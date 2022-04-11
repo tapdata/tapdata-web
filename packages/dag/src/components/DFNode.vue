@@ -10,16 +10,13 @@
       />
     </template>
     <div v-if="!stateIsReadonly" class="df-node-options" @click.stop>
-      <el-popover v-model="showAddMenu" placement="bottom" trigger="click" popper-class="min-width-unset rounded-xl">
-        <div slot="reference" class="node-option" title="添加节点">
-          <VIcon>plus</VIcon>
-        </div>
-        <div class="df-menu-list">
-          <div v-for="(n, ni) in processorNodeTypes" :key="ni" class="df-menu-item" @click="handleClickMenuItem(n)">
-            {{ n.name }}
-          </div>
-        </div>
-      </el-popover>
+      <div
+        class="node-option"
+        title="添加节点"
+        @click.stop="$emit('show-node-popover', 'node', data, $event.currentTarget || $event.target)"
+      >
+        <VIcon>plus</VIcon>
+      </div>
       <div @click.stop="$emit('delete', data.id)" class="node-option" title="删除节点">
         <VIcon>close</VIcon>
       </div>
@@ -60,8 +57,7 @@ export default {
 
   data() {
     return {
-      id: this.$attrs.id,
-      showAddMenu: false
+      id: this.$attrs.id
     }
   },
 
@@ -99,7 +95,6 @@ export default {
       const list = []
       if (this.isNodeActive(this.nodeId) && this.activeType === 'node') list.push('active')
       if (this.isNodeSelected(this.nodeId)) list.push('selected')
-      if (this.showAddMenu) list.push('options-active')
       if (this.canBeConnectedNodeIds.includes(this.nodeId)) list.push('can-be-connected')
       list.push(`node--${this.ins.group}`)
       return list
@@ -276,11 +271,6 @@ export default {
           this.$emit('nodeSelected', this.nodeId, true)
         }
       }
-    },
-
-    handleClickMenuItem(n) {
-      this.showAddMenu = false
-      this.$emit('quick-add-node', this.data, n)
     }
   }
 }
