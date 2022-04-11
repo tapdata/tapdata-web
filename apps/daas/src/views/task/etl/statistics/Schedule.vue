@@ -294,10 +294,11 @@ export default {
   },
   methods: {
     init() {
+      this.id = this.$route.params?.subId
       this.loadRuntimeInfo()
+      this.getSyncOverViewData() //数据初始化
     },
     loadRuntimeInfo() {
-      this.id = this.$route.params?.subId
       this.$api('SubTask')
         .runtimeInfo(this.id)
         .then(res => {
