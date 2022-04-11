@@ -124,26 +124,29 @@
                 <ElSkeletonItem variant="text"></ElSkeletonItem>
               </div>
             </template>
-            <div v-infinite-scroll="loadMoreTable" :infinite-scroll-disabled="disabled" class="px-2 pt-1">
-              <div
-                v-for="tb in tbList"
-                v-mouse-drag="{
-                  item: tb,
-                  container: '#dfEditorContent',
-                  getDragDom,
-                  onStart,
-                  onMove,
-                  onDrop,
-                  onStop
-                }"
-                :key="tb.id"
-                class="tb-item grabbable flex align-center px-4 user-select-none rounded-2"
-              >
-                <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
-              </div>
-              <EmptyItem v-if="!tbList.length"></EmptyItem>
-              <div v-if="tbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-                {{ $t('loading') }}<span class="dotting"></span>
+            <!--多加一层div包裹，避免骨架屏出现时，v-infinite-scroll指令dom指向骨架屏-->
+            <div>
+              <div v-infinite-scroll="loadMoreTable" :infinite-scroll-disabled="disabled" class="px-2 pt-1">
+                <div
+                  v-for="tb in tbList"
+                  v-mouse-drag="{
+                    item: tb,
+                    container: '#dfEditorContent',
+                    getDragDom,
+                    onStart,
+                    onMove,
+                    onDrop,
+                    onStop
+                  }"
+                  :key="tb.id"
+                  class="tb-item grabbable flex align-center px-4 user-select-none rounded-2"
+                >
+                  <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
+                </div>
+                <EmptyItem v-if="!tbList.length"></EmptyItem>
+                <div v-if="tbLoadingMore" class="text-center text-black-50 fs-8 p-2">
+                  {{ $t('loading') }}<span class="dotting"></span>
+                </div>
               </div>
             </div>
           </ElSkeleton>
