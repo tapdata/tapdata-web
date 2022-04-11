@@ -411,15 +411,6 @@ export const CONFIG_MODEL = {
       ]
     },
     {
-      icon: 'database-password',
-      items: [
-        {
-          label: i18n.t('connection_form_database_password'),
-          key: 'database_password'
-        }
-      ]
-    },
-    {
       icon: '',
       items: [
         {
