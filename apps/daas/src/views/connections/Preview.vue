@@ -66,7 +66,11 @@
             </div>
             <!-- 共享挖掘文字转换 /裸日志文字转换  start -->
             <div
-              v-else-if="(connection[temp.key] && temp.key === 'shareCdcEnable') || temp.key === 'redoLogParserEnable'"
+              v-else-if="
+                connection[temp.key] &&
+                (temp.key === 'shareCdcEnable' ||
+                  (temp.key === 'redoLogParserEnable' && connection.database_type === 'oracle'))
+              "
               class="box-line__value ellipsis"
             >
               <span>{{ connection[temp.key] ? $t('text_open') : $t('text_close') }}</span>
