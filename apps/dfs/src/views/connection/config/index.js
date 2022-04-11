@@ -31,6 +31,7 @@ import dfs_tencent_postgres from './dfs_tencent_postgres'
 import dfs_tencent_sqlserver from './dfs_tencent_sqlserver'
 import dfs_vika from './dfs_vika'
 import dfs_doris from './dfs_doris'
+import dfs_polardb_mysql from './dfs_polardb_mysql'
 
 export default {
   dfs_mysql,
@@ -65,5 +66,6 @@ export default {
   dfs_tencent_postgres,
   dfs_tencent_sqlserver,
   dfs_vika,
-  dfs_doris
+  dfs_doris,
+  dfs_polardb_mysql
 }
