@@ -686,6 +686,7 @@ export default {
     },
     formChange(data) {
       let filed = data.field || ''
+      let { database_type } = this.model
       //维格表
       if (filed === 'plain_password' && this.model.database_type === 'vika') {
         this.getSpaceVika('', data => {
@@ -694,6 +695,23 @@ export default {
             this.model.vika_space_id = ''
           }
         })
+      }
+      if (database_type === 'qingflow') {
+        if (['plain_password', 'qingFlowUserId'].includes(filed)) {
+          this.getSpaceQingflow('', data => {
+            let findOne = data?.result?.find(t => t.id === this.model.qingFlowTagId)
+            if (findOne) {
+              this.model.qingFlowTagId = findOne.tagId
+              this.model.qingflowTagName = findOne.tagName
+            } else {
+              // 不在列表中
+              this.model.qingFlowTagId = ''
+              this.model.qingflowTagName = ''
+            }
+          })
+        } else {
+
+        }
       }
     },
     //获取维格表的空间
@@ -726,6 +744,36 @@ export default {
         this.$ws.send(obj)
       })
     },
+    // 获取清流应用包名称
+    getSpaceQingflow(id, callback) {
+      let { plain_password, database_host, qingFlowUserId } = this.model
+      if (!plain_password && !id && !qingFlowUserId) {
+        return
+      }
+      let filter = { where: { status: { $in: ['Running'] } }, size: 10, page: 1, sort: ['createAt desc'] }
+      this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(({ items }) => {
+        let obj = {
+          type: 'pipe',
+          receiver: items[0]?.tmInfo?.agentId,
+          data: {
+            type: 'loadQingFlow',
+            load_type: 'tag',
+            database_host,
+            userId: qingFlowUserId,
+            accessToken: plain_password
+          }
+        }
+        if (!plain_password) {
+          obj.data.id = id
+        }
+        this.$ws.once('loadQingFlowResult', data => {
+          this.setSpaceQingflow(data)
+          callback?.(data)
+          this.$ws.off('loadQingFlowResult', this.setSpaceQingflow)
+        })
+        this.$ws.send(obj)
+      })
+    },
     setSpaceVika(data) {
       let result = data?.result || []
       let vika_space_id = this.config.items.find(it => it.field === 'vika_space_id')
@@ -736,6 +784,20 @@ export default {
             name: item.name,
             label: item.name,
             value: item.id
+          }
+        })
+      }
+    },
+    setSpaceQingflow(data) {
+      let result = data?.result || []
+      let qingFlowTagId = this.config.items.find(it => it.field === 'qingFlowTagId')
+      if (qingFlowTagId) {
+        qingFlowTagId.options = result.map(item => {
+          return {
+            id: item.tagId,
+            name: item.tagName,
+            label: item.tagName,
+            value: item.tagId
           }
         })
       }

@@ -203,6 +203,16 @@ export const DEFAULT_MODEL = {
     plain_password: '',
     vika_space_name: '',
     vika_space_id: ''
+  },
+  qingflow: {
+    name: '',
+    database_type: '',
+    connection_type: '',
+    database_host: '',
+    qingFlowUserId: '',
+    plain_password: '',
+    qingFlowTagId: '',
+    qingflowTagName: ''
   }
 }
 export const CONFIG_MODEL = {
