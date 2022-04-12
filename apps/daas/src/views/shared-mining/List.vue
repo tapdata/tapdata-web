@@ -35,7 +35,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column width="200" fixed="right" :label="$t('column_operation')">
+      <el-table-column width="240" fixed="right" :label="$t('column_operation')">
         <template #default="{ row }">
           <el-button size="mini" type="text" :disabled="row.disabledData.start" @click="run([row.id])">{{
             $t('task_list_run')
