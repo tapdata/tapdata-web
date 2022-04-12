@@ -497,7 +497,7 @@ export default {
             this.table.fetch()
             this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
           })
-          .catch(() => {
+          .catch(err => {
             this.$message.error(err.data?.message)
           })
           .finally(() => {
