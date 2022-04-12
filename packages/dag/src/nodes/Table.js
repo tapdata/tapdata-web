@@ -133,7 +133,8 @@ export class Table extends NodeType {
                     'x-component-props': {
                       allowCreate: false,
                       filterable: true,
-                      remote: true
+                      remote: true,
+                      'default-first-option': true
                     },
                     'x-reactions': [
                       '{{useRemoteQuery(loadDatabaseTable)}}',
