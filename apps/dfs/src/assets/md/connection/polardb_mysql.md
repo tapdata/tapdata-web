@@ -13,11 +13,11 @@ MySQL 5.0、5.1、5.5、5.6、5.7、8.x
 - 级连删除（CASCADE DELETE），这类由数据库产生的删除不会记录在binlog内，所以不被支持。
 修改 `$MYSQL_HOME/mysql.cnf `, 例如:
 ```
-server_id         = 223344
-log_bin           = mysql-bin
-expire_logs_days  = 1
-binlog_format     = row
-binlog_row_image  = full
+server_id           = 223344
+loose_polar_log_bin = ON
+expire_logs_days    = 1
+binlog_format       = row
+binlog_row_image    = full
 ```
 配置解释：<br>
 server-id: 对于 MySQL 中的每个服务器和复制客户端必须是唯一的<br>
