@@ -28,7 +28,7 @@
           clearable
           menu-min-width="240px"
           :placeholder="$t('dataExplorer_apiservr')"
-          @change="getData(1)"
+          @change="table.fetch(1)"
         ></SelectList>
         <SelectList
           v-if="pathList.length"
@@ -40,7 +40,7 @@
           clearable
           menu-min-width="240px"
           :placeholder="$t('dataExplorer_base_path')"
-          @change="getData(1)"
+          @change="table.fetch(1)"
         ></SelectList>
       </div>
       <div slot="operation">
