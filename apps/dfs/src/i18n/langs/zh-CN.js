@@ -713,6 +713,7 @@ export default {
   task_mapping_table_setting: '表设置',
   task_mapping_table_setting_tip:
     '用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型',
+  task_mapping_table_setting_tip1: '不支持的同步的字段类型',
   task_mapping_table_field_type_change: '类型修改',
   task_mapping_table_rename: '表改名',
   task_mapping_table_field_rename: '字段改名',

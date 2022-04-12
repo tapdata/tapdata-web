@@ -4,6 +4,9 @@
       <strong>{{ $t('task_mapping_table_setting') }}</strong
       >:
       {{ $t('task_mapping_table_setting_tip') }}
+      <ElLink type="primary" target="_blank" href="https://www.yuque.com/tapdata/cloud/mtbmta">{{
+        $t('task_mapping_table_setting_tip1')
+      }}</ElLink>
       <div class="float-end">
         <ElButton v-if="!readOnly && !targetIsVika" size="mini" @click="handleChangTableName">{{
           $t('task_mapping_table_rename')
@@ -172,7 +175,7 @@
             </template>
           </ElTableColumn>
           <ElTableColumn :label="$t('task_mapping_table_operate')" width="80" v-if="!hiddenFieldProcess && !readOnly">
-            <template slot-scope="scope">
+            <template v-if="!scope.row.notDataTypeSupport" slot-scope="scope">
               <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true, scope.row)">
                 {{ $t('button_delete') }}
               </ElLink>

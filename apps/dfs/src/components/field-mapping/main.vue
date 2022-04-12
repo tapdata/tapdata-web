@@ -269,6 +269,7 @@ export default {
             t_scale: field.scale,
             t_precision: field.precision,
             is_deleted: field.is_deleted, //目标决定这个字段是被删除？
+            notDataTypeSupport: field.dataTypeSupport === false, // 是否支持的数据类型
             t_isPrecisionEdit: true, //默认不能编辑
             t_isScaleEdit: true //默认不能编辑
           }
