@@ -637,8 +637,8 @@ export default [
       /* ---------- API审计  ----------*/
       {
         path: '/api-audit',
-        name: 'applications',
-        component: () => import('@/views/api-page/Applications'),
+        name: 'apiaudit',
+        component: () => import('@/views/api-page/ApiAudit'),
         meta: {
           title: 'page_title_api_audit',
           code: 'API_clients_menu'
