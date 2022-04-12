@@ -62,6 +62,9 @@ export default {
   button_zoom_out: '缩小',
   button_move_paper: '移动画布[按住空格]',
   button_search_node: '搜索节点',
+  button_finish: '完成',
+  button_btn_back: '上一步',
+  button_btn_next: '下一步',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精准匹配',
@@ -1030,7 +1033,7 @@ export default {
   task_setting_cdc_share_filter_on_server: '共享挖掘日志过滤',
   task_setting_lag_time: '增量滞后判断时间设置',
   task_setting_cron_feedbackText:
-    '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务。 语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 ',
+    '可以通过cron表达式设置固定时间、日期、间隔下运行定期任务。 语法: 秒 * 分钟 * 小时 * 日 * 月 * 星期 ? 年 * ',
   task_setting_cron_extra: '例子: 0 */1 * * * ? * //每分钟运行一次  0 0 2 * * ? * //每天2点运行',
 
   task_name: '任务名称',
@@ -1138,6 +1141,19 @@ export default {
   task_mapping_dialog_field_type_problem:
     '检测到您还有 XXX 张表的字段类型设置存在问题，请在左侧表区域选择有问题的表进行处理',
   task_mapping_dialog_target_no_fields_problem: '检测到您有 XXX 张表中没有字段，请先返回上一步将没有字段的表移除',
+
+  migrate_select_connection: '选择连接',
+  migrate_task_properties: '设置任务属性',
+  migrate_select_table: '选择表',
+  migrate_select_connection_tip:
+    '如果你还未添加数据源，请点击添加数据源按钮进行添加，为了方便你的测试，我们建议数据源的数量不少2个',
+  migrate_create_connection: '前往连接管理创建连接',
+  migrate_task_settings: '任务设置',
+  migrate_task_settings_tip:
+    '用户可以在任务设置步骤对任务名称、同步类型、遇错处理等进行设置，具体配置说明请查看帮助文档',
+  migrate_select_table_tip:
+    ' 用户可以点击中间向右的箭头按钮勾选源端待同步表，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输）',
+  migrate_same_connection_message: '源端、目标端选择了相同连接',
 
   // 函数管理
   function_tips_empty: '代码缺少JS函数',
