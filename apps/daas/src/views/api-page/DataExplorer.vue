@@ -42,6 +42,9 @@
           :placeholder="$t('dataExplorer_base_path')"
           @change="table.fetch(1)"
         ></SelectList>
+        <ElButton plain class="btn-refresh" @click="table.fetch(1)">
+          <VIcon class="text-primary">refresh</VIcon>
+        </ElButton>
       </div>
       <div slot="operation">
         <!-- <el-button v-readonlybtn="'API_data_time_zone_editing'" class="btn" size="mini" @click="timeZoneDialog = true">
@@ -1429,6 +1432,19 @@ export default {
       .stop {
         color: map-get($color, danger);
         background-color: #ffecec;
+      }
+      .btn-refresh {
+        padding: 0;
+        height: 32px;
+        line-height: 32px;
+        width: 32px;
+        min-width: 32px;
+        font-size: 16px;
+        &:hover,
+        &.is-plain:focus:hover {
+          border-color: #2c65ff;
+          background-color: #f5f6f7;
+        }
       }
     }
     .btn + .btn {

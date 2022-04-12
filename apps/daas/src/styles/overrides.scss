@@ -760,7 +760,7 @@
 .el-form-item.el-form-item--mini {
   margin-bottom: 20px;
   .el-form-item__label {
-    color: map-get($fontColor, light);
+    color: map-get($fontColor, rdlevel);
     font-size: 12px;
     font-weight: 500;
     text-align: left;
