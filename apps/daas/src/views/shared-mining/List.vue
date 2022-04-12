@@ -51,6 +51,9 @@
           <el-button size="mini" type="text" :disabled="row.disabledData.edit" @click="edit(row)">{{
             $t('button_edit')
           }}</el-button>
+          <el-button size="mini" type="text" :disabled="row.disabledData.reset" @click="rest([row.id])">{{
+            $t('dataFlow.button.reset')
+          }}</el-button>
           <el-divider direction="vertical"></el-divider>
           <el-button size="mini" type="text" @click="detail(row)">{{ $t('button_details') }}</el-button>
         </template>
@@ -476,6 +479,30 @@ export default {
           return
         }
         this.editDialogVisible = false
+      })
+    },
+    //重置
+    rest(ids, item = {}) {
+      let msgObj = this.getConfirmMessage('initialize', ids.length > 1, item.name)
+      this.$confirm(msgObj.msg, msgObj.title, {
+        type: 'warning'
+      }).then(resFlag => {
+        if (!resFlag) {
+          return
+        }
+        this.restLoading = true
+        this.$api('Task')
+          .batchRenew(ids)
+          .then(res => {
+            this.table.fetch()
+            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+          })
+          .catch(() => {
+            this.$message.error(err.data?.message)
+          })
+          .finally(() => {
+            this.restLoading = false
+          })
       })
     },
 
