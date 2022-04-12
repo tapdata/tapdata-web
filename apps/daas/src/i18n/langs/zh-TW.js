@@ -8,6 +8,8 @@ export default {
   tips_not_null: '值不能為空',
   tips_must_number: '值必須為數字',
   tips_rule_not_empty: '不能為空',
+  text_open: '開啟',
+  text_close: '關閉',
 
   // 通用下拉框
   select_option_all: '全部',
@@ -1047,7 +1049,7 @@ export default {
     '複製view時暫不支持設置字段映射，勾選此項下方字段映射功能會被禁用，已設置的字段映射將會被重置，是否確認勾選？ ',
   task_setting_oracle_custom_analysis: 'OracleSQL自定義解析',
   task_setting_cron_feedbackText:
-    '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務。語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 * 年.',
+    '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務。語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 * ',
   task_setting_cron_extra: '例子: 0 */1 * * * ? * //每分鐘運行一次  0 0 2 * * ? * //每天2點運行',
 
   //字段映射

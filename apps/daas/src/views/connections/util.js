@@ -411,11 +411,11 @@ export const CONFIG_MODEL = {
       ]
     },
     {
-      icon: 'database-password',
+      icon: '',
       items: [
         {
-          label: i18n.t('connection_form_database_password'),
-          key: 'database_password'
+          label: i18n.t('dataForm.form.databaseOwner'),
+          key: 'database_owner'
         }
       ]
     },
@@ -434,6 +434,24 @@ export const CONFIG_MODEL = {
         {
           label: i18n.t('connection_form_timezone'),
           key: 'database_datetype_without_timezone'
+        }
+      ]
+    },
+    {
+      icon: '',
+      items: [
+        {
+          label: i18n.t('connection_form_shared_mining'),
+          key: 'shareCdcEnable'
+        }
+      ]
+    },
+    {
+      icon: '',
+      items: [
+        {
+          label: i18n.t('connection_form_oracle_redoLog_parser'),
+          key: 'redoLogParserEnable'
         }
       ]
     }

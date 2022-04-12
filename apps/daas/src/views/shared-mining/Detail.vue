@@ -25,6 +25,7 @@
           <span class="label font-color-main fs-8">{{ $t('share_detail_statistics_time') }}</span>
           <DatetimeRange
             v-model="timeRange"
+            :range="2 * 365 * 24 * 60 * 60 * 1000"
             value-format="timestamp"
             class="filter-datetime-range ml-2"
             @change="changeTimeRangeFnc"
@@ -302,8 +303,6 @@ export default {
               type: 'subTask'
             },
             fields: ['inputQPS', 'outputQPS'], //optional， 返回需要用到的数据， 不指定会返回该指标里的所有值， 强烈建议指定， 不要浪费带宽
-            start: this.timeRange?.[0], //optional
-            end: this.timeRange?.[1], //optional
             limit: 10, //optional， 没有就返回全部， 服务器保护返回最多1000个
             guanluary: 'minute'
           }
@@ -318,6 +317,25 @@ export default {
           }
         ]
       }
+      let start = this.timeRange?.[0]
+      let end = this.timeRange?.[1]
+      if (!(start && !isNaN(start)) && !(end && !isNaN(end))) {
+        // 默认最近一分钟范围
+        start = Date.now() - 60 * 1000
+      }
+      if (start && !isNaN(start)) {
+        params.samples[0].start = start
+      } else {
+        start = Date.now() - 60 * 1000
+      }
+      if (end && !isNaN(end)) {
+        params.samples[0].end = end
+      } else {
+        end = undefined
+      }
+      let diff = (end || Date.now()) - start
+      params.samples[0].guanluary = this.getGuanluary(diff)
+      let guanluaryFormat = this.getGuanluary(diff, true)
       this.$api('Measurement')
         .query(params)
         .then(res => {
@@ -334,10 +352,6 @@ export default {
           const qpsData = samples[0] || {}
           let { inputQPS = [], outputQPS = [] } = qpsData
           let qpsDataTime = qpsData.time || []
-          // 空数据，需要模拟时间点
-          if (!qpsDataTime.length) {
-            qpsDataTime = this.getEmptyData(params.samples[0].start, params.samples[0].end)
-          }
 
           let xArr = qpsDataTime.map(t => formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
           const xArrLen = xArr.length
@@ -374,6 +388,13 @@ export default {
               //   xAxis: {
               //     data: xArr
               //   },
+              xAxis: {
+                axisLabel: {
+                  formatter: val => {
+                    return formatTime(val, guanluaryFormat)
+                  }
+                }
+              },
               series: [
                 {
                   data: Object.assign([], this.lineDataDeep.y[0])
@@ -412,34 +433,23 @@ export default {
         })
       }
     },
-    getEmptyData(start, end) {
-      let result = []
-      let startTimeStamp = start || new Date().getTime()
-      let endTimeStamp = end || new Date().getTime()
-      let diff = endTimeStamp - startTimeStamp
-      let timeSpacing = this.getTimeSpacing(this.getGuanluary(diff))
-      for (let i = start; i < endTimeStamp; i += timeSpacing) {
-        result.push(i)
-      }
-      return result.slice(1)
-    },
     getGuanluary(val, format) {
       let diff = val / 1000
       let timeType
       let formatRes = ''
-      // <= 1h(1 * 60 * 60s) --> minute, second point, max 60 * 12 = 720
-      // <= 12h(12 * 60 * 60s) --> hour, minute point, max 12 * 60 = 720
-      // <= 30d(30 * 24 * 60 * 60s) --> day, hour point, max 24 * 30 = 720
-      // <= 24m+ --> month, day point, max 30 * 24 = 720
+      // <= 1h(1 * 60 * 60s) --> minute, second point, max 60 * 12 = 720 period 5s
+      // <= 12h(12 * 60 * 60s) --> hour, minute point, max 12 * 60 = 720 period 1m
+      // <= 30d(30 * 24 * 60 * 60s) --> day, hour point, max 24 * 30 = 720 period 1h
+      // <= 24m+ --> month, day point, max 30 * 24 = 720 period 1d
       if (diff <= 1 * 60 * 60) {
         timeType = 'minute'
-        formatRes = 'YYYY-MM-DD HH:mm:ss'
+        formatRes = 'HH:mm:ss'
       } else if (diff <= 12 * 60 * 60) {
         timeType = 'hour'
-        formatRes = 'YYYY-MM-DD HH:mm'
+        formatRes = 'MM-DD HH:mm'
       } else if (diff <= 30 * 24 * 60 * 60) {
         timeType = 'day'
-        formatRes = 'YYYY-MM-DD HH:00'
+        formatRes = 'MM-DD HH:00'
       } else {
         timeType = 'month'
         formatRes = 'YYYY-MM-DD'
@@ -448,28 +458,6 @@ export default {
         return formatRes
       }
       return timeType
-    },
-    getTimeSpacing(type) {
-      // <= 1h(1 * 60 * 60s) --> minute, second point, max 60 * 12 = 720 period 5s
-      // <= 12h(12 * 60 * 60s) --> hour, minute point, max 12 * 60 = 720 period 1m
-      // <= 30d(30 * 24 * 60 * 60s) --> day, hour point, max 24 * 30 = 720 period 1h
-      // <= 24m+ --> month, day point, max 30 * 24 = 720 period 1d
-      let result = ''
-      switch (type) {
-        case 'minute':
-          result = 5 * 1000
-          break
-        case 'hour':
-          result = 1 * 60 * 1000
-          break
-        case 'day':
-          result = 1 * 60 * 60 * 1000
-          break
-        case 'month':
-          result = 1 * 24 * 60 * 60 * 1000
-          break
-      }
-      return result
     },
     changeTimeRangeFnc() {
       this.getMeasurement()
