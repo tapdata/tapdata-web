@@ -648,7 +648,7 @@ export default [
       {
         path: '/api-monitor',
         name: 'apiMonitor',
-        component: () => import('@/views/api-page/ApiServers'),
+        component: () => import('@/views/api-page/ApiMonitor'),
         meta: {
           title: 'page_title_api_monitor',
           code: 'API_server_menu'
