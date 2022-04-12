@@ -188,7 +188,7 @@ export default {
   .doc-test-iframe {
     min-height: 100%;
     width: 100%;
-    padding-left: 60px;
+    padding-left: 85px;
   }
 }
 </style>

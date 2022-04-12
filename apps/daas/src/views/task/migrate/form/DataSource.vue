@@ -12,6 +12,7 @@
         v-model="dataSourceData.source_filter_databaseType"
         style="width: 300px"
         filterable
+        clearable
         @change="getSourceConnection"
       >
         <el-option v-for="item in allowSourceDatabaseTypes" :key="item.value" :label="item.label" :value="item.value">
@@ -38,6 +39,7 @@
         v-model="dataSourceData.target_filter_databaseType"
         style="width: 300px"
         filterable
+        clearable
         @change="getTargetConnection"
       >
         <el-option v-for="item in allowTargetDatabaseTypes" :key="item.value" :label="item.label" :value="item.value">
