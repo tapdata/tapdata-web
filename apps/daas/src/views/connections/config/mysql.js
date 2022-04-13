@@ -142,7 +142,7 @@ export default function (vm) {
         field: 'table_filter',
         domType: 'textarea',
         label: vm.$t('dataForm.form.tableFilter'),
-        tip: vm.$t('connection_form_database_owner_tip'),
+        tips: vm.$t('connection_form_database_owner_tip'),
         maxlength: 500,
         showWordLimit: true
       },
@@ -155,7 +155,7 @@ export default function (vm) {
         type: 'select',
         field: 'database_datetype_without_timezone',
         label: vm.$t('dataForm.form.timeZone'),
-        tip: vm.$t('connection_form_impact_type'),
+        tips: vm.$t('connection_form_impact_type'),
         options: [],
         show: true
       },
@@ -163,7 +163,7 @@ export default function (vm) {
         type: 'switch',
         field: 'shareCdcEnable',
         label: vm.$t('connection_form_shared_mining'),
-        tip: vm.$t('connection_form_shared_mining_tip'),
+        tips: vm.$t('connection_form_shared_mining_tip'),
         show: true,
         dependOn: [
           {
