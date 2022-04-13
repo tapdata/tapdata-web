@@ -603,13 +603,13 @@
               isLeaf: 'leaf'
             }"
             :load="loadNodeQingflow"
-            @node-click="vikaNodeClick"
+            @node-click="clickNodeQingflow"
           ></ElTree>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
         <ElButton size="mini" @click="qingflowForm.visible = false">{{ $t('button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" :disabled="vikaSaveTableDisabled()" @click="vikaSaveTable()">{{
+        <ElButton size="mini" type="primary" :disabled="!this.qingflowForm.table" @click="qingflowSaveTable()">{{
           $t('button_confirm')
         }}</ElButton>
       </span>
@@ -969,6 +969,7 @@ export default {
         this.qingflowForm.visible = true
         this.qingflowForm.table = item.sinkObjectName
         this.qingflowForm.originalTableName = item.sourceObjectName
+        return
       }
       this.changeTableNameForm.visible = true
       this.changeTableNameForm.old = item.sourceObjectName
@@ -1642,6 +1643,32 @@ export default {
       this.copyForm()
       this.updateParentMetaData('table', this.form)
     },
+    qingflowSaveTable() {
+      let isInclude = false
+      this.form.tableOperations.forEach(el => {
+        if (el.originalTableName === this.qingflowForm.originalTableName) {
+          el.tableName = this.qingflowForm.table
+          isInclude = true
+          // 清空字段处理器
+          this.$emit('update:field_process', [])
+        }
+      })
+      if (!isInclude) {
+        this.form.tableOperations.push({
+          type: 'rename',
+          originalTableName: this.qingflowForm.originalTableName,
+          tableName: this.qingflowForm.table,
+          nodeId: this.qingflowForm.currentNode.data.id
+        })
+        this.form.vikaMappings[this.qingflowForm.originalTableName] = {
+          id: this.qingflowForm.currentNode.data.id,
+          name: this.qingflowForm.table
+        }
+      }
+      this.qingflowForm.visible = false
+      this.copyForm()
+      this.updateParentMetaData('table', this.form)
+    },
     fieldTypeChangeSaveTable() {
       this.batchFieldTypeForm.visible = false
     },
@@ -1680,10 +1707,11 @@ export default {
         }
       })
     },
-    vikaNodeClick(data, node) {
+    clickNodeQingflow(data, node) {
+      console.log('clickNodeQingflow', data, node)
       if (node.isLeaf) {
-        this.vikaForm.table = data.name
-        this.vikaForm.currentNode = node
+        this.qingflowForm.table = data.name
+        this.qingflowForm.currentNode = node
       }
     },
     //获取维格表的空间
@@ -1741,15 +1769,16 @@ export default {
     },
     loadNodeQingflow(node, resolve) {
       if (node.level === 0) {
-        this.$ws.once('loadVikaResult', data => {
-          this.loadRootNode(data, node, resolve)
+        this.$ws.once('loadQingFlowResult', data => {
+          console.log('loadQingFlowResult', data)
+          resolve(data.result?.map(t => Object.assign(t, { leaf: true, id: t.appKey, name: t.appName })) || [])
         })
         let obj = {
           type: 'pipe',
           receiver: this.qingflowForm.agentId,
           data: {
             type: 'loadQingFlow',
-            load_type: 'tag',
+            load_type: 'app',
             database_host: this.model.database_host,
             userId: this.model.qingFlowUserId,
             accessToken: this.model.plain_password,
@@ -1771,6 +1800,7 @@ export default {
           result[i]['leaf'] = false
         }
       }
+      console.log('loadRootNode', result)
       resolve(result)
     },
     setChildNode(data, node, resolve) {
