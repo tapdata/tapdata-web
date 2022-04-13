@@ -18,11 +18,6 @@
     >
       <span slot-scope="{ option }">
         <span> {{ option.label }}</span>
-        <span
-          v-if="selectSourceArr.includes(option.key) && $getSettingByKey('DFS_TCM_PLATFORM') === 'drs' && !isTwoWay"
-          @click.stop.prevent="handleFiled(option)"
-          class="el-icon-setting field-transfer__icon"
-        ></span>
       </span>
     </el-transfer>
     <el-dialog
