@@ -8,7 +8,13 @@
         </div>
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">api访问总数</header>
-          <div class="api-monitor-total__text">{{ previewData.visitTotalCount }}</div>
+          <div class="api-monitor-total__text">
+            {{
+              previewData.visitTotalCount - previewData.warningApiCount < 0
+                ? 0
+                : previewData.visitTotalCount - previewData.warningApiCount
+            }}/{{ previewData.visitTotalCount }}
+          </div>
         </div>
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">api访问总行数</header>
@@ -16,13 +22,23 @@
         </div>
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">api传输总量</header>
-          <div class="api-monitor-total__text">{{ previewData.transmitTotal }}</div>
+          <div class="api-monitor-total__text">{{ handleUnit(previewData.transmitTotal) || 0 }}</div>
         </div>
       </section>
       <section class="flex flex-direction api-monitor-card mb-5">
         <div class="flex flex-column api-monitor-chart api-monitor-card api-monitor__min__height bg-white pl-5 pt-5">
           <div class="api-monitor-chart__tex mb-2">api 告警数</div>
           <Chart type="pie" :extend="getPieOption()" class="type-chart"></Chart>
+          <div class="pie-status flex flex-wrap ml-5">
+            <div
+              v-for="(item, index) in chartData"
+              :key="index"
+              class="pie-status__item flex align-items-center ellipsis"
+            >
+              <span class="circle-icon mr-2" :style="{ 'background-color': item.color }"></span>
+              <span>{{ item.name }}</span>
+            </div>
+          </div>
         </div>
         <div class="flex flex-column flex-1 bg-white api-monitor-card api-monitor__min__height ml-5 mr-5 pl-5 pt-5">
           <div class="api-monitor-chart__text mb-2">api失败率TOP排序</div>
@@ -41,7 +57,7 @@
           >
           </el-pagination>
         </div>
-        <div class="flex flex-column flex-1 bg-white api-monitor-card api-monitor__min__height pl-5 pt-5">
+        <div class="flex flex-column flex-1 bg-white api-monitor-card api-monitor__min__height mr-5 pl-5 pt-5">
           <div class="api-monitor-chart__text mb-2">api响应时间TOP排序</div>
           <TableList
             :has-pagination="false"
@@ -61,19 +77,17 @@
       </section>
       <section class="flex flex-column bg-white api-monitor-card api-monitor__min__height mb-5 pl-5 pt-5">
         <header class="api-monitor-chart__text mb-2">API列表</header>
-        <TablePage
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="getApiList(1)"> </FilterBar>
+        <el-table
           ref="table"
           row-key="id"
           class="data-flow-list"
-          :remoteMethod="getApiList"
+          :data="apiList"
           :default-sort="{ prop: 'createTime', order: 'descending' }"
           @expand-change="expandChange"
         >
-          <template slot="search">
-            <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-          </template>
           <el-table-column type="expand" width="45">
-            <template slot-scope="scope">
+            <template>
               <span>斤斤计较</span>
             </template>
           </el-table-column>
@@ -81,8 +95,19 @@
           <el-table-column prop="status" label="API状态"> </el-table-column>
           <el-table-column prop="visitLine" label="API访问行数"> </el-table-column>
           <el-table-column prop="visitCount" label="API访问次数"> </el-table-column>
-          <el-table-column prop="transitQuantity" label="API访问传输量"> </el-table-column>
-        </TablePage>
+          <el-table-column prop="transitQuantity" label="API访问传输量">
+            <template #default="{ row }">
+              <span>{{ handleUnit(row.transmitTotal) || '' }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+          layout="->, total, prev, pager, next"
+          :current-page="page.apiListCurrent"
+          :total="page.apiListTotal"
+          @current-change="getApiList"
+        >
+        </el-pagination>
       </section>
     </main>
   </section>
@@ -92,10 +117,9 @@
 import Chart from 'web-core/components/chart'
 import TableList from '@/components/TableList'
 import FilterBar from '@/components/filter-bar'
-import TablePage from '@/components/TablePage'
 export default {
   name: 'ApiMonitor',
-  components: { Chart, TableList, FilterBar, TablePage },
+  components: { Chart, TableList, FilterBar },
   data() {
     return {
       columns: [
@@ -110,8 +134,8 @@ export default {
       ],
       previewData: {},
       chartData: [],
-      failRateList: [{ name: '1234567', failed: '85%' }],
-      consumingTimeList: [{ name: '1234567', failed: '85%' }],
+      failRateList: [],
+      consumingTimeList: [],
       apiList: [],
       page: {
         size: 5,
@@ -128,6 +152,7 @@ export default {
         clientName: '',
         status: ''
       },
+      clientNameList: ['cli1', 'cli2', 'cli3'],
       statusOptions: [
         { label: this.$t('task_list_status_all'), value: '' },
         { label: '已发布', value: 'active' },
@@ -135,23 +160,24 @@ export default {
       ]
     }
   },
+  created() {
+    this.getFilterItems()
+    let { status } = this.$route.query
+    this.searchParams.status = status ?? ''
+  },
   mounted() {
     this.getPreview()
-    this.getList()
-    this.getFilterItems()
-    this.table.fetch(1)
+    this.remoteFailedMethod()
+    this.consumingMethod()
+    this.getApiList(1)
   },
   watch: {
     '$route.query'() {
-      this.table.fetch(1)
-    }
-  },
-  computed: {
-    table() {
-      return this.$refs.table
+      this.getApiList(1)
     }
   },
   methods: {
+    //获取统计数据
     getPreview() {
       this.$api('ApiMonitor')
         .preview()
@@ -159,52 +185,7 @@ export default {
           this.previewData = res.data
         })
     },
-    getList() {
-      let filter = {
-        limit: 5,
-        skip: 0
-      }
-      this.$api('ApiMonitor')
-        .rankLists({
-          filter: JSON.stringify(filter)
-        })
-        .then(res => {
-          //map
-          let data = res.data.items.map(item => {
-            let objArr = []
-            for (let key in item) {
-              let abj = {
-                name: key,
-                failed: item[key]
-              }
-              objArr.push(abj)
-            }
-            return objArr
-          })
-          this.page.failRateTotal = res.data.total
-          this.failRateList = data || []
-        })
-        .catch(() => {
-          this.page.failRateTotal = 22
-          this.failRateList = [
-            {
-              name0: 0.55
-            },
-            {
-              name1: 0.55
-            },
-            {
-              name2: 0.55
-            },
-            {
-              name3: 0.55
-            },
-            {
-              name4: 0.55
-            }
-          ]
-        })
-    },
+    //图表数据组装
     getPieOption() {
       let data = [
         {
@@ -314,8 +295,9 @@ export default {
         ]
       }
     },
-    getApiList({ page }) {
-      let { current } = page
+    //获取api列表数据
+    getApiList() {
+      let { apiListCurrent } = this.page
 
       let { keyword, status } = this.searchParams
 
@@ -329,7 +311,7 @@ export default {
       let filter = {
         order: 'createTime DESC',
         limit: 5,
-        skip: (current - 1) * 5,
+        skip: (apiListCurrent - 1) * 5,
         where
       }
       return this.$api('ApiMonitor')
@@ -339,12 +321,10 @@ export default {
         .then(res => {
           let data = res.data
           this.apiList = data.items
-          return {
-            total: data.total,
-            data: data.items
-          }
+          this.page.apiListTotal = data.total
         })
     },
+    //api 列表筛选
     getFilterItems() {
       this.filterItems = [
         {
@@ -358,7 +338,7 @@ export default {
           label: this.$t('task_list_sync_type'),
           key: 'clientName',
           type: 'select-inner',
-          items: this.statusOptions
+          items: this.clientNameList
         },
         {
           placeholder: this.$t('task_list_search_placeholder'),
@@ -367,6 +347,7 @@ export default {
         }
       ]
     },
+    //控制手风琴（只展示一行)
     expandChange(row, expandRows) {
       if (expandRows.length > 1) {
         this.apiList.forEach(expandrow => {
@@ -378,12 +359,14 @@ export default {
         })
       }
     },
-    remoteFailedMethod({ page }) {
-      let { failRateCurrent, size } = page
+    //失败率排行榜
+    remoteFailedMethod() {
+      let { failRateCurrent, size } = this.page
       let filter = {
         where: {
           type: 'failRate'
         },
+        order: 'DESC',
         limit: size,
         skip: size * (failRateCurrent - 1)
       }
@@ -394,25 +377,23 @@ export default {
         .then(res => {
           //map
           let data = res.data.items.map(item => {
-            let objArr = []
+            let abj = {}
             for (let key in item) {
-              let abj = {
-                name: key,
-                failed: item[key]
-              }
-              objArr.push(abj)
+              abj.name = key
+              abj.failed = item[key]
             }
-            return objArr
+            return abj
           })
           this.page.failRateTotal = res.data.total
           this.failRateList = data || []
         })
     },
-    consumingMethod({ page }) {
-      let { consumingTimeCurrent, size } = page
+    //响应时间排行榜
+    consumingMethod() {
+      let { consumingTimeCurrent, size } = this.page
       let filter = {
         where: {
-          type: 'consumingTime'
+          type: 'latency '
         },
         limit: size,
         skip: size * (consumingTimeCurrent - 1)
@@ -424,19 +405,43 @@ export default {
         .then(res => {
           //map
           let data = res.data.items.map(item => {
-            let objArr = []
+            let abj = {}
             for (let key in item) {
-              let abj = {
-                name: key,
-                failed: item[key]
-              }
-              objArr.push(abj)
+              abj.name = key
+              abj.failed = item[key]
             }
-            return objArr
+            return abj
           })
           this.page.consumingTimeTotal = res.data.total
           this.consumingTimeList = data || []
         })
+    },
+    //单位换算
+    handleUnit(limit) {
+      if (!limit) return 0
+      var size = ''
+      if (limit < 0.1 * 1024) {
+        //小于0.1KB，则转化成B
+        size = limit.toFixed(1) + 'B'
+      } else if (limit < 0.1 * 1024 * 1024) {
+        //小于0.1MB，则转化成KB
+        size = (limit / 1024).toFixed(1) + 'KB'
+      } else if (limit < 0.1 * 1024 * 1024 * 1024) {
+        //小于0.1GB，则转化成MB
+        size = (limit / (1024 * 1024)).toFixed(1) + 'MB'
+      } else {
+        //其他转化成GB
+        size = (limit / (1024 * 1024 * 1024)).toFixed(1) + 'GB'
+      }
+
+      var sizeStr = size + '' //转成字符串
+      var index = sizeStr.indexOf('.') //获取小数点处的索引
+      var dou = sizeStr.substr(index + 1, 1) //获取小数点后一位的值
+      if (dou === '0') {
+        //判断后两位是否为00，如果是则删除0
+        return sizeStr.substring(0, index) + sizeStr.substr(index + 2, 1)
+      }
+      return size
     }
   }
 }
@@ -477,7 +482,7 @@ export default {
     border-radius: 4px;
   }
   .api-monitor-chart {
-    width: 280px;
+    width: 240px;
   }
 }
 </style>
