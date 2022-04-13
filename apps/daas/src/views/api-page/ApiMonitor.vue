@@ -59,8 +59,20 @@
           </el-pagination>
         </div>
       </section>
-      <section class="flex flex-column bg-white api-monitor-card api-monitor__min__height mb-4">
+      <section class="flex flex-column bg-white api-monitor-card api-monitor__min__height mb-4 pl-5 pt-5">
         <header class="api-monitor-chart__text mb-2">API列表</header>
+        <TablePage
+          ref="table"
+          row-key="id"
+          class="data-flow-list"
+          :remoteMethod="getApiList"
+          :default-sort="{ prop: 'createTime', order: 'descending' }"
+          @sort-change="handleSortTable"
+        >
+          <template slot="search">
+            <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+          </template>
+        </TablePage>
         <TableList
           :has-pagination="false"
           :data="apiList"
@@ -83,9 +95,11 @@
 <script>
 import Chart from 'web-core/components/chart'
 import TableList from '@/components/TableList'
+import FilterBar from '@/components/filter-bar'
+import TablePage from '@/components/TablePage'
 export default {
   name: 'ApiMonitor',
-  components: { Chart, TableList },
+  components: { Chart, TableList, FilterBar, TablePage },
   data() {
     return {
       columns: [
@@ -100,12 +114,28 @@ export default {
       ],
       apiListColumns: [
         {
-          label: 'Api ID',
+          label: 'API ID',
           prop: 'name'
         },
         {
-          label: '失败率',
-          prop: 'failed'
+          label: 'API名称',
+          prop: 'name'
+        },
+        {
+          label: 'API状态',
+          prop: 'status'
+        },
+        {
+          label: 'API访问行数',
+          prop: 'visitLine'
+        },
+        {
+          label: 'API访问次数',
+          prop: 'visitCount'
+        },
+        {
+          label: 'API访问传输量',
+          prop: 'transitQuantity'
         }
       ],
       previewData: {},
@@ -121,12 +151,23 @@ export default {
         consumingTimeTotal: 0,
         apiListCurrent: 1,
         apiListTotal: 0
-      }
+      },
+      filterItems: [],
+      searchParams: {
+        keyword: '',
+        status: ''
+      },
+      statusOptions: [
+        { label: this.$t('task_list_status_all'), value: '' },
+        { label: '已发布', value: 'active' },
+        { label: '待发布', value: 'pending' }
+      ]
     }
   },
   mounted() {
     this.getPreview()
     this.getList()
+    this.getApiList()
   },
   methods: {
     getPreview() {
@@ -270,6 +311,59 @@ export default {
           }
         ]
       }
+    },
+    getApiList({ page }) {
+      let { apiListCurrent, size } = page
+
+      let { keyword, status } = this.searchParams
+
+      let where = {}
+      if (keyword && keyword.trim()) {
+        where.clientName = keyword
+      }
+      if (status) {
+        where.status = status
+      }
+      let filter = {
+        order: 'createTime DESC',
+        limit: size,
+        skip: (apiListCurrent - 1) * size,
+        where
+      }
+      return this.$api('ApiMonitor')
+        .apiList({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          let data = res.data
+          this.apiList = res.data
+          return {
+            total: data.total,
+            data: data.items
+          }
+        })
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: this.$t('task_list_status'),
+          key: 'status',
+          type: 'select-inner',
+          items: this.statusOptions,
+          selectedWidth: '200px'
+        },
+        {
+          label: this.$t('task_list_sync_type'),
+          key: 'progress',
+          type: 'select-inner',
+          items: this.progressOptions
+        },
+        {
+          placeholder: this.$t('task_list_search_placeholder'),
+          key: 'keyword',
+          type: 'input'
+        }
+      ]
     },
     remoteFailedMethod({ page }) {
       let { failRateCurrent, size } = page
