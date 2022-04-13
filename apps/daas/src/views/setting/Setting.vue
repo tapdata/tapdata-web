@@ -8,7 +8,10 @@
           :class="activePanel === item.category ? 'active' : ''"
           @click="changeName(item.category)"
         >
-          <span class="title">{{ $t('setting_' + item.category) }}</span>
+          <ElTooltip :content="$t('setting_' + item.category)">
+            <span class="title">{{ $t('setting_' + item.category) }}</span>
+          </ElTooltip>
+
           <VIcon class="ml-3" size="14">arrow-right</VIcon>
         </li>
       </ul>
@@ -399,6 +402,12 @@ export default {
         line-height: 40px;
         cursor: pointer;
         color: #4e5969;
+        white-space: nowrap;
+        .title {
+          width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
       .active {
         background: rgba(44, 101, 255, 0.05);

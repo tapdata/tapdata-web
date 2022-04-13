@@ -12072,6 +12072,9 @@
 .font-color-sub {
   color: map-get($fontColor, sub) !important;
 }
+.font-color-secondary {
+  color: map-get($fontColor, secondary) !important;
+}
 .font-color-rdlevel{
   color: map-get($fontColor , rdlevel )!important;
 }

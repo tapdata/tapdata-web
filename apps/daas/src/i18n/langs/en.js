@@ -1198,6 +1198,8 @@ export default {
   migrate_select_table_tip:
     ' The user can click the right arrow button in the middle to select the tables to be synchronized at the source, and move these tables to the queue of tables to be synchronized (these tables will be transferred synchronously after the task is executed)',
   migrate_same_connection_message: 'The same connection is selected on the source side and the target side',
+  migrate_no_progress_statistics_yet: 'No progress statistics yet',
+  migrate_no_latency_statistics_yet: 'No latency statistics yet',
 
   // Function management
   function_tips_empty: 'Code lacks JS functions',

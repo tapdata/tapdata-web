@@ -549,7 +549,7 @@ export default {
               show: true,
               position: 'center',
               width: 60,
-              height: 34,
+              height: 38,
               fontWeight: 'bold',
               backgroundColor: '#fff',
               formatter: `{name|${total}}\n{value|${totalText}}`,
