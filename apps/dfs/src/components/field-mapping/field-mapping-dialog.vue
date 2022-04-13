@@ -8,18 +8,29 @@
         $t('task_mapping_table_setting_tip1')
       }}</ElLink>
       <div class="float-end">
-        <ElButton v-if="!readOnly && !targetIsVika" size="mini" @click="handleChangTableName">{{
+        <ElButton v-if="!readOnly && !targetIsVika && !targetIsQingflow" size="mini" @click="handleChangTableName">{{
           $t('task_mapping_table_rename')
         }}</ElButton>
-        <ElButton v-if="!readOnly && !targetIsVika" size="mini" @click="handleBatchChangeFieldType">{{
-          $t('task_mapping_table_field_type_change')
-        }}</ElButton>
-        <ElButton v-if="!readOnly && !targetIsVika" size="mini" @click="dialogFieldVisible = true">{{
-          $t('task_mapping_table_field_rename')
-        }}</ElButton>
-        <ElButton v-if="!readOnly && !targetIsVika" class="mr-5" size="mini" type="primary" @click="rollbackAll">{{
-          $t('task_mapping_table_restore_default')
-        }}</ElButton>
+        <ElButton
+          v-if="!readOnly && !targetIsVika && !targetIsQingflow"
+          size="mini"
+          @click="handleBatchChangeFieldType"
+          >{{ $t('task_mapping_table_field_type_change') }}</ElButton
+        >
+        <ElButton
+          v-if="!readOnly && !targetIsVika && !targetIsQingflow"
+          size="mini"
+          @click="dialogFieldVisible = true"
+          >{{ $t('task_mapping_table_field_rename') }}</ElButton
+        >
+        <ElButton
+          v-if="!readOnly && !targetIsVika && !targetIsQingflow"
+          class="mr-5"
+          size="mini"
+          type="primary"
+          @click="rollbackAll"
+          >{{ $t('task_mapping_table_restore_default') }}</ElButton
+        >
       </div>
     </div>
     <div class="task-form-body">
@@ -72,7 +83,7 @@
             <span> {{ $t('task_mapping_table_search_field') }}：</span>
             <ElInput v-model="searchField" size="mini" @change="search('field')"></ElInput>
           </div>
-          <div class="item ml-5" v-if="!readOnly && !targetIsVika">
+          <div class="item ml-5" v-if="!readOnly && !targetIsVika && !targetIsQingflow">
             <ElTooltip effect="dark" :content="$t('task_mapping_table_restore_default_fields')" placement="top-start">
               <ElButton
                 size="mini"
@@ -134,7 +145,10 @@
           </ElTableColumn>
           <ElTableColumn :label="$t('task_mapping_table_target_type')" width="150">
             <template slot-scope="scope">
-              <div v-if="!scope.row.is_deleted && !readOnly && !targetIsVika" @click="edit(scope.row, 'data_type')">
+              <div
+                v-if="!scope.row.is_deleted && !readOnly && !targetIsVika && !targetIsQingflow"
+                @click="edit(scope.row, 'data_type')"
+              >
                 <span>{{ scope.row.t_data_type }}</span>
                 <i v-if="!scope.row.t_data_type" class="icon-error el-icon-warning"></i>
                 <i class="icon el-icon-arrow-down"></i>
@@ -147,7 +161,13 @@
           <ElTableColumn :label="$t('task_mapping_table_target_length')" width="150">
             <template slot-scope="scope">
               <div
-                v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && !readOnly && !targetIsVika"
+                v-if="
+                  !scope.row.is_deleted &&
+                  scope.row.t_isPrecisionEdit &&
+                  !readOnly &&
+                  !targetIsVika &&
+                  !targetIsQingflow
+                "
                 @click="edit(scope.row, 'precision')"
               >
                 <span v-if="scope.row.t_precision < 0"></span>
@@ -163,7 +183,9 @@
           <ElTableColumn :label="$t('task_mapping_table_target_accuracy')" width="100">
             <template slot-scope="scope">
               <div
-                v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit && !readOnly && !targetIsVika"
+                v-if="
+                  !scope.row.is_deleted && scope.row.t_isScaleEdit && !readOnly && !targetIsVika && !targetIsQingflow
+                "
                 @click="edit(scope.row, 'scale')"
               >
                 <span>{{ scope.row.t_scale }}</span>
@@ -187,6 +209,7 @@
           <div class="field-mapping-table__empty" slot="empty">
             <i class="el-icon-folder-opened"></i>
             <span v-if="targetIsVika" class="ml-1">{{ $t('task_mapping_table_no_data_vika') }}</span>
+            <span v-else-if="targetIsQingflow" class="ml-1">{{ $t('task_mapping_table_no_data_vika') }}</span>
             <span v-else class="ml-1">{{ $t('task_mapping_table_no_data') }}</span>
           </div>
         </ElTable>
@@ -201,7 +224,7 @@
       :before-close="handleClose"
     >
       <ElSelect
-        v-if="['field_name'].includes(currentOperationType) && targetIsVika"
+        v-if="['field_name'].includes(currentOperationType) && (targetIsVika || targetIsQingflow)"
         v-model="editValueType[currentOperationType]"
         filterable
       >
@@ -545,6 +568,52 @@
         }}</ElButton>
       </span>
     </ElDialog>
+    <!-- qingflow目录 -->
+    <ElDialog
+      width="500px"
+      append-to-body
+      title="qingflow目录"
+      custom-class="vika-field-maping-table-dialog"
+      :visible.sync="qingflowForm.visible"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+    >
+      <div>
+        <ElForm label-position="top" :model="qingflowForm" style="width: 100%" @submit.prevent.stop>
+          <ElFormItem label="目标：" props="table" class="mb-0">
+            <ElInput
+              v-model="qingflowForm.table"
+              size="mini"
+              maxlength="50"
+              show-word-limit
+              class="mb-3"
+              readonly
+            ></ElInput>
+          </ElFormItem>
+        </ElForm>
+        <div style="border: 1px solid #ccc">
+          <ElTree
+            highlight-current
+            lazy
+            accordion
+            check-on-click-node
+            :props="{
+              label: 'name',
+              children: 'children',
+              isLeaf: 'leaf'
+            }"
+            :load="loadNodeQingflow"
+            @node-click="vikaNodeClick"
+          ></ElTree>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <ElButton size="mini" @click="qingflowForm.visible = false">{{ $t('button_cancel') }}</ElButton>
+        <ElButton size="mini" type="primary" :disabled="vikaSaveTableDisabled()" @click="vikaSaveTable()">{{
+          $t('button_confirm')
+        }}</ElButton>
+      </span>
+    </ElDialog>
   </div>
 </template>
 
@@ -669,6 +738,13 @@ export default {
         agentId: '',
         currentNode: {}
       },
+      qingflowForm: {
+        visible: false,
+        originalTableName: '',
+        table: '',
+        agentId: '',
+        currentNode: {}
+      },
       batchFieldTypeForm: {
         visible: false,
         list: [],
@@ -702,6 +778,8 @@ export default {
     this.updateView()
     if (this.targetIsVika) {
       this.loadConnection()
+    } else if (this.targetIsQingflow) {
+      this.loadConnectionQingflow()
     }
   },
   computed: {
@@ -718,6 +796,9 @@ export default {
     },
     targetIsVika() {
       return this.dataSourceModel?.target_databaseType === 'vika'
+    },
+    targetIsQingflow() {
+      return this.dataSourceModel?.target_databaseType === 'qingflow'
     }
   },
   methods: {
@@ -884,6 +965,10 @@ export default {
         this.vikaForm.table = item.sinkObjectName
         this.vikaForm.originalTableName = item.sourceObjectName
         return
+      } else if (this.targetIsQingflow) {
+        this.qingflowForm.visible = true
+        this.qingflowForm.table = item.sinkObjectName
+        this.qingflowForm.originalTableName = item.sourceObjectName
       }
       this.changeTableNameForm.visible = true
       this.changeTableNameForm.old = item.sourceObjectName
@@ -982,7 +1067,7 @@ export default {
           this.$message.error(this.$t('task_mapping_dialog_delete_all_field_tip'))
           return //所有字段被删除了 不可以保存任务
         }
-        if (this.targetIsVika) {
+        if (this.targetIsVika || this.targetIsQingflow) {
           if (index === this.position) {
             return
           }
@@ -1079,7 +1164,7 @@ export default {
       //任务-字段处理器
       if (key === 'field_name') {
         // vika 需要更新：字段名、字段类型、长度、精度
-        if (this.targetIsVika) {
+        if (this.targetIsVika || this.targetIsQingflow) {
           if (!verify) {
             return
           }
@@ -1364,7 +1449,7 @@ export default {
       }
       //删除类型
       let option = this.target.filter(v => v.id === id)
-      if (this.targetIsVika) {
+      if (this.targetIsVika || this.targetIsQingflow) {
         option = this.fieldMappingTableData.filter(v => v.t_id === id)
       }
       if (option.length === 0) return
@@ -1380,7 +1465,7 @@ export default {
         label: option.field_name,
         original_field_name: option.original_field_name
       }
-      if (this.targetIsVika) {
+      if (this.targetIsVika || this.targetIsQingflow) {
         op.data_type = option.t_data_type
         op.precision = option.t_precision
         op.scale = option.t_scale
@@ -1439,7 +1524,7 @@ export default {
         vikaMappings: this.form.vikaMappings
       }
       let flag = (result.checkDataType || result.checkInvalid) && result.noFieldsTable === 0
-      if (this.targetIsVika) {
+      if (this.targetIsVika || this.targetIsQingflow) {
         flag = flag || this.fieldMappingTableData.some(t => !t.t_field_name && !t.is_deleted)
       }
       if (flag) {
@@ -1579,6 +1664,22 @@ export default {
         }
       })
     },
+    loadConnectionQingflow() {
+      this.model.type = 'qingflow'
+      this.model.dataBaseType = 'vika'
+      this.$axios.get('tm/api/Connections/' + this.dataSourceModel.target_connectionId).then(data => {
+        if (data) {
+          this.model.qingFlowTagId = data?.qingFlowTagId
+          this.model.qingFlowUserId = data?.qingFlowUserId
+          this.model.database_host = data?.database_host
+          this.model.plain_password = data?.plain_password
+          this.model.connectionId = this.dataSourceModel.target_connectionId
+          this.setAgentId(val => {
+            this.qingflowForm.agentId = val
+          })
+        }
+      })
+    },
     vikaNodeClick(data, node) {
       if (node.isLeaf) {
         this.vikaForm.table = data.name
@@ -1590,6 +1691,14 @@ export default {
       let filter = { where: { status: { $in: ['Running'] } }, size: 10, page: 1, sort: ['createAt desc'] }
       this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(({ items }) => {
         this.vikaForm.agentId = items[0]?.tmInfo?.agentId
+      })
+    },
+    // agentId
+    setAgentId(callback) {
+      let filter = { where: { status: { $in: ['Running'] } }, size: 10, page: 1, sort: ['createAt desc'] }
+      this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(({ items }) => {
+        // agentId = items[0]?.tmInfo?.agentId
+        callback?.(items[0]?.tmInfo?.agentId)
       })
     },
     loadNode(node, resolve) {
@@ -1629,6 +1738,27 @@ export default {
         }
       }
       this.$ws.send(obj)
+    },
+    loadNodeQingflow(node, resolve) {
+      if (node.level === 0) {
+        this.$ws.once('loadVikaResult', data => {
+          this.loadRootNode(data, node, resolve)
+        })
+        let obj = {
+          type: 'pipe',
+          receiver: this.qingflowForm.agentId,
+          data: {
+            type: 'loadQingFlow',
+            load_type: 'tag',
+            database_host: this.model.database_host,
+            userId: this.model.qingFlowUserId,
+            accessToken: this.model.plain_password,
+            id: this.model.connectionId
+          }
+        }
+        this.$ws.send(obj)
+        return
+      }
     },
     loadRootNode(data, node, resolve) {
       //过滤目录结构
@@ -1704,7 +1834,7 @@ export default {
       }
     },
     getItemInvalid(item) {
-      if (this.targetIsVika) {
+      if (this.targetIsVika || this.targetIsQingflow) {
         return (
           item.invalid ||
           this.fieldMappingTableData.some(

@@ -37,6 +37,9 @@ export default {
   computed: {
     targetIsVika() {
       return this.$attrs?.dataSourceModel?.target_databaseType === 'vika'
+    },
+    targetIsQingflow() {
+      return this.$attrs?.dataSourceModel?.target_databaseType === 'qingflow'
     }
   },
   methods: {
@@ -61,7 +64,7 @@ export default {
       this.loadingMetadata = true
       if (taskData?.metadataMappings?.length > 0) {
         let metadataMappings = taskData.metadataMappings
-        if (this.targetIsVika) {
+        if (this.targetIsVika || this.targetIsQingflow) {
           this.formatUserDeletedNum(metadataMappings, taskData.stages[0]?.field_process)
         }
         this.fieldMappingNavData = metadataMappings
@@ -73,7 +76,7 @@ export default {
       } else {
         let promise = this.$axios.post('tm/api/DataFlows/metadata', taskData)
         promise.then(data => {
-          if (this.targetIsVika) {
+          if (this.targetIsVika || this.targetIsQingflow) {
             this.formatUserDeletedNum(data, this.field_process)
           }
           this.fieldMappingNavData = data
@@ -280,7 +283,8 @@ export default {
         })
       })
       // vika字段处理
-      if (this.targetIsVika) {
+      console.log('this.targetIsQingflow', this.targetIsQingflow)
+      if (this.targetIsVika || this.targetIsQingflow) {
         target = target?.filter(t => !t.is_deleted) || []
         let field = target[0] || {}
         let addOperations = this.$refs.fieldMappingDom.addOperations

@@ -1137,8 +1137,8 @@ export default {
             this.changeConfig([], 'setting_isOpenAutoDDL')
             this.changeConfig([], 'setting_twoWay')
           }
-          //kafka, vika 作为目标 不支持删除模式
-          if (['kafka', 'vika'].includes(this.dataSourceModel['target_databaseType'])) {
+          //kafka, vika, qingflow 作为目标 不支持删除模式
+          if (['kafka', 'vika', 'qingflow'].includes(this.dataSourceModel['target_databaseType'])) {
             this.changeConfig([], 'setting_distinctWriteType')
           }
           //greenplum、ADB mysql、kundb做源时不能增量
@@ -1431,7 +1431,8 @@ export default {
               'dameng',
               'tidb',
               'vika',
-              'doris'
+              'doris',
+              'qingflow'
             ]
             options = data.filter(item => filterArr.indexOf(item) === -1)
             source.options = options.map(item => {
