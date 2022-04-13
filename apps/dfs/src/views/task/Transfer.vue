@@ -171,8 +171,8 @@ export default {
             this.reloadCount++
             this.reloadApi()
             const { target_databaseType } = this.dataSourceModel || {}
-            if (target_databaseType === 'vika') {
-              this.reloadApiVika()
+            if (['vika', 'qingflow'].includes(target_databaseType)) {
+              this.reloadApiTarget()
             }
           }
         })
@@ -195,7 +195,7 @@ export default {
         })
         .catch(this.getSchemaCatch)
     },
-    reloadApiVika() {
+    reloadApiTarget() {
       let params = {
         loadCount: 0,
         loadFieldsStatus: 'loading'
