@@ -1840,7 +1840,7 @@ export default {
         font-size: 14px;
         font-family: PingFangSC-Medium, PingFang SC;
         font-weight: 500;
-        color: rgba(0, 0, 0, 0.85);
+        color: map-get($fontColor, normal);
         line-height: 28px;
       }
       .connection-from-label {
@@ -1855,7 +1855,7 @@ export default {
         .label {
           width: 160px;
           font-size: 12px;
-          color: #606266;
+          color: map-get($fontColor, slight);
         }
         .content-box {
           display: flex;

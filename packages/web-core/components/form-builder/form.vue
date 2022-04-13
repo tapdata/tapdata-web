@@ -320,6 +320,7 @@ export default {
   }
   .fb-radio-tip__text {
     line-height: 18px;
+    color: map-get($fontColor, slight);
   }
 }
 .e-popover {

@@ -20,10 +20,10 @@
             <!--步骤1-->
             <div class="body" v-if="steps[activeStep].index === 1">
               <div class="mb-8">
-                <span class="title font-weight-bold">{{ $t('migrate_select_connection') }}</span>
+                <span class="title fw-sub">{{ $t('migrate_select_connection') }}</span>
                 <span class="desc">
                   {{ $t('migrate_select_connection_tip')
-                  }}<span style="color: #337dff; cursor: pointer" @click="handleCreateDatabase">
+                  }}<span style="color: #2c65ff; cursor: pointer" @click="handleCreateDatabase">
                     {{ $t('migrate_create_connection') }}</span
                   >
                 </span>
@@ -38,7 +38,7 @@
             <!-- 步骤2 -->
             <div class="body step-3" v-if="steps[activeStep].index === 2">
               <div class="mb-8">
-                <span class="title">{{ $t('migrate_task_settings') }}</span>
+                <span class="title fw-sub">{{ $t('migrate_task_settings') }}</span>
                 <span class="desc">{{ $t('migrate_task_settings_tip') }} </span>
               </div>
               <Setting :dataSourceData="dataSourceData" :settingData="settingData" @submit="settingSubmit"></Setting>
@@ -46,7 +46,7 @@
             <!-- 步骤3 -->
             <div class="body step-4" v-if="steps[activeStep].index === 3">
               <div class="mb-6">
-                <span class="title">{{ $t('migrate_select_table') }}</span>
+                <span class="title fw-sub">{{ $t('migrate_select_table') }}</span>
                 <span class="desc">
                   {{ $t('migrate_select_table_tip') }}
                 </span>
@@ -676,7 +676,7 @@ export default {
     .body {
       .title {
         font-size: 14px;
-        color: rgba(0, 0, 0, 0.85);
+        color: map-get($fontColor, normal);
       }
       .desc {
         margin-left: 16px;
