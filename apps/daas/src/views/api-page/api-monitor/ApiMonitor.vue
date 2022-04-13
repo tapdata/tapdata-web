@@ -27,16 +27,16 @@
       </section>
       <section class="flex flex-direction api-monitor-card mb-5">
         <div class="flex flex-column api-monitor-chart api-monitor-card api-monitor__min__height bg-white pl-5 pt-5">
-          <div class="api-monitor-chart__tex mb-2">api 告警数</div>
+          <div class="api-monitor-chart__text mb-2">api 告警数</div>
           <Chart type="pie" :extend="getPieOption()" class="type-chart"></Chart>
-          <div class="pie-status flex flex-wrap ml-5">
-            <div
-              v-for="(item, index) in chartData"
-              :key="index"
-              class="pie-status__item flex align-items-center ellipsis"
-            >
-              <span class="circle-icon mr-2" :style="{ 'background-color': item.color }"></span>
-              <span>{{ item.name }}</span>
+          <div class="ml-8 mb-8 mt-5">
+            <div>
+              <i class="circle-total mr-3"></i><span class="mr-8">API总数</span
+              ><span class="lenged"> {{ previewData.totalCount }}</span>
+            </div>
+            <div class="mt-2">
+              <i class="circle-waring mr-3"></i><span class="mr-6">API告警数</span
+              ><span class=""> {{ previewData.warningApiCount }}</span>
             </div>
           </div>
         </div>
@@ -77,7 +77,7 @@
       </section>
       <section class="flex flex-column bg-white api-monitor-card api-monitor__min__height mb-5 pl-5 pt-5">
         <header class="api-monitor-chart__text mb-2">API列表</header>
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="getApiList(1)"> </FilterBar>
+        <FilterBar class="mb-2" v-model="searchParams" :items="filterItems" @fetch="getApiList(1)"> </FilterBar>
         <el-table
           ref="table"
           row-key="id"
@@ -87,8 +87,8 @@
           @expand-change="expandChange"
         >
           <el-table-column type="expand" width="45">
-            <template>
-              <span>斤斤计较</span>
+            <template #default="{ row }">
+              <Detail :id="row.id"></Detail>
             </template>
           </el-table-column>
           <el-table-column prop="name" label="API名称"> </el-table-column>
@@ -103,7 +103,7 @@
         </el-table>
         <el-pagination
           layout="->, total, prev, pager, next"
-          :current-page="page.apiListCurrent"
+          :current-page.sync="page.apiListCurrent"
           :total="page.apiListTotal"
           @current-change="getApiList"
         >
@@ -117,9 +117,10 @@
 import Chart from 'web-core/components/chart'
 import TableList from '@/components/TableList'
 import FilterBar from '@/components/filter-bar'
+import Detail from './Detail'
 export default {
   name: 'ApiMonitor',
-  components: { Chart, TableList, FilterBar },
+  components: { Chart, TableList, FilterBar, Detail },
   data() {
     return {
       columns: [
@@ -206,91 +207,13 @@ export default {
         }
       ]
       this.chartData = data
-      let dataName = []
-      let total = 0
-      let totalFalg = true
-      let totalText = this.$t('dashboard_total')
-      if (data?.length) {
-        data.forEach(res => {
-          dataName.push(res.name)
-          total += parseFloat(res.value) * 1
-        })
-        totalFalg = data.some(item => item.value > 0)
-      }
       return {
-        legend: {
-          show: false
-        },
-        tooltip: {
-          trigger: 'item',
-          borderWidth: 0,
-          backgroundColor: 'rgba(0,0,0,0.8)',
-          textStyle: {
-            color: '#fff',
-            fontSize: 12
-          },
-          formatter: params => {
-            let item = params
-            let val = item.value
-            if (val === 1.1) {
-              val = 1
-            }
-            let html = `<div style="text-align: center;"> ${params.name}<div style="font-family: 'DIN'">${val}</div></div>`
-            return html
-          }
-        },
         series: [
           {
             type: 'pie',
-            radius: ['40%', '70%'],
-            stillShowZeroSum: totalFalg ? false : true,
             avoidLabelOverlap: false,
-            zlevel: 1,
-            label: {
-              show: true,
-              position: 'center',
-              width: 60,
-              height: 34,
-              fontWeight: 'bold',
-              backgroundColor: '#fff',
-              formatter: `{name|${total}}\n{value|${totalText}}`,
-              rich: {
-                name: {
-                  lineHeight: 24,
-                  color: 'rgba(0, 0, 0, 0.85)',
-                  fontSize: 16,
-                  fontWeight: '400'
-                },
-                value: {
-                  color: 'rgba(0, 0, 0, 0.43)',
-                  fontSize: 12,
-                  fontWeight: '400'
-                }
-              }
-            },
-            emphasis: {
-              label: {
-                show: true,
-                fontWeight: 'bold',
-                formatter: '{name|{c}}\n{value|{b}}',
-                width: 60,
-                height: 34,
-                rich: {
-                  name: {
-                    lineHeight: 24,
-                    color: 'rgba(0, 0, 0, 0.85)',
-                    fontSize: '16',
-                    fontWeight: '400'
-                  },
-                  value: {
-                    color: 'rgba(0, 0, 0, 0.43)',
-                    fontSize: 12,
-                    fontWeight: '400'
-                  }
-                }
-              }
-            },
-            data: data
+            data: data,
+            radius: ['40%', '70%']
           }
         ]
       }
@@ -298,15 +221,17 @@ export default {
     //获取api列表数据
     getApiList() {
       let { apiListCurrent } = this.page
-
-      let { keyword, status } = this.searchParams
+      let { keyword, status, clientName } = this.searchParams
 
       let where = {}
       if (keyword && keyword.trim()) {
-        where.clientName = keyword
+        where.name = keyword
       }
       if (status) {
         where.status = status
+      }
+      if (clientName) {
+        where.clientName = clientName
       }
       let filter = {
         order: 'createTime DESC',
@@ -482,7 +407,21 @@ export default {
     border-radius: 4px;
   }
   .api-monitor-chart {
-    width: 240px;
+    width: 280px;
+  }
+  .circle-total {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #8fd8c0;
+    display: inline-block;
+  }
+  .circle-waring {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #2c65ff;
+    display: inline-block;
   }
 }
 </style>

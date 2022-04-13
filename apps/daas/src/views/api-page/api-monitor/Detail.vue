@@ -1,12 +1,45 @@
 <template>
   <section class="flex flex-direction">
-    <div class="flex-1">
-      <div>API访问次数</div>
-      <div>600</div>
+    <div class="flex-direction flex-1">
+      <div class="flex flex-direction flex-1">
+        <div class="flex-1">
+          <div>API访问次数</div>
+          <div>600</div>
+        </div>
+        <div class="flex-1">
+          <div>API访问次数</div>
+          <div>600</div>
+        </div>
+        <div class="flex-1">
+          <div>API访问次数</div>
+          <div>600</div>
+        </div>
+      </div>
+      <div class="flex flex-direction flex-1">
+        <div class="flex-1">
+          <div>API访问次数</div>
+          <div>600</div>
+        </div>
+        <div class="flex-1">
+          <div>API访问次数</div>
+          <div>600</div>
+        </div>
+        <div class="flex-1">
+          <div>API访问次数</div>
+          <div>600</div>
+        </div>
+      </div>
     </div>
     <div class="flex-1">
       <FilterBar v-model="searchParams" :items="filterItems" @fetch="getDetail()"> </FilterBar>
-      <div>600</div>
+    </div>
+    <div class="flex-1">
+      <ul>
+        <li>客戶端</li>
+        <li>客戶端</li>
+        <li>客戶端</li>
+        <li>客戶端</li>
+      </ul>
     </div>
   </section>
 </template>
