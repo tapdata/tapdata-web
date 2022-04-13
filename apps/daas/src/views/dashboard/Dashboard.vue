@@ -51,7 +51,7 @@
                 <li v-for="task in syncTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
                   <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
                   <span class="text">{{ $t('dashboard_status_' + task.label) }}</span
-                  ><span class="num pl-7">{{ task.value }}</span>
+                  ><span class="num pl-7">{{ handleChangeUnit(task.value) }}</span>
                 </li>
               </ul>
             </div>
@@ -157,7 +157,7 @@
                 <li v-for="item in transBarData" :key="item.key">
                   <i class="dots mr-3" :style="`background-color: ${item.color};`"></i>
                   <span class="text">{{ item.name }}</span
-                  ><span class="num pl-7">{{ item.value }}</span>
+                  ><span class="num pl-7">{{ handleChangeUnit(item.value) }}</span>
                 </li>
               </ul>
             </div>
@@ -573,6 +573,19 @@ export default {
       }
       return statusItem
     },
+    handleChangeUnit(val) {
+      // return size
+      if (val / (1000 * 1000 * 1000) > 1) {
+        return (val / (1000 * 1000 * 1000)).toFixed(1) + 'T'
+      } else if (val / (1000 * 1000) > 1) {
+        return (val / (1000 * 1000)).toFixed(1) + 'M'
+      } else if (val / 1000 > 1) {
+        return (val / 1000).toFixed(1) + 'K'
+      } else {
+        return val
+      }
+    },
+
     getPieOption(data) {
       let dataName = []
       let total = 0
@@ -584,6 +597,7 @@ export default {
           total += parseFloat(res.value) * 1
         })
         totalFalg = data.some(item => item.value > 0)
+        total = this.handleChangeUnit(total)
       }
 
       return {

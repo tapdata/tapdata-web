@@ -14,12 +14,7 @@ export const JoinExpression = observer(
 
     props: ['fields', 'value', 'findNodeById', 'loadNodeFieldNamesById', 'leftNodeId', 'rightNodeId'],
 
-    setup(
-      props,
-      {
-        /*emit*/
-      }
-    ) {
+    setup(props) {
       const formRef = useForm()
       const fieldRef = useField()
       const schemaRef = useFieldSchema()

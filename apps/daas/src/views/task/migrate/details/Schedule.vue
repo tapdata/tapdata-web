@@ -294,7 +294,7 @@ export default {
   },
   methods: {
     init() {
-      this.id = this.$route.params?.subId
+      this.id = this.$route.query?.subId
       this.loadRuntimeInfo()
       this.getSyncOverViewData() //数据初始化
     },
