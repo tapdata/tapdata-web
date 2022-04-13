@@ -4,7 +4,7 @@
       <div class="sign-in-panel">
         <div class="title">
           {{ $t('app.signIn.signIn') }}
-          <span @click="registry" v-if="$getSettingByKey('SHOW_REGISTER')">{{ $t('app.signIn.Registration') }}</span>
+          <span v-if="$getSettingByKey('SHOW_REGISTER')" @click="registry">{{ $t('app.signIn.Registration') }}</span>
         </div>
         <div class="error-tips" v-show="errorMessage">
           <i class="el-icon-warning-outline"></i>

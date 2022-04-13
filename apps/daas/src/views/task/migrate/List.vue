@@ -22,7 +22,6 @@
         <el-button
           size="mini"
           class="btn message-button-cancel"
-          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'SYNC_category_application'"
           v-show="multipleSelection.length > 0"
           @click="$refs.table.showClassify(handleSelectTag())"
@@ -204,11 +203,7 @@
                 >
                   {{ $t('task_list_delete') }}
                 </el-dropdown-item>
-                <el-dropdown-item
-                  command="setTag"
-                  v-if="$getSettingByKey('SHOW_CLASSIFY')"
-                  v-readonlybtn="'SYNC_category_application'"
-                >
+                <el-dropdown-item command="setTag" v-readonlybtn="'SYNC_category_application'">
                   {{ $t('dataFlow.addTag') }}
                 </el-dropdown-item>
                 <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
