@@ -649,6 +649,7 @@ export default {
         table_suffix: '',
         tableOperations: [],
         vikaMappings: {},
+        qingFlowMappings: {},
         selectSourceArr: [],
         topicData: [],
         queueData: []
@@ -802,6 +803,7 @@ export default {
           table_suffix: stages[1].table_suffix,
           tableOperations: stages[1].tableOperations,
           vikaMappings: stages[1].vikaMappings,
+          qingFlowMappings: stages[1].qingFlowMappings,
           tableNameTransform: stages[1].tableNameTransform,
           fieldsNameTransform: stages[1].fieldsNameTransform,
           field_process: stages[0].field_process,
@@ -1067,6 +1069,7 @@ export default {
         this.transferData.table_suffix = returnData.changNameData?.table_suffix
         this.transferData.tableOperations = returnData.changNameData?.tableOperations
         this.transferData.vikaMappings = returnData.changNameData?.vikaMappings
+        this.transferData.qingFlowMappings = returnData.changNameData?.qingFlowMappings
         this.transferData.tableNameTransform = returnData.changNameData?.tableNameTransform
         this.transferData.fieldsNameTransform = returnData.changNameData?.fieldsNameTransform
         let deleteLen = returnData.target.filter(v => !v.is_deleted)
@@ -1606,6 +1609,7 @@ export default {
           table_suffix: this.transferData.table_suffix,
           tableOperations: this.transferData.tableOperations,
           vikaMappings: this.transferData.vikaMappings,
+          qingFlowMappings: this.transferData.qingFlowMappings,
           tableNameTransform: this.transferData.tableNameTransform,
           fieldsNameTransform: this.transferData.fieldsNameTransform,
           type: 'database',
@@ -1705,6 +1709,7 @@ export default {
       this.transferData.fieldsNameTransform = data.fieldsNameTransform
       this.transferData.tableOperations = data.tableOperations
       this.transferData.vikaMappings = data.vikaMappings
+      this.transferData.qingFlowMappings = data.qingFlowMappings
     },
     selectRowFieldProcess(field_process) {
       this.transferData.field_process = field_process

@@ -213,6 +213,10 @@ export default {
     vikaMappings() {
       let stages = this.task?.stages || []
       return stages.find(t => !!t.inputLanes.length)?.vikaMappings || {}
+    },
+    qingFlowMappings() {
+      let stages = this.task?.stages || []
+      return stages.find(t => !!t.inputLanes.length)?.qingFlowMappings || {}
     }
   },
   watch: {
@@ -429,6 +433,8 @@ export default {
               let obj = Object.assign(item, item.statsData)
               if (obj.targetDatabaseType === 'vika') {
                 obj.targetTableName = this.vikaMappings[obj.sourceTableName]?.name
+              } else if (obj.targetDatabaseType === 'qingflow') {
+                obj.targetTableName = this.qingFlowMappings[obj.sourceTableName]?.appName
               }
               return obj
             })
