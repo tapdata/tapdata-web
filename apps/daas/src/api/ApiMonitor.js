@@ -14,10 +14,10 @@ export default class ApiMonitorAPI extends PublicApi {
   }
   apiList(params) {
     params = params || {}
-    return axios.get(this.url + '/apiList ', { params })
+    return axios.get(this.url + '/apiList', { params })
   }
   apiDetail(params) {
     params = params || {}
-    return axios.get(this.url + '/apiList ', { params })
+    return axios.get(this.url + '/apiDetail', { params })
   }
 }

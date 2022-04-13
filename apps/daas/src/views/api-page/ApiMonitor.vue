@@ -59,7 +59,7 @@
           </el-pagination>
         </div>
       </section>
-      <section class="flex flex-column bg-white api-monitor-card api-monitor__min__height mb-4 pl-5 pt-5">
+      <section class="flex flex-column bg-white api-monitor-card api-monitor__min__height mb-5 pl-5 pt-5">
         <header class="api-monitor-chart__text mb-2">API列表</header>
         <TablePage
           ref="table"
@@ -67,26 +67,22 @@
           class="data-flow-list"
           :remoteMethod="getApiList"
           :default-sort="{ prop: 'createTime', order: 'descending' }"
-          @sort-change="handleSortTable"
+          @expand-change="expandChange"
         >
           <template slot="search">
             <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
           </template>
+          <el-table-column type="expand" width="45">
+            <template slot-scope="scope">
+              <span>斤斤计较</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="name" label="API名称"> </el-table-column>
+          <el-table-column prop="status" label="API状态"> </el-table-column>
+          <el-table-column prop="visitLine" label="API访问行数"> </el-table-column>
+          <el-table-column prop="visitCount" label="API访问次数"> </el-table-column>
+          <el-table-column prop="transitQuantity" label="API访问传输量"> </el-table-column>
         </TablePage>
-        <TableList
-          :has-pagination="false"
-          :data="apiList"
-          :columns="apiListColumns"
-          height="100%"
-          ref="tableList"
-        ></TableList>
-        <el-pagination
-          layout="->,total, prev, next"
-          :current-page="page.apiListCurrent"
-          :total="page.apiListTotal"
-          @current-change="remoteFailedMethod"
-        >
-        </el-pagination>
       </section>
     </main>
   </section>
@@ -112,32 +108,6 @@ export default {
           prop: 'failed'
         }
       ],
-      apiListColumns: [
-        {
-          label: 'API ID',
-          prop: 'name'
-        },
-        {
-          label: 'API名称',
-          prop: 'name'
-        },
-        {
-          label: 'API状态',
-          prop: 'status'
-        },
-        {
-          label: 'API访问行数',
-          prop: 'visitLine'
-        },
-        {
-          label: 'API访问次数',
-          prop: 'visitCount'
-        },
-        {
-          label: 'API访问传输量',
-          prop: 'transitQuantity'
-        }
-      ],
       previewData: {},
       chartData: [],
       failRateList: [{ name: '1234567', failed: '85%' }],
@@ -155,6 +125,7 @@ export default {
       filterItems: [],
       searchParams: {
         keyword: '',
+        clientName: '',
         status: ''
       },
       statusOptions: [
@@ -167,7 +138,18 @@ export default {
   mounted() {
     this.getPreview()
     this.getList()
-    this.getApiList()
+    this.getFilterItems()
+    this.table.fetch(1)
+  },
+  watch: {
+    '$route.query'() {
+      this.table.fetch(1)
+    }
+  },
+  computed: {
+    table() {
+      return this.$refs.table
+    }
   },
   methods: {
     getPreview() {
@@ -201,6 +183,26 @@ export default {
           })
           this.page.failRateTotal = res.data.total
           this.failRateList = data || []
+        })
+        .catch(() => {
+          this.page.failRateTotal = 22
+          this.failRateList = [
+            {
+              name0: 0.55
+            },
+            {
+              name1: 0.55
+            },
+            {
+              name2: 0.55
+            },
+            {
+              name3: 0.55
+            },
+            {
+              name4: 0.55
+            }
+          ]
         })
     },
     getPieOption() {
@@ -313,7 +315,7 @@ export default {
       }
     },
     getApiList({ page }) {
-      let { apiListCurrent, size } = page
+      let { current } = page
 
       let { keyword, status } = this.searchParams
 
@@ -326,8 +328,8 @@ export default {
       }
       let filter = {
         order: 'createTime DESC',
-        limit: size,
-        skip: (apiListCurrent - 1) * size,
+        limit: 5,
+        skip: (current - 1) * 5,
         where
       }
       return this.$api('ApiMonitor')
@@ -336,7 +338,7 @@ export default {
         })
         .then(res => {
           let data = res.data
-          this.apiList = res.data
+          this.apiList = data.items
           return {
             total: data.total,
             data: data.items
@@ -354,9 +356,9 @@ export default {
         },
         {
           label: this.$t('task_list_sync_type'),
-          key: 'progress',
+          key: 'clientName',
           type: 'select-inner',
-          items: this.progressOptions
+          items: this.statusOptions
         },
         {
           placeholder: this.$t('task_list_search_placeholder'),
@@ -364,6 +366,17 @@ export default {
           type: 'input'
         }
       ]
+    },
+    expandChange(row, expandRows) {
+      if (expandRows.length > 1) {
+        this.apiList.forEach(expandrow => {
+          if (row.id !== expandrow.id) {
+            //这里需要判断一下展开行的length>1
+            // toggleRowExpansion 设置是否展开，true则展开
+            this.$refs.table.toggleRowExpansion(expandrow, false)
+          }
+        })
+      }
     },
     remoteFailedMethod({ page }) {
       let { failRateCurrent, size } = page
