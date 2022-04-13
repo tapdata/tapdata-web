@@ -45,9 +45,6 @@ export function hasPermissionByCode(code) {
 }
 
 export function permissionBtnDisable(code, id) {
-  if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-    return false
-  }
   let falg = false
   let cookie = window.VueCookie
   let user_id = cookie.get('user_id')
