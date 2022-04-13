@@ -4,6 +4,7 @@ import FastDownload from '@/views/agent-download/FastDownload.vue'
 import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
 import ContactUs from '@/views/ContactUs'
 import i18n from '@/i18n'
+import Lang from '../views/Lang.vue'
 
 const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/Form.vue')
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/connection/Form.vue')
@@ -293,5 +294,12 @@ const routes = [
     component: DagEditor
   }
 ]
+if (process.env.NODE_ENV === 'development') {
+  routes[0].children?.push({
+    path: '/lang',
+    name: 'lang',
+    component: Lang
+  })
+}
 
 export default routes
