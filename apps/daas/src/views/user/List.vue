@@ -242,7 +242,7 @@ export default {
       activePanel: 'all',
       muneList: [
         { name: this.$t('user_list_all'), key: 'all' },
-        { name: this.$t('user_status_notActivated'), key: ' notActivated', count: 0 },
+        { name: this.$t('user_status_notActivated'), key: 'notActivated', count: 0 },
         { name: this.$t('user_status_notVerified'), key: 'notVerified', count: 0 },
         { name: this.$t('user_status_rejected'), key: 'rejected', count: 0 }
       ],

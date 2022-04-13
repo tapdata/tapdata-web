@@ -1154,6 +1154,8 @@ export default {
   migrate_select_table_tip:
     ' 用户可以点击中间向右的箭头按钮勾选源端待同步表，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输）',
   migrate_same_connection_message: '源端、目标端选择了相同连接',
+  migrate_no_progress_statistics_yet: '暂无进度统计信息',
+  migrate_no_latency_statistics_yet: '暂无延迟统计信息',
 
   // 函数管理
   function_tips_empty: '代码缺少JS函数',
