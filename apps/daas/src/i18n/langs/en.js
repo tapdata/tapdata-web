@@ -151,6 +151,7 @@ export default {
   page_title_api_servers: 'API Servers',
   page_title_api_stat: 'API statistics',
   page_title_api_audit: 'API Audit',
+  page_title_api_audit_details: 'Details',
   page_title_api_monitor: 'API monitor',
   page_title_system: 'System',
   page_title_data_metadata: 'Metadata',

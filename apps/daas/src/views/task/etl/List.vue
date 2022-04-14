@@ -908,7 +908,6 @@ export default {
     },
     forceStop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('force_stop', ids.length > 1, item.name)
-      debugger
       this.$confirm(msgObj.msg, '', {
         type: 'warning',
         showClose: false

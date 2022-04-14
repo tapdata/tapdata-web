@@ -148,6 +148,7 @@ export default {
   page_title_api_servers: 'API服务器',
   page_title_api_stat: 'API统计',
   page_title_api_audit: 'API审计',
+  page_title_api_audit_details: '详情',
   page_title_api_monitor: 'API监控',
   page_title_system: '系统管理',
   page_title_data_metadata: '元数据管理',
@@ -491,6 +492,14 @@ export default {
   apiaudit_interview_time: '访问时间',
   apiaudit_visit_result: '访问结果',
   apiaudit_reason_fail: '失败原因',
+  apiaudit_log_info: '日志详情',
+  apiaudit_parameter: '参数',
+  apiaudit_link: '链接',
+  apiaudit_access_records: '访问记录数',
+  apiaudit_access_bandwidth: 'API 访问带宽（M)',
+  apiaudit_average_access_rate: 'API 平均访问速率（M/S)',
+  apiaudit_access_time: '访问耗时',
+  apiaudit_average_response_time: '平均响应时长',
 
   // 数据源
   connection_form_tidb_server: 'PDServer 地址',
