@@ -40,7 +40,7 @@
         <div class="flex text-center bg-color-main w-100 h-100">
           <div class="box py-3">
             <div class="title fs-7 font-color-normal">{{ $t('share_detail_incremental_play') }}</div>
-            <div class="time py-4 fs-2 text-primary">{{ replicateLag }}</div>
+            <div class="time py-4 fs-2 text-primary">{{ getReplicateLagTime(replicateLag) }}</div>
             <div class="text-muted font-color-sub fs-8" v-if="detailData.cdcTime">
               {{ $t('share_detail_incremental_time') }}：{{ formatTime(detailData.cdcTime) }}
             </div>
@@ -462,6 +462,14 @@ export default {
     changeTimeRangeFnc() {
       this.getMeasurement()
       //this.resetTimer()
+    },
+    getReplicateLagTime(val) {
+      if (val < 1000) {
+        return '<1' + this.$t('task_info_s')
+      } else if (val > 24 * 60 * 60 * 1000) {
+        return '>1' + this.$t('task_info_d')
+      }
+      return formatMs(val, 'time')
     },
     getTableNames() {
       let filter = {
