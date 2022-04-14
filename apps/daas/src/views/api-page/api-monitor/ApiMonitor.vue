@@ -45,13 +45,14 @@
           <TableList
             height="100%"
             ref="failRateList"
+            v-loading="loadingFailRateList"
             :has-pagination="false"
             :data="failRateList"
             :columns="columns"
           ></TableList>
           <el-pagination
             layout="->,total, prev, next"
-            :current-page="page.failRateCurrent"
+            :current-page.sync="page.failRateCurrent"
             :total="page.failRateTotal"
             @current-change="remoteFailedMethod"
           >
@@ -60,15 +61,16 @@
         <div class="flex flex-column flex-1 bg-white api-monitor-card api-monitor__min__height mr-5 pl-5 pt-5">
           <div class="api-monitor-chart__text mb-2">api响应时间TOP排序</div>
           <TableList
+            height="100%"
+            v-loading="loadingTimeList"
             :has-pagination="false"
             :data="consumingTimeList"
             :columns="columns"
-            height="100%"
             ref="consumingTimeList"
           ></TableList>
           <el-pagination
             layout="->,total, prev, next"
-            :current-page="page.consumingTimeCurrent"
+            :current-page.sync="page.consumingTimeCurrent"
             :total="page.consumingTimeTotal"
             @current-change="consumingMethod"
           >
@@ -82,6 +84,7 @@
           ref="table"
           row-key="id"
           class="data-flow-list"
+          v-loading="loadingApiList"
           :data="apiList"
           :default-sort="{ prop: 'createTime', order: 'descending' }"
           @expand-change="expandChange"
@@ -103,6 +106,7 @@
         </el-table>
         <el-pagination
           layout="->, total, prev, pager, next"
+          :page-size="5"
           :current-page.sync="page.apiListCurrent"
           :total="page.apiListTotal"
           @current-change="getApiList"
@@ -123,6 +127,9 @@ export default {
   components: { Chart, TableList, FilterBar, Detail },
   data() {
     return {
+      loadingTimeList: false,
+      loadingApiList: false,
+      loadingFailRateList: false,
       columns: [
         {
           label: 'Api ID',
@@ -153,7 +160,7 @@ export default {
         clientName: '',
         status: ''
       },
-      clientNameList: ['cli1', 'cli2', 'cli3'],
+      clientNameList: [],
       statusOptions: [
         { label: this.$t('task_list_status_all'), value: '' },
         { label: '已发布', value: 'active' },
@@ -162,12 +169,12 @@ export default {
     }
   },
   created() {
-    this.getFilterItems()
     let { status } = this.$route.query
     this.searchParams.status = status ?? ''
   },
   mounted() {
     this.getPreview()
+    this.getClientName()
     this.remoteFailedMethod()
     this.consumingMethod()
     this.getApiList(1)
@@ -184,6 +191,25 @@ export default {
         .preview()
         .then(res => {
           this.previewData = res.data
+        })
+    },
+    //获取所有客户端
+    getClientName() {
+      this.$api('ApiMonitor')
+        .apiClientName()
+        .then(res => {
+          //重组数据
+          let data = res.data
+          if (data?.length > 0) {
+            for (let i = 0; i < data.length; i++) {
+              let obj = {
+                label: data[i].name,
+                value: data[i].id
+              }
+              this.clientNameList.push(obj)
+            }
+          }
+          this.getFilterItems()
         })
     },
     //图表数据组装
@@ -231,7 +257,7 @@ export default {
         where.status = status
       }
       if (clientName) {
-        where.clientName = clientName
+        where.clientId = clientName
       }
       let filter = {
         order: 'createTime DESC',
@@ -239,6 +265,7 @@ export default {
         skip: (apiListCurrent - 1) * 5,
         where
       }
+      this.loadingApiList = true
       return this.$api('ApiMonitor')
         .apiList({
           filter: JSON.stringify(filter)
@@ -247,6 +274,9 @@ export default {
           let data = res.data
           this.apiList = data.items
           this.page.apiListTotal = data.total
+        })
+        .finally(() => {
+          this.loadingApiList = false
         })
     },
     //api 列表筛选
@@ -295,6 +325,7 @@ export default {
         limit: size,
         skip: size * (failRateCurrent - 1)
       }
+      this.loadingFailRateList = true
       this.$api('ApiMonitor')
         .rankLists({
           filter: JSON.stringify(filter)
@@ -312,6 +343,9 @@ export default {
           this.page.failRateTotal = res.data.total
           this.failRateList = data || []
         })
+        .finally(() => {
+          this.loadingFailRateList = false
+        })
     },
     //响应时间排行榜
     consumingMethod() {
@@ -323,6 +357,7 @@ export default {
         limit: size,
         skip: size * (consumingTimeCurrent - 1)
       }
+      this.loadingTimeList = true
       this.$api('ApiMonitor')
         .rankLists({
           filter: JSON.stringify(filter)
@@ -339,6 +374,9 @@ export default {
           })
           this.page.consumingTimeTotal = res.data.total
           this.consumingTimeList = data || []
+        })
+        .finally(() => {
+          this.loadingTimeList = false
         })
     },
     //单位换算

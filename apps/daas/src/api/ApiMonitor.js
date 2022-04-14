@@ -17,7 +17,9 @@ export default class ApiMonitorAPI extends PublicApi {
     return axios.get(this.url + '/apiList', { params })
   }
   apiDetail(params) {
-    params = params || {}
-    return axios.get(this.url + '/apiDetail', { params })
+    return axios.post(this.url + '/apiDetail', params)
+  }
+  apiClientName() {
+    return axios.get('/api/ApiCalls/findClients')
   }
 }

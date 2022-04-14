@@ -1,32 +1,32 @@
 <template>
-  <section class="api-monitor-detail-wrap flex flex-direction">
+  <section class="api-monitor-detail-wrap flex flex-direction" v-loading="loadingDetail">
     <div class="flex-direction flex-1 pt-5">
       <div class="flex flex-direction flex-1">
         <div class="flex-1">
           <div class="api-monitor-detail-wrap__text">API访问次数</div>
-          <div class="api-monitor-detail-wrap__value">600</div>
+          <div class="api-monitor-detail-wrap__value">{{ detail.visitTotalCount || 0 }}</div>
         </div>
         <div class="flex-1">
-          <div class="api-monitor-detail-wrap__text">API访问次数</div>
-          <div class="api-monitor-detail-wrap__value">600</div>
+          <div class="api-monitor-detail-wrap__text">API传输量</div>
+          <div class="api-monitor-detail-wrap__value">{{ detail.visitQuantity || 0 }}</div>
         </div>
         <div class="flex-1">
-          <div class="api-monitor-detail-wrap__text">API访问次数</div>
-          <div class="api-monitor-detail-wrap__value">600</div>
+          <div class="api-monitor-detail-wrap__text">API访问耗时</div>
+          <div class="api-monitor-detail-wrap__value">{{ detail.timeConsuming || 0 }}</div>
         </div>
       </div>
       <div class="flex flex-direction flex-1 pb-5">
         <div class="flex-1">
-          <div class="api-monitor-detail-wrap__text">API访问次数</div>
-          <div class="api-monitor-detail-wrap__value">600</div>
+          <div class="api-monitor-detail-wrap__text">API访问行数</div>
+          <div class="api-monitor-detail-wrap__value">{{ detail.visitTotalLine || 0 }}</div>
         </div>
         <div class="flex-1">
-          <div class="api-monitor-detail-wrap__text">API访问次数</div>
-          <div class="api-monitor-detail-wrap__value">600</div>
+          <div class="api-monitor-detail-wrap__text">API传输速率</div>
+          <div class="api-monitor-detail-wrap__value">{{ detail.speed || 0 }}</div>
         </div>
         <div class="flex-1">
-          <div class="api-monitor-detail-wrap__text">API访问次数</div>
-          <div class="api-monitor-detail-wrap__value">600</div>
+          <div class="api-monitor-detail-wrap__text">API响应时间</div>
+          <div class="api-monitor-detail-wrap__value">{{ detail.responseTime || 0 }}</div>
         </div>
       </div>
     </div>
@@ -36,8 +36,8 @@
     <div class="flex-1 pt-5">
       <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
       <div style="margin: 15px 0"></div>
-      <el-checkbox-group v-model="clientName">
-        <el-checkbox v-for="item in clientNameList" :key="item" :label="item"></el-checkbox>
+      <el-checkbox-group v-model="clientName" @change="handleCheckedCitiesChange">
+        <el-checkbox v-for="item in clientNameList" :key="item.id" :label="item.id">{{ item.name }}</el-checkbox>
       </el-checkbox-group>
     </div>
   </section>
@@ -51,6 +51,7 @@ export default {
   props: ['id'],
   data() {
     return {
+      detail: '',
       filterItems: [],
       searchParams: {
         guanluary: 5,
@@ -68,10 +69,17 @@ export default {
         { label: '30分钟', value: 30 },
         { label: '60分钟', value: 60 }
       ],
-      clientName: '',
+      allElection: [],
+      clientName: [],
       checkAll: false,
       isIndeterminate: true,
-      clientNameList: ['cli1', 'cli2', 'cli3']
+      loadingDetail: false,
+      clientNameList: [
+        {
+          name: 'Data Explorer',
+          id: '5c0e750b7a5cd42464a5099d'
+        }
+      ]
     }
   },
   created() {
@@ -79,6 +87,7 @@ export default {
   },
   mounted() {
     this.getDetail()
+    this.allElectionFun()
   },
   watch: {
     '$route.query'() {
@@ -87,22 +96,23 @@ export default {
   },
   methods: {
     getDetail() {
-      let filter = {
-        where: {
-          id: this.id,
-          guanluary: 5,
-          start: new Date().getTime(),
-          type: 'visitTotalLine'
-        }
+      let data = {
+        id: this.id,
+        guanluary: this.searchParams.guanluary || 5,
+        clientId: [],
+        start: new Date().getTime(),
+        type: this.searchParams.type || 'visitTotalLine'
       }
+      this.loadingDetail = true
       this.$api('ApiMonitor')
-        .apiDetail({
-          filter: JSON.stringify(filter)
-        })
+        .apiDetail(data)
         .then(res => {
-          let data = res.data
-          this.apiList = data.items
-          this.page.apiListTotal = data.total
+          this.detail = res.data
+          //全选值
+          this.allElectionFun()
+        })
+        .finally(() => {
+          this.loadingDetail = false
         })
     },
     getFilterItems() {
@@ -122,9 +132,22 @@ export default {
         }
       ]
     },
-    handleCheckAllChange() {
-      //全选
+    handleCheckAllChange(val) {
+      this.clientName = val ? this.allElection : []
       this.isIndeterminate = false
+    },
+    //选择所有
+    allElectionFun() {
+      for (var i = 0; i < this.clientNameList.length; i++) {
+        this.allElection.push(this.clientNameList[i].id)
+      }
+    },
+    handleCheckedCitiesChange(value) {
+      let checkedCount = value.length
+      this.checkAll = checkedCount === this.clientNameList.length
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.clientNameList.length
+      //刷新数据
+      this.getDetail()
     }
   }
 }
