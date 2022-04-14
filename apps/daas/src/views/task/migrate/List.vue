@@ -107,7 +107,14 @@
       <!-- <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column> -->
       <el-table-column prop="status" :label="$t('task_list_status')" width="180">
         <template #default="{ row }">
-          <span :class="['status-' + row.statusResult[0].status, 'status-block', 'mr-2']">
+          <!--调度失败任务 统一归类为error-->
+          <span
+            v-if="row.statusResult[0].status === 'schedule_failed'"
+            :class="['status-error', 'status-block', 'mr-2']"
+          >
+            {{ $t('task_preview_status_error') }}
+          </span>
+          <span v-else :class="['status-' + row.statusResult[0].status, 'status-block', 'mr-2']">
             {{ $t('task_preview_status_' + row.statusResult[0].status) }}
           </span>
           <span v-if="row.transformStatus && row.transformStatus === 'running'">

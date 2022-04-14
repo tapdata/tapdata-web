@@ -40,7 +40,7 @@
         <div class="flex text-center bg-color-main w-100 h-100">
           <div class="box py-3">
             <div class="title fs-7 font-color-normal">{{ $t('share_detail_incremental_play') }}</div>
-            <div class="time py-4 fs-2 text-primary">{{ replicateLag }}</div>
+            <div class="time py-4 fs-2 text-primary">{{ formatMs(replicateLag) }}</div>
             <div class="text-muted font-color-sub fs-8" v-if="detailData.cdcTime">
               {{ $t('share_detail_incremental_time') }}：{{ formatTime(detailData.cdcTime) }}
             </div>
@@ -519,7 +519,7 @@ export default {
       }
     }
     .share-detail-head-right {
-      width: 240px;
+      width: 280px;
       align-items: center;
       overflow: hidden;
       & > div {
