@@ -709,8 +709,6 @@ export default {
               this.model.qingflowTagName = ''
             }
           })
-        } else {
-
         }
       }
     },
