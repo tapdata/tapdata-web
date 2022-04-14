@@ -9,13 +9,15 @@ export const FormFlex = defineComponent({
   },
   setup(props, { attrs, slots }) {
     return () => {
-      const classList = [{
-        [`align-items-${props.align}`]: props.align,
-        [`align-content-${props.alignContent}`]: props.alignContent,
-        [`justify-${props.justify}`]: props.justify,
-      }]
+      const classList = [
+        {
+          [`align-items-${props.align}`]: props.align,
+          [`align-content-${props.alignContent}`]: props.alignContent,
+          [`justify-${props.justify}`]: props.justify
+        }
+      ]
       return (
-        <div staticClass="flex" class={classList} attrs={attrs} style={{gap: `${props.gap}px`}}>
+        <div staticClass="flex" class={classList} attrs={attrs} style={{ gap: `${props.gap}px` }}>
           {slots.default?.()}
         </div>
       )
