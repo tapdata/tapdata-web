@@ -13,21 +13,21 @@ export default function (vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: vm.$t('dataForm.form.connectionType'),
+        label: vm.$t('dataForm_form_connectionType'),
         options: [
           {
-            label: vm.$t('dataForm.form.options.sourceAndTarget'),
-            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+            label: vm.$t('dataForm_form_options_sourceAndTarget'),
+            tip: vm.$t('dataForm_form_options_sourceAndTargetTips'),
             value: 'source_and_target'
           },
           {
-            label: vm.$t('dataForm.form.options.source'),
-            tip: vm.$t('dataForm.form.options.sourceTips'),
+            label: vm.$t('dataForm_form_options_source'),
+            tip: vm.$t('dataForm_form_options_sourceTips'),
             value: 'source'
           },
           {
-            label: vm.$t('dataForm.form.options.target'),
-            tip: vm.$t('dataForm.form.options.targetTips'),
+            label: vm.$t('dataForm_form_options_target'),
+            tip: vm.$t('dataForm_form_options_targetTips'),
             value: 'target'
           }
         ],
@@ -40,14 +40,14 @@ export default function (vm) {
       {
         type: 'input',
         field: 'kafkaBootstrapServers',
-        label: vm.$t('dataForm.form.host'),
+        label: vm.$t('dataForm_form_host'),
         required: true,
         tip: vm.$t('connection_form_kafka_host_tip'),
         rules: [
           {
             validator(rule, value, callback) {
               if (!value || !value.trim()) {
-                callback(new Error(vm.$t('dataForm.error.noneHost')))
+                callback(new Error(vm.$t('dataForm_error_noneHost')))
               } else {
                 callback()
               }
@@ -58,14 +58,14 @@ export default function (vm) {
       {
         type: 'input',
         field: 'kafkaPatternTopics',
-        label: vm.$t('dataForm.form.kafka.topicExpression'),
+        label: vm.$t('dataForm_form_kafka_topicExpression'),
         show: true,
         required: true
       },
       {
         type: 'input',
         field: 'database_username',
-        label: vm.$t('dataForm.form.userName'),
+        label: vm.$t('dataForm_form_userName'),
         show: true,
         dependOn: [
           {
@@ -84,7 +84,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'plain_password',
-        label: vm.$t('dataForm.form.password'),
+        label: vm.$t('dataForm_form_password'),
         domType: 'password',
         showPassword: true,
         show: true,
@@ -106,7 +106,7 @@ export default function (vm) {
         type: 'switch', // 忽略非JSON Object格式消息
         field: 'kafkaIgnoreInvalidRecord',
         customClass: 'large-item',
-        label: vm.$t('dataForm.form.kafka.lonoreFormat'),
+        label: vm.$t('dataForm_form_kafka_lonoreFormat'),
         show: true,
         tip: vm.$t('connection_form_kafka_lonore_format_tip'),
         dependOn: [
@@ -126,13 +126,13 @@ export default function (vm) {
       {
         type: 'select', //ACK确认机制
         field: 'kafkaAcks',
-        label: vm.$t('dataForm.form.kafka.kafkaAcks'),
+        label: vm.$t('dataForm_form_kafka_kafkaAcks'),
         show: true,
         options: [
-          { label: vm.$t('dataForm.form.kafka.kafkaAcks0'), value: '0' },
-          { label: vm.$t('dataForm.form.kafka.kafkaAcks1'), value: '1' },
-          { label: vm.$t('dataForm.form.kafka.kafkaAcks_1'), value: '-1' },
-          { label: vm.$t('dataForm.form.kafka.kafkaAcksAll'), value: 'all' }
+          { label: vm.$t('dataForm_form_kafka_kafkaAcks0'), value: '0' },
+          { label: vm.$t('dataForm_form_kafka_kafkaAcks1'), value: '1' },
+          { label: vm.$t('dataForm_form_kafka_kafkaAcks_1'), value: '-1' },
+          { label: vm.$t('dataForm_form_kafka_kafkaAcksAll'), value: 'all' }
         ],
         dependOn: [
           {
@@ -151,7 +151,7 @@ export default function (vm) {
       {
         type: 'select', //消息压缩类型
         field: 'kafkaCompressionType',
-        label: vm.$t('dataForm.form.kafka.kafkaCompressionType'),
+        label: vm.$t('dataForm_form_kafka_kafkaCompressionType'),
         show: true,
         options: [
           { label: 'gzip', value: 'gzip' },
@@ -176,7 +176,7 @@ export default function (vm) {
       {
         type: 'switch', //是否忽略推送消息异常,
         field: 'kafkaIgnorePushError',
-        label: vm.$t('dataForm.form.kafka.kafkaIgnorePushError'),
+        label: vm.$t('dataForm_form_kafka_kafkaIgnorePushError'),
         show: true,
         customClass: 'large-item',
         tip: vm.$t('connection_form_kafka_ignore_push_error_tip'),

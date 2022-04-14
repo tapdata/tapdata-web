@@ -17,7 +17,7 @@
       :props="{ key: 'key' }"
       :item-size="30"
       :titles="titles"
-      :filter-placeholder="$t('editor.cell.link.searchContent')"
+      :filter-placeholder="$t('editor_cell_link_searchContent')"
       :data="sourceData"
       class="transfer-buttons-horizontal"
       filterable
@@ -38,7 +38,7 @@
       :data="sourceData"
       :top-value.sync="transferData.topicData"
       :bottom-value.sync="transferData.queueData"
-      :filter-placeholder="$t('editor.cell.link.searchContent')"
+      :filter-placeholder="$t('editor_cell_link_searchContent')"
       filterable
       @change="handleChangeTransfer"
     >
@@ -66,8 +66,8 @@ export default {
     return {
       transferLoading: false,
       sourceData: [],
-      titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')],
-      mqTitles: [this.$t('editor.cell.link.migrationObjece'), 'Topic', 'Queue'],
+      titles: [this.$t('editor_cell_link_migrationObjece'), this.$t('editor_cell_link_chosen')],
+      mqTitles: [this.$t('editor_cell_link_migrationObjece'), 'Topic', 'Queue'],
       type: '',
       progress: 0,
       showProgress: '',
@@ -154,10 +154,10 @@ export default {
     async reload() {
       this.$checkAgentStatus(() => {
         let config = {
-          title: this.$t('connection.reloadTittle'),
-          Message: this.$t('connection.reloadMsg'),
-          confirmButtonText: this.$t('message.confirm'),
-          cancelButtonText: this.$t('message.cancel'),
+          title: this.$t('connection_reloadTittle'),
+          Message: this.$t('connection_reloadMsg'),
+          confirmButtonText: this.$t('message_confirm'),
+          cancelButtonText: this.$t('message_cancel'),
           id: this.sourceId
         }
         this.$confirm(config.Message + '?', config.title, {

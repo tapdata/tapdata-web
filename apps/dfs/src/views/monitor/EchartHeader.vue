@@ -18,10 +18,10 @@
       :class="data.class"
       @change="changeFnc"
     >
-      <ElRadioButton v-if="!this.data.hideSecond" label="second">{{ $t('dataFlow.second') }}</ElRadioButton>
-      <ElRadioButton label="minute">{{ $t('dataFlow.min') }}</ElRadioButton>
-      <ElRadioButton label="hour">{{ $t('dataFlow.hour') }}</ElRadioButton>
-      <ElRadioButton label="day">{{ $t('dataFlow.day') }}</ElRadioButton>
+      <ElRadioButton v-if="!this.data.hideSecond" label="second">{{ $t('dataFlow_second') }}</ElRadioButton>
+      <ElRadioButton label="minute">{{ $t('dataFlow_min') }}</ElRadioButton>
+      <ElRadioButton label="hour">{{ $t('dataFlow_hour') }}</ElRadioButton>
+      <ElRadioButton label="day">{{ $t('dataFlow_day') }}</ElRadioButton>
     </ElRadioGroup>
   </div>
 </template>

@@ -21,35 +21,16 @@ export default {
   },
   watch: {
     databaseType(v) {
-      if (v === 'hazelcast_cloud_cluster') {
-        this.getHtmlMD('en_hazelcast_cloud_cluster')
-        return
-      }
       this.getHtmlMD(v)
-      // if (this.lang === 'en') {
-      //   this.getHtmlMD('en_' + v)
-      //   return
-      // } else {
-      //   this.getHtmlMD(v)
-      // }
     }
   },
   mounted() {
-    // if (this.lang === 'en') {
-    //   this.getHtmlMD('en_' + this.databaseType)
-    //   return
-    // } else {
-    //   this.getHtmlMD(this.databaseType)
-    // }
-    if (this.databaseType === 'hazelcast_cloud_cluster') {
-      this.getHtmlMD('en_hazelcast_cloud_cluster')
-      return
-    }
     this.getHtmlMD(this.databaseType)
   },
   methods: {
     getHtmlMD(type) {
-      this.htmlMD = require(`@/assets/md/connection/${type.toLowerCase()}.md`)
+      let locale = this.$i18n.locale || 'zh-CN'
+      this.htmlMD = require(`@/assets/md/${locale}/connection/${type.toLowerCase()}.md`)
     }
   }
 }

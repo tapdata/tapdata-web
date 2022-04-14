@@ -117,9 +117,9 @@
         </UploadFile>
       </div>
       <div class="mt-6 text-center">
-        <VButton @click="dialogObj.avatar = false">{{ $t('dataVerify.cancel') }}</VButton>
+        <VButton @click="dialogObj.avatar = false">{{ $t('dataVerify_cancel') }}</VButton>
         <VButton type="primary" :disabled="avatarDisabled()" auto-loading @click="avatarConfirm(arguments[0])">{{
-          $t('dataVerify.confirm')
+          $t('dataVerify_confirm')
         }}</VButton>
       </div>
     </ElDialog>
@@ -167,9 +167,9 @@
       </ElForm>
 
       <span slot="footer" class="dialog-footer">
-        <VButton @click="dialogObj.password = false">{{ $t('dataVerify.cancel') }}</VButton>
+        <VButton @click="dialogObj.password = false">{{ $t('dataVerify_cancel') }}</VButton>
         <VButton type="primary" auto-loading @click="passwordConfirm(arguments[0])" @>{{
-          $t('dataVerify.confirm')
+          $t('dataVerify_confirm')
         }}</VButton>
       </span>
     </ElDialog>
@@ -198,9 +198,9 @@
       </ElForm>
 
       <span slot="footer" class="dialog-footer">
-        <VButton @click="dialogObj.bindPhone = false">{{ $t('dataVerify.cancel') }}</VButton>
+        <VButton @click="dialogObj.bindPhone = false">{{ $t('dataVerify_cancel') }}</VButton>
         <VButton type="primary" :disabled="!phoneForm.oldCode" auto-loading @click="bindPhoneConfirm(arguments[0])">{{
-          $t('dataVerify.confirm')
+          $t('dataVerify_confirm')
         }}</VButton>
       </span>
     </ElDialog>
@@ -242,9 +242,9 @@
       </ElForm>
 
       <span slot="footer" class="dialog-footer">
-        <VButton @click="dialogObj.editPhone = false">{{ $t('dataVerify.cancel') }}</VButton>
+        <VButton @click="dialogObj.editPhone = false">{{ $t('dataVerify_cancel') }}</VButton>
         <VButton type="primary" :disabled="editPhoneDisabled()" auto-loading @click="editPhoneConfirm(arguments[0])">{{
-          $t('dataVerify.confirm')
+          $t('dataVerify_confirm')
         }}</VButton>
       </span>
     </ElDialog>
@@ -286,13 +286,13 @@
       </ElForm>
 
       <span slot="footer" class="dialog-footer">
-        <VButton @click="dialogObj.bindEmail = false">{{ $t('dataVerify.cancel') }}</VButton>
+        <VButton @click="dialogObj.bindEmail = false">{{ $t('dataVerify_cancel') }}</VButton>
         <VButton
           type="primary"
           :disabled="!emailForm.email || !emailForm.code"
           auto-loading
           @click="bindEmailConfirm(arguments[0])"
-          >{{ $t('dataVerify.confirm') }}</VButton
+          >{{ $t('dataVerify_confirm') }}</VButton
         >
       </span>
     </ElDialog>
@@ -334,9 +334,9 @@
       </ElForm>
 
       <span slot="footer" class="dialog-footer">
-        <VButton @click="dialogObj.editEmail = false">{{ $t('dataVerify.cancel') }}</VButton>
+        <VButton @click="dialogObj.editEmail = false">{{ $t('dataVerify_cancel') }}</VButton>
         <VButton type="primary" :disabled="editEmailDisabled()" auto-loading @click="editEmailConfirm(arguments[0])">{{
-          $t('dataVerify.confirm')
+          $t('dataVerify_confirm')
         }}</VButton>
       </span>
     </ElDialog>

@@ -80,10 +80,10 @@
           <EchartHeader :data="throughputObj.title" @change="changeHeaderFnc"></EchartHeader>
           <div class="floatLayer">
             <span style="background-color: rgba(72, 182, 226, 0.3); color: #409eff"
-              >{{ $t('dataFlow.input') }}:<span class="ml-1">{{ throughputObj.input }}</span></span
+              >{{ $t('dataFlow_input') }}:<span class="ml-1">{{ throughputObj.input }}</span></span
             >
             <span style="background-color: rgba(98, 165, 105, 0.3); color: #62a569"
-              >{{ $t('dataFlow.output') }}:<span class="ml-1">{{ throughputObj.output }}</span></span
+              >{{ $t('dataFlow_output') }}:<span class="ml-1">{{ throughputObj.output }}</span></span
             >
           </div>
           <Chart v-if="throughputObj.body" :extend="throughputObj.body" class="v-echart"></Chart>
@@ -92,7 +92,7 @@
           <EchartHeader :data="transfObj.title" @change="changeHeaderFnc"></EchartHeader>
           <div class="floatLayer">
             <span style="background-color: rgba(251, 142, 0, 0.3); color: #fb8e00"
-              >{{ $t('dataFlow.current') }}:<span class="ml-1">{{ transfObj.value }}</span></span
+              >{{ $t('dataFlow_current') }}:<span class="ml-1">{{ transfObj.value }}</span></span
             >
           </div>
           <Chart v-if="transfObj.body" :extend="transfObj.body" class="v-echart"></Chart>
@@ -101,7 +101,7 @@
           <EchartHeader :data="replicateObj.title" @change="changeHeaderFnc"></EchartHeader>
           <div class="floatLayer">
             <span style="background-color: rgba(7245, 108, 108, 0.3); color: #f56c6c"
-              >{{ $t('dataFlow.current') }}:<span class="ml-1">{{ replicateObj.value }}</span></span
+              >{{ $t('dataFlow_current') }}:<span class="ml-1">{{ replicateObj.value }}</span></span
             >
           </div>
           <Chart v-if="replicateObj.body" :extend="replicateObj.body" class="v-echart"></Chart>
@@ -162,7 +162,7 @@ export default {
         title: {
           key: 'overview',
           statsType: 'data_overview',
-          title: this.$t('dataFlow.dataScreening'),
+          title: this.$t('dataFlow_dataScreening'),
           classFlex: true,
           loading: false
         },
@@ -174,8 +174,8 @@ export default {
           key: 'throughput',
           statsType: 'throughput',
           time: 'minute',
-          title: this.$t('dataFlow.inputOutput'),
-          tip: this.$t('dataFlow.throughputpop'),
+          title: this.$t('dataFlow_inputOutput'),
+          tip: this.$t('dataFlow_throughputpop'),
           unit: 'QPS',
           class: 'putColor',
           classFlex: true,
@@ -191,8 +191,8 @@ export default {
           key: 'transf',
           statsType: 'trans_time',
           time: 'minute',
-          title: this.$t('dataFlow.transf'),
-          tip: this.$t('dataFlow.transtime_pop'),
+          title: this.$t('dataFlow_transf'),
+          tip: this.$t('dataFlow_transtime_pop'),
           unit: this.$t('task_monitor_unit_row'),
           class: 'transfColor',
           classFlex: true,
@@ -207,8 +207,8 @@ export default {
           key: 'replicate',
           statsType: 'repl_lag',
           time: 'minute',
-          title: this.$t('dataFlow.replicate'),
-          tip: this.$t('dataFlow.replicate_pop'),
+          title: this.$t('dataFlow_replicate'),
+          tip: this.$t('dataFlow_replicate_pop'),
           unit: this.$t('task_monitor_unit_second'),
           class: 'transfColor',
           classFlex: 'flex',
@@ -311,11 +311,11 @@ export default {
             show: false
           },
           data: [
-            this.$t('dataFlow.totalOutput'),
-            this.$t('dataFlow.totalInput'),
-            this.$t('dataFlow.totalInsert'),
-            this.$t('dataFlow.totalUpdate'),
-            this.$t('dataFlow.totalDelete')
+            this.$t('dataFlow_totalOutput'),
+            this.$t('dataFlow_totalInput'),
+            this.$t('dataFlow_totalInsert'),
+            this.$t('dataFlow_totalUpdate'),
+            this.$t('dataFlow_totalDelete')
           ],
           axisPointer: {
             type: 'shadow'
@@ -414,7 +414,7 @@ export default {
         },
         series: [
           {
-            name: this.$t('dataFlow.input'),
+            name: this.$t('dataFlow_input'),
             type: 'line',
             smooth: true,
             data: inputCountList,
@@ -426,7 +426,7 @@ export default {
             }
           },
           {
-            name: this.$t('dataFlow.output'),
+            name: this.$t('dataFlow_output'),
             type: 'line',
             smooth: true,
             data: outputCountList,

@@ -1434,7 +1434,7 @@ export default {
       let exist = false
       let filterData = this.target.filter(v => value === v.field_name && !v.is_deleted && table_name === v.table_name)
       if (filterData.length > 0) {
-        this.$message.error(value + this.$t('message.exists_name'))
+        this.$message.error(value + this.$t('message_exists_name'))
         exist = true
       }
       return exist

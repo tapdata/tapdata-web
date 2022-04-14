@@ -65,7 +65,7 @@
               :config="config"
               @value-change="formChange"
             >
-              <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
+              <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm_form_uriTips_content')"></div>
             </FormBuilder>
             <ElButton v-if="databaseType === 'hazelcast_cloud_cluster'" type="text" size="mini" @click="startTest()">{{
               $t('connection_form_hazecast_connection_test')
@@ -113,7 +113,7 @@
     </div>
     <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
     <ElDialog
-      :title="$t('connection.rename')"
+      :title="$t('connection_rename')"
       :close-on-click-modal="false"
       :visible.sync="dialogEditNameVisible"
       width="30%"
@@ -167,7 +167,7 @@ export default {
   data() {
     let validateRename = (rule, value, callback) => {
       if (!this.renameData.rename || !this.renameData.rename.trim()) {
-        callback(new Error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText')))
+        callback(new Error(this.$t('dataForm_form_connectionName') + this.$t('formBuilder_noneText')))
       } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(this.renameData.rename)) {
         callback(new Error(this.$t('connection_form_name_rules')))
       } else {
@@ -581,7 +581,7 @@ export default {
           }
           promise
             .then(() => {
-              this.$message.success(this.$t('message.saveOK'))
+              this.$message.success(this.$t('message_saveOK'))
 
               if (this.$route.query.step) {
                 this.$router.push({
@@ -602,7 +602,7 @@ export default {
               if (err && err?.data?.message) {
                 this.$message.error(err?.data?.message + ' (' + err?.data?.code + ')')
               } else {
-                this.$message.error(this.$t('dataForm.saveFail'))
+                this.$message.error(this.$t('dataForm_saveFail'))
               }
             })
             .finally(() => {
@@ -670,7 +670,7 @@ export default {
               this.editBtnLoading = false
               this.model.name = this.renameData.rename
               this.$refs['renameForm'].clearValidate()
-              this.$message.success(this.$t('message.saveOK'))
+              this.$message.success(this.$t('message_saveOK'))
               this.dialogEditNameVisible = false
             })
             .catch(err => {
@@ -678,7 +678,7 @@ export default {
               if (err && err?.data?.message) {
                 this.$message.error(err?.data?.message + ' (' + err?.data?.code + ')')
               } else {
-                this.$message.error(this.$t('dataForm.saveFail'))
+                this.$message.error(this.$t('dataForm_saveFail'))
               }
             })
         }
@@ -709,8 +709,6 @@ export default {
               this.model.qingflowTagName = ''
             }
           })
-        } else {
-
         }
       }
     },

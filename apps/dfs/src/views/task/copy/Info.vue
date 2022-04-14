@@ -114,7 +114,7 @@ export default {
         title: {
           key: 'overview',
           statsType: 'data_overview',
-          title: this.$t('dataFlow.dataScreening'),
+          title: this.$t('dataFlow_dataScreening'),
           loading: false
         },
         body: {

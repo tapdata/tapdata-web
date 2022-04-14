@@ -15,21 +15,21 @@ export default function (vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: vm.$t('dataForm.form.connectionType'),
+        label: vm.$t('dataForm_form_connectionType'),
         options: [
           {
-            label: vm.$t('dataForm.form.options.sourceAndTarget'),
-            tip: vm.$t('dataForm.form.options.sourceAndTargetTips'),
+            label: vm.$t('dataForm_form_options_sourceAndTarget'),
+            tip: vm.$t('dataForm_form_options_sourceAndTargetTips'),
             value: 'source_and_target'
           },
           {
-            label: vm.$t('dataForm.form.options.source'),
-            tip: vm.$t('dataForm.form.options.sourceTips'),
+            label: vm.$t('dataForm_form_options_source'),
+            tip: vm.$t('dataForm_form_options_sourceTips'),
             value: 'source'
           },
           {
-            label: vm.$t('dataForm.form.options.target'),
-            tip: vm.$t('dataForm.form.options.targetTips'),
+            label: vm.$t('dataForm_form_options_target'),
+            tip: vm.$t('dataForm_form_options_targetTips'),
             value: 'target'
           }
         ],
@@ -43,20 +43,20 @@ export default function (vm) {
         type: 'radio',
         field: 'isUrl',
         show: true,
-        label: vm.$t('dataForm.form.options.connectionMode'),
+        label: vm.$t('dataForm_form_options_connectionMode'),
         customClass: 'mongodb-item',
         isVertical: false,
         button: true,
         outerTip: true,
         options: [
           {
-            label: vm.$t('dataForm.form.options.URIMode'),
-            tip: vm.$t('dataForm.form.options.URIModeTips'),
+            label: vm.$t('dataForm_form_options_URIMode'),
+            tip: vm.$t('dataForm_form_options_URIModeTips'),
             value: true,
             disabled: false
           },
           {
-            label: vm.$t('dataForm.form.options.standardMode'),
+            label: vm.$t('dataForm_form_options_standardMode'),
             tip: vm.$t('connection_form_mongo_standard_mode_tip'),
             value: false,
             disabled: false
@@ -99,7 +99,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_uri',
-        label: vm.$t('dataForm.form.databaseUri'),
+        label: vm.$t('dataForm_form_databaseUri'),
         domType: 'textarea',
         required: true,
         show: false,
@@ -141,7 +141,7 @@ export default function (vm) {
         type: 'input',
         field: 'database_host',
 
-        label: vm.$t('dataForm.form.host'),
+        label: vm.$t('dataForm_form_host'),
         placeholder: vm.$t('connection_form_database_host_placeholder'),
         tip: vm.$t('connection_form_database_host_tips'),
         rules: [
@@ -149,7 +149,7 @@ export default function (vm) {
             required: true,
             validator: (rule, value, callback) => {
               if (!value || !value.trim()) {
-                callback(new Error(vm.$t('dataForm.error.noneHost')))
+                callback(new Error(vm.$t('dataForm_error_noneHost')))
               } else {
                 callback()
               }
@@ -174,7 +174,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_name',
-        label: vm.$t('dataForm.form.databaseName'),
+        label: vm.$t('dataForm_form_databaseName'),
         required: true,
         show: true,
         dependOn: [
@@ -194,7 +194,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_username',
-        label: vm.$t('dataForm.form.userName'),
+        label: vm.$t('dataForm_form_userName'),
         show: true,
         dependOn: [
           {
@@ -213,7 +213,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'plain_password',
-        label: vm.$t('dataForm.form.password'),
+        label: vm.$t('dataForm_form_password'),
         domType: 'password',
         show: true,
         dependOn: [
@@ -234,7 +234,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'additionalString',
-        label: vm.$t('dataForm.form.additionalString'),
+        label: vm.$t('dataForm_form_additionalString'),
         show: true,
         dependOn: [
           {
@@ -253,20 +253,20 @@ export default function (vm) {
       {
         type: 'radio',
         field: 'ssl',
-        label: vm.$t('dataForm.form.ssl'),
+        label: vm.$t('dataForm_form_ssl'),
         customClass: 'mongodb-item',
         isVertical: false,
         button: true,
         outerTip: true,
         options: [
           {
-            label: vm.$t('dataForm.form.options.sslTSL'),
-            tip: vm.$t('dataForm.form.options.sslTSLTip'),
+            label: vm.$t('dataForm_form_options_sslTSL'),
+            tip: vm.$t('dataForm_form_options_sslTSLTip'),
             value: true
           },
           {
-            label: vm.$t('dataForm.form.options.sslTop'),
-            tip: vm.$t('dataForm.form.options.sslTopTips'),
+            label: vm.$t('dataForm_form_options_sslTop'),
+            tip: vm.$t('dataForm_form_options_sslTopTips'),
             value: false
           }
         ],
@@ -287,7 +287,7 @@ export default function (vm) {
         type: 'file',
         field: 'sslKey',
         fileNameField: 'sslKeyFile',
-        label: vm.$t('dataForm.form.sslKey'),
+        label: vm.$t('dataForm_form_sslKey'),
         show: false,
         dependOn: [
           {
@@ -308,7 +308,7 @@ export default function (vm) {
             validator: (rule, value, callback) => {
               let ssl = vm.model.ssl
               if (ssl && (!value || !value.trim())) {
-                callback(new Error(vm.$t('dataForm.error.noneSslKey')))
+                callback(new Error(vm.$t('dataForm_error_noneSslKey')))
               } else {
                 callback()
               }
@@ -324,7 +324,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'sslPass',
-        label: vm.$t('dataForm.form.sslPass'),
+        label: vm.$t('dataForm_form_sslPass'),
         domType: 'password',
         show: false,
         dependOn: [
@@ -345,7 +345,7 @@ export default function (vm) {
       {
         type: 'switch',
         field: 'sslValidate',
-        label: vm.$t('dataForm.form.sslValidate'),
+        label: vm.$t('dataForm_form_sslValidate'),
         show: false,
         dependOn: [
           {
@@ -372,7 +372,7 @@ export default function (vm) {
         type: 'file',
         field: 'sslCA',
         fileNameField: 'sslCAFile',
-        label: vm.$t('dataForm.form.sslCA'),
+        label: vm.$t('dataForm_form_sslCA'),
         show: false,
         dependOn: [
           {
@@ -397,7 +397,7 @@ export default function (vm) {
             validator: (rule, v, callback) => {
               let ssl = vm.model.sslValidate
               if (ssl && !v) {
-                callback(new Error(vm.$t('dataForm.error.noneSslCA')))
+                callback(new Error(vm.$t('dataForm_error_noneSslCA')))
               } else {
                 callback()
               }

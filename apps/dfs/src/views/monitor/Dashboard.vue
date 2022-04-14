@@ -99,7 +99,7 @@
                     type="text"
                     @click="checkError(scope.row.errorMessage)"
                   >
-                    {{ $t('milestone.btn_check_error') }}
+                    {{ $t('milestone_btn_check_error') }}
                   </ElButton>
                 </template>
               </ElTableColumn>
