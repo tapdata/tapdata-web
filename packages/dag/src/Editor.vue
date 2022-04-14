@@ -71,7 +71,7 @@
           ></NodePopover>
         </main>
         <!--配置面板-->
-        <ConfigPanel ref="configPanel" :settings="dataflow" @hide="onHideSidebar"></ConfigPanel>
+        <ConfigPanel ref="configPanel" :settings="dataflow" :scope="scope" @hide="onHideSidebar"></ConfigPanel>
       </section>
     </section>
   </section>
