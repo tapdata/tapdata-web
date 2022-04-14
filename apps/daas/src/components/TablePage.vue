@@ -12,7 +12,7 @@
 
     <div class="table-page-main">
       <div class="table-page-main-box">
-        <div class="table-page-left" v-if="classify && !hideClassify && $getSettingByKey('SHOW_CLASSIFY')">
+        <div class="table-page-left" v-if="classify && !hideClassify">
           <Classification
             :authority="classify.authority"
             :types="classify.types"

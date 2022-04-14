@@ -6,7 +6,7 @@
 
     <div class="page-main">
       <div class="page-main-box">
-        <div class="switch-lang" v-if="$getSettingByKey('SHOW_LANGUAGE')">
+        <div v-if="$getSettingByKey('SHOW_LANGUAGE')" class="switch-lang">
           <span v-for="(value, key) in languages" :key="key" :class="{ bold: key === lang }" @click="langChange(key)">
             {{ value }}
             <ElDivider direction="vertical" v-if="key !== 'tc'"></ElDivider>

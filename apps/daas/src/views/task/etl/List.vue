@@ -20,7 +20,6 @@
       </template>
       <div class="buttons" slot="operation">
         <el-button
-          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'SYNC_category_application'"
           size="small"
           class="btn"
@@ -214,11 +213,7 @@
                 >
                   {{ $t('button.delete') }}
                 </el-dropdown-item>
-                <el-dropdown-item
-                  command="setTag"
-                  v-if="$getSettingByKey('SHOW_CLASSIFY')"
-                  v-readonlybtn="'SYNC_category_application'"
-                >
+                <el-dropdown-item command="setTag" v-readonlybtn="'SYNC_category_application'">
                   {{ $t('dataFlow.addTag') }}
                 </el-dropdown-item>
                 <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{

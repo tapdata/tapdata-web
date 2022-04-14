@@ -3,7 +3,7 @@
     <header>
       <div class="logo">
         <img :src="logoUrl" />
-        <div class="switch-lang" v-if="$getSettingByKey('SHOW_LANGUAGE')">
+        <div v-if="$getSettingByKey('SHOW_LANGUAGE')" class="switch-lang">
           <span v-for="(value, key) in languages" :key="key" :class="{ bold: key === lang }" @click="langChange(key)">
             {{ value }}
           </span>

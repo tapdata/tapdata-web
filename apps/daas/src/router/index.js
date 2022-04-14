@@ -66,7 +66,7 @@ export default i18n => {
 
       //判断当前路由的页面是否有权限，无权限则不跳转，有权限则执行跳转
       let matched = true
-      if (to.meta.code && !window.getSettingByKey('DFS_IGNORE_PERMISSION')) {
+      if (to.meta.code) {
         matched = permissions.some(p => p.code === to.meta.code)
       }
       // 绕开权限判断
