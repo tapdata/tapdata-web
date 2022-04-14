@@ -265,7 +265,7 @@ export function getSubTaskStatus(rows = []) {
     })
     if (Object.keys(tempMap).length === 1) {
       let status = rows[0]?.status
-      status = status === 'edit' ? 'ready' : status
+      status = status === 'edit' ? 'ready' : status === 'schedule_failed' ? 'error' : status
       result = [
         Object.assign({ count: 1 }, ETL_SUB_STATUS_MAP[status], {
           status: status

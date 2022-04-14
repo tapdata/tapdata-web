@@ -283,7 +283,7 @@ export default {
         .then(res => {
           let detailData = res?.data
           detailData.taskList = detailData.taskList?.map(item => {
-            item.status = item.status === 'edit' ? 'ready' : item.status
+            item.status = item.status === 'edit' ? 'ready' : item.status === 'schedule_failed' ? 'error' : item.status //没有子任务的概念
             return item
           })
           this.detailData = detailData
