@@ -48,7 +48,6 @@
       </div>
       <div slot="operation" class="pt-4">
         <el-button
-          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'user_category_application'"
           size="mini"
           class="btn"
@@ -88,8 +87,7 @@
           <span>{{ $t('user.creatUser') }}</span>
         </el-button>
       </div>
-      <el-table-column v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
-      </el-table-column>
+      <el-table-column type="selection" width="45" :reserve-selection="true"></el-table-column>
       <el-table-column :label="$t('user_list_user_name')" prop="username" sortable="username">
         <template slot-scope="scope">
           <div class="metadata-name">
@@ -242,7 +240,7 @@ export default {
       activePanel: 'all',
       muneList: [
         { name: this.$t('user_list_all'), key: 'all' },
-        { name: this.$t('user_status_notActivated'), key: ' notActivated', count: 0 },
+        { name: this.$t('user_status_notActivated'), key: 'notActivated', count: 0 },
         { name: this.$t('user_status_notVerified'), key: 'notVerified', count: 0 },
         { name: this.$t('user_status_rejected'), key: 'rejected', count: 0 }
       ],

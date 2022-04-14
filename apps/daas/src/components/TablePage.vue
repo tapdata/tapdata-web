@@ -1,6 +1,6 @@
 <template>
   <div class="table-page-container">
-    <div class="table-page-header" v-if="!$getSettingByKey('DFS_TCM_PLATFORM') && title">
+    <div class="table-page-header" v-if="title">
       <slot name="header">
         <div class="page-header-title">
           {{ title }}
@@ -12,7 +12,7 @@
 
     <div class="table-page-main">
       <div class="table-page-main-box">
-        <div class="table-page-left" v-if="classify && !hideClassify && $getSettingByKey('SHOW_CLASSIFY')">
+        <div class="table-page-left" v-if="classify && !hideClassify">
           <Classification
             :authority="classify.authority"
             :types="classify.types"
@@ -139,9 +139,6 @@ export default {
   // },
   methods: {
     getCache() {
-      if (window.getSettingByKey('DFS_TCM_PLATFORM')) {
-        return {}
-      }
       let params = this.$cache.get('TABLE_PAGE_PARAMS') || {}
       let key = this.$route.name
       // TODO 暂时针对dataflow页面做区分，后续将迁移和同步分为不同路由后去掉该代码块

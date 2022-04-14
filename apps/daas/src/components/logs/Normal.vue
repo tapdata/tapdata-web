@@ -77,7 +77,6 @@
   </div>
 </template>
 <script>
-import ws from '@/api/ws'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { delayTrigger, formatTime } from '@/utils/util'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
@@ -141,12 +140,12 @@ export default {
           limit: 20
         }
       }
-      ws.on('logs', data => {
+      this.$ws.on('logs', data => {
         data && this.resetData()
       })
 
-      ws.ready(() => {
-        ws.send(msg)
+      this.$ws.ready(() => {
+        this.$ws.send(msg)
       }, true)
     },
     scrollFnc(ev) {

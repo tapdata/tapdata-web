@@ -9,12 +9,10 @@
   >
     <ConnectionTypeSelector
       :types="database"
-      :commingTypes="comingAllowDatabase"
       :otherTypes="otherType"
       :large="true"
       @select="databaseType"
     ></ConnectionTypeSelector>
-    <!-- :automationType="automationType" -->
   </el-dialog>
 </template>
 
@@ -67,7 +65,6 @@ export default {
         'adb_mysql',
         'hazelcast_cloud_cluster'
       ],
-      comingAllowDatabase: [], // 即将上线
       otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],
       typeMap: TYPEMAP
       // automationType: '' //插件化数据源
@@ -78,18 +75,14 @@ export default {
     if (typeof allowDataType === 'string') {
       allowDataType = allowDataType.split(',')
     }
-    let comingAllowDataType = window.getSettingByKey('COMING_ONLINE_CONNECTION_TYPE') || []
     let allowType = this.allwoType
     if (allowType && allowType.length) {
       allowDataType = allowDataType.filter(val => {
         return this.allwoType.includes(val)
       })
     }
-    this.comingAllowDatabase = comingAllowDataType.filter(type => this.database.includes(type)) || []
     this.database = allowDataType.filter(type => this.database.includes(type)) || []
-    //this.database.push('vika')
     this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || []
-    // this.getDatabaseType()
   },
   methods: {
     getImgByType,

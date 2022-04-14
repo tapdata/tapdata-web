@@ -49,4 +49,9 @@ export default class Modules extends PublicAPI {
   batchUpdateListtags(params) {
     return axios.patch(`${this.url}/batchUpdateListtags`, params)
   }
+
+  // api审计列表
+  apiList(params) {
+    return axios.get(this.url + '/apiList', { params })
+  }
 }

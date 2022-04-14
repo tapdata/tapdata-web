@@ -1,12 +1,12 @@
 <template>
-  <div class="main-view-header p-6">
+  <div class="main-view-header p-4">
     <ElBreadcrumb v-if="breadcrumbData.length > 1" separator-class="el-icon-arrow-right">
       <ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
         {{ item.name }}
       </ElBreadcrumbItem>
     </ElBreadcrumb>
     <div class="header" v-else>
-      <span class="title">{{ $t($route.meta.title) }}</span>
+      <span class="title fs-6">{{ $t($route.meta.title) }}</span>
       <Desciption class="desc ml-4" :desc="$route.meta.desc"></Desciption>
     </div>
   </div>
@@ -20,7 +20,6 @@
     align-items: center;
   }
   .title {
-    font-size: 18px;
     color: #000000;
     line-height: 25px;
   }

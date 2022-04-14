@@ -484,6 +484,14 @@ export default {
   dataExplorer_base_path: '基础路径',
   // api文档及测试
   file_test_generate_code: '生成代码',
+
+  // api审计
+  apiaudit_name: 'API名称',
+  apiaudit_access_type: '访问类型',
+  apiaudit_interview_time: '访问时间',
+  apiaudit_visit_result: '访问结果',
+  apiaudit_reason_fail: '失败原因',
+
   // 数据源
   connection_form_tidb_server: 'PDServer 地址',
   connection_tidb_none_server: 'PDServer 地址不能为空',
@@ -1154,6 +1162,8 @@ export default {
   migrate_select_table_tip:
     ' 用户可以点击中间向右的箭头按钮勾选源端待同步表，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输）',
   migrate_same_connection_message: '源端、目标端选择了相同连接',
+  migrate_no_progress_statistics_yet: '暂无进度统计信息',
+  migrate_no_latency_statistics_yet: '暂无延迟统计信息',
 
   // 函数管理
   function_tips_empty: '代码缺少JS函数',

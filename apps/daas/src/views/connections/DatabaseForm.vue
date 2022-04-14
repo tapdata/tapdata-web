@@ -2,16 +2,11 @@
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
       <main class="connection-from-main">
-        <div class="connection-from-title" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
+        <div class="connection-from-title">
           {{
             $route.params.id ? this.$t('connection_form_edit_connection') : this.$t('connection_form_creat_connection')
           }}
         </div>
-        <!-- <header class="header" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
-          {{ $route.params.id ? $t('connection_form_edit_connection') : $t('connection_form_creat_connection') }}
-        </header> -->
-        <!-- <div class="databaseFrom-body">
-          <main class="databaseFrom-main"> -->
         <div class="connection-from-label" v-if="$route.params.id">
           <label class="label">{{ $t('connection_form_data_source') }}: </label>
           <div class="content-box">
@@ -34,23 +29,6 @@
             <el-button class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
               {{ $t('connection_form_change') }}
             </el-button>
-            <!-- <div class="content-box">
-              <div class="content">
-                {{ typeMap[databaseType] }}
-                <div class="addBtn color-primary" @click="dialogDatabaseTypeVisible = true">
-                  {{ $t('connection.change') }}
-                </div>
-              </div>
-              <div class="tip" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
-                    {{ $t('dataForm.form.guide') }}
-                    <a class="color-primary" target="_blank" href="https://docs.tapdata.net/data-source">{{
-                      $t('dataForm.form.guideDoc')
-                    }}</a>
-                  </div>
-                  <div class="tip" v-if="$getSettingByKey('DFS_TCM_PLATFORM')">
-                    请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
-                  </div>
-            </div> -->
           </div>
         </div>
         <div class="form-wrap">
@@ -72,9 +50,6 @@
                 /
                 <span class="refresh" @click="getMongodb"> 刷新数据 <VIcon class="font-color-sub">refresh</VIcon></span>
               </div>
-              <!-- <div class="url-tip" slot="kududatabase">
-                {{ $t('dataForm.form.kuduhost') }}
-              </div> -->
               <div class="url-tip" slot="ecsList" v-if="model.sourceType === 'ecs'">
                 <el-select
                   v-model="model.ecs"
@@ -106,34 +81,6 @@
                 </span>
               </div>
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
-              <!-- <div class="url-tip" slot="tableFilter">
-                {{ $t('connection_form_database_owner_tip') }}
-              </div> -->
-              <!-- <div class="url-tip" slot="timezone">
-                {{ $t('dataForm.form.timeZoneTips') }}
-              </div> -->
-              <!-- <div class="url-tip" slot="kafkaUri">
-                {{ $t('dataForm.form.kafka.hostPlaceHolder') }}
-              </div> -->
-              <!-- <div class="url-tip" slot="lonoreFormatTip">
-                {{ $t('dataForm.form.kafka.lonoreFormatTip') }}
-              </div> -->
-              <!-- <div class="url-tip" slot="pushErrorTip">
-                {{ $t('dataForm.form.kafka.pushErrorTip') }}
-              </div> -->
-
-              <!-- <div class="url-tip" slot="queueTip" v-if="model.mqType !== '2'">
-                {{ $t('dataForm.form.mq.queueSetTip') }}
-              </div> -->
-              <!-- <div class="url-tip" slot="topicTip" v-if="model.mqType !== '1'">
-                {{ $t('dataForm.form.mq.topicSetTip') }}
-              </div> -->
-              <!-- <div class="url-tip" slot="brokerUrlTip" v-if="model.mqType === '0'">
-                {{ $t('dataForm.form.mq.brokerUrlTip') }}
-              </div> -->
-              <!-- <div class="url-tip" slot="file_schema_tip">
-                <div>{{ $t('dataForm.form.gridfs.file_schema_tip') }}</div>
-              </div> -->
               <!-- rest api -->
               <div class="url-tip" slot="req_pre_process">
                 <div>function request_process(url, headers, request_params, offset) {</div>
@@ -534,7 +481,7 @@
           </div>
         </footer>
       </main>
-      <GitBook v-if="!$getSettingByKey('DFS_TCM_PLATFORM')"></GitBook>
+      <GitBook></GitBook>
       <!-- </div>
       </main> -->
     </div>
@@ -934,9 +881,6 @@ export default {
     checkDataTypeOptions(type) {
       this.model.database_type = type
       this.getFormConfig()
-      // if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-      //   this.getInstanceRegion()
-      // }
     },
     initTimezones() {
       let timezones = [{ label: '(Database Timezone)', value: '' }]
@@ -1591,15 +1535,6 @@ export default {
               }
             })
           }
-          if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-            params['platformInfo'] = Object.assign(params['platformInfo'], this.handlePlatformInfo(params))
-            if (params.sourceType === 'selfDB') {
-              delete params.DRS_region
-              delete params.DRS_zone
-              delete params.platformInfo.DRS_region
-              delete params.platformInfo.DRS_zone
-            }
-          }
           connectionsModel[this.model.id ? 'patchId' : 'post'](params)
             .then(() => {
               this.$message.success(this.$t('message.saveOK'))
@@ -1645,11 +1580,7 @@ export default {
     async startTest() {
       let result = await this.$api('Workers').getAvailableAgent()
       if (!result.data.result || result.data.result.length === 0) {
-        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-          this.$message.error(this.$t('dataForm.form.agentConnectionMsg'))
-        } else {
-          this.$message.error(this.$t('dataForm.form.agentMsg'))
-        }
+        this.$message.error(this.$t('dataForm.form.agentMsg'))
       } else {
         this.$refs.form.validate(valid => {
           if (valid) {
@@ -1660,12 +1591,6 @@ export default {
             ) {
               data.mqQueueSet = this.model.mqQueueSet.split(',')
               data.mqTopicSet = this.model.mqTopicSet.split(',')
-            }
-            if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-              this.model['platformInfo'] = Object.assign(
-                this.model['platformInfo'],
-                this.handlePlatformInfo(this.model)
-              )
             }
             this.dialogTestVisible = true
             if (this.$route.params.id) {
@@ -1743,17 +1668,9 @@ export default {
     },
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
-      //drs 检查实例是否可用 dfs 检查agent是否可用
-      if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
-        let result = await this.$api('Workers').getAvailableAgent()
-        if (!result.data.result || result.data.result.length === 0) {
-          this.$message.error(this.$t('dataForm.form.agentMsg'))
-        }
-      } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-        let result = await this.$api('tcm').getAgentCount()
-        if (!result.data || !result.data.agentTotalCount || result.data.agentTotalCount <= 0) {
-          this.$message.error('您尚未订购同步实例，请先订购实例')
-        }
+      let result = await this.$api('Workers').getAvailableAgent()
+      if (!result.data.result || result.data.result.length === 0) {
+        this.$message.error(this.$t('dataForm.form.agentMsg'))
       }
     },
     handleDatabaseType(type) {
@@ -1840,7 +1757,7 @@ export default {
         font-size: 14px;
         font-family: PingFangSC-Medium, PingFang SC;
         font-weight: 500;
-        color: rgba(0, 0, 0, 0.85);
+        color: map-get($fontColor, normal);
         line-height: 28px;
       }
       .connection-from-label {
@@ -1855,7 +1772,7 @@ export default {
         .label {
           width: 160px;
           font-size: 12px;
-          color: #606266;
+          color: map-get($fontColor, slight);
         }
         .content-box {
           display: flex;

@@ -291,7 +291,6 @@ export default {
               }
               item.createTime = this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
               let statuses = item.statuses
-              console.log('getTaskBtnDisabled', getTaskBtnDisabled(item))
               item.disabledData = getTaskBtnDisabled(item)
               item.statusResult = getSubTaskStatus(statuses)[0].status
               return item

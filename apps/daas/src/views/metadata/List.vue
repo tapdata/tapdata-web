@@ -18,7 +18,6 @@
       </div>
       <div slot="operation">
         <el-button
-          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'data_catalog_category_application'"
           size="mini"
           class="btn"
@@ -39,8 +38,7 @@
           <span>{{ $t('metadata.createModel') }}</span>
         </el-button>
       </div>
-      <el-table-column v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
-      </el-table-column>
+      <el-table-column type="selection" width="45" :reserve-selection="true"></el-table-column>
       <el-table-column :label="$t('metadata.header.name')" prop="name" sortable="custom">
         <template slot-scope="scope">
           <div class="metadata-name">
@@ -241,7 +239,7 @@ export default {
               if (!v || !v.trim()) {
                 return callback(new Error(this.$t('metadata_form_table_name') + this.$t('tips_rule_not_empty')))
               }
-                  const flag = /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/.test(v) // eslint-disable-line
+              const flag = /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/.test(v) // eslint-disable-line
               if (v.split('.')[0] == 'system' || !flag) {
                 return callback(new Error(this.$t('dialog.placeholderTable')))
               }

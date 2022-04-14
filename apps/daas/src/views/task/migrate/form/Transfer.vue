@@ -367,12 +367,14 @@ export default {
   ::v-deep {
     .transfer-buttons-horizontal {
       .el-transfer__buttons {
-        flex-direction: row;
+        flex-direction: column;
         padding: 0 16px;
         .el-transfer__button {
+          width: 36px;
+          min-width: 36px;
           margin-bottom: 0;
           & + .el-transfer__button {
-            margin-left: 16px;
+            margin-top: 16px;
           }
         }
       }
