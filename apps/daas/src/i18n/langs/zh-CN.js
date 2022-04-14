@@ -484,6 +484,14 @@ export default {
   dataExplorer_base_path: '基础路径',
   // api文档及测试
   file_test_generate_code: '生成代码',
+
+  // api审计
+  apiaudit_name: 'API名称',
+  apiaudit_access_type: '访问类型',
+  apiaudit_interview_time: '访问时间',
+  apiaudit_visit_result: '访问结果',
+  apiaudit_reason_fail: '失败原因',
+
   // 数据源
   connection_form_tidb_server: 'PDServer 地址',
   connection_tidb_none_server: 'PDServer 地址不能为空',

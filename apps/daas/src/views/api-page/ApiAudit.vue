@@ -17,32 +17,35 @@
           <span>{{ $t('api_server_create') }}</span>
         </el-button>
       </div>
-      <el-table-column
-        :label="$t('api_server_user')"
-        :show-overflow-tooltip="true"
-        prop="user.email"
-        sortable="user.email"
-        width="120"
-      >
+      <el-table-column label="API ID" :show-overflow-tooltip="true" prop="user.email" sortable="user.email" width="120">
         <template slot-scope="scope">
           {{ scope.row.user ? scope.row.user.email : '' }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('api_server_process_id')"
-        :show-overflow-tooltip="true"
-        prop="processId"
-        sortable="processId"
-      >
+      <el-table-column :label="$t('apiaudit_name')" :show-overflow-tooltip="true" prop="processId" sortable="processId">
       </el-table-column>
       <el-table-column
-        :label="$t('api_server_client_name')"
+        :label="$t('apiaudit_access_type')"
         :show-overflow-tooltip="true"
         prop="clientName"
         sortable="clientName"
       ></el-table-column>
       <el-table-column
-        :label="$t('api_server_client_uri')"
+        :label="$t('apiaudit_interview_time')"
+        :show-overflow-tooltip="true"
+        prop="clientURI"
+        sortable="clientURI"
+      >
+      </el-table-column>
+      <el-table-column
+        :label="$t('apiaudit_visit_result')"
+        :show-overflow-tooltip="true"
+        prop="clientURI"
+        sortable="clientURI"
+      >
+      </el-table-column>
+      <el-table-column
+        :label="$t('apiaudit_reason_fail')"
         :show-overflow-tooltip="true"
         prop="clientURI"
         sortable="clientURI"
