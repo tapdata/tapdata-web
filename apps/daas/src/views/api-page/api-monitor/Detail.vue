@@ -1,45 +1,44 @@
 <template>
-  <section class="flex flex-direction">
-    <div class="flex-direction flex-1">
+  <section class="api-monitor-detail-wrap flex flex-direction">
+    <div class="flex-direction flex-1 pt-5">
       <div class="flex flex-direction flex-1">
         <div class="flex-1">
-          <div>API访问次数</div>
-          <div>600</div>
+          <div class="api-monitor-detail-wrap__text">API访问次数</div>
+          <div class="api-monitor-detail-wrap__value">600</div>
         </div>
         <div class="flex-1">
-          <div>API访问次数</div>
-          <div>600</div>
+          <div class="api-monitor-detail-wrap__text">API访问次数</div>
+          <div class="api-monitor-detail-wrap__value">600</div>
         </div>
         <div class="flex-1">
-          <div>API访问次数</div>
-          <div>600</div>
+          <div class="api-monitor-detail-wrap__text">API访问次数</div>
+          <div class="api-monitor-detail-wrap__value">600</div>
         </div>
       </div>
-      <div class="flex flex-direction flex-1">
+      <div class="flex flex-direction flex-1 pb-5">
         <div class="flex-1">
-          <div>API访问次数</div>
-          <div>600</div>
+          <div class="api-monitor-detail-wrap__text">API访问次数</div>
+          <div class="api-monitor-detail-wrap__value">600</div>
         </div>
         <div class="flex-1">
-          <div>API访问次数</div>
-          <div>600</div>
+          <div class="api-monitor-detail-wrap__text">API访问次数</div>
+          <div class="api-monitor-detail-wrap__value">600</div>
         </div>
         <div class="flex-1">
-          <div>API访问次数</div>
-          <div>600</div>
+          <div class="api-monitor-detail-wrap__text">API访问次数</div>
+          <div class="api-monitor-detail-wrap__value">600</div>
         </div>
       </div>
     </div>
-    <div class="flex-1">
-      <FilterBar v-model="searchParams" :items="filterItems" @fetch="getDetail()"> </FilterBar>
+    <div class="flex-1 pt-3">
+      <FilterBar v-model="searchParams" :items="filterItems" :hideRefresh="true" @fetch="getDetail()"> </FilterBar>
     </div>
-    <div class="flex-1">
-      <ul>
-        <li>客戶端</li>
-        <li>客戶端</li>
-        <li>客戶端</li>
-        <li>客戶端</li>
-      </ul>
+    <div class="flex-1 pt-5">
+      <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+      <div style="margin: 15px 0"></div>
+      <el-checkbox-group v-model="clientName">
+        <el-checkbox v-for="item in clientNameList" :key="item" :label="item"></el-checkbox>
+      </el-checkbox-group>
     </div>
   </section>
 </template>
@@ -54,20 +53,29 @@ export default {
     return {
       filterItems: [],
       searchParams: {
-        time: '',
-        type: ''
+        guanluary: 5,
+        type: 'visitTotalLine'
       },
-      statusOptions: [
-        { label: this.$t('task_list_status_all'), value: '' },
-        { label: '已发布', value: 'active' },
-        { label: '待发布', value: 'pending' }
-      ]
+      typesOptions: [
+        { label: '访问行数', value: 'visitTotalLine' },
+        { label: '耗时', value: 'timeConsuming' },
+        { label: '传输速率', value: 'speed' },
+        { label: '响应时间', value: 'latency' }
+      ],
+      timeList: [
+        { label: '5分钟', value: 5 },
+        { label: '10分钟', value: 10 },
+        { label: '30分钟', value: 30 },
+        { label: '60分钟', value: 60 }
+      ],
+      clientName: '',
+      checkAll: false,
+      isIndeterminate: true,
+      clientNameList: ['cli1', 'cli2', 'cli3']
     }
   },
   created() {
     this.getFilterItems()
-    let { status } = this.$route.query
-    this.searchParams.status = status ?? ''
   },
   mounted() {
     this.getDetail()
@@ -77,48 +85,64 @@ export default {
       this.getDetail()
     }
   },
-  getDetail() {
-    let filter = {
-      where: {
-        id: this.id,
-        guanluary: 5,
-        start: 1649687341337,
-        type: 'visitTotalLine'
+  methods: {
+    getDetail() {
+      let filter = {
+        where: {
+          id: this.id,
+          guanluary: 5,
+          start: new Date().getTime(),
+          type: 'visitTotalLine'
+        }
       }
+      this.$api('ApiMonitor')
+        .apiDetail({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          let data = res.data
+          this.apiList = data.items
+          this.page.apiListTotal = data.total
+        })
+    },
+    getFilterItems() {
+      this.filterItems = [
+        {
+          label: this.$t('task_list_status'),
+          key: 'type',
+          type: 'select-inner',
+          items: this.typesOptions,
+          selectedWidth: '200px'
+        },
+        {
+          label: this.$t('task_list_sync_type'),
+          key: 'guanluary',
+          type: 'select-inner',
+          items: this.timeList
+        }
+      ]
+    },
+    handleCheckAllChange() {
+      //全选
+      this.isIndeterminate = false
     }
-    this.$api('ApiMonitor')
-      .apiDetail({
-        filter: JSON.stringify(filter)
-      })
-      .then(res => {
-        let data = res.data
-        this.apiList = data.items
-        this.page.apiListTotal = data.total
-      })
-  },
-  getFilterItems() {
-    this.filterItems = [
-      {
-        label: this.$t('task_list_status'),
-        key: 'status',
-        type: 'select-inner',
-        items: this.statusOptions,
-        selectedWidth: '200px'
-      },
-      {
-        label: this.$t('task_list_sync_type'),
-        key: 'clientName',
-        type: 'select-inner',
-        items: this.clientNameList
-      },
-      {
-        placeholder: this.$t('task_list_search_placeholder'),
-        key: 'keyword',
-        type: 'input'
-      }
-    ]
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.api-monitor-detail-wrap {
+  .api-monitor-detail-wrap__text {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.85);
+    text-align: center;
+  }
+  .api-monitor-detail-wrap__value {
+    font-size: 20px;
+    color: #2c65ff;
+    line-height: 38px;
+    text-align: center;
+  }
+}
+</style>
