@@ -87,12 +87,11 @@
 
 <script>
 import VIcon from '@/components/VIcon'
-import StatusTag from '@/components/StatusTag'
 import { CONFIG_MODEL } from './util'
 
 export default {
   name: 'DetailsDrawer',
-  components: { VIcon, StatusTag },
+  components: { VIcon },
   props: {
     hideOperation: {
       type: Boolean,

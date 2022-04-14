@@ -19,10 +19,10 @@
       </template>
       <div slot="operation">
         <ElButton
+          v-show="multipleSelection.length > 0"
           v-readonlybtn="'datasource_category_application'"
           size="mini"
           class="btn"
-          v-show="multipleSelection.length > 0"
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
@@ -35,12 +35,11 @@
           size="mini"
           @click="checkTestConnectionAvailable"
         >
-          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
           <span> {{ $t('connection.createNewDataSource') }}</span>
         </ElButton>
       </div>
       <ElTableColumn type="selection" width="45" :reserve-selection="true"></ElTableColumn>
-      <ElTableColumn prop="name" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true" min-width="150">
+      <ElTableColumn prop="name" min-width="150" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <div class="connection-name">
             <div class="database-img">
@@ -67,19 +66,19 @@
       <ElTableColumn prop="status" :label="$t('connection.dataBaseStatus')" width="100">
         <template slot-scope="scope">
           <div>
-            <span class="error" v-if="['invalid'].includes(scope.row.status)">
+            <span v-if="['invalid'].includes(scope.row.status)" class="error">
               <i class="connections-status__icon el-icon-error"></i>
               <span>
                 {{ $t('connection.status.invalid') }}
               </span>
             </span>
-            <span class="success" v-if="['ready'].includes(scope.row.status)">
+            <span v-if="['ready'].includes(scope.row.status)" class="success">
               <i class="connections-status__icon el-icon-success"></i>
               <span>
                 {{ $t('connection.status.ready') }}
               </span>
             </span>
-            <span class="warning" v-if="['testing'].includes(scope.row.status)">
+            <span v-if="['testing'].includes(scope.row.status)" class="warning">
               <VIcon class="connections-status__icon">loading-circle</VIcon>
               <span>
                 {{ $t('connection.status.testing') }}
@@ -88,7 +87,7 @@
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="connection_type" :label="$t('connection.connectionType')" width="160">
+      <ElTableColumn prop="connection_type" width="160" :label="$t('connection.connectionType')">
         <template slot-scope="scope">
           {{ $t('connection.type.' + scope.row.connection_type) }}
         </template>
@@ -104,12 +103,12 @@
           <SchemaProgress :data="scope.row"></SchemaProgress>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('connection.lastUpdateTime')" width="160" prop="last_updated" sortable="custom">
+      <ElTableColumn width="160" prop="last_updated" sortable="custom" :label="$t('connection.lastUpdateTime')">
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('connection.operate')" width="200" fixed="right">
+      <ElTableColumn width="200" fixed="right" :label="$t('connection.operate')">
         <template slot-scope="scope">
           <ElLink type="primary" @click="testConnection(scope.row)">{{ $t('connection_list_test_button') }} </ElLink>
           <ElDivider direction="vertical"></ElDivider>
@@ -169,7 +168,6 @@ export default {
       filterItems: [],
       user_id: this.$cookie.get('user_id'),
       dialogDatabaseTypeVisible: false,
-      previewVisible: false,
       multipleSelection: [],
       tableData: [],
       databaseType: '',
