@@ -39,7 +39,9 @@
       </div>
     </div>
 
-    <VirtualTransfer
+    <TableSelector v-if="!mqTransferFlag" :connection-id="sourceId"></TableSelector>
+
+    <!-- <VirtualTransfer
       v-if="!mqTransferFlag"
       v-loading="transferLoading"
       v-model="transferData.selectSourceArr"
@@ -55,7 +57,7 @@
       <template #right="{ option }">
         <span>{{ getTableLabel(option.label) }}</span>
       </template>
-    </VirtualTransfer>
+    </VirtualTransfer> -->
 
     <!-- S MQ穿梭框 -->
     <MqTransfer
@@ -87,13 +89,14 @@
 
 <script>
 import VIcon from '@/components/VIcon'
-import VirtualTransfer from 'web-core/components/virtual-transfer'
+// import VirtualTransfer from 'web-core/components/virtual-transfer'
 import MqTransfer from 'web-core/components/mq-transfer'
 import TableFieldFilter from './TableFieldFilter'
 import FieldMapping from '@tapdata/field-mapping'
+import TableSelector from '@/components/table-selector'
 
 export default {
-  components: { VIcon, MqTransfer, VirtualTransfer, TableFieldFilter, FieldMapping },
+  components: { VIcon, MqTransfer, TableFieldFilter, FieldMapping, TableSelector },
   props: {
     transferData: Object,
     isTwoWay: Boolean,
