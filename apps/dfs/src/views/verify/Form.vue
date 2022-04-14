@@ -122,7 +122,7 @@
                 @input="tableChangeHandler(item, 'source', index)"
               ></ElCascader>
               <span v-else :class="['item-value-text', { 'color-danger': !item.sourceTable }]">{{
-                item.sourceTable ? item.sourceTable[1] : $t('message.placeholderSelect')
+                item.sourceTable ? item.sourceTable[1] : $t('message_placeholderSelect')
               }}</span>
               <span class="item-icon">
                 <i class="el-icon-arrow-right"></i>
@@ -136,7 +136,7 @@
                 @input="tableChangeHandler(item, 'target')"
               ></ElCascader>
               <span v-else :class="['item-value-text', { 'color-danger': !item.targetTable }]">{{
-                item.targetTable ? item.targetTable[1] : $t('message.placeholderSelect')
+                item.targetTable ? item.targetTable[1] : $t('message_placeholderSelect')
               }}</span>
             </div>
             <div class="setting-item mt-4" v-show="form.inspectMethod !== 'row_count'">
@@ -150,7 +150,7 @@
                 :id="'item-source-' + index"
               ></MultiSelection>
               <span v-else :class="['item-value-text', { 'color-danger': !item.source.sortColumn }]">{{
-                item.source.sortColumn || $t('message.placeholderSelect')
+                item.source.sortColumn || $t('message_placeholderSelect')
               }}</span>
               <span class="item-icon"></span>
               <MultiSelection
@@ -161,7 +161,7 @@
                 :options="item.target.fields"
               ></MultiSelection>
               <span v-else :class="['item-value-text', { 'color-danger': !item.target.sortColumn }]">{{
-                item.target.sortColumn || $t('message.placeholderSelect')
+                item.target.sortColumn || $t('message_placeholderSelect')
               }}</span>
             </div>
             <div class="setting-item mt-4">
@@ -205,7 +205,7 @@
     </div>
     <ElDialog
       width="60%"
-      :title="$t('dataVerification.JSVerifyLogic')"
+      :title="$t('dataVerification_JSVerifyLogic')"
       :visible.sync="dialogAddScriptVisible"
       :before-close="handleAddScriptClose"
     >

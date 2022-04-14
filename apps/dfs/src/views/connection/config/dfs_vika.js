@@ -13,11 +13,11 @@ export default function (vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: vm.$t('dataForm.form.connectionType'),
+        label: vm.$t('dataForm_form_connectionType'),
         options: [
           {
-            label: vm.$t('dataForm.form.options.target'),
-            tip: vm.$t('dataForm.form.options.targetTips'),
+            label: vm.$t('dataForm_form_options_target'),
+            tip: vm.$t('dataForm_form_options_targetTips'),
             value: 'target'
           }
         ],
@@ -30,7 +30,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_host',
-        label: vm.$t('dataForm.form.host')
+        label: vm.$t('dataForm_form_host')
       },
       {
         type: 'input',

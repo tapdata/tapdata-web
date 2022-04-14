@@ -115,9 +115,9 @@ export default {
     return {
       loading: false,
       typeMap: {
-        row_count: this.$t('dataVerification.rowVerify'),
-        field: this.$t('dataVerification.contentVerify'),
-        jointField: this.$t('dataVerification.jointVerify')
+        row_count: this.$t('dataVerification_rowVerify'),
+        field: this.$t('dataVerification_contentVerify'),
+        jointField: this.$t('dataVerification_jointVerify')
       },
       inspect: {},
       resultInfo: {},
@@ -262,7 +262,7 @@ export default {
           { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: firstCheckId }
         )
         .then(() => {
-          this.$message.success(this.$t('dataVerification.startVerify'))
+          this.$message.success(this.$t('dataVerification_startVerify'))
           this.getData()
         })
     },

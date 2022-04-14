@@ -4,12 +4,12 @@
     ref="table"
     height="100%"
     :data="list"
-    :element-loading-text="$t('dataFlow.dataLoading')"
+    :element-loading-text="$t('dataFlow_dataLoading')"
     @row-click="rowClickHandler"
     @selection-change="handleSelectionChange"
   >
     <ElTableColumn type="selection" width="55" :selectable="checkSelectableFnc"> </ElTableColumn>
-    <ElTableColumn :label="$t('dataVerification.sourceTable')">
+    <ElTableColumn :label="$t('dataVerification_sourceTable')">
       <template slot-scope="scope">
         <span>{{ scope.row.source ? scope.row.source.table : '' }}</span>
         <div style="color: #ccc">
@@ -17,7 +17,7 @@
         </div>
       </template>
     </ElTableColumn>
-    <ElTableColumn :label="$t('dataVerification.targetTable')">
+    <ElTableColumn :label="$t('dataVerification_targetTable')">
       <template slot-scope="scope">
         <span>{{ scope.row.target ? scope.row.target.table : 0 }}</span>
         <div style="color: #ccc">
@@ -25,22 +25,22 @@
         </div>
       </template>
     </ElTableColumn>
-    <ElTableColumn :label="$t('dataVerification.sourceRows')">
+    <ElTableColumn :label="$t('dataVerification_sourceRows')">
       <template slot-scope="scope">
         <span>{{ (firstCheckId ? scope.row.firstSourceTotal : scope.row.source_total) || 0 }}</span>
       </template>
     </ElTableColumn>
-    <!--    <ElTableColumn v-if="$route.name === 'VerifyDiffDetails'" :label="$t('dataVerification.sourceRows')">-->
+    <!--    <ElTableColumn v-if="$route.name === 'VerifyDiffDetails'" :label="$t('dataVerification_sourceRows')">-->
     <!--      <template slot-scope="scope">-->
     <!--        <span>{{ scope.row.firstSourceTotal || 0 }}</span>-->
     <!--      </template>-->
     <!--    </ElTableColumn>-->
-    <!--    <ElTableColumn v-else :label="$t('dataVerification.sourceRows')">-->
+    <!--    <ElTableColumn v-else :label="$t('dataVerification_sourceRows')">-->
     <!--      <template slot-scope="scope">-->
     <!--        <span>{{ scope.row.source_total || 0 }}</span>-->
     <!--      </template>-->
     <!--    </ElTableColumn>-->
-    <ElTableColumn prop="progress" :label="$t('dataVerification.verifyProgress')" width="120px">
+    <ElTableColumn prop="progress" :label="$t('dataVerification_verifyProgress')" width="120px">
       <template slot-scope="scope">
         <div>
           <span>{{
@@ -49,7 +49,7 @@
         </div>
       </template>
     </ElTableColumn>
-    <ElTableColumn prop="status" :label="$t('dataVerification.verifyResult')">
+    <ElTableColumn prop="status" :label="$t('dataVerification_verifyResult')">
       <template slot-scope="scope" v-if="['waiting', 'done'].includes(scope.row.status)">
         <div class="inspect-result-status">
           <div v-if="scope.row.result === 'failed' && scope.row.countResultText">
@@ -66,7 +66,7 @@
           </div>
           <span class="success" v-if="scope.row.result === 'passed'">
             <i class="verify-icon el-icon-success color-success"></i>
-            <span>{{ $t('dataVerification.consistent') }}</span>
+            <span>{{ $t('dataVerification_consistent') }}</span>
           </span>
         </div>
       </template>

@@ -151,7 +151,7 @@
                           <div class="flex">
                             <ElInput
                               v-model="settingModel.cronExpression"
-                              :placeholder="$t('dataFlow.cronExpression')"
+                              :placeholder="$t('dataFlow_cronExpression')"
                               size="mini"
                               class="jobSchedule"
                             ></ElInput>
@@ -162,17 +162,17 @@
                               trigger="hover"
                             >
                               <div class="text box">
-                                <p>{{ $t('dialog.jobSchedule.explanation') }}</p>
-                                <p>{{ $t('dialog.jobSchedule.grammar') }}</p>
+                                <p>{{ $t('dialog_jobSchedule_explanation') }}</p>
+                                <p>{{ $t('dialog_jobSchedule_grammar') }}</p>
                                 <ul class="flex">
                                   <li v-for="item in timeTextArr" :key="item" class="mr-3 text-center">
                                     <p>{{ $t('dialog.jobSchedule.' + item) }}</p>
                                     <span>*</span>
                                   </li>
                                 </ul>
-                                <p>{{ $t('dialog.jobSchedule.example') }}</p>
-                                <p>0 */1 * * * ? // {{ $t('dialog.jobSchedule.runMinute') }}</p>
-                                <p>0 0 2 * * ? // {{ $t('dialog.jobSchedule.runDay') }}</p>
+                                <p>{{ $t('dialog_jobSchedule_example') }}</p>
+                                <p>0 */1 * * * ? // {{ $t('dialog_jobSchedule_runMinute') }}</p>
+                                <p>0 0 2 * * ? // {{ $t('dialog_jobSchedule_runDay') }}</p>
                               </div>
                               <VIcon slot="reference" class="color-disable ml-2" size="14">info</VIcon>
                             </ElPopover>
@@ -229,7 +229,7 @@
               v-else-if="steps[activeStep].showBackBtn || (steps[activeStep].index === 3 && !id)"
               @click="back()"
             >
-              {{ $t('guide.btn_back') }}
+              {{ $t('guide_btn_back') }}
             </VButton>
             <VButton
               v-if="steps[activeStep].showNextBtn"
@@ -239,7 +239,7 @@
               :disabled="(isTransfer || reloadLoading) && steps[activeStep].type === 'mapping'"
               @mousedown.native.prevent="next()"
             >
-              <span>{{ $t('guide.btn_next') }}</span>
+              <span>{{ $t('guide_btn_next') }}</span>
             </VButton>
             <VButton
               v-if="steps[activeStep].showSaveBtn"
@@ -667,15 +667,15 @@ export default {
       systemTimeZone: '',
       options: [
         {
-          label: this.$t('dataFlow.SyncInfo.localTZType'),
+          label: this.$t('dataFlow_SyncInfo_localTZType'),
           value: 'localTZ'
         },
         {
-          label: this.$t('dataFlow.SyncInfo.connTZType'),
+          label: this.$t('dataFlow_SyncInfo_connTZType'),
           value: 'connTZ'
         },
         {
-          label: this.$t('dataFlow.SyncInfo.currentType'),
+          label: this.$t('dataFlow_SyncInfo_currentType'),
           value: 'current'
         }
       ],
@@ -1660,7 +1660,7 @@ export default {
         })
         .catch(e => {
           if (e.response?.msg === 'duplication for names') {
-            this.$message.error(this.$t('message.exists_name'))
+            this.$message.error(this.$t('message_exists_name'))
           } else {
             this.$message.error(e.response?.msg || e.data?.msg)
           }

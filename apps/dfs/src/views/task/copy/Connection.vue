@@ -196,8 +196,8 @@ export default {
     async reload(row) {
       this.$checkAgentStatus(() => {
         let config = {
-          title: this.$t('connection.reloadTittle'),
-          Message: this.$t('connection.reloadMsg'),
+          title: this.$t('connection_reloadTittle'),
+          Message: this.$t('connection_reloadMsg'),
           confirmButtonText: this.$t('button_dialog_confirm'),
           cancelButtonText: this.$t('button_close'),
           name: row.name,
@@ -277,7 +277,7 @@ export default {
           }
         })
         .catch(() => {
-          this.$message.error(this.$t('connection.reloadFail'))
+          this.$message.error(this.$t('connection_reloadFail'))
           this.showProgress = false
           this.progress = 0 //加载完成
           this.reloadLoading = false

@@ -114,9 +114,9 @@ export default {
         total: 0
       },
       typeList: [
-        { label: this.$t('taskProgress.all'), value: 'all' },
-        { label: this.$t('taskProgress.running'), value: 'running' },
-        { label: this.$t('taskProgress.waiting'), value: 'waiting' }
+        { label: this.$t('taskProgress_all'), value: 'all' },
+        { label: this.$t('taskProgress_running'), value: 'running' },
+        { label: this.$t('taskProgress_waiting'), value: 'waiting' }
       ]
     }
   },
