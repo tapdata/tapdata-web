@@ -6,7 +6,7 @@
     :show-close="false"
     :with-header="false"
     size="320px"
-    style="top: 70px"
+    style="top: 60px"
     @closed="handleClose"
   >
     <div v-loading="loading" class="details-container">
