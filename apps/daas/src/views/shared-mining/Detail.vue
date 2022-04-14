@@ -507,7 +507,7 @@ export default {
       width: 100%;
       .label {
         width: 70px;
-        line-height: 28px;
+        line-height: 32px;
       }
       ::v-deep {
         .el-date-editor {
@@ -519,7 +519,7 @@ export default {
       }
     }
     .share-detail-head-right {
-      width: 240px;
+      min-width: 240px;
       align-items: center;
       overflow: hidden;
       & > div {
