@@ -3,12 +3,12 @@
     <main class="api-monitor-main">
       <section class="flex flex-direction bg-white api-monitor-card mb-5">
         <div class="flex-1 mt-5 text-center">
-          <header class="api-monitor-total__tittle">api总数</header>
-          <div class="api-monitor-total__text">{{ previewData.totalCount }}</div>
+          <header class="api-monitor-total__tittle">API总数</header>
+          <div class="api-monitor-total__text din-font">{{ previewData.totalCount }}</div>
         </div>
         <div class="flex-1 mt-5 text-center">
-          <header class="api-monitor-total__tittle">api访问总数</header>
-          <div class="api-monitor-total__text">
+          <header class="api-monitor-total__tittle">API访问总数</header>
+          <div class="api-monitor-total__text din-font">
             {{
               previewData.visitTotalCount - previewData.warningApiCount < 0
                 ? 0
@@ -17,31 +17,31 @@
           </div>
         </div>
         <div class="flex-1 mt-5 text-center">
-          <header class="api-monitor-total__tittle">api访问总行数</header>
-          <div class="api-monitor-total__text">{{ previewData.visitTotalLine }}</div>
+          <header class="api-monitor-total__tittle">API访问总行数</header>
+          <div class="api-monitor-total__text din-font">{{ previewData.visitTotalLine }}</div>
         </div>
         <div class="flex-1 mt-5 text-center">
-          <header class="api-monitor-total__tittle">api传输总量</header>
-          <div class="api-monitor-total__text">{{ handleUnit(previewData.transmitTotal) || 0 }}</div>
+          <header class="api-monitor-total__tittle">API传输总量</header>
+          <div class="api-monitor-total__text din-font">{{ handleUnit(previewData.transmitTotal) || 0 }}</div>
         </div>
       </section>
-      <section class="flex flex-direction api-monitor-card mb-5">
-        <div class="flex flex-column api-monitor-chart api-monitor-card api-monitor__min__height bg-white pl-5 pt-5">
-          <div class="api-monitor-chart__text mb-2">api 告警数</div>
+      <section class="flex flex-direction api-monitor-card mb-5 api-monitor__min__height">
+        <div class="flex flex-column api-monitor-chart api-monitor-card bg-white pl-5 pt-5">
+          <div class="api-monitor-chart__text mb-2">API 告警数</div>
           <Chart type="pie" :extend="getPieOption()" class="type-chart"></Chart>
           <div class="ml-8 mb-8 mt-5">
             <div>
               <i class="circle-total mr-3"></i><span class="mr-8">API总数</span
-              ><span class="lenged"> {{ previewData.totalCount }}</span>
+              ><span> {{ previewData.totalCount }}</span>
             </div>
             <div class="mt-2">
               <i class="circle-waring mr-3"></i><span class="mr-6">API告警数</span
-              ><span class=""> {{ previewData.warningApiCount }}</span>
+              ><span> {{ previewData.warningApiCount }}</span>
             </div>
           </div>
         </div>
-        <div class="flex flex-column flex-1 bg-white api-monitor-card api-monitor__min__height ml-5 mr-5 pl-5 pt-5">
-          <div class="api-monitor-chart__text mb-2">api失败率TOP排序</div>
+        <div class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card ml-5 mr-5 pl-5 pt-5">
+          <div class="api-monitor-chart__text mb-2">API失败率TOP排序</div>
           <TableList
             height="100%"
             ref="failRateList"
@@ -58,8 +58,8 @@
           >
           </el-pagination>
         </div>
-        <div class="flex flex-column flex-1 bg-white api-monitor-card api-monitor__min__height mr-5 pl-5 pt-5">
-          <div class="api-monitor-chart__text mb-2">api响应时间TOP排序</div>
+        <div class="flex flex-column flex-1 bg-white api-monitor-card pl-5 pt-5">
+          <div class="api-monitor-chart__text mb-2">API响应时间TOP排序</div>
           <TableList
             height="100%"
             v-loading="loadingTimeList"
@@ -77,7 +77,7 @@
           </el-pagination>
         </div>
       </section>
-      <section class="flex flex-column bg-white api-monitor-card api-monitor__min__height mb-5 pl-5 pt-5">
+      <section class="flex flex-column bg-white api-monitor-card mb-5 pl-5 pt-5">
         <header class="api-monitor-chart__text mb-2">API列表</header>
         <FilterBar class="mb-2" v-model="searchParams" :items="filterItems" @fetch="getApiList(1)"> </FilterBar>
         <el-table
@@ -419,14 +419,17 @@ export default {
   background-color: #eff1f4;
   overflow: auto;
   .api-monitor__min__height {
-    min-height: 248px;
+    height: 300px;
+  }
+  .api-monitor-table {
+    v::v-deep {
+    }
   }
   .api-monitor-main {
     width: 100%;
   }
   .api-monitor-total__tittle {
     font-size: 18px;
-    font-weight: 600;
     color: map-get($fontColor, main);
   }
   .api-monitor-total__text {

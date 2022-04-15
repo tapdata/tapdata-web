@@ -32,9 +32,11 @@
     </div>
     <div class="flex-1 pt-3">
       <FilterBar v-model="searchParams" :items="filterItems" :hideRefresh="true" @fetch="getDetail()"> </FilterBar>
-      <Chart ref="chart" type="line" :data="lineData" :options="lineOptions" class="type-chart h-100"></Chart>
+      <div v-loading="!lineDataDeep.x.length">
+        <Chart ref="chart" type="line" :data="lineData" :options="lineOptions" class="type-chart h-100"></Chart>
+      </div>
     </div>
-    <div class="flex-1 pt-5">
+    <div class="pt-5 ml-4" style="width: 200px">
       <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
       <div style="margin: 15px 0"></div>
       <el-checkbox-group v-model="clientName" @change="handleCheckedCitiesChange">
@@ -47,7 +49,7 @@
 <script>
 import FilterBar from '@/components/filter-bar'
 import Chart from 'web-core/components/chart'
-import { formatTime, formatMs } from '@/utils/util'
+import { formatTime } from '@/utils/util'
 export default {
   name: 'Detail',
   components: { FilterBar, Chart },
@@ -85,11 +87,11 @@ export default {
       ],
       lineData: {
         x: [],
-        y: [[], []]
+        y: [[]]
       },
       lineDataDeep: {
         x: [],
-        y: [[], []]
+        y: [[]]
       },
       lineOptions: {
         tooltip: {
@@ -198,37 +200,22 @@ export default {
         .then(res => {
           this.detail = res.data
           let data = res?.data
-          let { samples } = data
-          samples.forEach(el => {
-            for (let key in el) {
-              el[key] = el[key].reverse()
-            }
-          })
-          let statistics = data.statistics?.[0] || {}
-          this.replicateLag = statistics.replicateLag || 0
           // 折线图
-          const qpsData = samples[0] || {}
-          let { inputQPS = [], outputQPS = [] } = qpsData
-          let qpsDataTime = qpsData.time || []
+          let qpsDataValue = data.value || []
+          let qpsDataTime = data.time || []
 
           let xArr = qpsDataTime.map(t => formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
           const xArrLen = xArr.length
           if (this.lineDataDeep.x.length > 20) {
             this.lineDataDeep.x.splice(0, xArrLen)
             this.lineDataDeep.y[0].splice(0, xArrLen)
-            this.lineDataDeep.y[1].splice(0, xArrLen)
           }
           let inArr = []
-          let outArr = []
           xArr.forEach((el, i) => {
             let time = el
             inArr.push({
               name: time,
-              value: [time, inputQPS[i]]
-            })
-            outArr.push({
-              name: time,
-              value: [time, outputQPS[i]]
+              value: [time, qpsDataValue[i]]
             })
           })
           // eslint-disable-next-line
@@ -237,7 +224,6 @@ export default {
             if (!this.lineDataDeep.x.includes(el)) {
               this.lineDataDeep.x.push(el)
               this.lineDataDeep.y[0].push(inArr[index])
-              this.lineDataDeep.y[1].push(outArr[index])
             }
           })
           this.$nextTick(() => {
@@ -245,9 +231,6 @@ export default {
               series: [
                 {
                   data: Object.assign([], this.lineDataDeep.y[0])
-                },
-                {
-                  data: Object.assign([], this.lineDataDeep.y[1])
                 }
               ]
             })
