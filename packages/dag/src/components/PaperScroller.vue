@@ -88,7 +88,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['getCtor', 'isActionActive']),
+    ...mapGetters('dataflow', ['getCtor', 'isActionActive', 'stateIsReadonly']),
     ...mapState('dataflow', ['spaceKeyPressed']),
 
     selectBoxStyle() {
@@ -154,6 +154,16 @@ export default {
       return {
         transform: `translate(${this.paperReverseSize.w}px, ${this.paperReverseSize.h}px)`
       }
+    }
+  },
+
+  watch: {
+    stateIsReadonly() {
+      // 编辑和查看切换时，视图尺寸变化，主要是侧边栏显示隐藏的切换
+      const rect = this.$el.getBoundingClientRect()
+      this.visibleArea.width = rect.width
+      this.visibleArea.left = rect.left
+      this.visibleArea.x = rect.x
     }
   },
 
