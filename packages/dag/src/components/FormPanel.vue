@@ -97,6 +97,11 @@ export default {
   },
 
   watch: {
+    stateIsReadonly(v) {
+      console.log('监听：stateIsReadonly', v) // eslint-disable-line
+      this.form.setState({ disabled: v, effects: this.stateIsReadonly ? null : this.useEffects })
+    },
+
     async activeNodeId(n, o) {
       const formSchema = this.$store.getters['dataflow/formSchema'] || {}
 

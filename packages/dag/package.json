@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@daas/api": "workspace:^1.0.0",
+    "@daas/business": "workspace:^1.0.0",
     "@daas/form": "workspace:^1.0.0",
     "@daas/shared": "workspace:^1.0.0",
     "@formily/core": "^2.0.9",

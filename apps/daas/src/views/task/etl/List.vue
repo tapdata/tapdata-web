@@ -154,7 +154,7 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="row.disabledData.stop"
-              @click="stop([row.id])"
+              @click="stop([row.id], row)"
               >{{ $t('task_list_stop') }}</ElLink
             >
             <ElDivider direction="vertical"></ElDivider>
