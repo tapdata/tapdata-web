@@ -32,6 +32,7 @@
     </div>
     <div class="flex-1 pt-3">
       <FilterBar v-model="searchParams" :items="filterItems" :hideRefresh="true" @fetch="getDetail()"> </FilterBar>
+      <Chart ref="chart" type="line" :data="lineData" :options="lineOptions" class="type-chart h-100"></Chart>
     </div>
     <div class="flex-1 pt-5">
       <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
@@ -45,9 +46,11 @@
 
 <script>
 import FilterBar from '@/components/filter-bar'
+import Chart from 'web-core/components/chart'
+import { formatTime, formatMs } from '@/utils/util'
 export default {
   name: 'Detail',
-  components: { FilterBar },
+  components: { FilterBar, Chart },
   props: ['id'],
   data() {
     return {
@@ -79,7 +82,93 @@ export default {
           name: 'Data Explorer',
           id: '5c0e750b7a5cd42464a5099d'
         }
-      ]
+      ],
+      lineData: {
+        x: [],
+        y: [[], []]
+      },
+      lineDataDeep: {
+        x: [],
+        y: [[], []]
+      },
+      lineOptions: {
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          top: 4,
+          right: 0,
+          show: false
+        },
+        xAxis: {
+          type: 'time'
+        },
+        yAxis: [
+          {
+            // max: 'dataMax',
+            // name: 'QPS',
+            axisLabel: {
+              formatter: function (value) {
+                if (value >= 1000) {
+                  value = value / 1000 + 'K'
+                }
+                return value
+              }
+            }
+          },
+          {
+            // max: 'dataMax',
+            axisLabel: {
+              formatter: function (value) {
+                if (value >= 1000) {
+                  value = value / 1000 + 'K'
+                }
+                return value
+              }
+            }
+          }
+        ],
+        grid: {
+          left: 0,
+          right: 0,
+          top: '24px',
+          bottom: 0
+        },
+        series: [
+          {
+            name: this.$t('task_info_input'),
+            lineStyle: {
+              color: 'rgba(24, 144, 255, 1)',
+              width: 1
+            },
+            areaStyle: {
+              color: 'rgba(24, 144, 255, 0.2)'
+            },
+            symbol: 'none',
+            itemStyle: {
+              color: 'rgba(24, 144, 255, 1)'
+            },
+            // type: 'line',
+            data: []
+          },
+          {
+            name: this.$t('task_info_output'),
+            lineStyle: {
+              color: 'rgba(118, 205, 238, 1)',
+              width: 1
+            },
+            symbol: 'none',
+            areaStyle: {
+              color: 'rgba(118, 205, 238, 0.2)'
+            },
+            itemStyle: {
+              color: 'rgba(118, 205, 238, 1)'
+            },
+            // type: 'line',
+            data: []
+          }
+        ]
+      }
     }
   },
   created() {
@@ -108,6 +197,61 @@ export default {
         .apiDetail(data)
         .then(res => {
           this.detail = res.data
+          let data = res?.data
+          let { samples } = data
+          samples.forEach(el => {
+            for (let key in el) {
+              el[key] = el[key].reverse()
+            }
+          })
+          let statistics = data.statistics?.[0] || {}
+          this.replicateLag = statistics.replicateLag || 0
+          // 折线图
+          const qpsData = samples[0] || {}
+          let { inputQPS = [], outputQPS = [] } = qpsData
+          let qpsDataTime = qpsData.time || []
+
+          let xArr = qpsDataTime.map(t => formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
+          const xArrLen = xArr.length
+          if (this.lineDataDeep.x.length > 20) {
+            this.lineDataDeep.x.splice(0, xArrLen)
+            this.lineDataDeep.y[0].splice(0, xArrLen)
+            this.lineDataDeep.y[1].splice(0, xArrLen)
+          }
+          let inArr = []
+          let outArr = []
+          xArr.forEach((el, i) => {
+            let time = el
+            inArr.push({
+              name: time,
+              value: [time, inputQPS[i]]
+            })
+            outArr.push({
+              name: time,
+              value: [time, outputQPS[i]]
+            })
+          })
+          // eslint-disable-next-line
+          console.log('挖掘详情x轴：', this.lineDataDeep.x.length, xArr)
+          xArr.forEach((el, index) => {
+            if (!this.lineDataDeep.x.includes(el)) {
+              this.lineDataDeep.x.push(el)
+              this.lineDataDeep.y[0].push(inArr[index])
+              this.lineDataDeep.y[1].push(outArr[index])
+            }
+          })
+          this.$nextTick(() => {
+            this.$refs.chart?.chart?.setOption({
+              series: [
+                {
+                  data: Object.assign([], this.lineDataDeep.y[0])
+                },
+                {
+                  data: Object.assign([], this.lineDataDeep.y[1])
+                }
+              ]
+            })
+          })
           //全选值
           this.allElectionFun()
         })
