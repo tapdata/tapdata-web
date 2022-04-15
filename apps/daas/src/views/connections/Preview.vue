@@ -17,10 +17,10 @@
           <el-button type="primary" size="mini" class="flex-1" @click="reload()">
             {{ $t('connection_preview_load_schema') }}
           </el-button>
-          <el-button style="min-width: 60px" size="mini" @click="edit()">
+          <el-button style="min-width: 50px" size="mini" @click="edit()">
             {{ $t('connection_preview_edit') }}
           </el-button>
-          <el-button style="min-width: 70px" size="mini" @click="beforeTest()">
+          <el-button class="flex-1" size="mini" @click="beforeTest()">
             {{ $t('connection_preview_test') }}
           </el-button>
         </div>
