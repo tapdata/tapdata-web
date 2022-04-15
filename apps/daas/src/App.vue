@@ -7,7 +7,23 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  created() {
+    this.$root.checkAgent = this.checkAgent
+  },
+  methods: {
+    checkAgent(cb) {
+      this.$api('Workers')
+        .getAvailableAgent()
+        .then(res => {
+          if (!res?.data?.result?.length) {
+            this.$message.error(this.$t('agent_check_error'))
+          } else {
+            cb && cb()
+          }
+        })
+    }
+  }
 }
 </script>
 <style lang="scss">

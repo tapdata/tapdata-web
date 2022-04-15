@@ -19,9 +19,9 @@
           <ElMain :class="['create-task-main', 'task-main-' + steps[activeStep].index]">
             <!--步骤1-->
             <div class="body" v-if="steps[activeStep].index === 1">
-              <div class="mb-8">
-                <span class="title fw-sub">{{ $t('migrate_select_connection') }}</span>
-                <span class="desc">
+              <div class="mb-6 flex flex-wrap flex-1 pr-4" style="line-height: 20px">
+                <span class="title fw-sub mr-4 mb-2">{{ $t('migrate_select_connection') }}</span>
+                <span class="desc mb-2">
                   {{ $t('migrate_select_connection_tip')
                   }}<span style="color: #2c65ff; cursor: pointer" @click="handleCreateDatabase">
                     {{ $t('migrate_create_connection') }}</span
@@ -37,19 +37,45 @@
             </div>
             <!-- 步骤2 -->
             <div class="body step-3" v-if="steps[activeStep].index === 2">
-              <div class="mb-8">
-                <span class="title fw-sub">{{ $t('migrate_task_settings') }}</span>
-                <span class="desc">{{ $t('migrate_task_settings_tip') }} </span>
+              <div class="mb-6 flex flex-wrap flex-1 pr-4" style="line-height: 20px">
+                <span class="title fw-sub mr-4 mb-2">{{ $t('migrate_task_settings') }}</span>
+                <span class="desc mb-2">{{ $t('migrate_task_settings_tip') }} </span>
               </div>
               <Setting :dataSourceData="dataSourceData" :settingData="settingData" @submit="settingSubmit"></Setting>
             </div>
             <!-- 步骤3 -->
             <div class="body step-4" v-if="steps[activeStep].index === 3">
-              <div class="mb-6">
-                <span class="title fw-sub">{{ $t('migrate_select_table') }}</span>
-                <span class="desc">
-                  {{ $t('migrate_select_table_tip') }}
-                </span>
+              <div class="flex align-items-end mb-4">
+                <div class="flex flex-wrap flex-1 pr-4" style="line-height: 20px">
+                  <span class="title fw-sub mr-4 mb-2">{{ $t('migrate_select_table') }}</span>
+                  <span class="desc mb-2">
+                    {{ $t('migrate_select_table_tip') }}
+                  </span>
+                </div>
+                <div class="mb-2 flex">
+                  <VButton size="mini" @click="dialogTableVisible = true">{{
+                    $t('task_mapping_table_rename')
+                  }}</VButton>
+                  <VButton
+                    v-if="!transferData.showBtn"
+                    class="ml-4"
+                    type="primary"
+                    size="mini"
+                    :loading="loading"
+                    @click="getFieldMapping"
+                    >{{ $t('dag_link_button_field_mapping') }}</VButton
+                  >
+                  <FieldMapping
+                    v-if="showFieldMapping"
+                    ref="fieldMapping"
+                    class="task-form-field-mapping ml-4"
+                    :transform="transferData"
+                    :getDataFlow="daft"
+                    @update-first="returnModel"
+                    @returnPreFixSuffix="returnFieldMappingData"
+                    @returnFieldMapping="saveFieldProcess"
+                  ></FieldMapping>
+                </div>
               </div>
               <div class="create-task-transfer">
                 <Transfer
@@ -59,8 +85,12 @@
                   :mqTransferFlag="mqTransferFlag"
                   :isTwoWay="true"
                   :getTask="daft"
-                  :saveTask="createTask"
                 ></Transfer>
+                <TableFieldFilter
+                  :visible.sync="dialogTableVisible"
+                  :transform="transferData"
+                  @save="handleTableName"
+                ></TableFieldFilter>
               </div>
             </div>
           </ElMain>
@@ -107,10 +137,12 @@
 import Transfer from './Transfer'
 import DataSource from './DataSource'
 import Setting from './Setting'
+import TableFieldFilter from './TableFieldFilter'
+import FieldMapping from '@tapdata/field-mapping'
 import { DATASOURCE_MODEL, SETTING_MODEL, TRANSFER_MODEL } from './const'
 
 export default {
-  components: { Transfer, DataSource, Setting },
+  components: { Transfer, DataSource, Setting, TableFieldFilter, FieldMapping },
   data() {
     return {
       steps: [],
@@ -135,7 +167,8 @@ export default {
       nodes: [],
       edges: [],
       //保存
-      loadingSave: false
+      loadingSave: false,
+      dialogTableVisible: false
     }
   },
   created() {
@@ -154,6 +187,52 @@ export default {
     }
   },
   methods: {
+    //保存任务
+    getFieldMapping() {
+      this.loading = true
+      this.createTask().then(() => {
+        this.$refs.fieldMapping.getMetaData()
+        this.loading = false
+      })
+    },
+    //表改名（前缀，后缀，大小写）
+    handleTableName(form) {
+      this.transferData.tableNameTransform = form.tableNameTransform
+      this.transferData.tablePrefix = form.tablePrefix
+      this.transferData.tableSuffix = form.tableSuffix
+      this.dialogTableVisible = false
+    },
+    //字段映射
+    tranModelVersionControl() {
+      let data = this.daft()
+      if (data.id) {
+        this.transferData.showBtn = true
+      }
+      //查找目标节点
+      //是否显示字段推演
+      let nodeId = data?.dag?.edges?.[0]?.target || ''
+      let param = {
+        nodes: data?.dag?.nodes,
+        nodeId: nodeId
+      }
+      this.$api('Task')
+        .tranModelVersionControl(param)
+        .then(res => {
+          this.showFieldMapping = res?.data[nodeId]
+        })
+    },
+    // 字段处理器返回前后缀
+    returnFieldMappingData(data) {
+      this.transferData.fieldsNameTransform = data.fieldsNameTransform
+      this.transferData.batchOperationList = data.batchOperationList
+    },
+    //接收是否第一次打开
+    returnModel(value) {
+      this.transferData.isFirst = value
+    },
+    saveFieldProcess(data) {
+      this.transferData.fieldProcess = data
+    },
     checkEditor(id) {
       //先检查是否待启动
       this.$api('Task')
@@ -321,6 +400,7 @@ export default {
               this.sourceId = this.dataSourceData.source_connectionId
               this.activeStep++
               this.transferData.automaticallyCreateTables = this.settingData.automaticallyCreateTables
+              this.tranModelVersionControl()
             })
             .catch(() => {
               this.loading = false
@@ -541,6 +621,15 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.task-form-field-mapping {
+  ::v-deep {
+    > .el-button {
+      padding-top: 0;
+      padding-bottom: 0;
+      line-height: 28px;
+    }
+  }
+}
 .create-task-wrap {
   .select-connection-popper {
     .el-select-dropdown__item {
@@ -572,8 +661,6 @@ export default {
     }
   }
 }
-</style>
-<style lang="scss" scoped>
 .create-task-wrap {
   height: 0;
   padding: 0 20px 20px 20px;
@@ -679,7 +766,6 @@ export default {
         color: map-get($fontColor, normal);
       }
       .desc {
-        margin-left: 16px;
         font-size: 12px;
         color: rgba(0, 0, 0, 0.5);
       }

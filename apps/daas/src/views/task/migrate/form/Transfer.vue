@@ -1,63 +1,6 @@
 <template>
   <section class="tapdata-transfer-wrap">
-    <div class="reload-schema flex justify-content-between mb-5">
-      <div class="text-wrap" style="width: 400px">
-        {{ this.$t('task_form_no_table_available') }}
-        <el-button
-          class="border-0"
-          type="text"
-          :disabled="stateIsReadonly"
-          :loading="reloadLoading"
-          @click="reload()"
-          >{{ this.$t('task_form_reload') }}</el-button
-        >
-        <span v-if="showProgress" class="ml-2"><VIcon>loading</VIcon> {{ progress }} %</span>
-      </div>
-      <div>
-        <el-button class="mr-2" size="mini" @click="dialogTableVisible = true">{{
-          $t('task_mapping_table_rename')
-        }}</el-button>
-        <el-button
-          type="primary"
-          class="mr-2"
-          size="mini"
-          :loading="loading"
-          v-if="!transferData.showBtn"
-          @click="getFieldMapping"
-          >{{ $t('dag_link_button_field_mapping') }}</el-button
-        >
-        <FieldMapping
-          v-if="showFieldMapping"
-          ref="fieldMapping"
-          class="fr"
-          :transform="transferData"
-          :getDataFlow="getTask"
-          @update-first="returnModel"
-          @returnPreFixSuffix="returnFieldMappingData"
-          @returnFieldMapping="saveFieldProcess"
-        ></FieldMapping>
-      </div>
-    </div>
-
     <TableSelector v-if="!mqTransferFlag" :connection-id="sourceId"></TableSelector>
-
-    <!-- <VirtualTransfer
-      v-if="!mqTransferFlag"
-      v-loading="transferLoading"
-      v-model="transferData.selectSourceArr"
-      :props="{ key: 'key' }"
-      :item-size="30"
-      :titles="titles"
-      :filter-placeholder="$t('editor.cell.link.searchContent')"
-      :data="sourceData"
-      class="transfer-buttons-horizontal"
-      filterable
-      @change="handleChangeTransfer"
-    >
-      <template #right="{ option }">
-        <span>{{ getTableLabel(option.label) }}</span>
-      </template>
-    </VirtualTransfer> -->
 
     <!-- S MQ穿梭框 -->
     <MqTransfer
@@ -78,32 +21,20 @@
       </template>
     </MqTransfer>
     <!-- E MQ穿梭框 -->
-    <ConnectionTest ref="test"></ConnectionTest>
-    <TableFieldFilter
-      :visible.sync="dialogTableVisible"
-      :transform="transferData"
-      @save="handleTableName"
-    ></TableFieldFilter>
   </section>
 </template>
 
 <script>
-import VIcon from '@/components/VIcon'
-// import VirtualTransfer from 'web-core/components/virtual-transfer'
 import MqTransfer from 'web-core/components/mq-transfer'
-import TableFieldFilter from './TableFieldFilter'
-import FieldMapping from '@tapdata/field-mapping'
 import TableSelector from '@/components/table-selector'
 
 export default {
-  components: { VIcon, MqTransfer, TableFieldFilter, FieldMapping, TableSelector },
+  components: { MqTransfer, TableSelector },
   props: {
     transferData: Object,
     isTwoWay: Boolean,
     mqTransferFlag: Boolean,
-    sourceId: String,
-    getTask: Function,
-    saveTask: Function
+    sourceId: String
   },
 
   data() {
@@ -111,26 +42,15 @@ export default {
       stateIsReadonly: this.$store.state.dataflow.stateIsReadonly,
       transferLoading: false,
       showOperationBtn: false,
-      dialogTableVisible: false,
       sourceData: [],
       titles: [this.$t('editor.cell.link.migrationObjece'), this.$t('editor.cell.link.chosen')],
       mqTitles: [this.$t('editor.cell.link.migrationObjece'), 'Topic', 'Queue'],
       type: '',
-      progress: 0,
-      showProgress: '',
-      bidirectional: '',
-      loadFieldsStatus: 'finished',
-      reloadCount: 0,
-      reloadLoading: false, // 重新加载
-      loading: false,
-      //字段映射
-      showFieldMapping: true,
-      taskId: ''
+      bidirectional: ''
     }
   },
   mounted() {
     this.getTable(this.sourceId)
-    this.tranModelVersionControl()
     if (!this.transferData.automaticallyCreateTables || this.stateIsReadonly) {
       this.transferData.mode = 'readOnly'
     } else this.transferData.mode = 'all'
@@ -146,7 +66,6 @@ export default {
         .then(res => {
           if (res) {
             let data = res.data
-            this.loadFieldsStatus = data.loadFieldsStatus
             let tables = data?.schema?.tables || []
             tables = tables.sort((t1, t2) =>
               t1.table_name > t2.table_name ? 1 : t1.table_name === t2.table_name ? 0 : -1
@@ -195,82 +114,10 @@ export default {
       }
       return label
     },
-    //表改名（前缀，后缀，大小写）
-    handleTableName(form) {
-      this.transferData.tableNameTransform = form.tableNameTransform
-      this.transferData.tablePrefix = form.tablePrefix
-      this.transferData.tableSuffix = form.tableSuffix
-      this.dialogTableVisible = false
-    },
 
     // 穿梭框值改变的时候 (重命名 或者还原)
     handleChangeTransfer() {
       this.$emit('select-table')
-    },
-    //字段映射
-    tranModelVersionControl() {
-      let data = this.getTask()
-      this.taskId = data.id
-      if (this.taskId) {
-        this.transferData.showBtn = true
-      }
-      //查找目标节点
-      //是否显示字段推演
-      let nodeId = data?.dag?.edges?.[0]?.target || ''
-      let param = {
-        nodes: data?.dag?.nodes,
-        nodeId: nodeId
-      }
-      this.$api('Task')
-        .tranModelVersionControl(param)
-        .then(res => {
-          this.showFieldMapping = res?.data[nodeId]
-        })
-    },
-    //保存任务
-    getFieldMapping() {
-      this.loading = true
-      this.saveTask().then(() => {
-        this.$refs.fieldMapping.getMetaData()
-        this.loading = false
-      })
-    },
-    //接收是否第一次打开
-    returnModel(value) {
-      this.transferData.isFirst = value
-    },
-    // 字段处理器返回前后缀
-    returnFieldMappingData(data) {
-      this.transferData.fieldsNameTransform = data.fieldsNameTransform
-      this.transferData.batchOperationList = data.batchOperationList
-    },
-    saveFieldProcess(data) {
-      this.transferData.fieldProcess = data
-    },
-    //重新加载模型
-    async reload() {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-      } else {
-        let config = {
-          title: this.$t('connection.reloadTittle'),
-          Message: this.$t('connection.reloadMsg'),
-          confirmButtonText: this.$t('message.confirm'),
-          cancelButtonText: this.$t('message.cancel')
-        }
-        this.confirm(
-          () => {
-            this.showProgress = true
-            this.reloadLoading = true
-            this.progress = 0
-            this.reloadCount++
-            this.testSchema()
-          },
-          () => {},
-          config
-        )
-      }
     },
     confirm(callback, catchCallback, config) {
       this.$confirm(config.Message + '?', config.title, {
@@ -285,55 +132,6 @@ export default {
           catchCallback()
         }
       })
-    },
-    //请求测试
-    testSchema() {
-      let parms = {
-        loadCount: 0,
-        loadFieldsStatus: 'loading'
-      }
-      this.loadFieldsStatus = 'loading'
-      this.$api('connections')
-        .updateById(this.sourceId, parms)
-        .then(res => {
-          if (!this?.$refs?.test) {
-            return
-          }
-          let data = res?.data
-          this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
-          this.$refs.test.start(data, false, true)
-          this.getProgress()
-        })
-    },
-    getProgress() {
-      this.$api('connections')
-        .getNoSchema(this.sourceId)
-        .then(res => {
-          let data = res?.data
-          this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态
-          if (data.loadFieldsStatus === 'finished') {
-            this.progress = 100
-            setTimeout(() => {
-              this.showProgress = false
-              this.reloadLoading = false
-              this.progress = 0 //加载完成
-              this.getTable(this.sourceId) //更新schema
-            }, 1000)
-          } else {
-            let progress = Math.round((data.loadCount / data.tableCount) * 10000) / 100
-            this.progress = progress ? progress : 0
-            setTimeout(() => {
-              if (this?.$refs?.test) {
-                this.getProgress()
-              }
-            }, 1000)
-          }
-        })
-        .catch(() => {
-          this.$message.error('schema 加载失败')
-          this.showProgress = false
-          this.progress = 0 //加载完成
-        })
     }
   }
 }
