@@ -1,14 +1,5 @@
 <template>
-  <el-drawer
-    :modal="false"
-    :visible.sync="visible"
-    :direction="direction"
-    :show-close="false"
-    :with-header="false"
-    size="320px"
-    style="top: 60px"
-    @closed="handleClose"
-  >
+  <Drawer :visible.sync="visible">
     <div v-loading="loading" class="details-container">
       <div class="container-item border-item flex pb-5">
         <div class="pt-2">
@@ -82,17 +73,18 @@
       </div>
     </div>
     <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
-  </el-drawer>
+  </Drawer>
 </template>
 
 <script>
 import VIcon from '@/components/VIcon'
 import StatusTag from '@/components/StatusTag'
+import Drawer from '@/components/Drawer'
 import { CONFIG_MODEL } from './util'
 
 export default {
   name: 'DetailsDrawer',
-  components: { VIcon, StatusTag },
+  components: { VIcon, StatusTag, Drawer },
   props: {
     hideOperation: {
       type: Boolean,
