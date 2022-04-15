@@ -1109,7 +1109,6 @@ export default {
         margin-left: 12px;
       }
       .btn {
-        height: 28px;
         i.iconfont {
           font-size: 12px;
         }
