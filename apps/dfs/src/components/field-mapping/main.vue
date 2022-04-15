@@ -367,8 +367,7 @@ export default {
       return this.$refs.fieldMappingDom.returnData(hiddenMsg)
     },
     //保存数据当前节点的字段处理器
-    saveFileOperations(row, operations) {
-      if (operations?.length === 0) return
+    saveFileOperations(row, operations = []) {
       let field_process = {
         table_id: row.sourceTableId, //存源表名 兼容旧版字段处理器
         table_name: row.sourceObjectName,
