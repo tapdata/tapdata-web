@@ -124,6 +124,13 @@ export default {
   beforeDestroy() {
     this.clearInterval()
   },
+  watch: {
+    visible(val) {
+      if (!val) {
+        this.clearInterval() //清除定时器
+      }
+    }
+  },
   methods: {
     clearInterval() {
       // 清除定时器
