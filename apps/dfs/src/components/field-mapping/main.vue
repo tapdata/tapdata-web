@@ -367,24 +367,17 @@ export default {
       return this.$refs.fieldMappingDom.returnData(hiddenMsg)
     },
     //保存数据当前节点的字段处理器
-    saveFileOperations(row, operations) {
-      if (operations?.length === 0) return
+    saveFileOperations(row, operations = []) {
       let field_process = {
         table_id: row.sourceTableId, //存源表名 兼容旧版字段处理器
         table_name: row.sourceObjectName,
         operations: operations
       }
-      if (this.field_process && this.field_process.length > 0) {
-        for (let i = 0; i < this.field_process.length; i++) {
-          if (this.field_process[i].table_id === row?.sourceTableId) {
-            this.field_process[i].operations = operations
-          } else {
-            this.field_process = this.field_process || []
-            this.field_process.push(field_process)
-          }
-        }
+      this.field_process = this.field_process || []
+      let findOne = this.field_process.find(t => t.table_id === row?.sourceTableId)
+      if (findOne) {
+        findOne.operations = operations
       } else {
-        this.field_process = this.field_process || []
         this.field_process.push(field_process)
       }
       return this.field_process
