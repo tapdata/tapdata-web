@@ -20,9 +20,8 @@
       </template>
       <div class="buttons" slot="operation">
         <el-button
-          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'SYNC_category_application'"
-          size="small"
+          size="mini"
           class="btn"
           v-show="multipleSelection.length > 0"
           @click="$refs.table.showClassify(handleSelectTag())"
@@ -35,7 +34,7 @@
           @command="handleCommand($event)"
           v-show="multipleSelection.length > 0 && bulkOperation"
         >
-          <el-button class="btn-dropdowm" size="small">
+          <el-button class="btn-dropdowm" size="mini">
             <i class="iconfont icon-piliang back-btn-icon"></i>
             <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
           </el-button>
@@ -61,7 +60,7 @@
           <i class="iconfont icon-hanshu back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkFx') }}</span>
         </el-button> -->
-        <el-button v-readonlybtn="'SYNC_job_import'" size="small" class="btn" @click="handleImport">
+        <el-button v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
           <i class="iconfont icon-daoru back-btn-icon"></i>
           <span> {{ $t('dataFlow.bulkImport') }}</span>
         </el-button>
@@ -69,7 +68,7 @@
           v-readonlybtn="'SYNC_job_creation'"
           class="btn btn-create"
           type="primary"
-          size="small"
+          size="mini"
           @click="create"
         >
           <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
@@ -214,11 +213,7 @@
                 >
                   {{ $t('button.delete') }}
                 </el-dropdown-item>
-                <el-dropdown-item
-                  command="setTag"
-                  v-if="$getSettingByKey('SHOW_CLASSIFY')"
-                  v-readonlybtn="'SYNC_category_application'"
-                >
+                <el-dropdown-item command="setTag" v-readonlybtn="'SYNC_category_application'">
                   {{ $t('dataFlow.addTag') }}
                 </el-dropdown-item>
                 <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
@@ -771,17 +766,23 @@ export default {
       }
       const h = this.$createElement
       let strArr = this.$t('dataFlow.' + message).split('xxx')
-      let msg = h('p', null, [
-        strArr[0],
-        h(
-          'span',
-          {
-            class: 'color-primary'
-          },
-          name
-        ),
-        strArr[1]
-      ])
+      let msg = h(
+        'p',
+        {
+          style: 'width: calc(100% - 28px);word-break: break-all;'
+        },
+        [
+          strArr[0],
+          h(
+            'span',
+            {
+              class: 'color-primary'
+            },
+            name
+          ),
+          strArr[1]
+        ]
+      )
       return {
         msg,
         title: this.$t('dataFlow.' + title)

@@ -84,7 +84,7 @@
             <div
               v-for="(node, i) in nodeList"
               :key="i"
-              class="choose-item ellipsis pl-4"
+              class="choose-item ellipsis px-4"
               @click="handleClickNode(node)"
             >
               {{ node.name }}
@@ -489,12 +489,13 @@ $sidebarBg: #fff;
   .choose-item {
     margin-bottom: 2px;
     min-width: 148px;
+    font-size: 12px;
     line-height: 32px;
     border-radius: 6px;
     cursor: pointer;
 
     &:hover {
-      background: rgba(241, 243, 245, 0.5);
+      background-color: #eef3ff;
     }
   }
   .kbd-wrap {

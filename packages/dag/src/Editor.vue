@@ -47,6 +47,9 @@
               :node-id="n.id"
               :id="NODE_PREFIX + n.id"
               :js-plumb-ins="jsPlumbIns"
+              :class="{
+                'options-active': nodeMenu.typeId === n.id
+              }"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
               @drag-stop="onNodeDragStop"
@@ -54,35 +57,21 @@
               @deselectNode="nodeDeselectedById"
               @nodeSelected="nodeSelectedById"
               @delete="handleDeleteById"
-              @quick-add-node="quickAddNode"
+              @show-node-popover="showNodePopover"
             ></DFNode>
           </PaperScroller>
           <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
             <EmptyItem></EmptyItem>
           </div>
           <PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>
-          <ElPopover
-            ref="nodeMenu"
-            v-model="nodeMenu.show"
-            trigger="hover"
-            placement="bottom"
-            popper-class="min-width-unset rounded-xl"
-            :reference="nodeMenu.reference"
-          >
-            <div class="df-menu-list">
-              <div
-                v-for="(n, ni) in processorNodeTypes"
-                :key="ni"
-                class="df-menu-item"
-                @click="addNodeOnConnByNodeMenu(n)"
-              >
-                {{ n.name }}
-              </div>
-            </div>
-          </ElPopover>
+          <NodePopover
+            :popover="nodeMenu"
+            @click-node="handleClickNodePopover"
+            @hide="nodeMenu.typeId = ''"
+          ></NodePopover>
         </main>
         <!--配置面板-->
-        <ConfigPanel ref="configPanel" :settings="dataflow" @hide="onHideSidebar"></ConfigPanel>
+        <ConfigPanel ref="configPanel" :settings="dataflow" :scope="scope" @hide="onHideSidebar"></ConfigPanel>
       </section>
     </section>
   </section>
@@ -122,6 +111,7 @@ import { merge } from 'lodash'
 import PaperEmpty from './components/PaperEmpty'
 import EmptyItem from './components/EmptyItem'
 import formScope from './mixins/formScope'
+import NodePopover from './components/NodePopover'
 
 const taskApi = new Task()
 
@@ -135,6 +125,7 @@ export default {
   mixins: [deviceSupportHelpers, titleChange, showMessage, formScope],
 
   components: {
+    NodePopover,
     EmptyItem,
     PaperEmpty,
     ConfigPanel,
@@ -159,7 +150,10 @@ export default {
 
       nodeMenu: {
         show: false,
+        type: '',
+        typeId: '',
         reference: null,
+        data: null,
         connectionData: {}
       },
 
@@ -395,13 +389,14 @@ export default {
         const source = this.getRealId(sourceId)
         const target = this.getRealId(targetId)
         const connection = { source, target }
+        const connectionIns = info.connection
 
-        info.connection.bind('click', conn => {
+        info.connection.bind('click', () => {
           if (this.stateIsReadonly) return
           this.handleDeselectAllConnections()
-          conn.showOverlay('removeConn')
-          conn.showOverlay('addNodeOnConn')
-          conn.addClass('connection-selected')
+          info.connection.showOverlay('removeConn')
+          info.connection.showOverlay('addNodeOnConn')
+          info.connection.addClass('connection-selected')
           this.selectConnection(connection)
         })
         info.connection.bind('mouseover', () => {
@@ -411,9 +406,13 @@ export default {
           }
         })
         info.connection.bind('mouseout', () => {
-          if (info.connection.hasClass('connection-selected')) return
-          info.connection.hideOverlay('removeConn')
-          info.connection.hideOverlay('addNodeOnConn')
+          if (
+            connectionIns.hasClass('connection-selected') /* ||
+            (this.nodeMenu.show && this.nodeMenu.reference === connectionIns.canvas)*/
+          )
+            return
+          connectionIns.hideOverlay('removeConn')
+          connectionIns.hideOverlay('addNodeOnConn')
         })
 
         // 添加新增按钮，并且绑定事件，默认不可见
@@ -431,15 +430,10 @@ export default {
             },
             visible: false,
             events: {
-              mousedown: overlay => {
+              click: async overlay => {
                 const rect = info.connection.canvas.getBoundingClientRect()
-                // 更新reference
-                this.nodeMenu.reference = overlay.canvas
-                this.$refs.nodeMenu.referenceElm = overlay.canvas
-                this.nodeMenu.connection = connection
                 this.nodeMenu.connectionCenterPos = [rect.x + rect.width / 2, rect.y + rect.height / 2]
-                // 显示菜单
-                this.nodeMenu.show = true
+                await this.showNodePopover('connection', connection, overlay.canvas)
               }
             }
           }
@@ -459,7 +453,7 @@ export default {
             },
             visible: false,
             events: {
-              mousedown: () => {
+              click: () => {
                 this.command.exec(
                   new RemoveConnectionCommand({
                     source,
@@ -1125,6 +1119,8 @@ export default {
       const node = this.nodeById(id)
       this.command.exec(new RemoveNodeCommand(node))
       this.nodeDeselected(node)
+
+      this.nodeMenu.show = false // 防止节点删除后，popover仍在显示
     },
 
     handleZoomIn() {
@@ -1585,13 +1581,11 @@ export default {
 
     addNodeOnConnByNodeMenu(nodeType) {
       const { nodeMenu } = this
-      nodeMenu.show = false
-      // console.log('nodeMenu.connectionCenterPos', nodeMenu.connectionCenterPos) // eslint-disable-line
       const position = this.$refs.paperScroller.getDropPositionWithinPaper(nodeMenu.connectionCenterPos, {
         width: NODE_WIDTH,
         height: NODE_HEIGHT
       })
-      this.addNodeOnConn(nodeType, position, nodeMenu.connection.source, nodeMenu.connection.target)
+      this.addNodeOnConn(nodeType, position, nodeMenu.data.source, nodeMenu.data.target)
       this.$nextTick(() => {
         this.handleAutoLayout()
       })
@@ -1723,6 +1717,28 @@ export default {
       })
 
       this.deselectAllConnections()
+    },
+
+    async showNodePopover(type, data, el) {
+      type === 'node' && this.handleDeselectAllConnections()
+      this.nodeMenu.show = false
+      this.nodeMenu.reference = null
+      await this.$nextTick()
+      this.nodeMenu.reference = el
+      this.nodeMenu.type = type
+      this.nodeMenu.data = data
+      await this.$nextTick()
+      this.nodeMenu.show = true
+      this.nodeMenu.typeId = data.id
+    },
+
+    handleClickNodePopover(node) {
+      this.nodeMenu.show = false
+      if (this.nodeMenu.type === 'node') {
+        this.quickAddNode(this.nodeMenu.data, node)
+      } else {
+        this.addNodeOnConnByNodeMenu(node)
+      }
     }
   }
 }

@@ -80,28 +80,50 @@
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
           <span class="font-color-slight">{{ $t('task_monitor_total_input') }}</span>
         </div>
-        <div class="mb-4 fs-4 fw-bolder din-font" style="color: #409488">
-          {{ handleChangeUnit(overData.inputTotal) }}
-        </div>
+        <ElTooltip v-if="overData.inputTotal" :content="overData.inputTotal" placement="left-start">
+          <div class="mb-4 fs-4 fw-bolder din-font" style="color: #409488">
+            {{ handleChangeUnit(overData.inputTotal) }}
+          </div>
+        </ElTooltip>
+        <div v-else class="mb-4 fs-4 fw-bolder din-font" style="color: #409488">-</div>
+
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-success" size="18">mark</VIcon>
           <span class="font-color-slight">{{ $t('task_monitor_total_output') }}</span>
         </div>
-        <div class="mb-6 fs-4 fw-bolder din-font" style="color: #377ab9">
-          {{ handleChangeUnit(overData.outputTotal) }}
-        </div>
+        <ElTooltip v-if="overData.outputTotal" :content="overData.outputTotal" placement="left-start">
+          <div class="mb-4 fs-4 fw-bolder din-font" style="color: #377ab9">
+            {{ handleChangeUnit(overData.outputTotal) }}
+          </div>
+        </ElTooltip>
+        <div v-else class="mb-4 fs-4 fw-bolder din-font" style="color: #377ab9">-</div>
         <div class="flex justify-content-between text-center">
           <div>
             <div class="mb-3 font-color-slight">{{ $t('task_monitor_total_insert') }}</div>
-            <div class="fs-7 font-color-normal fw-bolder din-font">{{ handleChangeUnit(overData.insertedTotal) }}</div>
+            <ElTooltip v-if="overData.insertedTotal" :content="overData.insertedTotal">
+              <div class="fs-7 font-color-normal fw-bolder din-font">
+                {{ handleChangeUnit(overData.insertedTotal) }}
+              </div>
+            </ElTooltip>
+            <div v-else class="fs-7 font-color-normal fw-bolder din-font">-</div>
           </div>
           <div>
             <div class="mb-3 font-color-slight">{{ $t('task_monitor_total_update') }}</div>
-            <div class="fs-7 font-color-normal fw-bolder din-font">{{ handleChangeUnit(overData.updatedTotal) }}</div>
+            <ElTooltip v-if="overData.updatedTotal" :content="overData.updatedTotal">
+              <div class="fs-7 font-color-normal fw-bolder din-font">
+                {{ handleChangeUnit(overData.updatedTotal) }}
+              </div>
+            </ElTooltip>
+            <div v-else class="fs-7 font-color-normal fw-bolder din-font">-</div>
           </div>
           <div>
             <div class="mb-3 font-color-slight">{{ $t('task_monitor_total_delete') }}</div>
-            <div class="fs-7 font-color-normal fw-bolder din-font">{{ handleChangeUnit(overData.deletedTotal) }}</div>
+            <ElTooltip v-if="overData.deletedTotal" :content="overData.deletedTotal">
+              <div class="fs-7 font-color-normal fw-bolder din-font">
+                {{ handleChangeUnit(overData.deletedTotal) }}
+              </div>
+            </ElTooltip>
+            <div v-else class="fs-7 font-color-normal fw-bolder din-font">-</div>
           </div>
         </div>
       </div>
@@ -115,7 +137,10 @@
         >
           <div class="fw-bold right-box-text">{{ $t('task_info_full_progress') }}</div>
           <div class="flex-1 flex flex-column justify-content-center">
-            <div class="progress-box flex justify-content-center align-items-center position-relative mt-1">
+            <div
+              v-if="progress"
+              class="progress-box flex justify-content-center align-items-center position-relative mt-1"
+            >
               <ElProgress
                 type="circle"
                 color="rgba(44, 101, 255, 1)"
@@ -127,6 +152,9 @@
               <div class="flex justify-content-center position-absolute color-primary fw-bolder din-font">
                 {{ progress }}%
               </div>
+            </div>
+            <div class="pb-2 fs-8 font-color-secondary" v-else>
+              {{ $t('migrate_no_progress_statistics_yet') }}
             </div>
             <div v-if="progress === 100" class="right-box-text font-color-sub mt-1">
               {{ $t('task_info_full_time') }}：{{ formatTime(endTs) }}
@@ -142,10 +170,17 @@
         >
           <div class="fw-bold right-box-text">{{ $t('task_info_incremental_delay') }}</div>
           <div class="flex-1 flex flex-column justify-content-center">
-            <div class="color-primary fw-bolder fs-5 mt-1" style="height: 48px; line-height: 48px">
+            <div
+              v-if="writeData.replicateLag"
+              class="color-primary fw-bolder fs-5 mt-1"
+              style="height: 48px; line-height: 48px"
+            >
               {{ formatMs(writeData.replicateLag) }}
             </div>
-            <div class="right-box-text font-color-sub mt-1">
+            <div class="pb-2 fs-8 font-color-secondary" v-else>
+              {{ $t('migrate_no_latency_statistics_yet') }}
+            </div>
+            <div class="right-box-text font-color-sub mt-1" v-if="writeData.cdcTime">
               {{ $t('task_info_increment_time_point') }}：{{ formatTime(writeData.cdcTime) }}
             </div>
           </div>
@@ -382,7 +417,6 @@ export default {
     task: {
       deep: true,
       handler() {
-        console.log(this.task, '#######')
         this.init()
       }
     }

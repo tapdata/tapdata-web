@@ -1,14 +1,17 @@
 <template>
   <section class="setting-list-wrap">
     <div class="setting-list-box">
-      <ul class="setting-nav">
+      <ul class="setting-nav" :style="lang === 'en' ? '280px' : '160px'">
         <li
           v-for="(item, index) in formData.items"
           :key="index"
           :class="activePanel === item.category ? 'active' : ''"
           @click="changeName(item.category)"
         >
+          <!-- <ElTooltip :content="$t('setting_' + item.category)"> -->
           <span class="title">{{ $t('setting_' + item.category) }}</span>
+          <!-- </ElTooltip> -->
+
           <VIcon class="ml-3" size="14">arrow-right</VIcon>
         </li>
       </ul>
@@ -198,6 +201,7 @@ export default {
       },
       activeTab: 0,
       activePanel: 'Log',
+      lang: localStorage.getItem('tapdata_localize_lang') || 'en',
       emailTabs: [
         {
           label: this.$t('setting_Email_Template_Running'),
@@ -385,7 +389,6 @@ export default {
     // background-color: #fff;
     border-radius: 4px;
     .setting-nav {
-      width: 160px;
       height: 100%;
       padding: 20px 2px;
       border-right: 1px solid #f2f2f2;
@@ -399,6 +402,12 @@ export default {
         line-height: 40px;
         cursor: pointer;
         color: #4e5969;
+        white-space: nowrap;
+        .title {
+          width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
       .active {
         background: rgba(44, 101, 255, 0.05);

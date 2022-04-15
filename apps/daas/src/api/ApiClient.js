@@ -165,18 +165,19 @@ export default class {
 
   async getHeaders(collectionName, operationName) {
     let collection = this.collections[collectionName || this.collection.collection]
-    let properties = collection['properties']
+    let properties = collection ? collection['properties'] : {}
     let headers = []
     let fields = Object.keys(properties || {})
-    fields.forEach(field => {
-      headers.push({
-        text: field,
-        value: field,
-        show: true,
-        type: properties[field]['type'],
-        format: properties[field]['format']
+    if (fields?.length)
+      fields.forEach(field => {
+        headers.push({
+          text: field,
+          value: field,
+          show: true,
+          type: properties[field]['type'],
+          format: properties[field]['format']
+        })
       })
-    })
     let showFields = {}
     if (operationName) {
       showFields = (collection.api[operationName] && collection.api[operationName]['fields']) || {}

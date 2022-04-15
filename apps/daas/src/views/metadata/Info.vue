@@ -136,7 +136,7 @@
             <ul class="metadata-aside-main pt-4">
               <li class="business" v-for="(item, key, index) in metadataDataObj.custom_properties" :key="index">
                 <span>{{ key }} : {{ item }}</span>
-                <span class="delete" @click="delBusiness(item, key, index)">{{ $t('button.delete') }}</span>
+                <span type="text" class="delete" @click="delBusiness(item, key, index)">{{ $t('button_delete') }}</span>
               </li>
               <!-- <li>
 									<span class="label">{{ $t('metadata.details.tableLayering') }}：</span>
@@ -897,7 +897,7 @@ export default {
     font-size: 16px;
     font-weight: 600;
     & > span {
-      color: #409eff;
+      color: #2c65ff;
       cursor: pointer;
     }
   }
@@ -1017,7 +1017,7 @@ export default {
                 .delete {
                   display: inline-block;
                   cursor: pointer;
-                  color: #409eff;
+                  color: #2c65ff;
                 }
               }
             }
@@ -1032,7 +1032,7 @@ export default {
                 .delete {
                   display: inline-block;
                   cursor: pointer;
-                  color: #409eff;
+                  color: #2c65ff;
                 }
               }
             }

@@ -11,19 +11,9 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </div>
       <div slot="operation">
-        <!-- <el-button
-          v-if="$getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'"
-          v-readonlybtn="'SYNC_job_import'"
-          size="small"
-          class="btn"
-          @click="handleImport"
-        >
-          <i class="iconfont icon-daoru back-btn-icon"></i>
-          <span> {{ $t('dataFlow.bulkImport') }}</span>
-        </el-button> -->
         <el-button
           v-readonlybtn="'SYNC_category_application'"
-          size="small"
+          size="mini"
           class="btn"
           v-show="multipleSelection.length > 0"
           @click="handleExport"
@@ -35,10 +25,9 @@
           v-readonlybtn="'datasource_creation'"
           class="btn btn-create"
           type="primary"
-          size="small"
+          size="mini"
           @click="$router.push({ name: 'dataVerificationCreate' })"
         >
-          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
           <span> {{ $t('dataVerification.addVerifyTip') }}</span>
         </ElButton>
       </div>

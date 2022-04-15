@@ -9,9 +9,9 @@
           finish-status="success"
           align-center
         >
-          <ElStep title="选择连接"></ElStep>
-          <ElStep title="设置任务属性"></ElStep>
-          <ElStep title="选择表"></ElStep>
+          <ElStep :title="$t('migrate_select_connection')"></ElStep>
+          <ElStep :title="$t('migrate_task_properties')"></ElStep>
+          <ElStep :title="$t('migrate_select_table')"></ElStep>
         </ElSteps>
       </div>
       <ElContainer :class="['task-container', 'task-container-' + steps[activeStep].index]">
@@ -20,13 +20,11 @@
             <!--步骤1-->
             <div class="body" v-if="steps[activeStep].index === 1">
               <div class="mb-8">
-                <span class="title font-weight-bold">选择连接</span>
+                <span class="title fw-sub">{{ $t('migrate_select_connection') }}</span>
                 <span class="desc">
-                  如果你还未添加数据源，请点击添加数据源按钮进行添加，为了方便你的测试，我们建议数据源的数量不少2个<span
-                    style="color: #337dff; cursor: pointer"
-                    @click="handleCreateDatabase"
-                  >
-                    前往连接管理创建连接</span
+                  {{ $t('migrate_select_connection_tip')
+                  }}<span style="color: #2c65ff; cursor: pointer" @click="handleCreateDatabase">
+                    {{ $t('migrate_create_connection') }}</span
                   >
                 </span>
               </div>
@@ -40,19 +38,17 @@
             <!-- 步骤2 -->
             <div class="body step-3" v-if="steps[activeStep].index === 2">
               <div class="mb-8">
-                <span class="title">任务设置</span>
-                <span class="desc"
-                  >用户可以在任务设置步骤对任务名称、同步类型、遇错处理等进行设置，具体配置说明请查看帮助文档
-                </span>
+                <span class="title fw-sub">{{ $t('migrate_task_settings') }}</span>
+                <span class="desc">{{ $t('migrate_task_settings_tip') }} </span>
               </div>
               <Setting :dataSourceData="dataSourceData" :settingData="settingData" @submit="settingSubmit"></Setting>
             </div>
             <!-- 步骤3 -->
             <div class="body step-4" v-if="steps[activeStep].index === 3">
               <div class="mb-6">
-                <span class="title">选择表</span>
+                <span class="title fw-sub">{{ $t('migrate_select_table') }}</span>
                 <span class="desc">
-                  用户可以点击中间向右的箭头按钮勾选源端待同步表，将这些表移动到待同步表队列中（任务执行后将对这些表执行同步传输）
+                  {{ $t('migrate_select_table_tip') }}
                 </span>
               </div>
               <div class="create-task-transfer">
@@ -70,7 +66,7 @@
           </ElMain>
           <div class="create-task-footer pt-4 mx-6" :class="['btns-step-' + steps[activeStep].index]">
             <ElButton class="btn-step" size="mini" v-if="steps[activeStep].showExitBtn" @click="goBackList()">
-              取消
+              {{ $t('button_cancel') }}
             </ElButton>
             <ElButton
               class="btn-step"
@@ -79,7 +75,7 @@
               v-else-if="steps[activeStep].showBackBtn || (steps[activeStep].index === 2 && !id)"
               @click="previous()"
             >
-              {{ $t('guide.btn_back') }}
+              {{ $t('button_btn_back') }}
             </ElButton>
             <ElButton
               v-if="steps[activeStep].showNextBtn"
@@ -89,7 +85,7 @@
               :loading="loading"
               @mousedown.native.prevent="nextStep()"
             >
-              <span>{{ $t('guide.btn_next') }}</span>
+              <span>{{ $t('button_btn_next') }}</span>
             </ElButton>
             <VButton
               v-if="steps[activeStep].showSaveBtn"
@@ -99,7 +95,7 @@
               :loading="loadingSave"
               @click="save()"
             >
-              完成
+              {{ $t('button_finish') }}
             </VButton>
           </div>
         </div>
@@ -304,7 +300,7 @@ export default {
             //检验: 源端目标端选择相同库(id一致)
             if (this.dataSourceData.source_connectionId === this.dataSourceData.target_connectionId) {
               this.showSysncTableTip = true
-              this.$message.info('源端、目标端选择了相同连接')
+              this.$message.info(this.$t('migrate_same_connection_message'))
             }
             //检验: 是否是MQ数据源
             if (this.dataSourceData['target_databaseType'] === 'mq' && this.dataSourceData['mqType'] === '0') {
@@ -680,7 +676,7 @@ export default {
     .body {
       .title {
         font-size: 14px;
-        color: rgba(0, 0, 0, 0.85);
+        color: map-get($fontColor, normal);
       }
       .desc {
         margin-left: 16px;

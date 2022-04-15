@@ -187,7 +187,7 @@ export default {
         //overflow-y: auto;
       }
       .scroller {
-        min-height: 400px;
+        min-height: 50px;
         overflow-y: auto;
       }
     }

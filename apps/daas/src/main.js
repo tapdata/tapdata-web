@@ -39,6 +39,21 @@ Vue.component(VIcon.name, VIcon)
 
 window.VueCookie = VueCookie
 
+window._TAPDATA_OPTIONS_ = {
+  logoUrl: require('@/assets/images/logo.png'),
+  loginUrl: require('@/assets/images/login-bg.png'),
+  version: 'DAAS_BUILD_NUMBER',
+  loadingImg: require('@/assets/icons/loading.svg')
+}
+window.getSettingByKey = key => {
+  let value = ''
+
+  let setting = window?.__settings__.find(it => it.key === key) || {}
+  value = setting.isArray ? setting.value.split(',') : setting.value
+  return value
+}
+Vue.prototype.$getSettingByKey = window.getSettingByKey
+
 Vue.prototype.$confirm = (message, title, options) => {
   return new Promise((resolve, reject) => {
     VConfirm.confirm(
@@ -60,35 +75,6 @@ Vue.prototype.$confirm = (message, title, options) => {
       })
   }).catch(() => {})
 }
-
-window.openDebug = () => {
-  localStorage.setItem('tapdata_debug', 'true')
-}
-
-//因线上存在偶现bug，默认开启
-// if (process.env.NODE_ENV === 'development') {
-// window.openDebug()
-// }
-
-window._TAPDATA_OPTIONS_ = {
-  logoUrl: require('@/assets/images/logo.png'),
-  loginUrl: require('@/assets/images/login-bg.png'),
-  version: 'DAAS_BUILD_NUMBER',
-  loadingImg: require('@/assets/icons/loading.svg')
-}
-let config = sessionStorage.getItem('TM_CONFIG') || '{}'
-config = JSON.parse(config)
-window.getSettingByKey = key => {
-  let value = ''
-  if (!window.__settings__ || key.startsWith('DFS_')) {
-    value = config[key]
-  } else {
-    let setting = window.__settings__.find(it => it.key === key) || {}
-    value = setting.isArray ? setting.value.split(',') : setting.value
-  }
-  return value
-}
-Vue.prototype.$getSettingByKey = window.getSettingByKey
 
 const langMap = {
   sc: 'zh-CN',
@@ -117,15 +103,8 @@ let init = settings => {
   if (loc.protocol === 'https:') {
     wsUrl = 'wss:'
   }
-  let host = window.getSettingByKey('DFS_TM_WS_HOST') || loc.host
-  let apiPre = window.getSettingByKey('DFS_TM_API_PRE_URL') || location.pathname.replace(/\/$/, '')
-  let tcmApiPre = window.getSettingByKey('DFS_TCM_API_PRE_URL') || ''
-  let path = (tcmApiPre === '/console' ? '' : tcmApiPre) + apiPre
   let token = Cookie.get('token')
-  let tokenParam = 'access_token=' + token
-  wsUrl += '//' + host
-  wsUrl += path + '/ws/agent'
-  wsUrl += `?${tokenParam}`
+  wsUrl += `//${loc.host}${location.pathname.replace(/\/$/, '')}/ws/agent?access_token=${token}`
 
   window.App = new Vue({
     el: '#app',
@@ -159,28 +138,6 @@ document.addEventListener('visibilitychange', () => {
     let ele = document.querySelector(':focus')
     ele && ele.blur()
   }, 50)
-})
-
-Object.defineProperty(Array.prototype, 'findWhere', {
-  value: function (attrs) {
-    let keys = Object.keys(attrs),
-      length = keys.length
-    for (let idx = 0; idx < this.length; idx++) {
-      let object = this[idx]
-      if (object == null) continue
-      let obj = Object(object),
-        finded = true
-      for (let i = 0; i < length; i++) {
-        let key = keys[i]
-        if (attrs[key] !== obj[key] || !(key in obj)) {
-          finded = false
-          break
-        }
-      }
-      if (finded) return object
-    }
-    return null
-  }
 })
 
 // 判断浏览器是否为IE

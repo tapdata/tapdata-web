@@ -64,6 +64,9 @@ export default {
   button_zoom_out: 'Zoom out',
   button_move_paper: 'Move canvas[Press space]',
   button_search_node: 'Search node',
+  button_finish: 'Finish',
+  button_btn_back: 'Previous step',
+  button_btn_next: 'Next',
 
   query_fuzzy: 'Fuzzy match',
   query_precise: 'Exact match',
@@ -1089,7 +1092,7 @@ export default {
   task_setting_cdc_share_filter_on_server: 'Shared mining log filtering',
   task_setting_lag_time: 'Incremental lag judgment time setting',
   task_setting_cron_feedbackText:
-    'You can run periodic tasks at a fixed time, date, and interval through cron expressions. Syntax: second * minute * hour * day * month * week ? year ',
+    'You can run periodic tasks at a fixed time, date, and interval through cron expressions. Syntax: second * minute * hour * day * month * week ? year *',
   task_setting_cron_extra: 'Example: 0 */1 * * * ? * // Run every minute 0 0 2 * * ? * // Run at 2 every day',
 
   task_name: 'Task name',
@@ -1208,6 +1211,21 @@ export default {
     'It has been detected that you have a problem with the field type settings of XXX tables. Please select the problematic table in the table area on the left for processing.',
   task_mapping_dialog_target_no_fields_problem:
     'It is detected that you have XXX tables with no fields, please go back to the previous step and remove the tables without fields. ',
+
+  migrate_select_connection: 'Select connection',
+  migrate_task_properties: 'Set task properties',
+  migrate_select_table: 'Select table',
+  migrate_select_connection_tip:
+    "If you haven't added a data source, please click the Add Data Source button to add it. In order to facilitate your testing, we recommend that the number of data sources should be at least 2",
+  migrate_create_connection: 'Go to connection management to create a connection',
+  migrate_task_settings: 'Task settings',
+  migrate_task_settings_tip:
+    'Users can set the task name, synchronization type, error handling, etc. in the task setting step. For specific configuration instructions, please refer to the help document',
+  migrate_select_table_tip:
+    ' The user can click the right arrow button in the middle to select the tables to be synchronized at the source, and move these tables to the queue of tables to be synchronized (these tables will be transferred synchronously after the task is executed)',
+  migrate_same_connection_message: 'The same connection is selected on the source side and the target side',
+  migrate_no_progress_statistics_yet: 'No progress statistics yet',
+  migrate_no_latency_statistics_yet: 'No latency statistics yet',
 
   // Function management
   function_tips_empty: 'Code lacks JS functions',

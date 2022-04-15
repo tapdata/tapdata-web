@@ -1,7 +1,6 @@
 <template>
   <el-drawer
-    class="connection-drawer"
-    :class="$getSettingByKey('DFS_TCM_PLATFORM') === 'drs' ? 'no-top-drawer' : 'top-drawer'"
+    class="connection-drawer top-drawer"
     ref="drawer"
     :visible.sync="visible"
     :title="$t('dataForm.title')"
@@ -260,12 +259,7 @@ export default {
         }
         let type = this.type
         type = TYPEMAPCONFIG[type] || type //特殊数据源名称转换
-        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-          type = 'drs_' + type
-        }
-        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-          type = 'dfs_' + type
-        }
+
         let func = formConfig[type]
         if (func) {
           let config = func(this)
@@ -275,30 +269,6 @@ export default {
               value: data[it.field] || '-',
               field: it.field,
               show: true
-            }
-            if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-              switch (node.field) {
-                case 's_region': {
-                  node.value = data.platformInfo.DRS_regionName || node.value
-                  break
-                }
-                case 's_zone': {
-                  node.value = data.platformInfo.DRS_zoneName || node.value
-                  break
-                }
-                case 'region': {
-                  node.value = data.platformInfo.regionName || node.value
-                  break
-                }
-                case 'zone': {
-                  node.value = data.platformInfo.zoneName || node.value
-                  break
-                }
-                case 'sourceType': {
-                  node.value = this.sourceType[node.value]
-                  break
-                }
-              }
             }
             if (node.field === 'database_datetype_without_timezone') {
               if (node.value === '-') {

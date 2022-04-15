@@ -192,6 +192,9 @@ export default {
               params.id = id
               method = 'patch'
             }
+            if (!params.format) {
+              params.format = `${params.function_name}(${params.parameters})`
+            }
             this.loading = true
             this.$api('Javascript_functions')
               [method](
@@ -221,12 +224,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.custom-form-wrapper {
-  //   display: flex;
-  //   flex-direction: column;
-  //   height: 100%;
-  //   background: #fafafa;
-}
 .custom-form__body {
   margin: 30px 24px 0 24px;
   flex: 1;

@@ -222,7 +222,6 @@
 }
 .el-button {
   min-width: 80px;
-  line-height: initial;
   font-weight: normal;
   color: #4e5969;
   border-color: #f2f3f5;
@@ -239,7 +238,7 @@
 .el-button--primary {
   color: #fff;
   background-color: map-get($color, primary);
-  border: none;
+  border-color: map-get($color, primary);
 }
 //.el-button--mini,
 //.el-button--small {
@@ -408,6 +407,9 @@
 .el-pagination.is-background .el-pager li:not(.disabled).active {
   background-color: map-get($color, primary);
 }
+.el-pagination.is-background .el-pager li:not(.disabled):hover {
+  color: map-get($color, primary);
+}
 .el-breadcrumb__inner a,
 .el-breadcrumb__inner.is-link {
   font-weight: 400;
@@ -566,17 +568,27 @@
         }
       }
       .el-step__icon {
-        border: 1px solid #2c65ff;
+        background-color: #e9e9e9;
+        border: 1px solid #e9e9e9;
         .el-step__icon-inner {
           font-weight: normal;
-          color: #2c65ff;
+          color: #fff;
+        }
+      }
+      &.is-process {
+        .el-step__icon {
+          background-color: map-get($color,primary );
+          border: 1px solid map-get($color,primary );
         }
       }
     }
     .el-step__title {
       font-size: 14px;
-      font-weight: normal;
-      color: #000;
+      font-weight: 500;
+      color: #e9e9e9;
+      &.is-process {
+        color: map-get($fontColor, normal );
+      }
     }
   }
   &.mini {
@@ -750,17 +762,13 @@
   color: map-get($color, primary);
   border-color: map-get($color, primary);
 }
-.el-button--primary {
-  background-color: map-get($color, primary);
-  border: none;
-}
 
 /* --------------------- */
 .el-form-item.el-form-item--small,
 .el-form-item.el-form-item--mini {
   margin-bottom: 20px;
   .el-form-item__label {
-    color: map-get($fontColor, light);
+    color: map-get($fontColor, slight);
     font-size: 12px;
     font-weight: 500;
     text-align: left;
@@ -772,6 +780,11 @@
     font-size: 14px;
     font-weight: 500;
     color: #000;
+  }
+  .el-dialog__header {
+    .el-dialog__headerbtn:hover .el-dialog__close {
+      color: map-get($color, primary);
+    }
   }
   .el-dialog__body {
     padding: 0 20px 20px;

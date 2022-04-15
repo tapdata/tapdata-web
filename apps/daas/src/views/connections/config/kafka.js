@@ -41,7 +41,7 @@ export default function (vm) {
         type: 'input',
         field: 'kafkaBootstrapServers',
         label: vm.$t('dataForm.form.host'),
-        tip: vm.$t('connection_form_kafka_host_tip'),
+        tips: vm.$t('connection_form_kafka_host_tip'),
         required: true,
         rules: [
           {
@@ -67,7 +67,7 @@ export default function (vm) {
         field: 'krb5',
         label: vm.$t('connection_kafka_kerberos_attest'),
         show: true,
-        tip: vm.$t('connection_kafka_kerberos_tip')
+        tips: vm.$t('connection_kafka_kerberos_tip')
       },
       {
         type: 'file',
@@ -256,7 +256,7 @@ export default function (vm) {
         type: 'switch', // 忽略非JSON Object格式消息
         field: 'kafkaIgnoreInvalidRecord',
         label: vm.$t('dataForm.form.kafka.lonoreFormat'),
-        tip: vm.$t('connection_form_kafka_lonore_format_tip'),
+        tips: vm.$t('connection_form_kafka_lonore_format_tip'),
         show: true,
         dependOn: [
           {
@@ -326,7 +326,7 @@ export default function (vm) {
         type: 'switch', //是否忽略推送消息异常,
         field: 'kafkaIgnorePushError',
         label: vm.$t('dataForm.form.kafka.kafkaIgnorePushError'),
-        tip: vm.$t('connection_form_kafka_ignore_push_error_tip'),
+        tips: vm.$t('connection_form_kafka_ignore_push_error_tip'),
         show: true,
         dependOn: [
           {

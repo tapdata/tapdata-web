@@ -543,7 +543,7 @@ export default {
   }
 }
 .scroller {
-  height: 274px;
+  height: auto;
 }
 .el-select__loading {
   position: absolute;
@@ -563,7 +563,7 @@ export default {
   white-space: nowrap;
 }
 .inner-select__label {
-  color: map-get($fontColor, sub);
+  color: map-get($fontColor, slight);
 }
 .inner-select__selected {
   padding-left: 8px;

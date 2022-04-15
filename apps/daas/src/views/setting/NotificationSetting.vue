@@ -214,6 +214,7 @@ $unreadColor: #ee5353;
       span {
         padding: 4px 100px 4px 20px;
         font-size: 12px;
+        white-space: nowrap;
         color: map-get($fontColor, secondary);
         border: 1px solid #f2f2f2;
         border-left: 2px solid #2c65ff;

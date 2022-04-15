@@ -324,19 +324,7 @@ export default {
     }
   },
   created() {
-    // settings.get().then(res => {
-    // 	if (res.data && res.data.length) {
-    // 		this.toVersion = res.data.findWhere({ key: 'tapdataAgentVersion' }).value;
-    // 	}
-    // });
-
     this.getDataApi()
-    // 这是一个定时器
-    // TODO 集群管理轮询替换成webstocek
-    // let that = this
-    // this.timer = setInterval(() => {
-    //   that.getDataApi()
-    // }, 10000)
   },
   methods: {
     // 获取最大cpu、内存使用率

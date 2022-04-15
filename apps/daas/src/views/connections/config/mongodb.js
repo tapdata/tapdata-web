@@ -396,7 +396,7 @@ export default function (vm) {
         field: 'table_filter',
         domType: 'textarea',
         label: vm.$t('dataForm.form.tableFilter'),
-        tip: vm.$t('connection_form_impact_type'),
+        tips: vm.$t('connection_form_impact_type'),
         maxlength: 500,
         showWordLimit: true
       },
@@ -404,7 +404,7 @@ export default function (vm) {
         type: 'switch',
         field: 'shareCdcEnable',
         label: vm.$t('connection_form_shared_mining'),
-        tip: vm.$t('connection_form_shared_mining_tip'),
+        tips: vm.$t('connection_form_shared_mining_tip'),
         show: true,
         dependOn: [
           {

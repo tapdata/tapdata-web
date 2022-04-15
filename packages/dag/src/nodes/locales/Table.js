@@ -1,7 +1,7 @@
 export const Table = {
   'zh-cn': {
-    connectionId: '数据库',
-    tableName: '表',
+    connectionIdWrap: '数据库',
+    tableNameWrap: '表',
     totalReadMethod: {
       title: '全量数据读取',
       dataSource: ['全量读取', '自定义sql']
@@ -25,8 +25,8 @@ export const Table = {
     updateConditionFields: '更新条件字段'
   },
   'zh-tw': {
-    connectionId: '數據庫',
-    tableName: '表',
+    connectionIdWrap: '數據庫',
+    tableNameWrap: '表',
     totalReadMethod: {
       title: '全量數據讀取',
       dataSource: ['全量讀取', '自定義sql']
@@ -50,8 +50,8 @@ export const Table = {
     updateConditionFields: '更新條件字段'
   },
   'en-us': {
-    connectionId: 'Database',
-    tableName: 'Table',
+    connectionIdWrap: 'Database',
+    tableNameWrap: 'Table',
     totalReadMethod: {
       title: 'Total Read Method',
       dataSource: ['Full Read', 'Customize Sql']

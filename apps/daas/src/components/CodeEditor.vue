@@ -98,7 +98,11 @@ export default {
         system: this.$t('function_type_option_system')
       }
       this.$api('Javascript_functions')
-        .get()
+        .get({
+          filter: JSON.stringify({
+            size: 0
+          })
+        })
         .then(res => {
           let items = res?.data?.items || []
           items.sort((a, b) => {
@@ -123,43 +127,45 @@ export default {
               return 0
             }
           })
-          tools.addCompleter({
-            getCompletions: (editor, session, pos, prefix, callback) => {
-              if (prefix.length === 0) {
-                return callback(null, [])
-              } else {
-                return callback(
-                  null,
-                  items.map((item, index) => {
-                    let methodName = item.methodName || item.function_name
-                    return {
-                      caption: methodName,
-                      snippet: methodName + '(${1})',
-                      meta: typeMapping[item.type],
-                      type: 'snippet',
-                      score: 1000000 - index,
-                      format: item.format,
-                      parametersDesc: item.parameters_desc,
-                      returnDesc: item.return_value
-                    }
-                  })
-                )
-              }
-            },
-            getDocTooltip: function (item) {
-              if (item.type == 'snippet') {
-                let body = item.parametersDesc
-                  ? `<pre class="code-editor-snippet-tips__body"><div class="panel-title">parameters description</div>${item.parametersDesc}</pre>`
-                  : `<pre class="code-editor-snippet-tips__body">${item.format || item.caption}</pre>`
-                let footer = item.returnDesc
-                  ? `<pre class="code-editor-snippet-tips__footer"><div class="panel-title">return description</div>${item.returnDesc}</pre>`
-                  : ''
-                item.docHTML = `<div class="code-editor-snippet-tips"><div class="code-editor-snippet-tips__header"><span class="panel-title">function</span>${
-                  item.format || item.caption
-                }</div>${body}${footer}</div>`
+          editor.completers = [
+            {
+              getCompletions: (editor, session, pos, prefix, callback) => {
+                if (prefix.length === 0) {
+                  return callback(null, [])
+                } else {
+                  return callback(
+                    null,
+                    items.map((item, index) => {
+                      let methodName = item.methodName || item.function_name
+                      return {
+                        caption: methodName,
+                        snippet: methodName + '(${1})',
+                        meta: typeMapping[item.type],
+                        type: 'snippet',
+                        score: 1000000 - index,
+                        format: item.format,
+                        parametersDesc: item.parameters_desc,
+                        returnDesc: item.return_value
+                      }
+                    })
+                  )
+                }
+              },
+              getDocTooltip: function (item) {
+                if (item.type == 'snippet') {
+                  let body = item.parametersDesc
+                    ? `<pre class="code-editor-snippet-tips__body"><div class="panel-title">parameters description</div>${item.parametersDesc}</pre>`
+                    : `<pre class="code-editor-snippet-tips__body">${item.format || item.caption}</pre>`
+                  let footer = item.returnDesc
+                    ? `<pre class="code-editor-snippet-tips__footer"><div class="panel-title">return description</div>${item.returnDesc}</pre>`
+                    : ''
+                  item.docHTML = `<div class="code-editor-snippet-tips"><div class="code-editor-snippet-tips__header"><span class="panel-title">function</span>${
+                    item.format || item.caption
+                  }</div>${body}${footer}</div>`
+                }
               }
             }
-          })
+          ]
         })
     }
   }
@@ -181,11 +187,17 @@ export default {
     color: #c678dd;
   }
 }
+.code-editor-snippet-tips__header {
+  white-space: normal;
+  word-break: break-word;
+}
 .code-editor-snippet-tips__body,
 .code-editor-snippet-tips__footer {
   padding: 10px 0;
   border-top: 1px solid #ccc;
   font-size: 12px;
+  white-space: normal;
+  word-break: break-word;
   .panel-title {
     margin-bottom: 6px;
   }

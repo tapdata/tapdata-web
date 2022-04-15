@@ -64,6 +64,9 @@ export default {
   button_zoom_out: '縮小',
   button_move_paper: '移動畫布[按住空格]',
   button_search_node: '搜索節點',
+  button_finish: '完成',
+  button_btn_back: '上一步',
+  button_btn_next: '下一步',
 
   query_fuzzy: '模糊匹配',
   query_precise: '精準匹配',
@@ -1072,7 +1075,7 @@ export default {
     '複製view時暫不支持設置字段映射，勾選此項下方字段映射功能會被禁用，已設置的字段映射將會被重置，是否確認勾選？ ',
   task_setting_oracle_custom_analysis: 'OracleSQL自定義解析',
   task_setting_cron_feedbackText:
-    '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務。語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 ',
+    '可以通過cron表達式設置固定時間、日期、間隔下運行定期任務。語法: 秒 * 分鐘 * 小時 * 日 * 月 * 星期 ? 年 * ',
   task_setting_cron_extra: '例子: 0 */1 * * * ? * //每分鐘運行一次  0 0 2 * * ? * //每天2點運行',
 
   //字段映射
@@ -1158,6 +1161,21 @@ export default {
   task_mapping_dialog_field_type_problem:
     '檢測到您還有 XXX 張表的字段類型設置存在問題，請在左側表區域選擇有問題的表進行處理',
   task_mapping_dialog_target_no_fields_problem: '檢測到您有 XXX 張表中沒有字段，請先返回上一步將沒有字段的表移除',
+
+  migrate_select_connection: '選擇連接',
+  migrate_task_properties: '設置任務屬性',
+  migrate_select_table: '選擇表',
+  migrate_select_connection_tip:
+    '如果你還未添加數據源，請點擊添加數據源按鈕進行添加，為了方便你的測試，我們建議數據源的數量不少2個',
+  migrate_create_connection: '前往連接管理創建連接',
+  migrate_task_settings: '任務設置',
+  migrate_task_settings_tip:
+    '用戶可以在任務設置步驟對任務名稱、同步類型、遇錯處理等進行設置，具體配置說明請查看幫助文檔',
+  migrate_select_table_tip:
+    ' 用戶可以點擊中間向右的箭頭按鈕勾選源端待同步表，將這些表移動到待同步表隊列中（任務執行後將對這些表執行同步傳輸）',
+  migrate_same_connection_message: '源端、目標端選擇了相同連接',
+  migrate_no_progress_statistics_yet: '暫無進度統計信息',
+  migrate_no_latency_statistics_yet: '暫無延遲統計信息',
 
   // 函数管理
   function_tips_empty: '代碼缺少JS函數',

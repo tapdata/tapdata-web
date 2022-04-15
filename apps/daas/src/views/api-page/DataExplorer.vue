@@ -17,7 +17,34 @@
           {{ $t('modules_api_server_status') }}:
           <span class="status-text" :class="status">{{ $t('modules_status_' + status) }}</span>
         </div>
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+        <!-- <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar> -->
+        <SelectList
+          v-if="apiServersList.length"
+          v-model="searchParams.api_server_process_id"
+          :items="serverData"
+          :inner-label="$t('dataExplorer_apiservr')"
+          none-border
+          last-page-text=""
+          clearable
+          menu-min-width="240px"
+          :placeholder="$t('dataExplorer_apiservr')"
+          @change="table.fetch(1)"
+        ></SelectList>
+        <SelectList
+          v-if="pathList.length"
+          v-model="searchParams.collection"
+          :items="pathList"
+          :inner-label="$t('dataExplorer_base_path')"
+          none-border
+          last-page-text=""
+          clearable
+          menu-min-width="240px"
+          :placeholder="$t('dataExplorer_base_path')"
+          @change="table.fetch(1)"
+        ></SelectList>
+        <ElButton plain class="btn-refresh" @click="table.fetch(1)">
+          <VIcon class="text-primary">refresh</VIcon>
+        </ElButton>
       </div>
       <div slot="operation">
         <!-- <el-button v-readonlybtn="'API_data_time_zone_editing'" class="btn" size="mini" @click="timeZoneDialog = true">
@@ -96,7 +123,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('column_operation')" min-width="180">
+      <el-table-column :label="$t('column_operation')" min-width="180" fixed="right">
         <template slot-scope="scope">
           <el-button v-if="!downloadFileUrl" size="mini" type="text" @click="downloadFile(scope.row)">
             {{ $t('button_download') }}
@@ -213,17 +240,18 @@
 </template>
 
 <script>
-import FilterBar from '@/components/filter-bar'
+// import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import BrowseQuery from './BrowseQuery'
 import APIClient from '@/api/ApiClient'
+import SelectList from '@/components/SelectList'
 let time = 0
 export default {
   name: 'DataExplorer',
   components: {
     TablePage,
     BrowseQuery,
-    FilterBar
+    SelectList
   },
   data() {
     return {
@@ -234,6 +262,8 @@ export default {
       filterItems: [],
       status: 'stop',
       apiServersList: [],
+      pathList: [],
+      serverData: [],
       collectionsList: [],
       tableHeader: [],
       tableData: [],
@@ -279,7 +309,7 @@ export default {
     if (!this.without_timezone) {
       this.without_timezone = this.timezones[12]
     }
-    this.getFilterItems()
+    // this.getFilterItems()
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -393,6 +423,12 @@ export default {
             if (this.apiServersList.length) {
               this.searchParams.api_server_process_id = this.apiServersList[0].processId
               this.apiClient.setApiServer(this.apiServersList[0])
+              this.serverData = this.apiServersList.map(item => {
+                return {
+                  label: item.clientName,
+                  value: item.processId
+                }
+              })
             }
           }
         })
@@ -466,7 +502,7 @@ export default {
 
               _this.collectionsList = collectionsArr?.length ? collectionsArr : _this.collectionsList
               // 基础路径下拉获取值
-              _this.filterItems[1].items = _this.collectionsList.map(item => {
+              _this.pathList = _this.collectionsList.map(item => {
                 return {
                   label: item.text,
                   value: item.value
@@ -1054,7 +1090,6 @@ export default {
             }
           })
       }
-
       return Promise.all([await _this.apiClient.find(filter)])
         .then(res => {
           let typeMap = {
@@ -1324,42 +1359,42 @@ export default {
     handleSortTable({ order, prop }) {
       this.order = `${order ? prop : 'clientName'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
-    },
-    getFilterItems() {
-      this.filterItems = [
-        {
-          label: this.$t('dataExplorer_apiservr'),
-          key: 'api_server_process_id',
-          type: 'select-inner',
-          items: async () => {
-            let res = await this.$api('ApiServer').get({})
-            let items = res?.data?.items || []
-            this.apiServersList = items
-            this.searchParams.api_server_process_id = this.apiServersList[0].processId
-            this.apiClient.setApiServer(this.apiServersList[0])
-            return items.map(item => {
-              return {
-                label: item.clientName,
-                value: item.processId
-              }
-            })
-          },
-          selectedWidth: '200px'
-        },
-        {
-          label: this.$t('dataExplorer_base_path'),
-          key: 'collection',
-          type: 'select-inner',
-          items: this.collectionsList,
-          selectedWidth: '200px'
-        },
-        {
-          placeholder: this.$t('modules_name_placeholder'),
-          key: 'keyword',
-          type: 'input'
-        }
-      ]
     }
+    // getFilterItems() {
+    //   this.filterItems = [
+    //     {
+    //       label: this.$t('dataExplorer_apiservr'),
+    //       key: 'api_server_process_id',
+    //       type: 'select-inner',
+    //       items: async () => {
+    //         let res = await this.$api('ApiServer').get({})
+    //         let items = res?.data?.items || []
+    //         this.apiServersList = items
+    //         this.searchParams.api_server_process_id = this.apiServersList[0].processId
+    //         this.apiClient.setApiServer(this.apiServersList[0])
+    //         return items.map(item => {
+    //           return {
+    //             label: item.clientName,
+    //             value: item.processId
+    //           }
+    //         })
+    //       },
+    //       selectedWidth: '200px'
+    //     },
+    //     {
+    //       label: this.$t('dataExplorer_base_path'),
+    //       key: 'collection',
+    //       type: 'select-inner',
+    //       items: this.collectionsList,
+    //       selectedWidth: '200px'
+    //     },
+    //     {
+    //       placeholder: this.$t('modules_name_placeholder'),
+    //       key: 'keyword',
+    //       type: 'input'
+    //     }
+    //   ]
+    // }
   },
   beforeDestroy() {
     if (this.intervalId) {
@@ -1374,6 +1409,7 @@ export default {
     .search-bar {
       display: flex;
       flex-direction: row;
+      line-height: 34px;
       .search-status {
         line-height: 34px;
         .status-text {
@@ -1396,6 +1432,19 @@ export default {
       .stop {
         color: map-get($color, danger);
         background-color: #ffecec;
+      }
+      .btn-refresh {
+        padding: 0;
+        height: 32px;
+        line-height: 32px;
+        width: 32px;
+        min-width: 32px;
+        font-size: 16px;
+        &:hover,
+        &.is-plain:focus:hover {
+          border-color: #2c65ff;
+          background-color: #f5f6f7;
+        }
       }
     }
     .btn + .btn {

@@ -155,10 +155,11 @@ export default {
       max-width: 82px;
       font-weight: 500;
       font-size: 12px;
-      color: #000;
+      color: map-get($fontColor, normal);
       text-overflow: ellipsis;
       white-space: nowrap;
       word-break: break-word;
+      cursor: default;
       overflow: hidden;
     }
     .coming-icon {

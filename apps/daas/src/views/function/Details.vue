@@ -88,7 +88,7 @@ export default {
           let details = res?.data || {}
           // 处理老数据问题
           if (details.type === 'custom' && !details.script) {
-            details.script = `function ${details.function_name}() ${details.function_body}`
+            details.script = `function ${details.function_name}(${details.parameters}) ${details.function_body}`
           }
           if (details.type === 'jar') {
             details.classNameFmt = details.className?.split(details.packageName + '.')?.[1] || ''

@@ -1,5 +1,5 @@
 <template>
-  <section class="dashboard-wrap" v-if="!$getSettingByKey('SHOW_OLD_PAGE')" v-loading="loading">
+  <section v-loading="loading" class="dashboard-wrap">
     <template v-if="noPermission">
       <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
         <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">
@@ -24,7 +24,6 @@
                 </li>
               </ul>
             </div>
-            <!-- {{ copyPieData }} -->
             <div
               v-if="copyPieData.every(item => item.value === 0)"
               class="flex justify-content-center align-items-center w-100"
@@ -51,7 +50,7 @@
                 <li v-for="task in syncTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
                   <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
                   <span class="text">{{ $t('dashboard_status_' + task.label) }}</span
-                  ><span class="num pl-7">{{ task.value }}</span>
+                  ><span class="num pl-7">{{ handleChangeUnit(task.value) }}</span>
                 </li>
               </ul>
             </div>
@@ -73,54 +72,7 @@
             </div>
           </div>
         </el-col>
-        <!-- 复制任务状态 -->
-        <!-- <el-col :span="12" class="dashboard-col col">
-        <div class="dashboard-col-box">
-          <div class="dashboard-title fs-7">{{ $t('dashboard_copy_status_title') }}</div>
-          <div class="chart line-chart">
-            <ul>
-              <li v-for="item in copyTaskData" :key="item.name">
-                <span>{{ item.name }} </span> {{ item.value }}
-              </li>
-            </ul>
-            <Chart type="bar" class="bar-chart" :data="copyTaskData" :options="barOptions"></Chart>
-          </div>
-        </div>
-      </el-col> -->
       </el-row>
-      <!-- 开发任务概览  -->
-      <!-- <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
-      <el-col :span="12" class="dashboard-col col">
-        <div class="charts-list">
-          <div class="charts-list-text">
-            <div class="dashboard-title fs-7">{{ $t('dashboard_sync_overview_title') }}</div>
-            <ul class="job-list">
-              <li v-for="task in syncTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
-                <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
-                <span class="text">{{ $t('dashboard_status_' + task.label) }}</span
-                ><span class="num pl-7">{{ task.value }}</span>
-              </li>
-            </ul>
-          </div>
-          <div class="chart">
-            <Chart type="pie" :extend="getPieOption(syncPieData)" class="type-chart"></Chart>
-          </div>
-        </div>
-      </el-col>
-      <el-col :span="12" class="dashboard-col col">
-        <div class="dashboard-col-box">
-          <div class="dashboard-title fs-7">{{ $t('dashboard_sync_status_title') }}</div>
-          <div class="chart line-chart">
-            <ul>
-              <li v-for="item in syncTaskData" :key="item.name">
-                <span>{{ item.name }} </span> {{ item.value }}
-              </li>
-            </ul>
-            <Chart type="bar" class="bar-chart" :data="syncTaskData" :options="barOptions"></Chart>
-          </div>
-        </div>
-      </el-col>
-    </el-row> -->
       <!-- 数据校验 -->
       <el-row :gutter="20" class="dashboard-row mb-5" v-if="syncValidFalg">
         <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_verify_menu'">
@@ -157,7 +109,7 @@
                 <li v-for="item in transBarData" :key="item.key">
                   <i class="dots mr-3" :style="`background-color: ${item.color};`"></i>
                   <span class="text">{{ item.name }}</span
-                  ><span class="num pl-7">{{ item.value }}</span>
+                  ><span class="num pl-7">{{ handleChangeUnit(item.value) }}</span>
                 </li>
               </ul>
             </div>
@@ -238,17 +190,15 @@
       </div>
     </template>
   </section>
-  <DKDashboard v-else />
 </template>
 
 <script>
-import DKDashboard from './DKDashboard'
 import factory from '../../api/factory'
 import Chart from 'web-core/components/chart'
 const cluster = factory('cluster')
 
 export default {
-  components: { DKDashboard, Chart },
+  components: { Chart },
   data() {
     return {
       h: this.$createElement,
@@ -422,20 +372,8 @@ export default {
     if (this.$has('Cluster_management') || this.$has('Cluster_management_menu')) {
       this.getClsterDataApi()
     }
-
-    // this.allsyncJobsEchart = JSON.parse(JSON.stringify(this.allTaskEchart))
-    // this.copyTaskOptions = JSON.parse(JSON.stringify(this.allTaskEchart))
   },
   methods: {
-    // 点击迁移运行状态跳转到任务列表
-    // handleMigrationStatus(status) {
-    //   let routeUrl = this.$router.resolve({
-    //     name: 'migrate',
-    //     query: { status: status }
-    //   })
-    //   window.open(routeUrl.href)
-    // },
-
     // 获取服务器与进程的数据
     getClsterDataApi() {
       let params = {
@@ -529,28 +467,6 @@ export default {
 
       return echartData
     },
-    // // 指标
-    // getMeasurement() {
-    //   this.$api('Measurement')
-    //     .queryTransmitTotal()
-    //     .then(({ data }) => {
-    //       let result = []
-    //       this.transBarData.forEach(el => {
-    //         result.push(
-    //           Object.assign({}, el, {
-    //             value: data[el.key]
-    //           })
-    //         )
-    //       })
-    //       // eslint-disable-next-line
-    //       console.log('result', result)
-    //       this.transBarData = result
-    //     })
-    //     .catch(err => {
-    //       // eslint-disable-next-line
-    //       console.log('err', err)
-    //     })
-    // },
 
     // 数据处理
     handleDataProcessing(dataItem, statusData) {
@@ -573,6 +489,19 @@ export default {
       }
       return statusItem
     },
+    handleChangeUnit(val) {
+      // return size
+      if (val / (1000 * 1000 * 1000) > 1) {
+        return (val / (1000 * 1000 * 1000)).toFixed(1) + 'T'
+      } else if (val / (1000 * 1000) > 1) {
+        return (val / (1000 * 1000)).toFixed(1) + 'M'
+      } else if (val / 1000 > 1) {
+        return (val / 1000).toFixed(1) + 'K'
+      } else {
+        return val
+      }
+    },
+
     getPieOption(data) {
       let dataName = []
       let total = 0
@@ -584,6 +513,7 @@ export default {
           total += parseFloat(res.value) * 1
         })
         totalFalg = data.some(item => item.value > 0)
+        total = this.handleChangeUnit(total)
       }
 
       return {
@@ -619,7 +549,7 @@ export default {
               show: true,
               position: 'center',
               width: 60,
-              height: 34,
+              height: 38,
               fontWeight: 'bold',
               backgroundColor: '#fff',
               formatter: `{name|${total}}\n{value|${totalText}}`,
@@ -659,29 +589,6 @@ export default {
                 }
               }
             },
-            // itemStyle: {
-            //   normal: {
-            //     // color: function (params) {
-            //     //   var colorList = ['#7ba75d', '#409EFF', '#d9742c', '#e6b451', '#e06c6c']
-            //     //   return colorList[params.dataIndex]
-            //     // },
-            //     label: {
-            //       show: true,
-            //       // verticalAlign: 'middle',
-            //       // position: 'top',
-            //       // distance: 10,
-            //       formatter: function (value) {
-            //         if (value.data / (1000 * 1000 * 1000) > 1) {
-            //           return (value.data / (1000 * 1000 * 1000)).toFixed(1) + ' T'
-            //         } else if (value.data / (1000 * 1000) > 1) {
-            //           return (value.data / (1000 * 1000)).toFixed(1) + ' M'
-            //         } else if (value.data / 1000 > 1) {
-            //           return (value.data / 1000).toFixed(1) + ' K'
-            //         }
-            //       }
-            //     }
-            //   }
-            // },
             data: data
           }
         ]

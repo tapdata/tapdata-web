@@ -23,11 +23,11 @@ export default {
       document.body.appendChild(this.$el)
     }
     this.resize()
-    document.body.addEventListener('click', this.blur)
+    document.getElementById('app').addEventListener('click', this.blur)
   },
   destroyed() {
     this?.$el?.parentNode?.removeChild(this.$el)
-    document.body.removeEventListener('click', this.blur)
+    document.getElementById('app').removeEventListener('click', this.blur)
   },
   methods: {
     resize() {

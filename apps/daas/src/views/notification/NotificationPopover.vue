@@ -115,7 +115,6 @@
 </template>
 
 <script>
-import ws from '../../api/ws'
 import UserOperation from './UserOperation'
 import { TYPEMAP } from './tyepMap'
 import { mapState } from 'vuex'
@@ -167,7 +166,7 @@ export default {
         msg.userId = this.$cookie.get('user_id')
       }
       this.getUnReadNum()
-      ws.on('notification', data => {
+      this.$ws.on('notification', data => {
         if (data.data && data.data.length > 0) {
           this.listData.unshift(...data.data)
           this.getUnReadNum()
@@ -179,11 +178,11 @@ export default {
           })
         }
       })
-      ws.ready(() => {
-        ws.send(msg)
+      this.$ws.ready(() => {
+        this.$ws.send(msg)
       }, true)
       this.$root.$on('notificationUpdate', () => {
-        ws.send(msg)
+        this.$ws.send(msg)
       })
     },
     getUnReadNum() {
@@ -332,8 +331,6 @@ export default {
     }
     .tab-item {
       margin-bottom: 1px;
-      .notification-no-data {
-      }
     }
   }
 }

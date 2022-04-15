@@ -15,33 +15,38 @@
       <el-tab-pane :label="$t('notify_user_all_notice')" name="first"></el-tab-pane>
       <el-tab-pane :label="$t('notify_unread_notice')" name="second"></el-tab-pane>
     </el-tabs>
+    <div class="py-2 pl-4">
+      <SelectList
+        v-if="options.length"
+        v-model="searchParams.search"
+        :items="options"
+        :inner-label="$t('notify_notice_level')"
+        none-border
+        last-page-text=""
+        clearable
+        menu-min-width="240px"
+        @change="getData()"
+      ></SelectList>
+      <SelectList
+        v-if="msgOptions.length"
+        v-model="searchParams.msg"
+        :items="msgOptions"
+        :inner-label="$t('notify_notice_type')"
+        none-border
+        last-page-text=""
+        clearable
+        menu-min-width="240px"
+        @change="getData()"
+      ></SelectList>
+    </div>
     <ul class="cuk-list clearfix cuk-list-type-block">
-      <div class="py-2">
-        <SelectList
-          v-if="options.length"
-          v-model="searchParams.search"
-          :items="options"
-          :inner-label="$t('notify_notice_level')"
-          none-border
-          last-page-text=""
-          clearable
-          menu-min-width="240px"
-          @change="getData()"
-        ></SelectList>
-        <SelectList
-          v-if="msgOptions.length"
-          v-model="searchParams.msg"
-          :items="msgOptions"
-          :inner-label="$t('notify_notice_type')"
-          none-border
-          last-page-text=""
-          clearable
-          menu-min-width="240px"
-          @change="getData()"
-        ></SelectList>
-      </div>
-
-      <li class="list-item" v-for="item in listData" :key="item.id" @click="handleRead(item.id)">
+      <li
+        class="list-item"
+        :style="{ cursor: item.read ? 'default' : 'pointer' }"
+        v-for="item in listData"
+        :key="item.id"
+        @click="handleRead(item)"
+      >
         <div class="list-item-content" v-if="item.msg === 'JobDDL'">
           <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
           <div class="list-item-desc">
@@ -207,10 +212,10 @@ export default {
   },
   created() {
     this.getData()
-    this.getUnreadNum() //未读消息数量
+    // this.getUnreadNum() //未读消息数量
     this.getFilterItems()
     this.$root.$on('notificationUpdate', () => {
-      this.getUnreadNum() //未读消息数量
+      // this.getUnreadNum() //未读消息数量
       this.getData()
     })
   },
@@ -287,33 +292,36 @@ export default {
           this.loading = false
         })
     },
-    getUnreadNum() {
-      let filter = {
-        where: {
-          read: false
-        }
-      }
-      this.$api('notification')
-        .get({ filter: JSON.stringify(filter) })
-        .then(res => {
-          if (res.data) {
-            this.count = res.data.total || 0
-          }
-        })
-    },
-    handleRead(id) {
+    // getUnreadNum() {
+    //   let filter = {
+    //     where: {
+    //       read: false
+    //     }
+    //   }
+    //   this.$api('notification')
+    //     .get({ filter: JSON.stringify(filter) })
+    //     .then(res => {
+    //       if (res.data) {
+    //         this.count = res.data.total || 0
+    //       }
+    //     })
+    // },
+    handleRead(item) {
       let read = this.read
-      this.$api('notification')
-        .patch({ read: true, id: id })
-        .then(res => {
-          if (res.data) {
-            this.getUnreadNum() //未读消息数量
-            this.getData()
-            this.read = read
-            this.$root.$emit('notificationUpdate')
-          }
-        })
+      if (!item.read) {
+        this.$api('notification')
+          .patch({ read: true, id: item.id })
+          .then(res => {
+            if (res.data) {
+              // this.getUnreadNum() //未读消息数量
+              // this.getData()
+              this.read = read
+              this.$root.$emit('notificationUpdate')
+            }
+          })
+      }
     },
+    // 标记本页已读
     handlePageRead() {
       let ids = []
       this.listData.map(item => {
@@ -333,13 +341,14 @@ export default {
         .upsertWithWhere(where, data)
         .then(res => {
           if (res.data) {
-            this.getUnreadNum() //未读消息数量
+            // this.getUnreadNum() //未读消息数量
             this.getData()
             this.read = read
             this.$root.$emit('notificationUpdate')
           }
         })
     },
+    // 标记全部已读
     handleAllRead() {
       let where = {}
       let data = {
@@ -351,7 +360,7 @@ export default {
         .readAll(where, data)
         .then(res => {
           if (res.data) {
-            this.getUnreadNum() //未读消息数量
+            // this.getUnreadNum() //未读消息数量
             this.getData()
             this.read = read
             this.$root.$emit('notificationUpdate')
@@ -492,7 +501,6 @@ $unreadColor: #ee5353;
     position: relative;
     background: #fff;
     border-bottom: 1px solid #f5f7fa;
-    cursor: pointer;
     margin-right: 30px;
     .list-item-content {
       position: relative;

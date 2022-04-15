@@ -51,7 +51,12 @@
           ($has('Data_verify_menu') && $has('verify_job_creation'))
         "
       >
-        <ElCol :span="8" class="more-col" v-if="$has('datasource_menu') && $has('datasource_creation')">
+        <ElCol
+          :span="8"
+          class="more-col"
+          v-if="$has('datasource_menu') && $has('datasource_creation')"
+          :style="{ minHeight: lang === 'en' ? '190px' : '120px' }"
+        >
           <div class="more-col-box p-4" @click="handleConnection">
             <div class="fs-7 pb-4 font-color-normal">
               <div class="flex align-items-center flex-row">
@@ -59,14 +64,19 @@
                 <span class="pl-2 fw-sub">{{ $t('new_create_connection') }}</span>
               </div>
             </div>
-            <div class="fs-8 desc">
-              <ElTooltip effect="dark" :content="$t('new_create_connection_desc')" placement="bottom">
-                <div>{{ $t('new_create_connection_desc') }}</div>
-              </ElTooltip>
+            <div class="fs-8 desc" :style="{ minHeight: lang === 'en' ? '120px' : '70px' }">
+              <!-- <ElTooltip effect="dark" :content="$t('new_create_connection_desc')" placement="bottom"> -->
+              {{ $t('new_create_connection_desc') }}
+              <!-- </ElTooltip> -->
             </div>
           </div>
         </ElCol>
-        <ElCol :span="8" class="more-col" v-if="$has('API_management_menu') && $has('API_creation')">
+        <ElCol
+          :span="8"
+          class="more-col"
+          v-if="$has('API_management_menu') && $has('API_creation')"
+          :style="{ minHeight: lang === 'en' ? '190px' : '120px' }"
+        >
           <div class="more-col-box p-4" @click="handleModules">
             <div class="fs-7 pb-4 font-color-normal">
               <div class="flex align-items-center flex-row">
@@ -74,14 +84,17 @@
                 <span class="pl-2 fw-sub">{{ $t('new_create_api') }}</span>
               </div>
             </div>
-            <div class="fs-8 desc">
-              <ElTooltip effect="dark" :content="$t('new_create_api_desc')" placement="bottom">
-                <div>{{ $t('new_create_api_desc') }}</div>
-              </ElTooltip>
+            <div class="fs-8 desc" :style="{ minHeight: lang === 'en' ? '120px' : '70px' }">
+              {{ $t('new_create_api_desc') }}
             </div>
           </div>
         </ElCol>
-        <ElCol :span="8" class="more-col" v-if="$has('Data_verify_menu') && $has('verify_job_creation')">
+        <ElCol
+          :span="8"
+          class="more-col"
+          v-if="$has('Data_verify_menu') && $has('verify_job_creation')"
+          :style="{ minHeight: lang === 'en' ? '190px' : '120px' }"
+        >
           <div class="more-col-box p-4" @click="handleDataVerification">
             <div class="fs-7 pb-4 font-color-normal">
               <div class="flex align-items-center flex-row">
@@ -89,10 +102,8 @@
                 <span class="pl-2 fw-sub">{{ $t('new_data_valid') }}</span>
               </div>
             </div>
-            <div class="fs-8 desc">
-              <ElTooltip effect="dark" :content="$t('new_data_valid_desc')" placement="bottom">
-                <div>{{ $t('new_data_valid_desc') }}</div>
-              </ElTooltip>
+            <div class="fs-8 desc" :style="{ minHeight: lang === 'en' ? '120px' : '70px' }">
+              {{ $t('new_data_valid_desc') }}
             </div>
           </div>
         </ElCol>
@@ -121,6 +132,7 @@ export default {
   data() {
     return {
       dialogDatabaseTypeVisible: false,
+      lang: localStorage.getItem('tapdata_localize_lang') || 'en',
       whiteList: [
         'mysql',
         'oracle',
@@ -241,21 +253,19 @@ $color: #999999;
         border-radius: 4px;
         .desc {
           color: rgba(0, 0, 0, 0.43);
+          word-break: break-word;
         }
       }
     }
     .more-col {
       .more-col-box {
-        height: 116px;
         border-radius: 4px;
         cursor: pointer;
         border: 1px solid #f3f3f3;
         .desc {
+          min-height: 90px;
+          word-break: break-word;
           color: rgba(0, 0, 0, 0.43);
-          overflow: hidden;
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          -webkit-line-clamp: 3;
         }
       }
     }

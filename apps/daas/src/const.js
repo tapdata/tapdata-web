@@ -49,7 +49,7 @@ export const TOPOLOGY_MAP = topologyMap,
     paused: { text: '已暂停', icon: 'yizanting' }
   },
   ETL_STATUS_MAP = {
-    running: { text: '运行中', type: 'success' },
+    running: { text: '已运行', type: 'success' },
     not_running: { text: '未运行', type: 'disable' },
     error: { text: '错误', type: 'danger' }
   },

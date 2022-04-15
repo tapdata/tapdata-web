@@ -22,7 +22,6 @@ import {
 import { Path } from '@formily/path'
 import { validateBySchema } from '@daas/form/src/shared/validate'
 import { debounce } from 'lodash'
-import formScope from '../mixins/formScope'
 
 registerValidateMessageTemplateEngine((message, context) => {
   // console.log('registerValidateMessageTemplateEngine', message, context)
@@ -44,7 +43,9 @@ const mapEnum = dataSource => (item, index) => {
 export default {
   name: 'FormPanel',
 
-  mixins: [formScope],
+  props: {
+    scope: {}
+  },
 
   components: { Form, SchemaField },
 

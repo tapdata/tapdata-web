@@ -605,6 +605,7 @@ export default {
   ::v-deep {
     .formily-element-form-item-label label {
       font-size: 12px;
+      color: map-get($fontColor, rdlevel);
     }
     .formily-element-form-item-info-help {
       font-size: 12px;

@@ -31,7 +31,6 @@
         <ElButton size="mini" @click.native="exportFile">{{ $t('modules_export') }}</ElButton>
         <ElButton size="mini" @click.native="importFile">{{ $t('modules_import') }}</ElButton>
         <ElButton
-          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-show="multipleSelection.length > 0"
           v-readonlybtn="'data_catalog_category_application'"
           size="mini"
@@ -52,8 +51,7 @@
           <span>{{ $t('modules_create') }}</span>
         </ElButton>
       </div>
-      <el-table-column v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
-      </el-table-column>
+      <el-table-column type="selection" width="45" :reserve-selection="true"></el-table-column>
       <el-table-column :label="$t('modules_header_api_name')" show-overflow-tooltip minWidth="120">
         <template slot-scope="scope">
           <div style="white-space: nowrap"></div>

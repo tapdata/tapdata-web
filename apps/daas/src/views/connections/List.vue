@@ -19,7 +19,6 @@
       </template>
       <div slot="operation">
         <ElButton
-          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'datasource_category_application'"
           size="mini"
           class="btn"
@@ -40,8 +39,7 @@
           <span> {{ $t('connection.createNewDataSource') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
-      </ElTableColumn>
+      <ElTableColumn type="selection" width="45" :reserve-selection="true"></ElTableColumn>
       <ElTableColumn prop="name" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true" min-width="150">
         <template slot-scope="scope">
           <div class="connection-name">
@@ -49,11 +47,7 @@
               <img :src="$util.getConnectionTypeDialogImg(scope.row.database_type)" />
             </div>
             <div class="database-text">
-              <ElLink
-                type="primary"
-                style="display: block; line-height: 20px"
-                @click="preview(scope.row.id, scope.row.database_type)"
-              >
+              <ElLink type="primary" style="display: block; line-height: 20px" @click.stop="preview(scope.row)">
                 {{ scope.row.name }}
               </ElLink>
               <div class="region-info">{{ scope.row.regionInfo }}</div>
@@ -243,25 +237,15 @@ export default {
   },
   watch: {
     '$route.query'() {
-      // this.searchParams = Object.assign(this.searchParams, this.table.getCache())
       this.table.fetch(1)
     }
   },
   created() {
-    //header
-    // let guideDoc =
-    //   ' <a target="_blank" style="color: #409EFF" href="https://docs.tapdata.net/data-source">' +
-    //   this.$t('dataForm.form.guideDoc') +
-    //   '</a>'
-    // this.description = this.$t('connection.desc') + guideDoc
     let helpUrl = 'https://docs.tapdata.net'
     let guideDoc =
       ` <a style="color: #48B6E2" href="${helpUrl}/data-source">` + this.$t('connection_list_help_doc') + '</a>'
-    if (this.$getSettingByKey('SHOW_OLD_PAGE')) {
-      this.description = this.$t('connection_list_desc')
-    } else {
-      this.description = this.$t('connection_list_desc') + guideDoc
-    }
+
+    this.description = this.$t('connection_list_desc') + guideDoc
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
@@ -411,8 +395,8 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
-    preview(id, type) {
-      this.$refs.preview.open(id, type)
+    preview(row) {
+      this.$refs.preview.open(row)
     },
     edit(id, type, item) {
       if (item.search_databaseType) {
