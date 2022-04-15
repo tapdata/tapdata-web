@@ -309,7 +309,7 @@ export default {
       const scrollTop =
         this.paperOffset.top + (top + this.paperReverseSize.h) * scale - (this.visibleArea.height - NODE_HEIGHT) / 2
 
-      this.doChangePageScroll(scrollLeft, scrollTop)
+      this.doChangePageScroll(scrollLeft, scrollTop, true)
     },
 
     // 自动延伸画布，类似于无限画布
@@ -594,11 +594,13 @@ export default {
      * 设置页面滚动
      * @param left
      * @param top
+     * @param animate 平滑滚动
      */
-    doChangePageScroll(left, top) {
+    doChangePageScroll(left, top, animate) {
       this.$nextTick(() => {
-        this.$el.scrollLeft = left
-        this.$el.scrollTop = top
+        const options = { left, top }
+        animate && (options.behavior = 'smooth')
+        this.$el.scrollTo(options)
       })
     },
 
