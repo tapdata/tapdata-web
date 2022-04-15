@@ -3,12 +3,12 @@
     <main class="api-monitor-main">
       <section class="flex flex-direction bg-white api-monitor-card mb-5">
         <div class="flex-1 mt-5 text-center">
-          <header class="api-monitor-total__tittle">API总数</header>
+          <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_totalCount') }}</header>
           <div class="api-monitor-total__text din-font">{{ previewData.totalCount }}</div>
         </div>
         <div class="flex-1 mt-5 text-center">
-          <header class="api-monitor-total__tittle">API访问总数</header>
-          <div class="api-monitor-total__text din-font">
+          <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_warningApiCount') }}</header>
+          <div class="api-monitor-total__text din-font" v-if="previewData.visitTotalCount">
             {{
               previewData.visitTotalCount - previewData.warningApiCount < 0
                 ? 0
@@ -17,31 +17,31 @@
           </div>
         </div>
         <div class="flex-1 mt-5 text-center">
-          <header class="api-monitor-total__tittle">API访问总行数</header>
+          <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_visitTotalLine') }}</header>
           <div class="api-monitor-total__text din-font">{{ previewData.visitTotalLine }}</div>
         </div>
         <div class="flex-1 mt-5 text-center">
-          <header class="api-monitor-total__tittle">API传输总量</header>
+          <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_transmitTotal') }}</header>
           <div class="api-monitor-total__text din-font">{{ handleUnit(previewData.transmitTotal) || 0 }}</div>
         </div>
       </section>
       <section class="flex flex-direction api-monitor-card mb-5 api-monitor__min__height">
         <div class="flex flex-column api-monitor-chart api-monitor-card bg-white pl-5 pt-5">
-          <div class="api-monitor-chart__text mb-2">API 告警数</div>
+          <div class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_warningCount') }}</div>
           <Chart type="pie" :extend="getPieOption()" class="type-chart"></Chart>
           <div class="ml-8 mb-8 mt-5">
             <div>
-              <i class="circle-total mr-3"></i><span class="mr-8">API总数</span
+              <i class="circle-total mr-3"></i><span class="mr-8">{{ $t('api_monitor_total_totalCount') }}</span
               ><span> {{ previewData.totalCount }}</span>
             </div>
             <div class="mt-2">
-              <i class="circle-waring mr-3"></i><span class="mr-6">API告警数</span
+              <i class="circle-waring mr-3"></i><span class="mr-6">{{ $t('api_monitor_total_warningCount') }}</span
               ><span> {{ previewData.warningApiCount }}</span>
             </div>
           </div>
         </div>
         <div class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card ml-5 mr-5 pl-5 pt-5">
-          <div class="api-monitor-chart__text mb-2">API失败率TOP排序</div>
+          <div class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_FailRate') }}</div>
           <TableList
             height="100%"
             ref="failRateList"
@@ -59,7 +59,7 @@
           </el-pagination>
         </div>
         <div class="flex flex-column flex-1 bg-white api-monitor-card pl-5 pt-5">
-          <div class="api-monitor-chart__text mb-2">API响应时间TOP排序</div>
+          <div class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_consumingTime') }}</div>
           <TableList
             height="100%"
             v-loading="loadingTimeList"
@@ -78,7 +78,7 @@
         </div>
       </section>
       <section class="flex flex-column bg-white api-monitor-card mb-5 pl-5 pt-5">
-        <header class="api-monitor-chart__text mb-2">API列表</header>
+        <header class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_api_list') }}</header>
         <FilterBar class="mb-2" v-model="searchParams" :items="filterItems" @fetch="getApiList(1)"> </FilterBar>
         <el-table
           ref="table"
@@ -94,11 +94,11 @@
               <Detail :id="row.id"></Detail>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="API名称"> </el-table-column>
-          <el-table-column prop="status" label="API状态"> </el-table-column>
-          <el-table-column prop="visitLine" label="API访问行数"> </el-table-column>
-          <el-table-column prop="visitCount" label="API访问次数"> </el-table-column>
-          <el-table-column prop="transitQuantity" label="API访问传输量">
+          <el-table-column prop="name" :label="$t('api_monitor_total_api_list_name')"> </el-table-column>
+          <el-table-column prop="status" :label="$t('api_monitor_total_api_list_status')"> </el-table-column>
+          <el-table-column prop="visitLine" :label="$t('api_monitor_total_api_list_visitLine')"> </el-table-column>
+          <el-table-column prop="visitCount" :label="$t('api_monitor_total_api_list_visitCount')"> </el-table-column>
+          <el-table-column prop="transitQuantity" :label="$t('api_monitor_total_api_list_transitQuantity')">
             <template #default="{ row }">
               <span>{{ handleUnit(row.transmitTotal) || '' }}</span>
             </template>
@@ -136,7 +136,7 @@ export default {
           prop: 'name'
         },
         {
-          label: '失败率',
+          label: this.$t('api_monitor_total_columns_failed'),
           prop: 'failed'
         }
       ],
@@ -163,8 +163,8 @@ export default {
       clientNameList: [],
       statusOptions: [
         { label: this.$t('task_list_status_all'), value: '' },
-        { label: '已发布', value: 'active' },
-        { label: '待发布', value: 'pending' }
+        { label: this.$t('api_monitor_total_api_list_status_active'), value: 'active' },
+        { label: this.$t('api_monitor_total_api_list_status_pending'), value: 'pending' }
       ]
     }
   },
@@ -220,7 +220,7 @@ export default {
             color: '#8FD8C0'
           },
           label: 'totalCount',
-          name: 'API 总数',
+          name: this.$t('api_monitor_total_totalCount'),
           value: this.previewData?.totalCount
         },
         {
@@ -228,7 +228,7 @@ export default {
             color: '#2C65FF'
           },
           label: 'warningApiCount',
-          name: 'API警告数',
+          name: this.$t('api_monitor_total_warningCount'),
           value: this.previewData?.warningApiCount
         }
       ]
@@ -283,14 +283,14 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          label: this.$t('task_list_status'),
+          label: this.$t('api_monitor_total_api_list_status'),
           key: 'status',
           type: 'select-inner',
           items: this.statusOptions,
           selectedWidth: '200px'
         },
         {
-          label: this.$t('task_list_sync_type'),
+          label: this.$t('api_monitor_total_clientName'),
           key: 'clientName',
           type: 'select-inner',
           items: this.clientNameList

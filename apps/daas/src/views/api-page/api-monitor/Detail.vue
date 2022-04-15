@@ -3,29 +3,29 @@
     <div class="flex-direction flex-1 pt-5">
       <div class="flex flex-direction flex-1">
         <div class="flex-1">
-          <div class="api-monitor-detail-wrap__text">API访问次数</div>
+          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalCount') }}</div>
           <div class="api-monitor-detail-wrap__value">{{ detail.visitTotalCount || 0 }}</div>
         </div>
         <div class="flex-1">
-          <div class="api-monitor-detail-wrap__text">API传输量</div>
+          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitQuantity') }}</div>
           <div class="api-monitor-detail-wrap__value">{{ detail.visitQuantity || 0 }}</div>
         </div>
         <div class="flex-1">
-          <div class="api-monitor-detail-wrap__text">API访问耗时</div>
+          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_timeConsuming') }}</div>
           <div class="api-monitor-detail-wrap__value">{{ detail.timeConsuming || 0 }}</div>
         </div>
       </div>
       <div class="flex flex-direction flex-1 pb-5">
         <div class="flex-1">
-          <div class="api-monitor-detail-wrap__text">API访问行数</div>
+          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalLine') }}</div>
           <div class="api-monitor-detail-wrap__value">{{ detail.visitTotalLine || 0 }}</div>
         </div>
         <div class="flex-1">
-          <div class="api-monitor-detail-wrap__text">API传输速率</div>
+          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_speed') }}</div>
           <div class="api-monitor-detail-wrap__value">{{ detail.speed || 0 }}</div>
         </div>
         <div class="flex-1">
-          <div class="api-monitor-detail-wrap__text">API响应时间</div>
+          <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_responseTime') }}</div>
           <div class="api-monitor-detail-wrap__value">{{ detail.responseTime || 0 }}</div>
         </div>
       </div>
@@ -37,7 +37,9 @@
       </div>
     </div>
     <div class="pt-5 ml-4" style="width: 200px">
-      <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+      <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">{{
+        $t('previewData.role_all_check')
+      }}</el-checkbox>
       <div style="margin: 15px 0"></div>
       <el-checkbox-group v-model="clientName" @change="handleCheckedCitiesChange">
         <el-checkbox v-for="item in clientNameList" :key="item.id" :label="item.id">{{ item.name }}</el-checkbox>
@@ -63,16 +65,16 @@ export default {
         type: 'visitTotalLine'
       },
       typesOptions: [
-        { label: '访问行数', value: 'visitTotalLine' },
-        { label: '耗时', value: 'timeConsuming' },
-        { label: '传输速率', value: 'speed' },
-        { label: '响应时间', value: 'latency' }
+        { label: this.$t('api_monitor_detail_visitTotalLine'), value: 'visitTotalLine' },
+        { label: this.$t('api_monitor_detail_timeConsuming'), value: 'timeConsuming' },
+        { label: this.$t('api_monitor_detail_speed'), value: 'speed' },
+        { label: this.$t('api_monitor_detail_responseTime'), value: 'latency' }
       ],
       timeList: [
-        { label: '5分钟', value: 5 },
-        { label: '10分钟', value: 10 },
-        { label: '30分钟', value: 30 },
-        { label: '60分钟', value: 60 }
+        { label: this.$t('task_info_five_min'), value: 5 },
+        { label: this.$t('task_info_ten_min'), value: 10 },
+        { label: this.$t('task_info_thirty_min'), value: 30 },
+        { label: this.$t('task_info_last_hour'), value: 60 }
       ],
       allElection: [],
       clientName: [],
