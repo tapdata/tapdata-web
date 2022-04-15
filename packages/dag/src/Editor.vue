@@ -595,7 +595,7 @@ export default {
             action: 'dataflowViewer'
           }
         })
-        .catch(e => {
+        .catch(() => {
           console.log('Current route: DataflowViewer') // eslint-disable-line
         })
     },
