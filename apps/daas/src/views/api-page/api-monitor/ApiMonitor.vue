@@ -421,10 +421,12 @@ export default {
   .api-monitor__min__height {
     height: 300px;
   }
-  .api-monitor-table {
-    v::v-deep {
+  ::v-deep {
+    .el-table__header th {
+      font-weight: bold;
     }
   }
+
   .api-monitor-main {
     width: 100%;
   }

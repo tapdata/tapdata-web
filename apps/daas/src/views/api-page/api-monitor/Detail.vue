@@ -38,7 +38,7 @@
     </div>
     <div class="pt-5 ml-4" style="width: 200px">
       <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">{{
-        $t('previewData.role_all_check')
+        $t('role_all_check')
       }}</el-checkbox>
       <div style="margin: 15px 0"></div>
       <el-checkbox-group v-model="clientName" @change="handleCheckedCitiesChange">
