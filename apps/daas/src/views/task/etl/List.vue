@@ -766,17 +766,23 @@ export default {
       }
       const h = this.$createElement
       let strArr = this.$t('dataFlow.' + message).split('xxx')
-      let msg = h('p', null, [
-        strArr[0],
-        h(
-          'span',
-          {
-            class: 'color-primary'
-          },
-          name
-        ),
-        strArr[1]
-      ])
+      let msg = h(
+        'p',
+        {
+          style: 'width: calc(100% - 28px);word-break: break-all;'
+        },
+        [
+          strArr[0],
+          h(
+            'span',
+            {
+              class: 'color-primary'
+            },
+            name
+          ),
+          strArr[1]
+        ]
+      )
       return {
         msg,
         title: this.$t('dataFlow.' + title)

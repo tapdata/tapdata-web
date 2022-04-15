@@ -107,6 +107,7 @@
       <!-- <el-table-column prop="lag" :label="$t('dataFlow.maxLagTime')" width="180" sortable="custom"></el-table-column> -->
       <el-table-column prop="status" :label="$t('task_list_status')" width="180">
         <template #default="{ row }">
+          <!--调度失败任务 统一归类为error-->
           <span :class="['status-' + row.statusResult[0].status, 'status-block', 'mr-2']">
             {{ $t('task_preview_status_' + row.statusResult[0].status) }}
           </span>
@@ -631,17 +632,23 @@ export default {
       }
       const h = this.$createElement
       let strArr = this.$t('dataFlow.' + message).split('xxx')
-      let msg = h('p', null, [
-        strArr[0],
-        h(
-          'span',
-          {
-            class: 'color-primary'
-          },
-          name
-        ),
-        strArr[1]
-      ])
+      let msg = h(
+        'p',
+        {
+          style: 'width: calc(100% - 28px);word-break: break-all;'
+        },
+        [
+          strArr[0],
+          h(
+            'span',
+            {
+              class: 'color-primary'
+            },
+            name
+          ),
+          strArr[1]
+        ]
+      )
       return {
         msg,
         title: this.$t('dataFlow.' + title)

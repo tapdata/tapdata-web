@@ -40,7 +40,7 @@
         <div class="flex text-center bg-color-main w-100 h-100">
           <div class="box py-3">
             <div class="title fs-7 font-color-normal">{{ $t('share_detail_incremental_play') }}</div>
-            <div class="time py-4 fs-2 text-primary">{{ replicateLag }}</div>
+            <div class="time py-4 fs-2 text-primary">{{ getReplicateLagTime(replicateLag) }}</div>
             <div class="text-muted font-color-sub fs-8" v-if="detailData.cdcTime">
               {{ $t('share_detail_incremental_time') }}：{{ formatTime(detailData.cdcTime) }}
             </div>
@@ -283,7 +283,7 @@ export default {
         .then(res => {
           let detailData = res?.data
           detailData.taskList = detailData.taskList?.map(item => {
-            item.status = item.status === 'edit' ? 'ready' : item.status
+            item.status = item.status === 'edit' ? 'ready' : item.status === 'schedule_failed' ? 'error' : item.status //没有子任务的概念
             return item
           })
           this.detailData = detailData
@@ -463,6 +463,14 @@ export default {
       this.getMeasurement()
       //this.resetTimer()
     },
+    getReplicateLagTime(val) {
+      if (val < 1000) {
+        return '<1' + this.$t('task_info_s')
+      } else if (val > 24 * 60 * 60 * 1000) {
+        return '>1' + this.$t('task_info_d')
+      }
+      return formatMs(val, 'time')
+    },
     getTableNames() {
       let filter = {
         limit: this.pageSize,
@@ -507,7 +515,7 @@ export default {
       width: 100%;
       .label {
         width: 70px;
-        line-height: 28px;
+        line-height: 32px;
       }
       ::v-deep {
         .el-date-editor {
@@ -519,7 +527,7 @@ export default {
       }
     }
     .share-detail-head-right {
-      width: 240px;
+      min-width: 240px;
       align-items: center;
       overflow: hidden;
       & > div {

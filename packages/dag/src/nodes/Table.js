@@ -60,18 +60,24 @@ export class Table extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   asterisk: true,
-                  wrapperWidth: 300
+                  wrapperWidth: 320,
+                  feedbackLayout: 'none'
                 },
                 'x-component': 'FormFlex',
                 'x-component-props': {
-                  style: {
-                    gap: '8px'
-                  }
+                  gap: 8,
+                  align: 'start'
                 },
                 properties: {
                   connectionId: {
                     type: 'string',
                     required: true,
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      style: {
+                        flex:1
+                      }
+                    },
                     'x-component': 'Select',
                     'x-component-props': {
                       config: { placeholder: '请选择数据库' }
@@ -116,19 +122,24 @@ export class Table extends NodeType {
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   asterisk: true,
-                  wrapperWidth: 300,
-                  feedbackText: ''
+                  wrapperWidth: 320,
+                  feedbackLayout: 'none'
                 },
                 'x-component': 'FormFlex',
                 'x-component-props': {
-                  style: {
-                    gap: '8px'
-                  }
+                  gap: 8,
+                  align: 'start'
                 },
                 properties: {
                   tableName: {
                     type: 'string',
                     required: true,
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      style: {
+                        flex:1
+                      }
+                    },
                     'x-component': 'Select',
                     'x-component-props': {
                       allowCreate: false,

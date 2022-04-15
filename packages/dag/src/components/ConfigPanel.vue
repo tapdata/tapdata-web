@@ -27,7 +27,7 @@
       <ElTabs v-model="currentTab" class="config-tabs">
         <!--属性设置-->
         <ElTabPane :label="$t('dag_property_setting')">
-          <FormPanel v-on="$listeners" ref="formPanel"></FormPanel>
+          <FormPanel v-on="$listeners" v-bind="$attrs" ref="formPanel"></FormPanel>
         </ElTabPane>
         <!--元数据-->
         <ElTabPane :label="$t('dag_meta_data')">
