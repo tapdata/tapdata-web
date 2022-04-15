@@ -50,7 +50,7 @@
               <ElLink
                 type="primary"
                 style="display: block; line-height: 20px"
-                @click="preview(scope.row.id, scope.row.database_type)"
+                @click.stop="preview(scope.row.id, scope.row.database_type)"
               >
                 {{ scope.row.name }}
               </ElLink>
