@@ -379,17 +379,11 @@ export default {
         table_name: row.sourceObjectName,
         operations: operations
       }
-      if (this.field_process && this.field_process.length > 0) {
-        for (let i = 0; i < this.field_process.length; i++) {
-          if (this.field_process[i].table_id === row?.sourceTableId) {
-            this.field_process[i].operations = operations
-          } else {
-            this.field_process = this.field_process || []
-            this.field_process.push(field_process)
-          }
-        }
+      this.field_process = this.field_process || []
+      let findOne = this.field_process.find(t => t.table_id === row?.sourceTableId)
+      if (findOne) {
+        findOne.operations = operations
       } else {
-        this.field_process = this.field_process || []
         this.field_process.push(field_process)
       }
       return this.field_process

@@ -1596,7 +1596,7 @@ export default {
           dropType: 'no_drop',
           readBatchSize: 1000,
           readCdcInterval: 500,
-          field_process: this.transferData.field_process //字段处理器 源
+          field_process: uniqueArr(this.transferData.field_process, 'table_id') //字段处理器 源
         }),
         Object.assign({}, stageDefault, {
           id: targetIdB,
