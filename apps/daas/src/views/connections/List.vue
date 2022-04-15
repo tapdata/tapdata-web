@@ -47,11 +47,7 @@
               <img :src="$util.getConnectionTypeDialogImg(scope.row.database_type)" />
             </div>
             <div class="database-text">
-              <ElLink
-                type="primary"
-                style="display: block; line-height: 20px"
-                @click.stop="preview(scope.row.id, scope.row.database_type)"
-              >
+              <ElLink type="primary" style="display: block; line-height: 20px" @click.stop="preview(scope.row)">
                 {{ scope.row.name }}
               </ElLink>
               <div class="region-info">{{ scope.row.regionInfo }}</div>
@@ -399,8 +395,8 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
-    preview(id, type) {
-      this.$refs.preview.open(id, type)
+    preview(row) {
+      this.$refs.preview.open(row)
     },
     edit(id, type, item) {
       if (item.search_databaseType) {

@@ -142,21 +142,13 @@ export default {
       }
       return require(`web-core/assets/icons/node/${type.toLowerCase()}.svg`)
     },
-    open(id, type) {
-      this.loadData(id, type)
+    open(row) {
       this.visible = true
       this.showProgress = false
-    },
-    async loadData(id, type) {
-      this.loading = true
-      let data = null
-      data = await this.$api('connections').getNoSchema(id)
-      data = data.data
-      this.loading = false
-      this.connection = data
+      this.connection = row
       //组装数据
-      this.connection['last_updated'] = this.$moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
-      this.loadList(type)
+      this.connection['last_updated'] = this.$moment(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
+      this.loadList(row.database_type)
     },
     edit() {
       this.$router.push({
