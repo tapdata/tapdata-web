@@ -32,8 +32,8 @@
     </div>
     <div class="flex-1 pt-3">
       <FilterBar v-model="searchParams" :items="filterItems" :hideRefresh="true" @fetch="getDetail()"> </FilterBar>
-      <div v-loading="!lineDataDeep.x.length">
-        <Chart ref="chart" type="line" :data="lineData" :options="lineOptions" class="type-chart h-100"></Chart>
+      <div v-loading="!qpsDataTime.length" style="height: 200px">
+        <Chart ref="chart" :extend="lineOptions" class="type-chart h-100"></Chart>
       </div>
     </div>
     <div class="pt-5 ml-4" style="width: 200px">
@@ -87,14 +87,7 @@ export default {
           id: '5c0e750b7a5cd42464a5099d'
         }
       ],
-      lineData: {
-        x: [],
-        y: [[]]
-      },
-      lineDataDeep: {
-        x: [],
-        y: [[]]
-      },
+      qpsDataTime: [],
       lineOptions: {
         tooltip: {
           trigger: 'axis'
@@ -105,38 +98,36 @@ export default {
           show: false
         },
         xAxis: {
-          type: 'time'
+          type: 'time',
+          data: []
         },
-        yAxis: [
-          {
-            // max: 'dataMax',
-            // name: 'QPS',
-            axisLabel: {
-              formatter: function (value) {
-                if (value >= 1000) {
-                  value = value / 1000 + 'K'
-                }
-                return value
+        yAxis: {
+          axisLabel: {
+            formatter: function (value) {
+              if (value >= 1000) {
+                value = value / 1000 + 'K'
               }
+              return value
             }
           },
-          {
-            // max: 'dataMax',
-            axisLabel: {
-              formatter: function (value) {
-                if (value >= 1000) {
-                  value = value / 1000 + 'K'
-                }
-                return value
-              }
+          axisLine: {
+            show: true
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              type: 'dashed'
             }
           }
-        ],
+        },
         grid: {
-          left: 0,
-          right: 0,
-          top: '24px',
-          bottom: 0
+          left: '24px', // 没有数据的时候，Y轴单位显示不全。后面可以通过判断设置该值
+          right: '12px',
+          top: '8px',
+          bottom: 0,
+          containLabel: true,
+          borderWidth: 1,
+          borderColor: '#ccc'
         },
         series: [
           {
@@ -152,23 +143,7 @@ export default {
             itemStyle: {
               color: 'rgba(24, 144, 255, 1)'
             },
-            // type: 'line',
-            data: []
-          },
-          {
-            name: this.$t('task_info_output'),
-            lineStyle: {
-              color: 'rgba(118, 205, 238, 1)',
-              width: 1
-            },
-            symbol: 'none',
-            areaStyle: {
-              color: 'rgba(118, 205, 238, 0.2)'
-            },
-            itemStyle: {
-              color: 'rgba(118, 205, 238, 1)'
-            },
-            // type: 'line',
+            type: 'line',
             data: []
           }
         ]
@@ -204,35 +179,15 @@ export default {
           let data = res?.data
           // 折线图
           let qpsDataValue = data.value || []
-          let qpsDataTime = data.time || []
-
-          let xArr = qpsDataTime.map(t => formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
-          const xArrLen = xArr.length
-          if (this.lineDataDeep.x.length > 20) {
-            this.lineDataDeep.x.splice(0, xArrLen)
-            this.lineDataDeep.y[0].splice(0, xArrLen)
-          }
-          let inArr = []
-          xArr.forEach((el, i) => {
-            let time = el
-            inArr.push({
-              name: time,
-              value: [time, qpsDataValue[i]]
-            })
-          })
-          // eslint-disable-next-line
-          console.log('挖掘详情x轴：', this.lineDataDeep.x.length, xArr)
-          xArr.forEach((el, index) => {
-            if (!this.lineDataDeep.x.includes(el)) {
-              this.lineDataDeep.x.push(el)
-              this.lineDataDeep.y[0].push(inArr[index])
-            }
-          })
+          this.qpsDataTime = data.time || []
           this.$nextTick(() => {
             this.$refs.chart?.chart?.setOption({
+              xAxis: {
+                data: this.qpsDataTime
+              },
               series: [
                 {
-                  data: Object.assign([], this.lineDataDeep.y[0])
+                  data: qpsDataValue // Object.assign([], this.lineDataDeep.y[0])
                 }
               ]
             })
