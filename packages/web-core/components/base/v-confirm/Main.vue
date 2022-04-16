@@ -239,7 +239,9 @@ export default {
   color: rgba(0, 0, 0, 0.65);
 }
 .message-box__content {
-  padding-top: 4px;
+  padding: 4px 24px 0 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 .message-box__btns {
   padding: 0 24px 24px;
