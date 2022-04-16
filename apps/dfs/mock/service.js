@@ -2893,7 +2893,7 @@ module.exports = Object.assign({}, dataflow, connection, messages, verification,
     reqId: '1f3d1e66-a3f9-4a81-b844-2592c8618978',
     code: 'ok',
     data: {
-      agentId: '621dd6a54970eb5f888b650a',
+      // agentId: '621dd6a54970eb5f888b650a',
       deployInfo: {
         downloadUrl: 'http://resource.tapdata.net/package/feagent/dfs-v2.1.0-22022705/',
         links: [
@@ -2915,5 +2915,17 @@ module.exports = Object.assign({}, dataflow, connection, messages, verification,
         ]
       }
     }
+  },
+  '/tm/api/DatabaseTags/availableTags': {
+    reqId: '8630a994-21c1-4dba-a1da-ae1bac64e4b5',
+    ts: 1650080436214,
+    code: 'ok',
+    data: [
+      { name: 'localDatabase', desc: '本地自建库' },
+      { name: 'cloudDatabase', desc: '云数据库' },
+      { name: 'mq', desc: '消息队列' },
+      { name: 'nosql', desc: 'NoSQL数据库' },
+      { name: 'saas', desc: 'SaaS应用' }
+    ]
   }
 })
