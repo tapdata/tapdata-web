@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import { Message } from 'element-ui'
+import { errorConfirmFnc } from '@/util'
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL ||  '';
@@ -56,8 +57,7 @@ const errorCallback = error => {
     // 其他错误
     Message.error(`${error.message || error}`)
   } else if (error?.message !== 'cancel') {
-    // 500 报错
-    location.replace(location.href.split('#/')[0] + '#/500')
+    errorConfirmFnc(error)
   }
   console.error('请求报错：' + error) // eslint-disable-line
   return Promise.reject(error)

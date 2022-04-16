@@ -35,3 +35,11 @@
 .Workbench ~ .zsiq_floatmain {
   display: block !important;
 }
+.error-confirm-fold {
+  & > input:checked ~ label {
+    display: none;
+  }
+  & > input:checked + .error-confirm-fold-content {
+    white-space: inherit;
+  }
+}
