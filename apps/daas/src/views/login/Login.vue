@@ -222,8 +222,9 @@ export default {
           border-top: 1px solid #dedee4;
         }
         &::placeholder {
+          font-weight: 400;
           font-size: 14px;
-          color: rgba(204, 204, 204, 1);
+          color: #c9cdd4;
         }
       }
     }
@@ -236,6 +237,11 @@ export default {
       display: block;
       width: 100%;
       margin-top: 50px;
+    }
+    ::v-deep {
+      .el-checkbox__label {
+        color: map-get($fontColor, slight);
+      }
     }
     .remember {
       padding-top: 16px;

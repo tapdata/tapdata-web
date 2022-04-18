@@ -149,6 +149,7 @@ export default {
   page_title_api_servers: 'API服務器',
   page_title_api_stat: 'API統計',
   page_title_api_audit: 'API審計',
+  page_title_api_audit_details: '詳情',
   page_title_api_monitor: 'API監控',
   page_title_system: '系統管理',
   page_title_data_metadata: '元數據管理',

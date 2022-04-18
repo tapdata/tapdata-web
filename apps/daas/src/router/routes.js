@@ -114,17 +114,17 @@ export default [
             component: () => import('@/views/connections/List'),
             meta: {
               title: 'page_title_connections',
-              code: 'datasource_menu'
-              // desc: (h, t) => {
-              //   return [
-              //     t('connection_list_desc'),
-              //     h(
-              //       'ElLink',
-              //       { props: { type: 'primary', href: 'https://docs.tapdata.net/data-source' }, class: 'ml-1' },
-              //       [t('connection_list_help_doc')]
-              //     )
-              //   ]
-              // }
+              code: 'datasource_menu',
+              desc: (h, t) => {
+                return [
+                  t('connection_list_desc'),
+                  h(
+                    'ElLink',
+                    { props: { type: 'primary', href: 'https://docs.tapdata.net/data-source' }, class: 'ml-1' },
+                    [t('connection_list_help_doc')]
+                  )
+                ]
+              }
             }
           },
           {
@@ -632,17 +632,48 @@ export default [
         meta: {
           title: 'page_title_api_stat',
           code: 'API_stats_menu'
-        }
+        },
+        children: [
+          {
+            path: '',
+            name: 'modules',
+            component: () => import('@/views/api-page/Modules'),
+            meta: {
+              title: 'page_title_api_publish',
+              code: 'API_management_menu'
+            }
+          }
+        ]
       },
       /* ---------- API审计  ----------*/
       {
         path: '/api-audit',
         name: 'apiaudit',
-        component: () => import('@/views/api-page/ApiAudit'),
+        component: Parent,
         meta: {
           title: 'page_title_api_audit',
           code: 'API_clients_menu'
-        }
+        },
+        children: [
+          {
+            path: '',
+            name: 'apiaudit',
+            component: () => import('@/views/api-page/ApiAudit'),
+            meta: {
+              title: 'page_title_api_audit',
+              code: 'API_clients_menu'
+            }
+          },
+          {
+            path: ':id/details',
+            name: 'apiAuditDetails',
+            component: () => import('@/views/api-page/ApiAuditInfo'),
+            meta: {
+              title: 'page_title_api_audit_details',
+              code: 'API_clients_menu'
+            }
+          }
+        ]
       },
       /* ---------- API监控  ----------*/
       {
