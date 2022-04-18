@@ -21,6 +21,12 @@
       <ElTableColumn prop="data_type" :label="$t('meta_table_field_type')"> </ElTableColumn>
       <ElTableColumn prop="scale" :label="$t('meta_table_scale')"> </ElTableColumn>
       <ElTableColumn prop="precision" :label="$t('meta_table_precision')"> </ElTableColumn>
+      <ElTableColumn prop="defaultValue" :label="$t('meta_table_default')"> </ElTableColumn>
+      <ElTableColumn prop="is_nullable" :label="$t('meta_table_not_null')">
+        <template #default="{ row }">
+          {{ $t(`meta_table_${!row.is_nullable ? 'true' : 'false'}`) }}
+        </template>
+      </ElTableColumn>
       <ElTableColumn prop="comment" :label="$t('meta_table_comment')"> </ElTableColumn>
     </ElTable>
   </div>
@@ -70,8 +76,10 @@ export default {
   watch: {
     activeNodeId() {
       this.isShow && this.loadFields()
-      this.checkTarget()
-      this.checkNodeType()
+      if (this.activeNode) {
+        this.checkTarget()
+        this.checkNodeType()
+      }
     },
 
     transformStatus(v) {
@@ -83,7 +91,6 @@ export default {
     isShow(v) {
       if (v) {
         this.loadFields()
-        this.$refs.table.doLayout()
       }
     }
   },
@@ -96,6 +103,7 @@ export default {
   methods: {
     async loadFields() {
       if (this.transformStatus === 'loading') return
+      this.$refs.table.doLayout()
       this.loading = true
 
       try {

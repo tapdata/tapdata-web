@@ -555,7 +555,7 @@ export default {
     },
 
     toView(id) {
-      window.open(
+      /*window.open(
         this.$router.resolve({
           name: 'DataflowViewer',
           params: {
@@ -563,7 +563,13 @@ export default {
           }
         }).href,
         'viewer_' + id
-      )
+      )*/
+      this.$router.push({
+        name: 'DataflowViewer',
+        params: {
+          id
+        }
+      })
     }
   }
 }

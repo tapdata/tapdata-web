@@ -192,7 +192,7 @@ export default {
 
             if (x === position[0] && y === position[1]) {
               // 拖拽结束后位置没有改变
-                console.log('NotMove') // eslint-disable-line
+              console.log('NotMove') // eslint-disable-line
               this.isNotMove = true
               this.removeActiveAction('dragActive')
             }
@@ -237,7 +237,7 @@ export default {
         this.$el,
         {
           ...sourceEndpoint,
-          enabled: !this.stateIsReadonly,
+          // enabled: !this.stateIsReadonly,
           maxConnections: maxOutputs,
           dragOptions: {
             beforeStart: ({ el }) => {
