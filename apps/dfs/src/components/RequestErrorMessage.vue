@@ -1,0 +1,94 @@
+<template>
+  <div>
+    <div class="error-item">当前出现错误，请刷新页面</div>
+    <div v-show="code" class="error-item">
+      <span class="error-item__label">错误码：</span>
+      <span class="error-item__value">{{ code }}</span>
+    </div>
+    <div v-show="reqId" class="error-item">
+      <span class="error-item__label">请求ID：</span>
+      <span class="error-item__value cursor-pointer" @click="onCopy">{{ reqId }}</span>
+      <ElTooltip
+        placement="top"
+        manual
+        content="已复制"
+        popper-class="copy-tooltip"
+        :tabindex="10086"
+        :value="showTooltip"
+      >
+        <span class="operaKey" v-clipboard:copy="reqId" v-clipboard:success="onCopy" @mouseleave="showTooltip = false">
+          <VIcon size="14" :class="[{ 'copied-icon': copied }, 'cursor-pointer', 'ml-2']">copy</VIcon>
+        </span>
+      </ElTooltip>
+    </div>
+    <div v-show="message">
+      <div class="inline-flex align-items-center expand-operation cursor-pointer" @click="expand = !expand">
+        <span class="error-item__label">错误详情</span>
+        <VIcon size="14" :class="[{ expand: expand }, 'v-icon', 'ml-1']" @click.prevent.stop="expand = !expand"
+          >arrow-down</VIcon
+        >
+      </div>
+      <div v-show="expand" class="font-color-disable">{{ message }}</div>
+    </div>
+  </div>
+</template>
+
+<script>
+import VIcon from '@/components/VIcon'
+export default {
+  name: 'RequestErrorMessage',
+  components: { VIcon },
+  props: {
+    err: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
+  },
+  data() {
+    return {
+      expand: false,
+      showTooltip: false,
+      copied: false
+    }
+  },
+  computed: {
+    code() {
+      return this.err.code
+    },
+    reqId() {
+      return this.err.data?.reqId || 'd5d80c71-5bf5-4056-8e37-0a217f15b1af'
+    },
+    message() {
+      return this.err.message
+    }
+  },
+  methods: {
+    onCopy() {
+      this.showTooltip = true
+      this.copied = true
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.error-item {
+  margin-bottom: 8px;
+  line-height: 20px;
+}
+.expand-operation {
+  margin-bottom: 4px;
+  line-height: 20px;
+}
+.v-icon {
+  transition: 0.5s;
+  &.expand {
+    transform: rotate(180deg);
+  }
+}
+.copied-icon {
+  color: map-get($color, primary);
+}
+</style>

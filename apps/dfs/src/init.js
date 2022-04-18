@@ -110,7 +110,7 @@ export default ({ routes }) => {
           console.log('获取用户信息失败, 停止重试，跳转到500', err)
           loading.close()
           init()
-          errorConfirmFnc(err)
+          return errorConfirmFnc(err)
         }
       })
   }
