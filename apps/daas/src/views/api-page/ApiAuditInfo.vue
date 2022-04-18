@@ -26,13 +26,13 @@
         >
           <div class="w-100 text-center">
             <div class="fs-8 font-color-light">{{ item.label }}</div>
-            <!-- <div
+            <div
               class="link-primary pt-4 din-font details-box-item-num"
-              v-if="['latency', 'averResponseTime'].includes(item.key)"
+              v-if="item.value > 0 && ['latency', 'averResponseTime'].includes(item.key)"
             >
-              {{ item.value }}
-            </div> -->
-            <div class="link-primary pt-4 din-font details-box-item-num">
+              {{ item.value }}ms
+            </div>
+            <div v-else class="link-primary pt-4 din-font details-box-item-num">
               {{ item.value }}
             </div>
           </div>
