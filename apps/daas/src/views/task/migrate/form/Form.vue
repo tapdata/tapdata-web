@@ -758,9 +758,10 @@ export default {
   .create-task-main {
     padding: 24px 24px 0;
     background: #fff;
-    overflow-y: auto;
     font-size: 14px;
     .body {
+      overflow-y: auto;
+      min-height: 500px;
       .title {
         font-size: 14px;
         color: map-get($fontColor, normal);

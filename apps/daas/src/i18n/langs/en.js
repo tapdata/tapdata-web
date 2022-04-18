@@ -93,6 +93,7 @@ export default {
   message_operation_error: 'Operation failed',
   message_request_error: 'Request data failed',
   message_no_permission: 'Login has expired, please log in again',
+  message_loading: 'Loading',
 
   // 表格
   column_operation: 'Operate',
@@ -171,6 +172,15 @@ export default {
   // -- 多表选择器
   component_table_selector_candidate_label: 'To be selected',
   component_table_selector_checked_label: 'Selected ',
+  component_table_selector_error_not_exit: 'Table does not exist',
+  component_table_selector_error: 'Selected tables has exceptions',
+  component_table_selector_autofix: 'Clear exception tables',
+  component_table_selector_bulk_pick: 'Bulk pick',
+  component_table_selector_not_checked: 'You have not selected a table',
+  component_table_selector_tables_empty:
+    'You do not have a table at the moment, please click on the upper right corner to reload the table',
+  component_table_selector_clipboard_placeholder:
+    'Please enter table names separated by commas, for example: table_a, table_b',
 
   // app
   app_license_expire_warning: 'Reminder: License expires in {0} days remaining',

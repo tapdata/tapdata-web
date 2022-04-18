@@ -1,45 +1,49 @@
 <template>
-  <div class="table-selector">
+  <div v-loading="loading" class="table-selector">
+    <!-- 候选区 -->
     <div class="candidate-panel selector-panel">
       <div class="selector-panel__header">
         <div class="flex-1">
           <ElCheckbox
-            v-model="isCheckAll"
-            :indeterminate="!isCheckAll && checked.length > 0"
-            @input="checkAll"
+            v-if="table.tables.length"
+            v-model="table.isCheckAll"
+            :indeterminate="!table.isCheckAll && table.checked.length > 0"
+            @input="checkAll($event, 'table')"
           ></ElCheckbox>
           <span class="ml-3">{{ $t('component_table_selector_candidate_label') }}</span>
-          <span class="font-color-slight ml-2">({{ checked.length }}/{{ totalTableCount }})</span>
+          <span v-if="table.tables.length" class="font-color-slight ml-2"
+            >({{ table.checked.length }}/{{ table.tables.length }})</span
+          >
         </div>
-
-        <span v-if="showProgress" class="ml-2"><VIcon>loading</VIcon> {{ progress }} %</span>
+        <span v-if="showProgress" class="ml-2 color-primary">
+          <span>{{ $t('message_loading') }}</span>
+          <i class="el-icon-loading mx-2"></i>
+          <span>{{ progress }}%</span>
+        </span>
         <ElLink v-else type="primary" :disabled="stateIsReadonly" @click="reload()">
-          <span>{{ $t('button_reload') }}</span>
-          <i class="el-icon-refresh-left ml-1"></i>
+          <div class="flex align-center">
+            <span>{{ $t('button_reload') }}</span>
+            <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
+          </div>
         </ElLink>
         <ConnectionTest ref="test"></ConnectionTest>
       </div>
-      <div v-loading="loading" class="selector-panel__body">
+
+      <div class="selector-panel__body">
         <div class="selector-panel__search">
           <ElInput
-            v-model="searchKeyword"
+            v-model="table.searchKeyword"
             suffix-icon="el-icon-search"
             :placeholder="$t('common_placeholder_search_input')"
           ></ElInput>
         </div>
         <ElCheckboxGroup
-          v-model="checked"
-          v-show="connectionId && !loading && filteredData.length"
+          v-model="table.checked"
+          v-show="filteredData.length"
           class="selector-panel__list"
-          @input="checkedChange"
+          @input="checkedChange('table')"
         >
-          <RecycleScroller
-            ref="scroller"
-            class="selector-panel__scroller"
-            :item-size="36"
-            :buffer="50"
-            :items="filteredData"
-          >
+          <RecycleScroller class="selector-panel__scroller" :item-size="36" :buffer="50" :items="filteredData">
             <template #default="{ item }">
               <ElCheckbox class="selector-panel__item" :label="item" :key="item">
                 <span>{{ item }}</span>
@@ -47,21 +51,127 @@
             </template>
           </RecycleScroller>
         </ElCheckboxGroup>
+        <div v-if="!filteredData.length" class="flex-1 flex flex-column justify-center">
+          <ElEmpty
+            :image-size="111"
+            :image="require('@/assets/images/img_empty.png')"
+            :description="$t('component_table_selector_tables_empty') + '~'"
+          ></ElEmpty>
+        </div>
       </div>
     </div>
+    <!-- 左右箭头 按钮 -->
     <div class="selector-center">
       <div class="selector-btns">
-        <span class="btn-transfer">
+        <span class="btn-transfer" :class="{ 'btn-transfer--disabled': isOpenClipMode }" @click="add">
           <i class="el-icon-arrow-right"></i>
         </span>
-        <span class="btn-transfer mt-4">
+        <span class="btn-transfer mt-4" :class="{ 'btn-transfer--disabled': isOpenClipMode }" @click="remove">
           <i class="el-icon-arrow-left"></i>
         </span>
       </div>
     </div>
+    <!-- 已选择区 -->
     <div class="checked-panel selector-panel">
       <div class="selector-panel__header">
-        <span>{{ $t('component_table_selector_checked_label') }}</span>
+        <div class="flex-1">
+          <ElCheckbox
+            v-if="selected.tables.length && !isOpenClipMode"
+            v-model="selected.isCheckAll"
+            :indeterminate="!selected.isCheckAll && selected.checked.length > 0"
+            @input="checkAll($event, 'selected')"
+          ></ElCheckbox>
+          <span class="ml-3">{{ $t('component_table_selector_checked_label') }}</span>
+          <span v-if="selected.tables.length && !isOpenClipMode" class="font-color-slight ml-2"
+            >({{ selected.checked.length }}/{{ selected.tables.length }})</span
+          >
+        </div>
+        <ElLink type="primary" @click="changeSeletedMode()">
+          <div class="flex align-center">
+            <span>{{ $t('component_table_selector_bulk_pick') }}</span>
+            <VIcon class="ml-1" size="9">icon_table_selector_bulk_pick</VIcon>
+          </div>
+        </ElLink>
+      </div>
+      <div class="selector-panel__body">
+        <div v-show="!isOpenClipMode" class="selector-panel__search">
+          <ElInput
+            v-model="selected.searchKeyword"
+            suffix-icon="el-icon-search"
+            :placeholder="$t('common_placeholder_search_input')"
+          ></ElInput>
+        </div>
+        <ElCheckboxGroup
+          v-model="selected.checked"
+          v-show="filterSelectedData.length && !isOpenClipMode"
+          class="selector-panel__list"
+          @input="checkedChange('selected')"
+        >
+          <RecycleScroller class="selector-panel__scroller" :item-size="36" :buffer="50" :items="filterSelectedData">
+            <template #default="{ item }">
+              <ElCheckbox class="selector-panel__item" :label="item" :key="item">
+                <ElTooltip
+                  placement="right"
+                  :enterable="false"
+                  :disabled="!errorTables[item]"
+                  :content="errorTables[item]"
+                >
+                  <span :class="{ 'color-danger': errorTables[item] }">{{ item }}</span>
+                </ElTooltip>
+              </ElCheckbox>
+            </template>
+          </RecycleScroller>
+        </ElCheckboxGroup>
+        <div v-if="!isOpenClipMode && !filterSelectedData.length" class="flex-1 flex flex-column justify-center">
+          <ElEmpty
+            :image-size="111"
+            :image="require('@/assets/images/img_empty.png')"
+            :description="$t('component_table_selector_not_checked') + '~'"
+          ></ElEmpty>
+        </div>
+        <div v-if="isOpenClipMode" class="selector-clipboard h-100 flex flex-column">
+          <div
+            v-show="!isFocus"
+            class="selector-clipboard__view"
+            @click="
+              isFocus = true
+              clipboardValue = clipboardTables.concat().join(', ')
+            "
+          >
+            <ElTooltip
+              v-for="(t, i) in clipboardTables"
+              :key="t"
+              placement="top"
+              :enterable="false"
+              :disabled="!errorTables[t]"
+              :content="errorTables[t]"
+            >
+              <span :class="{ 'color-danger': errorTables[t] }"
+                >{{ t }}<template v-if="i < clipboardTables.length - 1">,&nbsp;</template></span
+              >
+            </ElTooltip>
+          </div>
+          <ElInput
+            v-show="isFocus"
+            v-model="clipboardValue"
+            ref="textarea"
+            class="selector-clipboard__textarea"
+            type="textarea"
+            resize="none"
+            :placeholder="$t('component_table_selector_clipboard_placeholder')"
+            @blur="isFocus = false"
+          ></ElInput>
+        </div>
+      </div>
+      <div class="selector-panel__footer">
+        <div v-if="Object.keys(errorTables).length" class="selector-error flex align-center">
+          <span class="color-danger">*{{ $t('component_table_selector_error') }}</span>
+          <ElLink class="ml-2" type="primary" @click="autofix">{{ $t('component_table_selector_autofix') }}</ElLink>
+        </div>
+        <div v-if="isOpenClipMode" class="px-4 pb-4 text-end">
+          <ElButton @click="changeSeletedMode()">{{ $t('button_cancel') }}</ElButton>
+          <ElButton type="primary" @click="submitClipboard">{{ $t('button_confirm') }}</ElButton>
+        </div>
       </div>
     </div>
   </div>
@@ -70,7 +180,6 @@
 <style lang="scss" scoped>
 .table-selector {
   display: flex;
-  min-height: 400px;
   height: 100%;
   overflow: hidden;
 }
@@ -143,6 +252,41 @@
       background: map-get($color, primary);
       color: #fff;
     }
+    &.btn-transfer--disabled {
+      background: #f2f3f5;
+      color: #333c4a;
+      cursor: not-allowed;
+    }
+  }
+}
+.selector-error {
+  padding: 16px;
+  font-size: 12px;
+}
+.selector-clipboard {
+  padding: 0 16px;
+}
+.selector-clipboard__view {
+  padding: 5px 15px;
+  flex: 1;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  overflow: auto;
+  > span {
+    display: inline-block;
+    line-height: 20px;
+    height: 20px;
+    font-size: 12px;
+    color: map-get($fontColor, normal);
+    word-break: break-word;
+  }
+}
+.selector-clipboard__textarea {
+  flex: 1;
+  ::v-deep {
+    .el-textarea__inner {
+      height: 100%;
+    }
   }
 }
 </style>
@@ -153,28 +297,75 @@ import { RecycleScroller } from 'vue-virtual-scroller'
 export default {
   components: { RecycleScroller },
   props: {
-    connectionId: String
+    connectionId: {
+      type: String,
+      required: true
+    },
+    value: Array
   },
   data() {
     return {
       stateIsReadonly: this.$store.state.dataflow.stateIsReadonly,
-
       loading: false,
-      isCheckAll: false,
-      totalTableCount: 0,
-      searchKeyword: '',
-      keyProp: '',
-      checked: [],
-      tables: [],
+      table: {
+        isCheckAll: false,
+        searchKeyword: '',
+        checked: [],
+        tables: []
+      },
+      selected: {
+        isCheckAll: false,
+        searchKeyword: '',
+        checked: [],
+        tables: []
+      },
       showProgress: false,
       progress: '',
-      loadFieldsStatus: 'finished'
+      loadFieldsStatus: 'finished',
+      errorTables: {},
+      isOpenClipMode: false,
+      clipboardValue: '',
+      isFocus: false
     }
   },
   computed: {
     filteredData() {
-      let reg = new RegExp(this.searchKeyword, 'i')
-      return this.tables.filter(item => reg.test(item))
+      let { searchKeyword, tables } = this.table
+      let reg = new RegExp(searchKeyword, 'i')
+      return tables.filter(item => reg.test(item))
+    },
+    filterSelectedData() {
+      let { searchKeyword, tables } = this.selected
+      let errorTables = this.getErrorTables(tables)
+      let reg = new RegExp(searchKeyword, 'i')
+      let filterTables = tables.filter(item => reg.test(item))
+      filterTables = filterTables.sort((t1, t2) => {
+        if (errorTables[t1]) {
+          return -1
+        }
+        if (errorTables[t2]) {
+          return 1
+        }
+        return 0
+      })
+      return filterTables
+    },
+    clipboardTables() {
+      let value = this.clipboardValue?.replace(/\s+/g, '')
+      let tables = value ? value.split(',') : []
+      return Array.from(new Set(tables))
+    }
+  },
+  watch: {
+    isFocus(v) {
+      if (v) {
+        this.$nextTick(() => {
+          this.$refs?.textarea?.focus()
+        })
+      }
+    },
+    value(v) {
+      this.selected.tables = v.concat()
     }
   },
   created() {
@@ -184,30 +375,103 @@ export default {
     }
   },
   methods: {
-    checkAll(flag) {
+    submitClipboard() {
+      let tables = this.clipboardTables
+      let errorTables = this.getErrorTables(tables)
+      if (!Object.keys(errorTables).length) {
+        this.changeSeletedMode()
+        let tables = this.clipboardTables.concat()
+        this.selected.tables = tables
+        this.$emit('input', this.selected.tables)
+        this.$emit('change')
+      }
+    },
+    add() {
+      if (this.isOpenClipMode) {
+        return
+      }
+      let tables = this.selected.tables.concat(this.table.checked)
+      if (tables.length) {
+        tables = Array.from(new Set(tables))
+        this.selected.tables = Object.freeze(tables)
+        this.$emit('input', this.selected.tables)
+        this.$emit('change')
+      } else {
+        this.$message.warning(this.$t('component_table_selector_not_checked'))
+      }
+    },
+    remove() {
+      if (this.isOpenClipMode) {
+        return
+      }
+      let tables = this.selected.checked
+      if (tables.length) {
+        this.selected.tables = Object.freeze(this.selected.tables.filter(it => !tables.includes(it)))
+        this.selected.checked = []
+        this.selected.isCheckAll = false
+        this.$emit('input', this.selected.tables)
+        this.$emit('change')
+      } else {
+        this.$message.warning(this.$t('component_table_selector_not_checked'))
+      }
+    },
+    autofix() {
+      if (this.isOpenClipMode) {
+        this.clipboardValue = this.clipboardTables.filter(t => !this.errorTables[t]).join(', ')
+        this.errorTables = {}
+      } else {
+        this.selected.tables = Object.freeze(this.selected.tables.filter(t => !this.errorTables[t]))
+        this.$emit('input', this.selected.tables)
+        this.$emit('change')
+      }
+    },
+    getErrorTables(tables) {
+      let allTables = this.table.tables
+      let errorTables = {}
+      tables.forEach(t => {
+        if (!allTables.includes(t)) {
+          errorTables[t] = this.$t('component_table_selector_error_not_exit')
+        }
+      })
+
+      this.errorTables = errorTables
+      return errorTables
+    },
+    checkAll(flag, name) {
+      let { tables } = this[name]
       if (flag) {
-        this.checked = this.tables
+        this[name].checked = tables
       } else {
-        this.checked = []
+        this[name].checked = []
       }
     },
-    checkedChange() {
-      let checked = this.checked
-      if (checked.length === this.tables.length) {
-        this.isCheckAll = true
+    checkedChange(name) {
+      let { checked, tables } = this[name]
+      if (checked.length === tables.length) {
+        this[name].isCheckAll = true
       } else {
-        this.isCheckAll = false
+        this[name].isCheckAll = false
       }
     },
+    changeSeletedMode() {
+      this.isOpenClipMode = !this.isOpenClipMode
+      this.errorTables = {}
+      if (this.isOpenClipMode) {
+        this.clipboardValue = ''
+        this.isFocus = true
+      } else {
+        this.getErrorTables(this.selected.tables)
+      }
+    },
+    // 获取所有表
     getTables() {
       this.loading = true
       this.$api('MetadataInstances')
         .getTables(this.connectionId)
         .then(res => {
           let tables = res.data || []
-          this.totalTableCount = tables.length
           tables = tables.sort((t1, t2) => (t1 > t2 ? 1 : t1 === t2 ? 0 : -1))
-          this.tables = tables
+          this.table.tables = Object.freeze(tables)
         })
         .finally(() => {
           this.loading = false
@@ -232,7 +496,7 @@ export default {
         })
       })
     },
-    //请求测试
+    //请求测试连接并获取进度
     testSchema() {
       let parms = {
         loadCount: 0,
@@ -240,7 +504,7 @@ export default {
       }
       this.loadFieldsStatus = 'loading'
       this.$api('connections')
-        .updateById(this.sourceId, parms)
+        .updateById(this.connectionId, parms)
         .then(res => {
           if (this?.$refs?.test) {
             let data = res?.data
@@ -250,9 +514,10 @@ export default {
           }
         })
     },
+    // 获取加载进度
     getProgress() {
       this.$api('connections')
-        .getNoSchema(this.sourceId)
+        .getNoSchema(this.connectionId)
         .then(res => {
           let data = res?.data
           this.loadFieldsStatus = data.loadFieldsStatus //同步reload状态

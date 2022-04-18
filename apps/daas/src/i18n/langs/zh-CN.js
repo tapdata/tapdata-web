@@ -92,6 +92,7 @@ export default {
   message_operation_error: '操作失败',
   message_request_error: '请求数据失败',
   message_no_permission: '登录已过期，请重新登录',
+  message_loading: '正在加载',
 
   // 表格
   column_operation: '操作',
@@ -169,6 +170,13 @@ export default {
   // -- 多表选择器
   component_table_selector_candidate_label: '待复制表',
   component_table_selector_checked_label: '已选择表',
+  component_table_selector_error_not_exit: '表不存在',
+  component_table_selector_error: '所选表存在异常',
+  component_table_selector_autofix: '清除异常表',
+  component_table_selector_bulk_pick: '批量选表',
+  component_table_selector_not_checked: '您暂时没有选择表',
+  component_table_selector_tables_empty: '您暂时没有表，请点击右上角重新加载表',
+  component_table_selector_clipboard_placeholder: '请输入表名称并以逗号分隔,例如：table_a,table_b',
 
   // app
   app_license_expire_warning: '提醒：License剩余 {0} 天到期',

@@ -1,6 +1,11 @@
 <template>
   <section class="tapdata-transfer-wrap">
-    <TableSelector v-if="!mqTransferFlag" :connection-id="sourceId"></TableSelector>
+    <TableSelector
+      v-if="!mqTransferFlag"
+      v-model="transferData.selectSourceArr"
+      :connection-id="sourceId"
+      @input="handleChangeTransfer"
+    ></TableSelector>
 
     <!-- S MQ穿梭框 -->
     <MqTransfer
@@ -140,6 +145,7 @@ export default {
 .tapdata-transfer-wrap {
   display: flex;
   flex-direction: column;
+
   .box-btn {
     display: flex;
     justify-content: flex-end;

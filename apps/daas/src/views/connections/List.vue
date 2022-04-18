@@ -575,46 +575,40 @@ export default {
 
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-      } else {
+      this.$root.checkAgent(() => {
         this.dialogDatabaseTypeVisible = true
-      }
+      })
     },
     async testConnection(item) {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-        return
-      }
-      let loading = this.$loading()
-      this.testData = Object.assign({}, defaultModel['default'], item)
-      if (['gridfs', 'mongodb'].includes(item.database_type)) {
-        delete this.testData.database_uri
-        this.testData.justTest = true
-      }
-      if (item.database_type !== 'redis') {
-        delete this.testData['database_password']
-      }
-      this.$api('connections')
-        .updateById(
-          item.id,
-          Object.assign(
-            {},
-            {
-              status: 'testing'
-            }
+      this.$root.checkAgent(() => {
+        let loading = this.$loading()
+        this.testData = Object.assign({}, defaultModel['default'], item)
+        if (['gridfs', 'mongodb'].includes(item.database_type)) {
+          delete this.testData.database_uri
+          this.testData.justTest = true
+        }
+        if (item.database_type !== 'redis') {
+          delete this.testData['database_password']
+        }
+        this.$api('connections')
+          .updateById(
+            item.id,
+            Object.assign(
+              {},
+              {
+                status: 'testing'
+              }
+            )
           )
-        )
-        .then(() => {
-          this.dialogTestVisible = true
-          this.$refs.test.start()
-          this.table.fetch()
-        })
-        .finally(() => {
-          loading.close()
-        })
+          .then(() => {
+            this.dialogTestVisible = true
+            this.$refs.test.start()
+            this.table.fetch()
+          })
+          .finally(() => {
+            loading.close()
+          })
+      })
     },
     returnTestData(data) {
       if (!data.status || data.status === null) return
