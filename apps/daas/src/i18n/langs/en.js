@@ -1973,6 +1973,10 @@ export default {
   meta_table_scale: 'Scale',
   meta_table_precision: 'Precision',
   meta_table_comment: 'Comment',
+  meta_table_default: 'Default',
+  meta_table_not_null: 'Not null',
+  meta_table_true: 'True',
+  meta_table_false: 'False',
 
   new_advanced_mode: 'Standard Mode',
   new_more_features: 'More features',

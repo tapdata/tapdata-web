@@ -1921,6 +1921,10 @@ export default {
   meta_table_scale: '精度',
   meta_table_precision: '长度',
   meta_table_comment: '字段注释',
+  meta_table_default: '默认值',
+  meta_table_not_null: '非空',
+  meta_table_true: '是',
+  meta_table_false: '否',
 
   // 新建
   new_advanced_mode: '标准模式',

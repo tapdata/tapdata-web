@@ -1900,6 +1900,10 @@ export default {
   meta_table_scale: '精度',
   meta_table_precision: '長度',
   meta_table_comment: '字段注釋',
+  meta_table_default: '默認值',
+  meta_table_not_null: '非空',
+  meta_table_true: '是',
+  meta_table_false: '否',
 
   new_advanced_mode: '標準模式',
   new_more_features: '更多功能',
