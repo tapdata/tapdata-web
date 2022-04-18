@@ -496,6 +496,25 @@ export default {
   // api documentation and testing api文档及测试
   file_test_generate_code: 'Generate code',
 
+  // api audit api审计
+  apiaudit_name: 'API name',
+  apiaudit_access_type: 'Access Type',
+  apiaudit_visitor: 'Visitor',
+  apiaudit_interview_time: 'Access time',
+  apiaudit_visit_result: 'Visit result',
+  apiaudit_reason_fail: 'Failure reason',
+  apiaudit_log_info: 'Log details',
+  apiaudit_parameter: 'parameter',
+  apiaudit_link: 'Link',
+  apiaudit_access_records: 'Number of access records',
+  apiaudit_access_bandwidth: 'API access bandwidth (M)',
+  apiaudit_average_access_rate: 'API average access rate (M/S)',
+  apiaudit_access_time: 'Access time',
+  apiaudit_average_response_time: 'Average response time',
+  apiaudit_success: 'success',
+  apiaudit_fail: 'Failed',
+  apiaudit_placeholder: 'Please enter name/ID',
+
   // 数据源
   connection_form_tidb_server: 'PDServer address',
   connection_tidb_none_server: 'PDServer address cannot be empty',

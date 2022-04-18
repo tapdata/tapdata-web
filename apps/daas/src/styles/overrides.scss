@@ -297,6 +297,10 @@
   border-color: map-get($borderColor, disable);
   background-color: map-get($bgColor, disable);
 }
+.el-button.is-plain:hover {
+  border-color: map-get($color, primary);
+  color:  map-get($color, primary);
+}
 .el-checkbox {
   font-weight: normal;
   color: map-get($fontColor, light);

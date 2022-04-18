@@ -12,7 +12,13 @@
         :show-overflow-tooltip="true"
         prop="method"
         sortable="method"
-      ></el-table-column>
+      >
+        <template #default="{ row }">
+          <span class="status-block" :style="{ 'background-color': colorMap[row.method] }">{{ row.method }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('apiaudit_visitor')" prop="user_name"> </el-table-column>
+
       <el-table-column
         :label="$t('apiaudit_interview_time')"
         :show-overflow-tooltip="true"
@@ -24,6 +30,9 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('apiaudit_visit_result')" :show-overflow-tooltip="true" prop="code" sortable="code">
+        <template #default="{ row }">
+          {{ row.code == 200 ? $t('apiaudit_success') : $t('apiaudit_fail') }}
+        </template>
       </el-table-column>
       <el-table-column
         :label="$t('apiaudit_reason_fail')"
@@ -57,15 +66,24 @@ export default {
   data() {
     return {
       searchParams: {
-        keyword: ''
+        keyword: '',
+        method: '',
+        code: '',
+        createTime: []
       },
       filterItems: [],
-      order: 'clientName DESC',
+      order: 'createTime DESC',
       createDialogVisible: false,
       createForm: {
         processId: '',
         clientName: '',
         clientURI: ''
+      },
+      colorMap: {
+        POST: '#478C6C',
+        PATCH: '#F2994B',
+        DELETE: '#DB5050',
+        GET: '#09819C'
       }
     }
   },
@@ -80,17 +98,12 @@ export default {
       return this.$refs.table
     }
   },
-  methods: {
-    // 重置查询条件
-    reset(name) {
-      if (name === 'reset') {
-        this.searchParams = {
-          keyword: ''
-        }
-      }
+  watch: {
+    '$route.query'() {
       this.table.fetch(1)
-    },
-
+    }
+  },
+  methods: {
     toDetails(item) {
       this.$router.push({ name: 'apiAuditDetails', params: { id: item.id } })
     },
@@ -98,11 +111,20 @@ export default {
     // 获取数据
     getData({ page }) {
       let { current, size } = page
-      let { keyword } = this.searchParams
+      let { method, code, createTime, keyword } = this.searchParams
       let where = {}
+      if (method) {
+        where.method = method
+      }
+      if (code) {
+        where.code = code
+      }
+      if (createTime?.length) {
+        where.createTime = createTime
+      }
       if (keyword && keyword.trim()) {
         let filterObj = { like: toRegExp(keyword), options: 'i' }
-        where.or = [{ clientName: filterObj }]
+        where.or = [{ name: filterObj }, { id: filterObj }]
       }
 
       let filter = {
@@ -136,7 +158,54 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          placeholder: this.$t('api_server_name'),
+          label: this.$t('apiaudit_access_type'),
+          key: 'method',
+          type: 'select-inner',
+          items: async () => {
+            let res = await this.$api('ApiCalls').getAllMethod()
+            let data = res?.data || []
+            if (data?.length) {
+              return data.map(item => {
+                return {
+                  label: item,
+                  value: item
+                }
+              })
+            } else {
+              return []
+            }
+          },
+          selectedWidth: '200px'
+        },
+        {
+          label: this.$t('apiaudit_visit_result'),
+          key: 'code',
+          type: 'select-inner',
+          items: async () => {
+            let res = await this.$api('ApiCalls').getAllResponseCode()
+            let data = res?.data || []
+            if (data?.length) {
+              return data.map(item => {
+                return {
+                  label: item,
+                  value: item
+                }
+              })
+            } else {
+              return []
+            }
+          },
+          selectedWidth: '200px'
+        },
+        {
+          title: this.$t('apiaudit_interview_time'),
+          key: 'createTime',
+          type: 'datetimerange',
+          placeholder: this.$t('common_placeholder_select'),
+          selectedWidth: '200px'
+        },
+        {
+          placeholder: this.$t('apiaudit_placeholder'),
           key: 'keyword',
           type: 'input'
         }
@@ -158,6 +227,9 @@ export default {
     .btn + .btn {
       margin-left: 5px;
     }
+  }
+  .status-block {
+    color: #fff;
   }
 }
 </style>

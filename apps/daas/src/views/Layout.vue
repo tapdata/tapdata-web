@@ -393,8 +393,8 @@ let menuSetting = [
       { name: 'apiDocAndTest', code: 'API_doc_&_test_menu' },
       { name: 'apiAnalysis', code: 'API_stats_menu' },
       { name: 'apiClient', code: 'API_clients_menu' },
-      { name: 'apiServers', code: 'API_server_menu' }
-      // { name: 'apiaudit', code: 'API_server_menu' }
+      { name: 'apiServers', code: 'API_server_menu' },
+      { name: 'apiaudit', code: 'API_server_menu' }
       // { name: 'apiMonitor' }
     ]
   },

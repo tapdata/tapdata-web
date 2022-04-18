@@ -489,6 +489,7 @@ export default {
   // api审计
   apiaudit_name: 'API名称',
   apiaudit_access_type: '访问类型',
+  apiaudit_visitor: '访问人员',
   apiaudit_interview_time: '访问时间',
   apiaudit_visit_result: '访问结果',
   apiaudit_reason_fail: '失败原因',
@@ -500,6 +501,9 @@ export default {
   apiaudit_average_access_rate: 'API 平均访问速率（M/S)',
   apiaudit_access_time: '访问耗时',
   apiaudit_average_response_time: '平均响应时长',
+  apiaudit_success: '成功',
+  apiaudit_fail: '失败',
+  apiaudit_placeholder: '请输入名称/ID',
 
   // 数据源
   connection_form_tidb_server: 'PDServer 地址',
