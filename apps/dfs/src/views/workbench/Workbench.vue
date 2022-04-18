@@ -294,7 +294,7 @@ export default {
         target: this.$refs.agent?.[0]
       })
       this.$axios
-        .get('/api/tcm/agent/agentCount')
+        .get('api/tcm/agent/agentCount')
         .then(data => {
           agentList[0].value = data.agentTotalCount || 0
           agentList[0].list[0].value = data.agentRunningCount || 0

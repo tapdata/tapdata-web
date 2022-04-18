@@ -1,4 +1,5 @@
 import moment from 'moment'
+import { confirm } from 'web-core'
 
 export function toDecimal2(x) {
   var float = parseFloat(x)
@@ -167,4 +168,40 @@ export const getDatabaseTypes = (mapping = false) => {
     return obj
   }
   return result
+}
+
+// 500错误弹窗
+export const errorConfirmFnc = error => {
+  let msg = `<div>当前出现错误，请刷新页面</div>`
+  let status = error?.response?.status
+  let title = '错误提示'
+  let config = error?.response?.config || error?.config
+  let req = error?.request
+  console.log('req', req)
+  msg += `<div class="mt-1">地址：[${status}]${config.url}</div>`
+  if (error.code) {
+    msg += `<div class="mt-1">错误码：${error.code}</div>`
+  }
+  if (error.data?.reqId) {
+    msg += `<div class="mt-1">请求ID：${error.data.reqId}</div>`
+  }
+  if (error.message) {
+    const mm = `错误详情：${error.message}`
+    msg += `<div class="error-confirm-fold flex mt-1">
+                <input type="checkbox" id="errorConfirm" style="display: none" />
+                <div class="error-confirm-fold-content text-truncate">${mm}</div>
+                <label for="errorConfirm" class="color-primary cursor-pointer text-nowrap ml-1">展开</label>
+              </div>`
+  }
+  confirm(msg, title, {
+    type: 'error',
+    iconSize: 18,
+    dangerouslyUseHTMLString: true,
+    confirmButtonText: '刷新页面',
+    cancelButtonText: '关闭'
+  }).then(flag => {
+    if (flag) {
+      location.reload()
+    }
+  })
 }

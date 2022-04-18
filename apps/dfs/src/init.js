@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
+import './assets/styles/app.scss'
 import 'default-passive-events'
 import './plugins/element'
 import './plugins/axios'
@@ -7,7 +8,6 @@ import './plugins/monent'
 import App from './App.vue'
 import VueRouter from 'vue-router'
 import 'github-markdown-css'
-import './assets/styles/app.scss'
 import VueClipboard from 'vue-clipboard2'
 import { Message } from 'element-ui'
 import settings from './settings'
@@ -15,6 +15,7 @@ import TapdataWebCore from 'web-core'
 import i18n from './i18n'
 import Purchase from '@/views/purchase/Purchase'
 import store from '@/store'
+import { errorConfirmFnc } from '@/util'
 
 Vue.config.productionTip = false
 Vue.prototype.$settings = settings
@@ -109,7 +110,7 @@ export default ({ routes }) => {
           console.log('获取用户信息失败, 停止重试，跳转到500', err)
           loading.close()
           init()
-          location.replace(location.href.split('#/')[0] + '#/500')
+          errorConfirmFnc(err)
         }
       })
   }
