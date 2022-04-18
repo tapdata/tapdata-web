@@ -207,6 +207,9 @@ export default {
   },
 
   created() {
+    if (this.$route.name === 'DataflowViewer') {
+      this.setStateReadonly(true)
+    }
     this.setValidateLanguage()
     this.initNodeType()
   },

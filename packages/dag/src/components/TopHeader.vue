@@ -125,7 +125,25 @@
           </ElScrollbar>
         </div>
       </ElPopover>
-      <ElButton size="mini" class="mx-2" @click="$emit('showSettings')">
+
+      <ElButton
+        v-if="stateIsReadonly"
+        size="mini"
+        class="mx-1 btn--text"
+        @click="
+          $router.push({
+            name: 'dataflowDetails',
+            params: {
+              id: dataflow.id
+            }
+          })
+        "
+      >
+        运行监控
+      </ElButton>
+
+      <ElButton size="mini" class="mx-1 btn--text" @click="$emit('showSettings')">
+        <VIcon>setting</VIcon>
         <!--设置-->
         {{ $t('button_setting') }}
       </ElButton>
@@ -133,20 +151,51 @@
         <!--保存-->
         {{ $t('button_save') }}
       </ElButton>
-      <ElButton
-        v-else
-        key="edit"
-        size="mini"
-        class="mx-2"
-        :disabled="dataflow.disabledData && dataflow.disabledData.edit"
-        @click="$emit('edit')"
-      >
-        <!--编辑-->
-        {{ $t('button_edit') }}
-      </ElButton>
+      <template v-else>
+        <ElButton
+          key="edit"
+          size="mini"
+          class="mx-1 btn--text"
+          :disabled="dataflow.disabledData && dataflow.disabledData.edit"
+          @click="$emit('edit')"
+        >
+          <VIcon>edit</VIcon>
+          <!--编辑-->
+          {{ $t('button_edit') }}
+        </ElButton>
+
+        <ElButton
+          v-if="isShowForceStop(dataflow.statuses)"
+          class="mx-1 btn--text"
+          :disabled="dataflow.disabledData && dataflow.disabledData.stop"
+          size="mini"
+          @click="$emit('forceStop')"
+        >
+          <VIcon>stop</VIcon>
+          {{ $t('task_list_force_stop') }}
+        </ElButton>
+        <ElButton
+          v-else
+          class="mx-1 btn--text"
+          :disabled="dataflow.disabledData && dataflow.disabledData.stop"
+          size="mini"
+          @click="$emit('stop')"
+        >
+          <VIcon>stop</VIcon>
+          {{ $t('task_list_stop') }}
+        </ElButton>
+        <ElButton
+          class="mx-1 btn--text"
+          :disabled="dataflow.disabledData && dataflow.disabledData.reset"
+          size="mini"
+          @click="$emit('reset')"
+        >
+          <VIcon>reset</VIcon>
+          {{ $t('dataFlow.button.reset') }}
+        </ElButton>
+      </template>
 
       <ElButton
-        v-if="!stateIsReadonly"
         :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start && dataflow.statuses.length > 0)"
         size="mini"
         class="mx-2"
@@ -155,44 +204,6 @@
       >
         {{ $t('task_list_run') }}
       </ElButton>
-
-      <ElButtonGroup v-else class="mx-2">
-        <ElButton
-          :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start && dataflow.statuses.length > 0)"
-          size="mini"
-          type="primary"
-          @click="$emit('start')"
-        >
-          {{ $t('task_list_run') }}
-        </ElButton>
-        <ElButton
-          v-if="isShowForceStop(dataflow.statuses)"
-          :disabled="dataflow.disabledData && dataflow.disabledData.stop"
-          size="mini"
-          type="primary"
-          @click="$emit('forceStop')"
-        >
-          {{ $t('task_list_force_stop') }}
-        </ElButton>
-        <ElButton
-          v-else
-          :disabled="dataflow.disabledData && dataflow.disabledData.stop"
-          size="mini"
-          type="primary"
-          @click="$emit('stop')"
-        >
-          {{ $t('task_list_stop') }}
-        </ElButton>
-
-        <ElButton
-          :disabled="dataflow.disabledData && dataflow.disabledData.reset"
-          size="mini"
-          type="primary"
-          @click="$emit('reset')"
-        >
-          {{ $t('dataFlow.button.reset') }}
-        </ElButton>
-      </ElButtonGroup>
     </div>
   </header>
 </template>
@@ -499,6 +510,22 @@ $sidebarBg: #fff;
   ::v-deep {
     .el-button {
       min-width: 64px;
+      line-height: 1;
+
+      &.btn--text {
+        min-width: auto;
+        background: unset;
+        border: none;
+        padding: 7px 8px;
+        &:hover {
+          background: $hoverBg;
+        }
+      }
+    }
+    .el-link--inner {
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
   }
 
@@ -543,6 +570,9 @@ $sidebarBg: #fff;
     &:hover {
       background-color: #eef3ff;
     }
+  }
+  &.auto-width .choose-item {
+    min-width: unset;
   }
   .kbd-wrap {
     kbd {

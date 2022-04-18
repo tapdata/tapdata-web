@@ -99,12 +99,12 @@ export default {
   watch: {
     stateIsReadonly(v) {
       console.log('监听：stateIsReadonly', v) // eslint-disable-line
-      this.form.setState({ disabled: v, effects: this.stateIsReadonly ? null : this.useEffects })
+      this.form.setState({ disabled: v })
     },
 
     async activeNodeId(n, o) {
       const formSchema = this.$store.getters['dataflow/formSchema'] || {}
-
+      if (!this.ins) return
       await this.setSchema(this.ins.formSchema || formSchema.node)
 
       // 如果节点存在错误状态，走一遍校验，可以让用户看到错误信息
@@ -226,7 +226,7 @@ export default {
       this.form = createForm({
         disabled: this.stateIsReadonly,
         values: values || this.node,
-        effects: this.stateIsReadonly ? null : this.useEffects
+        effects: this.useEffects
       })
       if (schema.schema && schema.form) {
         // 临时判断从自定义节点过来的schema
@@ -704,10 +704,12 @@ export default {
     // 绑定表单事件
     useEffects() {
       onFormValuesChange(form => {
+        if (this.stateIsReadonly) return
         console.log('onFormValuesChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
         this.updateNodeProps(form)
       })
       onFormInputChange(form => {
+        if (this.stateIsReadonly) return
         console.log('onFormInputChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
         this.updateNodeProps(form)
       })
