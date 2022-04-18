@@ -242,6 +242,10 @@ export function uniqueArr(arr = [], key = 'id') {
   }, [])
 }
 
+export function checkConnectionName(name) {
+  return /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(name)
+}
+
 // 获取子任务状态统计
 export function getSubTaskStatus(rows = []) {
   const statusMap = {

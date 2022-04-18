@@ -20,7 +20,6 @@
 import VIcon from '@/components/VIcon'
 import {
   CONNECTION_STATUS_MAP,
-  INSTANCE_STATUS_MAP,
   TASK_STATUS_MAP,
   MILESTONE_STATUS_MAP,
   ETL_STATUS_MAP,
@@ -67,7 +66,6 @@ export default {
       return (
         this.statusMap ||
         {
-          instance: INSTANCE_STATUS_MAP,
           task: TASK_STATUS_MAP,
           shareCdc: SHARECDC_MAP,
           connection: CONNECTION_STATUS_MAP,

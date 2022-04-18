@@ -75,7 +75,7 @@ export class Table extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       style: {
-                        flex:1
+                        flex: 1
                       }
                     },
                     'x-component': 'Select',
@@ -137,7 +137,7 @@ export class Table extends NodeType {
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       style: {
-                        flex:1
+                        flex: 1
                       }
                     },
                     'x-component': 'Select',

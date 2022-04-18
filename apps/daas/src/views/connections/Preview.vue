@@ -1,14 +1,5 @@
 <template>
-  <el-drawer
-    :modal="false"
-    :visible.sync="visible"
-    :direction="direction"
-    :show-close="false"
-    :with-header="false"
-    size="320px"
-    style="top: 60px"
-    @closed="handleClose"
-  >
+  <Drawer :visible.sync="visible">
     <div v-loading="loading" class="details-container">
       <div class="container-item border-item flex pb-5">
         <div class="pt-2">
@@ -23,13 +14,13 @@
       </div>
       <div v-if="!hideOperation" class="button-line container-item border-item pt-4 pb-5">
         <div slot="operation" class="flex">
-          <el-button type="primary" size="mini" class="flex-fill" @click="reload()">
+          <el-button type="primary" size="mini" class="flex-1" @click="reload()">
             {{ $t('connection_preview_load_schema') }}
           </el-button>
-          <el-button class="flex-fill" size="mini" @click="edit()">
+          <el-button style="min-width: 50px" size="mini" @click="edit()">
             {{ $t('connection_preview_edit') }}
           </el-button>
-          <el-button class="flex-fill" size="mini" @click="beforeTest()">
+          <el-button class="flex-1" size="mini" @click="beforeTest()">
             {{ $t('connection_preview_test') }}
           </el-button>
         </div>
@@ -82,17 +73,18 @@
       </div>
     </div>
     <ConnectionTest ref="test" @receive="receiveTestData"></ConnectionTest>
-  </el-drawer>
+  </Drawer>
 </template>
 
 <script>
 import VIcon from '@/components/VIcon'
 import StatusTag from '@/components/StatusTag'
+import Drawer from '@/components/Drawer'
 import { CONFIG_MODEL } from './util'
 
 export default {
   name: 'DetailsDrawer',
-  components: { VIcon, StatusTag },
+  components: { VIcon, StatusTag, Drawer },
   props: {
     hideOperation: {
       type: Boolean,
@@ -132,6 +124,13 @@ export default {
   beforeDestroy() {
     this.clearInterval()
   },
+  watch: {
+    visible(val) {
+      if (!val) {
+        this.clearInterval() //清除定时器
+      }
+    }
+  },
   methods: {
     clearInterval() {
       // 清除定时器
@@ -150,21 +149,13 @@ export default {
       }
       return require(`web-core/assets/icons/node/${type.toLowerCase()}.svg`)
     },
-    open(id, type) {
-      this.loadData(id, type)
+    open(row) {
       this.visible = true
       this.showProgress = false
-    },
-    async loadData(id, type) {
-      this.loading = true
-      let data = null
-      data = await this.$api('connections').getNoSchema(id)
-      data = data.data
-      this.loading = false
-      this.connection = data
+      this.connection = row
       //组装数据
-      this.connection['last_updated'] = this.$moment(data.last_updated).format('YYYY-MM-DD HH:mm:ss')
-      this.loadList(type)
+      this.connection['last_updated'] = this.$moment(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
+      this.loadList(row.database_type)
     },
     edit() {
       this.$router.push({
@@ -178,10 +169,7 @@ export default {
       })
     },
     async beforeTest() {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-      } else {
+      this.$root.checkAgent(() => {
         //先将管理端状态改为testing
         this.$api('connections')
           .updateById(this.connection.id, {
@@ -198,13 +186,10 @@ export default {
             }
             this.$refs.test.start(testData)
           })
-      }
+      })
     },
     async reload() {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-      } else {
+      this.$root.checkAgent(() => {
         let config = {
           title: this.$t('connection.reloadTittle'),
           Message: this.$t('connection.reloadMsg'),
@@ -226,7 +211,7 @@ export default {
             this.$emit('reload-schema')
           }
         })
-      }
+      })
     },
     //请求测试
     testSchema() {

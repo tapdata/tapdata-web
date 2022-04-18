@@ -5,7 +5,7 @@
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
       <div slot="operation">
-        <ElButton class="btn btn-create" type="primary" size="small" @click="create">
+        <ElButton class="btn btn-create" type="primary" size="mini" @click="create">
           <span> {{ $t('shared_cache_button_create') }}</span>
         </ElButton>
       </div>

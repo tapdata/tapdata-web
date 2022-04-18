@@ -38,7 +38,7 @@
       <el-input
         clearable
         class="search-item pl-4"
-        size="mini"
+        size="small"
         v-model="search.keyword"
         :placeholder="$t('notification.placeholder.keyword')"
         @change="getData(1)"

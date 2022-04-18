@@ -8,8 +8,9 @@
 
 #app {
   width: 100%;
-  min-width: 1440px;
+  // min-width: 1440px;
   height: 100%;
+  overflow: hidden;
   font-size: 12px;
   font-weight: 400;
   font-style: normal;
@@ -79,17 +80,29 @@ textarea::-webkit-input-placeholder {
 }
 .status-complete,
 .status-finish,
-.status-finished{
-  color: #008B58;
-  background-color: #B4EDD8;
+.status-finished {
+  color: #008b58;
+  background-color: #b4edd8;
 }
 .status-error {
   color: #d44d4d;
   background-color: #ffecec;
 }
 .status-paused {
+  color: #2c65ff;
+  background-color: #ddebff;
+}
+.status-edit {
+   color: #0083c7;
+   background-color: #d1eefd;
+ }
+.status-pending {
   color: #2C65FF;
   background-color: #DDEBFF;
+}
+.status-active{
+  color: #008B58;
+  background-color: #B4EDD8;
 }
 .status-edit {
   color: #0083c7;
@@ -108,20 +121,20 @@ textarea::-webkit-input-placeholder {
   background-color: #fdf1c8;
 }
 .status-pausing {
-  color: #6350D2;
-  background-color: #DCD6FF;
+  color: #6350d2;
+  background-color: #dcd6ff;
 }
 .status-stop {
-  color: #C88500;
-  background-color: #FFE4AE;
+  color: #c88500;
+  background-color: #ffe4ae;
 }
 .status-stopping {
   color: #c39700;
   background-color: #fdf1c8;
 }
 .status-ready {
-  color: #C39700;
-  background-color: #FDF1C8;
+  color: #c39700;
+  background-color: #fdf1c8;
 }
 
 // 无分类列表/详情页面/表单页面

@@ -139,11 +139,8 @@ export default {
     async startTest() {
       let data = this.getFormData()
       if (!data.form || !data.status) return //表单验证通过后测试连接
-      let form = JSON.stringify(data?.form?.values)
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-      } else {
+      this.$root.checkAgent(() => {
+        let form = JSON.stringify(data?.form?.values)
         this.model = form
         this.dialogTestVisible = true
         if (this.$route.params.id) {
@@ -152,7 +149,7 @@ export default {
         } else {
           this.$refs.test.start(false)
         }
-      }
+      })
     },
     receiveData(data) {
       if (!data.status || data.status === null) return

@@ -10,12 +10,6 @@ for (const dKey in directionMap) {
   topologyMap[dKey] = `${dValue}`
 }
 export const TOPOLOGY_MAP = topologyMap,
-  INSTANCE_STATUS_MAP = {
-    Creating: { text: '待部署', type: 'warning' },
-    Running: { text: '运行中', type: 'success' },
-    Stopping: { text: '停止中', type: 'danger' },
-    Stopped: { text: '离线', type: 'disable' }
-  },
   TASK_STATUS_MAP = {
     running: { text: '运行中', icon: 'yunxingzhong', type: 'success' },
     paused: { text: '待启动', icon: 'daiqidong' },
@@ -60,9 +54,7 @@ export const TOPOLOGY_MAP = topologyMap,
     schedule_failed: { text: '错误', type: 'schedule_failed' },
     wait_run: { text: '启动中', type: 'wait_run' },
     running: { text: '运行中', type: 'running' },
-    // pausing: { text: ' 暂停中', type: 'warning' },
     stopping: { text: '停止中', type: 'stopping' },
-    // pause: { text: '暂停', type: 'warning' },
     stop: { text: '已停止', type: 'stop' },
     complete: { text: '已完成', type: 'complete' },
     error: { text: '错误', type: 'error' }

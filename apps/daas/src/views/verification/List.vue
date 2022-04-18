@@ -13,7 +13,7 @@
       <div slot="operation">
         <el-button
           v-readonlybtn="'SYNC_category_application'"
-          size="small"
+          size="mini"
           class="btn"
           v-show="multipleSelection.length > 0"
           @click="handleExport"
@@ -25,7 +25,7 @@
           v-readonlybtn="'datasource_creation'"
           class="btn btn-create"
           type="primary"
-          size="small"
+          size="mini"
           @click="$router.push({ name: 'dataVerificationCreate' })"
         >
           <span> {{ $t('dataVerification.addVerifyTip') }}</span>

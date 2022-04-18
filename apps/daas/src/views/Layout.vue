@@ -91,9 +91,11 @@
         </div>
       </ElAside>
 
-      <ElMain class="layout-main" :style="{ marginLeft: isCollapse ? '66px' : isNotAside ? 0 : '200px' }">
-        <PageHeader></PageHeader>
-        <RouterView class="flex-fill" />
+      <ElMain class="layout-main">
+        <div class="layout-main-body">
+          <PageHeader></PageHeader>
+          <RouterView class="flex-fill" />
+        </div>
       </ElMain>
     </ElContainer>
     <CustomerService v-model="isShowCustomerService"></CustomerService>
@@ -124,15 +126,13 @@
   height: 100%;
   background: rgba(250, 250, 250, 1);
   .layout-header {
-    position: fixed;
-    top: 0;
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
     background: #212a3b;
-    z-index: 100;
+    min-width: 1000px;
     .logo {
       margin-left: 23px;
       display: block;
@@ -188,14 +188,10 @@
     }
   }
   .layout-aside {
-    position: fixed;
-    top: 60px;
-    left: 0;
-    bottom: 0;
+    position: relative;
     display: flex;
-    height: calc(100% - 60px);
+    height: 100%;
     overflow: hidden;
-    z-index: 100;
     border: 1px solid #e1e3e9;
     .el-menu--popup .submenu-item .btn-del {
       display: none;
@@ -310,14 +306,18 @@
   }
   .layout-main {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    height: calc(100% - 60px);
-    margin-top: 60px;
+    height: 100%;
     padding: 0;
     background: #fff;
     box-sizing: border-box;
     overflow-y: hidden;
+    overflow-x: auto;
+  }
+  .layout-main-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-width: 1238px;
   }
   .expire-msg {
     margin-right: 25px;

@@ -528,6 +528,7 @@ import Test from './Test'
 import { TYPEMAPCONFIG, defaultModel } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import VIcon from '@/components/VIcon'
+import { checkConnectionName } from '@/utils/util'
 
 const connectionsModel = factory('connections')
 let defaultConfig = []
@@ -567,7 +568,7 @@ export default {
     let validateRename = (rule, value, callback) => {
       if (!this.renameData.rename || !this.renameData.rename.trim()) {
         callback(new Error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText')))
-      } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(this.renameData.rename)) {
+      } else if (!checkConnectionName(this.renameData.rename)) {
         callback(new Error('名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'))
       } else {
         callback()
@@ -672,13 +673,9 @@ export default {
             validator: (rule, value, callback) => {
               if (!value || !value.trim()) {
                 callback(new Error('连接名称不能为空'))
-              } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(value)) {
+              } else if (!checkConnectionName(value)) {
                 callback('连接名称中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格')
-              } else if (
-                value &&
-                value.trim() &&
-                /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(value)
-              ) {
+              } else if (value && value.trim() && this.checkConnectionName(value)) {
                 let filter = {
                   where: {
                     name: this.model.name
@@ -1578,10 +1575,7 @@ export default {
     },
     //开始测试
     async startTest() {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-      } else {
+      this.$root.checkAgent(() => {
         this.$refs.form.validate(valid => {
           if (valid) {
             let data = Object.assign({}, this.model)
@@ -1608,7 +1602,7 @@ export default {
             }
           }
         })
-      }
+      })
     },
     returnTestData(data) {
       if (!data.status || data.status === null) return
@@ -1665,13 +1659,6 @@ export default {
     // 跳转到重复数据源
     clickLinkSource() {
       window.open('/#/connection/' + this.connectionObj.id, '_blank')
-    },
-    //检测agent 是否可用
-    async checkTestConnectionAvailable() {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-      }
     },
     handleDatabaseType(type) {
       this.dialogDatabaseTypeVisible = false

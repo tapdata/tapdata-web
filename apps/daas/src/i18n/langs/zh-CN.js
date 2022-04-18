@@ -19,6 +19,8 @@ export default {
   common_back_to_list: '返回列表',
   common_placeholder_select: '请选择',
   common_placeholder_input: '请输入',
+  common_placeholder_search_input: '请输入搜索内容...',
+
   // 通用按钮
   button_help: '帮助',
   button_edit: '编辑',
@@ -33,7 +35,7 @@ export default {
   button_copy: '复制',
   button_details: '详情',
   button_preview: '预览',
-  button_reload: '重新加载schema',
+  button_reload: '重新加载',
   button_ok: '确定',
   button_restart: '重启',
   button_start: '启动',
@@ -90,6 +92,7 @@ export default {
   message_operation_error: '操作失败',
   message_request_error: '请求数据失败',
   message_no_permission: '登录已过期，请重新登录',
+  message_loading: '正在加载',
 
   // 表格
   column_operation: '操作',
@@ -164,8 +167,26 @@ export default {
   page_title_custom_node: '自定义处理节点',
   page_title_account: '个人设置',
 
+  // 通用组件
+  // -- 多表选择器
+  component_table_selector_candidate_label: '待复制表',
+  component_table_selector_checked_label: '已选择表',
+  component_table_selector_error_not_exit: '表不存在',
+  component_table_selector_error: '所选表存在异常',
+  component_table_selector_autofix: '清除异常表',
+  component_table_selector_bulk_pick: '批量选表',
+  component_table_selector_not_checked: '您暂时没有选择表',
+  component_table_selector_tables_empty: '您暂时没有表，请点击右上角重新加载表',
+  component_table_selector_clipboard_placeholder: '请输入表名称并以逗号分隔,例如：table_a,table_b',
+
   // app
   app_license_expire_warning: '提醒：License剩余 {0} 天到期',
+
+  // 路由名
+  app_menu_jsFuncs: '函数',
+
+  // Agent
+  agent_check_error: 'Agent当前状态异常无法创建连接，请检查',
 
   // 控制台
   dashboard_status_running: '运行中',
@@ -438,6 +459,31 @@ export default {
   api_asnalysis_name: '名称',
   api_asnalysis_placeholder: '请求方式/路径',
 
+  //api 监控
+  api_monitor_total_totalCount: 'API总数',
+  api_monitor_total_warningApiCount: 'API访问总数',
+  api_monitor_total_visitTotalLine: 'API访问总行数',
+  api_monitor_total_transmitTotal: 'API传输总量',
+  api_monitor_total_warningCount: 'API告警数',
+  api_monitor_total_columns_failed: '失败率(%)',
+  api_monitor_total_FailRate: 'API失败率TOP排序',
+  api_monitor_total_consumingTime: 'API响应时间TOP排序',
+  api_monitor_total_clientName: '客户端',
+  api_monitor_total_api_list: 'API列表',
+  api_monitor_total_api_list_name: 'API名称',
+  api_monitor_total_api_list_status: 'API状态',
+  api_monitor_total_api_list_visitLine: 'API访问行数',
+  api_monitor_total_api_list_visitCount: 'API访问次数',
+  api_monitor_total_api_list_transitQuantity: 'API访问传输量',
+  api_monitor_total_api_list_status_active: '已发布',
+  api_monitor_total_api_list_status_pending: '待发布',
+  api_monitor_detail_visitTotalCount: 'API访问次数',
+  api_monitor_detail_visitQuantity: 'API传输量',
+  api_monitor_detail_timeConsuming: 'API访问耗时',
+  api_monitor_detail_visitTotalLine: 'API访问行数',
+  api_monitor_detail_speed: 'API传输速率',
+  api_monitor_detail_responseTime: 'API响应时间',
+
   // api服务器
   api_server_name: '名称',
   api_server_user: '用户',
@@ -683,6 +729,10 @@ export default {
     '此模式将连接网络中的单独服务器，该服务器提供到数据库的TSL/SSL通道。如果您的数据库位于不可访问的子网中，则可尝试使用此方法',
 
   connection_test_schema_tips: '可能原因：Schema大小写设置有问题，您可尝试修改大小写后重试',
+  connection_reload_schema_confirm_title: '重新加载 schema',
+  connection_reload_schema_confirm_msg: '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema',
+  connection_reload_schema_fail: 'Schema 加载失败',
+
   connection_oracle_config_share_log_switch: '共享挖掘',
 
   connection_preview_load_schema: '加载Schema',
@@ -692,9 +742,6 @@ export default {
   connection_preview_master_partition: '仅写入master分区',
   connection_preview_isr_partition: '写入所有ISR分区',
   connection_preview_operation_success: '操作成功',
-
-  // 路由名
-  app_menu_jsFuncs: '函数',
 
   // 函数
   js_func_name: '函数名',
@@ -981,6 +1028,7 @@ export default {
   task_info_select_frequency: '请选择频率',
   task_info_default: '默认',
   task_info_five_min: '最近五分钟',
+  task_info_ten_min: '最近十分钟',
   task_info_fifteen_min: '最近十五分钟',
   task_info_thirty_min: '最近三十分钟',
   task_info_last_hour: '最近一小时',
