@@ -419,7 +419,7 @@
     <ElDialog
       width="500px"
       append-to-body
-      :title="targetIsQingflow ? 'qingflow目录' : 'vika目录'"
+      title="目录"
       custom-class="vika-field-maping-table-dialog"
       :visible.sync="vikaForm.visible"
       :close-on-click-modal="false"
@@ -440,6 +440,7 @@
         </ElForm>
         <div style="border: 1px solid #ccc">
           <ElTree
+            v-loading="this.vikaForm.loading"
             highlight-current
             lazy
             accordion
@@ -689,7 +690,8 @@ export default {
         originalTableName: '',
         table: '',
         agentId: '',
-        currentNode: {}
+        currentNode: {},
+        loading: false
       },
       batchFieldTypeForm: {
         visible: false,
@@ -1640,6 +1642,7 @@ export default {
         if (this.targetIsQingflow) {
           this.$ws.once('loadQingFlowResult', data => {
             resolve(data.result?.map(t => Object.assign(t, { leaf: true, id: t.appKey, name: t.appName })) || [])
+            this.vikaForm.loading = false
           })
           let obj = {
             type: 'pipe',
@@ -1654,10 +1657,12 @@ export default {
             }
           }
           this.$ws.send(obj)
+          this.vikaForm.loading = true
           return
         }
         this.$ws.once('loadVikaResult', data => {
           this.loadRootNode(data, node, resolve)
+          this.vikaForm.loading = false
         })
         let obj = {
           type: 'pipe',
@@ -1672,6 +1677,7 @@ export default {
           }
         }
         this.$ws.send(obj)
+        this.vikaForm.loading = true
         return
       }
       this.$ws.once('loadVikaResult', data => {
