@@ -2,7 +2,7 @@
   <section class="api-monitor-wrap">
     <main class="api-monitor-main">
       <!--api t统计 -->
-      <section class="flex flex-direction bg-white api-monitor-card mb-5">
+      <section class="flex flex-direction bg-white api-monitor-card mb-5" v-loading="loadingTotal">
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_totalCount') }}</header>
           <div class="api-monitor-total__text din-font">{{ previewData.totalCount }}</div>
@@ -28,7 +28,7 @@
       </section>
       <!--api 排行榜 -->
       <section class="flex flex-direction api-monitor-card mb-5 api-monitor__min__height">
-        <div class="flex flex-column api-monitor-chart api-monitor-card bg-white pl-5 pt-5">
+        <div class="flex flex-column api-monitor-chart api-monitor-card bg-white pl-5 pt-5" v-loading="loadingTotal">
           <div class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_warningCount') }}</div>
           <Chart type="pie" :extend="getPieOption()" class="type-chart"></Chart>
           <div class="ml-8 mb-8 mt-5">
@@ -169,6 +169,7 @@ export default {
       loadingTimeList: false,
       loadingApiList: false,
       loadingFailRateList: false,
+      loadingTotal: false,
       columns: [
         {
           label: 'Api ID',
@@ -227,10 +228,14 @@ export default {
     },
     //获取统计数据
     getPreview() {
+      this.loadingTotal = true
       this.$api('ApiMonitor')
         .preview()
         .then(res => {
           this.previewData = res.data
+        })
+        .finally(() => {
+          this.loadingTotal = false
         })
     },
     //获取所有客户端
