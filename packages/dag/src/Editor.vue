@@ -302,6 +302,7 @@ export default {
       }
 
       const { id } = this.$route.params
+      this.dataflow.id = id
 
       this.stopDagWatch?.()
       if (!first) {
@@ -310,7 +311,7 @@ export default {
       }
       if (this.$route.name === 'DataflowViewer') {
         await this.openDataflow(id)
-        await this.startLoop()
+        // await this.startLoop()
         this.setStateReadonly(true)
       } else {
         if (id) {
@@ -1050,7 +1051,7 @@ export default {
 
     reformDataflow(data) {
       Object.keys(data).forEach(key => {
-        if (key !== 'dag') {
+        if (!['id', 'dag'].includes(key)) {
           this.$set(this.dataflow, key, data[key])
         }
       })
@@ -1063,7 +1064,7 @@ export default {
       )
     },
 
-    async save(silence) {
+    async save(needStart) {
       this.isSaving = true
 
       const errorMsg = await this.validate()
@@ -1080,9 +1081,9 @@ export default {
       const data = this.getDataflowDataToSave()
 
       try {
-        const result = await taskApi.save(data)
+        const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
-        !silence && this.$message.success(this.$t('message.saveOK'))
+        !needStart && this.$message.success(this.$t('message.saveOK'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         return true
@@ -1684,13 +1685,14 @@ export default {
         .catch(this.handleError)
     },
 
-    handleEditFlush(data) {
+    handleEditFlush(result) {
       // eslint-disable-next-line no-console
-      console.log('handleEditFlush', data)
-      const { opType } = data
+      console.log('handleEditFlush', result)
+      this.reformDataflow(result.data)
+      const { opType } = result
       if (opType === 'transformRate') {
         // 推演进度
-        this.setTransformStatus(data.transformStatus)
+        this.setTransformStatus(result.transformStatus)
       } else if (opType === 'updateVersion') {
         // 版本变化
       }
@@ -1715,9 +1717,9 @@ export default {
         this.dataflow.disabledData.start = true
         this.dataflow.disabledData.stop = true
         this.dataflow.disabledData.reset = true
-        await taskApi.start(this.dataflow.id)
+        // await taskApi.start(this.dataflow.id)
         this.gotoViewer()
-        await this.startLoop(true)
+        // await this.startLoop(true)
       }
     },
 
@@ -1737,7 +1739,7 @@ export default {
           clearInterval(this.intervalKey)
           await taskApi.stop(this.dataflow.id)
           this.$message.success(this.$t('message.operationSuccuess'))
-          await this.startLoop(true)
+          // await this.startLoop(true)
         } catch (e) {
           console.log(e) // eslint-disable-line
         }
@@ -1756,7 +1758,7 @@ export default {
         clearInterval(this.intervalKey)
         this.dataflow.disabledData.stop = true
         await taskApi.forceStop(this.dataflow.id)
-        this.startLoop(true)
+        // this.startLoop(true)
       })
     },
 
@@ -1773,7 +1775,7 @@ export default {
           this.dataflow.disabledData.reset = true
           const data = await taskApi.reset(this.dataflow.id)
           this.responseHandler(data, this.$t('message.resetOk'))
-          await this.startLoop(true)
+          // await this.startLoop(true)
         } catch (e) {
           this.$message.info(this.$t('message.resetFailed'))
         }
@@ -1860,8 +1862,10 @@ export default {
       this.$ws.on('editFlush', this.handleEditFlush)
       this.$ws.send({
         type: 'editFlush',
-        opType: 'subscribe',
-        taskId: this.dataflow.id
+        taskId: this.dataflow.id,
+        data: {
+          opType: 'subscribe'
+        }
       })
     },
 
