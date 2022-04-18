@@ -567,52 +567,6 @@
         }}</ElButton>
       </span>
     </ElDialog>
-    <!-- qingflow目录 -->
-    <ElDialog
-      width="500px"
-      append-to-body
-      title="qingflow目录"
-      custom-class="vika-field-maping-table-dialog"
-      :visible.sync="qingflowForm.visible"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-    >
-      <div>
-        <ElForm label-position="top" :model="qingflowForm" style="width: 100%" @submit.prevent.stop>
-          <ElFormItem label="目标：" props="table" class="mb-0">
-            <ElInput
-              v-model="qingflowForm.table"
-              size="mini"
-              maxlength="50"
-              show-word-limit
-              class="mb-3"
-              readonly
-            ></ElInput>
-          </ElFormItem>
-        </ElForm>
-        <div style="border: 1px solid #ccc">
-          <ElTree
-            highlight-current
-            lazy
-            accordion
-            check-on-click-node
-            :props="{
-              label: 'name',
-              children: 'children',
-              isLeaf: 'leaf'
-            }"
-            :load="loadNodeQingflow"
-            @node-click="clickNodeQingflow"
-          ></ElTree>
-        </div>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <ElButton size="mini" @click="qingflowForm.visible = false">{{ $t('button_cancel') }}</ElButton>
-        <ElButton size="mini" type="primary" :disabled="!this.qingflowForm.table" @click="qingflowSaveTable()">{{
-          $t('button_confirm')
-        }}</ElButton>
-      </span>
-    </ElDialog>
   </div>
 </template>
 
@@ -737,13 +691,6 @@ export default {
         agentId: '',
         currentNode: {}
       },
-      qingflowForm: {
-        visible: false,
-        originalTableName: '',
-        table: '',
-        agentId: '',
-        currentNode: {}
-      },
       batchFieldTypeForm: {
         visible: false,
         list: [],
@@ -778,8 +725,6 @@ export default {
     this.updateView()
     if (this.targetIsVika || this.targetIsQingflow) {
       this.loadConnection()
-    } else if (this.targetIsQingflow) {
-      this.loadConnectionQingflow()
     }
   },
   computed: {
@@ -964,11 +909,6 @@ export default {
         this.vikaForm.visible = true
         this.vikaForm.table = item.sinkObjectName
         this.vikaForm.originalTableName = item.sourceObjectName
-        return
-      } else if (this.targetIsQingflow) {
-        this.qingflowForm.visible = true
-        this.qingflowForm.table = item.sinkObjectName
-        this.qingflowForm.originalTableName = item.sourceObjectName
         return
       }
       this.changeTableNameForm.visible = true
@@ -1652,32 +1592,6 @@ export default {
       this.copyForm()
       this.updateParentMetaData('table', this.form)
     },
-    qingflowSaveTable() {
-      let isInclude = false
-      this.form.tableOperations.forEach(el => {
-        if (el.originalTableName === this.qingflowForm.originalTableName) {
-          el.tableName = this.qingflowForm.table
-          isInclude = true
-          // 清空字段处理器
-          this.$emit('update:field_process', [])
-        }
-      })
-      if (!isInclude) {
-        this.form.tableOperations.push({
-          type: 'rename',
-          originalTableName: this.qingflowForm.originalTableName,
-          tableName: this.qingflowForm.table,
-          nodeId: this.qingflowForm.currentNode.data.id
-        })
-        this.form.vikaMappings[this.qingflowForm.originalTableName] = {
-          id: this.qingflowForm.currentNode.data.id,
-          name: this.qingflowForm.table
-        }
-      }
-      this.qingflowForm.visible = false
-      this.copyForm()
-      this.updateParentMetaData('table', this.form)
-    },
     fieldTypeChangeSaveTable() {
       this.batchFieldTypeForm.visible = false
     },
@@ -1707,36 +1621,11 @@ export default {
         }
       })
     },
-    loadConnectionQingflow() {
-      this.model.type = 'qingflow'
-      this.model.dataBaseType = 'vika'
-      this.$axios.get('tm/api/Connections/' + this.dataSourceModel.target_connectionId).then(data => {
-        if (data) {
-          this.model.qingFlowTagId = data?.qingFlowTagId
-          this.model.qingFlowUserId = data?.qingFlowUserId
-          this.model.database_host = data?.database_host
-          this.model.plain_password = data?.plain_password
-          this.model.connectionId = this.dataSourceModel.target_connectionId
-          this.setAgentId(val => {
-            this.qingflowForm.agentId = val
-          })
-        }
-      })
-    },
-    clickNodeQingflow(data, node) {
-      console.log('clickNodeQingflow', data, node)
+    vikaNodeClick(data, node) {
       if (node.isLeaf) {
-        this.qingflowForm.table = data.name
-        this.qingflowForm.currentNode = node
+        this.vikaForm.table = data.name
+        this.vikaForm.currentNode = node
       }
-    },
-    // agentId
-    setAgentId(callback) {
-      let filter = { where: { status: { $in: ['Running'] } }, size: 10, page: 1, sort: ['createAt desc'] }
-      this.$axios.get('api/tcm/agent?filter=' + encodeURIComponent(JSON.stringify(filter))).then(({ items }) => {
-        // agentId = items[0]?.tmInfo?.agentId
-        callback?.(items[0]?.tmInfo?.agentId)
-      })
     },
     // agentId
     setAgentId(callback) {
@@ -1802,28 +1691,6 @@ export default {
         }
       }
       this.$ws.send(obj)
-    },
-    loadNodeQingflow(node, resolve) {
-      if (node.level === 0) {
-        this.$ws.once('loadQingFlowResult', data => {
-          console.log('loadQingFlowResult', data)
-          resolve(data.result?.map(t => Object.assign(t, { leaf: true, id: t.appKey, name: t.appName })) || [])
-        })
-        let obj = {
-          type: 'pipe',
-          receiver: this.qingflowForm.agentId,
-          data: {
-            type: 'loadQingFlow',
-            load_type: 'app',
-            database_host: this.model.database_host,
-            userId: this.model.qingFlowUserId,
-            accessToken: this.model.plain_password,
-            id: this.model.connectionId
-          }
-        }
-        this.$ws.send(obj)
-        return
-      }
     },
     loadRootNode(data, node, resolve) {
       //过滤目录结构
