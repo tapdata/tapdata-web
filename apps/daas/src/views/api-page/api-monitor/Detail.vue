@@ -1,6 +1,6 @@
 <template>
   <section class="api-monitor-detail-wrap flex flex-direction" v-loading="loadingDetail">
-    <div class="flex-direction flex-1 pt-5">
+    <div class="flex-direction flex-1 pt-5 mt-8">
       <div class="flex flex-direction flex-1">
         <div class="flex-1">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalCount') }}</div>
@@ -15,7 +15,7 @@
           <div class="api-monitor-detail-wrap__value">{{ detail.timeConsuming || 0 }}</div>
         </div>
       </div>
-      <div class="flex flex-direction flex-1 pb-5">
+      <div class="flex flex-direction flex-1 pb-5 mt-8">
         <div class="flex-1">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalLine') }}</div>
           <div class="api-monitor-detail-wrap__value">{{ detail.visitTotalLine || 0 }}</div>
@@ -98,8 +98,7 @@ export default {
           show: false
         },
         xAxis: {
-          type: 'time',
-          data: []
+          type: 'time'
         },
         yAxis: {
           axisLabel: {
@@ -180,6 +179,8 @@ export default {
           // 折线图
           let qpsDataValue = data.value || []
           this.qpsDataTime = data.time || []
+          this.qpsDataTime = this.qpsDataTime.map(t => formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
+          console.log(this.qpsDataTime)
           this.$nextTick(() => {
             this.$refs.chart?.chart?.setOption({
               xAxis: {

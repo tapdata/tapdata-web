@@ -1,6 +1,7 @@
 <template>
   <section class="api-monitor-wrap">
     <main class="api-monitor-main">
+      <!--api t统计 -->
       <section class="flex flex-direction bg-white api-monitor-card mb-5">
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_totalCount') }}</header>
@@ -25,6 +26,7 @@
           <div class="api-monitor-total__text din-font">{{ handleUnit(previewData.transmitTotal) || 0 }}</div>
         </div>
       </section>
+      <!--api 排行榜 -->
       <section class="flex flex-direction api-monitor-card mb-5 api-monitor__min__height">
         <div class="flex flex-column api-monitor-chart api-monitor-card bg-white pl-5 pt-5">
           <div class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_warningCount') }}</div>
@@ -41,7 +43,9 @@
           </div>
         </div>
         <div class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card ml-5 mr-5 pl-5 pt-5">
-          <div class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_FailRate') }}</div>
+          <div class="api-monitor-chart__text mb-2">
+            {{ $t('api_monitor_total_FailRate') }} <span icon="el-icon-d-caret" @click="handleFDOrder">排序</span>
+          </div>
           <TableList
             height="100%"
             ref="failRateList"
@@ -59,7 +63,11 @@
           </el-pagination>
         </div>
         <div class="flex flex-column flex-1 bg-white api-monitor-card pl-5 pt-5">
-          <div class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_consumingTime') }}</div>
+          <div class="api-monitor-chart__text mb-2">
+            {{ $t('api_monitor_total_consumingTime') }}
+            <span class="api-monitor-triangle-top" @click="handleCTOrder"></span>
+            <span class="api-monitor-triangle" @click="handleCTOrder"></span>
+          </div>
           <TableList
             height="100%"
             v-loading="loadingTimeList"
@@ -77,7 +85,8 @@
           </el-pagination>
         </div>
       </section>
-      <section class="flex flex-column bg-white api-monitor-card mb-5 pl-5 pt-5">
+      <!--api list -->
+      <section class="flex flex-column bg-white api-monitor-card api-monitor-list__min__height mb-5 pl-5 pt-5">
         <header class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_api_list') }}</header>
         <FilterBar class="mb-2" v-model="searchParams" :items="filterItems" @fetch="getApiList(1)"> </FilterBar>
         <el-table
@@ -149,8 +158,10 @@ export default {
         size: 5,
         failRateCurrent: 1,
         failRateTotal: 0,
+        failRateOrder: 'DESC',
         consumingTimeCurrent: 1,
         consumingTimeTotal: 0,
+        consumingTimeOrder: 'DESC',
         apiListCurrent: 1,
         apiListTotal: 0
       },
@@ -244,6 +255,84 @@ export default {
         ]
       }
     },
+    //失败率排行榜
+    remoteFailedMethod() {
+      let { failRateCurrent, size, failRateOrder } = this.page
+      let filter = {
+        where: {
+          type: 'failRate'
+        },
+        limit: size,
+        order: failRateOrder,
+        skip: size * (failRateCurrent - 1)
+      }
+      this.loadingFailRateList = true
+      this.$api('ApiMonitor')
+        .rankLists({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          //map
+          let data = res.data.items.map(item => {
+            let abj = {}
+            for (let key in item) {
+              abj.name = key
+              abj.failed = item[key]
+            }
+            return abj
+          })
+          this.page.failRateTotal = res.data.total
+          this.failRateList = data || []
+        })
+        .finally(() => {
+          this.loadingFailRateList = false
+        })
+    },
+    //处理失败率排序
+    handleFDOrder() {
+      let time = JSON.parse(JSON.stringify(this.page.failRateOrder))
+      this.page.failRateOrder = time === 'DESC' ? 'ASC ' : 'DESC'
+      this.remoteFailedMethod()
+    },
+    //响应时间排行榜
+    consumingMethod() {
+      let { consumingTimeCurrent, size, consumingTimeOrder } = this.page
+      let filter = {
+        where: {
+          type: 'latency '
+        },
+        limit: size,
+        order: consumingTimeOrder,
+        skip: size * (consumingTimeCurrent - 1)
+      }
+      this.loadingTimeList = true
+      this.$api('ApiMonitor')
+        .rankLists({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          //map
+          let data = res.data.items.map(item => {
+            let abj = {}
+            for (let key in item) {
+              abj.name = key
+              abj.failed = item[key]
+            }
+            return abj
+          })
+          this.page.consumingTimeTotal = res.data.total
+          this.consumingTimeList = data || []
+        })
+        .finally(() => {
+          this.loadingTimeList = false
+        })
+    },
+    //响应时间时间排序
+    handleCTOrder() {
+      let time = JSON.parse(JSON.stringify(this.page.consumingTimeOrder))
+      this.page.consumingTimeOrder = time === 'DESC' ? 'ASC ' : 'DESC'
+      this.consumingMethod()
+    },
     //获取api列表数据
     getApiList() {
       let { apiListCurrent } = this.page
@@ -314,71 +403,6 @@ export default {
         })
       }
     },
-    //失败率排行榜
-    remoteFailedMethod() {
-      let { failRateCurrent, size } = this.page
-      let filter = {
-        where: {
-          type: 'failRate'
-        },
-        order: 'DESC',
-        limit: size,
-        skip: size * (failRateCurrent - 1)
-      }
-      this.loadingFailRateList = true
-      this.$api('ApiMonitor')
-        .rankLists({
-          filter: JSON.stringify(filter)
-        })
-        .then(res => {
-          //map
-          let data = res.data.items.map(item => {
-            let abj = {}
-            for (let key in item) {
-              abj.name = key
-              abj.failed = item[key]
-            }
-            return abj
-          })
-          this.page.failRateTotal = res.data.total
-          this.failRateList = data || []
-        })
-        .finally(() => {
-          this.loadingFailRateList = false
-        })
-    },
-    //响应时间排行榜
-    consumingMethod() {
-      let { consumingTimeCurrent, size } = this.page
-      let filter = {
-        where: {
-          type: 'latency '
-        },
-        limit: size,
-        skip: size * (consumingTimeCurrent - 1)
-      }
-      this.loadingTimeList = true
-      this.$api('ApiMonitor')
-        .rankLists({
-          filter: JSON.stringify(filter)
-        })
-        .then(res => {
-          //map
-          let data = res.data.items.map(item => {
-            let abj = {}
-            for (let key in item) {
-              abj.name = key
-              abj.failed = item[key]
-            }
-            return abj
-          })
-          this.page.consumingTimeTotal = res.data.total
-          this.consumingTimeList = data || []
-        })
-        .finally(() => {
-          this.loadingTimeList = false
-        })
-    },
     //单位换算
     handleUnit(limit) {
       if (!limit) return 0
@@ -420,6 +444,9 @@ export default {
   overflow: auto;
   .api-monitor__min__height {
     height: 300px;
+  }
+  .api-monitor-list__min__height {
+    min-height: 300px;
   }
   ::v-deep {
     .el-table__header th {
@@ -465,6 +492,20 @@ export default {
     border-radius: 50%;
     background: #2c65ff;
     display: inline-block;
+  }
+  .api-monitor-triangle {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border: 5px solid transparent;
+    border-top-color: map-get($fontColor, main);
+  }
+  .api-monitor-triangle-top {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border: 5px solid transparent;
+    border-bottom-color: map-get($fontColor, main);
   }
 }
 </style>
