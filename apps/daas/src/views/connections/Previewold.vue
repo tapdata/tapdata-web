@@ -458,10 +458,7 @@ export default {
       this.$emit('previewVisible', false)
     },
     async beforeTest() {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-      } else {
+      this.$root.checkAgent(() => {
         //先将管理端状态改为testing
         this.$api('connections')
           .updateById(this.data.id, {
@@ -471,7 +468,7 @@ export default {
             this.dialogTestVisible = true
             this.$refs.test.start()
           })
-      }
+      })
     },
     edit(id, type) {
       if (
@@ -527,10 +524,7 @@ export default {
       }
     },
     async reload() {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-      } else {
+      this.$root.checkAgent(() => {
         let config = {
           title: this.$t('connection.reloadTittle'),
           Message: this.$t('connection.reloadMsg'),
@@ -548,7 +542,7 @@ export default {
           () => {},
           config
         )
-      }
+      })
     },
     confirm(callback, catchCallback, config) {
       this.$confirm(config.Message + config.name + '?', config.title, {
@@ -607,13 +601,6 @@ export default {
     //test
     handleTestVisible() {
       this.dialogTestVisible = false
-    },
-    //检测agent 是否可用
-    async checkTestConnectionAvailable() {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-      }
     }
   }
 }

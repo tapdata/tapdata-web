@@ -242,9 +242,6 @@ export default {
   font-size: 12px;
   color: rgba(0, 0, 0, 0.65);
 }
-.message-box__content {
-  // padding-top: 4px;
-}
 .message-box__btns {
   padding: 0 24px 24px;
   text-align: right;
@@ -258,7 +255,6 @@ export default {
 }
 .message-button-cancel {
   color: #4e5969;
-  border: 0;
   background-color: #f2f3f5;
 }
 </style>

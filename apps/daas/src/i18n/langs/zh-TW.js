@@ -20,6 +20,7 @@ export default {
   common_back_to_list: '返回列表',
   common_placeholder_select: '請選擇',
   common_placeholder_input: '請輸入',
+  common_placeholder_search_input: '請輸入搜索內容...',
 
   // 通用按钮
   button_help: '幫助',
@@ -92,6 +93,7 @@ export default {
   message_operation_error: '操作失敗',
   message_request_error: '請求數據失敗',
   message_no_permission: '登錄已過期，請重新登錄',
+  message_loading: '正在加載',
 
   // 表格
   column_operation: '操作',
@@ -165,8 +167,26 @@ export default {
   page_title_custom_node: '自定義處理節點',
   page_title_account: '個人設置',
 
+  // 通用組件
+  // -- 多表選擇器
+  component_table_selector_candidate_label: '待覆制表',
+  component_table_selector_checked_label: '已選擇表',
+  component_table_selector_error_not_exit: '表不存在',
+  component_table_selector_error: '所選表存在異常',
+  component_table_selector_autofix: '清除異常表',
+  component_table_selector_bulk_pick: '批量選表',
+  component_table_selector_not_checked: '您暫時沒有選擇表',
+  component_table_selector_tables_empty: '您暫時沒有表，請點擊右上角重新加載表',
+  component_table_selector_clipboard_placeholder: '請輸入表名稱並以逗號分隔,例如：table_a,table_b',
+
   // app
   app_license_expire_warning: '提醒：License剩餘 {0} 天到期',
+
+  // 路由名
+  app_menu_jsFuncs: '函數',
+
+  // Agent
+  agent_check_error: 'Agent當前狀態異常無法創建連接，請檢查',
 
   // 控制台
   dashboard_status_running: '運行中',
@@ -646,9 +666,6 @@ export default {
   connection_form_oracle_redoLog_parser: '裸日誌',
   connection_form_oracle_redoLog_parser_post: '日誌解析服務地址IP',
 
-  // 路由名
-  app_menu_jsFuncs: '函數',
-
   // 函數
   js_func_name: '函數名',
   js_func_parameters: '參數',
@@ -707,6 +724,9 @@ export default {
     '此模式將連接網絡中的單獨服務器，該服務器提供到數據庫的TSL/SSL通道。如果您的數據庫位於不可訪問的子網中，則可嘗試使用此方法',
 
   connection_test_schema_tips: '可能原因：Schema大小寫設置有問題，您可嘗試修改大小寫後重試',
+  connection_reload_schema_confirm_title: '重新加載 schema',
+  connection_reload_schema_confirm_msg: '如果此庫的schema過多，可能耗時較長，確定要刷新數據源的schema',
+  connection_reload_schema_fail: 'Schema 加載失敗',
 
   connection_preview_load_schema: '加載Schema',
   connection_preview_edit: '編輯',

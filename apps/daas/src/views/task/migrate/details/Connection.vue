@@ -164,15 +164,9 @@ export default {
       this.fetchTimer = null
     },
     testConnection(item) {
-      this.$api('Workers')
-        .getAvailableAgent()
-        .then(result => {
-          if (!result.data.result || result.data.result.length === 0) {
-            this.$message.error(this.$t('dataForm.form.agentMsg'))
-            return
-          }
-          this.test(item)
-        })
+      this.$root.checkAgent(() => {
+        this.test(item)
+      })
     },
     async test(data, isShowDialog = true) {
       if (['gridfs', 'mongodb'].includes(data.database_type)) {
@@ -195,34 +189,28 @@ export default {
       }
     },
     async reload(row) {
-      this.$api('Workers')
-        .getAvailableAgent()
-        .then(result => {
-          if (!result.data.result || result.data.result.length === 0) {
-            this.$message.error(this.$t('dataForm.form.agentMsg'))
-            return
+      this.$root.checkAgent(() => {
+        let config = {
+          title: this.$t('connection.reloadTittle'),
+          Message: this.$t('connection.reloadMsg'),
+          confirmButtonText: this.$t('button_confirm'),
+          cancelButtonText: this.$t('button_close'),
+          name: row.name,
+          id: row.id
+        }
+        this.$confirm(config.Message + config.name + '?', config.title, {
+          confirmButtonText: config.confirmButtonText,
+          cancelButtonText: config.cancelButtonText,
+          type: 'warning',
+          closeOnClickModal: false
+        }).then(resFlag => {
+          if (resFlag) {
+            this.showProgress = true
+            this.progress = 0
+            this.testSchema(row)
           }
-          let config = {
-            title: this.$t('connection.reloadTittle'),
-            Message: this.$t('connection.reloadMsg'),
-            confirmButtonText: this.$t('button_confirm'),
-            cancelButtonText: this.$t('button_close'),
-            name: row.name,
-            id: row.id
-          }
-          this.$confirm(config.Message + config.name + '?', config.title, {
-            confirmButtonText: config.confirmButtonText,
-            cancelButtonText: config.cancelButtonText,
-            type: 'warning',
-            closeOnClickModal: false
-          }).then(resFlag => {
-            if (resFlag) {
-              this.showProgress = true
-              this.progress = 0
-              this.testSchema(row)
-            }
-          })
         })
+      })
     },
     //请求测试
     testSchema(row) {

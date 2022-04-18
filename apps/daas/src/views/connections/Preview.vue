@@ -169,10 +169,7 @@ export default {
       })
     },
     async beforeTest() {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-      } else {
+      this.$root.checkAgent(() => {
         //先将管理端状态改为testing
         this.$api('connections')
           .updateById(this.connection.id, {
@@ -189,13 +186,10 @@ export default {
             }
             this.$refs.test.start(testData)
           })
-      }
+      })
     },
     async reload() {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-      } else {
+      this.$root.checkAgent(() => {
         let config = {
           title: this.$t('connection.reloadTittle'),
           Message: this.$t('connection.reloadMsg'),
@@ -217,7 +211,7 @@ export default {
             this.$emit('reload-schema')
           }
         })
-      }
+      })
     },
     //请求测试
     testSchema() {

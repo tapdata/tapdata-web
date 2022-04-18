@@ -67,7 +67,8 @@ import {
   SkeletonItem,
   InfiniteScroll,
   Breadcrumb,
-  BreadcrumbItem
+  BreadcrumbItem,
+  Empty
 } from 'element-ui'
 
 // 组件默认尺寸为small
@@ -167,10 +168,11 @@ Vue.component(CollapseItem.name, CollapseItem)
 Vue.component(Divider.name, Divider)
 Vue.component(Skeleton.name, Skeleton)
 Vue.component(SkeletonItem.name, SkeletonItem)
-Vue.use(Loading.directive)
-Vue.use(InfiniteScroll)
 Vue.component(Breadcrumb.name, Breadcrumb)
 Vue.component(BreadcrumbItem.name, BreadcrumbItem)
+Vue.component(Empty.name, Empty)
+Vue.use(Loading.directive)
+Vue.use(InfiniteScroll)
 /***提示只显示一次**/
 // 因为使用了new DonMessage()的原因，所以导致this.$message(options)的方式无法使用
 // 推荐使用this.$message.success("成功提示")或者this.$message.success(options)的方式进行调用

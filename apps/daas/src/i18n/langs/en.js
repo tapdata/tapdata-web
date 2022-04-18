@@ -20,6 +20,7 @@ export default {
   common_back_to_list: 'Return list',
   common_placeholder_select: 'Please select',
   common_placeholder_input: 'Please input',
+  common_placeholder_search_input: 'Please enter the search content...',
 
   // 通用按钮
   button_help: 'Help',
@@ -92,6 +93,7 @@ export default {
   message_operation_error: 'Operation failed',
   message_request_error: 'Request data failed',
   message_no_permission: 'Login has expired, please log in again',
+  message_loading: 'Loading',
 
   // 表格
   column_operation: 'Operate',
@@ -167,8 +169,28 @@ export default {
   page_title_custom_node: 'Custom Proccessor Node',
   page_title_account: 'Personal settings',
 
+  // 通用组件
+  // -- 多表选择器
+  component_table_selector_candidate_label: 'To be selected',
+  component_table_selector_checked_label: 'Selected ',
+  component_table_selector_error_not_exit: 'Table does not exist',
+  component_table_selector_error: 'Selected tables has exceptions',
+  component_table_selector_autofix: 'Clear exception tables',
+  component_table_selector_bulk_pick: 'Bulk pick',
+  component_table_selector_not_checked: 'You have not selected a table',
+  component_table_selector_tables_empty:
+    'You do not have a table at the moment, please click on the upper right corner to reload the table',
+  component_table_selector_clipboard_placeholder:
+    'Please enter table names separated by commas, for example: table_a, table_b',
+
   // app
   app_license_expire_warning: 'Reminder: License expires in {0} days remaining',
+
+  // 路由名
+  app_menu_jsFuncs: 'Function',
+
+  // Agent
+  agent_check_error: "Agent's current state is abnormal and cannot create a connection, please check",
 
   // console
   dashboard_status_running: 'Running',
@@ -710,6 +732,11 @@ export default {
 
   connection_test_schema_tips:
     'Possible reason: there is a problem with the Schema case setting, you can try to modify the case and try again',
+  connection_reload_schema_confirm_title: 'Reload schema',
+  connection_reload_schema_confirm_msg:
+    'If there are too many schemas in this library, it may take a long time. Make sure to refresh the schema of the data source',
+  connection_reload_schema_fail: 'Schema load failed',
+
   connection_oracle_config_share_log_switch: 'Shared mining',
   connection_form_oracle_redoLog_parser: 'Redo log',
   connection_form_oracle_redoLog_parser_post: 'Log parsing service address IP',
@@ -721,9 +748,6 @@ export default {
   connection_preview_master_partition: 'Write to master partition only',
   connection_preview_isr_partition: 'Write all ISR partitions',
   connection_preview_operation_success: 'Operation successful',
-
-  // 路由名
-  app_menu_jsFuncs: 'Function',
 
   // function函数
   js_func_name: 'Function name',
