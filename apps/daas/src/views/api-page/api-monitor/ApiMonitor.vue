@@ -327,7 +327,7 @@ export default {
       let { consumingTimeCurrent, size, consumingTimeOrder } = this.page
       let filter = {
         where: {
-          type: 'latency '
+          type: 'responseTime'
         },
         limit: size,
         order: consumingTimeOrder,
