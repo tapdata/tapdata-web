@@ -139,7 +139,9 @@
           })
         "
       >
-        运行监控
+        <VIcon>monitoring</VIcon>
+        <!--运行监控-->
+        {{ $t('task_list_button_monitor') }}
       </ElButton>
 
       <ElButton size="mini" class="mx-1 btn--text" @click="$emit('showSettings')">
@@ -165,6 +167,7 @@
         </ElButton>
 
         <ElButton
+          key="forceStop"
           v-if="isShowForceStop(dataflow.statuses)"
           class="mx-1 btn--text"
           :disabled="dataflow.disabledData && dataflow.disabledData.stop"
@@ -175,6 +178,7 @@
           {{ $t('task_list_force_stop') }}
         </ElButton>
         <ElButton
+          key="stop"
           v-else
           class="mx-1 btn--text"
           :disabled="dataflow.disabledData && dataflow.disabledData.stop"
@@ -185,6 +189,7 @@
           {{ $t('task_list_stop') }}
         </ElButton>
         <ElButton
+          key="reset"
           class="mx-1 btn--text"
           :disabled="dataflow.disabledData && dataflow.disabledData.reset"
           size="mini"
@@ -519,6 +524,11 @@ $sidebarBg: #fff;
         padding: 7px 8px;
         &:hover {
           background: $hoverBg;
+        }
+        > span {
+          display: flex;
+          align-items: center;
+          gap: 4px;
         }
       }
     }

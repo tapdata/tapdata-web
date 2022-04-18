@@ -220,7 +220,7 @@ export default {
         this.initCommand()
         this.initNodeView()
         await this.initView(true)
-        this.initWS()
+        // this.initWS()
       } catch (error) {
         console.error(error) // eslint-disable-line
       }
@@ -232,6 +232,7 @@ export default {
     this.jsPlumbIns?.destroy()
     this.resetWorkspace()
     this.resetState()
+    this.$ws.off('editFlush', this.handleEditFlush)
   },
 
   methods: {
@@ -287,12 +288,14 @@ export default {
     },
 
     async initView(first) {
+      this.stopDagWatch?.()
+
       if (this.$route.params.action === 'dataflowEdit') {
         // 保存后路由跳转
         this.setStateDirty(false)
         this.setStateReadonly(false)
-
-        clearInterval(this.intervalKey) // 从查看进入编辑，清掉轮询
+        this.stopDagWatch = this.$watch(() => this.allNodes.length + this.allEdges.length, this.updateDag)
+        // 从查看进入编辑，清掉轮询
         return Promise.resolve()
       }
 
@@ -304,7 +307,6 @@ export default {
       const { id } = this.$route.params
       this.dataflow.id = id
 
-      this.stopDagWatch?.()
       if (!first) {
         this.resetWorkspace()
         this.initNodeView()
@@ -323,6 +325,8 @@ export default {
         }
         this.stopDagWatch = this.$watch(() => this.allNodes.length + this.allEdges.length, this.updateDag)
       }
+
+      this.initWS()
     },
 
     initCommand() {
@@ -1049,18 +1053,20 @@ export default {
       return true
     },
 
-    reformDataflow(data) {
-      Object.keys(data).forEach(key => {
-        if (!['id', 'dag'].includes(key)) {
-          this.$set(this.dataflow, key, data[key])
-        }
-      })
-      // this.$set(this, 'dataflow', data)
+    reformDataflow(data, fromWS) {
+      if (!fromWS) {
+        Object.keys(data).forEach(key => {
+          if (!['dag'].includes(key)) {
+            this.$set(this.dataflow, key, data[key])
+          }
+        })
+      }
+      this.$set(this.dataflow, 'statuses', data.statuses)
       this.$set(this.dataflow, 'statusResult', getSubTaskStatus(data.statuses))
       this.$set(
         this.dataflow,
         'disabledData',
-        getTaskBtnDisabled(data, this.$disabledByPermission('SYNC_job_operation_all_data', data.user_id))
+        getTaskBtnDisabled(this.dataflow, this.$disabledByPermission('SYNC_job_operation_all_data', data.user_id))
       )
     },
 
@@ -1112,6 +1118,7 @@ export default {
         // this.$showError(e, '任务保存出错', '出现的问题:')
         // eslint-disable-next-line no-console
         console.error('任务保存出错', e)
+        this.handleError(e)
       }
     },
 
@@ -1283,8 +1290,6 @@ export default {
       this.reset()
       this.setActiveNode(null)
       this.resetSelectedNodes()
-
-      clearInterval(this.intervalKey)
     },
 
     async validateNode(node) {
@@ -1650,8 +1655,8 @@ export default {
       return newPosition
     },
 
-    handleError(error) {
-      if (error.data.code === 'Task.ListWarnMessage') {
+    handleError(error, msg = '出错了') {
+      if (error?.data.code === 'Task.ListWarnMessage') {
         let names = []
         if (error.data.data) {
           Object.keys(error.data.data).forEach(key => {
@@ -1671,7 +1676,7 @@ export default {
       } else {
         // eslint-disable-next-line no-console
         console.error(error)
-        this.$message.error('出错了')
+        this.$message.error(msg)
       }
     },
 
@@ -1687,8 +1692,14 @@ export default {
 
     handleEditFlush(result) {
       // eslint-disable-next-line no-console
-      console.log('handleEditFlush', result)
-      this.reformDataflow(result.data)
+      console.log('handleEditFlush', result, this.startAt && Date.now() - this.startAt)
+      if (!this.startAt || Date.now() - this.startAt > 100) {
+        this.reformDataflow(result.data, true)
+        this.startAt = null
+      } else {
+        console.log('跳过') // eslint-disable-line
+      }
+
       const { opType } = result
       if (opType === 'transformRate') {
         // 推演进度
@@ -1712,14 +1723,13 @@ export default {
     async handleStart() {
       const flag = await this.save(true)
       if (flag) {
-        clearInterval(this.intervalKey)
+        this.startAt = Date.now()
+        console.log('handleStart', this.startAt) // eslint-disable-line
         this.dataflow.disabledData.edit = true
         this.dataflow.disabledData.start = true
         this.dataflow.disabledData.stop = true
         this.dataflow.disabledData.reset = true
-        // await taskApi.start(this.dataflow.id)
         this.gotoViewer()
-        // await this.startLoop(true)
       }
     },
 
@@ -1736,11 +1746,11 @@ export default {
 
         try {
           this.dataflow.disabledData.stop = true
-          clearInterval(this.intervalKey)
+
           await taskApi.stop(this.dataflow.id)
           this.$message.success(this.$t('message.operationSuccuess'))
-          // await this.startLoop(true)
         } catch (e) {
+          this.handleError(e, this.$t('message.stopFail'))
           console.log(e) // eslint-disable-line
         }
       })
@@ -1755,7 +1765,7 @@ export default {
         if (!resFlag) {
           return
         }
-        clearInterval(this.intervalKey)
+
         this.dataflow.disabledData.stop = true
         await taskApi.forceStop(this.dataflow.id)
         // this.startLoop(true)
@@ -1771,13 +1781,11 @@ export default {
           return
         }
         try {
-          clearInterval(this.intervalKey)
           this.dataflow.disabledData.reset = true
           const data = await taskApi.reset(this.dataflow.id)
           this.responseHandler(data, this.$t('message.resetOk'))
-          // await this.startLoop(true)
         } catch (e) {
-          this.$message.info(this.$t('message.resetFailed'))
+          this.handleError(e, this.$t('message.resetFailed'))
         }
       })
     },
@@ -1836,14 +1844,6 @@ export default {
       }
     },
 
-    async startLoop(immediate) {
-      clearInterval(this.intervalKey)
-      if (immediate) {
-        this.loadDataflow(this.dataflow.id)
-      }
-      this.intervalKey = setInterval(() => this.loadDataflow(this.dataflow.id), 8000)
-    },
-
     async loadDataflow(id) {
       this.loading = true
       try {
@@ -1859,6 +1859,7 @@ export default {
     },
 
     initWS() {
+      this.$ws.off('editFlush', this.handleEditFlush)
       this.$ws.on('editFlush', this.handleEditFlush)
       this.$ws.send({
         type: 'editFlush',
