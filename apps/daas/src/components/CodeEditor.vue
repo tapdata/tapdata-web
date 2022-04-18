@@ -4,7 +4,7 @@
       height: height ? px(height) : '100%',
       width: width ? px(width) : '100%',
       padding: '12px 0',
-      backgroundColor: '#282c34',
+      backgroundColor: '#F5F6F8',
       overflow: 'hidden'
     }"
   >
@@ -44,7 +44,8 @@ export default {
     value: String,
     theme: {
       type: String,
-      default: 'one_dark'
+      // default: 'one_dark'
+      default: 'katzenmilch'
     },
     lang: {
       type: String,
@@ -173,7 +174,7 @@ export default {
 </script>
 <style lang="scss">
 .ace_tooltip.ace_doc-tooltip {
-  background: #25282c;
+  background: rgba(221, 221, 221, 0.4);
   color: #c1c1c1;
 }
 .code-editor-snippet-tips {
@@ -200,6 +201,15 @@ export default {
   word-break: break-word;
   .panel-title {
     margin-bottom: 6px;
+  }
+}
+.ace-katzenmilch {
+  background-color: #f5f6f8;
+  .ace_gutter {
+    background-color: #f5f6f8;
+    .ace_gutter-active-line {
+      color: #535f72;
+    }
   }
 }
 </style>

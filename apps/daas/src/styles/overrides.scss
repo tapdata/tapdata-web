@@ -239,7 +239,7 @@
 .el-button--primary {
   color: #fff;
   background-color: map-get($color, primary);
-  border: none;
+  border-color:  map-get($color, primary);
 }
 //.el-button--mini,
 //.el-button--small {
@@ -407,6 +407,9 @@
 }
 .el-pagination.is-background .el-pager li:not(.disabled).active {
   background-color: map-get($color, primary);
+}
+.el-pagination.is-background .el-pager li:not(.disabled):hover {
+  color: map-get($color, primary);
 }
 .el-breadcrumb__inner a,
 .el-breadcrumb__inner.is-link {
@@ -759,10 +762,6 @@
 .el-button.is-plain:focus:hover {
   color: map-get($color, primary);
   border-color: map-get($color, primary);
-}
-.el-button--primary {
-  background-color: map-get($color, primary);
-  border: none;
 }
 
 /* --------------------- */

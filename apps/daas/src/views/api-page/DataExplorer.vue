@@ -224,7 +224,8 @@
       :visible.sync="openCreateDialog"
     >
       <div class="create-dialog-box">
-        <el-input type="textarea" v-model="jsonDoc" :autosize="{ maxRows: 15 }"></el-input>
+        <CodeEditor v-model="jsonDoc" ref="editor" lang="javascript" height="200"></CodeEditor>
+        <!-- <el-input type="textarea" v-model="jsonDoc" :autosize="{ maxRows: 15 }"></el-input> -->
       </div>
 
       <ul v-if="jsonDocHint.length">
@@ -245,13 +246,15 @@ import TablePage from '@/components/TablePage'
 import BrowseQuery from './BrowseQuery'
 import APIClient from '@/api/ApiClient'
 import SelectList from '@/components/SelectList'
+import CodeEditor from '@/components/CodeEditor'
 let time = 0
 export default {
   name: 'DataExplorer',
   components: {
     TablePage,
     BrowseQuery,
-    SelectList
+    SelectList,
+    CodeEditor
   },
   data() {
     return {
@@ -794,9 +797,9 @@ export default {
     },
     // 创建
     openCreate() {
-      this.$nextTick(() => {
-        this.$refs.form.clearValidate()
-      })
+      // this.$nextTick(() => {
+      //   this.$refs.form.clearValidate()
+      // })
       function clearContent(obj) {
         if (obj && typeof obj === 'object') {
           Object.keys(obj).forEach(key => {
@@ -1470,13 +1473,13 @@ export default {
 }
 .create-dialog {
   .create-dialog-box {
-    padding: 15px;
-    background-color: #3a3d4c;
+    // padding: 15px;
+    // background-color: #3a3d4c;
     ::v-deep {
       .el-textarea .el-textarea__inner {
         min-height: 200px !important;
         color: #82b290;
-        background-color: #262838;
+        // background-color: #262838;
         border: 0;
       }
     }

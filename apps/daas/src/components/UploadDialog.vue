@@ -36,7 +36,7 @@
       </ElFormItem>
     </ElForm>
     <span slot="footer" class="dialog-footer">
-      <ElButton @click="dialogVisible = false" size="mini">{{ $t('button_cancel') }}</ElButton>
+      <ElButton @click="handleClose" size="mini">{{ $t('button_cancel') }}</ElButton>
       <ElButton type="primary" @click="submitUpload()" size="mini">{{ $t('button_confirm') }}</ElButton>
     </span>
   </ElDialog>
@@ -139,6 +139,7 @@ export default {
 
     handleClose() {
       this.dialogVisible = false
+      this.$refs.upload.clearFiles()
     }
   }
 }
@@ -153,6 +154,9 @@ export default {
         }
       }
       .el-upload-list__item-name {
+        &:hover {
+          color: map-get($color, primary);
+        }
         i {
           font-size: 18px;
           color: map-get($color, primary);
@@ -160,7 +164,7 @@ export default {
       }
       .el-upload-list__item-status-label {
         right: 50px;
-        top: 3px;
+        top: 7px;
       }
       .el-upload-list__item:hover {
         background-color: initial;

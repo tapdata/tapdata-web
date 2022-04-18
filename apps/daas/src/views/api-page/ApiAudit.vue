@@ -5,86 +5,41 @@
       <div slot="search" class="search-bar">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </div>
-      <div slot="operation">
-        <el-button
-          v-readonlybtn="'API_creation'"
-          type="primary"
-          class="btn btn-create"
-          size="mini"
-          @click="openCreateDialog"
-        >
-          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
-          <span>{{ $t('api_server_create') }}</span>
-        </el-button>
-      </div>
-      <el-table-column label="API ID" :show-overflow-tooltip="true" prop="user.email" sortable="user.email" width="120">
-        <template slot-scope="scope">
-          {{ scope.row.user ? scope.row.user.email : '' }}
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('apiaudit_name')" :show-overflow-tooltip="true" prop="processId" sortable="processId">
-      </el-table-column>
+      <el-table-column label="API ID" :show-overflow-tooltip="true" prop="id"></el-table-column>
+      <el-table-column :label="$t('apiaudit_name')" prop="name" sortable="name"> </el-table-column>
       <el-table-column
         :label="$t('apiaudit_access_type')"
         :show-overflow-tooltip="true"
-        prop="clientName"
-        sortable="clientName"
+        prop="method"
+        sortable="method"
       ></el-table-column>
       <el-table-column
         :label="$t('apiaudit_interview_time')"
         :show-overflow-tooltip="true"
-        prop="clientURI"
-        sortable="clientURI"
+        prop="createTime"
+        sortable="createTime"
       >
+        <template #default="{ row }">
+          {{ row.createTime ? $moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '-' }}
+        </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('apiaudit_visit_result')"
-        :show-overflow-tooltip="true"
-        prop="clientURI"
-        sortable="clientURI"
-      >
+      <el-table-column :label="$t('apiaudit_visit_result')" :show-overflow-tooltip="true" prop="code" sortable="code">
       </el-table-column>
       <el-table-column
         :label="$t('apiaudit_reason_fail')"
         :show-overflow-tooltip="true"
-        prop="clientURI"
-        sortable="clientURI"
+        prop="codeMSg"
+        sortable="codeMSg"
       >
       </el-table-column>
       <el-table-column :label="$t('column_operation')" width="140" fixed="right">
         <template slot-scope="scope">
-          <el-button v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="edit(scope.row)">
-            {{ $t('modules_edit') }}
+          <el-button v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="toDetails(scope.row)">
+            {{ $t('button_details') }}
           </el-button>
-          <el-button v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="remove(scope.row)">{{
-            $t('button_delete')
-          }}</el-button>
-          <el-tooltip class="item" effect="dark" :content="$t('api_server_download_API_Server_config')" placement="top">
-            <el-button
-              v-readonlybtn="'API_clients_amangement'"
-              size="mini"
-              type="text"
-              @click="downloadConfig(scope.row)"
-              >{{ $t('api_server_download') }}</el-button
-            >
-          </el-tooltip>
         </template>
       </el-table-column>
     </TablePage>
-    <!-- 创建客户端 -->
-    <el-dialog
-      width="600px"
-      custom-class="create-dialog"
-      :title="createForm.id ? $t('button_edit') : $t('api_server_create_server')"
-      :close-on-click-modal="false"
-      :visible.sync="createDialogVisible"
-    >
-      <FormBuilder ref="form" v-model="createForm" :config="createFormConfig"></FormBuilder>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</el-button>
-        <el-button type="primary" @click="createServer()" size="small">{{ $t('message.confirm') }}</el-button>
-      </span>
-    </el-dialog>
   </section>
 </template>
 
@@ -111,40 +66,6 @@ export default {
         processId: '',
         clientName: '',
         clientURI: ''
-      },
-      createFormConfig: {
-        form: {
-          labelPosition: 'left',
-          labelWidth: '140px'
-        },
-        items: [
-          {
-            type: 'input',
-            label: this.$t('api_server_process_id'),
-            field: 'processId',
-            show: true,
-            required: true
-          },
-          {
-            type: 'input',
-            label: this.$t('api_server_client_name'),
-            field: 'clientName',
-            show: true,
-            required: true,
-            maxlength: 100,
-            showWordLimit: true
-          },
-          {
-            type: 'input',
-            label: this.$t('api_server_client_uri'),
-            field: 'clientURI',
-            placeholder: this.$t('api_server_client_uri') + '(http://127.0.0.1:3080)',
-            show: true,
-            required: true,
-            maxlength: 200,
-            showWordLimit: true
-          }
-        ]
       }
     }
   },
@@ -169,86 +90,11 @@ export default {
       }
       this.table.fetch(1)
     },
-    // 创建
-    openCreateDialog() {
-      this.createDialogVisible = true
-      this.$nextTick(() => {
-        this.$refs.form.clearValidate()
-      })
-      this.createForm = {
-        processId: this.generatorSecret(),
-        clientName: '',
-        clientURI: ''
-      }
-    },
-    // 编辑
-    edit(item) {
-      this.createDialogVisible = true
-      this.$nextTick(() => {
-        this.$refs.form.clearValidate()
-      })
-      this.createForm = item
-    },
-    // 移除
-    remove(item) {
-      const h = this.$createElement
-      let message = h('p', [this.$t('message.deleteOrNot') + ' ' + item.clientName])
-      this.$confirm(message, '', {
-        type: 'warning'
-      }).then(resFlag => {
-        if (!resFlag) {
-          return
-        }
-        this.$api('ApiServer')
-          .delete(item.id, item.clientName)
-          .then(() => {
-            this.$message.success(this.$t('message_delete_ok'))
-            this.table.fetch()
-          })
-          .catch(() => {
-            this.$message.info(this.$t('message_delete_fail'))
-          })
-      })
+
+    toDetails(item) {
+      this.$router.push({ name: 'apiAuditDetails', params: { id: item.id } })
     },
 
-    // 下载api配置文件
-    downloadConfig(item) {
-      let token = this.$cookie.get('token')
-      window.open(this.$api('ApiServer').url + '/download/' + item.id + '?access_token=' + token, '_blank')
-    },
-
-    // 保存
-    createServer() {
-      const method = this.createForm.id ? 'patch' : 'post'
-      const params = this.createForm
-      this.$refs.form.validate(valid => {
-        if (valid) {
-          this.$api('ApiServer')
-            [method](params)
-            .then(res => {
-              if (res) {
-                this.table.fetch()
-                this.createDialogVisible = false
-                this.$message.success(this.$t('message_save_ok'))
-              }
-            })
-            .catch(() => {
-              this.$message.error(this.$t('message_save_fail'))
-            })
-        }
-      })
-    },
-
-    // 自动生成唯一标识
-    generatorSecret() {
-      let S4 = function () {
-        return (((1 + Math.random()) * 0x40000) | 0).toString(16).substring(1)
-      }
-      let NewGuid = function () {
-        return S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4()
-      }
-      return NewGuid()
-    },
     // 获取数据
     getData({ page }) {
       let { current, size } = page
@@ -265,7 +111,7 @@ export default {
         skip: (current - 1) * size,
         where
       }
-      return this.$api('ApiServer')
+      return this.$api('ApiCalls')
         .get({
           filter: JSON.stringify(filter)
         })

@@ -21,7 +21,7 @@
       <div class="buttons" slot="operation">
         <el-button
           v-readonlybtn="'SYNC_category_application'"
-          size="small"
+          size="mini"
           class="btn"
           v-show="multipleSelection.length > 0"
           @click="$refs.table.showClassify(handleSelectTag())"
@@ -34,7 +34,7 @@
           @command="handleCommand($event)"
           v-show="multipleSelection.length > 0 && bulkOperation"
         >
-          <el-button class="btn-dropdowm" size="small">
+          <el-button class="btn-dropdowm" size="mini">
             <i class="iconfont icon-piliang back-btn-icon"></i>
             <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
           </el-button>
@@ -60,7 +60,7 @@
           <i class="iconfont icon-hanshu back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkFx') }}</span>
         </el-button> -->
-        <el-button v-readonlybtn="'SYNC_job_import'" size="small" class="btn" @click="handleImport">
+        <el-button v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
           <i class="iconfont icon-daoru back-btn-icon"></i>
           <span> {{ $t('dataFlow.bulkImport') }}</span>
         </el-button>
@@ -68,7 +68,7 @@
           v-readonlybtn="'SYNC_job_creation'"
           class="btn btn-create"
           type="primary"
-          size="small"
+          size="mini"
           @click="create"
         >
           <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
