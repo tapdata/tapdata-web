@@ -1,163 +1,175 @@
 import VIcon from 'web-core/components/VIcon'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
-import { h, connect, mapProps, useForm, useField, useFieldSchema, RecursionField } from '@formily/vue'
+import { h as createElement, useForm, useField, useFieldSchema, RecursionField } from '@formily/vue'
 import { defineComponent } from '@vue/composition-api/dist/vue-composition-api'
 import { observer } from '@formily/reactive-vue'
-import { FormBaseItem as FormItem, FormLayout } from '@formily/element'
+import { FormBaseItem as FormItem } from '@formily/element'
+import { watch } from 'vue-demi'
 import './style.scss'
+import { action } from '@formily/reactive'
 
-export const JoinExpression = connect(
-  observer(
-    defineComponent({
-      name: 'JoinExpression',
+export const JoinExpression = observer(
+  defineComponent({
+    name: 'JoinExpression',
 
-      props: ['fields', 'value'],
+    props: ['fields', 'value', 'findNodeById', 'loadNodeFieldNamesById', 'leftNodeId', 'rightNodeId'],
 
-      data() {
-        return {
-          fieldArr: this.value
-        }
-      },
+    setup(props) {
+      const formRef = useForm()
+      const fieldRef = useField()
+      const schemaRef = useFieldSchema()
 
-      computed: {
-        leftFields() {
-          const id = this.formValue?.leftNodeId
-          if (id && this.fields?.[id]) {
-            return this.fields[id].map(item => item.field_name)
-          }
-          return []
-        },
+      const loadFieldNames = async (id, target) => {
+        let fieldNames = []
 
-        rightFields() {
-          const id = this.formValue?.rightNodeId
-          if (id && this.fields?.[id]) {
-            return this.fields[id].map(item => item.field_name)
-          }
-          return []
-        }
-      },
-
-      watch: {
-        fieldArr: {
-          deep: true,
-          handler(v) {
-            this.$emit('change', v)
-          }
-        },
-
-        leftFields() {
-          this.form.setFieldState(`${this.address}.*.left`, state => {
-            state.dataSource = this.leftFields
+        if (id) {
+          formRef.value.setFieldState(`${fieldRef.value.address}.*.${target}`, state => {
+            state.loading = true
           })
-        },
 
-        rightFields() {
-          this.form.setFieldState(`${this.address}.*.right`, state => {
-            state.dataSource = this.rightFields
-          })
+          fieldNames = await props.loadNodeFieldNamesById(id)
         }
-      },
 
-      setup() {
-        const formRef = useForm()
+        formRef.value.setFieldState(`${fieldRef.value.address}.*.${target}`, state => {
+          state.dataSource = fieldNames
+          state.loading = false
+        })
+      }
+
+      watch(
+        () => props.leftNodeId,
+        async val => {
+          await loadFieldNames(val, 'left')
+        },
+        { immediate: true }
+      )
+
+      watch(
+        () => props.rightNodeId,
+        async val => {
+          await loadFieldNames(val, 'right')
+        },
+        { immediate: true }
+      )
+
+      /*watch(
+          () => props.value,
+          () => {
+            emit('change', v)
+          },
+          {
+            deep: true
+          }
+        )*/
+
+      return () => {
         const form = formRef.value
-        const field = useField()
-        const schemaRef = useFieldSchema()
-        const schema = schemaRef.value.items.properties
+        const schema = schemaRef.value
+        const fieldArr = props.value
+        const leftTitle = form.getFieldState(`${fieldRef.value.address}.*.left`)?.title
+        const rightTitle = form.getFieldState(`${fieldRef.value.address}.*.right`)?.title
+        const { leftNodeId, rightNodeId } = props
+        const leftNodeName = props.findNodeById(leftNodeId)?.name
+        const rightNodeName = props.findNodeById(rightNodeId)?.name
 
-        const leftSchema = {
-          type: 'object',
-          properties: {
-            left: schema.left
-          }
+        const handleAdd = () => {
+          fieldArr.push({
+            left: '',
+            right: '',
+            expression: '='
+          })
         }
 
-        const rightSchema = {
-          type: 'object',
-          properties: {
-            right: schema.right
-          }
+        const handleRemove = index => {
+          fieldArr.splice(index, 1)
         }
 
-        return {
-          form,
-          formValue: form.values,
-          address: field.value.address,
-          leftSchema,
-          rightSchema
-        }
-      },
+        const doExchange = action.bound(() => {
+          form.setValuesIn('leftNodeId', rightNodeId)
+          form.setValuesIn('rightNodeId', leftNodeId)
+        })
 
-      render() {
-        const sourceNode = this.formValue.sourceNode || []
+        const handleExchange = () => {
+          doExchange()
+          props.value.forEach(item => {
+            const { left, right } = item
+            item.left = right
+            item.right = left
+          })
+          fieldRef.value.validate()
+        }
+
+        const renderItems = () => {
+          return fieldArr.map((item, i) => {
+            const left = createElement(
+              RecursionField,
+              {
+                props: {
+                  name: i,
+                  schema: schema.items,
+                  filterProperties: schema => schema.name === 'left',
+                  onlyRenderProperties: true
+                }
+              },
+              {}
+            )
+            const right = createElement(
+              RecursionField,
+              {
+                props: {
+                  name: i,
+                  schema: schema.items,
+                  filterProperties: schema => schema.name === 'right',
+                  onlyRenderProperties: true
+                }
+              },
+              {}
+            )
+            return (
+              <div class="flex join-expression-row" key={i}>
+                <div class="join-field">{left}</div>
+                <FormItem class="join-operator">=</FormItem>
+                <div class="join-field">{right}</div>
+                <FormItem>
+                  <ElButton class="ml-3 align-middle" size="mini" type="text" onClick={() => handleAdd()}>
+                    <VIcon size={16}>plus</VIcon>
+                  </ElButton>
+                  <ElButton
+                    class="ml-3 align-middle"
+                    size="mini"
+                    type="text"
+                    disabled={fieldArr.length < 2}
+                    onClick={() => handleRemove(i)}
+                  >
+                    <VIcon size={16}>delete</VIcon>
+                  </ElButton>
+                </FormItem>
+              </div>
+            )
+          })
+        }
 
         return (
           <div class="join-expression">
             <div class="join-name-wrap flex align-center">
               <div class="join-name flex text-nowrap">
-                左侧: <OverflowTooltip class="ml-1" placement="top" text={sourceNode[0]?.label}></OverflowTooltip>
+                {leftTitle}：<OverflowTooltip class="ml-1" placement="top" text={leftNodeName}></OverflowTooltip>
+              </div>
+              <div class="join-exchange">
+                <VIcon onClick={handleExchange} size={16}>
+                  exchange
+                </VIcon>
               </div>
               <div class="join-name flex text-nowrap">
-                右侧: <OverflowTooltip class="ml-1" placement="top" text={sourceNode[1]?.label}></OverflowTooltip>
+                {rightTitle}：<OverflowTooltip class="ml-1" placement="top" text={rightNodeName}></OverflowTooltip>
               </div>
             </div>
-            <FormLayout class="mb-n2" shallow={false} feedbackLayout="terse">
-              {this.fieldArr.map((item, i) => (
-                <div class="flex join-expression-row" key={i}>
-                  <div class="join-field">
-                    {h(RecursionField, {
-                      props: {
-                        name: i,
-                        schema: this.leftSchema
-                      }
-                    })}
-                  </div>
-                  <FormItem class="join-operator">=</FormItem>
-                  <div class="join-field">
-                    {h(RecursionField, {
-                      props: {
-                        name: i,
-                        schema: this.rightSchema
-                      }
-                    })}
-                  </div>
-                  <FormItem>
-                    <ElButton class="ml-3 align-middle" size="mini" type="text" onClick={() => this.handleAdd()}>
-                      <VIcon size={16}>plus</VIcon>
-                    </ElButton>
-                    <ElButton
-                      class="ml-3 align-middle"
-                      size="mini"
-                      type="text"
-                      disabled={this.fieldArr.length < 2}
-                      onClick={() => this.handleRemove(i)}
-                    >
-                      <VIcon size={16}>delete</VIcon>
-                    </ElButton>
-                  </FormItem>
-                </div>
-              ))}
-            </FormLayout>
+            {renderItems()}
           </div>
         )
-      },
-
-      methods: {
-        handleAdd() {
-          this.fieldArr.push({
-            left: '',
-            right: '',
-            expression: '='
-          })
-        },
-
-        handleRemove(index) {
-          this.fieldArr.splice(index, 1)
-        }
       }
-    })
-  ),
-  mapProps({ dataSource: 'fields' })
+    }
+  })
 )
 
 export default JoinExpression
