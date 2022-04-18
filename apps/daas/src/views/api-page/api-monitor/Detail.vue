@@ -1,18 +1,18 @@
 <template>
   <section class="api-monitor-detail-wrap flex flex-direction" v-loading="loadingDetail">
-    <div class="flex-direction flex-1 pt-5 mt-8">
+    <div class="flex-direction pt-5 mt-8" style="width: 350px">
       <div class="flex flex-direction flex-1">
         <div class="flex-1">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalCount') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ detail.visitTotalCount || 0 }}</div>
+          <div class="api-monitor-detail-wrap__value">{{ detail.totalCount }}/{{ detail.visitTotalCount || 0 }}</div>
         </div>
         <div class="flex-1">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitQuantity') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ detail.visitQuantity || 0 }}</div>
+          <div class="api-monitor-detail-wrap__value">{{ handleUnit(detail.visitQuantity) || 0 }}</div>
         </div>
         <div class="flex-1">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_timeConsuming') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ detail.timeConsuming || 0 }}</div>
+          <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.timeConsuming) || 0 }}</div>
         </div>
       </div>
       <div class="flex flex-direction flex-1 pb-5 mt-8">
@@ -52,6 +52,7 @@
 import FilterBar from '@/components/filter-bar'
 import Chart from 'web-core/components/chart'
 import { formatTime } from '@/utils/util'
+import { handleUnit, formatMs } from './utils'
 export default {
   name: 'Detail',
   components: { FilterBar, Chart },
@@ -59,6 +60,7 @@ export default {
   data() {
     return {
       detail: '',
+      timer: null,
       filterItems: [],
       searchParams: {
         guanluary: 5,
@@ -98,7 +100,8 @@ export default {
           show: false
         },
         xAxis: {
-          type: 'time'
+          type: 'category',
+          boundaryGap: false
         },
         yAxis: {
           axisLabel: {
@@ -121,8 +124,8 @@ export default {
         },
         grid: {
           left: '24px', // 没有数据的时候，Y轴单位显示不全。后面可以通过判断设置该值
-          right: '12px',
-          top: '8px',
+          right: '25px',
+          top: '20px',
           bottom: 0,
           containLabel: true,
           borderWidth: 1,
@@ -154,6 +157,9 @@ export default {
   },
   mounted() {
     this.getDetail()
+    this.timer = setInterval(() => {
+      this.getDetail(true)
+    }, 5000)
     this.allElectionFun()
   },
   watch: {
@@ -161,8 +167,19 @@ export default {
       this.getDetail()
     }
   },
+  destroyed() {
+    this.timer && clearInterval(this.timer)
+  },
   methods: {
-    getDetail() {
+    handleUnit(limit) {
+      return handleUnit(limit)
+    },
+    formatMs(time) {
+      if (time === 0 || !time) return 0
+      if (time < 1000) return time + 'ms'
+      return formatMs(time)
+    },
+    getDetail(hiddenLoading) {
       let data = {
         id: this.id,
         guanluary: this.searchParams.guanluary || 5,
@@ -170,17 +187,20 @@ export default {
         start: new Date().getTime(),
         type: this.searchParams.type || 'visitTotalLine'
       }
-      this.loadingDetail = true
+      if (!hiddenLoading) {
+        this.loadingDetail = true
+      }
       this.$api('ApiMonitor')
         .apiDetail(data)
         .then(res => {
+          //处理数据
           this.detail = res.data
+          this.detail['totalCount'] = (this.detail.visitTotalCount || 0) - (this.detail.errorVisitTotalCount || 0) || 0
           let data = res?.data
           // 折线图
           let qpsDataValue = data.value || []
           this.qpsDataTime = data.time || []
-          this.qpsDataTime = this.qpsDataTime.map(t => formatTime(t, 'YYYY-MM-DD HH:mm:ss.SSS')) // 时间不在这里格式化.map(t => formatTime(t))
-          console.log(this.qpsDataTime)
+          this.qpsDataTime = this.qpsDataTime.map(t => formatTime(t, 'HH:mm:ss')) // 时间不在这里格式化.map(t => formatTime(t))
           this.$nextTick(() => {
             this.$refs.chart?.chart?.setOption({
               xAxis: {

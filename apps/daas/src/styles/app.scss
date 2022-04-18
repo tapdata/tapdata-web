@@ -92,6 +92,18 @@ textarea::-webkit-input-placeholder {
   background-color: #DDEBFF;
 }
 .status-edit {
+   color: #0083c7;
+   background-color: #d1eefd;
+ }
+.status-pending {
+  color: #2C65FF;
+  background-color: #DDEBFF;
+}
+.status-active{
+  color: #008B58;
+  background-color: #B4EDD8;
+}
+.status-edit {
   color: #0083c7;
   background-color: #d1eefd;
 }

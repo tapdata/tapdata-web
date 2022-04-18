@@ -44,7 +44,19 @@
         </div>
         <div class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card ml-5 mr-5 pl-5 pt-5">
           <div class="api-monitor-chart__text mb-2">
-            {{ $t('api_monitor_total_FailRate') }} <span icon="el-icon-d-caret" @click="handleFDOrder">排序</span>
+            {{ $t('api_monitor_total_FailRate') }}
+            <span class="position-relative ml-2">
+              <span
+                class="api-monitor-triangle position-absolute"
+                :class="{ 'triangle-active': this.page.failRateOrder === 'ASC' }"
+                @click="handleFDOrder('ASC')"
+              ></span>
+              <span
+                class="api-monitor-triangle-top position-absolute"
+                :class="{ 'active-top': this.page.failRateOrder === 'DESC' }"
+                @click="handleFDOrder('DESC')"
+              ></span>
+            </span>
           </div>
           <TableList
             height="100%"
@@ -55,7 +67,7 @@
             :columns="columns"
           ></TableList>
           <el-pagination
-            layout="->,total, prev, next"
+            layout="->,total, prev,pager, next"
             :current-page.sync="page.failRateCurrent"
             :total="page.failRateTotal"
             @current-change="remoteFailedMethod"
@@ -65,8 +77,18 @@
         <div class="flex flex-column flex-1 bg-white api-monitor-card pl-5 pt-5">
           <div class="api-monitor-chart__text mb-2">
             {{ $t('api_monitor_total_consumingTime') }}
-            <span class="api-monitor-triangle-top" @click="handleCTOrder"></span>
-            <span class="api-monitor-triangle" @click="handleCTOrder"></span>
+            <span class="position-relative ml-2">
+              <span
+                class="api-monitor-triangle position-absolute"
+                :class="{ 'triangle-active': this.page.consumingTimeOrder === 'ASC' }"
+                @click="handleCTOrder('ASC')"
+              ></span>
+              <span
+                class="api-monitor-triangle-top position-absolute"
+                :class="{ 'active-top': this.page.consumingTimeOrder === 'DESC' }"
+                @click="handleCTOrder('DESC')"
+              ></span>
+            </span>
           </div>
           <TableList
             height="100%"
@@ -77,7 +99,7 @@
             ref="consumingTimeList"
           ></TableList>
           <el-pagination
-            layout="->,total, prev, next"
+            layout="->,total, prev,pager, next"
             :current-page.sync="page.consumingTimeCurrent"
             :total="page.consumingTimeTotal"
             @current-change="consumingMethod"
@@ -104,7 +126,13 @@
             </template>
           </el-table-column>
           <el-table-column prop="name" :label="$t('api_monitor_total_api_list_name')"> </el-table-column>
-          <el-table-column prop="status" :label="$t('api_monitor_total_api_list_status')"> </el-table-column>
+          <el-table-column prop="status" :label="$t('api_monitor_total_api_list_status')">
+            <template #default="{ row }">
+              <span :class="['status-' + row.status, 'status-block', 'mr-2']">
+                {{ $t('api_monitor_total_api_list_status_' + row.status) }}
+              </span>
+            </template>
+          </el-table-column>
           <el-table-column prop="visitLine" :label="$t('api_monitor_total_api_list_visitLine')"> </el-table-column>
           <el-table-column prop="visitCount" :label="$t('api_monitor_total_api_list_visitCount')"> </el-table-column>
           <el-table-column prop="transitQuantity" :label="$t('api_monitor_total_api_list_transitQuantity')">
@@ -130,7 +158,9 @@
 import Chart from 'web-core/components/chart'
 import TableList from '@/components/TableList'
 import FilterBar from '@/components/filter-bar'
+import { handleUnit } from './utils'
 import Detail from './Detail'
+import { toRegExp } from '../../../utils/util'
 export default {
   name: 'ApiMonitor',
   components: { Chart, TableList, FilterBar, Detail },
@@ -179,10 +209,6 @@ export default {
       ]
     }
   },
-  created() {
-    let { status } = this.$route.query
-    this.searchParams.status = status ?? ''
-  },
   mounted() {
     this.getPreview()
     this.getClientName()
@@ -196,6 +222,9 @@ export default {
     }
   },
   methods: {
+    handleUnit(limit) {
+      return handleUnit(limit)
+    },
     //获取统计数据
     getPreview() {
       this.$api('ApiMonitor')
@@ -289,9 +318,8 @@ export default {
         })
     },
     //处理失败率排序
-    handleFDOrder() {
-      let time = JSON.parse(JSON.stringify(this.page.failRateOrder))
-      this.page.failRateOrder = time === 'DESC' ? 'ASC ' : 'DESC'
+    handleFDOrder(type) {
+      this.page.failRateOrder = type
       this.remoteFailedMethod()
     },
     //响应时间排行榜
@@ -328,9 +356,8 @@ export default {
         })
     },
     //响应时间时间排序
-    handleCTOrder() {
-      let time = JSON.parse(JSON.stringify(this.page.consumingTimeOrder))
-      this.page.consumingTimeOrder = time === 'DESC' ? 'ASC ' : 'DESC'
+    handleCTOrder(type) {
+      this.page.consumingTimeOrder = type
       this.consumingMethod()
     },
     //获取api列表数据
@@ -340,7 +367,7 @@ export default {
 
       let where = {}
       if (keyword && keyword.trim()) {
-        where.name = keyword
+        where.name = { like: toRegExp(keyword), options: 'i' }
       }
       if (status) {
         where.status = status
@@ -385,7 +412,7 @@ export default {
           items: this.clientNameList
         },
         {
-          placeholder: this.$t('task_list_search_placeholder'),
+          placeholder: this.$t('api_monitor_total_api_list_name'),
           key: 'keyword',
           type: 'input'
         }
@@ -402,33 +429,6 @@ export default {
           }
         })
       }
-    },
-    //单位换算
-    handleUnit(limit) {
-      if (!limit) return 0
-      var size = ''
-      if (limit < 0.1 * 1024) {
-        //小于0.1KB，则转化成B
-        size = limit.toFixed(1) + 'B'
-      } else if (limit < 0.1 * 1024 * 1024) {
-        //小于0.1MB，则转化成KB
-        size = (limit / 1024).toFixed(1) + 'KB'
-      } else if (limit < 0.1 * 1024 * 1024 * 1024) {
-        //小于0.1GB，则转化成MB
-        size = (limit / (1024 * 1024)).toFixed(1) + 'MB'
-      } else {
-        //其他转化成GB
-        size = (limit / (1024 * 1024 * 1024)).toFixed(1) + 'GB'
-      }
-
-      var sizeStr = size + '' //转成字符串
-      var index = sizeStr.indexOf('.') //获取小数点处的索引
-      var dou = sizeStr.substr(index + 1, 1) //获取小数点后一位的值
-      if (dou === '0') {
-        //判断后两位是否为00，如果是则删除0
-        return sizeStr.substring(0, index) + sizeStr.substr(index + 2, 1)
-      }
-      return size
     }
   }
 }
@@ -479,6 +479,7 @@ export default {
   .api-monitor-chart {
     width: 280px;
   }
+  //图表样式
   .circle-total {
     width: 6px;
     height: 6px;
@@ -493,19 +494,36 @@ export default {
     background: #2c65ff;
     display: inline-block;
   }
+  //排序样式
   .api-monitor-triangle {
     display: inline-block;
     width: 0;
     height: 0;
-    border: 5px solid transparent;
-    border-top-color: map-get($fontColor, main);
+    top: 10px;
+    border: 4px solid transparent;
+    border-top-color: map-get($fontColor, light);
+    cursor: pointer;
+    &:hover {
+      border-top-color: map-get($color, primary);
+    }
+  }
+  .triangle-active {
+    border-top-color: map-get($color, primary);
   }
   .api-monitor-triangle-top {
     display: inline-block;
     width: 0;
     height: 0;
-    border: 5px solid transparent;
-    border-bottom-color: map-get($fontColor, main);
+    top: 0;
+    border: 4px solid transparent;
+    border-bottom-color: map-get($fontColor, light);
+    cursor: pointer;
+    &:hover {
+      border-bottom-color: map-get($color, primary);
+    }
+  }
+  .active-top {
+    border-bottom-color: map-get($color, primary);
   }
 }
 </style>
