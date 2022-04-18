@@ -7,9 +7,13 @@
       >
         <div class="message-box__header position-relative">
           <div class="message-box__title flex align-items-center">
-            <VIcon v-if="icon && onlyMessage" :size="iconSize" :color="iconColor" :class="['v-icon', iconClass]">{{
-              icon
-            }}</VIcon>
+            <VIcon
+              v-if="icon && haveTitleAndMessage"
+              :size="iconSize"
+              :color="iconColor"
+              :class="['v-icon', iconClass]"
+              >{{ icon }}</VIcon
+            >
             <span v-if="title" :class="titleClass">{{ title }}</span>
           </div>
           <button
@@ -27,10 +31,10 @@
           <div class="el-message-box__container">
             <div class="el-message-box__message flex" v-if="message !== ''">
               <VIcon
-                v-if="icon && !onlyMessage"
+                v-if="icon"
                 :size="iconSize"
                 :color="iconColor"
-                :class="['v-icon', 'flex-shrink-0', iconClass]"
+                :class="['v-icon', 'flex-shrink-0', { invisible: !onlyMessage }, iconClass]"
                 >{{ icon }}</VIcon
               >
               <slot>
@@ -128,7 +132,11 @@ export default {
     },
     onlyMessage() {
       let { title, message } = this
-      return !title && !!message
+      return !title && message === ''
+    },
+    haveTitleAndMessage() {
+      let { title, message } = this
+      return !!title && message !== ''
     }
   },
   watch: {
@@ -209,9 +217,10 @@ export default {
   padding: 24px 24px 0;
   font-size: 14px;
   color: rgba(0, 0, 0, 0.75);
+  font-weight: 700;
 }
 .v-icon {
-  margin-right: 5px;
+  margin-right: 12px;
 }
 .el-button {
   padding: 8px 16px;
@@ -231,7 +240,7 @@ export default {
   cursor: pointer;
 }
 .message-box__body {
-  margin: 0 0 24px;
+  margin: 8px 0 24px;
   padding: 0 24px;
   flex: 1;
   overflow: auto;
@@ -248,8 +257,6 @@ export default {
   text-align: right;
 }
 .message-button-cancel {
-  color: #4e5969;
-  border: 0;
-  background-color: #f2f3f5;
+  padding: 7px 16px;
 }
 </style>
