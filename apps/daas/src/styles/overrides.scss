@@ -216,6 +216,7 @@
 }
 .el-tooltip__popper {
   padding: 5px 10px;
+  max-width: 400px;
 }
 .el-tooltip__popper.is-dark {
   line-height: 20px;
@@ -501,6 +502,10 @@
       stroke: map-get($color, primary);
     }
   }
+}
+.el-button.is-loading:before {
+  top: 0;
+  bottom: 0;
 }
 //覆盖表单创建任务
 .CT-task-wrap {

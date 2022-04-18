@@ -33,6 +33,7 @@
         <div class="selector-panel__search">
           <ElInput
             v-model="table.searchKeyword"
+            clearable
             suffix-icon="el-icon-search"
             :placeholder="$t('common_placeholder_search_input')"
           ></ElInput>
@@ -46,7 +47,7 @@
           <RecycleScroller class="selector-panel__scroller" :item-size="36" :buffer="50" :items="filteredData">
             <template #default="{ item }">
               <ElCheckbox class="selector-panel__item" :label="item" :key="item">
-                <span>{{ item }}</span>
+                <OverflowTooltip :text="item" placement="right" :enterable="false"></OverflowTooltip>
               </ElCheckbox>
             </template>
           </RecycleScroller>
@@ -97,6 +98,7 @@
         <div v-show="!isOpenClipMode" class="selector-panel__search">
           <ElInput
             v-model="selected.searchKeyword"
+            clearable
             suffix-icon="el-icon-search"
             :placeholder="$t('common_placeholder_search_input')"
           ></ElInput>
@@ -110,13 +112,21 @@
           <RecycleScroller class="selector-panel__scroller" :item-size="36" :buffer="50" :items="filterSelectedData">
             <template #default="{ item }">
               <ElCheckbox class="selector-panel__item" :label="item" :key="item">
+                <OverflowTooltip
+                  v-if="!errorTables[item]"
+                  :text="item"
+                  placement="right"
+                  :enterable="false"
+                ></OverflowTooltip>
                 <ElTooltip
+                  v-else
+                  class="ellipsis"
                   placement="right"
                   :enterable="false"
                   :disabled="!errorTables[item]"
                   :content="errorTables[item]"
                 >
-                  <span :class="{ 'color-danger': errorTables[item] }">{{ item }}</span>
+                  <div :class="{ 'color-danger': errorTables[item] }">{{ item }}</div>
                 </ElTooltip>
               </ElCheckbox>
             </template>
@@ -222,8 +232,16 @@
   padding: 0 16px;
   width: 100%;
   line-height: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
   &:hover {
     background-color: #f5f7fa;
+  }
+  > ::v-deep {
+    .el-checkbox__label {
+      overflow: hidden;
+    }
   }
 }
 .selector-center {
@@ -293,9 +311,10 @@
 
 <script>
 import { RecycleScroller } from 'vue-virtual-scroller'
+import OverflowTooltip from 'web-core/components/overflow-tooltip'
 
 export default {
-  components: { RecycleScroller },
+  components: { RecycleScroller, OverflowTooltip },
   props: {
     connectionId: {
       type: String,
