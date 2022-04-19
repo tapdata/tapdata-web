@@ -17,8 +17,7 @@
           <span class="status-block" :style="{ 'background-color': colorMap[row.method] }">{{ row.method }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('apiaudit_visitor')" prop="user_name"> </el-table-column>
-
+      <el-table-column :label="$t('apiaudit_visitor')" prop="clientName"> </el-table-column>
       <el-table-column
         :label="$t('apiaudit_interview_time')"
         :show-overflow-tooltip="true"
@@ -30,9 +29,9 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('apiaudit_visit_result')" :show-overflow-tooltip="true" prop="code" sortable="code">
-        <template #default="{ row }">
+        <!-- <template #default="{ row }">
           {{ row.code == 200 ? $t('apiaudit_success') : $t('apiaudit_fail') }}
-        </template>
+        </template> -->
       </el-table-column>
       <el-table-column
         :label="$t('apiaudit_reason_fail')"
@@ -69,7 +68,8 @@ export default {
         keyword: '',
         method: '',
         code: '',
-        createTime: []
+        start: '',
+        end: ''
       },
       filterItems: [],
       order: 'createTime DESC',
@@ -101,7 +101,8 @@ export default {
   watch: {
     '$route.query'() {
       this.table.fetch(1)
-    }
+    },
+    'searchParams.createTime'() {}
   },
   methods: {
     toDetails(item) {
@@ -111,7 +112,7 @@ export default {
     // 获取数据
     getData({ page }) {
       let { current, size } = page
-      let { method, code, createTime, keyword } = this.searchParams
+      let { method, code, start, end, keyword } = this.searchParams
       let where = {}
       if (method) {
         where.method = method
@@ -119,8 +120,11 @@ export default {
       if (code) {
         where.code = code
       }
-      if (createTime?.length) {
-        where.createTime = createTime
+      if (start) {
+        where.start = start
+      }
+      if (end) {
+        where.end = end
       }
       if (keyword && keyword.trim()) {
         let filterObj = { like: toRegExp(keyword), options: 'i' }
@@ -199,7 +203,7 @@ export default {
         },
         {
           title: this.$t('apiaudit_interview_time'),
-          key: 'createTime',
+          key: 'start,end',
           type: 'datetimerange',
           placeholder: this.$t('common_placeholder_select'),
           selectedWidth: '200px'
