@@ -150,7 +150,7 @@ export const FieldRename = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={!this.isRename(data.id)}
+                          disabled={!this.isRename(data.id) || this.fieldsNameTransforms !== ''}
                           onClick={() => this.handleReset(node, data)}
                         >
                           <VIcon size="12">revoke</VIcon>
@@ -233,7 +233,10 @@ export const FieldRename = connect(
                 id: data.id,
                 field: nativeData.original_field_name,
                 operand: data.field_name,
-                table_name: data.table_name,
+                table_name:
+                  this.fieldsNameTransform === ''
+                    ? data.table_name
+                    : nativeData.field_name || nativeData.original_field_name,
                 type: data.type,
                 primary_key_position: data.primary_key_position,
                 color: data.color,
@@ -243,8 +246,11 @@ export const FieldRename = connect(
               this.operations.push(op)
             } else {
               op = ops[0]
-              op.operand = data.field_name
-              op.label = data.field_name
+              ;(op.operand =
+                this.fieldsNameTransform === ''
+                  ? data.table_name
+                  : nativeData.field_name || nativeData.original_field_name),
+                (op.label = data.field_name)
               op.field_name = data.field_name
             }
             //删除 相同字段名称
@@ -297,6 +303,11 @@ export const FieldRename = connect(
           return field
         },
         handleReset(node, data) {
+          if (this.fieldsNameTransforms !== '') {
+            //所有字段批量修改过，撤回既是保持原来字段名
+            this.handleRename()
+            return
+          }
           console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
           let dataLabel = JSON.parse(JSON.stringify(data.field_name))
           let self = this
