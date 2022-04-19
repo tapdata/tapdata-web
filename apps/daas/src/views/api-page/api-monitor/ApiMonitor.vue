@@ -68,6 +68,7 @@
           ></TableList>
           <el-pagination
             layout="->,total, prev,pager, next"
+            :page-size="5"
             :current-page.sync="page.failRateCurrent"
             :total="page.failRateTotal"
             @current-change="remoteFailedMethod"
@@ -100,6 +101,7 @@
           ></TableList>
           <el-pagination
             layout="->,total, prev,pager, next"
+            :page-size="5"
             :current-page.sync="page.consumingTimeCurrent"
             :total="page.consumingTimeTotal"
             @current-change="consumingMethod"
