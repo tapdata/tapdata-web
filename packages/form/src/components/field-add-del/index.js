@@ -17,6 +17,7 @@ export const FieldAddDel = connect(
         return {
           databaseType: form.values.databaseType,
           operations: form.values.operations || [],
+          deleteAllFields: form.values.deleteAllFields || false,
           form
         }
       },
@@ -68,7 +69,7 @@ export const FieldAddDel = connect(
         return (
           <div class="field-processors-tree-warp bg-body pt-2 pb-5">
             <div class="field-processor-operation flex">
-              <ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
+              {/*<ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />*/}
               <span class="flex-1 text inline-block ml-15">字段名称</span>
               <span class="field-ops inline-block ml-10">
                 <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllDelete()}>
@@ -93,7 +94,7 @@ export const FieldAddDel = connect(
                 data={fields}
                 node-key="id"
                 default-expand-all={true}
-                show-checkbox={true}
+                //show-checkbox={true}
                 expand-on-click-node={false}
                 class="field-processor-tree"
                 scopedSlots={{
@@ -378,14 +379,18 @@ export const FieldAddDel = connect(
           console.log('fieldProcessor.handleDelete', self.operations) // eslint-disable-line
         },
         handleAllDelete() {
-          let ids = this.$refs.tree.getCheckedNodes()
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              this.handleDelete(node, node.data)
-            })
-            this.checkAll = false
-          }
+          //清掉所有operations
+          this.operations.splice(0)
+          this.form.setValuesIn('deleteAllFields', true)
+
+          // let ids = this.$refs.tree.getCheckedNodes()
+          // if (ids && ids.length > 0) {
+          //   ids.map(id => {
+          //     let node = this.$refs.tree.getNode(id)
+          //     this.handleDelete(node, node.data)
+          //   })
+          //   this.checkAll = false
+          // }
         },
         handleAllReset() {
           let ids = this.$refs.tree.getCheckedNodes(false, true)
@@ -398,18 +403,18 @@ export const FieldAddDel = connect(
             })
             this.checkAll = false
           }
-        },
-        handleCheckAllChange() {
-          if (this.checkAll) {
-            this.$nextTick(() => {
-              this.$refs.tree.setCheckedNodes(this.fields)
-            })
-          } else {
-            this.$nextTick(() => {
-              this.$refs.tree.setCheckedKeys([])
-            })
-          }
         }
+        // handleCheckAllChange() {
+        //   if (this.checkAll) {
+        //     this.$nextTick(() => {
+        //       this.$refs.tree.setCheckedNodes(this.fields)
+        //     })
+        //   } else {
+        //     this.$nextTick(() => {
+        //       this.$refs.tree.setCheckedKeys([])
+        //     })
+        //   }
+        // }
       }
     })
   ),
