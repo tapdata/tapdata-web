@@ -1,6 +1,7 @@
 import moment from 'moment'
 import { confirm } from 'web-core'
 import RequestErrorMessage from '@/components/RequestErrorMessage.vue'
+import i18n from '@/i18n'
 
 export function toDecimal2(x) {
   var float = parseFloat(x)
@@ -175,12 +176,12 @@ export const getDatabaseTypes = (mapping = false) => {
 export const errorConfirmFnc = error => {
   try {
     let err = JSON.parse(JSON.stringify(error))
-    confirm(<RequestErrorMessage err={err}></RequestErrorMessage>, '错误提示', {
+    confirm(<RequestErrorMessage err={err}></RequestErrorMessage>, i18n.t('confirm_error_tip'), {
       type: 'error',
       iconSize: 18,
       dangerouslyUseHTMLString: false,
-      confirmButtonText: '刷新页面',
-      cancelButtonText: '关闭'
+      confirmButtonText: i18n.t('confirm_reload_label'),
+      cancelButtonText: i18n.t('gl_button_close')
     }).then(flag => {
       if (flag) {
         location.reload()
@@ -188,6 +189,5 @@ export const errorConfirmFnc = error => {
     })
   } catch (e) {
     // TODO error
-    console.log('e', e)
   }
 }

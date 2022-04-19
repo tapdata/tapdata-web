@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div class="error-item">当前出现错误，请刷新页面</div>
+    <div class="error-item">{{ errorTitle }}</div>
     <div v-show="code" class="error-item">
-      <span class="error-item__label">错误码：</span>
+      <span class="error-item__label">{{ codeLabel }}</span>
       <span class="error-item__value">{{ code }}</span>
     </div>
     <div v-show="reqId" class="error-item">
-      <span class="error-item__label">请求ID：</span>
+      <span class="error-item__label">{{ reqIdLabel }}</span>
       <span class="error-item__value cursor-pointer" @click="onCopy">{{ reqId }}</span>
       <ElTooltip
         placement="top"
@@ -23,7 +23,7 @@
     </div>
     <div v-show="message">
       <div class="inline-flex align-items-center expand-operation cursor-pointer" @click="expand = !expand">
-        <span class="error-item__label">错误详情</span>
+        <span class="error-item__label">{{ errorDetailLabel }}</span>
         <VIcon size="14" :class="[{ expand: expand }, 'v-icon', 'ml-1']" @click.prevent.stop="expand = !expand"
           >arrow-down</VIcon
         >
@@ -35,6 +35,8 @@
 
 <script>
 import VIcon from '@/components/VIcon'
+import i18n from '@/i18n'
+
 export default {
   name: 'RequestErrorMessage',
   components: { VIcon },
@@ -50,7 +52,11 @@ export default {
     return {
       expand: false,
       showTooltip: false,
-      copied: false
+      copied: false,
+      errorTitle: i18n.t('RequestErrorMessage_error_title'),
+      codeLabel: i18n.t('RequestErrorMessage_code_label'),
+      reqIdLabel: i18n.t('RequestErrorMessage_req_id_label'),
+      errorDetailLabel: i18n.t('RequestErrorMessage_error_detail_label')
     }
   },
   computed: {

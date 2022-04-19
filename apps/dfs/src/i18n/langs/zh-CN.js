@@ -10,6 +10,7 @@ export default {
   gl_button_cancel: '取消',
   gl_button_confirm: '确定',
   gl_button_finish: '完成',
+  gl_button_close: '关闭',
   gl_button_delete_fail: '删除失败',
   gl_button_update_success: '修改成功',
   gl_qr_code_wx_public_account: '微信公众号',
@@ -30,6 +31,9 @@ export default {
   button_confirm: '确定',
   button_close: '取 消',
   button_save: '确 定',
+  // 确认框
+  confirm_error_tip: '错误提示',
+  confirm_reload_label: '刷新页面',
   /** 模块 */
   // 工作台
   workbench_manage: '工作台',
@@ -1149,5 +1153,9 @@ export default {
   dataVerification_otherField: '其他字段差异',
   dataVerification_returnMsg: '返回的message',
   dataVerification_sourceTableData: '源表数据',
-  dataVerification_returnedData: '返回的data'
+  dataVerification_returnedData: '返回的data',
+  RequestErrorMessage_error_title: '当前出现错误，请刷新页面',
+  RequestErrorMessage_code_label: '错误码：',
+  RequestErrorMessage_req_id_label: '请求ID：',
+  RequestErrorMessage_error_detail_label: '错误详情'
 }
