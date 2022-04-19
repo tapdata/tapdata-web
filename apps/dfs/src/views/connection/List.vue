@@ -168,6 +168,7 @@ import SchemaProgress from 'web-core/components/SchemaProgress'
 import Preview from './Preview.vue'
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/filter-bar'
+import { getDatabaseTypes } from '@/util'
 
 let timer = null
 export default {
@@ -254,6 +255,7 @@ export default {
   },
   methods: {
     getFilterItems() {
+      const TYPEMAP = getDatabaseTypes(true)
       this.filterItems = [
         {
           label: '全部状态',
@@ -270,7 +272,7 @@ export default {
             let data = await this.$axios.get('tm/api/Connections/databaseType')
             return data.map(item => {
               return {
-                label: item,
+                label: TYPEMAP[item] || item,
                 value: item
               }
             })
