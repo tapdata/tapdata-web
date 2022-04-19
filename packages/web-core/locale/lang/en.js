@@ -1849,7 +1849,7 @@ const en = {
       initialReadSize: 'Initial record size',
       incrementalTps: 'CUD TPS',
       response_body: {
-        CHECK_CONNECT: 'Check the connection is available',
+        CHECK_CONNECT: 'Check if the connection is available',
         CHECK_AUTH: 'Checks if the username,password and database are available',
         CHECK_VERSION: 'Checks if the version information is available',
         LOAD_SCHEMA: 'Load schema model',
@@ -1857,7 +1857,7 @@ const en = {
         CHECK_ARCHIVE_LOG: 'Check if archive log is opened',
         CHECK_SUPPLEMENTAL_LOG: 'Check if supplemental log mode is correct',
         CHECK_DDL_PERMISSION: 'Check if execute ddl permissions are granted',
-        CHECK_PERMISSION: 'Check if permissions are graned',
+        CHECK_PERMISSION: 'Check if permissions are granted',
         CHECK_BIN_LOG: 'Check if binlog is opened, and is ROW level',
         CHECK_BIN_ROW_IMAGE: 'Check whether the binlog format is FULL',
         CHECK_SCRIPT: 'Check if script(s) is available',

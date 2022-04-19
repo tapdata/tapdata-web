@@ -206,12 +206,12 @@ export default {
     }
   },
 
-  created() {
+  async created() {
     if (this.$route.name === 'DataflowViewer') {
       this.setStateReadonly(true)
     }
     this.setValidateLanguage()
-    this.initNodeType()
+    await this.initNodeType()
   },
 
   mounted() {
