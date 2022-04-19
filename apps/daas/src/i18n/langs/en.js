@@ -461,7 +461,7 @@ export default {
   api_monitor_total_warningCount: 'API warning count',
   api_monitor_total_columns_failed: 'Failure rate (%)',
   api_monitor_total_FailRate: 'API failure rate TOP sort',
-  api_monitor_total_consumingTime: 'API response time TOP sorting',
+  api_monitor_total_consumingTime: 'API response time TOP sort',
   api_monitor_total_clientName: 'client',
   api_monitor_total_api_list: 'API list',
   api_monitor_total_api_list_name: 'API name',

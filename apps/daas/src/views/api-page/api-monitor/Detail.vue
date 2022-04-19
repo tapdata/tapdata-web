@@ -22,11 +22,13 @@
         </div>
         <div class="flex-1">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_speed') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ detail.speed || 0 }}</div>
+          <div class="api-monitor-detail-wrap__value">
+            {{ detail.speed ? handleUnit(detail.speed) + '/S' : '0 M/S' }}
+          </div>
         </div>
         <div class="flex-1">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_responseTime') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ detail.responseTime || 0 }}</div>
+          <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.responseTime) || 0 }}</div>
         </div>
       </div>
     </div>

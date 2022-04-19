@@ -139,7 +139,7 @@
           <el-table-column prop="visitCount" :label="$t('api_monitor_total_api_list_visitCount')"> </el-table-column>
           <el-table-column prop="transitQuantity" :label="$t('api_monitor_total_api_list_transitQuantity')">
             <template #default="{ row }">
-              <span>{{ handleUnit(row.transmitTotal) || '' }}</span>
+              <span>{{ handleUnit(row.transitQuantity) || '' }}</span>
             </template>
           </el-table-column>
         </el-table>
