@@ -381,16 +381,8 @@ export const FieldAddDel = connect(
         handleAllDelete() {
           //清掉所有operations
           this.operations.splice(0)
-          this.form.setValuesIn('deleteAllFields', true)
-
-          // let ids = this.$refs.tree.getCheckedNodes()
-          // if (ids && ids.length > 0) {
-          //   ids.map(id => {
-          //     let node = this.$refs.tree.getNode(id)
-          //     this.handleDelete(node, node.data)
-          //   })
-          //   this.checkAll = false
-          // }
+          let settingData = { ...this.form.values }
+          this.form.setValuesIn('deleteAllFields', !settingData?.deleteAllFields)
         },
         handleAllReset() {
           let ids = this.$refs.tree.getCheckedNodes(false, true)
