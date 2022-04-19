@@ -24,7 +24,8 @@ export const FieldRename = connect(
         return {
           nodeKey: '',
           originalFields: [],
-          checkAll: false,
+          //checkAll: false,
+          fieldsNameTransforms: '',
           /*字段处理器支持功能类型*/
           RENAME_OPS_TPL: {
             id: '',
@@ -71,12 +72,15 @@ export const FieldRename = connect(
             }
           })
         }
+        //初始化
+        let formValues = { ...this.form.values }
+        this.fieldsNameTransforms = formValues?.fieldsNameTransform
         // eslint-disable-next-line
         console.log('FieldProcess.mergeOutputSchema', fields)
         return (
           <div class="field-processors-tree-warp bg-body pt-2 pb-5">
             <div class="field-processor-operation flex">
-              <ElCheckbox class="check-all " v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
+              {/*<ElCheckbox class="check-all " v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />*/}
               <span class="flex-1 text inline-block ml-15 ">源字段名</span>
               <span class="flex-1 text inline-block">目标字段名</span>
               <span class="field-ops  inline-block mr-12">
@@ -97,7 +101,7 @@ export const FieldRename = connect(
                 data={fields}
                 node-key="id"
                 default-expand-all={true}
-                show-checkbox={true}
+                // show-checkbox={true}
                 expand-on-click-node={false}
                 class="field-processor-tree"
                 scopedSlots={{
@@ -333,38 +337,19 @@ export const FieldRename = connect(
           return fieldName
         },
         handleAllToUpperCase() {
-          let ids = this.$refs.tree.getCheckedNodes()
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              node.data.field_name = node.data.field_name.toUpperCase()
-              this.handleRename(node, node.data)
-            })
-          }
-          this.checkAll = false
+          //清掉所有operations
+          this.operations.splice(0)
+          this.form.setValuesIn('fieldsNameTransform', 'toUpperCase')
         },
         handleAllToLowerCase() {
-          let ids = this.$refs.tree.getCheckedNodes()
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              node.data.field_name = node.data.field_name.toLowerCase()
-              this.handleRename(node, node.data)
-            })
-          }
-          this.checkAll = false
+          //清掉所有operations
+          this.operations.splice(0)
+          this.form.setValuesIn('fieldsNameTransform', 'toLowerCase')
         },
         handleAllReset() {
-          let ids = this.$refs.tree.getCheckedNodes(false, true)
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              if (node) {
-                this.handleReset(node, node.data)
-              }
-            })
-          }
-          this.checkAll = false
+          //清掉所有operations 撤回不变
+          this.operations.splice(0)
+          this.form.setValuesIn('fieldsNameTransform', '')
         },
         handleCheckAllChange() {
           if (this.checkAll) {

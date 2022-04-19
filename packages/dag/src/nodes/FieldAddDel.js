@@ -30,7 +30,6 @@ export class FieldAddDel extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'FieldAddDel',
         'x-reactions': [
-          '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $values.$inputs[0])}}',
           '{{useAfterPatchAsyncDataSource({service: loadNodeFieldsById, withoutField: true}, $values.id, $values.deleteAllFields)}}'
         ]
       },
