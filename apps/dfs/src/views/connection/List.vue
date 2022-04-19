@@ -267,7 +267,7 @@ export default {
           label: '数据库类型',
           key: 'database_type',
           type: 'select-inner',
-          menuMinWidth: '180px',
+          menuMinWidth: '240px',
           items: async () => {
             let data = await this.$axios.get('tm/api/Connections/databaseType')
             return data.map(item => {
