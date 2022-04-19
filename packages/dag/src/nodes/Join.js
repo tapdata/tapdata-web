@@ -73,7 +73,7 @@ export class Join extends NodeType {
                   {
                     label: '左连接',
                     value: 'left'
-                  },
+                  } /*,
                   {
                     label: '右连接',
                     value: 'right'
@@ -85,7 +85,7 @@ export class Join extends NodeType {
                   {
                     label: '全连接',
                     value: 'full'
-                  }
+                  }*/
                 ],
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {

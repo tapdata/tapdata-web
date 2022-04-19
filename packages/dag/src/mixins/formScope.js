@@ -1,6 +1,6 @@
 import { Connections, MetadataInstances } from '@daas/api'
 import { action } from '@formily/reactive'
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import { isPlainObj } from '@daas/shared'
 
 const connections = new Connections()
@@ -574,10 +574,8 @@ export default {
 
           return field => {
             field.loading = true
-            const watcher = this.$watch('editVersion', v => {
-              // eslint-disable-next-line no-console
-              console.log('editVersion', v)
-              watcher()
+            let watcher
+            let callback = () => {
               const fetch = withoutField ? service(...serviceParams) : service({ field }, ...serviceParams)
               fetch.then(
                 action.bound(data => {
@@ -587,7 +585,16 @@ export default {
                   field.loading = false
                 })
               )
-            })
+            }
+            if (this.stateIsReadonly) {
+              watcher?.()
+              callback()
+            } else {
+              watcher = this.$watch('editVersion', () => {
+                watcher()
+                callback()
+              })
+            }
           }
         }
       }
@@ -595,6 +602,7 @@ export default {
   },
 
   computed: {
-    ...mapState('dataflow', ['editVersion'])
+    ...mapState('dataflow', ['editVersion']),
+    ...mapGetters('dataflow', ['stateIsReadonly'])
   }
 }
