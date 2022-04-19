@@ -69,9 +69,9 @@ export default {
       },
       typesOptions: [
         { label: this.$t('api_monitor_detail_visitTotalLine'), value: 'visitTotalLine' },
-        { label: this.$t('api_monitor_detail_timeConsuming'), value: 'timeConsuming' },
+        { label: this.$t('api_monitor_detail_timeConsuming'), value: 'latency' },
         { label: this.$t('api_monitor_detail_speed'), value: 'speed' },
-        { label: this.$t('api_monitor_detail_responseTime'), value: 'latency' }
+        { label: this.$t('api_monitor_detail_responseTime'), value: 'responseTime' }
       ],
       timeList: [
         { label: this.$t('task_info_five_min'), value: 5 },
@@ -160,7 +160,7 @@ export default {
     this.getDetail()
     this.timer = setInterval(() => {
       this.getDetail(true)
-    }, 5000)
+    }, 60000) //一分钟一次
     this.allElectionFun()
   },
   watch: {
