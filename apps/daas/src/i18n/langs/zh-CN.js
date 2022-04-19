@@ -468,6 +468,7 @@ export default {
   api_monitor_total_columns_failed: '失败率(%)',
   api_monitor_total_FailRate: 'API失败率TOP排序',
   api_monitor_total_consumingTime: 'API响应时间TOP',
+  api_monitor_total_rTime: '响应时间',
   api_monitor_total_clientName: '客户端',
   api_monitor_total_api_list: 'API列表',
   api_monitor_total_api_list_name: 'API名称',

@@ -179,7 +179,7 @@ export default {
     },
     formatMs(time) {
       if (time === 0 || !time) return 0
-      if (time < 1000) return time + 'ms'
+      if (time < 1000) return time + ' ms'
       return formatMs(time)
     },
     getDetail(hiddenLoading) {

@@ -96,9 +96,15 @@
             v-loading="loadingTimeList"
             :has-pagination="false"
             :data="consumingTimeList"
-            :columns="columns"
+            :columns="columnsRT"
             ref="consumingTimeList"
-          ></TableList>
+          >
+            <template slot="failed" slot-scope="scope">
+              <span>
+                {{ formatMs(scope.row.failed) }}
+              </span>
+            </template>
+          </TableList>
           <el-pagination
             layout="->,total, prev,pager, next"
             :page-size="5"
@@ -160,7 +166,7 @@
 import Chart from 'web-core/components/chart'
 import TableList from '@/components/TableList'
 import FilterBar from '@/components/filter-bar'
-import { handleUnit } from './utils'
+import { formatMs, handleUnit } from './utils'
 import Detail from './Detail'
 import { toRegExp } from '../../../utils/util'
 export default {
@@ -180,6 +186,16 @@ export default {
         {
           label: this.$t('api_monitor_total_columns_failed'),
           prop: 'failed'
+        }
+      ],
+      columnsRT: [
+        {
+          label: 'Api ID',
+          prop: 'name'
+        },
+        {
+          label: this.$t('api_monitor_total_rTime'),
+          slotName: 'failed'
         }
       ],
       previewData: {},
@@ -227,6 +243,11 @@ export default {
   methods: {
     handleUnit(limit) {
       return handleUnit(limit)
+    },
+    formatMs(time) {
+      if (time === 0 || !time) return 0
+      if (time < 1000) return time + ' ms'
+      return formatMs(time, '')
     },
     //获取统计数据
     getPreview() {
