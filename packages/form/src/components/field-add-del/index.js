@@ -108,6 +108,7 @@ export const FieldAddDel = connect(
                           <span
                             class={[
                               this.isRemove(data.id) ? 'active__delete' : '',
+                              data.is_deleted ? 'active__delete' : '',
                               this.isCreate(data.id) ? 'active__name' : ''
                             ]}
                           >
@@ -131,7 +132,12 @@ export const FieldAddDel = connect(
                           </span>
                         ) : (
                           //不是新建字段
-                          <span class={[this.isRemove(data.id) ? 'active__delete' : '']}>
+                          <span
+                            class={[
+                              this.isRemove(data.id) ? 'active__delete' : '',
+                              data.is_deleted ? 'active__delete' : ''
+                            ]}
+                          >
                             {data.field_name}
                             {data.primary_key_position > 0 ? (
                               <VIcon size="12" class="text-warning ml-1">
