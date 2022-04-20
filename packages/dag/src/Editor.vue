@@ -1692,13 +1692,16 @@ export default {
 
     handleEditFlush(result) {
       // eslint-disable-next-line no-console
-      console.log('handleEditFlush', result, this.startAt && Date.now() - this.startAt)
-      if (!this.startAt || Date.now() - this.startAt > 100) {
+      // console.log('handleEditFlush', result, this.startAt && Date.now() - this.startAt)
+      // eslint-disable-next-line no-console
+      console.log('handleEditFlush', result)
+      this.reformDataflow(result.data, true)
+      /*if (!this.startAt || Date.now() - this.startAt > 100) {
         this.reformDataflow(result.data, true)
         this.startAt = null
       } else {
         console.log('跳过') // eslint-disable-line
-      }
+      }*/
 
       const { opType } = result
       if (opType === 'transformRate') {
