@@ -1,5 +1,5 @@
 <template>
-  <div class="main-view-header p-4">
+  <div class="main-view-header py-4 px-5">
     <ElBreadcrumb v-if="breadcrumbData.length > 1" separator-class="el-icon-arrow-right">
       <ElBreadcrumbItem v-for="item in breadcrumbData" :key="item.name" :to="item.to">
         {{ item.name }}
