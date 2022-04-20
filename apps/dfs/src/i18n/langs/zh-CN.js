@@ -359,6 +359,7 @@ export default {
   connection_form_change: '更换',
   connection_form_rename: '改名',
   connection_form_give_up: '放弃',
+  connection_form_database_owner_tip: '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
   connection_form_confirm_edit: '此操作将丢失当前编辑内容',
   connection_form_confirm_create: '此操作将丢失当前正在创建的连接',
   connection_form_confirm_create_content: '你想放弃连接的创建吗？',
