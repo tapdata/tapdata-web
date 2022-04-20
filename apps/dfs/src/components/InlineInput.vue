@@ -110,7 +110,7 @@ export default {
     },
     tooltip() {
       let { min, max } = this
-      return i18n.t('template')(i18n.t('components_InlineInput_ziFuChangDuXian'), { val1: min, val2: max })
+      return i18n.t('components_InlineInput_ziFuChangDuXian', { val1: min, val2: max })
     }
   },
   watch: {
