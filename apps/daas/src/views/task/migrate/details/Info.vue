@@ -269,6 +269,7 @@ export default {
           }
         },
         yAxis: {
+          name: 'QPS',
           axisLabel: {
             formatter: function (value) {
               if (value >= 1000) {
