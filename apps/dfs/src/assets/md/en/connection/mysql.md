@@ -45,7 +45,6 @@ In the output result, the binlog_row_image value should be "FULL"
 
 #### **3.3 Create MySQL Account**
 After Mysql8, the password encryption method is different, please pay attention to use the corresponding version to set the password, otherwise it will cause the incremental synchronization to fail
-Use the following command to confirm whether supplemental logging is enabled
 ##### **3.3.1 5.x version**
 ```
 create user'username'@'localhost' identified by'password';
