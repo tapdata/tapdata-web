@@ -4,16 +4,19 @@
       <div class="title fs-7 fw-sub font-color-dark">{{ $t('apiaudit_log_info') }}</div>
       <ElRow class="pt-4" v-if="auditData">
         <ElCol class="font-color-normal pb-4" :span="12">
-          API ID: <span>{{ auditData.id ? auditData.id : '-' }}</span></ElCol
+          <span class="font-text"> API ID:</span> <span>{{ auditData.id ? auditData.id : '-' }}</span></ElCol
         >
         <ElCol class="font-color-normal pb-4" :span="12"
-          >{{ $t('apiaudit_name') }}: <span class="fw-sub">{{ auditData.name || '-' }}</span></ElCol
+          ><span class="font-text">{{ $t('apiaudit_name') }}:</span>
+          <span class="fw-sub">{{ auditData.name || '-' }}</span></ElCol
         >
         <ElCol class="font-color-normal" :span="12"
-          >{{ $t('apiaudit_link') }}: <span class="fw-sub">{{ auditData.apiPath || '-' }}</span></ElCol
+          ><span class="font-text">{{ $t('apiaudit_link') }}:</span>
+          <span class="fw-sub">{{ auditData.apiPath || '-' }}</span></ElCol
         >
         <ElCol class="font-color-normal" :span="12"
-          >{{ $t('apiaudit_interview_time') }}: <span class="fw-sub"> {{ auditData.createAt }}</span></ElCol
+          ><span class="font-text">{{ $t('apiaudit_interview_time') }}:</span>
+          <span class="fw-sub"> {{ auditData.createAt }}</span></ElCol
         >
       </ElRow>
     </div>
@@ -30,7 +33,7 @@
               class="link-primary pt-4 din-font details-box-item-num"
               v-if="item.value > 0 && ['latency', 'averResponseTime'].includes(item.key)"
             >
-              {{ item.value }}ms
+              {{ formatDuring(item.value) }}
             </div>
             <div v-else class="link-primary pt-4 din-font details-box-item-num">
               {{ item.value }}
@@ -44,24 +47,25 @@
     <div class="details-box flex-1 bg-white p-6 mt-6 rounded-2">
       <div class="title fs-7 fw-sub font-color-dark">{{ $t('apiaudit_parameter') }}</div>
       <div class="pt-4 editor-box" v-if="auditData">
-        <CodeEditor
+        <pre class="editor-pre">{{ auditData.reqParams }}</pre>
+        <!-- <CodeEditor
           v-model="auditData.reqParams"
           ref="editor"
           lang="javascript"
           height="200"
           :options="{ readOnly: true }"
-        ></CodeEditor>
+        ></CodeEditor> -->
       </div>
     </div>
   </section>
 </template>
 
 <script>
-import CodeEditor from '@/components/CodeEditor'
+// import CodeEditor from '@/components/CodeEditor'
 import { formatMs } from '@/utils/util'
 export default {
   name: 'ApiAudit',
-  components: { CodeEditor },
+  // components: { CodeEditor },
   data() {
     return {
       auditData: null,
@@ -101,6 +105,21 @@ export default {
           }
         })
     },
+    formatDuring(mss) {
+      let time = ''
+      // let days = parseInt(mss / (1000 * 60 * 60 * 24))
+      // let hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      let minutes = parseInt((mss % (1000 * 60 * 60)) / (1000 * 60))
+      let seconds = (mss % (1000 * 60)) / 1000
+      if (minutes > 0) {
+        time = minutes.toFixed(2) + 'min'
+      } else if (!minutes && seconds > 0) {
+        time = seconds.toFixed(2) + 's'
+      } else if (!minutes && !seconds && mss > 0) {
+        time = mss.toFixed(2) + 'ms'
+      }
+      return time
+    },
     formatMs(ms) {
       return formatMs(ms)
     }
@@ -121,6 +140,18 @@ export default {
     .details-box-item-num {
       font-size: 30px;
     }
+  }
+  .font-text {
+    display: inline-block;
+    width: 80px;
+  }
+  .editor-pre {
+    height: 200px;
+    padding: 20px;
+    margin: 0;
+    color: map-get($fontColor, normal);
+    background-color: #f5f6f8;
+    border-radius: 2px;
   }
 }
 </style>
