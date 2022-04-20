@@ -1,5 +1,5 @@
 <template>
-  <section class="metadata-info section-wrap">
+  <section class="metadata-info section-wrap" v-loading="loading">
     <!-- <header class="header">
       <span @click="back">
         {{ $t('metadata.details.dataDirectory') }}
@@ -635,6 +635,7 @@ export default {
     // 获取数据
     getData() {
       let id = this.$route?.params?.id || ''
+      this.loading = true
       return this.$api('MetadataInstances')
         .findTablesById([id])
         .then(res => {

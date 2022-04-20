@@ -129,6 +129,6 @@ export default {
   position: absolute;
   top: 11px;
   right: 4px;
-  color: #d8d8d8;
+  color: map-get($fontColor, slight);
 }
 </style>

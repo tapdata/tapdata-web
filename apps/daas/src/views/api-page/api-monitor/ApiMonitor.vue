@@ -180,7 +180,7 @@ export default {
       loadingTotal: false,
       columns: [
         {
-          label: 'Api ID',
+          label: this.$t('api_monitor_total_api_list_name'),
           prop: 'name'
         },
         {
@@ -190,7 +190,7 @@ export default {
       ],
       columnsRT: [
         {
-          label: 'Api ID',
+          label: this.$t('api_monitor_total_api_list_name'),
           prop: 'name'
         },
         {
