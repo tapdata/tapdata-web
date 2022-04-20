@@ -20,7 +20,8 @@
             </div>
           </div>
           <div class="py-6 text-center">
-            {{ $t('task_monitor_full_completion_time') }}：<span>{{ completeTime }}</span>
+            {{ $t('task_monitor_full_completion_time') }}{{ $t('field_mapping_field_mapping_dialog_')
+            }}<span>{{ completeTime }}</span>
           </div>
         </div>
         <!-- 非全量 -->
@@ -50,7 +51,9 @@
         <div v-if="task && task.setting && task.setting.sync_type !== 'cdc'" style="height: 310px">
           <div class="mb-10 fs-7 dots">{{ $t('task_monitor_progress_details') }}</div>
           <div v-for="(item, index) in initialList" :key="index" class="initial-box">
-            <span v-if="item.label" class="initial-box__title font-color-sub">{{ item.label }}：</span>
+            <span v-if="item.label" class="initial-box__title font-color-sub"
+              >{{ item.label }}{{ $t('field_mapping_field_mapping_dialog_') }}</span
+            >
             <span class="initial-box__value" :class="{ 'font-color-sub': !!item.value }">{{
               item.value || overviewStats[item.key]
             }}</span>

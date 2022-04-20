@@ -29,7 +29,7 @@
         </div>
         <div class="flex-fill ml-4">
           <div v-for="(temp, k) in item.items" :key="index + '' + k" class="box-line">
-            <div class="box-line__label">{{ temp.label + '：' }}</div>
+            <div class="box-line__label">{{ temp.label + $t('field_mapping_field_mapping_dialog_') }}</div>
             <div class="box-line__value">{{ agent[temp.key] || '-' }}</div>
           </div>
         </div>

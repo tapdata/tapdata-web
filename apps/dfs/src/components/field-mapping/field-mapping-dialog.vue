@@ -37,7 +37,9 @@
       <div class="flex flex-column">
         <div class="flex mb-5 ml-6">
           <div class="flex">
-            <span class="text"> {{ $t('task_mapping_table_search_table') }}：</span>
+            <span class="text">
+              {{ $t('task_mapping_table_search_table') }}{{ $t('field_mapping_field_mapping_dialog_') }}</span
+            >
             <ElInput v-model="searchTable" size="mini" @change="search('table')"></ElInput>
           </div>
         </div>
@@ -80,7 +82,7 @@
       <div class="main">
         <div class="search mb-5 ml-2">
           <div class="item">
-            <span> {{ $t('task_mapping_table_search_field') }}：</span>
+            <span> {{ $t('task_mapping_table_search_field') }}{{ $t('field_mapping_field_mapping_dialog_') }}</span>
             <ElInput v-model="searchField" size="mini" @change="search('field')"></ElInput>
           </div>
           <div class="item ml-5" v-if="!readOnly && !targetIsVika && !targetIsQingflow">
@@ -415,11 +417,11 @@
         >
       </span>
     </ElDialog>
-    <!-- vika目录 -->
+    <!-- vika{{$t('field_mapping_field_mapping_dialog_muLu')}} -->
     <ElDialog
       width="500px"
       append-to-body
-      title="目录"
+      :title="$t('field_mapping_field_mapping_dialog_muLu')"
       custom-class="vika-field-maping-table-dialog"
       :visible.sync="vikaForm.visible"
       :close-on-click-modal="false"
@@ -427,7 +429,7 @@
     >
       <div>
         <ElForm label-position="top" :model="vikaForm" style="width: 100%" @submit.prevent.stop>
-          <ElFormItem label="目标：" props="table" class="mb-0">
+          <ElFormItem :label="$t('field_mapping_field_mapping_dialog_muBiao')" props="table" class="mb-0">
             <ElInput
               v-model="vikaForm.table"
               size="mini"
@@ -463,11 +465,11 @@
         }}</ElButton>
       </span>
     </ElDialog>
-    <!-- 批量修改字段类型 -->
+    <!-- {{$t('field_mapping_field_mapping_dialog_piLiangXiuGaiZi')}} -->
     <ElDialog
       width="800px"
       append-to-body
-      :title="'批量修改字段类型'"
+      :title="$t('field_mapping_field_mapping_dialog_piLiangXiuGaiZi')"
       custom-class="batch-field-type-maping-table-dialog"
       :visible.sync="batchFieldTypeForm.visible"
       :close-on-click-modal="false"
@@ -475,11 +477,11 @@
     >
       <div>
         <ElRow>
-          <ElCol :span="7"> 源字段类型 </ElCol>
-          <ElCol :span="6"> 目标字段类型 </ElCol>
-          <ElCol :span="4"> 长度 </ElCol>
-          <ElCol :span="4"> 精度 </ElCol>
-          <ElCol :span="3"> 操作 </ElCol>
+          <ElCol :span="7">{{ $t('field_mapping_field_mapping_dialog_yuanZiDuanLeiXing') }}</ElCol>
+          <ElCol :span="6">{{ $t('field_mapping_field_mapping_dialog_muBiaoZiDuanLei') }}</ElCol>
+          <ElCol :span="4">{{ $t('field_mapping_field_mapping_dialog_changDu') }}</ElCol>
+          <ElCol :span="4">{{ $t('field_mapping_field_mapping_dialog_jingDu') }}</ElCol>
+          <ElCol :span="3">{{ $t('field_mapping_field_mapping_dialog_caoZuo') }}</ElCol>
         </ElRow>
         <ElRow v-for="(item, index) in batchFieldTypeForm.list" :key="index" class="mt-4">
           <ElCol :span="7" class="flex">
@@ -553,7 +555,7 @@
             @click="fieldTypeChangeAddItem(batchFieldTypeForm.list.length)"
           >
             <VIcon size="16" class="mr-1 cursor-pointer color-primary">plus-circle</VIcon>
-            <span class="color-primary">添加</span>
+            <span class="color-primary">{{ $t('field_mapping_field_mapping_dialog_tianJia') }}</span>
           </span>
         </div>
         <div class="flex align-items-center mt-4">
@@ -572,6 +574,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import VIcon from '../VIcon'
 export default {
   name: 'FieldMapping',
@@ -665,7 +669,9 @@ export default {
         table_suffix: [{ validator: validateSuffix, trigger: 'blur' }]
       },
       changeTableNameFormRules: {
-        new: [{ required: true, message: '请输入表名', trigger: 'blur' }]
+        new: [
+          { required: true, message: i18n.t('field_mapping_field_mapping_dialog_qingShuRuBiaoMing'), trigger: 'blur' }
+        ]
       },
       changeTableNameForm: {
         old: '',

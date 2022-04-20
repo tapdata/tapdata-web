@@ -162,6 +162,8 @@
 }
 </style>
 <script>
+import i18n from '@/i18n'
+
 import VIcon from '@/components/VIcon'
 import StatusTag from '@/components/StatusTag'
 import FilterBar from '@/components/filter-bar'
@@ -316,32 +318,32 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          label: '类型',
+          label: i18n.t('verify_List_leiXing'),
           key: 'inspectMethod',
           type: 'select-inner',
           items: this.filterInspectMethodOptions
         },
         {
-          label: '频次',
+          label: i18n.t('verify_List_pinCi'),
           key: 'mode',
           type: 'select-inner',
           items: this.filterModeOptions
         },
         {
-          label: '状态',
+          label: i18n.t('instance_Instance_zhuangTai'),
           key: 'enabled',
           type: 'select-inner',
           items: this.filterEnabledOptions
         },
         {
-          label: '结果',
+          label: i18n.t('verify_List_jieGuo'),
           key: 'result',
           type: 'select-inner',
           items: this.filterResultOptions
         },
 
         {
-          placeholder: '名称',
+          placeholder: i18n.t('task_Migration_mingCheng'),
           key: 'keyword',
           type: 'input'
         }

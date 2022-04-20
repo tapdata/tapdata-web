@@ -1,18 +1,18 @@
 <template>
   <div class="user-center g-panel-container flex-fill">
-    <div class="fs-7">个人信息</div>
+    <div class="fs-7">{{ $t('user_Center_geRenXinXi') }}</div>
     <ElDivider class="my-6"></ElDivider>
     <div>
       <div>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">用户名：</div>
+            <div class="user-item__label">{{ $t('user_Center_yongHuMing') }}</div>
             <div class="user-item__value">{{ userData.username }}</div>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">用户昵称：</div>
+            <div class="user-item__label">{{ $t('user_Center_yongHuNiCheng') }}</div>
             <InlineInput
               class="inline-input fs-8"
               :value="userData.nickname"
@@ -23,20 +23,20 @@
             ></InlineInput>
           </ElCol>
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">密码：</div>
+            <div class="user-item__label">{{ $t('user_Center_miMa') }}</div>
             <div class="user-item__value">******</div>
-            <ElLink type="primary" @click="editPassword">修改</ElLink>
+            <ElLink type="primary" @click="editPassword">{{ $t('user_Center_xiuGai') }}</ElLink>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">手机号：</div>
-            <div class="user-item__value">{{ userData.telephone || '未绑定' }}</div>
-            <ElLink v-if="userData.telephone" type="primary" @click="editPhone">修改</ElLink>
-            <ElLink v-else type="primary" @click="dialogObj.bindPhone = true">绑定</ElLink>
+            <div class="user-item__label">{{ $t('user_Center_shouJiHao') }}</div>
+            <div class="user-item__value">{{ userData.telephone || $t('user_Center_weiBangDing') }}</div>
+            <ElLink v-if="userData.telephone" type="primary" @click="editPhone">{{ $t('user_Center_xiuGai') }}</ElLink>
+            <ElLink v-else type="primary" @click="dialogObj.bindPhone = true">{{ $t('user_Center_bangDing') }}</ElLink>
           </ElCol>
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">头像：</div>
+            <div class="user-item__label">{{ $t('user_Center_touXiang') }}</div>
             <div class="user-item__value position-relative">
               <img
                 v-if="userData.avatar"
@@ -44,67 +44,75 @@
                 alt=""
                 style="position: absolute; top: -24px; left: 0; width: 56px; height: 56px; border-radius: 50%"
               />
-              <span v-else>暂无</span>
+              <span v-else>{{ $t('user_Center_zanWu') }}</span>
             </div>
-            <ElLink type="primary" @click="editAvatar">修改</ElLink>
+            <ElLink type="primary" @click="editAvatar">{{ $t('user_Center_xiuGai') }}</ElLink>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
           <!--          <ElCol :span="12" class="user-item">-->
           <!--            <div class="user-item__label">微信：</div>-->
-          <!--            <div class="user-item__value">{{ userData.wx || '未绑定' }}</div>-->
+          <!--            <div class="user-item__value">{{ userData.wx || $t('user_Center_weiBangDing') }}</div>-->
           <!--            <ElLink v-if="userData.wx" type="primary" @click="unbindWx">解绑</ElLink>-->
-          <!--            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">绑定</ElLink>-->
+          <!--            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">{{$t('user_Center_bangDing')}}</ElLink>-->
           <!--          </ElCol>-->
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">邮箱：</div>
-            <div class="user-item__value">{{ userData.email || '未绑定' }}</div>
-            <ElLink v-if="userData.email" type="primary" @click="editEmail">修改</ElLink>
-            <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">绑定</ElLink>
+            <div class="user-item__label">{{ $t('user_Center_youXiang') }}</div>
+            <div class="user-item__value">{{ userData.email || $t('user_Center_weiBangDing') }}</div>
+            <ElLink v-if="userData.email" type="primary" @click="editEmail">{{ $t('user_Center_xiuGai') }}</ElLink>
+            <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">{{ $t('user_Center_bangDing') }}</ElLink>
           </ElCol>
         </ElRow>
       </div>
     </div>
-    <div class="mt-12 fs-7">企业信息</div>
+    <div class="mt-12 fs-7">{{ $t('user_Center_qiYeXinXi') }}</div>
     <ElDivider class="my-6"></ElDivider>
     <div>
       <div>
         <ElRow :gutter="40" class="section-header mb-2">
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">公司名称：</div>
-            <div v-if="!isEdit" class="enterprise-item__value">{{ enData.companyName || '未填写' }}</div>
+            <div class="enterprise-item__label">{{ $t('user_Center_gongSiMingCheng') }}</div>
+            <div v-if="!isEdit" class="enterprise-item__value">
+              {{ enData.companyName || $t('user_Center_weiTianXie') }}
+            </div>
             <ElInput v-else v-model="enForm.companyName" class="enterprise-item__value"></ElInput>
           </ElCol>
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">公司官网：</div>
-            <div v-if="!isEdit" class="enterprise-item__value">{{ enData.website || '未填写' }}</div>
+            <div class="enterprise-item__label">{{ $t('user_Center_gongSiGuanWang') }}</div>
+            <div v-if="!isEdit" class="enterprise-item__value">
+              {{ enData.website || $t('user_Center_weiTianXie') }}
+            </div>
             <ElInput v-else v-model="enForm.website" class="enterprise-item__value"></ElInput>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-2">
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">所属行业：</div>
-            <div v-if="!isEdit" class="enterprise-item__value">{{ enData.industry || '未填写' }}</div>
+            <div class="enterprise-item__label">{{ $t('user_Center_suoShuHangYe') }}</div>
+            <div v-if="!isEdit" class="enterprise-item__value">
+              {{ enData.industry || $t('user_Center_weiTianXie') }}
+            </div>
             <ElInput v-else v-model="enForm.industry" class="enterprise-item__value"></ElInput>
           </ElCol>
           <ElCol :span="12" class="enterprise-item">
-            <div class="enterprise-item__label">所属城市：</div>
-            <div v-if="!isEdit" class="enterprise-item__value">{{ enData.city || '未填写' }}</div>
+            <div class="enterprise-item__label">{{ $t('user_Center_suoShuChengShi') }}</div>
+            <div v-if="!isEdit" class="enterprise-item__value">{{ enData.city || $t('user_Center_weiTianXie') }}</div>
             <ElInput v-else v-model="enForm.city" class="enterprise-item__value"></ElInput>
           </ElCol>
         </ElRow>
-        <VButton v-if="!isEdit" type="text" @click="editEnData">企业信息修改</VButton>
+        <VButton v-if="!isEdit" type="text" @click="editEnData">{{ $t('user_Center_qiYeXinXiXiu') }}</VButton>
         <template v-else>
-          <VButton type="text" @click="cancelEditEnData">取消</VButton>
-          <VButton type="text" auto-loading @click="saveEnData(arguments[0])">保存</VButton>
+          <VButton type="text" @click="cancelEditEnData">{{ $t('components_InlineInput_quXiao') }}</VButton>
+          <VButton type="text" auto-loading @click="saveEnData(arguments[0])">{{
+            $t('components_InlineInput_baoCun')
+          }}</VButton>
         </template>
       </div>
     </div>
-    <!--  上传头像  -->
+    <!--  {{$t('user_Center_shangChuanTouXiang')}}  -->
     <ElDialog
       width="435px"
       append-to-body
-      title="上传头像"
+      :title="$t('user_Center_shangChuanTouXiang')"
       :close-on-click-modal="false"
       :visible.sync="dialogObj.avatar"
     >
@@ -112,8 +120,8 @@
         <UploadFile :upload="upload" accept="image/*">
           <img v-if="avatar" :src="avatar" class="avatar" />
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          <div class="my-4 font-color-main">支持JPG、PNG和GIF格式，图片大小需在500KB以内</div>
-          <VButton type="primary">上传头像</VButton>
+          <div class="my-4 font-color-main">{{ $t('user_Center_zhiChiJPG') }}</div>
+          <VButton type="primary">{{ $t('user_Center_shangChuanTouXiang') }}</VButton>
         </UploadFile>
       </div>
       <div class="mt-6 text-center">
@@ -123,21 +131,30 @@
         }}</VButton>
       </div>
     </ElDialog>
-    <!--  修改密码  -->
+    <!--  {{$t('operation_log_List_xiuGaiMiMa')}}  -->
     <ElDialog
       width="435px"
       append-to-body
-      title="修改密码"
+      :title="$t('operation_log_List_xiuGaiMiMa')"
       label-width="120px"
       :close-on-click-modal="false"
       :visible.sync="dialogObj.password"
     >
       <ElForm :model="passwordForm" label-width="120px" @submit.native.prevent>
-        <ElFormItem prop="current" label="当前手机：">
-          <ElInput v-model="passwordForm.telephone" placeholder="请输入当前手机" maxlength="50" disabled></ElInput>
+        <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
+          <ElInput
+            v-model="passwordForm.telephone"
+            :placeholder="$t('user_Center_qingShuRuDangQian')"
+            maxlength="50"
+            disabled
+          ></ElInput>
         </ElFormItem>
-        <ElFormItem prop="newPassword" label="手机验证码：" class="inline-form-item">
-          <ElInput v-model="passwordForm.code" placeholder="请输入手机验证码" maxlength="50"></ElInput>
+        <ElFormItem prop="newPassword" :label="$t('user_Center_shouJiYanZhengMa')" class="inline-form-item">
+          <ElInput
+            v-model="passwordForm.code"
+            :placeholder="$t('user_Center_qingShuRuShouJi')"
+            maxlength="50"
+          ></ElInput>
           <VerificationCode
             :request-options="getCodeOptions(passwordForm.telephone, 'RESET_PASSWORD')"
             :disabled="!passwordForm.telephone"
@@ -146,19 +163,19 @@
             type="text"
           ></VerificationCode>
         </ElFormItem>
-        <ElFormItem prop="newPassword" label="新密码：">
+        <ElFormItem prop="newPassword" :label="$t('user_Center_xinMiMa')">
           <ElInput
             v-model="passwordForm.newPassword"
-            placeholder="请输入新密码"
+            :placeholder="$t('user_Center_qingShuRuXinMi')"
             maxlength="50"
             show-password
             onkeyup="value=value.replace(/[\u4e00-\u9fa5]/ig,'')"
           ></ElInput>
         </ElFormItem>
-        <ElFormItem prop="newAgainPassword" label="确认密码：">
+        <ElFormItem prop="newAgainPassword" :label="$t('user_Center_queRenMiMa')">
           <ElInput
             v-model="passwordForm.newAgainPassword"
-            placeholder="请输入新密码"
+            :placeholder="$t('user_Center_qingShuRuXinMi')"
             maxlength="50"
             show-password
             onkeyup="value=value.replace(/[\u4e00-\u9fa5]/ig,'')"
@@ -173,20 +190,28 @@
         }}</VButton>
       </span>
     </ElDialog>
-    <!--  绑定手机号  -->
+    <!--  {{$t('operation_log_List_bangDingShouJiHao')}}  -->
     <ElDialog
       width="435px"
       append-to-body
-      title="绑定手机号"
+      :title="$t('operation_log_List_bangDingShouJiHao')"
       :close-on-click-modal="false"
       :visible.sync="dialogObj.bindPhone"
     >
       <ElForm :model="phoneForm" label-width="120px" @submit.native.prevent>
-        <ElFormItem prop="current" label="当前手机：">
-          <ElInput v-model="phoneForm.current" placeholder="请输入当前手机" maxlength="50"></ElInput>
+        <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
+          <ElInput
+            v-model="phoneForm.current"
+            :placeholder="$t('user_Center_qingShuRuDangQian')"
+            maxlength="50"
+          ></ElInput>
         </ElFormItem>
-        <ElFormItem prop="newPassword" label="验证码：" class="inline-form-item">
-          <ElInput v-model="phoneForm.oldCode" placeholder="请输入手机验证码" maxlength="50"></ElInput>
+        <ElFormItem prop="newPassword" :label="$t('user_Center_yanZhengMa')" class="inline-form-item">
+          <ElInput
+            v-model="phoneForm.oldCode"
+            :placeholder="$t('user_Center_qingShuRuShouJi')"
+            maxlength="50"
+          ></ElInput>
           <VerificationCode
             :request-options="getCodeOptions(phoneForm.current, 'BIND_PHONE')"
             :disabled="!phoneForm.current"
@@ -204,20 +229,29 @@
         }}</VButton>
       </span>
     </ElDialog>
-    <!--  修改手机号  -->
+    <!--  {{$t('operation_log_List_xiuGaiShouJiHao')}}  -->
     <ElDialog
       width="435px"
       append-to-body
-      title="修改手机号"
+      :title="$t('operation_log_List_xiuGaiShouJiHao')"
       :close-on-click-modal="false"
       :visible.sync="dialogObj.editPhone"
     >
       <ElForm :model="phoneForm" label-width="120px" @submit.native.prevent>
-        <ElFormItem prop="current" label="当前手机：">
-          <ElInput v-model="phoneForm.current" placeholder="请输入当前手机" maxlength="50" disabled></ElInput>
+        <ElFormItem prop="current" :label="$t('user_Center_dangQianShouJi')">
+          <ElInput
+            v-model="phoneForm.current"
+            :placeholder="$t('user_Center_qingShuRuDangQian')"
+            maxlength="50"
+            disabled
+          ></ElInput>
         </ElFormItem>
-        <ElFormItem prop="newPassword" label="旧手机验证码：" class="inline-form-item">
-          <ElInput v-model="phoneForm.oldCode" placeholder="请输入旧手机验证码" maxlength="50"></ElInput>
+        <ElFormItem prop="newPassword" :label="$t('user_Center_jiuShouJiYanZheng')" class="inline-form-item">
+          <ElInput
+            v-model="phoneForm.oldCode"
+            :placeholder="$t('user_Center_qingShuRuJiuShou')"
+            maxlength="50"
+          ></ElInput>
           <VerificationCode
             :request-options="getCodeOptions(phoneForm.current, 'CHANGE_PHONE')"
             :disabled="!phoneForm.current"
@@ -226,11 +260,19 @@
             type="text"
           ></VerificationCode>
         </ElFormItem>
-        <ElFormItem prop="newAgainPassword" label="新手机：">
-          <ElInput v-model="phoneForm.newPhone" placeholder="请输入新手机" maxlength="50"></ElInput>
+        <ElFormItem prop="newAgainPassword" :label="$t('user_Center_xinShouJi')">
+          <ElInput
+            v-model="phoneForm.newPhone"
+            :placeholder="$t('user_Center_qingShuRuXinShou2')"
+            maxlength="50"
+          ></ElInput>
         </ElFormItem>
-        <ElFormItem prop="newAgainPassword" label="新手机验证码：">
-          <ElInput v-model="phoneForm.newCode" placeholder="请输入新手机验证码" maxlength="50"></ElInput>
+        <ElFormItem prop="newAgainPassword" :label="$t('user_Center_xinShouJiYanZheng')">
+          <ElInput
+            v-model="phoneForm.newCode"
+            :placeholder="$t('user_Center_qingShuRuXinShou')"
+            maxlength="50"
+          ></ElInput>
           <VerificationCode
             :request-options="getCodeOptions(phoneForm.newPhone, 'BIND_PHONE')"
             :disabled="!phoneForm.current"
@@ -248,33 +290,37 @@
         }}</VButton>
       </span>
     </ElDialog>
-    <!--  绑定微信  -->
+    <!--  {{$t('user_Center_bangDingWeiXin')}}  -->
     <ElDialog
       width="435px"
       append-to-body
-      title="绑定微信"
+      :title="$t('user_Center_bangDingWeiXin')"
       :close-on-click-modal="true"
       :visible.sync="dialogObj.bindWx"
     >
       <div class="text-center">
         <img src="../../../public/images/user/bindWx.png" alt="" style="width: 200px" />
-        <div class="mt-4 font-color-main">请使用微信扫描二维码绑定Tapdata Cloud</div>
+        <div class="mt-4 font-color-main">{{ $t('user_Center_qingShiYongWeiXin') }}</div>
       </div>
     </ElDialog>
-    <!--  绑定邮箱  -->
+    <!--  {{$t('operation_log_List_bangDingYouXiang')}}  -->
     <ElDialog
       width="435px"
       append-to-body
-      title="绑定邮箱"
+      :title="$t('operation_log_List_bangDingYouXiang')"
       :close-on-click-modal="false"
       :visible.sync="dialogObj.bindEmail"
     >
       <ElForm :model="emailForm" label-width="120px" @submit.native.prevent>
-        <ElFormItem prop="current" label="邮箱：">
-          <ElInput v-model="emailForm.email" placeholder="请输入邮箱" maxlength="50"></ElInput>
+        <ElFormItem prop="current" :label="$t('user_Center_youXiang')">
+          <ElInput
+            v-model="emailForm.email"
+            :placeholder="$t('user_Center_qingShuRuYouXiang')"
+            maxlength="50"
+          ></ElInput>
         </ElFormItem>
-        <ElFormItem prop="newPassword" label="验证码：" class="inline-form-item">
-          <ElInput v-model="emailForm.code" placeholder="请输入验证码" maxlength="50"></ElInput>
+        <ElFormItem prop="newPassword" :label="$t('user_Center_yanZhengMa')" class="inline-form-item">
+          <ElInput v-model="emailForm.code" :placeholder="$t('user_Center_qingShuRuYanZheng')" maxlength="50"></ElInput>
           <VerificationCode
             :request-options="getCodeOptions(emailForm.email, 'BIND_EMAIL', 'email')"
             :disabled="!emailForm.email"
@@ -296,20 +342,25 @@
         >
       </span>
     </ElDialog>
-    <!--  修改邮箱  -->
+    <!--  {{$t('operation_log_List_xiuGaiYouXiang')}}  -->
     <ElDialog
       width="435px"
       append-to-body
-      title="修改邮箱"
+      :title="$t('operation_log_List_xiuGaiYouXiang')"
       :close-on-click-modal="false"
       :visible.sync="dialogObj.editEmail"
     >
       <ElForm :model="emailForm" label-width="120px" @submit.native.prevent>
-        <ElFormItem prop="email" label="邮箱：">
-          <ElInput v-model="emailForm.email" disabled placeholder="请输入邮箱" maxlength="50"></ElInput>
+        <ElFormItem prop="email" :label="$t('user_Center_youXiang')">
+          <ElInput
+            v-model="emailForm.email"
+            disabled
+            :placeholder="$t('user_Center_qingShuRuYouXiang')"
+            maxlength="50"
+          ></ElInput>
         </ElFormItem>
-        <ElFormItem prop="code" label="当前邮箱验证码：" class="inline-form-item">
-          <ElInput v-model="emailForm.code" placeholder="请输入验证码" maxlength="50"></ElInput>
+        <ElFormItem prop="code" :label="$t('user_Center_dangQianYouXiangYan')" class="inline-form-item">
+          <ElInput v-model="emailForm.code" :placeholder="$t('user_Center_qingShuRuYanZheng')" maxlength="50"></ElInput>
           <VerificationCode
             :request-options="getCodeOptions(emailForm.email, 'CHANGE_EMAIL', 'email')"
             :disabled="!emailForm.email"
@@ -318,11 +369,19 @@
             type="text"
           ></VerificationCode>
         </ElFormItem>
-        <ElFormItem prop="newEmail" label="新邮箱：">
-          <ElInput v-model="emailForm.newEmail" placeholder="请输入新邮箱" maxlength="50"></ElInput>
+        <ElFormItem prop="newEmail" :label="$t('user_Center_xinYouXiang')">
+          <ElInput
+            v-model="emailForm.newEmail"
+            :placeholder="$t('user_Center_qingShuRuXinYou')"
+            maxlength="50"
+          ></ElInput>
         </ElFormItem>
-        <ElFormItem prop="newCode" label="新邮箱验证码：" class="inline-form-item">
-          <ElInput v-model="emailForm.newCode" placeholder="请输入验证码" maxlength="50"></ElInput>
+        <ElFormItem prop="newCode" :label="$t('user_Center_xinYouXiangYanZheng')" class="inline-form-item">
+          <ElInput
+            v-model="emailForm.newCode"
+            :placeholder="$t('user_Center_qingShuRuYanZheng')"
+            maxlength="50"
+          ></ElInput>
           <VerificationCode
             :request-options="getCodeOptions(emailForm.newEmail, 'BIND_EMAIL', 'email')"
             :disabled="!emailForm.newEmail"
@@ -344,6 +403,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import InlineInput from '@/components/InlineInput'
 import VerificationCode from '@/components/VerificationCode'
 import UploadFile from '@/components/UploadFile'
@@ -472,14 +533,14 @@ export default {
         })
         .then(() => {
           this.userData.nickname = nickname
-          this.$message.success('修改昵称成功')
+          this.$message.success(i18n.t('user_Center_xiuGaiNiChengCheng'))
         })
     },
     upload(evt) {
       let file = evt.target.files[0]
       const leftThan = file.size / 1024 < 500
       if (!leftThan) {
-        this.$message.error('上传头像图片大小不能超过 500KB!')
+        this.$message.error(i18n.t('user_Center_shangChuanTouXiangTu'))
         return
       }
       urlToBase64(URL.createObjectURL(file)).then(res => {
@@ -500,7 +561,7 @@ export default {
           avatar
         })
         .then(() => {
-          this.$message.success('修改头像成功')
+          this.$message.success(i18n.t('user_Center_xiuGaiTouXiangCheng'))
           this.userData.avatar = avatar
           this.refreshRootUser()
           this.dialogObj.avatar = false
@@ -532,7 +593,7 @@ export default {
     },
     editPassword() {
       if (!this.userData.telephone) {
-        this.$confirm('请先绑定手机号', '绑定手机', {
+        this.$confirm(i18n.t('user_Center_qingXianBangDingShou'), i18n.t('user_Center_bangDingShouJi'), {
           type: 'warning'
         }).then(resFlag => {
           if (resFlag) {
@@ -548,7 +609,7 @@ export default {
       let { passwordForm } = this
       let { newPassword, newAgainPassword } = passwordForm
       if (newPassword !== newAgainPassword) {
-        this.$message.error('输入密码不一致')
+        this.$message.error(i18n.t('user_Center_shuRuMiMaBu'))
         resetLoading?.()
         return
       }
@@ -558,7 +619,7 @@ export default {
           password: CryptoJS.RC4.encrypt(passwordForm.newPassword, 'XWFSxfs8wFcs').toString()
         })
         .then(() => {
-          this.$message.success('修改密码成功')
+          this.$message.success(i18n.t('user_Center_xiuGaiMiMaCheng'))
           this.resetPasswordForm()
           this.dialogObj.password = false
         })
@@ -579,7 +640,7 @@ export default {
         .then(() => {
           this.userData.telephone = phoneForm.current
           this.resetPhoneForm()
-          this.$message.success('绑定手机成功')
+          this.$message.success(i18n.t('user_Center_bangDingShouJiCheng'))
           this.dialogObj.bindPhone = false
         })
         .finally(() => {
@@ -617,7 +678,7 @@ export default {
         .then(() => {
           this.userData.telephone = phoneForm.newPhone
           this.resetPhoneForm()
-          this.$message.success('修改手机成功')
+          this.$message.success(i18n.t('user_Center_xiuGaiShouJiCheng'))
           this.dialogObj.editPhone = false
         })
         .finally(() => {
@@ -625,13 +686,13 @@ export default {
         })
     },
     unbindWx() {
-      this.$confirm('解除后将无法使用微信登录和接收微信通知，确定解绑吗', '解除微信', {
+      this.$confirm(i18n.t('user_Center_jieChuHouJiangWu'), i18n.t('user_Center_jieChuWeiXin'), {
         type: 'warning'
       }).then(resFlag => {
         if (resFlag) {
           this.$axios.patch('tm/api/user/unbindWx').then(() => {
             this.userData.wx = ''
-            this.$message.success('解绑微信成功')
+            this.$message.success(i18n.t('user_Center_jieBangWeiXinCheng'))
             this.dialogObj.editPhone = false
           })
         }
@@ -650,7 +711,7 @@ export default {
         .then(() => {
           this.userData.email = emailForm.email
           this.resetEmailForm()
-          this.$message.success('绑定邮箱成功')
+          this.$message.success(i18n.t('user_Center_bangDingYouXiangCheng'))
           this.dialogObj.bindEmail = false
         })
         .finally(() => {
@@ -683,7 +744,7 @@ export default {
         .then(() => {
           this.userData.email = emailForm.newEmail
           this.resetEmailForm()
-          this.$message.success('修改邮箱成功')
+          this.$message.success(i18n.t('user_Center_xiuGaiYouXiangCheng'))
           this.dialogObj.editEmail = false
         })
         .finally(() => {
@@ -707,7 +768,7 @@ export default {
           city: enForm.city
         })
         .then(() => {
-          this.$message.success('修改企业信息成功')
+          this.$message.success(i18n.t('user_Center_xiuGaiQiYeXin'))
           this.enData = Object.assign({}, enForm)
           this.isEdit = false
         })

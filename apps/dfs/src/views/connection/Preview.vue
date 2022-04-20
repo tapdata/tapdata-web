@@ -75,6 +75,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import VIcon from '@/components/VIcon'
 import StatusTag from '@/components/StatusTag'
 import { CONFIG_MODEL } from './const'
@@ -188,7 +190,7 @@ export default {
               delete testData['database_password']
             }
             this.$refs.test.start(testData)
-            this.responseHandler(data, '操作成功')
+            this.responseHandler(data, i18n.t('connection_Preview_caoZuoChengGong'))
           })
       })
     },

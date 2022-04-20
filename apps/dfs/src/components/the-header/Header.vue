@@ -70,7 +70,7 @@
 
           <ElDropdownMenu slot="dropdown">
             <!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
-            <ElDropdownItem command="userCenter"> 用户中心 </ElDropdownItem>
+            <ElDropdownItem command="userCenter">{{ $t('the_header_Header_yongHuZhongXin') }}</ElDropdownItem>
             <ElDropdownItem command="home"> {{ $t('header_official_website') }} </ElDropdownItem>
             <ElDropdownItem command="signOut"> {{ $t('header_sign_out') }} </ElDropdownItem>
           </ElDropdownMenu>
@@ -80,6 +80,8 @@
   </ElHeader>
 </template>
 <script>
+import i18n from '@/i18n'
+
 import NotificationPopover from '@/views/workbench/NotificationPopover'
 // import ws from '../../plugins/ws.js';
 import VIcon from '@/components/VIcon'
@@ -96,7 +98,7 @@ export default {
       USER_CENTER: window.__config__.USER_CENTER,
       lang: localStorage.getItem('tapdata_localize_lang') || 'sc',
       languages: {
-        sc: '中文',
+        sc: i18n.t('the_header_Header_zhongWen'),
         en: 'English'
       }
     }

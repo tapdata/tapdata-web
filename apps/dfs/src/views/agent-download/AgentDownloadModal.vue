@@ -73,9 +73,9 @@
                 $t('agent_deploy_before_prepare_linux_first_link')
               }}</ElLink>
             </li>
-            <li>2.在您的Linux服务器下新建目录tapdata用来安装部署Tapdata Agent</li>
+            <li>{{ $t('agent_download_AgentDownloadModal_zaiNinDeLI') }}</li>
             <li class="box title-text my-2">mkdir tapdata</li>
-            <li>3.复制下方命令并在tapdata目录下执行，其包含 Tapdata Agent 的下载、自动部署及启动。</li>
+            <li>{{ $t('agent_download_AgentDownloadModal_fuZhiXiaFangMing2') }}</li>
             <li class="box title-text my-2">
               <span class="link-line">{{ linuxLink }}</span>
               <ElTooltip
@@ -95,13 +95,13 @@
                 </span>
               </ElTooltip>
             </li>
-            <li>4.等待命令执行完成，即可完成Tapdata Agent的安装和启动。</li>
+            <li>{{ $t('agent_download_AgentDownloadModal_dengDaiMingLingZhi2') }}</li>
           </ul>
         </template>
         <template v-if="downLoadType === 'Docker'">
           <ul class="ul-style">
             <li>
-              <span>1.您的部署环境必须已经安装并启动Docker才可使用Docker方式安装，如未安装可参考</span>
+              <span>{{ $t('agent_download_AgentDownloadModal_ninDeBuShuHuan') }}</span>
               <ElLink type="primary" @click="dockerToInstall">{{
                 $t('agent_deploy_before_prepare_docker_install_link')
               }}</ElLink>
@@ -110,7 +110,7 @@
             <li>
               <div class="my-5 text-style">{{ $t('agent_deploy_start_install') }}</div>
             </li>
-            <li>2.复制下方命令并在tapdata目录下执行，其包含镜像的下载及运行，Tapdata Agent 的下载、自动部署及启动</li>
+            <li>{{ $t('agent_download_AgentDownloadModal_fuZhiXiaFangMing') }}</li>
             <li class="box title-text my-2">
               <span class="link-line">{{ dockerLink }}</span>
               <ElTooltip
@@ -130,7 +130,7 @@
                 </span>
               </ElTooltip>
             </li>
-            <li>3.等待命令执行完成，即可完成Tapdata Agent的安装和启动。</li>
+            <li>{{ $t('agent_download_AgentDownloadModal_dengDaiMingLingZhi') }}</li>
           </ul>
         </template>
         <div class="result-item mt-4 text-center">
@@ -138,14 +138,18 @@
             <VIcon class="v-icon animation-rotate color-success" size="24" color="rgb(61, 156, 64)"
               >loading-circle</VIcon
             >
-            <div class="mt-4 pb-10">部署状态检测中</div>
+            <div class="mt-4 pb-10">{{ $t('agent_download_AgentDownloadModal_buShuZhuangTaiJian') }}</div>
           </div>
           <div v-else class="finish-item">
             <VIcon class="v-icon color-success" size="24" color="rgb(61, 156, 64)">check</VIcon>
-            <div class="mt-4">恭喜您，完成部署！</div>
+            <div class="mt-4">{{ $t('agent_download_AgentDownloadModal_gongXiNinWanCheng') }}</div>
             <div class="flex justify-content-between mt-4">
-              <ElLink type="primary" @click="toConnection">开始创建连接</ElLink>
-              <ElLink type="primary" @click="toWorkbench">进入工作台</ElLink>
+              <ElLink type="primary" @click="toConnection">{{
+                $t('agent_download_AgentDownloadModal_kaiShiChuangJianLian')
+              }}</ElLink>
+              <ElLink type="primary" @click="toWorkbench">{{
+                $t('agent_download_AgentDownloadModal_jinRuGongZuoTai')
+              }}</ElLink>
             </div>
           </div>
         </div>

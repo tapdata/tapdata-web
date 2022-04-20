@@ -61,7 +61,9 @@
             <ElTooltip effect="dark" placement="top" :disabled="!scope.row.metric || !scope.row.metric.runningTaskNum">
               <div slot="content">
                 <template v-for="(item, index) in scope.row.metric.dataFlows">
-                  <div v-if="index < 3" :key="item.id">{{ $t('task_name') }}：{{ item.name }}</div>
+                  <div v-if="index < 3" :key="item.id">
+                    {{ $t('task_name') }}{{ $t('field_mapping_field_mapping_dialog_') }}{{ item.name }}
+                  </div>
                 </template>
                 <ElLink
                   v-if="scope.row.metric.runningTaskNum > 3"
@@ -269,6 +271,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import InlineInput from '../../components/InlineInput'
 import StatusTag from '../../components/StatusTag'
 import { INSTANCE_STATUS_MAP } from '../../const'
@@ -399,13 +403,13 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          label: '状态',
+          label: i18n.t('instance_Instance_zhuangTai'),
           key: 'status',
           type: 'select-inner',
           items: this.statusItems
         },
         {
-          placeholder: '按ID/实例名称搜索',
+          placeholder: i18n.t('instance_Instance_anIDShiLi'),
           key: 'keyword',
           type: 'input'
         }
@@ -749,7 +753,10 @@ export default {
             this.$t('agent_auto_upgrade_tip_upgrading') +
             (this.upgradingProgres(row) === undefined
               ? ''
-              : `，${this.$t('agent_auto_upgrade_tip_progress')}：${this.upgradingProgres(row)}%`)
+              : i18n.t('template')(i18n.t('instance_Instance_tHIST'), {
+                  val1: this.$t('agent_auto_upgrade_tip_progress'),
+                  val2: this.upgradingProgres(row)
+                }))
           break
         case 'fail':
         case 'error':

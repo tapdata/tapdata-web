@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import FieldMappingDialog from '@/components/field-mapping/field-mapping-dialog'
 export default {
   name: 'FieldMappings',
@@ -88,7 +90,7 @@ export default {
         })
         promise.catch(() => {
           this.loadingMetadata = false
-          this.$message.error('接口请求失败')
+          this.$message.error(i18n.t('field_mapping_main_jieKouQingQiuShi'))
         })
       }
     },

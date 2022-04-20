@@ -11,7 +11,7 @@
       <ElTooltip
         placement="top"
         manual
-        content="已复制"
+        :content="$t('components_RequestErrorMessage_yiFuZhi')"
         popper-class="copy-tooltip"
         :tabindex="10086"
         :value="showTooltip"

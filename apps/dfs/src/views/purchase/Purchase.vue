@@ -6,46 +6,48 @@
       <template v-if="pageType === 'form'">
         <ElForm inline-message ref="form" label-position="left" label-width="180px" :model="form">
           <div class="panel" v-if="$route.params.id && agentInfo">
-            <div class="panel-title">当前配置</div>
+            <div class="panel-title">{{ $t('purchase_Purchase_dangQianPeiZhi') }}</div>
             <ul class="info-list">
               <li class="info-item">
-                <span class="label">实例名称</span>
+                <span class="label">{{ $t('purchase_Purchase_shiLiMingCheng') }}</span>
                 <span class="value">{{ agentInfo.name }}</span>
               </li>
               <li class="info-item">
-                <span class="label">实例ID</span>
+                <span class="label">{{ $t('purchase_Purchase_shiLiID') }}</span>
                 <span class="value">{{ $route.params.id }}</span>
               </li>
               <li class="info-item">
-                <span class="label">地域及可用区</span>
+                <span class="label">{{ $t('purchase_Purchase_diYuJiKeYong') }}</span>
                 <span class="value">{{ agentInfo.regionFmt }} | {{ agentInfo.zoneFmt }}</span>
               </li>
               <li class="info-item">
-                <span class="label">实例规格</span>
+                <span class="label">{{ $t('purchase_Purchase_shiLiGuiGe') }}</span>
                 <span class="value">{{ specMap[agentInfo.spec.specType] }}</span>
               </li>
               <li class="info-item">
-                <span class="label">同步拓扑</span>
-                <span class="value">{{ topologyMap[agentInfo.spec.direction].split('（')[0] }}</span>
+                <span class="label">{{ $t('purchase_Purchase_tongBuTuoPu') }}</span>
+                <span class="value">{{
+                  topologyMap[agentInfo.spec.direction].split($t('purchase_Purchase_'))[0]
+                }}</span>
               </li>
               <li class="info-item">
-                <span class="label">计费模式</span>
+                <span class="label">{{ $t('purchase_Purchase_jiFeiMoShi') }}</span>
                 <span class="value">{{
                   chargeMap[agentInfo.orderInfo.chargingMode + ',' + agentInfo.orderInfo.periodType]
                 }}</span>
               </li>
               <li class="info-item">
-                <span class="label">订购时间</span>
+                <span class="label">{{ $t('purchase_Purchase_dingGouShiJian') }}</span>
                 <span class="value">{{ $moment(agentInfo.createAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
               </li>
               <li class="info-item" v-if="isInternet && agentInfo.orderInfo.periodType === 'month'">
-                <span class="label">到期时间</span>
+                <span class="label">{{ $t('purchase_Purchase_daoQiShiJian') }}</span>
                 <span class="value">{{ agentInfo.endTimeStr }}</span>
               </li>
             </ul>
           </div>
           <div class="panel" v-if="$route.name === 'Purchase'">
-            <ElFormItem label="计费方式">
+            <ElFormItem :label="$t('purchase_Purchase_jiFeiFangShi')">
               <div class="form-item">
                 <ElRadioGroup
                   class="radio-button"
@@ -59,24 +61,26 @@
                 <ElTooltip class="icon-tips" effect="dark" placement="right">
                   <div slot="content">
                     <template v-if="isInternet">
-                      <p>包月计费：属于预付费，即在新建实例时就需要支付“包月”费用。</p>
-                      <p>按量计费：属于后付费，即按小时扣费。从创建实例开始计费，到退订实例时结束计费。</p>
+                      <p>{{ $t('purchase_Purchase_baoYueJiFeiShu2') }}</p>
+                      <p>{{ $t('purchase_Purchase_anLiangJiFeiShu2') }}</p>
                     </template>
                     <template v-else>
                       <p>
-                        包月计费：属于后付费，按月支付。从创建实例开始计费，到退订实例时结束计费；支持“按月”自动续订。
+                        {{ $t('purchase_Purchase_baoYueJiFeiShu') }}
                       </p>
                       <p>
-                        按量计费：属于后付费，按小时扣费。从创建实例开始计费，到退订实例时结束计费；支持“按小时”自动续订。
+                        {{ $t('purchase_Purchase_anLiangJiFeiShu') }}
                       </p>
                     </template>
-                    <ElLink style="font-size: 12px" type="primary" @click="toHelp()">了解更多</ElLink>
+                    <ElLink style="font-size: 12px" type="primary" @click="toHelp()">{{
+                      $t('purchase_Purchase_liaoJieGengDuo')
+                    }}</ElLink>
                   </div>
                   <VIcon size="16">question-circle</VIcon>
                 </ElTooltip>
               </div>
             </ElFormItem>
-            <ElFormItem label="地域及可用区">
+            <ElFormItem :label="$t('purchase_Purchase_diYuJiKeYong')">
               <div class="form-item">
                 <ElSelect style="width: 240px" v-model="form.region" @change="regionChange()">
                   <ElOptionGroup v-for="group in regionOptions" :key="group.label" :label="group.label">
@@ -95,68 +99,74 @@
                 </ElRadioGroup>
                 <ElTooltip class="icon-tips" effect="dark" placement="right">
                   <div slot="content">
-                    <p style="max-width: 400px">
-                      可用区：同一地域内独立的物理区域，电力和网络均互相独立的物理数据中心，可以保障可用区间系统性故障的相互隔离
-                    </p>
+                    <p style="max-width: 400px">{{ $t('purchase_Purchase_keYongQuTongYi') }}</p>
                   </div>
                   <VIcon size="16">question-circle</VIcon>
                 </ElTooltip>
               </div>
-              <p class="form-item-tips">
-                不同地域的实例之间内网互不相通；选择靠近目标数据库的地域，可降低网络时延、提高目标数据库的访问速度。实例订购后不支持更换地域，请谨慎选择。
-              </p>
+              <p class="form-item-tips">{{ $t('purchase_Purchase_buTongDiYuDe') }}</p>
             </ElFormItem>
           </div>
           <div class="panel" v-if="$route.name !== 'Renew'">
-            <div class="panel-title mb-5" v-if="$route.name === 'Modify'">变更配置</div>
-            <ElFormItem label="同步拓扑">
+            <div class="panel-title mb-5" v-if="$route.name === 'Modify'">
+              {{ $t('purchase_Purchase_bianGengPeiZhi') }}
+            </div>
+            <ElFormItem :label="$t('purchase_Purchase_tongBuTuoPu')">
               <ElRadioGroup class="radio-button" :value="form.spec.direction" @input="handlerSyncChange">
                 <ElRadioButton v-for="opt in topologyOptions" :key="opt.value" :label="opt.value">
                   {{ opt.label }}
                 </ElRadioButton>
               </ElRadioGroup>
-              <p class="form-item-tips">双向同步仅支持 MongoDB to MongoDB 的同步</p>
+              <p class="form-item-tips">{{ $t('purchase_Purchase_shuangXiangTongBuJin') }}</p>
             </ElFormItem>
-            <ElFormItem label="实例规格">
+            <ElFormItem :label="$t('purchase_Purchase_shiLiGuiGe')">
               <ElRadioGroup class="radio-button" v-model="form.spec.specType">
                 <ElRadioButton v-for="opt in specOptions" :key="opt.value" :label="opt.value" :disabled="opt.disabled">
                   {{ opt.label }}
                 </ElRadioButton>
               </ElRadioGroup>
             </ElFormItem>
-            <ElFormItem required label="实例名称" prop="name" v-if="$route.name === 'Purchase'">
+            <ElFormItem
+              required
+              :label="$t('purchase_Purchase_shiLiMingCheng')"
+              prop="name"
+              v-if="$route.name === 'Purchase'"
+            >
               <ElInput style="width: 400px" v-model="form.name" maxlength="32" minlength="1"></ElInput>
-              <p class="form-item-tips">长度限制1～32个字符</p>
+              <p class="form-item-tips">{{ $t('purchase_Purchase_changDuXianZhiGe') }}</p>
             </ElFormItem>
           </div>
           <div class="panel" v-if="$route.name === 'Purchase'">
-            <ElFormItem label="订购时长" v-if="isInternet && form.periodType === 'month'">
+            <ElFormItem
+              :label="$t('purchase_Purchase_dingGouShiChang')"
+              v-if="isInternet && form.periodType === 'month'"
+            >
               <ElRadioGroup v-model="form.duration">
                 <template v-for="index in 12">
                   <ElRadioButton :key="index" :label="index" :class="{ 'second-line': index > 8 }"
-                    >{{ index }}个月</ElRadioButton
+                    >{{ index }}{{ $t('purchase_Purchase_geYue') }}</ElRadioButton
                   >
                   <br :key="'br' + index" v-if="index === 8" />
                 </template>
               </ElRadioGroup>
             </ElFormItem>
-            <ElFormItem label="订购实例数量">
-              <span style="font-size: 12px">1个</span>
+            <ElFormItem :label="$t('purchase_Purchase_dingGouShiLiShu')">
+              <span style="font-size: 12px">{{ $t('purchase_Purchase_ge') }}</span>
             </ElFormItem>
           </div>
           <div class="panel" v-if="$route.name === 'Renew'">
-            <div class="panel-title mb-5">续订配置</div>
-            <ElFormItem label="续订时长">
+            <div class="panel-title mb-5">{{ $t('purchase_Purchase_xuDingPeiZhi') }}</div>
+            <ElFormItem :label="$t('purchase_Purchase_xuDingShiChang')">
               <ElRadioGroup v-model="form.duration">
                 <template v-for="index in 12">
                   <ElRadioButton :key="index" :label="index" :class="{ 'second-line': index > 8 }"
-                    >{{ index }}个月</ElRadioButton
+                    >{{ index }}{{ $t('purchase_Purchase_geYue') }}</ElRadioButton
                   >
                   <br :key="'br' + index" v-if="index === 8" />
                 </template>
               </ElRadioGroup>
             </ElFormItem>
-            <ElFormItem label="续订后到期时间">
+            <ElFormItem :label="$t('purchase_Purchase_xuDingHouDaoQi')">
               <span style="font-size: 12px; color: #f04134">{{ invalidTimeAfterRenew }}</span>
             </ElFormItem>
           </div>
@@ -168,61 +178,66 @@
           <ElButton class="btn-back" size="mini" @click="pageType = 'form'">
             <VIcon>arrow-left</VIcon>
           </ElButton>
-          <ElLink style="font-size: 14px; margin-left: 3px" type="primary" @click="pageType = 'form'">
-            修改配置
-          </ElLink>
+          <ElLink style="font-size: 14px; margin-left: 3px" type="primary" @click="pageType = 'form'">{{
+            $t('purchase_Purchase_xiuGaiPeiZhi')
+          }}</ElLink>
         </div>
         <div class="panel">
           <ElTable ref="table" :data="[{}]">
             <ElTableColumn>
-              <div slot="header" style="padding-left: 20px">产品名称</div>
+              <div slot="header" style="padding-left: 20px">{{ $t('purchase_Purchase_chanPinMingCheng') }}</div>
               <template>
                 <div style="padding-left: 20px">
-                  数据库复制DRS
-                  <span v-if="$route.name === 'Modify'">规格变更</span><span v-if="$route.name === 'Renew'">续订</span>
+                  {{ $t('purchase_Purchase_shuJuKuFuZhi')
+                  }}<span v-if="$route.name === 'Modify'">{{ $t('purchase_Header_guiGeBianGeng') }}</span
+                  ><span v-if="$route.name === 'Renew'">{{ $t('purchase_Header_xuDing') }}</span>
                 </div>
               </template>
             </ElTableColumn>
-            <ElTableColumn label="配置信息" min-width="150px">
+            <ElTableColumn :label="$t('purchase_Purchase_peiZhiXinXi')" min-width="150px">
               <template>
                 <div class="props-item">
-                  <span class="label">地域及可用区</span>
+                  <span class="label">{{ $t('purchase_Purchase_diYuJiKeYong') }}</span>
                   <span class="value">{{ regionMap[form.region] }} | {{ zoneMap[form.zone] }}</span>
                 </div>
                 <div class="props-item">
-                  <span class="label">同步拓扑</span>
+                  <span class="label">{{ $t('purchase_Purchase_tongBuTuoPu') }}</span>
                   <span class="value">
-                    {{ topologyMap[form.spec.direction].split('（')[0] }}
+                    {{ topologyMap[form.spec.direction].split($t('purchase_Purchase_'))[0] }}
                   </span>
                 </div>
                 <div class="props-item">
-                  <span class="label">实例规格</span>
+                  <span class="label">{{ $t('purchase_Purchase_shiLiGuiGe') }}</span>
                   <span class="value">
                     {{ specMap[form.spec.specType] }}
                   </span>
                 </div>
                 <div class="props-item">
-                  <span class="label">实例名称</span>
+                  <span class="label">{{ $t('purchase_Purchase_shiLiMingCheng') }}</span>
                   <span class="value">{{ form.name }}</span>
                 </div>
               </template>
             </ElTableColumn>
-            <ElTableColumn label="实例数量">
+            <ElTableColumn :label="$t('purchase_Purchase_shiLiShuLiang')">
               <template>1</template>
             </ElTableColumn>
-            <ElTableColumn label="计费模式">
+            <ElTableColumn :label="$t('purchase_Purchase_jiFeiMoShi')">
               <template>{{ chargeMap[form.chargingMode + ',' + form.periodType] }}</template>
             </ElTableColumn>
             <ElTableColumn
-              label="时长"
-              v-if="user.customerType !== '政企集团客户' && form.periodType === 'month' && $route.name !== 'Modify'"
+              :label="$t('purchase_Purchase_shiChang')"
+              v-if="
+                user.customerType !== $t('purchase_Purchase_zhengQiJiTuanKe') &&
+                form.periodType === 'month' &&
+                $route.name !== 'Modify'
+              "
             >
-              <template>{{ form.duration }}个月</template>
+              <template>{{ form.duration }}{{ $t('purchase_Purchase_geYue') }}</template>
             </ElTableColumn>
-            <ElTableColumn label="单价">
+            <ElTableColumn :label="$t('purchase_Purchase_danJia')">
               <template>
                 <div style="color: #f04134">
-                  <span>￥{{ price }}</span>
+                  <span>{{ $t('purchase_Purchase_2') }}{{ price }}</span>
                   <span> {{ unit }}</span>
                 </div>
               </template>
@@ -231,36 +246,44 @@
         </div>
         <div class="panel confirm-footer">
           <div>
-            <span>费用合计</span>
-            <span class="price">￥{{ price }}</span>
-            <span v-show="form.chargingMode === '2'">/小时</span>
+            <span>{{ $t('purchase_Purchase_feiYongHeJi') }}</span>
+            <span class="price">{{ $t('purchase_Purchase_2') }}{{ price }}</span>
+            <span v-show="form.chargingMode === '2'">{{ $t('purchase_Purchase_xiaoShi') }}</span>
           </div>
           <div class="agreement">
-            <ElCheckbox style="vertical-align: middle" v-model="agree"> 我已阅读并同意 </ElCheckbox>
+            <ElCheckbox style="vertical-align: middle" v-model="agree">{{
+              $t('purchase_Purchase_woYiYueDuBing')
+            }}</ElCheckbox>
             <!-- <ElLink size="mini" type="primary" @click="toDoc()">《移动云产品销售协议》</ElLink> -->
           </div>
-          <ElButton style="margin-top: 10px" type="primary" @click="submit()"> 确认购买 </ElButton>
+          <ElButton style="margin-top: 10px" type="primary" @click="submit()">{{
+            $t('purchase_Purchase_queRenGouMai')
+          }}</ElButton>
         </div>
       </template>
       <div class="footer" v-if="pageType === 'form'">
         <div class="info">
           <div>
-            <span>费用合计</span>
-            <span class="price">￥{{ price }}</span>
+            <span>{{ $t('purchase_Purchase_feiYongHeJi') }}</span>
+            <span class="price">{{ $t('purchase_Purchase_2') }}{{ price }}</span>
             <span> {{ unit }}</span>
           </div>
           <div class="price-tips">
-            <span>参考价格，具体扣费请以账单为准。</span>
-            <ElLink style="font-size: 12px" type="primary" @click="toChargeDetails()">了解计费详情</ElLink>
+            <span>{{ $t('purchase_Purchase_canKaoJiaGeJu') }}</span>
+            <ElLink style="font-size: 12px" type="primary" @click="toChargeDetails()">{{
+              $t('purchase_Purchase_liaoJieJiFeiXiang')
+            }}</ElLink>
           </div>
         </div>
-        <ElButton type="primary" @click="toConfirm()">确认订单</ElButton>
+        <ElButton type="primary" @click="toConfirm()">{{ $t('purchase_Purchase_queRenDingDan') }}</ElButton>
       </div>
     </div>
   </section>
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import Header from './Header'
 import { TOPOLOGY_MAP, SPEC_MAP, CHARGE_MAP } from '../../const'
 import { toDecimal2 } from '../../util'
@@ -314,7 +337,7 @@ export default {
       return toDecimal2(price * this.form.duration)
     },
     unit() {
-      return this.form.chargingMode === '2' ? '/小时' : '/月'
+      return this.form.chargingMode === '2' ? i18n.t('purchase_Purchase_xiaoShi') : i18n.t('purchase_Purchase_yue')
     },
     user() {
       return window.__USER_INFO__ || {}
@@ -324,7 +347,7 @@ export default {
       for (const key in TOPOLOGY_MAP) {
         const value = TOPOLOGY_MAP[key]
         arr.push({
-          label: value.split('（')[0],
+          label: value.split(i18n.t('purchase_Purchase_'))[0],
           value: key
         })
       }
@@ -507,7 +530,11 @@ export default {
           chargingMode: form.chargingMode,
           periodType: form.periodType
         })
-        return this.productMap[key.replace('（同区域）', '') + '（同区域）'] || {}
+        return (
+          this.productMap[
+            key.replace(i18n.t('purchase_Purchase_tongQuYu'), '') + i18n.t('purchase_Purchase_tongQuYu')
+          ] || {}
+        )
       }
       return {}
     },
@@ -531,7 +558,7 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           if (this.$route.name === 'Modify' && JSON.stringify(this.form.spec) === JSON.stringify(this.agentInfo.spec)) {
-            return this.$alert('该实例规格与所选规格一致', {
+            return this.$alert(i18n.t('purchase_Purchase_gaiShiLiGuiGe'), {
               type: 'warning',
               customClass: 'el-message-box--alert'
             })
@@ -558,7 +585,7 @@ export default {
         this.form.serviceId = product.serviceId
         this.form.groupId = product.groupId
         this.form.measureId = product.measureId
-        let successTips = '您的资源已经开始创建，预计需要几分钟时间，您可以到实例列表查看，并进行下一步操作。'
+        let successTips = i18n.t('purchase_Purchase_ninDeZiYuanYi')
         this[method[action]]()
           .then(data => {
             if (!data.products || !data.products[0] || !data.products[0].orderExtId) {
@@ -578,25 +605,25 @@ export default {
                 orderId
               }
               if (data.payMode === 'REVIEW_POSTPAID') {
-                result.successTitle = '审批中'
-                result.tips = '您的订单正在审批中，请前往订单中心查看审批状态'
+                result.successTitle = i18n.t('purchase_Purchase_shenPiZhong')
+                result.tips = i18n.t('purchase_Purchase_ninDeDingDanZheng')
               }
               this.toResult(result)
             }
           })
           .catch(err => {
-            let message = err.data ? err.data.message : '请求失败'
+            let message = err.data ? err.data.message : i18n.t('purchase_Purchase_qingQiuShiBai')
             this.toResult({
               type: 'fail',
               action: action,
-              tips: '失败原因：' + message
+              tips: i18n.t('purchase_Purchase_shiBaiYuanYin') + message
             })
           })
           .finally(() => {
             loading.close()
           })
       } else {
-        this.$alert('请先阅读并勾选服务协议', {
+        this.$alert(i18n.t('purchase_Purchase_qingXianYueDuBing'), {
           type: 'warning',
           customClass: 'el-message-box--alert'
         })

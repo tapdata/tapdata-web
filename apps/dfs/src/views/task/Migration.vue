@@ -6,7 +6,9 @@
         <FilterBar v-model="searchParams" :items="filterItems" @search="search" @fetch="fetch"></FilterBar>
       </div>
       <div class="migration-operation-right">
-        <VButton type="primary" :loading="createLoading" @click="createTask"><span>创建任务</span></VButton>
+        <VButton type="primary" :loading="createLoading" @click="createTask"
+          ><span>{{ $t('task_Migration_chuangJianRenWu') }}</span></VButton
+        >
       </div>
     </div>
     <ElTable
@@ -15,13 +17,13 @@
       :data="list"
       @sort-change="sortChange"
     >
-      <ElTableColumn label="任务名称" prop="name" min-width="200">
+      <ElTableColumn :label="$t('task_Migration_renWuMingCheng')" prop="name" min-width="200">
         <template v-slot="scope">
           <ElLink type="primary" @click="toDetails(scope.row)">{{ scope.row.name }}</ElLink>
         </template>
       </ElTableColumn>
-      <ElTableColumn label="任务类型" prop="typeText"></ElTableColumn>
-      <ElTableColumn label="所属agent" prop="belongAgent" min-width="200">
+      <ElTableColumn :label="$t('task_Migration_renWuLeiXing')" prop="typeText"></ElTableColumn>
+      <ElTableColumn :label="$t('task_Migration_suoShuAGE')" prop="belongAgent" min-width="200">
         <template slot-scope="scope">
           <ElLink v-if="scope.row.belongAgent" type="primary" @click="toAgent(scope.row)">{{
             scope.row.belongAgent
@@ -106,12 +108,14 @@
               <i class="el-icon-more"></i>
             </ElButton>
             <ElDropdownMenu slot="dropdown" class="text-nowrap">
-              <ElDropdownItem command="copy">复制</ElDropdownItem>
+              <ElDropdownItem command="copy">{{ $t('connection_List_fuZhi') }}</ElDropdownItem>
               <ElDropdownItem command="resetAll" :disabled="!statusBtMap['reset'][scope.row.status]">
-                重置
+                {{ $t('task_Migration_zhongZhi') }}
               </ElDropdownItem>
               <ElDropdownItem command="del" :disabled="!statusBtMap['delete'][scope.row.status]">
-                <span :class="{ 'color-danger': statusBtMap['delete'][scope.row.status] }">删除</span>
+                <span :class="{ 'color-danger': statusBtMap['delete'][scope.row.status] }">{{
+                  $t('connection_List_shanChu')
+                }}</span>
               </ElDropdownItem>
             </ElDropdownMenu>
           </ElDropdown>
@@ -121,7 +125,7 @@
         <VIcon size="120">no-data-color</VIcon>
         <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
           <span>{{ $t('gl_no_data') }}</span>
-          <ElLink type="primary" class="fs-7" @click="createTask">创建任务</ElLink>
+          <ElLink type="primary" class="fs-7" @click="createTask">{{ $t('task_Migration_chuangJianRenWu') }}</ElLink>
         </div>
       </div>
       <div v-else class="migration-table__empty" slot="empty">
@@ -144,19 +148,19 @@
       @current-change="fetch"
     >
     </ElPagination>
-    <ElDialog title="选择任务类型" :visible.sync="createVisible" width="416px" top="30vh">
+    <ElDialog :title="$t('task_Migration_xuanZeRenWuLei')" :visible.sync="createVisible" width="416px" top="30vh">
       <div class="select-type flex justify-content-between">
         <div class="select-type__item" @click="createMigrate">
           <div>
-            <div>数据库迁移</div>
-            <div class="mt-4">对数据库进行跨库复制</div>
+            <div>{{ $t('task_Migration_shuJuKuQianYi') }}</div>
+            <div class="mt-4">{{ $t('task_Migration_duiShuJuKuJin') }}</div>
           </div>
           <VIcon size="30" class="v-icon">right-fill</VIcon>
         </div>
         <div class="select-type__item data-table ml-10" @click="createSync">
           <div>
-            <div>数据表同步</div>
-            <div class="mt-4 font-color-sub">抽取源端数据并计算转换</div>
+            <div>{{ $t('task_Migration_shuJuBiaoTongBu') }}</div>
+            <div class="mt-4 font-color-sub">{{ $t('task_Migration_chouQuYuanDuanShu') }}</div>
           </div>
           <VIcon size="30" class="v-icon">right-fill</VIcon>
         </div>
@@ -242,6 +246,8 @@
 }
 </style>
 <script>
+import i18n from '@/i18n'
+
 import { TASK_STATUS_MAP } from '../../const'
 import StatusTag from '../../components/StatusTag'
 import VIcon from '@/components/VIcon'
@@ -262,7 +268,10 @@ export default {
         keyword: '',
         type: ''
       },
-      typeMap: { 'cluster-clone': '数据库迁移', custom: '数据表同步' },
+      typeMap: {
+        'cluster-clone': i18n.t('task_Migration_shuJuKuQianYi'),
+        custom: i18n.t('task_Migration_shuJuBiaoTongBu')
+      },
       syncTypeMap: {
         initial_sync: this.$t('task_initial_sync'),
         cdc: this.$t('task_cdc'),
@@ -326,11 +335,11 @@ export default {
     filterTypeMap() {
       return [
         {
-          label: '数据库迁移',
+          label: i18n.t('task_Migration_shuJuKuQianYi'),
           value: 'cluster-clone'
         },
         {
-          label: '数据表同步',
+          label: i18n.t('task_Migration_shuJuBiaoTongBu'),
           value: 'custom'
         }
       ]
@@ -391,7 +400,7 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          label: '任务状态',
+          label: i18n.t('task_Migration_renWuZhuangTai'),
           key: 'status',
           type: 'select-inner',
           items: this.filterStatusOptions,
@@ -404,13 +413,13 @@ export default {
         //   items: this.filterTypeMap
         // },
         {
-          label: '同步类型',
+          label: i18n.t('task_Migration_tongBuLeiXing'),
           key: 'syncType',
           type: 'select-inner',
           items: this.filterSyncTypeMap
         },
         {
-          label: 'Agent 名称',
+          label: i18n.t('task_Migration_aGENT'),
           key: 'agentId',
           type: 'select-inner',
           // url: 'api/tcm/agent',
@@ -445,7 +454,7 @@ export default {
           // }
         },
         {
-          placeholder: '名称',
+          placeholder: i18n.t('task_Migration_mingCheng'),
           key: 'keyword',
           type: 'input'
         }
@@ -748,13 +757,9 @@ export default {
     run(ids, row, resetLoading) {
       const { setting } = row
       if (setting.isSchedule && setting.scheduleTime) {
-        this.$confirm(
-          '该任务已设置了计划运行时间，手动启动会使计划运行时间失效，是否确认继续启动？',
-          '是否启动该任务？',
-          {
-            type: 'warning'
-          }
-        ).then(resFlag => {
+        this.$confirm(i18n.t('task_Migration_gaiRenWuYiShe'), i18n.t('task_Migration_shiFouQiDongGai'), {
+          type: 'warning'
+        }).then(resFlag => {
           if (resFlag) {
             this.runTask(ids, row, resetLoading)
           }

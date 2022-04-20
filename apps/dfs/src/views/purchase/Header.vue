@@ -1,19 +1,24 @@
 <template>
   <div>
     <div class="purcahse-header">
-      <span>
-        数据库复制DRS&nbsp;
-        <span>{{ operationMap[action] }}</span>
+      <span
+        >{{ $t('purchase_Header_shuJuKuFuZhi') }}<span>{{ operationMap[action] }}</span>
       </span>
       <ul class="links">
         <li>
-          <ElLink class="slight" style="font-size: 12px" @click="toHistory()">购买历史</ElLink>
+          <ElLink class="slight" style="font-size: 12px" @click="toHistory()">{{
+            $t('purchase_Header_gouMaiLiShi')
+          }}</ElLink>
         </li>
         <li>
-          <ElLink class="slight" style="font-size: 12px" @click="toProduct()">查看产品详情</ElLink>
+          <ElLink class="slight" style="font-size: 12px" @click="toProduct()">{{
+            $t('purchase_Header_zhaKanChanPinXiang')
+          }}</ElLink>
         </li>
         <li>
-          <ElLink class="slight" style="font-size: 12px" @click="toHelp()">帮助文档</ElLink>
+          <ElLink class="slight" style="font-size: 12px" @click="toHelp()">{{
+            $t('purchase_Header_bangZhuWenDang')
+          }}</ElLink>
         </li>
       </ul>
     </div>
@@ -21,6 +26,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 export default {
   props: {
     action: String
@@ -28,9 +35,9 @@ export default {
   data() {
     return {
       operationMap: {
-        Purchase: '实例订购',
-        Renew: '续订',
-        Modify: '规格变更'
+        Purchase: i18n.t('purchase_Header_shiLiDingGou'),
+        Renew: i18n.t('purchase_Header_xuDing'),
+        Modify: i18n.t('purchase_Header_guiGeBianGeng')
       }
     }
   },

@@ -3,7 +3,7 @@
   <ElDialog
     width="300px"
     append-to-body
-    title="请绑定手机号"
+    :title="$t('components_BindPhone_qingBangDingShouJi')"
     :close-on-click-modal="!!$props.closeOnClickModal"
     :close-on-press-escape="!!$props.closeOnPressEscape"
     :show-close="!!$props.showClose"
@@ -11,11 +11,15 @@
     custom-class="bind-phone-dialog"
   >
     <ElForm :model="phoneForm" :label-width="showLabel ? '120px' : null" @submit.native.prevent>
-      <ElFormItem prop="current" :label="showLabel ? '当前手机：' : ''">
-        <ElInput v-model="phoneForm.current" placeholder="请输入手机" maxlength="50"></ElInput>
+      <ElFormItem prop="current" :label="showLabel ? $t('user_Center_dangQianShouJi') : ''">
+        <ElInput
+          v-model="phoneForm.current"
+          :placeholder="$t('components_BindPhone_qingShuRuShouJi')"
+          maxlength="50"
+        ></ElInput>
       </ElFormItem>
-      <ElFormItem prop="newPassword" :label="showLabel ? '验证码：' : ''" class="inline-form-item">
-        <ElInput v-model="phoneForm.oldCode" placeholder="请输入手机验证码" maxlength="50"></ElInput>
+      <ElFormItem prop="newPassword" :label="showLabel ? $t('user_Center_yanZhengMa') : ''" class="inline-form-item">
+        <ElInput v-model="phoneForm.oldCode" :placeholder="$t('user_Center_qingShuRuShouJi')" maxlength="50"></ElInput>
         <VerificationCode
           :request-options="getCodeOptions(phoneForm.current, 'BIND_PHONE')"
           :disabled="!phoneForm.current"
@@ -40,6 +44,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import VerificationCode from './VerificationCode'
 import { getCodeOptions } from '../util'
 
@@ -81,7 +87,7 @@ export default {
           code: phoneForm.oldCode
         })
         .then(() => {
-          this.$message.success('绑定手机成功')
+          this.$message.success(i18n.t('user_Center_bangDingShouJiCheng'))
           this.$emit('success', phoneForm.current)
           this.dialogVisible = false
         })

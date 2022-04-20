@@ -170,6 +170,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import { deepCopy, uniqueArr } from '@/util'
 import { Select } from 'element-ui'
 import { RecycleScroller } from 'vue-virtual-scroller'
@@ -229,7 +231,7 @@ export default {
     },
     lastPageText: {
       type: String,
-      default: '没有更多数据'
+      default: i18n.t('components_SelectList_meiYouGengDuoShu')
     },
     menuMinWidth: {
       type: String,

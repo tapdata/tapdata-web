@@ -5,25 +5,25 @@
     <div class="body">
       <div v-if="$route.path === '/500'" class="box">
         <img class="img" src="../assets/image/500.png" />
-        <p class="text">{{ $route.query.message || '服务器内部错误！' }}</p>
-        <ElButton class="mt-5" type="primary" @click="toHome()">返回首页</ElButton>
+        <p class="text">{{ $route.query.message || $t('views_Error_fuWuQiNeiBu') }}</p>
+        <ElButton class="mt-5" type="primary" @click="toHome()">{{ $t('views_Error_fanHuiShouYe') }}</ElButton>
       </div>
       <div v-if="$route.path === '/invalid'" class="box">
         <img class="img" src="../assets/image/invalid.png" />
-        <p class="text">账户暂无权限！您的账户权限不足，无法订购产品，请联系客户经理或客服人员：4001100868</p>
-        <ElButton class="mt-5" type="primary" @click="toHome()">返回首页</ElButton>
+        <p class="text">{{ $t('views_Error_zhangHuZanWuQuan') }}</p>
+        <ElButton class="mt-5" type="primary" @click="toHome()">{{ $t('views_Error_fanHuiShouYe') }}</ElButton>
       </div>
       <div v-if="$route.path === '/freeze'" class="box">
         <img class="img" src="../assets/image/freeze.png" />
-        <p class="label">账户已被冻结</p>
-        <p class="text">您的账户已被暂停，无法订购产品，请及时充值或联系客户经理。</p>
-        <ElButton class="mt-5" type="primary" @click="toHome()">返回首页</ElButton>
+        <p class="label">{{ $t('views_Error_zhangHuYiBeiDong') }}</p>
+        <p class="text">{{ $t('views_Error_ninDeZhangHuYi') }}</p>
+        <ElButton class="mt-5" type="primary" @click="toHome()">{{ $t('views_Error_fanHuiShouYe') }}</ElButton>
       </div>
       <div v-if="$route.path === '/off'" class="box">
         <img class="img" src="../assets/image/off_shelf.png" />
-        <p class="label">产品已下架</p>
-        <p class="text">非常抱歉，产品已下架</p>
-        <ElButton class="mt-5" type="primary" @click="toHome()">返回首页</ElButton>
+        <p class="label">{{ $t('views_Error_chanPinYiXiaJia') }}</p>
+        <p class="text">{{ $t('views_Error_feiChangBaoQianChan') }}</p>
+        <ElButton class="mt-5" type="primary" @click="toHome()">{{ $t('views_Error_fanHuiShouYe') }}</ElButton>
       </div>
     </div>
   </section>

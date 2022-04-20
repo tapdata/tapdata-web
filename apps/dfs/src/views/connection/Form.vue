@@ -150,6 +150,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import { DEFAULT_MODEL } from './const'
 import formConfig from './config'
 import GitBook from './GitBook'
@@ -292,12 +294,12 @@ export default {
                 if (!value || !value.trim()) {
                   if (this.databaseType === 'hazelcast_cloud_cluster') {
                     callback(new Error(this.$t('connection_form_hazecast_no_name')))
-                  } else callback(new Error('连接名称不能为空'))
+                  } else callback(new Error(i18n.t('connection_Form_lianJieMingChengBu')))
                 } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(value)) {
                   if (this.databaseType === 'hazelcast_cloud_cluster') {
                     callback(new Error(this.$t('connection_form_hazecast_name_rules')))
                   } else {
-                    callback(new Error('名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'))
+                    callback(new Error(i18n.t('connection_Form_mingChengGuiZeZhong')))
                   }
                 } else if (
                   value &&
@@ -320,7 +322,7 @@ export default {
                     .get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
                     .then(({ items }) => {
                       if (items && items.length !== 0) {
-                        callback(new Error('名称已存在'))
+                        callback(new Error(i18n.t('connection_Form_mingChengYiCunZai')))
                       } else callback()
                     })
                 } else {

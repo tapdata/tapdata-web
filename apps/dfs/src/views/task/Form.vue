@@ -51,7 +51,10 @@
                 @value-change="formChangeSetting"
               >
                 <template slot="syncPoints">
-                  <ElRow> {{ $t('connection_form_data_source') }}：{{ dataSourceModel.source_connectionName }} </ElRow>
+                  <ElRow>
+                    {{ $t('connection_form_data_source') }}{{ $t('field_mapping_field_mapping_dialog_')
+                    }}{{ dataSourceModel.source_connectionName }}
+                  </ElRow>
                   <ElRow>
                     <ElCol :span="8" style="margin-right: 10px">
                       <ElSelect v-model="settingModel.syncPoints[0].type" :placeholder="$t('gl_placeholder_select')">
@@ -1135,8 +1138,12 @@ export default {
         case 'setting': {
           this.getSupportTwoWay() // 进入设置页面再判断
           if (
-            !['mysql', 'aliyun_mysql', 'tencent_mysql', 'polardb_mysql'].includes(this.dataSourceModel['source_databaseType']) ||
-            !['mysql', 'aliyun_mysql', 'tencent_mysql', 'polardb_mysql'].includes(this.dataSourceModel['target_databaseType'])
+            !['mysql', 'aliyun_mysql', 'tencent_mysql', 'polardb_mysql'].includes(
+              this.dataSourceModel['source_databaseType']
+            ) ||
+            !['mysql', 'aliyun_mysql', 'tencent_mysql', 'polardb_mysql'].includes(
+              this.dataSourceModel['target_databaseType']
+            )
           ) {
             this.changeConfig([], 'setting_isOpenAutoDDL')
             this.changeConfig([], 'setting_twoWay')

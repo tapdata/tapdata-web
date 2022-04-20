@@ -47,6 +47,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/filter-bar'
 import TableList from '@/components/TableList'
@@ -170,47 +172,95 @@ export default {
           desc: this.$t('operation_log_difference_inspect_start_tip')
         },
         // 通知
-        { label: '已读全部通知', value: 'message&&readAll', desc: '设置全部通知为已读' },
-        { label: '删除全部通知', value: 'message&&deleteAll', desc: '删除了全部通知' },
-        { label: '标记通知为已读', value: 'message&&read', desc: '将选中的通知全部标记为已读' },
-        { label: '删除通知', value: 'message&&delete', desc: '将选中的通知全部删除' },
-        { label: '修改通知设置', value: 'userNotification&&update', desc: '修改了系统通知设置' },
+        {
+          label: i18n.t('operation_log_List_yiDuQuanBuTong'),
+          value: 'message&&readAll',
+          desc: i18n.t('operation_log_List_sheZhiQuanBuTong')
+        },
+        {
+          label: i18n.t('operation_log_List_shanChuQuanBuTong'),
+          value: 'message&&deleteAll',
+          desc: i18n.t('operation_log_List_shanChuLeQuanBu')
+        },
+        {
+          label: i18n.t('operation_log_List_biaoJiTongZhiWei'),
+          value: 'message&&read',
+          desc: i18n.t('operation_log_List_jiangXuanZhongDeTong2')
+        },
+        {
+          label: i18n.t('operation_log_List_shanChuTongZhi'),
+          value: 'message&&delete',
+          desc: i18n.t('operation_log_List_jiangXuanZhongDeTong')
+        },
+        {
+          label: i18n.t('operation_log_List_xiuGaiTongZhiShe'),
+          value: 'userNotification&&update',
+          desc: i18n.t('operation_log_List_xiuGaiLeXiTong')
+        },
         // 用户中心
         // { label: '修改昵称', value: 'user&&update_nickname', desc: '修改了昵称' },
-        { label: '修改用户信息', value: 'user&&update', desc: '修改了用户信息' },
-        { label: '绑定手机号', value: 'user&&bind_phone', desc: '绑定了手机号' },
-        { label: '修改手机号', value: 'user&&update_phone', desc: '修改了手机号' },
-        { label: '绑定邮箱', value: 'user&&bind_email', desc: '绑定了邮箱' },
-        { label: '修改邮箱', value: 'user&&update_email', desc: '修改了邮箱' },
-        { label: '修改密码', value: 'user&&reset_password', desc: '修改了密码' },
+        {
+          label: i18n.t('operation_log_List_xiuGaiYongHuXin'),
+          value: 'user&&update',
+          desc: i18n.t('operation_log_List_xiuGaiLeYongHu')
+        },
+        {
+          label: i18n.t('operation_log_List_bangDingShouJiHao'),
+          value: 'user&&bind_phone',
+          desc: i18n.t('operation_log_List_bangDingLeShouJi')
+        },
+        {
+          label: i18n.t('operation_log_List_xiuGaiShouJiHao'),
+          value: 'user&&update_phone',
+          desc: i18n.t('operation_log_List_xiuGaiLeShouJi')
+        },
+        {
+          label: i18n.t('operation_log_List_bangDingYouXiang'),
+          value: 'user&&bind_email',
+          desc: i18n.t('operation_log_List_bangDingLeYouXiang')
+        },
+        {
+          label: i18n.t('operation_log_List_xiuGaiYouXiang'),
+          value: 'user&&update_email',
+          desc: i18n.t('operation_log_List_xiuGaiLeYouXiang')
+        },
+        {
+          label: i18n.t('operation_log_List_xiuGaiMiMa'),
+          value: 'user&&reset_password',
+          desc: i18n.t('operation_log_List_xiuGaiLeMiMa')
+        },
         // { label: '修改头像', value: 'user&&update_avatar', desc: '修改了头像' },
-        { label: '修改企业信息', value: 'customer&&update', desc: '修改了企业信息' }
+        {
+          label: i18n.t('operation_log_List_xiuGaiQiYeXin'),
+          value: 'customer&&update',
+          desc: i18n.t('operation_log_List_xiuGaiLeQiYe')
+        }
       ],
       columns: [
         {
-          label: '用户名',
+          label: i18n.t('operation_log_List_yongHuMing'),
           prop: 'username',
           minWidth: 160
         },
         {
-          label: '操作时间',
+          label: i18n.t('operation_log_List_caoZuoShiJian'),
           prop: 'createTime',
           dataType: 'time',
           width: 180
         },
         {
-          label: '操作对象',
+          label: i18n.t('operation_log_List_caoZuoDuiXiang'),
           prop: 'parameter1',
           width: 350
         },
         {
-          label: '操作类型',
+          label: i18n.t('operation_log_List_caoZuoLeiXing'),
           prop: 'operationType',
           slotName: 'operationType',
           width: 120
         },
         {
-          label: '操作描述',
+          label: i18n.t('operation_log_List_caoZuoMiaoShu'),
           prop: 'desc',
           slotName: 'desc',
           minWidth: 300
@@ -265,23 +315,23 @@ export default {
     getSearchItems() {
       this.filterItems = [
         {
-          label: '操作类型',
+          label: i18n.t('operation_log_List_caoZuoLeiXing'),
           key: 'operationType',
           type: 'select-inner',
           items: this.operationTypeOptions
         },
         {
-          label: '操作时间',
+          label: i18n.t('operation_log_List_caoZuoShiJian'),
           key: 'start,end',
           type: 'datetimerange'
         },
         {
-          placeholder: '操作对象',
+          placeholder: i18n.t('operation_log_List_caoZuoDuiXiang'),
           key: 'parameter1',
           type: 'input'
         },
         {
-          placeholder: '用户名称',
+          placeholder: i18n.t('operation_log_List_yongHuMingCheng'),
           key: 'username',
           type: 'input'
         }

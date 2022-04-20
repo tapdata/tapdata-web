@@ -44,7 +44,7 @@
       <span class="mx-2 text-break" :class="{ ellipsis: !expandErrorMessage }" style="flex: 1">{{ errorMsg }}</span>
       <span>
         <ElLink type="danger" @click="expandErrorMessage = !expandErrorMessage">{{
-          expandErrorMessage ? '收起' : '展开'
+          expandErrorMessage ? $t('verify_Details_shouQi') : $t('verify_Details_zhanKai')
         }}</ElLink>
         <VIcon class="ml-2 color-info" size="12" @click="errorMsg = ''">close</VIcon>
       </span>

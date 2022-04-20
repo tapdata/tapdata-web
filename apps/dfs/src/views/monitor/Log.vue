@@ -7,7 +7,7 @@
           v-model="keyword"
           clearable
           prefix-icon="el-icon-search"
-          placeholder="请输入日志内容"
+          :placeholder="$t('monitor_Log_qingShuRuRiZhi')"
           @input="search"
         ></ElInput>
         <ElCheckboxGroup v-model="checkList" :min="1" class="inline-block ml-4" @change="changeType">
@@ -16,7 +16,7 @@
           <ElCheckbox label="ERROR">ERROR</ElCheckbox>
         </ElCheckboxGroup>
       </div>
-      <ElTooltip effect="dark" content="下载任务日志" placement="bottom">
+      <ElTooltip effect="dark" :content="$t('monitor_Log_xiaZaiRenWuRi')" placement="bottom">
         <VIcon class="color-primary mr-6" @click="openDownload">download</VIcon>
       </ElTooltip>
     </div>
@@ -24,7 +24,9 @@
       <div v-show="!noMore && loading" class="pb-4 text-center fs-5">
         <i class="el-icon-loading"></i>
       </div>
-      <div v-show="logs && logs.length && noMore" class="font-color-sub text-center pb-4">没有更多了</div>
+      <div v-show="logs && logs.length && noMore" class="font-color-sub text-center pb-4">
+        {{ $t('monitor_Log_meiYouGengDuoLe') }}
+      </div>
       <ul v-if="logs">
         <li class="log-item px-6" v-for="log in logs" :key="log.id">
           [<span class="fw-bold" :class="log.color" v-html="log.level"></span>]&nbsp; <span>{{ log.time }}</span
@@ -35,12 +37,12 @@
       <div v-if="logs && !logs.length" class="monitor-log__empty text-center">
         <VIcon size="120">no-data-color</VIcon>
         <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-          <span>暂无日志</span>
+          <span>{{ $t('monitor_Log_zanWuRiZhi') }}</span>
         </div>
       </div>
     </div>
     <ElDialog
-      title="下载任务日志"
+      :title="$t('monitor_Log_xiaZaiRenWuRi')"
       :visible.sync="downloadForm.visible"
       width="500px"
       top="30vh"
@@ -48,7 +50,7 @@
       :close-on-click-modal="false"
     >
       <div class="flex align-items-center pl-6">
-        <div class="mr-4">选择日志范围</div>
+        <div class="mr-4">{{ $t('monitor_Log_xuanZeRiZhiFan') }}</div>
         <ElSelect v-model="downloadForm.select" size="mini">
           <ElOption
             v-for="(item, index) in downloadForm.items"
@@ -59,7 +61,9 @@
         </ElSelect>
       </div>
       <div class="text-center mt-10">
-        <VButton type="primary" auto-loading @click="downloadNow(arguments[0])">立即下载</VButton>
+        <VButton type="primary" auto-loading @click="downloadNow(arguments[0])">{{
+          $t('monitor_Log_liJiXiaZai')
+        }}</VButton>
       </div>
     </ElDialog>
   </div>
@@ -88,6 +92,8 @@
 }
 </style>
 <script>
+import i18n from '@/i18n'
+
 import VIcon from '@/components/VIcon'
 import { downloadBlob } from '@/util'
 
@@ -109,19 +115,19 @@ export default {
         select: 6,
         items: [
           {
-            label: '最近6个小时',
+            label: i18n.t('monitor_Log_zuiJinGeXiaoShi'),
             value: 6
           },
           {
-            label: '最近1天',
+            label: i18n.t('monitor_Log_zuiJinTian3'),
             value: 24
           },
           {
-            label: '最近3天',
+            label: i18n.t('monitor_Log_zuiJinTian2'),
             value: 3 * 24
           },
           {
-            label: '最近5天',
+            label: i18n.t('monitor_Log_zuiJinTian'),
             value: 5 * 24
           }
         ]

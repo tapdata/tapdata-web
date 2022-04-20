@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 export default {
   name: 'VerificationCode',
   props: {
@@ -25,7 +27,7 @@ export default {
     },
     buttonText: {
       type: String,
-      default: '发送验证码'
+      default: i18n.t('components_VerificationCode_faSongYanZhengMa')
     },
     remoteMethod: {
       type: Function

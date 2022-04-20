@@ -353,6 +353,8 @@
 }
 </style>
 <script>
+import i18n from '@/i18n'
+
 const TABLE_PARAMS = {
   connectionId: '',
   table: '',
@@ -549,7 +551,7 @@ export default {
               )
             )
           ) {
-            this.$message.error('所选任务存在不支持校验的数据源，请重新选择')
+            this.$message.error(i18n.t('verify_Form_suoXuanRenWuCun'))
             this.loading = false
             return
           }
@@ -731,7 +733,7 @@ export default {
             })
           } else {
             this.flowStages = null
-            this.$message.error('找不到节点对应的表信息')
+            this.$message.error(i18n.t('verify_Form_zhaoBuDaoJieDian'))
           }
         })
       })

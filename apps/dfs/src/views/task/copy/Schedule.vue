@@ -51,9 +51,8 @@
                 >
               </div>
               <div>
-                {{ $t('task_info_expected') }}{{ currentStep.label }}{{ $t('task_info_completed_time') }}：{{
-                  completeTime
-                }}
+                {{ $t('task_info_expected') }}{{ currentStep.label }}{{ $t('task_info_completed_time')
+                }}{{ $t('field_mapping_field_mapping_dialog_') }}{{ completeTime }}
               </div>
             </div>
             <ElProgress :percentage="progressBar" :show-text="false"></ElProgress>
@@ -108,9 +107,8 @@
                 >
               </div>
               <div>
-                {{ $t('task_info_expected') }}{{ currentStep.label }}{{ $t('task_info_completed_time') }}：{{
-                  completeTime
-                }}
+                {{ $t('task_info_expected') }}{{ currentStep.label }}{{ $t('task_info_completed_time')
+                }}{{ $t('field_mapping_field_mapping_dialog_') }}{{ completeTime }}
               </div>
             </div>
             <ElProgress :percentage="progressBar" :show-text="false"></ElProgress>

@@ -121,6 +121,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import VIcon from '@/components/VIcon'
 import Chart from 'web-core/components/chart'
 import { formatTime, numToThousands } from '@/util'
@@ -342,43 +344,43 @@ export default {
         {
           id: 14,
           type: '',
-          name: 'Tapdata Cloud 2.1.3 版本发布啦！',
+          name: i18n.t('workbench_Workbench_tAPDA5'),
           time: '2022-04-07 21:00:00'
         },
         {
           id: 13,
           type: '',
-          name: 'Tapdata Cloud 2.1.2 版本发布啦！',
+          name: i18n.t('workbench_Workbench_tAPDA4'),
           time: '2022-03-30 18:00:00'
         },
         {
           id: 13,
           type: '',
-          name: 'Tapdata Cloud 2.1.2 版本发布啦！',
+          name: i18n.t('workbench_Workbench_tAPDA4'),
           time: '2022-03-30 18:00:00'
         },
         {
           id: 12,
           type: '',
-          name: 'Tapdata Cloud 2.1.1 版本发布啦！',
+          name: i18n.t('workbench_Workbench_tAPDA3'),
           time: '2022-03-11 14:00:00'
         },
         {
           id: 11,
           type: '',
-          name: 'Tapdata Cloud 2.1.0 版本发布啦！',
+          name: i18n.t('workbench_Workbench_tAPDA2'),
           time: '2022-02-28 14:00:00'
         },
         {
           id: 10,
           type: '',
-          name: 'Tapdata Cloud 2.0.1 版本发布啦！',
+          name: i18n.t('workbench_Workbench_tAPDA'),
           time: '2022-02-12 14:00:00'
         },
         {
           id: 8,
           type: '',
-          name: 'Tapdata Cloud 1.0.9 版本发布啦！',
+          name: i18n.t('workbench_Notice_tAPDA12'),
           time: '2021-12-21'
         }
       ]

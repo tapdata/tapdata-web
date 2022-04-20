@@ -11,7 +11,7 @@
       :value="value"
       @input="input"
     >
-      <ElOption value="" label="全部"></ElOption>
+      <ElOption value="" :label="$t('components_TableFilter_quanBu')"></ElOption>
       <ElOption v-for="(opt, key) in options" :key="key" :value="opt.value || key" :label="opt.label || opt"></ElOption>
     </ElSelect>
   </span>

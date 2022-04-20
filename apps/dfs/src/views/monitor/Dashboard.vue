@@ -20,7 +20,9 @@
         </div>
         <div class="mt-1">
           <span>{{ $t('task_monitor_founder') }}: {{ task.createUser }}</span>
-          <span class="ml-4">{{ $t('task_type') }}：{{ taskType.label }}</span>
+          <span class="ml-4"
+            >{{ $t('task_type') }}{{ $t('field_mapping_field_mapping_dialog_') }}{{ taskType.label }}</span
+          >
         </div>
         <div class="mt-2">
           <VButton
@@ -207,6 +209,8 @@
 }
 </style>
 <script>
+import i18n from '@/i18n'
+
 import StatusTag from '@/components/StatusTag'
 import TaskProgress from './TaskProgress'
 
@@ -661,7 +665,7 @@ export default {
       })
     },
     checkError(msg) {
-      this.$confirm(msg, '错误', {
+      this.$confirm(msg, i18n.t('monitor_Dashboard_cuoWu'), {
         type: 'warning',
         width: '850px'
       })

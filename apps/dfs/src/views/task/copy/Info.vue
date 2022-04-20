@@ -10,13 +10,14 @@
           only-img
         ></StatusTag>
         <!--        <span class="ml-6 font-color-sub">-->
-        <!--          所属Agent：<span>{{ task.belongAgent }}</span>-->
+        <!--          所属Agent{{$t('field_mapping_field_mapping_dialog_')}}<span>{{ task.belongAgent }}</span>-->
         <!--        </span>-->
         <span class="ml-6 font-color-sub">
-          {{ $t('task_monitor_founder') }}：<span>{{ creator }}</span>
+          {{ $t('task_monitor_founder') }}{{ $t('field_mapping_field_mapping_dialog_') }}<span>{{ creator }}</span>
         </span>
         <span class="ml-6 font-color-sub">
-          {{ $t('task_info_start_time') }}：<span>{{ formatTime(task.startTime) || '-' }}</span>
+          {{ $t('task_info_start_time') }}{{ $t('field_mapping_field_mapping_dialog_')
+          }}<span>{{ formatTime(task.startTime) || '-' }}</span>
         </span>
       </div>
       <div class="operation">
@@ -88,6 +89,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import StatusTag from '@/components/StatusTag'
 import VIcon from '@/components/VIcon'
 import Chart from 'web-core/components/chart'
@@ -392,8 +395,11 @@ export default {
       }
       if (type === 'edit') {
         this.$confirm(
-          `<p>${this.$t('task_list_edit_tip')}<span style="color:#409EFF">${this.$t('task_list_edit_tip1')}</span>、` +
-            `<span style="color:#409EFF">${this.$t('task_list_node_attr')}</span>、` +
+          i18n.t('template')(i18n.t('copy_Info_pTHIS'), {
+            val1: this.$t('task_list_edit_tip'),
+            val2: this.$t('task_list_edit_tip1')
+          }) +
+            i18n.t('template')(i18n.t('copy_Info_sPANS'), { val1: this.$t('task_list_node_attr') }) +
             `<span style="color:#409EFF">${this.$t('task_list_matching_releation')}</span>,` +
             `${this.$t('task_list_edit_submit')}<span style="color:#409EFF">${this.$t(
               'task_list_edit_reset'
