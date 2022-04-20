@@ -461,7 +461,8 @@ export default {
   api_monitor_total_warningCount: 'API warning count',
   api_monitor_total_columns_failed: 'Failure rate (%)',
   api_monitor_total_FailRate: 'API failure rate TOP sort',
-  api_monitor_total_consumingTime: 'API response time TOP sorting',
+  api_monitor_total_consumingTime: 'API response time TOP sort',
+  api_monitor_total_rTime: 'Response time',
   api_monitor_total_clientName: 'client',
   api_monitor_total_api_list: 'API list',
   api_monitor_total_api_list_name: 'API name',
@@ -542,6 +543,25 @@ export default {
   dataExplorer_base_path: 'Base path',
   // api documentation and testing api文档及测试
   file_test_generate_code: 'Generate code',
+
+  // api audit api审计
+  apiaudit_name: 'API name',
+  apiaudit_access_type: 'Access Type',
+  apiaudit_visitor: 'Visitor',
+  apiaudit_interview_time: 'Access time',
+  apiaudit_visit_result: 'Visit result',
+  apiaudit_reason_fail: 'Failure reason',
+  apiaudit_log_info: 'Log details',
+  apiaudit_parameter: 'parameter',
+  apiaudit_link: 'Link',
+  apiaudit_access_records: 'Number of access records',
+  apiaudit_access_bandwidth: 'API access bandwidth (M)',
+  apiaudit_average_access_rate: 'API average access rate (M/S)',
+  apiaudit_access_time: 'Access time',
+  apiaudit_average_response_time: 'Average response time',
+  apiaudit_success: 'success',
+  apiaudit_fail: 'Failed',
+  apiaudit_placeholder: 'Please enter name/ID',
 
   // 数据源
   connection_form_tidb_server: 'PDServer address',
@@ -2024,6 +2044,10 @@ export default {
   meta_table_scale: 'Scale',
   meta_table_precision: 'Precision',
   meta_table_comment: 'Comment',
+  meta_table_default: 'Default',
+  meta_table_not_null: 'Not null',
+  meta_table_true: 'True',
+  meta_table_false: 'False',
 
   new_advanced_mode: 'Standard Mode',
   new_more_features: 'More features',

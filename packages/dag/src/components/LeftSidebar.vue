@@ -776,7 +776,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-$itemH: 34px;
+$itemH: 30px;
 $hoverBg: #eef3ff;
 
 .drag-node {
@@ -872,7 +872,7 @@ $hoverBg: #eef3ff;
     .el-collapse {
       border-top: 0;
       &.processor-collapse {
-        max-height: 38.2%;
+        max-height: 30%;
       }
       &.collapse-fill {
         .el-collapse-item:first-child:last-child {

@@ -15,10 +15,10 @@ export function handleUnit(limit) {
     size = (limit / 1024).toFixed(1) + 'KB'
   } else if (limit < 0.1 * 1024 * 1024 * 1024) {
     //小于0.1GB，则转化成MB
-    size = (limit / (1024 * 1024)).toFixed(1) + 'MB'
+    size = (limit / (1024 * 1024)).toFixed(1) + 'M'
   } else {
     //其他转化成GB
-    size = (limit / (1024 * 1024 * 1024)).toFixed(1) + 'GB'
+    size = (limit / (1024 * 1024 * 1024)).toFixed(1) + 'G'
   }
 
   var sizeStr = size + '' //转成字符串

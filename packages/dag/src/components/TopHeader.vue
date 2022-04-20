@@ -14,6 +14,9 @@
       />
       <VIcon v-if="!stateIsReadonly" @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
     </div>
+
+    <StatusItem inline :value="dataflow.statusResult" />
+
     <div class="operation-center flex align-center">
       <template v-if="!stateIsReadonly">
         <!--撤销-->
@@ -35,12 +38,6 @@
           </button>
         </ElTooltip>
       </template>
-
-      <!--<ElTooltip transition="tooltip-fade-in" content="全屏">
-        <button @click="$emit('fullscreen')" class="icon-btn">
-          <VIcon size="20">fullscreen</VIcon>
-        </button>
-      </ElTooltip>-->
       <!--内容居中-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('button_center_content')">
         <button @click="$emit('center-content')" class="icon-btn">
@@ -59,41 +56,7 @@
           <VIcon size="20">hand</VIcon>
         </button>
       </ElTooltip>
-      <!--搜索节点-->
-      <ElPopover
-        v-model="showSearchNodePopover"
-        placement="bottom"
-        trigger="click"
-        popper-class="rounded-xl p-0"
-        @after-leave="nodeSearchInput = null"
-      >
-        <ElTooltip slot="reference" transition="tooltip-fade-in" :content="$t('button_search_node')">
-          <button class="icon-btn ml-2">
-            <VIcon size="20">magnify</VIcon>
-          </button>
-        </ElTooltip>
-
-        <div class="choose-pane-wrap">
-          <ElInput class="input-filled" v-model="nodeSearchInput" :placeholder="$t('dag_search_node_placeholder')">
-            <template #prefix>
-              <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
-            </template>
-          </ElInput>
-          <ElDivider class="m-0" />
-          <ElScrollbar tag="div" wrap-class="choose-list-wrap" view-class="choose-list p-2">
-            <div
-              v-for="(node, i) in nodeList"
-              :key="i"
-              class="choose-item ellipsis px-4"
-              @click="handleClickNode(node)"
-            >
-              {{ node.name }}
-            </div>
-            <EmptyItem v-if="!nodeList.length"></EmptyItem>
-          </ElScrollbar>
-        </div>
-      </ElPopover>
-      <VDivider class="mx-4" vertical inset></VDivider>
+      <VDivider class="mx-3" vertical inset></VDivider>
       <!--缩小-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('button_zoom_out')">
         <button @click="$emit('zoom-out')" class="icon-btn">
@@ -128,20 +91,123 @@
     </div>
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
-      <ElButton size="small" plain class="mx-2" @click="$emit('showSettings')">
+      <!--搜索节点-->
+      <ElPopover
+        v-model="showSearchNodePopover"
+        placement="bottom"
+        trigger="click"
+        popper-class="rounded-xl p-0"
+        @after-leave="nodeSearchInput = null"
+      >
+        <ElTooltip slot="reference" transition="tooltip-fade-in" :content="$t('button_search_node')">
+          <button class="icon-btn mx-2">
+            <VIcon size="20">magnify</VIcon>
+          </button>
+        </ElTooltip>
+
+        <div class="choose-pane-wrap">
+          <ElInput class="input-filled" v-model="nodeSearchInput" :placeholder="$t('dag_search_node_placeholder')">
+            <template #prefix>
+              <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
+            </template>
+          </ElInput>
+          <ElDivider class="m-0" />
+          <ElScrollbar tag="div" wrap-class="choose-list-wrap" view-class="choose-list p-2">
+            <div
+              v-for="(node, i) in nodeList"
+              :key="i"
+              class="choose-item ellipsis px-4"
+              @click="handleClickNode(node)"
+            >
+              {{ node.name }}
+            </div>
+            <EmptyItem v-if="!nodeList.length"></EmptyItem>
+          </ElScrollbar>
+        </div>
+      </ElPopover>
+
+      <ElButton
+        v-if="stateIsReadonly"
+        size="mini"
+        class="mx-1 btn--text"
+        @click="
+          $router.push({
+            name: 'dataflowDetails',
+            params: {
+              id: dataflow.id
+            }
+          })
+        "
+      >
+        <VIcon>monitoring</VIcon>
+        <!--运行监控-->
+        {{ $t('task_list_button_monitor') }}
+      </ElButton>
+
+      <ElButton size="mini" class="mx-1 btn--text" @click="$emit('showSettings')">
+        <VIcon>setting</VIcon>
         <!--设置-->
         {{ $t('button_setting') }}
       </ElButton>
-      <ElButton
-        v-if="!stateIsReadonly"
-        :loading="isSaving"
-        size="small"
-        type="primary"
-        class="mx-2"
-        @click="$emit('save')"
-      >
+      <ElButton v-if="!stateIsReadonly" :loading="isSaving" size="mini" class="mx-2" @click="$emit('save')">
         <!--保存-->
         {{ $t('button_save') }}
+      </ElButton>
+      <template v-else>
+        <ElButton
+          key="edit"
+          size="mini"
+          class="mx-1 btn--text"
+          :disabled="dataflow.disabledData && dataflow.disabledData.edit"
+          @click="$emit('edit')"
+        >
+          <VIcon>edit</VIcon>
+          <!--编辑-->
+          {{ $t('button_edit') }}
+        </ElButton>
+
+        <ElButton
+          key="forceStop"
+          v-if="isShowForceStop(dataflow.statuses)"
+          class="mx-1 btn--text"
+          :disabled="dataflow.disabledData && dataflow.disabledData.stop"
+          size="mini"
+          @click="$emit('forceStop')"
+        >
+          <VIcon>stop</VIcon>
+          {{ $t('task_list_force_stop') }}
+        </ElButton>
+        <ElButton
+          key="stop"
+          v-else
+          class="mx-1 btn--text"
+          :disabled="dataflow.disabledData && dataflow.disabledData.stop"
+          size="mini"
+          @click="$emit('stop')"
+        >
+          <VIcon>stop</VIcon>
+          {{ $t('task_list_stop') }}
+        </ElButton>
+        <ElButton
+          key="reset"
+          class="mx-1 btn--text"
+          :disabled="dataflow.disabledData && dataflow.disabledData.reset"
+          size="mini"
+          @click="$emit('reset')"
+        >
+          <VIcon>reset</VIcon>
+          {{ $t('dataFlow.button.reset') }}
+        </ElButton>
+      </template>
+
+      <ElButton
+        :disabled="isSaving || (dataflow.disabledData && dataflow.disabledData.start && dataflow.statuses.length > 0)"
+        size="mini"
+        class="mx-2"
+        type="primary"
+        @click="$emit('start')"
+      >
+        {{ $t('task_list_run') }}
       </ElButton>
     </div>
   </header>
@@ -154,6 +220,7 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import VDivider from 'web-core/components/VDivider'
 import { Select } from 'element-ui'
 import EmptyItem from './EmptyItem'
+import { StatusItem } from '@daas/business'
 
 export default {
   name: 'TopHeader',
@@ -161,12 +228,14 @@ export default {
   directives: { focusSelect },
 
   props: {
+    loading: Boolean,
     isSaving: Boolean,
     dataflowName: String,
+    dataflow: Object,
     scale: Number
   },
 
-  components: { EmptyItem, VDivider, VIcon, ElScrollbar: Select.components.ElScrollbar },
+  components: { StatusItem, EmptyItem, VDivider, VIcon, ElScrollbar: Select.components.ElScrollbar },
 
   data() {
     return {
@@ -221,6 +290,10 @@ export default {
 
   methods: {
     ...mapMutations('dataflow', ['setActiveType', 'setPaperSpaceKeyPressed']),
+
+    isShowForceStop(data) {
+      return data?.length && data.every(t => ['stopping'].includes(t.status))
+    },
 
     onNameInputChange() {
       if (!this.name) {
@@ -391,7 +464,7 @@ $sidebarBg: #fff;
   }
 
   .icon-btn + .icon-btn {
-    margin-left: 16px;
+    margin-left: 12px;
   }
 
   .btn-setting {
@@ -440,19 +513,29 @@ $sidebarBg: #fff;
   }
 
   ::v-deep {
-    .el-button-group {
-      .btn-base:not(:first-child) {
-        border-left: 1px solid #ddd;
+    .el-button {
+      min-width: 64px;
+      line-height: 1;
+
+      &.btn--text {
+        min-width: auto;
+        background: unset;
+        border: none;
+        padding: 7px 8px;
+        &:hover {
+          background: $hoverBg;
+        }
+        > span {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
       }
     }
-
-    .el-tag {
-      height: $baseHeight;
-      border-radius: $radius;
-    }
-
-    .el-input__inner {
-      border-radius: $radius;
+    .el-link--inner {
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
   }
 
@@ -497,6 +580,9 @@ $sidebarBg: #fff;
     &:hover {
       background-color: #eef3ff;
     }
+  }
+  &.auto-width .choose-item {
+    min-width: unset;
   }
   .kbd-wrap {
     kbd {

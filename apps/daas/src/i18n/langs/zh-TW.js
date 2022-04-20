@@ -466,7 +466,8 @@ export default {
   api_monitor_total_warningCount: 'API告警數',
   api_monitor_total_columns_failed: '失敗率(%)',
   api_monitor_total_FailRate: 'API失敗率TOP排序',
-  api_monitor_total_consumingTime: 'API響應時間TOP排序',
+  api_monitor_total_consumingTime: 'API響應時間TOP',
+  api_monitor_total_rTime: '響應時間',
   api_monitor_total_clientName: '客戶端',
   api_monitor_total_api_list: 'API列表',
   api_monitor_total_api_list_name: 'API名稱',
@@ -530,6 +531,25 @@ export default {
   dataExplorer_base_path: '基礎路徑',
   // api文檔及測試
   file_test_generate_code: '生成代碼',
+
+  // api審計
+  apiaudit_name: 'API名稱',
+  apiaudit_access_type: '訪問類型',
+  apiaudit_visitor: '訪問人員',
+  apiaudit_interview_time: '訪問時間',
+  apiaudit_visit_result: '訪問結果',
+  apiaudit_reason_fail: '失敗原因',
+  apiaudit_log_info: '日誌詳情',
+  apiaudit_parameter: '參數',
+  apiaudit_link: '鏈接',
+  apiaudit_access_records: '訪問記錄數',
+  apiaudit_access_bandwidth: 'API 訪問帶寬（M)',
+  apiaudit_average_access_rate: 'API 平均訪問速率（M/S)',
+  apiaudit_access_time: '訪問耗時',
+  apiaudit_average_response_time: '平均響應時長',
+  apiaudit_success: '成功',
+  apiaudit_fail: '失敗',
+  apiaudit_placeholder: '請輸入名稱/ID',
 
   // 数据源
   connection_form_tidb_server: 'PDServer 地址',
@@ -1947,6 +1967,10 @@ export default {
   meta_table_scale: '精度',
   meta_table_precision: '長度',
   meta_table_comment: '字段注釋',
+  meta_table_default: '默認值',
+  meta_table_not_null: '非空',
+  meta_table_true: '是',
+  meta_table_false: '否',
 
   new_advanced_mode: '標準模式',
   new_more_features: '更多功能',

@@ -73,8 +73,10 @@ export default {
 }
 .circle-icon {
   display: inline-block;
+  margin-top: -3px;
   width: 6px;
   height: 6px;
+  vertical-align: middle;
   border-radius: 50%;
 }
 </style>

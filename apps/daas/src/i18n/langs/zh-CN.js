@@ -467,7 +467,8 @@ export default {
   api_monitor_total_warningCount: 'API告警数',
   api_monitor_total_columns_failed: '失败率(%)',
   api_monitor_total_FailRate: 'API失败率TOP排序',
-  api_monitor_total_consumingTime: 'API响应时间TOP排序',
+  api_monitor_total_consumingTime: 'API响应时间TOP',
+  api_monitor_total_rTime: '响应时间',
   api_monitor_total_clientName: '客户端',
   api_monitor_total_api_list: 'API列表',
   api_monitor_total_api_list_name: 'API名称',
@@ -535,6 +536,7 @@ export default {
   // api审计
   apiaudit_name: 'API名称',
   apiaudit_access_type: '访问类型',
+  apiaudit_visitor: '访问人员',
   apiaudit_interview_time: '访问时间',
   apiaudit_visit_result: '访问结果',
   apiaudit_reason_fail: '失败原因',
@@ -546,6 +548,9 @@ export default {
   apiaudit_average_access_rate: 'API 平均访问速率（M/S)',
   apiaudit_access_time: '访问耗时',
   apiaudit_average_response_time: '平均响应时长',
+  apiaudit_success: '成功',
+  apiaudit_fail: '失败',
+  apiaudit_placeholder: '请输入名称/ID',
 
   // 数据源
   connection_form_tidb_server: 'PDServer 地址',
@@ -1978,6 +1983,10 @@ export default {
   meta_table_scale: '精度',
   meta_table_precision: '长度',
   meta_table_comment: '字段注释',
+  meta_table_default: '默认值',
+  meta_table_not_null: '非空',
+  meta_table_true: '是',
+  meta_table_false: '否',
 
   // 新建
   new_advanced_mode: '标准模式',
