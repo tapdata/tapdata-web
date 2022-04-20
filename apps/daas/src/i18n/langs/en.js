@@ -478,6 +478,8 @@ export default {
   api_monitor_detail_visitTotalLine: 'Number of API access lines',
   api_monitor_detail_speed: 'API transfer rate',
   api_monitor_detail_responseTime: 'API response time',
+  api_monitor_detail_monitoring_period: 'Monitoring period',
+  api_monitor_detail_Monitoring_conditions: 'Monitoring conditions',
 
   // api statistics api服务器
   api_asnalysis_header_api: 'API',

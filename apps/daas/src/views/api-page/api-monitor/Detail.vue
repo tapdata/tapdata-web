@@ -86,12 +86,7 @@ export default {
       checkAll: false,
       isIndeterminate: true,
       loadingDetail: false,
-      clientNameList: [
-        {
-          name: 'Data Explorer',
-          id: '5c0e750b7a5cd42464a5099d'
-        }
-      ],
+      clientNameList: [],
       qpsDataTime: [],
       lineOptions: {
         tooltip: {
@@ -226,7 +221,7 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          label: this.$t('dataExplorer_type'),
+          label: this.$t('api_monitor_detail_Monitoring_conditions'),
           key: 'type',
           type: 'select-inner',
           items: this.typesOptions,
@@ -234,7 +229,7 @@ export default {
           clearable: false
         },
         {
-          label: this.$t('task_info_statistics_time'),
+          label: this.$t('api_monitor_detail_monitoring_period'),
           key: 'guanluary',
           type: 'select-inner',
           items: this.timeList
