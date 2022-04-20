@@ -546,9 +546,16 @@ export default {
           let stages = flowData.stages || []
           if (
             stages.some(item =>
-              ['kafka', 'redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'mq', 'dummy db', 'vika'].includes(
-                item.databaseType || item.database_type
-              )
+              [
+                'kafka',
+                'redis',
+                'hazelcast_cloud_cluster',
+                'elasticsearch',
+                'mq',
+                'dummy db',
+                'vika',
+                'qingflow'
+              ].includes(item.databaseType || item.database_type)
             )
           ) {
             this.$message.error(i18n.t('verify_Form_suoXuanRenWuCun'))
