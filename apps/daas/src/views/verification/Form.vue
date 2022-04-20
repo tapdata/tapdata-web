@@ -617,7 +617,7 @@ export default {
       let id = this.$route.params.id
       let where = {
         status: {
-          inq: ['running', 'stop']
+          inq: ['running', 'stop', 'complete']
         },
         syncType: 'migrate'
       }
