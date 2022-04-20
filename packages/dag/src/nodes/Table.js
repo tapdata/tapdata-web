@@ -78,12 +78,17 @@ export class Table extends NodeType {
                         flex: 1
                       }
                     },
-                    'x-component': 'Select',
+                    'x-component': 'AsyncSelect',
                     'x-component-props': {
-                      config: { placeholder: '请选择数据库' }
+                      onLoadOption: '{{useForm($form)}}',
+                      onSelectOption: '{{onSelectOption}}',
+                      itemLabel: 'label',
+                      itemValue: 'id',
+                      itemQuery: 'name',
+                      method: '{{loadDatabases}}',
+                      params: `{{ {where: {database_type: $values.databaseType}} }}`
                     },
                     'x-reactions': [
-                      '{{useAsyncDataSource(loadDatabase, "dataSource")}}',
                       {
                         target: 'tableName',
                         effects: ['onFieldValueChange'],
@@ -102,15 +107,6 @@ export class Table extends NodeType {
                     'x-component-props': {
                       tooltip: '复制数据库名',
                       finishTooltip: '已复制'
-                    },
-                    'x-reactions': {
-                      dependencies: ['connectionId'],
-                      fulfill: {
-                        schema: {
-                          'x-component-props.content':
-                            '{{$form.query("connectionId").get("dataSource")?.find(item=>item.id===$deps[0])?.name}}'
-                        }
-                      }
                     }
                   }
                 }
@@ -140,15 +136,15 @@ export class Table extends NodeType {
                         flex: 1
                       }
                     },
-                    'x-component': 'Select',
+                    'x-component': 'AsyncSelect',
                     'x-component-props': {
-                      allowCreate: false,
-                      filterable: true,
-                      remote: true,
-                      'default-first-option': true
+                      itemType: 'string',
+                      itemLabel: 'original_name',
+                      method: '{{loadTable}}',
+                      params: `{{ {where: {'source.id': $values.connectionId}} }}`
                     },
                     'x-reactions': [
-                      '{{useRemoteQuery(loadDatabaseTable)}}',
+                      // '{{useRemoteQuery(loadDatabaseTable)}}',
                       {
                         target: 'name',
                         effects: ['onFieldInputValueChange'],
