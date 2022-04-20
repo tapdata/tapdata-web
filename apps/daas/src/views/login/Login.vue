@@ -181,7 +181,7 @@ export default {
       margin-bottom: 30px;
       font-size: 32px;
       font-weight: 600;
-      color: map-get($fontColor, normal);
+      color: map-get($fontColor, dark);
       span {
         float: right;
         padding-top: 16px;
@@ -240,7 +240,7 @@ export default {
     }
     ::v-deep {
       .el-checkbox__label {
-        color: map-get($fontColor, slight);
+        color: map-get($fontColor, light);
       }
     }
     .remember {

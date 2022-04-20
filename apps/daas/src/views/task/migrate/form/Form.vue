@@ -764,7 +764,7 @@ export default {
       min-height: 500px;
       .title {
         font-size: 14px;
-        color: map-get($fontColor, normal);
+        color: map-get($fontColor, dark);
       }
       .desc {
         font-size: 12px;

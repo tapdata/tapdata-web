@@ -1224,7 +1224,7 @@ export default {
           font-size: 12px;
           line-height: 20px;
           margin-top: 20px;
-          color: map-get($fontColor, slight);
+          color: map-get($fontColor, light);
         }
       }
       .table-example {

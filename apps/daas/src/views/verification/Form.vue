@@ -350,7 +350,7 @@
   margin-bottom: 24px;
   line-height: 22px;
   font-size: 14px;
-  color: map-get($fontColor, main);
+  color: map-get($fontColor, dark);
 }
 .form-item {
   margin-bottom: 32px;

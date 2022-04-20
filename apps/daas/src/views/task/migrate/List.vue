@@ -1192,15 +1192,15 @@ export default {
       width: 100%;
       overflow: hidden;
       .name {
-        color: map-get($fontColor, normal);
+        color: map-get($fontColor, dark);
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
       }
       .desc {
-        color: map-get($fontColor, light);
+        color: map-get($fontColor, normal);
         span {
-          color: map-get($fontColor, slight);
+          color: map-get($fontColor, light);
         }
       }
     }

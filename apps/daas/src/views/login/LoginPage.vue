@@ -95,11 +95,11 @@ export default {
         line-height: 18px;
         cursor: pointer;
         &:hover {
-          color: map-get($fontColor, normal);
+          color: map-get($fontColor, dark);
         }
       }
       .bold {
-        color: map-get($fontColor, normal);
+        color: map-get($fontColor, dark);
         font-weight: 500;
       }
     }

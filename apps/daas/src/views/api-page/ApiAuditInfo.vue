@@ -1,18 +1,18 @@
 <template>
   <section class="apiaudit-info-wrap section-wrap">
     <div class="details-box bg-white p-6 rounded-2">
-      <div class="title fs-7 fw-sub font-color-normal">{{ $t('apiaudit_log_info') }}</div>
+      <div class="title fs-7 fw-sub font-color-dark">{{ $t('apiaudit_log_info') }}</div>
       <ElRow class="pt-4" v-if="auditData">
-        <ElCol class="font-color-light pb-4" :span="12">
+        <ElCol class="font-color-normal pb-4" :span="12">
           API ID: <span>{{ auditData.id ? auditData.id : '-' }}</span></ElCol
         >
-        <ElCol class="font-color-light pb-4" :span="12"
+        <ElCol class="font-color-normal pb-4" :span="12"
           >{{ $t('apiaudit_name') }}: <span class="fw-sub">{{ auditData.name || '-' }}</span></ElCol
         >
-        <ElCol class="font-color-light" :span="12"
+        <ElCol class="font-color-normal" :span="12"
           >{{ $t('apiaudit_link') }}: <span class="fw-sub">{{ auditData.apiPath || '-' }}</span></ElCol
         >
-        <ElCol class="font-color-light" :span="12"
+        <ElCol class="font-color-normal" :span="12"
           >{{ $t('apiaudit_interview_time') }}: <span class="fw-sub"> {{ auditData.createAt }}</span></ElCol
         >
       </ElRow>
@@ -25,7 +25,7 @@
           class="details-box-item flex flex-sm-row justify-content-between text-center align-items-center"
         >
           <div class="w-100 text-center">
-            <div class="fs-8 font-color-light">{{ item.label }}</div>
+            <div class="fs-8 font-color-normal">{{ item.label }}</div>
             <div
               class="link-primary pt-4 din-font details-box-item-num"
               v-if="item.value > 0 && ['latency', 'averResponseTime'].includes(item.key)"
@@ -42,7 +42,7 @@
     </div>
 
     <div class="details-box flex-1 bg-white p-6 mt-6 rounded-2">
-      <div class="title fs-7 fw-sub font-color-normal">{{ $t('apiaudit_parameter') }}</div>
+      <div class="title fs-7 fw-sub font-color-dark">{{ $t('apiaudit_parameter') }}</div>
       <div class="pt-4 editor-box" v-if="auditData">
         <CodeEditor
           v-model="auditData.reqParams"

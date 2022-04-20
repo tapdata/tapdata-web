@@ -155,7 +155,7 @@ export default {
       max-width: 82px;
       font-weight: 500;
       font-size: 12px;
-      color: map-get($fontColor, normal);
+      color: map-get($fontColor, dark);
       text-overflow: ellipsis;
       white-space: nowrap;
       word-break: break-word;

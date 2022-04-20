@@ -10,11 +10,7 @@
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_warningApiCount') }}</header>
           <div class="api-monitor-total__text din-font" v-if="previewData.visitTotalCount">
-            {{
-              previewData.visitTotalCount - previewData.warningApiCount < 0
-                ? 0
-                : previewData.visitTotalCount - previewData.warningApiCount
-            }}/{{ previewData.visitTotalCount }}
+            {{ visitTotalCountText }}/{{ previewData.visitTotalCount }}
           </div>
         </div>
         <div class="flex-1 mt-5 text-center">
@@ -210,17 +206,23 @@ export default {
       ]
     }
   },
+  computed: {
+    visitTotalCountText() {
+      let count = this.previewData.visitTotalCount - this.previewData.warningApiCount
+      return count < 0 ? 0 : count
+    }
+  },
+  watch: {
+    '$route.query'() {
+      this.getApiList(1)
+    }
+  },
   mounted() {
     this.getPreview()
     this.getClientName()
     this.remoteFailedMethod()
     this.consumingMethod()
     this.getApiList(1)
-  },
-  watch: {
-    '$route.query'() {
-      this.getApiList(1)
-    }
   },
   methods: {
     handleUnit(limit) {
@@ -464,7 +466,7 @@ export default {
   }
   .api-monitor-total__tittle {
     font-size: 18px;
-    color: map-get($fontColor, main);
+    color: map-get($fontColor, dark);
   }
   .api-monitor-total__text {
     font-size: 46px;
@@ -475,7 +477,7 @@ export default {
   .api-monitor-chart__text {
     font-size: 14px;
     font-weight: 500;
-    color: map-get($fontColor, main);
+    color: map-get($fontColor, dark);
   }
   .api-monitor-card {
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
@@ -506,7 +508,7 @@ export default {
     height: 0;
     top: 10px;
     border: 4px solid transparent;
-    border-top-color: map-get($fontColor, light);
+    border-top-color: map-get($fontColor, normal);
     cursor: pointer;
     &:hover {
       border-top-color: map-get($color, primary);
@@ -521,7 +523,7 @@ export default {
     height: 0;
     top: 0;
     border: 4px solid transparent;
-    border-bottom-color: map-get($fontColor, light);
+    border-bottom-color: map-get($fontColor, normal);
     cursor: pointer;
     &:hover {
       border-bottom-color: map-get($color, primary);

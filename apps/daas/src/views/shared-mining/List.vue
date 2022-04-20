@@ -89,7 +89,7 @@
             }}</el-link>
             /
             <span class="refresh" @click="getMongodb">
-              {{ $t('shared_cdc_setting_refresh') }} <VIcon class="font-color-sub">refresh</VIcon></span
+              {{ $t('shared_cdc_setting_refresh') }} <VIcon class="font-color-slight">refresh</VIcon></span
             >
           </div>
         </el-form-item>

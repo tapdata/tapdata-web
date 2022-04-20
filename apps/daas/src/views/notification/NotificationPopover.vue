@@ -63,7 +63,7 @@
           <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
             <div>
               <VIcon size="76">no-notice</VIcon>
-              <div class="pt-4 fs-8 text-center font-color-sub fw-normal">{{ $t('notify_view_more') }}</div>
+              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_view_more') }}</div>
             </div>
           </div>
           <!-- <div class="notice-footer">
@@ -97,7 +97,7 @@
           <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
             <div>
               <VIcon size="76">no-notice</VIcon>
-              <div class="pt-4 fs-8 text-center font-color-sub fw-normal">{{ $t('notify_view_more') }}</div>
+              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_view_more') }}</div>
             </div>
           </div>
           <!-- <div class="notice-footer">
@@ -308,7 +308,7 @@ export default {
       .el-tabs__item {
         font-size: 14px;
         font-weight: 500;
-        color: map-get($fontColor, sub);
+        color: map-get($fontColor, slight);
         &.is-active {
           color: map-get($color, primary);
           font-weight: 400;

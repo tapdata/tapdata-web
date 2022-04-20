@@ -216,7 +216,7 @@ export default {
       font-size: 12px;
       span {
         display: inline-block;
-        color: map-get($fontColor, rdlevel);
+        color: map-get($fontColor, light);
       }
       ::v-deep {
         .el-radio {

@@ -209,7 +209,7 @@ export default {
           padding: 3px 0;
           .cell {
             padding-left: 14px;
-            color: map-get($fontColor, rdlevel);
+            color: map-get($fontColor, light);
             font-weight: 500;
           }
         }

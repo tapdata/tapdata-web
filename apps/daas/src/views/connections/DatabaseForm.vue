@@ -48,7 +48,9 @@
                   >请先创建mongodb数据源</el-link
                 >
                 /
-                <span class="refresh" @click="getMongodb"> 刷新数据 <VIcon class="font-color-sub">refresh</VIcon></span>
+                <span class="refresh" @click="getMongodb">
+                  刷新数据 <VIcon class="font-color-slight">refresh</VIcon></span
+                >
               </div>
               <div class="url-tip" slot="ecsList" v-if="model.sourceType === 'ecs'">
                 <el-select
@@ -1744,7 +1746,7 @@ export default {
         font-size: 14px;
         font-family: PingFangSC-Medium, PingFang SC;
         font-weight: 500;
-        color: map-get($fontColor, normal);
+        color: map-get($fontColor, dark);
         line-height: 28px;
       }
       .connection-from-label {
@@ -1759,7 +1761,7 @@ export default {
         .label {
           width: 160px;
           font-size: 12px;
-          color: map-get($fontColor, slight);
+          color: map-get($fontColor, light);
         }
         .content-box {
           display: flex;
@@ -1811,11 +1813,11 @@ export default {
                 }
                 .url-tip {
                   font-size: 12px;
-                  color: map-get($fontColor, slight);
+                  color: map-get($fontColor, light);
                   b {
                     font-size: 12px;
                     font-weight: 400;
-                    color: map-get($fontColor, slight);
+                    color: map-get($fontColor, light);
                   }
                 }
                 .fb-radio-group {

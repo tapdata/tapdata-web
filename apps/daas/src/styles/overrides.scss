@@ -32,7 +32,7 @@
   .el-select-group__title {
     font-size: 14px;
     font-weight: bold;
-    color: map-get($fontColor, normal);
+    color: map-get($fontColor, dark);
   }
   .el-select-group {
     padding: 0 20px;
@@ -49,7 +49,7 @@
     height: 32px;
     line-height: 30px;
     font-size: 12px;
-    color: map-get($fontColor, light);
+    color: map-get($fontColor, normal);
     background: #fff;
     &.selected {
       border-color: map-get($color, primary);
@@ -84,8 +84,14 @@
     }
   }
 }
+.el-textarea__inner,
 .el-input__inner {
-  color: #000;
+  &::placeholder {
+    font-weight: 400;
+    color: map-get($fontColor, slight);
+  }
+}
+.el-input__inner {
   border-radius: $borderRadius;
   // border: 1px solid rgba(221, 221, 221, 0.4);
   // background-color:  rgba(239, 241, 244, 0.2);
@@ -95,8 +101,7 @@
   border-color: map-get($color, primary);
 }
 .el-textarea__inner {
-  font-family: Arial;
-  color: map-get($fontColor, main);
+  color: map-get($fontColor, normal);
   // border: 1px solid rgba(221, 221, 221, 0.4);
   // background-color:  rgba(239, 241, 244, 0.2);
 }
@@ -132,10 +137,10 @@
 }
 .el-radio .el-radio__label {
   font-size: 12px;
-  color: map-get($fontColor, main);
+  color: map-get($fontColor, dark);
 }
 .el-radio__input.is-checked + .el-radio__label {
-  color: map-get($fontColor, main);
+  color: map-get($fontColor, dark);
 }
 .el-radio__inner {
   width: 16px;
@@ -155,7 +160,7 @@
 }
 .el-radio-button__inner {
   font-weight: normal;
-  color: map-get($fontColor, light);
+  color: map-get($fontColor, normal);
   background: #fff;
 }
 .el-radio-button--mini .el-radio-button__inner {
@@ -191,7 +196,7 @@
   display: none;
 }
 .el-link.el-link--default {
-  color: map-get($fontColor, normal);
+  color: map-get($fontColor, dark);
 }
 .el-link.el-link--default:hover {
   color: map-get($color, primary);
@@ -231,7 +236,7 @@
 }
 .el-button.is-plain:focus {
   border-color: map-get($borderColor, normal);
-  color: map-get($fontColor, normal);
+  color: map-get($fontColor, dark);
 }
 .el-button.is-plain:focus:hover {
   color: map-get($color, primary);
@@ -296,7 +301,7 @@
 }
 .el-checkbox {
   font-weight: normal;
-  color: map-get($fontColor, light);
+  color: map-get($fontColor, normal);
 }
 .el-checkbox__label {
   font-size: 12px;
@@ -327,7 +332,7 @@
   color: map-get($color, primary);
 }
 .el-dropdown-menu__item {
-  color: map-get($fontColor, normal);
+  color: map-get($fontColor, dark);
 }
 .el-dropdown-menu--small {
   white-space: nowrap;
@@ -337,7 +342,7 @@
 }
 .el-dropdown-menu__item:focus,
 .el-dropdown-menu__item:not(.is-disabled):hover {
-  color: map-get($fontColor, normal);
+  color: map-get($fontColor, dark);
 }
 .el-menu-item,
 .el-submenu__title {
@@ -351,7 +356,7 @@
   border-color: map-get($color, primary);
 }
 .el-table {
-  color: map-get($fontColor, normal);
+  color: map-get($fontColor, dark);
 }
 .el-table::before {
   display: none;
@@ -363,7 +368,7 @@
   display: block;
 }
 .el-table thead {
-  color: map-get($fontColor, normal);
+  color: map-get($fontColor, dark);
 }
 .el-table__fixed-right-patch {
   background: #f4f5f7;
@@ -411,7 +416,7 @@
 .el-breadcrumb__inner a,
 .el-breadcrumb__inner.is-link {
   font-weight: 400;
-  color: map-get($fontColor, secondary);
+  color: map-get($fontColor, light);
 }
 .el-breadcrumb__inner a:hover,
 .el-breadcrumb__inner.is-link:hover {
@@ -421,7 +426,7 @@
 .el-breadcrumb__item:last-child .el-breadcrumb__inner a,
 .el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover,
 .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
-  color: map-get($fontColor, light);
+  color: map-get($fontColor, normal);
 }
 .el-tag--small {
   border-radius: $borderRadius;
@@ -449,7 +454,7 @@
   line-height: 24px;
   font-size: 14px;
   font-weight: bold;
-  color: map-get($fontColor, normal);
+  color: map-get($fontColor, dark);
 }
 .el-message-box__btns {
   .el-button {
@@ -470,7 +475,7 @@
 .el-message-box__content {
   padding: 5px 15px 15px 15px;
   font-size: 12px;
-  color: map-get($fontColor, light);
+  color: map-get($fontColor, normal);
 }
 .el-message-box__status + .el-message-box__message {
   padding-left: 50px;
@@ -589,7 +594,7 @@
       font-weight: 500;
       color: #e9e9e9;
       &.is-process {
-        color: map-get($fontColor, normal);
+        color: map-get($fontColor, dark);
       }
     }
   }
@@ -615,18 +620,26 @@
     .el-step__title {
       font-size: 14px;
       &.is-wait {
-        color: map-get($fontColor, disable);
+        color: map-get($fontColor, slight);
       }
       &.is-process {
-        color: map-get($fontColor, disable);
+        color: map-get($fontColor, slight);
       }
       &.is-finish {
-        color: map-get($fontColor, main);
+        color: map-get($fontColor, dark);
       }
     }
     .el-step__description {
-      color: map-get($fontColor, disable);
+      color: map-get($fontColor, slight);
     }
+  }
+}
+
+// 空组件
+.el-empty__description {
+  font-size: 12px;
+  > p {
+    font-size: 12px;
   }
 }
 
@@ -748,7 +761,7 @@
   background-color: map-get($color, primary);
 }
 .el-tabs__item {
-  color: map-get($fontColor, sub);
+  color: map-get($fontColor, slight);
   font-weight: 400;
   user-select: none;
 }
@@ -758,7 +771,7 @@
 
 .el-button.is-plain:focus {
   border-color: map-get($borderColor, normal);
-  color: map-get($fontColor, normal);
+  color: map-get($fontColor, dark);
 }
 .el-button.is-plain:focus:hover {
   color: map-get($color, primary);
@@ -770,7 +783,7 @@
 .el-form-item.el-form-item--mini {
   margin-bottom: 20px;
   .el-form-item__label {
-    color: map-get($fontColor, slight);
+    color: map-get($fontColor, light);
     font-size: 12px;
     font-weight: 500;
     text-align: left;
