@@ -1864,7 +1864,7 @@ export default {
   role_page_Topology_menu: 'Network topology',
   role_page_servers_oversee_menu: 'Operation and maintenance operation control',
 
-  role_all_check: 'check all',
+  role_all_check: 'Check all',
 
   role_module_meun_Dashboard: 'Browse console',
   role_module_meun_datasource: 'Connection management',
