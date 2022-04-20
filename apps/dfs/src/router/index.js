@@ -2,7 +2,6 @@ import Layout from '../views/Layout.vue'
 import Error from '../views/Error.vue'
 import FastDownload from '@/views/agent-download/FastDownload.vue'
 import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
-import ContactUs from '@/views/ContactUs'
 import i18n from '@/i18n'
 import Lang from '../views/Lang.vue'
 
@@ -253,14 +252,6 @@ const routes = [
     component: UpgradeVersion,
     meta: {
       title: i18n.t('tap_upgrade')
-    }
-  },
-  {
-    path: '/contactUs',
-    name: 'ContactUs',
-    component: ContactUs,
-    meta: {
-      title: i18n.t('tap_contact_us')
     }
   },
   {
