@@ -703,6 +703,123 @@
       </div>
     </div>
   </div>
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 15">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>Tapdata 2.1.4 来啦：数据连接又上新，PolarDB MySQL、轻流开始接入，可自动标记不支持的字段类型</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2022-04-22 19:00</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-4">需求持续更新，优化一刻不停——Tapdata Cloud 2.1.4 来啦！</div>
+        <div class="mb-4 line-height-2">
+          最新发布的版本中，在新增数据连接之余，默认标记不支持同步的字段类型，避免因此影响任务的正常运行。
+        </div>
+        <div class="mb-2 p-4" style="background-color: rgb(241, 248, 255)">
+          <div class="mb-4">{{ $t('workbench_Notice_gengXinSuLan') }}</div>
+          <div class="ml-2 mb-4">
+            <span>1.</span><span class="fw-bold font-color-main pl-1">数据连接上新</span>：新增支持阿里云 PolarDB MySQL
+            作为源和目标，新增支持无代码系统搭建平台“轻流”为目标；
+          </div>
+          <div class="ml-2 mb-4">
+            <span>2.</span>
+            <span class="fw-bold font-color-main pl-1">自动标记不支持的字段类型</span
+            >：对于已经明确不支持同步的字段类型，在字段映射时默认标记为【不支持】，快速定位删除，以保证任务正常运行。
+          </div>
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">01</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>数据连接再添新成员</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p class="mb-2">持续打造 1+1＞2 的用户体验</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          作为国内首家异构数据库实时同步云平台，Tapdata Cloud
+          不断拓展能够支持的数据连接版图，力求满足用户的多样化数据源和目标需求，真正实现数据实时同步“全面破壁”。2.1.4
+          版本又有新伙伴加入：
+        </div>
+        <div class="mb-4 blue-title"><span class="blue-circle-index mr-1">1</span>新增支持 PolarDB MySQL 作为源和目标</div>
+        <div class="mb-4 line-height-2">
+          随着新兴国产数据库不断涌现，Tapdata Cloud 持续发力，与更多优质国产数据库牵手。本次更新中最新接入的<span
+            class="fw-bold font-color-main"
+            >阿里云 PolarDB MySQL</span
+          >，同时也是近日启动的
+          <ElLink
+            type="primary"
+            href="https://tapdata.net/tapdata-PDK-program.html?fromColId=2"
+            target="_blank"
+            class="fs-7 align-baseline"
+            >{{ $t('workbench_Notice_tAPDA') }}</ElLink
+          >
+          的首批共建伙伴之一，将与 Tapdata 牵手，共同为用户提供更好的数据即服务（DaaS）体验,
+          共同繁荣云原生分布式数据库生态。
+        </div>
+        <div class="mb-4 blue-title"><span class="blue-circle-index mr-1">2</span>新增支持“轻流”作为目标</div>
+        <div class="mb-4 line-height-2">
+          面对进击中的 SaaS 浪潮，瞄准用户多样化的目标需求，Tapdata Cloud 稳步规划，持续牵手。新版本开始支持优质
+          <span class="fw-bold font-color-main">SaaS 服务工具“轻流”</span
+          >为数据目标。作为无代码系统搭建平台，轻流支持0代码、快速搭建业务系统，可以有效提升工作效率，降低管理成本。当轻量的异构数据实时同步工具，遇上轻量的数字化管理工具，可以将二者的易用性加倍放大。用户借助
+          Tapdata Cloud 快速将业务数据等导入轻流，为更敏捷地使用轻流进行数字化管理提供稳定可靠的数据支撑。
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.4/01.png" alt="" />
+        </div>
+        <div class="mb-4">
+          {{ $t('workbench_Notice_zhiCiTAP') }}
+          <span class="fw-bold font-color-main"
+            >{{ $t('workbench_Notice_shuJuLianJieJu')
+            }}<span class="fs-6 pl-1" style="font-family: DIN; color: rgb(0, 122, 181)">32</span></span
+          >{{ $t('workbench_Notice_fangDaJiuKanT') }}
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.4/02.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">02</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>自动标记</strong>
+              <div><strong>不支持的字段类型</strong></div>
+            </div>
+            <div class="number-title-box__desc">
+              <p>快速定位删除，任务运行无阻</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          针对历史版本中，因部分数据库中的特殊字段类型不支持同步导致报错，故而影响任务正常运行的问题，新版本给出了解决方案：
+        </div>
+        <div class="mb-4 line-height-2">
+          该版本下，对于已经明确不支持同步的字段类型，在字段映射时将默认标记为【不支持】，这些字段在进入字段映射页面时会被自动删除，不再需要手动定位（<span
+            class="font-color-sub"
+            ><span class="fw-bold">*划重点</span
+            >：用户可以在任务界面明确看到相应字段是因为【不支持】而被删除，【已删除】字段不支持恢复</span
+          >），从而保证任务的正常运行，避免用户因为不清楚哪些字段不被支持而导致任务频繁出错。
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.4/03.png" alt="" />
+        </div>
+        <div class="line-height-2">
+          {{ $t('workbench_Notice_zhongShiChengZhangLu') }}
+          <img
+            src="../../../public/images/notice/love.png"
+            alt=""
+            style="width: 20px; height: 20px; vertical-align: text-bottom"
+          />{{ $t('workbench_Notice_') }}
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -967,5 +1084,18 @@ export default {
   display: inline-block;
   background: #000;
   vertical-align: middle;
+}
+.blue-title {
+  color: rgb(0, 122, 181);
+  font-weight: bold;
+}
+.blue-circle-index {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  font-size: 12px;
+  border-radius: 50%;
+  border: 1px solid #007ab5;
+  text-align: center;
 }
 </style>
