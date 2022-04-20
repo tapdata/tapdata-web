@@ -257,6 +257,8 @@ export default {
         this.model = Object.assign({}, DEFAULT_MODEL['tcp'])
       } else if (type === 'vika') {
         this.model = Object.assign({}, DEFAULT_MODEL['vika'])
+      } else if (type === 'qingflow') {
+        this.model = Object.assign({}, DEFAULT_MODEL['qingflow'])
       } else if (DEFAULT_MODEL[type]) {
         this.model = Object.assign({}, DEFAULT_MODEL[type])
       }
@@ -392,6 +394,8 @@ export default {
         if (this.model.database_type === 'vika') {
           //初始化维格表
           this.getSpaceVika(this.$route.params.id)
+        } else if (this.model.database_type === 'qingflow') {
+          this.getSpaceQingflow(this.$route.params.id)
         }
       } else {
         this.model = Object.assign(this.model, data, { name: this.model.name })
@@ -700,7 +704,7 @@ export default {
       }
       if (database_type === 'qingflow') {
         if (['plain_password', 'qingFlowUserId'].includes(filed)) {
-          this.getSpaceQingflow('', data => {
+          this.getSpaceQingflow(this.$route.params?.id, data => {
             let findOne = data?.result?.find(t => t.id === this.model.qingFlowTagId)
             if (findOne) {
               this.model.qingFlowTagId = findOne.tagId
