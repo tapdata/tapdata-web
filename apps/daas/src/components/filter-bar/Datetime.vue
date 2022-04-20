@@ -89,6 +89,9 @@ export default {
       input {
         color: map-get($fontColor, dark);
       }
+      input::placeholder {
+        color: map-get($fontColor, dark);
+      }
     }
     &.empty-time {
       width: 90px !important;
