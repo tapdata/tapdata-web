@@ -344,7 +344,7 @@ export default {
         {
           id: 15,
           type: '',
-          name: 'Tapdata Cloud 2.1.4 版本发布啦！',
+          name: i18n.t('workbench_Workbench_tAPDA1'),
           time: '2022-04-22 19:00'
         },
         {

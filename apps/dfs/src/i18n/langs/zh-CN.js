@@ -1625,5 +1625,46 @@ export default {
   workbench_Workbench_tAPDA4: 'Tapdata Cloud 2.1.2 版本发布啦！',
   workbench_Workbench_tAPDA3: 'Tapdata Cloud 2.1.1 版本发布啦！',
   workbench_Workbench_tAPDA2: 'Tapdata Cloud 2.1.0 版本发布啦！',
-  workbench_Workbench_tAPDA: 'Tapdata Cloud 2.0.1 版本发布啦！'
+  workbench_Workbench_tAPDA: 'Tapdata Cloud 2.0.1 版本发布啦！',
+  workbench_Notice_tAPDA1:
+    'Tapdata 2.1.4 来啦：数据连接又上新，PolarDB MySQL、轻流开始接入，可自动标记不支持的字段类型',
+  workbench_Notice_xuQiuChiXuGeng1: '需求持续更新，优化一刻不停——Tapdata Cloud 2.1.4 来啦！',
+  workbench_Notice_zuiXinFaBuDe1:
+    '最新发布的版本中，在新增数据连接之余，默认标记不支持同步的字段类型，避免因此影响任务的正常运行。',
+  workbench_Notice_shuJuLianJieShang1: '数据连接上新',
+  workbench_Notice_xinZengZhiChiA1:
+    '：新增支持阿里云 PolarDB MySQL\n            作为源和目标，新增支持无代码系统搭建平台“轻流”为目标；',
+  workbench_Notice_ziDongBiaoJiBu: '自动标记不支持的字段类型',
+  workbench_Notice_duiYuYiJingMing:
+    '：对于已经明确不支持同步的字段类型，在字段映射时默认标记为【不支持】，快速定位删除，以保证任务正常运行。',
+  workbench_Notice_shuJuLianJieZai: '数据连接再添新成员',
+  workbench_Notice_chiXuDaZaoDe: '持续打造 1+1＞2 的用户体验',
+  workbench_Notice_zuoWeiGuoNeiShou1:
+    '作为国内首家异构数据库实时同步云平台，Tapdata Cloud\n          不断拓展能够支持的数据连接版图，力求满足用户的多样化数据源和目标需求，真正实现数据实时同步“全面破壁”。2.1.4\n          版本又有新伙伴加入：',
+  workbench_Notice_xinZengZhiChiP: '新增支持 PolarDB MySQL 作为源和目标',
+  workbench_Notice_suiZheXinXingGuo1:
+    '随着新兴国产数据库不断涌现，Tapdata Cloud 持续发力，与更多优质国产数据库牵手。本次更新中最新接入的',
+  workbench_Notice_aLiYunPO: '阿里云 PolarDB MySQL',
+  workbench_Notice_tongShiYeShiJin: '，同时也是近日启动的',
+  workbench_Notice_deShouPiGongJian1:
+    '的首批共建伙伴之一，将与 Tapdata 牵手，共同为用户提供更好的数据即服务（DaaS）体验,\n          共同繁荣云原生分布式数据库生态。',
+  workbench_Notice_xinZengZhiChiQing: '新增支持“轻流”作为目标',
+  workbench_Notice_mianDuiJinJiZhong:
+    '\n          面对进击中的 SaaS 浪潮，瞄准用户多样化的目标需求，Tapdata Cloud 稳步规划，持续牵手。新版本开始支持优质',
+  workbench_Notice_sAASFu: 'SaaS 服务工具“轻流”',
+  workbench_Notice_weiShuJuMuBiao:
+    '为数据目标。作为无代码系统搭建平台，轻流支持0代码、快速搭建业务系统，可以有效提升工作效率，降低管理成本。当轻量的异构数据实时同步工具，遇上轻量的数字化管理工具，可以将二者的易用性加倍放大。用户借助\n          Tapdata Cloud 快速将业务数据等导入轻流，为更敏捷地使用轻流进行数字化管理提供稳定可靠的数据支撑。',
+  workbench_Notice_ziDongBiaoJi: '自动标记',
+  workbench_Notice_buZhiChiDeZi: '不支持的字段类型',
+  workbench_Notice_kuaiSuDingWeiShan: '快速定位删除，任务运行无阻',
+  workbench_Notice_zhenDuiLiShiBan1:
+    '针对历史版本中，因部分数据库中的特殊字段类型不支持同步导致报错，故而影响任务正常运行的问题，新版本给出了解决方案：',
+  workbench_Notice_gaiBanBenXiaDui:
+    '\n          该版本下，对于已经明确不支持同步的字段类型，在字段映射时将默认标记为【不支持】，这些字段在进入字段映射页面时会被自动删除，不再需要手动定位（',
+  workbench_Notice_huaZhongDian: '*划重点',
+  workbench_Notice_yongHuKeYiZai:
+    '：用户可以在任务界面明确看到相应字段是因为【不支持】而被删除，【已删除】字段不支持恢复',
+  workbench_Notice_congErBaoZhengRen:
+    '），从而保证任务的正常运行，避免用户因为不清楚哪些字段不被支持而导致任务频繁出错。',
+  workbench_Workbench_tAPDA1: 'Tapdata Cloud 2.1.4 版本发布啦！'
 }
