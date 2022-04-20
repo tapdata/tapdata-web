@@ -63,7 +63,7 @@ export const FieldValue = connect(
         this.fields = fields
         this.originalFields = JSON.parse(JSON.stringify(fields))
         return (
-          <div class="field-processors-tree-warp bg-body pt-2 pb-5">
+          <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
               <ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
               <span class="flex-1 text inline-block ml-15">字段名称</span>

@@ -71,7 +71,7 @@ export const FieldAddDel = connect(
         this.deleteAllFieldsData = formValues?.deleteAllFields
 
         return (
-          <div class="field-processors-tree-warp bg-body pt-2 pb-5">
+          <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
               {/*<ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />*/}
               <span class="flex-1 text inline-block ml-15">字段名称</span>
@@ -115,7 +115,9 @@ export const FieldAddDel = connect(
                         {this.isCreate(data.id) ? (
                           <span
                             class={[
-                              !this.isRemove(data.id) && data.is_deleted ? 'active__delete' : '',
+                              (data.is_deleted || this.isRemove(data.id)) && !this.isRest(data.id)
+                                ? 'active__delete'
+                                : '',
                               this.isCreate(data.id) ? 'active__name' : ''
                             ]}
                           >
@@ -139,7 +141,13 @@ export const FieldAddDel = connect(
                           </span>
                         ) : (
                           //不是新建字段
-                          <span class={[!this.isRemove(data.id) && data.is_deleted ? 'active__delete' : '']}>
+                          <span
+                            class={[
+                              (data.is_deleted || this.isRemove(data.id)) && !this.isRest(data.id)
+                                ? 'active__delete'
+                                : ''
+                            ]}
+                          >
                             {data.field_name}
                             {data.primary_key_position > 0 ? (
                               <VIcon size="12" class="text-warning ml-1">
@@ -155,7 +163,7 @@ export const FieldAddDel = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={this.isRemove(data.id) && data.is_deleted}
+                          disabled={(this.isRemove(data.id) || data.is_deleted) && !this.isRest(data.id)}
                           onClick={() => this.handleDelete(node, data)}
                         >
                           <VIcon> delete</VIcon>
@@ -163,7 +171,7 @@ export const FieldAddDel = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={!this.isRemove(data.id) && !data.is_deleted}
+                          disabled={(!this.isRemove(data.id) && !data.is_deleted) || this.isRest(data.id)}
                           onClick={() => this.handleReset(node, data)}
                         >
                           <VIcon size="12">revoke</VIcon>
@@ -180,6 +188,11 @@ export const FieldAddDel = connect(
       methods: {
         isRemove(id) {
           let ops = this.operations.filter(v => v.id === id && v.op === 'REMOVE' && v.operand)
+          return ops && ops.length > 0
+        },
+        isRest(id) {
+          //撤回删除
+          let ops = this.operations.filter(v => v.id === id && v.op === 'REMOVE' && !v.operand)
           return ops && ops.length > 0
         },
         isCreate(id) {
@@ -364,32 +377,36 @@ export const FieldAddDel = connect(
             this.$refs.tree.remove(node)
           } else {
             let originalField = this.getNativeData(data.id)
+            this.operations = this.operations || []
             let self = this
-            self.operations = self.operations || []
             let fn = function (field) {
               let ops = self.operations.filter(v => v.op === 'REMOVE' && v.id === field.id)
-              let op
-              if (ops.length === 0) {
-                op = Object.assign(JSON.parse(JSON.stringify(self.REMOVE_OPS_TPL)), {
-                  id: field.id,
-                  field: field.original_field_name,
-                  operand: !self.deleteAllFieldsData,
-                  table_name: field.table_name,
-                  type: field.java_type,
-                  primary_key_position: field.primary_key_position,
-                  color: field.color,
-                  label: field.field_name,
-                  field_name: field.field_name
-                })
-                self.operations.push(op)
+              let op = Object.assign(JSON.parse(JSON.stringify(self.REMOVE_OPS_TPL)), {
+                id: field.id,
+                field: field.original_field_name,
+                operand: !self.deleteAllFieldsData,
+                table_name: field.table_name,
+                type: field.java_type,
+                primary_key_position: field.primary_key_position,
+                color: field.color,
+                label: field.field_name,
+                field_name: field.field_name
+              })
+              if (ops.length !== 0) {
+                let index = self.operations.findIndex(v => v.op === 'REMOVE' && v.id === field.id)
+                if (index > -1) {
+                  self.operations.splice(index, 1)
+                }
+                op.operand = true
               }
+              self.operations.push(op)
               if (field.children) {
                 field.children.forEach(fn)
               }
             }
             if (originalField) fn(originalField)
           }
-          console.log('fieldProcessor.handleDelete', self.operations) // eslint-disable-line
+          console.log('fieldProcessor.handleDelete', this.operations) // eslint-disable-line
         },
         handleAllDelete() {
           //清掉所有operations

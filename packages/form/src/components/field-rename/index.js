@@ -52,7 +52,7 @@ export const FieldRename = connect(
         this.fields = fields || []
         this.originalFields = JSON.parse(JSON.stringify(fields))
         //查找是否有被删除的字段且operation有操作
-        if (this.operations?.length > 0) {
+        if (this.operations?.length > 0 && fields) {
           let temporary = handleOperation(fields, this.operations)
           temporary.map(item => {
             let targetIndex = fields.findIndex(n => n.id === item.id)
@@ -78,9 +78,8 @@ export const FieldRename = connect(
         // eslint-disable-next-line
         console.log('FieldProcess.mergeOutputSchema', fields)
         return (
-          <div class="field-processors-tree-warp bg-body pt-2 pb-5">
+          <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
-              {/*<ElCheckbox class="check-all " v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />*/}
               <span class="flex-1 text inline-block ml-15 ">源字段名</span>
               <span class="flex-1 text inline-block">目标字段名</span>
               <span class="field-ops  inline-block mr-12">
@@ -150,7 +149,9 @@ export const FieldRename = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={!this.isRename(data.id) && this.fieldsNameTransforms === ''}
+                          disabled={
+                            (!this.isRename(data.id) && this.fieldsNameTransforms === '') || this.isReset(data.id)
+                          }
                           onClick={() => this.handleReset(node, data)}
                         >
                           <VIcon size="12">revoke</VIcon>
@@ -169,6 +170,10 @@ export const FieldRename = connect(
           let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME')
           return ops && ops.length > 0
         },
+        isReset(id) {
+          let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME' && v.reset)
+          return ops && ops.length > 0
+        },
         showInput(data) {
           this.$set(data, 'showInput', true) //打开loading
           //将输入框自动获取焦点
@@ -185,88 +190,46 @@ export const FieldRename = connect(
         handleRename(node, data) {
           console.log('fieldProcessor.handleRename', node, data) //eslint-disable-line
           let nativeData = this.getNativeData(data.id) //查找初始schema
-          //该字段若是已被删除 不可再重命名
-          if (!data || data.field_name === '') {
-            data.field_name = nativeData.field_name
-            this.$message.error(this.$t('message.exists_name'))
-            return
-          }
-          let removes = this.operations.filter(v => v.id === data.id && v.op === 'REMOVE')
-          if (removes.length > 0) {
-            data.field_name = nativeData.field_name
-            return
-          }
           let existsName = this.handleExistsName(node, data)
           if (existsName) {
             data.field_name = nativeData.field_name
             return
           }
-          let createOps = this.operations.filter(v => v.id === data.id && v.op === 'CREATE')
-          if (createOps && createOps.length > 0) {
-            let op = createOps[0]
-            let level = op.level
-            let fieldNames = (op.field || op.field_name).split('.')
-            fieldNames[level] = data.field_name
-            op.field = fieldNames.join('.')
-            //同步对js 改名操作
-            if (this.scripts && this.scripts.length && this.scripts.length > 0) {
-              for (let i = 0; i < this.scripts.length; i++) {
-                if (op.id === this.scripts[i].id) {
-                  this.scripts[i].field = op.field
-                  this.scripts[i].label = op.field
-                }
-              }
-            }
+          //eslint-disable-next-line
+          console.log(
+            'fieldProcessor.handlerRename(node,data,nativeData,operations',
+            node,
+            data,
+            nativeData,
+            this.operations
+          )
+          let ops = this.operations.filter(v => v.id === data.id && v.op === 'RENAME')
+          let op
+          if (ops.length === 0) {
+            op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
+              id: data.id,
+              field: nativeData.original_field_name,
+              operand:
+                this.fieldsNameTransforms === ''
+                  ? data.field_name
+                  : nativeData.original_field_name || nativeData.original_field_name,
+              table_name: data.table_name,
+              type: data.type,
+              primary_key_position: data.primary_key_position,
+              color: data.color,
+              label: data.field_name,
+              field_name: data.field_name,
+              reset: this.fieldsNameTransforms !== ''
+            })
+            this.operations.push(op)
           } else {
-            //eslint-disable-next-line
-            console.log(
-              'fieldProcessor.handlerRename(node,data,nativeData,operations',
-              node,
-              data,
-              nativeData,
-              this.operations
-            )
-            let ops = this.operations.filter(v => v.id === data.id && v.op === 'RENAME')
-            let op
-            if (ops.length === 0) {
-              op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
-                id: data.id,
-                field: nativeData.original_field_name,
-                operand: data.field_name,
-                table_name:
-                  this.fieldsNameTransform === ''
-                    ? data.table_name
-                    : nativeData.field_name || nativeData.original_field_name,
-                type: data.type,
-                primary_key_position: data.primary_key_position,
-                color: data.color,
-                label: data.field_name,
-                field_name: data.field_name
-              })
-              this.operations.push(op)
-            } else {
-              op = ops[0]
-              ;(op.operand =
-                this.fieldsNameTransform === ''
-                  ? data.table_name
-                  : nativeData.field_name || nativeData.original_field_name),
-                (op.label = data.field_name)
-              op.field_name = data.field_name
-            }
-            //删除 相同字段名称
-            if (this.scripts && this.operations.length && this.operations.length > 0) {
-              for (let i = 0; i < this.operations.length; i++) {
-                let originalFieldName = this.operations[i].field
-                if (originalFieldName.indexOf('.') >= 0) {
-                  originalFieldName = originalFieldName.split('.')
-                  originalFieldName = originalFieldName[originalFieldName.length - 1]
-                }
-                if (originalFieldName === this.operations[i].operand && this.operations[i].op === 'RENAME') {
-                  this.operations.splice(i, 1)
-                  i--
-                }
-              }
-            }
+            op = ops[0]
+            ;(op.operand =
+              this.fieldsNameTransforms === ''
+                ? data.table_name
+                : nativeData.original_field_name || nativeData.original_field_name),
+              (op.label = data.field_name)
+            op.field_name = data.field_name
           }
           console.log(this.operations) //eslint-disable-line
         },
