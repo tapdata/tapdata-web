@@ -1478,7 +1478,7 @@ export default {
         }
       } else if (this.targetIsVika) {
         for (let key in this.form.vikaMappings) {
-          if (!getAllSourceTables[key]) {
+          if (!getAllSourceTables.includes(key)) {
             delete this.form.vikaMappings[key]
           }
         }
@@ -1602,16 +1602,16 @@ export default {
           tableName: this.vikaForm.table,
           nodeId: this.vikaForm.currentNode.data.id
         })
-        if (this.targetIsQingflow) {
-          this.form.qingFlowMappings[this.vikaForm.originalTableName] = {
-            appKey: this.vikaForm.currentNode.data.id,
-            appName: this.vikaForm.table
-          }
-        } else {
-          this.form.vikaMappings[this.vikaForm.originalTableName] = {
-            id: this.vikaForm.currentNode.data.id,
-            name: this.vikaForm.table
-          }
+      }
+      if (this.targetIsQingflow) {
+        this.form.qingFlowMappings[this.vikaForm.originalTableName] = {
+          appKey: this.vikaForm.currentNode.data.id,
+          appName: this.vikaForm.table
+        }
+      } else {
+        this.form.vikaMappings[this.vikaForm.originalTableName] = {
+          id: this.vikaForm.currentNode.data.id,
+          name: this.vikaForm.table
         }
       }
       this.vikaForm.visible = false
