@@ -81,14 +81,11 @@ export default {
   .filter-datetime__title {
     margin-right: 8px;
     cursor: pointer;
-    color: map-get($fontColor, slight);
+    color: map-get($fontColor, normal);
   }
   .el-date-editor {
     max-width: 150px;
     ::v-deep {
-      input::placeholder {
-        color: map-get($fontColor, dark);
-      }
       input {
         color: map-get($fontColor, dark);
       }
@@ -100,9 +97,6 @@ export default {
           width: 80px;
           text-align: center;
           font-weight: 400;
-        }
-        .el-input__inner::placeholder {
-          color: map-get($fontColor, slight);
         }
       }
     }
