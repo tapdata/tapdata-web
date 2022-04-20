@@ -150,7 +150,7 @@ export const FieldRename = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={!this.isRename(data.id) || this.fieldsNameTransforms !== ''}
+                          disabled={!this.isRename(data.id) && this.fieldsNameTransforms === ''}
                           onClick={() => this.handleReset(node, data)}
                         >
                           <VIcon size="12">revoke</VIcon>

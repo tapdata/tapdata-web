@@ -169,7 +169,7 @@ export const FieldAddDel = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={!this.isRemove(data.id) || data.is_deleted}
+                          disabled={!this.isRemove(data.id) && !data.is_deleted}
                           onClick={() => this.handleReset(node, data)}
                         >
                           <VIcon size="12">revoke</VIcon>
