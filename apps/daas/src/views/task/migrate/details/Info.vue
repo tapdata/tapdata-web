@@ -291,7 +291,7 @@ export default {
         grid: {
           left: '24px', // 没有数据的时候，Y轴单位显示不全。后面可以通过判断设置该值
           right: '12px',
-          top: '8px',
+          top: '30px',
           bottom: 0,
           containLabel: true,
           borderWidth: 1,
