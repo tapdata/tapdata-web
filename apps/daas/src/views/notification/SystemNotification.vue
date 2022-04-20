@@ -1,7 +1,7 @@
 <template>
   <div class="system-notification" v-loading="loading">
     <div class="notification-head pt-8 pb-4 px-6">
-      <div class="title font-color-normal fs-7">{{ $t('notify_system_notice') }}</div>
+      <div class="title font-color-dark fs-7">{{ $t('notify_system_notice') }}</div>
     </div>
 
     <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -531,7 +531,7 @@ $unreadColor: #ee5353;
     }
     .list-item-time {
       float: right;
-      color: map-get($fontColor, secondary);
+      color: map-get($fontColor, light);
       font-size: 12px;
     }
     &:hover {
@@ -571,7 +571,7 @@ $unreadColor: #ee5353;
     height: 40px;
     line-height: 40px;
     font-size: 14px;
-    color: map-get($fontColor, secondary);
+    color: map-get($fontColor, light);
     font-weight: 400;
     &.is-active {
       font-weight: 500;

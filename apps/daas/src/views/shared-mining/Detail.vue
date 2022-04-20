@@ -6,23 +6,23 @@
           <span class="fw-sub mb-4 fs-7">{{ $t('share_detail_mining_info') }}</span>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
-          <div class="fw-normal head-label font-color-slight">{{ $t('share_detail_name') }}:</div>
+          <div class="fw-normal head-label font-color-light">{{ $t('share_detail_name') }}:</div>
           <ElTooltip effect="dark" :content="detailData.name" placement="top-start">
-            <div class="name font-color-normal fw-normal">{{ detailData.name }}</div>
+            <div class="name font-color-dark fw-normal">{{ detailData.name }}</div>
           </ElTooltip>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
-          <div class="fw-normal head-label font-color-slight">{{ $t('share_detail_log_mining_time') }}:</div>
-          <div class="font-color-normal fw-normal">{{ $moment(detailData.logTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
+          <div class="fw-normal head-label font-color-light">{{ $t('share_detail_log_mining_time') }}:</div>
+          <div class="font-color-dark fw-normal">{{ $moment(detailData.logTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
         </div>
         <div class="flex justify-content-start mb-4 text-left fs-8">
-          <div class="fw-normal head-label font-color-slight">{{ $t('share_detail_log_time') }}:</div>
-          <div class="font-color-normal fw-normal">{{ detailData.storageTime }}</div>
+          <div class="fw-normal head-label font-color-light">{{ $t('share_detail_log_time') }}:</div>
+          <div class="font-color-dark fw-normal">{{ detailData.storageTime }}</div>
         </div>
       </div>
       <div class="share-detail-head-center py-5 px-6" style="min-height: 250px">
         <div class="flex">
-          <span class="label font-color-main fs-8">{{ $t('share_detail_statistics_time') }}</span>
+          <span class="label font-color-dark fs-8">{{ $t('share_detail_statistics_time') }}</span>
           <DatetimeRange
             v-model="timeRange"
             :range="2 * 365 * 24 * 60 * 60 * 1000"
@@ -39,9 +39,9 @@
       <div class="flex share-detail-head-right text-center p-6 pl-0">
         <div class="flex text-center bg-color-main w-100 h-100">
           <div class="box py-3">
-            <div class="title fs-7 font-color-normal">{{ $t('share_detail_incremental_play') }}</div>
+            <div class="title fs-7 font-color-dark">{{ $t('share_detail_incremental_play') }}</div>
             <div class="time py-4 fs-2 text-primary">{{ getReplicateLagTime(replicateLag) }}</div>
-            <div class="text-muted font-color-sub fs-8" v-if="detailData.cdcTime">
+            <div class="text-muted font-color-slight fs-8" v-if="detailData.cdcTime">
               {{ $t('share_detail_incremental_time') }}：{{ formatTime(detailData.cdcTime) }}
             </div>
           </div>

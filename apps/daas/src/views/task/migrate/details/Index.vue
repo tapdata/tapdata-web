@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loading" class="statistics-container font-color-sub section-wrap">
+  <div v-loading="loading" class="statistics-container font-color-slight section-wrap">
     <Info :task="task" class="card-box card-box__info" :remote-method="infoRemoteMethod" @reload="loadTask"></Info>
     <div class="card-box__content card-box px-6 py-2 mt-6">
       <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">

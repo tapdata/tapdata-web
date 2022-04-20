@@ -30,10 +30,10 @@
         @scroll.native="scrollFnc"
       >
         <template #before>
-          <div v-if="keyword" class="before-scroll-content text-center font-color-disable pb-2">
+          <div v-if="keyword" class="before-scroll-content text-center font-color-slight pb-2">
             <div>{{ $t('customer_logs_no_search_data') }}</div>
           </div>
-          <div v-else class="before-scroll-content text-center font-color-disable pb-2">
+          <div v-else class="before-scroll-content text-center font-color-slight pb-2">
             <div v-if="isNoMore">{{ $t('customer_logs_no_more_data') }}</div>
             <div v-else-if="!list.length">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
             <div v-show="preLoading">

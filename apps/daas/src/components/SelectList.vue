@@ -151,7 +151,7 @@
             </template>
             <template #after>
               <slot name="after">
-                <div v-if="!!lastPageText && isLastPage" class="pl-5 py-2 fs-7 font-color-disable">
+                <div v-if="!!lastPageText && isLastPage" class="pl-5 py-2 fs-7 font-color-slight">
                   {{ lastPageText }}
                 </div>
               </slot>
@@ -527,7 +527,7 @@ export default {
     &:hover {
       background-color: #fafafa;
       .icon-btn {
-        color: map-get($fontColor, main);
+        color: map-get($fontColor, dark);
       }
     }
     ::v-deep {
@@ -563,16 +563,13 @@ export default {
   white-space: nowrap;
 }
 .inner-select__label {
-  color: map-get($fontColor, slight);
+  color: map-get($fontColor, light);
 }
 .inner-select__selected {
   padding-left: 8px;
-  color: map-get($fontColor, main);
-  &.placeholder {
-    //color: map-get($fontColor, sub);
-  }
+  color: map-get($fontColor, dark);
 }
 .icon-btn {
-  color: map-get($fontColor, sub);
+  color: map-get($fontColor, slight);
 }
 </style>

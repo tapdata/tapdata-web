@@ -19,7 +19,6 @@ import '@/plugins/icon'
 import 'element-ui/lib/theme-chalk/index.css'
 import '@/directives'
 import 'github-markdown-css'
-// import '@/assets/style/index.scss'
 import LoadMore from '@/utils/loadMore'
 
 import '@/styles/app.scss'

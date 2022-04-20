@@ -10,11 +10,7 @@
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_warningApiCount') }}</header>
           <div class="api-monitor-total__text din-font" v-if="previewData.visitTotalCount">
-            {{
-              previewData.visitTotalCount - previewData.warningApiCount < 0
-                ? 0
-                : previewData.visitTotalCount - previewData.warningApiCount
-            }}/{{ previewData.visitTotalCount }}
+            {{ visitTotalCountText }}/{{ previewData.visitTotalCount }}
           </div>
         </div>
         <div class="flex-1 mt-5 text-center">
@@ -96,9 +92,15 @@
             v-loading="loadingTimeList"
             :has-pagination="false"
             :data="consumingTimeList"
-            :columns="columns"
+            :columns="columnsRT"
             ref="consumingTimeList"
-          ></TableList>
+          >
+            <template slot="failed" slot-scope="scope">
+              <span>
+                {{ formatMs(scope.row.failed) }}
+              </span>
+            </template>
+          </TableList>
           <el-pagination
             layout="->,total, prev,pager, next"
             :page-size="5"
@@ -139,7 +141,7 @@
           <el-table-column prop="visitCount" :label="$t('api_monitor_total_api_list_visitCount')"> </el-table-column>
           <el-table-column prop="transitQuantity" :label="$t('api_monitor_total_api_list_transitQuantity')">
             <template #default="{ row }">
-              <span>{{ handleUnit(row.transmitTotal) || '' }}</span>
+              <span>{{ handleUnit(row.transitQuantity) || '' }}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -160,7 +162,7 @@
 import Chart from 'web-core/components/chart'
 import TableList from '@/components/TableList'
 import FilterBar from '@/components/filter-bar'
-import { handleUnit } from './utils'
+import { formatMs, handleUnit } from './utils'
 import Detail from './Detail'
 import { toRegExp } from '../../../utils/util'
 export default {
@@ -180,6 +182,16 @@ export default {
         {
           label: this.$t('api_monitor_total_columns_failed'),
           prop: 'failed'
+        }
+      ],
+      columnsRT: [
+        {
+          label: 'Api ID',
+          prop: 'name'
+        },
+        {
+          label: this.$t('api_monitor_total_rTime'),
+          slotName: 'failed'
         }
       ],
       previewData: {},
@@ -212,6 +224,17 @@ export default {
       ]
     }
   },
+  computed: {
+    visitTotalCountText() {
+      let count = this.previewData.visitTotalCount - this.previewData.warningApiCount
+      return count < 0 ? 0 : count
+    }
+  },
+  watch: {
+    '$route.query'() {
+      this.getApiList(1)
+    }
+  },
   mounted() {
     this.getPreview()
     this.getClientName()
@@ -219,14 +242,14 @@ export default {
     this.consumingMethod()
     this.getApiList(1)
   },
-  watch: {
-    '$route.query'() {
-      this.getApiList(1)
-    }
-  },
   methods: {
     handleUnit(limit) {
       return handleUnit(limit)
+    },
+    formatMs(time) {
+      if (time === 0 || !time) return 0
+      if (time < 1000) return time + ' ms'
+      return formatMs(time, '')
     },
     //获取统计数据
     getPreview() {
@@ -466,7 +489,7 @@ export default {
   }
   .api-monitor-total__tittle {
     font-size: 18px;
-    color: map-get($fontColor, main);
+    color: map-get($fontColor, dark);
   }
   .api-monitor-total__text {
     font-size: 46px;
@@ -477,7 +500,7 @@ export default {
   .api-monitor-chart__text {
     font-size: 14px;
     font-weight: 500;
-    color: map-get($fontColor, main);
+    color: map-get($fontColor, dark);
   }
   .api-monitor-card {
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
@@ -508,7 +531,7 @@ export default {
     height: 0;
     top: 10px;
     border: 4px solid transparent;
-    border-top-color: map-get($fontColor, light);
+    border-top-color: map-get($fontColor, normal);
     cursor: pointer;
     &:hover {
       border-top-color: map-get($color, primary);
@@ -523,7 +546,7 @@ export default {
     height: 0;
     top: 0;
     border: 4px solid transparent;
-    border-bottom-color: map-get($fontColor, light);
+    border-bottom-color: map-get($fontColor, normal);
     cursor: pointer;
     &:hover {
       border-bottom-color: map-get($color, primary);

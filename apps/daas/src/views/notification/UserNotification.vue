@@ -1,7 +1,7 @@
 <template>
   <div class="user-notification" v-loading="loading">
     <div class="header pt-8 pb-4 px-6">
-      <div class="title font-color-normal fs-7">{{ $t('notify_user_notice') }}</div>
+      <div class="title font-color-dark fs-7">{{ $t('notify_user_notice') }}</div>
     </div>
     <div class="search-bar px-6">
       <!-- <el-date-picker
@@ -243,7 +243,7 @@ export default {
       font-size: 12px;
       color: #202d40;
       .item-time {
-        color: map-get($fontColor, secondary);
+        color: map-get($fontColor, light);
         font-weight: 400;
       }
     }

@@ -14,7 +14,7 @@
           <img src="@/assets/images/tu.png" />
         </div>
         <div class="table-info">
-          <h3 class="fs-7 font-color-main">
+          <h3 class="fs-7 font-color-dark">
             <span v-if="metadataDataObj.alias_name">
               {{ metadataDataObj.alias_name }}
             </span>
@@ -61,7 +61,7 @@
         <el-aside class="metadata-aside" v-show="asideFalg">
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
-              <span class="fs-7 font-color-rdlevel fw-sub">{{ $t('metadata.details.basicAttributes') }}</span>
+              <span class="fs-7 font-color-light fw-sub">{{ $t('metadata.details.basicAttributes') }}</span>
               <i @click.stop="asideFalg = false" class="iconfont icon-outdent text-primary"></i>
             </div>
             <ul class="metadata-aside-main pt-4">
@@ -128,7 +128,7 @@
 
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
-              <span class="fs-7 font-color-rdlevel fw-sub">{{ $t('metadata.details.businessAttributes') }}</span>
+              <span class="fs-7 font-color-light fw-sub">{{ $t('metadata.details.businessAttributes') }}</span>
               <el-button type="text" size="mini" @click.stop="creatBusiness"
                 >+ {{ $t('metadata.details.creat') }}</el-button
               >
@@ -989,7 +989,6 @@ export default {
               overflow: hidden;
               span {
                 display: inline-block;
-                float: left;
                 color: #000;
               }
               .label {
@@ -1185,14 +1184,12 @@ export default {
                       }
                       .label {
                         display: inline-block;
-                        float: left;
                         padding: 5px 0;
                         color: #aaa;
                         border-radius: 0;
                         background-color: transparent;
                       }
                       .dropInfo {
-                        float: left;
                         display: inline-block;
                         width: calc(100% - 60px);
                         white-space: break-spaces;

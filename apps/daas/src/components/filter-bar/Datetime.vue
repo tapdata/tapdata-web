@@ -87,10 +87,10 @@ export default {
     max-width: 150px;
     ::v-deep {
       input::placeholder {
-        color: map-get($fontColor, main);
+        color: map-get($fontColor, dark);
       }
       input {
-        color: map-get($fontColor, main);
+        color: map-get($fontColor, dark);
       }
     }
     &.empty-time {
@@ -102,7 +102,7 @@ export default {
           font-weight: 400;
         }
         .el-input__inner::placeholder {
-          color: map-get($fontColor, sub);
+          color: map-get($fontColor, slight);
         }
       }
     }
@@ -127,7 +127,7 @@ export default {
       }
     }
     .icon-btn {
-      color: map-get($fontColor, main);
+      color: map-get($fontColor, dark);
     }
   }
 }

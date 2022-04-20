@@ -23,7 +23,7 @@
       <div v-show="!noMore && loading" class="pb-4 text-center fs-5">
         <i class="el-icon-loading"></i>
       </div>
-      <div v-show="noMore" class="font-color-sub text-center pb-4">{{ $t('task_info_no_more') }}</div>
+      <div v-show="noMore" class="font-color-slight text-center pb-4">{{ $t('task_info_no_more') }}</div>
       <ul v-if="logs.length">
         <li class="log-item px-6" v-for="log in logs" :key="log.id">
           [<span class="fw-bold" :class="log.color" v-html="log.level"></span>]&nbsp; <span>{{ log.time }}</span
@@ -161,7 +161,7 @@ export default {
       let colorMap = {
         ERROR: 'color-danger',
         WARN: 'color-warning',
-        INFO: 'font-color-main'
+        INFO: 'font-color-dark'
       }
       let markKeyword = text => {
         let keyword = this.keyword

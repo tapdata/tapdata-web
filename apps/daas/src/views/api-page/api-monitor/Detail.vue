@@ -22,11 +22,13 @@
         </div>
         <div class="flex-1">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_speed') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ detail.speed || 0 }}</div>
+          <div class="api-monitor-detail-wrap__value">
+            {{ detail.speed ? handleUnit(detail.speed) + '/S' : '0 M/S' }}
+          </div>
         </div>
         <div class="flex-1">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_responseTime') }}</div>
-          <div class="api-monitor-detail-wrap__value">{{ detail.responseTime || 0 }}</div>
+          <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.responseTime) || 0 }}</div>
         </div>
       </div>
     </div>
@@ -69,9 +71,9 @@ export default {
       },
       typesOptions: [
         { label: this.$t('api_monitor_detail_visitTotalLine'), value: 'visitTotalLine' },
-        { label: this.$t('api_monitor_detail_timeConsuming'), value: 'timeConsuming' },
+        { label: this.$t('api_monitor_detail_timeConsuming'), value: 'latency' },
         { label: this.$t('api_monitor_detail_speed'), value: 'speed' },
-        { label: this.$t('api_monitor_detail_responseTime'), value: 'latency' }
+        { label: this.$t('api_monitor_detail_responseTime'), value: 'responseTime' }
       ],
       timeList: [
         { label: this.$t('task_info_five_min'), value: 5 },
@@ -160,7 +162,7 @@ export default {
     this.getDetail()
     this.timer = setInterval(() => {
       this.getDetail(true)
-    }, 5000)
+    }, 60000) //一分钟一次
     this.allElectionFun()
   },
   watch: {
@@ -177,7 +179,7 @@ export default {
     },
     formatMs(time) {
       if (time === 0 || !time) return 0
-      if (time < 1000) return time + 'ms'
+      if (time < 1000) return time + ' ms'
       return formatMs(time)
     },
     getDetail(hiddenLoading) {
