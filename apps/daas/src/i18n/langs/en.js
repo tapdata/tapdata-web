@@ -549,7 +549,7 @@ export default {
   apiaudit_access_type: 'Access Type',
   apiaudit_visitor: 'Visitor',
   apiaudit_interview_time: 'Access time',
-  apiaudit_visit_result: 'Visit result',
+  apiaudit_visit_result: 'Result',
   apiaudit_reason_fail: 'Failure reason',
   apiaudit_log_info: 'Log details',
   apiaudit_parameter: 'parameter',
