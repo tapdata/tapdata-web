@@ -1465,6 +1465,24 @@ export default {
     },
     returnData(hiddenMsg) {
       let result = this.checkTable()
+      // 清理多余数据，切换选择table导致的
+      let getAllSourceTables = this.fieldMappingNavData.map(t => t.sourceObjectName)
+      this.form.tableOperations = this.form.tableOperations.filter(t =>
+        getAllSourceTables.includes(t.originalTableName)
+      )
+      if (this.targetIsQingflow) {
+        for (let key in this.form.qingFlowMappings) {
+          if (!getAllSourceTables.includes(key)) {
+            delete this.form.qingFlowMappings[key]
+          }
+        }
+      } else if (this.targetIsVika) {
+        for (let key in this.form.vikaMappings) {
+          if (!getAllSourceTables[key]) {
+            delete this.form.vikaMappings[key]
+          }
+        }
+      }
       let changNameData = {
         table_prefix: this.form.table_prefix,
         table_suffix: this.form.table_suffix,
