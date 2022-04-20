@@ -180,7 +180,7 @@ export default {
     formatMs(time) {
       if (time === 0 || !time) return 0
       if (time < 1000) return time + ' ms'
-      return formatMs(time)
+      return formatMs(time, '')
     },
     getDetail(hiddenLoading) {
       let data = {

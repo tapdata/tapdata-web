@@ -35,19 +35,19 @@ export const formatMs = (msTime = 0, type = 'time') => {
   let time = msTime / 1000
   let arr = []
   arr.push({
-    label: i18n.t('task_info_d'),
+    label: 'd',
     value: Math.floor(time / 60 / 60 / 24)
   }) // day
   arr.push({
-    label: i18n.t('task_info_h'),
+    label: 'h',
     value: Math.floor(time / 60 / 60) % 24
   }) // hour
   arr.push({
-    label: i18n.t('task_info_m'),
+    label: 'm',
     value: Math.floor(time / 60) % 60
   }) // minute
   arr.push({
-    label: i18n.t('task_info_s'),
+    label: 's',
     value: Math.floor(time) % 60
   }) // second
   let result = ''
