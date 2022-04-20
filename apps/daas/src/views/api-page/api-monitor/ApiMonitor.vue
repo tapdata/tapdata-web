@@ -24,7 +24,10 @@
       </section>
       <!--api 排行榜 -->
       <section class="flex flex-direction api-monitor-card mb-5 api-monitor__min__height">
-        <div class="flex flex-column api-monitor-chart api-monitor-card bg-white pl-5 pt-5" v-loading="loadingTotal">
+        <div
+          class="flex flex-column api-monitor-chart api-monitor-card bg-white overflow-hidden pl-5 pt-5"
+          v-loading="loadingTotal"
+        >
           <div class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_warningCount') }}</div>
           <Chart type="pie" :extend="getPieOption()" class="type-chart"></Chart>
           <div class="ml-8 mb-8 mt-5">
@@ -38,7 +41,9 @@
             </div>
           </div>
         </div>
-        <div class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card ml-5 mr-5 pl-5 pt-5">
+        <div
+          class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card overflow-hidden ml-5 mr-5 pl-5 pt-5"
+        >
           <div class="api-monitor-chart__text mb-2">
             {{ $t('api_monitor_total_FailRate') }}
             <span class="position-relative ml-2">
@@ -75,7 +80,7 @@
           >
           </el-pagination>
         </div>
-        <div class="flex flex-column flex-1 bg-white api-monitor-card pl-5 pt-5">
+        <div class="flex flex-column flex-1 bg-white api-monitor-card overflow-hidden pl-5 pt-5">
           <div class="api-monitor-chart__text mb-2">
             {{ $t('api_monitor_total_consumingTime') }}
             <span class="position-relative ml-2">
@@ -145,7 +150,7 @@
           <el-table-column prop="visitCount" :label="$t('api_monitor_total_api_list_visitCount')"> </el-table-column>
           <el-table-column prop="transitQuantity" :label="$t('api_monitor_total_api_list_transitQuantity')">
             <template #default="{ row }">
-              <span>{{ handleUnit(row.transitQuantity) || '' }}</span>
+              <span>{{ handleUnit(row.transitQuantity) || '-' }}</span>
             </template>
           </el-table-column>
         </el-table>
@@ -535,7 +540,7 @@ export default {
     height: 0;
     top: 10px;
     border: 4px solid transparent;
-    border-top-color: map-get($fontColor, normal);
+    border-top-color: map-get($iconFillColor, normal);
     cursor: pointer;
     &:hover {
       border-top-color: map-get($color, primary);
@@ -550,7 +555,7 @@ export default {
     height: 0;
     top: 0;
     border: 4px solid transparent;
-    border-bottom-color: map-get($fontColor, normal);
+    border-bottom-color: map-get($iconFillColor, normal);
     cursor: pointer;
     &:hover {
       border-bottom-color: map-get($color, primary);
