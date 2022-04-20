@@ -81,8 +81,7 @@ export default function (vm) {
         type: 'input',
         field: 'database_owner',
         label: vm.$t('dataForm_form_databaseOwner'),
-        required: true,
-        tip: vm.$t('connection_form_database_owner_tip')
+        required: true
       },
       {
         type: 'input',
