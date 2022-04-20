@@ -161,7 +161,7 @@ export const FieldAddDel = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={this.isRemove(data.id)}
+                          disabled={this.isRemove(data.id) && !data.is_deleted}
                           onClick={() => this.handleDelete(node, data)}
                         >
                           <VIcon> delete</VIcon>
@@ -263,7 +263,7 @@ export const FieldAddDel = connect(
         handleReset(node, data) {
           if (this.deleteAllFieldsData) {
             //所有字段被删除，撤回既是不删除字段
-            this.handleDelete()
+            this.handleDelete(node, data)
             return
           }
           console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line

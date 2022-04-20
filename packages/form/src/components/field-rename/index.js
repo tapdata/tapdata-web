@@ -305,7 +305,7 @@ export const FieldRename = connect(
         handleReset(node, data) {
           if (this.fieldsNameTransforms !== '') {
             //所有字段批量修改过，撤回既是保持原来字段名
-            this.handleRename()
+            this.handleRename(node, data)
             return
           }
           console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
