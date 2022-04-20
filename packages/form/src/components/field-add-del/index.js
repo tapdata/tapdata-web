@@ -185,7 +185,7 @@ export const FieldAddDel = connect(
       },
       methods: {
         isRemove(id) {
-          let ops = this.operations.filter(v => v.id === id && v.op === 'REMOVE')
+          let ops = this.operations.filter(v => v.id === id && v.op === 'REMOVE' && v.op === false)
           return ops && ops.length > 0
         },
         isCreate(id) {
