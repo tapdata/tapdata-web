@@ -226,14 +226,15 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          label: this.$t('task_list_status'),
+          label: this.$t('dataExplorer_type'),
           key: 'type',
           type: 'select-inner',
           items: this.typesOptions,
-          selectedWidth: '200px'
+          selectedWidth: '200px',
+          clearable: false
         },
         {
-          label: this.$t('task_list_sync_type'),
+          label: this.$t('task_info_statistics_time'),
           key: 'guanluary',
           type: 'select-inner',
           items: this.timeList

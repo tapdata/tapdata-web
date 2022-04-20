@@ -677,7 +677,7 @@ export default {
                 callback(new Error('连接名称不能为空'))
               } else if (!checkConnectionName(value)) {
                 callback('连接名称中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格')
-              } else if (value && value.trim() && this.checkConnectionName(value)) {
+              } else if (value && value.trim() && checkConnectionName(value)) {
                 let filter = {
                   where: {
                     name: this.model.name
