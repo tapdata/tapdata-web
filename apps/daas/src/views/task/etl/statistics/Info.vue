@@ -126,6 +126,12 @@
         </div>
       </div>
       <div class="flex flex-column flex-fill ml-4" v-loading="!lineDataDeep.x.length">
+        <div
+          class="px-2"
+          style="line-height: 27px; border: 1px solid #e8e8e8; border-radius: 4px; box-sizing: border-box"
+        >
+          QPS
+        </div>
         <Chart ref="chart" :extend="lineOptions" class="type-chart h-100"></Chart>
       </div>
       <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
@@ -278,6 +284,7 @@ export default {
           }
         },
         yAxis: {
+          name: 'QPS',
           axisLabel: {
             formatter: function (value) {
               if (value >= 1000) {
@@ -299,7 +306,7 @@ export default {
         grid: {
           left: '24px', // 没有数据的时候，Y轴单位显示不全。后面可以通过判断设置该值
           right: '12px',
-          top: '8px',
+          top: '30px',
           bottom: 0,
           containLabel: true,
           borderWidth: 1,
