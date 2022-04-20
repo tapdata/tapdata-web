@@ -4,7 +4,7 @@
       <strong>{{ $t('task_mapping_table_setting') }}</strong
       >:
       {{ $t('task_mapping_table_setting_tip') }}
-      <ElLink type="primary" target="_blank" href="https://www.yuque.com/tapdata/cloud/mtbmta">{{
+      <ElLink type="primary" target="_blank" href="https://www.yuque.com/knbase/tapdata-cloud/mtbmta">{{
         $t('task_mapping_table_setting_tip1')
       }}</ElLink>
       <div class="float-end">
