@@ -61,7 +61,11 @@
             :has-pagination="false"
             :data="failRateList"
             :columns="columns"
-          ></TableList>
+          >
+            <template slot="failed" slot-scope="scope">
+              <span> {{ scope.row.failed * 100 }}</span>
+            </template>
+          </TableList>
           <el-pagination
             layout="->,total, prev,pager, next"
             :page-size="5"
@@ -181,7 +185,7 @@ export default {
         },
         {
           label: this.$t('api_monitor_total_columns_failed'),
-          prop: 'failed'
+          slotName: 'failed'
         }
       ],
       columnsRT: [
