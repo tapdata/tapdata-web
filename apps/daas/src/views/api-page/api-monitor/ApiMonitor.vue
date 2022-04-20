@@ -29,15 +29,19 @@
           v-loading="loadingTotal"
         >
           <div class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_warningCount') }}</div>
-          <Chart type="pie" :extend="getPieOption()" class="type-chart"></Chart>
-          <div class="ml-8 mb-8 mt-5">
+          <Chart type="pie" :extend="getPieOption()"></Chart>
+          <div class="flex ml-8 mb-8 mt-5">
             <div>
-              <i class="circle-total mr-3"></i><span class="mr-8">{{ $t('api_monitor_total_totalCount') }}</span
-              ><span> {{ previewData.totalCount }}</span>
+              <div class="mb-2">
+                <i class="circle-total mr-3"></i><span class="mr-8">{{ $t('api_monitor_total_totalCount') }}</span>
+              </div>
+              <div>
+                <i class="circle-waring mr-3"></i><span class="mr-6">{{ $t('api_monitor_total_warningCount') }}</span>
+              </div>
             </div>
-            <div class="mt-2">
-              <i class="circle-waring mr-3"></i><span class="mr-6">{{ $t('api_monitor_total_warningCount') }}</span
-              ><span> {{ previewData.warningApiCount }}</span>
+            <div>
+              <div class="mb-2">{{ previewData.totalCount }}</div>
+              <div>{{ previewData.warningApiCount }}</div>
             </div>
           </div>
         </div>
@@ -46,16 +50,14 @@
         >
           <div class="api-monitor-chart__text mb-2">
             {{ $t('api_monitor_total_FailRate') }}
-            <span class="position-relative ml-2">
+            <span class="api-monitor-triangle-bg position-relative ml-2" @click="handleFDOrder()">
               <span
                 class="api-monitor-triangle position-absolute"
                 :class="{ 'triangle-active': this.page.failRateOrder === 'ASC' }"
-                @click="handleFDOrder('ASC')"
               ></span>
               <span
                 class="api-monitor-triangle-top position-absolute"
                 :class="{ 'active-top': this.page.failRateOrder === 'DESC' }"
-                @click="handleFDOrder('DESC')"
               ></span>
             </span>
           </div>
@@ -83,16 +85,14 @@
         <div class="flex flex-column flex-1 bg-white api-monitor-card overflow-hidden pl-5 pt-5">
           <div class="api-monitor-chart__text mb-2">
             {{ $t('api_monitor_total_consumingTime') }}
-            <span class="position-relative ml-2">
+            <span class="api-monitor-triangle-bg position-relative ml-2" @click="handleCTOrder()">
               <span
                 class="api-monitor-triangle position-absolute"
                 :class="{ 'triangle-active': this.page.consumingTimeOrder === 'ASC' }"
-                @click="handleCTOrder('ASC')"
               ></span>
               <span
                 class="api-monitor-triangle-top position-absolute"
                 :class="{ 'active-top': this.page.consumingTimeOrder === 'DESC' }"
-                @click="handleCTOrder('DESC')"
               ></span>
             </span>
           </div>
@@ -357,8 +357,9 @@ export default {
         })
     },
     //处理失败率排序
-    handleFDOrder(type) {
-      this.page.failRateOrder = type
+    handleFDOrder() {
+      let time = JSON.parse(JSON.stringify(this.page.failRateOrder))
+      this.page.failRateOrder = time === 'DESC' ? 'ASC' : 'DESC'
       this.remoteFailedMethod()
     },
     //响应时间排行榜
@@ -395,8 +396,9 @@ export default {
         })
     },
     //响应时间时间排序
-    handleCTOrder(type) {
-      this.page.consumingTimeOrder = type
+    handleCTOrder() {
+      let time = JSON.parse(JSON.stringify(this.page.consumingTimeOrder))
+      this.page.consumingTimeOrder = time === 'DESC' ? 'ASC' : 'DESC'
       this.consumingMethod()
     },
     //获取api列表数据
@@ -516,7 +518,7 @@ export default {
     border-radius: 4px;
   }
   .api-monitor-chart {
-    width: 280px;
+    width: 300px;
   }
   //图表样式
   .circle-total {
@@ -534,17 +536,26 @@ export default {
     display: inline-block;
   }
   //排序样式
+  .api-monitor-triangle-bg {
+    width: 20px;
+    height: 20px;
+    top: 5px;
+    display: inline-block;
+    text-align: center;
+    border-radius: 2px;
+    cursor: pointer;
+    &:hover {
+      background: #eef3ff;
+    }
+  }
   .api-monitor-triangle {
     display: inline-block;
     width: 0;
     height: 0;
-    top: 10px;
+    left: 6px;
+    top: 11px;
     border: 4px solid transparent;
     border-top-color: map-get($iconFillColor, normal);
-    cursor: pointer;
-    &:hover {
-      border-top-color: map-get($color, primary);
-    }
   }
   .triangle-active {
     border-top-color: map-get($color, primary);
@@ -553,13 +564,11 @@ export default {
     display: inline-block;
     width: 0;
     height: 0;
+    left: 6px;
     top: 0;
     border: 4px solid transparent;
     border-bottom-color: map-get($iconFillColor, normal);
     cursor: pointer;
-    &:hover {
-      border-bottom-color: map-get($color, primary);
-    }
   }
   .active-top {
     border-bottom-color: map-get($color, primary);
