@@ -562,6 +562,7 @@ export default {
             this.loading = false
             return
           }
+
           this.flowStages = []
           this.isDbClone = flowData.mappingTemplate === 'cluster-clone'
           this.dealData(flowData, this.getTaskTree, this.isDbClone)
