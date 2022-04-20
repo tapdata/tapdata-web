@@ -81,7 +81,7 @@ export default {
   .filter-datetime__title {
     margin-right: 8px;
     cursor: pointer;
-    color: map-get($fontColor, slight);
+    // color: map-get($fontColor, slight);
   }
   .el-date-editor {
     max-width: 150px;
@@ -135,6 +135,6 @@ export default {
   position: absolute;
   top: 11px;
   right: 4px;
-  color: #d8d8d8;
+  color: map-get($fontColor, slight);
 }
 </style>

@@ -29,9 +29,9 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('apiaudit_visit_result')" :show-overflow-tooltip="true" prop="code" sortable="code">
-        <!-- <template #default="{ row }">
+        <template #default="{ row }">
           {{ row.code == 200 ? $t('apiaudit_success') : $t('apiaudit_fail') }}
-        </template> -->
+        </template>
       </el-table-column>
       <el-table-column
         :label="$t('apiaudit_reason_fail')"
@@ -191,7 +191,7 @@ export default {
             if (data?.length) {
               return data.map(item => {
                 return {
-                  label: item,
+                  label: item == 200 ? this.$t('apiaudit_success') : this.$t('apiaudit_fail'),
                   value: item
                 }
               })
