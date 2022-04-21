@@ -359,6 +359,7 @@ importers:
 
   packages/form:
     specifiers:
+      '@daas/api': workspace:^1.0.0
       '@formily/core': ^2.0.18
       '@formily/element': ^2.0.18
       '@formily/json-schema': ^2.0.18
@@ -370,6 +371,7 @@ importers:
       highlight.js: ^11.0.1
       resize-observer-polyfill: ^1.5.1
     dependencies:
+      '@daas/api': link:../api
       '@formily/core': registry.npmmirror.com/@formily/core/2.0.18
       '@formily/element': registry.npmmirror.com/@formily/element/2.0.18_da4ed421a25ea04915851e1fdb5b74b1
       '@formily/json-schema': registry.npmmirror.com/@formily/json-schema/2.0.18

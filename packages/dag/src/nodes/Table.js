@@ -80,8 +80,7 @@ export class Table extends NodeType {
                     },
                     'x-component': 'AsyncSelect',
                     'x-component-props': {
-                      onLoadOption: '{{useForm($form)}}',
-                      onSelectOption: '{{onSelectOption}}',
+                      onSetSelected: '{{useHandleWithForm(handlerSyncDatabaseChange, $form)}}',
                       itemLabel: 'label',
                       itemValue: 'id',
                       itemQuery: 'name',
@@ -130,6 +129,11 @@ export class Table extends NodeType {
                   tableName: {
                     type: 'string',
                     required: true,
+                    'x-validator': [
+                      {
+                        whitespace: true
+                      }
+                    ],
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       style: {
@@ -469,13 +473,7 @@ export class Table extends NodeType {
       // 切换连接，保存连接的类型
       'attrs.connectionType': {
         type: 'string',
-        'x-display': 'hidden',
-        'x-reactions': {
-          dependencies: ['connectionId'],
-          fulfill: {
-            run: '{{$self.value = $form.query("connectionId").get("dataSource")?.find(item=>item.id===$deps[0])?.connectionType}}'
-          }
-        }
+        'x-display': 'hidden'
       }
     }
   }

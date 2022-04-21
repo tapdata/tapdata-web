@@ -245,7 +245,7 @@ export default {
           }
         },
 
-        loadTable: async filter => {
+        loadTable: async (filter, config) => {
           filter.where &&
             Object.assign(filter.where, {
               meta_type: {
@@ -258,26 +258,26 @@ export default {
               original_name: true
             }
           })
-          const data = await metadataApi.get({ filter: JSON.stringify(filter) })
+          const data = await metadataApi.get({ filter: JSON.stringify(filter) }, config)
           data.items = data.items.map(item => item.original_name)
           return data
         },
 
-        useForm: form => {
-          return item => {
-            const field = form.query('grid.leftCell.connectionIdWrap.clipboardButton').take()
-            field.setComponentProps({
-              content: item.name
-            })
-            console.log('useForm', item, field) // eslint-disable-line
+        useHandleWithForm: (handle, form) => {
+          return (...args) => {
+            handle(form, ...args)
           }
         },
 
-        onLoadOption() {
-          console.log(arguments) // eslint-disable-line
-        },
-        onSelectOption() {
-          console.log(arguments) // eslint-disable-line
+        handlerSyncDatabaseChange: (form, item) => {
+          const field = form.query('grid.leftCell.connectionIdWrap.clipboardButton').take()
+          field.setComponentProps({
+            content: item.name
+          })
+          const connectionType = form.getValuesIn('attrs.connectionType')
+          if (connectionType !== item.connectionType) {
+            form.setValuesIn('attrs.connectionType', item.connectionType)
+          }
         },
 
         /**
