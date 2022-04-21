@@ -1667,5 +1667,8 @@ export default {
   workbench_Notice_congErBaoZhengRen:
     '），从而保证任务的正常运行，避免用户因为不清楚哪些字段不被支持而导致任务频繁出错。',
   workbench_Workbench_tAPDA1: 'Tapdata Cloud 2.1.4 版本发布啦！',
-  field_mapping_field_mapping_dialog_buZhiChi: '不支持'
+  field_mapping_field_mapping_dialog_buZhiChi: '不支持',
+  components_MqQueueOrTopic_zhuTi: '主题',
+  components_MqQueueOrTopic_duiLie: '队列',
+  components_MqQueueOrTopic_zhuTiHeDuiLie: '主题和队列只能选择一种进行配置'
 }

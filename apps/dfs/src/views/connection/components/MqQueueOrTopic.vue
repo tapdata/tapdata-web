@@ -1,11 +1,16 @@
 <template>
   <div>
     <ElRadioGroup v-model="model.mqQueueOrTopic" size="small" @change="change">
-      <ElRadioButton label="Topic" :disabled="model.mqType === '2'">主题</ElRadioButton>
-      <ElRadioButton label="Queue" :disabled="model.mqType === '1'">队列</ElRadioButton>
+      <ElRadioButton label="Topic" :disabled="model.mqType === '2'">{{
+        $t('components_MqQueueOrTopic_zhuTi')
+      }}</ElRadioButton>
+      <ElRadioButton label="Queue" :disabled="model.mqType === '1'">{{
+        $t('components_MqQueueOrTopic_duiLie')
+      }}</ElRadioButton>
     </ElRadioGroup>
     <div class="fb-radio-tip mb-8">
-      <i class="el-icon-info color-primary"></i><span class="fb-radio-tip__text">主题和队列只能选择一种进行配置</span>
+      <i class="el-icon-info color-primary"></i
+      ><span class="fb-radio-tip__text">{{ $t('components_MqQueueOrTopic_zhuTiHeDuiLie') }}</span>
     </div>
     <ElForm :model="model" ref="kennenform" @submit.native.prevent>
       <ElFormItem
