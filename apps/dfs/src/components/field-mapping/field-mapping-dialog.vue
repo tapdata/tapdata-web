@@ -64,7 +64,7 @@
                   v-if="!readOnly"
                   class="color-primary ml-2"
                   size="14"
-                  @click.stop.prevent="showChangeTableNameModal(item)"
+                  @click.stop.prevent="showChangeTableNameModal(item, index)"
                   >edit-outline</VIcon
                 >
               </div>
@@ -199,16 +199,18 @@
             </template>
           </ElTableColumn>
           <ElTableColumn :label="$t('task_mapping_table_operate')" width="80" v-if="!hiddenFieldProcess && !readOnly">
-            <template v-if="scope.row.notDataTypeSupport" slot-scope="scope">
-              <span>{{$t('field_mapping_field_mapping_dialog_buZhiChi')}}</span>
-            </template>
-            <template v-else slot-scope="scope">
-              <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true, scope.row)">
-                {{ $t('button_delete') }}
-              </ElLink>
-              <ElLink type="primary" v-else @click="del(scope.row.t_id, false, scope.row)">
-                {{ $t('task_mapping_table_reduction') }}
-              </ElLink>
+            <template slot-scope="scope">
+              <div v-if="scope.row.notDataTypeSupport">
+                <span>{{ $t('field_mapping_field_mapping_dialog_buZhiChi') }}</span>
+              </div>
+              <div v-else>
+                <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true, scope.row)">
+                  {{ $t('button_delete') }}
+                </ElLink>
+                <ElLink type="primary" v-else @click="del(scope.row.t_id, false, scope.row)">
+                  {{ $t('task_mapping_table_reduction') }}
+                </ElLink>
+              </div>
             </template>
           </ElTableColumn>
           <div class="field-mapping-table__empty" slot="empty">
@@ -915,7 +917,14 @@ export default {
       this.form.table_suffix = this.currentForm.table_suffix
     },
     /*单个表改名称弹窗显示*/
-    showChangeTableNameModal(item = {}) {
+    showChangeTableNameModal(item = {}, index) {
+      if (this.targetIsVika || this.targetIsQingflow) {
+        if (this.fieldMappingTableData.some(t => !t.t_field_name && !t.is_deleted)) {
+          this.$message.error(this.$t('task_mapping_table_field_name_empty_check'))
+          return
+        }
+      }
+      this.select(item, index)
       if (this.targetIsVika || this.targetIsQingflow) {
         this.vikaForm.visible = true
         this.vikaForm.table = item.sinkObjectName
