@@ -178,6 +178,7 @@ export const DEFAULT_MODEL = {
     plain_password: '',
     mqQueueSet: '', //队列名集合
     mqTopicSet: '', //主题名称
+    mqQueueOrTopic: '',
     routeKeyField: '', //消息路由
     virtualHost: '', //虚拟主机
     nameSrvAddr: ''

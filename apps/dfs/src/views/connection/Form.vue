@@ -66,6 +66,7 @@
               @value-change="formChange"
             >
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm_form_uriTips_content')"></div>
+              <MqQueueOrTopic v-model="model" slot="mqQueueOrTopic" ref="mqQueueOrTopic"></MqQueueOrTopic>
             </FormBuilder>
             <ElButton v-if="databaseType === 'hazelcast_cloud_cluster'" type="text" size="mini" @click="startTest()">{{
               $t('connection_form_hazecast_connection_test')
@@ -156,11 +157,12 @@ import { DEFAULT_MODEL } from './const'
 import formConfig from './config'
 import GitBook from './GitBook'
 import StatusTag from '../../components/StatusTag'
+import MqQueueOrTopic from './components/MqQueueOrTopic'
 import { SUPPORT_DB } from '../../const'
 import { getDatabaseTypes } from '@/util'
 let defaultConfig = []
 export default {
-  components: { GitBook, StatusTag },
+  components: { GitBook, StatusTag, MqQueueOrTopic },
   props: {
     databaseTypeText: {
       type: String
@@ -386,6 +388,11 @@ export default {
           let mqTopicSet = editData.mqTopicSet.length ? editData.mqTopicSet.join(',') : ''
           editData.mqQueueSet = mqQueueSet
           editData.mqTopicSet = mqTopicSet
+          if (editData.mqQueueSet) {
+            editData.mqQueueOrTopic = 'Queue'
+          } else {
+            editData.mqQueueOrTopic = 'Topic'
+          }
         }
         this.model = Object.assign(this.model, editData)
 
@@ -529,6 +536,13 @@ export default {
       this.model.search_databaseType = ''
       let data = Object.assign({}, this.model)
       if (data.database_type === 'mq') {
+        this.$refs.mqQueueOrTopic.validate(val => {
+          flag = val
+        })
+        if (!flag) {
+          this.submitBtnLoading = false
+          return
+        }
         if (typeof data.mqQueueSet === 'string' || typeof data.mqTopicSet === 'string') {
           data.mqQueueSet = data.mqQueueSet ? data.mqQueueSet.split(',') : []
           data.mqTopicSet = data.mqTopicSet ? data.mqTopicSet.split(',') : []

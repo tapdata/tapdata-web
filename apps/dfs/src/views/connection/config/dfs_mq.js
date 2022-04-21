@@ -10,7 +10,8 @@ export default function (vm) {
       labelWidth: '180px'
     },
     defaultModel: {
-      connection_type: 'source_and_target'
+      connection_type: 'source_and_target',
+      mqQueueOrTopic: 'Topic'
     },
     items: [
       {
@@ -65,77 +66,10 @@ export default function (vm) {
         required: true
       },
       {
-        type: 'input',
-        field: 'mqQueueSet',
-        label: vm.$t('dataForm_form_mq_mqQueueSet'),
-        required: true,
-        tip: vm.$t('connection_form_mq_queue_tip'),
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'mqType',
-                value: '1'
-              }
-            ],
-            triggerConfig: {
-              show: false
-            }
-          },
-          {
-            triggerOptions: [
-              {
-                field: 'mqType',
-                value: '0'
-              }
-            ],
-            triggerConfig: {
-              required: false
-            }
-          },
-          {
-            triggerOptions: [
-              {
-                field: 'connection_type',
-                value: 'target'
-              }
-            ],
-            triggerConfig: {
-              required: false
-            }
-          }
-        ]
-      },
-      {
-        type: 'input',
-        field: 'mqTopicSet',
-        show: true,
-        label: vm.$t('dataForm_form_mq_mqTopicSet'),
-        tip: vm.$t('connection_form_mq_topic_tip'),
-        dependOn: [
-          {
-            triggerOptions: [
-              {
-                field: 'mqType',
-                value: '2'
-              }
-            ],
-            triggerConfig: {
-              show: false
-            }
-          },
-          {
-            triggerOptions: [
-              {
-                field: 'mqType',
-                value: '1'
-              }
-            ],
-            triggerConfig: {
-              required: true
-            }
-          }
-        ]
+        type: 'slot',
+        slot: 'mqQueueOrTopic',
+        label: '主题/队列名称',
+        required: true
       },
       {
         type: 'input',

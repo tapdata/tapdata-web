@@ -1,0 +1,95 @@
+<template>
+  <div>
+    <ElRadioGroup v-model="model.mqQueueOrTopic" size="small" @change="change">
+      <ElRadioButton label="Topic" :disabled="model.mqType === '2'">主题</ElRadioButton>
+      <ElRadioButton label="Queue" :disabled="model.mqType === '1'">队列</ElRadioButton>
+    </ElRadioGroup>
+    <div class="fb-radio-tip mb-8">
+      <i class="el-icon-info color-primary"></i><span class="fb-radio-tip__text">主题和队列只能选择一种进行配置</span>
+    </div>
+    <ElForm :model="model" ref="kennenform" @submit.native.prevent>
+      <ElFormItem
+        v-if="model.mqQueueOrTopic === 'Topic'"
+        :rules="[
+          {
+            required: true,
+            message: $t('dataForm_form_mq_mqTopicSet') + $t('gl_form_can_not_be_empty'),
+            trigger: ['blur', 'change']
+          }
+        ]"
+        prop="mqTopicSet"
+      >
+        <ElInput v-model="model.mqTopicSet" :placeholder="$t('dataForm_form_mq_mqTopicSet')" size="small"></ElInput>
+        <div class="fb-radio-tip">
+          <i class="el-icon-info color-primary"></i
+          ><span class="fb-radio-tip__text">{{ $t('connection_form_mq_topic_tip') }}</span>
+        </div>
+      </ElFormItem>
+      <ElFormItem
+        v-if="model.mqQueueOrTopic === 'Queue'"
+        :rules="[
+          {
+            required: true,
+            message: $t('dataForm_form_mq_mqQueueSet') + $t('gl_form_can_not_be_empty'),
+            trigger: ['blur', 'change']
+          }
+        ]"
+        prop="mqQueueSet"
+      >
+        <ElInput v-model="model.mqQueueSet" :placeholder="$t('dataForm_form_mq_mqQueueSet')" size="small"></ElInput>
+        <div class="fb-radio-tip">
+          <i class="el-icon-info color-primary"></i
+          ><span class="fb-radio-tip__text">{{ $t('connection_form_mq_queue_tip') }}</span>
+        </div>
+      </ElFormItem>
+    </ElForm>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'MqQueueOrTopic',
+  props: {
+    value: {
+      type: Object,
+      require: true,
+      default: () => {}
+    }
+  },
+  data() {
+    return {
+      model: {
+        mqQueueOrTopic: '',
+        mqTopicSet: '',
+        mqQueueSet: ''
+      }
+    }
+  },
+  mounted() {
+    this.model = this.value
+  },
+  watch: {
+    'value.mqType'(v) {
+      if (v === '1') {
+        this.model.mqQueueOrTopic = 'Topic'
+      } else if (v === '2') {
+        this.model.mqQueueOrTopic = 'Queue'
+      }
+    }
+  },
+  methods: {
+    change(v) {
+      if (v === 'Topic') {
+        this.model.mqQueueSet = ''
+      } else if (v === 'Queue') {
+        this.model.mqTopicSet = ''
+      }
+    },
+    validate(callback) {
+      this.$refs.kennenform.validate(valid => {
+        callback?.(valid)
+      })
+    }
+  }
+}
+</script>
