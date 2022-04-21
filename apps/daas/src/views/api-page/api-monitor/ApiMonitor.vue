@@ -246,7 +246,11 @@ export default {
   },
   watch: {
     '$route.query'() {
-      this.getApiList(1)
+      //只有api list 条件筛选才更新
+      let { status, clientName } = this.$route.query
+      if (status || clientName) {
+        this.getApiList(1)
+      }
     }
   },
   mounted() {

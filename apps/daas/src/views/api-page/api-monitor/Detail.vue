@@ -83,8 +83,8 @@ export default {
       ],
       allElection: [],
       clientName: [],
-      checkAll: false,
-      isIndeterminate: true,
+      checkAll: true,
+      isIndeterminate: false,
       loadingDetail: false,
       clientNameList: [
         {
@@ -164,6 +164,7 @@ export default {
       this.getDetail(true)
     }, 60000) //一分钟一次
     this.allElectionFun()
+    this.handleCheckAllChange(true) //默认全选
   },
   watch: {
     '$route.query'() {
