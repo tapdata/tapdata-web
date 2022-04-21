@@ -263,6 +263,7 @@ export default {
   .api-monitor-detail-wrap__text {
     font-size: 12px;
     font-weight: 500;
+    height: 30px;
     color: rgba(0, 0, 0, 0.85);
     text-align: center;
   }

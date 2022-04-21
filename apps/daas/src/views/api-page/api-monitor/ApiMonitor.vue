@@ -450,7 +450,8 @@ export default {
           label: this.$t('api_monitor_total_clientName'),
           key: 'clientName',
           type: 'select-inner',
-          items: this.clientNameList
+          items: this.clientNameList,
+          selectedWidth: '200px'
         },
         {
           placeholder: this.$t('api_monitor_total_api_list_name'),
@@ -492,6 +493,9 @@ export default {
   ::v-deep {
     .el-table__header th {
       font-weight: bold;
+    }
+    .el-table--scrollable-y .el-table__body-wrapper {
+      overflow: hidden;
     }
   }
 
