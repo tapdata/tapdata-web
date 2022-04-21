@@ -405,6 +405,12 @@
 .el-table .el-table__header th {
   background-color: #fafafa;
 }
+.el-table .ascending .sort-caret.ascending {
+  border-bottom-color: map-get($color, primary);
+}
+.el-table .descending .sort-caret.descending {
+  border-top-color: map-get($color, primary);
+}
 .el-table__body tr.hover-row > td {
   background-color: map-get($bgColor, hover);
 }
@@ -413,6 +419,9 @@
 }
 .el-pagination.is-background .el-pager li:not(.disabled).active {
   background-color: map-get($color, primary);
+}
+.el-pagination.is-background .el-pager li:not(.disabled).active:hover {
+ color: #fff;
 }
 .el-pagination.is-background .el-pager li:not(.disabled):hover {
   color: map-get($color, primary);

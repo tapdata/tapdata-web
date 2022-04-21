@@ -4,7 +4,8 @@
       <div class="title fs-7 fw-sub font-color-dark">{{ $t('apiaudit_log_info') }}</div>
       <ElRow class="pt-4" v-if="auditData">
         <ElCol class="font-color-normal pb-4" :span="12">
-          <span class="font-text"> API ID:</span> <span>{{ auditData.id ? auditData.id : '-' }}</span></ElCol
+          <span class="font-text"> API ID:</span>
+          <span class="fw-sub">{{ auditData.id ? auditData.id : '-' }}</span></ElCol
         >
         <ElCol class="font-color-normal pb-4" :span="12"
           ><span class="font-text">{{ $t('apiaudit_name') }}:</span>
@@ -71,7 +72,7 @@ export default {
       auditData: null,
       list: [
         { label: this.$t('apiaudit_access_records'), key: 'visitTotalCount', value: 0 },
-        { label: this.$t('apiaudit_access_bandwidth'), key: 'visitTotal', value: 0 },
+        // { label: this.$t('apiaudit_access_bandwidth'), key: 'visitTotal', value: 0 },
         { label: this.$t('apiaudit_average_access_rate'), key: 'speed', value: 0 },
         { label: this.$t('apiaudit_access_time'), key: 'latency', value: 0 },
         { label: this.$t('apiaudit_average_response_time'), key: 'averResponseTime', value: 0 }
@@ -111,12 +112,12 @@ export default {
       // let hours = parseInt((mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
       let minutes = parseInt((mss % (1000 * 60 * 60)) / (1000 * 60))
       let seconds = (mss % (1000 * 60)) / 1000
-      if (minutes > 0) {
+      if (minutes > 1) {
         time = minutes.toFixed(2) + 'min'
-      } else if (!minutes && seconds > 0) {
+      } else if (minutes < 1 && seconds > 1) {
         time = seconds.toFixed(2) + 's'
-      } else if (!minutes && !seconds && mss > 0) {
-        time = mss.toFixed(2) + 'ms'
+      } else if (minutes < 1 && seconds < 1 && mss > 0) {
+        time = mss + 'ms'
       }
       return time
     },
