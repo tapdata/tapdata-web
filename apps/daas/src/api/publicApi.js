@@ -148,6 +148,7 @@ axios.interceptors.response.use(
                 message: data.message
               })
             }
+            reject(response)
             break
           default:
             reject(response)
