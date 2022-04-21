@@ -217,11 +217,13 @@ export default {
         }
       }
       let source = await this.$axios.get(
-        'tm/api/MetadataInstances/originalData?qualified_name=' + encodeURIComponent(row.sourceQualifiedName)
+        'tm/api/MetadataInstances/originalData?qualified_name=' +
+          encodeURIComponent(row.sourceQualifiedName?.replace(/[/.@&:?=%\s]+/g, '_'))
       )
       source = source && source.length > 0 ? source[0].fields : []
       let target = await this.$axios.get(
-        'tm/api/MetadataInstances/originalData?isTarget=true&qualified_name=' + encodeURIComponent(row.sinkQulifiedName)
+        'tm/api/MetadataInstances/originalData?isTarget=true&qualified_name=' +
+          encodeURIComponent(row.sinkQulifiedName?.replace(/[/.@&:?=%\s]+/g, '_'))
       )
       // 初始化所有字段都映射 只取顶级字段
       source = source.filter(field => field.field_name.indexOf('.') === -1)
