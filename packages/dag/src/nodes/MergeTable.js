@@ -20,6 +20,11 @@ export class MergeTable extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
+      $inputs: {
+        type: 'array',
+        'x-display': 'hidden'
+      },
+
       sourceNode: {
         type: 'array',
         'x-visible': false,
@@ -31,7 +36,7 @@ export class MergeTable extends NodeType {
         'x-decorator': 'FormItem',
         'x-component': 'ArrayItems',
         'x-reactions': {
-          dependencies: ['sourceNode'],
+          dependencies: ['$inputs'],
           fulfill: {
             run: '{{ getMergeItemsFromSourceNode($self, $deps[0]) }}'
           }
@@ -53,17 +58,35 @@ export class MergeTable extends NodeType {
                 }
               },
               properties: {
-                tableName: {
-                  type: 'string',
-                  title: '节点名称',
-                  'x-decorator': 'FormItem',
-                  'x-component': 'PreviewText.Input'
-                },
                 sourceId: {
                   type: 'string',
                   'x-hidden': true,
                   'x-decorator': 'FormItem',
                   'x-component': 'PreviewText.Input'
+                },
+                fieldNames: {
+                  type: 'array',
+                  visible: false,
+                  'x-reactions': [
+                    `{{useAsyncDataSource(loadNodeFieldsPrimaryKey, 'value', $self.query('.sourceId').value())}}`
+                    /*{
+                      fulfill: {
+                        run: `{{ console.log("fieldNames", $self.query('.joinKeys').value, $self.dataSource) }}`
+                      }
+                    }*/
+                  ]
+                },
+                tableName: {
+                  type: 'string',
+                  title: '节点名称',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'PreviewText.Input',
+                  'x-reactions': {
+                    dependencies: ['.sourceId'],
+                    fulfill: {
+                      run: '{{ $self.value = findNodeById($deps[0]).name }}'
+                    }
+                  }
                 },
                 mergeType: {
                   type: 'string',
@@ -138,14 +161,22 @@ export class MergeTable extends NodeType {
                       border: '1px solid #f2f2f2'
                     }
                   },
-                  'x-reactions': {
-                    dependencies: ['.mergeType'],
-                    fulfill: {
-                      schema: {
-                        'x-decorator-props.style.display': '{{ $deps[0] !== "appendWrite" ? "flex" : "none" }}'
+                  'x-reactions': [
+                    {
+                      dependencies: ['.mergeType'],
+                      fulfill: {
+                        schema: {
+                          'x-decorator-props.style.display': '{{ $deps[0] !== "appendWrite" ? "flex" : "none" }}'
+                        }
+                      }
+                    },
+                    {
+                      dependencies: ['.fieldNames'],
+                      fulfill: {
+                        run: `{{!$self.value?.length && (console.log('dataSource', $self.query('.fieldNames').get('dataSource')?.map(val => ({source:val,target:val}))), $self.value = $self.query('.fieldNames').get('dataSource')?.map(val => ({source:val,target:val})))}}`
                       }
                     }
-                  },
+                  ],
                   items: {
                     type: 'object',
                     properties: {
@@ -167,7 +198,15 @@ export class MergeTable extends NodeType {
                               filterable: true
                             },
                             'x-reactions': [
-                              '{{useAsyncDataSource(loadNodeFieldNames, "dataSource", $values.mergeProperties[$self.indexes[0]] ? $values.mergeProperties[$self.indexes[0]].sourceId : "")}}',
+                              {
+                                dependencies: ['...fieldNames'],
+                                fulfill: {
+                                  state: {
+                                    dataSource: '{{$deps[0]}}',
+                                    loading: `{{$self.query('...fieldNames').get('loading')}}`
+                                  }
+                                }
+                              },
                               {
                                 fulfill: {
                                   schema: {

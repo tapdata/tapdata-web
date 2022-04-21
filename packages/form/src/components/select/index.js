@@ -7,10 +7,13 @@ import { resolveComponent } from '@formily/element/lib/__builtins__'
 
 const SelectOption = defineComponent({
   name: 'FSelect',
-  props: ['options'],
+  props: ['options', 'itemLabel', 'itemValue', 'itemDisabled'],
   setup(customProps, { attrs, slots, listeners }) {
     return () => {
       const options = customProps.options || []
+      const itemLabel = customProps.itemLabel || 'label'
+      const itemValue = customProps.itemValue || 'value'
+      const itemDisabled = customProps.itemDisabled || 'disabled'
       const children =
         options.length !== 0
           ? {
@@ -25,17 +28,20 @@ const SelectOption = defineComponent({
                       }
                     )
                   } else {
+                    const optionProps = {
+                      value: option[itemValue],
+                      label: option[itemLabel],
+                      disabled: option[itemDisabled]
+                    }
                     return h(
                       ElOption,
                       {
-                        props: {
-                          ...option
-                        }
+                        props: optionProps
                       },
                       {
                         default: () => [
                           resolveComponent(slots?.option, {
-                            option
+                            optionProps
                           })
                         ]
                       }
