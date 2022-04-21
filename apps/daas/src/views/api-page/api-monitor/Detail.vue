@@ -10,23 +10,23 @@
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitQuantity') }}</div>
           <div class="api-monitor-detail-wrap__value">{{ handleUnit(detail.visitQuantity) || 0 }}</div>
         </div>
-        <div class="flex-1">
+        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'latency')">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_timeConsuming') }}</div>
           <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.timeConsuming) || 0 }}</div>
         </div>
       </div>
       <div class="flex flex-direction flex-1 pb-5 mt-8">
-        <div class="flex-1">
+        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'visitTotalLine')">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_visitTotalLine') }}</div>
           <div class="api-monitor-detail-wrap__value">{{ detail.visitTotalLine || 0 }}</div>
         </div>
-        <div class="flex-1">
+        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'speed')">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_speed') }}</div>
           <div class="api-monitor-detail-wrap__value">
             {{ detail.speed ? handleUnit(detail.speed) + '/S' : '0 M/S' }}
           </div>
         </div>
-        <div class="flex-1">
+        <div class="flex-1 cursor-pointer" @click="getDetail(false, 'responseTime')">
           <div class="api-monitor-detail-wrap__text">{{ $t('api_monitor_detail_responseTime') }}</div>
           <div class="api-monitor-detail-wrap__value">{{ formatMs(detail.responseTime) || 0 }}</div>
         </div>
@@ -86,7 +86,12 @@ export default {
       checkAll: false,
       isIndeterminate: true,
       loadingDetail: false,
-      clientNameList: [],
+      clientNameList: [
+        {
+          name: 'Data Explorer',
+          id: '5c0e750b7a5cd42464a5099d'
+        }
+      ],
       qpsDataTime: [],
       lineOptions: {
         tooltip: {
@@ -177,7 +182,10 @@ export default {
       if (time < 1000) return time + ' ms'
       return formatMs(time, '')
     },
-    getDetail(hiddenLoading) {
+    getDetail(hiddenLoading, type) {
+      if (type) {
+        this.searchParams.type = type
+      }
       let data = {
         id: this.id,
         guanluary: this.searchParams.guanluary || 5,

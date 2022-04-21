@@ -5,17 +5,18 @@
       <section class="flex flex-direction bg-white api-monitor-card mb-5" v-loading="loadingTotal">
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_totalCount') }}</header>
-          <div class="api-monitor-total__text din-font">{{ previewData.totalCount }}</div>
+          <div class="api-monitor-total__text din-font">{{ previewData.totalCount || 0 }}</div>
         </div>
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_warningApiCount') }}</header>
-          <div class="api-monitor-total__text din-font" v-if="previewData.visitTotalCount">
-            {{ visitTotalCountText }}/{{ previewData.visitTotalCount }}
+          <div class="api-monitor-total__text din-font">
+            <span v-if="visitTotalCountText === 0">0</span>
+            <span v-else> {{ visitTotalCountText }}/{{ previewData.visitTotalCount }}</span>
           </div>
         </div>
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_visitTotalLine') }}</header>
-          <div class="api-monitor-total__text din-font">{{ previewData.visitTotalLine }}</div>
+          <div class="api-monitor-total__text din-font">{{ previewData.visitTotalLine || 0 }}</div>
         </div>
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_transmitTotal') }}</header>
@@ -74,6 +75,7 @@
             </template>
           </TableList>
           <el-pagination
+            class="mb-5"
             layout="->,total, prev,pager, next"
             :page-size="5"
             :current-page.sync="page.failRateCurrent"
@@ -111,6 +113,7 @@
             </template>
           </TableList>
           <el-pagination
+            class="mb-5"
             layout="->,total, prev,pager, next"
             :page-size="5"
             :current-page.sync="page.consumingTimeCurrent"
@@ -155,6 +158,7 @@
           </el-table-column>
         </el-table>
         <el-pagination
+          class="mb-5 mt-5"
           layout="->, total, prev, pager, next"
           :page-size="5"
           :current-page.sync="page.apiListCurrent"
@@ -236,6 +240,7 @@ export default {
   computed: {
     visitTotalCountText() {
       let count = this.previewData.visitTotalCount - this.previewData.warningApiCount
+      if (isNaN(count)) return 0
       return count < 0 ? 0 : count
     }
   },
@@ -485,7 +490,7 @@ export default {
   background-color: #eff1f4;
   overflow: auto;
   .api-monitor__min__height {
-    height: 300px;
+    height: 342px;
   }
   .api-monitor-list__min__height {
     min-height: 300px;
@@ -505,6 +510,7 @@ export default {
   .api-monitor-total__tittle {
     font-size: 18px;
     color: map-get($fontColor, dark);
+    height: 30px;
   }
   .api-monitor-total__text {
     font-size: 46px;
