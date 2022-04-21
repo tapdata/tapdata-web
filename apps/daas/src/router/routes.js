@@ -632,24 +632,14 @@ export default [
         meta: {
           title: 'page_title_api_stat',
           code: 'API_stats_menu'
-        },
-        children: [
-          {
-            path: '',
-            name: 'modules',
-            component: () => import('@/views/api-page/Modules'),
-            meta: {
-              title: 'page_title_api_publish',
-              code: 'API_management_menu'
-            }
-          }
-        ]
+        }
       },
       /* ---------- API审计  ----------*/
       {
         path: '/api-audit',
         name: 'apiaudit',
         component: Parent,
+        redirect: 'api-audit/',
         meta: {
           title: 'page_title_api_audit',
           code: 'API_clients_menu'
@@ -657,7 +647,7 @@ export default [
         children: [
           {
             path: '',
-            name: 'apiaudit',
+            name: 'apiauditList',
             component: () => import('@/views/api-page/ApiAudit'),
             meta: {
               title: 'page_title_api_audit',

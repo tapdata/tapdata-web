@@ -617,7 +617,7 @@ export default {
       let id = this.$route.params.id
       let where = {
         status: {
-          inq: ['running', 'stop']
+          inq: ['running', 'stop', 'complete']
         },
         syncType: 'migrate'
       }
@@ -768,10 +768,8 @@ export default {
         }
         this.$api('MetadataInstances')
           .findInspect({
-            filter: JSON.stringify({
-              where,
-              fields: META_INSTANCE_FIELDS
-            })
+            where,
+            fields: META_INSTANCE_FIELDS
           })
           .then(res => {
             let data = res.data || []
