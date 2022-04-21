@@ -239,7 +239,7 @@ export default [
             component: Parent,
             redirect: 'details/:id/',
             meta: {
-              title: 'page_title_task_details'
+              title: 'page_title_run_monitor'
             },
             children: [
               {
