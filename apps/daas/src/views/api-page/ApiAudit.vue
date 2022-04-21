@@ -18,6 +18,7 @@
         :show-overflow-tooltip="true"
         prop="createTime"
         width="150"
+        sortable="createTime"
       >
         <template #default="{ row }">
           {{ row.createTime ? $moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '-' }}
@@ -28,7 +29,7 @@
           {{ row.code == 200 ? $t('apiaudit_success') : $t('apiaudit_fail') }}
         </template>
       </el-table-column>
-      <el-table-column prop="codeMSg" :label="$t('apiaudit_reason_fail')" :show-overflow-tooltip="true">
+      <el-table-column prop="codeMsg" :label="$t('apiaudit_reason_fail')" :show-overflow-tooltip="true">
       </el-table-column>
       <el-table-column :label="$t('column_operation')" width="70" fixed="right">
         <template slot-scope="scope">
@@ -146,7 +147,7 @@ export default {
 
     // 表格排序
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'clientName'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
     getFilterItems() {

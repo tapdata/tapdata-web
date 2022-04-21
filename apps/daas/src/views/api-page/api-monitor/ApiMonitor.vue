@@ -75,8 +75,9 @@
             </template>
           </TableList>
           <el-pagination
-            class="mb-5"
+            class="mb-5 mr-2"
             layout="->,total, prev,pager, next"
+            background
             :page-size="5"
             :current-page.sync="page.failRateCurrent"
             :total="page.failRateTotal"
@@ -101,6 +102,7 @@
           <TableList
             height="100%"
             v-loading="loadingTimeList"
+            background
             :has-pagination="false"
             :data="consumingTimeList"
             :columns="columnsRT"
@@ -113,8 +115,9 @@
             </template>
           </TableList>
           <el-pagination
-            class="mb-5"
+            class="mb-5 mr-2"
             layout="->,total, prev,pager, next"
+            background
             :page-size="5"
             :current-page.sync="page.consumingTimeCurrent"
             :total="page.consumingTimeTotal"
@@ -158,8 +161,9 @@
           </el-table-column>
         </el-table>
         <el-pagination
-          class="mb-5 mt-5"
-          layout="->, total, prev, pager, next"
+          class="mb-5 mt-5 mr-2"
+          layout="->, total, prev, pager, next, jumper"
+          background
           :page-size="5"
           :current-page.sync="page.apiListCurrent"
           :total="page.apiListTotal"
