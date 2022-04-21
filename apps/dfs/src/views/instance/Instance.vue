@@ -753,7 +753,7 @@ export default {
             this.$t('agent_auto_upgrade_tip_upgrading') +
             (this.upgradingProgres(row) === undefined
               ? ''
-              : i18n.t('template')(i18n.t('instance_Instance_tHIST'), {
+              : i18n.t('instance_Instance_tHIST', {
                   val1: this.$t('agent_auto_upgrade_tip_progress'),
                   val2: this.upgradingProgres(row)
                 }))

@@ -395,11 +395,11 @@ export default {
       }
       if (type === 'edit') {
         this.$confirm(
-          i18n.t('template')(i18n.t('copy_Info_pTHIS'), {
+          i18n.t('copy_Info_pTHIS', {
             val1: this.$t('task_list_edit_tip'),
             val2: this.$t('task_list_edit_tip1')
           }) +
-            i18n.t('template')(i18n.t('copy_Info_sPANS'), { val1: this.$t('task_list_node_attr') }) +
+            i18n.t('copy_Info_sPANS', { val1: this.$t('task_list_node_attr') }) +
             `<span style="color:#409EFF">${this.$t('task_list_matching_releation')}</span>,` +
             `${this.$t('task_list_edit_submit')}<span style="color:#409EFF">${this.$t(
               'task_list_edit_reset'
