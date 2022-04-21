@@ -75,16 +75,20 @@ export function getTaskBtnDisabled(row, or) {
     result.reset = filterArr.every(t => ['running'].includes(t.status))
     result.delete = filterArr.every(t => ['running'].includes(t.status))
   } else {
-    // 启动可用：待启动、已完成、错误、已停止
+    // 启动可用：待启动、已完成、错误、调度失败、已停止
     // 停止可用：运行中、停止中
-    // 编辑可用：编辑中、待启动、已完成、错误、已停止 或者 未运行状态
-    // 重置可用：已完成、错误、已停止
-    // 删除可用：编辑中、待启动、已完成、错误、已停止
-    result.start = !filterArr.every(t => ['ready', 'complete', 'error', 'stop'].includes(t.status))
+    // 编辑可用：编辑中、待启动、已完成、错误、调度失败、已停止 或者 未运行状态
+    // 重置可用：已完成、错误、调度失败、已停止
+    // 删除可用：编辑中、待启动、已完成、错误、调度失败、已停止
+    result.start = !filterArr.every(t => ['ready', 'complete', 'error', 'schedule_failed', 'stop'].includes(t.status))
     result.stop = !filterArr.every(t => ['running', 'stopping'].includes(t.status))
-    result.edit = !filterArr.every(t => ['edit', 'ready', 'complete', 'error', 'stop'].includes(t.status))
-    result.reset = !filterArr.every(t => ['complete', 'error', 'stop'].includes(t.status))
-    result.delete = !filterArr.every(t => ['edit', 'ready', 'complete', 'error', 'stop'].includes(t.status))
+    result.edit = !filterArr.every(t =>
+      ['edit', 'ready', 'complete', 'error', 'schedule_failed', 'stop'].includes(t.status)
+    )
+    result.reset = !filterArr.every(t => ['complete', 'error', 'schedule_failed', 'stop'].includes(t.status))
+    result.delete = !filterArr.every(t =>
+      ['edit', 'ready', 'complete', 'error', 'stop', 'schedule_failed'].includes(t.status)
+    )
   }
   if (or) {
     for (let key in result) {
