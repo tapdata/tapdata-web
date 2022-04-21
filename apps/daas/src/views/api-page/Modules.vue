@@ -602,7 +602,7 @@ export default {
           in: id
         }
       }
-      this.$api('MetadataInstances').download(where, 'modules')
+      this.$api('MetadataInstances').download(where, 'Modules')
     },
     // 单个导出
     export(item) {
@@ -611,7 +611,7 @@ export default {
           in: [item.id]
         }
       }
-      this.$api('MetadataInstances').download(where, 'modules')
+      this.$api('MetadataInstances').download(where, 'Modules')
     },
     // 复制
     copy(item) {
