@@ -883,6 +883,8 @@ export default {
           // vika clear tableOperations、field_process
           this.transferData.tableOperations = []
           this.transferData.field_process = []
+          this.transferData.topicData = []
+          this.transferData.queueData = []
         }
       }
     },
