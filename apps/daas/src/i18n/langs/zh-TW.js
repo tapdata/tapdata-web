@@ -483,6 +483,8 @@ export default {
   api_monitor_detail_visitTotalLine: 'API訪問行數',
   api_monitor_detail_speed: 'API傳輸速率',
   api_monitor_detail_responseTime: 'API響應時間',
+  api_monitor_detail_monitoring_period: '監控週期',
+  api_monitor_detail_Monitoring_conditions: '監控條件',
 
   // api服務器
   api_server_name: '名稱',

@@ -78,12 +78,16 @@ export class Table extends NodeType {
                         flex: 1
                       }
                     },
-                    'x-component': 'Select',
+                    'x-component': 'AsyncSelect',
                     'x-component-props': {
-                      config: { placeholder: '请选择数据库' }
+                      onSetSelected: '{{useHandleWithForm(handlerSyncDatabaseChange, $form)}}',
+                      itemLabel: 'label',
+                      itemValue: 'id',
+                      itemQuery: 'name',
+                      method: '{{loadDatabases}}',
+                      params: `{{ {where: {database_type: $values.databaseType}} }}`
                     },
                     'x-reactions': [
-                      '{{useAsyncDataSource(loadDatabase, "dataSource")}}',
                       {
                         target: 'tableName',
                         effects: ['onFieldValueChange'],
@@ -102,15 +106,6 @@ export class Table extends NodeType {
                     'x-component-props': {
                       tooltip: '复制数据库名',
                       finishTooltip: '已复制'
-                    },
-                    'x-reactions': {
-                      dependencies: ['connectionId'],
-                      fulfill: {
-                        schema: {
-                          'x-component-props.content':
-                            '{{$form.query("connectionId").get("dataSource")?.find(item=>item.id===$deps[0])?.name}}'
-                        }
-                      }
                     }
                   }
                 }
@@ -134,21 +129,26 @@ export class Table extends NodeType {
                   tableName: {
                     type: 'string',
                     required: true,
+                    'x-validator': [
+                      {
+                        whitespace: true
+                      }
+                    ],
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       style: {
                         flex: 1
                       }
                     },
-                    'x-component': 'Select',
+                    'x-component': 'AsyncSelect',
                     'x-component-props': {
-                      allowCreate: false,
-                      filterable: true,
-                      remote: true,
-                      'default-first-option': true
+                      itemType: 'string',
+                      itemLabel: 'original_name',
+                      method: '{{loadTable}}',
+                      params: `{{ {where: {'source.id': $values.connectionId}} }}`
                     },
                     'x-reactions': [
-                      '{{useRemoteQuery(loadDatabaseTable)}}',
+                      // '{{useRemoteQuery(loadDatabaseTable)}}',
                       {
                         target: 'name',
                         effects: ['onFieldInputValueChange'],
@@ -473,13 +473,7 @@ export class Table extends NodeType {
       // 切换连接，保存连接的类型
       'attrs.connectionType': {
         type: 'string',
-        'x-display': 'hidden',
-        'x-reactions': {
-          dependencies: ['connectionId'],
-          fulfill: {
-            run: '{{$self.value = $form.query("connectionId").get("dataSource")?.find(item=>item.id===$deps[0])?.connectionType}}'
-          }
-        }
+        'x-display': 'hidden'
       }
     }
   }

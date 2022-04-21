@@ -484,6 +484,8 @@ export default {
   api_monitor_detail_visitTotalLine: 'API访问行数',
   api_monitor_detail_speed: 'API传输速率',
   api_monitor_detail_responseTime: 'API响应时间',
+  api_monitor_detail_monitoring_period: '监控周期',
+  api_monitor_detail_Monitoring_conditions: '监控条件',
 
   // api服务器
   api_server_name: '名称',
