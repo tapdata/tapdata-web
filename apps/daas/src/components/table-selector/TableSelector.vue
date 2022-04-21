@@ -292,6 +292,7 @@
 .selector-clipboard__view {
   flex: 1;
   overflow: auto;
+  cursor: text;
   > span {
     display: inline-block;
     line-height: 20px;
