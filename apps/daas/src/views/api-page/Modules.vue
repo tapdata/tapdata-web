@@ -592,7 +592,7 @@ export default {
       // this.$router.push('/upload?type=api')
     },
     // 批量导出
-    export() {
+    exportFile() {
       let id = []
       id = this.multipleSelection.map(v => {
         return v.id
@@ -602,16 +602,16 @@ export default {
           in: id
         }
       }
-      this.$api('MetadataInstances').download(where)
+      this.$api('MetadataInstances').download(where, 'modules')
     },
     // 单个导出
-    handleDownload(item) {
+    export(item) {
       let where = {
         _id: {
           in: [item.id]
         }
       }
-      this.$api('MetadataInstances').download(where)
+      this.$api('MetadataInstances').download(where, 'modules')
     },
     // 复制
     copy(item) {

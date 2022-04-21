@@ -311,7 +311,7 @@ export default {
         where
       }
       this.$api('connections')
-        .findAll(params)
+        .listAll(params)
         .then(res => {
           let options = res?.data || []
           options = options.map(db => {
@@ -546,6 +546,8 @@ export default {
               }
             })
           }
+          console.log(this.createForm)
+          debugger
           this.$api('modules')
             [method](this.createForm)
             .then(res => {
