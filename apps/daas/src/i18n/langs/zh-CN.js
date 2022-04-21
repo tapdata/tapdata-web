@@ -415,6 +415,7 @@ export default {
   module_form_no_server_preview_api: '没有 API 服务器预览 API 文档.',
   module_form_get_api_uri_fail: '获取 API Server Uri 失败',
   module_form_duplication_name: '名称重复',
+  module_form_name_null: '名称不能为空',
 
   query_build_match_condition: '匹配条件',
   query_build_all: '全部',
