@@ -199,7 +199,10 @@
             </template>
           </ElTableColumn>
           <ElTableColumn :label="$t('task_mapping_table_operate')" width="80" v-if="!hiddenFieldProcess && !readOnly">
-            <template v-if="!scope.row.notDataTypeSupport" slot-scope="scope">
+            <template v-if="scope.row.notDataTypeSupport" slot-scope="scope">
+              <span>{{$t('field_mapping_field_mapping_dialog_buZhiChi')}}</span>
+            </template>
+            <template v-else slot-scope="scope">
               <ElLink type="primary" v-if="!scope.row.is_deleted" @click="del(scope.row.t_id, true, scope.row)">
                 {{ $t('button_delete') }}
               </ElLink>

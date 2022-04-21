@@ -673,7 +673,7 @@ export default {
   task_instance_choose_area: '选择可用区',
   task_mapping_table_setting: '表设置',
   task_mapping_table_setting_tip:
-    '用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型',
+    '用户可以在此页面设置源库每个表要同步的字段，以及在目标库自动建表时对应的字段名称和字段类型，对于不支持同步的类型，字段会被自动删除，并标记为不支持。',
   task_mapping_table_setting_tip1: '不支持的同步的字段类型',
   task_mapping_table_field_type_change: '类型修改',
   task_mapping_table_rename: '表改名',
@@ -1666,5 +1666,6 @@ export default {
     '：用户可以在任务界面明确看到相应字段是因为【不支持】而被删除，【已删除】字段不支持恢复',
   workbench_Notice_congErBaoZhengRen:
     '），从而保证任务的正常运行，避免用户因为不清楚哪些字段不被支持而导致任务频繁出错。',
-  workbench_Workbench_tAPDA1: 'Tapdata Cloud 2.1.4 版本发布啦！'
+  workbench_Workbench_tAPDA1: 'Tapdata Cloud 2.1.4 版本发布啦！',
+  field_mapping_field_mapping_dialog_buZhiChi: '不支持'
 }
