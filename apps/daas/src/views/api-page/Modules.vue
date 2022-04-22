@@ -75,7 +75,7 @@
           >
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_status')">
+      <el-table-column :label="$t('modules_header_status')" width="110">
         <template #default="{ row }">
           <span :class="['status-' + row.status, 'status-block', 'mr-2']">
             {{ $t('modules_' + row.status) }}
