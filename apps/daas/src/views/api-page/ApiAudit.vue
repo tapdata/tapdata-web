@@ -41,7 +41,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="codeMsg" :label="$t('apiaudit_reason_fail')" :show-overflow-tooltip="true">
-        <template #default="{ row }"> {{ row.code == 200 ? '-' : $t('apiaudit_fail') }} </template>
+        <template #default="{ row }"> {{ row.code == 200 ? '-' : row.codeMsg }} </template>
       </el-table-column>
       <el-table-column :label="$t('column_operation')" width="70" fixed="right">
         <template slot-scope="scope">
