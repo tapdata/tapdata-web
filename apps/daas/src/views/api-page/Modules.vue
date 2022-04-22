@@ -273,6 +273,13 @@ export default {
       // classifyList: []
     }
   },
+
+  watch: {
+    '$route.query'() {
+      this.table.fetch(1)
+    }
+  },
+
   created() {
     // this.getDbOptions()
     this.getWorkers()
