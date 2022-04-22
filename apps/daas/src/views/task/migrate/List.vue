@@ -146,7 +146,7 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
-              @click="forceStop([row.id])"
+              @click="forceStop([row.id], row)"
             >
               {{ $t('task_list_force_stop') }}
             </ElLink>
@@ -155,7 +155,7 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="row.disabledData.stop"
-              @click="stop([row.id])"
+              @click="stop([row.id], row)"
               >{{ $t('task_list_stop') }}</ElLink
             >
             <ElDivider direction="vertical"></ElDivider>
