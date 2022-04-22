@@ -76,8 +76,10 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('modules_header_status')">
-        <template slot-scope="scope">
-          <span>{{ $t('modules_' + scope.row.status) }}</span>
+        <template #default="{ row }">
+          <span :class="['status-' + row.status, 'status-block', 'mr-2']">
+            {{ $t('modules_' + row.status) }}
+          </span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('modules_header_basePath')" show-overflow-tooltip>
@@ -271,6 +273,13 @@ export default {
       // classifyList: []
     }
   },
+
+  watch: {
+    '$route.query'() {
+      this.table.fetch(1)
+    }
+  },
+
   created() {
     // this.getDbOptions()
     this.getWorkers()

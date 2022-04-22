@@ -357,6 +357,7 @@ export default {
   modules_header_last_updated: '更新時間',
   modules_header_operator: '操作',
 
+  modules_status_deploying: '部署中',
   modules_status_starting: '正在啟動',
   modules_status_running: '運行中',
   modules_status_restart: '更新中',
