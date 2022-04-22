@@ -385,7 +385,7 @@ export default {
     clipboardTables() {
       let value = this.clipboardValue?.replace(/\s+/g, '')
       let tables = value ? value.split(',') : []
-      return Array.from(new Set(tables))
+      return Array.from(new Set(tables.filter(it => !!it && it.trim())))
     }
   },
   watch: {
