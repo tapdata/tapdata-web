@@ -1,6 +1,5 @@
 import moment from 'moment'
 import { confirm } from 'web-core'
-import RequestErrorMessage from '@/components/RequestErrorMessage.vue'
 import i18n from '@/i18n'
 
 export function toDecimal2(x) {
@@ -174,20 +173,44 @@ export const getDatabaseTypes = (mapping = false) => {
 
 // 500错误弹窗
 export const errorConfirmFnc = error => {
-  try {
-    let err = JSON.parse(JSON.stringify(error))
-    confirm(<RequestErrorMessage err={err}></RequestErrorMessage>, i18n.t('confirm_error_tip'), {
-      type: 'error',
-      iconSize: 18,
-      dangerouslyUseHTMLString: false,
-      confirmButtonText: i18n.t('confirm_reload_label'),
-      cancelButtonText: i18n.t('gl_button_close')
-    }).then(flag => {
-      if (flag) {
-        location.reload()
-      }
-    })
-  } catch (e) {
-    // TODO error
+  let msg = `<div>${i18n.t('RequestErrorMessage_error_title')}</div>`
+  let title = i18n.t('confirm_error_tip')
+  error = typeof error === 'object' ? error : {}
+  let code = error.code
+  let reqId = error.data?.reqId
+  if (code) {
+    msg += `<div class="mt-1">${i18n.t(
+      'RequestErrorMessage_code_label'
+    )}<span class="color-disable">${code}</span></div>`
   }
+  if (reqId) {
+    msg += `<div class="mt-1">${i18n.t(
+      'RequestErrorMessage_req_id_label'
+    )}<span class="color-disable">${reqId}</span></div>`
+  }
+  if (error.message) {
+    const mm = `${i18n.t('RequestErrorMessage_error_detail_label')}${i18n.t(
+      'field_mapping_field_mapping_dialog_'
+    )}<span class="color-disable" style="
+    line-height: 18px;
+">${error.message}</span>`
+    msg += `<div class="error-confirm-fold mt-1">
+                <input type="checkbox" id="errorConfirm" style="display: none" />
+                <div class="error-confirm-fold-content text-truncate">${mm}</div>
+                <label for="errorConfirm" class="color-primary cursor-pointer text-nowrap">${i18n.t(
+                  'verify_Details_zhanKai'
+                )}</label>
+              </div>`
+  }
+  confirm(msg, title, {
+    type: 'error',
+    iconSize: 18,
+    dangerouslyUseHTMLString: true,
+    confirmButtonText: i18n.t('confirm_reload_label'),
+    cancelButtonText: i18n.t('gl_button_close')
+  }).then(flag => {
+    if (flag) {
+      location.reload()
+    }
+  })
 }

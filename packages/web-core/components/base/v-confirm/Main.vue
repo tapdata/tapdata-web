@@ -249,7 +249,8 @@ export default {
 }
 .message-box__content {
   padding: 4px 24px 0 0;
-  width: 100%;
+  flex: 1;
+  width: 0;
   box-sizing: border-box;
 }
 .message-box__btns {

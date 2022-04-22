@@ -11,7 +11,7 @@
       <ElTooltip
         placement="top"
         manual
-        :content="$t('components_RequestErrorMessage_yiFuZhi')"
+        :content="copiedTip"
         popper-class="copy-tooltip"
         :tabindex="10086"
         :value="showTooltip"
@@ -53,6 +53,8 @@ export default {
       expand: false,
       showTooltip: false,
       copied: false,
+      errData: {},
+      copiedTip: i18n.t('components_RequestErrorMessage_yiFuZhi'),
       errorTitle: i18n.t('RequestErrorMessage_error_title'),
       codeLabel: i18n.t('RequestErrorMessage_code_label'),
       reqIdLabel: i18n.t('RequestErrorMessage_req_id_label'),
@@ -61,19 +63,22 @@ export default {
   },
   computed: {
     code() {
-      return this.err.code
+      return this.errData.code
     },
     reqId() {
-      return this.err.data?.reqId || 'd5d80c71-5bf5-4056-8e37-0a217f15b1af'
+      return this.errData.data?.reqId
     },
     message() {
-      return this.err.message
+      return this.errData.message
     }
   },
   methods: {
     onCopy() {
       this.showTooltip = true
       this.copied = true
+    },
+    clickItem() {
+      this.expand = !this.expand
     }
   }
 }
