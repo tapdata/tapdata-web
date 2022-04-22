@@ -421,7 +421,7 @@
   background-color: map-get($color, primary);
 }
 .el-pagination.is-background .el-pager li:not(.disabled).active:hover {
- color: #fff;
+  color: #fff;
 }
 .el-pagination.is-background .el-pager li:not(.disabled):hover {
   color: map-get($color, primary);
@@ -489,6 +489,10 @@
   padding: 5px 15px 15px 15px;
   font-size: 12px;
   color: map-get($fontColor, normal);
+}
+.el-message-box__message {
+  overflow: hidden;
+  word-break: break-all;
 }
 .el-message-box__status + .el-message-box__message {
   padding-left: 50px;
