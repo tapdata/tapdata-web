@@ -71,8 +71,8 @@
               <div class="select">
                 {{
                   `${$t('task_mapping_table_selected')} ${
-                    position === index ? fieldCount : item.sourceFieldCount - item.userDeletedNum
-                  }/${item.sourceFieldCount}`
+                    position === index ? fieldCount : item.sinkAvailableFieldCount - item.userDeletedNum
+                  }/${item.sinkAvailableFieldCount}`
                 }}
               </div>
             </div>
@@ -718,7 +718,7 @@ export default {
     if (this.fieldMappingNavData) {
       this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
       this.selectRow = this.fieldMappingNavData[0]
-      this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
+      this.fieldCount = this.selectRow.sinkAvailableFieldCount - this.selectRow.userDeletedNum || 0
     }
     this.$nextTick(() => {
       if (!this.readOnly && this.transform) {
@@ -829,7 +829,7 @@ export default {
       if (data) {
         this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(data))
         this.selectRow = data[0]
-        this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
+        this.fieldCount = this.selectRow.sinkAvailableFieldCount - this.selectRow.userDeletedNum || 0
       }
       this.updateData()
     },
@@ -839,7 +839,7 @@ export default {
       this.initTypeMapping()
       this.clearSearch()
       this.operations = []
-      this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
+      this.fieldCount = this.selectRow.sinkAvailableFieldCount - this.selectRow.userDeletedNum || 0
       if (this.field_process?.length > 0) {
         this.getFieldProcess()
       }
@@ -1044,7 +1044,7 @@ export default {
       this.searchField = ''
       this.fieldCount = 0
       this.selectRow = item
-      this.fieldCount = item.sourceFieldCount - item.userDeletedNum || 0
+      this.fieldCount = item.sinkAvailableFieldCount - item.userDeletedNum || 0
       this.position = index
       this.updateView()
     },
@@ -1572,7 +1572,7 @@ export default {
       })
       let noFieldsTable = 0
       this.fieldMappingNavData.forEach(table => {
-        if (table.sourceFieldCount === 0) {
+        if (table.sinkAvailableFieldCount === 0) {
           checkInvalid = true
           noFieldsTable += 1
         }
