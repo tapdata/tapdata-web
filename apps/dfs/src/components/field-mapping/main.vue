@@ -287,7 +287,6 @@ export default {
         })
       })
       // vika字段处理
-      console.log('this.targetIsQingflow', this.targetIsQingflow)
       if (this.targetIsVika || this.targetIsQingflow) {
         target = target?.filter(t => !t.is_deleted) || []
         let field = target[0] || {}

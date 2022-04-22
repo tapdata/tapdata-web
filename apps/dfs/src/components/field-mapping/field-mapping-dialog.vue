@@ -1157,6 +1157,12 @@ export default {
         if (existsName) {
           return
         }
+        let fieldsNameTransform = this.form.fieldsNameTransform
+        if (fieldsNameTransform === 'toUpperCase') {
+          value = value?.toUpperCase()
+        } else if (fieldsNameTransform === 'toLowerCase') {
+          value = value?.toLowerCase()
+        }
         this.fieldProcessRename(id, key, value)
       } else if (key === 'data_type') {
         let option = this.target.filter(v => v.id === id)
