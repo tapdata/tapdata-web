@@ -367,6 +367,7 @@ export default {
   modules_header_last_updated: 'Update time',
   modules_header_operator: 'Operation',
 
+  modules_status_deploying: 'Deploying',
   modules_status_starting: 'Starting',
   modules_status_running: 'Running',
   modules_status_restart: 'Update in progress',
