@@ -554,8 +554,6 @@ export default {
               }
             })
           }
-          console.log(this.createForm)
-          debugger
           this.$api('modules')
             [method](this.createForm)
             .then(res => {
