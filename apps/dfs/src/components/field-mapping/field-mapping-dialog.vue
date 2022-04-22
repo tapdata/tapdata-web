@@ -1552,12 +1552,7 @@ export default {
     //保存校验
     checkTable() {
       //左边所有invalid 为false 右边所有目标字段有类型
-      let checkDataType = false
-      this.target.forEach(field => {
-        if (!field.data_type && !field.is_deleted) {
-          checkDataType = true
-        }
-      })
+      let checkDataType = this.fieldMappingTableData.some(t => !t.t_field_name && !t.is_deleted)
       //当前表 所有字段类型通过 将当前表的invalid 设置为false 校验通过
       this.fieldMappingNavData.forEach(table => {
         if (table.sinkObjectName === this.selectRow.sinkObjectName) {
