@@ -86,8 +86,8 @@ export default {
   },
   mounted() {
     this.sourceId = this.dataSourceModel?.source_connectionId
-    this.getSchemaProgress(true)
-    this.timer = setInterval(this.getSchemaProgress, 1000)
+    this.getSchemaProgress(this.getSchemaCatch)
+    this.timer = setInterval(this.getSchemaProgress, 2000)
     this.$once('hook:beforeDestroy', this.clearTimer)
   },
   methods: {
@@ -205,8 +205,8 @@ export default {
         this.$refs.test.start(data, false, true)
       })
     },
-    getSchemaProgress(ignore = false) {
-      if (!ignore && !this.reloadLoading) {
+    getSchemaProgress(callback) {
+      if (!this.reloadLoading) {
         return
       }
       if (!this.sourceId) {
@@ -217,7 +217,9 @@ export default {
         .then(data => {
           this.setTableAndProgress(data)
         })
-        .catch(this.getSchemaCatch)
+        .catch(() => {
+          callback?.()
+        })
     },
     setTableAndProgress(data) {
       if (data.loadFieldsStatus === 'finished') {
