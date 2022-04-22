@@ -132,11 +132,11 @@ export default {
     },
     onlyMessage() {
       let { title, message } = this
-      return !title && message === ''
+      return !title && message
     },
     haveTitleAndMessage() {
       let { title, message } = this
-      return !!title && message !== ''
+      return title && message
     }
   },
   watch: {

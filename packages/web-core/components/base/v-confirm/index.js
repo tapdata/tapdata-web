@@ -100,7 +100,7 @@ const showNextMsg = () => {
   }
   if (isVNode(instance.message)) {
     instance.$slots.default = [instance.message]
-    instance.message = null
+    instance.message = ' '
   } else {
     delete instance.$slots.default
   }
