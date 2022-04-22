@@ -26,10 +26,22 @@
       </el-table-column>
       <el-table-column prop="code" width="80" :label="$t('apiaudit_visit_result')" :show-overflow-tooltip="true">
         <template #default="{ row }">
-          {{ row.code == 200 ? $t('apiaudit_success') : $t('apiaudit_fail') }}
+          <span v-if="row.code == 200" class="success">
+            <i class="connections-status__icon el-icon-success"></i>
+            <span>
+              {{ $t('apiaudit_success') }}
+            </span>
+          </span>
+          <span v-else class="error">
+            <i class="connections-status__icon el-icon-error"></i>
+            <span>
+              {{ $t('apiaudit_fail') }}
+            </span>
+          </span>
         </template>
       </el-table-column>
       <el-table-column prop="codeMsg" :label="$t('apiaudit_reason_fail')" :show-overflow-tooltip="true">
+        <template #default="{ row }"> {{ row.code == 200 ? '-' : $t('apiaudit_fail') }} </template>
       </el-table-column>
       <el-table-column :label="$t('column_operation')" width="70" fixed="right">
         <template slot-scope="scope">

@@ -76,8 +76,10 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('modules_header_status')">
-        <template slot-scope="scope">
-          <span>{{ $t('modules_' + scope.row.status) }}</span>
+        <template #default="{ row }">
+          <span :class="['status-' + row.status, 'status-block', 'mr-2']">
+            {{ $t('modules_' + row.status) }}
+          </span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('modules_header_basePath')" show-overflow-tooltip>
@@ -271,6 +273,13 @@ export default {
       // classifyList: []
     }
   },
+
+  watch: {
+    '$route.query'() {
+      this.table.fetch(1)
+    }
+  },
+
   created() {
     // this.getDbOptions()
     this.getWorkers()
@@ -592,7 +601,7 @@ export default {
       // this.$router.push('/upload?type=api')
     },
     // 批量导出
-    export() {
+    exportFile() {
       let id = []
       id = this.multipleSelection.map(v => {
         return v.id
@@ -602,16 +611,16 @@ export default {
           in: id
         }
       }
-      this.$api('MetadataInstances').download(where)
+      this.$api('MetadataInstances').download(where, 'Modules')
     },
     // 单个导出
-    handleDownload(item) {
+    export(item) {
       let where = {
         _id: {
           in: [item.id]
         }
       }
-      this.$api('MetadataInstances').download(where)
+      this.$api('MetadataInstances').download(where, 'Modules')
     },
     // 复制
     copy(item) {

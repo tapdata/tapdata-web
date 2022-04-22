@@ -2,14 +2,14 @@
   <section class="module-warp section-wrap" v-loading="loadingFrom">
     <div class="module-warp-box section-wrap-box">
       <div class="module-form">
-        <ElForm :model="createForm" size="small">
-          <ElFormItem :label="$t('module_form_connection')" prop="datasource" :rules="rules" required>
+        <ElForm :model="createForm" ref="form" size="small">
+          <ElFormItem :label="$t('module_form_connection')" prop="datasource" :rules="rules.datasource" required>
             <ElSelect v-model="createForm.datasource" size="mini" placeholder="请选择" :disabled="$route.query.id">
               <ElOption v-for="item in databaseOptions" :key="item.value" :label="item.label" :value="item.value">
               </ElOption>
             </ElSelect>
           </ElFormItem>
-          <ElFormItem :label="$t('module_form_tablename')" prop="tablename" :rules="rules" required>
+          <ElFormItem :label="$t('module_form_tablename')" prop="tablename" :rules="rules.tablename" required>
             <VirtualSelect
               v-model="createForm.tablename"
               size="mini"
@@ -311,7 +311,7 @@ export default {
         where
       }
       this.$api('connections')
-        .findAll(params)
+        .listAll(params)
         .then(res => {
           let options = res?.data || []
           options = options.map(db => {
@@ -527,6 +527,14 @@ export default {
     },
     // 保存
     submit() {
+      if (!this.createForm.datasource || !this.createForm.tablename) {
+        this.$message.error(this.$t('modules_name_placeholder'))
+        return
+      }
+      if (!this.createForm.name) {
+        this.$message.error(this.$t('module_form_name_null'))
+        return
+      }
       if (this.createForm.paths?.length < 1) {
         this.$message.error(this.$t('module_form_noPath'))
         return
@@ -546,6 +554,8 @@ export default {
               }
             })
           }
+          console.log(this.createForm)
+          debugger
           this.$api('modules')
             [method](this.createForm)
             .then(res => {
