@@ -1312,14 +1312,13 @@ export default {
       border-right: 1px solid #f2f2f2;
       overflow-y: auto;
       li {
-        height: 93px;
+        // height: 93px;
         background: #ffffff;
         box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
         border-radius: 4px;
         border-bottom: 1px solid #f2f2f2;
         display: flex;
-        padding-top: 16px;
-        padding-left: 10px;
+        padding: 16px 0 10px 10px;
         &:hover {
           background: rgba(44, 101, 255, 0.05);
           cursor: pointer;

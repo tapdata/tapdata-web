@@ -474,7 +474,7 @@ export default {
 
 <style lang="scss">
 .database-filed-mapping-dialog {
-  height: 800px;
+  height: 600px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
