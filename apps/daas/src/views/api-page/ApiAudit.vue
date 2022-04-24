@@ -3,44 +3,47 @@
     <!-- api审计 -->
     <TablePage ref="table" row-key="id" class="apiaudit-list" :remoteMethod="getData" @sort-change="handleSortTable">
       <div slot="search" class="search-bar">
-        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
+        <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"></FilterBar>
       </div>
-      <el-table-column label="API ID" :show-overflow-tooltip="true" prop="id"></el-table-column>
-      <el-table-column :label="$t('apiaudit_name')" prop="name" sortable="name"> </el-table-column>
-      <el-table-column
-        :label="$t('apiaudit_access_type')"
-        :show-overflow-tooltip="true"
-        prop="method"
-        sortable="method"
-      >
+      <el-table-column prop="id" label="API ID" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="name" :label="$t('apiaudit_name')"></el-table-column>
+      <el-table-column prop="method" width="100" :label="$t('apiaudit_access_type')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="status-block" :style="{ 'background-color': colorMap[row.method] }">{{ row.method }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('apiaudit_visitor')" prop="clientName"> </el-table-column>
+      <el-table-column prop="clientName" :label="$t('apiaudit_visitor')"></el-table-column>
       <el-table-column
         :label="$t('apiaudit_interview_time')"
         :show-overflow-tooltip="true"
         prop="createTime"
+        width="150"
         sortable="createTime"
       >
         <template #default="{ row }">
           {{ row.createTime ? $moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '-' }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('apiaudit_visit_result')" :show-overflow-tooltip="true" prop="code" sortable="code">
-        <!-- <template #default="{ row }">
-          {{ row.code == 200 ? $t('apiaudit_success') : $t('apiaudit_fail') }}
-        </template> -->
+      <el-table-column prop="code" width="80" :label="$t('apiaudit_visit_result')" :show-overflow-tooltip="true">
+        <template #default="{ row }">
+          <span v-if="row.code == 200" class="success">
+            <i class="connections-status__icon el-icon-success"></i>
+            <span>
+              {{ $t('apiaudit_success') }}
+            </span>
+          </span>
+          <span v-else class="error">
+            <i class="connections-status__icon el-icon-error"></i>
+            <span>
+              {{ $t('apiaudit_fail') }}
+            </span>
+          </span>
+        </template>
       </el-table-column>
-      <el-table-column
-        :label="$t('apiaudit_reason_fail')"
-        :show-overflow-tooltip="true"
-        prop="codeMSg"
-        sortable="codeMSg"
-      >
+      <el-table-column prop="codeMsg" :label="$t('apiaudit_reason_fail')" :show-overflow-tooltip="true">
+        <template #default="{ row }"> {{ row.code == 200 ? '-' : row.codeMsg }} </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="140" fixed="right">
+      <el-table-column :label="$t('column_operation')" width="70" fixed="right">
         <template slot-scope="scope">
           <el-button v-readonlybtn="'API_clients_amangement'" size="mini" type="text" @click="toDetails(scope.row)">
             {{ $t('button_details') }}
@@ -156,7 +159,7 @@ export default {
 
     // 表格排序
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'clientName'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
     getFilterItems() {
@@ -191,7 +194,7 @@ export default {
             if (data?.length) {
               return data.map(item => {
                 return {
-                  label: item,
+                  label: item == 200 ? this.$t('apiaudit_success') : this.$t('apiaudit_fail'),
                   value: item
                 }
               })

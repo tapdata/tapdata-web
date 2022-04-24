@@ -5,21 +5,18 @@
       <section class="flex flex-direction bg-white api-monitor-card mb-5" v-loading="loadingTotal">
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_totalCount') }}</header>
-          <div class="api-monitor-total__text din-font">{{ previewData.totalCount }}</div>
+          <div class="api-monitor-total__text din-font">{{ previewData.totalCount || 0 }}</div>
         </div>
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_warningApiCount') }}</header>
-          <div class="api-monitor-total__text din-font" v-if="previewData.visitTotalCount">
-            {{
-              previewData.visitTotalCount - previewData.warningApiCount < 0
-                ? 0
-                : previewData.visitTotalCount - previewData.warningApiCount
-            }}/{{ previewData.visitTotalCount }}
+          <div class="api-monitor-total__text din-font">
+            <span v-if="visitTotalCountText === 0">0</span>
+            <span v-else> {{ visitTotalCountText }}/{{ previewData.visitTotalCount }}</span>
           </div>
         </div>
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_visitTotalLine') }}</header>
-          <div class="api-monitor-total__text din-font">{{ previewData.visitTotalLine }}</div>
+          <div class="api-monitor-total__text din-font">{{ previewData.visitTotalLine || 0 }}</div>
         </div>
         <div class="flex-1 mt-5 text-center">
           <header class="api-monitor-total__tittle">{{ $t('api_monitor_total_transmitTotal') }}</header>
@@ -28,33 +25,40 @@
       </section>
       <!--api 排行榜 -->
       <section class="flex flex-direction api-monitor-card mb-5 api-monitor__min__height">
-        <div class="flex flex-column api-monitor-chart api-monitor-card bg-white pl-5 pt-5" v-loading="loadingTotal">
+        <div
+          class="flex flex-column api-monitor-chart api-monitor-card bg-white overflow-hidden pl-5 pt-5"
+          v-loading="loadingTotal"
+        >
           <div class="api-monitor-chart__text mb-2">{{ $t('api_monitor_total_warningCount') }}</div>
-          <Chart type="pie" :extend="getPieOption()" class="type-chart"></Chart>
-          <div class="ml-8 mb-8 mt-5">
+          <Chart type="pie" :extend="getPieOption()"></Chart>
+          <div class="flex ml-8 mb-8 mt-5">
             <div>
-              <i class="circle-total mr-3"></i><span class="mr-8">{{ $t('api_monitor_total_totalCount') }}</span
-              ><span> {{ previewData.totalCount }}</span>
+              <div class="mb-2">
+                <i class="circle-total mr-3"></i><span class="mr-8">{{ $t('api_monitor_total_totalCount') }}</span>
+              </div>
+              <div>
+                <i class="circle-waring mr-3"></i><span class="mr-6">{{ $t('api_monitor_total_warningCount') }}</span>
+              </div>
             </div>
-            <div class="mt-2">
-              <i class="circle-waring mr-3"></i><span class="mr-6">{{ $t('api_monitor_total_warningCount') }}</span
-              ><span> {{ previewData.warningApiCount }}</span>
+            <div>
+              <div class="mb-2">{{ previewData.totalCount }}</div>
+              <div>{{ previewData.warningApiCount }}</div>
             </div>
           </div>
         </div>
-        <div class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card ml-5 mr-5 pl-5 pt-5">
+        <div
+          class="flex flex-column flex-1 bg-white api-monitor-table api-monitor-card overflow-hidden ml-5 mr-5 pl-5 pt-5"
+        >
           <div class="api-monitor-chart__text mb-2">
             {{ $t('api_monitor_total_FailRate') }}
-            <span class="position-relative ml-2">
+            <span class="api-monitor-triangle-bg position-relative ml-2" @click="handleFDOrder()">
               <span
                 class="api-monitor-triangle position-absolute"
                 :class="{ 'triangle-active': this.page.failRateOrder === 'ASC' }"
-                @click="handleFDOrder('ASC')"
               ></span>
               <span
                 class="api-monitor-triangle-top position-absolute"
                 :class="{ 'active-top': this.page.failRateOrder === 'DESC' }"
-                @click="handleFDOrder('DESC')"
               ></span>
             </span>
           </div>
@@ -65,41 +69,56 @@
             :has-pagination="false"
             :data="failRateList"
             :columns="columns"
-          ></TableList>
+          >
+            <template slot="failed" slot-scope="scope">
+              <span> {{ scope.row.failed * 100 }}</span>
+            </template>
+          </TableList>
           <el-pagination
+            class="mb-5 mr-2"
             layout="->,total, prev,pager, next"
+            background
+            :page-size="5"
             :current-page.sync="page.failRateCurrent"
             :total="page.failRateTotal"
             @current-change="remoteFailedMethod"
           >
           </el-pagination>
         </div>
-        <div class="flex flex-column flex-1 bg-white api-monitor-card pl-5 pt-5">
+        <div class="flex flex-column flex-1 bg-white api-monitor-card overflow-hidden pl-5 pt-5">
           <div class="api-monitor-chart__text mb-2">
             {{ $t('api_monitor_total_consumingTime') }}
-            <span class="position-relative ml-2">
+            <span class="api-monitor-triangle-bg position-relative ml-2" @click="handleCTOrder()">
               <span
                 class="api-monitor-triangle position-absolute"
                 :class="{ 'triangle-active': this.page.consumingTimeOrder === 'ASC' }"
-                @click="handleCTOrder('ASC')"
               ></span>
               <span
                 class="api-monitor-triangle-top position-absolute"
                 :class="{ 'active-top': this.page.consumingTimeOrder === 'DESC' }"
-                @click="handleCTOrder('DESC')"
               ></span>
             </span>
           </div>
           <TableList
             height="100%"
             v-loading="loadingTimeList"
+            background
             :has-pagination="false"
             :data="consumingTimeList"
-            :columns="columns"
+            :columns="columnsRT"
             ref="consumingTimeList"
-          ></TableList>
+          >
+            <template slot="failed" slot-scope="scope">
+              <span>
+                {{ formatMs(scope.row.failed) }}
+              </span>
+            </template>
+          </TableList>
           <el-pagination
+            class="mb-5 mr-2"
             layout="->,total, prev,pager, next"
+            background
+            :page-size="5"
             :current-page.sync="page.consumingTimeCurrent"
             :total="page.consumingTimeTotal"
             @current-change="consumingMethod"
@@ -137,12 +156,14 @@
           <el-table-column prop="visitCount" :label="$t('api_monitor_total_api_list_visitCount')"> </el-table-column>
           <el-table-column prop="transitQuantity" :label="$t('api_monitor_total_api_list_transitQuantity')">
             <template #default="{ row }">
-              <span>{{ handleUnit(row.transmitTotal) || '' }}</span>
+              <span>{{ handleUnit(row.transitQuantity) || '-' }}</span>
             </template>
           </el-table-column>
         </el-table>
         <el-pagination
-          layout="->, total, prev, pager, next"
+          class="mb-5 mt-5 mr-2"
+          layout="->, total, prev, pager, next, jumper"
+          background
           :page-size="5"
           :current-page.sync="page.apiListCurrent"
           :total="page.apiListTotal"
@@ -158,7 +179,7 @@
 import Chart from 'web-core/components/chart'
 import TableList from '@/components/TableList'
 import FilterBar from '@/components/filter-bar'
-import { handleUnit } from './utils'
+import { formatMs, handleUnit } from './utils'
 import Detail from './Detail'
 import { toRegExp } from '../../../utils/util'
 export default {
@@ -172,12 +193,22 @@ export default {
       loadingTotal: false,
       columns: [
         {
-          label: 'Api ID',
+          label: this.$t('api_monitor_total_api_list_name'),
           prop: 'name'
         },
         {
           label: this.$t('api_monitor_total_columns_failed'),
-          prop: 'failed'
+          slotName: 'failed'
+        }
+      ],
+      columnsRT: [
+        {
+          label: this.$t('api_monitor_total_api_list_name'),
+          prop: 'name'
+        },
+        {
+          label: this.$t('api_monitor_total_rTime'),
+          slotName: 'failed'
         }
       ],
       previewData: {},
@@ -210,6 +241,22 @@ export default {
       ]
     }
   },
+  computed: {
+    visitTotalCountText() {
+      let count = this.previewData.visitTotalCount - this.previewData.warningApiCount
+      if (isNaN(count)) return 0
+      return count < 0 ? 0 : count
+    }
+  },
+  watch: {
+    '$route.query'() {
+      //只有api list 条件筛选才更新
+      let { status, clientName } = this.$route.query
+      if (status || clientName) {
+        this.getApiList(1)
+      }
+    }
+  },
   mounted() {
     this.getPreview()
     this.getClientName()
@@ -217,14 +264,14 @@ export default {
     this.consumingMethod()
     this.getApiList(1)
   },
-  watch: {
-    '$route.query'() {
-      this.getApiList(1)
-    }
-  },
   methods: {
     handleUnit(limit) {
       return handleUnit(limit)
+    },
+    formatMs(time) {
+      if (time === 0 || !time) return 0
+      if (time < 1000) return time + ' ms'
+      return formatMs(time, '')
     },
     //获取统计数据
     getPreview() {
@@ -323,8 +370,9 @@ export default {
         })
     },
     //处理失败率排序
-    handleFDOrder(type) {
-      this.page.failRateOrder = type
+    handleFDOrder() {
+      let time = JSON.parse(JSON.stringify(this.page.failRateOrder))
+      this.page.failRateOrder = time === 'DESC' ? 'ASC' : 'DESC'
       this.remoteFailedMethod()
     },
     //响应时间排行榜
@@ -361,8 +409,9 @@ export default {
         })
     },
     //响应时间时间排序
-    handleCTOrder(type) {
-      this.page.consumingTimeOrder = type
+    handleCTOrder() {
+      let time = JSON.parse(JSON.stringify(this.page.consumingTimeOrder))
+      this.page.consumingTimeOrder = time === 'DESC' ? 'ASC' : 'DESC'
       this.consumingMethod()
     },
     //获取api列表数据
@@ -414,7 +463,8 @@ export default {
           label: this.$t('api_monitor_total_clientName'),
           key: 'clientName',
           type: 'select-inner',
-          items: this.clientNameList
+          items: this.clientNameList,
+          selectedWidth: '200px'
         },
         {
           placeholder: this.$t('api_monitor_total_api_list_name'),
@@ -448,7 +498,7 @@ export default {
   background-color: #eff1f4;
   overflow: auto;
   .api-monitor__min__height {
-    height: 300px;
+    height: 342px;
   }
   .api-monitor-list__min__height {
     min-height: 300px;
@@ -457,6 +507,9 @@ export default {
     .el-table__header th {
       font-weight: bold;
     }
+    .el-table--scrollable-y .el-table__body-wrapper {
+      overflow: hidden;
+    }
   }
 
   .api-monitor-main {
@@ -464,7 +517,8 @@ export default {
   }
   .api-monitor-total__tittle {
     font-size: 18px;
-    color: map-get($fontColor, main);
+    color: map-get($fontColor, dark);
+    height: 30px;
   }
   .api-monitor-total__text {
     font-size: 46px;
@@ -475,14 +529,14 @@ export default {
   .api-monitor-chart__text {
     font-size: 14px;
     font-weight: 500;
-    color: map-get($fontColor, main);
+    color: map-get($fontColor, dark);
   }
   .api-monitor-card {
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
     border-radius: 4px;
   }
   .api-monitor-chart {
-    width: 280px;
+    width: 300px;
   }
   //图表样式
   .circle-total {
@@ -500,17 +554,26 @@ export default {
     display: inline-block;
   }
   //排序样式
+  .api-monitor-triangle-bg {
+    width: 20px;
+    height: 20px;
+    top: 5px;
+    display: inline-block;
+    text-align: center;
+    border-radius: 2px;
+    cursor: pointer;
+    &:hover {
+      background: #eef3ff;
+    }
+  }
   .api-monitor-triangle {
     display: inline-block;
     width: 0;
     height: 0;
-    top: 10px;
+    left: 6px;
+    top: 11px;
     border: 4px solid transparent;
-    border-top-color: map-get($fontColor, light);
-    cursor: pointer;
-    &:hover {
-      border-top-color: map-get($color, primary);
-    }
+    border-top-color: map-get($iconFillColor, normal);
   }
   .triangle-active {
     border-top-color: map-get($color, primary);
@@ -519,13 +582,11 @@ export default {
     display: inline-block;
     width: 0;
     height: 0;
+    left: 6px;
     top: 0;
     border: 4px solid transparent;
-    border-bottom-color: map-get($fontColor, light);
+    border-bottom-color: map-get($iconFillColor, normal);
     cursor: pointer;
-    &:hover {
-      border-bottom-color: map-get($color, primary);
-    }
   }
   .active-top {
     border-bottom-color: map-get($color, primary);

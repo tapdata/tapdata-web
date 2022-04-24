@@ -391,10 +391,10 @@ let menuSetting = [
       { name: 'modules', code: 'API_management_menu' },
       { name: 'dataExplorer', code: 'API_data_explorer_menu' },
       { name: 'apiDocAndTest', code: 'API_doc_&_test_menu' },
-      { name: 'apiAnalysis', code: 'API_stats_menu' },
+      // { name: 'apiAnalysis', code: 'API_stats_menu' }, //隐藏api 统计入口
       { name: 'apiClient', code: 'API_clients_menu' },
       { name: 'apiServers', code: 'API_server_menu' },
-      { name: 'apiaudit', code: 'API_server_menu' },
+      { name: 'apiauditList', code: 'API_server_menu' },
       { name: 'apiMonitor', code: 'API_server_menu' }
     ]
   },

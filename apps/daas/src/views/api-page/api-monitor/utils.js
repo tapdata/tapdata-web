@@ -15,10 +15,10 @@ export function handleUnit(limit) {
     size = (limit / 1024).toFixed(1) + 'KB'
   } else if (limit < 0.1 * 1024 * 1024 * 1024) {
     //小于0.1GB，则转化成MB
-    size = (limit / (1024 * 1024)).toFixed(1) + 'MB'
+    size = (limit / (1024 * 1024)).toFixed(1) + 'M'
   } else {
     //其他转化成GB
-    size = (limit / (1024 * 1024 * 1024)).toFixed(1) + 'GB'
+    size = (limit / (1024 * 1024 * 1024)).toFixed(1) + 'G'
   }
 
   var sizeStr = size + '' //转成字符串
@@ -35,19 +35,19 @@ export const formatMs = (msTime = 0, type = 'time') => {
   let time = msTime / 1000
   let arr = []
   arr.push({
-    label: i18n.t('task_info_d'),
+    label: 'd',
     value: Math.floor(time / 60 / 60 / 24)
   }) // day
   arr.push({
-    label: i18n.t('task_info_h'),
+    label: 'h',
     value: Math.floor(time / 60 / 60) % 24
   }) // hour
   arr.push({
-    label: i18n.t('task_info_m'),
+    label: 'm',
     value: Math.floor(time / 60) % 60
   }) // minute
   arr.push({
-    label: i18n.t('task_info_s'),
+    label: 's',
     value: Math.floor(time) % 60
   }) // second
   let result = ''

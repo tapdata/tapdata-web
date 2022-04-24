@@ -12048,19 +12048,6 @@
   color: map-get($color, disable) !important;
 }
 
-// 字体颜色
-.font-color-main {
-  color: map-get($fontColor, main) !important;
-}
-
-.font-color-sub {
-  color: map-get($fontColor, sub) !important;
-}
-
-.font-color-disable {
-  color: map-get($fontColor, disable) !important;
-}
-
 // 背景颜色
 .bg-color-primary {
   background-color: map-get($color, primary) !important;

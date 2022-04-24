@@ -1,9 +1,8 @@
 @import 'var';
 @import 'reboot';
 @import 'overrides';
-//@import '~web-core/styles/utilities';
 @import 'utilities';
-@import '~@/assets/style/font/iconfont.css';
+@import '~@/styles/font/iconfont.css';
 @import '~@/assets/fonts/DIN/index.css';
 
 #app {
@@ -93,16 +92,16 @@ textarea::-webkit-input-placeholder {
   background-color: #ddebff;
 }
 .status-edit {
-   color: #0083c7;
-   background-color: #d1eefd;
- }
-.status-pending {
-  color: #2C65FF;
-  background-color: #DDEBFF;
+  color: #0083c7;
+  background-color: #d1eefd;
 }
-.status-active{
-  color: #008B58;
-  background-color: #B4EDD8;
+.status-pending {
+  color: #2c65ff;
+  background-color: #ddebff;
+}
+.status-active {
+  color: #178061 ;
+  background-color: #C4F3CB;
 }
 .status-edit {
   color: #0083c7;

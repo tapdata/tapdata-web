@@ -75,9 +75,11 @@
           >
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_status')">
-        <template slot-scope="scope">
-          <span>{{ $t('modules_' + scope.row.status) }}</span>
+      <el-table-column :label="$t('modules_header_status')" width="110">
+        <template #default="{ row }">
+          <span :class="['status-' + row.status, 'status-block', 'mr-2']">
+            {{ $t('modules_' + row.status) }}
+          </span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('modules_header_basePath')" show-overflow-tooltip>
@@ -105,26 +107,20 @@
           {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('modules_header_operator')" width="380" fixed="right">
+      <el-table-column :label="$t('modules_header_operator')" width="260" fixed="right">
         <template slot-scope="scope">
           <ElButton v-readonlybtn="'API_creation'" size="mini" type="text" @click="copy(scope.row)">
             {{ $t('button_copy') }}
           </ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton v-readonlybtn="'API_data_explorer'" size="mini" type="text" @click="toDetails(scope.row)">
+          <!-- <ElButton v-readonlybtn="'API_data_explorer'" size="mini" type="text" @click="toDetails(scope.row)">
             {{ $t('button_preview') }}
           </ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton
-            v-readonlybtn="'API_doc_&_test'"
-            v-if="scope.row.status === 'active'"
-            size="mini"
-            type="text"
-            @click="toDocumentTest(scope.row)"
-          >
+          <ElButton v-readonlybtn="'API_doc_&_test'" size="mini" type="text" @click="toDocumentTest(scope.row)">
             {{ $t('modules_api_test') }}
           </ElButton>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical"></ElDivider> -->
           <ElButton
             v-readonlybtn="'API_publish'"
             v-if="scope.row.status === 'pending'"
@@ -150,10 +146,10 @@
             {{ $t('modules_edit') }}
           </ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElButton v-readonlybtn="'API_export'" size="mini" type="text" @click="handleDownload(scope.row)">
+          <!-- <ElButton v-readonlybtn="'API_export'" size="mini" type="text" @click="handleDownload(scope.row)">
             {{ $t('modules_export') }}
           </ElButton>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical"></ElDivider> -->
           <ElButton
             v-readonlybtn="'API_delete'"
             size="mini"
@@ -162,6 +158,21 @@
             @click="remove(scope.row)"
             >{{ $t('button_delete') }}</ElButton
           >
+          <ElDivider direction="vertical"></ElDivider>
+          <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
+            <ElLink type="primary" class="rotate-90">
+              <i class="el-icon-more"></i>
+            </ElLink>
+            <ElDropdownMenu class="dataflow-table-more-dropdown-menu" slot="dropdown">
+              <ElDropdownItem command="preview" v-readonlybtn="'API_data_explorer'"
+                >{{ $t('button_preview') }}
+              </ElDropdownItem>
+              <ElDropdownItem command="export" v-readonlybtn="'API_export'">{{ $t('modules_export') }}</ElDropdownItem>
+              <ElDropdownItem command="toDocumentTest" v-readonlybtn="'API_doc_&_test'">{{
+                $t('modules_api_test')
+              }}</ElDropdownItem>
+            </ElDropdownMenu>
+          </ElDropdown>
         </template>
       </el-table-column>
     </TablePage>
@@ -249,7 +260,8 @@ export default {
         }
       ],
       multipleSelection: [],
-      intervalId: 0
+      intervalId: 0,
+      moreAuthority: this.$has('API_data_explorer') || this.$has('API_doc_&_test') || this.$has('API_export')
       // importDialogVisible: false,
       // importForm: {
       //   tag: [],
@@ -261,6 +273,13 @@ export default {
       // classifyList: []
     }
   },
+
+  watch: {
+    '$route.query'() {
+      this.table.fetch(1)
+    }
+  },
+
   created() {
     // this.getDbOptions()
     this.getWorkers()
@@ -425,7 +444,7 @@ export default {
       this.$router.push({ name: 'module' })
     },
     // 预览
-    toDetails(item) {
+    preview(item) {
       this.$router.push({ name: 'dataExplorer', query: { id: item.basePath + '_' + item.apiVersion } })
     },
     // api文档及测试
@@ -592,16 +611,16 @@ export default {
           in: id
         }
       }
-      this.$api('MetadataInstances').download(where)
+      this.$api('MetadataInstances').download(where, 'Modules')
     },
     // 单个导出
-    handleDownload(item) {
+    export(item) {
       let where = {
         _id: {
           in: [item.id]
         }
       }
-      this.$api('MetadataInstances').download(where)
+      this.$api('MetadataInstances').download(where, 'Modules')
     },
     // 复制
     copy(item) {
@@ -636,6 +655,15 @@ export default {
           type: 'input'
         }
       ]
+    },
+    handleCommand(command, node) {
+      let ids = []
+      if (node) {
+        ids = [node.id]
+      } else {
+        ids = this.multipleSelection.map(item => item.id)
+      }
+      this[command](ids, node)
     }
 
     // // 上传文件成功失败钩子

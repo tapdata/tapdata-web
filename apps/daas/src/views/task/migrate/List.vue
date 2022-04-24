@@ -146,7 +146,7 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
-              @click="forceStop([row.id])"
+              @click="forceStop([row.id], row)"
             >
               {{ $t('task_list_force_stop') }}
             </ElLink>
@@ -155,7 +155,7 @@
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
               :disabled="row.disabledData.stop"
-              @click="stop([row.id])"
+              @click="stop([row.id], row)"
               >{{ $t('task_list_stop') }}</ElLink
             >
             <ElDivider direction="vertical"></ElDivider>
@@ -1192,15 +1192,15 @@ export default {
       width: 100%;
       overflow: hidden;
       .name {
-        color: map-get($fontColor, normal);
+        color: map-get($fontColor, dark);
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
       }
       .desc {
-        color: map-get($fontColor, light);
+        color: map-get($fontColor, normal);
         span {
-          color: map-get($fontColor, slight);
+          color: map-get($fontColor, light);
         }
       }
     }

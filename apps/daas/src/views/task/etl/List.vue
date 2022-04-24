@@ -282,8 +282,8 @@
               </div>
               <div class="status bg-main rounded-1 py-3 px-2">
                 <span class="mr-2" v-for="item in previewData.statusResult" :key="item.status">
-                  <span class="din-font fs-6 font-color-rdlevel">{{ item.count }}</span>
-                  <span class="pl-1 fs-8 font-color-sub">{{ item.text }} </span>
+                  <span class="din-font fs-6 font-color-light">{{ item.count }}</span>
+                  <span class="pl-1 fs-8 font-color-slight">{{ item.text }} </span>
                 </span>
                 <div class="proportion">
                   <span
@@ -1295,15 +1295,15 @@ export default {
       width: 100%;
       overflow: hidden;
       .name {
-        color: map-get($fontColor, normal);
+        color: map-get($fontColor, dark);
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
       }
       .desc {
-        color: map-get($fontColor, light);
+        color: map-get($fontColor, normal);
         span {
-          color: map-get($fontColor, slight);
+          color: map-get($fontColor, light);
         }
       }
     }

@@ -3,7 +3,7 @@
     <div class="flex justify-content-between align-items-center">
       <div class="info-line flex align-items-center">
         <ElTooltip v-if="task.parentTask" class="item" effect="dark" :content="task.parentTask.name" placement="top">
-          <span v-if="task.parentTask" class="mr-4 fs-6 flex-1 font-color-main ellipsis info-name">{{
+          <span v-if="task.parentTask" class="mr-4 fs-6 flex-1 font-color-dark ellipsis info-name">{{
             task.parentTask.name
           }}</span>
         </ElTooltip>
@@ -12,10 +12,10 @@
           target="etlSub"
           :status="task.isFinished ? 'finished' : task.status || 'running'"
         ></StatusTag>
-        <span class="ml-6 font-color-sub">
+        <span class="ml-6 font-color-slight">
           {{ $t('task_monitor_founder') }}：<span>{{ task.creator }}</span>
         </span>
-        <span class="mx-6 font-color-sub">
+        <span class="mx-6 font-color-slight">
           {{ $t('task_info_start_time') }}：<span>{{ formatTime(task.startTime) || '-' }}</span>
         </span>
       </div>
@@ -78,7 +78,7 @@
       <div class="px-4 py-6 grey-background" style="min-width: 220px">
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
-          <span class="font-color-slight">{{ $t('task_monitor_total_input') }}</span>
+          <span class="font-color-light">{{ $t('task_monitor_total_input') }}</span>
         </div>
         <ElTooltip v-if="overData.inputTotal" :content="overData.inputTotal" placement="left-start">
           <div class="mb-4 fs-4 fw-bolder din-font" style="color: #409488">
@@ -89,7 +89,7 @@
 
         <div class="flex align-items-center mb-2">
           <VIcon class="mr-4 color-success" size="18">mark</VIcon>
-          <span class="font-color-slight">{{ $t('task_monitor_total_output') }}</span>
+          <span class="font-color-light">{{ $t('task_monitor_total_output') }}</span>
         </div>
         <ElTooltip v-if="overData.outputTotal" :content="overData.outputTotal" placement="left-start">
           <div class="mb-4 fs-4 fw-bolder din-font" style="color: #377ab9">
@@ -99,31 +99,31 @@
         <div v-else class="mb-4 fs-4 fw-bolder din-font" style="color: #377ab9">-</div>
         <div class="flex justify-content-between text-center">
           <div>
-            <div class="mb-3 font-color-slight">{{ $t('task_monitor_total_insert') }}</div>
+            <div class="mb-3 font-color-light">{{ $t('task_monitor_total_insert') }}</div>
             <ElTooltip v-if="overData.insertedTotal" :content="overData.insertedTotal">
-              <div class="fs-7 font-color-normal fw-bolder din-font">
+              <div class="fs-7 font-color-dark fw-bolder din-font">
                 {{ handleChangeUnit(overData.insertedTotal) }}
               </div>
             </ElTooltip>
-            <div v-else class="fs-7 font-color-normal fw-bolder din-font">-</div>
+            <div v-else class="fs-7 font-color-dark fw-bolder din-font">-</div>
           </div>
           <div>
-            <div class="mb-3 font-color-slight">{{ $t('task_monitor_total_update') }}</div>
+            <div class="mb-3 font-color-light">{{ $t('task_monitor_total_update') }}</div>
             <ElTooltip v-if="overData.updatedTotal" :content="overData.updatedTotal">
-              <div class="fs-7 font-color-normal fw-bolder din-font">
+              <div class="fs-7 font-color-dark fw-bolder din-font">
                 {{ handleChangeUnit(overData.updatedTotal) }}
               </div>
             </ElTooltip>
-            <div v-else class="fs-7 font-color-normal fw-bolder din-font">-</div>
+            <div v-else class="fs-7 font-color-dark fw-bolder din-font">-</div>
           </div>
           <div>
-            <div class="mb-3 font-color-slight">{{ $t('task_monitor_total_delete') }}</div>
+            <div class="mb-3 font-color-light">{{ $t('task_monitor_total_delete') }}</div>
             <ElTooltip v-if="overData.deletedTotal" :content="overData.deletedTotal">
-              <div class="fs-7 font-color-normal fw-bolder din-font">
+              <div class="fs-7 font-color-dark fw-bolder din-font">
                 {{ handleChangeUnit(overData.deletedTotal) }}
               </div>
             </ElTooltip>
-            <div v-else class="fs-7 font-color-normal fw-bolder din-font">-</div>
+            <div v-else class="fs-7 font-color-dark fw-bolder din-font">-</div>
           </div>
         </div>
       </div>
@@ -153,13 +153,13 @@
                 {{ progress }}%
               </div>
             </div>
-            <div class="pb-2 fs-8 font-color-secondary" v-else>
+            <div class="pb-2 fs-8 font-color-light" v-else>
               {{ $t('migrate_no_progress_statistics_yet') }}
             </div>
-            <div v-if="progress === 100" class="right-box-text font-color-sub mt-1">
+            <div v-if="progress === 100" class="right-box-text font-color-slight mt-1">
               {{ $t('task_info_full_time') }}：{{ formatTime(endTs) }}
             </div>
-            <div v-else class="right-box-text font-color-sub mt-1">
+            <div v-else class="right-box-text font-color-slight mt-1">
               {{ $t('task_monitor_full_completion_time') + '：' + (finishDuration || $t('task_info_calculating')) }}
             </div>
           </div>
@@ -177,10 +177,10 @@
             >
               {{ formatMs(writeData.replicateLag) }}
             </div>
-            <div class="pb-2 fs-8 font-color-secondary" v-else>
+            <div class="pb-2 fs-8 font-color-light" v-else>
               {{ $t('migrate_no_latency_statistics_yet') }}
             </div>
-            <div class="right-box-text font-color-sub mt-1" v-if="writeData.cdcTime">
+            <div class="right-box-text font-color-slight mt-1" v-if="writeData.cdcTime">
               {{ $t('task_info_increment_time_point') }}：{{ formatTime(writeData.cdcTime) }}
             </div>
           </div>
@@ -269,6 +269,7 @@ export default {
           }
         },
         yAxis: {
+          name: 'QPS',
           axisLabel: {
             formatter: function (value) {
               if (value >= 1000) {
@@ -290,7 +291,7 @@ export default {
         grid: {
           left: '24px', // 没有数据的时候，Y轴单位显示不全。后面可以通过判断设置该值
           right: '12px',
-          top: '8px',
+          top: '30px',
           bottom: 0,
           containLabel: true,
           borderWidth: 1,

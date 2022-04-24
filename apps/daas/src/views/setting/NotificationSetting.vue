@@ -215,7 +215,7 @@ $unreadColor: #ee5353;
         padding: 4px 100px 4px 20px;
         font-size: 12px;
         white-space: nowrap;
-        color: map-get($fontColor, secondary);
+        color: map-get($fontColor, light);
         border: 1px solid #f2f2f2;
         border-left: 2px solid #2c65ff;
         box-sizing: border-box;
@@ -237,7 +237,7 @@ $unreadColor: #ee5353;
       // }
       .notice,
       .email {
-        color: map-get($fontColor, secondary);
+        color: map-get($fontColor, light);
       }
       ul {
         // margin-left: 0;
@@ -260,7 +260,7 @@ $unreadColor: #ee5353;
         ::v-deep {
           .el-checkbox {
             .el-checkbox__label {
-              color: map-get($fontColor, secondary);
+              color: map-get($fontColor, light);
             }
           }
         }
@@ -279,10 +279,6 @@ $unreadColor: #ee5353;
     text-align: right;
     border-top: 1px solid #f2f2f2;
   }
-}
-.btn {
-  // margin-top: 10px;
-  // margin-bottom: 20px;
 }
 
 // .notification-main {

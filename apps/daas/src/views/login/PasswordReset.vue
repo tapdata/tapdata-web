@@ -258,7 +258,7 @@ export default {
       margin-bottom: 30px;
       font-size: 32px;
       font-weight: 600;
-      color: map-get($fontColor, normal);
+      color: map-get($fontColor, dark);
     }
     .tip {
       padding-bottom: 10px;

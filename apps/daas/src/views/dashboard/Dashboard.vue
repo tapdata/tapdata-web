@@ -624,6 +624,7 @@ export default {
       }
       .dashboard-label {
         color: #252a4c;
+        height: 48px;
       }
       .dashboard-num {
         font-size: 65px;

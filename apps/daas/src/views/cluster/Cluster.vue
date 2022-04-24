@@ -779,10 +779,10 @@ export default {
                   white-space: nowrap;
                   text-overflow: ellipsis;
                   overflow: hidden;
-                  color: map-get($fontColor, main);
+                  color: map-get($fontColor, dark);
                 }
                 .uuid {
-                  color: map-get($fontColor, sub);
+                  color: map-get($fontColor, slight);
                 }
                 .ip {
                   display: inline-block;
@@ -817,9 +817,9 @@ export default {
               text-align: center;
               font-size: 12px;
               font-weight: 400;
-              color: map-get($fontColor, sub);
+              color: map-get($fontColor, slight);
               div {
-                color: map-get($fontColor, main);
+                color: map-get($fontColor, dark);
               }
             }
             .line {
@@ -843,7 +843,7 @@ export default {
               background-color: #fafafa;
               .txt {
                 font-size: 12px;
-                color: map-get($fontColor, rdlevel);
+                color: map-get($fontColor, light);
               }
             }
             .data-list {
@@ -859,7 +859,7 @@ export default {
                 display: inline-block;
                 width: 120px;
                 font-size: 12px;
-                color: map-get($fontColor, main);
+                color: map-get($fontColor, dark);
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 i {

@@ -4,7 +4,7 @@
       <slot name="empty">
         <div class="instance-table__empty" slot="empty">
           <VIcon size="120">null</VIcon>
-          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+          <div class="flex justify-content-center lh-sm fs-7 font-color-slight">
             {{ $t('dag_dialog_field_mapping_no_data') }}
           </div>
         </div>
@@ -36,7 +36,7 @@ export default {
   ::v-deep {
     .el-table__header {
       th {
-        color: map-get($fontColor, rdlevel);
+        color: map-get($fontColor, light);
         font-weight: 500;
         background-color: #fafafa;
       }

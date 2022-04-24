@@ -1,5 +1,5 @@
 <template>
-  <div class="statistics-container flex flex-column font-color-sub h-100 section-wrap">
+  <div class="statistics-container flex flex-column font-color-slight h-100 section-wrap">
     <div class="statistics-container-box">
       <Info
         :task="task"
@@ -182,10 +182,6 @@ export default {
   .statistics-container-box {
     // overflow-y: auto;
     ::v-deep {
-      .logs-list {
-        //height: 200px;
-        //overflow-y: auto;
-      }
       .scroller {
         min-height: 50px;
         overflow-y: auto;

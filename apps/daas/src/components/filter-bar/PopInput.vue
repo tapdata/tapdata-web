@@ -137,17 +137,14 @@ export default {
 }
 .inner-select__title {
   display: inline-block;
-  color: map-get($fontColor, sub);
+  color: map-get($fontColor, slight);
 }
 .inner-select__value {
   display: inline-block;
   padding-left: 8px;
-  color: map-get($fontColor, main);
-  &.placeholder {
-    //color: map-get($fontColor, sub);
-  }
+  color: map-get($fontColor, dark);
 }
 .icon-btn {
-  color: map-get($fontColor, sub);
+  color: map-get($fontColor, slight);
 }
 </style>

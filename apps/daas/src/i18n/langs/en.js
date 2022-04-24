@@ -367,6 +367,7 @@ export default {
   modules_header_last_updated: 'Update time',
   modules_header_operator: 'Operation',
 
+  modules_status_deploying: 'Deploying',
   modules_status_starting: 'Starting',
   modules_status_running: 'Running',
   modules_status_restart: 'Update in progress',
@@ -425,6 +426,7 @@ export default {
   module_form_no_server_preview_api: 'There is no API server to preview the API document.',
   module_form_get_api_uri_fail: 'Failed to get API Server Uri',
   module_form_duplication_name: 'Duplicate for name',
+  module_form_name_null: 'The name cannot be empty',
 
   query_build_match_condition: 'Match condition',
   query_build_all: 'All',
@@ -461,7 +463,8 @@ export default {
   api_monitor_total_warningCount: 'API warning count',
   api_monitor_total_columns_failed: 'Failure rate (%)',
   api_monitor_total_FailRate: 'API failure rate TOP sort',
-  api_monitor_total_consumingTime: 'API response time TOP sorting',
+  api_monitor_total_consumingTime: 'API response time TOP sort',
+  api_monitor_total_rTime: 'Response time',
   api_monitor_total_clientName: 'client',
   api_monitor_total_api_list: 'API list',
   api_monitor_total_api_list_name: 'API name',
@@ -477,6 +480,8 @@ export default {
   api_monitor_detail_visitTotalLine: 'Number of API access lines',
   api_monitor_detail_speed: 'API transfer rate',
   api_monitor_detail_responseTime: 'API response time',
+  api_monitor_detail_monitoring_period: 'Monitoring period',
+  api_monitor_detail_Monitoring_conditions: 'Monitoring conditions',
 
   // api statistics api服务器
   api_asnalysis_header_api: 'API',
@@ -548,7 +553,7 @@ export default {
   apiaudit_access_type: 'Access Type',
   apiaudit_visitor: 'Visitor',
   apiaudit_interview_time: 'Access time',
-  apiaudit_visit_result: 'Visit result',
+  apiaudit_visit_result: 'Result',
   apiaudit_reason_fail: 'Failure reason',
   apiaudit_log_info: 'Log details',
   apiaudit_parameter: 'parameter',
@@ -1863,7 +1868,7 @@ export default {
   role_page_Topology_menu: 'Network topology',
   role_page_servers_oversee_menu: 'Operation and maintenance operation control',
 
-  role_all_check: 'check all',
+  role_all_check: 'Check all',
 
   role_module_meun_Dashboard: 'Browse console',
   role_module_meun_datasource: 'Connection management',

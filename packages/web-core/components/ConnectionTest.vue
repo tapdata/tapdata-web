@@ -306,6 +306,7 @@ export default {
     tr {
       .cell {
         white-space: normal !important;
+        word-break: break-word;
       }
     }
 

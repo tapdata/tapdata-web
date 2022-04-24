@@ -8,29 +8,25 @@ $codeFontFamily: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Co
 
 $color: (
   // primary: #337dff,
-  primary:#2C65FF,
+  primary: #2c65ff,
   dprimary: #0e42d2,
   lprimary: #4080ff,
   disprimary: #94bfff,
   success: #10c038,
   lsuccess: #dbefd1,
-  danger: #D44D4D,
-  warning: #FF7D00,
+  danger: #d44d4d,
+  warning: #ff7d00,
   info: #75849b,
   linfo: #e9edf2,
-  disable: #c9cdd4,
-
+  disable: #c9cdd4
 );
 
 $fontColor: (
-  normal: #1D2129,
-  light: #333C4A,
-  slight: #535F72,
-  secondary: #86909C,
-  main: rgba(0, 0, 0, 1),
-  sub: rgba(0, 0, 0, 0.65),
-  rdlevel: rgba(0, 0, 0, 0.85),
-  disable: #c9cdd4
+  dark: #1d2129,
+  normal: #333c4a,
+  light: #535f72,
+  slight: #c9cdd4,
+  white: #fff
 );
 
 $bgColor: (
@@ -39,8 +35,8 @@ $bgColor: (
   hover: #f5f8ff,
   main: #fafafa,
   form: rgba(239, 241, 244, 0.2),
-  stopping: #C39700,
-  complete:#008B58
+  stopping: #c39700,
+  complete: #008b58
 );
 
 $borderColor: (
@@ -48,5 +44,9 @@ $borderColor: (
   normal: #ddd,
   slight: #f6f7f7,
   light: #f2f2f2,
-  form:  rgba(221, 221, 221, 0.4)
+  form: rgba(221, 221, 221, 0.4)
+);
+
+$iconFillColor: (
+  normal: #4E5969,
 );

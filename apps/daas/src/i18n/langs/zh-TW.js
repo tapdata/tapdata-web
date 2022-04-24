@@ -357,6 +357,7 @@ export default {
   modules_header_last_updated: '更新時間',
   modules_header_operator: '操作',
 
+  modules_status_deploying: '部署中',
   modules_status_starting: '正在啟動',
   modules_status_running: '運行中',
   modules_status_restart: '更新中',
@@ -414,6 +415,7 @@ export default {
   module_form_no_server_preview_api: '沒有 API 服務器預覽 API 文檔.',
   module_form_get_api_uri_fail: '獲取 API Server Uri 失敗',
   module_form_duplication_name: '名稱重複',
+  module_form_name_null: '名稱不能為空',
 
   query_build_match_condition: '匹配條件',
   query_build_all: '全部',
@@ -466,7 +468,8 @@ export default {
   api_monitor_total_warningCount: 'API告警數',
   api_monitor_total_columns_failed: '失敗率(%)',
   api_monitor_total_FailRate: 'API失敗率TOP排序',
-  api_monitor_total_consumingTime: 'API響應時間TOP排序',
+  api_monitor_total_consumingTime: 'API響應時間TOP',
+  api_monitor_total_rTime: '響應時間',
   api_monitor_total_clientName: '客戶端',
   api_monitor_total_api_list: 'API列表',
   api_monitor_total_api_list_name: 'API名稱',
@@ -482,6 +485,8 @@ export default {
   api_monitor_detail_visitTotalLine: 'API訪問行數',
   api_monitor_detail_speed: 'API傳輸速率',
   api_monitor_detail_responseTime: 'API響應時間',
+  api_monitor_detail_monitoring_period: '監控週期',
+  api_monitor_detail_Monitoring_conditions: '監控條件',
 
   // api服務器
   api_server_name: '名稱',

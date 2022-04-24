@@ -11,7 +11,7 @@
             @input="checkAll($event, 'table')"
           ></ElCheckbox>
           <span class="ml-3">{{ $t('component_table_selector_candidate_label') }}</span>
-          <span v-if="table.tables.length" class="font-color-slight ml-2"
+          <span v-if="table.tables.length" class="font-color-light ml-2"
             >({{ table.checked.length }}/{{ table.tables.length }})</span
           >
         </div>
@@ -83,7 +83,7 @@
             @input="checkAll($event, 'selected')"
           ></ElCheckbox>
           <span class="ml-3">{{ $t('component_table_selector_checked_label') }}</span>
-          <span v-if="selected.tables.length && !isOpenClipMode" class="font-color-slight ml-2"
+          <span v-if="selected.tables.length && !isOpenClipMode" class="font-color-light ml-2"
             >({{ selected.checked.length }}/{{ selected.tables.length }})</span
           >
         </div>
@@ -148,18 +148,23 @@
               clipboardValue = clipboardTables.concat().join(', ')
             "
           >
-            <ElTooltip
-              v-for="(t, i) in clipboardTables"
-              :key="t"
-              placement="top"
-              :enterable="false"
-              :disabled="!errorTables[t]"
-              :content="errorTables[t]"
-            >
-              <span :class="{ 'color-danger': errorTables[t] }"
-                >{{ t }}<template v-if="i < clipboardTables.length - 1">,&nbsp;</template></span
+            <template v-if="clipboardTables.length">
+              <ElTooltip
+                v-for="(t, i) in clipboardTables"
+                :key="t"
+                placement="top"
+                :enterable="false"
+                :disabled="!errorTables[t]"
+                :content="errorTables[t]"
               >
-            </ElTooltip>
+                <span :class="{ 'color-danger': errorTables[t] }"
+                  >{{ t }}<template v-if="i < clipboardTables.length - 1">,&nbsp;</template></span
+                >
+              </ElTooltip>
+            </template>
+            <span v-else class="selector-clipboard__view--empty">{{
+              $t('component_table_selector_clipboard_placeholder')
+            }}</span>
           </div>
           <ElInput
             v-show="isFocus"
@@ -208,7 +213,7 @@
   align-items: center;
   background: #f7f8fa;
   line-height: 40px;
-  color: map-get($fontColor, light);
+  color: map-get($fontColor, normal);
   font-size: 14px;
 }
 .selector-panel__body {
@@ -285,11 +290,9 @@
   padding: 0 16px;
 }
 .selector-clipboard__view {
-  padding: 5px 15px;
   flex: 1;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
   overflow: auto;
+  cursor: text;
   > span {
     display: inline-block;
     line-height: 20px;
@@ -298,12 +301,22 @@
     color: map-get($fontColor, normal);
     word-break: break-word;
   }
+  .selector-clipboard__view--empty {
+    color: map-get($fontColor, slight);
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 20px;
+  }
 }
 .selector-clipboard__textarea {
   flex: 1;
   ::v-deep {
     .el-textarea__inner {
       height: 100%;
+      border: none;
+      padding: 0;
+      font-size: 12px;
+      line-height: 20px;
     }
   }
 }
@@ -372,7 +385,7 @@ export default {
     clipboardTables() {
       let value = this.clipboardValue?.replace(/\s+/g, '')
       let tables = value ? value.split(',') : []
-      return Array.from(new Set(tables))
+      return Array.from(new Set(tables.filter(it => !!it && it.trim())))
     }
   },
   watch: {

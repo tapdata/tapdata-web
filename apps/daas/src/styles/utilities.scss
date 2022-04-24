@@ -2590,8 +2590,6 @@
   color: inherit !important;
 }
 
-
-
 .bg-main {
   background-color: #fafafa !important;
 }
@@ -12066,29 +12064,17 @@
 }
 
 // 字体颜色
-.font-color-main {
-  color: map-get($fontColor, main) !important;
-}
-.font-color-sub {
-  color: map-get($fontColor, sub) !important;
-}
-.font-color-secondary {
-  color: map-get($fontColor, secondary) !important;
-}
-.font-color-rdlevel{
-  color: map-get($fontColor , rdlevel )!important;
+.font-color-dark {
+  color: map-get($fontColor, dark);
 }
 .font-color-normal {
-  color: map-get($fontColor , normal )!important;
+  color: map-get($fontColor, dark);
 }
 .font-color-light {
-  color: map-get($fontColor , light )!important;
+  color: map-get($fontColor, normal);
 }
 .font-color-slight {
-  color: map-get($fontColor , slight )!important;
-}
-.font-color-disable {
-  color: map-get($fontColor, disable) !important;
+  color: map-get($fontColor, light);
 }
 
 // 背景颜色
@@ -12115,7 +12101,6 @@
 .bg-color-main {
   background-color: map-get($bgColor, main) !important;
 }
-
 
 /*
 * public 具体的样式类

@@ -2,6 +2,7 @@ import { Connections, MetadataInstances } from '@daas/api'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { isPlainObj } from '@daas/shared'
+import { merge } from 'lodash'
 
 const connections = new Connections()
 const metadataApi = new MetadataInstances()
@@ -192,6 +193,91 @@ export default {
 
           const data = await metadataApi.get({ filter: JSON.stringify(filter) })
           return data.items.map(item => item.original_name)
+        },
+
+        loadDatabases: async filter => {
+          try {
+            const { isSource, isTarget } = filter
+            const _filter = {
+              where: {},
+              fields: {
+                name: 1,
+                id: 1,
+                database_type: 1,
+                connection_type: 1,
+                status: 1
+              },
+              order: ['status DESC', 'name ASC']
+            }
+            // 过滤连接类型
+            if (isSource && isTarget) {
+              _filter.where.connection_type = 'source_and_target'
+            } else if (isSource) {
+              _filter.where.connection_type = {
+                like: 'source',
+                options: 'i'
+              }
+            } else if (isTarget) {
+              _filter.where.connection_type = {
+                like: 'target',
+                options: 'i'
+              }
+            }
+            let result = await connections.get({
+              filter: JSON.stringify(merge(filter, _filter))
+            })
+
+            result.items = result.items.map(item => {
+              return {
+                id: item.id,
+                name: item.name,
+                label: `${item.name} (${this.$t('connection.status.' + item.status) || item.status})`,
+                value: item.id,
+                databaseType: item.database_type,
+                connectionType: item.connection_type
+              }
+            })
+
+            return result
+          } catch (e) {
+            console.log('catch', e) // eslint-disable-line
+            return { items: [], total: 0 }
+          }
+        },
+
+        loadTable: async (filter, config) => {
+          filter.where &&
+            Object.assign(filter.where, {
+              meta_type: {
+                in: ['collection', 'table', 'view'] //,
+              },
+              is_deleted: false
+            })
+          Object.assign(filter, {
+            fields: {
+              original_name: true
+            }
+          })
+          const data = await metadataApi.get({ filter: JSON.stringify(filter) }, config)
+          data.items = data.items.map(item => item.original_name)
+          return data
+        },
+
+        useHandleWithForm: (handle, form) => {
+          return (...args) => {
+            handle(form, ...args)
+          }
+        },
+
+        handlerSyncDatabaseChange: (form, item) => {
+          const field = form.query('grid.leftCell.connectionIdWrap.clipboardButton').take()
+          field.setComponentProps({
+            content: item.name
+          })
+          const connectionType = form.getValuesIn('attrs.connectionType')
+          if (connectionType !== item.connectionType) {
+            form.setValuesIn('attrs.connectionType', item.connectionType)
+          }
         },
 
         /**

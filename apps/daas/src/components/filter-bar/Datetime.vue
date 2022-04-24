@@ -81,16 +81,16 @@ export default {
   .filter-datetime__title {
     margin-right: 8px;
     cursor: pointer;
-    color: map-get($fontColor, slight);
+    color: map-get($fontColor, normal);
   }
   .el-date-editor {
     max-width: 150px;
     ::v-deep {
-      input::placeholder {
-        color: map-get($fontColor, main);
-      }
       input {
-        color: map-get($fontColor, main);
+        color: map-get($fontColor, dark);
+      }
+      input::placeholder {
+        color: map-get($fontColor, dark);
       }
     }
     &.empty-time {
@@ -100,9 +100,6 @@ export default {
           width: 80px;
           text-align: center;
           font-weight: 400;
-        }
-        .el-input__inner::placeholder {
-          color: map-get($fontColor, sub);
         }
       }
     }
@@ -127,7 +124,7 @@ export default {
       }
     }
     .icon-btn {
-      color: map-get($fontColor, main);
+      color: map-get($fontColor, dark);
     }
   }
 }
@@ -135,6 +132,6 @@ export default {
   position: absolute;
   top: 11px;
   right: 4px;
-  color: #d8d8d8;
+  color: map-get($fontColor, slight);
 }
 </style>

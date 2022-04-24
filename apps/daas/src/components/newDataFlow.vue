@@ -17,7 +17,7 @@
             </div>
 
             <div class="pl-4">
-              <div class="fs-7 pb-4 font-color-normal fw-sub">{{ $t('new_data_copy') }}</div>
+              <div class="fs-7 pb-4 font-color-dark fw-sub">{{ $t('new_data_copy') }}</div>
               <div class="fs-8 desc">
                 {{ $t('new_data_copy_desc') }}
               </div>
@@ -33,7 +33,7 @@
               <img src="../assets/images/new/Console_icon_new_data_development.svg" alt="" />
             </div>
             <div class="pl-4">
-              <div class="fs-7 pb-4 font-color-normal fw-sub">{{ $t('new_data_development') }}</div>
+              <div class="fs-7 pb-4 font-color-dark fw-sub">{{ $t('new_data_development') }}</div>
               <div class="fs-8 desc">{{ $t('new_data_development_desc') }}</div>
             </div>
             <div>
@@ -42,7 +42,7 @@
           </div>
         </ElCol>
       </ElRow>
-      <div class="pt-5 fs-7 pb-4 font-color-normal fw-sub">{{ $t('new_more_features') }}</div>
+      <div class="pt-5 fs-7 pb-4 font-color-dark fw-sub">{{ $t('new_more_features') }}</div>
       <ElRow
         :gutter="20"
         v-show="
@@ -58,7 +58,7 @@
           :style="{ minHeight: lang === 'en' ? '190px' : '120px' }"
         >
           <div class="more-col-box p-4" @click="handleConnection">
-            <div class="fs-7 pb-4 font-color-normal">
+            <div class="fs-7 pb-4 font-color-dark">
               <div class="flex align-items-center flex-row">
                 <img src="../assets/images/new/Console_icon_data_source.svg" alt="" />
                 <span class="pl-2 fw-sub">{{ $t('new_create_connection') }}</span>
@@ -78,7 +78,7 @@
           :style="{ minHeight: lang === 'en' ? '190px' : '120px' }"
         >
           <div class="more-col-box p-4" @click="handleModules">
-            <div class="fs-7 pb-4 font-color-normal">
+            <div class="fs-7 pb-4 font-color-dark">
               <div class="flex align-items-center flex-row">
                 <img src="../assets/images/new/Console_icon_api-fill.svg" alt="" />
                 <span class="pl-2 fw-sub">{{ $t('new_create_api') }}</span>
@@ -96,7 +96,7 @@
           :style="{ minHeight: lang === 'en' ? '190px' : '120px' }"
         >
           <div class="more-col-box p-4" @click="handleDataVerification">
-            <div class="fs-7 pb-4 font-color-normal">
+            <div class="fs-7 pb-4 font-color-dark">
               <div class="flex align-items-center flex-row">
                 <img src="../assets/images/new/Console_icon_data_verification.svg" alt="" />
                 <span class="pl-2 fw-sub">{{ $t('new_data_valid') }}</span>
@@ -281,7 +281,7 @@ $color: #999999;
 <style lang="scss">
 .simple-scene {
   .el-dialog__title {
-    color: map-get($fontColor, normal);
+    color: map-get($fontColor, dark);
   }
   .el-dialog__body {
     min-height: 240px;

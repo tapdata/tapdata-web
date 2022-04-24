@@ -63,7 +63,6 @@ axios.interceptors.request.use(
       preUrl = tcmApiPre + apiPre
     }
     config.url = preUrl + config.url
-    config.headers['Pool-Id'] = 'CIDC-RP-25'
     config.headers['x-requested-with'] = 'XMLHttpRequest'
 
     let key = getPendingKey(config)
@@ -148,6 +147,7 @@ axios.interceptors.response.use(
                 message: data.message
               })
             }
+            reject(response)
             break
           default:
             reject(response)
