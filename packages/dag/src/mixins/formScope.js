@@ -258,6 +258,12 @@ export default {
               original_name: true
             }
           })
+          if (!filter.where.original_name) {
+            filter.where.original_name = {
+              // regexp: '^[^\\s]+$'
+              neq: ''
+            }
+          }
           const data = await metadataApi.get({ filter: JSON.stringify(filter) }, config)
           data.items = data.items.map(item => item.original_name)
           return data

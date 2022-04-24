@@ -131,7 +131,8 @@ export class Table extends NodeType {
                     required: true,
                     'x-validator': [
                       {
-                        whitespace: true
+                        required: true,
+                        message: '请选择表'
                       }
                     ],
                     'x-decorator': 'FormItem',
@@ -140,15 +141,8 @@ export class Table extends NodeType {
                         flex: 1
                       }
                     },
-                    'x-component': 'AsyncSelect',
-                    'x-component-props': {
-                      itemType: 'string',
-                      itemLabel: 'original_name',
-                      method: '{{loadTable}}',
-                      params: `{{ {where: {'source.id': $values.connectionId}} }}`
-                    },
+                    'x-component': 'TableSelect',
                     'x-reactions': [
-                      // '{{useRemoteQuery(loadDatabaseTable)}}',
                       {
                         target: 'name',
                         effects: ['onFieldInputValueChange'],
@@ -459,8 +453,8 @@ export class Table extends NodeType {
                       filterable: true
                     },
                     'x-reactions': [
-                      // $values.tableName 的作用仅是收集该字段的依赖，tableName字段更新时会重新运行下面的方法
-                      '{{useAfterPatchAsyncDataSource({service: loadNodeFieldNames}, $values.id, "primaryKey", $values.tableName)}}'
+                      // 展示源节点的字段
+                      '{{useAsyncDataSource(loadNodeFieldNames, "dataSource", $values.$inputs[0], "primaryKey")}}'
                     ]
                   }
                 }
