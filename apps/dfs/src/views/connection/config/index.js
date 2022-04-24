@@ -34,6 +34,7 @@ import doris from './doris'
 import polardb_mysql from './polardb_mysql'
 import qingflow from './qingflow'
 import amazon_rds_mysql from './amazon_rds_mysql'
+import polardb_postgres from './polardb_postgres'
 
 export default {
   mysql,
@@ -71,5 +72,6 @@ export default {
   doris,
   polardb_mysql,
   qingflow,
-  amazon_rds_mysql
+  amazon_rds_mysql,
+  polardb_postgres
 }
