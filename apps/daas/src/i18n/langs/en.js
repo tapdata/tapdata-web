@@ -367,6 +367,7 @@ export default {
   modules_header_last_updated: 'Update time',
   modules_header_operator: 'Operation',
 
+  modules_status_deploying: 'Deploying',
   modules_status_starting: 'Starting',
   modules_status_running: 'Running',
   modules_status_restart: 'Update in progress',
@@ -425,6 +426,7 @@ export default {
   module_form_no_server_preview_api: 'There is no API server to preview the API document.',
   module_form_get_api_uri_fail: 'Failed to get API Server Uri',
   module_form_duplication_name: 'Duplicate for name',
+  module_form_name_null: 'The name cannot be empty',
 
   query_build_match_condition: 'Match condition',
   query_build_all: 'All',

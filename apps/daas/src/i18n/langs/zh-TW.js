@@ -357,6 +357,7 @@ export default {
   modules_header_last_updated: '更新時間',
   modules_header_operator: '操作',
 
+  modules_status_deploying: '部署中',
   modules_status_starting: '正在啟動',
   modules_status_running: '運行中',
   modules_status_restart: '更新中',
@@ -414,6 +415,7 @@ export default {
   module_form_no_server_preview_api: '沒有 API 服務器預覽 API 文檔.',
   module_form_get_api_uri_fail: '獲取 API Server Uri 失敗',
   module_form_duplication_name: '名稱重複',
+  module_form_name_null: '名稱不能為空',
 
   query_build_match_condition: '匹配條件',
   query_build_all: '全部',
