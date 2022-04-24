@@ -52,7 +52,7 @@ export const FieldRename = connect(
         this.fields = fields || []
         this.originalFields = JSON.parse(JSON.stringify(fields))
         //查找是否有被删除的字段且operation有操作
-        if (this.operations?.length > 0 && fields) {
+        if (this.operations?.length > 0 && fields?.length > 0) {
           let temporary = handleOperation(fields, this.operations)
           temporary.map(item => {
             let targetIndex = fields.findIndex(n => n.id === item.id)
@@ -80,7 +80,7 @@ export const FieldRename = connect(
         return (
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
-              <span class="flex-1 text inline-block ml-15 ">源字段名</span>
+              <span class="flex-1 text inline-block">源字段名</span>
               <span class="flex-1 text inline-block">目标字段名</span>
               <span class="field-ops  inline-block mr-12">
                 <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllToUpperCase()}>
@@ -109,7 +109,7 @@ export const FieldRename = connect(
                       class="tree-node flex flex-1 justify-content-center align-items flex-row"
                       slot-scope="{ node, data }"
                     >
-                      <span class="flex-1 text__inner inline-block ml-15">
+                      <span class="flex-1 text__inner inline-block">
                         {data.label}
                         {data.primary_key_position > 0 ? (
                           <VIcon size="12" class="text-warning ml-1">
@@ -122,6 +122,7 @@ export const FieldRename = connect(
                       <span class={['tree-field-input-wrap', 'item', 'inline-block', 'e-label']}>
                         {data.showInput ? (
                           <ElInput
+                            id="renameInput"
                             class="tree-field-input text__inner"
                             v-model={data.field_name}
                             onChange={() => this.handleRename(node, data)}
@@ -177,9 +178,9 @@ export const FieldRename = connect(
         showInput(data) {
           this.$set(data, 'showInput', true) //打开loading
           //将输入框自动获取焦点
-          // this.$nextTick(() => {
-          //   this.$refs[data.id].focus()
-          // })
+          this.$nextTick(() => {
+            document.getElementById('renameInput').focus()
+          })
         },
         closeInput(data) {
           this.$set(data, 'showInput', false) //打开loading

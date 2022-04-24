@@ -66,7 +66,7 @@ export const FieldValue = connect(
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
               <ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
-              <span class="flex-1 text inline-block ml-15">字段名称</span>
+              <span class="flex-1 text inline-block">字段名称</span>
               <span class="flex-1 text inline-block">字段赋值</span>
               <span class="field-ops inline-block ml-10">
                 <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllReset()}>
@@ -89,7 +89,7 @@ export const FieldValue = connect(
                       class="tree-node flex flex-1 justify-content-center align-items flex-row"
                       slot-scope="{ node, data }"
                     >
-                      <span class="field-name inline-block ml-15">
+                      <span class="field-name inline-block">
                         {data.field_name}
                         {data.primary_key_position > 0 ? (
                           <VIcon size="12" class="text-warning ml-1">

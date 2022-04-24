@@ -92,7 +92,7 @@ export const FieldModType = connect(
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
               <ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
-              <span class="flex-1 text inline-block ml-15">字段名称</span>
+              <span class="flex-1 text inline-block">字段名称</span>
               <span class="flex-1 text inline-block">源字段类型</span>
               <span class="field-type text inline-block">目标字段类型</span>
               <span class="field-ops inline-block ml-10">
@@ -116,7 +116,7 @@ export const FieldModType = connect(
                       class="tree-node flex flex-1 justify-content-center align-items flex-row"
                       slot-scope="{ node, data }"
                     >
-                      <span class="flex-1 inline-block ml-15">{data.field_name}</span>
+                      <span class="flex-1 inline-block">{data.field_name}</span>
                       <span class="flex-1 inline-block">{data.type}</span>
                       <ElSelect
                         v-model={data.java_type}
