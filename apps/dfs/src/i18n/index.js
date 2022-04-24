@@ -25,8 +25,9 @@ let langMap = {
   en: 'en'
 }
 Vue.use(VueI18n)
+let localeValue = localStorage.getItem('tapdata_localize_lang') || 'zh-CN'
 const i18n = new VueI18n({
-  locale: 'zh-CN',
+  locale: localeValue,
   messages: eleLangs
 })
 Object.values(langMap).forEach(l => {
