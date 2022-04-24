@@ -33,6 +33,7 @@ import vika from './vika'
 import doris from './doris'
 import polardb_mysql from './polardb_mysql'
 import qingflow from './qingflow'
+import amazon_rds_mysql from './amazon_rds_mysql'
 
 export default {
   mysql,
@@ -69,5 +70,6 @@ export default {
   vika,
   doris,
   polardb_mysql,
-  qingflow
+  qingflow,
+  amazon_rds_mysql
 }
