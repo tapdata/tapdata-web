@@ -454,7 +454,6 @@ export default {
           'mysql pxc': 'mysqlpxc',
           'rest api': 'restapi'
         }[type] || type //特殊数据源名称转换
-      type = 'dfs_' + type
       let func = formConfig[type]
       if (func) {
         let config = func(this)
