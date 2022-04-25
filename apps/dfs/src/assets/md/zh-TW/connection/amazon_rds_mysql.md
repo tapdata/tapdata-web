@@ -1,6 +1,6 @@
 ## **Connection configuration help**
 
-### **1. MYSQL Installation Instructions**
+### **1. Amazon RDS  for MySQL Installation Instructions**
 
 Please follow the instructions below to ensure that the MySQL database is successfully added and used in Tapdata.
 
