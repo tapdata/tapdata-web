@@ -58,6 +58,7 @@ export const FieldValue = connect(
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options || []
+        fields = fields.filter(item => !item.is_deleted)
         fields = convertSchemaToTreeData(fields) || []
         fields = this.checkOps(fields) || []
         this.fields = fields
@@ -65,7 +66,6 @@ export const FieldValue = connect(
         return (
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
-              <ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
               <span class="flex-1 text inline-block">字段名称</span>
               <span class="flex-1 text inline-block">字段赋值</span>
               <span class="field-ops inline-block ml-10">
@@ -191,7 +191,9 @@ export const FieldValue = connect(
             for (let i = 0; i < this.scripts.length; i++) {
               if (this.scripts[i]?.scriptType === 'js') {
                 let targetIndex = fields.findIndex(n => n.id === this.scripts[i].id)
-                if (targetIndex === -1) return
+                if (targetIndex === -1) {
+                  continue
+                }
                 fields[targetIndex].script = this.scripts[i].script
               }
             }
@@ -277,26 +279,7 @@ export const FieldValue = connect(
           fn(node, data)
         },
         handleAllReset() {
-          let ids = this.$refs.tree.getCheckedNodes(false, true)
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              if (node) {
-                this.handleReset(node, node.data)
-              }
-            })
-          }
-        },
-        handleCheckAllChange() {
-          if (this.checkAll) {
-            this.$nextTick(() => {
-              this.$refs.tree.setCheckedNodes(this.fields)
-            })
-          } else {
-            this.$nextTick(() => {
-              this.$refs.tree.setCheckedKeys([])
-            })
-          }
+          this.scripts.splice(0)
         }
       }
     })

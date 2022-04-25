@@ -50,30 +50,10 @@ export const FieldRename = connect(
         let fields = this.options || []
         fields = fields.filter(item => !item.is_deleted)
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
+        fields = this.checkOps(fields) || []
         this.fields = fields || []
         this.originalFields = JSON.parse(JSON.stringify(fields))
-        //清除空数组
-        //查找是否有被删除的字段且operation有操作
-        if (this.operations?.length > 0 && fields?.length > 0) {
-          this.operations.map(item => {
-            let targetIndex = fields.findIndex(n => n.id === item.id)
-            if (targetIndex < -1) return
-            if (item.op === 'RENAME') {
-              const name = fields[targetIndex].field_name
-              let newName = name.split('.')
-              newName[newName.length - 1] = item.operand
-              const newNameStr = newName.join('.')
-              fields[targetIndex].field_name = newNameStr
 
-              // change children field name
-              fields.forEach(field => {
-                if (field.field_name.startsWith(name + '.')) {
-                  field.field_name = newNameStr + field.field_name.substring(name.length)
-                }
-              })
-            }
-          })
-        }
         //初始化
         let formValues = { ...this.form.values }
         this.fieldsNameTransforms = formValues?.fieldsNameTransform
@@ -176,6 +156,34 @@ export const FieldRename = connect(
         isReset(id) {
           let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME' && v.reset)
           return ops && ops.length > 0
+        },
+        checkOps(fields) {
+          //查找是否有被删除的字段且operation有操作
+          if (this.operations?.length > 0 && fields?.length > 0) {
+            for (let i = 0; i < this.operations.length; i++) {
+              let item = this.operations[i]
+              if (!item) return fields
+              let targetIndex = fields.findIndex(n => n.id === item.id)
+              if (targetIndex === -1) {
+                continue
+              }
+              if (item.op === 'RENAME') {
+                const name = fields[targetIndex].field_name
+                let newName = name.split('.')
+                newName[newName.length - 1] = item.operand
+                const newNameStr = newName.join('.')
+                fields[targetIndex].field_name = newNameStr
+
+                // change children field name
+                fields.forEach(field => {
+                  if (field.field_name.startsWith(name + '.')) {
+                    field.field_name = newNameStr + field.field_name.substring(name.length)
+                  }
+                })
+              }
+            }
+          }
+          return fields
         },
         showInput(data) {
           this.$set(data, 'showInput', true) //打开loading

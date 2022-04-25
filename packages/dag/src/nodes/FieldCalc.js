@@ -29,8 +29,7 @@ export class FieldCalc extends NodeType {
         title: '',
         'x-decorator': 'FormItem',
         'x-component': 'FieldValue',
-        'x-reactions':
-          '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $values.$inputs[0])}}'
+        'x-reactions': '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $values.id)}}'
       }
     }
   }
