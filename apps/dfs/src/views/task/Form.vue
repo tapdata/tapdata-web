@@ -1155,9 +1155,11 @@ export default {
           if (['kafka', 'vika', 'qingflow'].includes(this.dataSourceModel['target_databaseType'])) {
             this.changeConfig([], 'setting_distinctWriteType')
           }
-          //greenplum、ADB mysql、kundb做源时不能增量
+          //greenplum、ADB mysql、kundb、polardb_postgres做源时不能增量
           if (
-            ['greenplum', 'adb_mysql', 'adb_postgres', 'kundb'].includes(this.dataSourceModel['source_databaseType'])
+            ['greenplum', 'adb_mysql', 'adb_postgres', 'kundb', 'polardb_postgres'].includes(
+              this.dataSourceModel['source_databaseType']
+            )
           ) {
             this.changeConfig([], 'setting_sync_type')
             //设置默认值
@@ -1193,7 +1195,8 @@ export default {
               'tencent_postgres',
               'tencent_sqlserver',
               'polardb_mysql',
-              'amazon_rds_mysql'
+              'amazon_rds_mysql',
+              'polardb_postgres'
             ].includes(this.dataSourceModel['target_databaseType'])
           ) {
             this.changeConfig([], 'setting_needToCreateIndex')
