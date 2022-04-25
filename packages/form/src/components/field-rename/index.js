@@ -48,6 +48,7 @@ export const FieldRename = connect(
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options || []
+        fields = fields.filter(item => !item.is_deleted)
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
         this.fields = fields || []
         this.originalFields = JSON.parse(JSON.stringify(fields))
