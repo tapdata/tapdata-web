@@ -497,35 +497,17 @@ export default {
         },
 
         /**
-         * 加载节点的字段选项列表（默认是第一个源节点）
-         * @param field
+         * 加载节点的字段选项列表
          * @param nodeId
          * @returns {Promise<{}|*>}
          */
-        loadNodeFieldOptions: async (field, nodeId) => {
-          if (!nodeId) {
-            const id = field.form.values.id
-            const allEdges = this.$store.getters['dataflow/allEdges']
-            const edge = allEdges.find(({ target }) => target === id)
-            if (!edge) return
-            nodeId = edge.source
-          }
-
-          let fields
-          try {
-            const data = await metadataApi.nodeSchema(nodeId)
-            fields = data.fields
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error('nodeSchema', e)
-          }
-
-          return fields
-            ? fields.map(item => ({
-                label: item.field_name,
-                value: item.id
-              }))
-            : []
+        loadNodeFieldOptions: async nodeId => {
+          const fields = await this.scope.loadNodeFieldsById(nodeId)
+          return fields.map(item => ({
+            label: item.field_name,
+            value: item.field_name,
+            isPrimaryKey: item.primary_key_position > 0
+          }))
         },
 
         /**
