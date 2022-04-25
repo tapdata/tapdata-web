@@ -5,7 +5,7 @@
 Please follow the instructions below to ensure that the MySQL database is successfully added and used in Tapdata.
 
 ### **2. Supported version**
-MySQL 5.0, 5.1, 5.5, 5.6, 5.7, 8.x
+Amazon RDS  for MySQL 5.7.x, 8.0.x
 
 ### **3. Prerequisites (as source)**
 #### **3.1 Open Binlog**
