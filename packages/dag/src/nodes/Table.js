@@ -428,14 +428,25 @@ export class Table extends NodeType {
                       wrapperWidth: 300
                     },
                     'x-component': 'Select',
-                    'x-reactions': {
-                      target: 'updateConditionFields',
-                      fulfill: {
-                        state: {
-                          visible: '{{$self.value!=="appendWrite"}}'
+                    'x-reactions': [
+                      {
+                        dependencies: ['$inputs'],
+                        fulfill: {
+                          state: {
+                            visible: '{{findNodeById($deps[0][0])?.type !== "merge_table_processor"}}'
+                          }
+                        }
+                      },
+                      {
+                        target: 'updateConditionFields',
+                        fulfill: {
+                          state: {
+                            visible:
+                              '{{$self.value!=="appendWrite" && findNodeById($values.$inputs[0])?.type !== "merge_table_processor"}}'
+                          }
                         }
                       }
-                    }
+                    ]
                   },
                   updateConditionFields: {
                     title: '更新条件字段',
