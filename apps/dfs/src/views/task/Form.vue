@@ -859,7 +859,8 @@ export default {
             'tencent_mongodb',
             'aliyun_sqlserver',
             'tencent_sqlserver',
-            'polardb_mysql'
+            'polardb_mysql',
+            'amazon_rds_mysql'
           ].includes(this.dataSourceModel['source_databaseType'])
         ) {
           target.show = true
@@ -1140,10 +1141,10 @@ export default {
         case 'setting': {
           this.getSupportTwoWay() // 进入设置页面再判断
           if (
-            !['mysql', 'aliyun_mysql', 'tencent_mysql', 'polardb_mysql'].includes(
+            !['mysql', 'aliyun_mysql', 'tencent_mysql', 'polardb_mysql', 'amazon_rds_mysql'].includes(
               this.dataSourceModel['source_databaseType']
             ) ||
-            !['mysql', 'aliyun_mysql', 'tencent_mysql', 'polardb_mysql'].includes(
+            !['mysql', 'aliyun_mysql', 'tencent_mysql', 'polardb_mysql', 'amazon_rds_mysql'].includes(
               this.dataSourceModel['target_databaseType']
             )
           ) {
@@ -1191,7 +1192,8 @@ export default {
               'tencent_mysql',
               'tencent_postgres',
               'tencent_sqlserver',
-              'polardb_mysql'
+              'polardb_mysql',
+              'amazon_rds_mysql'
             ].includes(this.dataSourceModel['target_databaseType'])
           ) {
             this.changeConfig([], 'setting_needToCreateIndex')
@@ -1213,7 +1215,8 @@ export default {
               'tencent_mongodb',
               'aliyun_sqlserver',
               'tencent_sqlserver',
-              'polardb_mysql'
+              'polardb_mysql',
+              'amazon_rds_mysql'
             ].includes(this.dataSourceModel['source_databaseType'])
           ) {
             target.show = true
