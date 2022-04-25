@@ -38,10 +38,9 @@
         prop="grantTypes"
         sortable="grantTypes"
         min-width="160"
-        max-width="300"
       >
         <template slot-scope="scope">
-          <span v-for="item in scope.row.grantTypes" :key="item" class="table-span">{{ item }}</span>
+          <span v-for="item in scope.row.grantTypes" :key="item" class="table-span text-break">{{ item }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -130,8 +129,8 @@
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <ElButton @click="createDialogVisible = false" size="small">{{ $t('message.cancel') }}</ElButton>
-        <ElButton type="primary" @click="createApplication()" size="small">{{ $t('message.confirm') }}</ElButton>
+        <ElButton @click="createDialogVisible = false" size="small">{{ $t('button_cancel') }}</ElButton>
+        <ElButton type="primary" @click="createApplication()" size="small">{{ $t('button_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </section>
@@ -352,6 +351,12 @@ export default {
     padding: 2px 5px;
     background: #eee;
     border-radius: 3px;
+  }
+  .el-table .cell.el-tooltip {
+    white-space: break-spaces;
+    .table-span {
+      white-space: pre;
+    }
   }
   .applications-form {
     .el-form-item {

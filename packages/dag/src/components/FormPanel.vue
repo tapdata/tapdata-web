@@ -23,14 +23,6 @@ import { Path } from '@formily/path'
 import { validateBySchema } from '@daas/form/src/shared/validate'
 import { debounce } from 'lodash'
 
-registerValidateMessageTemplateEngine((message, context) => {
-  // console.log('registerValidateMessageTemplateEngine', message, context)
-  if (context.field?.props?.name === 'tableName') {
-    return '请选择表'
-  }
-  return message
-})
-
 const mapEnum = dataSource => (item, index) => {
   const label = dataSource[index] || dataSource[item.value] || item.label
   return {
