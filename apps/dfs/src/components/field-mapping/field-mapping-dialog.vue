@@ -216,7 +216,7 @@
           <div class="field-mapping-table__empty" slot="empty">
             <i class="el-icon-folder-opened"></i>
             <span v-if="targetIsVika" class="ml-1">{{ $t('task_mapping_table_no_data_vika') }}</span>
-            <span v-else-if="targetIsQingflow" class="ml-1">{{ $t('task_mapping_table_no_data_vika') }}</span>
+            <span v-else-if="targetIsQingflow" class="ml-1">{{ $t('task_mapping_table_no_data_qingflow') }}</span>
             <span v-else class="ml-1">{{ $t('task_mapping_table_no_data') }}</span>
           </div>
         </ElTable>
