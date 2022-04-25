@@ -2,7 +2,7 @@ import { connect, mapProps, useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import VIcon from 'web-core/components/VIcon'
-import { handleOperation, convertSchemaToTreeData } from './util'
+import { convertSchemaToTreeData } from './util'
 import './index.scss'
 
 export const FieldRename = connect(
@@ -51,11 +51,12 @@ export const FieldRename = connect(
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
         this.fields = fields || []
         this.originalFields = JSON.parse(JSON.stringify(fields))
+        //清除空数组
         //查找是否有被删除的字段且operation有操作
         if (this.operations?.length > 0 && fields?.length > 0) {
-          let temporary = handleOperation(fields, this.operations)
-          temporary.map(item => {
+          this.operations.map(item => {
             let targetIndex = fields.findIndex(n => n.id === item.id)
+            if (targetIndex < -1) return
             if (item.op === 'RENAME') {
               const name = fields[targetIndex].field_name
               let newName = name.split('.')
@@ -110,7 +111,7 @@ export const FieldRename = connect(
                       slot-scope="{ node, data }"
                     >
                       <span class="flex-1 text__inner inline-block">
-                        {data.label}
+                        {data.original_field_name}
                         {data.primary_key_position > 0 ? (
                           <VIcon size="12" class="text-warning ml-1">
                             key
