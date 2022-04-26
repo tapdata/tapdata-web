@@ -133,10 +133,10 @@
       <div class="ml-3 flex flex-column text-center" style="min-width: 278px">
         <div
           v-if="task && task.parentTask && ['initial_sync', 'initial_sync+cdc'].includes(task.parentTask.type)"
-          class="right-box grey-background"
+          class="right-box grey-background justify-content-center"
         >
-          <div class="fw-bold right-box-text">{{ $t('task_info_full_progress') }}</div>
-          <div class="flex-1 flex flex-column justify-content-center">
+          <div class="fw-bold right-box-text font-color-dark">{{ $t('task_info_full_progress') }}</div>
+          <div class="flex flex-column justify-content-center">
             <div
               v-if="progress"
               class="progress-box flex justify-content-center align-items-center position-relative mt-1"
@@ -153,23 +153,23 @@
                 {{ progress }}%
               </div>
             </div>
-            <div class="pb-2 fs-8 font-color-light" v-else>
+            <div class="py-2 fs-8 font-color-light" v-else>
               {{ $t('migrate_no_progress_statistics_yet') }}
             </div>
-            <div v-if="progress === 100" class="right-box-text font-color-slight mt-1">
+            <div v-if="progress === 100" class="right-box-text font-color-light mt-1">
               {{ $t('task_info_full_time') }}：{{ formatTime(endTs) }}
             </div>
-            <div v-else class="right-box-text font-color-slight mt-1">
+            <div v-else class="right-box-text font-color-light mt-1">
               {{ $t('task_monitor_full_completion_time') + '：' + (finishDuration || $t('task_info_calculating')) }}
             </div>
           </div>
         </div>
         <div
           v-if="task && task.parentTask && ['cdc', 'initial_sync+cdc'].includes(task.parentTask.type)"
-          class="right-box grey-background"
+          class="right-box grey-background justify-content-center"
         >
-          <div class="fw-bold right-box-text">{{ $t('task_info_incremental_delay') }}</div>
-          <div class="flex-1 flex flex-column justify-content-center">
+          <div class="fw-bold right-box-text font-color-dark">{{ $t('task_info_incremental_delay') }}</div>
+          <div class="flex flex-column justify-content-center">
             <div
               v-if="writeData.replicateLag"
               class="color-primary fw-bolder fs-5 mt-1"
@@ -177,10 +177,10 @@
             >
               {{ formatMs(writeData.replicateLag) }}
             </div>
-            <div class="pb-2 fs-8 font-color-light" v-else>
+            <div class="py-2 fs-8 font-color-light" v-else>
               {{ $t('migrate_no_latency_statistics_yet') }}
             </div>
-            <div class="right-box-text font-color-slight mt-1" v-if="writeData.cdcTime">
+            <div class="right-box-text font-color-light mt-1" v-if="writeData.cdcTime">
               {{ $t('task_info_increment_time_point') }}：{{ formatTime(writeData.cdcTime) }}
             </div>
           </div>

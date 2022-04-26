@@ -126,21 +126,15 @@
         </div>
       </div>
       <div class="flex flex-column flex-fill ml-4" v-loading="!lineDataDeep.x.length">
-        <div
-          class="px-2"
-          style="line-height: 27px; border: 1px solid #e8e8e8; border-radius: 4px; box-sizing: border-box"
-        >
-          QPS
-        </div>
         <Chart ref="chart" :extend="lineOptions" class="type-chart h-100"></Chart>
       </div>
       <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
         <div
           v-if="task && task.parentTask && ['initial_sync', 'initial_sync+cdc'].includes(task.parentTask.type)"
-          class="right-box grey-background"
+          class="right-box grey-background justify-content-center"
         >
           <div class="fw-bold right-box-text font-color-dark">{{ $t('task_info_full_progress') }}</div>
-          <div class="flex-1 flex flex-column justify-content-center">
+          <div class="flex flex-column justify-content-center">
             <div
               class="progress-box flex justify-content-center align-items-center position-relative mt-1"
               v-if="syncData.progress"
@@ -157,7 +151,7 @@
                 {{ syncData.progress }}%
               </div>
             </div>
-            <div class="pb-2 fs-8 font-color-light" v-else>
+            <div class="py-2 fs-8 font-color-light" v-else>
               {{ $t('migrate_no_progress_statistics_yet') }}
             </div>
             <div v-if="syncData.progress === 100" class="right-box-text font-color-light mt-1">
@@ -174,10 +168,10 @@
         </div>
         <div
           v-if="task && task.parentTask && ['cdc', 'initial_sync+cdc'].includes(task.parentTask.type)"
-          class="right-box grey-background"
+          class="right-box grey-background justify-content-center"
         >
           <div class="fw-bold right-box-text font-color-dark">{{ $t('task_info_incremental_delay') }}</div>
-          <div class="flex-1 flex flex-column justify-content-center">
+          <div class="flex flex-column justify-content-center">
             <div
               v-if="writeData.replicateLag"
               class="color-primary fw-bolder fs-5 mt-1"
@@ -185,10 +179,10 @@
             >
               {{ getReplicateLagTime(writeData.replicateLag) }}
             </div>
-            <div class="pb-2 fs-8 font-color-light" v-else>
+            <div class="py-2 fs-8 font-color-light" v-else>
               {{ $t('migrate_no_latency_statistics_yet') }}
             </div>
-            <div class="right-box-text font-color-slight mt-1" v-if="writeData.cdcTime">
+            <div class="right-box-text font-color-light mt-1" v-if="writeData.cdcTime">
               {{ $t('task_info_increment_time_point') }}：{{ formatTime(writeData.cdcTime) }}
             </div>
           </div>
