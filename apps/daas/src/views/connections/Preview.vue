@@ -60,7 +60,7 @@
               v-else-if="
                 connection[temp.key] &&
                 (temp.key === 'shareCdcEnable' ||
-                  (temp.key === 'redoLogParserEnable' && connection.database_type === 'oracle'))
+                  (temp.key === 'redoLogParserEnable' && ['oracle','db2'].includes(connection.database_type)))
               "
               class="box-line__value ellipsis"
             >

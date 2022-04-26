@@ -160,6 +160,65 @@ export default function (vm) {
         tip: vm.$t('connection_form_impact_type'),
         options: [],
         show: true
+      },
+      {
+        type: 'switch',
+        field: 'redoLogParserEnable',
+        label: vm.$t('connection_form_oracle_redoLog_parser'),
+        show: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'connection_type',
+                value: 'target'
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          }
+        ]
+      },
+      {
+        type: 'input',
+        field: 'redoLogParserHost',
+        label: vm.$t('connection_form_oracle_redoLog_parser_post'),
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'redoLogParserEnable',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'input',
+        field: 'redoLogParserPort',
+        label: vm.$t('connection_form_port'),
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'redoLogParserEnable',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       }
     ]
   }
