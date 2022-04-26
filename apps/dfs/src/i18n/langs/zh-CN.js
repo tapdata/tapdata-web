@@ -1,4 +1,5 @@
 export default {
+  /** 全局 */
   gl_see_more: '查看更多',
   gl_no_data: '暂无数据',
   gl_no_match_result: '没有查到符合条件的结果',
@@ -18,6 +19,8 @@ export default {
   gl_telephone_tip: '电话咨询',
   gl_form_can_not_be_empty: '不能为空',
   gl_search_show_all: '查看全部',
+
+  // 按钮
   button_edit: '编辑',
   button_copy: '复制',
   button_reset: '重置',
@@ -28,8 +31,13 @@ export default {
   button_confirm: '确定',
   button_close: '取 消',
   button_save: '确 定',
+
+  // 确认框
   confirm_error_tip: '错误提示',
   confirm_reload_label: '刷新页面',
+
+  /** 模块 */
+  // 工作台
   workbench_manage: '工作台',
   workbench_quick_start: '快速开始',
   workbench_notice: '公告通知',
@@ -55,6 +63,8 @@ export default {
   workbench_statistics_title: '任务数据量统计',
   workbench_statistics__sub_title: '输入数据量',
   workbench_statistics__sub_title_label: '累计',
+
+  // 头部
   header_question: '问答支持',
   header_scan_code: '使用过程中遇到问题？',
   header_join_group: '扫码添加小助手获得技术支持',
@@ -75,6 +85,8 @@ export default {
   header_no_notice: '暂无通知',
   header_setting: '设置',
   header_view_notifications: '查看所有通知',
+
+  // 通知
   notify_setting: '通知设置',
   notify_agent_notification: 'agent通知',
   notify_sms_notification: '短信通知',
@@ -127,6 +139,8 @@ export default {
   notify_list_agent_deleted: 'Agent被删除',
   notify_list_will_release_agent: '即将被回收',
   notify_list_releases_agent: '已经被回收',
+
+  // 路由头部
   tap_home: '首页',
   tap_workbench: '工作台',
   tap_announcement_notice: '公告通知',
@@ -155,6 +169,8 @@ export default {
   tap_upgrade: 'Agent 升级',
   tap_contact_us: '联系我们',
   tap_user_center: '用户中心',
+
+  // Agent
   agent_key: 'Agent',
   agent_manage: 'Agent管理',
   agent_name: 'Agent 名称',
@@ -220,6 +236,8 @@ export default {
   agent_detail_run_manual: '日志目录',
   agent_list_empty_desc1: '快来',
   agent_list_empty_desc2: '开始实时数据同步吧~',
+
+  // Agent部署
   agent_deploy_title: 'Agent 下载与安装',
   agent_deploy_select_tip:
     'Tapdata DFS 云版需要先在本地安装 Agent 以确保连接数据库和数据传输服务的正常运行, 您可以根据要安装服务器的类型在下方选择相应的类型进行下载安装',
@@ -260,6 +278,8 @@ export default {
   agent_deploy_start_install_docker_second:
     '2.docker安装成功后，会自动输出已安装Agent的容器ID，您可以通过docker ps命令来查看正在运行的docker：',
   agent_deploy_start_install_docker_third: '3.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考',
+
+  // Agent升级
   agent_upgrade_title: 'Agent 版本升级',
   agent_upgrade_select_tip: '系统检测到您的Agent不是最新版本，请按照指引进行升级',
   agent_upgrade_before_title: '升级前',
@@ -287,6 +307,8 @@ export default {
   agent_upgrade_step_docker_second:
     '2.复制下方的升级命令直接在容器内执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本',
   agent_upgrade_step_docker_third: '3.出现“Update finished.”则代表Agent升级成功',
+
+  // 连接
   connection_manage: '连接管理',
   connection_list_column_schema_status: 'Schema加载状态',
   connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
@@ -408,6 +430,8 @@ export default {
   connection_preview_master_partition: '仅写入master分区',
   connection_preview_isr_partition: '写入所有ISR分区',
   connection_preview_operation_success: '操作成功',
+
+  // 任务
   task_manage: '任务管理',
   task_name: '任务名称',
   task_status: '任务状态',
@@ -735,6 +759,8 @@ export default {
   task_mapping_dialog_rename_a_single_table_title: '修改目标表名',
   task_mapping_dialog_rename_a_single_table_input_desc: '自定义名称的表，不会应用：前后缀和大小写转换操作',
   task_mapping_dialog_batch_change_field_type_desc: '实际可用长度取决于目标数据库类型定义，请按需设置',
+
+  // 里程碑
   milestone_label_init_dataflow: '【前期准备】解析dag路径创建子任务',
   milestone_label_connect_to_source: '【前期准备】连接源端数据源',
   milestone_label_connect_to_target: '【前期准备】连接目标端数据源',
@@ -752,6 +778,8 @@ export default {
   milestone_label_write_snapshot: '【数据传输】目标端全量写入数据快照',
   milestone_label_read_cdc_event: '【数据传输】源端采集器进入增量读取模式',
   milestone_label_write_cdc_event: '【数据传输】目标处理器进入增量写入模式',
+
+  // 操作日志
   operation_log_manage: '操作日志',
   operation_log_type: '操作类型',
   operation_log_Object: '操作对象',
@@ -852,6 +880,8 @@ export default {
   guide_agent_start_success: 'Agent启动中',
   guide_agent_start_fail: 'Agent启动失败',
   guide_creat_connection_fail: '创建连接失败',
+
+  // 数据校验
   verify_type: '类型',
   verify_frequency: '频次',
   verify_status: '状态',
@@ -932,6 +962,8 @@ export default {
   verify_message_confirm_delete_script: '确定要删除自定义JS校验逻辑吗',
   verify_message_confirm_back: '此操作会丢失当前正在创建（编辑）的校验任务',
   verify_message_title_confirm_back: '是否放弃创建（编辑）校验任务？',
+
+  // 旧国际化
   message_exists_name: '名称已存在',
   dataForm_form_connectionType: '连接类型',
   dataForm_form_options_source: '源头',
@@ -1118,6 +1150,8 @@ export default {
   dataForm_form_response_body_CHECK_GTID: ' 检查GTID模式与GTID一致性是否开启',
   dataForm_form_response_body_CHECK_VIKA_API_TOKEN: '检查vika密钥是否正确',
   dataForm_form_response_body_CHECK_QINGFLOW_ACCESS_TOKEN: '检查access token是否可用',
+
+  // 自动提取
   field_mapping_field_mapping_dialog_muLu: '目录',
   field_mapping_field_mapping_dialog_muBiao: '目标：',
   field_mapping_field_mapping_dialog_piLiangXiuGaiZi: '批量修改字段类型',
@@ -1137,7 +1171,6 @@ export default {
   components_InlineInput_baoCun: '保存',
   components_InlineInput_quXiao: '取消',
   components_InlineInput_bianJi: '编辑',
-  template: '',
   components_InlineInput_ziFuChangDuXian: '字符长度限制{val1}-{val2}个字符',
   components_RequestErrorMessage_yiFuZhi: '已复制',
   components_SelectList_meiYouGengDuoShu: '没有更多数据',
