@@ -791,7 +791,7 @@ export default {
             this.$message.success(this.$t('metadata.details.success_Release'))
           })
           .catch(() => {
-            this.$message.error(this.$t('message.saveFail'))
+            this.$message.error(this.$t('message_save_fail'))
           })
         // .finally(() => {
         //   instance.confirmButtonLoading = false
@@ -813,7 +813,7 @@ export default {
           this.$message.success(this.$t('metadata.details.success_Release'))
         })
         .catch(() => {
-          this.$message.error(this.$t('message.saveFail'))
+          this.$message.error(this.$t('message_save_fail'))
         })
         .finally(() => {
           this.businessDialogVisible = false
@@ -841,7 +841,7 @@ export default {
           this.$message.success(this.$t('metadata.details.success_Release'))
         })
         .catch(() => {
-          this.$message.error(this.$t('message.saveFail'))
+          this.$message.error(this.$t('message_save_fail'))
         })
         .finally(() => {
           this.editNameDialogVisible = false
@@ -859,7 +859,7 @@ export default {
           this.$message.success(this.$t('metadata.details.success_Release'))
         })
         .catch(() => {
-          this.$message.error(this.$t('message.saveFail'))
+          this.$message.error(this.$t('message_save_fail'))
         })
         .finally(() => {
           this.editCommentDialogVisible = false

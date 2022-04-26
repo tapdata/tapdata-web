@@ -111,7 +111,7 @@
           >
         </li>
         <!-- <li v-show="data.database_port && !['file', 'mariadb'].includes(data.database_type)">
-					<span class="label">{{ $t('dataForm.form.port') }}</span>
+					<span class="label">{{ $t('connection_form_port') }}</span>
 					<span class="value align-items-center align-middle"> {{ data.database_port }}</span>
 				</li> -->
         <div

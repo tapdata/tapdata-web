@@ -702,6 +702,12 @@ export default {
     'Begin with Chinese and English, 1-100 characters, including Chinese and English, numbers, underscores, underscores, spaces',
   connection_form_no_name: 'The connection name cannot be empty',
   connection_form_name_exists: 'Name already exists',
+  connection_form_access_node: 'Access Node',
+  connection_form_automatic: 'Platform automatic allocation',
+  connection_form_manual: 'User specified manually',
+  connection_form_access_node_tip:
+    'In the case of automatic, the right platform assigns the node for connection access, and in the case of manual, the user manually specifies the node for access',
+  connection_form_name_ip: 'name (ip)',
   connection_form_kafka_host_tip: 'Enter IP/host:port, multiple addresses are separated by commas',
   connection_form_kafka_lonore_format_tip:
     'If it is turned on, it will ignore the message if it encounters a parsing exception, otherwise it will stop pulling the message',

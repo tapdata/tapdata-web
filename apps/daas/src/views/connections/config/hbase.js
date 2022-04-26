@@ -16,11 +16,11 @@ export default function (vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: vm.$t('dataForm.form.connectionType'),
+        label: vm.$t('connection_form_connection_type'),
         options: [
           {
-            label: vm.$t('dataForm.form.options.source'),
-            tip: vm.$t('dataForm.form.options.sourceTips'),
+            label: vm.$t('connection_form_source'),
+            tip: vm.$t('connection_form_source_tip'),
             value: 'source'
           }
         ],
@@ -34,7 +34,7 @@ export default function (vm) {
         type: 'input',
         field: 'database_host',
 
-        label: vm.$t('dataForm.form.host'),
+        label: vm.$t('connection_form_host'),
         rules: [
           {
             required: true,
@@ -51,7 +51,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_port',
-        label: vm.$t('dataForm.form.port'),
+        label: vm.$t('connection_form_port'),
         required: true,
         rules: [
           {
@@ -73,8 +73,44 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_name',
-        label: vm.$t('dataForm.form.databaseName'),
+        label: vm.$t('connection_form_database_name'),
         required: true
+      },
+      {
+        type: 'select',
+        field: 'accessNodeType',
+        label: vm.$t('connection_form_access_node'),
+        options: [
+          {
+            label: vm.$t('connection_form_automatic'),
+            value: 'AUTOMATIC_PLATFORM_ALLOCATION'
+          },
+          {
+            label: vm.$t('connection_form_manual'),
+            value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+          }
+        ],
+        tips: vm.$t('connection_form_access_node_tip'),
+        required: true,
+        filterable: true
+      },
+      {
+        type: 'slot',
+        slot: 'accessNodeProcessId',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'accessNodeType',
+                value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       }
     ]
   }

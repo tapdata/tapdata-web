@@ -62,6 +62,9 @@
     }
   }
 }
+.el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
+  color: map-get($color, primary);
+}
 .el-select .el-input.is-focus .el-input__inner,
 .el-select .el-input__inner:focus,
 .el-input.is-active .el-input__inner,
