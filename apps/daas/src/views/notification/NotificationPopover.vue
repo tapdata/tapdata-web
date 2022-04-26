@@ -307,11 +307,11 @@ export default {
       }
       .el-tabs__item {
         font-size: 14px;
-        font-weight: 500;
+        font-weight: 400;
         color: map-get($fontColor, slight);
         &.is-active {
           color: map-get($color, primary);
-          font-weight: 400;
+          font-weight: 500;
           border-color: map-get($color, primary);
         }
       }
