@@ -1,106 +1,112 @@
 <template>
   <div class="notification" v-loading="loading">
-    <div class="notification-main">
-      <div class="notification-right-list">
-        <div class="notification-head">
-          <div class="title">{{ $t('notification.systemNotice') }}</div>
-        </div>
-        <div style="overflow-y: auto">
-          <section style="color: #999">
-            {{ $t('notification.tip') }}
-          </section>
-          <section class="run-notification" v-show="runNotification && runNotification.length > 0">
-            <span class="block"></span><span class="title">{{ $t('notification.jobOperationNotice') }}</span>
-            <ul>
-              <li v-for="(item, index) in runNotification" :key="index">
-                <span class="label">{{ notificationMAP[item.label] }}</span>
-                <el-checkbox class="notice" v-model="item.notice">{{ $t('notification.systemNotice') }}</el-checkbox>
-                <el-checkbox class="email" v-model="item.email">{{ $t('notification.emailNotice') }}</el-checkbox>
-                <span class="sort-label" v-if="item.lagTime">{{ notificationMAP[item.lagTime] }}</span>
-                <span v-if="item.label === 'CDCLagTime'">
-                  <el-input
-                    v-model="item.lagTimeInterval"
-                    class="item-input"
-                    size="mini"
-                    onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-                    onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-                  >
-                    <el-select v-model="item.lagTimeUtil" slot="append" placeholder="请选择" class="input-with-select">
-                      <el-option label="hour" value="hour"></el-option>
-                      <el-option label="second" value="second"></el-option>
-                    </el-select>
-                  </el-input>
-                </span>
-                <span class="sort-label" v-if="item.noticeInterval && item.email">{{
-                  notificationMAP[item.noticeInterval]
-                }}</span>
-                <span v-if="item.label === 'CDCLagTime' && item.email">
-                  <el-input
-                    v-model="item.noticeIntervalInterval"
-                    class="item-input"
-                    size="mini"
-                    onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-                    onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-                  >
-                    <el-select
-                      v-model="item.noticeIntervalUtil"
-                      slot="append"
-                      placeholder="请选择"
-                      class="input-with-select"
-                    >
-                      <el-option label="hour" value="hour"></el-option>
-                      <el-option label="second" value="second"></el-option>
-                    </el-select>
-                  </el-input>
-                </span>
-                <span v-if="item.label === 'jobEncounterError' && item.email">
-                  <el-input
-                    v-model="item.Interval"
-                    class="item-input"
-                    size="mini"
-                    onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
-                    onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
-                  >
-                    <el-select v-model="item.util" slot="append" placeholder="请选择" class="input-with-select">
-                      <el-option label="hour" value="hour"></el-option>
-                      <el-option label="second" value="second"></el-option>
-                    </el-select>
-                  </el-input>
-                </span>
-              </li>
-            </ul>
-          </section>
-          <section class="run-notification" v-show="systemNotification && systemNotification.length > 0">
-            <span class="block"></span><span class="title">{{ $t('notification.systemSetting') }}</span>
-            <ul>
-              <li v-for="(item, index) in systemNotification" :key="index">
-                <span class="label">{{ notificationMAP[item.label] }}</span>
-                <el-checkbox class="notice" v-model="item.notice">{{ $t('notification.systemNotice') }}</el-checkbox>
-                <el-checkbox class="email" v-model="item.email">{{ $t('notification.emailNotice') }}</el-checkbox>
-              </li>
-            </ul>
-          </section>
-          <section class="run-notification" v-show="agentNotification && agentNotification.length > 0">
-            <span class="block"></span><span class="title">{{ $t('notification.agentNotice') }}</span>
-            <ul>
-              <li v-for="(item, index) in agentNotification" :key="index">
-                <span class="label">{{ notificationMAP[item.label] }}</span>
-                <el-checkbox class="notice" v-model="item.notice">{{ $t('notification.systemNotice') }}</el-checkbox>
-                <el-checkbox class="email" v-model="item.email">{{ $t('notification.emailNotice') }}</el-checkbox>
-              </li>
-            </ul>
-          </section>
-        </div>
-        <el-button
-          class="btn"
-          @click="submit"
-          size="mini"
-          type="primary"
-          :disabled="!runNotification || !systemNotification || !agentNotification"
-          >{{ $t('dataForm.submit') }}</el-button
-        >
-      </div>
+    <div class="notification-head">
+      <div class="title">{{ $t('notify_system_notice') }}</div>
     </div>
+    <div class="notification-main" style="overflow-y: auto">
+      <section class="notification-tip">
+        <span> {{ $t('notify_tip') }}</span>
+      </section>
+      <section class="run-notification" v-show="runNotification && runNotification.length > 0">
+        <span class="title">{{ $t('notify_job_operation_notice') }}</span>
+        <ul>
+          <li v-for="(item, index) in runNotification" :key="index">
+            <span class="label">{{ notificationMAP[item.label] }}</span>
+            <el-checkbox class="notice" v-model="item.notice">{{ $t('notify_system_notice') }}</el-checkbox>
+            <el-checkbox class="email" v-model="item.email">{{ $t('notify_email_notice') }}</el-checkbox>
+            <div class="mt-4" v-if="item.lagTime">
+              <span class="label" v-if="item.lagTime">{{ notificationMAP[item.lagTime] }}</span>
+              <span v-if="item.label === 'CDCLagTime'">
+                <el-input
+                  v-model="item.lagTimeInterval"
+                  class="item-input"
+                  size="mini"
+                  onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                  onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+                >
+                  <el-select v-model="item.lagTimeUtil" slot="append" placeholder="请选择" class="input-with-select">
+                    <el-option label="hour" value="hour"></el-option>
+                    <el-option label="second" value="second"></el-option>
+                  </el-select>
+                </el-input>
+              </span>
+            </div>
+
+            <div class="mt-4" v-if="item.noticeInterval && item.email">
+              <span class="label" v-if="item.noticeInterval && item.email">
+                {{ notificationMAP[item.noticeInterval] }}
+              </span>
+              <span v-if="item.label === 'CDCLagTime' && item.email">
+                <el-input
+                  v-model="item.noticeIntervalInterval"
+                  class="item-input"
+                  size="mini"
+                  onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                  onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+                >
+                  <el-select
+                    v-model="item.noticeIntervalUtil"
+                    slot="append"
+                    placeholder="请选择"
+                    class="input-with-select"
+                  >
+                    <el-option label="hour" value="hour"></el-option>
+                    <el-option label="second" value="second"></el-option>
+                  </el-select>
+                </el-input>
+              </span>
+              <span v-if="item.label === 'jobEncounterError' && item.email">
+                <el-input
+                  v-model="item.Interval"
+                  class="item-input"
+                  size="mini"
+                  onkeyup="this.value=this.value.replace(/[^\d]/g,'') "
+                  onafterpaste="this.value=this.value.replace(/[^\d]/g,'') "
+                >
+                  <el-select v-model="item.util" slot="append" placeholder="请选择" class="input-with-select">
+                    <el-option label="hour" value="hour"></el-option>
+                    <el-option label="second" value="second"></el-option>
+                  </el-select>
+                </el-input>
+              </span>
+            </div>
+          </li>
+        </ul>
+      </section>
+      <section class="run-notification" v-show="systemNotification && systemNotification.length > 0">
+        <span class="title">{{ $t('notify_system_setting') }}</span>
+        <ul>
+          <li v-for="(item, index) in systemNotification" :key="index">
+            <span class="label">{{ notificationMAP[item.label] }}</span>
+            <el-checkbox class="notice" v-model="item.notice">{{ $t('notify_system_notice') }}</el-checkbox>
+            <el-checkbox class="email" v-model="item.email">{{ $t('notify_email_notice') }}</el-checkbox>
+          </li>
+        </ul>
+      </section>
+      <section class="run-notification" v-show="agentNotification && agentNotification.length > 0">
+        <span class="title">{{ $t('notification.agentNotice') }}</span>
+        <ul>
+          <li v-for="(item, index) in agentNotification" :key="index">
+            <span class="label">{{ notificationMAP[item.label] }}</span>
+            <el-checkbox class="notice" v-model="item.notice">{{ $t('notify_system_notice') }}</el-checkbox>
+            <el-checkbox class="email" v-model="item.email">{{ $t('notify_email_notice') }}</el-checkbox>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class="notification-footer">
+      <ElButton
+        class="btn"
+        @click="submit"
+        size="mini"
+        type="primary"
+        :disabled="!runNotification || !systemNotification || !agentNotification"
+        >{{ $t('dataForm.submit') }}</ElButton
+      >
+    </div>
+    <!-- <div class="notification-main">
+      <div class="notification-right-list"></div>
+    </div> -->
   </div>
 </template>
 
@@ -173,82 +179,65 @@ export default {
 <style scoped lang="scss">
 $unreadColor: #ee5353;
 .notification {
-  height: 100%;
-  font-size: 12px;
-}
-.btn {
-  width: 100px;
-  margin-top: 10px;
-  margin-bottom: 20px;
-}
-.notification-head {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-  color: #409eff;
-  padding: 20px 20px 20px 0;
-  .title {
-    font-size: 18px;
-    font-weight: bold;
-    color: rgba(51, 51, 51, 1);
-    line-height: 34px;
-  }
-  .search {
-    margin-top: 10px;
-    margin-right: 10px;
-    width: 200px;
-  }
-}
-.notification-main {
-  display: flex;
+  flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  .notification-left-sidebar {
-    background: rgba(250, 250, 250, 1);
-    border: 1px solid rgba(230, 230, 232, 1);
-    width: 250px;
+  font-size: 12px;
+  .notification-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 54px;
+    font-size: 12px;
+    color: #409eff;
+    padding: 20px 20px 0 24px;
     .title {
-      height: 14px;
       font-size: 14px;
       font-weight: bold;
-      color: rgba(51, 51, 51, 1);
+      color: #1d2129;
       line-height: 34px;
-      margin: 30px 20px;
     }
-    ul li {
-      height: 44px;
-      font-size: 12px;
-      font-weight: 400;
-      color: rgba(102, 102, 102, 1);
-      line-height: 44px;
-      background: rgba(238, 238, 238, 1);
-      padding-left: 20px;
-      cursor: pointer;
+    .search {
+      margin-right: 10px;
+      width: 200px;
     }
   }
-  .notification-right-list {
-    width: 100%;
-    flex: 1;
+  .notification-main {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    margin-left: 20px;
-    .block {
-      width: 11px;
-      height: 14px;
-      background: #409eff;
-      display: inline-block !important;
-      margin-right: 10px;
+    justify-content: space-between;
+    flex-grow: 1;
+    padding-left: 24px;
+    .notification-tip {
+      padding-top: 5px;
+      span {
+        padding: 4px 100px 4px 20px;
+        font-size: 12px;
+        white-space: nowrap;
+        color: map-get($fontColor, light);
+        border: 1px solid #f2f2f2;
+        border-left: 2px solid #2c65ff;
+        box-sizing: border-box;
+      }
     }
     .run-notification {
       margin-top: 15px;
       .title {
-        font-size: 16px;
+        font-size: 14px;
         font-weight: bold;
-        color: #333333;
+        color: #1d2129;
         line-height: 32px;
         margin-bottom: 20px;
+      }
+      // ::v-deep {
+      //   .el-checkbox__label {
+      //     color: #86909c;
+      //   }
+      // }
+      .notice,
+      .email {
+        color: map-get($fontColor, light);
       }
       ul {
         // margin-left: 0;
@@ -259,16 +248,21 @@ $unreadColor: #ee5353;
         .label {
           display: inline-block;
           width: 30%;
-          color: #666;
+          color: #4e5969;
+          font-weight: 500;
         }
-        .sort-label {
-          display: inline-block;
-          width: 100px;
-          margin-left: 40px;
-          color: #666;
+        .label {
+          color: #333c4a;
         }
         .item-input {
           width: 200px;
+        }
+        ::v-deep {
+          .el-checkbox {
+            .el-checkbox__label {
+              color: map-get($fontColor, light);
+            }
+          }
         }
       }
       .input-with-select {
@@ -276,7 +270,55 @@ $unreadColor: #ee5353;
       }
     }
   }
+  .notification-footer {
+    flex: 0 0 auto;
+    width: 100%;
+    padding: 0 20px;
+    line-height: 60px;
+    height: 60px;
+    text-align: right;
+    border-top: 1px solid #f2f2f2;
+  }
 }
+
+// .notification-main {
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: space-between;
+//   height: 100%;
+//   .notification-left-sidebar {
+//     background: rgba(250, 250, 250, 1);
+//     border: 1px solid rgba(230, 230, 232, 1);
+//     width: 250px;
+//     .title {
+//       height: 14px;
+//       font-size: 14px;
+//       font-weight: bold;
+//       color: rgba(51, 51, 51, 1);
+//       line-height: 34px;
+//       margin: 30px 20px;
+//     }
+//     ul li {
+//       height: 44px;
+//       font-size: 12px;
+//       font-weight: 400;
+//       color: rgba(102, 102, 102, 1);
+//       line-height: 44px;
+//       background: rgba(238, 238, 238, 1);
+//       padding-left: 20px;
+//       cursor: pointer;
+//     }
+//   }
+//   .notification-right-list {
+//     width: 100%;
+//     flex: 1;
+//     display: flex;
+//     flex-direction: column;
+//     overflow: hidden;
+//     padding-left: 20px;
+//   }
+
+// }
 .pagination {
   float: right;
   margin-top: 10px;

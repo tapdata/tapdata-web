@@ -2,8 +2,10 @@
   <section class="dataflow-editor layout-wrap vh-100">
     <!--头部-->
     <TopHeader
+      :loading="loading"
       :is-saving="isSaving"
       :dataflow-name="dataflow.name"
+      :dataflow="dataflow"
       :scale="scale"
       @page-return="handlePageReturn"
       @save="save"
@@ -17,12 +19,19 @@
       @center-content="handleCenterContent"
       @auto-layout="handleAutoLayout"
       @change-name="handleUpdateName"
+      @locate-node="handleLocateNode"
+      @start="handleStart"
+      @stop="handleStop"
+      @forceStop="handleForceStop"
+      @reset="handleReset"
+      @edit="handleEdit"
     ></TopHeader>
     <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
       <LeftSidebar
+        v-if="!stateIsReadonly"
         v-resize.right="{
-          minWidth: 230,
+          minWidth: 260,
           maxWidth: 400
         }"
         @move-node="handleDragMoveNode"
@@ -34,6 +43,7 @@
         <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
           <PaperScroller
             ref="paperScroller"
+            :nav-lines="navLines"
             @add-node="handleAddNodeToPos"
             @mouse-select="handleMouseSelect"
             @change-scale="handleChangeScale"
@@ -44,6 +54,9 @@
               :node-id="n.id"
               :id="NODE_PREFIX + n.id"
               :js-plumb-ins="jsPlumbIns"
+              :class="{
+                'options-active': nodeMenu.typeId === n.id
+              }"
               @drag-start="onNodeDragStart"
               @drag-move="onNodeDragMove"
               @drag-stop="onNodeDragStop"
@@ -51,53 +64,42 @@
               @deselectNode="nodeDeselectedById"
               @nodeSelected="nodeSelectedById"
               @delete="handleDeleteById"
-              @quick-add-node="quickAddNode"
+              @show-node-popover="showNodePopover"
             ></DFNode>
           </PaperScroller>
-          <PaperEmpty v-if="!allNodes.length"></PaperEmpty>
-          <ElPopover
-            ref="nodeMenu"
-            v-model="nodeMenu.show"
-            trigger="hover"
-            placement="bottom"
-            popper-class="min-width-unset rounded-xl"
-            :reference="nodeMenu.reference"
-          >
-            <div class="df-menu-list">
-              <div
-                v-for="(n, ni) in processorNodeTypes"
-                :key="ni"
-                class="df-menu-item"
-                @click="addNodeOnConnByNodeMenu(n)"
-              >
-                {{ n.name }}
-              </div>
-            </div>
-          </ElPopover>
+          <div v-if="!allNodes.length && stateIsReadonly" class="absolute-fill flex justify-center align-center">
+            <EmptyItem></EmptyItem>
+          </div>
+          <PaperEmpty v-else-if="!allNodes.length"></PaperEmpty>
+          <NodePopover
+            :popover="nodeMenu"
+            @click-node="handleClickNodePopover"
+            @hide="nodeMenu.typeId = ''"
+          ></NodePopover>
         </main>
         <!--配置面板-->
-        <ConfigPanel :settings="dataflow" @hide="onHideSidebar"></ConfigPanel>
+        <ConfigPanel ref="configPanel" :settings="dataflow" :scope="scope" @hide="onHideSidebar"></ConfigPanel>
       </section>
     </section>
   </section>
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/TopHeader'
 import LeftSidebar from './components/LeftSidebar'
 import DFNode from './components/DFNode'
-import jsPlumbIns from './instance'
+import { jsPlumb, config } from './instance'
 import { connectorActiveStyle } from './style'
-import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH } from './constants'
+import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
 import { ctorTypes, nodeTypes } from './nodes/loader'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
 import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from './components/ConfigPanel'
 import { uuid } from '@daas/shared'
-import { DatabaseTypes, Task } from '@daas/api'
+import { Task } from '@daas/api'
 import {
   AddConnectionCommand,
   AddNodeCommand,
@@ -114,8 +116,11 @@ import { validateBySchema } from '@daas/form/src/shared/validate'
 import resize from 'web-core/directives/resize'
 import { merge } from 'lodash'
 import PaperEmpty from './components/PaperEmpty'
+import EmptyItem from './components/EmptyItem'
+import formScope from './mixins/formScope'
+import NodePopover from './components/NodePopover'
+import { getSubTaskStatus, getTaskBtnDisabled } from '@daas/business'
 
-const databaseTypesApi = new DatabaseTypes()
 const taskApi = new Task()
 
 export default {
@@ -125,16 +130,11 @@ export default {
     resize
   },
 
-  mixins: [deviceSupportHelpers, titleChange, showMessage],
-
-  props: {
-    listRoute: {
-      type: Object,
-      default: () => ({ name: 'Task' })
-    }
-  },
+  mixins: [deviceSupportHelpers, titleChange, showMessage, formScope],
 
   components: {
+    NodePopover,
+    EmptyItem,
     PaperEmpty,
     ConfigPanel,
     PaperScroller,
@@ -147,10 +147,10 @@ export default {
     return {
       NODE_PREFIX,
       status: 'draft',
-      loading: true,
+      loading: false,
       editable: false,
       isSaving: false,
-      jsPlumbIns,
+      jsPlumbIns: jsPlumb.getInstance(config),
       navLines: [],
       selectBoxAttr: null,
       selectActive: false,
@@ -158,7 +158,10 @@ export default {
 
       nodeMenu: {
         show: false,
+        type: '',
+        typeId: '',
         reference: null,
+        data: null,
         connectionData: {}
       },
 
@@ -172,12 +175,14 @@ export default {
   },
 
   computed: {
+    ...mapState('dataflow', ['activeNodeId']),
     ...mapGetters('dataflow', [
       'allNodes',
       'allEdges',
       'isActionActive',
       'nodeById',
       'stateIsDirty',
+      'stateIsReadonly',
       'processorNodeTypes',
       'hasNodeError'
     ]),
@@ -192,19 +197,21 @@ export default {
             height: attr.h + 'px'
           }
         : null
-    },
-
-    isEditable() {
-      return ['draft', 'error', 'paused'].includes(this.status)
     }
   },
 
   watch: {
-    $route: 'initView'
+    $route() {
+      this.initView()
+    }
   },
 
-  created() {
-    this.initNodeType()
+  async created() {
+    if (this.$route.name === 'DataflowViewer') {
+      this.setStateReadonly(true)
+    }
+    this.setValidateLanguage()
+    await this.initNodeType()
   },
 
   mounted() {
@@ -212,22 +219,26 @@ export default {
       try {
         this.initCommand()
         this.initNodeView()
-        await this.initView()
-        this.initWS()
+        await this.initView(true)
+        // this.initWS()
       } catch (error) {
         console.error(error) // eslint-disable-line
       }
     })
   },
 
-  destroyed() {
+  beforeDestroy() {
     this.command = null
+    this.jsPlumbIns?.destroy()
     this.resetWorkspace()
+    this.resetState()
+    this.$ws.off('editFlush', this.handleEditFlush)
   },
 
   methods: {
     ...mapMutations('dataflow', [
       'setStateDirty',
+      'setStateReadonly',
       'setEdges',
       'setTaskId',
       'setNodeTypes',
@@ -249,10 +260,18 @@ export default {
       'setTransformStatus',
       'setEditVersion',
       'copyNodes',
-      'pasteNodes'
+      'pasteNodes',
+      'setNodeError',
+      'setNodeErrorMsg',
+      'clearNodeError',
+      'resetState',
+      'selectConnection',
+      'deselectAllConnections',
+      'setCanBeConnectedNodeIds',
+      'setValidateLanguage'
     ]),
 
-    ...mapActions('dataflow', ['addNodeAsync', 'updateDag']),
+    ...mapActions('dataflow', ['addNodeAsync', 'updateDag', 'loadCustomNode']),
 
     async confirmMessage(message, headline, type, confirmButtonText, cancelButtonText) {
       try {
@@ -268,58 +287,68 @@ export default {
       }
     },
 
-    async initView() {
-      if (this.$route.params.action === 'dataflowSave') {
+    async initView(first) {
+      this.stopDagWatch?.()
+
+      if (this.$route.params.action === 'dataflowEdit') {
         // 保存后路由跳转
         this.setStateDirty(false)
+        this.setStateReadonly(false)
+        this.stopDagWatch = this.$watch(() => this.allNodes.length + this.allEdges.length, this.updateDag)
+        // 从查看进入编辑，清掉轮询
         return Promise.resolve()
       }
 
-      if (this.stateIsDirty) {
-        // 状态已被修改
-        const importConfirm = await this.confirmMessage(
-          `当您切换数据流时，您当前的数据流更改将丢失。`,
-          '确定切换？',
-          'warning',
-          '确定（不保存）'
-        )
-        if (importConfirm === false) {
-          return Promise.resolve()
-        }
+      if (this.$route.params.action === 'dataflowViewer') {
+        this.setStateReadonly(true)
+        return Promise.resolve()
       }
 
       const { id } = this.$route.params
+      this.dataflow.id = id
 
-      if (id) {
+      if (!first) {
+        this.resetWorkspace()
+        this.initNodeView()
+      }
+      if (this.$route.name === 'DataflowViewer') {
         await this.openDataflow(id)
+        // await this.startLoop()
+        this.setStateReadonly(true)
       } else {
-        await this.newDataflow()
-        // this.handleShowSettings() // 默认打开设置
+        if (id) {
+          await this.openDataflow(id)
+          // 检查任务是否可编辑
+          this.checkGotoViewer()
+        } else {
+          await this.newDataflow()
+        }
+        this.stopDagWatch = this.$watch(() => this.allNodes.length + this.allEdges.length, this.updateDag)
       }
 
-      this.stopDagWatch?.()
-      this.stopDagWatch = this.$watch(() => this.allNodes.length + this.allEdges.length, this.updateDag)
+      this.initWS()
     },
 
     initCommand() {
       this.command = new CommandManager(this.$store, this.jsPlumbIns)
       Mousetrap.bind('mod+c', () => {
-        this.copyNodes()
+        !this.stateIsReadonly && this.copyNodes()
       })
       Mousetrap.bind('mod+v', () => {
-        this.pasteNodes(this.command)
+        !this.stateIsReadonly && this.pasteNodes(this.command)
       })
-      Mousetrap.bind('mod+z', () => {
-        this.command.undo()
+      Mousetrap.bind('mod+z', e => {
+        e.preventDefault()
+        !this.stateIsReadonly && this.command.undo()
       })
       Mousetrap.bind('mod+shift+z', () => {
-        this.command.redo()
+        !this.stateIsReadonly && this.command.redo()
       })
       Mousetrap.bind('mod+shift+o', () => {
         this.$refs.paperScroller.toggleMiniView()
       })
       Mousetrap.bind('backspace', () => {
-        this.handleDelete()
+        !this.stateIsReadonly && this.handleDelete()
       })
       Mousetrap.bind(['option+command+l', 'ctrl+alt+l'], e => {
         e.preventDefault()
@@ -331,44 +360,35 @@ export default {
       let _nodeTypes = nodeTypes
       this.setNodeTypes(_nodeTypes)
       this.setCtorTypes(ctorTypes)
+      await this.loadCustomNode()
     },
 
-    /**
-     * 加载插件化数据源节点
-     * @param allNodeTypes
-     * @returns {Promise<*>}
-     */
-    async loadDatabaseTypes(allNodeTypes) {
-      // 临时过滤本地的数据库节点
-      const localTypes = allNodeTypes.map(item => item.attr.databaseType)
+    checkCanBeConnected(sourceId, targetId, showMsg) {
+      if (sourceId === targetId) return false
+      if (this.isConnected(sourceId, targetId)) return false
 
-      const { data } = await databaseTypesApi.get({
-        filter: {
-          fields: {
-            id: 1,
-            type: 1,
-            name: 1
-          },
-          where: {
-            type: {
-              nin: localTypes
-            }
-          }
-        }
-      })
+      const source = this.nodeById(sourceId)
+      const target = this.nodeById(targetId)
+      const maxInputs = target.__Ctor.attr.maxInputs ?? -1
+      const connectionType = target.attrs.connectionType
 
-      return data.map(item => {
-        return {
-          name: item.name,
-          icon: 'tigerdb',
-          group: 'plugin',
-          type: 'database',
-          constructor: 'Database',
-          attr: {
-            databaseType: item.type
-          }
-        }
-      })
+      if (connectionType && !connectionType.includes('target')) {
+        showMsg && this.$message.info(`该节点「${target.name}」仅支持作为源`)
+        return false
+      }
+
+      const connections = this.jsPlumbIns.getConnections({ target: NODE_PREFIX + targetId })
+
+      if (connections?.length && maxInputs !== -1 && connections.length >= maxInputs) {
+        showMsg && this.$message.info('该节点已经达到最大连线限制')
+        return false
+      }
+
+      if (this.allowConnect(sourceId, targetId)) {
+        return target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source)
+      }
+
+      return false
     },
 
     initNodeView() {
@@ -377,19 +397,34 @@ export default {
       jsPlumbIns.registerConnectionType('active', connectorActiveStyle)
 
       jsPlumbIns.bind('connection', (info, event) => {
-        // console.log('connectionEvent', info) // eslint-disable-line
         const { sourceId, targetId } = info
         const source = this.getRealId(sourceId)
         const target = this.getRealId(targetId)
         const connection = { source, target }
+        const connectionIns = info.connection
 
-        info.connection.bind('mouseover', () => {
+        info.connection.bind('click', () => {
+          if (this.stateIsReadonly) return
+          this.handleDeselectAllConnections()
           info.connection.showOverlay('removeConn')
           info.connection.showOverlay('addNodeOnConn')
+          info.connection.addClass('connection-selected')
+          this.selectConnection(connection)
+        })
+        info.connection.bind('mouseover', () => {
+          if (!this.stateIsReadonly) {
+            info.connection.showOverlay('removeConn')
+            info.connection.showOverlay('addNodeOnConn')
+          }
         })
         info.connection.bind('mouseout', () => {
-          info.connection.hideOverlay('removeConn')
-          info.connection.hideOverlay('addNodeOnConn')
+          if (
+            connectionIns.hasClass('connection-selected') /* ||
+            (this.nodeMenu.show && this.nodeMenu.reference === connectionIns.canvas)*/
+          )
+            return
+          connectionIns.hideOverlay('removeConn')
+          connectionIns.hideOverlay('addNodeOnConn')
         })
 
         // 添加新增按钮，并且绑定事件，默认不可见
@@ -407,15 +442,10 @@ export default {
             },
             visible: false,
             events: {
-              mousedown: overlay => {
+              click: async overlay => {
                 const rect = info.connection.canvas.getBoundingClientRect()
-                // 更新reference
-                this.nodeMenu.reference = overlay.canvas
-                this.$refs.nodeMenu.referenceElm = overlay.canvas
-                this.nodeMenu.connection = connection
                 this.nodeMenu.connectionCenterPos = [rect.x + rect.width / 2, rect.y + rect.height / 2]
-                // 显示菜单
-                this.nodeMenu.show = true
+                await this.showNodePopover('connection', connection, overlay.canvas)
               }
             }
           }
@@ -435,7 +465,7 @@ export default {
             },
             visible: false,
             events: {
-              mousedown: () => {
+              click: () => {
                 this.command.exec(
                   new RemoveConnectionCommand({
                     source,
@@ -455,7 +485,29 @@ export default {
         }
       })
 
-      const _instance = {
+      /*let sourceMap
+      let targetMap
+      const initSourceAndTargetMap = () => {
+        const edges = this.allEdges
+        edges.forEach(item => {
+          let _source = sourceMap[item.source]
+          let _target = targetMap[item.target]
+
+          if (!_source) {
+            sourceMap[item.source] = [item]
+          } else {
+            _source.push(item)
+          }
+
+          if (!_target) {
+            targetMap[item.target] = [item]
+          } else {
+            _target.push(item)
+          }
+        })
+      }*/
+
+      /*const _instance = {
         getConnections(params) {
           // console.log('_instance', params) // eslint-disable-line
           if (typeof params === 'object') {
@@ -464,78 +516,101 @@ export default {
           }
           return jsPlumbIns.getConnections(params)
         }
-      }
+      }*/
 
       jsPlumbIns.bind('beforeDrop', info => {
         const { sourceId, targetId } = info
 
-        if (sourceId === targetId) return false
+        return this.checkCanBeConnected(this.getRealId(sourceId), this.getRealId(targetId), true)
+
+        /*if (sourceId === targetId) return false
 
         // console.log('beforeDrop', info) // eslint-disable-line
 
         const source = this.nodeById(this.getRealId(sourceId))
         const target = this.nodeById(this.getRealId(targetId))
 
-        // target.__Ctor.allowSource(source)
+        const connectionType = target.attrs.connectionType
+        if (connectionType && !connectionType.includes('target')) {
+          this.$message.info('该节点仅支持作为源')
+          return false
+        }
 
         if (!this.nodeELIsConnected(sourceId, targetId) && this.allowConnect(source.id, target.id)) {
           return target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source, _instance)
         }
 
-        return false
+        return false*/
+      })
+
+      jsPlumbIns.bind('beforeDrag', ({ sourceId }) => {
+        if (this.stateIsReadonly) return false
+        // 根据连接类型判断，节点是否仅支持作为目标
+        const node = this.nodeById(this.getRealId(sourceId))
+        const connectionType = node.attrs.connectionType
+        if (connectionType && !connectionType.includes('source')) {
+          this.$message.info(`该节点「${node.name}」仅支持作为目标`)
+          return false
+        }
+        return true
+      })
+
+      // 连线拖动时，可以被连的节点在画布上凸显
+      jsPlumbIns.bind('connectionDrag', info => {
+        const source = this.nodeById(this.getRealId(info.sourceId))
+        const canBeConnectedNodes = this.allNodes.filter(target => this.checkCanBeConnected(source.id, target.id))
+        this.setCanBeConnectedNodeIds(canBeConnectedNodes.map(n => n.id))
+      })
+
+      jsPlumbIns.bind('connectionDragStop', () => {
+        this.setCanBeConnectedNodeIds([])
       })
     },
 
     async openDataflow(id) {
-      this.resetWorkspace()
+      const data = await this.loadDataflow(id)
 
-      let data
-      try {
-        data = await taskApi.get([id])
-        if (data.temp) data.dag = data.temp // 和后端约定了，如果缓存有数据则获取temp
-      } catch (e) {
-        this.$showError(e, '任务加载出错', '加载任务出现的问题:')
-        return
+      if (data) {
+        const { dag } = data
+        this.setStateReadonly(this.$route.name === 'DataflowViewer' ? true : this.dataflow.disabledData.edit)
+        this.setTaskId(data.id)
+        this.setEdges(dag.edges)
+        this.setEditVersion(data.editVersion)
+        this.setStateDirty(false)
+
+        await this.$nextTick()
+        await this.addNodes(dag)
+        await this.$nextTick()
+        this.$refs.paperScroller.autoResizePaper()
+        this.handleCenterContent()
       }
+    },
 
-      const { dag } = data
+    checkGotoViewer() {
+      if (this.dataflow.disabledData.edit) {
+        // 不可编辑
+        this.gotoViewer()
+        this.setStateReadonly(true)
+      }
+    },
 
-      delete data.dag
-
-      this.status = data.status
-      this.$set(this, 'dataflow', data)
-
-      await this.addNodes(dag)
-      this.setTaskId(data.id)
-      this.setEdges(dag.edges)
-      this.setEditVersion(data.editVersion)
-      this.setStateDirty(false)
-
-      this.$refs.paperScroller.autoResizePaper()
-      this.handleCenterContent()
+    gotoViewer() {
+      this.$router
+        .push({
+          name: 'DataflowViewer',
+          params: {
+            id: this.dataflow.id,
+            action: 'dataflowViewer'
+          }
+        })
+        .catch(() => {
+          console.log('Current route: DataflowViewer') // eslint-disable-line
+        })
     },
 
     async newDataflow() {
-      this.resetWorkspace()
       this.dataflow.name = '新任务@' + new Date().toLocaleTimeString()
       await this.saveAsNewDataflow()
-    },
-
-    /**
-     * 旧版数据转换
-     * @param stages
-     * @returns {boolean}
-     */
-    transformStages(stages) {
-      if (!stages.length) return false
-      // 判断是否是旧版数据
-      if ('position' in stages[0]) return false
-      stages.forEach(item => {
-        item.position = [0, 0]
-        item.databaseType = item.database_type
-        delete item.database_type
-      })
-      return true
     },
 
     async addNodes({ nodes, edges }) {
@@ -543,6 +618,25 @@ export default {
       const { getters } = this.$store
       const getNodeType = getters['dataflow/nodeType']
       const getCtor = getters['dataflow/getCtor']
+      const outputsMap = {}
+      const inputsMap = {}
+
+      edges.forEach(({ source, target }) => {
+        let _source = outputsMap[source]
+        let _target = inputsMap[target]
+
+        if (!_source) {
+          outputsMap[source] = [target]
+        } else {
+          _source.push(target)
+        }
+
+        if (!_target) {
+          inputsMap[target] = [source]
+        } else {
+          _target.push(source)
+        }
+      })
 
       // 创建节点
       let nodeType
@@ -558,6 +652,9 @@ export default {
             value: ins,
             enumerable: false
           })
+
+          node.$inputs = inputsMap[node.id] || []
+          node.$outputs = outputsMap[node.id] || []
 
           this.addNode(node)
         }
@@ -762,38 +859,40 @@ export default {
      * 取消选择所有节点
      */
     deselectAllNodes() {
-      // console.log('deselectAllNodes') // eslint-disable-line
       this.jsPlumbIns.clearDragSelection()
       this.resetSelectedNodes()
-      this.deselectConnection()
-      // this.setActiveNode(null)
+      this.handleDeselectAllConnections()
     },
 
     /**
      * 取消选中连线
      */
-    deselectConnection() {
-      const activeConnection = this.$store.getters['dataflow/activeConnection']
-      if (!activeConnection) return
+    handleDeselectAllConnections() {
+      const selectedConnections = this.$store.state.dataflow.selectedConnections
+      if (!selectedConnections.length) return
 
       const { NODE_PREFIX, jsPlumbIns } = this
-      const conn = jsPlumbIns.select({
-        target: NODE_PREFIX + activeConnection.targetId,
-        source: NODE_PREFIX + activeConnection.sourceId
+
+      selectedConnections.forEach(({ target, source }) => {
+        const conn = jsPlumbIns.select({
+          target: NODE_PREFIX + target,
+          source: NODE_PREFIX + source
+        })
+
+        if (conn) {
+          conn.removeClass('connection-selected')
+          conn.hideOverlay('removeConn')
+          conn.hideOverlay('addNodeOnConn')
+        }
       })
 
-      if (conn) {
-        conn.removeClass('connection-selected')
-        conn.hideOverlay('remove-connection')
-      }
-
-      this.setActiveConnection(null)
+      this.deselectAllConnections()
     },
 
     onHideSidebar() {
       const activeType = this.$store.getters['dataflow/activeType']
       if (activeType === 'connection') {
-        this.deselectConnection(...arguments)
+        this.handleDeselectAllConnections(...arguments)
       }
       this.setActiveType(null)
     },
@@ -827,7 +926,7 @@ export default {
       }
     },
 
-    validate() {
+    async validate() {
       if (!this.dataflow.name) return this.$t('editor.cell.validate.empty_name')
 
       // 至少两个数据节点
@@ -835,6 +934,8 @@ export default {
       if (tableNode.length < 2) {
         return this.$t('editor.cell.validate.none_data_node')
       }
+
+      await this.validateAllNodes()
 
       const sourceMap = {},
         targetMap = {},
@@ -879,6 +980,53 @@ export default {
           return true
         }
       })
+
+      const nodeNames = []
+      let typeName = ''
+      // 根据任务类型(全量、增量),检查不支持此类型的节点
+      // 脏代码。这里的校验是有节点错误信息提示的，和节点表单校验揉在了一起，但是校验没有一起做
+      if (this.dataflow.type === 'initial_sync+cdc') {
+        typeName = '全量+增量'
+        tableNode.forEach(node => {
+          if (
+            sourceMap[node.id] &&
+            (NONSUPPORT_SYNC.includes(node.databaseType) || NONSUPPORT_CDC.includes(node.databaseType))
+          ) {
+            nodeNames.push(node.name)
+            this.setNodeErrorMsg({
+              id: node.id,
+              msg: '该节点不支持' + typeName
+            })
+          }
+        })
+      } else if (this.dataflow.type === 'initial_sync') {
+        typeName = '全量'
+        tableNode.forEach(node => {
+          if (sourceMap[node.id] && NONSUPPORT_SYNC.includes(node.databaseType)) {
+            nodeNames.push(node.name)
+            this.setNodeErrorMsg({
+              id: node.id,
+              msg: '该节点不支持' + typeName
+            })
+          }
+        })
+      } else if (this.dataflow.type === 'cdc') {
+        typeName = '增量'
+        tableNode.forEach(node => {
+          if (sourceMap[node.id] && NONSUPPORT_CDC.includes(node.databaseType)) {
+            nodeNames.push(node.name)
+            this.setNodeErrorMsg({
+              id: node.id,
+              msg: '该节点不支持' + typeName
+            })
+          }
+        })
+      }
+
+      if (nodeNames.length) {
+        someErrorMsg = `存在不支持${typeName}的节点`
+      }
+
       if (someErrorMsg) return someErrorMsg
 
       // 检查链路的末尾节点类型是否是表节点
@@ -905,11 +1053,30 @@ export default {
       return true
     },
 
-    async save() {
-      // this.validateNodes()
-      const errorMsg = this.validate()
+    reformDataflow(data, fromWS) {
+      if (!fromWS) {
+        Object.keys(data).forEach(key => {
+          if (!['dag'].includes(key)) {
+            this.$set(this.dataflow, key, data[key])
+          }
+        })
+      }
+      this.$set(this.dataflow, 'statuses', data.statuses)
+      this.$set(this.dataflow, 'statusResult', getSubTaskStatus(data.statuses))
+      this.$set(
+        this.dataflow,
+        'disabledData',
+        getTaskBtnDisabled(this.dataflow, this.$disabledByPermission('SYNC_job_operation_all_data', data.user_id))
+      )
+    },
+
+    async save(needStart) {
+      this.isSaving = true
+
+      const errorMsg = await this.validate()
       if (errorMsg) {
         this.$message.error(errorMsg)
+        this.isSaving = false
         return
       }
 
@@ -917,20 +1084,20 @@ export default {
         return this.saveAsNewDataflow()
       }
 
-      this.isSaving = true
-
       const data = this.getDataflowDataToSave()
 
       try {
-        const result = await taskApi.save(data)
-        this.$message.success(this.$t('message.saveOK'))
+        const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
+        this.reformDataflow(result)
+        !needStart && this.$message.success(this.$t('message.saveOK'))
         this.setEditVersion(result.editVersion)
+        this.isSaving = false
+        return true
       } catch (e) {
         this.handleError(e)
+        this.isSaving = false
+        return false
       }
-      // await taskApi.patch(data)
-
-      this.isSaving = false
     },
 
     async saveAsNewDataflow() {
@@ -939,16 +1106,19 @@ export default {
         const data = this.getDataflowDataToSave()
         const dataflow = await taskApi.post(data)
         this.isSaving = false
-        this.dataflow.id = dataflow.id
+        this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
         // this.$message.success(this.$t('message.saveOK'))
         await this.$router.replace({
           name: 'DataflowEditor',
-          params: { id: dataflow.id, action: 'dataflowSave' }
+          params: { id: dataflow.id, action: 'dataflowEdit' }
         })
       } catch (e) {
-        this.$showError(e, '任务保存出错', '出现的问题:')
+        // this.$showError(e, '任务保存出错', '出现的问题:')
+        // eslint-disable-next-line no-console
+        console.error('任务保存出错', e)
+        this.handleError(e)
       }
     },
 
@@ -967,12 +1137,15 @@ export default {
       const selectNodes = this.$store.getters['dataflow/getSelectedNodes']
       this.command.exec(new RemoveNodeCommand(selectNodes))
       this.resetSelectedNodes()
+      this.deleteSelectedConnections()
     },
 
     handleDeleteById(id) {
       const node = this.nodeById(id)
       this.command.exec(new RemoveNodeCommand(node))
       this.nodeDeselected(node)
+
+      this.nodeMenu.show = false // 防止节点删除后，popover仍在显示
     },
 
     handleZoomIn() {
@@ -1070,6 +1243,9 @@ export default {
     },
 
     nodeELIsConnected(s, t) {
+      const connections = this.jsPlumbIns.getConnections('*')
+      // eslint-disable-next-line
+      console.log('connections', connections)
       return this.jsPlumbIns.getConnections('*').some(c => `${c.sourceId}` === s && `${c.targetId}` === t)
     },
 
@@ -1102,9 +1278,6 @@ export default {
     },
 
     resetWorkspace() {
-      if (this.jsPlumbIns) {
-        this.jsPlumbIns.deleteEveryEndpoint()
-      }
       this.dataflow = merge(
         {
           id: '',
@@ -1112,47 +1285,182 @@ export default {
         },
         DEFAULT_SETTINGS
       )
+      this.jsPlumbIns.reset()
       this.deselectAllNodes()
       this.reset()
-      this.setActiveType(null)
+      this.setActiveNode(null)
       this.resetSelectedNodes()
     },
 
-    getError() {
-      if (!this.dataflow.name) return this.$t('editor.cell.validate.empty_name')
-
-      if (this.allNodes.length < 2) {
-        return this.$t('editor.cell.validate.none_data_node')
+    async validateNode(node) {
+      try {
+        await validateBySchema(node.__Ctor.formSchema, node, this.scope)
+        this.clearNodeError(node.id)
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log('节点校验错误', e)
+        this.setNodeError(node.id)
       }
-
-      if (this.jsPlumbIns.getConnections('*').length < 1) return this.$t('editor.cell.validate.none_link_node')
-
-      return null
     },
 
-    async validateNodes() {
-      const { allNodes } = this
-      const result = await Promise.all(allNodes.map(node => validateBySchema(node.__Ctor.formSchema, node))).catch(
-        error => {
-          // eslint-disable-next-line no-console
-          console.log('validateNodes', error)
-        }
+    async validateAllNodes() {
+      await Promise.all(
+        this.allNodes.map(node => {
+          if (this.activeNodeId === node.id) {
+            return this.$refs.configPanel.validateForm()
+          } else {
+            return this.validateNode(node)
+          }
+        })
       )
-      // eslint-disable-next-line no-console
-      console.log('validateNodes-result', result)
     },
 
     /**
      * 从侧边栏拖拽节点时，判断是否能放置到连线，并且高亮可以放置的线
      * @param item
      * @param position
+     * @param el
      */
-    handleDragMoveNode(item, position) {
+    handleDragMoveNode(item, position, el) {
       this.jsPlumbIns.select().removeClass('connection-highlight')
       const $elemBelow = document.elementFromPoint(...position)
-      if ($elemBelow.nodeName === 'path' && $elemBelow.parentElement._jsPlumb) {
+
+      if ($elemBelow?.nodeName === 'path' && $elemBelow.parentElement._jsPlumb) {
         $elemBelow.parentElement.classList.add('connection-highlight')
       }
+
+      let lines = []
+
+      if (document.getElementById('dfEditorContent').contains($elemBelow)) {
+        el.style.transform = `scale(${this.scale})`
+        let nw = el.offsetWidth
+        let nh = el.offsetHeight
+        const pos = this.$refs.paperScroller.getDropPositionWithinPaper(position, {
+          width: nw,
+          height: nh
+        })
+        let diffPos = { x: 0, y: 0 }
+        let horiArr = []
+        let verArr = []
+        let rangeX = 10
+        let rangeY = 10
+
+        this.allNodes.forEach(item => {
+          let [x, y] = item.attrs.position
+          let _x = x - pos[0]
+          let _y = y - pos[1]
+          if (Math.abs(_x) <= Math.abs(rangeX)) {
+            if (_x === rangeX) {
+              verArr.push(y)
+            } else {
+              rangeX = _x
+              verArr = [y]
+            }
+            diffPos.x = rangeX
+          }
+          if (Math.abs(_y) <= Math.abs(rangeY)) {
+            if (_y === rangeY) {
+              horiArr.push(x)
+            } else {
+              rangeY = _y
+              horiArr = [x]
+            }
+            diffPos.y = rangeY
+          }
+        })
+
+        pos[0] += diffPos.x
+        pos[1] += diffPos.y
+
+        // console.log('diffPos', diffPos.x, diffPos.y)
+        el.style.left = parseInt(el.style.left) + diffPos.x * this.scale + 'px'
+        el.style.top = parseInt(el.style.top) + diffPos.y * this.scale + 'px'
+
+        let t = pos[1],
+          b = pos[1] + nh,
+          l = pos[0],
+          r = pos[0] + nw
+        verArr.forEach(y => {
+          t = Math.min(y + nh, t)
+          b = Math.max(y, b)
+        })
+        horiArr.forEach(x => {
+          l = Math.min(x + nw, l)
+          r = Math.max(x, r)
+        })
+
+        // 组装导航线
+        if (t < pos[1]) {
+          let top = t + 'px',
+            height = pos[1] - t + 'px'
+          lines.push(
+            {
+              top,
+              left: pos[0] + 'px',
+              height
+            },
+            {
+              top,
+              left: pos[0] + nw + 'px',
+              height
+            }
+          )
+        }
+        if (b > pos[1] + nh) {
+          let top = pos[1] + nh + 'px',
+            height = b - pos[1] - nh + 'px'
+          lines.push(
+            {
+              top,
+              left: pos[0] + 'px',
+              height
+            },
+            {
+              top,
+              left: pos[0] + nw + 'px',
+              height
+            }
+          )
+        }
+
+        if (l < pos[0]) {
+          let left = l + 'px',
+            width = pos[0] - l + 'px'
+          lines.push(
+            {
+              top: pos[1] + 'px',
+              left,
+              width
+            },
+            {
+              top: pos[1] + nh + 'px',
+              left,
+              width
+            }
+          )
+        }
+
+        if (r > pos[0] + nw) {
+          let left = pos[0] + nw + 'px',
+            width = r - pos[0] - nw + 'px'
+          lines.push(
+            {
+              top: pos[1] + 'px',
+              left,
+              width
+            },
+            {
+              top: pos[1] + nh + 'px',
+              left,
+              width
+            }
+          )
+        }
+      } else {
+        el.style.transform = 'scale(1)'
+      }
+
+      this.navLines = lines
     },
 
     /**
@@ -1160,11 +1468,13 @@ export default {
      * 🎉 支持拖到连线上快速添加
      * @param item
      * @param position
-     * @param size
+     * @param rect
      */
-    handleAddNodeByDrag(item, position, size) {
+    handleAddNodeByDrag(item, position, rect) {
       const paper = this.$refs.paperScroller
-      const newPosition = paper.getDropPositionWithinPaper(position, size)
+      // const newPosition = paper.getDropPositionWithinPaper(position, rect)
+      const point = paper.getMouseToPage(rect)
+      const newPosition = [point.x, point.y]
       const $elemBelow = document.elementFromPoint(...position)
 
       // 节点拖放在连线上
@@ -1178,6 +1488,8 @@ export default {
       }
 
       paper.autoResizePaper()
+      // 重置导航线
+      this.navLines = []
     },
 
     handleAddNodeToPos(position, item) {
@@ -1189,20 +1501,25 @@ export default {
     handleAddTableAsNode(item) {
       const { x, y } = this.$refs.paperScroller.getPaperCenterPos()
       const position = this.getNewNodePosition([x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2], [0, 120])
-      this.handleAddNodeToPos(position, item)
+      const node = this.handleAddNodeToPos(position, item)
+      if (position[1] !== y) {
+        this.$refs.paperScroller.centerNode(node)
+      }
     },
 
     createNode(position, item) {
       const getCtor = this.$store.getters['dataflow/getCtor']
       const Ctor = getCtor(item.constructor)
       const ins = new Ctor(item)
-      const node = {
-        id: uuid(),
-        name: item.name,
-        type: item.type,
-        attrs: { position },
-        ...ins.getExtraAttr() // 附加属性
-      }
+      const node = merge(
+        {
+          id: uuid(),
+          name: item.name,
+          type: item.type,
+          attrs: { position }
+        },
+        ins.getExtraAttr()
+      )
 
       // 设置属性__Ctor不可枚举
       Object.defineProperty(node, '__Ctor', {
@@ -1290,13 +1607,11 @@ export default {
 
     addNodeOnConnByNodeMenu(nodeType) {
       const { nodeMenu } = this
-      nodeMenu.show = false
-      // console.log('nodeMenu.connectionCenterPos', nodeMenu.connectionCenterPos) // eslint-disable-line
       const position = this.$refs.paperScroller.getDropPositionWithinPaper(nodeMenu.connectionCenterPos, {
         width: NODE_WIDTH,
         height: NODE_HEIGHT
       })
-      this.addNodeOnConn(nodeType, position, nodeMenu.connection.source, nodeMenu.connection.target)
+      this.addNodeOnConn(nodeType, position, nodeMenu.data.source, nodeMenu.data.target)
       this.$nextTick(() => {
         this.handleAutoLayout()
       })
@@ -1340,13 +1655,28 @@ export default {
       return newPosition
     },
 
-    handleError(error) {
-      if (error?.data?.message) {
+    handleError(error, msg = '出错了') {
+      if (error?.data.code === 'Task.ListWarnMessage') {
+        let names = []
+        if (error.data.data) {
+          Object.keys(error.data.data).forEach(key => {
+            const node = this.$store.state.dataflow.NodeMap[key]
+            if (node) {
+              names.push(node.name)
+              this.setNodeErrorMsg({
+                id: node.id,
+                msg: error.data.data[key][0].msg
+              })
+            }
+          })
+        }
+        this.$message.error(`${this.$t('dag_save_fail')} ${names.join('，')}`)
+      } else if (error?.data?.message) {
         this.$message.error(error.data.message)
       } else {
         // eslint-disable-next-line no-console
         console.error(error)
-        this.$message.error('出错了')
+        this.$message.error(msg)
       }
     },
 
@@ -1360,36 +1690,239 @@ export default {
         .catch(this.handleError)
     },
 
-    handleEditFlush(data) {
+    handleEditFlush(result) {
       // eslint-disable-next-line no-console
-      console.log('handleEditFlush', data)
-      const { opType } = data
+      // console.log('handleEditFlush', result, this.startAt && Date.now() - this.startAt)
+      // eslint-disable-next-line no-console
+      console.log('handleEditFlush', result)
+      this.reformDataflow(result.data, true)
+      /*if (!this.startAt || Date.now() - this.startAt > 100) {
+        this.reformDataflow(result.data, true)
+        this.startAt = null
+      } else {
+        console.log('跳过') // eslint-disable-line
+      }*/
+
+      const { opType } = result
       if (opType === 'transformRate') {
         // 推演进度
-        this.setTransformStatus(data.transformStatus)
+        this.setTransformStatus(result.transformStatus)
       } else if (opType === 'updateVersion') {
         // 版本变化
       }
     },
 
     handlePageReturn() {
-      this.$router.push(this.listRoute)
+      this.$router.push({
+        name: 'dataflowList'
+      })
+    },
+
+    handleLocateNode(node) {
+      this.$refs.paperScroller.centerNode(node)
+      this.nodeSelectedById(node.id, true, true)
+    },
+
+    async handleStart() {
+      const flag = await this.save(true)
+      if (flag) {
+        this.startAt = Date.now()
+        console.log('handleStart', this.startAt) // eslint-disable-line
+        this.dataflow.disabledData.edit = true
+        this.dataflow.disabledData.start = true
+        this.dataflow.disabledData.stop = true
+        this.dataflow.disabledData.reset = true
+        this.gotoViewer()
+      }
+    },
+
+    handleStop() {
+      let message = this.getConfirmMessage('stop')
+
+      this.$confirm(message, '', {
+        type: 'warning',
+        showClose: false
+      }).then(async resFlag => {
+        if (!resFlag) {
+          return
+        }
+
+        try {
+          this.dataflow.disabledData.stop = true
+
+          await taskApi.stop(this.dataflow.id)
+          this.$message.success(this.$t('message.operationSuccuess'))
+        } catch (e) {
+          this.handleError(e, this.$t('message.stopFail'))
+          console.log(e) // eslint-disable-line
+        }
+      })
+    },
+
+    handleForceStop() {
+      let msg = this.getConfirmMessage('force_stop')
+      this.$confirm(msg, '', {
+        type: 'warning',
+        showClose: false
+      }).then(async resFlag => {
+        if (!resFlag) {
+          return
+        }
+
+        this.dataflow.disabledData.stop = true
+        await taskApi.forceStop(this.dataflow.id)
+        // this.startLoop(true)
+      })
+    },
+
+    handleReset() {
+      let msg = this.getConfirmMessage('initialize')
+      this.$confirm(msg, '', {
+        type: 'warning'
+      }).then(async resFlag => {
+        if (!resFlag) {
+          return
+        }
+        try {
+          this.dataflow.disabledData.reset = true
+          const data = await taskApi.reset(this.dataflow.id)
+          this.responseHandler(data, this.$t('message.resetOk'))
+        } catch (e) {
+          this.handleError(e, this.$t('message.resetFailed'))
+        }
+      })
+    },
+
+    handleEdit() {
+      this.$router.push({
+        name: 'DataflowEditor',
+        params: { id: this.dataflow.id, action: 'dataflowEdit' }
+      })
+    },
+
+    getConfirmMessage(operateStr) {
+      let message = operateStr + '_confirm_message'
+
+      const h = this.$createElement
+      let strArr = this.$t('dataFlow.' + message).split('xxx')
+      let msg = h('p', null, [
+        strArr[0],
+        h(
+          'span',
+          {
+            class: 'color-primary'
+          },
+          this.dataflow.name
+        ),
+        strArr[1]
+      ])
+      return msg
+    },
+
+    responseHandler(data, msg) {
+      let failList = data?.fail || []
+      if (failList.length) {
+        let msgMapping = {
+          5: this.$t('dataFlow.multiError.notFound'),
+          6: this.$t('dataFlow.multiError.statusError'),
+          7: this.$t('dataFlow.multiError.otherError'),
+          8: this.$t('dataFlow.multiError.statusError')
+        }
+        let nameMapping = {}
+        this.table.list.forEach(item => {
+          nameMapping[item.id] = item.name
+        })
+        this.$message.warning({
+          dangerouslyUseHTMLString: true,
+          message: failList
+            .map(item => {
+              return `<div style="line-height: 24px;"><span style="color: #409EFF">${
+                nameMapping[item.id]
+              }</span> : <span style="color: #F56C6C">${msgMapping[item.code]}</span></div>`
+            })
+            .join('')
+        })
+      } else if (msg) {
+        this.$message.success(msg)
+      }
+    },
+
+    async loadDataflow(id) {
+      this.loading = true
+      try {
+        const data = await taskApi.get([id])
+        data.dag = data.temp || data.dag // 和后端约定了，如果缓存有数据则获取temp
+        this.reformDataflow(data)
+        return data
+      } catch (e) {
+        console.log('任务加载出错', e) // eslint-disable-line
+      } finally {
+        this.loading = false
+      }
     },
 
     initWS() {
+      this.$ws.off('editFlush', this.handleEditFlush)
       this.$ws.on('editFlush', this.handleEditFlush)
       this.$ws.send({
         type: 'editFlush',
-        opType: 'subscribe',
-        taskId: this.dataflow.id
+        taskId: this.dataflow.id,
+        data: {
+          opType: 'subscribe'
+        }
       })
+    },
+
+    deleteSelectedConnections() {
+      const selectedConnections = this.$store.state.dataflow.selectedConnections
+      if (!selectedConnections.length) return
+
+      selectedConnections.forEach(({ target, source }) => {
+        const conn = this.jsPlumbIns.select({
+          target: NODE_PREFIX + target,
+          source: NODE_PREFIX + source
+        })
+
+        if (conn) {
+          this.command.exec(
+            new RemoveConnectionCommand({
+              source,
+              target
+            })
+          )
+        }
+      })
+
+      this.deselectAllConnections()
+    },
+
+    async showNodePopover(type, data, el) {
+      type === 'node' && this.handleDeselectAllConnections()
+      this.nodeMenu.show = false
+      this.nodeMenu.reference = null
+      await this.$nextTick()
+      this.nodeMenu.reference = el
+      this.nodeMenu.type = type
+      this.nodeMenu.data = data
+      await this.$nextTick()
+      this.nodeMenu.show = true
+      this.nodeMenu.typeId = data.id
+    },
+
+    handleClickNodePopover(node) {
+      this.nodeMenu.show = false
+      if (this.nodeMenu.type === 'node') {
+        this.quickAddNode(this.nodeMenu.data, node)
+      } else {
+        this.addNodeOnConnByNodeMenu(node)
+      }
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-$sidebarW: 230px;
+$sidebarW: 260px;
 $hoverBg: #e1e1e1;
 $radius: 3px;
 $baseHeight: 26px;
@@ -1429,11 +1962,11 @@ $sidebarBg: #fff;
     .connection-highlight,
     .connection-selected {
       path:nth-child(2) {
-        stroke: #fa6303;
+        stroke: #2c65ff;
       }
       path:nth-child(3) {
-        fill: #fa6303;
-        stroke: #fa6303;
+        fill: #2c65ff;
+        stroke: #2c65ff;
       }
     }
 

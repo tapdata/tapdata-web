@@ -76,26 +76,30 @@ export default {
 
 <style lang="scss" scoped>
 .filter-datetime {
+  position: relative;
   padding-left: 8px;
   .filter-datetime__title {
     margin-right: 8px;
     cursor: pointer;
+    color: map-get($fontColor, normal);
   }
   .el-date-editor {
     max-width: 150px;
     ::v-deep {
-      input::placeholder {
-        color: map-get($fontColor, main);
-      }
       input {
-        color: map-get($fontColor, main);
+        color: map-get($fontColor, dark);
+      }
+      input::placeholder {
+        color: map-get($fontColor, dark);
       }
     }
     &.empty-time {
-      width: auto;
+      width: 90px !important;
       ::v-deep {
         .el-input__inner {
           width: 80px;
+          text-align: center;
+          font-weight: 400;
         }
       }
     }
@@ -120,7 +124,7 @@ export default {
       }
     }
     .icon-btn {
-      color: map-get($fontColor, main);
+      color: map-get($fontColor, dark);
     }
   }
 }
@@ -128,6 +132,6 @@ export default {
   position: absolute;
   top: 11px;
   right: 4px;
-  color: map-get($fontColor, sub);
+  color: map-get($fontColor, slight);
 }
 </style>

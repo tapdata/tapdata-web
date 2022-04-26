@@ -239,9 +239,9 @@ export default {
     // 文件选中类型默认端口号
     'model.file_source_protocol'(val) {
       if (val === 'smb') {
-        this.model.database_port = '445'
+        this.model.database_port = this.model.database_port ? this.model.database_port : '445'
       } else if (val === 'ftp') {
-        this.model.database_port = '21'
+        this.model.database_port = this.model.database_port ? this.model.database_port : '21'
       }
     }
   },

@@ -1,0 +1,36 @@
+@import '../../../variables';
+
+.#{$prefix-cls}-designable-form {
+  .el-input,
+  .el-textarea,
+  .el-input-number,
+  .el-input-affix-wrapper,
+  .el-cascader-picker,
+  .el-picker-input,
+  .el-picker,
+  .el-cascader-picker-label,
+  .el-slider,
+  .el-checkbox,
+  .el-rate,
+  .el-switch,
+  .el-radio,
+  .el-radio-wrapper,
+  .el-checkbox-group,
+  .el-checkbox-wrapper,
+  .el-radio-group,
+  .el-upload,
+  .el-transfer,
+  .el-select,
+  .el-select-selector,
+  .el-input__suffix-inner {
+    pointer-events: none !important;
+
+    input {
+      pointer-events: none !important;
+    }
+  }
+
+  .v-icon svg {
+    pointer-events: none;
+  }
+}

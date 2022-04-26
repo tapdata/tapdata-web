@@ -5,21 +5,21 @@
         <div class="task-info__img flex justify-center align-items-center mr-8">
           <img src="../../../assets/images/task/task.png" alt="" />
         </div>
-        <div>
+        <div style="flex: 1">
           <div class="flex align-items-center">
             <span class="fs-6 color-primary">{{ task.name }}</span>
           </div>
-          <div class="flex align-items-center mt-4" style="height: 30px">
+          <div class="flex flex-wrap align-items-center">
             <div
               v-for="(item, index) in infoItems"
               :key="index"
-              :class="['flex', 'align-items-center', { 'ml-6': index !== 0 }]"
+              :class="['flex', 'align-items-center', 'mr-6', 'mt-4']"
             >
               <VIcon size="12" class="v-icon">{{ item.icon }}</VIcon>
               <span class="ml-1">{{ item.label }}</span>
               <span>{{ task[item.key] }}</span>
             </div>
-            <div class="ml-6 flex align-items-center">
+            <div class="mr-6 mt-4 flex align-items-center">
               <VIcon size="12" class="v-icon">document</VIcon>
               <span class="ml-1">{{ $t('task_details_desc') }}：</span>
               <InlineInput
@@ -36,20 +36,37 @@
           <div class="operation-row mt-4">
             <VButton
               type="primary"
-              :disabled="startDisabled"
               auto-loading
+              :disabled="task.disabledData.start"
               @click="start($route.params.id, arguments[0])"
             >
               <VIcon size="12">start-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_start') }}</span>
             </VButton>
-            <VButton :disabled="stopDisabled" :loading="loadingObj.stop" @click="stop($route.params.id, arguments[0])">
+            <VButton
+              v-if="isShowForceStop(task.statuses)"
+              :disabled="$disabledByPermission('SYNC_job_operation_all_data', task.user_id)"
+              @click="forceStop($route.params.id)"
+            >
+              {{ $t('task_list_force_stop') }}
+            </VButton>
+            <VButton
+              v-else
+              auto-loading
+              :disabled="task.disabledData.stop"
+              :loading="loadingObj.stop"
+              @click="stop($route.params.id, arguments[0])"
+            >
               <VIcon size="12">pause-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_stop') }}</span>
             </VButton>
-            <VButton :disabled="editDisabled" @click="handleEditor(task.id)">
+            <VButton :disabled="task.disabledData.edit" @click="handleEditor(task.id)">
               <VIcon size="12">edit-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_edit') }}</span>
+            </VButton>
+            <VButton @click="toView(task.id)">
+              <VIcon size="12">yulan</VIcon>
+              <span class="ml-1">{{ $t('button_check') }}</span>
             </VButton>
           </div>
         </div>
@@ -65,24 +82,24 @@
       </div>
     </div>
     <div class="sub-task flex-fill mt-6 p-6 bg-white">
-      <ElTabs v-model="activeTab" class="dashboard-tabs flex flex-column overflow-hidden h-100">
+      <ElTabs v-model="activeTab" class="dashboard-tabs">
         <ElTabPane label="子任务" name="subTask">
           <div slot="label">
             <span class="mr-2">{{ $t('task_details_sub_task') }}</span>
             <ElTooltip
               placement="top"
-              content="在Tapdata Cloud中你创建任务里的每个目标节点均会被定义为子任务 您可以在下方查看每个子任务详情"
+              content="在Tapdata中你创建任务里的每个目标节点均会被定义为子任务 您可以在下方查看每个子任务详情"
             >
               <VIcon class="color-primary" size="14">info</VIcon>
             </ElTooltip>
           </div>
-          <Subtask :task="task"></Subtask>
+          <Subtask v-if="activeTab === 'subTask'" :task="task"></Subtask>
         </ElTabPane>
-        <ElTabPane label="连接" name="connect" lazy>
-          <Connection :ids="connectionIds" @change="loadData"></Connection>
+        <ElTabPane label="连接" name="connect">
+          <Connection v-if="activeTab === 'connect'" :ids="connectionIds" @change="loadData"></Connection>
         </ElTabPane>
-        <ElTabPane label="历史运行记录" name="history" lazy>
-          <History v-if="task.id" :ids="[task.id]" :operations="operations"></History>
+        <ElTabPane label="历史运行记录" name="history">
+          <History v-if="activeTab === 'history' && task.id" :ids="[task.id]" :operations="operations"></History>
         </ElTabPane>
       </ElTabs>
     </div>
@@ -94,11 +111,12 @@ import VIcon from '@/components/VIcon'
 import InlineInput from '@/components/InlineInput'
 import Connection from '../migrate/details/Connection'
 import History from '../migrate/details/History'
-import Subtask from './Subtask'
+import Subtask from '../Subtask'
 import Chart from 'web-core/components/chart'
 import { ETL_SUB_STATUS_MAP } from '@/const'
-import { getSubTaskStatus } from './util'
+import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 
+let timeout = null
 export default {
   name: 'TaskDetails',
   components: { VIcon, InlineInput, Connection, History, Subtask, Chart },
@@ -106,7 +124,9 @@ export default {
     return {
       loading: true,
       activeTab: 'subTask',
-      task: {},
+      task: {
+        disabledData: {}
+      },
       infoItems: [
         {
           key: 'creator',
@@ -126,7 +146,8 @@ export default {
         {
           key: 'type',
           icon: 'menu',
-          label: '增量滞后'
+          label: '增量滞后:',
+          show: 'cdc'
         }
       ],
       ouputItems: [
@@ -139,15 +160,6 @@ export default {
           label: '总输入'
         }
       ],
-      statusBtMap: {
-        // scheduled, draft, running, stopping, error, pause, force stopping
-        run: { draft: true, error: true, pause: true },
-        stop: { running: true },
-        delete: { draft: true, error: true, pause: true },
-        edit: { draft: true, error: true, pause: true },
-        reset: { draft: true, error: true, pause: true },
-        forceStop: { stopping: true }
-      },
       syncTypeMap: {
         initial_sync: '全量',
         cdc: '增量',
@@ -161,9 +173,16 @@ export default {
         reset: false
       },
       operations: ['start', 'stop', 'forceStop'],
-      statusResult: [],
       pieData: [],
       pieOptions: {
+        title: {
+          text: '任务状态',
+          left: 'center',
+          top: 'center',
+          textStyle: {
+            fontSize: '12'
+          }
+        },
         legend: {
           show: false
         },
@@ -177,27 +196,6 @@ export default {
         this.task?.dag?.nodes?.map(item => {
           return item.connectionId
         }) || []
-      )
-    },
-    startDisabled() {
-      const { statusResult, task } = this
-      return (
-        this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
-        statusResult.every(t => t.status === 'running' && t.count)
-      )
-    },
-    stopDisabled() {
-      const { statusResult, task } = this
-      return (
-        this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
-        statusResult.every(t => t.status === 'stop' && t.count)
-      )
-    },
-    editDisabled() {
-      const { statusResult, task } = this
-      return (
-        this.$disabledByPermission('SYNC_job_operation_all_data', task.user_id) ||
-        statusResult.every(t => t.status === 'running' && t.count)
       )
     }
   },
@@ -233,17 +231,24 @@ export default {
   },
   mounted() {
     this.init()
+    //定时轮询
+    timeout = setInterval(() => {
+      this.loadData(true)
+    }, 2000)
   },
   destroyed() {
     this.$ws.off('watch', this.taskChange)
+    clearInterval(timeout)
   },
   methods: {
     init() {
       this.loadData()
     },
-    loadData() {
+    loadData(hiddenLoading) {
       let id = this.$route.params?.id
-      this.loading = true
+      if (!hiddenLoading) {
+        this.loading = true
+      }
       this.$api('Task')
         .get([id])
         .then(res => {
@@ -274,6 +279,9 @@ export default {
         item.value = obj[t].count
         item.name = obj[t].text
         if (t === 'edit') {
+          item.name = obj['ready'].text
+        }
+        if (t === 'running') {
           item.value += obj['wait_run'].count
         } else if (t === 'error') {
           item.value += obj['schedule_failed'].count
@@ -302,22 +310,22 @@ export default {
       result.creator = result.creator || result.username || result.user?.username || '-'
       result.updatedTime = result.last_updated ? this.formatTime(result.last_updated) : '-'
       result.type = this.syncTypeMap[result.type]
-      let statuses = result.statuses
-      result.statusResult = []
-      if (statuses?.length) {
-        let statusResult = getSubTaskStatus(statuses)
-        result.statusResult = statusResult
-      }
-      this.statusResult = result.statusResult
+      result.statusResult = getSubTaskStatus(result.statuses)
+      result.disabledData = getTaskBtnDisabled(
+        result,
+        this.$disabledByPermission('SYNC_job_operation_all_data', result.user_id)
+      )
       return result
+    },
+    isShowForceStop(data) {
+      return data?.length && data.every(t => ['stopping'].includes(t.status))
     },
     start(id, resetLoading) {
       // this.changeStatus(id, { status: 'scheduled', finallyEvents: resetLoading })
       this.$api('Task')
         .start(id)
-        .then(res => {
-          this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
-          this.table.fetch()
+        .then(() => {
+          this.$message.success(this.$t('message.operationSuccuess'))
         })
         .catch(err => {
           this.$message.error(err.data?.message)
@@ -339,15 +347,15 @@ export default {
         message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
         title = '重要提醒'
       }
+      resetLoading.stop = true
       this.$confirm(message, title, {
         type: 'warning'
       }).then(resFlag => {
         if (resFlag) {
           this.$api('Task')
             .stop(id)
-            .then(res => {
-              this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
-              this.table.fetch()
+            .then(() => {
+              this.$message.success(this.$t('message.operationSuccuess'))
             })
             .catch(err => {
               this.$message.error(err.data?.message)
@@ -358,17 +366,20 @@ export default {
         }
       })
     },
-    forceStop(id, resetLoading) {
+    forceStop(id) {
       let msgObj = this.getConfirmMessage('force_stop', this.task.name)
       this.$confirm(msgObj.msg, msgObj.title, {
         type: 'warning'
       }).then(resFlag => {
         if (resFlag) {
-          this.loadingObj.forceStop = true
-          this.changeStatus(id, { status: 'force stopping', finallyEvents: resetLoading })
-          this.loadingObj.forceStop = false
-        } else {
-          resetLoading?.()
+          this.$api('Task')
+            .forceStop([id])
+            .then(() => {
+              this.$message.success(this.$t('message.operationSuccuess'))
+            })
+            .catch(err => {
+              this.$message.error(err.data?.message)
+            })
         }
       })
     },
@@ -541,6 +552,24 @@ export default {
           it.outerHTML = ''
         })
       }, 200)
+    },
+
+    toView(id) {
+      /*window.open(
+        this.$router.resolve({
+          name: 'DataflowViewer',
+          params: {
+            id
+          }
+        }).href,
+        'viewer_' + id
+      )*/
+      this.$router.push({
+        name: 'DataflowViewer',
+        params: {
+          id
+        }
+      })
     }
   }
 }
@@ -551,6 +580,7 @@ export default {
   font-size: 12px;
 }
 .task-info {
+  border-radius: 4px;
   .v-icon {
     color: rgba(132, 175, 255, 1);
   }
@@ -558,10 +588,17 @@ export default {
 .sub-task {
   box-sizing: border-box;
   overflow: hidden;
+  border-radius: 4px;
+  .dashboard-tabs {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
   ::v-deep {
     .el-tabs__content {
-      flex: 1;
-      overflow: hidden;
+      height: 100%;
+      // flex: 1;
+      overflow: auto;
       .el-tab-pane,
       .subtask-container {
         height: 100%;
@@ -574,7 +611,7 @@ export default {
     width: 100px;
     height: 100px;
   }
-  max-width: 350px;
+  width: 250px;
   border-left: 1px solid #e8e8e8;
 }
 .pie-status__item {

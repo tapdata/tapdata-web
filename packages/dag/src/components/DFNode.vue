@@ -9,29 +9,28 @@
         :open-delay="400"
       />
     </template>
-    <div class="df-node-options" @click.stop>
-      <el-popover v-model="showAddMenu" placement="bottom" trigger="click" popper-class="min-width-unset rounded-xl">
-        <div slot="reference" class="node-option" titlmoue="添加节点">
-          <VIcon>plus</VIcon>
-        </div>
-        <div class="df-menu-list">
-          <div v-for="(n, ni) in processorNodeTypes" :key="ni" class="df-menu-item" @click="handleClickMenuItem(n)">
-            {{ n.name }}
-          </div>
-        </div>
-      </el-popover>
+    <div v-if="!stateIsReadonly" class="df-node-options" @click.stop>
+      <div
+        class="node-option"
+        title="添加节点"
+        @click.stop="$emit('show-node-popover', 'node', data, $event.currentTarget || $event.target)"
+      >
+        <VIcon>plus</VIcon>
+      </div>
       <div @click.stop="$emit('delete', data.id)" class="node-option" title="删除节点">
         <VIcon>close</VIcon>
       </div>
     </div>
-    <ElTooltip v-if="hasNodeError(data.id)" content="请检查节点配置" placement="top">
+    <ElTooltip v-if="hasNodeError(data.id)" :content="nodeErrorMsg" placement="top">
       <VIcon class="mr-2" size="14" color="#FF7474">warning</VIcon>
     </ElTooltip>
+    <div class="node-anchor input"></div>
+    <div class="node-anchor output"></div>
   </BaseNode>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { sourceEndpoint, targetEndpoint } from '../style'
 import { NODE_PREFIX } from '../constants'
@@ -58,12 +57,12 @@ export default {
 
   data() {
     return {
-      id: this.$attrs.id,
-      showAddMenu: false
+      id: this.$attrs.id
     }
   },
 
   computed: {
+    ...mapState('dataflow', ['canBeConnectedNodeIds']),
     ...mapGetters('dataflow', [
       'nodeById',
       'isActionActive',
@@ -71,7 +70,9 @@ export default {
       'isNodeSelected',
       'isMultiSelect',
       'processorNodeTypes',
-      'hasNodeError'
+      'hasNodeError',
+      'stateIsReadonly',
+      'activeType'
     ]),
 
     data() {
@@ -82,13 +83,19 @@ export default {
       return this.data.__Ctor
     },
 
+    canNotBeTarget() {
+      const connectionType = this.data.attrs.connectionType
+      if (connectionType) {
+        return !connectionType.includes('target')
+      }
+      return false
+    },
+
     nodeClass() {
       const list = []
-      if (this.isNodeActive(this.nodeId)) list.push('active')
-      // 多个节点选中显示高亮效果
-      // if (this.isNodeSelected(this.nodeId) && this.isMultiSelect) list.push('jtk-drag-selected')
+      if (this.isNodeActive(this.nodeId) && this.activeType === 'node') list.push('active')
       if (this.isNodeSelected(this.nodeId)) list.push('selected')
-      if (this.showAddMenu) list.push('options-active')
+      if (this.canBeConnectedNodeIds.includes(this.nodeId)) list.push('can-be-connected')
       list.push(`node--${this.ins.group}`)
       return list
     },
@@ -99,6 +106,14 @@ export default {
         left: left + 'px',
         top: top + 'px'
       }
+    },
+
+    nodeErrorMsg() {
+      const res = this.hasNodeError(this.data.id)
+      if (res) {
+        return typeof res === 'string' ? res : '请检查节点配置'
+      }
+      return null
     }
   },
 
@@ -122,10 +137,11 @@ export default {
     __init() {
       const { id, nodeId } = this
 
-      // console.log('sourceEndpoint, targetEndpoint', sourceEndpoint, targetEndpoint) // eslint-disable-line
-      const targetParams = { ...targetEndpoint, maxConnections: this.ins.attr.maxInputs || -1 }
+      const targetParams = {
+        ...targetEndpoint
+      }
 
-      this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
+      // this.jsPlumbIns.makeSource(id, { filter: '.sourcePoint', ...sourceEndpoint })
 
       this.jsPlumbIns.makeTarget(id, targetParams)
 
@@ -176,8 +192,9 @@ export default {
 
             if (x === position[0] && y === position[1]) {
               // 拖拽结束后位置没有改变
-              console.log('没有移动') // eslint-disable-line
+              console.log('NotMove') // eslint-disable-line
               this.isNotMove = true
+              this.removeActiveAction('dragActive')
             }
 
             moveNodes.forEach(node => {
@@ -203,8 +220,6 @@ export default {
                 }
               })
               newProperties.push(updateInformation)
-
-              // this.updateNodeProperties(updateInformation)
             })
           }
 
@@ -216,9 +231,27 @@ export default {
         uuid: id + '_target'
       })
 
-      this.jsPlumbIns.addEndpoint(this.$el, sourceEndpoint, {
-        uuid: id + '_source'
-      })
+      const maxOutputs = this.ins.attr.maxOutputs ?? -1
+
+      this.jsPlumbIns.addEndpoint(
+        this.$el,
+        {
+          ...sourceEndpoint,
+          // enabled: !this.stateIsReadonly,
+          maxConnections: maxOutputs,
+          dragOptions: {
+            beforeStart: ({ el }) => {
+              // 源point没有onMaxConnections事件回调，故用次事件内提示
+              if (maxOutputs !== -1 && el._jsPlumb.connections.length >= maxOutputs) {
+                this.$message.info(`该节点「${this.data.name}」已经达到最大连线限制`)
+              }
+            }
+          }
+        },
+        {
+          uuid: id + '_source'
+        }
+      )
     },
 
     mouseClick(e) {
@@ -237,11 +270,6 @@ export default {
           this.$emit('nodeSelected', this.nodeId, true)
         }
       }
-    },
-
-    handleClickMenuItem(n) {
-      this.showAddMenu = false
-      this.$emit('quick-add-node', this.data, n)
     }
   }
 }
@@ -280,14 +308,55 @@ export default {
   transform: translateY(-6px);
 }
 
-.df-node.jtk-drag {
-  &:after {
-    content: '';
+.df-node {
+  &.jtk-drag {
+    &:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+    }
+  }
+
+  .node-anchor {
+    display: none;
+    width: 16px;
+    height: 16px;
+    border-color: inherit;
     position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
+    cursor: crosshair;
+    left: 100%;
+    transform: translateX(-50%);
+    place-content: center;
+    place-items: center;
+
+    &:before {
+      content: '';
+      position: absolute;
+      border-width: 1px;
+      border-style: solid;
+      border-color: inherit;
+      border-radius: 50%;
+      background: #fff;
+      width: 12px;
+      height: 12px;
+    }
+
+    &.input {
+      left: 0;
+    }
+
+    //&:hover:before {
+    //  border-width: 2px;
+    //  width: 16px;
+    //  height: 16px;
+    //}
+  }
+
+  &:hover .node-anchor.output {
+    display: flex;
   }
 }
 </style>

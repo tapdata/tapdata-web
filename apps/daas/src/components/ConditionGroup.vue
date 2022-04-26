@@ -3,12 +3,13 @@
   <div class="condition-group-wrap" :class="color">
     <div class="query-build-header">
       <div class="query-build-header-left">
-        <span>{{ $t('query_build_match') }}</span>
-        <el-radio-group v-model="value.operator" size="mini" class="query-build-header-radio">
+        <span class="fw-sub pr-5">{{ $t('query_build_match_condition') }}</span>
+        <el-radio v-model="value.operator" label="and">{{ $t('query_build_all') }}</el-radio>
+        <el-radio v-model="value.operator" label="or">{{ $t('query_build_any') }}</el-radio>
+        <!-- <el-radio-group v-model="value.operator" size="mini" class="query-build-header-radio">
           <el-radio-button label="and">{{ $t('query_build_all') }}</el-radio-button>
           <el-radio-button label="or">{{ $t('query_build_any') }}</el-radio-button>
-        </el-radio-group>
-        <span>{{ $t('query_build_condition') }}</span>
+        </el-radio-group> -->
       </div>
       <div class="query-build-header-right">
         <el-tooltip class="item" effect="dark" :content="$t('query_build_addGroup')" placement="top">
@@ -22,7 +23,7 @@
       </div>
     </div>
     <div class="query-build-group">
-      <div class="query-build-group-item" v-for="(item, index) in conditions" :key="index">
+      <div class="query-build-group-item" v-for="(item, index) in conditions" :key="item.field">
         <template v-if="item.type === 'group'">
           <ConditionGroup
             v-model="conditions[index]"
@@ -56,7 +57,7 @@
                 }}</el-button>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" :content="$t('query_build_removeCondition')" placement="top">
-                <el-button v-if="conditionCount > 1" @click="removeChild(index)" type="text">{{
+                <el-button v-if="conditionCount > 1" @click="removeChild(item, index)" type="text">{{
                   $t('query_build_remove')
                 }}</el-button>
               </el-tooltip>
@@ -184,57 +185,92 @@ export default {
       this.$emit('remove')
     },
     // 删除条件
-    removeChild(index) {
-      this.value.conditions.splice(index, 1)
+    removeChild(item, index) {
+      let self = this
+      self.value.conditions.splice(index, 1)
+      // self.value.conditions.forEach((el, index) => {
+      //   if (item.field === el.field) {
+      //     console.log(el.field, index, this.conditions)
+      //     debugger
+      //     self.value.conditions.splice(index, 1)
+      //   }
+      // })
     }
   }
 }
 </script>
 <style scoped lang="scss">
 .condition-group-wrap {
-  border: 1px solid #aaa;
+  margin-bottom: 10px;
+  border: 1px solid #edeeee;
   border-left-width: 3px;
   overflow: hidden;
   .query-build-header {
     display: flex;
     justify-content: space-between;
+    height: 38px;
+    line-height: 38px;
     padding: 0 10px;
-    background-color: #eee;
+    background-color: map-get($bgColor, main);
     .query-build-header-left {
+      font-size: 12px;
       span {
         display: inline-block;
-        font-weight: bold;
-        color: #000;
+        color: map-get($fontColor, light);
       }
+      ::v-deep {
+        .el-radio {
+          .el-radio__label {
+            color: #000000;
+          }
+          &.is-checked .el-radio__label {
+            color: rgba(0, 0, 0, 0.65);
+          }
+        }
+      }
+
       .query-build-header-radio {
         padding: 4px 20px 0;
+      }
+    }
+    .query-build-header-right {
+      ::v-deep {
+        .el-button--text {
+          font-size: 12px;
+          background-color: #fafafa;
+        }
       }
     }
   }
   .query-build-group {
     padding: 10px 10px 10px 24px;
+    .query-build-group-item {
+      padding-bottom: 10px;
+    }
     .query-build-group-row {
       display: flex;
       justify-content: space-between;
       width: 100%;
       .query-build-group-button {
         width: 70px;
+        text-align: right;
       }
     }
   }
 }
 .condition-group-wrap.level1 {
-  border-left-color: #00c7ff;
-}
-.condition-group-wrap.level2 {
-  border-left-color: #a463f2;
-}
-.condition-group-wrap.level3 {
-  border-left-color: #ffb700;
-}
-.condition-group-wrap.level4 {
   border-left-color: #818182;
 }
+.condition-group-wrap.level2 {
+  border-left-color: map-get($color, primary);
+}
+.condition-group-wrap.level3 {
+  border-left-color: #a463f2;
+}
+.condition-group-wrap.level4 {
+  border-left-color: #ffb700;
+}
+
 .condition-group-wrap.level5 {
   border-left-color: #3ae698;
 }

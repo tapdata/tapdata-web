@@ -22,14 +22,7 @@
         </el-button>
       </div>
       <!-- 索引表格 start -->
-      <el-table
-        ref="table"
-        class="table-page-table"
-        height="100%"
-        border
-        v-loading="loading"
-        :data="collectionTableData"
-      >
+      <el-table ref="table" class="table-page-table" height="100%" v-loading="loading" :data="collectionTableData">
         <el-table-column :label="$t('metadata.details.collectionName')" prop="name">
           <template slot-scope="scope">
             <el-button type="text" @click="handleJumpTable(scope.row)" style="padding: 0 10px">{{
@@ -48,7 +41,7 @@
       <el-pagination
         background
         class="table-page-pagination"
-        layout="total, sizes, ->, prev, pager, next, jumper"
+        layout=" ->,total, sizes, prev, pager, next, jumper"
         :current-page.sync="pageCurrent"
         :page-sizes="[10, 20, 50, 100]"
         :page-size.sync="pageSize"
@@ -121,7 +114,7 @@ export default {
     // 获取表格数据
     getData() {
       this.$api('MetadataInstances')
-        .get([this.$route.params.id])
+        .findTablesById([this.$route.params.id])
         .then(res => {
           if (res) {
             this.collectionTableData = res.data.collections
@@ -154,15 +147,15 @@ export default {
         if (valid) {
           let params = {
             meta_type: 'collection',
-            original_id: _this.collectionData.id,
-            original_name: _this.createForm.name,
+            // original_id: _this.collectionData.id,
+            // original_name: _this.createForm.name,
             qualified_name: '',
-            source: _this.collectionData.source,
-            is_deleted: false,
+            // source: _this.collectionData.source,
+            // is_deleted: false,
             databaseId: _this.collectionData.id,
             name: _this.createForm.name
           }
-          params.qualified_name = params.source.database_uri + '_' + params.name
+          params.qualified_name = _this.collectionData.source.database_uri + '_' + params.name
           params.qualified_name = params.qualified_name
             // eslint-disable-next-line
             .split(/\/|\.|@|\&|:|\?|%|=/)
@@ -187,10 +180,7 @@ export default {
     // 删除数据集
     remove(item) {
       const h = this.$createElement
-      let message = h('p', [
-        this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#48b6e2' } }, item.name)
-      ])
+      let message = h('p', [this.$t('message.deleteOrNot') + ' ' + item.name])
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
         closeOnClickModal: false
@@ -268,23 +258,13 @@ export default {
 .collection-list-wrap {
   .create-dialog {
     .el-dialog__body {
-      padding: 30px;
+      .el-form-item.el-form-item--small,
+      .el-form-item.el-form-item--mini {
+        margin-bottom: 0;
+      }
     }
   }
-  .table-page-table {
-    th {
-      padding: 0;
-      line-height: 30px;
-      background-color: #eff1f4 !important;
-    }
-    td,
-    .is-scrolling-left ~ .el-table__fixed {
-      border-right: 0;
-    }
-    th {
-      border-right: 1px solid #dcdfe6;
-    }
-  }
+
   .table-page-pagination {
     padding-top: 5px;
     box-sizing: border-box;

@@ -7,8 +7,7 @@ export default function (vm) {
     defaultModel: {
       connection_type: 'source_and_target',
       isUrl: true,
-      ssl: false,
-      sslValidate: false
+      ssl: false
     },
     items: [
       {
@@ -255,6 +254,16 @@ export default function (vm) {
             field: 'sslPass',
             byValue: true,
             value: ''
+          },
+          {
+            field: 'sslKey',
+            byValue: true,
+            value: ''
+          },
+          {
+            field: 'sslPass',
+            byValue: true,
+            value: ''
           }
         ],
         isVertical: false,
@@ -267,17 +276,17 @@ export default function (vm) {
         field: 'sslKey',
         fileNameField: 'sslKeyFile',
         label: vm.$t('dataForm.form.sslKey'),
-        show: false,
+        show: true,
         dependOn: [
           {
             triggerOptions: [
               {
                 field: 'ssl',
-                value: true
+                value: false
               }
             ],
             triggerConfig: {
-              show: true
+              show: false
             }
           }
         ],
@@ -299,17 +308,17 @@ export default function (vm) {
         type: 'input',
         field: 'sslPass',
         label: vm.$t('dataForm.form.sslPass'),
-        show: false,
+        show: true,
         dependOn: [
           {
             triggerOptions: [
               {
                 field: 'ssl',
-                value: true
+                value: false
               }
             ],
             triggerConfig: {
-              show: true
+              show: false
             }
           }
         ]
@@ -318,17 +327,17 @@ export default function (vm) {
         type: 'switch',
         field: 'sslValidate',
         label: vm.$t('dataForm.form.sslValidate'),
-        show: false,
+        show: true,
         dependOn: [
           {
             triggerOptions: [
               {
                 field: 'ssl',
-                value: true
+                value: false
               }
             ],
             triggerConfig: {
-              show: true
+              show: false
             }
           }
         ],
@@ -387,7 +396,7 @@ export default function (vm) {
         field: 'table_filter',
         domType: 'textarea',
         label: vm.$t('dataForm.form.tableFilter'),
-        tip: vm.$t('connection_form_impact_type'),
+        tips: vm.$t('connection_form_impact_type'),
         maxlength: 500,
         showWordLimit: true
       },
@@ -395,7 +404,21 @@ export default function (vm) {
         type: 'switch',
         field: 'shareCdcEnable',
         label: vm.$t('connection_form_shared_mining'),
-        tip: vm.$t('connection_form_shared_mining_tip')
+        tips: vm.$t('connection_form_shared_mining_tip'),
+        show: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'connection_type',
+                value: 'target'
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          }
+        ]
       },
       {
         type: 'switch',
@@ -454,6 +477,8 @@ export default function (vm) {
         field: 'persistenceMongodb_collection',
         label: vm.$t('share_form_setting_table_name'),
         options: [],
+        allowCreate: true,
+        filterable: true,
         required: true,
         show: false,
         dependOn: [
@@ -481,6 +506,8 @@ export default function (vm) {
         options: [],
         required: true,
         show: false,
+        allowCreate: true,
+        filterable: true,
         dependOn: [
           {
             triggerOptions: [

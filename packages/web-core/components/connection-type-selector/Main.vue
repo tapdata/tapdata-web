@@ -1,9 +1,9 @@
 <template>
   <div class="database">
-    <el-radio-group v-if="!hideType" class="pb-5" v-model="type" @change="changeType">
+    <el-radio-group v-if="!hideType && otherTypes.length" class="pb-5" v-model="type" @change="changeType">
       <el-radio-button label="sourcedata">{{ $t('connection_form_data_source') }}</el-radio-button>
       <el-radio-button label="other">Other Type</el-radio-button>
-      <el-radio-button label="automation">Automation Type</el-radio-button>
+      <!-- <el-radio-button label="automation">Automation Type</el-radio-button> -->
     </el-radio-group>
     <template v-if="type === 'sourcedata'">
       <ul class="database-ul" :class="[large ? 'customNthChild' : 'primaryNthChild']">
@@ -158,10 +158,11 @@ export default {
       max-width: 82px;
       font-weight: 500;
       font-size: 12px;
-      color: #000;
+      color: map-get($fontColor, dark);
       text-overflow: ellipsis;
       white-space: nowrap;
       word-break: break-word;
+      cursor: default;
       overflow: hidden;
     }
     .coming-icon {
@@ -172,6 +173,7 @@ export default {
     }
   }
   .customNthChild {
+    max-height: 500px;
     li:nth-child(9n + 1) {
       margin-left: 0;
     }

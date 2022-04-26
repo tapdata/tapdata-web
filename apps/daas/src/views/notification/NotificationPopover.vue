@@ -1,14 +1,20 @@
 <template>
-  <el-popover placement="bottom" trigger="hover" @show="activeTab = 'system'">
+  <el-popover popper-class="notification-popover" placement="bottom" trigger="hover" @show="activeTab = 'system'">
     <div class="btn" slot="reference" @click="toCenter()">
       <el-badge class="item-badge" :value="unRead" :max="99" :hidden="!unRead">
-        <VIcon>xiaoxi-2</VIcon>
+        <VIcon size="16">xiaoxi-2</VIcon>
       </el-badge>
     </div>
-    <el-tabs stretch class="notification-popover-wrap" v-model="activeTab" type="border-card" @tab-click="tabHandler">
-      <el-tab-pane class="tab-item" :label="$t('notification.systemNotice')" name="system">
+    <el-tabs stretch class="notification-popover-wrap" v-model="activeTab" @tab-click="tabHandler">
+      <ElButton type="text" v-if="activeTab === 'system'" @click="handleNotify">{{
+        $t('notify_view_all_notify')
+      }}</ElButton>
+      <ElButton type="text" v-else @click="$router.push({ name: 'notification', query: { type: 'user' } })">{{
+        $t('notify_view_more')
+      }}</ElButton>
+      <el-tab-pane class="tab-item" :label="$t('notify_system_notice')" name="system">
         <div class="tab-item-container">
-          <ul class="tab-list cuk-list">
+          <ul class="tab-list cuk-list" v-if="listData.length">
             <li class="list-item" v-for="(item, index) in listData" :key="index" @click="handleRead(item.id)">
               <div class="list-item-content" v-if="item.msg === 'JobDDL'">
                 <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
@@ -16,15 +22,15 @@
                   <span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
                   <span>{{ systemMap[item.system] }}</span>
                   <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate">
-                    <span style="color: #409eff">
+                    <span class="link-primary">
                       {{ `${item.serverName} , ` }}
                     </span>
                   </router-link>
                   <span class="list-item-platform">
                     {{
-                      `${$t('notification.sourceName')} : ${item.sourceName} , ${$t('notification.databaseName')} : ${
+                      `${$t('notify_source_name')} : ${item.sourceName} , ${$t('notify_database_name')} : ${
                         item.databaseName
-                      } , ${$t('notification.schemaName')} : ${item.schemaName} ,`
+                      } , ${$t('notify_schema_name')} : ${item.schemaName} ,`
                     }}
                   </span>
                   <el-tooltip :content="item.sql" placement="top">
@@ -42,7 +48,7 @@
                 <div class="list-item-desc">
                   <span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
                   <span>{{ systemMap[item.system] }}</span>
-                  <span style="color: #409eff" @click="handleGo(item)">
+                  <span class="link-primary" @click="handleGo(item)">
                     {{ item.serverName }}
                   </span>
                   <span>{{ typeMap[item.msg] }}</span>
@@ -54,27 +60,33 @@
               </div>
             </li>
           </ul>
-          <div class="notice-footer">
+          <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
+            <div>
+              <VIcon size="76">no-notice</VIcon>
+              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_view_more') }}</div>
+            </div>
+          </div>
+          <!-- <div class="notice-footer">
             <span v-readonlybtn="'home_notice_settings'">
               <router-link to="/settingCenter/notificationSetting">
                 <span>
-                  {{ $t('notification.setting') }}
+                  {{ $t('notify_setting') }}
                 </span>
               </router-link>
             </span>
             <span class="notice-footer-text">
               <router-link to="/notification">
                 <span>
-                  {{ $t('notification.viewMore') }}
+                  {{ $t('notify_view_more') }}
                 </span>
               </router-link>
             </span>
-          </div>
+          </div> -->
         </div>
       </el-tab-pane>
-      <el-tab-pane class="tab-item" :label="$t('notification.userNotice')" name="user" v-loading="loading">
+      <el-tab-pane class="tab-item" :label="$t('notify_user_notice')" name="user" v-loading="loading">
         <div class="tab-item-container">
-          <ul class="tab-list notification-list">
+          <ul class="tab-list notification-list" v-if="userOperations.length">
             <li class="notification-item" v-for="record in userOperations" :key="record.id">
               <UserOperation :record="record"></UserOperation>
               <div class="item-time">
@@ -82,14 +94,20 @@
               </div>
             </li>
           </ul>
-          <div class="notice-footer">
+          <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
+            <div>
+              <VIcon size="76">no-notice</VIcon>
+              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_view_more') }}</div>
+            </div>
+          </div>
+          <!-- <div class="notice-footer">
             <span></span>
             <router-link to="/notification?type=user">
               <span class="more-text">
-                {{ $t('notification.viewMore') }}
+                {{ $t('notify_view_more') }}
               </span>
             </router-link>
-          </div>
+          </div> -->
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -97,11 +115,10 @@
 </template>
 
 <script>
-import ws from '../../api/ws'
 import UserOperation from './UserOperation'
 import { TYPEMAP } from './tyepMap'
 import { mapState } from 'vuex'
-import VIcon from '@/components/VIcon'
+import VIcon from 'web-core/components/VIcon'
 
 export default {
   components: {
@@ -120,13 +137,13 @@ export default {
       },
       typeMap: TYPEMAP,
       systemMap: {
-        sync: this.$t('notification.sync'),
-        migration: this.$t('notification.migration'),
-        dataFlow: this.$t('notification.dataFlow'),
-        agent: this.$t('notification.manageSever'),
-        inspect: this.$t('notification.inspect'),
-        JobDDL: this.$t('notification.ddlDeal'),
-        system: this.$t('notification.system')
+        sync: this.$t('notify_sync'),
+        migration: this.$t('notify_migration'),
+        dataFlow: this.$t('notify_data_flow'),
+        agent: this.$t('notify_manage_sever'),
+        inspect: this.$t('notify_inspect'),
+        JobDDL: this.$t('notify_ddl_deal'),
+        system: this.$t('notify_system')
       },
       userOperations: []
     }
@@ -138,6 +155,9 @@ export default {
     this.init()
   },
   methods: {
+    handleNotify() {
+      this.$router.push({ name: 'notification' })
+    },
     init() {
       let msg = {
         type: 'notification'
@@ -146,7 +166,7 @@ export default {
         msg.userId = this.$cookie.get('user_id')
       }
       this.getUnReadNum()
-      ws.on('notification', data => {
+      this.$ws.on('notification', data => {
         if (data.data && data.data.length > 0) {
           this.listData.unshift(...data.data)
           this.getUnReadNum()
@@ -158,11 +178,11 @@ export default {
           })
         }
       })
-      ws.ready(() => {
-        ws.send(msg)
+      this.$ws.ready(() => {
+        this.$ws.send(msg)
       }, true)
       this.$root.$on('notificationUpdate', () => {
-        ws.send(msg)
+        this.$ws.send(msg)
       })
     },
     getUnReadNum() {
@@ -273,12 +293,45 @@ export default {
 }
 </script>
 <style lang="scss">
-.notification-popover-wrap {
-  > .el-tabs__content {
-    padding: 0 !important;
-  }
-  .tab-item {
-    margin-bottom: 1px;
+.notification-popover {
+  overflow: hidden;
+  .notification-popover-wrap {
+    padding: 10px 16px;
+    overflow: hidden;
+    .el-tabs__header {
+      border-bottom: 1px solid map-get($borderColor, light);
+      .el-tabs__nav-wrap {
+        .el-tabs__nav-scroll {
+          width: 200px;
+        }
+      }
+      .el-tabs__item {
+        font-size: 14px;
+        font-weight: 500;
+        color: map-get($fontColor, slight);
+        &.is-active {
+          color: map-get($color, primary);
+          font-weight: 400;
+          border-color: map-get($color, primary);
+        }
+      }
+      .el-tabs__active-bar {
+        width: 100px;
+      }
+    }
+    > .el-tabs__content {
+      padding: 0 !important;
+      overflow: initial;
+      & > .el-button {
+        position: absolute;
+        right: 0;
+        top: -52px;
+        font-weight: 400;
+      }
+    }
+    .tab-item {
+      margin-bottom: 1px;
+    }
   }
 }
 </style>
@@ -373,7 +426,7 @@ export default {
       box-sizing: border-box;
       .notification-item {
         padding: 5px 20px 4px 20px;
-        border-bottom: 1px solid #dedee4;
+        border-bottom: 1px solid #f2f2f2;
         font-size: 12px;
         color: #666;
         &:hover {

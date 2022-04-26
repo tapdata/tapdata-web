@@ -1,6 +1,5 @@
 import locale from './locale'
 import baseComponents from './components/base'
-import VConfirm from './components/base/v-confirm'
 import FormBuilder from './components/form-builder'
 import ConnectionTypeSelector from './components/connection-type-selector'
 import ConnectionTest from './components/ConnectionTest'

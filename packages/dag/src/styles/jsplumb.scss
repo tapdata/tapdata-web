@@ -1,6 +1,8 @@
 .jtk-connector {
+  cursor: pointer;
   z-index: 4;
-  &.jtk-hover {
+  &.jtk-hover,
+  &.jtk-dragging {
     z-index: 1000;
   }
 }
@@ -24,14 +26,4 @@
 
 .jtk-drag-select {
   user-select: none;
-}
-
-.ace_editor,.ace_gutter-layer,.ace_scroller{
-  background-color: #000;
-}
-.ace_gutter-cell,.ace_content, .ace-tm  .ace_cursor  {
-  color: #fff;
-}
-.ace_gutter-active-line {
-  color: #000;
 }

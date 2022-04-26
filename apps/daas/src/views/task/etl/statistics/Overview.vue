@@ -1,22 +1,16 @@
 <template>
   <div class="overview-bar">
-    <div class="mb-4 fs-7 font-color-main fw-bolder">{{ info.label }}{{ this.$t('task_info_overview') }}</div>
+    <div class="mb-4 fs-7 font-color-dark fw-bolder">{{ this.$t('task_monitor_full_sync') }}</div>
     <div class="overview-bar__content p-4">
-      <div class="flex justify-content-between mb-2 font-color-main">
+      <div class="flex justify-content-between mb-2 font-color-dark">
         <div>
-          <span
-            >{{ $t('task_info_plan') }}{{ info.label }}{{ $t('task_info_table_number') }} {{ info.source || 0 }}</span
-          >
-          <span class="ml-3"
-            >{{ $t('task_info_completed') }}{{ info.label }}{{ $t('task_info_table_number') }}
-            {{ info.success || 0 }}</span
-          >
+          <span>{{ $t('task_info_table_number') }} : {{ totalDataText }}</span>
+          <span class="ml-3">{{ $t('task_info_completed') }} : {{ info.finishNumber || 0 }}</span>
         </div>
-        <div>
-          {{ $t('task_info_expected') }}{{ info.label }}{{ $t('task_info_completed_time') }}：{{ info.completeTime }}
-        </div>
+        <div v-if="info.progress !== 100">{{ $t('task_monitor_full_completion_time') }}：{{ finishDurationText }}</div>
+        <div v-else>{{ $t('task_info_fully_completed') }}</div>
       </div>
-      <ElProgress :percentage="info.progressBar" :show-text="false"></ElProgress>
+      <ElProgress color="#2C65FF" :percentage="info.progress" :show-text="false"></ElProgress>
     </div>
   </div>
 </template>
@@ -31,6 +25,16 @@ export default {
     },
     status: {
       type: String
+    }
+  },
+  computed: {
+    totalDataText() {
+      let num = this.info.totalDataNum
+      return num ? this.$t('task_info_overView_status') : num || 0
+    },
+    finishDurationText() {
+      let duration = this.info.finishDuration
+      return duration < 0 ? this.$t('task_info_overView_status') : duration || 0
     }
   }
 }

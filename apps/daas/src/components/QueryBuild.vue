@@ -235,13 +235,42 @@ export default {
 <style scoped lang="scss">
 .query-build-wrap {
   .query-build-show-filter {
-    margin-top: 10px;
-    padding: 0 10px;
     max-height: 500px;
     overflow-y: auto;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     pre {
       line-height: 20px;
+    }
+    ::v-deep {
+      .el-collapse {
+        border: 0;
+        .el-collapse-item:last-child {
+          margin-bottom: 0;
+        }
+      }
+      .el-collapse-item__header {
+        padding-bottom: 5px;
+        border-bottom: 0;
+        color: #2c65ff;
+        font-size: 12px;
+        .el-collapse-item__arrow {
+          margin-left: 6px;
+          transform: rotate(90deg);
+        }
+        .el-collapse-item__arrow.is-active {
+          transform: rotate(270deg);
+        }
+      }
+      .el-collapse-item__wrap {
+        margin-bottom: 30px;
+        padding: 15px;
+        border-bottom: 0;
+        background-color: #3a3d4c;
+        .el-collapse-item__content {
+          padding: 15px;
+          color: #82b290;
+          background: #262838;
+        }
+      }
     }
   }
 }

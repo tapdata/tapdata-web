@@ -23,12 +23,12 @@
           <div class="result-item__title mb-3 fs-5 fw-bolder">{{ item.code }}</div>
           <div class="result-item__message mb-2 ml-4">
             <div class="mb-1">{{ $t('solution_search_desc') }}:</div>
-            <div class="font-color-sub ml-4">{{ item.message }}</div>
+            <div class="font-color-slight ml-4">{{ item.message }}</div>
           </div>
           <ul class="result-item__list ml-4">
             <li v-for="(t, i) in item.solutions" :key="i" class="mb-1">
               <div class="mb-1">{{ $t('solution_search_solutions') }}{{ i + 1 }}:</div>
-              <div class="font-color-sub ml-4">{{ t }}</div>
+              <div class="font-color-slight ml-4">{{ t }}</div>
             </li>
           </ul>
         </div>

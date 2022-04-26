@@ -13,9 +13,11 @@
     "mock": "nodemon mock/mock.js"
   },
   "dependencies": {
+    "@daas/api": "workspace:^1.0.0",
     "@daas/dag": "workspace:^1.0.0",
     "@daas/node-design": "workspace:^1.0.0",
     "@daas/shared": "workspace:^1.0.0",
+    "@tapdata/field-mapping": "workspace:^1.0.0",
     "ace-builds": "^1.4.13",
     "ajv": "^8.9.0",
     "axios": "^0.21.1",
@@ -54,10 +56,12 @@
     "vue-router": "^3.2.0",
     "vue-virtual-scroller": "^1.0.10",
     "vuex": "^3.4.0",
-    "vuex-persistedstate": "^3.0.0",
     "ws": "^8.4.2"
   },
   "devDependencies": {
+    "@daas/form": "workspace:^1.0.0",
+    "@formily/core": "^2.0.9",
+    "@formily/reactive": "^2.0.9",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",

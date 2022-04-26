@@ -18,7 +18,6 @@ export default {
   props: {
     node: Object
   },
-
   getIcon(node) {
     let icon = node.type === 'table' ? node.databaseType : NODE_TYPE_ICON[node.type]
     return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
@@ -56,7 +55,7 @@ $height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 49px;
+    width: 53px;
     height: 100%;
     background-color: rgba(44, 101, 255, 0.2);
     border-right-style: solid;
@@ -171,6 +170,31 @@ $height: 50px;
   &.options-active {
     .df-node-options {
       display: flex;
+    }
+  }
+  &.can-be-connected {
+    .node-anchor.input {
+      display: flex;
+
+      &:before {
+        content: '';
+        position: absolute;
+        border-width: 2px;
+        border-style: solid;
+        border-color: #2c65ff;
+        border-radius: 50%;
+        background: #c0d1ff;
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    &.dropHover .node-anchor.input {
+      &:before {
+        width: 16px;
+        height: 16px;
+        border-color: #2c65ff;
+      }
     }
   }
 }

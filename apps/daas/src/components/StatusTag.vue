@@ -11,7 +11,7 @@
         :class="['circle-icon', 'mr-2', `bg-color-${statusObj.type}`]"
         :style="{ 'background-color': statusObj.color }"
       ></span>
-      <span class="td-status-tag__text font-color-sub">{{ statusObj.text }}</span>
+      <span class="td-status-tag__text font-color-slight">{{ statusObj.text }}</span>
     </span>
   </span>
 </template>
@@ -20,7 +20,6 @@
 import VIcon from '@/components/VIcon'
 import {
   CONNECTION_STATUS_MAP,
-  INSTANCE_STATUS_MAP,
   TASK_STATUS_MAP,
   MILESTONE_STATUS_MAP,
   ETL_STATUS_MAP,
@@ -57,12 +56,16 @@ export default {
       type: String
     }
   },
+  data() {
+    return {
+      lang: localStorage.getItem('tapdata_localize_lang') || 'sc'
+    }
+  },
   computed: {
     map() {
       return (
         this.statusMap ||
         {
-          instance: INSTANCE_STATUS_MAP,
           task: TASK_STATUS_MAP,
           shareCdc: SHARECDC_MAP,
           connection: CONNECTION_STATUS_MAP,

@@ -1,6 +1,13 @@
 <template>
   <div class="setting-panel">
-    <ElForm :model="settings" class="setting-panel-form" label-width="140px" label-position="top" size="small">
+    <ElForm
+      :model="settings"
+      class="setting-panel-form"
+      label-width="140px"
+      label-position="top"
+      size="small"
+      :disabled="stateIsReadonly"
+    >
       <ElTabs v-model="settingPanelType" class="setting-tabs h-100">
         <ElTabPane label="基本设置" name="base">
           <div class="setting-panel-box bg-white pt-3">
@@ -8,30 +15,39 @@
             <div class="px-5">
               <ElRow>
                 <ElCol :span="12">
-                  <ElFormItem label="任务名称" required="">
+                  <!--任务名称-->
+                  <ElFormItem :label="$t('task_stetting_name')" required="">
                     <ElInput v-model="settings.name"></ElInput>
                   </ElFormItem>
                 </ElCol>
                 <ElCol :span="12">
-                  <ElFormItem label="同步类型">
+                  <!--同步类型-->
+                  <ElFormItem :label="$t('task_setting_sync_type')">
                     <ElRadioGroup v-model="settings.type">
-                      <ElRadio label="initial_sync+cdc">全量+增量</ElRadio>
-                      <ElRadio label="initial_sync">全量</ElRadio>
-                      <ElRadio label="cdc">增量</ElRadio>
+                      <!--全量+增量-->
+                      <ElRadio label="initial_sync+cdc">{{ $t('task_setting_initial_sync_cdc') }}</ElRadio>
+                      <!--全量-->
+                      <ElRadio label="initial_sync">
+                        {{ $t('task_setting_initial_sync') }}
+                      </ElRadio>
+                      <!--增量-->
+                      <ElRadio label="cdc">{{ $t('task_setting_cdc') }}</ElRadio>
                     </ElRadioGroup>
                   </ElFormItem>
                 </ElCol>
               </ElRow>
               <ElRow>
                 <ElCol :span="24">
-                  <ElFormItem label="任务描述">
+                  <!--任务描述-->
+                  <ElFormItem :label="$t('task_stetting_desc')">
                     <ElInput type="textarea" v-model="settings.desc"></ElInput>
                   </ElFormItem>
                 </ElCol>
               </ElRow>
               <ElRow class="pb-5">
-                <ElCol :span="12">
-                  <ElFormItem label="任务调度" required="">
+                <ElCol :span="12" v-if="settings.type === 'initial_sync'">
+                  <!--任务调度-->
+                  <ElFormItem :label="$t('task_setting_is_schedule')" required="">
                     <ElSwitch v-model="settings.isSchedule"></ElSwitch>
                   </ElFormItem>
                 </ElCol>
@@ -65,16 +81,21 @@
             </div>
             <div class="px-5">
               <ElRow>
-                <ElCol :span="12">
-                  <ElFormItem label="自动创建索引">
+                <ElCol :span="4">
+                  <ElFormItem :label="$t('task_setting_automatic_index')">
                     <ElSwitch v-model="settings.isAutoCreateIndex"></ElSwitch>
                   </ElFormItem>
                 </ElCol>
-                <ElCol :span="12">
-                  <ElFormItem label="去重写入机制">
+                <ElCol :span="4">
+                  <ElFormItem :label="$t('task_setting_automatic_ddl')">
+                    <ElSwitch v-model="settings.isOpenAutoDDL"></ElSwitch>
+                  </ElFormItem>
+                </ElCol>
+                <ElCol :span="4">
+                  <ElFormItem :label="$t('task_setting_distinct_write_type')">
                     <ElSelect v-model="settings.deduplicWriteMode">
-                      <ElOption label="智能去重写入" value="intelligent"></ElOption>
-                      <ElOption label="强制去重写入" value="force"></ElOption>
+                      <ElOption :label="$t('dataFlow.setting.intellect')" value="intelligent"></ElOption>
+                      <ElOption :label="$t('dataFlow.setting.compel')" value="force"></ElOption>
                     </ElSelect>
                   </ElFormItem>
                 </ElCol>
@@ -87,7 +108,8 @@
               <span class="pl-2">任务的同步类型为全量或全量+增量时执行的</span>
             </div>
             <div class="px-5">
-              <ElFormItem label="目标写入线程数">
+              <!--目标写入线程数-->
+              <ElFormItem :label="$t('task_setting_transformer_concurrency')">
                 <ElInputNumber
                   controls-position="right"
                   v-model="settings.writeThreadSize"
@@ -105,12 +127,14 @@
             <div class="pb-5">
               <ElRow>
                 <ElCol :span="settings.type === 'cdc' ? 3 : 5">
-                  <ElFormItem label="增量同步并发写入:">
+                  <!--增量同步并发写入-->
+                  <ElFormItem :label="$t('task_setting_cdc_concurrency')">
                     <ElSwitch v-model="settings.increSyncConcurrency"></ElSwitch>
                   </ElFormItem>
                 </ElCol>
                 <ElCol :span="6">
-                  <ElFormItem label="增量滞后时间设置:">
+                  <!--增量滞后时间设置-->
+                  <ElFormItem :label="$t('task_setting_lag_time')">
                     <ElSwitch v-model="settings.increHysteresis"></ElSwitch>
                     <template v-if="settings.increHysteresis">
                       <ElInputNumber
@@ -124,12 +148,14 @@
                   </ElFormItem>
                 </ElCol>
                 <ElCol :span="3" v-if="settings.type === 'cdc'">
-                  <ElFormItem label="引擎过滤:">
+                  <!--引擎过滤-->
+                  <ElFormItem :label="$t('task_setting_cdc_engine_filter')">
                     <ElSwitch v-model="settings.isFilter"></ElSwitch>
                   </ElFormItem>
                 </ElCol>
                 <ElCol :span="8">
-                  <ElFormItem label="增量数据处理模式:">
+                  <!--增量数据处理模式-->
+                  <ElFormItem :label="$t('task_setting_share_cdc_mode')">
                     <ElSelect v-model="settings.increOperationMode">
                       <ElOption label="批量" :value="false"></ElOption>
                       <ElOption label="逐条" :value="true"></ElOption>
@@ -155,8 +181,8 @@
                   </ElFormItem>
                 </ElCol>
               </ElRow>
-
-              <ElFormItem label="增量开始时间点:" v-if="settings.type === 'cdc'">
+              <!--增量开始时间点-->
+              <ElFormItem :label="$t('task_setting_sync_point')" v-if="settings.type === 'cdc'">
                 <ElRow>
                   <ElCol :span="12" v-for="item in settings.syncPoints" :key="item.name">
                     <ElRow>
@@ -191,7 +217,8 @@
               <span class="pl-2">任务的同步类型为增量或全量+增量时执行</span>
             </div>
             <div class="px-5">
-              <ElFormItem label="开启共享日志挖掘">
+              <!--开启共享日志挖掘-->
+              <ElFormItem :label="$t('connection_form_shared_mining')">
                 <ElSwitch v-model="settings.shareCdcEnable"></ElSwitch>
               </ElFormItem>
             </div>
@@ -246,7 +273,7 @@ export default {
   },
 
   computed: {
-    ...mapState('dataflow', ['activeNodeId', 'transformStatus']),
+    ...mapState('dataflow', ['activeNodeId', 'transformStatus', 'stateIsReadonly']),
 
     ...mapGetters('dataflow', [
       'activeNode',

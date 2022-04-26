@@ -54,12 +54,8 @@ axios.interceptors.request.use(
         config.url = `${config.url}?access_token=${accessToken}`
       }
     }
-    let xToken = Cookie.get('xToken')
-    if (xToken) {
-      config.headers['X-Token'] = xToken
-    }
-    let apiPre = window.getSettingByKey('DFS_TM_API_PRE_URL') || ''
-    let tcmApiPre = window.getSettingByKey('DFS_TCM_API_PRE_URL') || ''
+    let apiPre = ''
+    let tcmApiPre = ''
     let preUrl = ''
     if (config.url.startsWith('/api/tcm')) {
       preUrl = tcmApiPre
@@ -67,7 +63,6 @@ axios.interceptors.request.use(
       preUrl = tcmApiPre + apiPre
     }
     config.url = preUrl + config.url
-    config.headers['Pool-Id'] = 'CIDC-RP-25'
     config.headers['x-requested-with'] = 'XMLHttpRequest'
 
     let key = getPendingKey(config)
@@ -108,7 +103,7 @@ axios.interceptors.response.use(
               response: {
                 code: '110500',
                 status: 500,
-                msg: data.msg,
+                msg: data.message,
                 data: data.data || []
               }
             })
@@ -118,7 +113,7 @@ axios.interceptors.response.use(
               response: {
                 code: '110400',
                 status: 500,
-                msg: data.msg
+                msg: data.message
               }
             })
             break
@@ -126,7 +121,7 @@ axios.interceptors.response.use(
             signOut()
             setTimeout(() => {
               Message.error({
-                message: data.msg
+                message: data.message
               })
             }, 500)
             break
@@ -135,12 +130,24 @@ axios.interceptors.response.use(
             reject({
               response: {
                 code: '110403',
-                msg: data.msg
+                msg: data.message
               }
             })
             Message.error({
-              message: i18n.t('message.noPermission')
+              message: i18n.t('message_no_permission')
             })
+            break
+          case 'SystemError':
+            if (data.message === 'System error: null') {
+              Message.error({
+                message: i18n.t('message_request_error')
+              })
+            } else {
+              Message.error({
+                message: data.message
+              })
+            }
+            reject(response)
             break
           default:
             reject(response)

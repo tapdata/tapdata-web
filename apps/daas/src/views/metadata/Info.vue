@@ -1,5 +1,5 @@
 <template>
-  <section class="metadata-info section-wrap">
+  <section class="metadata-info section-wrap" v-loading="loading">
     <!-- <header class="header">
       <span @click="back">
         {{ $t('metadata.details.dataDirectory') }}
@@ -11,26 +11,29 @@
       <!-- 元数据管理详情 头部信息 start -->
       <el-header class="matadata-head">
         <div class="img-box">
-          <img src="static/editor/table.svg" />
+          <img src="@/assets/images/tu.png" />
         </div>
         <div class="table-info">
-          <h3>
+          <h3 class="fs-7 font-color-dark">
             <span v-if="metadataDataObj.alias_name">
               {{ metadataDataObj.alias_name }}
             </span>
 
             <span v-if="metadataDataObj.alias_name">(</span>
-            {{ $t('metadata.details.originalTableName') }}：{{ metadataDataObj.original_name }}
+            {{
+              metadataDataObj.meta_type === 'database'
+                ? $t('metadata_detail_original_database_name')
+                : $t('metadata_detail_original_table_name')
+            }}：{{ metadataDataObj.original_name }}
             <span v-if="metadataDataObj.alias_name">)</span>
             <el-button type="text" @click="handleChangeName" style="padding: 0 10px">{{
               $t('metadata.details.renamed')
             }}</el-button>
           </h3>
-          <div class="description">
+          <div class="description pt-2">
             <span v-if="metadataDataObj.comment">{{ metadataDataObj.comment }}</span>
 
             <span v-else>{{ $t('metadata.details.clickAddDes') }}</span>
-
             <el-button
               class="e-button"
               type="text"
@@ -53,14 +56,13 @@
       <el-main class="matadata-main mt-4">
         <!-- 元数据管理详情 左侧信息 start -->
         <div class="aside" v-if="!asideFalg">
-          <i @click="asideFalg = true" class="iconfont icon-indent"></i>
-          <p>{{ $t('metadata.details.propertyDetails') }}</p>
+          <i @click="asideFalg = true" class="iconfont icon-indent text-primary"></i>
         </div>
         <el-aside class="metadata-aside" v-show="asideFalg">
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
-              <span class="fs-7">{{ $t('metadata.details.basicAttributes') }}</span>
-              <i @click.stop="asideFalg = false" class="iconfont icon-outdent"></i>
+              <span class="fs-7 font-color-light fw-sub">{{ $t('metadata.details.basicAttributes') }}</span>
+              <i @click.stop="asideFalg = false" class="iconfont icon-outdent text-primary"></i>
             </div>
             <ul class="metadata-aside-main pt-4">
               <!-- <li>
@@ -126,7 +128,7 @@
 
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
-              <span class="fs-7">{{ $t('metadata.details.businessAttributes') }}</span>
+              <span class="fs-7 font-color-light fw-sub">{{ $t('metadata.details.businessAttributes') }}</span>
               <el-button type="text" size="mini" @click.stop="creatBusiness"
                 >+ {{ $t('metadata.details.creat') }}</el-button
               >
@@ -134,7 +136,7 @@
             <ul class="metadata-aside-main pt-4">
               <li class="business" v-for="(item, key, index) in metadataDataObj.custom_properties" :key="index">
                 <span>{{ key }} : {{ item }}</span>
-                <span class="delete" @click="delBusiness(item, key, index)">{{ $t('button.delete') }}</span>
+                <span type="text" class="delete" @click="delBusiness(item, key, index)">{{ $t('button_delete') }}</span>
               </li>
               <!-- <li>
 									<span class="label">{{ $t('metadata.details.tableLayering') }}：</span>
@@ -159,188 +161,194 @@
         <!-- 元数据管理详情 主要内容 start -->
         <div class="metadata-main-content" :class="{ boxWidth: !asideFalg }">
           <!-- tab页面 start -->
-          <el-tabs v-model="activePanel" @tab-click="handleClick">
-            <el-tab-pane :label="item.name" :name="item.key" v-for="item in menuList" :key="item.key">
-              <!-- v-show="item.mateTypes.includes(metadataDataObj.meta_type)" -->
-              <!-- tab页面 end -->
-              <div class="table-box" v-if="activePanel == 'model'">
-                <div class="table-page-topbar">
-                  <div class="table-page-search-bar">
-                    <ul class="search-bar">
-                      <li class="item">
-                        <el-input
-                          :placeholder="$t('metadata.details.searchPlaceholder')"
-                          clearable
-                          v-model="searchParams.keyword"
-                          size="mini"
-                          style="width: 160px"
-                        >
-                          <span slot="prefix" class="el-input__icon h-100 ml-1">
-                            <VIcon size="14">search</VIcon>
-                          </span>
-                        </el-input>
-                      </li>
-                      <li class="item">
-                        <el-button type="text" class="restBtn" size="mini" @click="reset()">
-                          {{ $t('dataFlow.reset') }}
-                        </el-button>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="table-page-operation-bar">
-                    <div slot="operation" class="operation">
-                      <el-button class="btn-create" type="primary" size="mini" @click="hanldCreateFiled">
-                        <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
-                        <span> {{ $t('metadata.details.createFiled') }}</span>
-                      </el-button>
-                    </div>
-                  </div>
-                </div>
-                <!-- 模型 start -->
-                <el-table
-                  class="table-page-table"
-                  height="100%"
-                  v-loading="loading"
-                  border
-                  :element-loading-text="$t('dataFlow.dataLoading')"
-                  :data="tableFieldList"
-                  :header-cell-style="tableHeaderStyle"
-                >
-                  <el-table-column type="expand">
-                    <template slot-scope="scope">
-                      <ul class="attributes">
-                        <li class="more">
-                          <label class="label">{{ $t('metadata.details.moreAttributes') }} </label>
-                          <span>{{ $t('metadata.details.allowOverwrite') }} : {{ scope.row.is_auto_allowed }}</span>
-                          <span>{{ $t('metadata.details.is_nullable') }} : {{ scope.row.is_nullable }}</span>
-                          <span>{{ $t('metadata.details.fieldLength') }} : {{ scope.row.columnSize }}</span>
-                          <span>{{ $t('metadata.details.accuracy') }} : {{ scope.row.precision }}</span>
-                          <span>{{ $t('metadata.details.numberLength') }} : {{ scope.row.scale }}</span>
-                          <span>{{ $t('metadata.details.selfIncreasing') }} : {{ scope.row.autoincrement }}</span>
+          <el-tabs v-model="activePanel">
+            <template v-for="item in menuList">
+              <el-tab-pane
+                v-if="item.mateTypes.includes(metadataDataObj.meta_type)"
+                :key="item.key"
+                :label="item.name"
+                :name="item.key"
+              >
+                <!-- <span slot="label" v-if="item.mateTypes.includes(metadataDataObj.meta_type)">{{ item.name }}</span> -->
+
+                <!-- tab页面 end -->
+                <div class="table-box" v-if="activePanel == 'model'">
+                  <div class="table-page-topbar">
+                    <div class="table-page-search-bar">
+                      <ul class="search-bar">
+                        <li class="item">
+                          <el-input
+                            :placeholder="$t('metadata.details.searchPlaceholder')"
+                            clearable
+                            v-model="searchParams.keyword"
+                            size="mini"
+                            style="width: 160px"
+                          >
+                            <span slot="prefix" class="el-input__icon h-100 ml-1">
+                              <VIcon size="14">search</VIcon>
+                            </span>
+                          </el-input>
                         </li>
-                        <li v-if="scope.row.dictionary && scope.row.dictionary.length">
-                          <label class="label">{{ $t('metadata.details.filedDictionary') }}</label>
-                          <div class="dropInfo">
-                            <span v-for="item in scope.row.dictionary" :key="item.table_name"
-                              >{{ item.key }} : {{ item.value }}</span
-                            >
-                          </div>
-                        </li>
-                        <li v-if="scope.row.relation && scope.row.relation.length">
-                          <label class="label">{{ $t('metadata.details.foreignKeyAssociation') }}</label>
-                          <div class="dropInfo">
-                            <span v-for="item in scope.row.relation" :key="item.key"
-                              >{{ item.table_name }}, {{ item.field_name }},{{
-                                $t('metadata.details.' + item.rel)
-                              }}</span
-                            >
-                          </div>
+                        <li class="item">
+                          <el-button type="text" class="restBtn" size="mini" @click="reset()">
+                            {{ $t('dataFlow.reset') }}
+                          </el-button>
                         </li>
                       </ul>
-                    </template>
-                  </el-table-column>
-                  <!-- <el-table-column type="selection" width="45" :reserve-selection="true"> </el-table-column> -->
-                  <el-table-column prop="field_name" :label="$t('metadata.details.filedAliasName')" width="150">
-                    <template slot-scope="scope">
-                      <div class="database-text" style="margin-left: 0">
-                        <div>
-                          {{ scope.row.field_name }} <i v-if="scope.row.primary_key" class="iconfont icon-yuechi1"></i>
+                    </div>
+                    <div class="table-page-operation-bar">
+                      <div slot="operation" class="operation">
+                        <el-button class="btn-create" type="primary" size="mini" @click="hanldCreateFiled">
+                          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
+                          <span> {{ $t('metadata.details.createFiled') }}</span>
+                        </el-button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- 模型 start -->
+                  <el-table
+                    class="table-page-table"
+                    height="100%"
+                    v-loading="loading"
+                    :element-loading-text="$t('dataFlow.dataLoading')"
+                    :data="tableFieldList"
+                    :header-cell-style="tableHeaderStyle"
+                  >
+                    <el-table-column type="expand">
+                      <template slot-scope="scope">
+                        <ul class="attributes">
+                          <li class="more">
+                            <label class="label">{{ $t('metadata.details.moreAttributes') }} </label>
+                            <span>{{ $t('metadata.details.allowOverwrite') }} : {{ scope.row.is_auto_allowed }}</span>
+                            <span>{{ $t('metadata.details.is_nullable') }} : {{ scope.row.is_nullable }}</span>
+                            <span>{{ $t('metadata.details.fieldLength') }} : {{ scope.row.columnSize }}</span>
+                            <span>{{ $t('metadata.details.accuracy') }} : {{ scope.row.precision }}</span>
+                            <span>{{ $t('metadata.details.numberLength') }} : {{ scope.row.scale }}</span>
+                            <span>{{ $t('metadata.details.selfIncreasing') }} : {{ scope.row.autoincrement }}</span>
+                          </li>
+                          <li v-if="scope.row.dictionary && scope.row.dictionary.length">
+                            <label class="label">{{ $t('metadata.details.filedDictionary') }}</label>
+                            <div class="dropInfo">
+                              <span v-for="item in scope.row.dictionary" :key="item.table_name"
+                                >{{ item.key }} : {{ item.value }}</span
+                              >
+                            </div>
+                          </li>
+                          <li v-if="scope.row.relation && scope.row.relation.length">
+                            <label class="label">{{ $t('metadata.details.foreignKeyAssociation') }}</label>
+                            <div class="dropInfo">
+                              <span v-for="item in scope.row.relation" :key="item.key"
+                                >{{ item.table_name }}, {{ item.field_name }},{{
+                                  $t('metadata.details.' + item.rel)
+                                }}</span
+                              >
+                            </div>
+                          </li>
+                        </ul>
+                      </template>
+                    </el-table-column>
+                    <!-- <el-table-column type="selection" width="45" :reserve-selection="true"> </el-table-column> -->
+                    <el-table-column prop="field_name" :label="$t('metadata.details.filedAliasName')" width="150">
+                      <template slot-scope="scope">
+                        <div class="database-text" style="margin-left: 0">
+                          <div>
+                            {{ scope.row.field_name }}
+                            <i
+                              v-if="scope.row.primary_key || scope.row.primary_key_position > 0"
+                              class="iconfont icon-yuechi1"
+                            ></i>
+                          </div>
                         </div>
-                      </div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="alias_name" :label="$t('metadata.details.alias')" width="80">
-                    <template slot-scope="scope">
-                      <div class="database-text" style="margin-left: 0">
-                        <div>{{ scope.row.alias_name }}</div>
-                      </div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="java_type" :label="$t('metadata.details.fieldType')" width="100">
-                    <template slot-scope="scope">
-                      <div>
-                        {{ $t('metadata.details.' + scope.row.java_type) }}
-                      </div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    prop="columnSize"
-                    :label="$t('metadata.details.fieldLength')"
-                    width="100"
-                  ></el-table-column>
-                  <el-table-column prop="comment" :label="$t('metadata.details.description')"></el-table-column>
-                  <el-table-column width="120" :label="$t('metadata.details.opera')">
-                    <template slot-scope="scope">
-                      <el-button
-                        v-readonlybtn="'data_catalog_edition'"
-                        size="mini"
-                        type="text"
-                        @click="edit(scope.row)"
-                      >
-                        {{ $t('metadata.details.edit') }}
-                      </el-button>
-                      <el-button
-                        v-readonlybtn="'meta_data_deleting'"
-                        v-if="scope.row.field_name !== '_id'"
-                        size="mini"
-                        type="text"
-                        @click="remove(scope.row, scope.$index, 0)"
-                        >{{ $t('button.delete') }}</el-button
-                      >
-                    </template>
-                  </el-table-column>
-                </el-table>
-                <el-pagination
-                  background
-                  class="table-page-pagination"
-                  layout="total, ->, sizes, prev, pager, next"
-                  :current-page.sync="pageCurrent"
-                  :page-sizes="[10, 20, 50, 100]"
-                  :page-size.sync="pageSize"
-                  :total="pageTotal"
-                  @size-change="handleSizeChange"
-                  @current-change="handleCurrentChange"
-                >
-                </el-pagination>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="alias_name" :label="$t('metadata.details.alias')" width="80">
+                      <template slot-scope="scope">
+                        <div class="database-text" style="margin-left: 0">
+                          <div>{{ scope.row.alias_name }}</div>
+                        </div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="java_type" :label="$t('metadata.details.fieldType')" width="100">
+                      <template slot-scope="scope">
+                        <div>
+                          {{ $t('metadata.details.' + scope.row.java_type) }}
+                        </div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      prop="columnSize"
+                      :label="$t('metadata.details.fieldLength')"
+                      width="100"
+                    ></el-table-column>
+                    <el-table-column prop="comment" :label="$t('metadata.details.description')"></el-table-column>
+                    <el-table-column width="120" :label="$t('metadata.details.opera')">
+                      <template slot-scope="scope">
+                        <el-button
+                          v-readonlybtn="'data_catalog_edition'"
+                          size="mini"
+                          type="text"
+                          @click="edit(scope.row)"
+                        >
+                          {{ $t('metadata.details.edit') }}
+                        </el-button>
+                        <el-button
+                          v-readonlybtn="'meta_data_deleting'"
+                          v-if="scope.row.field_name !== '_id'"
+                          size="mini"
+                          type="text"
+                          @click="remove(scope.row, scope.$index, 0)"
+                          >{{ $t('button.delete') }}</el-button
+                        >
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                  <el-pagination
+                    background
+                    class="table-page-pagination"
+                    layout="->,total, sizes, prev, pager, next"
+                    :current-page.sync="pageCurrent"
+                    :page-sizes="[10, 20, 50, 100]"
+                    :page-size.sync="pageSize"
+                    :total="pageTotal"
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                  >
+                  </el-pagination>
 
-                <!-- 模型 end -->
-              </div>
-              <!-- 表链路图 start-->
-              <div class="table-box" v-if="activePanel == 'relations'">
-                <Relations :tableId="metadataDataObj.qualified_name"></Relations>
-              </div>
-              <!-- 表链路图 end-->
-              <!-- 版本管理 start -->
-              <div class="table-box" v-if="activePanel == 'version'">
-                <VersionList :histories="metadataDataObj"></VersionList>
-              </div>
-              <!-- 版本管理 end -->
-              <!-- 索引 start -->
-              <div class="table-box" v-if="activePanel == 'indexes'">
-                <IndexManager :indexData="metadataDataObj" v-if="activePanel == 'indexes'"></IndexManager>
-              </div>
-              <!-- 索引 end -->
-              <!-- 数据校验 start -->
-              <div class="table-box" v-if="activePanel == 'validation'">
-                <Validation :validaData="metadataDataObj" v-if="activePanel == 'validation'"></Validation>
-              </div>
-              <!-- 数据校验 end -->
-              <!-- 数据预览 start -->
-              <div class="table-box" v-if="activePanel == 'preview'">
-                <Preview :validaData="metadataDataObj" v-if="activePanel == 'preview'"></Preview>
-              </div>
-              <!-- 数据预览 end -->
-              <!-- 管道 start -->
-              <div class="table-box" v-if="activePanel == 'pipeline'">
-                <Pipeline :pipelineData="metadataDataObj" v-if="activePanel == 'pipeline'"></Pipeline>
-              </div>
-              <!-- 管道 end -->
-              <!-- 数据集 start -->
-              <div class="table-box" v-if="activePanel == 'collections'">
-                <Collections :collectionData="metadataDataObj" v-if="activePanel == 'collections'"></Collections>
-              </div>
-              <!-- 数据集 end -->
-            </el-tab-pane>
+                  <!-- 模型 end -->
+                </div>
+                <!-- 版本管理 start -->
+                <div class="table-box" v-if="activePanel == 'version'">
+                  <VersionList :histories="metadataDataObj"></VersionList>
+                </div>
+                <!-- 版本管理 end -->
+                <!-- 索引 start -->
+                <div class="table-box" v-if="activePanel == 'indexes'">
+                  <IndexManager :indexData="metadataDataObj" v-if="activePanel == 'indexes'"></IndexManager>
+                </div>
+                <!-- 索引 end -->
+                <!-- 数据校验 start -->
+                <div class="table-box" v-if="activePanel == 'validation'">
+                  <Validation :validaData="metadataDataObj" v-if="activePanel == 'validation'"></Validation>
+                </div>
+                <!-- 数据校验 end -->
+                <!-- 数据预览 start -->
+                <div class="table-box" v-if="activePanel == 'preview'">
+                  <Preview :validaData="metadataDataObj" v-if="activePanel == 'preview'"></Preview>
+                </div>
+                <!-- 数据预览 end -->
+                <!-- 管道 start -->
+                <div class="table-box" v-if="activePanel == 'pipeline'">
+                  <Pipeline :pipelineData="metadataDataObj" v-if="activePanel == 'pipeline'"></Pipeline>
+                </div>
+                <!-- 管道 end -->
+                <!-- 数据集 start -->
+                <div class="table-box" v-if="activePanel == 'collections'">
+                  <Collections :collectionData="metadataDataObj" v-if="activePanel == 'collections'"></Collections>
+                </div>
+                <!-- 数据集 end -->
+              </el-tab-pane>
+            </template>
           </el-tabs>
           <!-- <div class="tap-nav">
             <ul class="mune">
@@ -425,9 +433,8 @@
   </section>
 </template>
 <script>
-import VersionList from './versionList'
+import VersionList from './VersionList'
 import FormPage from './Form'
-import Relations from '../relations/relations'
 import IndexManager from './IndexManager'
 import Validation from './Validation'
 import Preview from './Preview'
@@ -437,7 +444,6 @@ import VIcon from '@/components/VIcon'
 export default {
   components: {
     VersionList,
-    Relations,
     FormPage,
     IndexManager,
     Validation,
@@ -474,37 +480,32 @@ export default {
             'apiendpoint'
           ],
           key: 'version'
-        },
-        {
-          name: this.$t('metadata.details.index.title'),
-          mateTypes: ['collection'],
-          key: 'indexes'
-        },
-        {
-          name: this.$t('metadata.details.validation.title'),
-          mateTypes: ['collection'],
-          key: 'validation'
-        },
-        {
-          name: this.$t('metadata.details.pipeline.title'),
-          mateTypes: ['collection', 'mongo_view'],
-          key: 'pipeline'
-        },
-        {
-          name: this.$t('metadata.details.preview.title'),
-          mateTypes: ['collection', 'api'],
-          key: 'preview'
-        },
-        {
-          name: this.$t('metadata.details.collection'),
-          mateTypes: ['database'],
-          key: 'collections'
-        },
-        {
-          name: this.$t('relations.blood'),
-          mateTypes: ['collection', 'table', 'mongo_view', 'view'],
-          key: 'relations'
         }
+        // {
+        //   name: this.$t('metadata.details.index.title'),
+        //   mateTypes: ['collection'],
+        //   key: 'indexes'
+        // },
+        // {
+        //   name: this.$t('metadata.details.validation.title'),
+        //   mateTypes: ['collection'],
+        //   key: 'validation'
+        // },
+        // {
+        //   name: this.$t('metadata.details.pipeline.title'),
+        //   mateTypes: ['collection', 'mongo_view'],
+        //   key: 'pipeline'
+        // },
+        // {
+        //   name: this.$t('metadata.details.preview.title'),
+        //   mateTypes: ['collection', 'api'],
+        //   key: 'preview'
+        // },
+        // {
+        //   name: this.$t('metadata.details.collection'),
+        //   mateTypes: ['database'],
+        //   key: 'collections'
+        // },
       ],
       description: '',
       searchParams: {},
@@ -634,8 +635,9 @@ export default {
     // 获取数据
     getData() {
       let id = this.$route?.params?.id || ''
+      this.loading = true
       return this.$api('MetadataInstances')
-        .get([id])
+        .findTablesById([id])
         .then(res => {
           this.metadataDataObj = res.data
           this.pageTotal = res.data.fields?.length || 0
@@ -663,7 +665,7 @@ export default {
       const h = this.$createElement
       let message = h('p', [
         this.$t('message.deleteOrNot') + ' ',
-        h('span', { style: { color: '#409EFF' } }, item.field_name)
+        h('span', { style: { color: '#2C65FF' } }, item.field_name)
       ])
       this.$confirm(message, this.$t('message_title_prompt'), {
         type: 'warning',
@@ -896,12 +898,11 @@ export default {
     font-size: 16px;
     font-weight: 600;
     & > span {
-      color: #409eff;
+      color: #2c65ff;
       cursor: pointer;
     }
   }
   .metadata-content {
-    padding: 10px;
     box-sizing: border-box;
     overflow: hidden;
     .matadata-head {
@@ -915,20 +916,24 @@ export default {
       overflow: hidden;
       box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
       .img-box {
-        width: 32px;
-        height: 32px;
+        width: 55px;
+        height: 55px;
+        line-height: 55px;
+        border-radius: 50%;
+        text-align: center;
+        background-color: rgba(44, 101, 255, 0.08);
+        img {
+          width: 30px;
+          vertical-align: middle;
+        }
       }
       .table-info {
         padding-left: 20px;
-        h3 {
-          font-size: 18px;
-          color: #333;
-        }
         .description {
           padding: 0 0 5px;
           font-size: 12px;
           span {
-            color: #aaa;
+            color: rgba(0, 0, 0, 0.2);
           }
           .e-button {
             padding: 5px 12px;
@@ -974,6 +979,9 @@ export default {
           overflow: auto;
           .metadata-aside-head {
             display: flex;
+            i {
+              cursor: pointer;
+            }
           }
           .metadata-aside-main {
             font-size: 12px;
@@ -982,7 +990,6 @@ export default {
               overflow: hidden;
               span {
                 display: inline-block;
-                float: left;
                 color: #000;
               }
               .label {
@@ -993,8 +1000,10 @@ export default {
               .label + span {
                 display: inline-block;
                 max-width: calc(100% - 100px);
+                width: 100%;
                 text-overflow: ellipsis;
                 overflow: hidden;
+                text-align: right;
               }
             }
             li.business {
@@ -1008,7 +1017,7 @@ export default {
                 .delete {
                   display: inline-block;
                   cursor: pointer;
-                  color: #409eff;
+                  color: #2c65ff;
                 }
               }
             }
@@ -1023,7 +1032,7 @@ export default {
                 .delete {
                   display: inline-block;
                   cursor: pointer;
-                  color: #409eff;
+                  color: #2c65ff;
                 }
               }
             }
@@ -1037,11 +1046,11 @@ export default {
       .aside {
         width: 28px;
         height: 100%;
-        padding: 5px 0;
-        text-align: center;
-        color: #666;
+        padding: 23px 0;
+        text-align: right;
         font-size: 12px;
         background-color: #fff;
+        border-right: 1px solid #f2f2f2;
         box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
         .iconfont {
           cursor: pointer;
@@ -1176,14 +1185,12 @@ export default {
                       }
                       .label {
                         display: inline-block;
-                        float: left;
                         padding: 5px 0;
                         color: #aaa;
                         border-radius: 0;
                         background-color: transparent;
                       }
                       .dropInfo {
-                        float: left;
                         display: inline-block;
                         width: calc(100% - 60px);
                         white-space: break-spaces;
@@ -1199,6 +1206,20 @@ export default {
                 }
               }
             }
+          }
+
+          .table-page-table {
+            .el-table__header-wrapper {
+              height: 40px;
+              th {
+                padding: 0;
+                line-height: 40px !important;
+                background-color: #fafafa;
+              }
+            }
+          }
+          .table-page-pagination {
+            padding-top: 20px;
           }
 
           flex-wrap: wrap;

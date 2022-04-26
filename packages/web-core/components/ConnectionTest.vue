@@ -297,7 +297,7 @@ export default {
   }
 
   .el-dialog__body {
-    padding: 0 20px;
+    padding: 0 20px 20px;
   }
 
   .test-block {
@@ -305,6 +305,7 @@ export default {
     tr {
       .cell {
         white-space: normal !important;
+        word-break: break-word;
       }
     }
 

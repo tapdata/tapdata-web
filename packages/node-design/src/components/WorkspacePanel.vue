@@ -1,5 +1,7 @@
 <template>
-  <div class="workspace-panel flex-1"></div>
+  <div class="workspace-panel flex-1">
+    <slot></slot>
+  </div>
 </template>
 
 <script>

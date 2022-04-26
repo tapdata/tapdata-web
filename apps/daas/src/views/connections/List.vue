@@ -19,11 +19,10 @@
       </template>
       <div slot="operation">
         <ElButton
-          v-if="$getSettingByKey('SHOW_CLASSIFY')"
+          v-show="multipleSelection.length > 0"
           v-readonlybtn="'datasource_category_application'"
           size="mini"
           class="btn"
-          v-show="multipleSelection.length > 0"
           @click="$refs.table.showClassify(handleSelectTag())"
         >
           <i class="iconfont icon-biaoqian back-btn-icon"></i>
@@ -33,27 +32,21 @@
           v-readonlybtn="'datasource_creation'"
           class="btn btn-create"
           type="primary"
-          size="small"
+          size="mini"
           @click="checkTestConnectionAvailable"
         >
-          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
           <span> {{ $t('connection.createNewDataSource') }}</span>
         </ElButton>
       </div>
-      <ElTableColumn v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
-      </ElTableColumn>
-      <ElTableColumn prop="name" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true" min-width="150">
+      <ElTableColumn type="selection" width="45" :reserve-selection="true"></ElTableColumn>
+      <ElTableColumn prop="name" min-width="150" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <div class="connection-name">
             <div class="database-img">
               <img :src="$util.getConnectionTypeDialogImg(scope.row.database_type)" />
             </div>
             <div class="database-text">
-              <ElLink
-                type="primary"
-                style="display: block; line-height: 20px"
-                @click="preview(scope.row.id, scope.row.database_type)"
-              >
+              <ElLink type="primary" style="display: block; line-height: 20px" @click.stop="preview(scope.row)">
                 {{ scope.row.name }}
               </ElLink>
               <div class="region-info">{{ scope.row.regionInfo }}</div>
@@ -69,19 +62,19 @@
       <ElTableColumn prop="status" :label="$t('connection.dataBaseStatus')" width="100">
         <template slot-scope="scope">
           <div>
-            <span class="error" v-if="['invalid'].includes(scope.row.status)">
+            <span v-if="['invalid'].includes(scope.row.status)" class="error">
               <i class="connections-status__icon el-icon-error"></i>
               <span>
                 {{ $t('connection.status.invalid') }}
               </span>
             </span>
-            <span class="success" v-if="['ready'].includes(scope.row.status)">
+            <span v-if="['ready'].includes(scope.row.status)" class="success">
               <i class="connections-status__icon el-icon-success"></i>
               <span>
                 {{ $t('connection.status.ready') }}
               </span>
             </span>
-            <span class="warning" v-if="['testing'].includes(scope.row.status)">
+            <span v-if="['testing'].includes(scope.row.status)" class="warning">
               <VIcon class="connections-status__icon">loading-circle</VIcon>
               <span>
                 {{ $t('connection.status.testing') }}
@@ -90,7 +83,7 @@
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="connection_type" :label="$t('connection.connectionType')" width="160">
+      <ElTableColumn prop="connection_type" width="160" :label="$t('connection.connectionType')">
         <template slot-scope="scope">
           {{ $t('connection.type.' + scope.row.connection_type) }}
         </template>
@@ -106,46 +99,38 @@
           <SchemaProgress :data="scope.row"></SchemaProgress>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('connection.lastUpdateTime')" width="160" prop="last_updated" sortable="custom">
+      <ElTableColumn width="160" prop="last_updated" sortable="custom" :label="$t('connection.lastUpdateTime')">
         <template slot-scope="scope">
           {{ scope.row.lastUpdateTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('connection.operate')" width="200">
+      <ElTableColumn width="200" fixed="right" :label="$t('connection.operate')">
         <template slot-scope="scope">
-          <ElLink type="primary" @click="testConnection(scope.row)">{{ $t('connection.testConnection') }} </ElLink>
+          <ElLink type="primary" @click="testConnection(scope.row)">{{ $t('connection_list_test_button') }} </ElLink>
+          <ElDivider direction="vertical"></ElDivider>
           <ElLink
             v-readonlybtn="'datasource_edition'"
-            style="margin-left: 10px"
             type="primary"
             :disabled="$disabledByPermission('datasource_edition_all_data', scope.row.user_id)"
             @click="edit(scope.row.id, scope.row.database_type, scope.row)"
-            >{{ $t('message.edit') }}
+            >{{ $t('button_edit') }}
           </ElLink>
-          <ElLink
-            v-readonlybtn="'datasource_creation'"
-            style="margin-left: 10px"
-            type="primary"
-            @click="copy(scope.row)"
-            >{{ $t('message.copy') }}
+          <ElDivider direction="vertical"></ElDivider>
+          <ElLink v-readonlybtn="'datasource_creation'" type="primary" @click="copy(scope.row)"
+            >{{ $t('button_copy') }}
           </ElLink>
+          <ElDivider direction="vertical"></ElDivider>
           <ElLink
             v-readonlybtn="'datasource_delete'"
-            style="margin-left: 10px"
             type="primary"
             :disabled="$disabledByPermission('datasource_delete_all_data', scope.row.user_id)"
             @click="remove(scope.row)"
-            >{{ $t('message.delete') }}
+            >{{ $t('button_delete') }}
           </ElLink>
         </template>
       </ElTableColumn>
     </TablePage>
-    <Preview
-      :id="id"
-      :visible="previewVisible"
-      :databaseType="databaseType"
-      v-on:previewVisible="handlePreviewVisible"
-    ></Preview>
+    <Preview ref="preview"></Preview>
     <DatabaseTypeDialog
       :dialogVisible="dialogDatabaseTypeVisible"
       @dialogVisible="handleDialogDatabaseTypeVisible"
@@ -164,10 +149,11 @@ import SchemaProgress from 'web-core/components/SchemaProgress'
 import TablePage from '@/components/TablePage'
 import VIcon from '@/components/VIcon'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
-import Preview from './Preview'
+import Preview from './Preview.vue'
 import { defaultModel, verify, desensitization } from './util'
 import Test from './Test'
 import FilterBar from '@/components/filter-bar'
+import { TYPEMAP } from 'web-core/const'
 
 let timeout = null
 
@@ -178,7 +164,6 @@ export default {
       filterItems: [],
       user_id: this.$cookie.get('user_id'),
       dialogDatabaseTypeVisible: false,
-      previewVisible: false,
       multipleSelection: [],
       tableData: [],
       databaseType: '',
@@ -250,30 +235,20 @@ export default {
   },
   watch: {
     '$route.query'() {
-      // this.searchParams = Object.assign(this.searchParams, this.table.getCache())
       this.table.fetch(1)
     }
   },
   created() {
-    this.getDatabaseType()
-    //header
-    // let guideDoc =
-    //   ' <a target="_blank" style="color: #409EFF" href="https://docs.tapdata.net/data-source">' +
-    //   this.$t('dataForm.form.guideDoc') +
-    //   '</a>'
-    // this.description = this.$t('connection.desc') + guideDoc
     let helpUrl = 'https://docs.tapdata.net'
     let guideDoc =
       ` <a style="color: #48B6E2" href="${helpUrl}/data-source">` + this.$t('connection_list_help_doc') + '</a>'
-    if (this.$getSettingByKey('SHOW_OLD_PAGE')) {
-      this.description = this.$t('connection_list_desc')
-    } else {
-      this.description = this.$t('connection_list_desc') + guideDoc
-    }
+
+    this.description = this.$t('connection_list_desc') + guideDoc
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 10000)
+    this.getFilterItems()
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -320,19 +295,7 @@ export default {
       this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
-    async getDatabaseType() {
-      let databaseTypes = await this.$api('DatabaseTypes').get()
-      let databaseTypeOptions = databaseTypes.data
-        .filter(dt => dt.type !== 'kudu')
-        .sort((t1, t2) => (t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1))
-      this.databaseTypeOptions = databaseTypeOptions.map(item => {
-        return {
-          label: item.name,
-          value: item.type
-        }
-      })
-      this.getFilterItems()
-    },
+
     getData({ page, tags }) {
       let region = this.$route.query.region
       let { current, size } = page
@@ -430,13 +393,8 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
-    preview(id, type) {
-      this.id = id
-      this.databaseType = type
-      this.previewVisible = true
-    },
-    handlePreviewVisible() {
-      this.previewVisible = false
+    preview(row) {
+      this.$refs.preview.open(row)
     },
     edit(id, type, item) {
       if (item.search_databaseType) {
@@ -493,8 +451,9 @@ export default {
         ),
         strArr[1]
       ])
-      this.$confirm(msg, this.$t('connection.deteleDatabaseTittle'), {
-        type: 'warning'
+      this.$confirm(msg, '', {
+        type: 'warning',
+        showClose: false
       }).then(resFlag => {
         if (!resFlag) {
           return
@@ -511,8 +470,8 @@ export default {
               this.table.fetch()
             }
           })
-          .catch(({ response }) => {
-            let msg = response && response.msg
+          .catch(err => {
+            let msg = err?.data?.message
             if (msg && (msg.jobs || msg.modules)) {
               this.$message.error(this.$t('connection.cannot_delete_remind'))
               // const h = this.$createElement;
@@ -523,6 +482,8 @@ export default {
               // 		...msg.modules.map(j => h('div', {}, []))
               // 	])
               // );
+            } else if (err?.data?.code === 'Datasource.LinkJobs') {
+              this.$message.error(this.$t('connection_list_delete_link_job'))
             } else {
               this.$message.error(msg || this.$t('connection.deleteFail'))
             }
@@ -588,6 +549,10 @@ export default {
         .batchUpdateListtags(attributes)
         .then(() => {
           this.table.fetch()
+          this.$message.success(this.$t('message_save_ok'))
+        })
+        .catch(() => {
+          this.$message.error(this.$t('message_save_fail'))
         })
     },
     //选择创建类型
@@ -606,47 +571,40 @@ export default {
 
     //检测agent 是否可用
     async checkTestConnectionAvailable() {
-      this.dialogDatabaseTypeVisible = true
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-      } else {
+      this.$root.checkAgent(() => {
         this.dialogDatabaseTypeVisible = true
-      }
+      })
     },
     async testConnection(item) {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        this.$message.error(this.$t('dataForm.form.agentMsg'))
-        return
-      }
-      let loading = this.$loading()
-      this.testData = Object.assign({}, defaultModel['default'], item)
-      if (['gridfs', 'mongodb'].includes(item.database_type)) {
-        delete this.testData.database_uri
-        this.testData.justTest = true
-      }
-      if (item.database_type !== 'redis') {
-        delete this.testData['database_password']
-      }
-      this.$api('connections')
-        .updateById(
-          item.id,
-          Object.assign(
-            {},
-            {
-              status: 'testing'
-            }
+      this.$root.checkAgent(() => {
+        let loading = this.$loading()
+        this.testData = Object.assign({}, defaultModel['default'], item)
+        if (['gridfs', 'mongodb'].includes(item.database_type)) {
+          delete this.testData.database_uri
+          this.testData.justTest = true
+        }
+        if (item.database_type !== 'redis') {
+          delete this.testData['database_password']
+        }
+        this.$api('connections')
+          .updateById(
+            item.id,
+            Object.assign(
+              {},
+              {
+                status: 'testing'
+              }
+            )
           )
-        )
-        .then(() => {
-          this.dialogTestVisible = true
-          this.$refs.test.start()
-          this.table.fetch()
-        })
-        .finally(() => {
-          loading.close()
-        })
+          .then(() => {
+            this.dialogTestVisible = true
+            this.$refs.test.start()
+            this.table.fetch()
+          })
+          .finally(() => {
+            loading.close()
+          })
+      })
     },
     returnTestData(data) {
       if (!data.status || data.status === null) return
@@ -678,7 +636,19 @@ export default {
           key: 'databaseType',
           type: 'select-inner',
           menuMinWidth: '250px',
-          items: this.databaseTypeOptions
+          items: async () => {
+            let res = await this.$api('connections').getDataTypes()
+            let databaseTypes = res?.data || []
+            let databaseTypeOptions = databaseTypes.sort((t1, t2) =>
+              t1.name > t2.name ? 1 : t1.name === t2.name ? 0 : -1
+            )
+            return databaseTypeOptions.map(item => {
+              return {
+                label: TYPEMAP[item],
+                value: item
+              }
+            })
+          }
         },
         {
           placeholder: this.$t('task_list_search_placeholder'),
@@ -699,14 +669,6 @@ export default {
         font-size: 12px;
       }
     }
-  }
-
-  .btn-refresh {
-    padding: 0;
-    height: 32px;
-    line-height: 32px;
-    width: 32px;
-    font-size: 16px;
   }
 
   .connection-name {

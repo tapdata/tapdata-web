@@ -67,19 +67,17 @@ export default {
 </script>
 <style lang="scss" scoped>
 .debug-logs {
-  padding: 10px 5px 5px 20px;
   height: 100%;
   box-sizing: border-box;
   overflow: hidden;
   ::v-deep {
     .log-container {
-      height: 300px;
-      max-height: 300px;
+      max-height: 400px;
     }
     .vue-recycle-scroller {
-      padding: 24px;
-      height: 250px;
-      max-height: 300px;
+      padding: 12px 24px;
+      height: 400px;
+      max-height: 600px;
       font-size: 14px;
       color: #333;
     }

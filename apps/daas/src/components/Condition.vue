@@ -48,14 +48,14 @@
             :placeholder="$t('query_build_queryValue')"
             size="mini"
             v-if="model.queryCommand === 'between' && !isDatetime"
-            style="width: 120px; padding-right: 10px"
+            style="width: 125px; padding-right: 10px"
           ></el-input>
           <el-input
             v-model="model.largerValue"
             v-if="model.queryCommand === 'between' && !isDatetime"
             :placeholder="$t('query_build_queryValue')"
             size="mini"
-            style="width: 120px; padding-right: 10px"
+            style="width: 125px; padding-right: 10px"
           ></el-input>
           <el-date-picker
             v-model="model.smallerValue"
@@ -164,6 +164,11 @@ export default {
     //   }
     // },
     conditions: {
+      handler() {
+        this.filterChange()
+      }
+    },
+    'model.queryField': {
       handler() {
         this.filterChange()
       }
@@ -296,7 +301,7 @@ export default {
 <style scoped lang="scss">
 .condition-warp {
   .condition-warp-group {
-    padding: 0 10px 0 24px;
+    // padding: 0 10px 0 24px;
     .condition-warp-group-item {
       display: flex;
       justify-content: space-between;

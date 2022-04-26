@@ -34,10 +34,59 @@ export default class TaskAPI extends PublicAPI {
   batchStop(ids) {
     return axios.put(this.url + `/batchStop?taskIds=` + ids.join('&taskIds='))
   }
+  forceStop(id) {
+    return axios.put(this.url + `/stop/${id}?force=true`)
+  }
   batchStart(ids) {
     return axios.put(this.url + `/batchStart?taskIds=` + ids.join('&taskIds='))
   }
   patchId(id, params) {
     return axios.patch(`${this.url}/${id}`, params)
+  }
+  chart(id) {
+    if (id) {
+      return axios.get(`${this.url}/chart?user_id=${id}`)
+    } else {
+      return axios.get(this.url + '/chart')
+    }
+  }
+  findTaskDetailById(id) {
+    return axios.get(this.url + '/findTaskDetailById/' + id)
+  }
+  tranModelVersionControl(params) {
+    return axios.post(this.url + '/tranModelVersionControl', params)
+  }
+  getId(id, params, filter) {
+    if (Array.isArray(params)) {
+      filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
+      let qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
+      return axios.get(this.url + '/' + id + params.join('/') + qs)
+    }
+    params = params || {}
+    return axios.get(this.url + '/' + id, { params })
+  }
+  edit(params) {
+    return axios.patch(this.url + '/confirm/' + params.id, params)
+  }
+  save(params) {
+    return axios.patch(this.url + '/confirm', params)
+  }
+  checkName(name, id) {
+    if (id) {
+      return axios.post(this.url + '/checkName?name=' + name + '&id=' + id)
+    } else {
+      return axios.post(this.url + '/checkName?name=' + name)
+    }
+  }
+  export(ids) {
+    let href = this.url + `/batch/load?taskId=${ids.join('&taskId=')}&access_token=${window.VueCookie.get('token')}`
+    window.open(href)
+  }
+  checkRun(id) {
+    return axios.get(this.url + '/checkRun/' + id)
+  }
+
+  batchUpdateListtags(params) {
+    return axios.patch(`${this.url}/batchUpdateListtags`, params)
   }
 }

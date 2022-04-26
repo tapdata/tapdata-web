@@ -1,3 +1,4 @@
+import { AllLocales } from '../locales'
 const nodeContext = require.context('../', false, /\.js$/)
 
 const requireAllNode = requireContext => {
@@ -152,7 +153,8 @@ export const nodeTypes = [
     icon: 'table',
     group: 'data',
     type: 'table',
-    constructor: 'Table'
+    constructor: 'Table',
+    locales: AllLocales.Table
   },
   {
     name: '数据集',

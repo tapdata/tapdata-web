@@ -21,19 +21,21 @@
             class="title-input text-truncate"
             @change="handleChangeName"
           />
-          <VIcon @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
+          <VIcon v-if="!stateIsReadonly" @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
         </div>
       </div>
       <ElTabs v-model="currentTab" class="config-tabs">
-        <ElTabPane label="属性设置">
-          <FormPanel v-on="$listeners"></FormPanel>
+        <!--属性设置-->
+        <ElTabPane :label="$t('dag_property_setting')">
+          <FormPanel v-on="$listeners" v-bind="$attrs" ref="formPanel"></FormPanel>
         </ElTabPane>
-        <ElTabPane label="元数据">
-          <MetaPane></MetaPane>
+        <!--元数据-->
+        <ElTabPane :label="$t('dag_meta_data')">
+          <MetaPane :is-show="currentTab === '1'"></MetaPane>
         </ElTabPane>
-        <ElTabPane label="数据详情">
+        <!--<ElTabPane label="数据详情">
           <DataPane></DataPane>
-        </ElTabPane>
+        </ElTabPane>-->
       </ElTabs>
     </div>
   </section>
@@ -45,7 +47,7 @@ import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
 import FormPanel from './FormPanel'
 import SettingPanel from './SettingPanel'
-import DataPane from './DataPane'
+// import DataPane from './DataPane'
 import MetaPane from './MetaPane'
 import VIcon from 'web-core/components/VIcon'
 import { NODE_TYPE_ICON } from '../constants'
@@ -65,10 +67,10 @@ export default {
     }
   },
 
-  components: { VIcon, MetaPane, DataPane, FormPanel, SettingPanel },
+  components: { VIcon, MetaPane, /*DataPane,*/ FormPanel, SettingPanel },
 
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById']),
+    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
 
     icon() {
       const node = this.activeNode
@@ -96,6 +98,10 @@ export default {
 
     handleClosePanel() {
       this.setActiveType(null)
+    },
+
+    async validateForm() {
+      await this.$refs.formPanel?.validate()
     }
   }
 }

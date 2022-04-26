@@ -2,16 +2,11 @@
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
       <main class="connection-from-main">
-        <div class="connection-from-title" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
+        <div class="connection-from-title">
           {{
             $route.params.id ? this.$t('connection_form_edit_connection') : this.$t('connection_form_creat_connection')
           }}
         </div>
-        <!-- <header class="header" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
-          {{ $route.params.id ? $t('connection_form_edit_connection') : $t('connection_form_creat_connection') }}
-        </header> -->
-        <!-- <div class="databaseFrom-body">
-          <main class="databaseFrom-main"> -->
         <div class="connection-from-label" v-if="$route.params.id">
           <label class="label">{{ $t('connection_form_data_source') }}: </label>
           <div class="content-box">
@@ -34,23 +29,6 @@
             <el-button class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
               {{ $t('connection_form_change') }}
             </el-button>
-            <!-- <div class="content-box">
-              <div class="content">
-                {{ typeMap[databaseType] }}
-                <div class="addBtn color-primary" @click="dialogDatabaseTypeVisible = true">
-                  {{ $t('connection.change') }}
-                </div>
-              </div>
-              <div class="tip" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
-                    {{ $t('dataForm.form.guide') }}
-                    <a class="color-primary" target="_blank" href="https://docs.tapdata.net/data-source">{{
-                      $t('dataForm.form.guideDoc')
-                    }}</a>
-                  </div>
-                  <div class="tip" v-if="$getSettingByKey('DFS_TCM_PLATFORM')">
-                    请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
-                  </div>
-            </div> -->
           </div>
         </div>
         <div class="form-wrap">
@@ -70,11 +48,10 @@
                   >请先创建mongodb数据源</el-link
                 >
                 /
-                <span class="refresh" @click="getMongodb"> 刷新数据 <VIcon class="font-color-sub">refresh</VIcon></span>
+                <span class="refresh" @click="getMongodb">
+                  刷新数据 <VIcon class="font-color-slight">refresh</VIcon></span
+                >
               </div>
-              <!-- <div class="url-tip" slot="kududatabase">
-                {{ $t('dataForm.form.kuduhost') }}
-              </div> -->
               <div class="url-tip" slot="ecsList" v-if="model.sourceType === 'ecs'">
                 <el-select
                   v-model="model.ecs"
@@ -106,34 +83,6 @@
                 </span>
               </div>
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
-              <!-- <div class="url-tip" slot="tableFilter">
-                {{ $t('connection_form_database_owner_tip') }}
-              </div> -->
-              <!-- <div class="url-tip" slot="timezone">
-                {{ $t('dataForm.form.timeZoneTips') }}
-              </div> -->
-              <!-- <div class="url-tip" slot="kafkaUri">
-                {{ $t('dataForm.form.kafka.hostPlaceHolder') }}
-              </div> -->
-              <!-- <div class="url-tip" slot="lonoreFormatTip">
-                {{ $t('dataForm.form.kafka.lonoreFormatTip') }}
-              </div> -->
-              <!-- <div class="url-tip" slot="pushErrorTip">
-                {{ $t('dataForm.form.kafka.pushErrorTip') }}
-              </div> -->
-
-              <!-- <div class="url-tip" slot="queueTip" v-if="model.mqType !== '2'">
-                {{ $t('dataForm.form.mq.queueSetTip') }}
-              </div> -->
-              <!-- <div class="url-tip" slot="topicTip" v-if="model.mqType !== '1'">
-                {{ $t('dataForm.form.mq.topicSetTip') }}
-              </div> -->
-              <!-- <div class="url-tip" slot="brokerUrlTip" v-if="model.mqType === '0'">
-                {{ $t('dataForm.form.mq.brokerUrlTip') }}
-              </div> -->
-              <!-- <div class="url-tip" slot="file_schema_tip">
-                <div>{{ $t('dataForm.form.gridfs.file_schema_tip') }}</div>
-              </div> -->
               <!-- rest api -->
               <div class="url-tip" slot="req_pre_process">
                 <div>function request_process(url, headers, request_params, offset) {</div>
@@ -501,9 +450,7 @@
                 </div>
               </div>
             </template>
-            <el-button type="primary" size="mini" class="test" @click="startTest()">{{
-              $t('connection.testConnection')
-            }}</el-button>
+
             <span class="status">
               <span class="error" v-if="['invalid'].includes(status)">
                 <VIcon>error</VIcon>
@@ -528,14 +475,15 @@
         </div>
         <footer slot="footer" class="footer">
           <div class="footer-btn">
-            <el-button size="mini" @click="goBack()">{{ $t('dataForm.cancel') }}</el-button>
+            <el-button size="mini" @click="goBack()">{{ $t('button_back') }}</el-button>
+            <el-button size="mini" class="test" @click="startTest()">{{ $t('connection_list_test_button') }}</el-button>
             <el-button size="mini" type="primary" :loading="submitBtnLoading" @click="submit">
-              {{ $t('dataForm.submit') }}
+              {{ $t('button_save') }}
             </el-button>
           </div>
         </footer>
       </main>
-      <GitBook v-if="!$getSettingByKey('DFS_TCM_PLATFORM')"></GitBook>
+      <GitBook></GitBook>
       <!-- </div>
       </main> -->
     </div>
@@ -564,29 +512,12 @@
         >
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelRename" size="mini">{{ $t('dataForm.cancel') }}</el-button>
+        <el-button @click="handleCancelRename" size="mini">{{ $t('button_cancel') }}</el-button>
         <el-button @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
-          $t('message.confirm')
+          $t('button_confirm')
         }}</el-button>
       </span>
     </el-dialog>
-    <!-- <el-dialog
-			:title="$t('dataForm.dialogTitle')"
-			:close-on-click-modal="false"
-			:visible.sync="repeatDialogVisible"
-			width="30%"
-		>
-			<p>
-				{{ $t('dataForm.error.sourceNameExist') }}
-				<span @click="clickLinkSource" style="color:#409EFF;cursor: pointer">
-					{{ connectionObj.name }}</span
-				>
-				{{ $t('dataForm.error.noCreate') }}
-			</p>
-			<span slot="footer" class="dialog-footer">
-				<el-button @click="repeatDialogVisible = false">{{ $t('dataForm.close') }}</el-button>
-			</span>
-		</el-dialog> -->
   </div>
 </template>
 
@@ -596,11 +527,11 @@ import formConfig from './config'
 import GitBook from './GitBook'
 import CodeEditor from '@/components/CodeEditor'
 import Test from './Test'
-import { TYPEMAPCONFIG, defaultModel, defaultCloudModel } from './util'
+import { TYPEMAPCONFIG, defaultModel } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import VIcon from '@/components/VIcon'
+import { checkConnectionName } from '@/utils/util'
 
-const databaseTypesModel = factory('DatabaseTypes')
 const connectionsModel = factory('connections')
 let defaultConfig = []
 export default {
@@ -639,7 +570,7 @@ export default {
     let validateRename = (rule, value, callback) => {
       if (!this.renameData.rename || !this.renameData.rename.trim()) {
         callback(new Error(this.$t('dataForm.form.connectionName') + this.$t('formBuilder.noneText')))
-      } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(this.renameData.rename)) {
+      } else if (!checkConnectionName(this.renameData.rename)) {
         callback(new Error('名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格'))
       } else {
         callback()
@@ -652,48 +583,10 @@ export default {
       visible: false,
       createStrategyDisabled: false,
       timezones: [],
-      dataTypes: [],
       logSaveList: [1, 2, 3, 4, 5, 6, 7],
       mongodbList: [],
       showSystemConfig: false,
       tableList: [], //共享挖掘
-      // whiteList: [
-      //   'mysql',
-      //   'oracle',
-      //   'mongodb',
-      //   'sqlserver',
-      //   'postgres',
-      //   'elasticsearch',
-      //   'redis',
-      //   'file',
-      //   'db2',
-      //   'kafka',
-      //   'mariadb',
-      //   'mysql pxc',
-      //   // 'jira',
-      //   'mq',
-      //   'dameng',
-      //   'gbase-8s',
-      //   'sybase ase',
-      //   'gaussdb200',
-      //   'dummy db',
-      //   'rest api',
-      //   'custom_connection',
-      //   'gridfs',
-      //   'hive',
-      //   'tcp_udp',
-      //   'hbase',
-      //   'kudu',
-      //   'greenplum',
-      //   'tidb',
-      //   'hana',
-      //   'clickhouse',
-      //   'kundb',
-      //   'adb_postgres',
-      //   'adb_mysql',
-      //   'vika',
-      //   'hazelcast_cloud_cluster'
-      // ],
       model: '',
       config: {
         items: []
@@ -763,14 +656,62 @@ export default {
     }
   },
   created() {
+    let self = this
+    defaultConfig = [
+      {
+        type: 'input',
+        field: 'name',
+        label: self.$t('dataForm.form.connectionName'),
+        required: true,
+        maxlength: 100,
+        width: '504px',
+        showWordLimit: true,
+        show: true,
+        customClass: 'large-item',
+        rules: [
+          {
+            required: true,
+            trigger: 'blur',
+            validator: (rule, value, callback) => {
+              if (!value || !value.trim()) {
+                callback(new Error('连接名称不能为空'))
+              } else if (!checkConnectionName(value)) {
+                callback('连接名称中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格')
+              } else if (value && value.trim() && checkConnectionName(value)) {
+                let filter = {
+                  where: {
+                    name: this.model.name
+                  },
+                  fields: {
+                    name: 1
+                  },
+                  limit: 1
+                }
+                if (this.id) {
+                  filter.where['id'] = { neq: this.id }
+                }
+                this.$api('connections')
+                  .get({
+                    filter: JSON.stringify(filter)
+                  })
+                  .then(res => {
+                    if (res.data?.total !== 0) {
+                      callback(new Error('名称已存在'))
+                    } else callback()
+                  })
+              } else {
+                callback()
+              }
+            }
+          }
+        ]
+      }
+    ]
     this.id = this.$route.params.id || ''
     this.databaseType = this.$route.query.databaseType || this.$store.state.createConnection.databaseType
     //确认类型 按照type 初始化变量
-    if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-      this.model = Object.assign({}, defaultCloudModel['default'], defaultCloudModel['drs'])
-    } else {
-      this.model = Object.assign({}, defaultModel['default'])
-    }
+
+    this.model = Object.assign({}, defaultModel['default'])
     switch (this.databaseType) {
       case 'kafka':
         this.model = Object.assign({}, defaultModel['kafka'])
@@ -803,63 +744,8 @@ export default {
         this.model = Object.assign({}, defaultModel['vika'])
         break
     }
-    this.getDT(this.databaseType)
+    this.checkDataTypeOptions(this.databaseType)
     this.initTimezones()
-    let self = this
-    defaultConfig = [
-      {
-        type: 'input',
-        field: 'name',
-        label: self.$t('dataForm.form.connectionName'),
-        required: true,
-        maxlength: 100,
-        width: '504px',
-        showWordLimit: true,
-        show: true,
-        customClass: 'large-item',
-        rules: [
-          {
-            required: true,
-            trigger: 'blur',
-            validator: (rule, value, callback) => {
-              if (!value || !value.trim()) {
-                callback(new Error('连接名称不能为空'))
-              } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(value)) {
-                callback('连接名称中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格')
-              } else if (
-                value &&
-                value.trim() &&
-                /^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(value)
-              ) {
-                let filter = {
-                  where: {
-                    name: this.model.name
-                  },
-                  fields: {
-                    name: 1
-                  },
-                  limit: 1
-                }
-                if (this.id) {
-                  filter.where['id'] = { neq: this.id }
-                }
-                this.$api('connections')
-                  .get({
-                    filter: JSON.stringify(filter)
-                  })
-                  .then(res => {
-                    if (res.data?.total !== 0) {
-                      callback(new Error('名称已存在'))
-                    } else callback()
-                  })
-              } else {
-                callback()
-              }
-            }
-          }
-        ]
-      }
-    ]
   },
   watch: {
     'model.multiTenant'(val) {
@@ -892,17 +778,9 @@ export default {
     formChange(data) {
       let filed = data.field || ''
       let value = data.value
-      if (filed === 'sourceType') {
-        this.model.database_host = ''
-      }
-      if (filed === 'region') {
-        this.model.zone = ''
-      }
-      if (filed === 'zone') {
-        this.getDataSourceRegion() //选择完zone 联动实例vip 接口
-      }
-      if (filed === 's_region') {
-        this.model.s_zone = ''
+      if (filed === 'connection_type') {
+        this.model.redoLogParserEnable = false
+        this.model.shareCdcEnable = false
       }
       //rest api
       if (filed === 'data_sync_mode') {
@@ -953,6 +831,7 @@ export default {
       }
       if (filed === 'persistenceMongodb_uri_db') {
         //请求是否有全局共享挖掘配置
+        this.model.persistenceMongodb_collection = '' //清空之前的数据
         this.handleTables()
       }
     },
@@ -1001,9 +880,6 @@ export default {
     checkDataTypeOptions(type) {
       this.model.database_type = type
       this.getFormConfig()
-      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-        this.getInstanceRegion()
-      }
     },
     initTimezones() {
       let timezones = [{ label: '(Database Timezone)', value: '' }]
@@ -1029,17 +905,6 @@ export default {
       }
       this.timezones = timezones
     },
-    // 获取数据库类型列表
-    async getDT(type) {
-      let result = await databaseTypesModel.get()
-      if (result.data) {
-        let options = result.data.map(dt => {
-          return { label: dt.name, value: dt.type }
-        })
-        this.dataTypes = options
-        this.checkDataTypeOptions(type)
-      }
-    },
     //获取维格表的空间
     getSpaceVika(id) {
       if ((!this.model.plain_password || this.model.plain_password === '') && !id) {
@@ -1063,18 +928,16 @@ export default {
     },
     // 共享挖掘设置
     check() {
-      this.$api('logcollector')
-        .check()
-        .then(res => {
-          if (res) {
-            let result = res?.data?.data
-            if (result) {
-              this.showSystemConfig = true
-              this.getMongodb()
-              //打开全局设置
-            }
+      Promise.all([this.$api('logcollector').check(), this.$api('logcollector').getSystemConfig()]).then(
+        ([check, res]) => {
+          let verify = check?.data
+          let digSettingForm = res?.data
+          if (verify && !digSettingForm?.persistenceMongodb_uri_db) {
+            this.showSystemConfig = true
+            this.getMongodb() //打开全局设置
           }
-        })
+        }
+      )
     },
     //获取所有mongo连接
     getMongodb() {
@@ -1165,11 +1028,6 @@ export default {
     getFormConfig() {
       let type = this.model.database_type
       type = TYPEMAPCONFIG[type] || type //特殊数据源名称转换
-      if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-        type = 'drs_' + type
-      } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-        type = 'dfs_' + type
-      }
       let func = formConfig[type]
 
       if (func) {
@@ -1189,10 +1047,6 @@ export default {
         if (this.model.database_type === 'mongodb' && this.$route.params.id && itemIsUrl) {
           itemIsUrl.options[0].disabled = true //编辑模式下mongodb不支持URL模式
         }
-        // else if (this.model.database_type === 'mongodb' && !this.$route.params.id && itemIsUrl) {
-        //   itemIsUrl.options[1].disabled = true
-        // }
-        //编辑模式下mongodb 不校验证书
         if (this.model.database_type === 'mongodb' && this.$route.params.id && sslKey) {
           sslKey.rules = []
         }
@@ -1222,21 +1076,21 @@ export default {
       this.loadingFrom = false
     },
     //第一步 选择实例
-    getInstanceRegion() {
-      this.$api('tcm')
-        .getRegionZone()
-        .then(data => {
-          this.instanceMock = data.data || []
-          if (this.model.region === '' && this.instanceMock.length > 0) {
-            this.model.region = this.instanceMock[0].code
-          }
-          this.changeConfig(this.instanceMock || [], 'region')
-          this.changeInstanceRegion()
-        })
-        .catch(() => {
-          this.$message.error('请求失败')
-        })
-    },
+    // getInstanceRegion() {
+    //   this.$api('tcm')
+    //     .getRegionZone()
+    //     .then(data => {
+    //       this.instanceMock = data.data || []
+    //       if (this.model.region === '' && this.instanceMock.length > 0) {
+    //         this.model.region = this.instanceMock[0].code
+    //       }
+    //       this.changeConfig(this.instanceMock || [], 'region')
+    //       this.changeInstanceRegion()
+    //     })
+    //     .catch(() => {
+    //       this.$message.error('请求失败')
+    //     })
+    // },
     changeInstanceRegion() {
       let zone = this.instanceMock.filter(item => item.code === this.model.region)
       if (zone.length > 0) {
@@ -1372,7 +1226,6 @@ export default {
           //映射可用区
           let persistenceMongodb_uri_db = items.find(it => it.field === 'persistenceMongodb_uri_db')
           if (persistenceMongodb_uri_db) {
-            persistenceMongodb_uri_db.show = true
             persistenceMongodb_uri_db.options = this.mongodbList.map(item => {
               return {
                 id: item.id,
@@ -1493,12 +1346,14 @@ export default {
         })
     },
     goBack() {
-      let tip = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接'
-      let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
-      this.$confirm(tip, title, {
-        confirmButtonText: '放弃',
-        cancelButtonText: '取消',
-        type: 'warning'
+      let msg = this.$route.params.id ? '此操作会丢失当前修改编辑内容' : '此操作会丢失当前正在创建的连接'
+      // let title = this.$route.params.id ? '是否放弃修改内容？' : '是否放弃创建该连接？'
+
+      this.$confirm(msg, '', {
+        confirmButtonText: this.$t('connection_form_give_up'),
+        cancelButtonText: this.$t('button_cancel'),
+        type: 'warning',
+        showClose: false
       }).then(resFlag => {
         if (!resFlag) {
           return
@@ -1679,15 +1534,6 @@ export default {
               }
             })
           }
-          if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-            params['platformInfo'] = Object.assign(params['platformInfo'], this.handlePlatformInfo(params))
-            if (params.sourceType === 'selfDB') {
-              delete params.DRS_region
-              delete params.DRS_zone
-              delete params.platformInfo.DRS_region
-              delete params.platformInfo.DRS_zone
-            }
-          }
           connectionsModel[this.model.id ? 'patchId' : 'post'](params)
             .then(() => {
               this.$message.success(this.$t('message.saveOK'))
@@ -1706,16 +1552,17 @@ export default {
             })
             .catch(err => {
               if (err && err.response) {
-                if (err.response.msg.indexOf('duplication for names') > -1) {
-                  this.$message.error(this.$t('dataForm.error.connectionNameExist'))
-                } else if (err.response.msg.indexOf('duplicate source') > -1) {
-                  // this.connectionObj.name = err.response.data.name;
-                  // this.connectionObj.id = err.response.data.id;
-                  // this.repeatDialogVisible = true;
-                  this.$message.error(this.$t('dataForm.error.duplicateSource'))
-                } else {
-                  this.$message.error(err.response.msg)
-                }
+                // if (err.response.msg.indexOf('duplication for names') > -1) {
+                //   this.$message.error(this.$t('dataForm.error.connectionNameExist'))
+                // } else if (err.response.msg.indexOf('duplicate source') > -1) {
+                //   // this.connectionObj.name = err.response.data.name;
+                //   // this.connectionObj.id = err.response.data.id;
+                //   // this.repeatDialogVisible = true;
+                //   this.$message.error(this.$t('dataForm.error.duplicateSource'))
+                // } else {
+                //   this.$message.error(err.response.msg)
+                // }
+                this.$message.error(err.response.message)
               } else {
                 this.$message.error(this.$t('message.saveFail'))
               }
@@ -1730,14 +1577,7 @@ export default {
     },
     //开始测试
     async startTest() {
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-          this.$message.error(this.$t('dataForm.form.agentConnectionMsg'))
-        } else {
-          this.$message.error(this.$t('dataForm.form.agentMsg'))
-        }
-      } else {
+      this.$root.checkAgent(() => {
         this.$refs.form.validate(valid => {
           if (valid) {
             let data = Object.assign({}, this.model)
@@ -1748,15 +1588,12 @@ export default {
               data.mqQueueSet = this.model.mqQueueSet.split(',')
               data.mqTopicSet = this.model.mqTopicSet.split(',')
             }
-            if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-              this.model['platformInfo'] = Object.assign(
-                this.model['platformInfo'],
-                this.handlePlatformInfo(this.model)
-              )
-            }
             this.dialogTestVisible = true
             if (this.$route.params.id) {
               //编辑需要特殊标识 updateSchema = false editTest = true
+              if (['mongodb', 'gridfs'].includes(data.database_type) && data?.database_uri) {
+                delete this.model.database_uri
+              }
               this.$refs.test.start(false, true)
             } else {
               delete this.model.id
@@ -1767,7 +1604,7 @@ export default {
             }
           }
         })
-      }
+      })
     },
     returnTestData(data) {
       if (!data.status || data.status === null) return
@@ -1824,21 +1661,6 @@ export default {
     // 跳转到重复数据源
     clickLinkSource() {
       window.open('/#/connection/' + this.connectionObj.id, '_blank')
-    },
-    //检测agent 是否可用
-    async checkTestConnectionAvailable() {
-      //drs 检查实例是否可用 dfs 检查agent是否可用
-      if (window.getSettingByKey('DFS_TCM_PLATFORM') !== 'drs') {
-        let result = await this.$api('Workers').getAvailableAgent()
-        if (!result.data.result || result.data.result.length === 0) {
-          this.$message.error(this.$t('dataForm.form.agentMsg'))
-        }
-      } else if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-        let result = await this.$api('tcm').getAgentCount()
-        if (!result.data || !result.data.agentTotalCount || result.data.agentTotalCount <= 0) {
-          this.$message.error('您尚未订购同步实例，请先订购实例')
-        }
-      }
     },
     handleDatabaseType(type) {
       this.dialogDatabaseTypeVisible = false
@@ -1924,7 +1746,7 @@ export default {
         font-size: 14px;
         font-family: PingFangSC-Medium, PingFang SC;
         font-weight: 500;
-        color: rgba(0, 0, 0, 0.85);
+        color: map-get($fontColor, dark);
         line-height: 28px;
       }
       .connection-from-label {
@@ -1939,7 +1761,7 @@ export default {
         .label {
           width: 160px;
           font-size: 12px;
-          color: #606266;
+          color: map-get($fontColor, light);
         }
         .content-box {
           display: flex;
@@ -1991,11 +1813,11 @@ export default {
                 }
                 .url-tip {
                   font-size: 12px;
-                  color: map-get($fontColor, slight);
+                  color: map-get($fontColor, light);
                   b {
                     font-size: 12px;
                     font-weight: 400;
-                    color: map-get($fontColor, slight);
+                    color: map-get($fontColor, light);
                   }
                 }
                 .fb-radio-group {
@@ -2210,18 +2032,17 @@ export default {
     .footer-btn {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: flex-start;
       margin: 0 auto;
       padding-top: 18px;
-      width: 450px;
     }
-    button {
-      margin-left: 10px;
-      padding: 0 15px;
-      height: 32px;
-      line-height: 32px;
-      border-radius: 2px;
-    }
+    // button {
+    //   margin-left: 10px;
+    //   padding: 0 15px;
+    //   height: 32px;
+    //   line-height: 32px;
+    //   border-radius: 2px;
+    // }
   }
 }
 </style>

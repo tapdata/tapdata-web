@@ -31,6 +31,7 @@ const findByCod = (arr, cond) => {
 // 初始化 state
 const state = () => ({
   stateIsDirty: false, // 状态是否被污染，标识数据改变
+  stateIsReadonly: false, // 状态是否被污染，标识数据改变
   nodeTypes: [], // 所有节点类型
   nodeViewOffsetPosition: [0, 0],
   paperMoveInProgress: false,
@@ -54,6 +55,9 @@ const state = () => ({
 const getters = {
   getStateIsDirty: state => {
     return state.stateIsDirty
+  },
+  stateIsReadonly: state => {
+    return state.stateIsReadonly
   },
 
   dataflowName: state => {
@@ -167,7 +171,9 @@ const mutations = {
   setStateDirty(state, dirty) {
     state.stateIsDirty = dirty
   },
-
+  setStateReadonly(state, readonly) {
+    state.stateIsReadonly = readonly
+  },
   // Id
   setDataflowId(state, id) {
     state.dataflow.id = id

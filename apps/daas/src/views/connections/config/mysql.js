@@ -142,7 +142,7 @@ export default function (vm) {
         field: 'table_filter',
         domType: 'textarea',
         label: vm.$t('dataForm.form.tableFilter'),
-        tip: vm.$t('connection_form_database_owner_tip'),
+        tips: vm.$t('connection_form_database_owner_tip'),
         maxlength: 500,
         showWordLimit: true
       },
@@ -155,7 +155,7 @@ export default function (vm) {
         type: 'select',
         field: 'database_datetype_without_timezone',
         label: vm.$t('dataForm.form.timeZone'),
-        tip: vm.$t('connection_form_impact_type'),
+        tips: vm.$t('connection_form_impact_type'),
         options: [],
         show: true
       },
@@ -163,7 +163,21 @@ export default function (vm) {
         type: 'switch',
         field: 'shareCdcEnable',
         label: vm.$t('connection_form_shared_mining'),
-        tip: vm.$t('connection_form_shared_mining_tip')
+        tips: vm.$t('connection_form_shared_mining_tip'),
+        show: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'connection_type',
+                value: 'target'
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          }
+        ]
       },
       {
         type: 'switch',
@@ -222,6 +236,8 @@ export default function (vm) {
         field: 'persistenceMongodb_collection',
         label: vm.$t('share_form_setting_table_name'),
         options: [],
+        allowCreate: true,
+        filterable: true,
         required: true,
         show: false,
         dependOn: [
@@ -248,6 +264,8 @@ export default function (vm) {
         label: vm.$t('share_form_setting_log_time'),
         options: [],
         required: true,
+        allowCreate: true,
+        filterable: true,
         show: false,
         dependOn: [
           {

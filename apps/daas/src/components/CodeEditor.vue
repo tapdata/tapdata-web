@@ -4,7 +4,7 @@
       height: height ? px(height) : '100%',
       width: width ? px(width) : '100%',
       padding: '12px 0',
-      backgroundColor: '#282c34',
+      backgroundColor: '#F5F6F8',
       overflow: 'hidden'
     }"
   >
@@ -44,7 +44,8 @@ export default {
     value: String,
     theme: {
       type: String,
-      default: 'one_dark'
+      // default: 'one_dark'
+      default: 'katzenmilch'
     },
     lang: {
       type: String,
@@ -98,9 +99,13 @@ export default {
         system: this.$t('function_type_option_system')
       }
       this.$api('Javascript_functions')
-        .get()
+        .get({
+          filter: JSON.stringify({
+            size: 0
+          })
+        })
         .then(res => {
-          let items = res?.data || []
+          let items = res?.data?.items || []
           items.sort((a, b) => {
             let scoreMap = {
               custom: 0,
@@ -123,43 +128,45 @@ export default {
               return 0
             }
           })
-          tools.addCompleter({
-            getCompletions: (editor, session, pos, prefix, callback) => {
-              if (prefix.length === 0) {
-                return callback(null, [])
-              } else {
-                return callback(
-                  null,
-                  items.map((item, index) => {
-                    let methodName = item.methodName || item.function_name
-                    return {
-                      caption: methodName,
-                      snippet: methodName + '(${1})',
-                      meta: typeMapping[item.type],
-                      type: 'snippet',
-                      score: 1000000 - index,
-                      format: item.format,
-                      parametersDesc: item.parameters_desc,
-                      returnDesc: item.return_value
-                    }
-                  })
-                )
-              }
-            },
-            getDocTooltip: function (item) {
-              if (item.type == 'snippet') {
-                let body = item.parametersDesc
-                  ? `<pre class="code-editor-snippet-tips__body"><div class="panel-title">parameters description</div>${item.parametersDesc}</pre>`
-                  : `<pre class="code-editor-snippet-tips__body">${item.format || item.caption}</pre>`
-                let footer = item.returnDesc
-                  ? `<pre class="code-editor-snippet-tips__footer"><div class="panel-title">return description</div>${item.returnDesc}</pre>`
-                  : ''
-                item.docHTML = `<div class="code-editor-snippet-tips"><div class="code-editor-snippet-tips__header"><span class="panel-title">function</span>${
-                  item.format || item.caption
-                }</div>${body}${footer}</div>`
+          editor.completers = [
+            {
+              getCompletions: (editor, session, pos, prefix, callback) => {
+                if (prefix.length === 0) {
+                  return callback(null, [])
+                } else {
+                  return callback(
+                    null,
+                    items.map((item, index) => {
+                      let methodName = item.methodName || item.function_name
+                      return {
+                        caption: methodName,
+                        snippet: methodName + '(${1})',
+                        meta: typeMapping[item.type],
+                        type: 'snippet',
+                        score: 1000000 - index,
+                        format: item.format,
+                        parametersDesc: item.parameters_desc,
+                        returnDesc: item.return_value
+                      }
+                    })
+                  )
+                }
+              },
+              getDocTooltip: function (item) {
+                if (item.type == 'snippet') {
+                  let body = item.parametersDesc
+                    ? `<pre class="code-editor-snippet-tips__body"><div class="panel-title">parameters description</div>${item.parametersDesc}</pre>`
+                    : `<pre class="code-editor-snippet-tips__body">${item.format || item.caption}</pre>`
+                  let footer = item.returnDesc
+                    ? `<pre class="code-editor-snippet-tips__footer"><div class="panel-title">return description</div>${item.returnDesc}</pre>`
+                    : ''
+                  item.docHTML = `<div class="code-editor-snippet-tips"><div class="code-editor-snippet-tips__header"><span class="panel-title">function</span>${
+                    item.format || item.caption
+                  }</div>${body}${footer}</div>`
+                }
               }
             }
-          })
+          ]
         })
     }
   }
@@ -167,7 +174,7 @@ export default {
 </script>
 <style lang="scss">
 .ace_tooltip.ace_doc-tooltip {
-  background: #25282c;
+  background: rgba(221, 221, 221, 0.4);
   color: #c1c1c1;
 }
 .code-editor-snippet-tips {
@@ -181,13 +188,28 @@ export default {
     color: #c678dd;
   }
 }
+.code-editor-snippet-tips__header {
+  white-space: normal;
+  word-break: break-word;
+}
 .code-editor-snippet-tips__body,
 .code-editor-snippet-tips__footer {
   padding: 10px 0;
   border-top: 1px solid #ccc;
   font-size: 12px;
+  white-space: normal;
+  word-break: break-word;
   .panel-title {
     margin-bottom: 6px;
+  }
+}
+.ace-katzenmilch {
+  background-color: #f5f6f8;
+  .ace_gutter {
+    background-color: #f5f6f8;
+    .ace_gutter-active-line {
+      color: #535f72;
+    }
   }
 }
 </style>

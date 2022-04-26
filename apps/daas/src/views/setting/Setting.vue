@@ -1,100 +1,116 @@
 <template>
-  <section class="setting-list-wrap section-wrap">
-    <div class="section-wrap-box">
-      <el-form :model="formData" class="e-form" label-position="top">
-        <div v-for="(item, index) in formData.items" :key="index" class="item">
-          <template v-if="item.category !== 'license'">
-            <span class="title">{{ $t('setting_' + item.category) }}</span>
-            <span class="btns" v-if="item.category === 'SMTP'">
-              <a @click="checkTemplate()">{{ $t('setting_email_template') }}</a>
-              <a @click="connectAndTest()">{{ $t('setting_connect_and_test') }}</a>
-            </span>
-          </template>
+  <section class="setting-list-wrap">
+    <div class="setting-list-box">
+      <ul class="setting-nav" :style="lang === 'en' ? '280px' : '160px'">
+        <li
+          v-for="(item, index) in formData.items"
+          :key="index"
+          :class="activePanel === item.category ? 'active' : ''"
+          @click="changeName(item.category)"
+        >
+          <!-- <ElTooltip :content="$t('setting_' + item.category)"> -->
+          <span class="title">{{ $t('setting_' + item.category) }}</span>
+          <!-- </ElTooltip> -->
 
-          <div class="box" v-for="(childItem, childIndex) in item.items" :key="childIndex">
-            <div v-if="item.category === 'license'">
-              <div class="license" v-for="(licenseItem, licenseIndex) in item.liceseItems" :key="licenseIndex">
-                <div>{{ $t('setting_nameserver') }}: {{ licenseItem.hostname }}</div>
-                <!--authorization報錯 隱藏到期時間-->
-                <!-- <div>
-                {{ $t('setting_expiredate') }}:
-                {{
-                  licenseItem.authorization ? $moment(licenseItem.authorization.validity_period.expires_on || '') : ''
-                }}
-              </div> -->
+          <VIcon class="ml-3" size="14">arrow-right</VIcon>
+        </li>
+      </ul>
+
+      <el-form :model="formData" class="e-form" label-width="340px">
+        <div class="e-form-box">
+          <div v-for="(item, index) in formData.items" :key="index" class="item" v-show="activePanel === item.category">
+            <template v-if="activePanel === item.category">
+              <span class="title">{{ $t('setting_' + item.category) }}</span>
+              <div class="box" v-for="(childItem, childIndex) in item.items" :key="childIndex">
+                <div v-if="item.category === 'license'">
+                  <div class="license" v-for="(licenseItem, licenseIndex) in item.liceseItems" :key="licenseIndex">
+                    <div>{{ $t('setting_nameserver') }}: {{ licenseItem.hostname }}</div>
+                  </div>
+                  <el-button @click="importlicense(licenseItem)">{{ $t('setting_import') }}</el-button>
+                  <el-button @click="hrefApply(licenseItem)">{{ $t('setting_apply') }}</el-button>
+                </div>
+
+                <el-row v-if="activePanel === childItem.category">
+                  <el-col :span="24">
+                    <el-form-item>
+                      <span slot="label">
+                        <span
+                          >{{
+                            $t('setting_' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label
+                          }}:</span
+                        >
+                        <el-tooltip effect="dark" placement="top" v-if="childItem.documentation">
+                          <div style="max-width: 300px" slot="content">
+                            {{
+                              $t(
+                                'setting_' +
+                                  (childItem.documentation || '')
+                                    .split('/')
+                                    .join('_')
+                                    .split(',')
+                                    .join('_')
+                                    .split(':')
+                                    .join('_')
+                                    .split('，')
+                                    .join('_')
+                                    .split('"')
+                                    .join('_')
+                                    .split(' ')
+                                    .join('_')
+                                    .split('(')
+                                    .join('_')
+                                    .split(')')
+                                    .join('_')
+                                    .split('.')
+                                    .join('_')
+                              )
+                            }}
+                          </div>
+                          <!-- <span
+                            class="icon iconfont icon-tishi1"
+                            style="vertical-align: bottom; padding-left: 10px; font-size: 18px"
+                          ></span> -->
+                          <VIcon class="color-primary ml-3" size="14">info</VIcon>
+                        </el-tooltip>
+                      </span>
+                      <el-input
+                        v-if="!childItem.enums || childItem.enums.length === 0"
+                        :type="childItem.key.match(/password/) ? 'password' : 'text'"
+                        v-model="childItem.value"
+                        :disabled="item.category === 'license'"
+                        :mask="childItem.mask"
+                        size="mini"
+                        :label="
+                          $t('setting_' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label
+                        "
+                      >
+                      </el-input>
+
+                      <el-select v-else v-model="childItem.value" size="mini">
+                        <el-option
+                          v-for="options in childItem.enums"
+                          :key="options"
+                          :value="options"
+                          :label="options"
+                        ></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
               </div>
-
-              <el-button @click="importlicense(licenseItem)">{{ $t('setting_import') }}</el-button>
-              <el-button @click="hrefApply(licenseItem)">{{ $t('setting_apply') }}</el-button>
-            </div>
-
-            <el-row v-else>
-              <el-col :span="24">
-                <el-form-item>
-                  <span slot="label">
-                    <span>{{
-                      $t('setting_' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label
-                    }}</span>
-                    <el-tooltip effect="dark" placement="top" v-if="childItem.documentation">
-                      <div style="max-width: 300px" slot="content">
-                        {{
-                          $t(
-                            'setting_' +
-                              (childItem.documentation || '')
-                                .split('/')
-                                .join('_')
-                                .split(',')
-                                .join('_')
-                                .split(':')
-                                .join('_')
-                                .split('，')
-                                .join('_')
-                                .split('"')
-                                .join('_')
-                                .split(' ')
-                                .join('_')
-                                .split('(')
-                                .join('_')
-                                .split(')')
-
-                                .join('_')
-                                .split('.')
-                                .join('_')
-                          )
-                        }}
-                      </div>
-                      <span
-                        class="icon iconfont icon-tishi1"
-                        style="vertical-align: bottom; padding-left: 10px; font-size: 18px"
-                      ></span>
-                    </el-tooltip>
-                  </span>
-                  <el-input
-                    v-if="!childItem.enums || childItem.enums.length === 0"
-                    :type="childItem.key.match(/password/) ? 'password' : 'text'"
-                    v-model="childItem.value"
-                    :disabled="item.category === 'license'"
-                    :mask="childItem.mask"
-                    size="mini"
-                    :label="$t('setting_' + (childItem.key_label || '').split(' ').join('_')) || childItem.key_label"
-                  >
-                  </el-input>
-
-                  <el-select v-else v-model="childItem.value" size="mini">
-                    <el-option
-                      v-for="options in childItem.enums"
-                      :key="options"
-                      :value="options"
-                      :label="options"
-                    ></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
+            </template>
+            <template v-if="item.category !== 'license'">
+              <!-- <span class="title">{{ $t('setting_' + item.category) }}</span> -->
+              <span class="btns" v-if="item.category === 'SMTP'">
+                <a class="link-primary" @click="checkTemplate()">{{ $t('setting_email_template') }}</a>
+                <a class="link-primary" @click="connectAndTest()">{{ $t('setting_connect_and_test') }}</a>
+              </span>
+            </template>
           </div>
         </div>
+
         <div class="footer">
-          <el-button @click="save" size="mini" type="primary">保存</el-button>
+          <el-button @click="save" size="mini" type="primary">{{ $t('button_save') }}</el-button>
         </div>
       </el-form>
     </div>
@@ -172,8 +188,10 @@
 </template>
 <script>
 import _ from 'lodash'
+import VIcon from '@/components/VIcon'
 export default {
   name: 'Setting',
+  components: { VIcon },
   data() {
     return {
       liceseItems: [],
@@ -182,6 +200,8 @@ export default {
         items: []
       },
       activeTab: 0,
+      activePanel: 'Log',
+      lang: localStorage.getItem('tapdata_localize_lang') || 'en',
       emailTabs: [
         {
           label: this.$t('setting_Email_Template_Running'),
@@ -236,6 +256,9 @@ export default {
     }
   },
   methods: {
+    changeName(name) {
+      this.activePanel = name
+    },
     // 获取设置数据
     getData() {
       let _this = this
@@ -352,22 +375,68 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .setting-list-wrap {
+  height: 100%;
   // position: relative;
   overflow: hidden;
   box-sizing: border-box;
-  .e-form {
+  .setting-list-box {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
     height: 100%;
-    padding: 0 10%;
+    // background-color: #fff;
+    border-radius: 4px;
+    .setting-nav {
+      height: 100%;
+      padding: 20px 2px;
+      border-right: 1px solid #f2f2f2;
+      li {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 10px 0 20px;
+        height: 40px;
+        line-height: 40px;
+        cursor: pointer;
+        color: #4e5969;
+        white-space: nowrap;
+        .title {
+          width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+      .active {
+        background: rgba(44, 101, 255, 0.05);
+      }
+    }
+  }
+
+  .e-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
     background-color: #fff;
-    overflow-y: auto;
     box-sizing: border-box;
+    overflow: hidden;
+    .e-form-box {
+      padding: 20px 20px 0;
+      flex: 1 1 auto;
+      overflow-y: auto;
+    }
     .item {
+      width: 800px;
       margin-bottom: 20px;
       .title {
         display: inline-block;
         padding: 10px 0 20px;
+        color: #1d2129;
+        font-size: 14px;
+        font-weight: 500;
       }
       .btns {
         float: right;
@@ -375,18 +444,19 @@ export default {
         font-size: 12px;
         a {
           padding: 0 10px;
-          color: #1976d2;
           cursor: pointer;
         }
       }
       .box {
-        padding-left: 20px;
         .el-form-item {
-          margin-bottom: 10px;
+          margin-bottom: 22px;
           .el-form-item__label {
             padding-bottom: 0;
             line-height: 28px;
           }
+          // .el-input__inner {
+          //   width: 500px;
+          // }
           .el-select {
             width: 100%;
           }
@@ -394,15 +464,12 @@ export default {
       }
     }
     .footer {
-      // position: absolute;
-      // bottom: 0;
-      // left: 0;
-      // right: 0;
-      // height: 48px;
-      // margin: auto;
+      flex: 0 0 auto;
+      width: 100%;
+      padding: 0 20px;
       line-height: 48px;
-      text-align: center;
-      border-top: 1px solid #eee;
+      text-align: right;
+      border-top: 1px solid #f2f2f2;
     }
   }
   .dialog-email-template {

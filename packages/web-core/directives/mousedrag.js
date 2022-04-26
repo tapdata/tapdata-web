@@ -20,6 +20,10 @@ export default {
     let $drag, width, height
     const { item, onStart, onMove, onStop, onDrop, box = [], domHtml, getDragDom, container } = binding.value
     const [t = 0, r = 0, b = 0, l = 0] = box
+    const GlobalState = {
+      onMouseDownAt: 0,
+      startEvent: null
+    }
 
     const moveAt = (posX, posY) => {
       let left = posX - width / 2
@@ -33,6 +37,7 @@ export default {
       $drag.style.position = 'fixed'
       $drag.style.left = left + 'px'
       $drag.style.top = top + 'px'
+      $drag.style.opacity = 1
     }
 
     const handleStart = (el._handleStart = async event => {
@@ -42,16 +47,10 @@ export default {
         eventsFor = EVENT.mouse
       }
       el._eventsFor = eventsFor
+      GlobalState.startEvent = event
+      GlobalState.onMouseDownAt = Date.now()
       if (event.button === 0) {
         onStart?.(item)
-        $drag = domHtml ? appendHtml(document.body, domHtml.replace(/\n/g, '').trim()) : await getDragDom()
-        document.body.classList.add('cursor-grabbing')
-        const rect = $drag.getBoundingClientRect()
-        width = rect.width
-        height = rect.height
-        let posX = event.touches ? event.touches[0].pageX : event.pageX
-        let posY = event.touches ? event.touches[0].pageY : event.pageY
-        moveAt(posX, posY)
         on(document.documentElement, eventsFor.move, handleMove, {
           capture: false,
           passive: false
@@ -62,6 +61,24 @@ export default {
 
     const handleMove = (el._handleMove = async event => {
       event.preventDefault()
+
+      const distance = Math.sqrt(
+        Math.pow(event.pageX - GlobalState.startEvent.pageX, 2) +
+          Math.pow(event.pageY - GlobalState.startEvent.pageY, 2)
+      )
+      const timeDelta = Date.now() - GlobalState.onMouseDownAt
+
+      if (distance < 4 || timeDelta < 10 || event === GlobalState.startEvent) {
+        return
+      }
+
+      if (!$drag) {
+        $drag = domHtml ? appendHtml(document.body, domHtml.replace(/\n/g, '').trim()) : await getDragDom()
+        document.body.classList.add('cursor-grabbing')
+        const rect = $drag.getBoundingClientRect()
+        width = rect.width
+        height = rect.height
+      }
       let posX = event.touches ? event.touches[0].pageX : event.pageX
       let posY = event.touches ? event.touches[0].pageY : event.pageY
       moveAt(posX, posY)
@@ -76,7 +93,8 @@ export default {
       onStop?.(item, [posX, posY])
 
       if ($drag) {
-        const { width, height } = $drag.getBoundingClientRect()
+        // const { width, height } = $drag.getBoundingClientRect()
+        const rect = $drag.getBoundingClientRect()
         domHtml && $drag.remove()
         $drag = null
 
@@ -84,7 +102,7 @@ export default {
           const $con = document.querySelector(container)
           const $elemBelow = document.elementFromPoint(posX, posY)
           if ($con && $con.contains($elemBelow)) {
-            onDrop?.(item, [posX, posY], { width, height })
+            onDrop?.(item, [posX, posY], rect)
           }
         }
       }

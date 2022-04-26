@@ -1,6 +1,6 @@
 <template>
   <ElContainer class="layout-container" direction="vertical">
-    <ElHeader class="layout-header" height="72px">
+    <ElHeader class="layout-header" height="60px">
       <a class="logo" href="/">
         <img :src="logoUrl" />
       </a>
@@ -11,47 +11,42 @@
         <ElButton v-if="creatAuthority" type="primary" size="mini" @click="command('newDataFlow')">
           {{ $t('dataFlow.createNew') }}
         </ElButton>
-        <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-6"></NotificationPopover>
-        <ElDropdown v-if="$getSettingByKey('SHOW_QA_AND_HELP')" class="btn ml-4" placement="bottom" @command="command">
-          <VIcon>wenda</VIcon>
-          <ElDropdownMenu slot="dropdown">
+        <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
+        <ElDropdown v-if="$getSettingByKey('SHOW_QA_AND_HELP')" class="btn" placement="bottom" @command="command">
+          <VIcon size="16">wenda</VIcon>
+          <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="help">{{ $t('app.document') }}</ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
         <ElDropdown
           v-if="$getSettingByKey('SHOW_SETTING_BUTTON') && settingVisibility"
-          class="btn ml-4"
+          class="btn"
           placement="bottom"
           @command="command"
         >
-          <VIcon>shezhi</VIcon>
-          <ElDropdownMenu slot="dropdown">
+          <VIcon size="16">shezhi</VIcon>
+          <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="settings" v-if="settingCode">{{ $t('page_title_setting') }}</ElDropdownItem>
             <ElDropdownItem command="setting" v-readonlybtn="'home_notice_settings'">{{
-              $t('notification.setting')
+              $t('notify_setting')
             }}</ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
-        <ElDropdown
-          v-if="$getSettingByKey('SHOW_LANGUAGE')"
-          class="btn ml-4"
-          placement="bottom"
-          @command="changeLanguage"
-        >
-          <VIcon>{{ { sc: 'language-sc', en: 'language-sc', tc: 'language-sc' }[lang] }}</VIcon>
-          <ElDropdownMenu slot="dropdown">
+        <ElDropdown v-if="$getSettingByKey('SHOW_LANGUAGE')" class="btn" placement="bottom" @command="changeLanguage">
+          <VIcon size="16">{{ { sc: 'language-sc', en: 'language-sc', tc: 'language-sc' }[lang] }}</VIcon>
+          <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
               {{ value }}
             </ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
         <ElDivider direction="vertical" class="divider mx-6"></ElDivider>
-        <ElDropdown class="menu-user" placement="bottom" @command="command">
+        <ElDropdown class="menu-user btn" placement="bottom" @command="command">
           <span>
             <span class="user-initials mr-2">{{ initials }}</span>
             <span>{{ userName }}<i class="el-icon-arrow-down ml-2"></i></span>
           </span>
-          <ElDropdownMenu slot="dropdown">
+          <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="account">{{ $t('app.account') }}</ElDropdownItem>
             <ElDropdownItem command="version">{{ $t('app.version') }}</ElDropdownItem>
             <ElDropdownItem command="license">{{ $t('page_title_license') }}</ElDropdownItem>
@@ -64,7 +59,7 @@
       </div>
     </ElHeader>
     <ElContainer style="width: 100%; flex: 1; overflow: hidden">
-      <ElAside class="layout-aside" width="auto">
+      <ElAside class="layout-aside" width="auto" v-if="!isNotAside">
         <ElMenu
           unique-opened
           class="menu"
@@ -76,8 +71,8 @@
           <template v-for="menu in menus">
             <ElSubmenu v-if="menu.children && !menu.hidden" :key="menu.label" :index="menu.name">
               <template slot="title">
-                <VIcon class="menu-icon mr-4">{{ menu.icon }}</VIcon>
-                <span slot="title">{{ menu.label }}</span>
+                <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
+                <span slot="title" class="ml-4 title">{{ menu.label }}</span>
               </template>
               <template v-for="cMenu in menu.children">
                 <ElMenuItem v-if="!cMenu.hidden" :key="cMenu.label" :index="cMenu.name">
@@ -86,8 +81,8 @@
               </template>
             </ElSubmenu>
             <ElMenuItem v-else-if="!menu.hidden" :key="menu.label" :index="menu.name">
-              <VIcon class="menu-icon mr-4">{{ menu.icon }}</VIcon>
-              <span slot="title">{{ menu.label }}</span>
+              <VIcon size="16" class="menu-icon">{{ menu.icon }}</VIcon>
+              <span slot="title" class="ml-4 title">{{ menu.label }}</span>
             </ElMenuItem>
           </template>
         </ElMenu>
@@ -95,9 +90,12 @@
           <i class="el-icon-d-arrow-left btn-collapse" :class="{ 'is-collapse': isCollapse }"></i>
         </div>
       </ElAside>
+
       <ElMain class="layout-main">
-        <PageHeader></PageHeader>
-        <RouterView class="flex-fill" />
+        <div class="layout-main-body">
+          <PageHeader></PageHeader>
+          <RouterView class="flex-fill" />
+        </div>
       </ElMain>
     </ElContainer>
     <CustomerService v-model="isShowCustomerService"></CustomerService>
@@ -132,7 +130,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
     background: #212a3b;
+    min-width: 1000px;
     .logo {
       margin-left: 23px;
       display: block;
@@ -149,6 +149,7 @@
       display: flex;
       align-items: center;
       .btn {
+        padding: 6px 12px;
         color: rgba(255, 255, 255, 0.85);
         cursor: pointer;
         i {
@@ -159,7 +160,9 @@
           width: 28px;
         }
         &:hover {
-          color: map-get($color, primary);
+          background-color: rgba(239, 241, 244, 0.23);
+          border-radius: 4px;
+          // color: map-get($color, primary);
         }
       }
       .divider {
@@ -171,16 +174,16 @@
         height: 30px;
         background: #ffa158;
         border-radius: 50%;
-        line-height: 30px;
+        line-height: 28px;
         text-align: center;
         font-size: 14px;
         color: #fff;
       }
       .menu-user {
         color: rgba(255, 255, 255, 0.85);
-        &:hover {
-          color: map-get($color, primary);
-        }
+        // &:hover {
+        //   color: map-get($color, primary);
+        // }
       }
     }
   }
@@ -189,11 +192,12 @@
     display: flex;
     height: 100%;
     overflow: hidden;
+    border: 1px solid #e1e3e9;
     .el-menu--popup .submenu-item .btn-del {
       display: none;
     }
     .menu {
-      width: 260px;
+      width: 200px;
       //flex: 1;
       padding-bottom: 48px;
       background: #f7f8fa;
@@ -206,8 +210,19 @@
       .el-menu-item .el-tooltip {
         outline: none;
       }
+
       &.el-menu--collapse {
         width: 64px;
+        & > .el-menu-item span,
+        & > .el-submenu > .el-submenu__title span {
+          visibility: visible;
+          overflow: initial;
+        }
+        .el-submenu__title {
+          span.title {
+            display: none;
+          }
+        }
       }
       .el-menu-item,
       .el-submenu__title {
@@ -215,20 +230,39 @@
         align-items: center;
         height: 50px;
         line-height: 50px;
-        font-weight: 500;
         color: rgba(0, 0, 0, 0.6);
         background: #f7f8fa;
         .submenu-item {
+          color: rgba(0, 0, 0, 0.6);
           padding-left: 12px;
         }
         &.is-active,
         &:hover {
-          color: map-get($color, primary);
+          color: map-get($color, primary) !important;
           background: rgba(44, 101, 255, 0.05);
         }
       }
+      .submenu-item {
+        font-weight: 400;
+      }
+      .el-menu-item,
+      .el-submenu__title {
+        font-weight: 500;
+      }
       .is-active .el-submenu__title {
         background: #f7f8fa;
+      }
+      .el-menu {
+        background-color: initial;
+        .el-menu-item {
+          &.is-active {
+            background-color: rgba(44, 101, 255, 0.05);
+            .submenu-item {
+              font-weight: 500;
+              color: map-get($color, primary) !important;
+            }
+          }
+        }
       }
     }
     .menu-footer {
@@ -271,12 +305,19 @@
     }
   }
   .layout-main {
+    position: relative;
+    height: 100%;
     padding: 0;
     background: #fff;
-    display: flex;
-    flex-direction: column;
     box-sizing: border-box;
     overflow-y: hidden;
+    overflow-x: auto;
+  }
+  .layout-main-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-width: 1238px;
   }
   .expire-msg {
     margin-right: 25px;
@@ -285,6 +326,11 @@
     font-weight: 500;
     color: rgba(255, 255, 255, 0.85);
     line-height: 17px;
+  }
+}
+.no-triangle {
+  .popper__arrow {
+    display: none;
   }
 }
 </style>
@@ -296,6 +342,7 @@ import NotificationPopover from './notification/NotificationPopover'
 import { signOut } from '../utils/util'
 import Cookie from '@daas/shared/src/cookie'
 import PageHeader from '@/components/PageHeader'
+import VIcon from 'web-core/components/VIcon'
 
 const Languages = {
   sc: '中文 (简)',
@@ -309,19 +356,20 @@ const LanguagesKey = {
 }
 let menuSetting = [
   { name: 'dashboard', icon: 'gongzuotai', alias: 'page_title_dashboard' },
-  { name: 'connectionsList', icon: 'agent' },
+  { name: 'connectionsList', icon: 'agent', code: 'datasource_menu' },
   {
     name: 'dataPipeline',
     label: 'page_title_data_pipeline',
     icon: 'huowuchuanshu',
     code: 'data_transmission',
     children: [
-      { name: 'migrateList' },
-      { name: 'dataflowList' },
-      { name: 'dataVerificationList' },
-      { name: 'sharedMiningList' },
-      { name: 'functionList' },
-      { name: 'sharedCacheList' }
+      { name: 'migrateList', code: 'Data_SYNC_menu' },
+      { name: 'dataflowList', code: 'Data_SYNC_menu' },
+      { name: 'dataVerificationList', code: 'Data_verify_menu' },
+      { name: 'sharedMiningList', code: 'log_collector_menu' },
+      { name: 'functionList', code: 'SYNC_Function_management' },
+      { name: 'customNodeList', code: 'custom_node_menu' },
+      { name: 'sharedCacheList', code: 'shared_cache_menu' }
     ]
   },
   {
@@ -329,7 +377,10 @@ let menuSetting = [
     label: 'page_title_data_discovery',
     icon: 'shujuzhili',
     code: 'data_government',
-    children: [{ name: 'metadataList' }, { name: 'search' }]
+    children: [
+      { name: 'metadataList', code: 'data_catalog_menu' },
+      { name: 'search', code: 'data_search_menu' }
+    ]
   },
   {
     name: 'dataService',
@@ -337,32 +388,34 @@ let menuSetting = [
     icon: 'connection',
     code: 'data_publish',
     children: [
-      { name: 'modules' },
-      { name: 'dataExplorer' },
-      { name: 'apiDocAndTest' },
-      { name: 'apiAnalysis' },
-      { name: 'applications' },
-      { name: 'apiServers' }
+      { name: 'modules', code: 'API_management_menu' },
+      { name: 'dataExplorer', code: 'API_data_explorer_menu' },
+      { name: 'apiDocAndTest', code: 'API_doc_&_test_menu' },
+      // { name: 'apiAnalysis', code: 'API_stats_menu' }, //隐藏api 统计入口
+      { name: 'apiClient', code: 'API_clients_menu' },
+      { name: 'apiServers', code: 'API_server_menu' },
+      { name: 'apiauditList', code: 'API_server_menu' },
+      { name: 'apiMonitor', code: 'API_server_menu' }
     ]
   },
   {
     name: 'system',
     label: 'page_title_system',
-    icon: 'caozuorizhi',
+    icon: 'system',
     code: 'system_management',
     children: [
-      { name: 'metadataDefinition' },
-      { name: 'tasks' },
-      { name: 'clusterManagement' },
-      { name: 'agents' },
-      { name: 'users' },
-      { name: 'roleList' },
-      { name: 'settings' }
+      // { name: 'metadataDefinition', code: 'data_catalog_menu' },
+      // { name: 'tasks', code: 'schedule_jobs_menu' },
+      { name: 'clusterManagement', code: 'Cluster_management_menu' },
+      // { name: 'agents', code: 'agents_menu' },
+      { name: 'users', code: 'user_management_menu' },
+      { name: 'roleList', code: 'role_management_menu' }
+      // { name: 'settings', code: 'system_settings_menu', alias: 'page_title_setting' }
     ]
   }
 ]
 export default {
-  components: { CustomerService, newDataFlow, NotificationPopover, PageHeader },
+  components: { CustomerService, newDataFlow, NotificationPopover, PageHeader, VIcon },
   data() {
     return {
       logoUrl: window._TAPDATA_OPTIONS_.logoUrl,
@@ -382,12 +435,18 @@ export default {
       licenseExpireVisible: false,
       licenseExpireDate: '',
       breadcrumbData: [],
-      isCollapse: false
+      isCollapse: false,
+      isNotAside: this.$route?.meta?.isNotAside || false
     }
   },
   computed: {
     initials() {
       return this.userName.substring(0, 1)
+    }
+  },
+  watch: {
+    $route(data) {
+      this.isNotAside = data?.meta?.isNotAside || false
     }
   },
   created() {
@@ -419,6 +478,7 @@ export default {
   methods: {
     getMenus() {
       let permissions = sessionStorage.getItem('tapdata_permissions')
+
       permissions = permissions ? JSON.parse(permissions) : []
       let routerMap = {}
       let routes = this.$router.options.routes.find(r => r.name === 'layout').children
@@ -445,6 +505,7 @@ export default {
             menu.label = this.$t(label)
           }
           let matched = !menu.code || permissions.some(p => p.code === menu.code)
+
           menu.hidden = !matched
           if (matched && menu.children) {
             menu.children = formatMenu(menu.children)
@@ -455,7 +516,7 @@ export default {
           return menu
         })
       }
-      let menus = menuSetting.concat()
+      let menus = JSON.parse(JSON.stringify(menuSetting))
       this.menus = formatMenu(menus)
     },
     command(command) {

@@ -182,7 +182,8 @@ export default {
                     style: { 'vertical-align': 'middle' },
                     props: {
                       trigger: 'hover',
-                      placement: 'top'
+                      placement: 'top',
+                      popperClass: 'e-popover'
                     }
                   },
                   [
@@ -199,7 +200,7 @@ export default {
                       },
                       [
                         h('i', {
-                          class: 'el-icon-warning-outline e-form-builder-item-tips'
+                          class: 'el-icon-info e-form-builder-item-tips'
                         })
                       ]
                     )
@@ -319,6 +320,19 @@ export default {
   }
   .fb-radio-tip__text {
     line-height: 18px;
+    color: map-get($fontColor, light);
+  }
+}
+.e-popover {
+  max-width: 200px;
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+.e-popover .popper__arrow {
+  // border-color: rgba(0, 0, 0, 0.6) !important;
+  filter: drop-shadow(0 2px 12px rgba(255, 255, 255, 0.03));
+  &::after {
+    border-top-color: rgba(0, 0, 0, 0.6) !important;
   }
 }
 </style>

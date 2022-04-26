@@ -755,7 +755,7 @@ export default {
     box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
   }
   .price {
-    color: #f04134;
+    color: map-get($color, danger);
     font-size: 26px;
   }
   .price-tips {

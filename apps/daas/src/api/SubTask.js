@@ -28,4 +28,19 @@ export default class TaskAPI extends PublicAPI {
   runtimeInfo(id) {
     return axios.get(this.url + `/runtimeInfo/${id}`)
   }
+  syncTable(id, params) {
+    return axios.get(this.url + `/view/sync/table/${id}`, { params })
+  }
+  syncOverView(id) {
+    return axios.get(this.url + `/view/sync/overview/${id}`)
+  }
+  cdcIncrease(id) {
+    return axios.get(this.url + `/view/increase/${id}`)
+  }
+  clearIncrease(id, srcId, tgtId) {
+    return axios.post(this.url + `/increase/clear/${id}?srcNode=${srcId}&tgtNode=${tgtId}`)
+  }
+  rollbackIncrease(id, srcId, tgtId, params) {
+    return axios.post(this.url + `/increase/backtracking/${id}?srcNode=${srcId}&tgtNode=${tgtId}`, params)
+  }
 }

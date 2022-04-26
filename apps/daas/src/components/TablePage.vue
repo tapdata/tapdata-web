@@ -1,6 +1,6 @@
 <template>
   <div class="table-page-container">
-    <div class="table-page-header" v-if="!$getSettingByKey('DFS_TCM_PLATFORM') && title">
+    <div class="table-page-header" v-if="title">
       <slot name="header">
         <div class="page-header-title">
           {{ title }}
@@ -12,7 +12,7 @@
 
     <div class="table-page-main">
       <div class="table-page-main-box">
-        <div class="table-page-left" v-if="classify && !hideClassify && $getSettingByKey('SHOW_CLASSIFY')">
+        <div class="table-page-left" v-if="classify && !hideClassify">
           <Classification
             :authority="classify.authority"
             :types="classify.types"
@@ -41,6 +41,7 @@
             :row-key="rowKey"
             :span-method="spanMethod"
             :data="list"
+            :default-sort="defaultSort"
             @selection-change="handleSelectionChange"
             @sort-change="$emit('sort-change', $event)"
           >
@@ -52,7 +53,7 @@
           <el-pagination
             background
             class="table-page-pagination mt-3"
-            layout="total, sizes, ->, prev, pager, next, jumper"
+            layout="->,total, sizes,  prev, pager, next, jumper"
             :current-page.sync="page.current"
             :page-sizes="[10, 20, 50, 100]"
             :page-size.sync="page.size"
@@ -100,7 +101,8 @@ export default {
     },
     remoteMethod: Function,
     rowKey: [String, Function],
-    spanMethod: [Function]
+    spanMethod: [Function],
+    defaultSort: Object
   },
   data() {
     return {
@@ -137,9 +139,6 @@ export default {
   // },
   methods: {
     getCache() {
-      if (window.getSettingByKey('DFS_TCM_PLATFORM')) {
-        return {}
-      }
       let params = this.$cache.get('TABLE_PAGE_PARAMS') || {}
       let key = this.$route.name
       // TODO 暂时针对dataflow页面做区分，后续将迁移和同步分为不同路由后去掉该代码块
@@ -199,6 +198,9 @@ export default {
               })
               .finally(() => {
                 this.loading = false
+                this.$nextTick(() => {
+                  this.$refs.table?.doLayout()
+                })
                 callback?.(this.getData())
               })
         }, debounce)
@@ -273,9 +275,10 @@ export default {
     }
   }
 
-  // .table-page-left {
-  //   margin-right: 10px;
-  // }
+  .table-page-left {
+    border-right: 1px solid #ebeef5;
+    // margin-right: 10px;
+  }
 
   .table-page-body {
     flex: 1;
@@ -308,6 +311,15 @@ export default {
       border-radius: 3px;
       background: #fff;
       overflow: hidden;
+      // .el-table__fixed-right {
+      //   height: 100% !important; //设置高优先，以覆盖内联样式
+      // }
+      .el-table__fixed-body-wrapper {
+        background-color: #fff;
+      }
+      .el-table__fixed {
+        height: auto !important; //设置高优先，以覆盖内联样式
+      }
     }
 
     .el-table--border td,
@@ -316,8 +328,11 @@ export default {
     }
 
     .el-table--border th {
-      border-right: 1px solid #ebeef5;
+      border-right: 0;
       background-color: #fafafa;
+      &:hover {
+        border-right: 1px solid #ebeef5;
+      }
       &:last-child {
         border-right: 0;
       }

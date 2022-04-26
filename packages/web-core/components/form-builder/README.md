@@ -171,7 +171,7 @@
 >
 >|  参数   | 说明   | 类型 | 可选值 | 默认值
 >| ---- | ---- | ---- | ---- | ----
->| accept | 接受上传的文件类型（thumbnail-mode 模式下此参数无效） | string | - | -
+>| accept | 接收上传的文件类型（thumbnail-mode 模式下此参数无效） | string | - | -
 >| placeholder | 输入框占位文本 | String | - | -
 >| clearable | 是否可清空 | Boolean | - | false
 

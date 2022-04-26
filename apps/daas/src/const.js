@@ -10,12 +10,6 @@ for (const dKey in directionMap) {
   topologyMap[dKey] = `${dValue}`
 }
 export const TOPOLOGY_MAP = topologyMap,
-  INSTANCE_STATUS_MAP = {
-    Creating: { text: '待部署', type: 'warning' },
-    Running: { text: '运行中', type: 'success' },
-    Stopping: { text: '停止中', type: 'danger' },
-    Stopped: { text: '离线', type: 'disable' }
-  },
   TASK_STATUS_MAP = {
     running: { text: '运行中', icon: 'yunxingzhong', type: 'success' },
     paused: { text: '待启动', icon: 'daiqidong' },
@@ -28,9 +22,13 @@ export const TOPOLOGY_MAP = topologyMap,
   },
   SHARECDC_MAP = {
     running: { text: '运行中', icon: 'running', type: 'success' },
-    stop: { text: '已暂停', icon: 'stop' },
+    stop: { text: '已停止', icon: 'stop' },
     error: { text: '错误', icon: 'error', type: 'warning' },
-    edit: { text: '编辑', icon: 'edit', type: 'warning' }
+    edit: { text: '编辑中', icon: 'edit' },
+    scheduling: { text: '启动中', icon: 'scheduling', type: 'success' },
+    stopping: { text: '停止中', icon: 'stopping', type: 'warning' }
+    // pause: { text: '强制停止中', icon: 'pause', type: 'success' },
+    //complete: { text: '已完成', icon: 'complete', type: 'success' }
   },
   CONNECTION_STATUS_MAP = {
     ready: { text: '有效', type: 'success' },
@@ -45,22 +43,21 @@ export const TOPOLOGY_MAP = topologyMap,
     paused: { text: '已暂停', icon: 'yizanting' }
   },
   ETL_STATUS_MAP = {
-    running: { text: '运行中', type: 'success' },
+    running: { text: '已运行', type: 'success' },
     not_running: { text: '未运行', type: 'disable' },
     error: { text: '错误', type: 'danger' }
   },
   ETL_SUB_STATUS_MAP = {
-    edit: { text: '待启动', type: 'primary' },
-    scheduling: { text: '启动中', type: 'success' },
-    schedule_failed: { text: '错误', type: 'danger' },
-    wait_run: { text: '待启动', type: 'warning' },
-    running: { text: '运行中', type: 'success' },
-    pausing: { text: ' 暂停中', type: 'warning' },
-    stopping: { text: '停止中', type: 'danger' },
-    pause: { text: '暂停', type: 'warning' },
-    stop: { text: '已停止', type: 'danger' },
-    complete: { text: '已完成', type: 'primary' },
-    error: { text: '错误', type: 'danger' }
+    ready: { text: '待启动', type: 'ready' },
+    edit: { text: '编辑中', type: 'edit' },
+    scheduling: { text: '启动中', type: 'scheduling' },
+    schedule_failed: { text: '错误', type: 'schedule_failed' },
+    wait_run: { text: '启动中', type: 'wait_run' },
+    running: { text: '运行中', type: 'running' },
+    stopping: { text: '停止中', type: 'stopping' },
+    stop: { text: '已停止', type: 'stop' },
+    complete: { text: '已完成', type: 'complete' },
+    error: { text: '错误', type: 'error' }
   },
   MIGRATE_STATUS_MAP = {
     running: {

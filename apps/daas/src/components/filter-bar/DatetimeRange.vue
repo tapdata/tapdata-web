@@ -42,6 +42,9 @@ export default {
     endPlaceholder: {
       type: String,
       default: '结束时间'
+    },
+    range: {
+      type: Number
     }
   },
   data() {
@@ -51,6 +54,9 @@ export default {
       startOptions: {
         disabledDate: time => {
           const { end } = this
+          if (this.range) {
+            return Math.abs((end ? this.getTimestamp(end) : Date.now()) - this.getTimestamp(time)) > this.range
+          }
           if (end) {
             if (this.getTimestamp(end) === this.getDayStartTimestamp(end)) {
               return this.getTimestamp(time) > this.getDayStartTimestamp(end) - 1
@@ -63,6 +69,9 @@ export default {
       endOptions: {
         disabledDate: time => {
           const { start } = this
+          if (this.range) {
+            return Math.abs(this.getTimestamp(time) - (start ? this.getTimestamp(start) : Date.now())) > this.range
+          }
           if (start) {
             if (this.getTimestamp(start) === this.getDayEndTimestamp(start)) {
               return this.getTimestamp(time) < this.getDayStartTimestamp(start) + 1
@@ -198,7 +207,7 @@ export default {
     }
   }
   .filter-datetime-range__title {
-    color: map-get($fontColor, sub);
+    color: map-get($fontColor, slight);
   }
 }
 </style>

@@ -560,6 +560,7 @@ const tc = {
     uploadOK: '上傳成功',
     uploadError: '上傳失敗',
     uploadInfo: '點擊查看詳情',
+    view: '查看',
     dataFlowExport: '導出',
     addTag: '添加標籤',
     overWrite: '覆蓋已有數據',
@@ -1819,7 +1820,8 @@ const tc = {
         SCAN_FILE: '掃描目錄中的文件',
         CHECK_BIN_LOG_SYNC: '檢查binlog日誌同步是否開啟',
         CHECK_GTID: ' 檢查GTID模式與GTID一致性是否開啟',
-        CHECK_VIKA_API_TOKEN: '檢查vika驗證是否正確'
+        CHECK_VIKA_API_TOKEN: '檢查vika驗證是否正確',
+        CHECK_REDO_LOG_PARSER: '檢查裸日誌解析服務是否可用'
       },
       initialReadSize: '初始化數據大小',
       incrementalTps: '測試速率(次/秒)',
@@ -3065,7 +3067,7 @@ const tc = {
     SMTP_Server_Port: 'SMTP 服務端口',
     SMTP_Server_User: 'SMTP 服務賬號',
     SMTP_Server_password: 'SMTP 服務密碼',
-    Email_Receivers: 'Email接受郵件地址',
+    Email_Receivers: 'Email接收郵件地址',
     Email_Send_Address: 'Email發送郵件地址',
     SMTP_Server_Host: 'SMTP 服務Host',
     Send_Email_Title_Prefix: '發​​送Email標題的前綴（可選）',
@@ -3095,7 +3097,7 @@ const tc = {
     Worker_Heartbeat_Expire: '進程心跳過期時間(秒)',
     License_Key: '證書秘鑰',
     Enter_jobs_log_level__error_warn_info_debug_trace: '輸入任務日誌等級: error/warn/info/debug/trace',
-    Email_Receivers_Multiple_separated_by_semicolons: '郵件接受者,可輸入多個，通過逗號分隔',
+    Email_Receivers_Multiple_separated_by_semicolons: '郵件接收者,可輸入多個，通過逗號分隔',
 
     Keep_recent_n_hours_message_before_the_last_processed_message_s_time_: '保持最近n小時消息',
     Store_full_record_as_embedded_document_in_target_collection_for_update_operations:

@@ -1,29 +1,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import createPersistedState from 'vuex-persistedstate'
 import mutations from './mutations'
 import actions from './actions'
-import cookie from 'vue-cookies'
 import dataflow from '@daas/dag/src/store'
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
-  plugins: [
-    createPersistedState({
-      key: 'tapdata' + [cookie.get('user_id')],
-      storage: window.localStorage || {
-        getItem: () => {},
-        setItem: () => {},
-        removeItem: () => {}
-      },
-      filter({ type }) {
-        // console.log('vux-type', type)
-        return !type.startsWith('dataflow')
-      }
-    })
-  ],
-
   // 全局变量
   state: {
     notification: {

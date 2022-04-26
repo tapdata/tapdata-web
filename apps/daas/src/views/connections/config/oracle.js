@@ -86,45 +86,6 @@ export default function (vm) {
           }
         ]
       },
-      // {
-      // 	type: 'input',
-      // 	field: 'database_host',
-      // 	label: vm.$t('dataForm.form.host'),
-      // 	rules: [
-      // 		{
-      // 			required: true,
-      // 			validator(rule, value, callback) {
-      // 				let port = this.value['database_port'];
-      // 				if (!value || !value.trim()) {
-      // 					callback(new Error(vm.$t('dataForm.error.noneHost')));
-      // 				} else if (!port) {
-      // 					callback(new Error(vm.$t('dataForm.error.nonePort')));
-      // 				} else if (!/^\d+$/.test(port)) {
-      // 					callback(new Error(vm.$t('dataForm.error.portNumber')));
-      // 				} else if (port < 1 || port > 65535) {
-      // 					callback(new Error(vm.$t('dataForm.error.portRange')));
-      // 				} else {
-      // 					callback();
-      // 				}
-      // 			}
-      // 		}
-      // 	],
-      // 	appendSlot: (h, data) => {
-      // 		return h('FbInput', {
-      // 			props: {
-      // 				value: data['database_port'],
-      // 				config: {
-      // 					placeholder: vm.$t('dataForm.form.port')
-      // 				}
-      // 			},
-      // 			on: {
-      // 				input(val) {
-      // 					data['database_port'] = val;
-      // 				}
-      // 			}
-      // 		});
-      // 	}
-      // },
       {
         type: 'input',
         field: 'database_name',
@@ -196,7 +157,7 @@ export default function (vm) {
         field: 'table_filter',
         domType: 'textarea',
         label: vm.$t('dataForm.form.tableFilter'),
-        tip: vm.$t('connection_form_database_owner_tip'),
+        tips: vm.$t('connection_form_database_owner_tip'),
         maxlength: 500,
         showWordLimit: true
       },
@@ -228,7 +189,7 @@ export default function (vm) {
         type: 'select',
         field: 'database_datetype_without_timezone',
         label: vm.$t('dataForm.form.timeZone'),
-        tip: vm.$t('connection_form_impact_type'),
+        tips: vm.$t('connection_form_impact_type'),
         options: [],
         show: true
       },
@@ -236,7 +197,21 @@ export default function (vm) {
         type: 'switch',
         field: 'shareCdcEnable',
         label: vm.$t('connection_form_shared_mining'),
-        tip: vm.$t('connection_form_shared_mining_tip')
+        tips: vm.$t('connection_form_shared_mining_tip'),
+        show: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'connection_type',
+                value: 'target'
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          }
+        ]
       },
       {
         type: 'switch',
@@ -296,6 +271,8 @@ export default function (vm) {
         label: vm.$t('share_form_setting_table_name'),
         options: [],
         required: true,
+        allowCreate: true,
+        filterable: true,
         show: false,
         dependOn: [
           {
@@ -321,6 +298,8 @@ export default function (vm) {
         label: vm.$t('share_form_setting_log_time'),
         options: [],
         required: true,
+        allowCreate: true,
+        filterable: true,
         show: false,
         dependOn: [
           {
@@ -331,6 +310,65 @@ export default function (vm) {
               },
               {
                 field: 'showShareConfig',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'switch',
+        field: 'redoLogParserEnable',
+        label: vm.$t('connection_form_oracle_redoLog_parser'),
+        show: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'connection_type',
+                value: 'target'
+              }
+            ],
+            triggerConfig: {
+              show: false
+            }
+          }
+        ]
+      },
+      {
+        type: 'input',
+        field: 'redoLogParserHost',
+        label: vm.$t('connection_form_oracle_redoLog_parser_post'),
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'redoLogParserEnable',
+                value: true
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'input',
+        field: 'redoLogParserPort',
+        label: vm.$t('connection_form_port'),
+        required: true,
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'redoLogParserEnable',
                 value: true
               }
             ],

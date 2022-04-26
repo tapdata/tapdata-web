@@ -15,65 +15,9 @@
     >
       <div slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-        <!-- <ul class="search-bar" solt="matchSolt">
-          <li> -->
-
-        <!-- <el-input
-          slot="matchSolt"
-          clearable
-          class="input-with-select"
-          size="mini"
-          v-model="searchParams.keyword"
-          :placeholder="$t('metadata.namePlaceholder')"
-          @input="table.fetch(1, 800)"
-        >
-          <el-select style="width: 120px" slot="prepend" v-model="searchParams.isFuzzy" @input="table.fetch(1)">
-            <el-option :label="$t('connection.fuzzyQuery')" :value="true"></el-option>
-            <el-option :label="$t('connection.PreciseQuery')" :value="false"></el-option>
-          </el-select>
-        </el-input> -->
-        <!-- </li> -->
-        <!-- <li>
-            <el-select
-              clearable
-              size="mini"
-              v-model="searchParams.metaType"
-              :placeholder="$t('metadata.typePlaceholder')"
-              @input="metaTypeChange"
-            >
-              <el-option
-                v-for="opt in metaTypeOptions"
-                :key="opt.value"
-                :label="opt.label"
-                :value="opt.value"
-              ></el-option>
-            </el-select>
-          </li>
-          <li v-if="whiteList.includes(searchParams.metaType)">
-            <el-select
-              clearable
-              filterable
-              size="mini"
-              v-model="searchParams.dbId"
-              :placeholder="$t('metadata.databasePlaceholder')"
-              @input="table.fetch(1)"
-            >
-              <el-option v-for="opt in dbOptions" :key="opt.id" :label="opt.name" :value="opt.id"></el-option>
-            </el-select>
-          </li>
-          <template v-if="searchParams.keyword || searchParams.metaType || searchParams.dbId">
-            <li>
-              <el-button size="mini" type="text" @click="reset()">{{ $t('button.query') }}</el-button>
-            </li>
-            <li>
-              <el-button size="mini" type="text" @click="reset('reset')">{{ $t('button.reset') }}</el-button>
-            </li>
-          </template>-->
-        <!-- </ul> -->
       </div>
       <div slot="operation">
         <el-button
-          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'data_catalog_category_application'"
           size="mini"
           class="btn"
@@ -94,8 +38,7 @@
           <span>{{ $t('metadata.createModel') }}</span>
         </el-button>
       </div>
-      <el-table-column v-if="$getSettingByKey('SHOW_CLASSIFY')" type="selection" width="45" :reserve-selection="true">
-      </el-table-column>
+      <el-table-column type="selection" width="45" :reserve-selection="true"></el-table-column>
       <el-table-column :label="$t('metadata.header.name')" prop="name" sortable="custom">
         <template slot-scope="scope">
           <div class="metadata-name">
@@ -113,8 +56,8 @@
                 {{ scope.row.classifications[0].value }}
               </el-tag>
             </div>
-            <div class="parent ellipsis" v-if="scope.row.database">
-              {{ scope.row.database.name }}
+            <div class="parent ellipsis" v-if="scope.row.source">
+              {{ scope.row.source.name }}
             </div>
           </div>
         </template>
@@ -134,7 +77,7 @@
           {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('metadata.details.opera')">
+      <el-table-column :label="$t('metadata.details.opera')" width="150">
         <template slot-scope="scope">
           <el-button
             v-readonlybtn="'data_catalog_edition'"
@@ -145,8 +88,9 @@
             "
             @click="toDetails(scope.row)"
           >
-            {{ $t('button.details') }}
+            {{ $t('button_details') }}
           </el-button>
+          <ElDivider direction="vertical"></ElDivider>
           <el-button
             v-readonlybtn="'data_catalog_edition'"
             size="mini"
@@ -158,6 +102,7 @@
           >
             {{ $t('button.rename') }}
           </el-button>
+          <ElDivider direction="vertical"></ElDivider>
           <el-button
             v-readonlybtn="'meta_data_deleting'"
             size="mini"
@@ -173,11 +118,31 @@
     <el-dialog
       width="500px"
       custom-class="create-dialog"
-      :title="$t('metadata.createNewModel')"
+      :title="$t('metadata_form_create')"
       :close-on-click-modal="false"
       :visible.sync="createDialogVisible"
     >
-      <FormBuilder ref="form" v-if="createDialogVisible" v-model="createForm" :config="createFormConfig"></FormBuilder>
+      <ElForm ref="form" label-position="left" label-width="100px" size="mini" :model="createForm" :rules="createRules">
+        <ElFormItem :label="$t('metadata_form_type')" required prop="model_type">
+          <ElSelect v-model="createForm.model_type" width="100%">
+            <ElOption
+              v-for="item in modelTyoeList"
+              :label="item.label"
+              :value="item.value"
+              :key="item.value"
+            ></ElOption>
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem :label="$t('metadata_form_database')" required prop="database">
+          <ElSelect v-model="createForm.database" width="100%">
+            <ElOption v-for="item in dbOptions" :label="item.label" :value="item.value" :key="item.value"></ElOption>
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem :label="$t('metadata_form_table_name')" required prop="tableName">
+          <ElInput v-model="createForm.tableName"></ElInput>
+        </ElFormItem>
+      </ElForm>
+
       <span slot="footer" class="dialog-footer">
         <el-button class="message-button-cancel" @click="createDialogVisible = false" size="mini">{{
           $t('button_cancel')
@@ -226,7 +191,6 @@ export default {
       whiteList: ['table', 'collection', 'mongo_view', 'view'],
       searchParams: {
         keyword: '',
-        isFuzzy: true,
         metaType: '',
         dbId: ''
       },
@@ -246,54 +210,48 @@ export default {
         database: '',
         tableName: ''
       },
-      createFormConfig: {
-        form: {
-          labelPosition: 'right',
-          labelWidth: '100px'
+      modelTyoeList: [
+        {
+          label: this.$t('metadata_form_collection'),
+          value: 'collection'
         },
-        items: [
+        {
+          label: this.$t('metadata_form_mongo_view'),
+          value: 'mongo_view'
+        }
+      ],
+      createRules: {
+        database: [
           {
-            type: 'select',
-            label: this.$t('metadata.form.type'),
-            field: 'model_type',
-            options: ['collection', 'mongo_view'].map(t => ({
-              label: this.$t('metadata.metaType.' + t),
-              value: t
-            })),
-            required: true
-          },
-          {
-            type: 'select',
-            label: this.$t('metadata.form.database'),
-            field: 'database',
-            options: [],
-            required: true
-          },
-          {
-            type: 'input',
-            label: this.$t('metadata.form.tableName'),
-            field: 'tableName',
-            rules: [
-              {
-                required: true,
-                validator: (rule, v, callback) => {
-                  if (!v || !v.trim()) {
-                    return callback(new Error(this.$t('metadata.form.none_table_name')))
-                  }
-                  const flag = /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/.test(v) // eslint-disable-line
-                  if (v.split('.')[0] == 'system' || !flag) {
-                    return callback(new Error(this.$t('dialog.placeholderTable')))
-                  }
-                  return callback()
-                }
+            required: true,
+            validator: (rule, v, callback) => {
+              if (!v || !v.trim()) {
+                return callback(new Error(this.$t('metadata_form_database') + this.$t('tips_rule_not_empty')))
               }
-            ]
+              return callback()
+            }
+          }
+        ],
+        tableName: [
+          {
+            required: true,
+            validator: (rule, v, callback) => {
+              if (!v || !v.trim()) {
+                return callback(new Error(this.$t('metadata_form_table_name') + this.$t('tips_rule_not_empty')))
+              }
+              const flag = /^[_a-zA-Z][0-9a-zA-Z_\.\-]*$/.test(v) // eslint-disable-line
+              if (v.split('.')[0] == 'system' || !flag) {
+                return callback(new Error(this.$t('dialog.placeholderTable')))
+              }
+              return callback()
+            }
           }
         ]
       },
       changeNameDialogVisible: false,
       changeNameValue: '',
-      changeNameData: null
+      changeNameData: null,
+      filterItems: []
     }
   },
   created() {
@@ -307,9 +265,9 @@ export default {
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-    let cache = this.table.getCache()
-    cache.isFuzzy = cache.isFuzzy === true
-    this.searchParams = cache
+    // let cache = this.table.getCache()
+    // cache.isFuzzy = cache.isFuzzy === true
+    // this.searchParams = cache
   },
   computed: {
     table() {
@@ -329,7 +287,6 @@ export default {
       if (name === 'reset') {
         this.searchParams = {
           keyword: '',
-          isFuzzy: true,
           metaType: '',
           dbId: ''
         }
@@ -339,7 +296,7 @@ export default {
     },
     getData({ page, tags }) {
       let { current, size } = page
-      let { isFuzzy, keyword, metaType, dbId } = this.searchParams
+      let { keyword, metaType, dbId } = this.searchParams
       let where = {
         is_deleted: false
       }
@@ -358,13 +315,12 @@ export default {
         create_time: true,
         collection: true,
         id: true,
-        'source._id': true,
-        'source.user_id': true,
+        source: true,
         databaseId: true,
         user_id: true
       }
       if (keyword && keyword.trim()) {
-        let filterObj = isFuzzy ? { like: toRegExp(keyword), options: 'i' } : keyword
+        let filterObj = { like: toRegExp(keyword), options: 'i' }
         where.or = [{ name: filterObj }, { original_name: filterObj }, { 'source.name': filterObj }]
       }
 
@@ -395,7 +351,6 @@ export default {
         })
         .then(res => {
           this.table.setCache({
-            isFuzzy,
             keyword,
             metaType,
             dbId
@@ -414,11 +369,11 @@ export default {
           database_type: true,
           connection_type: true,
           status: true
+        },
+        where: {
+          database_type: 'mongodb',
+          connection_type: { $in: ['target', 'source_and_target'] }
         }
-        // where: {
-        //   database_type: 'mongodb',
-        //   connection_type: ['target', 'source_and_target']
-        // }
       }
       this.$api('connections')
         .get({
@@ -427,18 +382,9 @@ export default {
         .then(res => {
           let dbOptions = res.data?.items || []
 
-          let options = []
-          dbOptions.forEach(db => {
-            if (db.database_type === 'mongodb' && ['target', 'source_and_target'].includes(db.connection_type)) {
-              options.push({
-                label: db.name,
-                value: db.id
-              })
-            }
+          this.dbOptions = dbOptions.map(item => {
+            return { label: item.name, value: item.id }
           })
-          this.dbOptions = dbOptions
-          // this.createFormConfig.items[1].options = options
-          this.getFilterItems()
         })
     },
     handleSortTable({ order, prop }) {
@@ -494,7 +440,7 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           let { model_type, database, tableName } = this.createForm
-          let db = this.dbOptions.find(it => it.id === database)
+          let db = this.dbOptions.find(it => it.value === database)
           let fields = [
             {
               checked: false,
@@ -521,22 +467,28 @@ export default {
             }
           ]
           let params = {
-            connectionId: db.id,
+            connectionId: db.value,
             original_name: tableName,
             is_deleted: false,
             meta_type: model_type,
             create_source: 'manual',
-            databaseId: db.id,
-            classifications: db.classifications,
+            databaseId: db.value,
+            // classifications: db.classifications ? db.classifications : [],
             alias_name: '',
             comment: ''
           }
           params.fields = model_type === 'collection' ? fields : []
           this.$api('MetadataInstances')
             .post(params)
-            .then(() => {
-              this.createDialogVisible = false
+            .then(res => {
+              if (res) {
+                this.createDialogVisible = false
+                this.$message.success(this.$t('message_save_ok'))
+              }
               // this.toDetails(res.data);
+            })
+            .catch(() => {
+              this.$message.success(this.$t('message_save_fail'))
             })
         }
       })
@@ -623,7 +575,15 @@ export default {
       }, debounce)
     },
     getFilterItems() {
-      console.log('TTTTTTTTTTT', this.dbOptions)
+      let filter = {
+        fields: {
+          name: true,
+          id: true,
+          database_type: true,
+          connection_type: true,
+          status: true
+        }
+      }
       this.filterItems = [
         {
           label: this.$t('metadata_type'),
@@ -636,10 +596,19 @@ export default {
           label: this.$t('metadata_db'),
           key: 'dbId',
           type: 'select-inner',
-          items: this.dbOptions
+          items: async () => {
+            let data = await this.$api('connections').findAll(filter)
+            let items = data?.data?.length ? data.data : []
+            return items.map(item => {
+              return {
+                label: item.name,
+                value: item.id
+              }
+            })
+          }
         },
         {
-          placeholder: this.$t('task_list_search_placeholder'),
+          placeholder: this.$t('metadata_name_placeholder'),
           key: 'keyword',
           type: 'input',
           slotName: ''
@@ -714,6 +683,9 @@ export default {
             text-align: left;
           }
           .el-form-item__content {
+            .el-select {
+              width: 100%;
+            }
             .el-form-item__error {
               line-height: 12px;
             }

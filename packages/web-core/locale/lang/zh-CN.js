@@ -580,6 +580,7 @@ const cn = {
     uploadOK: '上传成功',
     uploadError: '上传失败',
     uploadInfo: '点击查看详情',
+    view: '查看',
     dataFlowExport: '导出',
     addTag: '添加标签',
     bulkImport: '批量导入',
@@ -1848,7 +1849,8 @@ const cn = {
         CHECK_BIN_LOG_SYNC: '检查binlog日志同步是否开启',
         CHECK_GTID: ' 检查GTID模式与GTID一致性是否开启',
         CHECK_VIKA_API_TOKEN: '检查vika密钥是否正确',
-        CHECK_QINGFLOW_ACCESS_TOKEN: '检查access token是否可用'
+        CHECK_QINGFLOW_ACCESS_TOKEN: '检查access token是否可用',
+        CHECK_REDO_LOG_PARSER: '检查裸日志解析服务是否可用'
       },
       initialReadSize: '初始化数据大小',
       incrementalTps: '测试速率(次/秒)',
@@ -3097,7 +3099,7 @@ const cn = {
     SMTP_Server_Port: 'SMTP 服务端口',
     SMTP_Server_User: 'SMTP 服务账号',
     SMTP_Server_password: 'SMTP 服务密码',
-    Email_Receivers: 'Email接受邮件地址',
+    Email_Receivers: 'Email接收邮件地址',
     Email_Send_Address: 'Email发送邮件地址',
     SMTP_Server_Host: 'SMTP 服务Host',
     Send_Email_Title_Prefix: '发送Email标题的前缀（可选）',
@@ -3127,7 +3129,7 @@ const cn = {
     Worker_Heartbeat_Expire: '进程心跳过期时间(秒)',
     License_Key: '证书秘钥',
     Enter_jobs_log_level__error_warn_info_debug_trace: '输入任务日志等级: error/warn/info/debug/trace',
-    Email_Receivers_Multiple_separated_by_semicolons: '邮件接受者,可输入多个，通过逗号分隔',
+    Email_Receivers_Multiple_separated_by_semicolons: '邮件接收者,可输入多个，通过逗号分隔',
 
     Keep_recent_n_hours_message_before_the_last_processed_message_s_time_: '保持最近n小时消息',
     Store_full_record_as_embedded_document_in_target_collection_for_update_operations:

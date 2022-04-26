@@ -11,7 +11,7 @@
           </ElRadioGroup>
         </li>
         <li class="item">
-          <ElButton plain class="btn-refresh" size="small" @click="table.fetch()">
+          <ElButton plain class="btn-refresh" size="mini" @click="table.fetch()">
             <i class="el-icon-refresh"></i>
           </ElButton>
         </li>
@@ -42,7 +42,7 @@
         </ElButton>
       </div>
       <ElTableColumn :label="$t('function_name_label')" prop="function_name"> </ElTableColumn>
-      <ElTableColumn :label="$t('function_type_label')" prop="typeFmt"> </ElTableColumn>
+      <ElTableColumn :label="$t('function_type_label')" prop="typeFmt" width="120"> </ElTableColumn>
       <ElTableColumn :label="$t('function_describe_label')" prop="describe"> </ElTableColumn>
       <ElTableColumn :label="$t('function_last_update_label')" prop="lastUpdatedFmt"> </ElTableColumn>
 
@@ -97,26 +97,26 @@ export default {
       let where = {}
       type && (where.type = type)
       let filter = {
-        where: where,
+        where,
         order: this.order,
         limit: size,
         skip: (current - 1) * size
       }
-      return Promise.all([
-        this.$api('Javascript_functions').count({ where: where }),
-        this.$api('Javascript_functions').get({
-          filter: filter
+      return this.$api('Javascript_functions')
+        .get({
+          filter: JSON.stringify(filter)
         })
-      ]).then(([countRes, res]) => {
-        return {
-          total: countRes.data.count,
-          data: res.data.map(item => {
-            item.typeFmt = this.typeMapping[item.type]
-            item.lastUpdatedFmt = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
-            return item
-          })
-        }
-      })
+        .then(res => {
+          let list = res?.data?.items || []
+          return {
+            total: res.data?.total,
+            data: list.map(item => {
+              item.typeFmt = this.typeMapping[item.type]
+              item.lastUpdatedFmt = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
+              return item
+            })
+          }
+        })
     },
     remove(item) {
       this.$confirm(this.$t('function_message_delete_content'), this.$t('function_message_delete_title'), {
@@ -162,6 +162,7 @@ export default {
       height: 32px;
       line-height: 32px;
       width: 32px;
+      min-width: 32px;
       font-size: 16px;
     }
   }

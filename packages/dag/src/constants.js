@@ -7,6 +7,7 @@ export const DEFAULT_SETTINGS = {
   type: 'initial_sync+cdc', // 任务类型：全量+增量
   desc: '', // 任务描述
   isAutoCreateIndex: true, // 自动创建索引
+  isOpenAutoDDL: false, // 自动DDL
   writeThreadSize: 8, // 目标写入线程数
   deduplicWriteMode: 'intelligent', // 去重写入机制: 智能去重写入
   increOperationMode: false, // 增量数据处理模式：批量,
@@ -97,7 +98,13 @@ export const NODE_TYPE_ICON = {
   aggregation_processor: 'aggregator',
   row_filter_processor: 'row-filter',
   cache_lookup_processor: 'joint-cache',
-  join: 'join'
+  join_processor: 'join',
+  merge_table_processor: 'merge_table',
+  custom_processor: 'custom',
+  field_rename_processor: 'field_rename',
+  field_add_del_processor: 'field_add_del',
+  field_calc_processor: 'field_calc',
+  field_mod_type_processor: 'field_mod_type'
 }
 
 export const STATUS_MAP = {
@@ -186,3 +193,27 @@ export const STATUS_MAP = {
     edit: true
   }
 }
+
+// 不支持全量
+export const NONSUPPORT_SYNC = ['elasticsearch', 'redis', 'hive', 'tcp_udp', 'clickhouse', 'hazelcast_cloud_cluster']
+// 不支持增量
+export const NONSUPPORT_CDC = [
+  'db2',
+  'gbase-8s',
+  'sybase ase',
+  'gaussdb200',
+  'elasticsearch',
+  'redis',
+  'dameng',
+  'hive',
+  'tcp_udp',
+  'hbase',
+  'kudu',
+  'greenplum',
+  'hana',
+  'adb_mysql',
+  'adb_postgres',
+  'kundb',
+  'clickhouse',
+  'hazelcast_cloud_cluster'
+]

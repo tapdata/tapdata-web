@@ -1,0 +1,4 @@
+@font-face {
+  font-family: DIN;
+  src: local('DIN-Regular'), url('DIN.otf') format('opentype');
+}

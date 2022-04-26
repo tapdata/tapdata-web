@@ -151,7 +151,7 @@
             </template>
             <template #after>
               <slot name="after">
-                <div v-if="!!lastPageText && isLastPage" class="pl-5 py-2 fs-7 font-color-disable">
+                <div v-if="!!lastPageText && isLastPage" class="pl-5 py-2 fs-7 font-color-slight">
                   {{ lastPageText }}
                 </div>
               </slot>
@@ -314,6 +314,14 @@ export default {
     },
     value() {
       this.getSelectLabel()
+    },
+    items: {
+      deep: true,
+      handler(v1, v2) {
+        if (v1 && v2 && JSON.stringify(v1) !== JSON.stringify(v2)) {
+          this.init()
+        }
+      }
     }
   },
   mounted() {
@@ -519,7 +527,7 @@ export default {
     &:hover {
       background-color: #fafafa;
       .icon-btn {
-        color: map-get($fontColor, main);
+        color: map-get($fontColor, dark);
       }
     }
     ::v-deep {
@@ -535,7 +543,7 @@ export default {
   }
 }
 .scroller {
-  height: 274px;
+  height: auto;
 }
 .el-select__loading {
   position: absolute;
@@ -552,18 +560,16 @@ export default {
   border: 1px solid #d9d9d9;
   border-radius: 4px;
   cursor: pointer;
+  white-space: nowrap;
 }
 .inner-select__label {
-  color: map-get($fontColor, sub);
+  color: map-get($fontColor, light);
 }
 .inner-select__selected {
   padding-left: 8px;
-  color: map-get($fontColor, main);
-  &.placeholder {
-    //color: map-get($fontColor, sub);
-  }
+  color: map-get($fontColor, dark);
 }
 .icon-btn {
-  color: map-get($fontColor, sub);
+  color: map-get($fontColor, slight);
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
-  <section class="custom-form-wrapper section-wrap">
-    <div class="section-wrap-box">
+  <section v-loading="loading" class="custom-form-wrapper section-wrap">
+    <div class="section-wrap-box overflow-auto">
       <!-- <div class="container-header">
         {{ $route.params.id ? $t('function_button_edit_function') : $t('function_button_create_custom_function') }}
       </div> -->
@@ -77,10 +77,10 @@
           ></ElInput>
         </ElFormItem>
       </ElForm>
-      <div class="footer p-6">
-        <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('button_back') }}</ElButton>
-        <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
-      </div>
+    </div>
+    <div class="footer p-6">
+      <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('button_back') }}</ElButton>
+      <ElButton class="btn" type="primary" size="mini" @click="save">{{ $t('button_save') }}</ElButton>
     </div>
 
     <!-- </div>
@@ -109,6 +109,7 @@ export default {
   data() {
     let self = this
     return {
+      loading: false,
       details: {},
       form: {
         type: 'custom',
@@ -146,25 +147,29 @@ export default {
   },
   methods: {
     getData(id) {
+      this.loading = true
       this.$api('Javascript_functions')
         .findOne({
-          filter: {
+          filter: JSON.stringify({
             where: {
               id
             }
-          }
+          })
         })
         .then(res => {
           let details = res?.data || {}
           // 处理老数据问题
           if (details.type === 'custom' && !details.script) {
-            details.script = `function ${details.function_name}() ${details.function_body}`
+            details.script = `function ${details.function_name}(${details.parameters}) ${details.function_body}`
           }
           if (details.type === 'jar') {
             details.classNameFmt = details.className?.split(details.packageName + '.')?.[1] || ''
           }
           this.details = details
           this.form = Object.assign({}, this.form, details)
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
     save() {
@@ -187,6 +192,10 @@ export default {
               params.id = id
               method = 'patch'
             }
+            if (!params.format) {
+              params.format = `${params.function_name}(${params.parameters})`
+            }
+            this.loading = true
             this.$api('Javascript_functions')
               [method](
                 Object.assign({}, this.form, params, {
@@ -196,12 +205,15 @@ export default {
               )
               .then(res => {
                 if (res) {
-                  this.$message.success(this.$t('message.saveOK'))
+                  this.$message.success(this.$t('message_save_ok'))
                   this.$router.back()
                 }
               })
-              .catch(e => {
-                this.$message.error(e.response.msg)
+              .catch(err => {
+                this.$message.error(err?.data?.message || this.$t('message_save_fail'))
+              })
+              .finally(() => {
+                this.loading = false
               })
           }
         })
@@ -212,12 +224,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.custom-form-wrapper {
-  //   display: flex;
-  //   flex-direction: column;
-  //   height: 100%;
-  //   background: #fafafa;
-}
 .custom-form__body {
   margin: 30px 24px 0 24px;
   flex: 1;
@@ -233,7 +239,7 @@ export default {
     }
     .el-form-item--mini.el-form-item,
     .el-form-item--small.el-form-item {
-      margin-bottom: 24px;
+      margin-bottom: 30px;
     }
   }
   .script-editor {
@@ -246,12 +252,13 @@ export default {
     flex: 1;
     overflow: auto;
   }
-  .footer {
-    border-top: 1px solid #f0f0f0;
-    box-shadow: 0px -1px 2px 0px #f6f6f6;
-    .btn {
-      width: 80px;
-    }
+}
+.footer {
+  background: #fff;
+  border-top: 1px solid #f0f0f0;
+  box-shadow: 0px -1px 2px 0px #f6f6f6;
+  .btn {
+    width: 80px;
   }
 }
 </style>

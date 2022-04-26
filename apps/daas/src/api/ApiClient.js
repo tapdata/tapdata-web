@@ -59,7 +59,7 @@ export default class {
         })
       }
     })
-    clientInfo = clientInfo.data[0] || {}
+    clientInfo = clientInfo.data?.items[0] || {}
     // let scope = clientInfo.scopes && clientInfo.scopes[0] ? clientInfo.scopes[0] : 'All_publish_data'
     // let username = decodeURIComponent(document.cookie.match(/(^|)email=([^;]*)(;|$)/)[2])
     let data = 'grant_type=client_credentials&client_id=' + clientInfo.id + '&client_secret=' + clientInfo.clientSecret
@@ -165,18 +165,19 @@ export default class {
 
   async getHeaders(collectionName, operationName) {
     let collection = this.collections[collectionName || this.collection.collection]
-    let properties = collection['properties']
+    let properties = collection ? collection['properties'] : {}
     let headers = []
     let fields = Object.keys(properties || {})
-    fields.forEach(field => {
-      headers.push({
-        text: field,
-        value: field,
-        show: true,
-        type: properties[field]['type'],
-        format: properties[field]['format']
+    if (fields?.length)
+      fields.forEach(field => {
+        headers.push({
+          text: field,
+          value: field,
+          show: true,
+          type: properties[field]['type'],
+          format: properties[field]['format']
+        })
       })
-    })
     let showFields = {}
     if (operationName) {
       showFields = (collection.api[operationName] && collection.api[operationName]['fields']) || {}

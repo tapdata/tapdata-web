@@ -1,26 +1,17 @@
 <template>
-  <div class="section-wrap">
-    <div class="section-wrap-box">
+  <div class="section-wrap setting-warp">
+    <div class="setting-warp-box">
       <div class="setting-center">
         <div class="setting-left-sidebar">
-          <div class="title">{{ $t('account.setCenter') }}</div>
           <ul>
-            <li
-              :class="activePanel === 'settings' ? 'active' : ''"
-              v-if="authoritySetting"
-              @click="changeName('settings')"
-            >
-              <i class="iconfont icon-shezhi1"></i>
-              <span slot="title">{{ this.$t('account.systemSetting') }}</span>
-            </li>
             <li
               v-for="item in settingList"
               :key="item.icon"
               :class="activePanel === item.key ? 'active' : ''"
               @click="changeName(item.key)"
             >
-              <i :class="['iconfont', item.icon]"></i>
-              <VIcon>{{ item.icon }}</VIcon>
+              <!-- <i :class="['iconfont', item.icon]"></i> -->
+              <VIcon class="mr-2">{{ item.icon }}</VIcon>
               <span slot="title">{{ item.name }}</span>
             </li>
           </ul>
@@ -35,30 +26,34 @@
 
 <script>
 import VIcon from '@/components/VIcon'
-
 export default {
   components: { VIcon },
   data() {
     return {
       settingList: [
-        // {
-        // 	icon: 'icon-shezhi1',
-        // 	name: this.$t('account.systemSetting'),
-        // 	key: 'settings'
-        // },
+        {
+          icon: 'setting',
+          name: this.$t('account.systemSetting'),
+          key: 'settings'
+        },
         {
           icon: 'bells',
-          name: this.$t('notification.setting'),
+          name: this.$t('notify_setting'),
           key: 'notificationSetting'
         },
         {
-          icon: 'icon-gerenzhongxin',
+          icon: 'account',
           name: this.$t('account.accountSettings'),
           key: 'accountSetting'
         }
       ],
       activePanel: '',
       authoritySetting: this.$has('system_settings') && this.$has('system_settings_menu')
+    }
+  },
+  computed: {
+    breadcrumbName() {
+      return this.$t(this.$route.meta?.title)
     }
   },
   watch: {
@@ -81,49 +76,70 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.setting-center {
+.setting-warp {
   height: 100%;
-  font-size: 12px;
-  display: flex;
-  justify-content: space-between;
-  height: 100%;
-  .setting-left-sidebar {
-    background: rgba(250, 250, 250, 1);
-    border: 1px solid rgba(230, 230, 232, 1);
-    width: 250px;
-    .title {
-      height: 14px;
-      font-size: 14px;
-      font-weight: bold;
-      color: rgba(51, 51, 51, 1);
-      line-height: 34px;
-      margin: 30px 20px;
-    }
-    ul {
-      li {
-        height: 44px;
-        line-height: 44px;
-        padding-left: 20px;
-        cursor: pointer;
-        i {
-          color: #666;
+  overflow: hidden;
+  // .section-wrap-breadcrumb {
+  //   padding: 25px 0;
+  // }
+  .setting-warp-box {
+    flex: 1 1 auto;
+    border-radius: 4px;
+    background-color: #fff;
+    overflow: hidden;
+    .setting-center {
+      height: 100%;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      height: 100%;
+      .setting-left-sidebar {
+        padding-top: 16px;
+        border-right: 1px solid #f2f2f2;
+        width: 200px;
+        // .title {
+        //   height: 14px;
+        //   font-size: 14px;
+        //   font-weight: bold;
+        //   color: rgba(51, 51, 51, 1);
+        //   line-height: 34px;
+        //   padding: 30px 20px;
+        // }
+        ul {
+          li {
+            height: 44px;
+            line-height: 44px;
+            padding-left: 20px;
+            cursor: pointer;
+            color: #4e5969;
+            ::v-deep {
+              .iconfont {
+                color: #4e5969;
+              }
+            }
+          }
+          .active {
+            background: rgba(44, 101, 255, 0.05);
+            ::v-deep {
+              .iconfont {
+                color: #2c65ff;
+              }
+            }
+          }
+          // &:hover {
+          // 	background: #eeeeee;
+          // }
         }
       }
-      .active {
-        background: #eeeeee;
-      }
-      // &:hover {
-      // 	background: #eeeeee;
-      // }
-    }
-  }
 
-  .setting-main {
-    width: 100%;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+      .setting-main {
+        width: 100%;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+    }
   }
 }
 </style>

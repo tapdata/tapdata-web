@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="85px" height="44px" viewBox="0 0 85 44" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Console_icon_New data replication</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="37.1031746" height="42.7428571" rx="2"></rect>
+        <rect id="path-3" x="47.8968254" y="0" width="37.1031746" height="42.7428571" rx="2"></rect>
+    </defs>
+    <g id="控制台" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="控制台-新建" transform="translate(-424.000000, -320.000000)">
+            <g id="Console_icon_New-data-replication" transform="translate(424.000000, 320.000000)">
+                <g id="编组-5">
+                    <g id="矩形" transform="translate(0.000000, 1.257143)">
+                        <mask id="mask-2" fill="white">
+                            <use xlink:href="#path-1"></use>
+                        </mask>
+                        <use id="蒙版" fill-opacity="0.499810492" fill="#2C65FF" xlink:href="#path-1"></use>
+                    </g>
+                    <rect id="矩形" fill="#9DB8EF" x="7.42063492" y="15.0857143" width="16.8650794" height="4.19047619" rx="1"></rect>
+                    <rect id="矩形" fill="#EDEEF2" x="7.42063492" y="21.3714286" width="16.8650794" height="4.19047619" rx="1"></rect>
+                    <rect id="矩形" fill="#EDEEF2" x="7.42063492" y="29.3333333" width="16.8650794" height="4.19047619" rx="1"></rect>
+                    <rect id="矩形" fill="#87A7F9" opacity="0.235161918" x="2.19246032" y="8.38095238" width="3.37301587" height="4.19047619" rx="1"></rect>
+                    <rect id="矩形" fill="#87A7F9" opacity="0.235161918" x="2.19246032" y="15.0857143" width="3.37301587" height="4.19047619" rx="1"></rect>
+                    <rect id="矩形" fill="#87A7F9" opacity="0.235161918" x="2.19246032" y="21.3714286" width="3.37301587" height="4.19047619" rx="1"></rect>
+                    <rect id="矩形" fill="#87A7F9" opacity="0.235161918" x="2.19246032" y="29.3333333" width="3.37301587" height="4.19047619" rx="1"></rect>
+                    <rect id="矩形" fill="#2C65FF" x="7.42063492" y="8.38095238" width="24.2857143" height="4.19047619" rx="1"></rect>
+                    <mask id="mask-4" fill="white">
+                        <use xlink:href="#path-3"></use>
+                    </mask>
+                    <use id="蒙版" fill="#FFFFFF" xlink:href="#path-3"></use>
+                    <rect id="矩形" fill="#9DB8EF" mask="url(#mask-4)" x="55.8234127" y="15.0857143" width="16.8650794" height="4.19047619" rx="1"></rect>
+                    <rect id="矩形" fill="#EDEEF2" mask="url(#mask-4)" x="55.8234127" y="21.3714286" width="16.8650794" height="4.19047619" rx="1"></rect>
+                    <rect id="矩形" fill="#EDEEF2" mask="url(#mask-4)" x="55.8234127" y="29.3333333" width="16.8650794" height="4.19047619" rx="1"></rect>
+                    <rect id="矩形" fill="#87A7F9" opacity="0.235161918" mask="url(#mask-4)" x="50.5952381" y="8.38095238" width="3.37301587" height="4.19047619" rx="1"></rect>
+                    <rect id="矩形" fill="#87A7F9" opacity="0.235161918" mask="url(#mask-4)" x="50.5952381" y="15.0857143" width="3.37301587" height="4.19047619" rx="1"></rect>
+                    <rect id="矩形" fill="#87A7F9" opacity="0.235161918" mask="url(#mask-4)" x="50.5952381" y="21.3714286" width="3.37301587" height="4.19047619" rx="1"></rect>
+                    <rect id="矩形" fill="#87A7F9" opacity="0.235161918" mask="url(#mask-4)" x="50.5952381" y="29.3333333" width="3.37301587" height="4.19047619" rx="1"></rect>
+                    <rect id="矩形" fill="#2C65FF" mask="url(#mask-4)" x="55.8234127" y="8.38095238" width="24.2857143" height="4.19047619" rx="1"></rect>
+                </g>
+                <g id="矩形" transform="translate(48.000000, 0.000000)"></g>
+                <g id="编组-4" transform="translate(36.000000, 11.000000)">
+                    <ellipse id="椭圆形" fill="#2C65FF" opacity="0.531350999" cx="1.33333333" cy="1.5" rx="1.33333333" ry="1.5"></ellipse>
+                    <line x1="2.19138145" y1="1.5" x2="11.4314607" y2="1.5" id="直线" stroke="#2C65FF" stroke-linecap="square"></line>
+                    <rect id="矩形" fill="#2C65FF" x="11.4314607" y="0.75" width="1" height="1.5" rx="0.5"></rect>
+                    <ellipse id="椭圆形" fill="#2C65FF" cx="1.33333333" cy="1.5" rx="1" ry="1"></ellipse>
+                </g>
+                <g id="编组-4" transform="translate(36.000000, 18.000000)">
+                    <ellipse id="椭圆形" fill="#2C65FF" opacity="0.531350999" cx="1.33333333" cy="1.5" rx="1.33333333" ry="1.5"></ellipse>
+                    <line x1="2.19138145" y1="1.5" x2="11.4314607" y2="1.5" id="直线" stroke="#2C65FF" stroke-linecap="square"></line>
+                    <rect id="矩形" fill="#2C65FF" x="11.4314607" y="0.75" width="1" height="1.5" rx="0.5"></rect>
+                    <ellipse id="椭圆形" fill="#2C65FF" cx="1.33333333" cy="1.5" rx="1" ry="1"></ellipse>
+                </g>
+                <g id="编组-4" transform="translate(36.000000, 25.000000)">
+                    <ellipse id="椭圆形" fill="#2C65FF" opacity="0.531350999" cx="1.33333333" cy="1.5" rx="1.33333333" ry="1.5"></ellipse>
+                    <line x1="2.19138145" y1="1.5" x2="11.4314607" y2="1.5" id="直线" stroke="#2C65FF" stroke-linecap="square"></line>
+                    <rect id="矩形" fill="#2C65FF" x="11.4314607" y="0.75" width="1" height="1.5" rx="0.5"></rect>
+                    <ellipse id="椭圆形" fill="#2C65FF" cx="1.33333333" cy="1.5" rx="1" ry="1"></ellipse>
+                </g>
+                <g id="编组-4" transform="translate(36.000000, 31.000000)">
+                    <ellipse id="椭圆形" fill="#2C65FF" opacity="0.531350999" cx="1.33333333" cy="1.5" rx="1.33333333" ry="1.5"></ellipse>
+                    <line x1="2.19138145" y1="1.5" x2="11.4314607" y2="1.5" id="直线" stroke="#2C65FF" stroke-linecap="square"></line>
+                    <rect id="矩形" fill="#2C65FF" x="11.4314607" y="0.75" width="1" height="1.5" rx="0.5"></rect>
+                    <ellipse id="椭圆形" fill="#2C65FF" cx="1.33333333" cy="1.5" rx="1" ry="1"></ellipse>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -202,7 +202,7 @@ export default {
           })
         })
         .then(res => {
-          let data = res?.data || []
+          let data = res?.data?.items || []
           names = names.concat(data.map(item => item.function_name))
           this.repeatNames = Array.from(new Set(names))
           this.funcList.forEach(item => {

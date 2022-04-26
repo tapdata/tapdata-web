@@ -65,9 +65,11 @@ service.interceptors.request.use(function (config) {
   config.withCredentials = true
   config.headers['x-requested-with'] = 'XMLHttpRequest'
   let cancelFunc = null
-  config.cancelToken = new CancelToken(c => {
-    cancelFunc = c
-  })
+  if (!config.cancelToken) {
+    config.cancelToken = new CancelToken(c => {
+      cancelFunc = c
+    })
+  }
   let key = JSON.stringify(config)
   if (pending.includes(key)) {
     console.log('Cancel request:', config) //eslint-disable-line
@@ -94,3 +96,5 @@ service.interceptors.response.use(function (response) {
 }, errorCallback)
 
 export default service
+
+export { CancelToken }

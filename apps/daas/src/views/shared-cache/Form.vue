@@ -1,49 +1,351 @@
 <template>
-  <section class="shared-cache-form">
-    <ElForm>
-      <ElFormItem prop="name" :label="$t('shared_cache_name')">
-        <ElInput v-model="form.name"></ElInput>
-      </ElFormItem>
-      <ElFormItem prop="cacheKeys" :label="$t('shared_cache_keys')">
-        <ElInput v-model="form.cacheKeys"></ElInput>
-      </ElFormItem>
-      <ElFormItem prop="connectionId" :label="$t('column_connection')">
-        <ElInput v-model="form.connectionId"></ElInput>
-      </ElFormItem>
-      <ElFormItem prop="tableName" :label="$t('column_table')">
-        <ElInput v-model="form.tableName"></ElInput>
-      </ElFormItem>
-      <ElFormItem prop="fields" :label="$t('shared_cache_fields')">
-        <ElInput v-model="form.fields"></ElInput>
-      </ElFormItem>
-      <ElFormItem prop="maxRows" :label="$t('shared_cache_max_rows')">
-        <ElInput v-model="form.maxRows"></ElInput>
-      </ElFormItem>
-      <ElFormItem prop="ttl" :label="$t('shared_cache_ttl')">
-        <ElInput v-model="form.ttl"></ElInput>
-      </ElFormItem>
-      <ElFormItem prop="ttl" :label="$t('shared_cache_ttl')"> </ElFormItem>
-    </ElForm>
+  <section class="shared-cache-form section-wrap" v-loading="loading">
+    <div class="section-wrap-box flex">
+      <div class="title mb-6">
+        {{ $t($route.params.id ? 'page_title_shared_cache_edit' : 'page_title_shared_cache_create') }}
+      </div>
+      <ElForm
+        ref="form"
+        class="flex-fill overflow-auto pb-4"
+        label-width="120px"
+        label-position="left"
+        :model="form"
+        :rules="rules"
+      >
+        <ElFormItem prop="name" :label="$t('shared_cache_name') + ':'">
+          <ElInput v-model="form.name" class="form-input" :placeholder="$t('shared_cache_placeholder_name')"></ElInput>
+        </ElFormItem>
+        <ElFormItem prop="connectionId" :label="$t('column_connection') + ':'">
+          <VirtualSelect
+            v-model="form.connectionId"
+            filterable
+            class="form-input"
+            :item-size="50"
+            :items="connectionOptions"
+            :loading="!connectionOptions.length"
+            :placeholder="$t('shared_cache_placeholder_connection')"
+            @input="connectionInputHandler"
+          />
+        </ElFormItem>
+        <ElFormItem prop="tableName" :label="$t('column_table') + ':'">
+          <VirtualSelect
+            v-model="form.tableName"
+            filterable
+            class="form-input"
+            :item-size="50"
+            :items="tableOptions"
+            :loading="tableOptionsLoading"
+            :placeholder="$t('shared_cache_placeholder_table')"
+            @input="tableInputHandler"
+          />
+        </ElFormItem>
+        <ElFormItem prop="cacheKeys" :label="$t('shared_cache_keys') + ':'">
+          <FieldSelector
+            v-model="form.cacheKeys"
+            class="form-field-selector"
+            :options="fieldOptions"
+            :placeholder="$t('shared_cache_placeholder_keys')"
+          ></FieldSelector>
+        </ElFormItem>
+        <ElFormItem prop="fields" :label="$t('shared_cache_fields') + ':'">
+          <FieldSelector
+            v-model="form.fields"
+            class="form-field-selector"
+            :options="fieldOptions"
+            :placeholder="$t('shared_cache_placeholder_fields')"
+          ></FieldSelector>
+        </ElFormItem>
+        <ElFormItem prop="maxRows" :label="$t('shared_cache_max_rows') + ':'">
+          <div class="flex align-center">
+            <ElSelect :value="form.maxRows > 0" @input="form.maxRows = $event ? 10000 : 0" style="width: 355px">
+              <ElOption :label="$t('shared_cache_custom_max_record')" :value="true"></ElOption>
+              <ElOption :label="$t('shared_cache_custom_no_limit')" :value="false"></ElOption>
+            </ElSelect>
+            <template v-if="form.maxRows > 0">
+              <ElInputNumber
+                v-model.number="form.maxRows"
+                class="ml-3"
+                style="width: 100px"
+                controls-position="right"
+              ></ElInputNumber>
+              <span class="ml-1">{{ $t('shared_cache_custom_record_unit') }}</span>
+            </template>
+          </div>
+        </ElFormItem>
+        <ElFormItem prop="ttl" :label="$t('shared_cache_ttl') + ':'">
+          <ElInputNumber v-model="form.ttl" style="width: 100px" controls-position="right"></ElInputNumber>
+          <span class="ml-1">{{ $t('shared_cache_ttl_unit') }}</span>
+        </ElFormItem>
+        <ElFormItem :label="$t('shared_cache_code') + ':'"></ElFormItem>
+        <div class="example-wrapper overflow-hidden">
+          <div class="code">
+            <span class="color-primary">var</span> cachedRow = CacheService.getCache(
+            <span class="color-danger">'{{ form.name || 'cachename' }}'</span>
+            <template v-if="!form.cacheKeys || !form.cacheKeys.length">
+              ,<span class="bold">record</span>.<span class="color-danger">category_code</span>
+            </template>
+            <span v-for="key in form.cacheKeys.split(',')" :key="key">
+              <template v-if="key">
+                , <span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
+              </template>
+            </span>
+            );<br />
+            <span class="bold">record</span>.category_name = cachedRow.category_name;<br />
+          </div>
+          <div class="my-2">OR</div>
+          <div class="code">
+            <span class="bold">record</span>.category_name = CacheService.getCacheItem(
+            <span class="color-danger">'{{ form.name || 'cachename' }}'</span>, <span>'category_name'</span>,
+            defaultValue
+            <span v-for="key in form.cacheKeys.split(',')" :key="key">
+              <template v-if="key">
+                ,<span class="bold">record</span>.<span class="color-danger">{{ key }}</span>
+              </template>
+            </span>
+            );
+          </div>
+        </div>
+      </ElForm>
+      <div class="pt-6">
+        <ElButton @click="$router.back()">{{ $t('button_back') }}</ElButton>
+        <ElButton type="primary" @click="submit">{{ $t('button_save') }}</ElButton>
+      </div>
+    </div>
   </section>
 </template>
-
+<style lang="scss" scoped>
+.shared-cache-form .title {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.85);
+  line-height: 22px;
+}
+.form-input {
+  width: 504px;
+}
+.form-field-selector {
+  width: 905px;
+  max-width: 100%;
+}
+.example-wrapper {
+  padding: 16px;
+  width: 950px;
+  max-width: 100%;
+  background: #3a3d4c;
+  border-radius: 2px;
+  color: #bfd0ff;
+}
+.code {
+  padding: 8px;
+  white-space: nowrap;
+  border-radius: 2px;
+  background: #262838;
+  overflow-x: auto;
+  color: #82b290;
+  .bold {
+    font-weight: bold;
+  }
+}
+</style>
 <script>
+import VirtualSelect from 'web-core/components/virtual-select'
+import FieldSelector from './FieldSelector'
 export default {
+  components: { VirtualSelect, FieldSelector },
   data() {
     return {
+      loading: false,
       form: {
         name: '',
-        cacheKeys: '',
         connectionId: '',
         tableName: '',
+        cacheKeys: '',
         fields: '',
         maxRows: 10000,
         ttl: 7
+      },
+      connectionOptions: [],
+      tableOptions: [],
+      fieldOptions: [],
+      tableOptionsLoading: false,
+      fieldOptionsLoading: false,
+      rules: {
+        name: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_name') }],
+        connectionId: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_connection') }],
+        tableName: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_table') }],
+        cacheKeys: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_keys') }],
+        fields: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_fields') }],
+        maxRows: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_max_rows') }],
+        ttl: [{ required: true, trigger: 'blur', message: this.$t('shared_cache_placeholder_ttl') }]
       }
     }
   },
+  computed: {
+    script() {
+      let cacheKeys = this.form.cacheKeys || ''
+      return `  var cacheRow = CacheService.getCache(${this.form.name || 'cachename'}, ${
+        cacheKeys.length ? 'record.' + cacheKeys.split(',').join(', record.') : 'record.category_code'
+      })\n  record.category_name = cachedRow.category_name`
+    }
+  },
+  created() {
+    this.getConnectionOptions()
+    let id = this.$route.params.id
+    if (id) {
+      this.getData(id)
+    }
+  },
   methods: {
-    submit() {}
+    getData(id) {
+      this.loading = true
+      this.$api('shareCache')
+        .findOne(id)
+        .then(res => {
+          let data = res?.data || {}
+          this.form = {
+            name: data.name,
+            connectionId: data.connectionId,
+            tableName: data.tableName,
+            cacheKeys: data.cacheKeys,
+            fields: data.fields?.join(',') || '',
+            maxRows: data.maxRows,
+            ttl: data.ttl
+          }
+          this.getTableOptions(data.connectionId)
+          this.getTableSchema(data.tableName)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    getConnectionOptions() {
+      let filter = {
+        order: 'createTime DESC',
+        fields: {
+          id: true,
+          name: true
+        },
+        where: {
+          database_type: 'mongodb',
+          connection_type: { in: ['source', 'source_and_target'] }
+        }
+      }
+      this.$api('connections')
+        .listAll(filter)
+        .then(res => {
+          let options = res?.data || []
+          this.connectionOptions = options.map(opt => ({ label: opt.name, value: opt.id }))
+        })
+    },
+    getTableOptions(connectionId) {
+      this.tableOptionsLoading = true
+      this.$api('MetadataInstances')
+        .getTables(connectionId)
+        .then(res => {
+          let options = []
+          let list = res?.data || []
+          list.forEach(opt => {
+            if (opt) {
+              options.push({ label: opt, value: opt })
+            }
+          })
+          this.tableOptions = options
+        })
+        .finally(() => {
+          this.tableOptionsLoading = false
+        })
+    },
+    getTableSchema(tableName) {
+      let params = {
+        filter: JSON.stringify({
+          where: {
+            'source.id': this.form.connectionId,
+            original_name: tableName,
+            is_deleted: false,
+            'fields.is_deleted': false
+          },
+          fields: {
+            'fields.field_name': true,
+            'fields.original_field_name': true
+          }
+        })
+      }
+      this.fieldOptionsLoading = true
+      this.$api('MetadataInstances')
+        .get(params)
+        .then(res => {
+          let table = res?.data?.items?.[0]
+          if (table) {
+            let fields = table.fields || []
+            this.fieldOptions = fields.map(opt => opt.field_name)
+          } else {
+            this.$message.error(this.$t('shared_cache_messge_no_table'))
+          }
+        })
+        .finally(() => {
+          this.fieldOptionsLoading = false
+        })
+    },
+    connectionInputHandler(connectionId) {
+      this.form.tableName = ''
+      this.form.cacheKeys = ''
+      this.form.fields = ''
+      this.fieldOptions = []
+      this.getTableOptions(connectionId)
+    },
+    tableInputHandler(tableName) {
+      this.form.cacheKeys = ''
+      this.form.fields = ''
+      this.fieldOptions = []
+      this.getTableSchema(tableName)
+    },
+    submit() {
+      this.$refs.form.validate(flag => {
+        if (flag) {
+          let { name, connectionId, tableName, cacheKeys, fields, maxRows, ttl } = this.form
+          let id = this.$route.params.id
+          let params = {
+            id,
+            name,
+            dag: {
+              nodes: [
+                {
+                  type: 'collection',
+                  attrs: {
+                    fields: fields.split(',')
+                  },
+                  tableName: tableName,
+                  databaseType: 'mongodb',
+                  connectionId: connectionId
+                },
+                {
+                  ttl: ttl,
+                  cacheKeys: cacheKeys,
+                  maxRows: maxRows
+                }
+              ],
+              edges: []
+            }
+          }
+          let method = id ? 'patch' : 'post'
+          this.loading = true
+          this.$api('shareCache')
+            [method](params)
+            .then(() => {
+              this.$message.success(this.$t('message_save_ok'))
+              this.$router.replace({
+                name: 'sharedCacheList'
+              })
+            })
+            .catch(err => {
+              this.$message.error(err?.data?.message || this.$t('message_save_fail'))
+            })
+            .finally(() => {
+              this.loading = false
+            })
+        }
+      })
+    }
   }
 }
 </script>

@@ -69,16 +69,13 @@
     </el-table>
     <!--    <span v-show="testData.testLogs && testData.testLogs.length > 0">ERROR: {{ wsErrorMsg }}</span>-->
     <span slot="footer" class="dialog-footer">
-      <el-button size="mini" @click="start()" v-if="isTimeout && $getSettingByKey('DFS_TCM_PLATFORM') !== 'drs'">{{
-        $t('dataForm.test.retryBtn')
-      }}</el-button>
+      <el-button v-if="isTimeout" size="mini" @click="start()">{{ $t('dataForm.test.retryBtn') }}</el-button>
       <el-button size="mini" type="primary" @click="handleClose()">{{ $t('dataForm.close') }}</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
-import ws from '../../api/ws'
 import VIcon from '@/components/VIcon'
 export default {
   name: 'Test',
@@ -151,9 +148,9 @@ export default {
       this.$emit('update:dialogTestVisible', false)
     },
     handleWS() {
-      ws.ready(() => {
+      this.$ws.ready(() => {
         //接收数据
-        ws.on('testConnectionResult', data => {
+        this.$ws.on('testConnectionResult', data => {
           this.isTimeout = false //有回调
           let result = data.result || []
           this.wsError = data.status
@@ -193,7 +190,7 @@ export default {
           this.$emit('returnTestData', testData)
         })
         //长连接失败
-        ws.on('testConnection', data => {
+        this.$ws.on('testConnection', data => {
           this.wsError = data.status
           this.wsErrorMsg = data.error
           let testData = {
@@ -202,7 +199,7 @@ export default {
           this.$emit('returnTestData', testData)
         })
         //长连接失败
-        ws.on('pipe', data => {
+        this.$ws.on('pipe', data => {
           this.wsError = data.status
           this.wsErrorMsg = data.error
           let testData = {
@@ -236,8 +233,8 @@ export default {
       }
       let self = this
       this.isTimeout = true //重置
-      ws.ready(() => {
-        ws.send(msg)
+      this.$ws.ready(() => {
+        this.$ws.send(msg)
         self.timer = setTimeout(() => {
           if (self.isTimeout) {
             self.wsError = 'ERROR'
@@ -252,7 +249,7 @@ export default {
     },
     clearInterval() {
       // 取消长连接
-      ws.off('testConnection')
+      this.$ws.off('testConnection')
       this.testData.testLogs = []
       this.status = ''
     }
@@ -297,7 +294,7 @@ export default {
   }
 
   .el-dialog__body {
-    padding: 0 20px;
+    padding: 0 20px 20px;
   }
 
   .test-block {

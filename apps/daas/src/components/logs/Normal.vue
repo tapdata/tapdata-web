@@ -30,10 +30,10 @@
         @scroll.native="scrollFnc"
       >
         <template #before>
-          <div v-if="keyword" class="before-scroll-content text-center font-color-disable pb-2">
+          <div v-if="keyword" class="before-scroll-content text-center font-color-slight pb-2">
             <div>{{ $t('customer_logs_no_search_data') }}</div>
           </div>
-          <div v-else class="before-scroll-content text-center font-color-disable pb-2">
+          <div v-else class="before-scroll-content text-center font-color-slight pb-2">
             <div v-if="isNoMore">{{ $t('customer_logs_no_more_data') }}</div>
             <div v-else-if="!list.length">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
             <div v-show="preLoading">
@@ -77,7 +77,6 @@
   </div>
 </template>
 <script>
-import ws from '@/api/ws'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { delayTrigger, formatTime } from '@/utils/util'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
@@ -141,12 +140,12 @@ export default {
           limit: 20
         }
       }
-      ws.on('logs', data => {
+      this.$ws.on('logs', data => {
         data && this.resetData()
       })
 
-      ws.ready(() => {
-        ws.send(msg)
+      this.$ws.ready(() => {
+        this.$ws.send(msg)
       }, true)
     },
     scrollFnc(ev) {
@@ -369,6 +368,8 @@ export default {
   }
 }
 .e-debug-log {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
   box-sizing: border-box;
@@ -383,6 +384,7 @@ export default {
   }
 }
 .logs-list {
+  overflow: auto;
   background: rgba(229, 236, 255, 0.22);
   .el-loading-spinner .el-loading-text {
     font-size: 12px;

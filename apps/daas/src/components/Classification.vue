@@ -59,7 +59,13 @@
           </el-dropdown>
         </span>
       </el-tree>
-      <el-button v-else type="text" v-readonlybtn="authority" @click="showDialog()" class="create">
+      <el-button
+        v-if="treeData && treeData.length === 0 && isExpand"
+        type="text"
+        v-readonlybtn="authority"
+        @click="showDialog()"
+        class="create"
+      >
         {{ types[0] === 'user' ? $t('classification.creatUserGroup') : $t('classification.creatDataClassification') }}
       </el-button>
     </div>
@@ -73,9 +79,9 @@
         show-word-limit
       ></el-input>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="hideDialog()">{{ $t('message.cancel') }}</el-button>
+        <el-button size="mini" @click="hideDialog()">{{ $t('button_cancel') }}</el-button>
         <el-button size="mini" type="primary" @click="dialogSubmit()">
-          {{ $t('message.confirm') }}
+          {{ $t('button_confirm') }}
         </el-button>
       </span>
     </el-dialog>
@@ -105,7 +111,7 @@ export default {
   data() {
     return {
       searchFalg: false,
-      isExpand: true,
+      isExpand: false,
       filterText: '',
       treeData: [],
       default_expanded: false,
@@ -203,6 +209,7 @@ export default {
               }))
             }
             this.treeData = this.formatData(treeData)
+
             cb && cb(treeData)
           }
         })
@@ -339,12 +346,12 @@ export default {
         this.$message.error(this.$t('classification.nodeName'))
         return
       }
-      let nameExist = await this.checkName(value)
-      if (nameExist) {
-        return this.$message.error(this.$t('classification.nameExist'))
-      }
 
       if (this.types[0] === 'user') {
+        let nameExist = await this.checkName(value)
+        if (nameExist) {
+          return this.$message.error(this.$t('classification.nameExist'))
+        }
         let params = {
           name: value
         }
@@ -394,7 +401,11 @@ export default {
             }
           })
           .catch(e => {
-            this.$message.error('MetadataInstances error' + e)
+            if (e.data?.code === 'MetadataDefinition.Value.Exist') {
+              this.$message.error(this.$t('classification_name_already_exists'))
+            } else {
+              this.$message.error('MetadataInstances error' + e)
+            }
           })
       }
     },
@@ -474,16 +485,21 @@ export default {
     box-sizing: border-box;
     // background: #eff1f4;
     border: 0;
+    .icon-zhankai2 {
+      &:hover {
+        color: map-get($color, lprimary);
+      }
+    }
   }
   .toggle {
-    margin-top: 20px;
+    margin-top: 28px;
     color: #337dff;
   }
   &.expand {
     height: 100%;
     //width: 100%;
     padding: 20px 0;
-    border-right: 1px solid #f2f2f2;
+    // border-right: 1px solid #f2f2f2;
     width: 214px;
     .btn-expand {
       position: absolute;
@@ -492,9 +508,9 @@ export default {
       transform: rotate(180deg);
       .icon-zhankai2 {
         font-size: 16px;
-        color: #337dff;
+        color: map-get($color, primary);
         &:hover {
-          color: #409eff;
+          color: map-get($color, lprimary);
         }
       }
     }
@@ -532,7 +548,7 @@ export default {
         font-size: 16px;
         color: #666;
         &:hover {
-          color: #409eff;
+          color: map-get($color, primary);
         }
       }
     }

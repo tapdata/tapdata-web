@@ -11,6 +11,7 @@
       <div ref="paper" class="paper" :style="paperStyle">
         <div class="paper-content-wrap" :style="contentWrapStyle">
           <slot></slot>
+          <div class="nav-line" v-for="(l, i) in navLines" :key="`l-${i}`" :style="l"></div>
         </div>
       </div>
       <div v-show="showSelectBox" class="select-box" :style="selectBoxStyle"></div>
@@ -29,7 +30,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import { on, off } from '@daas/shared'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { getDataflowCorners } from '../helpers'
@@ -42,6 +43,7 @@ export default {
   name: 'PaperScroller',
   components: { MiniView },
   mixins: [deviceSupportHelpers, movePaper],
+  props: { navLines: Array },
 
   data() {
     return {
@@ -72,7 +74,7 @@ export default {
         h: 0
       },
       // 按下空格键
-      spaceKeyPressed: false,
+      // spaceKeyPressed: false,
       // 累积的缩放系数
       cumulativeZoomFactor: 1,
       // 缩放系数
@@ -86,7 +88,8 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['getCtor', 'isActionActive']),
+    ...mapGetters('dataflow', ['getCtor', 'isActionActive', 'stateIsReadonly']),
+    ...mapState('dataflow', ['spaceKeyPressed']),
 
     selectBoxStyle() {
       let attr = this.selectBoxAttr
@@ -144,13 +147,23 @@ export default {
         width: this.paperSize.width + 'px',
         height: this.paperSize.height + 'px',
         transform: `scale(${this.paperScale})`
-        // transformOrigin: `${this.scalePosition[0]}px ${this.scalePosition[1]}px`
+        // transform: `scale(${this.paperScale}) translate(${this.paperReverseSize.w}px, ${this.paperReverseSize.h}px)`
       }
     },
     contentWrapStyle() {
       return {
         transform: `translate(${this.paperReverseSize.w}px, ${this.paperReverseSize.h}px)`
       }
+    }
+  },
+
+  watch: {
+    stateIsReadonly() {
+      // 编辑和查看切换时，视图尺寸变化，主要是侧边栏显示隐藏的切换
+      const rect = this.$el.getBoundingClientRect()
+      this.visibleArea.width = rect.width
+      this.visibleArea.left = rect.left
+      this.visibleArea.x = rect.x
     }
   },
 
@@ -169,7 +182,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['addNode', 'setActiveType']),
+    ...mapMutations('dataflow', ['addNode', 'setActiveType', 'setPaperSpaceKeyPressed', 'removeActiveAction']),
 
     /**
      * 获取节点拖放后的坐标
@@ -178,6 +191,19 @@ export default {
      * @returns {*[]}
      */
     getDropPositionWithinPaper(position, size) {
+      const rect = this.$refs.paper.getBoundingClientRect()
+      const scale = this.paperScale
+      let [x, y] = position
+
+      x -= rect.x + this.paperReverseSize.w * scale + (size.width * scale) / 2
+      y -= rect.y + this.paperReverseSize.h * scale + (size.height * scale) / 2
+      x /= scale
+      y /= scale
+
+      return [x, y]
+    },
+
+    getPositionWithinPaper(position, size) {
       const rect = this.$refs.paper.getBoundingClientRect()
       const scale = this.paperScale
       let [x, y] = position
@@ -273,6 +299,29 @@ export default {
       this.doChangePageScroll(scrollLeft, scrollTop)
     },
 
+    /**
+     * 画布居中节点
+     * @param node
+     * @param ifZoomToFit
+     */
+    centerNode(node, ifZoomToFit) {
+      const [left, top] = node.attrs.position
+      let scale = Math.min(this.visibleArea.width / NODE_WIDTH, this.visibleArea.height / NODE_HEIGHT)
+
+      if (!ifZoomToFit) {
+        scale = Math.min(1, scale)
+      }
+
+      this.changeScale(scale)
+
+      const scrollLeft =
+        this.paperOffset.left + (left + this.paperReverseSize.w) * scale - (this.visibleArea.width - NODE_WIDTH) / 2
+      const scrollTop =
+        this.paperOffset.top + (top + this.paperReverseSize.h) * scale - (this.visibleArea.height - NODE_HEIGHT) / 2
+
+      this.doChangePageScroll(scrollLeft, scrollTop, true)
+    },
+
     // 自动延伸画布，类似于无限画布
     autoResizePaper() {
       const { width, height } = this.options
@@ -333,7 +382,8 @@ export default {
       }
 
       if (e.which === 32) {
-        this.spaceKeyPressed = true
+        // this.spaceKeyPressed = true
+        this.setPaperSpaceKeyPressed(true)
         if (e.target === this.$el) e.preventDefault()
       }
     },
@@ -344,7 +394,8 @@ export default {
       }
 
       if (e.which === 32) {
-        this.spaceKeyPressed = false
+        // this.spaceKeyPressed = false
+        this.setPaperSpaceKeyPressed(false)
       }
     },
 
@@ -401,6 +452,7 @@ export default {
 
       this.mouseUpMouseSelect()
       this.mouseUpMovePaper()
+      this.removeActiveAction('dragActive')
     },
 
     mouseUpMouseSelect() {
@@ -512,7 +564,19 @@ export default {
     getMouseToPage(e) {
       const scale = this.paperScale
       const paper = this.$refs.paper.getBoundingClientRect()
-      return { x: (e.x - paper.left) / scale, y: (e.y - paper.top) / scale }
+      return {
+        x: (e.x - paper.left) / scale - this.paperReverseSize.w,
+        y: (e.y - paper.top) / scale - this.paperReverseSize.h
+      }
+    },
+
+    getMouseToPageOriginal(e) {
+      const scale = this.paperScale
+      const paper = this.$refs.paper.getBoundingClientRect()
+      return {
+        x: (e.x - paper.left) / scale,
+        y: (e.y - paper.top) / scale
+      }
     },
 
     /**
@@ -522,7 +586,7 @@ export default {
      */
     wheelToScaleArtboard(scale, scalePoint) {
       scalePoint = scalePoint || this.getScaleAbsolutePoint()
-      const scaleOrigin = this.getMouseToPage(scalePoint)
+      const scaleOrigin = this.getMouseToPageOriginal(scalePoint)
       const area = this.visibleArea
       const offset = this.paperOffset
       const left = scalePoint.x - area.left // 光标与可视区左边的距离
@@ -540,11 +604,13 @@ export default {
      * 设置页面滚动
      * @param left
      * @param top
+     * @param animate 平滑滚动
      */
-    doChangePageScroll(left, top) {
+    doChangePageScroll(left, top, animate) {
       this.$nextTick(() => {
-        this.$el.scrollLeft = left
-        this.$el.scrollTop = top
+        const options = { left, top }
+        animate && (options.behavior = 'smooth')
+        this.$el.scrollTo(options)
       })
     },
 
@@ -608,5 +674,15 @@ export default {
   background: rgba(44, 101, 255, 0.07);
   border: 1px solid #2c65ff;
   border-radius: 2px;
+}
+
+.nav-line {
+  position: absolute;
+  width: 0;
+  height: 0;
+  top: 0;
+  left: 0;
+  border-top: 1px dashed #ff5b37;
+  border-left: 1px dashed #ff5b37;
 }
 </style>

@@ -21,21 +21,18 @@ export class Table extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
-      isSource: {
-        type: 'boolean',
-        'x-visible': false,
-        'x-reactions': '{{isSource}}'
+      $inputs: {
+        type: 'array',
+        'x-display': 'hidden'
       },
-      isTarget: {
-        type: 'boolean',
-        'x-visible': false,
-        'x-reactions': '{{isTarget}}'
+      $outputs: {
+        type: 'array',
+        'x-display': 'hidden'
       },
       databaseType: {
         type: 'string',
         'x-display': 'hidden'
       },
-
       grid: {
         type: 'void',
         'x-component': 'Space',
@@ -46,10 +43,10 @@ export class Table extends NodeType {
           filterIndex: []
         },
         'x-reactions': {
-          dependencies: ['isSource', 'isTarget'],
+          dependencies: ['$inputs', '$outputs'],
           fulfill: {
             schema: {
-              'x-component-props.filterIndex': '{{!!$deps[0] || !!$deps[1] ? [] : [1]}}'
+              'x-component-props.filterIndex': '{{$deps[0]?.length || $deps[1]?.length ? [] : [1]}}'
             }
           }
         },
@@ -57,73 +54,166 @@ export class Table extends NodeType {
           leftCell: {
             type: 'void',
             properties: {
-              connectionId: {
-                type: 'string',
+              connectionIdWrap: {
+                type: 'void',
                 title: '数据库',
-                required: true,
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
-                  wrapperWidth: 240
+                  asterisk: true,
+                  wrapperWidth: 320,
+                  feedbackLayout: 'none'
                 },
-                'x-component': 'Select',
+                'x-component': 'FormFlex',
                 'x-component-props': {
-                  config: { placeholder: '请选择数据库' }
+                  gap: 8,
+                  align: 'start'
                 },
-                'x-reactions': '{{useAsyncDataSource(loadDatabase, "dataSource")}}'
-              },
-              tableName: {
-                title: '表',
-                type: 'string',
-                required: true,
-                'x-decorator': 'FormItem',
-                'x-decorator-props': {
-                  wrapperWidth: 240,
-                  feedbackText: ''
-                },
-                'x-component': 'Select',
-                'x-component-props': {
-                  allowCreate: false,
-                  filterable: true
-                },
-                'x-reactions': [
-                  '{{useAsyncDataSource(loadDatabaseTable)}}',
-                  {
-                    dependencies: ['isTarget'],
-                    fulfill: {
-                      schema: {
-                        // title: '{{console.log("tableName", $deps[0]),$deps[0] ? "表(可输入创建新表)" : "表"}}',
-                        'x-component-props.allowCreate': '{{$deps[0]}}',
-                        'x-decorator-props.feedbackText': '{{$deps[0] && "可输入创建新表"}}'
+                properties: {
+                  connectionId: {
+                    type: 'string',
+                    required: true,
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      style: {
+                        flex: 1
                       }
-                    }
-                  }
-                ]
-              },
-              name: {
-                type: 'string',
-                'x-display': 'hidden',
-                'x-reactions': {
-                  dependencies: ['.tableName'],
-                  fulfill: {
-                    state: {
-                      value: '{{$deps[0]}}'
+                    },
+                    'x-component': 'AsyncSelect',
+                    'x-component-props': {
+                      onSetSelected: '{{useHandleWithForm(handlerSyncDatabaseChange, $form)}}',
+                      itemLabel: 'label',
+                      itemValue: 'id',
+                      itemQuery: 'name',
+                      method: '{{loadDatabases}}',
+                      params: `{{ {where: {database_type: $values.databaseType}} }}`
+                    },
+                    'x-reactions': [
+                      {
+                        target: 'tableName',
+                        effects: ['onFieldValueChange'],
+                        fulfill: {
+                          state: {
+                            value: ''
+                          }
+                        }
+                      }
+                    ]
+                  },
+
+                  clipboardButton: {
+                    type: 'void',
+                    'x-component': 'ClipboardButton',
+                    'x-component-props': {
+                      tooltip: '复制数据库名',
+                      finishTooltip: '已复制'
                     }
                   }
                 }
+              },
+
+              tableNameWrap: {
+                type: 'void',
+                title: '表',
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  asterisk: true,
+                  wrapperWidth: 320,
+                  feedbackLayout: 'none'
+                },
+                'x-component': 'FormFlex',
+                'x-component-props': {
+                  gap: 8,
+                  align: 'start'
+                },
+                properties: {
+                  tableName: {
+                    type: 'string',
+                    required: true,
+                    'x-validator': [
+                      {
+                        whitespace: true
+                      }
+                    ],
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      style: {
+                        flex: 1
+                      }
+                    },
+                    'x-component': 'AsyncSelect',
+                    'x-component-props': {
+                      itemType: 'string',
+                      itemLabel: 'original_name',
+                      method: '{{loadTable}}',
+                      params: `{{ {where: {'source.id': $values.connectionId}} }}`
+                    },
+                    'x-reactions': [
+                      // '{{useRemoteQuery(loadDatabaseTable)}}',
+                      {
+                        target: 'name',
+                        effects: ['onFieldInputValueChange'],
+                        fulfill: {
+                          state: {
+                            value: '{{$self.value}}'
+                          }
+                        }
+                      },
+                      {
+                        target: 'updateConditionFields',
+                        effects: ['onFieldValueChange'],
+                        fulfill: {
+                          state: {
+                            value: null
+                          }
+                        }
+                      },
+                      {
+                        dependencies: ['$inputs'],
+                        fulfill: {
+                          schema: {
+                            // title: '{{console.log("tableName", $deps[0]),$deps[0] ? "表(可输入创建新表)" : "表"}}',
+                            'x-component-props.allowCreate': '{{$deps[0].length>0}}'
+                            // 'x-decorator-props.feedbackText': '{{$deps[0] && "可输入创建新表"}}'
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  clipboardButton: {
+                    type: 'void',
+                    'x-component': 'ClipboardButton',
+                    'x-component-props': {
+                      tooltip: '复制表名',
+                      finishTooltip: '已复制'
+                    },
+                    'x-reactions': {
+                      dependencies: ['tableName'],
+                      fulfill: {
+                        schema: {
+                          'x-component-props.content': '{{$deps[0]}}'
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+
+              name: {
+                type: 'string',
+                'x-display': 'hidden'
               }
             }
           },
-
           rightCell: {
             type: 'void',
             properties: {
               sourceNodeConfig: {
                 type: 'void',
                 'x-reactions': {
-                  dependencies: ['isSource'],
+                  dependencies: ['$outputs'],
                   fulfill: {
                     state: {
-                      visible: '{{!!$deps[0]}}'
+                      visible: '{{$deps[0].length > 0}}'
                     }
                   }
                 },
@@ -144,7 +234,7 @@ export class Table extends NodeType {
                     ],
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 240
+                      wrapperWidth: 300
                     },
                     'x-component': 'Radio.Group'
                   },
@@ -183,17 +273,9 @@ export class Table extends NodeType {
                     ],
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 240
+                      wrapperWidth: 300
                     },
-                    'x-component': 'Radio.Group',
-                    'x-reactions': {
-                      dependencies: ['isSource'],
-                      fulfill: {
-                        state: {
-                          visible: '{{!!$deps[0]}}'
-                        }
-                      }
-                    }
+                    'x-component': 'Radio.Group'
                   },
                   increasesql: {
                     type: 'string',
@@ -220,7 +302,7 @@ export class Table extends NodeType {
                     required: true,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 240
+                      wrapperWidth: 300
                     },
                     'x-component': 'Input',
                     'x-reactions': {
@@ -297,10 +379,10 @@ export class Table extends NodeType {
               targetNodeConfig: {
                 type: 'void',
                 'x-reactions': {
-                  dependencies: ['isTarget'],
+                  dependencies: ['$inputs'],
                   fulfill: {
                     state: {
-                      visible: '{{!!$deps[0]}}'
+                      visible: '{{$deps[0].length > 0}}'
                     }
                   }
                 },
@@ -325,7 +407,7 @@ export class Table extends NodeType {
                     ],
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 240
+                      wrapperWidth: 300
                     },
                     'x-component': 'Select'
                   },
@@ -349,7 +431,7 @@ export class Table extends NodeType {
                     ],
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 240
+                      wrapperWidth: 300
                     },
                     'x-component': 'Select',
                     'x-reactions': {
@@ -364,10 +446,11 @@ export class Table extends NodeType {
                   updateConditionFields: {
                     title: '更新条件字段',
                     type: 'array',
+                    required: true,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
-                      wrapperWidth: 240,
-                      feedbackText: '可输入创建新字段'
+                      wrapperWidth: 300
+                      // feedbackText: '可输入创建新字段'
                     },
                     'x-component': 'Select',
                     'x-component-props': {
@@ -375,13 +458,22 @@ export class Table extends NodeType {
                       multiple: true,
                       filterable: true
                     },
-                    'x-reactions': ['{{useAsyncDataSource(loadNodeFieldNames)}}']
+                    'x-reactions': [
+                      // $values.tableName 的作用仅是收集该字段的依赖，tableName字段更新时会重新运行下面的方法
+                      '{{useAfterPatchAsyncDataSource({service: loadNodeFieldNames}, $values.id, "primaryKey", $values.tableName)}}'
+                    ]
                   }
                 }
               }
             }
           }
         }
+      },
+
+      // 切换连接，保存连接的类型
+      'attrs.connectionType': {
+        type: 'string',
+        'x-display': 'hidden'
       }
     }
   }
@@ -389,11 +481,14 @@ export class Table extends NodeType {
    * 获取额外添加到节点上的属性
    */
   getExtraAttr() {
-    const { tableName, databaseType, connectionId } = this.attr
+    const { tableName, databaseType, connectionId, connectionType } = this.attr
     return {
       tableName,
       databaseType,
-      connectionId
+      connectionId,
+      attrs: {
+        connectionType
+      }
     }
   }
 }

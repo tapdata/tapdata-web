@@ -1,17 +1,11 @@
-export * from './components/select'
-export * from './components/preview-text'
-export * from './components/space'
-export * from './components/JsEditor'
-export * from './components/SqlEditor'
-export * from './components/PreviewSql'
-export * from './components/SyncObjects'
-export * from './components/DatabaseInfo'
-export * from './components/FilterConditions'
-export * from './components/array-aggregate'
-export * from './components/field-processor'
-export * from './components/form-title'
-export * from './components/join-expression'
-export * from './components/join-expression'
-export * from './components/example-file'
+import { createSchemaField } from '@formily/vue'
+import * as components from './components'
+import { composeExport } from '@formily/element/lib/__builtins__'
 
-export * from '@formily/element'
+const { SchemaField } = createSchemaField({
+  components
+})
+
+export { SchemaField, composeExport }
+
+export * from './components'

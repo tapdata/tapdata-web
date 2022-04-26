@@ -1,7 +1,7 @@
 <template>
   <div class="attr-panel">
     <div class="attr-panel-body overflow-auto">
-      <Form class-name="form-wrap" :form="form" :colon="false" layout="horizontal" label-align="left" label-width="120">
+      <Form class-name="form-wrap" :form="form" v-bind="formProps">
         <SchemaField v-if="!!schema" :schema="schema" :scope="scope" />
       </Form>
     </div>
@@ -10,422 +10,108 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import * as components from '@daas/form'
-import { createSchemaField } from '@formily/vue'
-import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
-import { action } from '@formily/reactive'
+import { Form, SchemaField } from '@daas/form'
+import {
+  createForm,
+  onFormInputChange,
+  onFormValuesChange,
+  onFieldReact,
+  isVoidField,
+  registerValidateMessageTemplateEngine
+} from '@formily/core'
+import { Path } from '@formily/path'
 import { validateBySchema } from '@daas/form/src/shared/validate'
-import { Connections, MetadataInstances } from '@daas/api'
 import { debounce } from 'lodash'
 
-const { SchemaField } = createSchemaField({
-  components: {
-    ...components
+registerValidateMessageTemplateEngine((message, context) => {
+  // console.log('registerValidateMessageTemplateEngine', message, context)
+  if (context.field?.props?.name === 'tableName') {
+    return '请选择表'
   }
+  return message
 })
 
-const connections = new Connections()
-const metadataApi = new MetadataInstances()
+const mapEnum = dataSource => (item, index) => {
+  const label = dataSource[index] || dataSource[item.value] || item.label
+  return {
+    ...item,
+    value: item?.value ?? null,
+    label: label?.label ?? label
+  }
+}
 
 export default {
   name: 'FormPanel',
 
-  components: { Form: components.Form, SchemaField },
+  props: {
+    scope: {}
+  },
+
+  components: { Form, SchemaField },
 
   data() {
     return {
       form: createForm(),
 
-      schema: null,
+      formProps: {
+        colon: false,
+        shallow: false,
+        labelAlign: 'left',
+        // labelWidth: '120',
+        layout: 'vertical',
+        // layout: 'horizontal',
+        feedbackLayout: 'terse'
+      },
 
-      scope: {
-        /**
-         * 统一的异步数据源方法
-         * @param service
-         * @param fieldName 数据设置指定的字段
-         * @param serviceParams 缺省参数，传递给service方法
-         * @returns {(function(*=): void)|*}
-         */
-        useAsyncDataSource: (service, fieldName = 'dataSource', ...serviceParams) => {
-          return field => {
-            field.loading = true
-            service(field, ...serviceParams).then(
-              action.bound(data => {
-                if (fieldName === 'value') {
-                  field.setValue(data)
-                } else field[fieldName] = data
-                field.loading = false
-              })
-            )
-          }
-        },
-
-        /**
-         * 加载数据库
-         * @param field
-         * @param databaseType 数据库类型，String或Array
-         * @returns {Promise<*[]|*>}
-         */
-        loadDatabase: async (field, databaseType = field.form.values.databaseType) => {
-          try {
-            let result = await connections.get({
-              filter: JSON.stringify({
-                where: {
-                  database_type: databaseType
-                    ? {
-                        $in: Array.isArray(databaseType) ? databaseType : [databaseType]
-                      }
-                    : {
-                        $nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
-                      }
-                },
-                fields: {
-                  name: 1,
-                  id: 1,
-                  database_type: 1,
-                  connection_type: 1,
-                  status: 1
-                },
-                order: ['status DESC', 'name ASC']
-              })
-            })
-            return (result.items || result).map(item => {
-              return {
-                id: item.id,
-                name: item.name,
-                label: `${item.name} (${this.$t('connection.status.' + item.status) || item.status})`,
-                value: item.id,
-                databaseType: item.database_type
-              }
-            })
-          } catch (e) {
-            console.log('catch', e) // eslint-disable-line
-            return []
-          }
-        },
-
-        /**
-         * 加载数据库的详情
-         * @param field
-         * @param connectionId
-         * @returns {Promise<AxiosResponse<any>>}
-         */
-        loadDatabaseInfo: async (field, connectionId = field.query('connectionId').get('value')) => {
-          if (!connectionId) return
-          return await connections.customQuery([connectionId], {
-            schema: true
-          })
-        },
-
-        /**
-         * 加载数据库的表，只返回表名的集合
-         * @param field
-         * @param connectionId
-         * @returns {Promise<*|AxiosResponse<any>>}
-         */
-        loadDatabaseTable: async (field, connectionId = field.query('connectionId').get('value')) => {
-          if (!connectionId) return
-          const params = {
-            filter: JSON.stringify({
-              where: {
-                'source.id': connectionId,
-                meta_type: {
-                  in: ['collection', 'table', 'view'] //,
-                },
-                is_deleted: false
-              },
-              fields: {
-                original_name: true
-              }
-            })
-          }
-          const data = await metadataApi.get(params)
-          return data.items.map(item => item.original_name)
-        },
-
-        /**
-         * 加载表的详情，返回表的数据对象
-         * @param field
-         * @param connectionId
-         * @param tableName
-         * @returns {Promise<AxiosResponse<any>>}
-         */
-        loadTableInfo: async (
-          field,
-          connectionId = field.query('connectionId').get('value'),
-          tableName = field.query('tableName').get('value')
-        ) => {
-          if (!connectionId || !tableName) return
-          // console.log('loadTableInfo', field, id) // eslint-disable-line
-          const params = {
-            filter: JSON.stringify({
-              where: {
-                'source.id': connectionId,
-                original_name: tableName,
-                is_deleted: false
-              }
-            })
-          }
-          return await metadataApi.get(params)
-        },
-
-        /**
-         * 加载表字段，返回字段名的集合
-         * @param field
-         * @param connectionId
-         * @param tableName
-         * @returns {Promise<*>}
-         */
-        loadTableField: async (
-          field,
-          connectionId = field.query('connectionId').get('value'),
-          tableName = field.query('tableName').get('value')
-        ) => {
-          if (!connectionId || !tableName) return
-          const params = {
-            filter: JSON.stringify({
-              where: {
-                'source.id': connectionId,
-                original_name: tableName,
-                is_deleted: false
-              },
-              fields: {
-                fields: true
-              }
-            })
-          }
-          const data = await metadataApi.get(params)
-          return data.items[0]?.fields.map(item => item.field_name) || []
-          // const tableData = await metadataApi.findOne(params)
-          // return tableData.fields.map(item => item.field_name)
-        },
-
-        // 加载数据集
-        loadCollections: async (field, connectionId = field.query('connectionId').get('value')) => {
-          if (!connectionId) return
-          let result = await connections.get([connectionId])
-          const tables = result.data?.schema?.tables || []
-          return tables
-        },
-
-        /**
-         * 对目标端已存在的结构和数据的处理，下拉选项
-         * @param field
-         */
-        loadDropOptions: field => {
-          const options = [
-            {
-              label: this.$t('editor.cell.link.existingSchema.keepSchema'),
-              value: 'no_drop'
-            },
-            {
-              label: this.$t('editor.cell.link.existingSchema.keepExistedData'),
-              value: 'drop_data'
-            }
-          ]
-          if (field.form.values.database_type === 'mongodb') {
-            options.push({
-              label: this.$t('editor.cell.link.existingSchema.removeSchema'),
-              value: 'drop_schema'
-            })
-          }
-          field.dataSource = options
-        },
-
-        /**
-         * 数据写入模式
-         * @param field
-         */
-        loadWriteModelOptions: field => {
-          const options = [
-            {
-              label: this.$t('editor.cell.link.writeMode.append'),
-              value: 'append' // insert				{source: ''} + {target: ''}  =  {source: '', target: ''}
-            },
-            {
-              label: this.$t('editor.cell.link.writeMode.upsert'),
-              value: 'upsert' // OneOne				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
-            },
-            {
-              label: this.$t('editor.cell.link.writeMode.update'),
-              value: 'update' // OneMany				{source: ''} + {target: ''}  =  {source: '', joinPath: {target: ''}}
-            }
-          ]
-          if (field.form.values.type !== 'table') {
-            // SupportEmbedArray
-            options.push({
-              label: this.$t('editor.cell.link.writeMode.merge_embed'),
-              value: 'merge_embed' // ManyOne		{source: ''} + {target: ''}  =  {source: '', joinPath: [{target: ''}]}
-            })
-          }
-          field.dataSource = options
-        },
-
-        isSource: field => {
-          const id = field.form.values.id
-          const allEdges = this.$store.getters['dataflow/allEdges']
-          field.value = allEdges.some(({ source }) => source === id)
-        },
-
-        isTarget: field => {
-          const id = field.form.values.id
-          const allEdges = this.$store.getters['dataflow/allEdges']
-          field.value = allEdges.some(({ target }) => target === id)
-        },
-
-        getSourceNode: (field, fieldName = 'value') => {
-          const id = field.form.values.id
-          const edges = this.$store.getters['dataflow/allEdges']
-          const nodes = this.$store.getters['dataflow/allNodes']
-          const sourceArr = edges.filter(({ target }) => target === id)
-          field[fieldName] = sourceArr.map(({ source }) => {
-            return {
-              value: source,
-              label: nodes.find(node => node.id === source).name
-            }
-          })
-        },
-
-        /**
-         * 加载源节点的schema
-         * @param field
-         * @param dataType 数据类型 默认 array（二维数组） | object （key是节点ID，value是字段数组）
-         * @returns {Promise<{}>}
-         */
-        loadSourceNodeField: async (field, dataType = 'array') => {
-          const id = field.form.values.id
-          const allEdges = this.$store.getters['dataflow/allEdges']
-          const sourceArr = allEdges.filter(({ target }) => target === id)
-          if (!sourceArr.length) return
-          // eslint-disable-next-line no-console
-          // console.log('loadSourceNodeField🚗', id, sourceArr, field.form.values)
-          let stopWatch
-          let fetch
-          let result = []
-          if (this.transformStatus === 'loading') {
-            fetch = new Promise((resolve, reject) => {
-              stopWatch = this.$watch('transformStatus', async v => {
-                if (v === 'finished') {
-                  const result = await Promise.all(sourceArr.map(({ source }) => metadataApi.nodeSchema(source)))
-                  resolve(result)
-                } else {
-                  reject('推演失败')
-                }
-              })
-            })
-          } else {
-            fetch = Promise.all(sourceArr.map(({ source }) => metadataApi.nodeSchema(source)))
-          }
-
-          try {
-            result = await fetch
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error(e)
-          }
-          stopWatch?.()
-
-          if (dataType === 'array') {
-            return result.reduce((arr, item) => (item.fields && arr.push(item.fields), arr), [])
-          }
-          const data = {}
-          result.forEach((item, i) => {
-            if (item) data[sourceArr[i].source] = item.fields
-          })
-          return data
-        },
-
-        /**
-         * 加载节点的字段选项列表（默认是第一个源节点）
-         * @param field
-         * @param nodeId
-         * @returns {Promise<{}|*>}
-         */
-        loadNodeFieldOptions: async (field, nodeId) => {
-          if (!nodeId) {
-            const id = field.form.values.id
-            const allEdges = this.$store.getters['dataflow/allEdges']
-            const edge = allEdges.find(({ target }) => target === id)
-            if (!edge) return
-            nodeId = edge.source
-          }
-
-          let fields
-          try {
-            const data = await metadataApi.nodeSchema(nodeId)
-            fields = data.fields
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error('nodeSchema', e)
-          }
-
-          return fields
-            ? fields.map(item => ({
-                label: item.field_name,
-                value: item.id
-              }))
-            : []
-        },
-
-        /**
-         * 加载节点的字段名列表（默认是第一个源节点）
-         * @param field
-         * @param nodeId
-         * @returns {Promise<{}|*>}
-         */
-        loadNodeFieldNames: async (field, nodeId) => {
-          if (!nodeId) {
-            const id = field.form.values.id
-            const allEdges = this.$store.getters['dataflow/allEdges']
-            const edge = allEdges.find(({ target }) => target === id)
-            if (!edge) return
-            nodeId = edge.source
-          }
-
-          let fields
-          try {
-            const data = await metadataApi.nodeSchema(nodeId)
-            fields = data.fields
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error('nodeSchema', e)
-          }
-
-          return fields ? fields.map(item => item.field_name) : []
-        }
-      }
+      schema: null
     }
   },
 
   computed: {
     ...mapState('dataflow', ['activeNodeId', 'transformStatus']),
 
-    ...mapGetters('dataflow', ['activeNode', 'nodeById', 'activeConnection', 'activeType', 'hasNodeError', 'allEdges']),
+    ...mapGetters('dataflow', [
+      'activeNode',
+      'nodeById',
+      'activeConnection',
+      'activeType',
+      'hasNodeError',
+      'allEdges',
+      'stateIsReadonly',
+      'getMessage'
+    ]),
 
     node() {
-      return this.activeConnection ? this.nodeById(this.activeConnection.targetId) : this.activeNode
-    },
-
-    sourceNode() {
-      return this.activeConnection ? this.nodeById(this.activeConnection.sourceId) : null
+      return this.activeNode
     },
 
     ins() {
       return this.node?.__Ctor
+    },
+
+    nodeType() {
+      const { getters } = this.$store
+      const getNodeType = getters['dataflow/nodeType']
+      return getNodeType(this.activeNode)
     }
   },
 
   watch: {
+    stateIsReadonly(v) {
+      console.log('监听：stateIsReadonly', v) // eslint-disable-line
+      this.form.setState({ disabled: v })
+    },
+
     async activeNodeId(n, o) {
       const formSchema = this.$store.getters['dataflow/formSchema'] || {}
-
+      if (!this.ins) return
       await this.setSchema(this.ins.formSchema || formSchema.node)
 
       // 如果节点存在错误状态，走一遍校验，可以让用户看到错误信息
-      if (this.hasNodeError(n)) {
-        this.form.validate().then(() => {
-          this.clearNodeError(n)
-        })
+      // 脏代码。节点错误原先是布尔值，又增加字符串类型
+      // 布尔值代表表单校验，字符串目前仅是任务增量、全量校验
+      if (this.hasNodeError(n) && typeof this.hasNodeError(n) !== 'string') {
+        await this.validate()
       }
 
       // 校验上一个节点配置
@@ -437,13 +123,43 @@ export default {
             // eslint-disable-next-line no-console
             console.log('上一个激活的节点校验结果', result)
           }
-          this.clearNodeError(o)
+
+          if (this.hasNodeError(o) && typeof this.hasNodeError(o) !== 'string') {
+            this.clearNodeError(o)
+          }
         } catch (e) {
           // eslint-disable-next-line no-console
           console.error(e)
           this.setNodeError(o)
         }
       }
+
+      this.setNodeInputsWatcher(
+        this.$watch('node.$inputs', v => {
+          if (!this.node || !v) return
+          const $inputs = this.form.getFieldState('$inputs')
+          // eslint-disable-next-line no-console
+          console.log('🤖️ node.$inputs', this.node.name, v)
+          if ($inputs && $inputs.value.join(',') !== v.join(',')) {
+            // eslint-disable-next-line no-console
+            console.log('👷 更新$inputs', $inputs.value)
+            this.form.setValuesIn('$inputs', [...v])
+          }
+        })
+      )
+      this.setNodeOutputsWatcher(
+        this.$watch('node.$outputs', v => {
+          if (!this.node || !v) return
+          const $outputs = this.form.getFieldState('$outputs')
+          // eslint-disable-next-line no-console
+          console.log('🤖️ node.$outputs', this.node.name, v)
+          if ($outputs && $outputs.value.join(',') !== v.join(',')) {
+            // eslint-disable-next-line no-console
+            console.log('👷 更新$outputs', $outputs.value)
+            this.form.setValuesIn('$outputs', [...v])
+          }
+        })
+      )
     },
 
     // 监听连线变动
@@ -475,9 +191,31 @@ export default {
   },
 
   methods: {
-    ...mapMutations('dataflow', ['setNodeValue', 'updateNodeProperties', 'setNodeError', 'clearNodeError']),
+    ...mapMutations('dataflow', [
+      'setNodeValue',
+      'updateNodeProperties',
+      'setNodeError',
+      'clearNodeError',
+      'setNodeInputsWatcher',
+      'setNodeOutputsWatcher'
+    ]),
 
     ...mapActions('dataflow', ['updateDag']),
+
+    /**
+     * 校验表单
+     * @returns {Promise<void>}
+     */
+    async validate() {
+      const id = this.activeNodeId
+      if (!id) return
+      try {
+        await this.form.validate()
+        this.clearNodeError(id)
+      } catch (e) {
+        this.setNodeError(id)
+      }
+    },
 
     // 设置schema
     async setSchema(schema, values) {
@@ -486,11 +224,28 @@ export default {
       await this.$nextTick()
 
       this.form = createForm({
+        disabled: this.stateIsReadonly,
         values: values || this.node,
-        effects: this.useEffects,
-        editable: !this.isMonitor
+        effects: this.useEffects
       })
-      this.schema = JSON.parse(JSON.stringify(schema))
+      if (schema.schema && schema.form) {
+        // 临时判断从自定义节点过来的schema
+        // 表单数据存储到form对象
+        this.schema = {
+          type: 'object',
+          properties: {
+            // 自定节点附加属性
+            sourceNode: {
+              type: 'array',
+              'x-visible': false,
+              'x-reactions': '{{getSourceNode}}'
+            },
+            form: JSON.parse(JSON.stringify(schema.schema))
+          }
+        }
+      } else {
+        this.schema = JSON.parse(JSON.stringify(schema))
+      }
     },
 
     getSettingSchema() {
@@ -931,27 +686,86 @@ export default {
 
     // 更新节点属性
     updateNodeProps: debounce(function (form) {
+      if (!this.node) return
       const formValues = { ...form.values }
-      const filterProps = ['id', 'isSource', 'isTarget', 'attrs', 'sourceNode'] // 排除属性的更新
-      filterProps.forEach(key => (formValues[key] = undefined))
+      const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode', '$inputs', '$outputs'] // 排除属性的更新
+      filterProps.forEach(path => {
+        Path.setIn(formValues, path, undefined)
+      })
 
       this.updateNodeProperties({
         id: this.node.id,
         properties: JSON.parse(JSON.stringify(formValues))
       })
       this.updateDag()
+      this.confirmNodeHasError()
     }, 100),
 
     // 绑定表单事件
     useEffects() {
       onFormValuesChange(form => {
+        if (this.stateIsReadonly) return
         console.log('onFormValuesChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
         this.updateNodeProps(form)
       })
       onFormInputChange(form => {
+        if (this.stateIsReadonly) return
         console.log('onFormInputChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
         this.updateNodeProps(form)
       })
+      onFieldReact('*', field => {
+        const path = field.path.toString().replace(/\.[\d+]/g, '')
+        const takeMessage = prop => {
+          const token = `${path}${prop ? `.${prop}` : ''}`
+          return this.getMessage(token, this.nodeType.locales)
+        }
+        const title = takeMessage('title') || takeMessage()
+        const description = takeMessage('description')
+        const tooltip = takeMessage('tooltip')
+        const dataSource = takeMessage('dataSource')
+        const placeholder = takeMessage('placeholder')
+
+        if (title) {
+          field.title = title
+        }
+        if (description) {
+          field.description = description
+        }
+        if (tooltip) {
+          field.decorator[1] = field.decorator[1] || []
+          field.decorator[1].tooltip = tooltip
+        }
+        if (placeholder) {
+          field.component[1] = field.component[1] || []
+          field.component[1].placeholder = placeholder
+        }
+        if (dataSource?.length && !isVoidField(field)) {
+          if (field.dataSource?.length) {
+            field.dataSource = field.dataSource.map(mapEnum(dataSource))
+          } else {
+            field.dataSource = dataSource.slice()
+          }
+        }
+        /*if (!isVoidField(field)) {
+          if (dataSource?.length && !isVoidField(field)) {
+            if (field.dataSource?.length) {
+              field.dataSource = field.dataSource.map(mapEnum(dataSource))
+            } else {
+              field.dataSource = dataSource.slice()
+            }
+          } else {
+            field.dataSource = field.dataSource?.filter?.(Boolean)
+          }
+        }*/
+      })
+    },
+
+    confirmNodeHasError() {
+      // 节点已经没有错误，清除节点的告警图标
+      const res = this.hasNodeError(this.activeNodeId)
+      if (res && typeof res === 'boolean' && !this.form.errors.length) {
+        this.clearNodeError(this.activeNodeId)
+      }
     }
   }
 }
@@ -1034,6 +848,10 @@ $headerBg: #fff;
       .el-input-number--small {
         width: 130px;
       }
+    }
+
+    .formily-element-form-item-layout-vertical .formily-element-form-item-label-tooltip {
+      height: 40px;
     }
   }
 }

@@ -19,7 +19,7 @@ export const TYPEMAP = {
   kafka: 'Kafka',
   mariadb: 'MariaDB',
   'mysql pxc': 'MySQL PXC',
-  jira: 'jira',
+  jira: 'Jira',
   dameng: 'DM DB',
   hive: 'Hive',
   tcp_udp: 'TCP/IP',

@@ -17,6 +17,7 @@
         :is="getComponent(item.type)"
         :style="getStyle(item)"
         @input="search(item)"
+        @clear="fetch()"
       >
         <VIcon slot="suffix" size="14" class="inline-block">{{ item.icon }}</VIcon>
       </component>
@@ -111,6 +112,9 @@ export default {
                 result[k] = el.value[i]
               })
             }
+          } else if (el.type === 'input') {
+            let value = el.value?.trim() || ''
+            result[el.key] = value
           } else {
             result[el.key] = el.value
           }
@@ -143,11 +147,11 @@ export default {
       this.rules = result
     },
     search(item) {
-      this.$emit('input', this.getValue())
       this.$refs.filterForm.validate(res => {
         if (res) {
           const { delayTrigger } = this.$util
           delayTrigger(() => {
+            this.$emit('input', this.getValue())
             this.$router.replace({
               name: this.$route.name,
               query: this.getValue()
@@ -201,7 +205,7 @@ export default {
           break
         case 'input':
           this.setDefaultValue(item, 'debounce', 800)
-          this.setDefaultValue(item, 'icon', 'search')
+          this.setDefaultValue(item, 'suffix-icon', 'search')
           this.setDefaultValue(item, 'class', 'filter-el-input')
           break
         case 'input-pop':
@@ -240,10 +244,11 @@ export default {
   height: 32px;
   line-height: 32px;
   width: 32px;
+  min-width: 32px;
   font-size: 16px;
   &:hover,
   &.is-plain:focus:hover {
-    border-color: #d9d9d9;
+    border-color: #2c65ff;
     background-color: #f5f6f7;
   }
 }

@@ -11,12 +11,17 @@
   "license": "ISC",
   "dependencies": {
     "@daas/api": "workspace:^1.0.0",
+    "@daas/business": "workspace:^1.0.0",
     "@daas/form": "workspace:^1.0.0",
     "@daas/shared": "workspace:^1.0.0",
     "@formily/core": "^2.0.9",
     "@formily/element": "^2.0.9",
+    "@formily/path": "^2.0.12",
     "@formily/reactive": "^2.0.9",
+    "@formily/reactive-vue": "*",
+    "@tapdata/field-mapping": "workspace:^1.0.0",
     "dagre": "^0.8.5",
+    "jsplumb": "^2.15.6",
     "mousetrap": "^1.6.5",
     "vuex": "^3.6.2"
   }

@@ -1,16 +1,28 @@
+@use "sass:math";
 .join-expression {
+  $nw: 300px;
   $ow: 60px;
   .join-operator {
     width: $ow;
     text-align: center;
   }
 
+  .join-name-wrap {
+    position: relative;
+  }
+
   .join-name {
     margin-right: $ow;
-    width: 300px;
+    width: $nw;
   }
 
   .join-field {
-    width: 300px;
+    width: $nw;
+  }
+
+  .join-exchange {
+    position: absolute;
+    left: $nw + math.div($ow, 2);
+    transform: translateX(-50%);
   }
 }

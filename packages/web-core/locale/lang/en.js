@@ -574,6 +574,7 @@ const en = {
     uploadOK: 'Upload successful',
     uploadError: 'Upload failed',
     uploadInfo: 'Click to view details',
+    view: 'View',
     dataFlowExport: 'Export',
     addTag: 'Add tag',
     overWrite: 'Overwrite existing data',
@@ -874,7 +875,7 @@ const en = {
     reloadTittle: 'Reload schema',
     desc: 'Source Connection includes database, files, RESTful API, custom API etc. You must create at least one data source before you can create migration or replication job. In addition to the standard configuration, you can also configure whether to automatic/manual reload database schema, time zone, and table filter settings. See more details click',
     deteleDatabaseTittle: 'Do you want to delete the connection?',
-    deteleDatabaseMsg: 'After deleting connection XXX, this connection cannot be restored. ',
+    deteleDatabaseMsg: 'After deleting connection xxx, this connection cannot be restored. ',
     reloadMsg: 'It may take a long time to reload schema, are you sure to reload the schema of the database',
     checkMsg: 'This data source is used by transmission job or API, cannot be deleted',
     copyFailedMsg:
@@ -1848,7 +1849,7 @@ const en = {
       initialReadSize: 'Initial record size',
       incrementalTps: 'CUD TPS',
       response_body: {
-        CHECK_CONNECT: 'Check the connection is available',
+        CHECK_CONNECT: 'Check if the connection is available',
         CHECK_AUTH: 'Checks if the username,password and database are available',
         CHECK_VERSION: 'Checks if the version information is available',
         LOAD_SCHEMA: 'Load schema model',
@@ -1856,7 +1857,7 @@ const en = {
         CHECK_ARCHIVE_LOG: 'Check if archive log is opened',
         CHECK_SUPPLEMENTAL_LOG: 'Check if supplemental log mode is correct',
         CHECK_DDL_PERMISSION: 'Check if execute ddl permissions are granted',
-        CHECK_PERMISSION: 'Check if permissions are graned',
+        CHECK_PERMISSION: 'Check if permissions are granted',
         CHECK_BIN_LOG: 'Check if binlog is opened, and is ROW level',
         CHECK_BIN_ROW_IMAGE: 'Check whether the binlog format is FULL',
         CHECK_SCRIPT: 'Check if script(s) is available',
@@ -1869,7 +1870,8 @@ const en = {
         SCAN_FILE: 'Scan the files in the directory',
         CHECK_BIN_LOG_SYNC: 'Check BINLOG sync enable',
         CHECK_GTID: 'Check of GTID mode and GTID consistency enable',
-        CHECK_VIKA_API_TOKEN: 'Check if the vika key is correct'
+        CHECK_VIKA_API_TOKEN: 'Check if the vika key is correct',
+        CHECK_REDO_LOG_PARSER: 'Check if the raw log parsing service is available'
       },
       file: {
         fileAddr: 'File Address',

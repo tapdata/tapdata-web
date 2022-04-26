@@ -28,14 +28,11 @@
                   {{ $t('connection.change') }}
                 </div>
               </div>
-              <div class="tip" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
+              <div class="tip">
                 {{ $t('dataForm.form.guide') }}
                 <a class="color-primary" target="_blank" href="https://docs.tapdata.net/data-source">{{
                   $t('dataForm.form.guideDoc')
                 }}</a>
-              </div>
-              <div class="tip" v-if="$getSettingByKey('DFS_TCM_PLATFORM')">
-                请按输入以下配置项以创建连接，点击下方连接测试按钮进行连接检测，支持版本、配置说明与限制说明等事项请查阅帮助文档
               </div>
             </div>
           </div>
@@ -142,15 +139,8 @@ export default {
     async startTest() {
       let data = this.getFormData()
       if (!data.form || !data.status) return //表单验证通过后测试连接
-      let form = JSON.stringify(data?.form?.values)
-      let result = await this.$api('Workers').getAvailableAgent()
-      if (!result.data.result || result.data.result.length === 0) {
-        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'dfs') {
-          this.$message.error(this.$t('dataForm.form.agentConnectionMsg'))
-        } else {
-          this.$message.error(this.$t('dataForm.form.agentMsg'))
-        }
-      } else {
+      this.$root.checkAgent(() => {
+        let form = JSON.stringify(data?.form?.values)
         this.model = form
         this.dialogTestVisible = true
         if (this.$route.params.id) {
@@ -159,7 +149,7 @@ export default {
         } else {
           this.$refs.test.start(false)
         }
-      }
+      })
     },
     receiveData(data) {
       if (!data.status || data.status === null) return
@@ -207,15 +197,6 @@ export default {
         if (params.database_type === 'mongodb') {
           params.fill = params.isUrl ? 'uri' : ''
           delete params.isUrl
-        }
-        if (window.getSettingByKey('DFS_TCM_PLATFORM') === 'drs') {
-          params['platformInfo'] = Object.assign(params['platformInfo'], this.handlePlatformInfo(params))
-          if (params.sourceType === 'selfDB') {
-            delete params.DRS_region
-            delete params.DRS_zone
-            delete params.platformInfo.DRS_region
-            delete params.platformInfo.DRS_zone
-          }
         }
         this.$api('connections')
           [this.id ? 'patchId' : 'post'](params)

@@ -42,34 +42,32 @@ export default {
       }
       this.$listeners.click?.(resetLoading)
     }
-    let className = ''
+    let className = 'v-button'
     if (this.innerLoading) {
       className += 'inner-loading loader-width'
     }
-    return h('span', { class: 'v-button' }, [
-      h(
-        'el-button',
-        {
-          props: {
-            ...this.$props,
-            loading: this.$props.loading || this.comLoading,
-            size: this.$props.size || 'mini'
-          },
-          on: { ...this.$listeners, click: clickFnc },
-          class: className
+    return h(
+      'el-button',
+      {
+        props: {
+          ...this.$props,
+          loading: this.$props.loading || this.comLoading,
+          size: this.$props.size || 'mini'
         },
-        [this.$slots.default]
-      )
-    ])
+        on: { ...this.$listeners, click: clickFnc },
+        class: className
+      },
+      [this.$slots.default]
+    )
   }
 }
 </script>
 <style lang="scss">
 .v-button {
-  .el-button--mini,
-  .el-button--mini:focus,
-  .el-button--mini.is-active,
-  .el-button--mini:active {
+  &.el-button--mini,
+  &.el-button--mini:focus,
+  &.el-button--mini.is-active,
+  &.el-button--mini:active {
     min-width: 80px;
     height: 28px;
     line-height: 28px;
@@ -78,17 +76,17 @@ export default {
       border-color: map-get($color, primary);
     }
   }
-  .el-button--primary,
-  .el-button--primary:focus,
-  .el-button--primary.is-active,
-  .el-button--primary:active {
+  &.el-button--primary,
+  &.el-button--primary:focus,
+  &.el-button--primary.is-active,
+  &.el-button--primary:active {
     background-color: map-get($color, primary);
     &:hover {
       background-color: map-get($color, dprimary);
     }
   }
-  .is-disabled,
-  .is-disabled:hover {
+  &.is-disabled,
+  &.is-disabled:hover {
     color: #000;
     background: #f7f7f7;
     border-radius: 4px;
@@ -98,17 +96,17 @@ export default {
   & + & {
     margin-left: 16px;
   }
-  .el-button--text,
-  .el-button--text:focus,
-  .el-button--text:active,
-  .el-button--text.is-active {
+  &.el-button--text,
+  &.el-button--text:focus,
+  &.el-button--text:active,
+  &.el-button--text.is-active {
     min-width: unset;
   }
-  .is-loading.loader-width span {
+  &.is-loading.loader-width span {
     position: relative;
     display: inline-block;
   }
-  .is-loading.loader-width span:after {
+  &.is-loading.loader-width span:after {
     content: attr(data-content);
     display: inline-block;
     position: absolute;
@@ -120,7 +118,7 @@ export default {
     overflow: hidden;
     animation: showWidthAll 4s linear infinite;
   }
-  .inner-loading {
+  &.inner-loading {
     .el-icon-loading {
       display: none;
     }

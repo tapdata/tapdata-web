@@ -1,10 +1,15 @@
 import Vue from 'vue'
-import { isObject, uuid } from '@daas/shared'
-import { Task } from '@daas/api'
+import { isObject, uuid, mergeLocales, lowerSnake } from '@daas/shared'
+import { Task, CustomNode } from '@daas/api'
 import { debounce } from 'lodash'
 import { AddDagCommand } from './command'
+import { Path } from '@formily/path'
+import { observable } from '@formily/reactive'
+import { AllLocales } from './nodes/locales'
+import { setValidateLanguage } from '@formily/core'
 
 const taskApi = new Task()
+const customNodeApi = new CustomNode()
 
 const find = (obj, nameParts, conditions) => {
   if (!nameParts.length) return obj
@@ -33,9 +38,15 @@ const findByCod = (arr, cond) => {
   })
 }
 
-// 初始化 state
-const state = () => ({
+const langMap = {
+  sc: 'zh-CN',
+  tc: 'zh-TW',
+  en: 'en-US'
+}
+
+const getState = () => ({
   stateIsDirty: false, // 状态是否被污染，标识数据改变
+  stateIsReadonly: false, // 状态是否被污染，标识数据改变
   nodeTypes: [], // 所有节点类型
   nodeErrorState: {}, // 节点错误状态
   processorNodeTypes: [
@@ -43,19 +54,21 @@ const state = () => ({
       icon: 'javascript',
       name: 'JavaScript',
       type: 'js_processor',
-      constructor: 'JavaScript'
+      constructor: 'JavaScript',
+      locales: AllLocales.JavaScript
     },
-    {
-      icon: 'field-processor',
-      name: '字段处理',
-      type: 'field_processor',
-      constructor: 'FieldProcessor'
-    },
+    // {
+    //   icon: 'field-processor',
+    //   name: '字段处理',
+    //   type: 'field_processor',
+    //   constructor: 'FieldProcessor'
+    // },
     {
       icon: 'aggregator',
       name: '聚合',
       type: 'aggregation_processor',
-      constructor: 'Aggregate'
+      constructor: 'Aggregate',
+      locales: AllLocales.Aggregate
     },
     {
       icon: 'row-filter',
@@ -66,8 +79,39 @@ const state = () => ({
     {
       icon: 'join',
       name: '连接',
-      type: 'join',
-      constructor: 'Join'
+      type: 'join_processor',
+      constructor: 'Join',
+      locales: AllLocales.Join
+    },
+    /*{
+      icon: 'merge_table',
+      name: '主从合并',
+      type: 'merge_table_processor',
+      constructor: 'MergeTable'
+    },*/
+    {
+      icon: 'field_calc',
+      name: '字段计算',
+      type: 'field_calc_processor',
+      constructor: 'FieldCalc'
+    },
+    {
+      icon: 'field_mod_type',
+      name: '类型修改',
+      type: 'field_mod_type_processor',
+      constructor: 'FieldModType'
+    },
+    {
+      icon: 'field_rename',
+      name: '字段改名',
+      type: 'field_rename_processor',
+      constructor: 'FieldRename'
+    },
+    {
+      icon: 'field_add_del',
+      name: '增删字段',
+      type: 'field_add_del_processor',
+      constructor: 'FieldAddDel'
     }
     // {
     //   icon: 'joint-cache',
@@ -77,12 +121,14 @@ const state = () => ({
     // }
   ],
   nodeViewOffsetPosition: [0, 0],
+  spaceKeyPressed: false,
   paperMoveInProgress: false,
   ctorTypes: {}, // 所有节点构造类型
   activeNodeId: null, // 当前激活的节点ID
   activeConnection: null, // 当前激活的连接
   activeActions: [], // 激活的动作
   selectedNodes: [], // 选中的节点
+  selectedConnections: [], // 选中的线
   activeType: null,
   formSchema: null,
   taskId: null,
@@ -92,14 +138,28 @@ const state = () => ({
     edges: [] // 连线数据
   },
 
+  NodeMap: {},
+
   dagPromise: null,
-  editVersion: null
+  editVersion: null,
+
+  canBeConnectedNodeIds: [],
+  LOCALES_STORE: observable.ref({}),
+  nodeInputsWatcher: null,
+  nodeOutputsWatcher: null
 })
+
+// 初始化 state
+const state = getState()
 
 // getters
 const getters = {
   stateIsDirty: state => {
     return state.stateIsDirty
+  },
+
+  stateIsReadonly: state => {
+    return state.stateIsReadonly
   },
 
   // 判断action是否被标记
@@ -123,6 +183,8 @@ const getters = {
     if (nodeType === 'database') {
       const dbType = node.databaseType
       foundType = allNodeTypes.find(typeData => typeData.type === nodeType && typeData.attr.databaseType === dbType)
+    } else if (nodeType === 'custom_processor') {
+      foundType = state.processorNodeTypes.find(typeData => typeData.attr?.customNodeId === node.customNodeId)
     } else {
       foundType = allNodeTypes.find(typeData => typeData.type === nodeType)
     }
@@ -196,7 +258,25 @@ const getters = {
 
   formSchema: state => state.formSchema,
 
-  hasNodeError: state => id => state.nodeErrorState[id]
+  hasNodeError: state => id => state.nodeErrorState[id],
+
+  language: () => {
+    return langMap[localStorage.getItem('tapdata_localize_lang')].toLocaleLowerCase()
+  },
+
+  getMessage: (state, getters) => (token, locales) => {
+    const lang = getters.language
+    const locale = locales ? locales[lang] : state.LOCALES_STORE.value[lang]
+    if (!locale) {
+      for (let key in state.LOCALES_STORE.value) {
+        const message = Path.getIn(state.LOCALES_STORE.value[key], lowerSnake(token))
+        if (message) return message
+      }
+      return
+    }
+    // return Path.getIn(locale, lowerSnake(token))
+    return Path.getIn(locale, token)
+  }
 }
 
 // actions
@@ -213,6 +293,26 @@ const actions = {
   async addNodeAsync({ dispatch, commit }, nodeData) {
     commit('addNode', nodeData)
     await dispatch('updateDag')
+  },
+
+  async loadCustomNode({ commit }) {
+    const { items } = await customNodeApi.get()
+    commit(
+      'addProcessorNode',
+      items.map(item => {
+        return {
+          icon: 'custom-node',
+          name: item.name,
+          type: 'custom_processor',
+          constructor: 'CustomProcessor',
+          attr: {
+            customNodeId: item.id,
+            formSchema: item.formSchema
+          }
+        }
+      })
+    )
+    // console.log('loadCustomNode', data)
   }
 }
 
@@ -225,6 +325,10 @@ const mutations = {
    */
   setStateDirty(state, dirty) {
     state.stateIsDirty = dirty
+  },
+
+  setStateReadonly(state, readonly) {
+    state.stateIsReadonly = readonly
   },
 
   /**
@@ -254,6 +358,10 @@ const mutations = {
     state.paperMoveInProgress = value
   },
 
+  setPaperSpaceKeyPressed(state, value) {
+    state.spaceKeyPressed = value
+  },
+
   setNodeViewOffsetPosition(state, data) {
     state.nodeViewOffsetPosition = data.newOffset
   },
@@ -269,7 +377,13 @@ const mutations = {
 
   // 设置激活节点
   setActiveNode(state, nodeId) {
-    console.log('setActiveNode', nodeId) // eslint-disable-line
+    if (!nodeId || state.activeNodeId !== nodeId) {
+      // eslint-disable-next-line no-console
+      console.log('清空节点输入输出的监听')
+      state.nodeInputsWatcher?.()
+      state.nodeOutputsWatcher?.()
+    }
+
     state.activeNodeId = nodeId
     state.activeType = nodeId ? 'node' : null
   },
@@ -287,11 +401,19 @@ const mutations = {
 
   // 添加节点
   addNode(state, nodeData) {
+    if (!nodeData.$inputs) nodeData.$inputs = []
+    if (!nodeData.$outputs) nodeData.$outputs = []
     state.dag.nodes.push(nodeData)
+    Vue.set(state.NodeMap, nodeData.id, nodeData)
   },
 
   addNodes(state, nodes) {
-    state.dag.nodes.push(...nodes)
+    nodes.forEach(node => {
+      if (!node.$inputs) node.$inputs = []
+      if (!node.$outputs) node.$outputs = []
+      state.dag.nodes.push(node)
+      Vue.set(state.NodeMap, node.id, node)
+    })
   },
 
   // 更新节点属性
@@ -338,6 +460,22 @@ const mutations = {
   // 重置选择的节点
   resetSelectedNodes(state) {
     state.selectedNodes = []
+  },
+
+  selectConnection(state, connection) {
+    state.selectedConnections.push(connection)
+  },
+
+  deselectConnection(state, connection) {
+    const { selectedConnections } = state
+    const index = selectedConnections.findIndex((target, source) => {
+      return connection.target === target && connection.source === source
+    })
+    ~index && selectedConnections.splice(index, 1)
+  },
+
+  deselectAllConnections(state) {
+    state.selectedConnections = []
   },
 
   // 针对数组，修改某个项的值
@@ -390,8 +528,22 @@ const mutations = {
   addConnection(state, connection) {
     const { source, target } = connection
     const index = state.dag.edges.findIndex(item => item.source === source && item.target === target)
+    const sourceNode = state.NodeMap[source]
+    const targetNode = state.NodeMap[target]
+    const { $outputs = [] } = sourceNode
+    const { $inputs = [] } = targetNode
 
     if (!~index) state.dag.edges.push(connection)
+
+    if (!$outputs.includes(target)) {
+      $outputs.push(target)
+      Vue.set(sourceNode, '$outputs', $outputs)
+    }
+
+    if (!$inputs.includes(source)) {
+      $inputs.push(source)
+      Vue.set(targetNode, '$inputs', $inputs)
+    }
   },
 
   // 删除连接，清空input中的sourceId、output中的targetId
@@ -400,6 +552,21 @@ const mutations = {
     const index = state.dag.edges.findIndex(item => item.source === source && item.target === target)
 
     if (~index) state.dag.edges.splice(index, 1)
+
+    const sourceNode = state.NodeMap[source]
+    const targetNode = state.NodeMap[target]
+
+    const { $outputs = [] } = sourceNode
+    const { $inputs = [] } = targetNode
+
+    const ti = $outputs.indexOf(target)
+    const si = $inputs.indexOf(source)
+
+    if (~ti) $outputs.splice(ti, 1)
+    if (~si) $inputs.splice(si, 1)
+
+    // Vue.set(sourceNode, '$outputs', $outputs)
+    // Vue.set(targetNode, '$inputs', $inputs)
   },
 
   // 移除节点
@@ -415,8 +582,72 @@ const mutations = {
     }
 
     nodes.splice(index, 1)
+    Vue.delete(state.NodeMap, nodeId)
 
     state.dag.edges = edges.filter(({ source, target }) => nodeId !== source && nodeId !== target)
+
+    if (node.$outputs?.length) {
+      node.$outputs.forEach(id => {
+        const { $inputs = [] } = state.NodeMap[id]
+        const i = $inputs.indexOf(id)
+        if (~i) $inputs.splice(i, 1)
+      })
+    }
+
+    if (node.$inputs?.length) {
+      node.$inputs.forEach(id => {
+        const { $outputs = [] } = state.NodeMap[id]
+        const i = $outputs.indexOf(id)
+        if (~i) $outputs.splice(i, 1)
+      })
+    }
+
+    state.stateIsDirty = true
+  },
+
+  /**
+   * 批量删除节点
+   * @param state
+   * @param nodeIds
+   */
+  batchRemoveNode(state, nodeIds) {
+    nodeIds.forEach(id => {
+      const node = state.NodeMap[id]
+
+      Vue.delete(state.NodeMap, id)
+
+      if (node.$outputs?.length) {
+        node.$outputs.forEach(id => {
+          const outputNode = state.NodeMap[id]
+          if (outputNode) {
+            const { $inputs = [] } = outputNode
+            const i = $inputs.indexOf(id)
+            if (~i) $inputs.splice(i, 1)
+          }
+        })
+      }
+
+      if (node.$inputs?.length) {
+        node.$inputs.forEach(id => {
+          const inputNode = state.NodeMap[id]
+          if (inputNode) {
+            const { $outputs = [] } = inputNode
+            const i = $outputs.indexOf(id)
+            if (~i) $outputs.splice(i, 1)
+          }
+        })
+      }
+    })
+
+    if (nodeIds.includes(state.activeNodeId) && state.activeType === 'node') {
+      state.activeType = null
+    }
+
+    state.dag.nodes = state.dag.nodes.filter(node => !nodeIds.includes(node.id))
+
+    state.dag.edges = state.dag.edges.filter(
+      ({ source, target }) => !nodeIds.includes(source) && !nodeIds.includes(target)
+    )
 
     state.stateIsDirty = true
   },
@@ -427,6 +658,7 @@ const mutations = {
       state.stateIsDirty = true
     }
     state.dag.nodes.splice(0, state.dag.nodes.length)
+    state.NodeMap = {}
   },
 
   setFormSchema(state, schema) {
@@ -441,6 +673,10 @@ const mutations = {
    */
   setNodeError(state, id) {
     Vue.set(state.nodeErrorState, id, true)
+  },
+
+  setNodeErrorMsg(state, { id, msg }) {
+    Vue.set(state.nodeErrorState, id, msg)
   },
 
   /**
@@ -591,6 +827,36 @@ const mutations = {
       // 存储
       localStorage['DAG_CLIPBOARD'] = JSON.stringify(dag)
     }
+  },
+
+  addProcessorNode(state, nodes) {
+    state.processorNodeTypes.push(...nodes)
+  },
+
+  resetState(state) {
+    Object.assign(state, getState())
+  },
+
+  setCanBeConnectedNodeIds(state, ids) {
+    state.canBeConnectedNodeIds = ids
+  },
+
+  registerLocales: (state, packages) => {
+    packages.forEach(locales => {
+      mergeLocales(state.LOCALES_STORE.value, locales)
+    })
+  },
+
+  setValidateLanguage() {
+    setValidateLanguage(langMap[localStorage.getItem('tapdata_localize_lang')])
+  },
+
+  setNodeInputsWatcher(state, watcher) {
+    state.nodeInputsWatcher = watcher
+  },
+
+  setNodeOutputsWatcher(state, watcher) {
+    state.nodeOutputsWatcher = watcher
   }
 }
 

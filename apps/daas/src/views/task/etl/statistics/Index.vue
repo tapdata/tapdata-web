@@ -1,18 +1,26 @@
 <template>
-  <div class="statistics-container flex flex-column font-color-sub h-100">
-    <Info :task="task" class="card-box card-box__info" :remote-method="infoRemoteMethod" @reload="loadTask"></Info>
-    <div class="card-box px-6 flex-1">
-      <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
-        <ElTabPane label="任务进度" name="schedule">
-          <Schedule :task="task"></Schedule>
-        </ElTabPane>
-        <ElTabPane label="运行日志" name="log" lazy>
-          <Log :id="task.id"></Log>
-        </ElTabPane>
-        <ElTabPane label="挖掘任务" name="sharedMing" lazy>
-          <ShareMining :id="task.id"></ShareMining>
-        </ElTabPane>
-      </ElTabs>
+  <div class="statistics-container flex flex-column font-color-slight h-100 section-wrap">
+    <div class="statistics-container-box">
+      <Info
+        :task="task"
+        class="card-box card-box__info"
+        :syncData="syncData"
+        :remote-method="infoRemoteMethod"
+        @reload="loadTask"
+      ></Info>
+      <div class="flex-1 mt-6 pb-12 section-wrap-box">
+        <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
+          <ElTabPane :label="$t('task_monitor_progress')" name="schedule" lazy>
+            <Schedule :task="task" @sync="getSyncData"></Schedule>
+          </ElTabPane>
+          <ElTabPane :label="$t('task_monitor_run_log')" name="log" lazy>
+            <Log :id="task.id"></Log>
+          </ElTabPane>
+          <ElTabPane :label="$t('task_monitor_mining_task')" name="sharedMing" lazy>
+            <ShareMining :id="task.id"></ShareMining>
+          </ElTabPane>
+        </ElTabs>
+      </div>
     </div>
   </div>
 </template>
@@ -63,7 +71,8 @@ export default {
         input: 0,
         output: 0
       },
-      activeTab: 'schedule'
+      activeTab: 'schedule',
+      syncData: {}
     }
   },
   created() {
@@ -97,7 +106,7 @@ export default {
       }
     })
     this.timer = setInterval(() => {
-      this.loadTask()
+      this.loadTask(true)
     }, 5000)
   },
   mounted() {
@@ -105,14 +114,17 @@ export default {
   },
   destroyed() {
     this.$ws.off('watch', this.taskChange)
+    this.timer && clearInterval(this.timer)
   },
   methods: {
     init() {
       this.loadTask()
     },
-    async loadTask() {
+    async loadTask(hiddenLoading) {
       let id = this.$route.params?.subId
-      this.loading = true
+      if (!hiddenLoading) {
+        this.loading = true
+      }
       this.$api('SubTask')
         .get([id])
         .then(res => {
@@ -154,6 +166,10 @@ export default {
     },
     clearTimer() {
       this.timer && clearInterval(this.timer)
+    },
+    //接收全量同步的实时数据
+    getSyncData(data) {
+      this.syncData = data
     }
   }
 }
@@ -163,19 +179,19 @@ export default {
 .statistics-container {
   font-size: 12px;
   overflow-y: auto;
-  ::v-deep {
-    .logs-list {
-      //height: 200px;
-      //overflow-y: auto;
-    }
-    .scroller {
-      height: 200px;
-      overflow-y: auto;
+  .statistics-container-box {
+    // overflow-y: auto;
+    ::v-deep {
+      .scroller {
+        min-height: 50px;
+        overflow-y: auto;
+      }
     }
   }
 }
 .card-box {
   background: #fff;
+  border-radius: 4px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.02);
   ::v-deep {
     .table-list {

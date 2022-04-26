@@ -52,7 +52,7 @@
           ></CodeEditor>
         </div>
       </div>
-      <div class="footer p-6">
+      <div class="footer pt-6 pb-4">
         <ElButton class="btn" size="mini" @click="$router.back()">{{ $t('button_back') }}</ElButton>
       </div>
     </div>
@@ -81,19 +81,14 @@ export default {
         jar: this.$t('function_type_option_jar'),
         system: this.$t('function_type_option_system')
       }
+
       this.$api('Javascript_functions')
-        .findOne({
-          filter: {
-            where: {
-              id: this.$route.params.id
-            }
-          }
-        })
+        .get([this.$route.params.id])
         .then(res => {
           let details = res?.data || {}
           // 处理老数据问题
           if (details.type === 'custom' && !details.script) {
-            details.script = `function ${details.function_name}() ${details.function_body}`
+            details.script = `function ${details.function_name}(${details.parameters}) ${details.function_body}`
           }
           if (details.type === 'jar') {
             details.classNameFmt = details.className?.split(details.packageName + '.')?.[1] || ''
@@ -121,6 +116,10 @@ export default {
   //   box-shadow: 0px 0px 3px 0px #cccccc;
   //   overflow: hidden;
   ::v-deep {
+    .el-form {
+      flex: 1;
+      overflow-y: auto;
+    }
     .el-form-item__label {
       font-size: 12px;
     }
@@ -141,7 +140,7 @@ export default {
   }
   .footer {
     border-top: 1px solid #f0f0f0;
-    box-shadow: 0px -1px 2px 0px #f6f6f6;
+    // box-shadow: 0px -1px 2px 0px #f6f6f6;
     .btn {
       width: 80px;
     }

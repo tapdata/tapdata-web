@@ -60,7 +60,7 @@
         </el-form-item>
       </div>
       <!-- 字典模板 -->
-      <div class="box">
+      <!-- <div class="box">
         <h2>{{ $t('metadata.details.dictionarySettings') }}</h2>
         <el-table :data="form.dictionary" border class="e-table" style="width: 100%">
           <el-table-column prop="key" :label="$t('metadata.details.initialValue')">
@@ -90,7 +90,7 @@
             $t('metadata.details.chooseTemplate')
           }}</el-button>
         </div>
-      </div>
+      </div> -->
       <!-- 外键设置 -->
       <div class="box">
         <h2>{{ $t('metadata.details.foreignKeySetting') }}</h2>
@@ -150,10 +150,10 @@
       </div>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button class="cancel" @click="handleClose()" size="small">
-        {{ $t('message.cancel') }}
+      <el-button class="cancel" @click="handleClose()" size="mini">
+        {{ $t('button_cancel') }}
       </el-button>
-      <el-button type="primary" @click="save()" size="small">{{ $t('message.save') }}</el-button>
+      <el-button type="primary" @click="save()" size="mini">{{ $t('button_save') }}</el-button>
     </div>
     <el-dialog
       :title="$t('metadata.details.chooseTemplate')"
@@ -176,10 +176,10 @@
 				</li>
 			</ul> -->
       <div slot="footer" class="dialog-footer">
-        <el-button class="cancel" @click="dialogDictionaryVisible = false" size="small">{{
+        <el-button class="cancel" @click="dialogDictionaryVisible = false" size="mini">{{
           $t('message.cancel')
         }}</el-button>
-        <el-button type="primary" @click="handleSelectDictionary" size="small">{{ $t('message.confirm') }}</el-button>
+        <el-button type="primary" @click="handleSelectDictionary" size="mini">{{ $t('message.confirm') }}</el-button>
       </div>
     </el-dialog>
   </el-dialog>
@@ -582,6 +582,7 @@ export default {
     padding: 10px 20px;
     margin-bottom: 10px;
     background-color: #fff;
+    border-radius: 4px;
     box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
     h2 {
       padding-bottom: 10px;
@@ -604,11 +605,12 @@ export default {
 <style lang="scss">
 .metadata-info {
   .dialogInfo-form {
+    min-width: 600px;
     height: 90%;
     margin: 50px auto 0 !important;
     overflow: hidden;
     .el-dialog__body {
-      height: calc(100% - 126px);
+      height: calc(100% - 120px);
       padding: 10px 20px 0;
       overflow: hidden;
       overflow-y: auto;
@@ -626,8 +628,6 @@ export default {
       }
       .el-form-item__label {
         width: 100px;
-        text-align: right;
-        font-size: 12px;
       }
       .el-form-item__content {
         display: inline-block;
@@ -660,11 +660,14 @@ export default {
         }
       }
     }
-    .el-button.cancel {
-      color: #666;
-      border: 0;
-      background-color: #eee;
+    .el-dialog__footer {
+      padding-top: 20px;
     }
+    // .el-button.cancel {
+    //   color: #666;
+    //   border: 0;
+    //   background-color: #eee;
+    // }
   }
 }
 .dialogDictionary {

@@ -6,6 +6,7 @@
       class="data-flow-list"
       :classify="{ authority: 'SYNC_category_management', types: ['dataflow'] }"
       :remoteMethod="getData"
+      :default-sort="{ prop: 'createTime', order: 'descending' }"
       @selection-change="
         val => {
           multipleSelection = val
@@ -16,72 +17,11 @@
     >
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
-        <!-- <ul class="search-bar">
-          <li>
-            <ElSelect v-model="searchParams.status" size="small" @input="table.fetch(1)">
-              <ElOption :label="$t('dataFlow.status.all')" value=""></ElOption>
-              <ElOption v-for="(value, label) in statusOptions" :key="value" :label="label" :value="value"> </ElOption>
-            </ElSelect>
-          </li>
-          <li>
-            <el-select
-              v-model="searchParams.progress"
-              size="small"
-              clearable
-              :placeholder="$t('dataFlow.taskSettingPlaceholder')"
-              style="width: 160px"
-              @input="table.fetch(1)"
-            >
-              <el-option
-                v-for="item in progressOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-          </li>
-          <li>
-            <el-select
-              v-model="searchParams.executionStatus"
-              size="small"
-              clearable
-              :placeholder="$t('dataFlow.executionStatus')"
-              style="width: 160px"
-              @input="table.fetch(1)"
-            >
-              <el-option
-                v-for="opt in ['initializing', 'cdc', 'initialized', 'Lag']"
-                :key="opt"
-                :label="$t('dataFlow.status.' + opt)"
-                :value="opt"
-              ></el-option>
-            </el-select>
-          </li>
-          <li>
-            <el-input
-              v-model="searchParams.keyword"
-              clearable
-              size="small"
-              :placeholder="$t('dataFlow.searchPlaceholder')"
-              @input="table.fetch(1, 800)"
-            >
-              <span slot="prefix" class="el-input__icon h-100 ml-1">
-                <VIcon size="14">search</VIcon>
-              </span>
-            </el-input>
-          </li>
-          <li>
-            <ElButton class="btn-refresh" size="small" @click="table.fetch()">
-              <i class="el-icon-refresh"></i>
-            </ElButton>
-          </li>
-        </ul> -->
       </template>
       <div class="buttons" slot="operation">
         <el-button
-          v-if="$getSettingByKey('SHOW_CLASSIFY')"
           v-readonlybtn="'SYNC_category_application'"
-          size="small"
+          size="mini"
           class="btn"
           v-show="multipleSelection.length > 0"
           @click="$refs.table.showClassify(handleSelectTag())"
@@ -94,7 +34,7 @@
           @command="handleCommand($event)"
           v-show="multipleSelection.length > 0 && bulkOperation"
         >
-          <el-button class="btn-dropdowm" size="small">
+          <el-button class="btn-dropdowm" size="mini">
             <i class="iconfont icon-piliang back-btn-icon"></i>
             <span> {{ $t('dataFlow.taskBulkOperation') }}</span>
           </el-button>
@@ -120,7 +60,7 @@
           <i class="iconfont icon-hanshu back-btn-icon"></i>
           <span> {{ $t('dataFlow.taskBulkFx') }}</span>
         </el-button> -->
-        <el-button v-readonlybtn="'SYNC_job_import'" size="small" class="btn" @click="handleImport">
+        <el-button v-readonlybtn="'SYNC_job_import'" size="mini" class="btn" @click="handleImport">
           <i class="iconfont icon-daoru back-btn-icon"></i>
           <span> {{ $t('dataFlow.bulkImport') }}</span>
         </el-button>
@@ -128,14 +68,16 @@
           v-readonlybtn="'SYNC_job_creation'"
           class="btn btn-create"
           type="primary"
-          size="small"
+          size="mini"
           @click="create"
         >
-          <i class="iconfont icon-jia add-btn-icon"></i>
+          <!-- <i class="iconfont icon-jia add-btn-icon"></i> -->
+          {{ $t('task_create_task') }}
         </el-button>
       </div>
 
       <el-table-column
+        reserve-selection
         type="selection"
         width="45"
         :selectable="row => !row.hasChildren && !$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
@@ -144,8 +86,10 @@
 
       <el-table-column min-width="200" :label="$t('task_list_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
-          <span class="dataflow-name">
-            <span :class="['name', { 'has-children': row.hasChildren }]" @click="toDetail(row)">{{ row.name }}</span>
+          <span class="dataflow-name link-primary">
+            <span :class="['name', { 'has-children': row.hasChildren }]" @click.stop="handlePreview(row)">{{
+              row.name
+            }}</span>
             <el-tag v-if="row.listTagId !== undefined" class="tag" type="info" effect="dark" size="mini">
               {{ row.listTagValue }}
             </el-tag>
@@ -166,60 +110,63 @@
         </template>
       </el-table-column>
 
-      <el-table-column
+      <!-- <el-table-column
         prop="lag"
         :label="$t('task_list_execution_status')"
         width="180"
         sortable="custom"
-      ></el-table-column>
+      ></el-table-column> -->
 
-      <el-table-column prop="startTime" :label="$t('task_list_start_time')" width="170" sortable="custom">
+      <!--引擎暂时未回写启动时间，暂时注释-->
+      <!--<el-table-column prop="startTime" :label="$t('task_list_start_time')" width="170" sortable="custom">
         <template #default="{ row }">
           {{ row.startTime ? $moment(row.startTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
+      </el-table-column>-->
+      <el-table-column prop="createTime" :label="$t('column_create_time')" width="210" sortable="custom">
+        <template #default="{ row }">
+          {{ row.createTime ? $moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
+        </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="280" fixed="right">
+      <el-table-column :label="$t('column_operation')" width="270" fixed="right">
         <template #default="{ row }">
           <div class="table-operations" v-if="!row.hasChildren">
             <ElLink
               v-readonlybtn="'SYNC_job_operation'"
-              :disabled="startDisabled(row)"
+              :disabled="row.disabledData.start"
               type="primary"
               @click="start([row.id])"
             >
               {{ $t('task_list_run') }}
             </ElLink>
+            <ElDivider direction="vertical"></ElDivider>
             <ElLink
+              v-if="isShowForceStop(row.statuses)"
               v-readonlybtn="'SYNC_job_operation'"
               type="primary"
-              :disabled="
-                $disabledByPermission('SYNC_job_operation_all_data', row.user_id) || stopDisabled(row.statusResult)
-              "
-              class="ml-3"
-              @click="stop([row.id])"
+              :disabled="$disabledByPermission('SYNC_job_operation_all_data', row.user_id)"
+              @click="forceStop([row.id])"
+            >
+              {{ $t('task_list_force_stop') }}
+            </ElLink>
+            <ElLink
+              v-else
+              v-readonlybtn="'SYNC_job_operation'"
+              type="primary"
+              :disabled="row.disabledData.stop"
+              @click="stop([row.id], row)"
               >{{ $t('task_list_stop') }}</ElLink
             >
-            <!--            <ElLink-->
-            <!--              v-if="row.status === 'stopping'"-->
-            <!--              v-readonlybtn="'SYNC_job_operation'"-->
-            <!--              type="primary"-->
-            <!--              :disabled="-->
-            <!--                $disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||-->
-            <!--                !statusBtMap['forceStop'][row.status]-->
-            <!--              "-->
-            <!--              @click="forceStop([row.id])"-->
-            <!--            >-->
-            <!--              {{ $t('dataFlow.button.force_stop') }}-->
-            <!--            </ElLink>-->
+            <ElDivider direction="vertical"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
-              style="margin-left: 10px"
               type="primary"
-              :disabled="$disabledByPermission('SYNC_job_edition_all_data', row.user_id)"
+              :disabled="row.disabledData.edit"
               @click="handleEditor(row.id)"
             >
-              {{ $t('button.edit') }}
+              {{ $t('button_edit') }}
             </ElLink>
+            <ElDivider direction="vertical"></ElDivider>
             <!-- <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               style="margin-left: 10px"
@@ -233,17 +180,17 @@
             >
               {{ $t('task_list_button_schedule') }}
             </ElLink> -->
-            <el-dropdown
-              v-show="moreAuthority"
-              size="small"
-              style="margin-left: 10px"
-              @command="handleCommand($event, row)"
-            >
-              <ElLink type="primary">
-                {{ $t('button.more') }}
-                <i class="el-icon-arrow-down"></i>
+            <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetail(row)">
+              {{ $t('task_list_button_monitor') }}
+            </ElLink>
+            <ElDivider direction="vertical"></ElDivider>
+            <el-dropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
+              <ElLink type="primary" class="rotate-90">
+                <!-- {{ $t('button.more') }} -->
+                <i class="el-icon-more"></i>
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
+                <el-dropdown-item command="toView">{{ $t('dataFlow.view') }}</el-dropdown-item>
                 <el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
                   $t('dataFlow.dataFlowExport')
                 }}</el-dropdown-item>
@@ -252,7 +199,7 @@
                 </el-dropdown-item>
 
                 <el-dropdown-item
-                  :disabled="resetDisabled(row)"
+                  :disabled="row.disabledData.reset"
                   command="initialize"
                   v-readonlybtn="'SYNC_job_operation'"
                 >
@@ -261,18 +208,12 @@
                 <el-dropdown-item
                   class="btn-delete"
                   command="del"
-                  :disabled="
-                    $disabledByPermission('SYNC_job_delete_all_data', row.user_id) || deleteDisabled(row.statusResult)
-                  "
+                  :disabled="row.disabledData.delete"
                   v-readonlybtn="'SYNC_job_delete'"
                 >
                   {{ $t('button.delete') }}
                 </el-dropdown-item>
-                <el-dropdown-item
-                  command="setTag"
-                  v-if="$getSettingByKey('SHOW_CLASSIFY')"
-                  v-readonlybtn="'SYNC_category_application'"
-                >
+                <el-dropdown-item command="setTag" v-readonlybtn="'SYNC_category_application'">
                   {{ $t('dataFlow.addTag') }}
                 </el-dropdown-item>
                 <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
@@ -321,33 +262,96 @@
         <el-button type="primary" @click="saveTaskSetting">{{ $t('app.save') }}</el-button>
       </span>
     </el-dialog>
-    <DownAgent ref="agentDialog" type="taskRunning"></DownAgent>
     <SkipError ref="errorHandler" @skip="skipHandler"></SkipError>
+    <Drawer class="task-drawer" :visible.sync="isShowDetails">
+      <div class="task-drawer-wrap" v-loading="previewLoading">
+        <header class="header mb-3">
+          <div class="tab pb-3">
+            <div class="img-box">
+              <VIcon class="icon">text</VIcon>
+              <!-- <img src="../../../assets/images/migrate/headImage.png" /> -->
+            </div>
+            <div class="content" v-if="previewData">
+              <div class="name fs-6">
+                <el-tooltip class="item" effect="dark" :content="previewData.name" placement="top-start">
+                  <span> {{ previewData.name }}</span>
+                </el-tooltip>
+              </div>
+              <div class="fs-8 mt-2 mb-2 desc">
+                {{ $t('task_details_desc') }}: <span>{{ previewData.desc }}</span>
+              </div>
+              <div class="status bg-main rounded-1 py-3 px-2">
+                <span class="mr-2" v-for="item in previewData.statusResult" :key="item.status">
+                  <span class="din-font fs-6 font-color-light">{{ item.count }}</span>
+                  <span class="pl-1 fs-8 font-color-slight">{{ item.text }} </span>
+                </span>
+                <div class="proportion">
+                  <span
+                    v-for="item in proportionData"
+                    :key="item.label"
+                    :style="{ background: item.color, width: item.value + '%' }"
+                  ></span>
+                </div>
+                <!-- <img :src="getSatusImgSrc(previewData.status)" alt="" /> -->
+                <!-- <span :class="['status-' + previewData.status, 'status-block']">
+                  {{ $t('task_preview_status_' + previewData.status) }}
+                </span> -->
+              </div>
+            </div>
+          </div>
+        </header>
+        <ul class="info-list">
+          <li v-for="item in previewList" :key="item.label">
+            <!-- {{ previewData[item] }} -->
+            <template v-if="!!item.value">
+              <VIcon class="icon mr-4">{{ item.label }}</VIcon>
+              <!-- <img class="label-img" :src="getImgByData(item.label)" /> -->
+              <div class="label-text">
+                <div class="label">{{ $t('task_preview_' + item.label) }}:</div>
+                <div
+                  class="value align-items-center align-middle"
+                  :class="{ 'align-top': item.value && item.value.length > 15 }"
+                >
+                  {{ item.value }}
+                </div>
+              </div>
+            </template>
+          </li>
+        </ul>
+      </div>
+    </Drawer>
+    <!-- 导入 -->
+    <Upload :type="'dataflow'" ref="upload"></Upload>
   </section>
 </template>
 
 <script>
 import factory from '../../../api/factory'
-import ws from '../../../api/ws'
-const dataFlows = factory('DataFlows')
-const MetadataInstance = factory('MetadataInstances')
+const Task = factory('Task')
 // const cluster = factory('cluster');
 import { toRegExp } from '../../../utils/util'
 import SkipError from '../../../components/SkipError'
-import DownAgent from '../../downAgent/agentDown'
 import TablePage from '@/components/TablePage'
 import FilterBar from '@/components/filter-bar'
 // import VIcon from '@/components/VIcon'
-import StatusItem from './StatusItem'
+import Upload from '@/components/UploadDialog'
+import StatusItem from '../StatusItem'
+import Drawer from '@/components/Drawer'
 import { ETL_STATUS_MAP } from '@/const'
-import { getSubTaskStatus } from './util'
+import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
+// import { getTaskBtnDisabled } from '../util'
 
-let interval = null
+let timeout = null
 export default {
   name: 'TaskList',
-  components: { FilterBar, TablePage, DownAgent, SkipError, StatusItem },
+  components: { FilterBar, TablePage, SkipError, StatusItem, Drawer, Upload },
   data() {
     return {
+      proportionData: [],
+      isShowDetails: false,
+      previewLoading: false,
+      previewData: null,
+      previewList: [],
       filterItems: [],
       restLoading: false,
       searchParams: {
@@ -383,20 +387,6 @@ export default {
         initial_sync: this.$t('dataFlow.initial_sync'),
         cdc: this.$t('dataFlow.cdc'),
         'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
-      },
-      statusBtMap: {
-        // scheduled, draft, running, stopping, error, pause, force stopping
-        start: { draft: true, error: true, pause: true },
-        stop: { running: true },
-        delete: { edit: true, draft: true, error: true, pause: true },
-        edit: { edit: true, stop: true, error: true },
-        reset: { draft: true, error: true, pause: true },
-        forceStop: { stopping: true }
-        //     编辑中（edit）- 编辑中
-        // 启动中（start）- 启动中
-        // 运行中（running）- 运行中
-        // stop - 已停止
-        // pause - 暂停
       },
       dataFlowId: '',
 
@@ -441,14 +431,16 @@ export default {
     this.getFilterItems()
     let { status } = this.$route.query
     this.searchParams.status = status ?? ''
-    ws.on('watch', this.dataflowChange)
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
+    //定时轮询
+    timeout = setInterval(() => {
+      this.table.fetch(null, 0, true)
+    }, 8000)
   },
   beforeDestroy() {
-    ws.off('watch', this.dataflowChange)
-    clearInterval(interval)
+    clearInterval(timeout)
   },
   watch: {
     '$route.query'() {
@@ -480,41 +472,6 @@ export default {
         }
       }
     },
-    watchDataflowList(ids) {
-      let msg = {
-        type: 'watch',
-        collection: 'DataFlows',
-        filter: {
-          where: { 'fullDocument._id': { $in: ids } }, //查询条件
-          fields: {
-            'fullDocument.id': true,
-            'fullDocument.name': true,
-            'fullDocument.status': true,
-            'fullDocument.checked': true,
-            'fullDocument.executeMode': true,
-            'fullDocument.stopOnError': true,
-            'fullDocument.last_updated': true,
-            'fullDocument.startTime': true,
-            'fullDocument.children': true,
-            'fullDocument.stats': true,
-            'fullDocument.stages.id': true,
-            'fullDocument.stages.name': true,
-            'fullDocument.errorEvents': true,
-            'fullDocument.agentId': true,
-            'fullDocument.setting': true,
-            'fullDocument.listtags': true
-          }
-        }
-      }
-      try {
-        ws.ready(() => {
-          ws.send(msg)
-        }, true)
-      } catch (e) {
-        // eslint-disable-next-line
-        console.log('e', e)
-      }
-    },
     reset() {
       this.searchParams = {
         keyword: '',
@@ -534,7 +491,7 @@ export default {
       let { keyword, status, progress, executionStatus, timeData, syncType, agentId } = this.searchParams
 
       let where = {
-        mappingTemplate: this.mappingTemplate
+        syncType: 'sync'
       }
       let fields = {
         id: true,
@@ -546,7 +503,8 @@ export default {
         startTime: true,
         agentId: true,
         statuses: true,
-        type: true
+        type: true,
+        desc: true
       }
       if (keyword && keyword.trim()) {
         where.or = [
@@ -627,7 +585,6 @@ export default {
         .then(res => {
           let data = res.data
           let list = data?.items || []
-          this.watchDataflowList(list.map(it => it.id))
           this.table.setCache({
             keyword,
             status,
@@ -701,11 +658,11 @@ export default {
         }
       }
       let statuses = item.statuses
-      item.statusResult = []
-      if (statuses?.length) {
-        let result = getSubTaskStatus(statuses)
-        item.statusResult = result
-      }
+      item.disabledData = getTaskBtnDisabled(
+        item,
+        this.$disabledByPermission('SYNC_job_operation_all_data', item.user_id)
+      )
+      item.statusResult = getSubTaskStatus(statuses)
       return item
     },
     handleSelectTag() {
@@ -730,10 +687,12 @@ export default {
         id: ids,
         listtags
       }
-      dataFlows.batchUpdateListtags(attributes).then(() => {
-        this.dataFlowId = ''
-        this.table.fetch()
-      })
+      this.$api('Task')
+        .batchUpdateListtags(attributes)
+        .then(() => {
+          this.dataFlowId = ''
+          this.table.fetch()
+        })
     },
     create() {
       // let routeUrl = this.$router.resolve({
@@ -749,14 +708,14 @@ export default {
       this.$confirm(
         h('p', null, [
           h('span', null, this.$t('dataFlow.modifyEditText')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeLayoutProcess')),
+          h('span', { style: 'color: #2C65FF' }, this.$t('dataFlow.nodeLayoutProcess')),
           h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.nodeAttributes')),
+          h('span', { style: 'color: #2C65FF' }, this.$t('dataFlow.nodeAttributes')),
           h('span', null, '、'),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.matchingRelationship')),
+          h('span', { style: 'color: #2C65FF' }, this.$t('dataFlow.matchingRelationship')),
           h('span', null, '，'),
           h('span', null, this.$t('dataFlow.afterSubmission')),
-          h('span', { style: 'color: #409EFF' }, this.$t('dataFlow.reset')),
+          h('span', { style: 'color: #2C65FF' }, this.$t('dataFlow.reset')),
           h('span', null, this.$t('dataFlow.runNomally')),
           h('span', null, this.$t('dataFlow.editLayerTip'))
         ]),
@@ -788,14 +747,15 @@ export default {
       }, 200)
     },
     handleImport() {
-      let routeUrl = this.$router.resolve({
-        // path: '/upload?type=dataflow'
-        name: 'upload',
-        query: {
-          type: 'dataflow'
-        }
-      })
-      window.open(routeUrl.href, '_blank')
+      this.$refs.upload.show()
+      // let routeUrl = this.$router.resolve({
+      //   // path: '/upload?type=dataflow'
+      //   name: 'upload',
+      //   query: {
+      //     type: 'dataflow'
+      //   }
+      // })
+      // window.open(routeUrl.href, '_blank')
     },
     getConfirmMessage(operateStr, isBulk, name) {
       let title = operateStr + '_confirm_title',
@@ -806,17 +766,23 @@ export default {
       }
       const h = this.$createElement
       let strArr = this.$t('dataFlow.' + message).split('xxx')
-      let msg = h('p', null, [
-        strArr[0],
-        h(
-          'span',
-          {
-            class: 'color-primary'
-          },
-          name
-        ),
-        strArr[1]
-      ])
+      let msg = h(
+        'p',
+        {
+          style: 'width: calc(100% - 28px);word-break: break-all;'
+        },
+        [
+          strArr[0],
+          h(
+            'span',
+            {
+              class: 'color-primary'
+            },
+            name
+          ),
+          strArr[1]
+        ]
+      )
       return {
         msg,
         title: this.$t('dataFlow.' + title)
@@ -831,13 +797,19 @@ export default {
       }
       this[command](ids, node)
     },
+    toView([id]) {
+      window.open(
+        this.$router.resolve({
+          name: 'DataflowViewer',
+          params: {
+            id
+          }
+        }).href,
+        'viewer_' + id
+      )
+    },
     export(ids) {
-      let where = {
-        _id: {
-          in: ids
-        }
-      }
-      MetadataInstance.download(where, 'DataFLow')
+      Task.export(ids)
     },
     start(ids) {
       let _this = this
@@ -864,92 +836,59 @@ export default {
         // }
       }
 
-      if (this.$refs.agentDialog.checkAgent()) {
-        this.$api('Task')
-          .get({ filter: JSON.stringify(filter) })
-          .then(res => {
-            let flag = false
-            let items = res.data?.items || []
-            if (items.length) {
-              items.forEach(item => {
-                if (item?.errorEvents?.length) {
-                  flag = true
-                }
-              })
-            }
-            this.$api('Task')
-              .batchStart(ids)
-              .then(res => {
-                this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
-                this.table.fetch()
-              })
-              .catch(err => {
-                this.$message.error(err.data?.message)
-              })
-            if (flag) {
-              _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {
-                // _this.changeStatus(ids, { status: 'scheduled' })
-              })
-            } else {
+      this.$api('Task')
+        .get({ filter: JSON.stringify(filter) })
+        .then(res => {
+          let flag = false
+          let items = res.data?.items || []
+          if (items.length) {
+            items.forEach(item => {
+              if (item?.errorEvents?.length) {
+                flag = true
+              }
+            })
+          }
+          this.$api('Task')
+            .batchStart(ids)
+            .then(res => {
+              this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+              this.table.fetch()
+            })
+            .catch(err => {
+              this.$message.error(err.data?.message)
+            })
+          if (flag) {
+            _this.$refs.errorHandler.checkError({ id, status: 'error' }, () => {
               // _this.changeStatus(ids, { status: 'scheduled' })
-            }
-          })
-      }
-      // if (node) {
-      // 	this.$refs.errorHandler.checkError(node, () => {
-      // 		//启动任务时判断任务内是否存在聚合处理器，若存在，则弹框提示
-      // 		if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
-      // 			const h = this.$createElement;
-      // 			let arr = this.$t('message.startAggregation_message').split('XXX');
-      // 			this.$confirm(
-      // 				h('p', [
-      // 					arr[0] + '(',
-      // 					h('span', { style: { color: '#409EFF' } }, node.name),
-      // 					')' + arr[1]
-      // 				]),
-      // 				this.$t('dataFlow.importantReminder'),
-      // 				{
-      // 					type: 'warning',
-      // 					closeOnClickModal: false
-      // 				}
-      // 			)
-      // 				.then(() => {
-      // 					//若任务内存在聚合处理器，启动前先重置
-      // 					dataFlows.reset(node.id).then(() => {
-      // 						this.changeStatus(ids, { status: 'scheduled' });
-      // 					});
-      // 				})
-      // 				.catch(() => {
-      // 					this.table.fetch();
-      // 				});
-      // 		} else {
-      // 			this.changeStatus(ids, { status: 'scheduled' });
-      // 		}
-      // 	});
-      // } else {
+            })
+          } else {
+            // _this.changeStatus(ids, { status: 'scheduled' })
+          }
+        })
     },
     stop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('stop', ids.length > 1, item.name)
       let message = msgObj.msg
-      let title = msgObj.title
+      // let title = msgObj.title
       let list = this.table.list
       for (let i = 0; i < list.length; i++) {
         let node = list[i]
         if (ids.includes(node.id)) {
           if (node.setting && !node.setting.sync_type.includes('cdc')) {
             message = this.$t('message.stopInitial_syncMessage')
-            title = this.$t('dataFlow.importantReminder')
+            // title = this.$t('dataFlow.importantReminder')
           }
           if (node.stages && node.stages.find(s => s.type === 'aggregation_processor')) {
             const h = this.$createElement
             let arr = this.$t('message.stopAggregation_message').split('XXX')
             message = h('p', [arr[0] + '(', h('span', { style: { color: '#409EFF' } }, node.name), ')' + arr[1]])
-            title = this.$t('dataFlow.importantReminder')
+            // title = this.$t('dataFlow.importantReminder')
           }
         }
       }
-      this.$confirm(message, title, {
-        type: 'warning'
+      this.$confirm(message, '', {
+        type: 'warning',
+        showClose: false
       }).then(resFlag => {
         if (!resFlag) {
           return
@@ -969,18 +908,27 @@ export default {
     },
     forceStop(ids, item = {}) {
       let msgObj = this.getConfirmMessage('force_stop', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg, msgObj.title, {
-        type: 'warning'
+      this.$confirm(msgObj.msg, '', {
+        type: 'warning',
+        showClose: false
       }).then(resFlag => {
         if (!resFlag) {
           return
         }
-        this.changeStatus(ids, { status: 'force stopping' })
+        this.$api('Task')
+          .forceStop(ids)
+          .then(res => {
+            this.$message.success(res.data?.message || this.$t('message.operationSuccuess'))
+            this.table.fetch()
+          })
+          .catch(err => {
+            this.$message.error(err.data?.message)
+          })
       })
     },
     del(ids, item = {}) {
       let msgObj = this.getConfirmMessage('delete', ids.length > 1, item.name)
-      this.$confirm(msgObj.msg, msgObj.title, {
+      this.$confirm(msgObj.msg, '', {
         type: 'warning'
       }).then(resFlag => {
         if (!resFlag) {
@@ -1052,7 +1000,7 @@ export default {
         status
       }
       errorEvents && (attributes.errorEvents = errorEvents)
-      dataFlows
+      this.$api('Task')
         .update(where, attributes)
         .then(res => {
           this.table.fetch()
@@ -1120,7 +1068,7 @@ export default {
       let data = this.formSchedule.taskData.setting || {}
       data.isSchedule = this.formSchedule.isSchedule
       data.cronExpression = this.formSchedule.cronExpression
-      dataFlows
+      this.$api('Task')
         .patchId(this.formSchedule.id, { setting: data })
         .then(result => {
           if (result && result.data) {
@@ -1148,31 +1096,50 @@ export default {
         }
       })
     },
-    startDisabled(row) {
-      const statusResult = row.statusResult || []
-      const statusLength = row.statuses?.length || 0
-      return (
-        this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
-        statusResult.every(t => t.status === 'running' && t.count > 0 && t.count === statusLength)
-      )
+    isShowForceStop(data) {
+      return data?.length && data.every(t => ['stopping'].includes(t.status))
     },
-    stopDisabled(data) {
-      let stopData = data.filter(t => t.count > 0).find(t => ['running'].includes(t.status))
-      return stopData ? false : true
+    // 打开预览
+    handlePreview(data) {
+      let previewList = [{ label: 'subtasks', value: data.statuses.length }]
+      let statusResult = data.statusResult || []
+      let colorMap = {
+        error: '#F64E3E',
+        running: '#2CD36F',
+        not_running: '#FFBF00',
+        stop: '#FF7D00',
+        edit: '#2C65FF'
+      }
+      let total = statusResult.reduce((prev, cur) => {
+        return cur.count + prev
+      }, 0)
+      let proportionData = statusResult.map(item => {
+        return {
+          label: item.status,
+          key: item.count,
+          value: (item.count / total) * 100,
+          color: colorMap[item.status]
+        }
+      })
+      this.proportionData = proportionData
+
+      this.isShowDetails = true
+      this.previewData = data
+      for (let item in data) {
+        if (['createUser', 'type', 'id', 'createTime'].includes(item)) {
+          if (['type'].includes(item)) {
+            data[item] = this.syncType[data[item]]
+          }
+
+          if (['createTime'].includes(item)) {
+            data[item] = data[item] ? this.$moment(data[item]).format('YYYY-MM-DD HH:mm:ss') : '-'
+          }
+          previewList.push({ label: item, value: data[item] || '-' })
+        }
+      }
+      this.previewList = previewList
     },
-    resetDisabled(row) {
-      const statusResult = row.statusResult || []
-      const statusLength = row.statuses?.length || 0
-      return (
-        this.$disabledByPermission('SYNC_job_operation_all_data', row.user_id) ||
-        statusResult.some(t => t.status === 'running' && t.count > 0 && t.count === statusLength)
-      )
-    },
-    deleteDisabled(data) {
-      return !data
-        .filter(t => t.count > 0)
-        .every(t => ['edit', 'draft', 'error', 'pause', 'not_running', 'stop'].includes(t.status))
-    },
+
     getFilterItems() {
       this.filterItems = [
         {
@@ -1188,21 +1155,21 @@ export default {
           type: 'select-inner',
           items: this.progressOptions
         },
-        {
-          label: this.$t('task_list_execution_status'),
-          key: 'executionStatus',
-          type: 'select-inner',
-          menuMinWidth: '250px',
-          items: async () => {
-            let option = ['initializing', 'cdc', 'initialized', 'Lag']
-            return option.map(item => {
-              return {
-                label: this.$t('task_list_status_' + item),
-                value: item
-              }
-            })
-          }
-        },
+        // {
+        //   label: this.$t('task_list_execution_status'),
+        //   key: 'executionStatus',
+        //   type: 'select-inner',
+        //   menuMinWidth: '250px',
+        //   items: async () => {
+        //     let option = ['initializing', 'cdc', 'initialized', 'Lag']
+        //     return option.map(item => {
+        //       return {
+        //         label: this.$t('task_list_status_' + item),
+        //         value: item
+        //       }
+        //     })
+        //   }
+        // },
         {
           placeholder: this.$t('task_list_search_placeholder'),
           key: 'keyword',
@@ -1248,7 +1215,7 @@ export default {
           margin-left: 5px;
         }
         &.btn-create {
-          margin-left: 5px;
+          margin-left: 10px;
         }
         &.btn-createText {
           margin-left: 5px;
@@ -1264,9 +1231,8 @@ export default {
       }
       .name {
         &:not(.has-children) {
-          color: #409eff;
           cursor: pointer;
-          text-decoration: underline;
+          // text-decoration: underline;
         }
       }
     }
@@ -1288,6 +1254,182 @@ export default {
   color: #f56c6c;
   &.is-disabled {
     color: #bbb;
+  }
+}
+.task-drawer {
+  padding: 16px;
+  .task-drawer-wrap {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100%;
+  }
+  .header {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid #eee;
+  }
+  .test-progress {
+    width: 94.5%;
+    margin: 0 10px 10px 30px;
+  }
+  .tab {
+    display: flex;
+    justify-content: flex-start;
+    .img-box {
+      display: flex;
+      width: 20px;
+      justify-content: center;
+      align-items: flex-start;
+      background: #fff;
+      //border: 1px solid #dedee4;
+      border-radius: 3px;
+      margin: 5px 0 0 0;
+      img {
+        width: 20px;
+      }
+    }
+    .content {
+      margin-left: 10px;
+      margin-top: 4px;
+      width: 100%;
+      overflow: hidden;
+      .name {
+        color: map-get($fontColor, dark);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .desc {
+        color: map-get($fontColor, normal);
+        span {
+          color: map-get($fontColor, light);
+        }
+      }
+    }
+    .status {
+      font-size: 12px;
+      border-top-width: 2px;
+      box-sizing: border-box;
+      .proportion {
+        height: 6px;
+        background-color: map-get($bgColor, main);
+        span {
+          display: inline-block;
+          height: 6px;
+          &:first-child {
+            border-top-left-radius: 2px;
+            border-bottom-left-radius: 2px;
+          }
+          &:first-child {
+            border-top-left-radius: 2px;
+            border-bottom-left-radius: 2px;
+          }
+          &:last-child {
+            border-top-right-radius: 2px;
+            border-bottom-right-radius: 2px;
+          }
+        }
+      }
+      .error {
+        color: #f56c6c;
+      }
+      .success {
+        color: #67c23a;
+      }
+      .warning {
+        color: #e6a23c;
+      }
+    }
+  }
+  .label-img {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 15px;
+    margin-top: 2px;
+  }
+
+  .schema-load {
+    color: #999;
+    display: inline-block;
+    margin-left: 20px;
+    font-size: 12px;
+    font-weight: normal;
+  }
+  .info-list {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 690px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+    li {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      margin-bottom: 10px;
+      .label-text {
+        width: 100%;
+        margin-right: 16px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f2f2f2;
+        .label {
+          width: 100%;
+          text-align: left;
+          color: rgba(0, 0, 0, 0.6);
+          font-size: 12px;
+        }
+        .value {
+          display: inline-block;
+          width: 100%;
+          padding-top: 5px;
+          color: #666;
+          font-size: 12px;
+          color: #000;
+          word-break: break-all;
+        }
+      }
+    }
+  }
+  .bar {
+    display: block;
+    width: 100%;
+    height: 30px;
+    background: #f5f5f5;
+    border-bottom: 1px solid #dedee4;
+  }
+  .back-btn-icon-box {
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    font-weight: normal;
+    font-size: 14px;
+    color: red;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+    outline: 0;
+    border: 0;
+    border-radius: 0;
+    box-sizing: border-box;
+    background: #409eff;
+    transition: 0.1s;
+    -webkit-appearance: none;
+    -webkit-box-sizing: border-box;
+    -webkit-transition: 0.1s;
+  }
+  .back-btn-icon-box:hover {
+    background: #6dc5e8;
+  }
+  .back-btn-icon {
+    color: #fff;
+  }
+  .back-btn-text {
+    padding-left: 10px;
+    font-size: 12px;
   }
 }
 </style>

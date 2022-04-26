@@ -31,7 +31,7 @@ export default {
         },
         {
           icon: 'bells',
-          name: this.$t('notification.setting'),
+          name: this.$t('notify_setting'),
           key: 'notification'
         },
         {

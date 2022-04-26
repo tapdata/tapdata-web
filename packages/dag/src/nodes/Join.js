@@ -20,34 +20,36 @@ export class Join extends NodeType {
   formSchema = {
     type: 'object',
     properties: {
-      sourceNode: {
-        type: 'string',
-        'x-visible': false,
-        'x-reactions': '{{getSourceNode}}'
+      $inputs: {
+        type: 'array',
+        display: 'none',
+        'x-reactions': [
+          {
+            fulfill: {
+              run: `
+                // console.log('$self.value', $self.value, $values);
+                if (($values.leftNodeId && !$self.value.includes($values.leftNodeId)) || !$values.leftNodeId) {
+                  let nodeIds = $self.value.filter(v => v !== $values.rightNodeId)
+                  $values.leftNodeId = nodeIds[0] || ''
+                }
+                
+                if (($values.rightNodeId && !$self.value.includes($values.rightNodeId)) || !$values.rightNodeId) {
+                  let nodeIds = $self.value.filter(v => v !== $values.leftNodeId)
+                  $values.rightNodeId = nodeIds[0] || ''
+                }
+                // console.log('$inputs_$values', $values)
+              `
+            }
+          }
+        ]
       },
       leftNodeId: {
         type: 'string',
-        display: 'none',
-        'x-reactions': {
-          dependencies: ['sourceNode'],
-          fulfill: {
-            state: {
-              value: '{{$deps[0] && $deps[0][0] ? $deps[0][0].value : ""}}'
-            }
-          }
-        }
+        display: 'none'
       },
       rightNodeId: {
         type: 'string',
-        display: 'none',
-        'x-reactions': {
-          dependencies: ['sourceNode'],
-          fulfill: {
-            state: {
-              value: '{{$deps[0] && $deps[0][1] ? $deps[0][1].value : ""}}'
-            }
-          }
-        }
+        display: 'none'
       },
 
       grid: {
@@ -71,7 +73,7 @@ export class Join extends NodeType {
                   {
                     label: '左连接',
                     value: 'left'
-                  },
+                  } /*,
                   {
                     label: '右连接',
                     value: 'right'
@@ -83,16 +85,16 @@ export class Join extends NodeType {
                   {
                     label: '全连接',
                     value: 'full'
-                  }
+                  }*/
                 ],
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   wrapperWidth: 240
                 },
                 'x-component': 'Select'
-              },
+              }
 
-              embeddedMode: {
+              /*embeddedMode: {
                 type: 'boolean',
                 title: '内嵌模式',
                 'x-decorator': 'FormItem',
@@ -160,7 +162,7 @@ export class Join extends NodeType {
                     'x-component': 'Radio.Group'
                   }
                 }
-              }
+              }*/
             }
           },
 
@@ -176,15 +178,27 @@ export class Join extends NodeType {
                   type: 'object',
                   properties: {
                     left: {
+                      title: '左侧',
                       type: 'string',
                       required: true,
                       'x-decorator': 'FormItem',
+                      'x-decorator-props': {
+                        labelStyle: {
+                          display: 'none'
+                        }
+                      },
                       'x-component': 'Select'
                     },
                     right: {
+                      title: '右侧',
                       type: 'string',
                       required: true,
                       'x-decorator': 'FormItem',
+                      'x-decorator-props': {
+                        labelStyle: {
+                          display: 'none'
+                        }
+                      },
                       'x-component': 'Select'
                     }
                   }
@@ -194,11 +208,27 @@ export class Join extends NodeType {
                   layout: 'vertical'
                 },
                 'x-component': 'JoinExpression',
+                'x-component-props': {
+                  findNodeById: '{{findNodeById}}',
+                  loadNodeFieldNamesById: '{{loadNodeFieldNamesById}}'
+                },
                 'x-reactions': [
                   {
-                    dependencies: ['leftNodeId', 'rightNodeId']
+                    dependencies: ['leftNodeId'],
+                    fulfill: {
+                      schema: {
+                        'x-component-props.leftNodeId': '{{$deps[0]}}'
+                      }
+                    }
                   },
-                  '{{useAsyncDataSource(loadSourceNodeField, "dataSource", "object")}}'
+                  {
+                    dependencies: ['rightNodeId'],
+                    fulfill: {
+                      schema: {
+                        'x-component-props.rightNodeId': '{{$deps[0]}}'
+                      }
+                    }
+                  }
                 ]
               }
             }

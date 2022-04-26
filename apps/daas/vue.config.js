@@ -5,11 +5,11 @@ const CompressionWebpackPlugin = require('compression-webpack-plugin')
 const serveUrlMap = {
   mock: 'http://localhost:30300',
   dev: 'http://localhost:3000', // TM端本地默认地址
-  // test: 'http://192.168.1.181:3003',
   jet: 'http://jet.devops.tapdata.net:31613',
-  test: 'http://192.168.1.126:3003/' // tm 重构
-  // test: 'http://192.168.1.181:30300'
-  // test: 'http://192.168.3.3:8080/' // haosheng
+  // test: 'http://192.168.1.181:31438/' // 自定义节点
+  test: 'http://192.168.1.181:31025' // v2.0
+  // test: 'http://192.168.1.181:30726' // v2-dev
+  // test: 'http://192.168.1.126:3003/' // tm 重构
   // test: 'http://192.168.1.181:30474/' // v1-30
   // test: 'http://192.168.1.132:32535/' // v1-29
   // test: 'http://192.168.1.181:32220/' // v1-28
@@ -86,6 +86,7 @@ module.exports = {
       .loader('svgo-loader')
       .options({
         plugins: [
+          { name: 'removeTitle', active: true },
           { name: 'removeStyleElement', active: true },
           {
             name: 'removeAttributesBySelector',
@@ -120,6 +121,7 @@ module.exports = {
       .loader('svgo-loader')
       .options({
         plugins: [
+          { name: 'removeTitle', active: true },
           { name: 'removeStyleElement', active: true },
           {
             name: 'removeAttrs',

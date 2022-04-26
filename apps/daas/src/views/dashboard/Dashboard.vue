@@ -1,169 +1,207 @@
 <template>
-  <section class="dashboard-wrap" v-if="!$getSettingByKey('SHOW_OLD_PAGE')" v-loading="loading">
-    <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
-      <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">
-        <div class="dashboard-col-box">
-          <div class="dashboard-title fs-7">{{ $t('dashboard_' + item.key) }}</div>
-          <div class="dashboard-label fs-5 pt-4 text-center">{{ $t('dashboard_current_' + item.key) }}</div>
-          <div class="dashboard-num pt-4 pb-2 text-center">{{ item.value }}</div>
-        </div>
-      </el-col>
-    </el-row>
-    <!-- 复制任务概览 -->
-    <el-row :gutter="20" class="dashboard-row mb-5">
-      <el-col :span="12" class="dashboard-col col">
-        <div class="charts-list">
-          <div class="charts-list-text">
-            <div class="dashboard-title fs-7">{{ $t('dashboard_copy_overview_title') }}</div>
-            <ul class="job-list">
-              <li v-for="task in migrationTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
-                <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
-                <span class="text">{{ $t('dataFlow.status.' + task.label) }}</span
-                ><span class="num pl-7">{{ task.value }}</span>
-              </li>
-            </ul>
+  <section v-loading="loading" class="dashboard-wrap">
+    <template v-if="noPermission">
+      <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
+        <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">
+          <div class="dashboard-col-box">
+            <div class="dashboard-title fs-7">{{ $t('dashboard_' + item.key) }}</div>
+            <div class="dashboard-label fs-5 pt-4 text-center">{{ $t('dashboard_current_' + item.key) }}</div>
+            <div class="dashboard-num pt-4 pb-2 text-center din-font">{{ item.value }}</div>
           </div>
-
-          <div class="chart">
-            <Chart type="pie" :extend="getPieOption(copyPieData)" class="type-chart"></Chart>
+        </el-col>
+      </el-row>
+      <!-- 复制任务概览 -->
+      <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
+        <el-col :span="12" class="dashboard-col col">
+          <div class="charts-list flex flex-row">
+            <div class="charts-list-text">
+              <div class="dashboard-title fs-7">{{ $t('dashboard_copy_overview_title') }}</div>
+              <ul class="job-list">
+                <li v-for="task in migrationTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
+                  <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
+                  <span class="text">{{ $t('dashboard_status_' + task.label) }}</span
+                  ><span class="num pl-7">{{ task.value }}</span>
+                </li>
+              </ul>
+            </div>
+            <div
+              v-if="copyPieData.every(item => item.value === 0)"
+              class="flex justify-content-center align-items-center w-100"
+            >
+              <div
+                class="flex justify-content-center align-items-center"
+                v-html="
+                  $t('dashboard_no_statistics', [
+                    '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_copy_total') + '</span>'
+                  ])
+                "
+              ></div>
+            </div>
+            <div class="chart" v-else>
+              <Chart type="pie" :extend="getPieOption(copyPieData)" class="type-chart"></Chart>
+            </div>
           </div>
-        </div>
-      </el-col>
-      <!-- 复制任务状态 -->
-      <el-col :span="12" class="dashboard-col col">
-        <div class="dashboard-col-box">
-          <div class="dashboard-title fs-7">{{ $t('dashboard_copy_status_title') }}</div>
-          <div class="chart line-chart">
-            <ul>
-              <li v-for="item in copyTaskData" :key="item.name">
-                <span>{{ item.name }} </span> {{ item.value }}
-              </li>
-            </ul>
-            <Chart type="bar" :data="copyTaskData" :options="barOptions"></Chart>
+        </el-col>
+        <el-col :span="12" class="dashboard-col col">
+          <div class="charts-list flex flex-row">
+            <div class="charts-list-text">
+              <div class="dashboard-title fs-7">{{ $t('dashboard_sync_overview_title') }}</div>
+              <ul class="job-list">
+                <li v-for="task in syncTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
+                  <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
+                  <span class="text">{{ $t('dashboard_status_' + task.label) }}</span
+                  ><span class="num pl-7">{{ handleChangeUnit(task.value) }}</span>
+                </li>
+              </ul>
+            </div>
+            <div
+              v-if="syncPieData.every(item => item.value === 0)"
+              class="flex justify-content-center align-items-center w-100"
+            >
+              <div
+                class="flex justify-content-center align-items-center"
+                v-html="
+                  $t('dashboard_no_statistics', [
+                    '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_sync_total') + '</span>'
+                  ])
+                "
+              ></div>
+            </div>
+            <div class="chart" v-else>
+              <Chart type="pie" :extend="getPieOption(syncPieData)" class="type-chart"></Chart>
+            </div>
           </div>
-        </div>
-      </el-col>
-    </el-row>
-    <!-- 开发任务概览  -->
-    <el-row :gutter="20" class="dashboard-row mb-5">
-      <el-col :span="12" class="dashboard-col col">
-        <div class="charts-list">
-          <div class="charts-list-text">
-            <div class="dashboard-title fs-7">{{ $t('dashboard_sync_overview_title') }}</div>
-            <ul class="job-list">
-              <li v-for="task in syncTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
-                <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
-                <span class="text">{{ $t('dataFlow.status.' + task.label) }}</span
-                ><span class="num pl-7">{{ task.value }}</span>
-              </li>
-            </ul>
-          </div>
-          <div class="chart">
-            <Chart type="pie" :extend="getPieOption(syncPieData)" class="type-chart"></Chart>
-          </div>
-        </div>
-      </el-col>
-      <el-col :span="12" class="dashboard-col col">
-        <div class="dashboard-col-box">
-          <div class="dashboard-title fs-7">{{ $t('dashboard_sync_status_title') }}</div>
-          <div class="chart line-chart">
-            <ul>
-              <li v-for="item in syncTaskData" :key="item.name">
-                <span>{{ item.name }} </span> {{ item.value }}
-              </li>
-            </ul>
-            <Chart type="bar" :data="syncTaskData" :options="barOptions"></Chart>
-          </div>
-        </div>
-      </el-col>
-    </el-row>
-    <!-- 数据校验 -->
-    <el-row :gutter="20" class="dashboard-row mb-5">
-      <el-col :span="12" class="dashboard-col col">
-        <div class="dashboard-col-box">
-          <div class="dashboard-title fs-7">{{ $t('dashboard_valid_title') }}</div>
-          <div class="chart line-chart">
-            <ul>
-              <li v-for="item in validBarData" :key="item.name">
-                <span>{{ item.name }} </span> {{ item.value }}
-              </li>
-            </ul>
-            <Chart type="bar" :data="validBarData" :options="barOptions"></Chart>
-          </div>
-        </div>
-      </el-col>
-      <el-col :span="12" class="dashboard-col col">
-        <div class="charts-list">
-          <div class="charts-list-text">
-            <div class="dashboard-title fs-7">{{ $t('dashboard_transfer_overview') }}</div>
-            <ul class="job-list">
-              <li v-for="item in transBarData" :key="item.label" @click="handleMigrationStatus(task.label)">
-                <i class="dots mr-3" :style="`background-color: ${item.color};`"></i>
-                <span class="text">{{ item.name }}</span
-                ><span class="num pl-7">{{ item.value }}</span>
-              </li>
-            </ul>
-          </div>
-          <div class="chart">
-            <Chart type="pie" :extend="getPieOption(transBarData)" class="type-chart"></Chart>
-          </div>
-        </div>
-      </el-col>
-    </el-row>
-    <!-- 服务器进程 -->
-    <div class="dashboard-row dashboard-col col mb-5">
-      <div class="dashboard-col">
-        <div class="dashboard-col-box">
-          <div class="dashboard-title fs-7">服务器进程</div>
-          <el-row :gutter="20">
-            <el-col :span="12" class="server-list pt-3" v-for="item in serverTable" :key="item.id">
-              <div class="server-list-box">
-                <img src="../../assets/images/serve.svg" />
-                <!-- <img src="../../assets/icons/svg/serve.svg" alt="" /> -->
-                <div class="server-main ml-5">
-                  <div class="title">{{ item.systemInfo.ip }}</div>
-                  <ul class="flex pt-1">
-                    <li class="pr-5">
-                      <label class="label pr-2">{{ $t('dashboard_management') }}</label>
-                      <span :style="`color: ${colorServeMap[item.management.status]};`">{{
-                        $t('dashboard_' + item.management.status)
-                      }}</span>
-                    </li>
-                    <li class="pr-5">
-                      <label class="label pr-2">{{ $t('dashboard_task_transfer') }}</label>
-                      <span :style="`color: ${colorServeMap[item.engine.status]};`">{{
-                        $t('dashboard_' + item.engine.status)
-                      }}</span>
-                    </li>
-                    <li>
-                      <label class="label pr-2">{{ $t('dashboard_api_service') }}</label>
-                      <span :style="`color: ${colorServeMap[item.apiServer.status]};`">{{
-                        $t('dashboard_' + item.apiServer.status)
-                      }}</span>
-                    </li>
-                  </ul>
-                </div>
+        </el-col>
+      </el-row>
+      <!-- 数据校验 -->
+      <el-row :gutter="20" class="dashboard-row mb-5" v-if="syncValidFalg">
+        <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_verify_menu'">
+          <div class="dashboard-col-box">
+            <div class="dashboard-title fs-7">{{ $t('dashboard_valid_title') }}</div>
+            <div class="chart line-chart flex flex-column">
+              <ul>
+                <li v-for="item in validBarData" :key="item.name">
+                  <span>{{ item.name }} </span> {{ item.value }}
+                </li>
+              </ul>
+              <div
+                v-if="validBarData.every(item => item.value === 0)"
+                class="flex justify-content-center align-items-center h-100"
+              >
+                <div
+                  class="flex justify-content-center align-items-center"
+                  v-html="
+                    $t('dashboard_no_statistics', [
+                      '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_valid_title') + '</span>'
+                    ])
+                  "
+                ></div>
               </div>
-            </el-col>
-          </el-row>
+              <Chart v-else type="bar" class="bar-chart" :data="validBarData" :options="barOptions"></Chart>
+            </div>
+          </div>
+        </el-col>
+        <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_SYNC_menu'">
+          <div class="charts-list flex flex-row">
+            <div class="charts-list-text">
+              <div class="dashboard-title fs-7">{{ $t('dashboard_transfer_overview') }}</div>
+              <ul class="job-list">
+                <li v-for="item in transBarData" :key="item.key">
+                  <i class="dots mr-3" :style="`background-color: ${item.color};`"></i>
+                  <span class="text">{{ item.name }}</span
+                  ><span class="num pl-7">{{ handleChangeUnit(item.value) }}</span>
+                </li>
+              </ul>
+            </div>
+            <div
+              v-if="transBarData.every(item => item.value === 0)"
+              class="flex justify-content-center align-items-center w-100"
+            >
+              <div
+                class="flex justify-content-center align-items-center"
+                v-html="
+                  $t('dashboard_no_statistics', [
+                    '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_transfer_overview') + '</span>'
+                  ])
+                "
+              ></div>
+            </div>
+            <div class="chart" v-else>
+              <Chart type="pie" :extend="getPieOption(transBarData)" class="type-chart"></Chart>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+      <!-- 服务器进程 -->
+      <div class="dashboard-row dashboard-col col mb-5" v-readonlybtn="'Cluster_management_menu'">
+        <div class="dashboard-col">
+          <div class="dashboard-col-box">
+            <div class="dashboard-title fs-7">{{ $t('dashboard_server_title') }}</div>
+            <el-row :gutter="20" v-if="serverTable.length">
+              <el-col :span="12" class="server-list pt-3" v-for="item in serverTable" :key="item.id">
+                <div class="server-list-box">
+                  <img src="../../assets/images/serve.svg" />
+                  <!-- <img src="../../assets/icons/svg/serve.svg" alt="" /> -->
+                  <div class="server-main ml-5">
+                    <div class="title">{{ item.systemInfo.ip }}</div>
+
+                    <ul class="flex pt-1">
+                      <li class="pr-5">
+                        <label class="label pr-2">{{ $t('dashboard_management') }}</label>
+                        <span :style="`color: ${colorServeMap[item.management.status]};`">{{
+                          $t('dashboard_' + item.management.status)
+                        }}</span>
+                      </li>
+                      <li class="pr-5">
+                        <label class="label pr-2">{{ $t('dashboard_task_transfer') }}</label>
+                        <span :style="`color: ${colorServeMap[item.engine.status]};`">{{
+                          $t('dashboard_' + item.engine.status)
+                        }}</span>
+                      </li>
+                      <li>
+                        <label class="label pr-2">{{ $t('dashboard_api_service') }}</label>
+                        <span :style="`color: ${colorServeMap[item.apiServer.status]};`">{{
+                          $t('dashboard_' + item.apiServer.status)
+                        }}</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </el-col>
+            </el-row>
+            <div v-else class="flex justify-content-center align-items-center h-100 py-4">
+              <div
+                class="flex justify-content-center align-items-center"
+                v-html="
+                  $t('dashboard_no_statistics', [
+                    '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_server_title') + '</span>'
+                  ])
+                "
+              ></div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
+    <template v-else>
+      <div class="dashboard-wrap-box">
+        <img src="../../assets/images/undraw_secure_files_re_6vdh.svg" />
+        <div class="txt pt-4">{{ $t('dashboard_no_data_here') }}</div>
+      </div>
+    </template>
   </section>
-  <DKDashboard v-else />
 </template>
 
 <script>
-import DKDashboard from './DKDashboard'
 import factory from '../../api/factory'
 import Chart from 'web-core/components/chart'
 const cluster = factory('cluster')
-const DataFlows = factory('DataFlows')
 
 export default {
-  components: { DKDashboard, Chart },
+  components: { Chart },
   data() {
     return {
+      h: this.$createElement,
       copyPieData: [],
       copyTaskData: [],
       syncPieData: [],
@@ -174,7 +212,7 @@ export default {
       syncTaskList: [],
       pieOptions: null,
       barOptions: {
-        barWidth: '50%',
+        barWidth: 35,
         grid: {
           top: 20,
           bottom: 0,
@@ -185,7 +223,7 @@ export default {
           axisLine: {
             show: true,
             lineStyle: {
-              color: '#D9D9D9'
+              color: 'rgba(232, 232, 232, 0.75)'
             }
           },
           axisTick: {
@@ -221,84 +259,40 @@ export default {
         },
         tooltip: {
           trigger: 'item',
+          borderWidth: 0,
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          textStyle: {
+            color: '#fff',
+            fontSize: 12,
+            align: 'center'
+          },
           formatter: params => {
             let item = params
             let val = item.value
             if (val === 1.1) {
               val = 1
             }
-            let html = item.marker + params.name + `<span style="padding: 0 4px"></span><br/>` + val
+            let html = params.name + `<span style="padding: 0 4px; text-align: center;"></span><br/>` + val
             return html
           }
         }
       },
+      syncValidFalg: this.$has('Data_verify_menu') || this.$has('Data_SYNC_menu'),
       taskList: [
         { key: 'all_total', value: 0 },
         { key: 'copy_total', value: 0 },
         { key: 'sync_total', value: 0 },
         { key: 'valid_total', value: 0 }
       ],
+      statusList: [
+        { name: this.$t('dashboard_status_running'), label: 'running', value: 0 },
+        { name: this.$t('dashboard_status_edit'), label: 'edit', value: 0 },
+        { name: this.$t('dashboard_status_wait_run'), label: 'wait_run', value: 0 },
+        { name: this.$t('dashboard_status_stop'), label: 'stop', value: 0 },
+        { name: this.$t('dashboard_status_complete'), label: 'complete', value: 0 },
+        { name: this.$t('dashboard_status_error'), label: 'error', value: 0 }
+      ],
 
-      copyTaskOptions: {
-        tooltip: {
-          trigger: 'bar'
-        },
-        legend: {
-          // top: 4,
-          // right: 0,
-          // show: true
-        },
-        xAxis: {
-          type: 'category',
-          axisTick: {
-            show: true,
-            alignWithLabel: true
-          },
-          axisLine: {
-            show: true,
-            lineStyle: {
-              color: '#D9D9D9'
-            }
-          },
-          axisLabel: {
-            show: true,
-            interval: 'auto',
-            margin: '8'
-          },
-          // prettier-ignore
-          data: ['初始化中', '初始化完成', '增量中', '增量滞后']
-        },
-        yAxis: {
-          type: 'value',
-          name: 'Evaporation',
-          position: 'right',
-          alignTicks: true,
-          axisLine: {
-            show: true,
-            lineStyle: {
-              color: '#f00'
-            }
-          },
-          axisLabel: {
-            formatter: '{value} ml'
-          }
-          // axisLabel: {
-          //   formatter: function (value) {
-          //     if (value >= 1000) {
-          //       value = value / 1000 + 'K'
-          //     }
-          //     return value
-          //   }
-          // }
-        },
-        grid: {
-          left: 0,
-          right: 0,
-          top: '24px',
-          bottom: 0
-        },
-        series: []
-      },
       loading: false,
       migrationTotal: '',
       syncTotal: '',
@@ -311,10 +305,11 @@ export default {
       colorMap: {
         running: '#82C647',
         paused: '#AE86C9',
-        draft: '#88DBDA',
+        wait_run: '#AE86C9',
+        edit: '#88DBDA',
         error: '#F7D762',
-        stopping: '#E6B450',
-        scheduled: '#2EA0EA'
+        stop: '#E6B450',
+        complete: '#2EA0EA'
       },
       colorServeMap: {
         starting: '#409EFF',
@@ -328,41 +323,6 @@ export default {
         'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
       },
 
-      allTaskEchart: {
-        tooltip: {
-          trigger: 'item',
-          formatter: '{b}<br/> {c}'
-        },
-        legend: {
-          data: []
-        },
-        grid: {
-          containLabel: true,
-          bottom: '1%'
-        },
-        series: [
-          {
-            data: [],
-            type: 'pie',
-            labelLine: {
-              show: false
-            },
-            avoidLabelOverlap: false,
-            label: {
-              show: false,
-              position: 'center'
-            },
-            emphasis: {
-              label: {
-                show: true,
-                fontSize: '30',
-                fontWeight: 'bold'
-              }
-            },
-            radius: ['40%', '70%']
-          }
-        ]
-      },
       transfer: {
         height: 360,
         isHeader: false,
@@ -373,89 +333,7 @@ export default {
       syncJobStatusObj: {},
       migrationJobStatusObj: {},
       dataValidationObj: {}, //数据校验
-      allsyncJobsEchart: null,
-      // allMigrationJobsEchart: null,
-      // allTransEchart: null,
-      dataScreening: {
-        tooltip: {
-          show: false,
-          trigger: 'axis',
-          axisPointer: {
-            type: 'none'
-            // crossStyle: {
-            // 	color: '#999'
-            // }
-          }
-        },
-        toolbox: {
-          show: false
-        },
-        legend: {},
-        grid: {
-          left: '25%',
-          right: '30%',
-          bottom: '3%',
-          containLabel: true
-        },
-        xAxis: {
-          type: 'category',
-          show: true,
-          axisLine: {
-            show: false,
-            lineStyle: {
-              color: '#666',
-              width: 0
-            }
-          },
-          data: [
-            this.$t('dataFlow.totalOutput'),
-            this.$t('dataFlow.totalInput'),
-            this.$t('dataFlow.totalInsert'),
-            this.$t('dataFlow.totalUpdate'),
-            this.$t('dataFlow.totalDelete')
-          ],
-          axisPointer: {
-            type: 'shadow'
-          }
-        },
-        yAxis: {
-          axisLine: { show: false },
-          axisTick: { show: false },
-          splitLine: { show: false },
-          splitArea: { show: false }
-        },
-        series: [
-          {
-            type: 'bar',
-            data: [],
-            barWidth: '100%',
-            barGap: '-100%',
-            itemStyle: {
-              normal: {
-                color: function (params) {
-                  var colorList = ['#7ba75d', '#409EFF', '#d9742c', '#e6b451', '#e06c6c']
-                  return colorList[params.dataIndex]
-                },
-                label: {
-                  show: true,
-                  // verticalAlign: 'middle',
-                  position: 'top',
-                  distance: 10,
-                  formatter: function (value) {
-                    if (value.data / (1000 * 1000 * 1000) > 1) {
-                      return (value.data / (1000 * 1000 * 1000)).toFixed(1) + ' T'
-                    } else if (value.data / (1000 * 1000) > 1) {
-                      return (value.data / (1000 * 1000)).toFixed(1) + ' M'
-                    } else if (value.data / 1000 > 1) {
-                      return (value.data / 1000).toFixed(1) + ' K'
-                    }
-                  }
-                }
-              }
-            }
-          }
-        ]
-      },
+
       // 传输总览颜色
       transBarData: [
         { name: this.$t('dashboard_total_input'), value: 0, key: 'inputTotal', color: '#82C647' },
@@ -480,33 +358,22 @@ export default {
       },
       unitData: [],
       kbData: [],
-      unitType: ''
+      unitType: '',
+      noPermission: this.$has('Data_SYNC_menu') || this.$has('Data_verify_menu') || this.$has('Cluster_management_menu')
     }
   },
 
   mounted() {
     if (this.$has('Data_SYNC') || this.$has('Data_verify')) {
       this.getDataFlowApi()
-      this.getMeasurement()
+      // this.getMeasurement()
     }
 
     if (this.$has('Cluster_management') || this.$has('Cluster_management_menu')) {
       this.getClsterDataApi()
     }
-
-    this.allsyncJobsEchart = JSON.parse(JSON.stringify(this.allTaskEchart))
-    this.copyTaskOptions = JSON.parse(JSON.stringify(this.allTaskEchart))
   },
   methods: {
-    // 点击迁移运行状态跳转到任务列表
-    handleMigrationStatus(status) {
-      let routeUrl = this.$router.resolve({
-        name: 'migrate',
-        query: { status: status }
-      })
-      window.open(routeUrl.href)
-    },
-
     // 获取服务器与进程的数据
     getClsterDataApi() {
       let params = {
@@ -521,9 +388,10 @@ export default {
     getDataFlowApi() {
       let self = this
       self.loading = true
-      DataFlows.chart()
+      this.$api('Task')
+        .chart()
         .then(res => {
-          if (res && res.data) {
+          if (res?.data) {
             let setColor = list => {
               return list.map(item => {
                 item.itemStyle = {
@@ -532,19 +400,16 @@ export default {
                 return item
               })
             }
-            self.migrationTaskList = self.handleDataProcessing(res.data.chart1)
-            self.syncTaskList = self.handleDataProcessing(res.data.chart5)
-            self.allsyncJobsEchart.series[0].data = setColor(self.syncTaskList)
-
-            self.syncTotal = res.data.chart5.totalDataFlows
-            self.migrationTotal = res.data.chart1.totalDataFlows
-
             // 全部数据
+            let copy_total = res.data?.chart1?.total || 0
+            let sync_total = res.data?.chart3?.total || 0
+            let valid_total = res.data?.chart5?.total || 0
+
             let total = {
-              all_total: res.data.chart1.totalDataFlows + res.data.chart5.totalDataFlows + res.data.chart7.total,
-              copy_total: res.data.chart1.totalDataFlows,
-              sync_total: res.data.chart5.totalDataFlows,
-              valid_total: res.data.chart7.total
+              all_total: copy_total + sync_total + valid_total,
+              copy_total: copy_total,
+              sync_total: sync_total,
+              valid_total: valid_total
             }
             let result = []
             this.taskList.forEach(el => {
@@ -556,11 +421,19 @@ export default {
             })
             this.taskList = result
 
+            self.migrationTaskList = res.data.chart1?.items
+              ? self.handleDataProcessing(res.data.chart1.items, self.statusList)
+              : []
+            self.syncTaskList = res.data?.chart3
+              ? self.handleDataProcessing(res.data.chart3.items, self.statusList)
+              : []
+
             self.copyPieData = setColor(self.migrationTaskList)
-            self.copyTaskData = this.handleChart(res.data.chart4)
+            self.copyTaskData = this.handleChart(res.data.chart2)
             self.syncPieData = setColor(self.syncTaskList)
-            self.syncTaskData = this.handleChart(res.data.chart6)
-            self.validBarData = this.handleChart(res.data.chart7)
+            self.syncTaskData = this.handleChart(res.data.chart4)
+            self.validBarData = this.handleChart(res.data.chart5)
+            self.transBarData = this.handleChart(res.data.chart6, self.transBarData)
           }
         })
         .finally(() => {
@@ -569,73 +442,101 @@ export default {
     },
 
     // echart数据转换
-    handleChart(data) {
+    handleChart(data, originalData) {
       let echartData = []
-      for (let item in data) {
-        echartData.push({
-          name: this.$t('dashboard_' + item),
-          value: data[item],
-          color: '#2EA0EA'
-        })
-      }
-      return echartData
-    },
-    // 指标
-    getMeasurement() {
-      this.$api('Measurement')
-        .queryTransmitTotal()
-        .then(({ data }) => {
-          let result = []
-          this.transBarData.forEach(el => {
-            result.push(
-              Object.assign({}, el, {
-                value: data[el.key]
+      if (originalData?.length) {
+        originalData.forEach(el => {
+          for (let item in data) {
+            if (el.key === item)
+              echartData.push({
+                name: el.name || this.$t('dashboard_' + item),
+                value: data[item],
+                color: el.color
               })
-            )
+          }
+        })
+      } else {
+        for (let item in data) {
+          echartData.push({
+            name: this.$t('dashboard_' + item),
+            value: data[item],
+            color: '#2EA0EA'
           })
-          // eslint-disable-next-line
-          console.log('result', result)
-          this.transBarData = result
-        })
-        .catch(err => {
-          // eslint-disable-next-line
-          console.log('err', err)
-        })
+        }
+      }
+
+      return echartData
     },
 
     // 数据处理
-    handleDataProcessing(dataItem) {
+    handleDataProcessing(dataItem, statusData) {
       let statusItem = []
-      dataItem.statusCount.sort((a, b) => (a._id > b._id ? 1 : a._id === b._id ? 0 : -1))
-      dataItem.statusCount.forEach(element => {
-        statusItem.unshift({
-          name: this.$t('dataFlow.status.' + element._id),
-          label: element._id,
-          value: element.count
+      if (dataItem?.length) {
+        dataItem.sort((a, b) => (a._id > b._id ? 1 : a._id === b._id ? 0 : -1))
+        statusData.forEach(item => {
+          dataItem.forEach(element => {
+            if (item.label === element._id) {
+              statusItem.push({
+                name: item.name,
+                label: element._id,
+                value: element.count
+              })
+            }
+          })
         })
-      })
-      statusItem.filter((item, index) => {
-        if (item.name === 'stopping' || item.name === 'scheduled') {
-          statusItem.splice(index, 1)
-        }
-      })
+      } else {
+        statusItem = statusData
+      }
       return statusItem
     },
+    handleChangeUnit(val) {
+      // return size
+      if (val / (1000 * 1000 * 1000) > 1) {
+        return (val / (1000 * 1000 * 1000)).toFixed(1) + 'T'
+      } else if (val / (1000 * 1000) > 1) {
+        return (val / (1000 * 1000)).toFixed(1) + 'M'
+      } else if (val / 1000 > 1) {
+        return (val / 1000).toFixed(1) + 'K'
+      } else {
+        return val
+      }
+    },
+
     getPieOption(data) {
       let dataName = []
       let total = 0
       let totalFalg = true
+      let totalText = this.$t('dashboard_total')
       if (data?.length) {
         data.forEach(res => {
           dataName.push(res.name)
           total += parseFloat(res.value) * 1
         })
         totalFalg = data.some(item => item.value > 0)
+        total = this.handleChangeUnit(total)
       }
 
       return {
         legend: {
           show: false
+        },
+        tooltip: {
+          trigger: 'item',
+          borderWidth: 0,
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          textStyle: {
+            color: '#fff',
+            fontSize: 12
+          },
+          formatter: params => {
+            let item = params
+            let val = item.value
+            if (val === 1.1) {
+              val = 1
+            }
+            let html = `<div style="text-align: center;"> ${params.name}<div style="font-family: 'DIN'">${val}</div></div>`
+            return html
+          }
         },
         series: [
           {
@@ -648,12 +549,13 @@ export default {
               show: true,
               position: 'center',
               width: 60,
-              height: 30,
+              height: 38,
               fontWeight: 'bold',
               backgroundColor: '#fff',
-              formatter: `{name|${total}}\n{value|总计}`,
+              formatter: `{name|${total}}\n{value|${totalText}}`,
               rich: {
                 name: {
+                  lineHeight: 24,
                   color: 'rgba(0, 0, 0, 0.85)',
                   fontSize: 16,
                   fontWeight: '400'
@@ -671,9 +573,10 @@ export default {
                 fontWeight: 'bold',
                 formatter: '{name|{c}}\n{value|{b}}',
                 width: 60,
-                height: 30,
+                height: 34,
                 rich: {
                   name: {
+                    lineHeight: 24,
                     color: 'rgba(0, 0, 0, 0.85)',
                     fontSize: '16',
                     fontWeight: '400'
@@ -721,23 +624,26 @@ export default {
       }
       .dashboard-label {
         color: #252a4c;
+        height: 48px;
       }
       .dashboard-num {
         font-size: 65px;
         color: #2c65ff;
       }
       .charts-list {
+        height: 100%;
         overflow: hidden;
         box-sizing: border-box;
         background-color: #fff;
+        border-radius: 3px;
         box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
         .charts-list-text {
           float: left;
           width: 40%;
-          padding: 20px 30px 20px 20px;
+          padding: 20px 30px 12px 20px;
         }
         .job-list {
-          padding: 30px 30px 20px 60px;
+          padding: 16px 30px 20px 60px;
           box-sizing: border-box;
           li {
             margin-bottom: 5px;
@@ -770,7 +676,7 @@ export default {
         }
         .chart {
           float: left;
-          width: 40%;
+          width: 55%;
           height: 210px;
         }
       }
@@ -814,7 +720,23 @@ export default {
             }
           }
         }
+        .bar-chart {
+          height: calc(100% - 24px);
+        }
       }
+    }
+  }
+  .dashboard-wrap-box {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #fff;
+    border-radius: 4px;
+    justify-content: center;
+    align-items: center;
+    .txt {
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.43);
     }
   }
 }

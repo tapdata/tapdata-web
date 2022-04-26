@@ -12,6 +12,7 @@ module.exports = {
     'no-debugger': 'warn',
 
     'no-prototype-builtins': 'off',
+    'getter-return': 'off',
 
     'prettier/prettier': [
       'error',

@@ -302,12 +302,12 @@ export default function (vm) {
       },
       {
         type: 'input',
-        field: 'mqUserName',
+        field: 'database_username',
         label: vm.$t('connection_form_user_name')
       },
       {
         type: 'input',
-        field: 'mqPassword',
+        field: 'plain_password',
         label: vm.$t('connection_form_password'),
         domType: 'password',
         showPassword: true

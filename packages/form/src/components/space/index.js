@@ -22,7 +22,7 @@ export const Space = defineComponent({
 
       const prefixCls = `${stylePrefix}-space`
       const children = slots.default?.()
-      
+
       let items = []
       if (Array.isArray(children)) {
         if (children.length === 1) {
