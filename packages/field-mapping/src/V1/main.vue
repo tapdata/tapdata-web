@@ -376,6 +376,7 @@ export default {
             t_scale: field.scale,
             t_precision: field.precision,
             is_deleted: field.is_deleted, //目标决定这个字段是被删除？
+            t_default_value: field?.default_value || '',
             t_isPrecisionEdit: true, //默认能编辑
             t_isScaleEdit: true //默认能编辑
           }
