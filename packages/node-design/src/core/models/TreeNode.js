@@ -1,5 +1,5 @@
 import { action, define, observable, toJS } from '@formily/reactive'
-import { uid, isFn } from '@daas/shared'
+import { uid, isFn } from '@tap/shared'
 import {
   InsertBeforeEvent,
   InsertAfterEvent,

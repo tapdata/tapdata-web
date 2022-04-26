@@ -480,7 +480,7 @@ export default {
   // box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);
   .btn-expand {
     padding: 2px 3px;
-    color: #666;
+    color: map-get($fontColor, light);
     transform: rotate(0);
     box-sizing: border-box;
     // background: #eff1f4;
@@ -524,7 +524,7 @@ export default {
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        color: #666;
+        color: map-get($fontColor, light);
         font-size: 16px;
         // background: #fff;
         // border: 1px solid #dedee4;
@@ -546,7 +546,7 @@ export default {
       right: 54px;
       .icon-fangdajing {
         font-size: 16px;
-        color: #666;
+        color: map-get($fontColor, light);
         &:hover {
           color: map-get($color, primary);
         }
@@ -570,7 +570,7 @@ export default {
       align-items: center;
       justify-content: space-between;
       padding: 0 8px 0 46px;
-      color: #666;
+      color: map-get($fontColor, light);
       // background-color: #eff1f4;
     }
 

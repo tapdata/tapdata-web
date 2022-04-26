@@ -1,4 +1,4 @@
-import { each } from '@daas/shared'
+import { each } from '@tap/shared'
 import { Path } from '@formily/path'
 import { observable } from '@formily/reactive'
 import { mergeLocales, lowerSnake, getBrowserLanguage } from './internals'

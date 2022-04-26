@@ -42,7 +42,7 @@
 
 <script>
 import FieldMappingDialog from './FieldMappingDialog'
-import { Task } from '@daas/api'
+import { Task } from '@tap/api'
 
 const taskApi = new Task()
 export default {

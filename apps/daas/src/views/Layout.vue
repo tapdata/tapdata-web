@@ -283,7 +283,7 @@
       }
       .btn-collapse {
         padding: 10px;
-        color: #666;
+        color: map-get($fontColor, light);
         transition: all 0.4s;
         &.is-collapse {
           padding: 10px 24px;
@@ -340,7 +340,7 @@ import CustomerService from '@/components/CustomerService'
 import newDataFlow from '@/components/newDataFlow'
 import NotificationPopover from './notification/NotificationPopover'
 import { signOut } from '../utils/util'
-import Cookie from '@daas/shared/src/cookie'
+import Cookie from '@tap/shared/src/cookie'
 import PageHeader from '@/components/PageHeader'
 import VIcon from 'web-core/components/VIcon'
 

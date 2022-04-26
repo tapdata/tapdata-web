@@ -91,7 +91,7 @@ export default {
       padding-left: 20px;
       cursor: pointer;
       i {
-        color: #666;
+        color: map-get($fontColor, light);
       }
     }
     .active {

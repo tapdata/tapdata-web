@@ -1,7 +1,7 @@
-import { Connections, MetadataInstances } from '@daas/api'
+import { Connections, MetadataInstances } from '@tap/api'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
-import { isPlainObj } from '@daas/shared'
+import { isPlainObj } from '@tap/shared'
 import { merge } from 'lodash'
 
 const connections = new Connections()

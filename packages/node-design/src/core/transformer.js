@@ -1,5 +1,5 @@
 import { Schema } from '@formily/json-schema'
-import { clone, uid } from '@daas/shared'
+import { clone, uid } from '@tap/shared'
 
 const createOptions = options => {
   return {

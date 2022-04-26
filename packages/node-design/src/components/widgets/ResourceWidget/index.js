@@ -1,5 +1,5 @@
 import { defineComponent, ref } from 'vue-demi'
-import { isFn } from '@daas/shared'
+import { isFn } from '@tap/shared'
 import { isResourceHost, isResourceList } from '../../../core'
 import './index.scss'
 import { IconWidget } from '../IconWidget'

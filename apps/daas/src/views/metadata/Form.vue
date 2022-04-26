@@ -642,7 +642,7 @@ export default {
       .e-table {
         th {
           padding: 4px 10px;
-          color: #666;
+          color: map-get($fontColor, light);
           background-color: #eff1f4;
         }
         td {
@@ -654,7 +654,7 @@ export default {
       }
       .addBtn {
         .el-button {
-          color: #666;
+          color: map-get($fontColor, light);
           background-color: #ececec;
           border-color: #ececec;
         }
@@ -663,11 +663,6 @@ export default {
     .el-dialog__footer {
       padding-top: 20px;
     }
-    // .el-button.cancel {
-    //   color: #666;
-    //   border: 0;
-    //   background-color: #eee;
-    // }
   }
 }
 .dialogDictionary {

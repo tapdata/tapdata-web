@@ -84,15 +84,15 @@ export const FieldModType = connect(
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options || []
+        fields = fields.filter(item => !item.is_deleted)
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
         fields = this.checkOps(fields)
         this.fields = fields
         this.originalFields = JSON.parse(JSON.stringify(fields))
         return (
-          <div class="field-processors-tree-warp bg-body pt-2 pb-5">
+          <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
-              <ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
-              <span class="flex-1 text inline-block ml-15">字段名称</span>
+              <span class="flex-1 text inline-block">字段名称</span>
               <span class="flex-1 text inline-block">源字段类型</span>
               <span class="field-type text inline-block">目标字段类型</span>
               <span class="field-ops inline-block ml-10">
@@ -116,7 +116,7 @@ export const FieldModType = connect(
                       class="tree-node flex flex-1 justify-content-center align-items flex-row"
                       slot-scope="{ node, data }"
                     >
-                      <span class="flex-1 inline-block ml-15">{data.field_name}</span>
+                      <span class="flex-1 inline-block">{data.field_name}</span>
                       <span class="flex-1 inline-block">{data.type}</span>
                       <ElSelect
                         v-model={data.java_type}
@@ -176,7 +176,9 @@ export const FieldModType = connect(
             for (let i = 0; i < this.operations.length; i++) {
               if (this.operations[i]?.op === 'CONVERT') {
                 let targetIndex = fields.findIndex(n => n.id === this.operations[i].id)
-                if (targetIndex === -1) return
+                if (targetIndex === -1) {
+                  continue
+                }
                 fields[targetIndex].java_type = this.operations[i].operand
               }
             }
@@ -242,26 +244,7 @@ export const FieldModType = connect(
           return fieldName
         },
         handleAllReset() {
-          let ids = this.$refs.tree.getCheckedNodes(false, true)
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              if (node) {
-                this.handleReset(node, node.data)
-              }
-            })
-          }
-        },
-        handleCheckAllChange() {
-          if (this.checkAll) {
-            this.$nextTick(() => {
-              this.$refs.tree.setCheckedNodes(this.fields)
-            })
-          } else {
-            this.$nextTick(() => {
-              this.$refs.tree.setCheckedKeys([])
-            })
-          }
+          this.operations.splice(0)
         }
       }
     })

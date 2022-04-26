@@ -1,4 +1,4 @@
-import { on, off } from '@daas/shared'
+import { on, off } from '@tap/shared'
 
 export default {
   data() {

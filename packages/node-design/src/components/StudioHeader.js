@@ -3,7 +3,7 @@ import { defineComponent, watch, ref } from 'vue-demi'
 import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
 import { transformToTreeNode } from '../core'
-import { CustomNode } from '@daas/api'
+import { CustomNode } from '@tap/api'
 import { IconWidget } from './widgets'
 import { observer } from '@formily/reactive-vue'
 

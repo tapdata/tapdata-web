@@ -3,7 +3,7 @@ import { Selection } from './Selection'
 import { Hover } from './Hover'
 import { action, define, observable } from '@formily/reactive'
 import { Dragon } from './Dragon'
-import { each, isFn } from '@daas/shared'
+import { each, isFn } from '@tap/shared'
 
 export class Operation {
   workspace

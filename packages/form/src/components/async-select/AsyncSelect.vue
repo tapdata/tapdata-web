@@ -201,7 +201,7 @@ import { merge } from 'lodash'
 import { Select } from 'element-ui'
 import { getValueByPath } from 'element-ui/lib/utils/util'
 import scrollIntoView from 'element-ui/lib/utils/scroll-into-view'
-import { CancelToken } from '@daas/api'
+import { CancelToken } from '@tap/api'
 
 export default {
   name: 'AsyncSelect',

@@ -1,5 +1,5 @@
 import { createForm } from '@formily/core'
-import { Form, SchemaField } from '@daas/form'
+import { Form, SchemaField } from '@tap/form'
 import { transformToSchema } from '../../../core'
 import { defineComponent } from 'vue-demi'
 

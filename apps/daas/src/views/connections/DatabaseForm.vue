@@ -433,7 +433,7 @@
                             :placeholder="$t('dataForm.form.file.excludePlaceholder')"
                           ></el-input>
                         </el-form-item>
-                        <p style="font-size: 12px; color: #666">
+                        <p class="font-color-light" style="font-size: 12px">
                           {{ $t('dataForm.form.file.viewExpression') }}
                         </p>
                       </el-col>
@@ -2063,7 +2063,7 @@ export default {
 //   .url-tip {
 //     margin-top: -14px;
 //     b {
-//       color: #666;
+//       color: map-get($fontColor, light);
 //     }
 //   }
 //   .file-form-content {

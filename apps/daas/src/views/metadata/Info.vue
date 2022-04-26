@@ -947,7 +947,7 @@ export default {
             margin-right: 12px;
             padding: 3px 10px;
             font-size: 12px;
-            color: #666;
+            color: map-get($fontColor, light);
             border-radius: 3px;
             background-color: #eff1f4;
           }
@@ -1078,7 +1078,7 @@ export default {
               float: left;
               height: 28px;
               padding: 0 15px;
-              color: #666;
+              color: map-get($fontColor, light);
               text-align: center;
               border-right: 1px solid #dedee4;
               cursor: pointer;
@@ -1179,7 +1179,7 @@ export default {
                         display: inline-block;
                         padding: 3px 10px;
                         margin: 3px 5px;
-                        color: #666;
+                        color: map-get($fontColor, light);
                         border-radius: 10px;
                         background-color: #f7edee;
                       }
@@ -1362,7 +1362,7 @@ export default {
 //       }
 //     }
 //     .el-button.cancel {
-//       color: #666;
+//       color: map-get($fontColor, light);
 //       border: 0;
 //       background-color: #eee;
 //     }

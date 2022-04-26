@@ -1,7 +1,7 @@
 import { createBehavior, createResource } from '../../../core'
 import { createForm } from '@formily/core'
 import { observer } from '@formily/reactive-vue'
-import { Form as BaseForm } from '@daas/form'
+import { Form as BaseForm } from '@tap/form'
 import { usePrefix } from '../../../hooks'
 import { AllSchemas } from '../../schemas'
 import { AllLocales } from '../../locales'
