@@ -1,6 +1,6 @@
 import { usePrefix } from '../../hooks'
 import { defineComponent } from 'vue-demi'
-import { composeExport } from '@daas/form'
+import { composeExport } from '@tap/form'
 
 const WorkspacePanelComponent = defineComponent({
   setup(props, { slots }) {

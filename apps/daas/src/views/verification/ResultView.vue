@@ -154,7 +154,7 @@ $margin: 10px;
       text-overflow: ellipsis;
       font-size: 12px;
       padding: 8px;
-      color: #666;
+      color: map-get($fontColor, light);
       margin: 20% auto;
       i {
         font-size: 36px;

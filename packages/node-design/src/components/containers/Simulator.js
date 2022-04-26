@@ -1,4 +1,4 @@
-import { requestIdle } from '@daas/shared'
+import { requestIdle } from '@tap/shared'
 import { observer } from '@formily/reactive-vue'
 import { PCSimulator } from '../simulators'
 import { defineComponent } from 'vue-demi'

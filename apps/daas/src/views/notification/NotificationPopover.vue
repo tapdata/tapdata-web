@@ -355,7 +355,7 @@ export default {
     .more-text {
       display: inline-block;
       cursor: pointer;
-      color: #666;
+      color: map-get($fontColor, light);
     }
   }
   .tab-item {
@@ -400,7 +400,7 @@ export default {
           border-radius: 50%;
         }
         .list-item-desc {
-          color: #666;
+          color: map-get($fontColor, light);
           position: absolute;
           top: -5px;
           left: 30px;
@@ -413,7 +413,7 @@ export default {
           }
         }
         .list-item-platform {
-          color: #666;
+          color: map-get($fontColor, light);
         }
         .list-item-time {
           margin: 15px 0 0 17px;
@@ -428,7 +428,7 @@ export default {
         padding: 5px 20px 4px 20px;
         border-bottom: 1px solid #f2f2f2;
         font-size: 12px;
-        color: #666;
+        color: map-get($fontColor, light);
         &:hover {
           background-color: #ecf5ff;
         }

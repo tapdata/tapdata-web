@@ -1,4 +1,4 @@
-import { Radio as FormRadio } from '@daas/form'
+import { Radio as FormRadio } from '@tap/form'
 import { createBehavior, createResource } from '../../../core'
 import { createFieldSchema } from '../Field'
 import { AllSchemas } from '../../schemas'

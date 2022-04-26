@@ -62,7 +62,7 @@ import * as icons from './icons'
 import './theme.scss'
 import './locales'
 import { Input, Field, Select, Form, FormLayout, InputNumber, Checkbox, Radio } from './sources'
-import { Slider } from '@daas/form'
+import { Slider } from '@tap/form'
 import {
   SettingsForm,
   SizeInput,

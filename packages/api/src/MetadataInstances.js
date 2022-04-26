@@ -1,6 +1,6 @@
 import axios from './axios'
 import PublicApi from './PublicApi'
-import { isPlainObj } from '@daas/shared'
+import { isPlainObj } from '@tap/shared'
 export class MetadataInstances extends PublicApi {
   constructor() {
     super('/api/MetadataInstances')

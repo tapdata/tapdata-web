@@ -1,6 +1,6 @@
 //节点模型
 import { define, observable } from '@formily/reactive'
-import { CustomNode as API } from '@daas/api'
+import { CustomNode as API } from '@tap/api'
 import { transformToSchema } from '../transformer'
 
 const api = new API()

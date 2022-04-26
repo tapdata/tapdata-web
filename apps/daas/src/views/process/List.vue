@@ -198,7 +198,7 @@ export default {
         float: left;
         width: 100px;
         height: 28px;
-        color: #666;
+        color: map-get($fontColor, light);
         cursor: pointer;
         text-align: center;
         border-right: 1px solid #dedee4;

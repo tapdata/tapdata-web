@@ -1,5 +1,5 @@
 {
-  "name": "@daas/form",
+  "name": "@tap/form",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@daas/api": "workspace:^1.0.0",
+    "@tap/api": "workspace:^1.0.0",
     "@formily/core": "^2.0.9",
     "@formily/element": "^2.0.9",
     "@formily/json-schema": "^2.0.9",

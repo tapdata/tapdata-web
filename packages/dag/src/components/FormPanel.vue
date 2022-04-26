@@ -10,7 +10,7 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import { Form, SchemaField } from '@daas/form'
+import { Form, SchemaField } from '@tap/form'
 import {
   createForm,
   onFormInputChange,
@@ -20,7 +20,7 @@ import {
   registerValidateMessageTemplateEngine
 } from '@formily/core'
 import { Path } from '@formily/path'
-import { validateBySchema } from '@daas/form/src/shared/validate'
+import { validateBySchema } from '@tap/form/src/shared/validate'
 import { debounce } from 'lodash'
 
 registerValidateMessageTemplateEngine((message, context) => {

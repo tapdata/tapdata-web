@@ -952,7 +952,7 @@ export default {
     }
     span {
       font-size: 12px;
-      color: #666;
+      color: map-get($fontColor, light);
     }
   }
 
@@ -974,7 +974,7 @@ export default {
       p {
         display: inline-block;
         font-size: 12px;
-        color: #666;
+        color: map-get($fontColor, light);
       }
     }
 
@@ -1115,7 +1115,7 @@ export default {
           padding: 5px 0;
           margin: 0;
           font-size: 12px;
-          color: #666;
+          color: map-get($fontColor, light);
         }
       }
     }

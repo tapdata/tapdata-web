@@ -138,7 +138,7 @@ import Transfer from './Transfer'
 import DataSource from './DataSource'
 import Setting from './Setting'
 import TableFieldFilter from './TableFieldFilter'
-import FieldMapping from '@tapdata/field-mapping'
+import FieldMapping from '@tap/field-mapping'
 import { DATASOURCE_MODEL, SETTING_MODEL, TRANSFER_MODEL } from './const'
 
 export default {

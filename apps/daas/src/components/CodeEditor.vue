@@ -208,7 +208,7 @@ export default {
   .ace_gutter {
     background-color: #f5f6f8;
     .ace_gutter-active-line {
-      color: #535f72;
+      color: map-get($fontColor, light);
     }
   }
 }

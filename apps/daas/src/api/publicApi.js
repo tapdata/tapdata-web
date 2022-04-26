@@ -1,5 +1,5 @@
 import axios from 'axios'
-import Cookie from '@daas/shared/src/cookie'
+import Cookie from '@tap/shared/src/cookie'
 import { signOut } from '../utils/util'
 import { Message } from 'element-ui'
 import i18n from '@/i18n'

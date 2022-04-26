@@ -1384,7 +1384,7 @@ export default {
           display: inline-block;
           width: 100%;
           padding-top: 5px;
-          color: #666;
+          color: map-get($fontColor, light);
           font-size: 12px;
           color: #000;
           word-break: break-all;

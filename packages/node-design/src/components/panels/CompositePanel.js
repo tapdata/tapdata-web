@@ -1,4 +1,4 @@
-import { isValid } from '@daas/shared'
+import { isValid } from '@tap/shared'
 import { IconWidget, TextWidget } from '../widgets'
 import { usePrefix } from '../../hooks'
 import { defineComponent, ref, getCurrentInstance, watch } from 'vue-demi'

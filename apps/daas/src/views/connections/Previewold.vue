@@ -709,7 +709,7 @@ export default {
   }
   .value {
     width: 62%;
-    color: #666;
+    color: map-get($fontColor, light);
     font-size: 12px;
     display: inline-block;
     word-break: break-all;

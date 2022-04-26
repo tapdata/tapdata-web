@@ -2,7 +2,7 @@ import { observer } from '@formily/reactive-vue'
 import { TextWidget } from '../widgets'
 import { usePrefix, useWorkbench } from '../../hooks'
 import { defineComponent, ref, watchEffect } from 'vue-demi'
-import { requestIdle } from '@daas/shared'
+import { requestIdle } from '@tap/shared'
 
 export const SettingsPanel = observer(
   defineComponent({

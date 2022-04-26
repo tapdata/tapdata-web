@@ -1,4 +1,4 @@
-import { each, isPlainObj } from '@daas/shared'
+import { each, isPlainObj } from '@tap/shared'
 
 export const lowerSnake = str => {
   return String(str).replace(/\s+/g, '_').toLocaleLowerCase()
