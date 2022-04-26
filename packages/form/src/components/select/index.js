@@ -41,7 +41,7 @@ const SelectOption = defineComponent({
                       {
                         default: () => [
                           resolveComponent(slots?.option, {
-                            optionProps
+                            option
                           })
                         ]
                       }

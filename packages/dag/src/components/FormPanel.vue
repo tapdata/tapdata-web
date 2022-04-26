@@ -16,8 +16,7 @@ import {
   onFormInputChange,
   onFormValuesChange,
   onFieldReact,
-  isVoidField,
-  registerValidateMessageTemplateEngine
+  isVoidField
 } from '@formily/core'
 import { Path } from '@formily/path'
 import { validateBySchema } from '@daas/form/src/shared/validate'

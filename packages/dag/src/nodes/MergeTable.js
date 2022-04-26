@@ -132,7 +132,7 @@ export class MergeTable extends NodeType {
                   type: 'array',
                   title: '内嵌数组匹配条件',
                   'x-decorator': 'FormItem',
-                  'x-component': 'Select',
+                  'x-component': 'FieldSelect',
                   'x-component-props': {
                     'allow-create': true,
                     multiple: true,
@@ -189,22 +189,11 @@ export class MergeTable extends NodeType {
                             loading: true,
                             required: true,
                             'x-decorator': 'FormItem',
-                            'x-component': 'Select',
+                            'x-component': 'FieldSelect',
                             'x-component-props': {
                               'allow-create': true,
                               filterable: true
                             }
-                            /*'x-reactions': [
-                              {
-                                dependencies: ['...mergeType'],
-                                fulfill: {
-                                  schema: {
-                                    required:
-                                      '{{ console.log($deps[0], $deps[0] !== "appendWrite"),$deps[0] !== "appendWrite" }}'
-                                  }
-                                }
-                              }
-                            ]*/
                           }
                         }
                       },
@@ -221,7 +210,7 @@ export class MergeTable extends NodeType {
                             type: 'string',
                             required: true,
                             'x-decorator': 'FormItem',
-                            'x-component': 'Select',
+                            'x-component': 'FieldSelect',
                             'x-component-props': {
                               'allow-create': true,
                               filterable: true
