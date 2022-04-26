@@ -142,6 +142,9 @@ export class Table extends NodeType {
                       }
                     },
                     'x-component': 'TableSelect',
+                    'x-component-props': {
+                      method: '{{loadTable}}'
+                    },
                     'x-reactions': [
                       {
                         target: 'name',
