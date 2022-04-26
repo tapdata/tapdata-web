@@ -201,7 +201,7 @@ export default {
         this.$api('connections')
           [this.id ? 'patchId' : 'post'](params)
           .then(() => {
-            this.$message.success(this.$t('message.saveOK'))
+            this.$message.success(this.$t('message_save_ok'))
             if (this.$route.query.step) {
               this.$router.push({
                 name: 'connections',
@@ -228,7 +228,7 @@ export default {
                 this.$message.error(err.response.msg)
               }
             } else {
-              this.$message.error(this.$t('message.saveFail'))
+              this.$message.error(this.$t('message_save_fail'))
             }
           })
           .finally(() => {

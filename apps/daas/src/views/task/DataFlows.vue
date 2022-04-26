@@ -1207,11 +1207,11 @@ export default {
         .patchId(this.formSchedule.id, { setting: data })
         .then(result => {
           if (result && result.data) {
-            this.$message.success(this.$t('message.saveOK'))
+            this.$message.success(this.$t('message_save_ok'))
           }
         })
         .catch(() => {
-          this.$message.error(this.$t('message.saveFail'))
+          this.$message.error(this.$t('message_save_fail'))
         })
         .finally(() => {
           this.taskSettingsDialog = false

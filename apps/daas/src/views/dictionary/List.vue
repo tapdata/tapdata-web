@@ -454,13 +454,13 @@ export default {
             [method](this.createForm)
             .then(() => {
               this.table.fetch()
-              this.$message.success(this.$t('message.saveOK'))
+              this.$message.success(this.$t('message_save_ok'))
             })
             .catch(e => {
               if (e.response.msg.indexOf('Dictionary already exists') !== -1) {
                 this.$message.error(this.$t('dictionary.alreadyExists'))
               } else {
-                this.$message.error(this.$t('message.saveFail'))
+                this.$message.error(this.$t('message_save_fail'))
               }
             })
             .finally(() => {

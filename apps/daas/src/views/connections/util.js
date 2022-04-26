@@ -136,7 +136,9 @@ export const defaultModel = {
     showShareConfig: false, //是否隐藏有全局挖掘设置
     redoLogParserEnable: false,
     redoLogParserHost: '',
-    redoLogParserPort: ''
+    redoLogParserPort: '',
+    accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+    accessNodeProcessIdList: ''
   },
   kafka: {
     id: '',

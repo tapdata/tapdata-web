@@ -3,7 +3,7 @@
     <!-- <el-button class="btn-query" size="mini" type="text">
       <i class="iconfont icon-fangdajing" @click="searchFalg = !searchFalg"></i>
     </el-button> -->
-    <el-button type="text" class="btn-expand toggle" size="mini" @click="toggle()" v-if="!isExpand">
+    <el-button type="text" class="btn-expand no-expand toggle" size="mini" @click="toggle()" v-if="!isExpand">
       <i class="iconfont icon-zhankai2"></i>
     </el-button>
     <div class="classification-header" v-else>
@@ -476,7 +476,7 @@ export default {
   border-top: none;
   background: #fff;
   border-radius: 3px;
-  overflow: hidden;
+  // overflow: hidden;
   // box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);
   .btn-expand {
     padding: 2px 3px;
@@ -491,8 +491,12 @@ export default {
       }
     }
   }
+  .no-expand {
+    position: absolute;
+    left: 20px;
+  }
   .toggle {
-    margin-top: 28px;
+    margin-top: 26px;
     color: #337dff;
   }
   &.expand {
@@ -514,6 +518,7 @@ export default {
         }
       }
     }
+
     .btn-addIcon {
       position: absolute;
       top: 3px;

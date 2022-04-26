@@ -339,7 +339,7 @@ export default {
         .save(settingData)
         .then(res => {
           if (res) {
-            this.$message.success(this.$t('message.saveOK'))
+            this.$message.success(this.$t('message_save_ok'))
           }
         })
         .catch(e => {

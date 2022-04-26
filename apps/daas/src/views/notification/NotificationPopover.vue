@@ -316,15 +316,16 @@ export default {
         }
       }
       .el-tabs__active-bar {
-        width: 100px;
+        min-width: 80px !important;
       }
     }
     > .el-tabs__content {
+      margin-right: -13px;
       padding: 0 !important;
       overflow: initial;
       & > .el-button {
         position: absolute;
-        right: 0;
+        right: 13px;
         top: -52px;
         font-weight: 400;
       }
@@ -342,6 +343,7 @@ export default {
   overflow: hidden;
   position: relative;
   border-radius: 3px;
+
   .notice-footer {
     display: flex;
     justify-content: space-between;

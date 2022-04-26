@@ -1089,7 +1089,7 @@ export default {
       try {
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
-        !needStart && this.$message.success(this.$t('message.saveOK'))
+        !needStart && this.$message.success(this.$t('message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         return true
@@ -1109,7 +1109,7 @@ export default {
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
-        // this.$message.success(this.$t('message.saveOK'))
+        // this.$message.success(this.$t('message_save_ok'))
         await this.$router.replace({
           name: 'DataflowEditor',
           params: { id: dataflow.id, action: 'dataflowEdit' }

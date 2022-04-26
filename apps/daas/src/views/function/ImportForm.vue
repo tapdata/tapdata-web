@@ -362,7 +362,7 @@ export default {
             .post(params)
             .then(res => {
               if (res) {
-                this.$message.success(this.$t('message.saveOK'))
+                this.$message.success(this.$t('message_save_ok'))
                 this.$router.back()
               }
             })

@@ -32,7 +32,7 @@
         @update-nav="updateFieldMappingNavData"
       ></FieldMappingDialog>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" :disabled="false" @click="saveReturnData">{{ $t('dataVerify.confirm') }}</el-button>
+        <el-button type="primary" @click="saveReturnData">{{ $t('dataVerify.confirm') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -40,7 +40,7 @@
 
 <script>
 import FieldMappingDialog from './FieldMappingDialog'
-import ws from '../api/ws'
+import ws from '../../api/ws'
 
 export default {
   name: 'FiledMapping',
@@ -55,20 +55,6 @@ export default {
       loading: false,
       field_process: this.transform.field_process
     }
-  },
-  mounted() {
-    //监听ws error 关掉弹窗以及错误提示
-    let self = this
-    let id = this.transform.stageId
-    ws.on('metadataTransformerProgress', function (res) {
-      if (res?.data?.stageId === id) {
-        let status = res?.data?.status
-        if (['error'].includes(status)) {
-          self.dialogFieldProcessVisible = false //推演失败 关闭弹窗
-          self.$message.error(res?.data?.errorMsg)
-        }
-      }
-    })
   },
   methods: {
     /*
@@ -226,11 +212,7 @@ export default {
     clearTransform() {
       for (let i = 0; i < this.dataFlow.stages.length; i++) {
         if (this.dataFlow.stages[i].id === this.transform.stageId) {
-          this.dataFlow['stages'][i].fieldsNameTransform = 'noOperation'
-          this.dataFlow['stages'][i].tableNameTransform = 'noOperation'
-          this.dataFlow['stages'][i].table_suffix = ''
-          this.dataFlow['stages'][i].table_prefix = ''
-          this.dataFlow['stages'][i].batchOperationList = []
+          this.dataFlow['stages'][i].fieldsNameTransform = ''
           this.dataFlow['batchOperation'] = []
         }
       }
@@ -239,9 +221,6 @@ export default {
       for (let i = 0; i < this.dataFlow.stages.length; i++) {
         if (this.dataFlow.stages[i].id === this.transform.stageId) {
           this.dataFlow['stages'][i].fieldsNameTransform = data.fieldsNameTransform
-          this.dataFlow['stages'][i].tableNameTransform = data.tableNameTransform
-          this.dataFlow['stages'][i].table_prefix = data.table_prefix
-          this.dataFlow['stages'][i].table_suffix = data.table_suffix
           this.dataFlow['stages'][i].batchOperationList = data.batchOperationList
         }
       }
@@ -278,13 +257,41 @@ export default {
      * */
     async intiFieldMappingTableData(row) {
       if (!this.$refs.fieldMappingDom) return //打开弹窗才能请求弹窗列表数据
-      let source = row.sourceFields
+      let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
+      source = source.data && source.data.length > 0 ? source.data[0].fields : []
       let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
       target = target.data && target.data.length > 0 ? target.data[0].fields : []
       // 初始化所有字段都映射 只取顶级字段
       source = source.filter(field => field.field_name.indexOf('.') === -1)
-      //映射关系
-      let fieldsMapping = row.fieldsMapping
+      //是否有字段处理器
+      let operations = this.getFieldOperations(row)
+      if (operations?.length > 0) {
+        source.forEach(item => {
+          let original_field_name = item.original_field_name || item.field_name
+          let ops = operations.filter(op => op.original_field_name === original_field_name && op.op === 'RENAME')
+          if (!ops || ops?.length === 0) {
+            item.temporary_field_name = item.field_name
+            return
+          }
+          ops = ops[0]
+          item.temporary_field_name = ops.operand
+        })
+      } else {
+        source.forEach(item => {
+          item.temporary_field_name = item.field_name
+        })
+      }
+      //是否有批量字段改名操作
+      let fieldsNameTransform = this.checkTransform()
+      if (fieldsNameTransform !== '') {
+        source.forEach(item => {
+          if (fieldsNameTransform === 'toUpperCase') {
+            item.temporary_field_name = item.temporary_field_name.toUpperCase() || item.field_name.toUpperCase()
+          } else if (fieldsNameTransform === 'toLowerCase') {
+            item.temporary_field_name = item.temporary_field_name.toLowerCase() || item.field_name.toLowerCase()
+          }
+        })
+      }
       //源表 目标表数据组合
       let fieldMappingTableData = []
       source.forEach(item => {
@@ -299,38 +306,12 @@ export default {
             t_isPrecisionEdit: true, //默认能编辑
             t_isScaleEdit: true //默认能编辑
           }
-          if (item.field_name === field.sourceFieldName) {
+          //检查当前name个数
+          if (item.temporary_field_name === field.field_name) {
             fieldMappingTableData.push(Object.assign({}, item, node))
           }
         })
       })
-      //fieldsMapping
-      let addNodeArray = fieldsMapping.filter(item => item.type !== 'job_analyze')
-      if (addNodeArray.length > 0) {
-        addNodeArray.forEach(item => {
-          target.forEach(field => {
-            let node = {
-              id: '',
-              field_name: '',
-              data_type: '',
-              scale: '',
-              precision: '',
-              deleted: '', //目标决定这个字段是被删除？
-              t_id: field.id,
-              t_field_name: field.field_name,
-              t_data_type: field.data_type,
-              t_scale: field.scale,
-              t_precision: field.precision,
-              is_deleted: field.is_deleted, //目标决定这个字段是被删除？
-              t_isPrecisionEdit: true, //默认能编辑
-              t_isScaleEdit: true //默认能编辑
-            }
-            if (item.field_name === field.sourceFieldName) {
-              fieldMappingTableData.push(node)
-            }
-          })
-        })
-      }
       return {
         data: fieldMappingTableData,
         target: target
@@ -435,12 +416,12 @@ export default {
   }
   .text {
     padding: 0 50px;
-    color: map-get($fontColor, light);
+    color: #666;
   }
 }
 .e-button {
   padding: 4px 10px;
-  color: map-get($fontColor, light);
+  color: #666;
   background-color: #f5f5f5;
   margin-left: 10px;
 }
