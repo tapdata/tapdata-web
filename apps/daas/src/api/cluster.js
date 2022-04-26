@@ -30,4 +30,7 @@ export default class ClusterAPI extends PublicAPI {
   editAgent(id, params) {
     return axios.patch(this.url + '/' + id, params)
   }
+  findAccessNodeInfo(params) {
+    return axios.get(this.url + '/findAccessNodeInfo', { params })
+  }
 }
