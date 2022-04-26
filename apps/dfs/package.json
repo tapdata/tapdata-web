@@ -15,9 +15,9 @@
     "vue": "^2.6.14"
   },
   "dependencies": {
-    "@daas/dag": "workspace:^1.0.0",
-    "@daas/form": "workspace:^1.0.0",
-    "@daas/shared": "workspace:^1.0.0",
+    "@tap/dag": "workspace:^1.0.0",
+    "@tap/form": "workspace:^1.0.0",
+    "@tap/shared": "workspace:^1.0.0",
     "@formily/core": "^2.0.2",
     "@formily/json-schema": "^2.0.9",
     "@formily/reactive": "^2.0.2",

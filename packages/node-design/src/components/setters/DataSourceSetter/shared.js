@@ -1,4 +1,4 @@
-import { uid, clone, toArr } from '@daas/shared'
+import { uid, clone, toArr } from '@tap/shared'
 
 export const traverseTree = (data, callback) => {
   for (let i = 0; i < data.length; i++) {

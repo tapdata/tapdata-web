@@ -18,7 +18,7 @@
   </div>
 </template>
 <script>
-import Cookie from '@daas/shared/src/cookie'
+import Cookie from '@tap/shared/src/cookie'
 const langMap = {
   sc: 'zh-CN',
   tc: 'zh-TW',

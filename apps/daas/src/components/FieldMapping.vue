@@ -435,12 +435,12 @@ export default {
   }
   .text {
     padding: 0 50px;
-    color: #666;
+    color: map-get($fontColor, light);
   }
 }
 .e-button {
   padding: 4px 10px;
-  color: #666;
+  color: map-get($fontColor, light);
   background-color: #f5f5f5;
   margin-left: 10px;
 }

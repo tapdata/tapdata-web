@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
-import Cookie from '@daas/shared/src/cookie'
+import Cookie from '@tap/shared/src/cookie'
 
 // Full config:  https://github.com/axios/axios#request-config
 const config = {

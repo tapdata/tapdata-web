@@ -229,7 +229,7 @@ export default {
   .search-box {
     .el-input-group__prepend {
       background: #fff;
-      color: #666;
+      color: map-get($fontColor, light);
     }
   }
 }
@@ -315,7 +315,7 @@ export default {
       padding-left: 105px;
       margin-top: 20px;
       font-size: 13px;
-      color: #666;
+      color: map-get($fontColor, light);
     }
     .search-result {
       // margin: 10px;

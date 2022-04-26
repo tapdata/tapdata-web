@@ -1,5 +1,5 @@
 import { Tree, Button } from 'element-ui'
-import { uid } from '@daas/shared'
+import { uid } from '@tap/shared'
 import { observer } from '@formily/reactive-vue'
 import { FragmentComponent } from '@formily/vue'
 import { usePrefix } from '../../../hooks'

@@ -1,6 +1,6 @@
 import { useField, Field, observer } from '@formily/vue'
 import { usePrefix } from '../../../hooks'
-import { Select, Input } from '@daas/form'
+import { Select, Input } from '@tap/form'
 import { FoldItem } from '../FoldItem'
 import { ColorInput } from '../ColorInput'
 import { BackgroundSizeInput } from '../SizeInput'

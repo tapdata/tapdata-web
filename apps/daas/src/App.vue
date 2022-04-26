@@ -55,7 +55,7 @@ export default {
   p {
     font-size: 12px;
     line-height: 24px;
-    color: #666666;
+    color: map-get($fontColor, light);
     margin-top: 0px;
     margin: 8px 0;
     margin: 14px 0 14px;
@@ -85,7 +85,7 @@ export default {
     list-style: unset;
     font-size: 12px;
     line-height: 20px;
-    color: #666666;
+    color: map-get($fontColor, light);
     margin-top: 0px;
     margin: 8px 0;
   }

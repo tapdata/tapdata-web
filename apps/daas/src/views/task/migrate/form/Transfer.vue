@@ -272,7 +272,7 @@ export default {
   }
 
   .el-transfer-panel__item:hover {
-    color: #666;
+    color: map-get($fontColor, light);
   }
 
   .transfer {

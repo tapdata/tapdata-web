@@ -1,6 +1,6 @@
 import { CursorStatus, CursorType } from '../models'
 import { DragMoveEvent, DragStartEvent, DragStopEvent } from '../events'
-import { calcAutoScrollBasicInfo, scrollAnimate, Point } from '@daas/shared'
+import { calcAutoScrollBasicInfo, scrollAnimate, Point } from '@tap/shared'
 
 export const useAutoScrollEffect = engine => {
   let xScroller = null

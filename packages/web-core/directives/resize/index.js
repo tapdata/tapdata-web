@@ -1,4 +1,4 @@
-import { on, off, appendHtml } from '@daas/shared'
+import { on, off, appendHtml } from '@tap/shared'
 
 const EVENT = {
   mouse: {

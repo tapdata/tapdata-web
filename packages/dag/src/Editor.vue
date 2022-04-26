@@ -98,8 +98,8 @@ import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
 import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from './components/ConfigPanel'
-import { uuid } from '@daas/shared'
-import { Task } from '@daas/api'
+import { uuid } from '@tap/shared'
+import { Task } from '@tap/api'
 import {
   AddConnectionCommand,
   AddNodeCommand,
@@ -112,14 +112,14 @@ import {
 } from './command'
 import Mousetrap from 'mousetrap'
 import dagre from 'dagre'
-import { validateBySchema } from '@daas/form/src/shared/validate'
+import { validateBySchema } from '@tap/form/src/shared/validate'
 import resize from 'web-core/directives/resize'
 import { merge } from 'lodash'
 import PaperEmpty from './components/PaperEmpty'
 import EmptyItem from './components/EmptyItem'
 import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
-import { getSubTaskStatus, getTaskBtnDisabled } from '@daas/business'
+import { getSubTaskStatus, getTaskBtnDisabled } from '@tap/business'
 
 const taskApi = new Task()
 

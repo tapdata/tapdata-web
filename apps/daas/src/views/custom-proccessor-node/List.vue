@@ -29,7 +29,7 @@
 <script>
 import TablePage from '@/components/TablePage'
 import FilterBar from '../../components/filter-bar/Main'
-import { CustomNode } from '@daas/api'
+import { CustomNode } from '@tap/api'
 
 const api = new CustomNode()
 

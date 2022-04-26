@@ -33,8 +33,8 @@
 </template>
 
 <script>
-import { MetadataInstances } from '@daas/api'
-import FieldMapping from '@tapdata/field-mapping'
+import { MetadataInstances } from '@tap/api'
+import FieldMapping from '@tap/field-mapping'
 import { mapGetters, mapState } from 'vuex'
 import VIcon from 'web-core/components/VIcon'
 const metadataApi = new MetadataInstances()

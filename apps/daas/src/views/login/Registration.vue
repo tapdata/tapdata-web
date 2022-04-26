@@ -336,7 +336,7 @@ export default {
         padding-top: 20px;
         font-size: 12px;
         text-align: right;
-        color: #666;
+        color: map-get($fontColor, light);
         user-select: none;
         span {
           color: #409eff;

@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import * as components from '@daas/form'
+import * as components from '@tap/form'
 import { createSchemaField } from '@formily/vue'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 

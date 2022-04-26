@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import dataflow from '@daas/dag/src/store'
+import dataflow from '@tap/dag/src/store'
 
 Vue.use(Vuex)
 

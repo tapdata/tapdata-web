@@ -11,7 +11,7 @@ const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/task
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/connection/Form.vue')
 const DataflowDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/copy/Index.vue')
 const DagEditor = async () => {
-  const { Editor } = await import('@daas/dag')
+  const { Editor } = await import('@tap/dag')
   return Editor
 }
 

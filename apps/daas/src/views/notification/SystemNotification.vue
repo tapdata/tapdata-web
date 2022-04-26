@@ -520,7 +520,7 @@ $unreadColor: #ee5353;
       border-radius: 50%;
     }
     .list-item-desc {
-      color: #666;
+      color: map-get($fontColor, light);
       position: absolute;
       top: 0;
       left: 30px;

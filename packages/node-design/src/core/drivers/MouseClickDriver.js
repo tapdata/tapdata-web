@@ -1,4 +1,4 @@
-import { EventDriver } from '@daas/shared'
+import { EventDriver } from '@tap/shared'
 import { MouseClickEvent, MouseDoubleClickEvent } from '../events'
 
 export class MouseClickDriver extends EventDriver {

@@ -258,7 +258,7 @@ import ConnectionTypeSelector from 'web-core/components/connection-type-selector
 import resize from 'web-core/directives/resize'
 import BaseNode from './BaseNode'
 import { debounce } from 'lodash'
-import { CancelToken, Connections, MetadataInstances } from '@daas/api'
+import { CancelToken, Connections, MetadataInstances } from '@tap/api'
 import { Select } from 'element-ui'
 const connections = new Connections()
 const metadataApi = new MetadataInstances()

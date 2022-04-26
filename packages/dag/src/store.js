@@ -1,6 +1,6 @@
 import Vue from 'vue'
-import { isObject, uuid, mergeLocales, lowerSnake } from '@daas/shared'
-import { Task, CustomNode } from '@daas/api'
+import { isObject, uuid, mergeLocales, lowerSnake } from '@tap/shared'
+import { Task, CustomNode } from '@tap/api'
 import { debounce } from 'lodash'
 import { AddDagCommand } from './command'
 import { Path } from '@formily/path'
