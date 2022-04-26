@@ -12,14 +12,10 @@
         </div>
       </div>
       <ElTable class="connection-table table-border mt-4" height="100%" :data="list" @sort-change="sortChange">
-        <ElTableColumn label="连接名" prop="name" min-width="200px">
+        <ElTableColumn :label="$t('connection_List_lianJieMing')" prop="name" min-width="200px">
           <template slot-scope="scope">
             <div class="flex flex-row align-items-center">
-              <img
-                class="mr-2 db-img"
-                :src="require('web-core/assets/icons/node/' + scope.row.database_type.toLowerCase() + '.svg')"
-              />
-              <!-- require('web-core/assets/images/connection-type/' + scope.row.database_type.toLowerCase() + '.png') -->
+              <img class="mr-2 db-img" :src="getSvg(scope.row)" />
               <ElLink
                 type="primary"
                 style="display: block; line-height: 20px"
@@ -70,13 +66,19 @@
         <ElTableColumn :label="$t('connection_list_operate')" width="280">
           <template slot-scope="scope">
             <div class="operate-columns">
-              <ElButton size="mini" type="text" @click="testConnection(scope.row)">连接测试</ElButton>
+              <ElButton size="mini" type="text" @click="testConnection(scope.row)">{{
+                $t('connection_List_lianJieCeShi')
+              }}</ElButton>
               <ElDivider direction="vertical"></ElDivider>
-              <ElButton size="mini" type="text" :disabled="isCloud(scope.row)" @click="edit(scope.row)">编辑</ElButton>
+              <ElButton size="mini" type="text" :disabled="isCloud(scope.row)" @click="edit(scope.row)">{{
+                $t('components_InlineInput_bianJi')
+              }}</ElButton>
               <ElDivider direction="vertical"></ElDivider>
-              <ElButton size="mini" type="text" :disabled="isCloud(scope.row)" @click="copy(scope.row)">复制</ElButton>
+              <ElButton size="mini" type="text" :disabled="isCloud(scope.row)" @click="copy(scope.row)">{{
+                $t('connection_List_fuZhi')
+              }}</ElButton>
               <ElDivider direction="vertical"></ElDivider>
-              <ElButton size="mini" type="text" @click="del(scope.row)">删除</ElButton>
+              <ElButton size="mini" type="text" @click="del(scope.row)">{{ $t('connection_List_shanChu') }}</ElButton>
             </div>
           </template>
         </ElTableColumn>
@@ -84,7 +86,7 @@
           <VIcon size="120">no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('gl_no_data') }}</span>
-            <ElLink type="primary" class="fs-7" @click="create">创建连接</ElLink>
+            <ElLink type="primary" class="fs-7" @click="create">{{ $t('connection_List_chuangJianLianJie') }}</ElLink>
           </div>
         </div>
         <div v-else class="connection-table__empty" slot="empty">
@@ -107,7 +109,7 @@
         @current-change="fetch"
       >
       </ElPagination>
-      <!-- 连接测试 -->
+      <!-- {{$t('connection_List_lianJieCeShi')}} -->
       <ConnectionTest ref="test"></ConnectionTest>
       <Preview ref="preview" @close="fetch()" @reload-schema="fetch()"></Preview>
     </div>
@@ -166,12 +168,15 @@
 }
 </style>
 <script>
+import i18n from '@/i18n'
+
 import { CONNECTION_STATUS_MAP, SUPPORT_DB } from '../../const'
 import StatusTag from '../../components/StatusTag'
 import SchemaProgress from 'web-core/components/SchemaProgress'
 import Preview from './Preview.vue'
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/filter-bar'
+import { getDatabaseTypes } from '@/util'
 
 let timer = null
 export default {
@@ -258,30 +263,31 @@ export default {
   },
   methods: {
     getFilterItems() {
+      const TYPEMAP = getDatabaseTypes(true)
       this.filterItems = [
         {
-          label: '全部状态',
+          label: i18n.t('connection_List_quanBuZhuangTai'),
           key: 'status',
           type: 'select-inner',
           items: this.statusOptions
         },
         {
-          label: '数据库类型',
+          label: i18n.t('connection_List_shuJuKuLeiXing'),
           key: 'database_type',
           type: 'select-inner',
-          menuMinWidth: '180px',
+          menuMinWidth: '240px',
           items: async () => {
             let data = await this.$axios.get('tm/api/Connections/databaseType')
             return data.map(item => {
               return {
-                label: item,
+                label: TYPEMAP[item] || item,
                 value: item
               }
             })
           }
         },
         {
-          placeholder: '按连接名搜索',
+          placeholder: i18n.t('connection_List_anLianJieMingSou'),
           key: 'keyword',
           type: 'input'
         }
@@ -295,7 +301,8 @@ export default {
         loadFieldsStatus: true,
         loadCount: true,
         tableCount: true,
-        loadFieldErrMsg: true
+        loadFieldErrMsg: true,
+        database_type: true
       }
       let filter = {
         fields,
@@ -411,7 +418,7 @@ export default {
           headers: { 'lconname-name': item.name }
         })
         this.fetch()
-        this.$message.success('复制成功')
+        this.$message.success(i18n.t('connection_List_fuZhiChengGong'))
         this.test(data?.result || data, false)
       } catch (error) {
         if (error?.response?.msg === 'duplicate source') {
@@ -449,7 +456,7 @@ export default {
             }
           } catch (error) {
             // 删除失败
-            let errorTip = '删除失败'
+            let errorTip = i18n.t('connection_List_shanChuShiBai')
             const data = error?.data
             if (data.code === 'Datasource.LinkJobs') {
               errorTip = data.message
@@ -507,6 +514,12 @@ export default {
     },
     isCloud(row) {
       return row.agentType === 'Cloud'
+    },
+    getSvg(row = {}) {
+      if (!row.database_type) {
+        return null
+      }
+      return require('web-core/assets/icons/node/' + row.database_type.toLowerCase() + '.svg')
     }
   }
 }

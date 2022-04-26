@@ -87,12 +87,12 @@
           <div class="desc">{{ $t('agent_upgrade_step_docker_first_one') }}</div>
           <div>docker ps -a|grep tapdata|awk -F' ' '{print $1}'</div>
           <div class="desc">{{ $t('agent_upgrade_step_docker_first_two') }}</div>
-          <div>docker exec -it 容器ID bash</div>
+          <div>{{ $t('agent_download_UpgradeVersion_dOCKE') }}</div>
           <div class="desc">{{ $t('agent_upgrade_step_docker_first_three') }}</div>
           <div class="desc">{{ $t('agent_upgrade_step_docker_first_four') }}</div>
-          <div>docker start 容器ID</div>
+          <div>{{ $t('agent_download_UpgradeVersion_dOCKE2') }}</div>
           <div class="desc">{{ $t('agent_upgrade_step_docker_first_five') }}</div>
-          <div>docker exec -it 容器ID bash</div>
+          <div>{{ $t('agent_download_UpgradeVersion_dOCKE') }}</div>
         </div>
         <div>
           {{ $t('agent_upgrade_step_docker_second') }}

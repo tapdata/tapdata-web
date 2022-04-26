@@ -11,7 +11,7 @@
           <span>社区</span>
         </div> -->
         <!--        <div class="mr-6 pointer" @click="command('questions')">问答支持</div>-->
-        <el-popover placement="top-start" width="400" min-width="0" trigger="click">
+        <ElPopover placement="top-start" width="400" min-width="0" trigger="click">
           <div class="flex justify-content-between text-center">
             <div>
               <img style="width: 120px; height: 120px" src="../../../public/images/wx_user_support.png" alt="" />
@@ -28,7 +28,7 @@
             <VIcon class="mr-2" size="17">question</VIcon>
             <span>{{ $t('header_question') }}</span>
           </div>
-        </el-popover>
+        </ElPopover>
         <div class="command-item mr-6" @click="command('handbook')">
           <VIcon class="mr-2" size="17">send</VIcon>
           <span>{{ $t('header_manual') }}</span>
@@ -53,56 +53,35 @@
           </ElDropdownMenu>
         </ElDropdown> -->
         <ElDropdown class="command-item menu-user" placement="bottom" @command="command">
-          <!--					<el-button class="menu-button" size="mini">-->
+          <!--					<ElButton class="menu-button" size="mini">-->
           <!--						{{ user.username }}-->
-          <!--					</el-button>-->
+          <!--					</ElButton>-->
           <div class="username flex align-items-center">
-            <VIcon class="mr-2" size="17">account</VIcon>
+            <img
+              v-if="user.avatar"
+              :src="user.avatar"
+              alt=""
+              class="mr-2"
+              style="width: 30px; height: 30px; border-radius: 50%"
+            />
+            <VIcon v-else class="mr-2" size="20">account</VIcon>
             <span>{{ user.username || user.nickname || user.phone || user.email }}</span>
           </div>
 
           <ElDropdownMenu slot="dropdown">
             <!-- <ElDropdownItem command="account"> 个人设置 </ElDropdownItem> -->
-            <!--            <ElDropdownItem command="userCenter"> 用户中心 </ElDropdownItem>-->
+            <ElDropdownItem command="userCenter">{{ $t('the_header_Header_yongHuZhongXin') }}</ElDropdownItem>
             <ElDropdownItem command="home"> {{ $t('header_official_website') }} </ElDropdownItem>
             <ElDropdownItem command="signOut"> {{ $t('header_sign_out') }} </ElDropdownItem>
           </ElDropdownMenu>
         </ElDropdown>
       </div>
     </div>
-    <div class="dfs-header__dialog">
-      <div :class="['fixed-novice-guide-dialog', { active: guideVisible }]">
-        <div class="guide-dialog__content text-center">
-          <div class="guide-mark">
-            <img src="../../../public/images/guide/guide_mark.png" alt="" />
-          </div>
-          <div class="mt-5 fs-3 text-white">
-            <span>{{ $t('header_welcome') }}</span>
-            <span class="color-primary">Tapdata</span>
-            <span class="ml-1">Cloud</span>
-          </div>
-          <div class="mt-3 fs-6 text-white position-relative inline-block">
-            {{ $t('header_tutorials_tip') }}
-            <el-checkbox v-model="noShow" class="no-show-checkbox text-white position-absolute">{{
-              $t('header_more_reminders')
-            }}</el-checkbox>
-          </div>
-          <div class="guide-operation flex justify-content-center mt-8">
-            <template v-if="lang === 'sc'">
-              <img src="../../../public/images/guide/guid_no.png" alt="" @click="leaveGuide" />
-              <img class="ml-9" src="../../../public/images/guide/guid_yes.png" alt="" @click="toGuidePage" />
-            </template>
-            <template v-else>
-              <img src="../../../public/images/guide/en_guid_no.svg" alt="" @click="leaveGuide" />
-              <img class="ml-9" src="../../../public/images/guide/en_guid_yes.svg" alt="" @click="toGuidePage" />
-            </template>
-          </div>
-        </div>
-      </div>
-    </div>
   </ElHeader>
 </template>
 <script>
+import i18n from '@/i18n'
+
 import NotificationPopover from '@/views/workbench/NotificationPopover'
 // import ws from '../../plugins/ws.js';
 import VIcon from '@/components/VIcon'
@@ -116,50 +95,15 @@ export default {
   data() {
     return {
       user: window.__USER_INFO__ || {},
-      isShowCustomerService: false,
-      guideVisible: false, // 新手指引模态窗
-      isClose: false,
-      btnLoading: false,
-      noShow: false, // 不再显示新手引导
-      selfUser: {}, // self用户信息
       USER_CENTER: window.__config__.USER_CENTER,
       lang: localStorage.getItem('tapdata_localize_lang') || 'sc',
       languages: {
-        sc: '中文',
+        sc: i18n.t('the_header_Header_zhongWen'),
         en: 'English'
       }
     }
   },
-  created() {
-    this.init()
-  },
   methods: {
-    init() {
-      this.getTmUser()
-    },
-    getTmUser() {
-      this.$axios.get('tm/api/users/self').then(data => {
-        if (data) {
-          let guideData = data?.guideData ?? {}
-          this.selfUser = {
-            id: data.id,
-            guideData: guideData
-          }
-          this.noShow = !!guideData?.noShow
-          // 不再显示
-          if (
-            !guideData?.noShow &&
-            !guideData?.action &&
-            (new Date().getTime() - (guideData?.updateTime ?? 0)) / 1000 / 3600 > 24
-          ) {
-            this.showGuide()
-          }
-        }
-      })
-    },
-    showGuide() {
-      this.command('guide')
-    },
     command(command) {
       // let downloadUrl = '';
       switch (command) {
@@ -176,7 +120,10 @@ export default {
           window.open('https://cloud.tapdata.net/', '_blank')
           break
         case 'userCenter':
-          window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
+          // window.open(this.USER_CENTER || 'https://tapdata.authing.cn/u', '_blank')
+          this.$router.push({
+            name: 'userCenter'
+          })
           break
         case 'signOut':
           this.$confirm(this.$t('header_log_out_tip'), this.$t('header_log_out_title'), {
@@ -195,9 +142,6 @@ export default {
           break
         case 'source-center':
           window.open('https://www.yuque.com/tapdata/cloud/chan-pin-jian-jie_readme', '_blank')
-          break
-        case 'guide':
-          this.guideVisible = true
           break
         case 'handbook':
           window.open('https://sourl.cn/sxuj82', '_blank')
@@ -222,29 +166,6 @@ export default {
           document.cookie = keys[i] + '=0;path=/;domain=' + document.domain + ';expires=' + new Date(0).toUTCString()
         }
       }
-    },
-    leaveGuide() {
-      this.guideVisible = false
-      this.updateUser()
-    },
-    toGuidePage() {
-      this.guideVisible = false
-      this.updateUser(true)
-      if (this.$route.name !== 'NoviceGuide') {
-        this.$router.push({
-          name: 'NoviceGuide'
-        })
-      }
-    },
-    updateUser(action = false) {
-      let selfUser = this.selfUser
-      this.$axios.patch('tm/api/users/' + selfUser?.id, {
-        guideData: {
-          noShow: this.noShow,
-          updateTime: new Date().getTime(),
-          action: action || selfUser?.guideData?.action || false
-        }
-      })
     }
   }
 }

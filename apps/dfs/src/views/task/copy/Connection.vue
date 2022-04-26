@@ -9,11 +9,7 @@
     >
       <template slot="name" slot-scope="scope">
         <div class="flex flex-row align-items-center p-2">
-          <img
-            class="mr-2"
-            style="width: 24px; height: 24px"
-            :src="require('web-core/assets/images/connection-type/' + scope.row.database_type.toLowerCase() + '.png')"
-          />
+          <img class="mr-2" style="width: 24px; height: 24px" :src="getDatabaseImg(scope.row)" />
           <!--:src="require('static/editor/' + scope.row.database_type.toLowerCase() + '.svg')"  -->
           <ElLink
             type="primary"
@@ -200,16 +196,16 @@ export default {
     async reload(row) {
       this.$checkAgentStatus(() => {
         let config = {
-          title: this.$t('connection.reloadTittle'),
-          Message: this.$t('connection.reloadMsg'),
+          title: this.$t('connection_reloadTittle'),
+          Message: this.$t('connection_reloadMsg'),
           confirmButtonText: this.$t('button_dialog_confirm'),
           cancelButtonText: this.$t('button_close'),
           name: row.name,
           id: row.id
         }
         this.$confirm(config.Message + config.name + '?', config.title, {
-          confirmButtonText: config.confirmButtonText,
-          cancelButtonText: config.cancelButtonText,
+          // confirmButtonText: config.confirmButtonText,
+          // cancelButtonText: config.cancelButtonText,
           type: 'warning',
           closeOnClickModal: false
         }).then(resFlag => {
@@ -281,7 +277,7 @@ export default {
           }
         })
         .catch(() => {
-          this.$message.error(this.$t('connection.reloadFail'))
+          this.$message.error(this.$t('connection_reloadFail'))
           this.showProgress = false
           this.progress = 0 //加载完成
           this.reloadLoading = false
@@ -289,6 +285,9 @@ export default {
     },
     preview(id, type) {
       this.$refs.preview.open(id, type)
+    },
+    getDatabaseImg(row) {
+      return require('web-core/assets/icons/node/' + row.database_type.toLowerCase() + '.svg')
     }
   }
 }

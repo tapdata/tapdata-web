@@ -9,18 +9,19 @@
           </div>
           <div>
             <div class="progress-box flex justify-content-center align-items-center position-relative">
-              <el-progress
+              <ElProgress
                 type="circle"
                 color="rgba(44, 101, 255, 1)"
                 :percentage="progressBar"
                 :show-text="false"
                 :width="120"
-              ></el-progress>
+              ></ElProgress>
               <div class="progress-box__value flex justify-content-center align-items-center">{{ progressBar }}%</div>
             </div>
           </div>
           <div class="py-6 text-center">
-            {{ $t('task_monitor_full_completion_time') }}：<span>{{ completeTime }}</span>
+            {{ $t('task_monitor_full_completion_time') }}{{ $t('field_mapping_field_mapping_dialog_')
+            }}<span>{{ completeTime }}</span>
           </div>
         </div>
         <!-- 非全量 -->
@@ -30,13 +31,13 @@
           </div>
           <div class="pb-6">
             <div class="progress-box flex justify-content-center align-items-center position-relative">
-              <el-progress
+              <ElProgress
                 type="circle"
                 color="rgba(44, 101, 255, 1)"
                 :percentage="100"
                 :show-text="false"
                 :width="120"
-              ></el-progress>
+              ></ElProgress>
               <div class="progress-box__value flex flex-column justify-content-center align-items-center">
                 <div class="fs-5">{{ replicateObj.currentStatus || $t('task_monitor_delay') }}</div>
                 <div class="mt-2" v-if="!replicateObj.currentStatus">{{ replicateObj.value }}</div>
@@ -50,7 +51,9 @@
         <div v-if="task && task.setting && task.setting.sync_type !== 'cdc'" style="height: 310px">
           <div class="mb-10 fs-7 dots">{{ $t('task_monitor_progress_details') }}</div>
           <div v-for="(item, index) in initialList" :key="index" class="initial-box">
-            <span v-if="item.label" class="initial-box__title font-color-sub">{{ item.label }}：</span>
+            <span v-if="item.label" class="initial-box__title font-color-sub"
+              >{{ item.label }}{{ $t('field_mapping_field_mapping_dialog_') }}</span
+            >
             <span class="initial-box__value" :class="{ 'font-color-sub': !!item.value }">{{
               item.value || overviewStats[item.key]
             }}</span>
@@ -59,13 +62,13 @@
         <!-- 非全量 -->
         <div v-if="task && task.setting.sync_type !== 'initial_sync'">
           <div class="mb-10 fs-7 dots">{{ $t('task_monitor_cdc_details') }}</div>
-          <el-table :data="cdcLastTimes">
-            <el-table-column :label="$t('task_monitor_source_library')" prop="sourceConnectionName"></el-table-column>
-            <el-table-column :label="$t('task_monitor_time')" prop="cdcTime">
+          <ElTable :data="cdcLastTimes">
+            <ElTableColumn :label="$t('task_monitor_source_library')" prop="sourceConnectionName"></ElTableColumn>
+            <ElTableColumn :label="$t('task_monitor_time')" prop="cdcTime">
               <template slot-scope="scope">{{ $moment(scope.row.cdcTime).format('YYYY-MM-DD HH:mm:ss') }}</template>
-            </el-table-column>
-            <el-table-column :label="$t('task_monitor_target_library')" prop="targetConnectionName"></el-table-column>
-          </el-table>
+            </ElTableColumn>
+            <ElTableColumn :label="$t('task_monitor_target_library')" prop="targetConnectionName"></ElTableColumn>
+          </ElTable>
         </div>
       </div>
     </div>
@@ -80,10 +83,10 @@
           <EchartHeader :data="throughputObj.title" @change="changeHeaderFnc"></EchartHeader>
           <div class="floatLayer">
             <span style="background-color: rgba(72, 182, 226, 0.3); color: #409eff"
-              >{{ $t('dataFlow.input') }}:<span class="ml-1">{{ throughputObj.input }}</span></span
+              >{{ $t('dataFlow_input') }}:<span class="ml-1">{{ throughputObj.input }}</span></span
             >
             <span style="background-color: rgba(98, 165, 105, 0.3); color: #62a569"
-              >{{ $t('dataFlow.output') }}:<span class="ml-1">{{ throughputObj.output }}</span></span
+              >{{ $t('dataFlow_output') }}:<span class="ml-1">{{ throughputObj.output }}</span></span
             >
           </div>
           <Chart v-if="throughputObj.body" :extend="throughputObj.body" class="v-echart"></Chart>
@@ -92,7 +95,7 @@
           <EchartHeader :data="transfObj.title" @change="changeHeaderFnc"></EchartHeader>
           <div class="floatLayer">
             <span style="background-color: rgba(251, 142, 0, 0.3); color: #fb8e00"
-              >{{ $t('dataFlow.current') }}:<span class="ml-1">{{ transfObj.value }}</span></span
+              >{{ $t('dataFlow_current') }}:<span class="ml-1">{{ transfObj.value }}</span></span
             >
           </div>
           <Chart v-if="transfObj.body" :extend="transfObj.body" class="v-echart"></Chart>
@@ -101,7 +104,7 @@
           <EchartHeader :data="replicateObj.title" @change="changeHeaderFnc"></EchartHeader>
           <div class="floatLayer">
             <span style="background-color: rgba(7245, 108, 108, 0.3); color: #f56c6c"
-              >{{ $t('dataFlow.current') }}:<span class="ml-1">{{ replicateObj.value }}</span></span
+              >{{ $t('dataFlow_current') }}:<span class="ml-1">{{ replicateObj.value }}</span></span
             >
           </div>
           <Chart v-if="replicateObj.body" :extend="replicateObj.body" class="v-echart"></Chart>
@@ -162,7 +165,7 @@ export default {
         title: {
           key: 'overview',
           statsType: 'data_overview',
-          title: this.$t('dataFlow.dataScreening'),
+          title: this.$t('dataFlow_dataScreening'),
           classFlex: true,
           loading: false
         },
@@ -174,8 +177,8 @@ export default {
           key: 'throughput',
           statsType: 'throughput',
           time: 'minute',
-          title: this.$t('dataFlow.inputOutput'),
-          tip: this.$t('dataFlow.throughputpop'),
+          title: this.$t('dataFlow_inputOutput'),
+          tip: this.$t('dataFlow_throughputpop'),
           unit: 'QPS',
           class: 'putColor',
           classFlex: true,
@@ -191,8 +194,8 @@ export default {
           key: 'transf',
           statsType: 'trans_time',
           time: 'minute',
-          title: this.$t('dataFlow.transf'),
-          tip: this.$t('dataFlow.transtime_pop'),
+          title: this.$t('dataFlow_transf'),
+          tip: this.$t('dataFlow_transtime_pop'),
           unit: this.$t('task_monitor_unit_row'),
           class: 'transfColor',
           classFlex: true,
@@ -207,8 +210,8 @@ export default {
           key: 'replicate',
           statsType: 'repl_lag',
           time: 'minute',
-          title: this.$t('dataFlow.replicate'),
-          tip: this.$t('dataFlow.replicate_pop'),
+          title: this.$t('dataFlow_replicate'),
+          tip: this.$t('dataFlow_replicate_pop'),
           unit: this.$t('task_monitor_unit_second'),
           class: 'transfColor',
           classFlex: 'flex',
@@ -311,11 +314,11 @@ export default {
             show: false
           },
           data: [
-            this.$t('dataFlow.totalOutput'),
-            this.$t('dataFlow.totalInput'),
-            this.$t('dataFlow.totalInsert'),
-            this.$t('dataFlow.totalUpdate'),
-            this.$t('dataFlow.totalDelete')
+            this.$t('dataFlow_totalOutput'),
+            this.$t('dataFlow_totalInput'),
+            this.$t('dataFlow_totalInsert'),
+            this.$t('dataFlow_totalUpdate'),
+            this.$t('dataFlow_totalDelete')
           ],
           axisPointer: {
             type: 'shadow'
@@ -414,7 +417,7 @@ export default {
         },
         series: [
           {
-            name: this.$t('dataFlow.input'),
+            name: this.$t('dataFlow_input'),
             type: 'line',
             smooth: true,
             data: inputCountList,
@@ -426,7 +429,7 @@ export default {
             }
           },
           {
-            name: this.$t('dataFlow.output'),
+            name: this.$t('dataFlow_output'),
             type: 'line',
             smooth: true,
             data: outputCountList,

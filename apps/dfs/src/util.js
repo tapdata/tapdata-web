@@ -1,33 +1,7 @@
-import { TOPOLOGY_MAP } from './const'
 import moment from 'moment'
+import { confirm } from 'web-core'
+import i18n from '@/i18n'
 
-export function formatAgent(data) {
-  let { regionMap, zoneMap } = window.__REGION__
-  data.regionFmt = `${regionMap[data.region] || data.region} | ${zoneMap[data.zone] || data.zone}`
-  data.topology = TOPOLOGY_MAP[data.spec?.direction]?.split('（')[0]
-  data.endTimeStr = data.endTime ? moment(data.endTime).format('YYYY-DD-MM') : ''
-  return data
-}
-export function queryParams(data, isPrefix) {
-  isPrefix = isPrefix ? isPrefix : false
-  let prefix = isPrefix ? '?' : ''
-  let _result = []
-  for (let key in data) {
-    let value = data[key]
-    // 去掉为空的参数
-    if (['', undefined, null].includes(value)) {
-      continue
-    }
-    if (value.constructor === Array) {
-      value.forEach(_value => {
-        _result.push(encodeURIComponent(key) + '[]=' + encodeURIComponent(_value))
-      })
-    } else {
-      _result.push(encodeURIComponent(key) + '=' + encodeURIComponent(value))
-    }
-  }
-  return _result.length ? prefix + _result.join('&') : ''
-}
 export function toDecimal2(x) {
   var float = parseFloat(x)
   if (isNaN(float)) {
@@ -93,30 +67,6 @@ export function uniqueArr(arr = [], key = 'id') {
     return cur
   }, [])
 }
-// cookie
-export const cookie = {
-  // 设置cookie
-  set: (name, value, day) => {
-    const date = new Date()
-    date.setDate(date.getDate() + day)
-    document.cookie = name + '=' + value + ';expires=' + date.toUTCString()
-  },
-  // 获取cookie
-  get: key => {
-    var arr = document.cookie.split('; ')
-    for (var i = 0; i < arr.length; i++) {
-      var arr1 = arr[i].split('=')
-      if (arr1[0] == key) {
-        return arr1[1]
-      }
-    }
-    return ''
-  },
-  // 删除cookie
-  remove: name => {
-    cookie.set(name, '', -1)
-  }
-}
 let timeout = null
 export function delayTrigger(func, t) {
   if (t) {
@@ -156,4 +106,111 @@ export const TYPEMAP = {
   'mysql pxc': 'MySQL PXC',
   jira: 'jira',
   clickhouse: 'ClickHouse'
+}
+// 转base64
+export const urlToBase64 = url => {
+  return new Promise((resolve, reject) => {
+    let image = new Image()
+    image.onload = function () {
+      let canvas = document.createElement('canvas')
+      canvas.width = this.naturalWidth
+      canvas.height = this.naturalHeight
+      // 将图片插入画布并开始绘制
+      canvas.getContext('2d').drawImage(image, 0, 0)
+      // result
+      let result = canvas.toDataURL('image/png')
+      resolve(result)
+    }
+    // CORS 策略，会存在跨域问题https://stackoverflow.com/questions/20424279/canvas-todataurl-securityerror
+    image.setAttribute('crossOrigin', 'Anonymous')
+    image.src = url
+    // 图片加载失败的错误处理
+    image.onerror = () => {
+      reject(new Error('urlToBase64 error'))
+    }
+  })
+}
+// 千分符
+export const numToThousands = (num, index = 3, symbol = ',') => {
+  let reg = new RegExp('(?!^)(?=(\\d{' + index + '})+$)', 'g')
+  return String(num).replace(reg, symbol)
+}
+// 下载Blob
+export const downloadBlob = (res, name = '') => {
+  if (!res) {
+    return
+  }
+  const { data, headers } = res
+  const fileName = name || headers['content-disposition'].replace(/\w+;\s*filename="(.*)"/, '$1')
+  const blob = new Blob([data], { type: headers['content-type'] })
+  let dom = document.createElement('a')
+  let url = window.URL.createObjectURL(blob)
+  dom.href = url
+  dom.download = decodeURI(fileName)
+  dom.style.display = 'none'
+  document.body.appendChild(dom)
+  dom.click()
+  dom.parentNode.removeChild(dom)
+  window.URL.revokeObjectURL(url)
+}
+// 设置数据源
+export const setDatabaseTypes = (data = []) => {
+  localStorage.setItem('DatabaseTypes', JSON.stringify(data))
+}
+// 支持的数据源
+export const getDatabaseTypes = (mapping = false) => {
+  let str = localStorage.getItem('DatabaseTypes')
+  let result = str ? JSON.parse(str) : []
+  if (mapping) {
+    let obj = {}
+    result.forEach(el => {
+      obj[el.type] = el.name
+    })
+    return obj
+  }
+  return result
+}
+
+// 500错误弹窗
+export const errorConfirmFnc = error => {
+  let msg = `<div>${i18n.t('RequestErrorMessage_error_title')}</div>`
+  let title = i18n.t('confirm_error_tip')
+  error = typeof error === 'object' ? error : {}
+  let code = error.code
+  let reqId = error.data?.reqId
+  if (code) {
+    msg += `<div class="mt-1">${i18n.t(
+      'RequestErrorMessage_code_label'
+    )}<span class="color-disable">${code}</span></div>`
+  }
+  if (reqId) {
+    msg += `<div class="mt-1">${i18n.t(
+      'RequestErrorMessage_req_id_label'
+    )}<span class="color-disable">${reqId}</span></div>`
+  }
+  if (error.message) {
+    const mm = `${i18n.t('RequestErrorMessage_error_detail_label')}${i18n.t(
+      'field_mapping_field_mapping_dialog_'
+    )}<span class="color-disable" style="
+    line-height: 18px;
+">${error.message}</span>`
+    msg += `<div class="error-confirm-fold mt-1">
+                <input type="checkbox" id="errorConfirm" style="display: none" />
+                <div class="error-confirm-fold-content text-truncate">${mm}</div>
+                <label for="errorConfirm" class="color-primary cursor-pointer text-nowrap">${i18n.t(
+                  'verify_Details_zhanKai'
+                )}</label>
+              </div>`
+  }
+  confirm(msg, title, {
+    type: 'error',
+    iconSize: 18,
+    dangerouslyUseHTMLString: true,
+    confirmButtonText: i18n.t('confirm_reload_label'),
+    cancelButtonText: i18n.t('gl_button_close')
+  }).then(flag => {
+    if (flag) {
+      location.reload()
+    }
+  })
 }

@@ -33,8 +33,12 @@ const defaults = {
   beforeClose: null
 }
 
+const hasOwnProperty = Object.prototype.hasOwnProperty
+export function hasOwn(obj, key) {
+  return hasOwnProperty.call(obj, key)
+}
 function isVNode(node) {
-  return node !== null && typeof node === 'object' && hasOwnProperty.call(node, 'componentOptions')
+  return node !== null && typeof node === 'object' && hasOwn(node, 'componentOptions')
 }
 
 const defaultCallback = action => {
@@ -53,7 +57,7 @@ const defaultCallback = action => {
   }
 }
 const MessageBox = function (options, callback) {
-  if (typeof options === 'string') {
+  if (typeof options === 'string' || isVNode(options)) {
     options = {
       message: options
     }
@@ -96,7 +100,7 @@ const showNextMsg = () => {
   }
   if (isVNode(instance.message)) {
     instance.$slots.default = [instance.message]
-    instance.message = null
+    instance.message = ' '
   } else {
     delete instance.$slots.default
   }

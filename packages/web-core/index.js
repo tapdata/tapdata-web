@@ -12,9 +12,21 @@ import * as _const from './const'
 
 const components = [ConnectionTypeSelector, ConnectionTest, FieldMapping, CheckStage].concat(baseComponents)
 
+const confirm = (message, title, options) => {
+  return new Promise((resolve, reject) => {
+    VConfirm.confirm(message, title, options)
+      .then(() => {
+        resolve(true)
+      })
+      .catch(() => {
+        reject(false)
+      })
+  }).catch(() => {})
+}
 const install = Vue => {
   Vue.prototype.$util = _util
   Vue.prototype.$const = _const
+  Vue.prototype.$confirm = confirm
 
   Vue.use(FormBuilder)
 
@@ -41,4 +53,4 @@ const langs = locale
 export default {
   install
 }
-export { langs, ConnectionTypeSelector, ConnectionTest, WSClient, FieldMapping, CheckStage }
+export { langs, ConnectionTypeSelector, ConnectionTest, WSClient, FieldMapping, CheckStage, confirm }

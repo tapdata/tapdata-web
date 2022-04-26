@@ -1,6 +1,6 @@
 <template>
   <div class="database">
-    <el-radio-group v-if="otherTypes.length" class="pb-5" v-model="type" @change="changeType">
+    <el-radio-group v-if="!hideType && otherTypes.length" class="pb-5" v-model="type" @change="changeType">
       <el-radio-button label="sourcedata">{{ $t('connection_form_data_source') }}</el-radio-button>
       <el-radio-button label="other">Other Type</el-radio-button>
       <!-- <el-radio-button label="automation">Automation Type</el-radio-button> -->
@@ -90,6 +90,9 @@ export default {
       default: () => {
         return false
       }
+    },
+    hideType: {
+      type: Boolean
     }
   },
   data() {

@@ -29,14 +29,14 @@
         </template>
         <div v-if="!isSearching" class="migration-table__empty" slot="empty">
           <VIcon size="120">no-data-color</VIcon>
-          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
+          <div class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('gl_no_data') }}</span>
           </div>
         </div>
         <div v-else class="migration-table__empty" slot="empty">
           <VIcon size="120">search-no-data-color</VIcon>
-          <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-            <span>{{ $t('gl_no_match_result') }}</span>
+          <div class="flex justify-content-center align-items-center lh-sm fs-7 font-color-sub">
+            <span style="line-height: 20px">{{ $t('gl_no_match_result') }}</span>
             <ElLink type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</ElLink>
           </div>
         </div>
@@ -47,6 +47,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/filter-bar'
 import TableList from '@/components/TableList'
@@ -72,135 +74,193 @@ export default {
         // 连接
         {
           label: this.$t('operation_log_connection_create'),
-          value: 'connection_create',
+          value: 'connection&&create',
           desc: this.$t('operation_log_connection_create_tip')
         },
         {
           label: this.$t('operation_log_connection_update'),
-          value: 'connection_update',
+          value: 'connection&&update',
           desc: this.$t('operation_log_connection_update_tip')
         },
         {
           label: this.$t('operation_log_connection_copy'),
-          value: 'connection_copy',
+          value: 'connection&&copy',
           desc: this.$t('operation_log_connection_copy_tip')
         },
         {
           label: this.$t('operation_log_connection_delete'),
-          value: 'connection_delete',
+          value: 'connection&&delete',
           desc: this.$t('operation_log_connection_delete_tip')
         },
         // 任务
         {
           label: this.$t('operation_log_migration_create'),
-          value: 'migration_create',
+          value: 'migration&&create',
           desc: this.$t('operation_log_migration_create_tip')
         },
         {
           label: this.$t('operation_log_migration_start'),
-          value: 'migration_start',
+          value: 'migration&&start',
           desc: this.$t('operation_log_migration_start_tip')
         },
         {
           label: this.$t('operation_log_migration_update'),
-          value: 'migration_update',
+          value: 'migration&&update',
           desc: this.$t('operation_log_migration_update_tip')
         },
         {
           label: this.$t('operation_log_migration_copy'),
-          value: 'migration_copy',
+          value: 'migration&&copy',
           desc: this.$t('operation_log_migration_copy_tip')
         },
         {
           label: this.$t('operation_log_migration_reset'),
-          value: 'migration_reset',
+          value: 'migration&&reset',
           desc: this.$t('operation_log_migration_reset_tip')
         },
         {
           label: this.$t('operation_log_migration_delete'),
-          value: 'migration_delete',
+          value: 'migration&&delete',
           desc: this.$t('operation_log_migration_delete_tip')
         },
         {
           label: this.$t('operation_log_migration_stop'),
-          value: 'migration_stop',
+          value: 'migration&&stop',
           desc: this.$t('operation_log_migration_stop_tip')
         },
         {
           label: this.$t('operation_log_migration_forceStop'),
-          value: 'migration_forceStop',
+          value: 'migration&&forceStop',
           desc: this.$t('operation_log_migration_forceStop_tip')
         },
         // Agent
         {
           label: this.$t('operation_log_agent_rename'),
-          value: 'agent_rename',
+          value: 'agent&&rename',
           desc: this.$t('operation_log_agent_rename_tip')
         },
         {
           label: this.$t('operation_log_agent_update'),
-          value: 'agent_update',
+          value: 'agent&&update',
           desc: this.$t('operation_log_agent_update_tip')
         },
         // 校验
         {
           label: this.$t('operation_log_inspect_create'),
-          value: 'inspect_create',
+          value: 'inspect&&create',
           desc: this.$t('operation_log_inspect_create_tip')
         },
         {
           label: this.$t('operation_log_inspect_start'),
-          value: 'inspect_start',
+          value: 'inspect&&start',
           desc: this.$t('operation_log_inspect_start_tip')
         },
         {
           label: this.$t('operation_log_inspect_update'),
-          value: 'inspect_update',
+          value: 'inspect&&update',
           desc: this.$t('operation_log_inspect_update_tip')
         },
         {
           label: this.$t('operation_log_inspect_delete'),
-          value: 'inspect_delete',
+          value: 'inspect&&delete',
           desc: this.$t('operation_log_inspect_delete_tip')
         },
         // 二次校验
         {
           label: this.$t('operation_log_difference_inspect_start'),
-          value: 'differenceInspect_start',
+          value: 'differenceInspect&&start',
           desc: this.$t('operation_log_difference_inspect_start_tip')
         },
         // 通知
-        { label: '已读全部通知', value: 'message_readAll', desc: '设置全部通知为已读' },
-        { label: '删除全部通知', value: 'message_deleteAll', desc: '删除了全部通知' },
-        { label: '标记通知为已读', value: 'message_read', desc: '将选中的通知全部标记为已读' },
-        { label: '删除通知', value: 'message_delete', desc: '将选中的通知全部删除' },
-        { label: '修改通知设置', value: 'userNotification_update', desc: '修改了系统通知设置' }
+        {
+          label: i18n.t('operation_log_List_yiDuQuanBuTong'),
+          value: 'message&&readAll',
+          desc: i18n.t('operation_log_List_sheZhiQuanBuTong')
+        },
+        {
+          label: i18n.t('operation_log_List_shanChuQuanBuTong'),
+          value: 'message&&deleteAll',
+          desc: i18n.t('operation_log_List_shanChuLeQuanBu')
+        },
+        {
+          label: i18n.t('operation_log_List_biaoJiTongZhiWei'),
+          value: 'message&&read',
+          desc: i18n.t('operation_log_List_jiangXuanZhongDeTong2')
+        },
+        {
+          label: i18n.t('operation_log_List_shanChuTongZhi'),
+          value: 'message&&delete',
+          desc: i18n.t('operation_log_List_jiangXuanZhongDeTong')
+        },
+        {
+          label: i18n.t('operation_log_List_xiuGaiTongZhiShe'),
+          value: 'userNotification&&update',
+          desc: i18n.t('operation_log_List_xiuGaiLeXiTong')
+        },
+        // 用户中心
+        // { label: '修改昵称', value: 'user&&update_nickname', desc: '修改了昵称' },
+        {
+          label: i18n.t('operation_log_List_xiuGaiYongHuXin'),
+          value: 'user&&update',
+          desc: i18n.t('operation_log_List_xiuGaiLeYongHu')
+        },
+        {
+          label: i18n.t('operation_log_List_bangDingShouJiHao'),
+          value: 'user&&bind_phone',
+          desc: i18n.t('operation_log_List_bangDingLeShouJi')
+        },
+        {
+          label: i18n.t('operation_log_List_xiuGaiShouJiHao'),
+          value: 'user&&update_phone',
+          desc: i18n.t('operation_log_List_xiuGaiLeShouJi')
+        },
+        {
+          label: i18n.t('operation_log_List_bangDingYouXiang'),
+          value: 'user&&bind_email',
+          desc: i18n.t('operation_log_List_bangDingLeYouXiang')
+        },
+        {
+          label: i18n.t('operation_log_List_xiuGaiYouXiang'),
+          value: 'user&&update_email',
+          desc: i18n.t('operation_log_List_xiuGaiLeYouXiang')
+        },
+        {
+          label: i18n.t('operation_log_List_xiuGaiMiMa'),
+          value: 'user&&reset_password',
+          desc: i18n.t('operation_log_List_xiuGaiLeMiMa')
+        },
+        // { label: '修改头像', value: 'user&&update_avatar', desc: '修改了头像' },
+        {
+          label: i18n.t('operation_log_List_xiuGaiQiYeXin'),
+          value: 'customer&&update',
+          desc: i18n.t('operation_log_List_xiuGaiLeQiYe')
+        }
       ],
       columns: [
         {
-          label: '用户名',
+          label: i18n.t('operation_log_List_yongHuMing'),
           prop: 'username',
           minWidth: 160
         },
         {
-          label: '操作时间',
+          label: i18n.t('operation_log_List_caoZuoShiJian'),
           prop: 'createTime',
           dataType: 'time',
           width: 180
         },
         {
-          label: '操作对象',
+          label: i18n.t('operation_log_List_caoZuoDuiXiang'),
           prop: 'parameter1',
           width: 350
         },
         {
-          label: '操作类型',
+          label: i18n.t('operation_log_List_caoZuoLeiXing'),
           prop: 'operationType',
           slotName: 'operationType',
           width: 120
         },
         {
-          label: '操作描述',
+          label: i18n.t('operation_log_List_caoZuoMiaoShu'),
           prop: 'desc',
           slotName: 'desc',
           minWidth: 300
@@ -233,7 +293,7 @@ export default {
   },
   methods: {
     getModularAndOperation(operationType) {
-      let [modular, operation] = operationType.split('_')
+      let [modular, operation] = operationType.split('&&')
       return { modular, operation }
     },
     search(debounce) {
@@ -255,23 +315,23 @@ export default {
     getSearchItems() {
       this.filterItems = [
         {
-          label: '操作类型',
+          label: i18n.t('operation_log_List_caoZuoLeiXing'),
           key: 'operationType',
           type: 'select-inner',
           items: this.operationTypeOptions
         },
         {
-          label: '操作时间',
+          label: i18n.t('operation_log_List_caoZuoShiJian'),
           key: 'start,end',
           type: 'datetimerange'
         },
         {
-          placeholder: '操作对象',
+          placeholder: i18n.t('operation_log_List_caoZuoDuiXiang'),
           key: 'parameter1',
           type: 'input'
         },
         {
-          placeholder: '用户名称',
+          placeholder: i18n.t('operation_log_List_yongHuMingCheng'),
           key: 'username',
           type: 'input'
         }
@@ -323,7 +383,12 @@ export default {
         .then(({ total, items }) => {
           return {
             total: total,
-            data: items
+            data: items.map(t => {
+              if (t.modular === 'user') {
+                t.parameter1 = this.$t('operation_log_modular_name_user_center')
+              }
+              return t
+            })
           }
         })
     },
@@ -332,11 +397,11 @@ export default {
       this.table.fetch(1)
     },
     getOperationTypeLabel(row) {
-      return this.operationTypeOptions.find(item => item.value === `${row.modular}_${row.operation}`)?.label
+      return this.operationTypeOptions.find(item => item.value === `${row.modular}&&${row.operation}`)?.label
     },
     descFnc(row) {
       let { modular, operation, rename } = row
-      let findOne = this.operationTypeOptions.find(item => item.value === `${modular}_${operation}`)
+      let findOne = this.operationTypeOptions.find(item => item.value === `${modular}&&${operation}`)
       let desc = findOne?.desc ?? ''
       if (modular === 'connection' && operation === 'update' && rename) {
         desc = this.$t('operation_log_modify_connection_name')

@@ -5,67 +5,67 @@
         <ElStep v-for="(item, index) in stepData" :key="index" :title="item.label" :description="item.time"></ElStep>
       </ElSteps>
     </div>
-    <!-- 任务里程碑 -->
+    <!-- {{$t('task_TaskProgress_renWuLiChengBei')}} -->
     <ElCollapse v-model="activeNames" class="task-progress-collapse">
-      <ElCollapseItem title="任务里程碑" name="1">
+      <ElCollapseItem :title="$t('task_TaskProgress_renWuLiChengBei')" name="1">
         <ElTable :data="milestoneList" class="mt-5">
-          <ElTableColumn label="里程碑" prop="label"></ElTableColumn>
-          <ElTableColumn label="状态" prop="status" width="180">
+          <ElTableColumn :label="$t('task_TaskProgress_liChengBei')" prop="label"></ElTableColumn>
+          <ElTableColumn :label="$t('instance_Instance_zhuangTai')" prop="status" width="180">
             <template v-slot="scope">
               <StatusTag type="text" target="task" :status="getMilestoneStatus(scope.row.status)" only-img></StatusTag>
             </template>
           </ElTableColumn>
-          <ElTableColumn label="时间" prop="fromNow" width="180"></ElTableColumn>
+          <ElTableColumn :label="$t('task_TaskProgress_shiJian')" prop="fromNow" width="180"></ElTableColumn>
         </ElTable>
       </ElCollapseItem>
     </ElCollapse>
-    <!-- 结构迁移概览 -->
+    <!-- {{$t('task_TaskProgress_jieGouQianYiGai')}} -->
     <div class="task-progress-item pt-5">
-      <div class="title pb-4">结构迁移概览</div>
+      <div class="title pb-4">{{ $t('task_TaskProgress_jieGouQianYiGai') }}</div>
       <div class="pl-4 pb-5">
         <div class="pb-1" v-if="task.mappingTemplate === 'custom'">
-          <span>计划迁移表数量 100</span>
-          <span class="pl-6">已完成迁移表量 100</span>
-          <span class="float-end">预计全量完成还需时间：24小时23分1秒</span>
+          <span>{{ $t('task_TaskProgress_jiHuaQianYiBiao') }}</span>
+          <span class="pl-6">{{ $t('task_TaskProgress_yiWanChengQianYi') }}</span>
+          <span class="float-end">{{ $t('task_TaskProgress_yuJiQuanLiangWan') }}</span>
         </div>
         <div v-else>
-          <span>已迁移100张表</span>
-          <span class="pl-6">共100张表</span>
+          <span>{{ $t('task_TaskProgress_yiQianYiZhangBiao') }}</span>
+          <span class="pl-6">{{ $t('task_TaskProgress_gongZhangBiao') }}</span>
         </div>
         <ElProgress class="task-progress-line" :percentage="50"></ElProgress>
       </div>
     </div>
     <div class="task-progress-item pt-5">
-      <div class="title pb-4">迁移详情</div>
+      <div class="title pb-4">{{ $t('task_TaskProgress_qianYiXiangQing') }}</div>
       <div class="pl-4">
         <div class="task-progress-search-bar">
           <ul class="search-bar">
             <li class="item">
-              <el-input
+              <ElInput
                 clearable
                 class="input-with-select"
                 size="mini"
                 v-model="searchParams.keyword"
-                placeholder="请输入表名称"
+                :placeholder="$t('task_TaskProgress_qingShuRuBiaoMing')"
               >
-              </el-input>
+              </ElInput>
             </li>
             <li class="ml-6">
-              状态：
-              <!-- @input="table.fetch(1)" -->
-              <el-select clearable size="mini" v-model="searchParams.metaType">
-                <el-option v-for="opt in typeList" :key="opt.value" :label="opt.label" :value="opt.value"></el-option>
-              </el-select>
+              {{ $t('task_TaskProgress_zhuangTai')
+              }}<!-- @input="table.fetch(1)" -->
+              <ElSelect clearable size="mini" v-model="searchParams.metaType">
+                <ElOption v-for="opt in typeList" :key="opt.value" :label="opt.label" :value="opt.value"></ElOption>
+              </ElSelect>
             </li>
           </ul>
         </div>
         <div class="task-progress-table pt-6">
           <ElTable class="progress-info-table" :data="progressInfoData">
-            <ElTableColumn label="数据库" prop="name"></ElTableColumn>
-            <ElTableColumn label="数据表" prop="name"></ElTableColumn>
-            <ElTableColumn label="数据量（行）" prop="name"></ElTableColumn>
-            <ElTableColumn label="进度" prop="name"></ElTableColumn>
-            <ElTableColumn label="状态" prop="name" width="100"></ElTableColumn>
+            <ElTableColumn :label="$t('task_TaskProgress_shuJuKu')" prop="name"></ElTableColumn>
+            <ElTableColumn :label="$t('task_TaskProgress_shuJuBiao')" prop="name"></ElTableColumn>
+            <ElTableColumn :label="$t('task_TaskProgress_shuJuLiangHang')" prop="name"></ElTableColumn>
+            <ElTableColumn :label="$t('task_TaskProgress_jinDu')" prop="name"></ElTableColumn>
+            <ElTableColumn :label="$t('instance_Instance_zhuangTai')" prop="name" width="100"></ElTableColumn>
           </ElTable>
           <ElPagination
             background
@@ -85,6 +85,8 @@
   </div>
 </template>
 <script>
+import i18n from '@/i18n'
+
 import StatusTag from '@/components/StatusTag'
 export default {
   name: 'TaskPrgress',
@@ -100,8 +102,8 @@ export default {
       active: 0,
       activeNames: ['1'],
       stepData: [
-        { label: '任务初始化', time: '2021-12-12 18:00:00' },
-        { label: '结构迁移', time: '2021-12-12 18:00:00' }
+        { label: i18n.t('task_TaskProgress_renWuChuShiHua'), time: '2021-12-12 18:00:00' },
+        { label: i18n.t('task_TaskProgress_jieGouQianYi'), time: '2021-12-12 18:00:00' }
       ],
       progressInfoData: [], // 详情数据
       searchParams: {
@@ -114,9 +116,9 @@ export default {
         total: 0
       },
       typeList: [
-        { label: this.$t('taskProgress.all'), value: 'all' },
-        { label: this.$t('taskProgress.running'), value: 'running' },
-        { label: this.$t('taskProgress.waiting'), value: 'waiting' }
+        { label: this.$t('taskProgress_all'), value: 'all' },
+        { label: this.$t('taskProgress_running'), value: 'running' },
+        { label: this.$t('taskProgress_waiting'), value: 'waiting' }
       ]
     }
   },
@@ -127,15 +129,15 @@ export default {
       switch (this.task.setting.sync_type) {
         case 'initial_sync+cdc':
           list = [
-            { label: '全量同步', time: '2021-12-12 18:00:00' },
-            { label: '增量同步', time: '2021-12-12 18:00:00' }
+            { label: i18n.t('task_TaskProgress_quanLiangTongBu'), time: '2021-12-12 18:00:00' },
+            { label: i18n.t('task_TaskProgress_zengLiangTongBu'), time: '2021-12-12 18:00:00' }
           ]
           break
         case 'initial_sync':
-          list = [{ label: '全量同步', time: '2021-12-12 18:00:00' }]
+          list = [{ label: i18n.t('task_TaskProgress_quanLiangTongBu'), time: '2021-12-12 18:00:00' }]
           break
         default:
-          list = [{ label: '增量同步', time: '2021-12-12 18:00:00' }]
+          list = [{ label: i18n.t('task_TaskProgress_zengLiangTongBu'), time: '2021-12-12 18:00:00' }]
       }
       this.stepData.push(list)
     }

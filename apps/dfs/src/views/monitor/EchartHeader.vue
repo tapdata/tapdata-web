@@ -10,7 +10,7 @@
     <div v-if="data.unit" :class="['unit', 'mt-1', data.classfr]">
       <span>{{ data.unit }}</span>
     </div>
-    <el-radio-group
+    <ElRadioGroup
       v-if="data.unit"
       v-model="time"
       style="margin-left: 10px"
@@ -18,11 +18,11 @@
       :class="data.class"
       @change="changeFnc"
     >
-      <el-radio-button v-if="!this.data.hideSecond" label="second">{{ $t('dataFlow.second') }}</el-radio-button>
-      <el-radio-button label="minute">{{ $t('dataFlow.min') }}</el-radio-button>
-      <el-radio-button label="hour">{{ $t('dataFlow.hour') }}</el-radio-button>
-      <el-radio-button label="day">{{ $t('dataFlow.day') }}</el-radio-button>
-    </el-radio-group>
+      <ElRadioButton v-if="!this.data.hideSecond" label="second">{{ $t('dataFlow_second') }}</ElRadioButton>
+      <ElRadioButton label="minute">{{ $t('dataFlow_min') }}</ElRadioButton>
+      <ElRadioButton label="hour">{{ $t('dataFlow_hour') }}</ElRadioButton>
+      <ElRadioButton label="day">{{ $t('dataFlow_day') }}</ElRadioButton>
+    </ElRadioGroup>
   </div>
 </template>
 <script>

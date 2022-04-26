@@ -1,5 +1,5 @@
 <template>
-  <el-drawer
+  <ElDrawer
     :modal="false"
     :visible.sync="drawer"
     :direction="direction"
@@ -17,7 +17,7 @@
         </div>
         <div class="ml-4">
           <div class="fs-6 mb-2 ellipsis"><slot name="title"></slot></div>
-          <div><status-tag type="text" :status="agent.status"></status-tag></div>
+          <div><StatusTag type="text" :status="agent.status"></StatusTag></div>
         </div>
       </div>
       <div class="button-line container-item border-item pt-4 pb-5">
@@ -29,13 +29,13 @@
         </div>
         <div class="flex-fill ml-4">
           <div v-for="(temp, k) in item.items" :key="index + '' + k" class="box-line">
-            <div class="box-line__label">{{ temp.label + '：' }}</div>
+            <div class="box-line__label">{{ temp.label + $t('field_mapping_field_mapping_dialog_') }}</div>
             <div class="box-line__value">{{ agent[temp.key] || '-' }}</div>
           </div>
         </div>
       </div>
     </div>
-  </el-drawer>
+  </ElDrawer>
 </template>
 
 <script>

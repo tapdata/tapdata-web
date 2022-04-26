@@ -1,17 +1,17 @@
 <template>
-  <el-container class="create-task-wrap bg-white" v-if="steps[activeStep]">
-    <el-container style="overflow: hidden; flex: 1" class="create-task-container flex-column">
+  <ElContainer class="create-task-wrap bg-white" v-if="steps[activeStep]">
+    <ElContainer style="overflow: hidden; flex: 1" class="create-task-container flex-column">
       <div class="steps-header">
-        <el-steps class="primary pb-6" :active="taskStep" process-status="process" finish-status="success" align-center>
-          <el-step :title="$t('task_form_select_connection')"></el-step>
-          <el-step :title="$t('task_form_set_task_properties')"></el-step>
-          <el-step :title="$t('task_form_select_table')"></el-step>
-          <el-step :title="$t('task_form_table_field')"></el-step>
-        </el-steps>
+        <ElSteps class="primary pb-6" :active="taskStep" process-status="process" finish-status="success" align-center>
+          <ElStep :title="$t('task_form_select_connection')"></ElStep>
+          <ElStep :title="$t('task_form_set_task_properties')"></ElStep>
+          <ElStep :title="$t('task_form_select_table')"></ElStep>
+          <ElStep :title="$t('task_form_table_field')"></ElStep>
+        </ElSteps>
       </div>
-      <el-container :class="['task-container', 'task-container-' + steps[activeStep].index]">
+      <ElContainer :class="['task-container', 'task-container-' + steps[activeStep].index]">
         <div class="task-container-box flex-fill flex flex-column w-100">
-          <el-main :class="['create-task-main', 'task-main-' + steps[activeStep].index]">
+          <ElMain :class="['create-task-main', 'task-main-' + steps[activeStep].index]">
             <!--步骤2-->
             <div class="body" v-if="steps[activeStep].index === 2">
               <div class="mb-8">
@@ -23,7 +23,7 @@
                   }}</span>
                 </span>
               </div>
-              <form-builder
+              <FormBuilder
                 ref="dataSource"
                 v-model="dataSourceModel"
                 :config="config"
@@ -31,7 +31,7 @@
                 class="form-builder grey"
                 @value-change="formChange"
               >
-              </form-builder>
+              </FormBuilder>
             </div>
             <!-- 步骤3 -->
             <div class="body step-3" v-if="steps[activeStep].index === 3">
@@ -41,7 +41,7 @@
                   {{ $t('task_form_task_setting_tip') }}
                 </span>
               </div>
-              <form-builder
+              <FormBuilder
                 ref="setting"
                 v-model="settingModel"
                 :config="config"
@@ -51,32 +51,141 @@
                 @value-change="formChangeSetting"
               >
                 <template slot="syncPoints">
-                  <el-row>
-                    {{ $t('connection_form_data_source') }}：{{ dataSourceModel.source_connectionName }}
-                  </el-row>
-                  <el-row>
-                    <el-col :span="8" style="margin-right: 10px">
-                      <el-select v-model="settingModel.syncPoints[0].type" :placeholder="$t('gl_placeholder_select')">
-                        <el-option v-for="op in options" :key="op.value" :label="op.label" :value="op.value">
-                        </el-option>
-                      </el-select>
-                    </el-col>
-                    <el-col :span="12" v-if="settingModel.syncPoints[0].type !== 'current'">
-                      <el-date-picker
+                  <ElRow>
+                    {{ $t('connection_form_data_source') }}{{ $t('field_mapping_field_mapping_dialog_')
+                    }}{{ dataSourceModel.source_connectionName }}
+                  </ElRow>
+                  <ElRow>
+                    <ElCol :span="8" style="margin-right: 10px">
+                      <ElSelect v-model="settingModel.syncPoints[0].type" :placeholder="$t('gl_placeholder_select')">
+                        <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value"> </ElOption>
+                      </ElSelect>
+                    </ElCol>
+                    <ElCol :span="12" v-if="settingModel.syncPoints[0].type !== 'current'">
+                      <ElDatePicker
                         value-format="yyyy-MM-dd HH:mm:ss"
                         format="yyyy-MM-dd HH:mm:ss"
                         v-model="settingModel.syncPoints[0].date"
                         type="datetime"
                         :disabled="settingModel.syncPoints[0].type === 'current'"
-                      ></el-date-picker>
-                    </el-col>
-                  </el-row>
-                  <el-row>
+                      ></ElDatePicker>
+                    </ElCol>
+                  </ElRow>
+                  <ElRow>
                     <i class="el-icon-info color-primary mr-2"></i>
                     <span class="font-color-sub fs-8">{{ $t('task_form_setting_sync_points_tip') }}</span>
-                  </el-row>
+                  </ElRow>
                 </template>
-              </form-builder>
+                <template slot="scheduleTime">
+                  <ElRow class="flex align-items-center" style="height: 32px">
+                    <ElSwitch v-model="settingModel.isSchedule"></ElSwitch>
+                    <ElForm
+                      :model="settingModel"
+                      ref="scheduleTimeForm"
+                      inline
+                      class="ml-4 pt-7"
+                      @submit.native.prevent
+                    >
+                      <ElFormItem
+                        v-if="settingModel.isSchedule"
+                        required
+                        class="form-item"
+                        prop="scheduleTime"
+                        label=""
+                        :rules="[
+                          {
+                            required: true,
+                            message: $t('task_setting_schedule_time') + $t('gl_form_can_not_be_empty'),
+                            trigger: ['blur', 'change']
+                          }
+                        ]"
+                      >
+                        <ElDatePicker
+                          value-format="yyyy-MM-dd HH:mm:ss"
+                          format="yyyy-MM-dd HH:mm:ss"
+                          v-model="settingModel.scheduleTime"
+                          type="datetime"
+                          :picker-options="getCurrentOptions()"
+                          popper-class="schedule-time-date-picker"
+                        ></ElDatePicker>
+                      </ElFormItem>
+                    </ElForm>
+                    <!--                    <ElDatePicker-->
+                    <!--                      v-if="settingModel.isSchedule"-->
+                    <!--                      value-format="yyyy-MM-dd HH:mm:ss"-->
+                    <!--                      format="yyyy-MM-dd HH:mm:ss"-->
+                    <!--                      v-model="settingModel.scheduleTime"-->
+                    <!--                      type="datetime"-->
+                    <!--                      class="ml-4"-->
+                    <!--                      :picker-options="getCurrentOptions()"-->
+                    <!--                    ></ElDatePicker>-->
+                  </ElRow>
+                </template>
+                <template slot="cronExpression">
+                  <ElRow class="flex align-items-center" style="height: 32px">
+                    <div class="flex align-items-center">
+                      <ElSwitch v-model="settingModel.isSchedule"></ElSwitch>
+                      <ElForm
+                        :model="settingModel"
+                        ref="cronExpressionForm"
+                        inline
+                        class="ml-4 pt-7"
+                        @submit.native.prevent
+                      >
+                        <ElFormItem
+                          v-if="settingModel.isSchedule"
+                          required
+                          class="form-item"
+                          prop="cronExpression"
+                          label=""
+                          :rules="[
+                            {
+                              required: true,
+                              message: $t('task_setting_cron_expression') + $t('gl_form_can_not_be_empty'),
+                              trigger: ['blur', 'change']
+                            },
+                            {
+                              required: true,
+                              trigger: 'blur',
+                              validator: cronExpressionValidator
+                            }
+                          ]"
+                        >
+                          <div class="flex">
+                            <ElInput
+                              v-model="settingModel.cronExpression"
+                              :placeholder="$t('dataFlow_cronExpression')"
+                              size="mini"
+                              class="jobSchedule"
+                            ></ElInput>
+                            <ElPopover
+                              popper-class="jobSeceduleDialog"
+                              placement="top-start"
+                              width="500"
+                              trigger="hover"
+                            >
+                              <div class="text box">
+                                <p>{{ $t('dialog_jobSchedule_explanation') }}</p>
+                                <p>{{ $t('dialog_jobSchedule_grammar') }}</p>
+                                <ul class="flex">
+                                  <li v-for="item in timeTextArr" :key="item" class="mr-3 text-center">
+                                    <p>{{ $t('dialog.jobSchedule.' + item) }}</p>
+                                    <span>*</span>
+                                  </li>
+                                </ul>
+                                <p>{{ $t('dialog_jobSchedule_example') }}</p>
+                                <p>0 */1 * * * ? // {{ $t('dialog_jobSchedule_runMinute') }}</p>
+                                <p>0 0 2 * * ? // {{ $t('dialog_jobSchedule_runDay') }}</p>
+                              </div>
+                              <VIcon slot="reference" class="color-disable ml-2" size="14">info</VIcon>
+                            </ElPopover>
+                          </div>
+                        </ElFormItem>
+                      </ElForm>
+                    </div>
+                  </ElRow>
+                </template>
+              </FormBuilder>
             </div>
             <!-- 步骤4 -->
             <div class="body step-4" v-if="steps[activeStep].index === 4">
@@ -90,8 +199,10 @@
                 <Transfer
                   ref="transfer"
                   :transferData="transferData"
+                  :dataSourceModel="dataSourceModel"
                   :mqTransferFlag="mqTransferFlag"
                   :isTwoWay="settingModel.bidirectional"
+                  :reloadLoading.sync="reloadLoading"
                   @select-table="selectTransfer"
                 ></Transfer>
               </div>
@@ -103,35 +214,37 @@
                 :transform="transferData"
                 :isFirst="isFirst"
                 :getDataFlow="getDataFlow"
+                :dataSourceModel="dataSourceModel"
+                :customTypeMappings.sync="customTypeMappings"
                 @update-first="returnModel"
                 @update-transform="updateTranForm"
                 @row-click="selectRowFieldProcess"
               ></FieldMapping>
             </div>
-          </el-main>
+          </ElMain>
           <div class="create-task-footer py-6 mx-6" :class="['btns-step-' + steps[activeStep].index]">
-            <ElButton class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()">
+            <VButton class="btn-step" v-if="steps[activeStep].showExitBtn" @click="goBackList()">
               {{ $t('button_cancel') }}
-            </ElButton>
-            <ElButton
+            </VButton>
+            <VButton
               class="btn-step"
               :loading="loading"
               v-else-if="steps[activeStep].showBackBtn || (steps[activeStep].index === 3 && !id)"
               @click="back()"
             >
-              {{ $t('guide.btn_back') }}
-            </ElButton>
-            <ElButton
+              {{ $t('guide_btn_back') }}
+            </VButton>
+            <VButton
               v-if="steps[activeStep].showNextBtn"
               type="primary"
               class="btn-step"
               :loading="loading"
-              :disabled="isTransfer && steps[activeStep].type === 'mapping'"
+              :disabled="(isTransfer || reloadLoading) && steps[activeStep].type === 'mapping'"
               @mousedown.native.prevent="next()"
             >
-              <span>{{ $t('guide.btn_next') }}</span>
-            </ElButton>
-            <ElButton
+              <span>{{ $t('guide_btn_next') }}</span>
+            </VButton>
+            <VButton
               v-if="steps[activeStep].showSaveBtn"
               type="primary"
               class="btn-step"
@@ -140,12 +253,12 @@
               @click="save()"
             >
               {{ $t('button_finish') }}
-            </ElButton>
+            </VButton>
           </div>
         </div>
-      </el-container>
-    </el-container>
-  </el-container>
+      </ElContainer>
+    </ElContainer>
+  </ElContainer>
 </template>
 <style lang="scss">
 .create-task-wrap {
@@ -176,6 +289,13 @@
       .name {
         margin-left: 10px;
       }
+    }
+  }
+}
+.schedule-time-date-picker {
+  .el-picker-panel__footer {
+    .el-picker-panel__link-btn:first-child {
+      display: none;
     }
   }
 }
@@ -495,11 +615,13 @@
 import formConfig from '../task/config'
 import Transfer from './Transfer'
 import FieldMapping from '@/components/field-mapping/main'
+import VIcon from '@/components/VIcon'
 import { SETTING_MODEL, INSTANCE_MODEL, DFSDATASOURCE_MODEL } from '../task/const'
+import { uniqueArr, getDatabaseTypes } from '@/util'
 
 let defaultConfig = []
 export default {
-  components: { Transfer, FieldMapping },
+  components: { Transfer, FieldMapping, VIcon },
   data() {
     return {
       id: '',
@@ -528,6 +650,9 @@ export default {
       transferData: {
         table_prefix: '',
         table_suffix: '',
+        tableOperations: [],
+        vikaMappings: {},
+        qingFlowMappings: {},
         selectSourceArr: [],
         topicData: [],
         queueData: []
@@ -541,20 +666,19 @@ export default {
       dataSourceZone: '',
       dataSourceMock: [],
       dialogDatabaseTypeVisible: false,
-      allowDataType: this.$settings.ALLOW_CONNECTION_TYPE,
       supportTwoWay: false,
       systemTimeZone: '',
       options: [
         {
-          label: this.$t('dataFlow.SyncInfo.localTZType'),
+          label: this.$t('dataFlow_SyncInfo_localTZType'),
           value: 'localTZ'
         },
         {
-          label: this.$t('dataFlow.SyncInfo.connTZType'),
+          label: this.$t('dataFlow_SyncInfo_connTZType'),
           value: 'connTZ'
         },
         {
-          label: this.$t('dataFlow.SyncInfo.currentType'),
+          label: this.$t('dataFlow_SyncInfo_currentType'),
           value: 'current'
         }
       ],
@@ -568,7 +692,21 @@ export default {
       taskStep: 0,
       tableNameTransform: '',
       fieldsNameTransform: '',
-      updateTransfer: false
+      updateTransfer: false,
+      timeTextArr: ['second', 'minute', 'hour', 'day', 'month', 'week'],
+      cronExpressionValidator: (rule, value, callback) => {
+        if (!value || !value.trim()) {
+          callback(new Error(this.$t('task_form_task_cannot_empty')))
+        } else {
+          this.$axios.get('tm/api/DataFlows/cron/isValidExpression?cron=' + value).then(({ isValid }) => {
+            if (!isValid) {
+              callback(new Error(this.$t('task_setting_cron_expression_valid_false')))
+            } else callback()
+          })
+        }
+      },
+      customTypeMappings: [],
+      reloadLoading: false // 重新加载schema的loading
     }
   },
 
@@ -611,7 +749,7 @@ export default {
                   .get('tm/api/DataFlows?filter=' + encodeURIComponent(JSON.stringify(filter)))
                   .then(({ items }) => {
                     if (items?.length !== 0) {
-                      callback(new Error('任务名称已存在'))
+                      callback(new Error(this.$t('task_setting_task_name_already_exists')))
                     } else callback()
                   })
               }
@@ -666,6 +804,9 @@ export default {
         this.transferData = {
           table_prefix: stages[1].table_prefix,
           table_suffix: stages[1].table_suffix,
+          tableOperations: stages[1].tableOperations,
+          vikaMappings: stages[1].vikaMappings,
+          qingFlowMappings: stages[1].qingFlowMappings,
           tableNameTransform: stages[1].tableNameTransform,
           fieldsNameTransform: stages[1].fieldsNameTransform,
           field_process: stages[0].field_process,
@@ -673,6 +814,7 @@ export default {
           topicData: syncObjects[0]?.type === 'topic' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || [],
           queueData: syncObjects[0]?.type === 'queue' ? syncObjects[0].objectNames : syncObjects[1]?.objectNames || []
         }
+        this.customTypeMappings = data.customTypeMappings || []
         //编辑时不被覆盖
         this.tableNameTransform = stages[1].tableNameTransform
         this.fieldsNameTransform = stages[1].fieldsNameTransform
@@ -706,7 +848,19 @@ export default {
         let target = items.find(it => it.field === 'syncPoints')
         if (
           value === 'cdc' &&
-          ['mysql', 'oracle', 'sqlserver', 'mongodb'].includes(this.dataSourceModel['source_databaseType'])
+          [
+            'mysql',
+            'oracle',
+            'sqlserver',
+            'mongodb',
+            'aliyun_mysql',
+            'tencent_mysql',
+            'aliyun_mongodb',
+            'tencent_mongodb',
+            'aliyun_sqlserver',
+            'tencent_sqlserver',
+            'polardb_mysql'
+          ].includes(this.dataSourceModel['source_databaseType'])
         ) {
           target.show = true
         } else {
@@ -723,6 +877,15 @@ export default {
       if (field === 'target_filter_databaseType') {
         this.dataSourceModel['target_databaseType'] = data.value
         this.getConnection(this.getWhere('target'), 'target_connectionId', true)
+      }
+      if (field === 'target_connectionId') {
+        if (data.value) {
+          // vika clear tableOperations、field_process
+          this.transferData.tableOperations = []
+          this.transferData.field_process = []
+          this.transferData.topicData = []
+          this.transferData.queueData = []
+        }
       }
     },
     getSteps() {
@@ -827,10 +990,26 @@ export default {
       if (type === 'setting') {
         this.$refs.setting.validate(valid => {
           if (valid) {
-            this.activeStep += 1
-            this.getFormConfig()
-            if (this.showSysncTableTip) {
-              this.$message.warning(this.$t('task_form_table_name_cannot_consistent'))
+            // field: 'sync_type',
+            let { sync_type } = this.settingModel
+            if (sync_type === 'initial_sync') {
+              // 开启了调度时间
+              this.$refs.cronExpressionForm.validate(v => {
+                if (v) {
+                  this.settingNextFnc()
+                } else {
+                  this.$message.error(this.$t('task_form_validation_failed'))
+                }
+              })
+            } else {
+              // 开启了计划启动时间
+              this.$refs.scheduleTimeForm.validate(v => {
+                if (v) {
+                  this.settingNextFnc()
+                } else {
+                  this.$message.error(this.$t('task_form_validation_failed'))
+                }
+              })
             }
           } else {
             this.$message.error(this.$t('task_form_validation_failed'))
@@ -844,10 +1023,20 @@ export default {
           this.$message.error(this.$t('task_form_no_bable_tip'))
           return
         }
+        if (this.reloadLoading) {
+          return
+        }
         this.activeStep += 1
         this.getFormConfig()
       }
       this.taskStep++
+    },
+    settingNextFnc() {
+      this.activeStep += 1
+      this.getFormConfig()
+      if (this.showSysncTableTip) {
+        this.$message.warning(this.$t('task_form_table_name_cannot_consistent'))
+      }
     },
     selectTransfer() {
       this.isTransfer = !this.checkTransfer()
@@ -884,6 +1073,9 @@ export default {
         this.updateTransfer = true
         this.transferData.table_prefix = returnData.changNameData?.table_prefix
         this.transferData.table_suffix = returnData.changNameData?.table_suffix
+        this.transferData.tableOperations = returnData.changNameData?.tableOperations
+        this.transferData.vikaMappings = returnData.changNameData?.vikaMappings
+        this.transferData.qingFlowMappings = returnData.changNameData?.qingFlowMappings
         this.transferData.tableNameTransform = returnData.changNameData?.tableNameTransform
         this.transferData.fieldsNameTransform = returnData.changNameData?.fieldsNameTransform
         let deleteLen = returnData.target.filter(v => !v.is_deleted)
@@ -948,14 +1140,18 @@ export default {
         case 'setting': {
           this.getSupportTwoWay() // 进入设置页面再判断
           if (
-            this.dataSourceModel['source_databaseType'] !== 'mysql' ||
-            this.dataSourceModel['target_databaseType'] !== 'mysql'
+            !['mysql', 'aliyun_mysql', 'tencent_mysql', 'polardb_mysql'].includes(
+              this.dataSourceModel['source_databaseType']
+            ) ||
+            !['mysql', 'aliyun_mysql', 'tencent_mysql', 'polardb_mysql'].includes(
+              this.dataSourceModel['target_databaseType']
+            )
           ) {
             this.changeConfig([], 'setting_isOpenAutoDDL')
             this.changeConfig([], 'setting_twoWay')
           }
-          //kafka 作为目标 不支持删除模式
-          if (this.dataSourceModel['target_databaseType'] === 'kafka') {
+          //kafka, vika, qingflow 作为目标 不支持删除模式
+          if (['kafka', 'vika', 'qingflow'].includes(this.dataSourceModel['target_databaseType'])) {
             this.changeConfig([], 'setting_distinctWriteType')
           }
           //greenplum、ADB mysql、kundb做源时不能增量
@@ -976,11 +1172,27 @@ export default {
           //   this.settingModel.needToCreateIndex = false
           // }
 
-          //mysql、pg、oracle、sql server、mongodb、mariadb 是作为目标 支持自动创建索引
+          // mysql、pg、oracle、sql server、mongodb、mariadb 是作为目标 支持自动创建索引
           if (
-            ['mysql', 'postgres', 'oracle', 'sqlserver', 'mongodb', 'mariadb'].includes(
-              this.dataSourceModel['target_databaseType']
-            )
+            [
+              'mysql',
+              'postgres',
+              'oracle',
+              'sqlserver',
+              'mongodb',
+              'mariadb',
+              'aliyun_mysql',
+              'aliyun_mariadb',
+              'aliyun_mongodb',
+              'aliyun_sqlserver',
+              'aliyun_postgres',
+              'tencent_mariadb',
+              'tencent_mongodb',
+              'tencent_mysql',
+              'tencent_postgres',
+              'tencent_sqlserver',
+              'polardb_mysql'
+            ].includes(this.dataSourceModel['target_databaseType'])
           ) {
             this.changeConfig([], 'setting_needToCreateIndex')
             //设置默认值
@@ -990,14 +1202,29 @@ export default {
           let target = this.config.items.find(it => it.field === 'syncPoints')
           if (
             this.settingModel.sync_type === 'cdc' &&
-            ['mysql', 'oracle', 'sqlserver', 'mongodb'].includes(this.dataSourceModel['source_databaseType'])
+            [
+              'mysql',
+              'oracle',
+              'sqlserver',
+              'mongodb',
+              'aliyun_mysql',
+              'tencent_mysql',
+              'aliyun_mongodb',
+              'tencent_mongodb',
+              'aliyun_sqlserver',
+              'tencent_sqlserver',
+              'polardb_mysql'
+            ].includes(this.dataSourceModel['source_databaseType'])
           ) {
             target.show = true
           } else {
             target.show = false
           }
-          // kafka、mq作为源不支持无主键同步
-          if (['kafka', 'mq'].includes(this.dataSourceModel['source_databaseType'])) {
+          // kafka、mq作为源不支持无主键同步， doris作为目标不支持无主键同步
+          if (
+            ['kafka', 'mq'].includes(this.dataSourceModel['source_databaseType']) ||
+            ['doris'].includes(this.dataSourceModel['target_databaseType'])
+          ) {
             this.changeConfig([], 'setting_noPrimaryKey')
             this.settingModel.noPrimaryKey = false
           }
@@ -1034,10 +1261,10 @@ export default {
     //获取当前是否可以展示双向开关
     getSupportTwoWay() {
       this.supportTwoWay =
-        this.twoWayAgentRunningCount > 0 &&
-        this.dataSourceModel['source_databaseType'] === 'mongodb' &&
-        this.dataSourceModel['target_databaseType'] === 'mongodb' &&
-        this.settingModel['distinctWriteType'] !== 'compel' // 进入设置页面再判断
+        (this.twoWayAgentRunningCount > 0 &&
+          !['mongodb', 'aliyun_mongodb', 'tencent_mongodb'].includes(this.dataSourceModel['source_databaseType'])) ||
+        !['mongodb', 'aliyun_mongodb', 'tencent_mongodb'].includes(this.dataSourceModel['target_databaseType'])
+      this.settingModel['distinctWriteType'] !== 'compel' // 进入设置页面再判断
     },
     getWhere(type) {
       let where = {
@@ -1199,17 +1426,29 @@ export default {
         case 'setting_twoWay': {
           //映射是否双向同步
           let op = items.find(it => it.field === 'bidirectional')
-          op.show = !!this.supportTwoWay
+          if (op) {
+            op.show = !!this.supportTwoWay
+          }
           break
         }
         case 'databaseType': {
           let source = items.find(it => it.field === 'source_filter_databaseType')
-          let TYPEMAP = this.$const.TYPEMAP
+          let TYPEMAP = getDatabaseTypes(true)
           //不包含远端类型
           if (source) {
             // dfs源端不支持 redis elasticsearch
             let options = data
-            let filterArr = ['redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'clickhouse', 'dameng', 'tidb']
+            let filterArr = [
+              'redis',
+              'hazelcast_cloud_cluster',
+              'elasticsearch',
+              'clickhouse',
+              'dameng',
+              'tidb',
+              'vika',
+              'doris',
+              'qingflow'
+            ]
             options = data.filter(item => filterArr.indexOf(item) === -1)
             source.options = options.map(item => {
               return {
@@ -1251,6 +1490,8 @@ export default {
       if (!item) {
         const connection = await this.findOneConnection(target)
         item = this.getConnectionItem(connection)
+      } else {
+        item.id = item.value
       }
 
       return item
@@ -1264,7 +1505,9 @@ export default {
         stageId: stageId
       }
       this.$axios.post('tm/api/DataFlows/tranModelVersionControl', param).then(data => {
-        this.hiddenFieldMapping = !data?.[stageId] || false
+        if (data && data?.[stageId] !== undefined) {
+          this.hiddenFieldMapping = !data[stageId] || false
+        }
         this.getSteps()
       })
     },
@@ -1292,7 +1535,8 @@ export default {
             agentType: 'private'
           },
           this.platformInfo
-        )
+        ),
+        customTypeMappings: this.customTypeMappings
       }
       let stageDefault = {
         connectionId: '',
@@ -1364,7 +1608,7 @@ export default {
           dropType: 'no_drop',
           readBatchSize: 1000,
           readCdcInterval: 500,
-          field_process: this.transferData.field_process //字段处理器 源
+          field_process: uniqueArr(this.transferData.field_process, 'table_id') //字段处理器 源
         }),
         Object.assign({}, stageDefault, {
           id: targetIdB,
@@ -1375,6 +1619,9 @@ export default {
           name: this.dataSourceModel.target_connectionName,
           table_prefix: this.transferData.table_prefix,
           table_suffix: this.transferData.table_suffix,
+          tableOperations: this.transferData.tableOperations,
+          vikaMappings: this.transferData.vikaMappings,
+          qingFlowMappings: this.transferData.qingFlowMappings,
           tableNameTransform: this.transferData.tableNameTransform,
           fieldsNameTransform: this.transferData.fieldsNameTransform,
           type: 'database',
@@ -1400,7 +1647,7 @@ export default {
           this.$message.error(this.$t('task_form_no_fields_not_save'))
           return //所有字段被删除了 不可以保存任务
         }
-        this.saveOperations(returnData.row, returnData.operations, returnData.target)
+        this.saveOperations(returnData.row, returnData.operations, uniqueArr(returnData.target, 'field_name'))
         this.saveChangNameData(returnData.changNameData)
         this.updateTransfer = true
       } else {
@@ -1425,7 +1672,7 @@ export default {
         })
         .catch(e => {
           if (e.response?.msg === 'duplication for names') {
-            this.$message.error(this.$t('message.exists_name'))
+            this.$message.error(this.$t('message_exists_name'))
           } else {
             this.$message.error(e.response?.msg || e.data?.msg)
           }
@@ -1472,6 +1719,9 @@ export default {
       this.transferData.table_suffix = data.table_suffix
       this.transferData.tableNameTransform = data.tableNameTransform
       this.transferData.fieldsNameTransform = data.fieldsNameTransform
+      this.transferData.tableOperations = data.tableOperations
+      this.transferData.vikaMappings = data.vikaMappings
+      this.transferData.qingFlowMappings = data.qingFlowMappings
     },
     selectRowFieldProcess(field_process) {
       this.transferData.field_process = field_process
@@ -1520,6 +1770,25 @@ export default {
       }
       let result = await this.$axios.get('tm/api/Connections?filter=' + encodeURIComponent(JSON.stringify(filter)))
       return result?.items?.[0]
+    },
+    getCurrentOptions() {
+      let current = new Date()
+      let options = {
+        disabledDate: time => {
+          return time.getTime() < current.getTime() - 8.64e7
+        },
+        selectableRange: null
+      }
+      // same day
+      if (
+        this.$moment(current).format('YYYY-MM-DD') ===
+        this.$moment(this.settingModel.scheduleTime || current).format('YYYY-MM-DD')
+      ) {
+        options.selectableRange = this.$moment(current).format('HH:mm:ss') + '-23:59:59'
+      } else {
+        options.selectableRange = '00:00:00' + '-23:59:59'
+      }
+      return options
     }
   }
 }

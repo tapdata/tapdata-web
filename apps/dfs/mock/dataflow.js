@@ -1404,5 +1404,74 @@ module.exports = {
         }
       ]
     }
+  },
+  '/tm/api/DataFlowInsights/statistics': {
+    reqId: '77b5587a-fe9c-4ccc-b970-81b45f6f865f',
+    ts: 1644486895566,
+    code: 'ok',
+    data: {
+      granularity: 'week',
+      inputDataStatistics: [
+        { time: '2022-02-01', count: '@integer(0, 10))' },
+        { time: '2022-02-02', count: '@integer(0, 10)' },
+        { time: '2022-02-03', count: '@integer(0, 10)' },
+        { time: '2022-02-04', count: '@integer(0, 10)' },
+        { time: '2022-02-05', count: '@integer(0, 10)' },
+        { time: '2022-02-06', count: '@integer(0, 10)' },
+        { time: '2022-02-07', count: '@integer(0, 10)' },
+        { time: '2022-02-08', count: '@integer(0, 10)' },
+        { time: '2022-02-09', count: '@integer(0, 10)' },
+        { time: '2022-02-10', count: '@integer(0, 10)' },
+        { time: '2022-02-11', count: '@integer(0, 10)' },
+        { time: '2022-02-12', count: '@integer(0, 10)' },
+        { time: '2022-02-13', count: '@integer(0, 10)' },
+        { time: '2022-02-14', count: '@integer(0, 10)' },
+        { time: '2022-02-15', count: '@integer(0, 10)' },
+        { time: '2022-02-16', count: '@integer(0, 10)' },
+        { time: '2022-02-17', count: '@integer(0, 10)' },
+        { time: '2022-02-18', count: '@integer(0, 10)' },
+        { time: '2022-02-19', count: '@integer(0, 10)' },
+        { time: '2022-02-20', count: '@integer(0, 10)' },
+        { time: '2022-02-21', count: '@integer(0, 10)' },
+        { time: '2022-02-22', count: '@integer(0, 10)' },
+        { time: '2022-02-23', count: '@integer(0, 10)' },
+        { time: '2022-02-24', count: '@integer(0, 10)' },
+        { time: '2022-02-25', count: '@integer(0, 10)' },
+        { time: '2022-02-26', count: '@integer(0, 10)' },
+        { time: '2022-02-27', count: '@integer(0, 10)' },
+        { time: '2022-02-28', count: '@integer(0, 10)' },
+        { time: '2022-02-29', count: '@integer(0, 10)' },
+        { time: '2022-02-30', count: '@integer(0, 10)' }
+      ],
+      totalInputDataCount: '@integer(0, 100)'
+    }
+  },
+  '/tm/api/DataFlowRecord': {
+    reqId: 'd8c5f1bb-e617-4e2e-93ab-24c248eccef1',
+    ts: 1646476290267,
+    code: 'ok',
+    data: {
+      total: 1,
+      'items|1-50': [
+        {
+          id: '@id',
+          customId: '60cc0c304e190a579cbe306c',
+          createUser: 'jason@tapdata.io',
+          dataFlowId: '62233405b3e2d40f364b48f3',
+          dataFlowStartTime: '2022-03-05T09:57:28.503+00:00',
+          dataFlowEndTime: '2022-03-05T09:59:05.171+00:00',
+          'startType|1': ['manual', 'auto'],
+          'dataFlowStatus|1': ['running', 'completed', 'paused', 'error'],
+          createTime: '2022-03-05T10:31:25.787+00:00',
+          user_id: '60cc0c5887e32100106b6a17'
+        }
+      ]
+    }
+  },
+  '/tm/api/DataFlows/cron/isValidExpression': {
+    reqId: '2d2ef280-ca64-443a-9d74-51c1d89de1a4',
+    ts: 1646646169872,
+    code: 'ok',
+    data: { isValid: false }
   }
 }

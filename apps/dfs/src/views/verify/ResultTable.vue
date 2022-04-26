@@ -1,13 +1,15 @@
 <template>
-  <el-table
+  <ElTable
     highlight-current-row
     ref="table"
     height="100%"
     :data="list"
-    :element-loading-text="$t('dataFlow.dataLoading')"
+    :element-loading-text="$t('dataFlow_dataLoading')"
     @row-click="rowClickHandler"
+    @selection-change="handleSelectionChange"
   >
-    <ElTableColumn :label="$t('dataVerification.sourceTable')">
+    <ElTableColumn type="selection" width="55" :selectable="checkSelectableFnc"> </ElTableColumn>
+    <ElTableColumn :label="$t('dataVerification_sourceTable')">
       <template slot-scope="scope">
         <span>{{ scope.row.source ? scope.row.source.table : '' }}</span>
         <div style="color: #ccc">
@@ -15,7 +17,7 @@
         </div>
       </template>
     </ElTableColumn>
-    <ElTableColumn :label="$t('dataVerification.targetTable')">
+    <ElTableColumn :label="$t('dataVerification_targetTable')">
       <template slot-scope="scope">
         <span>{{ scope.row.target ? scope.row.target.table : 0 }}</span>
         <div style="color: #ccc">
@@ -23,23 +25,22 @@
         </div>
       </template>
     </ElTableColumn>
-    <ElTableColumn v-if="$route.name === 'VerifyDiffDetails'" :label="$t('dataVerification.sourceRows')">
+    <ElTableColumn :label="$t('dataVerification_sourceRows')">
       <template slot-scope="scope">
-        <span>{{ scope.row.source_total || 0 }}</span>
-        <!--        <div>-->
-        <!--          {{ scope.row.target_total || 0 }}-->
-        <!--        </div>-->
+        <span>{{ (firstCheckId ? scope.row.firstSourceTotal : scope.row.source_total) || 0 }}</span>
       </template>
     </ElTableColumn>
-    <ElTableColumn v-else :label="$t('dataVerification.sourceRows')">
-      <template slot-scope="scope">
-        <span>{{ scope.row.source_total || 0 }}</span>
-        <!--        <div>-->
-        <!--          {{ scope.row.firstTargetTotal || 0 }}-->
-        <!--        </div>-->
-      </template>
-    </ElTableColumn>
-    <ElTableColumn prop="progress" :label="$t('dataVerification.verifyProgress')" width="120px">
+    <!--    <ElTableColumn v-if="$route.name === 'VerifyDiffDetails'" :label="$t('dataVerification_sourceRows')">-->
+    <!--      <template slot-scope="scope">-->
+    <!--        <span>{{ scope.row.firstSourceTotal || 0 }}</span>-->
+    <!--      </template>-->
+    <!--    </ElTableColumn>-->
+    <!--    <ElTableColumn v-else :label="$t('dataVerification_sourceRows')">-->
+    <!--      <template slot-scope="scope">-->
+    <!--        <span>{{ scope.row.source_total || 0 }}</span>-->
+    <!--      </template>-->
+    <!--    </ElTableColumn>-->
+    <ElTableColumn prop="progress" :label="$t('dataVerification_verifyProgress')" width="120px">
       <template slot-scope="scope">
         <div>
           <span>{{
@@ -48,7 +49,7 @@
         </div>
       </template>
     </ElTableColumn>
-    <ElTableColumn prop="status" :label="$t('dataVerification.verifyResult')">
+    <ElTableColumn prop="status" :label="$t('dataVerification_verifyResult')">
       <template slot-scope="scope" v-if="['waiting', 'done'].includes(scope.row.status)">
         <div class="inspect-result-status">
           <div v-if="scope.row.result === 'failed' && scope.row.countResultText">
@@ -65,17 +66,24 @@
           </div>
           <span class="success" v-if="scope.row.result === 'passed'">
             <i class="verify-icon el-icon-success color-success"></i>
-            <span>{{ $t('dataVerification.consistent') }}</span>
+            <span>{{ $t('dataVerification_consistent') }}</span>
           </span>
         </div>
       </template>
     </ElTableColumn>
-  </el-table>
+    <ElTableColumn v-if="$route.name !== 'VerifyResult'" prop="status" :label="$t('verify_operation')">
+      <template slot-scope="scope">
+        <ElButton type="text" :disabled="scope.row.result === 'passed'" @click.prevent.stop="verifyAgain(scope.row)">{{
+          $t('verify_operation_verify_again')
+        }}</ElButton>
+      </template>
+    </ElTableColumn>
+  </ElTable>
 </template>
 <style lang="scss" scoped>
 .verify-icon {
   margin: 0 4px;
-  font-size: 14;
+  font-size: 14px;
 }
 </style>
 <script>
@@ -87,11 +95,15 @@ export default {
       default: () => {
         return []
       }
+    },
+    firstCheckId: {
+      type: String
     }
   },
   data() {
     return {
-      current: 0
+      current: 0,
+      multipleSelection: []
     }
   },
   computed: {
@@ -101,6 +113,10 @@ export default {
           let countResultText = ''
           let contentResultText = ''
           let diffCount = item.target_total - item.source_total
+          // 差异校验
+          if (this.$route.name === 'VerifyDiffDetails') {
+            diffCount = item.firstTargetTotal - item.firstSourceTotal
+          }
           let diffCountNum = Math.abs(diffCount)
           if (diffCount > 0) {
             countResultText = this.$t('verify_result_count_more', [diffCountNum])
@@ -120,6 +136,9 @@ export default {
         return item
       })
       return list
+    },
+    verifyAgainDisabled() {
+      return !this.list.every(t => ['done', 'error'].includes(t.status))
     }
   },
   methods: {
@@ -130,6 +149,18 @@ export default {
     rowClickHandler(row) {
       this.current = row.taskId
       this.$emit('row-click', row)
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+    getMultipleSelection() {
+      return this.multipleSelection || []
+    },
+    verifyAgain(row) {
+      this.$emit('verify-again', [row.taskId])
+    },
+    checkSelectableFnc(row) {
+      return row.result !== 'passed'
     }
   }
 }

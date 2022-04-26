@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import { Message } from 'element-ui'
+import { errorConfirmFnc } from '@/util'
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL ||  '';
@@ -56,8 +57,7 @@ const errorCallback = error => {
     // 其他错误
     Message.error(`${error.message || error}`)
   } else if (error?.message !== 'cancel') {
-    // 500 报错
-    location.replace(location.href.split('#/')[0] + '#/500')
+    errorConfirmFnc(error)
   }
   console.error('请求报错：' + error) // eslint-disable-line
   return Promise.reject(error)
@@ -75,6 +75,9 @@ _axios.interceptors.request.use(function (config) {
   let user = window.__USER_INFO__
   if (user) {
     config.headers['X-Token'] = user.token
+    if (process.env.NODE_ENV === 'development') {
+      config.headers['user_id'] = user.id
+    }
   }
   config.withCredentials = true
 
@@ -114,6 +117,13 @@ _axios.interceptors.response.use(function (response) {
       return reject(msg)
     } else {
       // 其他情况交由业务端自行处理
+      if (['Datasource.TableNotFound'].includes(code)) {
+        return reject(Object.assign(response))
+      }
+      // 文件处理
+      if (response?.config?.responseType === 'blob') {
+        return resolve(response)
+      }
       let msg = data?.message || data?.msg || ''
       console.log(`${code}： ${msg}`)
       Message.error(msg)

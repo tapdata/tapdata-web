@@ -122,7 +122,7 @@
                 @input="tableChangeHandler(item, 'source', index)"
               ></ElCascader>
               <span v-else :class="['item-value-text', { 'color-danger': !item.sourceTable }]">{{
-                item.sourceTable ? item.sourceTable[1] : $t('message.placeholderSelect')
+                item.sourceTable ? item.sourceTable[1] : $t('message_placeholderSelect')
               }}</span>
               <span class="item-icon">
                 <i class="el-icon-arrow-right"></i>
@@ -136,7 +136,7 @@
                 @input="tableChangeHandler(item, 'target')"
               ></ElCascader>
               <span v-else :class="['item-value-text', { 'color-danger': !item.targetTable }]">{{
-                item.targetTable ? item.targetTable[1] : $t('message.placeholderSelect')
+                item.targetTable ? item.targetTable[1] : $t('message_placeholderSelect')
               }}</span>
             </div>
             <div class="setting-item mt-4" v-show="form.inspectMethod !== 'row_count'">
@@ -150,7 +150,7 @@
                 :id="'item-source-' + index"
               ></MultiSelection>
               <span v-else :class="['item-value-text', { 'color-danger': !item.source.sortColumn }]">{{
-                item.source.sortColumn || $t('message.placeholderSelect')
+                item.source.sortColumn || $t('message_placeholderSelect')
               }}</span>
               <span class="item-icon"></span>
               <MultiSelection
@@ -161,7 +161,7 @@
                 :options="item.target.fields"
               ></MultiSelection>
               <span v-else :class="['item-value-text', { 'color-danger': !item.target.sortColumn }]">{{
-                item.target.sortColumn || $t('message.placeholderSelect')
+                item.target.sortColumn || $t('message_placeholderSelect')
               }}</span>
             </div>
             <div class="setting-item mt-4">
@@ -205,7 +205,7 @@
     </div>
     <ElDialog
       width="60%"
-      :title="$t('dataVerification.JSVerifyLogic')"
+      :title="$t('dataVerification_JSVerifyLogic')"
       :visible.sync="dialogAddScriptVisible"
       :before-close="handleAddScriptClose"
     >
@@ -353,6 +353,8 @@
 }
 </style>
 <script>
+import i18n from '@/i18n'
+
 const TABLE_PARAMS = {
   connectionId: '',
   table: '',
@@ -533,7 +535,8 @@ export default {
                   id: true,
                   name: true,
                   stages: true,
-                  mappingTemplate: true
+                  mappingTemplate: true,
+                  stats: true
                 }
               })
             )
@@ -543,15 +546,23 @@ export default {
           let stages = flowData.stages || []
           if (
             stages.some(item =>
-              ['kafka', 'redis', 'hazelcast_cloud_cluster', 'elasticsearch', 'mq', 'dummy db'].includes(
-                item.databaseType || item.database_type
-              )
+              [
+                'kafka',
+                'redis',
+                'hazelcast_cloud_cluster',
+                'elasticsearch',
+                'mq',
+                'dummy db',
+                'vika',
+                'qingflow'
+              ].includes(item.databaseType || item.database_type)
             )
           ) {
-            this.$message.error('所选任务存在不支持校验的数据源，请重新选择')
+            this.$message.error(i18n.t('verify_Form_suoXuanRenWuCun'))
             this.loading = false
             return
           }
+
           this.flowStages = []
           this.isDbClone = flowData.mappingTemplate === 'cluster-clone'
           this.dealData(flowData, this.getTaskTree, this.isDbClone)
@@ -583,6 +594,7 @@ export default {
           // 当stage存在syncObjects字段说明是目标节点
           let obj = stg.syncObjects[0]
           let tables = obj.objectNames || []
+          let tableOperations = stg.tableOperations || []
           tables.forEach(t => {
             // 迁移时，可以同时从目标节点获取源和目标的表名，匹配目标表名时注意大小写和前后缀配置
             tableNames.push(t)
@@ -591,6 +603,10 @@ export default {
             // 大小写转换
             if (stg.tableNameTransform) {
               name = name[stg.tableNameTransform]()
+            }
+            let findOne = tableOperations.find(f => f.originalTableName === t)
+            if (findOne) {
+              name = findOne.tableName
             }
             tableNames.push(name)
           })
@@ -609,15 +625,10 @@ export default {
           inq: Array.from(new Set(tableNames))
         }
         this.$axios
-          .get(
-            'tm/api/MetadataInstances/findInspect?filter=' +
-              encodeURIComponent(
-                JSON.stringify({
-                  where,
-                  fields: META_INSTANCE_FIELDS
-                })
-              )
-          )
+          .post('tm/api/MetadataInstances/findInspectPost', {
+            where,
+            fields: META_INSTANCE_FIELDS
+          })
           .then(data => {
             let tables = data?.items || data || []
             if (isDB) {
@@ -690,10 +701,18 @@ export default {
 
         let obj = target.syncObjects[0]
         let sourceTablesNames = obj.objectNames || []
+        let tableOperations = target.tableOperations
         sourceTablesNames.forEach(name => {
+          if (!this.flowStages) {
+            return
+          }
           let targetTableName = target.table_prefix + name + target.table_suffix
           if (target.tableNameTransform) {
             targetTableName = targetTableName[target.tableNameTransform]()
+          }
+          let findOne = tableOperations.find(f => f.originalTableName === name)
+          if (findOne) {
+            targetTableName = findOne.tableName
           }
           let sourceTable = tables.find(tb => tb.original_name === name && tb.source.id === source.connectionId)
           let targetTable = tables.find(
@@ -722,7 +741,7 @@ export default {
             })
           } else {
             this.flowStages = null
-            this.$message.error('找不到节点对应的表信息')
+            this.$message.error(i18n.t('verify_Form_zhaoBuDaoJieDian'))
           }
         })
       })
@@ -851,7 +870,7 @@ export default {
       if (source && source.connectionId) {
         let sourceStage = stages.find(stg => stg.connectionId === source.connectionId && stg.tableName === source.table)
         if (sourceStage) {
-          task.target = this.setTable(targetStage, source)
+          task.target = this.setTable(targetStage)
           task.targetTable = [targetStage.connectionId, targetStage.tableName]
           if (targetStage.joinTables) {
             let joinTable = targetStage.joinTables.find(ts => ts.stageId === sourceStage.id)
@@ -870,6 +889,10 @@ export default {
               task.target.sortColumn = targetSortColumn.join(',')
             }
           }
+          // let findTargetNewName = task.target.fields?.find(t => t.original_field_name === task.target.sortColumn)
+          // if (findTargetNewName) {
+          //   task.target.sortColumn = findTargetNewName.field_name
+          // }
         }
       }
     },

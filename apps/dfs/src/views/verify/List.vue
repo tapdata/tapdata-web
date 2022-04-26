@@ -24,7 +24,7 @@
       </ElTableColumn>
       <ElTableColumn prop="sourceTotal" width="120" :label="$t('verify_history_source_total_rows')"></ElTableColumn>
       <!-- <ElTableColumn prop="targetTotal" width="120" :label="$t('verify_history_target_total_rows')"></ElTableColumn> -->
-      <ElTableColumn :label="$t('dataVerification.verifyStatus')" width="120" prop="status">
+      <ElTableColumn :label="$t('dataVerification_verifyStatus')" width="120" prop="status">
         <template slot-scope="scope">
           <StatusTag type="text" :status="scope.row.status" :status-map="statusMap"></StatusTag>
           <span v-if="scope.row.InspectResult && scope.row.status === 'running'">
@@ -32,7 +32,7 @@
           </span>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('dataVerification.verifyResult')" width="180">
+      <ElTableColumn :label="$t('dataVerification_verifyResult')" width="180">
         <template slot-scope="scope">
           <div class="flex align-items-center">
             <template v-if="scope.row.InspectResult && ['waiting', 'done'].includes(scope.row.status)">
@@ -64,12 +64,12 @@
         </template>
       </ElTableColumn>
       <ElTableColumn
-        :label="$t('dataVerification.verifyTime')"
+        :label="$t('dataVerification_verifyTime')"
         prop="lastStartTime"
         sortable="custom"
         width="160"
       ></ElTableColumn>
-      <ElTableColumn :label="$t('dataVerification.operation')" width="300" fixed="right">
+      <ElTableColumn :label="$t('dataVerification_operation')" width="300">
         <template slot-scope="scope">
           <ElLink
             type="primary"
@@ -162,6 +162,8 @@
 }
 </style>
 <script>
+import i18n from '@/i18n'
+
 import VIcon from '@/components/VIcon'
 import StatusTag from '@/components/StatusTag'
 import FilterBar from '@/components/filter-bar'
@@ -190,36 +192,36 @@ export default {
       order: 'createTime DESC',
 
       inspectMethod: {
-        row_count: this.$t('dataVerification.rowVerify'),
-        field: this.$t('dataVerification.contentVerify'),
-        jointField: this.$t('dataVerification.jointVerify')
+        row_count: this.$t('dataVerification_rowVerify'),
+        field: this.$t('dataVerification_contentVerify'),
+        jointField: this.$t('dataVerification_jointVerify')
       },
       statusMap: {
         waiting: {
           color: '#FFB318',
-          text: this.$t('dataVerification.waiting')
+          text: this.$t('dataVerification_waiting')
         },
         scheduling: {
           color: '#FFB318',
-          text: this.$t('dataVerification.scheduling')
+          text: this.$t('dataVerification_scheduling')
         },
         error: {
           color: '#F5222D',
-          text: this.$t('dataVerification.error')
+          text: this.$t('dataVerification_error')
         },
         done: {
           color: '#52C41A',
-          text: this.$t('dataVerification.done')
+          text: this.$t('dataVerification_done')
         },
         running: {
           color: '#FFB318',
-          text: this.$t('dataVerification.running')
+          text: this.$t('dataVerification_running')
         }
       },
       validList: [
-        { name: this.$t('app.Home.checkSame'), value: 'passed' },
-        { name: this.$t('app.Home.countDifference'), value: 'row_count' },
-        { name: this.$t('app.Home.contentDifference'), value: 'valueDiff' },
+        { name: this.$t('app_Home_checkSame'), value: 'passed' },
+        { name: this.$t('app_Home_countDifference'), value: 'row_count' },
+        { name: this.$t('app_Home_contentDifference'), value: 'valueDiff' },
         { name: 'ERROR', value: 'error' }
       ]
     }
@@ -316,32 +318,32 @@ export default {
     getFilterItems() {
       this.filterItems = [
         {
-          label: '类型',
+          label: i18n.t('verify_List_leiXing'),
           key: 'inspectMethod',
           type: 'select-inner',
           items: this.filterInspectMethodOptions
         },
         {
-          label: '频次',
+          label: i18n.t('verify_List_pinCi'),
           key: 'mode',
           type: 'select-inner',
           items: this.filterModeOptions
         },
         {
-          label: '状态',
+          label: i18n.t('instance_Instance_zhuangTai'),
           key: 'enabled',
           type: 'select-inner',
           items: this.filterEnabledOptions
         },
         {
-          label: '结果',
+          label: i18n.t('verify_List_jieGuo'),
           key: 'result',
           type: 'select-inner',
           items: this.filterResultOptions
         },
 
         {
-          placeholder: '名称',
+          placeholder: i18n.t('task_Migration_mingCheng'),
           key: 'keyword',
           type: 'input'
         }
@@ -441,6 +443,10 @@ export default {
       if (result) {
         sourceTotal = result.source_total
         targetTotal = result.target_total
+        if (result.firstCheckId) {
+          sourceTotal = result.firstSourceTotal
+          targetTotal = result.firstTargetTotal
+        }
       }
       item.lastStartTime = item.lastStartTime ? this.$moment(item.lastStartTime).format('YYYY-MM-DD HH:mm:ss') : '-'
       item.sourceTotal = sourceTotal
@@ -502,20 +508,20 @@ export default {
             { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: '' }
           )
           .then(() => {
-            this.$message.success(this.$t('dataVerification.startVerify'))
+            this.$message.success(this.$t('dataVerification_startVerify'))
             this.updateStatusByIds([id])
           })
       })
     },
     remove(name, id) {
-      this.$confirm(`${this.$t('dataVerification.deleteMessage')} ${name}?`, this.$t('dataFlow.importantReminder'), {
-        confirmButtonText: this.$t('classification.deleteNode'),
-        cancelButtonText: this.$t('message.cancel'),
+      this.$confirm(`${this.$t('dataVerification_deleteMessage')} ${name}?`, this.$t('dataFlow_importantReminder'), {
+        confirmButtonText: this.$t('classification_deleteNode'),
+        cancelButtonText: this.$t('message_cancel'),
         type: 'warning'
       }).then(flat => {
         if (flat) {
           this.$axios.delete('tm/api/Inspects/' + id).then(() => {
-            this.$message.success(this.$t('message.deleteOK'))
+            this.$message.success(this.$t('message_deleteOK'))
             this.fetch()
           })
         }
@@ -532,7 +538,7 @@ export default {
           })
         } else {
           this.$message.info(
-            this.$t('dataVerification.checkStatusPre') + data.status + this.$t('dataVerification.checkStatusSuffix')
+            this.$t('dataVerification_checkStatusPre') + data.status + this.$t('dataVerification_checkStatusSuffix')
           )
         }
       })

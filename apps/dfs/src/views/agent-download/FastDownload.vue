@@ -17,28 +17,39 @@
           <span>{{ down.name }}</span>
         </div>
       </div>
-      <div class="text-style">{{ $t('agent_deploy_before_prepare_title') }}</div>
       <template v-if="downLoadType === 'windows'">
         <ul class="pt-5 ul-style">
-          <li class="flex">
-            <span>{{ $t('agent_deploy_before_prepare_windows_first') }}</span>
-            <ElLink class="ml-3" type="primary" @click="windowsToJava">{{
-              $t('agent_deploy_before_prepare_windows_first_link')
-            }}</ElLink>
-          </li>
-          <li>{{ $t('agent_deploy_before_prepare_windows_second') }}</li>
-          <li>{{ $t('agent_deploy_before_prepare_windows_third') }}</li>
-          <li>{{ $t('agent_deploy_before_prepare_windows_four') }}</li>
-          <li>
-            <ElButton class="mt-5" type="primary" @click="handleDownLoad">{{
-              $t('agent_deploy_before_prepare_windows_second_download')
-            }}</ElButton>
-          </li>
+          <!--          <li class="flex">-->
+          <!--            <span>{{ $t('agent_deploy_before_prepare_windows_first') }}</span>-->
+          <!--            <ElLink class="ml-3" type="primary" @click="windowsToJava">{{-->
+          <!--              $t('agent_deploy_before_prepare_windows_first_link')-->
+          <!--            }}</ElLink>-->
+          <!--          </li>-->
+          <!--          <li>{{ $t('agent_deploy_before_prepare_windows_second') }}</li>-->
+          <!--          <li>{{ $t('agent_deploy_before_prepare_windows_third') }}</li>-->
+          <!--          <li>{{ $t('agent_deploy_before_prepare_windows_four') }}</li>-->
+          <!--          <li>-->
+          <!--            <ElButton class="mt-5" type="primary" @click="handleDownLoad">{{-->
+          <!--              $t('agent_deploy_before_prepare_windows_second_download')-->
+          <!--            }}</ElButton>-->
+          <!--          </li>-->
           <li>
             <div class="my-5 text-style">{{ $t('agent_deploy_start_install') }}</div>
           </li>
           <li>
             {{ $t('agent_deploy_start_install_windows_first') }}
+            <ElLink type="primary" @click="handleDownLoad">{{
+              $t('agent_deploy_start_install_windows_first_download')
+            }}</ElLink>
+          </li>
+          <li class="mt-3">
+            {{ $t('agent_deploy_start_install_windows_second') }}
+          </li>
+          <li class="mt-3">
+            {{ $t('agent_deploy_start_install_windows_third') }}
+          </li>
+          <li class="mt-3">
+            {{ $t('agent_deploy_start_install_windows_fourth') }}
           </li>
           <li class="box title-text mt-2">
             <span class="link-line">{{ windowsLink }}</span>
@@ -60,17 +71,12 @@
             </ElTooltip>
           </li>
           <li class="mt-3">
-            <span>{{ $t('agent_deploy_start_install_windows_second') }}</span>
-            <img class="mt-2 block" :src="getImg('downloadWindows')" alt="" />
-          </li>
-          <li class="flex">
-            <span>{{ $t('agent_deploy_start_install_windows_third') }}</span>
-            <ElLink type="primary" @click="windowsToAgent">{{ $t('agent_deploy_link_agent_operation') }}</ElLink>
-            <span>{{ $t('agent_deploy_link_agent_operation_desc') }}</span>
+            <span>{{ $t('agent_deploy_start_install_windows_fifth') }}</span>
           </li>
         </ul>
       </template>
       <template v-if="downLoadType === 'Linux'">
+        <div class="text-style">{{ $t('agent_deploy_before_prepare_title') }}</div>
         <ul class="pt-5 ul-style">
           <li>
             <span>{{ $t('agent_deploy_before_prepare_linux_first') }}</span>
@@ -115,6 +121,7 @@
         </ul>
       </template>
       <template v-if="downLoadType === 'Docker'">
+        <div class="text-style">{{ $t('agent_deploy_before_prepare_title') }}</div>
         <ul class="pt-5 ul-style">
           <li>{{ $t('agent_deploy_before_prepare_docker_first') }}</li>
           <li>
@@ -161,7 +168,7 @@
       <div class="wx-img text-center">
         <img style="width: 120px; height: 120px" src="../../../public/images/wx_user_support.png" alt="" />
         <div>{{ $t('header_scan_code') }}</div>
-        <div>{{ $t('header_join_group') }}</div>
+        <div class="mt-1">{{ $t('header_join_group') }}</div>
       </div>
     </main>
     <footer class="footer">

@@ -6,6 +6,7 @@ const connection = require('./connection.js')
 const messages = require('./messages.js')
 const verification = require('./verification.js')
 const metadata = require('./metadata.js')
+const user = require('./user.js')
 
 const agent = {
   id: '@guid',
@@ -67,7 +68,7 @@ const agent = {
   },
   'agentType|1': ['Cloud', '']
 }
-module.exports = Object.assign({}, dataflow, connection, messages, verification, metadata, {
+module.exports = Object.assign({}, dataflow, connection, messages, verification, metadata, user, {
   '/tm/api/users/self': {
     data: {
       account_status: 1,
@@ -2887,5 +2888,44 @@ module.exports = Object.assign({}, dataflow, connection, messages, verification,
     reqId: '40948acc-789d-4da6-865f-985163bb01e8',
     code: 'ok',
     data: 'http://resource.tapdata.net/package/feagent/dfs-v1.19.0-543-g14662271f-test/'
+  },
+  '/api/tcm/orders/checkAgent': {
+    reqId: '1f3d1e66-a3f9-4a81-b844-2592c8618978',
+    code: 'ok',
+    data: {
+      // agentId: '621dd6a54970eb5f888b650a',
+      deployInfo: {
+        downloadUrl: 'http://resource.tapdata.net/package/feagent/dfs-v2.1.0-22022705/',
+        links: [
+          {
+            os: 'windows',
+            command:
+              'a/HZzXh5MDbwPGd8hCzZYYF0XXgDZ287oY34Sx3QAq5Z7zikkMRcI62kZHXq8RRJj6VrJcSY6ehw4iM8d8LW1QyffbvacyCNlUtZCQx0C+88f4sdUFZHADy+yui595cioqtyyPpL6brC38mSHWK+FxYcZnqccStKX3m05nKNDt6Lh/30Pdm7fv3jqwvJtWomH6bUTiX+f1wI8nXv55VUJWaAOk2V/R2ZQ66aDo7ousyLHKD6hCz+UJiiG1hgc27DQe+bBxKoCycX7Pmsmd0V45V5WJpR9JPJlo6Ys+M77ZkPitKxmPvUoOGZFIIbRNxJDPPxjSvnsvoaK28O0pibl4fwDHkQ80CTAkPUFLok1I8+SQXhyzRbocR9Noas6jZ5yrq6M6z1+nh8xirmseiKYCI3EXiPuz5LatPWHiTC8uYoNe0ilu9Raf3bottTpfxUozBk8Y7SD7aD9XZR1z94LdRDJ67XNhXUm2Czx0fUiPItMYKiBJhfJcerpvDds1nQ0p95enCQHGzaAwuAJ8QLam3n/Y9cghGEecE/wUiBJljsfk4Vr2CXDRkfDPMGzwcvZohv3PhnE1kHK/E6jjSmdxu8zka+4ibbCcBOIF1406p6EtDUYRdAirikyHQFrNs1'
+          },
+          {
+            os: 'linux',
+            command:
+              "wget 'http://resource.tapdata.net/package/feagent/dfs-v2.1.0-22022705/tapdata' && chmod +x tapdata && ./tapdata start backend --downloadUrl http://resource.tapdata.net/package/feagent/dfs-v2.1.0-22022705/ --token 'a/HZzXh5MDbwPGd8hCzZYYF0XXgDZ287oY34Sx3QAq5Z7zikkMRcI62kZHXq8RRJj6VrJcSY6ehw4iM8d8LW1QyffbvacyCNlUtZCQx0C+88f4sdUFZHADy+yui595cioqtyyPpL6brC38mSHWK+FxYcZnqccStKX3m05nKNDt6Lh/30Pdm7fv3jqwvJtWomH6bUTiX+f1wI8nXv55VUJWaAOk2V/R2ZQ66aDo7ousyLHKD6hCz+UJiiG1hgc27DQe+bBxKoCycX7Pmsmd0V45V5WJpR9JPJlo6Ys+M77ZkPitKxmPvUoOGZFIIbRNxJDPPxjSvnsvoaK28O0pibl4fwDHkQ80CTAkPUFLok1I8+SQXhyzRbocR9Noas6jZ5yrq6M6z1+nh8xirmseiKYCI3EXiPuz5LatPWHiTC8uYoNe0ilu9Raf3bottTpfxUozBk8Y7SD7aD9XZR1z94LdRDJ67XNhXUm2Czx0fUiPItMYKiBJhfJcerpvDds1nQ0p95enCQHGzaAwuAJ8QLam3n/Y9cghGEecE/wUiBJljsfk4Vr2CXDRkfDPMGzwcvZohv3PhnE1kHK/E6jjSmdxu8zka+4ibbCcBOIF1406p6EtDUYRdAirikyHQFrNs1'"
+          },
+          {
+            os: 'docker',
+            command:
+              "docker run -itd tapdata-docker.pkg.coding.net/dfs/flow-engine/dfs-flow-engine:v2.1.0-22022705 /opt/agent/tapdata start backend  --token 'a/HZzXh5MDbwPGd8hCzZYYF0XXgDZ287oY34Sx3QAq5Z7zikkMRcI62kZHXq8RRJj6VrJcSY6ehw4iM8d8LW1QyffbvacyCNlUtZCQx0C+88f4sdUFZHADy+yui595cioqtyyPpL6brC38mSHWK+FxYcZnqccStKX3m05nKNDt6Lh/30Pdm7fv3jqwvJtWomH6bUTiX+f1wI8nXv55VUJWaAOk2V/R2ZQ66aDo7ousyLHKD6hCz+UJiiG1hgc27DQe+bBxKoCycX7Pmsmd0V45V5WJpR9JPJlo6Ys+M77ZkPitKxmPvUoOGZFIIbRNxJDPPxjSvnsvoaK28O0pibl4fwDHkQ80CTAkPUFLok1I8+SQXhyzRbocR9Noas6jZ5yrq6M6z1+nh8xirmseiKYCI3EXiPuz5LatPWHiTC8uYoNe0ilu9Raf3bottTpfxUozBk8Y7SD7aD9XZR1z94LdRDJ67XNhXUm2Czx0fUiPItMYKiBJhfJcerpvDds1nQ0p95enCQHGzaAwuAJ8QLam3n/Y9cghGEecE/wUiBJljsfk4Vr2CXDRkfDPMGzwcvZohv3PhnE1kHK/E6jjSmdxu8zka+4ibbCcBOIF1406p6EtDUYRdAirikyHQFrNs1'"
+          }
+        ]
+      }
+    }
+  },
+  '/tm/api/DatabaseTags/availableTags': {
+    reqId: '8630a994-21c1-4dba-a1da-ae1bac64e4b5',
+    ts: 1650080436214,
+    code: 'ok',
+    data: [
+      { name: 'localDatabase', desc: '本地自建库' },
+      { name: 'cloudDatabase', desc: '云数据库' },
+      { name: 'mq', desc: '消息队列' },
+      { name: 'nosql', desc: 'NoSQL数据库' },
+      { name: 'saas', desc: 'SaaS应用' }
+    ]
   }
 })

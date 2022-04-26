@@ -1,15 +1,14 @@
 import Layout from '../views/Layout.vue'
 import Error from '../views/Error.vue'
-import SvgList from '../views/SvgList.vue'
-import AgentDownload from '@/views/agent-download/AgentPage.vue'
 import FastDownload from '@/views/agent-download/FastDownload.vue'
 import UpgradeVersion from '@/views/agent-download/UpgradeVersion.vue'
-import ContactUs from '@/views/ContactUs'
 import i18n from '@/i18n'
+import Lang from '../views/Lang.vue'
 
 const TaskForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/Form.vue')
 const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '../views/connection/Form.vue')
 const DataflowDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/copy/Index.vue')
+const UserCenter = () => import(/* webpackChunkName: "task-form" */ '../views/user/Center.vue')
 const DagEditor = async () => {
   const { Editor } = await import('@tap/dag')
   return Editor
@@ -230,22 +229,14 @@ const routes = [
         }
       },
       {
-        path: '/noviceGuide',
-        name: 'NoviceGuide',
-        component: () => import(/* webpackChunkName: "instance" */ '../views/novice-guide/Index.vue'),
+        path: '/user/center',
+        name: 'userCenter',
+        component: UserCenter,
         meta: {
-          title: i18n.t('tap_Beginner_guide')
+          title: i18n.t('tap_user_center')
         }
       }
     ]
-  },
-  {
-    path: '/agentDownload',
-    name: 'AgentDownload',
-    component: AgentDownload,
-    meta: {
-      title: i18n.t('tap_agent_download')
-    }
   },
   {
     path: '/fastDownload',
@@ -261,14 +252,6 @@ const routes = [
     component: UpgradeVersion,
     meta: {
       title: i18n.t('tap_upgrade')
-    }
-  },
-  {
-    path: '/contactUs',
-    name: 'ContactUs',
-    component: ContactUs,
-    meta: {
-      title: i18n.t('tap_contact_us')
     }
   },
   {
@@ -292,11 +275,6 @@ const routes = [
     component: Error
   },
   {
-    path: '/svg',
-    name: 'SvgList',
-    component: SvgList
-  },
-  {
     path: '/dataflow/editor',
     name: 'DataflowNew',
     component: DagEditor
@@ -307,5 +285,12 @@ const routes = [
     component: DagEditor
   }
 ]
+if (process.env.NODE_ENV === 'development') {
+  routes[0].children?.push({
+    path: '/lang',
+    name: 'lang',
+    component: Lang
+  })
+}
 
 export default routes

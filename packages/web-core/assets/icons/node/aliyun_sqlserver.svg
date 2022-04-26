@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Aliyun RDS for SQLServer</title>
+    <defs>
+        <polygon id="path-1" points="0 0 13.0205 0 13.0205 27.744 0 27.744"></polygon>
+    </defs>
+    <g id="Aliyun-RDS-for-SQLServer" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="编组" transform="translate(6.000000, 1.000000)">
+            <g transform="translate(0.000000, 5.373000)">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <g id="Clip-2"></g>
+                <path d="M13.0205,25.961 C6.7595,25.366 1.8605,20.095 1.8605,13.678 C1.8605,8.397 5.1785,3.894 9.8415,2.131 L10.3795,0 C4.3935,1.67 -0.0005,7.159 -0.0005,13.678 C-0.0005,20.862 5.3365,26.798 12.2615,27.744 L13.0205,25.961 Z" id="Fill-1" fill="#EB681A" mask="url(#mask-2)"></path>
+            </g>
+            <path d="M15.9389,4.958 L15.4809,6.775 C21.6959,7.415 26.5429,12.666 26.5429,19.051 C26.5429,24.227 23.3549,28.656 18.8359,30.489 L17.8649,32.773 C23.9329,31.158 28.4049,25.628 28.4049,19.051 C28.4049,11.795 22.9619,5.815 15.9389,4.958" id="Fill-3" fill="#EB681A"></path>
+            <path d="M15.2309,2.7427 L6.4839,17.2647 C5.5579,18.8037 5.9579,20.7937 7.4059,21.8567 L7.9419,22.2497 C9.4639,23.3667 11.6089,23.0007 12.6759,21.4437 L16.2229,16.2657 C17.1979,14.8437 19.1269,14.4537 20.5769,15.3867 L21.0019,15.6597 C22.3899,16.5517 22.8609,18.3597 22.0849,19.8147 L14.0549,34.8687" id="Stroke-5" stroke="#E0661F" stroke-width="2"></path>
+            <polygon id="Fill-7" fill="#E0661F" points="13.4677 1.959 16.7987 3.722 16.7987 0"></polygon>
+            <polygon id="Fill-9" fill="#E0661F" points="12.4296 37.6738 15.6166 35.6638 12.3886 33.8108"></polygon>
+        </g>
+    </g>
+</svg>
