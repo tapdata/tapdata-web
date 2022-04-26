@@ -455,20 +455,28 @@ export class Table extends NodeType {
                     title: '更新条件字段',
                     type: 'array',
                     required: true,
+                    default: null,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       wrapperWidth: 300
-                      // feedbackText: '可输入创建新字段'
                     },
-                    'x-component': 'Select',
+                    'x-component': 'FieldSelect',
                     'x-component-props': {
                       allowCreate: true,
                       multiple: true,
                       filterable: true
                     },
                     'x-reactions': [
-                      // 展示源节点的字段
-                      '{{useAsyncDataSource(loadNodeFieldNames, "dataSource", $values.$inputs[0], "primaryKey")}}'
+                      `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
+                      {
+                        fulfill: {
+                          run: `
+                            if (!$self.value && $self.dataSource?.length) {
+                              $self.setValue($self.dataSource.filter(item => item.isPrimaryKey).map(item => item.value))
+                            }
+                          `
+                        }
+                      }
                     ]
                   }
                 }

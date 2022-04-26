@@ -187,7 +187,7 @@ export class Join extends NodeType {
                           display: 'none'
                         }
                       },
-                      'x-component': 'Select'
+                      'x-component': 'FieldSelect'
                     },
                     right: {
                       title: '右侧',
@@ -199,7 +199,7 @@ export class Join extends NodeType {
                           display: 'none'
                         }
                       },
-                      'x-component': 'Select'
+                      'x-component': 'FieldSelect'
                     }
                   }
                 },
@@ -210,7 +210,7 @@ export class Join extends NodeType {
                 'x-component': 'JoinExpression',
                 'x-component-props': {
                   findNodeById: '{{findNodeById}}',
-                  loadNodeFieldNamesById: '{{loadNodeFieldNamesById}}'
+                  loadNodeFieldNamesById: '{{loadNodeFieldOptions}}'
                 },
                 'x-reactions': [
                   {
