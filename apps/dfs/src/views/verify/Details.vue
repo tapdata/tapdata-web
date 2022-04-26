@@ -4,6 +4,13 @@
       <div>
         <span style="font-size: 14px">{{ inspect.name }}</span>
         <span class="font-color-linfo ml-3">{{ typeMap[type] }}</span>
+        <ElButton type="text" class="ml-8" :disabled="verifyAgainDisabled" @click.prevent.stop="verifyAgain()">{{
+          $t('verify_operation_verify_again')
+        }}</ElButton>
+        <span class="button-icon">
+          <VIcon class="color-disable" size="14">info</VIcon>
+          <span class="button-icon__info ml-2">{{ $t('verify_operation_verify_again_info') }}</span>
+        </span>
       </div>
       <div v-if="inspect.inspectMethod !== 'row_count'">
         <div class="flex align-items-center">
@@ -37,7 +44,7 @@
       <span class="mx-2 text-break" :class="{ ellipsis: !expandErrorMessage }" style="flex: 1">{{ errorMsg }}</span>
       <span>
         <ElLink type="danger" @click="expandErrorMessage = !expandErrorMessage">{{
-          expandErrorMessage ? '收起' : '展开'
+          expandErrorMessage ? $t('verify_Details_shouQi') : $t('verify_Details_zhanKai')
         }}</ElLink>
         <VIcon class="ml-2 color-info" size="12" @click="errorMsg = ''">close</VIcon>
       </span>
@@ -49,7 +56,14 @@
       :element-loading-text="$t('verify_checking')"
     >
       <template v-if="!['running', 'scheduling'].includes(inspect.status)">
-        <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
+        <ResultTable
+          ref="singleTable"
+          :type="type"
+          :firstCheckId="resultInfo.firstCheckId"
+          :data="tableData"
+          @row-click="rowClick"
+          @verify-again="verifyAgain"
+        ></ResultTable>
         <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
       </template>
     </div>
@@ -65,6 +79,17 @@
 .verify-details-header {
   display: flex;
   justify-content: space-between;
+}
+.button-icon {
+  margin-left: 12px;
+  .button-icon__info {
+    display: none;
+  }
+  &:hover {
+    .button-icon__info {
+      display: inline;
+    }
+  }
 }
 .error-tips {
   padding: 6px 0;
@@ -90,9 +115,9 @@ export default {
     return {
       loading: false,
       typeMap: {
-        row_count: this.$t('dataVerification.rowVerify'),
-        field: this.$t('dataVerification.contentVerify'),
-        jointField: this.$t('dataVerification.jointVerify')
+        row_count: this.$t('dataVerification_rowVerify'),
+        field: this.$t('dataVerification_contentVerify'),
+        jointField: this.$t('dataVerification_jointVerify')
       },
       inspect: {},
       resultInfo: {},
@@ -106,7 +131,17 @@ export default {
       return this.inspect?.inspectMethod || ''
     },
     tableData() {
-      return this.resultInfo.stats || []
+      return (
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.resultInfo.stats?.sort((a, b) => {
+          let value1 = a.taskId
+          let value2 = b.taskId
+          return value1.localeCompare(value2)
+        }) || []
+      )
+    },
+    verifyAgainDisabled() {
+      return this.tableData.every(t => t.result === 'passed')
     }
   },
   created() {
@@ -147,19 +182,18 @@ export default {
             .then(data => {
               let result = data
               if (result) {
-                if (result) {
-                  this.resultInfo = result
-                  let stats = result.stats
-                  if (stats.length) {
-                    this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
-                    this.taskId = stats[0].taskId
-                    this.$nextTick(() => {
-                      this.$refs.resultView?.fetch(1)
-                      if (this.type !== 'row_count') {
-                        this.$refs.singleTable?.setCurrentRow(stats[0])
-                      }
-                    })
-                  }
+                this.resultInfo = result
+                let stats = result.stats
+                if (stats.length) {
+                  this.errorMsg = result.status === 'error' ? result.errorMsg : undefined
+                  let firstStats = this.tableData?.[0] || {}
+                  this.taskId = firstStats.taskId
+                  this.$nextTick(() => {
+                    this.$refs.resultView?.fetch(1)
+                    if (this.type !== 'row_count') {
+                      this.$refs.singleTable?.setCurrentRow(firstStats)
+                    }
+                  })
                 }
               }
             })
@@ -228,13 +262,13 @@ export default {
           { status: 'scheduling', ping_time: 0, scheduleTimes: 0, byFirstCheckId: firstCheckId }
         )
         .then(() => {
-          this.$message.success(this.$t('dataVerification.startVerify'))
+          this.$message.success(this.$t('dataVerification_startVerify'))
           this.getData()
         })
     },
     rowClick(row) {
       this.taskId = row.taskId
-      this.$refs.resultView.fetch(1)
+      this.$refs.resultView?.fetch(1)
     },
     handleOtherVerify(data) {
       if (data.length === 0) {
@@ -290,6 +324,30 @@ export default {
           id: this.resultInfo.firstCheckId
         }
       })
+    },
+    verifyAgain(ids = []) {
+      let taskIds = ids
+      let getMultipleSelection = this.$refs.singleTable.getMultipleSelection()
+      if (ids.length === 0 && getMultipleSelection.length) {
+        taskIds = getMultipleSelection.map(t => t.taskId)
+      }
+      this.$axios
+        .post(
+          'tm/api/Inspects/update?where=' +
+            encodeURIComponent(
+              JSON.stringify({
+                id: this.inspect.id
+              })
+            ),
+          {
+            status: 'scheduling',
+            inspectResultId: this.resultInfo.id,
+            taskIds
+          }
+        )
+        .then(() => {
+          this.getData()
+        })
     }
   }
 }

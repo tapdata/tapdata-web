@@ -51,9 +51,8 @@
                 >
               </div>
               <div>
-                {{ $t('task_info_expected') }}{{ currentStep.label }}{{ $t('task_info_completed_time') }}：{{
-                  completeTime
-                }}
+                {{ $t('task_info_expected') }}{{ currentStep.label }}{{ $t('task_info_completed_time')
+                }}{{ $t('field_mapping_field_mapping_dialog_') }}{{ completeTime }}
               </div>
             </div>
             <ElProgress :percentage="progressBar" :show-text="false"></ElProgress>
@@ -108,9 +107,8 @@
                 >
               </div>
               <div>
-                {{ $t('task_info_expected') }}{{ currentStep.label }}{{ $t('task_info_completed_time') }}：{{
-                  completeTime
-                }}
+                {{ $t('task_info_expected') }}{{ currentStep.label }}{{ $t('task_info_completed_time')
+                }}{{ $t('field_mapping_field_mapping_dialog_') }}{{ completeTime }}
               </div>
             </div>
             <ElProgress :percentage="progressBar" :show-text="false"></ElProgress>
@@ -209,6 +207,14 @@ export default {
     isSupport() {
       const type = this.task?.stages?.find(t => t.outputLanes.length)?.database_type
       return this.supportList.includes(type)
+    },
+    vikaMappings() {
+      let stages = this.task?.stages || []
+      return stages.find(t => !!t.inputLanes.length)?.vikaMappings || {}
+    },
+    qingFlowMappings() {
+      let stages = this.task?.stages || []
+      return stages.find(t => !!t.inputLanes.length)?.qingFlowMappings || {}
     }
   },
   watch: {
@@ -422,7 +428,13 @@ export default {
           return {
             total: res.total,
             data: res.items.map(item => {
-              return Object.assign(item, item.statsData)
+              let obj = Object.assign(item, item.statsData)
+              if (obj.targetDatabaseType === 'vika') {
+                obj.targetTableName = this.vikaMappings[obj.sourceTableName]?.name
+              } else if (obj.targetDatabaseType === 'qingflow') {
+                obj.targetTableName = this.qingFlowMappings[obj.sourceTableName]?.appName
+              }
+              return obj
             })
           }
         })

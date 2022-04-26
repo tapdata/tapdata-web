@@ -7,9 +7,13 @@
       >
         <!-- <div class="message-box__header position-relative">
           <div class="message-box__title flex align-items-center">
-            <VIcon v-if="icon && onlyMessage" :size="iconSize" :color="iconColor" :class="['v-icon', iconClass]">{{
-              icon
-            }}</VIcon>
+            <VIcon
+              v-if="icon && haveTitleAndMessage"
+              :size="iconSize"
+              :color="iconColor"
+              :class="['v-icon', iconClass]"
+              >{{ icon }}</VIcon
+            >
             <span v-if="title" :class="titleClass">{{ title }}</span>
           </div>
           <button
@@ -26,10 +30,13 @@
         <div class="message-box__body">
           <div class="el-message-box__container">
             <div class="el-message-box__message flex" v-if="message !== ''">
-              <!-- v-if="icon && !onlyMessage" -->
-              <VIcon :size="iconSize" :color="iconColor" :class="['v-icon', 'flex-shrink-0', iconClass]">{{
-                icon
-              }}</VIcon>
+              <VIcon
+                v-if="icon"
+                :size="iconSize"
+                :color="iconColor"
+                :class="['v-icon', 'flex-shrink-0', { invisible: !onlyMessage }, iconClass]"
+                >{{ icon }}</VIcon
+              >
               <slot>
                 <div v-if="!dangerouslyUseHTMLString" :class="['message-box__content', messageClass]">
                   {{ message }}
@@ -126,7 +133,11 @@ export default {
     },
     onlyMessage() {
       let { title, message } = this
-      return !title && !!message
+      return !title && message
+    },
+    haveTitleAndMessage() {
+      let { title, message } = this
+      return title && message
     }
   },
   watch: {
@@ -207,15 +218,10 @@ export default {
   padding: 24px 24px 0;
   font-size: 14px;
   color: rgba(0, 0, 0, 0.75);
+  font-weight: 700;
 }
 .v-icon {
-  width: 18px !important;
-  height: 18px !important;
-  margin-right: 10px;
-  margin-top: 1px;
-}
-.el-message-box__message {
-  font-size: 14px;
+  margin-right: 12px;
 }
 .el-button {
   padding: 8px 16px;
@@ -235,12 +241,18 @@ export default {
   cursor: pointer;
 }
 .message-box__body {
-  // margin: 0 0 24px;
-  padding: 24px;
+  margin: 8px 0 24px;
+  padding: 0 24px;
   flex: 1;
   overflow: auto;
   font-size: 12px;
   color: rgba(0, 0, 0, 0.65);
+}
+.message-box__content {
+  padding: 4px 24px 0 0;
+  flex: 1;
+  width: 0;
+  box-sizing: border-box;
 }
 .message-box__btns {
   padding: 0 24px 24px;
@@ -254,7 +266,6 @@ export default {
   }
 }
 .message-button-cancel {
-  color: #4e5969;
-  background-color: #f2f3f5;
+  padding: 7px 16px;
 }
 </style>

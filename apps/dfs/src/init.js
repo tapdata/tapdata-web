@@ -15,6 +15,7 @@ import TapdataWebCore from 'web-core'
 import i18n from './i18n'
 import Purchase from '@/views/purchase/Purchase'
 import store from '@/store'
+import { errorConfirmFnc } from '@/util'
 
 Vue.config.productionTip = false
 Vue.prototype.$settings = settings
@@ -109,7 +110,7 @@ export default ({ routes }) => {
           console.log('获取用户信息失败, 停止重试，跳转到500', err)
           loading.close()
           init()
-          location.replace(location.href.split('#/')[0] + '#/500')
+          return errorConfirmFnc(err)
         }
       })
   }

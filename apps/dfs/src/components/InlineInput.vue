@@ -4,7 +4,16 @@
       <span :class="[wordBreak ? 'word-break' : 'ellipsis']" :title="value" @click="$emit('click-text')">{{
         value
       }}</span>
-      <ElLink class="inline-input-link" style="margin-left: 5px" @click="editing = true">
+      <ElLink
+        v-if="type === 'text'"
+        type="primary"
+        class="inline-input-link"
+        style="margin-left: 5px"
+        @click="editing = true"
+      >
+        {{ editText }}
+      </ElLink>
+      <ElLink v-else class="inline-input-link" style="margin-left: 5px" @click="editing = true">
         <VIcon color="#999" v-bind="iconConfig">edit-outline</VIcon>
       </ElLink>
     </span>
@@ -25,6 +34,12 @@
         >
         <ElButton class="icon-button ml-2" size="medium" @click="cancel"><VIcon size="12">close</VIcon></ElButton>
       </template>
+      <template v-else-if="type === 'text'">
+        <ElButton type="text" class="icon-button ml-4" size="medium" :disabled="disabled" @click="save">{{
+          saveText
+        }}</ElButton>
+        <ElButton type="text" class="icon-button ml-2" size="medium" @click="cancel">{{ cancelText }}</ElButton>
+      </template>
       <template v-else>
         <ElButton
           class="inline-input-button"
@@ -33,15 +48,19 @@
           size="mini"
           :disabled="disabled"
           @click="save"
-          >保存</ElButton
+          >{{ $t('components_InlineInput_baoCun') }}</ElButton
         >
-        <ElButton class="inline-input-button" size="mini" @click="cancel">取消</ElButton>
+        <ElButton class="inline-input-button" size="mini" @click="cancel">{{
+          $t('components_InlineInput_quXiao')
+        }}</ElButton>
       </template>
     </span>
   </div>
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import VIcon from '@/components/VIcon'
 export default {
   components: { VIcon },
@@ -59,6 +78,18 @@ export default {
     max: {
       type: Number,
       default: 32
+    },
+    editText: {
+      type: String,
+      default: i18n.t('components_InlineInput_bianJi')
+    },
+    saveText: {
+      type: String,
+      default: i18n.t('components_InlineInput_baoCun')
+    },
+    cancelText: {
+      type: String,
+      default: i18n.t('components_InlineInput_quXiao')
     }
   },
   data() {
@@ -79,7 +110,7 @@ export default {
     },
     tooltip() {
       let { min, max } = this
-      return `字符长度限制${min}-${max}个字符`
+      return i18n.t('components_InlineInput_ziFuChangDuXian', { val1: min, val2: max })
     }
   },
   watch: {

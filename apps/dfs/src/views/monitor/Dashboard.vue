@@ -20,7 +20,9 @@
         </div>
         <div class="mt-1">
           <span>{{ $t('task_monitor_founder') }}: {{ task.createUser }}</span>
-          <span class="ml-4">{{ $t('task_type') }}：{{ taskType.label }}</span>
+          <span class="ml-4"
+            >{{ $t('task_type') }}{{ $t('field_mapping_field_mapping_dialog_') }}{{ taskType.label }}</span
+          >
         </div>
         <div class="mt-2">
           <VButton
@@ -67,12 +69,12 @@
         <div class="info-item info-title fs-7">{{ infoObj.source.title }}</div>
         <div v-for="(item, index) in infoObj.source.items" :key="'source' + index" class="info-item">
           <span class="font-color-sub">{{ item.label }}: </span>
-          <span class="font-color-main">{{ task[item.key] }}</span>
+          <span class="font-color-main">{{ task[item.key] || '-' }}</span>
         </div>
         <div class="info-item info-title fs-7">{{ infoObj.target.title }}</div>
         <div v-for="(item, index) in infoObj.target.items" :key="'target' + index" class="info-item">
           <span class="font-color-sub">{{ item.label }}: </span>
-          <span class="font-color-main">{{ task[item.key] }}</span>
+          <span class="font-color-main">{{ task[item.key] || '-' }}</span>
         </div>
       </div>
       <div class="panel-right flex-fit h-100 overflow-hidden p-6">
@@ -99,7 +101,7 @@
                     type="text"
                     @click="checkError(scope.row.errorMessage)"
                   >
-                    {{ $t('milestone.btn_check_error') }}
+                    {{ $t('milestone_btn_check_error') }}
                   </ElButton>
                 </template>
               </ElTableColumn>
@@ -123,7 +125,12 @@
             :label="$t('task_monitor_sync_content')"
             name="content"
           >
-            <FieldMapping ref="fieldMapping" :readOnly="true" :field_process="field_process"></FieldMapping>
+            <FieldMapping
+              ref="fieldMapping"
+              :readOnly="true"
+              :dataSourceModel="task ? task.dataSourceModel : {}"
+              :field_process="field_process"
+            ></FieldMapping>
           </ElTabPane>
         </ElTabs>
       </div>
@@ -202,12 +209,15 @@
 }
 </style>
 <script>
+import i18n from '@/i18n'
+
 import StatusTag from '@/components/StatusTag'
 import TaskProgress from './TaskProgress'
 
 import FieldMapping from '@/components/field-mapping/main'
 import Log from './Log.vue'
 import { isFinished } from '../task/copy/util'
+import { getDatabaseTypes } from '@/util'
 export default {
   components: { StatusTag, TaskProgress, Log, FieldMapping },
   data() {
@@ -350,17 +360,19 @@ export default {
     },
     // 获取任务数据
     getData() {
+      const { id } = this.$route.params || {}
       this.loading = true
-      this.$axios
-        .get(`tm/api/Dataflows/${this.$route.params.id}`)
-        .then(data => {
-          this.task = this.formatTask(data)
-          this.getConnections(data)
-          this.showContentTab(data)
-        })
-        .finally(() => {
-          this.loading = false
-        })
+      id &&
+        this.$axios
+          .get(`tm/api/Dataflows/${id}`)
+          .then(data => {
+            this.task = this.formatTask(data)
+            this.getConnections(data)
+            this.showContentTab(data)
+          })
+          .finally(() => {
+            this.loading = false
+          })
     },
     // 获取左侧栏连接信息
     getConnections(data) {
@@ -375,11 +387,12 @@ export default {
           source = stage
         }
       })
+      let typeMap = getDatabaseTypes(true)
       Object.assign(this.task, {
         sourceName: source.name,
         targetName: target.name,
-        sourceType: this.$const.TYPEMAP[source.databaseType] || this.$const.TYPEMAP[source.database_type],
-        targetType: this.$const.TYPEMAP[target.databaseType] || this.$const.TYPEMAP[target.database_type]
+        sourceType: typeMap[source.databaseType] || typeMap[source.database_type],
+        targetType: typeMap[target.databaseType] || typeMap[target.database_type]
       })
       let ids = [source.connectionId, target.connectionId]
       let filter = {
@@ -402,7 +415,7 @@ export default {
           }
           let host = c.database_host
           // mongo 不追加port
-          if (!['mongodb', 'mq'].includes(c.database_type)) {
+          if (c.database_port && !['mongodb', 'aliyun_mongodb', 'tencent_mongodb', 'mq'].includes(c.database_type)) {
             host += ':' + c.database_port
           }
           switch (c.database_type) {
@@ -652,7 +665,7 @@ export default {
       })
     },
     checkError(msg) {
-      this.$confirm(msg, '错误', {
+      this.$confirm(msg, i18n.t('monitor_Dashboard_cuoWu'), {
         type: 'warning',
         width: '850px'
       })

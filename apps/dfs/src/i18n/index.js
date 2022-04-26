@@ -30,6 +30,21 @@ const i18n = new VueI18n({
   messages: eleLangs
 })
 Object.values(langMap).forEach(l => {
+  // 定位矫正文案
+  if (process.env.NODE_ENV === 'development') {
+    let equal = localStorage.getItem('equalLang') ?? ''
+    let inc = localStorage.getItem('includesLang') ?? ''
+    equal = equal ? equal.split(',') : []
+    inc = inc ? inc.split(',') : []
+    for (let key in localLangs[l]) {
+      if (!!equal.length && equal.some(t => localLangs[l][key] === t)) {
+        delete localLangs[l][key]
+      }
+      if (localLangs[l][key] && !!inc.length && inc.some(t => localLangs[l][key]?.includes(t))) {
+        delete localLangs[l][key]
+      }
+    }
+  }
   i18n.mergeLocaleMessage(l, langs[l])
   i18n.mergeLocaleMessage(l, localLangs[l])
 })

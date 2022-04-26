@@ -12,7 +12,7 @@
       :style="{ 'max-width': inputWidth - 32 + 'px', width: '100%' }"
     >
       <span v-if="collapseTags && selected.length">
-        <el-tag
+        <ElTag
           :closable="!selectDisabled"
           :size="collapseTagSize"
           :hit="selected[0].hitState"
@@ -21,13 +21,13 @@
           disable-transitions
         >
           <span class="el-select__tags-text">{{ selected[0].currentLabel }}</span>
-        </el-tag>
-        <el-tag v-if="selected.length > 1" :closable="false" :size="collapseTagSize" type="info" disable-transitions>
+        </ElTag>
+        <ElTag v-if="selected.length > 1" :closable="false" :size="collapseTagSize" type="info" disable-transitions>
           <span class="el-select__tags-text">+ {{ selected.length - 1 }}</span>
-        </el-tag>
+        </ElTag>
       </span>
-      <transition-group @after-leave="resetInputHeight" v-if="!collapseTags">
-        <el-tag
+      <TransitionGroup @after-leave="resetInputHeight" v-if="!collapseTags">
+        <ElTag
           v-for="item in selected"
           :key="getValueKey(item)"
           :closable="!selectDisabled"
@@ -38,8 +38,8 @@
           disable-transitions
         >
           <span class="el-select__tags-text">{{ item.currentLabel }}</span>
-        </el-tag>
-      </transition-group>
+        </ElTag>
+      </TransitionGroup>
 
       <input
         type="text"
@@ -170,6 +170,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import { deepCopy, uniqueArr } from '@/util'
 import { Select } from 'element-ui'
 import { RecycleScroller } from 'vue-virtual-scroller'
@@ -229,7 +231,7 @@ export default {
     },
     lastPageText: {
       type: String,
-      default: '没有更多数据'
+      default: i18n.t('components_SelectList_meiYouGengDuoShu')
     },
     menuMinWidth: {
       type: String,

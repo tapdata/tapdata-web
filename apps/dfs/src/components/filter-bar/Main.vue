@@ -146,7 +146,7 @@ export default {
       this.$emit('input', this.getValue())
       this.$refs.filterForm.validate(res => {
         if (res) {
-          this.$emit('search', item.debounce)
+          this.$emit('search', item.debounce, item)
         }
       })
     },

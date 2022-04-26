@@ -28,7 +28,13 @@
       </span>
     </div>
     <div class="result-table mt-4" v-if="inspect && !['running', 'scheduling'].includes(inspect.status)">
-      <ResultTable ref="singleTable" :type="type" :data="tableData" @row-click="rowClick"></ResultTable>
+      <ResultTable
+        ref="singleTable"
+        :type="type"
+        :firstCheckId="resultInfo.firstCheckId"
+        :data="tableData"
+        @row-click="rowClick"
+      ></ResultTable>
       <ResultView v-if="type !== 'row_count'" ref="resultView" :remoteMethod="getResultData"></ResultView>
     </div>
   </section>
@@ -70,9 +76,9 @@ export default {
     return {
       loading: false,
       typeMap: {
-        row_count: this.$t('dataVerification.rowVerify'),
-        field: this.$t('dataVerification.contentVerify'),
-        jointField: this.$t('dataVerification.jointVerify')
+        row_count: this.$t('dataVerification_rowVerify'),
+        field: this.$t('dataVerification_contentVerify'),
+        jointField: this.$t('dataVerification_jointVerify')
       },
       inspect: {},
       resultInfo: {},
@@ -137,7 +143,7 @@ export default {
     },
     getResultData({ current, size }) {
       let taskId = this.taskId
-      let task = this.inspect.tasks?.find(item => item.taskId === taskId)
+      let task = this.tableData?.find(item => item.taskId === taskId)
       if (task) {
         let showAdvancedVerification = task.showAdvancedVerification
         let statsInfo = this.tableData.find(item => item.taskId === this.taskId)
@@ -171,6 +177,7 @@ export default {
             }
           })
       }
+      return Promise.reject()
     },
     rowClick(row) {
       this.taskId = row.taskId

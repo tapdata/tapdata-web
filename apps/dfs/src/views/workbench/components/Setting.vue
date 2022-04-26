@@ -42,15 +42,15 @@ export default {
       form: {
         connected: {
           email: true,
-          sms: true
+          sms: false
         },
         connectionInterrupted: {
           email: true,
-          sms: true
+          sms: false
         },
         stoppedByError: {
           email: true,
-          sms: true
+          sms: false
         }
       }
     }

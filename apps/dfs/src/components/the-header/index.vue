@@ -15,6 +15,9 @@ export default {
     },
     createTask() {
       this.$refs.header?.createTask?.()
+    },
+    getUser() {
+      this.$refs.header?.getUser?.()
     }
   }
 }

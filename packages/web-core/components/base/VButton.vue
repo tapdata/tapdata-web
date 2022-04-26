@@ -37,6 +37,9 @@ export default {
       if (this.autoLoading) {
         this.comLoading = true
       }
+      if (this.$props.disabled) {
+        return
+      }
       this.$listeners.click?.(resetLoading)
     }
     let className = 'v-button'
@@ -67,7 +70,7 @@ export default {
   &.el-button--mini:active {
     min-width: 80px;
     height: 28px;
-    line-height: 26px;
+    line-height: 28px;
     padding: 0 15px;
     &:hover {
       border-color: map-get($color, primary);

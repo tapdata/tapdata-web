@@ -72,12 +72,18 @@ git checkout dfs-v2.0.0
 ```bash
 docker login http://harbor.devops.tapdata.net:80
 ```
+...windows使用下面命令
+winpty docker login http://harbor.devops.tapdata.net:80
+...
 
 5. 执行build，要确保 `daas-cloud` 是最新的
 ```bash
 git pull
-./drs/build/build.sh -P dfs -v 2.0.0-20211230-xf-001 -p sit -c console
+./drs/build/build.sh -P dfs -v 2.1.1-202203021838-xf-001 -p test -c console
 ```
+...windows
+没有say语音包，执行前去sh文件中，注释掉
+...
 > -v 版本，可以按照版本号-日期-发布者-递增数的格式，每次更新记得的递增保证唯一
 
 4. 详细参数说明

@@ -210,12 +210,12 @@ export default function () {
           }
         ]
       },
-      {
-        type: 'switch',
-        field: 'bidirectional',
-        label: i18n.t('task_setting_two_way_switch'),
-        show: false
-      },
+      // {
+      //   type: 'switch',
+      //   field: 'bidirectional',
+      //   label: i18n.t('task_setting_two_way_switch'),
+      //   show: false
+      // },
       {
         type: 'switch',
         field: 'isOpenAutoDDL',
@@ -233,8 +233,59 @@ export default function () {
         type: 'slot',
         field: 'syncPoints',
         slot: 'syncPoints',
-        label: '增量采集开始时刻',
+        label: i18n.t('task_setting_sync_points'),
         show: false
+      },
+      {
+        type: 'slot',
+        field: 'cronExpression',
+        slot: 'cronExpression',
+        label: i18n.t('task_setting_cron_expression'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'sync_type',
+                value: 'initial_sync'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
+      },
+      {
+        type: 'slot',
+        field: 'scheduleTime',
+        slot: 'scheduleTime',
+        label: i18n.t('task_setting_schedule_time'),
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'sync_type',
+                value: 'initial_sync+cdc'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          },
+          {
+            triggerOptions: [
+              {
+                field: 'sync_type',
+                value: 'cdc'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       }
     ]
   }

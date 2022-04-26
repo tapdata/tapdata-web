@@ -1,473 +1,8 @@
 <template>
-  <div class="notice g-panel-container fs-8" v-if="$route.query.id == 1">
+  <div class="notice g-panel-container ws-main-container fs-8" v-if="$route.query.id == 8">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
-        <span>新手必看 ！如何玩转 Tapdata Cloud 数据同步功能</span>
-      </div>
-      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
-        <img src="../../assets/image/logoIconColour.png" alt="" />
-        <span class="ml-5 mr-4">Cloud@Tapdata</span>
-        <span>2021-05-28</span>
-      </div>
-    </div>
-    <div class="notice-body mt-6 p-6">
-      <div class="notice-body__content">
-        <div class="notice-body__step mb-4">
-          <div>Tapdata Cloud 是 Tapdata 的云版产品，提供安全、简单、永久免费的数据同步服务。</div>
-          <div>
-            近期，Tapdata Cloud 推出1.0 版本，接下来小助手带大家一起来看下如何玩转 Tapdata Cloud 数据同步功能吧！
-          </div>
-          <div class="fw-bolder fs-7">三步快速完成数据同步</div>
-          <div>
-            无论您是想实现数据库架构现代化，还是想实现零停机数据迁移，亦或是实现数据异地灾备及异地多活等，使用 Tapdata
-            Cloud 来搭配您的数据架构设计，只需3步帮您快速完成数据同步！
-          </div>
-          <div class="fw-bolder fs-7">第一步：部署Agent</div>
-          <div>
-            实例Agent是 Tapdata Cloud
-            最重要的组成部分，用户所有的同步任务都依赖于实例来进行。通过实例管理对Agent进行安装、启动、暂停和状态管理等操作。
-          </div>
-          <div class="fw-bolder fs-7">第二步：创建连接</div>
-          <div>
-            建立Agent与用户源数据库和目标数据库的连接。通过连接管理对用户添加的所有数据连接进行管理，主要包括创建连接、连接测试、编辑连接、复制连接、查询连接和删除连接等功能。
-          </div>
-          <div class="fw-bolder fs-7">第三步：创建任务</div>
-          <div>
-            创建同步任务并对同步任务进行管理，主要包括创建任务、启动任务、任务监控、任务编辑、复制、重置、删除等操作。
-          </div>
-          <!--				<div>本版本支持的数据源类型及版本：</div>-->
-        </div>
-        <div class="notice-body__intro">
-          <div class="fw-bolder fs-7">Tapdata 工作台介绍</div>
-          <div>工作台主要帮助用户快速了解和熟悉产品，并可以通过快速创建入口部署Agent、连接和任务。</div>
-          <div class="notice-body__intro-img py-1">
-            <img src="../../../public/images/workbench/workbench.png" alt="" />
-          </div>
-          <div class="fw-bolder fs-7">用户引导</div>
-          <div>点击 Tapdata Cloud 工作台中的【开启引导】可以进入用户引导页面，按照步骤说明学会使用 Tapdata Cloud。</div>
-          <div class="fw-bolder fs-7">快捷入口</div>
-          <div>部署Agent：一键进入Agent创建页面，开始部署Agent</div>
-          <div>创建连接：一键进入连接创建页面，开始创建连接</div>
-          <div>创建任务：一键进入任务创建页面，开始创建同步任务创建任务：一键进入任务创建页面，开始创建同步任务</div>
-          <div class="fw-bolder fs-7">公告通知</div>
-          <div>展示最新的公告信息，包括升级变更提醒、版本新特性介绍等内容，点击公告标题可以查看公告详细内容。</div>
-          <div class="fw-bolder fs-7">文档快速入口</div>
-          <div>点击入口可以快速查看产品介绍文档和产品使用手册。</div>
-          <div class="fw-bolder fs-7">文档中心</div>
-          <div>在文档中心，您可以找到 Tapdata Cloud 相关的文档和资源，帮助您更好地理解和使用我们的产品。</div>
-          <div class="fw-bolder fs-7">社区</div>
-          <div>
-            Tapdata Ask 提供 Tapdata Cloud
-            问答交流，您在使用产品的过程中遇到什么问题，可以点击“社区”提出您的问题，Tapdata
-            的技术人员将会不定期上问答社区看是否能为您提供帮助。同时欢迎您为其它朋友答疑解惑！
-          </div>
-          <div>
-            Tapdata Ask 入口：
-            <ElLink class="logo" type="primary" href="https://ask.tapdata.net/" target="_blank"
-              >https://ask.tapdata.net/</ElLink
-            >
-          </div>
-          <div>
-            您还可以在 Tapdata Ask 反馈我们产品的一些问题，提供优质的反馈将有机会获取 Tapdata 周边礼品，例如
-            签字笔，U盘等。
-          </div>
-          <div>如果您有比较紧急的问题，或者比较深入的交流反馈，也可以添加我们用户支持同学的企业微信，联系我们。</div>
-          <div class="QR-code">
-            <img src="../../../public/images/wx_user_support.png" alt="" />
-          </div>
-          <div class="fw-bolder">感谢您对 Tapdata Cloud 的支持，我们一起努力让数据同步变得更加简单高效！</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 2">
-    <div class="notice-header p-6">
-      <div class="notice-header__title fw-bolder fs-7">
-        <span>推荐 | 异构数据库同步云平台 Tapdata Cloud 开启有奖公测</span>
-      </div>
-      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
-        <img src="../../assets/image/logoIconColour.png" alt="" />
-        <span class="ml-5 mr-4">Cloud@Tapdata</span>
-        <span>2021-07-31</span>
-      </div>
-    </div>
-    <div class="notice-body mt-6 fs-6">
-      <div class="notice-body__content">
-        <div class="banner-box mb-10">
-          <img src="../../../public/images/notice/top.png" alt="" />
-        </div>
-        <div class="info-section section-margin mb-10">
-          <div class="info-section__header inline-block p-2">Tapdata Cloud 介绍</div>
-          <div class="info-section__body p-3 fs-7">
-            Tapdata Cloud 是 Tapdata「深圳钛铂数据有限公司 」自研的国内首个
-            <span class="fw-bolder">异构数据库实时同步云平台</span>
-            ，目前支持 Oracle、MySQL、PostgreSQL、SQL Server、MongoDB、Elasticsearch 之间的数据迁移和同步，即将支持
-            DB2、Sybase ASE、Redis、Kafka、GBase、GaussDB 等。Tapdata Cloud 将以
-            <span class="fw-bolder">永久免费</span>
-            的形式提供给所有开发者和企业使用。
-          </div>
-        </div>
-        <div class="index-section section-margin mb-3">
-          <div class="index-section__header flex">
-            <div class="index-section__number">01</div>
-            <div class="index-section__slash"></div>
-            <div class="index-section__title">
-              <div class="title-top">
-                <div class="title-top_arrow"></div>
-              </div>
-              <div class="title-bottom ml-3 fw-bolder">有奖公测活动</div>
-            </div>
-          </div>
-        </div>
-        <div class="activity-section section-margin fs-7 pb-5 px-5">
-          自开放公测以来，Tapdata Cloud 在与用户交互过程中不断升级迭代，为了回馈和鼓励用户更好地使用产品和提出宝贵建议，
-          <span class="fw-bolder">即日起至2021年10月1日，Tapdata 面向全体用户送出公测福利！</span>
-          不论您是Tapdata Cloud 的用户还是产品推荐官，都有机会赢取 AirPods
-          、Kindle、机械键盘、小爱音响、充电宝、定制保温杯和U盘等好礼！
-        </div>
-        <div class="prize-section section-margin flex justify-content-center p-4">
-          <img src="../../../public/images/notice/prize1.png" alt="" />
-          <img src="../../../public/images/notice/prize2.png" alt="" />
-        </div>
-        <div class="index-section section-margin mb-3">
-          <div class="index-section__header flex">
-            <div class="index-section__number">02</div>
-            <div class="index-section__slash"></div>
-            <div class="index-section__title">
-              <div class="title-top">
-                <div class="title-top_arrow"></div>
-              </div>
-              <div class="title-bottom ml-3 fw-bolder">活动参与方式</div>
-            </div>
-          </div>
-        </div>
-        <div class="mode-container section-margin flex pb-7">
-          <div class="mode-section">
-            <div class="mode-section__connect">
-              <div class="mode-section__header">方式一 ：顺利完成1个同步任务</div>
-              <div class="p-5 clear">
-                <div class="line-height-2">
-                  活动期间顺利完成至少1个 Tapdata Cloud 数据同步任务，截图发给 Tapdata
-                  服务号人工客服（通过公众号首页菜单联系客服），即可领取 64G U盘/ 充电宝 / 小爱音箱 / 保温杯 4选1！
-                </div>
-                <div class="text-center">
-                  <div class="fw-bolder mt-6 mb-3">Tapdata Cloud 官网↓↓</div>
-                  <div class="mb-3">https://cloud.tapdata.net/</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="mode-section">
-            <div class="mode-section__connect">
-              <div class="mode-section__header">方式二：撰写并分享产品体验博客</div>
-              <div class="p-5 clear">
-                <div class="line-height-2">
-                  活动期间，体验 Tapdata Cloud / Tapdata Enterprise，并撰写和分享使用经验博客文章，完成后将文章链接发给
-                  Tapdata 服务号人工客服，可根据内容质量获得Apple AirPods / Kindle /
-                  机械键盘（文章质量越高，奖品价值越高）！
-                </div>
-                <div class="mt-6 fs-8">
-                  * 内容判断维度：主题切合度，逻辑清晰度，可读性，参考价值等；本奖品也可以折合成京东购物卡兑换。
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="mode-section">
-            <div class="mode-section__connect">
-              <div class="mode-section__header">方式三：成为 Tapdata 产品推荐官</div>
-              <div class="p-5 clear">
-                <div class="line-height-2">
-                  活动期间成功邀请朋友关注 Tapdata
-                  微信服务号（邀请数≥15名）的推荐官，将获得礼品盲盒1个（包括不限于机械键盘，保温杯，充电宝，Kindle，
-                  Apple AirPods 等），邀请人数达标后系统将自动通知您（ps：邀请人数越多，将有机会获得更高价值的礼品）！
-                </div>
-                <div class="QR-code-section text-center">
-                  <div class="mt-6 mb-2">扫描识别二维码成为产品推荐官↓↓</div>
-                  <img src="../../../public/images/notice/poster.png" alt="" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 3">
-    <div class="notice-header p-6">
-      <div class="notice-header__title fw-bolder fs-7">
-        <span>Tapdata Cloud 1.0.6 版本发布啦！</span>
-      </div>
-      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
-        <img src="../../assets/image/logoIconColour.png" alt="" />
-        <span class="ml-5 mr-4">Cloud@Tapdata</span>
-        <span>2021-08-30</span>
-      </div>
-    </div>
-    <div class="notice-body mt-6 fs-6">
-      <div class="notice-body__content p-6 fs-7" style="width: 800px">
-        <div class="mb-3 fw-bolder">1.数据一致性如何保证？数据校验来帮忙</div>
-        <div class="mb-3">
-          多样化的校验手段：快速count校验、表全字段值校验和关联字段值校验，可增量式的差异化校验能力，让用户快速精准实现同步结果的校验。
-        </div>
-        <div class="mb-8">
-          <img src="../../../public/images/notice/verify.png" alt="" />
-        </div>
-        <div class="mb-3 fw-bolder">2. 异构迁移无从下手？类型映射帮您高效解决</div>
-        <div class="mb-3">
-          在异构数据库之间做迁移，类型转换是一大难题，也是导致迁移失败的重要原因，本次上线的类型映射功能，在系统推演的基础上，提供了人工调整的能力，进一步保证迁移的成功率。
-        </div>
-        <div class="mb-8">
-          <img src="../../../public/images/notice/verify_diff.png" alt="" />
-        </div>
-        <div class="mb-3 fw-bolder">3. 支持任务配置过程手动加载schema，轻松解决结构初始化问题</div>
-        <div class="mb-3">
-          配置同步任务时，源表信息不完整？没关系，手动加载来解决。充分满足网络波动等情况下，加载异常的问题。
-        </div>
-        <div class="mb-8">
-          <img src="../../../public/images/notice/task_load_schema.png" alt="" />
-        </div>
-        <div class="mb-3 fw-bolder">4. 任务支持设置增量并发写入，高性能同步不再是难题</div>
-        <div class="mb-3">为了提升数据同步时的目标端高性能写入，本次上线开放了增量并发开关，方便用户调优。</div>
-        <div class="mb-3">
-          <img src="../../../public/images/notice/task_write.png" alt="" />
-        </div>
-        <div class="mb-8">温馨提醒：增量并发默认未打开，需要自行开启。</div>
-        <div class="mb-3 fw-bolder">5. 全新增加对阿里云数仓AnalyticDB MySQL支持</div>
-        <div class="mb-8">在本版本中，增加了对AnalyticDB MySQL作为目标的支持，满足用户对于数据入仓的需求。</div>
-        <div class="mb-3 fw-bolder">6. 支持standalone模式MongoDB的全量同步</div>
-        <div class="mb-6">
-          在前面的版本中，Tapdata Cloud已支持在两个 MongoDB
-          集群之间复制数据。本次版本应MongoDB用户要求，支持standalone模式MongoDB的全量同步。
-        </div>
-        <div class="mb-4" style="color: #d83931">温馨提示：体验新功能，需要更新Agent到最新版本哦。</div>
-        <div class="mb-4">更多新功能具体介绍，敬请关注Tapdata服务号后续发布。</div>
-        <div class="mb-3">
-          <img style="width: 100px" src="../../../public/images/wx_code.png" alt="" />
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 4">
-    <div class="notice-header p-6">
-      <div class="notice-header__title fw-bolder fs-7">
-        <span>Tapdata Cloud 1.0.7 版本发布啦！</span>
-      </div>
-      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
-        <img src="../../assets/image/logoIconColour.png" alt="" />
-        <span class="ml-5 mr-4">Cloud@Tapdata</span>
-        <span>2021-10-26</span>
-      </div>
-    </div>
-    <div class="notice-body mt-6 fs-6">
-      <div class="notice-body__content p-6 fs-7" style="width: 800px">
-        <div class="mb-3 fw-bolder">1. 短信通知支持自配置</div>
-        <div class="mb-3">实现个性化通知</div>
-        <div class="mb-8">
-          <img src="../../../public/images/notice/v1.0.7_notice.png" alt="" />
-        </div>
-        <div class="mb-3 fw-bolder">2. 上新GP/MQ数据源支持</div>
-        <div class="mb-3">关系型，非关系型，消息队列，云上云下，自由流转.</div>
-        <div class="mb-8">
-          <img src="../../../public/images/notice/v1.0.7_connection.png" alt="" />
-        </div>
-        <div class="mb-3">即将上线DB2、Sybase ASE、GBase.</div>
-        <div class="mb-3 fw-bolder">3. 新版界面更友好</div>
-        <div class="mb-3">从配置指引到状态提醒，我们把细节做的更好。创建数据连接，右侧直接可获得清晰的指引</div>
-        <div class="mb-8">
-          <img src="../../../public/images/notice/v1.0.7_creat_connection.png" alt="" />
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 5">
-    <div class="notice-header p-6">
-      <div class="notice-header__title fw-bolder fs-7">
-        <span>Tapdata Cloud 1.0.8 版本发布啦！</span>
-      </div>
-      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
-        <img src="../../assets/image/logoIconColour.png" alt="" />
-        <span class="ml-5 mr-4">Cloud@Tapdata</span>
-        <span>2021-12-03</span>
-      </div>
-    </div>
-    <div class="notice-body mt-6 fs-6">
-      <div class="notice-body__content p-6 fs-7" style="width: 800px">
-        <div class="mb-3">
-          Tapdata Cloud 是国内首家异构数据库实时同步云平台，目前支持Oracle、MySQL、PG、SQL Server、MongoDB、ES
-          、达梦、Kafka、GP、MQ、ClickHouse、Hazelcast Cloud、ADB MySQL、ADB PostgreSQL、KunDB之间的数据同步，即将支持
-          DB2、Sybase ASE、Redis、GBase、GaussDB 等，并对用户永久免费。
-          完美支持SQL->NOSQL，拖拽式的“零”代码配置操作、可视化任务运行监控，强大的数据处理能力，Tapdata Cloud
-          让您轻松实现跨系统跨类型的数据同步和交换，释放数据准备阶段的精力。 近日，Tapdata Cloud 发布1.0.8
-          版本，新增5个数据源支持，并进行了多处细节优化
-        </div>
-        <div class="mb-3 fw-bolder">1. 上新ClickHouse等5个数据源</div>
-        <div class="mb-3">ClickHouse | Hazelcast Cloud | ADB MySQL | ADB PostgreSQL | KunDB</div>
-        <div class="mb-3">关系型数据库，NoSQL，NewSQL，消息队列，云上云下，自由流转</div>
-        <div class="mb-8">
-          <img src="../../../public/images/notice/v1.0.8_connection.png" alt="" />
-        </div>
-        <div class="mb-3 fw-bolder">2. 不断优化，提供更佳体验</div>
-        <div class="mb-3">对于用户使用的各个环节，我们一直在努力提供更佳体验。</div>
-        <div class="mb-3">
-          Tapdata Cloud 支持多种部署环境，包括：Linux，Windows，以及Docker。 Tapdata agent，是Tapdata
-          Cloud数据同步服务的执行实例，负责从TCM获取任务信息，通过流式技术从源系统获取数据、处理转换数据并发送到目标系统，并在任务执行过程中监测并上报任务状态至TCM。
-        </div>
-        <div class="mb-8">
-          <img src="../../../public/images/notice/v1.0.8_connection_1.png" alt="" />
-        </div>
-        <div class="mb-3">Tapdata Cloud采用了多种网络安全措施，确保用户数据和信息安全。</div>
-        <div class="mb-3">
-          <span class="fw-bolder">单向连接：</span>同步实例节点单向连接管控端运行服务。Tapdata
-          agent实例节点对外不主动暴露网络信息，只会连接 TCM管理端服务，获取任务信息、上报状态信息。
-        </div>
-        <div class="mb-3">
-          <span class="fw-bolder"> HTTPS 协议：</span>用户部署的Tapdata agent实例节点和 TCM 通信链路采用 HTTPS
-          协议，防止盗取并篡改信息。
-        </div>
-        <div class="mb-3">
-          <span class="fw-bolder">可信环境：</span
-          >自建模式下，所有数据流转均发生在受用户管理的服务器和网络环境，数据不流出泄漏。
-        </div>
-        <div class="mb-3">
-          在 Tapdata Cloud 1.0.8 版本中，我们对
-          Windows下Agent部署方式优化，同时优化了云版Agent包，打包时去掉暂时不需要的数据库驱动jar包 。/div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 6">
-    <div class="notice-header p-6">
-      <div class="notice-header__title fw-bolder fs-7">
-        <span>Tapdata Cloud 最新功能概览</span>
-      </div>
-      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
-        <img src="../../assets/image/logoIconColour.png" alt="" />
-        <span class="ml-5 mr-4">Cloud@Tapdata</span>
-        <span>2021-12-03</span>
-      </div>
-    </div>
-    <div class="notice-body mt-6 fs-6">
-      <div class="notice-body__content p-6 fs-7" style="width: 800px">
-        <div class="mb-8">
-          <img src="../../../public/images/notice/activity_1.png" alt="" />
-        </div>
-      </div>
-      <div class="mb-3 fw-bolder">Tapdata Cloud 是什么？</div>
-      <div class="mb-3">
-        Tapdata
-        Cloud是由Tapdata提供的集数据同步、数据融合（即将上线）、数据服务（即将上线）为一体的实时数据融合服务，能够在跨云、跨地域、多类型数据源的场景下，提供毫秒级的实时数据同步服务和数据融合服务。
-      </div>
-      <div class="mb-3 fw-bolder">Tapdata Cloud 支持的数据源类型和版本</div>
-      <div class="mb-3">Tapdata Cloud采用了多种网络安全措施，确保用户数据和信息安全。</div>
-      <div class="mb-8">
-        <img src="../../../public/images/notice/activity_2.png" alt="" />
-      </div>
-      <div class="mb-3">
-        <div class="fw-bolder">数据同步方式</div>
-        支持全量同步+增量同步。
-      </div>
-      <div class="mb-3">
-        <div class="fw-bolder">Tapdata Cloud 支持跨区域、跨网络的数据同步：</div>
-        Tapdata Cloud 通过 Agent 来连接源和目标，仅通过开放有限的网络服务，即可实现同步需求，在您开始部署 Agent
-        之前，一定要保证您准备用来部署 Agent 的服务器与您的源数据库和目标数据库的网络是开通的。同时，要保证您的 Agent
-        服务器可以正常访问 Tapdata Cloud 系统，这样 Agent 才能正常上报状态，获取同步配置，执行同步任务。
-      </div>
-      <div class="mb-3">
-        <div class="fw-bolder">数据管理</div>
-        支持创建连接、连接测试、编辑连接、复制连接、查询连接和删除连接等操作。
-      </div>
-      <div class="mb-3">
-        <div class="fw-bolder">任务管理</div>
-        支持创建任务、启动任务、任务监控、任务编辑、复制、重置、删除等操作。
-      </div>
-      <div class="mb-3">
-        <div class="fw-bolder">任务管理</div>
-        支持创建任务、启动任务、任务监控、任务编辑、复制、重置、删除等操作。
-      </div>
-      <div class="mb-3">
-        <div class="fw-bolder">类型映射</div>
-        在同步任务设置过程，通过类型映射设置，用户可以在设置同步范围，选择将源端哪些表同步到目标端，还可以设置源表到目标表的字段名、字段类型和字段精度等信息，提高异构数据迁移成功率，并在
-        Tapdata Cloud 工作台对任务进行管理和监控。
-      </div>
-      <div class="mb-3">
-        <div class="fw-bolder">数据校验方式</div>
-        快速count校验、表全字段值校验和关联字段值校验。
-      </div>
-      <div class="mb-3">
-        <div class="fw-bolder">数据校验</div>
-        支持创建任务、启动任务、任务监控、任务编辑、复制、重置、删除等操作。
-      </div>
-      <div class="mb-3">
-        <div class="fw-bolder">操作日志</div>
-        记录用户在系统进行的各项操作的日志，用户可查看操作的对象、时间、操作类型及描述。
-      </div>
-    </div>
-  </div>
-  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 7">
-    <div class="notice-header p-6">
-      <div class="notice-header__title fw-bolder fs-7">
-        <span>Tapdata 在线研讨会：DaaS vs 大数据平台，是竞争还是共处？</span>
-      </div>
-      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
-        <img src="../../assets/image/logoIconColour.png" alt="" />
-        <span class="ml-5 mr-4">Cloud@Tapdata</span>
-        <span>2021-12-03</span>
-      </div>
-    </div>
-    <div class="notice-body mt-6 fs-6">
-      <div class="notice-body__content p-6 fs-7" style="width: 800px">
-        <div class="mb-8">
-          <img src="../../../public/images/notice/activity_4.png" alt="" />
-        </div>
-        <div class="mb-3">
-          从20年前的传统数仓，到10年前大数据平台，5年前开始火热的数据中台以及最近出现的湖仓一体新数据平台，今天被数据孤岛困扰的企业，面临着太多的选择。这些数据产品及架构有一个共性：他们本质上解决的大部分都是分析洞察类场景(
-          Analytical)，无论是BI，报表，指标，标签，画像，AI等。<span class="fw-bolder"
-            >但是实际上，企业在事务型(Transactional)类型上的业务投入和AP 相比是9:1之差别。而Real Time DaaS,
-            则是主要为TP型场景设计的一个实时数据平台。</span
-          >
-        </div>
-        <div class="mb-3 fw-bolder">
-          我们为什么需要一个Real Time
-          DaaS？它和大数据平台技术上有什么区别？如果企业还没有构建数据平台，我是应该考虑DaaS还是Big
-          Data？如果已经有了大数据平台，我是否还需要DaaS？
-        </div>
-        <div class="mb-3">
-          如果你想了解更多，请参加本次的在线研讨会。TJ会详细阐述 Tapdata DaaS的技术特性以及在不同成熟度企业的合理运用。
-        </div>
-        <div class="mb-3">
-          *
-          我们还提供了丰富的参会礼品，不论是报名参会还是分享海报，都有机会获得机械键盘、数据库相关技术书籍以及精美伴手礼！详情关注文末介绍。
-        </div>
-        <div class="mb-3">Tapdata Cloud采用了多种网络安全措施，确保用户数据和信息安全。</div>
-        <div class="mb-8">
-          <img src="../../../public/images/notice/activity_3.png" alt="" />
-        </div>
-        <div class="mb-3">
-          <div class="fw-bolder">转发有奖</div>
-          转发本活动链接至朋友圈，并将截图发给官方小助手即可参加抽奖；我们将于在线研讨会开始前1小时，即12月8日晚7点开出会前抽奖，送出机械键盘1个，书籍《数据库系统内幕》2本，《图解SQL—数据库语言轻松入门》3本，伴手礼10个。
-        </div>
-        <div class="mb-3">
-          <div class="fw-bolder">参会有奖</div>
-          周三晚在线研讨会期间，按照主持人指示参加抽奖，我们将在分享期间抽奖送出机械键盘1个，书籍《数据库系统内幕》2本，《图解SQL—数据库语言轻松入门》3本，伴手礼10个。
-        </div>
-        <div class="mb-3">
-          <div class="fw-bolder">100%有奖！</div>
-          关注下方二维码即可获取您的专属海报，按照后台指引操作可以直接领取书籍1本（限量20名）！
-        </div>
-        <div class="mb-3">
-          在 Tapdata Cloud 1.0.8 版本中，我们对
-          Windows下Agent部署方式优化，同时优化了云版Agent包，打包时去掉暂时不需要的数据库驱动jar包 。/div>
-        </div>
-        <div class="mb-8">
-          <img src="../../../public/images/notice/activity_5.png" alt="" />
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 8">
-    <div class="notice-header p-6">
-      <div class="notice-header__title fw-bolder fs-7">
-        <span>Tapdata Cloud 1.0.9 版本发布啦！</span>
+        <span>{{ $t('workbench_Notice_tAPDA12') }}</span>
       </div>
       <div class="notice-header__time mt-5 ml-1 flex align-items-center">
         <img src="../../assets/image/logoIconColour.png" alt="" />
@@ -478,39 +13,24 @@
     <div class="notice-body mt-6 fs-6">
       <div class="notice-body__content p-6 fs-7" style="width: 800px">
         <div class="mb-3">
-          Tapdata Cloud 是国内首家异构数据库实时同步云平台，目前支持Oracle、MySQL、PG、SQL Server、MongoDB、ES
-          、达梦、Kafka、GP、MQ、ClickHouse、Hazelcast Cloud、ADB MySQL、ADB
-          PostgreSQL、KunDB、TiDB、Dummy之间的数据同步，即将支持 DB2、Sybase ASE、Redis、GBase、GaussDB
-          等，并对用户永久免费。
+          {{ $t('workbench_Notice_tAPDA11') }}<img src="../../../public/images/notice/v1.0.9_01.png" alt="" />
         </div>
-        <div class="mb-3">
-          完美支持SQL->NOSQL，拖拽式的“零”代码配置操作、可视化任务运行监控，强大的数据处理能力，Tapdata Cloud
-          让您轻松实现跨系统跨类型的数据同步和交换，释放数据准备阶段的精力。
-        </div>
-        <div class="mb-3">
-          近日，Tapdata Cloud 发布1.0.9 版本，新增2个数据源支持，并结合用户反馈进行了多处功能增强和优化。
-        </div>
-        <div class="mb-3 fw-bolder">1. 上新TiDB 等2个数据源</div>
-        <div class="mb-3">1.0.9 版本新增TiDB 作为同步目标，并支持Dummy 作为数据源。</div>
-        <div class="mb-8">
-          <img src="../../../public/images/notice/v1.0.9_01.png" alt="" />
-        </div>
-        <div class="mb-3 fw-bolder">2. 不断优化，提供更佳体验</div>
-        <div class="mb-3">在创建连接时，用户可以选择连接类型</div>
+        <div class="mb-3 fw-bolder">{{ $t('workbench_Notice_buDuanYouHuaTi') }}</div>
+        <div class="mb-3">{{ $t('workbench_Notice_zaiChuangJianLianJie') }}</div>
         <div class="mb-8">
           <img src="../../../public/images/notice/v1.0.9_02.png" alt="" />
         </div>
-        <div class="mb-3">本次新增日志过滤筛选功能，用户可以通过日志过滤筛选</div>
+        <div class="mb-3">{{ $t('workbench_Notice_benCiXinZengRi') }}</div>
         <div class="mb-8">
           <img src="../../../public/images/notice/v1.0.9_03.png" alt="" />
         </div>
-        <div class="mb-3 fw-bolder">3. 支持批量操作、体验更佳</div>
-        <div class="mb-3">字段映射部分，表名、字段名和大小写设置支持用户批量调整，简单快捷，极大提高了处理效率。</div>
+        <div class="mb-3 fw-bolder">{{ $t('workbench_Notice_zhiChiPiLiangCao') }}</div>
+        <div class="mb-3">{{ $t('workbench_Notice_ziDuanYingSheBu') }}</div>
         <div class="mb-8">
           <img src="../../../public/images/notice/v1.0.9_04.png" alt="" />
         </div>
-        <div class="mb-3 fw-bolder">4. 多维度统计，更直观了解任务进度</div>
-        <div class="mb-3">1.0.9 版本对数据库同步任务详情进行了优化，用户可以看到同步的进度，同步进程一目了然。</div>
+        <div class="mb-3 fw-bolder">{{ $t('workbench_Notice_duoWeiDuTongJi') }}</div>
+        <div class="mb-3">{{ $t('workbench_Notice_banBenDuiShuJu') }}</div>
         <div class="mb-8">
           <img src="../../../public/images/notice/v1.0.9_05.png" alt="" />
         </div>
@@ -520,7 +40,7 @@
   <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 9">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
-        <span>升级公告！</span>
+        <span>{{ $t('workbench_Notice_shengJiGongGao') }}</span>
       </div>
       <div class="notice-header__time mt-5 ml-1 flex align-items-center">
         <img src="../../assets/image/logoIconColour.png" alt="" />
@@ -530,23 +50,19 @@
     </div>
     <div class="notice-body mt-6 fs-6">
       <div class="notice-body__content p-6 fs-7" style="width: 800px">
-        <div class="mb-6">尊敬的用户朋友：</div>
-        <div class="mb-2">
-          您好！为了进一步提高服务质量，Tapdata Cloud 将于2022年1月20号（本周四）19点至22点进行升级
-        </div>
-        <div class="mb-2">
-          升级期间可能会影响访问控制台、创建任务等操作，不影响已在运行状态的任务，升级完成后恢复正常使用。
-        </div>
-        <div class="mb-10">以上升级如带来不便请您谅解，并提前做好准备，如有疑问可联系我们。</div>
-        <div class="">2022年1月20日</div>
-        <div class="">Tapdata Cloud 团队</div>
+        <div class="mb-6">{{ $t('workbench_Notice_zunJingDeYongHu') }}</div>
+        <div class="mb-2">{{ $t('workbench_Notice_ninHaoWeiLeJin') }}</div>
+        <div class="mb-2">{{ $t('workbench_Notice_shengJiQiJianKe') }}</div>
+        <div class="mb-10">{{ $t('workbench_Notice_yiShangShengJiRu') }}</div>
+        <div class="">{{ $t('workbench_Notice_nianYueRi') }}</div>
+        <div class="">{{ $t('workbench_Notice_tAPDA9') }}</div>
       </div>
     </div>
   </div>
   <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 10">
     <div class="notice-header p-6">
       <div class="notice-header__title fw-bolder fs-7">
-        <span>Tapdata Cloud 开年版本更新：细节控福利！数据源又新增，支持增量任务自定义采集「开始时刻」</span>
+        <span>{{ $t('workbench_Notice_tAPDA8') }}</span>
       </div>
       <div class="notice-header__time mt-5 ml-1 flex align-items-center">
         <img src="../../assets/image/logoIconColour.png" alt="" />
@@ -556,65 +72,53 @@
     </div>
     <div class="notice-body mt-6 fs-6">
       <div class="notice-body__content p-6 fs-7" style="width: 800px">
-        <div class="mb-4">开年又逢更新，优化一刻不停——Tapdata Cloud 新版本发布啦！</div>
-        <div class="mb-4">
-          此次发布的 2.0.1
-          版，在数据源上新之余，针对实际操作过程中的诸多细节再做优化，进一步提升了其易用性和操作的便捷性。
-        </div>
+        <div class="mb-4">{{ $t('workbench_Notice_kaiNianYouFengGeng') }}</div>
+        <div class="mb-4">{{ $t('workbench_Notice_ciCiFaBuDe2') }}</div>
         <div class="mb-2 p-4" style="background-color: rgb(241, 248, 255)">
-          <div class="mb-4">更新速览👇</div>
+          <div class="mb-4">{{ $t('workbench_Notice_gengXinSuLan') }}</div>
           <div class="ml-2 mb-4">
-            1. 支持<span class="fw-bold font-color-main">设置增量采集时间点</span>，增量任务可以自定义采集开始时刻
+            {{ $t('workbench_Notice_zhiChi')
+            }}<span class="fw-bold font-color-main">{{ $t('workbench_Notice_sheZhiZengLiangCai') }}</span
+            >{{ $t('workbench_Notice_zengLiangRenWuKe') }}
           </div>
           <div class="ml-2 mb-4">
-            2. 支持数据源再上新，数据连接<span class="fw-bold font-color-main">新增 MariaDB 支持</span>
+            {{ $t('workbench_Notice_zhiChiShuJuYuan')
+            }}<span class="fw-bold font-color-main">{{ $t('workbench_Notice_xinZengMAR') }}</span>
           </div>
-          <div class="ml-2 mb-4">3. 细节更新：优化了编辑「已运行任务」的弹窗提示，避免误操作</div>
+          <div class="ml-2 mb-4">{{ $t('workbench_Notice_xiJieGengXinYou') }}</div>
         </div>
         <div class="number-title-box mt-8">
           <div class="number-title-box__number">01</div>
           <div class="number-title-box__content">
             <div class="number-title-box__title">
-              <strong>支持设置增量采集时间点</strong>
+              <strong>{{ $t('workbench_Notice_zhiChiSheZhiZeng') }}</strong>
             </div>
-            <div class="number-title-box__desc">功能升级 操作更灵活</div>
+            <div class="number-title-box__desc">{{ $t('workbench_Notice_gongNengShengJiCao') }}</div>
           </div>
         </div>
-        <div class="mb-4 line-height-2">
-          针对历史版本中，设置增量任务时无法指定时间，默认从“当前时间”开始增量数据采集的问题，现已做出优化——新版本下，增量任务可以自定义增量采集时间点。打开增量任务设置，即可手动添加“增量采集开始时刻”，满足真实业务场景下的操作需求，专注使用体验的不断优化。
-        </div>
-        <div class="mb-4 line-height-2">
-          如果你的全量+增量任务在进入增量阶段后出现异常，导致任务停止，可以编辑任务，将任务的同步类型改为【增量同步】，然后将【增量采集开始时刻】设置为任务停止时所处于的增量时间点，再继续运行任务。无需再重新跑一次全量即可实现数据的无缝衔接，保证数据的完整性。
-        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_zhenDuiLiShiBan') }}</div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_ruGuoNiDeQuan') }}</div>
         <div>
           <img src="../../../public/images/notice/task_create.gif" alt="" />
         </div>
         <div>
           <img src="../../../public/images/notice/task_setting_cdc_time.png" alt="" />
         </div>
-        <div class="mb-4 line-height-2">
-          目前，该优化已覆盖包括 MySQL、SQL Server、Oracle，以及 MongoDB
-          在内的多个数据库。针对其他数据库的支持，后续也将陆续开放，敬请期待。
-        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_muQianGaiYouHua') }}</div>
         <div class="number-title-box mt-8">
           <div class="number-title-box__number">02</div>
           <div class="number-title-box__content">
             <div class="number-title-box__title">
-              <strong>数据源再上新</strong>
+              <strong>{{ $t('workbench_Notice_shuJuYuanZaiShang') }}</strong>
             </div>
             <div class="number-title-box__desc">
-              <p>MariaDB现已加入Tapdata Cloud</p>
-              <p class="mt-3">异构数据库实时同步家族</p>
+              <p>{{ $t('workbench_Notice_mARIA') }}</p>
+              <p class="mt-3">{{ $t('workbench_Notice_yiGouShuJuKu') }}</p>
             </div>
           </div>
         </div>
-        <div class="mb-4 line-height-2">
-          作为国内首家异构数据库实时同步云平台，Tapdata Cloud
-          打破系统和数据类型限制，支持多样化的数据源、拖拽式的“零”代码配置操作，以强大的数据处理能力，真正做到轻松实现跨系统跨类型的数据同步和交换，让你能够释放数据准备阶段的精力，更专注数据业务的开发与创新。
-        </div>
-        <div class="mb-4 line-height-2">
-          本次更新中，数据连接新增 MariaDB 支持，可支持的数据源版图再增一块。看，这都是 Tapdata Cloud 为你“打”下的江山：
-        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_zuoWeiGuoNeiShou3') }}</div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_benCiGengXinZhong3') }}</div>
         <div>
           <img src="../../../public/images/notice/connection_selector.png" alt="" />
         </div>
@@ -622,16 +126,14 @@
           <div class="number-title-box__number">03</div>
           <div class="number-title-box__content">
             <div class="number-title-box__title">
-              <strong>细节优化</strong>
+              <strong>{{ $t('workbench_Notice_xiJieYouHua') }}</strong>
             </div>
             <div class="number-title-box__desc">
-              <p>微小但贴心 使用更安心</p>
+              <p>{{ $t('workbench_Notice_weiXiaoDanTieXin2') }}</p>
             </div>
           </div>
         </div>
-        <div class="mb-4 line-height-2">
-          用户导向，细节至上——这一次，我们优化了针对已运行任务进行编辑的弹窗提示。叮咚，前方为已运行任务，如果修改任务设置，提交后必须重置才能正常运行，请谨慎操作哦。
-        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_yongHuDaoXiangXi2') }}</div>
         <div>
           <img src="../../../public/images/notice/task_edit_pop.gif" alt="" />
         </div>
@@ -639,12 +141,683 @@
           <img src="../../../public/images/notice/task_edit_pop_content.png" alt="" />
         </div>
         <div class="line-height-2">
-          重视成长路上收获的每一条反馈，不断完善，持续优化，Tapdata一直在路上。使于细节，成于大美，期待下一个新版本再和大家见面图片
+          {{ $t('workbench_Notice_zhongShiChengZhangLu2') }}
           <img
             src="../../../public/images/notice/love.png"
             alt=""
             style="width: 20px; height: 20px; vertical-align: text-bottom"
-          />。
+          />{{ $t('workbench_Notice_') }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 11">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>{{ $t('workbench_Notice_tAPDA7') }}</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2022-02-28</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-4">{{ $t('workbench_Notice_ciCiFaBuDe') }}</div>
+        <div class="mb-2 p-4" style="background-color: rgb(241, 248, 255)">
+          <div class="mb-4">{{ $t('workbench_Notice_gengXinSuLan') }}</div>
+          <div class="ml-2 mb-4">
+            {{ $t('workbench_Notice_shuJuLianJieShang2')
+            }}<span class="fw-bold font-color-main">{{ $t('workbench_Notice_kaiShiZhiChiYun') }}</span
+            >{{ $t('workbench_Notice_benLunXinZengA') }}
+          </div>
+          <div class="ml-2 mb-4">
+            2.
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_youHuaWIN') }}</span
+            >{{ $t('workbench_Notice_liuChengGengQingXi') }}
+          </div>
+          <div class="ml-2 mb-4">
+            3.
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_xinZengYongHuZhong2') }}</span
+            >{{ $t('workbench_Notice_zhiChiXiuGaiZhu') }}
+          </div>
+          <div class="ml-2 mb-4">
+            4.
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_xinZengRenWuShu2') }}</span
+            >{{ $t('workbench_Notice_yongHuGongZuoTai') }}
+          </div>
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">01</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_kaiShiZhiChiYun') }}</strong>
+            </div>
+            <div class="number-title-box__desc">{{ $t('workbench_Notice_shuJuLianJieYou2') }}</div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_zuoWeiGuoNeiShou') }}</div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_mianDuiDaLiangYong') }}</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.0_p_01.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">02</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_wINDO') }}</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>{{ $t('workbench_Notice_shaGuaMoShiZai') }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_tAPDA6') }}</div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_benCiGengXinZhong2') }}</div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_zaiAGEN') }}</div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_zaiAnZhuangGuoCheng')
+          }}<span class="color-danger">{{ $t('workbench_Notice_wuRenHeQinRu') }}</span
+          >{{ $t('workbench_Notice_3') }}
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.0_p_02.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">03</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_xinZengYongHuZhong') }}</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>{{ $t('workbench_Notice_niDeGeXingHua') }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_xiangYaoZiZhuXiu') }}</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.0_p_003.gif" alt="" />
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.0_p_004.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">04</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_xinZengRenWuShu') }}</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>{{ $t('workbench_Notice_yinWeiKeShiSuo') }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_zheYiCiWoMen') }}</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.0_p_005.gif" alt="" />
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.0_p_006.png" alt="" />
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.0_p_007.png" alt="" />
+        </div>
+        <div class="line-height-2">
+          {{ $t('workbench_Notice_zhongShiChengZhangLu') }}
+          <img
+            src="../../../public/images/notice/love.png"
+            alt=""
+            style="width: 20px; height: 20px; vertical-align: text-bottom"
+          />{{ $t('workbench_Notice_') }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 12">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>{{ $t('workbench_Notice_xinZengTengXunYun') }}</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2022-03-11</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-4">{{ $t('workbench_Notice_xuQiuChiXuGeng3') }}</div>
+        <div class="mb-4">{{ $t('workbench_Notice_zuiXinFaBuDe3') }}</div>
+        <div class="mb-2 p-4" style="background-color: rgb(241, 248, 255)">
+          <div class="mb-4">{{ $t('workbench_Notice_gengXinSuLan') }}</div>
+          <div class="ml-2 mb-4">
+            1.<span class="fw-bold font-color-main">{{ $t('workbench_Notice_shuJuLianJieShang') }}</span
+            >{{ $t('workbench_Notice_ciFanZengJiaLe') }}
+          </div>
+          <div class="ml-2 mb-4">
+            2.
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_kaiShiZhiChiRen') }}</span
+            >{{ $t('workbench_Notice_quanLiangRenWuKe2') }}
+          </div>
+          <div class="ml-2 mb-4">
+            3.
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_kaiShiZhiChiZhi') }}</span
+            >{{ $t('workbench_Notice_shuJuJiaoYanHuan') }}
+          </div>
+          <div class="ml-2 mb-4">
+            4.
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_ziDuanYingSheGuo2') }}</span
+            >{{ $t('workbench_Notice_zaiYuanYouDePi') }}
+          </div>
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">01</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_yunShuJuKuJie') }}</strong>
+            </div>
+            <div class="number-title-box__desc">{{ $t('workbench_Notice_banTuYouJianXin') }}</div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_zuoWeiGuoNeiShou2') }}</div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_jiBanBenShouCi') }}
+          <span class="fw-bold font-color-main"
+            >{{ $t('workbench_Notice_shuJuYuanJuDian')
+            }}<span class="fs-6" style="font-family: DIN; color: rgb(0, 122, 181)">28</span></span
+          >{{ $t('workbench_Notice_fangDaJiuKanT') }}
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_01.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">02</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_hINiDeRen') }}</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>{{ $t('workbench_Notice_buBeiDongJiaBan') }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_haiZaiWeiXuYao2') }}</div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_haiZaiWeiXuYao') }}</div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_niXiangYaoDeRen') }}</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_02.gif" alt="" />
+        </div>
+        <div class="my-4 fs-6" style="color: rgb(0, 122, 181)">{{ $t('workbench_Notice_quanLiangZengLiangJi') }}</div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_zhenDuiQuanLiangZeng') }}</div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_juTiLiuChengDa2') }}
+          <span class="color: rgb(136, 136, 136);"
+            >{{ $t('workbench_Notice_shouDongHuaZhongDian')
+            }}<span style="color: rgb(255, 76, 0)">{{ $t('workbench_Notice_baoCunQianQingWu') }}</span
+            >{{ $t('workbench_Notice_3') }}</span
+          >
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_03.png" alt="" />
+        </div>
+        <div class="py-1 text-center font-color-disable">{{ $t('workbench_Notice_daKaiSheZhi') }}</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_04.png" alt="" />
+        </div>
+        <div class="py-1 text-center font-color-disable">{{ $t('workbench_Notice_xuanZeYunXingShi') }}</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_05.png" alt="" />
+        </div>
+        <div class="py-1 text-center font-color-disable">{{ $t('workbench_Notice_sheZhiShiJianQian') }}</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_06.png" alt="" />
+        </div>
+        <div class="py-1 text-center font-color-disable">{{ $t('workbench_Notice_sheZhiShiJianDao') }}</div>
+        <div class="my-4 fs-6" style="color: rgb(0, 122, 181)">{{ $t('workbench_Notice_quanLiangRenWuKe') }}</div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_zhenDuiQuanLiangRen') }}</div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_juTiLiuChengDa') }}</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_07.png" alt="" />
+        </div>
+        <div class="py-1 text-center font-color-disable">{{ $t('workbench_Notice_daKaiSheZhi') }}</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_08.png" alt="" />
+        </div>
+        <div class="py-1 text-center font-color-disable">{{ $t('workbench_Notice_zhiLuShuRuKuang') }}</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_09.png" alt="" />
+        </div>
+        <div class="py-1 text-center font-color-disable">{{ $t('workbench_Notice_shiLiSheZhiTiao') }}</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_10.png" alt="" />
+        </div>
+        <div class="py-1 text-center font-color-disable">{{ $t('workbench_Notice_renWuWeiQiDong') }}</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_11.png" alt="" />
+        </div>
+        <div class="py-1 text-center font-color-disable">{{ $t('workbench_Notice_renWuDiYiCi') }}</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_12.png" alt="" />
+        </div>
+        <div class="py-1 text-center font-color-disable">{{ $t('workbench_Notice_renWuZaiCiQi') }}</div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">03</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_zhiChiDuiZhiDing') }}</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>{{ $t('workbench_Notice_zhiYouGeBieBiao') }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_congZheYiBanKai2') }}</div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_xinBanBenZhiChi2') }}</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_13.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">04</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_ziDuanYingSheShi') }}</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>{{ $t('workbench_Notice_daPoJuXianGeng') }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_tAPDA5') }}</div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_xinGongNengXiaYong') }}</div>
+        <ul class="pl-8">
+          <li class="mb-4 line-height-2 list-style-disc">
+            {{ $t('workbench_Notice_zaiQianYiGuoCheng')
+            }}<span class="fw-bold font-color-main">{{ $t('workbench_Notice_yuanBiaoShuJu') }}</span
+            >{{ $t('workbench_Notice_xieRu')
+            }}<span class="fw-bold font-color-main">{{ $t('workbench_Notice_zhiDingMuBiaoBiao') }}</span>
+          </li>
+          <li class="mb-4 line-height-2 list-style-disc">
+            {{ $t('workbench_Notice_tongGuoXiuGaiMu')
+            }}<span class="fw-bold font-color-main">{{ $t('workbench_Notice_duoGeJieGouXiang') }}</span
+            >{{ $t('workbench_Notice_xieRu')
+            }}<span class="fw-bold font-color-main">{{ $t('workbench_Notice_tongYiMuBiaoBiao') }}</span>
+          </li>
+        </ul>
+        <div>
+          <img src="../../../public/images/notice/v2.1.1_14.png" alt="" />
+        </div>
+        <div class="line-height-2">
+          {{ $t('workbench_Notice_zhongShiChengZhangLu') }}
+          <img
+            src="../../../public/images/notice/love.png"
+            alt=""
+            style="width: 20px; height: 20px; vertical-align: text-bottom"
+          />{{ $t('workbench_Notice_') }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 13">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>{{ $t('workbench_Notice_tAPDA4') }}</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2022-03-30</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-4">{{ $t('workbench_Notice_xuQiuChiXuGeng2') }}</div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_zuiXinFaBuDe2') }}</div>
+        <div class="mb-2 p-4" style="background-color: rgb(241, 248, 255)">
+          <div class="mb-4">{{ $t('workbench_Notice_gengXinSuLan') }}</div>
+          <div class="ml-2 mb-4">
+            1.<span class="fw-bold font-color-main">{{ $t('workbench_Notice_xinZengZhiChiV') }}</span
+            >{{ $t('workbench_Notice_daTongYuXinYi') }}
+          </div>
+          <div class="ml-2 mb-4">
+            2.
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_ziDuanLeiXingKe') }}</span
+            >{{ $t('workbench_Notice_ziDuanYingSheGuo') }}
+          </div>
+          <div class="ml-2 mb-4">
+            3.
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_saoMaDengLuGong') }}</span
+            >{{ $t('workbench_Notice_zhiChiWeiXinSao') }}
+          </div>
+          <div class="ml-2 mb-4">
+            4.
+            <span class="fw-bold font-color-main">{{ $t('workbench_Notice_gengDuoXiJieYou') }}</span
+            >{{ $t('field_mapping_field_mapping_dialog_') }}
+            <p class="mt-2">{{ $t('workbench_Notice_duanXinTongZhiCe') }}</p>
+            <p class="mt-2">{{ $t('workbench_Notice_chuangJianLianJieShi') }}</p>
+          </div>
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">01</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_kaiShiZhiChiV') }}</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p class="mb-2">{{ $t('workbench_Notice_shuJuLianJieYou') }}</p>
+              <p>{{ $t('workbench_Notice_qingLiangQingLiangGeng') }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_zuoWeiGuoNeiShou') }}</div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_benCiGengXinZhong') }}
+          <span class="fw-bold font-color-main"
+            ><span class="fs-6" style="font-family: DIN; color: rgb(0, 122, 181)">29</span></span
+          >{{ $t('workbench_Notice_fangDaJiuKanT') }}
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.2/01.jpg" alt="" />
+        </div>
+        <div class="my-4">
+          {{ $t('workbench_Notice_lingFuCaoZuoYan')
+          }}<span class="font-color-main fw-bold">{{ $t('workbench_Notice_jiangXueShengChengJi') }}</span
+          >{{ $t('workbench_Notice_2') }}
+        </div>
+        <div>
+          <!--<img src="../../../public/images/notice/v2.1.2/02.gif" alt="" />-->
+          <video src="../../../public/images/notice/v2.1.2/demo.mp4" controls="controls"></video>
+        </div>
+        <div class="text-center color-disable">{{ $t('workbench_Notice_caoZuoYanShiJiang') }}</div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">02</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_zhiChiZiDuanLei') }}</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>{{ $t('workbench_Notice_ziDuanLeiXingZhuan') }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_tAPDA3') }}</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.2/03.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">03</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_shiXianSaoMaZhu') }}</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>{{ $t('workbench_Notice_jiSaoJiYongKuai') }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_zhangHaoMiMaRong') }}</div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_congXianZaiKaiShi') }}</div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_chuCiSaoMaDeng') }}</div>
+        <div class="mb-4">
+          <img src="../../../public/images/notice/v2.1.2/04.png" alt="" />
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.2/05.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">04</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_gengDuoXiJieYou') }}</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>{{ $t('workbench_Notice_weiXiaoDanTieXin') }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_yongHuDaoXiangXi') }}</div>
+        <div class="mb-4 font-color-main fs-7 fw-bold">
+          <span class="dot mr-4"></span>{{ $t('workbench_Notice_ziZhuKaiGuanDuan') }}
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.2/06.png" alt="" />
+        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_aGENT') }}</div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_xinBanBenDeDuan') }}</div>
+        <div class="mb-4 font-color-main fs-7 fw-bold">
+          <span class="dot mr-4"></span>{{ $t('workbench_Notice_gengKuaiDingWeiLian') }}
+        </div>
+        <div class="mb-4">
+          <img src="../../../public/images/notice/v2.1.2/07.png" alt="" />
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.2/08.png" alt="" />
+        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_suoWeiBanTuZhi') }}</div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_xinBanBenZhiChi') }}</div>
+        <div class="line-height-2">
+          {{ $t('workbench_Notice_zhongShiChengZhangLu') }}
+          <img
+            src="../../../public/images/notice/love.png"
+            alt=""
+            style="width: 20px; height: 20px; vertical-align: text-bottom"
+          />{{ $t('workbench_Notice_') }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 14">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>{{ $t('workbench_Notice_tAPDA2') }}</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2022-04-07 21:00</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-4">{{ $t('workbench_Notice_xuQiuChiXuGeng') }}</div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_zuiXinFaBuDe') }}
+        </div>
+        <div class="mb-2 p-4" style="background-color: rgb(241, 248, 255)">
+          <div class="mb-4">{{ $t('workbench_Notice_gengXinSuLan') }}</div>
+          <div class="ml-2 mb-4">
+            <span>1.</span><span class="fw-bold font-color-main pl-1">{{ $t('workbench_Notice_xinZengZhiChiA') }}</span
+            >{{ $t('workbench_Notice_qianShouGengDuoYou') }}
+          </div>
+          <div class="ml-2 mb-4">
+            <span>2.</span>
+            <span class="fw-bold font-color-main pl-1">{{ $t('workbench_Notice_renWuRiZhiCha') }}</span
+            >{{ $t('workbench_Notice_kaiShiZhiChiZai') }}
+          </div>
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">01</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_kaiShiZhiChiD') }}</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p class="mb-2">{{ $t('workbench_Notice_qiangQiangLianShouGong') }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_zuoWeiGuoNeiShou') }}</div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_suiZheXinXingGuo') }}
+          <ElLink
+            type="primary"
+            href="https://tapdata.net/tapdata-PDK-program.html?fromColId=2"
+            target="_blank"
+            class="fs-7 align-baseline"
+            >{{ $t('workbench_Notice_tAPDA') }}</ElLink
+          >
+          {{ $t('workbench_Notice_deShouPiGongJian') }}
+        </div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_zhiCiTAP') }}
+          <span class="fw-bold font-color-main"
+            >{{ $t('workbench_Notice_shuJuLianJieJu')
+            }}<span class="fs-6 pl-1" style="font-family: DIN; color: rgb(0, 122, 181)">30</span></span
+          >{{ $t('workbench_Notice_fangDaJiuKanT') }}
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.3/01.png" alt="" />
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.3/02.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">02</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_renWuRiZhiCha') }}</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>{{ $t('workbench_Notice_xiaoYouHuaGengTie') }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_congZheYiBanKai') }}</div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_xinBanBenXiaDang') }}
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.3/03.png" alt="" />
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.3/04.png" alt="" />
+        </div>
+        <div class="line-height-2">
+          {{ $t('workbench_Notice_zhongShiChengZhangLu') }}
+          <img
+            src="../../../public/images/notice/love.png"
+            alt=""
+            style="width: 20px; height: 20px; vertical-align: text-bottom"
+          />{{ $t('workbench_Notice_') }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 15">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>{{ $t('workbench_Notice_tAPDA1') }}</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2022-04-22 19:00</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-4">{{ $t('workbench_Notice_xuQiuChiXuGeng1') }}</div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_zuiXinFaBuDe1') }}
+        </div>
+        <div class="mb-2 p-4" style="background-color: rgb(241, 248, 255)">
+          <div class="mb-4">{{ $t('workbench_Notice_gengXinSuLan') }}</div>
+          <div class="ml-2 mb-4">
+            <span>1.</span
+            ><span class="fw-bold font-color-main pl-1">{{ $t('workbench_Notice_shuJuLianJieShang1') }}</span
+            >{{ $t('workbench_Notice_xinZengZhiChiA1') }}
+          </div>
+          <div class="ml-2 mb-4">
+            <span>2.</span>
+            <span class="fw-bold font-color-main pl-1">{{ $t('workbench_Notice_ziDongBiaoJiBu') }}</span
+            >{{ $t('workbench_Notice_duiYuYiJingMing') }}
+          </div>
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">01</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_shuJuLianJieZai') }}</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p class="mb-2">{{ $t('workbench_Notice_chiXuDaZaoDe') }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_zuoWeiGuoNeiShou1') }}
+        </div>
+        <div class="mb-4 blue-title">
+          <span class="blue-circle-index mr-1">1</span>{{ $t('workbench_Notice_xinZengZhiChiP') }}
+        </div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_suiZheXinXingGuo1')
+          }}<span class="fw-bold font-color-main">{{ $t('workbench_Notice_aLiYunPO') }}</span
+          >{{ $t('workbench_Notice_tongShiYeShiJin') }}
+          <ElLink
+            type="primary"
+            href="https://tapdata.net/tapdata-PDK-program.html?fromColId=2"
+            target="_blank"
+            class="fs-7 align-baseline"
+            >{{ $t('workbench_Notice_tAPDA') }}</ElLink
+          >
+          {{ $t('workbench_Notice_deShouPiGongJian1') }}
+        </div>
+        <div class="mb-4 blue-title">
+          <span class="blue-circle-index mr-1">2</span>{{ $t('workbench_Notice_xinZengZhiChiQing') }}
+        </div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_mianDuiJinJiZhong') }}
+          <span class="fw-bold font-color-main">{{ $t('workbench_Notice_sAASFu') }}</span
+          >{{ $t('workbench_Notice_weiShuJuMuBiao') }}
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.4/01.png" alt="" />
+        </div>
+        <div class="mb-4">
+          {{ $t('workbench_Notice_zhiCiTAP') }}
+          <span class="fw-bold font-color-main"
+            >{{ $t('workbench_Notice_shuJuLianJieJu')
+            }}<span class="fs-6 pl-1" style="font-family: DIN; color: rgb(0, 122, 181)">32</span></span
+          >{{ $t('workbench_Notice_fangDaJiuKanT') }}
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.4/02.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">02</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_ziDongBiaoJi') }}</strong>
+              <div>
+                <strong>{{ $t('workbench_Notice_buZhiChiDeZi') }}</strong>
+              </div>
+            </div>
+            <div class="number-title-box__desc">
+              <p>{{ $t('workbench_Notice_kuaiSuDingWeiShan') }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_zhenDuiLiShiBan1') }}
+        </div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_gaiBanBenXiaDui')
+          }}<span class="font-color-sub"
+            ><span class="fw-bold">{{ $t('workbench_Notice_huaZhongDian') }}</span
+            >{{ $t('workbench_Notice_yongHuKeYiZai') }}</span
+          >{{ $t('workbench_Notice_congErBaoZhengRen') }}
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.4/03.png" alt="" />
+        </div>
+        <div class="line-height-2">
+          {{ $t('workbench_Notice_zhongShiChengZhangLu') }}
+          <img
+            src="../../../public/images/notice/love.png"
+            alt=""
+            style="width: 20px; height: 20px; vertical-align: text-bottom"
+          />{{ $t('workbench_Notice_') }}
         </div>
       </div>
     </div>
@@ -659,7 +832,7 @@ export default {
 
 <style lang="scss" scoped>
 .notice-header {
-  background: url('../../../public/images/workbench/notice_title.png') no-repeat 100% / cover;
+  background: url('../../../public/images/notice/notice_title.png') no-repeat 100% / cover;
   .notice-header__title {
   }
   .notice-header__time {
@@ -673,6 +846,9 @@ export default {
 .notice-body {
   background: #fff;
   img {
+    width: 100%;
+  }
+  video {
     width: 100%;
   }
   .notice-body__step {
@@ -899,5 +1075,29 @@ export default {
 
 :root .number-title-box__title {
   filter: none;
+}
+.list-style-disc {
+  list-style: disc;
+}
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  display: inline-block;
+  background: #000;
+  vertical-align: middle;
+}
+.blue-title {
+  color: rgb(0, 122, 181);
+  font-weight: bold;
+}
+.blue-circle-index {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  font-size: 12px;
+  border-radius: 50%;
+  border: 1px solid #007ab5;
+  text-align: center;
 }
 </style>

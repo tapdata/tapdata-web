@@ -1,8 +1,8 @@
 <template>
   <section class="data-verify-history-wrap g-panel-container" v-loading="loading">
     <div class="panel-main">
-      <el-table :data="page.data" height="100%">
-        <el-table-column :label="$t('dataVerification.verifyTime')" prop="start">
+      <ElTable :data="page.data" height="100%">
+        <ElTableColumn :label="$t('dataVerification_verifyTime')" prop="start">
           <template slot-scope="scope">
             {{
               scope.row.start
@@ -10,23 +10,23 @@
                 : $moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')
             }}
           </template>
-        </el-table-column>
-        <el-table-column :label="$t('dataVerification.completeTime')" prop="last_updated" align="center" width="180">
+        </ElTableColumn>
+        <ElTableColumn :label="$t('dataVerification_completeTime')" prop="last_updated" align="center" width="180">
           <template slot-scope="scope">
             <span>
               {{ scope.row.last_updated ? $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') : '' }}
             </span>
           </template>
-        </el-table-column>
+        </ElTableColumn>
         <template v-if="$route.name === 'VerifyDiffHistory'">
-          <el-table-column :label="$t('verify_history_source_rows')" prop="source_total"></el-table-column>
-          <el-table-column :label="$t('verify_history_target_rows')" prop="target_total"></el-table-column>
+          <ElTableColumn :label="$t('verify_history_source_rows')" prop="source_total"></ElTableColumn>
+          <ElTableColumn :label="$t('verify_history_target_rows')" prop="target_total"></ElTableColumn>
         </template>
         <template v-else>
-          <el-table-column :label="$t('verify_history_source_total_rows')" prop="firstSourceTotal"></el-table-column>
-          <!--          <el-table-column :label="$t('verify_history_target_total_rows')" prop="firstTargetTotal"></el-table-column>-->
+          <ElTableColumn :label="$t('verify_history_source_total_rows')" prop="firstSourceTotal"></ElTableColumn>
+          <!--          <ElTableColumn :label="$t('verify_history_target_total_rows')" prop="firstTargetTotal"></ElTableColumn>-->
         </template>
-        <el-table-column prop="progress" :label="$t('dataVerification.verifyProgress')" width="120px">
+        <ElTableColumn prop="progress" :label="$t('dataVerification_verifyProgress')" width="120px">
           <template slot-scope="scope">
             <div>
               <span>{{
@@ -34,13 +34,13 @@
               }}</span>
             </div>
           </template>
-        </el-table-column>
-        <el-table-column :label="$t('dataVerification.verifytype')" prop="inspect.inspectMethod">
+        </ElTableColumn>
+        <ElTableColumn :label="$t('dataVerification_verifytype')" prop="inspect.inspectMethod">
           <template slot-scope="scope">
             <span>{{ inspectMethod[scope.row.inspect ? scope.row.inspect.inspectMethod : ''] }}</span>
           </template>
-        </el-table-column>
-        <el-table-column :label="$t('dataVerification.verifyResult')" width="180">
+        </ElTableColumn>
+        <ElTableColumn :label="$t('dataVerification_verifyResult')" width="180">
           <template slot-scope="scope" v-if="['waiting', 'done'].includes(scope.row.status)">
             <div class="inspect-result">
               <span v-if="scope.row.result !== 'passed'" class="error">
@@ -57,15 +57,15 @@
               <VIcon v-if="scope.row.parentId" class="ml-2" size="14">ercijiaoyan</VIcon>
             </div>
           </template>
-        </el-table-column>
-        <el-table-column :label="$t('dataVerification.verifyStatus')" prop="status"></el-table-column>
-        <el-table-column :label="$t('dataFlow.operate')" width="60px">
+        </ElTableColumn>
+        <ElTableColumn :label="$t('dataVerification_verifyStatus')" prop="status"></ElTableColumn>
+        <ElTableColumn :label="$t('dataFlow_operate')" width="60px">
           <template slot-scope="scope">
-            <ElLink type="primary" @click="rowClick(scope.row)">{{ $t('button.details') }}</ElLink>
+            <ElLink type="primary" @click="rowClick(scope.row)">{{ $t('button_details') }}</ElLink>
           </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
+        </ElTableColumn>
+      </ElTable>
+      <ElPagination
         background
         class="pagination mt-3"
         :current-page.sync="page.current"
@@ -76,7 +76,7 @@
         @size-change="search(1)"
         @current-change="search"
       >
-      </el-pagination>
+      </ElPagination>
     </div>
   </section>
 </template>
@@ -100,9 +100,9 @@ export default {
       },
       selections: [],
       inspectMethod: {
-        row_count: this.$t('dataVerification.rowVerify'),
-        field: this.$t('dataVerification.contentVerify'),
-        jointField: this.$t('dataVerification.jointVerify')
+        row_count: this.$t('dataVerification_rowVerify'),
+        field: this.$t('dataVerification_contentVerify'),
+        jointField: this.$t('dataVerification_jointVerify')
       }
     }
   },

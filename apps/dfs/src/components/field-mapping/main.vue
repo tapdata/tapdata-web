@@ -9,14 +9,17 @@
     :fieldProcessMethod="updateFieldProcess"
     :updateMetadata="updateMetadata"
     :hiddenFieldProcess="false"
-    :field_process="field_process"
+    :field_process.sync="field_process"
     :transform="transform"
+    v-bind="$attrs"
     @row-click="saveOperations"
     @update-nav="updateFieldMappingNavData"
   ></FieldMappingDialog>
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import FieldMappingDialog from '@/components/field-mapping/field-mapping-dialog'
 export default {
   name: 'FieldMappings',
@@ -31,6 +34,14 @@ export default {
       field_process: [],
       dataFlow: [],
       stageId: ''
+    }
+  },
+  computed: {
+    targetIsVika() {
+      return this.$attrs?.dataSourceModel?.target_databaseType === 'vika'
+    },
+    targetIsQingflow() {
+      return this.$attrs?.dataSourceModel?.target_databaseType === 'qingflow'
     }
   },
   methods: {
@@ -54,7 +65,11 @@ export default {
       }
       this.loadingMetadata = true
       if (taskData?.metadataMappings?.length > 0) {
-        this.fieldMappingNavData = taskData.metadataMappings
+        let metadataMappings = taskData.metadataMappings
+        if (this.targetIsVika || this.targetIsQingflow) {
+          this.formatUserDeletedNum(metadataMappings, taskData.stages[0]?.field_process)
+        }
+        this.fieldMappingNavData = metadataMappings
         this.loadingMetadata = false
         if (this.$refs.fieldMappingDom) {
           this.$emit('update-first', false) //新建任务 第一次需要恢复默认
@@ -63,6 +78,9 @@ export default {
       } else {
         let promise = this.$axios.post('tm/api/DataFlows/metadata', taskData)
         promise.then(data => {
+          if (this.targetIsVika || this.targetIsQingflow) {
+            this.formatUserDeletedNum(data, this.field_process)
+          }
           this.fieldMappingNavData = data
           this.loadingMetadata = false
           if (this.$refs.fieldMappingDom) {
@@ -72,7 +90,7 @@ export default {
         })
         promise.catch(() => {
           this.loadingMetadata = false
-          this.$message.error('接口请求失败')
+          this.$message.error(i18n.t('field_mapping_main_jieKouQingQiuShi'))
         })
       }
     },
@@ -90,6 +108,9 @@ export default {
         this.field_process = []
         //清空表改名 字段改名
         this.clearTransform()
+        // 清空批量修改字段类型
+        this.$emit('update:customTypeMappings', [])
+        this.dataFlow['customTypeMappings'] = []
       } else if (rollbackTable) {
         this.dataFlow['rollback'] = rollback
         this.dataFlow['rollbackTable'] = rollbackTable
@@ -103,6 +124,11 @@ export default {
           }
         }
         let result = this.$refs.fieldMappingDom.returnForm()
+        result.tableOperations.forEach((el, i) => {
+          if (el.tableName === rollbackTable) {
+            result.tableOperations.splice(i, 1)
+          }
+        })
         this.updateAutoTransform('', result)
       }
       this.$emit('returnFieldMapping', this.field_process)
@@ -119,8 +145,14 @@ export default {
     },
     //获取左边导航数据 - 表
     async updateMetadata(type, data, row, operations) {
-      //将表改名 字段改名 放在setting里面
-      this.updateAutoTransform(type, data)
+      if (type === 'customTypeMappings') {
+        let result = JSON.parse(JSON.stringify(data))
+        this.dataFlow[type] = result
+        this.$emit('update:customTypeMappings', result)
+      } else {
+        //将表改名 字段改名 放在setting里面
+        this.updateAutoTransform(type, data)
+      }
       // if (type !== 'dataType') {
       //   this.dataFlow['rollback'] = 'all'
       // }
@@ -144,6 +176,7 @@ export default {
           this.dataFlow['stages'][i].tableNameTransform = ''
           this.dataFlow['stages'][i].table_suffix = ''
           this.dataFlow['stages'][i].table_prefix = ''
+          this.dataFlow['stages'][i].tableOperations = []
         }
       }
     },
@@ -154,6 +187,7 @@ export default {
           this.dataFlow['stages'][i].tableNameTransform = data.tableNameTransform
           this.dataFlow['stages'][i].table_prefix = data.table_prefix
           this.dataFlow['stages'][i].table_suffix = data.table_suffix
+          this.dataFlow['stages'][i].tableOperations = data.tableOperations
         }
       }
     },
@@ -176,16 +210,24 @@ export default {
      * 数据匹配：同步任务没有字段处理器，有字段处理器（改名），优先original_field_name || field
      * */
     async intiFieldMappingTableData(row) {
+      if (!(row.sourceQualifiedName && row.sinkQulifiedName)) {
+        return {
+          data: [],
+          target: []
+        }
+      }
       let source = await this.$axios.get(
-        'tm/api/MetadataInstances/originalData?qualified_name=' + encodeURIComponent(row.sourceQualifiedName)
+        'tm/api/MetadataInstances/originalData?qualified_name=' +
+          encodeURIComponent(row.sourceQualifiedName?.replace(/[/.@&:?=%\s]+/g, '_'))
       )
       source = source && source.length > 0 ? source[0].fields : []
       let target = await this.$axios.get(
-        'tm/api/MetadataInstances/originalData?isTarget=true&qualified_name=' + encodeURIComponent(row.sinkQulifiedName)
+        'tm/api/MetadataInstances/originalData?isTarget=true&qualified_name=' +
+          encodeURIComponent(row.sinkQulifiedName?.replace(/[/.@&:?=%\s]+/g, '_'))
       )
       // 初始化所有字段都映射 只取顶级字段
       source = source.filter(field => field.field_name.indexOf('.') === -1)
-      target = target && target.length > 0 ? target[0].fields : []
+      target = target?.length > 0 ? target[0].fields : []
       if (source?.length > 0 && target?.length === 0) {
         this.$message.error(this.$t('task_mapping_dialog_target_no_fields') + '(' + row.sinkQulifiedName + ')')
         return {
@@ -225,7 +267,7 @@ export default {
       //源表 目标表数据组合
       let fieldMappingTableData = []
       source.forEach(item => {
-        target.forEach(field => {
+        ;(target || []).forEach(field => {
           //先检查是否被改过名
           let node = {
             t_id: field.id,
@@ -234,18 +276,60 @@ export default {
             t_scale: field.scale,
             t_precision: field.precision,
             is_deleted: field.is_deleted, //目标决定这个字段是被删除？
+            notDataTypeSupport: field.dataTypeSupport === false, // 是否支持的数据类型
             t_isPrecisionEdit: true, //默认不能编辑
             t_isScaleEdit: true //默认不能编辑
           }
           //检查当前name个数
-          if (item.temporary_field_name === field.field_name) {
+          if (item.temporary_field_name === field.field_name && !item.is_deleted) {
             fieldMappingTableData.push(Object.assign({}, item, node))
           }
         })
       })
+      // vika字段处理
+      if (this.targetIsVika || this.targetIsQingflow) {
+        target = target?.filter(t => !t.is_deleted) || []
+        let field = target[0] || {}
+        let addOperations = this.$refs.fieldMappingDom.addOperations
+        fieldMappingTableData = source
+          .filter(t => !t.is_deleted)
+          .map(t => {
+            let node = {
+              t_id: t.id,
+              t_field_name: null,
+              t_data_type: field.data_type,
+              t_scale: field.scale,
+              t_precision: field.precision,
+              is_deleted: false, // 默认不删除
+              t_isPrecisionEdit: true, // 默认不能编辑
+              t_isScaleEdit: true // 默认不能编辑
+            }
+            // 自动匹配字段名相同的
+            let findOne = target?.find(f => f.field_name === t.field_name)
+            let findInOperations = operations?.find(item => item.id === t.id)
+            // 优先字段处理器
+            if (findInOperations) {
+              node.t_field_name = findInOperations.field
+              node.t_data_type = findInOperations.data_type
+              node.t_precision = findInOperations.precision
+              node.t_scale = findInOperations.scale
+              node.is_deleted = findInOperations.op === 'REMOVE'
+            } else if (findOne) {
+              // 自动匹配，字段名称相同的
+              node.t_field_name = findOne.field_name
+              node.t_data_type = findOne.data_type
+              node.t_precision = findOne.precision
+              node.t_scale = findOne.scale
+              // 需要添加到字段处理器中
+              addOperations(t.id, findOne, t, findOne.field_name)
+            }
+            return Object.assign({}, t, node)
+          })
+      }
       return {
         data: fieldMappingTableData,
-        target: target
+        target: target || [],
+        source: source || []
       }
     },
     //获取字段操作记录
@@ -260,8 +344,16 @@ export default {
     },
     //获取typeMapping
     async getTypeMapping(row) {
-      let data = await this.$axios.get('tm/api/TypeMappings/dataType?databaseType=' + row.sinkDbType)
-      return data
+      let { sourceDbType, sinkDbType } = row || {}
+      let source = []
+      let target = []
+      if (sourceDbType) {
+        source = await this.$axios.get('tm/api/TypeMappings/dataType?databaseType=' + sourceDbType)
+      }
+      if (sinkDbType) {
+        target = await this.$axios.get('tm/api/TypeMappings/dataType?databaseType=' + sinkDbType)
+      }
+      return { source, target }
     },
     //保存字段映射操作
     saveOperations(row, operations, target) {
@@ -283,27 +375,29 @@ export default {
       return this.$refs.fieldMappingDom.returnData(hiddenMsg)
     },
     //保存数据当前节点的字段处理器
-    saveFileOperations(row, operations) {
-      if (operations?.length === 0) return
+    saveFileOperations(row, operations = []) {
       let field_process = {
         table_id: row.sourceTableId, //存源表名 兼容旧版字段处理器
         table_name: row.sourceObjectName,
         operations: operations
       }
-      if (this.field_process && this.field_process.length > 0) {
-        for (let i = 0; i < this.field_process.length; i++) {
-          if (this.field_process[i].table_id === row?.sourceTableId) {
-            this.field_process[i].operations = operations
-          } else {
-            this.field_process = this.field_process || []
-            this.field_process.push(field_process)
-          }
-        }
+      this.field_process = this.field_process || []
+      let findOne = this.field_process.find(t => t.table_id === row?.sourceTableId)
+      if (findOne) {
+        findOne.operations = operations
       } else {
-        this.field_process = this.field_process || []
         this.field_process.push(field_process)
       }
       return this.field_process
+    },
+    // 格式化vika标记删除的字段数量
+    formatUserDeletedNum(data, field_process = []) {
+      data.forEach(el => {
+        let findOne = field_process.find(t => t.table_id === el.sourceTableId)
+        if (findOne) {
+          el.userDeletedNum = findOne.operations?.filter(t => t.op === 'REMOVE')?.length || 0
+        }
+      })
     }
   }
 }
