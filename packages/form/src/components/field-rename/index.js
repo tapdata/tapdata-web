@@ -113,7 +113,7 @@ export const FieldRename = connect(
                         ) : (
                           <span class="text__inner">{data.field_name}</span>
                         )}
-                        {!data.showInput ? (
+                        {!data.showInput && data.level === 1 ? (
                           <VIcon class={['ml-3', 'clickable']} size="12" onClick={() => this.showInput(node.data)}>
                             edit-outline
                           </VIcon>

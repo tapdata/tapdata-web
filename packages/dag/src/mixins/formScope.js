@@ -258,6 +258,12 @@ export default {
               original_name: true
             }
           })
+          if (!filter.where.original_name) {
+            filter.where.original_name = {
+              // regexp: '^[^\\s]+$'
+              neq: ''
+            }
+          }
           const data = await metadataApi.get({ filter: JSON.stringify(filter) }, config)
           data.items = data.items.map(item => item.original_name)
           return data
@@ -491,35 +497,17 @@ export default {
         },
 
         /**
-         * 加载节点的字段选项列表（默认是第一个源节点）
-         * @param field
+         * 加载节点的字段选项列表
          * @param nodeId
          * @returns {Promise<{}|*>}
          */
-        loadNodeFieldOptions: async (field, nodeId) => {
-          if (!nodeId) {
-            const id = field.form.values.id
-            const allEdges = this.$store.getters['dataflow/allEdges']
-            const edge = allEdges.find(({ target }) => target === id)
-            if (!edge) return
-            nodeId = edge.source
-          }
-
-          let fields
-          try {
-            const data = await metadataApi.nodeSchema(nodeId)
-            fields = data.fields
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error('nodeSchema', e)
-          }
-
-          return fields
-            ? fields.map(item => ({
-                label: item.field_name,
-                value: item.id
-              }))
-            : []
+        loadNodeFieldOptions: async nodeId => {
+          const fields = await this.scope.loadNodeFieldsById(nodeId)
+          return fields.map(item => ({
+            label: item.field_name,
+            value: item.field_name,
+            isPrimaryKey: item.primary_key_position > 0
+          }))
         },
 
         /**
@@ -554,23 +542,18 @@ export default {
 
           return result
         },
-        getMergeItemsFromSourceNode(field, sourceNodes) {
+        getMergeItemsFromSourceNode(field, inputs) {
           let mergeList = field.value || []
           let list = []
-          sourceNodes.forEach(it => {
-            let item = mergeList.find(mit => mit.sourceId === it.value)
+          inputs.forEach(sourceId => {
+            let item = mergeList.find(mit => mit.sourceId === sourceId)
             if (!item) {
               list.push({
-                tableName: it.label,
-                sourceId: it.value,
-                mergeType: 'appendWrite',
+                tableName: null,
+                sourceId,
+                mergeType: 'updateOrInsert',
                 tablePath: '',
-                joinKeys: [
-                  {
-                    source: '',
-                    target: ''
-                  }
-                ]
+                joinKeys: []
               })
             } else {
               list.push(item)
@@ -633,6 +616,37 @@ export default {
               }
             })
             return fields
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('nodeSchema', e)
+            return []
+          }
+        },
+
+        loadNodeFieldsPrimaryKey: async ({ field }, nodeId) => {
+          if (!nodeId) return []
+          try {
+            const data = await metadataApi.nodeSchema(nodeId)
+            const fields = data?.[0]?.fields || []
+            const keyMap = {}
+            fields.sort((a, b) => {
+              const aIsPrimaryKey = a.primary_key_position > 0
+              const bIsPrimaryKey = b.primary_key_position > 0
+
+              aIsPrimaryKey && (keyMap[a.field_name] = true)
+              bIsPrimaryKey && (keyMap[b.field_name] = true)
+
+              if (aIsPrimaryKey !== bIsPrimaryKey) {
+                return aIsPrimaryKey ? -1 : 1
+              } else {
+                return a.field_name.localeCompare(b.field_name)
+              }
+            })
+            console.log('keyMap', keyMap) // eslint-disable-line
+            field.setState({
+              dataSource: Object.keys(keyMap)
+            })
+            return fields.map(item => item.field_name)
           } catch (e) {
             // eslint-disable-next-line no-console
             console.error('nodeSchema', e)

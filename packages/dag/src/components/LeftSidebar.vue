@@ -572,6 +572,8 @@ export default {
       const txt = this.tbSearchTxt.trim()
       if (txt) {
         filter.where.original_name = { like: txt, options: 'i' }
+      } else {
+        filter.where.original_name = { neq: '' }
       }
 
       return { filter: JSON.stringify(filter) }

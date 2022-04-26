@@ -204,7 +204,7 @@ import scrollIntoView from 'element-ui/lib/utils/scroll-into-view'
 import { CancelToken } from '@tap/api'
 
 export default {
-  name: 'VirtualSelect',
+  name: 'AsyncSelect',
 
   extends: Select,
 
@@ -213,6 +213,7 @@ export default {
       type: Function,
       required: true
     },
+    createValidate: Function, // 当allowCreate打开时，验证创建项
     onSetSelected: Function, // 主要是在schema场景下做交互使用
     params: Object,
     itemType: {
@@ -386,6 +387,7 @@ export default {
 
     async setSelected() {
       if (!this.multiple) {
+        console.log('setSelected', this.value) // eslint-disable-line
         let option = await this.getOption(this.value)
         if (this.onSetSelected && ~this.hoverIndex) {
           if (!option.$el) {
@@ -465,6 +467,7 @@ export default {
           })
         }
       } catch (e) {
+        this.loadingMore = false
         console.log('AsyncSelect.loadDat', e) // eslint-disable-line
       }
     },
@@ -522,6 +525,54 @@ export default {
         scrollIntoView(menu, target)
       }
       this.$refs.scrollbar && this.$refs.scrollbar.handleScroll()
+    },
+
+    handleOptionSelect(option, byClick) {
+      if (this.multiple) {
+        const value = (this.value || []).slice()
+        const optionIndex = this.getValueIndex(value, option.value)
+        if (optionIndex > -1) {
+          value.splice(optionIndex, 1)
+        } else if (this.multipleLimit <= 0 || value.length < this.multipleLimit) {
+          value.push(option.value)
+        }
+        this.$emit('input', value)
+        this.emitChange(value)
+        if (option.created) {
+          this.query = ''
+          this.handleQueryChange('')
+          this.inputLength = 20
+        }
+        if (this.filterable) this.$refs.input.focus()
+      } else {
+        const value = option.value
+        if (option.created) {
+          // 因为调整了setSelected为异步
+          setTimeout(() => {
+            this.visible = false
+          }, 0)
+          this.$emit('create', value)
+          if (this.createValidate && !this.createValidate(value)) return
+        }
+        this.$emit('input', option.value)
+        this.emitChange(option.value)
+        !option.created && (this.visible = false)
+        /*if (option.created) {
+          // 因为调整了setSelected为异步
+          setTimeout(() => {
+            this.visible = false
+          }, 0)
+          this.$emit('create', option.value)
+        } else {
+          this.visible = false
+        }*/
+      }
+      this.isSilentBlur = byClick
+      this.setSoftFocus()
+      if (this.visible) return
+      this.$nextTick(() => {
+        this.scrollToOption(option)
+      })
     }
   }
 }
