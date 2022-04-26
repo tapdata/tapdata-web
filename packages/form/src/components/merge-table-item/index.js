@@ -22,9 +22,6 @@ export const MergeTableItem = observer(
         wrapperWidth: 500
       }
       const sourceId = recordRef.value.sourceId
-
-      console.log('MergeTableItem', sourceId, recordRef.value, indexRef.value)
-
       // 加载字段，并且默认将主键设置到joinKeys上
       props.loadFieldsMethod(sourceId).then(fields => {
         if (!recordRef.value.joinKeys?.length) {

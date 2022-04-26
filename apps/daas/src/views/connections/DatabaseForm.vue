@@ -93,12 +93,12 @@
                 >
                   <el-option
                     v-for="item in accessNodeList"
-                    :key="item.id"
-                    :label="item.systemInfo.hostname"
-                    :value="item.id"
+                    :key="item.processId"
+                    :label="item.hostName"
+                    :value="item.processId"
                   >
-                    <span class="fl">{{ item.systemInfo.hostname }}</span>
-                    <span class="font-color-light fr pl-2">{{ item.systemInfo.ip }}</span>
+                    <span class="fl">{{ item.hostName }}</span>
+                    <span class="font-color-light fr pl-2">{{ item.ip }}</span>
                   </el-option>
                 </el-select>
                 <!-- <el-input
@@ -1746,9 +1746,8 @@ export default {
     },
     // 获取数据
     async getCluster() {
-      let params = { index: 1 }
       this.$api('cluster')
-        .get(params)
+        .findAccessNodeInfo()
         .then(res => {
           let items = res.data?.items || []
           this.accessNodeList = items
