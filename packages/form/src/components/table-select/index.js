@@ -2,7 +2,7 @@ import AsyncSelect from '../async-select'
 import { useField } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
-import { MetadataInstances } from '@daas/api'
+import { MetadataInstances } from '@tap/api'
 
 const metadataApi = new MetadataInstances()
 
@@ -60,7 +60,7 @@ export const TableSelect = observer(
             method={loadTable}
             createValidate={createValidate}
             params={params}
-          ></AsyncSelect>
+          />
         )
       }
     }

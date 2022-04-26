@@ -11,13 +11,7 @@
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { Form, SchemaField } from '@tap/form'
-import {
-  createForm,
-  onFormInputChange,
-  onFormValuesChange,
-  onFieldReact,
-  isVoidField
-} from '@formily/core'
+import { createForm, onFormInputChange, onFormValuesChange, onFieldReact, isVoidField } from '@formily/core'
 import { Path } from '@formily/path'
 import { validateBySchema } from '@tap/form/src/shared/validate'
 import { debounce } from 'lodash'
