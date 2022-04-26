@@ -56,7 +56,7 @@ export const FieldRename = connect(
 
         //初始化
         let formValues = { ...this.form.values }
-        this.fieldsNameTransforms = formValues?.fieldsNameTransform
+        this.fieldsNameTransforms = formValues?.fieldsNameTransform || ''
         // eslint-disable-next-line
         console.log('FieldProcess.mergeOutputSchema', fields)
         return (

@@ -68,7 +68,7 @@ export const FieldAddDel = connect(
         this.fields = fields
         //初始化
         let formValues = { ...this.form.values }
-        this.deleteAllFieldsData = formValues?.deleteAllFields
+        this.deleteAllFieldsData = formValues?.deleteAllFields || false
 
         return (
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
@@ -123,6 +123,7 @@ export const FieldAddDel = connect(
                           >
                             {data.showInput ? (
                               <ElInput
+                                id="renameInput"
                                 class="tree-field-input text__inner"
                                 v-model={data.field_name}
                                 onChange={() => this.handleRename(node, data)}
@@ -247,9 +248,9 @@ export const FieldAddDel = connect(
         showInput(data) {
           this.$set(data, 'showInput', true) //打开loading
           //将输入框自动获取焦点
-          // this.$nextTick(() => {
-          //   this.$refs[data.id].focus()
-          // })
+          this.$nextTick(() => {
+            document.getElementById('renameInput').focus()
+          })
         },
         closeInput(data) {
           this.$set(data, 'showInput', false) //打开loading
@@ -353,7 +354,10 @@ export const FieldAddDel = connect(
           name = name || 'newFieldName'
           let exist = false
           let parentNode = this.fields.filter(v => name === v.field_name)
-          if (parentNode && parentNode.length > 1) {
+          if (
+            (parentNode && parentNode.length >= 1 && name === 'newFieldName') ||
+            (parentNode && parentNode.length > 1 && name !== 'newFieldName')
+          ) {
             this.$message.error(name + this.$t('message.exists_name'))
             exist = true
           }
