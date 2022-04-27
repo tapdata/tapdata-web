@@ -624,7 +624,9 @@ export default {
           databaseType: connection.databaseType,
           connectionId: connection.id,
           connectionType: connection.attr.connectionType,
-          accessNodeProcessId: connection.attr.accessNodeProcessId
+          // accessNodeProcessId: connection.attr.accessNodeProcessId
+          // accessNodeProcessId: '61935c9684103d36ce972daa-1fkjq3ar4'
+          accessNodeProcessId: 'f9e0e041-a72f-4e3f-87ff-0354eed0af92'
         }
       }))
 

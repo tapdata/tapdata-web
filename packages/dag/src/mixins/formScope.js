@@ -293,8 +293,8 @@ export default {
           const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId')
 
           connectionType !== item.connectionType && form.setValuesIn('attrs.connectionType', item.connectionType)
-          accessNodeProcessId !== item.accessNodeProcessId &&
-            form.setValuesIn('attrs.accessNodeProcessId', item.accessNodeProcessId)
+          /*accessNodeProcessId !== item.accessNodeProcessId &&
+            form.setValuesIn('attrs.accessNodeProcessId', item.accessNodeProcessId)*/
         },
 
         /**
@@ -715,6 +715,42 @@ export default {
   computed: {
     ...mapState('dataflow', ['editVersion']),
     ...mapGetters('dataflow', ['stateIsReadonly'])
+
+    /*accessNodeProcessIdArr() {
+      const set = this.allNodes
+        .filter(item => item.type === 'table')
+        .reduce((set, item) => {
+          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
+          return set
+        }, new Set())
+      return [...set]
+    },
+
+    accessNodeProcessList() {
+      if (!this.accessNodeProcessIdArr.length) return this.scope.$agents
+      return this.accessNodeProcessIdArr.reduce((list, id) => {
+        const item = this.scope.$agentMap[id]
+        if (item) {
+          list.push({
+            value: item.processId,
+            label: `${item.hostName}（${item.ip}）`
+          })
+        }
+        return list
+      }, [])
+    }*/
+  },
+
+  watch: {
+    /*accessNodeProcessIdArr: {
+      handler(arr) {
+        if (arr.length >= 1) {
+          this.$set(this.dataflow, 'accessNodeType', 'MANUALLY_SPECIFIED_BY_THE_USER')
+          this.$set(this.dataflow, 'accessNodeProcessId', this.settings.accessNodeProcessId || arr[0])
+        }
+      },
+      immediate: true
+    }*/
   },
 
   async created() {
@@ -727,7 +763,7 @@ export default {
       this.scope.$agents = data.map(item => {
         return {
           value: item.processId,
-          label: `${item.hostName}(${item.ip})`
+          label: `${item.hostName}（${item.ip}）`
         }
       })
       this.scope.$agentMap = data.reduce((obj, item) => ((obj[item.processId] = item), obj), {})

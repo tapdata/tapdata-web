@@ -210,6 +210,13 @@ export class Table extends NodeType {
                   style: {
                     color: '#535F72'
                   }
+                },
+                'x-reactions': {
+                  fulfill: {
+                    state: {
+                      display: '{{!$self.value ? "hidden":"visible"}}'
+                    }
+                  }
                 }
               },
 

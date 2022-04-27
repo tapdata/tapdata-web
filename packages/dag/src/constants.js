@@ -18,7 +18,8 @@ export const DEFAULT_SETTINGS = {
   processorThreadNum: 1, // 处理器线程数
   shareCdcEnable: false, //开启共享挖掘
   isSchedule: false,
-  cronExpression: ' '
+  cronExpression: ' ',
+  accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION'
 
   // readBatchSize: 100,
   // notificationWindow: 0,
