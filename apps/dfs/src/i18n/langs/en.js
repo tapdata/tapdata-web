@@ -1816,5 +1816,8 @@ export default {
   field_mapping_field_mapping_dialog_buZhiChi: "I won't support it",
   components_MqQueueOrTopic_zhuTi: 'theme',
   components_MqQueueOrTopic_duiLie: 'queue',
-  components_MqQueueOrTopic_zhuTiHeDuiLie: 'Only one subject and queue can be selected for configuration'
+  components_MqQueueOrTopic_zhuTiHeDuiLie: 'Only one subject and queue can be selected for configuration',
+  components_ErrorLogDialog_cuoWuRiZhiCha: 'Error log view',
+  components_ErrorLogDialog_qingQianWangAG: 'Please go to the agent deployment directory to view the log',
+  components_ErrorLogDialog_zhaKanGengDuoRi: 'View more logs'
 }

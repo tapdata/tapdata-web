@@ -1667,5 +1667,8 @@ export default {
   verify_configuration: '配寘',
   verify_delete: '删除',
   verify_see_details: '查看詳情',
-  verify_checking: '校驗中…'
+  verify_checking: '校驗中…',
+  components_ErrorLogDialog_cuoWuRiZhiCha: '錯誤日誌查看',
+  components_ErrorLogDialog_qingQianWangAG: '請前往Agent的部署目錄下查看日誌',
+  components_ErrorLogDialog_zhaKanGengDuoRi: '查看更多日誌'
 }
