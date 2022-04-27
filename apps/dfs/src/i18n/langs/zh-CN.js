@@ -1704,5 +1704,8 @@ export default {
   field_mapping_field_mapping_dialog_buZhiChi: '不支持',
   components_MqQueueOrTopic_zhuTi: '主题',
   components_MqQueueOrTopic_duiLie: '队列',
-  components_MqQueueOrTopic_zhuTiHeDuiLie: '主题和队列只能选择一种进行配置'
+  components_MqQueueOrTopic_zhuTiHeDuiLie: '主题和队列只能选择一种进行配置',
+  components_ErrorLogDialog_cuoWuRiZhiCha: '错误日志查看',
+  components_ErrorLogDialog_qingQianWangAG: '请前往Agent的部署目录下查看日志',
+  components_ErrorLogDialog_zhaKanGengDuoRi: '查看更多日志'
 }

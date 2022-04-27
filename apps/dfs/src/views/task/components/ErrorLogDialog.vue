@@ -1,13 +1,13 @@
 <template>
   <ElDialog
-    title="错误日志查看"
+    :title="$t('components_ErrorLogDialog_cuoWuRiZhiCha')"
     :visible.sync="dialogVisible"
     :width="width"
     custom-class="connection-type-dialog"
     @close="$emit('input', false)"
   >
     <div v-loading="loading" class="error-log-dialog__content">
-      <div v-if="!list.length">请前往Agent的部署目录下查看日志</div>
+      <div v-if="!list.length">{{ $t('components_ErrorLogDialog_qingQianWangAG') }}</div>
       <ul v-else class="error-log__list">
         <li v-for="(item, index) in list" :key="index">
           [<span class="fw-bold" :class="item.color" v-html="item.level"></span>]&nbsp;
@@ -16,7 +16,7 @@
       </ul>
     </div>
     <div class="pt-6 text-center">
-      <ElButton type="primary" @click="toDetail">查看更多日志</ElButton>
+      <ElButton type="primary" @click="toDetail">{{ $t('components_ErrorLogDialog_zhaKanGengDuoRi') }}</ElButton>
       <ElButton type="primary" class="close-btn" @click="dialogVisible = false">{{ $t('gl_button_close') }}</ElButton>
     </div>
   </ElDialog>

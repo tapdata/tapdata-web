@@ -40,7 +40,12 @@
               target="task"
               :status="scope.row.isFinished ? 'finished' : scope.row.status"
             ></StatusTag>
-            <ElTooltip v-if="scope.row.status === 'error'" effect="dark" content="错误日志查看" placement="top">
+            <ElTooltip
+              v-if="scope.row.status === 'error'"
+              effect="dark"
+              :content="$t('components_ErrorLogDialog_cuoWuRiZhiCha')"
+              placement="top"
+            >
               <span class="ml-2 mt-1 cursor-pointer" @click="openErrorLog(scope.row.id)">
                 <VIcon class="color-danger">warning-circle</VIcon>
               </span>
