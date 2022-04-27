@@ -84,9 +84,8 @@
               </div>
               <div class="url-tip" slot="accessNodeProcessId">
                 <el-select
-                  v-model="model.accessNodeProcessIdList"
+                  v-model="model.accessNodeProcessId"
                   clearable
-                  multiple
                   :placeholder="$t('connection_form_name_ip')"
                   v-loadmore="loadMore"
                   style="width: 100%"
@@ -1828,13 +1827,17 @@ export default {
       }
       .form-wrap {
         display: flex;
-        overflow-y: auto;
         flex: 1;
+        overflow: hidden;
         .form {
+          width: 100%;
+          height: 100%;
+          overflow-y: auto;
           .form-builder {
+            width: 396px;
             ::v-deep {
               .e-form-builder-item {
-                width: 396px;
+                // width: 396px;
                 &.large-item {
                   width: 680px;
                 }
@@ -1860,6 +1863,14 @@ export default {
                   .el-radio--mini.is-bordered {
                     padding-top: 0;
                   }
+                }
+                // .el-form-item__content {
+                //   width: 300px;
+                // }
+                .el-input .el-input__inner,
+                .el-textarea__inner {
+                  // width: 300px;
+                  background-color: rgba(239, 241, 244, 0.2);
                 }
               }
             }
@@ -2058,7 +2069,7 @@ export default {
   //   position: relative;
   // }
   .footer {
-    margin: 10px auto;
+    // margin: 10px auto;
     width: 100%;
     height: 62px;
     background-color: #fff;

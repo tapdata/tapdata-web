@@ -665,7 +665,7 @@ export default {
   connection_form_name_rules: '以中英文开头，1-100个字符，包括中英文，数字，中划线，下划线，空格',
   connection_form_no_name: '连接名不能为空',
   connection_form_name_exists: '名字已经存在',
-  connection_form_access_node: '访问节点',
+  connection_form_access_node: 'agent设置',
   connection_form_automatic: '平台自动分配',
   connection_form_manual: '用户手动指定',
   connection_form_access_node_tip: '自动情况下右平台分配节点进行连接访问，手动情况下由用户手动指定节点进行访问',
