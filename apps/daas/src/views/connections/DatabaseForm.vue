@@ -86,7 +86,6 @@
                 <el-select
                   v-model="model.accessNodeProcessId"
                   clearable
-                  multiple
                   :placeholder="$t('connection_form_name_ip')"
                   v-loadmore="loadMore"
                   style="width: 100%"
