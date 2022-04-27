@@ -119,7 +119,7 @@ export default {
 }
 .status-tag {
   display: inline-block;
-  padding: 0 8px;
+  padding: 4px 8px;
   border-radius: 4px;
   border: 1px solid #d9ecff;
   background-color: #ecf5ff;

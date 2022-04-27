@@ -12,7 +12,7 @@
           <ElTableColumn :label="$t('task_TaskProgress_liChengBei')" prop="label"></ElTableColumn>
           <ElTableColumn :label="$t('instance_Instance_zhuangTai')" prop="status" width="180">
             <template v-slot="scope">
-              <StatusTag type="text" target="task" :status="getMilestoneStatus(scope.row.status)" only-img></StatusTag>
+              <StatusTag type="tag" target="task" :status="getMilestoneStatus(scope.row.status)"></StatusTag>
             </template>
           </ElTableColumn>
           <ElTableColumn :label="$t('task_TaskProgress_shiJian')" prop="fromNow" width="180"></ElTableColumn>

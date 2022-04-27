@@ -4,10 +4,9 @@
       <div class="info-line">
         <span class="mr-4 fs-6 font-color-main">{{ task.name }}</span>
         <StatusTag
-          type="text"
+          type="tag"
           target="task"
           :status="task.isFinished ? 'finished' : task.status || 'running'"
-          only-img
         ></StatusTag>
         <!--        <span class="ml-6 font-color-sub">-->
         <!--          所属Agent{{$t('field_mapping_field_mapping_dialog_')}}<span>{{ task.belongAgent }}</span>-->
