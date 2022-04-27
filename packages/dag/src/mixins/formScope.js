@@ -1,4 +1,4 @@
-import { Connections, MetadataInstances } from '@tap/api'
+import { Connections, MetadataInstances, Cluster } from '@tap/api'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
 import { isPlainObj } from '@tap/shared'
@@ -6,12 +6,17 @@ import { merge } from 'lodash'
 
 const connections = new Connections()
 const metadataApi = new MetadataInstances()
+const clusterApi = new Cluster()
 
 export default {
   data() {
     return {
       scope: {
         $index: null, // 数组索引，防止使用该值，在表单校验(validateBySchema)时出错
+
+        $agents: [],
+
+        $agentMap: {},
 
         findNodeById: id => {
           return this.$store.state.dataflow.NodeMap[id]
@@ -704,5 +709,22 @@ export default {
   computed: {
     ...mapState('dataflow', ['editVersion']),
     ...mapGetters('dataflow', ['stateIsReadonly'])
+  },
+
+  async created() {
+    await this.loadAccessNode()
+  },
+
+  methods: {
+    async loadAccessNode() {
+      const data = await clusterApi.findAccessNodeInfo()
+      this.scope.$agents = data.map(item => {
+        return {
+          value: item.processId,
+          label: `${item.hostName}(${item.ip})`
+        }
+      })
+      this.scope.$agentMap = data.reduce((obj, item) => ((obj[item.processId] = item), obj), {})
+    }
   }
 }

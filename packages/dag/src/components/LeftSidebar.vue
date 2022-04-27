@@ -488,7 +488,9 @@ export default {
           id: 1,
           database_type: 1,
           connection_type: 1,
-          status: 1
+          status: 1,
+          accessNodeType: 1,
+          accessNodeProcessId: 1
         },
         order: ['status DESC', 'name ASC']
       }
@@ -525,7 +527,8 @@ export default {
           tableName: '',
           databaseType: item.database_type,
           connectionId: item.id,
-          connectionType: item.connection_type
+          connectionType: item.connection_type,
+          accessNodeProcessId: item.accessNodeProcessId
         }
       }))
 
@@ -619,7 +622,8 @@ export default {
           tableName: tb.original_name,
           databaseType: connection.databaseType,
           connectionId: connection.id,
-          connectionType: connection.attr.connectionType
+          connectionType: connection.attr.connectionType,
+          accessNodeProcessId: connection.attr.accessNodeProcessId
         }
       }))
 
