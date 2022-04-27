@@ -138,7 +138,7 @@ export const defaultModel = {
     redoLogParserHost: '',
     redoLogParserPort: '',
     accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
-    accessNodeProcessIdList: ''
+    accessNodeProcessId: ''
   },
   kafka: {
     id: '',

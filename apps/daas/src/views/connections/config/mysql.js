@@ -289,6 +289,7 @@ export default function (vm) {
         type: 'select',
         field: 'accessNodeType',
         label: vm.$t('connection_form_access_node'),
+        with: '150px',
         options: [
           {
             label: vm.$t('connection_form_automatic'),
@@ -300,13 +301,13 @@ export default function (vm) {
           }
         ],
         tips: vm.$t('connection_form_access_node_tip'),
-        required: true,
-        filterable: true
+        required: true
       },
       {
         type: 'slot',
         slot: 'accessNodeProcessId',
         show: false,
+        filterable: true,
         dependOn: [
           {
             triggerOptions: [

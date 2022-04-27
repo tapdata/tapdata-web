@@ -179,13 +179,13 @@ export default function (vm) {
           }
         ],
         tips: vm.$t('connection_form_access_node_tip'),
-        required: true,
-        filterable: true
+        required: true
       },
       {
         type: 'slot',
         slot: 'accessNodeProcessId',
         show: false,
+        filterable: true,
         dependOn: [
           {
             triggerOptions: [

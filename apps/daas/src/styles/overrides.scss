@@ -62,6 +62,9 @@
     }
   }
 }
+.el-select-dropdown__item {
+  color: map-get($fontColor, dark);
+}
 .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
   color: map-get($color, primary);
 }
@@ -74,7 +77,7 @@
 
 .el-select .el-select__tags {
   .el-tag.el-tag--info {
-    color: #1d2129;
+    color: map-get($fontColor, dark);
     font-weight: 400;
     border: 0;
     border-radius: 2px;
@@ -83,7 +86,7 @@
   .el-tag__close.el-icon-close {
     background-color: #f2f3f5;
     &:hover {
-      color: #000;
+      color: map-get($fontColor, dark);
     }
   }
 }
@@ -95,6 +98,7 @@
   }
 }
 .el-input__inner {
+  color: map-get($fontColor, dark);
   border-radius: $borderRadius;
   // border: 1px solid rgba(221, 221, 221, 0.4);
   // background-color:  rgba(239, 241, 244, 0.2);
