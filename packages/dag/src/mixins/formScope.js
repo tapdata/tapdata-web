@@ -293,8 +293,8 @@ export default {
           const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId')
 
           connectionType !== item.connectionType && form.setValuesIn('attrs.connectionType', item.connectionType)
-          /*accessNodeProcessId !== item.accessNodeProcessId &&
-            form.setValuesIn('attrs.accessNodeProcessId', item.accessNodeProcessId)*/
+          accessNodeProcessId !== item.accessNodeProcessId &&
+            form.setValuesIn('attrs.accessNodeProcessId', item.accessNodeProcessId)
         },
 
         /**
