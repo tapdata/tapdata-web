@@ -210,7 +210,10 @@ export default {
                 id: 1,
                 database_type: 1,
                 connection_type: 1,
-                status: 1
+                status: 1,
+                accessNodeType: 1,
+                accessNodeProcessId: 1,
+                accessNodeProcessIdList: 1
               },
               order: ['status DESC', 'name ASC']
             }
@@ -239,7 +242,8 @@ export default {
                 label: `${item.name} (${this.$t('connection.status.' + item.status) || item.status})`,
                 value: item.id,
                 databaseType: item.database_type,
-                connectionType: item.connection_type
+                connectionType: item.connection_type,
+                accessNodeProcessId: item.accessNodeProcessId
               }
             })
 
@@ -286,9 +290,11 @@ export default {
             content: item.name
           })
           const connectionType = form.getValuesIn('attrs.connectionType')
-          if (connectionType !== item.connectionType) {
-            form.setValuesIn('attrs.connectionType', item.connectionType)
-          }
+          const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId')
+
+          connectionType !== item.connectionType && form.setValuesIn('attrs.connectionType', item.connectionType)
+          accessNodeProcessId !== item.accessNodeProcessId &&
+            form.setValuesIn('attrs.accessNodeProcessId', item.accessNodeProcessId)
         },
 
         /**
