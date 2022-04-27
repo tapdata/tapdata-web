@@ -490,7 +490,8 @@ export default {
           connection_type: 1,
           status: 1,
           accessNodeType: 1,
-          accessNodeProcessId: 1
+          accessNodeProcessId: 1,
+          accessNodeProcessIdList: 1
         },
         order: ['status DESC', 'name ASC']
       }
