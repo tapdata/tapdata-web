@@ -286,6 +286,10 @@ export default {
   },
   created() {
     this.getData()
+    let tab = this.$route.query?.tab
+    if (tab) {
+      this.activeTab = tab
+    }
     this.$ws.on('watch', this.taskChange)
     this.$ws.send({
       type: 'watch',

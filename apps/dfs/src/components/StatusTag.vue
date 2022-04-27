@@ -3,7 +3,9 @@
     <img :src="imgSrc" :data-status="statusObj.text" alt="" />
   </span>
   <span v-else class="td-status-tag">
-    <ElTag v-if="type === 'tag'" :type="statusObj.type">{{ statusObj.text }}</ElTag>
+    <span v-if="type === 'tag'" :class="['status-tag', statusObj.type ? 'tag--' + statusObj.type : '']">{{
+      statusObj.text
+    }}</span>
     <span :class="['flex', 'align-items-center', 'icon-span', `color-${statusObj.type}`, status]" v-else>
       <VIcon v-if="statusObj.icon" class="v-icon" size="16">{{ statusObj.icon }}</VIcon>
       <span
@@ -114,5 +116,33 @@ export default {
 }
 .td-status-tag__text {
   display: inline-block;
+}
+.status-tag {
+  display: inline-block;
+  padding: 0 8px;
+  border-radius: 4px;
+  border: 1px solid #d9ecff;
+  background-color: #ecf5ff;
+  color: #409eff;
+  &.tag--success {
+    background-color: #f0f9eb;
+    border-color: #e1f3d8;
+    color: #67c23a;
+  }
+  &.tag--info {
+    background-color: #f4f4f5;
+    border-color: #e9e9eb;
+    color: #909399;
+  }
+  &.tag--warning {
+    background-color: #fdf6ec;
+    border-color: #faecd8;
+    color: #e6a23c;
+  }
+  &.tag--danger {
+    background-color: #fef0f0;
+    border-color: #fde2e2;
+    color: #f56c6c;
+  }
 }
 </style>

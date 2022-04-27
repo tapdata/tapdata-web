@@ -17,12 +17,12 @@ export const TOPOLOGY_MAP = topologyMap,
   },
   TASK_STATUS_MAP = {
     running: { text: i18n.t('task_status_running'), icon: 'yunxingzhong', type: 'success' },
-    paused: { text: i18n.t('task_status_paused'), icon: 'daiqidong' },
-    error: { text: i18n.t('task_status_error'), icon: 'cuowu', type: 'warning' },
-    draft: { text: i18n.t('task_status_draft'), icon: 'daiqidong' },
-    scheduled: { text: i18n.t('task_status_scheduled'), icon: 'qidongzhong', type: 'success' },
-    stopping: { text: i18n.t('task_status_stopping'), icon: 'tingzhizhong', type: 'success' },
-    'force stopping': { text: i18n.t('task_status_force_stopping'), icon: 'qiangzhitingzhi', type: 'success' },
+    paused: { text: i18n.t('task_status_paused'), icon: 'daiqidong', type: 'warning' },
+    error: { text: i18n.t('task_status_error'), icon: 'cuowu', type: 'danger' },
+    draft: { text: i18n.t('task_status_draft'), icon: 'daiqidong', type: 'warning' },
+    scheduled: { text: i18n.t('task_status_scheduled'), icon: 'qidongzhong' },
+    stopping: { text: i18n.t('task_status_stopping'), icon: 'tingzhizhong', type: 'info' },
+    'force stopping': { text: i18n.t('task_status_force_stopping'), icon: 'qiangzhitingzhi', type: 'danger' },
     finished: { text: i18n.t('task_status_finished'), icon: 'yiwancheng', type: 'success' }
   },
   CONNECTION_STATUS_MAP = {

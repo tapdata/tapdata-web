@@ -34,12 +34,18 @@
       <ElTableColumn :label="$t('task_type')" prop="syncTypeText" width="130"></ElTableColumn>
       <ElTableColumn :label="$t('task_status')" width="120">
         <template slot-scope="scope">
-          <StatusTag
-            type="text"
-            target="task"
-            :status="scope.row.isFinished ? 'finished' : scope.row.status"
-            only-img
-          ></StatusTag>
+          <div class="flex align-items-center">
+            <StatusTag
+              type="tag"
+              target="task"
+              :status="scope.row.isFinished ? 'finished' : scope.row.status"
+            ></StatusTag>
+            <ElTooltip v-if="scope.row.status === 'error'" effect="dark" content="错误日志查看" placement="top">
+              <span class="ml-2 mt-1 cursor-pointer" @click="openErrorLog(scope.row.id)">
+                <VIcon class="color-danger">warning-circle</VIcon>
+              </span>
+            </ElTooltip>
+          </div>
         </template>
       </ElTableColumn>
       <ElTableColumn :label="$t('task_start_time')" prop="startTime" sortable="custom" width="150">
@@ -167,6 +173,7 @@
       </div>
     </ElDialog>
     <!--    </div>-->
+    <ErrorLogDialog v-model="errorLogDialogData.visible" :id="errorLogDialogData.dataFlowId"></ErrorLogDialog>
   </section>
   <RouterView v-else></RouterView>
 </template>
@@ -208,12 +215,6 @@
       color: unset;
       cursor: unset;
     }
-    .td-status-tag {
-      position: absolute;
-      top: 50%;
-      left: 10px;
-      margin-top: -12px;
-    }
   }
   .migration-table__empty {
     color: map-get($fontColor, light);
@@ -252,11 +253,12 @@ import { TASK_STATUS_MAP } from '../../const'
 import StatusTag from '../../components/StatusTag'
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/filter-bar'
+import ErrorLogDialog from './components/ErrorLogDialog'
 import { isFinished } from './copy/util'
 let timer = null
 
 export default {
-  components: { StatusTag, VIcon, FilterBar },
+  components: { StatusTag, VIcon, FilterBar, ErrorLogDialog },
   data() {
     return {
       loading: true,
@@ -297,7 +299,11 @@ export default {
         forceStop: { stopping: true }
       },
       createVisible: false,
-      filterItems: []
+      filterItems: [],
+      errorLogDialogData: {
+        visible: false,
+        dataFlowId: ''
+      }
     }
   },
   computed: {
@@ -918,6 +924,10 @@ export default {
           id: row.id
         }
       })
+    },
+    openErrorLog(id) {
+      this.errorLogDialogData.visible = true
+      this.errorLogDialogData.dataFlowId = id
     }
   }
 }
