@@ -1,5 +1,4 @@
 export default {
-  /** 全局 */
   gl_see_more: 'See more',
   gl_no_data: 'No data',
   gl_no_match_result: 'No matching results were found ',
@@ -15,8 +14,6 @@ export default {
   gl_qr_code_tip: 'Code scanning consultation',
   gl_qr_code_wx_customer_service: 'WeChat customer service',
   gl_telephone_tip: 'Telephone consultation',
-
-  // button
   button_edit: 'Edit',
   button_copy: 'Copy',
   button_reset: 'Reset',
@@ -27,9 +24,6 @@ export default {
   button_confirm: 'Confirm',
   button_dialog_cancel: 'Cancel',
   button_dialog_confirm: 'Confirm',
-
-  /** 模块 */
-  // 工作台
   workbench_manage: 'Workbench',
   workbench_quick_start: 'Quick start',
   workbench_notice: 'Announcement notice',
@@ -55,8 +49,6 @@ export default {
   workbench_statistics_title: 'Task data volume statistics',
   workbench_statistics__sub_title: 'Input data volume',
   workbench_statistics__sub_title_label: 'cumulative',
-
-  // head
   header_question: 'Question and answer support',
   header_scan_code: 'Encountered problems during use? ',
   header_join_group: 'Scan the code to add a small assistant to get technical support',
@@ -77,8 +69,6 @@ export default {
   header_no_notice: 'No notice yet',
   header_setting: 'Settings',
   header_view_notifications: 'View all notifications',
-
-  // notify
   notify_setting: 'Notify settings',
   notify_agent_notification: 'agent notification',
   notify_sms_notification: 'SMS notification',
@@ -106,7 +96,6 @@ export default {
   notify_no_notice: 'No notification yet',
   notify_delete_notification_tip: 'Are you sure to delete the notification?',
   notify_delete_notification_title: 'Delete notification',
-
   notify_list_started: 'started',
   notify_list_paused: 'Paused',
   notify_list_edited: 'Edited',
@@ -131,8 +120,6 @@ export default {
   notify_list_agent_deleted: 'Agent deleted',
   notify_list_will_release_agent: 'will be released soon',
   notify_list_releases_agent: 'has been reclaimed',
-
-  // routing header
   tap_home: 'Home',
   tap_workbench: 'Workbench',
   tap_announcement_notice: 'Announcement Notice',
@@ -161,8 +148,6 @@ export default {
   tap_agent_download_now: 'Agent download now',
   tap_upgrade: 'Agent upgrade',
   tap_contact_us: 'Contact us',
-
-  // Agent
   agent_key: 'Agent',
   agent_manage: 'Agent',
   agent_name: 'Agent Name',
@@ -232,8 +217,6 @@ export default {
   agent_detail_run_manual: 'Log directory',
   agent_list_empty_desc1: 'Come soon',
   agent_list_empty_desc2: 'Start real-time data synchronization~',
-
-  // Agent部署
   agent_deploy_title: 'Agent download and installation',
   agent_deploy_select_tip:
     'Tapdata DFS Cloud Edition needs to install the Agent locally to ensure the normal operation of the database connection and data transmission service. You can select the corresponding type below to download and install according to the type of server to be installed.',
@@ -288,8 +271,6 @@ export default {
     '2. After the docker installation is successful, the container ID of the installed Agent will be automatically output. You can use the docker ps command to view the running docker:',
   agent_deploy_start_install_docker_third:
     "3. If you need to view the agent's log or start and stop the agent, please refer to",
-
-  // Agent升级
   agent_upgrade_title: 'Agent version upgrade',
   agent_upgrade_select_tip:
     'The system has detected that your Agent is not the latest version, please follow the instructions to upgrade',
@@ -322,8 +303,6 @@ export default {
     '2. Copy the upgrade command below to execute directly in the container, the upgrade command will automatically back up, upgrade and start, if the upgrade fails, it will automatically roll back the version',
   agent_upgrade_step_docker_third:
     '3. If "Update finished." appears, it means the Agent has been successfully upgraded',
-
-  // 连接
   connection_manage: 'Connection',
   connection_list_column_schema_status: 'Schema loading status',
   connection_list_column_schema_status_tips: 'Connections after Schema loading can be created normally',
@@ -401,31 +380,23 @@ export default {
   connection_form_mq_topic_tip: 'Multiple topics are separated by commas',
   connection_form_mq_broker_url: 'MQ connection string',
   connection_form_mq_broker_url_tip: 'Example tcp://127.0.0.1:61616, supports tcp, nio, udp, ssl, http(s)',
-  // connection_form_hazecast_connection_test: 'Connection test',
-  // connection_form_hazecast_create: 'Create connection',
-  // connection_form_hazecast_edit: 'Edit connection',
-  // connection_form_hazecast_data_source: 'Data source',
-  // connection_form_hazecast_data_source_type: 'Data source',
   connection_form_hazecast_rename: 'Rename',
   connection_form_change: 'Change',
   connection_form_rename: 'Rename',
-  // connection_form_hazecast_no_name: 'The connection name cannot be empty',
-  // connection_form_hazecast_name_exists: 'Name already exists',
   connection_form_hazecast_cancel: 'Cancel',
   connection_form_hazecast_save: 'Save',
   connection_form_give_up: 'Give up',
   connection_form_confirm_edit: 'This operation will lose the current edit content',
   connection_form_confirm_create: 'This operation will lose the connection currently being created',
-  connection_form_confirm_create_content: 'Do you want to abandon the creation of the connection ?', //是否放弃创建该连接？
-  connection_form_confirm_edit_content: 'Do you want to abandon the modification of the content ?', //是否放弃修改内容？
+  connection_form_confirm_create_content: 'Do you want to abandon the creation of the connection ?',
+  connection_form_confirm_edit_content: 'Do you want to abandon the modification of the content ?',
   connection_form_hazecast_options_target: 'Target',
   connection_form_hazecast_options_target_tips:
     'This data connection can only be used as a target in Tapdata, not as a source',
-  // connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'Target',",
   connection_form_hazecast_connection_type: 'Connection Type',
-  connection_form_hazecast_database_name: 'Cluster Name', //集群名称
+  connection_form_hazecast_database_name: 'Cluster Name',
   connection_form_hazecast_plain_password: 'Token',
-  connection_form_hazecast_ssl: 'Enable SSL', //是否开启ssl
+  connection_form_hazecast_ssl: 'Enable SSL',
   connection_form_hazecast_sslKey: 'Key Store File',
   connection_form_hazecast_sslCA: 'Trust Key Store File',
   connection_form_hazecast_sslPass: 'Key File Password',
@@ -435,10 +406,8 @@ export default {
   connection_form_tidb_none_server: 'PDServer address cannot be empty',
   connection_form_mongo_standard_mode:
     'This mode will connect to a separate server in the network, which provides a TSL/SSL channel to the database. If your database is in an inaccessible subnet, you can try this method',
-
   connection_test_schema_tips:
     'Possible reason: There is a problem with the Schema case setting, you can try to modify the case and try again',
-
   connection_preview_load_schema: 'Load Schema',
   connection_preview_edit: 'Edit',
   connection_preview_test: 'Test',
@@ -446,8 +415,6 @@ export default {
   connection_preview_master_partition: 'Write to master partition only',
   connection_preview_isr_partition: 'Write all ISR partitions',
   connection_preview_operation_success: 'Operation successful',
-
-  // 任务
   task_manage: 'Task',
   task_name: 'Task name',
   task_status: 'Status',
@@ -580,7 +547,6 @@ export default {
   task_form_source_connection: 'Source connection',
   task_form_target_type: 'Target type',
   task_form_target_connection: 'Target connection',
-
   task_monitor_progress: 'Task progress',
   task_monitor_full_sync: 'Full synchronization overview',
   task_monitor_full_completion_time: 'It is estimated that full completion will take time',
@@ -633,7 +599,6 @@ export default {
   task_monitor_topic_expressionL: 'topic expression',
   task_monitor_migration_task: 'Migration task',
   task_monitor_sync_task: 'Synchronous task',
-
   task_info_start_time: 'Start time',
   task_info_start: 'Start',
   task_info_stopt: 'Stop',
@@ -683,7 +648,6 @@ export default {
   task_info_operator_content: 'Operation content',
   task_info_connection_test: 'Test',
   task_info_lag_time: 'lag time',
-
   task_setting_sync_type: 'Sync type',
   task_setting_initial_sync: 'INITIAL SYNC',
   task_setting_cdc: 'CDC',
@@ -719,10 +683,8 @@ export default {
   task_setting_automatic_ddl_tip:
     'Automatic DDL operations support the renaming of fields and indexes, as well as operations such as adding, deleting, and updating',
   task_setting_automatic_index: 'Automatically create index',
-
   task_instance_select_area: 'Select area',
   task_instance_choose_area: 'Select Availability Zone',
-
   task_mapping_table_setting: 'Table Settings',
   task_mapping_table_setting_tip:
     'Users can set the fields to be synchronized for each table in the source database on this page, as well as the corresponding field names and field types when the target database is automatically created.',
@@ -782,7 +744,6 @@ export default {
     'It has been detected that you have a problem with the field type settings of XXX tables. Please select the problematic table in the table area on the left for processing.',
   task_mapping_dialog_target_no_fields_problem:
     'It is detected that you have XXX tables with no fields, please go back to the previous step and remove the tables without fields. ',
-
   milestone_label_init_dataflow: '[Preliminary preparation] Analyze dag path creation subtask',
   milestone_label_connect_to_source: '[Preliminary preparation] Connect to the source data source',
   milestone_label_connect_to_target: '[Preliminary preparation] Connect the target data source',
@@ -803,8 +764,6 @@ export default {
   milestone_label_write_snapshot: '[Data Transmission] The target end writes a snapshot of the data',
   milestone_label_read_cdc_event: '[Data Transmission] The source collector enters incremental reading mode',
   milestone_label_write_cdc_event: '[Data Transmission] Target processor enters incremental write mode',
-
-  // 操作日志
   operation_log_manage: 'Operation log',
   operation_log_type: 'Operation Type',
   operation_log_Object: 'Operation object',
@@ -865,7 +824,6 @@ export default {
   operation_log_modify_notification_setting: 'Modify notification settings',
   operation_log_modify_notification_setting_tip: 'System notification settings have been modified',
   operation_log_modify_connection_name: 'Modify the connection name from [${parameter2}] to [@{parameter1}]',
-
   guide_install_agent: 'Install Agent',
   guide_create_source_connection: 'Create source connection',
   guide_create_target_connection: 'Create target connection',
@@ -897,8 +855,6 @@ export default {
   guide_database_password: 'Database password',
   guide_sync_task: 'Sync type',
   guide_mapping_setting: 'Mapping settings',
-  // guide_mapping_setting_tip:
-  //   'Users can check the source table to be synchronized on this page, click the arrow button to the right in the middle to move these tables to the queue of tables to be synchronized (after the task is executed, these tables will be synchronized), and the mouse can be moved into the table name Rename the table and click the Finish button to successfully create a synchronization task. ',
   guide_mapping_setting_tip:
     'Users can check the source table to be synchronized on this page, click the arrow button in the middle to move these tables to the queue of tables to be synchronized (after the task is executed, these tables will be synchronized), and click the Finish button to succeed Create a synchronization task. ',
   guide_selected: 'table to be selected',
@@ -910,8 +866,6 @@ export default {
   guide_agent_start_success: 'Agent starting',
   guide_agent_start_fail: 'Agent start failed',
   guide_creat_connection_fail: 'Failed to create connection',
-
-  // 数据校验
   verify_type: 'Type',
   verify_frequency: 'Frequency',
   verify_status: 'Status',
@@ -949,33 +903,26 @@ export default {
   verify_operation_verify_again: 'Re-verify',
   verify_operation_verify_again_info:
     'When no table is selected, by default only the table that is inconsistent with the last verification will be re-verified',
-
   verify_title_create: 'New verification',
   verify_title_edit: 'Edit Verification',
-
   verify_history_source_rows: 'Verfify Rows',
   verify_history_target_rows: 'Target Rows',
   verify_history_source_total_rows: 'Source Total Rows',
   verify_history_target_total_rows: 'Target Total Rows',
-
   verify_type_row_count: 'Quick count verification',
   verify_type_field: 'Check all field values ​​of the table',
   verify_type_joint_field: 'Associated field value verification',
-
   verify_tips_type_row_count:
     'Quick count only performs count verification on the number of rows in the source table and the target table. The speed is extremely fast, but the specific field content of the difference will not be displayed.',
   verify_tips_type_field:
     'Full table field value verification will verify all the fields of the source table and the target table row by row. It can detect the differences in all fields, but the speed is slow.',
   verify_tips_type_joint_field:
     'Associated key verification only compares and verifies the values ​​of the associated fields of the source table and the target table, which is faster than the full-table field value verification mode',
-
   verify_frequency_manual: 'Single verification',
   verify_frequency_cron: 'Repeat verification',
-
   verify_job_enable: 'Enabled',
   verify_job_disable: 'Disabled',
   verify_job_name: 'Verify job name',
-
   verify_form_label_select_job: 'Select task',
   verify_form_label_type: 'Verification Type',
   verify_form_label_frequency: 'Verify frequency',
@@ -986,20 +933,16 @@ export default {
   verify_form_label_script: 'JS verification logic',
   verify_form_label_table: 'Table to be verified',
   verify_form_joint_table_header: 'Verification condition',
-
   verify_button_joint_table_clear: 'Clear',
   verify_button_add_table: 'Add table',
   verify_button_auto_add_table: 'Automatically add table',
   verify_button_add_script: 'Add logic',
-
   verify_switch_job_enable_or_not: 'Is it enabled?',
   verify_checkbox_advance: 'Advanced Checkbox',
-
   verify_validator_message_task: 'Please select a task',
   verify_validator_message_job_name: 'Please enter the verification job name',
   verify_validator_message_time: 'Please select the start and end time',
   verify_validator_message_frequency: 'Please enter the verification interval',
-
   verify_message_error_joint_table_not_set: 'Please add verification conditions',
   verify_message_error_joint_table_target_or_source_not_set:
     'The source table or the target table is not selected in the verification condition',
@@ -1073,14 +1016,12 @@ export default {
   task_mapping_dialog_rename_a_single_table_input_desc: 'user center',
   task_mapping_dialog_batch_change_field_type_desc: 'name already exists',
   operation_log_modular_name_user_center: 'connection type',
-
-  // 旧国际化
   message_exists_name: 'source',
   dataForm_form_connectionType: 'this data connection can only be used as a source in tapdata, not as a target',
   dataForm_form_options_source: 'target',
   dataForm_form_options_sourceTips: 'this data connection can only be used as a target in tapdata, not as a source',
-  dataForm_form_options_target: '',
-  dataForm_form_options_targetTips: '',
+  dataForm_form_options_target: 'target',
+  dataForm_form_options_targetTips: 'This data connection can only be used as a target in tapdata, not as a source',
   dataForm_form_host: 'Database address',
   dataForm_error_noneHost: 'database address cannot be empty',
   dataForm_form_port: 'port',
@@ -1138,8 +1079,9 @@ export default {
   dataForm_form_connectionMode:
     '< b > mongodb database connection URI demonstration: < / b > < br > < b > the user name and password in the URI must be URL encoded and spliced into the connection string < / b > < br > < b > replica set:</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx <br><b>Certified replica set enabled:</b> mongodb://admin:password @192.168.0.100:27017/mydb? Replicaset = XXX & authsource = admin < br > < b > multi node replica set:</b> mongodb://192.168.0.1:27017 ,192.168.0.2:27017,192.168.0.3:27017/mydb? Replicaset = XXX < br > < b > fragment set:</b> mongodb://192.168.0.100:27017/mydb <br><b>Multiple mongos:</b> mongodb://192.168.0.1:27017 ,192.168.0.2:27017,192.168.0.3:27017/mydb<br>',
   dataForm_form_serviceName: 'renamed',
-  dataForm_form_uriTips_content: '',
-  connection_rename: '',
+  dataForm_form_uriTips_content:
+    '<b>Demonstration of mongodb database connection URI: < / b > < br > < b > the user name and password in the URI must be URL encoded and spliced into the connection string < / b > < br > < b > replica set:</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx <br><b>Certified replica set enabled:</b> mongodb://admin:password @192.168.0.100:27017/mydb? Replicaset = XXX & authsource = admin < br > < b > multi node replica set:</b> mongodb://192.168.0.1:27017 ,192.168.0.2:27017,192.168.0.3:27017/mydb? Replicaset = XXX < br > < b > fragment set:</b> mongodb://192.168.0.100:27017/mydb <br><b>Multiple mongos:</b> mongodb://192.168.0.1:27017 ,192.168.0.2:27017,192.168.0.3:27017/mydb<br>',
+  connection_rename: 'Rename',
   dataForm_form_connectionName: 'Connection name',
   formBuilder_noneText: 'cannot be empty',
   message_saveOK: 'saved successfully',
@@ -1238,9 +1180,9 @@ export default {
   dataVerification_returnMsg: 'currently has an error. Please refresh the page',
   dataVerification_sourceTableData: 'error code:',
   dataVerification_returnedData: 'request ID:',
-  RequestErrorMessage_error_title: '',
-  RequestErrorMessage_code_label: '',
-  RequestErrorMessage_req_id_label: '',
+  RequestErrorMessage_error_title: 'There is an error currently. Please refresh the page',
+  RequestErrorMessage_code_label: 'Error code:',
+  RequestErrorMessage_req_id_label: 'Request ID:',
   RequestErrorMessage_error_detail_label: 'Error details',
   dataForm_form_response_body_CHECK_CONNECT: 'checks if the service connection is available',
   dataForm_form_response_body_CHECK_AUTH: 'checks whether the user name, password and database are correct',
@@ -1268,8 +1210,6 @@ export default {
   dataForm_form_response_body_CHECK_GTID: 'checks whether the consistency between gtid mode and gtid is enabled',
   dataForm_form_response_body_CHECK_VIKA_API_TOKEN: 'checks whether the Vika key is correct',
   dataForm_form_response_body_CHECK_QINGFLOW_ACCESS_TOKEN: 'checks whether the access token is available',
-
-  // 自动提取
   field_mapping_field_mapping_dialog_muLu: 'directory',
   field_mapping_field_mapping_dialog_muBiao: 'objectives:',
   field_mapping_field_mapping_dialog_piLiangXiuGaiZi: 'batch modify field type',
@@ -1410,16 +1350,21 @@ export default {
   purchase_Purchase_: 'learn more',
   purchase_Purchase_zhengQiJiTuanKe:
     'Availability area: an independent physical area in the same area, and a physical data center with independent power and network, which can ensure the mutual isolation of systematic faults in the availability area',
-  purchase_Purchase_dangQianPeiZhi: '',
-  purchase_Purchase_shiLiID: '',
-  purchase_Purchase_dingGouShiJian: '',
-  purchase_Purchase_daoQiShiJian: '',
-  purchase_Purchase_baoYueJiFeiShu2: '',
-  purchase_Purchase_anLiangJiFeiShu2: '',
-  purchase_Purchase_baoYueJiFeiShu: '',
-  purchase_Purchase_anLiangJiFeiShu: '',
-  purchase_Purchase_liaoJieGengDuo: '',
-  purchase_Purchase_keYongQuTongYi: '',
+  purchase_Purchase_dangQianPeiZhi: 'currently allocated',
+  purchase_Purchase_shiLiID: 'Instance ID',
+  purchase_Purchase_dingGouShiJian: 'Order time',
+  purchase_Purchase_daoQiShiJian: 'Expiration time',
+  purchase_Purchase_baoYueJiFeiShu2:
+    'Monthly billing: it belongs to prepayment, that is, when creating an instance, you need to pay a "monthly" fee.',
+  purchase_Purchase_anLiangJiFeiShu2:
+    'Billing by volume: it belongs to post payment, that is, the fee is deducted by hour. The billing starts when the instance is created and ends when the instance is unsubscribed.',
+  purchase_Purchase_baoYueJiFeiShu:
+    'Monthly billing: it belongs to post payment and is paid monthly. Billing starts from the creation of the instance and ends when the instance is unsubscribed; Support "monthly" automatic renewal.',
+  purchase_Purchase_anLiangJiFeiShu:
+    'Billing by volume: it belongs to post payment and is deducted by hour. Billing starts from the creation of the instance and ends when the instance is unsubscribed; Support automatic renewal by hour.',
+  purchase_Purchase_liaoJieGengDuo: 'Learn more',
+  purchase_Purchase_keYongQuTongYi:
+    'Availability area: an independent physical area in the same area, and a physical data center with independent power and network, which can ensure the mutual isolation of systematic faults in the availability area',
   purchase_Purchase_buTongDiYuDe:
     'The intranet of instances in different regions is not connected to each other; Choosing a region close to the target database can reduce the network delay and improve the access speed of the target database. The region cannot be changed after the instance is ordered. Please choose carefully.',
   purchase_Purchase_bianGengPeiZhi: 'change configuration',
@@ -1501,8 +1446,8 @@ export default {
   user_Center_queRenMiMa: 'old mobile phone verification code:',
   user_Center_yanZhengMa: ', please enter the old mobile phone verification code',
   user_Center_jiuShouJiYanZheng: "'s new phone:",
-  user_Center_qingShuRuJiuShou: '',
-  user_Center_xinShouJi: '',
+  user_Center_qingShuRuJiuShou: 'Please enter the old mobile phone verification code',
+  user_Center_xinShouJi: 'New phone:',
   user_Center_qingShuRuXinShou2: 'Please enter a new phone',
   user_Center_xinShouJiYanZheng: 'new mobile phone verification code:',
   user_Center_qingShuRuXinShou: ', please enter the new mobile phone verification code',
@@ -1573,10 +1518,12 @@ export default {
     'Hello! In order to further improve the service quality, the tapdata cloud will be upgraded from 19:00 to 22:00 on January 20, 2022 (Thursday)',
   workbench_Notice_banBenDuiShuJu:
     'During the upgrade, operations such as accessing the console and creating tasks may be affected, and tasks that are already running may not be affected. After the upgrade, they will be restored to normal use.',
-  workbench_Notice_shengJiGongGao: '',
-  workbench_Notice_zunJingDeYongHu: '',
-  workbench_Notice_ninHaoWeiLeJin: '',
-  workbench_Notice_shengJiQiJianKe: '',
+  workbench_Notice_shengJiGongGao: 'Upgrade announcement!',
+  workbench_Notice_zunJingDeYongHu: 'Dear users',
+  workbench_Notice_ninHaoWeiLeJin:
+    'Hello! In order to further improve the service quality, the tapdata cloud will be upgraded from 19:00 to 22:00 on January 20, 2022 (Thursday)',
+  workbench_Notice_shengJiQiJianKe:
+    'During the upgrade, operations such as accessing the console and creating tasks may be affected, and tasks that are already running may not be affected. After the upgrade, they will be restored to normal use.',
   workbench_Notice_yiShangShengJiRu:
     'Please understand the inconvenience caused by the above upgrade and make preparations in advance. If you have any questions, please contact us',
   workbench_Notice_nianYueRi: ', January 20, 2022',
@@ -1656,9 +1603,11 @@ export default {
     'This time, we also added "daily data volume trend chart" and "cumulative quantity chart" at the bottom of the [user workbench]. You can click to enter the workbench and slide down to view your task data statistics - a direct view of a table to make your task clearer',
   workbench_Notice_xinZengRenWuShu:
     'Pay attention to every feedback gained on the road of growth, constantly improve and optimize. Tapdata has been on the road all the time. Start with details and become great beauty. I look forward to seeing you again in the next new version',
-  workbench_Notice_yinWeiKeShiSuo: '',
-  workbench_Notice_zheYiCiWoMen: '',
-  workbench_Notice_zhongShiChengZhangLu: '',
+  workbench_Notice_yinWeiKeShiSuo: "It's clearer because it's visible",
+  workbench_Notice_zheYiCiWoMen:
+    'This time, we also added "daily data volume trend chart" and "cumulative quantity chart" at the bottom of the [user workbench]. You can click to enter the workbench and slide down to view your task data statistics - a direct view of a table to make your task clearer.',
+  workbench_Notice_zhongShiChengZhangLu:
+    'Pay attention to every feedback gained on the road of growth, constantly improve and optimize. Tapdata has been on the road all the time. Start with details and become great beauty. I look forward to seeing you again in the next new version',
   workbench_Notice_xinZengTengXunYun:
     'Tencent cloud database connection is added, tasks can be published regularly, and forms can be specified for re verification - tapdata with user experience firstCloud, start on the functional details again',
   workbench_Notice_xuQiuChiXuGeng3:
@@ -1694,10 +1643,14 @@ export default {
     'For [full quantity + increment] and [increment] tasks, the [planned running time] setting is added in the task attribute setting. This setting is closed by default, and you can choose whether to enable it according to the actual needs',
   workbench_Notice_niXiangYaoDeRen:
     'Specific process: open the setting and display the time selection control → select the planned running time as needed, and the optional time is: [current time, + ∞) → complete other settings and save the task → trigger the start and run of the task at the specified time __kaikai (* manually highlight: if [task saving time] ≥ [planned running time], the task will start when the setting is successfully saved,',
-  workbench_Notice_quanLiangZengLiangJi: '',
-  workbench_Notice_zhenDuiQuanLiangZeng: '',
-  workbench_Notice_juTiLiuChengDa2: '',
-  workbench_Notice_shouDongHuaZhongDian: '',
+  workbench_Notice_quanLiangZengLiangJi:
+    'For [full amount + increment] and [increment] tasks, "start time" can be specified',
+  workbench_Notice_zhenDuiQuanLiangZeng:
+    'For [full quantity + increment] and [increment] tasks, the [planned running time] setting is added in the task attribute setting. This setting is closed by default, and you can choose whether to enable it according to the actual needs.',
+  workbench_Notice_juTiLiuChengDa2:
+    'Specific process: open the setting and display the time selection control → select the planned running time as needed, and the optional time is: [current time, + ∞) → complete other settings and save the task → the task is triggered to start and run at the specified time',
+  workbench_Notice_shouDongHuaZhongDian:
+    '(* manually highlight: if [task save time] ≥ [planned run time], the task will start when the settings are saved successfully,',
   workbench_Notice_baoCunQianQingWu: 'Please carefully check whether the time setting is correct before saving',
   workbench_Notice_daKaiSheZhi: 'open Settings',
   workbench_Notice_xuanZeYunXingShi: 'selects the run time___ The task was not started before Kaikai set the time',
@@ -1748,9 +1701,11 @@ export default {
   workbench_Notice_ziDuanYingSheGuo: 'more details optimization',
   workbench_Notice_saoMaDengLuGong:
     '✔️ The SMS notification strategy is optimized. The SMS notification is turned off by default and can be turned on as needed',
-  workbench_Notice_zhiChiWeiXinSao: '',
-  workbench_Notice_gengDuoXiJieYou: '',
-  workbench_Notice_duanXinTongZhiCe: '',
+  workbench_Notice_zhiChiWeiXinSao:
+    ': it supports wechat code scanning registration and login. One click operation makes it faster to scan and use;',
+  workbench_Notice_gengDuoXiJieYou: 'More details optimization',
+  workbench_Notice_duanXinTongZhiCe:
+    '✔ Optimize the SMS notification strategy. The SMS notification is turned off by default and can be turned on as needed',
   workbench_Notice_chuangJianLianJieShi:
     '✔️ When creating a connection, you can quickly search and locate the data source and target through the connection type and connection name',
   workbench_Notice_kaiShiZhiChiV: 'began to support Vika as a target',
@@ -1834,11 +1789,13 @@ export default {
   workbench_Notice_chiXuDaZaoDe: 'was also launched recently',
   workbench_Notice_zuoWeiGuoNeiShou1:
     ', one of the first co construction partners, will join hands with tapdata to provide users with a better data as a service (DAAS) experience,Jointly prosper the cloud native distributed database ecosystem.',
-  workbench_Notice_xinZengZhiChiP: '',
-  workbench_Notice_suiZheXinXingGuo1: '',
-  workbench_Notice_aLiYunPO: '',
-  workbench_Notice_tongShiYeShiJin: '',
-  workbench_Notice_deShouPiGongJian1: '',
+  workbench_Notice_xinZengZhiChiP: 'Polardb MySQL is added as the source and target',
+  workbench_Notice_suiZheXinXingGuo1:
+    'With the continuous emergence of emerging domestic databases, tapdata cloud continues to work with more high-quality domestic databases. The latest access in this update',
+  workbench_Notice_aLiYunPO: 'Alibaba cloud polardb MySQL',
+  workbench_Notice_tongShiYeShiJin: 'It was also launched recently',
+  workbench_Notice_deShouPiGongJian1:
+    'One of the first co construction partners of, will join hands with tapdata to provide users with a better data as a service (DAAS) experience,Jointly prosper the cloud native distributed database ecosystem.',
   workbench_Notice_xinZengZhiChiQing: 'Added support for "light flow" as the target',
   workbench_Notice_mianDuiJinJiZhong:
     'In the face of the SaaS wave under attack and aiming at the diversified target needs of users, tapdata cloud plans steadily and continues to work together. The new version starts to support high quality',
@@ -1856,8 +1813,8 @@ export default {
   workbench_Notice_yongHuKeYiZai: 'theme',
   workbench_Notice_congErBaoZhengRen: 'queue',
   workbench_Workbench_tAPDA1: 'topic and queue can only be configured by selecting one',
-  field_mapping_field_mapping_dialog_buZhiChi: '',
-  components_MqQueueOrTopic_zhuTi: '',
-  components_MqQueueOrTopic_duiLie: '',
-  components_MqQueueOrTopic_zhuTiHeDuiLie: ''
+  field_mapping_field_mapping_dialog_buZhiChi: "I won't support it",
+  components_MqQueueOrTopic_zhuTi: 'theme',
+  components_MqQueueOrTopic_duiLie: 'queue',
+  components_MqQueueOrTopic_zhuTiHeDuiLie: 'Only one subject and queue can be selected for configuration'
 }
