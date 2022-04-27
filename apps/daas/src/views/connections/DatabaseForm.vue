@@ -1749,7 +1749,7 @@ export default {
       this.$api('cluster')
         .findAccessNodeInfo()
         .then(res => {
-          let items = res.data?.items || []
+          let items = res.data || []
           this.accessNodeList = items
         })
     }
