@@ -1075,7 +1075,8 @@ export default {
         field_name: '',
         data_type: '',
         precision: '',
-        scale: ''
+        scale: '',
+        default_value:''
       }
     },
     //字段删除
