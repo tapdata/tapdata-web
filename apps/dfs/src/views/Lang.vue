@@ -74,6 +74,8 @@
 </template>
 
 <script>
+
+
 import i18n from '@/i18n'
 
 import FilterBar from '@/components/filter-bar'
@@ -259,7 +261,7 @@ export default {
       reader.onload = () => {
         let data = reader.result?.replace('export default', '')
         callback?.(eval('(' + data + ')'))
-        this.$message.success('上传成功，刷新页面即可生效，并合并到现有文案。如果现有文案还需要使用，请先导出。')
+        this.$message.success(i18n.t('views_Lang_shangChuanChengGongShua'))
       }
     },
     uploadModifyEn(evt) {

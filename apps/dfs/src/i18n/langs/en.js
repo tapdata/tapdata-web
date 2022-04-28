@@ -1829,5 +1829,7 @@ export default {
   lang_zh_tw: 'traditional Chinese character',
   copy_result: 'Copied to clipboard',
   button_upload: 'upload',
-  button_export: 'export'
+  button_export: 'export',
+  views_Lang_shangChuanChengGongShua:
+    'If the upload is successful, refresh the page to take effect and merge it into the existing copy. If the existing copy needs to be used, please export it first.'
 }

@@ -1680,5 +1680,7 @@ export default {
   lang_zh_tw: '繁體',
   copy_result: '已複製到剪貼板',
   button_upload: '上傳',
-  button_export: '匯出'
+  button_export: '匯出',
+  views_Lang_shangChuanChengGongShua:
+    '上傳成功，刷新頁面即可生效，並合併到現有文案。 如果現有文案還需要使用，請先匯出。'
 }

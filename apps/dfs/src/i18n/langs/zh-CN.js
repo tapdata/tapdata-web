@@ -1719,5 +1719,6 @@ export default {
   views_Lang_wenAnBaoHanDe: '文案包含的值，List: a,b,c',
   views_Lang_wenAnDengYuDe: '文案等于的值，List: a,b,c',
   views_Lang_qingShuRuJiaoZheng: '请输入矫正文案',
-  copy_result: '已复制到剪贴板'
+  copy_result: '已复制到剪贴板',
+  views_Lang_shangChuanChengGongShua: '上传成功，刷新页面即可生效，并合并到现有文案。如果现有文案还需要使用，请先导出。'
 }
