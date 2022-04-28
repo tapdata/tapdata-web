@@ -136,6 +136,7 @@ export default {
           }).then(res => {
             if (res) {
               this.clearCookie()
+              localStorage.removeItem('tapdata_localize_lang') // 清除国际化
               location.href = './logout'
             }
           })

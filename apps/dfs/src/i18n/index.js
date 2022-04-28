@@ -28,10 +28,16 @@ let langMap = {
   tc: 'zh-TW',
   en: 'en'
 }
+// i18n需要的格式
+const i18nLangMap = {
+  'zh-CN': 'zh-CN',
+  'zh-TW': 'zh-TW',
+  'en-US': 'en'
+}
 Vue.use(VueI18n)
 let localeValue = localStorage.getItem('tapdata_localize_lang') || 'zh-CN'
 const i18n = new VueI18n({
-  locale: localeValue,
+  locale: i18nLangMap[localeValue],
   messages: eleLangs
 })
 Object.values(langMap).forEach(l => {
