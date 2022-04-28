@@ -77,7 +77,7 @@ export default {
         }
       }
       .el-step__line {
-        height: 2px;
+        height: 1px;
         top: 11px;
         left: 50%;
         right: -50%;
@@ -166,7 +166,7 @@ export default {
       border-color: map-get($color, disable);
     }
     .el-step__line {
-      height: 2px;
+      height: 1px;
       top: 11px;
       left: 50%;
       right: -50%;
