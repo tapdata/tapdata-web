@@ -268,16 +268,16 @@
     border-radius: 2px;
     font-size: 14px;
     background: #f2f3f5;
-    color: #333c4a;
+    color: map-get($fontColor, normal);
     text-align: center;
     cursor: pointer;
     &:hover {
       background: map-get($color, primary);
-      color: #fff;
+      color: map-get($fontColor, white);
     }
     &.btn-transfer--disabled {
       background: #f2f3f5;
-      color: #333c4a;
+      color: map-get($fontColor, normal);
       cursor: not-allowed;
     }
   }

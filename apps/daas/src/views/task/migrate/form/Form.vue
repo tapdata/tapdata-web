@@ -696,7 +696,7 @@ export default {
         &.active {
           .step-index {
             border-color: #fff;
-            color: #fff;
+            color: map-get($fontColor, white);
           }
         }
         .step-index {

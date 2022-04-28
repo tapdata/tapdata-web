@@ -195,7 +195,7 @@ $unreadColor: #ee5353;
     .title {
       font-size: 14px;
       font-weight: bold;
-      color: #1d2129;
+      color: map-get($fontColor, dark);
       line-height: 34px;
     }
     .search {
@@ -226,7 +226,7 @@ $unreadColor: #ee5353;
       .title {
         font-size: 14px;
         font-weight: bold;
-        color: #1d2129;
+        color: map-get($fontColor, dark);
         line-height: 32px;
         margin-bottom: 20px;
       }
@@ -252,7 +252,7 @@ $unreadColor: #ee5353;
           font-weight: 500;
         }
         .label {
-          color: #333c4a;
+          color: map-get($fontColor, normal);
         }
         .item-input {
           width: 200px;

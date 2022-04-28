@@ -85,7 +85,7 @@ export default {
     .switch-lang {
       padding-top: 50px;
       text-align: right;
-      color: #c9cdd4;
+      color: map-get($fontColor, slight);
       font-weight: 500;
       font-size: 14px;
       span {

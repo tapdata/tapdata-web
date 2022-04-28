@@ -135,7 +135,7 @@ export default {
         background: rgba(0, 0, 0, 0.4);
         .mask-text {
           opacity: 0;
-          color: #fff;
+          color: map-get($fontColor, white);
           font-weight: bold;
         }
         &:hover {

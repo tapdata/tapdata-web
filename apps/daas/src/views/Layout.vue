@@ -177,7 +177,7 @@
         line-height: 28px;
         text-align: center;
         font-size: 14px;
-        color: #fff;
+        color: map-get($fontColor, white);
       }
       .menu-user {
         color: rgba(255, 255, 255, 0.85);

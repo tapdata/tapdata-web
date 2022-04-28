@@ -24,7 +24,7 @@
           style="
             margin-left: 5px;
             background: rgb(245, 108, 108);
-            color: #fff;
+            color: map-get($fontColor, white);
             border-radius: 3px;
             display: inline-block;
             height: 22px;
