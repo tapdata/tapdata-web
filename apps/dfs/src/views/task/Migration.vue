@@ -936,7 +936,6 @@ export default {
       })
     },
     openErrorLog(row) {
-      this.errorLogDialogData.visible = true
       this.errorLogDialogData.dataFlowId = row.id
       this.errorLogDialogData.params = {
         where: {
@@ -950,6 +949,7 @@ export default {
         },
         order: `id DESC`
       }
+      this.errorLogDialogData.visible = true
     }
   }
 }
