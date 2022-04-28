@@ -10,8 +10,9 @@
       <div v-if="!list.length">{{ $t('components_ErrorLogDialog_qingQianWangAG') }}</div>
       <ul v-else class="error-log__list">
         <li v-for="(item, index) in list" :key="index">
-          [<span class="fw-bold" :class="item.color" v-html="item.level"></span>]&nbsp;
-          <span class="log-message" v-html="item.message"></span>
+          [<span class="fw-bold" :class="item.color" v-html="item.level"></span>]&nbsp; <span>{{ item.time }}</span
+          >&nbsp; [<span v-html="item.threadName"></span>]&nbsp; <span v-html="item.loggerName"></span>&nbsp;
+          <div class="log-message pl-10" v-html="item.message"></div>
         </li>
       </ul>
     </div>
@@ -36,6 +37,9 @@ export default {
     id: {
       type: String,
       require: true
+    },
+    params: {
+      type: Object
     }
   },
   data() {
@@ -75,6 +79,9 @@ export default {
         order: `id DESC`,
         limit: 10
       }
+      if (this.params) {
+        filter = this.params
+      }
       this.$axios
         .get(`tm/api/Logs?filter=${encodeURIComponent(JSON.stringify(filter))}`)
         .then(data => {
@@ -109,6 +116,7 @@ export default {
       }
     },
     toDetail() {
+      this.dialogVisible = false
       this.$router.push({
         name: 'Monitor',
         params: {
@@ -129,10 +137,12 @@ export default {
   justify-content: center;
   align-items: center;
   height: 350px;
+  font-size: 12px;
   border: 1px solid #ccc;
+  background: #fff;
 }
 .error-log__list {
-  padding: 8px 24px;
+  padding: 8px 12px;
   height: 100%;
   overflow-y: auto;
   box-sizing: border-box;

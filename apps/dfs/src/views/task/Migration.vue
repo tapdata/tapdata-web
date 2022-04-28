@@ -46,7 +46,7 @@
               :content="$t('components_ErrorLogDialog_cuoWuRiZhiCha')"
               placement="top"
             >
-              <span class="ml-2 mt-1 cursor-pointer" @click="openErrorLog(scope.row.id)">
+              <span class="ml-2 mt-1 cursor-pointer" @click="openErrorLog(scope.row)">
                 <VIcon class="color-danger">warning-circle</VIcon>
               </span>
             </ElTooltip>
@@ -178,7 +178,11 @@
       </div>
     </ElDialog>
     <!--    </div>-->
-    <ErrorLogDialog v-model="errorLogDialogData.visible" :id="errorLogDialogData.dataFlowId"></ErrorLogDialog>
+    <ErrorLogDialog
+      v-model="errorLogDialogData.visible"
+      :id="errorLogDialogData.dataFlowId"
+      :params="errorLogDialogData.params"
+    ></ErrorLogDialog>
   </section>
   <RouterView v-else></RouterView>
 </template>
@@ -307,7 +311,8 @@ export default {
       filterItems: [],
       errorLogDialogData: {
         visible: false,
-        dataFlowId: ''
+        dataFlowId: '',
+        params: {}
       }
     }
   },
@@ -930,9 +935,21 @@ export default {
         }
       })
     },
-    openErrorLog(id) {
+    openErrorLog(row) {
       this.errorLogDialogData.visible = true
-      this.errorLogDialogData.dataFlowId = id
+      this.errorLogDialogData.dataFlowId = row.id
+      this.errorLogDialogData.params = {
+        where: {
+          'contextMap.dataFlowId': {
+            $eq: row.id
+          },
+          level: {
+            $in: ['ERROR']
+          },
+          createTime: { $gt: { $date: new Date(row.startTime).getTime() } }
+        },
+        order: `id DESC`
+      }
     }
   }
 }
