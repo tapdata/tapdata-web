@@ -83,29 +83,41 @@
                 </span>
               </div>
               <div class="url-tip" slot="accessNodeProcessId">
-                <el-select
-                  v-model="model.accessNodeProcessId"
-                  clearable
-                  multiple
-                  :placeholder="$t('connection_form_name_ip')"
-                  v-loadmore="loadMore"
-                  style="width: 100%"
-                >
-                  <el-option
-                    v-for="item in accessNodeList"
-                    :key="item.processId"
-                    :label="item.hostName"
-                    :value="item.processId"
+                <ElForm :model="model" ref="agentForm">
+                  <ElFormItem
+                    required
+                    prop="accessNodeProcessId"
+                    :rules="{
+                      required: true,
+                      message: $t('connection_form_name_ip') + $t('tips_rule_not_empty'),
+                      trigger: 'blur'
+                    }"
                   >
-                    <span class="fl">{{ item.hostName }}</span>
-                    <span class="font-color-light fr pl-2">{{ item.ip }}</span>
-                  </el-option>
-                </el-select>
-                <!-- <el-input
+                    <ElSelect
+                      v-model="model.accessNodeProcessId"
+                      clearable
+                      :placeholder="$t('connection_form_name_ip')"
+                      v-loadmore="loadMore"
+                      style="width: 100%"
+                    >
+                      <ElOption
+                        v-for="item in accessNodeList"
+                        :key="item.processId"
+                        :label="item.hostName"
+                        :value="item.processId"
+                      >
+                        <span class="fl">{{ item.hostName }}</span>
+                        <span class="font-color-light fr pl-2">{{ item.ip }}</span>
+                      </ElOption>
+                    </ElSelect>
+                  </ElFormItem>
+
+                  <!-- <el-input
                   :rows="5"
                   v-model="model.accessNodeProcessId"
                   :placeholder="$t('connection_form_name_ip')"
                 ></el-input> -->
+                </ElForm>
               </div>
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
               <!-- rest api -->
@@ -1451,6 +1463,12 @@ export default {
       this.submitBtnLoading = true
       let flag = true
       this.model.search_databaseType = ''
+      this.$refs.agentForm.validate(valid => {
+        if (!valid) {
+          flag = false
+        }
+      })
+
       if (this.model.database_type === 'file' && this.model.connection_type === 'source') {
         this.$refs.fileForm.validate(valid => {
           if (!valid) {
@@ -1465,6 +1483,7 @@ export default {
           }
         })
       }
+
       if (this.model.database_type === 'gridfs' && this.model.file_type === 'excel') {
         this.$refs.excelForm.validate(valid => {
           if (!valid) {
@@ -1493,6 +1512,10 @@ export default {
         } else {
           delete data.brokerURL
         }
+      }
+
+      if (data.accessNodeType === 'AUTOMATIC_PLATFORM_ALLOCATION') {
+        data.accessNodeProcessId = ''
       }
 
       // if (this.model.database_type === 'mysqlpxc') {
@@ -1873,6 +1896,10 @@ export default {
                   // width: 300px;
                   background-color: rgba(239, 241, 244, 0.2);
                 }
+              }
+              .el-input-group__append button.el-button {
+                background-color: inherit;
+                border-color: azure;
               }
             }
           }
