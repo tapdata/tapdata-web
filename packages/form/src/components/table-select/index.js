@@ -2,33 +2,6 @@ import AsyncSelect from '../async-select'
 import { useField } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
-import { MetadataInstances } from '@tap/api'
-
-const metadataApi = new MetadataInstances()
-
-const loadTable = async (filter, config) => {
-  filter.where &&
-    Object.assign(filter.where, {
-      meta_type: {
-        in: ['collection', 'table', 'view'] //,
-      },
-      is_deleted: false
-    })
-  Object.assign(filter, {
-    fields: {
-      original_name: true
-    }
-  })
-  if (!filter.where.original_name) {
-    filter.where.original_name = {
-      // regexp: '^[^\\s]+$'
-      neq: ''
-    }
-  }
-  const data = await metadataApi.get({ filter: JSON.stringify(filter) }, config)
-  data.items = data.items.map(item => item.original_name)
-  return data
-}
 
 export const TableSelect = observer(
   defineComponent({
@@ -57,7 +30,6 @@ export const TableSelect = observer(
             vOn:create={handleCreate}
             itemType="string"
             itemQuery="original_name"
-            method={loadTable}
             createValidate={createValidate}
             params={params}
           />

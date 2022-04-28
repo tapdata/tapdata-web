@@ -2,17 +2,15 @@
   <ElContainer class="create-task-wrap section-wrap" v-if="steps[activeStep]">
     <ElContainer style="overflow: hidden; flex: 1" class="create-task-container flex-column section-wrap-box">
       <div class="steps-header">
-        <ElSteps
+        <VStep
+          ref="step"
           class="primary pb-6"
-          :active="activeStep"
           process-status="process"
           finish-status="success"
           align-center
-        >
-          <ElStep :title="$t('migrate_select_connection')"></ElStep>
-          <ElStep :title="$t('migrate_task_properties')"></ElStep>
-          <ElStep :title="$t('migrate_select_table')"></ElStep>
-        </ElSteps>
+          :stepList="stepList"
+          :activeStep="activeStep"
+        ></VStep>
       </div>
       <ElContainer :class="['task-container', 'task-container-' + steps[activeStep].index]">
         <div class="task-container-box flex-fill flex flex-column w-100">
@@ -138,11 +136,12 @@ import Transfer from './Transfer'
 import DataSource from './DataSource'
 import Setting from './Setting'
 import TableFieldFilter from './TableFieldFilter'
+import VStep from '@/components/VStep'
 import FieldMapping from '@tap/field-mapping'
 import { DATASOURCE_MODEL, SETTING_MODEL, TRANSFER_MODEL } from './const'
 
 export default {
-  components: { Transfer, DataSource, Setting, TableFieldFilter, FieldMapping },
+  components: { Transfer, DataSource, Setting, TableFieldFilter, FieldMapping, VStep },
   data() {
     return {
       steps: [],
@@ -151,6 +150,23 @@ export default {
       loading: false,
       stateIsReadonly: false, //只读模式
       isEditAll: false, //编辑所有步骤
+      stepList: [
+        {
+          label: this.$t('migrate_select_connection'),
+          desc: '',
+          time: ''
+        },
+        {
+          label: this.$t('migrate_task_properties'),
+          desc: '',
+          time: ''
+        },
+        {
+          label: this.$t('migrate_select_table'),
+          desc: '',
+          time: ''
+        }
+      ],
       //第一步 配置源端
       dataSourceData: Object.assign({}, DATASOURCE_MODEL),
       sourceId: '',

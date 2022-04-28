@@ -92,11 +92,11 @@ export const FieldModType = connect(
         return (
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
-              <span class="flex-1 text inline-block">字段名称</span>
-              <span class="flex-1 text inline-block">源字段类型</span>
-              <span class="field-type text inline-block">目标字段类型</span>
+              <span class="flex-1 text inline-block ml-6">字段名称</span>
+              <span class="flex-1 text inline-block ml-10">源字段类型</span>
+              <span class="field-type text inline-block pl-11">目标字段类型</span>
               <span class="field-ops inline-block ml-10">
-                <VIcon class="clickable ml-5" size="12" small onClick={() => this.handleAllReset()}>
+                <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllReset()}>
                   revoke
                 </VIcon>
               </span>
@@ -107,7 +107,6 @@ export const FieldModType = connect(
                 data={fields}
                 node-key="id"
                 default-expand-all={true}
-                show-checkbox={true}
                 expand-on-click-node={false}
                 class="field-processor-tree"
                 scopedSlots={{

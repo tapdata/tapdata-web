@@ -83,29 +83,41 @@
                 </span>
               </div>
               <div class="url-tip" slot="accessNodeProcessId">
-                <el-select
-                  v-model="model.accessNodeProcessIdList"
-                  clearable
-                  multiple
-                  :placeholder="$t('connection_form_name_ip')"
-                  v-loadmore="loadMore"
-                  style="width: 100%"
-                >
-                  <el-option
-                    v-for="item in accessNodeList"
-                    :key="item.id"
-                    :label="item.systemInfo.hostname"
-                    :value="item.id"
+                <ElForm :model="model" ref="agentForm">
+                  <ElFormItem
+                    required
+                    prop="accessNodeProcessId"
+                    :rules="{
+                      required: true,
+                      message: $t('connection_form_name_ip') + $t('tips_rule_not_empty'),
+                      trigger: 'blur'
+                    }"
                   >
-                    <span class="fl">{{ item.systemInfo.hostname }}</span>
-                    <span class="font-color-light fr pl-2">{{ item.systemInfo.ip }}</span>
-                  </el-option>
-                </el-select>
-                <!-- <el-input
+                    <ElSelect
+                      v-model="model.accessNodeProcessId"
+                      clearable
+                      :placeholder="$t('connection_form_name_ip')"
+                      v-loadmore="loadMore"
+                      style="width: 100%"
+                    >
+                      <ElOption
+                        v-for="item in accessNodeList"
+                        :key="item.processId"
+                        :label="item.hostName"
+                        :value="item.processId"
+                      >
+                        <span class="fl">{{ item.hostName }}</span>
+                        <span class="font-color-light fr pl-2">{{ item.ip }}</span>
+                      </ElOption>
+                    </ElSelect>
+                  </ElFormItem>
+
+                  <!-- <el-input
                   :rows="5"
                   v-model="model.accessNodeProcessId"
                   :placeholder="$t('connection_form_name_ip')"
                 ></el-input> -->
+                </ElForm>
               </div>
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
               <!-- rest api -->
@@ -1451,6 +1463,14 @@ export default {
       this.submitBtnLoading = true
       let flag = true
       this.model.search_databaseType = ''
+      if (this.model.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER') {
+        this.$refs.agentForm.validate(valid => {
+          if (!valid) {
+            flag = false
+          }
+        })
+      }
+
       if (this.model.database_type === 'file' && this.model.connection_type === 'source') {
         this.$refs.fileForm.validate(valid => {
           if (!valid) {
@@ -1465,6 +1485,7 @@ export default {
           }
         })
       }
+
       if (this.model.database_type === 'gridfs' && this.model.file_type === 'excel') {
         this.$refs.excelForm.validate(valid => {
           if (!valid) {
@@ -1493,6 +1514,10 @@ export default {
         } else {
           delete data.brokerURL
         }
+      }
+
+      if (data.accessNodeType === 'AUTOMATIC_PLATFORM_ALLOCATION') {
+        data.accessNodeProcessId = ''
       }
 
       // if (this.model.database_type === 'mysqlpxc') {
@@ -1746,11 +1771,10 @@ export default {
     },
     // 获取数据
     async getCluster() {
-      let params = { index: 1 }
       this.$api('cluster')
-        .get(params)
+        .findAccessNodeInfo()
         .then(res => {
-          let items = res.data?.items || []
+          let items = res.data || []
           this.accessNodeList = items
         })
     }
@@ -1829,13 +1853,17 @@ export default {
       }
       .form-wrap {
         display: flex;
-        overflow-y: auto;
         flex: 1;
+        overflow: hidden;
         .form {
+          width: 100%;
+          height: 100%;
+          overflow-y: auto;
           .form-builder {
+            width: 396px;
             ::v-deep {
               .e-form-builder-item {
-                width: 396px;
+                // width: 396px;
                 &.large-item {
                   width: 680px;
                 }
@@ -1862,6 +1890,18 @@ export default {
                     padding-top: 0;
                   }
                 }
+                // .el-form-item__content {
+                //   width: 300px;
+                // }
+                .el-input .el-input__inner,
+                .el-textarea__inner {
+                  // width: 300px;
+                  background-color: rgba(239, 241, 244, 0.2);
+                }
+              }
+              .el-input-group__append button.el-button {
+                background-color: inherit;
+                border-color: azure;
               }
             }
           }
@@ -2059,7 +2099,7 @@ export default {
   //   position: relative;
   // }
   .footer {
-    margin: 10px auto;
+    // margin: 10px auto;
     width: 100%;
     height: 62px;
     background-color: #fff;

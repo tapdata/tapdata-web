@@ -702,7 +702,7 @@ export default {
     'Begin with Chinese and English, 1-100 characters, including Chinese and English, numbers, underscores, underscores, spaces',
   connection_form_no_name: 'The connection name cannot be empty',
   connection_form_name_exists: 'Name already exists',
-  connection_form_access_node: 'Access Node',
+  connection_form_access_node: 'Agent settings',
   connection_form_automatic: 'Platform automatic allocation',
   connection_form_manual: 'User specified manually',
   connection_form_access_node_tip:
