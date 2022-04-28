@@ -1828,5 +1828,6 @@ export default {
   views_Lang_daoChuFanTi: 'Export traditional Chinese',
   views_Lang_zhongWen: 'chinese',
   views_Lang_yingWen: 'english',
-  views_Lang_fanTi: 'traditional Chinese character'
+  views_Lang_fanTi: 'traditional Chinese character',
+  copy_result: 'Copied to clipboard'
 }

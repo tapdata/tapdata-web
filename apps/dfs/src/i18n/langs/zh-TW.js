@@ -1679,5 +1679,6 @@ export default {
   views_Lang_daoChuFanTi: '匯出繁體',
   views_Lang_zhongWen: '中文',
   views_Lang_yingWen: '英文',
-  views_Lang_fanTi: '繁體'
+  views_Lang_fanTi: '繁體',
+  copy_result: '已複製到剪貼板'
 }

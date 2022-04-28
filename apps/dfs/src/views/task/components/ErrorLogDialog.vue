@@ -8,7 +8,7 @@
   >
     <div v-loading="loading" class="error-log-dialog__content">
       <div v-if="!list.length">{{ $t('components_ErrorLogDialog_qingQianWangAG') }}</div>
-      <ul v-else class="error-log__list">
+      <ul v-else class="error-log__list" ref="logList">
         <li v-for="(item, index) in list" :key="index">
           [<span class="fw-bold" :class="item.color" v-html="item.level"></span>]&nbsp; <span>{{ item.time }}</span
           >&nbsp; [<span v-html="item.threadName"></span>]&nbsp; <span v-html="item.loggerName"></span>&nbsp;
@@ -18,7 +18,7 @@
     </div>
     <div class="pt-6 text-center">
       <ElButton type="primary" @click="toDetail">{{ $t('components_ErrorLogDialog_zhaKanGengDuoRi') }}</ElButton>
-      <ElButton type="primary" class="close-btn" @click="dialogVisible = false">{{ $t('gl_button_close') }}</ElButton>
+      <ElButton type="primary" class="close-btn" @click="copy">{{ $t('button_copy') }}</ElButton>
     </div>
   </ElDialog>
 </template>
@@ -122,6 +122,15 @@ export default {
         query: {
           tab: 'log'
         }
+      })
+    },
+    copy() {
+      let val = this.$refs.logList.innerText
+      if (!val) {
+        return
+      }
+      this.$copyText(val).then(() => {
+        this.$message.success(this.$t('copy_result'))
       })
     }
   }
