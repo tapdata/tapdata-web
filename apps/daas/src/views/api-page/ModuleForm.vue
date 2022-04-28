@@ -29,10 +29,10 @@
         <div class="url-tip pb-5">
           <span>{{ $t('module_form_path') }}</span>
           <span>
-            <el-radio-group v-model="createForm.apiType" @change="changeApiType">
-              <el-radio label="defaultApi">{{ $t('module_form_default_Api') }}</el-radio>
-              <el-radio label="customerApi">{{ $t('module_form_customer_Api') }}</el-radio>
-            </el-radio-group>
+            <ElRadioGroup v-model="createForm.apiType" @change="changeApiType">
+              <ElRadio label="defaultApi">{{ $t('module_form_default_Api') }}</ElRadio>
+              <ElRadio label="customerApi">{{ $t('module_form_customer_Api') }}</ElRadio>
+            </ElRadioGroup>
             <div class="pt-4">{{ createForm.path }}</div>
           </span>
         </div>
@@ -835,7 +835,7 @@ export default {
               width: 62px;
               text-align: center;
               font-size: 11px;
-              color: #fff;
+              color: map-get($fontColor, white);
               border-radius: 2px;
             }
             .module-path-item-text {

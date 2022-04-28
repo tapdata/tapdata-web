@@ -410,7 +410,7 @@ $unreadColor: #ee5353;
   .title {
     padding-bottom: 20px;
     font-size: 14px;
-    color: #1d2129;
+    color: map-get($fontColor, dark);
     font-weight: bold;
   }
   .content {

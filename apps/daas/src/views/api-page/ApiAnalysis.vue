@@ -378,7 +378,7 @@ export default {
           margin: 0 10px;
           padding: 2px 0;
           border-radius: 2px;
-          color: #fff;
+          color: map-get($fontColor, white);
           text-align: center;
           white-space: nowrap;
         }

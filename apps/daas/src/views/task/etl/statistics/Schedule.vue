@@ -1,26 +1,15 @@
 <template>
   <div class="">
     <!--  步骤条  -->
-    <ElSteps :active="active" align-center class="mini mb-6 pt-3">
-      <ElStep v-for="(item, index) in steps" :key="index" :class="[{ 'is-ative': showActive === index + 1 }]">
-        <span
-          slot="icon"
-          :class="['circle-icon', { 'cursor-pointer': index + 1 <= active }]"
-          @click="clickStep(index)"
-        ></span>
-        <div slot="title" :class="[{ 'cursor-pointer': index + 1 <= active }]" @click="clickStep(index)">
-          {{ item.label }}
-        </div>
-        <div
-          v-if="item.time"
-          slot="description"
-          :class="[{ 'cursor-pointer': index + 1 <= active }]"
-          @click="clickStep(index)"
-        >
-          {{ item.time }}
-        </div>
-      </ElStep>
-    </ElSteps>
+    <VStep
+      ref="step"
+      align-center
+      :hasNumber="false"
+      :activeStep="active"
+      :stepList="steps"
+      :showActive="showActive"
+      @activeStep="clickStep"
+    ></VStep>
     <template v-if="steps.length > 0">
       <!--  任务初始化  -->
       <div v-if="['initial_sync'].indexOf(currentStep.group) === -1">
@@ -198,13 +187,14 @@
 
 <script>
 import TableList from '@/components/TableList'
+import VStep from '@/components/VStep'
 import Milestone from '../../migrate/details/Milestone'
 import Overview from './Overview'
 import { formatTime } from '@/utils/util'
 
 export default {
   name: 'Schedule',
-  components: { TableList, Milestone, Overview },
+  components: { TableList, Milestone, Overview, VStep },
   props: {
     task: {
       type: Object,

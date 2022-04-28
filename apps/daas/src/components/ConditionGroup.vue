@@ -17,8 +17,9 @@
             $t('query_build_add')
           }}</el-button>
         </el-tooltip>
+
         <el-tooltip class="item" effect="dark" :content="$t('query_build_removeGroup')" placement="top">
-          <el-button v-if="level > 1" @click="removeGroup" type="text">{{ $t('query_build_remove') }}</el-button>
+          <el-button v-if="level > 1" @click="removeGroup(value)" type="text">{{ $t('query_build_remove') }}</el-button>
         </el-tooltip>
       </div>
     </div>
@@ -32,7 +33,7 @@
             :field-value="fieldValue"
             :key="index"
             :level="childLevel"
-            @remove="removeChild(index)"
+            @remove="removeChild(conditions[index], index)"
           ></ConditionGroup>
         </template>
         <!-- 选择字段 -->
@@ -181,8 +182,8 @@ export default {
       this.$emit('input', this.value)
     },
     // 删除组
-    removeGroup() {
-      this.$emit('remove')
+    removeGroup(item) {
+      this.$emit('remove', item)
     },
     // 删除条件
     removeChild(item, index) {

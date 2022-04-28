@@ -66,8 +66,8 @@ export const FieldValue = connect(
         return (
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
-              <span class="flex-1 text inline-block">字段名称</span>
-              <span class="flex-1 text inline-block">字段赋值</span>
+              <span class="flex-1 text inline-block ml-6">字段名称</span>
+              <span class="flex-1 text inline-block ml-7">字段赋值</span>
               <span class="field-ops inline-block ml-10">
                 <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllReset()}>
                   revoke
@@ -80,7 +80,6 @@ export const FieldValue = connect(
                 data={fields}
                 node-key="id"
                 default-expand-all={true}
-                show-checkbox={true}
                 expand-on-click-node={false}
                 class="field-processor-tree"
                 scopedSlots={{

@@ -2,17 +2,15 @@
   <ElContainer class="create-task-wrap section-wrap" v-if="steps[activeStep]">
     <ElContainer style="overflow: hidden; flex: 1" class="create-task-container flex-column section-wrap-box">
       <div class="steps-header">
-        <ElSteps
+        <VStep
+          ref="step"
           class="primary pb-6"
-          :active="activeStep"
           process-status="process"
           finish-status="success"
           align-center
-        >
-          <ElStep :title="$t('migrate_select_connection')"></ElStep>
-          <ElStep :title="$t('migrate_task_properties')"></ElStep>
-          <ElStep :title="$t('migrate_select_table')"></ElStep>
-        </ElSteps>
+          :stepList="steps"
+          :activeStep="activeStep"
+        ></VStep>
       </div>
       <ElContainer :class="['task-container', 'task-container-' + steps[activeStep].index]">
         <div class="task-container-box flex-fill flex flex-column w-100">
@@ -138,11 +136,12 @@ import Transfer from './Transfer'
 import DataSource from './DataSource'
 import Setting from './Setting'
 import TableFieldFilter from './TableFieldFilter'
+import VStep from '@/components/VStep'
 import FieldMapping from '@tap/field-mapping'
 import { DATASOURCE_MODEL, SETTING_MODEL, TRANSFER_MODEL } from './const'
 
 export default {
-  components: { Transfer, DataSource, Setting, TableFieldFilter, FieldMapping },
+  components: { Transfer, DataSource, Setting, TableFieldFilter, FieldMapping, VStep },
   data() {
     return {
       steps: [],
@@ -326,10 +325,16 @@ export default {
       if (this.id && !this.stateIsReadonly && !this.isEditAll) {
         //编辑模式 没有第一步
         this.steps = [
-          { index: 2, text: this.$t('task_form_task_setting'), type: 'setting', showExitBtn: true, showNextBtn: true },
+          {
+            index: 2,
+            label: this.$t('migrate_task_properties'),
+            type: 'setting',
+            showExitBtn: true,
+            showNextBtn: true
+          },
           {
             index: 3,
-            text: this.$t('task_form_mapping_setting'),
+            label: this.$t('migrate_select_table'),
             type: 'mapping',
             showBackBtn: true,
             showSaveBtn: true
@@ -339,15 +344,21 @@ export default {
         this.steps = [
           {
             index: 1,
-            text: this.$t('task_form_source_target_connection'),
+            label: this.$t('migrate_select_connection'),
             type: 'dataSource',
             showExitBtn: true,
             showNextBtn: true
           },
-          { index: 2, text: this.$t('task_form_task_setting'), type: 'setting', showBackBtn: true, showNextBtn: true },
+          {
+            index: 2,
+            label: this.$t('migrate_task_properties'),
+            type: 'setting',
+            showBackBtn: true,
+            showNextBtn: true
+          },
           {
             index: 3,
-            text: this.$t('task_form_mapping_setting'),
+            label: this.$t('migrate_select_table'),
             type: 'mapping',
             showBackBtn: true,
             showSaveBtn: true
@@ -696,7 +707,7 @@ export default {
         &.active {
           .step-index {
             border-color: #fff;
-            color: #fff;
+            color: map-get($fontColor, white);
           }
         }
         .step-index {

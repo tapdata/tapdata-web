@@ -191,7 +191,7 @@ export default {
   // overflow: hidden;
   // box-sizing: border-box;
   .data-verify-history__icon {
-    color: #fff;
+    color: map-get($fontColor, white);
   }
   .panel-slider {
     width: 200px;

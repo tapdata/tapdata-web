@@ -48,7 +48,7 @@
   text-align: center;
   background: #f2f3f5;
   font-size: 12px;
-  color: #1d2129;
+  color: map-get($fontColor, dark);
 }
 .fields-selector--clip {
   position: absolute;

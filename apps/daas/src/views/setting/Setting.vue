@@ -434,7 +434,7 @@ export default {
       .title {
         display: inline-block;
         padding: 10px 0 20px;
-        color: #1d2129;
+        color: map-get($fontColor, dark);
         font-size: 14px;
         font-weight: 500;
       }

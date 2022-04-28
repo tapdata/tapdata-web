@@ -250,7 +250,7 @@
   border-color: map-get($color, primary);
 }
 .el-button--primary {
-  color: #fff;
+  color: map-get($fontColor, white);
   background-color: map-get($color, primary);
   border-color: map-get($color, primary);
 }
@@ -284,19 +284,19 @@
 .el-button--primary:hover {
   background-color: map-get($color, lprimary);
   border-color: map-get($color, lprimary);
-  color: #fff;
+  color: map-get($fontColor, white);
 }
 .el-button--primary:focus.el-button--primary:hover {
   background-color: map-get($color, lprimary);
   border-color: map-get($color, lprimary);
-  color: #fff;
+  color: map-get($fontColor, white);
 }
 .el-button--primary:focus,
 .el-button--primary.is-active,
 .el-button--primary:active {
   background-color: map-get($color, primary);
   border-color: map-get($color, primary);
-  color: #fff;
+  color: map-get($fontColor, white);
 }
 .el-button--primary.is-disabled,
 .el-button--primary.is-disabled:active,
@@ -428,7 +428,7 @@
   background-color: map-get($color, primary);
 }
 .el-pagination.is-background .el-pager li:not(.disabled).active:hover {
-  color: #fff;
+  color: map-get($fontColor, white);
 }
 .el-pagination.is-background .el-pager li:not(.disabled):hover {
   color: map-get($color, primary);
@@ -514,7 +514,7 @@
 
 .el-upload-list__item-name {
   padding: 2px 10px;
-  color: #1d2129;
+  color: map-get($fontColor, dark);
   background-color: #f7f8fa;
 }
 .el-upload-list__item .el-icon-close {
@@ -553,7 +553,7 @@
             .step-index {
               border-color: #fff;
               background: map-get($color, primary);
-              color: #fff;
+              color: map-get($fontColor, white);
             }
           }
         }
@@ -603,7 +603,7 @@
         border: 1px solid #e9e9e9;
         .el-step__icon-inner {
           font-weight: normal;
-          color: #fff;
+          color: map-get($fontColor, white);
         }
       }
       &.is-process {
