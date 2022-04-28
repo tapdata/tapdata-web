@@ -52,11 +52,7 @@ export default {
     return {
       active: 0
     }
-  },
-  mounted() {
-    console.log(this.hasNumber)
-  },
-  methods: {}
+  }
 }
 </script>
 
