@@ -406,8 +406,6 @@ export default {
   },
 
   created() {
-    this.init()
-
     let allowDataType = window.getSettingByKey('ALLOW_CONNECTION_TYPE') || []
     if (typeof allowDataType === 'string') {
       allowDataType = allowDataType.split(',')
@@ -420,6 +418,8 @@ export default {
 
     this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || []
     this.getDatabaseType()
+
+    this.init()
   },
 
   mounted() {
@@ -480,7 +480,7 @@ export default {
         size: 20,
         where: {
           database_type: {
-            $nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
+            $in: this.database
           }
         },
         fields: {
@@ -566,7 +566,8 @@ export default {
         fields: {
           id: true,
           original_name: true
-        }
+        },
+        order: ['original_name ASC']
       }
 
       const txt = this.tbSearchTxt.trim()

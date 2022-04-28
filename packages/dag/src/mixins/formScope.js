@@ -256,7 +256,8 @@ export default {
           Object.assign(filter, {
             fields: {
               original_name: true
-            }
+            },
+            order: ['original_name ASC']
           })
           if (!filter.where.original_name) {
             filter.where.original_name = {

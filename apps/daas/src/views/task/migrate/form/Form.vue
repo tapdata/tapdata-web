@@ -8,7 +8,7 @@
           process-status="process"
           finish-status="success"
           align-center
-          :stepList="stepList"
+          :stepList="steps"
           :activeStep="activeStep"
         ></VStep>
       </div>
@@ -150,23 +150,6 @@ export default {
       loading: false,
       stateIsReadonly: false, //只读模式
       isEditAll: false, //编辑所有步骤
-      stepList: [
-        {
-          label: this.$t('migrate_select_connection'),
-          desc: '',
-          time: ''
-        },
-        {
-          label: this.$t('migrate_task_properties'),
-          desc: '',
-          time: ''
-        },
-        {
-          label: this.$t('migrate_select_table'),
-          desc: '',
-          time: ''
-        }
-      ],
       //第一步 配置源端
       dataSourceData: Object.assign({}, DATASOURCE_MODEL),
       sourceId: '',
@@ -342,10 +325,16 @@ export default {
       if (this.id && !this.stateIsReadonly && !this.isEditAll) {
         //编辑模式 没有第一步
         this.steps = [
-          { index: 2, text: this.$t('task_form_task_setting'), type: 'setting', showExitBtn: true, showNextBtn: true },
+          {
+            index: 2,
+            label: this.$t('migrate_task_properties'),
+            type: 'setting',
+            showExitBtn: true,
+            showNextBtn: true
+          },
           {
             index: 3,
-            text: this.$t('task_form_mapping_setting'),
+            label: this.$t('migrate_select_table'),
             type: 'mapping',
             showBackBtn: true,
             showSaveBtn: true
@@ -355,15 +344,21 @@ export default {
         this.steps = [
           {
             index: 1,
-            text: this.$t('task_form_source_target_connection'),
+            label: this.$t('migrate_select_connection'),
             type: 'dataSource',
             showExitBtn: true,
             showNextBtn: true
           },
-          { index: 2, text: this.$t('task_form_task_setting'), type: 'setting', showBackBtn: true, showNextBtn: true },
+          {
+            index: 2,
+            label: this.$t('migrate_task_properties'),
+            type: 'setting',
+            showBackBtn: true,
+            showNextBtn: true
+          },
           {
             index: 3,
-            text: this.$t('task_form_mapping_setting'),
+            label: this.$t('migrate_select_table'),
             type: 'mapping',
             showBackBtn: true,
             showSaveBtn: true
