@@ -1,13 +1,6 @@
 <template>
   <ElSteps class="v-step-container" v-bind="$attrs" v-on="$listeners" :active="activeStep">
     <ElStep
-      v-if="hasNumber"
-      v-for="(item, index) in stepList"
-      :key="index"
-      :title="item.label"
-      :description="item.desc"
-    ></ElStep>
-    <ElStep
       v-if="!hasNumber"
       v-for="(item, index) in stepList"
       :key="index"
@@ -21,6 +14,7 @@
         {{ item.time }}
       </div>
     </ElStep>
+    <ElStep v-else v-for="(item, index) in stepList" :key="index" :title="item.label" :description="item.desc"></ElStep>
   </ElSteps>
 </template>
 
