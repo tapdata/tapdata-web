@@ -184,12 +184,11 @@ export default {
         let { key, value } = this.searchParams
         let data = this.list
         if (key) {
-          data = this.list.filter(t => t.key.includes(key || ''))
+          data = this.list.filter(t => t.key.toLowerCase().includes(key.trim().toLowerCase() || ''))
         }
         if (value) {
-          data = this.list.filter(
-            t => t['zh-CN'].includes(value || '') || t['zh-TW'].includes(value || '') || t['en'].includes(value || '')
-          )
+          let iVal = value.trim().toLowerCase()
+          data = this.list.filter(t => ['zh-CN', 'zh-TW', 'en'].some(s => t[s]?.toLowerCase().includes(iVal || '')))
         }
 
         this.data = data

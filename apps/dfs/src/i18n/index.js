@@ -11,8 +11,12 @@ import enModify from './modify/en'
 import zhTWSource from './langs/zh-TW'
 import zhTWModify from './modify/zh-TW'
 
-const en = Object.assign({}, enSource, enModify)
-const zhTW = Object.assign({}, zhTWSource, zhTWModify)
+let localLangModifyZhTW = localStorage.getItem('localLangModifyZhTW')
+let localLangModifyEn = localStorage.getItem('localLangModifyEn')
+localLangModifyZhTW = localLangModifyZhTW ? JSON.parse(localLangModifyZhTW) : {}
+localLangModifyEn = localLangModifyEn ? JSON.parse(localLangModifyEn) : {}
+const en = Object.assign({}, enSource, enModify, localLangModifyEn)
+const zhTW = Object.assign({}, zhTWSource, zhTWModify, localLangModifyZhTW)
 let eleLangs = {
   'zh-CN': zhLocale,
   'zh-TW': tcLocale,
