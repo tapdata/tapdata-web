@@ -1463,11 +1463,13 @@ export default {
       this.submitBtnLoading = true
       let flag = true
       this.model.search_databaseType = ''
-      this.$refs.agentForm.validate(valid => {
-        if (!valid) {
-          flag = false
-        }
-      })
+      if (this.model.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER') {
+        this.$refs.agentForm.validate(valid => {
+          if (!valid) {
+            flag = false
+          }
+        })
+      }
 
       if (this.model.database_type === 'file' && this.model.connection_type === 'source') {
         this.$refs.fileForm.validate(valid => {
