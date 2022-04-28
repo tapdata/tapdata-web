@@ -1,76 +1,132 @@
 <template>
   <div class="g-panel-container flex flex-column h-100">
-    <FilterBar v-model="searchParams" :items="filterItems" @search="search"> </FilterBar>
+    <ElCollapse>
+      <ElCollapseItem title="屏蔽国际化-规则" name="1">
+        <ElForm>
+          <ElFormItem label="文案包含的值，List: a,b,c">
+            <ElInput v-model="inc" type="textarea" placeholder="文案包含的值，List: a,b,c" autosize></ElInput>
+            <VButton type="primary" @click="saveIncludes">{{ $t('button_submit') }}</VButton>
+          </ElFormItem>
+          <ElFormItem label="文案等于的值，List: a,b,c">
+            <ElInput v-model="equal" type="textarea" placeholder="文案等于的值，List: a,b,c" autosize></ElInput>
+            <VButton type="primary" @click="saveEqual">{{ $t('button_submit') }}</VButton>
+          </ElFormItem>
+        </ElForm>
+      </ElCollapseItem>
+    </ElCollapse>
+    <div class="flex justify-content-between mt-4">
+      <FilterBar v-model="searchParams" :items="filterItems" @search="search"> </FilterBar>
+      <div>
+        <ElButton type="primary" @click="exportModifyEn">导出英文</ElButton>
+        <ElButton type="primary" @click="exportModifyZhTW">导出繁体</ElButton>
+      </div>
+    </div>
     <TableList ref="table" row-key="id" :columns="columns" :data="data" height="100%" class="mt-4" :isPage="true">
       <template slot="operation" slot-scope="scope">
         <div class="operate-columns">
-          <ElButton size="mini" type="text" @click="edit(scope.row)">edit</ElButton>
+          <ElButton size="mini" type="text" @click="edit(scope.row)">{{ $t('button_edit') }}</ElButton>
         </div>
+      </template>
+      <template slot="name" slot-scope="scope">
+        <div v-if="scope.row[scope.prop + '-modify']" class="color-success">
+          {{ scope.row[scope.prop + '-modify'] }}
+        </div>
+        <div v-else>{{ scope.row[scope.prop] }}</div>
       </template>
     </TableList>
 
-    <ElForm class="none">
-      <ElFormItem label="Includes List: a,b,c">
-        <ElInput v-model="inc" type="textarea" placeholder="for example: a,b,c" autosize></ElInput>
-        <VButton @click="saveIncludes">save</VButton>
-      </ElFormItem>
-      <ElFormItem label="Equal List: a,b,c">
-        <ElInput v-model="equal" type="textarea" placeholder="for example: a,b,c" autosize></ElInput>
-        <VButton @click="saveEqual">save</VButton>
-      </ElFormItem>
-    </ElForm>
+    <ElDialog width="435px" append-to-body title="edit" :close-on-click-modal="false" :visible.sync="dialog.visible">
+      <ElForm :model="dialog.form" label-width="120px" @submit.native.prevent>
+        <ElFormItem label="key">
+          <div>{{ dialog.form.key }}</div>
+        </ElFormItem>
+        <ElFormItem :label="langMap['zh-CN']">
+          <div>{{ dialog.form['zh-CN'] }}</div>
+        </ElFormItem>
+        <ElFormItem :label="langMap['zh-TW']">
+          <div>{{ dialog.form['zh-TW'] }}</div>
+          <ElInput v-model="dialog.form['zh-TW-modify']" type="textarea" placeholder="请输入矫正文案"></ElInput>
+        </ElFormItem>
+        <ElFormItem :label="langMap['en']">
+          <div>{{ dialog.form['en'] }}</div>
+          <ElInput v-model="dialog.form['en-modify']" type="textarea" placeholder="请输入矫正文案"></ElInput>
+        </ElFormItem>
+      </ElForm>
+      <span slot="footer" class="dialog-footer">
+        <VButton @click="dialog.visible = false">{{ $t('dataVerify_cancel') }}</VButton>
+        <VButton type="primary" @click="confirm">{{ $t('dataVerify_confirm') }}</VButton>
+      </span>
+    </ElDialog>
   </div>
 </template>
 
 <script>
 import FilterBar from '@/components/filter-bar'
 import TableList from '@/components/TableList'
+import zhCN from '@/i18n/langs/zh-CN'
+import enSource from '@/i18n/langs/en'
+import enModify from '@/i18n/modify/en'
+import zhTWSource from '@/i18n/langs/zh-TW'
+import zhTWModify from '@/i18n/modify/zh-TW'
+import { downloadBlob } from '@/util'
 
-let files = require
-  .context('@/i18n/langs', false, /\.js$/)
-  .keys()
-  .map(t => t.replace('./', '').replace('.js', ''))
-console.log('files', files)
-let columns = [
-  {
-    label: 'key',
-    prop: 'key',
-    minWidth: 160
-  }
-]
-let filesObject = {}
-files.forEach(el => {
-  let fileContent = require(`@/i18n/langs/${el}.js`)
-  filesObject[el] = fileContent.default
-  columns.push({
-    label: el,
-    prop: el
-  })
-})
-columns.push({
-  label: 'operation',
-  prop: 'operation',
-  slotName: 'operation'
-})
-let list = []
-let langs = Object.keys(filesObject)
-
-for (let key in filesObject['zh-CN']) {
-  let obj = {}
-  obj.key = key
-  langs.forEach(el => {
-    obj[el] = filesObject[el][key]
-  })
-  list.push(obj)
-}
-filesObject = null
 export default {
   name: 'Lang',
   components: { TableList, FilterBar },
   data() {
+    let langMap = {
+      'zh-CN': '中文',
+      en: '英文',
+      'zh-TW': '繁体'
+    }
+    // 原有的文案
+    let sourceObject = {
+      en: enSource,
+      'zh-CN': zhCN,
+      'zh-TW': zhTWSource
+    }
+    let localLangModifyZhTW = localStorage.getItem('localLangModifyZhTW')
+    let localLangModifyEn = localStorage.getItem('localLangModifyEn')
+    // 矫正的文案
+    let modifyObject = {
+      en: localLangModifyEn ? Object.assign(JSON.parse(localLangModifyEn), enModify) : enModify,
+      'zh-TW': localLangModifyZhTW ? Object.assign(JSON.parse(localLangModifyZhTW), zhTWModify) : zhTWModify
+    }
+    let columns = [
+      {
+        label: 'key',
+        prop: 'key',
+        minWidth: 100
+      }
+    ]
+    for (let key in langMap) {
+      columns.push({
+        label: langMap[key],
+        prop: key,
+        slotName: 'name'
+      })
+    }
+    columns.push({
+      label: 'operation',
+      prop: 'operation',
+      slotName: 'operation'
+    })
+    let list = []
+    for (let key in sourceObject['zh-CN']) {
+      let obj = {}
+      obj.key = key
+      Object.keys(langMap).forEach(el => {
+        obj[el] = sourceObject[el][key]
+        if (el !== 'zh-CN') {
+          obj[el + '-modify'] = modifyObject[el]?.[key] || ''
+        }
+      })
+      list.push(obj)
+    }
     return {
       inc: '',
       equal: '',
+      langMap: langMap,
       columns: columns,
       list: list,
       data: [],
@@ -91,14 +147,17 @@ export default {
           type: 'input',
           debounce: 300
         }
-      ]
+      ],
+      dialog: {
+        visible: false,
+        form: {}
+      }
     }
   },
   mounted() {
     this.inc = localStorage.getItem('includesLang') ?? ''
     this.equal = localStorage.getItem('equalLang') ?? ''
     this.data = this.list
-    console.log('this.', this.data)
   },
   methods: {
     saveIncludes() {
@@ -111,13 +170,8 @@ export default {
     },
     search(debounce) {
       const { delayTrigger } = this.$util
-      console.log('this.searchParams', this.searchParams)
       delayTrigger(() => {
         let { key, value } = this.searchParams
-        // if (!key && !value) {
-        //   this.data = this.list
-        //   return
-        // }
         let data = this.list
         if (key) {
           data = this.list.filter(t => t.key.includes(key || ''))
@@ -132,7 +186,56 @@ export default {
       }, debounce)
     },
     edit(row) {
-      console.log('edit', row)
+      this.dialog.visible = true
+      this.dialog.form = JSON.parse(JSON.stringify(row))
+    },
+    confirm() {
+      this.dialog.visible = false
+      let { form } = this.dialog
+      let findOne = this.list.find(t => t.key === form.key)
+      findOne['zh-TW-modify'] = form['zh-TW-modify']
+      findOne['en-modify'] = form['en-modify']
+      this.updateLocalStorage()
+      this.$message.success(this.$t('gl_button_update_success'))
+    },
+    getModifyData() {
+      let zhTW = {}
+      let en = {}
+      this.list.forEach(el => {
+        if (el['zh-TW-modify']) {
+          zhTW[el.key] = el['zh-TW-modify']
+        }
+        if (el['en-modify']) {
+          en[el.key] = el['en-modify']
+        }
+      })
+      return {
+        zhTW,
+        en
+      }
+    },
+    updateLocalStorage() {
+      let { zhTW, en } = this.getModifyData()
+      if (Object.keys(zhTW).length) {
+        localStorage.setItem('localLangModifyZhTW', JSON.stringify(zhTW))
+      }
+      if (Object.keys(en).length) {
+        localStorage.setItem('localLangModifyEn', JSON.stringify(en))
+      }
+    },
+    exportModifyZhTW() {
+      let { zhTW } = this.getModifyData()
+      this.downloadBlob(zhTW, 'zh-TW.js')
+    },
+    exportModifyEn() {
+      let { en } = this.getModifyData()
+      this.downloadBlob(en, 'en.js')
+    },
+    downloadBlob(obj = {}, name = '') {
+      downloadBlob(
+        { data: 'export default ' + JSON.stringify(obj), headers: { 'content-type': 'text/plain;charset=utf-8' } },
+        name
+      )
     }
   }
 }
