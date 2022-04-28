@@ -258,7 +258,7 @@ export default {
           this.isEditAll = checkResult //不弹窗支持改所有
           this.getSteps()
           if (!checkResult) {
-            this.$confirm(this.$t('task_list_edit_confirm'), this.$t('dataFlow.importantReminder'), {
+            this.$confirm(this.$t('task_list_edit_confirm'), '', {
               confirmButtonText: this.$t('dialog_button_confirm'),
               showCancelButton: false,
               type: 'warning'
@@ -780,11 +780,11 @@ export default {
       min-height: 500px;
       .title {
         font-size: 14px;
-        color: map-get($fontColor, dark);
+        color: map-get($fontColor, normal);
       }
       .desc {
         font-size: 12px;
-        color: rgba(0, 0, 0, 0.5);
+        color: map-get($fontColor, light);
       }
       .reload-schema {
         padding: 0 200px;

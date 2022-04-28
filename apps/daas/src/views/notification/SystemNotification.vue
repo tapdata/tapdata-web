@@ -129,9 +129,9 @@ export default {
       pagesize: 20,
       total: 0,
       colorMap: {
-        ERROR: 'red',
-        WARN: 'orangered',
-        INFO: '#409EFF'
+        ERROR: '#D44D4D',
+        WARN: '#FF7D00',
+        INFO: '#2c65ff'
       },
       systemMap: {
         sync: this.$t('notify_sync'),

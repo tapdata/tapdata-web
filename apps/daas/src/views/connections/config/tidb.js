@@ -161,7 +161,8 @@ export default function (vm) {
         label: vm.$t('connection_form_table_filter'),
         //tips: vm.$t('connection_form_table_filter_tips'),
         maxlength: 500,
-        showWordLimit: true
+        showWordLimit: true,
+        customClass: 'large-item'
       },
       {
         type: 'slot',

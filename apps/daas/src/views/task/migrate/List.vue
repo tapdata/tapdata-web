@@ -250,9 +250,9 @@
               <VIcon class="icon mr-4">{{ item.label }}</VIcon>
               <!-- <img class="label-img" :src="getImgByData(item.label)" /> -->
               <div class="label-text">
-                <div class="label">{{ $t('task_preview_' + item.label) }}:</div>
+                <div class="label font-color-light">{{ $t('task_preview_' + item.label) }}:</div>
                 <div
-                  class="value align-items-center align-middle"
+                  class="value align-items-center align-middle font-color-dark"
                   :class="{ 'align-top': item.value && item.value.length > 15 }"
                 >
                   {{ item.value }}
@@ -1254,16 +1254,13 @@ export default {
         .label {
           width: 100%;
           text-align: left;
-          color: rgba(0, 0, 0, 0.6);
           font-size: 12px;
         }
         .value {
           display: inline-block;
           width: 100%;
           padding-top: 5px;
-          color: map-get($fontColor, light);
           font-size: 12px;
-          color: #000;
           word-break: break-all;
         }
       }

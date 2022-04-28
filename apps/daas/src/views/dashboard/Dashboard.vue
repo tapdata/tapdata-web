@@ -4,8 +4,10 @@
       <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
         <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">
           <div class="dashboard-col-box">
-            <div class="dashboard-title fs-7">{{ $t('dashboard_' + item.key) }}</div>
-            <div class="dashboard-label fs-5 pt-4 text-center">{{ $t('dashboard_current_' + item.key) }}</div>
+            <div class="fs-7 font-color-normal">{{ $t('dashboard_' + item.key) }}</div>
+            <div class="dashboard-label fs-5 pt-4 text-center fw-sub font-color-dark">
+              {{ $t('dashboard_current_' + item.key) }}
+            </div>
             <div class="dashboard-num pt-4 pb-2 text-center din-font">{{ item.value }}</div>
           </div>
         </el-col>
@@ -15,12 +17,12 @@
         <el-col :span="12" class="dashboard-col col">
           <div class="charts-list flex flex-row">
             <div class="charts-list-text">
-              <div class="dashboard-title fs-7">{{ $t('dashboard_copy_overview_title') }}</div>
+              <div class="fs-7 font-color-normal">{{ $t('dashboard_copy_overview_title') }}</div>
               <ul class="job-list">
                 <li v-for="task in migrationTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
                   <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
-                  <span class="text">{{ $t('dashboard_status_' + task.label) }}</span
-                  ><span class="num pl-7">{{ task.value }}</span>
+                  <span class="fw-normal font-color-light">{{ $t('dashboard_status_' + task.label) }}</span
+                  ><span class="num pl-7 font-color-dark">{{ task.value }}</span>
                 </li>
               </ul>
             </div>
@@ -29,7 +31,7 @@
               class="flex justify-content-center align-items-center w-100"
             >
               <div
-                class="flex justify-content-center align-items-center"
+                class="flex justify-content-center align-items-center font-color-slight"
                 v-html="
                   $t('dashboard_no_statistics', [
                     '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_copy_total') + '</span>'
@@ -45,12 +47,12 @@
         <el-col :span="12" class="dashboard-col col">
           <div class="charts-list flex flex-row">
             <div class="charts-list-text">
-              <div class="dashboard-title fs-7">{{ $t('dashboard_sync_overview_title') }}</div>
+              <div class="fs-7 font-color-normal">{{ $t('dashboard_sync_overview_title') }}</div>
               <ul class="job-list">
                 <li v-for="task in syncTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
                   <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
-                  <span class="text">{{ $t('dashboard_status_' + task.label) }}</span
-                  ><span class="num pl-7">{{ handleChangeUnit(task.value) }}</span>
+                  <span class="fw-normal font-color-light">{{ $t('dashboard_status_' + task.label) }}</span
+                  ><span class="num pl-7 font-color-dark">{{ handleChangeUnit(task.value) }}</span>
                 </li>
               </ul>
             </div>
@@ -59,7 +61,7 @@
               class="flex justify-content-center align-items-center w-100"
             >
               <div
-                class="flex justify-content-center align-items-center"
+                class="flex justify-content-center align-items-center font-color-slight"
                 v-html="
                   $t('dashboard_no_statistics', [
                     '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_sync_total') + '</span>'
@@ -77,11 +79,12 @@
       <el-row :gutter="20" class="dashboard-row mb-5" v-if="syncValidFalg">
         <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_verify_menu'">
           <div class="dashboard-col-box">
-            <div class="dashboard-title fs-7">{{ $t('dashboard_valid_title') }}</div>
+            <div class="fs-7 font-color-normal">{{ $t('dashboard_valid_title') }}</div>
             <div class="chart line-chart flex flex-column">
               <ul>
                 <li v-for="item in validBarData" :key="item.name">
-                  <span>{{ item.name }} </span> {{ item.value }}
+                  <span class="font-color-light">{{ item.name }} </span>
+                  <span class="font-color-dark fw-sub"> {{ item.value }}</span>
                 </li>
               </ul>
               <div
@@ -89,7 +92,7 @@
                 class="flex justify-content-center align-items-center h-100"
               >
                 <div
-                  class="flex justify-content-center align-items-center"
+                  class="flex justify-content-center align-items-center font-color-slight"
                   v-html="
                     $t('dashboard_no_statistics', [
                       '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_valid_title') + '</span>'
@@ -104,12 +107,12 @@
         <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_SYNC_menu'">
           <div class="charts-list flex flex-row">
             <div class="charts-list-text">
-              <div class="dashboard-title fs-7">{{ $t('dashboard_transfer_overview') }}</div>
+              <div class="fs-7 font-color-normal">{{ $t('dashboard_transfer_overview') }}</div>
               <ul class="job-list">
                 <li v-for="item in transBarData" :key="item.key">
                   <i class="dots mr-3" :style="`background-color: ${item.color};`"></i>
-                  <span class="text">{{ item.name }}</span
-                  ><span class="num pl-7">{{ handleChangeUnit(item.value) }}</span>
+                  <span class="fw-normal font-color-light">{{ item.name }}</span
+                  ><span class="num pl-7 font-color-dark">{{ handleChangeUnit(item.value) }}</span>
                 </li>
               </ul>
             </div>
@@ -118,7 +121,7 @@
               class="flex justify-content-center align-items-center w-100"
             >
               <div
-                class="flex justify-content-center align-items-center"
+                class="flex justify-content-center align-items-center font-color-slight"
                 v-html="
                   $t('dashboard_no_statistics', [
                     '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_transfer_overview') + '</span>'
@@ -136,7 +139,7 @@
       <div class="dashboard-row dashboard-col col mb-5" v-readonlybtn="'Cluster_management_menu'">
         <div class="dashboard-col">
           <div class="dashboard-col-box">
-            <div class="dashboard-title fs-7">{{ $t('dashboard_server_title') }}</div>
+            <div class="fs-7 font-color-normal">{{ $t('dashboard_server_title') }}</div>
             <el-row :gutter="20" v-if="serverTable.length">
               <el-col :span="12" class="server-list pt-3" v-for="item in serverTable" :key="item.id">
                 <div class="server-list-box">
@@ -147,19 +150,19 @@
 
                     <ul class="flex pt-1">
                       <li class="pr-5">
-                        <label class="label pr-2">{{ $t('dashboard_management') }}</label>
+                        <label class="font-color-slight pr-2">{{ $t('dashboard_management') }}</label>
                         <span :style="`color: ${colorServeMap[item.management.status]};`">{{
                           $t('dashboard_' + item.management.status)
                         }}</span>
                       </li>
                       <li class="pr-5">
-                        <label class="label pr-2">{{ $t('dashboard_task_transfer') }}</label>
+                        <label class="font-color-slight pr-2">{{ $t('dashboard_task_transfer') }}</label>
                         <span :style="`color: ${colorServeMap[item.engine.status]};`">{{
                           $t('dashboard_' + item.engine.status)
                         }}</span>
                       </li>
                       <li>
-                        <label class="label pr-2">{{ $t('dashboard_api_service') }}</label>
+                        <label class="font-color-slight pr-2">{{ $t('dashboard_api_service') }}</label>
                         <span :style="`color: ${colorServeMap[item.apiServer.status]};`">{{
                           $t('dashboard_' + item.apiServer.status)
                         }}</span>
@@ -171,7 +174,7 @@
             </el-row>
             <div v-else class="flex justify-content-center align-items-center h-100 py-4">
               <div
-                class="flex justify-content-center align-items-center"
+                class="flex justify-content-center align-items-center font-color-slight"
                 v-html="
                   $t('dashboard_no_statistics', [
                     '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_server_title') + '</span>'
@@ -619,11 +622,7 @@ export default {
         background-color: #fff;
         box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
       }
-      .dashboard-title {
-        color: rgba(0, 0, 0, 0.85);
-      }
       .dashboard-label {
-        color: #252a4c;
         height: 48px;
       }
       .dashboard-num {
@@ -655,10 +654,6 @@ export default {
               height: 6px;
               border-radius: 50%;
             }
-            .text {
-              font-weight: 400;
-              color: rgba(0, 0, 0, 0.43);
-            }
             .num {
               font-weight: 600;
             }
@@ -667,7 +662,6 @@ export default {
               width: 50px;
               text-align: left;
               font-size: 12px;
-              color: #252a4c;
               &::before {
                 content: '';
               }
@@ -696,9 +690,6 @@ export default {
               color: #252a4c;
               font-weight: 500;
             }
-            .label {
-              color: rgba(0, 0, 0, 0.43);
-            }
           }
         }
       }
@@ -715,7 +706,6 @@ export default {
             font-weight: 600;
             span {
               padding-right: 5px;
-              color: rgba(0, 0, 0, 0.43);
               font-weight: 400;
             }
           }

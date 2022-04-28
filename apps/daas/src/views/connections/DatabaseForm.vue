@@ -1866,6 +1866,9 @@ export default {
                 // width: 396px;
                 &.large-item {
                   width: 680px;
+                  .el-form-item__content {
+                    padding-right: 30px;
+                  }
                 }
                 &.small-item {
                   width: 320px;
@@ -1897,6 +1900,9 @@ export default {
                 .el-textarea__inner {
                   // width: 300px;
                   background-color: rgba(239, 241, 244, 0.2);
+                }
+                .el-textarea__inner {
+                  min-height: 70px !important;
                 }
               }
               .el-input-group__append button.el-button {

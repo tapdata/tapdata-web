@@ -497,7 +497,7 @@ export default {
   }
   .toggle {
     margin-top: 26px;
-    color: #337dff;
+    color: map-get($color, lprimary);
   }
   &.expand {
     height: 100%;

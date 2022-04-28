@@ -191,6 +191,10 @@
   border-color: map-get($color, primary);
   box-shadow: -1px 0 0 0 map-get($color, primary);
 }
+.el-switch__core {
+  border-color: map-get($color, primary);
+  background-color: map-get($color, primary);
+}
 .el-switch.is-checked .el-switch__core {
   border-color: map-get($color, primary);
   background-color: map-get($color, primary);
@@ -587,6 +591,10 @@
         .el-step__line {
           background-color: rgba(44, 101, 255, 0.05);
         }
+        .el-step__icon {
+          background-color: map-get($color, primary);
+          border: 1px solid map-get($color, primary);
+        }
       }
       .el-step__line {
         height: 5px;
@@ -616,9 +624,9 @@
     .el-step__title {
       font-size: 14px;
       font-weight: 500;
-      color: #e9e9e9;
-      &.is-process {
-        color: map-get($fontColor, dark);
+      color: map-get($fontColor, slight);
+      &.is-process,&.is-success {
+        color: map-get($fontColor, normal);
       }
     }
   }
@@ -654,7 +662,7 @@
       }
     }
     .el-step__description {
-      color: map-get($fontColor, slight);
+      color: map-get($fontColor, light);
     }
   }
 }

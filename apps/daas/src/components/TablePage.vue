@@ -338,6 +338,12 @@ export default {
       }
       .cell {
         white-space: nowrap;
+        color: map-get($fontColor, dark);
+      }
+    }
+    .el-table--border td {
+      .cell {
+        color: map-get($fontColor, light);
       }
     }
 

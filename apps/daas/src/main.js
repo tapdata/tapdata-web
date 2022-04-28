@@ -12,7 +12,7 @@ import TapdataWebCore from 'web-core'
 import Cookie from '@tap/shared/src/cookie'
 import VIcon from '@/components/VIcon'
 import getRouter from '@/router'
-import VConfirm from 'web-core/components/base/v-confirm'
+import VConfirm from '@/components/v-confirm'
 
 import '@/plugins/element'
 import '@/plugins/icon'

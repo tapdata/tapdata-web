@@ -178,7 +178,8 @@ export default function (vm) {
         label: vm.$t('connection_form_table_filter'),
         tip: vm.$t('connection_form_database_owner_tip'),
         maxlength: 500,
-        showWordLimit: true
+        showWordLimit: true,
+        customClass: 'large-item'
       },
       {
         type: 'input',

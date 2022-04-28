@@ -99,6 +99,7 @@ export default function (vm) {
         domType: 'textarea',
         required: true,
         show: false,
+        customClass: 'large-item',
         dependOn: [
           {
             triggerOptions: [
@@ -398,7 +399,8 @@ export default function (vm) {
         label: vm.$t('connection_form_table_filter'),
         tips: vm.$t('connection_form_impact_type'),
         maxlength: 500,
-        showWordLimit: true
+        showWordLimit: true,
+        customClass: 'large-item'
       },
       {
         type: 'switch',
