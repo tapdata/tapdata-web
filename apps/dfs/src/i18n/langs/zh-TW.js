@@ -1675,10 +1675,10 @@ export default {
   views_Lang_wenAnBaoHanDe: '文案包含的值，List: a，b，c',
   views_Lang_wenAnDengYuDe: '文案等於的值，List: a，b，c',
   views_Lang_qingShuRuJiaoZheng: '請輸入矯正文案',
-  views_Lang_daoChuYingWen: '匯出英文',
-  views_Lang_daoChuFanTi: '匯出繁體',
-  views_Lang_zhongWen: '中文',
-  views_Lang_yingWen: '英文',
-  views_Lang_fanTi: '繁體',
-  copy_result: '已複製到剪貼板'
+  lang_zh_cn: '中文',
+  lang_en: '英文',
+  lang_zh_tw: '繁體',
+  copy_result: '已複製到剪貼板',
+  button_upload: '上傳',
+  button_export: '匯出'
 }

@@ -5,11 +5,11 @@
         <ElForm>
           <ElFormItem :label="$t('views_Lang_wenAnBaoHanDe')">
             <ElInput v-model="inc" type="textarea" :placeholder="$t('views_Lang_wenAnBaoHanDe')" autosize></ElInput>
-            <VButton type="primary" @click="saveIncludes">{{ $t('button_submit') }}</VButton>
+            <ElButton type="primary" class="mt-3" @click="saveIncludes">{{ $t('button_submit') }}</ElButton>
           </ElFormItem>
           <ElFormItem :label="$t('views_Lang_wenAnDengYuDe')">
             <ElInput v-model="equal" type="textarea" :placeholder="$t('views_Lang_wenAnDengYuDe')" autosize></ElInput>
-            <VButton type="primary" @click="saveEqual">{{ $t('button_submit') }}</VButton>
+            <ElButton type="primary" class="mt-3" @click="saveEqual">{{ $t('button_submit') }}</ElButton>
           </ElFormItem>
         </ElForm>
       </ElCollapseItem>
@@ -17,8 +17,14 @@
     <div class="flex justify-content-between mt-4">
       <FilterBar v-model="searchParams" :items="filterItems" @search="search"> </FilterBar>
       <div>
-        <ElButton type="primary" @click="exportModifyEn">{{ $t('views_Lang_daoChuYingWen') }}</ElButton>
-        <ElButton type="primary" @click="exportModifyZhTW">{{ $t('views_Lang_daoChuFanTi') }}</ElButton>
+        <UploadFile :upload="uploadModifyZhTW" accept="text/javascript" class="inline-block mr-4">
+          <ElButton>{{ $t('button_upload') + $t('lang_zh_tw') }}</ElButton>
+        </UploadFile>
+        <UploadFile :upload="uploadModifyEn" accept="text/javascript" class="inline-block mr-4">
+          <ElButton>{{ $t('button_upload') + $t('lang_en') }}</ElButton>
+        </UploadFile>
+        <ElButton type="primary" @click="exportModifyZhTW">{{ $t('button_export') + $t('lang_zh_tw') }}</ElButton>
+        <ElButton type="primary" @click="exportModifyEn">{{ $t('button_export') + $t('lang_en') }}</ElButton>
       </div>
     </div>
     <TableList ref="table" row-key="id" :columns="columns" :data="data" height="100%" class="mt-4" :isPage="true">
@@ -34,7 +40,6 @@
         <div v-else>{{ scope.row[scope.prop] }}</div>
       </template>
     </TableList>
-
     <ElDialog width="435px" append-to-body title="edit" :close-on-click-modal="false" :visible.sync="dialog.visible">
       <ElForm :model="dialog.form" label-width="120px" @submit.native.prevent>
         <ElFormItem label="key">
@@ -61,8 +66,8 @@
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <VButton @click="dialog.visible = false">{{ $t('dataVerify_cancel') }}</VButton>
-        <VButton type="primary" @click="confirm">{{ $t('dataVerify_confirm') }}</VButton>
+        <ElButton @click="dialog.visible = false">{{ $t('dataVerify_cancel') }}</ElButton>
+        <ElButton type="primary" @click="confirm">{{ $t('dataVerify_confirm') }}</ElButton>
       </span>
     </ElDialog>
   </div>
@@ -78,16 +83,17 @@ import enSource from '@/i18n/langs/en'
 import enModify from '@/i18n/modify/en'
 import zhTWSource from '@/i18n/langs/zh-TW'
 import zhTWModify from '@/i18n/modify/zh-TW'
+import UploadFile from '@/components/UploadFile'
 import { downloadBlob } from '@/util'
 
 export default {
   name: 'Lang',
-  components: { TableList, FilterBar },
+  components: { TableList, FilterBar, UploadFile },
   data() {
     let langMap = {
-      'zh-CN': i18n.t('views_Lang_zhongWen'),
-      en: i18n.t('views_Lang_yingWen'),
-      'zh-TW': i18n.t('views_Lang_fanTi')
+      'zh-CN': i18n.t('lang_zh_cn'),
+      'zh-TW': i18n.t('lang_zh_tw'),
+      en: i18n.t('lang_en')
     }
     // 原有的文案
     let sourceObject = {
@@ -245,6 +251,34 @@ export default {
         { data: 'export default ' + JSON.stringify(obj), headers: { 'content-type': 'text/plain;charset=utf-8' } },
         name
       )
+    },
+    upload(evt, callback) {
+      let file = evt.target.files[0]
+      let reader = new FileReader()
+      reader.readAsText(file, 'UTF-8')
+      reader.onload = () => {
+        let data = reader.result?.replace('export default', '')
+        callback?.(eval('(' + data + ')'))
+        this.$message.success('上传成功，刷新页面即可生效，并合并到现有文案。如果现有文案还需要使用，请先导出。')
+      }
+    },
+    uploadModifyEn(evt) {
+      this.upload(evt, data => {
+        let localLangModifyEn = localStorage.getItem('localLangModifyEn')
+        if (localLangModifyEn) {
+          Object.assign(data, JSON.parse(localLangModifyEn))
+        }
+        localStorage.setItem('localLangModifyEn', JSON.stringify(data))
+      })
+    },
+    uploadModifyZhTW(evt) {
+      this.upload(evt, data => {
+        let localLangModifyZhTW = localStorage.getItem('localLangModifyZhTW')
+        if (localLangModifyZhTW) {
+          Object.assign(data, JSON.parse(localLangModifyZhTW))
+        }
+        localStorage.setItem('localLangModifyZhTW', JSON.stringify(data))
+      })
     }
   }
 }

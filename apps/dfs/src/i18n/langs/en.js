@@ -1824,10 +1824,10 @@ export default {
   views_Lang_wenAnBaoHanDe: 'Values contained in the document, list: A, B, C',
   views_Lang_wenAnDengYuDe: 'Copy equals the value of, list: A, B, C',
   views_Lang_qingShuRuJiaoZheng: 'Please enter correction copy',
-  views_Lang_daoChuYingWen: 'Export English',
-  views_Lang_daoChuFanTi: 'Export traditional Chinese',
-  views_Lang_zhongWen: 'chinese',
-  views_Lang_yingWen: 'english',
-  views_Lang_fanTi: 'traditional Chinese character',
-  copy_result: 'Copied to clipboard'
+  lang_zh_cn: 'chinese',
+  lang_en: 'english',
+  lang_zh_tw: 'traditional Chinese character',
+  copy_result: 'Copied to clipboard',
+  button_upload: 'upload',
+  button_export: 'export'
 }

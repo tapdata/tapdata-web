@@ -31,6 +31,13 @@ export default {
   button_confirm: '确定',
   button_close: '取 消',
   button_save: '确 定',
+  button_upload: '上传',
+  button_export: '导出',
+
+  // 国际化
+  lang_zh_cn: '中文',
+  lang_en: '英文',
+  lang_zh_tw: '繁体',
 
   // 确认框
   confirm_error_tip: '错误提示',
@@ -1712,10 +1719,5 @@ export default {
   views_Lang_wenAnBaoHanDe: '文案包含的值，List: a,b,c',
   views_Lang_wenAnDengYuDe: '文案等于的值，List: a,b,c',
   views_Lang_qingShuRuJiaoZheng: '请输入矫正文案',
-  views_Lang_daoChuYingWen: '导出英文',
-  views_Lang_daoChuFanTi: '导出繁体',
-  views_Lang_zhongWen: '中文',
-  views_Lang_yingWen: '英文',
-  views_Lang_fanTi: '繁体',
   copy_result: '已复制到剪贴板'
 }
