@@ -31,6 +31,7 @@
               <DataSource
                 ref="dataSource"
                 :dataSourceData="dataSourceData"
+                :access-node-list="accessNodeProcessList"
                 @submit="dataSourceSubmit"
                 @change="handleSettingValue"
               ></DataSource>
@@ -41,7 +42,12 @@
                 <span class="title fw-sub mr-4 mb-2">{{ $t('migrate_task_settings') }}</span>
                 <span class="desc mb-2">{{ $t('migrate_task_settings_tip') }} </span>
               </div>
-              <Setting :dataSourceData="dataSourceData" :settingData="settingData" @submit="settingSubmit"></Setting>
+              <Setting
+                :dataSourceData="dataSourceData"
+                :settingData="settingData"
+                :access-node-list="accessNodeProcessList"
+                @submit="settingSubmit"
+              ></Setting>
             </div>
             <!-- 步骤3 -->
             <div class="body step-4" v-if="steps[activeStep].index === 3">
@@ -140,6 +146,9 @@ import Setting from './Setting'
 import TableFieldFilter from './TableFieldFilter'
 import FieldMapping from '@tap/field-mapping'
 import { DATASOURCE_MODEL, SETTING_MODEL, TRANSFER_MODEL } from './const'
+import { Cluster } from '@tap/api'
+
+const clusterApi = new Cluster()
 
 export default {
   components: { Transfer, DataSource, Setting, TableFieldFilter, FieldMapping },
@@ -168,10 +177,12 @@ export default {
       edges: [],
       //保存
       loadingSave: false,
-      dialogTableVisible: false
+      dialogTableVisible: false,
+
+      accessNodeProcessList: []
     }
   },
-  created() {
+  async created() {
     this.id = this.$route.params.id
     if (this.$route.name === 'MigrateViewer') {
       this.$store.commit('dataflow/setStateReadonly', true)
@@ -185,6 +196,7 @@ export default {
     } else {
       this.getSteps()
     }
+    await this.loadAccessNode()
   },
   methods: {
     //保存任务
@@ -616,6 +628,16 @@ export default {
         .finally(() => {
           this.loadingSave = false
         })
+    },
+
+    async loadAccessNode() {
+      const data = await clusterApi.findAccessNodeInfo()
+      this.accessNodeProcessList = data.map(item => {
+        return {
+          value: item.processId,
+          label: `${item.hostName}（${item.ip}）`
+        }
+      })
     }
   }
 }

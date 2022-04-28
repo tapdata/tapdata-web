@@ -29,7 +29,7 @@
         :clear="clearSourceMethod"
         :loading="loadingSource"
         :remote-method="remoteSourceMethod"
-        @change="$emit('change')"
+        @change="handleChangeSourceConnection"
       >
         <el-option v-for="item in sourceData" :key="item.value" :label="item.label" :value="item.value"> </el-option>
       </el-select>
@@ -56,7 +56,7 @@
         :loading="loadingTarget"
         :clear="clearTargetMethod"
         :remote-method="remoteTargetMethod"
-        @change="$emit('change')"
+        @change="handleChangeTargetConnection"
       >
         <el-option v-for="item in targetData" :key="item.value" :label="item.label" :value="item.value"> </el-option>
       </el-select>
@@ -69,8 +69,31 @@ import { verify } from '../../../connections/util'
 
 export default {
   name: 'Source',
-  props: ['dataSourceData'],
+  props: ['dataSourceData', 'accessNodeList'],
   data() {
+    const validateAccess = (type, rule, value, callback) => {
+      const source = this.sourceConnectionMap?.[this.dataSourceData.source_connectionId]
+      const target = this.targetConnectionMap?.[this.dataSourceData.target_connectionId]
+      if (source && target) {
+        const sourceAccessId = source.accessNodeProcessId
+        const targetAccessId = target.accessNodeProcessId
+        if (sourceAccessId && targetAccessId && sourceAccessId !== targetAccessId) {
+          const findId = type === 'source' ? sourceAccessId : targetAccessId
+          const findItem = this.accessNodeList.find(item => item.value === findId)
+
+          return callback(new Error(`源和目标所属agent冲突。当前所属agent：${findItem?.label || findId}`))
+        }
+      }
+      callback()
+    }
+
+    const validateSourceAccess = (rule, value, callback) => {
+      validateAccess('source', rule, value, callback)
+    }
+    const validateTargetAccess = (rule, value, callback) => {
+      validateAccess('target', rule, value, callback)
+    }
+
     return {
       stateIsReadonly: this.$store.state.dataflow.stateIsReadonly,
       allowSourceDatabaseTypes: [],
@@ -82,13 +105,15 @@ export default {
           { required: true, message: this.$t('task_form_source_type_check'), trigger: 'change' }
         ],
         source_connectionId: [
-          { required: true, message: this.$t('task_form_source_connection_check'), trigger: 'change' }
+          { required: true, message: this.$t('task_form_source_connection_check'), trigger: 'change' },
+          { validator: validateSourceAccess, trigger: 'change' }
         ],
         target_filter_databaseType: [
           { required: true, message: this.$t('task_form_target_type_check'), trigger: 'change' }
         ],
         target_connectionId: [
-          { required: true, message: this.$t('task_form_target_connection_check'), trigger: 'change' }
+          { required: true, message: this.$t('task_form_target_connection_check'), trigger: 'change' },
+          { validator: validateTargetAccess, trigger: 'change' }
         ]
       },
       loadingSource: false,
@@ -179,7 +204,10 @@ export default {
         database_name: 1,
         database_uri: 1,
         mqType: 1,
-        shareCdcEnable: 1
+        shareCdcEnable: 1,
+        accessNodeType: 1,
+        accessNodeProcessId: 1,
+        accessNodeProcessIdList: 1
       }
       if (type === 'source_connectionId') {
         fields['database_username'] = 1
@@ -207,12 +235,17 @@ export default {
               value: item.id,
               type: item.database_type,
               mqType: item.mqType || '',
-              shareCdcEnable: item.shareCdcEnable || ''
+              shareCdcEnable: item.shareCdcEnable || '',
+              accessNodeProcessId: item.accessNodeProcessId
             }
           })
           if (type === 'source_connectionId') {
             this.sourceData = options
-          } else this.targetData = options
+            this.sourceConnectionMap = options.reduce((map, item) => ((map[item.value] = item), map), {})
+          } else {
+            this.targetData = options
+            this.targetConnectionMap = options.reduce((map, item) => ((map[item.value] = item), map), {})
+          }
         })
         .finally(() => {
           if (type === 'source_connectionId') {
@@ -245,17 +278,36 @@ export default {
     save() {
       this.$refs.dataSourceModelForm.validate(valid => {
         if (valid) {
-          let source = this.sourceData.filter(op => op.value === this.dataSourceData.source_connectionId)[0]
-          let target = this.targetData.filter(op => op.value === this.dataSourceData.target_connectionId)[0]
+          const source = this.sourceConnectionMap?.[this.dataSourceData.source_connectionId]
+          const target = this.targetConnectionMap?.[this.dataSourceData.target_connectionId]
+
           this.dataSourceData.source_connectionName = source.name
           this.dataSourceData.target_connectionName = target.name
           this.dataSourceData['source_databaseType'] = source.type
           this.dataSourceData['target_databaseType'] = target.type
           this.dataSourceData.mqType = target.mqType
           this.dataSourceData.shareCdcEnable = source.shareCdcEnable
+          // 延续上面缓存的写法，存在的问题是，编辑任务时，连接的配置属性不会同步
+          this.dataSourceData.sourceAccessNodeProcessId = source.accessNodeProcessId
+          this.dataSourceData.targetAccessNodeProcessId = target.accessNodeProcessId
+
           this.$emit('submit', true)
         }
       })
+    },
+
+    handleChangeSourceConnection() {
+      if (this.dataSourceData.target_connectionId) {
+        this.$refs.dataSourceModelForm.validateField('target_connectionId')
+      }
+      this.$emit('change')
+    },
+
+    handleChangeTargetConnection() {
+      if (this.dataSourceData.source_connectionId) {
+        this.$refs.dataSourceModelForm.validateField('source_connectionId')
+      }
+      this.$emit('change')
     }
   }
 }

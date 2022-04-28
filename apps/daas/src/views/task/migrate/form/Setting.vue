@@ -29,7 +29,7 @@ const { SchemaField } = createSchemaField({
 export default {
   name: 'Setting',
   components: { Form: components.Form, SchemaField },
-  props: ['dataSourceData', 'settingData'],
+  props: ['dataSourceData', 'settingData', 'accessNodeList'],
   data() {
     return {
       form: createForm(),
@@ -42,6 +42,11 @@ export default {
       }
     }
   },
+
+  created() {
+    this.initAccessNode()
+  },
+
   mounted() {
     this.setSchema()
   },
@@ -200,6 +205,60 @@ export default {
                 ],
                 default: 'intellect'
               },
+
+              accessNodeWrap: {
+                type: 'void',
+                title: this.$t('connection_form_access_node'),
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  // asterisk: true,
+                  feedbackLayout: 'none'
+                },
+                'x-component': 'FormFlex',
+                'x-component-props': {
+                  gap: 8,
+                  align: 'start'
+                },
+
+                properties: {
+                  accessNodeType: {
+                    type: 'string',
+                    default: 'AUTOMATIC_PLATFORM_ALLOCATION',
+                    'x-disabled': this.disabledAccessNode,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Select',
+                    enum: [
+                      {
+                        label: this.$t('connection_form_automatic'),
+                        value: 'AUTOMATIC_PLATFORM_ALLOCATION'
+                      },
+                      {
+                        label: this.$t('connection_form_manual'),
+                        value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+                      }
+                    ]
+                  },
+                  accessNodeProcessId: {
+                    type: 'string',
+                    enum: this.accessNodeList,
+                    'x-disabled': this.disabledAccessNode,
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      style: { flex: 1 }
+                    },
+                    'x-component': 'Select',
+                    'x-reactions': {
+                      dependencies: ['accessNodeType'],
+                      fulfill: {
+                        state: {
+                          visible: '{{$deps[0]==="MANUALLY_SPECIFIED_BY_THE_USER"}}'
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+
               isStopOnError: {
                 title: this.$t('task_setting_stop_on_error'), //遇到错误停止
                 type: 'boolean',
@@ -596,6 +655,25 @@ export default {
         }
       }
       return config
+    },
+
+    initAccessNode() {
+      this.disabledAccessNode = false
+      const { sourceAccessNodeProcessId, targetAccessNodeProcessId } = this.dataSourceData
+      if (
+        sourceAccessNodeProcessId &&
+        (sourceAccessNodeProcessId === targetAccessNodeProcessId || !targetAccessNodeProcessId)
+      ) {
+        // 源和目标agent一致
+        this.settingData.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
+        this.settingData.accessNodeProcessId = sourceAccessNodeProcessId
+        this.disabledAccessNode = true
+      } else if (targetAccessNodeProcessId && !sourceAccessNodeProcessId) {
+        // 源和目标agent一致
+        this.settingData.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
+        this.settingData.accessNodeProcessId = targetAccessNodeProcessId
+        this.disabledAccessNode = true
+      }
     }
   }
 }
