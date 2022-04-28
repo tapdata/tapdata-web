@@ -566,7 +566,8 @@ export default {
         fields: {
           id: true,
           original_name: true
-        }
+        },
+        order: ['original_name ASC']
       }
 
       const txt = this.tbSearchTxt.trim()
