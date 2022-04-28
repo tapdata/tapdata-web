@@ -214,7 +214,7 @@ export default {
   .el-input-group__append {
     background-color: #409eff;
     border-color: #409eff;
-    color: #fff;
+    color: map-get($fontColor, white);
     .el-button {
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;

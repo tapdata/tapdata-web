@@ -1425,7 +1425,7 @@ export default {
     background: #6dc5e8;
   }
   .back-btn-icon {
-    color: #fff;
+    color: map-get($fontColor, white);
   }
   .back-btn-text {
     padding-left: 10px;

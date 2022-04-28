@@ -74,7 +74,7 @@ export const FieldAddDel = connect(
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
               {/*<ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />*/}
-              <span class="flex-1 text inline-block">字段名称</span>
+              <span class="flex-1 text inline-block ml-6">字段名称</span>
               <span class="field-ops inline-block ml-10">
                 <VIcon
                   class={[this.deleteAllFieldsData ? 'active__delete' : '', 'clickable', 'ml-5']}

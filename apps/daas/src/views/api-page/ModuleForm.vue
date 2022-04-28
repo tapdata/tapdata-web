@@ -835,7 +835,7 @@ export default {
               width: 62px;
               text-align: center;
               font-size: 11px;
-              color: #fff;
+              color: map-get($fontColor, white);
               border-radius: 2px;
             }
             .module-path-item-text {

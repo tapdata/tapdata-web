@@ -1342,7 +1342,7 @@ export default {
   }
   .el-table .error-row {
     background: rgba(255, 0, 0, 0.3);
-    color: #fff;
+    color: map-get($fontColor, white);
   }
   .el-table th {
     background: #f4f5f7;

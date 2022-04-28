@@ -62,7 +62,7 @@ export const FieldRename = connect(
         return (
           <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
-              <span class="flex-1 text inline-block">源字段名</span>
+              <span class="flex-1 text inline-block ml-6">源字段名</span>
               <span class="flex-1 text inline-block">目标字段名</span>
               <span class="field-ops  inline-block mr-12">
                 <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllToUpperCase()}>

@@ -2567,7 +2567,7 @@
 }
 
 .text-white {
-  color: #fff !important;
+  color: map-get($fontColor, white) !important;
 }
 
 .text-body {

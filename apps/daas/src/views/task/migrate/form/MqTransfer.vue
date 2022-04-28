@@ -37,21 +37,6 @@
         </div>
       </template>
     </ElTransfer>
-    <!-- <div style="position: fixed; top: 0; left: 0; z-index: 99; font-size: 12px">
-      <div>data: {{ data }}</div>
-      <div style="background-color: darkorange; color: #fff">
-        data1: {{ data1 }}
-      </div>
-      <div style="background-color: darkorange; color: #fff">
-        queueData: {{ queueData }}
-      </div>
-      <div style="background-color: darkgreen; color: #fff">
-        data2: {{ data2 }}
-      </div>
-      <div style="background-color: darkgreen; color: #fff">
-        topicData: {{ topicData }}
-      </div>
-    </div> -->
   </div>
 </template>
 

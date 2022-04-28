@@ -224,7 +224,7 @@ export default {
         &::placeholder {
           font-weight: 400;
           font-size: 14px;
-          color: #c9cdd4;
+          color: map-get($fontColor, slight);
         }
       }
     }
