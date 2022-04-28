@@ -174,7 +174,6 @@ export default {
   tap_agent_download: 'Agent 下载',
   tap_agent_download_now: 'Agent 立即下载',
   tap_upgrade: 'Agent 升级',
-  tap_contact_us: '联系我们',
   tap_user_center: '用户中心',
 
   // Agent

@@ -171,7 +171,7 @@
           <VIcon size="120">no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('agent_list_empty_desc1') }}</span>
-            <ElLink type="primary" class="fs-7" @click="createAgent">{{ $t('agent_button_create') }}</ElLink>
+            <span class="color-primary cursor-pointer fs-7 ml-1" @click="createAgent">{{ $t('agent_button_create') }}</span>
             <span>{{ $t('agent_list_empty_desc2') }}</span>
           </div>
         </div>
@@ -179,7 +179,7 @@
           <VIcon size="120">search-no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('gl_no_match_result') }}</span>
-            <ElLink type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</ElLink>
+            <span class="color-primary cursor-pointer fs-7 ml-1" @click="reset">{{ $t('gl_back_to_list') }}</span>
           </div>
         </div>
       </ElTable>
