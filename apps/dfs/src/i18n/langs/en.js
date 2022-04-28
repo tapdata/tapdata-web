@@ -1819,5 +1819,14 @@ export default {
   components_MqQueueOrTopic_zhuTiHeDuiLie: 'Only one subject and queue can be selected for configuration',
   components_ErrorLogDialog_cuoWuRiZhiCha: 'Error log view',
   components_ErrorLogDialog_qingQianWangAG: 'Please go to the agent deployment directory to view the log',
-  components_ErrorLogDialog_zhaKanGengDuoRi: 'View more logs'
+  components_ErrorLogDialog_zhaKanGengDuoRi: 'View more logs',
+  views_Lang_pingBiGuoJiHua: 'Shielding internationalization - Rules',
+  views_Lang_wenAnBaoHanDe: 'Values contained in the document, list: A, B, C',
+  views_Lang_wenAnDengYuDe: 'Copy equals the value of, list: A, B, C',
+  views_Lang_qingShuRuJiaoZheng: 'Please enter correction copy',
+  views_Lang_daoChuYingWen: 'Export English',
+  views_Lang_daoChuFanTi: 'Export traditional Chinese',
+  views_Lang_zhongWen: 'chinese',
+  views_Lang_yingWen: 'english',
+  views_Lang_fanTi: 'traditional Chinese character'
 }

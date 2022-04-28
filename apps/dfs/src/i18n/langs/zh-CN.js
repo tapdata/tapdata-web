@@ -1707,5 +1707,14 @@ export default {
   components_MqQueueOrTopic_zhuTiHeDuiLie: '主题和队列只能选择一种进行配置',
   components_ErrorLogDialog_cuoWuRiZhiCha: '错误日志查看',
   components_ErrorLogDialog_qingQianWangAG: '请前往Agent的部署目录下查看日志',
-  components_ErrorLogDialog_zhaKanGengDuoRi: '查看更多日志'
+  components_ErrorLogDialog_zhaKanGengDuoRi: '查看更多日志',
+  views_Lang_pingBiGuoJiHua: '屏蔽国际化-规则',
+  views_Lang_wenAnBaoHanDe: '文案包含的值，List: a,b,c',
+  views_Lang_wenAnDengYuDe: '文案等于的值，List: a,b,c',
+  views_Lang_qingShuRuJiaoZheng: '请输入矫正文案',
+  views_Lang_daoChuYingWen: '导出英文',
+  views_Lang_daoChuFanTi: '导出繁体',
+  views_Lang_zhongWen: '中文',
+  views_Lang_yingWen: '英文',
+  views_Lang_fanTi: '繁体'
 }

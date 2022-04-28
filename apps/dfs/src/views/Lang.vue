@@ -1,14 +1,14 @@
 <template>
   <div class="g-panel-container flex flex-column h-100">
     <ElCollapse>
-      <ElCollapseItem title="屏蔽国际化-规则" name="1">
+      <ElCollapseItem :title="$t('views_Lang_pingBiGuoJiHua')" name="1">
         <ElForm>
-          <ElFormItem label="文案包含的值，List: a,b,c">
-            <ElInput v-model="inc" type="textarea" placeholder="文案包含的值，List: a,b,c" autosize></ElInput>
+          <ElFormItem :label="$t('views_Lang_wenAnBaoHanDe')">
+            <ElInput v-model="inc" type="textarea" :placeholder="$t('views_Lang_wenAnBaoHanDe')" autosize></ElInput>
             <VButton type="primary" @click="saveIncludes">{{ $t('button_submit') }}</VButton>
           </ElFormItem>
-          <ElFormItem label="文案等于的值，List: a,b,c">
-            <ElInput v-model="equal" type="textarea" placeholder="文案等于的值，List: a,b,c" autosize></ElInput>
+          <ElFormItem :label="$t('views_Lang_wenAnDengYuDe')">
+            <ElInput v-model="equal" type="textarea" :placeholder="$t('views_Lang_wenAnDengYuDe')" autosize></ElInput>
             <VButton type="primary" @click="saveEqual">{{ $t('button_submit') }}</VButton>
           </ElFormItem>
         </ElForm>
@@ -17,8 +17,8 @@
     <div class="flex justify-content-between mt-4">
       <FilterBar v-model="searchParams" :items="filterItems" @search="search"> </FilterBar>
       <div>
-        <ElButton type="primary" @click="exportModifyEn">导出英文</ElButton>
-        <ElButton type="primary" @click="exportModifyZhTW">导出繁体</ElButton>
+        <ElButton type="primary" @click="exportModifyEn">{{ $t('views_Lang_daoChuYingWen') }}</ElButton>
+        <ElButton type="primary" @click="exportModifyZhTW">{{ $t('views_Lang_daoChuFanTi') }}</ElButton>
       </div>
     </div>
     <TableList ref="table" row-key="id" :columns="columns" :data="data" height="100%" class="mt-4" :isPage="true">
@@ -45,11 +45,19 @@
         </ElFormItem>
         <ElFormItem :label="langMap['zh-TW']">
           <div>{{ dialog.form['zh-TW'] }}</div>
-          <ElInput v-model="dialog.form['zh-TW-modify']" type="textarea" placeholder="请输入矫正文案"></ElInput>
+          <ElInput
+            v-model="dialog.form['zh-TW-modify']"
+            type="textarea"
+            :placeholder="$t('views_Lang_qingShuRuJiaoZheng')"
+          ></ElInput>
         </ElFormItem>
         <ElFormItem :label="langMap['en']">
           <div>{{ dialog.form['en'] }}</div>
-          <ElInput v-model="dialog.form['en-modify']" type="textarea" placeholder="请输入矫正文案"></ElInput>
+          <ElInput
+            v-model="dialog.form['en-modify']"
+            type="textarea"
+            :placeholder="$t('views_Lang_qingShuRuJiaoZheng')"
+          ></ElInput>
         </ElFormItem>
       </ElForm>
       <span slot="footer" class="dialog-footer">
@@ -61,6 +69,8 @@
 </template>
 
 <script>
+import i18n from '@/i18n'
+
 import FilterBar from '@/components/filter-bar'
 import TableList from '@/components/TableList'
 import zhCN from '@/i18n/langs/zh-CN'
@@ -75,9 +85,9 @@ export default {
   components: { TableList, FilterBar },
   data() {
     let langMap = {
-      'zh-CN': '中文',
-      en: '英文',
-      'zh-TW': '繁体'
+      'zh-CN': i18n.t('views_Lang_zhongWen'),
+      en: i18n.t('views_Lang_yingWen'),
+      'zh-TW': i18n.t('views_Lang_fanTi')
     }
     // 原有的文案
     let sourceObject = {
@@ -107,7 +117,7 @@ export default {
       })
     }
     columns.push({
-      label: 'operation',
+      label: i18n.t('connection_list_operate'),
       prop: 'operation',
       slotName: 'operation'
     })

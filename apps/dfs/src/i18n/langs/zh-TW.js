@@ -1670,5 +1670,14 @@ export default {
   verify_checking: '校驗中…',
   components_ErrorLogDialog_cuoWuRiZhiCha: '錯誤日誌查看',
   components_ErrorLogDialog_qingQianWangAG: '請前往Agent的部署目錄下查看日誌',
-  components_ErrorLogDialog_zhaKanGengDuoRi: '查看更多日誌'
+  components_ErrorLogDialog_zhaKanGengDuoRi: '查看更多日誌',
+  views_Lang_pingBiGuoJiHua: '遮罩國際化-規則',
+  views_Lang_wenAnBaoHanDe: '文案包含的值，List: a，b，c',
+  views_Lang_wenAnDengYuDe: '文案等於的值，List: a，b，c',
+  views_Lang_qingShuRuJiaoZheng: '請輸入矯正文案',
+  views_Lang_daoChuYingWen: '匯出英文',
+  views_Lang_daoChuFanTi: '匯出繁體',
+  views_Lang_zhongWen: '中文',
+  views_Lang_yingWen: '英文',
+  views_Lang_fanTi: '繁體'
 }
