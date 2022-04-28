@@ -14,7 +14,7 @@
   </div>
 </template>
 <script>
-import factory from '../api/factory'
+import factory from '../../api/factory'
 
 const dataFlowApi = factory('DataFlows')
 export default {

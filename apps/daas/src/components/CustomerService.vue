@@ -1,5 +1,6 @@
 <template>
   <el-card class="customer-service-wrap" v-if="value">
+    <!-- 客服 -->
     <header>
       <span>{{ $t('app.qa') }}</span>
       <i class="btn-close el-icon-close" @click="close"></i>
