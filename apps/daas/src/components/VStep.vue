@@ -1,20 +1,19 @@
 <template>
   <ElSteps class="v-step-container" v-bind="$attrs" v-on="$listeners" :active="activeStep">
-    <ElStep
-      v-if="!hasNumber"
-      v-for="(item, index) in stepList"
-      :key="index"
-      :class="[{ 'is-ative': showActive === index + 1 }]"
-    >
-      <span slot="icon" class="circle-icon cursor-pointer" @click="$emit('activeStep', index)"></span>
-      <div slot="title" class="cursor-pointer" @click="$emit('activeStep', index)">
-        {{ item.label }}
-      </div>
-      <div v-if="item.time" slot="description" class="cursor-pointer" @click="$emit('activeStep', index)">
-        {{ item.time }}
-      </div>
-    </ElStep>
-    <ElStep v-else v-for="(item, index) in stepList" :key="index" :title="item.label" :description="item.desc"></ElStep>
+    <template v-if="!hasNumber">
+      <ElStep v-for="(item, index) in stepList" :key="index" :class="[{ 'is-active': showActive === index + 1 }]">
+        <span slot="icon" class="circle-icon cursor-pointer" @click="$emit('activeStep', index)"></span>
+        <div slot="title" class="cursor-pointer" @click="$emit('activeStep', index)">
+          {{ item.label }}
+        </div>
+        <div v-if="item.time" slot="description" class="cursor-pointer" @click="$emit('activeStep', index)">
+          {{ item.time }}
+        </div>
+      </ElStep>
+    </template>
+    <template v-else>
+      <ElStep v-for="(item, index) in stepList" :key="index" :title="item.label" :description="item.desc"></ElStep>
+    </template>
   </ElSteps>
 </template>
 
@@ -93,7 +92,7 @@ export default {
       .el-step__description {
         color: map-get($fontColor, slight);
       }
-      .is-ative {
+      .is-active {
         .el-step__title,
         .el-step__description {
           color: map-get($color, primary);
