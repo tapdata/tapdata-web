@@ -974,7 +974,8 @@ export default {
         const chooseId = this.dataflow.accessNodeProcessId
 
         if (!chooseId) {
-          someErrorMsg = `请配置任务运行agent`
+          // someErrorMsg = `请配置任务运行agent`
+          someErrorMsg = `所属agent节点冲突` // 一样提示冲突
         } else {
           let isError = false
           const agent = this.scope.$agentMap[chooseId]
@@ -1623,7 +1624,8 @@ export default {
       if (error?.data.code === 'Task.ListWarnMessage') {
         let names = []
         if (error.data.data) {
-          Object.keys(error.data.data).forEach(key => {
+          const keys = Object.keys(error.data.data)
+          keys.forEach(key => {
             const node = this.$store.state.dataflow.NodeMap[key]
             if (node) {
               names.push(node.name)
@@ -1633,6 +1635,14 @@ export default {
               })
             }
           })
+          if (!names.length && keys.length && msg) {
+            // 兼容错误信息id不是节点id的情况
+            const msg = error.data.data[keys[0]][0]?.msg
+            if (msg) {
+              this.$message.error(msg)
+              return
+            }
+          }
         }
         this.$message.error(`${this.$t('dag_save_fail')} ${names.join('，')}`)
       } else if (error?.data?.message) {

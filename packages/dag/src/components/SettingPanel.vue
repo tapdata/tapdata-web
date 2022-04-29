@@ -83,7 +83,11 @@
               <ElRow>
                 <ElCol :span="12">
                   <ElFormItem :label="$t('connection_form_access_node')">
-                    <ElSelect v-model="settings.accessNodeType" :disabled="accessNodeProcessIdArr.length === 1">
+                    <ElSelect
+                      v-model="settings.accessNodeType"
+                      :disabled="accessNodeProcessIdArr.length === 1"
+                      @change="handleChangeAccessNodeType"
+                    >
                       <ElOption
                         :label="$t('connection_form_automatic')"
                         value="AUTOMATIC_PLATFORM_ALLOCATION"
@@ -331,16 +335,7 @@ export default {
 
     accessNodeProcessList() {
       if (!this.accessNodeProcessIdArr.length) return this.scope.$agents
-      return this.accessNodeProcessIdArr.reduce((list, id) => {
-        const item = this.scope.$agentMap[id]
-        if (item) {
-          list.push({
-            value: item.processId,
-            label: `${item.hostName}（${item.ip}）`
-          })
-        }
-        return list
-      }, [])
+      return this.scope.$agents.filter(item => this.accessNodeProcessIdArr.includes(item.value))
     }
   },
 
@@ -417,6 +412,17 @@ export default {
           }
         })
         return map
+      }
+    },
+
+    handleChangeAccessNodeType(v) {
+      if (
+        v === 'MANUALLY_SPECIFIED_BY_THE_USER' &&
+        !this.settings.accessNodeProcessId &&
+        this.accessNodeProcessList.length
+      ) {
+        // 用户选择指定agent运行，默认帮用户选第一项
+        this.$set(this.settings, 'accessNodeProcessId', this.accessNodeProcessList[0].value)
       }
     }
   }

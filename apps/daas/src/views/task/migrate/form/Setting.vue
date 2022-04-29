@@ -251,7 +251,9 @@ export default {
                       dependencies: ['accessNodeType'],
                       fulfill: {
                         state: {
-                          visible: '{{$deps[0]==="MANUALLY_SPECIFIED_BY_THE_USER"}}'
+                          visible: '{{$deps[0]==="MANUALLY_SPECIFIED_BY_THE_USER"}}',
+                          value:
+                            '{{console.log("$self.value", $self.value, $self.dataSource), $self.value || ($deps[0]==="MANUALLY_SPECIFIED_BY_THE_USER" && $self.dataSource.length ? $self.dataSource[0].value : undefined)}}'
                         }
                       }
                     }
@@ -664,12 +666,12 @@ export default {
         sourceAccessNodeProcessId &&
         (sourceAccessNodeProcessId === targetAccessNodeProcessId || !targetAccessNodeProcessId)
       ) {
-        // 源和目标agent一致
+        // 源和目标agent一致或只有源有指定agent
         this.settingData.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
         this.settingData.accessNodeProcessId = sourceAccessNodeProcessId
         this.disabledAccessNode = true
       } else if (targetAccessNodeProcessId && !sourceAccessNodeProcessId) {
-        // 源和目标agent一致
+        // 只有目标有指定agent
         this.settingData.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
         this.settingData.accessNodeProcessId = targetAccessNodeProcessId
         this.disabledAccessNode = true
