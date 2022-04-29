@@ -10,9 +10,16 @@ export default class notification extends PublicAPI {
   constructor() {
     super('/api/Messages')
   }
-  readAll(filter, update) {
+  // readAll(filter, update) {
+  //   return axios.request({
+  //     url: this.url + '/update?where=' + filter,
+  //     method: 'post',
+  //     data: update
+  //   })
+  // }
+  pageRead(filter, update) {
     return axios.request({
-      url: this.url + '/update?where=' + filter,
+      url: this.url + '?where=' + filter,
       method: 'post',
       data: update
     })
@@ -24,5 +31,8 @@ export default class notification extends PublicAPI {
       method: 'post',
       data: update
     })
+  }
+  readAll(params) {
+    return axios.post(this.url + '/readAll', params)
   }
 }

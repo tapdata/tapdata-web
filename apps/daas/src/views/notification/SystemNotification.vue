@@ -39,7 +39,7 @@
         @change="getData()"
       ></SelectList>
     </div>
-    <ul class="cuk-list clearfix cuk-list-type-block">
+    <ul class="cuk-list clearfix cuk-list-type-block" v-if="listData && listData.length">
       <li
         class="list-item"
         :style="{ cursor: item.read ? 'default' : 'pointer' }"
@@ -92,6 +92,12 @@
         </div>
       </li>
     </ul>
+    <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
+      <div>
+        <VIcon size="140">no-notice</VIcon>
+        <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_no_notice') }}</div>
+      </div>
+    </div>
     <el-pagination
       class="pagination"
       background
@@ -327,22 +333,19 @@ export default {
       this.listData.map(item => {
         ids.push(item.id)
       })
-      // let where = {
-      //   id: {
-      //     inq: ids
-      //   }
-      // }
-
-      let data = {
-        read: true,
+      let where = {
         id: {
           inq: ids
         }
       }
-      // where = JSON.stringify(where)
+
+      let data = {
+        read: true
+      }
+      where = JSON.stringify(where)
       let read = this.read
       this.$api('notification')
-        .post(data)
+        .pageRead(encodeURIComponent(where), data)
         .then(res => {
           if (res.data) {
             // this.getUnreadNum() //未读消息数量
@@ -352,16 +355,17 @@ export default {
           }
         })
     },
+
     // 标记全部已读
     handleAllRead() {
       let where = {}
-      let data = {
-        read: true
-      }
+      // let data = {
+      //   read: true
+      // }
       where = JSON.stringify(where)
       let read = this.read
       this.$api('notification')
-        .readAll(where, data)
+        .readAll(where)
         .then(res => {
           if (res.data) {
             // this.getUnreadNum() //未读消息数量

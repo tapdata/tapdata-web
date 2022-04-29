@@ -574,62 +574,6 @@ export default {
   connection_list_column_schema_status: 'Schema loading status',
   connection_list_column_schema_status_tips: 'Connections after Schema loading can be created normally',
 
-  // 连接管理
-  connection_form_connection_type: 'Connection Type',
-  connection_form_source_and_target: 'Source and target',
-  connection_form_source: 'Source',
-  connection_form_target: 'Target',
-  connection_form_source_and_target_tip:
-    'This data connection can be used as source and target at the same time in Tapdata',
-  connection_form_source_tip: 'This data connection can only be used as a source in Tapdata, not as a target',
-  connection_form_target_tip:
-    'This data connection can only be used as a target in Tapdata, and cannot be used as a source',
-  connection_form_host: 'Database host',
-  connection_form_user_name: 'Account',
-  connection_form_password: 'Password',
-  connection_form_shared_mining: 'Shared mining',
-  connection_form_shared_mining_tip:
-    'Shared mining will mine incremental logs. When there are multiple incremental tasks, there is no need to repeatedly start the log collection process, which can greatly reduce the occupation and waste of source library resources.',
-
-  connection_form_mq_type: 'MQ Type',
-  connection_form_mq_topic_set: 'topic name',
-  connection_form_mq_queue_set: 'Queue name set',
-  connection_form_mq_broker_url: 'MQ connection string',
-  connection_form_mq_database_host: 'MQ address',
-  connection_form_mq_database_port: 'MQ port',
-  connection_form_mq_route_key_field: 'Message routing',
-  connection_form_mq_virtual_host: 'Virtual Host',
-  connection_form_mq_producer_group: 'Producer Group',
-  connection_form_mq_consumer_group: 'Consumer Group',
-  connection_form_mq_queue_tip: 'Multiple queues are separated by commas',
-  connection_form_mq_topic_tip: 'Multiple topics are separated by commas',
-  connection_form_mq_broker_url_tip: 'Example tcp://127.0.0.1:61616, supports tcp, nio, udp, ssl, http(s)',
-
-  connection_form_custom_connection_connection_time_out: 'Connection timeout (s)',
-  connection_form_custom_connection_read_time_out: 'Read timeout (s)',
-  connection_form_custom_connection_before_operate: 'Pre-operation',
-  connection_form_custom_connection_after_operate: 'Post-operation',
-
-  connection_redis_valid: 'Authentication',
-
-  connection_hana_label_hana_type: 'Install type',
-  connection_form_hana_file_schema_tip: 'If matching files have the same structure, please specify a common name',
-
-  connection_kafka_kerberos_attest: 'kerberos authentication',
-  connection_kafka_kerberos_config_keytab: 'Key representation file',
-  connection_kafka_kerberos_config_conf: 'Configuration file',
-  connection_kafka_kerberos_body_config: 'Body Configuration',
-  connection_kafka_kerberos_service_name: 'Service name',
-  connection_kafka_kerberos_tip:
-    'The instance name mapping needs to be configured on the host where the Engine is located /etc/hosts',
-  connection_kafka_kerberos_none_keytab: 'The key representation file cannot be empty',
-  connection_kafka_kerberos_none_conf: 'Configuration file cannot be empty',
-  connection_kafka_encryption: 'Encryption',
-  connection_form_kafka_ignore_push: 'Ignore push message exception',
-  connection_form_kafka_compression_type: 'Message compression type',
-  connection_form_kafka_ack: 'ACK confirmation mechanism',
-  connection_form_kafka_ignore_invalid: 'Ignore non-JSON Object format messages',
-  connection_form_kafka_pattern_topic: 'topic expression',
   // 连接
   connection_manage: 'Connection Management',
   connection_list_form_task_status: 'task status',
@@ -670,60 +614,136 @@ export default {
   connection_list_test_button: 'Test',
   connection_list_delete_link_job: 'The connection is applied and cannot be deleted',
 
-  // 连接管理
-  connection_form_change: 'change',
-  connection_form_rename: 'rename',
-  connection_form_database_owner_tip:
+  connection_form_kuduhost: 'IP address: port; support multiple; split with ,',
+  connection_form_table_filter_tips:
     'Comma-separated list of expressions, use * to represent any character of any length',
+  connection_form_table_filter: 'Contain table',
+  connection_form_time_zone_tips: 'Affect type: DATE',
+  connection_form_time_zone: 'Time zone of the time type',
+  connection_form_reload_schema: 'Regularly load schema',
+  connection_form_ssl_tsl: 'TSL/SSL connection',
+  connection_form_ssl_top: 'Direct connection',
+  connection_form_plugin_name: 'Log Decoder',
+  connection_form_database_uri: 'Database URI',
+  connection_form_agent_msg: "Agent's current state is abnormal and cannot create a connection, please check",
+  connection_form_agent_connection_msg:
+    'The current state of the agent is abnormal, the connection cannot be tested, please check the agent',
+  connection_form_content:
+    `<b>MongoDB database connection URI example:</b><br>` +
+    `<b>The username and password in the URI must be url encoded and then spliced into the connection string</b><br>` +
+    `<b>ReplicaSet:</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br>` +
+    `<b>Authenticated replica set:</b> mongodb://admin:password@192.168.0.100:27017/mydb?replicaSet=xxx&authSource=admin<br>` +
+    `<b>Multi-node replica set:</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx<br>` +
+    `<b>shard set:</b> mongodb://192.168.0.100:27017/mydb<br>` +
+    `<b>Multiple mongos:</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb<br>`,
+
   connection_form_creat_connection: 'Create connection',
   connection_form_edit_connection: 'Edit connection',
   connection_form_data_source: 'Data source',
   connection_form_data_source_type: 'Data source type',
-  connection_form_connection_name: 'Connection name',
   connection_form_database_address: 'Database address',
+  connection_form_change: 'change',
+  connection_form_rename: 'rename',
+  connection_form_database_owner_tip:
+    'Comma-separated list of expressions, use * to represent any character of any length',
+  connection_form_connection_type: 'Connection Type',
+  connection_form_source_and_target: 'Source and target',
+  connection_form_source: 'Source',
+  connection_form_target: 'Target',
+  connection_form_source_and_target_tip:
+    'This data connection can be used as source and target at the same time in Tapdata',
+  connection_form_source_tip: 'This data connection can only be used as a source in Tapdata, not as a target',
+  connection_form_target_tip:
+    'This data connection can only be used as a target in Tapdata, and cannot be used as a source',
+  connection_form_host: 'Database host',
   connection_form_port: 'Port',
+  connection_form_connection_name: 'Connection name',
+  connection_form_user_name: 'Account',
+  connection_form_password: 'Password',
+  connection_form_shared_mining: 'Shared mining',
+  connection_form_shared_mining_tip:
+    'Shared mining will mine incremental logs. When there are multiple incremental tasks, there is no need to repeatedly start the log collection process, which can greatly reduce the occupation and waste of source library resources.',
+  connection_form_oracle_redoLog_parser: 'bare log',
+  connection_form_oracle_redoLog_parser_post: 'Log parsing service address IP',
   connection_form_database_name: 'Database name',
   connection_form_database_username: 'Account',
-  connection_form_database_password: 'Password',
+  connection_form_database_password: 'password',
   connection_form_additional_string: 'Other connection string parameters',
-  connection_form_timezone: 'Time zone of time type',
-  connection_form_virtual_host: 'Virtual Host',
-  connection_form_route_key_field: 'Message routing',
-
-  connection_form_broker_url: 'MQ connection string',
-
+  connection_form_timezone: 'Time zone of the time type',
+  connection_form_virtual_host: 'Virtual host',
   connection_form_connection_name_placeholder: 'Please enter the connection name',
-  connection_form_coming_soon: 'Coming soon',
-  connection_form_impact_type: 'Type of impact: DATE',
+  connection_form_coming_soon: 'coming soon',
+  connection_form_impact_type: 'Impact type: DATE',
   connection_form_database_host_placeholder: 'Please enter the database address',
   connection_form_database_host_tips:
-    'Database address (127.0.0.1/Domain: (port), please use multiple addresses, separate)',
+    'Database address (127.0.0.1/Domain:{port}, please use multiple addresses, separate)',
   connection_form_name_rules:
-    'Begin with Chinese and English, 1-100 characters, including Chinese and English, numbers, underscores, underscores, spaces',
-  connection_form_no_name: 'The connection name cannot be empty',
-  connection_form_name_exists: 'Name already exists',
-  connection_form_access_node: 'Agent settings',
+    'Start with Chinese and English, 1-100 characters, including Chinese and English, numbers, underscores, underscores, spaces',
+  connection_form_no_name: 'Connection name cannot be empty',
+  connection_form_name_exists: 'The name already exists',
+  connection_form_access_node: 'agent settings',
   connection_form_automatic: 'Platform automatic allocation',
   connection_form_manual: 'User specified manually',
   connection_form_access_node_tip:
-    'The platform assigns nodes for connection access under automatic conditions, and users manually specify nodes for access under manual conditions',
+    'In automatic case, the platform assigns nodes for connection access, and in manual case, the user manually specifies nodes for access',
   connection_form_name_ip: 'name (ip)',
-  connection_form_kafka_host_tip: 'Enter IP/host:port, multiple addresses are separated by commas',
+
+  connection_form_mq_type: 'MQ Type',
+  connection_form_mq_topic_set: 'topic name',
+  connection_form_mq_queue_set: 'Queue name set',
+  connection_form_mq_broker_url: 'MQ connection string',
+  connection_form_mq_database_host: 'MQ address',
+  connection_form_mq_database_port: 'MQ port',
+  connection_form_mq_route_key_field: 'Message routing',
+  connection_form_mq_virtual_host: 'Virtual Host',
+  connection_form_mq_producer_group: 'Producer Group',
+  connection_form_mq_consumer_group: 'Consumer Group',
+  connection_form_mq_queue_tip: 'Multiple queues are separated by commas',
+  connection_form_mq_topic_tip: 'Multiple topics are separated by commas',
+  connection_form_mq_broker_url_tip: 'Example tcp://127.0.0.1:61616, supports tcp, nio, udp, ssl, http(s)',
+
+  connection_form_custom_connection_connection_time_out: 'Connection timeout (s)',
+  connection_form_custom_connection_read_time_out: 'Read timeout (s)',
+  connection_form_custom_connection_before_operate: 'Pre-operation',
+  connection_form_custom_connection_after_operate: 'Post-operation',
+
+  connection_redis_valid: 'Authentication',
+
+  connection_hana_label_hana_type: 'Install type',
+  connection_form_hana_file_schema_tip: 'If matching files have the same structure, please specify a common name',
+
+  connection_kafka_kerberos_attest: 'kerberos authentication',
+  connection_kafka_kerberos_config_keytab: 'Key representation file',
+  connection_kafka_kerberos_config_conf: 'Configuration file',
+  connection_kafka_kerberos_body_config: 'body configuration',
+  connection_kafka_kerberos_service_name: 'Service name',
+  connection_kafka_kerberos_tip:
+    'The instance name mapping needs to be configured on the host where the Engine is located in /etc/hosts',
+  connection_kafka_kerberos_none_keytab: 'The key means that the file cannot be empty',
+  connection_kafka_kerberos_none_conf: 'The configuration file cannot be empty',
+  connection_kafka_encryption: 'Encryption method',
+  connection_form_kafka_host_tip: 'Enter IP/host:port , multiple addresses are separated by commas',
   connection_form_kafka_lonore_format_tip:
-    'If it is turned on, it will ignore the message if it encounters a parsing exception, otherwise it will stop pulling the message',
+    'If it is enabled, the message will be ignored when a parsing exception is encountered, otherwise it will stop pulling the message',
   connection_form_kafka_ignore_push_error_tip:
-    'If it is enabled, ignore the push message (there is a message loss), otherwise stop pushing the message',
+    'If enabled, ignore this push message (there is message loss), otherwise stop pushing messages',
+  connection_form_route_key_field: 'Message routing',
+  connection_form_broker_url: 'MQ connection string',
+  connection_form_kafka_ignore_push: 'Ignore push message exception',
+  connection_form_kafka_compression_type: 'Message compression type',
+  connection_form_kafka_ack: 'ACK confirmation mechanism',
+  connection_form_kafka_ignore_invalid: 'Ignore non-JSON Object format messages',
+  connection_form_kafka_pattern_topic: 'topic expression',
+
+  connection_form_kudu_host_tip: 'IP address: port; support multiple; split with ,',
+  // 连接管理
   connection_form_dameng_database_owner_tip:
     'Comma-separated expression list, use * to represent any character of any length',
 
   connection_form_hazecast_rename: 'Rename',
   connection_form_hazecast_cancel: 'Cancel',
   connection_form_hazecast_save: 'Save',
-  connection_form_give_up: 'give up',
-  connection_form_confirm_edit: 'This operation will lose the current edit content',
-  connection_form_confirm_create: 'This operation will lose the connection currently being created',
-  connection_form_confirm_create_content: 'Do you want to abandon the creation of the connection? ', //Do I have to give up creating the connection?
-  connection_form_confirm_edit_content: 'Do you want to abandon the content modification? ', //Do you want to give up modifying the content?
+
   connection_form_hazecast_options_target: 'Target',
   connection_form_hazecast_options_target_tips: "connection_form_hazecast_options_target:'Target',",
   connection_form_hazecast_connection_type: 'Connection Type',
@@ -756,6 +776,12 @@ export default {
   connection_form_hazecast_none_sslCA: 'The trust key store file cannot be empty',
   connection_form_hazecast_cluster_name_placeholder: 'Please enter the Cluster name',
   connection_form_hazecast_token_placeholder: 'Please enter the token',
+  connection_form_give_up: 'give up',
+  connection_form_confirm_edit: 'This operation will lose the current edit content',
+  connection_form_confirm_create: 'This operation will lose the connection currently being created',
+  connection_form_confirm_create_content: 'Do you want to abandon the creation of the connection? ', //Do I have to give up creating the connection?
+  connection_form_confirm_edit_content: 'Do you want to abandon the content modification? ', //Do you want to give up modifying the content?
+
   connection_form_tidb_none_server: 'PDServer address cannot be empty',
   connection_form_mongo_standard_mode_tip:
     'This mode will connect to a separate server in the network, which provides a TSL/SSL channel to the database. If your database is in an inaccessible subnet, you can try this method',
@@ -768,8 +794,6 @@ export default {
   connection_reload_schema_fail: 'Schema load failed',
 
   connection_oracle_config_share_log_switch: 'Shared mining',
-  connection_form_oracle_redoLog_parser: 'Redo log',
-  connection_form_oracle_redoLog_parser_post: 'Log parsing service address IP',
 
   connection_preview_load_schema: 'Load Schema',
   connection_preview_edit: 'Edit',

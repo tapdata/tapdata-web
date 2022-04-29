@@ -16,7 +16,7 @@
         </li>
       </ul>
 
-      <el-form :model="formData" class="e-form" label-width="340px">
+      <el-form :model="formData" class="e-form" label-position="top">
         <div class="e-form-box">
           <div v-for="(item, index) in formData.items" :key="index" class="item" v-show="activePanel === item.category">
             <template v-if="activePanel === item.category">

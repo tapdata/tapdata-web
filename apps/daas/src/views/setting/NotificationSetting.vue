@@ -166,7 +166,7 @@ export default {
       }
       Setting.enterpriseUpdate(where, data)
         .then(() => {
-          this.$message.success('submit OK')
+          this.$message.success(this.$t('message_save_ok'))
         })
         .finally(() => {
           this.loading = false

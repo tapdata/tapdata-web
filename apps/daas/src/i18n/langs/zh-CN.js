@@ -563,11 +563,8 @@ export default {
   connection_list_column_schema_status: 'Schema加载状态',
   connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
 
-  // 连接管理
-
   // 连接
   connection_manage: '连接管理',
-  connection_title: '数据源管理 ',
   connection_list_form_task_status: '任务状态',
   connection_list_form_sync_type: '同步类型',
   connection_list_form_database_type: '数据库类型',

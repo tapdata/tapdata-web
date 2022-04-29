@@ -81,7 +81,7 @@
         </div>
       </div>
     </div>
-    <div class="sub-task flex-fill mt-6 p-6 bg-white">
+    <div class="sub-task flex-fill mt-6 px-6 py-2 bg-white">
       <ElTabs v-model="activeTab" class="dashboard-tabs">
         <ElTabPane label="子任务" name="subTask">
           <div slot="label">

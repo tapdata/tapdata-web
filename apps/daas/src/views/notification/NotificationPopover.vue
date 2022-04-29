@@ -63,7 +63,7 @@
           <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
             <div>
               <VIcon size="76">no-notice</VIcon>
-              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_view_more') }}</div>
+              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_no_notice') }}</div>
             </div>
           </div>
           <!-- <div class="notice-footer">
