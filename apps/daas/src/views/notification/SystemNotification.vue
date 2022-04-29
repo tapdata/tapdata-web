@@ -327,18 +327,22 @@ export default {
       this.listData.map(item => {
         ids.push(item.id)
       })
-      let where = {
+      // let where = {
+      //   id: {
+      //     inq: ids
+      //   }
+      // }
+
+      let data = {
+        read: true,
         id: {
           inq: ids
         }
       }
-      let data = {
-        read: true
-      }
-      where = JSON.stringify(where)
+      // where = JSON.stringify(where)
       let read = this.read
       this.$api('notification')
-        .upsertWithWhere(where, data)
+        .post(data)
         .then(res => {
           if (res.data) {
             // this.getUnreadNum() //未读消息数量

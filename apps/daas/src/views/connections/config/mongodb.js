@@ -532,6 +532,7 @@ export default function (vm) {
         type: 'select',
         field: 'accessNodeType',
         label: vm.$t('connection_form_access_node'),
+        clearable: false,
         options: [
           {
             label: vm.$t('connection_form_automatic'),
@@ -542,8 +543,7 @@ export default function (vm) {
             value: 'MANUALLY_SPECIFIED_BY_THE_USER'
           }
         ],
-        tips: vm.$t('connection_form_access_node_tip'),
-        required: true
+        tips: vm.$t('connection_form_access_node_tip')
       },
       {
         type: 'slot',

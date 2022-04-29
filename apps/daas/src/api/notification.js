@@ -17,6 +17,7 @@ export default class notification extends PublicAPI {
       data: update
     })
   }
+
   upsertWithWhere(filter, update) {
     return axios.request({
       url: this.url + '/update?where=' + filter,

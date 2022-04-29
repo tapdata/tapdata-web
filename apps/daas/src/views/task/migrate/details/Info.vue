@@ -3,7 +3,7 @@
     <div class="flex justify-content-between align-items-center">
       <div class="info-line flex align-items-center">
         <ElTooltip v-if="task.parentTask" class="item" effect="dark" :content="task.parentTask.name" placement="top">
-          <span v-if="task.parentTask" class="mr-4 fs-6 flex-1 font-color-dark ellipsis info-name">{{
+          <span v-if="task.parentTask" class="mr-4 fs-6 flex-1 font-color-dark ellipsis info-name fw-sub">{{
             task.parentTask.name
           }}</span>
         </ElTooltip>
@@ -12,11 +12,11 @@
           target="etlSub"
           :status="task.isFinished ? 'finished' : task.status || 'running'"
         ></StatusTag>
-        <span class="ml-6 font-color-slight">
-          {{ $t('task_monitor_founder') }}：<span>{{ task.creator }}</span>
+        <span class="ml-6 font-color-light">
+          {{ $t('task_monitor_founder') }}：<span class="font-color-dark">>{{ task.creator }}</span>
         </span>
-        <span class="mx-6 font-color-slight">
-          {{ $t('task_info_start_time') }}：<span>{{ formatTime(task.startTime) || '-' }}</span>
+        <span class="mx-6 font-color-light">
+          {{ $t('task_info_start_time') }}：<span class="font-color-dark">{{ formatTime(task.startTime) || '-' }}</span>
         </span>
       </div>
       <div class="operation">

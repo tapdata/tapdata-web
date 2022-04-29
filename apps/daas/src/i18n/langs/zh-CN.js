@@ -668,7 +668,7 @@ export default {
   connection_form_access_node: 'agent设置',
   connection_form_automatic: '平台自动分配',
   connection_form_manual: '用户手动指定',
-  connection_form_access_node_tip: '自动情况下右平台分配节点进行连接访问，手动情况下由用户手动指定节点进行访问',
+  connection_form_access_node_tip: '自动情况下由平台分配节点进行连接访问，手动情况下由用户手动指定节点进行访问',
   connection_form_name_ip: '名称（ip）',
 
   connection_form_mq_type: 'MQ类型',

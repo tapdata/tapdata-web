@@ -706,7 +706,7 @@ export default {
   connection_form_automatic: 'Platform automatic allocation',
   connection_form_manual: 'User specified manually',
   connection_form_access_node_tip:
-    'In the case of automatic, the right platform assigns the node for connection access, and in the case of manual, the user manually specifies the node for access',
+    'The platform assigns nodes for connection access under automatic conditions, and users manually specify nodes for access under manual conditions',
   connection_form_name_ip: 'name (ip)',
   connection_form_kafka_host_tip: 'Enter IP/host:port, multiple addresses are separated by commas',
   connection_form_kafka_lonore_format_tip:

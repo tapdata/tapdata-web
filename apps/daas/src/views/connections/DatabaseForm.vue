@@ -95,7 +95,6 @@
                   >
                     <ElSelect
                       v-model="model.accessNodeProcessId"
-                      clearable
                       :placeholder="$t('connection_form_name_ip')"
                       v-loadmore="loadMore"
                       style="width: 100%"
@@ -1776,6 +1775,7 @@ export default {
         .then(res => {
           let items = res.data || []
           this.accessNodeList = items
+          this.model.accessNodeProcessId = items[0]?.processId
         })
     }
   }

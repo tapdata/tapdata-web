@@ -687,7 +687,7 @@ export default {
   connection_form_access_node: 'agent設置',
   connection_form_automatic: '平台自動分配',
   connection_form_manual: '用戶手動指定',
-  connection_form_access_node_tip: '自動情況下右平台分配節點進行連接訪問，手動情況下由用戶手動指定節點進行訪問',
+  connection_form_access_node_tip: '自動情況下由平台分配節點進行連接訪問，手動情況下由用戶手動指定節點進行訪問',
   connection_form_name_ip: '名稱（ip）',
 
   connection_form_kudu_host_tip: 'IP地址:端口; 支持多個; 用 , 分割',
