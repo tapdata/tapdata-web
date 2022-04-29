@@ -1,6 +1,6 @@
 <template>
   <div class="overview-bar">
-    <div class="mb-4 fs-7 font-color-dark fw-bolder">{{ this.$t('task_monitor_full_sync') }}</div>
+    <div class="mb-4 fs-7 font-color-dark">{{ this.$t('task_monitor_full_sync') }}</div>
     <div class="overview-bar__content p-4">
       <div class="flex justify-content-between mb-2 font-color-dark">
         <div>

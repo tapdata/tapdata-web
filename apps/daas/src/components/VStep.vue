@@ -180,6 +180,7 @@ export default {
     .el-step__title,
     .el-step__description,
     .el-step__description {
+      font-size: 14px;
       color: map-get($fontColor, slight);
     }
     .is-active {
