@@ -428,6 +428,9 @@
 .table-border.el-table--enable-row-hover .el-table__body tr:hover > td {
   background-color: inherit;
 }
+.el-pagination {
+  text-align: right;
+}
 .el-pagination.is-background .el-pager li:not(.disabled).active {
   background-color: map-get($color, primary);
 }
@@ -700,7 +703,7 @@
   background-color: map-get($color, primary);
 }
 .el-tabs__item {
-  color: map-get($fontColor, slight);
+  color: map-get($fontColor, light);
   font-weight: 400;
   user-select: none;
 }

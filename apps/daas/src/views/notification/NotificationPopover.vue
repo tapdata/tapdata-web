@@ -308,7 +308,7 @@ export default {
       .el-tabs__item {
         font-size: 14px;
         font-weight: 400;
-        color: map-get($fontColor, slight);
+        color: map-get($fontColor, light);
         &.is-active {
           color: map-get($color, primary);
           font-weight: 500;
