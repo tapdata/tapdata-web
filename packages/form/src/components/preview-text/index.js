@@ -1,9 +1,14 @@
-import { defineComponent, computed } from '@vue/composition-api'
-import { createContext, resolveComponent, useContext, composeExport } from '../utils/index'
+import { defineComponent, computed, toRef } from '@vue/composition-api'
+import {
+  createContext,
+  resolveComponent,
+  useContext,
+  composeExport,
+  stylePrefix
+} from '@formily/element/lib/__builtins__'
 import { observer } from '@formily/reactive-vue'
 import { h, useField } from '@formily/vue'
 import { isArr, isValid } from '@formily/shared'
-import { stylePrefix } from '../configs'
 import { Space } from '../space'
 import { Tag } from 'element-ui'
 import { formatDate } from 'element-ui/src/utils/date-util'
@@ -14,47 +19,17 @@ const PlaceholderContext = createContext('N/A')
 export const usePlaceholder = value => {
   const placeholderCtx = useContext(PlaceholderContext)
   const placeholder = computed(() => {
-    return isValid(value) && value !== '' ? value : resolveComponent(placeholderCtx.value) || 'N/A'
+    return isValid(value?.value) && value.value !== '' ? value.value : resolveComponent(placeholderCtx.value) || 'N/A'
   })
-
   return placeholder
 }
 
-const Input = observer(
-  defineComponent({
-    name: 'FPreviewTextInput',
-    props: [],
-    setup(_props, { attrs, slots }) {
-      const fieldRef = useField()
-      const field = fieldRef.value
-      const placeholder = usePlaceholder()
-      return () => {
-        return h(
-          Space,
-          {
-            class: [prefixCls],
-            style: attrs.style
-          },
-          {
-            default: () => [
-              slots?.prepend?.(),
-              slots?.prefix?.(),
-              field.value !== '' ? field.value : placeholder.value,
-              slots?.suffix?.(),
-              slots?.append?.() || attrs.append
-            ]
-          }
-        )
-      }
-    }
-  })
-)
-
-const Switch = defineComponent({
-  name: 'FPreviewSwitch',
-  props: [],
-  setup(_props, { attrs }) {
-    const placeholder = usePlaceholder(attrs.value ? '是' : '否')
+const Input = defineComponent({
+  name: 'FPreviewTextInput',
+  props: ['value', 'content'],
+  setup(props, { attrs, slots }) {
+    const value = toRef(props, props.content ? 'content' : 'value')
+    const placeholder = usePlaceholder(value)
     return () => {
       return h(
         Space,
@@ -63,7 +38,13 @@ const Switch = defineComponent({
           style: attrs.style
         },
         {
-          default: () => [placeholder.value]
+          default: () => [
+            slots?.prepend?.(),
+            slots?.prefix?.(),
+            placeholder.value,
+            slots?.suffix?.(),
+            slots?.append?.()
+          ]
         }
       )
     }
@@ -292,7 +273,6 @@ const Text = defineComponent({
 
 export const PreviewText = composeExport(Text, {
   Input,
-  Switch,
   Select,
   Cascader,
   DatePicker,
