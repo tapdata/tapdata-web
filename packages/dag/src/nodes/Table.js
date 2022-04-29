@@ -195,6 +195,31 @@ export class Table extends NodeType {
                 }
               },
 
+              // 指定agent
+              'attrs.accessNodeProcessId': {
+                type: 'string',
+                title: '所属agent',
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  wrapperWidth: 320
+                },
+                'x-component': 'PreviewText.Input',
+                'x-component-props': {
+                  content:
+                    '{{$agentMap[$self.value] ? `${$agentMap[$self.value].hostName}（${$agentMap[$self.value].ip}）` : "-"}}',
+                  style: {
+                    color: '#535F72'
+                  }
+                },
+                'x-reactions': {
+                  fulfill: {
+                    state: {
+                      display: '{{!$self.value ? "hidden":"visible"}}'
+                    }
+                  }
+                }
+              },
+
               name: {
                 type: 'string',
                 'x-display': 'hidden'
@@ -497,13 +522,14 @@ export class Table extends NodeType {
    * 获取额外添加到节点上的属性
    */
   getExtraAttr() {
-    const { tableName, databaseType, connectionId, connectionType } = this.attr
+    const { tableName, databaseType, connectionId, connectionType, accessNodeProcessId } = this.attr
     return {
       tableName,
       databaseType,
       connectionId,
       attrs: {
-        connectionType
+        connectionType,
+        accessNodeProcessId
       }
     }
   }

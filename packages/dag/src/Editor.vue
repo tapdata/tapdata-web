@@ -485,62 +485,10 @@ export default {
         }
       })
 
-      /*let sourceMap
-      let targetMap
-      const initSourceAndTargetMap = () => {
-        const edges = this.allEdges
-        edges.forEach(item => {
-          let _source = sourceMap[item.source]
-          let _target = targetMap[item.target]
-
-          if (!_source) {
-            sourceMap[item.source] = [item]
-          } else {
-            _source.push(item)
-          }
-
-          if (!_target) {
-            targetMap[item.target] = [item]
-          } else {
-            _target.push(item)
-          }
-        })
-      }*/
-
-      /*const _instance = {
-        getConnections(params) {
-          // console.log('_instance', params) // eslint-disable-line
-          if (typeof params === 'object') {
-            if (params.target) params.target = NODE_PREFIX + params.target
-            if (params.source) params.source = NODE_PREFIX + params.source
-          }
-          return jsPlumbIns.getConnections(params)
-        }
-      }*/
-
       jsPlumbIns.bind('beforeDrop', info => {
         const { sourceId, targetId } = info
 
         return this.checkCanBeConnected(this.getRealId(sourceId), this.getRealId(targetId), true)
-
-        /*if (sourceId === targetId) return false
-
-        // console.log('beforeDrop', info) // eslint-disable-line
-
-        const source = this.nodeById(this.getRealId(sourceId))
-        const target = this.nodeById(this.getRealId(targetId))
-
-        const connectionType = target.attrs.connectionType
-        if (connectionType && !connectionType.includes('target')) {
-          this.$message.info('该节点仅支持作为源')
-          return false
-        }
-
-        if (!this.nodeELIsConnected(sourceId, targetId) && this.allowConnect(source.id, target.id)) {
-          return target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source, _instance)
-        }
-
-        return false*/
       })
 
       jsPlumbIns.bind('beforeDrag', ({ sourceId }) => {
@@ -720,13 +668,6 @@ export default {
       pos[0] += diffPos.x
       pos[1] += diffPos.y
 
-      // this.updateNodeProperties({
-      //   id,
-      //   properties: {
-      //     position: [...pos]
-      //   }
-      // })
-
       param.el.style.left = pos[0] + 'px'
       param.el.style.top = pos[1] + 'px'
       this.jsPlumbIns.revalidate(param.el) // 重绘
@@ -904,12 +845,6 @@ export default {
       let nh = $node.offsetHeight
       let { x, y, bottom, right } = selectBoxAttr
 
-      // console.log('getNodesInSelection', selectBoxAttr) // eslint-disable-line
-      /*const nodeViewOffset = this.nodeViewOffsetPosition
-      x -= nodeViewOffset[0]
-      right -= nodeViewOffset[0]
-      y -= nodeViewOffset[1]
-      bottom -= nodeViewOffset[1]*/
       return this.allNodes.filter(node => {
         const [left, top] = node.attrs.position
         return left + nw > x && left < right && bottom > top && y < top + nh
@@ -1025,6 +960,35 @@ export default {
 
       if (nodeNames.length) {
         someErrorMsg = `存在不支持${typeName}的节点`
+      }
+
+      const accessNodeProcessIdArr = [
+        ...tableNode.reduce((set, item) => {
+          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
+          return set
+        }, new Set())
+      ]
+
+      if (accessNodeProcessIdArr.length > 1) {
+        // 所属agent节点冲突
+        const chooseId = this.dataflow.accessNodeProcessId
+
+        if (!chooseId) {
+          someErrorMsg = `请配置任务运行agent`
+        } else {
+          let isError = false
+          const agent = this.scope.$agentMap[chooseId]
+          tableNode.forEach(node => {
+            if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
+              this.setNodeErrorMsg({
+                id: node.id,
+                msg: `该节点不支持在 ${agent.hostName}（${agent.ip}）上运行`
+              })
+              isError = true
+            }
+          })
+          isError && (someErrorMsg = `所属agent节点冲突`)
+        }
       }
 
       if (someErrorMsg) return someErrorMsg
@@ -1691,17 +1655,7 @@ export default {
     },
 
     handleEditFlush(result) {
-      // eslint-disable-next-line no-console
-      // console.log('handleEditFlush', result, this.startAt && Date.now() - this.startAt)
-      // eslint-disable-next-line no-console
-      console.log('handleEditFlush', result)
       this.reformDataflow(result.data, true)
-      /*if (!this.startAt || Date.now() - this.startAt > 100) {
-        this.reformDataflow(result.data, true)
-        this.startAt = null
-      } else {
-        console.log('跳过') // eslint-disable-line
-      }*/
 
       const { opType } = result
       if (opType === 'transformRate') {
