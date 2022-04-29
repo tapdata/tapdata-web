@@ -990,6 +990,10 @@ export default {
           })
           isError && (someErrorMsg = `所属agent节点冲突`)
         }
+      } else if (accessNodeProcessIdArr.length === 1) {
+        // 如果画布上仅有一个所属agent，自动设置为任务的agent
+        this.$set(this.dataflow, 'accessNodeType', 'MANUALLY_SPECIFIED_BY_THE_USER')
+        this.$set(this.dataflow, 'accessNodeProcessId', accessNodeProcessIdArr[0])
       }
 
       if (someErrorMsg) return someErrorMsg
