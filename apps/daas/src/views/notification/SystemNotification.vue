@@ -52,11 +52,11 @@
           <div class="list-item-desc">
             <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
             <span>{{ systemMap[item.system] }}</span>
-            <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate">
-              <span class="link-primary">
-                {{ `${item.serverName} , ` }}
-              </span>
-            </router-link>
+            <!-- <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate"> -->
+            <span class="link-primary">
+              {{ `${item.serverName} , ` }}
+            </span>
+            <!-- </router-link> -->
             <span>
               {{
                 `${$t('notify_source_name')} : ${item.sourceName} , ${$t('notify_database_name')} : ${
