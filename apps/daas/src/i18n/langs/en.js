@@ -869,6 +869,7 @@ export default {
   dag_dialog_field_mapping_tittle_data_type: 'Modify the target table field type',
   dag_dialog_field_mapping_tittle_precision: 'Modify the length of the target field',
   dag_dialog_field_mapping_tittle_scale: 'Modify the precision of the target table',
+  dag_dialog_field_mapping_tittle_value: 'Modify the default value of the target table field',
   dag_dialog_field_mapping_error_tip: 'tip',
   dag_dialog_field_mapping_error_rollback_all: 'Are you sure you want to restore all to the default',
   dag_dialog_field_mapping_error_rollback: 'Are you sure you want to restore all to the default',

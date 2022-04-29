@@ -838,6 +838,7 @@ export default {
   dag_dialog_field_mapping_tittle_data_type: '修改目標表字段類型',
   dag_dialog_field_mapping_tittle_precision: '修改目標字段長度',
   dag_dialog_field_mapping_tittle_scale: '修改目標表精度',
+  dag_dialog_field_mapping_tittle_value: '修改目標表字段默認值',
   dag_dialog_field_mapping_error_tip: '提示',
   dag_dialog_field_mapping_error_rollback_all: '您確認要全部恢復默認嗎',
   dag_dialog_field_mapping_error_rollback: '您確認要全部恢復默認嗎',
