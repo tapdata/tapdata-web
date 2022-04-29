@@ -187,10 +187,10 @@
           </ElTableColumn>
           <ElTableColumn :label="$t('meta_table_default')" width="100">
             <template slot-scope="scope">
-             <div class="cursor-pointer" @click="edit(scope.row, 'default_value')">
-               <span class="field-mapping-table__default_value">{{ scope.row.t_default_value }}</span>
-               <i class="icon el-icon-edit-outline" ></i>
-             </div>
+              <div class="cursor-pointer" @click="edit(scope.row, 'default_value')">
+                <span class="field-mapping-table__default_value">{{ scope.row.t_default_value }}</span>
+                <i class="icon el-icon-edit-outline"></i>
+              </div>
             </template>
           </ElTableColumn>
           <ElTableColumn
@@ -440,7 +440,7 @@ export default {
         data_type: '',
         precision: '',
         scale: '',
-        default_value:''
+        default_value: ''
       },
       titleType: {
         field_name: this.$t('dag_dialog_field_mapping_tittle_field_name'),
@@ -1076,7 +1076,7 @@ export default {
         data_type: '',
         precision: '',
         scale: '',
-        default_value:''
+        default_value: ''
       }
     },
     //字段删除
@@ -1419,12 +1419,12 @@ export default {
     .color-darkorange {
       color: darkorange;
     }
-    .field-mapping-table__default_value{
+    .field-mapping-table__default_value {
       display: inline-block;
       max-width: 60px;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       line-height: 9px;
     }
   }

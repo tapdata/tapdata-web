@@ -89,6 +89,7 @@
             </template>
           </TableList>
           <el-pagination
+            style="margin-top: 10px"
             @current-change="getSyncTableData"
             :current-page.sync="currentPage"
             :page-sizes="[20, 50, 100]"
