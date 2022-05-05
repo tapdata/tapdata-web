@@ -195,7 +195,7 @@ export default {
           value: 0,
           list: [
             {
-              label: $t('task_sync_type_initial_sync'),
+              label: $t('task_initial_sync'),
               value: 0
             },
             {
@@ -203,7 +203,7 @@ export default {
               value: 0
             },
             {
-              label: $t('task_sync_type_initial_sync_cdc'),
+              label: $t('task_initial_sync_cdc'),
               value: 0
             }
           ]

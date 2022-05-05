@@ -7,7 +7,7 @@
       </div>
       <div class="migration-operation-right">
         <VButton type="primary" :loading="createLoading" @click="createTask"
-          ><span>{{ $t('task_Migration_chuangJianRenWu') }}</span></VButton
+          ><span>{{ $t('task_create_task') }}</span></VButton
         >
       </div>
     </div>
@@ -22,7 +22,7 @@
           <ElLink type="primary" @click="toDetails(scope.row)">{{ scope.row.name }}</ElLink>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('task_Migration_renWuLeiXing')" prop="typeText"></ElTableColumn>
+      <ElTableColumn :label="$t('task_Migration_renWuLeiXing')" prop="typeText" width="140"></ElTableColumn>
       <ElTableColumn :label="$t('task_Migration_suoShuAGE')" prop="belongAgent" min-width="200">
         <template slot-scope="scope">
           <ElLink v-if="scope.row.belongAgent" type="primary" @click="toAgent(scope.row)">{{
@@ -31,7 +31,7 @@
           <span v-else>-</span>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('task_type')" prop="syncTypeText" width="130"></ElTableColumn>
+      <ElTableColumn :label="$t('task_type')" prop="syncTypeText" width="140"></ElTableColumn>
       <ElTableColumn :label="$t('task_status')" width="120">
         <template slot-scope="scope">
           <div class="flex align-items-center">
@@ -121,11 +121,11 @@
             <ElDropdownMenu slot="dropdown" class="text-nowrap">
               <ElDropdownItem command="copy">{{ $t('button_copy') }}</ElDropdownItem>
               <ElDropdownItem command="resetAll" :disabled="!statusBtMap['reset'][scope.row.status]">
-                {{ $t('task_Migration_zhongZhi') }}
+                {{ $t('button_reset') }}
               </ElDropdownItem>
               <ElDropdownItem command="del" :disabled="!statusBtMap['delete'][scope.row.status]">
                 <span :class="{ 'color-danger': statusBtMap['delete'][scope.row.status] }">{{
-                  $t('connection_List_shanChu')
+                  $t('button_delete')
                 }}</span>
               </ElDropdownItem>
             </ElDropdownMenu>
@@ -136,7 +136,7 @@
         <VIcon size="120">no-data-color</VIcon>
         <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
           <span>{{ $t('gl_no_data') }}</span>
-          <ElLink type="primary" class="fs-7" @click="createTask">{{ $t('task_Migration_chuangJianRenWu') }}</ElLink>
+          <ElLink type="primary" class="fs-7" @click="createTask">{{ $t('task_create_task') }}</ElLink>
         </div>
       </div>
       <div v-else class="migration-table__empty" slot="empty">
@@ -285,7 +285,7 @@ export default {
       },
       syncTypeMap: {
         initial_sync: this.$t('task_initial_sync'),
-        cdc: this.$t('task_cdc'),
+        cdc: this.$t('task_sync_type_cdc'),
         'initial_sync+cdc': this.$t('task_initial_sync_cdc')
       },
       agentOptions: [],

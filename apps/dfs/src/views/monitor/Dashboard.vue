@@ -339,9 +339,9 @@ export default {
     taskType() {
       let sync_type = this.task.setting?.sync_type
       let map = {
-        initial_sync: this.$t('task_sync_type_initial_sync'),
+        initial_sync: this.$t('task_initial_sync'),
         cdc: this.$t('task_sync_type_cdc'),
-        'initial_sync+cdc': this.$t('task_sync_type_initial_sync_cdc')
+        'initial_sync+cdc': this.$t('task_initial_sync_cdc')
       }
       return {
         label: map[sync_type],
