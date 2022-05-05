@@ -18,7 +18,8 @@ $color: (
   warning: #ff7d00,
   info: #75849b,
   linfo: #e9edf2,
-  disable: #c9cdd4
+  disable: #c9cdd4,
+  white: #fff
 );
 
 $fontColor: (
@@ -30,14 +31,15 @@ $fontColor: (
 );
 
 $bgColor: (
-  disable: #f5f5f5,
+  disable: #f7f8fa,
   active: #ecf5ff,
-  hover: #f5f8ff,
-  main: #fafafa,
+  hover: #e5e6eb,
+  main: #F2F3F5,
   form: rgba(239, 241, 244, 0.2),
   stopping: #c39700,
   complete: #008b58,
-  common: #F2F3F5
+  special: #c9cdd4,
+  white: #fff
 );
 
 $borderColor: (

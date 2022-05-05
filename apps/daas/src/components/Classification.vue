@@ -474,7 +474,7 @@ export default {
   user-select: none;
   box-sizing: border-box;
   border-top: none;
-  background: #fff;
+  background: map-get($bgColor, white);
   border-radius: 3px;
   // overflow: hidden;
   // box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);
@@ -498,6 +498,7 @@ export default {
   .toggle {
     margin-top: 26px;
     color: map-get($color, lprimary);
+    z-index: 2;
   }
   &.expand {
     height: 100%;
@@ -542,7 +543,7 @@ export default {
         border-radius: 3px;
         cursor: pointer;
         &:hover {
-          color: #409eff;
+          color: map-get($color, primary);
         }
       }
     }
@@ -626,7 +627,7 @@ export default {
       margin-right: 5px;
       font-size: 12px;
       // color: #409EFF;
-      color: #658ffe;
+      color: map-get($color, lprimary);
     }
     .table-label {
       flex: 1;

@@ -61,7 +61,7 @@ export default {
     margin: 14px 0 14px;
   }
   pre {
-    background-color: #eee;
+    background-color: map-get($bgColor, hover);
     margin-bottom: 8px;
     margin-top: 8px;
     margin: 12px 0 12px;
@@ -70,14 +70,14 @@ export default {
     margin-bottom: 8px;
     margin-top: 8px;
     margin: 14px 0 14px;
-    background-color: #eee;
+    background-color: map-get($bgColor, hover);
     padding: 16px 16px;
   }
   tr {
-    background-color: #f5f5f5;
+    background-color: map-get($bgColor, main);
   }
   code {
-    background-color: #eee;
+    background-color: map-get($bgColor, hover);
   }
   ul,
   ol,
@@ -85,12 +85,12 @@ export default {
     list-style: unset;
     font-size: 12px;
     line-height: 20px;
-    color: map-get($fontColor, light);
+    color: map-get($fontColor, main);
     margin-top: 0px;
     margin: 8px 0;
   }
   blockquote {
-    border-color: #409eff;
+    border-color: map-get($color, primary);
   }
   table {
     display: table;
@@ -99,11 +99,11 @@ export default {
     margin-bottom: 20px;
   }
 }
-.container-header {
-  padding: 15px 20px;
-  background: #fff;
-  font-size: 16px;
-  border-bottom: 1px solid #dedee4;
-  box-shadow: 0px 0px 4px 0px rgb(0 0 0 / 10%);
-}
+// .container-header {
+//   padding: 15px 20px;
+//   background: map-get($bgColor, white);
+//   font-size: 16px;
+//   border-bottom: 1px solid #dedee4;
+//   box-shadow: 0px 0px 4px 0px rgb(0 0 0 / 10%);
+// }
 </style>

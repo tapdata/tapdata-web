@@ -302,7 +302,17 @@ export default {
                     label: this.$t('task_setting_onebyone'), //逐条
                     value: true
                   }
-                ]
+                ],
+
+                'x-reactions': {
+                  target: 'increaseReadSize',
+                  fulfill: {
+                    state: {
+                      visible: '{{!$self.value}}'
+                      // display: '{{console.log($deps[0]),$deps[0] == false ? "visible" : "hidden"}}'
+                    }
+                  }
+                }
               },
               increaseReadSize: {
                 title: this.$t('task_setting_cdc_fetch_size'), //增量批次读取条数
@@ -313,15 +323,16 @@ export default {
                   min: 1,
                   max: 1000
                 },
-                default: 1,
-                'x-reactions': {
-                  dependencies: ['increOperationMode'],
-                  fulfill: {
-                    state: {
-                      display: '{{$deps[0] === false ? "visible" : "hidden"}}'
-                    }
-                  }
-                }
+                default: 1
+                // 'x-reactions': {
+                //   dependencies: ['increOperationMode'],
+                //   fulfill: {
+                //     state: {
+                //       visible: '{{!$deps[0]}}'
+                //       // display: '{{console.log($deps[0]),$deps[0] == false ? "visible" : "hidden"}}'
+                //     }
+                //   }
+                // }
               },
               increment: {
                 title: this.$t('task_setting_automatic_index'), //自动创建索引
