@@ -1207,7 +1207,6 @@ export default {
   operation_log_List_xiuGaiLeMiMa: '修改了密碼',
   operation_log_List_xiuGaiQiYeXin: '修改企業資訊',
   operation_log_List_xiuGaiLeQiYe: '修改了企業資訊',
-  operation_log_List_yongHuMing: '用戶名',
   operation_log_List_caoZuoShiJian: '操作時間',
   operation_log_List_caoZuoDuiXiang: '操作對象',
   operation_log_List_caoZuoLeiXing: '操作類型',

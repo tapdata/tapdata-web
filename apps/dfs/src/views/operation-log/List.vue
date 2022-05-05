@@ -238,7 +238,7 @@ export default {
       ],
       columns: [
         {
-          label: i18n.t('operation_log_List_yongHuMing'),
+          label: i18n.t('operation_log_user_name'),
           prop: 'username',
           minWidth: 160
         },

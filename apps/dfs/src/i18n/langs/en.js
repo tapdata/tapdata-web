@@ -1297,7 +1297,6 @@ export default {
   operation_log_List_xiuGaiLeMiMa: 'Changed password',
   operation_log_List_xiuGaiQiYeXin: 'Modify enterprise information',
   operation_log_List_xiuGaiLeQiYe: 'Modified enterprise information',
-  operation_log_List_yongHuMing: 'user name',
   operation_log_List_caoZuoShiJian: 'Operation time',
   operation_log_List_caoZuoDuiXiang: 'Operation object',
   operation_log_List_caoZuoLeiXing: 'Operation type',

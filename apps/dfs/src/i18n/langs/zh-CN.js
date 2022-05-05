@@ -1245,7 +1245,6 @@ export default {
   operation_log_List_xiuGaiLeMiMa: '修改了密码',
   operation_log_List_xiuGaiQiYeXin: '修改企业信息',
   operation_log_List_xiuGaiLeQiYe: '修改了企业信息',
-  operation_log_List_yongHuMing: '用户名',
   operation_log_List_caoZuoShiJian: '操作时间',
   operation_log_List_caoZuoDuiXiang: '操作对象',
   operation_log_List_caoZuoLeiXing: '操作类型',
