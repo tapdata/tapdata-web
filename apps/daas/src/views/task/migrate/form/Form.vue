@@ -469,12 +469,24 @@ export default {
     },
 
     handleError(error) {
-      if (error?.data?.message) {
+      if (error?.data?.code === 'Task.ListWarnMessage') {
+        if (error.data.data) {
+          const keys = Object.keys(error.data.data)
+          if (keys.length) {
+            const msg = error.data.data[keys[0]][0]?.msg
+            if (msg) {
+              this.$message.error(msg)
+              return
+            }
+          }
+        }
+        this.$message.error(`${this.$t('dag_save_fail')}`)
+      } else if (error?.data?.message) {
         this.$message.error(error.data.message)
       } else {
         // eslint-disable-next-line no-console
         console.error(error)
-        this.$message.error('出错了')
+        this.$message.error(`${this.$t('dag_save_fail')}`)
       }
     },
     createTask() {
