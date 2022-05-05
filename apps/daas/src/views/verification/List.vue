@@ -97,7 +97,7 @@
         sortable="custom"
         width="140"
       ></el-table-column>
-      <el-table-column :label="$t('dataVerification.operation')" width="320" fixed="right">
+      <el-table-column :label="$t('dataVerification.operation')" width="360" fixed="right">
         <template slot-scope="scope">
           <ElLink
             v-readonlybtn="'verify_job_edition'"
