@@ -149,10 +149,26 @@ export default {
       list: list,
       data: [],
       searchParams: {
+        status: '',
         key: '',
         value: ''
       },
       filterItems: [
+        {
+          label: i18n.t('agent_status'),
+          key: 'status',
+          type: 'select-inner',
+          items: [
+            {
+              label: 'modify',
+              value: 'modify'
+            },
+            {
+              label: 'no-modify',
+              value: 'no-modify'
+            }
+          ]
+        },
         {
           placeholder: 'key',
           key: 'key',
@@ -189,8 +205,15 @@ export default {
     search(debounce) {
       const { delayTrigger } = this.$util
       delayTrigger(() => {
-        let { key, value } = this.searchParams
+        let { status, key, value } = this.searchParams
         let data = this.list
+        if (status) {
+          if (status === 'modify') {
+            data = this.list.filter(t => t['zh-TW-modify'] || t['en-modify'])
+          } else if (status === 'no-modify') {
+            data = this.list.filter(t => !t['zh-TW-modify'] && !t['en-modify'])
+          }
+        }
         if (key) {
           data = this.list.filter(t => t.key.toLowerCase().includes(key.trim().toLowerCase() || ''))
         }
