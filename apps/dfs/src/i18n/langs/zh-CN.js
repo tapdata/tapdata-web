@@ -33,6 +33,7 @@ export default {
   button_save: '确 定',
   button_upload: '上传',
   button_export: '导出',
+  button_test_connection: '连接测试',
 
   // 国际化
   lang_zh_cn: '中文',
@@ -1174,9 +1175,6 @@ export default {
   filter_bar_DatetimeRange_kaiShiShiJian: '开始时间',
   filter_bar_DatetimeRange_jieShuShiJian: '结束时间',
   filter_bar_PopInput_qingShuRu: '请输入',
-  components_InlineInput_baoCun: '保存',
-  components_InlineInput_quXiao: '取消',
-  components_InlineInput_bianJi: '编辑',
   components_InlineInput_ziFuChangDuXian: '字符长度限制{val1}-{val2}个字符',
   components_RequestErrorMessage_yiFuZhi: '已复制',
   components_SelectList_meiYouGengDuoShu: '没有更多数据',
@@ -1203,10 +1201,7 @@ export default {
   connection_Form_mingChengGuiZeZhong: '名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格',
   connection_Form_mingChengYiCunZai: '名称已存在',
   connection_List_lianJieMing: '连接名',
-  connection_List_lianJieCeShi: '连接测试',
-  connection_List_fuZhi: '复制',
   connection_List_shanChu: '删除',
-  connection_List_chuangJianLianJie: '创建连接',
   connection_List_quanBuZhuangTai: '全部状态',
   connection_List_shuJuKuLeiXing: '数据库类型',
   connection_List_anLianJieMingSou: '按连接名搜索',

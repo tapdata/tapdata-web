@@ -67,18 +67,18 @@
           <template slot-scope="scope">
             <div class="operate-columns">
               <ElButton size="mini" type="text" @click="testConnection(scope.row)">{{
-                $t('connection_List_lianJieCeShi')
+                $t('button_test_connection')
               }}</ElButton>
               <ElDivider direction="vertical"></ElDivider>
               <ElButton size="mini" type="text" :disabled="isCloud(scope.row)" @click="edit(scope.row)">{{
-                $t('components_InlineInput_bianJi')
+                $t('button_edit')
               }}</ElButton>
               <ElDivider direction="vertical"></ElDivider>
               <ElButton size="mini" type="text" :disabled="isCloud(scope.row)" @click="copy(scope.row)">{{
-                $t('connection_List_fuZhi')
+                $t('button_copy')
               }}</ElButton>
               <ElDivider direction="vertical"></ElDivider>
-              <ElButton size="mini" type="text" @click="del(scope.row)">{{ $t('connection_List_shanChu') }}</ElButton>
+              <ElButton size="mini" type="text" @click="del(scope.row)">{{ $t('button_delete') }}</ElButton>
             </div>
           </template>
         </ElTableColumn>
@@ -86,7 +86,7 @@
           <VIcon size="120">no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('gl_no_data') }}</span>
-            <ElLink type="primary" class="fs-7" @click="create">{{ $t('connection_List_chuangJianLianJie') }}</ElLink>
+            <ElLink type="primary" class="fs-7" @click="create">{{ $t('connection_form_creat_connection') }}</ElLink>
           </div>
         </div>
         <div v-else class="connection-table__empty" slot="empty">
@@ -109,7 +109,6 @@
         @current-change="fetch"
       >
       </ElPagination>
-      <!-- {{$t('connection_List_lianJieCeShi')}} -->
       <ConnectionTest ref="test"></ConnectionTest>
       <Preview ref="preview" @close="fetch()" @reload-schema="fetch()"></Preview>
     </div>

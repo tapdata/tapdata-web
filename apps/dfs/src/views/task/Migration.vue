@@ -119,7 +119,7 @@
               <i class="el-icon-more"></i>
             </ElButton>
             <ElDropdownMenu slot="dropdown" class="text-nowrap">
-              <ElDropdownItem command="copy">{{ $t('connection_List_fuZhi') }}</ElDropdownItem>
+              <ElDropdownItem command="copy">{{ $t('button_copy') }}</ElDropdownItem>
               <ElDropdownItem command="resetAll" :disabled="!statusBtMap['reset'][scope.row.status]">
                 {{ $t('task_Migration_zhongZhi') }}
               </ElDropdownItem>
