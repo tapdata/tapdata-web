@@ -46,7 +46,7 @@
       <ElTableColumn :label="$t('function_describe_label')" prop="describe"> </ElTableColumn>
       <ElTableColumn :label="$t('function_last_update_label')" prop="lastUpdatedFmt"> </ElTableColumn>
 
-      <ElTableColumn width="150" :label="$t('column_operation')">
+      <ElTableColumn width="160" :label="$t('column_operation')">
         <template #default="{ row }">
           <ElButton
             size="mini"
