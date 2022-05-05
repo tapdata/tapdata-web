@@ -1,14 +1,14 @@
-## **连接配置帮助**
+## **Connection configuration help**
 
-### **1. 准备工作**
-- **请使用超级管理员权限**
-- **请预先创建好应用包、应用及表单**
+### **1. Preparations**
+- **Please use super administrator privileges**
+- **Please pre-create the application package, application and form**
 
-### **2. 获取配置信息**
-- 用户ID，从通讯录处获得用户ID
-- accessToken：请进入【轻商城】-【插件中心】-【OPENAPI】生成accessToken
+### **2. Get configuration information**
+- User ID, get the user ID from the address book
+- accessToken: Please enter [Light Mall]-[Plugin Center]-[OPENAPI] to generate accessToken
 
-### **3. 性能限制**
-公有云OpenApi调用限制（专有轻流不受限制）
-- 默认2万次/天
-- 对并发量有限制  QPS限制为5次/秒
+### **3. Performance Limits**
+Public cloud OpenApi call limit (proprietary light stream is not limited)
+- Default 20,000 times/day
+- There is a limit on the amount of concurrency. QPS is limited to 5 times per second

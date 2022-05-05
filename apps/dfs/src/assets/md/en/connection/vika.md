@@ -1,20 +1,20 @@
-## **连接配置帮助**
+## **Connection configuration help**
 
-### **1. 维格表 限制**
-发送API请求时，你需要注意一下两种限制：频率限制和用量限制
+### **1. Vig table Restrictions**
+When sending API requests, you need to be aware of two limitations: frequency limitations and usage limitations
 
-请遵循以下限制以确保在 Tapdata 中成功添加和使用维格表。
+Please follow the restrictions below to ensure successful addition and use of wiggle tables in Tapdata.
 
-### **1.1 频率限制**
-同一个用户对同一张表的API请求频率上线为 5 次/秒
+### **1.1 Frequency Limit**
+The frequency of API requests from the same user to the same table is 5 times/second
 
-请求频率超过限制时，会提示错误操作太频繁（错误状态码 429 ）
+When the request frequency exceeds the limit, it will prompt that the error operation is too frequent (error status code 429 )
 
-### **1.2 用量限制**
-用量限制包含两种：一是API用量的限制；二是空间站资源用量的限制
+### **1.2 Usage Limit**
+There are two types of usage restrictions: one is API usage restrictions; the other is space station resource usage restrictions
 
-青铜级和白银级空间站每月可免费调用 10000 次API，累计用量每月账单日清零
+Bronze-level and silver-level space stations can call the API 10,000 times for free each month, and the accumulated usage is cleared on the monthly billing date
 
-公测阶段，你可以创建做多 1000 张维格表。单个维格表做多支持创建 50000 行记录、200个字段、30个视图
+During the beta phase, you can create a long 1000 Wiggles table. A single dimensional table to do more supports the creation of 50,000 rows of records, 200 fields, and 30 views
 
-单个空间站上传附件的容量上限为 1 GB
+Attachments can be uploaded up to 1 GB on a single space station
