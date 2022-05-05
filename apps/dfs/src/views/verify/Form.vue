@@ -452,7 +452,8 @@ export default {
   },
   created() {
     this.getFlowOptions()
-    this.htmlMD = require(`./functionInfo.md`)
+    let locale = this.$i18n.locale || 'zh-CN'
+    this.htmlMD = require(`@/assets/md/${locale}/verify/functionInfo.md`)
   },
   methods: {
     //获取dataflow数据
