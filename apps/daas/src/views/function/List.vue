@@ -48,17 +48,17 @@
 
       <ElTableColumn width="160" :label="$t('column_operation')">
         <template #default="{ row }">
-          <ElButton
+          <ElLink
             size="mini"
-            type="text"
+            type="primary"
             @click="$router.push({ name: 'FunctionDetails', params: { id: row.id } })"
-            >{{ $t('button_check') }}</ElButton
+            >{{ $t('button_check') }}</ElLink
           >
           <template v-if="row.type !== 'system'">
-            <ElButton size="mini" type="text" @click="toEdit(row)">{{ $t('button_edit') }}</ElButton>
-            <ElButton size="mini" type="text" style="color: #f56c6c" @click="remove(row)">{{
-              $t('button.delete')
-            }}</ElButton>
+            <ElDivider direction="vertical"></ElDivider>
+            <ElLink type="primary" size="mini" @click="toEdit(row)">{{ $t('button_edit') }}</ElLink>
+            <ElDivider direction="vertical"></ElDivider>
+            <ElLink type="primary" size="mini" @click="remove(row)">{{ $t('button.delete') }}</ElLink>
           </template>
         </template>
       </ElTableColumn>
