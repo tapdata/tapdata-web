@@ -142,7 +142,7 @@
             <span>{{ $moment(scope.row.createAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
           </template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('agent_operate')" width="200" fixed="right">
+        <ElTableColumn :label="$t('list_operation')" width="200" fixed="right">
           <template slot-scope="scope">
             <ElButton size="mini" type="text" :disabled="deployBtnDisabled(scope.row)" @click="toDeploy(scope.row)">{{
               $t('agent_button_deploy')

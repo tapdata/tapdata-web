@@ -125,7 +125,7 @@ export default {
       })
     }
     columns.push({
-      label: i18n.t('connection_list_operate'),
+      label: i18n.t('list_operation'),
       prop: 'operation',
       slotName: 'operation'
     })

@@ -59,7 +59,7 @@
       <ElTableColumn :label="$t('task_next_run_time')" prop="nextScheduledTime" sortable="custom" width="150">
         <template slot-scope="scope">{{ scope.row.nextScheduledTimeFmt }}</template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('task_operate')" width="280">
+      <ElTableColumn :label="$t('list_operation')" width="280">
         <template slot-scope="scope">
           <ElTooltip
             v-if="!['running', 'stopping'].includes(scope.row.status)"

@@ -33,6 +33,7 @@ export default {
   button_save: '确 定',
   button_upload: '上传',
   button_export: '导出',
+  button_details: '详情',
   button_test_connection: '连接测试',
 
   // 国际化
@@ -43,6 +44,9 @@ export default {
   // 确认框
   confirm_error_tip: '错误提示',
   confirm_reload_label: '刷新页面',
+
+  // 列表
+  list_operation: '操作',
 
   /** 模块 */
   // 工作台
@@ -186,7 +190,6 @@ export default {
   agent_create_time: '创建时间',
   agent_version: '版本',
   agent_status: '状态',
-  agent_operate: '操作',
   agent_status_all: '全部状态',
   agent_status_creating: '待部署',
   agent_status_running: '运行中',
@@ -329,7 +332,6 @@ export default {
   connection_list_target: '目标',
   connection_list_source_and_target: '源头和目标',
   connection_list_change_time: '修改时间',
-  connection_list_operate: '操作',
   connection_list_test: '连接测试',
   connection_list_edit: '编辑',
   connection_list_copy: '复制',
@@ -463,7 +465,6 @@ export default {
   task_type: '任务类型',
   task_start_time: '启动时间',
   task_next_run_time: '下次运行时间',
-  task_operate: '操作',
   task_config_not_completed: '任务配置未完成，无法启动',
   task_start_task: '启动任务',
   task_stop_task: '停止任务',
@@ -720,7 +721,6 @@ export default {
   task_mapping_table_target_type: '目标表类型',
   task_mapping_table_target_length: '目标表长度',
   task_mapping_table_target_accuracy: '目标表精度',
-  task_mapping_table_operate: '操作',
   task_mapping_table_length_range: '长度范围',
   task_mapping_table_accuracy_range: '精度范围',
   task_mapping_table_reduction: '还原',
@@ -918,7 +918,6 @@ export default {
   verify_button_create: '新建',
   verify_see_details: '查看详情',
   verify_checking: '校验中...',
-  verify_operation: '操作',
   verify_operation_verify_again: '重新校验',
   verify_operation_verify_again_info:
     '可以选择校验结果不一致的表进行重新校验，不选择时默认对当前所有不一致的表进行校验。',
@@ -1095,9 +1094,6 @@ export default {
   dataVerification_verifytype: '校验类型',
   dataVerification_verifyResult: '校验结果',
   dataVerification_verifyStatus: '校验状态',
-  dataFlow_operate: '操作',
-  button_details: '详情',
-  dataVerification_operation: '操作',
   dataVerification_waiting: '待校验',
   dataVerification_scheduling: '校验启动中',
   dataVerification_error: 'Error',
@@ -1165,7 +1161,6 @@ export default {
   field_mapping_field_mapping_dialog_muBiaoZiDuanLei: ' 目标字段类型 ',
   field_mapping_field_mapping_dialog_changDu: ' 长度 ',
   field_mapping_field_mapping_dialog_jingDu: ' 精度 ',
-  field_mapping_field_mapping_dialog_caoZuo: ' 操作 ',
   field_mapping_field_mapping_dialog_tianJia: '添加',
   field_mapping_field_mapping_dialog_qingShuRuBiaoMing: '请输入表名',
   field_mapping_main_jieKouQingQiuShi: '接口请求失败',

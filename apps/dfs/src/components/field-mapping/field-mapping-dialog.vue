@@ -198,7 +198,7 @@
               </div>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('task_mapping_table_operate')" width="80" v-if="!hiddenFieldProcess && !readOnly">
+          <ElTableColumn :label="$t('list_operation')" width="80" v-if="!hiddenFieldProcess && !readOnly">
             <template slot-scope="scope">
               <div v-if="scope.row.notDataTypeSupport">
                 <span>{{ $t('field_mapping_field_mapping_dialog_buZhiChi') }}</span>
@@ -486,7 +486,7 @@
           <ElCol :span="6">{{ $t('field_mapping_field_mapping_dialog_muBiaoZiDuanLei') }}</ElCol>
           <ElCol :span="4">{{ $t('field_mapping_field_mapping_dialog_changDu') }}</ElCol>
           <ElCol :span="4">{{ $t('field_mapping_field_mapping_dialog_jingDu') }}</ElCol>
-          <ElCol :span="3">{{ $t('field_mapping_field_mapping_dialog_caoZuo') }}</ElCol>
+          <ElCol :span="3">{{ $t('list_operation') }}</ElCol>
         </ElRow>
         <ElRow v-for="(item, index) in batchFieldTypeForm.list" :key="index" class="mt-4">
           <ElCol :span="7" class="flex">
