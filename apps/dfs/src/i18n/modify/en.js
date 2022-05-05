@@ -10,6 +10,7 @@ export default {
   task_initial_sync_cdc: 'INITIAL SYNC+ CDC',
   operation_log_migration_start: 'Start task1111',
   verify_configuration: 'Config',
+  verify_form_label_script: 'JS logic',
   dataVerification_verifyProgress: 'Verify Progress',
   dataVerification_verifyResult: 'Verify Progress',
   dataVerification_done: 'Verify finished',
