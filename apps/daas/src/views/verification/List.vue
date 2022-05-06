@@ -97,7 +97,7 @@
         sortable="custom"
         width="140"
       ></el-table-column>
-      <el-table-column :label="$t('dataVerification.operation')" width="320" fixed="right">
+      <el-table-column :label="$t('dataVerification.operation')" width="250" fixed="right">
         <template slot-scope="scope">
           <ElLink
             v-readonlybtn="'verify_job_edition'"
@@ -107,15 +107,11 @@
               ['running', 'scheduling'].includes(scope.row.status)
             "
             @click="startTask(scope.row.id)"
-            >{{ $t('dataVerification.executeVerifyTip') }}</ElLink
+            >{{ $t('verify_executeVerifyTip') }}</ElLink
           >
           <ElDivider direction="vertical"></ElDivider>
           <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">{{
-            $t('dataVerification.detailTip')
-          }}</ElLink>
-          <ElDivider direction="vertical"></ElDivider>
-          <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableHistory(scope.row.id)">{{
-            $t('dataVerification.historyTip')
+            $t('verify_detailTip')
           }}</ElLink>
           <ElDivider direction="vertical"></ElDivider>
           <ElLink
@@ -123,16 +119,25 @@
             type="primary"
             :disabled="$disabledByPermission('verify_job_edition_all_data', scope.row.user_id)"
             @click="goEdit(scope.row.id, scope.row.flowId)"
-            >{{ $t('dataVerification.configurationTip') }}</ElLink
+            >{{ $t('verify_configurationTip') }}</ElLink
           >
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink
-            v-readonlybtn="'verify_job_delete'"
-            type="primary"
-            :disabled="$disabledByPermission('verify_job_delete_all_data', scope.row.user_id)"
-            @click="remove(scope.row.name, scope.row.id)"
-            >{{ $t('dataVerification.deleteTip') }}</ElLink
-          >
+          <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, scope.row)">
+            <ElLink type="primary" class="rotate-90">
+              <i class="el-icon-more"></i>
+            </ElLink>
+            <ElDropdownMenu class="dataflow-table-more-dropdown-menu" slot="dropdown">
+              <ElDropdownItem command="history" :disabled="!scope.row.InspectResult"
+                >{{ $t('verify_historyTip') }}
+              </ElDropdownItem>
+              <ElDropdownItem
+                command="remove"
+                v-readonlybtn="'verify_job_delete'"
+                :disabled="$disabledByPermission('verify_job_delete_all_data', scope.row.user_id)"
+                >{{ $t('verify_deleteTip') }}</ElDropdownItem
+              >
+            </ElDropdownMenu>
+          </ElDropdown>
         </template>
       </el-table-column>
     </TablePage>
@@ -188,7 +193,8 @@ export default {
         { label: this.$t('verify_content_verify'), value: 'field' },
         { label: this.$t('verify_joint_verify'), value: 'jointField' }
       ],
-      multipleSelection: []
+      multipleSelection: [],
+      moreAuthority: this.$has('verify_job_delete_all_data')
     }
   },
   computed: {
@@ -313,6 +319,13 @@ export default {
           }
         })
     },
+    handleCommand(command, node) {
+      let ids = ''
+      if (node) {
+        ids = node.id
+      }
+      this[command](ids, node)
+    },
     toTableInfo(id) {
       let url = ''
       let route = this.$router.resolve({
@@ -324,7 +337,7 @@ export default {
       url = route.href
       window.open(url, '_blank')
     },
-    toTableHistory(id) {
+    history(id) {
       let url = ''
       let route = this.$router.resolve({
         name: 'dataVerifyHistory',
@@ -349,7 +362,8 @@ export default {
           this.table.fetch()
         })
     },
-    remove(name, id) {
+    remove(id, row) {
+      let name = row.name
       this.$confirm(`${this.$t('dataVerification.deleteMessage')} ${name}?`, this.$t('dataFlow.importantReminder'), {
         confirmButtonText: this.$t('classification.deleteNode'),
         cancelButtonText: this.$t('message.cancel'),

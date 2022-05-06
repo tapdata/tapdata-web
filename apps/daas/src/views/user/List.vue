@@ -120,7 +120,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="160">
+      <el-table-column :label="$t('column_operation')" width="210">
         <template slot-scope="scope">
           <div>
             <el-button

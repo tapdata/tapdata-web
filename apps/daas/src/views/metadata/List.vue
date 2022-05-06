@@ -77,7 +77,7 @@
           {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('metadata.details.opera')" width="150">
+      <el-table-column :label="$t('metadata.details.opera')" width="180">
         <template slot-scope="scope">
           <el-button
             v-readonlybtn="'data_catalog_edition'"

@@ -231,6 +231,7 @@ export class Table extends NodeType {
             properties: {
               sourceNodeConfig: {
                 type: 'void',
+                'x-component': 'FormContent', // 为properties组件增加根节点，避免vue-frag报错
                 'x-reactions': {
                   dependencies: ['$outputs'],
                   fulfill: {
@@ -400,6 +401,7 @@ export class Table extends NodeType {
               },
               targetNodeConfig: {
                 type: 'void',
+                'x-component': 'FormContent',
                 'x-reactions': {
                   dependencies: ['$inputs'],
                   fulfill: {

@@ -283,6 +283,12 @@ export default {
   verify_check_same: '校驗一致',
   verify_count_difference: 'Count不一致',
   verify_content_difference: '內容差異',
+  verify_executeVerifyTip: '执行',
+  verify_addVerifyTip: '新建校驗任務',
+  verify_historyTip: '历史',
+  verify_detailTip: '详情',
+  verify_configurationTip: '配置',
+  verify_deleteTip: 'Delete',
 
   verify_details_title: '任務校驗詳情',
   verify_history_title: '任務校驗歷史',
