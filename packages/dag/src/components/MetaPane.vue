@@ -108,8 +108,9 @@ export default {
 
       try {
         let data = await metadataApi.nodeSchema(this.activeNode.id)
-        data = data?.[0]
-        data.fields.sort((a, b) => {
+        let fields = data?.[0]?.fields || []
+        fields = fields.filter(f => !f.is_deleted)
+        fields.sort((a, b) => {
           const aIsPrimaryKey = a.primary_key_position > 0
           const bIsPrimaryKey = b.primary_key_position > 0
 
@@ -119,7 +120,7 @@ export default {
             return a.field_name.localeCompare(b.field_name)
           }
         })
-        this.tableData = data.fields
+        this.tableData = fields
       } catch (e) {
         this.tableData = []
       }
