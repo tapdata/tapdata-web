@@ -140,7 +140,7 @@ export default {
           console.log('🤖️ node.$outputs', this.node.name, v)
           if ($outputs && $outputs.value.join(',') !== v.join(',')) {
             // eslint-disable-next-line no-console
-            console.log('👷 更新$outputs', $outputs.value)
+            console.log('👷 更新$outputs', $outputs.value, v)
             this.form.setValuesIn('$outputs', [...v])
           }
         })

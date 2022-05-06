@@ -14,10 +14,10 @@ const removePending = config => {
   pending.splice(index, 1)
 }
 const errorCallback = error => {
-  if (error && error.response && error.response.status === 401) {
+  if (error?.response?.status === 401) {
     location.href = location.origin + location.pathname.substring(0, location.pathname.lastIndexOf('/')) + '/login'
     return
-  } else if ((error && error.response && error.response.status === 502) || error.response.status === 400) {
+  } else if (error?.response?.status === 502 || error?.response?.status === 400) {
     return
   }
   let data = error?.response?.data
