@@ -131,8 +131,8 @@ export default {
   width: 240px;
 }
 .database {
-  font-size: 12px;
   height: 380px;
+  font-size: 12px;
   overflow: auto;
 }
 .database__list {
