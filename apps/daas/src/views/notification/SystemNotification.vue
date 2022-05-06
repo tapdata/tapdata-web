@@ -515,7 +515,7 @@ $unreadColor: #ee5353;
   }
   .list-item {
     position: relative;
-    background: #fff;
+    background-color: map-get($bgColor, white);
     border-bottom: 1px solid #f5f7fa;
     margin-right: 30px;
     .list-item-content {

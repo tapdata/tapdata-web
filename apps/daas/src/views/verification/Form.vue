@@ -386,7 +386,7 @@
   }
   .joint-table-setting {
     flex: 1;
-    background: #fff;
+    background-color: map-get($bgColor, white);
   }
   .setting-item {
     display: flex;
@@ -405,7 +405,7 @@
       margin: 0 10px;
       width: 20px;
       line-height: 32px;
-      color: rgba(0, 0, 0, 0.6);
+      color: map-get($fontColor, light);
       font-size: 16px;
       text-align: center;
     }
@@ -420,9 +420,9 @@
     }
     .item-filter-body {
       padding: 16px;
-      background: #3a3d4c;
+      background: map-get($fontColor, normal);
       border-radius: 2px;
-      color: #abb2bf;
+      color: map-get($fontColor, slight);
       .filter-example-label {
         margin-top: 8px;
         color: #bfd0ff;

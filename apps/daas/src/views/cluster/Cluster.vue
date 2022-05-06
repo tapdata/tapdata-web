@@ -943,7 +943,7 @@ export default {
     justify-content: center;
     color: map-get($color, primary);
     font-size: 16px;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
   }
   .edit-agent-form {
     .rest-btn {

@@ -581,7 +581,7 @@ export default {
   .box {
     padding: 10px 20px;
     margin-bottom: 10px;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     border-radius: 4px;
     box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
     h2 {
@@ -673,7 +673,7 @@ export default {
     height: calc(100% - 126px);
     overflow: hidden;
     overflow-y: auto;
-    background: #fff;
+    background-color: map-get($bgColor, white);
   }
   li {
     padding: 5px 10px;

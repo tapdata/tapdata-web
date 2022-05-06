@@ -75,7 +75,7 @@ export default {
     flex: 1;
     justify-content: center;
     align-items: center;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     .page-main-box {
       display: flex;
       flex-direction: column;

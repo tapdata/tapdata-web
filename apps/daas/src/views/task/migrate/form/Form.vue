@@ -714,7 +714,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #fff;
+    background-color: map-get($bgColor, white);
     border-bottom: 1px solid #dedee4;
     color: rgba(102, 102, 102, 100);
     font-size: 12px;
@@ -802,7 +802,7 @@ export default {
   }
   .create-task-main {
     padding: 24px 24px 0;
-    background: #fff;
+    background-color: map-get($bgColor, white);
     font-size: 14px;
     .body {
       overflow-y: auto;

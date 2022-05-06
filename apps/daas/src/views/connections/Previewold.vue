@@ -634,7 +634,7 @@ export default {
       height: 60px;
       justify-content: center;
       align-items: center;
-      background: #fff;
+      background-color: map-get($bgColor, white);
       //border: 1px solid #dedee4;
       border-radius: 3px;
       margin-left: 30px;

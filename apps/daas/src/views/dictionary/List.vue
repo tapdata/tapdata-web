@@ -506,7 +506,7 @@ export default {
       li.active {
         height: 29px;
         border-radius: 3px 3px 0px 0px;
-        background-color: #fff;
+        background-color: map-get($bgColor, white);
         border-right: 0;
         border-left: 0;
         // box-shadow: 1px -1px 3px 0px rgba(0, 0, 0, 0.15);

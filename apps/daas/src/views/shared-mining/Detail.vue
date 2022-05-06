@@ -497,7 +497,7 @@ export default {
     //   height: 300px;
     // }
     width: 100%;
-    background: #fff;
+    background-color: map-get($bgColor, white);
     border-radius: 4px;
     .share-detail-head-left {
       width: 260px;

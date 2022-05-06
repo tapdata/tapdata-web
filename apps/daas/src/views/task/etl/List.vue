@@ -1276,7 +1276,7 @@ export default {
       width: 20px;
       justify-content: center;
       align-items: flex-start;
-      background: #fff;
+      background-color: map-get($bgColor, white);
       //border: 1px solid #dedee4;
       border-radius: 3px;
       margin: 5px 0 0 0;
@@ -1410,7 +1410,7 @@ export default {
     border: 0;
     border-radius: 0;
     box-sizing: border-box;
-    background: #409eff;
+    background-: map-get($color, primary);
     transition: 0.1s;
     -webkit-appearance: none;
     -webkit-box-sizing: border-box;

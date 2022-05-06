@@ -1351,7 +1351,7 @@ export default {
 .field-mapping-data-type {
   margin-top: 10px;
   font-size: 12px;
-  color: #999;
+  color: map-get($fontColor, slight);
 }
 </style>
 <style scoped lang="scss">

@@ -248,7 +248,7 @@ $unreadColor: #ee5353;
         .label {
           display: inline-block;
           width: 30%;
-          color: #4e5969;
+          color: map-get($fontColor, light);
           font-weight: 500;
         }
         .label {

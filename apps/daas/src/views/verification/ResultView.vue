@@ -139,7 +139,7 @@ $margin: 10px;
     .error-band {
       background: #fdf6ec;
       border: 1px solid #f8e2c0;
-      color: #e6a23c;
+      color: map-get($color, warning);
       margin: 10px;
       line-height: 20px;
       max-height: 160px;
@@ -230,7 +230,7 @@ $margin: 10px;
     .inspect-result-box {
       overflow: auto;
       .red {
-        color: #ee5353;
+        color: map-get($color, danger);
       }
       .inspect-details {
         li {

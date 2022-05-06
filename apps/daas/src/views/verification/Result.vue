@@ -49,7 +49,7 @@
 .error-tips {
   background: #fdf6ec;
   border: 1px solid #f8e2c0;
-  color: #e6a23c;
+  color: map-get($color, warning);
   line-height: 20px;
   max-height: 160px;
   text-overflow: ellipsis;

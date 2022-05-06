@@ -376,7 +376,7 @@ export default {
       font-size: 12px;
       .list-item {
         position: relative;
-        background: #fff;
+        background: map-get($bgColor, white);
         border-bottom: 1px solid #dedee4;
         padding: 0 5px 5px 0;
         cursor: pointer;
@@ -419,7 +419,7 @@ export default {
         }
         .list-item-time {
           margin: 15px 0 0 17px;
-          color: #aaa;
+          color: map-get($fontColor, slight);
           font-size: 12px;
         }
       }
@@ -439,7 +439,7 @@ export default {
         }
         .item-time {
           margin-top: 5px;
-          color: #aaa;
+          color: map-get($fontColor, light);
           font-size: 12px;
         }
       }

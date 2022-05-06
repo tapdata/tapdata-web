@@ -162,7 +162,7 @@ export default {
       box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);
       .table-page-topbar {
         padding: 10px 10px 0 10px;
-        background-color: #fff;
+        background-color: map-get($bgColor, white);
       }
       .el-table {
         box-sizing: border-box;
@@ -170,7 +170,7 @@ export default {
       .table-page-pagination {
         margin-top: 0;
         padding: 5px 20px;
-        background-color: #fff;
+        background-color: map-get($bgColor, white);
         box-sizing: border-box;
       }
     }

@@ -34,7 +34,7 @@ export default {
         'ElOption',
         {
           props: { value: '0', disabled: true },
-          style: 'padding: 0 20px;background: #fff;cursor: default;'
+          style: 'padding: 0 20px;background-color: map-get($bgColor, white);cursor: default;'
         },
         [
           h(

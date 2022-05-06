@@ -112,7 +112,7 @@ export default {
   //   flex: 1;
   //   display: flex;
   //   flex-direction: column;
-  //   background: #fff;
+  //   background-color: map-get($bgColor, white);
   //   box-shadow: 0px 0px 3px 0px #cccccc;
   //   overflow: hidden;
   ::v-deep {

@@ -135,7 +135,7 @@
   }
   .content {
     padding: 0 16px 8px 16px;
-    background: #fff;
+    background-color: map-get($bgColor, white);
   }
 }
 </style>

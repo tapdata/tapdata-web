@@ -532,7 +532,7 @@ export default {
         align-items: center;
         color: map-get($fontColor, light);
         font-size: 16px;
-        // background: #fff;
+        // background-color: map-get($bgColor, white);
         // border: 1px solid #dedee4;
         height: 66%;
         // padding: 0 4px;
@@ -588,7 +588,7 @@ export default {
       // .iconfont {
       // 	color: #c0c4cc;
       // 	font-size: 12px;
-      // 	background: #fff;
+      // 	background-color: map-get($bgColor, white);
       // 	border: 1px solid #dedee4;
       // 	display: flex;
       // 	justify-content: center;
@@ -626,7 +626,7 @@ export default {
     .icon-folder {
       margin-right: 5px;
       font-size: 12px;
-      // color: #409EFF;
+      // color: map-get($color, primary);
       color: map-get($color, lprimary);
     }
     .table-label {
@@ -647,7 +647,7 @@ export default {
   .create {
     padding: 5px 10px;
     font-size: 12px;
-    // color: #409eff;
+    // color: map-get($color, primary);
     cursor: pointer;
   }
 }

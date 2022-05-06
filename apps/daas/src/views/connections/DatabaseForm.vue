@@ -810,7 +810,8 @@ export default {
       this.ecsList = this.ecsList || []
       if (!this.ecsList || this.ecsList.length === 0) return
       this.handleStrategy()
-    }
+    },
+    'model.accessNodeType'() {}
   },
   methods: {
     formChange(data) {
@@ -1769,13 +1770,14 @@ export default {
       this.model.url_info[parentIndex].parameterArray.splice(index, 1)
     },
     // 获取数据
-    async getCluster() {
+    getCluster() {
+      let self = this
       this.$api('cluster')
         .findAccessNodeInfo()
         .then(res => {
           let items = res.data || []
-          this.accessNodeList = items
-          this.model.accessNodeProcessId = items[0]?.processId
+          self.accessNodeList = items
+          self.model.accessNodeProcessId = items[0]?.processId
         })
     }
   }
@@ -1796,7 +1798,7 @@ export default {
     padding-left: 24px;
     border-radius: 4px;
     overflow: hidden;
-    background: #fff;
+    background-color: map-get($bgColor, white);
     .connection-from-main {
       display: flex;
       flex: 1;
@@ -1999,7 +2001,7 @@ export default {
       //       padding: 10px 20px 20px !important;
       //       margin-bottom: 12px;
       //       box-sizing: border-box;
-      //       background-color: #fff;
+      //       background-color: map-get($bgColor, white);
       //       border: 1px solid #dedee4;
       //       border-radius: 3px;
       //       .el-input--mini .el-input__inner {
@@ -2030,7 +2032,7 @@ export default {
       //   height: 52px;
       //   justify-content: center;
       //   align-items: center;
-      //   background: #fff;
+      //   background-color: map-get($bgColor, white);
       //   border-radius: 3px;
       //   margin-right: 10px;
       //   img {
@@ -2108,7 +2110,7 @@ export default {
     // margin: 10px auto;
     width: 100%;
     height: 62px;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     border-left: none;
     line-height: 62px;
     border-top: 1px solid #dedee4;

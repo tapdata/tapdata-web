@@ -1116,13 +1116,13 @@ export default {
     .dataflow-name {
       .tag {
         margin-left: 5px;
-        color: #999999;
+        color: map-get($fontColor, slight);
         background: #f5f5f5;
         border: 1px solid #dedee4;
       }
       .name {
         &:not(.has-children) {
-          // color: #409eff;
+          // color: map-get($color, primary);
           cursor: pointer;
           // text-decoration: underline;
         }
@@ -1143,9 +1143,9 @@ export default {
   }
 }
 .dataflow-table-more-dropdown-menu .btn-delete {
-  color: #f56c6c;
+  color: map-get($color, danger);
   &.is-disabled {
-    color: #bbb;
+    color: map-get($fontColor, slight);
   }
 }
 .task-drawer {
@@ -1173,7 +1173,7 @@ export default {
       width: 20px;
       justify-content: center;
       align-items: flex-start;
-      background: #fff;
+      background-color: map-get($bgColor, white);
       //border: 1px solid #dedee4;
       border-radius: 3px;
       margin: 5px 0 0 0;
@@ -1284,7 +1284,7 @@ export default {
     border: 0;
     border-radius: 0;
     box-sizing: border-box;
-    background: #409eff;
+    background: map-get($color, primary);
     transition: 0.1s;
     -webkit-appearance: none;
     -webkit-box-sizing: border-box;

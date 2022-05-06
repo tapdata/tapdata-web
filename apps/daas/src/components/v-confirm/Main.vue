@@ -5,7 +5,7 @@
         :class="['message-box position-relative', customClass, center && 'el-message-box--center']"
         :style="{ width: width }"
       >
-        <!-- <div class="message-box__header position-relative">
+        <div class="message-box__header position-relative" v-if="title">
           <div class="message-box__title flex align-items-center">
             <VIcon
               v-if="icon && haveTitleAndMessage"
@@ -26,15 +26,15 @@
           >
             <i class="el-message-box__close el-icon-close"></i>
           </button>
-        </div> -->
-        <div class="message-box__body">
+        </div>
+        <div :class="['message-box__body', { 'pt-3': !title }]">
           <div class="el-message-box__container">
             <div class="el-message-box__message flex" v-if="message !== ''">
               <VIcon
                 v-if="icon"
                 :size="iconSize"
                 :color="iconColor"
-                :class="['v-icon', 'flex-shrink-0', { invisible: !onlyMessage }, iconClass]"
+                :class="['v-icon', 'flex-shrink-0', 'pt-1', { invisible: !onlyMessage }, iconClass]"
                 >{{ icon }}</VIcon
               >
               <slot>
@@ -99,7 +99,7 @@ export default {
       hideIcon: false,
       icon: '', // 图标
       iconColor: '',
-      iconSize: 25,
+      iconSize: 18,
       title: '', // 标题
       message: '', // 内容
       type: '', // 常用的几种提示类型： success、info、warning、error。不然需要自己传递 icon的属性
@@ -241,7 +241,7 @@ export default {
   cursor: pointer;
 }
 .message-box__body {
-  margin: 24px 0;
+  margin: 10px 0 24px;
   padding: 0 24px;
   flex: 1;
   overflow: auto;

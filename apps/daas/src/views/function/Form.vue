@@ -229,7 +229,7 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background-color: map-get($bgColor, white);
   box-shadow: 0px 0px 3px 0px #cccccc;
   overflow: hidden;
 
@@ -254,7 +254,7 @@ export default {
   }
 }
 .footer {
-  background: #fff;
+  background-color: map-get($bgColor, white);
   border-top: 1px solid #f0f0f0;
   box-shadow: 0px -1px 2px 0px #f6f6f6;
   .btn {

@@ -195,7 +195,7 @@ export default {
   overflow: auto !important;
 }
 .card-box {
-  background: #fff;
+  background-color: map-get($bgColor, white);
   border-radius: 4px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.02);
   ::v-deep {

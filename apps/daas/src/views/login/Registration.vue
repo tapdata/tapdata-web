@@ -336,10 +336,10 @@ export default {
         padding-top: 20px;
         font-size: 12px;
         text-align: right;
-        color: map-get($fontColor, light);
+        color: map-get($color, primary);
         user-select: none;
         span {
-          color: #409eff;
+          color: map-get($color, dark);
           cursor: pointer;
         }
       }
