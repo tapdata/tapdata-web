@@ -154,7 +154,7 @@
               :disabled="stopBtnDisabled(scope.row)"
               :loading="scope.row.btnLoading.stop"
               @click="handleStop(scope.row)"
-              >{{ $t('agent_button_stop') }}</ElButton
+              >{{ $t('button_stop') }}</ElButton
             >
             <ElDivider direction="vertical"></ElDivider>
             <ElButton
@@ -163,7 +163,7 @@
               :loading="scope.row.btnLoading.delete"
               :disabled="delBtnDisabled(scope.row)"
               @click="handleDel(scope.row)"
-              >{{ $t('agent_button_delete') }}</ElButton
+              >{{ $t('button_delete') }}</ElButton
             >
           </template>
         </ElTableColumn>
@@ -171,7 +171,9 @@
           <VIcon size="120">no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
             <span>{{ $t('agent_list_empty_desc1') }}</span>
-            <span class="color-primary cursor-pointer fs-7 ml-1" @click="createAgent">{{ $t('agent_button_create') }}</span>
+            <span class="color-primary cursor-pointer fs-7 ml-1" @click="createAgent">{{
+              $t('agent_button_create')
+            }}</span>
             <span>{{ $t('agent_list_empty_desc2') }}</span>
           </div>
         </div>
@@ -198,13 +200,13 @@
       <ElDialog :visible.sync="upgradeDialog" width="450px" top="30vh" center>
         <div class="dialog-content">{{ $t('agent_dialog_upgrade_title') }}</div>
         <div class="dialog-btn flex justify-content-evenly mt-6">
-          <div class="text-center" v-if="showAutoUpgrade">
+          <div class="text-center w-50" v-if="showAutoUpgrade">
             <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
               $t('agent_button_auto_upgrade')
             }}</ElButton>
-            <div v-if="disabledAutoUpgradeBtn" class="mt-1 fs-8">({{ $t('agent_tip_auto_upgrade') }})</div>
+            <div v-if="disabledAutoUpgradeBtn" class="mt-1 fs-8 text-break">({{ $t('agent_tip_auto_upgrade') }})</div>
           </div>
-          <div>
+          <div class="text-center w-50">
             <ElButton type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</ElButton>
           </div>
         </div>
@@ -252,7 +254,7 @@
             @click="handleStop(selectedRow)"
           >
             <VIcon size="12">stop</VIcon>
-            <span class="ml-1">{{ $t('agent_button_stop') }}</span>
+            <span class="ml-1">{{ $t('button_stop') }}</span>
           </VButton>
           <VButton
             :loading="selectedRow.btnLoading.delete"
@@ -261,7 +263,7 @@
             @click="handleDel(selectedRow)"
           >
             <VIcon size="12">delete</VIcon>
-            <span class="ml-1">{{ $t('agent_button_delete') }}</span>
+            <span class="ml-1">{{ $t('button_delete') }}</span>
           </VButton>
         </div>
       </Details>

@@ -14,5 +14,9 @@ export default {
   dataVerification_verifyProgress: 'Verify Progress',
   dataVerification_verifyResult: 'Verify Progress',
   dataVerification_done: 'Verify finished',
-  dataVerification_sourceRows: 'Source Table Rows'
+  dataVerification_sourceRows: 'Source Table Rows',
+  button_stop: 'Stop',
+  task_start_time: 'Start time',
+  agent_button_auto_upgrade: 'Auto',
+  agent_button_manual_upgrade: 'Manual'
 }
