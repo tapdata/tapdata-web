@@ -14,6 +14,12 @@ const removePending = config => {
   pending.splice(index, 1)
 }
 const errorCallback = error => {
+  if (axios.isCancel(error)) {
+    // eslint-disable-next-line no-console
+    console.log('Request canceled', error.message)
+    return Promise.reject('Request canceled')
+  }
+
   if (error?.response?.status === 401) {
     location.href = location.origin + location.pathname.substring(0, location.pathname.lastIndexOf('/')) + '/login'
     return
