@@ -63,7 +63,7 @@ export const FieldAddDel = connect(
         let fields = JSON.parse(JSON.stringify(this.options || []))
         //读取op 配置
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
-        fields = this.checkOps(fields)
+        //fields = this.checkOps(fields)
         this.originalFields = JSON.parse(JSON.stringify(fields))
         this.fields = fields
         //初始化

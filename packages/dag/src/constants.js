@@ -199,7 +199,6 @@ export const STATUS_MAP = {
 export const NONSUPPORT_SYNC = ['elasticsearch', 'redis', 'hive', 'tcp_udp', 'clickhouse', 'hazelcast_cloud_cluster']
 // 不支持增量
 export const NONSUPPORT_CDC = [
-  'db2',
   'gbase-8s',
   'sybase ase',
   'gaussdb200',
