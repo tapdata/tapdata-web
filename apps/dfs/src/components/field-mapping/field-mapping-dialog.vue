@@ -919,7 +919,7 @@ export default {
     /*单个表改名称弹窗显示*/
     showChangeTableNameModal(item = {}, index) {
       if (this.targetIsVika || this.targetIsQingflow) {
-        if (this.fieldMappingTableData.some(t => !t.t_field_name && !t.is_deleted)) {
+        if (index !== this.position && this.fieldMappingTableData.some(t => !t.t_field_name && !t.is_deleted)) {
           this.$message.error(this.$t('task_mapping_table_field_name_empty_check'))
           return
         }
@@ -1552,7 +1552,7 @@ export default {
     //保存校验
     checkTable() {
       //左边所有invalid 为false 右边所有目标字段有类型
-      let checkDataType = this.fieldMappingTableData.some(t => !t.t_field_name && !t.is_deleted)
+      let checkDataType = this.fieldMappingTableData.some(t => (!t.t_data_type || !t.t_field_name) && !t.is_deleted)
       //当前表 所有字段类型通过 将当前表的invalid 设置为false 校验通过
       this.fieldMappingNavData.forEach(table => {
         if (table.sinkObjectName === this.selectRow.sinkObjectName) {
