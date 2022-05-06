@@ -15,7 +15,7 @@
         @sort-change="sortChange"
       >
         <template slot="operationType" slot-scope="scope">
-          <div>{{ getOperationTypeLabel(scope.row) }}</div>
+          <div class="text-break">{{ getOperationTypeLabel(scope.row) }}</div>
         </template>
         <template slot="desc" slot-scope="scope">
           <span
