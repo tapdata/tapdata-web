@@ -295,12 +295,12 @@ export default {
   border-top: 1px solid #f2f2f2;
 }
 .box-line__label {
-  color: rgba(0, 0, 0, 0.6);
+  color: map-get($fontColor, light);
 }
 .box-line__value {
   max-width: 200px;
   margin-top: 8px;
-  color: #000;
+  color: map-get($fontColor, dark);
 }
 .img-box {
   width: 24px;

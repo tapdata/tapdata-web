@@ -116,7 +116,7 @@
   cursor: pointer;
   [class^='el-icon-'] {
     margin: 0;
-    color: #f56c6c !important;
+    color: map-get($color, danger) !important;
   }
 }
 .el-menu--inline .el-menu-item:hover .btn-del-fav-menu {
@@ -200,7 +200,7 @@
       width: 200px;
       //flex: 1;
       padding-bottom: 48px;
-      background: #f7f8fa;
+      background: map-get($bgColor, disable);
 
       overflow-y: auto;
       user-select: none;
@@ -230,10 +230,10 @@
         align-items: center;
         height: 50px;
         line-height: 50px;
-        color: rgba(0, 0, 0, 0.6);
+        color: map-get($color, light);
         background: #f7f8fa;
         .submenu-item {
-          color: rgba(0, 0, 0, 0.6);
+          color: map-get($color, light);
           padding-left: 12px;
         }
         &.is-active,
@@ -250,7 +250,7 @@
         font-weight: 500;
       }
       .is-active .el-submenu__title {
-        background: #f7f8fa;
+        background: map-get($bgColor, disable);
       }
       .el-menu {
         background-color: initial;
@@ -272,14 +272,14 @@
       width: 100%;
       height: 48px;
       line-height: 48px;
-      border: 1px solid #eee;
+      border: 1px solid map-get($borderColor, light);
       box-sizing: border-box;
       text-align: right;
       overflow: hidden;
-      background: rgba(250, 250, 250, 1);
+      background: map-get($bgColor, white);
       cursor: pointer;
       &:hover {
-        background: rgba(241, 241, 241, 1);
+        background: map-get($bgColor, main);
       }
       .btn-collapse {
         padding: 10px;
@@ -308,7 +308,7 @@
     position: relative;
     height: 100%;
     padding: 0;
-    background: #fff;
+    background: map-get($bgColor, white);
     box-sizing: border-box;
     overflow-y: hidden;
     overflow-x: auto;

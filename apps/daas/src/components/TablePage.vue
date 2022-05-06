@@ -229,7 +229,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #fafafa;
+  background: map-get($bgColor, white);
   min-width: 720px;
   flex: 1;
   width: 100%;
@@ -244,7 +244,7 @@ export default {
 
     .page-header-title {
       font-size: 16px;
-      color: #333;
+      color: map-get($fontColor, dark);
       font-weight: 600;
 
       &.link {
@@ -256,7 +256,7 @@ export default {
     .page-header-desc {
       margin-top: 10px;
       font-size: 12px;
-      color: #999;
+      color: map-get($fontColor, slight);
     }
   }
 
@@ -265,13 +265,12 @@ export default {
     flex: 1;
     // padding: 0 20px 20px 20px;
     overflow: hidden;
-    background-color: #eff1f4;
     .table-page-main-box {
       display: flex;
       flex: 1;
       width: 100%;
       border-radius: 4px;
-      background-color: #fff;
+      background-color: map-get($bgColor, white);
     }
   }
 
@@ -285,7 +284,7 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background-color: #fff;
+    // background-color: #fff;
     border-radius: 4px;
     .el-table--border {
       border: none;
@@ -309,13 +308,13 @@ export default {
       flex: 1;
       border-bottom: none;
       border-radius: 3px;
-      background: #fff;
+      background-color: map-get($bgColor, white);
       overflow: hidden;
       // .el-table__fixed-right {
       //   height: 100% !important; //设置高优先，以覆盖内联样式
       // }
       .el-table__fixed-body-wrapper {
-        background-color: #fff;
+        background-color: map-get($bgColor, white);
       }
       .el-table__fixed {
         height: auto !important; //设置高优先，以覆盖内联样式

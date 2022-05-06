@@ -105,7 +105,7 @@ $unreadColor: #ee5353;
         &:hover {
           background: rgba(44, 101, 255, 0.05);
           .iconfont {
-            color: #2c65ff;
+            color: map-get($color, primary);
           }
         }
         .iconfont {

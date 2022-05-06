@@ -122,7 +122,7 @@ export default {
             background: rgba(44, 101, 255, 0.05);
             ::v-deep {
               .iconfont {
-                color: #2c65ff;
+                color: map-get($color, primary);
               }
             }
           }

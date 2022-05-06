@@ -15,7 +15,7 @@
               statsInfo.source.connectionName
             }}
           </span>
-          <span style="color: #ccc">
+          <span class="font-color-slight">
             {{ `( Row: ${statsInfo.source_total} )` }}
           </span>
         </li>
@@ -29,7 +29,7 @@
               statsInfo.target.connectionName
             }}
           </span>
-          <span style="color: #ccc">
+          <span class="font-color-slight">
             {{ `( Row: ${statsInfo.target_total} )` }}
           </span>
         </li>
@@ -158,7 +158,7 @@ $margin: 10px;
       margin: 20% auto;
       i {
         font-size: 36px;
-        color: #409eff;
+        color: map-get($color, primary);
       }
     }
     .inspect-result {
@@ -176,7 +176,7 @@ $margin: 10px;
         padding: 0 10px 10px 10px;
       }
       .title-box {
-        color: #333;
+        color: map-get($fontColor, dark);
         background: #fafafa;
         font-size: 12px;
         line-height: 28px;
@@ -184,7 +184,7 @@ $margin: 10px;
         border-bottom: 1px solid #dedee4;
       }
       .message-box {
-        color: #333;
+        color: map-get($fontColor, dark);
         font-size: 12px;
         div {
           padding: 5px 10px;
@@ -293,7 +293,7 @@ $margin: 10px;
     line-height: 1;
     white-space: nowrap;
     cursor: pointer;
-    background: #409eff;
+    background: map-get($color, primary);
     border: 0;
     text-align: center;
     box-sizing: border-box;

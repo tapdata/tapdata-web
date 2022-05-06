@@ -250,7 +250,7 @@ export default {
       .el-collapse-item__header {
         padding-bottom: 5px;
         border-bottom: 0;
-        color: #2c65ff;
+        color: map-get($color, primary);
         font-size: 12px;
         .el-collapse-item__arrow {
           margin-left: 6px;

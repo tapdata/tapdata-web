@@ -388,11 +388,11 @@ export default {
   background: rgba(229, 236, 255, 0.22);
   .el-loading-spinner .el-loading-text {
     font-size: 12px;
-    color: #333;
+    color: map-get($fontColor, dark);
   }
   ::v-deep {
     .keyword {
-      color: #d54e21;
+      color: map-get($color, danger);
     }
   }
 }

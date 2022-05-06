@@ -115,7 +115,7 @@
       </el-table-column>
       <el-table-column :label="$t('user_list_status')" prop="status" sortable="status">
         <template slot-scope="scope">
-          <span :class="[scope.row.status, 'status']">
+          <span :class="['status-' + scope.row.status, 'status']">
             {{ scope.row.status ? $t('user_status_' + scope.row.status) : '' }}
           </span>
         </template>
@@ -965,22 +965,6 @@ export default {
       .status {
         padding: 5px 10px;
         border-radius: 4px;
-      }
-      .activated {
-        color: #178061;
-        background-color: #c4f3cb;
-      }
-      .notActivated {
-        color: #2c65ff;
-        background-color: #ddebff;
-      }
-      .notVerified {
-        color: #d5760e;
-        background-color: #ffe9cf;
-      }
-      .rejected {
-        color: #d44d4d;
-        background-color: #ffecec;
       }
     }
   }

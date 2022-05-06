@@ -15,10 +15,10 @@
       <slot name="left-footer"></slot>
     </VirtualTransferPanel>
     <div class="inline-flex flex-column">
-      <div class="el-transfer__buttons flex-row flex-1">
+      <div class="el-transfer__buttons flex-column flex-1">
+        <!-- class="mb-0 mr-4" -->
         <el-button
           type="primary"
-          class="mb-0 mr-4"
           :class="['el-transfer__button', hasButtonTexts ? 'is-with-texts' : '']"
           @click.native="addToLeft()"
           :disabled="topChecked.length === 0"
@@ -37,10 +37,10 @@
           <i class="el-icon-arrow-right"></i>
         </el-button>
       </div>
-      <div class="el-transfer__buttons flex-row flex-1">
+      <div class="el-transfer__buttons flex-column flex-1">
+        <!-- class="mb-0 mr-4" -->
         <el-button
           type="primary"
-          class="mb-0 mr-4"
           :class="['el-transfer__button', hasButtonTexts ? 'is-with-texts' : '']"
           @click.native="addToLeft('bottom')"
           :disabled="bottomChecked.length === 0"

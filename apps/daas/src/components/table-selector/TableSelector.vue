@@ -241,7 +241,7 @@
   display: flex;
   align-items: center;
   &:hover {
-    background-color: #f5f7fa;
+    background-color: map-get($bgColor, disable);
   }
   > ::v-deep {
     .el-checkbox__label {
@@ -267,7 +267,7 @@
     line-height: 28px;
     border-radius: 2px;
     font-size: 14px;
-    background: #f2f3f5;
+    background: map-get($bgColor, main);
     color: map-get($fontColor, normal);
     text-align: center;
     cursor: pointer;
@@ -276,7 +276,7 @@
       color: map-get($fontColor, white);
     }
     &.btn-transfer--disabled {
-      background: #f2f3f5;
+      background: map-get($bgColor, main);
       color: map-get($fontColor, normal);
       cursor: not-allowed;
     }

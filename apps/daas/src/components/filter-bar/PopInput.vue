@@ -110,7 +110,7 @@ export default {
     &:hover {
       background-color: #eff1f4;
       .icon-btn {
-        color: #000;
+        color: map-get($fontColor, dark);
       }
     }
   }

@@ -53,7 +53,7 @@
             <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
             <span>{{ systemMap[item.system] }}</span>
             <!-- <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate"> -->
-            <span class="link-primary">
+            <span class="link-primary cursor-pointer" @click="handleGo(item)">
               {{ `${item.serverName} , ` }}
             </span>
             <!-- </router-link> -->
@@ -79,7 +79,7 @@
           <div class="list-item-desc">
             <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
             <span>{{ systemMap[item.system] }}</span>
-            <span class="link-primary" @click="handleGo(item)">
+            <span class="link-primary cursor-pointer" @click="handleGo(item)">
               {{ item.serverName }}
             </span>
             <span>{{ typeMap[item.msg] }}</span>
@@ -402,9 +402,17 @@ export default {
     },
     handleGo(item) {
       switch (item.system) {
+        case 'migration':
+          this.$router.push({
+            name: 'MigrateEditor',
+            params: {
+              id: item.sourceId
+            }
+          })
+          break
         case 'dataFlow':
           this.$router.push({
-            name: 'job',
+            name: 'DataflowEditor',
             query: {
               id: item.sourceId,
               isMoniting: true,

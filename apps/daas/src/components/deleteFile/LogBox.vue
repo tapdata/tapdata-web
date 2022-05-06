@@ -118,7 +118,7 @@ export default {
   .noData {
     height: 100%;
     padding-top: 9%;
-    color: #999;
+    color: map-get($fontColor, slight);
     font-size: 12px;
     background-color: #fff;
     div {

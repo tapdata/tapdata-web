@@ -87,7 +87,7 @@ export default {
     cursor: pointer;
   }
   .item:hover {
-    color: #409eff;
+    color: map-get($color, primary);
   }
   .noData {
     text-align: center;

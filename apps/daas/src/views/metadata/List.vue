@@ -646,7 +646,7 @@ export default {
     }
     .metadata-name {
       .name {
-        color: #2c65ff;
+        color: map-get($color, primary);
         a {
           color: inherit;
           cursor: pointer;
@@ -657,12 +657,12 @@ export default {
       }
       .tag {
         margin-left: 5px;
-        color: #999999;
+        color: map-get($fontColor, light);
         background: #f5f5f5;
         border: 1px solid #dedee4;
       }
       .parent {
-        color: #cccccc;
+        color: map-get($fontColor, slight);
       }
     }
   }
@@ -699,7 +699,7 @@ export default {
   .change-name-label {
     width: 100px;
     line-height: 32px;
-    color: #000;
+    color: map-get($fontColor, dark);
   }
   // .el-message-box__header {
   //   padding: 15px 15px 0;

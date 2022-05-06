@@ -697,10 +697,10 @@ export default {
     }
   }
   .panelBtn:hover {
-    color: #409eff;
+    color: map-get($color, primary);
   }
   .label {
-    color: #999;
+    color: map-get($fontColor, light);
     font-size: 12px;
     display: inline-block;
     width: 110px;
@@ -715,7 +715,7 @@ export default {
     word-break: break-all;
   }
   .schema-load {
-    color: #999;
+    color: map-get($fontColor, light);
     display: inline-block;
     margin-left: 20px;
     font-size: 12px;
@@ -756,7 +756,7 @@ export default {
     border: 0;
     border-radius: 0;
     box-sizing: border-box;
-    background: #409eff;
+    background: map-get($color, primary);
     transition: 0.1s;
     -webkit-appearance: none;
     -webkit-box-sizing: border-box;

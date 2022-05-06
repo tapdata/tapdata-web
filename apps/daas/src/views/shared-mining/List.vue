@@ -566,7 +566,7 @@ export default {
     }
     .metadata-name {
       .name {
-        color: #409eff;
+        color: map-get($color, primary);
         a {
           color: inherit;
           cursor: pointer;

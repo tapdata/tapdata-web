@@ -1391,11 +1391,11 @@ export default {
         &:hover {
           background: rgba(44, 101, 255, 0.05);
           cursor: pointer;
-          border-left: 2px solid #2c65ff;
+          border-left: 2px solid map-get($color, primary);
         }
         &.active {
           background: rgba(44, 101, 255, 0.05);
-          border-left: 2px solid #2c65ff;
+          border-left: 2px solid map-get($color, primary);
           cursor: pointer;
         }
         .task-form__img {
@@ -1412,7 +1412,7 @@ export default {
           .source {
             font-size: 12px;
             font-weight: 400;
-            color: #000000;
+            color: map-get($fontColor, dark);
             line-height: 17px;
             text-align: left;
             overflow: hidden;
@@ -1433,7 +1433,7 @@ export default {
           .select {
             font-size: 12px;
             font-weight: 400;
-            color: #000000;
+            color: map-get($fontColor, dark);
             line-height: 17px;
             margin-top: 10px;
             display: flex;

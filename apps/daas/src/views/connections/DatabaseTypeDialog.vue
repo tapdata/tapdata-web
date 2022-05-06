@@ -101,7 +101,7 @@ export default {
 <style scoped lang="scss">
 .database {
   .title {
-    color: #999;
+    color: map-get($fontColor, slight);
     margin-left: 20px;
     margin-bottom: 20px;
     display: inline-block;

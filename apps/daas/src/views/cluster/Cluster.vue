@@ -705,19 +705,19 @@ export default {
 .clusterManagement-container {
   .header {
     padding: 15px 20px;
-    background: #ffffff;
+    background: map-get($bgColor, white);
     overflow: hidden;
     border-bottom: 1px solid #dedee4;
     box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     .title {
       font-size: 16px;
-      color: #333;
+      color: map-get($fontColor, dark);
       font-weight: 600;
     }
     .log_btn {
       font-size: 14px;
-      color: #409eff;
+      color: map-get($color, primary);
       cursor: pointer;
       float: right;
     }
@@ -751,9 +751,9 @@ export default {
         overflow: hidden;
         box-sizing: border-box;
         .list-box {
-          background-color: #fff;
+          background-color: map-get($bgColor, white);
           border-radius: 3px;
-          border: 1px solid #f2f2f2;
+          border: 1px solid map-get($bgColor, main);
           .list-box-header {
             overflow: hidden;
             display: flex;
@@ -787,7 +787,7 @@ export default {
                 .ip {
                   display: inline-block;
                   padding: 2px 10px;
-                  color: #2c65ff;
+                  color: map-get($color, primary);
                   border-radius: 2px;
                   background-color: #ebf3fd;
                 }
@@ -904,18 +904,18 @@ export default {
           .usageRate {
             padding-left: 12px;
             font-size: 12px;
-            color: #999;
+            color: map-get($fontColor, light);
           }
 
           .uuid {
             padding: 5px 0;
             font-size: 12px;
-            color: #999;
+            color: map-get($fontColor, light);
           }
 
           span {
             font-size: 14px;
-            color: #555;
+            color: map-get($fontColor, normal);
           }
         }
       }
@@ -929,7 +929,7 @@ export default {
         background-color: #ee5353 !important;
       }
       .green {
-        color: #409eff;
+        color: map-get($color, primary);
       }
       .bggreen {
         background-color: #71c179 !important;
@@ -941,7 +941,7 @@ export default {
     height: calc(100% - 60px);
     align-items: center;
     justify-content: center;
-    color: #409eff;
+    color: map-get($color, primary);
     font-size: 16px;
     background-color: #fff;
   }

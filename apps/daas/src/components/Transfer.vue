@@ -542,7 +542,7 @@ export default {
   }
 
   .tip {
-    color: #999;
+    color: map-get($fontColor, light);
     font-size: 12px;
     margin-bottom: 10px;
   }
@@ -592,7 +592,7 @@ export default {
 
           .nameStyle {
             display: none;
-            color: #48b6e2;
+            color: map-get($color, primary);
             float: right;
             font-size: 12px;
             padding-left: 10px;
@@ -717,7 +717,7 @@ export default {
       .el-transfer-panel__header {
         height: 28px;
         line-height: 28px;
-        background: #f5f5f5;
+        background: map-get($bgColor, disable) !important;
 
         .el-checkbox {
           height: 28px;

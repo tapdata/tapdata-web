@@ -278,7 +278,7 @@ export default {
       .desc {
         margin-top: 10px;
         font-size: 12px;
-        color: #ccc;
+        color: map-get($fontColor, slight);
       }
     }
   }
@@ -306,7 +306,7 @@ export default {
       border-bottom: 1px solid #dedee4;
       .search-title {
         font-size: 14px;
-        color: #333;
+        color: map-get($fontColor, dark);
         font-weight: bold;
         margin-right: 10px;
       }
@@ -330,7 +330,7 @@ export default {
       border: 1px solid rgba(255, 255, 255, 100);
     }
     .desc {
-      color: #aaa;
+      color: map-get($fontColor, light);
       margin-top: 5px;
       margin-bottom: 10px;
     }
@@ -373,7 +373,7 @@ export default {
       }
     }
     .more {
-      color: #999;
+      color: map-get($fontColor, light);
       font-size: 12px;
       cursor: pointer;
       text-align: center;

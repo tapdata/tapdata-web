@@ -627,7 +627,7 @@ export default {
       }
       .dashboard-num {
         font-size: 65px;
-        color: #2c65ff;
+        color: map-get($color, primary);
       }
       .charts-list {
         height: 100%;
@@ -702,7 +702,7 @@ export default {
           li {
             display: inline-block;
             padding-right: 10px;
-            color: #000;
+            color: map-get($fontColor, dark);
             font-weight: 600;
             span {
               padding-right: 5px;

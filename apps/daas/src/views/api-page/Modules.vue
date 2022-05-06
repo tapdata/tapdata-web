@@ -751,7 +751,7 @@ export default {
     }
     .modules-name {
       .name {
-        color: #409eff;
+        color: map-get($color, primary);
         a {
           color: inherit;
           cursor: pointer;
@@ -762,12 +762,12 @@ export default {
       }
       .tag {
         margin-left: 5px;
-        color: #999999;
+        color: map-get($fontColor, light);
         background: #f5f5f5;
         border: 1px solid #dedee4;
       }
       .parent {
-        color: #cccccc;
+        color: map-get($fontColor, slight);
       }
     }
   }
