@@ -20,14 +20,14 @@
     align-items: center;
   }
   .title {
-    color: #000000;
+    color: map-get($fontColor, dark);
     line-height: 25px;
   }
   .desc {
     display: flex;
     align-items: center;
     font-size: 12px;
-    color: rgba(0, 0, 0, 0.5);
+    color: map-get($fontColor, light);
     line-height: 17px;
   }
   .desc-body {

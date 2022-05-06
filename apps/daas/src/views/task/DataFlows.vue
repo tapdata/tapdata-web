@@ -1274,14 +1274,14 @@ export default {
       }
       .name {
         &:not(.has-children) {
-          color: #409eff;
+          color: map-get($color, primary);
           cursor: pointer;
           text-decoration: underline;
         }
       }
     }
     .task-name {
-      color: #333;
+      color: map-get($fontColor, dark);
     }
     .region-info {
       line-height: 20px;

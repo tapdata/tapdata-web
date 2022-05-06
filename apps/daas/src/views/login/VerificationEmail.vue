@@ -183,11 +183,11 @@ export default {
             border: none;
           }
           &:hover {
-            color: #333;
+            color: map-get($fontColor, dark);
           }
         }
         .bold {
-          color: #333333;
+          color: map-get($fontColor, dark);
           font-weight: 500;
         }
       }

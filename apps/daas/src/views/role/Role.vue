@@ -947,7 +947,7 @@ export default {
       padding-right: 30px;
       line-height: 60px;
       font-size: 16px;
-      color: #333;
+      color: map-get($fontColor, dark);
       font-weight: bold;
     }
     span {
@@ -969,7 +969,7 @@ export default {
         display: inline-block;
         padding-right: 20px;
         font-size: 14px;
-        color: #333;
+        color: map-get($fontColor, dark);
       }
       p {
         display: inline-block;

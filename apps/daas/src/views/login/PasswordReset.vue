@@ -263,7 +263,7 @@ export default {
     .tip {
       padding-bottom: 10px;
       font-size: 14px;
-      color: #aaa;
+      color: map-get($fontColor, slight);
     }
     .error-tips {
       margin-bottom: 22px;

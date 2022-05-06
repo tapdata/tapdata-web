@@ -273,12 +273,12 @@ export default {
     font-size: 12px;
     font-weight: 500;
     height: 30px;
-    color: rgba(0, 0, 0, 0.85);
+    color: map-get($fontColor, normal);
     text-align: center;
   }
   .api-monitor-detail-wrap__value {
     font-size: 20px;
-    color: #2c65ff;
+    color: map-get($color, primary);
     line-height: 38px;
     text-align: center;
   }

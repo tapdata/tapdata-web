@@ -550,7 +550,7 @@ export default {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #2c65ff;
+    background: map-get($color, primary);
     display: inline-block;
   }
   //排序样式

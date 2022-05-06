@@ -151,7 +151,7 @@ export default {
     padding: 20px;
     margin: 0;
     color: map-get($fontColor, normal);
-    background-color: #f5f6f8;
+    background-color: map-get($bgColor, disable);
     border-radius: 2px;
   }
 }

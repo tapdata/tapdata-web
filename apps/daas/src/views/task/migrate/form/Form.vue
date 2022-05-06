@@ -269,8 +269,8 @@ export default {
           if (res) {
             let data = res?.data
             this.status = data.status
-            this.settingData = data.attrs?.task_setting_Data
-            this.settingData.name = data?.name
+            this.settingData = data.attrs?.task_setting_Data || null
+            if (this.settingData) this.settingData.name = data?.name
             this.dataSourceData = data?.attrs?.task_data_source_Data
             this.nodes = data?.dag?.nodes
             this.edges = data?.dag?.edges
@@ -826,12 +826,12 @@ export default {
         min-height: 290px;
         ::v-deep {
           .el-transfer-panel__header {
-            background: rgba(44, 101, 255, 0.05);
-            height: 54px;
-            line-height: 54px;
+            background-color: map-get($bgColor, disable);
+            height: 40px;
+            line-height: 40px;
             .el-checkbox {
-              height: 54px;
-              line-height: 54px;
+              height: 40px;
+              line-height: 40px;
             }
           }
         }

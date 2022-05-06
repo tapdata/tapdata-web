@@ -83,7 +83,8 @@ textarea::-webkit-input-placeholder {
   color: #008b58;
   background-color: #b4edd8;
 }
-.status-error {
+.status-error,
+.status-rejected {
   color: #d44d4d;
   background-color: #ffecec;
 }
@@ -95,11 +96,13 @@ textarea::-webkit-input-placeholder {
   color: #0083c7;
   background-color: #d1eefd;
 }
-.status-pending {
+.status-pending,
+.status-notActivated {
   color: #2c65ff;
   background-color: #ddebff;
 }
-.status-active {
+.status-active,
+.status-activated {
   color: #178061 ;
   background-color: #C4F3CB;
 }
@@ -127,7 +130,8 @@ textarea::-webkit-input-placeholder {
   color: #c88500;
   background-color: #ffe4ae;
 }
-.status-stopping {
+.status-stopping,
+.status-notVerified {
   color: #c39700;
   background-color: #fdf1c8;
 }

@@ -172,6 +172,16 @@ export default {
     margin-left: 15px;
   }
   ::v-deep {
+    .create-task-transfer {
+      .inline-flex {
+        .el-transfer__button {
+          width: 76px;
+          .el-button {
+            min-width: 28px !important;
+          }
+        }
+      }
+    }
     .transfer-buttons-horizontal {
       .el-transfer__buttons {
         flex-direction: column;

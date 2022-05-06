@@ -181,7 +181,7 @@ export default {
   line-height: 48px;
   font-size: 24px;
   font-weight: 400;
-  color: rgba(0, 0, 0, 1);
+  color: map-get($fontColor, dark);
   margin-bottom: 30px;
   margin-top: 120px;
 }
@@ -196,12 +196,12 @@ export default {
   line-height: 43px;
   margin-top: 20px;
   a {
-    color: #409eff;
+    color: map-get($color, primary);
   }
 }
 .classify {
   display: inline-block;
-  color: #409eff;
+  color: map-get($color, primary);
   font-size: 12px;
   cursor: pointer;
 }

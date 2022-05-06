@@ -702,7 +702,7 @@ export default {
     margin-left: 4px;
 
     .name {
-      color: #409eff;
+      color: map-get($color, primary);
       cursor: pointer;
     }
 
@@ -715,7 +715,7 @@ export default {
     }
 
     .user {
-      color: #cccccc;
+      color: map-get($fontColor, slight);
       white-space: nowrap;
       word-break: break-word;
       overflow: hidden;
@@ -724,12 +724,12 @@ export default {
 
     .region-info {
       line-height: 20px;
-      color: #aaa;
+      color: map-get($fontColor, light);
     }
   }
 
   .btn-text {
-    // color: #409EFF;
+    // color: map-get($color, primary);
     font-size: 12px;
     padding-right: 5px;
   }
@@ -739,7 +739,7 @@ export default {
     line-height: 12px;
     font-size: 12px;
     font-weight: 400;
-    color: #999999;
+    color: map-get($fontColor, light);
     background: #f5f5f5;
     border: 1px solid #dedee4;
     border-radius: 3px;

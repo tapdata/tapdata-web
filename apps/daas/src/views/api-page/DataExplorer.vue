@@ -1445,7 +1445,7 @@ export default {
         font-size: 16px;
         &:hover,
         &.is-plain:focus:hover {
-          border-color: #2c65ff;
+          border-color: map-get($color, primary);
           background-color: #f5f6f7;
         }
       }
@@ -1462,7 +1462,7 @@ export default {
       span {
         padding: 0 50px 0 10px;
         font-size: 12px;
-        color: #606266;
+        color: map-get($fontColor, normal);
       }
     }
     .timezone {

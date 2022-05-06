@@ -802,7 +802,7 @@ export default {
             padding: 10px 15px 10px;
             border-bottom: 1px solid #edeeee;
             border-top: 0;
-            color: #000;
+            color: map-get($fontColor, dark);
             font-size: 10px;
             cursor: pointer;
             &:last-child {

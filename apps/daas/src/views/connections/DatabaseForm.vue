@@ -1831,7 +1831,7 @@ export default {
           font-size: 12px;
           font-family: PingFangSC-Regular, PingFang SC;
           font-weight: 400;
-          color: #000000;
+          color: map-get($fontColor, dark);
           align-items: center;
           white-space: nowrap;
           word-break: break-word;
@@ -1844,7 +1844,7 @@ export default {
           height: 25px;
           justify-content: center;
           align-items: center;
-          background: #fff;
+          background: map-get($bgColor, white);
           border-radius: 3px;
           img {
             width: 100%;
@@ -1865,9 +1865,9 @@ export default {
               .e-form-builder-item {
                 // width: 396px;
                 &.large-item {
-                  width: 680px;
+                  width: 610px;
                   .el-form-item__content {
-                    padding-right: 30px;
+                    padding-right: 20px;
                   }
                 }
                 &.small-item {

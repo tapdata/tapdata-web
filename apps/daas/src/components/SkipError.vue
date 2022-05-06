@@ -149,7 +149,7 @@ export default {
 }
 .skip-tip {
   font-size: 12px;
-  color: #999;
+  color: map-get($fontColor, slight);
 }
 .total {
   padding-top: 5px;

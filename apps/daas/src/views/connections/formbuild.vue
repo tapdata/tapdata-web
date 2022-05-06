@@ -339,7 +339,7 @@ export default {
         .tip {
           margin-left: 15px;
           font-size: 12px;
-          color: #999;
+          color: map-get($fontColor, slight);
           margin-top: 5px;
           line-height: 18px;
           width: 430px;

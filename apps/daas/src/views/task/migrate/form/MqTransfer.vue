@@ -175,7 +175,7 @@ export default {
       }
       .el-transfer__buttons {
         display: flex;
-        width: 122px;
+        width: 76px;
         flex-direction: row;
         box-sizing: border-box;
         & > button {

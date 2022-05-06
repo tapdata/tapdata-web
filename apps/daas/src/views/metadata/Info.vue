@@ -898,7 +898,7 @@ export default {
     font-size: 16px;
     font-weight: 600;
     & > span {
-      color: #2c65ff;
+      color: map-get($color, primary);
       cursor: pointer;
     }
   }
@@ -1017,7 +1017,7 @@ export default {
                 .delete {
                   display: inline-block;
                   cursor: pointer;
-                  color: #2c65ff;
+                  color: map-get($color, primary);
                 }
               }
             }
@@ -1032,7 +1032,7 @@ export default {
                 .delete {
                   display: inline-block;
                   cursor: pointer;
-                  color: #2c65ff;
+                  color: map-get($color, primary);
                 }
               }
             }

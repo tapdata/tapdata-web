@@ -462,7 +462,7 @@ export default {
           float: left;
           display: inline-block;
           text-align: center;
-          color: #999;
+          color: map-get($fontColor, slight);
           font-size: 12px;
           cursor: pointer;
           box-sizing: border-box;
@@ -482,7 +482,7 @@ export default {
     .selectSql {
       padding-top: 10px;
       font-size: 12px;
-      color: #999;
+      color: map-get($fontColor, slight);
       overflow: hidden;
       div {
         width: 100%;
@@ -511,7 +511,7 @@ export default {
   }
   .el-switch__label * {
     font-size: 12px !important;
-    color: #999;
+    color: map-get($fontColor, slight);
   }
 }
 </style>

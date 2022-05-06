@@ -190,7 +190,7 @@ $unreadColor: #ee5353;
     align-items: center;
     height: 54px;
     font-size: 12px;
-    color: #409eff;
+    color: map-get($color, primary);
     padding: 20px 20px 0 24px;
     .title {
       font-size: 14px;
@@ -217,7 +217,7 @@ $unreadColor: #ee5353;
         white-space: nowrap;
         color: map-get($fontColor, light);
         border: 1px solid #f2f2f2;
-        border-left: 2px solid #2c65ff;
+        border-left: 2px solid map-get($color, primary);
         box-sizing: border-box;
       }
     }

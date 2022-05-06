@@ -203,7 +203,7 @@ export default {
   flex-direction: column;
   max-height: 100%;
   vertical-align: middle;
-  background-color: #fff;
+  background-color: map-get($bgColor, white);
   border-radius: 4px;
   border: 1px solid #ebeef5;
   font-size: 18px;
@@ -217,7 +217,7 @@ export default {
 .message-box__header {
   padding: 24px 24px 0;
   font-size: 14px;
-  color: rgba(0, 0, 0, 0.75);
+  color: map-get($fontColor, normal);
   font-weight: 700;
 }
 .v-icon {
