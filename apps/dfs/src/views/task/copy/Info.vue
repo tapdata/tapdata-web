@@ -15,7 +15,7 @@
           {{ $t('task_monitor_founder') }}{{ $t('field_mapping_field_mapping_dialog_') }}<span>{{ creator }}</span>
         </span>
         <span class="ml-6 font-color-sub">
-          {{ $t('task_info_start_time') }}{{ $t('field_mapping_field_mapping_dialog_')
+          {{ $t('start_time') }}{{ $t('field_mapping_field_mapping_dialog_')
           }}<span>{{ formatTime(task.startTime) || '-' }}</span>
         </span>
       </div>

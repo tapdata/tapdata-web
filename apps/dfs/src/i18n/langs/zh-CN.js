@@ -49,6 +49,10 @@ export default {
   // 列表
   list_operation: '操作',
 
+  // 时间
+  start_time: '开始时间',
+  end_time: '结束时间',
+
   /** 模块 */
   // 工作台
   workbench_manage: '工作台',
@@ -606,7 +610,6 @@ export default {
   task_monitor_topic_expressionL: '主题表达式',
   task_monitor_migration_task: '迁移任务',
   task_monitor_sync_task: '同步任务',
-  task_info_start_time: '开始时间',
   task_info_start: '启动',
   task_info_stopt: '停止',
   task_info_data_screening: '事件统计',
@@ -787,9 +790,6 @@ export default {
   operation_log_manage: '操作日志',
   operation_log_type: '操作类型',
   operation_log_Object: '操作对象',
-  operation_log_start_time: '开始时间',
-  operation_log_end_time: '结束时间',
-  operation_log_time_tip: '【结束时间】不能小于【开始时间】',
   operation_log_user_name: '用户名称',
   operation_log_username: '用户名',
   operation_log_time: '操作时间',
@@ -1164,9 +1164,6 @@ export default {
   field_mapping_field_mapping_dialog_qingShuRuBiaoMing: '请输入表名',
   field_mapping_main_jieKouQingQiuShi: '接口请求失败',
   filter_bar_DatetimeRange_zhi: '至',
-  filter_bar_DatetimeRange_kaiShiShiJian: '开始时间',
-  filter_bar_DatetimeRange_jieShuShiJian: '结束时间',
-  filter_bar_PopInput_qingShuRu: '请输入',
   components_InlineInput_ziFuChangDuXian: '字符长度限制{val1}-{val2}个字符',
   components_RequestErrorMessage_yiFuZhi: '已复制',
   components_SelectList_meiYouGengDuoShu: '没有更多数据',
