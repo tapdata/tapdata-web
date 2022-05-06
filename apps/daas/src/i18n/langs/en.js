@@ -287,6 +287,12 @@ export default {
   verify_check_same: 'Verify is consistent',
   verify_count_difference: 'Count inconsistent',
   verify_content_difference: 'Content difference',
+  verify_executeVerifyTip: 'Execute',
+  verify_addVerifyTip: 'Create new verify job',
+  verify_historyTip: 'History',
+  verify_detailTip: 'Details',
+  verify_configurationTip: 'Configuration',
+  verify_deleteTip: 'Delete',
 
   verify_details_title: 'Task verification details',
   verify_history_title: 'Task verification history',

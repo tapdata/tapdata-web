@@ -205,12 +205,7 @@
                 >
                   {{ $t('dataFlow.button.reset') }}
                 </el-dropdown-item>
-                <el-dropdown-item
-                  class="btn-delete"
-                  command="del"
-                  :disabled="row.disabledData.delete"
-                  v-readonlybtn="'SYNC_job_delete'"
-                >
+                <el-dropdown-item command="del" :disabled="row.disabledData.delete" v-readonlybtn="'SYNC_job_delete'">
                   {{ $t('button.delete') }}
                 </el-dropdown-item>
                 <el-dropdown-item command="setTag" v-readonlybtn="'SYNC_category_application'">
