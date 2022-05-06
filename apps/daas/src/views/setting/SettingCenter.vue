@@ -85,7 +85,7 @@ export default {
   .setting-warp-box {
     flex: 1 1 auto;
     border-radius: 4px;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     overflow: hidden;
     .setting-center {
       height: 100%;
@@ -111,10 +111,10 @@ export default {
             line-height: 44px;
             padding-left: 20px;
             cursor: pointer;
-            color: #4e5969;
+            color: map-get($fontColor, light);
             ::v-deep {
               .iconfont {
-                color: #4e5969;
+                color: map-get($fontColor, light);
               }
             }
           }

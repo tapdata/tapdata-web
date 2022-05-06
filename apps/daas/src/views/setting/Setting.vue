@@ -401,7 +401,7 @@ export default {
         height: 40px;
         line-height: 40px;
         cursor: pointer;
-        color: #4e5969;
+        color: map-get($fontColor, light);
         white-space: nowrap;
         .title {
           width: 100%;

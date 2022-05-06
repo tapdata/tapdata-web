@@ -87,7 +87,7 @@ $unreadColor: #ee5353;
     display: flex;
     flex-direction: row;
     height: 100%;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     border-radius: 4px;
     .left-panel {
       border-right: 1px solid #f2f2f2;
@@ -99,7 +99,7 @@ $unreadColor: #ee5353;
         align-items: center;
         font-size: 12px;
         font-weight: 400;
-        color: #4e5969;
+        color: map-get($fontColor, normal);
         cursor: pointer;
         &.active,
         &:hover {
@@ -110,7 +110,7 @@ $unreadColor: #ee5353;
         }
         .iconfont {
           margin-right: 5px;
-          color: #4e5969;
+          color: map-get($fontColor, normal);
         }
         .content {
           flex: 1;

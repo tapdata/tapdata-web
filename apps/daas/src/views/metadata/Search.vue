@@ -212,8 +212,8 @@ export default {
 <style lang="scss">
 .metadata-search-wrap {
   .el-input-group__append {
-    background-color: #409eff;
-    border-color: #409eff;
+    background-color: map-get($color, primary);
+    border-color: map-get($color, primary);
     color: map-get($fontColor, white);
     .el-button {
       border-top-left-radius: 0;
@@ -222,13 +222,13 @@ export default {
   }
   .no-search-box {
     .el-input-group__prepend {
-      background: #fff;
-      color: #409eff;
+      background-color: map-get($bgColor, white);
+      color: map-get($color, primary);
     }
   }
   .search-box {
     .el-input-group__prepend {
-      background: #fff;
+      background-color: map-get($bgColor, white);
       color: map-get($fontColor, light);
     }
   }

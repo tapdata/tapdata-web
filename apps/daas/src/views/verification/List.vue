@@ -32,10 +32,10 @@
         </ElButton>
       </div>
       <el-table-column type="selection" width="45"></el-table-column>
-      <el-table-column :label="$t('dataVerification.verifyJobName')" min-width="180">
+      <el-table-column :label="$t('dataVerification.verifyJobName')" min-width="180" show-overflow-tooltip>
         <template slot-scope="scope">
           <div>{{ scope.row.name }}</div>
-          <div style="color: #aaa">
+          <div class="font-color-slight">
             <span
               >{{ inspectMethod[scope.row.inspectMethod] }} (
               {{
@@ -45,7 +45,7 @@
               }}
               )
             </span>
-            <span v-if="!scope.row.enabled" style="color: #f56c6c">&nbsp;Disabled</span>
+            <span v-if="!scope.row.enabled" class="font-color-slight">&nbsp;Disabled</span>
           </div>
         </template>
       </el-table-column>

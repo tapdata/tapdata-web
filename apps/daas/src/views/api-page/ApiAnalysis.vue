@@ -366,7 +366,7 @@ export default {
         //   height: 6px;
         //   width: 6px;
         //   border-radius: 50%;
-        //   background-color: #fff;
+        //   background-color: map-get($bgColor, white);
         // }
         .status {
           height: 6px;

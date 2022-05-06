@@ -619,7 +619,7 @@ export default {
         height: 100%;
         padding: 20px;
         border-radius: 4px;
-        background-color: #fff;
+        background-color: map-get($bgColor, white);
         box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
       }
       .dashboard-label {
@@ -633,7 +633,7 @@ export default {
         height: 100%;
         overflow: hidden;
         box-sizing: border-box;
-        background-color: #fff;
+        background-color: map-get($bgColor, white);
         border-radius: 3px;
         box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
         .charts-list-text {
@@ -687,7 +687,7 @@ export default {
           }
           .server-main {
             .title {
-              color: #252a4c;
+              color: map-get($fontColor, dark);
               font-weight: 500;
             }
           }
@@ -720,7 +720,7 @@ export default {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     border-radius: 4px;
     justify-content: center;
     align-items: center;

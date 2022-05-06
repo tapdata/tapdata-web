@@ -304,7 +304,7 @@ export default {
         height: 52px;
         justify-content: center;
         align-items: center;
-        background: #fff;
+        background-color: map-get($bgColor, white);
         border-radius: 3px;
         margin-right: 10px;
         img {
@@ -382,7 +382,7 @@ export default {
     margin: 10px auto;
     width: 100%;
     height: 62px;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     border-left: none;
     line-height: 62px;
     border-top: 1px solid #dedee4;

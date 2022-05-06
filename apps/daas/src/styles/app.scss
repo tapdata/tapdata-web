@@ -50,7 +50,7 @@
 }
 
 .g-panel-container {
-  background: #fff;
+  background-color: map-get($bgColor, white);
   padding: 24px;
   border-radius: 4px;
   box-sizing: border-box;
@@ -155,7 +155,7 @@ textarea::-webkit-input-placeholder {
     flex: 1;
     padding: 20px;
     border-radius: 4px;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     box-sizing: border-box;
     overflow: hidden;
   }
@@ -180,11 +180,11 @@ textarea::-webkit-input-placeholder {
   }
 }
 .message-button-cancel {
-  color: #4e5969;
+  color: map-get($fontColor, normal);
   border-color: #f2f3f5;
   background-color: #f2f3f5;
 }
 .message-button-cancel:hover {
-  background-color: #fff;
+  background-color: map-get($bgColor, white);
   border: 1px solid #2c65ff;
 }

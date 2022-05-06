@@ -910,7 +910,7 @@ export default {
       height: auto !important;
       flex-direction: row;
       padding: 20px;
-      background-color: #fff;
+      background-color: map-get($bgColor, white);
       box-sizing: content-box;
       border-radius: 4px;
       overflow: hidden;
@@ -959,7 +959,7 @@ export default {
       flex-direction: row;
       padding: 0;
       overflow: hidden;
-      background-color: #fff;
+      background-color: map-get($bgColor, white);
       border-radius: 4px;
       box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
       .metadata-aside {
@@ -970,7 +970,7 @@ export default {
         height: 100%;
         // padding: 20px;
         border-radius: 3px;
-        background-color: #fff;
+        background-color: map-get($bgColor, white);
         box-sizing: border-box;
         border-right: 1px solid #f2f2f2;
         .metadata-aside-box {
@@ -1049,7 +1049,7 @@ export default {
         padding: 23px 0;
         text-align: right;
         font-size: 12px;
-        background-color: #fff;
+        background-color: map-get($bgColor, white);
         border-right: 1px solid #f2f2f2;
         box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
         .iconfont {
@@ -1063,7 +1063,7 @@ export default {
         width: calc(100% - 311px);
         // margin-left: 10px;
         // box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);
-        background-color: #fff;
+        background-color: map-get($bgColor, white);
         .tap-nav {
           height: 60px;
           .mune {
@@ -1089,7 +1089,7 @@ export default {
             li.active {
               height: 29px;
               border-radius: 3px 3px 0px 0px;
-              background-color: #fff;
+              background-color: map-get($bgColor, white);
               border-right: 0;
               border-left: 0;
               // box-shadow: 1px -1px 3px 0px rgba(0, 0, 0, 0.15);
@@ -1132,7 +1132,7 @@ export default {
                   flex-direction: column;
                   height: 100%;
                   padding: 20px;
-                  background-color: #fff;
+                  background-color: map-get($bgColor, white);
                   // box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
                   box-sizing: border-box;
                   .table-page-topbar {
@@ -1282,7 +1282,7 @@ export default {
 //         // float: right;
 //         cursor: pointer;
 //         &:hover {
-//           color: #409eff;
+//           color: map-get($color, primary);
 //         }
 //       }
 //       .el-button {
@@ -1290,7 +1290,7 @@ export default {
 //         font-size: 12px;
 //         color: #333;
 //         &:hover {
-//           color: #409eff;
+//           color: map-get($color, primary);
 //         }
 //       }
 //     }
@@ -1341,7 +1341,7 @@ export default {
 //       padding-top: 5px;
 //       box-sizing: border-box;
 //       border-top: 1px solid #ddd;
-//       background-color: #fff;
+//       background-color: map-get($bgColor, white);
 //       td,
 //       .is-scrolling-left ~ .el-table__fixed {
 //         border-right: 0;

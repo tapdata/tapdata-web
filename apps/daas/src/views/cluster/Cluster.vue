@@ -26,7 +26,11 @@
         <div class="content" v-if="waterfallData.length">
           <el-row :gutter="20" class="waterfall">
             <el-col class="list" :md="12" :sm="24" v-for="(element, i) in waterfallData" :key="i">
-              <div class="grid-content list-box" v-for="item in element" :key="item.ip">
+              <div
+                :class="['grid-content', 'list-box', { 'mt-4': index > 0 }]"
+                v-for="(item, index) in element"
+                :key="item.ip"
+              >
                 <div class="list-box-header">
                   <div class="list-box-header-left">
                     <img class="mr-4" src="../../assets/images/serve.svg" />
@@ -943,7 +947,7 @@ export default {
     justify-content: center;
     color: map-get($color, primary);
     font-size: 16px;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
   }
   .edit-agent-form {
     .rest-btn {

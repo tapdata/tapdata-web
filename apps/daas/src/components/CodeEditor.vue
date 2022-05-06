@@ -175,7 +175,7 @@ export default {
 <style lang="scss">
 .ace_tooltip.ace_doc-tooltip {
   background: rgba(221, 221, 221, 0.4);
-  color: #c1c1c1;
+  color: map-get($fontColor, slight);
 }
 .code-editor-snippet-tips {
   max-height: 400px;

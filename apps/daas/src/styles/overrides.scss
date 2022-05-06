@@ -50,7 +50,7 @@
     line-height: 30px;
     font-size: 12px;
     color: map-get($fontColor, normal);
-    background: #fff;
+    background-color: map-get($bgColor, white);
     &.selected {
       border-color: map-get($color, primary);
       color: map-get($color, primary);
@@ -192,8 +192,8 @@
   box-shadow: -1px 0 0 0 map-get($color, primary);
 }
 .el-switch__core {
-  border-color: map-get($color, primary);
-  background-color: map-get($color, primary);
+  // border-color: map-get($color, primary);
+  // background-color: map-get($color, primary);
 }
 .el-switch.is-checked .el-switch__core {
   border-color: map-get($color, primary);
@@ -241,7 +241,7 @@
 .el-button {
   min-width: 80px;
   font-weight: normal;
-  color: #4e5969;
+  color: map-get($fontColor, normal);
   border-color: map-get($bgColor, main);
   background-color:  map-get($bgColor, main);
 }

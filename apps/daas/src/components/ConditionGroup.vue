@@ -222,7 +222,7 @@ export default {
       ::v-deep {
         .el-radio {
           .el-radio__label {
-            color: #000000;
+            color: map-get($fontColor, dark);
           }
           &.is-checked .el-radio__label {
             color: rgba(0, 0, 0, 0.65);

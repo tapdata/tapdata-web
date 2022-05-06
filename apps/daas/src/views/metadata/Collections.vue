@@ -226,7 +226,7 @@ export default {
     flex-direction: column;
     height: calc(100% - 28px);
     padding: 10px 20px;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
     box-sizing: border-box;
     overflow: hidden;
@@ -269,7 +269,7 @@ export default {
     padding-top: 5px;
     box-sizing: border-box;
     border-top: 1px solid #ddd;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     td,
     .is-scrolling-left ~ .el-table__fixed {
       border-right: 0;
