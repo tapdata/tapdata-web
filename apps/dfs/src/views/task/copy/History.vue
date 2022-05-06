@@ -2,14 +2,7 @@
   <div>
     <TableList :remoteMethod="remoteMethod" :remote-data="ids" :columns="columns" :hide-on-single-page="true">
       <template slot="dataFlowStatusLabel" slot-scope="scope">
-        <div>
-          <img
-            :src="imgSrc(scope.row.statusObj.icon)"
-            :data-status="scope.row.statusObj.text"
-            alt=""
-            class="status-img"
-          />
-        </div>
+        <StatusTag type="tag" :status="scope.row.dataFlowStatus" :statusMap="dataFlowStatusMap"></StatusTag>
       </template>
     </TableList>
   </div>
@@ -17,10 +10,11 @@
 
 <script>
 import TableList from '@/components/TableList'
+import StatusTag from '@/components/StatusTag'
 
 export default {
   name: 'History',
-  components: { TableList },
+  components: { TableList, StatusTag },
   props: {
     ids: {
       type: Array,
@@ -76,19 +70,19 @@ export default {
       dataFlowStatusMap: {
         running: {
           text: this.$t('task_status_running'),
-          icon: 'yunxingzhong'
+          type: 'success'
         },
         completed: {
           text: this.$t('task_status_finished'),
-          icon: 'yiwancheng'
+          type: 'success'
         },
         paused: {
-          text: this.$t('task_status_paused'),
-          icon: 'daiqidong'
+          text: this.$t('task_milestone_paused'),
+          type: 'info'
         },
         error: {
           text: this.$t('task_status_error'),
-          icon: 'cuowu'
+          type: 'danger'
         }
       },
       lang: localStorage.getItem('tapdata_localize_lang') || 'sc'
@@ -97,7 +91,7 @@ export default {
   methods: {
     remoteMethod({ page }) {
       let { current, size } = page
-      const { task, ids, startTypeMap, dataFlowStatusMap } = this
+      const { task, ids, startTypeMap } = this
       let where = {
         dataFlowId: ids[0]
       }
@@ -114,18 +108,10 @@ export default {
             data: data.items.map(t => {
               t.dataFlowName = task.name || '-'
               t.startTypeLabel = startTypeMap[t.startType]
-              t.statusObj = dataFlowStatusMap[t.dataFlowStatus] || {}
               return t
             })
           }
         })
-    },
-    imgSrc(icon) {
-      if (this.lang === 'en') {
-        return require(`../../../../public/images/task/${icon}.svg`)
-      } else {
-        return require(`../../../../public/images/task/${icon}.png`)
-      }
     }
   }
 }
