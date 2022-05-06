@@ -711,7 +711,7 @@ export default {
           if (target.tableNameTransform) {
             targetTableName = targetTableName[target.tableNameTransform]()
           }
-          let findOne = tableOperations.find(f => f.originalTableName === name)
+          let findOne = tableOperations?.find(f => f.originalTableName === name)
           if (findOne) {
             targetTableName = findOne.tableName
           }

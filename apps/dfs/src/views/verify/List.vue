@@ -28,7 +28,7 @@
         <template slot-scope="scope">
           <StatusTag type="text" :status="scope.row.status" :status-map="statusMap"></StatusTag>
           <span v-if="scope.row.InspectResult && scope.row.status === 'running'">
-            {{ `(${Math.round(scope.row.InspectResult.progress * 100)}%)` }}
+            {{ `(${Math.round((scope.row.InspectResult.progress || 0) * 100)}%)` }}
           </span>
         </template>
       </ElTableColumn>
