@@ -287,12 +287,11 @@ export default {
   font-size: 12px;
   background-color: #fff;
   box-sizing: border-box;
+  overflow: auto;
   .page-main {
     margin: 0 auto;
     width: 800px;
-    //height: calc(100% - 80px);
     box-sizing: border-box;
-    overflow: auto;
 
     .title {
       font-size: 28px !important;
