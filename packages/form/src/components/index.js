@@ -24,6 +24,7 @@ export * from './form-flex'
 export * from './async-select'
 export * from './table-select'
 export * from './merge-table-item'
+export * from './merge-table-tree'
 export * from './field-select'
 export * from './form-content'
 

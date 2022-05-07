@@ -13,12 +13,20 @@ const spaceSize = {
 
 export const Space = defineComponent({
   name: 'FSpace',
-  props: ['size', 'direction', 'align', 'split', 'filterIndex'],
+  props: ['size', 'direction', 'align', 'split', 'filterIndex', 'colSpan', 'inline'],
   setup(props, { slots }) {
     const layout = useFormLayout()
 
     return () => {
-      const { align, size = layout.value?.spaceGap ?? 'small', direction = 'horizontal', split, filterIndex } = props
+      const {
+        align,
+        size = layout.value?.spaceGap ?? 'small',
+        direction = 'horizontal',
+        split,
+        filterIndex,
+        colSpan = [],
+        inline = true
+      } = props
 
       const prefixCls = `${stylePrefix}-space`
       const children = slots.default?.()
@@ -54,7 +62,8 @@ export const Space = defineComponent({
       const someSpaceClass = {
         [prefixCls]: true,
         [`${prefixCls}-${direction}`]: true,
-        [`${prefixCls}-align-${mergedAlign}`]: mergedAlign
+        [`${prefixCls}-align-${mergedAlign}`]: mergedAlign,
+        flex: !inline
       }
 
       const itemClassName = `${prefixCls}-item`
@@ -74,7 +83,10 @@ export const Space = defineComponent({
             {
               class: itemClassName,
               key: `${itemClassName}-${i}`,
-              style
+              style: {
+                ...style,
+                flex: colSpan[i]
+              }
             },
             { default: () => [child] }
           ),

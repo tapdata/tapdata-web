@@ -797,6 +797,7 @@ $headerBg: #fff;
   }
 
   &-body {
+    position: relative;
     display: flex;
     flex-direction: column;
     flex: 1;

@@ -429,7 +429,7 @@ $sidebarBg: #fff;
       transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 
       &:focus {
-        border-color: #409eff;
+        border-color: map-get($color, primary);
         & + .title-input-icon {
           color: map-get($color, primary);
         }
