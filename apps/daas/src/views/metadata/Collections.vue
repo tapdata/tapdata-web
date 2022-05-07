@@ -236,7 +236,7 @@ export default {
       .btn-create {
         float: right;
         padding: 7px;
-        // background: #f5f5f5;
+        // background: map-get($bgColor, main);
         i.iconfont {
           font-size: 12px;
         }

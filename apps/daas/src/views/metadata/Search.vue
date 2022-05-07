@@ -236,7 +236,7 @@ export default {
 </style>
 <style scoped lang="scss">
 .metadata-change-background {
-  // background: #fafafa;
+  // background: map-get($bgColor, normal);
   display: flex;
   height: 100%;
   overflow: hidden;
@@ -301,7 +301,7 @@ export default {
     }
     .search-header {
       padding: 15px 0;
-      background: #ffffff;
+      background: map-get($bgColor, white);
       overflow: hidden;
       border-bottom: 1px solid #dedee4;
       .search-title {
@@ -342,7 +342,7 @@ export default {
           display: flex;
         }
         &:hover {
-          background: #fafafa;
+          background: map-get($bgColor, normal);
         }
       }
       .table-li {

@@ -167,7 +167,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  // background: #fafafa;
+  // background: map-get($bgColor, normal);
   width: 100%;
   height: 100%;
   overflow: hidden;

@@ -610,7 +610,7 @@ export default {
       .el-transfer-panel__header {
         height: 28px;
         line-height: 28px;
-        background: #f5f5f5;
+        background: map-get($bgColor, main);
 
         .el-checkbox {
           height: 28px;
@@ -632,7 +632,7 @@ export default {
 
       .el-transfer__button.is-disabled,
       .el-transfer__button.is-disabled:hover {
-        background-color: #f5f5f5;
+        background-color: map-get($bgColor, main);
       }
     }
 
@@ -739,7 +739,7 @@ export default {
 
       .el-transfer__button.is-disabled,
       .el-transfer__button.is-disabled:hover {
-        background-color: #f5f5f5;
+        background-color: map-get($bgColor, main);
       }
     }
     .field-transfer__input {

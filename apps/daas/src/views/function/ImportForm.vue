@@ -384,7 +384,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #fafafa;
+  background: map-get($bgColor, normal);
   .btn {
     min-width: 80px;
   }

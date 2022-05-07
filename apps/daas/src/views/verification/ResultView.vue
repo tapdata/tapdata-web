@@ -122,11 +122,11 @@ $margin: 10px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-left: 1px solid #f2f2f2;
+  border-left: 1px solid map-get($borderColor, light);
   .header {
     padding: 12px 24px;
     font-size: 12px;
-    background: #f5f5f5;
+    background: map-get($bgColor, main);
     font-size: 14px;
     line-height: 22px;
   }
@@ -177,7 +177,7 @@ $margin: 10px;
       }
       .title-box {
         color: map-get($fontColor, dark);
-        background: #fafafa;
+        background: map-get($bgColor, normal);
         font-size: 12px;
         line-height: 28px;
         padding-left: 10px;
@@ -245,11 +245,11 @@ $margin: 10px;
           word-wrap: break-word;
         }
         li + li {
-          border-left: 1px solid #f2f2f2;
+          border-left: 1px solid map-get($borderColor, light);
         }
         .father-table {
           display: flex;
-          border-top: 1px solid #f2f2f2;
+          border-top: 1px solid map-get($borderColor, light);
           li {
             padding-top: 16px;
             padding-bottom: 16px;
@@ -262,7 +262,7 @@ $margin: 10px;
         .sub-table {
           display: flex;
           &:nth-child(2n + 1) {
-            background: #fafafa;
+            background: map-get($bgColor, normal);
           }
           li {
             flex: 1;

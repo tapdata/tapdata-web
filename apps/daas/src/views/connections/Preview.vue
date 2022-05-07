@@ -281,7 +281,7 @@ export default {
 }
 .container-item {
   &.border-item {
-    border-bottom: 1px solid #f2f2f2;
+    border-bottom: 1px solid map-get($borderColor, light);
   }
   &.button-line {
     margin-bottom: -1px;
@@ -292,7 +292,7 @@ export default {
 }
 .box-line {
   padding: 8px 0;
-  border-top: 1px solid #f2f2f2;
+  border-top: 1px solid map-get($borderColor, light);
 }
 .box-line__label {
   color: map-get($fontColor, light);

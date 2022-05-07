@@ -239,7 +239,7 @@ export default {
       justify-content: space-between;
       align-items: center;
       line-height: 50px;
-      border-bottom: 1px solid #f2f2f2;
+      border-bottom: 1px solid map-get($borderColor, light);
       font-size: 12px;
       color: #202d40;
       .item-time {

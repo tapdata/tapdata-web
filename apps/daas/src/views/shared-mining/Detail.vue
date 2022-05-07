@@ -501,7 +501,7 @@ export default {
     border-radius: 4px;
     .share-detail-head-left {
       width: 260px;
-      border-right: 1px solid #f2f2f2;
+      border-right: 1px solid map-get($borderColor, light);
       .head-label {
         min-width: 100px;
       }

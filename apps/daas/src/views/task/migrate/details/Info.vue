@@ -880,7 +880,7 @@ export default {
   white-space: nowrap;
 }
 .grey-background {
-  background-color: #fafafa;
+  background-color: map-get($bgColor, normal);
 }
 .right-box {
   display: flex;

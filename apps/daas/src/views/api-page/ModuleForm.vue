@@ -783,7 +783,7 @@ export default {
           height: 54px;
           padding: 0 20px;
           line-height: 54px;
-          background-color: #fafafa;
+          background-color: map-get($bgColor, normal);
           border-bottom: 1px solid #edeeee;
           span {
             display: inline-block;

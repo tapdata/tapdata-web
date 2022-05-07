@@ -633,7 +633,7 @@ export default {
     }
     .btn {
       padding: 7px;
-      // background: #f5f5f5;
+      // background: map-get($bgColor, main);
       i.iconfont {
         font-size: 12px;
       }
@@ -658,7 +658,7 @@ export default {
       .tag {
         margin-left: 5px;
         color: map-get($fontColor, light);
-        background: #f5f5f5;
+        background: map-get($bgColor, main);
         border: 1px solid #dedee4;
       }
       .parent {

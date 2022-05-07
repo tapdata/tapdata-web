@@ -414,7 +414,7 @@
   border-bottom: 0;
 }
 .el-table .el-table__header th {
-  background-color: #fafafa;
+  background-color: map-get($bgColor, normal);
 }
 .el-table .ascending .sort-caret.ascending {
   border-bottom-color: map-get($color, primary);
@@ -611,7 +611,7 @@
     flex-direction: column;
     flex: 1;
     padding-top: 16px;
-    background: #fafafa;
+    background: map-get($bgColor, normal);
   }
   .el-transfer-panel__list {
     flex: 1;

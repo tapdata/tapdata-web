@@ -101,7 +101,7 @@
   padding: 16px;
 }
 .shared-cache-details--header {
-  border-bottom: 1px solid #f2f2f2;
+  border-bottom: 1px solid map-get($borderColor, light);
   .icon {
     font-size: 18px;
   }
@@ -112,7 +112,7 @@
     flex: 1;
     padding: 8px 0;
     line-height: 17px;
-    border-bottom: 1px solid #f2f2f2;
+    border-bottom: 1px solid map-get($borderColor, light);
     .label {
       font-size: 12px;
       color: rgba(0, 0, 0, 0.6);
@@ -131,7 +131,7 @@
     padding: 0 16px;
     height: 38px;
     line-height: 38px;
-    background: #fafafa;
+    background: map-get($bgColor, normal);
   }
   .content {
     padding: 0 16px 8px 16px;

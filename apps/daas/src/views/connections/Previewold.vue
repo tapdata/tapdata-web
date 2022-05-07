@@ -670,7 +670,7 @@ export default {
     }
     .btn {
       padding: 4px 7px;
-      background: #f5f5f5;
+      background: map-get($bgColor, main);
       i.iconfont {
         font-size: 12px;
       }
@@ -683,8 +683,8 @@ export default {
     ul {
       width: 100%;
       padding: 10px 0;
-      border-top: 1px solid #f2f2f2;
-      border-bottom: 1px solid #f2f2f2;
+      border-top: 1px solid map-get($borderColor, light);
+      border-bottom: 1px solid map-get($borderColor, light);
     }
     .item {
       margin-right: 10px;
@@ -737,7 +737,7 @@ export default {
     display: block;
     width: 100%;
     height: 30px;
-    background: #f5f5f5;
+    background: map-get($bgColor, main);
     border-bottom: 1px solid #dedee4;
   }
   .back-btn-icon-box {

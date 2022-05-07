@@ -1006,7 +1006,7 @@ export default {
         line-height: 30px;
         font-size: 12px;
         color: #999;
-        background-color: #f5f5f5;
+        background-color: map-get($bgColor, main);
         .e-col {
           padding-left: 12px;
         }

@@ -391,7 +391,7 @@ export default {
     .setting-nav {
       height: 100%;
       padding: 20px 2px;
-      border-right: 1px solid #f2f2f2;
+      border-right: 1px solid map-get($borderColor, light);
       li {
         display: flex;
         flex-direction: row;
@@ -469,7 +469,7 @@ export default {
       padding: 0 20px;
       line-height: 48px;
       text-align: right;
-      border-top: 1px solid #f2f2f2;
+      border-top: 1px solid map-get($borderColor, light);
     }
   }
   .dialog-email-template {
@@ -480,7 +480,7 @@ export default {
         padding: 5px 20px 5px 0;
         display: block;
         text-align: right;
-        border-right: 3px solid #f2f2f2;
+        border-right: 3px solid map-get($borderColor, light);
         cursor: pointer;
       }
       .active {

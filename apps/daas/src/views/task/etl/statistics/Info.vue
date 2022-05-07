@@ -869,7 +869,7 @@ export default {
   display: inline-block;
 }
 .grey-background {
-  background-color: #fafafa;
+  background-color: map-get($bgColor, normal);
 }
 .right-box {
   display: flex;

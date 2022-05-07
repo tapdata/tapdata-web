@@ -428,7 +428,7 @@ export default {
       box-sizing: border-box;
       .notification-item {
         padding: 5px 20px 4px 20px;
-        border-bottom: 1px solid #f2f2f2;
+        border-bottom: 1px solid map-get($borderColor, light);
         font-size: 12px;
         color: map-get($fontColor, light);
         &:hover {

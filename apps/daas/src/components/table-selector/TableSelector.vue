@@ -203,7 +203,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  border: 1px solid #f2f2f2;
+  border: 1px solid map-get($borderColor, light);
   border-radius: 2px;
   overflow: hidden;
 }

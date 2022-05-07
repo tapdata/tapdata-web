@@ -972,7 +972,7 @@ export default {
         border-radius: 3px;
         background-color: map-get($bgColor, white);
         box-sizing: border-box;
-        border-right: 1px solid #f2f2f2;
+        border-right: 1px solid map-get($borderColor, light);
         .metadata-aside-box {
           flex: 1;
           padding: 20px;
@@ -990,12 +990,12 @@ export default {
               overflow: hidden;
               span {
                 display: inline-block;
-                color: #000;
+                color: map-get($fontColor, dark);
               }
               .label {
                 display: inline-block;
                 width: 95px;
-                color: rgba(0, 0, 0, 0.65);
+                color: map-get($fontColor, light);
               }
               .label + span {
                 display: inline-block;
@@ -1050,7 +1050,7 @@ export default {
         text-align: right;
         font-size: 12px;
         background-color: map-get($bgColor, white);
-        border-right: 1px solid #f2f2f2;
+        border-right: 1px solid map-get($borderColor, light);
         box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
         .iconfont {
           cursor: pointer;
@@ -1159,7 +1159,7 @@ export default {
                         }
                         .btn {
                           padding: 7px;
-                          background: #f5f5f5;
+                          background: map-get($bgColor, main);
                           i.iconfont {
                             font-size: 12px;
                           }
@@ -1214,7 +1214,7 @@ export default {
               th {
                 padding: 0;
                 line-height: 40px !important;
-                background-color: #fafafa;
+                background-color: map-get($bgColor, normal);
               }
             }
           }

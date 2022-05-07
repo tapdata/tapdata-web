@@ -37,7 +37,7 @@
               ></el-input>
             </el-form-item>
             <el-checkbox class="keep-sign-in" v-model="keepSignIn" style="display: none">
-              <span style="color: #999"
+              <span class="font-color-light"
                 >{{ $t('app.signIn.registry_tip') }} <i>{{ $t('app.signIn.userPplicy') }}</i></span
               >
             </el-checkbox>
@@ -207,7 +207,7 @@ export default {
 
 <style lang="scss" scoped>
 .page-registry {
-  background: #fafafa;
+  background: map-get($bgColor, normal);
   height: 100%;
   overflow: auto;
   box-sizing: border-box;

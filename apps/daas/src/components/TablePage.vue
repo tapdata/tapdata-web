@@ -328,7 +328,7 @@ export default {
 
     .el-table--border th {
       border-right: 0;
-      background-color: #fafafa;
+      background-color: map-get($bgColor, normal);
       &:hover {
         border-right: 1px solid #ebeef5;
       }

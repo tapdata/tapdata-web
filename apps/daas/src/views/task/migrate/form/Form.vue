@@ -693,7 +693,7 @@ export default {
         border-radius: 3px;
         box-sizing: border-box;
         text-align: center;
-        color: #999;
+        color: map-get($fontColor, slight);
         img {
           display: block;
           width: 100%;
@@ -760,7 +760,7 @@ export default {
     }
   }
   .right-aside {
-    background: #fafafa;
+    background: map-get($bgColor, normal);
     border-left: 1px solid #dedee4;
   }
   .task-container {
@@ -793,7 +793,7 @@ export default {
               border-radius: unset;
             }
             th {
-              background-color: #fafafa;
+              background-color: map-get($bgColor, normal);
             }
           }
         }
@@ -875,15 +875,15 @@ export default {
         margin-top: 20px;
         .nav {
           width: 293px;
-          border-top: 1px solid #f2f2f2;
-          border-right: 1px solid #f2f2f2;
+          border-top: 1px solid map-get($borderColor, light);
+          border-right: 1px solid map-get($borderColor, light);
           background: rgba(44, 101, 255, 0.05);
           li {
             height: 115px;
-            background: #ffffff;
+            background: map-get($bgColor, white);
             box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
             border-radius: 4px;
-            border-bottom: 1px solid #f2f2f2;
+            border-bottom: 1px solid map-get($borderColor, light);
           }
         }
       }
@@ -987,7 +987,7 @@ export default {
     }
   }
   .create-task-footer {
-    border-top: 1px solid #f2f2f2;
+    border-top: 1px solid map-get($borderColor, light);
   }
   .step-4 {
     display: flex;
@@ -998,7 +998,7 @@ export default {
 .steps-header {
   margin: 0 20px;
   padding: 20px 0 0;
-  border-bottom: 1px solid #f2f2f2;
+  border-bottom: 1px solid map-get($borderColor, light);
 }
 .el-main {
   padding: 24px 0 0;

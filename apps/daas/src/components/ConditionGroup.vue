@@ -238,7 +238,7 @@ export default {
       ::v-deep {
         .el-button--text {
           font-size: 12px;
-          background-color: #fafafa;
+          background-color: map-get($bgColor, normal);
         }
       }
     }

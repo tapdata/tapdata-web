@@ -95,7 +95,7 @@ export default {
       height: 100%;
       .setting-left-sidebar {
         padding-top: 16px;
-        border-right: 1px solid #f2f2f2;
+        border-right: 1px solid map-get($borderColor, light);
         width: 200px;
         // .title {
         //   height: 14px;

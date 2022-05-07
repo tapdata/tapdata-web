@@ -551,7 +551,7 @@ $unreadColor: #ee5353;
       font-size: 12px;
     }
     &:hover {
-      background: #fafafa;
+      background: map-get($bgColor, normal);
     }
   }
 }

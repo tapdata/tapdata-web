@@ -42,7 +42,7 @@ export default {
 
 <style lang="scss" scoped>
 .overview-bar__content {
-  background: #fafafa;
+  background: map-get($bgColor, normal);
   border-radius: 4px 4px 0 0;
 }
 </style>

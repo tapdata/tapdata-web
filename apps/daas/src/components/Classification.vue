@@ -504,7 +504,7 @@ export default {
     height: 100%;
     //width: 100%;
     padding: 20px 0;
-    // border-right: 1px solid #f2f2f2;
+    // border-right: 1px solid map-get($borderColor, light);
     width: 214px;
     .btn-expand {
       position: absolute;
@@ -564,7 +564,7 @@ export default {
   .classification-header {
     position: relative;
     padding: 0 12px;
-    // background: #fafafa;
+    // background: map-get($bgColor, normal);
     // border-bottom: 1px solid #dedee4;
     font-size: 12px;
     line-height: 31px;

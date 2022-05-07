@@ -231,7 +231,7 @@ export default {
     }
   }
   .dataRule-list {
-    background-color: #fafafa;
+    background-color: map-get($bgColor, normal);
     .search-bar {
       display: flex;
       li + li {
@@ -250,7 +250,7 @@ export default {
     }
     .btn {
       padding: 7px;
-      background: #f5f5f5;
+      background: map-get($bgColor, main);
       i.iconfont {
         font-size: 12px;
       }

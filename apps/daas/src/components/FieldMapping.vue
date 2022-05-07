@@ -441,7 +441,7 @@ export default {
 .e-button {
   padding: 4px 10px;
   color: map-get($fontColor, light);
-  background-color: #f5f5f5;
+  background-color: map-get($bgColor, main);
   margin-left: 10px;
 }
 </style>

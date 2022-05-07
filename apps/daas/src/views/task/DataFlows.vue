@@ -1268,8 +1268,8 @@ export default {
     .dataflow-name {
       .tag {
         margin-left: 5px;
-        color: #999999;
-        background: #f5f5f5;
+        color: map-get($fontColor, slight);
+        background: map-get($bgColor, main);
         border: 1px solid #dedee4;
       }
       .name {
@@ -1285,7 +1285,7 @@ export default {
     }
     .region-info {
       line-height: 20px;
-      color: #aaa;
+      color: map-get($fontColor, light);
     }
     .table-operations {
       display: flex;
@@ -1297,7 +1297,7 @@ export default {
 .dataflow-table-more-dropdown-menu .btn-delete {
   color: #f56c6c;
   &.is-disabled {
-    color: #bbb;
+    color: map-get($fontColor, slight);
   }
 }
 </style>
@@ -1312,7 +1312,7 @@ export default {
   .text {
     padding-left: 100px;
     line-height: 28px;
-    color: #999;
+    color: map-get($fontColor, slight);
     ul {
       display: flex;
       flex-direction: row;

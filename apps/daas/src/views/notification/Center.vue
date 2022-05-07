@@ -90,7 +90,7 @@ $unreadColor: #ee5353;
     background-color: map-get($bgColor, white);
     border-radius: 4px;
     .left-panel {
-      border-right: 1px solid #f2f2f2;
+      border-right: 1px solid map-get($borderColor, light);
       width: 200px;
       ul.menu li {
         display: flex;

@@ -815,7 +815,7 @@ export default {
             justify-content: center;
             padding: 16px 0;
             text-align: center;
-            border-top: 1px solid #f2f2f2;
+            border-top: 1px solid map-get($borderColor, light);
             .usageRate {
               width: 50%;
               text-align: center;
@@ -844,7 +844,7 @@ export default {
               margin: 0 !important;
               line-height: 35px;
               font-size: 12px;
-              background-color: #fafafa;
+              background-color: map-get($bgColor, normal);
               .txt {
                 font-size: 12px;
                 color: map-get($fontColor, light);
@@ -855,7 +855,7 @@ export default {
               margin: 0 !important;
               margin-bottom: 5px;
               line-height: 35px;
-              border-bottom: 1px solid #f2f2f2;
+              border-bottom: 1px solid map-get($borderColor, light);
               &:last-child {
                 border-bottom: 0;
               }

@@ -372,7 +372,7 @@
   padding: 16px 24px;
   display: flex;
   justify-content: space-between;
-  background: #fafafa;
+  background: map-get($bgColor, normal);
 }
 .joint-table-footer {
   padding: 16px 24px;
@@ -381,7 +381,7 @@
   .joint-table-item {
     padding: 16px 24px;
     display: flex;
-    border-bottom: 1px solid #f2f2f2;
+    border-bottom: 1px solid map-get($borderColor, light);
     cursor: pointer;
   }
   .joint-table-setting {
@@ -486,7 +486,7 @@
     width: 300px;
   }
   .js-editor {
-    border: 1px solid #f2f2f2;
+    border: 1px solid map-get($borderColor, light);
   }
 }
 </style>

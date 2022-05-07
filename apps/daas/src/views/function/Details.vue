@@ -106,7 +106,7 @@ export default {
   // display: flex;
   // flex-direction: column;
   // height: 100%;
-  // background: #fafafa;
+  // background: map-get($bgColor, normal);
   // .function-details__body {
   //   margin: 30px 24px 0 24px;
   //   flex: 1;

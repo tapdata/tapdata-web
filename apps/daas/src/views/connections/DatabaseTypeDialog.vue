@@ -119,7 +119,7 @@ export default {
       height: 70px;
       justify-content: center;
       align-items: center;
-      background: #fafafa;
+      background: map-get($bgColor, normal);
       border: 1px solid #dedee4;
       border-radius: 3px;
       cursor: pointer;

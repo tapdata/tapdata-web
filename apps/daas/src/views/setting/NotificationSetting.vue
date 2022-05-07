@@ -216,7 +216,7 @@ $unreadColor: #ee5353;
         font-size: 12px;
         white-space: nowrap;
         color: map-get($fontColor, light);
-        border: 1px solid #f2f2f2;
+        border: 1px solid map-get($borderColor, light);
         border-left: 2px solid map-get($color, primary);
         box-sizing: border-box;
       }
@@ -277,7 +277,7 @@ $unreadColor: #ee5353;
     line-height: 60px;
     height: 60px;
     text-align: right;
-    border-top: 1px solid #f2f2f2;
+    border-top: 1px solid map-get($borderColor, light);
   }
 }
 

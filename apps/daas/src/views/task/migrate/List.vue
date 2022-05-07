@@ -1117,7 +1117,7 @@ export default {
       .tag {
         margin-left: 5px;
         color: map-get($fontColor, slight);
-        background: #f5f5f5;
+        background: map-get($bgColor, main);
         border: 1px solid #dedee4;
       }
       .name {
@@ -1223,7 +1223,7 @@ export default {
   }
 
   .schema-load {
-    color: #999;
+    color: map-get($fontColor, slight);
     display: inline-block;
     margin-left: 20px;
     font-size: 12px;
@@ -1245,7 +1245,7 @@ export default {
         width: 100%;
         margin-right: 16px;
         padding-bottom: 10px;
-        border-bottom: 1px solid #f2f2f2;
+        border-bottom: 1px solid map-get($borderColor, light);
         .label {
           width: 100%;
           text-align: left;
@@ -1265,7 +1265,7 @@ export default {
     display: block;
     width: 100%;
     height: 30px;
-    background: #f5f5f5;
+    background: map-get($bgColor, main);
     border-bottom: 1px solid #dedee4;
   }
   .back-btn-icon-box {
@@ -1313,7 +1313,7 @@ export default {
   .text {
     padding-left: 100px;
     line-height: 28px;
-    color: #999;
+    color: map-get($fontColor, slight);
     ul {
       display: flex;
       flex-direction: row;

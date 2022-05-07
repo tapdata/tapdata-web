@@ -133,7 +133,7 @@ export default {
 
 <style lang="scss" scoped>
 .page-registry_status {
-  background: #fafafa;
+  background: map-get($bgColor, normal);
   height: 100%;
   overflow: auto;
   box-sizing: border-box;

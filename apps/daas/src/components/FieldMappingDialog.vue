@@ -1377,15 +1377,15 @@ export default {
     height: 0;
     .task-form-left__ul {
       flex: 1;
-      border-top: 1px solid #f2f2f2;
-      border-right: 1px solid #f2f2f2;
+      border-top: 1px solid map-get($borderColor, light);
+      border-right: 1px solid map-get($borderColor, light);
       overflow-y: auto;
       li {
         // height: 93px;
-        background: #ffffff;
+        background: map-get($bgColor, white);
         box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
         border-radius: 4px;
-        border-bottom: 1px solid #f2f2f2;
+        border-bottom: 1px solid map-get($borderColor, light);
         display: flex;
         padding: 16px 0 10px 10px;
         &:hover {

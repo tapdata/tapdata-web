@@ -206,7 +206,7 @@ export default {
     .tip {
       height: 30px;
       font-size: 12px;
-      background: #f5f5f5;
+      background: map-get($bgColor, main);
       border: 1px solid map-get($borderColor, light);
       line-height: 30px;
     }

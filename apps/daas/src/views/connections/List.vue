@@ -681,7 +681,7 @@ export default {
     vertical-align: middle;
     width: 40px;
     height: 40px;
-    //background: #ffffff;
+    //background: map-get($bgColor, white);
     border-radius: 3px;
     display: flex;
     justify-content: center;
@@ -740,7 +740,7 @@ export default {
     font-size: 12px;
     font-weight: 400;
     color: map-get($fontColor, light);
-    background: #f5f5f5;
+    background: map-get($bgColor, main);
     border: 1px solid #dedee4;
     border-radius: 3px;
     margin-left: 5px;
