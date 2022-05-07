@@ -304,6 +304,7 @@ export const FieldAddDel = connect(
             }
           }
           fn(node, data)
+          this.$forceUpdate()
         },
         getParentFieldName(node) {
           let fieldName = node.data && node.data.field_name ? node.data.field_name : ''
@@ -322,7 +323,7 @@ export const FieldAddDel = connect(
          */
         handleCreate() {
           let node = this.$refs.tree.getNode(this.fields[0]?.id || '')
-          let existsName = this.handleExistsName(node?.data.field_name)
+          let existsName = this.handleExistsName()
           if (existsName) return
           console.log('fieldProcessor.handleCreate') //eslint-disable-line
           let fieldId = uuid()
@@ -410,6 +411,7 @@ export const FieldAddDel = connect(
             }
             if (originalField) fn(originalField)
           }
+          this.$forceUpdate()
           console.log('fieldProcessor.handleDelete', this.operations) // eslint-disable-line
         },
         handleAllDelete() {
