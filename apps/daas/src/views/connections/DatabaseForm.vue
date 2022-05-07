@@ -810,12 +810,13 @@ export default {
       this.ecsList = this.ecsList || []
       if (!this.ecsList || this.ecsList.length === 0) return
       this.handleStrategy()
-    },
-    'model.accessNodeType'(val) {
-      if (val === 'MANUALLY_SPECIFIED_BY_THE_USER') {
-        this.model.accessNodeProcessId = this.accessNodeList[0].processId
-      }
     }
+    // 'model.accessNodeType'(val) {
+    //   if (val === 'MANUALLY_SPECIFIED_BY_THE_USER') {
+    //     debugger
+    //     this.model.accessNodeProcessId = this.accessNodeList[0].processId
+    //   }
+    // }
   },
   methods: {
     formChange(data) {
@@ -905,6 +906,9 @@ export default {
         if (this.model.database_type === 'vika') {
           //初始化维格表
           this.getSpaceVika(this.$route.params.id)
+        }
+        if (!this.model.accessNodeProcessId) {
+          this.model.accessNodeProcessId = this.accessNodeList?.[0]?.processId
         }
       } else {
         this.model = Object.assign(this.model, data, { name: this.model.name })
@@ -1781,7 +1785,7 @@ export default {
         .then(res => {
           let items = res.data || []
           self.accessNodeList = items
-          self.model.accessNodeProcessId = items[0]?.processId
+          self.model.accessNodeProcessId = items?.[0]?.processId
         })
     }
   }

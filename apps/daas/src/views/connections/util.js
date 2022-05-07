@@ -160,7 +160,9 @@ export const defaultModel = {
     krb5ConfName: '',
     krb5Principal: '',
     krb5ServiceName: '',
-    kafkaSaslMechanism: 'PLAIN'
+    kafkaSaslMechanism: 'PLAIN',
+    accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+    accessNodeProcessId: ''
   },
   file: {
     name: '',
@@ -192,7 +194,9 @@ export const defaultModel = {
         include_filename: '',
         exclude_filename: ''
       }
-    ]
+    ],
+    accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+    accessNodeProcessId: ''
   },
   jira: {
     name: '',
@@ -200,7 +204,9 @@ export const defaultModel = {
     pdb: '',
     jiraUrl: '',
     jiraUsername: '',
-    jiraPassword: ''
+    jiraPassword: '',
+    accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+    accessNodeProcessId: ''
   },
   restApi: {
     name: '',
@@ -227,7 +233,9 @@ export const defaultModel = {
         initial_offset: '',
         content_type: ''
       }
-    ]
+    ],
+    accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+    accessNodeProcessId: ''
   },
   custom_connection: {
     name: '',
@@ -244,7 +252,9 @@ export const defaultModel = {
     custom_before_opr: false,
     custom_after_opr: false,
     custom_before_script: '',
-    custom_after_script: ''
+    custom_after_script: '',
+    accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+    accessNodeProcessId: ''
   },
   gridfs: {
     connection_type: 'source',
@@ -274,7 +284,9 @@ export const defaultModel = {
     excel_header_start: 'A1',
     excel_header_end: 'Z1',
     excel_value_start: '',
-    excel_value_end: ''
+    excel_value_end: '',
+    accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+    accessNodeProcessId: ''
   },
   tcp: {
     name: '',
@@ -283,7 +295,9 @@ export const defaultModel = {
     database_host: '',
     database_port: '',
     tcpUdpType: 'TCP',
-    root_name: ''
+    root_name: '',
+    accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+    accessNodeProcessId: ''
   },
   mq: {
     name: '',
@@ -300,10 +314,14 @@ export const defaultModel = {
     routeKeyField: '', //消息路由
     virtualHost: '', //虚拟主机
     productGroup: '',
-    consumerGroup: ''
+    consumerGroup: '',
+    accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+    accessNodeProcessId: ''
   },
   hana: {
-    hanaType: 'sdc'
+    hanaType: 'sdc',
+    accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+    accessNodeProcessId: ''
   },
   vika: {
     name: '',
@@ -312,7 +330,9 @@ export const defaultModel = {
     database_host: '',
     plain_password: '',
     vika_space_name: '',
-    vika_space_id: ''
+    vika_space_id: '',
+    accessNodeType: 'AUTOMATIC_PLATFORM_ALLOCATION',
+    accessNodeProcessId: ''
   }
 }
 export const defaultCloudModel = {
