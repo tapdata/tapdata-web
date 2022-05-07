@@ -637,11 +637,11 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$api('modules')
+        this.$api('cluster')
           .delete(item.id, item.name)
           .then(() => {
             this.$message.success(this.$t('message_delete_ok'))
-            this.table.fetch()
+            this.getDataApi()
           })
           .catch(() => {
             this.$message.info(this.$t('message_delete_fail'))
