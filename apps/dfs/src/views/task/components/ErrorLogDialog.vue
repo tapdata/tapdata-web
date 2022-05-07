@@ -114,6 +114,7 @@ export default {
     },
     toDetail() {
       this.dialogVisible = false
+      this.$emit('input', this.dialogVisible)
       this.$router.push({
         name: 'Monitor',
         params: {
