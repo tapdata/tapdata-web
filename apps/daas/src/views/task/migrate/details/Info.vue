@@ -138,29 +138,33 @@
           <div class="fw-bold right-box-text font-color-dark">{{ $t('task_info_full_progress') }}</div>
           <div class="flex flex-column justify-content-center">
             <div
-              v-if="progress"
+              v-if="syncData.progress"
               class="progress-box flex justify-content-center align-items-center position-relative mt-1"
             >
               <ElProgress
                 type="circle"
                 color="rgba(44, 101, 255, 1)"
                 :stroke-width="3"
-                :percentage="progress"
+                :percentage="syncData.progress"
                 :show-text="false"
                 :width="48"
               ></ElProgress>
               <div class="flex justify-content-center position-absolute color-primary fw-bolder din-font">
-                {{ progress }}%
+                {{ syncData.progress }}%
               </div>
             </div>
             <div class="py-2 fs-8 font-color-light" v-else>
               {{ $t('migrate_no_progress_statistics_yet') }}
             </div>
-            <div v-if="progress === 100" class="right-box-text font-color-light mt-1">
-              {{ $t('task_info_full_time') }}：{{ formatTime(endTs) }}
+            <div v-if="syncData.progress === 100" class="right-box-text font-color-light mt-1">
+              {{ $t('task_info_full_time') }}：{{ formatTime(syncData.endTs) }}
             </div>
             <div v-else class="right-box-text font-color-light mt-1">
-              {{ $t('task_monitor_full_completion_time') + '：' + (finishDuration || $t('task_info_calculating')) }}
+              {{
+                $t('task_monitor_full_completion_time') +
+                '：' +
+                (handleTime(syncData.finishDuration) || $t('task_info_calculating'))
+              }}
             </div>
           </div>
         </div>
@@ -203,6 +207,11 @@ export default {
   components: { StatusTag, VIcon, SelectList, Chart, DatetimeRange },
   props: {
     task: {
+      type: Object,
+      required: true,
+      default: () => {}
+    },
+    syncData: {
       type: Object,
       required: true,
       default: () => {}
