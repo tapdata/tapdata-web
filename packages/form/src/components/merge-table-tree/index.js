@@ -127,7 +127,8 @@ export const MergeTableTree = observer(
         const nodePath = refs.tree.getNodePath(node)
         nodePath.reduce((parent, item) => {
           if (parent) {
-            temp.push(parent.indexOf(item))
+            // temp.push(parent.indexOf(item))
+            temp.push(parent.findIndex(p => p.id === item.id))
           }
           return item.children
         }, treeRef.value)
