@@ -19,7 +19,7 @@
               <div class="list-item-content" v-if="item.msg === 'JobDDL'">
                 <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
                 <div class="list-item-desc">
-                  <span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
+                  <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
                   <span>{{ systemMap[item.system] }}</span>
                   <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate">
                     <span class="link-primary">
@@ -46,7 +46,7 @@
               <div class="list-item-content" v-else>
                 <div class="unread-1zPaAXtSu"></div>
                 <div class="list-item-desc">
-                  <span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
+                  <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
                   <span>{{ systemMap[item.system] }}</span>
                   <span class="link-primary" @click="handleGo(item)">
                     {{ item.serverName }}
@@ -119,6 +119,7 @@ import UserOperation from './UserOperation'
 import { TYPEMAP } from './tyepMap'
 import { mapState } from 'vuex'
 import VIcon from 'web-core/components/VIcon'
+import { formatTime, uniqueArr } from '@/utils/util'
 
 export default {
   components: {
@@ -127,13 +128,14 @@ export default {
   },
   data() {
     return {
+      // unRead: 0,
       loading: false,
       activeTab: 'system',
       listData: [],
       colorMap: {
-        ERROR: 'red',
-        WARN: 'orangered',
-        INFO: '#409EFF'
+        ERROR: '#D44D4D',
+        WARN: '#FF7D00',
+        INFO: '#2c65ff'
       },
       typeMap: TYPEMAP,
       systemMap: {
@@ -159,22 +161,22 @@ export default {
       this.$router.push({ name: 'notification' })
     },
     init() {
+      let self = this
       let msg = {
         type: 'notification'
       }
       if (!parseInt(this.$cookie.get('isAdmin'))) {
         msg.userId = this.$cookie.get('user_id')
       }
-      this.getUnReadNum()
-      this.$ws.on('notification', data => {
-        if (data.data && data.data.length > 0) {
-          this.listData.unshift(...data.data)
-          this.getUnReadNum()
-        }
-        //格式化日期
-        if (this.listData && this.listData.length > 0) {
-          this.listData.map(item => {
-            item['createTime'] = item.createTime ? this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
+      this.getUnreadData()
+      this.$ws.on('notification', res => {
+        this.getUnReadNum()
+        let data = res?.data
+        if (data) {
+          data.createTime = formatTime(data.createTime)
+          self.listData = uniqueArr([data, ...this.listData])
+          this.$store.commit('notification', {
+            unRead: data.total
           })
         }
       })
@@ -193,20 +195,49 @@ export default {
         .count({ where: JSON.stringify(where) })
         .then(res => {
           if (res.data) {
+            // this.unRead = res.data.count
             this.$store.commit('notification', {
-              unRead: res.data.count
+              unRead: res.data
             })
           }
+        })
+    },
+    getUnreadData() {
+      let filter = {
+        where: {
+          read: false
+        },
+        order: ['createTime DESC'],
+        limit: 20,
+        skip: 0
+      }
+      this.$api('notification')
+        .get({ filter: JSON.stringify(filter) })
+        .then(res => {
+          let { items, total } = res.data
+          this.$store.commit('notification', {
+            unRead: total
+          })
+          // this.unRead = total
+          this.listData = items.map(t => {
+            t.createTime = formatTime(t.createTime)
+            return t
+          })
         })
     },
     handleRead(id) {
       this.$api('notification')
         .patch({ read: true, id: id })
         .then(res => {
-          if (res.data) {
-            this.listData = []
+          if (res) {
+            this.getUnreadData()
             this.$root.$emit('notificationUpdate')
           }
+
+          // if (res.data) {
+          //   this.listData = []
+          //
+          // }
         })
     },
     getLag(lag) {

@@ -424,8 +424,6 @@ export default {
   },
   created() {
     this.getFilterItems()
-    let { status } = this.$route.query
-    this.searchParams.status = status ?? ''
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -433,6 +431,8 @@ export default {
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
+    let { status } = this.$route.query
+    this.searchParams.status = status ?? ''
   },
   beforeDestroy() {
     clearInterval(timeout)

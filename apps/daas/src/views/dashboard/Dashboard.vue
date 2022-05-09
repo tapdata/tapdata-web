@@ -8,7 +8,19 @@
             <div class="dashboard-label fs-5 pt-4 text-center fw-sub font-color-dark">
               {{ $t('dashboard_current_' + item.key) }}
             </div>
-            <div class="dashboard-num pt-4 pb-2 text-center din-font">{{ item.value }}</div>
+            <div
+              :class="[
+                'dashboard-num',
+                'pt-4',
+                'pb-2',
+                'text-center',
+                'din-font',
+                { 'cursor-pointer': item.key === 'copy_total' || item.key === 'sync_total' }
+              ]"
+              @click="handleTask(item)"
+            >
+              {{ item.value }}
+            </div>
           </div>
         </el-col>
       </el-row>
@@ -19,7 +31,7 @@
             <div class="charts-list-text">
               <div class="fs-7 font-color-normal">{{ $t('dashboard_copy_overview_title') }}</div>
               <ul class="job-list">
-                <li v-for="task in migrationTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
+                <li v-for="task in migrationTaskList" :key="task.label" @click="handleStatus(task.label)">
                   <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
                   <span class="fw-normal font-color-light">{{ $t('dashboard_status_' + task.label) }}</span
                   ><span class="num pl-7 font-color-dark">{{ task.value }}</span>
@@ -49,7 +61,7 @@
             <div class="charts-list-text">
               <div class="fs-7 font-color-normal">{{ $t('dashboard_sync_overview_title') }}</div>
               <ul class="job-list">
-                <li v-for="task in syncTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
+                <li v-for="task in syncTaskList" :key="task.label">
                   <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
                   <span class="fw-normal font-color-light">{{ $t('dashboard_status_' + task.label) }}</span
                   ><span class="num pl-7 font-color-dark">{{ handleChangeUnit(task.value) }}</span>
@@ -377,6 +389,26 @@ export default {
     }
   },
   methods: {
+    // 任务概览跳转页面
+    handleTask(item) {
+      if (item.key === 'copy_total') {
+        this.$router.push({
+          name: 'migrate'
+        })
+      } else if (item.key === 'sync_total') {
+        this.$router.push({
+          name: 'dataflowList'
+        })
+      }
+    },
+    handleStatus(status) {
+      this.$router.push({
+        name: 'migrate',
+        query: {
+          status: status
+        }
+      })
+    },
     // 获取服务器与进程的数据
     getClsterDataApi() {
       let params = {

@@ -348,6 +348,7 @@ export default {
         { label: this.$t('task_preview_status_stop'), value: 'stop' },
         { label: this.$t('task_preview_status_edit'), value: 'edit' },
         { label: this.$t('task_preview_status_ready'), value: 'ready' },
+        { label: this.$t('task_preview_status_wait_run'), value: 'wait_run' },
         { label: this.$t('task_preview_status_error'), value: 'error' },
         { label: this.$t('task_preview_status_complete'), value: 'complete' }
       ]
@@ -360,8 +361,8 @@ export default {
   },
   created() {
     this.getFilterItems()
-    let { status } = this.$route.query
-    this.searchParams.status = status ?? ''
+    // let { status } = this.$route.query
+    // this.searchParams.status = status ?? ''
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -369,6 +370,9 @@ export default {
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
+
+    let { status } = this.$route.query
+    this.searchParams.status = status ?? ''
   },
   beforeDestroy() {
     clearInterval(timeout)
