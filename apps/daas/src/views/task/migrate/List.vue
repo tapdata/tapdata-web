@@ -179,9 +179,6 @@
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
                 <el-dropdown-item command="toView">{{ $t('dataFlow.view') }}</el-dropdown-item>
-                <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
-                  $t('task_list_verify')
-                }}</el-dropdown-item>
                 <el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
                   $t('task_list_export')
                 }}</el-dropdown-item>

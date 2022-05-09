@@ -139,6 +139,18 @@ textarea::-webkit-input-placeholder {
   color: #c39700;
   background-color: #fdf1c8;
 }
+.status-connection-ready {
+  color: #2b8a6a;
+  background-color: #ccf4d2;
+}
+.status-connection-testing {
+  color: #d78120;
+  background-color: #feecd6;
+}
+.status-connection-invalid {
+  color: #d5575a;
+  background-color: #feeeef;
+}
 
 // 无分类列表/详情页面/表单页面
 .section-wrap {

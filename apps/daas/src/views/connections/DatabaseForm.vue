@@ -781,8 +781,8 @@ export default {
         this.model = Object.assign({}, defaultModel['vika'])
         break
     }
-    this.checkDataTypeOptions(this.databaseType)
     this.initTimezones()
+    this.checkDataTypeOptions(this.databaseType)
     this.getCluster()
   },
   watch: {
@@ -1076,7 +1076,6 @@ export default {
       let type = this.model.database_type
       type = TYPEMAPCONFIG[type] || type //特殊数据源名称转换
       let func = formConfig[type]
-
       if (func) {
         let config = func(this)
         let items = defaultConfig.concat(config.items)
