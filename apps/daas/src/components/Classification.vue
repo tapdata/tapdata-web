@@ -626,8 +626,8 @@ export default {
     .icon-folder {
       margin-right: 5px;
       font-size: 12px;
-      // color: map-get($color, primary);
-      color: map-get($color, lprimary);
+      color: map-get($color, primary);
+      // color: map-get($color, lprimary);
     }
     .table-label {
       flex: 1;

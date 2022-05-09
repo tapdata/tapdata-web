@@ -1345,7 +1345,7 @@ export default {
     color: map-get($fontColor, white);
   }
   .el-table th {
-    background: #f4f5f7;
+    background: map-get($bgColor, normal);
   }
 }
 .field-mapping-data-type {
@@ -1360,10 +1360,10 @@ export default {
   height: 100%;
   overflow: hidden;
   .icon {
-    color: #6dc5e8;
+    color: map-get($color, disprimary);
   }
   .icon-error {
-    color: red;
+    color: map-get($color, danger);
   }
   .task-form__text {
     display: inline-block;
@@ -1422,7 +1422,7 @@ export default {
           .target {
             font-size: 12px;
             font-weight: 400;
-            color: #ef9868;
+            color: map-get($color, warning);
             line-height: 17px;
             margin-top: 16px;
             text-align: left;
@@ -1451,7 +1451,7 @@ export default {
       flex-direction: column;
     }
     .color-darkorange {
-      color: darkorange;
+      color: map-get($color, warning);
     }
   }
 }

@@ -247,7 +247,7 @@ export default {
         line-height: 28px;
         text-align: center;
         font-size: 12px;
-        background-color: #f5f7fa;
+        background-color: map-get($bgColor, disable);
       }
       .e-select {
         width: 160px;

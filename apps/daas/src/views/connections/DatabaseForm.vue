@@ -1785,7 +1785,9 @@ export default {
         .then(res => {
           let items = res.data || []
           self.accessNodeList = items
-          self.model.accessNodeProcessId = items?.[0]?.processId
+          if (self.model.accessNodeProcessId) {
+            self.model.accessNodeProcessId = items?.[0]?.processId
+          }
         })
     }
   }
