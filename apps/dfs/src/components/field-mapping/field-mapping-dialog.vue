@@ -40,7 +40,7 @@
             <span class="text">
               {{ $t('task_mapping_table_search_table') }}{{ $t('field_mapping_field_mapping_dialog_') }}</span
             >
-            <ElInput v-model="searchTable" size="mini" @change="search('table')"></ElInput>
+            <ElInput v-model="searchTable" size="mini" clearable @input="search('table')"></ElInput>
           </div>
         </div>
         <ul class="task-form-left__ul flex-column">
@@ -83,7 +83,7 @@
         <div class="search mb-5 ml-2">
           <div class="item">
             <span> {{ $t('task_mapping_table_search_field') }}{{ $t('field_mapping_field_mapping_dialog_') }}</span>
-            <ElInput v-model="searchField" size="mini" @change="search('field')"></ElInput>
+            <ElInput v-model="searchField" size="mini" clearable @input="search('field')"></ElInput>
           </div>
           <div class="item ml-5" v-if="!readOnly && !targetIsVika && !targetIsQingflow">
             <ElTooltip effect="dark" :content="$t('task_mapping_table_restore_default_fields')" placement="top-start">
@@ -1054,32 +1054,35 @@ export default {
      * 按表搜索 按字段名搜索
      * */
     search(type) {
-      if (type === 'table') {
-        if (this.searchTable.trim()) {
-          this.searchTable = this.searchTable.trim().toString() //去空格
-          this.fieldMappingNavData = this.defaultFieldMappingNavData.filter(v => {
-            let str = (v.sourceObjectName + '' + v.sinkObjectName).toLowerCase()
-            return str.indexOf(this.searchTable.toLowerCase()) > -1
-          })
+      const { delayTrigger } = this.$util
+      delayTrigger(() => {
+        if (type === 'table') {
+          if (this.searchTable.trim()) {
+            this.searchTable = this.searchTable.trim().toString() //去空格
+            this.fieldMappingNavData = this.defaultFieldMappingNavData.filter(v => {
+              let str = (v.sourceObjectName + '' + v.sinkObjectName).toLowerCase()
+              return str.indexOf(this.searchTable.toLowerCase()) > -1
+            })
+          } else {
+            this.fieldMappingNavData = this.defaultFieldMappingNavData
+          }
         } else {
-          this.fieldMappingNavData = this.defaultFieldMappingNavData
+          if (this.searchField.trim()) {
+            this.searchField = this.searchField.trim().toString() //去空格
+            this.fieldMappingTableData = this.defaultFieldMappingTableData.filter(v => {
+              let str = (v.field_name + '' + v.t_field_name).toLowerCase()
+              return str.indexOf(this.searchField.toLowerCase()) > -1
+            })
+          } else {
+            this.fieldMappingTableData = this.defaultFieldMappingTableData
+          }
         }
-      } else {
-        if (this.searchField.trim()) {
-          this.searchField = this.searchField.trim().toString() //去空格
-          this.fieldMappingTableData = this.defaultFieldMappingTableData.filter(v => {
-            let str = (v.field_name + '' + v.t_field_name).toLowerCase()
-            return str.indexOf(this.searchField.toLowerCase()) > -1
-          })
-        } else {
-          this.fieldMappingTableData = this.defaultFieldMappingTableData
-        }
-      }
+      }, 300)
     },
     /*清空搜索条件*/
     clearSearch() {
       this.searchField = ''
-      this.searchTable = ''
+      // this.searchTable = ''
     },
     /*恢复默认单表*/
     rollbackTable(name, id) {
@@ -1562,22 +1565,11 @@ export default {
           } else table.invalid = true
         }
       })
-
       let checkInvalid = false
-      let count = 0
-      this.fieldMappingNavData.forEach(table => {
-        if (table.invalid) {
-          checkInvalid = true
-          count += 1
-        }
-      })
-      let noFieldsTable = 0
-      this.fieldMappingNavData.forEach(table => {
-        if (table.sinkAvailableFieldCount === 0) {
-          checkInvalid = true
-          noFieldsTable += 1
-        }
-      })
+      let count = this.fieldMappingNavData.filter(t => t.invalid)?.length || 0
+      checkInvalid = !!count
+      let noFieldsTable = this.fieldMappingNavData.filter(t => t.sinkAvailableFieldCount === 0)?.length || 0
+      checkInvalid = !!noFieldsTable
       return {
         checkInvalid: checkInvalid,
         checkDataType: checkDataType,
