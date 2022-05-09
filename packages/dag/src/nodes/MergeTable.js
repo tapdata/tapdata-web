@@ -52,7 +52,7 @@ export class MergeTable extends NodeType {
         'x-display': 'hidden'
       },
 
-      targetNodeFields: {
+      /*targetNodeFields: {
         type: 'array',
         visible: false,
         'x-reactions': [
@@ -67,7 +67,7 @@ export class MergeTable extends NodeType {
             }
           }
         ]
-      },
+      },*/
       mergeProperties: {
         type: 'array',
         required: true,
@@ -116,7 +116,7 @@ export class MergeTable extends NodeType {
                   properties: {
                     space: {
                       type: 'void',
-                      'x-component': 'FormGrid',
+                      'x-component': 'Space',
                       properties: {
                         targetPath: {
                           type: 'string',
@@ -131,12 +131,12 @@ export class MergeTable extends NodeType {
                             fulfill: {
                               state: {
                                 // visible: '{{ $deps[0] !== "appendWrite" }}',
-                                value: `{{ $self.value || ($deps[0] === "updateOrInsert" ? "" : findNodeById($deps[1])?.name) }}`
+                                // value: `{{ $self.value || ($deps[0] === "updateOrInsert" ? "" : findNodeById($deps[1])?.name) }}`
                               }
                             }
                           }
-                        }
-                        /*arrayKeys: {
+                        },
+                        arrayKeys: {
                           type: 'array',
                           title: '内嵌数组匹配条件',
                           'x-decorator': 'FormItem',
@@ -159,7 +159,7 @@ export class MergeTable extends NodeType {
                               }
                             }
                           ]
-                        }*/
+                        }
                       }
                     },
                     joinKeys: {

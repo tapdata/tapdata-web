@@ -1,6 +1,6 @@
-import { defineComponent, ref, reactive, toRef, watch, onMounted, computed, nextTick } from 'vue-demi'
+import { defineComponent, ref, watch, onMounted, computed, nextTick } from 'vue-demi'
 import { observer } from '@formily/reactive-vue'
-import { h as createElement, useFieldSchema, useForm, RecursionField, ExpressionScope } from '@formily/vue'
+import { h as createElement, useFieldSchema, useForm, RecursionField } from '@formily/vue'
 import { observe } from '@formily/reactive'
 import { Space } from '../space'
 import './style.scss'
@@ -32,12 +32,18 @@ export const MergeTableTree = observer(
       })
 
       const setPath = pathArr => {
-        currentPath.value = pathArr.join('.children.')
+        const path = pathArr.join('.children.')
+        // currentPath.value = path
+        currentPath.value = null
         if (pathArr.length === 1) {
-          form.setFieldState(`mergeProperties.${currentPath.value}.joinKeys`, {
+          form.setFieldState(`mergeProperties.${path}.joinKeys`, {
             visible: false
           })
         }
+        nextTick(() => {
+          currentPath.value = path
+        })
+        return path
       }
 
       watch(
@@ -83,11 +89,12 @@ export const MergeTableTree = observer(
         })
         treeRef.value = newTree
 
+        // console.log(`makeTree?${newTree == props.value}`, newTree, props.value) // eslint-disable-line
+
         if (newTree.length) {
           if (!currentKey.value || !$inputs.includes(currentKey.value)) {
             currentKey.value = newTree[0].id
             setPath([0])
-            // currentPath.value = '0'
           }
         } else {
           currentKey.value = null
@@ -109,7 +116,6 @@ export const MergeTableTree = observer(
       const renderNode = ({ data }) => {
         const dagNode = props.findNodeById(data.id)
         if (!dagNode) return
-        console.log('dagNode', dagNode) // eslint-disable-line
 
         const icon = dagNode.type === 'table' ? dagNode.databaseType : dagNode.type
         const iconSrc = icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
@@ -133,16 +139,16 @@ export const MergeTableTree = observer(
           return item.children
         }, treeRef.value)
 
-        setPath(temp)
+        return setPath(temp)
       }
 
-      const loadField = selfId => {
-        const pathArr = currentPath.value.split('.children.')
+      const loadField = (selfId, selfPath) => {
+        const pathArr = selfPath.split('.children.')
         if (pathArr.length < 2) return
         const parentPath = pathArr.slice(0, pathArr.length - 1).join('.children.')
         const parentId = form.getValuesIn(`mergeProperties.${parentPath}.id`)
         props.loadFieldsMethod(parentId).then(fields => {
-          form.setFieldState(`*(mergeProperties.${currentPath.value}.*(joinKeys.*.source,arrayKeys))`, {
+          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`, {
             loading: false,
             dataSource: fields
           })
@@ -155,7 +161,7 @@ export const MergeTableTree = observer(
             formRef.value.setValuesIn(`mergeProperties.${indexRef.value}.joinKeys`, joinKeys)
           }*/
 
-          form.setFieldState(`*(mergeProperties.${currentPath.value}.*(joinKeys.*.target))`, {
+          form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
             loading: false,
             dataSource: fields
           })
@@ -165,20 +171,38 @@ export const MergeTableTree = observer(
       const handleCurrentChange = (data, node) => {
         const oldKey = currentKey.value
         currentKey.value = data.id
-        updatePath(node)
+        const path = updatePath(node)
         if (data.id !== oldKey) {
-          loadField(currentKey.value)
+          loadField(currentKey.value, path)
         }
         console.log('handleCurrentChange', node) // eslint-disable-line
+      }
+
+      const handleNodeDragStart = (node, event) => {
+        console.log('handleNodeDragStart', node, event) // eslint-disable-line
+        // const dagNode = props.findNodeById(node.data.id)
+        // if (!dagNode) return
+        //
+        // const icon = dagNode.type === 'table' ? dagNode.databaseType : dagNode.type
+        // const iconSrc = icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
+        // let div = document.createElement('span')
+        // div.id = 'tree-node-drag'
+        // div.classList.add('v-chip', 'v-size--default', 'theme--light', 'drag-move-cursor')
+        // div.innerHTML = `<span class="v-chip__content">${dagNode.name}</span>`
+        // div.style.position = 'absolute'
+        // div.style.top = '0px'
+        // div.style.left = '-100%'
+        // document.body.appendChild(div)
+        // event.dataTransfer.setDragImage(div, 0, 0)
       }
 
       const handleNodeDrop = node => {
         console.log('handleNodeDrop', node, currentKey.value) // eslint-disable-line
         refs.tree.setCurrentKey(currentKey.value)
         const oldPath = currentPath.value
-        updatePath(refs.tree.getNode(currentKey.value))
-        if (oldPath !== currentKey.value) {
-          loadField(currentKey.value)
+        const path = updatePath(refs.tree.getNode(currentKey.value))
+        if (path !== oldPath) {
+          loadField(currentKey.value, path)
         }
       }
 
@@ -186,9 +210,13 @@ export const MergeTableTree = observer(
         if (currentKey.value) {
           refs.tree.setCurrentKey(currentKey.value)
         }
+
+        // console.log('props.value', props.value, treeRef.value) // eslint-disable-line
       })
 
       return () => {
+        // console.log('render', props.value, treeRef.value, currentPath.value) // eslint-disable-line
+
         return (
           <Space
             class="merge-table-tree-space"
@@ -211,6 +239,7 @@ export const MergeTableTree = observer(
                 default: renderNode
               }}
               vOn:current-change={handleCurrentChange}
+              vOn:node-drag-start={handleNodeDragStart}
               vOn:node-drop={handleNodeDrop}
             />
             <div>
@@ -221,6 +250,7 @@ export const MergeTableTree = observer(
                     key: currentPath.value,
                     // key: `${currentKey.value}_${currentPath.value}`,
                     props: {
+                      onlyRenderProperties: true,
                       name: currentPath.value,
                       schema: schemaRef.value.items
                     }

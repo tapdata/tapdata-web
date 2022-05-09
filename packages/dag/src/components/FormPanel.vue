@@ -672,7 +672,8 @@ export default {
     // 更新节点属性
     updateNodeProps: debounce(function (form) {
       if (!this.node) return
-      const formValues = { ...form.values }
+      const formValues = JSON.parse(JSON.stringify(form.values))
+      // const formValues = { ...form.values }
       const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode', '$inputs', '$outputs'] // 排除属性的更新
       filterProps.forEach(path => {
         Path.setIn(formValues, path, undefined)
@@ -680,7 +681,7 @@ export default {
 
       this.updateNodeProperties({
         id: this.node.id,
-        properties: JSON.parse(JSON.stringify(formValues))
+        properties: JSON.parse(JSON.stringify(form.values))
       })
       this.updateDag()
       this.confirmNodeHasError()
