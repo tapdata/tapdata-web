@@ -119,7 +119,7 @@
     }
     .value {
       font-size: 12px;
-      color: #000000;
+      color: map-get($fontColor, dark);
     }
   }
 }

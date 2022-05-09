@@ -179,7 +179,7 @@
               <i v-else :class="'dataflow-table__icon iconfont ' + statusMap[row.status].icon"></i>
             </template>
             <span>{{ row.statusLabel }}</span>
-            <span style="color: #999" v-if="!row.hasChildren && row.statusList && row.statusList.length">
+            <span class="font-color-light" v-if="!row.hasChildren && row.statusList && row.statusList.length">
               (
               <span v-for="(key, index) in row.statusList" :key="key">
                 {{ $t('dataFlow.status.' + key) }}

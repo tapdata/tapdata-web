@@ -311,7 +311,7 @@ export default {
     }
 
     thead {
-      color: #222;
+      color: map-get($fontColor, dark);
     }
 
     .information {

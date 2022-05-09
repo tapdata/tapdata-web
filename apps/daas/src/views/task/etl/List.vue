@@ -1220,7 +1220,7 @@ export default {
     .dataflow-name {
       .tag {
         margin-left: 5px;
-        color: #999999;
+        color: map-get($fontColor, light);
         background: map-get($bgColor, main);
         border: 1px solid #dedee4;
       }
@@ -1248,7 +1248,7 @@ export default {
 .dataflow-table-more-dropdown-menu .btn-delete {
   color: #f56c6c;
   &.is-disabled {
-    color: #bbb;
+    color: map-get($fontColor, slight);
   }
 }
 .task-drawer {

@@ -179,9 +179,6 @@
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
                 <el-dropdown-item command="toView">{{ $t('dataFlow.view') }}</el-dropdown-item>
-                <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
-                  $t('task_list_verify')
-                }}</el-dropdown-item>
                 <el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
                   $t('task_list_export')
                 }}</el-dropdown-item>
@@ -894,7 +891,7 @@ export default {
           dangerouslyUseHTMLString: true,
           message: failList
             .map(item => {
-              return `<div style="line-height: 24px;"><span style="color: #409EFF">${
+              return `<div style="line-height: 24px;"><span class="link-primary">${
                 nameMapping[item.id]
               }</span> : <span style="color: #F56C6C">${msgMapping[item.code]}</span></div>`
             })
