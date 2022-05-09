@@ -30,7 +30,7 @@ export default {
   computed: {
     totalDataText() {
       let num = this.info.totalDataNum
-      return num ? this.$t('task_info_overView_status') : num || 0
+      return num < 0 ? this.$t('task_info_overView_status') : num || 0
     },
     finishDurationText() {
       let duration = this.info.finishDuration
