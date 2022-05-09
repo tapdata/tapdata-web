@@ -330,7 +330,7 @@ export default {
           items: this.filterModeOptions
         },
         {
-          label: i18n.t('instance_Instance_zhuangTai'),
+          label: i18n.t('agent_status'),
           key: 'enabled',
           type: 'select-inner',
           items: this.filterEnabledOptions

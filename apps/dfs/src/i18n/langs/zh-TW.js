@@ -1163,7 +1163,6 @@ export default {
   views_Error_ninDeZhangHuYi: '您的帳戶已被暫停，無法訂購產品，請及時充值或聯系客戶經理。',
   views_Error_chanPinYiXiaJia: '產品已下架',
   views_Error_feiChangBaoQianChan: '非常抱歉，產品已下架',
-  instance_Instance_zhuangTai: '狀態',
   instance_Instance_anIDShiLi: '按ID/實例名稱蒐索',
   instance_Instance_tHIST: '，{val1}:{val2}%',
   monitor_Dashboard_cuoWu: '錯誤',

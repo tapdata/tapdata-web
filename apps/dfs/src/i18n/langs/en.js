@@ -1252,7 +1252,6 @@ export default {
     'Your account has been suspended and cannot order products. Please recharge in time or contact the account manager.',
   views_Error_chanPinYiXiaJia: 'The product has been taken off the shelf',
   views_Error_feiChangBaoQianChan: "I'm very sorry, the product has been taken off the shelf",
-  instance_Instance_zhuangTai: 'state',
   instance_Instance_anIDShiLi: 'Search by ID / instance name',
   instance_Instance_tHIST: '，{val1}：{val2}%',
   monitor_Dashboard_cuoWu: 'error',

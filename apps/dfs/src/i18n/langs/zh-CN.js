@@ -1202,7 +1202,6 @@ export default {
   views_Error_ninDeZhangHuYi: '您的账户已被暂停，无法订购产品，请及时充值或联系客户经理。',
   views_Error_chanPinYiXiaJia: '产品已下架',
   views_Error_feiChangBaoQianChan: '非常抱歉，产品已下架',
-  instance_Instance_zhuangTai: '状态',
   instance_Instance_anIDShiLi: '按ID/实例名称搜索',
   instance_Instance_tHIST: '，{val1}：{val2}%',
   monitor_Dashboard_cuoWu: '错误',
