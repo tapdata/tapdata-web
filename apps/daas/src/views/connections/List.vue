@@ -60,26 +60,29 @@
         </template>
       </ElTableColumn>
       <ElTableColumn prop="status" :label="$t('connection.dataBaseStatus')" width="100">
-        <template slot-scope="scope">
+        <template #default="{ row }">
           <div>
-            <span v-if="['invalid'].includes(scope.row.status)" class="error">
-              <i class="connections-status__icon el-icon-error"></i>
-              <span>
-                {{ $t('connection.status.invalid') }}
-              </span>
+            <span :class="['status-connection-' + row.status, 'status-block']">
+              {{ $t('connection.status.' + row.status) }}
             </span>
-            <span v-if="['ready'].includes(scope.row.status)" class="success">
-              <i class="connections-status__icon el-icon-success"></i>
-              <span>
-                {{ $t('connection.status.ready') }}
-              </span>
-            </span>
-            <span v-if="['testing'].includes(scope.row.status)" class="warning">
-              <VIcon class="connections-status__icon">loading-circle</VIcon>
-              <span>
-                {{ $t('connection.status.testing') }}
-              </span>
-            </span>
+            <!--            <span v-if="['invalid'].includes(scope.row.status)" class="error">-->
+            <!--              <i class="connections-status__icon el-icon-error"></i>-->
+            <!--              <span>-->
+            <!--                {{ $t('connection.status.invalid') }}-->
+            <!--              </span>-->
+            <!--            </span>-->
+            <!--            <span v-if="['ready'].includes(scope.row.status)" class="success">-->
+            <!--              <i class="connections-status__icon el-icon-success"></i>-->
+            <!--              <span>-->
+            <!--                {{ $t('connection.status.ready') }}-->
+            <!--              </span>-->
+            <!--            </span>-->
+            <!--            <span v-if="['testing'].includes(scope.row.status)" class="warning">-->
+            <!--              <VIcon class="connections-status__icon">loading-circle</VIcon>-->
+            <!--              <span>-->
+            <!--                {{ $t('connection.status.testing') }}-->
+            <!--              </span>-->
+            <!--            </span>-->
           </div>
         </template>
       </ElTableColumn>

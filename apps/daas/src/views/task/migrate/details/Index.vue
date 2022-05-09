@@ -19,7 +19,7 @@
           <Connection ref="connection" :ids="connectionIds" @change="loadTask"></Connection>
         </ElTabPane>
         <ElTabPane :label="$t('task_monitor_history_run_record')" name="history" lazy>
-          <History :ids="[task.id]" :operations="operations"></History>
+          <History :ids="[task.parentId]" :operations="operations"></History>
         </ElTabPane>
         <ElTabPane :label="$t('task_monitor_mining_task')" name="sharedMing" lazy>
           <ShareMining :id="task.id"></ShareMining>
