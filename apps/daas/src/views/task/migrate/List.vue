@@ -891,7 +891,7 @@ export default {
           dangerouslyUseHTMLString: true,
           message: failList
             .map(item => {
-              return `<div style="line-height: 24px;"><span style="color: #409EFF">${
+              return `<div style="line-height: 24px;"><span class="link-primary">${
                 nameMapping[item.id]
               }</span> : <span style="color: #F56C6C">${msgMapping[item.code]}</span></div>`
             })

@@ -95,7 +95,7 @@
                       <span class="txt fw-normal">{{ $t('cluster_manage_sys') }}</span>
                     </el-col>
                     <el-col :span="6">
-                      <span :class="[item.management.status, 'status']">{{
+                      <span :class="['status-' + item.management.status, 'status']">{{
                         $t('cluster_' + item.management.status)
                       }}</span>
                     </el-col>
@@ -130,7 +130,9 @@
                       <span class="txt fw-normal">{{ $t('cluster_sync_gover') }}</span>
                     </el-col>
                     <el-col :span="6">
-                      <span :class="[item.engine.status, 'status']">{{ $t('cluster_' + item.engine.status) }}</span>
+                      <span :class="['status-' + item.engine.status, 'status']">{{
+                        $t('cluster_' + item.engine.status)
+                      }}</span>
                     </el-col>
                     <el-col :md="9" :lg="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
@@ -164,7 +166,7 @@
                       <span class="txt fw-normal">API server</span>
                     </el-col>
                     <el-col :span="6">
-                      <span :class="[item.apiServer.status, 'status']">{{
+                      <span :class="['status-' + item.apiServer.status, 'status']">{{
                         $t('cluster_' + item.apiServer.status)
                       }}</span>
                     </el-col>
@@ -886,21 +888,21 @@ export default {
                   }
                 }
               }
-              .popover-tip {
-                display: inline-block;
-                color: #f00;
-                transform: rotate(180deg);
-                cursor: pointer;
-              }
+              // .popover-tip {
+              //   display: inline-block;
+              //   color: #f00;
+              //   transform: rotate(180deg);
+              //   cursor: pointer;
+              // }
             }
-            .running {
-              color: #178061;
-              background-color: #c4f3cb;
-            }
-            .stopped {
-              color: #d44d4d;
-              background-color: #ffecec;
-            }
+            // .running {
+            //   color: #178061;
+            //   background-color: #c4f3cb;
+            // }
+            // .stopped {
+            //   color: #d44d4d;
+            //   background-color: #ffecec;
+            // }
           }
         }
 
@@ -927,7 +929,7 @@ export default {
         padding-right: 15px;
       }
       .red {
-        color: #ee5353;
+        color: map-get($color, danger);
       }
       .bgred {
         background-color: #ee5353 !important;

@@ -4,9 +4,9 @@
       height: height ? px(height) : '100%',
       width: width ? px(width) : '100%',
       padding: '12px 0',
-      backgroundColor: '#F5F6F8',
       overflow: 'hidden'
     }"
+    class="bg-color-disable"
   >
     <VCodeEditor
       :value="value"
@@ -19,7 +19,7 @@
       @input="$emit('input', $event)"
     ></VCodeEditor>
     <div v-if="false" class="position-absolute w-100 h-100 flex flex-column">
-      <div class="p-4" style="background: #fff">
+      <div class="p-4 bg-color-white">
         <VButton>返回</VButton>
       </div>
       <div class="flex flex-fill">
@@ -44,8 +44,8 @@ export default {
     value: String,
     theme: {
       type: String,
-      // default: 'one_dark'
-      default: 'katzenmilch'
+      default: 'one_dark'
+      // default: 'katzenmilch'
     },
     lang: {
       type: String,
@@ -204,9 +204,9 @@ export default {
   }
 }
 .ace-katzenmilch {
-  background-color: #f5f6f8;
+  background-color: map-get($bgColor, disable);
   .ace_gutter {
-    background-color: #f5f6f8;
+    background-color: map-get($bgColor, disable);
     .ace_gutter-active-line {
       color: map-get($fontColor, light);
     }

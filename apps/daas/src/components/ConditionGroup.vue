@@ -203,7 +203,7 @@ export default {
 <style scoped lang="scss">
 .condition-group-wrap {
   margin-bottom: 10px;
-  border: 1px solid #edeeee;
+  border: 1px solid map-get($borderColor, light);
   border-left-width: 3px;
   overflow: hidden;
   .query-build-header {
@@ -238,7 +238,7 @@ export default {
       ::v-deep {
         .el-button--text {
           font-size: 12px;
-          background-color: map-get($bgColor, normal);
+          background-color: map-get($bgColor, main);
         }
       }
     }

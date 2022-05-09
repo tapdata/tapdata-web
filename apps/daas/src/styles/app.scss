@@ -84,7 +84,8 @@ textarea::-webkit-input-placeholder {
   background-color: #b4edd8;
 }
 .status-error,
-.status-rejected {
+.status-rejected,
+.status-stopped {
   color: #d44d4d;
   background-color: #ffecec;
 }

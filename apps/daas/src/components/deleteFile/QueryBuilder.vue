@@ -432,7 +432,7 @@ export default {
     .rowSlot {
       display: inline-block;
       margin-bottom: 12px;
-      border: 1px solid #dcdfe6;
+      border: 1px solid map-get($borderColor, light);
       border-radius: 4px;
       box-sizing: border-box;
       span {
@@ -443,7 +443,7 @@ export default {
         line-height: 28px;
         text-align: center;
         font-size: 12px;
-        background-color: #f5f7fa;
+        background-color: map-get($bgColor, disable);
       }
       .e-select {
         width: 160px;
@@ -455,7 +455,7 @@ export default {
         width: 84px;
         height: 28px;
         line-height: 27px;
-        border: 1px solid #dcdfe6;
+        border: 1px solid map-get($borderColor, light);
         border-radius: 4px;
         box-sizing: border-box;
         span {
@@ -472,10 +472,10 @@ export default {
         }
         span:last-child {
           width: 42px;
-          border-left: 1px solid #dcdfe6;
+          border-left: 1px solid map-get($borderColor, light);
         }
         span:hover {
-          background-color: #ecf5ff;
+          background-color: map-get($bgColor, hover);
         }
       }
     }

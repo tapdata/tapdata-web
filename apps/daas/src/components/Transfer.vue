@@ -699,7 +699,7 @@ export default {
 
           .nameStyle {
             display: none;
-            color: #48b6e2;
+            color: map-get($color, lprimary);
             float: right;
             font-size: 12px;
             padding-left: 10px;

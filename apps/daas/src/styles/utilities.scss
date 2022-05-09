@@ -12101,6 +12101,9 @@
 .bg-color-main {
   background-color: map-get($bgColor, main) !important;
 }
+.bg-color-white {
+  background-color: map-get($bgColor, white) !important;
+}
 
 /*
 * public 具体的样式类
