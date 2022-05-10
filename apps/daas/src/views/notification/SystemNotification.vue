@@ -53,9 +53,13 @@
             <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
             <span>{{ systemMap[item.system] }}</span>
             <!-- <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate"> -->
-            <span class="link-primary cursor-pointer" @click="handleGo(item)">
+            <span v-if="item.msg === 'deleted'" class="link-primary">
               {{ `${item.serverName} , ` }}
             </span>
+            <span v-else class="link-primary cursor-pointer" @click="handleGo(item)">
+              {{ `${item.serverName} , ` }}
+            </span>
+
             <!-- </router-link> -->
             <span>
               {{
@@ -79,7 +83,10 @@
           <div class="list-item-desc">
             <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
             <span>{{ systemMap[item.system] }}</span>
-            <span class="link-primary cursor-pointer" @click="handleGo(item)">
+            <span v-if="item.msg === 'deleted'" class="link-primary">
+              {{ `${item.serverName} , ` }}
+            </span>
+            <span v-else class="link-primary cursor-pointer" @click="handleGo(item)">
               {{ item.serverName }}
             </span>
             <span>{{ typeMap[item.msg] }}</span>
@@ -410,7 +417,7 @@ export default {
             }
           })
           break
-        case 'dataFlow':
+        case 'sync':
           this.$router.push({
             name: 'DataflowEditor',
             query: {
