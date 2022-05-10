@@ -135,17 +135,20 @@ export default {
                 required: 'true',
                 'x-decorator': 'FormItem',
                 'x-component': 'Input',
-                'x-validator': `{{(value) => {
-                  return new Promise((resolve) => {
-                    checkName(value).then((res) => {
-                      if(res.data === true) {
-                        resolve('${repeatNameMessage}')
-                      } else {
-                        resolve()
-                      }
+                'x-validator': {
+                  triggerType: 'onBlur',
+                  validator: `{{(value) => {
+                    return new Promise((resolve) => {
+                      checkName(value).then((res) => {
+                        if(res.data === true) {
+                          resolve('${repeatNameMessage}')
+                        } else {
+                          resolve()
+                        }
+                      })
                     })
-                  })
-                }}}`
+                  }}}`
+                }
               },
               desc: {
                 title: this.$t('task_stetting_desc'), //任务描述
