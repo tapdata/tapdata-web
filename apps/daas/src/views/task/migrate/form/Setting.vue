@@ -37,7 +37,12 @@ export default {
       scope: {
         checkName: value => {
           let id = this.$route.params.id || this.dataSourceData.id || '' //当前任务id
-          return this.$api('Task').checkName(value, id)
+          const { delayTrigger } = this.$util
+          return new Promise(resolve => {
+            delayTrigger(() => {
+              resolve(this.$api('Task').checkName(value, id))
+            }, 800)
+          })
         }
       }
     }
@@ -135,9 +140,7 @@ export default {
                 required: 'true',
                 'x-decorator': 'FormItem',
                 'x-component': 'Input',
-                'x-validator': {
-                  triggerType: 'onBlur',
-                  validator: `{{(value) => {
+                'x-validator': `{{(value) => {
                     return new Promise((resolve) => {
                       checkName(value).then((res) => {
                         if(res.data === true) {
@@ -148,7 +151,6 @@ export default {
                       })
                     })
                   }}}`
-                }
               },
               desc: {
                 title: this.$t('task_stetting_desc'), //任务描述
