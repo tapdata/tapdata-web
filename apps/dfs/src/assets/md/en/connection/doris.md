@@ -5,7 +5,8 @@
 Please follow the instructions below to ensure successful addition and use of the Doris database in Tapdata.
 
 ### **2. Supported Versions**
-Doris 0.15.0
+Doris 0.15.0 \
+No primary key synchronization is currently supported
 
 ### **3. Prerequisites (as goals)**
 Grant full permissions to a database
