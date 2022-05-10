@@ -283,6 +283,7 @@ export default {
       queryTime: 0, // 查询使用
       renderTime: 0, // 渲染使用
       aliasNameObj: {}, // 存储表头别名，切换api时改变
+      pkName: '', // 存储主键名称
       queryBuildKey: 1, // 自定义查询字段组件key
       condition: {}, //查询条件
       save_timezone: 0,
@@ -402,19 +403,20 @@ export default {
       for (let i in item.isshow) {
         item.isshow[i] = false
       }
-
-      item.istrue = true
-      item.isshow[key] = true
-      item.isspancen[key] = false
-      this.$nextTick(() => {
-        if (this.$refs.editInput && this.$refs.editInput.length) {
-          this.$refs.editInput.forEach(v => {
-            v.focus()
-          })
-        } else {
-          this.$refs.editInput && this.$refs.editInput.focus()
-        }
-      })
+      if (item.isPrimaryKey.pkName !== key) {
+        item.istrue = true
+        item.isshow[key] = true
+        item.isspancen[key] = false
+        this.$nextTick(() => {
+          if (this.$refs.editInput && this.$refs.editInput.length) {
+            this.$refs.editInput.forEach(v => {
+              v.focus()
+            })
+          } else {
+            this.$refs.editInput && this.$refs.editInput.focus()
+          }
+        })
+      }
     },
     // 获取API Server下拉值
     getApiServer() {
@@ -580,6 +582,7 @@ export default {
       let apiId = selectCollection.apiId || ''
       _this.apiClient.setCollection(selectCollection)
       // 根据当前表获取表api浏览表格头
+
       let headers = await _this.apiClient.getHeaders(selectCollection.collection, selectCollection.operationName)
 
       if (headers?.length)
@@ -628,7 +631,6 @@ export default {
             res.data[0].fields.forEach(v => {
               field_alias[v.field_name] = v.field_alias || ''
             })
-
             _this.enableTag = _this.enableEdit && field_alias.hasOwnProperty('__tapd8')
           }
           _this.table.fetch()
@@ -747,7 +749,8 @@ export default {
       let _this = this
       let text = String(value)
       let newValue = ''
-      let id = item['_id'] || this.editDocId
+      let { pkValue } = item.isPrimaryKey
+      let id = pkValue || this.editDocId
       _this.editDocId = item['_id']
       if (['float', 'double', 'short', 'bigDecimal', 'integer', 'long', 'number'].includes(type)) {
         if (!/^\d+$/.test(_this.editValue)) {
@@ -774,7 +777,6 @@ export default {
         newValue = _this.editValue
       }
       _this.jsonDocHint = []
-
       let result = await this.apiClient.updateById(id, {
         [value]: newValue
       })
@@ -1088,7 +1090,11 @@ export default {
                 if (v.alias_name) {
                   obj[v.field_name] = v.alias_name
                 }
+                if (v.primary_key_position) {
+                  this.$set(this, 'pkName', v.field_name)
+                }
               })
+
               this.$set(this, 'aliasNameObj', obj)
             }
           })
@@ -1118,9 +1124,10 @@ export default {
                   let value = record[v]
                   let h = {
                     show: true,
-                    text: this.aliasNameObj[v] || v,
+                    text: _this.aliasNameObj[v] || v,
                     type: typeMap[Object.prototype.toString.call(value)],
-                    value: v
+                    value: v,
+                    pkName: record[_this.pkName]
                   }
                   let header = oldHeaders.find(it => it.value === v)
                   if (header) {
@@ -1135,8 +1142,13 @@ export default {
                   record[v] = _this.timeZoneConversion(time)
                 }
               })
+              let isPrimaryKey = {
+                pkName: _this.pkName,
+                pkValue: record[_this.pkName]
+              }
               this.$set(record, 'isshow', {})
               this.$set(record, 'isspancen', {})
+              this.$set(record, 'isPrimaryKey', isPrimaryKey)
               for (let i in record) {
                 record.isshow[i] = false
                 record.isspancen[i] = true
