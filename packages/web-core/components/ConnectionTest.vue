@@ -164,7 +164,6 @@ export default {
         let testData = {
           wsError: data.status
         }
-        this.$refs.table.doLayout()
         if (result.response_body) {
           let validate_details = result.response_body.validate_details || []
           let res = validate_details.filter(item => item.status !== 'waiting')
@@ -192,6 +191,9 @@ export default {
           testData['status'] = data.status
           this.status = data.status
         }
+        this.$nextTick(() => {
+          this.$refs.table.doLayout()
+        })
         this.$emit('receive', testData)
       }
     },
