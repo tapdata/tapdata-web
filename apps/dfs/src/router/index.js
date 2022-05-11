@@ -285,12 +285,12 @@ const routes = [
     component: DagEditor
   }
 ]
-// if (process.env.NODE_ENV === 'development') {
-routes[0].children?.push({
-  path: '/lang',
-  name: 'lang',
-  component: Lang
-})
-// }
+if (process.env.NODE_ENV === 'development') {
+  routes[0].children?.push({
+    path: '/lang',
+    name: 'lang',
+    component: Lang
+  })
+}
 
 export default routes
