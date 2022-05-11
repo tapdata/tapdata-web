@@ -13,7 +13,7 @@
           :status="task.isFinished ? 'finished' : task.status || 'running'"
         ></StatusTag>
         <span class="ml-6 font-color-light">
-          {{ $t('task_monitor_founder') }}：<span class="font-color-dark">>{{ task.creator }}</span>
+          {{ $t('task_monitor_founder') }}：<span class="font-color-dark">{{ task.creator }}</span>
         </span>
         <span class="mx-6 font-color-light">
           {{ $t('task_info_start_time') }}：<span class="font-color-dark">{{ formatTime(task.startTime) || '-' }}</span>

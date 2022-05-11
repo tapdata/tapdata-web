@@ -10,11 +10,11 @@
           target="etlSub"
           :status="task.isFinished ? 'finished' : task.status || 'running'"
         ></StatusTag>
-        <span class="ml-6 font-color-slight">
+        <span class="ml-6 font-color-light">
           {{ $t('task_monitor_founder') }}：<span>{{ task.creator }}</span>
         </span>
-        <span class="mx-6 font-color-slight">
-          {{ $t('task_info_start_time') }}：<span>{{ formatTime(task.startTime) || '-' }}</span>
+        <span class="mx-6 font-color-light">
+          {{ $t('task_info_start_time') }}： <span>{{ formatTime(task.startTime) || '-' }}</span>
         </span>
       </div>
       <div class="operation">
