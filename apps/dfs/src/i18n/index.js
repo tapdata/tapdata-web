@@ -39,7 +39,7 @@ const i18nLangMap = {
   'en-US': 'en'
 }
 Vue.use(VueI18n)
-let localeValue = localStorage.getItem('tapdata_localize_lang') || 'zh-CN'
+let localeValue = 'zh-CN'
 const i18n = new VueI18n({
   locale: i18nLangMap[localeValue],
   messages: eleLangs

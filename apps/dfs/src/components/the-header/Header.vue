@@ -43,7 +43,7 @@
         <!--          <span>联系我们</span>-->
         <!--        </div>-->
         <NotificationPopover class="command-item mr-6"></NotificationPopover>
-        <ElDropdown placement="bottom" class="mr-6" @command="changeLanguage">
+        <ElDropdown v-if="false" placement="bottom" class="mr-6" @command="changeLanguage">
           <span class="cursor-pointer command-item langs-btn">{{ languagesItems[lang] }}</span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem v-for="(value, key) in languagesItems" :key="key" :command="key">
