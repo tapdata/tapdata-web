@@ -136,6 +136,7 @@ export default {
         datasource: '',
         tablename: '',
         readPreference: '',
+        readPreferenceTag: '',
         readConcern: '',
         apiVersion: 'v1',
         name: '',

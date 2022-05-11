@@ -63,7 +63,7 @@
   }
 }
 .el-select-dropdown__item {
-  color: map-get($fontColor, dark);
+  color: map-get($fontColor, normal);
 }
 .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
   color: map-get($color, primary);
@@ -98,7 +98,7 @@
   }
 }
 .el-input__inner {
-  color: map-get($fontColor, dark);
+  color: map-get($fontColor, normal);
   border-radius: $borderRadius;
   // border: 1px solid rgba(221, 221, 221, 0.4);
   // background-color:  rgba(239, 241, 244, 0.2);

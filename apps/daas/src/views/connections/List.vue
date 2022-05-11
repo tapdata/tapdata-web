@@ -118,11 +118,11 @@
             @click="edit(scope.row.id, scope.row.database_type, scope.row)"
             >{{ $t('button_edit') }}
           </ElLink>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
           <ElLink v-readonlybtn="'datasource_creation'" type="primary" @click="copy(scope.row)"
             >{{ $t('button_copy') }}
           </ElLink>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'datasource_creation'"></ElDivider>
           <ElLink
             v-readonlybtn="'datasource_delete'"
             type="primary"
