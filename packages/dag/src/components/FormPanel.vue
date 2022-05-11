@@ -691,7 +691,9 @@ export default {
     useEffects() {
       onFormValuesChange(form => {
         if (this.stateIsReadonly) return
-        console.log('onFormValuesChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
+        console.groupCollapsed(`🚗onFormValuesChange:${Date.now()}`) // eslint-disable-line
+        console.trace(JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
+        console.groupEnd()
         this.updateNodeProps(form)
       })
       onFormInputChange(form => {

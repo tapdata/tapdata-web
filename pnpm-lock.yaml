@@ -371,6 +371,7 @@ importers:
       '@formily/reactive-vue': ^2.0.18
       '@formily/shared': ^2.0.18
       '@tap/api': workspace:^1.0.0
+      '@tap/shared': workspace:^1.0.0
       '@vue/composition-api': ^1.2.4
       ace-builds: ^1.4.13
       highlight.js: ^11.0.1
@@ -383,6 +384,7 @@ importers:
       '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.0.18_3f39d8fe5118d28f4db30f0090a1b0cf
       '@formily/shared': registry.npmmirror.com/@formily/shared/2.0.18
       '@tap/api': link:../api
+      '@tap/shared': link:../shared
       '@vue/composition-api': registry.npmmirror.com/@vue/composition-api/1.4.6_vue@2.6.14
       ace-builds: registry.npmmirror.com/ace-builds/1.4.14
       highlight.js: registry.npmmirror.com/highlight.js/11.4.0
@@ -421,326 +423,6 @@ importers:
       vue-demi: registry.npmmirror.com/vue-demi/0.12.1_vue@2.6.14
 
 packages:
-
-  registry.nlark.com/@nodelib/fs.scandir/2.1.5:
-    resolution: {integrity: sha1-dhnC6yGyVIP20WdUi0z9WnSIw9U=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@nodelib/fs.scandir/download/@nodelib/fs.scandir-2.1.5.tgz}
-    name: '@nodelib/fs.scandir'
-    version: 2.1.5
-    engines: {node: '>= 8'}
-    dependencies:
-      '@nodelib/fs.stat': registry.npmmirror.com/@nodelib/fs.stat/2.0.5
-      run-parallel: registry.npmmirror.com/run-parallel/1.2.0
-    dev: true
-
-  registry.nlark.com/@trysound/sax/0.2.0:
-    resolution: {integrity: sha1-zMqrdYr1Z2Hre/N69vA/Mm3XmK0=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@trysound/sax/download/@trysound/sax-0.2.0.tgz}
-    name: '@trysound/sax'
-    version: 0.2.0
-    engines: {node: '>=10.13.0'}
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/ast/1.9.0:
-    resolution: {integrity: sha1-vYUGBLQEJFmlpBzX0zjL7Wle2WQ=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/ast/download/@webassemblyjs/ast-1.9.0.tgz}
-    name: '@webassemblyjs/ast'
-    version: 1.9.0
-    dependencies:
-      '@webassemblyjs/helper-module-context': registry.nlark.com/@webassemblyjs/helper-module-context/1.9.0
-      '@webassemblyjs/helper-wasm-bytecode': registry.nlark.com/@webassemblyjs/helper-wasm-bytecode/1.9.0
-      '@webassemblyjs/wast-parser': registry.nlark.com/@webassemblyjs/wast-parser/1.9.0
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/floating-point-hex-parser/1.9.0:
-    resolution: {integrity: sha1-PD07Jxvd/ITesA9xNEQ4MR1S/7Q=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/floating-point-hex-parser/download/@webassemblyjs/floating-point-hex-parser-1.9.0.tgz}
-    name: '@webassemblyjs/floating-point-hex-parser'
-    version: 1.9.0
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/helper-api-error/1.9.0:
-    resolution: {integrity: sha1-ID9nbjM7lsnaLuqzzO8zxFkotqI=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/helper-api-error/download/@webassemblyjs/helper-api-error-1.9.0.tgz}
-    name: '@webassemblyjs/helper-api-error'
-    version: 1.9.0
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/helper-buffer/1.9.0:
-    resolution: {integrity: sha1-oUQtJpxf6yP8vJ73WdrDVH8p3gA=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/helper-buffer/download/@webassemblyjs/helper-buffer-1.9.0.tgz}
-    name: '@webassemblyjs/helper-buffer'
-    version: 1.9.0
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/helper-code-frame/1.9.0:
-    resolution: {integrity: sha1-ZH+Iks0gQ6gqwMjF51w28dkVnyc=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/helper-code-frame/download/@webassemblyjs/helper-code-frame-1.9.0.tgz}
-    name: '@webassemblyjs/helper-code-frame'
-    version: 1.9.0
-    dependencies:
-      '@webassemblyjs/wast-printer': registry.nlark.com/@webassemblyjs/wast-printer/1.9.0
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/helper-fsm/1.9.0:
-    resolution: {integrity: sha1-wFJWtxJEIUZx9LCOwQitY7cO3bg=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/helper-fsm/download/@webassemblyjs/helper-fsm-1.9.0.tgz}
-    name: '@webassemblyjs/helper-fsm'
-    version: 1.9.0
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/helper-module-context/1.9.0:
-    resolution: {integrity: sha1-JdiIS3aDmHGgimxvgGw5ee9xLwc=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/helper-module-context/download/@webassemblyjs/helper-module-context-1.9.0.tgz}
-    name: '@webassemblyjs/helper-module-context'
-    version: 1.9.0
-    dependencies:
-      '@webassemblyjs/ast': registry.nlark.com/@webassemblyjs/ast/1.9.0
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/helper-wasm-bytecode/1.9.0:
-    resolution: {integrity: sha1-T+2L6sm4wU+MWLcNEk1UndH+V5A=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/helper-wasm-bytecode/download/@webassemblyjs/helper-wasm-bytecode-1.9.0.tgz}
-    name: '@webassemblyjs/helper-wasm-bytecode'
-    version: 1.9.0
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/helper-wasm-section/1.9.0:
-    resolution: {integrity: sha1-WkE41aYpK6GLBMWuSXF+QWeWU0Y=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/helper-wasm-section/download/@webassemblyjs/helper-wasm-section-1.9.0.tgz}
-    name: '@webassemblyjs/helper-wasm-section'
-    version: 1.9.0
-    dependencies:
-      '@webassemblyjs/ast': registry.nlark.com/@webassemblyjs/ast/1.9.0
-      '@webassemblyjs/helper-buffer': registry.nlark.com/@webassemblyjs/helper-buffer/1.9.0
-      '@webassemblyjs/helper-wasm-bytecode': registry.nlark.com/@webassemblyjs/helper-wasm-bytecode/1.9.0
-      '@webassemblyjs/wasm-gen': registry.nlark.com/@webassemblyjs/wasm-gen/1.9.0
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/ieee754/1.9.0:
-    resolution: {integrity: sha1-Fceg+6roP7JhQ7us9tbfFwKtOeQ=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/ieee754/download/@webassemblyjs/ieee754-1.9.0.tgz}
-    name: '@webassemblyjs/ieee754'
-    version: 1.9.0
-    dependencies:
-      '@xtuc/ieee754': registry.npmmirror.com/@xtuc/ieee754/1.2.0
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/leb128/1.9.0:
-    resolution: {integrity: sha1-8Zygt2ptxVYjoJz/p2noOPoeHJU=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/leb128/download/@webassemblyjs/leb128-1.9.0.tgz}
-    name: '@webassemblyjs/leb128'
-    version: 1.9.0
-    dependencies:
-      '@xtuc/long': registry.nlark.com/@xtuc/long/4.2.2
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/utf8/1.9.0:
-    resolution: {integrity: sha1-BNM7Y2945qaBMifoJAL3Y3tiKas=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/utf8/download/@webassemblyjs/utf8-1.9.0.tgz}
-    name: '@webassemblyjs/utf8'
-    version: 1.9.0
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/wasm-edit/1.9.0:
-    resolution: {integrity: sha1-P+bXnT8PkiGDqoYALELdJWz+6c8=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/wasm-edit/download/@webassemblyjs/wasm-edit-1.9.0.tgz}
-    name: '@webassemblyjs/wasm-edit'
-    version: 1.9.0
-    dependencies:
-      '@webassemblyjs/ast': registry.nlark.com/@webassemblyjs/ast/1.9.0
-      '@webassemblyjs/helper-buffer': registry.nlark.com/@webassemblyjs/helper-buffer/1.9.0
-      '@webassemblyjs/helper-wasm-bytecode': registry.nlark.com/@webassemblyjs/helper-wasm-bytecode/1.9.0
-      '@webassemblyjs/helper-wasm-section': registry.nlark.com/@webassemblyjs/helper-wasm-section/1.9.0
-      '@webassemblyjs/wasm-gen': registry.nlark.com/@webassemblyjs/wasm-gen/1.9.0
-      '@webassemblyjs/wasm-opt': registry.nlark.com/@webassemblyjs/wasm-opt/1.9.0
-      '@webassemblyjs/wasm-parser': registry.nlark.com/@webassemblyjs/wasm-parser/1.9.0
-      '@webassemblyjs/wast-printer': registry.nlark.com/@webassemblyjs/wast-printer/1.9.0
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/wasm-gen/1.9.0:
-    resolution: {integrity: sha1-ULxw7Gje2OJ2OwGhQYv0NJGnpJw=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/wasm-gen/download/@webassemblyjs/wasm-gen-1.9.0.tgz}
-    name: '@webassemblyjs/wasm-gen'
-    version: 1.9.0
-    dependencies:
-      '@webassemblyjs/ast': registry.nlark.com/@webassemblyjs/ast/1.9.0
-      '@webassemblyjs/helper-wasm-bytecode': registry.nlark.com/@webassemblyjs/helper-wasm-bytecode/1.9.0
-      '@webassemblyjs/ieee754': registry.nlark.com/@webassemblyjs/ieee754/1.9.0
-      '@webassemblyjs/leb128': registry.nlark.com/@webassemblyjs/leb128/1.9.0
-      '@webassemblyjs/utf8': registry.nlark.com/@webassemblyjs/utf8/1.9.0
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/wasm-opt/1.9.0:
-    resolution: {integrity: sha1-IhEYHlsxMmRDzIES658LkChyGmE=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/wasm-opt/download/@webassemblyjs/wasm-opt-1.9.0.tgz}
-    name: '@webassemblyjs/wasm-opt'
-    version: 1.9.0
-    dependencies:
-      '@webassemblyjs/ast': registry.nlark.com/@webassemblyjs/ast/1.9.0
-      '@webassemblyjs/helper-buffer': registry.nlark.com/@webassemblyjs/helper-buffer/1.9.0
-      '@webassemblyjs/wasm-gen': registry.nlark.com/@webassemblyjs/wasm-gen/1.9.0
-      '@webassemblyjs/wasm-parser': registry.nlark.com/@webassemblyjs/wasm-parser/1.9.0
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/wasm-parser/1.9.0:
-    resolution: {integrity: sha1-nUjkSCbfSmWYKUqmyHRp1kL/9l4=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/wasm-parser/download/@webassemblyjs/wasm-parser-1.9.0.tgz}
-    name: '@webassemblyjs/wasm-parser'
-    version: 1.9.0
-    dependencies:
-      '@webassemblyjs/ast': registry.nlark.com/@webassemblyjs/ast/1.9.0
-      '@webassemblyjs/helper-api-error': registry.nlark.com/@webassemblyjs/helper-api-error/1.9.0
-      '@webassemblyjs/helper-wasm-bytecode': registry.nlark.com/@webassemblyjs/helper-wasm-bytecode/1.9.0
-      '@webassemblyjs/ieee754': registry.nlark.com/@webassemblyjs/ieee754/1.9.0
-      '@webassemblyjs/leb128': registry.nlark.com/@webassemblyjs/leb128/1.9.0
-      '@webassemblyjs/utf8': registry.nlark.com/@webassemblyjs/utf8/1.9.0
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/wast-parser/1.9.0:
-    resolution: {integrity: sha1-MDERXXmsW9JhVWzsw/qQo+9FGRQ=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/wast-parser/download/@webassemblyjs/wast-parser-1.9.0.tgz}
-    name: '@webassemblyjs/wast-parser'
-    version: 1.9.0
-    dependencies:
-      '@webassemblyjs/ast': registry.nlark.com/@webassemblyjs/ast/1.9.0
-      '@webassemblyjs/floating-point-hex-parser': registry.nlark.com/@webassemblyjs/floating-point-hex-parser/1.9.0
-      '@webassemblyjs/helper-api-error': registry.nlark.com/@webassemblyjs/helper-api-error/1.9.0
-      '@webassemblyjs/helper-code-frame': registry.nlark.com/@webassemblyjs/helper-code-frame/1.9.0
-      '@webassemblyjs/helper-fsm': registry.nlark.com/@webassemblyjs/helper-fsm/1.9.0
-      '@xtuc/long': registry.nlark.com/@xtuc/long/4.2.2
-    dev: true
-
-  registry.nlark.com/@webassemblyjs/wast-printer/1.9.0:
-    resolution: {integrity: sha1-STXVTIX+9jewDOn1I3dFHQDUeJk=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@webassemblyjs/wast-printer/download/@webassemblyjs/wast-printer-1.9.0.tgz}
-    name: '@webassemblyjs/wast-printer'
-    version: 1.9.0
-    dependencies:
-      '@webassemblyjs/ast': registry.nlark.com/@webassemblyjs/ast/1.9.0
-      '@webassemblyjs/wast-parser': registry.nlark.com/@webassemblyjs/wast-parser/1.9.0
-      '@xtuc/long': registry.nlark.com/@xtuc/long/4.2.2
-    dev: true
-
-  registry.nlark.com/@xtuc/long/4.2.2:
-    resolution: {integrity: sha1-0pHGpOl5ibXGHZrPOWrk/hM6cY0=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@xtuc/long/download/@xtuc/long-4.2.2.tgz}
-    name: '@xtuc/long'
-    version: 4.2.2
-    dev: true
-
-  registry.nlark.com/ansi-html-community/0.0.8:
-    resolution: {integrity: sha1-afvE1sy+OD+XNpNK40w/gpDxv0E=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/ansi-html-community/download/ansi-html-community-0.0.8.tgz}
-    name: ansi-html-community
-    version: 0.0.8
-    engines: {'0': node >= 0.8.0}
-    hasBin: true
-    dev: true
-
-  registry.nlark.com/concat-map/0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/concat-map/download/concat-map-0.0.1.tgz}
-    name: concat-map
-    version: 0.0.1
-    dev: true
-
-  registry.nlark.com/cookie-signature/1.0.6:
-    resolution: {integrity: sha1-4wOogrNCzD7oylE6eZmXNNqzriw=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/cookie-signature/download/cookie-signature-1.0.6.tgz}
-    name: cookie-signature
-    version: 1.0.6
-    dev: true
-
-  registry.nlark.com/cssfilter/0.0.10:
-    resolution: {integrity: sha1-xtJnJjKi5cg+AT5oZKQs6N79IK4=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/cssfilter/download/cssfilter-0.0.10.tgz}
-    name: cssfilter
-    version: 0.0.10
-    dev: false
-
-  registry.nlark.com/ee-first/1.1.1:
-    resolution: {integrity: sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/ee-first/download/ee-first-1.1.1.tgz}
-    name: ee-first
-    version: 1.1.1
-    dev: true
-
-  registry.nlark.com/event-pubsub/4.3.0:
-    resolution: {integrity: sha1-9o2Ba8KfHsAsU53FjI3UDOcss24=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/event-pubsub/download/event-pubsub-4.3.0.tgz}
-    name: event-pubsub
-    version: 4.3.0
-    engines: {node: '>=4.0.0'}
-    dev: true
-
-  registry.nlark.com/forwarded/0.2.0:
-    resolution: {integrity: sha1-ImmTZCiq1MFcfr6XeahL8LKoGBE=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/forwarded/download/forwarded-0.2.0.tgz}
-    name: forwarded
-    version: 0.2.0
-    engines: {node: '>= 0.6'}
-    dev: true
-
-  registry.nlark.com/fresh/0.5.2:
-    resolution: {integrity: sha1-PYyt2Q2XZWn6g1qx+OSyOhBWBac=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/fresh/download/fresh-0.5.2.tgz}
-    name: fresh
-    version: 0.5.2
-    engines: {node: '>= 0.6'}
-    dev: true
-
-  registry.nlark.com/js-message/1.0.7:
-    resolution: {integrity: sha1-+93QU8ekcCGHG7iyyVOXzBfCDkc=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/js-message/download/js-message-1.0.7.tgz}
-    name: js-message
-    version: 1.0.7
-    engines: {node: '>=0.6.0'}
-    dev: true
-
-  registry.nlark.com/json-buffer/3.0.0:
-    resolution: {integrity: sha1-Wx85evx11ne96Lz8Dkfh+aPZqJg=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/json-buffer/download/json-buffer-3.0.0.tgz}
-    name: json-buffer
-    version: 3.0.0
-    dev: true
-
-  registry.nlark.com/media-typer/0.3.0:
-    resolution: {integrity: sha1-hxDXrwqmJvj/+hzgAWhUUmMlV0g=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/media-typer/download/media-typer-0.3.0.tgz}
-    name: media-typer
-    version: 0.3.0
-    engines: {node: '>= 0.6'}
-    dev: true
-
-  registry.nlark.com/merge-descriptors/1.0.1:
-    resolution: {integrity: sha1-sAqqVW3YtEVoFQ7J0blT8/kMu2E=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/merge-descriptors/download/merge-descriptors-1.0.1.tgz}
-    name: merge-descriptors
-    version: 1.0.1
-    dev: true
-
-  registry.nlark.com/merge-options/1.0.1:
-    resolution: {integrity: sha1-KmSyRFe+zU5NxggoMkfpTOWJqjI=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/merge-options/download/merge-options-1.0.1.tgz}
-    name: merge-options
-    version: 1.0.1
-    engines: {node: '>=4'}
-    dependencies:
-      is-plain-obj: registry.npmmirror.com/is-plain-obj/1.1.0
-    dev: true
-
-  registry.nlark.com/mute-stream/0.0.8:
-    resolution: {integrity: sha1-FjDEKyJR/4HiooPelqVJfqkuXg0=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/mute-stream/download/mute-stream-0.0.8.tgz}
-    name: mute-stream
-    version: 0.0.8
-    dev: true
-
-  registry.nlark.com/path-browserify/0.0.1:
-    resolution: {integrity: sha1-5sTd1+06onxoogzE5Q4aTug7vEo=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/path-browserify/download/path-browserify-0.0.1.tgz}
-    name: path-browserify
-    version: 0.0.1
-    dev: true
-
-  registry.nlark.com/setprototypeof/1.1.0:
-    resolution: {integrity: sha1-0L2FU2iHtv58DYGMuWLZ2RxU5lY=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/setprototypeof/download/setprototypeof-1.1.0.tgz}
-    name: setprototypeof
-    version: 1.1.0
-    dev: true
-
-  registry.nlark.com/setprototypeof/1.2.0:
-    resolution: {integrity: sha1-ZsmiSnP5/CjL5msJ/tPTPcrxtCQ=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/setprototypeof/download/setprototypeof-1.2.0.tgz}
-    name: setprototypeof
-    version: 1.2.0
-    dev: true
-
-  registry.nlark.com/tty-browserify/0.0.0:
-    resolution: {integrity: sha1-oVe6QC2iTpv5V/mqadUk7tQpAaY=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/tty-browserify/download/tty-browserify-0.0.0.tgz}
-    name: tty-browserify
-    version: 0.0.0
-    dev: true
-
-  registry.nlark.com/utils-merge/1.0.1:
-    resolution: {integrity: sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/utils-merge/download/utils-merge-1.0.1.tgz}
-    name: utils-merge
-    version: 1.0.1
-    engines: {node: '>= 0.4.0'}
-    dev: true
-
-  registry.nlark.com/write/1.0.3:
-    resolution: {integrity: sha1-CADhRSO5I6OH5BUSPIZWFqrg9cM=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/write/download/write-1.0.3.tgz}
-    name: write
-    version: 1.0.3
-    engines: {node: '>=4'}
-    dependencies:
-      mkdirp: registry.npmmirror.com/mkdirp/0.5.5
-    dev: true
 
   registry.npmmirror.com/@ampproject/remapping/2.1.1:
     resolution: {integrity: sha512-Aolwjd7HSC2PyY0fDj/wA/EimQT4HfEnFYNp5s9CQlrdhyvWTtvZ5YzrUPu6R6/1jKiUlxu8bUhkdSnKHNAHMA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@ampproject/remapping/-/remapping-2.1.1.tgz}
@@ -3052,7 +2734,7 @@ packages:
     dependencies:
       '@babel/core': registry.npmmirror.com/@babel/core/7.17.4
       '@vue/babel-preset-app': registry.npmmirror.com/@vue/babel-preset-app/4.5.15_vue@2.6.14
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_sass-loader@10.2.1
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.15
       babel-loader: registry.npmmirror.com/babel-loader/8.2.3_6fb82b936942eb9f11ea0fd3e177918b
       cache-loader: registry.npmmirror.com/cache-loader/4.1.0_webpack@4.46.0
@@ -3074,7 +2756,7 @@ packages:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
       eslint: '>= 1.6.0 < 7.0.0'
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_sass-loader@10.2.1
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.15
       eslint: registry.npmmirror.com/eslint/6.8.0
       eslint-loader: registry.npmmirror.com/eslint-loader/2.2.1_eslint@6.8.0+webpack@4.46.0
@@ -3095,7 +2777,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_sass-loader@10.2.1
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.15
     dev: true
 
@@ -3107,7 +2789,7 @@ packages:
     peerDependencies:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_sass-loader@10.2.1
     dev: true
 
   registry.npmmirror.com/@vue/cli-service/4.5.15_f11403f817a61609eac4cb4fb95cc164:

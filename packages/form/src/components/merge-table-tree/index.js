@@ -33,16 +33,16 @@ export const MergeTableTree = observer(
 
       const setPath = pathArr => {
         const path = pathArr.join('.children.')
-        // currentPath.value = path
-        currentPath.value = null
+        currentPath.value = path
+        // currentPath.value = null
         if (pathArr.length === 1) {
           form.setFieldState(`mergeProperties.${path}.joinKeys`, {
             visible: false
           })
         }
-        nextTick(() => {
+        /*nextTick(() => {
           currentPath.value = path
-        })
+        })*/
         return path
       }
 
@@ -82,7 +82,7 @@ export const MergeTableTree = observer(
               id,
               mergeType: 'updateOrInsert',
               tablePath: '',
-              joinKeys: [],
+              // joinKeys: [],
               children: []
             })
           }
@@ -215,7 +215,7 @@ export const MergeTableTree = observer(
       })
 
       return () => {
-        // console.log('render', props.value, treeRef.value, currentPath.value) // eslint-disable-line
+        console.log('render', props.value, treeRef.value, currentPath.value) // eslint-disable-line
 
         return (
           <Space
@@ -247,7 +247,7 @@ export const MergeTableTree = observer(
                 createElement(
                   RecursionField,
                   {
-                    key: currentPath.value,
+                    // key: currentPath.value,
                     // key: `${currentKey.value}_${currentPath.value}`,
                     props: {
                       onlyRenderProperties: true,

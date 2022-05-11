@@ -247,6 +247,10 @@ export class MergeTable extends NodeType {
                           'x-component': 'ArrayTable.Addition'
                         }
                       }
+                    },
+                    children: {
+                      type: 'array',
+                      'x-display': 'hidden'
                     }
                   }
                 }
