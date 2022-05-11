@@ -34,6 +34,7 @@
       </div>
     </div>
     <el-table
+      ref="table"
       :data="testData.testLogs"
       style="width: 100%"
       class="test-block"
@@ -163,6 +164,7 @@ export default {
         let testData = {
           wsError: data.status
         }
+        this.$refs.table.doLayout()
         if (result.response_body) {
           let validate_details = result.response_body.validate_details || []
           let res = validate_details.filter(item => item.status !== 'waiting')
