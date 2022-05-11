@@ -17,11 +17,11 @@ export default class notification extends PublicAPI {
   //     data: update
   //   })
   // }
-  pageRead(filter, update) {
+  pageRead(filter) {
     return axios.request({
-      url: this.url + '?where=' + filter,
+      url: this.url,
       method: 'post',
-      data: update
+      data: filter
     })
   }
 
