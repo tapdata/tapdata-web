@@ -302,8 +302,9 @@ export default {
     accessNodeProcessIdArr: {
       handler(arr) {
         if (arr.length >= 1) {
+          const currentId = this.settings.accessNodeProcessId
           this.$set(this.settings, 'accessNodeType', 'MANUALLY_SPECIFIED_BY_THE_USER')
-          this.$set(this.settings, 'accessNodeProcessId', this.settings.accessNodeProcessId || arr[0])
+          this.$set(this.settings, 'accessNodeProcessId', currentId && arr.includes(currentId) ? currentId : arr[0])
         }
       },
       immediate: true
