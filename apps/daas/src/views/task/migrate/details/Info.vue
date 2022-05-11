@@ -229,7 +229,8 @@ export default {
         start: {
           edit: true,
           stop: true,
-          complete: true
+          complete: true,
+          error: true
         },
         pause: {
           running: true
