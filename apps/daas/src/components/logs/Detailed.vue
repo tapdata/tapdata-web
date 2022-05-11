@@ -23,9 +23,9 @@
       <div v-show="!noMore && loading" class="pb-4 text-center fs-5">
         <i class="el-icon-loading"></i>
       </div>
-      <div v-show="noMore" class="font-color-slight text-center pb-4">{{ $t('task_info_no_more') }}</div>
+      <div v-show="noMore" class="font-color-light text-center pb-4">{{ $t('task_info_no_more') }}</div>
       <ul v-if="logs.length">
-        <li class="log-item px-6" v-for="log in logs" :key="log.id">
+        <li class="log-item px-6 font-color-light" v-for="log in logs" :key="log.id">
           [<span class="fw-bold" :class="log.color" v-html="log.level"></span>]&nbsp; <span>{{ log.time }}</span
           >&nbsp; [<span v-html="log.threadName"></span>]&nbsp; <span v-html="log.loggerName"></span>&nbsp;
           <div class="log-message pl-10" v-html="log.message"></div>

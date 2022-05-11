@@ -195,9 +195,10 @@ export default {
         .count({ where: JSON.stringify(where) })
         .then(res => {
           if (res.data) {
+            let data = res.data.data || res.data.data === 0 ? res.data.data : res.data
             // this.unRead = res.data.count
             this.$store.commit('notification', {
-              unRead: res.data
+              unRead: data
             })
           }
         })

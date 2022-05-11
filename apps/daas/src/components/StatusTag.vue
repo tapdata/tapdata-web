@@ -11,7 +11,7 @@
         :class="['circle-icon', 'mr-2', `bg-color-${statusObj.type}`]"
         :style="{ 'background-color': statusObj.color }"
       ></span>
-      <span class="td-status-tag__text font-color-slight">{{ statusObj.text }}</span>
+      <span class="td-status-tag__text font-color-light">{{ statusObj.text }}</span>
     </span>
   </span>
 </template>
