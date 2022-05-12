@@ -5,7 +5,7 @@
         <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">
           <div class="dashboard-col-box">
             <div class="fs-7 font-color-normal">{{ $t('dashboard_' + item.key) }}</div>
-            <div class="dashboard-label fs-5 pt-4 text-center fw-sub font-color-dark">
+            <div class="dashboard-label fs-5 pt-4 text-center fw-sub font-color-normal">
               {{ $t('dashboard_current_' + item.key) }}
             </div>
             <div
