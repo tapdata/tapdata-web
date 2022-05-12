@@ -38,7 +38,15 @@
         </div>
         <div class="form-wrap">
           <div class="form">
+            <SchemaToForm
+              v-if="isPdk"
+              ref="schemaToForm"
+              :schema="schemaData"
+              :colon="true"
+              label-width="160"
+            ></SchemaToForm>
             <form-builder
+              v-else
               ref="form"
               class="form-builder grey"
               v-model="model"
@@ -568,13 +576,12 @@ import formConfig from './config'
 import GitBook from './GitBook'
 import CodeEditor from '@/components/CodeEditor'
 import Test from './Test'
-import { TYPEMAPCONFIG, defaultModel } from './util'
+import { TYPEMAPCONFIG, defaultModel, getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import VIcon from '@/components/VIcon'
 import SchemaToForm from '@/components/SchemaToForm'
 import { checkConnectionName } from '@/utils/util'
 
-const databaseTypesModel = factory('DatabaseTypes')
 const connectionsModel = factory('connections')
 let defaultConfig = []
 export default {
@@ -1916,7 +1923,7 @@ export default {
       const pdkHash = this.$route.query?.pdkHash
       this.$api('DatabaseTypes')
         .pdkHash(pdkHash)
-        .then(data => {
+        .then(({ data }) => {
           this.pdkOptions = data
           let result = {}
           if (!this.id && !this.$route.query.id) {
