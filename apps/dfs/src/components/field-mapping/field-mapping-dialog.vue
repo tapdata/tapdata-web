@@ -45,7 +45,7 @@
         </div>
         <ul class="task-form-left__ul flex-column">
           <li
-            v-for="(item, index) in fieldMappingNavData"
+            v-for="(item, index) in fieldMappingNavDataShow"
             :key="index"
             :class="{ active: position === index }"
             @click.prevent="select(item, index)"
@@ -642,7 +642,7 @@ export default {
       typeMapping: [],
       typeMappingSource: [],
       currentTypeRules: [],
-      defaultFieldMappingNavData: '',
+      defaultFieldMappingNavData: [],
       defaultFieldMappingTableData: '',
       position: 0,
       fieldCount: '', //当前选中总数
@@ -708,6 +708,16 @@ export default {
         visible: false,
         list: [],
         options: []
+      },
+      fieldMappingNavDataShow: []
+    }
+  },
+  watch: {
+    fieldMappingNavData: {
+      deep: true,
+      handler(v) {
+        console.log('watch', v)
+        this.initNavData()
       }
     }
   },
@@ -715,11 +725,6 @@ export default {
     this.clearWs()
   },
   mounted() {
-    if (this.fieldMappingNavData) {
-      this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(this.fieldMappingNavData))
-      this.selectRow = this.fieldMappingNavData[0]
-      this.fieldCount = this.selectRow.sinkAvailableFieldCount - this.selectRow.userDeletedNum || 0
-    }
     this.$nextTick(() => {
       if (!this.readOnly && this.transform) {
         this.form = {
@@ -760,6 +765,12 @@ export default {
     }
   },
   methods: {
+    initNavData(data) {
+      this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(data || this.fieldMappingNavData))
+      this.fieldMappingNavDataShow = JSON.parse(JSON.stringify(this.defaultFieldMappingNavData))
+      this.selectRow = this.defaultFieldMappingNavData[0]
+      this.fieldCount = this.selectRow.sinkAvailableFieldCount - this.selectRow.userDeletedNum || 0
+    },
     //数据处理区域
     /*初始化table数据*/
     initTableData() {
@@ -827,9 +838,7 @@ export default {
     updateView(data) {
       //只读模式初始化
       if (data) {
-        this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(data))
-        this.selectRow = data[0]
-        this.fieldCount = this.selectRow.sinkAvailableFieldCount - this.selectRow.userDeletedNum || 0
+        this.initNavData(data)
       }
       this.updateData()
     },
@@ -847,12 +856,13 @@ export default {
     /*更新左边被删除字段*/
     updateFieldCount(type) {
       let id = this.selectRow.sinkQulifiedName
-      if (this.fieldMappingNavData) {
-        for (let i = 0; i < this.fieldMappingNavData.length; i++) {
-          if (this.fieldMappingNavData[i].sinkQulifiedName === id && type === 'remove') {
-            this.fieldMappingNavData[i].userDeletedNum = this.fieldMappingNavData[i].userDeletedNum + 1
-          } else if (this.fieldMappingNavData[i].sinkQulifiedName === id && type === 'add') {
-            this.fieldMappingNavData[i].userDeletedNum = this.fieldMappingNavData[i].userDeletedNum - 1
+      let { fieldMappingNavDataShow } = this
+      if (fieldMappingNavDataShow) {
+        for (let i = 0; i < fieldMappingNavDataShow.length; i++) {
+          if (fieldMappingNavDataShow[i].sinkQulifiedName === id && type === 'remove') {
+            fieldMappingNavDataShow[i].userDeletedNum = fieldMappingNavDataShow[i].userDeletedNum + 1
+          } else if (fieldMappingNavDataShow[i].sinkQulifiedName === id && type === 'add') {
+            fieldMappingNavDataShow[i].userDeletedNum = fieldMappingNavDataShow[i].userDeletedNum - 1
           }
         }
       }
@@ -1059,12 +1069,12 @@ export default {
         if (type === 'table') {
           if (this.searchTable.trim()) {
             this.searchTable = this.searchTable.trim().toString() //去空格
-            this.fieldMappingNavData = this.defaultFieldMappingNavData.filter(v => {
+            this.fieldMappingNavDataShow = this.defaultFieldMappingNavData.filter(v => {
               let str = (v.sourceObjectName + '' + v.sinkObjectName).toLowerCase()
               return str.indexOf(this.searchTable.toLowerCase()) > -1
             })
           } else {
-            this.fieldMappingNavData = this.defaultFieldMappingNavData
+            this.fieldMappingNavDataShow = this.defaultFieldMappingNavData
           }
         } else {
           if (this.searchField.trim()) {
@@ -1487,7 +1497,7 @@ export default {
     returnData(hiddenMsg) {
       let result = this.checkTable()
       // 清理多余数据，切换选择table导致的
-      let getAllSourceTables = this.fieldMappingNavData.map(t => t.sourceObjectName)
+      let getAllSourceTables = this.defaultFieldMappingNavData.map(t => t.sourceObjectName)
       this.form.tableOperations = this.form.tableOperations.filter(t =>
         getAllSourceTables.includes(t.originalTableName)
       )
@@ -1557,7 +1567,7 @@ export default {
       //左边所有invalid 为false 右边所有目标字段有类型
       let checkDataType = this.fieldMappingTableData.some(t => (!t.t_data_type || !t.t_field_name) && !t.is_deleted)
       //当前表 所有字段类型通过 将当前表的invalid 设置为false 校验通过
-      this.fieldMappingNavData.forEach(table => {
+      this.defaultFieldMappingNavData.forEach(table => {
         if (table.sinkObjectName === this.selectRow.sinkObjectName) {
           //当前表
           if (!checkDataType) {
@@ -1566,9 +1576,9 @@ export default {
         }
       })
       let checkInvalid = false
-      let count = this.fieldMappingNavData.filter(t => t.invalid)?.length || 0
+      let count = this.defaultFieldMappingNavData.filter(t => t.invalid)?.length || 0
       checkInvalid = !!count
-      let noFieldsTable = this.fieldMappingNavData.filter(t => t.sinkAvailableFieldCount === 0)?.length || 0
+      let noFieldsTable = this.defaultFieldMappingNavData.filter(t => t.sinkAvailableFieldCount === 0)?.length || 0
       checkInvalid = !!noFieldsTable
       return {
         checkInvalid: checkInvalid,
