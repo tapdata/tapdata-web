@@ -109,6 +109,7 @@ export const FieldRename = connect(
                             v-model={data.field_name}
                             onChange={() => this.handleRename(node, data)}
                             onBlur={() => this.closeInput(node.data)}
+                            onKeydown={() => this.handleKeyDown()}
                           />
                         ) : (
                           <span class="text__inner">{data.field_name}</span>
@@ -194,6 +195,11 @@ export const FieldRename = connect(
         },
         closeInput(data) {
           this.$set(data, 'showInput', false) //打开loading
+        },
+        handleKeyDown(e) {
+          if (e.keyCode === 13) {
+            this.$set(data, 'showInput', false) //打开loading
+          }
         },
         /*rename
          * @node 当前tree
