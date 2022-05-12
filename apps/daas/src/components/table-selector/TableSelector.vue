@@ -126,7 +126,9 @@
                   :disabled="!errorTables[item]"
                   :content="errorTables[item]"
                 >
-                  <div :class="{ 'color-danger': errorTables[item] }">{{ item }}</div>
+                  <div :class="{ 'color-danger': errorTables[item] }">
+                    <slot name="right-item" :row="item">{{ item }}</slot>
+                  </div>
                 </ElTooltip>
               </ElCheckbox>
             </template>

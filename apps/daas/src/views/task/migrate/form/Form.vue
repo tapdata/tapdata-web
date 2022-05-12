@@ -806,7 +806,7 @@ export default {
     font-size: 14px;
     .body {
       overflow-y: auto;
-      min-height: 500px;
+      min-height: 400px;
       .title {
         font-size: 14px;
         color: map-get($fontColor, normal);

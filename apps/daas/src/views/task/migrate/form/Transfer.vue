@@ -5,7 +5,11 @@
       v-model="transferData.selectSourceArr"
       :connection-id="sourceId"
       @input="handleChangeTransfer"
-    ></TableSelector>
+    >
+      <template #right-item="{ row }">
+        <span>{{ getTableLabel(row) }}</span>
+      </template>
+    </TableSelector>
 
     <!-- S MQ穿梭框 -->
     <MqTransfer
