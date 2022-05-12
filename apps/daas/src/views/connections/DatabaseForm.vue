@@ -1776,11 +1776,13 @@ export default {
       })
     },
     startTestPdk() {
+      debugger
       let formValues = this.$refs.schemaToForm?.getFormValues?.()
       this.model.name = formValues.__connection_database_name__
       delete formValues.__connection_database_name__
       this.model.config = formValues
       this.model.pdkType = 'pdk'
+      this.model.pdkHash = this.$route.query?.pdkHash
       this.dialogTestVisible = true
       if (this.$route.params.id) {
         //编辑需要特殊标识 updateSchema = false editTest = true
@@ -1946,12 +1948,15 @@ export default {
           }
           connection.properties = result
           this.schemaData = connection
-          this.getPdkData()
+          let id = this.id || this.$route.query.id
+          if (id) {
+            this.getPdkData(id)
+          }
         })
     },
-    getPdkData() {
+    getPdkData(id) {
       this.$api('connections')
-        .get([this.id || this.$route.query.id])
+        .get(id)
         .then(res => {
           this.model = res.data
           this.schemaFormInstance.setValues(res.data?.config)
