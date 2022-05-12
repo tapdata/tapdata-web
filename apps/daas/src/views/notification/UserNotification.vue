@@ -23,7 +23,6 @@
         class="filter-datetime-range"
         @change="getData(1)"
       ></DatetimeRange>
-      {{ search.userId }}
       <SelectList
         v-if="isAdmin"
         v-model="search.userId"
