@@ -228,7 +228,6 @@ export default {
     // this.getUnreadNum() //未读消息数量
     this.getFilterItems()
     this.$root.$on('notificationUpdate', () => {
-      // this.getUnreadNum() //未读消息数量
       this.getData()
     })
   },
@@ -330,6 +329,12 @@ export default {
               // this.getData()
               this.read = read
               this.$root.$emit('notificationUpdate')
+              let msg = {
+                type: 'notification'
+              }
+              this.$ws.ready(() => {
+                this.$ws.send(msg)
+              }, true)
             }
           })
       }
