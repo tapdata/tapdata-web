@@ -311,9 +311,9 @@ export default {
         // where.or = [{ name: filterObj }, { database_uri: filterObj }, { database_host: filterObj }];
         where.name = { like: verify(keyword), options: 'i' }
       }
-      where.database_type = {
-        in: window.getSettingByKey('ALLOW_CONNECTION_TYPE').split(',')
-      }
+      // where.database_type = {
+      //   in: window.getSettingByKey('ALLOW_CONNECTION_TYPE').split(',')
+      // }
       region && (where['platformInfo.region'] = region)
       databaseType && (where.database_type = databaseType)
       // if (databaseType === 'maria' || databaseType === 'mysqlpxc') {
