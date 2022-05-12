@@ -1,9 +1,10 @@
 <template>
-  <div class="">
+  <div>
     <!--  步骤条  -->
     <VStep
       ref="step"
       align-center
+      class="mb-2"
       :hasNumber="false"
       :activeStep="active"
       :stepList="steps"
@@ -305,7 +306,7 @@ export default {
         if (el.group && el.group !== item?.group) {
           stepsData.push({
             label: groupMap[el.group],
-            time: formatTime(el.start) || formatTime(el.end),
+            desc: formatTime(el.start) || formatTime(el.end),
             group: el.group
           })
         }

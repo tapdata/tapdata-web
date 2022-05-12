@@ -6,8 +6,8 @@
         <div slot="title" class="cursor-pointer" @click="$emit('activeStep', index)">
           {{ item.label }}
         </div>
-        <div v-if="item.time" slot="description" class="cursor-pointer" @click="$emit('activeStep', index)">
-          {{ item.time }}
+        <div v-if="item.desc" slot="description" class="cursor-pointer" @click="$emit('activeStep', index)">
+          {{ item.desc }}
         </div>
       </ElStep>
     </template>
@@ -30,7 +30,6 @@ export default {
         //   {
         //     label: '步骤1',
         //     desc: '这是一段很长很长很长的描述性文字',
-        //     time:'
         //    }
         // ]
       }
@@ -175,6 +174,11 @@ export default {
     .is-finish {
       .el-step__line {
         background-color: map-get($color, disable);
+      }
+      .el-step__line-inner {
+        transition-delay: -150ms !important;
+        border-width: 0px !important;
+        width: 0% !important;
       }
     }
     .el-step__title,
