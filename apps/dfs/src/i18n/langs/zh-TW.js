@@ -1656,5 +1656,43 @@ export default {
   views_Lang_qingShuRuJiaoZheng: '請輸入矯正文案',
   copy_result: '已複製到剪貼板',
   views_Lang_shangChuanChengGongShua:
-    '上傳成功，刷新頁面即可生效，並合併到現有文案。 如果現有文案還需要使用，請先匯出。'
+    '上傳成功，刷新頁面即可生效，並合併到現有文案。 如果現有文案還需要使用，請先匯出。',
+  workbench_Notice_tAPDA1213:
+    'Tapdata Cloud 2.1.5來啦：新增支持Amazon RDS資料庫，錯誤日誌査詢更便捷，Agent部署細節再優化',
+  workbench_Notice_xuQiuChiXuGeng12: '需求持續更新，優化一刻不停——Tapdata Cloud 2.1.5來啦！',
+  workbench_Notice_zuiXinFaBuDe12:
+    '最新發佈的版本中，數據連接再上新，同時新增任務報錯相關資訊快速查詢入口，開始支持JVM參數自定義設定。',
+  workbench_Notice_shuJuLianJieShang12: '數據連接上新',
+  workbench_Notice_chiXuQianShouYun:
+    '：持續牽手雲資料庫，新增支持阿裡雲PolarDBPostgreSQL，以及Amazon RDS for MySQL作為源和目標；',
+  workbench_Notice_xinZengCuoWuRi2: '新增錯誤日誌快速查詢入口',
+  workbench_Notice_renWuYunXingChu:
+    '：任務運行出錯時，可以直接通過彈窗預覽錯誤資訊，同時還可在彈窗底部獲取完整日誌査詢入口，一鍵快速到達日誌展示頁面；',
+  workbench_Notice_aGENT2: 'Agent部署配寘優化',
+  workbench_Notice_kaiShiZhiChiZi: '：開始支持自定義調整JVM配寘，有效避免Agent啟動可能導致的記憶體溢出。',
+  workbench_Notice_shuJuLianJieZai1: '數據連接再添新成員',
+  workbench_Notice_pOLAR: 'PolarDB PostgreSQL、Amazon RDS for MySQL開始接入',
+  workbench_Notice_zuoWeiGuoNeiShou12:
+    '作為國內首家異構資料庫實时同步雲平臺，Tapdata Cloud不斷拓展能够支持的數據連接版圖，力求滿足用戶的多樣化資料來源和目標需求，真正實現數據實时同步“全面破壁”。',
+  workbench_Notice_jiBanBenShouCi1:
+    '繼2.1.0版本首次實現雲資料庫接入之後，Tapdata Cloud持續發力，本次更新又有新夥伴加入：新增支持阿裡雲PolarDBPostgreSQL和Amazon RDS for MySQL作為源和目標。 至此，Tapdata Cloud數據連接據點數量擴張至',
+  workbench_Notice_fangDaJiuKanT1: '。 放大就看Tapdata Cloud“破壁行動”最新戰績 👇：',
+  workbench_Notice_xinZengCuoWuRi: '新增錯誤日誌',
+  workbench_Notice_kuaiSuChaXunRu: '快速查詢入口',
+  workbench_Notice_tanChuangYuLanYi: '彈窗預覽，一鍵直達',
+  workbench_Notice_renWuBaoCuoXiang: '任務報錯，想要更快査詢錯誤日誌怎麼辦？',
+  workbench_Notice_congZheYiBanBen:
+    '📣 從這一版本開始，日誌査詢將會更快捷！ 任務運行出錯時，無需回到運行監控頁面匯出錯誤日誌，可以直接通過彈窗預覽錯誤資訊，同時還可在彈窗底部獲取完整日誌査詢入口，一鍵直達日誌展示頁面，快速查看快速定位，使用更方便！',
+  workbench_Notice_renWuBaoCuoDian: '任務報錯，點擊查看錯誤日誌',
+  workbench_Notice_aGENT1: 'Agent部署細節優化',
+  workbench_Notice_zhiChiJVM: '支持JVM自定義配寘',
+  workbench_Notice_qiDongGengFangXin: '啟動更放心',
+  workbench_Notice_zhenDuiLiShiBan12:
+    '針對歷史版本在Agent安裝過程中，因啟動時默認分配記憶體較小可能導致的記憶體溢出問題，新版本給出了優化方案：',
+  workbench_Notice_xianJiangJVM:
+    '現將JVM參數設置許可權開放，支持用戶根據自身服務器的配寘來進行自定義調整。 Agent啟動時，會自動提示記憶體佔用情况，用戶按照實際需求在設定檔中自行調整並重啓即可。',
+  workbench_Notice_peiZhiWenJianKai: "設定檔開放的JVM參數名：tapdataJavaOpts: '-Xmx2362M'",
+  workbench_Notice_beiZhuMoRenQi:
+    '*備註：默認啟動佔用系統配寘記憶體的3/5，如果系統記憶體的3/5超過8G，則最大只佔用到8G。',
+  workbench_Workbench_tAPDA12: 'Tapdata Cloud 2.1.5版本發佈啦！'
 }

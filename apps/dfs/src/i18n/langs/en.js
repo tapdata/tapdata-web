@@ -1787,5 +1787,47 @@ export default {
   views_Lang_qingShuRuJiaoZheng: 'Please enter correction copy',
   copy_result: 'Copied to clipboard',
   views_Lang_shangChuanChengGongShua:
-    'If the upload is successful, refresh the page to take effect and merge it into the existing copy. If the existing copy needs to be used, please export it first.'
+    'If the upload is successful, refresh the page to take effect and merge it into the existing copy. If the existing copy needs to be used, please export it first.',
+  workbench_Notice_tAPDA1213:
+    'Tapdata cloud 2.1.5 is coming: Amazon RDS database is newly supported, error log query is more convenient, and agent deployment details are optimized',
+  workbench_Notice_xuQiuChiXuGeng12:
+    'Requirements are constantly updated and optimized - tapdata cloud 2.1.5 is coming!',
+  workbench_Notice_zuiXinFaBuDe12:
+    'In the latest released version, the data connection is updated again, and a quick query entry of task error related information is added, which starts to support the custom setting of JVM parameters.',
+  workbench_Notice_shuJuLianJieShang12: 'New data connection',
+  workbench_Notice_chiXuQianShouYun:
+    ': continue to join hands with Alibaba cloud database and add support for Alibaba cloud polardbPostgreSQL and Amazon RDS for MySQL as the source and target;',
+  workbench_Notice_xinZengCuoWuRi2: 'New error log quick query entry',
+  workbench_Notice_renWuYunXingChu:
+    ': when the task runs in error, you can preview the error information directly through the pop-up window. At the same time, you can get the complete log query entry at the bottom of the pop-up window, and you can quickly reach the log display page with one click;',
+  workbench_Notice_aGENT2: 'Agent deployment configuration optimization',
+  workbench_Notice_kaiShiZhiChiZi:
+    'Avoid supporting custom adjustment of JVM configuration at the beginning, and effectively:Memory overflow caused by agent startup.',
+  workbench_Notice_shuJuLianJieZai1: 'Add new members to data connection',
+  workbench_Notice_pOLAR: 'Polardb, PostgreSQL and Amazon RDS for MySQL are connected',
+  workbench_Notice_zuoWeiGuoNeiShou12:
+    'As the first heterogeneous database real-time synchronization cloud platform in China, tapdata cloudContinuously expand the data connection layout that can be supported, strive to meet the diversified data sources and target needs of users, and truly realize the "comprehensive breaking wall" of real-time data synchronization.',
+  workbench_Notice_jiBanBenShouCi1:
+    'Following the first cloud database access in version 2.1.0, tapdata cloud continues to make efforts, and new partners are added in this update: Alibaba cloud polardb is newly supportedPostgreSQL and Amazon RDS for MySQL are the source and target. So far, the number of tapdata cloud data connection sites has expanded to',
+  workbench_Notice_fangDaJiuKanT1:
+    '。 Zoom in to see the latest achievements of tapdata cloud\'s "wall breaking operation" 👇：',
+  workbench_Notice_xinZengCuoWuRi: 'New error log',
+  workbench_Notice_kuaiSuChaXunRu: 'Quick query entry',
+  workbench_Notice_tanChuangYuLanYi: 'Pop up preview, one click direct',
+  workbench_Notice_renWuBaoCuoXiang:
+    'If the task reports an error, what should I do if I want to query the error log faster?',
+  workbench_Notice_congZheYiBanBen:
+    "📣 Starting from this version, log query will be faster! When a task runs in error, you don't need to go back to the operation monitoring page to export the error log. You can preview the error information directly through the pop-up window. At the same time, you can get the complete log query entry at the bottom of the pop-up window. You can click directly to the log display page for quick viewing and quick positioning, which is more convenient to use!",
+  workbench_Notice_renWuBaoCuoDian: 'The task reports an error. Click to view the error log',
+  workbench_Notice_aGENT1: 'Agent deployment details optimization',
+  workbench_Notice_zhiChiJVM: 'Support JVM custom configuration',
+  workbench_Notice_qiDongGengFangXin: 'Start more assured',
+  workbench_Notice_zhenDuiLiShiBan12:
+    'In view of the memory overflow problem that may be caused by the small default allocated memory during the agent installation of the historical version, the new version gives an optimization scheme:',
+  workbench_Notice_xianJiangJVM:
+    'Now the JVM parameter setting permission is open, and users can customize and adjust according to their own server configuration. AgentWhen starting, it will automatically prompt the memory usage. The user can adjust and restart it in the configuration file according to the actual needs.',
+  workbench_Notice_peiZhiWenJianKai: "JVM parameter name opened by configuration file: tapdatajavaopts: '- xmx2362m'",
+  workbench_Notice_beiZhuMoRenQi:
+    '*Note: by default, startup occupies 3 / 5 of the system configuration memory. If 3 / 5 of the system memory exceeds 8g, it only occupies 8g at most.',
+  workbench_Workbench_tAPDA12: 'Tapdata cloud version 2.1.5 has been released!'
 }

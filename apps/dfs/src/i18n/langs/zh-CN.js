@@ -1697,5 +1697,45 @@ export default {
   views_Lang_wenAnDengYuDe: '文案等于的值，List: a,b,c',
   views_Lang_qingShuRuJiaoZheng: '请输入矫正文案',
   copy_result: '已复制到剪贴板',
-  views_Lang_shangChuanChengGongShua: '上传成功，刷新页面即可生效，并合并到现有文案。如果现有文案还需要使用，请先导出。'
+  views_Lang_shangChuanChengGongShua:
+    '上传成功，刷新页面即可生效，并合并到现有文案。如果现有文案还需要使用，请先导出。',
+  workbench_Notice_tAPDA1213:
+    'Tapdata Cloud 2.1.5来啦：新增支持Amazon RDS数据库，错误日志查询更便捷，Agent部署细节再优化',
+  workbench_Notice_xuQiuChiXuGeng12: '需求持续更新，优化一刻不停——Tapdata Cloud 2.1.5 来啦！',
+  workbench_Notice_zuiXinFaBuDe12:
+    '最新发布的版本中，数据连接再上新，同时新增任务报错相关信息快速查询入口，开始支持 JVM 参数自定义设置。',
+  workbench_Notice_shuJuLianJieShang12: '数据连接上新',
+  workbench_Notice_chiXuQianShouYun:
+    '：持续牵手云数据库，新增支持阿里云 PolarDB\n            PostgreSQL，以及 Amazon RDS for MySQL 作为源和目标；',
+  workbench_Notice_xinZengCuoWuRi2: '新增错误日志快速查询入口',
+  workbench_Notice_renWuYunXingChu:
+    '：任务运行出错时，可以直接通过弹窗预览错误信息，同时还可在弹窗底部获取完整日志查询入口，一键快速到达日志展示页面；',
+  workbench_Notice_aGENT2: 'Agent 部署配置优化',
+  workbench_Notice_kaiShiZhiChiZi:
+    '：开始支持自定义调整 JVM 配置，有效避免\n            Agent 启动可能导致的内存溢出。',
+  workbench_Notice_shuJuLianJieZai1: '数据连接再添新成员',
+  workbench_Notice_pOLAR: 'PolarDB PostgreSQL、Amazon RDS for MySQL 开始接入',
+  workbench_Notice_zuoWeiGuoNeiShou12:
+    '作为国内首家异构数据库实时同步云平台，Tapdata Cloud\n          不断拓展能够支持的数据连接版图，力求满足用户的多样化数据源和目标需求，真正实现数据实时同步“全面破壁”。',
+  workbench_Notice_jiBanBenShouCi1:
+    '\n          继 2.1.0 版本首次实现云数据库接入之后，Tapdata Cloud 持续发力，本次更新又有新伙伴加入：新增支持阿里云 PolarDB\n          PostgreSQL 和 Amazon RDS for MySQL 作为源和目标。至此，Tapdata Cloud 数据连接据点数量扩张至',
+  workbench_Notice_fangDaJiuKanT1: '。放大就看 Tapdata Cloud “破壁行动”最新战绩 👇：',
+  workbench_Notice_xinZengCuoWuRi: '新增错误日志',
+  workbench_Notice_kuaiSuChaXunRu: '快速查询入口',
+  workbench_Notice_tanChuangYuLanYi: '弹窗预览，一键直达',
+  workbench_Notice_renWuBaoCuoXiang: '任务报错，想要更快查询错误日志怎么办？',
+  workbench_Notice_congZheYiBanBen:
+    '📣从这一版本开始，日志查询将会更快捷！任务运行出错时，无需回到运行监控页面导出错误日志，可以直接通过弹窗预览错误信息，同时还可在弹窗底部获取完整日志查询入口，一键直达日志展示页面，快速查看快速定位，使用更方便！',
+  workbench_Notice_renWuBaoCuoDian: '任务报错，点击查看错误日志',
+  workbench_Notice_aGENT1: 'Agent 部署细节优化',
+  workbench_Notice_zhiChiJVM: '支持 JVM 自定义配置',
+  workbench_Notice_qiDongGengFangXin: '启动更放心',
+  workbench_Notice_zhenDuiLiShiBan12:
+    '针对历史版本在 Agent 安装过程中，因启动时默认分配内存较小可能导致的内存溢出问题，新版本给出了优化方案：',
+  workbench_Notice_xianJiangJVM:
+    '现将 JVM 参数设置权限开放，支持用户根据自身服务器的配置来进行自定义调整。Agent\n          启动时，会自动提示内存占用情况，用户按照实际需求在配置文件中自行调整并重启即可。',
+  workbench_Notice_peiZhiWenJianKai: "配置文件开放的 JVM 参数名：tapdataJavaOpts: '-Xmx2362M'",
+  workbench_Notice_beiZhuMoRenQi:
+    '*备注：默认启动占用系统配置内存的 3/5，如果系统内存的 3/5 超过 8G，则最大只占用到 8G。',
+  workbench_Workbench_tAPDA12: 'Tapdata Cloud 2.1.5 版本发布啦！'
 }

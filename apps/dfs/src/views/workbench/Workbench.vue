@@ -342,6 +342,12 @@ export default {
     loadNotices() {
       this.notices = [
         {
+          id: 16,
+          type: '',
+          name: i18n.t('workbench_Workbench_tAPDA12'),
+          time: '2022-05-12 18:00'
+        },
+        {
           id: 15,
           type: '',
           name: i18n.t('workbench_Workbench_tAPDA1'),
