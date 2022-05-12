@@ -93,7 +93,7 @@ axios.interceptors.response.use(
       let data = response.data
       if (data.code === 'ok') {
         return resolve({
-          data: data.data || data || {},
+          data: (data && data.data) || data || {},
           response: response
         })
       } else {

@@ -148,6 +148,7 @@ export default {
       this.jsPlumbIns.draggable(this.$el, {
         // containment: 'parent',
         start: params => {
+          this.onMouseDownAt = Date.now()
           // console.log('node-drag-start', params.pos)
           if (params.e && !this.isNodeSelected(this.nodeId)) {
             // 只有直接拖动的节点params才会有事件
@@ -190,10 +191,17 @@ export default {
             let x = parseFloat(this.$el.style.left)
             let y = parseFloat(this.$el.style.top)
 
+            const distance = Math.sqrt(Math.pow(x - position[0], 2) + Math.pow(y - position[1], 2))
+
             if (x === position[0] && y === position[1]) {
               // 拖拽结束后位置没有改变
               console.log('NotMove') // eslint-disable-line
               this.isNotMove = true
+              this.removeActiveAction('dragActive')
+            }
+
+            if (distance < 4 || Date.now() - this.onMouseDownAt < 10) {
+              console.log('拖动时间段，或者距离变化小，触发节点激活', Date.now() - this.onMouseDownAt, distance) // eslint-disable-line
               this.removeActiveAction('dragActive')
             }
 
@@ -223,6 +231,7 @@ export default {
             })
           }
 
+          this.onMouseDownAt = undefined
           this.$emit('drag-stop', this.isNotMove, oldProperties, newProperties)
         }
       })

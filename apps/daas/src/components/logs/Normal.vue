@@ -30,10 +30,10 @@
         @scroll.native="scrollFnc"
       >
         <template #before>
-          <div v-if="keyword" class="before-scroll-content text-center font-color-slight pb-2">
+          <div v-if="keyword" class="before-scroll-content text-center font-color-light pb-2">
             <div>{{ $t('customer_logs_no_search_data') }}</div>
           </div>
-          <div v-else class="before-scroll-content text-center font-color-slight pb-2">
+          <div v-else class="before-scroll-content text-center font-color-light pb-2">
             <div v-if="isNoMore">{{ $t('customer_logs_no_more_data') }}</div>
             <div v-else-if="!list.length">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
             <div v-show="preLoading">
@@ -48,7 +48,7 @@
             :data-index="index"
             :size-dependencies="[item.id, item.content]"
           >
-            <div class="flex py-1">
+            <div class="flex py-1 font-color-light">
               <div class="mr-2 white-space-nowrap">
                 [<span :class="['level', colorMap[item.level]]">{{ item.params.level || item.level }}</span
                 >]

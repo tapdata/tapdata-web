@@ -109,7 +109,7 @@
             @click="startTask(scope.row.id)"
             >{{ $t('verify_executeVerifyTip') }}</ElLink
           >
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
           <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">{{
             $t('verify_detailTip')
           }}</ElLink>
@@ -121,7 +121,7 @@
             @click="goEdit(scope.row.id, scope.row.flowId)"
             >{{ $t('verify_configurationTip') }}</ElLink
           >
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
           <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, scope.row)">
             <ElLink type="primary" class="rotate-90">
               <i class="el-icon-more"></i>

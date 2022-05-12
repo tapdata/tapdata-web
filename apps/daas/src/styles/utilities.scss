@@ -16,9 +16,11 @@
   color: map-get($color, primary);
 }
 
-.link-primary:hover,
+.link-primary:hover {
+  color: map-get($color, lprimary);
+}
 .link-primary:focus {
-  color: #0a58ca;
+  color:  map-get($color, dprimary);
 }
 
 .link-secondary {

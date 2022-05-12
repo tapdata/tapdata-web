@@ -228,7 +228,6 @@ export default {
     // this.getUnreadNum() //未读消息数量
     this.getFilterItems()
     this.$root.$on('notificationUpdate', () => {
-      // this.getUnreadNum() //未读消息数量
       this.getData()
     })
   },
@@ -330,6 +329,12 @@ export default {
               // this.getData()
               this.read = read
               this.$root.$emit('notificationUpdate')
+              let msg = {
+                type: 'notification'
+              }
+              this.$ws.ready(() => {
+                this.$ws.send(msg)
+              }, true)
             }
           })
       }
@@ -340,19 +345,17 @@ export default {
       this.listData.map(item => {
         ids.push(item.id)
       })
-      let where = {
-        id: {
-          inq: ids
-        }
+      let id = {
+        inq: ids
       }
 
       let data = {
-        read: true
+        read: true,
+        id
       }
-      where = JSON.stringify(where)
       let read = this.read
       this.$api('notification')
-        .pageRead(encodeURIComponent(where), data)
+        .pageRead(data)
         .then(res => {
           if (res.data) {
             // this.getUnreadNum() //未读消息数量

@@ -10,11 +10,11 @@
           target="etlSub"
           :status="task.isFinished ? 'finished' : task.status || 'running'"
         ></StatusTag>
-        <span class="ml-6 font-color-slight">
+        <span class="ml-6 font-color-light">
           {{ $t('task_monitor_founder') }}：<span>{{ task.creator }}</span>
         </span>
-        <span class="mx-6 font-color-slight">
-          {{ $t('task_info_start_time') }}：<span>{{ formatTime(task.startTime) || '-' }}</span>
+        <span class="mx-6 font-color-light">
+          {{ $t('task_info_start_time') }}： <span>{{ formatTime(task.startTime) || '-' }}</span>
         </span>
       </div>
       <div class="operation">
@@ -78,7 +78,7 @@
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
           <span class="font-color-light">{{ $t('task_monitor_total_input') }}</span>
         </div>
-        <ElTooltip v-if="overData.inputTotal" :content="toString(overData.inputTotal)" placement="left-start">
+        <ElTooltip v-if="overData.inputTotal" :content="overData.inputTotal.toString()" placement="left-start">
           <div class="mb-4 fs-4 fw-bolder din-font" style="color: #409488">
             {{ handleChangeUnit(overData.inputTotal) }}
           </div>
@@ -89,7 +89,7 @@
           <VIcon class="mr-4 color-success" size="18">mark</VIcon>
           <span class="font-color-light">{{ $t('task_monitor_total_output') }}</span>
         </div>
-        <ElTooltip v-if="overData.outputTotal" :content="toString(overData.outputTotal)" placement="left-start">
+        <ElTooltip v-if="overData.outputTotal" :content="overData.outputTotal.toString()" placement="left-start">
           <div class="mb-4 fs-4 fw-bolder din-font" style="color: #377ab9">
             {{ handleChangeUnit(overData.outputTotal) }}
           </div>
@@ -98,7 +98,7 @@
         <div class="flex justify-content-between text-center">
           <div>
             <div class="mb-3 font-color-light">{{ $t('task_monitor_total_insert') }}</div>
-            <ElTooltip v-if="overData.insertedTotal" :content="toString(overData.insertedTotal)">
+            <ElTooltip v-if="overData.insertedTotal" :content="overData.insertedTotal.toString()">
               <div class="fs-7 font-color-dark fw-bolder din-font">
                 {{ handleChangeUnit(overData.insertedTotal) }}
               </div>
@@ -107,7 +107,7 @@
           </div>
           <div>
             <div class="mb-3 font-color-light">{{ $t('task_monitor_total_update') }}</div>
-            <ElTooltip v-if="overData.updatedTotal" :content="toString(overData.updatedTotal)">
+            <ElTooltip v-if="overData.updatedTotal" :content="overData.updatedTotal.toString()">
               <div class="fs-7 font-color-dark fw-bolder din-font">
                 {{ handleChangeUnit(overData.updatedTotal) }}
               </div>
@@ -116,7 +116,7 @@
           </div>
           <div>
             <div class="mb-3 font-color-light">{{ $t('task_monitor_total_delete') }}</div>
-            <ElTooltip v-if="overData.deletedTotal" :content="toString(overData.deletedTotal)">
+            <ElTooltip v-if="overData.deletedTotal" :content="overData.deletedTotal.toString()">
               <div class="fs-7 font-color-dark fw-bolder din-font">
                 {{ handleChangeUnit(overData.deletedTotal) }}
               </div>

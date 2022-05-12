@@ -170,14 +170,15 @@ export default {
       }
       this.getUnreadData()
       this.$ws.on('notification', res => {
-        this.getUnReadNum()
+        // this.getUnReadNum()
+        this.getUnreadData()
         let data = res?.data
         if (data) {
           data.createTime = formatTime(data.createTime)
           self.listData = uniqueArr([data, ...this.listData])
-          this.$store.commit('notification', {
-            unRead: data.total
-          })
+          // this.$store.commit('notification', {
+          //   unRead: data.total
+          // })
         }
       })
       this.$ws.ready(() => {
@@ -195,9 +196,10 @@ export default {
         .count({ where: JSON.stringify(where) })
         .then(res => {
           if (res.data) {
+            let data = res.data.data || res.data.data === 0 ? res.data.data : res.data
             // this.unRead = res.data.count
             this.$store.commit('notification', {
-              unRead: res.data
+              unRead: data
             })
           }
         })
