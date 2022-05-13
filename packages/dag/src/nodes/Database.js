@@ -10,153 +10,126 @@ export class Database extends NodeType {
       if (attr.formSchema) this.formSchema = attr.formSchema
       if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
     }
+
+    if (node.group) {
+      this.group = node.group
+    }
   }
 
   attr = {}
 
   group = 'data'
 
-  /*formSchema = {
+  formSchema = {
     type: 'object',
     properties: {
-      datasource: {
-        title: '数据库',
-        type: 'void',
-        'x-decorator': 'ElFormItem',
+      $inputs: {
+        type: 'array',
+        'x-display': 'hidden'
+      },
+      $outputs: {
+        type: 'array',
+        'x-display': 'hidden'
+      },
+      databaseType: {
+        type: 'string',
+        'x-display': 'hidden'
+      },
+
+      'attrs.connectionName': {
+        type: 'string',
+        title: '连接名称',
+        'x-decorator': 'FormItem',
         'x-decorator-props': {
-          asterisk: true
+          className: 'form-item-text'
         },
-        'x-component': 'Row',
+        'x-component': 'PreviewText.Input',
         'x-component-props': {
-          type: 'flex',
-          gap: '8px'
-        },
-        properties: {
-          connectionId: {
-            type: 'string',
-            required: true,
-            'x-decorator': 'Col',
-            'x-decorator-props': { flex: 1 },
-            'x-component': 'ComboSelect',
-            'x-component-props': {
-              config: { placeholder: '请选择数据库' }
-            },
-            'x-reactions': ['{{useAsyncDataSource(loadDatabase)}}']
-          },
-          connectionBtn: {
-            type: 'void',
-            'x-component': 'AddDatabaseBtn'
+          style: {
+            color: '#535F72'
           }
         }
       },
+
+      // 所属agent
+      'attrs.accessNodeProcessId': {
+        type: 'string',
+        title: '所属agent',
+        'x-decorator': 'FormItem',
+        'x-decorator-props': {
+          className: 'form-item-text'
+        },
+        'x-component': 'PreviewText.Input',
+        'x-component-props': {
+          content:
+            '{{$agentMap[$self.value] ? `${$agentMap[$self.value].hostName}（${$agentMap[$self.value].ip}）` : "-"}}',
+          style: {
+            color: '#535F72'
+          }
+        },
+        'x-reactions': {
+          fulfill: {
+            state: {
+              display: '{{!$self.value ? "hidden":"visible"}}'
+            }
+          }
+        }
+      },
+
+      desc: {
+        type: 'string',
+        title: '节点描述',
+        'x-decorator': 'FormItem',
+        'x-component': 'Input.TextArea',
+        'x-component-props': {
+          autosize: { maxRows: 2 }
+        }
+      },
+
+      layout: {
+        type: 'void',
+        properties: {
+          'attrs.connectionName': {
+            type: 'string',
+            title: '连接名称',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              className: 'form-item-text'
+            },
+            'x-component': 'PreviewText.Input',
+            'x-component-props': {
+              style: {
+                color: '#535F72'
+              }
+            }
+          }
+        }
+      },
+
       name: {
         type: 'string',
-        'x-display': 'hidden',
-        'x-reactions': {
-          dependencies: ['connectionId'],
-          fulfill: {
-            run: '{{$self.value = $form.query("connectionId").get("dataSource")?.find(item=>item.id===$deps[0])?.name}}'
-          }
-        }
+        'x-display': 'hidden'
       },
-      datasourceInfo: {
+
+      // 切换连接，保存连接的类型
+      'attrs.connectionType': {
         type: 'string',
-        'x-component': 'DatabaseInfo',
-        'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo)}}']
+        'x-display': 'hidden'
       }
     }
   }
 
-  linkFormSchema = {
-    type: 'object',
-    properties: {
-      dropType: {
-        type: 'string',
-        title: '对目标端已存在的结构和数据的处理',
-        default: 'no_drop',
-        'x-decorator': 'ElFormItem',
-        'x-component': 'Select',
-        'x-reactions': ['{{loadDropOptions}}']
-      },
-      table_prefix: {
-        type: 'string',
-        default: '',
-        'x-display': 'hidden'
-      },
-      table_suffix: {
-        type: 'string',
-        default: '',
-        'x-display': 'hidden'
-      },
-      syncObjects: {
-        type: 'array',
-        default: [
-          {
-            type: 'table'
-          }
-        ],
-        enum: [
-          {
-            label: 'Table',
-            value: 'table',
-            tooltip: 'editor.cell.link.tableTip',
-            disabled: true
-          },
-          {
-            label: 'View',
-            value: 'view',
-            tooltip: 'editor.cell.link.viewTip'
-          },
-          {
-            label: 'Function',
-            value: 'function'
-          },
-          {
-            label: 'Procedure',
-            value: 'procedure'
-          }
-        ],
-        'x-component': 'SyncObjects',
-        'x-reactions': ['{{useAsyncDataSource(loadDatabaseInfo, "data", sourceConnectionId)}}']
-      }
-    }
-  }*/
-
-  /**
-   * 获取额外添加到节点上的属性
-   */
   getExtraAttr() {
+    const { tableName, databaseType, connectionId, connectionType, accessNodeProcessId, connectionName } = this.attr
     return {
-      databaseType: this.attr.databaseType,
-      inputLanes: [],
-      outputLanes: []
+      tableName,
+      databaseType,
+      connectionId,
+      attrs: {
+        connectionName,
+        connectionType,
+        accessNodeProcessId
+      }
     }
-  }
-
-  validate(data) {
-    if (!data.connectionId) return `${data.name}: ${i18n.t('editor.cell.data_node.database.none_database')}`
-    return true
-  }
-
-  allowTarget(target, source) {
-    console.log('allowTarget', arguments) // eslint-disable-line
-    if (source.databaseType === 'elasticsearch') {
-      return target.databaseType === 'kafka'
-    }
-    return (
-      target.type === 'database' &&
-      target.databaseType !== 'hbase' &&
-      target.inputLanes.length < 1 &&
-      target.outputLanes.length < 1
-    )
-  }
-
-  allowSource(source) {
-    return (
-      source.type === 'database' &&
-      source.databaseType !== 'kudu' &&
-      source.inputLanes.length < 1 &&
-      source.outputLanes.length < 1
-    )
   }
 }

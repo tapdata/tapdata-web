@@ -5,6 +5,10 @@ const DagEditor = async () => {
   const { Editor } = await import('@tap/dag')
   return Editor
 }
+const MigrationEditor = async () => {
+  const { MigrationEditor } = await import('@tap/dag')
+  return MigrationEditor
+}
 const NodeEditor = async () => {
   const { Editor } = await import('@tap/node-design')
   return Editor
@@ -85,6 +89,26 @@ export default [
       code: 'Data_SYNC_menu'
     }
   },
+
+  {
+    path: '/migrate/editor',
+    name: 'MigrateCreate',
+    component: MigrationEditor,
+    meta: {
+      title: 'page_title_task_edit',
+      code: 'Data_SYNC_menu'
+    }
+  },
+  {
+    path: '/migrate/editor/:id',
+    name: 'MigrateEditor',
+    component: MigrationEditor,
+    meta: {
+      title: 'page_title_task_edit',
+      code: 'Data_SYNC_menu'
+    }
+  },
+
   {
     path: '/',
     name: 'layout',
@@ -178,15 +202,6 @@ export default [
           {
             path: 'viewer/:id',
             name: 'MigrateViewer',
-            component: MigrateForm,
-            meta: {
-              title: 'page_title_task_edit',
-              code: 'Data_SYNC_menu'
-            }
-          },
-          {
-            path: 'edit/:id',
-            name: 'MigrateEditor',
             component: MigrateForm,
             meta: {
               title: 'page_title_task_edit',

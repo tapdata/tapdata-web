@@ -180,10 +180,10 @@ const getters = {
     const nodeType = node.type
     let foundType
     const allNodeTypes = [...state.nodeTypes, ...state.processorNodeTypes]
-    if (nodeType === 'database') {
+    /*if (nodeType === 'database') {
       const dbType = node.databaseType
       foundType = allNodeTypes.find(typeData => typeData.type === nodeType && typeData.attr.databaseType === dbType)
-    } else if (nodeType === 'custom_processor') {
+    } else*/ if (nodeType === 'custom_processor') {
       foundType = state.processorNodeTypes.find(typeData => typeData.attr?.customNodeId === node.customNodeId)
     } else {
       foundType = allNodeTypes.find(typeData => typeData.type === nodeType)

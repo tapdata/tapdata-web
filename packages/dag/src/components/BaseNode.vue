@@ -19,7 +19,7 @@ export default {
     node: Object
   },
   getIcon(node) {
-    let icon = node.type === 'table' ? node.databaseType : NODE_TYPE_ICON[node.type]
+    let icon = node.type === 'table' || node.type === 'database' ? node.databaseType : NODE_TYPE_ICON[node.type]
     return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
   }
 }
@@ -123,7 +123,8 @@ $height: 50px;
     }
   }
 
-  &.node--data {
+  &.node--data,
+  &.node--input {
     border-color: #6236ff;
     .df-node-icon {
       background-color: rgba(98, 54, 255, 0.2);
@@ -140,6 +141,34 @@ $height: 50px;
         width: 28px;
         height: 28px;
         background-color: #6236ff;
+        color: #fff;
+        font-size: 14px;
+        border-radius: 100%;
+        .v-icon__svg {
+          width: 1em;
+          height: 1em;
+        }
+      }
+    }
+  }
+
+  &.node--output {
+    border-color: #008eff;
+    .df-node-icon {
+      background-color: rgba(0, 155, 255, 0.2);
+      &:before {
+        content: '';
+        position: absolute;
+        width: 34px;
+        height: 34px;
+        border: 1px solid #008eff;
+        border-radius: 50%;
+        background: #fff;
+      }
+      .v-icon {
+        width: 28px;
+        height: 28px;
+        background-color: #008eff;
         color: #fff;
         font-size: 14px;
         border-radius: 100%;
