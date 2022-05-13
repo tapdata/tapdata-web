@@ -99,13 +99,12 @@ export default {
     }
     .el-step__title {
       font-size: 14px;
-      font-weight: 500;
-      color: #e9e9e9;
-      &.is-process {
-        color: map-get($fontColor, dark);
-      }
+      font-weight: 400;
+      color: map-get($fontColor, slight);
+      &.is-process,
       &.is-success {
         color: map-get($fontColor, dark);
+        font-weight: 500;
       }
     }
   }
