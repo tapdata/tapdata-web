@@ -715,8 +715,7 @@ export default {
   watch: {
     fieldMappingNavData: {
       deep: true,
-      handler(v) {
-        console.log('watch', v)
+      handler() {
         this.initNavData()
       }
     }
@@ -768,7 +767,9 @@ export default {
     initNavData(data) {
       this.defaultFieldMappingNavData = JSON.parse(JSON.stringify(data || this.fieldMappingNavData))
       this.fieldMappingNavDataShow = JSON.parse(JSON.stringify(this.defaultFieldMappingNavData))
-      this.selectRow = this.defaultFieldMappingNavData[0]
+      if (!this.selectRow) {
+        this.selectRow = this.defaultFieldMappingNavData[0]
+      }
       this.fieldCount = this.selectRow.sinkAvailableFieldCount - this.selectRow.userDeletedNum || 0
     },
     //数据处理区域
@@ -933,9 +934,7 @@ export default {
           this.$message.error(this.$t('task_mapping_table_field_name_empty_check'))
           return
         }
-      }
-      this.select(item, index)
-      if (this.targetIsVika || this.targetIsQingflow) {
+        this.select(item, index)
         this.vikaForm.visible = true
         this.vikaForm.table = item.sinkObjectName
         this.vikaForm.originalTableName = item.sourceObjectName
@@ -1524,9 +1523,6 @@ export default {
         qingFlowMappings: this.form.qingFlowMappings
       }
       let flag = (result.checkDataType || result.checkInvalid) && result.noFieldsTable === 0
-      if (this.targetIsVika || this.targetIsQingflow) {
-        flag = flag || this.fieldMappingTableData.some(t => !t.t_field_name && !t.is_deleted)
-      }
       if (flag) {
         if (!hiddenMsg) {
           let arr = this.$t('task_mapping_dialog_field_type_problem').split('XXX')
@@ -1577,9 +1573,8 @@ export default {
       })
       let checkInvalid = false
       let count = this.defaultFieldMappingNavData.filter(t => t.invalid)?.length || 0
-      checkInvalid = !!count
       let noFieldsTable = this.defaultFieldMappingNavData.filter(t => t.sinkAvailableFieldCount === 0)?.length || 0
-      checkInvalid = !!noFieldsTable
+      checkInvalid = !!count || !!noFieldsTable
       return {
         checkInvalid: checkInvalid,
         checkDataType: checkDataType,
@@ -1748,7 +1743,6 @@ export default {
           result[i]['leaf'] = false
         }
       }
-      console.log('loadRootNode', result)
       resolve(result)
     },
     setChildNode(data, node, resolve) {

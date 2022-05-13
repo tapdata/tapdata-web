@@ -69,7 +69,7 @@ export default {
         if (this.targetIsVika || this.targetIsQingflow) {
           this.formatUserDeletedNum(metadataMappings, taskData.stages[0]?.field_process)
         }
-        this.fieldMappingNavData = metadataMappings
+        this.updateFieldMappingNavData(metadataMappings)
         this.loadingMetadata = false
         if (this.$refs.fieldMappingDom) {
           this.$emit('update-first', false) //新建任务 第一次需要恢复默认
@@ -81,7 +81,7 @@ export default {
           if (this.targetIsVika || this.targetIsQingflow) {
             this.formatUserDeletedNum(data, this.field_process)
           }
-          this.fieldMappingNavData = data
+          this.updateFieldMappingNavData(data)
           this.loadingMetadata = false
           if (this.$refs.fieldMappingDom) {
             this.$emit('update-first', false) //新建任务 第一次需要恢复默认
@@ -165,8 +165,21 @@ export default {
       return promise
     },
     //更新左边导航
-    updateFieldMappingNavData(data) {
-      this.fieldMappingNavData = data
+    updateFieldMappingNavData(data = []) {
+      let metadataMappingsCom = data.map(t => {
+        return Object.assign({}, t, {
+          invalid: t.sinkAvailableFieldCount === 0 ? true : t.invalid
+        })
+      })
+      if (!(this.targetIsVika || this.targetIsQingflow)) {
+        metadataMappingsCom = metadataMappingsCom.sort((t1, t2) => {
+          if (t1.invalid && t2.invalid) {
+            return t1.sinkAvailableFieldCount - t2.sinkAvailableFieldCount
+          }
+          return t2.invalid - t1.invalid
+        })
+      }
+      this.fieldMappingNavData = metadataMappingsCom
     },
     //清空表改名 字段改名
     clearTransform() {
