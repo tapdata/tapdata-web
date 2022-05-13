@@ -39,11 +39,11 @@ export default {
     },
     startPlaceholder: {
       type: String,
-      default: i18n.t('filter_bar_DatetimeRange_kaiShiShiJian')
+      default: i18n.t('start_time')
     },
     endPlaceholder: {
       type: String,
-      default: i18n.t('filter_bar_DatetimeRange_jieShuShiJian')
+      default: i18n.t('end_time')
     }
   },
   data() {

@@ -27,7 +27,7 @@
           <div class="database__name">{{ item.name }}</div>
         </li>
       </ul>
-      <div v-else class="text-center">
+      <div v-else class="flex flex-column justify-content-center align-items-center h-100">
         <VIcon size="120">search-no-data-color</VIcon>
         <div class="flex justify-content-center lh-sm font-color-sub">
           <span>{{ $t('gl_no_match_result') }}</span>
@@ -51,7 +51,7 @@ export default {
     },
     width: {
       type: String,
-      default: '768px'
+      default: '780px'
     }
   },
   data() {
@@ -131,7 +131,9 @@ export default {
   width: 240px;
 }
 .database {
+  height: 380px;
   font-size: 12px;
+  overflow: auto;
 }
 .database__list {
   overflow: auto;

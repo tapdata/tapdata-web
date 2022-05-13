@@ -195,7 +195,7 @@ export default {
           value: 0,
           list: [
             {
-              label: $t('task_sync_type_initial_sync'),
+              label: $t('task_initial_sync'),
               value: 0
             },
             {
@@ -203,7 +203,7 @@ export default {
               value: 0
             },
             {
-              label: $t('task_sync_type_initial_sync_cdc'),
+              label: $t('task_initial_sync_cdc'),
               value: 0
             }
           ]
@@ -341,6 +341,12 @@ export default {
     },
     loadNotices() {
       this.notices = [
+        {
+          id: 16,
+          type: '',
+          name: i18n.t('workbench_Workbench_tAPDA12'),
+          time: '2022-05-12 18:00'
+        },
         {
           id: 15,
           type: '',

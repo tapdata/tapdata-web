@@ -1,5 +1,5 @@
 <template>
-  <ElContainer class="layout-wrap">
+  <ElContainer :class="['layout-wrap', $i18n && $i18n.locale]">
     <TheHeader ref="theHeader"></TheHeader>
     <ElAside class="left-aside" width="200px">
       <ElMenu :default-active="activeMenu" @select="menuTrigger">
@@ -206,6 +206,14 @@ export default {
 .layout-wrap {
   height: 100%;
   padding-top: 68px;
+  word-wrap: break-word;
+  word-break: break-word;
+  ::v-deep {
+    .el-dialog__body {
+      word-wrap: break-word;
+      word-break: break-word;
+    }
+  }
   .left-aside {
     border-right: 1px solid #f2f4f6;
     background: #fff;

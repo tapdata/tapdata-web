@@ -28,7 +28,7 @@
         <template slot-scope="scope">
           <StatusTag type="text" :status="scope.row.status" :status-map="statusMap"></StatusTag>
           <span v-if="scope.row.InspectResult && scope.row.status === 'running'">
-            {{ `(${Math.round(scope.row.InspectResult.progress * 100)}%)` }}
+            {{ `(${Math.round((scope.row.InspectResult.progress || 0) * 100)}%)` }}
           </span>
         </template>
       </ElTableColumn>
@@ -69,7 +69,7 @@
         sortable="custom"
         width="160"
       ></ElTableColumn>
-      <ElTableColumn :label="$t('dataVerification_operation')" width="300">
+      <ElTableColumn :label="$t('list_operation')" width="366">
         <template slot-scope="scope">
           <ElLink
             type="primary"
@@ -330,7 +330,7 @@ export default {
           items: this.filterModeOptions
         },
         {
-          label: i18n.t('instance_Instance_zhuangTai'),
+          label: i18n.t('agent_status'),
           key: 'enabled',
           type: 'select-inner',
           items: this.filterEnabledOptions

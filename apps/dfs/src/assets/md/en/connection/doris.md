@@ -1,18 +1,19 @@
-## **连接配置帮助**
+## **Connection configuration help**
 
-### **1. Doris 安装说明**
+### **1. Doris Installation Instructions**
 
-请遵循以下说明以确保在 Tapdata 中成功添加和使用Doris数据库。
+Please follow the instructions below to ensure successful addition and use of the Doris database in Tapdata.
 
-### **2. 支持版本**
-Doris 0.15.0
+### **2. Supported Versions**
+Doris 0.15.0 \
+No primary key synchronization is currently supported
 
-###  **3. 先决条件（作为目标）**
-对于某个数据库赋于全部权限
-```
+### **3. Prerequisites (as goals)**
+Grant full permissions to a database
+````
 GRANT ALL PRIVILEGES ON <DATABASE_NAME>.<TABLE_NAME> TO 'tapdata' IDENTIFIED BY 'password';
-```
-对于全局的权限
-```
+````
+global permissions
+````
 GRANT PROCESS ON *.* TO 'tapdata' IDENTIFIED BY 'password';
-```
+````

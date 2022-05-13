@@ -6,7 +6,7 @@
     </template>
     <!--  表体  -->
     <template v-if="!children && item.slotName" v-slot="scope">
-      <slot :name="item.slotName" :row="scope.row"></slot>
+      <slot :name="item.slotName" :row="scope.row" :prop="item.prop"></slot>
     </template>
     <template v-else-if="!children && item.dataType === 'time'" v-slot="scope">
       <div>{{ getValue(formatTime(scope.row[item.prop], item.fmt), item.default) }}</div>

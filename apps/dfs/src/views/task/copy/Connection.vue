@@ -109,7 +109,7 @@ export default {
           dataType: 'time'
         },
         {
-          label: this.$t('connection_list_operate'),
+          label: this.$t('list_operation'),
           prop: 'operation',
           slotName: 'operation'
         }

@@ -446,15 +446,15 @@ export default {
     // 按照数据库类型获取表单配置规则
     getFormConfig() {
       let type = this.model.database_type
-      type =
-        {
-          'gbase-8s': 'gbase8s',
-          'sybase ase': 'sybasease',
-          'dummy db': 'dummydb',
-          'mysql pxc': 'mysqlpxc',
-          'rest api': 'restapi'
-        }[type] || type //特殊数据源名称转换
-      type = 'dfs_' + type
+      // type =
+      //   {
+      //     'gbase-8s': 'gbase8s',
+      //     'sybase ase': 'sybasease',
+      //     'dummy db': 'dummydb',
+      //     'mysql pxc': 'mysqlpxc',
+      //     'rest api': 'restapi'
+      //   }[type] || type //特殊数据源名称转换
+      type = type.replace(/[-\s]+/g, '')
       let func = formConfig[type]
       if (func) {
         let config = func(this)

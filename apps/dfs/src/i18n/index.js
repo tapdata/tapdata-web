@@ -5,10 +5,18 @@ import locale from 'element-ui/lib/locale'
 import enLocale from 'element-ui/lib/locale/lang/en'
 import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
 import tcLocale from 'element-ui/lib/locale/lang/zh-TW'
-import en from './langs/en'
 import zhCN from './langs/zh-CN'
-import zhTW from './langs/zh-TW'
+import enSource from './langs/en'
+import enModify from './modify/en'
+import zhTWSource from './langs/zh-TW'
+import zhTWModify from './modify/zh-TW'
 
+let localLangModifyZhTW = localStorage.getItem('localLangModifyZhTW')
+let localLangModifyEn = localStorage.getItem('localLangModifyEn')
+localLangModifyZhTW = localLangModifyZhTW ? JSON.parse(localLangModifyZhTW) : {}
+localLangModifyEn = localLangModifyEn ? JSON.parse(localLangModifyEn) : {}
+const en = Object.assign({}, enSource, enModify, localLangModifyEn)
+const zhTW = Object.assign({}, zhTWSource, zhTWModify, localLangModifyZhTW)
 let eleLangs = {
   'zh-CN': zhLocale,
   'zh-TW': tcLocale,
@@ -24,9 +32,16 @@ let langMap = {
   tc: 'zh-TW',
   en: 'en'
 }
+// i18n需要的格式
+const i18nLangMap = {
+  'zh-CN': 'zh-CN',
+  'zh-TW': 'zh-TW',
+  'en-US': 'en'
+}
 Vue.use(VueI18n)
+let localeValue = 'zh-CN'
 const i18n = new VueI18n({
-  locale: 'zh-CN',
+  locale: i18nLangMap[localeValue],
   messages: eleLangs
 })
 Object.values(langMap).forEach(l => {

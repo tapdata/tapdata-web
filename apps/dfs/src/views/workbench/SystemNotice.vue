@@ -19,13 +19,13 @@
             {{ $t('notify_mark_read') }}
           </ElButton>
           <ElButton size="mini" @click="handleDelete" :disabled="multipleSelection.length < 1">
-            {{ $t('notify_delete') }}
+            {{ $t('button_delete') }}
           </ElButton>
           <ElButton size="mini" type="primary" @click="handleReadNoticeAll">
             {{ $t('notify_all_read') }}
           </ElButton>
           <ElButton size="mini" @click="handleAllDelete" :disabled="list.length < 1">
-            {{ $t('notify_all_delete') }}
+            {{ $t('button_all_delete') }}
           </ElButton>
         </div>
       </div>
