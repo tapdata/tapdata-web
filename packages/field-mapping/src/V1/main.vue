@@ -250,84 +250,6 @@ export default {
      * 数据组合：目标字段表示 "t_"标识 (is_deleted 目标表数据)
      * 数据匹配 源表所有字段过处理器 源表所有字段过字段改名 匹配后的数据再与目标表数据匹配
      * */
-    // async intiFieldMappingTableData(row) {
-    //   if (!this.$refs.fieldMappingDom) return //打开弹窗才能请求弹窗列表数据
-    //   let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
-    //   source = source.data && source.data.length > 0 ? source.data[0].fields : []
-    //   let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
-    //   target = target.data && target.data.length > 0 ? target.data[0].fields : []
-    //   // 初始化所有字段都映射 只取顶级字段
-    //   source = source.filter(field => field.field_name.indexOf('.') === -1)
-    //   //映射关系
-    //   let fieldsMapping = row.fieldsMapping
-    //   //源表 目标表数据组合
-    //   let sourceMapping = {}
-    //   source.forEach(item => {
-    //     if (!sourceMapping[item.field_name]) {
-    //       sourceMapping[item.field_name] = item
-    //     } else if (sourceMapping[item.field_name].is_deleted) {
-    //       sourceMapping[item.field_name] = item
-    //     }
-    //   })
-    //   let targetMapping = {}
-    //   target.forEach(item => {
-    //     if (!targetMapping[item.field_name]) {
-    //       targetMapping[item.field_name] = item
-    //     } else if (targetMapping[item.field_name].is_deleted) {
-    //       targetMapping[item.field_name] = item
-    //     }
-    //   })
-    //   let fieldMappingTableData = []
-    //   //fieldsMapping
-    //   if (fieldsMapping.length > 0) {
-    //     fieldsMapping.forEach(item => {
-    //       let source = sourceMapping[item.sourceFieldName]
-    //       let target = targetMapping[item.targetFieldName]
-    //       let node = {}
-    //       if (!source) {
-    //         if (!target.is_delete) {
-    //           node = {
-    //             id: '',
-    //             field_name: '',
-    //             data_type: '',
-    //             scale: '',
-    //             precision: '',
-    //             deleted: '', //目标决定这个字段是被删除？
-    //             t_id: target.id,
-    //             t_field_name: target.field_name,
-    //             t_data_type: target.data_type,
-    //             t_scale: target.scale,
-    //             t_precision: target.precision,
-    //             is_deleted: target.is_deleted, //目标决定这个字段是被删除？
-    //             t_isPrecisionEdit: true, //默认能编辑
-    //             t_isScaleEdit: true //默认能编辑
-    //           }
-    //           fieldMappingTableData.push(Object.assign({}, source, node))
-    //         }
-    //       } else {
-    //         node = {
-    //           t_id: target.id,
-    //           t_field_name: target.field_name,
-    //           t_data_type: target.data_type,
-    //           t_scale: target.scale,
-    //           t_precision: target.precision,
-    //           is_deleted: target.is_deleted, //目标决定这个字段是被删除？
-    //           t_isPrecisionEdit: true, //默认能编辑
-    //           t_isScaleEdit: true //默认能编辑
-    //         }
-    //         fieldMappingTableData.push(Object.assign({}, source, node))
-    //       }
-    //     })
-    //   }
-    //   //源端不是mongodb 目标端是mongodb 则_id 不显示
-    //   if (row.sinkDbType === 'mongodb' && row.sourceDbType !== 'mongodb') {
-    //     fieldMappingTableData = fieldMappingTableData.filter(v => v.t_field_name !== '_id')
-    //   }
-    //   return {
-    //     data: fieldMappingTableData,
-    //     target: target
-    //   }
-    // },
     async intiFieldMappingTableData(row) {
       if (!this.$refs.fieldMappingDom) return //打开弹窗才能请求弹窗列表数据
       let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
@@ -336,60 +258,140 @@ export default {
       target = target.data && target.data.length > 0 ? target.data[0].fields : []
       // 初始化所有字段都映射 只取顶级字段
       source = source.filter(field => field.field_name.indexOf('.') === -1)
-      //是否有字段处理器
-      let operations = this.getFieldOperations(row)
-      if (operations?.length > 0) {
-        source.forEach(item => {
-          let original_field_name = item.original_field_name || item.field_name
-          let ops = operations.filter(op => op.original_field_name === original_field_name && op.op === 'RENAME')
-          if (!ops || ops?.length === 0) {
-            item.temporary_field_name = item.field_name
-            return
-          }
-          ops = ops[0]
-          item.temporary_field_name = ops.operand
-        })
-      } else {
-        source.forEach(item => {
-          item.temporary_field_name = item.field_name
-        })
-      }
-      //是否有批量字段改名操作
-      let fieldsNameTransform = this.checkTransform()
-      if (fieldsNameTransform !== '') {
-        source.forEach(item => {
-          if (fieldsNameTransform === 'toUpperCase') {
-            item.temporary_field_name = item.temporary_field_name.toUpperCase() || item.field_name.toUpperCase()
-          } else if (fieldsNameTransform === 'toLowerCase') {
-            item.temporary_field_name = item.temporary_field_name.toLowerCase() || item.field_name.toLowerCase()
-          }
-        })
-      }
+      //映射关系
+      let fieldsMapping = row.fieldsMapping
       //源表 目标表数据组合
-      let fieldMappingTableData = []
+      let sourceMapping = {}
       source.forEach(item => {
-        target.forEach(field => {
-          let node = {
-            t_id: field.id,
-            t_field_name: field.field_name,
-            t_data_type: field.data_type,
-            t_scale: field.scale,
-            t_precision: field.precision,
-            is_deleted: field.is_deleted, //目标决定这个字段是被删除？
-            t_default_value: field?.default_value || '',
-            t_isPrecisionEdit: true, //默认能编辑
-            t_isScaleEdit: true //默认能编辑
-          }
-          //检查当前name个数
-          if (item.temporary_field_name === field.field_name) {
-            fieldMappingTableData.push(Object.assign({}, item, node))
+        if (!sourceMapping[item.field_name]) {
+          sourceMapping[item.field_name] = item
+        } else if (sourceMapping[item.field_name].is_deleted) {
+          sourceMapping[item.field_name] = item
+        }
+      })
+      let targetMapping = {}
+      target.forEach(item => {
+        if (!targetMapping[item.field_name]) {
+          targetMapping[item.field_name] = item
+        } else if (targetMapping[item.field_name].is_deleted) {
+          targetMapping[item.field_name] = item
+        }
+      })
+      let fieldMappingTableData = []
+      //fieldsMapping
+      if (fieldsMapping.length > 0) {
+        fieldsMapping.forEach(item => {
+          let source = sourceMapping[item.sourceFieldName]
+          let target = targetMapping[item.targetFieldName]
+          let node = {}
+          if (!source) {
+            if (!target.is_delete) {
+              node = {
+                id: '',
+                field_name: '',
+                data_type: '',
+                scale: '',
+                precision: '',
+                deleted: '', //目标决定这个字段是被删除？
+                t_id: target.id,
+                t_field_name: target.field_name,
+                t_data_type: target.data_type,
+                t_scale: target.scale,
+                t_precision: target.precision,
+                t_default_value: target?.default_value || '',
+                is_deleted: target.is_deleted, //目标决定这个字段是被删除？
+                t_isPrecisionEdit: true, //默认能编辑
+                t_isScaleEdit: true //默认能编辑
+              }
+              fieldMappingTableData.push(Object.assign({}, source, node))
+            }
+          } else {
+            node = {
+              t_id: target.id,
+              t_field_name: target.field_name,
+              t_data_type: target.data_type,
+              t_scale: target.scale,
+              t_precision: target.precision,
+              t_default_value: target?.default_value || '',
+              is_deleted: target.is_deleted, //目标决定这个字段是被删除？
+              t_isPrecisionEdit: true, //默认能编辑
+              t_isScaleEdit: true //默认能编辑
+            }
+            fieldMappingTableData.push(Object.assign({}, source, node))
           }
         })
-      })
+      }
+      //源端不是mongodb 目标端是mongodb 则_id 不显示
+      if (row.sinkDbType === 'mongodb' && row.sourceDbType !== 'mongodb') {
+        fieldMappingTableData = fieldMappingTableData.filter(v => v.t_field_name !== '_id')
+      }
       return {
         data: fieldMappingTableData,
         target: target
       }
+    },
+    // async intiFieldMappingTableData(row) {
+    //   if (!this.$refs.fieldMappingDom) return //打开弹窗才能请求弹窗列表数据
+    //   let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
+    //   source = source.data && source.data.length > 0 ? source.data[0].fields : []
+    //   let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
+    //   target = target.data && target.data.length > 0 ? target.data[0].fields : []
+    //   // 初始化所有字段都映射 只取顶级字段
+    //   source = source.filter(field => field.field_name.indexOf('.') === -1)
+    //   //是否有字段处理器
+    //   let operations = this.getFieldOperations(row)
+    //   if (operations?.length > 0) {
+    //     source.forEach(item => {
+    //       let original_field_name = item.original_field_name || item.field_name
+    //       let ops = operations.filter(op => op.original_field_name === original_field_name && op.op === 'RENAME')
+    //       if (!ops || ops?.length === 0) {
+    //         item.temporary_field_name = item.field_name
+    //         return
+    //       }
+    //       ops = ops[0]
+    //       item.temporary_field_name = ops.operand
+    //     })
+    //   } else {
+    //     source.forEach(item => {
+    //       item.temporary_field_name = item.field_name
+    //     })
+    //   }
+    //   //是否有批量字段改名操作
+    //   let fieldsNameTransform = this.checkTransform()
+    //   if (fieldsNameTransform !== '') {
+    //     source.forEach(item => {
+    //       if (fieldsNameTransform === 'toUpperCase') {
+    //         item.temporary_field_name = item.temporary_field_name.toUpperCase() || item.field_name.toUpperCase()
+    //       } else if (fieldsNameTransform === 'toLowerCase') {
+    //         item.temporary_field_name = item.temporary_field_name.toLowerCase() || item.field_name.toLowerCase()
+    //       }
+    //     })
+    //   }
+    //   //源表 目标表数据组合
+    //   let fieldMappingTableData = []
+    //   source.forEach(item => {
+    //     target.forEach(field => {
+    //       let node = {
+    //         t_id: field.id,
+    //         t_field_name: field.field_name,
+    //         t_data_type: field.data_type,
+    //         t_scale: field.scale,
+    //         t_precision: field.precision,
+    //         is_deleted: field.is_deleted, //目标决定这个字段是被删除？
+    //         t_default_value: field?.default_value || '',
+    //         t_isPrecisionEdit: true, //默认能编辑
+    //         t_isScaleEdit: true //默认能编辑
+    //       }
+    //       //检查当前name个数
+    //       if (item.temporary_field_name === field.field_name) {
+    //         fieldMappingTableData.push(Object.assign({}, item, node))
+    //       }
+    //     })
+    //   })
+    //   return {
+    //     data: fieldMappingTableData,
+    //     target: target
+    //   }
     },
     checkFieldName(field_name, target) {
       return target.filter(field => field_name === field.original_field_name)
