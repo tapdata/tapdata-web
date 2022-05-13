@@ -102,10 +102,10 @@ export default {
       font-weight: 500;
       color: #e9e9e9;
       &.is-process {
-        color: map-get($fontColor, dark);
+        color: map-get($fontColor, normal);
       }
       &.is-success {
-        color: map-get($fontColor, dark);
+        color: map-get($fontColor, normal);
       }
     }
   }
