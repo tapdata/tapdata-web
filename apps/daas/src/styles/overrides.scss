@@ -233,6 +233,8 @@
 .el-tooltip__popper {
   padding: 5px 10px;
   max-width: 400px;
+  max-height: 400px;
+  overflow-y: auto;
 }
 .el-tooltip__popper.is-dark {
   line-height: 20px;

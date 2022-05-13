@@ -120,7 +120,7 @@ $unreadColor: #ee5353;
           padding: 0px 5px;
           min-width: 25px;
           height: 17px;
-          border-radius: 4px;
+          border-radius: 10px;
           line-height: 17px;
           color: map-get($fontColor, white);
           font-weight: 500;
