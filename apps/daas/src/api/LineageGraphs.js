@@ -1,5 +1,5 @@
 import PublicAPI from './publicApi'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 export default class LineageGraphsAPI extends PublicAPI {
   constructor() {

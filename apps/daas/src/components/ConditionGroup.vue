@@ -189,13 +189,6 @@ export default {
     removeChild(item, index) {
       let self = this
       self.value.conditions.splice(index, 1)
-      // self.value.conditions.forEach((el, index) => {
-      //   if (item.field === el.field) {
-      //     console.log(el.field, index, this.conditions)
-      //     debugger
-      //     self.value.conditions.splice(index, 1)
-      //   }
-      // })
     }
   }
 }

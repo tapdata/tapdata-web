@@ -811,12 +811,6 @@ export default {
       if (!this.ecsList || this.ecsList.length === 0) return
       this.handleStrategy()
     }
-    // 'model.accessNodeType'(val) {
-    //   if (val === 'MANUALLY_SPECIFIED_BY_THE_USER') {
-    //     debugger
-    //     this.model.accessNodeProcessId = this.accessNodeList[0].processId
-    //   }
-    // }
   },
   methods: {
     formChange(data) {

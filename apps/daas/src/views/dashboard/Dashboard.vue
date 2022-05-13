@@ -208,9 +208,11 @@
 </template>
 
 <script>
-import factory from '../../api/factory'
 import Chart from 'web-core/components/chart'
-const cluster = factory('cluster')
+import { Cluster, Task } from '@tap/api'
+
+let clusterApi = new Cluster()
+let taskApi = new Task()
 
 export default {
   components: { Chart },
@@ -414,7 +416,7 @@ export default {
       let params = {
         type: 'dashboard'
       }
-      cluster.get(params).then(res => {
+      clusterApi.get(params).then(res => {
         this.serverProcess.tableData = res.data?.items
         this.serverTable = res.data?.items
       })
@@ -423,7 +425,7 @@ export default {
     getDataFlowApi() {
       let self = this
       self.loading = true
-      this.$api('Task')
+      taskApi
         .chart()
         .then(res => {
           if (res?.data) {

@@ -93,6 +93,11 @@ export default {
   message_request_error: '请求数据失败',
   message_no_permission: '登录已过期，请重新登录',
   message_loading: '正在加载',
+  message_401: '登录过期，请重新登录',
+  message_404: '请求的资源不存在',
+  message_5xx: '服务器异常',
+  message_network_unconnected: '网络未连接',
+  message_request_timeout: '请求超时',
 
   // 表格
   column_operation: '操作',
