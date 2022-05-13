@@ -226,10 +226,7 @@ export const FieldRename = connect(
             op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
               id: data.id,
               field: nativeData.original_field_name,
-              operand:
-                this.fieldsNameTransforms === ''
-                  ? data.field_name
-                  : nativeData.original_field_name || nativeData.original_field_name,
+              operand: data.field_name,
               table_name: data.table_name,
               type: data.type,
               primary_key_position: data.primary_key_position,
@@ -246,10 +243,7 @@ export const FieldRename = connect(
               let index = this.operations.findIndex(v => v.id === data.id && v.op === 'RENAME')
               this.operations.splice(index, 1)
             } else {
-              op.operand =
-                this.fieldsNameTransforms === ''
-                  ? data.field_name
-                  : nativeData.original_field_name || nativeData.original_field_name
+              op.operand = data.field_name
               op.label = data.field_name
               op.field_name = data.field_name
             }
