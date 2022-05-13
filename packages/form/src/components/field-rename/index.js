@@ -198,7 +198,7 @@ export const FieldRename = connect(
         },
         handleKeyDown(e) {
           if (e.keyCode === 13) {
-            this.$set(data, 'showInput', false) //打开loading
+            this.$set(data, 'showInput', false) //eslint-disable-line
           }
         },
         /*rename
@@ -241,13 +241,20 @@ export const FieldRename = connect(
             this.operations.push(op)
           } else {
             op = ops[0]
-            ;(op.operand =
-              this.fieldsNameTransforms === ''
-                ? data.table_name
-                : nativeData.original_field_name || nativeData.original_field_name),
-              (op.label = data.field_name)
-            op.field_name = data.field_name
+            if (data.field_name === nativeData.original_field_name) {
+              //再次改名跟原来名字一样 删除当前operation 记录
+              let index = this.operations.findIndex(v => v.id === data.id && v.op === 'RENAME')
+              this.operations.splice(index, 1)
+            } else {
+              op.operand =
+                this.fieldsNameTransforms === ''
+                  ? data.field_name
+                  : nativeData.original_field_name || nativeData.original_field_name
+              op.label = data.field_name
+              op.field_name = data.field_name
+            }
           }
+          this.$forceUpdate()
           console.log(this.operations) //eslint-disable-line
         },
         handleExistsName(node, data) {
