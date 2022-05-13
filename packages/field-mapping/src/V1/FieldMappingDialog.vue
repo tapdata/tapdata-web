@@ -43,10 +43,10 @@
             @click.prevent="select(item, index)"
           >
             <div class="task-form__img" v-if="item.invalid">
-              <img src="@/assets/images/fieldMapping-table-error.png" alt="" />
+              <img src="web-core/assets/images/fieldMapping-table-error.png" alt="" />
             </div>
             <div class="task-form__img" v-else>
-              <img src="@/assets/images/fieldMapping-table.png" alt="" />
+              <img src="web-core/assets/images/fieldMapping-table.png" alt="" />
             </div>
             <div class="task-form-text-box">
               <div class="source">{{ item.sourceObjectName }}</div>
@@ -383,7 +383,7 @@
 <script>
 import VIcon from 'web-core/components/VIcon'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
-import { delayTrigger } from '@/utils/util'
+const { delayTrigger } = this.$util
 import { modeMapping } from './const'
 
 export default {
