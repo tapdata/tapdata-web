@@ -392,7 +392,7 @@ export default {
     //     data: fieldMappingTableData,
     //     target: target
     //   }
-    },
+    // },
     checkFieldName(field_name, target) {
       return target.filter(field => field_name === field.original_field_name)
     },
