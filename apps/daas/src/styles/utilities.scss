@@ -60,12 +60,14 @@
 }
 
 .link-danger {
-  color: #dc3545;
+  color: #D44D4D;
 }
 
-.link-danger:hover,
+.link-danger:hover {
+  color: #F76560;
+}
 .link-danger:focus {
-  color: #b02a37;
+  color: #CB2634
 }
 
 .link-light {

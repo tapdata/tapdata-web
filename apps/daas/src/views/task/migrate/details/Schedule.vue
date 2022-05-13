@@ -71,9 +71,9 @@
           >
             <template slot="totalNum" slot-scope="scope">
               <span v-if="scope.row.totalNum === -2">
-                <span style="color: red">{{ $t('task_info_overView_error_msg') }} </span>
+                <span>{{ $t('task_info_overView_error_msg') }} </span>
                 <ElTooltip placement="top" :content="scope.row.errorMsg">
-                  <VIcon class="color-primary" size="14">error</VIcon>
+                  <VIcon class="link-danger cursor-pointer" size="14">error</VIcon>
                 </ElTooltip></span
               >
               <span v-else
