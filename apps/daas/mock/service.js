@@ -6,8 +6,9 @@ const dataflow = require('./dataflow.js')
 const measurement = require('./measurement.js')
 const subtask = require('./subtask.js')
 const sharedCache = require('./sharedCache.js')
+const task = require('./task.js')
 
-module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, {
+module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, task, {
   '/api/Connections': {
     code: 'ok',
     msg: 'ok',
@@ -69,7 +70,19 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
   },
   '/api/Settings': settings,
   '/api/timeStamp': { data: '1620388869929', code: 'ok', msg: 'ok' },
-  '/api/users/login': { data: '1620388869929', code: 'ok', msg: 'ok' },
+  '/api/users/login': {
+    reqId: 'dbec3322-9e26-4333-9e73-a6ed50650976',
+    ts: 1652424603306,
+    code: 'ok',
+    data: {
+      id: '354eda29ba054fa7a3a5ac5455624f811bcd514eb4d44a4290d829c4af0ee765',
+      ttl: 1209600,
+      created: '2022-05-13T06:50:03Z',
+      userId: '62172cfc49b865ee5379d3ed',
+      authType: 'access_code',
+      last_updated: '2022-05-13T06:50:03Z'
+    }
+  },
   '/api/users/:id/permissions': permission,
   '/api/DatabaseTypes': {
     data: [
@@ -2409,76 +2422,121 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
     msg: 'ok'
   },
   '/api/clusterStates': {
-    'data|0-10': [
-      {
-        id: '@id',
-        systemInfo: {
-          hostname: '@name',
-          uuid: '568c765b-9bc0-4950-ba24-46fd48884980',
-          ip: '10.233.67.116',
-          ips: ['10.233.67.116'],
-          time: 1620812073175,
-          accessCode: '<ACCESS_CODE>',
-          username: '',
-          process_id: '1d5bc63c-94da-4d52-87a3-b6ef49dec278'
-        },
-        reportInterval: 20000,
-        engine: { processID: ' 10491', 'status|1': ['running', 'stopped'] },
-        management: { processID: ' 10484', 'status|1': ['running', 'stopped'] },
-        apiServer: { processID: ' 10493', 'status|1': ['running', 'stopped'] },
-        customMonitorStatus: [
-          {
-            uuid: '568c765b-9bc0-4950-ba24-46fd48884980',
-            id: '@id',
-            name: '@name',
-            command: '7',
-            arguments: '',
-            'status|1': ['stopped', 'running']
-          }
-        ],
-        uuid: '568c765b-9bc0-4950-ba24-46fd48884980',
-        'status|1': ['running', 'down'],
-        insertTime: '2021-05-12T09:34:33.176Z',
-        ttl: '2021-05-12T09:35:13.176Z',
-        last_updated: '2021-05-12T09:34:33.177Z',
-        createTime: '2021-01-28T08:59:46.302Z',
-        agentName: 'tapdaas-test2',
-        custIP: '10.233.67.191',
-        customMonitor: [
-          {
-            uuid: '568c765b-9bc0-4950-ba24-46fd48884980',
-            id: '601a1434aa4cc500b3adf9cb',
-            name: '7',
-            command: '7',
-            arguments: ''
-          }
-        ],
-        updateTime: '2021-03-25T08:47:29.245Z',
-        managementOperation: {
-          _id: '60786d75252a040057bfaf10',
-          status: 4,
-          msg: '执行超时',
-          operation: 'restart',
-          ttl: 1618505127738
-        },
-        apiServerOperation: {
-          _id: '604b3cf1fb4a8302ffe5e510',
-          status: 4,
-          msg: '执行超时',
-          operation: 'start',
-          ttl: 1615543576247
-        },
-        engineOperation: {
-          _id: '6084e3b958c76a2315177468',
-          status: 2,
-          msg: '',
-          operation: 'start',
-          ttl: 1619321840158
-        }
-      }
-    ],
+    reqId: 'c1e4f1f3-e1fc-45a5-9235-8f202d525daa',
+    ts: 1652415699112,
     code: 'ok',
-    msg: 'ok'
+    data: {
+      total: 3,
+      items: [
+        {
+          id: '621ee97330ea830a02086a85',
+          customId: '62172cfc49b865ee5379d3ed',
+          lastUpdBy: '62172cfc49b865ee5379d3ed',
+          systemInfo: {
+            hostname: 'sharecdc-tapdaas-tapdaas-77487dd644-b8xtt',
+            uuid: '568c765b-9bc0-4950-ba24-46fd48884980',
+            ip: '10.233.68.239',
+            ips: ['10.233.68.239'],
+            time: 1652415694601,
+            accessCode: '<ACCESS_CODE>',
+            username: '',
+            process_id: '0e6ac0f8-6706-4bc9-8721-330a672569bb',
+            cpus: 40,
+            os: 'linux_docker',
+            totalmem: 101134467072,
+            logDir: '/data/tapdata/log',
+            work_dir: '/data/tapdata',
+            installationDirectory: '/data/tapdata'
+          },
+          reportInterval: 20000,
+          engine: { status: 'running', processID: ' 233' },
+          management: { status: 'running', processID: ' 227' },
+          apiServer: { status: 'running', processID: ' 463' },
+          customMonitorStatus: [],
+          uuid: '568c765b-9bc0-4950-ba24-46fd48884980',
+          status: 'running',
+          insertTime: '2022-05-13T04:21:34.603+00:00',
+          ttl: '2022-05-13T04:22:14.603+00:00',
+          agentName: 'sharecdc-tapdaas-tapdaas-7c9b6ff48f-dqz6z',
+          customMonitor: [
+            {
+              id: '624d660300424a6608c45a6e',
+              arguments: '',
+              command: '111',
+              name: '11',
+              uuid: '568c765b-9bc0-4950-ba24-46fd48884980'
+            },
+            {
+              id: '627a2f1795fade02e66ffffb',
+              arguments: '1',
+              command: '12',
+              name: '192.168.1.181',
+              uuid: '568c765b-9bc0-4950-ba24-46fd48884980'
+            }
+          ],
+          last_updated: '2022-05-13T04:21:34.604+00:00',
+          user_id: '62172cfc49b865ee5379d3ed'
+        },
+        {
+          id: '6277b0e3410b7e96242e972e',
+          systemInfo: {
+            hostname: 'sharecdc3-tapdaas-tapdaas-b4f87dbfc-sdpft',
+            uuid: '1e415023-d577-413e-97bd-22ad00377182',
+            ip: '10.233.68.241',
+            ips: ['10.233.68.241'],
+            time: 1652415694736,
+            accessCode: '<ACCESS_CODE>',
+            username: '',
+            process_id: 'cbd082ec-c1d6-4b21-bcda-3245a2ec9b3d',
+            cpus: 40,
+            os: 'linux_docker',
+            totalmem: 101134467072,
+            logDir: '/data/tapdata/log',
+            work_dir: '/data/tapdata',
+            installationDirectory: '/data/tapdata'
+          },
+          reportInterval: 20000,
+          engine: { status: 'running', processID: ' 71' },
+          management: { status: 'stopped', processID: '' },
+          apiServer: { status: 'stopped', processID: '' },
+          customMonitorStatus: [],
+          uuid: '1e415023-d577-413e-97bd-22ad00377182',
+          status: 'running',
+          insertTime: '2022-05-13T04:21:34.739+00:00',
+          ttl: '2022-05-13T04:22:14.739+00:00',
+          last_updated: '2022-05-13T04:21:34.740+00:00'
+        },
+        {
+          id: '6277cee1410b7e96246c8215',
+          systemInfo: {
+            hostname: 'sharecdc2-tapdaas-tapdaas-657c6444bc-jjk6s',
+            uuid: 'd524d2e8-d696-4705-ab4b-6edadc94f10d',
+            ip: '10.233.68.240',
+            ips: ['10.233.68.240'],
+            time: 1652415685564,
+            accessCode: '<ACCESS_CODE>',
+            username: '',
+            process_id: '8b46f1f3-a8bb-46c3-be63-d54cfe8bf1f4',
+            cpus: 40,
+            os: 'linux_docker',
+            totalmem: 101134467072,
+            logDir: '/data/tapdata/log',
+            work_dir: '/data/tapdata',
+            installationDirectory: '/data/tapdata'
+          },
+          reportInterval: 20000,
+          engine: { status: 'running', processID: ' 71' },
+          management: { status: 'stopped', processID: '' },
+          apiServer: { status: 'stopped', processID: '' },
+          customMonitorStatus: [],
+          uuid: 'd524d2e8-d696-4705-ab4b-6edadc94f10d',
+          status: 'running',
+          insertTime: '2022-05-13T04:21:25.567+00:00',
+          ttl: '2022-05-13T04:22:05.567+00:00',
+          last_updated: '2022-05-13T04:21:25.568+00:00'
+        }
+      ]
+    }
   },
   '/api/clusterStates/updataStatus': {
     data: { greeting: '1' },
@@ -5061,6 +5119,236 @@ module.exports = Object.assign({}, dataflow, measurement, subtask, sharedCache, 
       createTime: '2022-04-14T08:22:38.103+00:00',
       last_updated: '2022-04-14T08:24:00.015+00:00',
       user_id: '62172cfc49b865ee5379d3ed'
+    }
+  },
+  '/api/Messages': {
+    reqId: '0053e18d-26a1-48a6-ad11-f7c4a41b54d8',
+    ts: 1652415699139,
+    code: 'ok',
+    data: {
+      total: 374,
+      items: [
+        {
+          id: '627dd407e958a239d4814786',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_sqlserver_2019_source2kafka_183_9093B_MS1649832795686082403',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627dbab6713c2b1a34fbf429',
+          read: false,
+          createTime: '2022-05-13T03:44:07Z'
+        },
+        {
+          id: '627dd3b4e958a239d48145dc',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_sqlserver_2019_source2ES_189_targetB_MS1649832795686082403',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627dba5b713c2b1a34fbf27d',
+          read: false,
+          createTime: '2022-05-13T03:42:44Z'
+        },
+        {
+          id: '627dd35ae958a239d4814352',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_sqlserver_2019_source2sqlserver_2019_targetB_MS1649832795686082403',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db9e8713c2b1a34fbf0b5',
+          read: false,
+          createTime: '2022-05-13T03:41:14Z'
+        },
+        {
+          id: '627dd2ffe958a239d4814114',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_sqlserver_2019_source2postgres_5437_targetB_MS1649832795686082403',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db98b713c2b1a34fbeee5',
+          read: false,
+          createTime: '2022-05-13T03:39:43Z'
+        },
+        {
+          id: '627dd2a3e958a239d4813e89',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_sqlserver_2019_source2yun_targetB_MS1649832795686082403',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db940713c2b1a34fbed81',
+          read: false,
+          createTime: '2022-05-13T03:38:11Z'
+        },
+        {
+          id: '627dd24fe958a239d4813bd8',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_sqlserver_2019_source2oracle_132B_MS1649832795686082403',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db8ed713c2b1a34fbebe2',
+          read: false,
+          createTime: '2022-05-13T03:36:47Z'
+        },
+        {
+          id: '627dd1f8e958a239d4813981',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_sqlserver_2019_source2docker_mysql_8023_targetB_MS1649832795686082403',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db893713c2b1a34fbea49',
+          read: false,
+          createTime: '2022-05-13T03:35:20Z'
+        },
+        {
+          id: '627dd1a5e958a239d4813715',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_postgres_54372kafka_183_9093B_PG1652326426543853520',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db83f713c2b1a34fbe900',
+          read: false,
+          createTime: '2022-05-13T03:33:57Z'
+        },
+        {
+          id: '627dd160e958a239d48135ba',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_postgres_54372ES_189_targetB_PG1652326426543853520',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db7ef713c2b1a34fbe7bf',
+          read: false,
+          createTime: '2022-05-13T03:32:48Z'
+        },
+        {
+          id: '627dd106e958a239d48133aa',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_postgres_54372sqlserver_2019_targetB_PG1652326426543853520',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db78f713c2b1a34fbe649',
+          read: false,
+          createTime: '2022-05-13T03:31:18Z'
+        },
+        {
+          id: '627dd0aae958a239d4813139',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_postgres_54372postgres_5437_targetB_PG1652326426543853520',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db73a713c2b1a34fbe4b1',
+          read: false,
+          createTime: '2022-05-13T03:29:46Z'
+        },
+        {
+          id: '627dd05ee958a239d4812ed2',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_postgres_54372yun_targetB_PG1652326426543853520',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db6eb713c2b1a34fbe321',
+          read: false,
+          createTime: '2022-05-13T03:28:30Z'
+        },
+        {
+          id: '627dd010e958a239d4812c81',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_postgres_54372oracle_132B_PG1652326426543853520',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db69d713c2b1a34fbe1b9',
+          read: false,
+          createTime: '2022-05-13T03:27:12Z'
+        },
+        {
+          id: '627dcfc6e958a239d4812b44',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_postgres_54372docker_mysql_8023_targetB_PG1652326426543853520',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db655713c2b1a34fbe06f',
+          read: false,
+          createTime: '2022-05-13T03:25:58Z'
+        },
+        {
+          id: '627dcf68e958a239d4812930',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_yun_source2kafka_183_9093B_MG1649832791876755498',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db5fd713c2b1a34fbdf34',
+          read: false,
+          createTime: '2022-05-13T03:24:24Z'
+        },
+        {
+          id: '627dcf0fe958a239d48126c7',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_yun_source2ES_189_targetB_MG1649832791876755498',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db59c713c2b1a34fbdd6c',
+          read: false,
+          createTime: '2022-05-13T03:22:55Z'
+        },
+        {
+          id: '627dcea3e958a239d48123d7',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_yun_source2sqlserver_2019_targetB_MG1649832791876755498',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db536713c2b1a34fbdbcb',
+          read: false,
+          createTime: '2022-05-13T03:21:07Z'
+        },
+        {
+          id: '627dce47e958a239d48121c7',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_yun_source2postgres_5437_targetB_MG1649832791876755498',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db4d4713c2b1a34fbd9a0',
+          read: false,
+          createTime: '2022-05-13T03:19:35Z'
+        },
+        {
+          id: '627dcdf9e958a239d4811f68',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_yun_source2yun_targetB_MG1649832791876755498',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db47a713c2b1a34fbd828',
+          read: false,
+          createTime: '2022-05-13T03:18:17Z'
+        },
+        {
+          id: '627dcd98e958a239d4811ca4',
+          level: 'WARN',
+          system: 'migration',
+          serverName: 'demo_yun_source2oracle_132B_MG1649832791876755498',
+          msg: 'deleted',
+          title: '',
+          sourceId: '627db426713c2b1a34fbd67a',
+          read: false,
+          createTime: '2022-05-13T03:16:40Z'
+        }
+      ]
     }
   }
 })

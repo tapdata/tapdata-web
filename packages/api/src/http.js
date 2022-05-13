@@ -1,20 +1,22 @@
-import axios from './axios'
+import axios from 'axios'
 
-export default class PublicApi {
+const CancelToken = axios.CancelToken
+export default class Http {
   constructor(url) {
     this.url = url
+    this.axios = axios
   }
 
   count(params) {
-    return axios.get(this.url + '/count', { params })
+    return this.axios.get(this.url + '/count', { params })
   }
 
   patch(params) {
-    return axios.patch(this.url, params)
+    return this.axios.patch(this.url, params)
   }
 
   updateById(id, attributes) {
-    return axios.patch(this.url + '/' + id, attributes)
+    return this.axios.patch(this.url + '/' + id, attributes)
   }
 
   /**
@@ -26,29 +28,30 @@ export default class PublicApi {
   update(where, attributes) {
     if (typeof where === 'object') where = JSON.stringify(where)
 
-    return axios.post(this.url + '/update?where=' + encodeURIComponent(where), attributes)
+    return this.axios.post(this.url + '/update?where=' + encodeURIComponent(where), attributes)
   }
 
   get(params, filter) {
     if (Array.isArray(params)) {
       filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
       let qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
-      return axios.get(this.url + '/' + params.join('/') + qs)
+      return this.axios.get(this.url + '/' + params.join('/') + qs)
     }
     params = params || {}
-    return axios.get(this.url, { params })
+    return this.axios.get(this.url, { params })
   }
 
   delete(id) {
-    return axios.delete(`${this.url}/${id}`)
+    return this.axios.delete(`${this.url}/${id}`)
   }
 
   post(params) {
-    return axios.post(this.url, params)
+    return this.axios.post(this.url, params)
   }
 
   findOne(params) {
     params = params || {}
-    return axios.get(this.url + '/findOne', { params })
+    return this.axios.get(this.url + '/findOne', { params })
   }
 }
+export { CancelToken }

@@ -1,8 +1,7 @@
-import PublicApi from './PublicApi'
-import axios from './axios'
+import Http from './http'
 import qs from 'qs'
 
-export class Task extends PublicApi {
+export class Task extends Http {
   constructor() {
     super('/api/Task')
   }
@@ -13,35 +12,43 @@ export class Task extends PublicApi {
    * @returns {*}
    */
   save(params) {
-    return axios.patch(this.url + '/confirm/' + params.id, params)
+    return this.axios.patch(this.url + '/confirm/' + params.id, params)
   }
 
   saveAndStart(params) {
-    return axios.patch(this.url + '/confirmStart/' + params.id, params)
+    return this.axios.patch(this.url + '/confirmStart/' + params.id, params)
   }
 
   getMetadata(params) {
-    return axios.post(this.url + '/metadata', params)
+    return this.axios.post(this.url + '/metadata', params)
   }
 
   start(id) {
-    return axios.put(this.url + `/start/${id}`)
+    return this.axios.put(this.url + `/start/${id}`)
   }
 
   batchStart(taskIds) {
-    // return axios.put(this.url + `/batchStart?taskIds=` + ids.join('&taskIds='))
-    return axios.put(this.url + `/batchStart`, qs.stringify({ taskIds }))
+    // return this.axios.put(this.url + `/batchStart?taskIds=` + ids.join('&taskIds='))
+    return this.axios.put(this.url + `/batchStart`, qs.stringify({ taskIds }))
   }
 
   stop(id) {
-    return axios.put(this.url + `/stop/${id}`)
+    return this.axios.put(this.url + `/stop/${id}`)
   }
 
   forceStop(id) {
-    return axios.put(this.url + `/stop/${id}?force=true`)
+    return this.axios.put(this.url + `/stop/${id}?force=true`)
   }
 
   reset(id) {
-    return axios.put(this.url + `/renew/${id}`)
+    return this.axios.put(this.url + `/renew/${id}`)
+  }
+
+  chart(id) {
+    if (id) {
+      return this.axios.get(`${this.url}/chart?user_id=${id}`)
+    } else {
+      return this.axios.get(this.url + '/chart')
+    }
   }
 }

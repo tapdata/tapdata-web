@@ -94,6 +94,11 @@ export default {
   message_request_error: 'Request data failed',
   message_no_permission: 'Login has expired, please log in again',
   message_loading: 'Loading',
+  message_401: 'Login expired, please log in again',
+  message_404: 'The resource you requested not existed',
+  message_5xx: 'Server abnormal',
+  message_network_unconnected: 'Network not connected',
+  message_request_timeout: 'Request timed out',
 
   // 表格
   column_operation: 'Operate',

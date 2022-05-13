@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 let pretreatment = function (doc) {
   if (Array.isArray(doc)) {

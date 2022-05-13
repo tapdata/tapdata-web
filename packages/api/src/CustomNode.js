@@ -1,17 +1,15 @@
-import axios from './axios'
-import PublicAPI from './PublicApi'
+import Http from './http'
 
-export class CustomNode extends PublicAPI {
+export class CustomNode extends Http {
   constructor() {
     super('/api/customNode')
   }
-
   /**
    * 检查使用该节点的任务
    * @param id
    * @returns {Promise<AxiosResponse<any>>}
    */
   checkUsed(id) {
-    return axios.get(`${this.url}/checkUsed/${id}`)
+    return this.axios.get(`${this.url}/checkUsed/${id}`)
   }
 }

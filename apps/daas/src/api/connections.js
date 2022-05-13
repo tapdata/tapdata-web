@@ -3,7 +3,7 @@
  * @date 3/2/20
  * @description
  */
-import axios from 'axios'
+import axios from '@/plugins/axios'
 import PublicAPI from './publicApi'
 
 export default class Connections extends PublicAPI {
