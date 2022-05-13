@@ -10,6 +10,6 @@ export class CustomNode extends Http {
    * @returns {Promise<AxiosResponse<any>>}
    */
   checkUsed(id) {
-    return this.axios.get(`${this.url}/checkUsed/${id}`)
+    return this.axios.get(`${this.url}/checkUsed/${id}`).then(this.useData)
   }
 }

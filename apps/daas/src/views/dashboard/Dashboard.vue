@@ -416,9 +416,9 @@ export default {
       let params = {
         type: 'dashboard'
       }
-      clusterApi.get(params).then(res => {
-        this.serverProcess.tableData = res.data?.items
-        this.serverTable = res.data?.items
+      clusterApi.get(params).then(data => {
+        this.serverProcess.tableData = data?.items
+        this.serverTable = data?.items
       })
     },
     // 获取dataflows数据
@@ -427,8 +427,8 @@ export default {
       self.loading = true
       taskApi
         .chart()
-        .then(res => {
-          if (res?.data) {
+        .then(data => {
+          if (data) {
             let setColor = list => {
               return list.map(item => {
                 item.itemStyle = {
@@ -438,9 +438,9 @@ export default {
               })
             }
             // 全部数据
-            let copy_total = res.data?.chart1?.total || 0
-            let sync_total = res.data?.chart3?.total || 0
-            let valid_total = res.data?.chart5?.total || 0
+            let copy_total = data?.chart1?.total || 0
+            let sync_total = data?.chart3?.total || 0
+            let valid_total = data?.chart5?.total || 0
 
             let total = {
               all_total: copy_total + sync_total + valid_total,
@@ -458,19 +458,17 @@ export default {
             })
             this.taskList = result
 
-            self.migrationTaskList = res.data.chart1?.items
-              ? self.handleDataProcessing(res.data.chart1.items, self.statusList)
+            self.migrationTaskList = data.chart1?.items
+              ? self.handleDataProcessing(data.chart1.items, self.statusList)
               : []
-            self.syncTaskList = res.data?.chart3
-              ? self.handleDataProcessing(res.data.chart3.items, self.statusList)
-              : []
+            self.syncTaskList = data?.chart3 ? self.handleDataProcessing(data.chart3.items, self.statusList) : []
 
             self.copyPieData = setColor(self.migrationTaskList)
-            self.copyTaskData = this.handleChart(res.data.chart2)
+            self.copyTaskData = this.handleChart(data.chart2)
             self.syncPieData = setColor(self.syncTaskList)
-            self.syncTaskData = this.handleChart(res.data.chart4)
-            self.validBarData = this.handleChart(res.data.chart5)
-            self.transBarData = this.handleChart(res.data.chart6, self.transBarData)
+            self.syncTaskData = this.handleChart(data.chart4)
+            self.validBarData = this.handleChart(data.chart5)
+            self.transBarData = this.handleChart(data.chart6, self.transBarData)
           }
         })
         .finally(() => {
