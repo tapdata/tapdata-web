@@ -125,6 +125,7 @@
             </template>
           </ElTableColumn>
           <ElTableColumn :label="$t('dag_dialog_field_mapping_source_scale')" prop="scale" width="100"></ElTableColumn>
+          <ElTableColumn :label="$t('meta_table_default')" prop="default_value" width="100"></ElTableColumn>
           <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')" width="260">
             <template slot-scope="scope">
               <div
