@@ -124,7 +124,7 @@
         </template>
       </el-table-column>-->
 
-      <el-table-column prop="createTime" :label="$t('column_create_time')" width="210" sortable="custom">
+      <el-table-column prop="createTime" :label="$t('column_create_time')" width="210" sortable="createTime">
         <template #default="{ row }">
           {{ row.createTime ? $moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>

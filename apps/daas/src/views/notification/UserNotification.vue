@@ -122,7 +122,7 @@ export default {
           this.userOptions = data.map(item => {
             return {
               label: item.username,
-              value: item.id
+              value: item.username
             }
           })
         })
@@ -140,7 +140,7 @@ export default {
         where.parameter1 = { like: toRegExp(keyword), options: 'i' }
       }
       if (userId) {
-        where.user_id = userId
+        where.username = userId
       }
       if (range && range.length) {
         let startTime = range[0] ? range[0] : ''
