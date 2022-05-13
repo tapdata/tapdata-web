@@ -137,7 +137,7 @@ export default {
         color: map-get($fontColor, slight);
       }
       &.is-finish {
-        color: map-get($fontColor, dark);
+        color: map-get($fontColor, normal);
       }
     }
     .el-step__description {
@@ -189,7 +189,7 @@ export default {
     .is-active {
       .el-step__title,
       .el-step__description {
-        color: map-get($color, primary);
+        color: map-get($fontColor, normal);
       }
       .is-finish {
         .circle-icon {

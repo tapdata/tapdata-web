@@ -258,7 +258,7 @@ export const FieldAddDel = connect(
         },
         handleKeyDown(e) {
           if (e.keyCode === 13) {
-            this.$set(data, 'showInput', false) //打开loading
+            this.$set(data, 'showInput', false) //eslint-disable-line
           }
         },
         handleRename(node, data) {
