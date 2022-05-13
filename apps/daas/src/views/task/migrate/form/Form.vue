@@ -418,7 +418,6 @@ export default {
             .validate()
             .then(() => {
               //数据: 第三步请求schema用到sourceId
-              this.settingData = { ...this.form.values } //保存表单
               this.loading = false
               this.sourceId = this.dataSourceData.source_connectionId
               this.activeStep++
@@ -451,6 +450,7 @@ export default {
     //第二步 任务设置配置
     settingSubmit(form) {
       this.form = form
+      this.settingData = { ...this.form.values } //保存表单
     },
     //第三步 映射表
     checkTransfer() {
