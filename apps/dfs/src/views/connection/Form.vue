@@ -554,11 +554,11 @@ export default {
           data.routeKeyField = '' //消息路由
           data.virtualHost = '' //虚拟主机
         } else if (data.mqType === '1') {
-          data.mqQueueSet = [] //队列名集合
+          // data.mqQueueSet = [] //队列名集合
           data.brokerURL = '' //字符串
         } else {
           data.brokerURL = ''
-          data.mqTopicSet = [] //主题名
+          // data.mqTopicSet = [] //主题名
           data.routeKeyField = '' //消息路由
           data.virtualHost = '' //虚拟主机
         }
