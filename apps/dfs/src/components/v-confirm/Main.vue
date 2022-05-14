@@ -218,7 +218,9 @@ export default {
   box-sizing: border-box;
 }
 .message-box__header {
-  padding: 24px 24px 0;
+  display: inline-block;
+  padding: 24px 16px 0;
+  //padding-right: 16px;
   font-size: 14px;
   color: rgba(0, 0, 0, 0.75);
   font-weight: 700;

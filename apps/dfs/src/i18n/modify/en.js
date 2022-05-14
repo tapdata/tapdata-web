@@ -40,4 +40,12 @@ export default {
   connection_form_qingflow_tag_name: 'Application Name',
   dataForm_error_portNumber: 'Must be a number',
   operation_log_List_caoZuoMiaoShu: 'Operation Description',
+  task_mapping_table_restore_default: 'Reset default',
+  task_setting_stop_on_error: 'Encounter error stop',
+  task_setting_incremental_concurrency_switch: 'Incremental concurrencyy',
+  task_setting_no_primary_sync_switch: 'No primary key synchronization',
+  task_setting_automatic_index: 'Automatically create indexes',
+  guide_btn_back: 'Previous',
+  guide_btn_next: 'Next',
+  task_setting_read_number: 'Number of reads'
 }
