@@ -1777,7 +1777,6 @@ export default {
       })
     },
     startTestPdk() {
-      debugger
       let formValues = this.$refs.schemaToForm?.getFormValues?.()
       this.model.name = formValues.__connection_database_name__
       delete formValues.__connection_database_name__
