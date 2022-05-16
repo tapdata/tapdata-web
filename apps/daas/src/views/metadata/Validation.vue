@@ -491,9 +491,9 @@ export default {
           let result = this.doSave()
           if (result) {
             this.createDialogVisible = false
-            this.$message.success(this.$t('message.saveOK'))
+            this.$message.success(this.$t('message_save_ok'))
           } else {
-            this.$message.error(this.$t('message.saveFail'))
+            this.$message.error(this.$t('message_save_fail'))
           }
         }
       })

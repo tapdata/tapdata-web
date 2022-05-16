@@ -502,12 +502,12 @@ export default {
           name: this.changeNameValue
         })
         .then(() => {
-          this.$message.success(this.$t('message.saveOK'))
+          this.$message.success(this.$t('message_save_ok'))
           this.changeNameDialogVisible = false
           this.table.fetch()
         })
         .catch(() => {
-          this.$message.info(this.$t('message.saveFail'))
+          this.$message.info(this.$t('message_save_fail'))
         })
     },
     changeName(item) {
@@ -529,11 +529,11 @@ export default {
       //       name: resFlag.value
       //     })
       //     .then(() => {
-      //       this.$message.success(this.$t('message.saveOK'))
+      //       this.$message.success(this.$t('message_save_ok'))
       //       this.table.fetch()
       //     })
       //     .catch(() => {
-      //       this.$message.info(this.$t('message.saveFail'))
+      //       this.$message.info(this.$t('message_save_fail'))
       //     })
       // })
     },

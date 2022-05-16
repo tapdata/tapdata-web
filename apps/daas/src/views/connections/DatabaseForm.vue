@@ -82,6 +82,31 @@
                   <span v-else>已开通</span>
                 </span>
               </div>
+              <div class="url-tip" slot="accessNodeProcessId">
+                <el-select
+                  v-model="model.accessNodeProcessIdList"
+                  clearable
+                  multiple
+                  :placeholder="$t('connection_form_name_ip')"
+                  v-loadmore="loadMore"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="item in accessNodeList"
+                    :key="item.id"
+                    :label="item.systemInfo.hostname"
+                    :value="item.id"
+                  >
+                    <span class="fl">{{ item.systemInfo.hostname }}</span>
+                    <span class="font-color-light fr pl-2">{{ item.systemInfo.ip }}</span>
+                  </el-option>
+                </el-select>
+                <!-- <el-input
+                  :rows="5"
+                  v-model="model.accessNodeProcessId"
+                  :placeholder="$t('connection_form_name_ip')"
+                ></el-input> -->
+              </div>
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
               <!-- rest api -->
               <div class="url-tip" slot="req_pre_process">
@@ -577,6 +602,7 @@ export default {
       }
     }
     return {
+      accessNodeList: [],
       // modelForm: {},
       rules: [],
       id: '',
@@ -746,6 +772,7 @@ export default {
     }
     this.checkDataTypeOptions(this.databaseType)
     this.initTimezones()
+    this.getCluster()
   },
   watch: {
     'model.multiTenant'(val) {
@@ -1536,7 +1563,7 @@ export default {
           }
           connectionsModel[this.model.id ? 'patchId' : 'post'](params)
             .then(() => {
-              this.$message.success(this.$t('message.saveOK'))
+              this.$message.success(this.$t('message_save_ok'))
               if (this.$route.query.step) {
                 this.$router.push({
                   name: 'connections',
@@ -1564,7 +1591,7 @@ export default {
                 // }
                 this.$message.error(err.response.message)
               } else {
-                this.$message.error(this.$t('message.saveFail'))
+                this.$message.error(this.$t('message_save_fail'))
               }
             })
             .finally(() => {
@@ -1638,7 +1665,7 @@ export default {
               this.editBtnLoading = false
               this.model.name = this.renameData.rename
               this.$refs['renameForm'].clearValidate()
-              this.$message.success(this.$t('message.saveOK'))
+              this.$message.success(this.$t('message_save_ok'))
               this.dialogEditNameVisible = false
             })
             .catch(err => {
@@ -1716,6 +1743,16 @@ export default {
     },
     removeParameter(parentIndex, index) {
       this.model.url_info[parentIndex].parameterArray.splice(index, 1)
+    },
+    // 获取数据
+    async getCluster() {
+      let params = { index: 1 }
+      this.$api('cluster')
+        .get(params)
+        .then(res => {
+          let items = res.data?.items || []
+          this.accessNodeList = items
+        })
     }
   }
 }

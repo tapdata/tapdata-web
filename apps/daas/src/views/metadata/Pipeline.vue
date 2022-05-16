@@ -178,10 +178,10 @@ export default {
           pipline: this.model
         })
         .then(() => {
-          this.$message.success(this.$t('message.saveOK'))
+          this.$message.success(this.$t('message_save_ok'))
         })
         .catch(() => {
-          this.$message.error(this.$t('message.saveFail'))
+          this.$message.error(this.$t('message_save_fail'))
         })
     }
   }

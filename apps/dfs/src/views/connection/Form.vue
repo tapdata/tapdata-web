@@ -573,7 +573,7 @@ export default {
           }
           promise
             .then(() => {
-              this.$message.success(this.$t('message.saveOK'))
+              this.$message.success(this.$t('message_save_ok'))
 
               if (this.$route.query.step) {
                 this.$router.push({
@@ -662,7 +662,7 @@ export default {
               this.editBtnLoading = false
               this.model.name = this.renameData.rename
               this.$refs['renameForm'].clearValidate()
-              this.$message.success(this.$t('message.saveOK'))
+              this.$message.success(this.$t('message_save_ok'))
               this.dialogEditNameVisible = false
             })
             .catch(err => {

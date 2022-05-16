@@ -13,11 +13,11 @@ export default function (vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: vm.$t('dataForm.form.connectionType'),
+        label: vm.$t('connection_form_connection_type'),
         options: [
           {
-            label: vm.$t('dataForm.form.options.target'),
-            tip: vm.$t('dataForm.form.options.targetTips'),
+            label: vm.$t('connection_form_target'),
+            tip: vm.$t('connection_form_target_tip'),
             value: 'target'
           }
         ],
@@ -30,7 +30,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'database_host',
-        label: vm.$t('dataForm.form.host')
+        label: vm.$t('connection_form_host')
       },
       {
         type: 'input',
@@ -46,6 +46,42 @@ export default function (vm) {
         label: '空间站名称',
         options: [],
         required: true
+      },
+      {
+        type: 'select',
+        field: 'accessNodeType',
+        label: vm.$t('connection_form_access_node'),
+        options: [
+          {
+            label: vm.$t('connection_form_automatic'),
+            value: 'AUTOMATIC_PLATFORM_ALLOCATION'
+          },
+          {
+            label: vm.$t('connection_form_manual'),
+            value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+          }
+        ],
+        tips: vm.$t('connection_form_access_node_tip'),
+        required: true,
+        filterable: true
+      },
+      {
+        type: 'slot',
+        slot: 'accessNodeProcessId',
+        show: false,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'accessNodeType',
+                value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       }
     ]
   }

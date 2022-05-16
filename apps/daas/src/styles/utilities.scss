@@ -12068,13 +12068,13 @@
   color: map-get($fontColor, dark);
 }
 .font-color-normal {
-  color: map-get($fontColor, dark);
-}
-.font-color-light {
   color: map-get($fontColor, normal);
 }
-.font-color-slight {
+.font-color-light {
   color: map-get($fontColor, light);
+}
+.font-color-slight {
+  color: map-get($fontColor, slight);
 }
 
 // 背景颜色

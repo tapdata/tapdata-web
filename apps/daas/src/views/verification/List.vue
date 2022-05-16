@@ -401,7 +401,7 @@ export default {
           key: 'mode',
           type: 'select-inner',
           items: [
-            { label: this.$t('verify_single'), value: 'manual' },
+            { label: this.$t('verify_single'), value: 'MANUALLY_SPECIFIED_BY_THE_USER' },
             { label: this.$t('verify_repeating'), value: 'cron' }
           ]
         },
