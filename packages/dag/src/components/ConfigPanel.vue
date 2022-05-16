@@ -36,8 +36,8 @@
         <!--<ElTabPane label="数据详情">
           <DataPane></DataPane>
         </ElTabPane>-->
-        <ElTabPane v-if="isPdk" label="pdk表单">
-          <PdkPane :activeNode="activeNode"></PdkPane>
+        <ElTabPane v-if="isPdk" label="pdk">
+          <PdkPane v-on="$listeners" v-bind="$attrs" ref="pdkPane"></PdkPane>
         </ElTabPane>
       </ElTabs>
     </div>
