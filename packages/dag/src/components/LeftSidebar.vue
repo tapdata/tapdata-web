@@ -133,7 +133,7 @@
                     item: tb,
                     container: '#dfEditorContent',
                     getDragDom,
-                    onStart,
+                    onStart: onTBStart,
                     onMove,
                     onDrop,
                     onStop
@@ -172,7 +172,7 @@
                   item: n,
                   container: '#dfEditorContent',
                   getDragDom,
-                  onStart,
+                  onStart: onProcessorStart,
                   onMove,
                   onDrop,
                   onStop
@@ -201,8 +201,8 @@
       v-if="dragStarting"
       id="dragNode"
       class="drag-node"
-      :node="dragNodeType"
-      :class="`node--${dragNodeType.group}`"
+      :node="dragNode"
+      :class="`node--${dragNode.__Ctor.group}`"
     ></BaseNode>
     <!-- E 节点拖拽元素 -->
 
@@ -308,7 +308,7 @@ export default {
       },
       dragStarting: false,
       dragMoving: false,
-      dragNodeType: null,
+      dragNode: null,
       connectionDialog: false,
       connectionFormDialog: false,
       databaseType: '',
@@ -517,21 +517,10 @@ export default {
 
       this.dbTotal = data.total
 
-      const dbList = data.items.map(item => ({
-        id: item.id,
-        name: item.name,
-        type: 'table',
-        group: 'data',
-        constructor: 'Table',
-        databaseType: item.database_type,
-        attr: {
-          tableName: '',
-          databaseType: item.database_type,
-          connectionId: item.id,
-          connectionType: item.connection_type,
-          accessNodeProcessId: item.accessNodeProcessId
-        }
-      }))
+      const dbList = data.items.map(item => {
+        item.databaseType = item.database_type
+        return item
+      })
 
       if (loadMore) {
         // 防止重复push
@@ -615,20 +604,7 @@ export default {
 
       const tables = data.items.map(tb => ({
         id: tb.id,
-        name: tb.original_name,
-        type: 'table',
-        group: 'data',
-        constructor: 'Table',
-        databaseType: connection.databaseType,
-        attr: {
-          tableName: tb.original_name,
-          databaseType: connection.databaseType,
-          connectionId: connection.id,
-          connectionType: connection.attr.connectionType,
-          accessNodeProcessId: connection.attr.accessNodeProcessId
-          // accessNodeProcessId: '61935c9684103d36ce972daa-1fkjq3ar4'
-          // accessNodeProcessId: 'f9e0e041-a72f-4e3f-87ff-0354eed0af92'
-        }
+        name: tb.original_name
       }))
 
       this.tbTotal = data.total
@@ -680,8 +656,51 @@ export default {
       return document.getElementById('dragNode')
     },
 
+    initStart(node) {
+      const getResourceIns = this.$store.getters['dataflow/getResourceIns']
+      const ins = getResourceIns(node)
+      Object.defineProperty(node, '__Ctor', {
+        value: ins,
+        enumerable: false
+      })
+      this.dragNode = node
+      this.dragStarting = true
+      this.dragMoving = false
+    },
+
     onStart(item) {
-      this.dragNodeType = item
+      const node = {
+        name: item.name,
+        type: 'table',
+        databaseType: item.database_type,
+        connectionId: item.id,
+        tableName: '',
+        attrs: {
+          connectionName: item.name,
+          connectionType: item.connection_type,
+          accessNodeProcessId: item.accessNodeProcessId
+        }
+      }
+      this.initStart(node)
+    },
+
+    onTBStart(item) {
+      const node = this.getNodePropsByTable(item.name)
+      this.initStart(node)
+    },
+
+    onProcessorStart(item) {
+      const node = item
+      const getResourceIns = this.$store.getters['dataflow/getResourceIns']
+      if (!item.__Ctor) {
+        const ins = getResourceIns(node)
+        // 设置属性__Ctor不可枚举
+        Object.defineProperty(node, '__Ctor', {
+          value: ins,
+          enumerable: false
+        })
+      }
+      this.dragNode = node
       this.dragStarting = true
       this.dragMoving = false
     },
@@ -691,8 +710,8 @@ export default {
       this.$emit('move-node', ...arguments)
     },
 
-    onDrop() {
-      this.$emit('drop-node', ...arguments)
+    onDrop(item, position, rect) {
+      this.$emit('drop-node', this.dragNode, position, rect)
     },
 
     onStop() {
@@ -754,20 +773,7 @@ export default {
     },
 
     handleSaveTable(name) {
-      const connection = this.activeConnection
-
-      this.$emit('add-table-as-node', {
-        name,
-        type: 'table',
-        group: 'data',
-        constructor: 'Table',
-        databaseType: connection.databaseType,
-        attr: {
-          tableName: name,
-          databaseType: connection.databaseType,
-          connectionId: connection.id
-        }
-      })
+      this.$emit('add-table-as-node', this.getNodePropsByTable(name))
     },
 
     updateDBScrollbar() {
@@ -780,6 +786,21 @@ export default {
 
     updateProcessorScrollbar() {
       setTimeout(this.$refs.processorList.update, 350)
+    },
+
+    getNodePropsByTable(tableName) {
+      const connection = this.activeConnection
+      return {
+        name: tableName,
+        type: 'table',
+        databaseType: connection.database_type,
+        connectionId: connection.id,
+        tableName,
+        attrs: {
+          connectionType: connection.connection_type,
+          accessNodeProcessId: connection.accessNodeProcessId
+        }
+      }
     }
   }
 }

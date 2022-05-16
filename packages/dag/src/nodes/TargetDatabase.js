@@ -1,13 +1,17 @@
 import { NodeType } from './extends/NodeType'
 
-export class Database extends NodeType {
+export class TargetDatabase extends NodeType {
   constructor() {
     super()
   }
 
   type = 'database'
 
-  group = 'data'
+  minInputs = 0 // 最小输入个数
+  maxInputs = 1 // 最大输入个数
+  maxOutputs = 1 // 最大输出个数
+
+  group = 'output'
 
   formSchema = {
     type: 'object',
@@ -88,8 +92,22 @@ export class Database extends NodeType {
     }
   }
 
+  getExtraAttr() {
+    const { tableName, databaseType, connectionId, connectionType, accessNodeProcessId, connectionName } = this.attr
+    return {
+      tableName,
+      databaseType,
+      connectionId,
+      attrs: {
+        connectionName,
+        connectionType,
+        accessNodeProcessId
+      }
+    }
+  }
+
   selector(node) {
     // attrs.isTarget 是UI属性，在无UI的模式生成的节点，通过是否有输入($inputs)来判断
-    return node.type === 'database' && !node.attrs.isTarget && !node.$inputs?.length
+    return node.type === 'database' && (node.attrs.isTarget || node.$inputs?.length)
   }
 }

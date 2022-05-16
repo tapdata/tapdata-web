@@ -72,12 +72,6 @@ export default {
 
     ins() {
       return this.node?.__Ctor
-    },
-
-    nodeType() {
-      const { getters } = this.$store
-      const getNodeType = getters['dataflow/nodeType']
-      return getNodeType(this.activeNode)
     }
   },
 
@@ -702,7 +696,7 @@ export default {
         const path = field.path.toString().replace(/\.[\d+]/g, '')
         const takeMessage = prop => {
           const token = `${path}${prop ? `.${prop}` : ''}`
-          return this.getMessage(token, this.nodeType.locales)
+          return this.getMessage(token, this.ins.locales)
         }
         const title = takeMessage('title') || takeMessage()
         const description = takeMessage('description')
@@ -839,8 +833,14 @@ $headerBg: #fff;
       height: 40px;
     }
 
+    .formily-element-form-item:not(.form-item-text) + .form-item-text {
+      margin-top: 16px;
+    }
+
     .form-item-text {
-      margin-top: 8px;
+      & + .form-item-text {
+        margin-top: 8px;
+      }
       margin-bottom: 0;
       .formily-element-form-item-label-content {
         min-height: unset;

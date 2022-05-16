@@ -94,7 +94,7 @@ import DFNode from './components/DFNode'
 import { jsPlumb, config } from './instance'
 import { connectorActiveStyle } from './style'
 import { DEFAULT_SETTINGS, NODE_HEIGHT, NODE_PREFIX, NODE_WIDTH, NONSUPPORT_CDC, NONSUPPORT_SYNC } from './constants'
-import { ctorTypes, nodeTypes } from './nodes/loader'
+import { allResourceIns } from './nodes/loader'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
 import { showMessage } from 'web-core/mixins/showMessage'
@@ -213,9 +213,6 @@ export default {
     }
     this.setValidateLanguage()
     await this.initNodeType()
-  },
-
-  mounted() {
     this.jsPlumbIns.ready(async () => {
       try {
         this.initCommand()
@@ -242,8 +239,7 @@ export default {
       'setStateReadonly',
       'setEdges',
       'setTaskId',
-      'setNodeTypes',
-      'setCtorTypes',
+      'addResourceIns',
       'updateNodeProperties',
       'setActiveNode',
       'setActiveConnection',
@@ -358,9 +354,7 @@ export default {
     },
 
     async initNodeType() {
-      let _nodeTypes = nodeTypes
-      this.setNodeTypes(_nodeTypes)
-      this.setCtorTypes(ctorTypes)
+      this.addResourceIns(allResourceIns)
       await this.loadCustomNode()
     },
 
@@ -370,7 +364,7 @@ export default {
 
       const source = this.nodeById(sourceId)
       const target = this.nodeById(targetId)
-      const maxInputs = target.__Ctor.attr.maxInputs ?? -1
+      const maxInputs = target.__Ctor.maxInputs ?? -1
       const connectionType = target.attrs.connectionType
 
       if (connectionType && !connectionType.includes('target')) {
@@ -564,9 +558,7 @@ export default {
 
     async addNodes({ nodes, edges }) {
       if (!nodes?.length) return
-      const { getters } = this.$store
-      const getNodeType = getters['dataflow/nodeType']
-      const getCtor = getters['dataflow/getCtor']
+      const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       const outputsMap = {}
       const inputsMap = {}
 
@@ -587,26 +579,15 @@ export default {
         }
       })
 
-      // 创建节点
-      let nodeType
       nodes.forEach(node => {
-        delete node.outputSchema // 粗暴删除不需要的节点属性
-        nodeType = getNodeType(node)
-
-        if (nodeType !== null) {
-          const Ctor = getCtor(nodeType.constructor)
-          const ins = new Ctor(nodeType)
-
-          Object.defineProperty(node, '__Ctor', {
-            value: ins,
-            enumerable: false
-          })
-
-          node.$inputs = inputsMap[node.id] || []
-          node.$outputs = outputsMap[node.id] || []
-
-          this.addNode(node)
-        }
+        node.$inputs = inputsMap[node.id] || []
+        node.$outputs = outputsMap[node.id] || []
+        const ins = getResourceIns(node)
+        Object.defineProperty(node, '__Ctor', {
+          value: ins,
+          enumerable: false
+        })
+        this.addNode(node)
       })
 
       await this.$nextTick()
@@ -858,7 +839,8 @@ export default {
       return {
         dag,
         editVersion,
-        ...this.dataflow
+        ...this.dataflow,
+        syncType: 'migrate'
       }
     },
 
@@ -897,7 +879,7 @@ export default {
       // 检查每个节点的源节点个数、连线个数、节点的错误状态
       this.allNodes.some(node => {
         const { id } = node
-        const minInputs = node.__Ctor.attr.minInputs ?? 1 // 没有设置minInputs则缺省为1
+        const minInputs = node.__Ctor.minInputs ?? 1 // 没有设置minInputs则缺省为1
         const inputNum = targetMap[id]?.length ?? 0
 
         if (!sourceMap[id] && !targetMap[id]) {
@@ -1478,24 +1460,21 @@ export default {
     },
 
     createNode(position, item) {
-      const getCtor = this.$store.getters['dataflow/getCtor']
-      const Ctor = getCtor(item.constructor)
-      const ins = new Ctor(item)
+      const getResourceIns = this.$store.getters['dataflow/getResourceIns']
       const node = merge(
         {
           id: uuid(),
-          name: item.name,
-          type: item.type,
           attrs: { position }
         },
-        ins.getExtraAttr()
+        item
       )
 
-      // 设置属性__Ctor不可枚举
+      const ins = item.__Ctor || getResourceIns(item)
       Object.defineProperty(node, '__Ctor', {
         value: ins,
         enumerable: false
       })
+
       return node
     },
 

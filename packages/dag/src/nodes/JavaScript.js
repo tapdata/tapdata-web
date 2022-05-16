@@ -1,19 +1,14 @@
 import { NodeType } from './extends/NodeType'
+import { AllLocales } from './locales'
 
 export class JavaScript extends NodeType {
-  constructor(node) {
-    super(node)
-
-    if (node.attr) {
-      const attr = Object.assign(this.attr, node.attr)
-      if (attr.formSchema) this.formSchema = attr.formSchema
-      if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
-    }
+  constructor() {
+    super()
   }
 
-  attr = {
-    maxInputs: 1 // 最大输入个数
-  }
+  type = 'js_processor'
+
+  maxInputs = 1 // 最大输入个数
 
   group = 'processor'
 
@@ -37,4 +32,6 @@ export class JavaScript extends NodeType {
       }
     }
   }
+
+  locales = AllLocales.JavaScript
 }

@@ -21,10 +21,6 @@
           <VIcon size="20" class="click-btn" @click.stop="creat">add-outline</VIcon>
         </div>
       </div>
-      <!--<ElTabs v-model="currentTab" class="type-tabs">
-        <ElTabPane label="来源"> </ElTabPane>
-        <ElTabPane label="目标"> </ElTabPane>
-      </ElTabs>-->
 
       <div class="px-4 py-3">
         <ElInput
@@ -37,8 +33,6 @@
           @keyup.native.stop
           @click.native.stop
           @input="handleDBInput"
-          @blur="handleBlur"
-          @clear="handleShowDBInput"
         >
           <template #prefix>
             <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
@@ -91,44 +85,6 @@
           </div>
         </ElSkeleton>
       </ElScrollbar>
-
-      <!--<ElCollapse v-model="collapseMode" ref="dbCollapse" class="collapse-fill db-list-container" accordion>
-        <ElCollapseItem name="db">
-          <template #title>
-            <div class="flex align-center flex-1 overflow-hidden">
-              <template v-if="collapseMode === 'db'">
-                <span class="flex-1 user-select-none text-truncate flex align-center">
-                  &lt;!&ndash;连接&ndash;&gt;
-                  {{ $t('dag_connection') }}
-                  <span v-show="dbTotal > 0" class="badge">{{ dbTotal }}</span>
-                </span>
-                <VIcon size="20" class="click-btn" @click.stop="creat">add-outline</VIcon>
-                <VIcon size="20" class="click-btn" @click.stop="handleShowDBInput">search-outline</VIcon>
-              </template>
-              <span v-else class="flex-1 user-select-none text-truncate">{{ activeConnection.name }}</span>
-              <ElInput
-                v-if="showDBInput"
-                v-model="dbSearchTxt"
-                ref="dbInput"
-                class="header__input"
-                :placeholder="$t('connection_name_search_placeholder')"
-                size="mini"
-                clearable
-                @keydown.native.stop
-                @keyup.native.stop
-                @click.native.stop
-                @input="handleDBInput"
-                @blur="handleBlur"
-                @clear="handleShowDBInput"
-              >
-                <template #prefix>
-                  <VIcon size="14" class="ml-1 h-100">magnify</VIcon>
-                </template>
-              </ElInput>
-            </div>
-          </template>
-        </ElCollapseItem>
-      </ElCollapse>-->
     </div>
 
     <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse" value="process">
@@ -149,7 +105,7 @@
                   item: n,
                   container: '#dfEditorContent',
                   getDragDom,
-                  onStart,
+                  onStart: onProcessorStart,
                   onMove,
                   onDrop,
                   onStop
@@ -178,8 +134,8 @@
       v-if="dragStarting"
       id="dragNode"
       class="drag-node"
-      :node="dragNodeType"
-      :class="`node--${dragNodeType.group}`"
+      :node="dragNode"
+      :class="`node--${dragNode.__Ctor.group}`"
     ></BaseNode>
     <!-- E 节点拖拽元素 -->
 
@@ -233,10 +189,9 @@ import ConnectionTypeSelector from 'web-core/components/connection-type-selector
 import resize from 'web-core/directives/resize'
 import BaseNode from '../components/BaseNode'
 import { debounce } from 'lodash'
-import { CancelToken, Connections, MetadataInstances } from '@tap/api'
+import { Connections } from '@tap/api'
 import { Select } from 'element-ui'
 const connections = new Connections()
-const metadataApi = new MetadataInstances()
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'
 import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
 import EmptyItem from 'web-core/components/EmptyItem'
@@ -250,7 +205,6 @@ export default {
     OverflowTooltip,
     BaseNode,
     VIcon,
-    // Form,
     ConnectionTypeSelector,
     ElScrollbar: Select.components.ElScrollbar
   },
@@ -266,29 +220,16 @@ export default {
       dbList: [],
       dbPage: 1,
       dbTotal: 0,
-      tbList: [],
-      tbPage: 1,
-      tbTotal: 0,
       dbSearchTxt: '',
-      tbSearchTxt: '',
       showDBInput: false,
-      showTBInput: false,
-      currentConnectionId: '',
-      activeConnection: {
-        id: '',
-        name: '',
-        databaseType: ''
-      },
       dragStarting: false,
       dragMoving: false,
-      dragNodeType: null,
+      dragNode: null,
       connectionDialog: false,
       connectionFormDialog: false,
       databaseType: '',
       dbLoading: true,
       dbLoadingMore: false,
-      tbLoading: true,
-      tbLoadingMore: false,
       skeletonThrottle: 0,
 
       database: [
@@ -345,29 +286,8 @@ export default {
   computed: {
     ...mapGetters('dataflow', ['processorNodeTypes', 'getCtor']),
 
-    searchFilter() {
-      return this.search.toLowerCase().trim()
-    },
-
-    filteredNodeTypes() {
-      const nodeTypes = this.searchItems
-      const filter = this.searchFilter
-
-      return nodeTypes.filter(item => {
-        return filter && item.name.toLowerCase().includes(filter)
-      })
-    },
-
-    noMore() {
-      return this.tbPage >= Math.ceil(this.tbTotal / 20)
-    },
-
     noDBMore() {
       return this.dbPage >= Math.ceil(this.dbTotal / 20)
-    },
-
-    disabled() {
-      return this.tbLoading || this.noMore || this.tbLoadingMore
     },
 
     disabledDBMore() {
@@ -443,13 +363,7 @@ export default {
       })
     },
     async init() {
-      this.tbLoading = true
-      const data = await this.loadDatabase()
-      if (data.length) {
-        this.handleSelectDB(data[0])
-      } else {
-        this.tbLoading = false
-      }
+      await this.loadDatabase()
     },
 
     getDbFilter() {
@@ -530,23 +444,9 @@ export default {
         if (item.database_type === 'kafka') {
           connectionUrl = item.kafkaBootstrapServers
         }
-        return {
-          id: item.id,
-          name: item.name,
-          type: 'database',
-          group: this.connectionType === 'source' ? 'input' : 'output',
-          constructor: 'Database',
-          databaseType: item.database_type,
-          connectionUrl,
-          attr: {
-            tableName: '',
-            databaseType: item.database_type,
-            connectionId: item.id,
-            connectionName: item.name,
-            connectionType: item.connection_type,
-            accessNodeProcessId: item.accessNodeProcessId
-          }
-        }
+        item.connectionUrl = connectionUrl
+        item.databaseType = item.database_type
+        return item
       })
 
       if (loadMore) {
@@ -572,104 +472,6 @@ export default {
       this.loadDatabase(true)
     },
 
-    getTableFilter() {
-      const filter = {
-        page: this.tbPage,
-        size: 20,
-        where: {
-          'source.id': this.activeConnection.id,
-          meta_type: {
-            in: ['collection', 'table', 'view']
-          },
-          is_deleted: false
-        },
-        fields: {
-          id: true,
-          original_name: true
-        },
-        order: ['original_name ASC']
-      }
-
-      const txt = this.tbSearchTxt.trim()
-      if (txt) {
-        filter.where.original_name = { like: txt, options: 'i' }
-      } else {
-        filter.where.original_name = { neq: '' }
-      }
-
-      return { filter: JSON.stringify(filter) }
-    },
-
-    /**
-     * 加载数据库
-     * @param loadMore 加载更多开关
-     * @returns {Promise<void>}
-     */
-    async loadDatabaseTable(loadMore) {
-      const connection = this.activeConnection
-      this.cancelSource?.cancel()
-      this.cancelSource = CancelToken.source()
-
-      if (loadMore) {
-        this.tbPage++
-        this.tbLoadingMore = true
-      } else {
-        this.tbLoading = true
-        this.tbPage = 1
-      }
-
-      let data
-      try {
-        data = await metadataApi.get(this.getTableFilter(), {
-          cancelToken: this.cancelSource.token
-        })
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.log('loadDatabaseTable', e)
-        return
-      }
-
-      const tables = data.items.map(tb => ({
-        id: tb.id,
-        name: tb.original_name,
-        type: 'table',
-        group: this.connectionType === 'source' ? 'input' : 'output',
-        constructor: 'Database',
-        databaseType: connection.databaseType,
-        attr: {
-          tableName: tb.original_name,
-          databaseType: connection.databaseType,
-          connectionId: connection.id,
-          connectionType: connection.attr.connectionType,
-          accessNodeProcessId: connection.attr.accessNodeProcessId
-          // accessNodeProcessId: '61935c9684103d36ce972daa-1fkjq3ar4'
-          // accessNodeProcessId: 'f9e0e041-a72f-4e3f-87ff-0354eed0af92'
-        }
-      }))
-
-      this.tbTotal = data.total
-
-      if (loadMore) {
-        tables.forEach(item => {
-          if (!this.tbIdMap[item.id]) {
-            this.tbList.push(item)
-            this.tbIdMap[item.id] = true
-          }
-        })
-        this.tbLoadingMore = false
-      } else {
-        this.scrollTopOfTableList()
-        this.tbList = tables
-        this.tbLoading = false
-        // 缓存所有tbId
-        this.tbIdMap = tables.reduce((map, item) => ((map[item.id] = true), map), {})
-      }
-    },
-
-    loadMoreTable() {
-      this.loadDatabaseTable(true)
-    },
-
     // 新增数据源保存
     saveConnection() {
       this.connectionFormDialog = false
@@ -680,24 +482,36 @@ export default {
       return require(`web-core/assets/icons/node/${item.databaseType}.svg`)
     },
 
-    getNodeHtml(n) {
-      return `
-        <div class="df-node" style="z-index: 11;pointer-events: none;">
-          <div class="df-node-icon">
-            <img draggable="false" style="width: 30px;height: 30px;vertical-align: middle;" src="static/editor/o-${n.icon}.svg">
-          </div>
-          <div class="df-node-text">${n.name}</div>
-        </div>
-      `
-    },
-
     async getDragDom() {
       await this.$nextTick()
       return document.getElementById('dragNode')
     },
 
     onStart(item) {
-      this.dragNodeType = item
+      const node = this.getNodeProps(item)
+      const getResourceIns = this.$store.getters['dataflow/getResourceIns']
+      const ins = getResourceIns(node)
+      Object.defineProperty(node, '__Ctor', {
+        value: ins,
+        enumerable: false
+      })
+      this.dragNode = node
+      this.dragStarting = true
+      this.dragMoving = false
+    },
+
+    onProcessorStart(item) {
+      const node = item
+      const getResourceIns = this.$store.getters['dataflow/getResourceIns']
+      if (!item.__Ctor) {
+        const ins = getResourceIns(node)
+        // 设置属性__Ctor不可枚举
+        Object.defineProperty(node, '__Ctor', {
+          value: ins,
+          enumerable: false
+        })
+      }
+      this.dragNode = node
       this.dragStarting = true
       this.dragMoving = false
     },
@@ -707,8 +521,8 @@ export default {
       this.$emit('move-node', ...arguments)
     },
 
-    onDrop() {
-      this.$emit('drop-node', ...arguments)
+    onDrop(item, position, rect) {
+      this.$emit('drop-node', this.dragNode, position, rect)
     },
 
     onStop() {
@@ -716,86 +530,35 @@ export default {
       this.dragMoving = false
     },
 
-    handleSelectDB(db) {
-      const lastId = this.activeConnection.id
-      this.tbSearchTxt = ''
-      this.activeConnection = db
-      lastId !== db.id && this.loadDatabaseTable()
-    },
-
-    handleTBInput: debounce(function () {
-      this.loadDatabaseTable()
-    }, 100),
-
     scrollTopOfDBList() {
       if (this.$refs.dbList) this.$refs.dbList.wrap.scrollTop = 0
-    },
-
-    scrollTopOfTableList() {
-      if (this.$refs.tbList) this.$refs.tbList.wrap.scrollTop = 0
-    },
-
-    handleTBBlur() {
-      if (!this.tbSearchTxt.trim()) {
-        this.showTBInput = false
-      }
-    },
-
-    handleShowTBInput() {
-      this.showTBInput = true
-      this.$nextTick(() => {
-        this.$refs.tbInput.focus()
-      })
-    },
-
-    handleBlur() {
-      if (!this.dbSearchTxt.trim()) {
-        this.showDBInput = false
-      }
-    },
-
-    handleShowDBInput() {
-      this.showDBInput = true
-      this.$nextTick(() => {
-        this.$refs.dbInput.focus()
-      })
     },
 
     handleDBInput: debounce(function () {
       this.loadDatabase()
     }, 100),
 
-    handleAddTable() {
-      this.dialogData.visible = true
-    },
-
-    handleSaveTable(name) {
-      const connection = this.activeConnection
-
-      this.$emit('add-table-as-node', {
-        name,
-        type: 'table',
-        group: 'data',
-        constructor: 'Table',
-        databaseType: connection.databaseType,
-        attr: {
-          tableName: name,
-          databaseType: connection.databaseType,
-          connectionId: connection.id
-        }
-      })
-    },
-
     updateDBScrollbar() {
       setTimeout(this.$refs.dbList.update, 350)
     },
 
-    updateTBScrollbar() {
-      setTimeout(this.$refs.tbList.update, 350)
-    },
-
     updateProcessorScrollbar() {
       setTimeout(this.$refs.processorList.update, 350)
+    },
+
+    getNodeProps(item) {
+      return {
+        name: item.name,
+        type: 'database',
+        databaseType: item.database_type,
+        connectionId: item.id,
+        attrs: {
+          isTarget: this.connectionType === 'target',
+          connectionName: item.name,
+          connectionType: item.connection_type,
+          accessNodeProcessId: item.accessNodeProcessId
+        }
+      }
     }
   }
 }

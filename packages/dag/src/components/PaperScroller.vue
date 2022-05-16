@@ -9,6 +9,8 @@
   >
     <div ref="scrollerBg" class="paper-scroller-background" :style="scrollerBgStyle">
       <div ref="paper" class="paper" :style="paperStyle">
+        <!--safari 低版本 增加-->
+        <!--<div class="paper-content-wrap" :style="contentWrapStyle" style="position: relative">-->
         <div class="paper-content-wrap" :style="contentWrapStyle">
           <slot></slot>
           <div class="nav-line" v-for="(l, i) in navLines" :key="`l-${i}`" :style="l"></div>
@@ -83,7 +85,7 @@ export default {
         x: 0,
         y: 0
       },
-      showMiniView: true
+      showMiniView: false
     }
   },
 

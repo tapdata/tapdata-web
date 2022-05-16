@@ -1,20 +1,16 @@
 import { NodeType } from './extends/NodeType'
+import { AllLocales } from './locales'
 
 export class Table extends NodeType {
-  constructor(node) {
-    super(node)
-
-    if (node.attr) {
-      const attr = Object.assign(this.attr, node.attr)
-      if (attr.formSchema) this.formSchema = attr.formSchema
-      if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
-    }
+  constructor() {
+    super()
   }
 
-  attr = {
-    minInputs: 0, // 最小输入个数
-    maxInputs: 1 // 最大输入个数
-  }
+  minInputs = 0 // 最小输入个数
+
+  maxInputs = 1 // 最大输入个数
+
+  type = 'table'
 
   group = 'data'
 
@@ -521,19 +517,6 @@ export class Table extends NodeType {
       }
     }
   }
-  /**
-   * 获取额外添加到节点上的属性
-   */
-  getExtraAttr() {
-    const { tableName, databaseType, connectionId, connectionType, accessNodeProcessId } = this.attr
-    return {
-      tableName,
-      databaseType,
-      connectionId,
-      attrs: {
-        connectionType,
-        accessNodeProcessId
-      }
-    }
-  }
+
+  locales = AllLocales.Table
 }

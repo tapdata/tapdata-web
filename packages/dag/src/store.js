@@ -5,8 +5,8 @@ import { debounce } from 'lodash'
 import { AddDagCommand } from './command'
 import { Path } from '@formily/path'
 import { observable } from '@formily/reactive'
-import { AllLocales } from './nodes/locales'
 import { setValidateLanguage } from '@formily/core'
+import { CustomProcessor } from './nodes/extends/CustomProcessor'
 
 const taskApi = new Task()
 const customNodeApi = new CustomNode()
@@ -47,15 +47,14 @@ const langMap = {
 const getState = () => ({
   stateIsDirty: false, // 状态是否被污染，标识数据改变
   stateIsReadonly: false, // 状态是否被污染，标识数据改变
+  allResourceIns: [],
   nodeTypes: [], // 所有节点类型
   nodeErrorState: {}, // 节点错误状态
   processorNodeTypes: [
     {
       icon: 'javascript',
       name: 'JavaScript',
-      type: 'js_processor',
-      constructor: 'JavaScript',
-      locales: AllLocales.JavaScript
+      type: 'js_processor'
     },
     // {
     //   icon: 'field-processor',
@@ -66,52 +65,42 @@ const getState = () => ({
     {
       icon: 'aggregator',
       name: '聚合',
-      type: 'aggregation_processor',
-      constructor: 'Aggregate',
-      locales: AllLocales.Aggregate
+      type: 'aggregation_processor'
     },
     {
       icon: 'row-filter',
       name: 'Row Filter',
-      type: 'row_filter_processor',
-      constructor: 'RowFilter'
+      type: 'row_filter_processor'
     },
     {
       icon: 'join',
       name: '连接',
-      type: 'join_processor',
-      constructor: 'Join',
-      locales: AllLocales.Join
+      type: 'join_processor'
     },
     {
       icon: 'merge_table',
       name: '主从合并',
-      type: 'merge_table_processor',
-      constructor: 'MergeTable'
+      type: 'merge_table_processor'
     },
     {
       icon: 'field_calc',
       name: '字段计算',
-      type: 'field_calc_processor',
-      constructor: 'FieldCalc'
+      type: 'field_calc_processor'
     },
     {
       icon: 'field_mod_type',
       name: '类型修改',
-      type: 'field_mod_type_processor',
-      constructor: 'FieldModType'
+      type: 'field_mod_type_processor'
     },
     {
       icon: 'field_rename',
       name: '字段改名',
-      type: 'field_rename_processor',
-      constructor: 'FieldRename'
+      type: 'field_rename_processor'
     },
     {
       icon: 'field_add_del',
       name: '增删字段',
-      type: 'field_add_del_processor',
-      constructor: 'FieldAddDel'
+      type: 'field_add_del_processor'
     }
     // {
     //   icon: 'joint-cache',
@@ -192,6 +181,11 @@ const getters = {
     if (foundType === undefined) return null
 
     return foundType
+  },
+
+  // 节点资源实例
+  getResourceIns: state => node => {
+    return state.allResourceIns.find(ins => ins.selector(node))
   },
 
   dag: state => state.dag,
@@ -297,21 +291,36 @@ const actions = {
 
   async loadCustomNode({ commit }) {
     const { items } = await customNodeApi.get()
+    const insArr = []
     commit(
       'addProcessorNode',
       items.map(item => {
-        return {
+        const node = {
           icon: 'custom-node',
           name: item.name,
           type: 'custom_processor',
-          constructor: 'CustomProcessor',
-          attr: {
-            customNodeId: item.id,
-            formSchema: item.formSchema
+          attrs: {
+            customNodeId: item.id
           }
         }
+
+        const ins = new CustomProcessor({
+          customNodeId: item.id,
+          formSchema: item.formSchema
+        })
+
+        insArr.push(ins)
+
+        // 设置属性__Ctor不可枚举
+        Object.defineProperty(node, '__Ctor', {
+          value: ins,
+          enumerable: false
+        })
+
+        return node
       })
     )
+    commit('addResourceIns', insArr)
     // console.log('loadCustomNode', data)
   }
 }
@@ -373,6 +382,10 @@ const mutations = {
 
   setCtorTypes(state, ctorTypes) {
     Vue.set(state, 'ctorTypes', ctorTypes)
+  },
+
+  addResourceIns(state, allResourceIns) {
+    state.allResourceIns.push(...allResourceIns)
   },
 
   // 设置激活节点
