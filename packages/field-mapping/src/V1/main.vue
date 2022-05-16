@@ -329,7 +329,7 @@ export default {
     //   }
     // },
     async intiFieldMappingTableData(row) {
-      if (!this.$refs.fieldMappingDom) return //打开弹窗才能请求弹窗列表数据
+      if (!this.$refs.fieldMappingDom || !row) return //打开弹窗才能请求弹窗列表数据
       let source = await this.$api('MetadataInstances').originalData(row.sourceQualifiedName)
       source = source.data && source.data.length > 0 ? source.data[0].fields : []
       let target = await this.$api('MetadataInstances').originalData(row.sinkQulifiedName, '&isTarget=true')
