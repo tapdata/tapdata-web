@@ -16,7 +16,7 @@
               :class="['flex', 'align-items-center', 'mr-6', 'mt-4']"
             >
               <VIcon size="12" class="v-icon">{{ item.icon }}</VIcon>
-              <span class="ml-1">{{ item.label }}</span>
+              <span class="ml-1">{{ item.label }}: </span>
               <span>{{ task[item.key] }}</span>
             </div>
             <div class="mr-6 mt-4 flex align-items-center">
@@ -83,22 +83,19 @@
     </div>
     <div class="sub-task flex-fill mt-6 px-6 py-2 bg-white">
       <ElTabs v-model="activeTab" class="dashboard-tabs">
-        <ElTabPane label="子任务" name="subTask">
+        <ElTabPane :label="$t('task_preview_subtasks')" name="subTask">
           <div slot="label">
             <span class="mr-2">{{ $t('task_details_sub_task') }}</span>
-            <ElTooltip
-              placement="top"
-              content="在Tapdata中你创建任务里的每个目标节点均会被定义为子任务 您可以在下方查看每个子任务详情"
-            >
+            <ElTooltip placement="top" :content="$t('task_info_subtasks_tip')">
               <VIcon class="color-primary" size="14">info</VIcon>
             </ElTooltip>
           </div>
           <Subtask v-if="activeTab === 'subTask'" :task="task"></Subtask>
         </ElTabPane>
-        <ElTabPane label="连接" name="connect">
+        <ElTabPane :label="$t('task_monitor_run_connection')" name="connect">
           <Connection v-if="activeTab === 'connect'" :ids="connectionIds" @change="loadData"></Connection>
         </ElTabPane>
-        <ElTabPane label="历史运行记录" name="history">
+        <ElTabPane :label="$t('task_monitor_history_run_record')" name="history">
           <History v-if="activeTab === 'history' && task.id" :ids="[task.id]" :operations="operations"></History>
         </ElTabPane>
       </ElTabs>
@@ -131,39 +128,41 @@ export default {
         {
           key: 'creator',
           icon: 'account-fill',
-          label: '创建人：'
+          label: this.$t('task_monitor_founder')
         },
         {
           key: 'updatedTime',
           icon: 'time-fill',
-          label: '修改时间：'
+          label: this.$t('task_monitor_change_time')
         },
         {
           key: 'type',
           icon: 'menu',
-          label: '同步类型：'
+          label: this.$t('task_monitor_sync_type')
         },
         {
           key: 'type',
           icon: 'menu',
-          label: '增量滞后:',
+          label: this.$t('task_monitor_incremental_lag'),
           show: 'cdc'
         }
       ],
       ouputItems: [
         {
           key: 'totalOutput',
-          label: '总输出'
+          label: this.$t('task_monitor_total_input')
         },
         {
           key: 'totalInput',
-          label: '总输入'
+          label: this.$t('task_monitor_total_output')
         }
       ],
       syncTypeMap: {
-        initial_sync: '全量',
-        cdc: '增量',
-        'initial_sync+cdc': '全量+增量'
+        syncType: {
+          initial_sync: this.$t('dataFlow.initial_sync'),
+          cdc: this.$t('dataFlow.cdc'),
+          'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
+        }
       },
       list: [],
       loadingObj: {
@@ -176,7 +175,7 @@ export default {
       pieData: [],
       pieOptions: {
         title: {
-          text: '任务状态',
+          text: this.$t('task_status'),
           left: 'center',
           top: 'center',
           textStyle: {

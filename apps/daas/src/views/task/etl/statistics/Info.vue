@@ -37,7 +37,7 @@
         v-if="stagesItems.length"
         v-model="selectedStage"
         :items="stagesItems"
-        inner-label="节点"
+        :inner-label="$t('task_info_node')"
         none-border
         last-page-text=""
         clearable
@@ -48,7 +48,7 @@
       <SelectList
         v-model="selectedTime"
         :items="selectedTimeItems"
-        inner-label="周期"
+        :inner-label="$t('task_info_cycle')"
         none-border
         last-page-text=""
         :placeholder="$t('task_info_select_period')"
@@ -65,7 +65,7 @@
       <SelectList
         v-model="selectedRate"
         :items="selectedRateItems"
-        inner-label="频率"
+        :inner-label="$t('task_info_frequency')"
         none-border
         last-page-text=""
         :placeholder="$t('task_info_select_frequency')"

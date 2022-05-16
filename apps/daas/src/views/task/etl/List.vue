@@ -379,9 +379,9 @@ export default {
       taskSettingsDialog: false, //任务调度设置弹窗开关
 
       syncType: {
-        initial_sync: this.$t('dataFlow.initial_sync'),
-        cdc: this.$t('dataFlow.cdc'),
-        'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
+        initial_sync: this.$t('task_info_initial_sync'),
+        cdc: this.$t('task_info_initial_cdc'),
+        'initial_sync+cdc': this.$t('task_info_initial_sync') + '+' + this.$t('task_info_initial_cdc')
       },
       dataFlowId: '',
 
