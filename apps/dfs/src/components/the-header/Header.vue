@@ -79,7 +79,7 @@
   </ElHeader>
 </template>
 <script>
-import Cookie from '@daas/shared/src/cookie'
+import Cookie from '@tap/shared/src/cookie'
 import NotificationPopover from '@/views/workbench/NotificationPopover'
 // import ws from '../../plugins/ws.js';
 import VIcon from '@/components/VIcon'
