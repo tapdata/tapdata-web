@@ -4,7 +4,7 @@
       <div class="container-item border-item flex pb-5">
         <div class="pt-2">
           <div class="img-box">
-            <img :src="getImgByType(connection.database_type)" />
+            <img :src="getConnectionIcon()" />
           </div>
         </div>
         <div class="ml-4">
@@ -85,7 +85,7 @@
 import VIcon from '@/components/VIcon'
 import StatusTag from '@/components/StatusTag'
 import Drawer from '@/components/Drawer'
-import { CONFIG_MODEL } from './util'
+import { CONFIG_MODEL, getConnectionIcon } from './util'
 
 export default {
   name: 'DetailsDrawer',
@@ -274,6 +274,13 @@ export default {
     loadList(type) {
       let whiteList = ['kafka', 'mq']
       this.list = whiteList.includes(type) ? CONFIG_MODEL[type] : CONFIG_MODEL['default']
+    },
+    getConnectionIcon() {
+      const { connection } = this
+      if (!connection) {
+        return
+      }
+      return getConnectionIcon(connection)
     }
   }
 }
