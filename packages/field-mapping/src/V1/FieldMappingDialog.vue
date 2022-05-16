@@ -125,9 +125,11 @@
             </template>
           </ElTableColumn>
           <ElTableColumn :label="$t('dag_dialog_field_mapping_source_scale')" prop="scale" width="100"></ElTableColumn>
+          <ElTableColumn :label="$t('meta_table_default')" prop="default_value" width="100"></ElTableColumn>
           <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')" width="260">
             <template slot-scope="scope">
               <div
+                class="cursor-pointer"
                 v-if="!scope.row.is_deleted && modeMapping[transform.mode]['field_rename']"
                 @click="edit(scope.row, 'field_name')"
               >
@@ -141,6 +143,7 @@
           <ElTableColumn :label="$t('dag_dialog_field_mapping_target_type')" width="150">
             <template slot-scope="scope">
               <div
+                class="cursor-pointer"
                 v-if="!scope.row.is_deleted && modeMapping[transform.mode]['field_type']"
                 @click="edit(scope.row, 'data_type')"
               >
@@ -156,6 +159,7 @@
           <ElTableColumn :label="$t('dag_dialog_field_mapping_target_precision')" width="150">
             <template slot-scope="scope">
               <div
+                class="cursor-pointer"
                 v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && modeMapping[transform.mode]['precision']"
                 @click="edit(scope.row, 'precision')"
               >
@@ -170,6 +174,7 @@
           <ElTableColumn :label="$t('dag_dialog_field_mapping_target_scale')" width="100">
             <template slot-scope="scope">
               <div
+                class="cursor-pointer"
                 v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit && modeMapping[transform.mode]['scale']"
                 @click="edit(scope.row, 'scale')"
               >
@@ -181,9 +186,18 @@
               </div>
             </template>
           </ElTableColumn>
+          <ElTableColumn :label="$t('meta_table_default')" width="100">
+            <template slot-scope="scope">
+              <div class="cursor-pointer" @click="edit(scope.row, 'default_value')">
+                <span class="field-mapping-table__default_value">{{ scope.row.t_default_value }}</span>
+                <i class="icon el-icon-edit-outline"></i>
+              </div>
+            </template>
+          </ElTableColumn>
           <ElTableColumn
             :label="$t('dag_dialog_field_mapping_operate')"
             width="80"
+            fixed="right"
             v-if="modeMapping[transform.mode]['field_table_ops']"
           >
             <template slot-scope="scope">
@@ -264,6 +278,11 @@
           </div>
         </div>
       </div>
+      <ElInput
+        type="textarea"
+        v-model="editValueType[currentOperationType]"
+        v-if="['default_value'].includes(currentOperationType)"
+      ></ElInput>
       <span slot="footer" class="dialog-footer">
         <ElButton @click="handleClose()">{{ $t('button_cancel') }}</ElButton>
         <ElButton type="primary" @click="editSave()">{{ $t('button_confirm') }}</ElButton>
@@ -421,13 +440,15 @@ export default {
         field_name: '',
         data_type: '',
         precision: '',
-        scale: ''
+        scale: '',
+        default_value: ''
       },
       titleType: {
         field_name: this.$t('dag_dialog_field_mapping_tittle_field_name'),
         data_type: this.$t('dag_dialog_field_mapping_tittle_data_type'),
         precision: this.$t('dag_dialog_field_mapping_tittle_precision'),
-        scale: this.$t('dag_dialog_field_mapping_tittle_scale')
+        scale: this.$t('dag_dialog_field_mapping_tittle_scale'),
+        default_value: this.$t('dag_dialog_field_mapping_tittle_value')
       },
       page: {
         size: 10,
@@ -907,6 +928,7 @@ export default {
     edit(row, type) {
       this.dialogVisible = true
       this.editValueType[type] = row[`t_${type}`]
+
       this.currentOperationType = type
       this.currentOperationData = row
       //初始化
@@ -1054,7 +1076,8 @@ export default {
         field_name: '',
         data_type: '',
         precision: '',
-        scale: ''
+        scale: '',
+        default_value: ''
       }
     },
     //字段删除
@@ -1331,14 +1354,13 @@ export default {
       border-right: 1px solid #f2f2f2;
       overflow-y: auto;
       li {
-        height: 93px;
+        // height: 93px;
         background: #ffffff;
         box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
         border-radius: 4px;
         border-bottom: 1px solid #f2f2f2;
         display: flex;
-        padding-top: 16px;
-        padding-left: 10px;
+        padding: 16px 0 10px 10px;
         &:hover {
           background: rgba(44, 101, 255, 0.05);
           cursor: pointer;
@@ -1397,6 +1419,14 @@ export default {
     }
     .color-darkorange {
       color: darkorange;
+    }
+    .field-mapping-table__default_value {
+      display: inline-block;
+      max-width: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      line-height: 9px;
     }
   }
 }

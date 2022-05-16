@@ -47,10 +47,10 @@
         </ElButton>
       </div>
       <div slot="operation">
-        <!-- <el-button v-readonlybtn="'API_data_time_zone_editing'" class="btn" size="mini" @click="timeZoneDialog = true">
+        <!-- <ElButton v-readonlybtn="'API_data_time_zone_editing'" class="btn" size="mini" @click="timeZoneDialog = true">
           <span v-if="save_timezone === 0 || save_timezone === '0'">{{ $t('dataExplorer_zone') }}</span>
           <span v-else>{{ timezoneLabel }}</span>
-        </el-button> -->
+        </ElButton> -->
         <ElSelect
           v-model="without_timezone"
           size="mini"
@@ -63,16 +63,16 @@
         >
           <ElOption v-for="item in timezones" :label="item.label" :value="item.value" :key="item.value"></ElOption>
         </ElSelect>
-        <el-button v-readonlybtn="'API_data_explorer_export'" class="btn" size="mini" @click="exportDialog = true">
+        <ElButton v-readonlybtn="'API_data_explorer_export'" class="btn" size="mini" @click="exportDialog = true">
           <span>{{ $t('button_export') }}</span>
-        </el-button>
-        <el-button class="btn" size="mini" @click="showFilterDialog = true">
+        </ElButton>
+        <ElButton class="btn" size="mini" @click="showFilterDialog = true">
           <span>{{ $t('dataExplorer_query') }}</span>
-        </el-button>
-        <el-button v-readonlybtn="'API_doc_&_test'" class="btn" size="mini" @click="openDocument">
+        </ElButton>
+        <ElButton v-readonlybtn="'API_doc_&_test'" class="btn" size="mini" @click="openDocument">
           <span>{{ $t('dataExplorer_document') }}</span>
-        </el-button>
-        <el-button
+        </ElButton>
+        <ElButton
           v-if="enableEdit"
           v-readonlybtn="'API_creation'"
           class="btn btn-create"
@@ -81,7 +81,7 @@
           @click="openCreate"
         >
           <span>{{ $t('button_create') }}</span>
-        </el-button>
+        </ElButton>
       </div>
 
       <!-- 列表项 -->
@@ -111,24 +111,24 @@
                 size="mini"
               />
               <div>
-                <el-button @click="editOk(scope.row, item.text, item.type)" class="btn-text" type="text" size="small">
+                <ElButton @click="editOk(scope.row, item.text, item.type)" class="btn-text" type="text" size="small">
                   {{ $t('dataQuality.save') }}
-                </el-button>
-                <el-button @click="editCancel(scope.row, item.text)" class="btn-text" type="text" size="small">
+                </ElButton>
+                <ElButton @click="editCancel(scope.row, item.text)" class="btn-text" type="text" size="small">
                   {{ $t('dataQuality.cancel') }}
-                </el-button>
+                </ElButton>
               </div>
             </div>
           </template>
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('column_operation')" min-width="180" fixed="right">
+      <el-table-column :label="$t('column_operation')" width="220" fixed="right">
         <template slot-scope="scope">
-          <el-button v-if="!downloadFileUrl" size="mini" type="text" @click="downloadFile(scope.row)">
+          <ElButton v-if="downloadFileUrl" size="mini" type="text" @click="downloadFile(scope.row)">
             {{ $t('button_download') }}
-          </el-button>
-          <el-button
+          </ElButton>
+          <ElButton
             v-if="enableTag"
             v-readonlybtn="'API_data_explorer_tagging'"
             size="mini"
@@ -136,17 +136,17 @@
             @click="settingTag(scope.row)"
           >
             {{ $t('dataExplorer_tag_title') }}
-          </el-button>
-          <el-button
+          </ElButton>
+          <ElButton
             v-if="enableEdit"
             v-readonlybtn="'API_data_explorer_deleting'"
             size="mini"
             type="text"
             @click="remove(scope.row)"
-            >{{ $t('button_delete') }}</el-button
+            >{{ $t('button_delete') }}</ElButton
           >
           <el-tooltip class="item" effect="dark" :content="$t('api_server_download_API_Server_config')" placement="top">
-            <el-button
+            <ElButton
               v-if="scope.row['dk_new_filename'] && scope.row['dk_orginal_filename'] && scope.row['dk_filepath']"
               size="mini"
               type="text"
@@ -157,7 +157,7 @@
                   'metadata.dk_new_filename': scope.row['dk_new_filename']
                 })
               "
-              >{{ $t('api_server_download') }}</el-button
+              >{{ $t('api_server_download') }}</ElButton
             >
           </el-tooltip>
         </template>
@@ -186,8 +186,8 @@
         <el-option v-for="item in timezones" :label="item.label" :value="item.value" :key="item.value"></el-option>
       </el-select>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="timeZoneDialog = false" size="small">{{ $t('message.cancel') }}</el-button>
-        <el-button type="primary" @click="saveTimeZone()" size="small">{{ $t('message.confirm') }}</el-button>
+        <ElButton @click="timeZoneDialog = false" size="small">{{ $t('message.cancel') }}</ElButton>
+        <ElButton type="primary" @click="saveTimeZone()" size="small">{{ $t('message.confirm') }}</ElButton>
       </span>
     </el-dialog> -->
     <!-- 导出 -->
@@ -199,9 +199,9 @@
       :visible.sync="exportDialog"
     >
       <span class="pr-5">{{ $t('dataExplorer_type') }}:</span>
-      <el-button size="mini" @click="exportData('csv')">CSV</el-button>
-      <el-button size="mini" @click="exportData('excel')">Excel</el-button>
-      <el-button size="mini" @click="exportData('json')">JSON</el-button>
+      <ElButton size="mini" @click="exportData('csv')">CSV</ElButton>
+      <ElButton size="mini" @click="exportData('excel')">Excel</ElButton>
+      <ElButton size="mini" @click="exportData('json')">JSON</ElButton>
     </el-dialog>
     <!-- 查询 -->
     <BrowseQuery
@@ -232,9 +232,9 @@
         <li v-for="(item, index) in jsonDocHint" :key="index">{{ item }}</li>
       </ul>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="openCreateDialog = false" size="mini">{{ $t('dialog_button_cancel') }}</el-button>
-        <el-button @click="formatJson()" size="mini">{{ $t('dataExplorer_format') }}</el-button>
-        <el-button type="primary" @click="createSave()" size="mini">{{ $t('button_confirm') }}</el-button>
+        <ElButton @click="openCreateDialog = false" size="mini">{{ $t('dialog_button_cancel') }}</ElButton>
+        <ElButton @click="formatJson()" size="mini">{{ $t('dataExplorer_format') }}</ElButton>
+        <ElButton type="primary" @click="createSave()" size="mini">{{ $t('button_confirm') }}</ElButton>
       </span>
     </el-dialog>
   </section>
@@ -275,14 +275,15 @@ export default {
       jsonDocHint: [], // json错误信息
       apiClient: null,
       downloadFileUrl: '',
-      enableTag: true,
+      enableTag: false,
       editTag: false, // 设置标签按钮
-      enableEdit: true, // 删除按钮显示
+      enableEdit: false, // 删除按钮显示
       apiType: '',
       intervalId: 0,
       queryTime: 0, // 查询使用
       renderTime: 0, // 渲染使用
       aliasNameObj: {}, // 存储表头别名，切换api时改变
+      pkName: '', // 存储主键名称
       queryBuildKey: 1, // 自定义查询字段组件key
       condition: {}, //查询条件
       save_timezone: 0,
@@ -402,19 +403,20 @@ export default {
       for (let i in item.isshow) {
         item.isshow[i] = false
       }
-
-      item.istrue = true
-      item.isshow[key] = true
-      item.isspancen[key] = false
-      this.$nextTick(() => {
-        if (this.$refs.editInput && this.$refs.editInput.length) {
-          this.$refs.editInput.forEach(v => {
-            v.focus()
-          })
-        } else {
-          this.$refs.editInput && this.$refs.editInput.focus()
-        }
-      })
+      if (item.isPrimaryKey.pkName !== key) {
+        item.istrue = true
+        item.isshow[key] = true
+        item.isspancen[key] = false
+        this.$nextTick(() => {
+          if (this.$refs.editInput && this.$refs.editInput.length) {
+            this.$refs.editInput.forEach(v => {
+              v.focus()
+            })
+          } else {
+            this.$refs.editInput && this.$refs.editInput.focus()
+          }
+        })
+      }
     },
     // 获取API Server下拉值
     getApiServer() {
@@ -578,10 +580,11 @@ export default {
       let selectCollection = selectCollections.length ? selectCollections[0] : {}
 
       let apiId = selectCollection.apiId || ''
+      _this.downloadFileUrl = selectCollection.downloadFileUrl || ''
       _this.apiClient.setCollection(selectCollection)
       // 根据当前表获取表api浏览表格头
-      let headers = await _this.apiClient.getHeaders(selectCollection.collection, selectCollection.operationName)
 
+      let headers = await _this.apiClient.getHeaders(selectCollection.collection, selectCollection.operationName)
       if (headers?.length)
         headers.forEach(col => {
           if (col) _this.tableHeader.push(col)
@@ -605,30 +608,26 @@ export default {
             }
           }
         })
-
       _this.enableEdit = selectCollection.type === 'preset'
       _this.apiId = apiId
 
-      let modulesParmas = {
-        filter: {
-          field: {
-            _id: true,
-            fields: true
-          },
-          where: {
-            _id: apiId
-          }
+      let filter = {
+        field: {
+          _id: true,
+          fields: true
+        },
+        where: {
+          _id: apiId
         }
       }
       this.$api('modules')
-        .get(modulesParmas)
+        .get({ filter: JSON.stringify(filter) })
         .then(res => {
           if (res?.data?.length) {
             let field_alias = {}
             res.data[0].fields.forEach(v => {
               field_alias[v.field_name] = v.field_alias || ''
             })
-
             _this.enableTag = _this.enableEdit && field_alias.hasOwnProperty('__tapd8')
           }
           _this.table.fetch()
@@ -747,7 +746,8 @@ export default {
       let _this = this
       let text = String(value)
       let newValue = ''
-      let id = item['_id'] || this.editDocId
+      let { pkValue } = item.isPrimaryKey
+      let id = pkValue || this.editDocId
       _this.editDocId = item['_id']
       if (['float', 'double', 'short', 'bigDecimal', 'integer', 'long', 'number'].includes(type)) {
         if (!/^\d+$/.test(_this.editValue)) {
@@ -774,7 +774,6 @@ export default {
         newValue = _this.editValue
       }
       _this.jsonDocHint = []
-
       let result = await this.apiClient.updateById(id, {
         [value]: newValue
       })
@@ -1060,7 +1059,9 @@ export default {
         return Math.floor(time / 10) / 100
       }
       this.classifyTag = tags
-      this.getCollections(tags)
+      if (tags) {
+        this.getCollections(tags)
+      }
 
       if (_this.condition && Object.keys(_this.condition)?.length) {
         where = this.condition
@@ -1088,7 +1089,11 @@ export default {
                 if (v.alias_name) {
                   obj[v.field_name] = v.alias_name
                 }
+                if (v.primary_key_position) {
+                  this.$set(this, 'pkName', v.field_name)
+                }
               })
+
               this.$set(this, 'aliasNameObj', obj)
             }
           })
@@ -1118,9 +1123,10 @@ export default {
                   let value = record[v]
                   let h = {
                     show: true,
-                    text: this.aliasNameObj[v] || v,
+                    text: _this.aliasNameObj[v] || v,
                     type: typeMap[Object.prototype.toString.call(value)],
-                    value: v
+                    value: v,
+                    pkName: record[_this.pkName]
                   }
                   let header = oldHeaders.find(it => it.value === v)
                   if (header) {
@@ -1135,8 +1141,13 @@ export default {
                   record[v] = _this.timeZoneConversion(time)
                 }
               })
+              let isPrimaryKey = {
+                pkName: _this.pkName,
+                pkValue: record[_this.pkName]
+              }
               this.$set(record, 'isshow', {})
               this.$set(record, 'isspancen', {})
+              this.$set(record, 'isPrimaryKey', isPrimaryKey)
               for (let i in record) {
                 record.isshow[i] = false
                 record.isspancen[i] = true
@@ -1445,7 +1456,7 @@ export default {
         font-size: 16px;
         &:hover,
         &.is-plain:focus:hover {
-          border-color: #2c65ff;
+          border-color: map-get($color, primary);
           background-color: #f5f6f7;
         }
       }
@@ -1462,7 +1473,7 @@ export default {
       span {
         padding: 0 50px 0 10px;
         font-size: 12px;
-        color: #606266;
+        color: map-get($fontColor, normal);
       }
     }
     .timezone {

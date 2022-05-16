@@ -362,7 +362,7 @@ export default {
             .post(params)
             .then(res => {
               if (res) {
-                this.$message.success(this.$t('message.saveOK'))
+                this.$message.success(this.$t('message_save_ok'))
                 this.$router.back()
               }
             })
@@ -384,7 +384,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #fafafa;
+  background: map-get($bgColor, normal);
   .btn {
     min-width: 80px;
   }
@@ -394,7 +394,7 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background-color: map-get($bgColor, white);
   box-shadow: 0px 0px 3px 0px #cccccc;
   overflow: hidden;
 

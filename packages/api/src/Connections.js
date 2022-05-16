@@ -1,7 +1,6 @@
-import axios from './axios'
-import PublicAPI from './PublicApi'
+import Http from './http'
 
-export class Connections extends PublicAPI {
+export class Connections extends Http {
   constructor() {
     super('/api/Connections')
   }
@@ -10,35 +9,36 @@ export class Connections extends PublicAPI {
     for (let item in params) {
       url += item + '=' + params[item] + '&'
     }
-    return axios.get(url)
+    return this.axios.get(url).then(this.useData)
   }
   copy(id, params) {
-    return axios.post(this.url + '/' + id + '/copy', params)
+    return this.axios.post(this.url + '/' + id + '/copy', params).then(this.useData)
   }
   deleteConnection(id, name) {
-    return axios.delete(`${this.url}/${id}?name=${name}`)
+    return this.axios.delete(`${this.url}/${id}?name=${name}`).then(this.useData)
   }
   batchUpdateListtags(params) {
-    return axios.patch(`${this.url}/batchUpdateListtags`, params)
+    return this.axios.patch(`${this.url}/batchUpdateListtags`, params).then(this.useData)
   }
   check(id, params) {
-    return axios.patch(`${this.url}/${id}`, params)
+    return this.axios.patch(`${this.url}/${id}`, params).then(this.useData)
   }
   patchId(params) {
     let id = params._id || params.id
     delete params._id
     delete params.id
-    return axios.patch(`${this.url}/${id}`, params)
+    return this.axios.patch(`${this.url}/${id}`, params).then(this.useData)
   }
   update(params) {
-    return axios.post(`${this.url}/update?where=` + encodeURIComponent(JSON.stringify({ _id: params.id })), params)
+    return this.axios
+      .post(`${this.url}/update?where=` + encodeURIComponent(JSON.stringify({ _id: params.id })), params)
+      .then(this.useData)
   }
   getNoSchema(id) {
     let url = `${this.url}/${id}` + '?noSchema=1'
-    return axios.get(url)
+    return this.axios.get(url).then(this.useData)
   }
-
   getAllowDatabaseType() {
-    return axios.get(`${this.url}/databaseType`)
+    return this.axios.get(`${this.url}/databaseType`).then(this.useData)
   }
 }

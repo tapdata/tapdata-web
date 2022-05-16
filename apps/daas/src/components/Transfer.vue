@@ -542,7 +542,7 @@ export default {
   }
 
   .tip {
-    color: #999;
+    color: map-get($fontColor, light);
     font-size: 12px;
     margin-bottom: 10px;
   }
@@ -592,7 +592,7 @@ export default {
 
           .nameStyle {
             display: none;
-            color: #48b6e2;
+            color: map-get($color, primary);
             float: right;
             font-size: 12px;
             padding-left: 10px;
@@ -610,7 +610,7 @@ export default {
       .el-transfer-panel__header {
         height: 28px;
         line-height: 28px;
-        background: #f5f5f5;
+        background: map-get($bgColor, main);
 
         .el-checkbox {
           height: 28px;
@@ -632,7 +632,7 @@ export default {
 
       .el-transfer__button.is-disabled,
       .el-transfer__button.is-disabled:hover {
-        background-color: #f5f5f5;
+        background-color: map-get($bgColor, main);
       }
     }
 
@@ -656,7 +656,7 @@ export default {
   }
 
   .el-transfer-panel__item:hover {
-    color: #666;
+    color: map-get($fontColor, light);
   }
 
   .transfer {
@@ -699,7 +699,7 @@ export default {
 
           .nameStyle {
             display: none;
-            color: #48b6e2;
+            color: map-get($color, lprimary);
             float: right;
             font-size: 12px;
             padding-left: 10px;
@@ -717,7 +717,7 @@ export default {
       .el-transfer-panel__header {
         height: 28px;
         line-height: 28px;
-        background: #f5f5f5;
+        background: map-get($bgColor, disable) !important;
 
         .el-checkbox {
           height: 28px;
@@ -739,7 +739,7 @@ export default {
 
       .el-transfer__button.is-disabled,
       .el-transfer__button.is-disabled:hover {
-        background-color: #f5f5f5;
+        background-color: map-get($bgColor, main);
       }
     }
     .field-transfer__input {

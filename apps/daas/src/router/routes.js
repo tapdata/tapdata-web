@@ -2,11 +2,11 @@ import Parent from './Parent.vue'
 const MigrateForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/migrate/form/Form.vue')
 const MigrateDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/migrate/details/Index.vue')
 const DagEditor = async () => {
-  const { Editor } = await import('@daas/dag')
+  const { Editor } = await import('@tap/dag')
   return Editor
 }
 const NodeEditor = async () => {
-  const { Editor } = await import('@daas/node-design')
+  const { Editor } = await import('@tap/node-design')
   return Editor
 }
 export default [

@@ -1,4 +1,4 @@
-import { requestIdle } from '@daas/shared'
+import { requestIdle } from '@tap/shared'
 import { Path } from '@formily/path'
 import { MouseDoubleClickEvent, MouseClickEvent } from '../events'
 

@@ -85,7 +85,7 @@ export default {
   .setting-warp-box {
     flex: 1 1 auto;
     border-radius: 4px;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     overflow: hidden;
     .setting-center {
       height: 100%;
@@ -95,7 +95,7 @@ export default {
       height: 100%;
       .setting-left-sidebar {
         padding-top: 16px;
-        border-right: 1px solid #f2f2f2;
+        border-right: 1px solid map-get($borderColor, light);
         width: 200px;
         // .title {
         //   height: 14px;
@@ -111,10 +111,10 @@ export default {
             line-height: 44px;
             padding-left: 20px;
             cursor: pointer;
-            color: #4e5969;
+            color: map-get($fontColor, light);
             ::v-deep {
               .iconfont {
-                color: #4e5969;
+                color: map-get($fontColor, light);
               }
             }
           }
@@ -122,7 +122,7 @@ export default {
             background: rgba(44, 101, 255, 0.05);
             ::v-deep {
               .iconfont {
-                color: #2c65ff;
+                color: map-get($color, primary);
               }
             }
           }

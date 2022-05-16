@@ -77,7 +77,7 @@ export default {
 
 <style lang="scss">
 .advance-setting {
-  color: #409eff;
+  color: map-get($color, primary);
   cursor: pointer;
 }
 .sp-setting {

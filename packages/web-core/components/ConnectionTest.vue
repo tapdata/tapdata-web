@@ -34,6 +34,7 @@
       </div>
     </div>
     <el-table
+      ref="table"
       :data="testData.testLogs"
       style="width: 100%"
       class="test-block"
@@ -190,6 +191,9 @@ export default {
           testData['status'] = data.status
           this.status = data.status
         }
+        this.$nextTick(() => {
+          this.$refs.table.doLayout()
+        })
         this.$emit('receive', testData)
       }
     },

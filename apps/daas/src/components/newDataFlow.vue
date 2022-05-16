@@ -240,7 +240,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-$color: #999999;
+$color: map-get($fontColor, slight);
 .simple-scene {
   .create {
     .create-col {

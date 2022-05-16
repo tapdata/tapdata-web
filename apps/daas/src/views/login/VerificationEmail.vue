@@ -30,7 +30,7 @@
 <script>
 import LoginPage from './LoginPage'
 import factory from '@/api/factory'
-import Cookie from '@daas/shared/src/cookie'
+import Cookie from '@tap/shared/src/cookie'
 const usersModel = factory('users')
 
 const LanguagesKey = {
@@ -183,11 +183,11 @@ export default {
             border: none;
           }
           &:hover {
-            color: #333;
+            color: map-get($fontColor, dark);
           }
         }
         .bold {
-          color: #333333;
+          color: map-get($fontColor, dark);
           font-weight: 500;
         }
       }
@@ -215,7 +215,7 @@ export default {
     }
     .text {
       font-size: 14px;
-      color: #666;
+      color: map-get($fontColor, light);
       p {
         font-size: 18px;
         user-select: none;
@@ -230,7 +230,7 @@ export default {
           color: map-get($color, primary);
           cursor: pointer;
           i {
-            color: #666;
+            color: map-get($fontColor, light);
           }
         }
         .noClick {

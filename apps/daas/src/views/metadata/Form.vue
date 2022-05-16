@@ -562,7 +562,7 @@ export default {
                 this.$message.success(this.$t('metadata.details.success_Release'))
               })
               .catch(() => {
-                this.$message.error(this.$t('message.saveFail'))
+                this.$message.error(this.$t('message_save_fail'))
               })
           } else {
             this.$message.error(this.$t('metadata.details.filedName_repeat'))
@@ -581,7 +581,7 @@ export default {
   .box {
     padding: 10px 20px;
     margin-bottom: 10px;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     border-radius: 4px;
     box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
     h2 {
@@ -642,7 +642,7 @@ export default {
       .e-table {
         th {
           padding: 4px 10px;
-          color: #666;
+          color: map-get($fontColor, light);
           background-color: #eff1f4;
         }
         td {
@@ -654,7 +654,7 @@ export default {
       }
       .addBtn {
         .el-button {
-          color: #666;
+          color: map-get($fontColor, light);
           background-color: #ececec;
           border-color: #ececec;
         }
@@ -663,11 +663,6 @@ export default {
     .el-dialog__footer {
       padding-top: 20px;
     }
-    // .el-button.cancel {
-    //   color: #666;
-    //   border: 0;
-    //   background-color: #eee;
-    // }
   }
 }
 .dialogDictionary {
@@ -678,7 +673,7 @@ export default {
     height: calc(100% - 126px);
     overflow: hidden;
     overflow-y: auto;
-    background: #fff;
+    background-color: map-get($bgColor, white);
   }
   li {
     padding: 5px 10px;

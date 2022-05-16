@@ -28,7 +28,7 @@ export class Aggregate extends NodeType {
         type: 'array',
         visible: false,
         'x-reactions': [
-          '{{useAsyncDataSourceByConfig({service: loadNodeFieldNamesById, fieldName: "value", withoutField: true}, $values.$inputs[0])}}',
+          '{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, fieldName: "value", withoutField: true}, $values.$inputs[0])}}',
           {
             target: '*(primaryKeys,aggregations.*.aggExpression,aggregations.*.groupByExpression)',
             fulfill: {
@@ -57,7 +57,7 @@ export class Aggregate extends NodeType {
                 type: 'array',
                 required: true,
                 'x-decorator': 'FormItem',
-                'x-component': 'Select',
+                'x-component': 'FieldSelect',
                 'x-component-props': {
                   multiple: true
                 }
@@ -136,7 +136,7 @@ export class Aggregate extends NodeType {
                           required: true,
                           'x-decorator': 'FormItem',
                           'x-decorator-props': { gridSpan: 2 },
-                          'x-component': 'Select',
+                          'x-component': 'FieldSelect',
                           'x-component-props': {
                             allowCreate: true
                           },
@@ -184,7 +184,7 @@ export class Aggregate extends NodeType {
                       title: '分组字段',
                       type: 'array',
                       'x-decorator': 'FormItem',
-                      'x-component': 'Select',
+                      'x-component': 'FieldSelect',
                       'x-component-props': {
                         multiple: true
                       }

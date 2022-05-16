@@ -37,7 +37,7 @@
               ></el-input>
             </el-form-item>
             <el-checkbox class="keep-sign-in" v-model="keepSignIn" style="display: none">
-              <span style="color: #999"
+              <span class="font-color-light"
                 >{{ $t('app.signIn.registry_tip') }} <i>{{ $t('app.signIn.userPplicy') }}</i></span
               >
             </el-checkbox>
@@ -207,7 +207,7 @@ export default {
 
 <style lang="scss" scoped>
 .page-registry {
-  background: #fafafa;
+  background: map-get($bgColor, normal);
   height: 100%;
   overflow: auto;
   box-sizing: border-box;
@@ -240,11 +240,11 @@ export default {
             border: none;
           }
           &:hover {
-            color: #333;
+            color: map-get($fontColor, dark);
           }
         }
         .bold {
-          color: #333333;
+          color: map-get($fontColor, dark);
           font-weight: 500;
         }
       }
@@ -336,10 +336,10 @@ export default {
         padding-top: 20px;
         font-size: 12px;
         text-align: right;
-        color: #666;
+        color: map-get($color, primary);
         user-select: none;
         span {
-          color: #409eff;
+          color: map-get($color, dark);
           cursor: pointer;
         }
       }
@@ -355,7 +355,7 @@ export default {
         padding-bottom: 30px;
         font-size: 26px;
         font-weight: 500;
-        color: #333;
+        color: map-get($fontColor, dark);
       }
       p {
         font-size: 12px;

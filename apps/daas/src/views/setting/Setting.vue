@@ -16,7 +16,7 @@
         </li>
       </ul>
 
-      <el-form :model="formData" class="e-form" label-width="340px">
+      <el-form :model="formData" class="e-form" label-position="top">
         <div class="e-form-box">
           <div v-for="(item, index) in formData.items" :key="index" class="item" v-show="activePanel === item.category">
             <template v-if="activePanel === item.category">
@@ -339,7 +339,7 @@ export default {
         .save(settingData)
         .then(res => {
           if (res) {
-            this.$message.success(this.$t('message.saveOK'))
+            this.$message.success(this.$t('message_save_ok'))
           }
         })
         .catch(e => {
@@ -391,7 +391,7 @@ export default {
     .setting-nav {
       height: 100%;
       padding: 20px 2px;
-      border-right: 1px solid #f2f2f2;
+      border-right: 1px solid map-get($borderColor, light);
       li {
         display: flex;
         flex-direction: row;
@@ -401,7 +401,7 @@ export default {
         height: 40px;
         line-height: 40px;
         cursor: pointer;
-        color: #4e5969;
+        color: map-get($fontColor, light);
         white-space: nowrap;
         .title {
           width: 100%;
@@ -434,7 +434,7 @@ export default {
       .title {
         display: inline-block;
         padding: 10px 0 20px;
-        color: #1d2129;
+        color: map-get($fontColor, dark);
         font-size: 14px;
         font-weight: 500;
       }
@@ -469,7 +469,7 @@ export default {
       padding: 0 20px;
       line-height: 48px;
       text-align: right;
-      border-top: 1px solid #f2f2f2;
+      border-top: 1px solid map-get($borderColor, light);
     }
   }
   .dialog-email-template {
@@ -480,12 +480,12 @@ export default {
         padding: 5px 20px 5px 0;
         display: block;
         text-align: right;
-        border-right: 3px solid #f2f2f2;
+        border-right: 3px solid map-get($borderColor, light);
         cursor: pointer;
       }
       .active {
-        color: #409eff;
-        border-right: 3px solid #409eff;
+        color: map-get($color, primary);
+        border-right: 3px solid map-get($color, primary);
       }
     }
     .settings-email-template {

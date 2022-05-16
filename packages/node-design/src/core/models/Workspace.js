@@ -1,6 +1,6 @@
 import { Viewport } from './Viewport'
 import { Operation } from './Operation'
-import { uid } from '@daas/shared'
+import { uid } from '@tap/shared'
 
 //工作区模型
 export class Workspace {

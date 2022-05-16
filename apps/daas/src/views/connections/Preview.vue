@@ -24,7 +24,12 @@
             {{ $t('connection_preview_test') }}
           </el-button>
         </div>
-        <el-progress v-if="showProgress" class="mt-2" color="#2c65ff" :percentage="progress"></el-progress>
+        <el-progress
+          v-if="showProgress"
+          class="details-progress mt-2"
+          color="#2c65ff"
+          :percentage="progress"
+        ></el-progress>
       </div>
       <div v-for="(item, index) in list" :key="index + ''" class="container-item flex">
         <div class="pt-3">
@@ -60,7 +65,7 @@
               v-else-if="
                 connection[temp.key] &&
                 (temp.key === 'shareCdcEnable' ||
-                  (temp.key === 'redoLogParserEnable' && connection.database_type === 'oracle'))
+                  (temp.key === 'redoLogParserEnable' && ['oracle', 'db2'].includes(connection.database_type)))
               "
               class="box-line__value ellipsis"
             >
@@ -281,7 +286,7 @@ export default {
 }
 .container-item {
   &.border-item {
-    border-bottom: 1px solid #f2f2f2;
+    border-bottom: 1px solid map-get($borderColor, light);
   }
   &.button-line {
     margin-bottom: -1px;
@@ -292,21 +297,30 @@ export default {
 }
 .box-line {
   padding: 8px 0;
-  border-top: 1px solid #f2f2f2;
+  border-top: 1px solid map-get($borderColor, light);
 }
 .box-line__label {
-  color: rgba(0, 0, 0, 0.6);
+  color: map-get($fontColor, light);
 }
 .box-line__value {
   max-width: 200px;
   margin-top: 8px;
-  color: #000;
+  color: map-get($fontColor, dark);
 }
 .img-box {
   width: 24px;
   img {
     width: 100%;
     height: 100%;
+  }
+}
+</style>
+<style lang="scss">
+.details-container {
+  .details-progress {
+    .el-progress-bar {
+      width: 97%;
+    }
   }
 }
 </style>

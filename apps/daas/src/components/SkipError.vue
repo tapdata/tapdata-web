@@ -4,7 +4,7 @@
     <div class="skip-tip">{{ $t('dataFlow.skipError.attention') }}</div>
     <div class="skip-name">
       {{ `${$t('dataFlow.skipError.taskName')}:` }}
-      <span style="color: #409eff">{{ task.name }}</span>
+      <span class="link-primary">{{ task.name }}</span>
     </div>
     <ul class="error-list">
       <span class="check-all"
@@ -116,7 +116,7 @@ export default {
     margin-left: 10px;
     .error-content {
       font-size: 12px;
-      background: #fff;
+      background-color: map-get($bgColor, white);
       border: 1px solid #dedee4;
       width: 96%;
       padding: 5px 10px;
@@ -149,7 +149,7 @@ export default {
 }
 .skip-tip {
   font-size: 12px;
-  color: #999;
+  color: map-get($fontColor, slight);
 }
 .total {
   padding-top: 5px;

@@ -115,12 +115,12 @@
       </el-table-column>
       <el-table-column :label="$t('user_list_status')" prop="status" sortable="status">
         <template slot-scope="scope">
-          <span :class="[scope.row.status, 'status']">
+          <span :class="['status-' + scope.row.status, 'status']">
             {{ scope.row.status ? $t('user_status_' + scope.row.status) : '' }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('column_operation')" width="160">
+      <el-table-column :label="$t('column_operation')" width="210">
         <template slot-scope="scope">
           <div>
             <el-button
@@ -865,40 +865,44 @@ export default {
 .user-list-wrap {
   .tapNav {
     height: 28px;
-    // background-color: rgba(239, 241, 244, 100);
-    .mune {
-      display: inline-block;
-      height: 28px;
-      line-height: 25px;
-      font-size: 12px;
-      // border-radius: 0px 3px 0px 0px;
-      // background-color: rgba(244, 245, 247, 100);
-      // box-shadow: 0 -1px 10px 0px rgba(0, 0, 0, 0.15);
-      li {
-        float: left;
-        width: 100px;
-        height: 28px;
-        color: #666;
-        cursor: pointer;
-        text-align: center;
-        border-right: 1px solid #dedee4;
-
-        &:last-child {
-          border-right: 0;
-        }
-      }
-      li.active {
-        height: 29px;
-        border-radius: 3px 3px 0px 0px;
-        background-color: #fff;
-        border-right: 0;
-        border-left: 0;
-        // box-shadow: 1px -1px 3px 0px rgba(0, 0, 0, 0.15);
+    ::v-deep {
+      .el-tabs__nav-scroll {
+        padding-left: 20px;
       }
     }
+    // background-color: rgba(239, 241, 244, 100);
+    // .mune {
+    //   display: inline-block;
+    //   height: 28px;
+    //   line-height: 25px;
+    //   font-size: 12px;
+    //   // border-radius: 0px 3px 0px 0px;
+    //   // background-color: rgba(244, 245, 247, 100);
+    //   // box-shadow: 0 -1px 10px 0px rgba(0, 0, 0, 0.15);
+    //   li {
+    //     float: left;
+    //     width: 100px;
+    //     height: 28px;
+    //     color: map-get($fontColor, light);
+    //     cursor: pointer;
+    //     text-align: center;
+    //     border-right: 1px solid #dedee4;
+
+    //     &:last-child {
+    //       border-right: 0;
+    //     }
+    //   }
+    //   li.active {
+    //     height: 29px;
+    //     border-radius: 3px 3px 0px 0px;
+    //     background-color: map-get($bgColor, white);
+    //     border-right: 0;
+    //     border-left: 0;
+    //     // box-shadow: 1px -1px 3px 0px rgba(0, 0, 0, 0.15);
+    //   }
+    // }
   }
   .user-list {
-    background-color: rgba(239, 241, 244, 100);
     .search-bar {
       display: flex;
       li + li {
@@ -922,20 +926,14 @@ export default {
     }
     .metadata-name {
       .name {
-        color: #409eff;
+        color: map-get($color, primary);
         a {
           color: inherit;
           cursor: pointer;
         }
       }
-      .tag {
-        margin-left: 5px;
-        color: #999999;
-        background: #f5f5f5;
-        border: 1px solid #dedee4;
-      }
       .parent {
-        color: #cccccc;
+        color: map-get($color, disable);
       }
     }
   }
@@ -947,43 +945,32 @@ export default {
     .table-page-body {
       box-shadow: 0 7px 15px -10px rgba(0, 0, 0, 0.1);
       .table-page-topbar {
-        padding-top: 20px;
-        background-color: #fff;
+        padding: 20px 20px 0;
+        background-color: map-get($bgColor, white);
         .search-bar {
           padding-top: 10px;
         }
       }
       .el-table {
-        // padding: 0 10px;
+        padding: 0 20px;
         box-sizing: border-box;
         overflow: hidden;
       }
       .table-page-pagination {
         margin-top: 0;
         padding: 5px 20px;
-        background-color: #fff;
+        background-color: map-get($bgColor, white);
         box-sizing: border-box;
       }
       .status {
         padding: 5px 10px;
         border-radius: 4px;
       }
-      .activated {
-        color: #178061;
-        background-color: #c4f3cb;
-      }
-      .notActivated {
-        color: #2c65ff;
-        background-color: #ddebff;
-      }
-      .notVerified {
-        color: #d5760e;
-        background-color: #ffe9cf;
-      }
-      .rejected {
-        color: #d44d4d;
-        background-color: #ffecec;
-      }
+    }
+  }
+  .table-page-main {
+    .table-page-body {
+      padding: 15px 0 20px !important;
     }
   }
 }

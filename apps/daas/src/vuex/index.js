@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import mutations from './mutations'
 import actions from './actions'
-import dataflow from '@daas/dag/src/store'
+import dataflow from '@tap/dag/src/store'
 
 Vue.use(Vuex)
 

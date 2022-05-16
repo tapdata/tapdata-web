@@ -1,4 +1,4 @@
-import { FormItem } from '@daas/form'
+import { FormItem } from '@tap/form'
 import { useField, FragmentComponent } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { observable } from '@formily/reactive'
@@ -6,7 +6,7 @@ import { usePrefix } from '../../../hooks'
 import { IconWidget } from '../../widgets'
 import './styles.scss'
 import { defineComponent } from 'vue-demi'
-import { composeExport } from '@daas/form'
+import { composeExport } from '@tap/form'
 
 const ExpandedMap = new Map()
 

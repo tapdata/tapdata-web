@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import ClipButton from './ClipButton'
+import ClipButton from '@/components/ClipButton'
 export default {
   components: {
     ClipButton

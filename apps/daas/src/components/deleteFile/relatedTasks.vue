@@ -14,7 +14,7 @@
   </div>
 </template>
 <script>
-import factory from '../api/factory'
+import factory from '../../api/factory'
 
 const dataFlowApi = factory('DataFlows')
 export default {
@@ -87,7 +87,7 @@ export default {
     cursor: pointer;
   }
   .item:hover {
-    color: #409eff;
+    color: map-get($color, primary);
   }
   .noData {
     text-align: center;

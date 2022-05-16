@@ -366,7 +366,7 @@ export default {
         //   height: 6px;
         //   width: 6px;
         //   border-radius: 50%;
-        //   background-color: #fff;
+        //   background-color: map-get($bgColor, white);
         // }
         .status {
           height: 6px;
@@ -378,7 +378,7 @@ export default {
           margin: 0 10px;
           padding: 2px 0;
           border-radius: 2px;
-          color: #fff;
+          color: map-get($fontColor, white);
           text-align: center;
           white-space: nowrap;
         }

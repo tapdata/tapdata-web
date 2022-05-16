@@ -50,7 +50,7 @@
 }
 
 .g-panel-container {
-  background: #fff;
+  background-color: map-get($bgColor, white);
   padding: 24px;
   border-radius: 4px;
   box-sizing: border-box;
@@ -83,7 +83,9 @@ textarea::-webkit-input-placeholder {
   color: #008b58;
   background-color: #b4edd8;
 }
-.status-error {
+.status-error,
+.status-rejected,
+.status-stopped {
   color: #d44d4d;
   background-color: #ffecec;
 }
@@ -95,11 +97,13 @@ textarea::-webkit-input-placeholder {
   color: #0083c7;
   background-color: #d1eefd;
 }
-.status-pending {
+.status-pending,
+.status-notActivated {
   color: #2c65ff;
   background-color: #ddebff;
 }
-.status-active {
+.status-active,
+.status-activated {
   color: #178061 ;
   background-color: #C4F3CB;
 }
@@ -127,13 +131,26 @@ textarea::-webkit-input-placeholder {
   color: #c88500;
   background-color: #ffe4ae;
 }
-.status-stopping {
+.status-stopping,
+.status-notVerified {
   color: #c39700;
   background-color: #fdf1c8;
 }
 .status-ready {
   color: #c39700;
   background-color: #fdf1c8;
+}
+.status-connection-ready {
+  color: #2b8a6a;
+  background-color: #ccf4d2;
+}
+.status-connection-testing {
+  color: #d78120;
+  background-color: #feecd6;
+}
+.status-connection-invalid {
+  color: #d5575a;
+  background-color: #feeeef;
 }
 
 // 无分类列表/详情页面/表单页面
@@ -151,7 +168,7 @@ textarea::-webkit-input-placeholder {
     flex: 1;
     padding: 20px;
     border-radius: 4px;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     box-sizing: border-box;
     overflow: hidden;
   }
@@ -176,11 +193,11 @@ textarea::-webkit-input-placeholder {
   }
 }
 .message-button-cancel {
-  color: #4e5969;
+  color: map-get($fontColor, normal);
   border-color: #f2f3f5;
   background-color: #f2f3f5;
 }
 .message-button-cancel:hover {
-  background-color: #fff;
+  background-color: map-get($bgColor, white);
   border: 1px solid #2c65ff;
 }

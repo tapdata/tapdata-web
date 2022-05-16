@@ -258,7 +258,7 @@ import ConnectionTypeSelector from 'web-core/components/connection-type-selector
 import resize from 'web-core/directives/resize'
 import BaseNode from './BaseNode'
 import { debounce } from 'lodash'
-import { CancelToken, Connections, MetadataInstances } from '@daas/api'
+import { CancelToken, Connections, MetadataInstances } from '@tap/api'
 import { Select } from 'element-ui'
 const connections = new Connections()
 const metadataApi = new MetadataInstances()
@@ -406,8 +406,6 @@ export default {
   },
 
   created() {
-    this.init()
-
     let allowDataType = window.getSettingByKey('ALLOW_CONNECTION_TYPE') || []
     if (typeof allowDataType === 'string') {
       allowDataType = allowDataType.split(',')
@@ -420,6 +418,8 @@ export default {
 
     this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || []
     this.getDatabaseType()
+
+    this.init()
   },
 
   mounted() {
@@ -480,7 +480,7 @@ export default {
         size: 20,
         where: {
           database_type: {
-            $nin: ['file', 'dummy', 'gridfs', 'rest api', 'custom_connection']
+            $in: this.database
           }
         },
         fields: {
@@ -488,7 +488,10 @@ export default {
           id: 1,
           database_type: 1,
           connection_type: 1,
-          status: 1
+          status: 1,
+          accessNodeType: 1,
+          accessNodeProcessId: 1,
+          accessNodeProcessIdList: 1
         },
         order: ['status DESC', 'name ASC']
       }
@@ -525,7 +528,8 @@ export default {
           tableName: '',
           databaseType: item.database_type,
           connectionId: item.id,
-          connectionType: item.connection_type
+          connectionType: item.connection_type,
+          accessNodeProcessId: item.accessNodeProcessId
         }
       }))
 
@@ -566,12 +570,15 @@ export default {
         fields: {
           id: true,
           original_name: true
-        }
+        },
+        order: ['original_name ASC']
       }
 
       const txt = this.tbSearchTxt.trim()
       if (txt) {
         filter.where.original_name = { like: txt, options: 'i' }
+      } else {
+        filter.where.original_name = { neq: '' }
       }
 
       return { filter: JSON.stringify(filter) }
@@ -617,7 +624,10 @@ export default {
           tableName: tb.original_name,
           databaseType: connection.databaseType,
           connectionId: connection.id,
-          connectionType: connection.attr.connectionType
+          connectionType: connection.attr.connectionType,
+          accessNodeProcessId: connection.attr.accessNodeProcessId
+          // accessNodeProcessId: '61935c9684103d36ce972daa-1fkjq3ar4'
+          // accessNodeProcessId: 'f9e0e041-a72f-4e3f-87ff-0354eed0af92'
         }
       }))
 

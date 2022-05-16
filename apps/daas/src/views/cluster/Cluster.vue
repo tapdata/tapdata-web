@@ -26,7 +26,11 @@
         <div class="content" v-if="waterfallData.length">
           <el-row :gutter="20" class="waterfall">
             <el-col class="list" :md="12" :sm="24" v-for="(element, i) in waterfallData" :key="i">
-              <div class="grid-content list-box" v-for="item in element" :key="item.ip">
+              <div
+                :class="['grid-content', 'list-box', { 'mt-4': index > 0 }]"
+                v-for="(item, index) in element"
+                :key="item.ip"
+              >
                 <div class="list-box-header">
                   <div class="list-box-header-left">
                     <img class="mr-4" src="../../assets/images/serve.svg" />
@@ -91,7 +95,7 @@
                       <span class="txt fw-normal">{{ $t('cluster_manage_sys') }}</span>
                     </el-col>
                     <el-col :span="6">
-                      <span :class="[item.management.status, 'status']">{{
+                      <span :class="['status-' + item.management.status, 'status']">{{
                         $t('cluster_' + item.management.status)
                       }}</span>
                     </el-col>
@@ -126,7 +130,9 @@
                       <span class="txt fw-normal">{{ $t('cluster_sync_gover') }}</span>
                     </el-col>
                     <el-col :span="6">
-                      <span :class="[item.engine.status, 'status']">{{ $t('cluster_' + item.engine.status) }}</span>
+                      <span :class="['status-' + item.engine.status, 'status']">{{
+                        $t('cluster_' + item.engine.status)
+                      }}</span>
                     </el-col>
                     <el-col :md="9" :lg="8">
                       <div class="btn" v-readonlybtn="'Cluster_operation'">
@@ -160,7 +166,7 @@
                       <span class="txt fw-normal">API server</span>
                     </el-col>
                     <el-col :span="6">
-                      <span :class="[item.apiServer.status, 'status']">{{
+                      <span :class="['status-' + item.apiServer.status, 'status']">{{
                         $t('cluster_' + item.apiServer.status)
                       }}</span>
                     </el-col>
@@ -633,11 +639,11 @@ export default {
         if (!resFlag) {
           return
         }
-        this.$api('modules')
+        this.$api('cluster')
           .delete(item.id, item.name)
           .then(() => {
             this.$message.success(this.$t('message_delete_ok'))
-            this.table.fetch()
+            this.getDataApi()
           })
           .catch(() => {
             this.$message.info(this.$t('message_delete_fail'))
@@ -705,19 +711,19 @@ export default {
 .clusterManagement-container {
   .header {
     padding: 15px 20px;
-    background: #ffffff;
+    background: map-get($bgColor, white);
     overflow: hidden;
     border-bottom: 1px solid #dedee4;
     box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     .title {
       font-size: 16px;
-      color: #333;
+      color: map-get($fontColor, dark);
       font-weight: 600;
     }
     .log_btn {
       font-size: 14px;
-      color: #409eff;
+      color: map-get($color, primary);
       cursor: pointer;
       float: right;
     }
@@ -751,9 +757,9 @@ export default {
         overflow: hidden;
         box-sizing: border-box;
         .list-box {
-          background-color: #fff;
+          background-color: map-get($bgColor, white);
           border-radius: 3px;
-          border: 1px solid #f2f2f2;
+          border: 1px solid map-get($bgColor, main);
           .list-box-header {
             overflow: hidden;
             display: flex;
@@ -787,7 +793,7 @@ export default {
                 .ip {
                   display: inline-block;
                   padding: 2px 10px;
-                  color: #2c65ff;
+                  color: map-get($color, primary);
                   border-radius: 2px;
                   background-color: #ebf3fd;
                 }
@@ -811,7 +817,7 @@ export default {
             justify-content: center;
             padding: 16px 0;
             text-align: center;
-            border-top: 1px solid #f2f2f2;
+            border-top: 1px solid map-get($borderColor, light);
             .usageRate {
               width: 50%;
               text-align: center;
@@ -840,7 +846,7 @@ export default {
               margin: 0 !important;
               line-height: 35px;
               font-size: 12px;
-              background-color: #fafafa;
+              background-color: map-get($bgColor, normal);
               .txt {
                 font-size: 12px;
                 color: map-get($fontColor, light);
@@ -851,7 +857,7 @@ export default {
               margin: 0 !important;
               margin-bottom: 5px;
               line-height: 35px;
-              border-bottom: 1px solid #f2f2f2;
+              border-bottom: 1px solid map-get($borderColor, light);
               &:last-child {
                 border-bottom: 0;
               }
@@ -882,21 +888,21 @@ export default {
                   }
                 }
               }
-              .popover-tip {
-                display: inline-block;
-                color: #f00;
-                transform: rotate(180deg);
-                cursor: pointer;
-              }
+              // .popover-tip {
+              //   display: inline-block;
+              //   color: #f00;
+              //   transform: rotate(180deg);
+              //   cursor: pointer;
+              // }
             }
-            .running {
-              color: #178061;
-              background-color: #c4f3cb;
-            }
-            .stopped {
-              color: #d44d4d;
-              background-color: #ffecec;
-            }
+            // .running {
+            //   color: #178061;
+            //   background-color: #c4f3cb;
+            // }
+            // .stopped {
+            //   color: #d44d4d;
+            //   background-color: #ffecec;
+            // }
           }
         }
 
@@ -904,18 +910,18 @@ export default {
           .usageRate {
             padding-left: 12px;
             font-size: 12px;
-            color: #999;
+            color: map-get($fontColor, light);
           }
 
           .uuid {
             padding: 5px 0;
             font-size: 12px;
-            color: #999;
+            color: map-get($fontColor, light);
           }
 
           span {
             font-size: 14px;
-            color: #555;
+            color: map-get($fontColor, normal);
           }
         }
       }
@@ -923,13 +929,13 @@ export default {
         padding-right: 15px;
       }
       .red {
-        color: #ee5353;
+        color: map-get($color, danger);
       }
       .bgred {
         background-color: #ee5353 !important;
       }
       .green {
-        color: #409eff;
+        color: map-get($color, primary);
       }
       .bggreen {
         background-color: #71c179 !important;
@@ -941,9 +947,9 @@ export default {
     height: calc(100% - 60px);
     align-items: center;
     justify-content: center;
-    color: #409eff;
+    color: map-get($color, primary);
     font-size: 16px;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
   }
   .edit-agent-form {
     .rest-btn {

@@ -497,11 +497,11 @@ export default {
     //   height: 300px;
     // }
     width: 100%;
-    background: #fff;
+    background-color: map-get($bgColor, white);
     border-radius: 4px;
     .share-detail-head-left {
       width: 260px;
-      border-right: 1px solid #f2f2f2;
+      border-right: 1px solid map-get($borderColor, light);
       .head-label {
         min-width: 100px;
       }

@@ -1,6 +1,6 @@
 <template>
   <div class="overview-bar">
-    <div class="mb-4 fs-7 font-color-dark fw-bolder">{{ this.$t('task_monitor_full_sync') }}</div>
+    <div class="mb-4 fs-7 font-color-dark">{{ this.$t('task_monitor_full_sync') }}</div>
     <div class="overview-bar__content p-4">
       <div class="flex justify-content-between mb-2 font-color-dark">
         <div>
@@ -30,7 +30,7 @@ export default {
   computed: {
     totalDataText() {
       let num = this.info.totalDataNum
-      return num ? this.$t('task_info_overView_status') : num || 0
+      return num < 0 ? this.$t('task_info_overView_status') : num || 0
     },
     finishDurationText() {
       let duration = this.info.finishDuration
@@ -42,7 +42,7 @@ export default {
 
 <style lang="scss" scoped>
 .overview-bar__content {
-  background: #fafafa;
+  background: map-get($bgColor, normal);
   border-radius: 4px 4px 0 0;
 }
 </style>

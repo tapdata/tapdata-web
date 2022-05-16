@@ -111,7 +111,7 @@
           >
         </li>
         <!-- <li v-show="data.database_port && !['file', 'mariadb'].includes(data.database_type)">
-					<span class="label">{{ $t('dataForm.form.port') }}</span>
+					<span class="label">{{ $t('connection_form_port') }}</span>
 					<span class="value align-items-center align-middle"> {{ data.database_port }}</span>
 				</li> -->
         <div
@@ -634,7 +634,7 @@ export default {
       height: 60px;
       justify-content: center;
       align-items: center;
-      background: #fff;
+      background-color: map-get($bgColor, white);
       //border: 1px solid #dedee4;
       border-radius: 3px;
       margin-left: 30px;
@@ -670,7 +670,7 @@ export default {
     }
     .btn {
       padding: 4px 7px;
-      background: #f5f5f5;
+      background: map-get($bgColor, main);
       i.iconfont {
         font-size: 12px;
       }
@@ -683,8 +683,8 @@ export default {
     ul {
       width: 100%;
       padding: 10px 0;
-      border-top: 1px solid #f2f2f2;
-      border-bottom: 1px solid #f2f2f2;
+      border-top: 1px solid map-get($borderColor, light);
+      border-bottom: 1px solid map-get($borderColor, light);
     }
     .item {
       margin-right: 10px;
@@ -697,10 +697,10 @@ export default {
     }
   }
   .panelBtn:hover {
-    color: #409eff;
+    color: map-get($color, primary);
   }
   .label {
-    color: #999;
+    color: map-get($fontColor, light);
     font-size: 12px;
     display: inline-block;
     width: 110px;
@@ -709,13 +709,13 @@ export default {
   }
   .value {
     width: 62%;
-    color: #666;
+    color: map-get($fontColor, light);
     font-size: 12px;
     display: inline-block;
     word-break: break-all;
   }
   .schema-load {
-    color: #999;
+    color: map-get($fontColor, light);
     display: inline-block;
     margin-left: 20px;
     font-size: 12px;
@@ -737,7 +737,7 @@ export default {
     display: block;
     width: 100%;
     height: 30px;
-    background: #f5f5f5;
+    background: map-get($bgColor, main);
     border-bottom: 1px solid #dedee4;
   }
   .back-btn-icon-box {
@@ -756,7 +756,7 @@ export default {
     border: 0;
     border-radius: 0;
     box-sizing: border-box;
-    background: #409eff;
+    background: map-get($color, primary);
     transition: 0.1s;
     -webkit-appearance: none;
     -webkit-box-sizing: border-box;
@@ -766,7 +766,7 @@ export default {
     background: #6dc5e8;
   }
   .back-btn-icon {
-    color: #fff;
+    color: map-get($fontColor, white);
   }
   .back-btn-text {
     padding-left: 10px;

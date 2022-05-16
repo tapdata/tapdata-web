@@ -4,24 +4,35 @@
  * @description
  */
 import PublicAPI from './publicApi'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 export default class notification extends PublicAPI {
   constructor() {
     super('/api/Messages')
   }
-  readAll(filter, update) {
+  // readAll(filter, update) {
+  //   return axios.request({
+  //     url: this.url + '/update?where=' + filter,
+  //     method: 'post',
+  //     data: update
+  //   })
+  // }
+  pageRead(filter) {
     return axios.request({
-      url: this.url + '/update?where=' + filter,
+      url: this.url,
       method: 'post',
-      data: update
+      data: filter
     })
   }
+
   upsertWithWhere(filter, update) {
     return axios.request({
       url: this.url + '/update?where=' + filter,
       method: 'post',
       data: update
     })
+  }
+  readAll(params) {
+    return axios.post(this.url + '/readAll', params)
   }
 }

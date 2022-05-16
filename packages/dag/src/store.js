@@ -1,6 +1,6 @@
 import Vue from 'vue'
-import { isObject, uuid, mergeLocales, lowerSnake } from '@daas/shared'
-import { Task, CustomNode } from '@daas/api'
+import { isObject, uuid, mergeLocales, lowerSnake } from '@tap/shared'
+import { Task, CustomNode } from '@tap/api'
 import { debounce } from 'lodash'
 import { AddDagCommand } from './command'
 import { Path } from '@formily/path'
@@ -83,12 +83,12 @@ const getState = () => ({
       constructor: 'Join',
       locales: AllLocales.Join
     },
-    /*{
+    {
       icon: 'merge_table',
       name: '主从合并',
       type: 'merge_table_processor',
       constructor: 'MergeTable'
-    },*/
+    },
     {
       icon: 'field_calc',
       name: '字段计算',
@@ -589,7 +589,7 @@ const mutations = {
     if (node.$outputs?.length) {
       node.$outputs.forEach(id => {
         const { $inputs = [] } = state.NodeMap[id]
-        const i = $inputs.indexOf(id)
+        const i = $inputs.indexOf(nodeId)
         if (~i) $inputs.splice(i, 1)
       })
     }
@@ -597,7 +597,7 @@ const mutations = {
     if (node.$inputs?.length) {
       node.$inputs.forEach(id => {
         const { $outputs = [] } = state.NodeMap[id]
-        const i = $outputs.indexOf(id)
+        const i = $outputs.indexOf(nodeId)
         if (~i) $outputs.splice(i, 1)
       })
     }
@@ -611,17 +611,17 @@ const mutations = {
    * @param nodeIds
    */
   batchRemoveNode(state, nodeIds) {
-    nodeIds.forEach(id => {
-      const node = state.NodeMap[id]
+    nodeIds.forEach(nodeId => {
+      const node = state.NodeMap[nodeId]
 
-      Vue.delete(state.NodeMap, id)
+      Vue.delete(state.NodeMap, nodeId)
 
       if (node.$outputs?.length) {
         node.$outputs.forEach(id => {
           const outputNode = state.NodeMap[id]
           if (outputNode) {
             const { $inputs = [] } = outputNode
-            const i = $inputs.indexOf(id)
+            const i = $inputs.indexOf(nodeId)
             if (~i) $inputs.splice(i, 1)
           }
         })
@@ -632,7 +632,7 @@ const mutations = {
           const inputNode = state.NodeMap[id]
           if (inputNode) {
             const { $outputs = [] } = inputNode
-            const i = $outputs.indexOf(id)
+            const i = $outputs.indexOf(nodeId)
             if (~i) $outputs.splice(i, 1)
           }
         })

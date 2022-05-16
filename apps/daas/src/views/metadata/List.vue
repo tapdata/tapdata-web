@@ -77,7 +77,7 @@
           {{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('metadata.details.opera')" width="150">
+      <el-table-column :label="$t('metadata.details.opera')" width="180">
         <template slot-scope="scope">
           <el-button
             v-readonlybtn="'data_catalog_edition'"
@@ -90,7 +90,7 @@
           >
             {{ $t('button_details') }}
           </el-button>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'data_catalog_edition'"></ElDivider>
           <el-button
             v-readonlybtn="'data_catalog_edition'"
             size="mini"
@@ -102,7 +102,7 @@
           >
             {{ $t('button.rename') }}
           </el-button>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'data_catalog_edition'"></ElDivider>
           <el-button
             v-readonlybtn="'meta_data_deleting'"
             size="mini"
@@ -502,12 +502,12 @@ export default {
           name: this.changeNameValue
         })
         .then(() => {
-          this.$message.success(this.$t('message.saveOK'))
+          this.$message.success(this.$t('message_save_ok'))
           this.changeNameDialogVisible = false
           this.table.fetch()
         })
         .catch(() => {
-          this.$message.info(this.$t('message.saveFail'))
+          this.$message.info(this.$t('message_save_fail'))
         })
     },
     changeName(item) {
@@ -529,11 +529,11 @@ export default {
       //       name: resFlag.value
       //     })
       //     .then(() => {
-      //       this.$message.success(this.$t('message.saveOK'))
+      //       this.$message.success(this.$t('message_save_ok'))
       //       this.table.fetch()
       //     })
       //     .catch(() => {
-      //       this.$message.info(this.$t('message.saveFail'))
+      //       this.$message.info(this.$t('message_save_fail'))
       //     })
       // })
     },
@@ -633,7 +633,7 @@ export default {
     }
     .btn {
       padding: 7px;
-      // background: #f5f5f5;
+      // background: map-get($bgColor, main);
       i.iconfont {
         font-size: 12px;
       }
@@ -646,7 +646,7 @@ export default {
     }
     .metadata-name {
       .name {
-        color: #2c65ff;
+        color: map-get($color, primary);
         a {
           color: inherit;
           cursor: pointer;
@@ -657,12 +657,12 @@ export default {
       }
       .tag {
         margin-left: 5px;
-        color: #999999;
-        background: #f5f5f5;
+        color: map-get($fontColor, light);
+        background: map-get($bgColor, main);
         border: 1px solid #dedee4;
       }
       .parent {
-        color: #cccccc;
+        color: map-get($fontColor, slight);
       }
     }
   }
@@ -699,7 +699,7 @@ export default {
   .change-name-label {
     width: 100px;
     line-height: 32px;
-    color: #000;
+    color: map-get($fontColor, dark);
   }
   // .el-message-box__header {
   //   padding: 15px 15px 0;

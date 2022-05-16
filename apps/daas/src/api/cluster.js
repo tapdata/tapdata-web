@@ -4,7 +4,7 @@
  * @date 2/27/20
  * @description
  */
-import axios from 'axios'
+import axios from '@/plugins/axios'
 import PublicAPI from './publicApi'
 
 export default class ClusterAPI extends PublicAPI {
@@ -29,5 +29,8 @@ export default class ClusterAPI extends PublicAPI {
   }
   editAgent(id, params) {
     return axios.patch(this.url + '/' + id, params)
+  }
+  findAccessNodeInfo(params) {
+    return axios.get(this.url + '/findAccessNodeInfo', { params })
   }
 }

@@ -2,17 +2,15 @@
   <ElContainer class="create-task-wrap section-wrap" v-if="steps[activeStep]">
     <ElContainer style="overflow: hidden; flex: 1" class="create-task-container flex-column section-wrap-box">
       <div class="steps-header">
-        <ElSteps
+        <VStep
+          ref="step"
           class="primary pb-6"
-          :active="activeStep"
           process-status="process"
           finish-status="success"
           align-center
-        >
-          <ElStep :title="$t('migrate_select_connection')"></ElStep>
-          <ElStep :title="$t('migrate_task_properties')"></ElStep>
-          <ElStep :title="$t('migrate_select_table')"></ElStep>
-        </ElSteps>
+          :stepList="steps"
+          :activeStep="activeStep"
+        ></VStep>
       </div>
       <ElContainer :class="['task-container', 'task-container-' + steps[activeStep].index]">
         <div class="task-container-box flex-fill flex flex-column w-100">
@@ -31,6 +29,7 @@
               <DataSource
                 ref="dataSource"
                 :dataSourceData="dataSourceData"
+                :access-node-list="accessNodeProcessList"
                 @submit="dataSourceSubmit"
                 @change="handleSettingValue"
               ></DataSource>
@@ -41,7 +40,12 @@
                 <span class="title fw-sub mr-4 mb-2">{{ $t('migrate_task_settings') }}</span>
                 <span class="desc mb-2">{{ $t('migrate_task_settings_tip') }} </span>
               </div>
-              <Setting :dataSourceData="dataSourceData" :settingData="settingData" @submit="settingSubmit"></Setting>
+              <Setting
+                :dataSourceData="dataSourceData"
+                :settingData="settingData"
+                :access-node-list="accessNodeProcessList"
+                @submit="settingSubmit"
+              ></Setting>
             </div>
             <!-- 步骤3 -->
             <div class="body step-4" v-if="steps[activeStep].index === 3">
@@ -138,11 +142,15 @@ import Transfer from './Transfer'
 import DataSource from './DataSource'
 import Setting from './Setting'
 import TableFieldFilter from './TableFieldFilter'
-import FieldMapping from '@tapdata/field-mapping'
+import VStep from '@/components/VStep'
+import FieldMapping from '@tap/field-mapping'
 import { DATASOURCE_MODEL, SETTING_MODEL, TRANSFER_MODEL } from './const'
+import { Cluster } from '@tap/api'
+
+const clusterApi = new Cluster()
 
 export default {
-  components: { Transfer, DataSource, Setting, TableFieldFilter, FieldMapping },
+  components: { Transfer, DataSource, Setting, TableFieldFilter, FieldMapping, VStep },
   data() {
     return {
       steps: [],
@@ -168,10 +176,12 @@ export default {
       edges: [],
       //保存
       loadingSave: false,
-      dialogTableVisible: false
+      dialogTableVisible: false,
+
+      accessNodeProcessList: []
     }
   },
-  created() {
+  async created() {
     this.id = this.$route.params.id
     if (this.$route.name === 'MigrateViewer') {
       this.$store.commit('dataflow/setStateReadonly', true)
@@ -185,6 +195,7 @@ export default {
     } else {
       this.getSteps()
     }
+    await this.loadAccessNode()
   },
   methods: {
     //保存任务
@@ -242,7 +253,7 @@ export default {
           this.isEditAll = checkResult //不弹窗支持改所有
           this.getSteps()
           if (!checkResult) {
-            this.$confirm(this.$t('task_list_edit_confirm'), this.$t('dataFlow.importantReminder'), {
+            this.$confirm(this.$t('task_list_edit_confirm'), '', {
               confirmButtonText: this.$t('dialog_button_confirm'),
               showCancelButton: false,
               type: 'warning'
@@ -258,8 +269,8 @@ export default {
           if (res) {
             let data = res?.data
             this.status = data.status
-            this.settingData = data.attrs?.task_setting_Data
-            this.settingData.name = data?.name
+            this.settingData = data.attrs?.task_setting_Data || null
+            if (this.settingData) this.settingData.name = data?.name
             this.dataSourceData = data?.attrs?.task_data_source_Data
             this.nodes = data?.dag?.nodes
             this.edges = data?.dag?.edges
@@ -326,10 +337,16 @@ export default {
       if (this.id && !this.stateIsReadonly && !this.isEditAll) {
         //编辑模式 没有第一步
         this.steps = [
-          { index: 2, text: this.$t('task_form_task_setting'), type: 'setting', showExitBtn: true, showNextBtn: true },
+          {
+            index: 2,
+            label: this.$t('migrate_task_properties'),
+            type: 'setting',
+            showExitBtn: true,
+            showNextBtn: true
+          },
           {
             index: 3,
-            text: this.$t('task_form_mapping_setting'),
+            label: this.$t('migrate_select_table'),
             type: 'mapping',
             showBackBtn: true,
             showSaveBtn: true
@@ -339,15 +356,21 @@ export default {
         this.steps = [
           {
             index: 1,
-            text: this.$t('task_form_source_target_connection'),
+            label: this.$t('migrate_select_connection'),
             type: 'dataSource',
             showExitBtn: true,
             showNextBtn: true
           },
-          { index: 2, text: this.$t('task_form_task_setting'), type: 'setting', showBackBtn: true, showNextBtn: true },
+          {
+            index: 2,
+            label: this.$t('migrate_task_properties'),
+            type: 'setting',
+            showBackBtn: true,
+            showNextBtn: true
+          },
           {
             index: 3,
-            text: this.$t('task_form_mapping_setting'),
+            label: this.$t('migrate_select_table'),
             type: 'mapping',
             showBackBtn: true,
             showSaveBtn: true
@@ -395,7 +418,6 @@ export default {
             .validate()
             .then(() => {
               //数据: 第三步请求schema用到sourceId
-              this.settingData = { ...this.form.values } //保存表单
               this.loading = false
               this.sourceId = this.dataSourceData.source_connectionId
               this.activeStep++
@@ -428,6 +450,7 @@ export default {
     //第二步 任务设置配置
     settingSubmit(form) {
       this.form = form
+      this.settingData = { ...this.form.values } //保存表单
     },
     //第三步 映射表
     checkTransfer() {
@@ -446,12 +469,24 @@ export default {
     },
 
     handleError(error) {
-      if (error?.data?.message) {
+      if (error?.data?.code === 'Task.ListWarnMessage') {
+        if (error.data.data) {
+          const keys = Object.keys(error.data.data)
+          if (keys.length) {
+            const msg = error.data.data[keys[0]][0]?.msg
+            if (msg) {
+              this.$message.error(msg)
+              return
+            }
+          }
+        }
+        this.$message.error(`${this.$t('dag_save_fail')}`)
+      } else if (error?.data?.message) {
         this.$message.error(error.data.message)
       } else {
         // eslint-disable-next-line no-console
         console.error(error)
-        this.$message.error('出错了')
+        this.$message.error(`${this.$t('dag_save_fail')}`)
       }
     },
     createTask() {
@@ -616,6 +651,16 @@ export default {
         .finally(() => {
           this.loadingSave = false
         })
+    },
+
+    async loadAccessNode() {
+      const data = await clusterApi.findAccessNodeInfo()
+      this.accessNodeProcessList = data.map(item => {
+        return {
+          value: item.processId,
+          label: `${item.hostName}（${item.ip}）`
+        }
+      })
     }
   }
 }
@@ -648,7 +693,7 @@ export default {
         border-radius: 3px;
         box-sizing: border-box;
         text-align: center;
-        color: #999;
+        color: map-get($fontColor, slight);
         img {
           display: block;
           width: 100%;
@@ -669,7 +714,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #fff;
+    background-color: map-get($bgColor, white);
     border-bottom: 1px solid #dedee4;
     color: rgba(102, 102, 102, 100);
     font-size: 12px;
@@ -696,7 +741,7 @@ export default {
         &.active {
           .step-index {
             border-color: #fff;
-            color: #fff;
+            color: map-get($fontColor, white);
           }
         }
         .step-index {
@@ -715,7 +760,7 @@ export default {
     }
   }
   .right-aside {
-    background: #fafafa;
+    background: map-get($bgColor, normal);
     border-left: 1px solid #dedee4;
   }
   .task-container {
@@ -748,7 +793,7 @@ export default {
               border-radius: unset;
             }
             th {
-              background-color: #fafafa;
+              background-color: map-get($bgColor, normal);
             }
           }
         }
@@ -757,18 +802,18 @@ export default {
   }
   .create-task-main {
     padding: 24px 24px 0;
-    background: #fff;
+    background-color: map-get($bgColor, white);
     font-size: 14px;
     .body {
       overflow-y: auto;
-      min-height: 500px;
+      min-height: 400px;
       .title {
         font-size: 14px;
-        color: map-get($fontColor, dark);
+        color: map-get($fontColor, normal);
       }
       .desc {
         font-size: 12px;
-        color: rgba(0, 0, 0, 0.5);
+        color: map-get($fontColor, light);
       }
       .reload-schema {
         padding: 0 200px;
@@ -781,12 +826,12 @@ export default {
         min-height: 290px;
         ::v-deep {
           .el-transfer-panel__header {
-            background: rgba(44, 101, 255, 0.05);
-            height: 54px;
-            line-height: 54px;
+            background-color: map-get($bgColor, disable);
+            height: 40px;
+            line-height: 40px;
             .el-checkbox {
-              height: 54px;
-              line-height: 54px;
+              height: 40px;
+              line-height: 40px;
             }
           }
         }
@@ -830,15 +875,15 @@ export default {
         margin-top: 20px;
         .nav {
           width: 293px;
-          border-top: 1px solid #f2f2f2;
-          border-right: 1px solid #f2f2f2;
+          border-top: 1px solid map-get($borderColor, light);
+          border-right: 1px solid map-get($borderColor, light);
           background: rgba(44, 101, 255, 0.05);
           li {
             height: 115px;
-            background: #ffffff;
+            background: map-get($bgColor, white);
             box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
             border-radius: 4px;
-            border-bottom: 1px solid #f2f2f2;
+            border-bottom: 1px solid map-get($borderColor, light);
           }
         }
       }
@@ -942,7 +987,7 @@ export default {
     }
   }
   .create-task-footer {
-    border-top: 1px solid #f2f2f2;
+    border-top: 1px solid map-get($borderColor, light);
   }
   .step-4 {
     display: flex;
@@ -953,7 +998,7 @@ export default {
 .steps-header {
   margin: 0 20px;
   padding: 20px 0 0;
-  border-bottom: 1px solid #f2f2f2;
+  border-bottom: 1px solid map-get($borderColor, light);
 }
 .el-main {
   padding: 24px 0 0;

@@ -7,7 +7,7 @@
       :transform="transform"
       :getDataFlow="getDataFlow"
     ></FieldMapping>
-    <div class="total">共有{{ tableData.length }}个字段</div>
+    <div class="total mb-2 mt-4">共有 {{ tableData.length }} 个字段</div>
     <ElTable ref="table" v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
       <ElTableColumn width="56" type="index" :label="$t('meta_table_index')"> </ElTableColumn>
       <ElTableColumn prop="field_name" :label="$t('meta_table_field_name')">
@@ -33,8 +33,8 @@
 </template>
 
 <script>
-import { MetadataInstances } from '@daas/api'
-import FieldMapping from '@tapdata/field-mapping'
+import { MetadataInstances } from '@tap/api'
+import FieldMapping from '@tap/field-mapping'
 import { mapGetters, mapState } from 'vuex'
 import VIcon from 'web-core/components/VIcon'
 const metadataApi = new MetadataInstances()
@@ -108,8 +108,9 @@ export default {
 
       try {
         let data = await metadataApi.nodeSchema(this.activeNode.id)
-        data = data?.[0]
-        data.fields.sort((a, b) => {
+        let fields = data?.[0]?.fields || []
+        fields = fields.filter(f => !f.is_deleted)
+        fields.sort((a, b) => {
           const aIsPrimaryKey = a.primary_key_position > 0
           const bIsPrimaryKey = b.primary_key_position > 0
 
@@ -119,7 +120,7 @@ export default {
             return a.field_name.localeCompare(b.field_name)
           }
         })
-        this.tableData = data.fields
+        this.tableData = fields
       } catch (e) {
         this.tableData = []
       }

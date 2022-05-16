@@ -1,6 +1,6 @@
 <template>
   <div class="milestone-container">
-    <div class="inline-flex align-items-center fs-7 font-color-dark fw-bolder cursor-pointer" @click="toggleFnc">
+    <div class="inline-flex align-items-center fs-7 font-color-dark cursor-pointer" @click="toggleFnc">
       <span>{{ $t('task_monitor_mission_milestone') }}</span>
       <VIcon v-if="isFold" class="v-icon ml-1">arrow-right</VIcon>
       <VIcon v-else class="v-icon ml-1">arrow-down</VIcon>

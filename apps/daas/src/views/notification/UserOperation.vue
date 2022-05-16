@@ -29,6 +29,6 @@ export default {
 <style scoped lang="scss">
 .user-operation-wrap {
   display: inline-block;
-  color: #666;
+  color: map-get($fontColor, light);
 }
 </style>

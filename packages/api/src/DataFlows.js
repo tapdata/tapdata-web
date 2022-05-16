@@ -1,97 +1,86 @@
-import PublicAPI from './PublicApi'
-import axios from './axios'
+import Http from './http'
 
-export class DataFlows extends PublicAPI {
+export class DataFlows extends Http {
   constructor() {
     super('/api/DataFlows')
   }
-
   chart(id) {
     if (id) {
-      return axios.get(`${this.url}/chart?user_id=${id}`)
+      return this.axios.get(`${this.url}/chart?user_id=${id}`)
     } else {
-      return axios.get(this.url + '/chart')
+      return this.axios.get(this.url + '/chart')
     }
   }
-
   draft(params) {
-    return axios.patch(this.url + '/draft', params)
+    return this.axios.patch(this.url + '/draft', params)
   }
-
   copy(id) {
-    return axios.post(`${this.url}/${id}/copy`)
+    return this.axios.post(`${this.url}/${id}/copy`)
   }
-
   reset(id) {
-    return axios.post(`${this.url}/${id}/reset`)
+    return this.axios.post(`${this.url}/${id}/reset`)
   }
   create(params) {
-    return axios.post(`${this.url}`, params)
+    return this.axios.post(`${this.url}`, params)
   }
   patchId(id, params) {
-    return axios.patch(`${this.url}/${id}`, params)
+    return this.axios.patch(`${this.url}/${id}`, params)
   }
 
   patchAll(params) {
-    return axios.patch(`${this.url}/updateBatch`, params)
+    return this.axios.patch(`${this.url}/updateBatch`, params)
   }
-
   getId(id, params, filter) {
     if (Array.isArray(params)) {
       filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
       let qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
-      return axios.get(this.url + '/' + id + params.join('/') + qs)
+      return this.axios.get(this.url + '/' + id + params.join('/') + qs)
     }
     params = params || {}
-    return axios.get(this.url + '/' + id, { params })
+    return this.axios.get(this.url + '/' + id, { params })
   }
   getSourceList(id, type, connId, sourceOrTarget) {
     if (connId) {
-      return axios.get(
+      return this.axios.get(
         `${this.url}/dataFlowTables?dataFlowId=${id}&type=${type}&connId=${connId}&sourceOrTarget=${sourceOrTarget}`
       )
     } else {
-      return axios.get(`${this.url}/dataFlowTables?dataFlowId=${id}&type=${type}`)
+      return this.axios.get(`${this.url}/dataFlowTables?dataFlowId=${id}&type=${type}`)
     }
   }
   deleteAll(where) {
     if (typeof where === 'object') where = JSON.stringify(where)
-    return axios.post(this.url + '/removeAll?where=' + encodeURIComponent(where))
+    return this.axios.post(this.url + '/removeAll?where=' + encodeURIComponent(where))
   }
   resetAll(where) {
     if (typeof where === 'object') where = JSON.stringify(where)
-    return axios.post(this.url + '/resetAll?id=' + encodeURIComponent(where))
+    return this.axios.post(this.url + '/resetAll?id=' + encodeURIComponent(where))
   }
-
   saveStage(stages) {
-    return axios.post(`${this.url}/stages`, stages)
+    return this.axios.post(`${this.url}/stages`, stages)
   }
-
   relatedDataFlows(params) {
-    return axios.get(this.url + '/relatedDataFlows', { params })
+    return this.axios.get(this.url + '/relatedDataFlows', { params })
   }
   tableFlow(params) {
-    return axios.get(this.url + '/tableFlow', { params })
+    return this.axios.get(this.url + '/tableFlow', { params })
   }
   batchUpdateListtags(params) {
-    return axios.patch(`${this.url}/batchUpdateListtags`, params)
+    return this.axios.patch(`${this.url}/batchUpdateListtags`, params)
   }
   getOverview(params) {
-    return axios.patch(`${this.url}/overview`, params)
+    return this.axios.patch(`${this.url}/overview`, params)
   }
   getInsight(params) {
-    return axios.patch(`${this.url}/insight`, params)
+    return this.axios.patch(`${this.url}/insight`, params)
   }
-
   tranModelVersionControl(params) {
-    return axios.post(this.url + '/tranModelVersionControl', params)
+    return this.axios.post(this.url + '/tranModelVersionControl', params)
   }
-
   metadata(params) {
-    return axios.post(this.url + '/metadata', params)
+    return this.axios.post(this.url + '/metadata', params)
   }
-
   originalData(qualified_name) {
-    return axios.get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name))
+    return this.axios.get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name))
   }
 }

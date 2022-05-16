@@ -212,9 +212,9 @@ export default {
 <style lang="scss">
 .metadata-search-wrap {
   .el-input-group__append {
-    background-color: #409eff;
-    border-color: #409eff;
-    color: #fff;
+    background-color: map-get($color, primary);
+    border-color: map-get($color, primary);
+    color: map-get($fontColor, white);
     .el-button {
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
@@ -222,21 +222,21 @@ export default {
   }
   .no-search-box {
     .el-input-group__prepend {
-      background: #fff;
-      color: #409eff;
+      background-color: map-get($bgColor, white);
+      color: map-get($color, primary);
     }
   }
   .search-box {
     .el-input-group__prepend {
-      background: #fff;
-      color: #666;
+      background-color: map-get($bgColor, white);
+      color: map-get($fontColor, light);
     }
   }
 }
 </style>
 <style scoped lang="scss">
 .metadata-change-background {
-  // background: #fafafa;
+  // background: map-get($bgColor, normal);
   display: flex;
   height: 100%;
   overflow: hidden;
@@ -278,7 +278,7 @@ export default {
       .desc {
         margin-top: 10px;
         font-size: 12px;
-        color: #ccc;
+        color: map-get($fontColor, slight);
       }
     }
   }
@@ -301,12 +301,12 @@ export default {
     }
     .search-header {
       padding: 15px 0;
-      background: #ffffff;
+      background: map-get($bgColor, white);
       overflow: hidden;
       border-bottom: 1px solid #dedee4;
       .search-title {
         font-size: 14px;
-        color: #333;
+        color: map-get($fontColor, dark);
         font-weight: bold;
         margin-right: 10px;
       }
@@ -315,7 +315,7 @@ export default {
       padding-left: 105px;
       margin-top: 20px;
       font-size: 13px;
-      color: #666;
+      color: map-get($fontColor, light);
     }
     .search-result {
       // margin: 10px;
@@ -330,7 +330,7 @@ export default {
       border: 1px solid rgba(255, 255, 255, 100);
     }
     .desc {
-      color: #aaa;
+      color: map-get($fontColor, light);
       margin-top: 5px;
       margin-bottom: 10px;
     }
@@ -342,7 +342,7 @@ export default {
           display: flex;
         }
         &:hover {
-          background: #fafafa;
+          background: map-get($bgColor, normal);
         }
       }
       .table-li {
@@ -373,7 +373,7 @@ export default {
       }
     }
     .more {
-      color: #999;
+      color: map-get($fontColor, light);
       font-size: 12px;
       cursor: pointer;
       text-align: center;

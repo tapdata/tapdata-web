@@ -34,13 +34,14 @@
       </el-table-column>
       <el-table-column
         :label="$t('application_header_grant_type')"
-        :show-overflow-tooltip="true"
         prop="grantTypes"
         sortable="grantTypes"
         min-width="160"
       >
         <template slot-scope="scope">
-          <span v-for="item in scope.row.grantTypes" :key="item" class="table-span text-break">{{ item }}</span>
+          <div class="classfy">
+            <span v-for="item in scope.row.grantTypes" :key="item" class="table-span text-break">{{ item }}</span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column
@@ -352,7 +353,7 @@ export default {
     background: #eee;
     border-radius: 3px;
   }
-  .el-table .cell.el-tooltip {
+  .el-table .cell .classfy {
     white-space: break-spaces;
     .table-span {
       white-space: pre;

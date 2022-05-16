@@ -401,7 +401,7 @@ export default {
 
 <style scoped lang="scss">
 .database-filed-mapping-dialog {
-  height: 800px;
+  // height: 800px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -416,13 +416,13 @@ export default {
   }
   .text {
     padding: 0 50px;
-    color: #666;
+    color: map-get($fontColor, light);
   }
 }
 .e-button {
   padding: 4px 10px;
-  color: #666;
-  background-color: #f5f5f5;
+  color: map-get($fontColor, light);
+  background-color: map-get($bgColor, main);
   margin-left: 10px;
 }
 </style>

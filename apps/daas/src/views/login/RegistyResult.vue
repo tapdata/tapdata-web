@@ -133,7 +133,7 @@ export default {
 
 <style lang="scss" scoped>
 .page-registry_status {
-  background: #fafafa;
+  background: map-get($bgColor, normal);
   height: 100%;
   overflow: auto;
   box-sizing: border-box;
@@ -159,7 +159,7 @@ export default {
       .text {
         padding-top: 8px;
         font-size: 14px;
-        color: #666;
+        color: map-get($fontColor, light);
         text-align: center;
         p {
           font-size: 18px;
@@ -176,7 +176,7 @@ export default {
             color: map-get($color, primary);
             cursor: pointer;
             i {
-              color: #666;
+              color: map-get($fontColor, light);
             }
           }
         }

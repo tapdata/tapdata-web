@@ -1,6 +1,6 @@
 import { observable, define, action } from '@formily/reactive'
 import { SelectNodeEvent, UnSelectNodeEvent } from '../events'
-import { isStr, isArr } from '@daas/shared'
+import { isStr, isArr } from '@tap/shared'
 
 export class Selection {
   operation

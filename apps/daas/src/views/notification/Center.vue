@@ -87,10 +87,10 @@ $unreadColor: #ee5353;
     display: flex;
     flex-direction: row;
     height: 100%;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     border-radius: 4px;
     .left-panel {
-      border-right: 1px solid #f2f2f2;
+      border-right: 1px solid map-get($borderColor, light);
       width: 200px;
       ul.menu li {
         display: flex;
@@ -99,18 +99,18 @@ $unreadColor: #ee5353;
         align-items: center;
         font-size: 12px;
         font-weight: 400;
-        color: #4e5969;
+        color: map-get($fontColor, normal);
         cursor: pointer;
         &.active,
         &:hover {
           background: rgba(44, 101, 255, 0.05);
           .iconfont {
-            color: #2c65ff;
+            color: map-get($color, primary);
           }
         }
         .iconfont {
           margin-right: 5px;
-          color: #4e5969;
+          color: map-get($fontColor, normal);
         }
         .content {
           flex: 1;
@@ -120,9 +120,9 @@ $unreadColor: #ee5353;
           padding: 0px 5px;
           min-width: 25px;
           height: 17px;
-          border-radius: 4px;
+          border-radius: 10px;
           line-height: 17px;
-          color: #fff;
+          color: map-get($fontColor, white);
           font-weight: 500;
           font-size: 12px;
           white-space: nowrap;

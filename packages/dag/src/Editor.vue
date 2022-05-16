@@ -98,8 +98,8 @@ import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
 import { showMessage } from 'web-core/mixins/showMessage'
 import ConfigPanel from './components/ConfigPanel'
-import { uuid } from '@daas/shared'
-import { Task } from '@daas/api'
+import { uuid } from '@tap/shared'
+import { Task } from '@tap/api'
 import {
   AddConnectionCommand,
   AddNodeCommand,
@@ -112,14 +112,14 @@ import {
 } from './command'
 import Mousetrap from 'mousetrap'
 import dagre from 'dagre'
-import { validateBySchema } from '@daas/form/src/shared/validate'
+import { validateBySchema } from '@tap/form/src/shared/validate'
 import resize from 'web-core/directives/resize'
 import { merge } from 'lodash'
 import PaperEmpty from './components/PaperEmpty'
 import EmptyItem from './components/EmptyItem'
 import formScope from './mixins/formScope'
 import NodePopover from './components/NodePopover'
-import { getSubTaskStatus, getTaskBtnDisabled } from '@daas/business'
+import { getSubTaskStatus, getTaskBtnDisabled } from '@tap/business'
 
 const taskApi = new Task()
 
@@ -485,62 +485,10 @@ export default {
         }
       })
 
-      /*let sourceMap
-      let targetMap
-      const initSourceAndTargetMap = () => {
-        const edges = this.allEdges
-        edges.forEach(item => {
-          let _source = sourceMap[item.source]
-          let _target = targetMap[item.target]
-
-          if (!_source) {
-            sourceMap[item.source] = [item]
-          } else {
-            _source.push(item)
-          }
-
-          if (!_target) {
-            targetMap[item.target] = [item]
-          } else {
-            _target.push(item)
-          }
-        })
-      }*/
-
-      /*const _instance = {
-        getConnections(params) {
-          // console.log('_instance', params) // eslint-disable-line
-          if (typeof params === 'object') {
-            if (params.target) params.target = NODE_PREFIX + params.target
-            if (params.source) params.source = NODE_PREFIX + params.source
-          }
-          return jsPlumbIns.getConnections(params)
-        }
-      }*/
-
       jsPlumbIns.bind('beforeDrop', info => {
         const { sourceId, targetId } = info
 
         return this.checkCanBeConnected(this.getRealId(sourceId), this.getRealId(targetId), true)
-
-        /*if (sourceId === targetId) return false
-
-        // console.log('beforeDrop', info) // eslint-disable-line
-
-        const source = this.nodeById(this.getRealId(sourceId))
-        const target = this.nodeById(this.getRealId(targetId))
-
-        const connectionType = target.attrs.connectionType
-        if (connectionType && !connectionType.includes('target')) {
-          this.$message.info('该节点仅支持作为源')
-          return false
-        }
-
-        if (!this.nodeELIsConnected(sourceId, targetId) && this.allowConnect(source.id, target.id)) {
-          return target.__Ctor.allowSource(source) && source.__Ctor.allowTarget(target, source, _instance)
-        }
-
-        return false*/
       })
 
       jsPlumbIns.bind('beforeDrag', ({ sourceId }) => {
@@ -720,13 +668,6 @@ export default {
       pos[0] += diffPos.x
       pos[1] += diffPos.y
 
-      // this.updateNodeProperties({
-      //   id,
-      //   properties: {
-      //     position: [...pos]
-      //   }
-      // })
-
       param.el.style.left = pos[0] + 'px'
       param.el.style.top = pos[1] + 'px'
       this.jsPlumbIns.revalidate(param.el) // 重绘
@@ -904,12 +845,6 @@ export default {
       let nh = $node.offsetHeight
       let { x, y, bottom, right } = selectBoxAttr
 
-      // console.log('getNodesInSelection', selectBoxAttr) // eslint-disable-line
-      /*const nodeViewOffset = this.nodeViewOffsetPosition
-      x -= nodeViewOffset[0]
-      right -= nodeViewOffset[0]
-      y -= nodeViewOffset[1]
-      bottom -= nodeViewOffset[1]*/
       return this.allNodes.filter(node => {
         const [left, top] = node.attrs.position
         return left + nw > x && left < right && bottom > top && y < top + nh
@@ -1027,6 +962,40 @@ export default {
         someErrorMsg = `存在不支持${typeName}的节点`
       }
 
+      const accessNodeProcessIdArr = [
+        ...tableNode.reduce((set, item) => {
+          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
+          return set
+        }, new Set())
+      ]
+
+      if (accessNodeProcessIdArr.length > 1) {
+        // 所属agent节点冲突
+        const chooseId = this.dataflow.accessNodeProcessId
+
+        if (!chooseId) {
+          // someErrorMsg = `请配置任务运行agent`
+          someErrorMsg = `所属agent节点冲突` // 一样提示冲突
+        } else {
+          let isError = false
+          const agent = this.scope.$agentMap[chooseId]
+          tableNode.forEach(node => {
+            if (node.attrs.accessNodeProcessId && chooseId !== node.attrs.accessNodeProcessId) {
+              this.setNodeErrorMsg({
+                id: node.id,
+                msg: `该节点不支持在 ${agent.hostName}（${agent.ip}）上运行`
+              })
+              isError = true
+            }
+          })
+          isError && (someErrorMsg = `所属agent节点冲突`)
+        }
+      } else if (accessNodeProcessIdArr.length === 1) {
+        // 如果画布上仅有一个所属agent，自动设置为任务的agent
+        this.$set(this.dataflow, 'accessNodeType', 'MANUALLY_SPECIFIED_BY_THE_USER')
+        this.$set(this.dataflow, 'accessNodeProcessId', accessNodeProcessIdArr[0])
+      }
+
       if (someErrorMsg) return someErrorMsg
 
       // 检查链路的末尾节点类型是否是表节点
@@ -1089,7 +1058,7 @@ export default {
       try {
         const result = await taskApi[needStart ? 'saveAndStart' : 'save'](data)
         this.reformDataflow(result)
-        !needStart && this.$message.success(this.$t('message.saveOK'))
+        !needStart && this.$message.success(this.$t('message_save_ok'))
         this.setEditVersion(result.editVersion)
         this.isSaving = false
         return true
@@ -1109,7 +1078,7 @@ export default {
         this.reformDataflow(dataflow)
         this.setTaskId(dataflow.id)
         this.setEditVersion(dataflow.editVersion)
-        // this.$message.success(this.$t('message.saveOK'))
+        // this.$message.success(this.$t('message_save_ok'))
         await this.$router.replace({
           name: 'DataflowEditor',
           params: { id: dataflow.id, action: 'dataflowEdit' }
@@ -1659,7 +1628,8 @@ export default {
       if (error?.data.code === 'Task.ListWarnMessage') {
         let names = []
         if (error.data.data) {
-          Object.keys(error.data.data).forEach(key => {
+          const keys = Object.keys(error.data.data)
+          keys.forEach(key => {
             const node = this.$store.state.dataflow.NodeMap[key]
             if (node) {
               names.push(node.name)
@@ -1669,6 +1639,14 @@ export default {
               })
             }
           })
+          if (!names.length && keys.length && msg) {
+            // 兼容错误信息id不是节点id的情况
+            const msg = error.data.data[keys[0]][0]?.msg
+            if (msg) {
+              this.$message.error(msg)
+              return
+            }
+          }
         }
         this.$message.error(`${this.$t('dag_save_fail')} ${names.join('，')}`)
       } else if (error?.data?.message) {
@@ -1691,17 +1669,7 @@ export default {
     },
 
     handleEditFlush(result) {
-      // eslint-disable-next-line no-console
-      // console.log('handleEditFlush', result, this.startAt && Date.now() - this.startAt)
-      // eslint-disable-next-line no-console
-      console.log('handleEditFlush', result)
       this.reformDataflow(result.data, true)
-      /*if (!this.startAt || Date.now() - this.startAt > 100) {
-        this.reformDataflow(result.data, true)
-        this.startAt = null
-      } else {
-        console.log('跳过') // eslint-disable-line
-      }*/
 
       const { opType } = result
       if (opType === 'transformRate') {

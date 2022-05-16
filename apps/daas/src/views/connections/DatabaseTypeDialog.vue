@@ -101,7 +101,7 @@ export default {
 <style scoped lang="scss">
 .database {
   .title {
-    color: #999;
+    color: map-get($fontColor, slight);
     margin-left: 20px;
     margin-bottom: 20px;
     display: inline-block;
@@ -119,7 +119,7 @@ export default {
       height: 70px;
       justify-content: center;
       align-items: center;
-      background: #fafafa;
+      background: map-get($bgColor, normal);
       border: 1px solid #dedee4;
       border-radius: 3px;
       cursor: pointer;
@@ -135,7 +135,7 @@ export default {
         background: rgba(0, 0, 0, 0.4);
         .mask-text {
           opacity: 0;
-          color: #fff;
+          color: map-get($fontColor, white);
           font-weight: bold;
         }
         &:hover {

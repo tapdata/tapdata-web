@@ -1,4 +1,4 @@
-import { isStr, isPlainObj } from '@daas/shared'
+import { isStr, isPlainObj } from '@tap/shared'
 import { GlobalRegistry } from '../../../core'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent, computed, ref } from 'vue-demi'

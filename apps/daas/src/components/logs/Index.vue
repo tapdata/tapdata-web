@@ -79,7 +79,7 @@ export default {
       height: 400px;
       max-height: 600px;
       font-size: 14px;
-      color: #333;
+      color: map-get($fontColor, dark);
     }
   }
 }

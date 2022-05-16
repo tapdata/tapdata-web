@@ -60,26 +60,29 @@
         </template>
       </ElTableColumn>
       <ElTableColumn prop="status" :label="$t('connection.dataBaseStatus')" width="100">
-        <template slot-scope="scope">
+        <template #default="{ row }">
           <div>
-            <span v-if="['invalid'].includes(scope.row.status)" class="error">
-              <i class="connections-status__icon el-icon-error"></i>
-              <span>
-                {{ $t('connection.status.invalid') }}
-              </span>
+            <span :class="['status-connection-' + row.status, 'status-block']">
+              {{ $t('connection.status.' + row.status) }}
             </span>
-            <span v-if="['ready'].includes(scope.row.status)" class="success">
-              <i class="connections-status__icon el-icon-success"></i>
-              <span>
-                {{ $t('connection.status.ready') }}
-              </span>
-            </span>
-            <span v-if="['testing'].includes(scope.row.status)" class="warning">
-              <VIcon class="connections-status__icon">loading-circle</VIcon>
-              <span>
-                {{ $t('connection.status.testing') }}
-              </span>
-            </span>
+            <!--            <span v-if="['invalid'].includes(scope.row.status)" class="error">-->
+            <!--              <i class="connections-status__icon el-icon-error"></i>-->
+            <!--              <span>-->
+            <!--                {{ $t('connection.status.invalid') }}-->
+            <!--              </span>-->
+            <!--            </span>-->
+            <!--            <span v-if="['ready'].includes(scope.row.status)" class="success">-->
+            <!--              <i class="connections-status__icon el-icon-success"></i>-->
+            <!--              <span>-->
+            <!--                {{ $t('connection.status.ready') }}-->
+            <!--              </span>-->
+            <!--            </span>-->
+            <!--            <span v-if="['testing'].includes(scope.row.status)" class="warning">-->
+            <!--              <VIcon class="connections-status__icon">loading-circle</VIcon>-->
+            <!--              <span>-->
+            <!--                {{ $t('connection.status.testing') }}-->
+            <!--              </span>-->
+            <!--            </span>-->
           </div>
         </template>
       </ElTableColumn>
@@ -115,11 +118,11 @@
             @click="edit(scope.row.id, scope.row.database_type, scope.row)"
             >{{ $t('button_edit') }}
           </ElLink>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
           <ElLink v-readonlybtn="'datasource_creation'" type="primary" @click="copy(scope.row)"
             >{{ $t('button_copy') }}
           </ElLink>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'datasource_creation'"></ElDivider>
           <ElLink
             v-readonlybtn="'datasource_delete'"
             type="primary"
@@ -169,7 +172,7 @@ export default {
       databaseType: '',
       id: '',
       description: '',
-      order: 'createTime DESC',
+      order: 'last_updated DESC',
       databaseModelOptions: [
         {
           label: this.$t('connection_list_source'),
@@ -292,7 +295,7 @@ export default {
     },
     //筛选条件
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
 
@@ -681,7 +684,7 @@ export default {
     vertical-align: middle;
     width: 40px;
     height: 40px;
-    //background: #ffffff;
+    //background: map-get($bgColor, white);
     border-radius: 3px;
     display: flex;
     justify-content: center;
@@ -702,7 +705,7 @@ export default {
     margin-left: 4px;
 
     .name {
-      color: #409eff;
+      color: map-get($color, primary);
       cursor: pointer;
     }
 
@@ -715,7 +718,7 @@ export default {
     }
 
     .user {
-      color: #cccccc;
+      color: map-get($fontColor, slight);
       white-space: nowrap;
       word-break: break-word;
       overflow: hidden;
@@ -724,12 +727,12 @@ export default {
 
     .region-info {
       line-height: 20px;
-      color: #aaa;
+      color: map-get($fontColor, light);
     }
   }
 
   .btn-text {
-    // color: #409EFF;
+    // color: map-get($color, primary);
     font-size: 12px;
     padding-right: 5px;
   }
@@ -739,8 +742,8 @@ export default {
     line-height: 12px;
     font-size: 12px;
     font-weight: 400;
-    color: #999999;
-    background: #f5f5f5;
+    color: map-get($fontColor, light);
+    background: map-get($bgColor, main);
     border: 1px solid #dedee4;
     border-radius: 3px;
     margin-left: 5px;

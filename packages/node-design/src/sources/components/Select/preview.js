@@ -1,4 +1,4 @@
-import { Select as FormSelect } from '@daas/form'
+import { Select as FormSelect } from '@tap/form'
 import { createBehavior, createResource } from '../../../core'
 import { createFieldSchema } from '../Field'
 import { AllSchemas } from '../../schemas'

@@ -1,6 +1,6 @@
 import { ClosestPosition, CursorType } from '../models'
 import { DragStartEvent, DragMoveEvent, DragStopEvent, ViewportScrollEvent } from '../events'
-import { Point } from '@daas/shared'
+import { Point } from '@tap/shared'
 
 export const useDragDropEffect = engine => {
   engine.subscribeTo(DragStartEvent, event => {

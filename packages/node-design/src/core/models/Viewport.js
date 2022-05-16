@@ -1,11 +1,4 @@
-import {
-  calcBoundingRect,
-  calcElementLayout,
-  isHTMLElement,
-  isPointInRect,
-  requestIdle,
-  cancelIdle
-} from '@daas/shared'
+import { calcBoundingRect, calcElementLayout, isHTMLElement, isPointInRect, requestIdle, cancelIdle } from '@tap/shared'
 import { action, define, observable } from '@formily/reactive'
 import { Selector } from './Selector'
 

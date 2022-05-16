@@ -372,7 +372,7 @@ export default {
               if (res) {
                 this.editDocId = null
                 this.table.fetch()
-                this.$message.success(this.$t('message.saveOK'))
+                this.$message.success(this.$t('message_save_ok'))
                 this.createDialogVisible = false
               }
             })

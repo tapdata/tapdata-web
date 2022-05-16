@@ -1,6 +1,6 @@
-import PublicAPI from './PublicApi'
+import Http from './http'
 
-export class DatabaseTypes extends PublicAPI {
+export class DatabaseTypes extends Http {
   constructor() {
     super('/api/DatabaseTypes')
   }

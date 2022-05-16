@@ -4,7 +4,7 @@
  */
 import { createPolyInput } from '../PolyInput'
 import { Button, Popover, Select, Option } from 'element-ui'
-import { Input, InputNumber } from '@daas/form'
+import { Input, InputNumber } from '@tap/form'
 import { TextWidget } from '../../widgets'
 import { defineComponent } from 'vue-demi'
 import CodeEditor from 'web-core/components/base/VCodeEditor'
