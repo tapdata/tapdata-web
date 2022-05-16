@@ -1682,7 +1682,8 @@ export default {
           {
             name: __connection_database_name__, // 必填，需要渲染
             connection_type: pdkOptions.connectionType, // 必填 data.connectionType
-            database_type: pdkOptions.type
+            database_type: pdkOptions.type,
+            pdkHash: pdkOptions.pdkHash
           },
           {
             status: 'testing',
