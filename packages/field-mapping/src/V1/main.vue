@@ -406,7 +406,12 @@ export default {
     },
     //获取typeMapping
     async getTypeMapping(row) {
-      if (!row) return
+      if (!row) {
+        return {
+          sourceData: [],
+          targetData: []
+        }
+      }
       return Promise.all([
         this.$api('TypeMapping').getId(row.sourceDbType),
         this.$api('TypeMapping').getId(row.sinkDbType)
