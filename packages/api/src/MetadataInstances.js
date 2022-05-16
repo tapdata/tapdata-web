@@ -1,42 +1,43 @@
-import axios from './axios'
-import PublicApi from './PublicApi'
+import Http from './http'
 import { isPlainObj } from '@tap/shared'
-export class MetadataInstances extends PublicApi {
+export class MetadataInstances extends Http {
   constructor() {
     super('/api/MetadataInstances')
   }
   getId(id, params) {
-    return axios.get(this.url + '/' + id, { params })
+    return this.axios.get(this.url + '/' + id, { params }).then(this.useData)
   }
   patch(id, params) {
-    return axios.patch(this.url + '/' + id, params)
+    return this.axios.patch(this.url + '/' + id, params).then(this.useData)
   }
   classification(params) {
-    return axios.patch(this.url + '/classifications', params)
+    return this.axios.patch(this.url + '/classifications', params).then(this.useData)
   }
   download(where, type) {
     if (typeof where === 'object') where = JSON.stringify(where)
-    window.open(this.url + `/download?where=${encodeURIComponent(where)}&type=${type}`)
-    // return axios.get(this.url + '/download?where=' + where);
+    window.open(this.url + `/download?where=${encodeURIComponent(where)}&type=${type}`).then(this.useData)
+    // return this.axios.get(this.url + '/download?where=' + where);
   }
 
   dataMap(params) {
-    return axios.get(this.url + '/dataMap', { params })
+    return this.axios.get(this.url + '/dataMap', { params }).then(this.useData)
   }
   schema(params) {
-    return axios.get(this.url + '/schema', { params })
+    return this.axios.get(this.url + '/schema', { params }).then(this.useData)
   }
   tableConnection(params) {
-    return axios.get(this.url + '/tableConnection', { params })
+    return this.axios.get(this.url + '/tableConnection', { params }).then(this.useData)
   }
   upload(upsert, type, listtags, params) {
-    return axios.post(`${this.url}/upload?upsert=${upsert}&type=${type}&listtags=${listtags}`, params)
+    return this.axios
+      .post(`${this.url}/upload?upsert=${upsert}&type=${type}&listtags=${listtags}`, params)
+      .then(this.useData)
   }
   search(params) {
-    return axios.get(this.url + '/search', { params })
+    return this.axios.get(this.url + '/search', { params }).then(this.useData)
   }
   compareHistory(id, params) {
-    return axios.get(this.url + '/compareHistory?id=' + id, params)
+    return this.axios.get(this.url + '/compareHistory?id=' + id, params).then(this.useData)
   }
 
   /**
@@ -46,12 +47,14 @@ export class MetadataInstances extends PublicApi {
    * @returns {Promise<AxiosResponse<any>>}
    */
   nodeSchema(nodeId, fields = ['fields']) {
-    return axios.get(this.url + '/node/schema', {
-      params: {
-        nodeId,
-        fields
-      }
-    })
+    return this.axios
+      .get(this.url + '/node/schema', {
+        params: {
+          nodeId,
+          fields
+        }
+      })
+      .then(this.useData)
   }
 
   /**
@@ -59,20 +62,25 @@ export class MetadataInstances extends PublicApi {
    */
   originalData(qualified_name, target) {
     if (target) {
-      return axios.get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name) + target)
-    } else return axios.get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name))
+      return this.axios
+        .get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name) + target)
+        .then(this.useData)
+    } else
+      return this.axios
+        .get(this.url + '/originalData?qualified_name=' + encodeURIComponent(qualified_name))
+        .then(this.useData)
   }
 
   get(params = {}, filter) {
     if (Array.isArray(params)) {
       filter = typeof filter === 'object' ? JSON.stringify(filter) : filter
       let qs = filter ? '?filter=' + encodeURIComponent(filter) : ''
-      return axios.get(this.url + '/' + params.join('/') + qs)
+      return this.axios.get(this.url + '/' + params.join('/') + qs).then(this.useData)
     }
     const config = { params }
     if (isPlainObj(filter)) {
       Object.assign(config, filter)
     }
-    return axios.get(this.url, config)
+    return this.axios.get(this.url, config).then(this.useData)
   }
 }

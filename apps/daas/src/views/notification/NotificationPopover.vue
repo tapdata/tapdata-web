@@ -170,14 +170,15 @@ export default {
       }
       this.getUnreadData()
       this.$ws.on('notification', res => {
-        this.getUnReadNum()
+        // this.getUnReadNum()
+        this.getUnreadData()
         let data = res?.data
         if (data) {
           data.createTime = formatTime(data.createTime)
           self.listData = uniqueArr([data, ...this.listData])
-          this.$store.commit('notification', {
-            unRead: data.total
-          })
+          // this.$store.commit('notification', {
+          //   unRead: data.total
+          // })
         }
       })
       this.$ws.ready(() => {

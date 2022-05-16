@@ -112,21 +112,16 @@
           <RecycleScroller class="selector-panel__scroller" :item-size="36" :buffer="50" :items="filterSelectedData">
             <template #default="{ item }">
               <ElCheckbox class="selector-panel__item" :label="item" :key="item">
-                <OverflowTooltip
-                  v-if="!errorTables[item]"
-                  :text="item"
-                  placement="right"
-                  :enterable="false"
-                ></OverflowTooltip>
                 <ElTooltip
-                  v-else
                   class="ellipsis"
                   placement="right"
                   :enterable="false"
                   :disabled="!errorTables[item]"
                   :content="errorTables[item]"
                 >
-                  <div :class="{ 'color-danger': errorTables[item] }">{{ item }}</div>
+                  <div :class="{ 'color-danger': errorTables[item] }">
+                    <slot name="right-item" :row="item">{{ item }}</slot>
+                  </div>
                 </ElTooltip>
               </ElCheckbox>
             </template>

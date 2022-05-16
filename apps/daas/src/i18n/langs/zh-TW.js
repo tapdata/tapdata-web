@@ -94,6 +94,11 @@ export default {
   message_request_error: '請求數據失敗',
   message_no_permission: '登錄已過期，請重新登錄',
   message_loading: '正在加載',
+  message_401: '登錄過期，請重新登錄',
+  message_404: '請求的資源不存在',
+  message_5xx: '伺服器異常',
+  message_network_unconnected: '網絡未連接',
+  message_request_timeout: '請求超時',
 
   // 表格
   column_operation: '操作',

@@ -122,7 +122,7 @@ export default {
           this.userOptions = data.map(item => {
             return {
               label: item.username,
-              value: item.id
+              value: item.username
             }
           })
         })
@@ -140,19 +140,17 @@ export default {
         where.parameter1 = { like: toRegExp(keyword), options: 'i' }
       }
       if (userId) {
-        where.user_id = {
-          like: userId
-        }
+        where.username = userId
       }
       if (range && range.length) {
-        let startTime = range[0] ? this.$moment(range[0]).format('YYYY-MM-DD HH:mm:ss') : ''
-        let endTime = range[1] ? this.$moment(range[1]).format('YYYY-MM-DD HH:mm:ss') : ''
-        if (startTime) {
-          where.and = [{ createTime: { gte: startTime } }]
-        } else if (endTime) {
-          where.and = [{ createTime: { lte: endTime } }]
+        let startTime = range[0] ? range[0] : ''
+        let endTime = range[1] ? range[1] : ''
+        if (startTime && !endTime) {
+          where.createTime = { $gt: { $date: startTime } }
+        } else if (!startTime && endTime) {
+          where.createTime = { $lt: { $date: endTime } }
         } else if (startTime && endTime) {
-          where.and = [{ createTime: { gte: startTime } }, { createTime: { lte: endTime } }]
+          where.createTime = { $gt: { $date: startTime }, $lt: { $date: endTime } }
         }
       }
       let filter = {

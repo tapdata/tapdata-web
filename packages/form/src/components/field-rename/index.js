@@ -109,6 +109,7 @@ export const FieldRename = connect(
                             v-model={data.field_name}
                             onChange={() => this.handleRename(node, data)}
                             onBlur={() => this.closeInput(node.data)}
+                            onKeydown={() => this.handleKeyDown()}
                           />
                         ) : (
                           <span class="text__inner">{data.field_name}</span>
@@ -195,6 +196,11 @@ export const FieldRename = connect(
         closeInput(data) {
           this.$set(data, 'showInput', false) //打开loading
         },
+        handleKeyDown(e) {
+          if (e.keyCode === 13) {
+            this.$set(data, 'showInput', false) //eslint-disable-line
+          }
+        },
         /*rename
          * @node 当前tree
          * @data 当前数据*/
@@ -220,10 +226,7 @@ export const FieldRename = connect(
             op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
               id: data.id,
               field: nativeData.original_field_name,
-              operand:
-                this.fieldsNameTransforms === ''
-                  ? data.field_name
-                  : nativeData.original_field_name || nativeData.original_field_name,
+              operand: data.field_name,
               table_name: data.table_name,
               type: data.type,
               primary_key_position: data.primary_key_position,
@@ -235,13 +238,17 @@ export const FieldRename = connect(
             this.operations.push(op)
           } else {
             op = ops[0]
-            ;(op.operand =
-              this.fieldsNameTransforms === ''
-                ? data.table_name
-                : nativeData.original_field_name || nativeData.original_field_name),
-              (op.label = data.field_name)
-            op.field_name = data.field_name
+            if (data.field_name === nativeData.original_field_name) {
+              //再次改名跟原来名字一样 删除当前operation 记录
+              let index = this.operations.findIndex(v => v.id === data.id && v.op === 'RENAME')
+              this.operations.splice(index, 1)
+            } else {
+              op.operand = data.field_name
+              op.label = data.field_name
+              op.field_name = data.field_name
+            }
           }
+          this.$forceUpdate()
           console.log(this.operations) //eslint-disable-line
         },
         handleExistsName(node, data) {

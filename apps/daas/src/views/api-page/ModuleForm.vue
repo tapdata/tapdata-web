@@ -190,16 +190,6 @@ export default {
     'createForm.datasource'() {
       this.getTableData()
     },
-    // 'createForm.tablename'() {
-    // let fields = []
-    // debugger
-    // let selectedCollections = this.tableNameSelectConfig.options.filter(v => v.value === val)
-    // selectedCollections.forEach(v => {
-    //   fields = fields.concat(v.fields)
-    // })
-    // this.fields = fields
-    // this.getFieldsData()
-    // },
     'createForm.apiType'(newType, oldType) {
       if (this.$route.query.id && (newType === oldType || oldType === '')) return
       this.createForm.paths = []

@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from '@/plugins/axios'
 import PublicAPI from './publicApi'
 
 export default class DataFlowsDebugs extends PublicAPI {

@@ -94,7 +94,7 @@
       <el-table-column
         :label="$t('dataVerification.verifyTime')"
         prop="lastStartTime"
-        sortable="custom"
+        sortable="lastStartTime"
         width="140"
       ></el-table-column>
       <el-table-column :label="$t('dataVerification.operation')" width="250" fixed="right">
@@ -168,7 +168,7 @@ export default {
       },
       filterItems: [],
       loadingImg: window._TAPDATA_OPTIONS_.loadingImg,
-      order: 'createTime DESC',
+      order: 'lastStartTime DESC',
       inspectMethod: {
         row_count: this.$t('dataVerification.rowVerify'),
         field: this.$t('dataVerification.contentVerify'),
@@ -251,7 +251,7 @@ export default {
     },
     //筛选条件
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.order = `${order ? prop : 'lastStartTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
     getData({ page }) {

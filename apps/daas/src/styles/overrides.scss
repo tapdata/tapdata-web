@@ -233,6 +233,8 @@
 .el-tooltip__popper {
   padding: 5px 10px;
   max-width: 400px;
+  max-height: 400px;
+  overflow-y: auto;
 }
 .el-tooltip__popper.is-dark {
   line-height: 20px;
@@ -383,7 +385,8 @@
   display: block;
 }
 .el-table thead {
-  color: map-get($fontColor, dark);
+  color: map-get($fontColor, normal);
+
 }
 .el-table__fixed-right-patch {
   background: #f4f5f7;
@@ -391,6 +394,7 @@
 .el-table th {
   background: #f4f5f7;
   border-bottom: 0;
+  font-weight: 500;
 }
 .el-table td,
 .el-table th.is-leaf {

@@ -9,16 +9,7 @@ import { errorConfirmFnc } from '@/util'
 // axios.defaults.baseURL = process.env.baseURL ||  '';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-
-let config = {
-  // baseURL: ''
-  // timeout: 60 * 1000, // Timeout
-  // withCredentials: true, // Check cross-site Access-Control
-  headers: {
-    'x-requested-with': 'XMLHttpRequest'
-  }
-}
-const _axios = axios.create(config)
+axios.defaults.headers.common['x-requested-with'] = 'XMLHttpRequest'
 const pending = []
 const CancelToken = axios.CancelToken
 
@@ -63,7 +54,7 @@ const errorCallback = error => {
   return Promise.reject(error)
 }
 // 请求发起拦截器
-_axios.interceptors.request.use(function (config) {
+axios.interceptors.request.use(function (config) {
   // 本地开发使用header中加__token的方式绕过网关登录
   const ACCESS_TOKEN = process.env.VUE_APP_ACCESS_TOKEN || ''
   if (ACCESS_TOKEN) {
@@ -98,7 +89,7 @@ _axios.interceptors.request.use(function (config) {
 }, errorCallback)
 
 // 请求返回拦截器
-_axios.interceptors.response.use(function (response) {
+axios.interceptors.response.use(function (response) {
   return new Promise((resolve, reject) => {
     // 从请求池清除掉错误请求
     removePending(response.config)
@@ -134,17 +125,17 @@ _axios.interceptors.response.use(function (response) {
 
 const Plugin = {}
 Plugin.install = function (Vue) {
-  Vue.axios = _axios
-  window.axios = _axios
+  Vue.axios = axios
+  window.axios = axios
   Object.defineProperties(Vue.prototype, {
     axios: {
       get() {
-        return _axios
+        return axios
       }
     },
     $axios: {
       get() {
-        return _axios
+        return axios
       }
     }
   })

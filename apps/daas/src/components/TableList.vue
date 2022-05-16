@@ -36,8 +36,8 @@ export default {
   ::v-deep {
     .el-table__header {
       th {
-        color: map-get($fontColor, dark);
-        font-weight: 700;
+        color: map-get($fontColor, normal);
+        font-weight: 500;
         background-color: map-get($bgColor, normal);
       }
     }

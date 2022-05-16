@@ -3,42 +3,41 @@
  * @date 3/2/20
  * @description
  */
-import PublicAPI from './PublicApi'
-import axios from 'axios'
+import Http from './http'
 
-export class TCM extends PublicAPI {
+export class TCM extends Http {
   constructor() {
     super('/api/tcm')
   }
   //获取实例列表
   getAgent() {
-    return axios.get(this.url + '/agent')
+    return this.axios.get(this.url + '/agent')
   }
   getAgentCount() {
-    return axios.get(this.url + '/agent/agentCount')
+    return this.axios.get(this.url + '/agent/agentCount')
   }
   //h获取可用区
   getRegion() {
-    return axios.get(this.url + '/region')
+    return this.axios.get(this.url + '/region')
   }
   //h获取可用区
   productVip(params) {
-    return axios.get(this.url + '/product/vip', { params })
+    return this.axios.get(this.url + '/product/vip', { params })
   }
   //实例相关地区列表
   getRegionZone() {
-    return axios.get(this.url + '/agent/regionZone')
+    return this.axios.get(this.url + '/agent/regionZone')
   }
   //vpc列表
   getVpcList(id) {
-    return axios.get(this.url + '/vpc/list/' + id)
+    return this.axios.get(this.url + '/vpc/list/' + id)
   }
   //创建网络策略
   strategy(params) {
-    return axios.post(this.url + '/strategy', params)
+    return this.axios.post(this.url + '/strategy', params)
   }
   //ecs列表
   getEcsList(id, params) {
-    return axios.get(this.url + '/ecs/list/' + id, { params })
+    return this.axios.get(this.url + '/ecs/list/' + id, { params })
   }
 }

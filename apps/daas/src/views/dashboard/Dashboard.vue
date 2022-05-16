@@ -5,7 +5,7 @@
         <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">
           <div class="dashboard-col-box">
             <div class="fs-7 font-color-normal">{{ $t('dashboard_' + item.key) }}</div>
-            <div class="dashboard-label fs-5 pt-4 text-center fw-sub font-color-dark">
+            <div class="dashboard-label fs-5 pt-4 text-center fw-sub font-color-normal">
               {{ $t('dashboard_current_' + item.key) }}
             </div>
             <div
@@ -208,9 +208,11 @@
 </template>
 
 <script>
-import factory from '../../api/factory'
 import Chart from 'web-core/components/chart'
-const cluster = factory('cluster')
+import { Cluster, Task } from '@tap/api'
+
+let clusterApi = new Cluster()
+let taskApi = new Task()
 
 export default {
   components: { Chart },
@@ -414,19 +416,19 @@ export default {
       let params = {
         type: 'dashboard'
       }
-      cluster.get(params).then(res => {
-        this.serverProcess.tableData = res.data?.items
-        this.serverTable = res.data?.items
+      clusterApi.get(params).then(data => {
+        this.serverProcess.tableData = data?.items
+        this.serverTable = data?.items
       })
     },
     // 获取dataflows数据
     getDataFlowApi() {
       let self = this
       self.loading = true
-      this.$api('Task')
+      taskApi
         .chart()
-        .then(res => {
-          if (res?.data) {
+        .then(data => {
+          if (data) {
             let setColor = list => {
               return list.map(item => {
                 item.itemStyle = {
@@ -436,9 +438,9 @@ export default {
               })
             }
             // 全部数据
-            let copy_total = res.data?.chart1?.total || 0
-            let sync_total = res.data?.chart3?.total || 0
-            let valid_total = res.data?.chart5?.total || 0
+            let copy_total = data?.chart1?.total || 0
+            let sync_total = data?.chart3?.total || 0
+            let valid_total = data?.chart5?.total || 0
 
             let total = {
               all_total: copy_total + sync_total + valid_total,
@@ -456,19 +458,17 @@ export default {
             })
             this.taskList = result
 
-            self.migrationTaskList = res.data.chart1?.items
-              ? self.handleDataProcessing(res.data.chart1.items, self.statusList)
+            self.migrationTaskList = data.chart1?.items
+              ? self.handleDataProcessing(data.chart1.items, self.statusList)
               : []
-            self.syncTaskList = res.data?.chart3
-              ? self.handleDataProcessing(res.data.chart3.items, self.statusList)
-              : []
+            self.syncTaskList = data?.chart3 ? self.handleDataProcessing(data.chart3.items, self.statusList) : []
 
             self.copyPieData = setColor(self.migrationTaskList)
-            self.copyTaskData = this.handleChart(res.data.chart2)
+            self.copyTaskData = this.handleChart(data.chart2)
             self.syncPieData = setColor(self.syncTaskList)
-            self.syncTaskData = this.handleChart(res.data.chart4)
-            self.validBarData = this.handleChart(res.data.chart5)
-            self.transBarData = this.handleChart(res.data.chart6, self.transBarData)
+            self.syncTaskData = this.handleChart(data.chart4)
+            self.validBarData = this.handleChart(data.chart5)
+            self.transBarData = this.handleChart(data.chart6, self.transBarData)
           }
         })
         .finally(() => {
