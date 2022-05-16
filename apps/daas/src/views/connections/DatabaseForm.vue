@@ -1941,14 +1941,12 @@ export default {
           let connection = {}
           if (data?.properties?.connection) {
             connection = data.properties.connection
-            let properties = connection.properties
-            for (let key in properties) {
-              result[key] = properties[key]
-            }
+            let properties = connection.properties || {}
+            Object.assign(result, properties)
           }
           connection.properties = result
           this.schemaData = connection
-          let id = this.id || this.$route.query.id
+          let id = this.id || this.$route.params.id
           if (id) {
             this.getPdkData(id)
           }
@@ -1956,7 +1954,7 @@ export default {
     },
     getPdkData(id) {
       this.$api('connections')
-        .get(id)
+        .customQuery(id, { schema: true })
         .then(res => {
           this.model = res.data
           this.schemaFormInstance.setValues(res.data?.config)
@@ -2056,6 +2054,9 @@ export default {
           width: 100%;
           height: 100%;
           overflow-y: auto;
+          .scheme-to-form {
+            width: 396px;
+          }
           .form-builder {
             width: 396px;
             ::v-deep {
