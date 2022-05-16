@@ -402,7 +402,7 @@
 <script>
 import VIcon from 'web-core/components/VIcon'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
-const { delayTrigger } = this.$util
+import { delayTrigger } from 'web-core/util'
 import { modeMapping } from './const'
 
 export default {
