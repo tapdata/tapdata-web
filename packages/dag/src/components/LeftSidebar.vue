@@ -267,6 +267,7 @@ import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowToolti
 import EmptyItem from 'web-core/components/EmptyItem'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import CreateTable from './CreateTable'
+import util from '../mixins/util'
 
 export default {
   name: 'LeftSidebar',
@@ -281,6 +282,8 @@ export default {
     ConnectionTypeSelector,
     ElScrollbar: Select.components.ElScrollbar
   },
+
+  mixins: [util],
 
   data() {
     return {
@@ -452,16 +455,31 @@ export default {
                 !this.comingAllowDatabase.includes(item.type) &&
                 !['mem_cache', 'rest api', 'log_collect'].includes(item.type)
             )
+            this.getPdkData(res.data)
           }
         })
+    },
+    getPdkData(data) {
+      this.database.push(...data.filter(t => t.pdkType === 'pdk'))
     },
     createConnection(type) {
       this.connectionDialog = false
       // this.connectionFormDialog = true
-      this.databaseType = type
+      let item
+      if (typeof type === 'object') {
+        item = type
+        type = item.type
+      }
+      let query = {
+        databaseType: type
+      }
+      if (item) {
+        query.pdkType = item.pdkType
+        query.pdkHash = item.pdkHash
+      }
       this.$router.push({
         name: 'connectionsCreate',
-        query: { databaseType: type }
+        query
       })
     },
     async init() {

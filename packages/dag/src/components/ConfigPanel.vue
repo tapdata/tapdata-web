@@ -74,7 +74,7 @@ export default {
     }
   },
 
-  components: { VIcon, MetaPane, DataPane, FormPanel, SettingPanel, PdkPane },
+  components: { VIcon, MetaPane, /*DataPane,*/ FormPanel, SettingPanel, PdkPane },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
