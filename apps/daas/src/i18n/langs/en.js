@@ -1141,10 +1141,10 @@ export default {
   task_info_custom_time: 'Custom time',
   task_info_five_seconds: '5 seconds',
   task_info_one_min: '1 minute',
-  task_info_full_progress: 'full progress',
+  task_info_full_progress: 'INITIAL SYNC progress',
   task_info_full_time: 'full completion time',
   task_info_calculating: 'Calculating',
-  task_info_incremental_delay: 'Incremental delay',
+  task_info_incremental_delay: 'CDC delay',
   task_info_increment_time_point: 'The time point of the increment',
   task_info_statistics_time: 'Statistics time',
 
