@@ -115,6 +115,10 @@ axios.interceptors.response.use(function (response) {
       if (response?.config?.responseType === 'blob') {
         return resolve(response)
       }
+      // JSON文件
+      if (response?.config.url?.match(/.json$/i)) {
+        return resolve(response)
+      }
       let msg = data?.message || data?.msg || ''
       console.log(`${code}： ${msg}`)
       Message.error(msg)
