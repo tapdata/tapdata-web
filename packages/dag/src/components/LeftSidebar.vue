@@ -497,9 +497,9 @@ export default {
         page: this.dbPage,
         size: 20,
         where: {
-          database_type: {
-            $in: this.database
-          }
+          // database_type: {
+          //   $in: this.database
+          // }
         },
         fields: {
           name: 1,
