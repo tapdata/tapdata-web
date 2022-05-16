@@ -112,7 +112,7 @@
           <ElButton v-readonlybtn="'API_creation'" size="mini" type="text" @click="copy(scope.row)">
             {{ $t('button_copy') }}
           </ElButton>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'API_creation'"></ElDivider>
           <!-- <ElButton v-readonlybtn="'API_data_explorer'" size="mini" type="text" @click="toDetails(scope.row)">
             {{ $t('button_preview') }}
           </ElButton>
@@ -141,11 +141,11 @@
           >
             {{ $t('modules_unpublish_api') }}
           </ElButton>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'API_publish'"></ElDivider>
           <ElButton v-readonlybtn="'API_edition'" size="mini" type="text" @click="edit(scope.row)">
             {{ $t('modules_edit') }}
           </ElButton>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'API_edition'"></ElDivider>
           <!-- <ElButton v-readonlybtn="'API_export'" size="mini" type="text" @click="handleDownload(scope.row)">
             {{ $t('modules_export') }}
           </ElButton>
@@ -154,11 +154,11 @@
             v-readonlybtn="'API_delete'"
             size="mini"
             type="text"
-            :disabled="$disabledByPermission('API_delete_all_data', scope.row.userId)"
+            :disabled="$disabledByPermission('API_delete_all_data', scope.row.userId) || scope.row.status !== 'pending'"
             @click="remove(scope.row)"
             >{{ $t('button_delete') }}</ElButton
           >
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'API_delete'"></ElDivider>
           <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
             <ElLink type="primary" class="rotate-90">
               <i class="el-icon-more"></i>
@@ -738,7 +738,7 @@ export default {
     }
     .btn {
       // padding: 7px;
-      // background: #f5f5f5;
+      // background: map-get($bgColor, main);
       i.iconfont {
         font-size: 12px;
       }
@@ -751,7 +751,7 @@ export default {
     }
     .modules-name {
       .name {
-        color: #409eff;
+        color: map-get($color, primary);
         a {
           color: inherit;
           cursor: pointer;
@@ -762,12 +762,12 @@ export default {
       }
       .tag {
         margin-left: 5px;
-        color: #999999;
-        background: #f5f5f5;
+        color: map-get($fontColor, light);
+        background: map-get($bgColor, main);
         border: 1px solid #dedee4;
       }
       .parent {
-        color: #cccccc;
+        color: map-get($fontColor, slight);
       }
     }
   }

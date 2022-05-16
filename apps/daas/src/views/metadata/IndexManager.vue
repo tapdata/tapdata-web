@@ -341,11 +341,11 @@ export default {
             .post(params)
             .then(() => {
               this.createDialogVisible = false
-              this.$message.success(this.$t('message.saveOK'))
+              this.$message.success(this.$t('message_save_ok'))
               // this.toDetails(res.data);
             })
             .catch(() => {
-              this.$message.error(this.$t('message.saveFail'))
+              this.$message.error(this.$t('message_save_fail'))
             })
         }
       })
@@ -405,7 +405,7 @@ export default {
     .btn-create {
       float: right;
       padding: 7px;
-      // background: #f5f5f5;
+      // background: map-get($bgColor, main);
       i.iconfont {
         font-size: 12px;
       }

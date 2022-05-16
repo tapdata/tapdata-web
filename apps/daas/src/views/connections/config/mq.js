@@ -349,6 +349,43 @@ export default function (vm) {
             }
           }
         ]
+      },
+      {
+        type: 'select',
+        field: 'accessNodeType',
+        label: vm.$t('connection_form_access_node'),
+        clearable: false,
+        options: [
+          {
+            label: vm.$t('connection_form_automatic'),
+            value: 'AUTOMATIC_PLATFORM_ALLOCATION'
+          },
+          {
+            label: vm.$t('connection_form_manual'),
+            value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+          }
+        ],
+        tips: vm.$t('connection_form_access_node_tip')
+      },
+      {
+        type: 'slot',
+        slot: 'accessNodeProcessId',
+        customClass: 'large-item',
+        show: false,
+        filterable: true,
+        dependOn: [
+          {
+            triggerOptions: [
+              {
+                field: 'accessNodeType',
+                value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+              }
+            ],
+            triggerConfig: {
+              show: true
+            }
+          }
+        ]
       }
     ]
   }

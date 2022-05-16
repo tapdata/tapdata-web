@@ -1342,16 +1342,16 @@ export default {
   }
   .el-table .error-row {
     background: rgba(255, 0, 0, 0.3);
-    color: #fff;
+    color: map-get($fontColor, white);
   }
   .el-table th {
-    background: #f4f5f7;
+    background: map-get($bgColor, normal);
   }
 }
 .field-mapping-data-type {
   margin-top: 10px;
   font-size: 12px;
-  color: #999;
+  color: map-get($fontColor, slight);
 }
 </style>
 <style scoped lang="scss">
@@ -1360,10 +1360,10 @@ export default {
   height: 100%;
   overflow: hidden;
   .icon {
-    color: #6dc5e8;
+    color: map-get($color, disprimary);
   }
   .icon-error {
-    color: red;
+    color: map-get($color, danger);
   }
   .task-form__text {
     display: inline-block;
@@ -1377,26 +1377,25 @@ export default {
     height: 0;
     .task-form-left__ul {
       flex: 1;
-      border-top: 1px solid #f2f2f2;
-      border-right: 1px solid #f2f2f2;
+      border-top: 1px solid map-get($borderColor, light);
+      border-right: 1px solid map-get($borderColor, light);
       overflow-y: auto;
       li {
-        height: 93px;
-        background: #ffffff;
+        // height: 93px;
+        background: map-get($bgColor, white);
         box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
         border-radius: 4px;
-        border-bottom: 1px solid #f2f2f2;
+        border-bottom: 1px solid map-get($borderColor, light);
         display: flex;
-        padding-top: 16px;
-        padding-left: 10px;
+        padding: 16px 0 10px 10px;
         &:hover {
           background: rgba(44, 101, 255, 0.05);
           cursor: pointer;
-          border-left: 2px solid #2c65ff;
+          border-left: 2px solid map-get($color, primary);
         }
         &.active {
           background: rgba(44, 101, 255, 0.05);
-          border-left: 2px solid #2c65ff;
+          border-left: 2px solid map-get($color, primary);
           cursor: pointer;
         }
         .task-form__img {
@@ -1413,7 +1412,7 @@ export default {
           .source {
             font-size: 12px;
             font-weight: 400;
-            color: #000000;
+            color: map-get($fontColor, dark);
             line-height: 17px;
             text-align: left;
             overflow: hidden;
@@ -1423,7 +1422,7 @@ export default {
           .target {
             font-size: 12px;
             font-weight: 400;
-            color: #ef9868;
+            color: map-get($color, warning);
             line-height: 17px;
             margin-top: 16px;
             text-align: left;
@@ -1434,7 +1433,7 @@ export default {
           .select {
             font-size: 12px;
             font-weight: 400;
-            color: #000000;
+            color: map-get($fontColor, dark);
             line-height: 17px;
             margin-top: 10px;
             display: flex;
@@ -1452,7 +1451,7 @@ export default {
       flex-direction: column;
     }
     .color-darkorange {
-      color: darkorange;
+      color: map-get($color, warning);
     }
   }
 }

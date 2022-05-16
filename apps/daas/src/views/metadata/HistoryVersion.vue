@@ -339,7 +339,7 @@ export default {
     div {
       flex: 1;
       font-size: 14px;
-      color: #333;
+      color: map-get($fontColor, dark);
       text-align: center;
     }
     div:first-child {

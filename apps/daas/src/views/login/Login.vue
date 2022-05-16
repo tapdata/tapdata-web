@@ -167,7 +167,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  // background: #fafafa;
+  // background: map-get($bgColor, normal);
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -210,7 +210,7 @@ export default {
         padding-left: 15px;
         width: 100%;
         height: 44px;
-        color: #606266;
+        color: map-get($fontColor, light);
         line-height: 44px;
         border-radius: 0;
         box-sizing: border-box;
@@ -224,7 +224,7 @@ export default {
         &::placeholder {
           font-weight: 400;
           font-size: 14px;
-          color: #c9cdd4;
+          color: map-get($fontColor, slight);
         }
       }
     }

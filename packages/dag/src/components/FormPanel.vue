@@ -10,26 +10,11 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-import { Form, SchemaField } from '@daas/form'
-import {
-  createForm,
-  onFormInputChange,
-  onFormValuesChange,
-  onFieldReact,
-  isVoidField,
-  registerValidateMessageTemplateEngine
-} from '@formily/core'
+import { Form, SchemaField } from '@tap/form'
+import { createForm, onFormInputChange, onFormValuesChange, onFieldReact, isVoidField } from '@formily/core'
 import { Path } from '@formily/path'
-import { validateBySchema } from '@daas/form/src/shared/validate'
+import { validateBySchema } from '@tap/form/src/shared/validate'
 import { debounce } from 'lodash'
-
-registerValidateMessageTemplateEngine((message, context) => {
-  // console.log('registerValidateMessageTemplateEngine', message, context)
-  if (context.field?.props?.name === 'tableName') {
-    return '请选择表'
-  }
-  return message
-})
 
 const mapEnum = dataSource => (item, index) => {
   const label = dataSource[index] || dataSource[item.value] || item.label
@@ -155,7 +140,7 @@ export default {
           console.log('🤖️ node.$outputs', this.node.name, v)
           if ($outputs && $outputs.value.join(',') !== v.join(',')) {
             // eslint-disable-next-line no-console
-            console.log('👷 更新$outputs', $outputs.value)
+            console.log('👷 更新$outputs', $outputs.value, v)
             this.form.setValuesIn('$outputs', [...v])
           }
         })

@@ -1,4 +1,4 @@
-import { isStr } from '@daas/shared'
+import { isStr } from '@tap/shared'
 import { getCurrentInstance } from 'vue-demi'
 
 const css2obj = css => {

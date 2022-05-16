@@ -4,9 +4,23 @@
       <el-row :gutter="20" class="dashboard-row mb-5" v-readonlybtn="'Data_SYNC_menu'">
         <el-col :span="6" v-for="item in taskList" :key="item.name" class="dashboard-col">
           <div class="dashboard-col-box">
-            <div class="dashboard-title fs-7">{{ $t('dashboard_' + item.key) }}</div>
-            <div class="dashboard-label fs-5 pt-4 text-center">{{ $t('dashboard_current_' + item.key) }}</div>
-            <div class="dashboard-num pt-4 pb-2 text-center din-font">{{ item.value }}</div>
+            <div class="fs-7 font-color-normal">{{ $t('dashboard_' + item.key) }}</div>
+            <div class="dashboard-label fs-5 pt-4 text-center fw-sub font-color-normal">
+              {{ $t('dashboard_current_' + item.key) }}
+            </div>
+            <div
+              :class="[
+                'dashboard-num',
+                'pt-4',
+                'pb-2',
+                'text-center',
+                'din-font',
+                { 'cursor-pointer': item.key === 'copy_total' || item.key === 'sync_total' }
+              ]"
+              @click="handleTask(item)"
+            >
+              {{ item.value }}
+            </div>
           </div>
         </el-col>
       </el-row>
@@ -15,12 +29,12 @@
         <el-col :span="12" class="dashboard-col col">
           <div class="charts-list flex flex-row">
             <div class="charts-list-text">
-              <div class="dashboard-title fs-7">{{ $t('dashboard_copy_overview_title') }}</div>
+              <div class="fs-7 font-color-normal">{{ $t('dashboard_copy_overview_title') }}</div>
               <ul class="job-list">
-                <li v-for="task in migrationTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
+                <li v-for="task in migrationTaskList" :key="task.label" @click="handleStatus(task.label)">
                   <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
-                  <span class="text">{{ $t('dashboard_status_' + task.label) }}</span
-                  ><span class="num pl-7">{{ task.value }}</span>
+                  <span class="fw-normal font-color-light">{{ $t('dashboard_status_' + task.label) }}</span
+                  ><span class="num pl-7 font-color-dark">{{ task.value }}</span>
                 </li>
               </ul>
             </div>
@@ -29,7 +43,7 @@
               class="flex justify-content-center align-items-center w-100"
             >
               <div
-                class="flex justify-content-center align-items-center"
+                class="flex justify-content-center align-items-center font-color-slight"
                 v-html="
                   $t('dashboard_no_statistics', [
                     '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_copy_total') + '</span>'
@@ -45,12 +59,12 @@
         <el-col :span="12" class="dashboard-col col">
           <div class="charts-list flex flex-row">
             <div class="charts-list-text">
-              <div class="dashboard-title fs-7">{{ $t('dashboard_sync_overview_title') }}</div>
+              <div class="fs-7 font-color-normal">{{ $t('dashboard_sync_overview_title') }}</div>
               <ul class="job-list">
-                <li v-for="task in syncTaskList" :key="task.label" @click="handleMigrationStatus(task.label)">
+                <li v-for="task in syncTaskList" :key="task.label">
                   <i class="dots mr-3" :style="`background-color: ${colorMap[task.label]};`"></i>
-                  <span class="text">{{ $t('dashboard_status_' + task.label) }}</span
-                  ><span class="num pl-7">{{ handleChangeUnit(task.value) }}</span>
+                  <span class="fw-normal font-color-light">{{ $t('dashboard_status_' + task.label) }}</span
+                  ><span class="num pl-7 font-color-dark">{{ handleChangeUnit(task.value) }}</span>
                 </li>
               </ul>
             </div>
@@ -59,7 +73,7 @@
               class="flex justify-content-center align-items-center w-100"
             >
               <div
-                class="flex justify-content-center align-items-center"
+                class="flex justify-content-center align-items-center font-color-slight"
                 v-html="
                   $t('dashboard_no_statistics', [
                     '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_sync_total') + '</span>'
@@ -77,11 +91,12 @@
       <el-row :gutter="20" class="dashboard-row mb-5" v-if="syncValidFalg">
         <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_verify_menu'">
           <div class="dashboard-col-box">
-            <div class="dashboard-title fs-7">{{ $t('dashboard_valid_title') }}</div>
+            <div class="fs-7 font-color-normal">{{ $t('dashboard_valid_title') }}</div>
             <div class="chart line-chart flex flex-column">
               <ul>
                 <li v-for="item in validBarData" :key="item.name">
-                  <span>{{ item.name }} </span> {{ item.value }}
+                  <span class="font-color-light">{{ item.name }} </span>
+                  <span class="font-color-dark fw-sub"> {{ item.value }}</span>
                 </li>
               </ul>
               <div
@@ -89,7 +104,7 @@
                 class="flex justify-content-center align-items-center h-100"
               >
                 <div
-                  class="flex justify-content-center align-items-center"
+                  class="flex justify-content-center align-items-center font-color-slight"
                   v-html="
                     $t('dashboard_no_statistics', [
                       '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_valid_title') + '</span>'
@@ -104,12 +119,12 @@
         <el-col :span="12" class="dashboard-col col" v-readonlybtn="'Data_SYNC_menu'">
           <div class="charts-list flex flex-row">
             <div class="charts-list-text">
-              <div class="dashboard-title fs-7">{{ $t('dashboard_transfer_overview') }}</div>
+              <div class="fs-7 font-color-normal">{{ $t('dashboard_transfer_overview') }}</div>
               <ul class="job-list">
                 <li v-for="item in transBarData" :key="item.key">
                   <i class="dots mr-3" :style="`background-color: ${item.color};`"></i>
-                  <span class="text">{{ item.name }}</span
-                  ><span class="num pl-7">{{ handleChangeUnit(item.value) }}</span>
+                  <span class="fw-normal font-color-light">{{ item.name }}</span
+                  ><span class="num pl-7 font-color-dark">{{ handleChangeUnit(item.value) }}</span>
                 </li>
               </ul>
             </div>
@@ -118,7 +133,7 @@
               class="flex justify-content-center align-items-center w-100"
             >
               <div
-                class="flex justify-content-center align-items-center"
+                class="flex justify-content-center align-items-center font-color-slight"
                 v-html="
                   $t('dashboard_no_statistics', [
                     '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_transfer_overview') + '</span>'
@@ -136,7 +151,7 @@
       <div class="dashboard-row dashboard-col col mb-5" v-readonlybtn="'Cluster_management_menu'">
         <div class="dashboard-col">
           <div class="dashboard-col-box">
-            <div class="dashboard-title fs-7">{{ $t('dashboard_server_title') }}</div>
+            <div class="fs-7 font-color-normal">{{ $t('dashboard_server_title') }}</div>
             <el-row :gutter="20" v-if="serverTable.length">
               <el-col :span="12" class="server-list pt-3" v-for="item in serverTable" :key="item.id">
                 <div class="server-list-box">
@@ -147,19 +162,19 @@
 
                     <ul class="flex pt-1">
                       <li class="pr-5">
-                        <label class="label pr-2">{{ $t('dashboard_management') }}</label>
+                        <label class="font-color-slight pr-2">{{ $t('dashboard_management') }}</label>
                         <span :style="`color: ${colorServeMap[item.management.status]};`">{{
                           $t('dashboard_' + item.management.status)
                         }}</span>
                       </li>
                       <li class="pr-5">
-                        <label class="label pr-2">{{ $t('dashboard_task_transfer') }}</label>
+                        <label class="font-color-slight pr-2">{{ $t('dashboard_task_transfer') }}</label>
                         <span :style="`color: ${colorServeMap[item.engine.status]};`">{{
                           $t('dashboard_' + item.engine.status)
                         }}</span>
                       </li>
                       <li>
-                        <label class="label pr-2">{{ $t('dashboard_api_service') }}</label>
+                        <label class="font-color-slight pr-2">{{ $t('dashboard_api_service') }}</label>
                         <span :style="`color: ${colorServeMap[item.apiServer.status]};`">{{
                           $t('dashboard_' + item.apiServer.status)
                         }}</span>
@@ -171,7 +186,7 @@
             </el-row>
             <div v-else class="flex justify-content-center align-items-center h-100 py-4">
               <div
-                class="flex justify-content-center align-items-center"
+                class="flex justify-content-center align-items-center font-color-slight"
                 v-html="
                   $t('dashboard_no_statistics', [
                     '<span style=\'color: #2C65FF; padding: 0 5px;\'>' + $t('dashboard_server_title') + '</span>'
@@ -193,9 +208,11 @@
 </template>
 
 <script>
-import factory from '../../api/factory'
 import Chart from 'web-core/components/chart'
-const cluster = factory('cluster')
+import { Cluster, Task } from '@tap/api'
+
+let clusterApi = new Cluster()
+let taskApi = new Task()
 
 export default {
   components: { Chart },
@@ -374,24 +391,44 @@ export default {
     }
   },
   methods: {
+    // 任务概览跳转页面
+    handleTask(item) {
+      if (item.key === 'copy_total') {
+        this.$router.push({
+          name: 'migrate'
+        })
+      } else if (item.key === 'sync_total') {
+        this.$router.push({
+          name: 'dataflowList'
+        })
+      }
+    },
+    handleStatus(status) {
+      this.$router.push({
+        name: 'migrate',
+        query: {
+          status: status
+        }
+      })
+    },
     // 获取服务器与进程的数据
     getClsterDataApi() {
       let params = {
         type: 'dashboard'
       }
-      cluster.get(params).then(res => {
-        this.serverProcess.tableData = res.data?.items
-        this.serverTable = res.data?.items
+      clusterApi.get(params).then(data => {
+        this.serverProcess.tableData = data?.items
+        this.serverTable = data?.items
       })
     },
     // 获取dataflows数据
     getDataFlowApi() {
       let self = this
       self.loading = true
-      this.$api('Task')
+      taskApi
         .chart()
-        .then(res => {
-          if (res?.data) {
+        .then(data => {
+          if (data) {
             let setColor = list => {
               return list.map(item => {
                 item.itemStyle = {
@@ -401,9 +438,9 @@ export default {
               })
             }
             // 全部数据
-            let copy_total = res.data?.chart1?.total || 0
-            let sync_total = res.data?.chart3?.total || 0
-            let valid_total = res.data?.chart5?.total || 0
+            let copy_total = data?.chart1?.total || 0
+            let sync_total = data?.chart3?.total || 0
+            let valid_total = data?.chart5?.total || 0
 
             let total = {
               all_total: copy_total + sync_total + valid_total,
@@ -421,19 +458,17 @@ export default {
             })
             this.taskList = result
 
-            self.migrationTaskList = res.data.chart1?.items
-              ? self.handleDataProcessing(res.data.chart1.items, self.statusList)
+            self.migrationTaskList = data.chart1?.items
+              ? self.handleDataProcessing(data.chart1.items, self.statusList)
               : []
-            self.syncTaskList = res.data?.chart3
-              ? self.handleDataProcessing(res.data.chart3.items, self.statusList)
-              : []
+            self.syncTaskList = data?.chart3 ? self.handleDataProcessing(data.chart3.items, self.statusList) : []
 
             self.copyPieData = setColor(self.migrationTaskList)
-            self.copyTaskData = this.handleChart(res.data.chart2)
+            self.copyTaskData = this.handleChart(data.chart2)
             self.syncPieData = setColor(self.syncTaskList)
-            self.syncTaskData = this.handleChart(res.data.chart4)
-            self.validBarData = this.handleChart(res.data.chart5)
-            self.transBarData = this.handleChart(res.data.chart6, self.transBarData)
+            self.syncTaskData = this.handleChart(data.chart4)
+            self.validBarData = this.handleChart(data.chart5)
+            self.transBarData = this.handleChart(data.chart6, self.transBarData)
           }
         })
         .finally(() => {
@@ -616,25 +651,21 @@ export default {
         height: 100%;
         padding: 20px;
         border-radius: 4px;
-        background-color: #fff;
+        background-color: map-get($bgColor, white);
         box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
       }
-      .dashboard-title {
-        color: rgba(0, 0, 0, 0.85);
-      }
       .dashboard-label {
-        color: #252a4c;
         height: 48px;
       }
       .dashboard-num {
         font-size: 65px;
-        color: #2c65ff;
+        color: map-get($color, primary);
       }
       .charts-list {
         height: 100%;
         overflow: hidden;
         box-sizing: border-box;
-        background-color: #fff;
+        background-color: map-get($bgColor, white);
         border-radius: 3px;
         box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
         .charts-list-text {
@@ -655,10 +686,6 @@ export default {
               height: 6px;
               border-radius: 50%;
             }
-            .text {
-              font-weight: 400;
-              color: rgba(0, 0, 0, 0.43);
-            }
             .num {
               font-weight: 600;
             }
@@ -667,7 +694,6 @@ export default {
               width: 50px;
               text-align: left;
               font-size: 12px;
-              color: #252a4c;
               &::before {
                 content: '';
               }
@@ -693,11 +719,8 @@ export default {
           }
           .server-main {
             .title {
-              color: #252a4c;
+              color: map-get($fontColor, dark);
               font-weight: 500;
-            }
-            .label {
-              color: rgba(0, 0, 0, 0.43);
             }
           }
         }
@@ -711,11 +734,10 @@ export default {
           li {
             display: inline-block;
             padding-right: 10px;
-            color: #000;
+            color: map-get($fontColor, dark);
             font-weight: 600;
             span {
               padding-right: 5px;
-              color: rgba(0, 0, 0, 0.43);
               font-weight: 400;
             }
           }
@@ -730,7 +752,7 @@ export default {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     border-radius: 4px;
     justify-content: center;
     align-items: center;

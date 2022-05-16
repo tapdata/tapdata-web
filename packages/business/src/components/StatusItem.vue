@@ -5,7 +5,7 @@
         :class="['circle-icon', 'mr-2', !!item.type && `bg-color-${item.type}`]"
         :style="{ 'background-color': colorMap[item.type] }"
       ></span>
-      <span class="etl-status-item__text font-color-slight">{{ item.text }}</span>
+      <span class="etl-status-item__text font-color-light">{{ item.text }}</span>
       <span v-if="showCount" class="etl-status-item__count font-color-slight">{{ ': ' + (item.count || 0) }}</span>
     </div>
   </div>

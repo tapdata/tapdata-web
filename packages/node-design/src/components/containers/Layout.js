@@ -1,5 +1,5 @@
 import { defineComponent, watch } from 'vue-demi'
-import { each, useContext } from '@daas/shared'
+import { each, useContext } from '@tap/shared'
 import { DesignerLayoutContext } from '../../context'
 
 export const Layout = defineComponent({

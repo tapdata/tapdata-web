@@ -1,6 +1,12 @@
 <template>
   <div v-loading="loading" class="statistics-container font-color-slight section-wrap">
-    <Info :task="task" class="card-box card-box__info" :remote-method="infoRemoteMethod" @reload="loadTask"></Info>
+    <Info
+      :task="task"
+      :syncData="syncData"
+      class="card-box card-box__info"
+      :remote-method="infoRemoteMethod"
+      @reload="loadTask"
+    ></Info>
     <div class="card-box__content card-box px-6 py-2 mt-6">
       <ElTabs v-model="activeTab" class="flex flex-column flex-1 overflow-hidden h-100">
         <ElTabPane :label="$t('task_monitor_progress')" name="schedule">
@@ -13,7 +19,7 @@
           <Connection ref="connection" :ids="connectionIds" @change="loadTask"></Connection>
         </ElTabPane>
         <ElTabPane :label="$t('task_monitor_history_run_record')" name="history" lazy>
-          <History :ids="[task.id]" :operations="operations"></History>
+          <History :ids="[task.parentId]" :operations="operations"></History>
         </ElTabPane>
         <ElTabPane :label="$t('task_monitor_mining_task')" name="sharedMing" lazy>
           <ShareMining :id="task.id"></ShareMining>
@@ -195,7 +201,7 @@ export default {
   overflow: auto !important;
 }
 .card-box {
-  background: #fff;
+  background-color: map-get($bgColor, white);
   border-radius: 4px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.02);
   ::v-deep {

@@ -29,8 +29,7 @@ export class FieldModType extends NodeType {
         title: '',
         'x-decorator': 'FormItem',
         'x-component': 'FieldModType',
-        'x-reactions':
-          '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $values.$inputs[0])}}'
+        'x-reactions': '{{useAsyncDataSourceByConfig({service: loadNodeFieldsById, withoutField: true}, $values.id)}}'
       }
     }
   }

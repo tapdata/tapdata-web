@@ -248,8 +248,8 @@ export default {
   font-size: 16px;
   &:hover,
   &.is-plain:focus:hover {
-    border-color: #2c65ff;
-    background-color: #f5f6f7;
+    border-color: map-get($color, primary);
+    background-color: map-get($color, disable);
   }
 }
 .filter-form {
@@ -267,7 +267,7 @@ export default {
   ::v-deep {
     .el-input__inner {
       &:hover {
-        border-color: #d9d9d9;
+        border-color: map-get($borderColor, disable);
       }
       &:focus,
       &:target {

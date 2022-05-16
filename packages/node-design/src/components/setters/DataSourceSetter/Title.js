@@ -1,4 +1,4 @@
-import { clone, toArr } from '@daas/shared'
+import { clone, toArr } from '@tap/shared'
 import { observer } from '@formily/reactive-vue'
 import { usePrefix } from '../../../hooks'
 import { TextWidget, IconWidget } from '../../widgets'

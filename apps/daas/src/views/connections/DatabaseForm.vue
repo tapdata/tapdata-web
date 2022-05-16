@@ -82,6 +82,42 @@
                   <span v-else>已开通</span>
                 </span>
               </div>
+              <div class="url-tip" slot="accessNodeProcessId">
+                <ElForm :model="model" ref="agentForm">
+                  <ElFormItem
+                    required
+                    prop="accessNodeProcessId"
+                    :rules="{
+                      required: true,
+                      message: $t('connection_form_name_ip') + $t('tips_rule_not_empty'),
+                      trigger: 'blur'
+                    }"
+                  >
+                    <ElSelect
+                      v-model="model.accessNodeProcessId"
+                      :placeholder="$t('connection_form_name_ip')"
+                      v-loadmore="loadMore"
+                      style="width: 100%"
+                    >
+                      <ElOption
+                        v-for="item in accessNodeList"
+                        :key="item.processId"
+                        :label="item.hostName"
+                        :value="item.processId"
+                      >
+                        <span class="fl">{{ item.hostName }}</span>
+                        <span class="font-color-light fr pl-2">{{ item.ip }}</span>
+                      </ElOption>
+                    </ElSelect>
+                  </ElFormItem>
+
+                  <!-- <el-input
+                  :rows="5"
+                  v-model="model.accessNodeProcessId"
+                  :placeholder="$t('connection_form_name_ip')"
+                ></el-input> -->
+                </ElForm>
+              </div>
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
               <!-- rest api -->
               <div class="url-tip" slot="req_pre_process">
@@ -433,7 +469,7 @@
                             :placeholder="$t('dataForm.form.file.excludePlaceholder')"
                           ></el-input>
                         </el-form-item>
-                        <p style="font-size: 12px; color: #666">
+                        <p class="font-color-light" style="font-size: 12px">
                           {{ $t('dataForm.form.file.viewExpression') }}
                         </p>
                       </el-col>
@@ -577,6 +613,7 @@ export default {
       }
     }
     return {
+      accessNodeList: [],
       // modelForm: {},
       rules: [],
       id: '',
@@ -744,8 +781,9 @@ export default {
         this.model = Object.assign({}, defaultModel['vika'])
         break
     }
-    this.checkDataTypeOptions(this.databaseType)
     this.initTimezones()
+    this.checkDataTypeOptions(this.databaseType)
+    this.getCluster()
   },
   watch: {
     'model.multiTenant'(val) {
@@ -862,6 +900,9 @@ export default {
         if (this.model.database_type === 'vika') {
           //初始化维格表
           this.getSpaceVika(this.$route.params.id)
+        }
+        if (!this.model.accessNodeProcessId) {
+          this.model.accessNodeProcessId = this.accessNodeList?.[0]?.processId
         }
       } else {
         this.model = Object.assign(this.model, data, { name: this.model.name })
@@ -1029,7 +1070,6 @@ export default {
       let type = this.model.database_type
       type = TYPEMAPCONFIG[type] || type //特殊数据源名称转换
       let func = formConfig[type]
-
       if (func) {
         let config = func(this)
         let items = defaultConfig.concat(config.items)
@@ -1424,6 +1464,14 @@ export default {
       this.submitBtnLoading = true
       let flag = true
       this.model.search_databaseType = ''
+      if (this.model.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER') {
+        this.$refs.agentForm.validate(valid => {
+          if (!valid) {
+            flag = false
+          }
+        })
+      }
+
       if (this.model.database_type === 'file' && this.model.connection_type === 'source') {
         this.$refs.fileForm.validate(valid => {
           if (!valid) {
@@ -1438,6 +1486,7 @@ export default {
           }
         })
       }
+
       if (this.model.database_type === 'gridfs' && this.model.file_type === 'excel') {
         this.$refs.excelForm.validate(valid => {
           if (!valid) {
@@ -1466,6 +1515,10 @@ export default {
         } else {
           delete data.brokerURL
         }
+      }
+
+      if (data.accessNodeType === 'AUTOMATIC_PLATFORM_ALLOCATION') {
+        data.accessNodeProcessId = ''
       }
 
       // if (this.model.database_type === 'mysqlpxc') {
@@ -1536,7 +1589,7 @@ export default {
           }
           connectionsModel[this.model.id ? 'patchId' : 'post'](params)
             .then(() => {
-              this.$message.success(this.$t('message.saveOK'))
+              this.$message.success(this.$t('message_save_ok'))
               if (this.$route.query.step) {
                 this.$router.push({
                   name: 'connections',
@@ -1564,7 +1617,7 @@ export default {
                 // }
                 this.$message.error(err.response.message)
               } else {
-                this.$message.error(this.$t('message.saveFail'))
+                this.$message.error(this.$t('message_save_fail'))
               }
             })
             .finally(() => {
@@ -1638,7 +1691,7 @@ export default {
               this.editBtnLoading = false
               this.model.name = this.renameData.rename
               this.$refs['renameForm'].clearValidate()
-              this.$message.success(this.$t('message.saveOK'))
+              this.$message.success(this.$t('message_save_ok'))
               this.dialogEditNameVisible = false
             })
             .catch(err => {
@@ -1716,6 +1769,19 @@ export default {
     },
     removeParameter(parentIndex, index) {
       this.model.url_info[parentIndex].parameterArray.splice(index, 1)
+    },
+    // 获取数据
+    getCluster() {
+      let self = this
+      this.$api('cluster')
+        .findAccessNodeInfo()
+        .then(res => {
+          let items = res.data || []
+          self.accessNodeList = items
+          if (!self.model.accessNodeProcessId) {
+            self.model.accessNodeProcessId = items?.[0]?.processId
+          }
+        })
     }
   }
 }
@@ -1735,7 +1801,7 @@ export default {
     padding-left: 24px;
     border-radius: 4px;
     overflow: hidden;
-    background: #fff;
+    background-color: map-get($bgColor, white);
     .connection-from-main {
       display: flex;
       flex: 1;
@@ -1770,7 +1836,7 @@ export default {
           font-size: 12px;
           font-family: PingFangSC-Regular, PingFang SC;
           font-weight: 400;
-          color: #000000;
+          color: map-get($fontColor, dark);
           align-items: center;
           white-space: nowrap;
           word-break: break-word;
@@ -1783,7 +1849,7 @@ export default {
           height: 25px;
           justify-content: center;
           align-items: center;
-          background: #fff;
+          background: map-get($bgColor, white);
           border-radius: 3px;
           img {
             width: 100%;
@@ -1792,15 +1858,22 @@ export default {
       }
       .form-wrap {
         display: flex;
-        overflow-y: auto;
         flex: 1;
+        overflow: hidden;
         .form {
+          width: 100%;
+          height: 100%;
+          overflow-y: auto;
           .form-builder {
+            width: 396px;
             ::v-deep {
               .e-form-builder-item {
-                width: 396px;
+                // width: 396px;
                 &.large-item {
-                  width: 680px;
+                  width: 610px;
+                  .el-form-item__content {
+                    padding-right: 20px;
+                  }
                 }
                 &.small-item {
                   width: 320px;
@@ -1825,6 +1898,21 @@ export default {
                     padding-top: 0;
                   }
                 }
+                // .el-form-item__content {
+                //   width: 300px;
+                // }
+                .el-input .el-input__inner,
+                .el-textarea__inner {
+                  // width: 300px;
+                  background-color: rgba(239, 241, 244, 0.2);
+                }
+                .el-textarea__inner {
+                  min-height: 70px !important;
+                }
+              }
+              .el-input-group__append button.el-button {
+                background-color: inherit;
+                border-color: azure;
               }
             }
           }
@@ -1916,7 +2004,7 @@ export default {
       //       padding: 10px 20px 20px !important;
       //       margin-bottom: 12px;
       //       box-sizing: border-box;
-      //       background-color: #fff;
+      //       background-color: map-get($bgColor, white);
       //       border: 1px solid #dedee4;
       //       border-radius: 3px;
       //       .el-input--mini .el-input__inner {
@@ -1947,7 +2035,7 @@ export default {
       //   height: 52px;
       //   justify-content: center;
       //   align-items: center;
-      //   background: #fff;
+      //   background-color: map-get($bgColor, white);
       //   border-radius: 3px;
       //   margin-right: 10px;
       //   img {
@@ -2022,10 +2110,10 @@ export default {
   //   position: relative;
   // }
   .footer {
-    margin: 10px auto;
+    // margin: 10px auto;
     width: 100%;
     height: 62px;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     border-left: none;
     line-height: 62px;
     border-top: 1px solid #dedee4;
@@ -2063,7 +2151,7 @@ export default {
 //   .url-tip {
 //     margin-top: -14px;
 //     b {
-//       color: #666;
+//       color: map-get($fontColor, light);
 //     }
 //   }
 //   .file-form-content {

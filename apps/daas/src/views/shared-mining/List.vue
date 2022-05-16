@@ -40,21 +40,21 @@
           <el-button size="mini" type="text" :disabled="row.disabledData.start" @click="run([row.id])">{{
             $t('task_list_run')
           }}</el-button>
-          <el-divider direction="vertical"></el-divider>
+          <ElDivider direction="vertical"></ElDivider>
           <ElLink v-if="isShowForceStop(row.statuses)" type="primary" @click="forceStop([row.id])">
             {{ $t('task_list_force_stop') }}
           </ElLink>
           <el-button v-else size="mini" type="text" :disabled="row.disabledData.stop" @click="stop([row.id])">{{
             $t('task_list_stop')
           }}</el-button>
-          <el-divider direction="vertical"></el-divider>
+          <ElDivider direction="vertical"></ElDivider>
           <el-button size="mini" type="text" :disabled="row.disabledData.edit" @click="edit(row)">{{
             $t('button_edit')
           }}</el-button>
           <el-button size="mini" type="text" :disabled="row.disabledData.reset" @click="rest([row.id])">{{
             $t('dataFlow.button.reset')
           }}</el-button>
-          <el-divider direction="vertical"></el-divider>
+          <ElDivider direction="vertical"></ElDivider>
           <el-button size="mini" type="text" @click="detail(row)">{{ $t('button_details') }}</el-button>
         </template>
       </el-table-column>
@@ -566,7 +566,7 @@ export default {
     }
     .metadata-name {
       .name {
-        color: #409eff;
+        color: map-get($color, primary);
         a {
           color: inherit;
           cursor: pointer;
@@ -577,12 +577,12 @@ export default {
       }
       .tag {
         margin-left: 5px;
-        color: #999999;
-        background: #f5f5f5;
+        color: map-get($fontColor, slight);
+        background: map-get($bgColor, main);
         border: 1px solid #dedee4;
       }
       .parent {
-        color: #cccccc;
+        color: map-get($fontColor, slight);
       }
     }
   }

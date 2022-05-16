@@ -112,21 +112,16 @@
           <RecycleScroller class="selector-panel__scroller" :item-size="36" :buffer="50" :items="filterSelectedData">
             <template #default="{ item }">
               <ElCheckbox class="selector-panel__item" :label="item" :key="item">
-                <OverflowTooltip
-                  v-if="!errorTables[item]"
-                  :text="item"
-                  placement="right"
-                  :enterable="false"
-                ></OverflowTooltip>
                 <ElTooltip
-                  v-else
                   class="ellipsis"
                   placement="right"
                   :enterable="false"
                   :disabled="!errorTables[item]"
                   :content="errorTables[item]"
                 >
-                  <div :class="{ 'color-danger': errorTables[item] }">{{ item }}</div>
+                  <div :class="{ 'color-danger': errorTables[item] }">
+                    <slot name="right-item" :row="item">{{ item }}</slot>
+                  </div>
                 </ElTooltip>
               </ElCheckbox>
             </template>
@@ -203,7 +198,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  border: 1px solid #f2f2f2;
+  border: 1px solid map-get($borderColor, light);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -241,7 +236,7 @@
   display: flex;
   align-items: center;
   &:hover {
-    background-color: #f5f7fa;
+    background-color: map-get($bgColor, disable);
   }
   > ::v-deep {
     .el-checkbox__label {
@@ -267,17 +262,17 @@
     line-height: 28px;
     border-radius: 2px;
     font-size: 14px;
-    background: #f2f3f5;
-    color: #333c4a;
+    background: map-get($bgColor, main);
+    color: map-get($fontColor, normal);
     text-align: center;
     cursor: pointer;
     &:hover {
       background: map-get($color, primary);
-      color: #fff;
+      color: map-get($fontColor, white);
     }
     &.btn-transfer--disabled {
-      background: #f2f3f5;
-      color: #333c4a;
+      background: map-get($bgColor, main);
+      color: map-get($fontColor, normal);
       cursor: not-allowed;
     }
   }

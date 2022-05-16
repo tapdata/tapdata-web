@@ -432,7 +432,7 @@ export default {
     .rowSlot {
       display: inline-block;
       margin-bottom: 12px;
-      border: 1px solid #dcdfe6;
+      border: 1px solid map-get($borderColor, light);
       border-radius: 4px;
       box-sizing: border-box;
       span {
@@ -443,7 +443,7 @@ export default {
         line-height: 28px;
         text-align: center;
         font-size: 12px;
-        background-color: #f5f7fa;
+        background-color: map-get($bgColor, disable);
       }
       .e-select {
         width: 160px;
@@ -455,14 +455,14 @@ export default {
         width: 84px;
         height: 28px;
         line-height: 27px;
-        border: 1px solid #dcdfe6;
+        border: 1px solid map-get($borderColor, light);
         border-radius: 4px;
         box-sizing: border-box;
         span {
           float: left;
           display: inline-block;
           text-align: center;
-          color: #999;
+          color: map-get($fontColor, slight);
           font-size: 12px;
           cursor: pointer;
           box-sizing: border-box;
@@ -472,17 +472,17 @@ export default {
         }
         span:last-child {
           width: 42px;
-          border-left: 1px solid #dcdfe6;
+          border-left: 1px solid map-get($borderColor, light);
         }
         span:hover {
-          background-color: #ecf5ff;
+          background-color: map-get($bgColor, hover);
         }
       }
     }
     .selectSql {
       padding-top: 10px;
       font-size: 12px;
-      color: #999;
+      color: map-get($fontColor, slight);
       overflow: hidden;
       div {
         width: 100%;
@@ -511,7 +511,7 @@ export default {
   }
   .el-switch__label * {
     font-size: 12px !important;
-    color: #999;
+    color: map-get($fontColor, slight);
   }
 }
 </style>

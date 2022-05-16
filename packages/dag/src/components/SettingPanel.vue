@@ -37,7 +37,7 @@
                 </ElCol>
               </ElRow>
               <ElRow>
-                <ElCol :span="24">
+                <ElCol :span="12">
                   <!--任务描述-->
                   <ElFormItem :label="$t('task_stetting_desc')">
                     <ElInput type="textarea" v-model="settings.desc"></ElInput>
@@ -74,6 +74,41 @@
           </div>
         </ElTabPane>
         <ElTabPane label="高级设置" name="advanced">
+          <div class="setting-panel-box bg-white border-bottom pt-3">
+            <div class="setting-title fs-7 px-5">
+              运行设置
+              <span class="pl-2">任务在启动和运行时的环境设置</span>
+            </div>
+            <div class="px-5">
+              <ElRow>
+                <ElCol :span="12">
+                  <ElFormItem :label="$t('connection_form_access_node')">
+                    <ElSelect
+                      v-model="settings.accessNodeType"
+                      :disabled="accessNodeProcessIdArr.length === 1"
+                      @change="handleChangeAccessNodeType"
+                    >
+                      <ElOption
+                        :label="$t('connection_form_automatic')"
+                        value="AUTOMATIC_PLATFORM_ALLOCATION"
+                      ></ElOption>
+                      <ElOption :label="$t('connection_form_manual')" value="MANUALLY_SPECIFIED_BY_THE_USER"></ElOption>
+                    </ElSelect>
+
+                    <ElSelect
+                      v-if="settings.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER'"
+                      v-model="settings.accessNodeProcessId"
+                      class="ml-4"
+                      style="width: 300px"
+                      :disabled="accessNodeProcessIdArr.length === 1"
+                    >
+                      <ElOption v-for="(item, i) in accessNodeProcessList" :key="i" v-bind="item"></ElOption>
+                    </ElSelect>
+                  </ElFormItem>
+                </ElCol>
+              </ElRow>
+            </div>
+          </div>
           <div class="setting-panel-box bg-white border-bottom pt-3">
             <div class="setting-title fs-7 px-5">
               读写设置
@@ -237,7 +272,8 @@ export default {
   name: 'SettingPanel',
 
   props: {
-    settings: Object
+    settings: Object,
+    scope: Object
   },
 
   data() {
@@ -262,14 +298,17 @@ export default {
     }
   },
 
-  created() {
-    let timeZone = new Date().getTimezoneOffset() / 60
-    if (timeZone > 0) {
-      this.systemTimeZone = 0 - timeZone
-    } else {
-      this.systemTimeZone = '+' + -timeZone
+  watch: {
+    accessNodeProcessIdArr: {
+      handler(arr) {
+        if (arr.length >= 1) {
+          const currentId = this.settings.accessNodeProcessId
+          this.$set(this.settings, 'accessNodeType', 'MANUALLY_SPECIFIED_BY_THE_USER')
+          this.$set(this.settings, 'accessNodeProcessId', currentId && arr.includes(currentId) ? currentId : arr[0])
+        }
+      },
+      immediate: true
     }
-    this.getAllNode()
   },
 
   computed: {
@@ -283,7 +322,32 @@ export default {
       'hasNodeError',
       'allNodes',
       'allEdges'
-    ])
+    ]),
+
+    accessNodeProcessIdArr() {
+      const set = this.allNodes
+        .filter(item => item.type === 'table')
+        .reduce((set, item) => {
+          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
+          return set
+        }, new Set())
+      return [...set]
+    },
+
+    accessNodeProcessList() {
+      if (!this.accessNodeProcessIdArr.length) return this.scope.$agents
+      return this.scope.$agents.filter(item => this.accessNodeProcessIdArr.includes(item.value))
+    }
+  },
+
+  created() {
+    let timeZone = new Date().getTimezoneOffset() / 60
+    if (timeZone > 0) {
+      this.systemTimeZone = 0 - timeZone
+    } else {
+      this.systemTimeZone = '+' + -timeZone
+    }
+    this.getAllNode()
   },
 
   methods: {
@@ -349,6 +413,17 @@ export default {
           }
         })
         return map
+      }
+    },
+
+    handleChangeAccessNodeType(v) {
+      if (
+        v === 'MANUALLY_SPECIFIED_BY_THE_USER' &&
+        !this.settings.accessNodeProcessId &&
+        this.accessNodeProcessList.length
+      ) {
+        // 用户选择指定agent运行，默认帮用户选第一项
+        this.$set(this.settings, 'accessNodeProcessId', this.accessNodeProcessList[0].value)
       }
     }
   }

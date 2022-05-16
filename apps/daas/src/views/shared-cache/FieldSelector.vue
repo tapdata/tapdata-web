@@ -36,7 +36,7 @@
 .fields-selector--display {
   flex-wrap: wrap;
   height: 100px;
-  background: #fafafa;
+  background: map-get($bgColor, normal);
   border-radius: 4px;
   overflow: auto;
 }
@@ -48,7 +48,7 @@
   text-align: center;
   background: #f2f3f5;
   font-size: 12px;
-  color: #1d2129;
+  color: map-get($fontColor, dark);
 }
 .fields-selector--clip {
   position: absolute;

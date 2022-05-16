@@ -1,6 +1,6 @@
 import { usePrefix, useViewport } from '../../hooks'
 import { AuxToolWidget, EmptyWidget } from '../widgets'
-import { requestIdle } from '@daas/shared'
+import { requestIdle } from '@tap/shared'
 import { defineComponent, ref, onMounted } from 'vue-demi'
 
 export const Viewport = defineComponent({

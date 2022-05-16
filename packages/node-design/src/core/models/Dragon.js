@@ -1,5 +1,5 @@
 import { observable, define, action } from '@formily/reactive'
-import { calcDistanceOfPointToRect, calcDistancePointToEdge, isNearAfter, isPointInRect } from '@daas/shared'
+import { calcDistanceOfPointToRect, calcDistancePointToEdge, isNearAfter, isPointInRect } from '@tap/shared'
 import { DragNodeEvent, DropNodeEvent } from '../events'
 
 export const ClosestPosition = {

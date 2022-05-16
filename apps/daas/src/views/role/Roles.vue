@@ -390,7 +390,8 @@ export default {
       _this.oldUser = []
       let filter = {
         where: {
-          roleId: id
+          roleId: id,
+          principalType: 'USER'
         },
         limit: 999
       }
@@ -399,13 +400,15 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          if (res && res.data?.items) {
-            res.data?.items.forEach(roleMapping => {
-              if (roleMapping.principalType === 'USER' && this.userGroup.find(v => v.id === roleMapping.principalId)) {
-                _this.roleusers.push(roleMapping.principalId)
-                _this.oldUser.push(roleMapping)
-              }
-            })
+          if (res?.data?.length) {
+            _this.roleusers = res.data.map(item => item.principalId)
+            _this.oldUser = res.data
+            // res.data?.forEach(roleMapping => {
+            //   if (roleMapping.principalType === 'USER' && this.userGroup.find(v => v.id === roleMapping.principalId)) {
+            //     _this.roleusers.push(roleMapping.principalId)
+            //     _this.oldUser.push(roleMapping)
+            //   }
+            // })
           }
         })
     },
@@ -522,7 +525,7 @@ export default {
 
     .btn {
       padding: 7px;
-      background: #f5f5f5;
+      background: map-get($bgColor, main);
 
       i.iconfont {
         font-size: 12px;

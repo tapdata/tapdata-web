@@ -3,7 +3,7 @@ import { defineComponent, watch, ref } from 'vue-demi'
 import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
 import { transformToTreeNode } from '../core'
-import { CustomNode } from '@daas/api'
+import { CustomNode } from '@tap/api'
 import { IconWidget } from './widgets'
 import { observer } from '@formily/reactive-vue'
 
@@ -56,11 +56,11 @@ export const StudioHeader = observer(
               params: { id: data.id, action: 'nodeSave' }
             })
           }
-          root.$message.success(root.$t('message.saveOK'))
+          root.$message.success(root.$t('message_save_ok'))
         } catch (e) {
           // eslint-disable-next-line no-console
           console.log('CustomNode save error', e)
-          root.$message.error(root.$t('message.saveFail'))
+          root.$message.error(root.$t('message_save_fail'))
         }
         saving.value = false
       }

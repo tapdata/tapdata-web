@@ -2,7 +2,7 @@
   <div class="role section-wrap" v-loading="loading">
     <div class="section-wrap-box">
       <head class="head">
-        <i class="iconfont icon-left-circle back-btn-icon" style="color: #409eff; cursor: pointer" @click="back"></i>
+        <i class="iconfont icon-left-circle back-btn-icon link-primary cursor-pointer" @click="back"></i>
         <h1 class="pl-2">{{ $t('role.settingTitle') }}</h1>
         <span>{{ $t('role.currentRole') }}: {{ roleName }}</span>
       </head>
@@ -900,21 +900,21 @@ export default {
         })
         .then(() => {
           this.$emit('saveBack')
-          this.$message.success(this.$t('message.saveOK'))
+          this.$message.success(this.$t('message_save_ok'))
           // roleMappingModel
           // 	.post(newRoleMappings)
           // 	.then(() => {
-          // 		this.$message.success(this.$t('message.saveOK'));
+          // 		this.$message.success(this.$t('message_save_ok'));
           // 	})
           // 	.catch(() => {
-          // 		this.$message.success(this.$t('message.saveFail'));
+          // 		this.$message.success(this.$t('message_save_fail'));
           // 	})
           // 	.finally(() => {
           // 		self.saveloading = false;
           // 	});
         })
         .catch(() => {
-          this.$message.success(this.$t('message.saveFail'))
+          this.$message.success(this.$t('message_save_fail'))
         })
         .finally(() => {
           self.saveloading = false
@@ -947,12 +947,12 @@ export default {
       padding-right: 30px;
       line-height: 60px;
       font-size: 16px;
-      color: #333;
+      color: map-get($fontColor, dark);
       font-weight: bold;
     }
     span {
       font-size: 12px;
-      color: #666;
+      color: map-get($fontColor, light);
     }
   }
 
@@ -969,12 +969,12 @@ export default {
         display: inline-block;
         padding-right: 20px;
         font-size: 14px;
-        color: #333;
+        color: map-get($fontColor, dark);
       }
       p {
         display: inline-block;
         font-size: 12px;
-        color: #666;
+        color: map-get($fontColor, light);
       }
     }
 
@@ -1005,8 +1005,8 @@ export default {
         height: 30px !important;
         line-height: 30px;
         font-size: 12px;
-        color: #999;
-        background-color: #f5f5f5;
+        color: map-get($fontColor, light);
+        background-color: map-get($bgColor, main);
         .e-col {
           padding-left: 12px;
         }
@@ -1115,7 +1115,7 @@ export default {
           padding: 5px 0;
           margin: 0;
           font-size: 12px;
-          color: #666;
+          color: map-get($fontColor, light);
         }
       }
     }

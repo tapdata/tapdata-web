@@ -1,5 +1,5 @@
 import { createForm } from '@formily/core'
-import { Form, SchemaField } from '@daas/form'
+import { Form, SchemaField } from '@tap/form'
 import { observe } from '@formily/reactive'
 import { NodePathWidget } from '../widgets'
 import { SettingsFormContext, IconContext } from '../../context'
@@ -8,7 +8,7 @@ import { useLocales } from './useLocales'
 import { Empty } from 'element-ui'
 import './styles.scss'
 import { defineComponent, nextTick, reactive, ref, watch } from 'vue-demi'
-import { requestIdle, cancelIdle, uid } from '@daas/shared'
+import { requestIdle, cancelIdle, uid } from '@tap/shared'
 
 export const SettingsForm = defineComponent({
   props: ['uploadAction', 'components', 'effects', 'scope', 'headers'],

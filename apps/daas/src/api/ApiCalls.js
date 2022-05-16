@@ -5,7 +5,7 @@
  * @description
  */
 import PublicAPI from './publicApi'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 export default class ApiCalls extends PublicAPI {
   constructor() {
     super('/api/ApiCalls')

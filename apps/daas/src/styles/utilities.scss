@@ -13,12 +13,14 @@
 
 .link-primary {
   // color: #0d6efd;
-  color: #2c65ff;
+  color: map-get($color, primary);
 }
 
-.link-primary:hover,
+.link-primary:hover {
+  color: map-get($color, lprimary);
+}
 .link-primary:focus {
-  color: #0a58ca;
+  color:  map-get($color, dprimary);
 }
 
 .link-secondary {
@@ -58,12 +60,14 @@
 }
 
 .link-danger {
-  color: #dc3545;
+  color: #D44D4D;
 }
 
-.link-danger:hover,
+.link-danger:hover {
+  color: #F76560;
+}
 .link-danger:focus {
-  color: #b02a37;
+  color: #CB2634
 }
 
 .link-light {
@@ -2535,7 +2539,7 @@
 /* rtl:end:remove */
 .text-primary {
   // color: #0d6efd !important;
-  color: #2c65ff !important;
+  color: map-get($color, primary) !important;
 }
 
 .text-secondary {
@@ -2567,7 +2571,7 @@
 }
 
 .text-white {
-  color: #fff !important;
+  color: map-get($fontColor, white) !important;
 }
 
 .text-body {
@@ -2595,7 +2599,7 @@
 }
 
 .bg-primary {
-  background-color: #2c65ff !important;
+  background-color: map-get($color, primary) !important;
 }
 
 .bg-secondary {
@@ -12068,13 +12072,13 @@
   color: map-get($fontColor, dark);
 }
 .font-color-normal {
-  color: map-get($fontColor, dark);
-}
-.font-color-light {
   color: map-get($fontColor, normal);
 }
-.font-color-slight {
+.font-color-light {
   color: map-get($fontColor, light);
+}
+.font-color-slight {
+  color: map-get($fontColor, slight);
 }
 
 // 背景颜色
@@ -12100,6 +12104,9 @@
 
 .bg-color-main {
   background-color: map-get($bgColor, main) !important;
+}
+.bg-color-white {
+  background-color: map-get($bgColor, white) !important;
 }
 
 /*

@@ -4,7 +4,7 @@
  * @description
  */
 import PublicApi from './publicApi'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 export default class MetadataInstancesAPI extends PublicApi {
   constructor() {
     super('/api/MetadataInstances')

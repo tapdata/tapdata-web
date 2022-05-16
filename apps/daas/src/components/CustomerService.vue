@@ -1,5 +1,6 @@
 <template>
   <el-card class="customer-service-wrap" v-if="value">
+    <!-- 客服 -->
     <header>
       <span>{{ $t('app.qa') }}</span>
       <i class="btn-close el-icon-close" @click="close"></i>
@@ -54,7 +55,7 @@ export default {
   z-index: 100;
   width: 360px;
   height: 540px;
-  color: #333;
+  color: map-get($fontColor, dark);
   font-size: 14px;
   header {
     position: relative;
@@ -80,7 +81,7 @@ export default {
         font-weight: bold;
       }
       .content .btn {
-        color: #1976d2;
+        color: map-get($color, primary);
         cursor: pointer;
       }
       .code {

@@ -29,7 +29,7 @@
 <script>
 import TablePage from '@/components/TablePage'
 import FilterBar from '../../components/filter-bar/Main'
-import { CustomNode } from '@daas/api'
+import { CustomNode } from '@tap/api'
 
 const api = new CustomNode()
 
@@ -126,8 +126,8 @@ export default {
               {usedData.map(item => {
                 return (
                   <a
-                    class="block"
-                    style="color: #2C65FF;line-height: 1.5;"
+                    class="block link-primary"
+                    style="line-height: 1.5;"
                     target="_blank"
                     href={
                       this.$router.resolve({

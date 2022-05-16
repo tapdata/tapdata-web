@@ -166,7 +166,7 @@ export default {
       }
       Setting.enterpriseUpdate(where, data)
         .then(() => {
-          this.$message.success('submit OK')
+          this.$message.success(this.$t('message_save_ok'))
         })
         .finally(() => {
           this.loading = false
@@ -190,12 +190,12 @@ $unreadColor: #ee5353;
     align-items: center;
     height: 54px;
     font-size: 12px;
-    color: #409eff;
+    color: map-get($color, primary);
     padding: 20px 20px 0 24px;
     .title {
       font-size: 14px;
       font-weight: bold;
-      color: #1d2129;
+      color: map-get($fontColor, dark);
       line-height: 34px;
     }
     .search {
@@ -216,8 +216,8 @@ $unreadColor: #ee5353;
         font-size: 12px;
         white-space: nowrap;
         color: map-get($fontColor, light);
-        border: 1px solid #f2f2f2;
-        border-left: 2px solid #2c65ff;
+        border: 1px solid map-get($borderColor, light);
+        border-left: 2px solid map-get($color, primary);
         box-sizing: border-box;
       }
     }
@@ -226,7 +226,7 @@ $unreadColor: #ee5353;
       .title {
         font-size: 14px;
         font-weight: bold;
-        color: #1d2129;
+        color: map-get($fontColor, dark);
         line-height: 32px;
         margin-bottom: 20px;
       }
@@ -248,11 +248,11 @@ $unreadColor: #ee5353;
         .label {
           display: inline-block;
           width: 30%;
-          color: #4e5969;
+          color: map-get($fontColor, light);
           font-weight: 500;
         }
         .label {
-          color: #333c4a;
+          color: map-get($fontColor, normal);
         }
         .item-input {
           width: 200px;
@@ -277,7 +277,7 @@ $unreadColor: #ee5353;
     line-height: 60px;
     height: 60px;
     text-align: right;
-    border-top: 1px solid #f2f2f2;
+    border-top: 1px solid map-get($borderColor, light);
   }
 }
 

@@ -191,7 +191,7 @@ export default {
   // overflow: hidden;
   // box-sizing: border-box;
   .data-verify-history__icon {
-    color: #fff;
+    color: map-get($fontColor, white);
   }
   .panel-slider {
     width: 200px;
@@ -206,13 +206,13 @@ export default {
     .tip {
       height: 30px;
       font-size: 12px;
-      background: #f5f5f5;
-      border: 1px solid #dedee4;
+      background: map-get($bgColor, main);
+      border: 1px solid map-get($borderColor, light);
       line-height: 30px;
     }
     .title {
       font-weight: bold;
-      color: #409eff;
+      color: map-get($color, primary);
       margin: 10px 0;
     }
 
@@ -231,7 +231,7 @@ export default {
     .pagination {
       white-space: nowrap;
       padding: 2px 5px;
-      color: #303133;
+      color: map-get($fontColor, dark);
       font-weight: 700;
     }
     .back-btn-icon-box {
@@ -242,7 +242,7 @@ export default {
       line-height: 1;
       white-space: nowrap;
       cursor: pointer;
-      background: #409eff;
+      background: map-get($color, primary);
       border: 0;
       -webkit-appearance: none;
       text-align: center;

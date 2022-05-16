@@ -201,7 +201,7 @@ export default {
         this.$api('connections')
           [this.id ? 'patchId' : 'post'](params)
           .then(() => {
-            this.$message.success(this.$t('message.saveOK'))
+            this.$message.success(this.$t('message_save_ok'))
             if (this.$route.query.step) {
               this.$router.push({
                 name: 'connections',
@@ -228,7 +228,7 @@ export default {
                 this.$message.error(err.response.msg)
               }
             } else {
-              this.$message.error(this.$t('message.saveFail'))
+              this.$message.error(this.$t('message_save_fail'))
             }
           })
           .finally(() => {
@@ -304,7 +304,7 @@ export default {
         height: 52px;
         justify-content: center;
         align-items: center;
-        background: #fff;
+        background-color: map-get($bgColor, white);
         border-radius: 3px;
         margin-right: 10px;
         img {
@@ -339,7 +339,7 @@ export default {
         .tip {
           margin-left: 15px;
           font-size: 12px;
-          color: #999;
+          color: map-get($fontColor, slight);
           margin-top: 5px;
           line-height: 18px;
           width: 430px;
@@ -382,7 +382,7 @@ export default {
     margin: 10px auto;
     width: 100%;
     height: 62px;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     border-left: none;
     line-height: 62px;
     border-top: 1px solid #dedee4;

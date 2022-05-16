@@ -17,6 +17,7 @@ export const FieldAddDel = connect(
         return {
           databaseType: form.values.databaseType,
           operations: form.values.operations || [],
+          deleteAllFields: form.values.deleteAllFields || false,
           form
         }
       },
@@ -26,6 +27,7 @@ export const FieldAddDel = connect(
           nodeKey: '',
           originalFields: [],
           checkAll: false,
+          deleteAllFieldsData: false,
           fields: [],
           /*字段处理器支持功能类型*/
           REMOVE_OPS_TPL: {
@@ -61,17 +63,24 @@ export const FieldAddDel = connect(
         let fields = JSON.parse(JSON.stringify(this.options || []))
         //读取op 配置
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
-        fields = this.checkOps(fields)
+        //fields = this.checkOps(fields)
         this.originalFields = JSON.parse(JSON.stringify(fields))
         this.fields = fields
+        //初始化
+        let formValues = { ...this.form.values }
+        this.deleteAllFieldsData = formValues?.deleteAllFields || false
 
         return (
-          <div class="field-processors-tree-warp bg-body pt-2 pb-5">
+          <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
-              <ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
-              <span class="flex-1 text inline-block ml-15">字段名称</span>
+              {/*<ElCheckbox class="check-all" v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />*/}
+              <span class="flex-1 text inline-block ml-6">字段名称</span>
               <span class="field-ops inline-block ml-10">
-                <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllDelete()}>
+                <VIcon
+                  class={[this.deleteAllFieldsData ? 'active__delete' : '', 'clickable', 'ml-5']}
+                  size="12"
+                  onClick={() => this.handleAllDelete()}
+                >
                   delete
                 </VIcon>
                 <VIcon
@@ -93,7 +102,7 @@ export const FieldAddDel = connect(
                 data={fields}
                 node-key="id"
                 default-expand-all={true}
-                show-checkbox={true}
+                //show-checkbox={true}
                 expand-on-click-node={false}
                 class="field-processor-tree"
                 scopedSlots={{
@@ -102,20 +111,24 @@ export const FieldAddDel = connect(
                       class={['tree-node', 'flex flex-1', 'justify-content-center', 'align-items', 'flex-row']}
                       slot-scope="{ node, data }"
                     >
-                      <span class={['inline-block', 'flex-1', 'ml-15']}>
+                      <span class={['inline-block', 'flex-1']}>
                         {this.isCreate(data.id) ? (
                           <span
                             class={[
-                              this.isRemove(data.id) ? 'active__delete' : '',
+                              (data.is_deleted || this.isRemove(data.id)) && !this.isRest(data.id)
+                                ? 'active__delete'
+                                : '',
                               this.isCreate(data.id) ? 'active__name' : ''
                             ]}
                           >
                             {data.showInput ? (
                               <ElInput
+                                id="renameInput"
                                 class="tree-field-input text__inner"
                                 v-model={data.field_name}
                                 onChange={() => this.handleRename(node, data)}
                                 onBlur={() => this.closeInput(node.data)}
+                                onKeydown={() => this.handleKeyDown()}
                               />
                             ) : (
                               <span class="text__inner">{data.field_name}</span>
@@ -130,7 +143,13 @@ export const FieldAddDel = connect(
                           </span>
                         ) : (
                           //不是新建字段
-                          <span class={[this.isRemove(data.id) ? 'active__delete' : '']}>
+                          <span
+                            class={[
+                              (data.is_deleted || this.isRemove(data.id)) && !this.isRest(data.id)
+                                ? 'active__delete'
+                                : ''
+                            ]}
+                          >
                             {data.field_name}
                             {data.primary_key_position > 0 ? (
                               <VIcon size="12" class="text-warning ml-1">
@@ -146,7 +165,7 @@ export const FieldAddDel = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={this.isRemove(data.id)}
+                          disabled={(this.isRemove(data.id) || data.is_deleted) && !this.isRest(data.id)}
                           onClick={() => this.handleDelete(node, data)}
                         >
                           <VIcon> delete</VIcon>
@@ -154,7 +173,7 @@ export const FieldAddDel = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={!this.isRemove(data.id)}
+                          disabled={(!this.isRemove(data.id) && !data.is_deleted) || this.isRest(data.id)}
                           onClick={() => this.handleReset(node, data)}
                         >
                           <VIcon size="12">revoke</VIcon>
@@ -170,7 +189,12 @@ export const FieldAddDel = connect(
       },
       methods: {
         isRemove(id) {
-          let ops = this.operations.filter(v => v.id === id && v.op === 'REMOVE')
+          let ops = this.operations.filter(v => v.id === id && v.op === 'REMOVE' && v.operand)
+          return ops && ops.length > 0
+        },
+        isRest(id) {
+          //撤回删除
+          let ops = this.operations.filter(v => v.id === id && v.op === 'REMOVE' && !v.operand)
           return ops && ops.length > 0
         },
         isCreate(id) {
@@ -225,12 +249,17 @@ export const FieldAddDel = connect(
         showInput(data) {
           this.$set(data, 'showInput', true) //打开loading
           //将输入框自动获取焦点
-          // this.$nextTick(() => {
-          //   this.$refs[data.id].focus()
-          // })
+          this.$nextTick(() => {
+            document.getElementById('renameInput').focus()
+          })
         },
         closeInput(data) {
           this.$set(data, 'showInput', false) //打开loading
+        },
+        handleKeyDown(e) {
+          if (e.keyCode === 13) {
+            this.$set(data, 'showInput', false) //eslint-disable-line
+          }
         },
         handleRename(node, data) {
           let nativeData = this.getNativeData(data.id) //查找初始schema
@@ -246,6 +275,11 @@ export const FieldAddDel = connect(
           }
         },
         handleReset(node, data) {
+          if (this.deleteAllFieldsData) {
+            //所有字段被删除，撤回既是不删除字段
+            this.handleDelete(node, data)
+            return
+          }
           console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
           let parentId = node.parent.data.id
           let indexId = this.operations.filter(v => v.op === 'REMOVE' && v.id === parentId)
@@ -276,6 +310,7 @@ export const FieldAddDel = connect(
             }
           }
           fn(node, data)
+          this.$forceUpdate()
         },
         getParentFieldName(node) {
           let fieldName = node.data && node.data.field_name ? node.data.field_name : ''
@@ -294,7 +329,7 @@ export const FieldAddDel = connect(
          */
         handleCreate() {
           let node = this.$refs.tree.getNode(this.fields[0]?.id || '')
-          let existsName = this.handleExistsName(node?.data.field_name)
+          let existsName = this.handleExistsName()
           if (existsName) return
           console.log('fieldProcessor.handleCreate') //eslint-disable-line
           let fieldId = uuid()
@@ -326,7 +361,10 @@ export const FieldAddDel = connect(
           name = name || 'newFieldName'
           let exist = false
           let parentNode = this.fields.filter(v => name === v.field_name)
-          if (parentNode && parentNode.length > 1) {
+          if (
+            (parentNode && parentNode.length >= 1 && name === 'newFieldName') ||
+            (parentNode && parentNode.length > 1 && name !== 'newFieldName')
+          ) {
             this.$message.error(name + this.$t('message.exists_name'))
             exist = true
           }
@@ -350,66 +388,59 @@ export const FieldAddDel = connect(
             this.$refs.tree.remove(node)
           } else {
             let originalField = this.getNativeData(data.id)
+            this.operations = this.operations || []
             let self = this
-            self.operations = self.operations || []
             let fn = function (field) {
               let ops = self.operations.filter(v => v.op === 'REMOVE' && v.id === field.id)
-              let op
-              if (ops.length === 0) {
-                op = Object.assign(JSON.parse(JSON.stringify(self.REMOVE_OPS_TPL)), {
-                  id: field.id,
-                  field: field.original_field_name,
-                  operand: true,
-                  table_name: field.table_name,
-                  type: field.java_type,
-                  primary_key_position: field.primary_key_position,
-                  color: field.color,
-                  label: field.field_name,
-                  field_name: field.field_name
-                })
-                self.operations.push(op)
+              let op = Object.assign(JSON.parse(JSON.stringify(self.REMOVE_OPS_TPL)), {
+                id: field.id,
+                field: field.original_field_name,
+                operand: !self.deleteAllFieldsData,
+                table_name: field.table_name,
+                type: field.java_type,
+                primary_key_position: field.primary_key_position,
+                color: field.color,
+                label: field.field_name,
+                field_name: field.field_name
+              })
+              if (ops.length !== 0) {
+                let index = self.operations.findIndex(v => v.op === 'REMOVE' && v.id === field.id)
+                if (index > -1) {
+                  self.operations.splice(index, 1)
+                }
+                op.operand = true
               }
+              self.operations.push(op)
               if (field.children) {
                 field.children.forEach(fn)
               }
             }
             if (originalField) fn(originalField)
           }
-          console.log('fieldProcessor.handleDelete', self.operations) // eslint-disable-line
+          this.$forceUpdate()
+          console.log('fieldProcessor.handleDelete', this.operations) // eslint-disable-line
         },
         handleAllDelete() {
-          let ids = this.$refs.tree.getCheckedNodes()
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              this.handleDelete(node, node.data)
-            })
-            this.checkAll = false
-          }
+          //清掉所有operations
+          this.operations.splice(0)
+          this.form.setValuesIn('deleteAllFields', true)
         },
         handleAllReset() {
-          let ids = this.$refs.tree.getCheckedNodes(false, true)
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              if (node) {
-                this.handleReset(node, node.data)
-              }
-            })
-            this.checkAll = false
-          }
-        },
-        handleCheckAllChange() {
-          if (this.checkAll) {
-            this.$nextTick(() => {
-              this.$refs.tree.setCheckedNodes(this.fields)
-            })
-          } else {
-            this.$nextTick(() => {
-              this.$refs.tree.setCheckedKeys([])
-            })
-          }
+          //清掉所有operations
+          this.operations.splice(0)
+          this.form.setValuesIn('deleteAllFields', false)
         }
+        // handleCheckAllChange() {
+        //   if (this.checkAll) {
+        //     this.$nextTick(() => {
+        //       this.$refs.tree.setCheckedNodes(this.fields)
+        //     })
+        //   } else {
+        //     this.$nextTick(() => {
+        //       this.$refs.tree.setCheckedKeys([])
+        //     })
+        //   }
+        // }
       }
     })
   ),

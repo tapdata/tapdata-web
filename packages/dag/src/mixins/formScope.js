@@ -1,17 +1,22 @@
-import { Connections, MetadataInstances } from '@daas/api'
+import { Connections, MetadataInstances, Cluster } from '@tap/api'
 import { action } from '@formily/reactive'
 import { mapGetters, mapState } from 'vuex'
-import { isPlainObj } from '@daas/shared'
+import { isPlainObj } from '@tap/shared'
 import { merge } from 'lodash'
 
 const connections = new Connections()
 const metadataApi = new MetadataInstances()
+const clusterApi = new Cluster()
 
 export default {
   data() {
     return {
       scope: {
         $index: null, // 数组索引，防止使用该值，在表单校验(validateBySchema)时出错
+
+        $agents: [],
+
+        $agentMap: {},
 
         findNodeById: id => {
           return this.$store.state.dataflow.NodeMap[id]
@@ -205,7 +210,10 @@ export default {
                 id: 1,
                 database_type: 1,
                 connection_type: 1,
-                status: 1
+                status: 1,
+                accessNodeType: 1,
+                accessNodeProcessId: 1,
+                accessNodeProcessIdList: 1
               },
               order: ['status DESC', 'name ASC']
             }
@@ -234,7 +242,8 @@ export default {
                 label: `${item.name} (${this.$t('connection.status.' + item.status) || item.status})`,
                 value: item.id,
                 databaseType: item.database_type,
-                connectionType: item.connection_type
+                connectionType: item.connection_type,
+                accessNodeProcessId: item.accessNodeProcessId
               }
             })
 
@@ -256,8 +265,15 @@ export default {
           Object.assign(filter, {
             fields: {
               original_name: true
-            }
+            },
+            order: ['original_name ASC']
           })
+          if (!filter.where.original_name) {
+            filter.where.original_name = {
+              // regexp: '^[^\\s]+$'
+              neq: ''
+            }
+          }
           const data = await metadataApi.get({ filter: JSON.stringify(filter) }, config)
           data.items = data.items.map(item => item.original_name)
           return data
@@ -275,9 +291,11 @@ export default {
             content: item.name
           })
           const connectionType = form.getValuesIn('attrs.connectionType')
-          if (connectionType !== item.connectionType) {
-            form.setValuesIn('attrs.connectionType', item.connectionType)
-          }
+          const accessNodeProcessId = form.getValuesIn('attrs.accessNodeProcessId')
+
+          connectionType !== item.connectionType && form.setValuesIn('attrs.connectionType', item.connectionType)
+          accessNodeProcessId !== item.accessNodeProcessId &&
+            form.setValuesIn('attrs.accessNodeProcessId', item.accessNodeProcessId)
         },
 
         /**
@@ -491,35 +509,17 @@ export default {
         },
 
         /**
-         * 加载节点的字段选项列表（默认是第一个源节点）
-         * @param field
+         * 加载节点的字段选项列表
          * @param nodeId
          * @returns {Promise<{}|*>}
          */
-        loadNodeFieldOptions: async (field, nodeId) => {
-          if (!nodeId) {
-            const id = field.form.values.id
-            const allEdges = this.$store.getters['dataflow/allEdges']
-            const edge = allEdges.find(({ target }) => target === id)
-            if (!edge) return
-            nodeId = edge.source
-          }
-
-          let fields
-          try {
-            const data = await metadataApi.nodeSchema(nodeId)
-            fields = data.fields
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error('nodeSchema', e)
-          }
-
-          return fields
-            ? fields.map(item => ({
-                label: item.field_name,
-                value: item.id
-              }))
-            : []
+        loadNodeFieldOptions: async nodeId => {
+          const fields = await this.scope.loadNodeFieldsById(nodeId)
+          return fields.map(item => ({
+            label: item.field_name,
+            value: item.field_name,
+            isPrimaryKey: item.primary_key_position > 0
+          }))
         },
 
         /**
@@ -554,23 +554,18 @@ export default {
 
           return result
         },
-        getMergeItemsFromSourceNode(field, sourceNodes) {
+        getMergeItemsFromSourceNode(field, inputs) {
           let mergeList = field.value || []
           let list = []
-          sourceNodes.forEach(it => {
-            let item = mergeList.find(mit => mit.sourceId === it.value)
+          inputs.forEach(sourceId => {
+            let item = mergeList.find(mit => mit.sourceId === sourceId)
             if (!item) {
               list.push({
-                tableName: it.label,
-                sourceId: it.value,
-                mergeType: 'appendWrite',
+                tableName: null,
+                sourceId,
+                mergeType: 'updateOrInsert',
                 tablePath: '',
-                joinKeys: [
-                  {
-                    source: '',
-                    target: ''
-                  }
-                ]
+                joinKeys: []
               })
             } else {
               list.push(item)
@@ -640,6 +635,37 @@ export default {
           }
         },
 
+        loadNodeFieldsPrimaryKey: async ({ field }, nodeId) => {
+          if (!nodeId) return []
+          try {
+            const data = await metadataApi.nodeSchema(nodeId)
+            const fields = data?.[0]?.fields || []
+            const keyMap = {}
+            fields.sort((a, b) => {
+              const aIsPrimaryKey = a.primary_key_position > 0
+              const bIsPrimaryKey = b.primary_key_position > 0
+
+              aIsPrimaryKey && (keyMap[a.field_name] = true)
+              bIsPrimaryKey && (keyMap[b.field_name] = true)
+
+              if (aIsPrimaryKey !== bIsPrimaryKey) {
+                return aIsPrimaryKey ? -1 : 1
+              } else {
+                return a.field_name.localeCompare(b.field_name)
+              }
+            })
+            console.log('keyMap', keyMap) // eslint-disable-line
+            field.setState({
+              dataSource: Object.keys(keyMap)
+            })
+            return fields.map(item => item.field_name)
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('nodeSchema', e)
+            return []
+          }
+        },
+
         /**
          * 在dag更新接口请求完之后运行
          * @param service
@@ -690,5 +716,58 @@ export default {
   computed: {
     ...mapState('dataflow', ['editVersion']),
     ...mapGetters('dataflow', ['stateIsReadonly'])
+
+    /*accessNodeProcessIdArr() {
+      const set = this.allNodes
+        .filter(item => item.type === 'table')
+        .reduce((set, item) => {
+          item.attrs.accessNodeProcessId && set.add(item.attrs.accessNodeProcessId)
+          return set
+        }, new Set())
+      return [...set]
+    },
+
+    accessNodeProcessList() {
+      if (!this.accessNodeProcessIdArr.length) return this.scope.$agents
+      return this.accessNodeProcessIdArr.reduce((list, id) => {
+        const item = this.scope.$agentMap[id]
+        if (item) {
+          list.push({
+            value: item.processId,
+            label: `${item.hostName}（${item.ip}）`
+          })
+        }
+        return list
+      }, [])
+    }*/
+  },
+
+  watch: {
+    /*accessNodeProcessIdArr: {
+      handler(arr) {
+        if (arr.length >= 1) {
+          this.$set(this.dataflow, 'accessNodeType', 'MANUALLY_SPECIFIED_BY_THE_USER')
+          this.$set(this.dataflow, 'accessNodeProcessId', this.settings.accessNodeProcessId || arr[0])
+        }
+      },
+      immediate: true
+    }*/
+  },
+
+  async created() {
+    await this.loadAccessNode()
+  },
+
+  methods: {
+    async loadAccessNode() {
+      const data = await clusterApi.findAccessNodeInfo()
+      this.scope.$agents = data.map(item => {
+        return {
+          value: item.processId,
+          label: `${item.hostName}（${item.ip}）`
+        }
+      })
+      this.scope.$agentMap = data.reduce((obj, item) => ((obj[item.processId] = item), obj), {})
+    }
   }
 }

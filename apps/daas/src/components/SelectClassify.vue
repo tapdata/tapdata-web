@@ -222,7 +222,7 @@ export default {
 .filter-icon {
   padding-right: 10px;
   font-size: 12px;
-  color: #edc958;
+  color: map-get($color, primary);
 }
 
 .SelectClassify-tree {

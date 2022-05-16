@@ -106,13 +106,13 @@ export default {
   // display: flex;
   // flex-direction: column;
   // height: 100%;
-  // background: #fafafa;
+  // background: map-get($bgColor, normal);
   // .function-details__body {
   //   margin: 30px 24px 0 24px;
   //   flex: 1;
   //   display: flex;
   //   flex-direction: column;
-  //   background: #fff;
+  //   background-color: map-get($bgColor, white);
   //   box-shadow: 0px 0px 3px 0px #cccccc;
   //   overflow: hidden;
   ::v-deep {

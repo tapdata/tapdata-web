@@ -1,6 +1,6 @@
 import { CursorStatus } from '../models'
 import { MouseClickEvent } from '../events'
-import { KeyCode, Point } from '@daas/shared'
+import { KeyCode, Point } from '@tap/shared'
 
 export const useSelectionEffect = engine => {
   engine.subscribeTo(MouseClickEvent, event => {

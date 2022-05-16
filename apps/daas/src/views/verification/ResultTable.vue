@@ -10,7 +10,7 @@
     <ElTableColumn :label="$t('dataVerification.sourceTable')">
       <template slot-scope="scope">
         <span>{{ scope.row.source ? scope.row.source.table : '' }}</span>
-        <div style="color: #ccc">
+        <div class="font-color-slight">
           {{ scope.row.source ? scope.row.source.connectionName : '' }}
         </div>
       </template>
@@ -18,7 +18,7 @@
     <ElTableColumn :label="$t('dataVerification.targetTable')">
       <template slot-scope="scope">
         <span>{{ scope.row.target ? scope.row.target.table : 0 }}</span>
-        <div style="color: #ccc">
+        <div class="font-color-slight">
           {{ scope.row.target ? scope.row.target.connectionName : 0 }}
         </div>
       </template>

@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import * as components from '@daas/form'
+import * as components from '@tap/form'
 import { createSchemaField } from '@formily/vue'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 
@@ -29,7 +29,7 @@ const { SchemaField } = createSchemaField({
 export default {
   name: 'Setting',
   components: { Form: components.Form, SchemaField },
-  props: ['dataSourceData', 'settingData'],
+  props: ['dataSourceData', 'settingData', 'accessNodeList'],
   data() {
     return {
       form: createForm(),
@@ -37,11 +37,21 @@ export default {
       scope: {
         checkName: value => {
           let id = this.$route.params.id || this.dataSourceData.id || '' //当前任务id
-          return this.$api('Task').checkName(value, id)
+          const { delayTrigger } = this.$util
+          return new Promise(resolve => {
+            delayTrigger(() => {
+              resolve(this.$api('Task').checkName(value, id))
+            }, 800)
+          })
         }
       }
     }
   },
+
+  created() {
+    this.initAccessNode()
+  },
+
   mounted() {
     this.setSchema()
   },
@@ -131,16 +141,16 @@ export default {
                 'x-decorator': 'FormItem',
                 'x-component': 'Input',
                 'x-validator': `{{(value) => {
-                  return new Promise((resolve) => {
-                    checkName(value).then((res) => {
-                      if(res.data === true) {
-                        resolve('${repeatNameMessage}')
-                      } else {
-                        resolve()
-                      }
+                    return new Promise((resolve) => {
+                      checkName(value).then((res) => {
+                        if(res.data === true) {
+                          resolve('${repeatNameMessage}')
+                        } else {
+                          resolve()
+                        }
+                      })
                     })
-                  })
-                }}}`
+                  }}}`
               },
               desc: {
                 title: this.$t('task_stetting_desc'), //任务描述
@@ -200,6 +210,62 @@ export default {
                 ],
                 default: 'intellect'
               },
+
+              accessNodeWrap: {
+                type: 'void',
+                title: this.$t('connection_form_access_node'),
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  // asterisk: true,
+                  feedbackLayout: 'none'
+                },
+                'x-component': 'FormFlex',
+                'x-component-props': {
+                  gap: 8,
+                  align: 'start'
+                },
+
+                properties: {
+                  accessNodeType: {
+                    type: 'string',
+                    default: 'AUTOMATIC_PLATFORM_ALLOCATION',
+                    'x-disabled': this.disabledAccessNode,
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Select',
+                    enum: [
+                      {
+                        label: this.$t('connection_form_automatic'),
+                        value: 'AUTOMATIC_PLATFORM_ALLOCATION'
+                      },
+                      {
+                        label: this.$t('connection_form_manual'),
+                        value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+                      }
+                    ]
+                  },
+                  accessNodeProcessId: {
+                    type: 'string',
+                    enum: this.accessNodeList,
+                    'x-disabled': this.disabledAccessNode,
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      style: { flex: 1 }
+                    },
+                    'x-component': 'Select',
+                    'x-reactions': {
+                      dependencies: ['accessNodeType'],
+                      fulfill: {
+                        state: {
+                          visible: '{{$deps[0]==="MANUALLY_SPECIFIED_BY_THE_USER"}}',
+                          value:
+                            '{{console.log("$self.value", $self.value, $self.dataSource), $self.value || ($deps[0]==="MANUALLY_SPECIFIED_BY_THE_USER" && $self.dataSource.length ? $self.dataSource[0].value : undefined)}}'
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+
               isStopOnError: {
                 title: this.$t('task_setting_stop_on_error'), //遇到错误停止
                 type: 'boolean',
@@ -241,7 +307,17 @@ export default {
                     label: this.$t('task_setting_onebyone'), //逐条
                     value: true
                   }
-                ]
+                ],
+
+                'x-reactions': {
+                  target: 'increaseReadSize',
+                  fulfill: {
+                    state: {
+                      visible: '{{!$self.value}}'
+                      // display: '{{console.log($deps[0]),$deps[0] == false ? "visible" : "hidden"}}'
+                    }
+                  }
+                }
               },
               increaseReadSize: {
                 title: this.$t('task_setting_cdc_fetch_size'), //增量批次读取条数
@@ -252,15 +328,16 @@ export default {
                   min: 1,
                   max: 1000
                 },
-                default: 1,
-                'x-reactions': {
-                  dependencies: ['increOperationMode'],
-                  fulfill: {
-                    state: {
-                      display: '{{$deps[0] === false ? "visible" : "hidden"}}'
-                    }
-                  }
-                }
+                default: 1
+                // 'x-reactions': {
+                //   dependencies: ['increOperationMode'],
+                //   fulfill: {
+                //     state: {
+                //       visible: '{{!$deps[0]}}'
+                //       // display: '{{console.log($deps[0]),$deps[0] == false ? "visible" : "hidden"}}'
+                //     }
+                //   }
+                // }
               },
               increment: {
                 title: this.$t('task_setting_automatic_index'), //自动创建索引
@@ -596,6 +673,25 @@ export default {
         }
       }
       return config
+    },
+
+    initAccessNode() {
+      this.disabledAccessNode = false
+      const { sourceAccessNodeProcessId, targetAccessNodeProcessId } = this.dataSourceData
+      if (
+        sourceAccessNodeProcessId &&
+        (sourceAccessNodeProcessId === targetAccessNodeProcessId || !targetAccessNodeProcessId)
+      ) {
+        // 源和目标agent一致或只有源有指定agent
+        this.settingData.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
+        this.settingData.accessNodeProcessId = sourceAccessNodeProcessId
+        this.disabledAccessNode = true
+      } else if (targetAccessNodeProcessId && !sourceAccessNodeProcessId) {
+        // 只有目标有指定agent
+        this.settingData.accessNodeType = 'MANUALLY_SPECIFIED_BY_THE_USER'
+        this.settingData.accessNodeProcessId = targetAccessNodeProcessId
+        this.disabledAccessNode = true
+      }
     }
   }
 }

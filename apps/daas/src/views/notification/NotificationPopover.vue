@@ -19,7 +19,7 @@
               <div class="list-item-content" v-if="item.msg === 'JobDDL'">
                 <div class="unread-1zPaAXtSu" v-show="!item.read"></div>
                 <div class="list-item-desc">
-                  <span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
+                  <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
                   <span>{{ systemMap[item.system] }}</span>
                   <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate">
                     <span class="link-primary">
@@ -46,7 +46,7 @@
               <div class="list-item-content" v-else>
                 <div class="unread-1zPaAXtSu"></div>
                 <div class="list-item-desc">
-                  <span :style="`color: ${colorMap[item.level]};`">{{ item.level }}</span>
+                  <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
                   <span>{{ systemMap[item.system] }}</span>
                   <span class="link-primary" @click="handleGo(item)">
                     {{ item.serverName }}
@@ -63,7 +63,7 @@
           <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
             <div>
               <VIcon size="76">no-notice</VIcon>
-              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_view_more') }}</div>
+              <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_no_notice') }}</div>
             </div>
           </div>
           <!-- <div class="notice-footer">
@@ -119,6 +119,7 @@ import UserOperation from './UserOperation'
 import { TYPEMAP } from './tyepMap'
 import { mapState } from 'vuex'
 import VIcon from 'web-core/components/VIcon'
+import { formatTime, uniqueArr } from '@/utils/util'
 
 export default {
   components: {
@@ -127,13 +128,14 @@ export default {
   },
   data() {
     return {
+      // unRead: 0,
       loading: false,
       activeTab: 'system',
       listData: [],
       colorMap: {
-        ERROR: 'red',
-        WARN: 'orangered',
-        INFO: '#409EFF'
+        ERROR: '#D44D4D',
+        WARN: '#FF7D00',
+        INFO: '#2c65ff'
       },
       typeMap: TYPEMAP,
       systemMap: {
@@ -159,23 +161,24 @@ export default {
       this.$router.push({ name: 'notification' })
     },
     init() {
+      let self = this
       let msg = {
         type: 'notification'
       }
       if (!parseInt(this.$cookie.get('isAdmin'))) {
         msg.userId = this.$cookie.get('user_id')
       }
-      this.getUnReadNum()
-      this.$ws.on('notification', data => {
-        if (data.data && data.data.length > 0) {
-          this.listData.unshift(...data.data)
-          this.getUnReadNum()
-        }
-        //格式化日期
-        if (this.listData && this.listData.length > 0) {
-          this.listData.map(item => {
-            item['createTime'] = item.createTime ? this.$moment(item.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
-          })
+      this.getUnreadData()
+      this.$ws.on('notification', res => {
+        // this.getUnReadNum()
+        this.getUnreadData()
+        let data = res?.data
+        if (data) {
+          data.createTime = formatTime(data.createTime)
+          self.listData = uniqueArr([data, ...this.listData])
+          // this.$store.commit('notification', {
+          //   unRead: data.total
+          // })
         }
       })
       this.$ws.ready(() => {
@@ -193,20 +196,50 @@ export default {
         .count({ where: JSON.stringify(where) })
         .then(res => {
           if (res.data) {
+            let data = res.data.data || res.data.data === 0 ? res.data.data : res.data
+            // this.unRead = res.data.count
             this.$store.commit('notification', {
-              unRead: res.data.count
+              unRead: data
             })
           }
+        })
+    },
+    getUnreadData() {
+      let filter = {
+        where: {
+          read: false
+        },
+        order: ['createTime DESC'],
+        limit: 20,
+        skip: 0
+      }
+      this.$api('notification')
+        .get({ filter: JSON.stringify(filter) })
+        .then(res => {
+          let { items, total } = res.data
+          this.$store.commit('notification', {
+            unRead: total
+          })
+          // this.unRead = total
+          this.listData = items.map(t => {
+            t.createTime = formatTime(t.createTime)
+            return t
+          })
         })
     },
     handleRead(id) {
       this.$api('notification')
         .patch({ read: true, id: id })
         .then(res => {
-          if (res.data) {
-            this.listData = []
+          if (res) {
+            this.getUnreadData()
             this.$root.$emit('notificationUpdate')
           }
+
+          // if (res.data) {
+          //   this.listData = []
+          //
+          // }
         })
     },
     getLag(lag) {
@@ -307,24 +340,25 @@ export default {
       }
       .el-tabs__item {
         font-size: 14px;
-        font-weight: 500;
-        color: map-get($fontColor, slight);
+        font-weight: 400;
+        color: map-get($fontColor, light);
         &.is-active {
           color: map-get($color, primary);
-          font-weight: 400;
+          font-weight: 500;
           border-color: map-get($color, primary);
         }
       }
       .el-tabs__active-bar {
-        width: 100px;
+        min-width: 80px !important;
       }
     }
     > .el-tabs__content {
+      margin-right: -13px;
       padding: 0 !important;
       overflow: initial;
       & > .el-button {
         position: absolute;
-        right: 0;
+        right: 13px;
         top: -52px;
         font-weight: 400;
       }
@@ -342,6 +376,7 @@ export default {
   overflow: hidden;
   position: relative;
   border-radius: 3px;
+
   .notice-footer {
     display: flex;
     justify-content: space-between;
@@ -355,7 +390,7 @@ export default {
     .more-text {
       display: inline-block;
       cursor: pointer;
-      color: #666;
+      color: map-get($fontColor, light);
     }
   }
   .tab-item {
@@ -374,7 +409,7 @@ export default {
       font-size: 12px;
       .list-item {
         position: relative;
-        background: #fff;
+        background: map-get($bgColor, white);
         border-bottom: 1px solid #dedee4;
         padding: 0 5px 5px 0;
         cursor: pointer;
@@ -400,7 +435,7 @@ export default {
           border-radius: 50%;
         }
         .list-item-desc {
-          color: #666;
+          color: map-get($fontColor, light);
           position: absolute;
           top: -5px;
           left: 30px;
@@ -413,11 +448,11 @@ export default {
           }
         }
         .list-item-platform {
-          color: #666;
+          color: map-get($fontColor, light);
         }
         .list-item-time {
           margin: 15px 0 0 17px;
-          color: #aaa;
+          color: map-get($fontColor, slight);
           font-size: 12px;
         }
       }
@@ -426,9 +461,9 @@ export default {
       box-sizing: border-box;
       .notification-item {
         padding: 5px 20px 4px 20px;
-        border-bottom: 1px solid #f2f2f2;
+        border-bottom: 1px solid map-get($borderColor, light);
         font-size: 12px;
-        color: #666;
+        color: map-get($fontColor, light);
         &:hover {
           background-color: #ecf5ff;
         }
@@ -437,7 +472,7 @@ export default {
         }
         .item-time {
           margin-top: 5px;
-          color: #aaa;
+          color: map-get($fontColor, light);
           font-size: 12px;
         }
       }

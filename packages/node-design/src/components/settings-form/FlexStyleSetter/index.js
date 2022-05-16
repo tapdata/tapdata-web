@@ -1,6 +1,6 @@
 import { Field, useField } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
-import { Radio } from '@daas/form'
+import { Radio } from '@tap/form'
 import { IconWidget } from '../../widgets'
 import { usePrefix } from '../../../hooks'
 import { InputItems } from '../InputItems'

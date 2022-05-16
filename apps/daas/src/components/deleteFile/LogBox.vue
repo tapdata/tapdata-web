@@ -118,9 +118,9 @@ export default {
   .noData {
     height: 100%;
     padding-top: 9%;
-    color: #999;
+    color: map-get($fontColor, slight);
     font-size: 12px;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     div {
       text-align: center;
     }
@@ -138,13 +138,13 @@ export default {
   height: 100%;
   overflow: auto;
   font-size: 11px;
-  color: #222222;
+  color: map-get($fontColor, dark);
   box-sizing: border-box;
 }
 li.log-box-item {
   list-style: none;
   padding-bottom: 5px;
-  color: #222222;
+  color: map-get($fontColor, dark);
   font-size: 11px;
 
   .level {

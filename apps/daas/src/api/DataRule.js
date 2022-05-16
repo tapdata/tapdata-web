@@ -1,4 +1,4 @@
-// import axios from 'axios'
+// import axios from '@/plugins/axios'
 import PublicApi from './publicApi'
 
 export default class DataRulesAPI extends PublicApi {

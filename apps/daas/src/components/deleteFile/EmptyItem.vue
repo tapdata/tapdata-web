@@ -66,7 +66,7 @@ export default {
   }
 
   .empty-img-simple-ellipse {
-    fill: #f5f5f5;
+    fill: map-get($bgColor, main);
   }
 
   .empty-img-simple-g {
@@ -74,7 +74,7 @@ export default {
   }
 
   .empty-img-simple-path {
-    fill: #fafafa;
+    fill: map-get($bgColor, normal);
   }
 }
 </style>

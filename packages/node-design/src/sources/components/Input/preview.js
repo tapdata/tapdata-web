@@ -1,4 +1,4 @@
-import { Input as FormInput } from '@daas/form'
+import { Input as FormInput } from '@tap/form'
 import { createBehavior, createResource } from '../../../core'
 import { createFieldSchema } from '../Field'
 import { AllSchemas } from '../../schemas'

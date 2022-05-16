@@ -3,7 +3,7 @@
     <!-- <el-button class="btn-query" size="mini" type="text">
       <i class="iconfont icon-fangdajing" @click="searchFalg = !searchFalg"></i>
     </el-button> -->
-    <el-button type="text" class="btn-expand toggle" size="mini" @click="toggle()" v-if="!isExpand">
+    <el-button type="text" class="btn-expand no-expand toggle" size="mini" @click="toggle()" v-if="!isExpand">
       <i class="iconfont icon-zhankai2"></i>
     </el-button>
     <div class="classification-header" v-else>
@@ -474,13 +474,13 @@ export default {
   user-select: none;
   box-sizing: border-box;
   border-top: none;
-  background: #fff;
+  background: map-get($bgColor, white);
   border-radius: 3px;
-  overflow: hidden;
+  // overflow: hidden;
   // box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);
   .btn-expand {
     padding: 2px 3px;
-    color: #666;
+    color: map-get($fontColor, light);
     transform: rotate(0);
     box-sizing: border-box;
     // background: #eff1f4;
@@ -491,15 +491,20 @@ export default {
       }
     }
   }
+  .no-expand {
+    position: absolute;
+    left: 20px;
+  }
   .toggle {
-    margin-top: 28px;
-    color: #337dff;
+    margin-top: 26px;
+    color: map-get($color, lprimary);
+    z-index: 2;
   }
   &.expand {
     height: 100%;
     //width: 100%;
     padding: 20px 0;
-    // border-right: 1px solid #f2f2f2;
+    // border-right: 1px solid map-get($borderColor, light);
     width: 214px;
     .btn-expand {
       position: absolute;
@@ -514,6 +519,7 @@ export default {
         }
       }
     }
+
     .btn-addIcon {
       position: absolute;
       top: 3px;
@@ -524,9 +530,9 @@ export default {
         flex-direction: row;
         justify-content: center;
         align-items: center;
-        color: #666;
+        color: map-get($fontColor, light);
         font-size: 16px;
-        // background: #fff;
+        // background-color: map-get($bgColor, white);
         // border: 1px solid #dedee4;
         height: 66%;
         // padding: 0 4px;
@@ -537,7 +543,7 @@ export default {
         border-radius: 3px;
         cursor: pointer;
         &:hover {
-          color: #409eff;
+          color: map-get($color, primary);
         }
       }
     }
@@ -546,7 +552,7 @@ export default {
       right: 54px;
       .icon-fangdajing {
         font-size: 16px;
-        color: #666;
+        color: map-get($fontColor, light);
         &:hover {
           color: map-get($color, primary);
         }
@@ -558,7 +564,7 @@ export default {
   .classification-header {
     position: relative;
     padding: 0 12px;
-    // background: #fafafa;
+    // background: map-get($bgColor, normal);
     // border-bottom: 1px solid #dedee4;
     font-size: 12px;
     line-height: 31px;
@@ -570,7 +576,7 @@ export default {
       align-items: center;
       justify-content: space-between;
       padding: 0 8px 0 46px;
-      color: #666;
+      color: map-get($fontColor, light);
       // background-color: #eff1f4;
     }
 
@@ -582,7 +588,7 @@ export default {
       // .iconfont {
       // 	color: #c0c4cc;
       // 	font-size: 12px;
-      // 	background: #fff;
+      // 	background-color: map-get($bgColor, white);
       // 	border: 1px solid #dedee4;
       // 	display: flex;
       // 	justify-content: center;
@@ -620,8 +626,8 @@ export default {
     .icon-folder {
       margin-right: 5px;
       font-size: 12px;
-      // color: #409EFF;
-      color: #658ffe;
+      color: map-get($color, primary);
+      // color: map-get($color, lprimary);
     }
     .table-label {
       flex: 1;
@@ -641,7 +647,7 @@ export default {
   .create {
     padding: 5px 10px;
     font-size: 12px;
-    // color: #409eff;
+    // color: map-get($color, primary);
     cursor: pointer;
   }
 }

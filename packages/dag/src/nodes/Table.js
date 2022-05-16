@@ -131,7 +131,8 @@ export class Table extends NodeType {
                     required: true,
                     'x-validator': [
                       {
-                        whitespace: true
+                        required: true,
+                        message: '请选择表'
                       }
                     ],
                     'x-decorator': 'FormItem',
@@ -140,15 +141,11 @@ export class Table extends NodeType {
                         flex: 1
                       }
                     },
-                    'x-component': 'AsyncSelect',
+                    'x-component': 'TableSelect',
                     'x-component-props': {
-                      itemType: 'string',
-                      itemLabel: 'original_name',
-                      method: '{{loadTable}}',
-                      params: `{{ {where: {'source.id': $values.connectionId}} }}`
+                      method: '{{loadTable}}'
                     },
                     'x-reactions': [
-                      // '{{useRemoteQuery(loadDatabaseTable)}}',
                       {
                         target: 'name',
                         effects: ['onFieldInputValueChange'],
@@ -198,6 +195,31 @@ export class Table extends NodeType {
                 }
               },
 
+              // 指定agent
+              'attrs.accessNodeProcessId': {
+                type: 'string',
+                title: '所属agent',
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  wrapperWidth: 320
+                },
+                'x-component': 'PreviewText.Input',
+                'x-component-props': {
+                  content:
+                    '{{$agentMap[$self.value] ? `${$agentMap[$self.value].hostName}（${$agentMap[$self.value].ip}）` : "-"}}',
+                  style: {
+                    color: '#535F72'
+                  }
+                },
+                'x-reactions': {
+                  fulfill: {
+                    state: {
+                      display: '{{!$self.value ? "hidden":"visible"}}'
+                    }
+                  }
+                }
+              },
+
               name: {
                 type: 'string',
                 'x-display': 'hidden'
@@ -209,6 +231,7 @@ export class Table extends NodeType {
             properties: {
               sourceNodeConfig: {
                 type: 'void',
+                'x-component': 'FormContent', // 为properties组件增加根节点，避免vue-frag报错
                 'x-reactions': {
                   dependencies: ['$outputs'],
                   fulfill: {
@@ -378,6 +401,7 @@ export class Table extends NodeType {
               },
               targetNodeConfig: {
                 type: 'void',
+                'x-component': 'FormContent',
                 'x-reactions': {
                   dependencies: ['$inputs'],
                   fulfill: {
@@ -434,33 +458,53 @@ export class Table extends NodeType {
                       wrapperWidth: 300
                     },
                     'x-component': 'Select',
-                    'x-reactions': {
-                      target: 'updateConditionFields',
-                      fulfill: {
-                        state: {
-                          visible: '{{$self.value!=="appendWrite"}}'
+                    'x-reactions': [
+                      {
+                        dependencies: ['$inputs'],
+                        fulfill: {
+                          state: {
+                            visible: '{{findNodeById($deps[0][0])?.type !== "merge_table_processor"}}'
+                          }
+                        }
+                      },
+                      {
+                        target: 'updateConditionFields',
+                        fulfill: {
+                          state: {
+                            visible:
+                              '{{$self.value!=="appendWrite" && findNodeById($values.$inputs[0])?.type !== "merge_table_processor"}}'
+                          }
                         }
                       }
-                    }
+                    ]
                   },
                   updateConditionFields: {
                     title: '更新条件字段',
                     type: 'array',
                     required: true,
+                    default: null,
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
                       wrapperWidth: 300
-                      // feedbackText: '可输入创建新字段'
                     },
-                    'x-component': 'Select',
+                    'x-component': 'FieldSelect',
                     'x-component-props': {
                       allowCreate: true,
                       multiple: true,
                       filterable: true
                     },
                     'x-reactions': [
-                      // $values.tableName 的作用仅是收集该字段的依赖，tableName字段更新时会重新运行下面的方法
-                      '{{useAfterPatchAsyncDataSource({service: loadNodeFieldNames}, $values.id, "primaryKey", $values.tableName)}}'
+                      `{{useAsyncDataSourceByConfig({service: loadNodeFieldOptions, withoutField: true}, $values.$inputs[0])}}`,
+                      {
+                        fulfill: {
+                          run: `
+                            if (!$self.value && $self.dataSource?.length) {
+                              $self.setValue($self.dataSource.filter(item => item.isPrimaryKey).map(item => item.value))
+                              $self.validate()
+                            }
+                          `
+                        }
+                      }
                     ]
                   }
                 }
@@ -481,13 +525,14 @@ export class Table extends NodeType {
    * 获取额外添加到节点上的属性
    */
   getExtraAttr() {
-    const { tableName, databaseType, connectionId, connectionType } = this.attr
+    const { tableName, databaseType, connectionId, connectionType, accessNodeProcessId } = this.attr
     return {
       tableName,
       databaseType,
       connectionId,
       attrs: {
-        connectionType
+        connectionType,
+        accessNodeProcessId
       }
     }
   }

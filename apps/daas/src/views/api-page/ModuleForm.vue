@@ -29,10 +29,10 @@
         <div class="url-tip pb-5">
           <span>{{ $t('module_form_path') }}</span>
           <span>
-            <el-radio-group v-model="createForm.apiType" @change="changeApiType">
-              <el-radio label="defaultApi">{{ $t('module_form_default_Api') }}</el-radio>
-              <el-radio label="customerApi">{{ $t('module_form_customer_Api') }}</el-radio>
-            </el-radio-group>
+            <ElRadioGroup v-model="createForm.apiType" @change="changeApiType">
+              <ElRadio label="defaultApi">{{ $t('module_form_default_Api') }}</ElRadio>
+              <ElRadio label="customerApi">{{ $t('module_form_customer_Api') }}</ElRadio>
+            </ElRadioGroup>
             <div class="pt-4">{{ createForm.path }}</div>
           </span>
         </div>
@@ -136,6 +136,7 @@ export default {
         datasource: '',
         tablename: '',
         readPreference: '',
+        readPreferenceTag: '',
         readConcern: '',
         apiVersion: 'v1',
         name: '',
@@ -189,16 +190,6 @@ export default {
     'createForm.datasource'() {
       this.getTableData()
     },
-    // 'createForm.tablename'() {
-    // let fields = []
-    // debugger
-    // let selectedCollections = this.tableNameSelectConfig.options.filter(v => v.value === val)
-    // selectedCollections.forEach(v => {
-    //   fields = fields.concat(v.fields)
-    // })
-    // this.fields = fields
-    // this.getFieldsData()
-    // },
     'createForm.apiType'(newType, oldType) {
       if (this.$route.query.id && (newType === oldType || oldType === '')) return
       this.createForm.paths = []
@@ -783,7 +774,7 @@ export default {
           height: 54px;
           padding: 0 20px;
           line-height: 54px;
-          background-color: #fafafa;
+          background-color: map-get($bgColor, normal);
           border-bottom: 1px solid #edeeee;
           span {
             display: inline-block;
@@ -802,7 +793,7 @@ export default {
             padding: 10px 15px 10px;
             border-bottom: 1px solid #edeeee;
             border-top: 0;
-            color: #000;
+            color: map-get($fontColor, dark);
             font-size: 10px;
             cursor: pointer;
             &:last-child {
@@ -835,7 +826,7 @@ export default {
               width: 62px;
               text-align: center;
               font-size: 11px;
-              color: #fff;
+              color: map-get($fontColor, white);
               border-radius: 2px;
             }
             .module-path-item-text {

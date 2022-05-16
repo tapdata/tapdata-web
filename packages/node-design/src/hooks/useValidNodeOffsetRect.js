@@ -1,5 +1,5 @@
 import { ref } from 'vue-demi'
-import { requestIdle, cancelIdle } from '@daas/shared'
+import { requestIdle, cancelIdle } from '@tap/shared'
 import ResizeObserver from 'resize-observer-polyfill'
 import { useViewport } from './useViewport'
 import { useEffect } from './useEffect'

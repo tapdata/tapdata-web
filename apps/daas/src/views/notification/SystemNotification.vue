@@ -39,7 +39,7 @@
         @change="getData()"
       ></SelectList>
     </div>
-    <ul class="cuk-list clearfix cuk-list-type-block">
+    <ul class="cuk-list clearfix cuk-list-type-block" v-if="listData && listData.length">
       <li
         class="list-item"
         :style="{ cursor: item.read ? 'default' : 'pointer' }"
@@ -52,11 +52,15 @@
           <div class="list-item-desc">
             <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
             <span>{{ systemMap[item.system] }}</span>
-            <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate">
-              <span class="link-primary">
-                {{ `${item.serverName} , ` }}
-              </span>
-            </router-link>
+            <!-- <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate"> -->
+            <span v-if="item.msg === 'deleted'" class="link-primary">
+              {{ `${item.serverName} , ` }}
+            </span>
+            <span v-else class="link-primary cursor-pointer" @click="handleGo(item)">
+              {{ `${item.serverName} , ` }}
+            </span>
+
+            <!-- </router-link> -->
             <span>
               {{
                 `${$t('notify_source_name')} : ${item.sourceName} , ${$t('notify_database_name')} : ${
@@ -79,7 +83,10 @@
           <div class="list-item-desc">
             <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
             <span>{{ systemMap[item.system] }}</span>
-            <span class="link-primary" @click="handleGo(item)">
+            <span v-if="item.msg === 'deleted'" class="link-primary">
+              {{ `${item.serverName} , ` }}
+            </span>
+            <span v-else class="link-primary cursor-pointer" @click="handleGo(item)">
               {{ item.serverName }}
             </span>
             <span>{{ typeMap[item.msg] }}</span>
@@ -92,6 +99,12 @@
         </div>
       </li>
     </ul>
+    <div v-else class="notification-no-data flex h-100 justify-content-center align-items-center">
+      <div>
+        <VIcon size="140">no-notice</VIcon>
+        <div class="pt-4 fs-8 text-center font-color-slight fw-normal">{{ $t('notify_no_notice') }}</div>
+      </div>
+    </div>
     <el-pagination
       class="pagination"
       background
@@ -129,9 +142,9 @@ export default {
       pagesize: 20,
       total: 0,
       colorMap: {
-        ERROR: 'red',
-        WARN: 'orangered',
-        INFO: '#409EFF'
+        ERROR: '#D44D4D',
+        WARN: '#FF7D00',
+        INFO: '#2c65ff'
       },
       systemMap: {
         sync: this.$t('notify_sync'),
@@ -215,7 +228,6 @@ export default {
     // this.getUnreadNum() //未读消息数量
     this.getFilterItems()
     this.$root.$on('notificationUpdate', () => {
-      // this.getUnreadNum() //未读消息数量
       this.getData()
     })
   },
@@ -317,6 +329,12 @@ export default {
               // this.getData()
               this.read = read
               this.$root.$emit('notificationUpdate')
+              let msg = {
+                type: 'notification'
+              }
+              this.$ws.ready(() => {
+                this.$ws.send(msg)
+              }, true)
             }
           })
       }
@@ -327,43 +345,55 @@ export default {
       this.listData.map(item => {
         ids.push(item.id)
       })
-      let where = {
-        id: {
-          inq: ids
-        }
+      let id = {
+        inq: ids
       }
+
       let data = {
-        read: true
+        read: true,
+        id
       }
-      where = JSON.stringify(where)
       let read = this.read
       this.$api('notification')
-        .upsertWithWhere(where, data)
+        .pageRead(data)
         .then(res => {
           if (res.data) {
             // this.getUnreadNum() //未读消息数量
             this.getData()
             this.read = read
             this.$root.$emit('notificationUpdate')
+            let msg = {
+              type: 'notification'
+            }
+            this.$ws.ready(() => {
+              this.$ws.send(msg)
+            }, true)
           }
         })
     },
+
     // 标记全部已读
     handleAllRead() {
       let where = {}
-      let data = {
-        read: true
-      }
+      // let data = {
+      //   read: true
+      // }
       where = JSON.stringify(where)
       let read = this.read
       this.$api('notification')
-        .readAll(where, data)
+        .readAll(where)
         .then(res => {
           if (res.data) {
             // this.getUnreadNum() //未读消息数量
             this.getData()
             this.read = read
             this.$root.$emit('notificationUpdate')
+            let msg = {
+              type: 'notification'
+            }
+            this.$ws.ready(() => {
+              this.$ws.send(msg)
+            }, true)
           }
         })
     },
@@ -394,9 +424,17 @@ export default {
     },
     handleGo(item) {
       switch (item.system) {
-        case 'dataFlow':
+        case 'migration':
           this.$router.push({
-            name: 'job',
+            name: 'MigrateEditor',
+            params: {
+              id: item.sourceId
+            }
+          })
+          break
+        case 'sync':
+          this.$router.push({
+            name: 'DataflowEditor',
             query: {
               id: item.sourceId,
               isMoniting: true,
@@ -499,8 +537,8 @@ $unreadColor: #ee5353;
   }
   .list-item {
     position: relative;
-    background: #fff;
-    border-bottom: 1px solid #f5f7fa;
+    background-color: map-get($bgColor, white);
+    border-bottom: 1px solid map-get($bgColor, disable);
     margin-right: 30px;
     .list-item-content {
       position: relative;
@@ -520,7 +558,7 @@ $unreadColor: #ee5353;
       border-radius: 50%;
     }
     .list-item-desc {
-      color: #666;
+      color: map-get($fontColor, light);
       position: absolute;
       top: 0;
       left: 30px;
@@ -535,7 +573,7 @@ $unreadColor: #ee5353;
       font-size: 12px;
     }
     &:hover {
-      background: #fafafa;
+      background: map-get($bgColor, normal);
     }
   }
 }

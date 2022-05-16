@@ -1,4 +1,4 @@
-import { EventDriver } from '@daas/shared'
+import { EventDriver } from '@tap/shared'
 import { DragStartEvent, DragMoveEvent, DragStopEvent } from '../events'
 
 const GlobalState = {

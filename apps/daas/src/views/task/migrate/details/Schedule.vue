@@ -1,33 +1,23 @@
 <template>
-  <div class="">
+  <div>
     <!--  步骤条  -->
-    <ElSteps :active="active" align-center class="mini mb-6 pt-3">
-      <ElStep v-for="(item, index) in steps" :key="index" :class="[{ 'is-ative': showActive === index + 1 }]">
-        <span
-          slot="icon"
-          :class="['circle-icon', { 'cursor-pointer': index + 1 <= active }]"
-          @click="clickStep(index)"
-        ></span>
-        <div slot="title" :class="[{ 'cursor-pointer': index + 1 <= active }]" @click="clickStep(index)">
-          {{ item.label }}
-        </div>
-        <div
-          v-if="item.time"
-          slot="description"
-          :class="[{ 'cursor-pointer': index + 1 <= active }]"
-          @click="clickStep(index)"
-        >
-          {{ item.time }}
-        </div>
-      </ElStep>
-    </ElSteps>
+    <VStep
+      ref="step"
+      align-center
+      class="mb-2"
+      :hasNumber="false"
+      :activeStep="active"
+      :stepList="steps"
+      :showActive="showActive"
+      @activeStep="clickStep"
+    ></VStep>
     <template v-if="steps.length > 0">
       <!--  任务初始化  -->
       <div v-if="['initial_sync'].indexOf(currentStep.group) === -1">
         <!--  里程碑  -->
         <Milestone :list="milestonesData" :taskStatus="task && task.status" :fold="false"></Milestone>
         <div v-if="currentStep.group === 'cdc'" class="mt-6">
-          <div class="mb-4 fs-7 font-color-dark fw-bolder">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
+          <div class="mb-4 fs-7 font-color-dark">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
           <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page>
             <template slot="operation" slot-scope="scope">
               <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{ $t('button_clear') }}</ElButton>
@@ -51,7 +41,7 @@
           :status="task.status"
         ></Overview>
         <div v-if="currentStep.group === 'structure'" class="mt-6">
-          <div class="mb-4 fs-7 font-color-dark fw-bolder">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
+          <div class="mb-4 fs-7 font-color-dark">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
           <div></div>
           <TableList
             v-if="columns.length"
@@ -68,7 +58,7 @@
           </TableList>
         </div>
         <div v-if="currentStep.group === 'initial_sync'" class="mt-6">
-          <div class="mb-4 fs-7 font-color-dark fw-bolder">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
+          <div class="mb-4 fs-7 font-color-dark">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
           <div></div>
           <TableList
             v-if="columns.length"
@@ -81,9 +71,9 @@
           >
             <template slot="totalNum" slot-scope="scope">
               <span v-if="scope.row.totalNum === -2">
-                <span style="color: red">{{ $t('task_info_overView_error_msg') }} </span>
+                <span>{{ $t('task_info_overView_error_msg') }} </span>
                 <ElTooltip placement="top" :content="scope.row.errorMsg">
-                  <VIcon class="color-primary" size="14">error</VIcon>
+                  <VIcon class="link-danger cursor-pointer" size="14">error</VIcon>
                 </ElTooltip></span
               >
               <span v-else
@@ -100,6 +90,7 @@
             </template>
           </TableList>
           <el-pagination
+            style="margin-top: 10px"
             @current-change="getSyncTableData"
             :current-page.sync="currentPage"
             :page-sizes="[20, 50, 100]"
@@ -110,7 +101,7 @@
           </el-pagination>
         </div>
         <div v-if="currentStep.group === 'cdc'" class="mt-6">
-          <div class="mb-4 fs-7 font-color-dark fw-bolder">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
+          <div class="mb-4 fs-7 font-color-dark">{{ currentStep.label }}{{ $t('task_info_info') }}</div>
           <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page>
             <template slot="operation" slot-scope="scope">
               <ElButton size="mini" type="text" @click="handleClear(scope.row)">{{ $t('button_clear') }}</ElButton>
@@ -129,9 +120,7 @@
       <ElDivider class="my-6"></ElDivider>
       <Overview :info="syncOverViewData" :status="task.status"></Overview>
       <div v-if="currentStep.group === 'structure'" class="mt-6">
-        <div class="mb-4 fs-7 font-color-dark fw-bolder">
-          {{ $t('task_info_task_structure') }}{{ $t('task_info_info') }}
-        </div>
+        <div class="mb-4 fs-7 font-color-dark">{{ $t('task_info_task_structure') }}{{ $t('task_info_info') }}</div>
         <div></div>
         <TableList
           v-if="columns.length"
@@ -148,9 +137,7 @@
         </TableList>
       </div>
       <div class="mt-6">
-        <div class="mb-4 fs-7 font-color-dark fw-bolder">
-          {{ $t('task_setting_initial_sync') }}{{ $t('task_info_info') }}
-        </div>
+        <div class="mb-4 fs-7 font-color-dark">{{ $t('task_setting_initial_sync') }}{{ $t('task_info_info') }}</div>
         <TableList
           v-if="columns.length"
           :data="syncTableList"
@@ -165,7 +152,7 @@
         </TableList>
       </div>
       <div class="mt-6">
-        <div class="mb-4 fs-7 font-color-dark fw-bolder">{{ $t('task_info_task_cdc') }}{{ $t('task_info_info') }}</div>
+        <div class="mb-4 fs-7 font-color-dark">{{ $t('task_info_task_cdc') }}{{ $t('task_info_info') }}</div>
         <TableList :columns="cdcColumns" :data="list" max-height="300" hide-on-single-page></TableList>
       </div>
     </div>
@@ -198,13 +185,14 @@
 
 <script>
 import TableList from '@/components/TableList'
+import VStep from '@/components/VStep'
 import Milestone from './Milestone'
 import Overview from '../../etl/statistics/Overview'
 import { formatTime } from '@/utils/util'
 
 export default {
   name: 'Schedule',
-  components: { TableList, Milestone, Overview },
+  components: { TableList, Milestone, Overview, VStep },
   props: {
     task: {
       type: Object,
@@ -318,7 +306,7 @@ export default {
         if (el.group && el.group !== item?.group) {
           stepsData.push({
             label: groupMap[el.group],
-            time: formatTime(el.start) || formatTime(el.end),
+            desc: formatTime(el.start) || formatTime(el.end),
             group: el.group
           })
         }
@@ -630,44 +618,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.circle-icon {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: map-get($color, disable);
-}
-.el-steps {
-  ::v-deep {
-    .el-step__head .el-step__icon {
-      border: 0;
-    }
-    .el-step__line {
-      height: 2px;
-      top: 11px;
-      left: 50%;
-      right: -50%;
-      background-color: map-get($color, disable);
-    }
-    .is-finish {
-      .circle-icon {
-        background-color: map-get($color, primary);
-      }
-      .el-step__line {
-        background-color: map-get($color, primary);
-      }
-    }
-    .el-step__description,
-    .el-step__description {
-      color: map-get($fontColor, slight);
-    }
-    .is-ative {
-      .el-step__title,
-      .el-step__description {
-        color: map-get($color, primary);
-      }
-    }
-  }
-}
-</style>

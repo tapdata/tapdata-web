@@ -164,7 +164,7 @@ export default {
   .fb-radio-tip__text {
     margin-left: 8px;
     font-size: 12px;
-    color: map-get($fontColor, slight);
+    color: map-get($fontColor, light);
   }
 }
 </style>

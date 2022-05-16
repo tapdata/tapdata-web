@@ -1,4 +1,4 @@
-import { isArr } from '@daas/shared'
+import { isArr } from '@tap/shared'
 import { TreeNode, Engine } from './models'
 import { mergeLocales } from './internals'
 import { untracked } from '@formily/reactive'

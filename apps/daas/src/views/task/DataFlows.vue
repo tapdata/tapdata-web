@@ -179,7 +179,7 @@
               <i v-else :class="'dataflow-table__icon iconfont ' + statusMap[row.status].icon"></i>
             </template>
             <span>{{ row.statusLabel }}</span>
-            <span style="color: #999" v-if="!row.hasChildren && row.statusList && row.statusList.length">
+            <span class="font-color-light" v-if="!row.hasChildren && row.statusList && row.statusList.length">
               (
               <span v-for="(key, index) in row.statusList" :key="key">
                 {{ $t('dataFlow.status.' + key) }}
@@ -1207,11 +1207,11 @@ export default {
         .patchId(this.formSchedule.id, { setting: data })
         .then(result => {
           if (result && result.data) {
-            this.$message.success(this.$t('message.saveOK'))
+            this.$message.success(this.$t('message_save_ok'))
           }
         })
         .catch(() => {
-          this.$message.error(this.$t('message.saveFail'))
+          this.$message.error(this.$t('message_save_fail'))
         })
         .finally(() => {
           this.taskSettingsDialog = false
@@ -1268,24 +1268,24 @@ export default {
     .dataflow-name {
       .tag {
         margin-left: 5px;
-        color: #999999;
-        background: #f5f5f5;
+        color: map-get($fontColor, slight);
+        background: map-get($bgColor, main);
         border: 1px solid #dedee4;
       }
       .name {
         &:not(.has-children) {
-          color: #409eff;
+          color: map-get($color, primary);
           cursor: pointer;
           text-decoration: underline;
         }
       }
     }
     .task-name {
-      color: #333;
+      color: map-get($fontColor, dark);
     }
     .region-info {
       line-height: 20px;
-      color: #aaa;
+      color: map-get($fontColor, light);
     }
     .table-operations {
       display: flex;
@@ -1297,7 +1297,7 @@ export default {
 .dataflow-table-more-dropdown-menu .btn-delete {
   color: #f56c6c;
   &.is-disabled {
-    color: #bbb;
+    color: map-get($fontColor, slight);
   }
 }
 </style>
@@ -1312,7 +1312,7 @@ export default {
   .text {
     padding-left: 100px;
     line-height: 28px;
-    color: #999;
+    color: map-get($fontColor, slight);
     ul {
       display: flex;
       flex-direction: row;

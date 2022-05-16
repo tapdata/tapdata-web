@@ -1,5 +1,5 @@
 {
-  "name": "@daas/api",
+  "name": "@tap/api",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@daas/shared": "workspace:^1.0.0",
+    "@tap/shared": "workspace:^1.0.0",
     "axios": "^0.21.1",
     "qs": "^6.10.3"
   }

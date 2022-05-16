@@ -1,4 +1,4 @@
-import { InputNumber } from '@daas/form'
+import { InputNumber } from '@tap/form'
 import { createPolyInput } from '../PolyInput'
 import './styles.scss'
 

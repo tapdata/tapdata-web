@@ -18,7 +18,7 @@
   </div>
 </template>
 <script>
-import Cookie from '@daas/shared/src/cookie'
+import Cookie from '@tap/shared/src/cookie'
 const langMap = {
   sc: 'zh-CN',
   tc: 'zh-TW',
@@ -75,7 +75,7 @@ export default {
     flex: 1;
     justify-content: center;
     align-items: center;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     .page-main-box {
       display: flex;
       flex-direction: column;
@@ -85,7 +85,7 @@ export default {
     .switch-lang {
       padding-top: 50px;
       text-align: right;
-      color: #c9cdd4;
+      color: map-get($fontColor, slight);
       font-weight: 500;
       font-size: 14px;
       span {
@@ -126,7 +126,7 @@ header {
       span {
         display: inline-block;
         padding: 0 10px;
-        border-left: 1px solid #333333;
+        border-left: 1px solid map-get($fontColor, dark);
         box-sizing: border-box;
         height: 18px;
         line-height: 18px;
@@ -135,7 +135,7 @@ header {
           border: none;
         }
         &:hover {
-          color: #333;
+          color: map-get($fontColor, dark);
         }
       }
     }

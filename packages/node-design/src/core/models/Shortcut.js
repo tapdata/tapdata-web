@@ -1,4 +1,4 @@
-import { isFn, KeyCode } from '@daas/shared'
+import { isFn, KeyCode } from '@tap/shared'
 
 export { KeyCode }
 

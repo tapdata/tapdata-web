@@ -40,7 +40,7 @@
       <ElFormItem :label="$t('module_form_available_query_field')" v-if="model.method !== 'STREAM'">
         <ElSelect v-model="model.availableQueryField" multiple filterable size="mini">
           <ElOption
-            v-for="item in model.fields"
+            v-for="item in fields"
             :label="item.field_name"
             :value="item.field_name"
             :key="item.field_name"
@@ -50,7 +50,7 @@
       <ElFormItem :label="$t('module_form_required_query_field')" v-if="model.method !== 'STREAM'">
         <ElSelect v-model="model.requiredQueryField" multiple filterable size="mini">
           <ElOption
-            v-for="item in model.fields"
+            v-for="item in fields"
             :label="item.field_name"
             :value="item.field_name"
             :key="item.field_name"
@@ -116,11 +116,13 @@ export default {
   computed: {
     fields() {
       let _this = this
-      let fieldData = _this.model.fields.map(item => {
+      let fieldData = _this.model.fields.filter(item => {
         if (item) {
-          item.field_name = item.alias_name ? item.alias_name + ' ( ' + item.field_name + ' ) ' : item.field_name
-          item.javaType = item.data_type || item.javaType
-          return item
+          if (!item.field_name.includes('__tapd8')) {
+            item.field_name = item.alias_name ? item.alias_name + ' ( ' + item.field_name + ' ) ' : item.field_name
+            item.javaType = item.data_type || item.javaType
+            return item
+          }
         }
       })
       return fieldData

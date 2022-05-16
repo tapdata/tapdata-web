@@ -3,7 +3,7 @@ import { Workbench } from './Workbench'
 import { Cursor } from './Cursor'
 import { Keyboard } from './Keyboard'
 import { Screen } from './Screen'
-import { uid, Event } from '@daas/shared'
+import { uid, Event } from '@tap/shared'
 
 const globalThisPolyfill = window
 

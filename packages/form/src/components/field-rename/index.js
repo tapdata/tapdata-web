@@ -2,7 +2,7 @@ import { connect, mapProps, useForm } from '@formily/vue'
 import { observer } from '@formily/reactive-vue'
 import { defineComponent } from 'vue-demi'
 import VIcon from 'web-core/components/VIcon'
-import { handleOperation, convertSchemaToTreeData } from './util'
+import { convertSchemaToTreeData } from './util'
 import './index.scss'
 
 export const FieldRename = connect(
@@ -24,7 +24,8 @@ export const FieldRename = connect(
         return {
           nodeKey: '',
           originalFields: [],
-          checkAll: false,
+          //checkAll: false,
+          fieldsNameTransforms: '',
           /*字段处理器支持功能类型*/
           RENAME_OPS_TPL: {
             id: '',
@@ -47,37 +48,21 @@ export const FieldRename = connect(
         // eslint-disable-next-line no-console
         console.log('🚗 FieldProcessor', this.loading, this.options)
         let fields = this.options || []
+        fields = fields.filter(item => !item.is_deleted)
         fields = convertSchemaToTreeData(fields) || [] //将模型转换成tree
+        fields = this.checkOps(fields) || []
         this.fields = fields || []
         this.originalFields = JSON.parse(JSON.stringify(fields))
-        //查找是否有被删除的字段且operation有操作
-        if (this.operations?.length > 0) {
-          let temporary = handleOperation(fields, this.operations)
-          temporary.map(item => {
-            let targetIndex = fields.findIndex(n => n.id === item.id)
-            if (item.op === 'RENAME') {
-              const name = fields[targetIndex].field_name
-              let newName = name.split('.')
-              newName[newName.length - 1] = item.operand
-              const newNameStr = newName.join('.')
-              fields[targetIndex].field_name = newNameStr
 
-              // change children field name
-              fields.forEach(field => {
-                if (field.field_name.startsWith(name + '.')) {
-                  field.field_name = newNameStr + field.field_name.substring(name.length)
-                }
-              })
-            }
-          })
-        }
+        //初始化
+        let formValues = { ...this.form.values }
+        this.fieldsNameTransforms = formValues?.fieldsNameTransform || ''
         // eslint-disable-next-line
         console.log('FieldProcess.mergeOutputSchema', fields)
         return (
-          <div class="field-processors-tree-warp bg-body pt-2 pb-5">
+          <div class="field-processors-tree-warp bg-body pt-2 pb-5" v-loading={this.loading}>
             <div class="field-processor-operation flex">
-              <ElCheckbox class="check-all " v-model={this.checkAll} onChange={() => this.handleCheckAllChange()} />
-              <span class="flex-1 text inline-block ml-15 ">源字段名</span>
+              <span class="flex-1 text inline-block ml-6">源字段名</span>
               <span class="flex-1 text inline-block">目标字段名</span>
               <span class="field-ops  inline-block mr-12">
                 <VIcon class="clickable ml-5" size="12" onClick={() => this.handleAllToUpperCase()}>
@@ -97,7 +82,7 @@ export const FieldRename = connect(
                 data={fields}
                 node-key="id"
                 default-expand-all={true}
-                show-checkbox={true}
+                // show-checkbox={true}
                 expand-on-click-node={false}
                 class="field-processor-tree"
                 scopedSlots={{
@@ -106,8 +91,8 @@ export const FieldRename = connect(
                       class="tree-node flex flex-1 justify-content-center align-items flex-row"
                       slot-scope="{ node, data }"
                     >
-                      <span class="flex-1 text__inner inline-block ml-15">
-                        {data.label}
+                      <span class="flex-1 text__inner inline-block">
+                        {data.original_field_name}
                         {data.primary_key_position > 0 ? (
                           <VIcon size="12" class="text-warning ml-1">
                             key
@@ -119,15 +104,17 @@ export const FieldRename = connect(
                       <span class={['tree-field-input-wrap', 'item', 'inline-block', 'e-label']}>
                         {data.showInput ? (
                           <ElInput
+                            id="renameInput"
                             class="tree-field-input text__inner"
                             v-model={data.field_name}
                             onChange={() => this.handleRename(node, data)}
                             onBlur={() => this.closeInput(node.data)}
+                            onKeydown={() => this.handleKeyDown()}
                           />
                         ) : (
                           <span class="text__inner">{data.field_name}</span>
                         )}
-                        {!data.showInput ? (
+                        {!data.showInput && data.level === 1 ? (
                           <VIcon class={['ml-3', 'clickable']} size="12" onClick={() => this.showInput(node.data)}>
                             edit-outline
                           </VIcon>
@@ -146,7 +133,9 @@ export const FieldRename = connect(
                         <ElButton
                           type="text"
                           class="ml-5"
-                          disabled={!this.isRename(data.id)}
+                          disabled={
+                            (!this.isRename(data.id) && this.fieldsNameTransforms === '') || this.isReset(data.id)
+                          }
                           onClick={() => this.handleReset(node, data)}
                         >
                           <VIcon size="12">revoke</VIcon>
@@ -165,15 +154,52 @@ export const FieldRename = connect(
           let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME')
           return ops && ops.length > 0
         },
+        isReset(id) {
+          let ops = this.operations.filter(v => v.id === id && v.op === 'RENAME' && v.reset)
+          return ops && ops.length > 0
+        },
+        checkOps(fields) {
+          //查找是否有被删除的字段且operation有操作
+          if (this.operations?.length > 0 && fields?.length > 0) {
+            for (let i = 0; i < this.operations.length; i++) {
+              let item = this.operations[i]
+              if (!item) return fields
+              let targetIndex = fields.findIndex(n => n.id === item.id)
+              if (targetIndex === -1) {
+                continue
+              }
+              if (item.op === 'RENAME') {
+                const name = fields[targetIndex].field_name
+                let newName = name.split('.')
+                newName[newName.length - 1] = item.operand
+                const newNameStr = newName.join('.')
+                fields[targetIndex].field_name = newNameStr
+
+                // change children field name
+                fields.forEach(field => {
+                  if (field.field_name.startsWith(name + '.')) {
+                    field.field_name = newNameStr + field.field_name.substring(name.length)
+                  }
+                })
+              }
+            }
+          }
+          return fields
+        },
         showInput(data) {
           this.$set(data, 'showInput', true) //打开loading
           //将输入框自动获取焦点
-          // this.$nextTick(() => {
-          //   this.$refs[data.id].focus()
-          // })
+          this.$nextTick(() => {
+            document.getElementById('renameInput').focus()
+          })
         },
         closeInput(data) {
           this.$set(data, 'showInput', false) //打开loading
+        },
+        handleKeyDown(e) {
+          if (e.keyCode === 13) {
+            this.$set(data, 'showInput', false) //eslint-disable-line
+          }
         },
         /*rename
          * @node 当前tree
@@ -181,83 +207,48 @@ export const FieldRename = connect(
         handleRename(node, data) {
           console.log('fieldProcessor.handleRename', node, data) //eslint-disable-line
           let nativeData = this.getNativeData(data.id) //查找初始schema
-          //该字段若是已被删除 不可再重命名
-          if (!data || data.field_name === '') {
-            data.field_name = nativeData.field_name
-            this.$message.error(this.$t('message.exists_name'))
-            return
-          }
-          let removes = this.operations.filter(v => v.id === data.id && v.op === 'REMOVE')
-          if (removes.length > 0) {
-            data.field_name = nativeData.field_name
-            return
-          }
           let existsName = this.handleExistsName(node, data)
           if (existsName) {
             data.field_name = nativeData.field_name
             return
           }
-          let createOps = this.operations.filter(v => v.id === data.id && v.op === 'CREATE')
-          if (createOps && createOps.length > 0) {
-            let op = createOps[0]
-            let level = op.level
-            let fieldNames = (op.field || op.field_name).split('.')
-            fieldNames[level] = data.field_name
-            op.field = fieldNames.join('.')
-            //同步对js 改名操作
-            if (this.scripts && this.scripts.length && this.scripts.length > 0) {
-              for (let i = 0; i < this.scripts.length; i++) {
-                if (op.id === this.scripts[i].id) {
-                  this.scripts[i].field = op.field
-                  this.scripts[i].label = op.field
-                }
-              }
-            }
+          //eslint-disable-next-line
+          console.log(
+            'fieldProcessor.handlerRename(node,data,nativeData,operations',
+            node,
+            data,
+            nativeData,
+            this.operations
+          )
+          let ops = this.operations.filter(v => v.id === data.id && v.op === 'RENAME')
+          let op
+          if (ops.length === 0) {
+            op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
+              id: data.id,
+              field: nativeData.original_field_name,
+              operand: data.field_name,
+              table_name: data.table_name,
+              type: data.type,
+              primary_key_position: data.primary_key_position,
+              color: data.color,
+              label: data.field_name,
+              field_name: data.field_name,
+              reset: this.fieldsNameTransforms !== ''
+            })
+            this.operations.push(op)
           } else {
-            //eslint-disable-next-line
-            console.log(
-              'fieldProcessor.handlerRename(node,data,nativeData,operations',
-              node,
-              data,
-              nativeData,
-              this.operations
-            )
-            let ops = this.operations.filter(v => v.id === data.id && v.op === 'RENAME')
-            let op
-            if (ops.length === 0) {
-              op = Object.assign(JSON.parse(JSON.stringify(this.RENAME_OPS_TPL)), {
-                id: data.id,
-                field: nativeData.original_field_name,
-                operand: data.field_name,
-                table_name: data.table_name,
-                type: data.type,
-                primary_key_position: data.primary_key_position,
-                color: data.color,
-                label: data.field_name,
-                field_name: data.field_name
-              })
-              this.operations.push(op)
+            op = ops[0]
+            if (data.field_name === nativeData.original_field_name) {
+              //再次改名跟原来名字一样 删除当前operation 记录
+              let index = this.operations.findIndex(v => v.id === data.id && v.op === 'RENAME')
+              this.operations.splice(index, 1)
             } else {
-              op = ops[0]
               op.operand = data.field_name
               op.label = data.field_name
               op.field_name = data.field_name
             }
-            //删除 相同字段名称
-            if (this.scripts && this.operations.length && this.operations.length > 0) {
-              for (let i = 0; i < this.operations.length; i++) {
-                let originalFieldName = this.operations[i].field
-                if (originalFieldName.indexOf('.') >= 0) {
-                  originalFieldName = originalFieldName.split('.')
-                  originalFieldName = originalFieldName[originalFieldName.length - 1]
-                }
-                if (originalFieldName === this.operations[i].operand && this.operations[i].op === 'RENAME') {
-                  this.operations.splice(i, 1)
-                  i--
-                }
-              }
-            }
           }
+          this.$forceUpdate()
           console.log(this.operations) //eslint-disable-line
         },
         handleExistsName(node, data) {
@@ -293,6 +284,11 @@ export const FieldRename = connect(
           return field
         },
         handleReset(node, data) {
+          if (this.fieldsNameTransforms !== '') {
+            //所有字段批量修改过，撤回既是保持原来字段名
+            this.handleRename(node, data)
+            return
+          }
           console.log('fieldProcessor.handleReset', node, data) //eslint-disable-line
           let dataLabel = JSON.parse(JSON.stringify(data.field_name))
           let self = this
@@ -333,38 +329,19 @@ export const FieldRename = connect(
           return fieldName
         },
         handleAllToUpperCase() {
-          let ids = this.$refs.tree.getCheckedNodes()
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              node.data.field_name = node.data.field_name.toUpperCase()
-              this.handleRename(node, node.data)
-            })
-          }
-          this.checkAll = false
+          //清掉所有operations
+          this.operations.splice(0)
+          this.form.setValuesIn('fieldsNameTransform', 'toUpperCase')
         },
         handleAllToLowerCase() {
-          let ids = this.$refs.tree.getCheckedNodes()
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              node.data.field_name = node.data.field_name.toLowerCase()
-              this.handleRename(node, node.data)
-            })
-          }
-          this.checkAll = false
+          //清掉所有operations
+          this.operations.splice(0)
+          this.form.setValuesIn('fieldsNameTransform', 'toLowerCase')
         },
         handleAllReset() {
-          let ids = this.$refs.tree.getCheckedNodes(false, true)
-          if (ids && ids.length > 0) {
-            ids.map(id => {
-              let node = this.$refs.tree.getNode(id)
-              if (node) {
-                this.handleReset(node, node.data)
-              }
-            })
-          }
-          this.checkAll = false
+          //清掉所有operations 撤回不变
+          this.operations.splice(0)
+          this.form.setValuesIn('fieldsNameTransform', '')
         },
         handleCheckAllChange() {
           if (this.checkAll) {

@@ -52,9 +52,6 @@ export function permissionBtnDisable(code, id) {
   if (!id) {
     return true
   }
-  if (code === 'SYNC_job_operation_all_data') {
-    // debugger
-  }
   if (!Vue.prototype.$has(code)) {
     if (id !== user_id) {
       falg = true

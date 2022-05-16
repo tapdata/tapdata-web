@@ -180,10 +180,10 @@ export default {
         .patch(parmas)
         .then(() => {
           this.table.fetch()
-          this.$message.success(this.$t('message.saveOK'))
+          this.$message.success(this.$t('message_save_ok'))
         })
         .catch(() => {
-          this.$message.error(this.$t('message.saveFail'))
+          this.$message.error(this.$t('message_save_fail'))
         })
     },
 
@@ -211,7 +211,7 @@ export default {
         float: left;
         width: 100px;
         height: 28px;
-        color: #666;
+        color: map-get($fontColor, light);
         cursor: pointer;
         text-align: center;
         border-right: 1px solid #dedee4;
@@ -223,7 +223,7 @@ export default {
       li.active {
         height: 29px;
         border-radius: 3px 3px 0px 0px;
-        background-color: #fff;
+        background-color: map-get($bgColor, white);
         border-right: 0;
         border-left: 0;
         // box-shadow: 1px -1px 3px 0px rgba(0, 0, 0, 0.15);
@@ -231,7 +231,7 @@ export default {
     }
   }
   .dataRule-list {
-    background-color: #fafafa;
+    background-color: map-get($bgColor, normal);
     .search-bar {
       display: flex;
       li + li {
@@ -250,7 +250,7 @@ export default {
     }
     .btn {
       padding: 7px;
-      background: #f5f5f5;
+      background: map-get($bgColor, main);
       i.iconfont {
         font-size: 12px;
       }

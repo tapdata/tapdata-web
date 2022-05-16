@@ -17,8 +17,9 @@
             $t('query_build_add')
           }}</el-button>
         </el-tooltip>
+
         <el-tooltip class="item" effect="dark" :content="$t('query_build_removeGroup')" placement="top">
-          <el-button v-if="level > 1" @click="removeGroup" type="text">{{ $t('query_build_remove') }}</el-button>
+          <el-button v-if="level > 1" @click="removeGroup(value)" type="text">{{ $t('query_build_remove') }}</el-button>
         </el-tooltip>
       </div>
     </div>
@@ -32,7 +33,7 @@
             :field-value="fieldValue"
             :key="index"
             :level="childLevel"
-            @remove="removeChild(index)"
+            @remove="removeChild(conditions[index], index)"
           ></ConditionGroup>
         </template>
         <!-- 选择字段 -->
@@ -181,20 +182,13 @@ export default {
       this.$emit('input', this.value)
     },
     // 删除组
-    removeGroup() {
-      this.$emit('remove')
+    removeGroup(item) {
+      this.$emit('remove', item)
     },
     // 删除条件
     removeChild(item, index) {
       let self = this
       self.value.conditions.splice(index, 1)
-      // self.value.conditions.forEach((el, index) => {
-      //   if (item.field === el.field) {
-      //     console.log(el.field, index, this.conditions)
-      //     debugger
-      //     self.value.conditions.splice(index, 1)
-      //   }
-      // })
     }
   }
 }
@@ -202,7 +196,7 @@ export default {
 <style scoped lang="scss">
 .condition-group-wrap {
   margin-bottom: 10px;
-  border: 1px solid #edeeee;
+  border: 1px solid map-get($borderColor, light);
   border-left-width: 3px;
   overflow: hidden;
   .query-build-header {
@@ -221,7 +215,7 @@ export default {
       ::v-deep {
         .el-radio {
           .el-radio__label {
-            color: #000000;
+            color: map-get($fontColor, dark);
           }
           &.is-checked .el-radio__label {
             color: rgba(0, 0, 0, 0.65);
@@ -237,7 +231,7 @@ export default {
       ::v-deep {
         .el-button--text {
           font-size: 12px;
-          background-color: #fafafa;
+          background-color: map-get($bgColor, main);
         }
       }
     }

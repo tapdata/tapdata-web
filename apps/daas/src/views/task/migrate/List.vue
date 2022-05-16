@@ -124,7 +124,7 @@
         </template>
       </el-table-column>-->
 
-      <el-table-column prop="createTime" :label="$t('column_create_time')" width="210" sortable="custom">
+      <el-table-column prop="createTime" :label="$t('column_create_time')" width="210" sortable="createTime">
         <template #default="{ row }">
           {{ row.createTime ? $moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
@@ -140,7 +140,7 @@
             >
               {{ $t('task_list_run') }}
             </ElLink>
-            <ElDivider direction="vertical"></ElDivider>
+            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_operation'"></ElDivider>
             <ElLink
               v-if="row.status === 'stopping'"
               v-readonlybtn="'SYNC_job_operation'"
@@ -158,7 +158,7 @@
               @click="stop([row.id], row)"
               >{{ $t('task_list_stop') }}</ElLink
             >
-            <ElDivider direction="vertical"></ElDivider>
+            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_operation'"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -167,11 +167,11 @@
             >
               {{ $t('task_list_edit') }}
             </ElLink>
-            <ElDivider direction="vertical"></ElDivider>
+            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_edition'"></ElDivider>
             <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetail(row)">
               {{ $t('task_list_button_monitor') }}
             </ElLink>
-            <ElDivider direction="vertical"></ElDivider>
+            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_edition'"></ElDivider>
             <el-dropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
               <ElLink type="primary" class="rotate-90">
                 <!-- {{ $t('button.more') }} -->
@@ -179,9 +179,6 @@
               </ElLink>
               <el-dropdown-menu class="dataflow-table-more-dropdown-menu" slot="dropdown">
                 <el-dropdown-item command="toView">{{ $t('dataFlow.view') }}</el-dropdown-item>
-                <el-dropdown-item command="validate" v-readonlybtn="'Data_verify'">{{
-                  $t('task_list_verify')
-                }}</el-dropdown-item>
                 <el-dropdown-item command="export" v-readonlybtn="'SYNC_job_export'">{{
                   $t('task_list_export')
                 }}</el-dropdown-item>
@@ -196,12 +193,7 @@
                 >
                   {{ $t('task_list_reset') }}
                 </el-dropdown-item>
-                <el-dropdown-item
-                  class="btn-delete"
-                  command="del"
-                  :disabled="row.disabledData.delete"
-                  v-readonlybtn="'SYNC_job_delete'"
-                >
+                <el-dropdown-item command="del" :disabled="row.disabledData.delete" v-readonlybtn="'SYNC_job_delete'">
                   {{ $t('task_list_delete') }}
                 </el-dropdown-item>
                 <el-dropdown-item command="setTag" v-readonlybtn="'SYNC_category_application'">
@@ -250,9 +242,9 @@
               <VIcon class="icon mr-4">{{ item.label }}</VIcon>
               <!-- <img class="label-img" :src="getImgByData(item.label)" /> -->
               <div class="label-text">
-                <div class="label">{{ $t('task_preview_' + item.label) }}:</div>
+                <div class="label font-color-light">{{ $t('task_preview_' + item.label) }}:</div>
                 <div
-                  class="value align-items-center align-middle"
+                  class="value align-items-center align-middle font-color-dark"
                   :class="{ 'align-top': item.value && item.value.length > 15 }"
                 >
                   {{ item.value }}
@@ -356,6 +348,7 @@ export default {
         { label: this.$t('task_preview_status_stop'), value: 'stop' },
         { label: this.$t('task_preview_status_edit'), value: 'edit' },
         { label: this.$t('task_preview_status_ready'), value: 'ready' },
+        { label: this.$t('task_preview_status_wait_run'), value: 'wait_run' },
         { label: this.$t('task_preview_status_error'), value: 'error' },
         { label: this.$t('task_preview_status_complete'), value: 'complete' }
       ]
@@ -368,8 +361,8 @@ export default {
   },
   created() {
     this.getFilterItems()
-    let { status } = this.$route.query
-    this.searchParams.status = status ?? ''
+    // let { status } = this.$route.query
+    // this.searchParams.status = status ?? ''
   },
   mounted() {
     this.searchParams = Object.assign(this.searchParams, this.table.getCache())
@@ -377,6 +370,9 @@ export default {
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
     }, 8000)
+
+    let { status } = this.$route.query
+    this.searchParams.status = status ?? ''
   },
   beforeDestroy() {
     clearInterval(timeout)
@@ -899,7 +895,7 @@ export default {
           dangerouslyUseHTMLString: true,
           message: failList
             .map(item => {
-              return `<div style="line-height: 24px;"><span style="color: #409EFF">${
+              return `<div style="line-height: 24px;"><span class="link-primary">${
                 nameMapping[item.id]
               }</span> : <span style="color: #F56C6C">${msgMapping[item.code]}</span></div>`
             })
@@ -919,11 +915,11 @@ export default {
         .patchId(this.formSchedule.id, { setting: data })
         .then(result => {
           if (result && result.data) {
-            this.$message.success(this.$t('message.saveOK'))
+            this.$message.success(this.$t('message_save_ok'))
           }
         })
         .catch(() => {
-          this.$message.error(this.$t('message.saveFail'))
+          this.$message.error(this.$t('message_save_fail'))
         })
         .finally(() => {
           this.taskSettingsDialog = false
@@ -1121,13 +1117,13 @@ export default {
     .dataflow-name {
       .tag {
         margin-left: 5px;
-        color: #999999;
-        background: #f5f5f5;
+        color: map-get($fontColor, slight);
+        background: map-get($bgColor, main);
         border: 1px solid #dedee4;
       }
       .name {
         &:not(.has-children) {
-          // color: #409eff;
+          // color: map-get($color, primary);
           cursor: pointer;
           // text-decoration: underline;
         }
@@ -1148,9 +1144,9 @@ export default {
   }
 }
 .dataflow-table-more-dropdown-menu .btn-delete {
-  color: #f56c6c;
+  color: map-get($color, danger);
   &.is-disabled {
-    color: #bbb;
+    color: map-get($fontColor, slight);
   }
 }
 .task-drawer {
@@ -1178,7 +1174,7 @@ export default {
       width: 20px;
       justify-content: center;
       align-items: flex-start;
-      background: #fff;
+      background-color: map-get($bgColor, white);
       //border: 1px solid #dedee4;
       border-radius: 3px;
       margin: 5px 0 0 0;
@@ -1228,7 +1224,7 @@ export default {
   }
 
   .schema-load {
-    color: #999;
+    color: map-get($fontColor, slight);
     display: inline-block;
     margin-left: 20px;
     font-size: 12px;
@@ -1250,20 +1246,17 @@ export default {
         width: 100%;
         margin-right: 16px;
         padding-bottom: 10px;
-        border-bottom: 1px solid #f2f2f2;
+        border-bottom: 1px solid map-get($borderColor, light);
         .label {
           width: 100%;
           text-align: left;
-          color: rgba(0, 0, 0, 0.6);
           font-size: 12px;
         }
         .value {
           display: inline-block;
           width: 100%;
           padding-top: 5px;
-          color: #666;
           font-size: 12px;
-          color: #000;
           word-break: break-all;
         }
       }
@@ -1273,7 +1266,7 @@ export default {
     display: block;
     width: 100%;
     height: 30px;
-    background: #f5f5f5;
+    background: map-get($bgColor, main);
     border-bottom: 1px solid #dedee4;
   }
   .back-btn-icon-box {
@@ -1292,7 +1285,7 @@ export default {
     border: 0;
     border-radius: 0;
     box-sizing: border-box;
-    background: #409eff;
+    background: map-get($color, primary);
     transition: 0.1s;
     -webkit-appearance: none;
     -webkit-box-sizing: border-box;
@@ -1302,7 +1295,7 @@ export default {
     background: #6dc5e8;
   }
   .back-btn-icon {
-    color: #fff;
+    color: map-get($fontColor, white);
   }
   .back-btn-text {
     padding-left: 10px;
@@ -1321,7 +1314,7 @@ export default {
   .text {
     padding-left: 100px;
     line-height: 28px;
-    color: #999;
+    color: map-get($fontColor, slight);
     ul {
       display: flex;
       flex-direction: row;

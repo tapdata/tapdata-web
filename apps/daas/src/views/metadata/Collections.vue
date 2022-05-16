@@ -169,10 +169,10 @@ export default {
                 size: 20
               }
               this.getData(page)
-              this.$message.success(this.$t('message.saveOK'))
+              this.$message.success(this.$t('message_save_ok'))
             })
             .catch(() => {
-              this.$message.error(this.$t('message.saveFail'))
+              this.$message.error(this.$t('message_save_fail'))
             })
         }
       })
@@ -226,7 +226,7 @@ export default {
     flex-direction: column;
     height: calc(100% - 28px);
     padding: 10px 20px;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
     box-sizing: border-box;
     overflow: hidden;
@@ -236,7 +236,7 @@ export default {
       .btn-create {
         float: right;
         padding: 7px;
-        // background: #f5f5f5;
+        // background: map-get($bgColor, main);
         i.iconfont {
           font-size: 12px;
         }
@@ -269,7 +269,7 @@ export default {
     padding-top: 5px;
     box-sizing: border-box;
     border-top: 1px solid #ddd;
-    background-color: #fff;
+    background-color: map-get($bgColor, white);
     td,
     .is-scrolling-left ~ .el-table__fixed {
       border-right: 0;

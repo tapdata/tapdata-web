@@ -10,11 +10,11 @@
           target="etlSub"
           :status="task.isFinished ? 'finished' : task.status || 'running'"
         ></StatusTag>
-        <span class="ml-6 font-color-slight">
+        <span class="ml-6 font-color-light">
           {{ $t('task_monitor_founder') }}：<span>{{ task.creator }}</span>
         </span>
-        <span class="mx-6 font-color-slight">
-          {{ $t('task_info_start_time') }}：<span>{{ formatTime(task.startTime) || '-' }}</span>
+        <span class="mx-6 font-color-light">
+          {{ $t('task_info_start_time') }}： <span>{{ formatTime(task.startTime) || '-' }}</span>
         </span>
       </div>
       <div class="operation">
@@ -78,7 +78,7 @@
           <VIcon class="mr-4 color-primary" size="18">mark</VIcon>
           <span class="font-color-light">{{ $t('task_monitor_total_input') }}</span>
         </div>
-        <ElTooltip v-if="overData.inputTotal" :content="overData.inputTotal" placement="left-start">
+        <ElTooltip v-if="overData.inputTotal" :content="overData.inputTotal.toString()" placement="left-start">
           <div class="mb-4 fs-4 fw-bolder din-font" style="color: #409488">
             {{ handleChangeUnit(overData.inputTotal) }}
           </div>
@@ -89,7 +89,7 @@
           <VIcon class="mr-4 color-success" size="18">mark</VIcon>
           <span class="font-color-light">{{ $t('task_monitor_total_output') }}</span>
         </div>
-        <ElTooltip v-if="overData.outputTotal" :content="overData.outputTotal" placement="left-start">
+        <ElTooltip v-if="overData.outputTotal" :content="overData.outputTotal.toString()" placement="left-start">
           <div class="mb-4 fs-4 fw-bolder din-font" style="color: #377ab9">
             {{ handleChangeUnit(overData.outputTotal) }}
           </div>
@@ -98,7 +98,7 @@
         <div class="flex justify-content-between text-center">
           <div>
             <div class="mb-3 font-color-light">{{ $t('task_monitor_total_insert') }}</div>
-            <ElTooltip v-if="overData.insertedTotal" :content="overData.insertedTotal">
+            <ElTooltip v-if="overData.insertedTotal" :content="overData.insertedTotal.toString()">
               <div class="fs-7 font-color-dark fw-bolder din-font">
                 {{ handleChangeUnit(overData.insertedTotal) }}
               </div>
@@ -107,7 +107,7 @@
           </div>
           <div>
             <div class="mb-3 font-color-light">{{ $t('task_monitor_total_update') }}</div>
-            <ElTooltip v-if="overData.updatedTotal" :content="overData.updatedTotal">
+            <ElTooltip v-if="overData.updatedTotal" :content="overData.updatedTotal.toString()">
               <div class="fs-7 font-color-dark fw-bolder din-font">
                 {{ handleChangeUnit(overData.updatedTotal) }}
               </div>
@@ -116,7 +116,7 @@
           </div>
           <div>
             <div class="mb-3 font-color-light">{{ $t('task_monitor_total_delete') }}</div>
-            <ElTooltip v-if="overData.deletedTotal" :content="overData.deletedTotal">
+            <ElTooltip v-if="overData.deletedTotal" :content="overData.deletedTotal.toString()">
               <div class="fs-7 font-color-dark fw-bolder din-font">
                 {{ handleChangeUnit(overData.deletedTotal) }}
               </div>
@@ -126,21 +126,15 @@
         </div>
       </div>
       <div class="flex flex-column flex-fill ml-4" v-loading="!lineDataDeep.x.length">
-        <div
-          class="px-2"
-          style="line-height: 27px; border: 1px solid #e8e8e8; border-radius: 4px; box-sizing: border-box"
-        >
-          QPS
-        </div>
         <Chart ref="chart" :extend="lineOptions" class="type-chart h-100"></Chart>
       </div>
       <div class="ml-3 flex flex-column text-center" style="min-width: 250px">
         <div
           v-if="task && task.parentTask && ['initial_sync', 'initial_sync+cdc'].includes(task.parentTask.type)"
-          class="right-box grey-background"
+          class="right-box grey-background justify-content-center"
         >
           <div class="fw-bold right-box-text font-color-dark">{{ $t('task_info_full_progress') }}</div>
-          <div class="flex-1 flex flex-column justify-content-center">
+          <div class="flex flex-column justify-content-center">
             <div
               class="progress-box flex justify-content-center align-items-center position-relative mt-1"
               v-if="syncData.progress"
@@ -157,7 +151,7 @@
                 {{ syncData.progress }}%
               </div>
             </div>
-            <div class="pb-2 fs-8 font-color-light" v-else>
+            <div class="py-2 fs-8 font-color-light" v-else>
               {{ $t('migrate_no_progress_statistics_yet') }}
             </div>
             <div v-if="syncData.progress === 100" class="right-box-text font-color-light mt-1">
@@ -174,10 +168,10 @@
         </div>
         <div
           v-if="task && task.parentTask && ['cdc', 'initial_sync+cdc'].includes(task.parentTask.type)"
-          class="right-box grey-background"
+          class="right-box grey-background justify-content-center"
         >
           <div class="fw-bold right-box-text font-color-dark">{{ $t('task_info_incremental_delay') }}</div>
-          <div class="flex-1 flex flex-column justify-content-center">
+          <div class="flex flex-column justify-content-center">
             <div
               v-if="writeData.replicateLag"
               class="color-primary fw-bolder fs-5 mt-1"
@@ -185,10 +179,10 @@
             >
               {{ getReplicateLagTime(writeData.replicateLag) }}
             </div>
-            <div class="pb-2 fs-8 font-color-light" v-else>
+            <div class="py-2 fs-8 font-color-light" v-else>
               {{ $t('migrate_no_latency_statistics_yet') }}
             </div>
-            <div class="right-box-text font-color-slight mt-1" v-if="writeData.cdcTime">
+            <div class="right-box-text font-color-light mt-1" v-if="writeData.cdcTime">
               {{ $t('task_info_increment_time_point') }}：{{ formatTime(writeData.cdcTime) }}
             </div>
           </div>
@@ -875,7 +869,7 @@ export default {
   display: inline-block;
 }
 .grey-background {
-  background-color: #fafafa;
+  background-color: map-get($bgColor, normal);
 }
 .right-box {
   display: flex;
