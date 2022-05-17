@@ -122,11 +122,11 @@ export default function (vm) {
         domType: 'password',
         showPassword: true
       },
-      {
-        type: 'switch',
-        field: 'schemaAutoUpdate',
-        label: vm.$t('dataForm_form_ReloadSchema')
-      },
+      // {
+      //   type: 'switch',
+      //   field: 'schemaAutoUpdate',
+      //   label: vm.$t('dataForm_form_ReloadSchema')
+      // },
       // {
       //   type: 'input',
       //   field: 'table_filter',
