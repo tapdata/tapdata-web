@@ -14,15 +14,7 @@
       :validate-on-rule-change="false"
     >
       <ElFormItem required class="form-item" prop="flowId" :label="$t('verify_form_label_select_job') + ': '">
-        <ElSelect
-          filterable
-          class="form-select"
-          v-model="form.flowId"
-          :loading="!flowOptions"
-          @input="flowChangeHandler"
-        >
-          <ElOption v-for="opt in flowOptions" :key="opt.id" :label="opt.name" :value="opt.id"></ElOption>
-        </ElSelect>
+        <AsyncSelect v-model="form.flowId" :method="getFlowItems" :onSetSelected="selectedFnc"></AsyncSelect>
       </ElFormItem>
       <ElFormItem required class="form-item" :label="$t('verify_form_label_type') + ': '">
         <ElRadioGroup v-model="form.inspectMethod">
@@ -354,6 +346,7 @@
 </style>
 <script>
 import i18n from '@/i18n'
+import AsyncSelect from '@tap/form/src/components/async-select'
 
 const TABLE_PARAMS = {
   connectionId: '',
@@ -378,7 +371,7 @@ const META_INSTANCE_FIELDS = {
 import MultiSelection from './MultiSelection.vue'
 import CodeEditor from 'web-core/components/CodeEditor.vue'
 export default {
-  components: { MultiSelection, CodeEditor },
+  components: { MultiSelection, CodeEditor, AsyncSelect },
   data() {
     let self = this
     let requiredValidator = (msg, isCheckMode) => {
@@ -451,47 +444,49 @@ export default {
     }
   },
   created() {
-    this.getFlowOptions()
     let locale = this.$i18n.locale || 'zh-CN'
     this.htmlMD = require(`@/assets/md/${locale}/verify/functionInfo.md`)
+    let id = this.$route.params.id
+    if (id) {
+      this.getData(id)
+    }
   },
   methods: {
-    //获取dataflow数据
-    getFlowOptions() {
-      this.loading = true
-      let id = this.$route.params.id
+    async getFlowItems(filter) {
       let where = {
         status: {
           inq: ['running', 'paused', 'error']
         }
       }
-      this.$axios
-        .get(
-          'tm/api/DataFlows?filter=' +
-            encodeURIComponent(
-              JSON.stringify({
-                where: where,
-                fields: {
-                  id: true,
-                  name: true
-                },
-                order: 'createTime DESC',
-                limit: 999
-              })
-            )
-        )
-        .then(data => {
-          this.flowOptions = data.items || []
-          let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
-          this.form.name = this.form.name || flow.name || ''
-          this.form['dataFlowName'] = flow.name
-          if (id) {
-            this.getData(id)
-          }
+      if (filter.where?.value) {
+        where.id = filter.where.value
+      }
+      let result = await this.$axios.get(
+        'tm/api/DataFlows?filter=' +
+          encodeURIComponent(
+            JSON.stringify({
+              where: where,
+              fields: {
+                id: true,
+                name: true
+              },
+              order: 'createTime DESC',
+              page: filter.page || 1,
+              limit: filter.size || 999
+            })
+          )
+      )
+      let items = result.items.map(t => {
+        return Object.assign(t, {
+          label: t.name,
+          value: t.id
         })
-        .finally(() => {
-          !id && (this.loading = false)
-        })
+      })
+      this.flowOptions = items
+      return {
+        items,
+        total: result.total
+      }
     },
     //获取表单数据
     getData(id) {
@@ -573,12 +568,11 @@ export default {
         })
     },
     //dataflow改变时
-    flowChangeHandler() {
+    selectedFnc(option) {
       this.form.tasks = []
       this.sourceTree = []
       this.targetTree = []
-      let flow = this.flowOptions.find(item => item.id === this.form.flowId) || {}
-      this.form.name = this.form.name || flow.name || ''
+      this.form.name = this.form.name || option.name || ''
       this.getFlowStages()
     },
     dealData(flowData, callback, isDB) {
