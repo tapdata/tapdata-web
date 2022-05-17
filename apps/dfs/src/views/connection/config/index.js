@@ -13,7 +13,7 @@ import kafka from './kafka'
 import greenplum from './greenplum'
 import mq from './mq'
 import clickhouse from './clickhouse'
-import dfs_kundb from './kundb'
+import kundb from './kundb'
 import adb_postgres from './adb_postgres'
 import adb_mysql from './adb_mysql'
 import hazelcast_cloud_cluster from './hazelcast_cloud_cluster'
@@ -52,7 +52,7 @@ export default {
   greenplum,
   mq,
   clickhouse,
-  dfs_kundb,
+  kundb,
   adb_postgres,
   adb_mysql,
   hazelcast_cloud_cluster,
