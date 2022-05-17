@@ -458,8 +458,14 @@ export default {
           inq: ['running', 'paused', 'error']
         }
       }
-      if (filter.where?.value) {
-        where.id = filter.where.value
+      if (filter.where) {
+        let { label, value } = filter.where
+        if (value) {
+          where.id = value
+        }
+        if (label?.like) {
+          where.name = { like: label.like, options: label.like.options }
+        }
       }
       let result = await this.$axios.get(
         'tm/api/DataFlows?filter=' +
