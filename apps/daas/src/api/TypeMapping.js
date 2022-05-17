@@ -3,9 +3,12 @@ import axios from 'axios'
 // import axios from 'axios';
 export default class TypeMapping extends PublicApi {
   constructor() {
-    super('/api/TypeMappings/dataType')
+    super('/api/TypeMappings')
   }
   getId(type) {
-    return axios.get(this.url + '?databaseType=' + type)
+    return axios.get(this.url + '/dataType?databaseType=' + type)
+  }
+  pdkDataType(type) {
+    return axios.get(this.url + '/pdk/dataType?databaseType=' + type)
   }
 }

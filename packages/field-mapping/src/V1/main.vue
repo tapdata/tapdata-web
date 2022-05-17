@@ -28,6 +28,8 @@
         :updateMetadata="updateMetadata"
         :fieldProcess="transform.fieldProcess"
         :transform="transform"
+        :getDataFlow="getDataFlow"
+        :isPdk="isPdk"
         @row-click="saveOperations"
         @update-nav="updateFieldMappingNavData"
       ></FieldMappingDialog>
@@ -56,8 +58,17 @@ export default {
       fieldMappingTableData: '', //右边table
       dialogFieldProcessVisible: false,
       loading: false,
-      fieldProcess: this.transform.fieldProcess
+      fieldProcess: this.transform.fieldProcess,
+      isPdk: false
     }
+  },
+  mounted() {
+    //点击按钮重新拿值
+    if (this.getDataFlow) {
+      this.dataFlow = this.getDataFlow()
+      this.dataFlow.id = this.dataFlow.id || this.dataFlow?.taskId
+    }
+    this.isPdk = this.$store.getters['dataflow/activeNode']?.attrs.pdkType === 'pdk'
   },
   methods: {
     /*
@@ -411,6 +422,34 @@ export default {
           sourceData: [],
           targetData: []
         }
+      }
+      if (this.isPdk) {
+        // TODO sourceDbType to sinkDbType
+        return Promise.all([
+          this.$api('TypeMapping').pdkDataType(row.sinkDbType),
+          this.$api('TypeMapping').pdkDataType(row.sinkDbType)
+        ]).then(res => {
+          let sourceData = [],
+            targetData = []
+          let sourceObj = JSON.parse(res?.[0]?.data || '{}')
+          let targetObj = JSON.parse(res?.[1]?.data || '{}')
+          for (let key in sourceObj) {
+            sourceData.push({
+              dbType: key,
+              rules: sourceObj[key]
+            })
+          }
+          for (let key in targetObj) {
+            targetData.push({
+              dbType: key,
+              rules: targetObj[key]
+            })
+          }
+          return {
+            sourceData: sourceData,
+            targetData: targetData
+          }
+        })
       }
       return Promise.all([
         this.$api('TypeMapping').getId(row.sourceDbType),

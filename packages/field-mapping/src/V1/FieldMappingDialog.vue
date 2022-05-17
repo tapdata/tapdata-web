@@ -252,7 +252,13 @@
         </div>
       </div>
       <div v-if="['data_type'].includes(currentOperationType)">
-        <ElSelect v-model="editValueType[currentOperationType]" filterable @change="initDataType">
+        <ElAutocomplete
+          v-if="isPdk"
+          v-model="editValueType[currentOperationType]"
+          class="inline-input"
+          :fetch-suggestions="querySearchPdkType"
+        ></ElAutocomplete>
+        <ElSelect v-else v-model="editValueType[currentOperationType]" filterable @change="initDataType">
           <ElOption
             :label="item.dbType"
             :value="item.dbType"
@@ -260,6 +266,7 @@
             :key="index"
           ></ElOption>
         </ElSelect>
+        <div v-if="isPdk" class="mt-3 fs-8">{{ getPdkEditValueType() }}</div>
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
           <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
             <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
@@ -414,7 +421,9 @@ export default {
     updateMetadata: Function,
     getNavDataMethod: Function,
     fieldProcess: Array,
-    transform: Object
+    transform: Object,
+    getDataFlow: Function,
+    isPdk: Boolean
   },
   data() {
     return {
@@ -525,7 +534,7 @@ export default {
       this.$nextTick(() => {
         this.remoteMethod &&
           this.remoteMethod(this.selectRow)
-            .then(({ data, target }) => {
+            .then(({ data = [], target = [] }) => {
               this.target = target
               this.fieldMappingTableData = data
               this.initShowEdit()
@@ -959,15 +968,18 @@ export default {
         }
         this.fieldProcessRename(id, key, value)
       } else if (key === 'data_type') {
-        let option = this.target.filter(v => v.id === id)
-        if (option.length === 0) return
-        option = option[0]
+        let option = this.target.find(v => v.id === id)
+        if (!option) {
+          return
+        }
         if (value === option.data_type) {
           this.handleClose() //类型无改变
           return
         }
-        //如果是改类型 需要手动修改字段的长度以及精度
-        this.influences(id, this.currentTypeRules || [])
+        if (!this.isPdk) {
+          //如果是改类型 需要手动修改字段的长度以及精度
+          this.influences(id, this.currentTypeRules || [])
+        }
       } else if (key === 'precision') {
         let isPrecision = this.currentTypeRules.filter(v => v.minPrecision < v.maxPrecision)
         if (isPrecision.length === 0) {
@@ -1302,6 +1314,21 @@ export default {
     },
     returnForm() {
       return this.form
+    },
+    querySearchPdkType(queryString, cb) {
+      let result = this.typeMapping.map(t => {
+        return {
+          value: t.dbType
+        }
+      })
+      if (queryString) {
+        result = result.filter(t => t.value.toLowerCase().includes(queryString))
+      }
+      cb(result)
+    },
+    getPdkEditValueType() {
+      let findOne = this.typeMapping.find(t => t.dbType === this.editValueType[this.currentOperationType])
+      return findOne?.rules || ''
     }
   }
 }
