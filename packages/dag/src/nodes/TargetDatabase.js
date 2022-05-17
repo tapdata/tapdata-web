@@ -101,15 +101,15 @@ export class TargetDatabase extends NodeType {
                 default: 'updateOrInsert',
                 enum: [
                   {
-                    label: '更新写入',
+                    label: '清除目标端原有表结构及数据',
                     value: 'updateWrite'
                   },
                   {
-                    label: '追加写入',
+                    label: '保持目标端原有表结构，清除数据',
                     value: 'appendWrite'
                   },
                   {
-                    label: '更新已存在或者插入新数据',
+                    label: '保持目标端原有表结构和数据',
                     value: 'updateOrInsert'
                   }
                 ],
