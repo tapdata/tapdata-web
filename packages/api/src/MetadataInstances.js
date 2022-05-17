@@ -83,4 +83,8 @@ export class MetadataInstances extends Http {
     }
     return this.axios.get(this.url, config).then(this.useData)
   }
+
+  getTables(connectionId) {
+    return this.axios.get(this.url + '/tables?connectionId=' + connectionId).then(this.useData)
+  }
 }

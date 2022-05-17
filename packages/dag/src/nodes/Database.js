@@ -81,6 +81,84 @@ export class Database extends NodeType {
         }
       },
 
+      increaseReadSize: {
+        title: '批量读取条数', //增量批次读取条数
+        type: 'string',
+        'x-decorator': 'FormItem',
+        'x-component': 'InputNumber',
+        'x-decorator-props': {
+          tooltip: '全量每批次读取的条数'
+        },
+        'x-component-props': {
+          min: 1,
+          max: 100000
+        },
+        default: 100
+      },
+
+      syncObjects: {
+        type: 'array',
+        default: [
+          {
+            type: 'table',
+            objectNames: []
+          }
+        ]
+      },
+
+      'syncObjects.0.type': {
+        title: '选择表',
+        type: 'string',
+        'x-decorator': 'FormItem',
+        'x-component': 'Radio.Group',
+        enum: [
+          {
+            label: '全部',
+            value: 'tableAll'
+          },
+          {
+            label: '自定义',
+            value: 'table'
+          }
+        ]
+      },
+
+      'syncObjects.0.objectNames': {
+        type: 'array',
+        default: [],
+        'x-component': 'TableSelector',
+        'x-component-props': {
+          connectionId: '{{$values.connectionId}}',
+          style: {
+            height: '300px'
+          }
+        },
+        'x-reactions': {
+          dependencies: ['syncObjects.0.type'],
+          fulfill: {
+            state: {
+              visible: '{{$deps[0] === "table"}}'
+            }
+          }
+        }
+      },
+
+      tableCard: {
+        type: 'void',
+        'x-component': 'TableListCard',
+        'x-component-props': {
+          connectionId: '{{$values.connectionId}}'
+        },
+        'x-reactions': {
+          dependencies: ['syncObjects.0.type'],
+          fulfill: {
+            state: {
+              visible: '{{$deps[0] === "tableAll"}}'
+            }
+          }
+        }
+      },
+
       name: {
         type: 'string',
         'x-display': 'hidden'
