@@ -56,12 +56,6 @@ const getState = () => ({
       name: 'JavaScript',
       type: 'js_processor'
     },
-    // {
-    //   icon: 'field-processor',
-    //   name: '字段处理',
-    //   type: 'field_processor',
-    //   constructor: 'FieldProcessor'
-    // },
     {
       icon: 'aggregator',
       name: '聚合',
@@ -102,12 +96,6 @@ const getState = () => ({
       name: '增删字段',
       type: 'field_add_del_processor'
     }
-    // {
-    //   icon: 'joint-cache',
-    //   name: '关联缓存',
-    //   type: 'cache_lookup_processor',
-    //   constructor: 'JointCache'
-    // }
   ],
   nodeViewOffsetPosition: [0, 0],
   spaceKeyPressed: false,

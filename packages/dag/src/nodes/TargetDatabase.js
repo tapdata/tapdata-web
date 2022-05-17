@@ -9,7 +9,7 @@ export class TargetDatabase extends NodeType {
 
   minInputs = 0 // 最小输入个数
   maxInputs = 1 // 最大输入个数
-  maxOutputs = 1 // 最大输出个数
+  maxOutputs = 0 // 最大输出个数
 
   group = 'output'
 

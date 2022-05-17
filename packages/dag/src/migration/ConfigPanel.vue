@@ -8,7 +8,7 @@
     :class="{ flex: activeType }"
   >
     <div class="panel-header flex align-center px-4 border-bottom">
-      <ElImage class="mr-2" :src="icon"></ElImage>
+      <NodeIcon class="mr-2" :node="activeNode" />
       <div class="title-input-wrap flex align-center flex-shrink-0 h-100">
         <input
           ref="nameInput"
@@ -34,12 +34,9 @@ import { mapGetters, mapMutations } from 'vuex'
 import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
 import FormPanel from '../components/FormPanel'
-import SettingPanel from '../components/SettingPanel'
-// import DataPane from './DataPane'
-import MetaPane from '../components/MetaPane'
 import VIcon from 'web-core/components/VIcon'
-import { NODE_TYPE_ICON } from '../constants'
 import focusSelect from 'web-core/directives/focusSelect'
+import NodeIcon from '../components/NodeIcon'
 
 export default {
   name: 'ConfigPanel',
@@ -55,17 +52,10 @@ export default {
     }
   },
 
-  components: { VIcon, /*DataPane,*/ FormPanel },
+  components: { NodeIcon, VIcon, /*DataPane,*/ FormPanel },
 
   computed: {
-    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
-
-    icon() {
-      const node = this.activeNode
-      if (!node) return null
-      const icon = node.type === 'table' || node.type === 'database' ? node.databaseType : NODE_TYPE_ICON[node.type]
-      return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
-    }
+    ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly'])
   },
 
   methods: {

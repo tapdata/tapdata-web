@@ -6,13 +6,13 @@ export class Table extends NodeType {
     super()
   }
 
-  minInputs = 0 // 最小输入个数
-
-  maxInputs = 1 // 最大输入个数
-
   type = 'table'
 
   group = 'data'
+
+  minInputs = 0 // 最小输入个数
+
+  maxInputs = 1 // 最大输入个数
 
   formSchema = {
     type: 'object',

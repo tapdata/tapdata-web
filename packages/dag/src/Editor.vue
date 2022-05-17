@@ -363,7 +363,7 @@ export default {
 
       const source = this.nodeById(sourceId)
       const target = this.nodeById(targetId)
-      const maxInputs = target.__Ctor.attr.maxInputs ?? -1
+      const maxInputs = target.__Ctor.maxInputs ?? -1
       const connectionType = target.attrs.connectionType
 
       if (connectionType && !connectionType.includes('target')) {
@@ -373,7 +373,7 @@ export default {
 
       const connections = this.jsPlumbIns.getConnections({ target: NODE_PREFIX + targetId })
 
-      if (connections?.length && maxInputs !== -1 && connections.length >= maxInputs) {
+      if (maxInputs !== -1 && connections.length >= maxInputs) {
         showMsg && this.$message.info('该节点已经达到最大连线限制')
         return false
       }
@@ -879,7 +879,7 @@ export default {
       // 检查每个节点的源节点个数、连线个数、节点的错误状态
       this.allNodes.some(node => {
         const { id } = node
-        const minInputs = node.__Ctor.attr.minInputs ?? 1 // 没有设置minInputs则缺省为1
+        const minInputs = node.__Ctor.minInputs ?? 1 // 没有设置minInputs则缺省为1
         const inputNum = targetMap[id]?.length ?? 0
 
         if (!sourceMap[id] && !targetMap[id]) {

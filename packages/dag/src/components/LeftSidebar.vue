@@ -61,12 +61,12 @@
                     onStop
                   }"
                   :key="db.id"
-                  class="db-item grabbable flex align-center px-4 user-select-none rounded-2"
+                  class="db-item grabbable flex align-center px-2 user-select-none rounded-2"
                   :class="{ active: activeConnection.id === db.id }"
                   @click="handleSelectDB(db)"
                 >
-                  <ElImage class="flex-shrink-0" :src="genIconSrc(db)"></ElImage>
-                  <div class="db-item-txt text-truncate ml-4">{{ db.name }}</div>
+                  <NodeIcon class="flex-shrink-0 mr-2" :node="db" />
+                  <div class="db-item-txt text-truncate">{{ db.name }}</div>
                 </div>
                 <EmptyItem v-if="!dbList.length"></EmptyItem>
                 <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
@@ -139,7 +139,7 @@
                     onStop
                   }"
                   :key="tb.id"
-                  class="tb-item grabbable flex align-center px-4 user-select-none rounded-2"
+                  class="tb-item grabbable flex align-center px-2 user-select-none rounded-2"
                 >
                   <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
                 </div>
@@ -164,7 +164,26 @@
             </span>
           </div>
         </template>
-        <ElScrollbar ref="processorList" tag="div" wrap-class="" :wrap-style="scrollbarWrapStyle">
+        <ElScrollbar ref="processorList" tag="div" wrap-class="px-3" :wrap-style="scrollbarWrapStyle">
+          <div
+            v-for="(n, ni) in processorNodeTypes"
+            :key="ni"
+            v-mouse-drag="{
+              item: n,
+              container: '#dfEditorContent',
+              getDragDom,
+              onStart: onProcessorStart,
+              onMove,
+              onDrop,
+              onStop
+            }"
+            class="node-item grabbable flex align-center px-2 user-select-none rounded-2"
+          >
+            <NodeIcon class="flex-shrink-0 mr-2" :node="n" />
+            <OverflowTooltip :text="n.name" popper-class="df-node-text-tooltip" placement="top" :open-delay="400" />
+          </div>
+        </ElScrollbar>
+        <!--<ElScrollbar ref="processorList" tag="div" wrap-class="" :wrap-style="scrollbarWrapStyle">
           <ElRow class="node-list flex-wrap px-2" :gutter="0" type="flex">
             <ElCol :span="8" v-for="(n, ni) in processorNodeTypes" :key="ni" class="p-1">
               <div
@@ -192,7 +211,7 @@
               </div>
             </ElCol>
           </ElRow>
-        </ElScrollbar>
+        </ElScrollbar>-->
       </ElCollapseItem>
     </ElCollapse>
 
@@ -267,11 +286,13 @@ import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowToolti
 import EmptyItem from 'web-core/components/EmptyItem'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import CreateTable from './CreateTable'
+import NodeIcon from './NodeIcon'
 
 export default {
   name: 'LeftSidebar',
 
   components: {
+    NodeIcon,
     CreateTable,
     EmptyItem,
     OverflowTooltip,
@@ -869,7 +890,8 @@ $hoverBg: #eef3ff;
     }
 
     .db-item,
-    .tb-item {
+    .tb-item,
+    .node-item {
       margin-bottom: 4px;
       height: $itemH;
       font-size: 12px;

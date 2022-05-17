@@ -374,7 +374,7 @@ export default {
 
       const connections = this.jsPlumbIns.getConnections({ target: NODE_PREFIX + targetId })
 
-      if (connections?.length && maxInputs !== -1 && connections.length >= maxInputs) {
+      if (maxInputs !== -1 && connections.length >= maxInputs) {
         showMsg && this.$message.info('该节点已经达到最大连线限制')
         return false
       }

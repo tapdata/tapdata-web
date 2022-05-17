@@ -67,11 +67,11 @@
               :key="db.id"
               class="db-item grabbable flex align-center px-2 user-select-none rounded-2"
             >
-              <ElImage class="flex-shrink-0 mr-2" :src="genIconSrc(db)"></ElImage>
+              <NodeIcon class="flex-shrink-0 mr-2" :node="db" />
               <div class="flex flex-wrap db-item-content align-self-stretch py-1">
                 <OverflowTooltip class="w-100 text-truncate" :text="db.name" placement="right" :open-delay="400" />
                 <OverflowTooltip
-                  class="w-100 font-color-slight text-truncate"
+                  class="w-100 font-color-light text-truncate"
                   :text="db.connectionUrl"
                   placement="right"
                   :open-delay="400"
@@ -87,7 +87,7 @@
       </ElScrollbar>
     </div>
 
-    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse" value="process">
+    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse border-top" value="process">
       <ElCollapseItem name="process">
         <template #title>
           <div class="flex align-center flex-1">
@@ -97,34 +97,24 @@
             </span>
           </div>
         </template>
-        <ElScrollbar ref="processorList" tag="div" wrap-class="" :wrap-style="scrollbarWrapStyle">
-          <ElRow class="node-list flex-wrap px-2" :gutter="0" type="flex">
-            <ElCol :span="8" v-for="(n, ni) in processorNodeTypes" :key="ni" class="p-1">
-              <div
-                v-mouse-drag="{
-                  item: n,
-                  container: '#dfEditorContent',
-                  getDragDom,
-                  onStart: onProcessorStart,
-                  onMove,
-                  onDrop,
-                  onStop
-                }"
-                class="node-item flex flex-column align-center px-1 py-2 grabbable user-select-none"
-              >
-                <div class="node-item-icon flex justify-center align-center mb-2">
-                  <VIcon size="24" color="#2C65FF">{{ n.icon }}</VIcon>
-                </div>
-                <OverflowTooltip
-                  class="node-item-txt text-center w-100"
-                  :text="n.name"
-                  popper-class="df-node-text-tooltip"
-                  placement="top"
-                  :open-delay="400"
-                />
-              </div>
-            </ElCol>
-          </ElRow>
+        <ElScrollbar ref="processorList" tag="div" wrap-class="px-3" :wrap-style="scrollbarWrapStyle">
+          <div
+            v-for="(n, ni) in processorNodeTypes"
+            :key="ni"
+            v-mouse-drag="{
+              item: n,
+              container: '#dfEditorContent',
+              getDragDom,
+              onStart: onProcessorStart,
+              onMove,
+              onDrop,
+              onStop
+            }"
+            class="node-item grabbable flex align-center px-2 user-select-none rounded-2"
+          >
+            <NodeIcon class="flex-shrink-0 mr-2" :node="n" />
+            <OverflowTooltip :text="n.name" popper-class="df-node-text-tooltip" placement="top" :open-delay="400" />
+          </div>
         </ElScrollbar>
       </ElCollapseItem>
     </ElCollapse>
@@ -155,15 +145,6 @@
       ></ConnectionTypeSelector>
       <!-- :automationType="automationType" -->
     </ElDialog>
-    <!-- <ElDialog
-      title="创建连接"
-      width="60%"
-      :visible.sync="connectionFormDialog"
-      :close-on-click-modal="false"
-      :append-to-body="true"
-    >
-      <Form v-if="connectionFormDialog" :databaseTypeText="databaseType" @saveConnection="saveConnection"></Form>
-    </ElDialog> -->
   </aside>
 </template>
 
@@ -196,11 +177,13 @@ import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/re
 import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
 import EmptyItem from 'web-core/components/EmptyItem'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
+import NodeIcon from '../components/NodeIcon'
 
 export default {
   name: 'LeftSider',
 
   components: {
+    NodeIcon,
     EmptyItem,
     OverflowTooltip,
     BaseNode,
@@ -266,14 +249,6 @@ export default {
       comingAllowDatabase: [], // 即将上线
       otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],
       automationType: '', //插件化数据源
-
-      dialogData: {
-        type: 'table',
-        title: this.$t('dialog.createTable'),
-        placeholder: this.$t('dialog.placeholderTable'),
-        visible: false
-      },
-
       connectionType: 'source'
     }
   },
@@ -565,7 +540,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-$itemH: 40px;
 $hoverBg: #eef3ff;
 
 .drag-node {
@@ -665,9 +639,9 @@ $hoverBg: #eef3ff;
     }
 
     .db-item,
-    .tb-item {
+    .node-item {
+      height: 40px;
       margin-bottom: 4px;
-      height: $itemH;
       font-size: 12px;
       &.active {
         background-color: #eef3ff;
@@ -692,6 +666,15 @@ $hoverBg: #eef3ff;
 
       &:last-child {
         margin-bottom: 0;
+      }
+    }
+
+    .node-item {
+      height: 30px;
+
+      .el-image {
+        width: 20px;
+        height: 20px;
       }
     }
 
