@@ -22,6 +22,7 @@ import 'github-markdown-css'
 import LoadMore from '@/utils/loadMore'
 
 import '@/styles/app.scss'
+import '@/styles/element-variables.scss'
 
 Vue.config.productionTip = false
 Vue.use(VueCookie)

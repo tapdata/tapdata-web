@@ -26,7 +26,7 @@
         </el-input>
       </div>
     </div>
-    <div class="tree-block">
+    <div class="tree-block" v-if="isExpand">
       <el-tree
         v-if="treeData && treeData.length > 0"
         check-strictly
@@ -469,7 +469,7 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 24px;
+  width: 20px;
   // height: 22px;
   user-select: none;
   box-sizing: border-box;
@@ -479,7 +479,7 @@ export default {
   // overflow: hidden;
   // box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);
   .btn-expand {
-    padding: 2px 3px;
+    // padding: 2px 3px;
     color: map-get($fontColor, light);
     transform: rotate(0);
     box-sizing: border-box;
@@ -493,10 +493,11 @@ export default {
   }
   .no-expand {
     position: absolute;
-    left: 20px;
+    left: 18px;
+    top: 4px;
   }
   .toggle {
-    margin-top: 26px;
+    margin-top: 16px;
     color: map-get($color, lprimary);
     z-index: 2;
   }
@@ -508,8 +509,8 @@ export default {
     width: 214px;
     .btn-expand {
       position: absolute;
-      top: 5px;
-      left: 17px;
+      top: 0;
+      left: 19px;
       transform: rotate(180deg);
       .icon-zhankai2 {
         font-size: 16px;
@@ -522,7 +523,7 @@ export default {
 
     .btn-addIcon {
       position: absolute;
-      top: 3px;
+      top: 2px;
       right: 12px;
       font-size: 12px;
       .iconfont.icon-jia {
