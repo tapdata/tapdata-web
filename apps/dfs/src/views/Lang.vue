@@ -236,7 +236,7 @@ export default {
       findOne['zh-TW-modify'] = form['zh-TW-modify']
       findOne['en-modify'] = form['en-modify']
       this.updateLocalStorage()
-      this.$message.success(this.$t('gl_button_update_success'))
+      this.$message.success(this.$t('operate_update_success'))
     },
     getModifyData() {
       let zhTW = {}

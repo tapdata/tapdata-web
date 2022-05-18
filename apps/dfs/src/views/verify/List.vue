@@ -99,15 +99,15 @@
       <div v-if="!isSearching" class="page-table__empty" slot="empty">
         <VIcon size="120">no-data-color</VIcon>
         <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-          <span>{{ $t('gl_no_data') }}</span>
+          <span>{{ $t('data_no_data') }}</span>
           <ElLink type="primary" class="fs-7" @click="toCreate">{{ $t('verify_button_create') }}</ElLink>
         </div>
       </div>
       <div v-else class="page-table__empty" slot="empty">
         <VIcon size="120">search-no-data-color</VIcon>
         <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-          <span>{{ $t('gl_no_match_result') }}</span>
-          <ElLink type="primary" class="fs-7" @click="reset">{{ $t('gl_back_to_list') }}</ElLink>
+          <span>{{ $t('data_no_find_result') }}</span>
+          <ElLink type="primary" class="fs-7" @click="reset">{{ $t('link_back_to_list') }}</ElLink>
         </div>
       </div>
     </ElTable>

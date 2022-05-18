@@ -70,7 +70,7 @@
                   class="block text-center"
                   type="primary"
                   @click="toDataFlow(scope.row.tmInfo.agentId)"
-                  >{{ $t('gl_see_more') }}</ElLink
+                  >{{ $t('data_see_more') }}</ElLink
                 >
               </div>
               <ElLink type="primary" class="ml-7" @click="toDataFlow(scope.row.tmInfo.agentId)">{{
@@ -180,8 +180,8 @@
         <div v-else class="instance-table__empty" slot="empty">
           <VIcon size="120">search-no-data-color</VIcon>
           <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
-            <span>{{ $t('gl_no_match_result') }}</span>
-            <span class="color-primary cursor-pointer fs-7 ml-1" @click="reset">{{ $t('gl_back_to_list') }}</span>
+            <span>{{ $t('data_no_find_result') }}</span>
+            <span class="color-primary cursor-pointer fs-7 ml-1" @click="reset">{{ $t('link_back_to_list') }}</span>
           </div>
         </div>
       </ElTable>
@@ -216,7 +216,7 @@
         <div class="dialog-content text-center">{{ $t('agent_dialog_upgrade_fail') }}</div>
         <div class="dialog-btn flex justify-content-evenly mt-6">
           <div class="text-center">
-            <ElButton type="primary" @click="cancelUpgradeFnc">{{ $t('gl_button_cancel') }}</ElButton>
+            <ElButton type="primary" @click="cancelUpgradeFnc">{{ $t('button_cancel') }}</ElButton>
           </div>
           <div>
             <ElButton type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</ElButton>
@@ -601,7 +601,7 @@ export default {
       let title = null
       let message = this.$t('agent_button_delete_confirm_title')
       if (noDelFlag) {
-        title = this.$t('gl_button_delete_fail')
+        title = this.$t('operate_delete_fail')
         message = this.$t('agent_button_delete_confirm_msg')
       }
       this.$confirm(message, title, {
@@ -664,7 +664,7 @@ export default {
           name: val
         })
         .then(() => {
-          this.$message.success(this.$t('gl_button_update_success'))
+          this.$message.success(this.$t('operate_update_success'))
           this.fetch()
         })
         .catch(() => {

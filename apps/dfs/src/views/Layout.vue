@@ -208,12 +208,6 @@ export default {
   padding-top: 68px;
   word-wrap: break-word;
   word-break: break-word;
-  ::v-deep {
-    .el-dialog__body {
-      word-wrap: break-word;
-      word-break: break-word;
-    }
-  }
   .left-aside {
     border-right: 1px solid #f2f4f6;
     background: #fff;

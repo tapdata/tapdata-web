@@ -1,6 +1,10 @@
 export default {
-  gl_select_option_all: 'All',
+  form_all: 'All',
   button_test_connection: 'Test',
+  user_nick_name: 'Nickname',
+  user_phone: 'Mobile',
+  user_email: 'Mail',
+  user_avatar: 'Avatart',
   list_operation: 'Operation',
   notify_agent_notification: 'Agent notification',
   notify_all_read: 'Mark All as Read',
@@ -22,5 +26,14 @@ export default {
   dataForm_form_uriTips_content:
     '<b>MongoDB database connection URI example:</b><br><b>The username and password in the URI must be url encoded and then spliced into the connection string</b><br><b>replica set :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br><b>Authenticated replica set:</b> mongodb://admin:password@192.168.0.100:27017/ mydb?replicaSet=xxx&authSource=admin<br><b>Multi-node replica set:</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx< br><b>Sharded set:</b> mongodb://192.168.0.100:27017/mydb<br><b>Multiple mongos:</b> mongodb://192.168.0.1:27017,192.168. 0.2:27017,192.168.0.3:27017/mydb<br>',
   copy_Info_pTHIS: '<p>{val1}<span style="color:#409EFF">{val2}</span>、',
-  copy_Info_sPANS: '<span style="color:#409EFF">{val1}</span>、'
+  copy_Info_sPANS: '<span style="color:#409EFF">{val1}</span>、',
+  user_phone_number: 'Phone',
+  user_Center_geRenXinXi: 'Personal information',
+  user_Center_gongSiMingCheng: 'Company:',
+  user_Center_gongSiGuanWang: 'Website:',
+  user_Center_yongHuNiCheng: 'Nickname:',
+  user_Center_qingShuRuJiuShou: 'Please enter the code',
+  components_VerificationCode_faSongYanZhengMa: 'Send',
+  user_Center_qingShuRuXinShou: 'Please enter the code',
+  user_Center_qingShuRuShouJi: 'Please enter the code',
 }

@@ -117,7 +117,7 @@
       <span
         :class="['inner-select__selected', { placeholder: !selectedLabel }]"
         :style="{ 'max-width': selectedWidth }"
-        >{{ selectedLabel || $t('gl_placeholder_select') }}</span
+        >{{ selectedLabel || $t('form_placeholder_select') }}</span
       >
       <VIcon v-if="showClose" size="10" class="icon-btn ml-1" @click.native="handleClearClick">close</VIcon>
       <VIcon v-else size="10" class="icon-btn ml-1">arrow-down-fill</VIcon>

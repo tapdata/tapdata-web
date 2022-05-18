@@ -1,24 +1,17 @@
 export default {
   /** 全局 */
-  gl_see_more: '查看更多',
-  gl_no_data: '暂无数据',
-  gl_no_match_result: '没有查到符合条件的结果',
-  gl_back_to_list: '返回列表',
-  gl_placeholder_select: '请选择',
-  gl_select_option_all: '全部',
-  gl_placeholder_input: '请输入',
-  gl_button_cancel: '取消',
-  gl_button_confirm: '确定',
-  gl_button_finish: '完成',
-  gl_button_close: '关闭',
-  gl_button_delete_fail: '删除失败',
-  gl_button_update_success: '修改成功',
-  gl_qr_code_wx_public_account: '微信公众号',
-  gl_qr_code_tip: '扫码咨询',
-  gl_qr_code_wx_customer_service: '微信客服',
-  gl_telephone_tip: '电话咨询',
-  gl_form_can_not_be_empty: '不能为空',
-  gl_search_show_all: '查看全部',
+  // 数据
+  data_see_more: '查看更多',
+  data_see_all: '查看全部',
+  data_no_data: '暂无数据',
+  data_no: '暂无',
+  data_no_find_result: '没有查到符合条件的结果',
+
+  // 表单
+  form_all: '全部',
+  form_placeholder_input: '请输入',
+  form_placeholder_select: '请选择',
+  form_can_not_be_empty: '不能为空',
 
   // 按钮
   button_edit: '编辑',
@@ -31,12 +24,16 @@ export default {
   button_finish: '完成',
   button_submit: '提交',
   button_confirm: '确定',
-  button_close: '取 消',
+  button_close: '关闭',
   button_save: '保存',
   button_upload: '上传',
   button_export: '导出',
   button_details: '详情',
   button_test_connection: '连接测试',
+  button_bind: '绑定',
+
+  // 链接
+  link_back_to_list: '返回列表',
 
   // 国际化
   lang_zh_cn: '中文',
@@ -50,15 +47,31 @@ export default {
   // 列表
   list_operation: '操作',
 
-  // 时间
+  // 时间日期
   start_time: '开始时间',
   end_time: '结束时间',
 
   // 用户
   user_name: '用户名',
   user_nick_name: '昵称',
+  user_password: '密码',
   user_phone: '手机',
+  user_phone_number: '手机号',
   user_email: '邮箱',
+  user_avatar: '头像',
+
+  // 操作结果
+  operate_delete_fail: '删除失败',
+  operate_update_success: '修改成功',
+
+  // 符号
+  symbol_colon: '：',
+
+  // 其他
+  gl_qr_code_wx_public_account: '微信公众号',
+  gl_qr_code_tip: '扫码咨询',
+  gl_qr_code_wx_customer_service: '微信客服',
+  gl_telephone_tip: '电话咨询',
 
   /** 模块 */
   // 工作台
@@ -796,7 +809,6 @@ export default {
   operation_log_type: '操作类型',
   operation_log_Object: '操作对象',
   operation_log_user_name: '用户名称',
-  operation_log_username: '用户名',
   operation_log_time: '操作时间',
   operation_log_describe: '操作描述',
   operation_log_connection_create: '创建连接',
@@ -1376,14 +1388,8 @@ export default {
   user_Center_weiBangDing: '未绑定',
   user_Center_weiTianXie: '未填写',
   user_Center_geRenXinXi: '个人信息',
-  user_Center_yongHuMing: '用户名：',
   user_Center_yongHuNiCheng: '用户昵称：',
-  user_Center_miMa: '密码：',
   user_Center_xiuGai: '修改',
-  user_Center_shouJiHao: '手机号：',
-  user_Center_bangDing: '绑定',
-  user_Center_touXiang: '头像：',
-  user_Center_zanWu: '暂无',
   user_Center_qiYeXinXi: '企业信息',
   user_Center_gongSiMingCheng: '公司名称：',
   user_Center_gongSiGuanWang: '公司官网：',

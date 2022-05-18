@@ -57,7 +57,7 @@
                   </ElRow>
                   <ElRow>
                     <ElCol :span="8" style="margin-right: 10px">
-                      <ElSelect v-model="settingModel.syncPoints[0].type" :placeholder="$t('gl_placeholder_select')">
+                      <ElSelect v-model="settingModel.syncPoints[0].type" :placeholder="$t('form_placeholder_select')">
                         <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value"> </ElOption>
                       </ElSelect>
                     </ElCol>
@@ -95,7 +95,7 @@
                         :rules="[
                           {
                             required: true,
-                            message: $t('task_setting_schedule_time') + $t('gl_form_can_not_be_empty'),
+                            message: $t('task_setting_schedule_time') + $t('form_can_not_be_empty'),
                             trigger: ['blur', 'change']
                           }
                         ]"
@@ -141,7 +141,7 @@
                           :rules="[
                             {
                               required: true,
-                              message: $t('task_setting_cron_expression') + $t('gl_form_can_not_be_empty'),
+                              message: $t('task_setting_cron_expression') + $t('form_can_not_be_empty'),
                               trigger: ['blur', 'change']
                             },
                             {

@@ -18,7 +18,7 @@
         :rules="[
           {
             required: true,
-            message: $t('dataForm_form_mq_mqTopicSet') + $t('gl_form_can_not_be_empty'),
+            message: $t('dataForm_form_mq_mqTopicSet') + $t('form_can_not_be_empty'),
             trigger: ['blur', 'change']
           }
         ]"
@@ -35,7 +35,7 @@
         :rules="[
           {
             required: true,
-            message: $t('dataForm_form_mq_mqQueueSet') + $t('gl_form_can_not_be_empty'),
+            message: $t('dataForm_form_mq_mqQueueSet') + $t('form_can_not_be_empty'),
             trigger: ['blur', 'change']
           }
         ]"

@@ -6,7 +6,7 @@
       <div>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_Center_yongHuMing') }}</div>
+            <div class="user-item__label">{{ $t('user_name') }}{{ $t('symbol_colon') }}</div>
             <div class="user-item__value">{{ userData.username }}</div>
           </ElCol>
         </ElRow>
@@ -23,20 +23,20 @@
             ></InlineInput>
           </ElCol>
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_Center_miMa') }}</div>
+            <div class="user-item__label">{{ $t('user_password') }}{{ $t('symbol_colon') }}</div>
             <div class="user-item__value">******</div>
             <ElLink type="primary" @click="editPassword">{{ $t('user_Center_xiuGai') }}</ElLink>
           </ElCol>
         </ElRow>
         <ElRow :gutter="40" class="section-header mb-6">
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_Center_shouJiHao') }}</div>
+            <div class="user-item__label">{{ $t('user_phone_number') }}</div>
             <div class="user-item__value">{{ userData.telephone || $t('user_Center_weiBangDing') }}</div>
             <ElLink v-if="userData.telephone" type="primary" @click="editPhone">{{ $t('user_Center_xiuGai') }}</ElLink>
-            <ElLink v-else type="primary" @click="dialogObj.bindPhone = true">{{ $t('user_Center_bangDing') }}</ElLink>
+            <ElLink v-else type="primary" @click="dialogObj.bindPhone = true">{{ $t('button_bind') }}</ElLink>
           </ElCol>
           <ElCol :span="12" class="user-item">
-            <div class="user-item__label">{{ $t('user_Center_touXiang') }}</div>
+            <div class="user-item__label">{{ $t('user_avatar') }}</div>
             <div class="user-item__value position-relative">
               <img
                 v-if="userData.avatar"
@@ -44,7 +44,7 @@
                 alt=""
                 style="position: absolute; top: -24px; left: 0; width: 56px; height: 56px; border-radius: 50%"
               />
-              <span v-else>{{ $t('user_Center_zanWu') }}</span>
+              <span v-else>{{ $t('data_no') }}</span>
             </div>
             <ElLink type="primary" @click="editAvatar">{{ $t('user_Center_xiuGai') }}</ElLink>
           </ElCol>
@@ -54,13 +54,13 @@
           <!--            <div class="user-item__label">微信：</div>-->
           <!--            <div class="user-item__value">{{ userData.wx || $t('user_Center_weiBangDing') }}</div>-->
           <!--            <ElLink v-if="userData.wx" type="primary" @click="unbindWx">解绑</ElLink>-->
-          <!--            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">{{$t('user_Center_bangDing')}}</ElLink>-->
+          <!--            <ElLink v-else type="primary" @click="dialogObj.bindWx = true">{{$t('button_bind')}}</ElLink>-->
           <!--          </ElCol>-->
           <ElCol :span="12" class="user-item">
             <div class="user-item__label">{{ $t('user_Center_youXiang') }}</div>
             <div class="user-item__value">{{ userData.email || $t('user_Center_weiBangDing') }}</div>
             <ElLink v-if="userData.email" type="primary" @click="editEmail">{{ $t('user_Center_xiuGai') }}</ElLink>
-            <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">{{ $t('user_Center_bangDing') }}</ElLink>
+            <ElLink v-else type="primary" @click="dialogObj.bindEmail = true">{{ $t('button_bind') }}</ElLink>
           </ElCol>
         </ElRow>
       </div>

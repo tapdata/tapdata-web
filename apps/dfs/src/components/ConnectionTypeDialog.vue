@@ -12,7 +12,7 @@
       </ElSelect>
       <ElInput
         v-model="searchKey"
-        :placeholder="$t('gl_placeholder_input')"
+        :placeholder="$t('form_placeholder_input')"
         class="search-box__input"
         clearable
         @input="searchFnc"
@@ -30,8 +30,8 @@
       <div v-else class="flex flex-column justify-content-center align-items-center h-100">
         <VIcon size="120">search-no-data-color</VIcon>
         <div class="flex justify-content-center lh-sm font-color-sub">
-          <span>{{ $t('gl_no_match_result') }}</span>
-          <span class="color-primary cursor-pointer" @click="reset">{{ $t('gl_search_show_all') }}</span>
+          <span>{{ $t('data_no_find_result') }}</span>
+          <span class="color-primary cursor-pointer" @click="reset">{{ $t('data_see_all') }}</span>
         </div>
       </div>
     </div>
@@ -78,7 +78,7 @@ export default {
     },
     getOptions() {
       this.$axios.get('tm/api/DatabaseTags/availableTags').then(data => {
-        this.options = [{ name: '', desc: this.$t('gl_select_option_all') }, ...data]
+        this.options = [{ name: '', desc: this.$t('form_all') }, ...data]
       })
     },
     getData() {

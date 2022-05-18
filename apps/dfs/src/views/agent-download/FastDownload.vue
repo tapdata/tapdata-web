@@ -172,7 +172,7 @@
       </div>
     </main>
     <footer class="footer">
-      <ElButton type="primary" @click="handleNextStep()">{{ $t('gl_button_finish') }}</ElButton>
+      <ElButton type="primary" @click="handleNextStep()">{{ $t('button_finish') }}</ElButton>
     </footer>
   </section>
 </template>
