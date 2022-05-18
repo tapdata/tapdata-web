@@ -1065,6 +1065,9 @@ export default {
       }
     },
     showPrecisionEdit(id, data) {
+      if (data instanceof Object) {
+        return
+      }
       let isPrecision = data.filter(v => v.minPrecision < v.maxPrecision)
       if (isPrecision.length !== 0) {
         //固定值
