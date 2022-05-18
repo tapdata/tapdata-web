@@ -1,4 +1,3 @@
-f
 <template>
   <div v-loading="loading" class="table-selector">
     <!-- 候选区 -->
@@ -225,6 +224,11 @@ f
 .selector-panel__list {
   margin-top: 16px;
   flex: 1;
+  height: calc(100% - 32px);
+  padding-bottom: 5px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .selector-panel__scroller {
   height: 100%;
@@ -319,6 +323,7 @@ f
 </style>
 
 <script>
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
 
@@ -345,7 +350,7 @@ export default {
         isCheckAll: false,
         searchKeyword: '',
         checked: [],
-        tables: []
+        tables: this.value
       },
       showProgress: false,
       progress: '',
@@ -392,7 +397,7 @@ export default {
         })
       }
     },
-    value(v) {
+    value(v = []) {
       this.selected.tables = v.concat()
     }
   },
@@ -411,7 +416,7 @@ export default {
         let tables = this.clipboardTables.concat()
         this.selected.tables = tables
         this.$emit('input', this.selected.tables)
-        this.$emit('change')
+        this.$emit('change', this.selected.tables)
       }
     },
     add() {
@@ -423,7 +428,7 @@ export default {
         tables = Array.from(new Set(tables))
         this.selected.tables = Object.freeze(tables)
         this.$emit('input', this.selected.tables)
-        this.$emit('change')
+        this.$emit('change', this.selected.tables)
       } else {
         this.$message.warning(this.$t('component_table_selector_not_checked'))
       }
@@ -438,7 +443,7 @@ export default {
         this.selected.checked = []
         this.selected.isCheckAll = false
         this.$emit('input', this.selected.tables)
-        this.$emit('change')
+        this.$emit('change', this.selected.tables)
       } else {
         this.$message.warning(this.$t('component_table_selector_not_checked'))
       }
@@ -450,7 +455,7 @@ export default {
       } else {
         this.selected.tables = Object.freeze(this.selected.tables.filter(t => !this.errorTables[t]))
         this.$emit('input', this.selected.tables)
-        this.$emit('change')
+        this.$emit('change', this.selected.tables)
       }
     },
     getErrorTables(tables) {

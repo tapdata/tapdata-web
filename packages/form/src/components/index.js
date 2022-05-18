@@ -26,5 +26,7 @@ export * from './table-select'
 export * from './merge-table-item'
 export * from './field-select'
 export * from './form-content'
+export * from './table-list-card'
+export * from './table-selector'
 
 export * from '@formily/element'

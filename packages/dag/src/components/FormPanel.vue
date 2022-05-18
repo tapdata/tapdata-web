@@ -831,6 +831,9 @@ $headerBg: #fff;
 
     .formily-element-form-item-layout-vertical .formily-element-form-item-label-tooltip {
       height: 40px;
+      i {
+        line-height: 1;
+      }
     }
 
     .formily-element-form-item:not(.form-item-text) + .form-item-text {
