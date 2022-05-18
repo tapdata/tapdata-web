@@ -155,16 +155,11 @@
               </div>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_precision')" width="150">
+          <ElTableColumn v-if="!isPdk" :label="$t('dag_dialog_field_mapping_target_precision')" width="150">
             <template slot-scope="scope">
               <div
                 class="cursor-pointer"
-                v-if="
-                  !scope.row.is_deleted &&
-                  scope.row.t_isPrecisionEdit &&
-                  modeMapping[transform.mode]['precision'] &&
-                  !isPdk
-                "
+                v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && modeMapping[transform.mode]['precision']"
                 @click="edit(scope.row, 'precision')"
               >
                 <span>{{ scope.row.t_precision }}</span>
@@ -175,13 +170,11 @@
               </div>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_scale')" width="100">
+          <ElTableColumn v-if="!isPdk" :label="$t('dag_dialog_field_mapping_target_scale')" width="100">
             <template slot-scope="scope">
               <div
                 class="cursor-pointer"
-                v-if="
-                  !scope.row.is_deleted && scope.row.t_isScaleEdit && modeMapping[transform.mode]['scale'] && !isPdk
-                "
+                v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit && modeMapping[transform.mode]['scale']"
                 @click="edit(scope.row, 'scale')"
               >
                 <span>{{ scope.row.t_scale }}</span>
@@ -202,7 +195,7 @@
           </ElTableColumn>
           <ElTableColumn
             :label="$t('dag_dialog_field_mapping_operate')"
-            width="80"
+            :width="isPdk ? 100 : 80"
             fixed="right"
             v-if="modeMapping[transform.mode]['field_table_ops']"
           >
