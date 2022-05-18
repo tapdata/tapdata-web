@@ -35,5 +35,5 @@ export default {
   user_Center_qingShuRuJiuShou: 'Please enter the code',
   components_VerificationCode_faSongYanZhengMa: 'Send',
   user_Center_qingShuRuXinShou: 'Please enter the code',
-  user_Center_qingShuRuShouJi: 'Please enter the code',
+  user_Center_qingShuRuShouJi: 'Please enter the code'
 }
