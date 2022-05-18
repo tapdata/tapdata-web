@@ -1,0 +1,482 @@
+<template>
+  <div class="field-mapping flex flex-column" v-loading="loadingPage">
+    <div class="task-form-body">
+      <div class="task-form-left flex flex-column">
+        <div class="flex mb-2">
+          <div class="flex">
+            <ElInput
+              v-model="searchTable"
+              size="mini"
+              placeholder="请输入表名"
+              suffix-icon="el-icon-search"
+              clearable
+              @input="getMetadataTransformer(searchTable)"
+            ></ElInput>
+          </div>
+        </div>
+        <div class="mb-2 ml-6" v-if="progress.showProgress">
+          {{ progress.finished }} / {{ progress.total }} <VIcon size="12">loading</VIcon
+          ><span>{{ $t('dag_dialog_field_mapping_loading_schema') }}</span>
+        </div>
+        <ul class="task-form-left__ul flex flex-column">
+          <li
+            v-for="(item, index) in navData"
+            :key="index"
+            :class="{ active: position === index }"
+            @click.prevent="select(item, index)"
+          >
+            <div class="task-form__img" v-if="item.invalid">
+              <img src="web-core/assets/images/fieldMapping-table-error.png" alt="" />
+            </div>
+            <div class="task-form__img" v-else>
+              <img src="web-core/assets/images/fieldMapping-table.png" alt="" />
+            </div>
+            <div class="task-form-text-box">
+              <div class="source">{{ item.sourceObjectName }}</div>
+              <div class="target">{{ item.sinkObjectName }}</div>
+              <div class="select">
+                {{
+                  `${$t('dag_dialog_field_mapping_selected')} ${
+                    position === index ? fieldCount : item.sourceFieldCount - item.userDeletedNum
+                  }/${item.sourceFieldCount}`
+                }}
+              </div>
+            </div>
+          </li>
+        </ul>
+        <ElPagination
+          small
+          class="flex mt-3"
+          layout="total, prev, pager, next"
+          :current-page.sync="page.current"
+          :page-size.sync="page.size"
+          :total="page.total"
+          :pager-count="5"
+          @current-change="getMetadataTransformer"
+        >
+        </ElPagination>
+      </div>
+      <div class="main">
+        <div class="flex mb-2 ml-2 text-start">
+          <div class="flex align-items-center">
+            <ElInput
+              v-model="searchField"
+              size="mini"
+              placeholder="请输入表名"
+              suffix-icon="el-icon-search"
+              @input="getMetadataTransformer(searchField)"
+            ></ElInput>
+          </div>
+          <div class="item ml-2">
+            <ElButton plain class="btn-refresh" @click="getMetadataTransformer">
+              <VIcon class="text-primary">refresh</VIcon>
+            </ElButton>
+          </div>
+        </div>
+        <ElTable class="field-mapping-table table-border" height="100%" border :data="target" v-loading="loading">
+          <ElTableColumn show-overflow-tooltip :label="$t('dag_dialog_field_mapping_source_field')" prop="field_name">
+            <template slot-scope="scope">
+              <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
+                >{{ scope.row.field_name }}
+                <VIcon size="12" class="color-darkorange">key</VIcon>
+              </span>
+              <span v-else class="item" :show-overflow-tooltip="true">{{ scope.row.field_name }}</span>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn :label="$t('dag_dialog_field_mapping_source_type')" prop="data_type"></ElTableColumn>
+          <ElTableColumn :label="$t('dag_dialog_field_mapping_source_precision')" prop="precision">
+            <template slot-scope="scope">
+              <span>{{ scope.row.precision === -1 ? '' : scope.row.precision }}</span>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn :label="$t('dag_dialog_field_mapping_source_scale')" prop="scale"></ElTableColumn>
+          <ElTableColumn :label="$t('meta_table_default')" prop="default_value"></ElTableColumn>
+          <div class="field-mapping-table__empty" slot="empty">
+            <i class="el-icon-folder-opened"></i>
+            <span class="ml-1">{{ $t('dag_dialog_field_mapping_no_data') }}</span>
+          </div>
+        </ElTable>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import VIcon from 'web-core/components/VIcon'
+import rollback from 'web-core/assets/icons/svg/rollback.svg'
+import refresh from 'web-core/assets/icons/svg/refresh.svg'
+import { Task, MetadataTransformer, MetadataInstances } from '@tap/api'
+
+const taskApi = new Task()
+const metadataTransformeApi = new MetadataTransformer()
+const metadataInstancesApi = new MetadataInstances()
+
+export default {
+  name: 'FieldMappingDialog',
+  components: { VIcon },
+  data() {
+    return {
+      searchField: '',
+      searchTable: '',
+      loading: false,
+      loadingPage: false,
+      dataFlow: '',
+      navData: [],
+      typeMapping: [],
+      position: 0,
+      fieldCount: '', //当前选中总数
+      target: [],
+      page: {
+        size: 10,
+        current: 1,
+        total: 0
+      },
+      progress: {
+        total: 0,
+        finished: '0',
+        progress: '0',
+        showProgress: false
+      },
+      sourceTableName: 'tableName',
+      rollback,
+      refresh
+    }
+  },
+  mounted() {
+    this.getMetaData()
+    //接收数据
+    let id = this.dataFlow.id
+    let self = this
+    this.$ws.on('metadataTransformerProgress', function (res) {
+      if (res?.data?.stageId === id) {
+        let { finished, total, status } = res?.data
+        self.progress.finished = finished
+        self.progress.total = total
+        self.page.total = finished
+        if (status !== 'done') {
+          self.progress.showProgress = true
+          if (self.navData?.length < self.page.size && self.page.current === 1) {
+            self.getMetadataTransformer()
+          }
+        } else {
+          self.progress.showProgress = false
+          self.getMetadataTransformer()
+        }
+      }
+    })
+  },
+  methods: {
+    getDataflowDataToSave() {
+      const dag = this.$store.getters['dataflow/dag']
+      const editVersion = this.$store.state.dataflow.editVersion
+      let dataflow = this.$store.state.dataflow
+      return {
+        dag,
+        editVersion,
+        ...dataflow
+      }
+    },
+    getDataFlow() {
+      const data = this.getDataflowDataToSave()
+      return data
+    },
+    /*
+     * 模型推演
+     * 新建任务，首次全部恢复默认
+     * 过滤条件：当前目标节点 nodeId
+     * 触发父组件：首次条件
+     * */
+    getMetaData() {
+      //点击按钮重新拿值
+      if (this.getDataFlow) {
+        this.dataFlow = this.getDataFlow()
+        this.dataFlow.id = this.dataFlow.id || this.dataFlow?.taskId
+      }
+
+      if (!this.dataFlow) return
+      this.dataFlow['nodeId'] = this.dataFlow.activeNodeId //任务同步目标节点nodeId 推演
+
+      let promise = taskApi.getMetadata(this.dataFlow)
+      promise
+        .then(() => {
+          this.getMetadataTransformer()
+          this.initWSSed() //发送ws 监听schema进度
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    getMetadataTransformer(value) {
+      let { size, current } = this.page
+      let id = this.dataFlow?.id
+      let where = {
+        dataFlowId: id,
+        sinkNodeId: this.dataFlow['nodeId'] //todo 返回是否为sinkNodeId
+      }
+      if (value) {
+        let filterObj = { like: value, options: 'i' }
+        where['or'] = [{ sinkQulifiedName: filterObj }, { sourceObjectName: filterObj }]
+      }
+      let filter = {
+        where: where,
+        limit: size || 10,
+        skip: (current - 1) * size > 0 ? (current - 1) * size : 0
+      }
+      metadataTransformeApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          res = {
+            total: 1,
+            items: [
+              {
+                id: '62848152410b7e96247f98ce',
+                invalid: false,
+                sourceQualifiedName: 'T_db2_TESTDB_SOURCE_B_DB21651028192296776429_621df3ad98bcdf1ea2e223c2',
+                sourceObjectName: 'B_DB21651028192296776429',
+                sourceFieldCount: 3,
+                sourceTableId: '6274f6cc410b7e9624ac721f',
+                sinkNodeId: 'bf8a15de-9118-4f32-8a94-493c58fe25ed',
+                sinkQulifiedName: 'MC_mongodb_test_AUTO_CUSTOMER_POLICY_MG2MG_C_6239733fdecec63c31d50416',
+                sinkDbName: 'Mongo API',
+                sinkObjectName: 'AUTO_CUSTOMER_POLICY_MG2MG_C',
+                sinkDbType: 'mongodb',
+                sinkStageId: 'bf8a15de-9118-4f32-8a94-493c58fe25ed',
+                userDeletedNum: 0,
+                sinkTableId: '62848152410b7e96247f9636',
+                dataFlowId: '628480f3bab771354c257937',
+                uuid: 'c8cd3580d48a4f85a1d267eca5cb316a',
+                fieldsMapping: [
+                  {
+                    targetFieldName: 'pk',
+                    sourceFieldName: 'pk',
+                    sourceFieldType: 'INTEGER',
+                    type: 'auto'
+                  },
+                  {
+                    targetFieldName: 'title',
+                    sourceFieldName: 'title',
+                    sourceFieldType: 'VARCHAR',
+                    type: 'auto'
+                  },
+                  {
+                    targetFieldName: 'n',
+                    sourceFieldName: 'n',
+                    sourceFieldType: 'INTEGER',
+                    type: 'auto'
+                  }
+                ]
+              }
+            ]
+          }
+          let { total, items } = res
+          this.total = total
+          this.navData = items
+          //请求左侧table数据
+          this.intiFieldMappingTableData(items[0])
+        })
+    },
+    async intiFieldMappingTableData(row) {
+      let data = await metadataInstancesApi.originalData(row.sinkQulifiedName)
+      this.target = data && data.length > 0 ? data[0].fields : []
+    },
+    //实时获取schema加载进度
+    initWSSed() {
+      let id = this.dataFlow?.id || this.dataFlow?.taskId
+      let msg = {
+        type: 'metadataTransformerProgress',
+        data: {
+          dataFlowId: id,
+          stageId: this.dataFlow['nodeId']
+        }
+      }
+      this.$ws.ready(() => {
+        this.$ws.send(msg)
+      }, true)
+
+      //总任务
+      let msgData = {
+        type: 'metadataTransformerProgress',
+        data: {
+          dataFlowId: id
+        }
+      }
+      this.$ws.ready(() => {
+        this.$ws.send(msgData)
+      }, true)
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+.field-mapping {
+  .el-table .delete-row {
+    background: #f2f2f2;
+  }
+  .el-table .error-row {
+    background: rgba(255, 0, 0, 0.3);
+    color: #fff;
+  }
+  .el-table th {
+    background: #f4f5f7;
+  }
+}
+.field-mapping-data-type {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #999;
+}
+</style>
+<style scoped lang="scss">
+.field-mapping {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+  .icon {
+    color: #6dc5e8;
+  }
+  .icon-error {
+    color: red;
+  }
+  .task-form__text {
+    display: inline-block;
+    width: 130px;
+    text-align: left;
+  }
+  .btn-refresh {
+    padding: 0;
+    height: 32px;
+    line-height: 32px;
+    width: 32px;
+    min-width: 32px;
+    font-size: 16px;
+    &:hover,
+    &.is-plain:focus:hover {
+      border-color: map-get($color, primary);
+      background-color: map-get($color, disable);
+    }
+  }
+  .task-form-body {
+    display: flex;
+    flex: 1;
+    height: 0;
+    min-height: 350px;
+    .task-form-left__ul {
+      flex: 1;
+      border-top: 1px solid #f2f2f2;
+      border-right: 1px solid #f2f2f2;
+      max-width: 190px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      li {
+        background: #ffffff;
+        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+        border-radius: 4px;
+        border-bottom: 1px solid #f2f2f2;
+        display: flex;
+        padding: 16px 0 10px 10px;
+        &:hover {
+          background: rgba(44, 101, 255, 0.05);
+          cursor: pointer;
+          border-left: 2px solid #2c65ff;
+        }
+        &.active {
+          background: rgba(44, 101, 255, 0.05);
+          border-left: 2px solid #2c65ff;
+          cursor: pointer;
+        }
+        .task-form__img {
+          width: 34px;
+          height: 50px;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+        .task-form-text-box {
+          margin-left: 16px;
+          width: 140px;
+          .source {
+            font-size: 12px;
+            font-weight: 400;
+            color: #000000;
+            line-height: 10px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .target {
+            font-size: 12px;
+            font-weight: 400;
+            color: #ef9868;
+            line-height: 10px;
+            margin-top: 13px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .select {
+            font-size: 12px;
+            font-weight: 400;
+            color: #000000;
+            line-height: 17px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+        }
+      }
+    }
+
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      flex-direction: column;
+    }
+    .color-darkorange {
+      color: darkorange;
+    }
+    .field-mapping-table__default_value {
+      display: inline-block;
+      max-width: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      line-height: 9px;
+    }
+  }
+}
+::v-deep {
+  .field-maping-table-dialog {
+    .table-box {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      .table-form {
+        width: 56%;
+        .el-form-item {
+          margin-bottom: 12px;
+        }
+        .tip {
+          padding-left: 40px;
+        }
+      }
+      .table-example {
+        width: 36%;
+        h3 {
+          padding-bottom: 20px;
+        }
+        p {
+          padding-bottom: 10px;
+        }
+      }
+    }
+  }
+}
+</style>

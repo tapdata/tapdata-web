@@ -84,10 +84,10 @@ export class TargetDatabase extends NodeType {
         'x-display': 'hidden'
       },
       fieldMapping: {
-        type: 'string',
+        type: 'void',
         title: '推演结果',
         'x-decorator': 'FormItem',
-        'x-component': 'FieldMapping'
+        'x-component': 'SchemaFiledMapping'
       },
       collapse: {
         type: 'void',

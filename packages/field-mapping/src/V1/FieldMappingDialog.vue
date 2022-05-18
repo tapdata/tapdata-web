@@ -1381,27 +1381,33 @@ export default {
         }
         .task-form-text-box {
           margin-left: 16px;
-          width: 200px;
+          width: 190px;
           .source {
             font-size: 12px;
             font-weight: 400;
             color: #000000;
-            line-height: 17px;
+            line-height: 7px;
             text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .target {
             font-size: 12px;
             font-weight: 400;
             color: #ef9868;
-            line-height: 17px;
+            line-height: 7px;
             margin-top: 16px;
             text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .select {
             font-size: 12px;
             font-weight: 400;
             color: #000000;
-            line-height: 17px;
+            line-height: 7px;
             margin-top: 10px;
             display: flex;
             justify-content: space-between;

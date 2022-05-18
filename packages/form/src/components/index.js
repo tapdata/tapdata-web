@@ -28,5 +28,6 @@ export * from './field-select'
 export * from './form-content'
 export * from './table-list-card'
 export * from './table-selector'
+export * from './schema-field-mapping'
 
 export * from '@formily/element'
