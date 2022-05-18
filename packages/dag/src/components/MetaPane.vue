@@ -19,8 +19,8 @@
         </template>
       </ElTableColumn>
       <ElTableColumn prop="data_type" :label="$t('meta_table_field_type')"> </ElTableColumn>
-      <ElTableColumn prop="scale" :label="$t('meta_table_scale')"> </ElTableColumn>
-      <ElTableColumn prop="precision" :label="$t('meta_table_precision')"> </ElTableColumn>
+      <ElTableColumn v-if="!isPdk" prop="scale" :label="$t('meta_table_scale')"> </ElTableColumn>
+      <ElTableColumn v-if="!isPdk" prop="precision" :label="$t('meta_table_precision')"> </ElTableColumn>
       <ElTableColumn prop="default_value" :label="$t('meta_table_default')"> </ElTableColumn>
       <ElTableColumn prop="is_nullable" :label="$t('meta_table_not_null')">
         <template #default="{ row }">
@@ -70,6 +70,10 @@ export default {
 
     showLoading() {
       return this.loading || this.transformStatus === 'loading'
+    },
+
+    isPdk() {
+      return this.activeNode?.attrs?.pdkType === 'pdk'
     }
   },
 
