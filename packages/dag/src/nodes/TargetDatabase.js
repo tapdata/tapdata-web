@@ -83,6 +83,12 @@ export class TargetDatabase extends NodeType {
         type: 'string',
         'x-display': 'hidden'
       },
+      fieldMapping: {
+        type: 'string',
+        title: '推演结果',
+        'x-decorator': 'FormItem',
+        'x-component': 'FieldMapping'
+      },
       collapse: {
         type: 'void',
         'x-decorator': 'FormItem',
@@ -95,29 +101,29 @@ export class TargetDatabase extends NodeType {
               title: '高级设置'
             },
             properties: {
-              writeStrategy: {
+              existDataProcessMode: {
                 type: 'string',
                 title: '重复处理策略',
-                default: 'updateOrInsert',
+                default: 'keepData',
                 enum: [
                   {
                     label: '清除目标端原有表结构及数据',
-                    value: 'updateWrite'
+                    value: 'dropTable'
                   },
                   {
                     label: '保持目标端原有表结构，清除数据',
-                    value: 'appendWrite'
+                    value: 'removeData'
                   },
                   {
                     label: '保持目标端原有表结构和数据',
-                    value: 'updateOrInsert'
+                    value: 'keepData'
                   }
                 ],
                 'x-decorator': 'FormItem',
                 required: true,
                 'x-component': 'Select'
               },
-              existDataProcessMode: {
+              writeEvent: {
                 title: '数据写入策略',
                 type: 'void',
                 'x-decorator': 'FormItem',
@@ -137,21 +143,21 @@ export class TargetDatabase extends NodeType {
                           }
                         ]
                       },
-                      existDataProcess: {
+                      insertEvent: {
                         type: 'string',
                         'x-component': 'Select',
                         'x-decorator-props': {
                           wrapperWidth: 300
                         },
-                        default: '1',
+                        default: 'existUpdateOrNotExistInsert',
                         enum: [
                           {
                             label: '目标存在时更新，不存在时插入',
-                            value: '1'
+                            value: 'existUpdateOrNotExistInsert'
                           },
                           {
                             label: '目标存在时丢弃，不存在时插入',
-                            value: '2'
+                            value: 'existDiscardOrNotExistInsert'
                           }
                         ],
                         'x-decorator': 'FormItem',
@@ -174,7 +180,7 @@ export class TargetDatabase extends NodeType {
                           }
                         ]
                       },
-                      existDataProcess: {
+                      updateEvent: {
                         type: 'string',
                         'x-component': 'Select',
                         'x-decorator-props': {
@@ -184,11 +190,11 @@ export class TargetDatabase extends NodeType {
                         enum: [
                           {
                             label: '目标存在时更新，不存在时丢弃',
-                            value: '1'
+                            value: 'existUpdateOrNotExistDiscard'
                           },
                           {
                             label: '目标存在时更新，不存在时插入',
-                            value: '2'
+                            value: 'existUpdateOrNotExistInsert'
                           }
                         ],
                         'x-decorator': 'FormItem',
@@ -200,7 +206,7 @@ export class TargetDatabase extends NodeType {
                     type: 'void',
                     'x-component': 'Space',
                     properties: {
-                      checkMode: {
+                      deleteEvent: {
                         type: 'array',
                         'x-component': 'Checkbox.Group',
                         'x-decorator': 'FormItem',
@@ -225,7 +231,7 @@ export class TargetDatabase extends NodeType {
                   }
                 }
               },
-              increaseSyncInterval: {
+              writeThreadSize: {
                 title: '目标写入线程数',
                 type: 'number',
                 default: 8,
