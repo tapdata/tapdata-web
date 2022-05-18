@@ -5,11 +5,11 @@
         <ElForm>
           <ElFormItem :label="$t('views_Lang_wenAnBaoHanDe')">
             <ElInput v-model="inc" type="textarea" :placeholder="$t('views_Lang_wenAnBaoHanDe')" autosize></ElInput>
-            <ElButton type="primary" class="mt-3" @click="saveIncludes">{{ $t('button_submit') }}</ElButton>
+            <ElButton type="primary" class="mt-3" @click="saveIncludes">{{ $t('button_save') }}</ElButton>
           </ElFormItem>
           <ElFormItem :label="$t('views_Lang_wenAnDengYuDe')">
             <ElInput v-model="equal" type="textarea" :placeholder="$t('views_Lang_wenAnDengYuDe')" autosize></ElInput>
-            <ElButton type="primary" class="mt-3" @click="saveEqual">{{ $t('button_submit') }}</ElButton>
+            <ElButton type="primary" class="mt-3" @click="saveEqual">{{ $t('button_save') }}</ElButton>
           </ElFormItem>
         </ElForm>
       </ElCollapseItem>

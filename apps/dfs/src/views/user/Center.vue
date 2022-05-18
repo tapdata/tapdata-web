@@ -99,12 +99,10 @@
             <ElInput v-else v-model="enForm.city" class="enterprise-item__value"></ElInput>
           </ElCol>
         </ElRow>
-        <VButton v-if="!isEdit" type="text" @click="editEnData">{{ $t('user_Center_qiYeXinXiXiu') }}</VButton>
+        <VButton v-if="!isEdit" type="text" class="pl-0" @click="editEnData">{{ $t('user_Center_qiYeXinXiXiu') }}</VButton>
         <template v-else>
-          <VButton type="text" @click="cancelEditEnData">{{ $t('button_cancel') }}</VButton>
-          <VButton type="text" auto-loading @click="saveEnData(arguments[0])">{{
-            $t('button_save')
-          }}</VButton>
+          <VButton type="text" class="pl-0" @click="cancelEditEnData">{{ $t('button_cancel') }}</VButton>
+          <VButton type="text" auto-loading @click="saveEnData(arguments[0])">{{ $t('button_save') }}</VButton>
         </template>
       </div>
     </div>

@@ -29,10 +29,10 @@ export default {
   button_all_delete: '全部删除',
   button_cancel: '取消',
   button_finish: '完成',
-  button_submit: '保存',
+  button_submit: '提交',
   button_confirm: '确定',
   button_close: '取 消',
-  button_save: '确 定',
+  button_save: '保存',
   button_upload: '上传',
   button_export: '导出',
   button_details: '详情',
@@ -53,6 +53,12 @@ export default {
   // 时间
   start_time: '开始时间',
   end_time: '结束时间',
+
+  // 用户
+  user_name: '用户名',
+  user_nick_name: '昵称',
+  user_phone: '手机',
+  user_email: '邮箱',
 
   /** 模块 */
   // 工作台

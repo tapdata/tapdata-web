@@ -29,7 +29,7 @@ export default {
   button_submit: 'Submit',
   button_confirm: 'Confirm',
   button_close: 'Cancel',
-  button_save: 'determine',
+  button_save: 'Save',
   button_upload: 'upload',
   button_export: 'export',
   button_details: 'details',

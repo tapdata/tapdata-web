@@ -1,5 +1,5 @@
 export default {
-  gl_select_option_all: 'all',
+  gl_select_option_all: 'All',
   button_test_connection: 'Test',
   list_operation: 'Operation',
   notify_agent_notification: 'Agent notification',

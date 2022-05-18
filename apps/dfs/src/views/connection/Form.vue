@@ -99,7 +99,7 @@
                   :loading="submitBtnLoading"
                   @click="submit"
                 >
-                  {{ $t('button_submit') }}
+                  {{ $t('button_save') }}
                 </ElButton>
               </template>
             </footer>
