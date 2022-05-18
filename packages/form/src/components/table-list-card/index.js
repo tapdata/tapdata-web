@@ -6,7 +6,7 @@ const api = new MetadataInstances()
 
 export const TableListCard = defineComponent({
   props: ['connectionId'],
-  setup(props) {
+  setup(props, { emit }) {
     const loading = ref(false)
     const list = ref([])
     const loadData = () => {
@@ -15,6 +15,7 @@ export const TableListCard = defineComponent({
         .getTables(props.connectionId)
         .then(data => {
           list.value = data
+          emit('change', data)
         })
         .finally(() => (loading.value = false))
     }
