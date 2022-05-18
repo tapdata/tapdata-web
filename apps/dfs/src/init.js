@@ -16,6 +16,7 @@ import i18n from './i18n'
 import Purchase from '@/views/purchase/Purchase'
 import store from '@/store'
 import { errorConfirmFnc } from '@/util'
+import VConfirm from '@/components/v-confirm'
 
 Vue.config.productionTip = false
 Vue.prototype.$settings = settings
@@ -43,6 +44,18 @@ Vue.prototype.$checkAgentStatus = callback => {
       }
     })
   })
+}
+
+Vue.prototype.$confirm = (message, title, options) => {
+  return new Promise((resolve, reject) => {
+    VConfirm.confirm(message, title, options)
+      .then(() => {
+        resolve(true)
+      })
+      .catch(() => {
+        reject(false)
+      })
+  }).catch(() => {})
 }
 
 export default ({ routes }) => {

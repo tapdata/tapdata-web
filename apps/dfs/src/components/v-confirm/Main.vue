@@ -5,7 +5,7 @@
         :class="['message-box position-relative', customClass, center && 'el-message-box--center']"
         :style="{ width: width }"
       >
-        <!-- <div class="message-box__header position-relative">
+        <div class="message-box__header position-relative">
           <div class="message-box__title flex align-items-center">
             <VIcon
               v-if="icon && haveTitleAndMessage"
@@ -26,7 +26,7 @@
           >
             <i class="el-message-box__close el-icon-close"></i>
           </button>
-        </div> -->
+        </div>
         <div class="message-box__body">
           <div class="el-message-box__container">
             <div class="el-message-box__message flex" v-if="message !== ''">
@@ -55,7 +55,7 @@
             @click.native="handleAction('cancel')"
             @keydown.enter="handleAction('cancel')"
           >
-            {{ cancelButtonText || '取消' }}
+            {{ cancelButtonText || cancelButtonTextDefault }}
           </el-button>
           <el-button
             type="primary"
@@ -67,7 +67,7 @@
             @click.native="handleAction('confirm')"
             @keydown.enter="handleAction('confirm')"
           >
-            {{ confirmButtonText || '确认' }}
+            {{ confirmButtonText || confirmButtonTextDefault }}
           </el-button>
         </div>
       </div>
@@ -81,6 +81,7 @@ import error from 'web-core/assets/icons/svg/error.svg'
 import info from 'web-core/assets/icons/svg/info.svg'
 import success from 'web-core/assets/icons/svg/success.svg'
 import warning from 'web-core/assets/icons/svg/warning.svg'
+import i18n from '@/i18n'
 
 export default {
   components: { VIcon },
@@ -121,7 +122,9 @@ export default {
       cancelButtonClass: '',
       dangerouslyUseHTMLString: false,
       distinguishCancelAndClose: false,
-      width: '416px' // 需要完整的像素字符串
+      width: '416px', // 需要完整的像素字符串
+      confirmButtonTextDefault: i18n.t('button_confirm'),
+      cancelButtonTextDefault: i18n.t('button_cancel')
     }
   },
   computed: {
@@ -257,13 +260,6 @@ export default {
 .message-box__btns {
   padding: 0 24px 24px;
   text-align: right;
-  .el-button {
-    padding: 0 16px;
-    &.el-button--mini {
-      height: 28px;
-      line-height: 28px;
-    }
-  }
 }
 .message-button-cancel {
   padding: 7px 16px;
