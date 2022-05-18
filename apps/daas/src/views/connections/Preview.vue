@@ -157,6 +157,11 @@ export default {
     open(row) {
       this.visible = true
       this.showProgress = false
+      if (row.pdkType === 'pdk') {
+        for (let key in row.config) {
+          row['database_' + key] = row.config[key]
+        }
+      }
       this.connection = row
       //组装数据
       this.connection['last_updated'] = this.$moment(row.last_updated).format('YYYY-MM-DD HH:mm:ss')
