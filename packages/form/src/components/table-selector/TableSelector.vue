@@ -461,11 +461,14 @@ export default {
     getErrorTables(tables) {
       let allTables = this.table.tables
       let errorTables = {}
-      tables.forEach(t => {
-        if (!allTables.includes(t)) {
-          errorTables[t] = this.$t('component_table_selector_error_not_exit')
-        }
-      })
+
+      if (!this.loading) {
+        tables.forEach(t => {
+          if (!allTables.includes(t)) {
+            errorTables[t] = this.$t('component_table_selector_error_not_exit')
+          }
+        })
+      }
 
       this.errorTables = errorTables
       return errorTables

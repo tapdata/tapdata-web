@@ -1,5 +1,5 @@
 <template>
-  <aside class="layout-sidebar --left border-end flex flex-column flex-shrink-0">
+  <aside class="layout-sidebar --left border-end flex-column flex-shrink-0">
     <div class="flex flex-column flex-1 min-h-0">
       <div class="connection-tabs flex align-center px-1 border-bottom">
         <div
@@ -66,6 +66,7 @@
               }"
               :key="db.id"
               class="db-item grabbable flex align-center px-2 user-select-none rounded-2"
+              @dblclick="$emit('add-node', getNodeProps(db))"
             >
               <NodeIcon class="flex-shrink-0 mr-2" :node="db" />
               <div class="flex flex-wrap db-item-content align-self-stretch py-1">

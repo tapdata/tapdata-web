@@ -131,7 +131,6 @@ export class Database extends NodeType {
         'x-component-props': {
           connectionId: '{{$values.connectionId}}',
           style: {
-            height: 'unset',
             minHeight: 0,
             maxHeight: 'calc(100vh - 120px)'
           }
@@ -140,7 +139,7 @@ export class Database extends NodeType {
           dependencies: ['attrs.howManyTable'],
           fulfill: {
             state: {
-              visible: '{{$deps[0] === "some"}}'
+              visible: '{{$deps[0] === "some" ? "visible":"hidden"}}'
             }
           }
         }
@@ -159,7 +158,7 @@ export class Database extends NodeType {
               dependencies: ['attrs.howManyTable'],
               fulfill: {
                 state: {
-                  visible: '{{$deps[0] === "all"}}'
+                  display: '{{$deps[0] === "all" ? "visible":"hidden"}}'
                 }
               }
             }

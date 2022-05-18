@@ -29,6 +29,7 @@
     <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
       <LeftSider
+        v-show="activeType !== 'node'"
         v-if="!stateIsReadonly"
         v-resize.right="{
           minWidth: 260,
@@ -36,7 +37,7 @@
         }"
         @move-node="handleDragMoveNode"
         @drop-node="handleAddNodeByDrag"
-        @add-table-as-node="handleAddTableAsNode"
+        @add-node="handleAddNode"
       />
       <!--内容体-->
       <main id="dfEditorContent" ref="layoutContent" class="layout-content flex-1 overflow-hidden">
@@ -180,6 +181,7 @@ export default {
     ...mapGetters('dataflow', [
       'allNodes',
       'allEdges',
+      'activeType',
       'isActionActive',
       'nodeById',
       'stateIsDirty',
@@ -1450,7 +1452,7 @@ export default {
       return node
     },
 
-    handleAddTableAsNode(item) {
+    handleAddNode(item) {
       const { x, y } = this.$refs.paperScroller.getPaperCenterPos()
       const position = this.getNewNodePosition([x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2], [0, 120])
       const node = this.handleAddNodeToPos(position, item)
@@ -1879,6 +1881,7 @@ $sidebarBg: #fff;
 .layout-sidebar {
   position: relative;
   z-index: 10;
+  display: flex;
   width: $sidebarW;
   height: 100%;
   background-color: $sidebarBg;
