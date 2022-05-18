@@ -106,19 +106,20 @@ export class Database extends NodeType {
         ]
       },
 
-      'syncObjects.0.type': {
+      'attrs.howManyTable': {
         title: '选择表',
         type: 'string',
+        default: 'all',
         'x-decorator': 'FormItem',
         'x-component': 'Radio.Group',
         enum: [
           {
             label: '全部',
-            value: 'tableAll'
+            value: 'all'
           },
           {
             label: '自定义',
-            value: 'table'
+            value: 'some'
           }
         ]
       },
@@ -130,14 +131,16 @@ export class Database extends NodeType {
         'x-component-props': {
           connectionId: '{{$values.connectionId}}',
           style: {
-            height: '300px'
+            height: 'unset',
+            minHeight: 0,
+            maxHeight: 'calc(100vh - 120px)'
           }
         },
         'x-reactions': {
-          dependencies: ['syncObjects.0.type'],
+          dependencies: ['attrs.howManyTable'],
           fulfill: {
             state: {
-              visible: '{{$deps[0] === "table"}}'
+              visible: '{{$deps[0] === "some"}}'
             }
           }
         }
@@ -145,15 +148,20 @@ export class Database extends NodeType {
 
       tableCard: {
         type: 'void',
-        'x-component': 'TableListCard',
-        'x-component-props': {
-          connectionId: '{{$values.connectionId}}'
-        },
-        'x-reactions': {
-          dependencies: ['syncObjects.0.type'],
-          fulfill: {
-            state: {
-              visible: '{{$deps[0] === "tableAll"}}'
+        properties: {
+          'syncObjects.0.objectNames': {
+            type: 'string',
+            'x-component': 'TableListCard',
+            'x-component-props': {
+              connectionId: '{{$values.connectionId}}'
+            },
+            'x-reactions': {
+              dependencies: ['attrs.howManyTable'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0] === "all"}}'
+                }
+              }
             }
           }
         }
