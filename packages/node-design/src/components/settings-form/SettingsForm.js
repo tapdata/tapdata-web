@@ -65,6 +65,8 @@ export const SettingsForm = defineComponent({
     return () => {
       const prefix = prefixRef
 
+      console.log('SettingsForm', sources, nodeRef.value, nodeRef.value?.isRoot) // eslint-disable-line
+
       const render = () => {
         if (!sources.isEmpty && formRef.value) {
           return (
