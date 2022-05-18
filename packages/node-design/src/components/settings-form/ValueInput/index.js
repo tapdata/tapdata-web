@@ -50,7 +50,7 @@ export const ValueInput = createPolyInput([
       props: ['value'],
       setup: (props, { emit }) => {
         return () => (
-          <Popover trigger="click">
+          <Popover trigger="click" class="w-100">
             <div
               style={{
                 width: '400px',
@@ -73,7 +73,7 @@ export const ValueInput = createPolyInput([
                 }}
               />
             </div>
-            <Button slot="reference" block>
+            <Button slot="reference" class="w-100">
               <TextWidget token="SettingComponents.ValueInput.expression" />
             </Button>
           </Popover>
