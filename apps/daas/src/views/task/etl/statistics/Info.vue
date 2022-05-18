@@ -678,7 +678,11 @@ export default {
         } else {
           xArr.forEach((el, index) => {
             // 过滤重复的时间点
-            if (!this.lineDataDeep.x.includes(el)) {
+            let findIndex = this.lineDataDeep.x.indexOf(el)
+            if (findIndex > -1) {
+              this.lineDataDeep.y[0][findIndex] = inArr[index]
+              this.lineDataDeep.y[1][findIndex] = outArr[index]
+            } else {
               this.lineDataDeep.x.push(el)
               this.lineDataDeep.y[0].push(inArr[index])
               this.lineDataDeep.y[1].push(outArr[index])
