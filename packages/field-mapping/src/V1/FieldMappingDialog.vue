@@ -159,7 +159,12 @@
             <template slot-scope="scope">
               <div
                 class="cursor-pointer"
-                v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && modeMapping[transform.mode]['precision']"
+                v-if="
+                  !scope.row.is_deleted &&
+                  scope.row.t_isPrecisionEdit &&
+                  modeMapping[transform.mode]['precision'] &&
+                  !isPdk
+                "
                 @click="edit(scope.row, 'precision')"
               >
                 <span>{{ scope.row.t_precision }}</span>
@@ -174,7 +179,9 @@
             <template slot-scope="scope">
               <div
                 class="cursor-pointer"
-                v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit && modeMapping[transform.mode]['scale']"
+                v-if="
+                  !scope.row.is_deleted && scope.row.t_isScaleEdit && modeMapping[transform.mode]['scale'] && !isPdk
+                "
                 @click="edit(scope.row, 'scale')"
               >
                 <span>{{ scope.row.t_scale }}</span>
