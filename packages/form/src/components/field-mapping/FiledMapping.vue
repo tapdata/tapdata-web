@@ -18,7 +18,7 @@
           {{ progress.finished }} / {{ progress.total }} <VIcon size="12">loading</VIcon
           ><span>{{ $t('dag_dialog_field_mapping_loading_schema') }}</span>
         </div>
-        <ul class="task-form-left__ul flex flex-column">
+        <ul class="task-form-left__ul flex flex-column" v-loading="loadingNav">
           <li
             v-for="(item, index) in navData"
             :key="index"
@@ -71,9 +71,12 @@
             <ElButton plain class="btn-refresh" @click="getMetadataTransformer">
               <VIcon class="text-primary">refresh</VIcon>
             </ElButton>
+            <ElButton plain class="btn-refresh" @click="dialogVisible = true">
+              <VIcon class="text-primary">edit-outline</VIcon>
+            </ElButton>
           </div>
         </div>
-        <ElTable class="field-mapping-table table-border" height="100%" border :data="target" v-loading="loading">
+        <ElTable class="field-mapping-table table-border" height="100%" border :data="target" v-loading="loadingTable">
           <ElTableColumn show-overflow-tooltip :label="$t('dag_dialog_field_mapping_source_field')" prop="field_name">
             <template slot-scope="scope">
               <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
@@ -98,6 +101,7 @@
         </ElTable>
       </div>
     </div>
+    <Dialog :visible="dialogVisible" :target="target" :navData="navData"></Dialog>
   </div>
 </template>
 
@@ -106,6 +110,7 @@ import VIcon from 'web-core/components/VIcon'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
 import refresh from 'web-core/assets/icons/svg/refresh.svg'
 import { Task, MetadataTransformer, MetadataInstances } from '@tap/api'
+import Dialog from './Dialog'
 
 const taskApi = new Task()
 const metadataTransformeApi = new MetadataTransformer()
@@ -113,13 +118,14 @@ const metadataInstancesApi = new MetadataInstances()
 
 export default {
   name: 'FieldMappingDialog',
-  components: { VIcon },
+  components: { VIcon, Dialog },
   data() {
     return {
       searchField: '',
       searchTable: '',
-      loading: false,
-      loadingPage: false,
+      loadingTable: true,
+      loadingNav: true,
+      dialogVisible: false,
       dataFlow: '',
       navData: [],
       typeMapping: [],
@@ -191,6 +197,7 @@ export default {
       if (this.getDataFlow) {
         this.dataFlow = this.getDataFlow()
         this.dataFlow.id = this.dataFlow.id || this.dataFlow?.taskId
+        this.dataFlow['syncType'] = 'migrate'
       }
 
       if (!this.dataFlow) return
@@ -276,10 +283,14 @@ export default {
           //请求左侧table数据
           this.intiFieldMappingTableData(items[0])
         })
+        .finally(() => {
+          this.loadingNav = false
+        })
     },
     async intiFieldMappingTableData(row) {
       let data = await metadataInstancesApi.originalData(row.sinkQulifiedName)
       this.target = data && data.length > 0 ? data[0].fields : []
+      this.loadingTable = false
     },
     //实时获取schema加载进度
     initWSSed() {
