@@ -114,9 +114,9 @@ export default observer({
                       isStopOnError: {
                         title: this.$t('task_setting_stop_on_error'), //遇到错误停止
                         type: 'boolean',
+                        default: true,
                         'x-decorator': 'FormItem',
-                        'x-component': 'Switch',
-                        default: true
+                        'x-component': 'Switch'
                       },
                       shareCdcEnable: {
                         title: this.$t('connection_form_shared_mining'), //共享挖掘日志过滤
@@ -134,10 +134,9 @@ export default observer({
                         }
                       },
                       syncPoints: {
-                        title: this.$t('task_setting_sync_point'), //增量采集开始时刻
                         type: 'array',
-                        'x-decorator': 'FormItem',
                         'x-component': 'ArrayItems',
+                        'x-decorator': 'FormItem',
                         'x-reactions': {
                           dependencies: ['sync_type'],
                           fulfill: {
@@ -146,61 +145,57 @@ export default observer({
                             }
                           }
                         },
-                        items: [
-                          {
-                            type: 'object',
-                            properties: {
-                              row: {
-                                type: 'void',
-                                'x-component': 'Row',
-                                'x-component-props': {
-                                  type: 'flex',
-                                  gap: '10px'
-                                },
-                                properties: {
-                                  type: {
-                                    type: 'string',
-                                    'x-decorator': 'Col',
-                                    'x-decorator-props': {
-                                      span: 8
-                                    },
-                                    'x-component': 'Select',
-                                    'x-component-props': {
-                                      placeholder: '请选择'
-                                    },
-                                    default: 'localTZ',
-                                    enum: [
-                                      {
-                                        label: this.$t('dataFlow.SyncInfo.localTZType'),
-                                        value: 'localTZ'
-                                      },
-                                      {
-                                        label: this.$t('dataFlow.SyncInfo.connTZType'),
-                                        value: 'connTZ'
-                                      },
-                                      {
-                                        label: this.$t('dataFlow.SyncInfo.currentType'),
-                                        value: 'current'
-                                      }
-                                    ]
+                        default: [{ type: 'current', date: '' }],
+                        title: this.$t('task_setting_sync_point'), //增量采集开始时刻
+                        items: {
+                          type: 'object',
+                          properties: {
+                            space: {
+                              type: 'void',
+                              'x-component': 'Space',
+                              properties: {
+                                type: {
+                                  type: 'string',
+                                  'x-component': 'Select',
+                                  'x-component-props': {
+                                    placeholder: '请选择'
                                   },
-                                  date: {
-                                    type: 'string',
-                                    'x-decorator': 'Col',
-                                    'x-decorator-props': {
-                                      span: 14
+                                  default: 'current',
+                                  enum: [
+                                    {
+                                      label: this.$t('dataFlow.SyncInfo.localTZType'),
+                                      value: 'localTZ'
                                     },
-                                    'x-component': 'DatePicker',
-                                    'x-component-props': {
-                                      type: 'datetime',
-                                      format: 'yyyy-MM-dd HH:mm:ss'
+                                    {
+                                      label: this.$t('dataFlow.SyncInfo.connTZType'),
+                                      value: 'connTZ'
+                                    },
+                                    {
+                                      label: this.$t('dataFlow.SyncInfo.currentType'),
+                                      value: 'current'
+                                    }
+                                  ]
+                                },
+                                date: {
+                                  type: 'string',
+                                  'x-component': 'DatePicker',
+                                  'x-component-props': {
+                                    type: 'datetime',
+                                    format: 'yyyy-MM-dd HH:mm:ss'
+                                  },
+                                  'x-reactions': {
+                                    dependencies: ['type'],
+                                    fulfill: {
+                                      state: {
+                                        visible: '{{$deps[0] !== "current"}}'
+                                      }
                                     }
                                   }
                                 }
                               }
                             }
                           }
-                        ]
+                        }
                       }
                     }
                   }
