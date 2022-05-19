@@ -43,10 +43,10 @@
             @click.prevent="select(item, index)"
           >
             <div class="task-form__img" v-if="item.invalid">
-              <img src="web-core/assets/images/fieldMapping-table-error.png" alt="" />
+              <img :src="fieldMapping_table_error" alt="" />
             </div>
             <div class="task-form__img" v-else>
-              <img src="web-core/assets/images/fieldMapping-table.png" alt="" />
+              <img :src="fieldMapping_table" alt="" />
             </div>
             <div class="task-form-text-box">
               <div class="source">{{ item.sourceObjectName }}</div>
@@ -402,6 +402,8 @@
 <script>
 import VIcon from 'web-core/components/VIcon'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
+import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
+import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
 import { delayTrigger } from 'web-core/util'
 import { modeMapping } from './const'
 
@@ -469,6 +471,8 @@ export default {
       currentForm: {},
       sourceTableName: 'tableName',
       rollback,
+      fieldMapping_table,
+      fieldMapping_table_error,
       //批量修改字段
       batchOperation: [
         {

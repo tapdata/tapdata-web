@@ -1,6 +1,6 @@
 import { observer } from '@formily/reactive-vue'
 import { TextWidget } from '../widgets'
-import { usePrefix, useWorkbench } from '../../hooks'
+import { useCurrentNode, usePrefix, useWorkbench } from '../../hooks'
 import { defineComponent, ref, watchEffect } from 'vue-demi'
 import { requestIdle } from '@tap/shared'
 
@@ -12,6 +12,9 @@ export const SettingsPanel = observer(
       const workbenchRef = useWorkbench()
       const innerVisible = ref(true)
       const visible = ref(true)
+      const currentWorkspace = workbenchRef.value?.activeWorkspace || workbenchRef.value?.currentWorkspace
+      const currentWorkspaceId = currentWorkspace?.id
+      const nodeRef = useCurrentNode(currentWorkspaceId)
 
       watchEffect(() => {
         if (visible.value || workbenchRef.value.type === 'DESIGNABLE') {
@@ -26,7 +29,7 @@ export const SettingsPanel = observer(
       })
 
       return () => {
-        if (workbenchRef.value.type !== 'DESIGNABLE') {
+        if (workbenchRef.value.type !== 'DESIGNABLE' || nodeRef.value?.isRoot) {
           if (innerVisible.value) innerVisible.value = false
           return null
         }

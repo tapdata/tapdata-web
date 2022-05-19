@@ -43,13 +43,7 @@
       <div v-if="details.type === 'custom'" class="mb-4">
         <div class="details-panel-title mb-4">{{ $t('function_script_label') }}</div>
         <div class="script-editor">
-          <CodeEditor
-            v-model="details.script"
-            ref="editor"
-            lang="javascript"
-            height="200"
-            :options="{ readOnly: true }"
-          ></CodeEditor>
+          <JsEditor v-model="details.script" height="200" :options="{ readOnly: true }"></JsEditor>
         </div>
       </div>
       <div class="footer pt-6 pb-4">
@@ -63,9 +57,9 @@
 </template>
 
 <script>
-import CodeEditor from '@/components/CodeEditor'
+import { JsEditor } from '@tap/component'
 export default {
-  components: { CodeEditor },
+  components: { JsEditor },
   data() {
     return {
       details: {}

@@ -2,13 +2,22 @@
   <div
     :style="{
       height: height ? px(height) : '100%',
-      width: width ? px(width) : '100%'
+      width: width ? px(width) : '100%',
+      padding: '12px 0',
+      overflow: 'hidden',
+      background: '#282c34'
     }"
-  ></div>
+  >
+    <div
+      :style="{
+        height: '100%',
+        width: '100%'
+      }"
+    ></div>
+  </div>
 </template>
 
 <script>
-// TODO 输出README文档
 import ace from 'ace-builds'
 import 'ace-builds/webpack-resolver'
 import 'ace-builds/src-noconflict/ext-language_tools'
@@ -25,7 +34,10 @@ export default {
       required: true
     },
     lang: String,
-    theme: String,
+    theme: {
+      type: String,
+      default: 'one_dark'
+    },
     height: [String, Number],
     width: [String, Number],
     options: Object
@@ -55,8 +67,7 @@ export default {
   mounted() {
     let lang = this.lang || 'text'
     let theme = this.theme
-
-    let editor = (this.editor = ace.edit(this.$el))
+    let editor = (this.editor = ace.edit(this.$el.firstElementChild))
     let tools = ace.require('ace/ext/language_tools')
     var beautify = ace.require('ace/ext/beautify') // get reference to extension
     ace.require('ace/ext/searchbox')

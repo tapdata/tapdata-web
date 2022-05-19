@@ -1,4 +1,4 @@
-import CodeEditor from 'web-core/components/base/VCodeEditor'
+import { VCodeEditor } from '@tap/component'
 
 export const SqlEditor = {
   props: {
@@ -40,7 +40,7 @@ export const SqlEditor = {
       ...this.options
     }
     return (
-      <CodeEditor
+      <VCodeEditor
         class="border rounded-2"
         value={this.sql}
         lang="sql"

@@ -1,6 +1,6 @@
 import { transformToSchema, transformToTreeNode } from '../../../core'
 import { defineComponent } from 'vue-demi'
-import CodeEditor from 'web-core/components/base/VCodeEditor'
+import { VCodeEditor } from '@tap/component'
 
 export const SchemaEditorWidget = defineComponent({
   props: ['tree', 'onChange', 'options'],
@@ -10,7 +10,7 @@ export const SchemaEditorWidget = defineComponent({
       ...props.options
     }
     return () => (
-      <CodeEditor
+      <VCodeEditor
         value={JSON.stringify(transformToSchema(props.tree), null, 2)}
         onInput={value => {
           props.onChange?.(transformToTreeNode(JSON.parse(value)))

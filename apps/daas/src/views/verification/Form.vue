@@ -237,7 +237,12 @@
                 <div class="item-filter">
                   <div v-if="item.source.sourceFilterFalg" class="item-filter-body">
                     <template v-if="editId === item.id">
-                      <CodeEditor v-model.trim="item.source.where" lang="sql" height="200px" class="mb-2"></CodeEditor>
+                      <VCodeEditor
+                        v-model.trim="item.source.where"
+                        class="mb-2"
+                        lang="sql"
+                        height="200px"
+                      ></VCodeEditor>
                       <div class="filter-example-label">{{ $t('dag_dialog_field_mapping_example') }}</div>
                       <div v-if="item.source.databaseType === 'mongodb'" class="filter-example">
                         {"field": 1, "field2": "value"}
@@ -253,7 +258,12 @@
                 <div class="item-filter">
                   <div v-if="item.target.targeFilterFalg" class="item-filter-body">
                     <template v-if="editId === item.id">
-                      <CodeEditor v-model.trim="item.target.where" lang="sql" height="200px" class="mb-2"></CodeEditor>
+                      <VCodeEditor
+                        v-model.trim="item.target.where"
+                        class="mb-2"
+                        lang="sql"
+                        height="200px"
+                      ></VCodeEditor>
                       <div class="filter-example-label">{{ $t('dag_dialog_field_mapping_example') }}</div>
                       <div v-if="item.target.databaseType === 'mongodb'" class="filter-example">
                         {"field": 1, "field2": "value"}
@@ -323,7 +333,7 @@
       <div class="js-wrap">
         <div class="jsBox">
           <div class="js-fixText"><span style="color: #0000ff">function </span><span> validate(sourceRow){</span></div>
-          <CodeEditor class="js-editor" v-model="webScript" lang="javascript"></CodeEditor>
+          <JsEditor v-model="webScript" class="js-editor"></JsEditor>
           <div class="js-fixText">}</div>
         </div>
         <div class="markdown-body-wrap example ml-4">
@@ -512,11 +522,11 @@ const META_INSTANCE_FIELDS = {
   meta_type: true
 }
 import MultiSelection from './MultiSelection.vue'
-import CodeEditor from '@/components/CodeEditor.vue'
+import { VCodeEditor, JsEditor } from '@tap/component'
 
 import { DATA_NODE_TYPES } from '@/const.js'
 export default {
-  components: { MultiSelection, CodeEditor },
+  components: { MultiSelection, VCodeEditor, JsEditor },
   data() {
     let self = this
     let requiredValidator = (msg, check) => {
