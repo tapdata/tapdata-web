@@ -856,6 +856,10 @@ export default {
   dag_data_setting_example: '例子:',
   dag_data_setting_runMinute: '每分鐘運行一次',
   dag_data_setting_runDay: '每天2點運行',
+  dag_attributes_exist_data_deal: 'Existing data processing',
+  dag_attributes_exist_data_keep_data: 'Keep existing data',
+  dag_attributes_exist_data_remove_data: 'Remove existing data before running',
+  dag_attributes_exist_data_drop_table: 'Drop table structure before running',
 
   //Field mapping字段映射
   dag_link_button_field_mapping: 'Field mapping',

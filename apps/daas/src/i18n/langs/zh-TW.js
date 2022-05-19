@@ -818,6 +818,10 @@ export default {
   dag_data_setting_example: '例子:',
   dag_data_setting_runMinute: '每分鐘運行一次',
   dag_data_setting_runDay: '每天2點運行',
+  dag_attributes_exist_data_deal: '已有數據處理',
+  dag_attributes_exist_data_keep_data: '保持已存在的數據',
+  dag_attributes_exist_data_remove_data: '運行前刪除已存在的數據',
+  dag_attributes_exist_data_drop_table: '運行前刪除表結構',
 
   dag_dialog_field_mapping_change_type_field_rename: '類型修改',
   dag_dialog_field_mapping_batch_change_type: '批量修改字段類型',

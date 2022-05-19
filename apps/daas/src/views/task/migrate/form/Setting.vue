@@ -210,7 +210,33 @@ export default {
                 ],
                 default: 'intellect'
               },
-
+              existDataProcessMode: {
+                title: this.$t('dag_attributes_exist_data_deal'),
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Radio.Group',
+                'x-component-props': {
+                  optionType: 'button'
+                },
+                enum: [
+                  {
+                    label: this.$t('dag_attributes_exist_data_keep_data'),
+                    value: 'keepData'
+                  },
+                  {
+                    label: this.$t('dag_attributes_exist_data_remove_data'),
+                    value: 'removeData'
+                  },
+                  {
+                    label: this.$t('dag_attributes_exist_data_drop_table'),
+                    value: 'dropTable'
+                  }
+                ],
+                default: 'keepData',
+                'x-decorator-props': {
+                  wrapperWidth: 420
+                }
+              },
               accessNodeWrap: {
                 type: 'void',
                 title: this.$t('connection_form_access_node'),

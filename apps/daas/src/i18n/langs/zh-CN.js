@@ -822,6 +822,10 @@ export default {
   dag_data_setting_example: '例子:',
   dag_data_setting_runMinute: '每分钟运行一次',
   dag_data_setting_runDay: '每天2点运行',
+  dag_attributes_exist_data_deal: '已有数据处理',
+  dag_attributes_exist_data_keep_data: '保持已存在的数据',
+  dag_attributes_exist_data_remove_data: '运行前删除已存在的数据',
+  dag_attributes_exist_data_drop_table: '运行前删除表结构',
   //字段映射
   dag_link_button_field_mapping: '字段映射',
   dag_link_button_mapping_configuration: '映射配置',
