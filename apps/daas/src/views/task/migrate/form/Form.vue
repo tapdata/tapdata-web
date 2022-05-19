@@ -593,7 +593,8 @@ export default {
             name: this.dataSourceData.source_connectionName,
             tableName: this.dataSourceData.source_connectionName, //?
             type: 'database',
-            fieldProcess: this.transferData.fieldProcess
+            fieldProcess: this.transferData.fieldProcess,
+            existDataProcessMode: this.settingData.existDataProcessMode
           }
         ),
         Object.assign(
@@ -610,7 +611,8 @@ export default {
             tableSuffix: this.transferData.tableSuffix,
             tableNameTransform: this.transferData.tableNameTransform,
             fieldsNameTransform: this.transferData.fieldsNameTransform,
-            batchOperationList: this.transferData.batchOperationList
+            batchOperationList: this.transferData.batchOperationList,
+            existDataProcessMode: this.settingData.existDataProcessMode
           }
         )
       ]
