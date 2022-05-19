@@ -169,7 +169,7 @@ import mouseDrag from 'web-core/directives/mousedrag'
 import VIcon from 'web-core/components/VIcon'
 import ConnectionTypeSelector from 'web-core/components/connection-type-selector'
 import resize from 'web-core/directives/resize'
-import BaseNode from '../components/BaseNode'
+import BaseNode from '../BaseNode'
 import { debounce } from 'lodash'
 import { Connections } from '@tap/api'
 import { Select } from 'element-ui'
@@ -178,7 +178,7 @@ import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/re
 import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowTooltip'
 import EmptyItem from 'web-core/components/EmptyItem'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
-import NodeIcon from '../components/NodeIcon'
+import NodeIcon from '../NodeIcon'
 
 export default {
   name: 'LeftSider',

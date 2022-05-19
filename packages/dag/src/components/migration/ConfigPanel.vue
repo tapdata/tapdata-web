@@ -1,30 +1,32 @@
 <template>
   <section
     v-show="activeType"
-    v-resize.left="{
-      minWidth: 400
-    }"
     class="config-panel border-start flex-column"
-    :class="{ flex: activeType }"
+    :class="{ flex: activeType, 'show-settings': activeType === 'settings' }"
   >
     <div class="panel-header flex align-center px-4 border-bottom">
-      <NodeIcon class="mr-2" :node="activeNode" />
-      <div class="title-input-wrap flex align-center flex-shrink-0 h-100">
-        <input
-          ref="nameInput"
-          v-focus-select
-          :value="activeNode ? activeNode.name : ''"
-          class="title-input text-truncate"
-          @change="handleChangeName"
-        />
-        <VIcon v-if="!stateIsReadonly" @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
-      </div>
+      <template v-if="activeType !== 'settings'">
+        <NodeIcon class="mr-2" :node="activeNode" />
+        <div class="title-input-wrap flex align-center flex-shrink-0 h-100">
+          <input
+            ref="nameInput"
+            v-focus-select
+            :value="activeNode ? activeNode.name : ''"
+            class="title-input text-truncate"
+            @change="handleChangeName"
+          />
+          <VIcon v-if="!stateIsReadonly" @click="focusNameInput" class="title-input-icon" size="14">edit-outline</VIcon>
+        </div>
+      </template>
+      <div v-else class="title-input-wrap flex align-center flex-shrink-0 h-100">任务设置</div>
 
       <VIcon class="ml-3" size="16" @click="handleClosePanel">close</VIcon>
     </div>
 
     <div class="panel-content flex-1">
-      <FormPanel v-on="$listeners" v-bind="$attrs" ref="formPanel"></FormPanel>
+      <FormPanel v-show="activeType !== 'settings'" v-on="$listeners" v-bind="$attrs" ref="formPanel"></FormPanel>
+
+      <SettingPanel v-bind="$attrs" v-on="$listeners" v-if="activeType === 'settings'" />
     </div>
   </section>
 </template>
@@ -33,10 +35,11 @@
 import { mapGetters, mapMutations } from 'vuex'
 import 'web-core/directives/resize/index.scss'
 import resize from 'web-core/directives/resize'
-import FormPanel from '../components/FormPanel'
+import FormPanel from '../FormPanel'
 import VIcon from 'web-core/components/VIcon'
 import focusSelect from 'web-core/directives/focusSelect'
-import NodeIcon from '../components/NodeIcon'
+import NodeIcon from '../NodeIcon'
+import SettingPanel from './SettingPanel'
 
 export default {
   name: 'ConfigPanel',
@@ -52,7 +55,7 @@ export default {
     }
   },
 
-  components: { NodeIcon, VIcon, /*DataPane,*/ FormPanel },
+  components: { SettingPanel, NodeIcon, VIcon, /*DataPane,*/ FormPanel },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly'])
@@ -154,6 +157,10 @@ $headerHeight: 40px;
   background-color: #fff;
   //transition: height 0.24s;
   will-change: width;
+
+  &.show-settings {
+    width: 320px;
+  }
 
   &-close {
   }

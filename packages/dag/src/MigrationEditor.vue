@@ -90,7 +90,7 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import PaperScroller from './components/PaperScroller'
 import TopHeader from './components/TopHeader'
-import LeftSider from './migration/LeftSider'
+import LeftSider from './components/migration/LeftSider'
 import DFNode from './components/DFNode'
 import { jsPlumb, config } from './instance'
 import { connectorActiveStyle } from './style'
@@ -99,7 +99,7 @@ import { allResourceIns } from './nodes/loader'
 import deviceSupportHelpers from 'web-core/mixins/deviceSupportHelpers'
 import { titleChange } from 'web-core/mixins/titleChange'
 import { showMessage } from 'web-core/mixins/showMessage'
-import ConfigPanel from './migration/ConfigPanel'
+import ConfigPanel from './components/migration/ConfigPanel'
 import { uuid } from '@tap/shared'
 import { Task } from '@tap/api'
 import {
@@ -850,7 +850,7 @@ export default {
       if (!this.dataflow.name) return this.$t('editor.cell.validate.empty_name')
 
       // 至少两个数据节点
-      const tableNode = this.allNodes.filter(node => node.type === 'table')
+      const tableNode = this.allNodes.filter(node => node.type === 'database')
       if (tableNode.length < 2) {
         return this.$t('editor.cell.validate.none_data_node')
       }
@@ -995,7 +995,7 @@ export default {
     isEndOfTable(source, sourceMap, nodeMap) {
       if (!sourceMap[source.id]) {
         // 末位节点
-        return source.type === 'table'
+        return source.type === 'database'
       }
 
       for (let edge of sourceMap[source.id]) {

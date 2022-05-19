@@ -88,9 +88,7 @@
           <VIcon size="20">add-outline</VIcon>
         </button>
       </ElTooltip>
-    </div>
-    <div class="flex align-center flex-grow-1">
-      <div class="flex-grow-1"></div>
+      <VDivider class="mx-3" vertical inset></VDivider>
       <!--搜索节点-->
       <ElPopover
         v-model="showSearchNodePopover"
@@ -125,6 +123,15 @@
           </ElScrollbar>
         </div>
       </ElPopover>
+      <!--设置-->
+      <ElTooltip transition="tooltip-fade-in" :content="$t('button_setting')">
+        <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: spaceKeyPressed }">
+          <VIcon size="20">setting</VIcon>
+        </button>
+      </ElTooltip>
+    </div>
+    <div class="flex align-center flex-grow-1">
+      <div class="flex-grow-1"></div>
 
       <ElButton
         v-if="stateIsReadonly"
@@ -144,11 +151,6 @@
         {{ $t('task_list_button_monitor') }}
       </ElButton>
 
-      <ElButton size="mini" class="mx-1 btn--text" @click="$emit('showSettings')">
-        <VIcon>setting</VIcon>
-        <!--设置-->
-        {{ $t('button_setting') }}
-      </ElButton>
       <ElButton v-if="!stateIsReadonly" :loading="isSaving" size="mini" class="mx-2" @click="$emit('save')">
         <!--保存-->
         {{ $t('button_save') }}
@@ -578,7 +580,7 @@ $sidebarBg: #fff;
     cursor: pointer;
 
     &:hover {
-      background-color: #eef3ff;
+      background-color: #edf1f9;
     }
   }
   &.auto-width .choose-item {
