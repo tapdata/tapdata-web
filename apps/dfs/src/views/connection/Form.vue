@@ -2,56 +2,31 @@
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
       <main class="connection-from-main">
-        <div v-if="databaseType === 'hazelcast_cloud_cluster'" class="connection-from-title">
-          {{ $route.params.id ? $t('connection_form_hazecast_edit') : $t('connection_form_hazecast_create') }}
-        </div>
-        <div v-else class="connection-from-title">
+        <div class="connection-from-title">
           {{
             $route.params.id ? this.$t('connection_form_edit_connection') : this.$t('connection_form_creat_connection')
           }}
         </div>
         <div class="connection-from-label" v-if="$route.params.id">
-          <label v-if="databaseType === 'hazelcast_cloud_cluster'" class="haze_label"
-            >{{ $t('connection_form_hazecast_data_source') }}:
-          </label>
-          <label v-else class="label">{{ $t('connection_form_data_source') }}: </label>
+          <label class="label">{{ $t('connection_form_data_source') }}: </label>
           <div class="content-box">
             <div class="img-box ml-2">
               <img :src="$util.getConnectionTypeImg(databaseType)" />
             </div>
             <span class="ml-2">{{ model.name }}</span>
-            <ElButton
-              v-if="databaseType === 'hazelcast_cloud_cluster'"
-              class="ml-2"
-              type="text"
-              @click="dialogEditNameVisible = true"
-            >
-              {{ $t('connection_form_hazecast_rename') }}
-            </ElButton>
-            <ElButton v-else class="ml-2" type="text" @click="dialogEditNameVisible = true">
+            <ElButton class="ml-2" type="text" @click="dialogEditNameVisible = true">
               {{ $t('connection_form_rename') }}
             </ElButton>
           </div>
         </div>
         <div class="connection-from-label" v-else>
-          <label v-if="databaseType === 'hazelcast_cloud_cluster'" class="haze_label"
-            >{{ $t('connection_form_hazecast_data_source_type') }} :</label
-          >
-          <label v-else class="label">{{ $t('connection_form_data_source_type') }}:</label>
+          <label class="label">{{ $t('connection_form_data_source_type') }}:</label>
           <div class="content-box">
             <div class="img-box ml-2">
               <img :src="$util.getConnectionTypeImg(databaseType)" />
             </div>
             <span class="ml-2">{{ typeMap[databaseType] }}</span>
-            <ElButton
-              v-if="databaseType === 'hazelcast_cloud_cluster'"
-              class="ml-2"
-              type="text"
-              @click="$root.$emit('select-connection-type')"
-            >
-              {{ $t('connection_form_hazecast_change') }}
-            </ElButton>
-            <ElButton v-else class="ml-2" type="text" @click="$root.$emit('select-connection-type')">
+            <ElButton class="ml-2" type="text" @click="$root.$emit('select-connection-type')">
               {{ $t('connection_form_change') }}
             </ElButton>
           </div>
@@ -68,29 +43,12 @@
               <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm_form_uriTips_content')"></div>
               <MqQueueOrTopic v-model="model" slot="mqQueueOrTopic" ref="mqQueueOrTopic"></MqQueueOrTopic>
             </FormBuilder>
-            <ElButton v-if="databaseType === 'hazelcast_cloud_cluster'" type="text" size="mini" @click="startTest()">{{
-              $t('connection_form_hazecast_connection_test')
-            }}</ElButton>
-            <ElButton v-else type="text" size="mini" @click="startTest()">{{ $t('connection_list_test') }}</ElButton>
+            <ElButton type="text" size="mini" @click="startTest()">{{ $t('connection_list_test') }}</ElButton>
             <span>
               <StatusTag type="text" class="ml-4" target="connection" :status="status"></StatusTag>
             </span>
             <footer class="mt-2 pb-4">
-              <template v-if="databaseType === 'hazelcast_cloud_cluster'">
-                <ElButton size="mini" class="connection-from-btn" @click="goBack()">{{
-                  $t('connection_form_hazecast_cancel')
-                }}</ElButton>
-                <ElButton
-                  size="mini"
-                  class="connection-from-btn"
-                  type="primary"
-                  :loading="submitBtnLoading"
-                  @click="submit"
-                >
-                  {{ $t('connection_form_hazecast_save') }}
-                </ElButton>
-              </template>
-              <template v-else>
+              <template>
                 <ElButton size="mini" class="connection-from-btn" @click="goBack()">{{ $t('button_cancel') }}</ElButton>
                 <ElButton
                   size="mini"
@@ -123,23 +81,12 @@
         <ElFormItem prop="rename">
           <ElInput v-model="renameData.rename" maxlength="100" show-word-limit></ElInput>
         </ElFormItem>
-        <span
-          v-if="databaseType === 'hazelcast_cloud_cluster'"
-          style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block"
-          >{{ $t('connection_form_hazecast_name_rules') }}</span
-        >
-        <span v-else style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block">{{
+        <span style="color: #ccc; margin-top: 5px; font-size: 12px; display: inline-block">{{
           $t('connection_form_name_rules')
         }}</span>
       </ElForm>
       <span slot="footer" class="dialog-footer">
-        <template v-if="databaseType === 'hazelcast_cloud_cluster'">
-          <ElButton @click="handleCancelRename" size="mini">{{ $t('connection_form_hazecast_cancel') }}</ElButton>
-          <ElButton @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
-            $t('connection_form_hazecast_save')
-          }}</ElButton>
-        </template>
-        <template v-else>
+        <template>
           <ElButton @click="handleCancelRename" size="mini">{{ $t('button_cancel') }}</ElButton>
           <ElButton @click="submitEdit()" size="mini" type="primary" :loading="editBtnLoading">{{
             $t('button_confirm')
@@ -276,14 +223,8 @@ export default {
         {
           type: 'input',
           field: 'name',
-          label:
-            self.databaseType === 'hazelcast_cloud_cluster'
-              ? self.$t('connection_form_hazecast_connection_name')
-              : self.$t('connection_form_connection_name'),
-          placeholder:
-            self.databaseType === 'hazelcast_cloud_cluster'
-              ? self.$t('connection_form_hazecast_connection_name_placeholder')
-              : self.$t('connection_form_connection_name_placeholder'),
+          label: self.$t('connection_form_connection_name'),
+          placeholder: self.$t('connection_form_connection_name_placeholder'),
           required: true,
           maxlength: 100,
           width: '504px',
@@ -296,15 +237,9 @@ export default {
               trigger: 'blur',
               validator: (rule, value, callback) => {
                 if (!value || !value.trim()) {
-                  if (this.databaseType === 'hazelcast_cloud_cluster') {
-                    callback(new Error(this.$t('connection_form_hazecast_no_name')))
-                  } else callback(new Error(i18n.t('connection_Form_lianJieMingChengBu')))
+                  callback(new Error(i18n.t('connection_Form_lianJieMingChengBu')))
                 } else if (!/^([\u4e00-\u9fa5]|[A-Za-z])([a-zA-Z0-9_\s-]|[\u4e00-\u9fa5])*$/.test(value)) {
-                  if (this.databaseType === 'hazelcast_cloud_cluster') {
-                    callback(new Error(this.$t('connection_form_hazecast_name_rules')))
-                  } else {
-                    callback(new Error(i18n.t('connection_Form_mingChengGuiZeZhong')))
-                  }
+                  callback(new Error(i18n.t('connection_Form_mingChengGuiZeZhong')))
                 } else if (
                   value &&
                   value.trim() &&

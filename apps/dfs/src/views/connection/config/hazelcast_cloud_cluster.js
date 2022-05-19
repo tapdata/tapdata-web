@@ -12,15 +12,15 @@ export default function (vm) {
       {
         type: 'radio',
         field: 'connection_type',
-        label: vm.$t('connection_form_hazecast_connection_type'),
+        label: vm.$t('dataForm_form_connectionType'),
         customClass: 'large-item',
         isVertical: false,
         button: true,
         outerTip: true,
         options: [
           {
-            label: vm.$t('connection_form_hazecast_options_target'),
-            tip: vm.$t('connection_form_hazecast_options_target_tips'),
+            label: vm.$t('dataForm_form_options_target'),
+            tip: vm.$t('dataForm_form_options_targetTips'),
             value: 'target'
           }
         ],
@@ -30,7 +30,7 @@ export default function (vm) {
         type: 'input',
         field: 'database_name',
         label: vm.$t('connection_form_hazecast_database_name'),
-        placeholder: 'Please enter the cluster name',
+        placeholder: vm.$t('connection_form_hazecast_database_name_placeholder'),
         required: true,
         rules: [
           {
@@ -40,7 +40,7 @@ export default function (vm) {
                 if (v) {
                   callback()
                 }
-                callback(new Error('The cluster name cannot be empty'))
+                callback(new Error(vm.$t('connection_form_hazecast_database_name_empty')))
               } else {
                 callback()
               }
@@ -54,7 +54,7 @@ export default function (vm) {
         label: vm.$t('connection_form_hazecast_plain_password'),
         domType: 'password',
         customClass: 'large-item',
-        placeholder: 'Please enter the token',
+        placeholder: vm.$t('connection_form_hazecast_plain_password_placeholder'),
         showPassword: true,
         required: true,
         rules: [
@@ -65,7 +65,7 @@ export default function (vm) {
                 if (v) {
                   callback()
                 }
-                callback(new Error('The token cannot be empty'))
+                callback(new Error(vm.$t('connection_form_hazecast_plain_password_empty')))
               } else {
                 callback()
               }
@@ -180,7 +180,7 @@ export default function (vm) {
         field: 'sslPass',
         label: vm.$t('connection_form_hazecast_sslPass'),
         domType: 'password',
-        placeholder: 'Please enter the key file Password',
+        placeholder: vm.$t('connection_form_hazecast_sslPass_placeholder'),
         showPassword: true,
         show: false,
         dependOn: [
