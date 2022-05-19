@@ -6,6 +6,7 @@
       class="flex justify-content-end mr-5 mt-3"
       :transform="transform"
       :getDataFlow="getDataFlow"
+      @returnPreFixSuffix="loadFields"
     ></FieldMapping>
     <div class="total mb-2 mt-4">共有 {{ tableData.length }} 个字段</div>
     <ElTable ref="table" v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
