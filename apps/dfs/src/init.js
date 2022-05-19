@@ -39,7 +39,7 @@ Vue.prototype.$checkAgentStatus = callback => {
       if (data.agentRunningCount || data.agentRunningCount > 0) {
         resolve(callback?.())
       } else {
-        Message.error('Agent当前状态异常，请检查')
+        Message.error(i18n.t('agent_error_check'))
         reject()
       }
     })
