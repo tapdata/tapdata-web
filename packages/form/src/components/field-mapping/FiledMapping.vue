@@ -1,5 +1,5 @@
 <template>
-  <div class="field-mapping flex flex-column" v-loading="loadingPage">
+  <div class="field-mapping flex flex-column">
     <div class="task-form-body">
       <div class="task-form-left flex flex-column">
         <div class="flex mb-2">
@@ -62,7 +62,7 @@
             <ElInput
               v-model="searchField"
               size="mini"
-              placeholder="请输入表名"
+              placeholder="请输入字段名"
               suffix-icon="el-icon-search"
               @input="getMetadataTransformer(searchField)"
             ></ElInput>
@@ -111,6 +111,7 @@ import rollback from 'web-core/assets/icons/svg/rollback.svg'
 import refresh from 'web-core/assets/icons/svg/refresh.svg'
 import { Task, MetadataTransformer, MetadataInstances } from '@tap/api'
 import Dialog from './Dialog'
+import { modeMapping } from '../../../../field-mapping/src/V1/const'
 
 const taskApi = new Task()
 const metadataTransformeApi = new MetadataTransformer()
@@ -130,6 +131,7 @@ export default {
       navData: [],
       typeMapping: [],
       position: 0,
+      selectRow: '',
       fieldCount: '', //当前选中总数
       target: [],
       page: {
@@ -291,6 +293,15 @@ export default {
       let data = await metadataInstancesApi.originalData(row.sinkQulifiedName)
       this.target = data && data.length > 0 ? data[0].fields : []
       this.loadingTable = false
+    },
+    /*切换表*/
+    select(item, index) {
+      this.position = '' //再次点击清空去一个样式
+      this.searchField = ''
+      this.fieldCount = 0
+      this.selectRow = item
+      this.fieldCount = item.sourceFieldCount - item.userDeletedNum || 0
+      this.position = index
     },
     //实时获取schema加载进度
     initWSSed() {
