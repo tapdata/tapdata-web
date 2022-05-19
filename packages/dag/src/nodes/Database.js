@@ -139,7 +139,7 @@ export class Database extends NodeType {
           dependencies: ['attrs.howManyTable'],
           fulfill: {
             state: {
-              visible: '{{$deps[0] === "some" ? "visible":"hidden"}}'
+              display: '{{$deps[0] === "some" ? "visible":"hidden"}}'
             }
           }
         }
