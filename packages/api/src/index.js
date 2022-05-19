@@ -9,6 +9,7 @@ export * from './Tcm'
 export * from './TypeMapping'
 export * from './CustomNode'
 export * from './Cluster'
+export * from './Function'
 export { CancelToken }
 
 export default Http
