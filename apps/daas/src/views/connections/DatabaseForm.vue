@@ -134,12 +134,12 @@
               <!-- custom_connection -->
               <div slot="cdcScrip">
                 <div>function requestData(ctx) {</div>
-                <CodeEditor v-model="model.custom_cdc_script" :width="width" :height="height"></CodeEditor>
+                <JsEditor v-model="model.custom_cdc_script" :width="width" :height="height"></JsEditor>
                 <div>}</div>
               </div>
               <div slot="historyScrip">
                 <div>function requestData() {</div>
-                <CodeEditor v-model="model.custom_initial_script" :width="width" :height="height"></CodeEditor>
+                <JsEditor v-model="model.custom_initial_script" :width="width" :height="height"></JsEditor>
                 <div>}</div>
               </div>
               <div slot="targetScrip">
@@ -161,17 +161,17 @@
                 </div>
                 <div>}]</div>
                 <div style="padding-bottom: 5px; margin-top: 10px; font-weight: bold">function onData(data) {</div>
-                <CodeEditor v-model="model.custom_ondata_script" :width="width" :height="height"></CodeEditor>
+                <JsEditor v-model="model.custom_ondata_script" :width="width" :height="height"></JsEditor>
                 <div>}</div>
               </div>
               <div slot="custom_before_script">
                 <div>function before() {</div>
-                <CodeEditor v-model="model.custom_before_script" :width="width" :height="height"></CodeEditor>
+                <JsEditor v-model="model.custom_before_script" :width="width" :height="height"></JsEditor>
                 <div>}</div>
               </div>
               <div slot="custom_after_script">
                 <div>function after() {</div>
-                <CodeEditor v-model="model.custom_after_script" :width="width" :height="height"></CodeEditor>
+                <JsEditor v-model="model.custom_after_script" :width="width" :height="height"></JsEditor>
                 <div>}</div>
               </div>
             </form-builder>
@@ -561,7 +561,7 @@
 import factory from '@/api/factory'
 import formConfig from './config'
 import GitBook from './GitBook'
-import CodeEditor from '@/components/CodeEditor'
+import { JsEditor } from '@tap/component'
 import Test from './Test'
 import { TYPEMAPCONFIG, defaultModel } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
@@ -572,7 +572,7 @@ const connectionsModel = factory('connections')
 let defaultConfig = []
 export default {
   name: 'DatabaseForm',
-  components: { GitBook, Test, DatabaseTypeDialog, CodeEditor, VIcon },
+  components: { GitBook, Test, DatabaseTypeDialog, JsEditor, VIcon },
   data() {
     let validateExcelHeader = (rule, value, callback) => {
       let start = this.model.excel_header_start

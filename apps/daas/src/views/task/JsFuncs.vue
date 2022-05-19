@@ -113,7 +113,7 @@
           <el-checkbox v-model="lineNumbers" class="e-checkbox" @input="showGutter">{{
             $t('function_checkbox_Line_number')
           }}</el-checkbox>
-          <CodeEditor v-model="model.jsonDoc" ref="editor" lang="javascript" height="300"></CodeEditor>
+          <JsEditor v-model="model.jsonDoc" ref="editor" height="300"></JsEditor>
           <ul v-if="jsonDocHint.length > 0">
             <li v-for="item in jsonDocHint" :key="item">{{ item }}</li>
           </ul>
@@ -139,14 +139,14 @@
 </template>
 <script>
 import TablePage from '@/components/TablePage'
-import CodeEditor from '@/components/CodeEditor'
+import { JsEditor } from '@tap/component'
 import 'prismjs'
 const parser = require('esprima')
 const escodegen = require('escodegen')
 
 export default {
   name: 'JsFuncs',
-  components: { TablePage, CodeEditor },
+  components: { TablePage, JsEditor },
   data() {
     return {
       order: 'last_updated',
