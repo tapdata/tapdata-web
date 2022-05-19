@@ -3,7 +3,7 @@
     <el-button class="float-end" type="text" @click="visible = true">获取创建命令</el-button>
     <el-dialog :visible.sync="visible" width="50%" append-to-body :close-on-click-modal="false">
       <div slot="title">
-        <span>创建命令</span>
+        <span class="mr-2">创建命令</span>
         <ClipboardButton :tooltip="tooltip" :finishTooltip="finishTooltip" :content="sql"></ClipboardButton>
       </div>
       <CodeEditor class="border rounded-2" :value="sql" lang="javascript" :height="200" :options="options"></CodeEditor>

@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="提示"
+    title="编辑推演结果"
     :visible.sync="visible"
     width="70%"
     append-to-body
@@ -65,7 +65,7 @@
               <ElInput
                 v-model="searchField"
                 size="mini"
-                placeholder="请输入表名"
+                placeholder="请输入字段名"
                 suffix-icon="el-icon-search"
                 @input="getMetadataTransformer(searchField)"
               ></ElInput>
@@ -260,7 +260,7 @@ export default {
         default_value: this.$t('dag_dialog_field_mapping_tittle_value')
       },
       typeMapping: [],
-      dialogFieldVisible: false,
+      dialogVisible: false,
       rollback,
       refresh
     }
