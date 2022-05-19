@@ -1056,6 +1056,9 @@ export default {
       })
     },
     showScaleEdit(id, data) {
+      if (data instanceof Object) {
+        return
+      }
       let isScale = data.filter(v => v.minScale < v.maxScale)
       if (isScale.length !== 0) {
         //固定值
