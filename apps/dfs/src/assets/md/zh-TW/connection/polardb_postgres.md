@@ -1,20 +1,20 @@
-## **连接配置帮助**
-### **1. PolarDB Postgres 安装说明**
-请遵循以下说明以确保在 Tapdata 中成功添加和使用 PolarDB Postgres 数据库。
+## **連接配置幫助**
+### **1. PolarDB Postgres 安裝說明**
+請遵循以下說明以確保在 Tapdata 中成功添加和使用 PolarDB Postgres 數據庫。
 ### **2. 支持版本**
 PolarDB Postgres 11
 
-### **3. 先决条件**
-#### **3.1 权限**
-##### **3.1.1 作为源**
+### **3. 先決條件**
+#### **3.1 權限**
+##### **3.1.1 作為源**
 - **初始化**<br>
 ```
 GRANT SELECT ON ALL TABLES IN SCHEMA <schemaname> TO <username>;
 ```
 
-##### **3.1.2 作为目标**
+##### **3.1.2 作為目標**
 ```
 GRANT INSERT,UPDATE,DELETE,TRUNCATE
 ON ALL TABLES IN SCHEMA <schemaname> TO <username>;
 ```
-> **注意**：以上只是基本权限的设置，实际场景可能更加复杂
+> **注意**：以上只是基本權限的設置，實際場景可能更加複雜

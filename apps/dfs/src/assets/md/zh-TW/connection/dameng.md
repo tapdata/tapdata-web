@@ -1,25 +1,24 @@
-# DM数据库连接配置帮助
+# DM數據庫連接配置幫助
 
 
 
-### 1.DM配置说明
+### 1.DM配置說明
 
-请遵循以下说明以确保在 Tapdata 中成功添加和使用 DM 数据库。
+請遵循以下說明以確保在 Tapdata 中成功添加和使用 DM 數據庫。
 
 ### 2.支持版本
 
 DM7、DM8
 
-### 3.先决条件
+### 3.先決條件
 
-#### 3.1作为目标
+#### 3.1作為目標
 
 ```sql
-#创建用户
+#創建用戶
 create user <username> identified by "password" limit password_life_time unlimited default tablespace <tablespace>;
-#给用户授权
+#給用戶授權
 grant select any table,insert any table,delete any table,update any table,create any table, create any index to <username>;
 ```
 
-> **注意**：以上只是基本权限的设置，实际场景可能更加复杂
-
+> **注意**：以上只是基本權限的設置，實際場景可能更加複雜

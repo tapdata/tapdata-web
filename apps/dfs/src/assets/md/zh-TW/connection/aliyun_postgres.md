@@ -1,20 +1,20 @@
-## **连接配置帮助**
-### **1. Aliyun RDS for PG安装说明**
-请遵循以下说明以确保在 Tapdata 中成功添加和使用PostgreSQL数据库。
+## **連接配置幫助**
+### **1. Aliyun RDS for PG安裝說明**
+請遵循以下說明以確保在 Tapdata 中成功添加和使用PostgreSQL數據庫。
 ### **2. 支持版本**
 PostgreSQL 9.4、9.5、9.6、10.x、11.x、12版本
 ### **3. CDC原理和支持**
 #### **3.1 CDC原理**
-PostgreSQL 的逻辑解码功能最早出现在9.4版本中，它是一种机制，允许提取提交到事务日志中的更改，并通过输出插件以用户友好的方式处理这些更改。
-此输出插件必须在运行PostgreSQL服务器之前安装，并与一个复制槽一起启用，以便客户端能够使用更改。
+PostgreSQL 的邏輯解碼功能最早出現在9.4版本中，它是一種機制，允許提取提交到事務日誌中的更改，並通過輸出插件以用戶友好的方式處理這些更改。
+此輸出插件必須在運行PostgreSQL服務器之前安裝，並與一個複制槽一起啟用，以便客戶端能夠使用更改。
 #### **3.2 CDC支持**
-- **逻辑解码**（Logical Decoding）：用于从 WAL 日志中解析逻辑变更事件
-- **复制协议**（Replication Protocol）：提供了消费者实时订阅（甚至同步订阅）数据库变更的机制
-- **快照导出**（export snapshot）：允许导出数据库的一致性快照（pg_export_snapshot）
-- **复制槽**（Replication Slot）：用于保存消费者偏移量，跟踪订阅者进度。
-所以，根据以上，我们需要安装逻辑解码器，现有提供的解码器如下：
+- **邏輯解碼**（Logical Decoding）：用於從 WAL 日誌中解析邏輯變更事件
+- **複製協議**（Replication Protocol）：提供了消費者實時訂閱（甚至同步訂閱）數據庫變更的機制
+- **快照導出**（export snapshot）：允許導出數據庫的一致性快照（pg_export_snapshot）
+- **複製槽**（Replication Slot）：用於保存消費者偏移量，跟踪訂閱者進度。
+  所以，根據以上，我們需要安裝邏輯解碼器，現有提供的解碼器如下：
 
-解码器| pg版本 | tapdata支持 | 输出格式
+解碼器| pg版本 | tapdata支持 | 輸出格式
 :-----------: | :-----------: |:-----------:|:-----------: |
 decoderbufs|9.6+|不支持|protobuf
 wal2json|9.4+|支持|json|
@@ -22,20 +22,20 @@ pgoutput|10.0+|不支持|pg log|
 test_decoding|9.4+|不支持|text|
 decoder_raw|9.4+|不支持|SQL|
 
-### **4. 先决条件**
+### **4. 先決條件**
 #### **4.1 修改REPLICA IDENTITY**
-该属性决定了当数据发生`UPDATE,DELETE`时，日志记录的字段
-- **DEFAULT** - 更新和删除将包含primary key列的现前值
-- **NOTHING** - 更新和删除将不包含任何先前值
-- **FULL** - 更新和删除将包含所有列的先前值
-- **INDEX index name** - 更新和删除事件将包含名为index name的索引定义中包含的列的先前值
-如果有多表合并同步的场景，则Tapdata需要调整该属性为FULL
-示例
+該屬性決定了當數據發生`UPDATE,DELETE`時，日誌記錄的字段
+- **DEFAULT** - 更新和刪除將包含primary key列的現前值
+- **NOTHING** - 更新和刪除將不包含任何先前值
+- **FULL** - 更新和刪除將包含所有列的先前值
+- **INDEX index name** - 更新和刪除事件將包含名為index name的索引定義中包含的列的先前值
+  如果有多表合併同步的場景，則Tapdata需要調整該屬性為FULL
+  示例
 ```
 alter table '[schema]'.'[table name]' REPLICA IDENTITY FULL`
 ```
 
-#### **4.2 插件安装**
+#### **4.2 插件安裝**
 - [decorderbufs](https://github.com/debezium/postgres-decoderbufs)
 - [Protobuf-c 1.2+](https://github.com/protobuf-c/protobuf-c)
 - [protobuf ](https://blog.csdn.net/gumingyaotangwei/article/details/78936608)
@@ -43,13 +43,13 @@ alter table '[schema]'.'[table name]' REPLICA IDENTITY FULL`
 - [wal2json ](https://github.com/eulerto/wal2json/blob/master/README.md)
 - pgoutput(pg 10.0+)
 
-**安装步骤**<br>
-以 wal2json 为例，安装步骤如下<br>
-确保环境变量PATH中包含"/bin"<br>
+**安裝步驟**<br>
+以 wal2json 為例，安裝步驟如下<br>
+確保環境變量PATH中包含"/bin"<br>
 ```
-export PATH=$PATH:<postgres安装路径>/bin
+export PATH=$PATH:<postgres安裝路徑>/bin
 ```
-**安装插件**<br>
+**安裝插件**<br>
 ```
 git clone https://github.com/eulerto/wal2json -b master --single-branch \
 && cd wal2json \
@@ -58,15 +58,15 @@ git clone https://github.com/eulerto/wal2json -b master --single-branch \
 && cd .. \
 && rm -rf wal2json
 ```
-安装插件报错处理`make`命令执行，遇到类似 `fatal error: [xxx].h: No such file or directory `的异常信息<br>
+安裝插件報錯處理`make`命令執行，遇到類似 `fatal error: [xxx].h: No such file or directory `的異常信息<br>
 **原因**：缺少postgresql-server-dev<br>
-**解决方案**：安装postgresql-server-dev，以debian系统为例<br>
+**解決方案**：安裝postgresql-server-dev，以debian系統為例<br>
 ```
-// 版本号例如:9.4, 9.6等
-apt-get install -y postgresql-server-dev-<版本号>
+// 版本號例如:9.4, 9.6等
+apt-get install -y postgresql-server-dev-<版本號>
 ```
 **配置文件**<br>
-如果你正在使用一个支持的逻辑解码插件(不能是 pgoutput )，并且它已经安装，配置服务器在启动时加载插件:<br>
+如果你正在使用一個支持的邏輯解碼插件(不能是 pgoutput )，並且它已經安裝，配置服務器在啟動時加載插件:<br>
 ```
 postgresql.conf
 shared_preload_libraries = 'decoderbufs,wal2json'
@@ -75,25 +75,25 @@ shared_preload_libraries = 'decoderbufs,wal2json'
 ```
 # REPLICATION
 wal_level = logical
-max_wal_senders = 1 # 大于0即可
-max_replication_slots = 1 # 大于0即可
+max_wal_senders = 1 # 大於0即可
+max_replication_slots = 1 # 大於0即可
 ```
 
-#### **4.3 权限**
-##### **4.3.1 作为源**
+#### **4.3 權限**
+##### **4.3.1 作為源**
 - **初始化**<br>
 ```
 GRANT SELECT ON ALL TABLES IN SCHEMA <schemaname> TO <username>;
 ```
 - **增量**<br>
-用户需要有replication login权限，如果不需要日志增量功能，则可以不设置replication权限
+  用戶需要有replication login權限，如果不需要日誌增量功能，則可以不設置replication權限
 ```
 CREATE ROLE <rolename> REPLICATION LOGIN;
 CREATE USER <username> ROLE <rolename> PASSWORD '<password>';
 // or
 CREATE USER <username> WITH REPLICATION LOGIN PASSWORD '<password>';
 ```
-配置文件 pg_hba.conf 需要添加如下内容：<br>
+配置文件 pg_hba.conf 需要添加如下內容：<br>
 ```
 pg_hba.conf
 local   replication     <youruser>                     trust
@@ -101,18 +101,18 @@ host    replication     <youruser>  0.0.0.0/32         md5
 host    replication     <youruser>  ::1/128            trust
 ```
 
-##### **4.3.2 作为目标**
+##### **4.3.2 作為目標**
 ```
 GRANT INSERT,UPDATE,DELETE,TRUNCATE
 ON ALL TABLES IN SCHEMA <schemaname> TO <username>;
 ```
-> **注意**：以上只是基本权限的设置，实际场景可能更加复杂
+> **注意**：以上只是基本權限的設置，實際場景可能更加複雜
 
-##### **4.4  测试日志插件**
-> **注意**：以下操作建议在POC环境进行
->连接postgres数据库，切换至需要同步的数据库，创建一张测试表
+##### **4.4  測試日誌插件**
+> **注意**：以下操作建議在POC環境進行
+>連接postgres數據庫，切換至需要同步的數據庫，創建一張測試表
 ```
--- 假设需要同步的数据库为postgres，模型为public
+-- 假設需要同步的數據庫為postgres，模型為public
 \c postgres
 
 create table public.test_decode
@@ -125,42 +125,42 @@ create table public.test_decode
   score  decimal
 )
 ```
-可以根据自己情况创建一张测试表<br>
-- 创建 slot 连接，以 wal2json 插件为例
+可以根據自己情況創建一張測試表<br>
+- 創建 slot 連接，以 wal2json 插件為例
 ```
 select * from pg_create_logical_replication_slot('slot_test', 'wal2json')
 ```
-- 创建成功后，对测试表插入一条数据<br>
-- 监听日志，查看返回结果，是否有刚才插入操作的信息<br>
+- 創建成功後，對測試表插入一條數據<br>
+- 監聽日誌，查看返回結果，是否有剛才插入操作的信息<br>
 ```
 select * from pg_logical_slot_peek_changes('slot_test', null, null)
 ```
-- 成功后，销毁slot连接，删除测试表<br>
+- 成功後，銷毀slot連接，刪除測試表<br>
 ```
 select * from pg_drop_replication_slot('slot_test')
 drop table public.test_decode
 ```
-#### **4.5 异常处理**
+#### **4.5 異常處理**
 - **Slot清理**<br>
-如果 tapdata 由于不可控异常（断电、进程崩溃等），导致cdc中断，会导致 slot 连接无法正确从 pg 主节点删除，将一直占用一个 slot 连接名额，需手动登录主节点，进行删除
-查询slot信息
+  如果 tapdata 由於不可控異常（斷電、進程崩潰等），導致cdc中斷，會導致 slot 連接無法正確從 pg 主節點刪除，將一直佔用一個 slot 連接名額，需手動登錄主節點，進行刪除
+  查詢slot信息
 ```
 // 查看是否有slot_name=tapdata的信息
  TABLE pg_replication_slots;
 ```
-- **删除slot节点**<br>
+- **刪除slot節點**<br>
 ```
 select * from pg_drop_replication_slot('tapdata');
 ```
-- **删除操作**<br>
-在使用 wal2json 插件解码时，如果源表没有主键，则无法实现增量同步的删除操作
+- **刪除操作**<br>
+  在使用 wal2json 插件解碼時，如果源表沒有主鍵，則無法實現增量同步的刪除操作
 
-#### **4.6 使用最后更新时间戳的方式进行增量同步**
-##### **4.6.1 名词解释**
-**schema**：中文为模型，pgsql一共有3级目录，库->模型->表，以下命令中<schema>字符，需要填入表所在的模型名称
-##### **4.6.2 预先准备（该步骤只需要操作一次）**
-- **创建公共函数**
-在数据库中，执行以下命令
+#### **4.6 使用最後更新時間戳的方式進行增量同步**
+##### **4.6.1 名詞解釋**
+**schema**：中文為模型，pgsql一共有3級目錄，庫->模型->表，以下命令中<schema>字符，需要填入表所在的模型名稱
+##### **4.6.2 預先準備（該步驟只需要操作一次）**
+- **創建公共函數**
+  在數據庫中，執行以下命令
 ```
 CREATE OR REPLACE FUNCTION <schema>.update_lastmodified_column()
     RETURNS TRIGGER language plpgsql AS $$
@@ -170,16 +170,15 @@ CREATE OR REPLACE FUNCTION <schema>.update_lastmodified_column()
     END;
 $$;
 ```
-- **创建字段和trigger**
-> **注意**：以下操作，每张表需要执行一次
-假设需要增加last update的表名为mytable
-- **创建last_update字段**
+- **創建字段和trigger**
+> **注意**：以下操作，每張表需要執行一次
+假設需要增加last update的表名為mytable
+- **創建last_update字段**
 ```
 alter table <schema>.mytable add column last_udpate timestamp default now();
 ```
-- **创建trigger**
+- **創建trigger**
 ```
 create trigger trg_uptime before update on <schema>.mytable for each row execute procedure
     update_lastmodified_column();
 ```
-
