@@ -45,8 +45,13 @@ Form.Behavior = createBehavior({
       //   }
       // },
       defaultProps: {
-        labelCol: 6,
-        wrapperCol: 12
+        colon: false,
+        shallow: false,
+        layout: 'vertical',
+        feedbackLayout: 'terse',
+        style: {
+          padding: '16px'
+        }
       }
     }
   },

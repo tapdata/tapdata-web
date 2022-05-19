@@ -41,13 +41,17 @@ export function createPolyInput(polyTypes = []) {
       const current = ref(types[0]?.type)
       const typesValue = ref({})
 
-      watch([value], () => {
-        types?.forEach(({ checker, type }) => {
-          if (checker(value)) {
-            current.value = type
-          }
-        })
-      })
+      watch(
+        [value],
+        () => {
+          types?.forEach(({ checker, type }) => {
+            if (checker(value.value)) {
+              current.value = type
+            }
+          })
+        },
+        { immediate: true }
+      )
 
       const getNextType = () => {
         const currentIndex = types?.findIndex(({ type }) => type === current.value)

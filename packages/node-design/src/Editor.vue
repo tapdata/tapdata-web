@@ -4,6 +4,7 @@
       <CompositePanel>
         <CompositePanel.Item title="panels.Component" icon="Component">
           <ResourceWidget title="sources.Inputs" :sources="sources"></ResourceWidget>
+          <ResourceWidget title="sources.Business" :sources="businessSources"></ResourceWidget>
         </CompositePanel.Item>
       </CompositePanel>
       <Workspace id="form">
@@ -61,7 +62,7 @@ import { GlobalRegistry } from './core'
 import * as icons from './icons'
 import './theme.scss'
 import './locales'
-import { Input, Field, Select, Form, FormLayout, InputNumber, Checkbox, Radio } from './sources'
+import { Input, Field, Select, Form, FormLayout, InputNumber, Checkbox, Radio, FieldSelect } from './sources'
 import { Slider } from '@tap/form'
 import {
   SettingsForm,
@@ -92,7 +93,8 @@ GlobalRegistry.registerDesignerLocales({
       Inputs: '输入控件',
       Layouts: '布局组件',
       Arrays: '自增组件',
-      Displays: '展示组件'
+      Displays: '展示组件',
+      Business: '业务组件'
     }
   },
   'en-US': {
@@ -100,7 +102,8 @@ GlobalRegistry.registerDesignerLocales({
       Inputs: 'Inputs',
       Layouts: 'Layouts',
       Arrays: 'Arrays',
-      Displays: 'Displays'
+      Displays: 'Displays',
+      Business: 'Business'
     }
   }
 })
@@ -127,7 +130,8 @@ export default {
   data() {
     return {
       sources: [Input, Select, InputNumber, Checkbox, Radio],
-      components: { Field, Input, Select, Form, FormLayout, InputNumber, Checkbox, Radio },
+      businessSources: [FieldSelect],
+      components: { Field, Input, Select, Form, FormLayout, InputNumber, Checkbox, Radio, FieldSelect },
       settingsFormComponents: { SizeInput, DisplayStyleSetter, FlexStyleSetter, Slider, CollapseItem, ValueInput }
     }
   }
