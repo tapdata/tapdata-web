@@ -338,8 +338,8 @@ export default {
       }
       .cell {
         white-space: nowrap;
-        font-weight: 500;
-        color: map-get($fontColor, normal);
+        // font-weight: 500;
+        // color: map-get($fontColor, normal);
       }
     }
     .el-table--border td {

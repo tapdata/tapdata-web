@@ -3,17 +3,17 @@
     <!-- <el-button class="btn-query" size="mini" type="text">
       <i class="iconfont icon-fangdajing" @click="searchFalg = !searchFalg"></i>
     </el-button> -->
-    <el-button type="text" class="btn-expand no-expand toggle" size="mini" @click="toggle()" v-if="!isExpand">
+    <ElButton type="text" class="btn-expand no-expand toggle" size="mini" @click="toggle()" v-if="!isExpand">
       <i class="iconfont icon-zhankai2"></i>
-    </el-button>
+    </ElButton>
     <div class="classification-header" v-else>
-      <el-button type="text" class="btn-expand" size="mini" @click="toggle()">
+      <ElButton type="text" class="btn-expand" size="mini" @click="toggle()">
         <i class="iconfont icon-zhankai2"></i>
-      </el-button>
-      <el-button class="btn-addIcon" size="mini" type="text" v-readonlybtn="authority" @click="showDialog()">
+      </ElButton>
+      <ElButton class="btn-addIcon" size="mini" type="text" v-readonlybtn="authority" @click="showDialog()">
         <!-- <i class="iconfont icon-jia" v-readonlybtn="authority" @click="showDialog()"></i> -->
         {{ $t('button_button') }}
-      </el-button>
+      </ElButton>
       <div class="title">
         <span>{{ types[0] === 'user' ? $t('classification.userTitle') : $t('classification.title') }}</span>
       </div>
@@ -480,15 +480,15 @@ export default {
   // box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);
   .btn-expand {
     // padding: 2px 3px;
-    color: map-get($fontColor, light);
+    // color: map-get($fontColor, light);
     transform: rotate(0);
     box-sizing: border-box;
     // background: #eff1f4;
     border: 0;
     .icon-zhankai2 {
-      &:hover {
-        color: map-get($color, lprimary);
-      }
+      // &:hover {
+      //   color: map-get($color, lprimary);
+      // }
     }
   }
   .no-expand {
@@ -498,7 +498,7 @@ export default {
   }
   .toggle {
     margin-top: 16px;
-    color: map-get($color, lprimary);
+    // color: map-get($color, lprimary);
     z-index: 2;
   }
   &.expand {
@@ -514,9 +514,9 @@ export default {
       transform: rotate(180deg);
       .icon-zhankai2 {
         font-size: 16px;
-        color: map-get($color, primary);
+        // color: map-get($color, primary);
         &:hover {
-          color: map-get($color, lprimary);
+          // color: map-get($color, lprimary);
         }
       }
     }

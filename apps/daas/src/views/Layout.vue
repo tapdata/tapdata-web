@@ -230,15 +230,15 @@
         align-items: center;
         height: 50px;
         line-height: 50px;
-        color: map-get($fontColor, normal);
+        // color: map-get($fontColor, normal);
         background: #f7f8fa;
         .submenu-item {
-          color: map-get($fontColor, light);
+          // color: map-get($fontColor, light);
           padding-left: 12px;
         }
         &.is-active,
         &:hover {
-          color: map-get($color, primary) !important;
+          // color: map-get($color, primary) !important;
           background: rgba(44, 101, 255, 0.05);
         }
       }
@@ -259,7 +259,7 @@
             background-color: rgba(44, 101, 255, 0.05);
             .submenu-item {
               font-weight: 500;
-              color: map-get($color, primary) !important;
+              // color: map-get($color, primary) !important;
             }
           }
         }

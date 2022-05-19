@@ -289,7 +289,9 @@ export default {
             if (val === 1.1) {
               val = 1
             }
+
             let html = params.name + `<span style="padding: 0 4px; text-align: center;"></span><br/>` + val
+            // console.log(html, this.handleChangeUnit(val))
             return html
           }
         }
@@ -546,9 +548,12 @@ export default {
         data.forEach(res => {
           dataName.push(res.name)
           total += parseFloat(res.value) * 1
+          // res.value = this.handleChangeUnit(res.value)
         })
         totalFalg = data.some(item => item.value > 0)
         total = this.handleChangeUnit(total)
+
+        console.log(data, '######')
       }
 
       return {
@@ -606,7 +611,9 @@ export default {
               label: {
                 show: true,
                 fontWeight: 'bold',
-                formatter: '{name|{c}}\n{value|{b}}',
+                formatter: ({ name, value }) => {
+                  return `{name|${this.handleChangeUnit(value)}}\n{value|${name}}`
+                },
                 width: 60,
                 height: 34,
                 rich: {

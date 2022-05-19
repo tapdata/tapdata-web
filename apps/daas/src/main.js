@@ -16,7 +16,7 @@ import VConfirm from '@/components/v-confirm'
 
 import '@/plugins/element'
 import '@/plugins/icon'
-import 'element-ui/lib/theme-chalk/index.css'
+// import 'element-ui/lib/theme-chalk/index.css'
 import '@/directives'
 import 'github-markdown-css'
 import LoadMore from '@/utils/loadMore'

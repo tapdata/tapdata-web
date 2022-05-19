@@ -53,12 +53,12 @@
             <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
             <span>{{ systemMap[item.system] }}</span>
             <!-- <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate"> -->
-            <span v-if="item.msg === 'deleted'" class="link-primary">
+            <ElLink v-if="item.msg === 'deleted'">
+              {{ `${item.serverName} ` }}
+            </ElLink>
+            <ElLink type="primary" v-else class="link-primary cursor-pointer" @click="handleGo(item)">
               {{ `${item.serverName} , ` }}
-            </span>
-            <span v-else class="link-primary cursor-pointer" @click="handleGo(item)">
-              {{ `${item.serverName} , ` }}
-            </span>
+            </ElLink>
 
             <!-- </router-link> -->
             <span>
@@ -83,12 +83,12 @@
           <div class="list-item-desc">
             <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
             <span>{{ systemMap[item.system] }}</span>
-            <span v-if="item.msg === 'deleted'" class="link-primary">
-              {{ `${item.serverName} , ` }}
+            <span v-if="item.msg === 'deleted'">
+              {{ `${item.serverName} ` }}
             </span>
-            <span v-else class="link-primary cursor-pointer" @click="handleGo(item)">
+            <ElLink type="primary" v-else class="cursor-pointer px-1" @click="handleGo(item)">
               {{ item.serverName }}
-            </span>
+            </ElLink>
             <span>{{ typeMap[item.msg] }}</span>
             <span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
             <span v-if="item.restDay">{{ item.restDay }} {{ $t('notify_day') }}</span>
@@ -609,11 +609,11 @@ $unreadColor: #ee5353;
     height: 40px;
     line-height: 40px;
     font-size: 14px;
-    color: map-get($fontColor, light);
+    // color: map-get($fontColor, light);
     font-weight: 400;
     &.is-active {
       font-weight: 500;
-      color: map-get($color, primary);
+      // color: map-get($color, primary);
     }
   }
 }
