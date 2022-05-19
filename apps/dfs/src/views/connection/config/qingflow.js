@@ -43,13 +43,13 @@ export default function (vm) {
       {
         type: 'input',
         field: 'qingFlowUserId',
-        label: '用户ID',
+        label: vm.$t('user_name_id'),
         required: true
       },
       {
         type: 'select',
         field: 'qingFlowTagId',
-        label: '应用包名称',
+        label: vm.$t('connection_form_qingflow_tag_name'),
         options: [],
         required: true
       }

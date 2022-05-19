@@ -35,5 +35,8 @@ export default {
   user_Center_qingShuRuJiuShou: 'Please enter the code',
   components_VerificationCode_faSongYanZhengMa: 'Send',
   user_Center_qingShuRuXinShou: 'Please enter the code',
-  user_Center_qingShuRuShouJi: 'Please enter the code'
+  user_Center_qingShuRuShouJi: 'Please enter the code',
+  connection_form_vika_plain_password: 'Authentication Token',
+  connection_form_qingflow_tag_name: 'Application Name',
+  dataForm_error_portNumber: 'Must be a number'
 }

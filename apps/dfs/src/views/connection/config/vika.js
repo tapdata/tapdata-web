@@ -35,7 +35,7 @@ export default function (vm) {
       {
         type: 'input',
         field: 'plain_password',
-        label: '接口鉴权Token',
+        label: vm.$t('connection_form_vika_plain_password'),
         domType: 'password',
         showPassword: true,
         required: true
@@ -43,7 +43,7 @@ export default function (vm) {
       {
         type: 'select',
         field: 'vika_space_id',
-        label: '空间站名称',
+        label: vm.$t('connection_form_vika_vika_space_id'),
         options: [],
         required: true
       }

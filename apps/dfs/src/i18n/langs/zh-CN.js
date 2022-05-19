@@ -54,6 +54,7 @@ export default {
   // 用户
   user_name: '用户名',
   user_nick_name: '昵称',
+  user_name_id: '用户ID',
   user_password: '密码',
   user_phone: '手机',
   user_phone_number: '手机号',
@@ -417,6 +418,9 @@ export default {
   connection_form_confirm_create: '此操作将丢失当前正在创建的连接',
   connection_form_confirm_create_content: '你想放弃连接的创建吗？',
   connection_form_confirm_edit_content: '要放弃修改内容吗？',
+  connection_form_vika_plain_password: '接口鉴权Token',
+  connection_form_vika_space_id: '空间站名称',
+  connection_form_qingflow_tag_name: '应用包名称',
   connection_form_hazecast_connection_type: 'Connection Type',
   connection_form_hazecast_connection_test: 'Connection test',
   connection_form_hazecast_create: 'Create connection',
