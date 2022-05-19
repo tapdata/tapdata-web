@@ -109,7 +109,7 @@ export class Database extends NodeType {
       'attrs.howManyTable': {
         title: '选择表',
         type: 'string',
-        default: 'all',
+        default: 'some',
         'x-decorator': 'FormItem',
         'x-component': 'Radio.Group',
         enum: [
@@ -121,7 +121,16 @@ export class Database extends NodeType {
             label: '自定义',
             value: 'some'
           }
-        ]
+        ],
+        'x-reactions': {
+          target: 'syncObjects.0.objectNames',
+          effects: ['onFieldInputValueChange'],
+          fulfill: {
+            state: {
+              value: '{{$self.value === "some" ? []:$self.value}}'
+            }
+          }
+        }
       },
 
       'syncObjects.0.objectNames': {
