@@ -78,6 +78,11 @@ export class TargetDatabase extends NodeType {
           autosize: { maxRows: 2 }
         }
       },
+      clipBtn: {
+        type: 'void',
+        'x-decorator': 'FormItem',
+        'x-component': 'ClipboardBtn'
+      },
 
       name: {
         type: 'string',
