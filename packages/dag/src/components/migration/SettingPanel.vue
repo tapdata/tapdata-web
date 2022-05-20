@@ -54,6 +54,30 @@ export default observer({
                   max: 100
                 }
               },
+              crontabExpression: {
+                //调度表达式
+                title: this.$t('task_setting_cron_expression_label'), //定期调度任务
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: this.$t('task_setting_cron_expression')
+                },
+                'x-decorator-props': {
+                  feedbackStatus: 'info',
+                  feedbackText: this.$t('task_setting_cron_feedbackText'),
+                  extra: this.$t('task_setting_cron_extra'),
+                  feedbackLayout: 'terse'
+                },
+                'x-reactions': {
+                  dependencies: ['sync_type', 'isSchedule'],
+                  fulfill: {
+                    state: {
+                      display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
+                    }
+                  }
+                }
+              },
               sync_type: {
                 title: this.$t('task_setting_sync_type'),
                 type: 'string',
