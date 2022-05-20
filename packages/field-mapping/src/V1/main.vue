@@ -68,11 +68,6 @@ export default {
       this.dataFlow = this.getDataFlow()
       this.dataFlow.id = this.dataFlow.id || this.dataFlow?.taskId
     }
-    // if (this.dataFlow?.syncType === 'migrate') {
-    //   this.isPdk = this.dataFlow.attrs?.task_data_source_Data?.target_targetType === 'pdk'
-    // } else {
-    //   this.isPdk = this.$store.getters['dataflow/activeNode']?.attrs.pdkType === 'pdk'
-    // }
   },
   methods: {
     /*

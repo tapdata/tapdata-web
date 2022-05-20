@@ -104,7 +104,7 @@
             show-overflow-tooltip
             :label="$t('dag_dialog_field_mapping_source_field')"
             prop="field_name"
-            width="150"
+            width="360"
           >
             <template slot-scope="scope">
               <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
@@ -119,13 +119,23 @@
             prop="data_type"
             width="150"
           ></ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_source_precision')" prop="precision" width="150">
+          <ElTableColumn
+            v-if="!isPdk"
+            :label="$t('dag_dialog_field_mapping_source_precision')"
+            prop="precision"
+            width="150"
+          >
             <template slot-scope="scope">
               <span>{{ scope.row.precision === -1 ? '' : scope.row.precision }}</span>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_source_scale')" prop="scale" width="100"></ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')" width="260">
+          <ElTableColumn
+            v-if="!isPdk"
+            :label="$t('dag_dialog_field_mapping_source_scale')"
+            prop="scale"
+            width="100"
+          ></ElTableColumn>
+          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')" :width="isPdk ? 360 : 260">
             <template slot-scope="scope">
               <div
                 class="cursor-pointer"
