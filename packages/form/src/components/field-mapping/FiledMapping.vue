@@ -71,7 +71,7 @@
             <ElButton plain class="btn-refresh" @click="getMetadataTransformer">
               <VIcon class="text-primary">refresh</VIcon>
             </ElButton>
-            <ElButton plain class="btn-refresh" @click="dialogVisible = true">
+            <ElButton plain class="btn-refresh" @click.stop="dialogVisible = true">
               <VIcon class="text-primary">edit-outline</VIcon>
             </ElButton>
           </div>
