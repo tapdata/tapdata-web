@@ -141,10 +141,11 @@ export class TargetDatabase extends NodeType {
                         type: 'array',
                         'x-component': 'Checkbox.Group',
                         'x-decorator': 'FormItem',
+                        default: true,
                         enum: [
                           {
                             label: '插入事件',
-                            value: 1
+                            value: true
                           }
                         ]
                       },
@@ -165,8 +166,7 @@ export class TargetDatabase extends NodeType {
                             value: 'existDiscardOrNotExistInsert'
                           }
                         ],
-                        'x-decorator': 'FormItem',
-                        required: true
+                        'x-decorator': 'FormItem'
                       }
                     }
                   },
@@ -178,10 +178,11 @@ export class TargetDatabase extends NodeType {
                         type: 'array',
                         'x-component': 'Checkbox.Group',
                         'x-decorator': 'FormItem',
+                        default: true,
                         enum: [
                           {
                             label: '更新事件',
-                            value: 1
+                            value: true
                           }
                         ]
                       },
@@ -191,7 +192,7 @@ export class TargetDatabase extends NodeType {
                         'x-decorator-props': {
                           wrapperWidth: 300
                         },
-                        default: '1',
+                        default: 'existUpdateOrNotExistDiscard',
                         enum: [
                           {
                             label: '目标存在时更新，不存在时丢弃',
@@ -202,8 +203,7 @@ export class TargetDatabase extends NodeType {
                             value: 'existUpdateOrNotExistInsert'
                           }
                         ],
-                        'x-decorator': 'FormItem',
-                        required: true
+                        'x-decorator': 'FormItem'
                       }
                     }
                   },
