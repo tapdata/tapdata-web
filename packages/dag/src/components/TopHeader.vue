@@ -133,19 +133,7 @@
     <div class="flex align-center flex-grow-1">
       <div class="flex-grow-1"></div>
 
-      <ElButton
-        v-if="stateIsReadonly"
-        size="mini"
-        class="mx-1 btn--text"
-        @click="
-          $router.push({
-            name: 'dataflowDetails',
-            params: {
-              id: dataflow.id
-            }
-          })
-        "
-      >
+      <ElButton v-if="stateIsReadonly" size="mini" class="mx-1 btn--text" @click="$emit('detail')">
         <VIcon>monitoring</VIcon>
         <!--运行监控-->
         {{ $t('task_list_button_monitor') }}

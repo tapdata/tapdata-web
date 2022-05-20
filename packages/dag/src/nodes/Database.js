@@ -109,7 +109,7 @@ export class Database extends NodeType {
       'attrs.howManyTable': {
         title: '选择表',
         type: 'string',
-        default: 'some',
+        default: 'all',
         'x-decorator': 'FormItem',
         'x-component': 'Radio.Group',
         enum: [

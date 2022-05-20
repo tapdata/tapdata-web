@@ -25,6 +25,7 @@
       @forceStop="handleForceStop"
       @reset="handleReset"
       @edit="handleEdit"
+      @detail="handleDetail"
     ></TopHeader>
     <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
@@ -1745,6 +1746,15 @@ export default {
       this.$router.push({
         name: 'DataflowEditor',
         params: { id: this.dataflow.id, action: 'dataflowEdit' }
+      })
+    },
+
+    handleDetail() {
+      this.$router.push({
+        name: 'dataflowDetails',
+        params: {
+          id: this.dataflow.id
+        }
       })
     },
 
