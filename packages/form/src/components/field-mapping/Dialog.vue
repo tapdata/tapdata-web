@@ -29,10 +29,10 @@
               @click.prevent="select(item, index)"
             >
               <div class="task-form__img" v-if="item.invalid">
-                <img src="web-core/assets/images/fieldMapping-table-error.png" alt="" />
+                <img :src="fieldMapping_table_error" alt="" />
               </div>
               <div class="task-form__img" v-else>
-                <img src="web-core/assets/images/fieldMapping-table.png" alt="" />
+                <img :src="fieldMapping_table" alt="" />
               </div>
               <div class="task-form-text-box">
                 <div class="source">{{ item.sourceObjectName }}</div>
@@ -226,6 +226,8 @@
 import VIcon from 'web-core/components/VIcon'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
 import refresh from 'web-core/assets/icons/svg/refresh.svg'
+import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
+import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
 import { TypeMapping } from '@tap/api'
 const typeMappingApi = new TypeMapping()
 
@@ -242,6 +244,7 @@ export default {
         current: 1,
         total: 0
       },
+      position: 0,
       selectRow: '',
       currentOperationType: '',
       currentOperationData: '',
@@ -262,6 +265,8 @@ export default {
       typeMapping: [],
       dialogVisible: false,
       rollback,
+      fieldMapping_table_error,
+      fieldMapping_table,
       refresh
     }
   },
@@ -542,7 +547,7 @@ export default {
         }
         .task-form__img {
           width: 34px;
-          height: 50px;
+          height: 34px;
           img {
             width: 100%;
             height: 100%;

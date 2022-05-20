@@ -6,18 +6,24 @@
         <span class="mr-2">创建命令</span>
         <ClipboardButton :tooltip="tooltip" :finishTooltip="finishTooltip" :content="sql"></ClipboardButton>
       </div>
-      <CodeEditor class="border rounded-2" :value="sql" lang="javascript" :height="200" :options="options"></CodeEditor>
+      <VCodeEditor
+        class="border rounded-2"
+        :value="sql"
+        lang="javascript"
+        :height="200"
+        :options="options"
+      ></VCodeEditor>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import CodeEditor from 'web-core/components/base/VCodeEditor'
+import { VCodeEditor } from '@tap/component'
 import ClipboardButton from '../clipboard-button'
 
 export default {
   name: 'ClipboardDialog',
-  components: { CodeEditor, ClipboardButton },
+  components: { VCodeEditor, ClipboardButton },
   data() {
     return {
       visible: false,
