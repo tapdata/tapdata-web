@@ -78,7 +78,7 @@
             </div>
           </div>
           <ElTable class="field-mapping-table table-border" height="100%" border :data="target">
-            <ElTableColumn show-overflow-tooltip :label="$t('dag_dialog_field_mapping_source_field')" prop="field_name">
+            <ElTableColumn show-overflow-tooltip :label="$t('dag_dialog_field_mapping_field')" prop="field_name">
               <template #default="{ row }">
                 <span v-if="row.primary_key_position > 0" :show-overflow-tooltip="true"
                   >{{ row.field_name }}
@@ -87,7 +87,7 @@
                 <span v-else class="item" :show-overflow-tooltip="true">{{ row.field_name }}</span>
               </template>
             </ElTableColumn>
-            <ElTableColumn :label="$t('dag_dialog_field_mapping_source_type')" prop="data_type">
+            <ElTableColumn :label="$t('dag_dialog_field_mapping_type')" prop="data_type">
               <template #default="{ row }">
                 <div class="cursor-pointer" v-if="!row.is_deleted" @click="edit(row, 'data_type')">
                   <span>{{ row.data_type }}</span>
@@ -99,7 +99,7 @@
                 </div>
               </template>
             </ElTableColumn>
-            <ElTableColumn :label="$t('dag_dialog_field_mapping_source_precision')" prop="precision">
+            <ElTableColumn :label="$t('dag_dialog_field_mapping_precision')" prop="precision">
               <template #default="{ row }">
                 <div
                   class="cursor-pointer"
@@ -114,7 +114,7 @@
                 </div>
               </template>
             </ElTableColumn>
-            <ElTableColumn :label="$t('dag_dialog_field_mapping_source_scale')" prop="scale">
+            <ElTableColumn :label="$t('dag_dialog_field_mapping_scale')" prop="scale">
               <template #default="{ row }">
                 <div class="cursor-pointer" v-if="!row.is_deleted && row.isScaleEdit" @click="edit(row, 'scale')">
                   <span>{{ row.scale }}</span>

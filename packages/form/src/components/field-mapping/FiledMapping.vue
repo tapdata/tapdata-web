@@ -77,7 +77,7 @@
           </div>
         </div>
         <ElTable class="field-mapping-table table-border" height="100%" border :data="target" v-loading="loadingTable">
-          <ElTableColumn show-overflow-tooltip :label="$t('dag_dialog_field_mapping_source_field')" prop="field_name">
+          <ElTableColumn show-overflow-tooltip :label="$t('dag_dialog_field_mapping_field')" prop="field_name">
             <template slot-scope="scope">
               <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
                 >{{ scope.row.field_name }}
@@ -86,13 +86,13 @@
               <span v-else class="item" :show-overflow-tooltip="true">{{ scope.row.field_name }}</span>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_source_type')" prop="data_type"></ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_source_precision')" prop="precision">
+          <ElTableColumn :label="$t('dag_dialog_field_mapping_type')" prop="data_type"></ElTableColumn>
+          <ElTableColumn :label="$t('dag_dialog_field_mapping_precision')" prop="precision">
             <template slot-scope="scope">
               <span>{{ scope.row.precision === -1 ? '' : scope.row.precision }}</span>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_source_scale')" prop="scale"></ElTableColumn>
+          <ElTableColumn :label="$t('dag_dialog_field_mapping_scale')" prop="scale"></ElTableColumn>
           <ElTableColumn :label="$t('meta_table_default')" prop="default_value"></ElTableColumn>
           <div class="field-mapping-table__empty" slot="empty">
             <i class="el-icon-folder-opened"></i>
