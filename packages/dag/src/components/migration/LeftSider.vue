@@ -523,16 +523,17 @@ export default {
     },
 
     getNodeProps(item) {
+      const extraAttrs = this.connectionType === 'target' ? { isTarget: true } : {}
       return {
         name: item.name,
         type: 'database',
         databaseType: item.database_type,
         connectionId: item.id,
         attrs: {
-          isTarget: this.connectionType === 'target',
           connectionName: item.name,
           connectionType: item.connection_type,
-          accessNodeProcessId: item.accessNodeProcessId
+          accessNodeProcessId: item.accessNodeProcessId,
+          ...extraAttrs
         }
       }
     }

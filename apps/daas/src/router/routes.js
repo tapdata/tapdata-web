@@ -108,6 +108,15 @@ export default [
       code: 'Data_SYNC_menu'
     }
   },
+  {
+    path: '/migrate/viewer/:id',
+    name: 'MigrateViewer',
+    component: MigrationEditor,
+    meta: {
+      title: 'page_title_task_edit',
+      code: 'Data_SYNC_menu'
+    }
+  },
 
   {
     path: '/',

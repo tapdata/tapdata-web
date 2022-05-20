@@ -121,7 +121,16 @@ export class Database extends NodeType {
             label: '自定义',
             value: 'some'
           }
-        ]
+        ],
+        'x-reactions': {
+          target: 'syncObjects.0.objectNames',
+          effects: ['onFieldInputValueChange'],
+          fulfill: {
+            state: {
+              value: '{{$self.value === "some" ? []:$self.value}}'
+            }
+          }
+        }
       },
 
       'syncObjects.0.objectNames': {
@@ -181,6 +190,6 @@ export class Database extends NodeType {
 
   selector(node) {
     // attrs.isTarget 是UI属性，在无UI的模式生成的节点，通过是否有输入($inputs)来判断
-    return node.type === 'database' && !node.attrs.isTarget && !node.$inputs?.length
+    return node.type === 'database' && !node.attrs?.isTarget && !node.$inputs?.length
   }
 }
