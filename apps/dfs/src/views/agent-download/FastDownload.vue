@@ -380,6 +380,7 @@ export default {
     padding: 4px;
     border: 1px solid #dcdcdc;
     background-color: #fff;
+    width: 220px;
   }
 }
 </style>
