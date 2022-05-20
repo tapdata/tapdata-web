@@ -7,7 +7,7 @@ import { Button, Popover, Select, Option } from 'element-ui'
 import { Input, InputNumber } from '@tap/form'
 import { TextWidget } from '../../widgets'
 import { defineComponent } from 'vue-demi'
-import CodeEditor from 'web-core/components/base/VCodeEditor'
+import { VCodeEditor } from '@tap/component'
 
 const STARTTAG_REX =
   /<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/
@@ -50,7 +50,7 @@ export const ValueInput = createPolyInput([
       props: ['value'],
       setup: (props, { emit }) => {
         return () => (
-          <Popover trigger="click">
+          <Popover trigger="click" class="w-100">
             <div
               style={{
                 width: '400px',
@@ -60,7 +60,7 @@ export const ValueInput = createPolyInput([
                 borderRadius: '4px'
               }}
             >
-              <CodeEditor
+              <VCodeEditor
                 props={props}
                 lang="javascript"
                 options={{
@@ -73,7 +73,7 @@ export const ValueInput = createPolyInput([
                 }}
               />
             </div>
-            <Button slot="reference" block>
+            <Button slot="reference" class="w-100">
               <TextWidget token="SettingComponents.ValueInput.expression" />
             </Button>
           </Popover>

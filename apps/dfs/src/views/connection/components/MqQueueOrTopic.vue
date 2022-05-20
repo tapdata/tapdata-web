@@ -1,10 +1,10 @@
 <template>
   <div>
-    <ElRadioGroup v-model="model.mqQueueOrTopic" size="small" @change="change">
-      <ElRadioButton label="Topic" :disabled="model.mqType === '2'">{{
+    <ElRadioGroup v-model="model.mqQueueOrTopic" size="small">
+      <ElRadioButton label="Topic" :disabled="model.mqType === '1'">{{
         $t('components_MqQueueOrTopic_zhuTi')
       }}</ElRadioButton>
-      <ElRadioButton label="Queue" :disabled="model.mqType === '1'">{{
+      <ElRadioButton label="Queue" :disabled="model.mqType === '2'">{{
         $t('components_MqQueueOrTopic_duiLie')
       }}</ElRadioButton>
     </ElRadioGroup>
@@ -76,20 +76,13 @@ export default {
   watch: {
     'value.mqType'(v) {
       if (v === '1') {
-        this.model.mqQueueOrTopic = 'Topic'
-      } else if (v === '2') {
         this.model.mqQueueOrTopic = 'Queue'
+      } else if (v === '2') {
+        this.model.mqQueueOrTopic = 'Topic'
       }
     }
   },
   methods: {
-    change(v) {
-      if (v === 'Topic') {
-        this.model.mqQueueSet = ''
-      } else if (v === 'Queue') {
-        this.model.mqTopicSet = ''
-      }
-    },
     validate(callback) {
       this.$refs.kennenform.validate(valid => {
         callback?.(valid)

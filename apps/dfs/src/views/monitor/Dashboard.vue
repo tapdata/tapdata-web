@@ -12,10 +12,9 @@
             >
           </ElTooltip>
           <StatusTag
-            type="text"
+            type="tag"
             target="task"
             :status="task.isFinished ? 'finished' : task.status || 'running'"
-            only-img
           ></StatusTag>
         </div>
         <div class="mt-1">
@@ -107,12 +106,7 @@
               </ElTableColumn>
               <ElTableColumn :label="$t('task_monitor_status')" prop="status" width="100px">
                 <template slot-scope="scope">
-                  <StatusTag
-                    type="text"
-                    target="milestone"
-                    :status="getMilestoneStatus(scope.row.status)"
-                    only-img
-                  ></StatusTag>
+                  <StatusTag type="tag" target="milestone" :status="getMilestoneStatus(scope.row.status)"></StatusTag>
                 </template>
               </ElTableColumn>
               <ElTableColumn :label="$t('task_monitor_time')" prop="fromNow" width="160px"></ElTableColumn>
@@ -286,6 +280,10 @@ export default {
   },
   created() {
     this.getData()
+    let tab = this.$route.query?.tab
+    if (tab) {
+      this.activeTab = tab
+    }
     this.$ws.on('watch', this.taskChange)
     this.$ws.send({
       type: 'watch',
@@ -341,9 +339,9 @@ export default {
     taskType() {
       let sync_type = this.task.setting?.sync_type
       let map = {
-        initial_sync: this.$t('task_sync_type_initial_sync'),
+        initial_sync: this.$t('task_initial_sync'),
         cdc: this.$t('task_sync_type_cdc'),
-        'initial_sync+cdc': this.$t('task_sync_type_initial_sync_cdc')
+        'initial_sync+cdc': this.$t('task_initial_sync_cdc')
       }
       return {
         label: map[sync_type],

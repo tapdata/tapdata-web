@@ -29,10 +29,10 @@
             @click.prevent="select(item, index)"
           >
             <div class="task-form__img" v-if="item.invalid">
-              <img src="../assets/images/fieldMapping-table-error.png" alt="" />
+              <img src="../assets/images/fieldMapping_table_error.png" alt="" />
             </div>
             <div class="task-form__img" v-else>
-              <img src="../assets/images/fieldMapping-table.png" alt="" />
+              <img src="../assets/images/fieldMapping_table.png" alt="" />
             </div>
             <div class="task-form-text-box">
               <div class="source">{{ item.sourceObjectName }}</div>

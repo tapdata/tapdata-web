@@ -3,7 +3,7 @@ export default function () {
   return {
     form: {
       labelPosition: 'left',
-      labelWidth: '120px',
+      labelWidth: '144px',
       labelColon: true
     },
     defaultModel: {

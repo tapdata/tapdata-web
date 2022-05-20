@@ -101,9 +101,9 @@
         </ElRow>
         <VButton v-if="!isEdit" type="text" @click="editEnData">{{ $t('user_Center_qiYeXinXiXiu') }}</VButton>
         <template v-else>
-          <VButton type="text" @click="cancelEditEnData">{{ $t('components_InlineInput_quXiao') }}</VButton>
+          <VButton type="text" @click="cancelEditEnData">{{ $t('button_cancel') }}</VButton>
           <VButton type="text" auto-loading @click="saveEnData(arguments[0])">{{
-            $t('components_InlineInput_baoCun')
+            $t('button_save')
           }}</VButton>
         </template>
       </div>

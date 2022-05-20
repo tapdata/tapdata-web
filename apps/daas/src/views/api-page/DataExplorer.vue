@@ -224,7 +224,7 @@
       :visible.sync="openCreateDialog"
     >
       <div class="create-dialog-box">
-        <CodeEditor v-model="jsonDoc" ref="editor" lang="javascript" height="200"></CodeEditor>
+        <JsEditor v-model="jsonDoc" height="200"></JsEditor>
         <!-- <el-input type="textarea" v-model="jsonDoc" :autosize="{ maxRows: 15 }"></el-input> -->
       </div>
 
@@ -241,12 +241,11 @@
 </template>
 
 <script>
-// import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import BrowseQuery from './BrowseQuery'
 import APIClient from '@/api/ApiClient'
 import SelectList from '@/components/SelectList'
-import CodeEditor from '@/components/CodeEditor'
+import { JsEditor } from '@tap/component'
 let time = 0
 export default {
   name: 'DataExplorer',
@@ -254,7 +253,7 @@ export default {
     TablePage,
     BrowseQuery,
     SelectList,
-    CodeEditor
+    JsEditor
   },
   data() {
     return {

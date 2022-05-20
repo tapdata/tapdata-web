@@ -1,0 +1,26 @@
+export default {
+  gl_select_option_all: 'all',
+  button_test_connection: 'Test',
+  list_operation: 'Operation',
+  notify_agent_notification: 'Agent notification',
+  notify_all_read: 'Mark All as Read',
+  task_start_task: 'Start',
+  task_operation_monitor: 'Monitor',
+  task_initial_sync: 'INITIAL SYNC',
+  task_initial_sync_cdc: 'INITIAL SYNC+ CDC',
+  operation_log_migration_start: 'Start task1111',
+  verify_configuration: 'Config',
+  verify_form_label_script: 'JS logic',
+  dataVerification_verifyProgress: 'Verify Progress',
+  dataVerification_verifyResult: 'Verify Progress',
+  dataVerification_done: 'Verify finished',
+  dataVerification_sourceRows: 'Source Table Rows',
+  button_stop: 'Stop',
+  task_start_time: 'Start time',
+  agent_button_auto_upgrade: 'Auto',
+  agent_button_manual_upgrade: 'Manual',
+  dataForm_form_uriTips_content:
+    '<b>MongoDB database connection URI example:</b><br><b>The username and password in the URI must be url encoded and then spliced into the connection string</b><br><b>replica set :</b> mongodb://192.168.0.100:27017/mydb?replicaSet=xxx<br><b>Authenticated replica set:</b> mongodb://admin:password@192.168.0.100:27017/ mydb?replicaSet=xxx&authSource=admin<br><b>Multi-node replica set:</b> mongodb://192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017/mydb?replicaSet=xxx< br><b>Sharded set:</b> mongodb://192.168.0.100:27017/mydb<br><b>Multiple mongos:</b> mongodb://192.168.0.1:27017,192.168. 0.2:27017,192.168.0.3:27017/mydb<br>',
+  copy_Info_pTHIS: '<p>{val1}<span style="color:#409EFF">{val2}</span>、',
+  copy_Info_sPANS: '<span style="color:#409EFF">{val1}</span>、'
+}

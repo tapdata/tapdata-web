@@ -49,24 +49,15 @@
       <div class="title fs-7 fw-sub font-color-dark">{{ $t('apiaudit_parameter') }}</div>
       <div class="pt-4 editor-box" v-if="auditData">
         <pre class="editor-pre">{{ auditData.reqParams }}</pre>
-        <!-- <CodeEditor
-          v-model="auditData.reqParams"
-          ref="editor"
-          lang="javascript"
-          height="200"
-          :options="{ readOnly: true }"
-        ></CodeEditor> -->
       </div>
     </div>
   </section>
 </template>
 
 <script>
-// import CodeEditor from '@/components/CodeEditor'
 import { formatMs } from '@/utils/util'
 export default {
   name: 'ApiAudit',
-  // components: { CodeEditor },
   data() {
     return {
       auditData: null,

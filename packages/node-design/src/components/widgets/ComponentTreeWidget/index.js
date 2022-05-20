@@ -33,9 +33,9 @@ export const TreeNodeWidget = observer(
             ...node.props,
             ...node.designerProps?.getComponentProps?.(node)
           }
-          if (node.depth === 0) {
+          /*if (node.depth === 0) {
             delete props.style
-          }
+          }*/
           return props
         }
         const renderComponent = () => {

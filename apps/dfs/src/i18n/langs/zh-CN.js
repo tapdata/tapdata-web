@@ -1,4 +1,5 @@
 export default {
+  /** 全局 */
   gl_see_more: '查看更多',
   gl_no_data: '暂无数据',
   gl_no_match_result: '没有查到符合条件的结果',
@@ -18,18 +19,43 @@ export default {
   gl_telephone_tip: '电话咨询',
   gl_form_can_not_be_empty: '不能为空',
   gl_search_show_all: '查看全部',
+
+  // 按钮
   button_edit: '编辑',
   button_copy: '复制',
   button_reset: '重置',
+  button_stop: '停止',
   button_delete: '删除',
+  button_all_delete: '全部删除',
   button_cancel: '取消',
   button_finish: '完成',
   button_submit: '保存',
   button_confirm: '确定',
   button_close: '取 消',
   button_save: '确 定',
+  button_upload: '上传',
+  button_export: '导出',
+  button_details: '详情',
+  button_test_connection: '连接测试',
+
+  // 国际化
+  lang_zh_cn: '中文',
+  lang_en: '英文',
+  lang_zh_tw: '繁体',
+
+  // 确认框
   confirm_error_tip: '错误提示',
   confirm_reload_label: '刷新页面',
+
+  // 列表
+  list_operation: '操作',
+
+  // 时间
+  start_time: '开始时间',
+  end_time: '结束时间',
+
+  /** 模块 */
+  // 工作台
   workbench_manage: '工作台',
   workbench_quick_start: '快速开始',
   workbench_notice: '公告通知',
@@ -55,6 +81,8 @@ export default {
   workbench_statistics_title: '任务数据量统计',
   workbench_statistics__sub_title: '输入数据量',
   workbench_statistics__sub_title_label: '累计',
+
+  // 头部
   header_question: '问答支持',
   header_scan_code: '使用过程中遇到问题？',
   header_join_group: '扫码添加小助手获得技术支持',
@@ -75,6 +103,8 @@ export default {
   header_no_notice: '暂无通知',
   header_setting: '设置',
   header_view_notifications: '查看所有通知',
+
+  // 通知
   notify_setting: '通知设置',
   notify_agent_notification: 'agent通知',
   notify_sms_notification: '短信通知',
@@ -92,9 +122,7 @@ export default {
   notify_task_longer_exists: '您的任务已不存在',
   notify_list: '通知列表',
   notify_mark_read: '标记为已读',
-  notify_delete: '删除',
   notify_all_read: '全部已读',
-  notify_all_delete: '全部删除',
   notify_notification_content: '通知内容',
   notify_day: '天',
   notify_notification_time: '通知时间',
@@ -127,6 +155,8 @@ export default {
   notify_list_agent_deleted: 'Agent被删除',
   notify_list_will_release_agent: '即将被回收',
   notify_list_releases_agent: '已经被回收',
+
+  // 路由头部
   tap_home: '首页',
   tap_workbench: '工作台',
   tap_announcement_notice: '公告通知',
@@ -153,8 +183,9 @@ export default {
   tap_agent_download: 'Agent 下载',
   tap_agent_download_now: 'Agent 立即下载',
   tap_upgrade: 'Agent 升级',
-  tap_contact_us: '联系我们',
   tap_user_center: '用户中心',
+
+  // Agent
   agent_key: 'Agent',
   agent_manage: 'Agent管理',
   agent_name: 'Agent 名称',
@@ -163,7 +194,6 @@ export default {
   agent_create_time: '创建时间',
   agent_version: '版本',
   agent_status: '状态',
-  agent_operate: '操作',
   agent_status_all: '全部状态',
   agent_status_creating: '待部署',
   agent_status_running: '运行中',
@@ -177,8 +207,6 @@ export default {
   agent_button_deploy: '部署',
   agent_button_deploy_now: '立即部署',
   agent_button_deploy_later: '稍后部署',
-  agent_button_stop: '停止',
-  agent_button_delete: '删除',
   agent_button_auto_upgrade: '自动升级',
   agent_button_manual_upgrade: '手动升级',
   agent_tip_auto_upgrade: 'Agent离线时无法使用自动升级',
@@ -220,6 +248,8 @@ export default {
   agent_detail_run_manual: '日志目录',
   agent_list_empty_desc1: '快来',
   agent_list_empty_desc2: '开始实时数据同步吧~',
+
+  // Agent部署
   agent_deploy_title: 'Agent 下载与安装',
   agent_deploy_select_tip:
     'Tapdata DFS 云版需要先在本地安装 Agent 以确保连接数据库和数据传输服务的正常运行, 您可以根据要安装服务器的类型在下方选择相应的类型进行下载安装',
@@ -260,6 +290,8 @@ export default {
   agent_deploy_start_install_docker_second:
     '2.docker安装成功后，会自动输出已安装Agent的容器ID，您可以通过docker ps命令来查看正在运行的docker：',
   agent_deploy_start_install_docker_third: '3.如果您需要查看Agent的日志或者对Agent进行启停操作，请参考',
+
+  // Agent升级
   agent_upgrade_title: 'Agent 版本升级',
   agent_upgrade_select_tip: '系统检测到您的Agent不是最新版本，请按照指引进行升级',
   agent_upgrade_before_title: '升级前',
@@ -287,6 +319,8 @@ export default {
   agent_upgrade_step_docker_second:
     '2.复制下方的升级命令直接在容器内执行，该升级命令会自动进行备份、升级和启动，如果升级失败会自动回退版本',
   agent_upgrade_step_docker_third: '3.出现“Update finished.”则代表Agent升级成功',
+
+  // 连接
   connection_manage: '连接管理',
   connection_list_column_schema_status: 'Schema加载状态',
   connection_list_column_schema_status_tips: 'Schema加载完成的连接才可以正常创建任务',
@@ -300,7 +334,6 @@ export default {
   connection_list_target: '目标',
   connection_list_source_and_target: '源头和目标',
   connection_list_change_time: '修改时间',
-  connection_list_operate: '操作',
   connection_list_test: '连接测试',
   connection_list_edit: '编辑',
   connection_list_copy: '复制',
@@ -408,6 +441,8 @@ export default {
   connection_preview_master_partition: '仅写入master分区',
   connection_preview_isr_partition: '写入所有ISR分区',
   connection_preview_operation_success: '操作成功',
+
+  // 任务
   task_manage: '任务管理',
   task_name: '任务名称',
   task_status: '任务状态',
@@ -426,15 +461,12 @@ export default {
   task_milestone_error: '错误',
   task_milestone_finish: '已完成',
   task_milestone_paused: '已暂停',
-  task_sync_type_initial_sync: '全量',
   task_sync_type_cdc: '增量',
-  task_sync_type_initial_sync_cdc: '全量+增量',
   task_create_task: '创建任务',
   task_agent: '所属agent',
   task_type: '任务类型',
   task_start_time: '启动时间',
   task_next_run_time: '下次运行时间',
-  task_operate: '操作',
   task_config_not_completed: '任务配置未完成，无法启动',
   task_start_task: '启动任务',
   task_stop_task: '停止任务',
@@ -577,7 +609,6 @@ export default {
   task_monitor_topic_expressionL: '主题表达式',
   task_monitor_migration_task: '迁移任务',
   task_monitor_sync_task: '同步任务',
-  task_info_start_time: '开始时间',
   task_info_start: '启动',
   task_info_stopt: '停止',
   task_info_data_screening: '事件统计',
@@ -691,7 +722,6 @@ export default {
   task_mapping_table_target_type: '目标表类型',
   task_mapping_table_target_length: '目标表长度',
   task_mapping_table_target_accuracy: '目标表精度',
-  task_mapping_table_operate: '操作',
   task_mapping_table_length_range: '长度范围',
   task_mapping_table_accuracy_range: '精度范围',
   task_mapping_table_reduction: '还原',
@@ -700,6 +730,7 @@ export default {
     '当前表字段未设置完成，请保证所有源字段都已关联目标字段，不需要同步的源字段请直接删除',
   task_mapping_table_no_data: '暂无数据，可能正在首次加载表结构，请稍候再试',
   task_mapping_table_no_data_vika: '请选择目标维格表，并等待表结构信息加载完成',
+  task_mapping_table_no_data_qingflow: '请选择目标轻流应用，并等待字段信息加载完成',
   task_mapping_batch_change_field_title: '批量改字段名设置',
   task_mapping_dialog_field_name_case: '字段名大小写',
   task_mapping_dialog_constant: '不变',
@@ -734,6 +765,8 @@ export default {
   task_mapping_dialog_rename_a_single_table_title: '修改目标表名',
   task_mapping_dialog_rename_a_single_table_input_desc: '自定义名称的表，不会应用：前后缀和大小写转换操作',
   task_mapping_dialog_batch_change_field_type_desc: '实际可用长度取决于目标数据库类型定义，请按需设置',
+
+  // 里程碑
   milestone_label_init_dataflow: '【前期准备】解析dag路径创建子任务',
   milestone_label_connect_to_source: '【前期准备】连接源端数据源',
   milestone_label_connect_to_target: '【前期准备】连接目标端数据源',
@@ -751,12 +784,11 @@ export default {
   milestone_label_write_snapshot: '【数据传输】目标端全量写入数据快照',
   milestone_label_read_cdc_event: '【数据传输】源端采集器进入增量读取模式',
   milestone_label_write_cdc_event: '【数据传输】目标处理器进入增量写入模式',
+
+  // 操作日志
   operation_log_manage: '操作日志',
   operation_log_type: '操作类型',
   operation_log_Object: '操作对象',
-  operation_log_start_time: '开始时间',
-  operation_log_end_time: '结束时间',
-  operation_log_time_tip: '【结束时间】不能小于【开始时间】',
   operation_log_user_name: '用户名称',
   operation_log_username: '用户名',
   operation_log_time: '操作时间',
@@ -851,6 +883,8 @@ export default {
   guide_agent_start_success: 'Agent启动中',
   guide_agent_start_fail: 'Agent启动失败',
   guide_creat_connection_fail: '创建连接失败',
+
+  // 数据校验
   verify_type: '类型',
   verify_frequency: '频次',
   verify_status: '状态',
@@ -882,7 +916,6 @@ export default {
   verify_button_create: '新建',
   verify_see_details: '查看详情',
   verify_checking: '校验中...',
-  verify_operation: '操作',
   verify_operation_verify_again: '重新校验',
   verify_operation_verify_again_info:
     '可以选择校验结果不一致的表进行重新校验，不选择时默认对当前所有不一致的表进行校验。',
@@ -931,6 +964,8 @@ export default {
   verify_message_confirm_delete_script: '确定要删除自定义JS校验逻辑吗',
   verify_message_confirm_back: '此操作会丢失当前正在创建（编辑）的校验任务',
   verify_message_title_confirm_back: '是否放弃创建（编辑）校验任务？',
+
+  // 旧国际化
   message_exists_name: '名称已存在',
   dataForm_form_connectionType: '连接类型',
   dataForm_form_options_source: '源头',
@@ -1057,9 +1092,6 @@ export default {
   dataVerification_verifytype: '校验类型',
   dataVerification_verifyResult: '校验结果',
   dataVerification_verifyStatus: '校验状态',
-  dataFlow_operate: '操作',
-  button_details: '详情',
-  dataVerification_operation: '操作',
   dataVerification_waiting: '待校验',
   dataVerification_scheduling: '校验启动中',
   dataVerification_error: 'Error',
@@ -1117,6 +1149,8 @@ export default {
   dataForm_form_response_body_CHECK_GTID: ' 检查GTID模式与GTID一致性是否开启',
   dataForm_form_response_body_CHECK_VIKA_API_TOKEN: '检查vika密钥是否正确',
   dataForm_form_response_body_CHECK_QINGFLOW_ACCESS_TOKEN: '检查access token是否可用',
+
+  // 自动提取
   field_mapping_field_mapping_dialog_muLu: '目录',
   field_mapping_field_mapping_dialog_muBiao: '目标：',
   field_mapping_field_mapping_dialog_piLiangXiuGaiZi: '批量修改字段类型',
@@ -1125,18 +1159,10 @@ export default {
   field_mapping_field_mapping_dialog_muBiaoZiDuanLei: ' 目标字段类型 ',
   field_mapping_field_mapping_dialog_changDu: ' 长度 ',
   field_mapping_field_mapping_dialog_jingDu: ' 精度 ',
-  field_mapping_field_mapping_dialog_caoZuo: ' 操作 ',
   field_mapping_field_mapping_dialog_tianJia: '添加',
   field_mapping_field_mapping_dialog_qingShuRuBiaoMing: '请输入表名',
   field_mapping_main_jieKouQingQiuShi: '接口请求失败',
   filter_bar_DatetimeRange_zhi: '至',
-  filter_bar_DatetimeRange_kaiShiShiJian: '开始时间',
-  filter_bar_DatetimeRange_jieShuShiJian: '结束时间',
-  filter_bar_PopInput_qingShuRu: '请输入',
-  components_InlineInput_baoCun: '保存',
-  components_InlineInput_quXiao: '取消',
-  components_InlineInput_bianJi: '编辑',
-  template: '',
   components_InlineInput_ziFuChangDuXian: '字符长度限制{val1}-{val2}个字符',
   components_RequestErrorMessage_yiFuZhi: '已复制',
   components_SelectList_meiYouGengDuoShu: '没有更多数据',
@@ -1163,10 +1189,6 @@ export default {
   connection_Form_mingChengGuiZeZhong: '名称规则：中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格',
   connection_Form_mingChengYiCunZai: '名称已存在',
   connection_List_lianJieMing: '连接名',
-  connection_List_lianJieCeShi: '连接测试',
-  connection_List_fuZhi: '复制',
-  connection_List_shanChu: '删除',
-  connection_List_chuangJianLianJie: '创建连接',
   connection_List_quanBuZhuangTai: '全部状态',
   connection_List_shuJuKuLeiXing: '数据库类型',
   connection_List_anLianJieMingSou: '按连接名搜索',
@@ -1180,7 +1202,6 @@ export default {
   views_Error_ninDeZhangHuYi: '您的账户已被暂停，无法订购产品，请及时充值或联系客户经理。',
   views_Error_chanPinYiXiaJia: '产品已下架',
   views_Error_feiChangBaoQianChan: '非常抱歉，产品已下架',
-  instance_Instance_zhuangTai: '状态',
   instance_Instance_anIDShiLi: '按ID/实例名称搜索',
   instance_Instance_tHIST: '，{val1}：{val2}%',
   monitor_Dashboard_cuoWu: '错误',
@@ -1218,7 +1239,6 @@ export default {
   operation_log_List_xiuGaiLeMiMa: '修改了密码',
   operation_log_List_xiuGaiQiYeXin: '修改企业信息',
   operation_log_List_xiuGaiLeQiYe: '修改了企业信息',
-  operation_log_List_yongHuMing: '用户名',
   operation_log_List_caoZuoShiJian: '操作时间',
   operation_log_List_caoZuoDuiXiang: '操作对象',
   operation_log_List_caoZuoLeiXing: '操作类型',
@@ -1294,8 +1314,6 @@ export default {
   task_Migration_renWuLeiXing: '任务类型',
   task_Migration_suoShuAGE: '所属agent',
   task_Migration_xuanZeRenWuLei: '选择任务类型',
-  task_Migration_chuangJianRenWu: '创建任务',
-  task_Migration_zhongZhi: '重置',
   task_Migration_shuJuKuQianYi: '数据库迁移',
   task_Migration_duiShuJuKuJin: '对数据库进行跨库复制',
   task_Migration_shuJuBiaoTongBu: '数据表同步',
@@ -1670,5 +1688,54 @@ export default {
   field_mapping_field_mapping_dialog_buZhiChi: '不支持',
   components_MqQueueOrTopic_zhuTi: '主题',
   components_MqQueueOrTopic_duiLie: '队列',
-  components_MqQueueOrTopic_zhuTiHeDuiLie: '主题和队列只能选择一种进行配置'
+  components_MqQueueOrTopic_zhuTiHeDuiLie: '主题和队列只能选择一种进行配置',
+  components_ErrorLogDialog_cuoWuRiZhiCha: '错误日志查看',
+  components_ErrorLogDialog_qingQianWangAG: '请前往Agent的部署目录下查看日志',
+  components_ErrorLogDialog_zhaKanGengDuoRi: '查看更多日志',
+  views_Lang_pingBiGuoJiHua: '屏蔽国际化-规则',
+  views_Lang_wenAnBaoHanDe: '文案包含的值，List: a,b,c',
+  views_Lang_wenAnDengYuDe: '文案等于的值，List: a,b,c',
+  views_Lang_qingShuRuJiaoZheng: '请输入矫正文案',
+  copy_result: '已复制到剪贴板',
+  views_Lang_shangChuanChengGongShua:
+    '上传成功，刷新页面即可生效，并合并到现有文案。如果现有文案还需要使用，请先导出。',
+  workbench_Notice_tAPDA1213:
+    'Tapdata Cloud 2.1.5来啦：新增支持Amazon RDS数据库，错误日志查询更便捷，Agent部署细节再优化',
+  workbench_Notice_xuQiuChiXuGeng12: '需求持续更新，优化一刻不停——Tapdata Cloud 2.1.5 来啦！',
+  workbench_Notice_zuiXinFaBuDe12:
+    '最新发布的版本中，数据连接再上新，同时新增任务报错相关信息快速查询入口，开始支持 JVM 参数自定义设置。',
+  workbench_Notice_shuJuLianJieShang12: '数据连接上新',
+  workbench_Notice_chiXuQianShouYun:
+    '：持续牵手云数据库，新增支持阿里云 PolarDB\n            PostgreSQL，以及 Amazon RDS for MySQL 作为源和目标；',
+  workbench_Notice_xinZengCuoWuRi2: '新增错误日志快速查询入口',
+  workbench_Notice_renWuYunXingChu:
+    '：任务运行出错时，可以直接通过弹窗预览错误信息，同时还可在弹窗底部获取完整日志查询入口，一键快速到达日志展示页面；',
+  workbench_Notice_aGENT2: 'Agent 部署配置优化',
+  workbench_Notice_kaiShiZhiChiZi:
+    '：开始支持自定义调整 JVM 配置，有效避免\n            Agent 启动可能导致的内存溢出。',
+  workbench_Notice_shuJuLianJieZai1: '数据连接再添新成员',
+  workbench_Notice_pOLAR: 'PolarDB PostgreSQL、Amazon RDS for MySQL 开始接入',
+  workbench_Notice_zuoWeiGuoNeiShou12:
+    '作为国内首家异构数据库实时同步云平台，Tapdata Cloud\n          不断拓展能够支持的数据连接版图，力求满足用户的多样化数据源和目标需求，真正实现数据实时同步“全面破壁”。',
+  workbench_Notice_jiBanBenShouCi1:
+    '\n          继 2.1.0 版本首次实现云数据库接入之后，Tapdata Cloud 持续发力，本次更新又有新伙伴加入：新增支持阿里云 PolarDB\n          PostgreSQL 和 Amazon RDS for MySQL 作为源和目标。至此，Tapdata Cloud 数据连接据点数量扩张至',
+  workbench_Notice_fangDaJiuKanT1: '。放大就看 Tapdata Cloud “破壁行动”最新战绩 👇：',
+  workbench_Notice_xinZengCuoWuRi: '新增错误日志',
+  workbench_Notice_kuaiSuChaXunRu: '快速查询入口',
+  workbench_Notice_tanChuangYuLanYi: '弹窗预览，一键直达',
+  workbench_Notice_renWuBaoCuoXiang: '任务报错，想要更快查询错误日志怎么办？',
+  workbench_Notice_congZheYiBanBen:
+    '📣从这一版本开始，日志查询将会更快捷！任务运行出错时，无需回到运行监控页面导出错误日志，可以直接通过弹窗预览错误信息，同时还可在弹窗底部获取完整日志查询入口，一键直达日志展示页面，快速查看快速定位，使用更方便！',
+  workbench_Notice_renWuBaoCuoDian: '任务报错，点击查看错误日志',
+  workbench_Notice_aGENT1: 'Agent 部署细节优化',
+  workbench_Notice_zhiChiJVM: '支持 JVM 自定义配置',
+  workbench_Notice_qiDongGengFangXin: '启动更放心',
+  workbench_Notice_zhenDuiLiShiBan12:
+    '针对历史版本在 Agent 安装过程中，因启动时默认分配内存较小可能导致的内存溢出问题，新版本给出了优化方案：',
+  workbench_Notice_xianJiangJVM:
+    '现将 JVM 参数设置权限开放，支持用户根据自身服务器的配置来进行自定义调整。Agent\n          启动时，会自动提示内存占用情况，用户按照实际需求在配置文件中自行调整并重启即可。',
+  workbench_Notice_peiZhiWenJianKai: "配置文件开放的 JVM 参数名：tapdataJavaOpts: '-Xmx2362M'",
+  workbench_Notice_beiZhuMoRenQi:
+    '*备注：默认启动占用系统配置内存的 3/5，如果系统内存的 3/5 超过 8G，则最大只占用到 8G。',
+  workbench_Workbench_tAPDA12: 'Tapdata Cloud 2.1.5 版本发布啦！'
 }

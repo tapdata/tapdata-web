@@ -1473,5 +1473,79 @@ module.exports = {
     ts: 1646646169872,
     code: 'ok',
     data: { isValid: false }
+  },
+  'tm/api/Logs': {
+    reqId: 'ce13dd7b-9522-422a-9fb6-f9660f3c5d24',
+    ts: 1651134550642,
+    code: 'ok',
+    data: {
+      total: 2,
+      items: [
+        {
+          id: '626a0bb2b0b60b22b7bc89a7',
+          customId: '610a3d43d7f65cfcd80837b5',
+          lastUpdBy: '611618fe86fa6c0011e999d6',
+          createUser: '610a3d43d7f65cfcd80837b5',
+          level: 'ERROR',
+          loggerName: 'com.tapdata.transformer.DefaultTransformer',
+          message:
+            "Bulk operation to target failed, message:  Apply event MessageEntity{op='i', before=null, after={SETTLED_DATE=0000-00-00 00:00:00, CLAIM_ID=CL_100000002, SETTLED_AMOUNT=null, CLAIM_REASON=null, CLAIM_TYPE=P000000009, POLICY_ID=P000000002, CLAIM_DATE=2022-01-31 10:28:03.0, LAST_CHANGE=null, CLAIM_AMOUNT=90.00}, tableName='CLAIM', opExpression=null, offset={tapdataCdcOffset=com.tapdata.entity.MySqlBinlogPosition@406eb616, CLAIM={CLAIM_ID=CL_100000002}, snapshotOffset=true}, subMap=null, ns='null', isJdbc=true, dataQualityTag=null, fileTask=null} to table TEST_INVALIOD_CLAIM failed: Execute insert failed, sql: SQLServerPreparedStatement:1912, target table name: TEST_INVALIOD_CLAIM, err(S0003:242): The conversion of a nvarchar data type to a datetime data type resulted in an out-of-range value.; stack: \njava.lang.RuntimeException: Execute insert failed, sql: SQLServerPreparedStatement:1912, target table name: TEST_INVALIOD_CLAIM, err(S0003:242): The conversion of a nvarchar data type to a datetime data type resulted in an out-of-range value.\n\tat io.tapdata.JdbcTarget.doInsertOne(JdbcTarget.java:1520)\n\tat io.tapdata.JdbcTarget.messageMappingProcess(JdbcTarget.java:1298)\n\tat io.tapdata.JdbcTarget.processMessage(JdbcTarget.java:1222)\n\tat io.tapdata.JdbcTarget.oneByOneProcessEvent(JdbcTarget.java:1148)\n\tat io.tapdata.JdbcTarget.lambda$onData$1(JdbcTarget.java:697)\n\tat com.tapdata.constant.MessageUtil.dispatcherMessage(MessageUtil.java:96)\n\tat io.tapdata.JdbcTarget.onData(JdbcTarget.java:695)\n\tat com.tapdata.transformer.DefaultTransformer.lambda$initialSyncProcess$3(DefaultTransformer.java:585)\n\tat java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)\n\tat java.util.concurrent.FutureTask.run(FutureTask.java:266)\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)\n\tat java.lang.Thread.run(Thread.java:745)\nCaused by: com.microsoft.sqlserver.jdbc.SQLServerException: The conversion of a nvarchar data type to a datetime data type resulted in an out-of-range value.\n\tat com.microsoft.sqlserver.jdbc.SQLServerException.makeFromDatabaseError(SQLServerException.java:265)\n\tat com.microsoft.sqlserver.jdbc.SQLServerStatement.getNextResult(SQLServerStatement.java:1662)\n\tat com.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.doExecutePreparedStatement(SQLServerPreparedStatement.java:615)\n\tat com.microsoft.sqlserver.jdbc.SQLServerPreparedStatement$PrepStmtExecCmd.doExecute(SQLServerPreparedStatement.java:537)\n\tat com.microsoft.sqlserver.jdbc.TDSCommand.execute(IOBuffer.java:7417)\n\tat com.microsoft.sqlserver.jdbc.SQLServerConnection.executeCommand(SQLServerConnection.java:3488)\n\tat com.microsoft.sqlserver.jdbc.SQLServerStatement.executeCommand(SQLServerStatement.java:262)\n\tat com.microsoft.sqlserver.jdbc.SQLServerStatement.executeStatement(SQLServerStatement.java:237)\n\tat com.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.executeUpdate(SQLServerPreparedStatement.java:483)\n\tat io.tapdata.JdbcTarget.doInsertOne(JdbcTarget.java:1497)\n\t... 12 more\n.; Will stop job",
+          date: 1651116978568,
+          thrown: {
+            type: 'com.microsoft.sqlserver.jdbc.SQLServerException',
+            message:
+              'The conversion of a nvarchar data type to a datetime data type resulted in an out-of-range value.\ncom.microsoft.sqlserver.jdbc.SQLServerException.makeFromDatabaseError(SQLServerException.java:265)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.getNextResult(SQLServerStatement.java:1662)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.doExecutePreparedStatement(SQLServerPreparedStatement.java:615)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement$PrepStmtExecCmd.doExecute(SQLServerPreparedStatement.java:537)\ncom.microsoft.sqlserver.jdbc.TDSCommand.execute(IOBuffer.java:7417)\ncom.microsoft.sqlserver.jdbc.SQLServerConnection.executeCommand(SQLServerConnection.java:3488)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.executeCommand(SQLServerStatement.java:262)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.executeStatement(SQLServerStatement.java:237)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.executeUpdate(SQLServerPreparedStatement.java:483)\nio.tapdata.JdbcTarget.doInsertOne(JdbcTarget.java:1497)\nio.tapdata.JdbcTarget.messageMappingProcess(JdbcTarget.java:1298)\nio.tapdata.JdbcTarget.processMessage(JdbcTarget.java:1222)\nio.tapdata.JdbcTarget.oneByOneProcessEvent(JdbcTarget.java:1148)\nio.tapdata.JdbcTarget.lambda$onData$1(JdbcTarget.java:697)\ncom.tapdata.constant.MessageUtil.dispatcherMessage(MessageUtil.java:96)\nio.tapdata.JdbcTarget.onData(JdbcTarget.java:695)\ncom.tapdata.transformer.DefaultTransformer.lambda$initialSyncProcess$3(DefaultTransformer.java:585)\njava.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)\njava.util.concurrent.FutureTask.run(FutureTask.java:266)\njava.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)\njava.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)\njava.lang.Thread.run(Thread.java:745)\n'
+          },
+          threadName: 'pool-2684-thread-3',
+          contextMap: {
+            app: 'transformer',
+            dataFlowId: '626a0ba8b0b60b22b7bc8939',
+            jobId: '626a0bab5d7d220bcedc6a85',
+            jobName: '无效日期验证_1',
+            threadName: 'pool-2684-thread-3',
+            userId: '611618fe86fa6c0011e999d6'
+          },
+          contextStack: [],
+          threadId: 14611,
+          threadPriority: 5,
+          millis: 1651116978568,
+          createTime: '2022-04-28T03:36:18.572+00:00',
+          last_updated: '2022-04-28T03:36:18.572+00:00',
+          user_id: '611618fe86fa6c0011e999d6'
+        },
+        {
+          id: '626a0bb29247b74dbe466a9d',
+          customId: '610a3d43d7f65cfcd80837b5',
+          lastUpdBy: '611618fe86fa6c0011e999d6',
+          createUser: '610a3d43d7f65cfcd80837b5',
+          level: 'ERROR',
+          loggerName: 'io.tapdata.JdbcTarget',
+          message:
+            "Apply event MessageEntity{op='i', before=null, after={SETTLED_DATE=0000-00-00 00:00:00, CLAIM_ID=CL_100000002, SETTLED_AMOUNT=null, CLAIM_REASON=null, CLAIM_TYPE=P000000009, POLICY_ID=P000000002, CLAIM_DATE=2022-01-31 10:28:03.0, LAST_CHANGE=null, CLAIM_AMOUNT=90.00}, tableName='CLAIM', opExpression=null, offset={tapdataCdcOffset=com.tapdata.entity.MySqlBinlogPosition@406eb616, CLAIM={CLAIM_ID=CL_100000002}, snapshotOffset=true}, subMap=null, ns='null', isJdbc=true, dataQualityTag=null, fileTask=null} to table TEST_INVALIOD_CLAIM failed: Execute insert failed, sql: SQLServerPreparedStatement:1912, target table name: TEST_INVALIOD_CLAIM, err(S0003:242): The conversion of a nvarchar data type to a datetime data type resulted in an out-of-range value.; stack: \njava.lang.RuntimeException: Execute insert failed, sql: SQLServerPreparedStatement:1912, target table name: TEST_INVALIOD_CLAIM, err(S0003:242): The conversion of a nvarchar data type to a datetime data type resulted in an out-of-range value.\n\tat io.tapdata.JdbcTarget.doInsertOne(JdbcTarget.java:1520)\n\tat io.tapdata.JdbcTarget.messageMappingProcess(JdbcTarget.java:1298)\n\tat io.tapdata.JdbcTarget.processMessage(JdbcTarget.java:1222)\n\tat io.tapdata.JdbcTarget.oneByOneProcessEvent(JdbcTarget.java:1148)\n\tat io.tapdata.JdbcTarget.lambda$onData$1(JdbcTarget.java:697)\n\tat com.tapdata.constant.MessageUtil.dispatcherMessage(MessageUtil.java:96)\n\tat io.tapdata.JdbcTarget.onData(JdbcTarget.java:695)\n\tat com.tapdata.transformer.DefaultTransformer.lambda$initialSyncProcess$3(DefaultTransformer.java:585)\n\tat java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)\n\tat java.util.concurrent.FutureTask.run(FutureTask.java:266)\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)\n\tat java.lang.Thread.run(Thread.java:745)\nCaused by: com.microsoft.sqlserver.jdbc.SQLServerException: The conversion of a nvarchar data type to a datetime data type resulted in an out-of-range value.\n\tat com.microsoft.sqlserver.jdbc.SQLServerException.makeFromDatabaseError(SQLServerException.java:265)\n\tat com.microsoft.sqlserver.jdbc.SQLServerStatement.getNextResult(SQLServerStatement.java:1662)\n\tat com.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.doExecutePreparedStatement(SQLServerPreparedStatement.java:615)\n\tat com.microsoft.sqlserver.jdbc.SQLServerPreparedStatement$PrepStmtExecCmd.doExecute(SQLServerPreparedStatement.java:537)\n\tat com.microsoft.sqlserver.jdbc.TDSCommand.execute(IOBuffer.java:7417)\n\tat com.microsoft.sqlserver.jdbc.SQLServerConnection.executeCommand(SQLServerConnection.java:3488)\n\tat com.microsoft.sqlserver.jdbc.SQLServerStatement.executeCommand(SQLServerStatement.java:262)\n\tat com.microsoft.sqlserver.jdbc.SQLServerStatement.executeStatement(SQLServerStatement.java:237)\n\tat com.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.executeUpdate(SQLServerPreparedStatement.java:483)\n\tat io.tapdata.JdbcTarget.doInsertOne(JdbcTarget.java:1497)\n\t... 12 more\n; Will stop job",
+          date: 1651116978518,
+          thrown: {
+            type: 'com.microsoft.sqlserver.jdbc.SQLServerException',
+            message:
+              'The conversion of a nvarchar data type to a datetime data type resulted in an out-of-range value.\ncom.microsoft.sqlserver.jdbc.SQLServerException.makeFromDatabaseError(SQLServerException.java:265)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.getNextResult(SQLServerStatement.java:1662)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.doExecutePreparedStatement(SQLServerPreparedStatement.java:615)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement$PrepStmtExecCmd.doExecute(SQLServerPreparedStatement.java:537)\ncom.microsoft.sqlserver.jdbc.TDSCommand.execute(IOBuffer.java:7417)\ncom.microsoft.sqlserver.jdbc.SQLServerConnection.executeCommand(SQLServerConnection.java:3488)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.executeCommand(SQLServerStatement.java:262)\ncom.microsoft.sqlserver.jdbc.SQLServerStatement.executeStatement(SQLServerStatement.java:237)\ncom.microsoft.sqlserver.jdbc.SQLServerPreparedStatement.executeUpdate(SQLServerPreparedStatement.java:483)\nio.tapdata.JdbcTarget.doInsertOne(JdbcTarget.java:1497)\nio.tapdata.JdbcTarget.messageMappingProcess(JdbcTarget.java:1298)\nio.tapdata.JdbcTarget.processMessage(JdbcTarget.java:1222)\nio.tapdata.JdbcTarget.oneByOneProcessEvent(JdbcTarget.java:1148)\nio.tapdata.JdbcTarget.lambda$onData$1(JdbcTarget.java:697)\ncom.tapdata.constant.MessageUtil.dispatcherMessage(MessageUtil.java:96)\nio.tapdata.JdbcTarget.onData(JdbcTarget.java:695)\ncom.tapdata.transformer.DefaultTransformer.lambda$initialSyncProcess$3(DefaultTransformer.java:585)\njava.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)\njava.util.concurrent.FutureTask.run(FutureTask.java:266)\njava.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)\njava.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)\njava.lang.Thread.run(Thread.java:745)\n'
+          },
+          threadName: 'pool-2684-thread-3',
+          contextMap: {
+            app: 'transformer',
+            dataFlowId: '626a0ba8b0b60b22b7bc8939',
+            jobId: '626a0bab5d7d220bcedc6a85',
+            jobName: '无效日期验证_1',
+            threadName: 'pool-2684-thread-3',
+            userId: '611618fe86fa6c0011e999d6'
+          },
+          contextStack: [],
+          threadId: 14611,
+          threadPriority: 5,
+          millis: 1651116978518,
+          createTime: '2022-04-28T03:36:18.521+00:00',
+          last_updated: '2022-04-28T03:36:18.521+00:00',
+          user_id: '611618fe86fa6c0011e999d6'
+        }
+      ]
+    }
   }
 }

@@ -7,7 +7,7 @@
       </div>
       <div class="migration-operation-right">
         <VButton type="primary" :loading="createLoading" @click="createTask"
-          ><span>{{ $t('task_Migration_chuangJianRenWu') }}</span></VButton
+          ><span>{{ $t('task_create_task') }}</span></VButton
         >
       </div>
     </div>
@@ -22,7 +22,7 @@
           <ElLink type="primary" @click="toDetails(scope.row)">{{ scope.row.name }}</ElLink>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('task_Migration_renWuLeiXing')" prop="typeText"></ElTableColumn>
+      <ElTableColumn :label="$t('task_Migration_renWuLeiXing')" prop="typeText" width="140"></ElTableColumn>
       <ElTableColumn :label="$t('task_Migration_suoShuAGE')" prop="belongAgent" min-width="200">
         <template slot-scope="scope">
           <ElLink v-if="scope.row.belongAgent" type="primary" @click="toAgent(scope.row)">{{
@@ -31,15 +31,26 @@
           <span v-else>-</span>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('task_type')" prop="syncTypeText" width="130"></ElTableColumn>
+      <ElTableColumn :label="$t('task_type')" prop="syncTypeText" width="140"></ElTableColumn>
       <ElTableColumn :label="$t('task_status')" width="120">
         <template slot-scope="scope">
-          <StatusTag
-            type="text"
-            target="task"
-            :status="scope.row.isFinished ? 'finished' : scope.row.status"
-            only-img
-          ></StatusTag>
+          <div class="flex align-items-center">
+            <StatusTag
+              type="tag"
+              target="task"
+              :status="scope.row.isFinished ? 'finished' : scope.row.status"
+            ></StatusTag>
+            <ElTooltip
+              v-if="scope.row.status === 'error'"
+              effect="dark"
+              :content="$t('components_ErrorLogDialog_cuoWuRiZhiCha')"
+              placement="top"
+            >
+              <span class="ml-2 mt-1 cursor-pointer" @click="openErrorLog(scope.row)">
+                <VIcon class="color-danger">warning-circle</VIcon>
+              </span>
+            </ElTooltip>
+          </div>
         </template>
       </ElTableColumn>
       <ElTableColumn :label="$t('task_start_time')" prop="startTime" sortable="custom" width="150">
@@ -48,7 +59,7 @@
       <ElTableColumn :label="$t('task_next_run_time')" prop="nextScheduledTime" sortable="custom" width="150">
         <template slot-scope="scope">{{ scope.row.nextScheduledTimeFmt }}</template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('task_operate')" width="280">
+      <ElTableColumn :label="$t('list_operation')" width="280">
         <template slot-scope="scope">
           <ElTooltip
             v-if="!['running', 'stopping'].includes(scope.row.status)"
@@ -108,13 +119,13 @@
               <i class="el-icon-more"></i>
             </ElButton>
             <ElDropdownMenu slot="dropdown" class="text-nowrap">
-              <ElDropdownItem command="copy">{{ $t('connection_List_fuZhi') }}</ElDropdownItem>
+              <ElDropdownItem command="copy">{{ $t('button_copy') }}</ElDropdownItem>
               <ElDropdownItem command="resetAll" :disabled="!statusBtMap['reset'][scope.row.status]">
-                {{ $t('task_Migration_zhongZhi') }}
+                {{ $t('button_reset') }}
               </ElDropdownItem>
               <ElDropdownItem command="del" :disabled="!statusBtMap['delete'][scope.row.status]">
                 <span :class="{ 'color-danger': statusBtMap['delete'][scope.row.status] }">{{
-                  $t('connection_List_shanChu')
+                  $t('button_delete')
                 }}</span>
               </ElDropdownItem>
             </ElDropdownMenu>
@@ -125,7 +136,7 @@
         <VIcon size="120">no-data-color</VIcon>
         <div class="flex justify-content-center lh-sm fs-7 font-color-sub">
           <span>{{ $t('gl_no_data') }}</span>
-          <ElLink type="primary" class="fs-7" @click="createTask">{{ $t('task_Migration_chuangJianRenWu') }}</ElLink>
+          <ElLink type="primary" class="fs-7" @click="createTask">{{ $t('task_create_task') }}</ElLink>
         </div>
       </div>
       <div v-else class="migration-table__empty" slot="empty">
@@ -167,6 +178,11 @@
       </div>
     </ElDialog>
     <!--    </div>-->
+    <ErrorLogDialog
+      v-model="errorLogDialogData.visible"
+      :id="errorLogDialogData.dataFlowId"
+      :params="errorLogDialogData.params"
+    ></ErrorLogDialog>
   </section>
   <RouterView v-else></RouterView>
 </template>
@@ -208,12 +224,6 @@
       color: unset;
       cursor: unset;
     }
-    .td-status-tag {
-      position: absolute;
-      top: 50%;
-      left: 10px;
-      margin-top: -12px;
-    }
   }
   .migration-table__empty {
     color: map-get($fontColor, light);
@@ -252,11 +262,12 @@ import { TASK_STATUS_MAP } from '../../const'
 import StatusTag from '../../components/StatusTag'
 import VIcon from '@/components/VIcon'
 import FilterBar from '@/components/filter-bar'
+import ErrorLogDialog from './components/ErrorLogDialog'
 import { isFinished } from './copy/util'
 let timer = null
 
 export default {
-  components: { StatusTag, VIcon, FilterBar },
+  components: { StatusTag, VIcon, FilterBar, ErrorLogDialog },
   data() {
     return {
       loading: true,
@@ -274,7 +285,7 @@ export default {
       },
       syncTypeMap: {
         initial_sync: this.$t('task_initial_sync'),
-        cdc: this.$t('task_cdc'),
+        cdc: this.$t('task_sync_type_cdc'),
         'initial_sync+cdc': this.$t('task_initial_sync_cdc')
       },
       agentOptions: [],
@@ -297,7 +308,12 @@ export default {
         forceStop: { stopping: true }
       },
       createVisible: false,
-      filterItems: []
+      filterItems: [],
+      errorLogDialogData: {
+        visible: false,
+        dataFlowId: '',
+        params: {}
+      }
     }
   },
   computed: {
@@ -918,6 +934,22 @@ export default {
           id: row.id
         }
       })
+    },
+    openErrorLog(row) {
+      this.errorLogDialogData.dataFlowId = row.id
+      this.errorLogDialogData.params = {
+        where: {
+          'contextMap.dataFlowId': {
+            $eq: row.id
+          },
+          level: {
+            $in: ['ERROR']
+          },
+          createTime: { $gt: { $date: new Date(row.startTime).getTime() } }
+        },
+        order: `id DESC`
+      }
+      this.errorLogDialogData.visible = true
     }
   }
 }

@@ -43,15 +43,14 @@
         <!--          <span>联系我们</span>-->
         <!--        </div>-->
         <NotificationPopover class="command-item mr-6"></NotificationPopover>
-        <!-- <ElDropdown class="btn" placement="bottom" @command="changeLanguage">
-          <VIcon class="mr-6" size="17" v-if="lang === 'sc'">cn</VIcon>
-          <VIcon class="mr-6" size="17" v-else>en</VIcon>
-          <ElDropdownMenu slot="dropdown">
-            <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
+        <ElDropdown v-if="false" placement="bottom" class="mr-6" @command="changeLanguage">
+          <span class="cursor-pointer command-item langs-btn">{{ languagesItems[lang] }}</span>
+          <ElDropdownMenu slot="dropdown" class="no-triangle">
+            <ElDropdownItem v-for="(value, key) in languagesItems" :key="key" :command="key">
               {{ value }}
             </ElDropdownItem>
           </ElDropdownMenu>
-        </ElDropdown> -->
+        </ElDropdown>
         <ElDropdown class="command-item menu-user" placement="bottom" @command="command">
           <!--					<ElButton class="menu-button" size="mini">-->
           <!--						{{ user.username }}-->
@@ -80,15 +79,15 @@
   </ElHeader>
 </template>
 <script>
-import i18n from '@/i18n'
-
+import Cookie from '@daas/shared/src/cookie'
 import NotificationPopover from '@/views/workbench/NotificationPopover'
 // import ws from '../../plugins/ws.js';
 import VIcon from '@/components/VIcon'
+// i18n需要的格式
 const langMap = {
-  sc: 'zh-CN',
-  tc: 'zh-TW',
-  en: 'en'
+  'zh-CN': 'zh-CN',
+  'zh-TW': 'zh-TW',
+  'en-US': 'en'
 }
 export default {
   components: { VIcon, NotificationPopover },
@@ -96,12 +95,16 @@ export default {
     return {
       user: window.__USER_INFO__ || {},
       USER_CENTER: window.__config__.USER_CENTER,
-      lang: localStorage.getItem('tapdata_localize_lang') || 'sc',
-      languages: {
-        sc: i18n.t('the_header_Header_zhongWen'),
-        en: 'English'
+      lang: '',
+      languagesItems: {
+        'zh-CN': '中文 (简)',
+        'zh-TW': '中文 (繁)',
+        'en-US': 'English'
       }
     }
+  },
+  created() {
+    this.setLang()
   },
   methods: {
     command(command) {
@@ -133,6 +136,7 @@ export default {
           }).then(res => {
             if (res) {
               this.clearCookie()
+              localStorage.removeItem('tapdata_localize_lang') // 清除国际化
               location.href = './logout'
             }
           })
@@ -156,6 +160,7 @@ export default {
       this.lang = lang
       this.$i18n.locale = langMap[lang]
       localStorage.setItem('tapdata_localize_lang', lang)
+      Cookie.set('lang', lang)
       location.reload()
       // window.__USER_LANG__ = lang
     },
@@ -166,6 +171,27 @@ export default {
           document.cookie = keys[i] + '=0;path=/;domain=' + document.domain + ';expires=' + new Date(0).toUTCString()
         }
       }
+    },
+    getLangKey(value, obj) {
+      if (!value) {
+        return
+      }
+      let res = obj || langMap
+      for (let key in res) {
+        if (res[key] === value) {
+          return key
+        }
+      }
+    },
+    setLang() {
+      let getItem = localStorage.getItem('tapdata_localize_lang')
+      if (getItem) {
+        this.lang = getItem
+        Cookie.set('lang', getItem)
+        return
+      }
+      let lang = Cookie.get('_authing_lang') || navigator.language || navigator.browserLanguage || 'zh-CN'
+      this.changeLanguage(lang)
     }
   }
 }
@@ -308,5 +334,9 @@ export default {
       right: 0;
     }
   }
+}
+.langs-btn {
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 </style>
