@@ -22,7 +22,7 @@
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="sourceTotal" width="120" :label="$t('verify_history_source_total_rows')"></ElTableColumn>
+      <ElTableColumn prop="sourceTotal" width="140" :label="$t('verify_history_source_total_rows')"></ElTableColumn>
       <!-- <ElTableColumn prop="targetTotal" width="120" :label="$t('verify_history_target_total_rows')"></ElTableColumn> -->
       <ElTableColumn :label="$t('dataVerification_verifyStatus')" width="120" prop="status">
         <template slot-scope="scope">
