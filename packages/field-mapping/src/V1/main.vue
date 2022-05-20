@@ -433,9 +433,8 @@ export default {
         }
       }
       if (this.isPdk) {
-        // TODO sourceDbType to sinkDbType
         return Promise.all([
-          this.$api('TypeMapping').pdkDataType(row.sinkDbType),
+          this.$api('TypeMapping').pdkDataType(row.sourceDbType),
           this.$api('TypeMapping').pdkDataType(row.sinkDbType)
         ]).then(res => {
           let sourceData = [],
@@ -470,7 +469,7 @@ export default {
         }
       })
     },
-    saveReturnData() {
+    async saveReturnData() {
       //保存字段映射
       let returnData = this.$refs.fieldMappingDom.returnData()
       if (!returnData.valid) return //检验不通过
@@ -479,8 +478,8 @@ export default {
         this.$message.error(this.$t('dag_link_field_mapping_error_all_deleted'))
         return //所有字段被删除了 不可以保存任务
       }
+      await this.saveOperations(returnData.row, returnData.operations, returnData.target, returnData.changNameData)
       this.$emit('returnPreFixSuffix', returnData.changNameData)
-      this.saveOperations(returnData.row, returnData.operations, returnData.target, returnData.changNameData)
       this.dialogFieldProcessVisible = false
     },
     //保存字段处理器
