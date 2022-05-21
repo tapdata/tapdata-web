@@ -1106,6 +1106,7 @@ export default {
       let type = this.model.database_type
       type = TYPEMAPCONFIG[type] || type //特殊数据源名称转换
       let func = formConfig[type]
+      console.log('getFormConfig', func)
       if (func) {
         let config = func(this)
         let items = defaultConfig.concat(config.items)
@@ -1954,7 +1955,7 @@ export default {
     },
     getPdkData(id) {
       this.$api('connections')
-        .customQuery(id, { schema: true })
+        .getNoSchema(id)
         .then(res => {
           this.model = res.data
           this.schemaFormInstance.setValues(res.data?.config)
