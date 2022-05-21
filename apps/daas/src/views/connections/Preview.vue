@@ -168,14 +168,22 @@ export default {
       this.loadList(row.database_type)
     },
     edit() {
+      const { connection = {} } = this
+      const { id, database_type, pdkType, pdkHash } = connection
+      let query = {
+        databaseType: database_type
+      }
+      if (pdkType) {
+        query.pdkType = pdkType
+        query.pdkHash = pdkHash
+      }
       this.$router.push({
         name: 'connectionsEdit',
         params: {
-          id: this.connection.id
+          id,
+          databaseType: database_type
         },
-        query: {
-          databaseType: this.connection.database_type
-        }
+        query
       })
     },
     async beforeTest() {
