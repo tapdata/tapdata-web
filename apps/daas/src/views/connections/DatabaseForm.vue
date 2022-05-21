@@ -579,7 +579,7 @@ import Test from './Test'
 import { TYPEMAPCONFIG, defaultModel, getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import VIcon from '@/components/VIcon'
-import SchemaToForm from '@/components/SchemaToForm'
+import SchemaToForm from '@tap/dag/src/components/SchemaToForm'
 import { checkConnectionName } from '@/utils/util'
 
 const connectionsModel = factory('connections')
