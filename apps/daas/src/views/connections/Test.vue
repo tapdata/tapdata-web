@@ -12,7 +12,8 @@
     <div class="test-result">
       <div v-if="testData.testLogs && testData.testLogs.length === 0 && wsError === 'ERROR'" style="color: #d54e21">
         <i class="el-icon-warning" style="color: #d54e21"></i>
-        <span class="test-title">{{ wsErrorMsg ? wsErrorMsg : $t('dataForm.test.error') }}</span>
+        <pre v-if="wsErrorMsg" v-html="wsErrorMsg" class="test-title overflow-auto"></pre>
+        <span v-else>{{ $t('dataForm.test.error') }}</span>
       </div>
       <div v-else>
         <div class="test-status" v-if="['invalid', 'ERROR'].includes(status)">
