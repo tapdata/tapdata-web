@@ -46,8 +46,8 @@
           </template>
         </RecycleScroller>
       </el-checkbox-group>
-      <p class="el-transfer-panel__empty" v-show="hasNoMatch">{{ t('el.transfer.noMatch') }}</p>
-      <p class="el-transfer-panel__empty" v-show="data.length === 0 && !hasNoMatch">{{ t('el.transfer.noData') }}</p>
+      <p class="el-transfer-panel__empty" v-show="hasNoMatch">{{ $t('el.transfer.noMatch') }}</p>
+      <p class="el-transfer-panel__empty" v-show="data.length === 0 && !hasNoMatch">{{ $t('el.transfer.noData') }}</p>
     </div>
     <p class="el-transfer-panel__footer" v-if="hasFooter">
       <slot></slot>

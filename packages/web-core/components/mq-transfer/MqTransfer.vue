@@ -95,7 +95,7 @@
 
 <script>
 import { Transfer } from 'element-ui'
-import VirtualTransferPanel from 'web-core/components/virtual-transfer/VirtualTransferPanel'
+import { VirtualTransferPanel } from '@tap/component'
 
 export default {
   name: 'MqTransfer',
