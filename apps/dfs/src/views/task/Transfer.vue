@@ -54,7 +54,7 @@
 
 <script>
 import VIcon from '@/components/VIcon'
-import VirtualTransfer from 'web-core/components/virtual-transfer'
+import { VirtualTransfer } from '@tap/component'
 import MqTransfer from 'web-core/components/mq-transfer'
 
 export default {
