@@ -7,16 +7,17 @@ import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
 import tcLocale from 'element-ui/lib/locale/lang/zh-TW'
 import zhCN from './langs/zh-CN'
 import enSource from './langs/en'
-import enModify from './modify/en'
 import zhTWSource from './langs/zh-TW'
-import zhTWModify from './modify/zh-TW'
+import modify from './modify'
+
+import { langs as tapComponentLangs } from '@tap/component'
 
 let localLangModifyZhTW = localStorage.getItem('localLangModifyZhTW')
 let localLangModifyEn = localStorage.getItem('localLangModifyEn')
 localLangModifyZhTW = localLangModifyZhTW ? JSON.parse(localLangModifyZhTW) : {}
 localLangModifyEn = localLangModifyEn ? JSON.parse(localLangModifyEn) : {}
-const en = Object.assign({}, enSource, enModify, localLangModifyEn)
-const zhTW = Object.assign({}, zhTWSource, zhTWModify, localLangModifyZhTW)
+const en = Object.assign({}, enSource, modify.en, localLangModifyEn)
+const zhTW = Object.assign({}, zhTWSource, modify.zhTW, localLangModifyZhTW)
 let eleLangs = {
   'zh-CN': zhLocale,
   'zh-TW': tcLocale,
@@ -26,11 +27,6 @@ let localLangs = {
   'zh-CN': zhCN,
   'zh-TW': zhTW,
   en: en
-}
-let langMap = {
-  sc: 'zh-CN',
-  tc: 'zh-TW',
-  en: 'en'
 }
 // i18n需要的格式
 const i18nLangMap = {
@@ -42,28 +38,29 @@ Vue.use(VueI18n)
 let localeValue = 'zh-CN'
 const i18n = new VueI18n({
   locale: i18nLangMap[localeValue],
-  messages: eleLangs
+  messages: {} // eleLangs
 })
-Object.values(langMap).forEach(l => {
-  // 定位矫正文案
-  if (process.env.NODE_ENV === 'development') {
-    let equal = localStorage.getItem('equalLang') ?? ''
-    let inc = localStorage.getItem('includesLang') ?? ''
-    equal = equal ? equal.split(',') : []
-    inc = inc ? inc.split(',') : []
-    for (let key in localLangs[l]) {
-      if (!!equal.length && equal.some(t => localLangs[l][key] === t)) {
-        delete localLangs[l][key]
-      }
-      if (localLangs[l][key] && !!inc.length && inc.some(t => localLangs[l][key]?.includes(t))) {
-        delete localLangs[l][key]
-      }
-    }
-  }
-  i18n.mergeLocaleMessage(l, langs[l])
-  i18n.mergeLocaleMessage(l, localLangs[l])
+const current = i18n.locale
+const langsArr = [localLangs, langs, tapComponentLangs]
+langsArr.forEach(el => {
+  i18n.mergeLocaleMessage(current, el[current])
 })
-
-locale.i18n((key, value) => i18n.t(key, value)) // 重点：为了实现element插件的多语言切换
-
+locale.use(eleLangs[current])
+// 定位矫正文案
+// let currentLang = i18n.messages?.[current] || {}
+// if (process.env.NODE_ENV === 'development') {
+//   let equal = localStorage.getItem('equalLang') ?? ''
+//   let inc = localStorage.getItem('includesLang') ?? ''
+//   equal = equal ? equal.split(',') : []
+//   inc = inc ? inc.split(',') : []
+//   for (let key in currentLang) {
+//     let item = currentLang[key]
+//     if (!!equal.length && equal.some(t => item === t)) {
+//       delete currentLang[key]
+//     }
+//     if (item && !!inc.length && inc.some(t => item?.includes(t))) {
+//       delete currentLang[key]
+//     }
+//   }
+// }
 export default i18n
