@@ -10,9 +10,13 @@
     :close-on-press-escape="false"
   >
     <div class="test-result">
-      <div v-if="testData.testLogs && testData.testLogs.length === 0 && wsError === 'ERROR'" style="color: #d54e21">
+      <div
+        v-if="testData.testLogs && testData.testLogs.length === 0 && wsError === 'ERROR'"
+        style="color: #d54e21"
+        class="flex align-items-baseline"
+      >
         <i class="el-icon-warning" style="color: #d54e21"></i>
-        <pre v-if="wsErrorMsg" v-html="wsErrorMsg" class="test-title overflow-auto"></pre>
+        <pre v-if="wsErrorMsg" v-html="wsErrorMsg" class="test-title overflow-auto mt-0"></pre>
         <span v-else>{{ $t('dataForm.test.error') }}</span>
       </div>
       <div v-else>
