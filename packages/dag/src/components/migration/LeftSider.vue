@@ -69,10 +69,10 @@
               @dblclick="$emit('add-node', getNodeProps(db))"
             >
               <NodeIcon class="flex-shrink-0 mr-2" :node="db" />
-              <div class="flex flex-wrap db-item-content align-self-stretch py-1">
+              <div class="flex flex-column justify-center db-item-content">
                 <OverflowTooltip class="w-100 text-truncate" :text="db.name" placement="right" :open-delay="400" />
                 <OverflowTooltip
-                  class="w-100 font-color-light text-truncate"
+                  class="w-100 text-truncate"
                   :text="db.connectionUrl"
                   placement="right"
                   :open-delay="400"
@@ -359,6 +359,8 @@ export default {
           name: 1,
           id: 1,
           database_type: 1,
+          database_owner: 1,
+          database_name: 1,
           database_username: 1,
           database_host: 1,
           database_port: 1,
@@ -400,10 +402,12 @@ export default {
       const dbList = data.items.map(item => {
         let connectionUrl = ''
         if (item.database_type !== 'mongodb') {
-          if (item.database_username) {
-            connectionUrl += item.database_username + ':***@'
-          }
-          connectionUrl += item.database_host + ':' + item.database_port
+          // if (item.database_username) {
+          //   connectionUrl += item.database_username + ':***@'
+          // }
+          connectionUrl += `${item.database_host}:${item.database_port}/${item.database_name}${
+            item.database_owner ? `/${item.database_owner}` : ''
+          }`
         } else {
           connectionUrl = item.database_uri || item.connection_name
         }
@@ -642,7 +646,7 @@ $hoverBg: #eef3ff;
 
     .db-item,
     .node-item {
-      height: 40px;
+      height: 42px;
       margin-bottom: 4px;
       font-size: 12px;
       &.active {
@@ -663,6 +667,11 @@ $hoverBg: #eef3ff;
         overflow: hidden;
         > :not(:last-child) {
           margin-bottom: 4px;
+          font-size: 13px;
+        }
+
+        > :last-child {
+          color: rgb(83 95 114 / 70%);
         }
       }
 
