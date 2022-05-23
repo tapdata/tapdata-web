@@ -597,7 +597,7 @@ export default {
     },
     create() {
       this.$router.push({
-        name: 'MigrateNew'
+        name: 'MigrateCreate'
       })
     },
     handleEditor(id) {
