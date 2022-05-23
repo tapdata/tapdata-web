@@ -445,7 +445,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$sidebarW: 260px;
+$sidebarW: 320px;
 $hoverBg: #e1e1e1;
 $radius: 3px;
 $baseHeight: 26px;
