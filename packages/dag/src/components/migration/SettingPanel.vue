@@ -1,5 +1,5 @@
 <template>
-  <FormRender :form="form" :schema="schema" />
+  <FormRender :form="form" :schema="schema" :scope="scope" />
 </template>
 
 <script>
@@ -7,19 +7,30 @@ import { createForm } from '@formily/core'
 import { observable } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
 import FormRender from '../FormRender'
+import { debounce } from 'lodash'
+import { Task } from '@tap/api'
+
+const taskApi = new Task()
 
 export default observer({
   name: 'SettingPanel',
   components: { FormRender },
   props: {
-    settings: Object,
-    scope: Object
+    settings: Object
   },
 
   data() {
     let repeatNameMessage = this.$t('task_form_error_name_duplicate')
     const values = observable(this.settings)
     return {
+      scope: {
+        checkName: value => {
+          return new Promise(resolve => {
+            this.handleCheckName(resolve, value)
+          })
+        }
+      },
+
       schema: {
         type: 'object',
         properties: {
@@ -34,8 +45,8 @@ export default observer({
                 'x-component': 'Input',
                 'x-validator': `{{(value) => {
                     return new Promise((resolve) => {
-                      checkName(value).then((res) => {
-                        if(res.data === true) {
+                      checkName(value).then(({data}) => {
+                        if(data === true) {
                           resolve('${repeatNameMessage}')
                         } else {
                           resolve()
@@ -235,6 +246,14 @@ export default observer({
         values
       })
     }
+  },
+
+  methods: {
+    handleCheckName: debounce(function (resolve, value) {
+      taskApi.checkName(value, this.settings.id || '').then(data => {
+        resolve(data)
+      })
+    }, 500)
   }
 })
 </script>

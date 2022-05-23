@@ -51,4 +51,12 @@ export class Task extends Http {
       return this.axios.get(this.url + '/chart').then(this.useData)
     }
   }
+
+  checkName(name, id) {
+    if (id) {
+      return this.axios.post(this.url + '/checkName?name=' + name + '&id=' + id).then(this.useData)
+    } else {
+      return this.axios.post(this.url + '/checkName?name=' + name).then(this.useData)
+    }
+  }
 }

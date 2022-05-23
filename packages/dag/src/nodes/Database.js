@@ -96,16 +96,6 @@ export class Database extends NodeType {
         default: 100
       },
 
-      syncObjects: {
-        type: 'array',
-        default: [
-          {
-            type: 'table',
-            objectNames: []
-          }
-        ]
-      },
-
       'attrs.howManyTable': {
         title: '选择表',
         type: 'string',
@@ -123,7 +113,7 @@ export class Database extends NodeType {
           }
         ],
         'x-reactions': {
-          target: 'syncObjects.0.objectNames',
+          target: 'tableNames',
           effects: ['onFieldInputValueChange'],
           fulfill: {
             state: {
@@ -133,7 +123,7 @@ export class Database extends NodeType {
         }
       },
 
-      'syncObjects.0.objectNames': {
+      tableNames: {
         type: 'array',
         default: [],
         'x-component': 'TableSelector',
@@ -157,7 +147,7 @@ export class Database extends NodeType {
       tableCard: {
         type: 'void',
         properties: {
-          'syncObjects.0.objectNames': {
+          tableNames: {
             type: 'string',
             'x-component': 'TableListCard',
             'x-component-props': {
