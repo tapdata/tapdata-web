@@ -204,12 +204,12 @@
             <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
               $t('agent_button_auto_upgrade')
             }}</ElButton>
-            <div v-if="disabledAutoUpgradeBtn" class="mt-1 fs-8 text-break">({{ $t('agent_tip_auto_upgrade') }})</div>
           </div>
           <div class="text-center w-50">
             <ElButton type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</ElButton>
           </div>
         </div>
+        <div v-if="disabledAutoUpgradeBtn" class="mt-1 fs-8 text-break">({{ $t('agent_tip_auto_upgrade') }})</div>
       </ElDialog>
       <!--   升级失败   -->
       <ElDialog :visible.sync="upgradeErrorDialog" width="450px" top="30vh" center>
