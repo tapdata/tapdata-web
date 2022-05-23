@@ -112,7 +112,7 @@ import InlineInput from '@/components/InlineInput'
 import Connection from '../migrate/details/Connection'
 import History from '../migrate/details/History'
 import Subtask from '../Subtask'
-import Chart from 'web-core/components/chart'
+import { Chart } from '@tap/component'
 import { ETL_SUB_STATUS_MAP } from '@/const'
 import { getSubTaskStatus, getTaskBtnDisabled } from '@/utils/util'
 

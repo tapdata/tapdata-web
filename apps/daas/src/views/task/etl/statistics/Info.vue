@@ -196,7 +196,7 @@
 import StatusTag from '@/components/StatusTag'
 import VIcon from '@/components/VIcon'
 import SelectList from '@/components/SelectList'
-import Chart from 'web-core/components/chart'
+import { Chart } from '@tap/component'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import { formatTime, formatMs } from '@/utils/util'
 

@@ -110,7 +110,7 @@
 </template>
 
 <script>
-import Chart from 'web-core/components/chart'
+import { Chart } from '@tap/component'
 import TableList from '@/components/TableList'
 import { formatTime, formatMs } from '@/utils/util'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'

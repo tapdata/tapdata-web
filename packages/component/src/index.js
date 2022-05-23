@@ -6,5 +6,6 @@ import VirtualTransferPanel from './base/virtual-transfer/VirtualTransferPanel'
 import VTable from './base/v-table'
 
 // business
+import Chart from './chart'
 
-export { langs, VirtualTransfer, VirtualTransferPanel, VTable }
+export { langs, VirtualTransfer, VirtualTransferPanel, VTable, Chart }

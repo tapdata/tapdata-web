@@ -124,7 +124,7 @@
 import i18n from '@/i18n'
 
 import VIcon from '@/components/VIcon'
-import Chart from 'web-core/components/chart'
+import { Chart } from '@tap/component'
 import { formatTime, numToThousands } from '@/util'
 
 export default {

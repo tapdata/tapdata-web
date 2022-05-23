@@ -115,7 +115,7 @@
 </template>
 
 <script>
-import Chart from 'web-core/components/chart'
+import { Chart } from '@tap/component'
 import EchartHeader from './EchartHeader'
 import { getOverviewData } from '../task/copy/util'
 import { formatTimeByTime } from '@/util'

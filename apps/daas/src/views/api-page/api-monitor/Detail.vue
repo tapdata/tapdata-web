@@ -53,7 +53,7 @@
 
 <script>
 import FilterBar from '@/components/filter-bar'
-import Chart from 'web-core/components/chart'
+import { Chart } from '@tap/component'
 import { formatTime } from '@/utils/util'
 import { handleUnit, formatMs } from './utils'
 export default {

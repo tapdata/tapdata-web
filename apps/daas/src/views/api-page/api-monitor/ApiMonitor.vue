@@ -176,7 +176,7 @@
 </template>
 
 <script>
-import Chart from 'web-core/components/chart'
+import { Chart } from '@tap/component'
 import TableList from '@/components/TableList'
 import FilterBar from '@/components/filter-bar'
 import { formatMs, handleUnit } from './utils'

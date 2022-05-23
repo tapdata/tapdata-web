@@ -92,7 +92,7 @@ import i18n from '@/i18n'
 
 import StatusTag from '@/components/StatusTag'
 import VIcon from '@/components/VIcon'
-import Chart from 'web-core/components/chart'
+import { Chart } from '@tap/component'
 import { formatTime, isEmpty, formatTimeByTime } from '@/util'
 
 let lastMsg
