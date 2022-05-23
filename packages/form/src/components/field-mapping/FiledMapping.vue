@@ -239,49 +239,6 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          res = {
-            total: 1,
-            items: [
-              {
-                id: '62848152410b7e96247f98ce',
-                invalid: false,
-                sourceQualifiedName: 'T_db2_TESTDB_SOURCE_B_DB21651028192296776429_621df3ad98bcdf1ea2e223c2',
-                sourceObjectName: 'B_DB21651028192296776429',
-                sourceFieldCount: 3,
-                sourceTableId: '6274f6cc410b7e9624ac721f',
-                sinkNodeId: 'bf8a15de-9118-4f32-8a94-493c58fe25ed',
-                sinkQulifiedName: 'MC_mongodb_test_AUTO_CUSTOMER_POLICY_MG2MG_C_6239733fdecec63c31d50416',
-                sinkDbName: 'Mongo API',
-                sinkObjectName: 'AUTO_CUSTOMER_POLICY_MG2MG_C',
-                sinkDbType: 'mongodb',
-                sinkStageId: 'bf8a15de-9118-4f32-8a94-493c58fe25ed',
-                userDeletedNum: 0,
-                sinkTableId: '62848152410b7e96247f9636',
-                dataFlowId: '628480f3bab771354c257937',
-                uuid: 'c8cd3580d48a4f85a1d267eca5cb316a',
-                fieldsMapping: [
-                  {
-                    targetFieldName: 'pk',
-                    sourceFieldName: 'pk',
-                    sourceFieldType: 'INTEGER',
-                    type: 'auto'
-                  },
-                  {
-                    targetFieldName: 'title',
-                    sourceFieldName: 'title',
-                    sourceFieldType: 'VARCHAR',
-                    type: 'auto'
-                  },
-                  {
-                    targetFieldName: 'n',
-                    sourceFieldName: 'n',
-                    sourceFieldType: 'INTEGER',
-                    type: 'auto'
-                  }
-                ]
-              }
-            ]
-          }
           let { total, items } = res
           this.total = total
           this.navData = items
