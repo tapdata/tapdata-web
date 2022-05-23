@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import MqTransfer from 'web-core/components/mq-transfer'
+import { MqTransfer } from '@tap/component'
 import TableSelector from '@/components/table-selector'
 
 export default {
