@@ -103,13 +103,10 @@ export default {
   workbench_statistics__sub_title_label: '累计',
 
   // 头部
-  header_question: '问答支持',
   header_scan_code: '使用过程中遇到问题？',
   header_join_group: '扫码添加小助手获得技术支持',
-  header_scan_code_title1: '扫码关注Tapdata微信服务号',
-  header_scan_code_desc1: '获取最新资讯和技术干货',
   header_manual: '使用手册',
-  header_feedback: '提交反馈',
+  header_technical_support: '技术支持',
   header_official_website: '官网',
   header_sign_out: '退出登录',
   header_welcome: 'Hi，欢迎使用',

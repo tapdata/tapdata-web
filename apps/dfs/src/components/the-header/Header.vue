@@ -6,42 +6,14 @@
         <img src="../../assets/image/logoFull.png" alt="" />
       </ElLink>
       <div class="dfs-header__button button-bar pr-4 fs-7">
-        <!-- <div class="mr-6 pointer" @click="command('toCommunity')">
-          <VIcon class="mr-2" size="17">shequ</VIcon>
-          <span>社区</span>
-        </div> -->
-        <!--        <div class="mr-6 pointer" @click="command('questions')">问答支持</div>-->
-        <ElPopover placement="top-start" width="400" min-width="0" trigger="click">
-          <div class="flex justify-content-between text-center">
-            <div>
-              <img style="width: 120px; height: 120px" src="../../../public/images/wx_user_support.png" alt="" />
-              <div>{{ $t('header_scan_code') }}</div>
-              <div>{{ $t('header_join_group') }}</div>
-            </div>
-            <div>
-              <img style="width: 120px; height: 120px" src="../../../public/images/wx_code.png" alt="" />
-              <div>{{ $t('header_scan_code_title1') }}</div>
-              <div>{{ $t('header_scan_code_desc1') }}</div>
-            </div>
-          </div>
-          <div class="command-item mr-6" slot="reference">
-            <VIcon class="mr-2" size="17">question</VIcon>
-            <span>{{ $t('header_question') }}</span>
-          </div>
-        </ElPopover>
+        <div class="command-item mr-6" @click="command('support')">
+          <VIcon class="mr-2" size="17">question</VIcon>
+          <span>{{ $t('header_technical_support') }}</span>
+        </div>
         <div class="command-item mr-6" @click="command('handbook')">
           <VIcon class="mr-2" size="17">send</VIcon>
           <span>{{ $t('header_manual') }}</span>
         </div>
-        <!--        <div class="command-item mr-6" @click="command('feedback')">-->
-        <!--          <VIcon class="v-icon mr-2" size="17">feedback</VIcon>-->
-        <!--          <span>{{ $t('header_feedback') }}</span>-->
-        <!--        </div>-->
-        <!--        <div class="mr-6 pointer" @click="command('source-center')">文档中心</div>-->
-        <!--        <div class="flex align-items-center mr-6 pointer" @click="command('contact-us')">-->
-        <!--          <VIcon class="mr-2" size="17">send</VIcon>-->
-        <!--          <span>联系我们</span>-->
-        <!--        </div>-->
         <NotificationPopover class="command-item mr-6"></NotificationPopover>
         <ElDropdown v-if="false" placement="bottom" class="mr-6" @command="changeLanguage">
           <span class="cursor-pointer command-item langs-btn">{{ languagesItems[lang] }}</span>
@@ -52,9 +24,6 @@
           </ElDropdownMenu>
         </ElDropdown>
         <ElDropdown class="command-item menu-user" placement="bottom" @command="command">
-          <!--					<ElButton class="menu-button" size="mini">-->
-          <!--						{{ user.username }}-->
-          <!--					</ElButton>-->
           <div class="username flex align-items-center">
             <img
               v-if="user.avatar"
@@ -150,8 +119,8 @@ export default {
         case 'handbook':
           window.open('https://sourl.cn/sxuj82', '_blank')
           break
-        case 'feedback':
-          window.open('https://sourl.cn/bDjxdj', '_blank')
+        case 'support':
+          window.open('https://desk.zoho.com.cn/portal/tapdata/zh/community/topic/welcome-to-community', '_blank')
           break
       }
     },
