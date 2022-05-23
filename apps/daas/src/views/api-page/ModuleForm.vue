@@ -122,7 +122,7 @@
 import APIClient from '@/api/ApiClient'
 import CustomerApiForm from './CustomerApiForm'
 import SelectClassify from '@/components/SelectClassify'
-import VirtualSelect from 'web-core/components/virtual-select'
+import { VirtualSelect } from '@tap/component'
 export default {
   name: 'ModuleForm',
   components: { CustomerApiForm, SelectClassify, VirtualSelect },

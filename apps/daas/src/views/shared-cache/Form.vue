@@ -148,7 +148,7 @@
 }
 </style>
 <script>
-import VirtualSelect from 'web-core/components/virtual-select'
+import { VirtualSelect } from '@tap/component'
 import FieldSelector from './FieldSelector'
 export default {
   components: { VirtualSelect, FieldSelector },
