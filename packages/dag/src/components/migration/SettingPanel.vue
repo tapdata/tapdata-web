@@ -45,7 +45,7 @@ export default observer({
                 'x-component': 'Input',
                 'x-validator': `{{(value) => {
                     return new Promise((resolve) => {
-                      checkName(value).then(({data}) => {
+                      checkName(value).then(data => {
                         if(data === true) {
                           resolve('${repeatNameMessage}')
                         } else {
