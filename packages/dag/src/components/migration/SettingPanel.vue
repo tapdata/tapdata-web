@@ -54,30 +54,6 @@ export default observer({
                   max: 100
                 }
               },
-              crontabExpression: {
-                //调度表达式
-                title: this.$t('task_setting_cron_expression_label'), //定期调度任务
-                type: 'string',
-                'x-decorator': 'FormItem',
-                'x-component': 'Input',
-                'x-component-props': {
-                  placeholder: this.$t('task_setting_cron_expression')
-                },
-                'x-decorator-props': {
-                  feedbackStatus: 'info',
-                  feedbackText: this.$t('task_setting_cron_feedbackText'),
-                  extra: this.$t('task_setting_cron_extra'),
-                  feedbackLayout: 'terse'
-                },
-                'x-reactions': {
-                  dependencies: ['sync_type', 'isSchedule'],
-                  fulfill: {
-                    state: {
-                      display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
-                    }
-                  }
-                }
-              },
               sync_type: {
                 title: this.$t('task_setting_sync_type'),
                 type: 'string',
@@ -100,15 +76,7 @@ export default observer({
                     label: this.$t('task_setting_cdc'), //增量
                     value: 'cdc'
                   }
-                ],
-                'x-reactions': {
-                  target: '*(increOperationMode, increaseReadSize)',
-                  fulfill: {
-                    state: {
-                      visible: '{{$self.value !== "initial_sync"}}'
-                    }
-                  }
-                }
+                ]
               },
               collapse: {
                 type: 'void',
@@ -122,6 +90,74 @@ export default observer({
                       title: '高级设置'
                     },
                     properties: {
+                      planTime: {
+                        title: '计划时间', //计划时间
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Switch',
+                        default: false,
+                        target: '*(crontabExpression,syncPoints)',
+                        fulfill: {
+                          state: {
+                            visible: '{{$self.value}}'
+                          }
+                        }
+                      },
+                      planDate: {
+                        type: 'string',
+                        'x-component': 'DatePicker',
+                        'x-component-props': {
+                          type: 'datetime',
+                          format: 'yyyy-MM-dd HH:mm:ss'
+                        },
+                        'x-reactions': {
+                          dependencies: ['sync_type', 'planTime'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] !== "initial_sync+cdc" && $deps[1] ? "visible" : "hidden"}}'
+                            }
+                          }
+                        }
+                      },
+                      isSchedule: {
+                        title: this.$t('task_setting_is_schedule'), //定期调度任务
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Switch',
+                        'x-reactions': {
+                          dependencies: ['sync_type', 'planTime'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
+                            }
+                          }
+                        },
+                        default: false
+                      },
+                      crontabExpression: {
+                        //调度表达式
+                        title: this.$t('task_setting_cron_expression_label'), //定期调度任务
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Input',
+                        'x-component-props': {
+                          placeholder: this.$t('task_setting_cron_expression')
+                        },
+                        'x-decorator-props': {
+                          feedbackStatus: 'info',
+                          feedbackText: this.$t('task_setting_cron_feedbackText'),
+                          extra: this.$t('task_setting_cron_extra'),
+                          feedbackLayout: 'terse'
+                        },
+                        'x-reactions': {
+                          dependencies: ['sync_type', 'isSchedule'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
+                            }
+                          }
+                        }
+                      },
                       isAutoCreateIndex: {
                         title: this.$t('task_setting_automatic_index'), //自动创建索引
                         type: 'boolean',
@@ -162,10 +198,10 @@ export default observer({
                         'x-component': 'ArrayItems',
                         'x-decorator': 'FormItem',
                         'x-reactions': {
-                          dependencies: ['sync_type'],
+                          dependencies: ['sync_type', 'planTime'],
                           fulfill: {
                             state: {
-                              visible: '{{$deps[0] === "cdc"}}'
+                              visible: '{{$deps[0] === "cdc" && $deps[1] ? "visible" : "hidden"}}'
                             }
                           }
                         },
