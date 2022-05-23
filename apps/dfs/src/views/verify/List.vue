@@ -69,7 +69,7 @@
         sortable="custom"
         width="160"
       ></ElTableColumn>
-      <ElTableColumn :label="$t('list_operation')" width="366">
+      <ElTableColumn :label="$t('list_operation')" width="366" fixed="right">
         <template slot-scope="scope">
           <ElLink
             type="primary"

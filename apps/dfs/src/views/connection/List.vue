@@ -63,7 +63,7 @@
         <ElTableColumn :label="$t('connection_list_change_time')" prop="last_updated" width="150" sortable="custom">
           <template slot-scope="scope">{{ $moment(scope.row.last_updated).format('YYYY-MM-DD HH:mm:ss') }}</template>
         </ElTableColumn>
-        <ElTableColumn :label="$t('list_operation')" width="280">
+        <ElTableColumn :label="$t('list_operation')" width="280" fixed="right">
           <template slot-scope="scope">
             <div class="operate-columns">
               <ElButton size="mini" type="text" @click="testConnection(scope.row)">{{
