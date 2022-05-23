@@ -32,7 +32,7 @@
 
 <script>
 import ColumnItem from './Column'
-import { delayTrigger } from '../../../util'
+import { delayTrigger } from '@tap/shared'
 export default {
   name: 'VTable',
   components: { ColumnItem },

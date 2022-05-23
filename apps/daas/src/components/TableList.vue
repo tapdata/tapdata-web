@@ -17,10 +17,11 @@
 </template>
 
 <script>
+import { VTable } from '@tap/component'
 import VIcon from '@/components/VIcon'
 export default {
   name: 'TableList',
-  components: { VIcon },
+  components: { VTable, VIcon },
   methods: {
     fetch() {
       return this.$refs.table?.fetch(...arguments)
