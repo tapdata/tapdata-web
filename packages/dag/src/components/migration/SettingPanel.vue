@@ -130,6 +130,26 @@ export default observer({
                           }
                         }
                       },
+                      isAutoCreateIndex: {
+                        title: this.$t('task_setting_automatic_index'), //自动创建索引
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Switch',
+                        default: true
+                      },
+                      noPrimaryKey: {
+                        title: this.$t('task_setting_no_primary_key'), //支持无主键同步
+                        type: 'boolean',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Switch'
+                      },
+                      isStopOnError: {
+                        title: this.$t('task_setting_stop_on_error'), //遇到错误停止
+                        type: 'boolean',
+                        default: true,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Switch'
+                      },
                       isSchedule: {
                         title: this.$t('task_setting_is_schedule'), //定期调度任务
                         type: 'boolean',
@@ -169,26 +189,6 @@ export default observer({
                           }
                         }
                       },
-                      isAutoCreateIndex: {
-                        title: this.$t('task_setting_automatic_index'), //自动创建索引
-                        type: 'boolean',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch',
-                        default: true
-                      },
-                      noPrimaryKey: {
-                        title: this.$t('task_setting_no_primary_key'), //支持无主键同步
-                        type: 'boolean',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch'
-                      },
-                      isStopOnError: {
-                        title: this.$t('task_setting_stop_on_error'), //遇到错误停止
-                        type: 'boolean',
-                        default: true,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch'
-                      },
                       shareCdcEnable: {
                         title: this.$t('connection_form_shared_mining'), //共享挖掘日志过滤
                         type: 'boolean',
@@ -204,20 +204,27 @@ export default observer({
                           }
                         }
                       },
+                      isAutoInspect: {
+                        title: '数据校验', //共享挖掘日志过滤
+                        type: 'boolean',
+                        default: true,
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Switch'
+                      },
                       syncPoints: {
+                        title: this.$t('task_setting_sync_point'), //增量采集开始时刻
                         type: 'array',
+                        default: [{ type: 'current', date: '' }],
                         'x-component': 'ArrayItems',
                         'x-decorator': 'FormItem',
                         'x-reactions': {
                           dependencies: ['sync_type', 'planTime'],
                           fulfill: {
                             state: {
-                              visible: '{{$deps[0] === "cdc" && $deps[1] ? "visible" : "hidden"}}'
+                              display: '{{$deps[0] === "cdc" && $deps[1] ? "visible" : "hidden"}}'
                             }
                           }
                         },
-                        default: [{ type: 'current', date: '' }],
-                        title: this.$t('task_setting_sync_point'), //增量采集开始时刻
                         items: {
                           type: 'object',
                           properties: {
