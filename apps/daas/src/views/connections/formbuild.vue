@@ -172,7 +172,6 @@ export default {
         let params = Object.assign(
           {},
           {
-            // user_id: this.$cookie.get('user_id'),
             status: 'testing',
             schema: {},
             retry: 0,

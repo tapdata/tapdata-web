@@ -1,3 +1,5 @@
+import Cookie from './cookie'
+
 export function setPermission(list) {
   let permissions = []
   if (list) {
@@ -21,17 +23,15 @@ export function setPermission(list) {
 //   }
 // }
 export function signOut() {
-  let cookie = window.VueCookie
-
   sessionStorage.removeItem('tapdata_permissions')
-  cookie.delete('xToken')
-  cookie.delete('token')
-  cookie.delete('user_id')
-  cookie.delete('login')
-  cookie.delete('isAdmin')
-  cookie.delete('email')
-  cookie.delete('username')
-  cookie.delete('isReadonly')
+  Cookie.remove('xToken')
+  Cookie.remove('token')
+  Cookie.remove('user_id')
+  Cookie.remove('login')
+  Cookie.remove('isAdmin')
+  Cookie.remove('email')
+  Cookie.remove('username')
+  Cookie.remove('isReadonly')
   if (window !== top) {
     top.window.location.href = '/login'
   } else {

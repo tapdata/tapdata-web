@@ -226,7 +226,6 @@ import FilterBar from '@/components/filter-bar'
 import TablePage from '@/components/TablePage'
 import Upload from '@/components/UploadDialog'
 import { toRegExp } from '@/utils/util'
-// import * as Cookie from 'tiny-cookie'
 
 export default {
   name: 'Modules',
@@ -284,9 +283,6 @@ export default {
     // this.getDbOptions()
     this.getWorkers()
     this.getFilterItems()
-  },
-  mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
   },
   computed: {
     table() {
@@ -354,11 +350,6 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          this.table.setCache({
-            keyword,
-            status
-          })
-
           return {
             total: res.data.total,
             data: res.data?.items || []
@@ -665,34 +656,6 @@ export default {
       }
       this[command](ids, node)
     }
-
-    // // 上传文件成功失败钩子
-    // handleChange(file) {
-    //   this.importForm.fileList = [file]
-    //   this.importForm.action =
-    //     window.location.origin +
-    //     window.location.pathname +
-    //     'api/MetadataInstances/upload?upsert=' +
-    //     this.importForm.upsert +
-    //     '&listtags=' +
-    //     encodeURIComponent(JSON.stringify(this.importForm.tag)) +
-    //     '&type=APIServer' +
-    //     `&access_token=${Cookie.get('token')}`
-    // },
-
-    // handleSuccess(response) {
-    //   if (response.code === '110500' || response.code === '110401') {
-    //     this.status = false
-    //     this.$message.error(this.$t('dataFlow.uploadError'))
-    //   } else {
-    //     this.status = true
-    //   }
-    // },
-    // // 上传保存
-    // submitUpload() {
-    //   this.importDialogVisible = false
-    //   this.$refs.upload.submit()
-    // }
   },
   beforeDestroy() {
     if (this.intervalId) {

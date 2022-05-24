@@ -74,6 +74,7 @@
 // import crypto from 'crypto';
 // import CryptoJS from 'crypto-js';
 import Header from './Header'
+import Cookie from '@tap/shared/src/cookie'
 // import _ from 'lodash';
 
 // const Languages = {
@@ -164,14 +165,14 @@ export default {
       try {
         let usersModel = this.$api('users')
 
-        this.$cookie.set('location_origin', window.location.origin)
+        Cookie.set('location_origin', window.location.origin)
 
         let { data } = await usersModel.post(this.form)
         if (data.textStatus === 'DISABLE_SIGNUP') {
           this.errorMessage = data.textStatus
           return
         }
-        this.$cookie.set('user_id', data.id)
+        Cookie.set('user_id', data.id)
         this.$router.replace({
           name: 'verificationEmail',
           params: { data: this.form }

@@ -17,7 +17,7 @@ export default {
   },
   methods: {
     getHtmlMD(type) {
-      this.htmlMD = require(`@/assets/md/connection/${type.toLowerCase()}.md`)
+      this.htmlMD = require(`@/assets/md/sources/${type.toLowerCase()}.md`)
     }
   }
 }

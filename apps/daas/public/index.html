@@ -44,6 +44,14 @@
         background: rgba(0, 0, 0, 0.1);
       }
     </style>
+    <% if (process.env.NODE_ENV === 'production') { %>
+      <% for(var css of htmlWebpackPlugin.options.cdn.css) { %>
+        <link rel="stylesheet" href="<%=css%>" as="style">
+      <% } %>
+      <% for(var js of htmlWebpackPlugin.options.cdn.js) { %>
+        <script src="<%=js%>"></script>
+      <% } %>
+    <% } %>
   </head>
   <body>
     <div id="app">

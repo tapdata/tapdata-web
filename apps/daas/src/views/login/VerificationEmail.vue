@@ -78,7 +78,7 @@ export default {
       if (!this.timer) {
         try {
           this.time = TIME_COUNT
-          this.$cookie.set('location_origin', window.location.origin)
+          Cookie.set('location_origin', window.location.origin)
 
           this.timer = setInterval(() => {
             if (this.time > 0 && this.time <= TIME_COUNT) {
@@ -115,7 +115,7 @@ export default {
       // this.loading = true;
       if (!this.timer) {
         this.time = TIME_COUNT
-        this.$cookie.set('location_origin', window.location.origin)
+        Cookie.set('location_origin', window.location.origin)
         this.timer = setInterval(() => {
           if (this.time > 0 && this.time <= TIME_COUNT) {
             this.time--

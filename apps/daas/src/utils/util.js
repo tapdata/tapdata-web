@@ -1,6 +1,7 @@
 import moment from 'moment'
 import i18n from '@/i18n'
 import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from '@/const'
+import Cookie from '@tap/shared/src/cookie'
 
 export function setPermission(list) {
   let permissions = []
@@ -19,15 +20,13 @@ export function setPermission(list) {
 }
 
 export function signOut() {
-  let cookie = window.VueCookie
-
-  cookie.delete('token')
-  cookie.delete('user_id')
-  cookie.delete('login')
-  cookie.delete('isAdmin')
-  cookie.delete('email')
-  cookie.delete('username')
-  cookie.delete('isReadonly')
+  Cookie.remove('token')
+  Cookie.remove('user_id')
+  Cookie.remove('login')
+  Cookie.remove('isAdmin')
+  Cookie.remove('email')
+  Cookie.remove('username')
+  Cookie.remove('isReadonly')
   sessionStorage.setItem('lastLocationHref', location.href)
   if (window !== top) {
     top.window.location.href = '/login'

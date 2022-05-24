@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import Cookie from '@tap/shared/src/cookie'
 
 Vue.directive('readonlybtn', {
   inserted: function (el, binding, vnode) {
@@ -46,8 +47,7 @@ export function hasPermissionByCode(code) {
 
 export function permissionBtnDisable(code, id) {
   let falg = false
-  let cookie = window.VueCookie
-  let user_id = cookie.get('user_id')
+  let user_id = Cookie.get('user_id')
 
   if (!id) {
     return true

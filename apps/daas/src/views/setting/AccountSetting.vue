@@ -122,6 +122,7 @@
 
 <script>
 import factory from '@/api/factory'
+import Cookie from '@tap/shared/src/cookie'
 const usersModel = factory('users')
 
 export default {
@@ -260,20 +261,7 @@ export default {
     // 获取当前信息
     async handleGetData() {
       this.loading = true
-      // let filter = {
-      //   where: {
-      //     id: this.$cookie.get('user_id')
-      //   }
-      // }
-      // let parmas = {
-      //   filter: {
-      //     where: {
-      //       id: this.$cookie.get('user_id')
-      //     }
-      //   }
-      // }
-      // let result = await usersModel.get({ filter: JSON.stringify(filter) })
-      let result = await usersModel.get([this.$cookie.get('user_id')])
+      let result = await usersModel.get([Cookie.get('user_id')])
       let items = result.data
       if (items) {
         this.infoList.forEach(item => {
@@ -309,7 +297,7 @@ export default {
     // 修改用户名
     confirm() {
       let parmas = {
-        id: this.$cookie.get('user_id'),
+        id: Cookie.get('user_id'),
         username: this.userName
       }
       if (this.userName) {
@@ -350,9 +338,8 @@ export default {
               }
               this.$message.success(this.$t('account.pawSaveSuccess'))
               this.passwordDialogFalg = false
-              let cookie = window.VueCookie
-              cookie.delete('token')
-              cookie.delete('user_id')
+              Cookie.remove('token')
+              Cookie.remove('user_id')
               setTimeout(() => {
                 location.reload()
               }, 500)

@@ -53,7 +53,7 @@
 
 <script>
 import factory from '../api/factory'
-import _ from 'lodash'
+import Cookie from '@tap/shared/src/cookie'
 
 const MetadataDefinitions = factory('MetadataDefinitions')
 const UserGroupModel = factory('UserGroup')
@@ -85,7 +85,7 @@ export default {
   methods: {
     show(tagList) {
       this.dialogVisible = true
-      this.oldTagList = _.cloneDeep(tagList)
+      this.oldTagList = JSON.parse(JSON.stringify(tagList))
       this.getData()
     },
     getData(cb) {
@@ -94,7 +94,7 @@ export default {
         where.or = this.types.map(t => ({ item_type: t }))
       }
 
-      if (!parseInt(this.$cookie.get('isAdmin'))) where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` }
+      if (!parseInt(Cookie.get('isAdmin'))) where.user_id = { regexp: `^${Cookie.get('user_id')}$` }
 
       let filter = {
         where

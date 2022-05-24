@@ -161,6 +161,7 @@ import { defaultModel, verify, desensitization } from './util'
 import Test from './Test'
 import FilterBar from '@/components/filter-bar'
 import { TYPEMAP } from 'web-core/const'
+import Cookie from '@tap/shared/src/cookie'
 
 let timeout = null
 
@@ -169,7 +170,7 @@ export default {
   data() {
     return {
       filterItems: [],
-      user_id: this.$cookie.get('user_id'),
+      user_id: Cookie.get('user_id'),
       dialogDatabaseTypeVisible: false,
       multipleSelection: [],
       tableData: [],
@@ -258,7 +259,6 @@ export default {
     this.getFilterItems()
   },
   mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
     let query = this.$route.query
     if (query.step) {
       this.handleGuide()
@@ -345,14 +345,6 @@ export default {
         })
         .then(res => {
           let list = res.data?.items || []
-          this.table.setCache({
-            databaseType,
-            keyword,
-            databaseModel,
-            status,
-            panelFlag: true,
-            sourceType
-          })
           return {
             total: res.data?.total,
             data: list.map(item => {

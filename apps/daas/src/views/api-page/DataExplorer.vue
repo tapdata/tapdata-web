@@ -314,9 +314,6 @@ export default {
     }
     // this.getFilterItems()
   },
-  mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-  },
   watch: {
     'searchParams.api_server_process_id': {
       handler(val) {

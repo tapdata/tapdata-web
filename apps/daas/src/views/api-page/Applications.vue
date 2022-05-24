@@ -169,10 +169,6 @@ export default {
   },
   created() {
     this.getFilterItems()
-  },
-  mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-
     this.getRoles()
   },
   computed: {
@@ -292,9 +288,6 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          this.table.setCache({
-            keyword
-          })
           return {
             total: res.data?.total || 0,
             data: res.data?.items || []

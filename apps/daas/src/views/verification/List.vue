@@ -212,9 +212,6 @@ export default {
     }, 10000)
     this.getFilterItems()
   },
-  mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-  },
   destroyed() {
     clearInterval(timeout)
   },

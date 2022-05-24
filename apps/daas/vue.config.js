@@ -1,6 +1,6 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
-// const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
+const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
@@ -54,6 +54,50 @@ module.exports = {
     }
   },
   chainWebpack(config) {
+    //  ============ 配置别名 ============
+    config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('../../packages/web-core'))
+
+    // config.module.noParse(
+    //   /^(vue|vue-router|vuex|vuex-router-sync|axios|vue-virtual-scroller|vue-i18n|vue-echarts|echarts|vue-clipboard2|qs|mousetrap|moment|lodash|jsplumb|highlight.js|graphlib|github-markdown-css|element-ui|dagre|crypto|crypto-js)$/
+    // )
+
+    //  ============ 配置CDN ============
+    if (process.env.NODE_ENV === 'production') {
+      config.externals({
+        vue: 'Vue',
+        'vue-router': 'VueRouter',
+        vuex: 'Vuex',
+        axios: 'axios',
+        'vue-virtual-scroller': 'VueVirtualScroller',
+        'vue-i18n': 'VueI18n',
+        'vue-clipboard2': 'VueClipboard',
+        lodash: '_'
+      })
+      const baseUrl = './lib/'
+      const cdn = {
+        css: [
+          // vue-virtual-scroller
+          baseUrl + 'vue-virtual-scroller/vue-virtual-scroller.css'
+        ],
+        js: [
+          baseUrl + 'vue.min.js',
+          baseUrl + 'vue-router.min.js',
+          baseUrl + 'vuex.min.js',
+          baseUrl + 'axios.min.js',
+          baseUrl + 'vue-virtual-scroller/vue-virtual-scroller.min.js',
+          baseUrl + 'vue-i18n.min.js',
+          baseUrl + 'vue-clipboard.min.js',
+          baseUrl + 'lodash.min.js'
+        ]
+      }
+      // 通过 html-webpack-plugin 将 cdn 注入到 index.html 之中
+      config.plugin('html').tap(args => {
+        args[0].cdn = cdn
+        return args
+      })
+    }
+
+    // ============ svg处理 ============
     const iconDir = resolve('src/assets/icons/svg')
     const colorIconDir = resolve('src/assets/icons/colorSvg')
     const webCoreIconDir = resolve('../../packages/web-core/assets/icons/svg')
@@ -144,20 +188,22 @@ module.exports = {
       .use('markdown')
       .loader('markdown-loader')
       .end()
-
-    config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('../../packages/web-core'))
   },
   configureWebpack: config => {
+    // 尽量保证项目中文件后缀的精确
+    config.resolve.extensions = ['.js', 'jsx', '.vue', '.json']
+
     if (process.env.NODE_ENV === 'production') {
       // gzip
       config.plugins.push(
         new CompressionWebpackPlugin({
-          // 正在匹配需要压缩的文件后缀
-          test: /\.(js|css|svg|woff|ttf|json|html)$/,
-          // 大于10kb的会压缩
-          threshold: 10240
+          test: /\.(js|css|svg|woff|ttf|json|html|otf)$/, // 正在匹配需要压缩的文件后缀
+          threshold: 10240 // 大于10kb的会压缩
           // 其余配置查看compression-webpack-plugin
-        })
+        }),
+
+        // 分析工具
+        new SpeedMeasurePlugin()
       )
 
       config['performance'] = {
@@ -165,18 +211,13 @@ module.exports = {
         maxEntrypointSize: 10000000,
         maxAssetSize: 30000000
       }
-
-      /*config.plugins.push(
-        new HardSourceWebpackPlugin(),
-        new HardSourceWebpackPlugin.ExcludeModulePlugin([
-          {
-            test: /.*\.DS_Store/
-          }
-        ])
-      )*/
     }
   },
   css: {
+    extract: {
+      // 一个官方维护人员的回复如下，简单的说，就是在js里css的引入顺序导致的问题，多个css的在js里的引入顺序不同，就会提示这个警告。例如，在1.js 里，引入的顺序是a.css, b.css; 在2.js里，引入顺序是b.css,a.css, 出现了这种引入顺序不同，就导致了警告。在两个js里把引入顺序调成一致，就没问题了。在1.js和2.js里的引入顺序都调整成a.css, b.css 就没有那个警告了。
+      ignoreOrder: true // 对于通过使用 scoping 或命名约定来解决 css order 的项目，可以通过将插件的 ignoreOrder 选项设置为 true 来禁用 css order 警告。
+    },
     loaderOptions: {
       scss: {
         additionalData: `@use "~@/styles/var.scss" as *;`

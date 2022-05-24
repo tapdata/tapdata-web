@@ -47,6 +47,7 @@ import crypto from 'crypto'
 import CryptoJS from 'crypto-js'
 import LoginPage from './LoginPage'
 import _ from 'lodash'
+import Cookie from '@tap/shared/src/cookie'
 
 export default {
   name: 'SignIn',
@@ -122,13 +123,13 @@ export default {
         let user = await usersModel.getUserById(`/${data.userId}?access_token=${data.id}`)
         // eslint-disable-next-line
         console.log('登录成功：', data)
-        this.$cookie.set('email', this.form.email)
-        this.$cookie.set('username', user.data.username || '')
-        this.$cookie.set('login', 1)
-        this.$cookie.set('token', data.id)
-        this.$cookie.set('isAdmin', parseInt(user.data.role) || 0)
-        this.$cookie.set('user_id', data.userId)
-        this.$cookie.set('lang', this.langMap[localStorage.getItem('tapdata_localize_lang')] || 'zh-CN')
+        Cookie.set('email', this.form.email)
+        Cookie.set('username', user.data.username || '')
+        Cookie.set('login', 1)
+        Cookie.set('token', data.id)
+        Cookie.set('isAdmin', parseInt(user.data.role) || 0)
+        Cookie.set('user_id', data.userId)
+        Cookie.set('lang', this.langMap[localStorage.getItem('tapdata_localize_lang')] || 'zh-CN')
 
         let lastLocationHref = sessionStorage.getItem('lastLocationHref')
         if (lastLocationHref) {
