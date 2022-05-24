@@ -216,7 +216,9 @@
         <div class="dialog-content text-center">{{ $t('agent_dialog_upgrade_fail') }}</div>
         <div class="dialog-btn flex justify-content-evenly mt-6">
           <div class="text-center">
-            <ElButton type="primary" @click="cancelUpgradeFnc">{{ $t('button_cancel') }}</ElButton>
+            <ElButton type="primary" :disabled="disabledAutoUpgradeBtn" @click="autoUpgradeFnc">{{
+              $t('button_retry')
+            }}</ElButton>
           </div>
           <div>
             <ElButton type="primary" @click="manualUpgradeFnc">{{ $t('agent_button_manual_upgrade') }}</ElButton>
@@ -740,10 +742,6 @@ export default {
     closeDialog() {
       this.upgradeDialog = false
       this.upgradeErrorDialog = false
-    },
-    // 取消
-    cancelUpgradeFnc() {
-      this.closeDialog() // 关闭升级方式选择窗口
     },
     getTooltipContent(row, type) {
       let result

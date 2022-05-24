@@ -25,6 +25,7 @@ export default {
   button_details: 'details',
   button_test_connection: 'Connection test',
   button_bind: 'binding',
+  button_retry: 'retry',
   link_back_to_list: 'Back to list',
   lang_zh_cn: 'chinese',
   lang_en: 'english',
@@ -194,7 +195,7 @@ export default {
   agent_tip_auto_upgrade: 'Unable to use "Auto upgrade" when Agent is offline',
   agent_dialog_upgrade_title:
     'The Agent version is updated. You can upgrade your Agent to the latest version in the following ways. Tasks cannot be run during the upgrade process.',
-  agent_dialog_upgrade_fail: 'Automatic upgrade failed, please try to upgrade manually.',
+  agent_dialog_upgrade_fail: 'Auto upgrade failed, please try again or upgrade manually!',
   agent_link_to_purchase_msg: 'Jump to the download page after confirmation',
   agent_link_to_purchase_title: 'Whether to confirm the order instance？',
   agent_link_to_old_purchase_msg: 'After confirmation, jump to the page for ordering hosting instances',

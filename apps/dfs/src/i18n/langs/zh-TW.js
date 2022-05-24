@@ -25,6 +25,7 @@ export default {
   button_details: '詳情',
   button_test_connection: '連接測試',
   button_bind: '綁定',
+  button_retry: '重試',
   link_back_to_list: '返回列表',
   lang_zh_cn: '中文',
   lang_en: '英文',
@@ -194,7 +195,7 @@ export default {
   agent_tip_auto_upgrade: 'Agent離線時無法使用自動升級',
   agent_dialog_upgrade_title:
     'Agent版本有更新，您可以通過以下管道將您的Agent陞級到最新版本。 陞級過程中將無法運行任務。',
-  agent_dialog_upgrade_fail: '自動升級失敗，請嘗試手動陞級。',
+  agent_dialog_upgrade_fail: '自動升級失敗，請重試或者直接手動升級！',
   agent_link_to_purchase_msg: '確認後跳轉下載頁面',
   agent_link_to_purchase_title: '是否確認訂購實例？',
   agent_link_to_old_purchase_msg: '確認後跳轉訂購託管實例頁面',

@@ -31,6 +31,7 @@ export default {
   button_details: '详情',
   button_test_connection: '连接测试',
   button_bind: '绑定',
+  button_retry: '重试',
 
   // 链接
   link_back_to_list: '返回列表',
@@ -229,7 +230,7 @@ export default {
   agent_tip_auto_upgrade: 'Agent离线时无法使用自动升级',
   agent_dialog_upgrade_title:
     'Agent版本有更新，您可以通过以下方式将您的Agent升级到最新版本。升级过程中将无法运行任务。',
-  agent_dialog_upgrade_fail: '自动升级失败，请尝试手动升级。',
+  agent_dialog_upgrade_fail: '自动升级失败，请重试或者直接手动升级！',
   agent_link_to_purchase_msg: '确认后跳转下载页面',
   agent_link_to_purchase_title: '是否确认订购实例？',
   agent_link_to_old_purchase_msg: '确认后跳转订购托管实例页面',
