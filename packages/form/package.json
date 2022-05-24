@@ -18,6 +18,7 @@
     "@formily/shared": "^2.0.9",
     "@tap/api": "workspace:^1.0.0",
     "@tap/component": "workspace:^1.0.0",
+    "@tap/shared": "workspace:^1.0.0",
     "@vue/composition-api": "^1.4.6",
     "ace-builds": "^1.4.13",
     "highlight.js": "^11.0.1",

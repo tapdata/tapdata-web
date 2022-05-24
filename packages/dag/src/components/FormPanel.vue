@@ -660,7 +660,8 @@ export default {
     // 更新节点属性
     updateNodeProps: debounce(function (form) {
       if (!this.node) return
-      const formValues = { ...form.values }
+      const formValues = JSON.parse(JSON.stringify(form.values))
+      // const formValues = { ...form.values }
       const filterProps = ['id', 'isSource', 'isTarget', 'attrs.position', 'sourceNode', '$inputs', '$outputs'] // 排除属性的更新
       filterProps.forEach(path => {
         Path.setIn(formValues, path, undefined)
@@ -668,7 +669,7 @@ export default {
 
       this.updateNodeProperties({
         id: this.node.id,
-        properties: JSON.parse(JSON.stringify(formValues))
+        properties: JSON.parse(JSON.stringify(form.values))
       })
       this.updateDag()
       this.confirmNodeHasError()
@@ -678,7 +679,9 @@ export default {
     useEffects() {
       onFormValuesChange(form => {
         if (this.stateIsReadonly) return
-        console.log('onFormValuesChange', JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
+        console.groupCollapsed(`🚗onFormValuesChange:${Date.now()}`) // eslint-disable-line
+        console.trace(JSON.parse(JSON.stringify(form.values))) // eslint-disable-line
+        console.groupEnd()
         this.updateNodeProps(form)
       })
       onFormInputChange(form => {
@@ -690,7 +693,7 @@ export default {
         const path = field.path.toString().replace(/\.[\d+]/g, '')
         const takeMessage = prop => {
           const token = `${path}${prop ? `.${prop}` : ''}`
-          return this.getMessage(token, this.ins.locales)
+          return this.getMessage(token, this.nodeType.locales)
         }
         const title = takeMessage('title') || takeMessage()
         const description = takeMessage('description')
