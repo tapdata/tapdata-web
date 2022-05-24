@@ -27,7 +27,7 @@
                 ref="dataSource"
                 v-model="dataSourceModel"
                 :config="config"
-                style="width: 376px"
+                style="width: 450px"
                 class="form-builder grey"
                 @value-change="formChange"
               >

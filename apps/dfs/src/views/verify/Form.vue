@@ -14,7 +14,12 @@
       :validate-on-rule-change="false"
     >
       <ElFormItem required class="form-item" prop="flowId" :label="$t('verify_form_label_select_job') + ': '">
-        <AsyncSelect v-model="form.flowId" :method="getFlowItems" :onSetSelected="selectedFnc"></AsyncSelect>
+        <AsyncSelect
+          v-model="form.flowId"
+          :method="getFlowItems"
+          :onSetSelected="selectedFnc"
+          style="width: 342px"
+        ></AsyncSelect>
       </ElFormItem>
       <ElFormItem required class="form-item" :label="$t('verify_form_label_type') + ': '">
         <ElRadioGroup v-model="form.inspectMethod">
