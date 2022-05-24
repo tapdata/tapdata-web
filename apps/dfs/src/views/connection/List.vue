@@ -412,13 +412,12 @@ export default {
         return
       }
       try {
-        let data = await this.$axios.post(`tm/api/Connections/${item.id}/copy`, {
+        await this.$axios.post(`tm/api/Connections/${item.id}/copy`, {
           uri: `${item.id}/copy`,
           headers: { 'lconname-name': item.name }
         })
         this.fetch()
         this.$message.success(i18n.t('connection_List_fuZhiChengGong'))
-        this.test(data?.result || data, false)
       } catch (error) {
         if (error?.response?.msg === 'duplicate source') {
           this.$message.success(this.$t('connection_list_copy_failed'))
