@@ -42,7 +42,7 @@
   </ElDialog>
 </template>
 <script>
-import * as Cookie from 'tiny-cookie'
+import Cookie from '@tap/shared/src/cookie'
 import VIcon from '@/components/VIcon'
 export default {
   name: 'Upload',

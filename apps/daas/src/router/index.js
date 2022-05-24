@@ -4,6 +4,7 @@ import factor from '@/api/factory'
 import { setPermission } from '@/utils/util'
 import { Loading, Message } from 'element-ui'
 import routes from './routes'
+import Cookie from '@tap/shared/src/cookie'
 
 Vue.use(Router)
 export default i18n => {
@@ -24,9 +25,8 @@ export default i18n => {
     if (to.meta.title && window.getSettingByKey('SHOW_PAGE_TITLE')) {
       document.title = i18n.t(to.meta.title)
     }
-    let cookie = window.VueCookie
-    let token = cookie.get('token')
-    let userId = cookie.get('user_id')
+    let token = Cookie.get('token')
+    let userId = Cookie.get('user_id')
 
     if (token) {
       //若token存在，获取权限

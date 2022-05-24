@@ -509,18 +509,12 @@ export default {
     this.searchParams.executionStatus = executionStatus ?? ''
     ws.on('watch', this.dataflowChange)
   },
-  mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-  },
   beforeDestroy() {
     ws.off('watch', this.dataflowChange)
     clearInterval(interval)
   },
   watch: {
     '$route.query'(query) {
-      if (this.mappingTemplate !== query.mapping) {
-        this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-      }
       this.mappingTemplate = query.mapping
       this.table.fetch(1)
     }
@@ -702,13 +696,6 @@ export default {
           let data = res.data
           let list = data?.items || []
           this.watchDataflowList(list.map(it => it.id))
-          this.table.setCache({
-            keyword,
-            status,
-            progress,
-            executionStatus,
-            timeData
-          })
           return {
             total: data.total,
             data: list.map(item => {
@@ -725,13 +712,6 @@ export default {
           let data = res.data
           let list = data?.items || []
           this.watchDataflowList(list.map(it => it.id))
-          this.table.setCache({
-            keyword,
-            status,
-            progress,
-            executionStatus,
-            timeData
-          })
           return {
             total: data.total,
             data: list.map(item => {

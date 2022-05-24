@@ -64,7 +64,7 @@ export const createComponentSchema = (component, decorator) => {
     }
   }
 }
-
+// eslint-disable-next-line
 export const createFieldSchema = (component, decorator = AllSchemas.FormItem) => {
   return {
     type: 'object',

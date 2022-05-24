@@ -140,6 +140,8 @@
 </template>
 
 <script>
+import Cookie from '@tap/shared/src/cookie'
+
 let timer = null
 export default {
   data() {
@@ -338,7 +340,7 @@ export default {
           }
           let loading = this.$loading()
           let { fileId, fileName, packageName } = this.form
-          let useId = this.$cookie.get('user_id')
+          let useId = Cookie.get('user_id')
           let now = new Date()
           let params = list.map(item => {
             let { function_name, describe, format, parameters_desc, return_value, className, methodName } = item

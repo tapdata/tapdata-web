@@ -193,11 +193,6 @@ export default {
   created() {
     this.getUserData()
     this.getFilterItems()
-    // this.getDbOptions();
-    // this.getCount();
-  },
-  mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
   },
   watch: {
     '$route.query'() {

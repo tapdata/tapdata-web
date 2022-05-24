@@ -520,8 +520,6 @@
         </footer>
       </main>
       <GitBook></GitBook>
-      <!-- </div>
-      </main> -->
     </div>
     <Test
       ref="test"
@@ -567,6 +565,7 @@ import { TYPEMAPCONFIG, defaultModel } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
 import VIcon from '@/components/VIcon'
 import { checkConnectionName } from '@/utils/util'
+import Cookie from '@tap/shared/src/cookie'
 
 const connectionsModel = factory('connections')
 let defaultConfig = []
@@ -1328,7 +1327,7 @@ export default {
     //切换sourceType ecs需要请求ecs列表 开通网络策略
     getEcsList() {
       if (this.model.sourceType !== 'ecs') return
-      let userId = this.$cookie.get('userId')
+      let userId = Cookie.get('userId')
       let params = {
         page: this.ecsPage || 1,
         pageSize: this.ecsPageSize || 10,
@@ -1360,7 +1359,7 @@ export default {
       let currentData = this.vpcList.filter(item => item.portId === this.model.vpc)
       if (currentData.length === 0) return
       let params = {
-        userId: this.$cookie.get('user_id'),
+        userId: Cookie.get('user_id'),
         ecsId: this.model.ecs,
         region: this.model.region,
         zone: this.model.zone,
@@ -1538,7 +1537,6 @@ export default {
           let params = Object.assign(
             {},
             {
-              // user_id: this.$cookie.get('user_id'),
               status: 'testing',
               schema: {},
               retry: 0,

@@ -5,6 +5,7 @@
  */
 import PublicAPI from './publicApi'
 import axios from '@/plugins/axios'
+import Cookie from '@tap/shared/src/cookie'
 
 export default class TaskAPI extends PublicAPI {
   constructor() {
@@ -79,7 +80,7 @@ export default class TaskAPI extends PublicAPI {
     }
   }
   export(ids) {
-    let href = this.url + `/batch/load?taskId=${ids.join('&taskId=')}&access_token=${window.VueCookie.get('token')}`
+    let href = this.url + `/batch/load?taskId=${ids.join('&taskId=')}&access_token=${Cookie.get('token')}`
     window.open(href)
   }
   checkRun(id) {

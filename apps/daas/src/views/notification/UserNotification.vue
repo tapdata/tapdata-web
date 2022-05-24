@@ -80,6 +80,7 @@ import UserOperation from './UserOperation'
 import SelectList from '@/components/SelectList'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import { toRegExp } from '../../utils/util'
+import Cookie from '@tap/shared/src/cookie'
 
 export default {
   components: {
@@ -90,7 +91,7 @@ export default {
   data() {
     return {
       loading: false,
-      isAdmin: parseInt(this.$cookie.get('isAdmin')),
+      isAdmin: parseInt(Cookie.get('isAdmin')),
       search: {
         keyword: '',
         range: [],
@@ -108,8 +109,6 @@ export default {
   created() {
     if (this.isAdmin) {
       this.getUsers()
-    } else {
-      // this.search.userId = this.$cookie.get('user_id');
     }
     this.getData()
   },

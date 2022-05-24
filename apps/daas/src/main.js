@@ -2,12 +2,9 @@ import Vue from 'vue'
 import App from '@/App.vue'
 import moment from 'moment' // 时间格式化
 import store from '@/vuex' // 引入全局数据控制
-import VueCookie from 'vue-cookie'
 import i18n from './i18n'
-import VueBus from 'vue-bus'
 import VueClipboard from 'vue-clipboard2'
 import factory from '@/api/factory'
-import Cache from '@/utils/cache'
 import TapdataWebCore from 'web-core'
 import Cookie from '@tap/shared/src/cookie'
 import VIcon from '@/components/VIcon'
@@ -24,19 +21,14 @@ import LoadMore from '@/utils/loadMore'
 import '@/styles/app.scss'
 
 Vue.config.productionTip = false
-Vue.use(VueCookie)
-Vue.use(VueBus)
 Vue.use(VueClipboard)
 Vue.use(LoadMore)
 Vue.use(TapdataWebCore)
 
 Vue.prototype.$moment = moment
 Vue.prototype.$api = factory
-Vue.prototype.$cache = new Cache()
 
 Vue.component(VIcon.name, VIcon)
-
-window.VueCookie = VueCookie
 
 window._TAPDATA_OPTIONS_ = {
   logoUrl: require('@/assets/images/logo.png'),

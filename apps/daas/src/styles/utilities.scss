@@ -3,7 +3,7 @@
 * https://getbootstrap.com/docs/5.0/utilities/api/
 */
 .din-font {
-  font-family: 'DIN';
+  font-family: DIN;
 }
 .clearfix::after {
   display: block;
@@ -20,7 +20,7 @@
   color: map-get($color, lprimary);
 }
 .link-primary:focus {
-  color:  map-get($color, dprimary);
+  color: map-get($color, dprimary);
 }
 
 .link-secondary {
@@ -60,14 +60,14 @@
 }
 
 .link-danger {
-  color: #D44D4D;
+  color: #d44d4d;
 }
 
 .link-danger:hover {
-  color: #F76560;
+  color: #f76560;
 }
 .link-danger:focus {
-  color: #CB2634
+  color: #cb2634;
 }
 
 .link-light {

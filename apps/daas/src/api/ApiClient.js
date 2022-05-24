@@ -60,8 +60,6 @@ export default class {
       }
     })
     clientInfo = clientInfo.data?.items[0] || {}
-    // let scope = clientInfo.scopes && clientInfo.scopes[0] ? clientInfo.scopes[0] : 'All_publish_data'
-    // let username = decodeURIComponent(document.cookie.match(/(^|)email=([^;]*)(;|$)/)[2])
     let data = 'grant_type=client_credentials&client_id=' + clientInfo.id + '&client_secret=' + clientInfo.clientSecret
 
     const result = await axios.create().post('/oauth/token', data)

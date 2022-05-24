@@ -45,7 +45,7 @@
 
 <script>
 import SelectClassify from '../components/SelectClassify'
-import * as Cookie from 'tiny-cookie'
+import Cookie from '@tap/shared/src/cookie'
 // import factory from '@/api/factory';
 // const MetadataInstance = factory('MetadataInstances');
 export default {

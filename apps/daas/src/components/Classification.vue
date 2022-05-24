@@ -185,7 +185,6 @@ export default {
           $in: this.types
         }
       }
-      // if (!parseInt(this.$cookie.get('isAdmin'))) where.user_id = { regexp: `^${this.$cookie.get('user_id')}$` }
       let filter = {
         where
       }

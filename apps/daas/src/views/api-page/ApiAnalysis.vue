@@ -76,12 +76,6 @@ export default {
   created() {
     this.getFilterItems()
   },
-  mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-    // let cache = this.table.getCache()
-    // cache.isFuzzy = cache.isFuzzy === true
-    // this.searchParams = cache
-  },
   computed: {
     table() {
       return this.$refs.table
@@ -129,10 +123,6 @@ export default {
           filter: JSON.stringify(filter)
         })
       ]).then(([totalRes, res]) => {
-        this.table.setCache({
-          keyword
-        })
-
         if (totalRes.data?.items?.length) {
           res.data = res.data.items.concat(totalRes.data.items)
         }

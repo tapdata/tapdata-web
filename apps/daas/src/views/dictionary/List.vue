@@ -280,10 +280,6 @@ export default {
       }
     }
   },
-  created() {},
-  mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-  },
   computed: {
     table() {
       return this.$refs.table

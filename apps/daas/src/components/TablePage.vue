@@ -119,12 +119,6 @@ export default {
     }
   },
   mounted() {
-    // 获取缓存的每页条数
-    let cachePageSize = this.$cache.get('TABLE_PAGE_SIZE')
-    if (cachePageSize && cachePageSize[this.$route.name]) {
-      this.page.size = cachePageSize[this.$route.name]
-    }
-
     this.fetch(1)
   },
   // created() {
@@ -138,27 +132,6 @@ export default {
   //   }
   // },
   methods: {
-    getCache() {
-      let params = this.$cache.get('TABLE_PAGE_PARAMS') || {}
-      let key = this.$route.name
-      // TODO 暂时针对dataflow页面做区分，后续将迁移和同步分为不同路由后去掉该代码块
-      if (key === 'dataFlows') {
-        key = key + this.$route.query['mapping']
-      }
-      return params[key] || {}
-    },
-    setCache(cache) {
-      let params = this.$cache.get('TABLE_PAGE_PARAMS') || {}
-      let key = this.$route.name
-      // TODO 暂时针对dataflow页面做区分，后续将迁移和同步分为不同路由后去掉该代码块
-      if (key === 'dataFlows') {
-        key = key + this.$route.query['mapping']
-      }
-      let pageParams = params[key] || {}
-      pageParams = Object.assign({}, pageParams, cache)
-      params[key] = pageParams
-      this.$cache.set('TABLE_PAGE_PARAMS', params)
-    },
     fetch(pageNum, debounce = 0, hideLoading, callback) {
       let timer = null
       if (pageNum === 1) {
@@ -176,18 +149,15 @@ export default {
             this.remoteMethod({
               page: this.page,
               tags: this.tags,
-              data: this.list,
-              cache: this.cache
+              data: this.list
             })
               .then(({ data, total }) => {
-                this.cache = null
                 this.page.total = total
                 this.list = data || []
 
                 // 缓存每页条数
                 let pageData = {}
                 pageData[this.$route.name] = this.page.size
-                this.$cache.set('TABLE_PAGE_SIZE', pageData)
 
                 if (total > 0 && (!data || !data.length)) {
                   clearTimeout(timer)

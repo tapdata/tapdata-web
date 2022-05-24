@@ -451,8 +451,8 @@ export default {
   },
   created() {
     this.getMenus()
-    if (this.$cookie.get('email')) {
-      this.userName = this.$cookie.get('username') || this.$cookie.get('email').split('@')[0] || ''
+    if (Cookie.get('email')) {
+      this.userName = Cookie.get('username') || Cookie.get('email').split('@')[0] || ''
     }
 
     window.iframeRouterChange = route => {
@@ -617,7 +617,7 @@ export default {
         .then(res => {
           if (res) {
             let expires_on = res.data.expires_on || ''
-            if (this.$cookie.get('isAdmin') == 1) {
+            if (Cookie.get('isAdmin') == 1) {
               let endTime = expires_on - stime
               endTime = parseInt(endTime / 1000 / 60 / 60 / 24) //相差天数
               let showDay = window.getSettingByKey('licenseNoticeDays') || 0

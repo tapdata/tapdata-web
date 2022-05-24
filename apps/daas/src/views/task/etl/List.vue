@@ -426,7 +426,6 @@ export default {
     this.getFilterItems()
   },
   mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
@@ -580,13 +579,6 @@ export default {
         .then(res => {
           let data = res.data
           let list = data?.items || []
-          this.table.setCache({
-            keyword,
-            status,
-            progress,
-            executionStatus,
-            timeData
-          })
           return {
             total: data.total,
             data: list.map(item => {

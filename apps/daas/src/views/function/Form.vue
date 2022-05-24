@@ -90,6 +90,8 @@
 
 <script>
 import { JsEditor } from '@tap/component'
+import Cookie from '@tap/shared/src/cookie'
+
 const getScriptObj = script => {
   let matchArr1 = script.match(/(?<=function\s+)\w+(?=\s*\([^]*\))/g)
   let name = matchArr1?.[0] || ''
@@ -200,7 +202,7 @@ export default {
               [method](
                 Object.assign({}, this.form, params, {
                   last_updated: new Date(),
-                  user_id: this.$cookie.get('user_id')
+                  user_id: Cookie.get('user_id')
                 })
               )
               .then(res => {

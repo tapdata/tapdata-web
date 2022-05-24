@@ -263,12 +263,6 @@ export default {
       this.table.fetch(1)
     }
   },
-  mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-    // let cache = this.table.getCache()
-    // cache.isFuzzy = cache.isFuzzy === true
-    // this.searchParams = cache
-  },
   computed: {
     table() {
       return this.$refs.table
@@ -350,11 +344,6 @@ export default {
           filter: JSON.stringify(filter)
         })
         .then(res => {
-          this.table.setCache({
-            keyword,
-            metaType,
-            dbId
-          })
           return {
             total: res.data.total,
             data: res.data?.items || []

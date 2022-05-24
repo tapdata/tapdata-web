@@ -367,9 +367,6 @@ export default {
     // this.getCount();
     this.getFilterItems()
   },
-  mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-  },
   computed: {
     table() {
       return this.$refs.table

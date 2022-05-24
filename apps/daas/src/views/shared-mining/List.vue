@@ -239,7 +239,6 @@ export default {
     }
   },
   mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
     //定时轮询
     timeout = setInterval(() => {
       this.table.fetch(null, 0, true)
@@ -278,7 +277,6 @@ export default {
         })
         .then(res => {
           let list = res.data?.items || []
-          // this.table.setCache({ keyword })
           let pointTime = new Date()
           return {
             total: res.data.total,

@@ -120,6 +120,7 @@ import { TYPEMAP } from './tyepMap'
 import { mapState } from 'vuex'
 import VIcon from 'web-core/components/VIcon'
 import { formatTime, uniqueArr } from '@/utils/util'
+import Cookie from '@tap/shared/src/cookie'
 
 export default {
   components: {
@@ -165,8 +166,8 @@ export default {
       let msg = {
         type: 'notification'
       }
-      if (!parseInt(this.$cookie.get('isAdmin'))) {
-        msg.userId = this.$cookie.get('user_id')
+      if (!parseInt(Cookie.get('isAdmin'))) {
+        msg.userId = Cookie.get('user_id')
       }
       this.getUnreadData()
       this.$ws.on('notification', res => {

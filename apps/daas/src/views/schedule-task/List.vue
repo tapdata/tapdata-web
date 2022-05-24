@@ -113,10 +113,6 @@ export default {
       createForm: null
     }
   },
-  created() {},
-  mounted() {
-    this.searchParams = Object.assign(this.searchParams, this.table.getCache())
-  },
   computed: {
     table() {
       return this.$refs.table
