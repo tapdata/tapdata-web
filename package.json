@@ -2,12 +2,12 @@
   "name": "daas-monorepo",
   "private": true,
   "scripts": {
-    "start:daas": "pnpm start:test --filter daas",
-    "start:dfs": "pnpm start:test --filter dfs",
-    "dev:daas": "pnpm start:dev --filter daas",
-    "dev:dfs": "pnpm start:dev --filter dfs",
-    "build:daas": "pnpm build --filter daas",
-    "build:dfs": "pnpm build --filter dfs",
+    "start:daas": "pnpm --filter daas start:test ",
+    "start:dfs": "pnpm --filter dfs start:test",
+    "dev:daas": "pnpm --filter daas start:dev",
+    "dev:dfs": "pnpm --filter dfs start:dev",
+    "build:daas": "pnpm --filter daas build",
+    "build:dfs": "pnpm --filter dfs build",
     "clean": "rm -rf node_modules && pnpm -r exec -- rm -rf node_modules"
   },
   "dependencies": {
@@ -30,14 +30,14 @@
   },
   "pnpm": {
     "overrides": {
-      "@formily/core": "^2.0.18",
-      "@formily/element": "^2.0.18",
-      "@formily/json-schema": "^2.0.18",
-      "@formily/path": "^2.0.18",
-      "@formily/reactive": "^2.0.18",
-      "@formily/reactive-vue": "^2.0.18",
-      "@formily/shared": "^2.0.18",
-      "@formily/vue": "^2.0.18"
+      "@formily/core": "^2.1.2",
+      "@formily/element": "^2.1.2",
+      "@formily/json-schema": "^2.1.2",
+      "@formily/path": "^2.1.2",
+      "@formily/reactive": "^2.1.2",
+      "@formily/reactive-vue": "^2.1.2",
+      "@formily/shared": "^2.1.2",
+      "@formily/vue": "^2.1.2"
     }
   }
 }
