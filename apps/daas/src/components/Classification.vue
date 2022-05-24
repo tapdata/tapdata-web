@@ -3,17 +3,17 @@
     <!-- <el-button class="btn-query" size="mini" type="text">
       <i class="iconfont icon-fangdajing" @click="searchFalg = !searchFalg"></i>
     </el-button> -->
-    <el-button type="text" class="btn-expand no-expand toggle" size="mini" @click="toggle()" v-if="!isExpand">
+    <ElButton type="text" class="btn-expand no-expand toggle" size="mini" @click="toggle()" v-if="!isExpand">
       <i class="iconfont icon-zhankai2"></i>
-    </el-button>
+    </ElButton>
     <div class="classification-header" v-else>
-      <el-button type="text" class="btn-expand" size="mini" @click="toggle()">
+      <ElButton type="text" class="btn-expand" size="mini" @click="toggle()">
         <i class="iconfont icon-zhankai2"></i>
-      </el-button>
-      <el-button class="btn-addIcon" size="mini" type="text" v-readonlybtn="authority" @click="showDialog()">
+      </ElButton>
+      <ElButton class="btn-addIcon" size="mini" type="text" v-readonlybtn="authority" @click="showDialog()">
         <!-- <i class="iconfont icon-jia" v-readonlybtn="authority" @click="showDialog()"></i> -->
         {{ $t('button_button') }}
-      </el-button>
+      </ElButton>
       <div class="title">
         <span>{{ types[0] === 'user' ? $t('classification.userTitle') : $t('classification.title') }}</span>
       </div>
@@ -26,7 +26,7 @@
         </el-input>
       </div>
     </div>
-    <div class="tree-block">
+    <div class="tree-block" v-if="isExpand">
       <el-tree
         v-if="treeData && treeData.length > 0"
         check-strictly
@@ -469,7 +469,7 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 24px;
+  width: 20px;
   // height: 22px;
   user-select: none;
   box-sizing: border-box;
@@ -479,25 +479,26 @@ export default {
   // overflow: hidden;
   // box-shadow: 0px -2px 10px 0px rgba(0, 0, 0, 0.1);
   .btn-expand {
-    padding: 2px 3px;
-    color: map-get($fontColor, light);
+    // padding: 2px 3px;
+    // color: map-get($fontColor, light);
     transform: rotate(0);
     box-sizing: border-box;
     // background: #eff1f4;
     border: 0;
     .icon-zhankai2 {
-      &:hover {
-        color: map-get($color, lprimary);
-      }
+      // &:hover {
+      //   color: map-get($color, lprimary);
+      // }
     }
   }
   .no-expand {
     position: absolute;
-    left: 20px;
+    left: 18px;
+    top: 4px;
   }
   .toggle {
-    margin-top: 26px;
-    color: map-get($color, lprimary);
+    margin-top: 16px;
+    // color: map-get($color, lprimary);
     z-index: 2;
   }
   &.expand {
@@ -508,21 +509,21 @@ export default {
     width: 214px;
     .btn-expand {
       position: absolute;
-      top: 5px;
-      left: 17px;
+      top: 0;
+      left: 19px;
       transform: rotate(180deg);
       .icon-zhankai2 {
         font-size: 16px;
-        color: map-get($color, primary);
+        // color: map-get($color, primary);
         &:hover {
-          color: map-get($color, lprimary);
+          // color: map-get($color, lprimary);
         }
       }
     }
 
     .btn-addIcon {
       position: absolute;
-      top: 3px;
+      top: 2px;
       right: 12px;
       font-size: 12px;
       .iconfont.icon-jia {

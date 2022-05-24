@@ -21,11 +21,20 @@
                 <div class="list-item-desc">
                   <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
                   <span>{{ systemMap[item.system] }}</span>
-                  <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate">
+                  <span v-if="item.msg === 'deleted'">
+                    {{ `${item.serverName} , ` }}
+                  </span>
+                  <template v-else>
+                    <ElLink type="primary" class="cursor-pointer px-1" @click="handleGo(item)">
+                      {{ `${item.serverName} , ` }}
+                    </ElLink>
+                  </template>
+
+                  <!-- <router-link :to="`/job?id=${item.sourceId}&isMoniting=true&mapping=` + item.mappingTemplate">
                     <span class="link-primary">
                       {{ `${item.serverName} , ` }}
                     </span>
-                  </router-link>
+                  </router-link> -->
                   <span class="list-item-platform">
                     {{
                       `${$t('notify_source_name')} : ${item.sourceName} , ${$t('notify_database_name')} : ${
@@ -46,12 +55,18 @@
               <div class="list-item-content" v-else>
                 <div class="unread-1zPaAXtSu"></div>
                 <div class="list-item-desc">
-                  <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
-                  <span>{{ systemMap[item.system] }}</span>
-                  <span class="link-primary" @click="handleGo(item)">
-                    {{ item.serverName }}
-                  </span>
-                  <span>{{ typeMap[item.msg] }}</span>
+                  <div class="flex">
+                    <span :style="`color: ${colorMap[item.level]};`">【{{ item.level }}】</span>
+                    <span>{{ systemMap[item.system] }} </span>
+                    <ElLink v-if="item.msg === 'deleted'">
+                      {{ `${item.serverName} ` }}
+                    </ElLink>
+                    <ElLink type="primary" v-else class="cursor-pointer px-1" @click="handleGo(item)">
+                      {{ item.serverName }}
+                    </ElLink>
+                    <span>{{ typeMap[item.msg] }}</span>
+                  </div>
+
                   <span v-if="item.CDCTime">{{ getLag(item.CDCTime) }}</span>
                 </div>
                 <div class="list-item-time">
@@ -332,6 +347,7 @@ export default {
     padding: 10px 16px;
     overflow: hidden;
     .el-tabs__header {
+      color: map-get($fontColor, light);
       border-bottom: 1px solid map-get($borderColor, light);
       .el-tabs__nav-wrap {
         .el-tabs__nav-scroll {
@@ -341,9 +357,9 @@ export default {
       .el-tabs__item {
         font-size: 14px;
         font-weight: 400;
-        color: map-get($fontColor, light);
+
         &.is-active {
-          color: map-get($color, primary);
+          // color: map-get($color, primary);
           font-weight: 500;
           border-color: map-get($color, primary);
         }
@@ -441,8 +457,13 @@ export default {
           left: 30px;
           right: 20px;
           overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+
+          & > div {
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
           span {
             font-size: 12px;
           }
