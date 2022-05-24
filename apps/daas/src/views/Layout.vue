@@ -32,7 +32,7 @@
           placement="bottom"
           @command="command"
         >
-          <span class="icon-btn  py-1 px-3">
+          <span class="icon-btn py-1 px-3">
             <VIcon size="16">shezhi</VIcon>
           </span>
           <!-- <VIcon class="icon-btn" size="16">shezhi</VIcon> -->
@@ -44,7 +44,7 @@
           </ElDropdownMenu>
         </ElDropdown>
         <ElDropdown v-if="$getSettingByKey('SHOW_LANGUAGE')" class="btn" placement="bottom" @command="changeLanguage">
-          <span class="icon-btn  py-1 px-3">
+          <span class="icon-btn py-1 px-3">
             <VIcon size="16">{{ { sc: 'language-sc', en: 'language-sc', tc: 'language-sc' }[lang] }}</VIcon>
           </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
