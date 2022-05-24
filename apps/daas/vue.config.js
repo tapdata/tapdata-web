@@ -1,6 +1,5 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
 
 const serveUrlMap = {
@@ -58,43 +57,45 @@ module.exports = {
     //  ============ 配置别名 ============
     config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('../../packages/web-core'))
 
-    config.module.noParse(
-      /^(vue|vue-router|vuex|vuex-router-sync|axios|vue-virtual-scroller|vue-i18n|vue-echarts|echarts|vue-clipboard2|qs|mousetrap|moment|lodash|jsplumb|highlight.js|graphlib|github-markdown-css|element-ui|dagre|crypto|crypto-js)$/
-    )
+    // config.module.noParse(
+    //   /^(vue|vue-router|vuex|vuex-router-sync|axios|vue-virtual-scroller|vue-i18n|vue-echarts|echarts|vue-clipboard2|qs|mousetrap|moment|lodash|jsplumb|highlight.js|graphlib|github-markdown-css|element-ui|dagre|crypto|crypto-js)$/
+    // )
 
-    config.externals({
-      vue: 'Vue',
-      axios: 'axios',
-      'vue-router': 'VueRouter',
-      vuex: 'Vuex',
-      'vue-virtual-scroller': 'VueVirtualScroller',
-      'vue-i18n': 'VueI18n',
-      'vue-echarts': 'VueECharts',
-      'vue-clipboard2': 'VueClipboard',
-      lodash: '_'
-    })
-    const baseUrl = './public/lib/'
-    const cdn = {
-      css: [
-        // vue-virtual-scroller
-        baseUrl + 'vue-virtual-scroller/vue-virtual-scroller.css'
-      ],
-      js: [
-        baseUrl + 'vue.min.js',
-        baseUrl + 'vue-router.min.js',
-        baseUrl + 'vuex.min.js',
-        baseUrl + 'axios.min.js',
-        baseUrl + 'vue-virtual-scroller/vue-virtual-scroller.min.js',
-        baseUrl + 'vue-i18n.min.js',
-        baseUrl + 'vue-clipboard.min.js',
-        baseUrl + 'lodash.min.js'
-      ]
+    //  ============ 配置CDN ============
+    if (process.env.NODE_ENV === 'production') {
+      config.externals({
+        vue: 'Vue',
+        'vue-router': 'VueRouter',
+        vuex: 'Vuex',
+        axios: 'axios',
+        'vue-virtual-scroller': 'VueVirtualScroller',
+        'vue-i18n': 'VueI18n',
+        'vue-clipboard2': 'VueClipboard',
+        lodash: '_'
+      })
+      const baseUrl = './lib/'
+      const cdn = {
+        css: [
+          // vue-virtual-scroller
+          baseUrl + 'vue-virtual-scroller/vue-virtual-scroller.css'
+        ],
+        js: [
+          baseUrl + 'vue.min.js',
+          baseUrl + 'vue-router.min.js',
+          baseUrl + 'vuex.min.js',
+          baseUrl + 'axios.min.js',
+          baseUrl + 'vue-virtual-scroller/vue-virtual-scroller.min.js',
+          baseUrl + 'vue-i18n.min.js',
+          baseUrl + 'vue-clipboard.min.js',
+          baseUrl + 'lodash.min.js'
+        ]
+      }
+      // 通过 html-webpack-plugin 将 cdn 注入到 index.html 之中
+      config.plugin('html').tap(args => {
+        args[0].cdn = cdn
+        return args
+      })
     }
-    // 通过 html-webpack-plugin 将 cdn 注入到 index.html 之中
-    config.plugin('html').tap(args => {
-      args[0].cdn = cdn
-      return args
-    })
 
     // ============ svg处理 ============
     const iconDir = resolve('src/assets/icons/svg')
@@ -192,23 +193,6 @@ module.exports = {
     // 尽量保证项目中文件后缀的精确
     config.resolve.extensions = ['.js', 'jsx', '.vue', '.json']
 
-    if (process.env.NODE_ENV !== 'production') {
-      config.plugins.push(
-        // 为模块提供中间缓存，缓存路径是：node_modules/.cache/hard-source
-        // 解决未检测到的配置更改
-        new HardSourceWebpackPlugin({
-          root: process.cwd(),
-          directories: [],
-          environmentHash: {
-            root: process.cwd(),
-            directories: [],
-            // 配置了files 的主要原因是解决配置更新，cache 不生效了的问题
-            // 配置后有包的变化，plugin 会重新构建一部分 cache
-            files: ['package.json']
-          }
-        })
-      )
-    }
     if (process.env.NODE_ENV === 'production') {
       // gzip
       config.plugins.push(
