@@ -1,11 +1,12 @@
 <template>
   <el-dialog
     title="编辑推演结果"
-    :visible.sync="visible"
+    :visible="visible"
     width="70%"
     append-to-body
     custom-class="database-filed-mapping-dialog"
     :close-on-click-modal="false"
+    @close="closeDialog"
   >
     <div class="field-mapping flex flex-column">
       <div class="task-form-body">
@@ -18,6 +19,7 @@
                 placeholder="请输入表名"
                 suffix-icon="el-icon-search"
                 clearable
+                @input="getMetadataTransformer(searchTable)"
               ></ElInput>
             </div>
           </div>
@@ -74,7 +76,7 @@
               <ElButton plain class="btn-refresh" @click="getMetadataTransformer">
                 <VIcon class="text-primary">refresh</VIcon>
               </ElButton>
-              <ElButton type="text" @click="getMetadataTransformer"> 重置 </ElButton>
+              <ElButton type="text" @click="updateMetaData"> 重置 </ElButton>
             </div>
           </div>
           <ElTable class="field-mapping-table table-border" height="100%" border :data="target">
@@ -99,7 +101,7 @@
                 </div>
               </template>
             </ElTableColumn>
-            <ElTableColumn :label="$t('dag_dialog_field_mapping_precision')" prop="precision">
+            <ElTableColumn :label="$t('dag_dialog_field_mapping_precision')">
               <template #default="{ row }">
                 <div
                   class="cursor-pointer"
@@ -114,7 +116,7 @@
                 </div>
               </template>
             </ElTableColumn>
-            <ElTableColumn :label="$t('dag_dialog_field_mapping_scale')" prop="scale">
+            <ElTableColumn :label="$t('dag_dialog_field_mapping_scale')">
               <template #default="{ row }">
                 <div class="cursor-pointer" v-if="!row.is_deleted && row.isScaleEdit" @click="edit(row, 'scale')">
                   <span>{{ row.scale }}</span>
@@ -125,7 +127,7 @@
                 </div>
               </template>
             </ElTableColumn>
-            <ElTableColumn :label="$t('meta_table_default')" prop="default_value">
+            <ElTableColumn :label="$t('meta_table_default')">
               <template #default="{ row }">
                 <div class="cursor-pointer" @click="edit(row, 'default_value')">
                   <span class="field-mapping-table__default_value">{{ row.default_value }}</span>
@@ -216,8 +218,8 @@
       </span>
     </ElDialog>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false">取 消</el-button>
-      <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      <el-button @click="closeDialog()">取 消</el-button>
+      <el-button type="primary" @click="save(true)">确 定</el-button>
     </span>
   </el-dialog>
 </template>
@@ -228,17 +230,22 @@ import rollback from 'web-core/assets/icons/svg/rollback.svg'
 import refresh from 'web-core/assets/icons/svg/refresh.svg'
 import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
-import { TypeMapping } from '@tap/api'
+import { MetadataInstances, MetadataTransformer, Task, TypeMapping } from '@tap/api'
 const typeMappingApi = new TypeMapping()
+const taskApi = new Task()
+const metadataTransformeApi = new MetadataTransformer()
+const metadataInstancesApi = new MetadataInstances()
 
 export default {
   name: 'Dialog',
   components: { VIcon },
-  props: ['target', 'navData', 'visible'],
+  props: ['initTarget', 'initNavData', 'visible', 'dataFlow'],
   data() {
     return {
       searchTable: '',
       searchField: '',
+      navData: [],
+      target: [],
       page: {
         size: 10,
         current: 1,
@@ -271,11 +278,71 @@ export default {
     }
   },
   mounted() {
-    this.selectRow = this.navData?.[0] || ''
+    this.selectRow = this.navData?.[0] || {}
+    this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
     this.getTypeMapping(this.selectRow)
   },
+  watch: {
+    visible() {
+      this.target = this.initTarget //初始化
+      this.navData = this.initNavData
+    }
+  },
   methods: {
-    getMetadataTransformer() {},
+    select(item, index) {
+      this.position = '' //再次点击清空去一个样式
+      this.searchField = ''
+      this.fieldCount = 0
+      this.selectRow = item
+      this.fieldCount = item.sourceFieldCount - item.userDeletedNum || 0
+      this.position = index
+      this.intiFieldMappingTableData(this.selectRow)
+      this.getTypeMapping(this.selectRow)
+      this.save()
+    },
+    async intiFieldMappingTableData(row) {
+      if (!row.sinkQulifiedName) return
+      let data = await metadataInstancesApi.originalData(row.sinkQulifiedName)
+      this.target = data && data.length > 0 ? data[0].fields : []
+      this.loadingTable = false
+    },
+    getMetadataTransformer(value) {
+      let { size, current } = this.page
+      let id = this.dataFlow?.id
+      let where = {
+        dataFlowId: id,
+        sinkNodeId: this.dataFlow['nodeId'] //todo 返回是否为sinkNodeId
+      }
+      if (value) {
+        let filterObj = { like: value, options: 'i' }
+        where['or'] = [{ sinkQulifiedName: filterObj }, { sourceObjectName: filterObj }]
+      }
+      let filter = {
+        where: where,
+        limit: size || 10,
+        skip: (current - 1) * size > 0 ? (current - 1) * size : 0
+      }
+      metadataTransformeApi
+        .get({
+          filter: JSON.stringify(filter)
+        })
+        .then(res => {
+          let { total, items } = res
+          this.page.total = total
+          this.navData = items
+          //请求左侧table数据
+          this.selectRow = items?.[0] || {}
+          this.intiFieldMappingTableData(this.selectRow)
+        })
+        .finally(() => {
+          this.loadingNav = false
+        })
+    },
+    rest() {
+      this.searchField = ''
+      this.searchTable = ''
+      this.getMetadataTransformer()
+    },
     //获取typeMapping
     getTypeMapping(row) {
       typeMappingApi.dataType(row.sinkDbType).then(res => {
@@ -406,6 +473,7 @@ export default {
           field['is_auto_allowed'] = false
         }
       })
+      this.$forceUpdate()
     },
     //保存校验
     checkTable() {
@@ -440,6 +508,14 @@ export default {
         count: count
       }
     },
+    //只是视图更新 field['source'] = 'manual' 不动
+    updateTargetView(id, key, value) {
+      this.target.forEach(field => {
+        if (field.id === id && field.is_deleted !== 'true' && field.is_deleted !== true) {
+          field[key] = value
+        }
+      })
+    },
     showScaleEdit(id, data) {
       let isScale = data.filter(v => v.minScale < v.maxScale)
       if (isScale.length !== 0) {
@@ -463,6 +539,30 @@ export default {
       if (target?.length > 0) {
         this.currentTypeRules = target[0]?.rules || []
       } else this.currentTypeRules = '' //清除上一个字段范围
+    },
+    //重置
+    updateMetaData() {
+      if (!this.dataFlow) return
+      this.dataFlow['rollback'] = 'all'
+      taskApi.getMetadata(this.dataFlow).then(() => {
+        this.getMetadataTransformer() //更新整个数据
+      })
+    },
+    save(val) {
+      if (!this.target || !this.selectRow.sinkQulifiedName) return
+      let where = {
+        qualified_name: this.selectRow.sinkQulifiedName
+      }
+      let data = {
+        fields: this.target
+      }
+      metadataInstancesApi.update(where, data)
+      if (val) {
+        this.closeDialog()
+      }
+    },
+    closeDialog() {
+      this.$emit('update:visible', false)
     }
   }
 }

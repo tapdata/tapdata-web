@@ -23,7 +23,7 @@
             v-for="(item, index) in navData"
             :key="index"
             :class="{ active: position === index }"
-            @click.prevent="select(item, index)"
+            @click="select(item, index)"
           >
             <div class="task-form__img" v-if="item.invalid">
               <img :src="fieldMapping_table_error" alt="" />
@@ -101,7 +101,7 @@
         </ElTable>
       </div>
     </div>
-    <Dialog :visible="dialogVisible" :target="target" :navData="navData"></Dialog>
+    <Dialog :visible.sync="dialogVisible" :initTarget="target" :initNavData="navData" :dataFlow="dataFlow"></Dialog>
   </div>
 </template>
 
@@ -240,16 +240,18 @@ export default {
         })
         .then(res => {
           let { total, items } = res
-          this.total = total
+          this.page.total = total
           this.navData = items
           //请求左侧table数据
-          this.intiFieldMappingTableData(items[0])
+          this.selectRow = items?.[0] || {}
+          this.intiFieldMappingTableData(this.selectRow)
         })
         .finally(() => {
           this.loadingNav = false
         })
     },
     async intiFieldMappingTableData(row) {
+      if (!row.sinkQulifiedName) return
       let data = await metadataInstancesApi.originalData(row.sinkQulifiedName)
       this.target = data && data.length > 0 ? data[0].fields : []
       this.loadingTable = false
@@ -262,6 +264,7 @@ export default {
       this.selectRow = item
       this.fieldCount = item.sourceFieldCount - item.userDeletedNum || 0
       this.position = index
+      this.intiFieldMappingTableData(this.selectRow)
     },
     //实时获取schema加载进度
     initWSSed() {
@@ -345,6 +348,7 @@ export default {
     flex: 1;
     height: 0;
     min-height: 350px;
+    max-height: 350px;
     .task-form-left__ul {
       flex: 1;
       border-top: 1px solid #f2f2f2;
