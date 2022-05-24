@@ -454,18 +454,7 @@ export default {
               this.fetch()
             }
           } catch (error) {
-            // 删除失败
-            let errorTip = i18n.t('connection_List_shanChuShiBai')
-            const data = error?.data
-            if (data.code === 'Datasource.LinkJobs') {
-              errorTip = data.message
-            } else if (error?.data?.msg) {
-              let { dataFlows, jobs, modules } = error?.data?.msg
-              if ([...dataFlows, ...jobs, ...modules].length > 0) {
-                errorTip = this.$t('connection_list_task_occupied')
-              }
-            }
-            this.$message.error(errorTip)
+            // 删除失败，接口会返回错误
           }
         }
       })
