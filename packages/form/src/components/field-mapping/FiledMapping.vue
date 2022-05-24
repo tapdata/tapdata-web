@@ -68,7 +68,7 @@
             ></ElInput>
           </div>
           <div class="item ml-2">
-            <ElButton plain class="btn-refresh" @click="getMetadataTransformer">
+            <ElButton plain class="btn-refresh" @click="rest()">
               <VIcon class="text-primary">refresh</VIcon>
             </ElButton>
             <ElButton plain class="btn-refresh" @click.stop="dialogVisible = true">
@@ -234,6 +234,7 @@ export default {
         limit: size || 10,
         skip: (current - 1) * size > 0 ? (current - 1) * size : 0
       }
+      this.loadingNav = true
       metadataTransformeApi
         .get({
           filter: JSON.stringify(filter)
@@ -251,8 +252,14 @@ export default {
           this.loadingNav = false
         })
     },
+    rest() {
+      this.searchField = ''
+      this.searchTable = ''
+      this.getMetadataTransformer()
+    },
     async intiFieldMappingTableData(row) {
       if (!row.sinkQulifiedName) return
+      this.loadingTable = true
       let data = await metadataInstancesApi.originalData(row.sinkQulifiedName)
       this.target = data && data.length > 0 ? data[0].fields : []
       this.loadingTable = false

@@ -352,7 +352,6 @@ export default {
           //请求左侧table数据
           this.selectRow = this.navData?.[0] || {}
           this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
-          this.initShowEdit()
           this.intiFieldMappingTableData(this.selectRow)
         })
         .finally(() => {
@@ -368,6 +367,7 @@ export default {
     getTypeMapping(row) {
       typeMappingApi.dataType(row.sinkDbType).then(res => {
         this.typeMapping = res.data
+        this.initShowEdit()
       })
     },
     handleClose() {
@@ -463,7 +463,7 @@ export default {
     /* 初始化目标字段、长度是否可编辑*/
     initShowEdit() {
       if (this.target?.length === 0) return
-      for (let i = 0; i < data.length; i++) {
+      for (let i = 0; i < this.target.length; i++) {
         let rules = this.typeMapping.filter(v => v.dbType === this.target[i].data_type)
         if (rules?.length > 0) {
           rules = rules[0].rules
