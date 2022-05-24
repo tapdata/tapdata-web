@@ -1,1848 +1,1721 @@
 {
+  "reqId": "ea1e9995-a543-48a5-8b0e-f49c6e440978",
+  "ts": 1652415698707,
+  "code": "ok",
   "data": {
     "permissions": [
       {
-        "description": "系统消息通知设置功能",
-        "resources": [{ "type": "button", "code": "home_notice" }],
-        "need_permission": true,
-        "id": "1",
-        "name": "notice",
-        "order": 1,
-        "parentId": "system_management",
-        "status": "enable",
-        "type": "read"
-      },
-      {
+        "id": "82",
         "description": "",
-        "resources": [
-          { "type": "button", "code": "datasource_delete_all_data" }
-        ],
-        "need_permission": true,
-        "id": "10",
-        "name": "datasource_delete_all_data",
-        "order": 10,
-        "parentId": "datasource_delete",
+        "name": "API_category_application",
+        "order": 82,
+        "parentId": "API_management",
+        "resources": [{ "type": "button", "code": "API_category_application" }],
         "status": "enable",
-        "type": "readAllData"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "API服务器模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "API_server", "path": "/apiServers" }
-        ],
-        "need_permission": true,
-        "id": "100",
-        "name": "API_server",
-        "order": 100,
-        "parentId": "data_publish",
-        "status": "enable",
-        "type": "read"
-      },
-      {
+        "id": "83",
         "description": "",
-        "resources": [{ "type": "button", "code": "API_server_management" }],
-        "need_permission": true,
-        "id": "101",
-        "name": "API_server_management",
-        "order": 101,
-        "parentId": "API_server",
+        "name": "API_category_management",
+        "order": 83,
+        "parentId": "API_management",
+        "resources": [{ "type": "button", "code": "API_category_management" }],
         "status": "enable",
-        "type": "write"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "数据采集旧版模块，关闭此模块及相关功能不可见",
-        "resources": [
-          {
-            "type": "page",
-            "code": "data_collect(old)_menu",
-            "path": "/dataCollect"
-          }
-        ],
-        "need_permission": true,
-        "id": "102",
-        "dataControl": true,
-        "isMenu": true,
-        "name": "data_collect_menu",
-        "order": 102,
-        "parentId": "",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "数据采集旧版模块，关闭此模块及相关功能不可见",
-        "resources": [{ "type": "button", "code": "data_collect(old)" }],
-        "need_permission": true,
-        "id": "103",
-        "dataControl": true,
-        "name": "data_collect",
-        "order": 103,
-        "parentId": "",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "",
-        "resources": [
-          {
-            "type": "page",
-            "code": "data_collect_all_data",
-            "path": "/dataCollect"
-          }
-        ],
-        "need_permission": true,
-        "id": "104",
-        "name": "data_collect_all_data",
-        "order": 104,
-        "parentId": "data_collect",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "系统管理模块，关闭此模块及相关功能不可见",
-        "resources": [{ "type": "button", "code": "system_management_menu" }],
-        "need_permission": true,
-        "id": "105",
-        "isMenu": true,
-        "name": "system_management_menu",
-        "order": 105,
-        "parentId": "",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "系统管理模块，关闭此模块及相关功能不可见",
-        "resources": [{ "type": "button", "code": "system_management" }],
-        "need_permission": true,
-        "id": "106",
-        "name": "system_management",
-        "order": 106,
-        "parentId": "",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "调度任务模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "schedule_jobs_menu", "path": "/tasks" }
-        ],
-        "need_permission": true,
         "id": "107",
-        "isMenu": true,
-        "name": "schedule_jobs_menu",
+        "description": "API客户端模块，关闭此模块及相关功能不可见",
+        "name": "API_clients",
         "order": 107,
-        "parentId": "system_management",
+        "parentId": "data_publish",
+        "resources": [{ "type": "page", "code": "API_clients", "path": "/applications" }],
         "status": "enable",
-        "type": "read"
+        "type": "read",
+        "need_permission": true
       },
       {
-        "description": "调度任务模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "schedule_jobs", "path": "/tasks" }
-        ],
-        "need_permission": true,
         "id": "108",
-        "name": "schedule_jobs",
+        "description": "",
+        "name": "API_clients_amangement",
         "order": 108,
-        "parentId": "system_management",
+        "parentId": "API_clients",
+        "resources": [{ "type": "button", "code": "API_clients_amangement" }],
         "status": "enable",
-        "type": "read"
+        "type": "write",
+        "need_permission": true
       },
       {
+        "id": "106",
+        "description": "API客户端模块，关闭此模块及相关功能不可见",
+        "name": "API_clients_menu",
+        "order": 106,
+        "parentId": "data_publish",
+        "resources": [{ "type": "page", "code": "API_clients_menu", "path": "/applications" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "84",
         "description": "",
-        "resources": [{ "type": "button", "code": "schedule_jobs_management" }],
-        "need_permission": true,
-        "id": "109",
-        "name": "schedule_jobs_management",
-        "order": 109,
-        "parentId": "schedule_jobs",
+        "name": "API_creation",
+        "order": 84,
+        "parentId": "API_management",
+        "resources": [{ "type": "button", "code": "API_creation" }],
         "status": "enable",
-        "type": "write"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "编辑数据源功能",
-        "resources": [
-          {
-            "type": "page",
-            "code": "datasource_edition",
-            "path": "/connection"
-          }
-        ],
-        "need_permission": true,
-        "id": "11",
-        "dataControl": true,
-        "name": "datasource_edition",
-        "order": 11,
-        "parentId": "datasource",
+        "id": "98",
+        "description": "API数据浏览删除",
+        "name": "API_data_creation",
+        "order": 98,
+        "parentId": "API_data_explorer",
+        "resources": [{ "type": "button", "code": "API_data_creation" }],
         "status": "enable",
-        "type": "write"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "集群管理模块，关闭此模块及相关功能不可见",
-        "resources": [
-          {
-            "type": "page",
-            "code": "Cluster_management_menu",
-            "path": "/clusterManagement"
-          }
-        ],
-        "need_permission": true,
+        "id": "99",
+        "description": "API数据浏览删除",
+        "name": "API_data_download",
+        "order": 99,
+        "parentId": "API_data_explorer",
+        "resources": [{ "type": "button", "code": "API_data_download" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "94",
+        "description": "API数据浏览模块，关闭此模块及相关功能不可见",
+        "name": "API_data_explorer",
+        "order": 94,
+        "parentId": "data_publish",
+        "resources": [{ "type": "page", "code": "API_data_explorer", "path": "/dataExplorer" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "96",
+        "description": "API数据浏览删除",
+        "name": "API_data_explorer_deleting",
+        "order": 96,
+        "parentId": "API_data_explorer",
+        "resources": [{ "type": "button", "code": "API_data_explorer_deleting" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "95",
+        "description": "API数据预览导出",
+        "name": "API_data_explorer_export",
+        "order": 95,
+        "parentId": "API_data_explorer",
+        "resources": [{ "type": "button", "code": "API_data_explorer_export" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "93",
+        "description": "API数据浏览模块，关闭此模块及相关功能不可见",
+        "name": "API_data_explorer_menu",
+        "order": 93,
+        "parentId": "data_publish",
+        "resources": [{ "type": "page", "code": "API_data_explorer_menu", "path": "/dataExplorer" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "100",
+        "description": "API数据浏览加标签",
+        "name": "API_data_explorer_tagging",
+        "order": 100,
+        "parentId": "API_data_explorer",
+        "resources": [{ "type": "button", "code": "API_data_explorer_tagging" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "97",
+        "description": "API数据浏览删除",
+        "name": "API_data_time_zone_editing",
+        "order": 97,
+        "parentId": "API_data_explorer",
+        "resources": [{ "type": "button", "code": "API_data_time_zone_editing" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "85",
+        "description": "",
+        "name": "API_delete",
+        "order": 85,
+        "parentId": "API_management",
+        "resources": [{ "type": "button", "code": "API_delete" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "86",
+        "description": "",
+        "name": "API_delete_all_data",
+        "order": 86,
+        "parentId": "API_delete",
+        "resources": [{ "type": "button", "code": "API_delete_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "102",
+        "description": "API文档测试模块，关闭此模块及相关功能不可见",
+        "name": "API_doc_test",
+        "order": 102,
+        "parentId": "data_publish",
+        "resources": [{ "type": "page", "code": "API_doc_&_test", "path": "/apiDocAndTest" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "103",
+        "description": "API文档测试批量导出",
+        "name": "API_doc_test_export",
+        "order": 103,
+        "parentId": "API_doc_test",
+        "resources": [{ "type": "page", "code": "API_doc_&_test_export" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "101",
+        "description": "API文档测试模块，关闭此模块及相关功能不可见",
+        "name": "API_doc_test_menu",
+        "order": 101,
+        "parentId": "data_publish",
+        "resources": [{ "type": "page", "code": "API_doc_&_test_menu", "path": "/apiDocAndTest" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "87",
+        "description": "",
+        "name": "API_edition",
+        "order": 87,
+        "parentId": "API_management",
+        "resources": [{ "type": "button", "code": "API_edition" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "88",
+        "description": "",
+        "name": "API_edition_all_data",
+        "order": 88,
+        "parentId": "API_edition",
+        "resources": [{ "type": "button", "code": "API_edition_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "92",
+        "description": "",
+        "name": "API_export",
+        "order": 92,
+        "parentId": "API_management",
+        "resources": [{ "type": "button", "code": "API_export" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "91",
+        "description": "",
+        "name": "API_import",
+        "order": 91,
+        "parentId": "API_management",
+        "resources": [{ "type": "button", "code": "API_import" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "80",
+        "description": "API发布模块，关闭此模块及相关功能不可见",
+        "name": "API_management",
+        "order": 80,
+        "parentId": "data_publish",
+        "resources": [{ "type": "page", "code": "API_management", "path": "/modules" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "81",
+        "description": "",
+        "name": "API_management_all_data",
+        "order": 81,
+        "parentId": "API_management",
+        "resources": [{ "type": "button", "code": "API_management_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "79",
+        "description": "API发布模块，关闭此模块及相关功能不可见",
+        "name": "API_management_menu",
+        "order": 79,
+        "parentId": "",
+        "resources": [{ "type": "page", "code": "API_management_menu", "path": "/modules" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "89",
+        "description": "",
+        "name": "API_publish",
+        "order": 89,
+        "parentId": "API_management",
+        "resources": [{ "type": "button", "code": "API_publish" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "90",
+        "description": "",
+        "name": "API_publish_all_data",
+        "order": 90,
+        "parentId": "API_publish",
+        "resources": [{ "type": "button", "code": "API_publish_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
         "id": "110",
-        "dataControl": true,
-        "isMenu": true,
-        "name": "Cluster_management_menu",
+        "description": "API服务器模块，关闭此模块及相关功能不可见",
+        "name": "API_server",
         "order": 110,
-        "parentId": "system_management",
+        "parentId": "data_publish",
+        "resources": [{ "type": "page", "code": "API_server", "path": "/apiServers" }],
         "status": "enable",
-        "type": "read"
+        "type": "read",
+        "need_permission": true
       },
       {
-        "description": "集群管理模块，关闭此模块及相关功能不可见",
-        "resources": [
-          {
-            "type": "page",
-            "code": "Cluster_management",
-            "path": "/clusterManagement"
-          }
-        ],
-        "need_permission": true,
         "id": "111",
-        "dataControl": true,
-        "name": "Cluster_management",
+        "description": "",
+        "name": "API_server_management",
         "order": 111,
-        "parentId": "system_management",
+        "parentId": "API_server",
+        "resources": [{ "type": "button", "code": "API_server_management" }],
         "status": "enable",
-        "type": "read"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "",
-        "resources": [
-          { "type": "button", "code": "Cluster_management_all_data" }
-        ],
-        "need_permission": true,
-        "id": "112",
-        "name": "Cluster_management_all_data",
-        "order": 112,
-        "parentId": "Cluster_management",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "Cluster_operation" }],
-        "need_permission": true,
-        "id": "113",
-        "name": "Cluster_operation",
-        "order": 113,
-        "parentId": "Cluster_management",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "status_log" }],
-        "need_permission": true,
-        "id": "114",
-        "name": "status_log",
-        "order": 114,
-        "parentId": "Cluster_management",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "进程管理模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "agents_menu", "path": "/agents" }
-        ],
-        "need_permission": true,
-        "id": "115",
+        "id": "109",
+        "description": "API服务器模块，关闭此模块及相关功能不可见",
+        "name": "API_server_menu",
+        "order": 109,
+        "parentId": "data_publish",
+        "resources": [{ "type": "page", "code": "API_server_menu", "path": "/apiServers" }],
         "isMenu": true,
-        "name": "agents_menu",
-        "order": 115,
-        "parentId": "system_management",
         "status": "enable",
-        "type": "read"
+        "type": "read",
+        "need_permission": true
       },
       {
-        "description": "进程管理模块，关闭此模块及相关功能不可见",
-        "resources": [{ "type": "page", "code": "agents", "path": "/agents" }],
-        "need_permission": true,
-        "id": "116",
-        "name": "agents",
-        "order": 116,
-        "parentId": "system_management",
+        "id": "105",
+        "description": "API统计分析模块，关闭此模块及相关功能不可见",
+        "name": "API_stats",
+        "order": 105,
+        "parentId": "data_publish",
+        "resources": [{ "type": "page", "code": "API_stats", "path": "/apiAnalysis" }],
         "status": "enable",
-        "type": "read"
+        "type": "read",
+        "need_permission": true
       },
       {
-        "description": "用户管理模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "user_management_menu", "path": "/users" }
-        ],
-        "need_permission": true,
-        "id": "117",
-        "dataControl": true,
+        "id": "104",
+        "description": "API统计分析模块，关闭此模块及相关功能不可见",
+        "name": "API_stats_menu",
+        "order": 104,
+        "parentId": "data_publish",
+        "resources": [{ "type": "page", "code": "API_stats_menu", "path": "/apiAnalysis" }],
         "isMenu": true,
-        "name": "user_management_menu",
-        "order": 117,
-        "parentId": "system_management",
         "status": "enable",
-        "type": "read"
+        "type": "read",
+        "need_permission": true
       },
       {
-        "description": "用户管理模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "user_management", "path": "/users" }
-        ],
-        "need_permission": true,
-        "id": "118",
-        "dataControl": true,
-        "name": "user_management",
-        "order": 118,
-        "parentId": "system_management",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "user_management_all_data" }],
-        "need_permission": true,
-        "id": "119",
-        "name": "user_management_all_data",
-        "order": 119,
-        "parentId": "user_management",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "",
-        "resources": [
-          { "type": "button", "code": "datasource_edition_all_data" }
-        ],
-        "need_permission": true,
-        "id": "12",
-        "name": "datasource_edition_all_data",
-        "order": 12,
-        "parentId": "datasource_edition",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "user_creation" }],
-        "need_permission": true,
-        "id": "120",
-        "name": "user_creation",
-        "order": 120,
-        "parentId": "user_management",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "user_edition" }],
-        "need_permission": true,
         "id": "121",
-        "dataControl": true,
-        "name": "user_edition",
+        "description": "集群管理模块，关闭此模块及相关功能不可见",
+        "name": "Cluster_management",
         "order": 121,
-        "parentId": "user_management",
+        "parentId": "system_management",
+        "resources": [{ "type": "page", "code": "Cluster_management", "path": "/clusterManagement" }],
         "status": "enable",
-        "type": "write"
+        "type": "read",
+        "need_permission": true
       },
       {
-        "description": "",
-        "resources": [{ "type": "button", "code": "user_edition_all_data" }],
-        "need_permission": true,
         "id": "122",
-        "name": "user_edition_all_data",
+        "description": "",
+        "name": "Cluster_management_all_data",
         "order": 122,
-        "parentId": "user_edition",
+        "parentId": "Cluster_management",
+        "resources": [{ "type": "button", "code": "Cluster_management_all_data" }],
         "status": "enable",
-        "type": "readAllData"
+        "type": "readAllData",
+        "need_permission": true
       },
       {
-        "description": "",
-        "resources": [{ "type": "button", "code": "user_delete" }],
-        "need_permission": true,
+        "id": "120",
+        "description": "集群管理模块，关闭此模块及相关功能不可见",
+        "name": "Cluster_management_menu",
+        "order": 120,
+        "parentId": "system_management",
+        "resources": [{ "type": "page", "code": "Cluster_management_menu", "path": "/clusterManagement" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
         "id": "123",
-        "dataControl": true,
-        "name": "user_delete",
+        "description": "",
+        "name": "Cluster_operation",
         "order": 123,
-        "parentId": "user_management",
+        "parentId": "Cluster_management",
+        "resources": [{ "type": "button", "code": "Cluster_operation" }],
         "status": "enable",
-        "type": "write"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "",
-        "resources": [{ "type": "button", "code": "user_delete_all_data" }],
-        "need_permission": true,
-        "id": "124",
-        "name": "user_delete_all_data",
-        "order": 124,
-        "parentId": "user_delete",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "user_category_management" }],
-        "need_permission": true,
-        "id": "125",
-        "name": "user_category_management",
-        "order": 125,
-        "parentId": "user_management",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [
-          { "type": "button", "code": "user_category_application" }
-        ],
-        "need_permission": true,
-        "id": "126",
-        "name": "user_category_application",
-        "order": 126,
-        "parentId": "user_management",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "角色管理模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "role_management_menu", "path": "/roles" }
-        ],
-        "need_permission": true,
-        "id": "127",
-        "dataControl": true,
-        "isMenu": true,
-        "name": "role_management_menu",
-        "order": 127,
-        "parentId": "system_management",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "角色管理模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "role_management", "path": "/roles" }
-        ],
-        "need_permission": true,
-        "id": "128",
-        "dataControl": true,
-        "name": "role_management",
-        "order": 128,
-        "parentId": "system_management",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "role_management_all_data" }],
-        "need_permission": true,
-        "id": "129",
-        "name": "role_management_all_data",
-        "order": 129,
-        "parentId": "role_management",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "数据传输模块，关闭此模块及相关功能不可见",
-        "resources": [
-          {
-            "type": "page",
-            "code": "data_transmission_menu",
-            "path": "/dataFlows"
-          },
-          { "type": "page", "code": "data_transmission", "path": "/job" }
-        ],
-        "need_permission": true,
-        "id": "13",
-        "isMenu": true,
-        "name": "data_transmission_menu",
-        "order": 13,
-        "parentId": "",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "role_creation" }],
-        "need_permission": true,
-        "id": "130",
-        "name": "role_creation",
-        "order": 130,
-        "parentId": "role_management",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "role_edition" }],
-        "need_permission": true,
-        "id": "131",
-        "dataControl": true,
-        "name": "role_edition",
-        "order": 131,
-        "parentId": "role_management",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "role_edition_all_data" }],
-        "need_permission": true,
-        "id": "132",
-        "name": "role_edition_all_data",
-        "order": 132,
-        "parentId": "role_edition",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "role_delete" }],
-        "need_permission": true,
-        "id": "133",
-        "dataControl": true,
-        "name": "role_delete",
-        "order": 133,
-        "parentId": "role_management",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "role_delete_all_data" }],
-        "need_permission": true,
-        "id": "134",
-        "name": "role_delete_all_data",
-        "order": 134,
-        "parentId": "role_delete",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "系统设置模块，关闭此模块及相关功能不可见",
-        "resources": [
-          {
-            "type": "page",
-            "code": "system_settings_menu",
-            "path": "/settings"
-          }
-        ],
-        "need_permission": true,
-        "id": "135",
-        "isMenu": true,
-        "name": "system_settings_menu",
-        "order": 135,
-        "parentId": "system_management",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "系统设置模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "system_settings", "path": "/settings" }
-        ],
-        "need_permission": true,
-        "id": "136",
-        "name": "system_settings",
-        "order": 136,
-        "parentId": "system_management",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "",
-        "resources": [
-          { "type": "button", "code": "system_settings_modification" }
-        ],
-        "need_permission": true,
-        "id": "137",
-        "name": "system_settings_modification",
-        "order": 137,
-        "parentId": "system_settings",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "首页图表",
-        "resources": [{ "type": "button", "code": "chart" }],
-        "need_permission": true,
-        "id": "138",
-        "dataControl": true,
-        "name": "chart",
-        "order": 138,
-        "parentId": "",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "首页图表",
-        "resources": [{ "type": "button", "code": "chart_all_data" }],
-        "need_permission": true,
-        "id": "139",
-        "name": "chart_all_data",
-        "order": 139,
-        "parentId": "chart",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "数据传输模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "data_transmission", "path": "/dataFlows" },
-          { "type": "page", "code": "data_transmission", "path": "/job" }
-        ],
-        "need_permission": true,
-        "id": "14",
-        "name": "data_transmission",
-        "order": 14,
-        "parentId": "",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "字典模板",
-        "resources": [
-          { "type": "page", "code": "dictionary_menu", "path": "/dictionary" }
-        ],
-        "need_permission": true,
-        "id": "140",
-        "isMenu": true,
-        "name": "dictionary_menu",
-        "order": 140,
-        "parentId": "data_government",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "字典模板",
-        "resources": [{ "type": "button", "code": "dictionary" }],
-        "need_permission": true,
-        "id": "141",
-        "name": "dictionary",
-        "order": 141,
-        "parentId": "data_government",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "字典模板",
-        "resources": [{ "type": "button", "code": "dictionary_all_data" }],
-        "need_permission": true,
-        "id": "142",
-        "name": "dictionary_all_data",
-        "order": 142,
-        "parentId": "data_government",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
+        "id": "26",
         "description": "数据同步模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "Data_SYNC_menu", "path": "/dataFlows" }
-        ],
-        "need_permission": true,
-        "id": "15",
-        "dataControl": true,
-        "isMenu": true,
-        "name": "Data_SYNC_menu",
-        "order": 15,
+        "name": "Data_SYNC",
+        "order": 26,
         "parentId": "data_transmission",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "数据同步模块，关闭此模块及相关功能不可见",
         "resources": [
           { "type": "page", "code": "Data_SYNC", "path": "/dataFlows" },
           { "type": "page", "code": "Data_SYNC", "path": "/job" }
         ],
-        "need_permission": true,
-        "id": "16",
-        "dataControl": true,
-        "name": "Data_SYNC",
-        "order": 16,
-        "parentId": "data_transmission",
         "status": "enable",
-        "type": "read"
+        "type": "read",
+        "need_permission": true
       },
       {
-        "description": "",
-        "resources": [{ "type": "button", "code": "Data_SYNC_all_data" }],
-        "need_permission": true,
-        "id": "17",
-        "name": "Data_SYNC_all_data",
-        "order": 17,
-        "parentId": "Data_SYNC",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "对同步任务分类的新建、编辑、删除操作",
-        "resources": [{ "type": "button", "code": "SYNC_category_management" }],
-        "need_permission": true,
-        "id": "18",
-        "name": "SYNC_category_management",
-        "order": 18,
-        "parentId": "Data_SYNC",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "分类对同步任务的应用操作",
-        "resources": [
-          { "type": "button", "code": "SYNC_category_application" }
-        ],
-        "need_permission": true,
-        "id": "19",
-        "name": "SYNC_category_application",
-        "order": 19,
-        "parentId": "Data_SYNC",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "系统消息通知设置功能",
-        "resources": [{ "type": "button", "code": "home_notice_settings" }],
-        "need_permission": true,
-        "id": "2",
-        "name": "notice_settings",
-        "order": 2,
-        "parentId": "system_management",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "创建新的同步任务功能",
-        "resources": [{ "type": "button", "code": "SYNC_job_creation" }],
-        "need_permission": true,
-        "id": "20",
-        "name": "SYNC_job_creation",
-        "order": 20,
-        "parentId": "Data_SYNC",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "删除同步任务功能",
-        "resources": [{ "type": "button", "code": "SYNC_job_delete" }],
-        "need_permission": true,
-        "id": "21",
-        "dataControl": true,
-        "name": "SYNC_job_delete",
-        "order": 21,
-        "parentId": "Data_SYNC",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "SYNC_job_delete_all_data" }],
-        "need_permission": true,
-        "id": "22",
-        "name": "SYNC_job_delete_all_data",
-        "order": 22,
-        "parentId": "SYNC_job_delete",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "编辑同步任务功能",
-        "resources": [{ "type": "button", "code": "SYNC_job_edition" }],
-        "need_permission": true,
-        "id": "23",
-        "dataControl": true,
-        "name": "SYNC_job_edition",
-        "order": 23,
-        "parentId": "Data_SYNC",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [
-          { "type": "button", "code": "SYNC_job_edition_all_data" }
-        ],
-        "need_permission": true,
-        "id": "24",
-        "name": "SYNC_job_edition_all_data",
-        "order": 24,
-        "parentId": "SYNC_job_edition",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "对同步任务的启动、停止、重置等操作",
-        "resources": [{ "type": "button", "code": "SYNC_job_operation" }],
-        "need_permission": true,
-        "id": "25",
-        "dataControl": true,
-        "name": "SYNC_job_operation",
-        "order": 25,
-        "parentId": "Data_SYNC",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [
-          { "type": "button", "code": "SYNC_job_operation_all_data" }
-        ],
-        "need_permission": true,
-        "id": "26",
-        "name": "SYNC_job_operation_all_data",
-        "order": 26,
-        "parentId": "SYNC_job_operation",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "同步任务导入功能",
-        "resources": [{ "type": "button", "code": "SYNC_job_import" }],
-        "need_permission": true,
         "id": "27",
-        "name": "SYNC_job_import",
+        "description": "",
+        "name": "Data_SYNC_all_data",
         "order": 27,
         "parentId": "Data_SYNC",
+        "resources": [{ "type": "button", "code": "Data_SYNC_all_data" }],
         "status": "enable",
-        "type": "write"
+        "type": "readAllData",
+        "need_permission": true
       },
       {
-        "description": "同步任务导出功能",
-        "resources": [{ "type": "button", "code": "SYNC_job_export" }],
-        "need_permission": true,
-        "id": "28",
-        "name": "SYNC_job_export",
-        "order": 28,
-        "parentId": "Data_SYNC",
+        "id": "25",
+        "description": "数据同步模块，关闭此模块及相关功能不可见",
+        "name": "Data_SYNC_menu",
+        "order": 25,
+        "parentId": "data_transmission",
+        "resources": [{ "type": "page", "code": "Data_SYNC_menu", "path": "/dataFlows" }],
+        "isMenu": true,
         "status": "enable",
-        "type": "write"
+        "type": "read",
+        "need_permission": true
       },
       {
+        "id": "41",
+        "description": "数据校验模块，关闭此模块及相关功能不可见",
+        "name": "Data_verify",
+        "order": 41,
+        "parentId": "data_transmission",
+        "resources": [{ "type": "page", "code": "Data_verify", "path": "/dataVerification" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "42",
+        "description": "",
+        "name": "Data_verify_all_data",
+        "order": 42,
+        "parentId": "Data_verify",
+        "resources": [{ "type": "button", "code": "Data_verify_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "40",
+        "description": "数据校验模块，关闭此模块及相关功能不可见",
+        "name": "Data_verify_menu",
+        "order": 40,
+        "parentId": "data_transmission",
+        "resources": [{ "type": "page", "code": "Data_verify_menu", "path": "/dataVerification" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "39",
         "description": "全局函数的应用和管理",
-        "resources": [{ "type": "button", "code": "SYNC_Function_management" }],
-        "need_permission": true,
-        "id": "29",
         "name": "SYNC_Function_management",
+        "order": 39,
+        "parentId": "Data_SYNC",
+        "resources": [{ "type": "button", "code": "SYNC_Function_management" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "29",
+        "description": "分类对同步任务的应用操作",
+        "name": "SYNC_category_application",
         "order": 29,
         "parentId": "Data_SYNC",
+        "resources": [{ "type": "button", "code": "SYNC_category_application" }],
         "status": "enable",
-        "type": "write"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "数据源模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "datasource_menu", "path": "/connections" }
-        ],
-        "need_permission": true,
-        "id": "3",
-        "isMenu": true,
-        "name": "datasource_menu",
-        "order": 3,
-        "parentId": "",
+        "id": "28",
+        "description": "对同步任务分类的新建、编辑、删除操作",
+        "name": "SYNC_category_management",
+        "order": 28,
+        "parentId": "Data_SYNC",
+        "resources": [{ "type": "button", "code": "SYNC_category_management" }],
         "status": "enable",
-        "type": "read"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "数据校验模块，关闭此模块及相关功能不可见",
-        "resources": [
-          {
-            "type": "page",
-            "code": "Data_verify_menu",
-            "path": "/dataVerification"
-          }
-        ],
-        "need_permission": true,
         "id": "30",
-        "dataControl": true,
-        "isMenu": true,
-        "name": "Data_verify_menu",
+        "description": "创建新的同步任务功能",
+        "name": "SYNC_job_creation",
         "order": 30,
-        "parentId": "data_transmission",
+        "parentId": "Data_SYNC",
+        "resources": [{ "type": "button", "code": "SYNC_job_creation" }],
         "status": "enable",
-        "type": "read"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "数据校验模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "Data_verify", "path": "/dataVerification" }
-        ],
-        "need_permission": true,
         "id": "31",
-        "dataControl": true,
-        "name": "Data_verify",
+        "description": "删除同步任务功能",
+        "name": "SYNC_job_delete",
         "order": 31,
-        "parentId": "data_transmission",
+        "parentId": "Data_SYNC",
+        "resources": [{ "type": "button", "code": "SYNC_job_delete" }],
         "status": "enable",
-        "type": "read"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "",
-        "resources": [{ "type": "button", "code": "Data_verify_all_data" }],
-        "need_permission": true,
         "id": "32",
-        "name": "Data_verify_all_data",
+        "description": "",
+        "name": "SYNC_job_delete_all_data",
         "order": 32,
-        "parentId": "Data_verify",
+        "parentId": "SYNC_job_delete",
+        "resources": [{ "type": "button", "code": "SYNC_job_delete_all_data" }],
         "status": "enable",
-        "type": "readAllData"
+        "type": "readAllData",
+        "need_permission": true
       },
       {
-        "description": "创建校验任务功能",
-        "resources": [{ "type": "button", "code": "verify_job_creation" }],
-        "need_permission": true,
         "id": "33",
-        "name": "verify_job_creation",
+        "description": "编辑同步任务功能",
+        "name": "SYNC_job_edition",
         "order": 33,
-        "parentId": "Data_verify",
+        "parentId": "Data_SYNC",
+        "resources": [{ "type": "button", "code": "SYNC_job_edition" }],
         "status": "enable",
-        "type": "write"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "编辑校验任务功能",
-        "resources": [{ "type": "button", "code": "verify_job_edition" }],
-        "need_permission": true,
         "id": "34",
-        "dataControl": true,
-        "name": "verify_job_edition",
+        "description": "",
+        "name": "SYNC_job_edition_all_data",
         "order": 34,
-        "parentId": "Data_verify",
+        "parentId": "SYNC_job_edition",
+        "resources": [{ "type": "button", "code": "SYNC_job_edition_all_data" }],
         "status": "enable",
-        "type": "write"
+        "type": "readAllData",
+        "need_permission": true
       },
       {
-        "description": "",
-        "resources": [
-          { "type": "button", "code": "verify_job_edition_all_data" }
-        ],
-        "need_permission": true,
-        "id": "35",
-        "name": "verify_job_edition_all_data",
-        "order": 35,
-        "parentId": "verify_job_edition",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "删除校验任务功能",
-        "resources": [{ "type": "button", "code": "verify_job_delete" }],
-        "need_permission": true,
-        "id": "36",
-        "dataControl": true,
-        "name": "verify_job_delete",
-        "order": 36,
-        "parentId": "Data_verify",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [
-          { "type": "button", "code": "verify_job_delete_all_data" }
-        ],
-        "need_permission": true,
-        "id": "37",
-        "name": "verify_job_delete_all_data",
-        "order": 37,
-        "parentId": "verify_job_delete",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "数据治理模块，关闭此模块及相关功能不可见",
-        "resources": [{ "type": "button", "code": "data_government_menu" }],
-        "need_permission": true,
         "id": "38",
-        "isMenu": true,
-        "name": "data_government_menu",
+        "description": "同步任务导出功能",
+        "name": "SYNC_job_export",
         "order": 38,
-        "parentId": "",
+        "parentId": "Data_SYNC",
+        "resources": [{ "type": "button", "code": "SYNC_job_export" }],
         "status": "enable",
-        "type": "read"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "数据治理模块，关闭此模块及相关功能不可见",
-        "resources": [{ "type": "button", "code": "data_government" }],
-        "need_permission": true,
-        "id": "39",
-        "name": "data_government",
-        "order": 39,
-        "parentId": "",
+        "id": "37",
+        "description": "同步任务导入功能",
+        "name": "SYNC_job_import",
+        "order": 37,
+        "parentId": "Data_SYNC",
+        "resources": [{ "type": "button", "code": "SYNC_job_import" }],
         "status": "enable",
-        "type": "read"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "数据源模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "datasource", "path": "/connections" }
-        ],
-        "need_permission": true,
-        "id": "4",
-        "dataControl": true,
-        "name": "datasource",
-        "order": 4,
-        "parentId": "",
+        "id": "35",
+        "description": "对同步任务的启动、停止、重置等操作",
+        "name": "SYNC_job_operation",
+        "order": 35,
+        "parentId": "Data_SYNC",
+        "resources": [{ "type": "button", "code": "SYNC_job_operation" }],
         "status": "enable",
-        "type": "read"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "数据目录模块，关闭此模块及相关功能不可见",
-        "resources": [
-          {
-            "type": "page",
-            "code": "data_catalog_menu",
-            "path": "/metadataDefinition"
-          }
-        ],
-        "need_permission": true,
-        "id": "40",
-        "dataControl": true,
+        "id": "36",
+        "description": "",
+        "name": "SYNC_job_operation_all_data",
+        "order": 36,
+        "parentId": "SYNC_job_operation",
+        "resources": [{ "type": "button", "code": "SYNC_job_operation_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "126",
+        "description": "进程管理模块，关闭此模块及相关功能不可见",
+        "name": "agents",
+        "order": 126,
+        "parentId": "system_management",
+        "resources": [{ "type": "page", "code": "agents", "path": "/agents" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "125",
+        "description": "进程管理模块，关闭此模块及相关功能不可见",
+        "name": "agents_menu",
+        "order": 125,
+        "parentId": "system_management",
+        "resources": [{ "type": "page", "code": "agents_menu", "path": "/agents" }],
         "isMenu": true,
-        "name": "data_catalog_menu",
-        "order": 40,
-        "parentId": "data_government",
         "status": "enable",
-        "type": "read"
+        "type": "read",
+        "need_permission": true
       },
       {
-        "description": "数据目录模块，关闭此模块及相关功能不可见",
-        "resources": [
-          {
-            "type": "page",
-            "code": "data_catalog",
-            "path": "/metadataDefinition"
-          }
-        ],
-        "need_permission": true,
-        "id": "41",
-        "dataControl": true,
-        "name": "data_catalog",
-        "order": 41,
-        "parentId": "data_government",
+        "id": "148",
+        "description": "首页图表",
+        "name": "chart",
+        "order": 148,
+        "parentId": "",
+        "resources": [{ "type": "button", "code": "chart" }],
         "status": "enable",
-        "type": "read"
+        "type": "read",
+        "need_permission": true
       },
       {
-        "description": "",
-        "resources": [{ "type": "button", "code": "data_catalog_all_data" }],
-        "need_permission": true,
-        "id": "42",
-        "name": "data_catalog_all_data",
-        "order": 42,
-        "parentId": "data_catalog",
+        "id": "149",
+        "description": "首页图表",
+        "name": "chart_all_data",
+        "order": 149,
+        "parentId": "chart",
+        "resources": [{ "type": "button", "code": "chart_all_data" }],
         "status": "enable",
-        "type": "read"
+        "type": "readAllData",
+        "need_permission": true
       },
       {
-        "description": "对元数据分类的新建、编辑、删除操作",
-        "resources": [
-          { "type": "button", "code": "data_catalog_category_management" }
-        ],
-        "need_permission": true,
-        "id": "43",
-        "name": "data_catalog_category_management",
-        "order": 43,
-        "parentId": "data_catalog",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "分类对元数据的应用操作",
-        "resources": [
-          { "type": "button", "code": "data_catalog_category_application" }
-        ],
-        "need_permission": true,
-        "id": "44",
-        "name": "data_catalog_category_application",
-        "order": 44,
-        "parentId": "data_catalog",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "对元数据的编辑功能",
-        "resources": [
-          {
-            "type": "page",
-            "code": "data_catalog_edition",
-            "path": "/metadataInstances"
-          }
-        ],
-        "need_permission": true,
-        "id": "45",
-        "dataControl": true,
-        "name": "data_catalog_edition",
-        "order": 45,
-        "parentId": "data_catalog",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [
-          { "type": "button", "code": "data_catalog_edition_all_data" }
-        ],
-        "need_permission": true,
-        "id": "46",
-        "name": "data_catalog_edition_all_data",
-        "order": 46,
-        "parentId": "data_catalog_edition",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "元数据删除",
-        "resources": [{ "type": "button", "code": "meta_data_deleting" }],
-        "need_permission": true,
-        "id": "47",
-        "dataControl": true,
-        "name": "meta_data_deleting",
-        "order": 47,
-        "parentId": "data_catalog",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [
-          { "type": "button", "code": "meta_data_deleting_all_data" }
-        ],
-        "need_permission": true,
-        "id": "48",
-        "name": "meta_data_deleting_all_data",
-        "order": 48,
-        "parentId": "meta_data_deleting",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "创建新模型的功能",
-        "resources": [{ "type": "button", "code": "new_model_creation" }],
-        "need_permission": true,
-        "id": "49",
-        "name": "new_model_creation",
-        "order": 49,
-        "parentId": "data_catalog",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "datasource_all_data" }],
-        "need_permission": true,
         "id": "5",
-        "name": "datasource_all_data",
+        "description": "自定义节点模块，关闭此模块及相关功能不可见",
+        "name": "custom_node",
         "order": 5,
-        "parentId": "datasource",
+        "parentId": "data_transmission",
+        "resources": [{ "type": "page", "code": "custom_node", "path": "/customNode" }],
         "status": "enable",
-        "type": "readAllData"
+        "type": "read",
+        "need_permission": true
       },
       {
-        "description": "数据质量模块，关闭此模块及相关功能不可见",
-        "resources": [
-          {
-            "type": "page",
-            "code": "data_quality_menu",
-            "path": "/dataQuality"
-          }
-        ],
-        "need_permission": true,
-        "id": "50",
-        "dataControl": true,
+        "id": "6",
+        "description": "自定义节点模块，关闭此模块及相关功能不可见",
+        "name": "custom_node_menu",
+        "order": 6,
+        "parentId": "data_transmission",
+        "resources": [{ "type": "page", "code": "custom_node_menu", "path": "/customNode" }],
         "isMenu": true,
-        "name": "data_quality_menu",
-        "order": 50,
-        "parentId": "data_government",
         "status": "enable",
-        "type": "read"
+        "type": "read",
+        "need_permission": true
       },
       {
-        "description": "数据质量模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "data_quality", "path": "/dataQuality" }
-        ],
-        "need_permission": true,
         "id": "51",
-        "dataControl": true,
-        "name": "data_quality",
+        "description": "数据目录模块，关闭此模块及相关功能不可见",
+        "name": "data_catalog",
         "order": 51,
         "parentId": "data_government",
+        "resources": [{ "type": "page", "code": "data_catalog", "path": "/metadataDefinition" }],
         "status": "enable",
-        "type": "read"
+        "type": "read",
+        "need_permission": true
       },
       {
-        "description": "",
-        "resources": [{ "type": "button", "code": "data_quality_all_data" }],
-        "need_permission": true,
         "id": "52",
-        "name": "data_quality_all_data",
+        "description": "",
+        "name": "data_catalog_all_data",
         "order": 52,
-        "parentId": "data_quality",
+        "parentId": "data_catalog",
+        "resources": [{ "type": "button", "code": "data_catalog_all_data" }],
         "status": "enable",
-        "type": "readAllData"
+        "type": "read",
+        "need_permission": true
       },
       {
-        "description": "",
-        "resources": [{ "type": "button", "code": "data_quality_edition" }],
-        "need_permission": true,
-        "id": "53",
-        "dataControl": true,
-        "name": "data_quality_edition",
-        "order": 53,
-        "parentId": "data_quality",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [
-          { "type": "button", "code": "data_quality_edition_all_data" }
-        ],
-        "need_permission": true,
         "id": "54",
-        "name": "data_quality_edition_all_data",
+        "description": "分类对元数据的应用操作",
+        "name": "data_catalog_category_application",
         "order": 54,
-        "parentId": "data_quality_edition",
+        "parentId": "data_catalog",
+        "resources": [{ "type": "button", "code": "data_catalog_category_application" }],
         "status": "enable",
-        "type": "readAllData"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "数据规则模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "data_rules_menu", "path": "/dataRules" }
-        ],
-        "need_permission": true,
+        "id": "53",
+        "description": "对元数据分类的新建、编辑、删除操作",
+        "name": "data_catalog_category_management",
+        "order": 53,
+        "parentId": "data_catalog",
+        "resources": [{ "type": "button", "code": "data_catalog_category_management" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
         "id": "55",
-        "dataControl": true,
-        "isMenu": true,
-        "name": "data_rules_menu",
+        "description": "对元数据的编辑功能",
+        "name": "data_catalog_edition",
         "order": 55,
-        "parentId": "data_government",
+        "parentId": "data_catalog",
+        "resources": [{ "type": "page", "code": "data_catalog_edition", "path": "/metadataInstances" }],
         "status": "enable",
-        "type": "read"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "数据规则模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "data_rules", "path": "/dataRules" }
-        ],
-        "need_permission": true,
         "id": "56",
-        "dataControl": true,
-        "name": "data_rules",
+        "description": "",
+        "name": "data_catalog_edition_all_data",
         "order": 56,
+        "parentId": "data_catalog_edition",
+        "resources": [{ "type": "button", "code": "data_catalog_edition_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "50",
+        "description": "数据目录模块，关闭此模块及相关功能不可见",
+        "name": "data_catalog_menu",
+        "order": 50,
         "parentId": "data_government",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "data_rules_all_data" }],
-        "need_permission": true,
-        "id": "57",
-        "name": "data_rules_all_data",
-        "order": 57,
-        "parentId": "data_rules",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "data_rule_management" }],
-        "need_permission": true,
-        "id": "58",
-        "dataControl": true,
-        "name": "data_rule_management",
-        "order": 58,
-        "parentId": "data_rules",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [
-          { "type": "button", "code": "data_rule_management_all_data" }
-        ],
-        "need_permission": true,
-        "id": "59",
-        "name": "data_rule_management_all_data",
-        "order": 59,
-        "parentId": "data_rule_management",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "对数据源分类的新建、编辑、删除操作",
-        "resources": [
-          { "type": "button", "code": "datasource_catalog_management" }
-        ],
-        "need_permission": true,
-        "id": "6",
-        "name": "datasource_category_management",
-        "order": 6,
-        "parentId": "datasource",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "数据生命周期模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "time_to_live_menu", "path": "/ttl" }
-        ],
-        "need_permission": true,
-        "id": "60",
-        "dataControl": true,
+        "resources": [{ "type": "page", "code": "data_catalog_menu", "path": "/metadataDefinition" }],
         "isMenu": true,
-        "name": "time_to_live_menu",
-        "order": 60,
-        "parentId": "data_government",
         "status": "enable",
-        "type": "read"
+        "type": "read",
+        "need_permission": true
       },
       {
-        "description": "数据生命周期模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "time_to_live", "path": "/ttl" }
-        ],
-        "need_permission": true,
+        "id": "113",
+        "description": "数据采集旧版模块，关闭此模块及相关功能不可见",
+        "name": "data_collect",
+        "order": 113,
+        "parentId": "",
+        "resources": [{ "type": "button", "code": "data_collect(old)" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "114",
+        "description": "",
+        "name": "data_collect_all_data",
+        "order": 114,
+        "parentId": "data_collect",
+        "resources": [{ "type": "page", "code": "data_collect_all_data", "path": "/dataCollect" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "112",
+        "description": "数据采集旧版模块，关闭此模块及相关功能不可见",
+        "name": "data_collect_menu",
+        "order": 112,
+        "parentId": "",
+        "resources": [{ "type": "page", "code": "data_collect(old)_menu", "path": "/dataCollect" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "49",
+        "description": "数据治理模块，关闭此模块及相关功能不可见",
+        "name": "data_government",
+        "order": 49,
+        "parentId": "",
+        "resources": [{ "type": "button", "code": "data_government" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "48",
+        "description": "数据治理模块，关闭此模块及相关功能不可见",
+        "name": "data_government_menu",
+        "order": 48,
+        "parentId": "",
+        "resources": [{ "type": "button", "code": "data_government_menu" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "76",
+        "description": "数据地图模块，关闭此模块及相关功能不可见",
+        "name": "data_lineage",
+        "order": 76,
+        "parentId": "data_government",
+        "resources": [{ "type": "page", "code": "data_lineage", "path": "/dataMap" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "75",
+        "description": "数据地图模块，关闭此模块及相关功能不可见",
+        "name": "data_lineage_menu",
+        "order": 75,
+        "parentId": "data_government",
+        "resources": [{ "type": "page", "code": "data_lineage_menu", "path": "/dataMap" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "78",
+        "description": "数据发布模块，关闭此模块及相关功能不可见",
+        "name": "data_publish",
+        "order": 78,
+        "parentId": "",
+        "resources": [{ "type": "button", "code": "data_publish" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "77",
+        "description": "数据发布模块，关闭此模块及相关功能不可见",
+        "name": "data_publish_menu",
+        "order": 77,
+        "parentId": "",
+        "resources": [{ "type": "button", "code": "data_publish_menu" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
         "id": "61",
-        "dataControl": true,
-        "name": "time_to_live",
+        "description": "数据质量模块，关闭此模块及相关功能不可见",
+        "name": "data_quality",
         "order": 61,
         "parentId": "data_government",
+        "resources": [{ "type": "page", "code": "data_quality", "path": "/dataQuality" }],
         "status": "enable",
-        "type": "read"
+        "type": "read",
+        "need_permission": true
       },
       {
-        "description": "",
-        "resources": [{ "type": "button", "code": "time_to_live_all_data" }],
-        "need_permission": true,
         "id": "62",
-        "name": "time_to_live_all_data",
+        "description": "",
+        "name": "data_quality_all_data",
         "order": 62,
-        "parentId": "time_to_live",
+        "parentId": "data_quality",
+        "resources": [{ "type": "button", "code": "data_quality_all_data" }],
         "status": "enable",
-        "type": "readAllData"
+        "type": "readAllData",
+        "need_permission": true
       },
       {
-        "description": "",
-        "resources": [{ "type": "button", "code": "time_to_live_management" }],
-        "need_permission": true,
         "id": "63",
-        "dataControl": true,
-        "name": "time_to_live_management",
-        "order": 63,
-        "parentId": "time_to_live",
-        "status": "enable",
-        "type": "write"
-      },
-      {
         "description": "",
-        "resources": [
-          { "type": "button", "code": "time_to_live_management_all_data" }
-        ],
-        "need_permission": true,
+        "name": "data_quality_edition",
+        "order": 63,
+        "parentId": "data_quality",
+        "resources": [{ "type": "button", "code": "data_quality_edition" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
         "id": "64",
-        "name": "time_to_live_management_all_data",
+        "description": "",
+        "name": "data_quality_edition_all_data",
         "order": 64,
-        "parentId": "time_to_live_management",
+        "parentId": "data_quality_edition",
+        "resources": [{ "type": "button", "code": "data_quality_edition_all_data" }],
         "status": "enable",
-        "type": "readAllData"
+        "type": "readAllData",
+        "need_permission": true
       },
       {
-        "description": "数据地图模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "data_lineage_menu", "path": "/dataMap" }
-        ],
-        "need_permission": true,
-        "id": "65",
-        "isMenu": true,
-        "name": "data_lineage_menu",
-        "order": 65,
+        "id": "60",
+        "description": "数据质量模块，关闭此模块及相关功能不可见",
+        "name": "data_quality_menu",
+        "order": 60,
         "parentId": "data_government",
+        "resources": [{ "type": "page", "code": "data_quality_menu", "path": "/dataQuality" }],
+        "isMenu": true,
         "status": "enable",
-        "type": "read"
+        "type": "read",
+        "need_permission": true
       },
       {
-        "description": "数据地图模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "data_lineage", "path": "/dataMap" }
-        ],
-        "need_permission": true,
+        "id": "68",
+        "description": "",
+        "name": "data_rule_management",
+        "order": 68,
+        "parentId": "data_rules",
+        "resources": [{ "type": "button", "code": "data_rule_management" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "69",
+        "description": "",
+        "name": "data_rule_management_all_data",
+        "order": 69,
+        "parentId": "data_rule_management",
+        "resources": [{ "type": "button", "code": "data_rule_management_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
         "id": "66",
-        "name": "data_lineage",
+        "description": "数据规则模块，关闭此模块及相关功能不可见",
+        "name": "data_rules",
         "order": 66,
         "parentId": "data_government",
+        "resources": [{ "type": "page", "code": "data_rules", "path": "/dataRules" }],
         "status": "enable",
-        "type": "read"
+        "type": "read",
+        "need_permission": true
       },
       {
-        "description": "数据发布模块，关闭此模块及相关功能不可见",
-        "resources": [{ "type": "button", "code": "data_publish_menu" }],
-        "need_permission": true,
         "id": "67",
-        "isMenu": true,
-        "name": "data_publish_menu",
+        "description": "",
+        "name": "data_rules_all_data",
         "order": 67,
-        "parentId": "",
+        "parentId": "data_rules",
+        "resources": [{ "type": "button", "code": "data_rules_all_data" }],
         "status": "enable",
-        "type": "read"
+        "type": "readAllData",
+        "need_permission": true
       },
       {
-        "description": "数据发布模块，关闭此模块及相关功能不可见",
-        "resources": [{ "type": "button", "code": "data_publish" }],
-        "need_permission": true,
-        "id": "68",
-        "name": "data_publish",
-        "order": 68,
-        "parentId": "",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "API发布模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "API_management_menu", "path": "/modules" }
-        ],
-        "need_permission": true,
-        "id": "69",
-        "dataControl": true,
+        "id": "65",
+        "description": "数据规则模块，关闭此模块及相关功能不可见",
+        "name": "data_rules_menu",
+        "order": 65,
+        "parentId": "data_government",
+        "resources": [{ "type": "page", "code": "data_rules_menu", "path": "/dataRules" }],
         "isMenu": true,
-        "name": "API_management_menu",
-        "order": 69,
-        "parentId": "",
         "status": "enable",
-        "type": "read"
+        "type": "read",
+        "need_permission": true
       },
       {
+        "id": "1",
+        "description": "数据搜索模块，关闭此模块及相关功能不可见",
+        "name": "data_search",
+        "order": 1,
+        "parentId": "data_government",
+        "resources": [{ "type": "page", "code": "data_search", "path": "/search" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "2",
+        "description": "数据搜索模块，关闭此模块及相关功能不可见",
+        "name": "data_search_menu",
+        "order": 2,
+        "parentId": "data_government",
+        "resources": [{ "type": "page", "code": "data_search_menu", "path": "/search" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "24",
+        "description": "数据传输模块，关闭此模块及相关功能不可见",
+        "name": "data_transmission",
+        "order": 24,
+        "parentId": "",
+        "resources": [
+          { "type": "page", "code": "data_transmission", "path": "/dataFlows" },
+          { "type": "page", "code": "data_transmission", "path": "/job" }
+        ],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "23",
+        "description": "数据传输模块，关闭此模块及相关功能不可见",
+        "name": "data_transmission_menu",
+        "order": 23,
+        "parentId": "",
+        "resources": [
+          { "type": "page", "code": "data_transmission_menu", "path": "/dataFlows" },
+          { "type": "page", "code": "data_transmission", "path": "/job" }
+        ],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "14",
+        "description": "数据源模块，关闭此模块及相关功能不可见",
+        "name": "datasource",
+        "order": 14,
+        "parentId": "",
+        "resources": [{ "type": "page", "code": "datasource", "path": "/connections" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "15",
+        "description": "",
+        "name": "datasource_all_data",
+        "order": 15,
+        "parentId": "datasource",
+        "resources": [{ "type": "button", "code": "datasource_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "17",
         "description": "分类对数据源的应用操作",
-        "resources": [
-          { "type": "button", "code": "datasource_category_application" }
-        ],
-        "need_permission": true,
-        "id": "7",
         "name": "datasource_category_application",
-        "order": 7,
+        "order": 17,
         "parentId": "datasource",
+        "resources": [{ "type": "button", "code": "datasource_category_application" }],
         "status": "enable",
-        "type": "write"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "API发布模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "API_management", "path": "/modules" }
-        ],
-        "need_permission": true,
-        "id": "70",
-        "dataControl": true,
-        "name": "API_management",
-        "order": 70,
-        "parentId": "data_publish",
+        "id": "16",
+        "description": "对数据源分类的新建、编辑、删除操作",
+        "name": "datasource_category_management",
+        "order": 16,
+        "parentId": "datasource",
+        "resources": [{ "type": "button", "code": "datasource_catalog_management" }],
         "status": "enable",
-        "type": "read"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "",
-        "resources": [{ "type": "button", "code": "API_management_all_data" }],
-        "need_permission": true,
-        "id": "71",
-        "name": "API_management_all_data",
-        "order": 71,
-        "parentId": "API_management",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "API_category_application" }],
-        "need_permission": true,
-        "id": "72",
-        "name": "API_category_application",
-        "order": 72,
-        "parentId": "API_management",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "API_category_management" }],
-        "need_permission": true,
-        "id": "73",
-        "name": "API_category_management",
-        "order": 73,
-        "parentId": "API_management",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "API_creation" }],
-        "need_permission": true,
-        "id": "74",
-        "name": "API_creation",
-        "order": 74,
-        "parentId": "API_management",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "API_delete" }],
-        "need_permission": true,
-        "id": "75",
-        "dataControl": true,
-        "name": "API_delete",
-        "order": 75,
-        "parentId": "API_management",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "API_delete_all_data" }],
-        "need_permission": true,
-        "id": "76",
-        "name": "API_delete_all_data",
-        "order": 76,
-        "parentId": "API_delete",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "API_edition" }],
-        "need_permission": true,
-        "id": "77",
-        "dataControl": true,
-        "name": "API_edition",
-        "order": 77,
-        "parentId": "API_management",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "API_edition_all_data" }],
-        "need_permission": true,
-        "id": "78",
-        "name": "API_edition_all_data",
-        "order": 78,
-        "parentId": "API_edition",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "API_publish" }],
-        "need_permission": true,
-        "id": "79",
-        "dataControl": true,
-        "name": "API_publish",
-        "order": 79,
-        "parentId": "API_management",
-        "status": "enable",
-        "type": "write"
-      },
-      {
+        "id": "18",
         "description": "创建新的数据源功能",
-        "resources": [
-          {
-            "type": "page",
-            "code": "datasource_creation",
-            "path": "/connection"
-          }
-        ],
-        "need_permission": true,
-        "id": "8",
         "name": "datasource_creation",
-        "order": 8,
+        "order": 18,
         "parentId": "datasource",
+        "resources": [{ "type": "page", "code": "datasource_creation", "path": "/connection" }],
         "status": "enable",
-        "type": "write"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "",
-        "resources": [{ "type": "button", "code": "API_publish_all_data" }],
-        "need_permission": true,
-        "id": "80",
-        "name": "API_publish_all_data",
-        "order": 80,
-        "parentId": "API_publish",
-        "status": "enable",
-        "type": "readAllData"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "API_import" }],
-        "need_permission": true,
-        "id": "81",
-        "name": "API_import",
-        "order": 81,
-        "parentId": "API_management",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "",
-        "resources": [{ "type": "button", "code": "API_export" }],
-        "need_permission": true,
-        "id": "82",
-        "name": "API_export",
-        "order": 82,
-        "parentId": "API_management",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "API数据浏览模块，关闭此模块及相关功能不可见",
-        "resources": [
-          {
-            "type": "page",
-            "code": "API_data_explorer_menu",
-            "path": "/dataExplorer"
-          }
-        ],
-        "need_permission": true,
-        "id": "83",
-        "isMenu": true,
-        "name": "API_data_explorer_menu",
-        "order": 83,
-        "parentId": "data_publish",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "API数据浏览模块，关闭此模块及相关功能不可见",
-        "resources": [
-          {
-            "type": "page",
-            "code": "API_data_explorer",
-            "path": "/dataExplorer"
-          }
-        ],
-        "need_permission": true,
-        "id": "84",
-        "name": "API_data_explorer",
-        "order": 84,
-        "parentId": "data_publish",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "API数据预览导出",
-        "resources": [{ "type": "button", "code": "API_data_explorer_export" }],
-        "need_permission": true,
-        "id": "85",
-        "name": "API_data_explorer_export",
-        "order": 85,
-        "parentId": "API_data_explorer",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "API数据浏览删除",
-        "resources": [
-          { "type": "button", "code": "API_data_explorer_deleting" }
-        ],
-        "need_permission": true,
-        "id": "86",
-        "name": "API_data_explorer_deleting",
-        "order": 86,
-        "parentId": "API_data_explorer",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "API数据浏览删除",
-        "resources": [
-          { "type": "button", "code": "API_data_time_zone_editing" }
-        ],
-        "need_permission": true,
-        "id": "87",
-        "name": "API_data_time_zone_editing",
-        "order": 87,
-        "parentId": "API_data_explorer",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "API数据浏览删除",
-        "resources": [{ "type": "button", "code": "API_data_creation" }],
-        "need_permission": true,
-        "id": "88",
-        "name": "API_data_creation",
-        "order": 88,
-        "parentId": "API_data_explorer",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "API数据浏览删除",
-        "resources": [{ "type": "button", "code": "API_data_download" }],
-        "need_permission": true,
-        "id": "89",
-        "name": "API_data_download",
-        "order": 89,
-        "parentId": "API_data_explorer",
-        "status": "enable",
-        "type": "write"
-      },
-      {
+        "id": "19",
         "description": "删除数据源功能",
-        "resources": [{ "type": "button", "code": "datasource_delete" }],
-        "need_permission": true,
-        "id": "9",
-        "dataControl": true,
         "name": "datasource_delete",
-        "order": 9,
+        "order": 19,
         "parentId": "datasource",
+        "resources": [{ "type": "button", "code": "datasource_delete" }],
         "status": "enable",
-        "type": "write"
+        "type": "write",
+        "need_permission": true
       },
       {
-        "description": "API数据浏览加标签",
-        "resources": [
-          { "type": "button", "code": "API_data_explorer_tagging" }
-        ],
-        "need_permission": true,
-        "id": "90",
-        "name": "API_data_explorer_tagging",
-        "order": 90,
-        "parentId": "API_data_explorer",
-        "status": "enable",
-        "type": "write"
-      },
-      {
-        "description": "API文档测试模块，关闭此模块及相关功能不可见",
-        "resources": [
-          {
-            "type": "page",
-            "code": "API_doc_&_test_menu",
-            "path": "/apiDocAndTest"
-          }
-        ],
-        "need_permission": true,
-        "id": "91",
-        "isMenu": true,
-        "name": "API_doc_test_menu",
-        "order": 91,
-        "parentId": "data_publish",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "API文档测试模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "API_doc_&_test", "path": "/apiDocAndTest" }
-        ],
-        "need_permission": true,
-        "id": "92",
-        "name": "API_doc_test",
-        "order": 92,
-        "parentId": "data_publish",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "API文档测试批量导出",
-        "resources": [{ "type": "page", "code": "API_doc_&_test_export" }],
-        "need_permission": true,
-        "id": "93",
-        "name": "API_doc_test_export",
-        "order": 93,
-        "parentId": "API_doc_test",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "API统计分析模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "API_stats_menu", "path": "/apiAnalysis" }
-        ],
-        "need_permission": true,
-        "id": "94",
-        "isMenu": true,
-        "name": "API_stats_menu",
-        "order": 94,
-        "parentId": "data_publish",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "API统计分析模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "API_stats", "path": "/apiAnalysis" }
-        ],
-        "need_permission": true,
-        "id": "95",
-        "name": "API_stats",
-        "order": 95,
-        "parentId": "data_publish",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "API客户端模块，关闭此模块及相关功能不可见",
-        "resources": [
-          {
-            "type": "page",
-            "code": "API_clients_menu",
-            "path": "/applications"
-          }
-        ],
-        "need_permission": true,
-        "id": "96",
-        "isMenu": true,
-        "name": "API_clients_menu",
-        "order": 96,
-        "parentId": "data_publish",
-        "status": "enable",
-        "type": "read"
-      },
-      {
-        "description": "API客户端模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "API_clients", "path": "/applications" }
-        ],
-        "need_permission": true,
-        "id": "97",
-        "name": "API_clients",
-        "order": 97,
-        "parentId": "data_publish",
-        "status": "enable",
-        "type": "read"
-      },
-      {
+        "id": "20",
         "description": "",
-        "resources": [{ "type": "button", "code": "API_clients_amangement" }],
-        "need_permission": true,
-        "id": "98",
-        "name": "API_clients_amangement",
-        "order": 98,
-        "parentId": "API_clients",
+        "name": "datasource_delete_all_data",
+        "order": 20,
+        "parentId": "datasource_delete",
+        "resources": [{ "type": "button", "code": "datasource_delete_all_data" }],
         "status": "enable",
-        "type": "write"
+        "type": "readAllData",
+        "need_permission": true
       },
       {
-        "description": "API服务器模块，关闭此模块及相关功能不可见",
-        "resources": [
-          { "type": "page", "code": "API_server_menu", "path": "/apiServers" }
-        ],
-        "need_permission": true,
-        "id": "99",
-        "isMenu": true,
-        "name": "API_server_menu",
-        "order": 99,
-        "parentId": "data_publish",
+        "id": "21",
+        "description": "编辑数据源功能",
+        "name": "datasource_edition",
+        "order": 21,
+        "parentId": "datasource",
+        "resources": [{ "type": "page", "code": "datasource_edition", "path": "/connection" }],
         "status": "enable",
-        "type": "read"
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "22",
+        "description": "",
+        "name": "datasource_edition_all_data",
+        "order": 22,
+        "parentId": "datasource_edition",
+        "resources": [{ "type": "button", "code": "datasource_edition_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "13",
+        "description": "数据源模块，关闭此模块及相关功能不可见",
+        "name": "datasource_menu",
+        "order": 13,
+        "parentId": "",
+        "resources": [{ "type": "page", "code": "datasource_menu", "path": "/connections" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "151",
+        "description": "字典模板",
+        "name": "dictionary",
+        "order": 151,
+        "parentId": "data_government",
+        "resources": [{ "type": "button", "code": "dictionary" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "152",
+        "description": "字典模板",
+        "name": "dictionary_all_data",
+        "order": 152,
+        "parentId": "data_government",
+        "resources": [{ "type": "button", "code": "dictionary_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "150",
+        "description": "字典模板",
+        "name": "dictionary_menu",
+        "order": 150,
+        "parentId": "data_government",
+        "resources": [{ "type": "page", "code": "dictionary_menu", "path": "/dictionary" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "7",
+        "description": "函数管理模块，关闭此模块及相关功能不可见",
+        "name": "function_manager",
+        "order": 7,
+        "parentId": "data_transmission",
+        "resources": [{ "type": "page", "code": "function_manager", "path": "/function" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "8",
+        "description": "函数管理模块，关闭此模块及相关功能不可见",
+        "name": "function_manager_menu",
+        "order": 8,
+        "parentId": "data_transmission",
+        "resources": [{ "type": "page", "code": "function_manager_menu", "path": "/function" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "9",
+        "description": "共享挖掘模块，关闭此模块及相关功能不可见",
+        "name": "log_collector",
+        "order": 9,
+        "parentId": "data_transmission",
+        "resources": [{ "type": "page", "code": "log_collector", "path": "/sharedMining" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "10",
+        "description": "共享挖掘模块，关闭此模块及相关功能不可见",
+        "name": "log_collector_menu",
+        "order": 10,
+        "parentId": "data_transmission",
+        "resources": [{ "type": "page", "code": "log_collector_menu", "path": "/sharedMining" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "57",
+        "description": "元数据删除",
+        "name": "meta_data_deleting",
+        "order": 57,
+        "parentId": "data_catalog",
+        "resources": [{ "type": "button", "code": "meta_data_deleting" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "58",
+        "description": "",
+        "name": "meta_data_deleting_all_data",
+        "order": 58,
+        "parentId": "meta_data_deleting",
+        "resources": [{ "type": "button", "code": "meta_data_deleting_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "59",
+        "description": "创建新模型的功能",
+        "name": "new_model_creation",
+        "order": 59,
+        "parentId": "data_catalog",
+        "resources": [{ "type": "button", "code": "new_model_creation" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "11",
+        "description": "系统消息通知设置功能",
+        "name": "notice",
+        "order": 11,
+        "parentId": "system_management",
+        "resources": [{ "type": "button", "code": "home_notice" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "12",
+        "description": "系统消息通知设置功能",
+        "name": "notice_settings",
+        "order": 12,
+        "parentId": "system_management",
+        "resources": [{ "type": "button", "code": "home_notice_settings" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "140",
+        "description": "",
+        "name": "role_creation",
+        "order": 140,
+        "parentId": "role_management",
+        "resources": [{ "type": "button", "code": "role_creation" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "143",
+        "description": "",
+        "name": "role_delete",
+        "order": 143,
+        "parentId": "role_management",
+        "resources": [{ "type": "button", "code": "role_delete" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "144",
+        "description": "",
+        "name": "role_delete_all_data",
+        "order": 144,
+        "parentId": "role_delete",
+        "resources": [{ "type": "button", "code": "role_delete_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "141",
+        "description": "",
+        "name": "role_edition",
+        "order": 141,
+        "parentId": "role_management",
+        "resources": [{ "type": "button", "code": "role_edition" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "142",
+        "description": "",
+        "name": "role_edition_all_data",
+        "order": 142,
+        "parentId": "role_edition",
+        "resources": [{ "type": "button", "code": "role_edition_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "138",
+        "description": "角色管理模块，关闭此模块及相关功能不可见",
+        "name": "role_management",
+        "order": 138,
+        "parentId": "system_management",
+        "resources": [{ "type": "page", "code": "role_management", "path": "/roles" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "139",
+        "description": "",
+        "name": "role_management_all_data",
+        "order": 139,
+        "parentId": "role_management",
+        "resources": [{ "type": "button", "code": "role_management_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "137",
+        "description": "角色管理模块，关闭此模块及相关功能不可见",
+        "name": "role_management_menu",
+        "order": 137,
+        "parentId": "system_management",
+        "resources": [{ "type": "page", "code": "role_management_menu", "path": "/roles" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "118",
+        "description": "调度任务模块，关闭此模块及相关功能不可见",
+        "name": "schedule_jobs",
+        "order": 118,
+        "parentId": "system_management",
+        "resources": [{ "type": "page", "code": "schedule_jobs", "path": "/tasks" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "119",
+        "description": "",
+        "name": "schedule_jobs_management",
+        "order": 119,
+        "parentId": "schedule_jobs",
+        "resources": [{ "type": "button", "code": "schedule_jobs_management" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "117",
+        "description": "调度任务模块，关闭此模块及相关功能不可见",
+        "name": "schedule_jobs_menu",
+        "order": 117,
+        "parentId": "system_management",
+        "resources": [{ "type": "page", "code": "schedule_jobs_menu", "path": "/tasks" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "3",
+        "description": "共享缓存模块，关闭此模块及相关功能不可见",
+        "name": "shared_cache",
+        "order": 3,
+        "parentId": "data_transmission",
+        "resources": [{ "type": "page", "code": "shared_cache", "path": "/shared-cache" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "4",
+        "description": "共享缓存模块，关闭此模块及相关功能不可见",
+        "name": "shared_cache_menu",
+        "order": 4,
+        "parentId": "data_transmission",
+        "resources": [{ "type": "page", "code": "shared_cache_menu", "path": "/shared-cache" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "124",
+        "description": "",
+        "name": "status_log",
+        "order": 124,
+        "parentId": "Cluster_management",
+        "resources": [{ "type": "button", "code": "status_log" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "116",
+        "description": "系统管理模块，关闭此模块及相关功能不可见",
+        "name": "system_management",
+        "order": 116,
+        "parentId": "",
+        "resources": [{ "type": "button", "code": "system_management" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "115",
+        "description": "系统管理模块，关闭此模块及相关功能不可见",
+        "name": "system_management_menu",
+        "order": 115,
+        "parentId": "",
+        "resources": [{ "type": "button", "code": "system_management_menu" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "146",
+        "description": "系统设置模块，关闭此模块及相关功能不可见",
+        "name": "system_settings",
+        "order": 146,
+        "parentId": "system_management",
+        "resources": [{ "type": "page", "code": "system_settings", "path": "/settings" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "145",
+        "description": "系统设置模块，关闭此模块及相关功能不可见",
+        "name": "system_settings_menu",
+        "order": 145,
+        "parentId": "system_management",
+        "resources": [{ "type": "page", "code": "system_settings_menu", "path": "/settings" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "147",
+        "description": "",
+        "name": "system_settings_modification",
+        "order": 147,
+        "parentId": "system_settings",
+        "resources": [{ "type": "button", "code": "system_settings_modification" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "71",
+        "description": "数据生命周期模块，关闭此模块及相关功能不可见",
+        "name": "time_to_live",
+        "order": 71,
+        "parentId": "data_government",
+        "resources": [{ "type": "page", "code": "time_to_live", "path": "/ttl" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "72",
+        "description": "",
+        "name": "time_to_live_all_data",
+        "order": 72,
+        "parentId": "time_to_live",
+        "resources": [{ "type": "button", "code": "time_to_live_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "73",
+        "description": "",
+        "name": "time_to_live_management",
+        "order": 73,
+        "parentId": "time_to_live",
+        "resources": [{ "type": "button", "code": "time_to_live_management" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "74",
+        "description": "",
+        "name": "time_to_live_management_all_data",
+        "order": 74,
+        "parentId": "time_to_live_management",
+        "resources": [{ "type": "button", "code": "time_to_live_management_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "70",
+        "description": "数据生命周期模块，关闭此模块及相关功能不可见",
+        "name": "time_to_live_menu",
+        "order": 70,
+        "parentId": "data_government",
+        "resources": [{ "type": "page", "code": "time_to_live_menu", "path": "/ttl" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "136",
+        "description": "",
+        "name": "user_category_application",
+        "order": 136,
+        "parentId": "user_management",
+        "resources": [{ "type": "button", "code": "user_category_application" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "135",
+        "description": "",
+        "name": "user_category_management",
+        "order": 135,
+        "parentId": "user_management",
+        "resources": [{ "type": "button", "code": "user_category_management" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "130",
+        "description": "",
+        "name": "user_creation",
+        "order": 130,
+        "parentId": "user_management",
+        "resources": [{ "type": "button", "code": "user_creation" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "133",
+        "description": "",
+        "name": "user_delete",
+        "order": 133,
+        "parentId": "user_management",
+        "resources": [{ "type": "button", "code": "user_delete" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "134",
+        "description": "",
+        "name": "user_delete_all_data",
+        "order": 134,
+        "parentId": "user_delete",
+        "resources": [{ "type": "button", "code": "user_delete_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "131",
+        "description": "",
+        "name": "user_edition",
+        "order": 131,
+        "parentId": "user_management",
+        "resources": [{ "type": "button", "code": "user_edition" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "132",
+        "description": "",
+        "name": "user_edition_all_data",
+        "order": 132,
+        "parentId": "user_edition",
+        "resources": [{ "type": "button", "code": "user_edition_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "128",
+        "description": "用户管理模块，关闭此模块及相关功能不可见",
+        "name": "user_management",
+        "order": 128,
+        "parentId": "system_management",
+        "resources": [{ "type": "page", "code": "user_management", "path": "/users" }],
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "129",
+        "description": "",
+        "name": "user_management_all_data",
+        "order": 129,
+        "parentId": "user_management",
+        "resources": [{ "type": "button", "code": "user_management_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "127",
+        "description": "用户管理模块，关闭此模块及相关功能不可见",
+        "name": "user_management_menu",
+        "order": 127,
+        "parentId": "system_management",
+        "resources": [{ "type": "page", "code": "user_management_menu", "path": "/users" }],
+        "isMenu": true,
+        "status": "enable",
+        "type": "read",
+        "need_permission": true
+      },
+      {
+        "id": "43",
+        "description": "创建校验任务功能",
+        "name": "verify_job_creation",
+        "order": 43,
+        "parentId": "Data_verify",
+        "resources": [{ "type": "button", "code": "verify_job_creation" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "46",
+        "description": "删除校验任务功能",
+        "name": "verify_job_delete",
+        "order": 46,
+        "parentId": "Data_verify",
+        "resources": [{ "type": "button", "code": "verify_job_delete" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "47",
+        "description": "",
+        "name": "verify_job_delete_all_data",
+        "order": 47,
+        "parentId": "verify_job_delete",
+        "resources": [{ "type": "button", "code": "verify_job_delete_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
+      },
+      {
+        "id": "44",
+        "description": "编辑校验任务功能",
+        "name": "verify_job_edition",
+        "order": 44,
+        "parentId": "Data_verify",
+        "resources": [{ "type": "button", "code": "verify_job_edition" }],
+        "status": "enable",
+        "type": "write",
+        "need_permission": true
+      },
+      {
+        "id": "45",
+        "description": "",
+        "name": "verify_job_edition_all_data",
+        "order": 45,
+        "parentId": "verify_job_edition",
+        "resources": [{ "type": "button", "code": "verify_job_edition_all_data" }],
+        "status": "enable",
+        "type": "readAllData",
+        "need_permission": true
       }
     ]
-  },
-  "code": "ok",
-  "msg": "ok"
+  }
 }

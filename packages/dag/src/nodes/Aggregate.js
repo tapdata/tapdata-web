@@ -1,19 +1,14 @@
 import { NodeType } from './extends/NodeType'
+import { AllLocales } from './locales'
 
 export class Aggregate extends NodeType {
-  constructor(node) {
-    super(node)
-
-    if (node.attr) {
-      const attr = Object.assign(this.attr, node.attr)
-      if (attr.formSchema) this.formSchema = attr.formSchema
-      if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
-    }
+  constructor() {
+    super()
   }
 
-  attr = {
-    maxInputs: 1 // 最大输入个数
-  }
+  type = 'aggregation_processor'
+
+  maxInputs = 1 // 最大输入个数
 
   group = 'processor'
 
@@ -52,16 +47,16 @@ export class Aggregate extends NodeType {
             type: 'void',
             'x-component': 'FormGrid.GridColumn',
             properties: {
-              primaryKeys: {
-                title: '主键',
-                type: 'array',
-                required: true,
-                'x-decorator': 'FormItem',
-                'x-component': 'FieldSelect',
-                'x-component-props': {
-                  multiple: true
-                }
-              },
+              // primaryKeys: {
+              //   title: '主键',
+              //   type: 'array',
+              //   required: true,
+              //   'x-decorator': 'FormItem',
+              //   'x-component': 'FieldSelect',
+              //   'x-component-props': {
+              //     multiple: true
+              //   }
+              // },
               aggregations: {
                 type: 'array',
                 'x-decorator': 'FormItem',
@@ -155,31 +150,31 @@ export class Aggregate extends NodeType {
                       }
                     },
 
-                    name: {
-                      type: 'string',
-                      title: '子处理名称',
-                      required: true,
-                      'x-decorator': 'FormItem',
-                      'x-decorator-props': {
-                        tooltip: `后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，\n故不同的子处理名称不可重复。`
-                      },
-                      'x-component': 'Input',
-                      'x-reactions': [
-                        {
-                          dependencies: ['.aggFunction'],
-                          fulfill: {
-                            state: {
-                              value: `{{$deps[0]+($index > 0 ? '_'+($index):'')}}`
-                            }
-                          }
-                        }
-                      ]
-                    },
-                    filterPredicate: {
-                      title: '过滤器',
-                      'x-decorator': 'FormItem',
-                      'x-component': 'Input.TextArea'
-                    },
+                    // name: {
+                    //   type: 'string',
+                    //   title: '子处理名称',
+                    //   required: true,
+                    //   'x-decorator': 'FormItem',
+                    //   'x-decorator-props': {
+                    //     tooltip: `后续节点的脚本编辑需要引用此子处理的名称进行指定的数据处理，\n故不同的子处理名称不可重复。`
+                    //   },
+                    //   'x-component': 'Input',
+                    //   'x-reactions': [
+                    //     {
+                    //       dependencies: ['.aggFunction'],
+                    //       fulfill: {
+                    //         state: {
+                    //           value: `{{$deps[0]+($index > 0 ? '_'+($index):'')}}`
+                    //         }
+                    //       }
+                    //     }
+                    //   ]
+                    // },
+                    // filterPredicate: {
+                    //   title: '过滤器',
+                    //   'x-decorator': 'FormItem',
+                    //   'x-component': 'Input.TextArea'
+                    // },
                     groupByExpression: {
                       title: '分组字段',
                       type: 'array',
@@ -221,4 +216,6 @@ export class Aggregate extends NodeType {
       }
     }
   }
+
+  locales = AllLocales.Aggregate
 }

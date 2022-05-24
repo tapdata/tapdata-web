@@ -90,7 +90,7 @@
           >
             {{ $t('button_details') }}
           </el-button>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'data_catalog_edition'"></ElDivider>
           <el-button
             v-readonlybtn="'data_catalog_edition'"
             size="mini"
@@ -102,7 +102,7 @@
           >
             {{ $t('button.rename') }}
           </el-button>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'data_catalog_edition'"></ElDivider>
           <el-button
             v-readonlybtn="'meta_data_deleting'"
             size="mini"

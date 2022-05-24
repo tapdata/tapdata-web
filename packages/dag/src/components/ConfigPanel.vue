@@ -12,7 +12,7 @@
     </div>
     <div class="config-tabs-wrap">
       <div class="tabs-header flex align-center px-4">
-        <ElImage class="mr-2" :src="icon"></ElImage>
+        <NodeIcon class="mr-2" :node="activeNode" />
         <div class="title-input-wrap flex align-center flex-shrink-0 h-100">
           <input
             ref="nameInput"
@@ -54,9 +54,8 @@ import SettingPanel from './SettingPanel'
 import MetaPane from './MetaPane'
 import PdkPane from './PdkPane'
 import VIcon from 'web-core/components/VIcon'
-import { NODE_TYPE_ICON } from '../constants'
 import focusSelect from 'web-core/directives/focusSelect'
-import util from '../mixins/util'
+import NodeIcon from './NodeIcon'
 
 export default {
   name: 'ConfigPanel',
@@ -66,22 +65,16 @@ export default {
     focusSelect
   },
 
-  mixins: [util],
-
   data() {
     return {
       currentTab: '0'
     }
   },
 
-  components: { VIcon, MetaPane, /*DataPane,*/ FormPanel, SettingPanel, PdkPane },
+  components: { NodeIcon, VIcon, MetaPane, /*DataPane,*/ FormPanel, SettingPanel, PdkPane },
 
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
-
-    icon() {
-      return this.getIcon(this.activeNode)
-    },
 
     isPdk() {
       return this.activeNode?.attrs?.pdkType === 'pdk'

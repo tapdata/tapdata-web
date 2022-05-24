@@ -112,7 +112,7 @@
           <ElButton v-readonlybtn="'API_creation'" size="mini" type="text" @click="copy(scope.row)">
             {{ $t('button_copy') }}
           </ElButton>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'API_creation'"></ElDivider>
           <!-- <ElButton v-readonlybtn="'API_data_explorer'" size="mini" type="text" @click="toDetails(scope.row)">
             {{ $t('button_preview') }}
           </ElButton>
@@ -141,11 +141,11 @@
           >
             {{ $t('modules_unpublish_api') }}
           </ElButton>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'API_publish'"></ElDivider>
           <ElButton v-readonlybtn="'API_edition'" size="mini" type="text" @click="edit(scope.row)">
             {{ $t('modules_edit') }}
           </ElButton>
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'API_edition'"></ElDivider>
           <!-- <ElButton v-readonlybtn="'API_export'" size="mini" type="text" @click="handleDownload(scope.row)">
             {{ $t('modules_export') }}
           </ElButton>
@@ -154,11 +154,11 @@
             v-readonlybtn="'API_delete'"
             size="mini"
             type="text"
-            :disabled="$disabledByPermission('API_delete_all_data', scope.row.userId)"
+            :disabled="$disabledByPermission('API_delete_all_data', scope.row.userId) || scope.row.status !== 'pending'"
             @click="remove(scope.row)"
             >{{ $t('button_delete') }}</ElButton
           >
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'API_delete'"></ElDivider>
           <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
             <ElLink type="primary" class="rotate-90">
               <i class="el-icon-more"></i>

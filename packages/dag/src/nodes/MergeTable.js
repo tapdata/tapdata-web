@@ -1,19 +1,13 @@
 import { NodeType } from './extends/NodeType'
 
 export class MergeTable extends NodeType {
-  constructor(node) {
-    super(node)
-
-    if (node.attr) {
-      const attr = Object.assign(this.attr, node.attr)
-      if (attr.formSchema) this.formSchema = attr.formSchema
-      if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
-    }
+  constructor() {
+    super()
   }
 
-  attr = {
-    maxOutputs: 1 // 最大输出个数
-  }
+  type = 'merge_table_processor'
+
+  maxOutputs = 1 // 最大输出个数
 
   group = 'processor'
 

@@ -1,10 +1,5 @@
 export class NodeType {
-  constructor(node) {
-    this.icon = node.icon
-    this.name = node.name
-    this.tip = node.name
-  }
-
+  constructor() {}
   /**
    * 获取额外添加到节点上的属性
    */
@@ -28,5 +23,10 @@ export class NodeType {
    */
   allowSource() {
     return true
+  }
+
+  selector(node) {
+    if (!this.type) throw new Error('缺少必要的type属性！')
+    return node.type === this.type
   }
 }

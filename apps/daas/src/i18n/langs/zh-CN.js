@@ -21,6 +21,22 @@ export default {
   common_placeholder_input: '请输入',
   common_placeholder_search_input: '请输入搜索内容...',
 
+  status_running: '运行中',
+  status_paused: '待启动',
+  status_draft: '待启动',
+  status_ready: '待启动',
+  status_edit: '编辑中',
+  status_error: '错误',
+  status_wait_run: '启动中',
+  status_scheduled: '启动中',
+  status_scheduling: '启动中',
+  status_complete: '完成',
+  status_stop: '已停止',
+  status_stopping: '停止中',
+  status_finished: '已完成',
+  status_force_stopping: '强制停止中',
+  status_schedule_failed: '错误',
+
   // 通用按钮
   button_help: '帮助',
   button_edit: '编辑',
@@ -93,6 +109,11 @@ export default {
   message_request_error: '请求数据失败',
   message_no_permission: '登录已过期，请重新登录',
   message_loading: '正在加载',
+  message_401: '登录过期，请重新登录',
+  message_404: '请求的资源不存在',
+  message_5xx: '服务器异常',
+  message_network_unconnected: '网络未连接',
+  message_request_timeout: '请求超时',
 
   // 表格
   column_operation: '操作',
@@ -844,6 +865,10 @@ export default {
   dag_dialog_field_mapping_selected: '已选中',
   dag_dialog_field_mapping_search_field: '搜索字段',
   dag_dialog_field_mapping_source_field: '源表字段名',
+  dag_dialog_field_mapping_field: '字段名',
+  dag_dialog_field_mapping_type: '字段类型',
+  dag_dialog_field_mapping_precision: '字段长度',
+  dag_dialog_field_mapping_scale: '字段精度',
   dag_dialog_field_mapping_source_type: '源表类型',
   dag_dialog_field_mapping_source_precision: '源表长度',
   dag_dialog_field_mapping_source_scale: '源表精度',
@@ -954,6 +979,10 @@ export default {
   task_preview_status_schedule_failed: '调度失败',
   task_preview_status_ready: '待启动',
 
+  task_status_running: '已运行',
+  task_status_not_running: '未运行',
+  task_status_error: '错误',
+
   task_monitor_progress: '任务进度',
   task_monitor_full_sync: '全量同步概览',
   task_monitor_full_completion_time: '预计全量完成还需时间',
@@ -974,6 +1003,9 @@ export default {
   task_monitor_unit_second: '单位：/秒',
   task_monitor_not_start: '未开始',
   task_monitor_founder: '创建人',
+  task_monitor_change_time: '修改时间',
+  task_monitor_sync_type: '同步类型',
+  task_monitor_incremental_lag: '增量滞后',
   task_monitor_start: '启动',
   task_monitor_stop: '停止',
   task_monitor_reset: '重置',
@@ -1010,6 +1042,11 @@ export default {
   task_monitor_sync_task: '同步任务',
 
   task_info_start_time: '开始时间',
+  task_info_initial_sync: '全量',
+  task_info_initial_cdc: '增量',
+  task_info_node: '节点',
+  task_info_cycle: '周期',
+  task_info_frequency: '频率',
   task_info_start: '启动',
   task_info_stopt: '停止',
   task_info_data_screening: '事件统计',
@@ -1085,6 +1122,10 @@ export default {
   task_info_status_waiting: '待运行',
   task_info_status_running: '同步中',
   task_info_status_done: '已完成',
+
+  task_info_subtasks_tip: '在Tapdata中你创建任务里的每个目标节点均会被定义为子任务 您可以在下方查看每个子任务详情',
+  task_info_subtasks_name: '子任务名称',
+  task_info_subtasks_status: '状态',
 
   task_stetting_name: '任务名称',
   task_stetting_desc: '任务描述',
@@ -1989,6 +2030,7 @@ export default {
   milestone_list_status_error: '错误',
   milestone_list_status_waiting: '待执行',
   milestone_list_status_running: '运行中',
+  milestone_list_status_paused: '已暂停',
 
   classification_name_already_exists: '分类名称已存在',
 

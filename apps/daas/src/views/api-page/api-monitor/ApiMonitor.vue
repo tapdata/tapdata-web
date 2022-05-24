@@ -503,14 +503,14 @@ export default {
   .api-monitor-list__min__height {
     min-height: 300px;
   }
-  ::v-deep {
-    .el-table__header th {
-      font-weight: bold;
-    }
-    .el-table--scrollable-y .el-table__body-wrapper {
-      overflow: hidden;
-    }
-  }
+  // ::v-deep {
+  //   .el-table__header th {
+  //     font-weight: 500;
+  //   }
+  //   .el-table--scrollable-y .el-table__body-wrapper {
+  //     overflow: hidden;
+  //   }
+  // }
 
   .api-monitor-main {
     width: 100%;

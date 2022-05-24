@@ -9,7 +9,16 @@ const requireAllNode = requireContext => {
   }, {})
 }
 
+const requireAllIns = requireContext => {
+  return requireContext.keys().map(name => {
+    let Module = requireContext(name)
+    return new Module[Object.keys(Module)[0]]()
+  }, {})
+}
+
 export const ctorTypes = requireAllNode(nodeContext)
+
+export const allResourceIns = requireAllIns(nodeContext)
 
 let _nodeTypes = localStorage['store.nodeTypes']
 

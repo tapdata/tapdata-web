@@ -112,7 +112,14 @@ export const createFieldSchema = (component, decorator = AllSchemas.FormItem) =>
           },
           enum: {
             'x-decorator': 'FormItem',
-            'x-component': DataSourceSetter
+            'x-component': DataSourceSetter,
+            'x-reactions': {
+              fulfill: {
+                state: {
+                  hidden: '{{$form.values["x-component"] !== "Select"}}'
+                }
+              }
+            }
           },
           required: {
             type: 'boolean',
@@ -120,8 +127,8 @@ export const createFieldSchema = (component, decorator = AllSchemas.FormItem) =>
             'x-component': 'Switch'
           }
         }
-      },
-      ...createComponentSchema(component, decorator)
+      }
+      // ...createComponentSchema(component, decorator)
     }
   }
 }

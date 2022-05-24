@@ -124,7 +124,7 @@
         </template>
       </el-table-column>-->
 
-      <el-table-column prop="createTime" :label="$t('column_create_time')" width="210" sortable="custom">
+      <el-table-column prop="createTime" :label="$t('column_create_time')" width="210" sortable="createTime">
         <template #default="{ row }">
           {{ row.createTime ? $moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '' }}
         </template>
@@ -140,7 +140,7 @@
             >
               {{ $t('task_list_run') }}
             </ElLink>
-            <ElDivider direction="vertical"></ElDivider>
+            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_operation'"></ElDivider>
             <ElLink
               v-if="row.status === 'stopping'"
               v-readonlybtn="'SYNC_job_operation'"
@@ -158,7 +158,7 @@
               @click="stop([row.id], row)"
               >{{ $t('task_list_stop') }}</ElLink
             >
-            <ElDivider direction="vertical"></ElDivider>
+            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_operation'"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -167,11 +167,11 @@
             >
               {{ $t('task_list_edit') }}
             </ElLink>
-            <ElDivider direction="vertical"></ElDivider>
+            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_edition'"></ElDivider>
             <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetail(row)">
               {{ $t('task_list_button_monitor') }}
             </ElLink>
-            <ElDivider direction="vertical"></ElDivider>
+            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_edition'"></ElDivider>
             <el-dropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
               <ElLink type="primary" class="rotate-90">
                 <!-- {{ $t('button.more') }} -->
@@ -597,7 +597,7 @@ export default {
     },
     create() {
       this.$router.push({
-        name: 'MigrateNew'
+        name: 'MigrateCreate'
       })
     },
     handleEditor(id) {

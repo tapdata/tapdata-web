@@ -1,0 +1,33 @@
+.table-list-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 100px;
+  max-height: calc(100vh - 120px);
+  overflow: hidden;
+  .el-card__header  {
+    padding: 8px 16px;
+    background: #FAFAFA;
+    color: #333C4A;
+    font-weight: 500;
+  }
+
+  .el-card__body {
+    flex: 1;
+    padding: 8px;
+    position: relative;
+    overflow: auto;
+    .table-list {
+      &.el-loading-parent--relative {
+        position: static !important;
+      }
+      &-item {
+        height: 32px;
+        line-height: 32px;
+        &:hover {
+          background-color: #edf1f9;
+        }
+      }
+    }
+  }
+
+}

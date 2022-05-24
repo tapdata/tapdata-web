@@ -128,6 +128,7 @@ export const FieldAddDel = connect(
                                 v-model={data.field_name}
                                 onChange={() => this.handleRename(node, data)}
                                 onBlur={() => this.closeInput(node.data)}
+                                onKeydown={() => this.handleKeyDown()}
                               />
                             ) : (
                               <span class="text__inner">{data.field_name}</span>
@@ -254,6 +255,11 @@ export const FieldAddDel = connect(
         },
         closeInput(data) {
           this.$set(data, 'showInput', false) //打开loading
+        },
+        handleKeyDown(e) {
+          if (e.keyCode === 13) {
+            this.$set(data, 'showInput', false) //eslint-disable-line
+          }
         },
         handleRename(node, data) {
           let nativeData = this.getNativeData(data.id) //查找初始schema

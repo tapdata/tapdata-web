@@ -1,12 +1,10 @@
-import PublicApi from './PublicApi'
-import axios from 'axios'
-// import axios from 'axios';
-export class TypeMapping extends PublicApi {
+import Http from './http'
+export class TypeMapping extends Http {
   constructor() {
     super('/api/TypeMappings')
   }
 
   dataType(type) {
-    return axios.get(this.url + '/dataType?databaseType=' + type)
+    return this.axios.get(this.url + '/dataType?databaseType=' + type)
   }
 }

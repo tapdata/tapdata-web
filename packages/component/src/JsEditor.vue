@@ -1,52 +1,28 @@
 <template>
-  <div
-    :style="{
-      height: height ? px(height) : '100%',
-      width: width ? px(width) : '100%',
-      padding: '12px 0',
-      overflow: 'hidden'
-    }"
-    class="bg-color-disable"
-  >
-    <VCodeEditor
-      :value="value"
-      :theme="theme"
-      :lang="lang"
-      :width="width"
-      :height="height"
-      :options="_options"
-      @init="init"
-      @input="$emit('input', $event)"
-    ></VCodeEditor>
-    <div v-if="false" class="position-absolute w-100 h-100 flex flex-column">
-      <div class="p-4 bg-color-white">
-        <VButton>返回</VButton>
-      </div>
-      <div class="flex flex-fill">
-        <VCodeEditor
-          :value="value"
-          class="flex-fill"
-          :lang="lang"
-          :theme="theme"
-          :options="_options"
-          @init="init"
-          @input="$emit('input', $event)"
-        ></VCodeEditor>
-      </div>
-    </div>
-  </div>
+  <VCodeEditor
+    :value="value"
+    :theme="theme"
+    :lang="lang"
+    :width="width"
+    :height="height - 24"
+    :options="_options"
+    @init="init"
+    @input="$emit('input', $event)"
+  ></VCodeEditor>
 </template>
 
 <script>
+import VCodeEditor from './base/VCodeEditor.vue'
+import { Function } from '@tap/api'
+
+const functionApi = new Function()
+
 export default {
-  name: 'CodeEditor',
+  name: 'JsEditor',
+  components: { VCodeEditor },
   props: {
     value: String,
-    theme: {
-      type: String,
-      default: 'one_dark'
-      // default: 'katzenmilch'
-    },
+    theme: String,
     lang: {
       type: String,
       default: 'javascript'
@@ -98,14 +74,14 @@ export default {
         jar: this.$t('function_type_option_jar'),
         system: this.$t('function_type_option_system')
       }
-      this.$api('Javascript_functions')
+      functionApi
         .get({
           filter: JSON.stringify({
             size: 0
           })
         })
-        .then(res => {
-          let items = res?.data?.items || []
+        .then(data => {
+          let items = data?.items || []
           items.sort((a, b) => {
             let scoreMap = {
               custom: 0,
@@ -174,8 +150,8 @@ export default {
 </script>
 <style lang="scss">
 .ace_tooltip.ace_doc-tooltip {
-  background: rgba(221, 221, 221, 0.4);
-  color: map-get($fontColor, slight);
+  background: map-get($bgColor, normal);
+  color: map-get($fontColor, normal);
 }
 .code-editor-snippet-tips {
   max-height: 400px;

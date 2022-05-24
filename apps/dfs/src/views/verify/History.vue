@@ -59,7 +59,7 @@
           </template>
         </ElTableColumn>
         <ElTableColumn :label="$t('dataVerification_verifyStatus')" prop="status"></ElTableColumn>
-        <ElTableColumn :label="$t('dataFlow_operate')" width="60px">
+        <ElTableColumn :label="$t('list_operation')" width="90px">
           <template slot-scope="scope">
             <ElLink type="primary" @click="rowClick(scope.row)">{{ $t('button_details') }}</ElLink>
           </template>

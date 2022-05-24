@@ -2,16 +2,11 @@
   <div class="connection-from" v-loading="loadingFrom">
     <div class="connection-from-body">
       <main class="connection-from-main">
-        <div class="connection-from-title" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
+        <div class="connection-from-title">
           {{
             $route.params.id ? this.$t('connection_form_edit_connection') : this.$t('connection_form_creat_connection')
           }}
         </div>
-        <!-- <header class="header" v-if="!$getSettingByKey('DFS_TCM_PLATFORM')">
-          {{ $route.params.id ? $t('connection_form_edit_connection') : $t('connection_form_creat_connection') }}
-        </header> -->
-        <!-- <div class="databaseFrom-body">
-          <main class="databaseFrom-main"> -->
         <div class="connection-from-label" v-if="$route.params.id">
           <label class="label">{{ $t('connection_form_data_source') }}: </label>
           <div class="content-box">
@@ -147,12 +142,12 @@
               <!-- custom_connection -->
               <div slot="cdcScrip">
                 <div>function requestData(ctx) {</div>
-                <CodeEditor v-model="model.custom_cdc_script" :width="width" :height="height"></CodeEditor>
+                <JsEditor v-model="model.custom_cdc_script" :width="width" :height="height"></JsEditor>
                 <div>}</div>
               </div>
               <div slot="historyScrip">
                 <div>function requestData() {</div>
-                <CodeEditor v-model="model.custom_initial_script" :width="width" :height="height"></CodeEditor>
+                <JsEditor v-model="model.custom_initial_script" :width="width" :height="height"></JsEditor>
                 <div>}</div>
               </div>
               <div slot="targetScrip">
@@ -174,17 +169,17 @@
                 </div>
                 <div>}]</div>
                 <div style="padding-bottom: 5px; margin-top: 10px; font-weight: bold">function onData(data) {</div>
-                <CodeEditor v-model="model.custom_ondata_script" :width="width" :height="height"></CodeEditor>
+                <JsEditor v-model="model.custom_ondata_script" :width="width" :height="height"></JsEditor>
                 <div>}</div>
               </div>
               <div slot="custom_before_script">
                 <div>function before() {</div>
-                <CodeEditor v-model="model.custom_before_script" :width="width" :height="height"></CodeEditor>
+                <JsEditor v-model="model.custom_before_script" :width="width" :height="height"></JsEditor>
                 <div>}</div>
               </div>
               <div slot="custom_after_script">
                 <div>function after() {</div>
-                <CodeEditor v-model="model.custom_after_script" :width="width" :height="height"></CodeEditor>
+                <JsEditor v-model="model.custom_after_script" :width="width" :height="height"></JsEditor>
                 <div>}</div>
               </div>
             </form-builder>
@@ -574,7 +569,7 @@
 import factory from '@/api/factory'
 import formConfig from './config'
 import GitBook from './GitBook'
-import CodeEditor from '@/components/CodeEditor'
+import { JsEditor } from '@tap/component'
 import Test from './Test'
 import { TYPEMAPCONFIG, defaultModel, getConnectionIcon } from './util'
 import DatabaseTypeDialog from './DatabaseTypeDialog'
@@ -586,7 +581,7 @@ const connectionsModel = factory('connections')
 let defaultConfig = []
 export default {
   name: 'DatabaseForm',
-  components: { GitBook, Test, DatabaseTypeDialog, CodeEditor, VIcon, SchemaToForm },
+  components: { GitBook, Test, DatabaseTypeDialog, JsEditor, VIcon, SchemaToForm },
   data() {
     let validateExcelHeader = (rule, value, callback) => {
       let start = this.model.excel_header_start
@@ -1106,7 +1101,6 @@ export default {
       let type = this.model.database_type
       type = TYPEMAPCONFIG[type] || type //特殊数据源名称转换
       let func = formConfig[type]
-      console.log('getFormConfig', func)
       if (func) {
         let config = func(this)
         let items = defaultConfig.concat(config.items)

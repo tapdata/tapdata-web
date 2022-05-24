@@ -4,7 +4,7 @@
  * @date 2/27/20
  * @description
  */
-import axios from 'axios'
+import axios from '@/plugins/axios'
 import PublicAPI from './publicApi'
 
 export default class ApplicationsAPI extends PublicAPI {

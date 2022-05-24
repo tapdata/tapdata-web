@@ -25,7 +25,7 @@
         </div>
       </template>
     </ElTableColumn>
-    <ElTableColumn :label="$t('dataVerification_sourceRows')">
+    <ElTableColumn :label="$t('dataVerification_sourceRows')" width="140px">
       <template slot-scope="scope">
         <span>{{ (firstCheckId ? scope.row.firstSourceTotal : scope.row.source_total) || 0 }}</span>
       </template>
@@ -71,7 +71,7 @@
         </div>
       </template>
     </ElTableColumn>
-    <ElTableColumn v-if="$route.name !== 'VerifyResult'" prop="status" :label="$t('verify_operation')">
+    <ElTableColumn v-if="$route.name !== 'VerifyResult'" prop="status" :label="$t('list_operation')" width="90px">
       <template slot-scope="scope">
         <ElButton type="text" :disabled="scope.row.result === 'passed'" @click.prevent.stop="verifyAgain(scope.row)">{{
           $t('verify_operation_verify_again')

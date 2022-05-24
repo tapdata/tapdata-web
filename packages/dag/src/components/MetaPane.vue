@@ -8,7 +8,7 @@
       :getDataFlow="getDataFlow"
       @returnPreFixSuffix="loadFields"
     ></FieldMapping>
-    <div class="total">共有{{ tableData.length }}个字段</div>
+    <div class="total mb-2 mt-4">共有 {{ tableData.length }} 个字段</div>
     <ElTable ref="table" v-loading="showLoading" :data="tableData" stripe style="width: 100%" height="100%">
       <ElTableColumn width="56" type="index" :label="$t('meta_table_index')"> </ElTableColumn>
       <ElTableColumn prop="field_name" :label="$t('meta_table_field_name')">

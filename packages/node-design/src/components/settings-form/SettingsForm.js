@@ -1,6 +1,6 @@
 import { createForm } from '@formily/core'
 import { Form, SchemaField } from '@tap/form'
-import { observe } from '@formily/reactive'
+// import { observe } from '@formily/reactive'
 import { NodePathWidget } from '../widgets'
 import { SettingsFormContext, IconContext } from '../../context'
 import { usePrefix, useSelected, useCurrentNode, useWorkbench } from '../../hooks'
@@ -50,11 +50,11 @@ export const SettingsForm = defineComponent({
     }
     requestIdleTask()
 
-    observe(nodeRef.value, () => {
-      nextTick(() => {
-        requestIdleTask()
-      })
-    })
+    // observe(nodeRef.value, () => {
+    //   nextTick(() => {
+    //     requestIdleTask()
+    //   })
+    // })
 
     watch(selectedRef, () => {
       nextTick(() => {

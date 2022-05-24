@@ -230,10 +230,10 @@
         align-items: center;
         height: 50px;
         line-height: 50px;
-        color: map-get($color, light);
+        color: map-get($fontColor, normal);
         background: #f7f8fa;
         .submenu-item {
-          color: map-get($color, light);
+          color: map-get($fontColor, light);
           padding-left: 12px;
         }
         &.is-active,

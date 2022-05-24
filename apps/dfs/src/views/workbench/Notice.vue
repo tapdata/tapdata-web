@@ -822,6 +822,126 @@
       </div>
     </div>
   </div>
+  <div class="notice g-panel-container ws-main-container fs-8" v-else-if="$route.query.id == 16">
+    <div class="notice-header p-6">
+      <div class="notice-header__title fw-bolder fs-7">
+        <span>{{ $t('workbench_Notice_tAPDA1213') }}</span>
+      </div>
+      <div class="notice-header__time mt-5 ml-1 flex align-items-center">
+        <img src="../../assets/image/logoIconColour.png" alt="" />
+        <span class="ml-5 mr-4">Cloud@Tapdata</span>
+        <span>2022-05-12 18:00</span>
+      </div>
+    </div>
+    <div class="notice-body mt-6 fs-6">
+      <div class="notice-body__content p-6 fs-7" style="width: 800px">
+        <div class="mb-4">{{ $t('workbench_Notice_xuQiuChiXuGeng12') }}</div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_zuiXinFaBuDe12') }}
+        </div>
+        <div class="mb-2 p-4" style="background-color: rgb(241, 248, 255)">
+          <div class="mb-4">{{ $t('workbench_Notice_gengXinSuLan') }}</div>
+          <div class="ml-2 mb-4">
+            <span>1.</span
+            ><span class="fw-bold font-color-main pl-1">{{ $t('workbench_Notice_shuJuLianJieShang12') }}</span
+            >{{ $t('workbench_Notice_chiXuQianShouYun') }}
+          </div>
+          <div class="ml-2 mb-4">
+            <span>2.</span>
+            <span class="fw-bold font-color-main pl-1">{{ $t('workbench_Notice_xinZengCuoWuRi2') }}</span
+            >{{ $t('workbench_Notice_renWuYunXingChu') }}
+          </div>
+          <div class="ml-2 mb-4">
+            <span>3.</span>
+            <span class="fw-bold font-color-main pl-1">{{ $t('workbench_Notice_aGENT2') }}</span
+            >{{ $t('workbench_Notice_kaiShiZhiChiZi') }}
+          </div>
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">01</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_shuJuLianJieZai1') }}</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p class="mb-2">{{ $t('workbench_Notice_pOLAR') }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_zuoWeiGuoNeiShou12') }}
+        </div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_jiBanBenShouCi1') }}
+          <span class="fw-bold font-color-main"
+            ><span class="fs-6" style="font-family: DIN; color: rgb(0, 122, 181)">34</span></span
+          >{{ $t('workbench_Notice_fangDaJiuKanT1') }}
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.5/01.png" alt="" />
+        </div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">02</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_xinZengCuoWuRi') }}</strong>
+              <div>
+                <strong>{{ $t('workbench_Notice_kuaiSuChaXunRu') }}</strong>
+              </div>
+            </div>
+            <div class="number-title-box__desc">
+              <p>{{ $t('workbench_Notice_tanChuangYuLanYi') }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">{{ $t('workbench_Notice_renWuBaoCuoXiang') }}</div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_congZheYiBanBen') }}
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.5/02.png" alt="" />
+        </div>
+        <div class="font-color-disable text-center mb-2">{{ $t('workbench_Notice_renWuBaoCuoDian') }}</div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.5/03.png" alt="" />
+        </div>
+        <div class="font-color-disable text-center mb-2">{{ $t('workbench_Notice_renWuBaoCuoDian') }}</div>
+        <div class="number-title-box mt-8">
+          <div class="number-title-box__number">03</div>
+          <div class="number-title-box__content">
+            <div class="number-title-box__title">
+              <strong>{{ $t('workbench_Notice_aGENT1') }}</strong>
+            </div>
+            <div class="number-title-box__desc">
+              <p>{{ $t('workbench_Notice_zhiChiJVM') }}</p>
+              <p>{{ $t('workbench_Notice_qiDongGengFangXin') }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_zhenDuiLiShiBan12') }}
+        </div>
+        <div class="mb-4 line-height-2">
+          {{ $t('workbench_Notice_xianJiangJVM') }}
+        </div>
+        <div>
+          <img src="../../../public/images/notice/v2.1.5/04.png" alt="" />
+        </div>
+        <div class="font-color-disable text-center mb-4">{{ $t('workbench_Notice_peiZhiWenJianKai') }}</div>
+        <div class="mb-4 line-height-2 font-color-disable">
+          {{ $t('workbench_Notice_beiZhuMoRenQi') }}
+        </div>
+        <div class="line-height-2">
+          {{ $t('workbench_Notice_zhongShiChengZhangLu') }}
+          <img
+            src="../../../public/images/notice/love.png"
+            alt=""
+            style="width: 20px; height: 20px; vertical-align: text-bottom"
+          />{{ $t('workbench_Notice_') }}
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>

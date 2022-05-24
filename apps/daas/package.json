@@ -14,14 +14,13 @@
   },
   "dependencies": {
     "@tap/api": "workspace:^1.0.0",
+    "@tap/component": "workspace:^1.0.0",
     "@tap/dag": "workspace:^1.0.0",
+    "@tap/field-mapping": "workspace:^1.0.0",
     "@tap/node-design": "workspace:^1.0.0",
     "@tap/shared": "workspace:^1.0.0",
-    "@tap/field-mapping": "workspace:^1.0.0",
-    "@tap/dag": "workspace:^1.0.0",
     "@tap/form": "workspace:^1.0.0",
     "@tap/node-design": "workspace:^1.0.0",
-    "@tap/shared": "workspace:^1.0.0",
     "@formily/core": "^2.0.9",
     "@formily/element": "^2.0.9",
     "ace-builds": "^1.4.13",
@@ -56,6 +55,7 @@
     "vue-clipboard2": "^0.3.1",
     "vue-cookie": "^1.1.4",
     "vue-cookies": "^1.7.0",
+    "vue-demi": "^0.12.1",
     "vue-echarts": "^6.0.0",
     "vue-i18n": "^8.15.3",
     "vue-json-viewer": "^2.2.15",
@@ -65,7 +65,6 @@
     "ws": "^8.4.2"
   },
   "devDependencies": {
-    "@tap/form": "workspace:^1.0.0",
     "@formily/core": "^2.0.9",
     "@formily/reactive": "^2.0.9",
     "@vue/cli-plugin-babel": "~4.5.0",

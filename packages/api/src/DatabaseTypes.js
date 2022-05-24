@@ -1,11 +1,10 @@
-import PublicAPI from './PublicApi'
-import axios from './axios'
+import Http from './http'
 
-export class DatabaseTypes extends PublicAPI {
+export class DatabaseTypes extends Http {
   constructor() {
     super('/api/DatabaseTypes')
   }
   pdkHash(pdkHash) {
-    return axios.get(this.url + '/pdkHash/' + pdkHash)
+    return axios.get(this.url + '/pdkHash/' + pdkHash).then(this.useData)
   }
 }

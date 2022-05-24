@@ -136,6 +136,7 @@
           v-show="options.length > 0 && !showLoading"
         >
           <div v-infinite-scroll="loadMore" :infinite-scroll-disabled="scrollDisabled">
+            <ElOption :value="query" created v-if="showNewOption" />
             <template v-if="itemType === 'string'">
               <ElOption v-for="item in items" :key="item" :value="item" />
             </template>
@@ -148,7 +149,6 @@
                 :index="i"
               />
             </template>
-            <ElOption :value="query" created v-if="showNewOption"> </ElOption>
             <div v-if="loadingMore" class="el-select-dropdown__empty">
               <span class="el-select-dropdown__loading-icon mr-2">
                 <svg

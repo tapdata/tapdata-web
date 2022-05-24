@@ -6,8 +6,8 @@
         <div slot="title" class="cursor-pointer" @click="$emit('activeStep', index)">
           {{ item.label }}
         </div>
-        <div v-if="item.time" slot="description" class="cursor-pointer" @click="$emit('activeStep', index)">
-          {{ item.time }}
+        <div v-if="item.desc" slot="description" class="cursor-pointer" @click="$emit('activeStep', index)">
+          {{ item.desc }}
         </div>
       </ElStep>
     </template>
@@ -30,7 +30,6 @@ export default {
         //   {
         //     label: '步骤1',
         //     desc: '这是一段很长很长很长的描述性文字',
-        //     time:'
         //    }
         // ]
       }
@@ -100,13 +99,12 @@ export default {
     }
     .el-step__title {
       font-size: 14px;
-      font-weight: 500;
-      color: #e9e9e9;
-      &.is-process {
-        color: map-get($fontColor, dark);
-      }
+      font-weight: 400;
+      color: map-get($fontColor, slight);
+      &.is-process,
       &.is-success {
         color: map-get($fontColor, dark);
+        font-weight: 500;
       }
     }
   }
@@ -139,7 +137,7 @@ export default {
         color: map-get($fontColor, slight);
       }
       &.is-finish {
-        color: map-get($fontColor, dark);
+        color: map-get($fontColor, normal);
       }
     }
     .el-step__description {
@@ -176,6 +174,11 @@ export default {
       .el-step__line {
         background-color: map-get($color, disable);
       }
+      .el-step__line-inner {
+        transition-delay: -150ms !important;
+        border-width: 0px !important;
+        width: 0% !important;
+      }
     }
     .el-step__title,
     .el-step__description,
@@ -186,7 +189,7 @@ export default {
     .is-active {
       .el-step__title,
       .el-step__description {
-        color: map-get($color, primary);
+        color: map-get($fontColor, normal);
       }
       .is-finish {
         .circle-icon {

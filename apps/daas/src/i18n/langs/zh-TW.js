@@ -22,6 +22,22 @@ export default {
   common_placeholder_input: '請輸入',
   common_placeholder_search_input: '請輸入搜索內容...',
 
+  status_running: '運行中',
+  status_paused: '待啟動',
+  status_draft: '待啟動',
+  status_ready: '待啟動',
+  status_edit: '編輯中',
+  status_error: '錯誤',
+  status_wait_run: '啟動中',
+  status_scheduled: '啟動中',
+  status_scheduling: '啟動中',
+  status_complete: '完成',
+  status_stop: '已停止',
+  status_stopping: '停止中',
+  status_finished: '已完成',
+  status_force_stopping: '強制停止中',
+  status_schedule_failed: '錯誤',
+
   // 通用按钮
   button_help: '幫助',
   button_edit: '編輯',
@@ -94,6 +110,11 @@ export default {
   message_request_error: '請求數據失敗',
   message_no_permission: '登錄已過期，請重新登錄',
   message_loading: '正在加載',
+  message_401: '登錄過期，請重新登錄',
+  message_404: '請求的資源不存在',
+  message_5xx: '伺服器異常',
+  message_network_unconnected: '網絡未連接',
+  message_request_timeout: '請求超時',
 
   // 表格
   column_operation: '操作',
@@ -846,6 +867,10 @@ export default {
   dag_dialog_field_mapping_selected: '已選中',
   dag_dialog_field_mapping_search_field: '搜索字段',
   dag_dialog_field_mapping_source_field: '源表字段名',
+  dag_dialog_field_mapping_field: '字段名',
+  dag_dialog_field_mapping_type: '字段類型',
+  dag_dialog_field_mapping_precision: '字段長度',
+  dag_dialog_field_mapping_scale: '字段精度',
   dag_dialog_field_mapping_source_type: '源表類型',
   dag_dialog_field_mapping_source_precision: '源表長度',
   dag_dialog_field_mapping_source_scale: '源表精度',
@@ -948,6 +973,10 @@ export default {
   task_preview_status_schedule_failed: '調度失敗',
   task_preview_status_ready: '待啟動',
 
+  task_status_running: '已運行',
+  task_status_not_running: '未運行',
+  task_status_error: '錯誤',
+
   task_monitor_progress: '任務進度',
   task_monitor_full_sync: '全量同步概覽',
   task_monitor_full_completion_time: '預計全量完成還需時間',
@@ -968,6 +997,9 @@ export default {
   task_monitor_unit_second: '單位：/秒',
   task_monitor_not_start: '未開始',
   task_monitor_founder: '創建人',
+  task_monitor_change_time: '修改時間',
+  task_monitor_sync_type: '同步類型',
+  task_monitor_incremental_lag: '增量滯後',
   task_monitor_start: '啟動',
   task_monitor_stop: '停止',
   task_monitor_reset: '重置',
@@ -1004,6 +1036,11 @@ export default {
   task_monitor_sync_task: '同步任務',
 
   task_info_start_time: '開始時間',
+  task_info_initial_sync: '全量',
+  task_info_initial_cdc: '增量',
+  task_info_node: '節點',
+  task_info_cycle: '週期',
+  task_info_frequency: '頻率',
   task_info_start: '啟動',
   task_info_stopt: '停止',
   task_info_data_screening: '事件統計',
@@ -1079,6 +1116,10 @@ export default {
   task_info_status_waiting: '待運行',
   task_info_status_running: '同步中',
   task_info_status_done: '已完成',
+
+  task_info_subtasks_tip: '在Tapdata中你創建任務裡的每個目標節點均會被定義為子任務 您可以在下方查看每個子任務詳情',
+  task_info_subtasks_name: '子任務名稱',
+  task_info_subtasks_status: '狀態',
 
   task_stetting_name: '任務名稱',
   task_stetting_desc: '任務描述',
@@ -1972,9 +2013,10 @@ export default {
   milestone_label_write_cdc_event: '【數據傳輸】目標處理器進入增量寫入模式',
 
   milestone_list_status_finish: '已完成',
-  milestone_list_status_error: '错误',
+  milestone_list_status_error: '錯誤',
   milestone_list_status_waiting: '待執行',
-  milestone_list_status_running: '运行中',
+  milestone_list_status_running: '運行中',
+  milestone_list_status_paused: '已暫停',
 
   classification_name_already_exists: '分類名稱已存在',
 

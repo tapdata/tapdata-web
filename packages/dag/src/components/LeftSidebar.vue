@@ -61,12 +61,12 @@
                     onStop
                   }"
                   :key="db.id"
-                  class="db-item grabbable flex align-center px-4 user-select-none rounded-2"
+                  class="db-item grabbable flex align-center px-2 user-select-none rounded-2"
                   :class="{ active: activeConnection.id === db.id }"
                   @click="handleSelectDB(db)"
                 >
-                  <ElImage class="flex-shrink-0" :src="getIcon(db)"></ElImage>
-                  <div class="db-item-txt text-truncate ml-4">{{ db.name }}</div>
+                  <NodeIcon class="flex-shrink-0 mr-2" :node="db" />
+                  <div class="db-item-txt text-truncate">{{ db.name }}</div>
                 </div>
                 <EmptyItem v-if="!dbList.length"></EmptyItem>
                 <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
@@ -133,13 +133,13 @@
                     item: tb,
                     container: '#dfEditorContent',
                     getDragDom,
-                    onStart,
+                    onStart: onTBStart,
                     onMove,
                     onDrop,
                     onStop
                   }"
                   :key="tb.id"
-                  class="tb-item grabbable flex align-center px-4 user-select-none rounded-2"
+                  class="tb-item grabbable flex align-center px-2 user-select-none rounded-2"
                 >
                   <OverflowTooltip :text="tb.name" placement="right" :open-delay="400"></OverflowTooltip>
                 </div>
@@ -164,7 +164,26 @@
             </span>
           </div>
         </template>
-        <ElScrollbar ref="processorList" tag="div" wrap-class="" :wrap-style="scrollbarWrapStyle">
+        <ElScrollbar ref="processorList" tag="div" wrap-class="px-3" :wrap-style="scrollbarWrapStyle">
+          <div
+            v-for="(n, ni) in processorNodeTypes"
+            :key="ni"
+            v-mouse-drag="{
+              item: n,
+              container: '#dfEditorContent',
+              getDragDom,
+              onStart: onProcessorStart,
+              onMove,
+              onDrop,
+              onStop
+            }"
+            class="node-item grabbable flex align-center px-2 user-select-none rounded-2"
+          >
+            <NodeIcon class="flex-shrink-0 mr-2" :node="n" />
+            <OverflowTooltip :text="n.name" popper-class="df-node-text-tooltip" placement="top" :open-delay="400" />
+          </div>
+        </ElScrollbar>
+        <!--<ElScrollbar ref="processorList" tag="div" wrap-class="" :wrap-style="scrollbarWrapStyle">
           <ElRow class="node-list flex-wrap px-2" :gutter="0" type="flex">
             <ElCol :span="8" v-for="(n, ni) in processorNodeTypes" :key="ni" class="p-1">
               <div
@@ -172,7 +191,7 @@
                   item: n,
                   container: '#dfEditorContent',
                   getDragDom,
-                  onStart,
+                  onStart: onProcessorStart,
                   onMove,
                   onDrop,
                   onStop
@@ -192,7 +211,7 @@
               </div>
             </ElCol>
           </ElRow>
-        </ElScrollbar>
+        </ElScrollbar>-->
       </ElCollapseItem>
     </ElCollapse>
 
@@ -201,8 +220,8 @@
       v-if="dragStarting"
       id="dragNode"
       class="drag-node"
-      :node="dragNodeType"
-      :class="`node--${dragNodeType.group}`"
+      :node="dragNode"
+      :class="`node--${dragNode.__Ctor.group}`"
     ></BaseNode>
     <!-- E 节点拖拽元素 -->
 
@@ -267,12 +286,13 @@ import OverflowTooltip from 'web-core/components/overflow-tooltip/OverflowToolti
 import EmptyItem from 'web-core/components/EmptyItem'
 import scrollbarWidth from 'element-ui/lib/utils/scrollbar-width'
 import CreateTable from './CreateTable'
-import util from '../mixins/util'
+import NodeIcon from './NodeIcon'
 
 export default {
   name: 'LeftSidebar',
 
   components: {
+    NodeIcon,
     CreateTable,
     EmptyItem,
     OverflowTooltip,
@@ -282,8 +302,6 @@ export default {
     ConnectionTypeSelector,
     ElScrollbar: Select.components.ElScrollbar
   },
-
-  mixins: [util],
 
   data() {
     return {
@@ -311,7 +329,7 @@ export default {
       },
       dragStarting: false,
       dragMoving: false,
-      dragNodeType: null,
+      dragNode: null,
       connectionDialog: false,
       connectionFormDialog: false,
       databaseType: '',
@@ -417,7 +435,6 @@ export default {
     let comingAllowDataType = window.getSettingByKey('COMING_ONLINE_CONNECTION_TYPE') || []
     this.comingAllowDatabase = comingAllowDataType.filter(type => this.database.includes(type)) || []
     this.database = allowDataType.filter(type => this.database.includes(type)) || []
-    this.database.push('vika')
 
     this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || []
     this.getDatabaseType()
@@ -537,23 +554,10 @@ export default {
 
       this.dbTotal = data.total
 
-      const dbList = data.items.map(item => ({
-        id: item.id,
-        name: item.name,
-        type: 'table',
-        group: 'data',
-        constructor: 'Table',
-        databaseType: item.database_type,
-        attr: {
-          tableName: '',
-          databaseType: item.database_type,
-          connectionId: item.id,
-          connectionType: item.connection_type,
-          accessNodeProcessId: item.accessNodeProcessId,
-          pdkType: item.pdkType,
-          pdkHash: item.pdkHash
-        }
-      }))
+      const dbList = data.items.map(item => {
+        item.databaseType = item.database_type
+        return item
+      })
 
       if (loadMore) {
         // 防止重复push
@@ -613,7 +617,6 @@ export default {
      */
     async loadDatabaseTable(loadMore) {
       const connection = this.activeConnection
-      const { pdkType, pdkHash } = connection?.attr || {}
       this.cancelSource?.cancel()
       this.cancelSource = CancelToken.source()
 
@@ -638,22 +641,7 @@ export default {
 
       const tables = data.items.map(tb => ({
         id: tb.id,
-        name: tb.original_name,
-        type: 'table',
-        group: 'data',
-        constructor: 'Table',
-        databaseType: connection.databaseType,
-        attr: {
-          tableName: tb.original_name,
-          databaseType: connection.databaseType,
-          connectionId: connection.id,
-          connectionType: connection.attr.connectionType,
-          accessNodeProcessId: connection.attr.accessNodeProcessId,
-          pdkType,
-          pdkHash
-          // accessNodeProcessId: '61935c9684103d36ce972daa-1fkjq3ar4'
-          // accessNodeProcessId: 'f9e0e041-a72f-4e3f-87ff-0354eed0af92'
-        }
+        name: tb.original_name
       }))
 
       this.tbTotal = data.total
@@ -701,8 +689,51 @@ export default {
       return document.getElementById('dragNode')
     },
 
+    initStart(node) {
+      const getResourceIns = this.$store.getters['dataflow/getResourceIns']
+      const ins = getResourceIns(node)
+      Object.defineProperty(node, '__Ctor', {
+        value: ins,
+        enumerable: false
+      })
+      this.dragNode = node
+      this.dragStarting = true
+      this.dragMoving = false
+    },
+
     onStart(item) {
-      this.dragNodeType = item
+      const node = {
+        name: item.name,
+        type: 'table',
+        databaseType: item.database_type,
+        connectionId: item.id,
+        tableName: '',
+        attrs: {
+          connectionName: item.name,
+          connectionType: item.connection_type,
+          accessNodeProcessId: item.accessNodeProcessId
+        }
+      }
+      this.initStart(node)
+    },
+
+    onTBStart(item) {
+      const node = this.getNodePropsByTable(item.name)
+      this.initStart(node)
+    },
+
+    onProcessorStart(item) {
+      const node = item
+      const getResourceIns = this.$store.getters['dataflow/getResourceIns']
+      if (!item.__Ctor) {
+        const ins = getResourceIns(node)
+        // 设置属性__Ctor不可枚举
+        Object.defineProperty(node, '__Ctor', {
+          value: ins,
+          enumerable: false
+        })
+      }
+      this.dragNode = node
       this.dragStarting = true
       this.dragMoving = false
     },
@@ -712,8 +743,8 @@ export default {
       this.$emit('move-node', ...arguments)
     },
 
-    onDrop() {
-      this.$emit('drop-node', ...arguments)
+    onDrop(item, position, rect) {
+      this.$emit('drop-node', this.dragNode, position, rect)
     },
 
     onStop() {
@@ -775,23 +806,7 @@ export default {
     },
 
     handleSaveTable(name) {
-      const connection = this.activeConnection
-      const { pdkType, pdkHash } = connection?.attr || {}
-
-      this.$emit('add-table-as-node', {
-        name,
-        type: 'table',
-        group: 'data',
-        constructor: 'Table',
-        databaseType: connection.databaseType,
-        attr: {
-          tableName: name,
-          databaseType: connection.databaseType,
-          connectionId: connection.id,
-          pdkType,
-          pdkHash
-        }
-      })
+      this.$emit('add-table-as-node', this.getNodePropsByTable(name))
     },
 
     updateDBScrollbar() {
@@ -804,6 +819,23 @@ export default {
 
     updateProcessorScrollbar() {
       setTimeout(this.$refs.processorList.update, 350)
+    },
+
+    getNodePropsByTable(tableName) {
+      const connection = this.activeConnection
+      return {
+        name: tableName,
+        type: 'table',
+        databaseType: connection.database_type,
+        connectionId: connection.id,
+        tableName,
+        attrs: {
+          connectionType: connection.connection_type,
+          accessNodeProcessId: connection.accessNodeProcessId,
+          pdkType: connection.pdkType,
+          pdkHash: connection.pdkHash
+        }
+      }
     }
   }
 }
@@ -872,7 +904,8 @@ $hoverBg: #eef3ff;
     }
 
     .db-item,
-    .tb-item {
+    .tb-item,
+    .node-item {
       margin-bottom: 4px;
       height: $itemH;
       font-size: 12px;

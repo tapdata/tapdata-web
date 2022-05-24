@@ -15,7 +15,7 @@
         @sort-change="sortChange"
       >
         <template slot="operationType" slot-scope="scope">
-          <div>{{ getOperationTypeLabel(scope.row) }}</div>
+          <div class="text-break">{{ getOperationTypeLabel(scope.row) }}</div>
         </template>
         <template slot="desc" slot-scope="scope">
           <span
@@ -238,7 +238,7 @@ export default {
       ],
       columns: [
         {
-          label: i18n.t('operation_log_List_yongHuMing'),
+          label: i18n.t('operation_log_user_name'),
           prop: 'username',
           minWidth: 160
         },

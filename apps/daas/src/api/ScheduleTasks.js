@@ -4,7 +4,7 @@
  * @description
  */
 import PublicAPI from './publicApi'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 
 export default class TaskHistoriesAPI extends PublicAPI {
   constructor() {

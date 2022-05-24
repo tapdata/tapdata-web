@@ -209,6 +209,7 @@ export default function (vm) {
       {
         type: 'slot',
         slot: 'accessNodeProcessId',
+        customClass: 'large-item',
         show: false,
         filterable: true,
         dependOn: [

@@ -94,7 +94,7 @@
       <el-table-column
         :label="$t('dataVerification.verifyTime')"
         prop="lastStartTime"
-        sortable="custom"
+        sortable="lastStartTime"
         width="140"
       ></el-table-column>
       <el-table-column :label="$t('dataVerification.operation')" width="250" fixed="right">
@@ -109,7 +109,7 @@
             @click="startTask(scope.row.id)"
             >{{ $t('verify_executeVerifyTip') }}</ElLink
           >
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
           <ElLink type="primary" :disabled="!scope.row.InspectResult" @click="toTableInfo(scope.row.id)">{{
             $t('verify_detailTip')
           }}</ElLink>
@@ -121,7 +121,7 @@
             @click="goEdit(scope.row.id, scope.row.flowId)"
             >{{ $t('verify_configurationTip') }}</ElLink
           >
-          <ElDivider direction="vertical"></ElDivider>
+          <ElDivider direction="vertical" v-readonlybtn="'verify_job_edition'"></ElDivider>
           <ElDropdown v-show="moreAuthority" size="small" @command="handleCommand($event, scope.row)">
             <ElLink type="primary" class="rotate-90">
               <i class="el-icon-more"></i>
@@ -168,7 +168,7 @@ export default {
       },
       filterItems: [],
       loadingImg: window._TAPDATA_OPTIONS_.loadingImg,
-      order: 'createTime DESC',
+      order: 'lastStartTime DESC',
       inspectMethod: {
         row_count: this.$t('dataVerification.rowVerify'),
         field: this.$t('dataVerification.contentVerify'),
@@ -251,7 +251,7 @@ export default {
     },
     //筛选条件
     handleSortTable({ order, prop }) {
-      this.order = `${order ? prop : 'createTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.order = `${order ? prop : 'lastStartTime'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
       this.table.fetch(1)
     },
     getData({ page }) {

@@ -43,10 +43,10 @@
             @click.prevent="select(item, index)"
           >
             <div class="task-form__img" v-if="item.invalid">
-              <img src="@/assets/images/fieldMapping-table-error.png" alt="" />
+              <img :src="fieldMapping_table_error" alt="" />
             </div>
             <div class="task-form__img" v-else>
-              <img src="@/assets/images/fieldMapping-table.png" alt="" />
+              <img :src="fieldMapping_table" alt="" />
             </div>
             <div class="task-form-text-box">
               <div class="source">{{ item.sourceObjectName }}</div>
@@ -135,6 +135,7 @@
             prop="scale"
             width="100"
           ></ElTableColumn>
+          <ElTableColumn :label="$t('meta_table_default')" prop="default_value" width="100"></ElTableColumn>
           <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')" :width="isPdk ? 360 : 260">
             <template slot-scope="scope">
               <div
@@ -418,7 +419,9 @@
 <script>
 import VIcon from 'web-core/components/VIcon'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
-import { delayTrigger } from '@/utils/util'
+import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
+import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
+import { delayTrigger } from 'web-core/util'
 import { modeMapping } from './const'
 
 export default {
@@ -487,6 +490,8 @@ export default {
       currentForm: {},
       sourceTableName: 'tableName',
       rollback,
+      fieldMapping_table,
+      fieldMapping_table_error,
       //批量修改字段
       batchOperation: [
         {
@@ -1423,27 +1428,33 @@ export default {
         }
         .task-form-text-box {
           margin-left: 16px;
-          width: 200px;
+          width: 190px;
           .source {
             font-size: 12px;
             font-weight: 400;
             color: #000000;
-            line-height: 17px;
+            line-height: 7px;
             text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .target {
             font-size: 12px;
             font-weight: 400;
             color: #ef9868;
-            line-height: 17px;
+            line-height: 7px;
             margin-top: 16px;
             text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .select {
             font-size: 12px;
             font-weight: 400;
             color: #000000;
-            line-height: 17px;
+            line-height: 7px;
             margin-top: 10px;
             display: flex;
             justify-content: space-between;

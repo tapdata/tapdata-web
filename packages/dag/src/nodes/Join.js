@@ -1,19 +1,14 @@
 import { NodeType } from './extends/NodeType'
+import { AllLocales } from './locales'
 
 export class Join extends NodeType {
-  constructor(node) {
-    super(node)
-
-    if (node.attr) {
-      const attr = Object.assign(this.attr, node.attr)
-      if (attr.formSchema) this.formSchema = attr.formSchema
-      if (attr.linkFormSchema) this.linkFormSchema = attr.linkFormSchema
-    }
+  constructor() {
+    super()
   }
 
-  attr = {
-    maxInputs: 2 // 最大输入个数
-  }
+  type = 'join_processor'
+
+  maxInputs = 2 // 最大输入个数
 
   group = 'processor'
 
@@ -237,4 +232,6 @@ export class Join extends NodeType {
       }
     }
   }
+
+  locales = AllLocales.Join
 }

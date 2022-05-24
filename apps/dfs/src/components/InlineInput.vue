@@ -48,10 +48,10 @@
           size="mini"
           :disabled="disabled"
           @click="save"
-          >{{ $t('components_InlineInput_baoCun') }}</ElButton
+          >{{ $t('button_save') }}</ElButton
         >
         <ElButton class="inline-input-button" size="mini" @click="cancel">{{
-          $t('components_InlineInput_quXiao')
+          $t('button_cancel')
         }}</ElButton>
       </template>
     </span>
@@ -81,15 +81,15 @@ export default {
     },
     editText: {
       type: String,
-      default: i18n.t('components_InlineInput_bianJi')
+      default: i18n.t('button_edit')
     },
     saveText: {
       type: String,
-      default: i18n.t('components_InlineInput_baoCun')
+      default: i18n.t('button_save')
     },
     cancelText: {
       type: String,
-      default: i18n.t('components_InlineInput_quXiao')
+      default: i18n.t('button_cancel')
     }
   },
   data() {

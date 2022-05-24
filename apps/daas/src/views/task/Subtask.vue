@@ -109,16 +109,16 @@ export default {
       fetchTimer: null,
       columns: [
         {
-          label: '子任务名称',
+          label: this.$t('task_info_subtasks_name'),
           prop: 'name'
         },
         {
-          label: '状态',
+          label: this.$t('task_info_subtasks_status'),
           prop: 'status',
           slotName: 'status'
         },
         {
-          label: '操作',
+          label: this.$t('column_operation'),
           prop: 'operation',
           slotName: 'operation'
         }

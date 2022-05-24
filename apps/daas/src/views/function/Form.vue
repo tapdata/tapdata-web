@@ -46,7 +46,7 @@
           :rules="scriptRules"
         >
           <div class="script-editor">
-            <CodeEditor v-model="form.script" ref="editor" lang="javascript" height="200"></CodeEditor>
+            <JsEditor v-model="form.script" ref="editor" height="200"></JsEditor>
           </div>
         </ElFormItem>
         <ElFormItem prop="describe" :label="$t('function_describe_label') + ':'">
@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import CodeEditor from '@/components/CodeEditor'
+import { JsEditor } from '@tap/component'
 const getScriptObj = script => {
   let matchArr1 = script.match(/(?<=function\s+)\w+(?=\s*\([^]*\))/g)
   let name = matchArr1?.[0] || ''
@@ -105,7 +105,7 @@ const getScriptObj = script => {
   }
 }
 export default {
-  components: { CodeEditor },
+  components: { JsEditor },
   data() {
     let self = this
     return {

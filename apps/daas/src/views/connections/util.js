@@ -436,7 +436,7 @@ export const CONFIG_MODEL = {
       ]
     },
     {
-      icon: '',
+      icon: 'connect_schema',
       items: [
         {
           label: i18n.t('dataForm.form.databaseOwner'),
@@ -463,7 +463,7 @@ export const CONFIG_MODEL = {
       ]
     },
     {
-      icon: '',
+      icon: 'connect_shared_mining',
       items: [
         {
           label: i18n.t('connection_form_shared_mining'),
@@ -472,7 +472,7 @@ export const CONFIG_MODEL = {
       ]
     },
     {
-      icon: '',
+      icon: 'connect_journal',
       items: [
         {
           label: i18n.t('connection_form_oracle_redoLog_parser'),

@@ -159,17 +159,23 @@ export default {
   },
   methods: {
     fetch(pageNum, debounce = 0, hideLoading, callback) {
-      if (!this.remoteMethod) {
-        this.list = this.data
-        this.nonePage = this.list.length <= this.page.size
-        return
-      }
       if (pageNum === 1) {
         this.multipleSelection = []
         this.$emit('selection-change', [])
         this.$refs?.table?.clearSelection()
       }
       this.page.current = pageNum || this.page.current
+      if (!this.remoteMethod) {
+        if (this.$attrs.isPage) {
+          this.page.total = this.data.length
+          let { current, size } = this.page
+          this.list = this.data.slice((current - 1) * size, current * size)
+          return
+        }
+        this.list = this.data
+        this.nonePage = this.list.length <= this.page.size
+        return
+      }
       this.$nextTick(() => {
         delayTrigger(() => {
           if (!hideLoading) {

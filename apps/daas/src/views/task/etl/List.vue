@@ -139,7 +139,7 @@
             >
               {{ $t('task_list_run') }}
             </ElLink>
-            <ElDivider direction="vertical"></ElDivider>
+            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_operation'"></ElDivider>
             <ElLink
               v-if="isShowForceStop(row.statuses)"
               v-readonlybtn="'SYNC_job_operation'"
@@ -157,7 +157,7 @@
               @click="stop([row.id], row)"
               >{{ $t('task_list_stop') }}</ElLink
             >
-            <ElDivider direction="vertical"></ElDivider>
+            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_operation'"></ElDivider>
             <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               type="primary"
@@ -166,7 +166,7 @@
             >
               {{ $t('button_edit') }}
             </ElLink>
-            <ElDivider direction="vertical"></ElDivider>
+            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_edition'"></ElDivider>
             <!-- <ElLink
               v-readonlybtn="'SYNC_job_edition'"
               style="margin-left: 10px"
@@ -183,7 +183,7 @@
             <ElLink v-readonlybtn="'SYNC_job_edition'" type="primary" @click="toDetail(row)">
               {{ $t('task_list_button_monitor') }}
             </ElLink>
-            <ElDivider direction="vertical"></ElDivider>
+            <ElDivider direction="vertical" v-readonlybtn="'SYNC_job_edition'"></ElDivider>
             <el-dropdown v-show="moreAuthority" size="small" @command="handleCommand($event, row)">
               <ElLink type="primary" class="rotate-90">
                 <!-- {{ $t('button.more') }} -->
@@ -379,9 +379,9 @@ export default {
       taskSettingsDialog: false, //任务调度设置弹窗开关
 
       syncType: {
-        initial_sync: this.$t('dataFlow.initial_sync'),
-        cdc: this.$t('dataFlow.cdc'),
-        'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
+        initial_sync: this.$t('task_info_initial_sync'),
+        cdc: this.$t('task_info_initial_cdc'),
+        'initial_sync+cdc': this.$t('task_info_initial_sync') + '+' + this.$t('task_info_initial_cdc')
       },
       dataFlowId: '',
 

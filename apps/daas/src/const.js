@@ -11,53 +11,53 @@ for (const dKey in directionMap) {
 }
 export const TOPOLOGY_MAP = topologyMap,
   TASK_STATUS_MAP = {
-    running: { text: '运行中', icon: 'yunxingzhong', type: 'success' },
-    paused: { text: '待启动', icon: 'daiqidong' },
-    error: { text: '错误', icon: 'cuowu', type: 'warning' },
-    draft: { text: '待启动', icon: 'daiqidong' },
-    scheduled: { text: '启动中', icon: 'qidongzhong', type: 'success' },
-    stopping: { text: '停止中', icon: 'tingzhizhong', type: 'success' },
-    'force stopping': { text: '强制停止中', icon: 'qiangzhitingzhi', type: 'success' },
-    finished: { text: '已完成', icon: 'yiwancheng', type: 'success' }
+    running: { text: i18n.t('status_running'), icon: 'yunxingzhong', type: 'success' },
+    paused: { text: i18n.t('status_paused'), icon: 'daiqidong' },
+    error: { text: i18n.t('status_error'), icon: 'cuowu', type: 'warning' },
+    draft: { text: i18n.t('status_draft'), icon: 'daiqidong' },
+    scheduled: { text: i18n.t('status_scheduled'), icon: 'qidongzhong', type: 'success' },
+    stopping: { text: i18n.t('status_stopping'), icon: 'tingzhizhong', type: 'success' },
+    'force stopping': { text: i18n.t('status_force_stopping'), icon: 'qiangzhitingzhi', type: 'success' },
+    finished: { text: i18n.t('status_finished'), icon: 'yiwancheng', type: 'success' }
   },
   SHARECDC_MAP = {
-    running: { text: '运行中', icon: 'running', type: 'success' },
-    stop: { text: '已停止', icon: 'stop' },
-    error: { text: '错误', icon: 'error', type: 'warning' },
-    edit: { text: '编辑中', icon: 'edit' },
-    scheduling: { text: '启动中', icon: 'scheduling', type: 'success' },
-    stopping: { text: '停止中', icon: 'stopping', type: 'warning' }
+    running: { text: i18n.t('status_running'), icon: 'running', type: 'success' },
+    stop: { text: i18n.t('status_stop'), icon: 'stop' },
+    error: { text: i18n.t('status_error'), icon: 'error', type: 'warning' },
+    edit: { text: i18n.t('status_edit'), icon: 'edit' },
+    scheduling: { text: i18n.t('status_scheduling'), icon: 'scheduling', type: 'success' },
+    stopping: { text: i18n.t('status_stopping'), icon: 'stopping', type: 'warning' }
     // pause: { text: '强制停止中', icon: 'pause', type: 'success' },
     //complete: { text: '已完成', icon: 'complete', type: 'success' }
   },
   CONNECTION_STATUS_MAP = {
-    ready: { text: '有效', type: 'success' },
-    invalid: { text: '失效', type: 'danger' },
-    testing: { text: '测试中', type: 'warning' }
+    ready: { text: i18n.t('connection_list_efficient'), type: 'success' },
+    invalid: { text: i18n.t('connection_list_invalidation'), type: 'danger' },
+    testing: { text: i18n.t('connection_list_testing'), type: 'warning' }
   },
   MILESTONE_STATUS_MAP = {
-    waiting: { text: '待执行', icon: 'daizhixing' },
-    running: { text: '进行中', icon: 'jinxingzhong' },
-    error: { text: '错误', icon: 'cuowu' },
-    finish: { text: '已完成', icon: 'yiwancheng' },
-    paused: { text: '已暂停', icon: 'yizanting' }
+    waiting: { text: i18n.t('milestone_list_status_waiting'), icon: 'daizhixing' },
+    running: { text: i18n.t('task_info_progress'), icon: 'jinxingzhong' },
+    error: { text: i18n.t('milestone_list_status_error'), icon: 'cuowu' },
+    finish: { text: i18n.t('milestone_list_status_finish'), icon: 'yiwancheng' },
+    paused: { text: i18n.t('status_stopping'), icon: 'yizanting' }
   },
   ETL_STATUS_MAP = {
-    running: { text: '已运行', type: 'success' },
-    not_running: { text: '未运行', type: 'disable' },
-    error: { text: '错误', type: 'danger' }
+    running: { text: i18n.t('task_status_running'), type: 'success' },
+    not_running: { text: i18n.t('task_status_not_running'), type: 'disable' },
+    error: { text: i18n.t('task_status_error'), type: 'danger' }
   },
   ETL_SUB_STATUS_MAP = {
-    ready: { text: '待启动', type: 'ready' },
-    edit: { text: '编辑中', type: 'edit' },
-    scheduling: { text: '启动中', type: 'scheduling' },
-    schedule_failed: { text: '错误', type: 'schedule_failed' },
-    wait_run: { text: '启动中', type: 'wait_run' },
-    running: { text: '运行中', type: 'running' },
-    stopping: { text: '停止中', type: 'stopping' },
-    stop: { text: '已停止', type: 'stop' },
-    complete: { text: '已完成', type: 'complete' },
-    error: { text: '错误', type: 'error' }
+    ready: { text: i18n.t('status_ready'), type: 'ready' },
+    edit: { text: i18n.t('status_edit'), type: 'edit' },
+    scheduling: { text: i18n.t('status_scheduling'), type: 'scheduling' },
+    schedule_failed: { text: i18n.t('status_schedule_failed'), type: 'schedule_failed' },
+    wait_run: { text: i18n.t('status_wait_run'), type: 'wait_run' },
+    running: { text: i18n.t('status_running'), type: 'running' },
+    stopping: { text: i18n.t('status_stopping'), type: 'stopping' },
+    stop: { text: i18n.t('status_stop'), type: 'stop' },
+    complete: { text: i18n.t('status_complete'), type: 'complete' },
+    error: { text: i18n.t('task_status_error'), type: 'error' }
   },
   MIGRATE_STATUS_MAP = {
     running: {

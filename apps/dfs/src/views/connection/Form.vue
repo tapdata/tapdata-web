@@ -446,15 +446,15 @@ export default {
     // 按照数据库类型获取表单配置规则
     getFormConfig() {
       let type = this.model.database_type
-      type =
-        {
-          'gbase-8s': 'gbase8s',
-          'sybase ase': 'sybasease',
-          'dummy db': 'dummydb',
-          'mysql pxc': 'mysqlpxc',
-          'rest api': 'restapi'
-        }[type] || type //特殊数据源名称转换
-      type = 'dfs_' + type
+      // type =
+      //   {
+      //     'gbase-8s': 'gbase8s',
+      //     'sybase ase': 'sybasease',
+      //     'dummy db': 'dummydb',
+      //     'mysql pxc': 'mysqlpxc',
+      //     'rest api': 'restapi'
+      //   }[type] || type //特殊数据源名称转换
+      type = type.replace(/[-\s]+/g, '')
       let func = formConfig[type]
       if (func) {
         let config = func(this)
@@ -554,11 +554,11 @@ export default {
           data.routeKeyField = '' //消息路由
           data.virtualHost = '' //虚拟主机
         } else if (data.mqType === '1') {
-          data.mqQueueSet = [] //队列名集合
+          // data.mqQueueSet = [] //队列名集合
           data.brokerURL = '' //字符串
         } else {
           data.brokerURL = ''
-          data.mqTopicSet = [] //主题名
+          // data.mqTopicSet = [] //主题名
           data.routeKeyField = '' //消息路由
           data.virtualHost = '' //虚拟主机
         }
