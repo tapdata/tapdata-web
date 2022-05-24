@@ -41,7 +41,7 @@ function get(key) {
   return key ? tmp[key] : tmp
 }
 
-export default {
+export const Cookie = {
   get,
   set,
   remove(key, attrs) {
@@ -54,3 +54,5 @@ export default {
     )
   }
 }
+
+export default Cookie
