@@ -10,16 +10,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@tap/api": "workspace:^1.0.0",
-    "@tap/component": "workspace:^1.0.0",
-    "@tap/form": "workspace:^1.0.0",
-    "@tap/shared": "workspace:^1.0.0",
     "@formily/core": "^2.0.11",
     "@formily/json-schema": "^2.0.9",
     "@formily/path": "^2.0.12",
     "@formily/reactive": "^2.0.11",
     "@formily/reactive-vue": "^2.0.11",
     "@formily/shared": "^2.0.9",
+    "@tap/api": "workspace:^1.0.0",
+    "@tap/component": "workspace:^1.0.0",
+    "@tap/form": "workspace:^1.0.0",
+    "@tap/shared": "workspace:^1.0.0",
     "resize-observer-polyfill": "^1.5.1"
   }
 }
