@@ -252,7 +252,7 @@ export default {
       return [
         {
           label: $t('verify_frequency_manual'),
-          value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+          value: 'manual'
         },
         {
           label: $t('verify_frequency_cron'),
