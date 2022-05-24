@@ -1,7 +1,7 @@
 <template>
   <el-popover popper-class="notification-popover" placement="bottom" trigger="hover" @show="activeTab = 'system'">
     <div class="btn" slot="reference" @click="toCenter()">
-      <el-badge class="item-badge" :value="unRead" :max="99" :hidden="!unRead">
+      <el-badge class="item-badge icon-btn px-3" :value="unRead" :max="99" :hidden="!unRead">
         <VIcon size="16">xiaoxi-2</VIcon>
       </el-badge>
     </div>
