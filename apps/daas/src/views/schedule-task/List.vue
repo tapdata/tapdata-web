@@ -80,7 +80,7 @@
             type="text"
             @click="
               $router.push({
-                name: 'taskHistories',
+                name: 'scheduleTaskHistories',
                 query: {
                   taskId: scope.row.id,
                   task_name: scope.row.task_name

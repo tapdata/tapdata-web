@@ -411,7 +411,6 @@ let menuSetting = [
     code: 'system_management',
     children: [
       // { name: 'metadataDefinition', code: 'data_catalog_menu' },
-      // { name: 'tasks', code: 'schedule_jobs_menu' },
       { name: 'clusterManagement', code: 'Cluster_management_menu' },
       // { name: 'agents', code: 'agents_menu' },
       { name: 'users', code: 'user_management_menu' },

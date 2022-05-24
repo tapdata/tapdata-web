@@ -1,25 +1,33 @@
 import Parent from './Parent.vue'
 const MigrateForm = () => import(/* webpackChunkName: "task-form" */ '../views/task/migrate/form/Form.vue')
 const MigrateDetails = () => import(/* webpackChunkName: "task-form" */ '../views/task/migrate/details/Index.vue')
+const ConnectionForm = () => import(/* webpackChunkName: "connection-form" */ '@/views/connections/DatabaseForm')
+const VerificationForm = () => import(/* webpackChunkName: "verification-form" */ '@/views/verification/Form')
+const VerificationHistory = () => import(/* webpackChunkName: "verification-history" */ '@/views/verification/History')
+const VerificationResult = () => import(/* webpackChunkName: "verification-result" */ '@/views/verification/Result')
+const FunctionForm = () => import(/* webpackChunkName: "function-form" */ '@/views/function/Form')
+const SharedCacheForm = () => import(/* webpackChunkName: "shared-cache-form" */ '@/views/shared-cache/Form')
+const ApiPublishForm = () => import(/* webpackChunkName: "api-publish-form" */ '@/views/api-page/ModuleForm')
+const RoleDetails = () => import(/* webpackChunkName: "role-details" */ '@/views/role/Role')
 const DagEditor = async () => {
-  const { Editor } = await import('@tap/dag')
+  const { Editor } = await import(/* webpackChunkName: "dag" */ '@tap/dag')
   return Editor
 }
 const NodeEditor = async () => {
-  const { Editor } = await import('@tap/node-design')
+  const { Editor } = await import(/* webpackChunkName: "node-design" */ '@tap/node-design')
   return Editor
 }
 export default [
   {
     path: '/login',
     name: 'login',
-    component: () => import('@/views/login/Login'),
+    component: () => import(/* webpackChunkName: "login" */ '@/views/login/Login'),
     title: 'tap.login'
   },
   {
     path: '/registry',
     name: 'registry',
-    component: () => import('@/views/login/Registration'),
+    component: () => import(/* webpackChunkName: "registry" */ '@/views/login/Registration'),
     meta: {
       title: 'tap.registry'
     }
@@ -27,7 +35,7 @@ export default [
   {
     path: '/verificationEmail',
     name: 'verificationEmail',
-    component: () => import('@/views/login/VerificationEmail'),
+    component: () => import(/* webpackChunkName: "email" */ '@/views/login/VerificationEmail'),
     meta: {
       title: 'tap.verificationEmail'
     }
@@ -35,7 +43,7 @@ export default [
   {
     path: '/registyResult',
     name: 'registyResult',
-    component: () => import('@/views/login/RegistyResult'),
+    component: () => import(/* webpackChunkName: "registy-result" */ '@/views/login/RegistyResult'),
     meta: {
       title: 'tap.registry'
     }
@@ -43,7 +51,7 @@ export default [
   {
     path: '/passwordReset',
     name: 'passwordReset',
-    component: () => import('@/views/login/PasswordReset'),
+    component: () => import(/* webpackChunkName: "password" */ '@/views/login/PasswordReset'),
     meta: {
       title: 'tap.passwordReset'
     }
@@ -95,7 +103,7 @@ export default [
       {
         path: 'dashboard',
         name: 'dashboard',
-        component: () => import('@/views/dashboard/Dashboard'),
+        component: () => import(/* webpackChunkName: "dashboard" */ '@/views/dashboard/Dashboard'),
         meta: { title: 'page_title_overview' }
       },
       /* ---------- 连接管理  ----------*/
@@ -111,7 +119,7 @@ export default [
           {
             path: '',
             name: 'connectionsList',
-            component: () => import('@/views/connections/List'),
+            component: () => import(/* webpackChunkName: "connection-list" */ '@/views/connections/List'),
             meta: {
               title: 'page_title_connections',
               code: 'datasource_menu',
@@ -130,7 +138,7 @@ export default [
           {
             path: 'create',
             name: 'connectionsCreate',
-            component: () => import('@/views/connections/DatabaseForm'),
+            component: ConnectionForm,
             meta: {
               title: 'page_title_connections_create',
               code: 'datasource_creation'
@@ -139,7 +147,7 @@ export default [
           {
             path: ':id/edit',
             name: 'connectionsEdit',
-            component: () => import('@/views/connections/DatabaseForm'),
+            component: ConnectionForm,
             meta: {
               title: 'page_title_connections_edit',
               code: 'datasource_edition'
@@ -160,7 +168,7 @@ export default [
           {
             path: '',
             name: 'migrateList',
-            component: () => import('@/views/task/migrate/List'),
+            component: () => import(/* webpackChunkName: "migrate-list" */ '@/views/task/migrate/List'),
             meta: {
               title: 'page_title_data_copy',
               code: 'Data_SYNC_menu'
@@ -205,7 +213,7 @@ export default [
           {
             path: 'Statistics',
             name: 'MigrateStatistics',
-            component: () => import('@/views/task/migrate/details/Index'),
+            component: MigrateDetails,
             meta: {
               title: 'page_title_run_monitor',
               code: 'Data_SYNC_menu'
@@ -226,7 +234,7 @@ export default [
           {
             path: '',
             name: 'dataflowList',
-            component: () => import('@/views/task/etl/List'),
+            component: () => import(/* webpackChunkName: "etl-list" */ '@/views/task/etl/List'),
             meta: {
               title: 'page_title_data_develop',
               code: 'Data_SYNC_menu'
@@ -245,7 +253,7 @@ export default [
               {
                 path: '',
                 name: 'dataflowDetails',
-                component: () => import('@/views/task/etl/Details'),
+                component: () => import(/* webpackChunkName: "etl-details" */ '@/views/task/etl/Details'),
                 meta: {
                   title: 'page_title_run_monitor',
                   code: 'Data_SYNC_menu'
@@ -254,7 +262,7 @@ export default [
               {
                 path: 'statistics/:subId',
                 name: 'dataflowStatistics',
-                component: () => import('@/views/task/etl/statistics/Index'),
+                component: () => import(/* webpackChunkName: "etl-statistics" */ '@/views/task/etl/statistics/Index'),
                 meta: {
                   title: 'page_title_task_stat',
                   code: 'Data_SYNC_menu'
@@ -277,25 +285,16 @@ export default [
           {
             path: '',
             name: 'dataVerificationList',
-            component: () => import('@/views/verification/List'),
+            component: () => import(/* webpackChunkName: "verification-list" */ '@/views/verification/List'),
             meta: {
               title: 'page_title_data_verification',
               code: 'Data_verify_menu'
             }
           },
           {
-            path: 'old/create',
-            name: 'oldDataVerificationCreate',
-            component: () => import('@/views/verification/Form'),
-            meta: {
-              title: 'page_title_task_create',
-              code: 'verify_job_creation'
-            }
-          },
-          {
             path: 'create',
             name: 'dataVerificationCreate',
-            component: () => import('@/views/verification/Form'),
+            component: VerificationForm,
             meta: {
               title: 'page_title_task_create',
               code: 'verify_job_creation'
@@ -304,7 +303,7 @@ export default [
           {
             path: ':id/edit',
             name: 'dataVerificationEdit',
-            component: () => import('@/views/verification/Form'),
+            component: VerificationForm,
             meta: {
               title: 'page_title_task_edit',
               code: 'verify_job_edition'
@@ -313,7 +312,7 @@ export default [
           {
             path: ':id/details',
             name: 'dataVerifyDetails',
-            component: () => import('@/views/verification/Details'),
+            component: () => import(/* webpackChunkName: "verification-details" */ '@/views/verification/Details'),
             meta: {
               title: 'page_title_task_details',
               code: 'Data_verify'
@@ -322,7 +321,7 @@ export default [
           {
             path: ':id/history',
             name: 'dataVerifyHistory',
-            component: () => import('@/views/verification/History'),
+            component: VerificationHistory,
             meta: {
               title: 'page_title_data_verification_history',
               code: 'Data_verify'
@@ -331,7 +330,7 @@ export default [
           {
             path: '/dataVerifyResult/:id/history',
             name: 'VerifyDiffHistory',
-            component: () => import('@/views/verification/History'),
+            component: VerificationHistory,
             meta: {
               title: 'page_title_diff_verification_history',
               code: 'Data_verify'
@@ -340,7 +339,7 @@ export default [
           {
             path: '/dataVerifyResult/:id/details',
             name: 'VerifyDiffDetails',
-            component: () => import('@/views/verification/Result'),
+            component: VerificationResult,
             meta: {
               title: 'page_title_diff_verification_details',
               code: 'Data_verify'
@@ -349,7 +348,7 @@ export default [
           {
             path: '/dataVerifyResult/:id',
             name: 'dataVerifyResult',
-            component: () => import('@/views/verification/Result'),
+            component: VerificationResult,
             meta: {
               title: 'page_title_data_verification_result',
               code: 'Data_verify'
@@ -370,7 +369,7 @@ export default [
           {
             path: '',
             name: 'sharedMiningList',
-            component: () => import('@/views/shared-mining/List'),
+            component: () => import(/* webpackChunkName: "shared-mining" */ '@/views/shared-mining/List'),
             meta: {
               title: 'page_title_shared_mining',
               code: 'log_collector_menu'
@@ -379,7 +378,7 @@ export default [
           {
             path: 'details/:id',
             name: 'SharedMiningDetails',
-            component: () => import('@/views/shared-mining/Detail'),
+            component: () => import(/* webpackChunkName: "shared-mining-details" */ '@/views/shared-mining/Detail'),
             meta: {
               title: 'page_title_shared_mining_details',
               code: 'log_collector_menu'
@@ -400,7 +399,7 @@ export default [
           {
             path: '',
             name: 'functionList',
-            component: () => import('@/views/function/List'),
+            component: () => import(/* webpackChunkName: "function-list" */ '@/views/function/List'),
             meta: {
               title: 'page_title_function',
               code: 'SYNC_Function_management'
@@ -409,7 +408,7 @@ export default [
           {
             path: 'create',
             name: 'FunctionCreate',
-            component: () => import('@/views/function/Form'),
+            component: FunctionForm,
             meta: {
               title: 'page_title_function_create',
               code: 'SYNC_Function_management'
@@ -418,7 +417,7 @@ export default [
           {
             path: 'import',
             name: 'FunctionImport',
-            component: () => import('@/views/function/ImportForm'),
+            component: () => import(/* webpackChunkName: "function-import" */ '@/views/function/ImportForm'),
             meta: {
               title: 'page_title_function_import',
               code: 'SYNC_Function_management'
@@ -427,7 +426,7 @@ export default [
           {
             path: 'edit/:id',
             name: 'FunctionEdit',
-            component: () => import('@/views/function/Form'),
+            component: FunctionForm,
             meta: {
               title: 'page_title_function_edit',
               code: 'SYNC_Function_management'
@@ -436,7 +435,7 @@ export default [
           {
             path: 'details/:id',
             name: 'FunctionDetails',
-            component: () => import('@/views/function/Details'),
+            component: () => import(/* webpackChunkName: "function-details" */ '@/views/function/Details'),
             meta: {
               title: 'page_title_function_details',
               code: 'SYNC_Function_management'
@@ -455,7 +454,8 @@ export default [
           {
             path: '',
             name: 'customNodeList',
-            component: () => import('@/views/custom-proccessor-node/List'),
+            component: () =>
+              import(/* webpackChunkName: "custom-proccessor-node" */ '@/views/custom-proccessor-node/List'),
             meta: {
               title: 'page_title_custom_node',
               code: 'custom_node_menu'
@@ -476,7 +476,7 @@ export default [
           {
             path: '',
             name: 'sharedCacheList',
-            component: () => import('@/views/shared-cache/List'),
+            component: () => import(/* webpackChunkName: "shared-cache" */ '@/views/shared-cache/List'),
             meta: {
               title: 'page_title_shared_cache',
               code: 'shared_cache_menu'
@@ -485,7 +485,7 @@ export default [
           {
             path: 'create',
             name: 'sharedCacheCreate',
-            component: () => import('@/views/shared-cache/Form'),
+            component: SharedCacheForm,
             meta: {
               title: 'page_title_shared_cache_create',
               code: 'shared_cache_menu'
@@ -494,7 +494,7 @@ export default [
           {
             path: ':id/edit',
             name: 'sharedCacheEdit',
-            component: () => import('@/views/shared-cache/Form'),
+            component: SharedCacheForm,
             meta: {
               title: 'page_title_shared_cache_edit',
               code: 'shared_cache_menu'
@@ -515,7 +515,7 @@ export default [
           {
             path: '',
             name: 'metadataList',
-            component: () => import('@/views/metadata/List'),
+            component: () => import(/* webpackChunkName: "metadata" */ '@/views/metadata/List'),
             meta: {
               title: 'page_title_data_catalogue',
               code: 'data_catalog_menu',
@@ -526,7 +526,7 @@ export default [
           {
             path: ':id/details',
             name: 'metadataDetails',
-            component: () => import('@/views/metadata/Info'),
+            component: () => import(/* webpackChunkName: "metadata-details" */ '@/views/metadata/Info'),
             meta: {
               code: 'data_catalog_menu',
               title: 'page_title_data_catalogue_info'
@@ -538,7 +538,7 @@ export default [
       {
         path: '/search',
         name: 'search',
-        component: () => import('@/views/metadata/Search'),
+        component: () => import(/* webpackChunkName: "metadata-search" */ '@/views/metadata/Search'),
         meta: {
           title: 'page_title_data_search',
           code: 'data_search_menu'
@@ -557,7 +557,7 @@ export default [
           {
             path: '',
             name: 'modules',
-            component: () => import('@/views/api-page/Modules'),
+            component: () => import(/* webpackChunkName: "api-publish" */ '@/views/api-page/Modules'),
             meta: {
               title: 'page_title_api_publish',
               code: 'API_management_menu'
@@ -566,7 +566,7 @@ export default [
           {
             path: 'create',
             name: 'module',
-            component: () => import('@/views/api-page/ModuleForm'),
+            component: ApiPublishForm,
             meta: {
               title: 'page_title_api_publish_create',
               code: 'API_creation'
@@ -575,7 +575,7 @@ export default [
           {
             path: ':id/edit',
             name: 'editModule',
-            component: () => import('@/views/api-page/ModuleForm'),
+            component: ApiPublishForm,
             meta: {
               title: 'page_title_api_publish_edit',
               code: 'API_edition'
@@ -587,7 +587,7 @@ export default [
       {
         path: '/api-browse',
         name: 'dataExplorer',
-        component: () => import('@/views/api-page/DataExplorer'),
+        component: () => import(/* webpackChunkName: "api-explorer" */ '@/views/api-page/DataExplorer'),
         meta: {
           title: 'page_title_api_browse',
           code: 'API_data_explorer_menu'
@@ -597,7 +597,7 @@ export default [
       {
         path: '/api-test',
         name: 'apiDocAndTest',
-        component: () => import('@/views/api-page/ApiDocAndTest'),
+        component: () => import(/* webpackChunkName: "api-doc-and-test" */ '@/views/api-page/ApiDocAndTest'),
         meta: {
           title: 'page_title_api_test',
           code: 'API_doc_&_test_menu'
@@ -607,7 +607,7 @@ export default [
       {
         path: '/api-client',
         name: 'apiClient',
-        component: () => import('@/views/api-page/Applications'),
+        component: () => import(/* webpackChunkName: "api-client" */ '@/views/api-page/Applications'),
         meta: {
           title: 'page_title_api_client',
           code: 'API_clients_menu'
@@ -617,7 +617,7 @@ export default [
       {
         path: '/api-servers',
         name: 'apiServers',
-        component: () => import('@/views/api-page/ApiServers'),
+        component: () => import(/* webpackChunkName: "api-server" */ '@/views/api-page/ApiServers'),
         meta: {
           title: 'page_title_api_servers',
           code: 'API_server_menu'
@@ -628,7 +628,7 @@ export default [
       {
         path: '/api-statistics',
         name: 'apiAnalysis',
-        component: () => import('@/views/api-page/ApiAnalysis'),
+        component: () => import(/* webpackChunkName: "api-analysis" */ '@/views/api-page/ApiAnalysis'),
         meta: {
           title: 'page_title_api_stat',
           code: 'API_stats_menu'
@@ -648,7 +648,7 @@ export default [
           {
             path: '',
             name: 'apiauditList',
-            component: () => import('@/views/api-page/ApiAudit'),
+            component: () => import(/* webpackChunkName: "api-audit" */ '@/views/api-page/ApiAudit'),
             meta: {
               title: 'page_title_api_audit',
               code: 'API_clients_menu'
@@ -657,7 +657,7 @@ export default [
           {
             path: ':id/details',
             name: 'apiAuditDetails',
-            component: () => import('@/views/api-page/ApiAuditInfo'),
+            component: () => import(/* webpackChunkName: "api-audit-details" */ '@/views/api-page/ApiAuditInfo'),
             meta: {
               title: 'page_title_api_audit_details',
               code: 'API_clients_menu'
@@ -669,7 +669,7 @@ export default [
       {
         path: '/api-monitor',
         name: 'apiMonitor',
-        component: () => import('@/views/api-page/api-monitor/ApiMonitor'),
+        component: () => import(/* webpackChunkName: "api-monitor" */ '@/views/api-page/api-monitor/ApiMonitor'),
         meta: {
           title: 'page_title_api_monitor',
           code: 'API_server_menu'
@@ -679,7 +679,7 @@ export default [
       {
         path: '/metadata',
         name: 'metadataDefinition',
-        component: () => import('@/views/metadata/List'),
+        component: () => import(/* webpackChunkName: "metadata-definition" */ '@/views/metadata/List'),
         meta: {
           title: 'page_title_data_metadata',
           code: 'data_catalog_menu',
@@ -698,21 +698,11 @@ export default [
           ]
         }
       },
-      /* ---------- 调度任务  ----------*/
-      {
-        path: '/schedule-task',
-        name: 'tasks',
-        component: () => import('@/views/schedule-task/List'),
-        meta: {
-          title: 'page_title_schedule',
-          code: 'schedule_jobs_menu'
-        }
-      },
       /* ---------- 集群管理  ----------*/
       {
         path: '/cluster',
         name: 'clusterManagement',
-        component: () => import('@/views/cluster/Cluster'),
+        component: () => import(/* webpackChunkName: "cluster" */ '@/views/cluster/Cluster'),
         meta: {
           title: 'page_title_cluster',
           code: 'Cluster_management_menu'
@@ -722,7 +712,7 @@ export default [
       {
         path: '/process',
         name: 'agents',
-        component: () => import('@/views/process/List'),
+        component: () => import(/* webpackChunkName: "process" */ '@/views/process/List'),
         meta: {
           title: 'page_title_process',
           code: 'agents_menu'
@@ -732,7 +722,7 @@ export default [
       {
         path: '/user',
         name: 'users',
-        component: () => import('@/views/user/List'),
+        component: () => import(/* webpackChunkName: "user" */ '@/views/user/List'),
         meta: {
           title: 'page_title_user',
           code: 'user_management_menu'
@@ -751,7 +741,7 @@ export default [
           {
             path: '',
             name: 'roleList',
-            component: () => import('@/views/role/Roles'),
+            component: () => import(/* webpackChunkName: "role-list" */ '@/views/role/Roles'),
             meta: {
               title: 'page_title_role',
               code: 'role_management_menu'
@@ -760,7 +750,7 @@ export default [
           {
             path: 'create',
             name: 'role',
-            component: () => import('@/views/role/Role'),
+            component: RoleDetails,
             meta: {
               title: 'page_title_role',
               code: 'role_creation'
@@ -769,7 +759,7 @@ export default [
           {
             path: ':id/edit',
             name: 'editRole',
-            component: () => import('@/views/role/Role'),
+            component: RoleDetails,
             meta: {
               title: 'page_title_role',
               code: 'role_edition'
@@ -782,7 +772,7 @@ export default [
         path: '/settingCenter',
         name: 'settingCenter',
         redirect: 'settingCenter/accountSetting',
-        component: () => import('@/views/setting/SettingCenter'),
+        component: () => import(/* webpackChunkName: "setting-center" */ '@/views/setting/SettingCenter'),
         meta: {
           title: 'page_title_back_menu',
           isNotAside: true
@@ -791,20 +781,21 @@ export default [
           {
             path: 'accountSetting',
             name: 'accountSetting',
-            component: () => import('@/views/setting/AccountSetting'),
+            component: () => import(/* webpackChunkName: "account-setting" */ '@/views/setting/AccountSetting'),
             meta: { title: 'page_title_account', isNotAside: true }
           },
           {
             path: 'notificationSetting',
             name: 'notificationSetting',
-            component: () => import('@/views/setting/NotificationSetting'),
+            component: () =>
+              import(/* webpackChunkName: "notification-setting" */ '@/views/setting/NotificationSetting'),
             meta: { title: 'notify_setting', isNotAside: true }
           },
           /* ---------- 系统设置  ----------*/
           {
             path: 'settings',
             name: 'settings',
-            component: () => import('@/views/setting/Setting'),
+            component: () => import(/* webpackChunkName: "system-setting" */ '@/views/setting/Setting'),
             meta: {
               title: 'page_title_setting',
               code: 'system_settings_menu',
@@ -815,15 +806,6 @@ export default [
       },
 
       /* ---------- 不确定路由  ----------*/
-      {
-        path: '/taskHistories',
-        name: 'taskHistories',
-        component: () => import('@/views/schedule-task/Histories'),
-        meta: {
-          code: 'schedule_jobs_menu',
-          title: 'page_title_schedule_history'
-        }
-      },
       {
         path: '/dailyRecord',
         name: 'dailyRecord',

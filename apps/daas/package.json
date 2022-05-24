@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "@formily/core": "^2.0.9",
-    "@formily/reactive": "^2.0.9",
     "@tap/api": "workspace:^1.0.0",
     "@tap/component": "workspace:^1.0.0",
     "@tap/dag": "workspace:^1.0.0",
@@ -31,9 +30,7 @@
     "echarts": "^5.0.2",
     "element-ui": "2.15.7",
     "github-markdown-css": "^4.0.0",
-    "graphlib": "^2.1.8",
     "highlight.js": "^11.0.1",
-    "jsplumb": "^2.15.6",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "mousetrap": "^1.6.5",

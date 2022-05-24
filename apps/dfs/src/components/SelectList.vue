@@ -554,9 +554,6 @@ export default {
 .inner-select__selected {
   padding-left: 8px;
   color: map-get($fontColor, main);
-  &.placeholder {
-    //color: map-get($fontColor, sub);
-  }
 }
 .icon-btn {
   color: map-get($fontColor, sub);

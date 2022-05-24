@@ -1,24 +1,13 @@
 const { resolve } = require('path')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
+const webpack = require('webpack')
 
 const serveUrlMap = {
   mock: 'http://localhost:30300',
   dev: 'http://localhost:3000', // TM端本地默认地址
   jet: 'http://jet.devops.tapdata.net:31613',
-  // test: 'http://192.168.1.181:31438/' // 自定义节点
   test: 'http://192.168.1.181:31025' // v2.0
-  // test: 'http://192.168.1.181:30726' // v2-dev
-  // test: 'http://192.168.1.126:3003/' // tm 重构
-  // test: 'http://192.168.1.181:30474/' // v1-30
-  // test: 'http://192.168.1.132:32535/' // v1-29
-  // test: 'http://192.168.1.181:32220/' // v1-28
-  // test: 'http://192.168.1.181:31119/' // v1-27
-  // test: 'http://192.168.1.193:31704' // table-many
-  // test: 'http://192.168.1.181:30390' // v1-25
-  // test: 'http://192.168.1.181:30649'  // v1-24
-  // test: 'http://192.168.1.181:31703'  // v1-23
-  // test: 'http://192.168.1.181:30891'  // v1-22
 }
 let origin
 const { argv } = process
@@ -57,45 +46,11 @@ module.exports = {
     //  ============ 配置别名 ============
     config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('../../packages/web-core'))
 
-    // config.module.noParse(
-    //   /^(vue|vue-router|vuex|vuex-router-sync|axios|vue-virtual-scroller|vue-i18n|vue-echarts|echarts|vue-clipboard2|qs|mousetrap|moment|lodash|jsplumb|highlight.js|graphlib|github-markdown-css|element-ui|dagre|crypto|crypto-js)$/
-    // )
+    config.module.noParse(
+      /^(vue|vue-router|vuex|vuex-router-sync|axios|vue-virtual-scroller|vue-i18n|vue-echarts|echarts|vue-clipboard2|qs|mousetrap|lodash|jsplumb|highlight.js|graphlib|github-markdown-css|element-ui|dagre|crypto|crypto-js|@formily|ace-builds)$/
+    )
 
-    //  ============ 配置CDN ============
-    if (process.env.NODE_ENV === 'production') {
-      config.externals({
-        vue: 'Vue',
-        'vue-router': 'VueRouter',
-        vuex: 'Vuex',
-        axios: 'axios',
-        'vue-virtual-scroller': 'VueVirtualScroller',
-        'vue-i18n': 'VueI18n',
-        'vue-clipboard2': 'VueClipboard',
-        lodash: '_'
-      })
-      const baseUrl = './lib/'
-      const cdn = {
-        css: [
-          // vue-virtual-scroller
-          baseUrl + 'vue-virtual-scroller/vue-virtual-scroller.css'
-        ],
-        js: [
-          baseUrl + 'vue.min.js',
-          baseUrl + 'vue-router.min.js',
-          baseUrl + 'vuex.min.js',
-          baseUrl + 'axios.min.js',
-          baseUrl + 'vue-virtual-scroller/vue-virtual-scroller.min.js',
-          baseUrl + 'vue-i18n.min.js',
-          baseUrl + 'vue-clipboard.min.js',
-          baseUrl + 'lodash.min.js'
-        ]
-      }
-      // 通过 html-webpack-plugin 将 cdn 注入到 index.html 之中
-      config.plugin('html').tap(args => {
-        args[0].cdn = cdn
-        return args
-      })
-    }
+    config.plugin('ignore').use(new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn$/))
 
     // ============ svg处理 ============
     const iconDir = resolve('src/assets/icons/svg')
