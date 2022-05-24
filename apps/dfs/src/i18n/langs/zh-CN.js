@@ -12,6 +12,8 @@ export default {
   form_placeholder_input: '请输入',
   form_placeholder_select: '请选择',
   form_can_not_be_empty: '不能为空',
+  form_save_success: '保存成功',
+  form_save_fail: '保存失败',
 
   // 按钮
   button_edit: '编辑',
@@ -1041,8 +1043,6 @@ export default {
   connection_rename: '改名',
   dataForm_form_connectionName: '连接名称',
   formBuilder_noneText: '不能为空',
-  message_saveOK: '保存成功',
-  dataForm_saveFail: '保存失败',
   connection_reloadTittle: '重新加载 schema',
   connection_reloadMsg: '如果此库的schema过多，可能耗时较长，确定要刷新数据源的schema ',
   message_confirm: '确 定',

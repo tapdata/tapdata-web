@@ -536,7 +536,7 @@ export default {
           }
           promise
             .then(() => {
-              this.$message.success(this.$t('message_save_ok'))
+              this.$message.success(this.$t('form_save_success'))
 
               if (this.$route.query.step) {
                 this.$router.push({
@@ -557,7 +557,7 @@ export default {
               if (err && err?.data?.message) {
                 this.$message.error(err?.data?.message + ' (' + err?.data?.code + ')')
               } else {
-                this.$message.error(this.$t('dataForm_saveFail'))
+                this.$message.error(this.$t('form_save_fail'))
               }
             })
             .finally(() => {
@@ -625,7 +625,7 @@ export default {
               this.editBtnLoading = false
               this.model.name = this.renameData.rename
               this.$refs['renameForm'].clearValidate()
-              this.$message.success(this.$t('message_save_ok'))
+              this.$message.success(this.$t('form_save_success'))
               this.dialogEditNameVisible = false
             })
             .catch(err => {
@@ -633,7 +633,7 @@ export default {
               if (err && err?.data?.message) {
                 this.$message.error(err?.data?.message + ' (' + err?.data?.code + ')')
               } else {
-                this.$message.error(this.$t('dataForm_saveFail'))
+                this.$message.error(this.$t('form_save_fail'))
               }
             })
         }
