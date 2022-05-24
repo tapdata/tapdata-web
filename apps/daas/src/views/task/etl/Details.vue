@@ -34,7 +34,7 @@
             </div>
           </div>
           <div class="operation-row mt-4">
-            <VButton
+            <ElButton
               type="primary"
               auto-loading
               :disabled="task.disabledData.start"
@@ -42,15 +42,15 @@
             >
               <VIcon size="12">start-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_start') }}</span>
-            </VButton>
-            <VButton
+            </ElButton>
+            <ElButton
               v-if="isShowForceStop(task.statuses)"
               :disabled="$disabledByPermission('SYNC_job_operation_all_data', task.user_id)"
               @click="forceStop($route.params.id)"
             >
               {{ $t('task_list_force_stop') }}
-            </VButton>
-            <VButton
+            </ElButton>
+            <ElButton
               v-else
               auto-loading
               :disabled="task.disabledData.stop"
@@ -59,15 +59,15 @@
             >
               <VIcon size="12">pause-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_stop') }}</span>
-            </VButton>
-            <VButton :disabled="task.disabledData.edit" @click="handleEditor(task.id)">
+            </ElButton>
+            <ElButton :disabled="task.disabledData.edit" @click="handleEditor(task.id)">
               <VIcon size="12">edit-fill</VIcon>
               <span class="ml-1">{{ $t('task_button_edit') }}</span>
-            </VButton>
-            <VButton @click="toView(task.id)">
+            </ElButton>
+            <ElButton @click="toView(task.id)">
               <VIcon size="12">yulan</VIcon>
               <span class="ml-1">{{ $t('button_check') }}</span>
-            </VButton>
+            </ElButton>
           </div>
         </div>
       </div>

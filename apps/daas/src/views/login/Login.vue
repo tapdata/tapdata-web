@@ -30,12 +30,12 @@
         <el-checkbox class="keep-sign-in" v-model="keepSignIn">
           {{ $t('app.signIn.keepSignIn') }}
         </el-checkbox>
-        <el-button class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
+        <ElButton class="btn-sign-in" type="primary" size="medium" :loading="loading" @click="submit">
           {{ $t('app.signIn.signIn') }}
-        </el-button>
+        </ElButton>
 
         <div class="remember">
-          <span @click="forgetPassword">{{ $t('app.signIn.forgetPassword') }}</span>
+          <ElButton type="text" @click="forgetPassword">{{ $t('app.signIn.forgetPassword') }}</ElButton>
         </div>
       </div>
     </section>

@@ -1,14 +1,14 @@
 lockfileVersion: 5.3
 
 overrides:
-  '@formily/core': ^2.0.18
-  '@formily/element': ^2.0.18
-  '@formily/json-schema': ^2.0.18
-  '@formily/path': ^2.0.18
-  '@formily/reactive': ^2.0.18
-  '@formily/reactive-vue': ^2.0.18
-  '@formily/shared': ^2.0.18
-  '@formily/vue': ^2.0.18
+  '@formily/core': ^2.1.2
+  '@formily/element': ^2.1.2
+  '@formily/json-schema': ^2.1.2
+  '@formily/path': ^2.1.2
+  '@formily/reactive': ^2.1.2
+  '@formily/reactive-vue': ^2.1.2
+  '@formily/shared': ^2.1.2
+  '@formily/vue': ^2.1.2
 
 importers:
 
@@ -47,8 +47,8 @@ importers:
 
   apps/daas:
     specifiers:
-      '@formily/core': ^2.0.18
-      '@formily/reactive': ^2.0.18
+      '@formily/core': ^2.1.2
+      '@formily/reactive': ^2.1.2
       '@tap/api': workspace:^1.0.0
       '@tap/component': workspace:^1.0.0
       '@tap/dag': workspace:^1.0.0
@@ -107,8 +107,8 @@ importers:
       vue-virtual-scroller: ^1.0.10
       vuex: ^3.4.0
     dependencies:
-      '@formily/core': registry.npmmirror.com/@formily/core/2.0.18
-      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.18
+      '@formily/core': registry.npmmirror.com/@formily/core/2.1.2
+      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.1.2
       '@tap/api': link:../../packages/api
       '@tap/component': link:../../packages/component
       '@tap/dag': link:../../packages/dag
@@ -141,17 +141,17 @@ importers:
       vuex: registry.npmmirror.com/vuex/3.6.2_vue@2.6.14
     devDependencies:
       '@vue/cli-plugin-babel': registry.npmmirror.com/@vue/cli-plugin-babel/4.5.15_4c1e5ebbf041a85328f9984e4ede8f8a
-      '@vue/cli-plugin-eslint': registry.npmmirror.com/@vue/cli-plugin-eslint/4.5.15_@vue+cli-service@4.5.15
+      '@vue/cli-plugin-eslint': registry.npmmirror.com/@vue/cli-plugin-eslint/4.5.15_159f9ca94908a7070131e2c321d72521
       '@vue/cli-plugin-router': registry.npmmirror.com/@vue/cli-plugin-router/4.5.15_@vue+cli-service@4.5.15
       '@vue/cli-plugin-vuex': registry.npmmirror.com/@vue/cli-plugin-vuex/4.5.15_@vue+cli-service@4.5.15
       '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_bd35ede954b13d40bce924b0d62135a8
-      '@vue/eslint-config-prettier': registry.npmmirror.com/@vue/eslint-config-prettier/6.0.0_eslint-plugin-prettier@3.4.1
-      babel-eslint: registry.npmmirror.com/babel-eslint/10.1.0
+      '@vue/eslint-config-prettier': registry.npmmirror.com/@vue/eslint-config-prettier/6.0.0_4adef71036e25249dceaf9dc58301895
+      babel-eslint: registry.npmmirror.com/babel-eslint/10.1.0_eslint@6.8.0
       babel-plugin-dynamic-import-node: registry.npmmirror.com/babel-plugin-dynamic-import-node/2.3.3
       compression-webpack-plugin: registry.npmmirror.com/compression-webpack-plugin/5.0.2
       cross-env: registry.npmmirror.com/cross-env/7.0.3
-      eslint-plugin-prettier: registry.npmmirror.com/eslint-plugin-prettier/3.4.1
-      eslint-plugin-vue: registry.npmmirror.com/eslint-plugin-vue/6.2.2
+      eslint-plugin-prettier: registry.npmmirror.com/eslint-plugin-prettier/3.4.1_eslint@6.8.0+prettier@2.5.1
+      eslint-plugin-vue: registry.npmmirror.com/eslint-plugin-vue/6.2.2_eslint@6.8.0
       express: registry.npmmirror.com/express/4.17.2
       express-ws: registry.npmmirror.com/express-ws/4.0.0_express@4.17.2
       hard-source-webpack-plugin: registry.npmmirror.com/hard-source-webpack-plugin/0.13.1
@@ -170,12 +170,12 @@ importers:
 
   apps/dfs:
     specifiers:
-      '@formily/core': ^2.0.18
-      '@formily/json-schema': ^2.0.18
-      '@formily/reactive': ^2.0.18
-      '@formily/reactive-vue': ^2.0.18
-      '@formily/shared': ^2.0.18
-      '@formily/vue': ^2.0.18
+      '@formily/core': ^2.1.2
+      '@formily/json-schema': ^2.1.2
+      '@formily/reactive': ^2.1.2
+      '@formily/reactive-vue': ^2.1.2
+      '@formily/shared': ^2.1.2
+      '@formily/vue': ^2.1.2
       '@tap/dag': workspace:^1.0.0
       '@tap/form': workspace:^1.0.0
       '@tap/shared': workspace:^1.0.0
@@ -227,12 +227,12 @@ importers:
       vue-virtual-scroller: ^1.0.10
       vuex: ^3.6.2
     dependencies:
-      '@formily/core': registry.npmmirror.com/@formily/core/2.0.18
-      '@formily/json-schema': registry.npmmirror.com/@formily/json-schema/2.0.18
-      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.18
-      '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.0.18_3f39d8fe5118d28f4db30f0090a1b0cf
-      '@formily/shared': registry.npmmirror.com/@formily/shared/2.0.18
-      '@formily/vue': registry.npmmirror.com/@formily/vue/2.0.18_3f39d8fe5118d28f4db30f0090a1b0cf
+      '@formily/core': registry.npmmirror.com/@formily/core/2.1.2
+      '@formily/json-schema': registry.npmmirror.com/@formily/json-schema/2.1.2
+      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.1.2
+      '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.1.2_3f39d8fe5118d28f4db30f0090a1b0cf
+      '@formily/shared': registry.npmmirror.com/@formily/shared/2.1.2
+      '@formily/vue': registry.npmmirror.com/@formily/vue/2.1.2_3f39d8fe5118d28f4db30f0090a1b0cf
       '@tap/dag': link:../../packages/dag
       '@tap/form': link:../../packages/form
       '@tap/shared': link:../../packages/shared
@@ -306,11 +306,11 @@ importers:
 
   packages/dag:
     specifiers:
-      '@formily/core': ^2.0.18
-      '@formily/element': ^2.0.18
-      '@formily/path': ^2.0.18
-      '@formily/reactive': ^2.0.18
-      '@formily/reactive-vue': ^2.0.18
+      '@formily/core': ^2.1.2
+      '@formily/element': ^2.1.2
+      '@formily/path': ^2.1.2
+      '@formily/reactive': ^2.1.2
+      '@formily/reactive-vue': ^2.1.2
       '@tap/api': workspace:^1.0.0
       '@tap/business': workspace:^1.0.0
       '@tap/field-mapping': workspace:^1.0.0
@@ -321,11 +321,11 @@ importers:
       mousetrap: ^1.6.5
       vuex: ^3.6.2
     dependencies:
-      '@formily/core': registry.npmmirror.com/@formily/core/2.0.18
-      '@formily/element': registry.npmmirror.com/@formily/element/2.0.18_element-ui@2.15.7+vue@2.6.14
-      '@formily/path': registry.npmmirror.com/@formily/path/2.0.18
-      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.18
-      '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.0.18_vue@2.6.14
+      '@formily/core': registry.npmmirror.com/@formily/core/2.1.2
+      '@formily/element': registry.npmmirror.com/@formily/element/2.1.2_element-ui@2.15.7+vue@2.6.14
+      '@formily/path': registry.npmmirror.com/@formily/path/2.1.2
+      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.1.2
+      '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.1.2_vue@2.6.14
       '@tap/api': link:../api
       '@tap/business': link:../business
       '@tap/field-mapping': link:../field-mapping
@@ -344,12 +344,12 @@ importers:
 
   packages/form:
     specifiers:
-      '@formily/core': ^2.0.18
-      '@formily/element': ^2.0.18
-      '@formily/json-schema': ^2.0.18
-      '@formily/reactive': ^2.0.18
-      '@formily/reactive-vue': ^2.0.18
-      '@formily/shared': ^2.0.18
+      '@formily/core': ^2.1.2
+      '@formily/element': ^2.1.2
+      '@formily/json-schema': ^2.1.2
+      '@formily/reactive': ^2.1.2
+      '@formily/reactive-vue': ^2.1.2
+      '@formily/shared': ^2.1.2
       '@tap/api': workspace:^1.0.0
       '@tap/component': workspace:^1.0.0
       '@vue/composition-api': ^1.2.4
@@ -357,12 +357,12 @@ importers:
       highlight.js: ^11.0.1
       resize-observer-polyfill: ^1.5.1
     dependencies:
-      '@formily/core': registry.npmmirror.com/@formily/core/2.0.18
-      '@formily/element': registry.npmmirror.com/@formily/element/2.0.18_da4ed421a25ea04915851e1fdb5b74b1
-      '@formily/json-schema': registry.npmmirror.com/@formily/json-schema/2.0.18
-      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.18
-      '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.0.18_3f39d8fe5118d28f4db30f0090a1b0cf
-      '@formily/shared': registry.npmmirror.com/@formily/shared/2.0.18
+      '@formily/core': registry.npmmirror.com/@formily/core/2.1.2
+      '@formily/element': registry.npmmirror.com/@formily/element/2.1.2_da4ed421a25ea04915851e1fdb5b74b1
+      '@formily/json-schema': registry.npmmirror.com/@formily/json-schema/2.1.2
+      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.1.2
+      '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.1.2_3f39d8fe5118d28f4db30f0090a1b0cf
+      '@formily/shared': registry.npmmirror.com/@formily/shared/2.1.2
       '@tap/api': link:../api
       '@tap/component': link:../component
       '@vue/composition-api': registry.npmmirror.com/@vue/composition-api/1.4.6_vue@2.6.14
@@ -372,24 +372,24 @@ importers:
 
   packages/node-design:
     specifiers:
-      '@formily/core': ^2.0.18
-      '@formily/json-schema': ^2.0.18
-      '@formily/path': ^2.0.18
-      '@formily/reactive': ^2.0.18
-      '@formily/reactive-vue': ^2.0.18
-      '@formily/shared': ^2.0.18
+      '@formily/core': ^2.1.2
+      '@formily/json-schema': ^2.1.2
+      '@formily/path': ^2.1.2
+      '@formily/reactive': ^2.1.2
+      '@formily/reactive-vue': ^2.1.2
+      '@formily/shared': ^2.1.2
       '@tap/api': workspace:^1.0.0
       '@tap/component': workspace:^1.0.0
       '@tap/form': workspace:^1.0.0
       '@tap/shared': workspace:^1.0.0
       resize-observer-polyfill: ^1.5.1
     dependencies:
-      '@formily/core': registry.npmmirror.com/@formily/core/2.0.18
-      '@formily/json-schema': registry.npmmirror.com/@formily/json-schema/2.0.18
-      '@formily/path': registry.npmmirror.com/@formily/path/2.0.18
-      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.18
-      '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.0.18_vue@2.6.14
-      '@formily/shared': registry.npmmirror.com/@formily/shared/2.0.18
+      '@formily/core': registry.npmmirror.com/@formily/core/2.1.2
+      '@formily/json-schema': registry.npmmirror.com/@formily/json-schema/2.1.2
+      '@formily/path': registry.npmmirror.com/@formily/path/2.1.2
+      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.1.2
+      '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.1.2_vue@2.6.14
+      '@formily/shared': registry.npmmirror.com/@formily/shared/2.1.2
       '@tap/api': link:../api
       '@tap/component': link:../component
       '@tap/form': link:../form
@@ -1895,35 +1895,35 @@ packages:
       to-fast-properties: registry.npmmirror.com/to-fast-properties/2.0.0
     dev: true
 
-  registry.npmmirror.com/@formily/core/2.0.18:
-    resolution: {integrity: sha512-ZjTih1T7MXWNIYRawVCo5nJ2ZdFqUwxWiezBFbZX2VajFrkb/5St26h6bYcRLgCAmiuwxu3H8hNmOO3iVOIB5w==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/core/-/core-2.0.18.tgz}
+  registry.npmmirror.com/@formily/core/2.1.2:
+    resolution: {integrity: sha512-K+7azEGhlB58UgibxvF4FQETfp3JLlI3YDIpwvyajCVd1Wbcrq4aLlv8TMkzuFIz0enJZRKSd56lzxMQtE0LPQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/core/-/core-2.1.2.tgz}
     name: '@formily/core'
-    version: 2.0.18
+    version: 2.1.2
     engines: {npm: '>=3.0.0'}
     dependencies:
-      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.18
-      '@formily/shared': registry.npmmirror.com/@formily/shared/2.0.18
-      '@formily/validator': registry.npmmirror.com/@formily/validator/2.0.18
+      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.1.2
+      '@formily/shared': registry.npmmirror.com/@formily/shared/2.1.2
+      '@formily/validator': registry.npmmirror.com/@formily/validator/2.1.2
     dev: false
 
-  registry.npmmirror.com/@formily/element/2.0.18_da4ed421a25ea04915851e1fdb5b74b1:
-    resolution: {integrity: sha512-T0ndZh9MTRzq/OputTkFvohNwWLyUsqtBay3nN4WIiYTbrN3mkdJoZvar3l7AhsYVj1BouX3YS/cQwoI/2I/8Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/element/-/element-2.0.18.tgz}
-    id: registry.npmmirror.com/@formily/element/2.0.18
+  registry.npmmirror.com/@formily/element/2.1.2_da4ed421a25ea04915851e1fdb5b74b1:
+    resolution: {integrity: sha512-WmP9hdpV1s0fmMYYzMzi0FqnqFe75Fy50t7nma8zevZ07XhLG0MgBGkp4U9NeRrz9LwJpN6KYe++ED3/WO4IPg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/element/-/element-2.1.2.tgz}
+    id: registry.npmmirror.com/@formily/element/2.1.2
     name: '@formily/element'
-    version: 2.0.18
+    version: 2.1.2
     engines: {npm: '>=3.0.0'}
     peerDependencies:
       '@vue/composition-api': ^1.0.0-beta.1
       element-ui: ^2.14.0
       vue: ^2.6.0
     dependencies:
-      '@formily/core': registry.npmmirror.com/@formily/core/2.0.18
-      '@formily/grid': registry.npmmirror.com/@formily/grid/2.0.18
-      '@formily/json-schema': registry.npmmirror.com/@formily/json-schema/2.0.18
-      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.18
-      '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.0.18_3f39d8fe5118d28f4db30f0090a1b0cf
-      '@formily/shared': registry.npmmirror.com/@formily/shared/2.0.18
-      '@formily/vue': registry.npmmirror.com/@formily/vue/2.0.18_3f39d8fe5118d28f4db30f0090a1b0cf
+      '@formily/core': registry.npmmirror.com/@formily/core/2.1.2
+      '@formily/grid': registry.npmmirror.com/@formily/grid/2.1.2
+      '@formily/json-schema': registry.npmmirror.com/@formily/json-schema/2.1.2
+      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.1.2
+      '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.1.2_3f39d8fe5118d28f4db30f0090a1b0cf
+      '@formily/shared': registry.npmmirror.com/@formily/shared/2.1.2
+      '@formily/vue': registry.npmmirror.com/@formily/vue/2.1.2_3f39d8fe5118d28f4db30f0090a1b0cf
       '@vue/composition-api': registry.npmmirror.com/@vue/composition-api/1.4.6_vue@2.6.14
       element-ui: registry.npmmirror.com/element-ui/2.15.7_vue@2.6.14
       portal-vue: registry.npmmirror.com/portal-vue/2.1.7_vue@2.6.14
@@ -1933,24 +1933,24 @@ packages:
       - typescript
     dev: false
 
-  registry.npmmirror.com/@formily/element/2.0.18_element-ui@2.15.7+vue@2.6.14:
-    resolution: {integrity: sha512-T0ndZh9MTRzq/OputTkFvohNwWLyUsqtBay3nN4WIiYTbrN3mkdJoZvar3l7AhsYVj1BouX3YS/cQwoI/2I/8Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/element/-/element-2.0.18.tgz}
-    id: registry.npmmirror.com/@formily/element/2.0.18
+  registry.npmmirror.com/@formily/element/2.1.2_element-ui@2.15.7+vue@2.6.14:
+    resolution: {integrity: sha512-WmP9hdpV1s0fmMYYzMzi0FqnqFe75Fy50t7nma8zevZ07XhLG0MgBGkp4U9NeRrz9LwJpN6KYe++ED3/WO4IPg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/element/-/element-2.1.2.tgz}
+    id: registry.npmmirror.com/@formily/element/2.1.2
     name: '@formily/element'
-    version: 2.0.18
+    version: 2.1.2
     engines: {npm: '>=3.0.0'}
     peerDependencies:
       '@vue/composition-api': ^1.0.0-beta.1
       element-ui: ^2.14.0
       vue: ^2.6.0
     dependencies:
-      '@formily/core': registry.npmmirror.com/@formily/core/2.0.18
-      '@formily/grid': registry.npmmirror.com/@formily/grid/2.0.18
-      '@formily/json-schema': registry.npmmirror.com/@formily/json-schema/2.0.18
-      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.18
-      '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.0.18_vue@2.6.14
-      '@formily/shared': registry.npmmirror.com/@formily/shared/2.0.18
-      '@formily/vue': registry.npmmirror.com/@formily/vue/2.0.18_vue@2.6.14
+      '@formily/core': registry.npmmirror.com/@formily/core/2.1.2
+      '@formily/grid': registry.npmmirror.com/@formily/grid/2.1.2
+      '@formily/json-schema': registry.npmmirror.com/@formily/json-schema/2.1.2
+      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.1.2
+      '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.1.2_vue@2.6.14
+      '@formily/shared': registry.npmmirror.com/@formily/shared/2.1.2
+      '@formily/vue': registry.npmmirror.com/@formily/vue/2.1.2_vue@2.6.14
       element-ui: registry.npmmirror.com/element-ui/2.15.7_vue@2.6.14
       portal-vue: registry.npmmirror.com/portal-vue/2.1.7_vue@2.6.14
       vue: registry.npmmirror.com/vue/2.6.14
@@ -1959,43 +1959,43 @@ packages:
       - typescript
     dev: false
 
-  registry.npmmirror.com/@formily/grid/2.0.18:
-    resolution: {integrity: sha512-41X1ovt7cLXPvDy9gBS6EcB8j9ddLNtPHM0Qrs9ylW2XNKz0lkH5raGzzRPZ5Chr9enR5U5yby+bAMkjQb3dsA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/grid/-/grid-2.0.18.tgz}
+  registry.npmmirror.com/@formily/grid/2.1.2:
+    resolution: {integrity: sha512-t5aFqGW1qVkbZzvHS5rSvCswUP0zXjswYzSM9yqo2C8q9IFV+hW7Wp1ilq1nP485ejiSVtdnsufVNuOa7qk7Sg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/grid/-/grid-2.1.2.tgz}
     name: '@formily/grid'
-    version: 2.0.18
+    version: 2.1.2
     engines: {npm: '>=3.0.0'}
     peerDependencies:
       typescript: ^4.1.0
     dependencies:
-      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.18
+      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.1.2
       '@juggle/resize-observer': registry.npmmirror.com/@juggle/resize-observer/3.3.1
     dev: false
 
-  registry.npmmirror.com/@formily/json-schema/2.0.18:
-    resolution: {integrity: sha512-ZU7W8Hi670fpCdBJNxx03EjarV8JzvB/AXCMFT2umZkyaCLx0YqxUVDC+/UOigeUVv19H/pA2yLL/rJuoab4+A==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/json-schema/-/json-schema-2.0.18.tgz}
+  registry.npmmirror.com/@formily/json-schema/2.1.2:
+    resolution: {integrity: sha512-RroEee9QD1F4xYCV4vS5bb3U6by/xmcxidvKGEjFYTcf99UxJXhS0g2fh+6LfYQTQoIaD/+xFc8pUxzMxIgteg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/json-schema/-/json-schema-2.1.2.tgz}
     name: '@formily/json-schema'
-    version: 2.0.18
+    version: 2.1.2
     engines: {npm: '>=3.0.0'}
     peerDependencies:
       typescript: ^4.1.5
     dependencies:
-      '@formily/core': registry.npmmirror.com/@formily/core/2.0.18
-      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.18
-      '@formily/shared': registry.npmmirror.com/@formily/shared/2.0.18
+      '@formily/core': registry.npmmirror.com/@formily/core/2.1.2
+      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.1.2
+      '@formily/shared': registry.npmmirror.com/@formily/shared/2.1.2
     dev: false
 
-  registry.npmmirror.com/@formily/path/2.0.18:
-    resolution: {integrity: sha512-8KkJq9BQPMY6tleQ25BvxMTk0bBdasNwnZWj93w6BXlKMShRkOO3YBCbGxeI3gXQQxws0Q0xX34/fTeccWZVRw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/path/-/path-2.0.18.tgz}
+  registry.npmmirror.com/@formily/path/2.1.2:
+    resolution: {integrity: sha512-jFBWhx2FaKBkEXaGJr5Y9qs5V7ce+Fw7o6zIrAsyEhJHx1CdvwmbTzGpYOOPDtidMzvHVAsvLHkSpeaHfryZdw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/path/-/path-2.1.2.tgz}
     name: '@formily/path'
-    version: 2.0.18
+    version: 2.1.2
     engines: {npm: '>=3.0.0'}
     dev: false
 
-  registry.npmmirror.com/@formily/reactive-vue/2.0.18_3f39d8fe5118d28f4db30f0090a1b0cf:
-    resolution: {integrity: sha512-gcQ3CRKyoPuewt1vqB8OjCG8QXmiZLxHQDt6YrT87MMYNSlFpB7oReDoNyzB4iNMxZGdqvN5sXx4D5ZVhyDZLw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/reactive-vue/-/reactive-vue-2.0.18.tgz}
-    id: registry.npmmirror.com/@formily/reactive-vue/2.0.18
+  registry.npmmirror.com/@formily/reactive-vue/2.1.2_3f39d8fe5118d28f4db30f0090a1b0cf:
+    resolution: {integrity: sha512-p4iC56Mvq1TTx5wecajCXleQE265yCENi7VEnJDaZp9zxChYmghfnGgt9bAIW2xro37f9DS+2S8nDRqKQqGuIg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/reactive-vue/-/reactive-vue-2.1.2.tgz}
+    id: registry.npmmirror.com/@formily/reactive-vue/2.1.2
     name: '@formily/reactive-vue'
-    version: 2.0.18
+    version: 2.1.2
     engines: {npm: '>=3.0.0'}
     peerDependencies:
       '@vue/composition-api': ^1.0.0-beta.1
@@ -2004,17 +2004,17 @@ packages:
       '@vue/composition-api':
         optional: true
     dependencies:
-      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.18
+      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.1.2
       '@vue/composition-api': registry.npmmirror.com/@vue/composition-api/1.4.6_vue@2.6.14
       vue: registry.npmmirror.com/vue/2.6.14
       vue-demi: registry.npmmirror.com/vue-demi/0.9.1_3f39d8fe5118d28f4db30f0090a1b0cf
     dev: false
 
-  registry.npmmirror.com/@formily/reactive-vue/2.0.18_vue@2.6.14:
-    resolution: {integrity: sha512-gcQ3CRKyoPuewt1vqB8OjCG8QXmiZLxHQDt6YrT87MMYNSlFpB7oReDoNyzB4iNMxZGdqvN5sXx4D5ZVhyDZLw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/reactive-vue/-/reactive-vue-2.0.18.tgz}
-    id: registry.npmmirror.com/@formily/reactive-vue/2.0.18
+  registry.npmmirror.com/@formily/reactive-vue/2.1.2_vue@2.6.14:
+    resolution: {integrity: sha512-p4iC56Mvq1TTx5wecajCXleQE265yCENi7VEnJDaZp9zxChYmghfnGgt9bAIW2xro37f9DS+2S8nDRqKQqGuIg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/reactive-vue/-/reactive-vue-2.1.2.tgz}
+    id: registry.npmmirror.com/@formily/reactive-vue/2.1.2
     name: '@formily/reactive-vue'
-    version: 2.0.18
+    version: 2.1.2
     engines: {npm: '>=3.0.0'}
     peerDependencies:
       '@vue/composition-api': ^1.0.0-beta.1
@@ -2023,25 +2023,25 @@ packages:
       '@vue/composition-api':
         optional: true
     dependencies:
-      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.18
+      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.1.2
       vue: registry.npmmirror.com/vue/2.6.14
       vue-demi: registry.npmmirror.com/vue-demi/0.9.1_vue@2.6.14
     dev: false
 
-  registry.npmmirror.com/@formily/reactive/2.0.18:
-    resolution: {integrity: sha512-Xy0RZ+Srnnr1q6ApU6SOReOyhOUMWiL00qpUQUO1XclIgWxcxCQVOzPsBQA9S+MPg2B4Ja30ii7/QcEd554CLg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/reactive/-/reactive-2.0.18.tgz}
+  registry.npmmirror.com/@formily/reactive/2.1.2:
+    resolution: {integrity: sha512-9L7hAznjbQqY0QsSvAfz9ksmcJbNVP1pJSNkqID9ZMI7bVsmoxKLNXIlT5sw0jnlSpKStW7mQAzjRdivbUxTwQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/reactive/-/reactive-2.1.2.tgz}
     name: '@formily/reactive'
-    version: 2.0.18
+    version: 2.1.2
     engines: {npm: '>=3.0.0'}
     dev: false
 
-  registry.npmmirror.com/@formily/shared/2.0.18:
-    resolution: {integrity: sha512-v+rhavjzSXnMPZX6LpEtpecUBRhw08MrS1peKSNCLX6Kdof8sQq0j13SGNZ2oKuE7F98kDV9j9fllZ6EUGRaKQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/shared/-/shared-2.0.18.tgz}
+  registry.npmmirror.com/@formily/shared/2.1.2:
+    resolution: {integrity: sha512-WIWwFtPyGMqtCXu2F3a98K+RDsgb0B5kuH3cBD90wc4TPasCv75DMRg/EEP0USVs6WC9J8wIWSqqmYosP/vIFA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/shared/-/shared-2.1.2.tgz}
     name: '@formily/shared'
-    version: 2.0.18
+    version: 2.1.2
     engines: {npm: '>=3.0.0'}
     dependencies:
-      '@formily/path': registry.npmmirror.com/@formily/path/2.0.18
+      '@formily/path': registry.npmmirror.com/@formily/path/2.1.2
       camel-case: registry.npmmirror.com/camel-case/4.1.2
       lower-case: registry.npmmirror.com/lower-case/2.0.2
       no-case: registry.npmmirror.com/no-case/3.0.4
@@ -2050,20 +2050,20 @@ packages:
       upper-case: registry.npmmirror.com/upper-case/2.0.2
     dev: false
 
-  registry.npmmirror.com/@formily/validator/2.0.18:
-    resolution: {integrity: sha512-G8+w22T8yaojc4Kk9LaIr2sr5YRzm5s9W3rlQYVq/0yIJDmkj1oTCkuGiknnR22Y28REasBVdp93qWQa8o9YHw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/validator/-/validator-2.0.18.tgz}
+  registry.npmmirror.com/@formily/validator/2.1.2:
+    resolution: {integrity: sha512-3XvswpgVJUXM3VimUNez7BWqgfSeuFG7TSkyMi2LKu0JSBO1/RLq5D9Ps69BnA16RJGQijdX0pePtsVNzu9JFw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/validator/-/validator-2.1.2.tgz}
     name: '@formily/validator'
-    version: 2.0.18
+    version: 2.1.2
     engines: {npm: '>=3.0.0'}
     dependencies:
-      '@formily/shared': registry.npmmirror.com/@formily/shared/2.0.18
+      '@formily/shared': registry.npmmirror.com/@formily/shared/2.1.2
     dev: false
 
-  registry.npmmirror.com/@formily/vue/2.0.18_3f39d8fe5118d28f4db30f0090a1b0cf:
-    resolution: {integrity: sha512-Q3FQ7fj7DyUu43Qs/uhaolTt2II0AuIuRuL/ZQLWdXz92Dqx7V66AwDX9uLgaqjXI00EPQvv47nW+jGSaK7j2g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/vue/-/vue-2.0.18.tgz}
-    id: registry.npmmirror.com/@formily/vue/2.0.18
+  registry.npmmirror.com/@formily/vue/2.1.2_3f39d8fe5118d28f4db30f0090a1b0cf:
+    resolution: {integrity: sha512-HTCXMWwKg6upr/CWxxP1aO1ri7V9z85FUc9CM+lnmnU1UeYM93bLjqlkwXJvcLSapoTiLrPmzgfzUfZGZT1naA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/vue/-/vue-2.1.2.tgz}
+    id: registry.npmmirror.com/@formily/vue/2.1.2
     name: '@formily/vue'
-    version: 2.0.18
+    version: 2.1.2
     engines: {npm: '>=3.0.0'}
     hasBin: true
     requiresBuild: true
@@ -2074,12 +2074,12 @@ packages:
       '@vue/composition-api':
         optional: true
     dependencies:
-      '@formily/core': registry.npmmirror.com/@formily/core/2.0.18
-      '@formily/json-schema': registry.npmmirror.com/@formily/json-schema/2.0.18
-      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.18
-      '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.0.18_3f39d8fe5118d28f4db30f0090a1b0cf
-      '@formily/shared': registry.npmmirror.com/@formily/shared/2.0.18
-      '@formily/validator': registry.npmmirror.com/@formily/validator/2.0.18
+      '@formily/core': registry.npmmirror.com/@formily/core/2.1.2
+      '@formily/json-schema': registry.npmmirror.com/@formily/json-schema/2.1.2
+      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.1.2
+      '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.1.2_3f39d8fe5118d28f4db30f0090a1b0cf
+      '@formily/shared': registry.npmmirror.com/@formily/shared/2.1.2
+      '@formily/validator': registry.npmmirror.com/@formily/validator/2.1.2
       '@vue/composition-api': registry.npmmirror.com/@vue/composition-api/1.4.6_vue@2.6.14
       fs-extra: registry.npmmirror.com/fs-extra/10.0.0
       vue: registry.npmmirror.com/vue/2.6.14
@@ -2089,11 +2089,11 @@ packages:
       - typescript
     dev: false
 
-  registry.npmmirror.com/@formily/vue/2.0.18_vue@2.6.14:
-    resolution: {integrity: sha512-Q3FQ7fj7DyUu43Qs/uhaolTt2II0AuIuRuL/ZQLWdXz92Dqx7V66AwDX9uLgaqjXI00EPQvv47nW+jGSaK7j2g==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/vue/-/vue-2.0.18.tgz}
-    id: registry.npmmirror.com/@formily/vue/2.0.18
+  registry.npmmirror.com/@formily/vue/2.1.2_vue@2.6.14:
+    resolution: {integrity: sha512-HTCXMWwKg6upr/CWxxP1aO1ri7V9z85FUc9CM+lnmnU1UeYM93bLjqlkwXJvcLSapoTiLrPmzgfzUfZGZT1naA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@formily/vue/-/vue-2.1.2.tgz}
+    id: registry.npmmirror.com/@formily/vue/2.1.2
     name: '@formily/vue'
-    version: 2.0.18
+    version: 2.1.2
     engines: {npm: '>=3.0.0'}
     hasBin: true
     requiresBuild: true
@@ -2104,12 +2104,12 @@ packages:
       '@vue/composition-api':
         optional: true
     dependencies:
-      '@formily/core': registry.npmmirror.com/@formily/core/2.0.18
-      '@formily/json-schema': registry.npmmirror.com/@formily/json-schema/2.0.18
-      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.0.18
-      '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.0.18_vue@2.6.14
-      '@formily/shared': registry.npmmirror.com/@formily/shared/2.0.18
-      '@formily/validator': registry.npmmirror.com/@formily/validator/2.0.18
+      '@formily/core': registry.npmmirror.com/@formily/core/2.1.2
+      '@formily/json-schema': registry.npmmirror.com/@formily/json-schema/2.1.2
+      '@formily/reactive': registry.npmmirror.com/@formily/reactive/2.1.2
+      '@formily/reactive-vue': registry.npmmirror.com/@formily/reactive-vue/2.1.2_vue@2.6.14
+      '@formily/shared': registry.npmmirror.com/@formily/shared/2.1.2
+      '@formily/validator': registry.npmmirror.com/@formily/validator/2.1.2
       fs-extra: registry.npmmirror.com/fs-extra/10.0.0
       vue: registry.npmmirror.com/vue/2.6.14
       vue-demi: registry.npmmirror.com/vue-demi/0.9.1_vue@2.6.14
@@ -2763,32 +2763,10 @@ packages:
       '@vue/cli-service': ^3.0.0 || ^4.0.0-0
       eslint: '>= 1.6.0 < 7.0.0'
     dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_2b50be06b5fb1b72c53517f2d8ffe927
+      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_bd35ede954b13d40bce924b0d62135a8
       '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.15
       eslint: registry.npmmirror.com/eslint/6.8.0
       eslint-loader: registry.npmmirror.com/eslint-loader/2.2.1_eslint@6.8.0+webpack@4.46.0
-      globby: registry.npmmirror.com/globby/9.2.0
-      inquirer: registry.npmmirror.com/inquirer/7.3.3
-      webpack: registry.npmmirror.com/webpack/4.46.0
-      yorkie: registry.npmmirror.com/yorkie/2.0.0
-    transitivePeerDependencies:
-      - supports-color
-      - webpack-cli
-      - webpack-command
-    dev: true
-
-  registry.npmmirror.com/@vue/cli-plugin-eslint/4.5.15_@vue+cli-service@4.5.15:
-    resolution: {integrity: sha512-/2Fl6wY/5bz3HD035oSnFRMsKNxDxU396KqBdpCQdwdvqk4mm6JAbXqihpcBRTNPeTO6w+LwGe6FE56PVbJdbg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@vue/cli-plugin-eslint/-/cli-plugin-eslint-4.5.15.tgz}
-    id: registry.npmmirror.com/@vue/cli-plugin-eslint/4.5.15
-    name: '@vue/cli-plugin-eslint'
-    version: 4.5.15
-    peerDependencies:
-      '@vue/cli-service': ^3.0.0 || ^4.0.0-0
-      eslint: '>= 1.6.0 < 7.0.0'
-    dependencies:
-      '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/4.5.15_bd35ede954b13d40bce924b0d62135a8
-      '@vue/cli-shared-utils': registry.npmmirror.com/@vue/cli-shared-utils/4.5.15
-      eslint-loader: registry.npmmirror.com/eslint-loader/2.2.1_webpack@4.46.0
       globby: registry.npmmirror.com/globby/9.2.0
       inquirer: registry.npmmirror.com/inquirer/7.3.3
       webpack: registry.npmmirror.com/webpack/4.46.0
@@ -3243,20 +3221,6 @@ packages:
       eslint-config-prettier: registry.npmmirror.com/eslint-config-prettier/6.15.0_eslint@6.8.0
       eslint-plugin-prettier: registry.npmmirror.com/eslint-plugin-prettier/3.4.1_eslint@6.8.0+prettier@2.5.1
       prettier: registry.npmmirror.com/prettier/2.5.1
-    dev: true
-
-  registry.npmmirror.com/@vue/eslint-config-prettier/6.0.0_eslint-plugin-prettier@3.4.1:
-    resolution: {integrity: sha512-wFQmv45c3ige5EA+ngijq40YpVcIkAy0Lihupnsnd1Dao5CBbPyfCzqtejFLZX1EwH/kCJdpz3t6s+5wd3+KxQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@vue/eslint-config-prettier/-/eslint-config-prettier-6.0.0.tgz}
-    id: registry.npmmirror.com/@vue/eslint-config-prettier/6.0.0
-    name: '@vue/eslint-config-prettier'
-    version: 6.0.0
-    peerDependencies:
-      eslint: '>= 5.0.0'
-      eslint-plugin-prettier: ^3.1.0
-      prettier: '>= 1.13.0'
-    dependencies:
-      eslint-config-prettier: registry.npmmirror.com/eslint-config-prettier/6.15.0
-      eslint-plugin-prettier: registry.npmmirror.com/eslint-plugin-prettier/3.4.1
     dev: true
 
   registry.npmmirror.com/@vue/preload-webpack-plugin/1.1.2_502c618fc8a7d35df07e93275324a2d0:
@@ -3943,29 +3907,10 @@ packages:
     name: axios
     version: 0.21.4
     dependencies:
-      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8
+      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8_debug@4.3.3
     transitivePeerDependencies:
       - debug
     dev: false
-
-  registry.npmmirror.com/babel-eslint/10.1.0:
-    resolution: {integrity: sha512-ifWaTHQ0ce+448CYop8AdrQiBsGrnC+bMgfyKFdi6EsPLTAWG+QfyDeM6OH+FmWnKvEq5NnBMLvlBUPKQZoDSg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/babel-eslint/-/babel-eslint-10.1.0.tgz}
-    name: babel-eslint
-    version: 10.1.0
-    engines: {node: '>=6'}
-    deprecated: babel-eslint is now @babel/eslint-parser. This package will no longer receive updates.
-    peerDependencies:
-      eslint: '>= 4.12.1'
-    dependencies:
-      '@babel/code-frame': registry.npmmirror.com/@babel/code-frame/7.16.7
-      '@babel/parser': registry.npmmirror.com/@babel/parser/7.17.3
-      '@babel/traverse': registry.npmmirror.com/@babel/traverse/7.17.3
-      '@babel/types': registry.npmmirror.com/@babel/types/7.17.0
-      eslint-visitor-keys: registry.npmmirror.com/eslint-visitor-keys/1.3.0
-      resolve: registry.npmmirror.com/resolve/1.22.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
 
   registry.npmmirror.com/babel-eslint/10.1.0_eslint@6.8.0:
     resolution: {integrity: sha512-ifWaTHQ0ce+448CYop8AdrQiBsGrnC+bMgfyKFdi6EsPLTAWG+QfyDeM6OH+FmWnKvEq5NnBMLvlBUPKQZoDSg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/babel-eslint/-/babel-eslint-10.1.0.tgz}
@@ -6737,17 +6682,6 @@ packages:
     engines: {node: '>=0.8.0'}
     dev: true
 
-  registry.npmmirror.com/eslint-config-prettier/6.15.0:
-    resolution: {integrity: sha512-a1+kOYLR8wMGustcgAjdydMsQ2A/2ipRPwRKUmfYaSxc9ZPcrku080Ctl6zrZzZNs/U82MjSv+qKREkoq3bJaw==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/eslint-config-prettier/-/eslint-config-prettier-6.15.0.tgz}
-    name: eslint-config-prettier
-    version: 6.15.0
-    hasBin: true
-    peerDependencies:
-      eslint: '>=3.14.1'
-    dependencies:
-      get-stdin: registry.npmmirror.com/get-stdin/6.0.0
-    dev: true
-
   registry.npmmirror.com/eslint-config-prettier/6.15.0_eslint@6.8.0:
     resolution: {integrity: sha512-a1+kOYLR8wMGustcgAjdydMsQ2A/2ipRPwRKUmfYaSxc9ZPcrku080Ctl6zrZzZNs/U82MjSv+qKREkoq3bJaw==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/eslint-config-prettier/-/eslint-config-prettier-6.15.0.tgz}
     id: registry.npmmirror.com/eslint-config-prettier/6.15.0
@@ -6777,41 +6711,7 @@ packages:
       object-assign: registry.npmmirror.com/object-assign/4.1.1
       object-hash: registry.npmmirror.com/object-hash/1.3.1
       rimraf: registry.npmmirror.com/rimraf/2.7.1
-      webpack: registry.npmmirror.com/webpack/4.46.0_webpack-cli@4.9.2
-    dev: true
-
-  registry.npmmirror.com/eslint-loader/2.2.1_webpack@4.46.0:
-    resolution: {integrity: sha512-RLgV9hoCVsMLvOxCuNjdqOrUqIj9oJg8hF44vzJaYqsAHuY9G2YAeN3joQ9nxP0p5Th9iFSIpKo+SD8KISxXRg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/eslint-loader/-/eslint-loader-2.2.1.tgz}
-    id: registry.npmmirror.com/eslint-loader/2.2.1
-    name: eslint-loader
-    version: 2.2.1
-    deprecated: This loader has been deprecated. Please use eslint-webpack-plugin
-    peerDependencies:
-      eslint: '>=1.6.0 <7.0.0'
-      webpack: '>=2.0.0 <5.0.0'
-    dependencies:
-      loader-fs-cache: registry.npmmirror.com/loader-fs-cache/1.0.3
-      loader-utils: registry.npmmirror.com/loader-utils/1.4.0
-      object-assign: registry.npmmirror.com/object-assign/4.1.1
-      object-hash: registry.npmmirror.com/object-hash/1.3.1
-      rimraf: registry.npmmirror.com/rimraf/2.7.1
       webpack: registry.npmmirror.com/webpack/4.46.0
-    dev: true
-
-  registry.npmmirror.com/eslint-plugin-prettier/3.4.1:
-    resolution: {integrity: sha512-htg25EUYUeIhKHXjOinK4BgCcDwtLHjqaxCDsMy5nbnUMkKFvIhMVCp+5GFUXQ4Nr8lBsPqtGAqBenbpFqAA2g==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.4.1.tgz}
-    name: eslint-plugin-prettier
-    version: 3.4.1
-    engines: {node: '>=6.0.0'}
-    peerDependencies:
-      eslint: '>=5.0.0'
-      eslint-config-prettier: '*'
-      prettier: '>=1.13.0'
-    peerDependenciesMeta:
-      eslint-config-prettier:
-        optional: true
-    dependencies:
-      prettier-linter-helpers: registry.npmmirror.com/prettier-linter-helpers/1.0.0
     dev: true
 
   registry.npmmirror.com/eslint-plugin-prettier/3.4.1_eslint@6.8.0+prettier@2.5.1:
@@ -6831,21 +6731,6 @@ packages:
       eslint: registry.npmmirror.com/eslint/6.8.0
       prettier: registry.npmmirror.com/prettier/2.5.1
       prettier-linter-helpers: registry.npmmirror.com/prettier-linter-helpers/1.0.0
-    dev: true
-
-  registry.npmmirror.com/eslint-plugin-vue/6.2.2:
-    resolution: {integrity: sha512-Nhc+oVAHm0uz/PkJAWscwIT4ijTrK5fqNqz9QB1D35SbbuMG1uB6Yr5AJpvPSWg+WOw7nYNswerYh0kOk64gqQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/eslint-plugin-vue/-/eslint-plugin-vue-6.2.2.tgz}
-    name: eslint-plugin-vue
-    version: 6.2.2
-    engines: {node: '>=8.10'}
-    peerDependencies:
-      eslint: ^5.0.0 || ^6.0.0
-    dependencies:
-      natural-compare: registry.npmmirror.com/natural-compare/1.4.0
-      semver: registry.npmmirror.com/semver/5.7.1
-      vue-eslint-parser: registry.npmmirror.com/vue-eslint-parser/7.11.0
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   registry.npmmirror.com/eslint-plugin-vue/6.2.2_eslint@6.8.0:
@@ -7646,8 +7531,9 @@ packages:
       readable-stream: registry.npmmirror.com/readable-stream/2.3.7
     dev: true
 
-  registry.npmmirror.com/follow-redirects/1.14.8:
+  registry.npmmirror.com/follow-redirects/1.14.8_debug@4.3.3:
     resolution: {integrity: sha512-1x0S9UVJHsQprFcEC/qnNzBLcIxsjAV905f/UkQxbclCsoTWlacCNOpQa/anodLl2uaEKFhfWOvM2Qg77+15zA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.14.8.tgz}
+    id: registry.npmmirror.com/follow-redirects/1.14.8
     name: follow-redirects
     version: 1.14.8
     engines: {node: '>=4.0'}
@@ -7656,6 +7542,8 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
+    dependencies:
+      debug: registry.npmmirror.com/debug/4.3.3
 
   registry.npmmirror.com/for-in/1.0.2:
     resolution: {integrity: sha512-7EwmXrOjyL+ChxMhmG5lnW9MPt1aIeZEwKhQzoBUdTV0N3zuwWDZYVJatDvZ2OyzPUvdIAZDsCetk3coyMfcnQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/for-in/-/for-in-1.0.2.tgz}
@@ -8523,7 +8411,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: registry.npmmirror.com/eventemitter3/4.0.7
-      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8
+      follow-redirects: registry.npmmirror.com/follow-redirects/1.14.8_debug@4.3.3
       requires-port: registry.npmmirror.com/requires-port/1.0.0
     transitivePeerDependencies:
       - debug
@@ -14910,25 +14798,6 @@ packages:
       vue: registry.npmmirror.com/vue/2.6.14
       vue-demi: registry.npmmirror.com/vue-demi/0.12.1_vue@2.6.14
     dev: false
-
-  registry.npmmirror.com/vue-eslint-parser/7.11.0:
-    resolution: {integrity: sha512-qh3VhDLeh773wjgNTl7ss0VejY9bMMa0GoDG2fQVyDzRFdiU3L7fw74tWZDHNQXdZqxO3EveQroa9ct39D2nqg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-eslint-parser/-/vue-eslint-parser-7.11.0.tgz}
-    name: vue-eslint-parser
-    version: 7.11.0
-    engines: {node: '>=8.10'}
-    peerDependencies:
-      eslint: '>=5.0.0'
-    dependencies:
-      debug: registry.npmmirror.com/debug/4.3.3
-      eslint-scope: registry.npmmirror.com/eslint-scope/5.1.1
-      eslint-visitor-keys: registry.npmmirror.com/eslint-visitor-keys/1.3.0
-      espree: registry.npmmirror.com/espree/6.2.1
-      esquery: registry.npmmirror.com/esquery/1.4.0
-      lodash: registry.npmmirror.com/lodash/4.17.21
-      semver: registry.npmmirror.com/semver/6.3.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
 
   registry.npmmirror.com/vue-eslint-parser/7.11.0_eslint@6.8.0:
     resolution: {integrity: sha512-qh3VhDLeh773wjgNTl7ss0VejY9bMMa0GoDG2fQVyDzRFdiU3L7fw74tWZDHNQXdZqxO3EveQroa9ct39D2nqg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-eslint-parser/-/vue-eslint-parser-7.11.0.tgz}

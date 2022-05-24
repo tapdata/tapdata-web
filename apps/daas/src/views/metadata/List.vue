@@ -43,9 +43,9 @@
         <template slot-scope="scope">
           <div class="metadata-name">
             <div class="name ellipsis">
-              <a @click="toDetails(scope.row)">
+              <ElLink type="primary" @click="toDetails(scope.row)">
                 {{ scope.row.name || scope.row.original_name }}
-              </a>
+              </ElLink>
               <el-tag
                 v-if="scope.row.classifications && scope.row.classifications.length"
                 class="tag"
@@ -634,16 +634,16 @@ export default {
       }
     }
     .metadata-name {
-      .name {
-        color: map-get($color, primary);
-        a {
-          color: inherit;
-          cursor: pointer;
-        }
-      }
-      .name:hover {
-        text-decoration: underline;
-      }
+      // .name {
+      //   color: map-get($color, primary);
+      //   a {
+      //     color: inherit;
+      //     cursor: pointer;
+      //   }
+      // }
+      // .name:hover {
+      //   text-decoration: underline;
+      // }
       .tag {
         margin-left: 5px;
         color: map-get($fontColor, light);

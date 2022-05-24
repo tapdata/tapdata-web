@@ -43,7 +43,7 @@
           @change="table.fetch(1)"
         ></SelectList>
         <ElButton plain class="btn-refresh" @click="table.fetch(1)">
-          <VIcon class="text-primary">refresh</VIcon>
+          <VIcon>refresh</VIcon>
         </ElButton>
       </div>
       <div slot="operation">

@@ -56,13 +56,13 @@
       <el-main class="matadata-main mt-4">
         <!-- 元数据管理详情 左侧信息 start -->
         <div class="aside" v-if="!asideFalg">
-          <i @click="asideFalg = true" class="iconfont icon-indent text-primary"></i>
+          <ElLink @click="asideFalg = true" class="iconfont icon-indent"></ElLink>
         </div>
         <el-aside class="metadata-aside" v-show="asideFalg">
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
               <span class="fs-7 font-color-light fw-sub">{{ $t('metadata.details.basicAttributes') }}</span>
-              <i @click.stop="asideFalg = false" class="iconfont icon-outdent text-primary"></i>
+              <ElLink type="primary" @click.stop="asideFalg = false" class="iconfont icon-outdent"></ElLink>
             </div>
             <ul class="metadata-aside-main pt-4">
               <!-- <li>
@@ -129,14 +129,16 @@
           <div class="metadata-aside-box">
             <div class="metadata-aside-head flex justify-content-between">
               <span class="fs-7 font-color-light fw-sub">{{ $t('metadata.details.businessAttributes') }}</span>
-              <el-button type="text" size="mini" @click.stop="creatBusiness"
-                >+ {{ $t('metadata.details.creat') }}</el-button
+              <ElLink type="primary" size="mini" @click.stop="creatBusiness"
+                >+ {{ $t('metadata.details.creat') }}</ElLink
               >
             </div>
             <ul class="metadata-aside-main pt-4">
               <li class="business" v-for="(item, key, index) in metadataDataObj.custom_properties" :key="index">
                 <span>{{ key }} : {{ item }}</span>
-                <span type="text" class="delete" @click="delBusiness(item, key, index)">{{ $t('button_delete') }}</span>
+                <ElLink type="primary" class="delete" @click="delBusiness(item, key, index)">{{
+                  $t('button_delete')
+                }}</ElLink>
               </li>
               <!-- <li>
 									<span class="label">{{ $t('metadata.details.tableLayering') }}：</span>
@@ -525,9 +527,7 @@ export default {
       pageTotal: 0,
       tableHeaderStyle: {
         padding: '0',
-        lineHeight: '30px',
-        background: '#fafafa',
-        color: '#999'
+        lineHeight: '30px'
       },
       businessDialogVisible: false,
       businessForm: {
@@ -1017,22 +1017,7 @@ export default {
                 .delete {
                   display: inline-block;
                   cursor: pointer;
-                  color: map-get($color, primary);
-                }
-              }
-            }
-            li.business {
-              display: flex;
-              justify-content: space-between;
-              .delete {
-                display: none;
-              }
-
-              &:hover {
-                .delete {
-                  display: inline-block;
-                  cursor: pointer;
-                  color: map-get($color, primary);
+                  // color: map-get($color, primary);
                 }
               }
             }
@@ -1214,7 +1199,7 @@ export default {
               th {
                 padding: 0;
                 line-height: 40px !important;
-                background-color: map-get($bgColor, normal);
+                // background-color: map-get($bgColor, normal);
               }
             }
           }

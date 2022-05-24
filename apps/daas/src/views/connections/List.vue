@@ -107,29 +107,33 @@
           {{ scope.row.lastUpdateTime }}
         </template>
       </ElTableColumn>
-      <ElTableColumn width="200" fixed="right" :label="$t('connection.operate')">
+      <ElTableColumn width="220" fixed="right" :label="$t('connection.operate')">
         <template slot-scope="scope">
-          <ElLink type="primary" @click="testConnection(scope.row)">{{ $t('connection_list_test_button') }} </ElLink>
+          <ElButton type="text" @click="testConnection(scope.row)">{{ $t('connection_list_test_button') }} </ElButton>
           <ElDivider direction="vertical"></ElDivider>
-          <ElLink
+          <ElButton
             v-readonlybtn="'datasource_edition'"
-            type="primary"
+            type="text"
             :disabled="$disabledByPermission('datasource_edition_all_data', scope.row.user_id)"
             @click="edit(scope.row.id, scope.row.database_type, scope.row)"
             >{{ $t('button_edit') }}
-          </ElLink>
+          </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'datasource_edition'"></ElDivider>
-          <ElLink v-readonlybtn="'datasource_creation'" type="primary" @click="copy(scope.row)"
+          <ElButton
+            v-readonlybtn="'datasource_creation'"
+            type="text"
+            :loading="scope.row.copyLoading"
+            @click="copy(scope.row)"
             >{{ $t('button_copy') }}
-          </ElLink>
+          </ElButton>
           <ElDivider direction="vertical" v-readonlybtn="'datasource_creation'"></ElDivider>
-          <ElLink
+          <ElButton
             v-readonlybtn="'datasource_delete'"
-            type="primary"
+            type="text"
             :disabled="$disabledByPermission('datasource_delete_all_data', scope.row.user_id)"
             @click="remove(scope.row)"
             >{{ $t('button_delete') }}
-          </ElLink>
+          </ElButton>
         </template>
       </ElTableColumn>
     </TablePage>
@@ -408,7 +412,7 @@ export default {
     },
     copy(data) {
       let headersName = { 'lconname-name': data.name }
-      // return false;
+      this.$set(data, 'copyLoading', true)
       this.$api('connections')
         .copy(
           data.id,
@@ -431,6 +435,9 @@ export default {
             }
           }
         })
+      // .finally(() => {
+      //   this.$set(data, 'copyLoading', false)
+      // })
     },
     remove(data) {
       const h = this.$createElement
@@ -482,24 +489,25 @@ export default {
             } else {
               this.$message.error(msg || this.$t('connection.deleteFail'))
             }
+            resFlag.closeLoading()
           })
       })
     },
-    //公用弹窗
-    confirm(callback, catchCallback, config) {
-      this.$confirm(config.Message + config.name + '?', config.title, {
-        confirmButtonText: config.confirmButtonText,
-        cancelButtonText: config.cancelButtonText,
-        type: 'warning',
-        closeOnClickModal: false
-      }).then(resFlag => {
-        if (resFlag) {
-          callback()
-        } else {
-          catchCallback()
-        }
-      })
-    },
+    // //公用弹窗
+    // confirm(callback, catchCallback, config) {
+    //   this.$confirm(config.Message + config.name + '?', config.title, {
+    //     confirmButtonText: config.confirmButtonText,
+    //     cancelButtonText: config.cancelButtonText,
+    //     type: 'warning',
+    //     closeOnClickModal: false
+    //   }).then(resFlag => {
+    //     if (resFlag) {
+    //       callback()
+    //     } else {
+    //       catchCallback()
+    //     }
+    //   })
+    // },
     //表格数据格式化
     formatterConnectionType(row) {
       switch (row.connection_type) {

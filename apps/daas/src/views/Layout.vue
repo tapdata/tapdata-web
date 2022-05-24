@@ -12,7 +12,13 @@
           {{ $t('dataFlow.createNew') }}
         </ElButton>
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
-        <ElDropdown v-if="$getSettingByKey('SHOW_QA_AND_HELP')" class="btn" placement="bottom" @command="command">
+        <ElDropdown
+          v-if="$getSettingByKey('SHOW_QA_AND_HELP')"
+          class="btn"
+          placement="bottom"
+          @command="command"
+          command="help"
+        >
           <VIcon size="16">wenda</VIcon>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="help">{{ $t('app.document') }}</ElDropdownItem>
@@ -230,15 +236,15 @@
         align-items: center;
         height: 50px;
         line-height: 50px;
-        color: map-get($fontColor, normal);
+        // color: map-get($fontColor, normal);
         background: #f7f8fa;
         .submenu-item {
-          color: map-get($fontColor, light);
+          // color: map-get($fontColor, light);
           padding-left: 12px;
         }
         &.is-active,
         &:hover {
-          color: map-get($color, primary) !important;
+          // color: map-get($color, primary) !important;
           background: rgba(44, 101, 255, 0.05);
         }
       }
@@ -259,7 +265,7 @@
             background-color: rgba(44, 101, 255, 0.05);
             .submenu-item {
               font-weight: 500;
-              color: map-get($color, primary) !important;
+              // color: map-get($color, primary) !important;
             }
           }
         }

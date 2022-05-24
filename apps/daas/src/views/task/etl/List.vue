@@ -87,9 +87,12 @@
       <el-table-column min-width="200" :label="$t('task_list_name')" :show-overflow-tooltip="true">
         <template #default="{ row }">
           <span class="dataflow-name link-primary">
-            <span :class="['name', { 'has-children': row.hasChildren }]" @click.stop="handlePreview(row)">{{
-              row.name
-            }}</span>
+            <ElLink
+              type="primary"
+              :class="['name', { 'has-children': row.hasChildren }]"
+              @click.stop="handlePreview(row)"
+              >{{ row.name }}</ElLink
+            >
             <el-tag v-if="row.listTagId !== undefined" class="tag" type="info" effect="dark" size="mini">
               {{ row.listTagValue }}
             </el-tag>
