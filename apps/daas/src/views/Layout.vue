@@ -19,7 +19,9 @@
           @command="command"
           command="help"
         >
-          <VIcon size="16">wenda</VIcon>
+          <span class="icon-btn py-1 px-3">
+            <VIcon size="16">wenda</VIcon>
+          </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="help">{{ $t('app.document') }}</ElDropdownItem>
           </ElDropdownMenu>
@@ -30,7 +32,10 @@
           placement="bottom"
           @command="command"
         >
-          <VIcon size="16">shezhi</VIcon>
+          <span class="icon-btn  py-1 px-3">
+            <VIcon size="16">shezhi</VIcon>
+          </span>
+          <!-- <VIcon class="icon-btn" size="16">shezhi</VIcon> -->
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="settings" v-if="settingCode">{{ $t('page_title_setting') }}</ElDropdownItem>
             <ElDropdownItem command="setting" v-readonlybtn="'home_notice_settings'">{{
@@ -39,7 +44,9 @@
           </ElDropdownMenu>
         </ElDropdown>
         <ElDropdown v-if="$getSettingByKey('SHOW_LANGUAGE')" class="btn" placement="bottom" @command="changeLanguage">
-          <VIcon size="16">{{ { sc: 'language-sc', en: 'language-sc', tc: 'language-sc' }[lang] }}</VIcon>
+          <span class="icon-btn  py-1 px-3">
+            <VIcon size="16">{{ { sc: 'language-sc', en: 'language-sc', tc: 'language-sc' }[lang] }}</VIcon>
+          </span>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem v-for="(value, key) in languages" :key="key" :command="key">
               {{ value }}
@@ -47,8 +54,8 @@
           </ElDropdownMenu>
         </ElDropdown>
         <ElDivider direction="vertical" class="divider mx-6"></ElDivider>
-        <ElDropdown class="menu-user btn" placement="bottom" @command="command">
-          <span>
+        <ElDropdown class="menu-user btn pl-2" placement="bottom" @command="command">
+          <span class="icon-btn">
             <span class="user-initials mr-2">{{ initials }}</span>
             <span>{{ userName }}<i class="el-icon-arrow-down ml-2"></i></span>
           </span>
@@ -155,7 +162,7 @@
       display: flex;
       align-items: center;
       .btn {
-        padding: 6px 12px;
+        padding: 6px 0;
         color: rgba(255, 255, 255, 0.85);
         cursor: pointer;
         i {
@@ -306,7 +313,7 @@
       border: none;
     }
     .el-badge__content.is-fixed {
-      right: 18px;
+      right: 26px;
       top: 3px;
     }
   }

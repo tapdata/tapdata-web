@@ -16,16 +16,43 @@ $--color-white: #ffffff !default;
 $--color-black: #000000 !default;
 
 
-$--color-primary: #2C65FF !default;
-$--color-success: #10c038 !default;
-$--color-warning: #FF7D00 !default;
-$--color-danger: #D44D4D !default;
-$--color-info: #909399 !default;
+$--color-primary:  map-get($color, primary)!default;  // #2c65ff
+$--color-success: map-get($color, success) !default; // #2c65ff
+$--color-warning: map-get($color, warning) !default; // #FF7D00
+$--color-danger: map-get($color, danger) !default; // #D44D4D
+$--color-info: map-get($color, info) !default; // #75849b
 
-$--color-text-primary: #333c4a !default; //aaa
-$--color-text-regular: #535f72 !default;
+$--color-text-primary:  map-get($fontColor, normal)!default; //#333c4a
+$--color-text-regular: map-get($fontColor, light) !default; //#535f72
 $--color-text-secondary: #909399 !default;
-$--color-text-placeholder: #C9CDD4 !default;
+$--color-text-placeholder: map-get($fontColor, slight) !default; // #c9cdd4
+
+/* Link
+-------------------------- */
+// $--link-color: $--color-primary-light-2 !default;
+// $--link-hover-color: $--color-primary !default;
+$--link-color: $--color-primary  !default;
+$--link-hover-color: $--color-primary !default;
+$--link-disabled-font-color: $--color-text-placeholder;
+
+/* Background
+-------------------------- */
+$--background-color-base: #F2F3F5 !default;
+$--background-color-regular: #FAFAFA !default;
+/* Border
+-------------------------- */
+$--border-width-base: 1px !default;
+$--border-style-base: solid !default;
+$--border-color-base: rgba(221, 221, 221, 0.4) !default;
+$--border-color-light: #f2f2f2 !default;
+$--border-color-lighter: #ebeef5 !default;
+$--border-color-extra-light: #f2f6fc !default;
+$--border-color-hover: $--color-text-placeholder !default;
+$--border-base: $--border-width-base $--border-style-base $--border-color-base !default;
+$--border-radius-base: 4px !default;
+$--border-radius-small: 2px !default;
+$--border-radius-circle: 100% !default;
+$--border-color-background: #F2F3F5 !default;
 
 $--color-primary-light-1: mix($--color-white, $--color-primary, 10%) !default; /* 53a8ff */
 $--color-primary-light-2: mix($--color-white, $--color-primary, 20%) !default; /* 66b1ff */
@@ -49,33 +76,6 @@ $--color-warning-lighter: mix($--color-white, $--color-warning, 90%) !default;
 $--color-danger-lighter: mix($--color-white, $--color-danger, 90%) !default;
 $--color-info-lighter: mix($--color-white, $--color-info, 90%) !default;
 
-
-/* Link
--------------------------- */
-// $--link-color: $--color-primary-light-2 !default;
-// $--link-hover-color: $--color-primary !default;
-$--link-color: #2C65FF  !default;
-$--link-hover-color: $--color-primary !default;
-$--link-disabled-font-color: $--color-text-placeholder;
-
-/* Background
--------------------------- */
-$--background-color-base: #F2F3F5 !default;
-$--background-color-regular: #FAFAFA !default;
-/* Border
--------------------------- */
-$--border-width-base: 1px !default;
-$--border-style-base: solid !default;
-$--border-color-base: rgba(221, 221, 221, 0.4) !default;
-$--border-color-light: #f2f2f2 !default;
-$--border-color-lighter: #ebeef5 !default;
-$--border-color-extra-light: #f2f6fc !default;
-$--border-color-hover: $--color-text-placeholder !default;
-$--border-base: $--border-width-base $--border-style-base $--border-color-base !default;
-$--border-radius-base: 4px !default;
-$--border-radius-small: 2px !default;
-$--border-radius-circle: 100% !default;
-$--border-color-background: #F2F3F5 !default;
 
 /* Box-shadow
 -------------------------- */
