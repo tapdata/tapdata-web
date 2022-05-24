@@ -322,7 +322,7 @@ export default {
             let findInOperations = operations?.find(item => item.id === t.id)
             // 优先字段处理器
             if (findInOperations) {
-              node.t_field_name = findInOperations.field
+              node.t_field_name = findInOperations.label
               node.t_data_type = findInOperations.data_type
               node.t_precision = findInOperations.precision
               node.t_scale = findInOperations.scale

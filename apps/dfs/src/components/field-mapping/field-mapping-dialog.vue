@@ -900,7 +900,7 @@ export default {
       this.updateTableData(id, `t_${key}`, value)
     },
     /*更新左边表导航 重新推演*/
-    updateParentMetaData(type, data) {
+    updateParentMetaData(type, data, callback) {
       this.loadingPage = true
       this.$nextTick(() => {
         this.updateMetadata &&
@@ -908,6 +908,7 @@ export default {
             .then(res => {
               this.$emit('update-nav', res)
               this.selectRow = res[this.position]
+              callback?.()
             })
             .finally(() => {
               this.loadingPage = false
@@ -1601,8 +1602,6 @@ export default {
         if (el.originalTableName === this.vikaForm.originalTableName) {
           el.tableName = this.vikaForm.table
           isInclude = true
-          // 清空字段处理器
-          this.$emit('update:field_process', [])
         }
       })
       if (!isInclude) {
@@ -1626,7 +1625,10 @@ export default {
       }
       this.vikaForm.visible = false
       this.copyForm()
-      this.updateParentMetaData('table', this.form)
+      // 保存字段处理器
+      this.updateParentMetaData('table', this.form, () => {
+        this.$emit('row-click', this.selectRow, [], this.target)
+      })
     },
     fieldTypeChangeSaveTable() {
       this.batchFieldTypeForm.visible = false
