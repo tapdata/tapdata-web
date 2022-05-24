@@ -88,12 +88,12 @@
       </ElScrollbar>
     </div>
 
-    <ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse border-top" value="process">
+    <!--<ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse border-top" value="process">
       <ElCollapseItem name="process">
         <template #title>
           <div class="flex align-center flex-1">
             <span class="flex-1 user-select-none">
-              <!--处理节点-->
+              &lt;!&ndash;处理节点&ndash;&gt;
               {{ $t('dag_processor_node') }}
             </span>
           </div>
@@ -118,7 +118,7 @@
           </div>
         </ElScrollbar>
       </ElCollapseItem>
-    </ElCollapse>
+    </ElCollapse>-->
 
     <!-- S 节点拖拽元素 -->
     <BaseNode
@@ -294,11 +294,11 @@ export default {
   },
 
   mounted() {
-    addResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
+    // addResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
   },
 
   beforeDestroy() {
-    removeResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
+    // removeResizeListener(this.$refs.processorCollapse.$el, this.updateProcessorScrollbar)
   },
 
   methods: {

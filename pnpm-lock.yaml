@@ -380,10 +380,11 @@ importers:
       '@formily/shared': ^2.1.2
       '@tap/api': workspace:^1.0.0
       '@tap/component': workspace:^1.0.0
-      '@vue/composition-api': ^1.2.4
+      '@vue/composition-api': ^1.4.6
       ace-builds: ^1.4.13
       highlight.js: ^11.0.1
       resize-observer-polyfill: ^1.5.1
+      vue-demi: ^0.12.1
       vue-virtual-scroller: ^1.0.10
     dependencies:
       '@formily/core': registry.npmmirror.com/@formily/core/2.1.2
@@ -398,7 +399,8 @@ importers:
       ace-builds: registry.npmmirror.com/ace-builds/1.4.14
       highlight.js: registry.npmmirror.com/highlight.js/11.4.0
       resize-observer-polyfill: registry.npmmirror.com/resize-observer-polyfill/1.5.1
-      vue-virtual-scroller: registry.npmmirror.com/vue-virtual-scroller/1.0.10_vue@2.6.14
+      vue-demi: registry.npmmirror.com/vue-demi/0.12.1_@vue+composition-api@1.4.6
+      vue-virtual-scroller: registry.npmmirror.com/vue-virtual-scroller/1.0.10
 
   packages/node-design:
     specifiers:
@@ -15344,6 +15346,24 @@ packages:
         optional: true
     dev: false
 
+  registry.npmmirror.com/vue-demi/0.12.1_@vue+composition-api@1.4.6:
+    resolution: {integrity: sha512-QL3ny+wX8c6Xm1/EZylbgzdoDolye+VpCXRhI2hug9dJTP3OUJ3lmiKN3CsVV3mOJKwFi0nsstbgob0vG7aoIw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-demi/-/vue-demi-0.12.1.tgz}
+    id: registry.npmmirror.com/vue-demi/0.12.1
+    name: vue-demi
+    version: 0.12.1
+    engines: {node: '>=12'}
+    hasBin: true
+    requiresBuild: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      '@vue/composition-api': registry.npmmirror.com/@vue/composition-api/1.4.6
+    dev: false
+
   registry.npmmirror.com/vue-demi/0.12.1_h445r7srddji6tntb4ajbinqz4:
     resolution: {integrity: sha512-QL3ny+wX8c6Xm1/EZylbgzdoDolye+VpCXRhI2hug9dJTP3OUJ3lmiKN3CsVV3mOJKwFi0nsstbgob0vG7aoIw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-demi/-/vue-demi-0.12.1.tgz}
     id: registry.npmmirror.com/vue-demi/0.12.1
@@ -15835,6 +15855,14 @@ packages:
     version: 0.4.6
     dev: false
 
+  registry.npmmirror.com/vue-resize/0.4.5:
+    resolution: {integrity: sha512-bhP7MlgJQ8TIkZJXAfDf78uJO+mEI3CaLABLjv0WNzr4CcGRGPIAItyWYnP6LsPA4Oq0WE+suidNs6dgpO4RHg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-resize/-/vue-resize-0.4.5.tgz}
+    name: vue-resize
+    version: 0.4.5
+    peerDependencies:
+      vue: ^2.3.0
+    dev: false
+
   registry.npmmirror.com/vue-resize/0.4.5_vue@2.6.14:
     resolution: {integrity: sha512-bhP7MlgJQ8TIkZJXAfDf78uJO+mEI3CaLABLjv0WNzr4CcGRGPIAItyWYnP6LsPA4Oq0WE+suidNs6dgpO4RHg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-resize/-/vue-resize-0.4.5.tgz}
     id: registry.npmmirror.com/vue-resize/0.4.5
@@ -15883,6 +15911,18 @@ packages:
     name: vue-template-es2015-compiler
     version: 1.9.1
     dev: true
+
+  registry.npmmirror.com/vue-virtual-scroller/1.0.10:
+    resolution: {integrity: sha512-Hn4qSBDhRY4XdngPioYy/ykDjrLX/NMm1fQXm/4UQQ/Xv1x8JbHGFZNftQowTcfICgN7yc31AKnUk1UGLJ2ndA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-virtual-scroller/-/vue-virtual-scroller-1.0.10.tgz}
+    name: vue-virtual-scroller
+    version: 1.0.10
+    peerDependencies:
+      vue: ^2.6.11
+    dependencies:
+      scrollparent: registry.npmmirror.com/scrollparent/2.0.1
+      vue-observe-visibility: registry.npmmirror.com/vue-observe-visibility/0.4.6
+      vue-resize: registry.npmmirror.com/vue-resize/0.4.5
+    dev: false
 
   registry.npmmirror.com/vue-virtual-scroller/1.0.10_vue@2.6.14:
     resolution: {integrity: sha512-Hn4qSBDhRY4XdngPioYy/ykDjrLX/NMm1fQXm/4UQQ/Xv1x8JbHGFZNftQowTcfICgN7yc31AKnUk1UGLJ2ndA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue-virtual-scroller/-/vue-virtual-scroller-1.0.10.tgz}

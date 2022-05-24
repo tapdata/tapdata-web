@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { createForm } from '@formily/core'
 import { observable } from '@formily/reactive'
 import { observer } from '@formily/reactive-vue'
@@ -289,6 +290,20 @@ export default observer({
         values
       })
     }
+  },
+
+  computed: {
+    ...mapGetters('dataflow', ['stateIsReadonly'])
+  },
+
+  watch: {
+    stateIsReadonly(v) {
+      this.form.setState({ disabled: v })
+    }
+  },
+
+  created() {
+    this.form.setState({ disabled: this.stateIsReadonly })
   },
 
   methods: {
