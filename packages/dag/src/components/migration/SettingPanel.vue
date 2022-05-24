@@ -204,13 +204,13 @@ export default observer({
                           }
                         }
                       },
-                      isAutoInspect: {
-                        title: '数据校验', //共享挖掘日志过滤
-                        type: 'boolean',
-                        default: true,
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch'
-                      },
+                      // isAutoInspect: {
+                      //   title: '数据校验', //共享挖掘日志过滤
+                      //   type: 'boolean',
+                      //   default: true,
+                      //   'x-decorator': 'FormItem',
+                      //   'x-component': 'Switch'
+                      // },
                       syncPoints: {
                         title: this.$t('task_setting_sync_point'), //增量采集开始时刻
                         type: 'array',

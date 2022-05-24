@@ -10,7 +10,7 @@
   >
     <div class="field-mapping flex flex-column">
       <div class="task-form-body">
-        <div class="task-form-left flex flex-column">
+        <div class="task-form-left flex flex-column" v-loading="loadingNav">
           <div class="flex mb-2">
             <div class="flex">
               <ElInput
@@ -73,14 +73,25 @@
               ></ElInput>
             </div>
             <div class="item ml-2">
-              <ElButton plain class="btn-refresh" @click="getMetadataTransformer">
+              <ElButton plain class="btn-refresh" @click="rest">
                 <VIcon class="text-primary">refresh</VIcon>
               </ElButton>
               <ElButton type="text" @click="updateMetaData"> 重置 </ElButton>
             </div>
           </div>
-          <ElTable class="field-mapping-table table-border" height="100%" border :data="target">
-            <ElTableColumn show-overflow-tooltip :label="$t('dag_dialog_field_mapping_field')" prop="field_name">
+          <ElTable
+            class="field-mapping-table table-border"
+            height="100%"
+            border
+            :data="target"
+            v-loading="loadingTable"
+          >
+            <ElTableColumn
+              show-overflow-tooltip
+              :label="$t('dag_dialog_field_mapping_field')"
+              prop="field_name"
+              width="200"
+            >
               <template #default="{ row }">
                 <span v-if="row.primary_key_position > 0" :show-overflow-tooltip="true"
                   >{{ row.field_name }}
@@ -94,7 +105,7 @@
                 <div class="cursor-pointer" v-if="!row.is_deleted" @click="edit(row, 'data_type')">
                   <span>{{ row.data_type }}</span>
                   <i v-if="!row.data_type" class="icon-error el-icon-warning"></i>
-                  <i class="icon el-icon-arrow-down"></i>
+                  <i class="field-mapping__icon el-icon-arrow-down"></i>
                 </div>
                 <div v-else>
                   <span>{{ row.data_type }}</span>
@@ -108,11 +119,11 @@
                   v-if="!row.is_deleted && row.isPrecisionEdit"
                   @click="edit(row, 'precision')"
                 >
-                  <span>{{ row.precision }}</span>
-                  <i class="icon el-icon-edit-outline"></i>
+                  <span> {{ row.precision < 0 ? '' : row.precision }}</span>
+                  <i class="field-mapping__icon el-icon-edit-outline"></i>
                 </div>
                 <div v-else>
-                  <span>{{ row.precision === -1 ? '' : row.precision }}</span>
+                  <span>{{ row.precision < 0 ? '' : row.precision }}</span>
                 </div>
               </template>
             </ElTableColumn>
@@ -120,7 +131,7 @@
               <template #default="{ row }">
                 <div class="cursor-pointer" v-if="!row.is_deleted && row.isScaleEdit" @click="edit(row, 'scale')">
                   <span>{{ row.scale }}</span>
-                  <i class="icon el-icon-edit-outline"></i>
+                  <i class="field-mapping__icon el-icon-edit-outline"></i>
                 </div>
                 <div v-else>
                   <span>{{ row.scale }}</span>
@@ -131,7 +142,7 @@
               <template #default="{ row }">
                 <div class="cursor-pointer" @click="edit(row, 'default_value')">
                   <span class="field-mapping-table__default_value">{{ row.default_value }}</span>
-                  <i class="icon el-icon-edit-outline"></i>
+                  <i class="field-mapping__icon el-icon-edit-outline"></i>
                 </div>
               </template>
             </ElTableColumn>
@@ -239,13 +250,15 @@ const metadataInstancesApi = new MetadataInstances()
 export default {
   name: 'Dialog',
   components: { VIcon },
-  props: ['initTarget', 'initNavData', 'visible', 'dataFlow'],
+  props: ['visible', 'dataFlow'],
   data() {
     return {
       searchTable: '',
       searchField: '',
       navData: [],
       target: [],
+      loadingTable: true,
+      loadingNav: true,
       page: {
         size: 10,
         current: 1,
@@ -277,15 +290,11 @@ export default {
       refresh
     }
   },
-  mounted() {
-    this.selectRow = this.navData?.[0] || {}
-    this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
-    this.getTypeMapping(this.selectRow)
-  },
   watch: {
     visible() {
-      this.target = this.initTarget //初始化
-      this.navData = this.initNavData
+      if (this.visible) {
+        this.getMetadataTransformer()
+      }
     }
   },
   methods: {
@@ -297,13 +306,22 @@ export default {
       this.fieldCount = item.sourceFieldCount - item.userDeletedNum || 0
       this.position = index
       this.intiFieldMappingTableData(this.selectRow)
-      this.getTypeMapping(this.selectRow)
       this.save()
     },
     async intiFieldMappingTableData(row) {
       if (!row.sinkQulifiedName) return
+      this.loadingTable = true
       let data = await metadataInstancesApi.originalData(row.sinkQulifiedName)
       this.target = data && data.length > 0 ? data[0].fields : []
+      //添加edit
+      for (let i = 0; i < this.target.length; i++) {
+        this.target[i]['isPrecisionEdit'] = true
+        this.target[i]['isScaleEdit'] = true
+        if (!this.target[i]['default_value']) {
+          this.target[i]['default_value'] = ''
+        }
+      }
+      this.getTypeMapping(this.selectRow)
       this.loadingTable = false
     },
     getMetadataTransformer(value) {
@@ -313,7 +331,7 @@ export default {
         dataFlowId: id,
         sinkNodeId: this.dataFlow['nodeId'] //todo 返回是否为sinkNodeId
       }
-      if (value) {
+      if (value && current !== value) {
         let filterObj = { like: value, options: 'i' }
         where['or'] = [{ sinkQulifiedName: filterObj }, { sourceObjectName: filterObj }]
       }
@@ -322,6 +340,7 @@ export default {
         limit: size || 10,
         skip: (current - 1) * size > 0 ? (current - 1) * size : 0
       }
+      this.loadingNav = true
       metadataTransformeApi
         .get({
           filter: JSON.stringify(filter)
@@ -331,7 +350,9 @@ export default {
           this.page.total = total
           this.navData = items
           //请求左侧table数据
-          this.selectRow = items?.[0] || {}
+          this.selectRow = this.navData?.[0] || {}
+          this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
+          this.initShowEdit()
           this.intiFieldMappingTableData(this.selectRow)
         })
         .finally(() => {
@@ -439,6 +460,18 @@ export default {
       this.checkTable() //消除感叹号
       this.handleClose()
     },
+    /* 初始化目标字段、长度是否可编辑*/
+    initShowEdit() {
+      if (this.target?.length === 0) return
+      for (let i = 0; i < data.length; i++) {
+        let rules = this.typeMapping.filter(v => v.dbType === this.target[i].data_type)
+        if (rules?.length > 0) {
+          rules = rules[0].rules
+          this.showPrecisionEdit(this.target[i].id, rules || [])
+          this.showScaleEdit(this.target[i].id, rules || [])
+        }
+      }
+    },
     //改类型影响字段长度 精度
     influences(id, rules) {
       this.showScaleEdit(id, rules)
@@ -473,7 +506,6 @@ export default {
           field['is_auto_allowed'] = false
         }
       })
-      this.$forceUpdate()
     },
     //保存校验
     checkTable() {
@@ -699,6 +731,9 @@ export default {
     }
     .color-darkorange {
       color: darkorange;
+    }
+    .field-mapping__icon {
+      color: map-get($color, primary);
     }
     .field-mapping-table__default_value {
       display: inline-block;

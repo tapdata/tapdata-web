@@ -101,7 +101,7 @@
         </ElTable>
       </div>
     </div>
-    <Dialog :visible.sync="dialogVisible" :initTarget="target" :initNavData="navData" :dataFlow="dataFlow"></Dialog>
+    <Dialog :visible.sync="dialogVisible" :dataFlow="dataFlow"></Dialog>
   </div>
 </template>
 
@@ -225,7 +225,7 @@ export default {
         dataFlowId: id,
         sinkNodeId: this.dataFlow['nodeId'] //todo 返回是否为sinkNodeId
       }
-      if (value) {
+      if (value && current !== value) {
         let filterObj = { like: value, options: 'i' }
         where['or'] = [{ sinkQulifiedName: filterObj }, { sourceObjectName: filterObj }]
       }
@@ -244,6 +244,7 @@ export default {
           this.navData = items
           //请求左侧table数据
           this.selectRow = items?.[0] || {}
+          this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
           this.intiFieldMappingTableData(this.selectRow)
         })
         .finally(() => {
