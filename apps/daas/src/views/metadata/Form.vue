@@ -642,21 +642,14 @@ export default {
       .e-table {
         th {
           padding: 4px 10px;
-          color: map-get($fontColor, light);
-          background-color: #eff1f4;
+          // color: map-get($fontColor, light);
+          // background-color: #eff1f4;
         }
         td {
           padding: 0;
         }
         .el-table__body-wrapper {
           border-bottom: 1px solid #ececec;
-        }
-      }
-      .addBtn {
-        .el-button {
-          color: map-get($fontColor, light);
-          background-color: #ececec;
-          border-color: #ececec;
         }
       }
     }

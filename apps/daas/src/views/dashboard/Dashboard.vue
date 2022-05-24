@@ -552,8 +552,6 @@ export default {
         })
         totalFalg = data.some(item => item.value > 0)
         total = this.handleChangeUnit(total)
-
-        console.log(data, '######')
       }
 
       return {

@@ -12,7 +12,13 @@
           {{ $t('dataFlow.createNew') }}
         </ElButton>
         <NotificationPopover v-if="$getSettingByKey('SHOW_NOTIFICATION')" class="ml-4"></NotificationPopover>
-        <ElDropdown v-if="$getSettingByKey('SHOW_QA_AND_HELP')" class="btn" placement="bottom" @command="command">
+        <ElDropdown
+          v-if="$getSettingByKey('SHOW_QA_AND_HELP')"
+          class="btn"
+          placement="bottom"
+          @command="command"
+          command="help"
+        >
           <VIcon size="16">wenda</VIcon>
           <ElDropdownMenu slot="dropdown" class="no-triangle">
             <ElDropdownItem command="help">{{ $t('app.document') }}</ElDropdownItem>

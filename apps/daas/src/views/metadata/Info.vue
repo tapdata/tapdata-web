@@ -527,9 +527,7 @@ export default {
       pageTotal: 0,
       tableHeaderStyle: {
         padding: '0',
-        lineHeight: '30px',
-        background: '#fafafa',
-        color: '#999'
+        lineHeight: '30px'
       },
       businessDialogVisible: false,
       businessForm: {
@@ -1201,7 +1199,7 @@ export default {
               th {
                 padding: 0;
                 line-height: 40px !important;
-                background-color: map-get($bgColor, normal);
+                // background-color: map-get($bgColor, normal);
               }
             }
           }

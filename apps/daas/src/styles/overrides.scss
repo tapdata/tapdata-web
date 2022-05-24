@@ -115,7 +115,7 @@
 .el-input,
 .el-textarea {
   .el-input__count {
-    background-color: rgba(239, 241, 244, 0.2);
+    background-color: rgba(239, 241, 244, 0.2)!important;
     .el-input__count-inner {
       color: rgba(0, 0, 0, 0.65);
       background-color: rgba(239, 241, 244, 0.2);
@@ -163,7 +163,7 @@
 }
 
 .el-radio-button__inner {
-  // font-weight: normal;
+  font-weight: 400 !important;
   // color: map-get($fontColor, normal);
   background:  map-get($bgColor, white)!important;
 }
@@ -183,6 +183,7 @@
   border-radius: 0 $borderRadiusBtn $borderRadiusBtn 0;
 }
 .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+  font-weight: 500!important;
   // color: map-get($color, primary);
   background-color:  map-get($bgColor, white);
   // border-color: map-get($color, primary);
@@ -258,6 +259,7 @@
   // border-color: map-get($color, primary);
 // }
 .el-button--text {
+  font-weight: 400!important;
   min-width: auto;
   // color: map-get($color, primary);
   border: none;
@@ -389,9 +391,12 @@
   background: #f4f5f7;
 }
 .el-table th {
-  background: #f4f5f7;
+  // background: #f4f5f7;
   border-bottom: 0;
   font-weight: 500;
+  .cell {
+    white-space: nowrap;
+  }
 }
 .el-table td,
 .el-table th.is-leaf {
@@ -432,44 +437,49 @@
 .el-pagination {
   text-align: right;
 }
-.el-pagination.is-background .el-pager li:not(.disabled).active {
-  background-color: map-get($color, primary);
-}
-.el-pagination.is-background .el-pager li:not(.disabled).active:hover {
-  color: map-get($fontColor, white);
-}
-.el-pagination.is-background .el-pager li:not(.disabled):hover {
-  color: map-get($color, primary);
-}
+// .el-pagination.is-background .el-pager li:not(.disabled).active {
+//   background-color: map-get($color, primary);
+// }
+// .el-pagination.is-background .el-pager li:not(.disabled).active:hover {
+//   color: map-get($fontColor, white);
+// }
+// .el-pagination.is-background .el-pager li:not(.disabled):hover {
+//   color: map-get($color, primary);
+// }
 .el-breadcrumb__inner a,
 .el-breadcrumb__inner.is-link {
-  font-weight: 400;
-  color: map-get($fontColor, light);
+  font-size: 12px;
+  font-weight: 400!important;
+  color: map-get($fontColor, light)!important;
 }
 .el-breadcrumb__inner a:hover,
 .el-breadcrumb__inner.is-link:hover {
-  color: map-get($color, primary);
+  color: map-get($color, primary)!important;
 }
 .el-breadcrumb__item:last-child .el-breadcrumb__inner,
 .el-breadcrumb__item:last-child .el-breadcrumb__inner a,
 .el-breadcrumb__item:last-child .el-breadcrumb__inner a:hover,
 .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
-  color: map-get($fontColor, normal);
+  font-weight: 500!important;
+  color: map-get($fontColor, normal)!important;
 }
 .el-tag--small {
   border-radius: $borderRadius;
   height: 20px;
   line-height: 18px;
 }
-.el-tag.el-tag--success {
-  color: map-get($color, success);
-  border-color: map-get($color, success);
-  background-color: map-get($color, lsuccess);
-}
-.el-tag.el-tag--info {
-  color: map-get($color, info);
-  border-color: map-get($color, info);
-  background-color: map-get($color, linfo);
+// .el-tag.el-tag--success {
+//   color: map-get($color, success);
+//   border-color: map-get($color, success);
+//   background-color: map-get($color, lsuccess);
+// }
+// .el-tag.el-tag--info {
+//   color: map-get($color, info);
+//   border-color: map-get($color, info);
+//   background-color: map-get($color, linfo);
+// }
+.el-message__content {
+  color: map-get($fontColor, dark)!important;
 }
 .el-message-box {
   position: relative;
@@ -503,7 +513,7 @@
 .el-message-box__content {
   padding: 5px 15px 15px 15px;
   font-size: 12px;
-  color: map-get($fontColor, normal);
+  color: map-get($fontColor, normal)!important;
 }
 .el-message-box__message {
   overflow: hidden;

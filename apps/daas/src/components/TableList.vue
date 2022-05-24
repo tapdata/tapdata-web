@@ -38,6 +38,7 @@ export default {
       th {
         color: map-get($fontColor, normal);
         font-weight: 500;
+        white-space: nowrap;
         background-color: map-get($bgColor, normal);
       }
     }

@@ -16,8 +16,8 @@ $--color-white: #ffffff !default;
 $--color-black: #000000 !default;
 
 
-$--color-primary: #f00 !default;
-$--color-success: #178061 !default;
+$--color-primary: #2C65FF !default;
+$--color-success: #10c038 !default;
 $--color-warning: #FF7D00 !default;
 $--color-danger: #D44D4D !default;
 $--color-info: #909399 !default;
@@ -54,20 +54,20 @@ $--color-info-lighter: mix($--color-white, $--color-info, 90%) !default;
 -------------------------- */
 // $--link-color: $--color-primary-light-2 !default;
 // $--link-hover-color: $--color-primary !default;
-$--link-color: #f00  !default;
+$--link-color: #2C65FF  !default;
 $--link-hover-color: $--color-primary !default;
 $--link-disabled-font-color: $--color-text-placeholder;
 
 /* Background
 -------------------------- */
 $--background-color-base: #F2F3F5 !default;
-
+$--background-color-regular: #FAFAFA !default;
 /* Border
 -------------------------- */
 $--border-width-base: 1px !default;
 $--border-style-base: solid !default;
 $--border-color-base: rgba(221, 221, 221, 0.4) !default;
-$--border-color-light: #e4e7ed !default;
+$--border-color-light: #f2f2f2 !default;
 $--border-color-lighter: #ebeef5 !default;
 $--border-color-extra-light: #f2f6fc !default;
 $--border-color-hover: $--color-text-placeholder !default;
@@ -285,19 +285,19 @@ $--msgbox-danger-color: $--color-danger !default;
 
 /* Message
 -------------------------- */
-$--message-shadow: $--box-shadow-base !default;
-$--message-min-width: 380px !default;
-$--message-background-color: #edf2fc !default;
-$--message-padding: 15px 15px 15px 20px !default;
-$--message-content-color: $--color-text-regular !default;
-$--message-close-color: $--color-text-placeholder !default;
-$--message-close-size: 16px !default;
-$--message-close-hover-color: $--color-text-secondary !default;
+// $--message-shadow: $--box-shadow-base !default;
+// $--message-min-width: 380px !default;
+// $--message-background-color: #edf2fc !default;
+// $--message-padding: 15px 15px 15px 20px !default;
+// $--message-content-color: $--color-text-regular !default;
+// $--message-close-color: $--color-text-placeholder !default;
+// $--message-close-size: 16px !default;
+// $--message-close-hover-color: $--color-text-secondary !default;
 
-$--message-success-color: $--color-success !default;
-$--message-info-color: $--color-info !default;
-$--message-warning-color: $--color-warning !default;
-$--message-danger-color: $--color-danger !default;
+// $--message-success-color: $--color-success !default;
+// $--message-info-color: $--color-info !default;
+// $--message-warning-color: $--color-warning !default;
+// $--message-danger-color: $--color-danger !default;
 
 /* Notification
 -------------------------- */
@@ -327,20 +327,20 @@ $--message-danger-color: $--color-danger !default;
 $--input-font-size: $--font-size-base !default;
 $--input-color: $--color-text-primary !default;
 $--input-font-color: $--color-text-primary !default;
-$--input-width: 140px !default;
-$--input-height: 40px !default;
-$--input-border: $--border-base !default;
-$--input-border-color: $--border-color-base !default;
-$--input-border-radius: $--border-radius-base !default;
-$--input-border-color-hover: $--border-color-hover !default;
-$--input-fill: $--color-white !default;
-$--input-fill-disabled: $--disabled-fill-base !default;
-$--input-color-disabled: $--font-color-disabled-base !default;
-$--input-icon-color: $--color-text-placeholder !default;
-$--input-placeholder-color: $--color-text-placeholder !default;
+// $--input-width: 140px !default;
+// $--input-height: 40px !default;
+// $--input-border: $--border-base !default;
+// $--input-border-color: $--border-color-base !default;
+// $--input-border-radius: $--border-radius-base !default;
+// $--input-border-color-hover: $--border-color-hover !default;
+// $--input-fill: $--color-white !default;
+// $--input-fill-disabled: $--disabled-fill-base !default;
+// $--input-color-disabled: $--font-color-disabled-base !default;
+// $--input-icon-color: $--color-text-placeholder !default;
+// $--input-placeholder-color: $--color-text-placeholder !default;
 $--input-max-width: 314px !default;
 $--input-count-color: $--color-white !default;
-$--input-placeholder-color: $--color-text-placeholder!default;
+// $--input-placeholder-color: $--color-text-placeholder!default;
 
 $--input-hover-border: $--border-color-hover !default;
 $--input-clear-hover-color: $--color-text-secondary !default;
@@ -394,18 +394,18 @@ $--group-title-width: 66px !default;
 
 /* Tab
 -------------------------- */
-$--tab-font-size: 12px !default;
-$--tab-border-line: 1px solid #e4e4e4 !default;
-$--tab-header-color-active: $--color-text-secondary !default;
-$--tab-header-color-hover: $--color-text-regular !default;
-$--tab-header-color: #ff0 !default;
-$--tab-header-fill-active: rgba($--color-black, 0.06) !default;
-$--tab-header-fill-hover: rgba($--color-black, 0.06) !default;
-$--tab-vertical-header-width: 90px !default;
-$--tab-vertical-header-count-color: $--color-white !default;
-$--tab-vertical-header-count-fill: $--color-text-secondary !default;
+// $--tab-font-size: 12px !default;
+// $--tab-border-line: 1px solid #e4e4e4 !default;
+// $--tab-header-color-active: $--color-text-secondary !default;
+// $--tab-header-color-hover: $--color-text-regular !default;
+// $--tab-header-color: #ff0 !default;
+// $--tab-header-fill-active: rgba($--color-black, 0.06) !default;
+// $--tab-header-fill-hover: rgba($--color-black, 0.06) !default;
+// $--tab-vertical-header-width: 90px !default;
+// $--tab-vertical-header-count-color: $--color-white !default;
+// $--tab-vertical-header-count-fill: $--color-text-secondary !default;
 
-$--tab-item-color: $--color-text-secondary !default;
+$--tabs-item-color: $--color-text-regular !default;
 
 /* Button
 -------------------------- */
@@ -499,10 +499,9 @@ $--table-header-color: $--color-text-secondary !default;
 $--table-header-font-color: $--color-text-primary;
 $--table-row-hover-background: $--background-color-base !default;
 $--table-current-row-background: $--color-primary-light-9 !default;
-$--table-header-background: $--color-white !default;
 $--table-footer-background: $--color-text-placeholder !default;
 $--table-fixed-box-shadow: 0 0 10px rgba(0, 0, 0, .12) !default;
-
+$--table-header-background-color: $--background-color-regular !default;
 /* Pagination
 -------------------------- */
 $--pagination-font-size: 13px !default;

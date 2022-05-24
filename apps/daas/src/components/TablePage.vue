@@ -329,7 +329,8 @@ export default {
     .el-table--border th {
       font-weight: 500;
       border-right: 0;
-      background-color: map-get($bgColor, normal);
+      border-bottom: 0;
+      // background-color: map-get($bgColor, normal);
       &:hover {
         border-right: 1px solid #ebeef5;
       }
@@ -338,6 +339,7 @@ export default {
       }
       .cell {
         white-space: nowrap;
+
         // font-weight: 500;
         // color: map-get($fontColor, normal);
       }
