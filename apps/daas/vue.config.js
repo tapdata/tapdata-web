@@ -46,10 +46,6 @@ module.exports = {
     //  ============ 配置别名 ============
     config.resolve.alias.set('@', resolve('src')).set('web-core', resolve('../../packages/web-core'))
 
-    config.module.noParse(
-      /^(vue|vue-router|vuex|vuex-router-sync|axios|vue-virtual-scroller|vue-i18n|vue-echarts|echarts|vue-clipboard2|qs|mousetrap|lodash|jsplumb|highlight.js|graphlib|github-markdown-css|element-ui|dagre|crypto|crypto-js|@formily|ace-builds)$/
-    )
-
     config.plugin('ignore').use(new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn$/))
 
     // ============ svg处理 ============
