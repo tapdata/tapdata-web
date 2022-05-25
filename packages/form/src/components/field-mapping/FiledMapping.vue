@@ -32,8 +32,18 @@
               <img :src="fieldMapping_table" alt="" />
             </div>
             <div class="task-form-text-box">
-              <div class="source">{{ item.sourceObjectName }}</div>
-              <div class="target">{{ item.sinkObjectName }}</div>
+              <OverflowTooltip
+                class="w-100 text-truncate source"
+                :text="item.sourceObjectName"
+                placement="right"
+                :open-delay="400"
+              />
+              <OverflowTooltip
+                class="w-100 text-truncate target"
+                :text="item.sinkObjectName"
+                placement="right"
+                :open-delay="400"
+              />
               <div class="select">
                 {{
                   `${$t('dag_dialog_field_mapping_selected')} ${
@@ -48,6 +58,7 @@
           small
           class="flex mt-3"
           layout="total, prev, pager, next"
+          :page-count="3"
           :current-page.sync="page.current"
           :page-size.sync="page.size"
           :total="page.total"

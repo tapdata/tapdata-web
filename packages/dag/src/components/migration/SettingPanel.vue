@@ -25,7 +25,6 @@ export default observer({
 
     let values = observable(this.settings)
     return {
-      systemTimeZone: '',
       scope: {
         checkName: value => {
           return new Promise(resolve => {
@@ -177,7 +176,7 @@ export default observer({
                         items: {
                           type: 'object',
                           properties: {
-                            type: {
+                            pointType: {
                               type: 'string',
                               'x-component': 'Select',
                               'x-component-props': {
@@ -210,7 +209,7 @@ export default observer({
                                 valueFormat: 'timestamp'
                               },
                               'x-reactions': {
-                                dependencies: ['.type'],
+                                dependencies: ['.pointType'],
                                 fulfill: {
                                   state: {
                                     visible: '{{$deps[0] !== "current"}}'
@@ -322,10 +321,10 @@ export default observer({
           if (!map[item.connectionId] && item) {
             map[item.connectionId] = {
               connectionId: item.connectionId,
-              type: 'current', // localTZ: 本地时区； connTZ：连接时区
+              pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
               dateTime: '',
-              timezone: systemTimeZone,
-              name: item.name
+              timeZone: systemTimeZone,
+              connectionName: item.name
             }
           }
         })
