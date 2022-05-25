@@ -34,55 +34,13 @@ export default {
   },
   data() {
     return {
-      database: [
-        'mysql',
-        'oracle',
-        'mongodb',
-        'sqlserver',
-        'postgres',
-        'elasticsearch',
-        'redis',
-        'gbase-8s',
-        'sybase ase',
-        'gaussdb200',
-        'db2',
-        'kafka',
-        'mariadb',
-        'mysql pxc',
-        // 'jira',
-        'mq',
-        'dameng',
-        'hive',
-        // 'tcp_udp',
-        'hbase',
-        'kudu',
-        'greenplum',
-        'tidb',
-        'hana',
-        'clickhouse',
-        'kundb',
-        'adb_postgres',
-        'adb_mysql',
-        'hazelcast_cloud_cluster'
-      ],
-      otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],
+      database: [],
+      otherType: [],
       typeMap: TYPEMAP
       // automationType: '' //插件化数据源
     }
   },
   created() {
-    let allowDataType = window.getSettingByKey('ALLOW_CONNECTION_TYPE') || []
-    if (typeof allowDataType === 'string') {
-      allowDataType = allowDataType.split(',')
-    }
-    let allowType = this.allwoType
-    if (allowType && allowType.length) {
-      allowDataType = allowDataType.filter(val => {
-        return this.allwoType.includes(val)
-      })
-    }
-    this.database = allowDataType.filter(type => this.database.includes(type)) || []
-    this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || []
     this.getDatabaseType()
   },
   methods: {
@@ -91,14 +49,9 @@ export default {
       this.$emit('dialogVisible', false)
       this.$emit('update:dialogVisible', false)
     },
-    databaseType(type) {
-      if (typeof type === 'object') {
-        this.$emit('databaseType', type.type, type)
-        this.$store.commit('createConnection', { databaseType: type.type, item: type })
-        return
-      }
-      this.$emit('databaseType', type)
-      this.$store.commit('createConnection', { databaseType: type })
+    databaseType(item) {
+      this.$emit('databaseType', item.type, item)
+      this.$store.commit('createConnection', { databaseType: item.type, item })
     },
     getDatabaseType() {
       this.$api('DatabaseTypes')

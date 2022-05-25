@@ -36,9 +36,9 @@
         <!--<ElTabPane label="数据详情">
           <DataPane></DataPane>
         </ElTabPane>-->
-        <ElTabPane v-if="isPdk" label="pdk">
-          <PdkPane v-on="$listeners" v-bind="$attrs" ref="pdkPane"></PdkPane>
-        </ElTabPane>
+        <!--        <ElTabPane label="pdk">-->
+        <!--          <PdkPane v-on="$listeners" v-bind="$attrs" ref="pdkPane"></PdkPane>-->
+        <!--        </ElTabPane>-->
       </ElTabs>
     </div>
   </section>
@@ -76,8 +76,8 @@ export default {
   computed: {
     ...mapGetters('dataflow', ['activeType', 'activeNode', 'nodeById', 'stateIsReadonly']),
 
-    isPdk() {
-      return this.activeNode?.attrs?.pdkType === 'pdk'
+    icon() {
+      return this.getIcon(this.activeNode)
     }
   },
 

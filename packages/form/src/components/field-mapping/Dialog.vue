@@ -103,12 +103,12 @@
             <ElTableColumn :label="$t('dag_dialog_field_mapping_type')" prop="data_type">
               <template #default="{ row }">
                 <div class="cursor-pointer" v-if="!row.is_deleted" @click="edit(row, 'data_type')">
-                  <span>{{ row.data_type }}</span>
+                  <span :show-overflow-tooltip="true">{{ row.data_type }}</span>
                   <i v-if="!row.data_type" class="icon-error el-icon-warning"></i>
                   <i class="field-mapping__icon el-icon-arrow-down"></i>
                 </div>
                 <div v-else>
-                  <span>{{ row.data_type }}</span>
+                  <span :show-overflow-tooltip="true">{{ row.data_type }}</span>
                 </div>
               </template>
             </ElTableColumn>
@@ -116,10 +116,10 @@
               <template #default="{ row }">
                 <div
                   class="cursor-pointer"
-                  v-if="!row.is_deleted && row.isPrecisionEdit"
+                  v-if="!row.is_deleted && row.isPrecisionEdit && row.precision > 0"
                   @click="edit(row, 'precision')"
                 >
-                  <span> {{ row.precision < 0 ? '' : row.precision }}</span>
+                  <span> {{ row.precision }}</span>
                   <i class="field-mapping__icon el-icon-edit-outline"></i>
                 </div>
                 <div v-else>
