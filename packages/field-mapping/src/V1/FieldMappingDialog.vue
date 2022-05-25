@@ -265,14 +265,6 @@
           class="inline-input"
           :fetch-suggestions="querySearchPdkType"
         ></ElAutocomplete>
-        <ElSelect v-model="editValueType[currentOperationType]" filterable @change="initDataType">
-          <ElOption
-            :label="item.dbType"
-            :value="item.dbType"
-            v-for="(item, index) in typeMapping"
-            :key="index"
-          ></ElOption>
-        </ElSelect>
         <div class="mt-3 fs-8">{{ getPdkEditValueType() }}</div>
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
           <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
@@ -988,6 +980,7 @@ export default {
         }
         //如果是改类型 需要手动修改字段的长度以及精度
         // this.influences(id, this.currentTypeRules || [])
+        this.updateTargetView(id, 'tapType', '')
       } else if (key === 'precision') {
         let isPrecision = this.currentTypeRules.filter(v => v.minPrecision < v.maxPrecision)
         if (isPrecision.length === 0) {
@@ -1335,9 +1328,6 @@ export default {
           value: t.dbType
         }
       })
-      if (queryString) {
-        result = result.filter(t => t.value.toLowerCase().includes(queryString))
-      }
       cb(result)
     },
     getPdkEditValueType() {
