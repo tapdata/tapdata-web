@@ -1,6 +1,6 @@
 <template>
   <section class="function-list-wrapper section-wrap">
-    <TablePage ref="table" class="h-100" :remoteMethod="getData">
+    <TablePage ref="table" class="h-100" :remoteMethod="getData" @sort-change="handleSortTable">
       <template slot="search">
         <FilterBar v-model="searchParams" :items="filterItems" @fetch="table.fetch(1)"> </FilterBar>
       </template>
@@ -13,7 +13,7 @@
       <ElTableColumn :label="$t('function_describe_label')" prop="desc"> </ElTableColumn>
 
       <ElTableColumn prop="createTime" :label="$t('column_create_time')"></ElTableColumn>
-      <ElTableColumn prop="last_updated" :label="$t('function_last_update_label')"></ElTableColumn>
+      <ElTableColumn prop="last_updated" sortable="last_updated" :label="$t('function_last_update_label')"></ElTableColumn>
 
       <ElTableColumn width="150" :label="$t('column_operation')">
         <template #default="{ row }">
@@ -164,6 +164,11 @@ export default {
           name: 'NodeNew'
         }).href
       )
+    },
+     //筛选条件
+    handleSortTable({ order, prop }) {
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.table.fetch(1)
     }
   }
 }
