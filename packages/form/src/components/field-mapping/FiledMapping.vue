@@ -86,7 +86,11 @@
               <span v-else class="item" :show-overflow-tooltip="true">{{ scope.row.field_name }}</span>
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_type')" prop="data_type"></ElTableColumn>
+          <ElTableColumn
+            :label="$t('dag_dialog_field_mapping_type')"
+            prop="data_type"
+            :show-overflow-tooltip="true"
+          ></ElTableColumn>
           <ElTableColumn :label="$t('dag_dialog_field_mapping_precision')" prop="precision">
             <template slot-scope="scope">
               <span>{{ scope.row.precision === -1 ? '' : scope.row.precision }}</span>
