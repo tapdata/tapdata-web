@@ -90,7 +90,7 @@
       </ElTooltip>
       <VDivider class="mx-3" vertical inset></VDivider>
       <!--搜索节点-->
-      <ElPopover
+      <!--<ElPopover
         v-model="showSearchNodePopover"
         placement="bottom"
         trigger="click"
@@ -122,7 +122,7 @@
             <EmptyItem v-if="!nodeList.length"></EmptyItem>
           </ElScrollbar>
         </div>
-      </ElPopover>
+      </ElPopover>-->
       <!--设置-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('button_setting')">
         <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: spaceKeyPressed }">
