@@ -22,8 +22,10 @@ export default observer({
 
   data() {
     let repeatNameMessage = this.$t('task_form_error_name_duplicate')
-    const values = observable(this.settings)
+
+    let values = observable(this.settings)
     return {
+      systemTimeZone: '',
       scope: {
         checkName: value => {
           return new Promise(resolve => {
@@ -56,17 +58,7 @@ export default observer({
                     })
                   }}}`
               },
-              desc: {
-                title: this.$t('task_stetting_desc'), //任务描述
-                type: 'string',
-                'x-decorator': 'FormItem',
-                'x-component': 'Input.TextArea',
-                'x-component-props': {
-                  min: 1,
-                  max: 100
-                }
-              },
-              sync_type: {
+              type: {
                 title: this.$t('task_setting_sync_type'),
                 type: 'string',
                 'x-decorator': 'FormItem',
@@ -89,6 +81,16 @@ export default observer({
                     value: 'cdc'
                   }
                 ]
+              },
+              desc: {
+                title: this.$t('task_stetting_desc'), //任务描述
+                type: 'string',
+                'x-decorator': 'FormItem',
+                'x-component': 'Input.TextArea',
+                'x-component-props': {
+                  min: 1,
+                  max: 100
+                }
               },
               collapse: {
                 type: 'void',
@@ -117,6 +119,7 @@ export default observer({
                       },
                       planStartDate: {
                         type: 'string',
+                        required: 'true',
                         'x-component': 'DatePicker',
                         'x-component-props': {
                           type: 'datetime',
@@ -124,10 +127,96 @@ export default observer({
                           valueFormat: 'timestamp'
                         },
                         'x-reactions': {
-                          dependencies: ['sync_type', 'planStartDateFlag'],
+                          dependencies: ['planStartDateFlag'],
                           fulfill: {
                             state: {
-                              display: '{{$deps[0] !== "initial_sync+cdc" && $deps[1] ? "visible" : "hidden"}}'
+                              display: '{{$deps[0] ? "visible" : "hidden"}}'
+                            }
+                          }
+                        }
+                      },
+                      crontabExpression: {
+                        //调度表达式
+                        title: '重复策略', //定期调度任务
+                        type: 'string',
+                        'x-decorator': 'FormItem',
+                        'x-component': 'Input.TextArea',
+                        'x-component-props': {
+                          placeholder: this.$t('task_setting_cron_expression')
+                        },
+                        'x-decorator-props': {
+                          tooltip: '提示提示',
+                          feedbackStatus: 'info',
+                          feedbackText: this.$t('task_setting_cron_feedbackText'),
+                          extra: this.$t('task_setting_cron_extra'),
+                          feedbackLayout: 'terse'
+                        },
+                        'x-reactions': {
+                          dependencies: ['type', 'planStartDateFlag'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
+                            }
+                          }
+                        }
+                      },
+                      syncPoints: {
+                        title: this.$t('task_setting_sync_point'), //增量采集开始时刻
+                        type: 'array',
+                        default: [{ type: 'current', date: '' }],
+                        'x-component': 'ArrayItems',
+                        'x-decorator': 'FormItem',
+                        'x-reactions': {
+                          dependencies: ['type', 'planStartDateFlag'],
+                          fulfill: {
+                            state: {
+                              display: '{{$deps[0] === "cdc" && $deps[1] ? "visible" : "hidden"}}'
+                            }
+                          }
+                        },
+                        items: {
+                          type: 'object',
+                          properties: {
+                            type: {
+                              type: 'string',
+                              'x-component': 'Select',
+                              'x-component-props': {
+                                placeholder: '请选择',
+                                style: 'margin-bottom:10px'
+                              },
+                              default: 'current',
+                              enum: [
+                                {
+                                  label: this.$t('dataFlow.SyncInfo.localTZType'),
+                                  value: 'localTZ'
+                                },
+                                {
+                                  label: this.$t('dataFlow.SyncInfo.connTZType'),
+                                  value: 'connTZ'
+                                },
+                                {
+                                  label: this.$t('dataFlow.SyncInfo.currentType'),
+                                  value: 'current'
+                                }
+                              ]
+                            },
+                            dateTime: {
+                              type: 'string',
+                              required: 'true',
+                              'x-component': 'DatePicker',
+                              'x-component-props': {
+                                type: 'datetime',
+                                format: 'yyyy-MM-dd HH:mm:ss',
+                                valueFormat: 'timestamp'
+                              },
+                              'x-reactions': {
+                                dependencies: ['.type'],
+                                fulfill: {
+                                  state: {
+                                    visible: '{{$deps[0] !== "current"}}'
+                                  }
+                                }
+                              }
                             }
                           }
                         }
@@ -146,45 +235,6 @@ export default observer({
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch'
                       },
-                      isSchedule: {
-                        title: this.$t('task_setting_is_schedule'), //定期调度任务
-                        type: 'boolean',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch',
-                        'x-reactions': {
-                          dependencies: ['sync_type', 'planStartDateFlag'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
-                            }
-                          }
-                        },
-                        default: false
-                      },
-                      crontabExpression: {
-                        //调度表达式
-                        title: this.$t('task_setting_cron_expression_label'), //定期调度任务
-                        type: 'string',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Input',
-                        'x-component-props': {
-                          placeholder: this.$t('task_setting_cron_expression')
-                        },
-                        'x-decorator-props': {
-                          feedbackStatus: 'info',
-                          feedbackText: this.$t('task_setting_cron_feedbackText'),
-                          extra: this.$t('task_setting_cron_extra'),
-                          feedbackLayout: 'terse'
-                        },
-                        'x-reactions': {
-                          dependencies: ['sync_type', 'isSchedule'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
-                            }
-                          }
-                        }
-                      },
                       shareCdcEnable: {
                         title: this.$t('connection_form_shared_mining'), //共享挖掘日志过滤
                         type: 'boolean',
@@ -192,14 +242,14 @@ export default observer({
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch',
                         'x-reactions': {
-                          dependencies: ['sync_type'],
+                          dependencies: ['type'],
                           fulfill: {
                             state: {
                               visible: '{{$deps[0] !== "initial_sync"}}' // 只有增量或全量+增量支持
                             }
                           }
                         }
-                      },
+                      }
                       // isAutoInspect: {
                       //   title: '数据校验', //共享挖掘日志过滤
                       //   type: 'boolean',
@@ -207,70 +257,6 @@ export default observer({
                       //   'x-decorator': 'FormItem',
                       //   'x-component': 'Switch'
                       // },
-                      syncPoints: {
-                        title: this.$t('task_setting_sync_point'), //增量采集开始时刻
-                        type: 'array',
-                        default: [{ type: 'current', date: '' }],
-                        'x-component': 'ArrayItems',
-                        'x-decorator': 'FormItem',
-                        'x-reactions': {
-                          dependencies: ['sync_type', 'planStartDateFlag'],
-                          fulfill: {
-                            state: {
-                              display: '{{$deps[0] === "cdc" && $deps[1] ? "visible" : "hidden"}}'
-                            }
-                          }
-                        },
-                        items: {
-                          type: 'object',
-                          properties: {
-                            space: {
-                              type: 'void',
-                              'x-component': 'Space',
-                              properties: {
-                                type: {
-                                  type: 'string',
-                                  'x-component': 'Select',
-                                  'x-component-props': {
-                                    placeholder: '请选择'
-                                  },
-                                  default: 'current',
-                                  enum: [
-                                    {
-                                      label: this.$t('dataFlow.SyncInfo.localTZType'),
-                                      value: 'localTZ'
-                                    },
-                                    {
-                                      label: this.$t('dataFlow.SyncInfo.connTZType'),
-                                      value: 'connTZ'
-                                    },
-                                    {
-                                      label: this.$t('dataFlow.SyncInfo.currentType'),
-                                      value: 'current'
-                                    }
-                                  ]
-                                },
-                                date: {
-                                  type: 'string',
-                                  'x-component': 'DatePicker',
-                                  'x-component-props': {
-                                    type: 'datetime',
-                                    format: 'yyyy-MM-dd HH:mm:ss'
-                                  },
-                                  'x-reactions': {
-                                    dependencies: ['type'],
-                                    fulfill: {
-                                      state: {
-                                        visible: '{{$deps[0] !== "current"}}'
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
                     }
                   }
                 }
@@ -285,6 +271,9 @@ export default observer({
         values
       })
     }
+  },
+  mounted() {
+    this.getAllNode()
   },
 
   computed: {
@@ -306,7 +295,47 @@ export default observer({
       taskApi.checkName(value, this.settings.id || '').then(data => {
         resolve(data)
       })
-    }, 500)
+    }, 500),
+    // 获取所有节点
+    getAllNode() {
+      let timeZone = new Date().getTimezoneOffset() / 60
+      let systemTimeZone = ''
+      if (timeZone > 0) {
+        systemTimeZone = 0 - timeZone
+      } else {
+        systemTimeZone = '+' + -timeZone
+      }
+      const allNodes = this.$store.getters['dataflow/allNodes']
+      const allSource = this.$store.getters['dataflow/allEdges'].map(item => item.source)
+      // 根据节点id查询源节点数据
+      let sourceConnectionIds = []
+      const sourceNodes = allNodes.filter(item => {
+        if (allSource.includes(item.id)) {
+          sourceConnectionIds.push(item.connectionId)
+          return item
+        }
+      })
+      // 过滤重复数据源
+      let map = {}
+      let filterSourceNodes = () => {
+        sourceNodes.forEach(item => {
+          if (!map[item.connectionId] && item) {
+            map[item.connectionId] = {
+              connectionId: item.connectionId,
+              type: 'current', // localTZ: 本地时区； connTZ：连接时区
+              dateTime: '',
+              timezone: systemTimeZone,
+              name: item.name
+            }
+          }
+        })
+        return map
+      }
+      this.$set(this.settings, 'syncPoints', Object.values(filterSourceNodes()))
+      // let arr = filterSourceNodes()
+      // eslint-disable-next-line
+      console.log(allNodes, allSource, sourceConnectionIds, this.settings.syncPoints, filterSourceNodes())
+    }
   }
 })
 </script>

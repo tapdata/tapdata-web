@@ -111,6 +111,7 @@
 
 <script>
 import VIcon from 'web-core/components/VIcon'
+import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
 import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
@@ -124,7 +125,7 @@ const metadataInstancesApi = new MetadataInstances()
 
 export default {
   name: 'FieldMappingDialog',
-  components: { VIcon, Dialog },
+  components: { VIcon, Dialog, OverflowTooltip },
   data() {
     return {
       searchField: '',
@@ -386,8 +387,8 @@ export default {
           cursor: pointer;
         }
         .task-form__img {
-          width: 34px;
-          height: 34px;
+          width: 25px;
+          height: 31px;
           img {
             width: 100%;
             height: 100%;
@@ -395,7 +396,7 @@ export default {
         }
         .task-form-text-box {
           margin-left: 16px;
-          width: 140px;
+          width: 128px;
           .source {
             font-size: 12px;
             font-weight: 400;
