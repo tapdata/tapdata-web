@@ -14,19 +14,12 @@
 </template>
 
 <script>
-import * as components from '@tap/form'
-import { createSchemaField } from '@formily/vue'
+import { Form, SchemaField } from '@tap/form'
 import { createForm } from '@formily/core'
-
-const { SchemaField } = createSchemaField({
-  components: {
-    ...components
-  }
-})
 
 export default {
   name: 'SchemaToForm',
-  components: { Form: components.Form, SchemaField },
+  components: { Form, SchemaField },
   props: {
     schema: {
       type: Object

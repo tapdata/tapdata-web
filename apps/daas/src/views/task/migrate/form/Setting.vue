@@ -17,18 +17,12 @@
 </template>
 
 <script>
-import * as components from '@tap/form'
-import { createSchemaField } from '@formily/vue'
+import { SchemaField, Form } from '@tap/form'
 import { createForm, onFormInputChange, onFormValuesChange } from '@formily/core'
 
-const { SchemaField } = createSchemaField({
-  components: {
-    ...components
-  }
-})
 export default {
   name: 'Setting',
-  components: { Form: components.Form, SchemaField },
+  components: { Form, SchemaField },
   props: ['dataSourceData', 'settingData', 'accessNodeList'],
   data() {
     return {
