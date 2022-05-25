@@ -5,6 +5,6 @@ export class DatabaseTypes extends Http {
     super('/api/DatabaseTypes')
   }
   pdkHash(pdkHash) {
-    return axios.get(this.url + '/pdkHash/' + pdkHash).then(this.useData)
+    return this.axios.get(this.url + '/pdkHash/' + pdkHash).then(this.useData)
   }
 }
