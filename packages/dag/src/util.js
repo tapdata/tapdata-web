@@ -4,7 +4,7 @@ const BASE_URL = process.env.BASE_URL || '/'
 
 export function getNodeIconSrc(node) {
   if (!node) return
-  const pdkHash = node.attrs?.pdkHash
+  const pdkHash = node.pdkHash || node.attrs?.pdkHash
   if (pdkHash) {
     const accessToken = Cookie.get('token')
     return `${BASE_URL}api/pdk/icon?access_token=${accessToken}&pdkHash=${pdkHash}`

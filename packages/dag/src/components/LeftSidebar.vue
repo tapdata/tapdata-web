@@ -619,17 +619,6 @@ export default {
       this.init()
     },
 
-    getNodeHtml(n) {
-      return `
-        <div class="df-node" style="z-index: 11;pointer-events: none;">
-          <div class="df-node-icon">
-            <img draggable="false" style="width: 30px;height: 30px;vertical-align: middle;" src="static/editor/o-${n.icon}.svg">
-          </div>
-          <div class="df-node-text">${n.name}</div>
-        </div>
-      `
-    },
-
     async getDragDom() {
       await this.$nextTick()
       return document.getElementById('dragNode')
@@ -648,23 +637,12 @@ export default {
     },
 
     onStart(item) {
-      const node = {
-        name: item.name,
-        type: 'table',
-        databaseType: item.database_type,
-        connectionId: item.id,
-        tableName: '',
-        attrs: {
-          connectionName: item.name,
-          connectionType: item.connection_type,
-          accessNodeProcessId: item.accessNodeProcessId
-        }
-      }
+      const node = this.getNodeProps(item, '')
       this.initStart(node)
     },
 
     onTBStart(item) {
-      const node = this.getNodePropsByTable(item.name)
+      const node = this.getNodeProps(this.activeConnection, item.name)
       this.initStart(node)
     },
 
@@ -752,7 +730,7 @@ export default {
     },
 
     handleSaveTable(name) {
-      this.$emit('add-table-as-node', this.getNodePropsByTable(name))
+      this.$emit('add-table-as-node', this.getNodeProps(name))
     },
 
     updateDBScrollbar() {
@@ -767,10 +745,9 @@ export default {
       setTimeout(this.$refs.processorList.update, 350)
     },
 
-    getNodePropsByTable(tableName) {
-      const connection = this.activeConnection
+    getNodeProps(connection, tableName) {
       return {
-        name: tableName,
+        name: tableName || connection.name,
         type: 'table',
         databaseType: connection.database_type,
         connectionId: connection.id,

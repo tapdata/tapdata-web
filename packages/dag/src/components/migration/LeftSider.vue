@@ -347,9 +347,9 @@ export default {
         page: this.dbPage,
         size: 20,
         where: {
-          database_type: {
-            $in: this.database
-          },
+          // database_type: {
+          //   $in: this.database
+          // },
           connection_type: {
             like: this.connectionType,
             options: 'i'
@@ -373,7 +373,9 @@ export default {
           status: 1,
           accessNodeType: 1,
           accessNodeProcessId: 1,
-          accessNodeProcessIdList: 1
+          accessNodeProcessIdList: 1,
+          pdkType: 1,
+          pdkHash: 1
         },
         order: ['status DESC', 'name ASC']
       }
