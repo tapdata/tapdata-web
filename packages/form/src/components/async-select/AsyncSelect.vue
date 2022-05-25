@@ -310,7 +310,6 @@ export default {
 
   watch: {
     async params(val, old) {
-      // console.log('watch:params', JSON.stringify(val), JSON.stringify(old), JSON.stringify(val) === JSON.stringify(old)) // eslint-disable-line
       if (JSON.stringify(val) !== JSON.stringify(old)) {
         this.lastQuery = null
         this.query = ''
@@ -325,7 +324,6 @@ export default {
 
   methods: {
     onInputChange() {
-      console.log('onInputChange', this.selectedLabel) // eslint-disable-line
       if (this.filterable && this.query !== this.selectedLabel) {
         this.query = this.selectedLabel.trim()
         this.handleQueryChange(this.query)
@@ -373,7 +371,7 @@ export default {
         value: value,
         currentLabel: label
       }
-      if (this.itemType === 'object' && this.total > 0) {
+      if (this.itemType === 'object' && this.total > 0 && !!value) {
         this.loadingOption = true
         newOption = (await this.loadOption(value)) || newOption
         this.loadingOption = false
@@ -387,7 +385,6 @@ export default {
 
     async setSelected() {
       if (!this.multiple) {
-        console.log('setSelected', this.value) // eslint-disable-line
         let option = await this.getOption(this.value)
         if (this.onSetSelected && ~this.hoverIndex) {
           if (!option.$el) {
