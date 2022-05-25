@@ -39,7 +39,7 @@
         </ElButton>
       </div>
       <ElTableColumn type="selection" width="45" :reserve-selection="true"></ElTableColumn>
-      <ElTableColumn prop="name" min-width="150" :label="$t('connection.dataBaseName')" :show-overflow-tooltip="true">
+      <ElTableColumn show-overflow-tooltip prop="name" min-width="150" :label="$t('connection.dataBaseName')">
         <template slot-scope="scope">
           <div class="connection-name">
             <div class="database-img">
@@ -54,7 +54,7 @@
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="$t('connection.connectionInfo')" min-width="150">
+      <ElTableColumn show-overflow-tooltip :label="$t('connection.connectionInfo')" min-width="150">
         <template slot-scope="scope">
           {{ scope.row.connectionUrl }}
         </template>
@@ -357,28 +357,40 @@ export default {
               if (platformInfo && platformInfo.regionName) {
                 item.regionInfo = platformInfo.regionName + ' ' + platformInfo.zoneName
               }
-              if (item.database_type !== 'mongodb') {
-                item.connectionUrl = ''
-                if (item.database_username) {
-                  item.connectionUrl += item.database_username + ':***@'
+
+              if (item.config) {
+                if (item.config.uri) {
+                  item.connectionUrl = item.config.uri
+                } else {
+                  item.connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
+                    item.config.schema ? `/${item.config.schema}` : ''
+                  }`
                 }
-                item.connectionUrl += item.database_host + ':' + item.database_port
               } else {
-                item.connectionUrl = item.database_uri || item.connection_name
+                if (item.database_type !== 'mongodb') {
+                  item.connectionUrl = ''
+                  if (item.database_username) {
+                    item.connectionUrl += item.database_username + ':***@'
+                  }
+                  item.connectionUrl += item.database_host + ':' + item.database_port
+                } else {
+                  item.connectionUrl = item.database_uri || item.connection_name
+                }
+                if (item.database_type === 'mq' && item.mqType === '0') {
+                  item.connectionUrl = item.brokerURL
+                }
+                // 不存在uri 和 port === 0
+                if (!item.database_uri && !item.database_port && item.mqType !== '0') {
+                  item.connectionUrl = ''
+                }
+                if (item.database_type === 'kudu') {
+                  item.connectionUrl = item.database_host
+                }
+                if (item.database_type === 'kafka') {
+                  item.connectionUrl = item.kafkaBootstrapServers
+                }
               }
-              if (item.database_type === 'mq' && item.mqType === '0') {
-                item.connectionUrl = item.brokerURL
-              }
-              // 不存在uri 和 port === 0
-              if (!item.database_uri && !item.database_port && item.mqType !== '0') {
-                item.connectionUrl = ''
-              }
-              if (item.database_type === 'kudu') {
-                item.connectionUrl = item.database_host
-              }
-              if (item.database_type === 'kafka') {
-                item.connectionUrl = item.kafkaBootstrapServers
-              }
+
               item.connectionSource = this.sourceTypeMapping[item.sourceType]
               item.lastUpdateTime = this.$moment(item.last_updated).format('YYYY-MM-DD HH:mm:ss')
               return item

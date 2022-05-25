@@ -375,7 +375,8 @@ export default {
           accessNodeProcessId: 1,
           accessNodeProcessIdList: 1,
           pdkType: 1,
-          pdkHash: 1
+          pdkHash: 1,
+          config: 1
         },
         order: ['status DESC', 'name ASC']
       }
@@ -403,29 +404,41 @@ export default {
 
       const dbList = data.items.map(item => {
         let connectionUrl = ''
-        if (item.database_type !== 'mongodb') {
-          // if (item.database_username) {
-          //   connectionUrl += item.database_username + ':***@'
-          // }
-          connectionUrl += `${item.database_host}:${item.database_port}/${item.database_name}${
-            item.database_owner ? `/${item.database_owner}` : ''
-          }`
+
+        if (item.config) {
+          if (item.config.uri) {
+            connectionUrl = item.config.uri
+          } else {
+            connectionUrl = `${item.config.host}:${item.config.port}/${item.config.database}${
+              item.config.schema ? `/${item.config.schema}` : ''
+            }`
+          }
         } else {
-          connectionUrl = item.database_uri || item.connection_name
+          if (item.database_type !== 'mongodb') {
+            // if (item.database_username) {
+            //   connectionUrl += item.database_username + ':***@'
+            // }
+            connectionUrl += `${item.database_host}:${item.database_port}/${item.database_name}${
+              item.database_owner ? `/${item.database_owner}` : ''
+            }`
+          } else {
+            connectionUrl = item.database_uri || item.connection_name
+          }
+          if (item.database_type === 'mq' && item.mqType === '0') {
+            connectionUrl = item.brokerURL
+          }
+          // 不存在uri 和 port === 0
+          if (!item.database_uri && !item.database_port && item.mqType !== '0') {
+            connectionUrl = ''
+          }
+          if (item.database_type === 'kudu') {
+            connectionUrl = item.database_host
+          }
+          if (item.database_type === 'kafka') {
+            connectionUrl = item.kafkaBootstrapServers
+          }
         }
-        if (item.database_type === 'mq' && item.mqType === '0') {
-          connectionUrl = item.brokerURL
-        }
-        // 不存在uri 和 port === 0
-        if (!item.database_uri && !item.database_port && item.mqType !== '0') {
-          connectionUrl = ''
-        }
-        if (item.database_type === 'kudu') {
-          connectionUrl = item.database_host
-        }
-        if (item.database_type === 'kafka') {
-          connectionUrl = item.kafkaBootstrapServers
-        }
+
         item.connectionUrl = connectionUrl
         item.databaseType = item.database_type
         return item
@@ -539,6 +552,8 @@ export default {
           connectionName: item.name,
           connectionType: item.connection_type,
           accessNodeProcessId: item.accessNodeProcessId,
+          pdkType: item.pdkType,
+          pdkHash: item.pdkHash,
           ...extraAttrs
         }
       }
