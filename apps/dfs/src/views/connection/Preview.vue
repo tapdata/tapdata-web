@@ -332,4 +332,11 @@ export default {
     height: 100%;
   }
 }
+.el-progress {
+  ::v-deep {
+    .el-progress__text {
+      word-break: initial;
+    }
+  }
+}
 </style>
