@@ -43,10 +43,8 @@
 </template>
 
 <script>
-import crypto from 'crypto'
-import CryptoJS from 'crypto-js'
+import cryptoJS from 'crypto-js'
 import LoginPage from './LoginPage'
-import _ from 'lodash'
 import Cookie from '@tap/shared/src/cookie'
 
 export default {
@@ -76,7 +74,7 @@ export default {
   methods: {
     async submit() {
       let form = this.form
-      let oldPassword = _.clone(this.form.password)
+      let oldPassword = this.form.password + ''
       let message = ''
       if (!form.email || !form.email.trim()) {
         message = this.$t('app.signIn.email_require')
@@ -99,15 +97,10 @@ export default {
         //登陆密码加密
         let timeStampData = await timeStamp.get()
         this.form['stime'] = timeStampData.data
-        this.form.password = CryptoJS.RC4.encrypt(this.form.password, 'Gotapd8').toString()
+        this.form.password = cryptoJS.RC4.encrypt(this.form.password, 'Gotapd8').toString()
         let Str = this.form.email + this.form.password + this.form.stime + 'Gotapd8'
-        this.form['sign'] = crypto.createHash('sha1').update(Str).digest('hex').toUpperCase()
+        this.form['sign'] = cryptoJS.SHA1(Str).toString().toUpperCase()
         let { data } = await usersModel.login(this.form)
-        // if (!data.permissions) {
-        // 	this.loading = false;
-        // 	this.form.password = oldPassword;
-        // 	return;
-        // }
         if (data.textStatus === 'WAITING_APPROVE') {
           this.errorMessage = this.$t('app.signIn.account_waiting_approve')
           return
@@ -116,10 +109,6 @@ export default {
           this.errorMessage = this.$t('app.signIn.account_disabled')
           return
         }
-        // if (!data.permissions || data.permissions.length === 0) {
-        // 	this.errorMessage = this.$t('app.signIn.permission_denied');
-        // 	return;
-        // }
         let user = await usersModel.getUserById(`/${data.userId}?access_token=${data.id}`)
         // eslint-disable-next-line
         console.log('登录成功：', data)
@@ -137,7 +126,6 @@ export default {
         }
         setTimeout(() => {
           sessionStorage.removeItem('lastLocationHref')
-          // location.reload()
         }, 50)
       } catch (e) {
         let msg = e?.data?.message
