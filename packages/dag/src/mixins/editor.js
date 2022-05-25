@@ -339,8 +339,10 @@ export default {
       const node = this.nodeById(id)
 
       node && this.nodeSelected(node)
-
-      setActive && this.setActiveNode(node.id)
+      if (setActive) {
+        this.setActiveNode(node.id)
+        this.showLeftSider = false
+      }
     },
 
     nodeSelected(node) {
@@ -738,7 +740,11 @@ export default {
 
     handleShowSettings() {
       this.deselectAllNodes()
-      this.setActiveType('settings')
+      if (this.activeType === 'settings') {
+        this.setActiveType(null)
+      } else {
+        this.setActiveType('settings')
+      }
     },
 
     /**
@@ -1087,11 +1093,13 @@ export default {
       // 取消选中所有节点
       this.deselectAllNodes()
       // 清空激活状态
-      this.setActiveType(null)
+      // this.setActiveType(null)
 
       if (showSelectBox) {
         const selectedNodes = this.getNodesInSelection(selectBoxAttr)
         selectedNodes.forEach(node => this.nodeSelected(node))
+      } else {
+        this.setActiveType(null)
       }
     },
 

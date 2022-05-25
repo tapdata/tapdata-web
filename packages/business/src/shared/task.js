@@ -1,3 +1,4 @@
+import { Cookie } from '@tap/shared'
 // 获取子任务状态统计
 import { ETL_STATUS_MAP, ETL_SUB_STATUS_MAP } from './const'
 
@@ -96,4 +97,17 @@ export function getTaskBtnDisabled(row, or) {
     }
   }
   return result
+}
+
+const BASE_URL = process.env.BASE_URL || '/'
+
+export function getNodeIconSrc(node) {
+  if (!node) return
+  const pdkHash = node.pdkHash || node.attrs?.pdkHash
+  if (pdkHash) {
+    const accessToken = Cookie.get('token')
+    return `${BASE_URL}api/pdk/icon?access_token=${accessToken}&pdkHash=${pdkHash}`
+  }
+  let icon = node.type === 'table' || node.type === 'database' || node.databaseType ? node.databaseType : node.type
+  return icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
 }

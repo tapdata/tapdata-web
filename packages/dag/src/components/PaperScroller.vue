@@ -449,9 +449,15 @@ export default {
       this.selectBoxAttr = { x, y, w, h, right: x + w, bottom: y + h }
     },
 
-    mouseUp() {
+    mouseUp(event) {
       off(window, 'mouseup', this.mouseUp)
-
+      if (
+        [this.$refs.paper, this.$refs.scrollerBg, this.$el].includes(event.target) &&
+        !this.showSelectBox &&
+        !this.$store.getters['dataflow/isPaperMoveInProgress']
+      ) {
+        this.$emit('click-blank')
+      }
       this.mouseUpMouseSelect()
       this.mouseUpMovePaper()
       this.removeActiveAction('dragActive')
