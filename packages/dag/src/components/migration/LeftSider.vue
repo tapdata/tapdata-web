@@ -216,39 +216,9 @@ export default {
       dbLoadingMore: false,
       skeletonThrottle: 0,
 
-      database: [
-        'mysql',
-        'oracle',
-        'mongodb',
-        'sqlserver',
-        'postgres',
-        'elasticsearch',
-        'redis',
-        'gbase-8s',
-        'sybase ase',
-        'gaussdb200',
-        'db2',
-        'kafka',
-        'mariadb',
-        'mysql pxc',
-        // 'jira',
-        'mq',
-        'dameng',
-        'hive',
-        // 'tcp_udp',
-        'hbase',
-        'kudu',
-        'greenplum',
-        'tidb',
-        'hana',
-        'clickhouse',
-        'kundb',
-        'adb_postgres',
-        'adb_mysql',
-        'hazelcast_cloud_cluster'
-      ],
+      database: [],
       comingAllowDatabase: [], // 即将上线
-      otherType: ['gridfs', 'dummy db', 'rest api', 'custom_connection', 'file'],
+      otherType: [],
       automationType: '', //插件化数据源
       connectionType: 'source'
     }
@@ -277,17 +247,6 @@ export default {
   },
 
   created() {
-    let allowDataType = window.getSettingByKey('ALLOW_CONNECTION_TYPE') || []
-    if (typeof allowDataType === 'string') {
-      allowDataType = allowDataType.split(',')
-    }
-
-    let comingAllowDataType = window.getSettingByKey('COMING_ONLINE_CONNECTION_TYPE') || []
-    this.comingAllowDatabase = comingAllowDataType.filter(type => this.database.includes(type)) || []
-    this.database = allowDataType.filter(type => this.database.includes(type)) || []
-    this.database.push('vika')
-
-    this.otherType = allowDataType.filter(type => this.otherType.includes(type)) || []
     this.getDatabaseType()
 
     this.init()
@@ -318,16 +277,12 @@ export default {
         .get()
         .then(res => {
           if (res.data) {
-            this.automationType = res.data || []
-            this.automationType = this.automationType.filter(
-              item =>
-                !this.otherType.includes(item.type) &&
-                !this.database.includes(item.type) &&
-                !this.comingAllowDatabase.includes(item.type) &&
-                !['mem_cache', 'rest api', 'log_collect'].includes(item.type)
-            )
+            this.getPdkData(res.data)
           }
         })
+    },
+    getPdkData(data) {
+      this.database.push(...data.filter(t => t.pdkType === 'pdk'))
     },
     createConnection(type) {
       this.connectionDialog = false
