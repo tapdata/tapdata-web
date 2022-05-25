@@ -126,7 +126,6 @@ export class Database extends NodeType {
       tableNames: {
         type: 'array',
         default: [],
-        required: true,
         'x-component': 'TableSelector',
         'x-component-props': {
           connectionId: '{{$values.connectionId}}',
@@ -150,7 +149,6 @@ export class Database extends NodeType {
         properties: {
           tableNames: {
             type: 'string',
-            required: true,
             'x-component': 'TableListCard',
             'x-component-props': {
               connectionId: '{{$values.connectionId}}'

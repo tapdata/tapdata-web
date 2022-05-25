@@ -20,7 +20,7 @@
           <i class="el-icon-loading mx-2"></i>
           <span>{{ progress }}%</span>
         </span>
-        <ElLink v-else type="primary" :disabled="stateIsReadonly" @click="reload()">
+        <ElLink v-else-if="!disabled" type="primary" :disabled="stateIsReadonly" @click="reload()">
           <div class="flex align-center">
             <span>{{ $t('button_reload') }}</span>
             <VIcon class="ml-1" size="9">icon_table_selector_load</VIcon>
@@ -64,10 +64,14 @@
     <!-- 左右箭头 按钮 -->
     <div class="selector-center">
       <div class="selector-btns">
-        <span class="btn-transfer" :class="{ 'btn-transfer--disabled': isOpenClipMode }" @click="add">
+        <span class="btn-transfer" :class="{ 'btn-transfer--disabled': isOpenClipMode || disabled }" @click="add">
           <i class="el-icon-arrow-right"></i>
         </span>
-        <span class="btn-transfer mt-4" :class="{ 'btn-transfer--disabled': isOpenClipMode }" @click="remove">
+        <span
+          class="btn-transfer mt-4"
+          :class="{ 'btn-transfer--disabled': isOpenClipMode || disabled }"
+          @click="remove"
+        >
           <i class="el-icon-arrow-left"></i>
         </span>
       </div>
@@ -87,7 +91,7 @@
             >({{ selected.checked.length }}/{{ selected.tables.length }})</span
           >
         </div>
-        <ElLink type="primary" @click="changeSeletedMode()">
+        <ElLink v-if="!disabled" type="primary" @click="changeSeletedMode()">
           <div class="flex align-center">
             <span>{{ $t('component_table_selector_bulk_pick') }}</span>
             <VIcon class="ml-1" size="9">icon_table_selector_bulk_pick</VIcon>
@@ -334,7 +338,8 @@ export default {
       type: String,
       required: true
     },
-    value: Array
+    value: Array,
+    disabled: Boolean
   },
   data() {
     return {
@@ -420,7 +425,7 @@ export default {
       }
     },
     add() {
-      if (this.isOpenClipMode) {
+      if (this.isOpenClipMode || this.disabled) {
         return
       }
       let tables = this.selected.tables.concat(this.table.checked)
@@ -434,7 +439,7 @@ export default {
       }
     },
     remove() {
-      if (this.isOpenClipMode) {
+      if (this.isOpenClipMode || this.disabled) {
         return
       }
       let tables = this.selected.checked
