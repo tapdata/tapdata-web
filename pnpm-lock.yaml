@@ -10,6 +10,7 @@ overrides:
   '@formily/shared': ^2.1.2
   '@formily/vue': ^2.1.2
   vue-demi: ^0.12.1
+  vue: ^2.6.14
 
 importers:
 

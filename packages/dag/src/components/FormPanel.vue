@@ -669,7 +669,7 @@ export default {
 
       this.updateNodeProperties({
         id: this.node.id,
-        properties: JSON.parse(JSON.stringify(form.values))
+        properties: JSON.parse(JSON.stringify(formValues))
       })
       this.updateDag()
       this.confirmNodeHasError()
