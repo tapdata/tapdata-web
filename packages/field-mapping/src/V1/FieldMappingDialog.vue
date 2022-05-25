@@ -265,7 +265,7 @@
           class="inline-input"
           :fetch-suggestions="querySearchPdkType"
         ></ElAutocomplete>
-        <ElSelect v-else v-model="editValueType[currentOperationType]" filterable @change="initDataType">
+        <ElSelect v-model="editValueType[currentOperationType]" filterable @change="initDataType">
           <ElOption
             :label="item.dbType"
             :value="item.dbType"
