@@ -462,12 +462,14 @@ export default {
         this.$message.error(this.$t('dag_link_field_mapping_error_all_deleted'))
         return //所有字段被删除了 不可以保存任务
       }
-      await this.saveOperations(returnData.row, returnData.operations, returnData.target, returnData.changNameData)
+      await this.saveOperations(returnData.row, returnData.operations, returnData.target, () => {
+        taskApi.getMetadata(this.dataFlow)
+      })
       this.$emit('returnPreFixSuffix', returnData.changNameData)
       this.dialogFieldProcessVisible = false
     },
     //保存字段处理器
-    saveOperations(row, operations, target) {
+    saveOperations(row, operations, target, callback) {
       if (!target || target?.length === 0) return
       let where = {
         qualified_name: row.sinkQulifiedName
@@ -475,7 +477,11 @@ export default {
       let data = {
         fields: target
       }
-      this.$api('MetadataInstances').update(where, data)
+      this.$api('MetadataInstances')
+        .update(where, data)
+        .then(() => {
+          callback?.()
+        })
       if (this.transform.hiddenFieldProcess) return //任务同步 没有字段处理器
       this.fieldProcess = this.$refs.fieldMappingDom.saveFileOperations()
       this.$emit('returnFieldMapping', this.fieldProcess)
