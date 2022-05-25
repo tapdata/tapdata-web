@@ -4,6 +4,7 @@ import { h as createElement, useFieldSchema, useForm, RecursionField } from '@fo
 import { observe } from '@formily/reactive'
 import { Space } from '../space'
 import './style.scss'
+import { getNodeIconSrc } from '@tap/business'
 
 export const MergeTableTree = observer(
   defineComponent({
@@ -117,8 +118,7 @@ export const MergeTableTree = observer(
         const dagNode = props.findNodeById(data.id)
         if (!dagNode) return
 
-        const icon = dagNode.type === 'table' ? dagNode.databaseType : dagNode.type
-        const iconSrc = icon ? require(`web-core/assets/icons/node/${icon}.svg`) : null
+        const iconSrc = getNodeIconSrc(dagNode)
 
         return (
           <div class="flex align-center ml-n2">

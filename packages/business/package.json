@@ -5,5 +5,8 @@
   "main": "src/index",
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@tap/shared": "workspace:^1.0.0"
+  }
 }

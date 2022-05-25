@@ -30,7 +30,7 @@
     <section class="layout-wrap layout-has-sider">
       <!--左侧边栏-->
       <LeftSider
-        v-show="activeType !== 'node'"
+        v-show="showLeftSider || allNodes.length === 0"
         v-if="!stateIsReadonly"
         v-resize.right="{
           minWidth: 260,
@@ -48,6 +48,7 @@
           @add-node="handleAddNodeToPos"
           @mouse-select="handleMouseSelect"
           @change-scale="handleChangeScale"
+          @click-blank="showLeftSider = true"
         >
           <DFNode
             v-for="n in allNodes"
@@ -158,7 +159,8 @@ export default {
         name: ''
       },
 
-      scale: 1
+      scale: 1,
+      showLeftSider: true
     }
   },
 
