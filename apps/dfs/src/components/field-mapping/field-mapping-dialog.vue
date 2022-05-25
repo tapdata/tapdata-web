@@ -592,6 +592,7 @@ export default {
     typeMappingMethod: Function,
     fieldProcessMethod: Function,
     updateMetadata: Function,
+    saveFileOperations: Function,
     transform: Object,
     hiddenFieldProcess: {
       type: Boolean,
@@ -1625,9 +1626,9 @@ export default {
       }
       this.vikaForm.visible = false
       this.copyForm()
-      // 保存字段处理器
+      // 保存数据当前节点的字段处理器
       this.updateParentMetaData('table', this.form, () => {
-        this.$emit('row-click', this.selectRow, [], this.target)
+        this.saveFileOperations(this.selectRow, [])
       })
     },
     fieldTypeChangeSaveTable() {

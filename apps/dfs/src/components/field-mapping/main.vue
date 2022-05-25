@@ -8,6 +8,7 @@
     :fieldMappingNavData="fieldMappingNavData"
     :fieldProcessMethod="updateFieldProcess"
     :updateMetadata="updateMetadata"
+    :saveFileOperations="saveFileOperations"
     :hiddenFieldProcess="false"
     :field_process.sync="field_process"
     :transform="transform"
