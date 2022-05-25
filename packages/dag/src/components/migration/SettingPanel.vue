@@ -102,7 +102,7 @@ export default observer({
                       title: '高级设置'
                     },
                     properties: {
-                      planTime: {
+                      planStartDateFlag: {
                         title: '计划时间', //计划时间
                         type: 'boolean',
                         'x-decorator': 'FormItem',
@@ -115,7 +115,7 @@ export default observer({
                           }
                         }
                       },
-                      planDate: {
+                      planStartDate: {
                         type: 'string',
                         'x-component': 'DatePicker',
                         'x-component-props': {
@@ -123,7 +123,7 @@ export default observer({
                           format: 'yyyy-MM-dd HH:mm:ss'
                         },
                         'x-reactions': {
-                          dependencies: ['sync_type', 'planTime'],
+                          dependencies: ['sync_type', 'planStartDateFlag'],
                           fulfill: {
                             state: {
                               display: '{{$deps[0] !== "initial_sync+cdc" && $deps[1] ? "visible" : "hidden"}}'
@@ -138,12 +138,6 @@ export default observer({
                         'x-component': 'Switch',
                         default: true
                       },
-                      noPrimaryKey: {
-                        title: this.$t('task_setting_no_primary_key'), //支持无主键同步
-                        type: 'boolean',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Switch'
-                      },
                       isStopOnError: {
                         title: this.$t('task_setting_stop_on_error'), //遇到错误停止
                         type: 'boolean',
@@ -157,7 +151,7 @@ export default observer({
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch',
                         'x-reactions': {
-                          dependencies: ['sync_type', 'planTime'],
+                          dependencies: ['sync_type', 'planStartDateFlag'],
                           fulfill: {
                             state: {
                               display: '{{$deps[0] === "initial_sync" && $deps[1] ? "visible" : "hidden"}}'
@@ -219,7 +213,7 @@ export default observer({
                         'x-component': 'ArrayItems',
                         'x-decorator': 'FormItem',
                         'x-reactions': {
-                          dependencies: ['sync_type', 'planTime'],
+                          dependencies: ['sync_type', 'planStartDateFlag'],
                           fulfill: {
                             state: {
                               display: '{{$deps[0] === "cdc" && $deps[1] ? "visible" : "hidden"}}'
