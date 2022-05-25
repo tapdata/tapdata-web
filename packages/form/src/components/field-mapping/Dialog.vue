@@ -23,6 +23,10 @@
               ></ElInput>
             </div>
           </div>
+          <div class="mb-2 ml-6" v-if="progress.showProgress">
+            {{ progress.finished }} / {{ progress.total }} <VIcon size="12">loading</VIcon
+            ><span>{{ $t('dag_dialog_field_mapping_loading_schema') }}</span>
+          </div>
           <ul class="task-form-left__ul flex flex-column">
             <li
               v-for="(item, index) in navData"
@@ -259,6 +263,12 @@ export default {
       target: [],
       loadingTable: true,
       loadingNav: true,
+      progress: {
+        total: 0,
+        finished: '0',
+        progress: '0',
+        showProgress: false
+      },
       page: {
         size: 10,
         current: 1,
@@ -294,6 +304,26 @@ export default {
     visible() {
       if (this.visible) {
         this.getMetadataTransformer()
+        //接收数据
+        let id = this.dataFlow.id
+        let self = this
+        this.$ws.on('metadataTransformerProgress', function (res) {
+          if (res?.data?.stageId === id) {
+            let { finished, total, status } = res?.data
+            self.progress.finished = finished
+            self.progress.total = total
+            self.page.total = finished
+            if (status !== 'done') {
+              self.progress.showProgress = true
+              if (self.navData?.length < self.page.size && self.page.current === 1) {
+                self.getMetadataTransformer()
+              }
+            } else {
+              self.progress.showProgress = false
+              self.getMetadataTransformer()
+            }
+          }
+        })
       }
     }
   },
@@ -352,6 +382,7 @@ export default {
           //请求左侧table数据
           this.selectRow = this.navData?.[0] || {}
           this.fieldCount = this.selectRow.sourceFieldCount - this.selectRow.userDeletedNum || 0
+          this.initWSSed()
           this.intiFieldMappingTableData(this.selectRow)
         })
         .finally(() => {
@@ -595,6 +626,31 @@ export default {
     },
     closeDialog() {
       this.$emit('update:visible', false)
+    },
+    //实时获取schema加载进度
+    initWSSed() {
+      let id = this.dataFlow?.id || this.dataFlow?.taskId
+      let msg = {
+        type: 'metadataTransformerProgress',
+        data: {
+          dataFlowId: id,
+          stageId: this.dataFlow['nodeId']
+        }
+      }
+      this.$ws.ready(() => {
+        this.$ws.send(msg)
+      }, true)
+
+      //总任务
+      let msgData = {
+        type: 'metadataTransformerProgress',
+        data: {
+          dataFlowId: id
+        }
+      }
+      this.$ws.ready(() => {
+        this.$ws.send(msgData)
+      }, true)
     }
   }
 }
