@@ -29,7 +29,6 @@
         :fieldProcess="transform.fieldProcess"
         :transform="transform"
         :getDataFlow="getDataFlow"
-        :isPdk="isPdk"
         @row-click="saveOperations"
         @update-nav="updateFieldMappingNavData"
       ></FieldMappingDialog>
@@ -58,8 +57,7 @@ export default {
       fieldMappingTableData: '', //右边table
       dialogFieldProcessVisible: false,
       loading: false,
-      fieldProcess: this.transform.fieldProcess,
-      isPdk: true
+      fieldProcess: this.transform.fieldProcess
     }
   },
   mounted() {
@@ -429,40 +427,29 @@ export default {
           targetData: []
         }
       }
-      if (this.isPdk) {
-        return Promise.all([
-          this.$api('TypeMapping').pdkDataType(row.sourceDbType),
-          this.$api('TypeMapping').pdkDataType(row.sinkDbType)
-        ]).then(res => {
-          let sourceData = [],
-            targetData = []
-          let sourceObj = JSON.parse(res?.[0]?.data || '{}')
-          let targetObj = JSON.parse(res?.[1]?.data || '{}')
-          for (let key in sourceObj) {
-            sourceData.push({
-              dbType: key,
-              rules: sourceObj[key]
-            })
-          }
-          for (let key in targetObj) {
-            targetData.push({
-              dbType: key,
-              rules: targetObj[key]
-            })
-          }
-          return {
-            sourceData: sourceData,
-            targetData: targetData
-          }
-        })
-      }
       return Promise.all([
-        this.$api('TypeMapping').getId(row.sourceDbType),
-        this.$api('TypeMapping').getId(row.sinkDbType)
-      ]).then(([sourceData, targetData]) => {
+        this.$api('TypeMapping').pdkDataType(row.sourceDbType),
+        this.$api('TypeMapping').pdkDataType(row.sinkDbType)
+      ]).then(res => {
+        let sourceData = [],
+          targetData = []
+        let sourceObj = JSON.parse(res?.[0]?.data || '{}')
+        let targetObj = JSON.parse(res?.[1]?.data || '{}')
+        for (let key in sourceObj) {
+          sourceData.push({
+            dbType: key,
+            rules: sourceObj[key]
+          })
+        }
+        for (let key in targetObj) {
+          targetData.push({
+            dbType: key,
+            rules: targetObj[key]
+          })
+        }
         return {
-          sourceData: sourceData?.data,
-          targetData: targetData?.data
+          sourceData: sourceData,
+          targetData: targetData
         }
       })
     },

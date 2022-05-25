@@ -119,24 +119,21 @@
             prop="data_type"
             width="150"
           ></ElTableColumn>
-          <ElTableColumn
-            v-if="!isPdk"
-            :label="$t('dag_dialog_field_mapping_source_precision')"
-            prop="precision"
-            width="150"
-          >
-            <template slot-scope="scope">
-              <span>{{ scope.row.precision === -1 ? '' : scope.row.precision }}</span>
-            </template>
-          </ElTableColumn>
-          <ElTableColumn
-            v-if="!isPdk"
-            :label="$t('dag_dialog_field_mapping_source_scale')"
-            prop="scale"
-            width="100"
-          ></ElTableColumn>
-          <ElTableColumn :label="$t('meta_table_default')" prop="default_value" width="100"></ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')" :width="isPdk ? 360 : 260">
+          <!--          <ElTableColumn-->
+          <!--            :label="$t('dag_dialog_field_mapping_source_precision')"-->
+          <!--            prop="precision"-->
+          <!--            width="150"-->
+          <!--          >-->
+          <!--            <template slot-scope="scope">-->
+          <!--              <span>{{ scope.row.precision === -1 ? '' : scope.row.precision }}</span>-->
+          <!--            </template>-->
+          <!--          </ElTableColumn>-->
+          <!--          <ElTableColumn-->
+          <!--            :label="$t('dag_dialog_field_mapping_source_scale')"-->
+          <!--            prop="scale"-->
+          <!--            width="100"-->
+          <!--          ></ElTableColumn>-->
+          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')" :width="360">
             <template slot-scope="scope">
               <div
                 class="cursor-pointer"
@@ -166,36 +163,36 @@
               </div>
             </template>
           </ElTableColumn>
-          <ElTableColumn v-if="!isPdk" :label="$t('dag_dialog_field_mapping_target_precision')" width="150">
-            <template slot-scope="scope">
-              <div
-                class="cursor-pointer"
-                v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && modeMapping[transform.mode]['precision']"
-                @click="edit(scope.row, 'precision')"
-              >
-                <span>{{ scope.row.t_precision }}</span>
-                <i class="icon el-icon-edit-outline"></i>
-              </div>
-              <div v-else>
-                <span>{{ scope.row.t_precision === -1 ? '' : scope.row.t_precision }}</span>
-              </div>
-            </template>
-          </ElTableColumn>
-          <ElTableColumn v-if="!isPdk" :label="$t('dag_dialog_field_mapping_target_scale')" width="100">
-            <template slot-scope="scope">
-              <div
-                class="cursor-pointer"
-                v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit && modeMapping[transform.mode]['scale']"
-                @click="edit(scope.row, 'scale')"
-              >
-                <span>{{ scope.row.t_scale }}</span>
-                <i class="icon el-icon-edit-outline"></i>
-              </div>
-              <div v-else>
-                <span>{{ scope.row.t_scale }}</span>
-              </div>
-            </template>
-          </ElTableColumn>
+          <!--          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_precision')" width="150">-->
+          <!--            <template slot-scope="scope">-->
+          <!--              <div-->
+          <!--                class="cursor-pointer"-->
+          <!--                v-if="!scope.row.is_deleted && scope.row.t_isPrecisionEdit && modeMapping[transform.mode]['precision']"-->
+          <!--                @click="edit(scope.row, 'precision')"-->
+          <!--              >-->
+          <!--                <span>{{ scope.row.t_precision }}</span>-->
+          <!--                <i class="icon el-icon-edit-outline"></i>-->
+          <!--              </div>-->
+          <!--              <div v-else>-->
+          <!--                <span>{{ scope.row.t_precision === -1 ? '' : scope.row.t_precision }}</span>-->
+          <!--              </div>-->
+          <!--            </template>-->
+          <!--          </ElTableColumn>-->
+          <!--          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_scale')" width="100">-->
+          <!--            <template slot-scope="scope">-->
+          <!--              <div-->
+          <!--                class="cursor-pointer"-->
+          <!--                v-if="!scope.row.is_deleted && scope.row.t_isScaleEdit && modeMapping[transform.mode]['scale']"-->
+          <!--                @click="edit(scope.row, 'scale')"-->
+          <!--              >-->
+          <!--                <span>{{ scope.row.t_scale }}</span>-->
+          <!--                <i class="icon el-icon-edit-outline"></i>-->
+          <!--              </div>-->
+          <!--              <div v-else>-->
+          <!--                <span>{{ scope.row.t_scale }}</span>-->
+          <!--              </div>-->
+          <!--            </template>-->
+          <!--          </ElTableColumn>-->
           <ElTableColumn :label="$t('meta_table_default')" width="100">
             <template slot-scope="scope">
               <div class="cursor-pointer" @click="edit(scope.row, 'default_value')">
@@ -206,7 +203,7 @@
           </ElTableColumn>
           <ElTableColumn
             :label="$t('dag_dialog_field_mapping_operate')"
-            :width="isPdk ? 100 : 80"
+            :width="100"
             fixed="right"
             v-if="modeMapping[transform.mode]['field_table_ops']"
           >
@@ -264,7 +261,6 @@
       </div>
       <div v-if="['data_type'].includes(currentOperationType)">
         <ElAutocomplete
-          v-if="isPdk"
           v-model="editValueType[currentOperationType]"
           class="inline-input"
           :fetch-suggestions="querySearchPdkType"
@@ -277,7 +273,7 @@
             :key="index"
           ></ElOption>
         </ElSelect>
-        <div v-if="isPdk" class="mt-3 fs-8">{{ getPdkEditValueType() }}</div>
+        <div class="mt-3 fs-8">{{ getPdkEditValueType() }}</div>
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
           <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
             <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
@@ -435,8 +431,7 @@ export default {
     getNavDataMethod: Function,
     fieldProcess: Array,
     transform: Object,
-    getDataFlow: Function,
-    isPdk: Boolean
+    getDataFlow: Function
   },
   data() {
     return {
@@ -991,10 +986,8 @@ export default {
           this.handleClose() //类型无改变
           return
         }
-        if (!this.isPdk) {
-          //如果是改类型 需要手动修改字段的长度以及精度
-          this.influences(id, this.currentTypeRules || [])
-        }
+        //如果是改类型 需要手动修改字段的长度以及精度
+        // this.influences(id, this.currentTypeRules || [])
       } else if (key === 'precision') {
         let isPrecision = this.currentTypeRules.filter(v => v.minPrecision < v.maxPrecision)
         if (isPrecision.length === 0) {

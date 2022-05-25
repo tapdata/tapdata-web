@@ -25,7 +25,7 @@
             <div class="img-box ml-2">
               <img :src="getConnectionIcon()" alt="" />
             </div>
-            <span class="ml-2">{{ databaseTypeLabel }}</span>
+            <span class="ml-2">{{ databaseType }}</span>
             <el-button class="ml-2" type="text" @click="dialogDatabaseTypeVisible = true">
               {{ $t('connection_form_change') }}
             </el-button>
@@ -33,156 +33,7 @@
         </div>
         <div class="form-wrap">
           <div class="form">
-            <SchemaToForm
-              v-if="isPdk"
-              ref="schemaToForm"
-              :schema="schemaData"
-              :colon="true"
-              label-width="160"
-            ></SchemaToForm>
-            <form-builder
-              v-else
-              ref="form"
-              class="form-builder grey"
-              v-model="model"
-              :config="config"
-              @value-change="formChange"
-            >
-              <div class="url-tip" slot="name" v-if="!$route.params.id">
-                中英开头，1～100个字符，可包含中英文、数字、中划线、下划线、空格
-              </div>
-              <div class="url-tip" slot="shareCdc-tip" v-if="mongodbList.length === 0 && model.showShareConfig">
-                <el-link type="primary" target="_blank" href="#/connections/create?databaseType=mongodb"
-                  >请先创建mongodb数据源</el-link
-                >
-                /
-                <span class="refresh" @click="getMongodb">
-                  刷新数据 <VIcon class="font-color-slight">refresh</VIcon></span
-                >
-              </div>
-              <div class="url-tip" slot="ecsList" v-if="model.sourceType === 'ecs'">
-                <el-select
-                  v-model="model.ecs"
-                  clearable
-                  placeholder="请选择"
-                  v-loadmore="loadMore"
-                  style="width: 100%; margin-top: 10px"
-                  @change="handleEcsList"
-                >
-                  <el-option v-for="item in ecsList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                </el-select>
-                <el-select v-model="model.vpc" clearable placeholder="请选择" style="width: 100%; margin-top: 10px">
-                  <el-option v-for="item in vpcList" :key="item.portId" :label="item.vpcName" :value="item.portId">
-                  </el-option>
-                </el-select>
-              </div>
-              <div class="url-tip" slot="vpc-setting" v-if="model.ecs">
-                <el-checkbox v-model="model.checkedVpc">授权允许数据同步服务访问您的ECS实例</el-checkbox>
-                <span v-if="model.checkedVpc">
-                  <el-link
-                    v-if="!model.platformInfo.strategyExistence"
-                    :underline="false"
-                    @click="createStrategy()"
-                    style="color: #d54e21"
-                    :disabled="createStrategyDisabled"
-                    >点击开通</el-link
-                  >
-                  <span v-else>已开通</span>
-                </span>
-              </div>
-              <div class="url-tip" slot="accessNodeProcessId">
-                <ElForm :model="model" ref="agentForm">
-                  <ElFormItem
-                    required
-                    prop="accessNodeProcessId"
-                    :rules="{
-                      required: true,
-                      message: $t('connection_form_name_ip') + $t('tips_rule_not_empty'),
-                      trigger: 'blur'
-                    }"
-                  >
-                    <ElSelect
-                      v-model="model.accessNodeProcessId"
-                      :placeholder="$t('connection_form_name_ip')"
-                      v-loadmore="loadMore"
-                      style="width: 100%"
-                    >
-                      <ElOption
-                        v-for="item in accessNodeList"
-                        :key="item.processId"
-                        :label="item.hostName"
-                        :value="item.processId"
-                      >
-                        <span class="fl">{{ item.hostName }}</span>
-                        <span class="font-color-light fr pl-2">{{ item.ip }}</span>
-                      </ElOption>
-                    </ElSelect>
-                  </ElFormItem>
-
-                  <!-- <el-input
-                  :rows="5"
-                  v-model="model.accessNodeProcessId"
-                  :placeholder="$t('connection_form_name_ip')"
-                ></el-input> -->
-                </ElForm>
-              </div>
-              <div class="url-tip" slot="urlTip" v-if="model.isUrl" v-html="$t('dataForm.form.uriTips.content')"></div>
-              <!-- rest api -->
-              <div class="url-tip" slot="req_pre_process">
-                <div>function request_process(url, headers, request_params, offset) {</div>
-                <el-input type="textarea" :rows="5" v-model="model.req_pre_process"></el-input>
-                <div>return {'url': url, 'headers':headers,'request_params':request_params, 'offset': offset};}</div>
-              </div>
-              <div class="url-tip" slot="resp_pre_process">
-                <div>function response_process(result) {</div>
-                <div>var tapdata_result = { data_rows:[], access_token:null, 'tapdata_offset': offset }</div>
-                <el-input type="textarea" :rows="5" v-model="model.resp_pre_process"></el-input>
-                <div>return tapdata_result; }</div>
-              </div>
-              <!-- custom_connection -->
-              <div slot="cdcScrip">
-                <div>function requestData(ctx) {</div>
-                <JsEditor v-model="model.custom_cdc_script" :width="width" :height="height"></JsEditor>
-                <div>}</div>
-              </div>
-              <div slot="historyScrip">
-                <div>function requestData() {</div>
-                <JsEditor v-model="model.custom_initial_script" :width="width" :height="height"></JsEditor>
-                <div>}</div>
-              </div>
-              <div slot="targetScrip">
-                <div>
-                  data = [{
-                  <span style="color: #998; font-style: italic"> // data is an array</span>
-                </div>
-                <div style="margin-left: 30px">
-                  op : " i ",
-                  <span style="color: #998; font-style: italic"> // i - insert, u - update, d - delete</span>
-                </div>
-                <div style="margin-left: 30px">
-                  from : " ",
-                  <span style="color: #998; font-style: italic"> // source table name</span>
-                </div>
-                <div style="margin-left: 30px">
-                  data : { },
-                  <span style="color: #998; font-style: italic"> // master data</span>
-                </div>
-                <div>}]</div>
-                <div style="padding-bottom: 5px; margin-top: 10px; font-weight: bold">function onData(data) {</div>
-                <JsEditor v-model="model.custom_ondata_script" :width="width" :height="height"></JsEditor>
-                <div>}</div>
-              </div>
-              <div slot="custom_before_script">
-                <div>function before() {</div>
-                <JsEditor v-model="model.custom_before_script" :width="width" :height="height"></JsEditor>
-                <div>}</div>
-              </div>
-              <div slot="custom_after_script">
-                <div>function after() {</div>
-                <JsEditor v-model="model.custom_after_script" :width="width" :height="height"></JsEditor>
-                <div>}</div>
-              </div>
-            </form-builder>
+            <SchemaToForm ref="schemaToForm" :schema="schemaData" :colon="true" label-width="160"></SchemaToForm>
             <!-- rest api -->
             <template v-if="databaseType === 'rest api'">
               <div class="rest-api-box">
@@ -527,7 +378,6 @@
           </div>
         </footer>
       </main>
-      <GitBook v-if="!isPdk"></GitBook>
       <!-- </div>
       </main> -->
     </div>
@@ -706,18 +556,8 @@ export default {
     }
   },
   computed: {
-    isPdk() {
-      return [this.$route.query.pdkType, this.$store.state.pdkType].includes('pdk')
-    },
     schemaFormInstance() {
       return this.$refs.schemaToForm.getForm?.()
-    },
-    databaseTypeLabel() {
-      const { isPdk, databaseType, typeMap } = this
-      if (isPdk) {
-        return databaseType
-      }
-      return typeMap[databaseType]
     }
   },
   created() {
@@ -812,9 +652,7 @@ export default {
     this.initTimezones()
     this.checkDataTypeOptions(this.databaseType)
     this.getCluster()
-    if (this.isPdk) {
-      this.getPdkForm()
-    }
+    this.getPdkForm()
   },
   watch: {
     'model.multiTenant'(val) {
@@ -1492,178 +1330,6 @@ export default {
       return platformInfo
     },
     submit() {
-      if (this.isPdk) {
-        this.submitPdk()
-        return
-      }
-      this.submitBtnLoading = true
-      let flag = true
-      this.model.search_databaseType = ''
-      if (this.model.accessNodeType === 'MANUALLY_SPECIFIED_BY_THE_USER') {
-        this.$refs.agentForm.validate(valid => {
-          if (!valid) {
-            flag = false
-          }
-        })
-      }
-
-      if (this.model.database_type === 'file' && this.model.connection_type === 'source') {
-        this.$refs.fileForm.validate(valid => {
-          if (!valid) {
-            flag = false
-          }
-        })
-      }
-      if (this.model.database_type === 'rest api') {
-        this.$refs.urlInfoForm.validate(valid => {
-          if (!valid) {
-            flag = false
-          }
-        })
-      }
-
-      if (this.model.database_type === 'gridfs' && this.model.file_type === 'excel') {
-        this.$refs.excelForm.validate(valid => {
-          if (!valid) {
-            flag = false
-          }
-        })
-      }
-      if (!this.model.checkedVpc && this.model.sourceType === 'ecs') {
-        this.$message.error('请授权允许数据同步服务访问您的ECS实例')
-        return
-      }
-      if (this.model.platformInfo && !this.model.platformInfo.strategyExistence && this.model.sourceType === 'ecs') {
-        this.$message.error('请"点击开通"开通网络策略')
-        return
-      }
-      let data = Object.assign({}, this.model)
-      if (data.database_type === 'mq') {
-        if (typeof data.mqQueueSet === 'string' || typeof data.mqTopicSet === 'string') {
-          data.mqQueueSet = data.mqQueueSet ? data.mqQueueSet.split(',') : []
-          data.mqTopicSet = data.mqTopicSet ? data.mqTopicSet.split(',') : []
-        }
-
-        if (data.mqType === '0') {
-          delete data.database_host
-          delete data.database_port
-        } else {
-          delete data.brokerURL
-        }
-      }
-
-      if (data.accessNodeType === 'AUTOMATIC_PLATFORM_ALLOCATION') {
-        data.accessNodeProcessId = ''
-      }
-
-      // if (this.model.database_type === 'mysqlpxc') {
-      // 	// this.model.search_databaseType = this.model.database_type;
-      // 	this.model.database_type = 'mysql pxc';
-      // }
-      this.$refs.form.validate(valid => {
-        if (valid && flag) {
-          //提交全局挖掘设置
-          if (this.showSystemConfig) {
-            this.saveSetting()
-          } else {
-            delete this.model.persistenceMongodb_uri_db
-            delete this.model.persistenceMongodb_collection
-            delete this.model.share_cdc_ttl_day
-          }
-          let params = Object.assign(
-            {},
-            {
-              // user_id: this.$cookie.get('user_id'),
-              status: 'testing',
-              schema: {},
-              retry: 0,
-              nextRetry: null,
-              response_body: {},
-              project: '',
-              submit: true
-            },
-            data
-          )
-          params['sslCert'] = this.model.sslKey
-          delete params.sslKeyFile
-          delete params.sslCAFile
-          delete params.status //编辑的情况下不传status
-          if (!params.id) {
-            delete params.id
-          }
-          if (!params.id) {
-            params['status'] = this.status ? this.status : 'testing' //默认值 0 代表没有点击过测试
-          }
-          if (!params.schema) {
-            delete params.schema
-          }
-          if (!params.tidbPdServer) {
-            delete params.tidbPdServer
-          }
-          if (params.database_type === 'mongodb') {
-            //params['database_uri'] = encodeURIComponent(params['database_uri'])
-            params.fill = params.isUrl ? 'uri' : ''
-            params.isUrl
-          }
-          //rest api 数据组装
-          if (params.database_type === 'rest api') {
-            params.url_info.forEach(v => {
-              if (v) {
-                v.headerArray.forEach(header => {
-                  if (header && header.name) {
-                    v.headers[header.name] = header.value
-                  }
-                })
-                v.parameterArray.forEach(parameter => {
-                  if (parameter && parameter.name) {
-                    v.request_parameters[parameter.name] = parameter.value
-                  }
-                })
-              }
-            })
-          }
-          connectionsModel[this.model.id ? 'patchId' : 'post'](params)
-            .then(() => {
-              this.$message.success(this.$t('message_save_ok'))
-              if (this.$route.query.step) {
-                this.$router.push({
-                  name: 'connections',
-                  query: {
-                    step: this.$route.query.step
-                  }
-                })
-              } else {
-                this.$router.push({
-                  name: 'connections'
-                })
-              }
-            })
-            .catch(err => {
-              if (err && err.response) {
-                // if (err.response.msg.indexOf('duplication for names') > -1) {
-                //   this.$message.error(this.$t('dataForm.error.connectionNameExist'))
-                // } else if (err.response.msg.indexOf('duplicate source') > -1) {
-                //   // this.connectionObj.name = err.response.data.name;
-                //   // this.connectionObj.id = err.response.data.id;
-                //   // this.repeatDialogVisible = true;
-                //   this.$message.error(this.$t('dataForm.error.duplicateSource'))
-                // } else {
-                //   this.$message.error(err.response.msg)
-                // }
-                this.$message.error(err.response.message)
-              } else {
-                this.$message.error(this.$t('message_save_fail'))
-              }
-            })
-            .finally(() => {
-              this.submitBtnLoading = false
-            })
-        } else {
-          this.submitBtnLoading = false
-        }
-      })
-    },
-    submitPdk() {
       this.pdkFormModel = this.$refs.schemaToForm?.getForm?.()
       this.schemaFormInstance?.validate().then(() => {
         this.submitBtnLoading = true
@@ -1737,37 +1403,8 @@ export default {
     //开始测试
     async startTest() {
       this.$root.checkAgent(() => {
-        if (this.isPdk) {
-          this.schemaFormInstance.validate().then(() => {
-            this.startTestPdk()
-          })
-          return
-        }
-        this.$refs.form.validate(valid => {
-          if (valid) {
-            let data = Object.assign({}, this.model)
-            if (
-              this.model.database_type === 'mq' &&
-              (typeof this.model.mqQueueSet === 'string' || typeof this.model.mqTopicSet === 'string')
-            ) {
-              data.mqQueueSet = this.model.mqQueueSet.split(',')
-              data.mqTopicSet = this.model.mqTopicSet.split(',')
-            }
-            this.dialogTestVisible = true
-            if (this.$route.params.id) {
-              //编辑需要特殊标识 updateSchema = false editTest = true
-              if (['mongodb', 'gridfs'].includes(data.database_type) && data?.database_uri) {
-                delete this.model.database_uri
-              }
-              this.$refs.test.start(false, true)
-            } else {
-              delete this.model.id
-              if (!data.isUrl && data.database_type === 'mongodb') {
-                this.model.database_password = data.plain_password || ''
-              }
-              this.$refs.test.start(false)
-            }
-          }
+        this.schemaFormInstance.validate().then(() => {
+          this.startTestPdk()
         })
       })
     },
@@ -1957,15 +1594,13 @@ export default {
         })
     },
     getConnectionIcon() {
-      const { databaseType, isPdk } = this
+      const { databaseType } = this
       let result = {
         database_type: databaseType
       }
-      if (isPdk) {
-        const { pdkHash, pdkType } = this.$route.query || {}
-        result.pdkHash = pdkHash
-        result.pdkType = pdkType
-      }
+      const { pdkHash, pdkType } = this.$route.query || {}
+      result.pdkHash = pdkHash
+      result.pdkType = pdkType
       return getConnectionIcon(result)
     }
   }
