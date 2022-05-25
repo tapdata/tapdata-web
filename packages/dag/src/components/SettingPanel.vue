@@ -226,7 +226,7 @@
                         {{ item.name || item.connectionId }}
                       </div>
                       <ElCol :span="8" style="margin-right: 10px">
-                        <ElSelect v-model="item.type" placeholder="请选择">
+                        <ElSelect v-model="item.pointType" placeholder="请选择">
                           <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value">
                           </ElOption>
                         </ElSelect>
@@ -235,7 +235,7 @@
                         <ElDatePicker
                           format="yyyy-MM-dd HH:mm:ss"
                           style="width: 95%"
-                          v-model="item.date"
+                          v-model="item.dateTime"
                           type="datetime"
                           :disabled="item.type === 'current'"
                         ></ElDatePicker>
@@ -372,11 +372,10 @@ export default {
           if (!map[item.connectionId]) {
             map[item.connectionId] = {
               connectionId: item.connectionId,
-              type: 'current', // localTZ: 本地时区； connTZ：连接时区
-              time: '',
-              date: '',
-              timezone: this.systemTimeZone,
-              name: item.name
+              pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
+              dateTime: '',
+              timeZone: this.systemTimeZone,
+              connectionName: item.name
             }
           }
         })

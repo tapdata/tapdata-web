@@ -50,53 +50,7 @@ const getState = () => ({
   allResourceIns: [],
   nodeTypes: [], // 所有节点类型
   nodeErrorState: {}, // 节点错误状态
-  processorNodeTypes: [
-    {
-      icon: 'javascript',
-      name: 'JavaScript',
-      type: 'js_processor'
-    },
-    {
-      icon: 'aggregator',
-      name: '聚合',
-      type: 'aggregation_processor'
-    },
-    {
-      icon: 'row-filter',
-      name: 'Row Filter',
-      type: 'row_filter_processor'
-    },
-    {
-      icon: 'join',
-      name: '连接',
-      type: 'join_processor'
-    },
-    {
-      icon: 'merge_table',
-      name: '主从合并',
-      type: 'merge_table_processor'
-    },
-    {
-      icon: 'field_calc',
-      name: '字段计算',
-      type: 'field_calc_processor'
-    },
-    {
-      icon: 'field_mod_type',
-      name: '类型修改',
-      type: 'field_mod_type_processor'
-    },
-    {
-      icon: 'field_rename',
-      name: '字段改名',
-      type: 'field_rename_processor'
-    },
-    {
-      icon: 'field_add_del',
-      name: '增删字段',
-      type: 'field_add_del_processor'
-    }
-  ],
+  processorNodeTypes: [],
   nodeViewOffsetPosition: [0, 0],
   spaceKeyPressed: false,
   paperMoveInProgress: false,
@@ -766,8 +720,8 @@ const mutations = {
 
       if (!nodes.length) return
 
-      const allNodeTypes = [...state.nodeTypes, ...state.processorNodeTypes]
-      const nodeTypesMap = allNodeTypes.reduce((res, item) => ((res[item.type] = item), res), {})
+      // const allNodeTypes = [...state.nodeTypes, ...state.processorNodeTypes]
+      // const nodeTypesMap = allNodeTypes.reduce((res, item) => ((res[item.type] = item), res), {})
       const sourceMap = {},
         targetMap = {}
 
@@ -794,6 +748,9 @@ const mutations = {
         node.attrs.position[0] += 20
         node.attrs.position[1] += 20
 
+        node.$inputs = []
+        node.$outputs = []
+
         // 替换连线里绑定的ID
         if (sourceMap[oldId]) {
           sourceMap[oldId].forEach(item => (item.source = node.id))
@@ -803,18 +760,39 @@ const mutations = {
           targetMap[oldId].forEach(item => (item.target = node.id))
         }
 
-        const nodeType = nodeTypesMap[node.type]
-
-        if (nodeType) {
-          const Ctor = state.ctorTypes[nodeType.constructor]
-          const ins = new Ctor(nodeType)
-
-          Object.defineProperty(node, '__Ctor', {
-            value: ins,
-            enumerable: false
-          })
-        }
+        const ins = state.allResourceIns.find(ins => ins.selector(node))
+        Object.defineProperty(node, '__Ctor', {
+          value: ins,
+          enumerable: false
+        })
       })
+
+      if (edges.length) {
+        const outputsMap = {}
+        const inputsMap = {}
+
+        edges.forEach(({ source, target }) => {
+          let _source = outputsMap[source]
+          let _target = inputsMap[target]
+
+          if (!_source) {
+            outputsMap[source] = [target]
+          } else {
+            _source.push(target)
+          }
+
+          if (!_target) {
+            inputsMap[target] = [source]
+          } else {
+            _target.push(source)
+          }
+        })
+
+        nodes.forEach(node => {
+          node.$inputs = inputsMap[node.id] || []
+          node.$outputs = outputsMap[node.id] || []
+        })
+      }
 
       // 执行添加dag命令，可以撤销/重做
       await command.exec(new AddDagCommand(dag))

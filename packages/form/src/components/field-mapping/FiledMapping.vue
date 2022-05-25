@@ -32,8 +32,18 @@
               <img :src="fieldMapping_table" alt="" />
             </div>
             <div class="task-form-text-box">
-              <div class="source">{{ item.sourceObjectName }}</div>
-              <div class="target">{{ item.sinkObjectName }}</div>
+              <OverflowTooltip
+                class="w-100 text-truncate source"
+                :text="item.sourceObjectName"
+                placement="right"
+                :open-delay="400"
+              />
+              <OverflowTooltip
+                class="w-100 text-truncate target"
+                :text="item.sinkObjectName"
+                placement="right"
+                :open-delay="400"
+              />
               <div class="select">
                 {{
                   `${$t('dag_dialog_field_mapping_selected')} ${
@@ -48,6 +58,7 @@
           small
           class="flex mt-3"
           layout="total, prev, pager, next"
+          :page-count="3"
           :current-page.sync="page.current"
           :page-size.sync="page.size"
           :total="page.total"
@@ -111,6 +122,7 @@
 
 <script>
 import VIcon from 'web-core/components/VIcon'
+import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
 import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
@@ -124,7 +136,7 @@ const metadataInstancesApi = new MetadataInstances()
 
 export default {
   name: 'FieldMappingDialog',
-  components: { VIcon, Dialog },
+  components: { VIcon, Dialog, OverflowTooltip },
   data() {
     return {
       searchField: '',
@@ -386,8 +398,8 @@ export default {
           cursor: pointer;
         }
         .task-form__img {
-          width: 34px;
-          height: 34px;
+          width: 25px;
+          height: 31px;
           img {
             width: 100%;
             height: 100%;
@@ -395,7 +407,7 @@ export default {
         }
         .task-form-text-box {
           margin-left: 16px;
-          width: 140px;
+          width: 128px;
           .source {
             font-size: 12px;
             font-weight: 400;

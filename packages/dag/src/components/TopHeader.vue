@@ -125,7 +125,7 @@
       </ElPopover>-->
       <!--设置-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('button_setting')">
-        <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: spaceKeyPressed }">
+        <button @click="$emit('showSettings')" class="icon-btn" :class="{ active: activeType === 'settings' }">
           <VIcon size="20">setting</VIcon>
         </button>
       </ElTooltip>
@@ -242,7 +242,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('dataflow', ['dataflowId', 'stateIsReadonly', 'allNodes']),
+    ...mapGetters('dataflow', ['dataflowId', 'stateIsReadonly', 'allNodes', 'activeType']),
     ...mapState('dataflow', ['spaceKeyPressed']),
 
     syncTxt() {
