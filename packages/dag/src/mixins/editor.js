@@ -1,3 +1,4 @@
+import { merge } from 'lodash'
 import { connectorActiveStyle } from '../style'
 import { Task } from '@tap/api'
 import Mousetrap from 'mousetrap'

@@ -16,6 +16,7 @@
     "@formily/reactive": "^2.0.9",
     "@formily/reactive-vue": "^2.0.9",
     "@formily/shared": "^2.0.9",
+    "@formily/vue": "^2.1.2",
     "@tap/api": "workspace:^1.0.0",
     "@tap/component": "workspace:^1.0.0",
     "@tap/shared": "workspace:^1.0.0",
@@ -23,6 +24,7 @@
     "ace-builds": "^1.4.13",
     "highlight.js": "^11.0.1",
     "resize-observer-polyfill": "^1.5.1",
+    "vue": "^2.6.14",
     "vue-demi": "^0.12.1",
     "vue-virtual-scroller": "^1.0.10"
   }

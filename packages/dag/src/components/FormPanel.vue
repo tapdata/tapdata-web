@@ -693,7 +693,7 @@ export default {
         const path = field.path.toString().replace(/\.[\d+]/g, '')
         const takeMessage = prop => {
           const token = `${path}${prop ? `.${prop}` : ''}`
-          return this.getMessage(token, this.nodeType.locales)
+          return this.getMessage(token, this.ins.locales)
         }
         const title = takeMessage('title') || takeMessage()
         const description = takeMessage('description')
