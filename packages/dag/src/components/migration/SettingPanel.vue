@@ -120,7 +120,8 @@ export default observer({
                         'x-component': 'DatePicker',
                         'x-component-props': {
                           type: 'datetime',
-                          format: 'yyyy-MM-dd HH:mm:ss'
+                          format: 'yyyy-MM-dd HH:mm:ss',
+                          valueFormat: 'timestamp'
                         },
                         'x-reactions': {
                           dependencies: ['sync_type', 'planStartDateFlag'],
