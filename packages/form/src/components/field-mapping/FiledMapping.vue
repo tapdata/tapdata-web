@@ -184,7 +184,7 @@ export default {
   mounted() {
     this.getMetaData()
     //接收数据
-    let id = this.dataFlow.id
+    let id = this.dataFlow.nodeId
     let self = this
     this.$ws.on('metadataTransformerProgress', function (res) {
       if (res?.data?.stageId === id) {
