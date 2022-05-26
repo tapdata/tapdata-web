@@ -18,7 +18,7 @@
           {{ progress.finished }} / {{ progress.total }} <VIcon size="12">loading</VIcon
           ><span>{{ $t('dag_dialog_field_mapping_loading_schema') }}</span>
         </div>
-        <ul class="task-form-left__ul flex flex-column" v-loading="loadingNav">
+        <ul class="task-form-left__ul flex flex-column" v-loading="loadingNav" v-if="navData.length > 0">
           <li
             v-for="(item, index) in navData"
             :key="index"
@@ -54,6 +54,10 @@
             </div>
           </li>
         </ul>
+        <div class="task-form-left__ul flex flex-column align-items-center" v-else>
+          <div class="table__empty_img" style="margin-top: 40%"><img style="" :src="noData" /></div>
+          <div class="noData">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
+        </div>
         <ElPagination
           small
           class="flex mt-3"
@@ -115,8 +119,8 @@
           <ElTableColumn :label="$t('dag_dialog_field_mapping_scale')" prop="scale"></ElTableColumn>
           <ElTableColumn :label="$t('meta_table_default')" prop="default_value"></ElTableColumn>
           <div class="field-mapping-table__empty" slot="empty">
-            <i class="el-icon-folder-opened"></i>
-            <span class="ml-1">{{ $t('dag_dialog_field_mapping_no_data') }}</span>
+            <div class="table__empty_img" style="margin-left: 32%"><img style="" :src="noData" /></div>
+            <div class="noData">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
           </div>
         </ElTable>
       </div>
@@ -130,6 +134,7 @@ import VIcon from 'web-core/components/VIcon'
 import OverflowTooltip from 'web-core/components/overflow-tooltip'
 import rollback from 'web-core/assets/icons/svg/rollback.svg'
 import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
+import noData from 'web-core/assets/images/noData.png'
 import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
 import refresh from 'web-core/assets/icons/svg/refresh.svg'
 import { Task, MetadataTransformer, MetadataInstances } from '@tap/api'
@@ -172,7 +177,8 @@ export default {
       rollback,
       fieldMapping_table,
       fieldMapping_table_error,
-      refresh
+      refresh,
+      noData
     }
   },
   mounted() {
@@ -273,6 +279,7 @@ export default {
         })
         .finally(() => {
           this.loadingNav = false
+          this.loadingTable = false
         })
     },
     rest() {
@@ -373,6 +380,18 @@ export default {
     width: 130px;
     text-align: left;
   }
+  .table__empty_img {
+    width: 80px;
+    height: 80px;
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .noData {
+    font-size: 12px;
+    color: map-get($bgColor, special);
+  }
   .btn-refresh {
     padding: 0;
     height: 32px;
@@ -394,26 +413,26 @@ export default {
     max-height: 350px;
     .task-form-left__ul {
       flex: 1;
-      border-top: 1px solid #f2f2f2;
-      border-right: 1px solid #f2f2f2;
+      border-top: 1px solid map-get($borderColor, light);
+      border-right: 1px solid map-get($borderColor, light);
       max-width: 190px;
       overflow-x: hidden;
       overflow-y: auto;
       li {
-        background: #ffffff;
+        background: map-get($color, white);
         box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
         border-radius: 4px;
-        border-bottom: 1px solid #f2f2f2;
+        border-bottom: 1px solid map-get($borderColor, light);
         display: flex;
         padding: 16px 0 10px 10px;
         &:hover {
           background: rgba(44, 101, 255, 0.05);
           cursor: pointer;
-          border-left: 2px solid #2c65ff;
+          border-left: 2px solid map-get($color, primary);
         }
         &.active {
           background: rgba(44, 101, 255, 0.05);
-          border-left: 2px solid #2c65ff;
+          border-left: 2px solid map-get($color, primary);
           cursor: pointer;
         }
         .task-form__img {
