@@ -497,8 +497,7 @@ export default {
     },
 
     getNodeProps(item) {
-      const extraAttrs = this.connectionType === 'target' ? { isTarget: true } : {}
-      return {
+      const props = {
         name: item.name,
         type: 'database',
         databaseType: item.database_type,
@@ -508,10 +507,16 @@ export default {
           connectionType: item.connection_type,
           accessNodeProcessId: item.accessNodeProcessId,
           pdkType: item.pdkType,
-          pdkHash: item.pdkHash,
-          ...extraAttrs
+          pdkHash: item.pdkHash
         }
       }
+
+      if (this.connectionType === 'target') {
+        props.existDataProcessMode = 'keepData'
+        props.attrs.isTarget = true
+      }
+
+      return props
     }
   }
 }

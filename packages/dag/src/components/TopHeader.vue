@@ -51,11 +51,11 @@
         </button>
       </ElTooltip>
       <!--移动画布-->
-      <ElTooltip transition="tooltip-fade-in" :content="$t('button_move_paper')">
+      <!--<ElTooltip transition="tooltip-fade-in" :content="$t('button_move_paper')">
         <button @click="toggleMovePaper" class="icon-btn" :class="{ active: spaceKeyPressed }">
           <VIcon size="20">hand</VIcon>
         </button>
-      </ElTooltip>
+      </ElTooltip>-->
       <VDivider class="mx-3" vertical inset></VDivider>
       <!--缩小-->
       <ElTooltip transition="tooltip-fade-in" :content="$t('button_zoom_out')">
