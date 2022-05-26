@@ -317,6 +317,7 @@ export default observer({
         sourceNodes.forEach(item => {
           if (!map[item.connectionId]) {
             //是否已有保存数据
+            this.settings.syncPoints = this.settings.syncPoints || []
             let oldPoint = this.settings.syncPoints.filter(point => point.connectionId === item.connectionId)
             if (oldPoint?.length > 0) {
               map[item.connectionId] = {
