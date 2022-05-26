@@ -526,7 +526,7 @@ export default {
       Mousetrap.bind('mod+shift+o', () => {
         this.$refs.paperScroller.toggleMiniView()
       })
-      Mousetrap.bind('backspace', () => {
+      Mousetrap.bind(['backspace', 'del'], () => {
         !this.stateIsReadonly && this.handleDelete()
       })
       Mousetrap.bind(['option+command+l', 'ctrl+alt+l'], e => {
@@ -1082,7 +1082,7 @@ export default {
 
     handleAddNode(item) {
       const { x, y } = this.$refs.paperScroller.getPaperCenterPos()
-      const position = this.getNewNodePosition([x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2], [0, 120])
+      const position = this.getNewNodePosition([x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2], [120, 0])
       const node = this.handleAddNodeToPos(position, item)
       if (position[1] !== y) {
         this.$refs.paperScroller.centerNode(node)
