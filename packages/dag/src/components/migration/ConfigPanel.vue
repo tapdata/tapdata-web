@@ -65,12 +65,16 @@ export default {
     ...mapMutations('dataflow', ['updateNodeProperties', 'setNodeError', 'clearNodeError', 'setActiveType']),
 
     handleChangeName(e) {
-      this.updateNodeProperties({
-        id: this.activeNode.id,
-        properties: {
-          name: e.target.value
-        }
-      })
+      if (e.target.value) {
+        this.updateNodeProperties({
+          id: this.activeNode.id,
+          properties: {
+            name: e.target.value
+          }
+        })
+      } else {
+        this.$refs.nameInput.value = this.activeNode.name
+      }
     },
 
     focusNameInput() {
