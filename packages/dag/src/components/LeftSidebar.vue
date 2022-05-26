@@ -731,7 +731,7 @@ export default {
     },
 
     handleSaveTable(name) {
-      this.$emit('add-table-as-node', this.getNodeProps(name))
+      this.$emit('add-table-as-node', this.getNodeProps(this.activeConnection, name))
     },
 
     updateDBScrollbar() {
