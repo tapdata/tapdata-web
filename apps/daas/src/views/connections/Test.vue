@@ -151,6 +151,7 @@ export default {
     },
     handleClose() {
       this.$emit('update:dialogTestVisible', false)
+      this.clearInterval()
     },
     handleWS() {
       this.$ws.ready(() => {

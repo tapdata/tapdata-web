@@ -192,7 +192,7 @@ export default {
           this.status = data.status
         }
         this.$nextTick(() => {
-          this.$refs.table.doLayout()
+          this.$refs.table?.doLayout()
         })
         this.$emit('receive', testData)
       }
