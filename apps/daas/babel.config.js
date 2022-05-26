@@ -9,6 +9,7 @@ module.exports = {
       }
     ]
   ],
+  plugins: ['lodash'],
   env: {
     development: {
       // 解决热加载编译速度慢问题，引入按需加载插件 dynamic-import-node

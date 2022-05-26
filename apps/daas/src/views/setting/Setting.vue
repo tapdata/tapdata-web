@@ -187,7 +187,7 @@
   </section>
 </template>
 <script>
-import _ from 'lodash'
+import { uniq, find } from 'lodash'
 import VIcon from '@/components/VIcon'
 export default {
   name: 'Setting',
@@ -281,7 +281,7 @@ export default {
           if (res && res.data.length) {
             items = res.data.map(item => item.category)
           }
-          items = _.uniq(items)
+          items = uniq(items)
           items.sort((a, b) => {
             return a.sort < b.sort ? -1 : 1
           })
@@ -309,7 +309,7 @@ export default {
           })
 
           let vals = sortCategories.map(item => {
-            let value = _.find(itemsCategories, val => {
+            let value = find(itemsCategories, val => {
               return val.category === item.category
             })
             return Object.assign(value, item)

@@ -1,6 +1,6 @@
 <template>
   <section class="function-list-wrapper section-wrap">
-    <TablePage ref="table" class="h-100" :remoteMethod="getData">
+    <TablePage ref="table" class="h-100" :remoteMethod="getData"  @sort-change="handleSortTable">
       <ul class="search-bar" slot="search">
         <li class="item">
           <ElRadioGroup v-model="searchParams.type" size="small" @input="table.fetch(1)">
@@ -44,7 +44,11 @@
       <ElTableColumn :label="$t('function_name_label')" prop="function_name"> </ElTableColumn>
       <ElTableColumn :label="$t('function_type_label')" prop="typeFmt" width="120"> </ElTableColumn>
       <ElTableColumn :label="$t('function_describe_label')" prop="describe"> </ElTableColumn>
-      <ElTableColumn :label="$t('function_last_update_label')" prop="lastUpdatedFmt"> </ElTableColumn>
+      <ElTableColumn :label="$t('function_last_update_label')" prop="last_updated" sortable="last_updated">
+        <template slot-scope="scope">
+          {{ scope.row.lastUpdatedFmt }}
+        </template>
+      </ElTableColumn>
 
       <ElTableColumn width="160" :label="$t('column_operation')">
         <template #default="{ row }">
@@ -144,6 +148,10 @@ export default {
       this.$router.push({
         name: 'FunctionCreate'
       })
+    },
+    handleSortTable({ order, prop }) {
+      this.order = `${order ? prop : 'last_updated'} ${order === 'ascending' ? 'ASC' : 'DESC'}`
+      this.table.fetch(1)
     }
   }
 }

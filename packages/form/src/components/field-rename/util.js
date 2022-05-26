@@ -1,14 +1,9 @@
-/**
- * @author lg<lirufei0808@gmail.com>
- * @date 2020/11/27
- * @description
- */
-import _ from 'lodash'
+import { sortBy, get, set, merge } from 'lodash'
 export const convertSchemaToTreeData = function (Schema) {
   if (Schema) {
     let root = {}
     let fields = Schema || []
-    fields = _.sortBy(fields, [field => field.table_name + field.field_name])
+    fields = sortBy(fields, [field => field.table_name + field.field_name])
     for (let i = 0; i < fields.length; i++) {
       let field = fields[i]
       if (field && field.field_name && field.original_field_name) {
@@ -32,11 +27,11 @@ export const convertSchemaToTreeData = function (Schema) {
           comment: field.comment
         }
         let path = 'children.' + jsonPathForFieldName.join('.children.')
-        let partField = _.get(root, path)
+        let partField = get(root, path)
         if (!partField) {
-          _.set(root, path, treeItem)
+          set(root, path, treeItem)
         } else {
-          _.set(root, path, _.merge(partField, treeItem))
+          set(root, path, merge(partField, treeItem))
         }
       }
     }

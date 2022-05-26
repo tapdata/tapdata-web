@@ -28,7 +28,7 @@
       </el-table-column>
       <el-table-column :label="$t('share_list_time')" sortable></el-table-column>
       <el-table-column prop="createTime" width="160" :label="$t('share_list_creat_time')" sortable> </el-table-column>
-      <el-table-column width="100" prop="status" :label="$t('share_list_status')">
+      <el-table-column width="120" prop="status" :label="$t('share_list_status')">
         <template #default="{ row }">
           <span :class="['status-' + row.statusResult, 'status-block']">
             {{ $t('task_preview_status_' + row.statusResult) }}
@@ -267,7 +267,7 @@ export default {
       taskName && (where.taskName = taskName)
       connectionName && (where.connectionName = connectionName)
       let filter = {
-        order: 'createTime DESC',
+        order: this.order,
         limit: size,
         skip: (current - 1) * size,
         where

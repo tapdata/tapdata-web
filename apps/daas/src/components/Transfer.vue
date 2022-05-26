@@ -119,7 +119,7 @@
 
 <script>
 let selectKeepArr = []
-import _ from 'lodash'
+import { cloneDeep } from 'lodash'
 import VIcon from '@/components/VIcon'
 export default {
   components: { VIcon },
@@ -255,7 +255,7 @@ export default {
             //初始化已有字段处理
             let field_process = this.field_process.filter(process => process.table_id === id)
             if (field_process.length > 0) {
-              this.operations = _.cloneDeep(field_process[0].operations) || []
+              this.operations = cloneDeep(field_process[0].operations) || []
             }
             //解析operations
             if (this.operations.length === 0) return
