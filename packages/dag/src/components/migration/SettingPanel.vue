@@ -22,7 +22,7 @@ export default observer({
 
   data() {
     let repeatNameMessage = this.$t('task_form_error_name_duplicate')
-
+    this.getAllNode()
     let values = observable(this.settings)
     return {
       scope: {
@@ -270,9 +270,6 @@ export default observer({
       })
     }
   },
-  mounted() {
-    this.getAllNode()
-  },
 
   computed: {
     ...mapGetters('dataflow', ['stateIsReadonly'])
@@ -314,22 +311,36 @@ export default observer({
         }
       })
       // 过滤重复数据源
+      // 过滤重复数据源
       let map = {}
       let filterSourceNodes = () => {
         sourceNodes.forEach(item => {
-          if (!map[item.connectionId] && item) {
-            map[item.connectionId] = {
-              connectionId: item.connectionId,
-              pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
-              dateTime: '',
-              timeZone: systemTimeZone,
-              connectionName: item.name
+          if (!map[item.connectionId]) {
+            //是否已有保存数据
+            let oldPoint = this.settings.syncPoints.filter(point => point.connectionId === item.connectionId)
+            if (oldPoint?.length > 0) {
+              map[item.connectionId] = {
+                connectionId: item.connectionId,
+                pointType: oldPoint[0].pointType || 'current', // localTZ: 本地时区； connTZ：连接时区
+                dateTime: oldPoint[0].dateTime || '',
+                timeZone: this.systemTimeZone,
+                connectionName: item.name
+              }
+            } else {
+              map[item.connectionId] = {
+                connectionId: item.connectionId,
+                pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
+                dateTime: '',
+                timeZone: this.systemTimeZone,
+                connectionName: item.name
+              }
             }
           }
         })
         return map
       }
-      this.$set(this.settings, 'syncPoints', Object.values(filterSourceNodes()))
+      this.settings.syncPoints = Object.values(filterSourceNodes())
+      //this.$set(this.settings, 'syncPoints', Object.values(filterSourceNodes()))
       // let arr = filterSourceNodes()
       // eslint-disable-next-line
       console.log(allNodes, allSource, sourceConnectionIds, this.settings.syncPoints, filterSourceNodes())

@@ -371,19 +371,30 @@ export default {
       let filterSourceNodes = () => {
         sourceNodes.forEach(item => {
           if (!map[item.connectionId]) {
-            map[item.connectionId] = {
-              connectionId: item.connectionId,
-              pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
-              dateTime: '',
-              timeZone: this.systemTimeZone,
-              connectionName: item.name
+            //是否已有保存数据
+            let oldPoint = this.settings.syncPoints.filter(point => point.connectionId === item.connectionId)
+            if (oldPoint?.length > 0) {
+              map[item.connectionId] = {
+                connectionId: item.connectionId,
+                pointType: oldPoint[0].pointType || 'current', // localTZ: 本地时区； connTZ：连接时区
+                dateTime: oldPoint[0].dateTime || '',
+                timeZone: this.systemTimeZone,
+                connectionName: item.name
+              }
+            } else {
+              map[item.connectionId] = {
+                connectionId: item.connectionId,
+                pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
+                dateTime: '',
+                timeZone: this.systemTimeZone,
+                connectionName: item.name
+              }
             }
           }
         })
         return map
       }
-      this.$set(this.settings, 'syncPoints', Object.values(filterSourceNodes()))
-      // let arr = filterSourceNodes()
+      this.settings.syncPoints = Object.values(filterSourceNodes())
       // eslint-disable-next-line
       console.log(allNodes, allSource, sourceConnectionIds, this.settings.syncPoints, filterSourceNodes())
     },
