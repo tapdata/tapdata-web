@@ -226,7 +226,7 @@
                         {{ item.name || item.connectionId }}
                       </div>
                       <ElCol :span="8" style="margin-right: 10px">
-                        <ElSelect v-model="item.pointType" placeholder="请选择">
+                        <ElSelect v-model="item.pointType" placeholder="请选择" @change="hh">
                           <ElOption v-for="op in options" :key="op.value" :label="op.label" :value="op.value">
                           </ElOption>
                         </ElSelect>
@@ -355,6 +355,9 @@ export default {
     ...mapMutations('dataflow', ['setNodeValue', 'updateNodeProperties', 'setDataflowSettings']),
 
     // 获取所有节点
+    hh(val) {
+      console.log(val)
+    },
     getAllNode() {
       const allNodes = this.allNodes
       const allSource = this.$store.getters['dataflow/allEdges'].map(item => item.source)
@@ -372,16 +375,7 @@ export default {
         sourceNodes.forEach(item => {
           if (!map[item.connectionId]) {
             //是否已有保存数据
-            let oldPoint = this.settings.syncPoints.filter(point => point.connectionId === item.connectionId)
-            if (oldPoint?.length > 0) {
-              map[item.connectionId] = {
-                connectionId: item.connectionId,
-                pointType: oldPoint[0].pointType || 'current', // localTZ: 本地时区； connTZ：连接时区
-                dateTime: oldPoint[0].dateTime || '',
-                timeZone: this.systemTimeZone,
-                connectionName: item.name
-              }
-            } else {
+            if (!this.settings.syncPoints) {
               map[item.connectionId] = {
                 connectionId: item.connectionId,
                 pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
@@ -389,12 +383,31 @@ export default {
                 timeZone: this.systemTimeZone,
                 connectionName: item.name
               }
+            } else {
+              let oldPoint = this.settings.syncPoints.filter(point => point.connectionId === item.connectionId)
+              if (oldPoint?.length > 0) {
+                map[item.connectionId] = {
+                  connectionId: item.connectionId,
+                  pointType: oldPoint[0].pointType || 'current', // localTZ: 本地时区； connTZ：连接时区
+                  dateTime: oldPoint[0].dateTime || '',
+                  timeZone: this.systemTimeZone,
+                  connectionName: item.name
+                }
+              } else {
+                map[item.connectionId] = {
+                  connectionId: item.connectionId,
+                  pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
+                  dateTime: '',
+                  timeZone: this.systemTimeZone,
+                  connectionName: item.name
+                }
+              }
             }
           }
         })
         return map
       }
-      this.settings.syncPoints = Object.values(filterSourceNodes())
+      this.$set(this.settings, 'syncPoints', Object.values(filterSourceNodes()))
       // eslint-disable-next-line
       console.log(allNodes, allSource, sourceConnectionIds, this.settings.syncPoints, filterSourceNodes())
     },
