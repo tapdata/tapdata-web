@@ -901,7 +901,7 @@ export default {
   dag_dialog_field_mapping_selected: 'Selected',
   dag_dialog_field_mapping_search_field: 'Search Field',
   dag_dialog_field_mapping_source_field: 'Source table field name',
-              dag_dialog_field_mapping_field: 'Name',
+  dag_dialog_field_mapping_field: 'Name',
   dag_dialog_field_mapping_type: 'Type',
   dag_dialog_field_mapping_precision: 'Precision',
   dag_dialog_field_mapping_scale: 'Scale',
@@ -1226,6 +1226,9 @@ export default {
   task_setting_cron_feedbackText:
     'You can run periodic tasks at a fixed time, date, and interval through cron expressions. Syntax: second * minute * hour * day * month * week ? year *',
   task_setting_cron_extra: 'Example: 0 */1 * * * ? * // Run every minute 0 0 2 * * ? * // Run at 2 every day',
+  task_setting_cron_tip:
+    'You can run periodic tasks at a fixed time, date, and interval through cron expressions. Syntax: second * minute * hour * day * month * week ? year * ; Example: 0 */1 * * * ? * // Run every minute 0 0 2 * * ? * // Run at 2 every day',
+  task_setting_syncPoint_tip: 'The task will collect incremental logs from this point in time',
 
   task_name: 'Task name',
   task_status: 'Task Status',

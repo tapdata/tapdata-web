@@ -104,7 +104,7 @@ export default observer({
                     },
                     properties: {
                       planStartDateFlag: {
-                        title: '计划时间', //计划时间
+                        title: '计划开始时间', //计划时间
                         type: 'boolean',
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch',
@@ -144,11 +144,7 @@ export default observer({
                           placeholder: this.$t('task_setting_cron_expression')
                         },
                         'x-decorator-props': {
-                          tooltip: '提示提示',
-                          feedbackStatus: 'info',
-                          feedbackText: this.$t('task_setting_cron_feedbackText'),
-                          extra: this.$t('task_setting_cron_extra'),
-                          feedbackLayout: 'terse'
+                          tooltip: this.$t('task_setting_cron_tip')
                         },
                         'x-reactions': {
                           dependencies: ['type', 'planStartDateFlag'],
@@ -163,6 +159,9 @@ export default observer({
                         title: this.$t('task_setting_sync_point'), //增量采集开始时刻
                         type: 'array',
                         default: [{ type: 'current', date: '' }],
+                        'x-decorator-props': {
+                          tooltip: this.$t('task_setting_syncPoint_tip')
+                        },
                         'x-component': 'ArrayItems',
                         'x-decorator': 'FormItem',
                         'x-reactions': {
