@@ -56,13 +56,18 @@
           <ElPagination
             small
             class="flex mt-3"
-            layout="total, prev, pager, next"
+            layout="total, prev, slot, next"
             :current-page.sync="page.current"
             :page-size.sync="page.size"
             :total="page.total"
             :pager-count="5"
             @current-change="getMetadataTransformer"
           >
+            <div class="text-center">
+              <span class="page__current" style="min-width: 22px">{{ page.current }}</span>
+              <span class="icon-color" style="min-width: 22px">/</span>
+              <span class="icon-color" style="min-width: 22px">{{ page.count }}</span>
+            </div>
           </ElPagination>
         </div>
         <div class="main">
@@ -272,7 +277,8 @@ export default {
       page: {
         size: 10,
         current: 1,
-        total: 0
+        total: 0,
+        count: 1
       },
       position: 0,
       selectRow: '',
@@ -378,6 +384,7 @@ export default {
         .then(res => {
           let { total, items } = res
           this.page.total = total
+          this.page.count = Math.floor(total / 10) === 0 ? 1 : Math.floor(total / 10)
           this.navData = items
           //请求左侧table数据
           this.selectRow = this.navData?.[0] || {}
@@ -685,6 +692,18 @@ export default {
   }
   .icon-error {
     color: red;
+  }
+  .icon-color {
+    color: map-get($iconFillColor, normal);
+  }
+  .page__current {
+    width: 22px;
+    height: 22px;
+    font-size: 14px;
+    font-weight: 400;
+    color: map-get($color, primary);
+    line-height: 22px;
+    background-color: map-get($bgColor, pageCount);
   }
   .task-form__text {
     display: inline-block;
