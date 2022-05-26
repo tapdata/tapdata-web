@@ -52,73 +52,43 @@
               <ElSkeletonItem variant="text"></ElSkeletonItem>
             </div>
           </template>
-          <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore" class="px-3 pt-1">
-            <div
-              v-for="db in dbList"
-              v-mouse-drag="{
-                item: db,
-                container: '#dfEditorContent',
-                getDragDom,
-                onStart,
-                onMove,
-                onDrop,
-                onStop
-              }"
-              :key="db.id"
-              class="db-item grabbable flex align-center px-2 user-select-none rounded-2"
-              @dblclick="$emit('add-node', getNodeProps(db))"
-            >
-              <NodeIcon class="flex-shrink-0 mr-2" :node="db" />
-              <div class="flex flex-column justify-center db-item-content">
-                <OverflowTooltip class="w-100 text-truncate" :text="db.name" placement="right" :open-delay="400" />
-                <OverflowTooltip
-                  class="w-100 text-truncate"
-                  :text="db.connectionUrl"
-                  placement="right"
-                  :open-delay="400"
-                />
+          <div>
+            <div v-infinite-scroll="loadMoreDB" :infinite-scroll-disabled="disabledDBMore" class="px-3 pt-1">
+              <div
+                v-for="db in dbList"
+                v-mouse-drag="{
+                  item: db,
+                  container: '#dfEditorContent',
+                  getDragDom,
+                  onStart,
+                  onMove,
+                  onDrop,
+                  onStop
+                }"
+                :key="db.id"
+                class="db-item grabbable flex align-center px-2 user-select-none rounded-2"
+                @dblclick="$emit('add-node', getNodeProps(db))"
+              >
+                <NodeIcon class="flex-shrink-0 mr-2" :node="db" />
+                <div class="flex flex-column justify-center db-item-content">
+                  <OverflowTooltip class="w-100 text-truncate" :text="db.name" placement="right" :open-delay="400" />
+                  <OverflowTooltip
+                    class="w-100 text-truncate"
+                    :text="db.connectionUrl"
+                    placement="right"
+                    :open-delay="400"
+                  />
+                </div>
               </div>
-            </div>
-            <EmptyItem v-if="!dbList.length"></EmptyItem>
-            <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
-              {{ $t('loading') }}<span class="dotting"></span>
+              <EmptyItem v-if="!dbList.length"></EmptyItem>
+              <div v-if="dbLoadingMore" class="text-center text-black-50 fs-8 p-2">
+                {{ $t('loading') }}<span class="dotting"></span>
+              </div>
             </div>
           </div>
         </ElSkeleton>
       </ElScrollbar>
     </div>
-
-    <!--<ElCollapse ref="processorCollapse" class="collapse-fill processor-collapse border-top" value="process">
-      <ElCollapseItem name="process">
-        <template #title>
-          <div class="flex align-center flex-1">
-            <span class="flex-1 user-select-none">
-              &lt;!&ndash;处理节点&ndash;&gt;
-              {{ $t('dag_processor_node') }}
-            </span>
-          </div>
-        </template>
-        <ElScrollbar ref="processorList" tag="div" wrap-class="px-3" :wrap-style="scrollbarWrapStyle">
-          <div
-            v-for="(n, ni) in processorNodeTypes"
-            :key="ni"
-            v-mouse-drag="{
-              item: n,
-              container: '#dfEditorContent',
-              getDragDom,
-              onStart: onProcessorStart,
-              onMove,
-              onDrop,
-              onStop
-            }"
-            class="node-item grabbable flex align-center px-2 user-select-none rounded-2"
-          >
-            <NodeIcon class="flex-shrink-0 mr-2" :node="n" />
-            <OverflowTooltip :text="n.name" popper-class="df-node-text-tooltip" placement="top" :open-delay="400" />
-          </div>
-        </ElScrollbar>
-      </ElCollapseItem>
-    </ElCollapse>-->
 
     <!-- S 节点拖拽元素 -->
     <BaseNode
@@ -237,6 +207,7 @@ export default {
     },
 
     disabledDBMore() {
+      console.log('disabledDBMore', this.dbLoading, this.noDBMore) // eslint-disable-line
       return this.dbLoading || this.noDBMore || this.dbLoadingMore
     },
 
@@ -351,6 +322,7 @@ export default {
       } else {
         this.dbLoading = true
         this.dbPage = 1
+        this.dbTotal = 0
       }
 
       const data = await connections.get(this.getDbFilter())
@@ -419,6 +391,7 @@ export default {
     },
 
     loadMoreDB() {
+      console.log('loadMoreDB') // eslint-disable-line
       this.loadDatabase(true)
     },
 
