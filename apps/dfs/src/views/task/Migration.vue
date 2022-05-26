@@ -645,11 +645,11 @@ export default {
               this.$message.success(this.$t('task_reset_success'))
               this.fetch(1)
             } else {
-              this.$message.success(this.$t('task_reset_failed'))
+              this.$message.error(this.$t('task_reset_failed'))
             }
           })
           .catch(() => {
-            this.$message.success(this.$t('task_reset_failed'))
+            this.$message.error(this.$t('task_reset_failed'))
           })
       })
     },
