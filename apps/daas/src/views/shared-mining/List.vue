@@ -202,6 +202,7 @@ export default {
         name: '',
         storageTime: 3
       },
+      currentForm: {},
       options: [
         {
           label: this.$t('share_form_edit_localTZ_type'),
@@ -465,9 +466,15 @@ export default {
       this.editForm.id = item.id
       this.editForm.name = item.name
       this.editForm.storageTime = item.storageTime
+      this.currentForm = JSON.parse(JSON.stringify(this.editForm))
     },
     // 取消编辑
     cancelEdit() {
+      //弹框没有任何修改 直接关闭不需要二次提示
+      if (this.editForm.name === this.currentForm.name && this.editForm.storageTime === this.currentForm.storageTime) {
+        this.editDialogVisible = false
+        return
+      }
       this.$confirm(this.$t('share_form_edit_text'), this.$t('share_form_edit_title'), {
         type: 'warning',
         closeOnClickModal: false
