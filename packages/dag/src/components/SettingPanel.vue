@@ -231,13 +231,14 @@
                           </ElOption>
                         </ElSelect>
                       </ElCol>
-                      <ElCol :span="14" v-if="item.type !== 'current'">
+                      <ElCol :span="14" v-if="item.pointType !== 'current'">
                         <ElDatePicker
                           format="yyyy-MM-dd HH:mm:ss"
+                          value-format="timestamp"
                           style="width: 95%"
                           v-model="item.dateTime"
                           type="datetime"
-                          :disabled="item.type === 'current'"
+                          :disabled="item.pointType === 'current'"
                         ></ElDatePicker>
                       </ElCol>
                     </ElRow>

@@ -100,6 +100,7 @@ export class Database extends NodeType {
         title: '选择表',
         type: 'string',
         default: 'all',
+        required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Radio.Group',
         enum: [
@@ -123,6 +124,30 @@ export class Database extends NodeType {
         }
       },
 
+      tableCard: {
+        type: 'void',
+        properties: {
+          tableNames: {
+            type: 'array',
+            'x-component': 'TableListCard',
+            'x-component-props': {
+              connectionId: '{{$values.connectionId}}'
+            },
+            'x-reactions': {
+              dependencies: ['attrs.howManyTable'],
+              fulfill: {
+                state: {
+                  display: '{{$deps[0] !== "some" ? "visible":"hidden"}}'
+                },
+                schema: {
+                  required: '{{$deps[0] !== "some"}}'
+                }
+              }
+            }
+          }
+        }
+      },
+
       tableNames: {
         type: 'array',
         default: [],
@@ -139,27 +164,9 @@ export class Database extends NodeType {
           fulfill: {
             state: {
               display: '{{$deps[0] === "some" ? "visible":"hidden"}}'
-            }
-          }
-        }
-      },
-
-      tableCard: {
-        type: 'void',
-        properties: {
-          tableNames: {
-            type: 'string',
-            'x-component': 'TableListCard',
-            'x-component-props': {
-              connectionId: '{{$values.connectionId}}'
             },
-            'x-reactions': {
-              dependencies: ['attrs.howManyTable'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0] === "all" ? "visible":"hidden"}}'
-                }
-              }
+            schema: {
+              required: '{{$deps[0] === "some"}}'
             }
           }
         }

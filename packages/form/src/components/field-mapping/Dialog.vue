@@ -27,7 +27,7 @@
             {{ progress.finished }} / {{ progress.total }} <VIcon size="12">loading</VIcon
             ><span>{{ $t('dag_dialog_field_mapping_loading_schema') }}</span>
           </div>
-          <ul class="task-form-left__ul flex flex-column">
+          <ul class="task-form-left__ul flex flex-column" v-if="navData.length > 0">
             <li
               v-for="(item, index) in navData"
               :key="index"
@@ -53,6 +53,10 @@
               </div>
             </li>
           </ul>
+          <div class="task-form-left__ul flex flex-column align-items-center" v-else>
+            <div class="table__empty_img" style="margin-top: 88%"><img style="" :src="noData" /></div>
+            <div class="noData">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
+          </div>
           <ElPagination
             small
             class="flex mt-3"
@@ -156,8 +160,8 @@
               </template>
             </ElTableColumn>
             <div class="field-mapping-table__empty" slot="empty">
-              <i class="el-icon-folder-opened"></i>
-              <span class="ml-1">{{ $t('dag_dialog_field_mapping_no_data') }}</span>
+              <div class="table__empty_img" style="margin-left: 40%"><img style="" :src="noData" /></div>
+              <div class="noData">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
             </div>
           </ElTable>
         </div>
@@ -250,6 +254,7 @@ import rollback from 'web-core/assets/icons/svg/rollback.svg'
 import refresh from 'web-core/assets/icons/svg/refresh.svg'
 import fieldMapping_table from 'web-core/assets/images/fieldMapping_table.png'
 import fieldMapping_table_error from 'web-core/assets/images/fieldMapping_table_error.png'
+import noData from 'web-core/assets/images/noData.png'
 import { MetadataInstances, MetadataTransformer, Task, TypeMapping } from '@tap/api'
 const typeMappingApi = new TypeMapping()
 const taskApi = new Task()
@@ -303,7 +308,8 @@ export default {
       rollback,
       fieldMapping_table_error,
       fieldMapping_table,
-      refresh
+      refresh,
+      noData
     }
   },
   watch: {
@@ -311,7 +317,7 @@ export default {
       if (this.visible) {
         this.getMetadataTransformer()
         //接收数据
-        let id = this.dataFlow.id
+        let id = this.dataFlow.nodeId
         let self = this
         this.$ws.on('metadataTransformerProgress', function (res) {
           if (res?.data?.stageId === id) {
@@ -319,6 +325,7 @@ export default {
             self.progress.finished = finished
             self.progress.total = total
             self.page.total = finished
+            self.page.count = Math.floor(finished / 10) === 0 ? 1 : Math.floor(finished / 10)
             if (status !== 'done') {
               self.progress.showProgress = true
               if (self.navData?.length < self.page.size && self.page.current === 1) {
@@ -394,6 +401,7 @@ export default {
         })
         .finally(() => {
           this.loadingNav = false
+          this.loadingTable = false
         })
     },
     rest() {
@@ -695,6 +703,18 @@ export default {
   }
   .icon-color {
     color: map-get($iconFillColor, normal);
+  }
+  .table__empty_img {
+    width: 80px;
+    height: 80px;
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .noData {
+    font-size: 12px;
+    color: map-get($bgColor, special);
   }
   .page__current {
     width: 22px;
