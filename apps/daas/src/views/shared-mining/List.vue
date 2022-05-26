@@ -75,41 +75,41 @@
         :disabled="!showEditSettingBtn"
         :rules="rules"
       >
-        <el-form-item prop="persistenceMongodb_uri_db" size="mini" :label="$t('share_form_setting_connection_name')">
-          <el-select
-            v-model="digSettingForm.persistenceMongodb_uri_db"
-            :placeholder="$t('shared_cdc_setting_select_mongodb_tip')"
-            @change="handleTables"
-          >
-            <el-option v-for="item in mongodbList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-          </el-select>
-          <div v-if="showEditSettingBtn && mongodbList.length === 0">
-            <el-link type="primary" target="_blank" href="#/connections/create?databaseType=mongodb">{{
-              $t('shared_cdc_setting_no_mongodb_tip')
-            }}</el-link>
-            /
-            <span class="refresh" @click="getMongodb">
-              {{ $t('shared_cdc_setting_refresh') }} <VIcon class="font-color-slight">refresh</VIcon></span
-            >
-          </div>
-        </el-form-item>
-        <el-form-item prop="persistenceMongodb_collection" size="mini" :label="$t('share_form_setting_table_name')">
-          <el-select
-            v-model="digSettingForm.persistenceMongodb_collection"
-            :placeholder="$t('shared_cdc_setting_select_table_tip')"
-            allow-create
-            filterable
-          >
-            <el-option
-              v-for="table in tableList"
-              :key="table.tableId"
-              :label="table.table_name"
-              :value="table.table_name"
-            >
-            </el-option>
+        <el-form-item prop="persistenceMongodb_uri_db" size="mini" :label="$t('shared_cdc_setting_select_mode')">
+          <el-select v-model="digSettingForm.persistenceMode">
+            <el-option v-for="item in enumsItems" :key="item" :label="item" :value="item"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item size="mini" :label="$t('share_form_setting_log_time')">
+
+        <el-form-item
+          v-if="digSettingForm.persistenceMode === 'MongoDB'"
+          prop="persistenceMongodb_uri_db"
+          size="mini"
+          label="MongoDB URI"
+        >
+          <el-input v-model="digSettingForm.persistenceMongodb_uri_db"></el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="digSettingForm.persistenceMode === 'MongoDB'"
+          prop="persistenceMongodb_collection"
+          size="mini"
+          :label="$t('share_form_setting_table_name')"
+        >
+          <el-input v-model="digSettingForm.persistenceMongodb_collection"> </el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="digSettingForm.persistenceMode === 'RocksDB'"
+          prop="persistenceMongodb_collection"
+          size="mini"
+          :label="$t('setting_share_cdc_persistence_rocksdb_path')"
+        >
+          <el-input v-model="digSettingForm.persistenceRocksdb_path"></el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="['MongoDB', 'RocksDB'].includes(digSettingForm.persistenceMode)"
+          size="mini"
+          :label="$t('share_form_setting_log_time')"
+        >
           <el-select
             allow-create
             filterable
@@ -191,10 +191,13 @@ export default {
       editDialogVisible: false,
       loadingConfig: false,
       digSettingForm: {
-        persistenceMongodb_uri_db: '',
-        persistenceMongodb_collection: '',
+        persistenceMode: 'Mem', // 存储模式
+        persistenceMongodb_uri_db: '', // mongodb uri
+        persistenceMongodb_collection: '', // mongodb tablename
+        persistenceRocksdb_path: '', // rocksdb路径
         share_cdc_ttl_day: 3
       },
+      enumsItems: ['Mem', 'MongoDB', 'RocksDB'],
       mongodbList: [],
       tableList: [],
       editForm: {
