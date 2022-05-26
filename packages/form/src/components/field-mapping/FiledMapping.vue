@@ -192,6 +192,7 @@ export default {
         self.progress.finished = finished
         self.progress.total = total
         self.page.total = finished
+        self.page.count = Math.floor(finished / 10) === 0 ? 1 : Math.floor(finished / 10)
         if (status !== 'done') {
           self.progress.showProgress = true
           if (self.navData?.length < self.page.size && self.page.current === 1) {
