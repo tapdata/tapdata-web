@@ -474,7 +474,8 @@ export default {
           accessNodeProcessId: 1,
           accessNodeProcessIdList: 1,
           pdkType: 1,
-          pdkHash: 1
+          pdkHash: 1,
+          pdkExpansion: 1
         },
         order: ['status DESC', 'name ASC']
       }
@@ -756,7 +757,8 @@ export default {
           connectionType: connection.connection_type,
           accessNodeProcessId: connection.accessNodeProcessId,
           pdkType: connection.pdkType,
-          pdkHash: connection.pdkHash
+          pdkHash: connection.pdkHash,
+          pdkExpansion: connection.pdkExpansion
         }
       }
     }
