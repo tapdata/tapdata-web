@@ -80,7 +80,7 @@
         </div>
         <ElTooltip :content="overData.inputTotal.toString()" placement="left-start">
           <div class="mb-4 fs-4 fw-bolder din-font" style="color: #409488">
-            {{ handleChangeUnit(overData.inputTotal) }}
+            {{ toThousandsUnit(overData.inputTotal) }}
           </div>
         </ElTooltip>
 
@@ -90,7 +90,7 @@
         </div>
         <ElTooltip :content="overData.outputTotal.toString()" placement="left-start">
           <div class="mb-4 fs-4 fw-bolder din-font" style="color: #377ab9">
-            {{ handleChangeUnit(overData.outputTotal) }}
+            {{ toThousandsUnit(overData.outputTotal) }}
           </div>
         </ElTooltip>
         <div class="flex justify-content-between text-center">
@@ -98,7 +98,7 @@
             <div class="mb-3 font-color-light">{{ $t('task_monitor_total_insert') }}</div>
             <ElTooltip :content="overData.insertedTotal.toString()">
               <div class="fs-7 font-color-dark fw-bolder din-font">
-                {{ handleChangeUnit(overData.insertedTotal) }}
+                {{ toThousandsUnit(overData.insertedTotal) }}
               </div>
             </ElTooltip>
           </div>
@@ -106,7 +106,7 @@
             <div class="mb-3 font-color-light">{{ $t('task_monitor_total_update') }}</div>
             <ElTooltip :content="overData.updatedTotal.toString()">
               <div class="fs-7 font-color-dark fw-bolder din-font">
-                {{ handleChangeUnit(overData.updatedTotal) }}
+                {{ toThousandsUnit(overData.updatedTotal) }}
               </div>
             </ElTooltip>
           </div>
@@ -114,7 +114,7 @@
             <div class="mb-3 font-color-light">{{ $t('task_monitor_total_delete') }}</div>
             <ElTooltip :content="overData.deletedTotal.toString()">
               <div class="fs-7 font-color-dark fw-bolder din-font">
-                {{ handleChangeUnit(overData.deletedTotal) }}
+                {{ toThousandsUnit(overData.deletedTotal) }}
               </div>
             </ElTooltip>
           </div>
@@ -194,7 +194,7 @@ import SelectList from '@/components/SelectList'
 import Chart from 'web-core/components/chart'
 import DatetimeRange from '@/components/filter-bar/DatetimeRange'
 import { formatTime, formatMs } from '@/utils/util'
-import { handleChangeUnit } from '../../util'
+import { toThousandsUnit } from '@/utils/util'
 
 export default {
   name: 'Info',
@@ -427,7 +427,7 @@ export default {
     this.init()
   },
   methods: {
-    handleChangeUnit,
+    toThousandsUnit,
     init() {
       this.getMeasurement()
       this.resetTimer()
