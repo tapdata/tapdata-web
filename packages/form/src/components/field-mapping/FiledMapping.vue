@@ -84,7 +84,8 @@
               size="mini"
               placeholder="请输入字段名"
               suffix-icon="el-icon-search"
-              @input="getMetadataTransformer(searchField)"
+              clearable
+              @input="search()"
             ></ElInput>
           </div>
           <div class="item ml-2">
@@ -96,7 +97,13 @@
             </ElButton>
           </div>
         </div>
-        <ElTable class="field-mapping-table table-border" height="100%" border :data="target" v-loading="loadingTable">
+        <ElTable
+          class="field-mapping-table table-border"
+          height="100%"
+          border
+          :data="viewTableData"
+          v-loading="loadingTable"
+        >
           <ElTableColumn show-overflow-tooltip :label="$t('dag_dialog_field_mapping_field')" prop="field_name">
             <template slot-scope="scope">
               <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
@@ -156,6 +163,7 @@ export default {
       dialogVisible: false,
       dataFlow: '',
       navData: [],
+      viewTableData: [],
       typeMapping: [],
       position: 0,
       selectRow: '',
@@ -283,6 +291,22 @@ export default {
           this.loadingTable = false
         })
     },
+    search() {
+      this.$nextTick(() => {
+        const { delayTrigger } = this.$util
+        delayTrigger(() => {
+          if (this.searchField.trim()) {
+            this.searchField = this.searchField.trim().toString() //去空格
+            this.viewTableData = this.target.filter(v => {
+              let str = (v.field_name + '' + v.field_name).toLowerCase()
+              return str.indexOf(this.searchField.toLowerCase()) > -1
+            })
+          } else {
+            this.viewTableData = this.target
+          }
+        }, 100)
+      })
+    },
     rest() {
       this.searchField = ''
       this.searchTable = ''
@@ -293,6 +317,7 @@ export default {
       this.loadingTable = true
       let data = await metadataInstancesApi.originalData(row.sinkQulifiedName)
       this.target = data && data.length > 0 ? data[0].fields : []
+      this.viewTableData = this.target
       this.loadingTable = false
     },
     /*切换表*/

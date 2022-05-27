@@ -82,7 +82,7 @@
                 size="mini"
                 placeholder="请输入字段名"
                 suffix-icon="el-icon-search"
-                @input="getMetadataTransformer(searchField)"
+                @input="search()"
               ></ElInput>
             </div>
             <div class="item ml-2">
@@ -96,7 +96,7 @@
             class="field-mapping-table table-border"
             height="100%"
             border
-            :data="target"
+            :data="viewTableData"
             v-loading="loadingTable"
           >
             <ElTableColumn
@@ -271,6 +271,7 @@ export default {
       searchField: '',
       navData: [],
       target: [],
+      viewTableData: [],
       loadingTable: true,
       loadingNav: true,
       progress: {
@@ -364,6 +365,7 @@ export default {
           this.target[i]['default_value'] = ''
         }
       }
+      this.viewTableData = this.target
       this.getTypeMapping(this.selectRow)
       this.loadingTable = false
     },
@@ -403,6 +405,22 @@ export default {
           this.loadingNav = false
           this.loadingTable = false
         })
+    },
+    search() {
+      this.$nextTick(() => {
+        const { delayTrigger } = this.$util
+        delayTrigger(() => {
+          if (this.searchField.trim()) {
+            this.searchField = this.searchField.trim().toString() //去空格
+            this.viewTableData = this.target.filter(v => {
+              let str = (v.field_name + '' + v.field_name).toLowerCase()
+              return str.indexOf(this.searchField.toLowerCase()) > -1
+            })
+          } else {
+            this.viewTableData = this.target
+          }
+        }, 100)
+      })
     },
     rest() {
       this.searchField = ''
@@ -640,6 +658,8 @@ export default {
       }
     },
     closeDialog() {
+      this.searchField = ''
+      this.searchTable = ''
       this.$emit('update:visible', false)
     },
     //实时获取schema加载进度
