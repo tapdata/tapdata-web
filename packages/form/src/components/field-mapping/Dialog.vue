@@ -125,32 +125,6 @@
                 </div>
               </template>
             </ElTableColumn>
-            <ElTableColumn :label="$t('dag_dialog_field_mapping_precision')">
-              <template #default="{ row }">
-                <div
-                  class="cursor-pointer"
-                  v-if="!row.is_deleted && row.isPrecisionEdit && row.precision > 0"
-                  @click="edit(row, 'precision')"
-                >
-                  <span> {{ row.precision }}</span>
-                  <i class="field-mapping__icon el-icon-edit-outline"></i>
-                </div>
-                <div v-else>
-                  <span>{{ row.precision < 0 ? '' : row.precision }}</span>
-                </div>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn :label="$t('dag_dialog_field_mapping_scale')">
-              <template #default="{ row }">
-                <div class="cursor-pointer" v-if="!row.is_deleted && row.isScaleEdit" @click="edit(row, 'scale')">
-                  <span>{{ row.scale }}</span>
-                  <i class="field-mapping__icon el-icon-edit-outline"></i>
-                </div>
-                <div v-else>
-                  <span>{{ row.scale }}</span>
-                </div>
-              </template>
-            </ElTableColumn>
             <ElTableColumn :label="$t('meta_table_default')">
               <template #default="{ row }">
                 <div class="cursor-pointer" @click="edit(row, 'default_value')">
@@ -206,14 +180,12 @@
         </div>
       </div>
       <div v-if="['data_type'].includes(currentOperationType)">
-        <ElSelect v-model="editValueType[currentOperationType]" filterable @change="initDataType">
-          <ElOption
-            :label="item.dbType"
-            :value="item.dbType"
-            v-for="(item, index) in typeMapping"
-            :key="index"
-          ></ElOption>
-        </ElSelect>
+        <ElAutocomplete
+          v-model="editValueType[currentOperationType]"
+          class="inline-input"
+          :fetch-suggestions="querySearchPdkType"
+        ></ElAutocomplete>
+        <div class="mt-3 fs-8">{{ getPdkEditValueType() }}</div>
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
           <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
             <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
@@ -359,8 +331,6 @@ export default {
       this.target = data && data.length > 0 ? data[0].fields : []
       //添加edit
       for (let i = 0; i < this.target.length; i++) {
-        this.target[i]['isPrecisionEdit'] = true
-        this.target[i]['isScaleEdit'] = true
         if (!this.target[i]['default_value']) {
           this.target[i]['default_value'] = ''
         }
@@ -429,9 +399,14 @@ export default {
     },
     //获取typeMapping
     getTypeMapping(row) {
-      typeMappingApi.dataType(row.sinkDbType).then(res => {
-        this.typeMapping = res.data
-        this.initShowEdit()
+      typeMappingApi.pdkDataType(row.sinkDbType).then(res => {
+        let targetObj = JSON.parse(res?.data || '{}')
+        for (let key in targetObj) {
+          this.typeMapping.push({
+            dbType: key,
+            rules: targetObj[key]
+          })
+        }
       })
     },
     handleClose() {
@@ -473,7 +448,7 @@ export default {
           return
         }
         //如果是改类型 需要手动修改字段的长度以及精度
-        this.influences(id, this.currentTypeRules || [])
+        this.updateTargetView(id, 'tapType', '')
       } else if (key === 'precision') {
         let isPrecision = this.currentTypeRules.filter(v => v.minPrecision < v.maxPrecision)
         if (isPrecision.length === 0) {
@@ -524,43 +499,7 @@ export default {
       this.checkTable() //消除感叹号
       this.handleClose()
     },
-    /* 初始化目标字段、长度是否可编辑*/
-    initShowEdit() {
-      if (this.target?.length === 0) return
-      for (let i = 0; i < this.target.length; i++) {
-        let rules = this.typeMapping.filter(v => v.dbType === this.target[i].data_type)
-        if (rules?.length > 0) {
-          rules = rules[0].rules
-          this.showPrecisionEdit(this.target[i].id, rules || [])
-          this.showScaleEdit(this.target[i].id, rules || [])
-        }
-      }
-    },
-    //改类型影响字段长度 精度
-    influences(id, rules) {
-      this.showScaleEdit(id, rules)
-      this.showPrecisionEdit(id, rules)
-      this.influencesScale(id, rules)
-      this.influencesPrecision(id, rules)
-    },
-    influencesScale(id, rules) {
-      rules.forEach(r => {
-        if (r.minScale || r.minScale === 0) {
-          this.updateTarget(id, 'scale', r.minScale < 0 ? 0 : r.minScale)
-        } else {
-          this.updateTarget(id, 'scale', null)
-        }
-      })
-    },
-    influencesPrecision(id, rules) {
-      rules.forEach(r => {
-        if (r.minPrecision || r.minPrecision === 0) {
-          this.updateTarget(id, 'precision', r.minPrecision < 0 ? 0 : r.minPrecision)
-        } else {
-          this.updateTarget(id, 'precision', null)
-        }
-      })
-    },
+
     /*更新target 数据*/
     updateTarget(id, key, value) {
       this.target.forEach(field => {
@@ -635,6 +574,19 @@ export default {
       if (target?.length > 0) {
         this.currentTypeRules = target[0]?.rules || []
       } else this.currentTypeRules = '' //清除上一个字段范围
+    },
+    querySearchPdkType(queryString, cb) {
+      let result = this.typeMapping.map(t => {
+        return {
+          value: t.dbType
+        }
+      })
+      cb(result)
+    },
+    getPdkEditValueType() {
+      let findOne = this.typeMapping.find(t => t.dbType === this.editValueType[this.currentOperationType])
+      console.log(findOne?.rules)
+      return findOne?.rules || ''
     },
     //重置
     updateMetaData() {

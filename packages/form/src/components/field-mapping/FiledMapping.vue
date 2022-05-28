@@ -118,12 +118,6 @@
             prop="data_type"
             :show-overflow-tooltip="true"
           ></ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_precision')" prop="precision">
-            <template slot-scope="scope">
-              <span>{{ scope.row.precision === -1 ? '' : scope.row.precision }}</span>
-            </template>
-          </ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_scale')" prop="scale"></ElTableColumn>
           <ElTableColumn :label="$t('meta_table_default')" prop="default_value"></ElTableColumn>
           <div class="field-mapping-table__empty" slot="empty">
             <div class="table__empty_img" style="margin-left: 32%"><img style="" :src="noData" /></div>
@@ -248,7 +242,7 @@ export default {
       let promise = taskApi.getMetadata(this.dataFlow)
       promise
         .then(() => {
-          this.getMetadataTransformer()
+          // this.getMetadataTransformer()
           this.initWSSed() //发送ws 监听schema进度
         })
         .finally(() => {
