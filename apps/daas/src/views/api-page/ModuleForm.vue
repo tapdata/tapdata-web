@@ -294,7 +294,7 @@ export default {
       let where = {
         or: [{ connection_type: 'source_and_target' }, { connection_type: 'target' }],
         database_type: {
-          in: ['mongodb', 'gridfs', 'oracle', 'mysql', 'sqlserver', 'postgres']
+          in: ['MongoDb', 'Mysql', 'Postgres']
         }
       }
       let params = {
