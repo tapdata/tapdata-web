@@ -306,7 +306,6 @@ export default {
       result.totalInput = result.stats?.input?.rows || 0
       result.creator = result.creator || result.username || result.user?.username || '-'
       result.updatedTime = result.last_updated ? this.formatTime(result.last_updated) : '-'
-      debugger
       result.type = this.syncTypeMap[result.type]
       result.statusResult = getSubTaskStatus(result.statuses)
       result.disabledData = getTaskBtnDisabled(
