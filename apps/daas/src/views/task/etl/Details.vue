@@ -158,11 +158,9 @@ export default {
         }
       ],
       syncTypeMap: {
-        syncType: {
-          initial_sync: this.$t('dataFlow.initial_sync'),
-          cdc: this.$t('dataFlow.cdc'),
-          'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
-        }
+        initial_sync: this.$t('dataFlow.initial_sync'),
+        cdc: this.$t('dataFlow.cdc'),
+        'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
       },
       list: [],
       loadingObj: {
@@ -308,6 +306,7 @@ export default {
       result.totalInput = result.stats?.input?.rows || 0
       result.creator = result.creator || result.username || result.user?.username || '-'
       result.updatedTime = result.last_updated ? this.formatTime(result.last_updated) : '-'
+      debugger
       result.type = this.syncTypeMap[result.type]
       result.statusResult = getSubTaskStatus(result.statuses)
       result.disabledData = getTaskBtnDisabled(
