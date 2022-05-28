@@ -1025,12 +1025,10 @@ export default {
         let id = this.$route.params?.id
         let { pdkOptions } = this
         let formValues = this.$refs.schemaToForm?.getFormValues?.()
-        let { __connection_database_name__ } = formValues
-        delete formValues.__connection_database_name__
         let params = Object.assign(
           {
-            name: __connection_database_name__, // 必填，需要渲染
-            connection_type: pdkOptions.connectionType, // 必填 data.connectionType
+            name: formValues.name, // 必填
+            connection_type: formValues.connection_type, // 必填
             database_type: pdkOptions.type,
             pdkHash: pdkOptions.pdkHash
           },
@@ -1045,7 +1043,7 @@ export default {
             pdkType: 'pdk'
           },
           {
-            config: formValues
+            config: formValues.config
           }
         )
         if (id) {
@@ -1237,25 +1235,47 @@ export default {
         .pdkHash(pdkHash)
         .then(({ data }) => {
           this.pdkOptions = data
-          let result = {}
-          if (!this.id && !this.$route.query.id) {
-            // 连接名称是必填项
-            result.__connection_database_name__ = {
-              type: 'string',
-              title: '连接名称',
-              required: true,
-              'x-decorator': 'FormItem',
-              'x-component': 'Input'
-            }
+          let result = {
+            type: 'object',
+            'x-component-props': {
+              width: 500
+            },
+            properties: {}
           }
-          let connection = {}
-          if (data?.properties?.connection) {
-            connection = data.properties.connection
-            let properties = connection.properties || {}
-            Object.assign(result, properties)
+          result.properties.name = {
+            type: 'string',
+            title: this.$t('connection_form_connection_name'),
+            required: true,
+            'x-decorator': 'FormItem',
+            'x-component': 'Input'
           }
-          connection.properties = result
-          this.schemaData = connection
+          result.properties.connection_type = {
+            type: 'string',
+            title: this.$t('connection_form_connection_type'),
+            required: true,
+            default: 'source',
+            enum: [
+              {
+                label: this.$t('connection_form_source'),
+                value: 'source',
+                tip: this.$t('connection_form_source_tip')
+              },
+              {
+                label: this.$t('connection_form_target'),
+                value: 'target',
+                tip: this.$t('connection_form_target_tip')
+              },
+              {
+                label: this.$t('connection_form_source_and_target'),
+                value: 'source_and_target',
+                tip: this.$t('connection_form_source_and_target_tip')
+              }
+            ],
+            'x-decorator': 'FormItem',
+            'x-component': 'Radio.Group'
+          }
+          result.properties.config = data?.properties?.connection || {}
+          this.schemaData = result
           let id = this.id || this.$route.params.id
           if (id) {
             this.getPdkData(id)
