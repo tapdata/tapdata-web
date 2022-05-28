@@ -585,7 +585,6 @@ export default {
     },
     getPdkEditValueType() {
       let findOne = this.typeMapping.find(t => t.dbType === this.editValueType[this.currentOperationType])
-      console.log(findOne?.rules)
       return findOne?.rules || ''
     },
     //重置
