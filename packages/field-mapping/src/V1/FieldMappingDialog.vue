@@ -1416,7 +1416,7 @@ export default {
             font-size: 12px;
             font-weight: 400;
             color: #000000;
-            line-height: 7px;
+            line-height: 17px;
             text-align: left;
             white-space: nowrap;
             overflow: hidden;
@@ -1426,7 +1426,7 @@ export default {
             font-size: 12px;
             font-weight: 400;
             color: #ef9868;
-            line-height: 7px;
+            line-height: 17px;
             margin-top: 16px;
             text-align: left;
             white-space: nowrap;
@@ -1437,7 +1437,7 @@ export default {
             font-size: 12px;
             font-weight: 400;
             color: #000000;
-            line-height: 7px;
+            line-height: 17px;
             margin-top: 10px;
             display: flex;
             justify-content: space-between;
