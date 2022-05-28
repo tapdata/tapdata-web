@@ -10,11 +10,7 @@
     >
       <template slot="name" slot-scope="scope">
         <div class="flex flex-row align-items-center p-2">
-          <img
-            class="mr-2"
-            style="width: 24px; height: 24px"
-            :src="require('web-core/assets/icons/node/' + scope.row.database_type.toLowerCase() + '.svg')"
-          />
+          <img class="mr-2" style="width: 24px; height: 24px" :src="getConnectionIcon(scope.row)" alt="" />
           <ElLink type="primary" style="display: block; line-height: 20px">
             {{ scope.row.name }}
           </ElLink>
@@ -57,6 +53,7 @@ import StatusTag from '@/components/StatusTag'
 import SchemaProgress from 'web-core/components/SchemaProgress'
 import VIcon from '@/components/VIcon'
 import { deepCopy } from '@/utils/util'
+import { getConnectionIcon } from '@/views/connections/util'
 
 export default {
   name: 'Connection',
@@ -229,6 +226,9 @@ export default {
           this.loadFieldsStatus = res?.data.loadFieldsStatus //同步reload状态
           this.$refs.test.start(row, false, true)
         })
+    },
+    getConnectionIcon() {
+      return getConnectionIcon(...arguments)
     }
   }
 }
