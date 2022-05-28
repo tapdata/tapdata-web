@@ -18,45 +18,47 @@
           {{ progress.finished }} / {{ progress.total }} <VIcon size="12">loading</VIcon
           ><span>{{ $t('dag_dialog_field_mapping_loading_schema') }}</span>
         </div>
-        <ul class="task-form-left__ul flex flex-column" v-loading="loadingNav" v-if="navData.length > 0">
-          <li
-            v-for="(item, index) in navData"
-            :key="index"
-            :class="{ active: position === index }"
-            @click="select(item, index)"
-          >
-            <div class="task-form__img" v-if="item.invalid">
-              <img :src="fieldMapping_table_error" alt="" />
-            </div>
-            <div class="task-form__img" v-else>
-              <img :src="fieldMapping_table" alt="" />
-            </div>
-            <div class="task-form-text-box">
-              <OverflowTooltip
-                class="w-100 text-truncate source"
-                :text="item.sourceObjectName"
-                placement="right"
-                :open-delay="400"
-              />
-              <OverflowTooltip
-                class="w-100 text-truncate target"
-                :text="item.sinkObjectName"
-                placement="right"
-                :open-delay="400"
-              />
-              <div class="select">
-                {{
-                  `${$t('dag_dialog_field_mapping_selected')} ${
-                    position === index ? fieldCount : item.sourceFieldCount - item.userDeletedNum
-                  }/${item.sourceFieldCount}`
-                }}
+        <div class="task-form-left__ul flex flex-column" v-loading="loadingNav">
+          <ul v-if="navData.length > 0">
+            <li
+              v-for="(item, index) in navData"
+              :key="index"
+              :class="{ active: position === index }"
+              @click="select(item, index)"
+            >
+              <div class="task-form__img" v-if="item.invalid">
+                <img :src="fieldMapping_table_error" alt="" />
               </div>
-            </div>
-          </li>
-        </ul>
-        <div class="task-form-left__ul flex flex-column align-items-center" v-else>
-          <div class="table__empty_img" style="margin-top: 40%"><img style="" :src="noData" /></div>
-          <div class="noData">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
+              <div class="task-form__img" v-else>
+                <img :src="fieldMapping_table" alt="" />
+              </div>
+              <div class="task-form-text-box">
+                <OverflowTooltip
+                  class="w-100 text-truncate source"
+                  :text="item.sourceObjectName"
+                  placement="right"
+                  :open-delay="400"
+                />
+                <OverflowTooltip
+                  class="w-100 text-truncate target"
+                  :text="item.sinkObjectName"
+                  placement="right"
+                  :open-delay="400"
+                />
+                <div class="select">
+                  {{
+                    `${$t('dag_dialog_field_mapping_selected')} ${
+                      position === index ? fieldCount : item.sourceFieldCount - item.userDeletedNum
+                    }/${item.sourceFieldCount}`
+                  }}
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div class="task-form-left__ul flex flex-column align-items-center" v-else>
+            <div class="table__empty_img" style="margin-top: 40%"><img style="" :src="noData" /></div>
+            <div class="noData">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
+          </div>
         </div>
         <ElPagination
           small

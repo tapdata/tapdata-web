@@ -461,25 +461,25 @@ export const CONFIG_MODEL = {
           key: 'database_datetype_without_timezone'
         }
       ]
-    },
-    {
-      icon: 'connect_shared_mining',
-      items: [
-        {
-          label: i18n.t('connection_form_shared_mining'),
-          key: 'shareCdcEnable'
-        }
-      ]
-    },
-    {
-      icon: 'connect_journal',
-      items: [
-        {
-          label: i18n.t('connection_form_oracle_redoLog_parser'),
-          key: 'redoLogParserEnable'
-        }
-      ]
     }
+    // {
+    //   icon: 'connect_shared_mining',
+    //   items: [
+    //     {
+    //       label: i18n.t('connection_form_shared_mining'),
+    //       key: 'shareCdcEnable'
+    //     }
+    //   ]
+    // },
+    // {
+    //   icon: 'connect_journal',
+    //   items: [
+    //     {
+    //       label: i18n.t('connection_form_oracle_redoLog_parser'),
+    //       key: 'redoLogParserEnable'
+    //     }
+    //   ]
+    // }
   ],
   kafka: [
     {
