@@ -1383,7 +1383,7 @@ export default {
           height: 100%;
           overflow-y: auto;
           .scheme-to-form {
-            width: 396px;
+            width: 480px;
           }
           .form-builder {
             width: 396px;
