@@ -1025,12 +1025,10 @@ export default {
         let id = this.$route.params?.id
         let { pdkOptions } = this
         let formValues = this.$refs.schemaToForm?.getFormValues?.()
-        let { __connection_database_name__ } = formValues
-        delete formValues.__connection_database_name__
         let params = Object.assign(
           {
-            name: __connection_database_name__, // 必填，需要渲染
-            connection_type: pdkOptions.connectionType, // 必填 data.connectionType
+            name: formValues.name, // 必填
+            connection_type: formValues.connection_type, // 必填
             database_type: pdkOptions.type,
             pdkHash: pdkOptions.pdkHash
           },
@@ -1045,7 +1043,7 @@ export default {
             pdkType: 'pdk'
           },
           {
-            config: formValues
+            config: formValues.config
           }
         )
         if (id) {
@@ -1088,9 +1086,9 @@ export default {
     },
     startTestPdk() {
       let formValues = this.$refs.schemaToForm?.getFormValues?.()
-      this.model.name = formValues.__connection_database_name__
-      delete formValues.__connection_database_name__
-      this.model.config = formValues
+      this.model.name = formValues.name
+      this.model.connection_type = formValues.connection_type
+      this.model.config = formValues.config
       this.model.pdkType = 'pdk'
       this.model.pdkHash = this.$route.query?.pdkHash
       this.dialogTestVisible = true
@@ -1236,27 +1234,51 @@ export default {
       this.$api('DatabaseTypes')
         .pdkHash(pdkHash)
         .then(({ data }) => {
+          let id = this.id || this.$route.params.id
           this.pdkOptions = data
-          let result = {}
-          if (!this.id && !this.$route.query.id) {
-            // 连接名称是必填项
-            result.__connection_database_name__ = {
+          let result = {
+            type: 'object',
+            'x-component-props': {
+              width: 500
+            },
+            properties: {}
+          }
+          if (!id) {
+            result.properties.name = {
               type: 'string',
-              title: '连接名称',
+              title: this.$t('connection_form_connection_name'),
               required: true,
               'x-decorator': 'FormItem',
               'x-component': 'Input'
             }
           }
-          let connection = {}
-          if (data?.properties?.connection) {
-            connection = data.properties.connection
-            let properties = connection.properties || {}
-            Object.assign(result, properties)
+          result.properties.connection_type = {
+            type: 'string',
+            title: this.$t('connection_form_connection_type'),
+            required: true,
+            default: 'source',
+            enum: [
+              {
+                label: this.$t('connection_form_source'),
+                value: 'source',
+                tip: this.$t('connection_form_source_tip')
+              },
+              {
+                label: this.$t('connection_form_target'),
+                value: 'target',
+                tip: this.$t('connection_form_target_tip')
+              },
+              {
+                label: this.$t('connection_form_source_and_target'),
+                value: 'source_and_target',
+                tip: this.$t('connection_form_source_and_target_tip')
+              }
+            ],
+            'x-decorator': 'FormItem',
+            'x-component': 'Radio.Group'
           }
-          connection.properties = result
-          this.schemaData = connection
-          let id = this.id || this.$route.params.id
+          result.properties.config = data?.properties?.connection || {}
+          this.schemaData = result
           if (id) {
             this.getPdkData(id)
           }
@@ -1267,7 +1289,10 @@ export default {
         .getNoSchema(id)
         .then(res => {
           this.model = res.data
-          this.schemaFormInstance.setValues(res.data?.config)
+          this.schemaFormInstance.setValues({
+            connection_type: this.model.connection_type,
+            config: this.model?.config
+          })
           this.renameData.rename = this.model.name
         })
     },
@@ -1363,7 +1388,7 @@ export default {
           height: 100%;
           overflow-y: auto;
           .scheme-to-form {
-            width: 396px;
+            width: 480px;
           }
           .form-builder {
             width: 396px;

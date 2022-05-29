@@ -18,45 +18,47 @@
           {{ progress.finished }} / {{ progress.total }} <VIcon size="12">loading</VIcon
           ><span>{{ $t('dag_dialog_field_mapping_loading_schema') }}</span>
         </div>
-        <ul class="task-form-left__ul flex flex-column" v-loading="loadingNav" v-if="navData.length > 0">
-          <li
-            v-for="(item, index) in navData"
-            :key="index"
-            :class="{ active: position === index }"
-            @click="select(item, index)"
-          >
-            <div class="task-form__img" v-if="item.invalid">
-              <img :src="fieldMapping_table_error" alt="" />
-            </div>
-            <div class="task-form__img" v-else>
-              <img :src="fieldMapping_table" alt="" />
-            </div>
-            <div class="task-form-text-box">
-              <OverflowTooltip
-                class="w-100 text-truncate source"
-                :text="item.sourceObjectName"
-                placement="right"
-                :open-delay="400"
-              />
-              <OverflowTooltip
-                class="w-100 text-truncate target"
-                :text="item.sinkObjectName"
-                placement="right"
-                :open-delay="400"
-              />
-              <div class="select">
-                {{
-                  `${$t('dag_dialog_field_mapping_selected')} ${
-                    position === index ? fieldCount : item.sourceFieldCount - item.userDeletedNum
-                  }/${item.sourceFieldCount}`
-                }}
+        <div class="task-form-left__ul flex flex-column" v-loading="loadingNav">
+          <ul v-if="navData.length > 0">
+            <li
+              v-for="(item, index) in navData"
+              :key="index"
+              :class="{ active: position === index }"
+              @click="select(item, index)"
+            >
+              <div class="task-form__img" v-if="item.invalid">
+                <img :src="fieldMapping_table_error" alt="" />
               </div>
-            </div>
-          </li>
-        </ul>
-        <div class="task-form-left__ul flex flex-column align-items-center" v-else>
-          <div class="table__empty_img" style="margin-top: 40%"><img style="" :src="noData" /></div>
-          <div class="noData">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
+              <div class="task-form__img" v-else>
+                <img :src="fieldMapping_table" alt="" />
+              </div>
+              <div class="task-form-text-box">
+                <OverflowTooltip
+                  class="w-100 text-truncate source"
+                  :text="item.sourceObjectName"
+                  placement="right"
+                  :open-delay="400"
+                />
+                <OverflowTooltip
+                  class="w-100 text-truncate target"
+                  :text="item.sinkObjectName"
+                  placement="right"
+                  :open-delay="400"
+                />
+                <div class="select">
+                  {{
+                    `${$t('dag_dialog_field_mapping_selected')} ${
+                      position === index ? fieldCount : item.sourceFieldCount - item.userDeletedNum
+                    }/${item.sourceFieldCount}`
+                  }}
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div class="task-form-left__ul flex flex-column align-items-center" v-else>
+            <div class="table__empty_img" style="margin-top: 40%"><img style="" :src="noData" /></div>
+            <div class="noData">{{ $t('dag_dialog_field_mapping_no_data') }}</div>
+          </div>
         </div>
         <ElPagination
           small
@@ -84,7 +86,8 @@
               size="mini"
               placeholder="请输入字段名"
               suffix-icon="el-icon-search"
-              @input="getMetadataTransformer(searchField)"
+              clearable
+              @input="search()"
             ></ElInput>
           </div>
           <div class="item ml-2">
@@ -96,7 +99,13 @@
             </ElButton>
           </div>
         </div>
-        <ElTable class="field-mapping-table table-border" height="100%" border :data="target" v-loading="loadingTable">
+        <ElTable
+          class="field-mapping-table table-border"
+          height="100%"
+          border
+          :data="viewTableData"
+          v-loading="loadingTable"
+        >
           <ElTableColumn show-overflow-tooltip :label="$t('dag_dialog_field_mapping_field')" prop="field_name">
             <template slot-scope="scope">
               <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
@@ -111,12 +120,6 @@
             prop="data_type"
             :show-overflow-tooltip="true"
           ></ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_precision')" prop="precision">
-            <template slot-scope="scope">
-              <span>{{ scope.row.precision === -1 ? '' : scope.row.precision }}</span>
-            </template>
-          </ElTableColumn>
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_scale')" prop="scale"></ElTableColumn>
           <ElTableColumn :label="$t('meta_table_default')" prop="default_value"></ElTableColumn>
           <div class="field-mapping-table__empty" slot="empty">
             <div class="table__empty_img" style="margin-left: 32%"><img style="" :src="noData" /></div>
@@ -156,6 +159,7 @@ export default {
       dialogVisible: false,
       dataFlow: '',
       navData: [],
+      viewTableData: [],
       typeMapping: [],
       position: 0,
       selectRow: '',
@@ -184,7 +188,7 @@ export default {
   mounted() {
     this.getMetaData()
     //接收数据
-    let id = this.dataFlow.id
+    let id = this.dataFlow.nodeId
     let self = this
     this.$ws.on('metadataTransformerProgress', function (res) {
       if (res?.data?.stageId === id) {
@@ -192,6 +196,7 @@ export default {
         self.progress.finished = finished
         self.progress.total = total
         self.page.total = finished
+        self.page.count = Math.floor(finished / 10) === 0 ? 1 : Math.floor(finished / 10)
         if (status !== 'done') {
           self.progress.showProgress = true
           if (self.navData?.length < self.page.size && self.page.current === 1) {
@@ -239,7 +244,7 @@ export default {
       let promise = taskApi.getMetadata(this.dataFlow)
       promise
         .then(() => {
-          this.getMetadataTransformer()
+          // this.getMetadataTransformer()
           this.initWSSed() //发送ws 监听schema进度
         })
         .finally(() => {
@@ -282,6 +287,22 @@ export default {
           this.loadingTable = false
         })
     },
+    search() {
+      this.$nextTick(() => {
+        const { delayTrigger } = this.$util
+        delayTrigger(() => {
+          if (this.searchField.trim()) {
+            this.searchField = this.searchField.trim().toString() //去空格
+            this.viewTableData = this.target.filter(v => {
+              let str = (v.field_name + '' + v.field_name).toLowerCase()
+              return str.indexOf(this.searchField.toLowerCase()) > -1
+            })
+          } else {
+            this.viewTableData = this.target
+          }
+        }, 100)
+      })
+    },
     rest() {
       this.searchField = ''
       this.searchTable = ''
@@ -292,6 +313,7 @@ export default {
       this.loadingTable = true
       let data = await metadataInstancesApi.originalData(row.sinkQulifiedName)
       this.target = data && data.length > 0 ? data[0].fields : []
+      this.viewTableData = this.target
       this.loadingTable = false
     },
     /*切换表*/

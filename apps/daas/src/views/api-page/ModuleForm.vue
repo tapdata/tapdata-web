@@ -292,10 +292,7 @@ export default {
         user_id: true
       }
       let where = {
-        or: [{ connection_type: 'source_and_target' }, { connection_type: 'target' }],
-        database_type: {
-          in: ['mongodb', 'gridfs', 'oracle', 'mysql', 'sqlserver', 'postgres']
-        }
+        or: [{ connection_type: 'source_and_target' }, { connection_type: 'target' }]
       }
       let params = {
         fields: fields,

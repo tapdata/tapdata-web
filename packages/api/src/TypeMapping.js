@@ -7,4 +7,7 @@ export class TypeMapping extends Http {
   dataType(type) {
     return this.axios.get(this.url + '/dataType?databaseType=' + type)
   }
+  pdkDataType(type) {
+    return this.axios.get(this.url + '/pdk/dataType?databaseType=' + type)
+  }
 }

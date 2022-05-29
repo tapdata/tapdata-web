@@ -82,7 +82,7 @@
                 size="mini"
                 placeholder="请输入字段名"
                 suffix-icon="el-icon-search"
-                @input="getMetadataTransformer(searchField)"
+                @input="search()"
               ></ElInput>
             </div>
             <div class="item ml-2">
@@ -96,7 +96,7 @@
             class="field-mapping-table table-border"
             height="100%"
             border
-            :data="target"
+            :data="viewTableData"
             v-loading="loadingTable"
           >
             <ElTableColumn
@@ -122,32 +122,6 @@
                 </div>
                 <div v-else>
                   <span :show-overflow-tooltip="true">{{ row.data_type }}</span>
-                </div>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn :label="$t('dag_dialog_field_mapping_precision')">
-              <template #default="{ row }">
-                <div
-                  class="cursor-pointer"
-                  v-if="!row.is_deleted && row.isPrecisionEdit && row.precision > 0"
-                  @click="edit(row, 'precision')"
-                >
-                  <span> {{ row.precision }}</span>
-                  <i class="field-mapping__icon el-icon-edit-outline"></i>
-                </div>
-                <div v-else>
-                  <span>{{ row.precision < 0 ? '' : row.precision }}</span>
-                </div>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn :label="$t('dag_dialog_field_mapping_scale')">
-              <template #default="{ row }">
-                <div class="cursor-pointer" v-if="!row.is_deleted && row.isScaleEdit" @click="edit(row, 'scale')">
-                  <span>{{ row.scale }}</span>
-                  <i class="field-mapping__icon el-icon-edit-outline"></i>
-                </div>
-                <div v-else>
-                  <span>{{ row.scale }}</span>
                 </div>
               </template>
             </ElTableColumn>
@@ -206,14 +180,12 @@
         </div>
       </div>
       <div v-if="['data_type'].includes(currentOperationType)">
-        <ElSelect v-model="editValueType[currentOperationType]" filterable @change="initDataType">
-          <ElOption
-            :label="item.dbType"
-            :value="item.dbType"
-            v-for="(item, index) in typeMapping"
-            :key="index"
-          ></ElOption>
-        </ElSelect>
+        <ElAutocomplete
+          v-model="editValueType[currentOperationType]"
+          class="inline-input"
+          :fetch-suggestions="querySearchPdkType"
+        ></ElAutocomplete>
+        <div class="mt-3 fs-8">{{ getPdkEditValueType() }}</div>
         <div class="field-mapping-data-type" v-if="currentTypeRules.length > 0">
           <div v-for="(item, index) in currentTypeRules" :key="item.dbType">
             <div v-if="item.maxPrecision && item.minPrecision !== item.maxPrecision">
@@ -271,6 +243,7 @@ export default {
       searchField: '',
       navData: [],
       target: [],
+      viewTableData: [],
       loadingTable: true,
       loadingNav: true,
       progress: {
@@ -317,7 +290,7 @@ export default {
       if (this.visible) {
         this.getMetadataTransformer()
         //接收数据
-        let id = this.dataFlow.id
+        let id = this.dataFlow.nodeId
         let self = this
         this.$ws.on('metadataTransformerProgress', function (res) {
           if (res?.data?.stageId === id) {
@@ -325,6 +298,7 @@ export default {
             self.progress.finished = finished
             self.progress.total = total
             self.page.total = finished
+            self.page.count = Math.floor(finished / 10) === 0 ? 1 : Math.floor(finished / 10)
             if (status !== 'done') {
               self.progress.showProgress = true
               if (self.navData?.length < self.page.size && self.page.current === 1) {
@@ -357,12 +331,11 @@ export default {
       this.target = data && data.length > 0 ? data[0].fields : []
       //添加edit
       for (let i = 0; i < this.target.length; i++) {
-        this.target[i]['isPrecisionEdit'] = true
-        this.target[i]['isScaleEdit'] = true
         if (!this.target[i]['default_value']) {
           this.target[i]['default_value'] = ''
         }
       }
+      this.viewTableData = this.target
       this.getTypeMapping(this.selectRow)
       this.loadingTable = false
     },
@@ -403,6 +376,22 @@ export default {
           this.loadingTable = false
         })
     },
+    search() {
+      this.$nextTick(() => {
+        const { delayTrigger } = this.$util
+        delayTrigger(() => {
+          if (this.searchField.trim()) {
+            this.searchField = this.searchField.trim().toString() //去空格
+            this.viewTableData = this.target.filter(v => {
+              let str = (v.field_name + '' + v.field_name).toLowerCase()
+              return str.indexOf(this.searchField.toLowerCase()) > -1
+            })
+          } else {
+            this.viewTableData = this.target
+          }
+        }, 100)
+      })
+    },
     rest() {
       this.searchField = ''
       this.searchTable = ''
@@ -410,9 +399,14 @@ export default {
     },
     //获取typeMapping
     getTypeMapping(row) {
-      typeMappingApi.dataType(row.sinkDbType).then(res => {
-        this.typeMapping = res.data
-        this.initShowEdit()
+      typeMappingApi.pdkDataType(row.sinkDbType).then(res => {
+        let targetObj = JSON.parse(res?.data || '{}')
+        for (let key in targetObj) {
+          this.typeMapping.push({
+            dbType: key,
+            rules: targetObj[key]
+          })
+        }
       })
     },
     handleClose() {
@@ -454,7 +448,7 @@ export default {
           return
         }
         //如果是改类型 需要手动修改字段的长度以及精度
-        this.influences(id, this.currentTypeRules || [])
+        this.updateTargetView(id, 'tapType', '')
       } else if (key === 'precision') {
         let isPrecision = this.currentTypeRules.filter(v => v.minPrecision < v.maxPrecision)
         if (isPrecision.length === 0) {
@@ -505,43 +499,7 @@ export default {
       this.checkTable() //消除感叹号
       this.handleClose()
     },
-    /* 初始化目标字段、长度是否可编辑*/
-    initShowEdit() {
-      if (this.target?.length === 0) return
-      for (let i = 0; i < this.target.length; i++) {
-        let rules = this.typeMapping.filter(v => v.dbType === this.target[i].data_type)
-        if (rules?.length > 0) {
-          rules = rules[0].rules
-          this.showPrecisionEdit(this.target[i].id, rules || [])
-          this.showScaleEdit(this.target[i].id, rules || [])
-        }
-      }
-    },
-    //改类型影响字段长度 精度
-    influences(id, rules) {
-      this.showScaleEdit(id, rules)
-      this.showPrecisionEdit(id, rules)
-      this.influencesScale(id, rules)
-      this.influencesPrecision(id, rules)
-    },
-    influencesScale(id, rules) {
-      rules.forEach(r => {
-        if (r.minScale || r.minScale === 0) {
-          this.updateTarget(id, 'scale', r.minScale < 0 ? 0 : r.minScale)
-        } else {
-          this.updateTarget(id, 'scale', null)
-        }
-      })
-    },
-    influencesPrecision(id, rules) {
-      rules.forEach(r => {
-        if (r.minPrecision || r.minPrecision === 0) {
-          this.updateTarget(id, 'precision', r.minPrecision < 0 ? 0 : r.minPrecision)
-        } else {
-          this.updateTarget(id, 'precision', null)
-        }
-      })
-    },
+
     /*更新target 数据*/
     updateTarget(id, key, value) {
       this.target.forEach(field => {
@@ -617,6 +575,18 @@ export default {
         this.currentTypeRules = target[0]?.rules || []
       } else this.currentTypeRules = '' //清除上一个字段范围
     },
+    querySearchPdkType(queryString, cb) {
+      let result = this.typeMapping.map(t => {
+        return {
+          value: t.dbType
+        }
+      })
+      cb(result)
+    },
+    getPdkEditValueType() {
+      let findOne = this.typeMapping.find(t => t.dbType === this.editValueType[this.currentOperationType])
+      return findOne?.rules || ''
+    },
     //重置
     updateMetaData() {
       if (!this.dataFlow) return
@@ -639,6 +609,8 @@ export default {
       }
     },
     closeDialog() {
+      this.searchField = ''
+      this.searchTable = ''
       this.$emit('update:visible', false)
     },
     //实时获取schema加载进度

@@ -100,12 +100,7 @@
           :row-class-name="tableRowClassName"
           v-loading="loading"
         >
-          <ElTableColumn
-            show-overflow-tooltip
-            :label="$t('dag_dialog_field_mapping_source_field')"
-            prop="field_name"
-            width="360"
-          >
+          <ElTableColumn show-overflow-tooltip :label="$t('dag_dialog_field_mapping_source_field')" prop="field_name">
             <template slot-scope="scope">
               <span v-if="scope.row.primary_key_position > 0" :show-overflow-tooltip="true"
                 >{{ scope.row.field_name }}
@@ -133,7 +128,7 @@
           <!--            prop="scale"-->
           <!--            width="100"-->
           <!--          ></ElTableColumn>-->
-          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')" :width="360">
+          <ElTableColumn :label="$t('dag_dialog_field_mapping_target_field')">
             <template slot-scope="scope">
               <div
                 class="cursor-pointer"
@@ -193,7 +188,7 @@
           <!--              </div>-->
           <!--            </template>-->
           <!--          </ElTableColumn>-->
-          <ElTableColumn :label="$t('meta_table_default')" width="100">
+          <ElTableColumn :label="$t('meta_table_default')" width="180">
             <template slot-scope="scope">
               <div class="cursor-pointer" @click="edit(scope.row, 'default_value')">
                 <span class="field-mapping-table__default_value">{{ scope.row.t_default_value }}</span>
@@ -1416,7 +1411,7 @@ export default {
             font-size: 12px;
             font-weight: 400;
             color: #000000;
-            line-height: 7px;
+            line-height: 17px;
             text-align: left;
             white-space: nowrap;
             overflow: hidden;
@@ -1426,7 +1421,7 @@ export default {
             font-size: 12px;
             font-weight: 400;
             color: #ef9868;
-            line-height: 7px;
+            line-height: 17px;
             margin-top: 16px;
             text-align: left;
             white-space: nowrap;
@@ -1437,7 +1432,7 @@ export default {
             font-size: 12px;
             font-weight: 400;
             color: #000000;
-            line-height: 7px;
+            line-height: 17px;
             margin-top: 10px;
             display: flex;
             justify-content: space-between;

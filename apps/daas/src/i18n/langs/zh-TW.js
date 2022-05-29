@@ -1383,6 +1383,7 @@ export default {
   shared_cdc_setting_no_mongodb_tip: ' 請先創建mongodb數據源',
   shared_cdc_name: '請輸入挖掘名稱',
   shared_cdc_setting_refresh: '刷新數據',
+  shared_cdc_setting_select_mode: '存储模式',
   shared_cdc_setting_select_mongodb_tip: '請選擇mongodb連接',
   shared_cdc_setting_select_table_tip: '請選擇表名',
   shared_cdc_setting_select_time_tip: '請選擇日誌保存時長',

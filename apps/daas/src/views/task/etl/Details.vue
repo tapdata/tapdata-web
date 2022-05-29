@@ -158,11 +158,9 @@ export default {
         }
       ],
       syncTypeMap: {
-        syncType: {
-          initial_sync: this.$t('dataFlow.initial_sync'),
-          cdc: this.$t('dataFlow.cdc'),
-          'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
-        }
+        initial_sync: this.$t('dataFlow.initial_sync'),
+        cdc: this.$t('dataFlow.cdc'),
+        'initial_sync+cdc': this.$t('dataFlow.initial_sync') + '+' + this.$t('dataFlow.cdc')
       },
       list: [],
       loadingObj: {
