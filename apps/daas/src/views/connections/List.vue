@@ -136,6 +136,9 @@
           </ElButton>
         </template>
       </ElTableColumn>
+      <!-- <div slot="noDataText">
+       {{$t('connection_list_no_data',[$t('connection_form_creat_connection')])}}
+      </div> -->
     </TablePage>
     <Preview ref="preview"></Preview>
     <DatabaseTypeDialog

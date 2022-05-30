@@ -28,7 +28,7 @@
           {{ scope.row.createTimeFmt }}
         </template>
       </ElTableColumn>
-      <ElTableColumn prop="cacheTimeAt" :label="$t('shared_cache_time')" sortable="cacheTimeAt">
+      <ElTableColumn prop="cacheTimeAt" :label="$t('shared_cache_time')">
         <template slot-scope="scope">
           {{ scope.row.cacheTimeAtFmt }}
         </template>

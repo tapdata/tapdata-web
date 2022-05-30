@@ -440,6 +440,12 @@
 .el-table--border::after {
   width: 0!important;
 }
+.el-table__empty-block {
+  height: 70%!important;
+}
+.el-table__empty-block .el-table__empty-text .empty {
+  line-height: 30px;
+}
 .el-pagination {
   text-align: right;
 }

@@ -628,6 +628,8 @@ export default {
   connection_list_help_doc: '帮助文档',
   connection_list_test_button: '连接测试',
   connection_list_delete_link_job: '连接被应用,不能删除',
+  connection_list_no_data_title: '快来',
+  connection_list_no_data_title1:'开始实时数据同步吧~',
 
   connection_form_kuduhost: 'IP地址:端口; 支持多个; 用 , 分割',
   connection_form_table_filter_tips: '逗号分割的表达式列表，使用 * 代表任意长度任意字符',
