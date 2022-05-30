@@ -238,12 +238,9 @@ const actions = {
       'addProcessorNode',
       items.map(item => {
         const node = {
-          icon: 'custom-node',
           name: item.name,
           type: 'custom_processor',
-          attrs: {
-            customNodeId: item.id
-          }
+          customNodeId: item.id
         }
 
         const ins = new CustomProcessor({

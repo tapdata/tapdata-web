@@ -357,47 +357,38 @@ export default {
     async initNodeType() {
       this.addProcessorNode([
         {
-          icon: 'javascript',
           name: 'JavaScript',
           type: 'js_processor'
         },
         {
-          icon: 'aggregator',
           name: '聚合',
           type: 'aggregation_processor'
         },
         {
-          icon: 'row-filter',
           name: 'Row Filter',
           type: 'row_filter_processor'
         },
         {
-          icon: 'join',
           name: '连接',
           type: 'join_processor'
         },
         {
-          icon: 'merge_table',
           name: '主从合并',
           type: 'merge_table_processor'
         },
         {
-          icon: 'field_calc',
           name: '字段计算',
           type: 'field_calc_processor'
         },
         {
-          icon: 'field_mod_type',
           name: '类型修改',
           type: 'field_mod_type_processor'
         },
         {
-          icon: 'field_rename',
           name: '字段改名',
           type: 'field_rename_processor'
         },
         {
-          icon: 'field_add_del',
           name: '增删字段',
           type: 'field_add_del_processor'
         }
