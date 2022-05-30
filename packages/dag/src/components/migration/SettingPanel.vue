@@ -232,7 +232,7 @@ export default observer({
                         default: true,
                         'x-decorator': 'FormItem',
                         'x-component': 'Switch'
-                      },
+                      }
                       // shareCdcEnable: {
                       //   title: this.$t('connection_form_shared_mining'), //共享挖掘日志过滤
                       //   type: 'boolean',
@@ -324,7 +324,7 @@ export default observer({
                 connectionId: item.connectionId,
                 pointType: oldPoint[0].pointType || 'current', // localTZ: 本地时区； connTZ：连接时区
                 dateTime: oldPoint[0].dateTime || '',
-                timeZone: this.systemTimeZone,
+                timeZone: systemTimeZone,
                 connectionName: item.name
               }
             } else {
@@ -332,7 +332,7 @@ export default observer({
                 connectionId: item.connectionId,
                 pointType: 'current', // localTZ: 本地时区； connTZ：连接时区
                 dateTime: '',
-                timeZone: this.systemTimeZone,
+                timeZone: systemTimeZone,
                 connectionName: item.name
               }
             }
