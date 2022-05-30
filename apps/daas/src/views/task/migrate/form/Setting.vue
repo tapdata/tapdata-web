@@ -245,45 +245,45 @@ export default {
                   align: 'start'
                 },
 
-                properties: {
-                  accessNodeType: {
-                    type: 'string',
-                    default: 'AUTOMATIC_PLATFORM_ALLOCATION',
-                    'x-disabled': this.disabledAccessNode,
-                    'x-decorator': 'FormItem',
-                    'x-component': 'Select',
-                    enum: [
-                      {
-                        label: this.$t('connection_form_automatic'),
-                        value: 'AUTOMATIC_PLATFORM_ALLOCATION'
-                      },
-                      {
-                        label: this.$t('connection_form_manual'),
-                        value: 'MANUALLY_SPECIFIED_BY_THE_USER'
-                      }
-                    ]
-                  },
-                  accessNodeProcessId: {
-                    type: 'string',
-                    enum: this.accessNodeList,
-                    'x-disabled': this.disabledAccessNode,
-                    'x-decorator': 'FormItem',
-                    'x-decorator-props': {
-                      style: { flex: 1 }
-                    },
-                    'x-component': 'Select',
-                    'x-reactions': {
-                      dependencies: ['accessNodeType'],
-                      fulfill: {
-                        state: {
-                          visible: '{{$deps[0]==="MANUALLY_SPECIFIED_BY_THE_USER"}}',
-                          value:
-                            '{{console.log("$self.value", $self.value, $self.dataSource), $self.value || ($deps[0]==="MANUALLY_SPECIFIED_BY_THE_USER" && $self.dataSource.length ? $self.dataSource[0].value : undefined)}}'
-                        }
-                      }
-                    }
-                  }
-                }
+                // properties: {
+                //   accessNodeType: {
+                //     type: 'string',
+                //     default: 'AUTOMATIC_PLATFORM_ALLOCATION',
+                //     'x-disabled': this.disabledAccessNode,
+                //     'x-decorator': 'FormItem',
+                //     'x-component': 'Select',
+                //     enum: [
+                //       {
+                //         label: this.$t('connection_form_automatic'),
+                //         value: 'AUTOMATIC_PLATFORM_ALLOCATION'
+                //       },
+                //       {
+                //         label: this.$t('connection_form_manual'),
+                //         value: 'MANUALLY_SPECIFIED_BY_THE_USER'
+                //       }
+                //     ]
+                //   },
+                //   accessNodeProcessId: {
+                //     type: 'string',
+                //     enum: this.accessNodeList,
+                //     'x-disabled': this.disabledAccessNode,
+                //     'x-decorator': 'FormItem',
+                //     'x-decorator-props': {
+                //       style: { flex: 1 }
+                //     },
+                //     'x-component': 'Select',
+                //     'x-reactions': {
+                //       dependencies: ['accessNodeType'],
+                //       fulfill: {
+                //         state: {
+                //           visible: '{{$deps[0]==="MANUALLY_SPECIFIED_BY_THE_USER"}}',
+                //           value:
+                //             '{{console.log("$self.value", $self.value, $self.dataSource), $self.value || ($deps[0]==="MANUALLY_SPECIFIED_BY_THE_USER" && $self.dataSource.length ? $self.dataSource[0].value : undefined)}}'
+                //         }
+                //       }
+                //     }
+                //   }
+                // }
               },
 
               isStopOnError: {

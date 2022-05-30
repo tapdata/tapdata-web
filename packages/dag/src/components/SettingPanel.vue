@@ -79,7 +79,7 @@
               运行设置
               <span class="pl-2">任务在启动和运行时的环境设置</span>
             </div>
-            <div class="px-5">
+            <!-- <div class="px-5">
               <ElRow>
                 <ElCol :span="12">
                   <ElFormItem :label="$t('connection_form_access_node')">
@@ -107,7 +107,7 @@
                   </ElFormItem>
                 </ElCol>
               </ElRow>
-            </div>
+            </div> -->
           </div>
           <div class="setting-panel-box bg-white border-bottom pt-3">
             <div class="setting-title fs-7 px-5">
@@ -247,13 +247,13 @@
               </ElFormItem>
             </div>
           </div>
+           <!--开启共享日志挖掘-->
           <div class="setting-panel-box bg-white border-bottom pt-3" v-if="settings.type !== 'initial_sync'">
             <div class="setting-title fs-7 px-5">
               共享挖掘设置
               <span class="pl-2">任务的同步类型为增量或全量+增量时执行</span>
             </div>
             <div class="px-5">
-              <!--开启共享日志挖掘-->
               <ElFormItem :label="$t('connection_form_shared_mining')">
                 <ElSwitch v-model="settings.shareCdcEnable"></ElSwitch>
               </ElFormItem>

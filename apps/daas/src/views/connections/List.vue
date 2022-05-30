@@ -46,7 +46,8 @@
               <img :src="getConnectionIcon(scope.row)" alt="" />
             </div>
             <div class="database-text">
-              <ElLink type="primary" style="display: block; line-height: 20px" @click.stop="preview(scope.row)">
+               <!-- @click.stop="preview(scope.row)" -->
+              <ElLink type="primary" style="display: block; line-height: 20px">
                 {{ scope.row.name }}
               </ElLink>
               <div class="region-info">{{ scope.row.regionInfo }}</div>
