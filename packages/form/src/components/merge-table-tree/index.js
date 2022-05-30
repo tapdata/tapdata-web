@@ -1,7 +1,7 @@
 import { defineComponent, ref, watch, onMounted, computed, nextTick } from 'vue-demi'
 import { observer } from '@formily/reactive-vue'
 import { h as createElement, useFieldSchema, useForm, RecursionField } from '@formily/vue'
-import { observe } from '@formily/reactive'
+import { observe, toJS } from '@formily/reactive'
 import { Space } from '../space'
 import './style.scss'
 import { getNodeIconSrc } from '@tap/business'
@@ -51,7 +51,7 @@ export const MergeTableTree = observer(
         treeRef,
         val => {
           console.log('🤖MergeTableTree.watch', val, treeRef.value)
-          emit('change', val)
+          emit('change', toJS(val))
         },
         { deep: true }
       )
@@ -79,10 +79,11 @@ export const MergeTableTree = observer(
         let newTree = traverse(props.value)
         $inputs.forEach(id => {
           if (!filterIdMap[id]) {
+            const node = props.findNodeById(id)
             newTree.push({
               id,
               mergeType: 'updateOrInsert',
-              tablePath: '',
+              targetPath: node.name,
               // joinKeys: [],
               children: []
             })
@@ -121,9 +122,9 @@ export const MergeTableTree = observer(
         const iconSrc = getNodeIconSrc(dagNode)
 
         return (
-          <div class="flex align-center ml-n2">
+          <div class="flex flex-1 align-center ml-n2 overflow-hidden">
             <ElImage class="mr-2" src={iconSrc}></ElImage>
-            {dagNode.name}
+            <div class="flex-1 text-truncate">{dagNode.name}</div>
           </div>
         )
       }
@@ -147,25 +148,25 @@ export const MergeTableTree = observer(
         if (pathArr.length < 2) return
         const parentPath = pathArr.slice(0, pathArr.length - 1).join('.children.')
         const parentId = form.getValuesIn(`mergeProperties.${parentPath}.id`)
-        props.loadFieldsMethod(parentId).then(fields => {
+        props.loadFieldsMethod(selfId).then(fields => {
           form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.source,arrayKeys))`, {
             loading: false,
             dataSource: fields
           })
         })
-        props.loadFieldsMethod(selfId).then(fields => {
-          /*if (!recordRef.value.joinKeys?.length) {
+        /*props.loadFieldsMethod(parentId).then(fields => {
+          /!*if (!recordRef.value.joinKeys?.length) {
             const joinKeys = fields
               .filter(item => item.isPrimaryKey)
               .map(item => ({ source: item.value, target: item.value }))
             formRef.value.setValuesIn(`mergeProperties.${indexRef.value}.joinKeys`, joinKeys)
-          }*/
+          }*!/
 
           form.setFieldState(`*(mergeProperties.${selfPath}.*(joinKeys.*.target))`, {
             loading: false,
             dataSource: fields
           })
-        })
+        })*/
       }
 
       const handleCurrentChange = (data, node) => {
